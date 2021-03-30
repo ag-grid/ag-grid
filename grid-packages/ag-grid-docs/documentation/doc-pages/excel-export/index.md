@@ -82,8 +82,6 @@ Some of the most likely errors you can encounter when exporting to Excel are:
 
 <api-documentation source='excel-export/resources/excel-export-params.json' section='excelData'></api-documentation>
 
-## Excel Styles
-
 ### ExcelStyle
 
 <api-documentation source='excel-export/resources/excel-export-params.json' section='excelStyle'></api-documentation>
@@ -116,8 +114,6 @@ Some of the most likely errors you can encounter when exporting to Excel are:
 
 <api-documentation source='excel-export/resources/excel-export-params.json' section='excelProtection'></api-documentation>
 
-## Multiple Sheet Configuration
-
 ### ExcelExportMultipleSheetParams
 
 This interface is only relevant when exporting multiple sheets in a single Excel file. For more info see [Excel Export - Multiple Sheets](/excel-export-multiple-sheets/).
@@ -144,3 +140,17 @@ interface ExcelExportMultipleSheetParams extends ExcelExportParams {
 ### ExcelSheetPageSetup
 
 <api-documentation source='excel-export/resources/excel-export-params.json' section='excelSheetPageSetup'></api-documentation>
+
+## Types
+
+### ExcelDataType
+
+```ts
+type ExcelDataType = 'String' | 'Formula' | 'Number' | 'Boolean' | 'DateTime' | 'Error'
+```
+
+### ExcelOOXMLDataType
+
+```ts
+type ExcelOOXMLDataType = 'str' | 's' | 'f' | 'inlineStr' | 'n' | 'b' | 'd' | 'e' | 'empty'
+```

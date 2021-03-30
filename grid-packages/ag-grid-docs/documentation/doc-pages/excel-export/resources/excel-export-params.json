@@ -213,15 +213,7 @@
         "type": {
             "default": "xxx",
             "description": "xxx",
-            "options": [
-                "String",
-                "Formula",
-                "Number",
-                "Boolean",
-                "DateTime",
-                "Error"
-            ],
-            "type": "string"
+            "type": "ExcelDataType | ExcelOOXMLDataType"
         },
         "value": {
             "default": "xxx",
@@ -243,15 +235,7 @@
         "dataType": {
             "default": "xxx",
             "description": "xxx",
-            "options": [
-                "String",
-                "Formula",
-                "Number",
-                "Boolean",
-                "DateTime",
-                "Error"
-            ],
-            "type": "string"
+            "type": "ExcelDataType"
         },
         "font": {
             "default": "xxx",
