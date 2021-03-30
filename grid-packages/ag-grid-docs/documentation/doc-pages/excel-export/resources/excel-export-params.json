@@ -544,7 +544,7 @@
                 "Portrait",
                 "Landscape"
             ],
-            "type": "ExcelSheetPageOrientationType"
+            "type": "string"
         },
         "pageSize": {
             "default": "Letter",
@@ -576,7 +576,7 @@
                 "Japanese Postcard",
                 "Japanese Double Postcard"
             ],
-            "type": "ExcelSheetPageSizeType"
+            "type": "string"
         }
     }
 }
