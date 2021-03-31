@@ -787,20 +787,16 @@ export class RowRenderer extends BeanStub {
         }
 
         // add in new rows
-        const nextVmTurnFunctions: Function[] = [];
         const rowComps: RowController[] = [];
 
         indexesToDraw.forEach(rowIndex => {
             const rowComp = this.createOrUpdateRowComp(rowIndex, rowsToRecycle, animate, afterScroll);
             if (exists(rowComp)) {
                 rowComps.push(rowComp);
-                pushAll(nextVmTurnFunctions, rowComp.getAndClearNextVMTurnFunctions());
             }
         });
 
         this.clearLastPlacedElements();
-
-        executeNextVMTurn(nextVmTurnFunctions);
 
         const useAnimationFrame = afterScroll && !this.gridOptionsWrapper.isSuppressAnimationFrame() && !this.printLayout;
 

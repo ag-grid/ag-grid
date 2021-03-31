@@ -40,8 +40,21 @@ export function executeInAWhile(funcs: Function[]): void {
     executeAfter(funcs, 400);
 }
 
-export function executeNextVMTurn(funcs: Function[]): void {
-    executeAfter(funcs, 0);
+let executeNextVMTurnFuncs: Function[] = [];
+let executeNextVMTurnPending = false;
+
+export function executeNextVMTurn(func: ()=>void): void {
+    executeNextVMTurnFuncs.push(func);
+
+    if (executeNextVMTurnPending) { return; }
+
+    executeNextVMTurnPending = true;
+    window.setTimeout(() => {
+        const funcsCopy = executeNextVMTurnFuncs.slice();
+        executeNextVMTurnFuncs.length = 0;
+        executeNextVMTurnPending = false;
+        funcsCopy.forEach(func => func())
+    }, 0);
 }
 
 export function executeAfter(funcs: Function[], milliseconds = 0): void {

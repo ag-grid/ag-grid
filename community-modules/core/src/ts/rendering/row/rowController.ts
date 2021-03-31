@@ -39,6 +39,7 @@ import { CellPosition } from "../../entities/cellPosition";
 import { RowPosition } from "../../entities/rowPosition";
 import { RowContainerComp } from "../../gridBodyComp/rowContainer/rowContainerComp";
 import { RowComp } from "./rowComp";
+import { executeNextVMTurn } from "../../utils/function";
 
 export enum RowType {
     Normal,
@@ -96,11 +97,6 @@ export class RowController extends Component {
     private centerCols: Column[];
     private leftCols: Column[];
     private rightCols: Column[];
-
-    // for animations, there are bits we want done in the next VM turn, to all DOM to update first.
-    // instead of each row doing a setTimeout(func,0), we put the functions here and the rowRenderer
-    // executes them all in one timeout
-    private createSecondPassFuncs: Function[] = [];
 
     // these get called before the row is destroyed - they set up the DOM for the remove animation (ie they
     // set the DOM up for the animation), then the delayedDestroyFunctions get called when the animation is
@@ -179,13 +175,11 @@ export class RowController extends Component {
         this.addListeners();
 
         if (this.slideRowIn) {
-            this.createSecondPassFuncs.push(() => {
-                this.onTopChanged();
-            });
+            executeNextVMTurn(this.onTopChanged.bind(this));
         }
         if (this.fadeRowIn) {
-            this.createSecondPassFuncs.push(() => {
-                this.allRowComps.forEach( rowComp => removeCssClass(rowComp.getGui(), 'ag-opacity-zero'))
+            executeNextVMTurn(() => {
+                this.allRowComps.forEach( rowComp => removeCssClass(rowComp.getGui(), 'ag-opacity-zero'));
             });
         }
     }
@@ -1220,13 +1214,6 @@ export class RowController extends Component {
                 }
             });
         }
-    }
-
-    // we clear so that the functions are never executed twice
-    public getAndClearNextVMTurnFunctions(): Function[] {
-        const result = this.createSecondPassFuncs;
-        this.createSecondPassFuncs = [];
-        return result;
     }
 
     public getRowNode(): RowNode {
