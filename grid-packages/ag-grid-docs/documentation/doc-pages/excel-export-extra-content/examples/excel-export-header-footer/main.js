@@ -69,7 +69,7 @@ function getValues(type) {
         }
 
         if (underline) {
-            obj.font.underline = 'None';
+            obj.font.underline = 'Single';
         }
     }
 

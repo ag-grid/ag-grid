@@ -209,7 +209,9 @@ const processHeaderFooterContent = (content: ExcelHeaderFooterContent | ExcelHea
 
             if (font.size) { output += `&amp;${font.size}` }
             if (font.strikeThrough) { output += '&amp;S' }
-            if (font.underline) { output += '&amp;U' }
+            if (font.underline) { 
+                output += `&amp;${font.underline === 'Double' ? 'E' : 'U'}`;
+             }
             if (font.color) { output += `&amp;K${font.color.replace('#', '').toUpperCase()}` }
         }
 

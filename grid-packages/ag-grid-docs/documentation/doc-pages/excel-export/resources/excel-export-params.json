@@ -430,9 +430,17 @@
             "default": "xxx",
             "description": "xxx",
             "options": [
-                "None",
-                "Subscript",
-                "Superscript"
+                "Single",
+                "Double"
+            ],
+            "type": "string"
+        },
+        "verticalAlign": {
+            "default": "xxx",
+            "description": "xxx",
+            "options": [
+                "Superscript",
+                "Subscript"
             ],
             "type": "string"
         }

@@ -4,37 +4,36 @@ const fontFactory: ExcelOOXMLTemplate = {
     getTemplate(font: Font) {
         const {
             size, colorTheme, color = '00000000', name = 'Calibri', family, scheme,
-            italic, bold, strike, outline, shadow, underline
+            italic, bold, strike, outline, shadow, underline, verticalAlign
         } = font;
 
         const children: XmlElement[] = [
             { name: 'sz', properties: { rawMap: { val: size } }},
-            { name: 'color', properties: { rawMap: { theme: colorTheme, rgb: color }}},
-            { name: 'name', properties: { rawMap: { val: name }}}
+            { name: 'color', properties: { rawMap: { theme: colorTheme, rgb: color } }},
+            { name: 'name', properties: { rawMap: { val: name } }}
         ];
 
         if (family) {
-            children.push({ name: 'family', properties: { rawMap: { val: family }}});
+            children.push({ name: 'family', properties: { rawMap: { val: family } }});
         }
 
         if (scheme) {
-            children.push({ name: 'scheme', properties: { rawMap: { val: scheme }}});
+            children.push({ name: 'scheme', properties: { rawMap: { val: scheme } }});
         }
 
-        if (italic) { children.push({name: 'i'}); }
-        if (bold) { children.push({name: 'b'}); }
-        if (strike) { children.push({name: 'strike'}); }
-        if (outline) { children.push({name: 'outline'}); }
-        if (shadow) { children.push({name: 'shadow'}); }
+        if (italic) { children.push({ name: 'i' }); }
+        if (bold) { children.push({ name: 'b' }); }
+        if (strike) { children.push({ name: 'strike' }); }
+        if (outline) { children.push( {name: 'outline' }); }
+        if (shadow) { children.push({ name: 'shadow' }); }
         if (underline) {
-            const lUnder = underline.toLocaleLowerCase();
-            children.push({name: 'u', properties: {rawMap: {val: lUnder === 'double' ? 'double' : 'single'}}});
+            children.push({name: 'u', properties: { rawMap: { val: underline } }});
+        }
+        if (verticalAlign) {
+            children.push({name: 'vertAlign', properties: { rawMap: { val: verticalAlign } }});
         }
 
-        return {
-            name: "font",
-            children
-        };
+        return { name: "font", children };
     }
 };
 
@@ -59,5 +58,6 @@ export interface Font {
     strike?: boolean;
     outline?: boolean;
     shadow?: boolean;
-    underline?: string;
+    underline?: 'single' | 'double';
+    verticalAlign?: 'superscript' | 'subscript';
 }
