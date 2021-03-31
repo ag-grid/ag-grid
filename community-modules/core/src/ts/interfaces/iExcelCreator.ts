@@ -57,7 +57,7 @@ export interface ExcelFont {
     size?: number;
     strikeThrough?: boolean;
     underline?: 'Single' | 'Double';
-    verticalAlign: 'Superscript' | 'Subscript';
+    verticalAlign?: 'Superscript' | 'Subscript';
 }
 
 export interface ExcelInterior {
