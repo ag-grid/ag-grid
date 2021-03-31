@@ -98,15 +98,6 @@ export class RowController extends Component {
     private leftCols: Column[];
     private rightCols: Column[];
 
-    // these get called before the row is destroyed - they set up the DOM for the remove animation (ie they
-    // set the DOM up for the animation), then the delayedDestroyFunctions get called when the animation is
-    // complete (ie removes from the dom).
-    private removeFirstPassFuncs: Function[] = [];
-
-    // for animations, these functions get called 400ms after the row is cleared, called by the rowRenderer
-    // so each row isn't setting up it's own timeout
-    private removeSecondPassFuncs: Function[] = [];
-
     private fadeRowIn: boolean;
     private slideRowIn: boolean;
     private readonly useAnimationFrameForCreate: boolean;
@@ -229,14 +220,6 @@ export class RowController extends Component {
             context: this.beans.gridOptionsWrapper.getContext()
         };
         func(params);
-    }
-
-    public addRemoveFirstPassFunc(f: Function): void {
-        this.removeFirstPassFuncs.push(f);
-    }
-
-    public addRemoveSecondPassFunc(f: Function): void {
-        this.removeSecondPassFuncs.push(f);
     }
 
     private newRowComp(rowContainerComp: RowContainerComp,
@@ -1103,25 +1086,14 @@ export class RowController extends Component {
     }
 
     // note - this is NOT called by context, as we don't wire / unwire the CellComp for performance reasons.
-    public destroy(animate = false): void {
+    public destroy(): void {
         this.active = false;
 
         // why do we have this method? shouldn't everything below be added as a destroy func beside
         // the corresponding create logic?
 
         this.destroyFullWidthComponents();
-
-        if (animate) {
-            this.removeFirstPassFuncs.forEach(func => func());
-            this.removeSecondPassFuncs.push(this.destroyRowComps.bind(this));
-        } else {
-            this.destroyRowComps();
-
-            // we are not animating, so execute the second stage of removal now.
-            // we call getAndClear, so that they are only called once
-            const delayedDestroyFunctions = this.getAndClearDelayedDestroyFunctions();
-            delayedDestroyFunctions.forEach(func => func());
-        }
+        this.setupRemoveAnimation();
 
         const event: VirtualRowRemovedEvent = this.createRowEvent(Events.EVENT_VIRTUAL_ROW_REMOVED);
 
@@ -1130,16 +1102,25 @@ export class RowController extends Component {
         super.destroy();
     }
 
-    private destroyRowComps(): void {
-        this.allRowComps.forEach( c => c.destroy() );
-        this.allRowComps.length = 0;
+    private setupRemoveAnimation(): void {
+        const rowStillVisibleJustNotInViewport = this.rowNode.rowTop != null;
+        if (rowStillVisibleJustNotInViewport) {
+            // if the row is not rendered, but in viewport, it means it has moved,
+            // so we animate the row out. if the new location is very far away,
+            // the animation will be so fast the row will look like it's just disappeared,
+            // so instead we animate to a position just outside the viewport.
+            const rowTop = this.roundRowTopToBounds(this.rowNode.rowTop!);
+            this.setRowTop(rowTop);
+        } else {
+            this.allRowComps.forEach(rowComp => {
+                addCssClass(rowComp.getGui(), 'ag-opacity-zero');
+            });
+        }
     }
 
-    // we clear so that the functions are never executed twice
-    public getAndClearDelayedDestroyFunctions(): Function[] {
-        const result = this.removeSecondPassFuncs;
-        this.removeSecondPassFuncs = [];
-        return result;
+    public destroySecondPass(): void {
+        this.allRowComps.forEach( c => c.destroy() );
+        this.allRowComps.length = 0;
     }
 
     private onCellFocusChanged(): void {

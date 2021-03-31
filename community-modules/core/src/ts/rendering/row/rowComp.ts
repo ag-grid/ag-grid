@@ -132,6 +132,7 @@ export class RowComp extends Component {
 
     public destroy(): void {
         super.destroy();
+        this.container.removeRow(this.getGui());
         this.destroyAllCells();
     }
 
@@ -206,23 +207,6 @@ export class RowComp extends Component {
         this.addDomData();
 
         const eRow = this.getGui();
-
-        this.controller.addRemoveSecondPassFunc(() => {
-            this.container.removeRow(eRow);
-        });
-
-        this.controller.addRemoveFirstPassFunc(() => {
-            if (exists(this.rowNode.rowTop)) {
-                // the row top is updated anyway, however we set it here again
-                // to something more reasonable for the animation - ie if the
-                // row top is 10000px away, the row will flash out, so this
-                // gives it a rounded value, so row animates out more slowly
-                const rowTop = this.controller.roundRowTopToBounds(this.rowNode.rowTop);
-                this.controller.setRowTop(rowTop);
-            } else {
-                addCssClass(eRow, 'ag-opacity-zero');
-            }
-        });
 
         // adding hover functionality adds listener to this row, so we
         // do it lazily in an animation frame

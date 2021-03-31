@@ -940,15 +940,21 @@ export class RowRenderer extends BeanStub {
     }
 
     private destroyRowComps(rowCompsMap: { [key: string]: RowController; } | null | undefined, animate: boolean): void {
-        const delayedFuncs: Function[] = [];
+        const executeInAWhileFuncs: (()=>void)[] = [];
         iterateObject(rowCompsMap, (nodeId: string, rowComp: RowController) => {
             // if row was used, then it's null
             if (!rowComp) { return; }
 
-            rowComp.destroy(animate);
-            pushAll(delayedFuncs, rowComp.getAndClearDelayedDestroyFunctions());
+            rowComp.destroy();
+            if (animate) {
+                executeInAWhileFuncs.push(rowComp.destroySecondPass.bind(rowComp));
+            } else {
+                rowComp.destroySecondPass();
+            }
         });
-        executeInAWhile(delayedFuncs);
+        if (animate) {
+            executeInAWhile(executeInAWhileFuncs);
+        }
     }
 
     private checkAngularCompile(): void {
