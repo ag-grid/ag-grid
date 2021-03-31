@@ -301,6 +301,7 @@ export class RowRenderer extends BeanStub {
     ): void {
         rowComps.forEach((row: RowController) => {
             row.destroy();
+            row.destroySecondPass();
         });
 
         rowComps.length = 0;
@@ -711,9 +712,10 @@ export class RowRenderer extends BeanStub {
         // if no fromIndex then set to -1, which will refresh everything
         // let realFromIndex = -1;
         rowsToRemove.forEach(indexToRemove => {
-            const renderedRow = this.rowCompsByIndex[indexToRemove];
-            if (renderedRow) {
-                renderedRow.destroy();
+            const rowComp = this.rowCompsByIndex[indexToRemove];
+            if (rowComp) {
+                rowComp.destroy();
+                rowComp.destroySecondPass();
             }
             delete this.rowCompsByIndex[indexToRemove];
         });
@@ -798,12 +800,13 @@ export class RowRenderer extends BeanStub {
 
         this.clearLastPlacedElements();
 
-        const useAnimationFrame = afterScroll && !this.gridOptionsWrapper.isSuppressAnimationFrame() && !this.printLayout;
-
-        if (useAnimationFrame) {
-            this.beans.taskQueue.addDestroyTask(this.destroyRowComps.bind(this, rowsToRecycle, animate));
-        } else {
-            this.destroyRowComps(rowsToRecycle, animate);
+        if (rowsToRecycle) {
+            const useAnimationFrame = afterScroll && !this.gridOptionsWrapper.isSuppressAnimationFrame() && !this.printLayout;
+            if (useAnimationFrame) {
+                this.beans.taskQueue.addDestroyTask(this.destroyRowComps.bind(this, rowsToRecycle, animate));
+            } else {
+                this.destroyRowComps(rowsToRecycle, animate);
+            }
         }
 
         this.checkAngularCompile();
