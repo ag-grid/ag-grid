@@ -3,7 +3,7 @@ const columnDefs = [
     {field: "age"},
     {field: "country", minWidth: 130, tooltipField: "country"},
     {field: "year"},
-    {field: "date"},x
+    {field: "date"},
     {field: "sport"},
     {field: "gold"},
     {field: "silver"},
