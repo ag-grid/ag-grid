@@ -300,7 +300,7 @@ export class RowRenderer extends BeanStub {
         fullWidthContainerComp: RowContainerComp
     ): void {
         rowComps.forEach((row: RowController) => {
-            row.destroy();
+            row.destroyFirstPass();
             row.destroySecondPass();
         });
 
@@ -714,7 +714,7 @@ export class RowRenderer extends BeanStub {
         rowsToRemove.forEach(indexToRemove => {
             const rowComp = this.rowCompsByIndex[indexToRemove];
             if (rowComp) {
-                rowComp.destroy();
+                rowComp.destroyFirstPass();
                 rowComp.destroySecondPass();
             }
             delete this.rowCompsByIndex[indexToRemove];
@@ -948,7 +948,7 @@ export class RowRenderer extends BeanStub {
             // if row was used, then it's null
             if (!rowComp) { return; }
 
-            rowComp.destroy();
+            rowComp.destroyFirstPass();
             if (animate) {
                 executeInAWhileFuncs.push(rowComp.destroySecondPass.bind(rowComp));
             } else {

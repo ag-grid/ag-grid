@@ -1086,7 +1086,7 @@ export class RowController extends Component {
     }
 
     // note - this is NOT called by context, as we don't wire / unwire the CellComp for performance reasons.
-    public destroy(): void {
+    public destroyFirstPass(): void {
         this.active = false;
 
         // why do we have this method? shouldn't everything below be added as a destroy func beside
