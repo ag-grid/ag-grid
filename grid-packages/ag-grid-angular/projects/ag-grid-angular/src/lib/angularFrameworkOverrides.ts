@@ -1,4 +1,4 @@
-import {Injectable, NgZone} from "@angular/core";
+import { Injectable, NgZone } from "@angular/core";
 import {VanillaFrameworkOverrides} from "ag-grid-community";
 
 @Injectable()
@@ -14,18 +14,24 @@ export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
 
     }
 
-    public setTimeout(action: any, timeout?: any): void {
-        this._ngZone.runOutsideAngular(() => {
-            window.setTimeout(() => {
-                action();
-            }, timeout);
-        });
+	public setTimeout(action: any, timeout?: any): void {
+			if (this._ngZone) {
+				this._ngZone.runOutsideAngular(() => {
+					window.setTimeout(() => {
+						action();
+					}, timeout);
+				});
+			} else {
+        window.setTimeout(() => {
+          action();
+        }, timeout);
+      }
     }
 
     addEventListener(element: HTMLElement, eventType: string, listener: EventListener | EventListenerObject, useCapture?: boolean): void {
-        if (this.isOutsideAngular(eventType)) {
+			if (this.isOutsideAngular(eventType) && this._ngZone) {
             this._ngZone.runOutsideAngular(() => {
-                element.addEventListener(eventType, listener, useCapture);
+              element.addEventListener(eventType, listener, useCapture);
             });
         } else {
             element.addEventListener(eventType, listener, useCapture);
@@ -34,7 +40,11 @@ export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
 
     dispatchEvent(eventType: string, listener: () => {}): void {
         if (this.isOutsideAngular(eventType)) {
-            this._ngZone.runOutsideAngular(listener);
+            if (this._ngZone) {
+                this._ngZone.runOutsideAngular(listener);
+            } else {
+                listener();
+            }
         } else if(this.isEmitterUsed(eventType)) {
             // only trigger off events (and potentially change detection) if actually used
             if(!NgZone.isInAngularZone()) {
@@ -43,5 +53,5 @@ export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
                 listener();
             }
         }
-    }
+		}
 }
