@@ -15,4 +15,8 @@ Note the following:
     - With `prependContent=ExcelCell[][]` or `appendContent=ExcelCell[][]`, custom content will be inserted containing commas and quotes. These commas and quotes will be visible when opened in Excel because they have been escaped properly.
 
 
+<grid-example title='Excel Export - Custom Header and Footer' name='excel-export-prepend-append' type='generated' options='{ "enterprise": true, "exampleHeight": 815 }'></grid-example>
+
+## Adding Headers and Footers
+
 <grid-example title='Excel Export - Custom Header and Footer' name='excel-export-header-footer' type='generated' options='{ "enterprise": true, "exampleHeight": 815 }'></grid-example>

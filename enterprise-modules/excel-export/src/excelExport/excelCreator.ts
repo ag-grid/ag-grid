@@ -16,7 +16,7 @@ import {
     _
 } from '@ag-grid-community/core';
 
-import { ExcelCell, ExcelStyle, ExcelSheetConfig } from '@ag-grid-community/core';
+import { ExcelCell, ExcelStyle } from '@ag-grid-community/core';
 import { ExcelXmlSerializingSession } from './excelXmlSerializingSession';
 import { ExcelXlsxSerializingSession } from './excelXlsxSerializingSession';
 import { ExcelXlsxFactory } from './excelXlsxFactory';
@@ -162,21 +162,9 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
         const isXlsx = this.getExportMode() === 'xlsx';
 
         let sheetName = 'ag-grid';
-        const sheetConfig: ExcelSheetConfig = {
-            margins: { top: 0.75, right: 0.7, bottom: 0.75, left: 0.7, header: 0.3, footer: 0.3 }
-        }
 
         if (params.sheetName != null) {
             sheetName = _.utf8_encode(params.sheetName.toString().substr(0, 31));
-        }
-
-        if (params.sheetConfig) {
-            if (params.sheetConfig.margins) {
-                sheetConfig.margins = Object.assign({}, sheetConfig.margins, params.sheetConfig.margins);
-            }
-            if (params.sheetConfig.setup) {
-                sheetConfig.setup = Object.assign({}, params.sheetConfig.setup)
-            }
         }
 
         const config: ExcelGridSerializingParams = {
@@ -186,7 +174,7 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
             gridOptionsWrapper,
             headerRowHeight: params.headerRowHeight || params.rowHeight,
             sheetName,
-            sheetConfig,
+            sheetConfig: params.sheetConfig,
             baseExcelStyles: this.gridOptions.excelStyles || [],
             styleLinker: this.styleLinker.bind(this)
         };

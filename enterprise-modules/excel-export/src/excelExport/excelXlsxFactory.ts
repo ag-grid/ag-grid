@@ -9,7 +9,7 @@ import workbookFactory from './files/ooxml/workbook';
 import worksheetFactory from './files/ooxml/worksheet';
 import relationshipsFactory from './files/ooxml/relationships';
 
-import { ExcelStyle, ExcelWorksheet } from '@ag-grid-community/core';
+import { ExcelStyle, ExcelWorksheet, ExcelHeaderFooter } from '@ag-grid-community/core';
 import { XmlFactory } from "@ag-grid-community/csv-export";
 
 /**
@@ -21,11 +21,17 @@ export class ExcelXlsxFactory {
     private static sheetNames: string[] = [];
     public static factoryMode: ExcelFactoryMode = ExcelFactoryMode.SINGLE_SHEET;
 
-    public static createExcel(styles: ExcelStyle[], worksheet: ExcelWorksheet, worksheetConfig: ExcelSheetConfig): string {
+    public static createExcel(
+        styles: ExcelStyle[],
+        worksheet: ExcelWorksheet,
+        worksheetConfig?: ExcelSheetConfig,
+        sheetHeader?: ExcelHeaderFooter,
+        sheetFooter?: ExcelHeaderFooter
+    ): string {
         this.addSheetName(worksheet);
         registerStyles(styles);
 
-        return this.createWorksheet(worksheet, worksheetConfig);
+        return this.createWorksheet(worksheet, worksheetConfig, sheetHeader, sheetFooter);
     }
 
     private static addSheetName(worksheet: ExcelWorksheet): void {
@@ -134,10 +140,17 @@ export class ExcelXlsxFactory {
         return `${header}${xmlBody}`;
     }
 
-    private static createWorksheet(worksheet: ExcelWorksheet, worksheetConfig: ExcelSheetConfig): string {
+    private static createWorksheet(
+        worksheet: ExcelWorksheet,
+        worksheetConfig?: ExcelSheetConfig,
+        sheetHeader?: ExcelHeaderFooter,
+        sheetFooter?: ExcelHeaderFooter
+    ): string {
         return this.createXmlPart(worksheetFactory.getTemplate({
             worksheet,
-            worksheetConfig
+            worksheetConfig,
+            sheetHeader,
+            sheetFooter
         }));
     }
 }
