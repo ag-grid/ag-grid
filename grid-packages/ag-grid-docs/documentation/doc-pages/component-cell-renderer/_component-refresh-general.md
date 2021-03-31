@@ -15,10 +15,8 @@
 |- Scrolling the grid vertically causes columns (and their containing cells) to be removed and inserted due to column virtualisation.
 |
 |All of the above will result in the component being destroyed and recreated.
-|### Grid vs Component Refresh
-|
-|The refresh method returns back a boolean value. If you do not want to handle the refresh in the cell renderer, just return back `false` from an otherwise empty method. This will indicate to the grid that you did not refresh and the grid will instead destroy the component and create another instance of your component from scratch instead.
 |
 |### Grid vs Component Refresh
 |
 |The refresh method returns back a boolean value. If you do not want to handle the refresh in the cell renderer, just return back `false` from an otherwise empty method. This will indicate to the grid that you did not refresh and the grid will instead destroy the component and create another instance of your component from scratch instead.
+|
