@@ -1,21 +1,53 @@
-.greenBackground{
-    background-color: #b5e6b5;
+.column {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid gray;
+    border-radius: 5px;
+    padding: 10px;
+    margin-right: 5px;
 }
 
-.blueBackground{
-    background-color: #507dd0;
-    color: #ffffff;
+.column > span {
+    position: absolute;
+    top: -10px;
+    background-color: white;
 }
 
-.details > label {
-    margin-bottom: 10px;
+.column label {
+    display: flex;
+    align-items: center;
 }
-.details > label:first-of-type {
-    margin-top: 10px;
+
+.column label * {
+    margin-left: 5px;
 }
-.details > label:last-of-type {
-    margin-bottom: 0;
+
+.column label.underline {
+    position: relative;
+
 }
+.column label.underline input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+}
+
+.column label.underline input + button {
+    border: 1px solid black;
+    border-radius: 2px;
+}
+.column label.underline input:checked + button {
+    text-decoration: underline;
+    border-radius: 2px;
+    border: 1px solid black;
+    background: #3c81ff;
+    color: white;
+}
+
 .option {
     display: block;
     margin: 5px 10px 5px 0;

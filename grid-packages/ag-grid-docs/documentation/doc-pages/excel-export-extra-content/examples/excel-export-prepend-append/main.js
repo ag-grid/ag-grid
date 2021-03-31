@@ -1,11 +1,27 @@
 var columnDefs = [
-        { field: 'athlete', minWidth: 200 },
-        { field: 'country', minWidth: 200, },
-        { field: 'sport', minWidth: 150 },
-        { field: 'gold' },
-        { field: 'silver' },
-        { field: 'bronze' },
-        { field: 'total' }
+    {
+        headerName: 'Top Level Column Group',
+        children: [
+            {
+                headerName: 'Group A',
+                children: [
+                    { field: 'athlete', minWidth: 200 },
+                    { field: 'country', minWidth: 200, },
+                    { headerName: 'Group', valueGetter: 'data.country.charAt(0)', },
+                ]
+            },
+            {
+                headerName: 'Group B',
+                children: [
+                    { field: 'sport', minWidth: 150 },
+                    { field: 'gold' },
+                    { field: 'silver' },
+                    { field: 'bronze' },
+                    { field: 'total', }
+                ]
+            }
+        ]
+    }
 ];
 
 var gridOptions = {
@@ -37,59 +53,34 @@ var gridOptions = {
     ]
 };
 
-function getValues(type) {
-    var value = document.querySelector('#' + type + 'Value').value;
-    if (value == null) { return; }
-
-    var obj = { 
-        value: value
-    };
-
-    obj.position = document.querySelector('#' + type + 'Position').value;
-    var fontName = document.querySelector('#' + type + 'FontName').value;
-    var fontSize = document.querySelector('#' + type + 'FontSize').value;
-    var fontWeight = document.querySelector('#' + type + 'FontWeight').value;
-    var underline = document.querySelector('#' + type + 'Underline').checked;
-
-    if (fontName !== 'Calibri' || fontSize != 11 || fontWeight !== 'Regular' || underline) {
-        obj.font = {};
-        if (fontName !== 'Calibri') {
-            obj.font.fontName = fontName;
-        }
-        if (fontSize != 11) {
-            obj.font.size = fontSize;
-        }
-        if (fontWeight !== 'Regular') {
-            if (fontWeight.indexOf('Bold') !== -1) {
-                obj.font.bold = true;
-            }
-            if (fontWeight.indexOf('Italic') !== -1) {
-                obj.font.italic = true;
-            }
-        }
-
-        if (underline) {
-            obj.font.underline = 'None';
-        }
+function getValue(inputSelector) {
+    var text = document.querySelector(inputSelector).value;
+    switch (text) {
+        case 'array':
+            return [
+                [],
+                [
+                    { data: { value: 'Here is a comma, and a some "quotes".', type: "String" } }
+                ],
+                [
+                    { data: { value: 'They are visible when the downloaded file is opened in Excel because custom content is properly escaped.', type: "String" } }
+                ],
+                [
+                    { data: { value: "this cell:", type: "String" }, mergeAcross: 1 },
+                    { data: { value: "is empty because the first cell has mergeAcross=1", type: "String" } }
+                ],
+                []
+            ]
+        default:
+            return;
     }
-
-    return obj;
 }
 
 function getParams() {
-    var header = getValues('header'),
-        footer = getValues('footer'),
-        obj = {};
-
-    if (header) {
-        obj.sheetHeader = { all: header };
-    }
-
-    if (footer) {
-        obj.sheetFooter = { all: footer };
-    }
-
-    return obj;
+    return {
+        prependContent: getValue('#prependContent'),
+        appendContent: getValue('#appendContent')
+    };
 }
 
 function onBtExport() {

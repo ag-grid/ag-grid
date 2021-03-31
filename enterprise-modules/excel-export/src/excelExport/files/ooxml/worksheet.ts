@@ -1,4 +1,17 @@
-import { ExcelOOXMLTemplate, ExcelWorksheet, ExcelRow, ExcelColumn, ExcelSheetConfig } from '@ag-grid-community/core';
+import {
+    ExcelOOXMLTemplate,
+    ExcelWorksheet,
+    ExcelRow,
+    ExcelColumn,
+    ExcelSheetConfig,
+    ExcelHeaderFooter,
+    XmlElement,
+    ExcelSheetMargin,
+    ExcelSheetPageSetup,
+    ExcelHeaderFooterContent,
+    _
+} from '@ag-grid-community/core';
+
 import columnFactory from './column';
 import rowFactory from './row';
 import mergeCell from './mergeCell';
@@ -83,44 +96,50 @@ const getPageSize = (pageSize?: string): number => {
     return pos === -1 ? 1 : (pos + 1);
 }
 
-const worksheetFactory: ExcelOOXMLTemplate = {
-    getTemplate(params: {
-        worksheet: ExcelWorksheet,
-        worksheetConfig: ExcelSheetConfig
-    }) {
-        const { table } = params.worksheet;
-        const { rows, columns } = table;
-
-        const mergedCells = (columns && columns.length) ? getMergedCells(rows, columns) : [];
-
-        const children = [];
+const addColumns = (columns: ExcelColumn[]) => {
+    return (children: XmlElement[]) => {
         if (columns.length) {
             children.push({
                 name: 'cols',
                 children: columns.map(columnFactory.getTemplate)
             });
         }
+        return children;
+    }
+}
 
+const addSheetData = (rows: ExcelRow[]) => {
+    return (children: XmlElement[]) => {
         if (rows.length) {
             children.push({
                 name: 'sheetData',
                 children: rows.map(rowFactory.getTemplate)
             });
         }
+        return children;
+    }
+}
 
-        if (mergedCells.length) {
+const addMergeCells = (mergeCells: string[]) => {
+    return (children: XmlElement[]) => {
+        if (mergeCells.length) {
             children.push({
                 name: 'mergeCells',
                 properties: {
                     rawMap: {
-                        count: mergedCells.length
+                        count: mergeCells.length
                     }
                 },
-                children: mergedCells.map(mergeCell.getTemplate)
+                children: mergeCells.map(mergeCell.getTemplate)
             });
         }
+        return children;
+    }
+}
 
-        const { bottom, footer, header, left, right, top } = params.worksheetConfig.margins!;
+const addPageMargins = (margins: ExcelSheetMargin) => {
+    return (children: XmlElement[]) => {
+        const { top = 0.75, right = 0.7, bottom = 0.75, left = 0.7, header = 0.3, footer = 0.3 } = margins;
 
         children.push({
             name: 'pageMargins',
@@ -129,8 +148,12 @@ const worksheetFactory: ExcelOOXMLTemplate = {
             }
         });
 
-        const pageSetup = params.worksheetConfig.setup;
+        return children;
+    }
+}
 
+const addPageSetup = (pageSetup?: ExcelSheetPageSetup) => {
+    return (children: XmlElement[]) => {
         if (pageSetup) {
             children.push({
                 name: 'pageSetup',
@@ -144,6 +167,137 @@ const worksheetFactory: ExcelOOXMLTemplate = {
                 }
             })
         }
+        return children;
+    }
+}
+
+const hasDifferentFirstHeaderFooter = (header?: ExcelHeaderFooter, footer?: ExcelHeaderFooter): number => {
+    if (header && header.first != null) { return 1; }
+    if (footer && footer.first != null) { return 1; }
+
+    return 0;
+}
+
+const hasDifferentOddEvenHeaderFooter = (header?: ExcelHeaderFooter, footer?: ExcelHeaderFooter): number => {
+    if (header && header.even != null) { return 1; }
+    if (footer && footer.even != null) { return 1; }
+
+    return 0;
+}
+
+const processHeaderFooterContent = (content: ExcelHeaderFooterContent | ExcelHeaderFooterContent[]): string => {
+    if (!Array.isArray(content)) {
+        content = [content];
+    }
+
+    return content.reduce((prev, curr) => {
+        const pos = curr.position === 'Center' ? 'C' : curr.position === 'Right' ? 'R' : 'L';
+        let output = prev += `&amp;${pos}`;
+        const font = curr.font;
+
+        if (font) {
+            output += '&amp;&quot;'
+            output += font.fontName || 'Calibri';
+            if (font.bold !== font.italic) {
+                output += font.bold ? ',Bold' : ',Italic'
+            } else if (font.bold) {
+                output += ',Bold Italic'
+            } else {
+                output += ',Regular'
+            }
+            output += '&quot;'
+
+            if (font.size) { output += `&amp;${font.size}` }
+            if (font.strikeThrough) { output += '&amp;S' }
+            if (font.underline) { output += '&amp;U' }
+            if (font.color) { output += `&amp;K${font.color.replace('#', '').toUpperCase()}` }
+        }
+
+        output += _.escapeString(curr.value);
+
+        return output;
+    },'')
+}
+
+const buildHeaderFooter = (params: {
+        header?: ExcelHeaderFooter,
+        footer?: ExcelHeaderFooter
+    }): XmlElement[] => {
+    const rules: ['all', 'first', 'even'] = ['all', 'first', 'even'];
+    const headersAndFooters = [] as XmlElement[];
+
+    for (const [key, value] of Object.entries(params)) {
+        const nameSuffix = `${key.charAt(0).toUpperCase()}${key.slice(1)}`;
+
+        rules.forEach(rule => {
+            if (!value) { return; }
+
+            const content: ExcelHeaderFooterContent | ExcelHeaderFooterContent[] | undefined = value[rule];
+
+            if (content) {
+                const namePrefix = rule === 'all' ? 'odd' : rule;
+                
+                headersAndFooters.push({
+                    name: `${namePrefix}${nameSuffix}`,
+                    properties: {
+                        rawMap: {
+                            'xml:space': 'preserve',
+                        }
+                    },
+                    textNode: processHeaderFooterContent(content)
+                });
+            }
+        })
+    }
+
+    return headersAndFooters;
+}
+
+const addHeaderFooter = (header?: ExcelHeaderFooter, footer?: ExcelHeaderFooter) => {
+    return (children: XmlElement[]) => {
+        if (!header && !footer) { return children; }
+
+        const differentFirst = hasDifferentFirstHeaderFooter(header, footer)
+        const differentOddEven = hasDifferentOddEvenHeaderFooter(header, footer)
+
+        children.push({
+            name: 'headerFooter',
+            properties: {
+                rawMap: {
+                    differentFirst: differentFirst ? 1 : 0,
+                    differentOddEven: differentOddEven ? 1 : 0
+                }
+            },
+            children: buildHeaderFooter({ header, footer })
+        })
+        return children;
+    }
+}
+
+const worksheetFactory: ExcelOOXMLTemplate = {
+    getTemplate(params: {
+        worksheet: ExcelWorksheet,
+        worksheetConfig?: ExcelSheetConfig,
+        sheetHeader?: ExcelHeaderFooter,
+        sheetFooter?: ExcelHeaderFooter
+    }) {
+        const { worksheet, worksheetConfig, sheetHeader, sheetFooter } = params;
+        const { table } = worksheet;
+        const { rows, columns } = table;
+        const mergedCells = (columns && columns.length) ? getMergedCells(rows, columns) : [];
+        const margins = (worksheetConfig && worksheetConfig.margins) || {};
+        const pageSetup = worksheetConfig && worksheetConfig.setup;
+
+        const createWorksheetChildren = _.compose(
+            addColumns(columns),
+            addSheetData(rows),
+            addMergeCells(mergedCells),
+            addPageMargins(margins),
+            addPageSetup(pageSetup),
+            addHeaderFooter(sheetHeader, sheetFooter)
+        );
+
+        const children = createWorksheetChildren([]);
 
         return {
             name: "worksheet",

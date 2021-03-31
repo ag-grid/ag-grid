@@ -1,5 +1,4 @@
 import {
-    Column,
     ExcelCell,
     ExcelOOXMLDataType,
     ExcelStyle,
@@ -13,7 +12,16 @@ import { BaseExcelSerializingSession } from './baseExcelSerializingSession';
 export class ExcelXlsxSerializingSession extends BaseExcelSerializingSession<ExcelOOXMLDataType> {
 
     protected createExcel(data: ExcelWorksheet): string {
-        return ExcelXlsxFactory.createExcel(this.excelStyles, data, this.config.sheetConfig);
+        const { excelStyles, config } = this;
+        const { sheetConfig, sheetHeader, sheetFooter } = config;
+        
+        return ExcelXlsxFactory.createExcel(
+            excelStyles, 
+            data,
+            sheetConfig,
+            sheetHeader,
+            sheetFooter
+        );
     }
 
     protected getDataTypeForValue(valueForCell: string): ExcelOOXMLDataType {

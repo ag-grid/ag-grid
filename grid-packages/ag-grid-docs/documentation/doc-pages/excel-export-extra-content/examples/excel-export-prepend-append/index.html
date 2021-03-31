@@ -1,0 +1,26 @@
+<div class="container">
+    <div class="columns">
+        <div class="column">
+            <label class="option" for="prependContent">
+                prependContent =
+                <select id="prependContent">
+                    <option>none</option>
+                    <option value="array">ExcelCell[][] (recommended format)</option>
+                </select>
+            </label>
+            <label class="option" for="appendContent">
+                appendContent =
+                <select id="appendContent">
+                    <option>none</option>
+                    <option value="array">ExcelCell[][] (recommended format)</option>
+                </select>
+            </label>
+        </div>
+    </div>
+    <div>
+        <button onclick="onBtExport()" style="margin: 5px 0px; font-weight: bold;">Export to Excel</button>
+    </div>
+    <div class="grid-wrapper">
+        <div id="myGrid" class="ag-theme-alpine"></div>
+    </div>
+</div>

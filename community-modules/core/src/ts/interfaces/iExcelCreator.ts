@@ -82,7 +82,11 @@ export interface ExcelProtection {
 export interface ExcelWorksheet {
     name: string;
     table: ExcelTable;
-    config?: ExcelSheetConfig;
+    config?: {
+        sheetConfig?: ExcelSheetConfig;
+        sheetHeader?: ExcelHeaderFooter;
+        sheetFooter?: ExcelHeaderFooter;
+    };
 }
 
 export interface ExcelTable {
@@ -182,7 +186,21 @@ export interface ExcelExportParams extends ExportParams<ExcelCell[][]> {
     rowHeight?: number;
     sheetName?: string;
     sheetConfig?: ExcelSheetConfig;
+    sheetHeader?: ExcelHeaderFooter;
+    sheetFooter?: ExcelHeaderFooter;
     suppressTextAsCDATA?:boolean;
+}
+
+export interface ExcelHeaderFooter {
+    all?: ExcelHeaderFooterContent | ExcelHeaderFooterContent[];
+    first?: ExcelHeaderFooterContent | ExcelHeaderFooterContent[];
+    even?: ExcelHeaderFooterContent | ExcelHeaderFooterContent[];
+}
+
+export interface ExcelHeaderFooterContent {
+    value: string;
+    position?: 'Left' | 'Center' | 'Right';
+    font?: ExcelFont;
 }
 
 export type ExcelExportMultipleSheetParams = PackageFileParams<ExcelExportParams>;
