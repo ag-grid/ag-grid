@@ -34,6 +34,10 @@ import { doOnce, executeInAWhile, executeNextVMTurn } from "../utils/function";
 import { KeyCode } from '../constants/keyCode';
 import { RowContainerComp } from "../gridBodyComp/rowContainer/rowContainerComp";
 
+export interface RowMap {
+    [key: string]: RowController
+}
+
 @Bean("rowRenderer")
 export class RowRenderer extends BeanStub {
 
@@ -61,7 +65,7 @@ export class RowRenderer extends BeanStub {
 
     // map of row ids to row objects. keeps track of which elements
     // are rendered for which rows in the dom.
-    private rowCompsByIndex: { [key: string]: RowController | null; } = {};
+    private rowCompsByIndex: RowMap = {};
 
     private floatingTopRowComps: RowController[] = [];
     private floatingBottomRowComps: RowController[] = [];
@@ -84,6 +88,10 @@ export class RowRenderer extends BeanStub {
 
     public agWire(@Qualifier("loggerFactory") loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create("RowRenderer");
+    }
+
+    public getRowCompsByIndex(): RowMap {
+        return this.rowCompsByIndex;
     }
 
     public registerGridComp(gridBodyComp: GridBodyComp): void {
@@ -390,11 +398,11 @@ export class RowRenderer extends BeanStub {
     }
 
     // gets called from:
-    // +) initialisation (in registerGridComp)
-    // +) onDomLayoutchanged
-    // +) onPageLoaded
-    // +) onPinnedRowDataChanged
-    // +) redrawRows (from Grid API)
+    // +) initialisation (in registerGridComp) params = null
+    // +) onDomLayoutChanged, params = null
+    // +) onPageLoaded, recycleRows, animate, newData, newPage from event, onlyBody=true
+    // +) onPinnedRowDataChanged, recycleRows = true
+    // +) redrawRows (from Grid API), recycleRows = true/false
     private redrawAfterModelUpdate(params: RefreshViewParams = {}): void {
         this.getLockOnRefresh();
 
@@ -410,10 +418,8 @@ export class RowRenderer extends BeanStub {
 
         // after modelUpdate, row indexes can change, so we clear out the rowsByIndex map,
         // however we can reuse the rows, so we keep them but index by rowNode.id
-        let rowsToRecycle: { [key: string]: RowController; } | null = null;
-        if (recycleRows) {
-            rowsToRecycle = this.recycleRows();
-        } else {
+        let rowsToRecycle = recycleRows ? this.recycleRows() : null;
+        if (!recycleRows) {
             this.removeAllRowComps();
         }
 
@@ -686,7 +692,8 @@ export class RowRenderer extends BeanStub {
         this.removeRowComps(rowIndexesToRemove);
     }
 
-    private recycleRows(): { [id: string]: RowController; } {
+    private recycleRows(): RowMap {
+        // remove all stub nodes, they can't be reused, as no rowNode id
         const stubNodeIndexes: string[] = [];
         iterateObject(this.rowCompsByIndex, (index: string, rowComp: RowController) => {
             const stubNode = rowComp.getRowNode().id==null;
@@ -696,7 +703,8 @@ export class RowRenderer extends BeanStub {
         });
         this.removeRowComps(stubNodeIndexes);
 
-        const nodesByIdMap: { [id: string]: RowController; } = {};
+        // then clear out rowCompsByIndex, but before that take a copy, but index by id, not rowIndex
+        const nodesByIdMap: RowMap = {};
         iterateObject(this.rowCompsByIndex, (index: string, rowComp: RowController) => {
             const rowNode = rowComp.getRowNode();
             nodesByIdMap[rowNode.id!] = rowComp;
@@ -936,7 +944,7 @@ export class RowRenderer extends BeanStub {
             rowNode.alreadyRendered = true;
         }
 
-        this.rowCompsByIndex[rowIndex] = rowComp;
+        this.rowCompsByIndex[rowIndex] = rowComp!;
 
         return rowComp;
     }

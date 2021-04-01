@@ -15,7 +15,6 @@ import {
 } from "../../events";
 
 import { ICellRendererComp } from "../cellRenderers/iCellRenderer";
-import { Component } from "../../widgets/component";
 
 import { ProcessRowParams, RowClassParams } from "../../entities/gridOptions";
 import { IFrameworkOverrides } from "../../interfaces/iFrameworkOverrides";
@@ -41,6 +40,7 @@ import { RowContainerComp } from "../../gridBodyComp/rowContainer/rowContainerCo
 import { RowComp } from "./rowComp";
 import { executeNextVMTurn } from "../../utils/function";
 import { RowCssClassCalculatorParams } from "./rowCssClassCalculator";
+import { BeanStub } from "../../context/beanStub";
 
 export enum RowType {
     Normal,
@@ -63,7 +63,7 @@ const FullWidthKeys: Map<RowType, string> = new Map([
     [RowType.FullWidthDetail, 'detailCellRenderer']
 ]);
 
-export class RowController extends Component {
+export class RowController extends BeanStub {
 
     public static DOM_DATA_KEY_RENDERED_ROW = 'renderedRow';
 
