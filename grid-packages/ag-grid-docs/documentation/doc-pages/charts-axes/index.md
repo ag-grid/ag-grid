@@ -165,7 +165,7 @@ Where:
   - `X` - Hexadecimal notation, using upper-case letters, rounded to integer.
 
 [[note]]
-|If you want to have a formatted value in the middle of some string, you have to wrap it in `#{}`
+|If you want to have a formatted value in the middle of some string, you have to wrap it in `#{}`,
 | so that it's clear where the number format begins and ends. For example: `I'm #{0>2.0f} years old`.
 
 ### Example: Number Label Format
