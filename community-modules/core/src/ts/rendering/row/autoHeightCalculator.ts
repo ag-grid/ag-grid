@@ -6,7 +6,7 @@ import { CellComp } from "../cellComp";
 import { ColumnController } from "../../columnController/columnController";
 import { BeanStub } from "../../context/beanStub";
 import { addCssClass } from "../../utils/dom";
-import { RowCssClassCalculator } from "./rowCssClassCalculator";
+import { RowCssClassCalculator, RowCssClassCalculatorParams } from "./rowCssClassCalculator";
 import { AngularRowUtils } from "./angularRowUtils";
 
 @Bean('autoHeightCalculator')
@@ -95,7 +95,7 @@ export class AutoHeightCalculator extends BeanStub {
         // so any styles on row also get applied in dummy, otherwise
         // the content in dummy may differ to the real
         const rowIndex = rowNode.rowIndex!;
-        const params = {
+        const params: RowCssClassCalculatorParams = {
             rowNode: rowNode,
             rowIsEven: rowIndex % 2 === 0,
             rowLevel: this.rowCssClassCalculator.calculateRowLevel(rowNode),

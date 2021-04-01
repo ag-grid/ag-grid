@@ -15,8 +15,8 @@ export interface RowCssClassCalculatorParams {
     lastRowOnPage: boolean;
     printLayout: boolean;
     expandable: boolean;
-    pinned: string | null;
 
+    pinned?: string | null;
     extraCssClass?: string;
     rowFocused?: boolean;
     fadeRowIn?: boolean;
