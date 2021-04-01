@@ -15,8 +15,12 @@
             "type": "number"
         },
         "data": {
-            "description": "Array of strings containing the raw data for Excel workbook sheets. This property is only required when exporting to multiple sheets using `api.exportMultipleSheetsAsExcel()` and the data for each sheet is obtained by calling `api.getGridRawDataForExcel()`.",
-            "type": "string[]"
+            "description": "Array of strings containing the raw data for Excel workbook sheets. This property is only used when exporting to multiple sheets using `api.exportMultipleSheetsAsExcel()` and the data for each sheet is obtained by calling `api.getGridRawDataForExcel()`.",
+            "type": "string[]",
+            "more": {
+                "name": "Multiple Sheets",
+                "url": "/excel-export-multiple-sheets/"
+            }
         },
         "exportMode": {
             "default": "xlsx",
