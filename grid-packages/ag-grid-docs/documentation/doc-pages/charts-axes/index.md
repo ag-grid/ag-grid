@@ -121,9 +121,65 @@ formatter: function(params) {
 
 <chart-example title='Axis Label Formatter' name='axis-label-formatter' type='generated'></chart-example>
 
+### Number Label Format String
+
+For number axes, a format string can be provided, which will be used to format the numbers for display as axis labels.
+The format string may contain the following directives, which reflect those from Python's <a href="https://docs.python.org/3/library/string.html#format-specification-mini-language" target="_blank">format specification</a>:
+
+`[[fill]align][sign][#][0][width][grouping_option][.precision][type]`
+
+Where:
+
+- `fill` - Can be any character.
+- `align`:
+  - `>` - Forces the field to be right-aligned within the available space (default).
+  - `<` - Forces the field to be left-aligned within the available space.
+  - `^` - Forces the field to be centered within the available space.
+  - `=` - Like >, but with any sign and symbol to the left of any padding.
+- `sign`:
+  - `-` - Nothing for zero or positive and a minus sign for negative (default).
+  - `+` - A plus sign for zero or positive and a minus sign for negative.
+  - `(` - Nothing for zero or positive and parentheses for negative.
+  - ` ` - A space for zero or positive and a minus sign for negative.
+- `symbol`:
+  - `$` - Apply currency symbols per the locale definition.
+  - `#` - For binary, octal, or hexadecimal notation, prefix by `0b`, `0o`, or `0x`, respectively.
+- `zero` - The `0` option enables zero-padding. Implicitly sets fill to `0` and align to `=`.
+- `width` - The width defines the minimum field width. If not specified, then the width will be determined by the content.
+- `comma` - The comma `,` option enables the use of a group separator, such as a comma for thousands.
+- `precision` - Depending on the type, the precision either indicates the number of digits that follow the decimal point (types `f` and `%`), or the number of significant digits (types ` `​, `e`, `g`, `r`, `s` and `p`). If the precision is not specified, it defaults to 6 for all types except `​ ` (none), which defaults to 12. Precision is ignored for integer formats (types `b`, `o`, `d`, `x`, `X` and `c`).
+- `trim` - The `~` option trims insignificant trailing zeros across all format types. This is most commonly used in conjunction with types `r`, `e`, `s` and `%`.
+- `type` - Determines how the data should be presented:
+  - `%` - Multiply by 100, and then decimal notation with a percent sign.
+  - `b` - Binary notation, rounded to integer.
+  - `c` - Converts the integer to the corresponding unicode character before printing.
+  - `d` - Decimal notation, rounded to integer.
+  - `e` - Exponent notation.
+  - `f` - Fixed point notation.
+  - `g` - Either decimal or exponent notation, rounded to significant digits.
+  - `o` - Octal notation, rounded to integer.
+  - `p` - Multiply by 100, round to significant digits, and then decimal notation with a percent sign.
+  - `r` - Decimal notation, rounded to significant digits.
+  - `s` - Decimal notation with a SI prefix, rounded to significant digits.
+  - `x` - Hexadecimal notation, using lower-case letters, rounded to integer.
+  - `X` - Hexadecimal notation, using upper-case letters, rounded to integer.
+
+[[note]]
+|If you want to have a formatted value in the middle of some string, you have to wrap it in `#{}`
+| so that it's clear where the number format begins and ends. For example: `I'm #{0>2.0f} years old`.
+
+### Example: Number Label Format
+
+The `label` config of the left axis in the example below uses the `'🌧️ #{0>2.1f} °C'` specifier string for the `format` property to format numbers as integers padded to left with zeros to achieve a consistent 2-digit width.
+
+Notice that we wrapped the number format in `#{}` since we want to prepend the formatted value with the weather icon
+and to append the units used at the end.
+
+<chart-example title='Number Axis Label Format' name='number-axis-label-format' type='generated'></chart-example>
+
 ### Time Label Format String
 
-For time axes, a format string can be provided, which will be used to format the data for display as axis labels. The format string may contain the following directives, which reflect those from Python's <a href="https://strftime.org/" target="_blank">strftime</a>:
+For time axes, a format string can be provided, which will be used to format the dates for display as axis labels. The format string may contain the following directives, which reflect those from Python's <a href="https://strftime.org/" target="_blank">strftime</a>:
 
 - `%a` - abbreviated weekday name.*
 - `%A` - full weekday name.*

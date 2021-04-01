@@ -25,8 +25,9 @@ const formatTypes: { [key in FormatType]: (x: number, p?: number) => string } = 
     'r': formatRounded,
     // Decimal notation with a SI prefix, rounded to significant digits.
     's': formatPrefixAuto,
-    'X': (x: number) => Math.round(x).toString(16).toUpperCase(),
     // Hexadecimal notation, using upper-case letters, rounded to integer.
+    'X': (x: number) => Math.round(x).toString(16).toUpperCase(),
+    // Hexadecimal notation, using lower-case letters, rounded to integer.
     'x': (x: number) => Math.round(x).toString(16)
 };
 
@@ -43,6 +44,7 @@ interface FormatSpecifierOptions {
     precision?: string;
     trim?: string;
     type?: FormatType;
+    string?: string;
 }
 
 export class FormatSpecifier {
@@ -94,7 +96,14 @@ export class FormatSpecifier {
      * This is most commonly used in conjunction with types `r`, `e`, `s` and `%`.
      */
     trim: boolean;
+    /**
+     * Presentation style.
+     */
     type: FormatType | '';
+    /**
+     * Interpolation string.
+     */
+    string?: string;
 
     constructor(specifier: FormatSpecifierOptions) {
         this.fill = specifier.fill === undefined ? ' ' : String(specifier.fill);
@@ -107,26 +116,23 @@ export class FormatSpecifier {
         this.precision = specifier.precision === undefined ? undefined : +specifier.precision;
         this.trim = !!specifier.trim;
         this.type = specifier.type === undefined ? '' : String(specifier.type) as FormatType;
-    }
-
-    toString(): string {
-        return this.fill
-            + this.align
-            + this.sign
-            + this.symbol
-            + (this.zero ? '0' : '')
-            + (this.width === undefined ? '' : Math.max(1, this.width | 0))
-            + (this.comma ? ',' : '')
-            + (this.precision === undefined ? '' : '.' + Math.max(0, this.precision | 0))
-            + (this.trim ? '~' : '')
-            + this.type;
+        this.string = specifier.string;
     }
 }
 
 // [[fill]align][sign][symbol][0][width][,][.precision][~][type]
 const formatRegEx = /^(?:(.)?([<>=^]))?([+\-( ])?([$#])?(0)?(\d+)?(,)?(\.\d+)?(~)?([a-z%])?$/i;
+const interpolateRegEx = /(#\{(.*?)\})/g;
 
 export function makeFormatSpecifier(specifier: string): FormatSpecifier {
+    let found = false;
+    let string = specifier.replace(interpolateRegEx, function () {
+        if (!found) {
+            specifier = arguments[2];
+            found = true;
+        }
+        return '#{}';
+    });
     const match = formatRegEx.exec(specifier);
 
     if (!match) {
@@ -143,7 +149,8 @@ export function makeFormatSpecifier(specifier: string): FormatSpecifier {
         comma: match[7],
         precision: match[8] && match[8].slice(1),
         trim: match[9],
-        type: match[10] as FormatType
+        type: match[10] as FormatType,
+        string: found ? string : undefined
     });
 }
 
@@ -186,7 +193,7 @@ export function tickFormat(start: number, stop: number, count: number, specifier
             break;
         }
     }
-    return format(String(formatSpecifier));
+    return format(formatSpecifier);
 }
 
 let prefixExponent: number;
@@ -321,12 +328,12 @@ export function formatDecimalParts(x: number, p?: number): [string, number] | un
     ];
 }
 
-function identity(x: any) {
+function identity<T>(x: T): T {
     return x;
 }
 
 export let formatDefaultLocale: FormatLocale;
-export let format: (specifier: string) => (n: number | { valueOf(): number }) => string;
+export let format: (specifier: string | FormatSpecifier) => (n: number | { valueOf(): number }) => string;
 export let formatPrefix: (specifier: string, value: number) => (n: number | { valueOf(): number }) => string;
 
 defaultLocale({
@@ -439,8 +446,10 @@ export function formatLocale(locale: FormatLocaleOptions): FormatLocale {
     const minus = locale.minus === undefined ? '\u2212' : String(locale.minus);
     const nan = locale.nan === undefined ? 'NaN' : String(locale.nan);
 
-    function newFormat(specifier: string) {
-        const formatSpecifier = makeFormatSpecifier(specifier);
+    function newFormat(specifier: string | FormatSpecifier): (x: number) => string {
+        const formatSpecifier = typeof specifier === 'string'
+            ? makeFormatSpecifier(specifier)
+            : specifier;
 
         let fill = formatSpecifier.fill;
         let align = formatSpecifier.align;
@@ -495,7 +504,7 @@ export function formatLocale(locale: FormatLocaleOptions): FormatLocale {
             precision = Math.max(0, Math.min(20, precision));
         }
 
-        function format(x: number) {
+        function format(x: number): string {
             let valuePrefix = prefix;
             let valueSuffix = suffix;
             let value: string;
@@ -564,12 +573,13 @@ export function formatLocale(locale: FormatLocaleOptions): FormatLocale {
                 default: value = padding + valuePrefix + value + valueSuffix; break;
             }
 
+            const { string } = formatSpecifier;
+            if (string) {
+                return string.replace(interpolateRegEx, () => numerals(value));
+            }
+
             return numerals(value);
         }
-
-        format.toString = function () {
-            return String(formatSpecifier);
-        };
 
         return format;
     }
@@ -578,7 +588,7 @@ export function formatLocale(locale: FormatLocaleOptions): FormatLocale {
         const formatSpecifier = makeFormatSpecifier(specifier);
         formatSpecifier.type = 'f';
 
-        const f = newFormat(String(formatSpecifier));
+        const f = newFormat(formatSpecifier);
         const e = Math.max(-8, Math.min(8, Math.floor(exponent(value) / 3))) * 3;
         const k = Math.pow(10, -e);
         const prefix = prefixes[8 + e / 3];
