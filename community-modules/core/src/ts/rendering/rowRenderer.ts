@@ -62,6 +62,7 @@ export class RowRenderer extends BeanStub {
     // map of row ids to row objects. keeps track of which elements
     // are rendered for which rows in the dom.
     private rowCompsByIndex: { [key: string]: RowController | null; } = {};
+
     private floatingTopRowComps: RowController[] = [];
     private floatingBottomRowComps: RowController[] = [];
 
@@ -241,19 +242,19 @@ export class RowRenderer extends BeanStub {
         this.removeRowComps(rowIndexesToRemove);
     }
 
-    private onPageLoaded(refreshEvent?: ModelUpdatedEvent): void {
-        if (missing(refreshEvent)) {
-            refreshEvent = {
-                type: Events.EVENT_MODEL_UPDATED,
-                api: this.gridApi,
-                columnApi: this.columnApi,
-                animate: false,
-                keepRenderedRows: false,
-                newData: false,
-                newPage: false
-            };
-        }
-        this.onModelUpdated(refreshEvent);
+    private onPageLoaded(event: ModelUpdatedEvent): void {
+        const params: RefreshViewParams = {
+            recycleRows: event.keepRenderedRows,
+            animate: event.animate,
+            newData: event.newData,
+            newPage: event.newPage,
+            // because this is a model updated event (not pinned rows), we
+            // can skip updating the pinned rows. this is needed so that if user
+            // is doing transaction updates, the pinned rows are not getting constantly
+            // trashed - or editing cells in pinned rows are not refreshed and put into read mode
+            onlyBody: true
+        };
+        this.redrawAfterModelUpdate(params);
     }
 
     public getAllCellsForColumn(column: Column): HTMLElement[] {
@@ -338,21 +339,6 @@ export class RowRenderer extends BeanStub {
         this.redrawAfterModelUpdate(params);
     }
 
-    private onModelUpdated(refreshEvent: ModelUpdatedEvent): void {
-        const params: RefreshViewParams = {
-            recycleRows: refreshEvent.keepRenderedRows,
-            animate: refreshEvent.animate,
-            newData: refreshEvent.newData,
-            newPage: refreshEvent.newPage,
-            // because this is a model updated event (not pinned rows), we
-            // can skip updating the pinned rows. this is needed so that if user
-            // is doing transaction updates, the pinned rows are not getting constantly
-            // trashed - or editing cells in pinned rows are not refreshed and put into read mode
-            onlyBody: true
-        };
-        this.redrawAfterModelUpdate(params);
-    }
-
     // if the row nodes are not rendered, no index is returned
     private getRenderedIndexesForRowNodes(rowNodes: RowNode[]): string[] {
         const result: string[] = [];
@@ -369,17 +355,19 @@ export class RowRenderer extends BeanStub {
         return result;
     }
 
-    public redrawRows(rowNodes: RowNode[]): void {
-        if (!rowNodes || rowNodes.length == 0) { return; }
+    public redrawRows(rowNodes?: RowNode[]): void {
+        // if no row nodes provided, then refresh everything
+        const partialRefresh = rowNodes!=null && rowNodes.length>0;
 
-        const indexesToRemove = this.getRenderedIndexesForRowNodes(rowNodes);
-
-        // remove the rows
-        this.removeRowComps(indexesToRemove);
+        if (partialRefresh) {
+            const indexesToRemove = this.getRenderedIndexesForRowNodes(rowNodes!);
+            // remove the rows
+            this.removeRowComps(indexesToRemove);
+        }
 
         // add draw them again
         this.redrawAfterModelUpdate({
-            recycleRows: true
+            recycleRows: partialRefresh
         });
     }
 
@@ -401,8 +389,13 @@ export class RowRenderer extends BeanStub {
         return elementIsNotACellDev ? null : focusedCell;
     }
 
-    // gets called after changes to the model.
-    public redrawAfterModelUpdate(params: RefreshViewParams = {}): void {
+    // gets called from:
+    // +) initialisation (in registerGridComp)
+    // +) onDomLayoutchanged
+    // +) onPageLoaded
+    // +) onPinnedRowDataChanged
+    // +) redrawRows (from Grid API)
+    private redrawAfterModelUpdate(params: RefreshViewParams = {}): void {
         this.getLockOnRefresh();
 
         const focusedCell: CellPosition | null = this.getCellToRestoreFocusToAfterRefresh(params);
@@ -414,7 +407,15 @@ export class RowRenderer extends BeanStub {
         // uses normal dom layout to put cells into dom - it doesn't allow reordering rows.
         const recycleRows = !this.printLayout && !!params.recycleRows;
         const animate = params.animate && this.gridOptionsWrapper.isAnimateRows();
-        const rowsToRecycle = this.binRowComps(recycleRows);
+
+        // after modelUpdate, row indexes can change, so we clear out the rowsByIndex map,
+        // however we can reuse the rows, so we keep them but index by rowNode.id
+        let rowsToRecycle: { [key: string]: RowController; } | null = null;
+        if (recycleRows) {
+            rowsToRecycle = this.recycleRows();
+        } else {
+            this.removeAllRowComps();
+        }
 
         const isFocusedCellGettingRecycled = () => {
             if (focusedCell == null || rowsToRecycle == null) { return false; }
@@ -676,35 +677,33 @@ export class RowRenderer extends BeanStub {
     }
 
     protected destroy(): void {
-        const rowIndexesToRemove = Object.keys(this.rowCompsByIndex);
-
-        this.removeRowComps(rowIndexesToRemove);
-
+        this.removeAllRowComps();
         super.destroy();
     }
 
-    private binRowComps(recycleRows: boolean): { [key: string]: RowController; } {
-        const rowsToRecycle: { [key: string]: RowController; } = {};
-        let indexesToRemove: string[];
+    private removeAllRowComps(): void {
+        const rowIndexesToRemove = Object.keys(this.rowCompsByIndex);
+        this.removeRowComps(rowIndexesToRemove);
+    }
 
-        if (recycleRows) {
-            indexesToRemove = [];
-            iterateObject(this.rowCompsByIndex, (index: string, rowComp: RowController) => {
-                const rowNode = rowComp.getRowNode();
-                if (exists(rowNode.id)) {
-                    rowsToRecycle[rowNode.id] = rowComp;
-                    delete this.rowCompsByIndex[index];
-                } else {
-                    indexesToRemove.push(index);
-                }
-            });
-        } else {
-            indexesToRemove = Object.keys(this.rowCompsByIndex);
-        }
+    private recycleRows(): { [id: string]: RowController; } {
+        const stubNodeIndexes: string[] = [];
+        iterateObject(this.rowCompsByIndex, (index: string, rowComp: RowController) => {
+            const stubNode = rowComp.getRowNode().id==null;
+            if (stubNode) {
+                stubNodeIndexes.push(index);
+            }
+        });
+        this.removeRowComps(stubNodeIndexes);
 
-        this.removeRowComps(indexesToRemove);
+        const nodesByIdMap: { [id: string]: RowController; } = {};
+        iterateObject(this.rowCompsByIndex, (index: string, rowComp: RowController) => {
+            const rowNode = rowComp.getRowNode();
+            nodesByIdMap[rowNode.id!] = rowComp;
+        });
+        this.rowCompsByIndex = {};
 
-        return rowsToRecycle;
+        return nodesByIdMap;
     }
 
     // takes array of row indexes

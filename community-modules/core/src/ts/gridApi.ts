@@ -486,55 +486,8 @@ export class GridApi {
     }
 
     public redrawRows(params: RedrawRowsParams = {}): void {
-        if (params && params.rowNodes) {
-            this.rowRenderer.redrawRows(params.rowNodes);
-        } else {
-            this.rowRenderer.redrawAfterModelUpdate();
-        }
-    }
-
-    public timeFullRedraw(count = 1) {
-        let iterationCount = 0;
-        let totalProcessing = 0;
-        let totalReflow = 0;
-
-        const that = this;
-
-        doOneIteration();
-
-        function doOneIteration(): void {
-            const start = (new Date()).getTime();
-            that.rowRenderer.redrawAfterModelUpdate();
-            const endProcessing = (new Date()).getTime();
-            window.setTimeout(() => {
-                const endReflow = (new Date()).getTime();
-                const durationProcessing = endProcessing - start;
-                const durationReflow = endReflow - endProcessing;
-                // tslint:disable-next-line
-                console.log('duration:  processing = ' + durationProcessing + 'ms, reflow = ' + durationReflow + 'ms');
-
-                iterationCount++;
-                totalProcessing += durationProcessing;
-                totalReflow += durationReflow;
-
-                if (iterationCount < count) {
-                    // wait for 1s between tests
-                    window.setTimeout(doOneIteration, 1000);
-                } else {
-                    finish();
-                }
-
-            }, 0);
-        }
-
-        function finish(): void {
-            // tslint:disable-next-line
-            console.log('tests complete. iteration count = ' + iterationCount);
-            // tslint:disable-next-line
-            console.log('average processing = ' + (totalProcessing / iterationCount) + 'ms');
-            // tslint:disable-next-line
-            console.log('average reflow = ' + (totalReflow / iterationCount) + 'ms');
-        }
+        const rowNodes = params ? params.rowNodes : undefined;
+        this.rowRenderer.redrawRows(rowNodes);
     }
 
     /** @deprecated */

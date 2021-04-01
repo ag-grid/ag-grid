@@ -27,6 +27,13 @@ export interface ModelUpdatedEvent extends AgGridEvent {
     newPage: boolean;
 }
 
+export interface PaginationChangedEvent extends AgGridEvent {
+    animate?: boolean;
+    keepRenderedRows?: boolean;
+    newData?: boolean;
+    newPage: boolean;
+}
+
 export interface AgEvent {
     type: string;
 }
@@ -209,13 +216,6 @@ export interface BodyScrollEvent extends AgGridEvent {
 // not documented
 export interface FlashCellsEvent extends AgGridEvent {
     cells: any;
-}
-
-export interface PaginationChangedEvent extends AgGridEvent {
-    animate?: boolean;
-    keepRenderedRows?: boolean;
-    newData?: boolean;
-    newPage: boolean;
 }
 
 export interface PaginationPixelOffsetChangedEvent extends AgGridEvent {
