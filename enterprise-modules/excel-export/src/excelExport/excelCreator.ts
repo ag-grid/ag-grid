@@ -176,7 +176,6 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
         if (params.sheetName != null) {
             sheetName = _.utf8_encode(params.sheetName.toString().substr(0, 31));
         }
-
         const config: ExcelGridSerializingParams = {
             ...params,
             columnController,
