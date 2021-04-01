@@ -11,9 +11,12 @@
             "type": "boolean"
         },
         "columnWidth": {
-            "default": "undefined",
             "description": "Defines the default column width. If no value is present, each column will have value currently set in the application with a min value of 75px. This property can also be supplied a callback function that returns a number: `(params: ColumnWidthCallbackParams) => number`.",
             "type": "number"
+        },
+        "data": {
+            "description": "Array of strings containing the raw data for Excel workbook sheets. This property is only required when exporting to multiple sheets using `api.exportMultipleSheetsAsExcel()` and the data for each sheet is obtained by calling `api.getGridRawDataForExcel()`.",
+            "type": "string[]"
         },
         "exportMode": {
             "default": "xlsx",
@@ -44,7 +47,6 @@
             "type": "boolean"
         },
         "customHeader": {
-            "default": "undefined",
             "description": "Content to put at the bottom of the file export. A 2D array of ExcelCell objects (see Custom Headers and Footers section).",
             "type": "ExcelCell"
         },
@@ -59,7 +61,6 @@
             "type": "boolean"
         },
         "columnKeys": {
-            "default": "undefined",
             "description": "Provide a list (an array) of column keys or Column objects if you want to export specific columns.",
             "type": "(string | Column)[]"
         },
@@ -79,7 +80,6 @@
             "type": "boolean"
         },
         "sheetConfig": {
-            "default": "undefined",
             "description": "xxx",
             "type": "ExcelSheetConfig"
         },

@@ -24,7 +24,6 @@ import { IAggFuncService } from "./interfaces/iAggFuncService";
 import { IFilterComp } from "./interfaces/iFilter";
 import { CsvExportParams } from "./interfaces/exportParams";
 import {
-    ExcelExportMultipleSheetParams,
     ExcelExportParams,
     ExcelFactoryMode,
     IExcelCreator
@@ -297,13 +296,13 @@ export class GridApi {
         }
     }
 
-    public getMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): Blob | undefined {
+    public getMultipleSheetsAsExcel(params: ExcelExportParams): Blob | undefined {
         if (ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.getMultipleSheetsAsExcel')) {
             return this.excelCreator.getMultipleSheetsAsExcel(params);
         }
     }
 
-    public exportMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): void {
+    public exportMultipleSheetsAsExcel(params: ExcelExportParams): void {
         if (ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.exportMultipleSheetsAsExcel')) {
             return this.excelCreator.exportMultipleSheetsAsExcel(params);
         }

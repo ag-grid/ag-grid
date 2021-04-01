@@ -689,7 +689,7 @@
             "description": "Downloads an Excel export of multiple sheets in one file.",
             "type": {
                 "arguments": {
-                    "params": "ExcelExportMultipleSheetParams"
+                    "params": "ExcelExportParams"
                 }
             },
             "more": {
@@ -701,7 +701,7 @@
             "description": "Similar to `exportMultipleSheetsAsExcel`, except instead of downloading a file, it will return a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) to be processed by the user.",
             "type": {
                 "arguments": {
-                    "params": "ExcelExportMultipleSheetParams"
+                    "params": "ExcelExportParams"
                 },
                 "returnType": "Blob"
             },

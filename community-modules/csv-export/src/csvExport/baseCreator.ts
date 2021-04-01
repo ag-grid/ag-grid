@@ -1,4 +1,4 @@
-import { BaseExportParams, ExportParams, PackageFileParams, _ } from "@ag-grid-community/core";
+import { BaseExportParams, ExportParams, _ } from "@ag-grid-community/core";
 import { BaseCreatorBeans, GridSerializingSession } from "./interfaces";
 
 export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P extends ExportParams<T>> {
@@ -35,13 +35,6 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
         _.assign(params, userParams);
 
         return params;
-    }
-
-    protected packageFile(params: PackageFileParams<P>): Blob {
-        return new Blob(["\ufeff", params.data[0]], {
-            // @ts-ignore
-            type: window.navigator.msSaveOrOpenBlob ? this.getMimeType() : 'octet/stream'
-        });
     }
 
     public abstract createSerializingSession(params?: P): S;
