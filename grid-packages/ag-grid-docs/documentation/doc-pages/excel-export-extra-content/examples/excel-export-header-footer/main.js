@@ -78,15 +78,22 @@ function getValues(type) {
 
 function getParams() {
     var header = getValues('header'),
-        footer = getValues('footer'),
-        obj = {};
+        footer = getValues('footer');
 
-    if (header) {
-        obj.sheetHeader = { all: header };
+    if (!header && !footer) { return; }
+
+    obj  = {
+        sheetHeaderFooterConfig: {
+            all: {}
+        }
+    };
+
+    if (header){
+        obj.sheetHeaderFooterConfig.all.header = [header];
     }
 
     if (footer) {
-        obj.sheetFooter = { all: footer };
+        obj.sheetHeaderFooterConfig.all.footer = [footer];
     }
 
     return obj;

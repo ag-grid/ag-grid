@@ -58,6 +58,7 @@ export {
     ExcelData,
     ExcelDataType,
     ExcelExportParams,
+    ExcelHeaderFooterConfig,
     ExcelHeaderFooter,
     ExcelHeaderFooterContent,
     ExcelSheetConfig,

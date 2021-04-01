@@ -1,4 +1,11 @@
-import { XmlElement, ExcelFactoryMode, ExcelSheetConfig } from '@ag-grid-community/core';
+import {
+    ExcelFactoryMode,
+    ExcelHeaderFooterConfig,
+    ExcelSheetConfig,
+    ExcelStyle,
+    ExcelWorksheet,
+    XmlElement
+} from '@ag-grid-community/core';
 
 import coreFactory from './files/ooxml/core';
 import contentTypesFactory from './files/ooxml/contentTypes';
@@ -9,7 +16,6 @@ import workbookFactory from './files/ooxml/workbook';
 import worksheetFactory from './files/ooxml/worksheet';
 import relationshipsFactory from './files/ooxml/relationships';
 
-import { ExcelStyle, ExcelWorksheet, ExcelHeaderFooter } from '@ag-grid-community/core';
 import { XmlFactory } from "@ag-grid-community/csv-export";
 
 /**
@@ -24,14 +30,13 @@ export class ExcelXlsxFactory {
     public static createExcel(
         styles: ExcelStyle[],
         worksheet: ExcelWorksheet,
-        worksheetConfig?: ExcelSheetConfig,
-        sheetHeader?: ExcelHeaderFooter,
-        sheetFooter?: ExcelHeaderFooter
+        sheetConfig?: ExcelSheetConfig,
+        sheetHeaderFooterConfig?: ExcelHeaderFooterConfig
     ): string {
         this.addSheetName(worksheet);
         registerStyles(styles);
 
-        return this.createWorksheet(worksheet, worksheetConfig, sheetHeader, sheetFooter);
+        return this.createWorksheet(worksheet, sheetConfig, sheetHeaderFooterConfig);
     }
 
     private static addSheetName(worksheet: ExcelWorksheet): void {
@@ -142,15 +147,13 @@ export class ExcelXlsxFactory {
 
     private static createWorksheet(
         worksheet: ExcelWorksheet,
-        worksheetConfig?: ExcelSheetConfig,
-        sheetHeader?: ExcelHeaderFooter,
-        sheetFooter?: ExcelHeaderFooter
+        sheetConfig?: ExcelSheetConfig,
+        sheetHeaderFooterConfig?: ExcelHeaderFooterConfig,
     ): string {
         return this.createXmlPart(worksheetFactory.getTemplate({
             worksheet,
-            worksheetConfig,
-            sheetHeader,
-            sheetFooter
+            sheetConfig,
+            sheetHeaderFooterConfig
         }));
     }
 }

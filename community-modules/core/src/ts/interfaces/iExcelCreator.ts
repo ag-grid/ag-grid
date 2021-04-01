@@ -79,11 +79,6 @@ export interface ExcelProtection {
 export interface ExcelWorksheet {
     name: string;
     table: ExcelTable;
-    config?: {
-        sheetConfig?: ExcelSheetConfig;
-        sheetHeader?: ExcelHeaderFooter;
-        sheetFooter?: ExcelHeaderFooter;
-    };
 }
 
 export interface ExcelTable {
@@ -184,15 +179,18 @@ export interface ExcelExportParams extends ExportParams<ExcelCell[][]> {
     rowHeight?: number;
     sheetName?: string;
     sheetConfig?: ExcelSheetConfig;
-    sheetHeader?: ExcelHeaderFooter;
-    sheetFooter?: ExcelHeaderFooter;
+    sheetHeaderFooterConfig?: ExcelHeaderFooterConfig;
     suppressTextAsCDATA?:boolean;
 }
 
+export interface ExcelHeaderFooterConfig {
+    all?: ExcelHeaderFooter;
+    first?: ExcelHeaderFooter;
+    even?: ExcelHeaderFooter;
+}
 export interface ExcelHeaderFooter {
-    all?: ExcelHeaderFooterContent | ExcelHeaderFooterContent[];
-    first?: ExcelHeaderFooterContent | ExcelHeaderFooterContent[];
-    even?: ExcelHeaderFooterContent | ExcelHeaderFooterContent[];
+    header?: ExcelHeaderFooterContent[];
+    footer?: ExcelHeaderFooterContent[];
 }
 
 export interface ExcelHeaderFooterContent {

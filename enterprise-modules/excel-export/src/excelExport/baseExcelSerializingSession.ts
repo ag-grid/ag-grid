@@ -4,9 +4,9 @@ import {
     Constants,
     ExcelCell,
     ExcelColumn,
+    ExcelHeaderFooterConfig,
     ExcelRow,
     ExcelSheetConfig,
-    ExcelHeaderFooter,
     ExcelStyle,
     ExcelWorksheet,
     RowNode,
@@ -24,8 +24,7 @@ import {
 export interface ExcelGridSerializingParams extends GridSerializingParams {
     sheetName: string;
     sheetConfig?: ExcelSheetConfig;
-    sheetHeader?: ExcelHeaderFooter;
-    sheetFooter?: ExcelHeaderFooter;
+    sheetHeaderFooterConfig?: ExcelHeaderFooterConfig;
     baseExcelStyles: ExcelStyle[];
     styleLinker: (rowType: RowType, rowIndex: number, colIndex: number, value: string, column?: Column, node?: RowNode) => string[];
     suppressTextAsCDATA?: boolean;
@@ -108,18 +107,11 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
             this.cols.push(this.convertColumnToExcel(null, this.cols.length + 1));
         }
 
-        const { sheetConfig, sheetHeader, sheetFooter } = this.config;
-
         const data: ExcelWorksheet = {
             name: this.config.sheetName,
             table: {
                 columns: this.cols,
                 rows: this.rows
-            },
-            config: {
-                sheetConfig,
-                sheetHeader,
-                sheetFooter
             }
         };
 
