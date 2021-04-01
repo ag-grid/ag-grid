@@ -27,6 +27,7 @@ import { setAriaSort, getAriaSortState, removeAriaSort } from "../../utils/aria"
 import { addCssClass, addOrRemoveCssClass, removeCssClass, setDisplayed } from "../../utils/dom";
 import { KeyCode } from '../../constants/keyCode';
 import { ITooltipParams } from "../../rendering/tooltipComponent";
+import { escapeString } from "../../utils/string";
 
 export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
@@ -509,7 +510,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
         const refresh = () => {
             const newTooltipText = this.column.getColDef().headerTooltip;
-            this.setTooltip(newTooltipText);
+            this.setTooltip(escapeString(newTooltipText));
         };
 
         refresh();
