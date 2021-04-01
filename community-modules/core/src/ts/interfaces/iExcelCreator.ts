@@ -56,11 +56,8 @@ export interface ExcelFont {
     shadow?: boolean;
     size?: number;
     strikeThrough?: boolean;
-    underline?: 'None' | 'Subscript' | 'Superscript';
-    /**
-     * @deprecated Legacy property
-     */
-    verticalAlign: string;
+    underline?: 'Single' | 'Double';
+    verticalAlign?: 'Superscript' | 'Subscript';
 }
 
 export interface ExcelInterior {

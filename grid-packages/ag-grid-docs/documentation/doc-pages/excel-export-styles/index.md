@@ -228,11 +228,10 @@ interface ExcelFont {
     shadow: boolean;
     size: number;
     strikeThrough: boolean;
-    underline: 'None' | 'Subscript' | 'Superscript';
+    underline: 'Single' | 'Double';
+    verticalAlign: 'Superscript' | 'Subscript';
     charSet: number;
     family: string;
-    /* legacy property */
-    verticalAlign: string;
 }
 ```
 

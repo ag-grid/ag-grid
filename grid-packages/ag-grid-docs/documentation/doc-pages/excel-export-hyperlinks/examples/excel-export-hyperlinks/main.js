@@ -16,7 +16,7 @@ var gridOptions = {
         {
             id: 'hyperlinks',
             font: {
-                underline: 'Subscript',
+                underline: 'Single',
                 color: '#358ccb'
             }
         }

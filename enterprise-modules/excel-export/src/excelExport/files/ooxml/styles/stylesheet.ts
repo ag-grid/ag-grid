@@ -199,10 +199,12 @@ const registerBorders = (borders: ExcelBorders): number => {
 };
 
 const registerFont = (font: ExcelFont): number => {
-    const { fontName: name = 'Calibri', color, size, bold, italic, outline, shadow, strikeThrough, underline, family } = font;
+    const { fontName: name = 'Calibri', color, size, bold, italic, outline, shadow, strikeThrough, underline, family, verticalAlign } = font;
     const utf8Name = name ? _.utf8_encode(name) : name;
     const convertedColor = convertLegacyColor(color);
     const familyId = getFamilyId(family);
+    const convertedUnderline = underline ? (underline.toLocaleLowerCase() as 'single' | 'double') : undefined;
+    const convertedVerticalAlign = verticalAlign ? (verticalAlign.toLocaleLowerCase() as 'superscript' | 'subscript') : undefined;
 
     let pos = _.findIndex(registeredFonts, (currentFont) => {
         if (
@@ -214,7 +216,8 @@ const registerFont = (font: ExcelFont): number => {
             currentFont.outline != outline ||
             currentFont.shadow != shadow ||
             currentFont.strike != strikeThrough ||
-            currentFont.underline != underline ||
+            currentFont.underline != convertedUnderline ||
+            currentFont.verticalAlign != convertedVerticalAlign ||
             currentFont.family != familyId
         ) {
             return false;
@@ -234,7 +237,8 @@ const registerFont = (font: ExcelFont): number => {
             outline,
             shadow,
             strike: strikeThrough,
-            underline,
+            underline: convertedUnderline,
+            verticalAlign: convertedVerticalAlign,
             family: familyId
         });
     }

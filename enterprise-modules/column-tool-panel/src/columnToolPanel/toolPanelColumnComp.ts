@@ -92,7 +92,7 @@ export class ToolPanelColumnComp extends Component {
 
         const refresh = () => {
             const newTooltipText = this.column.getColDef().headerTooltip;
-            this.setTooltip(newTooltipText);
+            this.setTooltip(_.escapeString(newTooltipText));
         };
 
         refresh();

@@ -29,7 +29,7 @@ export class DropZoneColumnComp extends Component {
 
     public static EVENT_COLUMN_REMOVE = 'columnRemove';
 
-    private static TEMPLATE =
+    private static TEMPLATE = /* html */
         `<span>
           <span ref="eDragHandle" class="ag-drag-handle ag-column-drop-cell-drag-handle"></span>
           <span ref="eText" class="ag-column-drop-cell-text"></span>
@@ -79,7 +79,7 @@ export class DropZoneColumnComp extends Component {
 
         const refresh = () => {
             const newTooltipText = this.column.getColDef().headerTooltip;
-            this.setTooltip(newTooltipText);
+            this.setTooltip(_.escapeString(newTooltipText));
         };
 
         refresh();

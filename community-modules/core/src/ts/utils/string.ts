@@ -65,7 +65,7 @@ export function utf8_encode(s: string | null): string {
     }
 
     function encodeCodePoint(point: number): string {
-        if (point >=0 && point <= 31) {
+        if (point >= 0 && point <= 31) {
             return `_x${point.toString(16).toUpperCase().padStart(4, '0')}_`;
         }
 
@@ -133,8 +133,8 @@ export function capitalise(str: string): string {
     return str[0].toUpperCase() + str.substr(1).toLowerCase();
 }
 
-export function escapeString(toEscape: string | null): string | null {
-    return toEscape == null || !toEscape.replace ? toEscape : toEscape.replace(reUnescapedHtml, chr => HTML_ESCAPES[chr]);
+export function escapeString(toEscape?: string | null): string | null {
+    return toEscape == null ? null : toEscape.toString().replace(reUnescapedHtml, chr => HTML_ESCAPES[chr]);
 }
 
 /**

@@ -80,7 +80,7 @@ export class Component extends BeanStub {
         };
     }
 
-    public setTooltip(newTooltipText: string | undefined): void {
+    public setTooltip(newTooltipText?: string | null): void {
 
         const removeTooltip = () => {
             if (this.usingBrowserTooltips) {
@@ -103,10 +103,12 @@ export class Component extends BeanStub {
                 removeTooltip();
             }
 
-            this.tooltipText = newTooltipText;
+            if (newTooltipText != null) {
+                this.tooltipText = newTooltipText;
 
-            if (this.tooltipText) {
-                addTooltip();
+                if (this.tooltipText) {
+                    addTooltip();
+                }
             }
         }
     }
