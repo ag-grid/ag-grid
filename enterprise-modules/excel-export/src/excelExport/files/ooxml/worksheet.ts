@@ -176,7 +176,10 @@ const replaceHeaderFooterTokens = (value: string): string => {
         '&[Page]': '&P',
         '&[Pages]': '&N',
         '&[Date]': '&D',
-        '&[Time]': '&T'
+        '&[Time]': '&T',
+        '&[Tab]': '&A',
+        '&[Path]': '&Z',
+        '&[File]': '&F'
     }
 
     for (const [key, token] of Object.entries(map)) {
