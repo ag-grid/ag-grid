@@ -40,6 +40,7 @@ import { RowPosition } from "../../entities/rowPosition";
 import { RowContainerComp } from "../../gridBodyComp/rowContainer/rowContainerComp";
 import { RowComp } from "./rowComp";
 import { executeNextVMTurn } from "../../utils/function";
+import { RowCssClassCalculatorParams } from "./rowCssClassCalculator";
 
 export enum RowType {
     Normal,
@@ -222,10 +223,8 @@ export class RowController extends Component {
         func(params);
     }
 
-    private newRowComp(rowContainerComp: RowContainerComp,
-                       pinned: string | null,
-                       extraCssClass: string | null = null): RowComp {
-        const res = new RowComp(this, rowContainerComp, this.beans, this.rowNode, pinned, extraCssClass);
+    private newRowComp(rowContainerComp: RowContainerComp, pinned: string | null): RowComp {
+        const res = new RowComp(this, rowContainerComp, this.beans, this.rowNode, pinned);
         this.allRowComps.push(res);
         return res;
     }
@@ -314,20 +313,16 @@ export class RowController extends Component {
     private createFullWidthRowUi(): void {
 
         if (this.embedFullWidth) {
-            this.centerRowComp = this.createFullWidthRowCell(this.bodyRowContainerComp, null,
-                null);
+            this.centerRowComp = this.createFullWidthRowCell(this.bodyRowContainerComp, null);
 
             // printLayout doesn't put components into the pinned sections
             if (this.printLayout) { return; }
 
-            this.leftRowComp = this.createFullWidthRowCell(this.leftRowContainerComp, Constants.PINNED_LEFT,
-                'ag-cell-last-left-pinned');
-            this.rightRowComp = this.createFullWidthRowCell(this.rightRowContainerComp, Constants.PINNED_RIGHT,
-                'ag-cell-first-right-pinned');
+            this.leftRowComp = this.createFullWidthRowCell(this.leftRowContainerComp, Constants.PINNED_LEFT);
+            this.rightRowComp = this.createFullWidthRowCell(this.rightRowContainerComp, Constants.PINNED_RIGHT);
         } else {
             // otherwise we add to the fullWidth container as normal
-            this.fullWidthRowComp = this.createFullWidthRowCell(this.fullWidthRowContainerComp, null,
-                null);
+            this.fullWidthRowComp = this.createFullWidthRowCell(this.fullWidthRowContainerComp, null);
         }
     }
 
@@ -691,13 +686,9 @@ export class RowController extends Component {
         }
     }
 
-    private createFullWidthRowCell(
-        rowContainerComp: RowContainerComp,
-        pinned: string | null,
-        extraCssClass: string | null
-    ): RowComp {
+    private createFullWidthRowCell(rowContainerComp: RowContainerComp, pinned: string | null): RowComp {
 
-        const rowComp = this.newRowComp(rowContainerComp, pinned, extraCssClass);
+        const rowComp = this.newRowComp(rowContainerComp, pinned);
         const eRow = rowComp.getGui();
 
         const params = this.createFullWidthParams(eRow, pinned);
@@ -929,10 +920,9 @@ export class RowController extends Component {
         return businessKeyForNodeFunc(this.rowNode);
     }
 
-    public getInitialRowClasses(extraCssClass: string): string[] {
-        const params = {
+    public getInitialRowClasses(pinned: string | null): string[] {
+        const params: RowCssClassCalculatorParams = {
             rowNode: this.rowNode,
-            extraCssClass: extraCssClass,
             rowFocused: this.rowFocused,
             fadeRowIn: this.fadeRowIn,
             rowIsEven: this.rowIsEven,
@@ -942,7 +932,8 @@ export class RowController extends Component {
             lastRowOnPage: this.isLastRowOnPage(),
             printLayout: this.printLayout,
             expandable: this.rowNode.isExpandable(),
-            scope: this.scope
+            scope: this.scope,
+            pinned: pinned
         };
         return this.beans.rowCssClassCalculator.getInitialRowClasses(params);
     }

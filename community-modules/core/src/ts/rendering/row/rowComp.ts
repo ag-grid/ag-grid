@@ -26,7 +26,7 @@ export class RowComp extends Component {
 
     private cellComps: { [key: string]: CellComp | null; } = {};
 
-    constructor(controller: RowController, container: RowContainerComp, beans: Beans, rowNode: RowNode, pinned: string | null, extraCssClass: string | null) {
+    constructor(controller: RowController, container: RowContainerComp, beans: Beans, rowNode: RowNode, pinned: string | null) {
         super();
 
         this.container = container;
@@ -35,7 +35,7 @@ export class RowComp extends Component {
         this.pinned = pinned;
         this.controller = controller;
 
-        const template = this.createTemplate(extraCssClass);
+        const template = this.createTemplate();
         this.setTemplate(template);
         container.appendRow(this.getGui());
 
@@ -160,12 +160,12 @@ export class RowComp extends Component {
         }
     }
 
-    private createTemplate(extraCssClass: string | null = null): string {
+    private createTemplate(): string {
         const con = this.controller;
 
         const templateParts: string[] = [];
         const rowHeight = this.rowNode.rowHeight;
-        const rowClasses = con.getInitialRowClasses(extraCssClass!).join(' ');
+        const rowClasses = con.getInitialRowClasses(this.pinned).join(' ');
         const rowIdSanitised = escapeString(this.rowNode.id!);
         const userRowStyles = con.preProcessStylesFromGridOptions();
         const businessKey = con.getRowBusinessKey();
