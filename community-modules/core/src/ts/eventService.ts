@@ -77,8 +77,8 @@ export class EventService implements IEventEmitter {
 
         listeners.delete(listener);
 
-        const listenerMap = async ? this.allAsyncListeners : this.allSyncListeners;
         if (listeners.size === 0) {
+            const listenerMap = async ? this.allAsyncListeners : this.allSyncListeners;
             listenerMap.delete(eventType);
         }
     }
