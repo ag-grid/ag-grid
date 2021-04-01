@@ -171,6 +171,21 @@ const addPageSetup = (pageSetup?: ExcelSheetPageSetup) => {
     }
 }
 
+const replaceHeaderFooterTokens = (value: string): string => {
+    const map = {
+        '&[Page]': '&P',
+        '&[Pages]': '&N',
+        '&[Date]': '&D',
+        '&[Time]': '&T'
+    }
+
+    for (const [key, token] of Object.entries(map)) {
+        value = value.replace(key, token);
+    }
+
+    return value;
+}
+
 const processHeaderFooterContent = (content: ExcelHeaderFooterContent[]): string => {
     return content.reduce((prev, curr) => {
         const pos = curr.position === 'Center' ? 'C' : curr.position === 'Right' ? 'R' : 'L';
@@ -197,7 +212,7 @@ const processHeaderFooterContent = (content: ExcelHeaderFooterContent[]): string
             if (font.color) { output += `&amp;K${font.color.replace('#', '').toUpperCase()}` }
         }
 
-        output += _.escapeString(curr.value);
+        output += _.escapeString(replaceHeaderFooterTokens(curr.value));
 
         return output;
     }, '')
