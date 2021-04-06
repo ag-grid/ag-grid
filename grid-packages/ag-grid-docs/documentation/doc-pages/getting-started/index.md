@@ -1881,6 +1881,11 @@ title: "Get Started with AG Grid"
 |         }
 |     }
 | </script>
+|
+|<style lang="scss">
+|    @import "../node_modules/ag-grid-community/dist/styles/ag-grid.css";
+|    @import "../node_modules/ag-grid-community/dist/styles/ag-theme-alpine.css";
+|</style>
 | ```
 |
 | The code above presents two essential configuration properties of the grid -

@@ -1,9 +1,9 @@
 
 ![alt text](./github-banner.png "AG Grid")
 
-[![CDNJS](https://img.shields.io/cdnjs/v/ag-grid)](https://cdnjs.com/libraries/ag-grid) [![npm](https://img.shields.io/npm/dm/ag-grid-vue3)](https://www.npmjs.com/package/ag-grid-vue3) [![Bundle Phobia](https://badgen.net/bundlephobia/minzip/ag-grid-vue3)](https://bundlephobia.com/result?p=ag-grid-vue3) [![Github Stars](https://img.shields.io/github/stars/ag-grid/ag-grid?style=social)](https://github.com/ag-grid/ag-grid) [![Twitter](https://img.shields.io/twitter/follow/ag_grid?style=social)](https://twitter.com/ag_grid)
+[![CDNJS](https://img.shields.io/cdnjs/v/ag-grid)](https://cdnjs.com/libraries/ag-grid) [![npm](https://img.shields.io/npm/dm/ag-grid-vue)](https://www.npmjs.com/package/ag-grid-vue) [![Bundle Phobia](https://badgen.net/bundlephobia/minzip/ag-grid-vue)](https://bundlephobia.com/result?p=ag-grid-vue) [![Github Stars](https://img.shields.io/github/stars/ag-grid/ag-grid?style=social)](https://github.com/ag-grid/ag-grid) [![Twitter](https://img.shields.io/twitter/follow/ag_grid?style=social)](https://twitter.com/ag_grid)
 
-AG Grid Vue3 Component
+AG Grid Vue Component
 ------
 
 AG Grid is a fully-featured and highly customizable JavaScript data grid.
@@ -39,12 +39,12 @@ Here are some of the features that make AG Grid stand out:
 * Data Export to CSV
 * Data Export to Excel *
 * Row Reordering
-* Copy / Paste 
+* Copy / Paste
 * Column Spanning
 * Pinned Rows
 * Full Width Rows
 
-\* The features marked with an asterisk are available in the [enterprise version](https://www.ag-grid.com/license-pricing.php?utm_source=ag-grid-react-readme&utm_medium=repository&utm_campaign=github) only.
+* The features marked with an asterisk are available in the [enterprise version](https://www.ag-grid.com/license-pricing.php?utm_source=ag-grid-react-readme&utm_medium=repository&utm_campaign=github) only.
 
 Check out [developers documentation](https://www.ag-grid.com/documentation-main/documentation.php?utm_source=ag-grid-react-readme&utm_medium=repository&utm_campaign=github) for a complete list of features or visit [our official docs](https://www.ag-grid.com/features-overview?utm_source=ag-grid-react-readme&utm_medium=repository&utm_campaign=github) for tutorials and feature demos.
 
@@ -55,59 +55,62 @@ Use the setup instructions below or go through [a 5-minute-quickstart guide](htt
 
 #### Install dependencies
 
-    $ npm i --save ag-grid-community ag-grid-react react-dom-factories
+```
+npm install ag-grid-vue3 ag-grid-community vue-class-component@next
+```
 
-#### Import the grid and styles
 
-    import {AgGridReact} from 'ag-grid-react';
-    
-    import 'ag-grid-community/dist/styles/ag-grid.css';
-    import 'ag-grid-community/dist/styles/ag-theme-balham.css';
+#### Declare the grid, row and columns and styles
 
-### Set the grid's configuration in a parent component
-	class App extends Component {
-		constructor(props) {
-			super(props);
+```html
+<template>
+    <ag-grid-vue style="width: 500px; height: 500px;"
+        class="ag-theme-alpine"
+        :columnDefs="columnDefs"
+        :rowData="rowData">
+    </ag-grid-vue>
+</template>
+```
 
-			this.state = {
-				columnDefs: [
-					{headerName: "Make", field: "make"},
-					{headerName: "Model", field: "model"},
-					{headerName: "Price", field: "price"}
+### Set the grid's configuration in the component
+```js
+<script>
+    import { AgGridVue } from "ag-grid-vue";
 
-				],
-				rowData: [
-					{make: "Toyota", model: "Celica", price: 35000},
-					{make: "Ford", model: "Mondeo", price: 32000},
-					{make: "Porsche", model: "Boxter", price: 72000}
-				]
-			}
-		}
-		...
-	}
+    export default {
+        name: 'App',
+        data() {
+            return {
+                columnDefs: null,
+                rowData: null
+            }
+        },
+        components: {
+            AgGridVue
+        },
+        beforeMount() {
+            this.columnDefs = [
+                { field: 'make' },
+                { field: 'model' },
+                { field: 'price' }
+            ];
 
-### Render the grid as the `AgGridReact` child component
+            this.rowData = [
+                { make: 'Toyota', model: 'Celica', price: 35000 },
+                { make: 'Ford', model: 'Mondeo', price: 32000 },
+                { make: 'Porsche', model: 'Boxter', price: 72000 }
+            ];
+        }
+    }
+</script>
 
-	class App extends Component {
-		constructor(props) {...}
+<style lang="scss">
+    @import "../node_modules/ag-grid-community/dist/styles/ag-grid.css";
+    @import "../node_modules/ag-grid-community/dist/styles/ag-theme-alpine.css";
+</style>
+```
 
-		render() {
-			return (
-				<div
-					className="ag-theme-balham"
-					style={{
-						height: '500px',
-						width: '600px'
-					}}
-				>
-					<AgGridReact
-						columnDefs={this.state.columnDefs}
-						rowData={this.state.rowData}>
-					</AgGridReact>
-				</div>
-			);
-		}
-	}
+Please refer the [Get Started with Vue 3](https://www.ag-grid.com/vue-grid/vue3?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github) for a full walkthrough on how to use Vue 3 with AG Grid.
 
 Issue Reporting
 ----------
