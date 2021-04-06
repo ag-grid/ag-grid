@@ -118,10 +118,6 @@ Some of the most likely errors you can encounter when exporting to Excel are:
 
 <api-documentation source='excel-export/resources/excel-export-params.json' section='excelProtection'></api-documentation>
 
-### ExcelSheetConfig
-
-<api-documentation source='excel-export/resources/excel-export-params.json' section='excelSheetConfig'></api-documentation>
-
 ### ExcelSheetMargin
 
 <api-documentation source='excel-export/resources/excel-export-params.json' section='excelSheetMargin'></api-documentation>

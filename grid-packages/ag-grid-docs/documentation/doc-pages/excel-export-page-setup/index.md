@@ -20,24 +20,9 @@ interface ExcelExportParams {
 ```
 
 ### ExcelSheetMargin
-```ts
-export interface ExcelSheetMargin {
-    top?: number; // Default: 0.75
-    right?: number; // Default: 0.7
-    bottom?: number; // Default: 0.75
-    left?: number; // Default: 0.7
-    header?: number; // Default: 0.3
-    footer?: number; // Default: 0.3
-}
-```
+
+<api-documentation source='excel-export/resources/excel-export-params.json' section='excelSheetMargin'></api-documentation>
 
 ### ExcelSheetPageSetup
-```ts
-export interface ExcelSheetPageSetup {
-    orientation?: 'Portrait' | 'Landscape'; // Default: 'Portrait'
-    /** 
-     * Default: 'Letter'
-     */
-    pageSize?: 'Letter' | 'Letter Small' | 'Tabloid' | 'Ledger' | 'Legal' | 'Statement' | 'Executive' | 'A3' | 'A4' | 'A4 Small' | 'A5' | 'A6' | 'B4' | 'B5' | 'Folio' | 'Envelope' | 'Envelope DL' | 'Envelope C5' | 'Envelope B5' | 'Envelope C3' | 'Envelope C4' | 'Envelope C6' | 'Envelope Monarch' | 'Japanese Postcard' | 'Japanese Double Postcard';
-}
-```
+
+<api-documentation source='excel-export/resources/excel-export-params.json' section='excelSheetPageSetup'></api-documentation>
