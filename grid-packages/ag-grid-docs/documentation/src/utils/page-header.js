@@ -1,10 +1,10 @@
 import { agGridVersion, agChartsVersion } from 'utils/consts';
 
-export const getHeaderTitle = (title, framework = 'javascript', isCharts = false, isRootPage = false) =>
-    isRootPage ? title : `${getProductType(framework, isCharts)}: ${title}`;
+export const getHeaderTitle = (title, framework = 'javascript', isCharts = false, isRootPage = false, version = '') =>
+    isRootPage ? title : `${getProductType(framework, isCharts, version)}: ${title}`;
 
-const getProductType = (framework, isCharts = false) =>
-    `${getFrameworkName(framework)} ${isCharts ? 'Charts' : 'Grid'}`;
+const getProductType = (framework, isCharts = false, version = '') =>
+    `${getFrameworkName(framework)}${version} ${isCharts ? 'Charts' : 'Grid'}`;
 
 export const getFrameworkName = framework => {
     const mappings = {
