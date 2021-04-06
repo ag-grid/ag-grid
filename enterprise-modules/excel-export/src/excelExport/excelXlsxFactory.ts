@@ -1,7 +1,8 @@
 import {
     ExcelFactoryMode,
     ExcelHeaderFooterConfig,
-    ExcelSheetConfig,
+    ExcelSheetMargin,
+    ExcelSheetPageSetup,
     ExcelStyle,
     ExcelWorksheet,
     XmlElement
@@ -30,13 +31,14 @@ export class ExcelXlsxFactory {
     public static createExcel(
         styles: ExcelStyle[],
         worksheet: ExcelWorksheet,
-        sheetConfig?: ExcelSheetConfig,
-        sheetHeaderFooterConfig?: ExcelHeaderFooterConfig
+        margins?: ExcelSheetMargin,
+        pageSetup?: ExcelSheetPageSetup,
+        headerFooterConfig?: ExcelHeaderFooterConfig
     ): string {
         this.addSheetName(worksheet);
         registerStyles(styles);
 
-        return this.createWorksheet(worksheet, sheetConfig, sheetHeaderFooterConfig);
+        return this.createWorksheet(worksheet, margins, pageSetup, headerFooterConfig);
     }
 
     private static addSheetName(worksheet: ExcelWorksheet): void {
@@ -147,13 +149,15 @@ export class ExcelXlsxFactory {
 
     private static createWorksheet(
         worksheet: ExcelWorksheet,
-        sheetConfig?: ExcelSheetConfig,
-        sheetHeaderFooterConfig?: ExcelHeaderFooterConfig,
+        margins?: ExcelSheetMargin,
+        pageSetup?: ExcelSheetPageSetup,
+        headerFooterConfig?: ExcelHeaderFooterConfig,
     ): string {
         return this.createXmlPart(worksheetFactory.getTemplate({
             worksheet,
-            sheetConfig,
-            sheetHeaderFooterConfig
+            margins,
+            pageSetup,
+            headerFooterConfig
         }));
     }
 }

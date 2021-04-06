@@ -55,7 +55,7 @@ function onBtExport() {
     });
     gridOptions.api.onFilterChanged();
 
-    spreadsheets.push(gridOptions.api.getGridRawDataForExcel({
+    spreadsheets.push(gridOptions.api.getSheetDataForExcel({
         customHeader:[
             [{ styleId: 'cover', data: { value: 'AG Grid', type: 'String' }}]
         ],
@@ -68,7 +68,7 @@ function onBtExport() {
     filterInstance.setModel(null);
     gridOptions.api.onFilterChanged();
 
-    spreadsheets.push(gridOptions.api.getGridRawDataForExcel());
+    spreadsheets.push(gridOptions.api.getSheetDataForExcel());
 
     gridOptions.api.exportMultipleSheetsAsExcel({
         data: spreadsheets,

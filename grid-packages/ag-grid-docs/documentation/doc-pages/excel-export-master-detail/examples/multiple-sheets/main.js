@@ -43,10 +43,10 @@ function onFirstDataRendered(params) {
 function onBtExport() {
     var spreadsheets = [];
 
-    spreadsheets.push(gridOptions.api.getGridRawDataForExcel());
+    spreadsheets.push(gridOptions.api.getSheetDataForExcel());
 
     gridOptions.api.forEachDetailGridInfo(function(node) {
-        spreadsheets.push(node.api.getGridRawDataForExcel({
+        spreadsheets.push(node.api.getSheetDataForExcel({
             sheetName: node.id.replace('detail_', '')
         }));
     });

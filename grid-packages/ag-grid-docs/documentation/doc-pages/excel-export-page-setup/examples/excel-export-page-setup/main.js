@@ -55,7 +55,7 @@ function getValue(id) {
 
 function getSheetConfig() {
     return {
-        setup: {
+        pageSetup: {
             orientation: getValue('#pageOrientation'),
             pageSize: getValue('#pageSize')
         },
@@ -71,8 +71,10 @@ function getSheetConfig() {
 }
 
 function onBtExport() {
+    var config = getSheetConfig();
     gridOptions.api.exportDataAsExcel({
-        sheetConfig: getSheetConfig()
+        pageSetup: config.pageSetup,
+        margins: config.margins
     });
 }
 

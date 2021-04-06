@@ -3,13 +3,12 @@ import {
     ExcelWorksheet,
     ExcelRow,
     ExcelColumn,
-    ExcelSheetConfig,
     XmlElement,
     ExcelSheetMargin,
     ExcelSheetPageSetup,
     ExcelHeaderFooterContent,
-    _,
-    ExcelHeaderFooterConfig
+    ExcelHeaderFooterConfig,
+    _
 } from '@ag-grid-community/core';
 
 import columnFactory from './column';
@@ -221,12 +220,12 @@ const processHeaderFooterContent = (content: ExcelHeaderFooterContent[]): string
     }, '')
 }
 
-const buildHeaderFooter = (sheetHeaderFooterConfig: ExcelHeaderFooterConfig): XmlElement[] => {
+const buildHeaderFooter = (headerFooterConfig: ExcelHeaderFooterConfig): XmlElement[] => {
     const rules: ['all', 'first', 'even'] = ['all', 'first', 'even'];
     const headersAndFooters = [] as XmlElement[];
 
     rules.forEach(rule => {
-        const headerFooter = sheetHeaderFooterConfig[rule];
+        const headerFooter = headerFooterConfig[rule];
         const namePrefix = rule === 'all' ? 'odd' : rule;
 
         if (!headerFooter || (!headerFooter.header && !headerFooter.footer)) { return; }
@@ -253,12 +252,12 @@ const buildHeaderFooter = (sheetHeaderFooterConfig: ExcelHeaderFooterConfig): Xm
     return headersAndFooters;
 }
 
-const addHeaderFooter = (sheetHeaderFooterConfig?: ExcelHeaderFooterConfig) => {
+const addHeaderFooter = (headerFooterConfig?: ExcelHeaderFooterConfig) => {
     return (children: XmlElement[]) => {
-        if (!sheetHeaderFooterConfig) { return children; }
+        if (!headerFooterConfig) { return children; }
 
-        const differentFirst = sheetHeaderFooterConfig.first != null ? 1 : 0;
-        const differentOddEven = sheetHeaderFooterConfig.even != null ? 1 : 0;
+        const differentFirst = headerFooterConfig.first != null ? 1 : 0;
+        const differentOddEven = headerFooterConfig.even != null ? 1 : 0;
 
         children.push({
             name: 'headerFooter',
@@ -268,7 +267,7 @@ const addHeaderFooter = (sheetHeaderFooterConfig?: ExcelHeaderFooterConfig) => {
                     differentOddEven
                 }
             },
-            children: buildHeaderFooter(sheetHeaderFooterConfig)
+            children: buildHeaderFooter(headerFooterConfig)
         })
         return children;
     }
@@ -277,15 +276,14 @@ const addHeaderFooter = (sheetHeaderFooterConfig?: ExcelHeaderFooterConfig) => {
 const worksheetFactory: ExcelOOXMLTemplate = {
     getTemplate(params: {
         worksheet: ExcelWorksheet,
-        sheetConfig?: ExcelSheetConfig,
-        sheetHeaderFooterConfig?: ExcelHeaderFooterConfig
+        margins?: ExcelSheetMargin,
+        pageSetup?: ExcelSheetPageSetup,
+        headerFooterConfig?: ExcelHeaderFooterConfig
     }) {
-        const { worksheet, sheetConfig, sheetHeaderFooterConfig } = params;
+        const { worksheet, margins = {}, pageSetup, headerFooterConfig } = params;
         const { table } = worksheet;
         const { rows, columns } = table;
         const mergedCells = (columns && columns.length) ? getMergedCells(rows, columns) : [];
-        const margins = (sheetConfig && sheetConfig.margins) || {};
-        const pageSetup = sheetConfig && sheetConfig.setup;
 
         const createWorksheetChildren = _.compose(
             addColumns(columns),
@@ -293,7 +291,7 @@ const worksheetFactory: ExcelOOXMLTemplate = {
             addMergeCells(mergedCells),
             addPageMargins(margins),
             addPageSetup(pageSetup),
-            addHeaderFooter(sheetHeaderFooterConfig)
+            addHeaderFooter(headerFooterConfig)
         );
 
         const children = createWorksheetChildren([]);

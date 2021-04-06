@@ -83,17 +83,17 @@ function getParams() {
     if (!header && !footer) { return; }
 
     obj  = {
-        sheetHeaderFooterConfig: {
+        headerFooterConfig: {
             all: {}
         }
     };
 
     if (header){
-        obj.sheetHeaderFooterConfig.all.header = [header];
+        obj.headerFooterConfig.all.header = [header];
     }
 
     if (footer) {
-        obj.sheetHeaderFooterConfig.all.footer = [footer];
+        obj.headerFooterConfig.all.footer = [footer];
     }
 
     return obj;

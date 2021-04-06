@@ -6,7 +6,8 @@ import {
     ExcelColumn,
     ExcelHeaderFooterConfig,
     ExcelRow,
-    ExcelSheetConfig,
+    ExcelSheetMargin,
+    ExcelSheetPageSetup,
     ExcelStyle,
     ExcelWorksheet,
     RowNode,
@@ -22,16 +23,17 @@ import {
 } from "@ag-grid-community/csv-export";
 
 export interface ExcelGridSerializingParams extends GridSerializingParams {
-    sheetName: string;
-    sheetConfig?: ExcelSheetConfig;
-    sheetHeaderFooterConfig?: ExcelHeaderFooterConfig;
+    autoConvertFormulas?: boolean;
     baseExcelStyles: ExcelStyle[];
+    columnWidth?: number | ((params: ColumnWidthCallbackParams) => number);
+    headerFooterConfig?: ExcelHeaderFooterConfig;
+    headerRowHeight?: number;
+    margins?: ExcelSheetMargin;
+    pageSetup?: ExcelSheetPageSetup;
+    rowHeight?: number;
+    sheetName: string;
     styleLinker: (rowType: RowType, rowIndex: number, value: string, column?: Column, node?: RowNode) => string[];
     suppressTextAsCDATA?: boolean;
-    rowHeight?: number;
-    headerRowHeight?: number;
-    columnWidth?: number | ((params: ColumnWidthCallbackParams) => number);
-    autoConvertFormulas?: boolean;
 }
 
 interface ExcelMixedStyle {

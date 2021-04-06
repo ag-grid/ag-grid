@@ -186,8 +186,8 @@ const VueExample = {
             var spreadsheets = [];
             
             spreadsheets.push(
-                this.leftApi.getGridRawDataForExcel({ sheetName: 'Athletes' }),
-                this.rightApi.getGridRawDataForExcel({ sheetName: 'Selected Athletes' })
+                this.leftApi.getSheetDataForExcel({ sheetName: 'Athletes' }),
+                this.rightApi.getSheetDataForExcel({ sheetName: 'Selected Athletes' })
             );
 
             exportMultipleSheetsAsExcel({
