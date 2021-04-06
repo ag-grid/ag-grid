@@ -75,7 +75,7 @@ const DocPageTemplate = ({ data, pageContext: { framework, pageName } }) => {
 
   let { title, description, version } = page.frontmatter;
 
-  version = version || '';
+  version = version ? ` ${version}` : '';
 
   if (!description) {
     // If no description is provided in the Markdown, we create one from the lead paragraph
@@ -86,7 +86,7 @@ const DocPageTemplate = ({ data, pageContext: { framework, pageName } }) => {
     }
   }
 
-  const pageTitle = getHeaderTitle(title, framework, version, pageName.startsWith('charts-'), page.frontmatter.rootPage);
+  const pageTitle = getHeaderTitle(title, framework, pageName.startsWith('charts-'), page.frontmatter.rootPage, version);
 
   return (
     <div id="doc-page-wrapper" className={styles['doc-page-wrapper']}>
