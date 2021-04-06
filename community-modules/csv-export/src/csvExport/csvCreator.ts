@@ -38,7 +38,12 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
 
         const { mergedParams, data } = this.getMergedParamsAndData(userParams);
 
-        Downloader.download(this.getFileName(mergedParams.fileName), this.packageFile({ data: [data] }));
+        const packagedFile = new Blob(["\ufeff", data], {
+            // @ts-ignore
+            type: window.navigator.msSaveOrOpenBlob ? this.getMimeType() : 'octet/stream'
+        });
+
+        Downloader.download(this.getFileName(mergedParams.fileName), packagedFile);
 
         return data;
     }

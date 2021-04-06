@@ -13,14 +13,13 @@ export class ExcelXlsxSerializingSession extends BaseExcelSerializingSession<Exc
 
     protected createExcel(data: ExcelWorksheet): string {
         const { excelStyles, config } = this;
-        const { sheetConfig, sheetHeader, sheetFooter } = config;
+        const { sheetConfig, sheetHeaderFooterConfig } = config;
         
         return ExcelXlsxFactory.createExcel(
             excelStyles, 
             data,
             sheetConfig,
-            sheetHeader,
-            sheetFooter
+            sheetHeaderFooterConfig
         );
     }
 

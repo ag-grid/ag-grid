@@ -1277,8 +1277,8 @@ title: "Get Started with AG Grid"
 |
 | <video-section id="6PA45adHun8" title="Getting Started Video Tutorial">
 |     In this article, we will walk you through the necessary steps to add AG Grid
-|     (both <a href="../licensing/">Community and Enterprise</a> are covered) to an existing
-|     React project, and configure some of the essential features of it. We will show you some of the
+|     (both <a href="../licensing/">Community and Enterprise</a> are covered) to a new React project, 
+| and configure some of the essential features of it. We will show you some of the
 |     fundamentals of the grid (passing properties, using the API, etc). As a bonus, we will also tweak the
 |     grid's visual appearance using Sass variables.
 | </video-section>
@@ -1308,8 +1308,8 @@ title: "Get Started with AG Grid"
 | different configuration. AG Grid and the React wrapper are distributed as NPM packages, which should
 | work with any common React project module bundler setup. Let's follow the
 | [create-react-app instructions](https://github.com/facebook/create-react-app#quick-overview) - run
-| the following commands in your terminal:
-|
+| the following commands in your terminal: 
+| 
 | ```bash
 | npx create-react-app my-app
 | cd my-app
@@ -1334,37 +1334,34 @@ title: "Get Started with AG Grid"
 | After a few seconds of waiting, you should be good to go. Let's get to the actual coding! Open `src/App.js` in your
 | favorite text editor and change its contents to the following:
 |
-| ```jsx
-| import React, { useState } from 'react';
-| import { AgGridColumn, AgGridReact } from 'ag-grid-react';
+|```jsx
+|import React from 'react';
+|import {AgGridColumn, AgGridReact} from 'ag-grid-react';
 |
-| import 'ag-grid-community/dist/styles/ag-grid.css';
-| import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
+|import 'ag-grid-community/dist/styles/ag-grid.css';
+|import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 |
-| const App = () => {
-|     const [gridApi, setGridApi] = useState(null);
-|     const [gridColumnApi, setGridColumnApi] = useState(null);
+|const App = () => {
+|    const rowData = [
+|        {make: "Toyota", model: "Celica", price: 35000},
+|        {make: "Ford", model: "Mondeo", price: 32000},
+|        {make: "Porsche", model: "Boxter", price: 72000}
+|    ];
 |
-|     const [rowData, setRowData] = useState([
-|         { make: "Toyota", model: "Celica", price: 35000 },
-|         { make: "Ford", model: "Mondeo", price: 32000 },
-|         { make: "Porsche", model: "Boxter", price: 72000 }
-|     ]);
+|    return (
+|        <div className="ag-theme-alpine" style={{height: 400, width: 600}}>
+|            <AgGridReact
+|                rowData={rowData}>
+|                <AgGridColumn field="make"></AgGridColumn>
+|                <AgGridColumn field="model"></AgGridColumn>
+|                <AgGridColumn field="price"></AgGridColumn>
+|            </AgGridReact>
+|        </div>
+|    );
+|};
 |
-|     return (
-|         <div className="ag-theme-alpine" style={{ height: 400, width: 600 }}>
-|             <AgGridReact
-|                 rowData={rowData}>
-|                 <AgGridColumn field="make"></AgGridColumn>
-|                 <AgGridColumn field="model"></AgGridColumn>
-|                 <AgGridColumn field="price"></AgGridColumn>
-|             </AgGridReact>
-|         </div>
-|     );
-| };
-|
-| export default App;
-| ```
+|export default App;
+|```
 |
 | Done? If everything is correct, we should see a simple grid that looks like this:<br/><br/>
 | ![AG Grid in its simplest form](resources/step1.png)
@@ -1385,11 +1382,11 @@ title: "Get Started with AG Grid"
 | design. You can customise it further with Sass variables, a technique which we will cover further down the road.
 |
 | ```jsx
-| const [rowData, setRowData] = useState([
+| const rowData = [
 |     {make: "Toyota", model: "Celica", price: 35000},
 |     {make: "Ford", model: "Mondeo", price: 32000},
 |     {make: "Porsche", model: "Boxter", price: 72000}
-| ]);
+| ];
 |
 | //...
 |
@@ -1465,11 +1462,11 @@ title: "Get Started with AG Grid"
 | grid component - We are using the HTML5 `fetch` API.
 |
 | ```diff
-| - const [rowData, setRowData] = useState([
-| -     { make: "Toyota", model: "Celica", price: 35000 },
-| -     { make: "Ford", model: "Mondeo", price: 32000 },
-| -     { make: "Porsche", model: "Boxter", price: 72000 }
-| - ]);
+| -  const rowData = [
+| -      {make: "Toyota", model: "Celica", price: 35000},
+| -      {make: "Ford", model: "Mondeo", price: 32000},
+| -      {make: "Porsche", model: "Boxter", price: 72000}
+| -  ];
 |
 | + const [rowData, setRowData] = useState([]);
 |
@@ -1493,58 +1490,55 @@ title: "Get Started with AG Grid"
 | the selected records and pass them with an API call to a remote service endpoint.
 |
 | Fortunately, the above task is quite simple with AG Grid. As you may have already guessed,
-| it is just a matter of adding and changing couple of properties:
+| it is just a matter of adding and changing couple of properties, as well as accessing the Grid API via a `ref`:
 |
-| ```diff
-| - <AgGridColumn field="make" sortable={ true } filter={ true }></AgGridColumn>
-| + <AgGridColumn field="make" sortable={ true } filter={true } checkboxSelection={ true }></AgGridColumn>
-| ```
+|```diff
+|const App = () => {
+|    const [rowData, setRowData] = useState([]);
+|+  const gridRef = useRef(null);
 |
-| ```diff
-|   <AgGridReact
-| +     rowSelection="multiple"
-| ```
+|    useEffect(() => {
+|        fetch('https://www.ag-grid.com/example-assets/row-data.json')
+|            .then(result => result.json())
+|            .then(rowData => setRowData(rowData))
+|    }, []);
 |
-| Great! Now the first column contains a checkbox that, when clicked, selects the row. The only
-| thing we have to add is a button that gets the selected data and sends it to the server. To do this,
-| we need the following change:
+|+  const onButtonClick = e => {
+|+      const selectedNodes = gridRef.current.api.getSelectedNodes()
+|+      const selectedData = selectedNodes.map( node => node.data )
+|+      const selectedDataStringPresentation = selectedData.map( node => `${node.make} ${node.model}`).join(', ')
+|+      alert(`Selected nodes: ${selectedDataStringPresentation}`)
+|+  }
 |
-| ```jsx
-| <div className="ag-theme-alpine" style={{ height: 400, width: 600 }}>
-|     <button onClick={onButtonClick}>Get selected rows</button>
-|     <AgGridReact
-|         rowData={ rowData }
-|         rowSelection="multiple">
-|         <AgGridColumn field="make" sortable={ true } filter={ true } checkboxSelection={ true }></AgGridColumn>
-|         <AgGridColumn field="model" sortable={ true } filter={ true }></AgGridColumn>
-|         <AgGridColumn field="price" sortable={ true } filter={ true }></AgGridColumn>
-|     </AgGridReact>
-| </div>
-| ```
+|    return (
+|        <div className="ag-theme-alpine" style={{height: 400, width: 600}}>
+|+          <button onClick={onButtonClick}>Get selected rows</button>
+|            <AgGridReact
+|+              ref={gridRef}
+|                rowData={rowData}
+|+              rowSelection="multiple">
+|-              <AgGridColumn field="make" sortable={true} filter={true}></AgGridColumn>
+|+              <AgGridColumn field="make" sortable={true} filter={true} checkboxSelection={true}></AgGridColumn>
+|                <AgGridColumn field="model" sortable={true} filter={true}></AgGridColumn>
+|                <AgGridColumn field="price" sortable={true} filter={true}></AgGridColumn>
+|            </AgGridReact>
+|        </div>);
+|};
+|```
 |
-| Afterwards, add the following event handler at the end of the component class:
-|
-| ```jsx
-| const onButtonClick = e => {
-|     const selectedNodes = gridApi.getSelectedNodes()
-|     const selectedData = selectedNodes.map( node => node.data )
-|     const selectedDataStringPresentation = selectedData.map( node => `${node.make} ${node.model}`).join(', ')
-|     alert(`Selected nodes: ${selectedDataStringPresentation}`)
-| }
-| ```
+|Let's break down what we've added above:
+|- We're obtaining a `ref` to the grid which will in turn allow us to access both the Grid API (via `api`) and the Column API (via `columnApi`)
+|- We've set the `rowSelection` to `multiple` - this will allow the user to select multiple rows at once
+|- We've added a new `buttton` as well as a new method (`onButtonClick`) that will provide the selected rows to the backend
 |
 | Well, we cheated a bit. Calling `alert` is not exactly a call to our backend. Hopefully you will forgive
 | us this shortcut for the sake of keeping the article short and simple. Of course, you can substitute
 | that bit with a real-world application logic after you are done with the tutorial.
 |
-| What happened above? Several things:
-|
-| - `onGridReady={ params => setGridApi(params.api) }` obtained a reference to the ag-grid API instance;
-| - We added a button with an event handler;
-| - Inside the event handler, we accessed the grid api object reference to access the currently
-| selected grid row nodes;
-| - Afterwards, we extracted the row nodes' underlying data items and converted them to a string suitable
-| to be presented to the user in an alert box.
+| [[note]]
+| | Using a `ref` to access the Grid APIs is one option - the other is to use the `gridReady` Grid callback and save the APIs:<br/>
+| | `onGridReady={ params => setGridApi(params.api) }`<br/>
+| | Both are valid - you can choose the mechanism that you prefer - see [Grid Callbacks](../grid-callbacks/) for more information.
 |
 | ##Grouping (enterprise)
 |
@@ -1653,6 +1647,7 @@ title: "Get Started with AG Grid"
 |
 | - import 'ag-grid-community/dist/styles/ag-grid.css';
 | - import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
+| + import './App.scss'
 | ```
 |
 | If everything is configured correctly, the second row of the grid will be blue. Congratulations!

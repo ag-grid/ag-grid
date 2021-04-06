@@ -1,11 +1,13 @@
 import {
+    _,
     Autowired,
     Bean,
     Column,
     ColumnController,
+    ExcelCell,
     ExcelExportParams,
     ExcelFactoryMode,
-    ExcelExportMultipleSheetParams,
+    ExcelStyle,
     GridOptions,
     GridOptionsWrapper,
     IExcelCreator,
@@ -13,20 +15,17 @@ import {
     RowNode,
     StylingService,
     ValueService,
-    _
 } from '@ag-grid-community/core';
-
-import { ExcelCell, ExcelStyle } from '@ag-grid-community/core';
 import { ExcelXmlSerializingSession } from './excelXmlSerializingSession';
 import { ExcelXlsxSerializingSession } from './excelXlsxSerializingSession';
 import { ExcelXlsxFactory } from './excelXlsxFactory';
-import { BaseCreator, GridSerializer, ZipContainer, RowType, Downloader } from "@ag-grid-community/csv-export";
+import { BaseCreator, Downloader, GridSerializer, RowType, ZipContainer } from "@ag-grid-community/csv-export";
 import { ExcelGridSerializingParams } from './baseExcelSerializingSession';
 import { ExcelXmlFactory } from './excelXmlFactory';
 
 type SerializingSession = ExcelXlsxSerializingSession | ExcelXmlSerializingSession;
 
-export const getMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams) => {
+export const getMultipleSheetsAsExcel = (params: ExcelExportParams): Blob | undefined => {
     const { data, fontSize = 11, author = 'AG Grid' } = params;
     ZipContainer.addFolders([
         'xl/worksheets/',
@@ -36,6 +35,11 @@ export const getMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams)
         'docProps/',
         '_rels/'
     ]);
+
+    if (!data || data.length === 0) {
+        console.warn("AG Grid: Invalid params supplied to getMultipleSheetsAsExcel() - `ExcelExportParams.data` is empty.");
+        return undefined;
+    }
 
     const sheetLen = data.length;
     data.forEach((value, idx) => {
@@ -55,10 +59,12 @@ export const getMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams)
     return ZipContainer.getContent('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 }
 
-export const exportMultipleSheetsAsExcel = (properties: ExcelExportMultipleSheetParams) => {
-    const { fileName = 'export.xlsx' } = properties;
-
-    Downloader.download(fileName, getMultipleSheetsAsExcel(properties));
+export const exportMultipleSheetsAsExcel = (params: ExcelExportParams) => {
+    const { fileName = 'export.xlsx' } = params;
+    const contents =  getMultipleSheetsAsExcel(params);
+    if (contents) {
+        Downloader.download(fileName, contents);
+    }
 }
 
 @Bean('excelCreator')
@@ -90,11 +96,15 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
 
         const { mergedParams, data } = this.getMergedParamsAndData(userParams);
 
-        Downloader.download(this.getFileName(mergedParams.fileName), this.packageFile({
+        const packageFile = this.packageFile({
             data: [data],
             fontSize: mergedParams.fontSize,
             author: mergedParams.author
-        }));
+        });
+
+        if (packageFile) {
+            Downloader.download(this.getFileName(mergedParams.fileName), packageFile);
+        }
 
         return data;
     }
@@ -111,7 +121,7 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
         return this.export(params);
     }
 
-    public getDataAsExcel(params?: ExcelExportParams): Blob | string {
+    public getDataAsExcel(params?: ExcelExportParams): Blob | string | undefined {
         const { mergedParams, data } =  this.getMergedParamsAndData(params);
 
         if (params && params.exportMode === 'xml') { return data; }
@@ -137,11 +147,11 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
         return this.getMergedParamsAndData(params).data;
     }
 
-    public getMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): Blob {
+    public getMultipleSheetsAsExcel(params: ExcelExportParams): Blob | undefined {
         return getMultipleSheetsAsExcel(params);
     }
 
-    public exportMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams) {
+    public exportMultipleSheetsAsExcel(params: ExcelExportParams) {
         return exportMultipleSheetsAsExcel(params);
     }
 
@@ -166,7 +176,6 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
         if (params.sheetName != null) {
             sheetName = _.utf8_encode(params.sheetName.toString().substr(0, 31));
         }
-
         const config: ExcelGridSerializingParams = {
             ...params,
             columnController,
@@ -182,7 +191,7 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
         return new (isXlsx ? ExcelXlsxSerializingSession : ExcelXmlSerializingSession)(config);
     }
 
-    private styleLinker(rowType: RowType, rowIndex: number, colIndex: number, value: string, column: Column, node: RowNode): string[] | null {
+    private styleLinker(rowType: RowType, rowIndex: number, value: string, column: Column, node: RowNode): string[] | null {
         if (rowType === RowType.HEADER) { return ["header"]; }
         if (rowType === RowType.HEADER_GROUPING) { return ["header", "headerGroup"]; }
 
@@ -233,9 +242,12 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
         return this.exportMode;
     }
 
-    protected packageFile(params: ExcelExportMultipleSheetParams): Blob {
+    private packageFile(params: ExcelExportParams): Blob | undefined {
         if (this.getExportMode() === 'xml') {
-            return super.packageFile(params);
+            return new Blob(["\ufeff", params.data![0]], {
+                // @ts-ignore
+                type: window.navigator.msSaveOrOpenBlob ? this.getMimeType() : 'octet/stream'
+            });
         }
 
         return getMultipleSheetsAsExcel(params);

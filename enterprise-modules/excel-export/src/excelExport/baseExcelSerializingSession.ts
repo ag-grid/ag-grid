@@ -4,9 +4,9 @@ import {
     Constants,
     ExcelCell,
     ExcelColumn,
+    ExcelHeaderFooterConfig,
     ExcelRow,
     ExcelSheetConfig,
-    ExcelHeaderFooter,
     ExcelStyle,
     ExcelWorksheet,
     RowNode,
@@ -24,10 +24,9 @@ import {
 export interface ExcelGridSerializingParams extends GridSerializingParams {
     sheetName: string;
     sheetConfig?: ExcelSheetConfig;
-    sheetHeader?: ExcelHeaderFooter;
-    sheetFooter?: ExcelHeaderFooter;
+    sheetHeaderFooterConfig?: ExcelHeaderFooterConfig;
     baseExcelStyles: ExcelStyle[];
-    styleLinker: (rowType: RowType, rowIndex: number, colIndex: number, value: string, column?: Column, node?: RowNode) => string[];
+    styleLinker: (rowType: RowType, rowIndex: number, value: string, column?: Column, node?: RowNode) => string[];
     suppressTextAsCDATA?: boolean;
     rowHeight?: number;
     headerRowHeight?: number;
@@ -82,7 +81,7 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
         });
         return {
             onColumn: (header: string, index: number, span: number) => {
-                const styleIds: string[] = this.config.styleLinker(RowType.HEADER_GROUPING, 1, index, `grouping-${header}`, undefined, undefined);
+                const styleIds: string[] = this.config.styleLinker(RowType.HEADER_GROUPING, 1, `grouping-${header}`, undefined, undefined);
                 currentCells.push(this.createMergedCell(this.getStyleId(styleIds), this.getDataTypeForValue('string'), header, span));
             }
         };
@@ -108,18 +107,11 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
             this.cols.push(this.convertColumnToExcel(null, this.cols.length + 1));
         }
 
-        const { sheetConfig, sheetHeader, sheetFooter } = this.config;
-
         const data: ExcelWorksheet = {
             name: this.config.sheetName,
             table: {
                 columns: this.cols,
                 rows: this.rows
-            },
-            config: {
-                sheetConfig,
-                sheetHeader,
-                sheetFooter
             }
         };
 
@@ -155,7 +147,7 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
     private onNewHeaderColumn(rowIndex: number, currentCells: ExcelCell[]): (column: Column, index: number, node: RowNode) => void {
         return (column, index) => {
             const nameForCol = this.extractHeaderValue(column);
-            const styleIds: string[] = this.config.styleLinker(RowType.HEADER, rowIndex, index, nameForCol, column, undefined);
+            const styleIds: string[] = this.config.styleLinker(RowType.HEADER, rowIndex, nameForCol, column, undefined);
             currentCells.push(this.createCell(this.getStyleId(styleIds), this.getDataTypeForValue('string'), nameForCol));
         };
     }
@@ -179,7 +171,7 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
                 return;
             }
             const valueForCell = this.extractRowCellValue(column, index, rowIndex, Constants.EXPORT_TYPE_EXCEL, node);
-            const styleIds: string[] = this.config.styleLinker(RowType.BODY, rowIndex, index, valueForCell, column, node);
+            const styleIds: string[] = this.config.styleLinker(RowType.BODY, rowIndex, valueForCell, column, node);
             const excelStyleId: string | null = this.getStyleId(styleIds);
             const colSpan = column.getColSpan(node);
 

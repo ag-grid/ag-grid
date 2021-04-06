@@ -1,5 +1,5 @@
 import { Column } from "../entities/column";
-import { ExportParams, PackageFileParams } from "./exportParams";
+import { ExportParams } from "./exportParams";
 import { XmlElement } from "./iXmlFactory";
 
 // Excel Styles
@@ -79,11 +79,6 @@ export interface ExcelProtection {
 export interface ExcelWorksheet {
     name: string;
     table: ExcelTable;
-    config?: {
-        sheetConfig?: ExcelSheetConfig;
-        sheetHeader?: ExcelHeaderFooter;
-        sheetFooter?: ExcelHeaderFooter;
-    };
 }
 
 export interface ExcelTable {
@@ -177,21 +172,25 @@ export interface ExcelExportParams extends ExportParams<ExcelCell[][]> {
     author?: string;
     autoConvertFormulas?: boolean;
     columnWidth?: number | ((params: ColumnWidthCallbackParams) => number);
+    data?: string[];
     exportMode?: 'xlsx' | 'xml';
     fontSize?: number;
     headerRowHeight?: number;
     rowHeight?: number;
     sheetName?: string;
     sheetConfig?: ExcelSheetConfig;
-    sheetHeader?: ExcelHeaderFooter;
-    sheetFooter?: ExcelHeaderFooter;
+    sheetHeaderFooterConfig?: ExcelHeaderFooterConfig;
     suppressTextAsCDATA?:boolean;
 }
 
+export interface ExcelHeaderFooterConfig {
+    all?: ExcelHeaderFooter;
+    first?: ExcelHeaderFooter;
+    even?: ExcelHeaderFooter;
+}
 export interface ExcelHeaderFooter {
-    all?: ExcelHeaderFooterContent | ExcelHeaderFooterContent[];
-    first?: ExcelHeaderFooterContent | ExcelHeaderFooterContent[];
-    even?: ExcelHeaderFooterContent | ExcelHeaderFooterContent[];
+    header?: ExcelHeaderFooterContent[];
+    footer?: ExcelHeaderFooterContent[];
 }
 
 export interface ExcelHeaderFooterContent {
@@ -200,15 +199,13 @@ export interface ExcelHeaderFooterContent {
     font?: ExcelFont;
 }
 
-export type ExcelExportMultipleSheetParams = PackageFileParams<ExcelExportParams>;
-
 export interface IExcelCreator {
     exportDataAsExcel(params?: ExcelExportParams): void;
-    getDataAsExcel(params?: ExcelExportParams): Blob | string;
+    getDataAsExcel(params?: ExcelExportParams): Blob | string | undefined;
     getGridRawDataForExcel(params?: ExcelExportParams): string;
 
-    getMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): Blob;
-    exportMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): void;
+    getMultipleSheetsAsExcel(params: ExcelExportParams): Blob | undefined;
+    exportMultipleSheetsAsExcel(params: ExcelExportParams): void;
 
     /** private methods */
     setFactoryMode(factoryMode: ExcelFactoryMode, exportMode: 'xml' | 'xlsx'): void;

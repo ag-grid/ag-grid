@@ -114,21 +114,6 @@ Some of the most likely errors you can encounter when exporting to Excel are:
 
 <api-documentation source='excel-export/resources/excel-export-params.json' section='excelProtection'></api-documentation>
 
-### ExcelExportMultipleSheetParams
-
-This interface is only relevant when exporting multiple sheets in a single Excel file. For more info see [Excel Export - Multiple Sheets](/excel-export-multiple-sheets/).
-
-```ts
-// This interface is the same as `ExcelExportParams`, with one addition data param.
-interface ExcelExportMultipleSheetParams extends ExcelExportParams {
-    /**
-     * This should contain an array of strings, where each string is the return
-     * of the `api.getGridRawDataForExcel()` method.
-     */
-    data: string[];
-}
-```
-
 ### ExcelSheetConfig
 
 <api-documentation source='excel-export/resources/excel-export-params.json' section='excelSheetConfig'></api-documentation>
