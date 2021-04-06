@@ -776,7 +776,7 @@ export class GridApi {
 
     // Valid values for position are bottom, middle and top
     public ensureNodeVisible(comparator: any, position: string | null = null) {
-        this.gridCompController.ensureNodeVisible(comparator, position);
+        this.gridBodyComp.ensureNodeVisible(comparator, position);
     }
 
     public forEachLeafNode(callback: (rowNode: RowNode) => void) {

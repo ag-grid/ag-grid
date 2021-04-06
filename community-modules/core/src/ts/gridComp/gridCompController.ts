@@ -13,10 +13,7 @@ import { Logger, LoggerFactory } from "../logger";
 import { ResizeObserverService } from "../misc/resizeObserverService";
 import { GridSizeChangedEvent } from "../events";
 import { ColumnApi } from "../columnController/columnApi";
-import { ISideBar } from "../interfaces/iSideBar";
-import { Component } from "../widgets/component";
 import { GridOptions } from "../entities/gridOptions";
-import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
 import { IRowModel } from "../interfaces/iRowModel";
 import { findIndex } from "../utils/array";
 import { Column } from "../entities/column";
@@ -50,7 +47,6 @@ export class GridCompController extends BeanStub {
     private view: GridCompView;
     private eGridHostDiv: HTMLElement;
     private eGridComp: HTMLElement;
-    private gridBodyComp: GridBodyComp;
 
     private logger: Logger;
 
@@ -76,11 +72,10 @@ export class GridCompController extends BeanStub {
         }
     }
 
-    public setView(view: GridCompView, eGridDiv: HTMLElement, eGridComp: HTMLElement, gridBodyComp: GridBodyComp): void {
+    public setView(view: GridCompView, eGridDiv: HTMLElement, eGridComp: HTMLElement): void {
         this.view = view;
         this.eGridHostDiv = eGridDiv;
         this.eGridComp = eGridComp;
-        this.gridBodyComp = gridBodyComp;
 
         this.createManagedBean(new LayoutFeature(this.view));
 
@@ -176,31 +171,5 @@ export class GridCompController extends BeanStub {
         this.view.forceFocusOutOfContainer(up);
     }
 
-    // Valid values for position are bottom, middle and top
-    public ensureNodeVisible(comparator: any, position: string | null = null) {
 
-        // look for the node index we want to display
-        const rowCount = this.rowModel.getRowCount();
-        const comparatorIsAFunction = typeof comparator === 'function';
-        let indexToSelect = -1;
-        // go through all the nodes, find the one we want to show
-        for (let i = 0; i < rowCount; i++) {
-            const node = this.rowModel.getRow(i);
-            if (comparatorIsAFunction) {
-                if (comparator(node)) {
-                    indexToSelect = i;
-                    break;
-                }
-            } else {
-                // check object equality against node and data
-                if (comparator === node || comparator === node!.data) {
-                    indexToSelect = i;
-                    break;
-                }
-            }
-        }
-        if (indexToSelect >= 0) {
-            this.gridBodyComp.ensureIndexVisible(indexToSelect, position);
-        }
-    }
 }

@@ -76,10 +76,9 @@ import {
 import { FakeHorizontalScrollComp } from "./fakeHorizontalScrollComp";
 import { RowContainerComp, RowContainerNames } from "./rowContainer/rowContainerComp";
 import { ViewportSizeFeature } from "./viewportSizeFeature";
+import { IRowModel } from "../interfaces/iRowModel";
 
-// in the html below, it is important that there are no white space between some of the divs, as if there is white space,
-// it won't render correctly in safari, as safari renders white space as a gap
-const GRID_PANEL_NORMAL_TEMPLATE = /* html */
+const GRID_BODY_TEMPLATE = /* html */
     `<div class="ag-root ag-unselectable" role="grid" unselectable="on">
         <ag-header-root ref="headerRoot" unselectable="on"></ag-header-root>
         <div class="ag-floating-top" ref="eTop" role="presentation" unselectable="on">
@@ -104,22 +103,6 @@ const GRID_PANEL_NORMAL_TEMPLATE = /* html */
         <ag-overlay-wrapper ref="overlayWrapper"></ag-overlay-wrapper>
     </div>`;
 
-export type RowContainerComponentNames =
-    'fullWidth' |
-    'body' |
-    'pinnedLeft' |
-    'pinnedRight' |
-    'floatingTop' |
-    'floatingTopPinnedLeft' |
-    'floatingTopPinnedRight' |
-    'floatingTopFullWidth' |
-    'floatingBottom' |
-    'floatingBottomPinnedLeft' |
-    'floatingBottomPinnedRight' |
-    'floatingBottomFullWidth';
-
-export type RowContainerComponents = { [K in RowContainerComponentNames]: RowContainerComp };
-
 type ScrollDirection = 'horizontal' | 'vertical';
 
 export class GridBodyComp extends Component implements LayoutView {
@@ -135,6 +118,7 @@ export class GridBodyComp extends Component implements LayoutView {
     @Autowired('paginationAutoPageSizeService') private paginationAutoPageSizeService: PaginationAutoPageSizeService;
     @Autowired('beans') private beans: Beans;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
+    @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('dragService') private dragService: DragService;
@@ -179,7 +163,6 @@ export class GridBodyComp extends Component implements LayoutView {
     @RefSelector('headerRoot') headerRootComp: HeaderRootComp;
     @RefSelector('overlayWrapper') private overlayWrapper: OverlayWrapperComponent;
 
-    private rowContainerComponents: RowContainerComponents;
     private eAllCellContainers: HTMLElement[];
 
     private scrollLeft = -1;
@@ -201,7 +184,7 @@ export class GridBodyComp extends Component implements LayoutView {
     private controller: GridBodyController;
 
     constructor() {
-        super(GRID_PANEL_NORMAL_TEMPLATE);
+        super(GRID_BODY_TEMPLATE);
         this.resetLastHorizontalScrollElementDebounced = debounce(this.resetLastHorizontalScrollElement.bind(this), 500);
     }
 
@@ -839,6 +822,34 @@ export class GridBodyComp extends Component implements LayoutView {
     }
 
     // Valid values for position are bottom, middle and top
+    public ensureNodeVisible(comparator: any, position: string | null = null) {
+
+        // look for the node index we want to display
+        const rowCount = this.rowModel.getRowCount();
+        const comparatorIsAFunction = typeof comparator === 'function';
+        let indexToSelect = -1;
+        // go through all the nodes, find the one we want to show
+        for (let i = 0; i < rowCount; i++) {
+            const node = this.rowModel.getRow(i);
+            if (comparatorIsAFunction) {
+                if (comparator(node)) {
+                    indexToSelect = i;
+                    break;
+                }
+            } else {
+                // check object equality against node and data
+                if (comparator === node || comparator === node!.data) {
+                    indexToSelect = i;
+                    break;
+                }
+            }
+        }
+        if (indexToSelect >= 0) {
+            this.ensureIndexVisible(indexToSelect, position);
+        }
+    }
+
+    // Valid values for position are bottom, middle and top
     // position should be {'top','middle','bottom', or undefined/null}.
     // if undefined/null, then the grid will to the minimal amount of scrolling,
     // eg if grid needs to scroll up, it scrolls until row is on top,
@@ -1140,27 +1151,6 @@ export class GridBodyComp extends Component implements LayoutView {
         this.eAllCellContainers = [
             this.leftContainer.getContainerElement(), this.rightContainer.getContainerElement(), this.centerContainer.getContainerElement(),
             this.eTop, this.eBottom, this.fullWidthContainer.getContainerElement()];
-
-        this.rowContainerComponents = {
-            body: this.centerContainer,
-            fullWidth: this.fullWidthContainer,
-            pinnedLeft: this.leftContainer,
-            pinnedRight: this.rightContainer,
-
-            floatingTop: this.topCenterContainer,
-            floatingTopPinnedLeft: this.topLeftContainer,
-            floatingTopPinnedRight: this.topRightContainer,
-            floatingTopFullWidth: this.topFullWidthContainer,
-
-            floatingBottom: this.bottomCenterContainer,
-            floatingBottomPinnedLeft: this.bottomLeftContainer,
-            floatingBottomPinnedRight: this.bottomRightContainer,
-            floatingBottomFullWidth: this.bottomFullWidthContainer,
-        };
-    }
-
-    public getRowContainers(): RowContainerComponents {
-        return this.rowContainerComponents;
     }
 
     public getFloatingTopBottom(): HTMLElement[] {
