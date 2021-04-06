@@ -32,6 +32,7 @@ const types = {
     ExcelData: '/excel-export/#exceldata',
     ExcelDataType: '/excel-export/#exceldatatype',
     ExcelExportParams: '/excel-export/#excelexportparams',
+    ExcelExportMultipleSheetParams: '/excel-export/#excelexportmultiplesheetparams',
     ExcelFont: '/excel-export/#excelfont',
     ExcelInterior: '/excel-export/#excelinterior',
     ExcelNumberFormat: '/excel-export/#excelnumberformat',
