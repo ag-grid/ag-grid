@@ -14,13 +14,9 @@ import {
     VirtualRowRemovedEvent
 } from "../../events";
 
-import { ICellRendererComp } from "../cellRenderers/iCellRenderer";
-
 import { ProcessRowParams, RowClassParams } from "../../entities/gridOptions";
 import { IFrameworkOverrides } from "../../interfaces/iFrameworkOverrides";
 import { Constants } from "../../constants/constants";
-import { ModuleNames } from "../../modules/moduleNames";
-import { ModuleRegistry } from "../../modules/moduleRegistry";
 import { setAriaExpanded, setAriaLabel, setAriaRowIndex, setAriaSelected } from "../../utils/aria";
 import {
     addCssClass,
@@ -143,17 +139,7 @@ export class RowController extends BeanStub {
 
         this.setRowType();
 
-/*
-        if (this.isFullWidth()) {
-            this.createFullWidthRowUi();
-        } else {
-            this.setupNormalRowContainers();
-        }
-*/
-
-        if (!this.isFullWidth()) {
-            this.updateColumnLists(!this.useAnimationFrameForCreate);
-        }
+        this.updateColumnLists(!this.useAnimationFrameForCreate);
 
         this.addListeners();
 
@@ -242,25 +228,6 @@ export class RowController extends BeanStub {
         func(params);
     }
 
-    private newRowComp(rowContainerComp: RowContainerComp, pinned: string | null): RowComp {
-        const res = new RowComp(this, rowContainerComp, this.beans, pinned);
-        this.allRowComps.push(res);
-        return res;
-    }
-
-    private createRowComp(
-        rowContainerComp: RowContainerComp,
-        pinned: string | null
-    ): RowComp {
-
-        const res = this.newRowComp(rowContainerComp, pinned);
-        const eRow = res.getGui();
-
-        this.refreshAriaLabel(eRow, !!this.rowNode.isSelected());
-
-        return res;
-    }
-
     private setRowType(): void {
         const isStub = this.rowNode.stub;
         const isFullWidthCell = this.rowNode.isFullWidthCell();
@@ -286,13 +253,9 @@ export class RowController extends BeanStub {
         }
     }
 
-/*    private setupNormalRowContainers(): void {
-        this.centerRowComp = this.createRowComp(this.bodyRowContainerComp, null);
-        this.rightRowComp = this.createRowComp(this.rightRowContainerComp, Constants.PINNED_RIGHT);
-        this.leftRowComp = this.createRowComp(this.leftRowContainerComp, Constants.PINNED_LEFT);
-    }*/
-
     private updateColumnLists(suppressAnimationFrame = false): void {
+
+        if (this.isFullWidth()) { return; }
 
         const noAnimation = suppressAnimationFrame
             || this.beans.gridOptionsWrapper.isSuppressAnimationFrame()
@@ -328,22 +291,6 @@ export class RowController extends BeanStub {
         }
         this.allRowComps.forEach( rc => rc.onColumnChanged() );
     }
-
-/*    private createFullWidthRowUi(): void {
-
-        if (this.embedFullWidth) {
-            this.centerRowComp = this.createFullWidthRowCell(this.bodyRowContainerComp, null);
-
-            // printLayout doesn't put components into the pinned sections
-            if (this.printLayout) { return; }
-
-            this.leftRowComp = this.createFullWidthRowCell(this.leftRowContainerComp, Constants.PINNED_LEFT);
-            this.rightRowComp = this.createFullWidthRowCell(this.rightRowContainerComp, Constants.PINNED_RIGHT);
-        } else {
-            // otherwise we add to the fullWidth container as normal
-            this.fullWidthRowComp = this.createFullWidthRowCell(this.fullWidthRowContainerComp, null);
-        }
-    }*/
 
     private setAnimateFlags(animateIn: boolean): void {
         if (animateIn) {
@@ -516,14 +463,10 @@ export class RowController extends BeanStub {
     }
 
     private onDisplayedColumnsChanged(): void {
-        if (this.isFullWidth()) { return; }
-
         this.updateColumnLists();
     }
 
     private onVirtualColumnsChanged(): void {
-        if (this.isFullWidth()) { return; }
-
         this.updateColumnLists();
     }
 
@@ -702,54 +645,6 @@ export class RowController extends BeanStub {
         }
     }
 
-/*
-    private createFullWidthRowCell(rowContainerComp: RowContainerComp, pinned: string | null): RowComp {
-
-        const rowComp = this.newRowComp(rowContainerComp, pinned);
-        const eRow = rowComp.getGui();
-
-        const params = this.createFullWidthParams(eRow, pinned);
-
-        const callback = (cellRenderer: ICellRendererComp) => {
-            if (this.isAlive()) {
-                const eGui = cellRenderer.getGui();
-                eRow.appendChild(eGui);
-                if (this.rowType===RowType.FullWidthDetail) {
-                    this.setupDetailRowAutoHeight(eGui);
-                }
-                rowComp.setFullWidthRowComp(cellRenderer);
-            } else {
-                this.beans.context.destroyBean(cellRenderer);
-            }
-        };
-
-        // if doing master detail, it's possible we have a cached row comp from last time detail was displayed
-        const cachedDetailComp = this.beans.detailRowCompCache.get(this.rowNode, pinned);
-        if (cachedDetailComp) {
-            callback(cachedDetailComp);
-        } else {
-            const cellRendererType = FullWidthKeys.get(this.rowType)!;
-            const cellRendererName = FullWidthRenderers.get(this.rowType)!;
-
-            const res = this.beans.userComponentFactory.newFullWidthCellRenderer(params, cellRendererType, cellRendererName);
-            if (res) {
-                res.then(callback);
-            } else {
-                const masterDetailModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.MasterDetailModule);
-                if (cellRendererName === 'agDetailCellRenderer' && !masterDetailModuleLoaded) {
-                    console.warn(`AG Grid: cell renderer agDetailCellRenderer (for master detail) not found. Did you forget to include the master detail module?`);
-                } else {
-                    console.error(`AG Grid: fullWidthCellRenderer ${cellRendererName} not found`);
-                }
-            }
-        }
-
-        this.angular1Compile(eRow);
-
-        return rowComp;
-    }
-*/
-
     public setupDetailRowAutoHeight(eDetailGui: HTMLElement): void {
 
         if (!this.beans.gridOptionsWrapper.isDetailRowAutoHeight()) { return; }
@@ -781,12 +676,6 @@ export class RowController extends BeanStub {
         this.addDestroyFunc(resizeObserverDestroyFunc);
 
         checkRowSizeFunc();
-    }
-
-    private angular1Compile(element: Element): void {
-        if (!this.scope) { return; }
-
-        this.beans.$compile(element)(this.scope);
     }
 
     public createFullWidthParams(eRow: HTMLElement, pinned: string | null): any {
@@ -1244,12 +1133,6 @@ export class RowController extends BeanStub {
             if (!rowIsEvenChanged) { return; }
             addOrRemoveCssClass(eRow, 'ag-row-even', rowIsEven);
             addOrRemoveCssClass(eRow, 'ag-row-odd', !rowIsEven);
-        });
-    }
-
-    public ensureDomOrder(): void {
-        this.allRowComps.forEach( rowComp => {
-            rowComp.getContainer().ensureDomOrder(rowComp.getGui());
         });
     }
 

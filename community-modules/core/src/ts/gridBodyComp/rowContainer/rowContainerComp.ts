@@ -3,12 +3,13 @@ import { RefSelector } from "../../widgets/componentAnnotations";
 import { Autowired, PostConstruct } from "../../context/context";
 import { RowContainerController, RowContainerView } from "./rowContainerController";
 import {
-    appendHtml,
     ensureDomOrder,
     getInnerWidth,
     getScrollLeft,
-    insertWithDomOrder, isHorizontalScrollShowing,
-    isVisible, setScrollLeft
+    insertWithDomOrder,
+    isHorizontalScrollShowing,
+    isVisible,
+    setScrollLeft
 } from "../../utils/dom";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { ResizeObserverService } from "../../misc/resizeObserverService";
@@ -17,11 +18,9 @@ import { SetPinnedLeftWidthFeature } from "./setPinnedLeftWidthFeature";
 import { SetPinnedRightWidthFeature } from "./setPinnedRightWidthFeature";
 import { SetHeightFeature } from "./setHeightFeature";
 import { Events } from "../../eventKeys";
-import { RowMap, RowRenderer } from "../../rendering/rowRenderer";
+import { RowRenderer } from "../../rendering/rowRenderer";
 import { RowComp } from "../../rendering/row/rowComp";
-import { iterateObject } from "../../utils/object";
 import { RowController } from "../../rendering/row/rowController";
-import { RowNode } from "../../entities/rowNode";
 import { Beans } from "../../rendering/beans";
 import { Constants } from "../../constants/constants";
 
@@ -278,30 +277,28 @@ export class RowContainerComp extends Component {
     }
 
     private onDisplayedRowsChanged(): void {
-        const bodyContainers = [RowContainerNames.CENTER, RowContainerNames.LEFT, RowContainerNames.RIGHT,
-            RowContainerNames.FULL_WIDTH];
-        this.forContainers(bodyContainers, this.onDisplayedRowsChanged_body.bind(this));
-    }
-
-    private onDisplayedRowsChanged_body(): void {
-
-        const fullWithContainer = this.name === RowContainerNames.FULL_WIDTH;
+        const fullWithContainer =
+            this.name === RowContainerNames.TOP_FULL_WITH
+            || this.name === RowContainerNames.BOTTOM_FULL_WITH
+            || this.name === RowContainerNames.FULL_WIDTH;
 
         const oldRows = {...this.renderedRows};
         this.renderedRows = {};
 
+        this.clearLastPlacedElement();
+
         const processRow = (rowCon: RowController) => {
             const instanceId = rowCon.getInstanceId();
-            if (oldRows[instanceId]) {
-                this.renderedRows[instanceId] = oldRows[instanceId];
+            const existingRowComp = oldRows[instanceId];
+            if (existingRowComp) {
+                this.renderedRows[instanceId] = existingRowComp;
                 delete oldRows[instanceId];
-                return;
+                this.ensureDomOrder(existingRowComp.getGui());
+            } else {
+                const rowComp = this.newRowComp(rowCon);
+                this.renderedRows[instanceId] = rowComp;
+                this.appendRow(rowComp.getGui());
             }
-
-            const rowComp = this.newRowComp(rowCon);
-            this.renderedRows[instanceId] = rowComp;
-
-            this.appendRow(rowComp.getGui());
         };
 
         const doesRowMatch = (rowCon: RowController) => {
@@ -314,14 +311,30 @@ export class RowContainerComp extends Component {
             return match;
         };
 
-        const allRowCons = this.rowRenderer.getRowsByIndex();
-        const zombieRowCons = this.rowRenderer.getZombieRowCons();
-
-        const rowConsToRender = [...Object.values(allRowCons),...Object.values(zombieRowCons)];
+        const rowConsToRender = this.getRowCons();
 
         rowConsToRender.filter(doesRowMatch).forEach(processRow);
 
         Object.values(oldRows).forEach( rowComp => this.removeRow(rowComp.getGui()) );
+    }
+
+    private getRowCons(): RowController[] {
+        switch (this.name) {
+            case RowContainerNames.TOP_CENTER:
+            case RowContainerNames.TOP_LEFT:
+            case RowContainerNames.TOP_RIGHT:
+            case RowContainerNames.TOP_FULL_WITH:
+                return this.rowRenderer.getTopRowCons();
+
+            case RowContainerNames.BOTTOM_CENTER:
+            case RowContainerNames.BOTTOM_LEFT:
+            case RowContainerNames.BOTTOM_RIGHT:
+            case RowContainerNames.BOTTOM_FULL_WITH:
+                return this.rowRenderer.getBottomRowCons();
+
+            default:
+                return this.rowRenderer.getRowCons();
+        }
     }
 
     private newRowComp(rowCon: RowController): RowComp {
