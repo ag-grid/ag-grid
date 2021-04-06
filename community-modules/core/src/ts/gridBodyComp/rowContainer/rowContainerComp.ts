@@ -16,6 +16,14 @@ import { ColumnController } from "../../columnController/columnController";
 import { SetPinnedLeftWidthFeature } from "./setPinnedLeftWidthFeature";
 import { SetPinnedRightWidthFeature } from "./setPinnedRightWidthFeature";
 import { SetHeightFeature } from "./setHeightFeature";
+import { Events } from "../../eventKeys";
+import { RowMap, RowRenderer } from "../../rendering/rowRenderer";
+import { RowComp } from "../../rendering/row/rowComp";
+import { iterateObject } from "../../utils/object";
+import { RowController } from "../../rendering/row/rowController";
+import { RowNode } from "../../entities/rowNode";
+import { Beans } from "../../rendering/beans";
+import { Constants } from "../../constants/constants";
 
 export enum RowContainerNames {
     LEFT = 'left',
@@ -112,16 +120,22 @@ export class RowContainerComp extends Component {
 
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
+    @Autowired("beans") private beans: Beans;
 
     @RefSelector('eViewport') private eViewport: HTMLElement;
     @RefSelector('eContainer') private eContainer: HTMLElement;
     @RefSelector('eWrapper') private eWrapper: HTMLElement;
+
+    private renderedRows: {[id: string]: RowComp} = {};
 
     private readonly name: RowContainerNames;
 
     private enableRtl: boolean;
 
     private scrollTop: number;
+
+    private embedFullWidthRows: boolean;
 
     // we ensure the rows are in the dom in the order in which they appear on screen when the
     // user requests this via gridOptions.ensureDomOrder. this is typically used for screen readers.
@@ -137,6 +151,7 @@ export class RowContainerComp extends Component {
     private postConstruct(): void {
 
         this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
+        this.embedFullWidthRows = this.gridOptionsWrapper.isEmbedFullWidthRows();
 
         const view: RowContainerView = {
             setViewportHeight: height => this.eViewport.style.height = height,
@@ -156,6 +171,8 @@ export class RowContainerComp extends Component {
 
         this.forContainers([RowContainerNames.CENTER, RowContainerNames.LEFT, RowContainerNames.RIGHT, RowContainerNames.FULL_WIDTH],
             ()=> this.createManagedBean(new SetHeightFeature(this.eContainer, this.eWrapper)))
+
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_ROWS_CHANGED, this.onDisplayedRowsChanged.bind(this));
     }
 
     private forContainers(names: RowContainerNames[], callback: (()=>void)): void {
@@ -258,6 +275,74 @@ export class RowContainerComp extends Component {
 
     public removeRow(eRow: HTMLElement): void {
         this.eContainer.removeChild(eRow);
+    }
+
+    private onDisplayedRowsChanged(): void {
+        const bodyContainers = [RowContainerNames.CENTER, RowContainerNames.LEFT, RowContainerNames.RIGHT,
+            RowContainerNames.FULL_WIDTH];
+        this.forContainers(bodyContainers, this.onDisplayedRowsChanged_body.bind(this));
+    }
+
+    private onDisplayedRowsChanged_body(): void {
+
+        const fullWithContainer = this.name === RowContainerNames.FULL_WIDTH;
+
+        const oldRows = {...this.renderedRows};
+        this.renderedRows = {};
+
+        const processRow = (rowCon: RowController) => {
+            const instanceId = rowCon.getInstanceId();
+            if (oldRows[instanceId]) {
+                this.renderedRows[instanceId] = oldRows[instanceId];
+                delete oldRows[instanceId];
+                return;
+            }
+
+            const rowComp = this.newRowComp(rowCon);
+            this.renderedRows[instanceId] = rowComp;
+
+            this.appendRow(rowComp.getGui());
+        };
+
+        const doesRowMatch = (rowCon: RowController) => {
+            const fullWidthController = rowCon.isFullWidth();
+
+            const match = fullWithContainer ?
+                !this.embedFullWidthRows && fullWidthController
+                : this.embedFullWidthRows || !fullWidthController
+
+            return match;
+        };
+
+        const allRowCons = this.rowRenderer.getRowsByIndex();
+        const zombieRowCons = this.rowRenderer.getZombieRowCons();
+
+        const rowConsToRender = [...Object.values(allRowCons),...Object.values(zombieRowCons)];
+
+        rowConsToRender.filter(doesRowMatch).forEach(processRow);
+
+        Object.values(oldRows).forEach( rowComp => this.removeRow(rowComp.getGui()) );
+    }
+
+    private newRowComp(rowCon: RowController): RowComp {
+        let pinned: string | null;
+        switch (this.name) {
+            case RowContainerNames.BOTTOM_LEFT:
+            case RowContainerNames.TOP_LEFT:
+            case RowContainerNames.LEFT:
+                pinned = Constants.PINNED_LEFT;
+                break;
+            case RowContainerNames.BOTTOM_RIGHT:
+            case RowContainerNames.TOP_RIGHT:
+            case RowContainerNames.RIGHT:
+                pinned = Constants.PINNED_RIGHT;
+                break;
+            default:
+                pinned = null;
+                break;
+        }
+        const res = new RowComp(rowCon, this, this.beans, pinned);
+        return res;
     }
 
 }

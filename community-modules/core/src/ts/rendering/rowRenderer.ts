@@ -3,7 +3,14 @@ import { GridBodyComp, RowContainerComponents } from "../gridBodyComp/gridBodyCo
 import { RowController } from "./row/rowController";
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
-import { CellFocusedEvent, Events, FirstDataRenderedEvent, ModelUpdatedEvent, ViewportChangedEvent } from "../events";
+import {
+    CellFocusedEvent,
+    DisplayedRowsChangedEvent,
+    Events,
+    FirstDataRenderedEvent,
+    ModelUpdatedEvent,
+    ViewportChangedEvent
+} from "../events";
 import { Constants } from "../constants/constants";
 import { CellComp } from "./cellComp";
 import { Autowired, Bean, Optional, Qualifier } from "../context/context";
@@ -65,10 +72,12 @@ export class RowRenderer extends BeanStub {
 
     // map of row ids to row objects. keeps track of which elements
     // are rendered for which rows in the dom.
-    private rowCompsByIndex: RowMap = {};
+    private rowCompsByRowIndex: RowMap = {};
 
-    private floatingTopRowComps: RowController[] = [];
-    private floatingBottomRowComps: RowController[] = [];
+    private zombieRowCons: RowMap = {};
+
+    private topRowCons: RowController[] = [];
+    private bottomRowCons: RowController[] = [];
 
     private rowContainers: RowContainerComponents;
 
@@ -90,8 +99,12 @@ export class RowRenderer extends BeanStub {
         this.logger = loggerFactory.create("RowRenderer");
     }
 
-    public getRowCompsByIndex(): RowMap {
-        return this.rowCompsByIndex;
+    public getRowsByIndex(): RowMap {
+        return this.rowCompsByRowIndex;
+    }
+
+    public getZombieRowCons(): RowMap {
+        return this.zombieRowCons;
     }
 
     public registerGridComp(gridBodyComp: GridBodyComp): void {
@@ -246,7 +259,7 @@ export class RowRenderer extends BeanStub {
     public datasourceChanged(): void {
         this.firstRenderedRow = 0;
         this.lastRenderedRow = -1;
-        const rowIndexesToRemove = Object.keys(this.rowCompsByIndex);
+        const rowIndexesToRemove = Object.keys(this.rowCompsByRowIndex);
         this.removeRowComps(rowIndexesToRemove);
     }
 
@@ -273,16 +286,16 @@ export class RowRenderer extends BeanStub {
             if (eCell) { eCells.push(eCell); }
         }
 
-        iterateObject(this.rowCompsByIndex, callback);
-        iterateObject(this.floatingBottomRowComps, callback);
-        iterateObject(this.floatingTopRowComps, callback);
+        iterateObject(this.rowCompsByRowIndex, callback);
+        iterateObject(this.bottomRowCons, callback);
+        iterateObject(this.topRowCons, callback);
 
         return eCells;
     }
 
     public refreshFloatingRowComps(): void {
         this.refreshFloatingRows(
-            this.floatingTopRowComps,
+            this.topRowCons,
             this.pinnedRowModel.getPinnedTopRowData(),
             this.rowContainers.floatingTopPinnedLeft,
             this.rowContainers.floatingTopPinnedRight,
@@ -291,7 +304,7 @@ export class RowRenderer extends BeanStub {
         );
 
         this.refreshFloatingRows(
-            this.floatingBottomRowComps,
+            this.bottomRowCons,
             this.pinnedRowModel.getPinnedBottomRowData(),
             this.rowContainers.floatingBottomPinnedLeft,
             this.rowContainers.floatingBottomPinnedRight,
@@ -308,7 +321,7 @@ export class RowRenderer extends BeanStub {
         bodyContainerComp: RowContainerComp,
         fullWidthContainerComp: RowContainerComp
     ): void {
-        rowComps.forEach((row: RowController) => {
+        /*rowComps.forEach((row: RowController) => {
             row.destroyFirstPass();
             row.destroySecondPass();
         });
@@ -319,10 +332,6 @@ export class RowRenderer extends BeanStub {
             rowNodes.forEach((node: RowNode) => {
                 const rowComp = new RowController(
                     this.$scope,
-                    bodyContainerComp,
-                    pinnedLeftContainerComp,
-                    pinnedRightContainerComp,
-                    fullWidthContainerComp,
                     node,
                     this.beans,
                     false,
@@ -335,7 +344,7 @@ export class RowRenderer extends BeanStub {
             });
         }
 
-        this.clearLastPlacedElements();
+        this.clearLastPlacedElements();*/
     }
 
     private onPinnedRowDataChanged(): void {
@@ -353,7 +362,7 @@ export class RowRenderer extends BeanStub {
 
         if (missing(rowNodes)) { return result; }
 
-        iterateObject(this.rowCompsByIndex, (index: string, renderedRow: RowController) => {
+        iterateObject(this.rowCompsByRowIndex, (index: string, renderedRow: RowController) => {
             const rowNode = renderedRow.getRowNode();
             if (rowNodes.indexOf(rowNode) >= 0) {
                 result.push(index);
@@ -524,13 +533,13 @@ export class RowRenderer extends BeanStub {
     }
 
     private forEachRowComp(callback: (key: string, rowComp: RowController) => void): void {
-        iterateObject(this.rowCompsByIndex, callback);
-        iterateObject(this.floatingTopRowComps, callback);
-        iterateObject(this.floatingBottomRowComps, callback);
+        iterateObject(this.rowCompsByRowIndex, callback);
+        iterateObject(this.topRowCons, callback);
+        iterateObject(this.bottomRowCons, callback);
     }
 
     public addRenderedRowListener(eventName: string, rowIndex: number, callback: Function): void {
-        const rowComp = this.rowCompsByIndex[rowIndex];
+        const rowComp = this.rowCompsByRowIndex[rowIndex];
         if (rowComp) {
             rowComp.addEventListener(eventName, callback);
         }
@@ -669,16 +678,16 @@ export class RowRenderer extends BeanStub {
             });
         };
 
-        iterateObject(this.rowCompsByIndex, (index: string, rowComp: RowController) => {
+        iterateObject(this.rowCompsByRowIndex, (index: string, rowComp: RowController) => {
             processRow(rowComp);
         });
 
-        if (this.floatingTopRowComps) {
-            this.floatingTopRowComps.forEach(processRow);
+        if (this.topRowCons) {
+            this.topRowCons.forEach(processRow);
         }
 
-        if (this.floatingBottomRowComps) {
-            this.floatingBottomRowComps.forEach(processRow);
+        if (this.bottomRowCons) {
+            this.bottomRowCons.forEach(processRow);
         }
     }
 
@@ -688,14 +697,14 @@ export class RowRenderer extends BeanStub {
     }
 
     private removeAllRowComps(): void {
-        const rowIndexesToRemove = Object.keys(this.rowCompsByIndex);
+        const rowIndexesToRemove = Object.keys(this.rowCompsByRowIndex);
         this.removeRowComps(rowIndexesToRemove);
     }
 
     private recycleRows(): RowMap {
         // remove all stub nodes, they can't be reused, as no rowNode id
         const stubNodeIndexes: string[] = [];
-        iterateObject(this.rowCompsByIndex, (index: string, rowComp: RowController) => {
+        iterateObject(this.rowCompsByRowIndex, (index: string, rowComp: RowController) => {
             const stubNode = rowComp.getRowNode().id==null;
             if (stubNode) {
                 stubNodeIndexes.push(index);
@@ -705,11 +714,11 @@ export class RowRenderer extends BeanStub {
 
         // then clear out rowCompsByIndex, but before that take a copy, but index by id, not rowIndex
         const nodesByIdMap: RowMap = {};
-        iterateObject(this.rowCompsByIndex, (index: string, rowComp: RowController) => {
+        iterateObject(this.rowCompsByRowIndex, (index: string, rowComp: RowController) => {
             const rowNode = rowComp.getRowNode();
             nodesByIdMap[rowNode.id!] = rowComp;
         });
-        this.rowCompsByIndex = {};
+        this.rowCompsByRowIndex = {};
 
         return nodesByIdMap;
     }
@@ -719,12 +728,12 @@ export class RowRenderer extends BeanStub {
         // if no fromIndex then set to -1, which will refresh everything
         // let realFromIndex = -1;
         rowsToRemove.forEach(indexToRemove => {
-            const rowComp = this.rowCompsByIndex[indexToRemove];
+            const rowComp = this.rowCompsByRowIndex[indexToRemove];
             if (rowComp) {
                 rowComp.destroyFirstPass();
                 rowComp.destroySecondPass();
             }
-            delete this.rowCompsByIndex[indexToRemove];
+            delete this.rowCompsByRowIndex[indexToRemove];
         });
     }
 
@@ -743,7 +752,7 @@ export class RowRenderer extends BeanStub {
         const indexesToDrawMap: { [index: string]: boolean; } = {};
         indexesToDraw.forEach(index => (indexesToDrawMap[index] = true));
 
-        const existingIndexes = Object.keys(this.rowCompsByIndex);
+        const existingIndexes = Object.keys(this.rowCompsByRowIndex);
         const indexesNotToDraw: string[] = existingIndexes.filter(index => !indexesToDrawMap[index]);
 
         this.removeRowComps(indexesNotToDraw);
@@ -764,7 +773,7 @@ export class RowRenderer extends BeanStub {
         };
 
         // if we are redrawing due to scrolling change, then old rows are in this.rowCompsByIndex
-        iterateObject(this.rowCompsByIndex, checkRowToDraw);
+        iterateObject(this.rowCompsByRowIndex, checkRowToDraw);
 
         // if we are redrawing due to model update, then old rows are in rowsToRecycle
         iterateObject(rowsToRecycle, checkRowToDraw);
@@ -815,9 +824,14 @@ export class RowRenderer extends BeanStub {
                 this.destroyRowComps(rowsToRecycle, animate);
             }
         }
-
         this.checkAngularCompile();
         this.gridBodyComp.updateRowCount();
+        this.dispatchDisplayedRowsChanged();
+    }
+
+    private dispatchDisplayedRowsChanged(): void {
+        const event: DisplayedRowsChangedEvent = {type: Events.EVENT_DISPLAYED_ROWS_CHANGED};
+        this.eventService.dispatchEvent(event);
     }
 
     private clearLastPlacedElements(): void {
@@ -850,7 +864,7 @@ export class RowRenderer extends BeanStub {
         // embedded, as what appears in each section depends on whether we are pinned or not
         const rowsToRemove: string[] = [];
 
-        iterateObject(this.rowCompsByIndex, (id: string, rowComp: RowController) => {
+        iterateObject(this.rowCompsByRowIndex, (id: string, rowComp: RowController) => {
             if (rowComp.isFullWidth()) {
                 const rowIndex = rowComp.getRowNode().rowIndex;
 
@@ -873,7 +887,7 @@ export class RowRenderer extends BeanStub {
             rowNodesToRefresh!.forEach(r => idsToRefresh[r.id!] = true);
         }
 
-        iterateObject(this.rowCompsByIndex, (id: string, rowComp: RowController) => {
+        iterateObject(this.rowCompsByRowIndex, (id: string, rowComp: RowController) => {
             if (!rowComp.isFullWidth()) { return; }
 
             const rowNode = rowComp.getRowNode();
@@ -907,7 +921,7 @@ export class RowRenderer extends BeanStub {
         afterScroll: boolean
     ): RowController | null | undefined {
         let rowNode: RowNode | null = null;
-        let rowComp: RowController | null = this.rowCompsByIndex[rowIndex];
+        let rowComp: RowController | null = this.rowCompsByRowIndex[rowIndex];
 
         // if no row comp, see if we can get it from the previous rowComps
         if (!rowComp) {
@@ -944,25 +958,32 @@ export class RowRenderer extends BeanStub {
             rowNode.alreadyRendered = true;
         }
 
-        this.rowCompsByIndex[rowIndex] = rowComp!;
+        this.rowCompsByRowIndex[rowIndex] = rowComp!;
 
         return rowComp;
     }
 
-    private destroyRowComps(rowCompsMap: { [key: string]: RowController; } | null | undefined, animate: boolean): void {
+    private destroyRowComps(rowConsMap: { [key: string]: RowController; } | null | undefined, animate: boolean): void {
         const executeInAWhileFuncs: (()=>void)[] = [];
-        iterateObject(rowCompsMap, (nodeId: string, rowComp: RowController) => {
+        iterateObject(rowConsMap, (nodeId: string, rowCon: RowController) => {
             // if row was used, then it's null
-            if (!rowComp) { return; }
+            if (!rowCon) { return; }
 
-            rowComp.destroyFirstPass();
+            rowCon.destroyFirstPass();
             if (animate) {
-                executeInAWhileFuncs.push(rowComp.destroySecondPass.bind(rowComp));
+                this.zombieRowCons[rowCon.getInstanceId()] = rowCon;
+                executeInAWhileFuncs.push(()=> {
+                    rowCon.destroySecondPass();
+                    delete this.zombieRowCons[rowCon.getInstanceId()];
+                });
             } else {
-                rowComp.destroySecondPass();
+                rowCon.destroySecondPass();
             }
         });
         if (animate) {
+            // this ensures we fire displayedRowsChanged AFTER all the 'executeInAWhileFuncs' get
+            // executed, as we added it to the end of the list.
+            executeInAWhileFuncs.push(this.dispatchDisplayedRowsChanged.bind(this));
             executeInAWhile(executeInAWhileFuncs);
         }
     }
@@ -1136,10 +1157,6 @@ export class RowRenderer extends BeanStub {
 
         const rowComp = new RowController(
             this.$scope,
-            this.rowContainers.body,
-            this.rowContainers.pinnedLeft,
-            this.rowContainers.pinnedRight,
-            this.rowContainers.fullWidth,
             rowNode,
             this.beans,
             animate,
@@ -1152,7 +1169,7 @@ export class RowRenderer extends BeanStub {
     }
 
     public getRenderedNodes() {
-        const renderedRows = this.rowCompsByIndex;
+        const renderedRows = this.rowCompsByRowIndex;
 
         return Object.keys(renderedRows).map(key => renderedRows[key]!.getRowNode());
     }
@@ -1336,13 +1353,13 @@ export class RowRenderer extends BeanStub {
         let rowComponent: RowController | null;
         switch (rowPosition.rowPinned) {
             case Constants.PINNED_TOP:
-                rowComponent = this.floatingTopRowComps[rowPosition.rowIndex];
+                rowComponent = this.topRowCons[rowPosition.rowIndex];
                 break;
             case Constants.PINNED_BOTTOM:
-                rowComponent = this.floatingBottomRowComps[rowPosition.rowIndex];
+                rowComponent = this.bottomRowCons[rowPosition.rowIndex];
                 break;
             default:
-                rowComponent = this.rowCompsByIndex[rowPosition.rowIndex];
+                rowComponent = this.rowCompsByRowIndex[rowPosition.rowIndex];
                 break;
         }
 

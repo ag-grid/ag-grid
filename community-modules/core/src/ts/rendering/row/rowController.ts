@@ -50,22 +50,26 @@ export enum RowType {
     FullWidthDetail
 }
 
-const FullWidthRenderers: Map<RowType, string> = new Map([
+export const FullWidthRenderers: Map<RowType, string> = new Map([
     [RowType.FullWidthLoading, 'agLoadingCellRenderer'],
     [RowType.FullWidthGroup, 'agGroupRowRenderer'],
     [RowType.FullWidthDetail, 'agDetailCellRenderer']
 ]);
 
-const FullWidthKeys: Map<RowType, string> = new Map([
+export const FullWidthKeys: Map<RowType, string> = new Map([
     [RowType.FullWidth, 'fullWidthCellRenderer'],
     [RowType.FullWidthLoading, 'loadingCellRenderer'],
     [RowType.FullWidthGroup, 'groupRowRenderer'],
     [RowType.FullWidthDetail, 'detailCellRenderer']
 ]);
 
+let instanceIdSequence = 0;
+
 export class RowController extends BeanStub {
 
     public static DOM_DATA_KEY_RENDERED_ROW = 'renderedRow';
+
+    private instanceId = instanceIdSequence++;
 
     private readonly rowNode: RowNode;
 
@@ -80,13 +84,6 @@ export class RowController extends BeanStub {
     private centerRowComp: RowComp;
     private fullWidthRowComp: RowComp;
 
-    private readonly bodyRowContainerComp: RowContainerComp;
-    private readonly fullWidthRowContainerComp: RowContainerComp;
-    private readonly leftRowContainerComp: RowContainerComp;
-    private readonly rightRowContainerComp: RowContainerComp;
-
-    private fullWidthRowDestroyFuncs: (() => void)[] = [];
-
     private firstRowOnPage: boolean;
     private lastRowOnPage: boolean;
 
@@ -95,9 +92,9 @@ export class RowController extends BeanStub {
     private editingRow: boolean;
     private rowFocused: boolean;
 
-    private centerCols: Column[];
-    private leftCols: Column[];
-    private rightCols: Column[];
+    private centerCols: Column[] = [];
+    private leftCols: Column[] = [];
+    private rightCols: Column[] = [];
 
     private fadeRowIn: boolean;
     private slideRowIn: boolean;
@@ -121,10 +118,6 @@ export class RowController extends BeanStub {
 
     constructor(
         parentScope: any,
-        bodyContainerComp: RowContainerComp,
-        pinnedLeftContainerComp: RowContainerComp,
-        pinnedRightContainerComp: RowContainerComp,
-        fullWidthContainerComp: RowContainerComp,
         rowNode: RowNode,
         beans: Beans,
         animateIn: boolean,
@@ -135,10 +128,6 @@ export class RowController extends BeanStub {
         super();
         this.parentScope = parentScope;
         this.beans = beans;
-        this.bodyRowContainerComp = bodyContainerComp;
-        this.leftRowContainerComp = pinnedLeftContainerComp;
-        this.rightRowContainerComp = pinnedRightContainerComp;
-        this.fullWidthRowContainerComp = fullWidthContainerComp;
         this.rowNode = rowNode;
         this.rowIsEven = this.rowNode.rowIndex! % 2 === 0;
         this.paginationPage = this.beans.paginationProxy.getCurrentPage();
@@ -154,11 +143,13 @@ export class RowController extends BeanStub {
 
         this.setRowType();
 
+/*
         if (this.isFullWidth()) {
             this.createFullWidthRowUi();
         } else {
             this.setupNormalRowContainers();
         }
+*/
 
         if (!this.isFullWidth()) {
             this.updateColumnLists(!this.useAnimationFrameForCreate);
@@ -174,6 +165,34 @@ export class RowController extends BeanStub {
                 this.allRowComps.forEach( rowComp => removeCssClass(rowComp.getGui(), 'ag-opacity-zero'));
             });
         }
+    }
+
+    public getInstanceId(): number {
+        return this.instanceId;
+    }
+
+    public setLeftRowComp(rowComp: RowComp): void {
+        if (this.leftRowComp) { console.error('AG Grid - should not set leftRowComp twice') }
+        this.leftRowComp = rowComp;
+        this.allRowComps.push(rowComp);
+    }
+
+    public setRightRowComp(rowComp: RowComp): void {
+        if (this.rightRowComp) { console.error('AG Grid - should not set rightRowComp twice') }
+        this.rightRowComp = rowComp;
+        this.allRowComps.push(rowComp);
+    }
+
+    public setCenterRowComp(rowComp: RowComp): void {
+        if (this.centerRowComp) { console.error('AG Grid - should not set centerRowComp twice') }
+        this.centerRowComp = rowComp;
+        this.allRowComps.push(rowComp);
+    }
+
+    public setFullWidthRowComp(rowComp: RowComp): void {
+        if (this.fullWidthRowComp) { console.error('AG Grid - should not set fullWidthRowComp twice') }
+        this.fullWidthRowComp = rowComp;
+        this.allRowComps.push(rowComp);
     }
 
     public getColsForRowComp(pinned: string | null): Column[] {
@@ -224,7 +243,7 @@ export class RowController extends BeanStub {
     }
 
     private newRowComp(rowContainerComp: RowContainerComp, pinned: string | null): RowComp {
-        const res = new RowComp(this, rowContainerComp, this.beans, this.rowNode, pinned);
+        const res = new RowComp(this, rowContainerComp, this.beans, pinned);
         this.allRowComps.push(res);
         return res;
     }
@@ -267,11 +286,11 @@ export class RowController extends BeanStub {
         }
     }
 
-    private setupNormalRowContainers(): void {
+/*    private setupNormalRowContainers(): void {
         this.centerRowComp = this.createRowComp(this.bodyRowContainerComp, null);
         this.rightRowComp = this.createRowComp(this.rightRowContainerComp, Constants.PINNED_RIGHT);
         this.leftRowComp = this.createRowComp(this.leftRowContainerComp, Constants.PINNED_LEFT);
-    }
+    }*/
 
     private updateColumnLists(suppressAnimationFrame = false): void {
 
@@ -310,7 +329,7 @@ export class RowController extends BeanStub {
         this.allRowComps.forEach( rc => rc.onColumnChanged() );
     }
 
-    private createFullWidthRowUi(): void {
+/*    private createFullWidthRowUi(): void {
 
         if (this.embedFullWidth) {
             this.centerRowComp = this.createFullWidthRowCell(this.bodyRowContainerComp, null);
@@ -324,7 +343,7 @@ export class RowController extends BeanStub {
             // otherwise we add to the fullWidth container as normal
             this.fullWidthRowComp = this.createFullWidthRowCell(this.fullWidthRowContainerComp, null);
         }
-    }
+    }*/
 
     private setAnimateFlags(animateIn: boolean): void {
         if (animateIn) {
@@ -349,6 +368,10 @@ export class RowController extends BeanStub {
 
     public isFullWidth(): boolean {
         return this.rowType !== RowType.Normal;
+    }
+
+    public getRowType(): RowType {
+        return this.rowType;
     }
 
     public refreshFullWidth(): boolean {
@@ -496,13 +519,6 @@ export class RowController extends BeanStub {
         if (this.isFullWidth()) { return; }
 
         this.updateColumnLists();
-    }
-
-    private destroyFullWidthComponents(): void {
-        this.fullWidthRowDestroyFuncs.forEach(f => f());
-        this.fullWidthRowDestroyFuncs = [];
-
-        this.allRowComps.forEach( rowComp => rowComp.destroyFullWidthComponent() );
     }
 
     private onVirtualColumnsChanged(): void {
@@ -686,6 +702,7 @@ export class RowController extends BeanStub {
         }
     }
 
+/*
     private createFullWidthRowCell(rowContainerComp: RowContainerComp, pinned: string | null): RowComp {
 
         const rowComp = this.newRowComp(rowContainerComp, pinned);
@@ -731,8 +748,9 @@ export class RowController extends BeanStub {
 
         return rowComp;
     }
+*/
 
-    private setupDetailRowAutoHeight(eDetailGui: HTMLElement): void {
+    public setupDetailRowAutoHeight(eDetailGui: HTMLElement): void {
 
         if (!this.beans.gridOptionsWrapper.isDetailRowAutoHeight()) { return; }
 
@@ -760,7 +778,7 @@ export class RowController extends BeanStub {
 
         const resizeObserverDestroyFunc = this.beans.resizeObserverService.observeResize(eDetailGui, checkRowSizeFunc);
 
-        this.fullWidthRowDestroyFuncs.push(resizeObserverDestroyFunc);
+        this.addDestroyFunc(resizeObserverDestroyFunc);
 
         checkRowSizeFunc();
     }
@@ -771,7 +789,7 @@ export class RowController extends BeanStub {
         this.beans.$compile(element)(this.scope);
     }
 
-    private createFullWidthParams(eRow: HTMLElement, pinned: string | null): any {
+    public createFullWidthParams(eRow: HTMLElement, pinned: string | null): any {
         const params = {
             fullWidth: true,
             data: this.rowNode.data,
@@ -982,7 +1000,7 @@ export class RowController extends BeanStub {
         });
     }
 
-    private refreshAriaLabel(node: HTMLElement, selected: boolean): void {
+    public refreshAriaLabel(node: HTMLElement, selected: boolean): void {
         if (selected && this.beans.gridOptionsWrapper.isSuppressRowDeselection()) {
             node.removeAttribute('aria-label');
             return;
@@ -1083,7 +1101,6 @@ export class RowController extends BeanStub {
         // why do we have this method? shouldn't everything below be added as a destroy func beside
         // the corresponding create logic?
 
-        this.destroyFullWidthComponents();
         this.setupRemoveAnimation();
 
         const event: VirtualRowRemovedEvent = this.createRowEvent(Events.EVENT_VIRTUAL_ROW_REMOVED);

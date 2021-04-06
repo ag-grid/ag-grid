@@ -393,3 +393,5 @@ export interface LeftPinnedWidthChangedEvent extends AgEvent {} // not documente
 export interface RightPinnedWidthChangedEvent extends AgEvent {} // not documented
 
 export interface RowContainerHeightChanged extends AgEvent {} // not documented
+
+export interface DisplayedRowsChangedEvent extends AgEvent {} // not documented

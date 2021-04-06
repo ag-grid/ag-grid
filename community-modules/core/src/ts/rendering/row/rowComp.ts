@@ -5,11 +5,14 @@ import { Beans } from "../beans";
 import { RowNode } from "../../entities/rowNode";
 import { addCssClass, setDomChildOrder } from "../../utils/dom";
 import { escapeString } from "../../utils/string";
-import { RowController } from "./rowController";
+import { FullWidthKeys, FullWidthRenderers, RowController, RowType } from "./rowController";
 import { exists, missing } from "../../utils/generic";
 import { Column } from "../../entities/column";
 import { CellComp } from "../cellComp";
 import { iterateObject } from "../../utils/object";
+import { Constants } from "../../constants/constants";
+import { ModuleRegistry } from "../../modules/moduleRegistry";
+import { ModuleNames } from "../../modules/moduleNames";
 
 export class RowComp extends Component {
 
@@ -26,20 +29,84 @@ export class RowComp extends Component {
 
     private cellComps: { [key: string]: CellComp | null; } = {};
 
-    constructor(controller: RowController, container: RowContainerComp, beans: Beans, rowNode: RowNode, pinned: string | null) {
+    constructor(controller: RowController, container: RowContainerComp, beans: Beans, pinned: string | null) {
         super();
 
         this.container = container;
         this.beans = beans;
-        this.rowNode = rowNode;
+        this.rowNode = controller.getRowNode();
         this.pinned = pinned;
         this.controller = controller;
 
         const template = this.createTemplate();
         this.setTemplate(template);
-        container.appendRow(this.getGui());
 
         this.afterRowAttached();
+
+        switch (pinned) {
+            case Constants.PINNED_LEFT:
+                controller.setLeftRowComp(this);
+                break;
+            case Constants.PINNED_RIGHT:
+                controller.setRightRowComp(this);
+                break;
+            default:
+                if (controller.isFullWidth() && !beans.gridOptionsWrapper.isEmbedFullWidthRows()) {
+                    controller.setFullWidthRowComp(this);
+                } else {
+                    controller.setCenterRowComp(this);
+                }
+                break;
+        }
+
+        if (controller.isFullWidth()) {
+            this.createFullWidthRowCell();
+        } else {
+            this.onColumnChanged();
+            this.controller.refreshAriaLabel(this.getGui(), !!this.rowNode.isSelected());
+        }
+    }
+
+    private createFullWidthRowCell(): void {
+
+        const params = this.controller.createFullWidthParams(this.getGui(), this.pinned);
+
+        const callback = (cellRenderer: ICellRendererComp) => {
+            if (this.isAlive()) {
+                const eGui = cellRenderer.getGui();
+                this.getGui().appendChild(eGui);
+                if (this.controller.getRowType()===RowType.FullWidthDetail) {
+                    this.controller.setupDetailRowAutoHeight(eGui);
+                }
+                this.setFullWidthRowComp(cellRenderer);
+            } else {
+                this.beans.context.destroyBean(cellRenderer);
+            }
+        };
+
+        // if doing master detail, it's possible we have a cached row comp from last time detail was displayed
+        const cachedDetailComp = this.beans.detailRowCompCache.get(this.rowNode, this.pinned);
+        if (cachedDetailComp) {
+            callback(cachedDetailComp);
+        } else {
+            const cellRendererType = FullWidthKeys.get(this.controller.getRowType())!;
+            const cellRendererName = FullWidthRenderers.get(this.controller.getRowType())!;
+
+            const res = this.beans.userComponentFactory.newFullWidthCellRenderer(params, cellRendererType, cellRendererName);
+            if (res) {
+                res.then(callback);
+            } else {
+                const masterDetailModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.MasterDetailModule);
+                if (cellRendererName === 'agDetailCellRenderer' && !masterDetailModuleLoaded) {
+                    console.warn(`AG Grid: cell renderer agDetailCellRenderer (for master detail) not found. Did you forget to include the master detail module?`);
+                } else {
+                    console.error(`AG Grid: fullWidthCellRenderer ${cellRendererName} not found`);
+                }
+            }
+        }
+
+        // fixme - what to do here?
+        // this.angular1Compile(eRow);
     }
 
     public onColumnChanged(): void {
@@ -132,7 +199,6 @@ export class RowComp extends Component {
 
     public destroy(): void {
         super.destroy();
-        this.container.removeRow(this.getGui());
         this.destroyAllCells();
     }
 
@@ -146,18 +212,16 @@ export class RowComp extends Component {
     }
 
     public setFullWidthRowComp(fullWidthRowComponent: ICellRendererComp): void {
+        if (this.fullWidthRowComponent) { console.error('AG Grid - should not be setting fullWidthRowComponent twice');}
         this.fullWidthRowComponent = fullWidthRowComponent;
+        this.addDestroyFunc( ()=> {
+            this.beans.detailRowCompCache.addOrDestroy(this.rowNode, this.pinned, fullWidthRowComponent);
+            this.fullWidthRowComponent = null;
+        });
     }
 
     public getFullWidthRowComp(): ICellRendererComp | null | undefined {
         return this.fullWidthRowComponent;
-    }
-
-    public destroyFullWidthComponent(): void {
-        if (this.fullWidthRowComponent) {
-            this.beans.detailRowCompCache.addOrDestroy(this.rowNode, this.pinned, this.fullWidthRowComponent);
-            this.fullWidthRowComponent = null;
-        }
     }
 
     private createTemplate(): string {

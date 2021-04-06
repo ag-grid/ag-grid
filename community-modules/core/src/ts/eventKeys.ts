@@ -167,6 +167,7 @@ export class Events {
     public static EVENT_COLUMN_HOVER_CHANGED = 'columnHoverChanged';
     public static EVENT_FLASH_CELLS = 'flashCells';
     public static EVENT_PAGINATION_PIXEL_OFFSET_CHANGED = 'paginationPixelOffsetChanged';
+    public static EVENT_DISPLAYED_ROWS_CHANGED = 'displayedRowsChanged';
 
     public static EVENT_LEFT_PINNED_WIDTH_CHANGED = 'leftPinnedWidthChanged';
     public static EVENT_RIGHT_PINNED_WIDTH_CHANGED = 'rightPinnedWidthChanged';
