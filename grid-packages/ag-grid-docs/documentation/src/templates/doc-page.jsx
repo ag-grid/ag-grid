@@ -73,7 +73,9 @@ const DocPageTemplate = ({ data, pageContext: { framework, pageName } }) => {
     },
   }).Compiler;
 
-  let { title, description } = page.frontmatter;
+  let { title, description, version } = page.frontmatter;
+
+  version = version || '';
 
   if (!description) {
     // If no description is provided in the Markdown, we create one from the lead paragraph
@@ -84,7 +86,7 @@ const DocPageTemplate = ({ data, pageContext: { framework, pageName } }) => {
     }
   }
 
-  const pageTitle = getHeaderTitle(title, framework, pageName.startsWith('charts-'), page.frontmatter.rootPage);
+  const pageTitle = getHeaderTitle(title, framework, version, pageName.startsWith('charts-'), page.frontmatter.rootPage);
 
   return (
     <div id="doc-page-wrapper" className={styles['doc-page-wrapper']}>
@@ -104,6 +106,7 @@ export const pageQuery = graphql`
       htmlAst
       frontmatter {
         title
+        version
         enterprise
         description
         rootPage
