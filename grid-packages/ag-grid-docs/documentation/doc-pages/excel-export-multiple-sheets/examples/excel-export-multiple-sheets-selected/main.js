@@ -34,7 +34,7 @@ function onBtExport() {
         node.setSelected(true);
 
         if (index % 100 === 99) {
-            spreadsheets.push(gridOptions.api.getGridRawDataForExcel({
+            spreadsheets.push(gridOptions.api.getSheetDataForExcel({
                 onlySelected: true
             }));
         }
@@ -43,7 +43,7 @@ function onBtExport() {
     // check if the last page was exported
 
     if (gridOptions.api.getSelectedNodes().length) {
-        spreadsheets.push(gridOptions.api.getGridRawDataForExcel({
+        spreadsheets.push(gridOptions.api.getSheetDataForExcel({
             onlySelected: true
         }));
         gridOptions.api.deselectAll();

@@ -3,24 +3,19 @@ title: "Excel Export - Page Setup"
 enterprise: true
 ---
 
+[[warning]]
+| The value of the margins must be provided in `inches`.
+
 <grid-example title='Excel Export - Page Setup' name='excel-export-page-setup' type='generated' options='{ "enterprise": true, "exampleHeight": 815 }'></grid-example>
 
 ## Interfaces
 
 ### ExcelExportParams
-
 ```ts
 interface ExcelExportParams {
     // ...
-    sheetConfig?: ExcelSheetConfig;
-}
-```
-
-### ExcelExportParams
-```ts
-interface ExcelSheetConfig {
     margins?: ExcelSheetMargin;
-    setup?: ExcelSheetPageSetup;
+    pageSetup?: ExcelSheetPageSetup
 }
 ```
 

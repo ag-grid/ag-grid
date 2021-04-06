@@ -127,8 +127,8 @@ function onExcelExport() {
     var spreadsheets = [];
     
     spreadsheets.push(
-        leftGridOptions.api.getGridRawDataForExcel({ sheetName: 'Athletes' }),
-        rightGridOptions.api.getGridRawDataForExcel({ sheetName: 'Selected Athletes' })
+        leftGridOptions.api.getSheetDataForExcel({ sheetName: 'Athletes' }),
+        rightGridOptions.api.getSheetDataForExcel({ sheetName: 'Selected Athletes' })
     );
 
     // could be leftGridOptions or rightGridOptions

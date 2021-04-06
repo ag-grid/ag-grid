@@ -109,8 +109,8 @@ const TwoGridsWithMultipleRecordsExample = () => {
         var spreadsheets = [];
         
         spreadsheets.push(
-            leftApi.getGridRawDataForExcel({ sheetName: 'Athletes' }),
-            rightApi.getGridRawDataForExcel({ sheetName: 'Selected Athletes' })
+            leftApi.getSheetDataForExcel({ sheetName: 'Athletes' }),
+            rightApi.getSheetDataForExcel({ sheetName: 'Selected Athletes' })
         );
     
         exportMultipleSheetsAsExcel({

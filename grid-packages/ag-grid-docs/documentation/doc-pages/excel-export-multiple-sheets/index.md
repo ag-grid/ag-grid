@@ -7,13 +7,13 @@ Excel Export provides a way to export an Excel file with multiple sheets, this c
 
 ## How it works
 
-A raw Excel Sheet can be exported from the grid by calling the `getGridRawDataForExcel` method. This will start the `Multiple Sheet Export` process. The results of calling `getGridRawDataForExcel` should be stored in an Array, and once all needed sheets have been stored, the `exportMultipleSheetsAsExcel` or `getMultipleSheetsAsExcel` method should be called.
+A raw Excel Sheet can be exported from the grid by calling the `getSheetDataForExcel` method. This will start the `Multiple Sheet Export` process. The results of calling `getSheetDataForExcel` should be stored in an Array, and once all needed sheets have been stored, the `exportMultipleSheetsAsExcel` or `getMultipleSheetsAsExcel` method should be called.
 
 [[note]]
 | When using modules, the `exportMultipleSheetsAsExcel` and `getMultipleSheetsAsExcel` functions can be imported directly from the `excel-export` module as `import { exportMultipleSheetsAsExcel, getMultipleSheetsAsExcel } from '@ag-grid-enterprise/excel-export'`.
 
 [[warning]]
-| Calling `getGridRawDataForExcel` will start a Multiple Sheet export process, that can only be ended by calling `exportMultipleSheetsAsExcel` or `getMultipleSheetsAsExcel`. Before this process is ended, no data will be able to be exported from the grid using `exportDataAsExcel` or `getDataAsExcel`.
+| Calling `getSheetDataForExcel` will start a Multiple Sheet export process, that can only be ended by calling `exportMultipleSheetsAsExcel` or `getMultipleSheetsAsExcel`. Before this process is ended, no data will be able to be exported from the grid using `exportDataAsExcel` or `getDataAsExcel`.
 
 ## Example with Data Selection
 In this example, we combine the `onlySelected=true` property to limit the export to 100 rows per sheet.
@@ -48,7 +48,7 @@ Note the following:
 
 ### API Methods
 
-<api-documentation source='grid-api/api.json' section='export' names='["getGridRawDataForExcel()", "getMultipleSheetsAsExcel()", "exportMultipleSheetsAsExcel()"]'></api-documentation>
+<api-documentation source='grid-api/api.json' section='export' names='["getSheetDataForExcel()", "getMultipleSheetsAsExcel()", "exportMultipleSheetsAsExcel()"]'></api-documentation>
 
 ## Interfaces
 
@@ -59,7 +59,7 @@ Note the following:
 interface ExcelExportMultipleSheetParams extends ExcelExportParams {
     /**
      * This should contain an array of strings, where each string is the return
-     * of the `api.getGridRawDataForExcel()` method.
+     * of the `api.getSheetDataForExcel()` method.
      */
     data: string[];
 }

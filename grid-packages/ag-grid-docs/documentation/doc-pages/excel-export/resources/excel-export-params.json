@@ -15,7 +15,7 @@
             "type": "number"
         },
         "data": {
-            "description": "Array of strings containing the raw data for Excel workbook sheets. This property is only used when exporting to multiple sheets using `api.exportMultipleSheetsAsExcel()` and the data for each sheet is obtained by calling `api.getGridRawDataForExcel()`.",
+            "description": "Array of strings containing the raw data for Excel workbook sheets. This property is only used when exporting to multiple sheets using `api.exportMultipleSheetsAsExcel()` and the data for each sheet is obtained by calling `api.getSheetDataForExcel()`.",
             "type": "string[]",
             "more": {
                 "name": "Multiple Sheets",
@@ -83,9 +83,13 @@
             "description": "Only export selected rows including other pages (only makes sense when using pagination).",
             "type": "boolean"
         },
-        "sheetConfig": {
+        "margins": {
             "description": "xxx",
-            "type": "ExcelSheetConfig"
+            "type": "ExcelSheetMargin"
+        },
+        "pageSetup": {
+            "description": "xxx",
+            "type": "ExcelSheetPageSetup"
         },
         "skipGroups": {
             "default": "false",
@@ -486,18 +490,6 @@
             "default": "xxx",
             "description": "xxx",
             "type": "boolean"
-        }
-    },
-    "excelSheetConfig": {
-        "margins": {
-            "default": "xxx",
-            "description": "xxx",
-            "type": "ExcelSheetMargin"
-        },
-        "setup": {
-            "default": "xxx",
-            "description": "xxx",
-            "type": "ExcelSheetPageSetup"
         }
     },
     "excelSheetMargin": {

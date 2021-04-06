@@ -38,7 +38,7 @@ function onBtExport() {
         sportFilterInstance.setModel({ values: [sport] });
         gridOptions.api.onFilterChanged();
 
-        spreadsheets.push(gridOptions.api.getGridRawDataForExcel({
+        spreadsheets.push(gridOptions.api.getSheetDataForExcel({
             sheetName: sport
         }));
     }

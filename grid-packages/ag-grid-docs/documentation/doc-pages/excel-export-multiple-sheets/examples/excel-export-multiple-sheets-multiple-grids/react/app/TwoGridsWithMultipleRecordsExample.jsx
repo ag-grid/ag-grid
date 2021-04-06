@@ -193,8 +193,8 @@ export default class extends Component {
         var spreadsheets = [];
         
         spreadsheets.push(
-            this.state.leftApi.getGridRawDataForExcel({ sheetName: 'Athletes' }),
-            this.state.rightApi.getGridRawDataForExcel({ sheetName: 'Selected Athletes' })
+            this.state.leftApi.getSheetDataForExcel({ sheetName: 'Athletes' }),
+            this.state.rightApi.getSheetDataForExcel({ sheetName: 'Selected Athletes' })
         );
     
         exportMultipleSheetsAsExcel({
