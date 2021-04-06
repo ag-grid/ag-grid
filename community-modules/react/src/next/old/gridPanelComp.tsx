@@ -1,8 +1,8 @@
-import {Context, HeaderRootComp, GridBodyComp, ColumnSt, HeaderRowSt, RowSt, CenterRowContainerSt} from "@ag-grid-community/core";
+import {Context, HeaderRootComp, GridBodyComp, ColumnSt, HeaderRowSt, RowSt, RowContainerSt} from "@ag-grid-community/core";
 import React, {useRef, useEffect, useState, MutableRefObject} from "react";
 import {RowComp} from "./rowComp";
 
-export function GridCoreComp(props: { headerRows: HeaderRowSt[], rows: RowSt[], centerRowContainer: CenterRowContainerSt, context: Context }) {
+export function GridCoreComp(props: { headerRows: HeaderRowSt[], rows: RowSt[], centerRowContainer: RowContainerSt, context: Context }) {
     const {context, headerRows, rows, centerRowContainer} = props;
     return (
         <div className="ag-root-wrapper ag-layout-normal ag-ltr">
@@ -13,7 +13,7 @@ export function GridCoreComp(props: { headerRows: HeaderRowSt[], rows: RowSt[], 
     );
 }
 
-export function GridPanelComp(props: { headerRows: HeaderRowSt[], rows: RowSt[], centerRowContainer: CenterRowContainerSt, context: Context }) {
+export function GridPanelComp(props: { headerRows: HeaderRowSt[], rows: RowSt[], centerRowContainer: RowContainerSt, context: Context }) {
 
     const {headerRows, rows, centerRowContainer, context} = props;
 

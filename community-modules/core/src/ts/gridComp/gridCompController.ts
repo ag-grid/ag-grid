@@ -52,17 +52,10 @@ export class GridCompController extends BeanStub {
     private eGridComp: HTMLElement;
     private gridBodyComp: GridBodyComp;
 
-    private sideBarComp: ISideBar & Component
-
     private logger: Logger;
 
-    constructor(view: GridCompView, eGridDiv: HTMLElement, eGridComp: HTMLElement, sideBarComp: ISideBar & Component, gridBodyComp: GridBodyComp) {
+    constructor() {
         super();
-        this.view = view;
-        this.eGridHostDiv = eGridDiv;
-        this.eGridComp = eGridComp;
-        this.sideBarComp = sideBarComp;
-        this.gridBodyComp = gridBodyComp;
     }
 
     @PostConstruct
@@ -81,6 +74,13 @@ export class GridCompController extends BeanStub {
         if (ModuleRegistry.isRegistered(ModuleNames.ClipboardModule)) {
             this.clipboardService.registerGridCompController(this);
         }
+    }
+
+    public setView(view: GridCompView, eGridDiv: HTMLElement, eGridComp: HTMLElement, gridBodyComp: GridBodyComp): void {
+        this.view = view;
+        this.eGridHostDiv = eGridDiv;
+        this.eGridComp = eGridComp;
+        this.gridBodyComp = gridBodyComp;
 
         this.createManagedBean(new LayoutFeature(this.view));
 
@@ -96,11 +96,25 @@ export class GridCompController extends BeanStub {
             this.view.addOrRemoveKeyboardFocusClass(false);
         });
 
-        this.logger.log('ready');
-
         const unsubscribeFromResize = this.resizeObserverService.observeResize(
             this.eGridHostDiv, this.onGridSizeChanged.bind(this));
         this.addDestroyFunc(() => unsubscribeFromResize());
+    }
+
+    public showDropZones(): boolean {
+        return ModuleRegistry.isRegistered(ModuleNames.RowGroupingModule);
+    }
+
+    public showSideBar(): boolean {
+        return ModuleRegistry.isRegistered(ModuleNames.SideBarModule);
+    }
+
+    public showStatusBar(): boolean {
+        return ModuleRegistry.isRegistered(ModuleNames.StatusBarModule);
+    }
+
+    public showWatermark(): boolean {
+        return ModuleRegistry.isRegistered(ModuleNames.EnterpriseCoreModule);;
     }
 
     private onGridSizeChanged(): void {

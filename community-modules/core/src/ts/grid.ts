@@ -265,7 +265,7 @@ export class GridCoreCreator {
             { componentName: 'AgSlider', componentClass: AgSlider },
             { componentName: 'AgAngleSelect', componentClass: AgAngleSelect },
             { componentName: 'AgColorPicker', componentClass: AgColorPicker },
-            { componentName: 'AgGridPanel', componentClass: GridBodyComp },
+            { componentName: 'AgGridBody', componentClass: GridBodyComp },
             { componentName: 'AgHeaderRoot', componentClass: HeaderRootComp },
             { componentName: 'AgPagination', componentClass: PaginationComp },
             { componentName: 'AgOverlayWrapper', componentClass: OverlayWrapperComponent },

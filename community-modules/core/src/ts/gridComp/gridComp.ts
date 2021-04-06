@@ -25,7 +25,7 @@ export class GridComp extends ManagedFocusComponent {
 
     private logger: Logger;
     private eGridDiv: HTMLElement;
-    private controller: GridCompController;
+    private con: GridCompController;
 
     constructor(eGridDiv: HTMLElement) {
         super(undefined, true);
@@ -34,9 +34,6 @@ export class GridComp extends ManagedFocusComponent {
 
     protected postConstruct(): void {
         this.logger = this.loggerFactory.create('GridComp');
-
-        const template = this.createTemplate();
-        this.setTemplate(template);
 
         const view: GridCompView = {
             destroyGridUi:
@@ -50,7 +47,12 @@ export class GridComp extends ManagedFocusComponent {
             getFocusableContainers: this.getFocusableContainers.bind(this)
         };
 
-        this.controller = this.createManagedBean(new GridCompController(view, this.getGui(), this.eGridDiv, this.sideBarComp, this.gridBodyComp));
+        this.con = this.createManagedBean(new GridCompController());
+
+        const template = this.createTemplate();
+        this.setTemplate(template);
+
+        this.con.setView(view, this.getGui(), this.eGridDiv, this.gridBodyComp);
 
         this.insertGridIntoDom();
 
@@ -77,21 +79,16 @@ export class GridComp extends ManagedFocusComponent {
     }
 
     private createTemplate(): string {
-        const sideBarModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.SideBarModule);
-        const statusBarModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.StatusBarModule);
-        const rowGroupingLoaded = ModuleRegistry.isRegistered(ModuleNames.RowGroupingModule);
-        const enterpriseCoreLoaded = ModuleRegistry.isRegistered(ModuleNames.EnterpriseCoreModule);
-
-        const dropZones = rowGroupingLoaded ? '<ag-grid-header-drop-zones></ag-grid-header-drop-zones>' : '';
-        const sideBar = sideBarModuleLoaded ? '<ag-side-bar ref="sideBar"></ag-side-bar>' : '';
-        const statusBar = statusBarModuleLoaded ? '<ag-status-bar ref="statusBar"></ag-status-bar>' : '';
-        const watermark = enterpriseCoreLoaded ? '<ag-watermark></ag-watermark>' : '';
+        const dropZones = this.con.showDropZones() ? '<ag-grid-header-drop-zones></ag-grid-header-drop-zones>' : '';
+        const sideBar = this.con.showSideBar() ? '<ag-side-bar ref="sideBar"></ag-side-bar>' : '';
+        const statusBar = this.con.showStatusBar() ? '<ag-status-bar ref="statusBar"></ag-status-bar>' : '';
+        const watermark = this.con.showWatermark() ? '<ag-watermark></ag-watermark>' : '';
 
         const template = /* html */
             `<div ref="eRootWrapper" class="ag-root-wrapper">
                 ${dropZones}
                 <div class="ag-root-wrapper-body" ref="rootWrapperBody">
-                    <ag-grid-panel ref="gridBody"></ag-grid-panel>
+                    <ag-grid-body ref="gridBody"></ag-grid-body>
                     ${sideBar}
                 </div>
                 ${statusBar}
@@ -132,7 +129,7 @@ export class GridComp extends ManagedFocusComponent {
             if (this.focusController.focusGridView(lastColumn, true)) { return true; }
         }
 
-        return this.controller.focusGridHeader();
+        return this.con.focusGridHeader();
     }
 
     protected onTabKeyDown(): void { }

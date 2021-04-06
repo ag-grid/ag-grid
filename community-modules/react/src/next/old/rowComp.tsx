@@ -9,7 +9,7 @@ export function RowComp(props: {row: RowSt}) {
 
     return (
         <div className={`ag-row ag-row-no-focus ${evenOddClass} ag-row-level-0 ag-row-position-absolute`}  role="row" row-index="999"
-             aria-rowindex="999" row-id="999" row-business-key="999"
+             row-id="999" row-business-key="999"
              style={{
                  height: row.height + 'px',
                  top: row.top + 'px'

@@ -1,13 +1,9 @@
 import {AgGridColumn} from "../agGridColumn";
-import {ComponentUtil, Grid, Context, GridOptions, HeaderRowSt, HeadlessService, RowSt, RowContainerSt} from "ag-grid-community";
+import {ComponentUtil, GridCoreCreator, Context, GridOptions, HeaderRowSt, HeadlessService, RowSt, RowContainerSt} from "ag-grid-community";
 import React, {useEffect, useState} from "react";
-import {GridCoreComp} from "./gridPanelComp";
+import {GridComp} from "./gridComp";
 
 export function AgGridReactNext(props: any) {
-
-    const [headerRows, setHeaderRows] = useState<HeaderRowSt[]>([]);
-    const [rows, setRows] = useState<RowSt[]>([]);
-    const [centerRowContainer, setCenterRowContainer] = useState<RowContainerSt>({height: 0, width: 0});
 
     const [context, setContext] = useState<Context>();
 
@@ -34,37 +30,19 @@ export function AgGridReactNext(props: any) {
         const destroyFuncs: (()=>void)[] = [];
 
         // don't need the return value
-        new Grid(null!, gridOptions, gridParams);
+        new GridCoreCreator().create(null as any as HTMLElement, gridOptions, context => {
+            setContext(context);
+        }, gridParams);
+
+        // new Grid(null!, gridOptions, gridParams);
         destroyFuncs.push( ()=>gridOptions.api!.destroy() );
-
-        const headlessService: HeadlessService = (gridOptions.api as any).headlessService;
-
-        setContext((gridOptions.api as any).context);
-
-        const addHeadlessServiceEventListener = (event: string, listener: (()=>void)) => {
-            listener();
-            headlessService.addEventListener(event, listener);
-            destroyFuncs.push( ()=> headlessService.removeEventListener(event, listener))
-        };
-
-        addHeadlessServiceEventListener(HeadlessService.EVENT_ROWS_UPDATED, ()=> {
-            setRows(headlessService.getRows());
-        });
-
-        addHeadlessServiceEventListener(HeadlessService.EVENT_HEADERS_UPDATED, ()=> {
-            setHeaderRows(headlessService.getHeaderRows());
-        });
-
-        addHeadlessServiceEventListener(HeadlessService.EVENT_ROW_CONTAINER_UPDATED, ()=> {
-            setCenterRowContainer(headlessService.getCenterRowContainer());
-        });
 
         return ()=> destroyFuncs.forEach( f => f() );
     }, []);
 
     return (
         <>
-            {context && <GridCoreComp rows={rows} headerRows={headerRows} centerRowContainer={centerRowContainer} context={context} /> }
+            {context && <GridComp context={context} /> }
         </>
     );
 }
