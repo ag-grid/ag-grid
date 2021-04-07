@@ -1382,12 +1382,6 @@
                 }
             }
         },
-        "checkGridSize()": {
-            "description": "Tells the grid to check its size again (which decides which columns and rows to render). Calling this method can be useful if you do not have the grid in the DOM when you first create it, after the grid is placed in the DOM.",
-            "type": {
-                "arguments": {}
-            }
-        },
         "resetRowHeights()": {
             "description": "Tells the grid to recalculate the row heights.",
             "type": {

@@ -527,7 +527,6 @@ export class GridApi {
 
     public refreshHeader() {
         this.headerRootComp.refreshHeader();
-        this.gridBodyComp.setHeaderAndFloatingHeights();
     }
 
     public isAnyFilterPresent(): boolean {
@@ -1556,7 +1555,7 @@ export class GridApi {
     }
 
     public checkGridSize(): void {
-        this.gridBodyComp.setHeaderAndFloatingHeights();
+        console.warn(`in AG Grid v25.2.0, checkGridSize() was removed, as it was legacy and didn't do anything uesful.`);
     }
 
     public getFirstRenderedRow(): number {

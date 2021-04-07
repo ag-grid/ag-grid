@@ -839,7 +839,7 @@ export class GridBodyComp extends Component implements LayoutView {
         }
     }
 
-    public setHeaderAndFloatingHeights(): void {
+    private setHeaderAndFloatingHeights(): void {
         this.setHeaderHeight();
         this.setFloatingHeights();
     }
