@@ -1,10 +1,11 @@
 import { BeanStub } from "../context/beanStub";
-import { Autowired, PostConstruct } from "../context/context";
+import { Autowired, PostConstruct, PreConstruct } from "../context/context";
 import { LayoutFeature, LayoutView } from "../styling/layoutFeature";
 import { Constants } from "../constants/constants";
 import { Events } from "../eventKeys";
 import { RowContainerHeightService } from "../rendering/rowContainerHeightService";
 import { ControllersService } from "../controllersService";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
 
 export enum RowAnimationCssClasses {
     ANIMATION_ON = 'ag-row-animation',
@@ -42,7 +43,7 @@ export class GridBodyController extends BeanStub {
     private postConstruct(): void {
         this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
         this.printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
-        this.controllersService.registerGridBodyController(this);
+        this.addEventListeners();
     }
 
     public setView(view: GridBodyView, eGridBody: HTMLElement): void {
@@ -54,6 +55,24 @@ export class GridBodyController extends BeanStub {
         this.createManagedBean(new LayoutFeature(this.view));
 
         this.setupRowAnimationCssClass();
+
+        this.controllersService.registerGridBodyController(this);
+    }
+
+    private addEventListeners(): void {
+        // this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        // this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onDisplayedColumnsWidthChanged.bind(this));
+        // this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.setHeaderAndFloatingHeights.bind(this));
+        // this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
+        // this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, this.onRowDataChanged.bind(this));
+        // this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
+        //
+        // this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_HEADER_HEIGHT, this.setHeaderAndFloatingHeights.bind(this));
+        // this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, this.setHeaderAndFloatingHeights.bind(this));
+        // this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_GROUP_HEADER_HEIGHT, this.setHeaderAndFloatingHeights.bind(this));
+        // this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_GROUP_HEADER_HEIGHT, this.setHeaderAndFloatingHeights.bind(this));
+        // this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_FLOATING_FILTERS_HEIGHT, this.setHeaderAndFloatingHeights.bind(this));
+        // this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
     }
 
     public checkBodyHeight(): void {

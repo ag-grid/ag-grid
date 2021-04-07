@@ -192,8 +192,6 @@ export class GridBodyComp extends Component implements LayoutView {
         this.controller = this.createManagedBean(new GridBodyController());
         this.controller.setView(view, this.getGui());
 
-        this.createManagedBean(new ViewportSizeFeature(this.centerContainer, this.controller));
-
         this.addEventListeners();
         this.addDragListeners();
 
@@ -208,16 +206,6 @@ export class GridBodyComp extends Component implements LayoutView {
         this.disableBrowserDragging();
         this.addBodyViewportListener();
         this.addStopEditingWhenGridLosesFocus();
-
-/*        [
-            this.leftContainer.getContainerElement(),
-            this.rightContainer.getContainerElement(),
-            this.centerContainer.getContainerElement(),
-            this.fullWidthContainer.getContainerElement(),
-            this.eTop, this.eBottom
-        ].forEach( container => {
-            this.createManagedBean(new BodyEventsFeature(container));
-        });*/
 
         this.addRowDragListener();
 

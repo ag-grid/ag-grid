@@ -11,6 +11,9 @@ export class ControllersService {
     private gridCompController: GridCompController;
     private gridBodyController: GridBodyController;
 
+    // should be using promises maybe instead of this? not sure
+    private waitingOnGridBodyCon: ((con: GridBodyController)=>void)[] = [];
+
     public registerGridCompController(gridCompController: GridCompController): void {
         this.gridCompController = gridCompController;
     }
@@ -21,9 +24,19 @@ export class ControllersService {
 
     public registerGridBodyController(gridBodyController: GridBodyController): void {
         this.gridBodyController = gridBodyController;
+        this.waitingOnGridBodyCon.forEach( c => c(this.gridBodyController) );
+        this.waitingOnGridBodyCon.length = 0;
     }
 
     public getGridBodyController(): GridBodyController {
         return this.gridBodyController;
+    }
+
+    public getGridBodyControllerAsync(callback: (con: GridBodyController)=>void ): void {
+        if (this.gridBodyController) {
+            callback(this.gridBodyController);
+        } else {
+            this.waitingOnGridBodyCon.push(callback);
+        }
     }
 }

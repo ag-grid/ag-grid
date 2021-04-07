@@ -8,9 +8,14 @@ import { Events } from "../events";
 import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
 import { RowContainerComp } from "./rowContainer/rowContainerComp";
+import { ControllersService } from "../controllersService";
 
+// listens to changes in the center viewport size, for column and row virtualisation,
+// and adjusts grid as necessary. there are two viewports, one for horizontal and one for
+// vertical scrolling.
 export class ViewportSizeFeature extends BeanStub {
 
+    @Autowired('controllersService') private controllersService: ControllersService;
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
@@ -22,17 +27,18 @@ export class ViewportSizeFeature extends BeanStub {
 
     private centerWidth: number;
 
-    constructor(centerContainer: RowContainerComp, gridBodyCon: GridBodyController) {
+    constructor(centerContainer: RowContainerComp) {
         super();
         this.centerContainer = centerContainer;
-        this.gridBodyCon = gridBodyCon;
     }
 
     @PostConstruct
     private postConstruct(): void {
+        this.controllersService.getGridBodyControllerAsync( gridBodyCon => {
+            this.gridBodyCon = gridBodyCon;
+            this.listenForResize();
+        });
         this.addManagedListener(this.eventService, Events.EVENT_SCROLLBAR_WIDTH_CHANGED, this.onScrollbarWidthChanged.bind(this));
-
-        this.listenForResize();
     }
 
     private listenForResize(): void {
