@@ -3,8 +3,6 @@ import {LayoutCssClasses, UpdateLayoutClassesParams, FocusController, GridBodyCo
 
 export function GridComp(params: {context: Context}) {
 
-    const [con, setCon] = useState<GridCompController>();
-
     const [rtlClass, setRtlClass] = useState<string>('');
     const [keyboardFocusClass, setKeyboardFocusClass] = useState<string>('');
     const [layoutClass, setLayoutClass] = useState<string>('');
@@ -16,7 +14,6 @@ export function GridComp(params: {context: Context}) {
 
     useEffect( ()=> {
         const con = context.createBean(new GridCompController());
-        setCon(con);
 
         const view: GridCompView = {
             destroyGridUi:
