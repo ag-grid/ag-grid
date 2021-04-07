@@ -1,5 +1,5 @@
 import {AgGridColumn} from "../agGridColumn";
-import {ComponentUtil, GridCoreCreator, Context, GridOptions, HeaderRowSt, HeadlessService, RowSt, RowContainerSt} from "@ag-grid-community/core";
+import {ComponentUtil, GridCoreCreator, Context, GridOptions} from "@ag-grid-community/core";
 import React, {useEffect, useState} from "react";
 import {GridComp} from "./gridComp";
 
@@ -30,7 +30,8 @@ export function AgGridReactNext(props: any) {
         const destroyFuncs: (()=>void)[] = [];
 
         // don't need the return value
-        new GridCoreCreator().create(null as any as HTMLElement, gridOptions, context => {
+        const gridCoreCreator = new GridCoreCreator();
+        gridCoreCreator.create(null as any as HTMLElement, gridOptions, context => {
             setContext(context);
         }, gridParams);
 
@@ -42,7 +43,7 @@ export function AgGridReactNext(props: any) {
 
     return (
         <>
-            {context && <GridComp context={context} /> }
+            {context && <GridComp context={context}/> }
         </>
     );
 }

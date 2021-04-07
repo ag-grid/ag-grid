@@ -206,6 +206,7 @@ export { IGetRowsParams, IDatasource } from "./interfaces/iDatasource";
 
 //styling
 export { StylingService } from "./styling/stylingService";
+export { UpdateLayoutClassesParams, LayoutCssClasses } from "./styling/layoutFeature";
 
 // widgets
 export { AgAbstractField, FieldElement } from "./widgets/agAbstractField";
