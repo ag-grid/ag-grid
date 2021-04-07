@@ -3,6 +3,7 @@ import { RefSelector } from "../widgets/componentAnnotations";
 import { PostConstruct } from "../context/context";
 import { FakeHorizontalScrollController, FakeHorizontalScrollView } from "./fakeHorizontalScrollController";
 import { addOrRemoveCssClass, setFixedHeight, setFixedWidth } from "../utils/dom";
+import { CenterWidthFeature } from "./centerWidthFeature";
 
 export class FakeHorizontalScrollComp extends Component {
 
@@ -41,6 +42,8 @@ export class FakeHorizontalScrollComp extends Component {
                 addOrRemoveCssClass(this.eRightSpacer, cssClass, include),
         };
         this.controller = this.createManagedBean(new FakeHorizontalScrollController(view));
+
+        this.createManagedBean(new CenterWidthFeature( width => this.eContainer.style.width = `${width}px`));
     }
 
     public getViewport(): HTMLElement {

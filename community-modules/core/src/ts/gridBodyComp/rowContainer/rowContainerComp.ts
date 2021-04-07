@@ -24,6 +24,7 @@ import { RowController } from "../../rendering/row/rowController";
 import { Beans } from "../../rendering/beans";
 import { Constants } from "../../constants/constants";
 import { ViewportSizeFeature } from "../viewportSizeFeature";
+import { CenterWidthFeature } from "../centerWidthFeature";
 
 export enum RowContainerNames {
     LEFT = 'left',
@@ -175,6 +176,9 @@ export class RowContainerComp extends Component {
 
         this.forContainers([RowContainerNames.CENTER],
             ()=> this.createManagedBean(new ViewportSizeFeature(this)))
+
+        this.forContainers([RowContainerNames.CENTER, RowContainerNames.TOP_CENTER, RowContainerNames.BOTTOM_CENTER],
+            ()=> this.createManagedBean(new CenterWidthFeature(width => this.eContainer.style.width = `${width}px`)))
 
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_ROWS_CHANGED, this.onDisplayedRowsChanged.bind(this));
     }

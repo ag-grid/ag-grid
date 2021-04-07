@@ -16,6 +16,7 @@ import { exists } from '../utils/generic';
 import { KeyName } from '../constants/keyName';
 import { SetPinnedLeftWidthFeature } from "../gridBodyComp/rowContainer/setPinnedLeftWidthFeature";
 import { PinnedWidthService } from "../gridBodyComp/pinnedWidthService";
+import { CenterWidthFeature } from "../gridBodyComp/centerWidthFeature";
 
 export type HeaderContainerPosition = 'left' | 'right' | 'center';
 
@@ -88,6 +89,8 @@ export class HeaderRootComp extends ManagedFocusComponent {
 
         this.onPivotModeChanged();
         this.addPreventHeaderScroll();
+
+        this.createManagedBean(new CenterWidthFeature(width => this.eHeaderContainer.style.width = `${width}px`));
 
         if (this.columnController.isReady()) {
             this.refreshHeader();
@@ -211,10 +214,6 @@ export class HeaderRootComp extends ManagedFocusComponent {
 
     public getHeaderContainers(): Map<HeaderContainerPosition, HeaderContainer> {
         return this.headerContainers;
-    }
-
-    public setHeaderContainerWidth(width: number) {
-        this.eHeaderContainer.style.width = `${width}px`;
     }
 
     private onPinnedLeftWidthChanged(): void {

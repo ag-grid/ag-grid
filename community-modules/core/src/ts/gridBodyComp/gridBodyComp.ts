@@ -315,7 +315,6 @@ export class GridBodyComp extends Component implements LayoutView {
 
         if (this.printLayout !== newPrintLayout) {
             this.printLayout = newPrintLayout;
-            this.setCenterWidth();
         }
     }
 
@@ -806,7 +805,6 @@ export class GridBodyComp extends Component implements LayoutView {
     }
 
     public onDisplayedColumnsChanged(): void {
-        this.setCenterWidth();
         this.setHeaderAndFloatingHeights();
         this.onHorizontalViewportChanged();
         this.updateScrollVisibleService();
@@ -814,7 +812,6 @@ export class GridBodyComp extends Component implements LayoutView {
     }
 
     private onDisplayedColumnsWidthChanged(): void {
-        this.setCenterWidth();
         this.onHorizontalViewportChanged();
         this.updateScrollVisibleService();
 
@@ -825,29 +822,6 @@ export class GridBodyComp extends Component implements LayoutView {
             // the width. to be convinced of this, take out this line, enable RTL,
             // scroll all the way to the left and then resize a column
             this.horizontallyScrollHeaderCenterAndFloatingCenter();
-        }
-    }
-
-    private setCenterWidth(): void {
-        const { headerRootComp, columnController } = this;
-        let width = columnController.getBodyContainerWidth();
-
-        if (this.printLayout) {
-            const pinnedContainerWidths = columnController.getDisplayedColumnsLeftWidth()
-                + columnController.getDisplayedColumnsRightWidth();
-            width += pinnedContainerWidths;
-        }
-
-        headerRootComp.setHeaderContainerWidth(width);
-
-        const widthPx = `${width}px`;
-
-        this.centerContainer.getContainerElement().style.width = widthPx;
-        this.bottomCenterContainer.getContainerElement().style.width = widthPx;
-        this.topCenterContainer.getContainerElement().style.width = widthPx;
-
-        if (!this.printLayout) {
-            this.fakeHScroll.getContainer().style.width = widthPx;
         }
     }
 
