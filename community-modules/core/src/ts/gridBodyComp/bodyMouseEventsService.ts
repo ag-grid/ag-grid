@@ -112,24 +112,4 @@ export class BodyMouseEventsService extends BeanStub {
             this.contextMenuFactory.onContextMenu(mouseEvent, touchEvent, rowNode, column, value, anchorToElement);
         }
     }
-
-/*
-    private onContextMenu(mouseEvent: MouseEvent | null, touchEvent: TouchEvent | null, rowNode: RowNode | null, column: Column | null, value: any, anchorToElement: HTMLElement): void {
-        // to allow us to debug in chrome, we ignore the event if ctrl is pressed.
-        // not everyone wants this, so first 'if' below allows to turn this hack off.
-        if (!this.gridOptionsWrapper.isAllowContextMenuWithControlKey()) {
-            // then do the check
-            if (mouseEvent && (mouseEvent.ctrlKey || mouseEvent.metaKey)) { return; }
-        }
-
-        if (this.contextMenuFactory && !this.gridOptionsWrapper.isSuppressContextMenu()) {
-            const eventOrTouch: (MouseEvent | Touch) = mouseEvent ? mouseEvent : touchEvent!.touches[0];
-            if (this.contextMenuFactory.showMenu(rowNode!, column!, value, eventOrTouch, anchorToElement)) {
-                const event = mouseEvent ? mouseEvent : touchEvent;
-                event!.preventDefault();
-            }
-        }
-    }
-*/
-
 }
