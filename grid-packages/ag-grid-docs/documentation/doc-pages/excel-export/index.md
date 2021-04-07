@@ -74,6 +74,10 @@ Some of the most likely errors you can encounter when exporting to Excel are:
 
 <api-documentation source='excel-export/resources/excel-export-params.json' section='excelExportParams'></api-documentation>
 
+### ExcelExportMultipleSheetParams:
+
+<api-documentation source='excel-export/resources/excel-export-params.json' section='excelExportMultipleSheetParams'></api-documentation>
+
 ### ExcelCell
 
 <api-documentation source='excel-export/resources/excel-export-params.json' section='excelCell'></api-documentation>
@@ -113,10 +117,6 @@ Some of the most likely errors you can encounter when exporting to Excel are:
 ### ExcelProtection
 
 <api-documentation source='excel-export/resources/excel-export-params.json' section='excelProtection'></api-documentation>
-
-### ExcelSheetConfig
-
-<api-documentation source='excel-export/resources/excel-export-params.json' section='excelSheetConfig'></api-documentation>
 
 ### ExcelSheetMargin
 
