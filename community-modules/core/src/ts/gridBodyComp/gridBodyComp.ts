@@ -2,26 +2,19 @@ import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { ColumnApi } from '../columnController/columnApi';
 import { RowRenderer } from '../rendering/rowRenderer';
 import { Autowired, Optional, PostConstruct } from '../context/context';
-import { BodyHeightChangedEvent, BodyScrollEvent, CellKeyDownEvent, CellKeyPressEvent, Events } from '../events';
+import { BodyHeightChangedEvent, BodyScrollEvent, Events } from '../events';
 import { DragListenerParams, DragService } from '../dragAndDrop/dragService';
 import { IRangeController } from '../interfaces/iRangeController';
 import { Constants } from '../constants/constants';
 import { MouseEventService } from './mouseEventService';
-import { IClipboardService } from '../interfaces/iClipboardService';
 import { IContextMenuFactory } from '../interfaces/iContextMenuFactory';
 import { ScrollVisibleService, SetScrollsVisibleParams } from './scrollVisibleService';
-import { Column } from '../entities/column';
-import { RowNode } from '../entities/rowNode';
 import { PaginationProxy } from '../pagination/paginationProxy';
 import { PaginationAutoPageSizeService } from '../pagination/paginationAutoPageSizeService';
 import { AlignedGridsService } from '../alignedGridsService';
 import { GridApi } from '../gridApi';
 import { AnimationFrameService } from '../misc/animationFrameService';
-import { RowController } from '../rendering/row/rowController';
 import { NavigationService } from './navigationService';
-import { CellComp } from '../rendering/cellComp';
-import { ValueService } from '../valueService/valueService';
-import { LongTapEvent, TouchListener } from '../widgets/touchListener';
 import { DragAndDropService } from '../dragAndDrop/dragAndDropService';
 import { RowDragFeature } from './rowDragFeature';
 import { RowContainerHeightService } from '../rendering/rowContainerHeightService';
@@ -35,9 +28,6 @@ import { RefSelector } from '../widgets/componentAnnotations';
 import { HeaderRootComp } from '../headerRendering/headerRootComp';
 import { ResizeObserverService } from '../misc/resizeObserverService';
 import { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
-import { ModuleRegistry } from '../modules/moduleRegistry';
-import { ModuleNames } from '../modules/moduleNames';
-import { UndoRedoService } from '../undoRedo/undoRedoService';
 import { ColumnController } from '../columnController/columnController';
 import { HeaderNavigationService } from '../headerRendering/header/headerNavigationService';
 import { setAriaColCount, setAriaMultiSelectable, setAriaRowCount } from '../utils/aria';
@@ -48,24 +38,16 @@ import {
     getInnerHeight,
     getInnerWidth,
     getScrollLeft,
-    isHorizontalScrollShowing,
     isRtlNegativeScroll,
     isVerticalScrollShowing,
-    isVisible,
     removeCssClass,
-    setDisplayed,
-    setFixedWidth,
     setScrollLeft
 } from '../utils/dom';
 import { getTabIndex, isIOSUserAgent } from '../utils/browser';
-import { missing, missingOrEmpty } from '../utils/generic';
-import { getComponentForEvent, getTarget, isStopPropagationForAgGrid } from '../utils/event';
-import { isUserSuppressingKeyboardEvent } from '../utils/keyboard';
-import { last } from '../utils/array';
-import { KeyCode } from '../constants/keyCode';
+import { missing } from '../utils/generic';
+import { getTarget } from '../utils/event';
 import { PopupService } from "../widgets/popupService";
 import { IMenuFactory } from "../interfaces/iMenuFactory";
-import { KeyName } from '../constants/keyName';
 import { LayoutCssClasses, LayoutView, UpdateLayoutClassesParams } from "../styling/layoutFeature";
 import {
     CSS_CLASS_FORCE_VERTICAL_SCROLL,
@@ -77,7 +59,6 @@ import { FakeHorizontalScrollComp } from "./fakeHorizontalScrollComp";
 import { RowContainerComp, RowContainerNames } from "./rowContainer/rowContainerComp";
 import { ViewportSizeFeature } from "./viewportSizeFeature";
 import { IRowModel } from "../interfaces/iRowModel";
-import { BodyMouseEventsService } from "./bodyMouseEventsService";
 
 const GRID_BODY_TEMPLATE = /* html */
     `<div class="ag-root ag-unselectable" role="grid" unselectable="on">
@@ -126,20 +107,16 @@ export class GridBodyComp extends Component implements LayoutView {
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
     @Autowired('$scope') private $scope: any;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
-    @Autowired('valueService') private valueService: ValueService;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('rowContainerHeightService') private heightScaler: RowContainerHeightService;
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
-    @Autowired('undoRedoService') private undoRedoService: UndoRedoService;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
     @Autowired('popupService') public popupService: PopupService;
-    @Autowired('bodyMouseEventsService') public bodyMouseEventsService: BodyMouseEventsService;
 
     @Optional('rangeController') private rangeController: IRangeController;
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
     @Optional('menuFactory') private menuFactory: IMenuFactory;
-    @Optional('clipboardService') private clipboardService: IClipboardService;
 
     @RefSelector('eBodyViewport') private eBodyViewport: HTMLElement;
     @RefSelector('eTop') private eTop: HTMLElement;
@@ -164,8 +141,6 @@ export class GridBodyComp extends Component implements LayoutView {
 
     @RefSelector('headerRoot') headerRootComp: HeaderRootComp;
     @RefSelector('overlayWrapper') private overlayWrapper: OverlayWrapperComponent;
-
-    private eAllCellContainers: HTMLElement[];
 
     private scrollLeft = -1;
     private scrollTop = -1;
@@ -219,8 +194,6 @@ export class GridBodyComp extends Component implements LayoutView {
 
         this.createManagedBean(new ViewportSizeFeature(this.centerContainer, this.controller));
 
-        this.buildRowContainerComponents();
-
         this.addEventListeners();
         this.addDragListeners();
 
@@ -233,12 +206,18 @@ export class GridBodyComp extends Component implements LayoutView {
 
         this.setHeaderAndFloatingHeights();
         this.disableBrowserDragging();
-        this.addPreventScrollWhileDragging();
-        this.addKeyboardEvents();
         this.addBodyViewportListener();
         this.addStopEditingWhenGridLosesFocus();
 
-        this.eAllCellContainers.forEach( container => this.bodyMouseEventsService.addElement(container));
+/*        [
+            this.leftContainer.getContainerElement(),
+            this.rightContainer.getContainerElement(),
+            this.centerContainer.getContainerElement(),
+            this.fullWidthContainer.getContainerElement(),
+            this.eTop, this.eBottom
+        ].forEach( container => {
+            this.createManagedBean(new BodyEventsFeature(container));
+        });*/
 
         this.addRowDragListener();
 
@@ -479,41 +458,6 @@ export class GridBodyComp extends Component implements LayoutView {
         });
     }
 
-
-
-    // this methods prevents the grid views from being scrolled while the dragService is being used
-    // eg. the view should not scroll up and down while dragging rows using the rowDragComp.
-    private addPreventScrollWhileDragging(): void {
-        const preventScroll = (e: TouchEvent) => {
-            if (this.dragService.isDragging()) {
-                if (e.cancelable) {
-                    e.preventDefault();
-                }
-            }
-        };
-
-        this.eAllCellContainers.forEach(container => {
-            container.addEventListener('touchmove', preventScroll, { passive: false });
-        });
-
-        this.addDestroyFunc(() => {
-            this.eAllCellContainers.forEach(container => {
-                container.removeEventListener('touchmove', preventScroll);
-            });
-        });
-    }
-
-    private addKeyboardEvents(): void {
-        const eventNames = ['keydown', 'keypress'];
-
-        eventNames.forEach(eventName => {
-            const listener = this.processKeyboardEvent.bind(this, eventName);
-            this.eAllCellContainers.forEach(container => {
-                this.addManagedListener(container, eventName, listener);
-            });
-        });
-    }
-
     private addBodyViewportListener(): void {
         // we want to listen for clicks directly on the eBodyViewport, so the user has a way of showing
         // the context menu if no rows or columns are displayed, or user simply clicks outside of a cell
@@ -538,177 +482,9 @@ export class GridBodyComp extends Component implements LayoutView {
         return this.eBodyViewport.getBoundingClientRect();
     }
 
-
-    private processKeyboardEvent(eventName: string, keyboardEvent: KeyboardEvent): void {
-        const cellComp = getComponentForEvent<CellComp>(this.gridOptionsWrapper, keyboardEvent, 'cellComp');
-        const rowComp = getComponentForEvent<RowController>(this.gridOptionsWrapper, keyboardEvent, 'renderedRow');
-
-        if (keyboardEvent.defaultPrevented) { return; }
-        if (cellComp) {
-            this.processCellKeyboardEvent(cellComp, eventName, keyboardEvent);
-        } else if (rowComp && rowComp.isFullWidth()) {
-            this.processFullWidthRowKeyboardEvent(rowComp, eventName, keyboardEvent);
-        }
-    }
-
-    private processCellKeyboardEvent(cellComp: CellComp, eventName: string, keyboardEvent: KeyboardEvent): void {
-        const rowNode = cellComp.getRenderedRow()!.getRowNode();
-        const column = cellComp.getColumn();
-        const editing = cellComp.isEditing();
-
-        const gridProcessingAllowed = !isUserSuppressingKeyboardEvent(this.gridOptionsWrapper, keyboardEvent, rowNode, column, editing);
-
-        if (gridProcessingAllowed) {
-            switch (eventName) {
-                case 'keydown':
-                    // first see if it's a scroll key, page up / down, home / end etc
-                    const wasScrollKey = !editing && this.navigationService.handlePageScrollingKey(keyboardEvent);
-
-                    // if not a scroll key, then we pass onto cell
-                    if (!wasScrollKey) {
-                        cellComp.onKeyDown(keyboardEvent);
-                    }
-
-                    // perform clipboard and undo / redo operations
-                    this.doGridOperations(keyboardEvent, cellComp);
-
-                    break;
-                case 'keypress':
-                    cellComp.onKeyPress(keyboardEvent);
-                    break;
-            }
-        }
-
-        if (eventName === 'keydown') {
-            const cellKeyDownEvent: CellKeyDownEvent = cellComp.createEvent(keyboardEvent, Events.EVENT_CELL_KEY_DOWN);
-            this.eventService.dispatchEvent(cellKeyDownEvent);
-        }
-
-        if (eventName === 'keypress') {
-            const cellKeyPressEvent: CellKeyPressEvent = cellComp.createEvent(keyboardEvent, Events.EVENT_CELL_KEY_PRESS);
-            this.eventService.dispatchEvent(cellKeyPressEvent);
-        }
-    }
-
-    processFullWidthRowKeyboardEvent(rowComp: RowController, eventName: string, keyboardEvent: KeyboardEvent) {
-        const rowNode = rowComp.getRowNode();
-        const focusedCell = this.beans.focusController.getFocusedCell();
-        const column = (focusedCell && focusedCell.column) as Column;
-        const gridProcessingAllowed = !isUserSuppressingKeyboardEvent(this.gridOptionsWrapper, keyboardEvent, rowNode, column, false);
-
-        if (gridProcessingAllowed) {
-            const key = keyboardEvent.key;
-            if (eventName === 'keydown') {
-                switch (key) {
-                    case KeyName.UP:
-                    case KeyName.DOWN:
-                        rowComp.onKeyboardNavigate(keyboardEvent);
-                        break;
-                    case KeyName.TAB:
-                        rowComp.onTabKeyDown(keyboardEvent);
-                    default:
-                }
-            }
-        }
-    }
-
-    private doGridOperations(keyboardEvent: KeyboardEvent, cellComp: CellComp): void {
-        // check if ctrl or meta key pressed
-        if (!keyboardEvent.ctrlKey && !keyboardEvent.metaKey) { return; }
-
-        // if the cell the event came from is editing, then we do not
-        // want to do the default shortcut keys, otherwise the editor
-        // (eg a text field) would not be able to do the normal cut/copy/paste
-        if (cellComp.isEditing()) { return; }
-
-        // for copy / paste, we don't want to execute when the event
-        // was from a child grid (happens in master detail)
-        if (!this.mouseEventService.isEventFromThisGrid(keyboardEvent)) { return; }
-
-        switch (keyboardEvent.which) {
-            case KeyCode.A:
-                return this.onCtrlAndA(keyboardEvent);
-            case KeyCode.C:
-                return this.onCtrlAndC(keyboardEvent);
-            case KeyCode.V:
-                return this.onCtrlAndV();
-            case KeyCode.D:
-                return this.onCtrlAndD(keyboardEvent);
-            case KeyCode.Z:
-                return keyboardEvent.shiftKey ? this.undoRedoService.redo() : this.undoRedoService.undo();
-            case KeyCode.Y:
-                return this.undoRedoService.redo();
-        }
-    }
-
     // gets called by rowRenderer when new data loaded, as it will want to scroll to the top
     public scrollToTop(): void {
         this.eBodyViewport.scrollTop = 0;
-    }
-
-
-
-
-
-
-
-    private onCtrlAndA(event: KeyboardEvent): void {
-
-        const { pinnedRowModel, paginationProxy, rangeController } = this;
-        const { PINNED_BOTTOM, PINNED_TOP } = Constants;
-
-        if (rangeController && paginationProxy.isRowsToRender()) {
-            const [isEmptyPinnedTop, isEmptyPinnedBottom] = [
-                pinnedRowModel.isEmpty(PINNED_TOP),
-                pinnedRowModel.isEmpty(PINNED_BOTTOM)
-            ];
-
-            const floatingStart = isEmptyPinnedTop ? null : PINNED_TOP;
-            let floatingEnd: string | null;
-            let rowEnd: number;
-
-            if (isEmptyPinnedBottom) {
-                floatingEnd = null;
-                rowEnd = this.paginationProxy.getRowCount() - 1;
-            } else {
-                floatingEnd = PINNED_BOTTOM;
-                rowEnd = pinnedRowModel.getPinnedBottomRowData().length - 1;
-            }
-
-            const allDisplayedColumns = this.columnController.getAllDisplayedColumns();
-            if (missingOrEmpty(allDisplayedColumns)) { return; }
-
-            rangeController.setCellRange({
-                rowStartIndex: 0,
-                rowStartPinned: floatingStart,
-                rowEndIndex: rowEnd,
-                rowEndPinned: floatingEnd,
-                columnStart: allDisplayedColumns[0],
-                columnEnd: last(allDisplayedColumns)
-            });
-        }
-        event.preventDefault();
-    }
-
-    private onCtrlAndC(event: KeyboardEvent): void {
-
-        if (!this.clipboardService || this.gridOptionsWrapper.isEnableCellTextSelection()) { return; }
-
-        this.clipboardService.copyToClipboard();
-        event.preventDefault();
-    }
-
-    private onCtrlAndV(): void {
-        if (ModuleRegistry.isRegistered(ModuleNames.ClipboardModule) && !this.gridOptionsWrapper.isSuppressClipboardPaste()) {
-            this.clipboardService.pasteFromClipboard();
-        }
-    }
-
-    private onCtrlAndD(event: KeyboardEvent): void {
-        if (ModuleRegistry.isRegistered(ModuleNames.ClipboardModule) && !this.gridOptionsWrapper.isSuppressClipboardPaste()) {
-            this.clipboardService.copyRangeDown();
-        }
-        event.preventDefault();
     }
 
     // Valid values for position are bottom, middle and top
@@ -1035,12 +811,6 @@ export class GridBodyComp extends Component implements LayoutView {
 
     public getDropTargetRightContainers(): HTMLElement[] {
         return [this.rightContainer.getContainerElement(), this.bottomRightContainer.getContainerElement(), this.topRightContainer.getContainerElement()];
-    }
-
-    private buildRowContainerComponents() {
-        this.eAllCellContainers = [
-            this.leftContainer.getContainerElement(), this.rightContainer.getContainerElement(), this.centerContainer.getContainerElement(),
-            this.eTop, this.eBottom, this.fullWidthContainer.getContainerElement()];
     }
 
     public getFloatingTopBottom(): HTMLElement[] {

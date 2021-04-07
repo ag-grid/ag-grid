@@ -156,7 +156,8 @@ export class RowContainerComp extends Component {
             setViewportHeight: height => this.eViewport.style.height = height,
         };
 
-        this.createManagedBean(new RowContainerController(view, this.name));
+        const con = this.createManagedBean(new RowContainerController(this.name));
+        con.setView(view, this.eContainer);
 
         this.listenOnDomOrder();
 

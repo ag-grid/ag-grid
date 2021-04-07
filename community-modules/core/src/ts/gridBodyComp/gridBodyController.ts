@@ -4,6 +4,7 @@ import { LayoutFeature, LayoutView } from "../styling/layoutFeature";
 import { Constants } from "../constants/constants";
 import { Events } from "../eventKeys";
 import { RowContainerHeightService } from "../rendering/rowContainerHeightService";
+import { ControllersService } from "../controllersService";
 
 export enum RowAnimationCssClasses {
     ANIMATION_ON = 'ag-row-animation',
@@ -28,6 +29,7 @@ export interface GridBodyView extends  LayoutView {
 export class GridBodyController extends BeanStub {
 
     @Autowired('rowContainerHeightService') private rowContainerHeightService: RowContainerHeightService;
+    @Autowired('controllersService') private controllersService: ControllersService;
 
     private view: GridBodyView;
     private eGridBody: HTMLElement;
@@ -40,6 +42,7 @@ export class GridBodyController extends BeanStub {
     private postConstruct(): void {
         this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
         this.printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
+        this.controllersService.registerGridBodyController(this);
     }
 
     public setView(view: GridBodyView, eGridBody: HTMLElement): void {
