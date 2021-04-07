@@ -77,6 +77,7 @@ import { FakeHorizontalScrollComp } from "./fakeHorizontalScrollComp";
 import { RowContainerComp, RowContainerNames } from "./rowContainer/rowContainerComp";
 import { ViewportSizeFeature } from "./viewportSizeFeature";
 import { IRowModel } from "../interfaces/iRowModel";
+import { BodyMouseEventsService } from "./bodyMouseEventsService";
 
 const GRID_BODY_TEMPLATE = /* html */
     `<div class="ag-root ag-unselectable" role="grid" unselectable="on">
@@ -133,6 +134,7 @@ export class GridBodyComp extends Component implements LayoutView {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
     @Autowired('popupService') public popupService: PopupService;
+    @Autowired('bodyMouseEventsService') public bodyMouseEventsService: BodyMouseEventsService;
 
     @Optional('rangeController') private rangeController: IRangeController;
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
@@ -212,12 +214,8 @@ export class GridBodyComp extends Component implements LayoutView {
             checkScrollLeft: this.checkScrollLeft.bind(this)
         };
 
-        const params = {
-            view: view
-        };
-
-        this.controller = this.createManagedBean(new GridBodyController(params));
-
+        this.controller = this.createManagedBean(new GridBodyController());
+        this.controller.setView(view, this.getGui());
 
         this.createManagedBean(new ViewportSizeFeature(this.centerContainer, this.controller));
 
@@ -235,12 +233,13 @@ export class GridBodyComp extends Component implements LayoutView {
 
         this.setHeaderAndFloatingHeights();
         this.disableBrowserDragging();
-        this.addMouseListeners();
         this.addPreventScrollWhileDragging();
         this.addKeyboardEvents();
         this.addBodyViewportListener();
         this.addStopEditingWhenGridLosesFocus();
-        this.mockContextMenuForIPad();
+
+        this.eAllCellContainers.forEach( container => this.bodyMouseEventsService.addElement(container));
+
         this.addRowDragListener();
 
         if (this.$scope) {
@@ -480,16 +479,7 @@ export class GridBodyComp extends Component implements LayoutView {
         });
     }
 
-    private addMouseListeners(): void {
-        const eventNames = ['dblclick', 'contextmenu', 'mouseover', 'mouseout', 'click', 'mousedown'];
 
-        eventNames.forEach(eventName => {
-            const listener = this.processMouseEvent.bind(this, eventName);
-            this.eAllCellContainers.forEach(container =>
-                this.addManagedListener(container, eventName, listener)
-            );
-        });
-    }
 
     // this methods prevents the grid views from being scrolled while the dragService is being used
     // eg. the view should not scroll up and down while dragging rows using the rowDragComp.
@@ -531,8 +521,9 @@ export class GridBodyComp extends Component implements LayoutView {
             const target = getTarget(mouseEvent);
             if (target === this.eBodyViewport || target === this.centerContainer.getViewportElement()) {
                 // show it
-                this.onContextMenu(mouseEvent, null, null, null, null, this.getGui());
-                this.preventDefaultOnContextMenu(mouseEvent);
+                if (this.contextMenuFactory) {
+                    this.contextMenuFactory.onContextMenu(mouseEvent, null, null, null, null, this.getGui());
+                }
             }
         };
 
@@ -547,20 +538,6 @@ export class GridBodyComp extends Component implements LayoutView {
         return this.eBodyViewport.getBoundingClientRect();
     }
 
-    private getRowForEvent(event: Event): RowController | null {
-        let sourceElement: Element | null = getTarget(event);
-
-        while (sourceElement) {
-            const renderedRow = this.gridOptionsWrapper.getDomData(sourceElement, RowController.DOM_DATA_KEY_RENDERED_ROW);
-            if (renderedRow) {
-                return renderedRow;
-            }
-
-            sourceElement = sourceElement.parentElement;
-        }
-
-        return null;
-    }
 
     private processKeyboardEvent(eventName: string, keyboardEvent: KeyboardEvent): void {
         const cellComp = getComponentForEvent<CellComp>(this.gridOptionsWrapper, keyboardEvent, 'cellComp');
@@ -669,98 +646,11 @@ export class GridBodyComp extends Component implements LayoutView {
         this.eBodyViewport.scrollTop = 0;
     }
 
-    private processMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
-        if (
-            !this.mouseEventService.isEventFromThisGrid(mouseEvent) ||
-            isStopPropagationForAgGrid(mouseEvent)
-        ) {
-            return;
-        }
 
-        const rowComp = this.getRowForEvent(mouseEvent);
-        const cellComp = this.mouseEventService.getRenderedCellForEvent(mouseEvent)!;
 
-        if (eventName === "contextmenu") {
-            this.preventDefaultOnContextMenu(mouseEvent);
-            this.handleContextMenuMouseEvent(mouseEvent, null, rowComp, cellComp);
-        } else {
-            if (cellComp) {
-                cellComp.onMouseEvent(eventName, mouseEvent);
-            }
-            if (rowComp) {
-                rowComp.onMouseEvent(eventName, mouseEvent);
-            }
-        }
-    }
 
-    private mockContextMenuForIPad(): void {
-        // we do NOT want this when not in iPad, otherwise we will be doing
-        if (!isIOSUserAgent()) { return; }
 
-        this.eAllCellContainers.forEach(container => {
-            const touchListener = new TouchListener(container);
-            const longTapListener = (event: LongTapEvent) => {
-                const rowComp = this.getRowForEvent(event.touchEvent);
-                const cellComp = this.mouseEventService.getRenderedCellForEvent(event.touchEvent)!;
 
-                this.handleContextMenuMouseEvent(null, event.touchEvent, rowComp, cellComp);
-            };
-
-            this.addManagedListener(touchListener, TouchListener.EVENT_LONG_TAP, longTapListener);
-            this.addDestroyFunc(() => touchListener.destroy());
-        });
-
-    }
-
-    private handleContextMenuMouseEvent(mouseEvent: MouseEvent | null, touchEvent: TouchEvent | null, rowComp: RowController | null, cellComp: CellComp) {
-        const rowNode = rowComp ? rowComp.getRowNode() : null;
-        const column = cellComp ? cellComp.getColumn() : null;
-        let value = null;
-
-        if (column) {
-            const event = mouseEvent ? mouseEvent : touchEvent;
-            cellComp.dispatchCellContextMenuEvent(event);
-            value = this.valueService.getValue(column, rowNode);
-        }
-
-        // if user clicked on a cell, anchor to that cell, otherwise anchor to the grid panel
-        const anchorToElement = cellComp ? cellComp.getGui() : this.getGui();
-
-        this.onContextMenu(mouseEvent, touchEvent, rowNode, column, value, anchorToElement);
-    }
-
-    private onContextMenu(mouseEvent: MouseEvent | null, touchEvent: TouchEvent | null, rowNode: RowNode | null, column: Column | null, value: any, anchorToElement: HTMLElement): void {
-        // to allow us to debug in chrome, we ignore the event if ctrl is pressed.
-        // not everyone wants this, so first 'if' below allows to turn this hack off.
-        if (!this.gridOptionsWrapper.isAllowContextMenuWithControlKey()) {
-            // then do the check
-            if (mouseEvent && (mouseEvent.ctrlKey || mouseEvent.metaKey)) { return; }
-        }
-
-        if (this.contextMenuFactory && !this.gridOptionsWrapper.isSuppressContextMenu()) {
-            const eventOrTouch: (MouseEvent | Touch) = mouseEvent ? mouseEvent : touchEvent!.touches[0];
-            if (this.contextMenuFactory.showMenu(rowNode!, column!, value, eventOrTouch, anchorToElement)) {
-                const event = mouseEvent ? mouseEvent : touchEvent;
-                event!.preventDefault();
-            }
-        }
-    }
-
-    private preventDefaultOnContextMenu(mouseEvent: MouseEvent): void {
-        // if we don't do this, then middle click will never result in a 'click' event, as 'mousedown'
-        // will be consumed by the browser to mean 'scroll' (as you can scroll with the middle mouse
-        // button in the browser). so this property allows the user to receive middle button clicks if
-        // they want.
-        const { gridOptionsWrapper } = this;
-        const { which } = mouseEvent;
-
-        if (
-            gridOptionsWrapper.isPreventDefaultOnContextMenu() ||
-            (gridOptionsWrapper.isSuppressMiddleClickScrolls() && which === 2)
-        ) {
-            mouseEvent.preventDefault();
-        }
-    }
 
     private onCtrlAndA(event: KeyboardEvent): void {
 

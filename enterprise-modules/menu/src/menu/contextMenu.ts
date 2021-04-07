@@ -102,6 +102,43 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
         return defaultMenuOptions;
     }
 
+    public onContextMenu(mouseEvent: MouseEvent | null, touchEvent: TouchEvent | null, rowNode: RowNode | null, column: Column | null, value: any, anchorToElement: HTMLElement): void {
+        // to allow us to debug in chrome, we ignore the event if ctrl is pressed.
+        // not everyone wants this, so first 'if' below allows to turn this hack off.
+        if (!this.gridOptionsWrapper.isAllowContextMenuWithControlKey()) {
+            // then do the check
+            if (mouseEvent && (mouseEvent.ctrlKey || mouseEvent.metaKey)) { return; }
+        }
+
+        if (this.gridOptionsWrapper.isSuppressContextMenu()) { return; }
+
+        const eventOrTouch: (MouseEvent | Touch) = mouseEvent ? mouseEvent : touchEvent!.touches[0];
+        if (this.showMenu(rowNode!, column!, value, eventOrTouch, anchorToElement)) {
+            const event = mouseEvent ? mouseEvent : touchEvent;
+            event!.preventDefault();
+        }
+
+        if (mouseEvent) {
+            this.preventDefaultOnContextMenu(mouseEvent);
+        }
+    }
+
+    private preventDefaultOnContextMenu(mouseEvent: MouseEvent): void {
+        // if we don't do this, then middle click will never result in a 'click' event, as 'mousedown'
+        // will be consumed by the browser to mean 'scroll' (as you can scroll with the middle mouse
+        // button in the browser). so this property allows the user to receive middle button clicks if
+        // they want.
+        const { gridOptionsWrapper } = this;
+        const { which } = mouseEvent;
+
+        if (
+            gridOptionsWrapper.isPreventDefaultOnContextMenu() ||
+            (gridOptionsWrapper.isSuppressMiddleClickScrolls() && which === 2)
+        ) {
+            mouseEvent.preventDefault();
+        }
+    }
+
     public showMenu(node: RowNode, column: Column, value: any, mouseEvent: MouseEvent | Touch, anchorToElement: HTMLElement): boolean {
         const menuItems = this.getMenuItems(node, column, value);
         const eGridBodyGui = this.gridBodyComp.getGui();

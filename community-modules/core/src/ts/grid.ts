@@ -94,6 +94,7 @@ import { ControllersService } from "./controllersService";
 import { FakeHorizontalScrollComp } from "./gridBodyComp/fakeHorizontalScrollComp";
 import { PinnedWidthService } from "./gridBodyComp/pinnedWidthService";
 import { RowContainerComp } from "./gridBodyComp/rowContainer/rowContainerComp";
+import { BodyMouseEventsService } from "./gridBodyComp/bodyMouseEventsService";
 
 export interface GridParams {
     // used by Web Components
@@ -306,7 +307,7 @@ export class GridCoreCreator {
             SelectableService, AutoGroupColService, ChangeDetectionService, AnimationFrameService,
             DetailRowCompCache, UndoRedoService, AgStackComponentsRegistry, ColumnDefFactory,
             RowCssClassCalculator, RowNodeBlockLoader, RowNodeSorter, ControllersService,
-            PinnedWidthService
+            PinnedWidthService, BodyMouseEventsService
         ];
 
         const moduleBeans = this.extractModuleEntity(registeredModules, (module) => module.beans ? module.beans : []);

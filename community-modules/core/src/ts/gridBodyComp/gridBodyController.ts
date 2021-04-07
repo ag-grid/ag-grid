@@ -30,21 +30,22 @@ export class GridBodyController extends BeanStub {
     @Autowired('rowContainerHeightService') private rowContainerHeightService: RowContainerHeightService;
 
     private view: GridBodyView;
+    private eGridBody: HTMLElement;
 
     // properties we use a lot, so keep reference
     private enableRtl: boolean;
     private printLayout: boolean;
 
-    constructor(params: {view: GridBodyView}) {
-        super();
-        this.view = params.view;
-    }
-
     @PostConstruct
     private postConstruct(): void {
-
         this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
         this.printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
+    }
+
+    public setView(view: GridBodyView, eGridBody: HTMLElement): void {
+        this.view = view;
+        this.eGridBody = eGridBody;
+
         this.view.setProps({printLayout: this.printLayout, enableRtl: this.enableRtl});
 
         this.createManagedBean(new LayoutFeature(this.view));
@@ -95,5 +96,8 @@ export class GridBodyController extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_HEIGHT_SCALE_CHANGED, listener);
     }
 
+    public getGridBodyElement(): HTMLElement {
+        return this.eGridBody;
+    }
 
 }
