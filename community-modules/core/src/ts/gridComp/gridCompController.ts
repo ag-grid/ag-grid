@@ -20,6 +20,7 @@ import { Column } from "../entities/column";
 import { ColumnGroup } from "../entities/columnGroup";
 import { ColumnController } from "../columnController/columnController";
 import { ControllersService } from "../controllersService";
+import { MouseEventService } from "../gridBodyComp/mouseEventService";
 
 export interface GridCompView extends LayoutView {
     setRtlClass(cssClass: string): void;
@@ -43,6 +44,7 @@ export class GridCompController extends BeanStub {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('controllersService') private controllersService: ControllersService;
+    @Autowired('mouseEventService') private mouseEventService: MouseEventService;
 
     private view: GridCompView;
     private eGridHostDiv: HTMLElement;
@@ -76,6 +78,8 @@ export class GridCompController extends BeanStub {
         this.view = view;
         this.eGridHostDiv = eGridDiv;
         this.eGridComp = eGridComp;
+
+        this.mouseEventService.stampTopLevelGridCompWithGridInstance(eGridDiv);
 
         this.createManagedBean(new LayoutFeature(this.view));
 
