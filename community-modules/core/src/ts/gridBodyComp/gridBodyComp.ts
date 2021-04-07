@@ -840,7 +840,12 @@ export class GridBodyComp extends Component implements LayoutView {
     }
 
     public setHeaderAndFloatingHeights(): void {
-        const { columnController, gridOptionsWrapper, pinnedRowModel, eTop, eBottom } = this;
+        this.setHeaderHeight();
+        this.setFloatingHeights();
+    }
+
+    private setHeaderHeight(): void {
+        const {columnController, gridOptionsWrapper} = this;
 
         let numberOfFloating = 0;
         let headerRowCount = columnController.getHeaderRowCount();
@@ -871,6 +876,11 @@ export class GridBodyComp extends Component implements LayoutView {
         totalHeaderHeight += headerHeight!;
 
         this.headerRootComp.setHeight(totalHeaderHeight);
+    }
+
+    private setFloatingHeights(): void {
+        const {pinnedRowModel, eTop, eBottom} = this;
+
         let floatingTopHeight = pinnedRowModel.getPinnedTopTotalHeight();
 
         if (floatingTopHeight) {
