@@ -133,4 +133,8 @@ export class RowContainerController extends BeanStub {
         const isAlwaysShowHorizontalScroll = this.gridOptionsWrapper.isAlwaysShowHorizontalScroll();
         return isAlwaysShowHorizontalScroll || isHorizontalScrollShowing(this.eViewport);
     }
+
+    public getViewportElement(): HTMLElement {
+        return this.eViewport;
+    }
 }

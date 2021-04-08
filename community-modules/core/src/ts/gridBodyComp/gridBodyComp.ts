@@ -197,7 +197,7 @@ export class GridBodyComp extends Component implements LayoutView {
         };
 
         this.controller = this.createManagedBean(new GridBodyController());
-        this.controller.setView(view, this.getGui());
+        this.controller.setView(view, this.getGui(), this.eBodyViewport);
 
         this.addEventListeners();
         this.addDragListeners();
@@ -212,7 +212,6 @@ export class GridBodyComp extends Component implements LayoutView {
         this.setFloatingHeights();
 
         this.disableBrowserDragging();
-        this.addBodyViewportListener();
         this.addStopEditingWhenGridLosesFocus();
 
         this.addRowDragListener();
@@ -447,22 +446,6 @@ export class GridBodyComp extends Component implements LayoutView {
         });
     }
 
-    private addBodyViewportListener(): void {
-        // we want to listen for clicks directly on the eBodyViewport, so the user has a way of showing
-        // the context menu if no rows or columns are displayed, or user simply clicks outside of a cell
-        const listener = (mouseEvent: MouseEvent) => {
-            const target = getTarget(mouseEvent);
-            if (target === this.eBodyViewport || target === this.centerContainer.getViewportElement()) {
-                // show it
-                if (this.contextMenuFactory) {
-                    this.contextMenuFactory.onContextMenu(mouseEvent, null, null, null, null, this.getGui());
-                }
-            }
-        };
-
-        this.addManagedListener(this.eBodyViewport, 'contextmenu', listener);
-    }
-
     // + rangeController - used to know when to scroll when user is dragging outside the
     // main viewport while doing a range selection
     public getBodyClientRect(): ClientRect | undefined {
@@ -610,7 +593,7 @@ export class GridBodyComp extends Component implements LayoutView {
     // triggers a resize event, so notify listeners if the scroll position has changed
     private checkScrollLeft(): void {
         if (this.scrollLeft !== this.getCenterViewportScrollLeft()) {
-            this.onBodyHorizontalScroll(this.centerContainer.getViewportElement());
+            this.onBodyHorizontalScroll(this.controllersService.getCenterRowContainerCon().getViewportElement());
         }
     }
 

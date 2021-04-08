@@ -1,5 +1,5 @@
 import { BeanStub } from "../context/beanStub";
-import { Autowired, PostConstruct, PreConstruct } from "../context/context";
+import { Autowired, Optional, PostConstruct, PreConstruct } from "../context/context";
 import { LayoutFeature, LayoutView } from "../styling/layoutFeature";
 import { Constants } from "../constants/constants";
 import { Events } from "../eventKeys";
@@ -9,6 +9,8 @@ import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { setAriaColCount } from "../utils/aria";
 import { ColumnController } from "../columnController/columnController";
 import { ScrollVisibleService, SetScrollsVisibleParams } from "./scrollVisibleService";
+import { getTarget } from "../utils/event";
+import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
 
 export enum RowAnimationCssClasses {
     ANIMATION_ON = 'ag-row-animation',
@@ -37,9 +39,11 @@ export class GridBodyController extends BeanStub {
     @Autowired('controllersService') private controllersService: ControllersService;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
+    @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
 
     private view: GridBodyView;
     private eGridBody: HTMLElement;
+    private eBodyViewport: HTMLElement;
 
     // properties we use a lot, so keep reference
     private enableRtl: boolean;
@@ -51,9 +55,10 @@ export class GridBodyController extends BeanStub {
         this.printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
     }
 
-    public setView(view: GridBodyView, eGridBody: HTMLElement): void {
+    public setView(view: GridBodyView, eGridBody: HTMLElement, eBodyViewport: HTMLElement): void {
         this.view = view;
         this.eGridBody = eGridBody;
+        this.eBodyViewport = eBodyViewport;
 
         this.view.setProps({printLayout: this.printLayout, enableRtl: this.enableRtl});
 
@@ -65,6 +70,7 @@ export class GridBodyController extends BeanStub {
 
         this.addEventListeners();
         this.onGridColumnsChanged();
+        this.addBodyViewportListener();
     }
 
     private addEventListeners(): void {
@@ -136,4 +142,19 @@ export class GridBodyController extends BeanStub {
         return this.eGridBody;
     }
 
+    private addBodyViewportListener(): void {
+        // we want to listen for clicks directly on the eBodyViewport, so the user has a way of showing
+        // the context menu if no rows or columns are displayed, or user simply clicks outside of a cell
+        const listener = (mouseEvent: MouseEvent) => {
+            const target = getTarget(mouseEvent);
+            if (target === this.eBodyViewport || target === this.controllersService.getCenterRowContainerCon().getViewportElement()) {
+                // show it
+                if (this.contextMenuFactory) {
+                    this.contextMenuFactory.onContextMenu(mouseEvent, null, null, null, null, this.eGridBody);
+                }
+            }
+        };
+
+        this.addManagedListener(this.eBodyViewport, 'contextmenu', listener);
+    }
 }

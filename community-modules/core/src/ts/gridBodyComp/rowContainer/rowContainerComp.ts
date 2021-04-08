@@ -205,6 +205,7 @@ export class RowContainerComp extends Component {
         listener();
     }
 
+    // this is repeated inside the controller, need to remove where this one is called from
     public getViewportElement(): HTMLElement {
         return this.eViewport;
     }
