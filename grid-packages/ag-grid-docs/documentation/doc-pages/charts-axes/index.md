@@ -10,6 +10,7 @@ The charting library supports three axis types:
 
 - [Category](#category-axis)
 - [Number](#number-axis)
+- [Log](#log-axis)
 - [Time](#time-axis)
 
 Each type is tailored to be used with certain types of data. An axis can be positioned to any side of a chart &mdash; `'top'`, `'right'`, `'bottom'`, or `'left'`. Just like with series, the axes can be specified by setting the corresponding `axes` array property of a chart.
@@ -51,6 +52,32 @@ Here's the simplest number axis config:
 }
 ```
 
+## Log Axis
+
+If the range of values is very wide, the `log` axis can be used instead of the `number` axis.
+For example, because the `number` axis uses a linear scale, **same changes in magnitude result in the
+same pixel distance**.
+
+The `log` axis uses a log scale, where **same _percentage_ changes in magnitude result in the same pixel distance**.
+In other words, the pixel distance between 10 and 100, and 100 and 1000 will be the same because both ranges
+represent the same percentage increase. Whereas, if the `number` axis was used, the second distance would be
+10 times larger than the first.
+
+The above property of the log axis can also be useful in financial charts. For example, if your rate of
+return on an investment stays consistent over time, the investment value chart will look like a straight line.
+
+By default, the `log` axis renders 10 ticks (and grid lines) per order of magnitude. If your range is wide
+enough, you may start getting too many ticks, in which case using a smaller value for the `tick: { count: xxx }`
+config might be necessary.
+
+All of the above points are demonstrated by the example below.
+
+### Example: Number Axis vs Log Axis
+
+<chart-example title='Number Axis vs Log Axis' name='number-vs-log' type='generated'></chart-example>
+
+[[note]]
+| The range of a log axis should be strictly positive or strictly negative (because there's no power you can raise a number to that will yield zero). For that reason, any non-conforming range will be clipped to conformity, leaving only the larger segment. For example, `[0, 10]` will be clipped to  `[Number.EPSILON, 10]`, while `[-10, 5]` will be clipped to `[-10, -Number.EPSILON]`. Since there can be orders of magnitude difference between `Number.EPSILON` and the other range value, it is often desirable to set the `min` or `max` property of the axis manually. In this case it can be `min: 1` and `max: -1`, respectively.
 ## Time Axis
 
 The time axis is similar to the number axis in the sense that it is also used to plot continuous values. The time axis can even be used with numeric data (in addition to `Date` objects), but the numbers will be interpreted as Unix timestamps. The time axis differs from the number axis in tick segmentation and label formatting. For example, you could choose to place a tick every 5 minutes, every month, or every Friday.

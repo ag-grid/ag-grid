@@ -22,6 +22,7 @@ import { tickStep } from "../util/ticks";
 import { locale } from "../util/time/format/defaultLocale";
 
 export class TimeScale extends ContinuousScale {
+    readonly type = 'time';
 
     private year: CountableTimeInterval = timeYear;
     private month: CountableTimeInterval = timeMonth;

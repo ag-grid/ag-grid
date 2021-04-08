@@ -22,8 +22,8 @@ import { NavigatorHandle } from "./navigator/navigatorHandle";
 import { CartesianSeriesMarker } from "./series/cartesian/cartesianSeries";
 import { Chart } from "./chart";
 import { HierarchyChart } from "./hierarchyChart";
-import { HierarchySeries } from "./series/hierarchy/hierarchySeries";
 import { TreemapSeries } from "./series/hierarchy/treemapSeries";
+import { LogAxis } from "./axis/logAxis";
 
 /*
     This file defines the specs for creating different kinds of charts, but
@@ -359,6 +359,14 @@ const mappings: any = {
             [NumberAxis.type]: {
                 meta: {
                     constructor: NumberAxis,
+                    setAsIs: ['gridStyle', 'visibleRange'],
+                    ...axisDefaults
+                },
+                ...axisMappings
+            },
+            [LogAxis.type]: {
+                meta: {
+                    constructor: LogAxis,
                     setAsIs: ['gridStyle', 'visibleRange'],
                     ...axisDefaults
                 },

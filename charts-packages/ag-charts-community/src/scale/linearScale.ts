@@ -6,6 +6,8 @@ import { tickFormat } from "../util/numberFormat";
  * Maps continuous domain to a continuous range.
  */
 export class LinearScale extends ContinuousScale {
+    readonly type = 'linear';
+
     ticks(count = 10) {
         const d = this._domain;
         return ticks(d[0], d[d.length - 1], count);
