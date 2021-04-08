@@ -9,6 +9,7 @@ import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
 import { RowContainerComp } from "./rowContainer/rowContainerComp";
 import { ControllersService } from "../controllersService";
+import { RowContainerController } from "./rowContainer/rowContainerController";
 
 // listens to changes in the center viewport size, for column and row virtualisation,
 // and adjusts grid as necessary. there are two viewports, one for horizontal and one for
@@ -22,14 +23,14 @@ export class ViewportSizeFeature extends BeanStub {
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 
-    private centerContainer: RowContainerComp;
+    private centerContainerCon: RowContainerController;
     private gridBodyCon: GridBodyController;
 
     private centerWidth: number;
 
-    constructor(centerContainer: RowContainerComp) {
+    constructor(centerContainer: RowContainerController) {
         super();
-        this.centerContainer = centerContainer;
+        this.centerContainerCon = centerContainer;
     }
 
     @PostConstruct
@@ -45,7 +46,7 @@ export class ViewportSizeFeature extends BeanStub {
         const listener = this.onCenterViewportResized.bind(this);
 
         // centerContainer gets horizontal resizes
-        this.centerContainer.registerViewportResizeListener(listener);
+        this.centerContainerCon.registerViewportResizeListener(listener);
 
         // eBodyViewport gets vertical resizes
         this.gridBodyCon.registerBodyViewportResizeListener(listener);
@@ -56,10 +57,10 @@ export class ViewportSizeFeature extends BeanStub {
     }
 
     private onCenterViewportResized(): void {
-        if (this.centerContainer.isViewportVisible()) {
+        if (this.centerContainerCon.isViewportVisible()) {
             this.checkViewportAndScrolls();
 
-            const newWidth = this.centerContainer.getCenterWidth();
+            const newWidth = this.centerContainerCon.getCenterWidth();
 
             if (newWidth !== this.centerWidth) {
                 this.centerWidth = newWidth;
@@ -112,15 +113,15 @@ export class ViewportSizeFeature extends BeanStub {
 
     public isHorizontalScrollShowing(): boolean {
         const isAlwaysShowHorizontalScroll = this.gridOptionsWrapper.isAlwaysShowHorizontalScroll();
-        return isAlwaysShowHorizontalScroll || this.centerContainer.isViewportHScrollShowing();
+        return isAlwaysShowHorizontalScroll || this.centerContainerCon.isViewportHScrollShowing();
     }
 
     // this gets called whenever a change in the viewport, so we can inform column controller it has to work
     // out the virtual columns again. gets called from following locations:
     // + ensureColVisible, scroll, init, layoutChanged, displayedColumnsChanged, API (doLayout)
     private onHorizontalViewportChanged(): void {
-        const scrollWidth = this.centerContainer.getCenterWidth();
-        const scrollPosition = this.centerContainer.getViewportScrollLeft();
+        const scrollWidth = this.centerContainerCon.getCenterWidth();
+        const scrollPosition = this.centerContainerCon.getViewportScrollLeft();
 
         this.columnController.setViewportPosition(scrollWidth, scrollPosition);
     }

@@ -57,8 +57,8 @@ import {
 } from "./gridBodyController";
 import { FakeHorizontalScrollComp } from "./fakeHorizontalScrollComp";
 import { RowContainerComp, RowContainerNames } from "./rowContainer/rowContainerComp";
-import { ViewportSizeFeature } from "./viewportSizeFeature";
 import { IRowModel } from "../interfaces/iRowModel";
+import { ControllersService } from "../controllersService";
 
 const GRID_BODY_TEMPLATE = /* html */
     `<div class="ag-root ag-unselectable" role="grid" unselectable="on">
@@ -113,6 +113,7 @@ export class GridBodyComp extends Component implements LayoutView {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
     @Autowired('popupService') public popupService: PopupService;
+    @Autowired('controllersService') public controllersService: ControllersService;
 
     @Optional('rangeController') private rangeController: IRangeController;
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
@@ -589,8 +590,8 @@ export class GridBodyComp extends Component implements LayoutView {
     }
 
     // + moveColumnController
-    public getCenterWidth(): number {
-        return this.centerContainer.getCenterWidth();
+    private getCenterWidth(): number {
+        return this.controllersService.getCenterRowContainerCon().getCenterWidth();
     }
 
     public isHorizontalScrollShowing(): boolean {
@@ -658,12 +659,6 @@ export class GridBodyComp extends Component implements LayoutView {
         const total = rowCount === -1 ? -1 : (headerCount + rowCount);
 
         setAriaRowCount(this.getGui(), total);
-    }
-
-    private updateColumnCount(): void {
-        const columns = this.columnController.getAllGridColumns();
-
-        setAriaColCount(this.getGui(), columns.length);
     }
 
     public ensureColumnVisible(key: any): void {
@@ -804,13 +799,10 @@ export class GridBodyComp extends Component implements LayoutView {
     }
 
     public onDisplayedColumnsChanged(): void {
-        this.onHorizontalViewportChanged();
         this.updateScrollVisibleService();
-        this.updateColumnCount();
     }
 
     private onDisplayedColumnsWidthChanged(): void {
-        this.onHorizontalViewportChanged();
         this.updateScrollVisibleService();
 
         if (this.enableRtl) {
@@ -1034,6 +1026,10 @@ export class GridBodyComp extends Component implements LayoutView {
         this.onHorizontalViewportChanged();
     }
 
+    private onHorizontalViewportChanged(): void {
+        this.controllersService.getCenterRowContainerCon().onHorizontalViewportChanged();
+    }
+
     private redrawRowsAfterScroll(): void {
         const event: BodyScrollEvent = {
             type: Events.EVENT_BODY_SCROLL,
@@ -1046,18 +1042,8 @@ export class GridBodyComp extends Component implements LayoutView {
         this.eventService.dispatchEvent(event);
     }
 
-    // this gets called whenever a change in the viewport, so we can inform column controller it has to work
-    // out the virtual columns again. gets called from following locations:
-    // + ensureColVisible, scroll, init, layoutChanged, displayedColumnsChanged, API (doLayout)
-    private onHorizontalViewportChanged(): void {
-        const scrollWidth = this.getCenterWidth();
-        const scrollPosition = this.getCenterViewportScrollLeft();
-
-        this.columnController.setViewportPosition(scrollWidth, scrollPosition);
-    }
-
-    public getCenterViewportScrollLeft(): number {
-        return this.centerContainer.getCenterViewportScrollLeft();
+    private getCenterViewportScrollLeft(): number {
+        return this.controllersService.getCenterRowContainerCon().getCenterViewportScrollLeft();
     }
 
     public horizontallyScrollHeaderCenterAndFloatingCenter(scrollLeft?: number): void {

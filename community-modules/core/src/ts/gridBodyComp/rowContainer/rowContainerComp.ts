@@ -159,7 +159,7 @@ export class RowContainerComp extends Component {
         };
 
         const con = this.createManagedBean(new RowContainerController(this.name));
-        con.setView(view, this.eContainer);
+        con.setView(view, this.eContainer, this.eViewport);
 
         this.listenOnDomOrder();
 
@@ -175,7 +175,7 @@ export class RowContainerComp extends Component {
             ()=> this.createManagedBean(new SetHeightFeature(this.eContainer, this.eWrapper)))
 
         this.forContainers([RowContainerNames.CENTER],
-            ()=> this.createManagedBean(new ViewportSizeFeature(this)))
+            ()=> this.createManagedBean(new ViewportSizeFeature(con)))
 
         this.forContainers([RowContainerNames.CENTER, RowContainerNames.TOP_CENTER, RowContainerNames.BOTTOM_CENTER],
             ()=> this.createManagedBean(new CenterWidthFeature(width => this.eContainer.style.width = `${width}px`)))
@@ -187,27 +187,6 @@ export class RowContainerComp extends Component {
         if (names.indexOf(this.name) >= 0) {
             callback();
         }
-    }
-
-    public registerViewportResizeListener(listener: (()=>void) ) {
-        const unsubscribeFromResize = this.resizeObserverService.observeResize(this.eViewport, listener);
-        this.addDestroyFunc(() => unsubscribeFromResize());
-    }
-
-    public isViewportHScrollShowing(): boolean {
-        return isHorizontalScrollShowing(this.eViewport);
-    }
-
-    public getViewportScrollLeft(): number {
-        return getScrollLeft(this.eViewport, this.enableRtl);
-    }
-
-    public isViewportVisible(): boolean {
-        return isVisible(this.eViewport);
-    }
-
-    public getCenterWidth(): number {
-        return getInnerWidth(this.eViewport);
     }
 
     // when editing a pinned row, if the cell is half outside the scrollable area, the browser can
@@ -233,11 +212,6 @@ export class RowContainerComp extends Component {
     public isHorizontalScrollShowing(): boolean {
         const isAlwaysShowHorizontalScroll = this.gridOptionsWrapper.isAlwaysShowHorizontalScroll();
         return isAlwaysShowHorizontalScroll || isHorizontalScrollShowing(this.eViewport);
-    }
-
-    public getCenterViewportScrollLeft(): number {
-        // we defer to a util, as how you calculated scrollLeft when doing RTL depends on the browser
-        return getScrollLeft(this.eViewport, this.enableRtl);
     }
 
     public setCenterViewportScrollLeft(value: number): void {

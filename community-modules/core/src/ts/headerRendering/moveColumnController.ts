@@ -10,6 +10,7 @@ import { Logger, LoggerFactory } from "../logger";
 import { ColumnEventType } from "../events";
 import { missing, exists } from "../utils/generic";
 import { sortNumerically, last, includes } from "../utils/array";
+import { ControllersService } from "../controllersService";
 
 export class MoveColumnController implements DropListener {
 
@@ -17,6 +18,7 @@ export class MoveColumnController implements DropListener {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('controllersService') public controllersService: ControllersService;
 
     private gridBodyComp: GridBodyComp;
 
@@ -119,7 +121,7 @@ export class MoveColumnController implements DropListener {
 
         // adjust for scroll only if centre container (the pinned containers don't scroll)
         if (this.centerContainer) {
-            x += this.gridBodyComp.getCenterViewportScrollLeft();
+            x += this.controllersService.getCenterRowContainerCon().getCenterViewportScrollLeft();
         }
 
         return x;
@@ -129,8 +131,8 @@ export class MoveColumnController implements DropListener {
         if (this.centerContainer) {
             // scroll if the mouse has gone outside the grid (or just outside the scrollable part if pinning)
             // putting in 50 buffer, so even if user gets to edge of grid, a scroll will happen
-            const firstVisiblePixel = this.gridBodyComp.getCenterViewportScrollLeft();
-            const lastVisiblePixel = firstVisiblePixel + this.gridBodyComp.getCenterWidth();
+            const firstVisiblePixel = this.controllersService.getCenterRowContainerCon().getCenterViewportScrollLeft();
+            const lastVisiblePixel = firstVisiblePixel + this.controllersService.getCenterRowContainerCon().getCenterWidth();
 
             if (this.gridOptionsWrapper.isEnableRtl()) {
                 this.needToMoveRight = xAdjustedForScroll < (firstVisiblePixel + 50);
