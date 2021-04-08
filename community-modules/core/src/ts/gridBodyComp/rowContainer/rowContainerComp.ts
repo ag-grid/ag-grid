@@ -209,11 +209,6 @@ export class RowContainerComp extends Component {
         return this.eViewport;
     }
 
-    public isHorizontalScrollShowing(): boolean {
-        const isAlwaysShowHorizontalScroll = this.gridOptionsWrapper.isAlwaysShowHorizontalScroll();
-        return isAlwaysShowHorizontalScroll || isHorizontalScrollShowing(this.eViewport);
-    }
-
     public setCenterViewportScrollLeft(value: number): void {
         // we defer to a util, as how you calculated scrollLeft when doing RTL depends on the browser
         setScrollLeft(this.eViewport, value, this.enableRtl);

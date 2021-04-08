@@ -129,4 +129,8 @@ export class RowContainerController extends BeanStub {
         return getScrollLeft(this.eViewport, this.enableRtl);
     }
 
+    public isHorizontalScrollShowing(): boolean {
+        const isAlwaysShowHorizontalScroll = this.gridOptionsWrapper.isAlwaysShowHorizontalScroll();
+        return isAlwaysShowHorizontalScroll || isHorizontalScrollShowing(this.eViewport);
+    }
 }

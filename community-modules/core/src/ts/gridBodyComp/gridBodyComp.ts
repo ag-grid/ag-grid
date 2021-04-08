@@ -185,7 +185,10 @@ export class GridBodyComp extends Component implements LayoutView {
                 this.addDestroyFunc(() => unsubscribeFromResize());
             },
             clearBodyHeight: ()=> this.bodyHeight = 0,
-            setVerticalScrollPaddingVisible: this.setVerticalScrollPaddingVisible.bind(this),
+            setVerticalScrollPaddingVisible: show => {
+                const scroller = show ? 'scroll' : 'hidden';
+                this.eTop.style.overflowY = this.eBottom.style.overflowY = scroller;
+            },
             checkBodyHeight: this.checkBodyHeight.bind(this),
             checkScrollLeft: this.checkScrollLeft.bind(this),
             setColumnCount: count => {
@@ -406,7 +409,6 @@ export class GridBodyComp extends Component implements LayoutView {
     }
 
     private addEventListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onDisplayedColumnsWidthChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.setFloatingHeights.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
@@ -594,10 +596,6 @@ export class GridBodyComp extends Component implements LayoutView {
         return this.controllersService.getCenterRowContainerCon().getCenterWidth();
     }
 
-    public isHorizontalScrollShowing(): boolean {
-        return this.centerContainer.isHorizontalScrollShowing();
-    }
-
     public isVerticalScrollShowing(): boolean {
         const isAlwaysShowVerticalScroll = this.gridOptionsWrapper.isAlwaysShowVerticalScroll();
         addOrRemoveCssClass(this.eBodyViewport, 'ag-force-vertical-scroll', isAlwaysShowVerticalScroll);
@@ -614,34 +612,6 @@ export class GridBodyComp extends Component implements LayoutView {
         if (this.scrollLeft !== this.getCenterViewportScrollLeft()) {
             this.onBodyHorizontalScroll(this.centerContainer.getViewportElement());
         }
-    }
-
-    private updateScrollVisibleService(): void {
-        // because of column animation (which takes 200ms), we have to do this twice.
-        // eg if user removes cols anywhere except at the RHS, then the cols on the RHS
-        // will animate to the left to fill the gap. this animation means just after
-        // the cols are removed, the remaining cols are still in the original location
-        // at the start of the animation, so pre animation the H scrollbar is still needed,
-        // but post animation it is not.
-        this.updateScrollVisibleServiceImpl();
-        setTimeout(this.updateScrollVisibleServiceImpl.bind(this), 500);
-    }
-
-    private updateScrollVisibleServiceImpl(): void {
-        const params: SetScrollsVisibleParams = {
-            horizontalScrollShowing: this.isHorizontalScrollShowing(),
-            verticalScrollShowing: this.isVerticalScrollShowing()
-        };
-
-        this.scrollVisibleService.setScrollsVisible(params);
-
-        this.setVerticalScrollPaddingVisible(params.verticalScrollShowing);
-    }
-
-    private setVerticalScrollPaddingVisible(show: boolean): void {
-        const scroller = show ? 'scroll' : 'hidden';
-
-        this.eTop.style.overflowY = this.eBottom.style.overflowY = scroller;
     }
 
     public updateRowCount(): void {
@@ -798,13 +768,7 @@ export class GridBodyComp extends Component implements LayoutView {
         return [this.eTop, this.eBottom];
     }
 
-    public onDisplayedColumnsChanged(): void {
-        this.updateScrollVisibleService();
-    }
-
     private onDisplayedColumnsWidthChanged(): void {
-        this.updateScrollVisibleService();
-
         if (this.enableRtl) {
             // because RTL is all backwards, a change in the width of the row
             // can cause a change in the scroll position, without a scroll event,

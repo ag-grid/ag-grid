@@ -12,6 +12,7 @@ import { BeanStub } from "../context/beanStub";
 import { exists } from "../utils/generic";
 import { last } from "../utils/array";
 import { KeyCode } from '../constants/keyCode';
+import { ControllersService } from "../controllersService";
 
 interface NavigateParams {
      // The rowIndex to vertically scroll to
@@ -34,6 +35,7 @@ export class NavigationService extends BeanStub {
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Optional('rangeController') private rangeController: IRangeController;
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('controllersService') public controllersService: ControllersService;
 
     private gridPanel: GridBodyComp;
 
@@ -150,7 +152,7 @@ export class NavigationService extends BeanStub {
         const scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
         let pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
 
-        if (this.gridPanel.isHorizontalScrollShowing()) {
+        if (this.controllersService.getCenterRowContainerCon().isHorizontalScrollShowing()) {
             pixelsInOnePage -= scrollbarWidth;
         }
 
@@ -187,7 +189,7 @@ export class NavigationService extends BeanStub {
         const scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
         let pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
 
-        if (this.gridPanel.isHorizontalScrollShowing()) {
+        if (this.controllersService.getCenterRowContainerCon().isHorizontalScrollShowing()) {
             pixelsInOnePage -= scrollbarWidth;
         }
 

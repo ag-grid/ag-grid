@@ -8,6 +8,7 @@ import { ControllersService } from "../controllersService";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { setAriaColCount } from "../utils/aria";
 import { ColumnController } from "../columnController/columnController";
+import { ScrollVisibleService, SetScrollsVisibleParams } from "./scrollVisibleService";
 
 export enum RowAnimationCssClasses {
     ANIMATION_ON = 'ag-row-animation',
@@ -35,6 +36,7 @@ export class GridBodyController extends BeanStub {
     @Autowired('rowContainerHeightService') private rowContainerHeightService: RowContainerHeightService;
     @Autowired('controllersService') private controllersService: ControllersService;
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
 
     private view: GridBodyView;
     private eGridBody: HTMLElement;
@@ -67,6 +69,7 @@ export class GridBodyController extends BeanStub {
 
     private addEventListeners(): void {
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
         // this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onDisplayedColumnsWidthChanged.bind(this));
         // this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.setHeaderAndFloatingHeights.bind(this));
         // this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
@@ -74,6 +77,11 @@ export class GridBodyController extends BeanStub {
         // this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
 
         // this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
+    }
+
+    private onScrollVisibilityChanged(): void {
+        const show = this.scrollVisibleService.isVerticalScrollShowing();
+        this.view.setVerticalScrollPaddingVisible(show);
     }
 
     private onGridColumnsChanged(): void {
