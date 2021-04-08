@@ -148,7 +148,8 @@ export class NavigationService extends BeanStub {
     private onPageDown(gridCell: CellPosition): void {
         if (this.isTimeSinceLastPageEventToRecent()) { return; }
 
-        const scrollPosition = this.gridPanel.getVScrollPosition();
+        const gridBodyCon = this.controllersService.getGridBodyController();
+        const scrollPosition = gridBodyCon.getVScrollPosition();
         const scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
         let pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
 
@@ -185,7 +186,8 @@ export class NavigationService extends BeanStub {
     private onPageUp(gridCell: CellPosition): void {
         if (this.isTimeSinceLastPageEventToRecent()) { return; }
 
-        const scrollPosition = this.gridPanel.getVScrollPosition();
+        const gridBodyCon = this.controllersService.getGridBodyController();
+        const scrollPosition = gridBodyCon.getVScrollPosition();
         const scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
         let pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
 

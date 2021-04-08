@@ -215,14 +215,6 @@ export class RowContainerComp extends Component {
         setScrollLeft(this.eViewport, value, this.enableRtl);
     }
 
-    public getHScrollPosition(): { left: number, right: number; } {
-        const res = {
-            left: this.eViewport.scrollLeft,
-            right: this.eViewport.scrollLeft + this.eViewport.offsetWidth
-        };
-        return res;
-    }
-
     public getContainerElement(): HTMLElement {
         return this.eContainer;
     }

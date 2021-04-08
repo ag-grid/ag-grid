@@ -268,4 +268,26 @@ export class GridBodyScrollFeature extends BeanStub {
         this.doHorizontalScroll(hScrollPosition);
     }
 
+    public setVerticalScrollPosition(vScrollPosition: number): void {
+        this.eBodyViewport.scrollTop = vScrollPosition;
+    }
+
+    public getVScrollPosition(): { top: number, bottom: number; } {
+        const result = {
+            top: this.eBodyViewport.scrollTop,
+            bottom: this.eBodyViewport.scrollTop + this.eBodyViewport.offsetHeight
+        };
+        return result;
+    }
+
+    public getHScrollPosition(): { left: number, right: number; } {
+        const centerContainer = this.controllersService.getCenterRowContainerCon();
+        return centerContainer.getHScrollPosition();
+    }
+
+    public isHorizontalScrollShowing(): boolean {
+        const centerContainer = this.controllersService.getCenterRowContainerCon();
+        return centerContainer.isHorizontalScrollShowing();
+    }
+
 }

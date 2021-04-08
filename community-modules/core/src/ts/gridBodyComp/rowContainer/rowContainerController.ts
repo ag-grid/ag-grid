@@ -147,4 +147,12 @@ export class RowContainerController extends BeanStub {
     public setContainerTranslateX(amount: number): void {
         this.eContainer.style.transform = `translateX(${amount}px)`
     }
+
+    public getHScrollPosition(): { left: number, right: number; } {
+        const res = {
+            left: this.eViewport.scrollLeft,
+            right: this.eViewport.scrollLeft + this.eViewport.offsetWidth
+        };
+        return res;
+    }
 }

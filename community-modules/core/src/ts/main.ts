@@ -120,6 +120,7 @@ export { FloatingFilterMapper } from './filter/floating/floatingFilterMapper';
 
 // gridPanel
 export { GridBodyComp } from "./gridBodyComp/gridBodyComp";
+export { GridBodyController } from "./gridBodyComp/gridBodyController";
 export { ScrollVisibleService } from "./gridBodyComp/scrollVisibleService";
 export { MouseEventService } from "./gridBodyComp/mouseEventService";
 

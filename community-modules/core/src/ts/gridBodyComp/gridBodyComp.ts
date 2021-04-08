@@ -204,11 +204,9 @@ export class GridBodyComp extends Component implements LayoutView {
         this.headerRootComp.registerGridComp(this);
         this.navigationService.registerGridComp(this);
         this.headerNavigationService.registerGridComp(this);
-        this.heightScaler.registerGridComp(this);
         this.autoHeightCalculator.registerGridComp(this);
         this.columnAnimationService.registerGridComp(this);
         this.autoWidthCalculator.registerGridComp(this);
-        this.mouseEventService.registerGridComp(this);
         this.beans.registerGridComp(this);
         this.rowRenderer.registerGridComp(this);
         this.animationFrameService.registerGridComp(this);
@@ -244,18 +242,6 @@ export class GridBodyComp extends Component implements LayoutView {
         addOrRemoveCssClass(this.eBodyViewport, RowAnimationCssClasses.ANIMATION_OFF, !animateRows);
     }
 
-    public getVScrollPosition(): { top: number, bottom: number; } {
-        const result = {
-            top: this.eBodyViewport.scrollTop,
-            bottom: this.eBodyViewport.scrollTop + this.eBodyViewport.offsetHeight
-        };
-        return result;
-    }
-
-    public getHScrollPosition(): { left: number, right: number; } {
-        return this.centerContainer.getHScrollPosition();
-    }
-
     private onRowDataChanged(): void {
         this.showOrHideOverlay();
     }
@@ -263,9 +249,11 @@ export class GridBodyComp extends Component implements LayoutView {
     private showOrHideOverlay(): void {
         const isEmpty = this.paginationProxy.isEmpty();
         const isSuppressNoRowsOverlay = this.gridOptionsWrapper.isSuppressNoRowsOverlay();
-        const method = isEmpty && !isSuppressNoRowsOverlay ? 'showNoRowsOverlay' : 'hideOverlay';
-
-        this[method]();
+        if (isEmpty && !isSuppressNoRowsOverlay) {
+            this.showNoRowsOverlay();
+        } else {
+            this.hideOverlay();
+        }
     }
 
     private onNewColumnsLoaded(): void {
@@ -421,14 +409,6 @@ export class GridBodyComp extends Component implements LayoutView {
         });
     }
 
-    // + rangeController - used to know when to scroll when user is dragging outside the
-    // main viewport while doing a range selection
-    public getBodyClientRect(): ClientRect | undefined {
-        if (!this.eBodyViewport) { return; }
-
-        return this.eBodyViewport.getBoundingClientRect();
-    }
-
     // gets called by rowRenderer when new data loaded, as it will want to scroll to the top
     public scrollToTop(): void {
         this.eBodyViewport.scrollTop = 0;
@@ -497,7 +477,7 @@ export class GridBodyComp extends Component implements LayoutView {
             const rowTopPixel = rowNode!.rowTop! - paginationOffset;
             const rowBottomPixel = rowTopPixel + rowNode!.rowHeight!;
 
-            const scrollPosition = this.getVScrollPosition();
+            const scrollPosition = this.controller.getVScrollPosition();
             const heightOffset = this.heightScaler.getOffset();
 
             const vScrollTop = scrollPosition.top + heightOffset;
@@ -748,7 +728,7 @@ export class GridBodyComp extends Component implements LayoutView {
     }
 
     public setVerticalScrollPosition(vScrollPosition: number): void {
-        this.eBodyViewport.scrollTop = vScrollPosition;
+        this.controller.setVerticalScrollPosition(vScrollPosition);
     }
 
     // called by the headerRootComp and moveColumnController
@@ -757,14 +737,6 @@ export class GridBodyComp extends Component implements LayoutView {
 
         this.setHorizontalScrollPosition(oldScrollPosition + pixels);
         return this.centerContainer.getViewportElement().scrollLeft - oldScrollPosition;
-    }
-
-    // called by rowDragFeature
-    public scrollVertically(pixels: number): number {
-        const oldScrollPosition = this.eBodyViewport.scrollTop;
-
-        this.setVerticalScrollPosition(oldScrollPosition + pixels);
-        return this.eBodyViewport.scrollTop - oldScrollPosition;
     }
 
     private getCenterViewportScrollLeft(): number {

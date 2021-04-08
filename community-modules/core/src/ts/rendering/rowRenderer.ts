@@ -1000,7 +1000,8 @@ export class RowRenderer extends BeanStub {
             const {pageFirstPixel, pageLastPixel} = this.paginationProxy.getCurrentPagePixelRange();
             const maxDivHeightScaler = this.rowContainerHeightService.getOffset();
 
-            const bodyVRange = this.gridBodyComp.getVScrollPosition();
+            const gridBodyCon = this.controllersService.getGridBodyController();
+            const bodyVRange = gridBodyCon.getVScrollPosition();
             const bodyTopPixel = bodyVRange.top;
             const bodyBottomPixel = bodyVRange.bottom;
 

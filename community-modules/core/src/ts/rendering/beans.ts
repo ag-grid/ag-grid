@@ -35,6 +35,7 @@ import { IRowModel } from "../interfaces/iRowModel";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 import { IServerSideRowModel } from "../interfaces/iServerSideRowModel";
 import { ResizeObserverService } from "../misc/resizeObserverService";
+import { ControllersService } from "../controllersService";
 
 /** Using the IoC has a slight performance consideration, which is no problem most of the
  * time, unless we are trashing objects - which is the case when scrolling and rowComp
@@ -80,6 +81,7 @@ export class Beans {
     @Optional('selectionHandleFactory') public selectionHandleFactory: ISelectionHandleFactory;
     @Autowired('rowCssClassCalculator') public rowCssClassCalculator: RowCssClassCalculator;
     @Autowired('rowModel') public rowModel: IRowModel;
+    @Autowired('controllersService') public controllersService: ControllersService;
 
     public doingMasterDetail: boolean;
     public gridBodyComp: GridBodyComp;

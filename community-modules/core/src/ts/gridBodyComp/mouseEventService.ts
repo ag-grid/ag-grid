@@ -9,21 +9,18 @@ import { DraggingEvent } from "../dragAndDrop/dragAndDropService";
 import { BeanStub } from "../context/beanStub";
 import { getEventPath, getComponentForEvent } from "../utils/event";
 import { exists } from "../utils/generic";
+import { ControllersService } from "../controllersService";
 
 @Bean('mouseEventService')
 export class MouseEventService extends BeanStub {
 
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
+    @Autowired('controllersService') private controllersService: ControllersService;
 
     private static gridInstanceSequence = new NumberSequence();
     private static GRID_DOM_KEY = '__ag_grid_instance';
-    private gridBodyComp: GridBodyComp;
 
     private gridInstanceId = MouseEventService.gridInstanceSequence.next();
-
-    public registerGridComp(gridBodyComp: GridBodyComp): void {
-        this.gridBodyComp = gridBodyComp;
-    }
 
     // we put the instance id onto the main DOM element. this is used for events, when grids are inside grids,
     // so the grid can work out if the even came from this grid or a grid inside this one. see the ctrl+v logic
@@ -75,8 +72,9 @@ export class MouseEventService extends BeanStub {
         }
 
         if (gridPanelHasScrolls) {
-            const vRange = this.gridBodyComp.getVScrollPosition();
-            const hRange = this.gridBodyComp.getHScrollPosition();
+            const gridBodyCon = this.controllersService.getGridBodyController();
+            const vRange = gridBodyCon.getVScrollPosition();
+            const hRange = gridBodyCon.getHScrollPosition();
             x += hRange.left;
             y += vRange.top;
         }

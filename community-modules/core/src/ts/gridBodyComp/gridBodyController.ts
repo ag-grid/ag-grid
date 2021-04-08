@@ -53,7 +53,7 @@ export class GridBodyController extends BeanStub {
 
     private bodyHeight: number;
 
-    private horizontalScrollFeature: GridBodyScrollFeature;
+    private bodyScrollFeature: GridBodyScrollFeature;
 
     @PostConstruct
     private postConstruct(): void {
@@ -69,7 +69,7 @@ export class GridBodyController extends BeanStub {
         this.view.setProps({printLayout: this.printLayout, enableRtl: this.enableRtl});
 
         this.createManagedBean(new LayoutFeature(this.view));
-        this.horizontalScrollFeature = this.createManagedBean(new GridBodyScrollFeature(this.eBodyViewport));
+        this.bodyScrollFeature = this.createManagedBean(new GridBodyScrollFeature(this.eBodyViewport));
 
         this.setupRowAnimationCssClass();
 
@@ -125,19 +125,23 @@ export class GridBodyController extends BeanStub {
     }
 
     public checkScrollLeft(): void {
-        this.horizontalScrollFeature.checkScrollLeft();
+        this.bodyScrollFeature.checkScrollLeft();
     }
 
     public horizontallyScrollHeaderCenterAndFloatingCenter(): void {
-        this.horizontalScrollFeature.horizontallyScrollHeaderCenterAndFloatingCenter();
+        this.bodyScrollFeature.horizontallyScrollHeaderCenterAndFloatingCenter();
     }
 
     public executeAnimationFrameScroll(): boolean {
-        return this.horizontalScrollFeature.executeAnimationFrameScroll();
+        return this.bodyScrollFeature.executeAnimationFrameScroll();
     }
 
     public setHorizontalScrollPosition(hScrollPosition: number): void {
-        this.horizontalScrollFeature.setHorizontalScrollPosition(hScrollPosition);
+        this.bodyScrollFeature.setHorizontalScrollPosition(hScrollPosition);
+    }
+
+    public setVerticalScrollPosition(vScrollPosition: number): void {
+        this.bodyScrollFeature.setVerticalScrollPosition(vScrollPosition);
     }
 
     public getBodyHeight(): number {
@@ -185,5 +189,42 @@ export class GridBodyController extends BeanStub {
         };
 
         this.addManagedListener(this.eBodyViewport, 'contextmenu', listener);
+    }
+
+    public getVScrollPosition(): { top: number, bottom: number; } {
+        const result = {
+            top: this.eBodyViewport.scrollTop,
+            bottom: this.eBodyViewport.scrollTop + this.eBodyViewport.offsetHeight
+        };
+        return result;
+    }
+
+    public getHScrollPosition(): { left: number, right: number; } {
+        const centerContainer = this.controllersService.getCenterRowContainerCon();
+        return centerContainer.getHScrollPosition();
+    }
+
+    public getGui(): HTMLElement {
+        return this.eGridBody;
+    }
+
+    // called by rowDragFeature
+    public scrollVertically(pixels: number): number {
+        const oldScrollPosition = this.eBodyViewport.scrollTop;
+
+        this.setVerticalScrollPosition(oldScrollPosition + pixels);
+        return this.eBodyViewport.scrollTop - oldScrollPosition;
+    }
+
+    public isHorizontalScrollShowing(): boolean {
+        return this.bodyScrollFeature.isHorizontalScrollShowing();
+    }
+
+    // + rangeController - used to know when to scroll when user is dragging outside the
+    // main viewport while doing a range selection
+    public getBodyClientRect(): ClientRect | undefined {
+        if (!this.eBodyViewport) { return; }
+
+        return this.eBodyViewport.getBoundingClientRect();
     }
 }

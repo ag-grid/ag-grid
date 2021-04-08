@@ -21,6 +21,7 @@ import { BeanStub } from "../context/beanStub";
 import { exists, missingOrEmpty } from "../utils/generic";
 import { doOnce } from "../utils/function";
 import { PaginationProxy } from "../pagination/paginationProxy";
+import { ControllersService } from "../controllersService";
 
 export interface RowDropZoneEvents {
     onDragEnter?: (params: RowDragEnterEvent) => void;
@@ -46,8 +47,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     @Autowired('selectionController') private selectionController: SelectionController;
     @Optional('rangeController') private rangeController: IRangeController;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
+    @Autowired('controllersService') private controllersService: ControllersService;
 
-    private gridPanel: GridBodyComp;
     private clientSideRowModel: IClientSideRowModel;
     private eContainer: HTMLElement;
     private needToMoveUp: boolean;
@@ -63,7 +64,6 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     constructor(eContainer: HTMLElement, gridPanel: GridBodyComp) {
         super();
         this.eContainer = eContainer;
-        this.gridPanel = gridPanel;
     }
 
     @PostConstruct
@@ -158,7 +158,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     private isDropZoneWithinThisGrid(draggingEvent: DraggingEvent): boolean {
-        const gridGui = this.gridPanel.getGui();
+        const gridBodyCon = this.controllersService.getGridBodyController();
+        const gridGui = gridBodyCon.getGui();
         const { dropZoneTarget } = draggingEvent;
 
         return !gridGui.contains(dropZoneTarget);
@@ -271,7 +272,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
     private checkCenterForScrolling(pixel: number): void {
         // scroll if the mouse is within 50px of the grid edge
-        const pixelRange = this.gridPanel.getVScrollPosition();
+        const gridBodyCon = this.controllersService.getGridBodyController();
+        const pixelRange = gridBodyCon.getVScrollPosition();
 
         // console.log(`pixelRange = (${pixelRange.top}, ${pixelRange.bottom})`);
 
@@ -317,10 +319,11 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
         let pixelsMoved: number | null = null;
 
+        const gridBodyCon = this.controllersService.getGridBodyController();
         if (this.needToMoveDown) {
-            pixelsMoved = this.gridPanel.scrollVertically(pixelsToMove);
+            pixelsMoved = gridBodyCon.scrollVertically(pixelsToMove);
         } else if (this.needToMoveUp) {
-            pixelsMoved = this.gridPanel.scrollVertically(-pixelsToMove);
+            pixelsMoved = gridBodyCon.scrollVertically(-pixelsToMove);
         }
 
         if (pixelsMoved !== 0) {

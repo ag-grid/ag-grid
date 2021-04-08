@@ -1,8 +1,9 @@
 import { BeanStub } from "../context/beanStub";
-import { Bean, PostConstruct } from "../context/context";
+import { Autowired, Bean, PostConstruct } from "../context/context";
 import { Events } from "../eventKeys";
 import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
 import { getMaxDivHeight } from "../utils/browser";
+import { ControllersService } from "../controllersService";
 
 /**
  * This class solves the 'max height' problem, where the user might want to show more data than
@@ -12,7 +13,7 @@ import { getMaxDivHeight } from "../utils/browser";
 @Bean('rowContainerHeightService')
 export class RowContainerHeightService extends BeanStub {
 
-    private gridBodyComp: GridBodyComp;
+    @Autowired('controllersService') private controllersService: ControllersService;
 
     private maxDivHeight: number;
 
@@ -42,10 +43,6 @@ export class RowContainerHeightService extends BeanStub {
         this.maxDivHeight = getMaxDivHeight();
     }
 
-    public registerGridComp(gridBodyComp: GridBodyComp): void {
-        this.gridBodyComp = gridBodyComp;
-    }
-
     public isScaling(): boolean {
         return this.scaling;
     }
@@ -57,7 +54,8 @@ export class RowContainerHeightService extends BeanStub {
     public updateOffset(): void {
         if (!this.scaling) { return; }
 
-        const newScrollY = this.gridBodyComp.getVScrollPosition().top;
+        const gridBodyCon = this.controllersService.getGridBodyController();
+        const newScrollY = gridBodyCon.getVScrollPosition().top;
         const newBodyHeight = this.getUiBodyHeight();
 
         const atLeastOneChanged = newScrollY !== this.scrollY || newBodyHeight !== this.uiBodyHeight;
@@ -121,7 +119,8 @@ export class RowContainerHeightService extends BeanStub {
     }
 
     private getUiBodyHeight(): number {
-        const pos = this.gridBodyComp.getVScrollPosition();
+        const gridBodyCon = this.controllersService.getGridBodyController();
+        const pos = gridBodyCon.getVScrollPosition();
         return pos.bottom - pos.top;
     }
 

@@ -75,6 +75,8 @@ import { ServerSideStoreState } from "./interfaces/IServerSideStore";
 import { HeadlessService } from "./headless/headlessService";
 import { GridCompController } from "./gridComp/gridCompController";
 import { ISideBar } from "./interfaces/iSideBar";
+import { ControllersService } from "./controllersService";
+import { GridBodyController } from "./gridBodyComp/gridBodyController";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -181,8 +183,10 @@ export class GridApi {
     @Optional('headlessService') private headlessService: HeadlessService;
     @Optional('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
     @Optional('ssrmTransactionManager') private serverSideTransactionManager: IServerSideTransactionManager;
+    @Optional('controllersService') private controllersService: ControllersService;
 
     private gridBodyComp: GridBodyComp;
+    private gridBodyCon: GridBodyController;
     private gridCompController: GridCompController;
     private sideBarComp: ISideBar;
 
@@ -225,6 +229,10 @@ export class GridApi {
                 this.serverSideRowModel = this.rowModel as IServerSideRowModel;
                 break;
         }
+
+        this.controllersService.whenReady( ()=> {
+            this.gridBodyCon = this.controllersService.getGridBodyController();
+        });
     }
 
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
@@ -452,11 +460,11 @@ export class GridApi {
     }
 
     public getVerticalPixelRange(): { top: number, bottom: number; } {
-        return this.gridBodyComp.getVScrollPosition();
+        return this.gridBodyCon.getVScrollPosition();
     }
 
     public getHorizontalPixelRange(): { left: number, right: number; } {
-        return this.gridBodyComp.getHScrollPosition();
+        return this.gridBodyCon.getHScrollPosition();
     }
 
     public setAlwaysShowHorizontalScroll(show: boolean) {
