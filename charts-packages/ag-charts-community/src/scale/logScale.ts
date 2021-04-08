@@ -3,6 +3,8 @@ import ticks from "../util/ticks";
 import { format } from "../util/numberFormat";
 
 export class LogScale extends ContinuousScale {
+    readonly type = 'log';
+
     _domain = [1, 10];
 
     baseLog = identity; // takes a log with base `base` of `x`

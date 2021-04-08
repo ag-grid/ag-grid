@@ -5,6 +5,7 @@ import Scale from './scale';
  * See https://github.com/d3/d3-scale#band-scales for more info.
  */
 export class BandScale<D> implements Scale<D, number> {
+    readonly type = 'band';
 
     /**
      * Maps datum to its index in the {@link domain} array.

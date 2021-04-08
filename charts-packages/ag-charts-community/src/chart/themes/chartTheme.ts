@@ -232,6 +232,9 @@ export class ChartTheme {
             number: {
                 ...ChartTheme.getAxisDefaults()
             },
+            log: {
+                ...ChartTheme.getAxisDefaults()
+            },
             category: {
                 ...ChartTheme.getAxisDefaults()
             },
