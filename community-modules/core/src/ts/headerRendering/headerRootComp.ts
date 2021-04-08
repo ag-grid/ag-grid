@@ -95,6 +95,21 @@ export class HeaderRootComp extends ManagedFocusComponent {
         if (this.columnController.isReady()) {
             this.refreshHeader();
         }
+
+        this.setupHeaderHeight();
+    }
+
+    private setupHeaderHeight(): void {
+        const listener = this.setHeaderHeight.bind(this);
+        listener();
+
+        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_HEADER_HEIGHT, listener);
+        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, listener);
+        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_GROUP_HEADER_HEIGHT, listener);
+        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_GROUP_HEADER_HEIGHT, listener);
+        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_FLOATING_FILTERS_HEIGHT, listener);
+
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, listener);
     }
 
     public registerGridComp(gridBodyComp: GridBodyComp): void {
@@ -188,10 +203,40 @@ export class HeaderRootComp extends ManagedFocusComponent {
         addOrRemoveCssClass(this.getGui(), 'ag-pivot-off', !pivotMode);
     }
 
-    public setHeight(height: number): void {
+    private setHeaderHeight(): void {
+        const {columnController, gridOptionsWrapper} = this;
+
+        let numberOfFloating = 0;
+        let headerRowCount = columnController.getHeaderRowCount();
+        let totalHeaderHeight: number;
+        let groupHeight: number | null | undefined;
+        let headerHeight: number | null | undefined;
+
+        if (columnController.isPivotMode()) {
+            groupHeight = gridOptionsWrapper.getPivotGroupHeaderHeight();
+            headerHeight = gridOptionsWrapper.getPivotHeaderHeight();
+        } else {
+            const hasFloatingFilters = columnController.hasFloatingFilters();
+
+            if (hasFloatingFilters) {
+                headerRowCount++;
+                numberOfFloating = 1;
+            }
+
+            groupHeight = gridOptionsWrapper.getGroupHeaderHeight();
+            headerHeight = gridOptionsWrapper.getHeaderHeight();
+        }
+
+        const numberOfNonGroups = 1 + numberOfFloating;
+        const numberOfGroups = headerRowCount - numberOfNonGroups;
+
+        totalHeaderHeight = numberOfFloating * gridOptionsWrapper.getFloatingFiltersHeight()!;
+        totalHeaderHeight += numberOfGroups * groupHeight!;
+        totalHeaderHeight += headerHeight!;
+
         // one extra pixel is needed here to account for the
         // height of the border
-        const px = `${height + 1}px`;
+        const px = `${totalHeaderHeight + 1}px`;
         this.getGui().style.height = px;
         this.getGui().style.minHeight = px;
     }

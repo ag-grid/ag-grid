@@ -202,7 +202,8 @@ export class GridBodyComp extends Component implements LayoutView {
         }
         this.setCellTextSelection(this.gridOptionsWrapper.isEnableCellTextSelect());
 
-        this.setHeaderAndFloatingHeights();
+        this.setFloatingHeights();
+
         this.disableBrowserDragging();
         this.addBodyViewportListener();
         this.addStopEditingWhenGridLosesFocus();
@@ -403,16 +404,11 @@ export class GridBodyComp extends Component implements LayoutView {
     private addEventListeners(): void {
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onDisplayedColumnsWidthChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.setHeaderAndFloatingHeights.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.setFloatingHeights.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, this.onRowDataChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
 
-        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_HEADER_HEIGHT, this.setHeaderAndFloatingHeights.bind(this));
-        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, this.setHeaderAndFloatingHeights.bind(this));
-        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_GROUP_HEADER_HEIGHT, this.setHeaderAndFloatingHeights.bind(this));
-        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_GROUP_HEADER_HEIGHT, this.setHeaderAndFloatingHeights.bind(this));
-        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_FLOATING_FILTERS_HEIGHT, this.setHeaderAndFloatingHeights.bind(this));
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
     }
 
@@ -805,7 +801,6 @@ export class GridBodyComp extends Component implements LayoutView {
     }
 
     public onDisplayedColumnsChanged(): void {
-        this.setHeaderAndFloatingHeights();
         this.onHorizontalViewportChanged();
         this.updateScrollVisibleService();
         this.updateColumnCount();
@@ -837,45 +832,6 @@ export class GridBodyComp extends Component implements LayoutView {
             };
             this.eventService.dispatchEvent(event);
         }
-    }
-
-    private setHeaderAndFloatingHeights(): void {
-        this.setHeaderHeight();
-        this.setFloatingHeights();
-    }
-
-    private setHeaderHeight(): void {
-        const {columnController, gridOptionsWrapper} = this;
-
-        let numberOfFloating = 0;
-        let headerRowCount = columnController.getHeaderRowCount();
-        let totalHeaderHeight: number;
-        let groupHeight: number | null | undefined;
-        let headerHeight: number | null | undefined;
-
-        if (columnController.isPivotMode()) {
-            groupHeight = gridOptionsWrapper.getPivotGroupHeaderHeight();
-            headerHeight = gridOptionsWrapper.getPivotHeaderHeight();
-        } else {
-            const hasFloatingFilters = columnController.hasFloatingFilters();
-
-            if (hasFloatingFilters) {
-                headerRowCount++;
-                numberOfFloating = 1;
-            }
-
-            groupHeight = gridOptionsWrapper.getGroupHeaderHeight();
-            headerHeight = gridOptionsWrapper.getHeaderHeight();
-        }
-
-        const numberOfNonGroups = 1 + numberOfFloating;
-        const numberOfGroups = headerRowCount - numberOfNonGroups;
-
-        totalHeaderHeight = numberOfFloating * gridOptionsWrapper.getFloatingFiltersHeight()!;
-        totalHeaderHeight += numberOfGroups * groupHeight!;
-        totalHeaderHeight += headerHeight!;
-
-        this.headerRootComp.setHeight(totalHeaderHeight);
     }
 
     private setFloatingHeights(): void {
