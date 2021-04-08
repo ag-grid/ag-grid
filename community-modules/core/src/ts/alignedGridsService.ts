@@ -15,14 +15,15 @@ import { Autowired } from "./context/context";
 import { PostConstruct } from "./context/context";
 import { OriginalColumnGroup } from "./entities/originalColumnGroup";
 import { BeanStub } from "./context/beanStub";
+import { ControllersService } from "./controllersService";
 
 @Bean('alignedGridsService')
 export class AlignedGridsService extends BeanStub {
 
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('controllersService') private controllersService: ControllersService;
 
     private logger: Logger;
-    private gridBodyComp: GridBodyComp;
 
     // flag to mark if we are consuming. to avoid cyclic events (ie other grid firing back to master
     // while processing a master event) we mark this if consuming an event, and if we are, then
@@ -31,10 +32,6 @@ export class AlignedGridsService extends BeanStub {
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('AlignedGridsService');
-    }
-
-    public registerGridComp(gridBodyComp: GridBodyComp): void {
-        this.gridBodyComp = gridBodyComp;
     }
 
     @PostConstruct
@@ -90,7 +87,8 @@ export class AlignedGridsService extends BeanStub {
 
     private onScrollEvent(event: BodyScrollEvent): void {
         this.onEvent(() => {
-            this.gridBodyComp.setHorizontalScrollPosition(event.left);
+            const gridBodyCon = this.controllersService.getGridBodyController();
+            gridBodyCon.setHorizontalScrollPosition(event.left);
         });
     }
 
@@ -225,7 +223,8 @@ export class AlignedGridsService extends BeanStub {
                 });
                 break;
         }
-        const isVerticalScrollShowing = this.gridBodyComp.isVerticalScrollShowing();
+        const gridBodyCon = this.controllersService.getGridBodyController();
+        const isVerticalScrollShowing = gridBodyCon.isVerticalScrollShowing();
         const alignedGrids = this.gridOptionsWrapper.getAlignedGrids();
 
         if (alignedGrids) {

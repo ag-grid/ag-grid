@@ -10,6 +10,7 @@ import { GridBodyComp } from "../../gridBodyComp/gridBodyComp";
 import { AnimationFrameService } from "../../misc/animationFrameService";
 import { HeaderRootComp, HeaderContainerPosition } from "../headerRootComp";
 import { last } from "../../utils/array";
+import { ControllersService } from "../../controllersService";
 
 export enum HeaderNavigationDirection {
     UP,
@@ -24,6 +25,7 @@ export class HeaderNavigationService extends BeanStub {
     @Autowired('focusController') private focusController: FocusController;
     @Autowired('headerPositionUtils') private headerPositionUtils: HeaderPositionUtils;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
+    @Autowired('controllersService') private controllersService: ControllersService;
 
     private gridBodyComp: GridBodyComp;
     private headerRoot: HeaderRootComp;
@@ -172,7 +174,8 @@ export class HeaderNavigationService extends BeanStub {
 
         // need to nudge the scrolls for the floating items. otherwise when we set focus on a non-visible
         // floating cell, the scrolls get out of sync
-        this.gridBodyComp.horizontallyScrollHeaderCenterAndFloatingCenter();
+        const gridBodyCon = this.controllersService.getGridBodyController();
+        gridBodyCon.horizontallyScrollHeaderCenterAndFloatingCenter();
 
         // need to flush frames, to make sure the correct cells are rendered
         this.animationFrameService.flushAllFrames();

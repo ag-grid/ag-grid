@@ -2,26 +2,95 @@ import { GridCompController } from "./gridComp/gridCompController";
 import { Bean } from "./context/context";
 import { GridBodyController } from "./gridBodyComp/gridBodyController";
 import { RowContainerController } from "./gridBodyComp/rowContainer/rowContainerController";
+import { HeaderRootComp } from "./headerRendering/headerRootComp";
+import { FakeHorizontalScrollController } from "./gridBodyComp/fakeHorizontalScrollController";
+import { BeanStub } from "./context/beanStub";
+import { Events } from "./eventKeys";
 
 // for all controllers that are singletons, they can register here so other parts
 // of the application can access them.
 
 @Bean('controllersService')
-export class ControllersService {
+export class ControllersService extends BeanStub {
 
     private gridCompCon: GridCompController;
     private gridBodyCon: GridBodyController;
-    private centerRowContainerCon: RowContainerController;
 
-    // should be using promises maybe instead of this? not sure
-    private waitingOnGridBodyCon: ((con: GridBodyController)=>void)[] = [];
+    private centerRowContainerCon: RowContainerController;
+    private bottomCenterRowContainerCon: RowContainerController;
+    private topCenterRowContainerCon: RowContainerController;
+
+    private fakeHScrollCon: FakeHorizontalScrollController;
+
+    private headerRootComp: HeaderRootComp;
+
+    private ready = false;
+    private readyCallbacks: (()=>void)[] = [];
+
+    private checkReady(): void {
+        this.ready =
+            this.gridCompCon != null
+            && this.gridBodyCon != null
+            && this.centerRowContainerCon != null
+            && this.bottomCenterRowContainerCon != null
+            && this.topCenterRowContainerCon != null
+            && this.fakeHScrollCon != null
+            && this.headerRootComp != null;
+
+        if (this.ready) {
+            this.readyCallbacks.forEach( c => c() );
+            this.readyCallbacks.length = 0;
+        }
+    }
+
+    public whenReady(callback: ()=>void): void {
+        if (this.ready) {
+            callback();
+        } else {
+            this.readyCallbacks.push(callback);
+        }
+    }
+
+    public registerFakeHScrollCon(fakeHScrollCon: FakeHorizontalScrollController): void {
+        this.fakeHScrollCon = fakeHScrollCon;
+        this.checkReady();
+    }
+
+    public registerHeaderRootComp(headerRootComp: HeaderRootComp): void {
+        this.headerRootComp = headerRootComp;
+        this.checkReady();
+    }
 
     public registerCenterRowContainerCon(centerRowContainerCon: RowContainerController): void {
         this.centerRowContainerCon = centerRowContainerCon;
+        this.checkReady();
+    }
+
+    public registerTopCenterRowContainerCon(topCenterRowContainerCon: RowContainerController): void {
+        this.topCenterRowContainerCon = topCenterRowContainerCon;
+        this.checkReady();
+    }
+
+    public registerBottomCenterRowContainerCon(bottomCenterRowContainerCon: RowContainerController): void {
+        this.bottomCenterRowContainerCon = bottomCenterRowContainerCon;
+        this.checkReady();
+    }
+    public registerGridBodyController(gridBodyController: GridBodyController): void {
+        this.gridBodyCon = gridBodyController;
+        this.checkReady();
     }
 
     public registerGridCompController(gridCompController: GridCompController): void {
         this.gridCompCon = gridCompController;
+        this.checkReady();
+    }
+
+    public getFakeHScrollCon(): FakeHorizontalScrollController {
+        return this.fakeHScrollCon;
+    }
+
+    public getHeaderRootComp(): HeaderRootComp {
+        return this.headerRootComp;
     }
 
     public getGridCompController(): GridCompController {
@@ -32,21 +101,15 @@ export class ControllersService {
         return this.centerRowContainerCon;
     }
 
-    public registerGridBodyController(gridBodyController: GridBodyController): void {
-        this.gridBodyCon = gridBodyController;
-        this.waitingOnGridBodyCon.forEach( c => c(this.gridBodyCon) );
-        this.waitingOnGridBodyCon.length = 0;
+    public getTopCenterRowContainerCon(): RowContainerController {
+        return this.topCenterRowContainerCon;
+    }
+
+    public getBottomCenterRowContainerCon(): RowContainerController {
+        return this.bottomCenterRowContainerCon;
     }
 
     public getGridBodyController(): GridBodyController {
         return this.gridBodyCon;
-    }
-
-    public getGridBodyControllerAsync(callback: (con: GridBodyController)=>void ): void {
-        if (this.gridBodyCon) {
-            callback(this.gridBodyCon);
-        } else {
-            this.waitingOnGridBodyCon.push(callback);
-        }
     }
 }

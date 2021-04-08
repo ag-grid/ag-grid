@@ -41,17 +41,9 @@ export class FakeHorizontalScrollComp extends Component {
             includeRightSpacerScrollerCss: (cssClass: string, include: boolean) =>
                 addOrRemoveCssClass(this.eRightSpacer, cssClass, include),
         };
-        this.controller = this.createManagedBean(new FakeHorizontalScrollController(view));
+        this.controller = this.createManagedBean(new FakeHorizontalScrollController());
+        this.controller.setView(view, this.eViewport, this.eContainer);
 
         this.createManagedBean(new CenterWidthFeature( width => this.eContainer.style.width = `${width}px`));
     }
-
-    public getViewport(): HTMLElement {
-        return this.eViewport;
-    }
-
-    public getContainer(): HTMLElement {
-        return this.eContainer;
-    }
-
 }

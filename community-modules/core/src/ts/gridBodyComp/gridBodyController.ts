@@ -11,6 +11,7 @@ import { ColumnController } from "../columnController/columnController";
 import { ScrollVisibleService, SetScrollsVisibleParams } from "./scrollVisibleService";
 import { getTarget } from "../utils/event";
 import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
+import { GridBodyScrollFeature } from "./gridBodyScrollFeature";
 
 export enum RowAnimationCssClasses {
     ANIMATION_ON = 'ag-row-animation',
@@ -27,7 +28,6 @@ export interface GridBodyView extends  LayoutView {
     isVerticalScrollShowing(): boolean;
     getBodyHeight(): number;
     setVerticalScrollPaddingVisible(visible: boolean): void;
-    checkScrollLeft(): void;
     registerBodyViewportResizeListener(listener: (()=>void)): void;
     clearBodyHeight(): void;
     checkBodyHeight(): void;
@@ -49,6 +49,8 @@ export class GridBodyController extends BeanStub {
     private enableRtl: boolean;
     private printLayout: boolean;
 
+    private horizontalScrollFeature: GridBodyScrollFeature;
+
     @PostConstruct
     private postConstruct(): void {
         this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
@@ -63,6 +65,7 @@ export class GridBodyController extends BeanStub {
         this.view.setProps({printLayout: this.printLayout, enableRtl: this.enableRtl});
 
         this.createManagedBean(new LayoutFeature(this.view));
+        this.horizontalScrollFeature = this.createManagedBean(new GridBodyScrollFeature(this.eBodyViewport));
 
         this.setupRowAnimationCssClass();
 
@@ -108,7 +111,19 @@ export class GridBodyController extends BeanStub {
     }
 
     public checkScrollLeft(): void {
-        this.view.checkScrollLeft();
+        this.horizontalScrollFeature.checkScrollLeft();
+    }
+
+    public horizontallyScrollHeaderCenterAndFloatingCenter(): void {
+        this.horizontalScrollFeature.horizontallyScrollHeaderCenterAndFloatingCenter();
+    }
+
+    public executeAnimationFrameScroll(): boolean {
+        return this.horizontalScrollFeature.executeAnimationFrameScroll();
+    }
+
+    public setHorizontalScrollPosition(hScrollPosition: number): void {
+        this.horizontalScrollFeature.setHorizontalScrollPosition(hScrollPosition);
     }
 
     public getBodyHeight(): number {

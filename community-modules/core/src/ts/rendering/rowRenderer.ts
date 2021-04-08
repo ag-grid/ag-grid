@@ -39,6 +39,7 @@ import { createArrayOfNumbers } from "../utils/number";
 import { last } from "../utils/array";
 import { doOnce, executeInAWhile } from "../utils/function";
 import { KeyCode } from '../constants/keyCode';
+import { ControllersService } from "../controllersService";
 
 export interface RowMap {
     [key: string]: RowController
@@ -61,6 +62,7 @@ export class RowRenderer extends BeanStub {
     @Autowired("animationFrameService") private animationFrameService: AnimationFrameService;
     @Autowired("rowPositionUtils") private rowPositionUtils: RowPositionUtils;
     @Optional("rangeController") private rangeController: IRangeController;
+    @Optional("controllersService") private controllersService: ControllersService;
 
     private gridBodyComp: GridBodyComp;
 
@@ -1321,7 +1323,7 @@ export class RowRenderer extends BeanStub {
 
         // need to nudge the scrolls for the floating items. otherwise when we set focus on a non-visible
         // floating cell, the scrolls get out of sync
-        this.gridBodyComp.horizontallyScrollHeaderCenterAndFloatingCenter();
+        this.controllersService.getGridBodyController().horizontallyScrollHeaderCenterAndFloatingCenter();
 
         // need to flush frames, to make sure the correct cells are rendered
         this.animationFrameService.flushAllFrames();

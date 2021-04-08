@@ -85,8 +85,6 @@ const GRID_BODY_TEMPLATE = /* html */
         <ag-overlay-wrapper ref="overlayWrapper"></ag-overlay-wrapper>
     </div>`;
 
-type ScrollDirection = 'horizontal' | 'vertical';
-
 export class GridBodyComp extends Component implements LayoutView {
 
     @Autowired('alignedGridsService') private alignedGridsService: AlignedGridsService;
@@ -143,13 +141,6 @@ export class GridBodyComp extends Component implements LayoutView {
     @RefSelector('headerRoot') headerRootComp: HeaderRootComp;
     @RefSelector('overlayWrapper') private overlayWrapper: OverlayWrapperComponent;
 
-    private scrollLeft = -1;
-    private scrollTop = -1;
-    private nextScrollTop = -1;
-
-    private lastHorizontalScrollElement: HTMLElement | undefined | null;
-
-    private readonly resetLastHorizontalScrollElementDebounced: () => void;
 
     private bodyHeight: number;
 
@@ -163,7 +154,6 @@ export class GridBodyComp extends Component implements LayoutView {
 
     constructor() {
         super(GRID_BODY_TEMPLATE);
-        this.resetLastHorizontalScrollElementDebounced = debounce(this.resetLastHorizontalScrollElement.bind(this), 500);
     }
 
     @PostConstruct
@@ -190,7 +180,6 @@ export class GridBodyComp extends Component implements LayoutView {
                 this.eTop.style.overflowY = this.eBottom.style.overflowY = scroller;
             },
             checkBodyHeight: this.checkBodyHeight.bind(this),
-            checkScrollLeft: this.checkScrollLeft.bind(this),
             setColumnCount: count => {
                 setAriaColCount(this.getGui(), count)
             }
@@ -201,8 +190,6 @@ export class GridBodyComp extends Component implements LayoutView {
 
         this.addEventListeners();
         this.addDragListeners();
-
-        this.addScrollListener();
 
         if (this.gridOptionsWrapper.isRowModelDefault() && !this.gridOptionsWrapper.getRowData()) {
             this.showLoadingOverlay();
@@ -220,10 +207,7 @@ export class GridBodyComp extends Component implements LayoutView {
             this.addAngularApplyCheck();
         }
 
-        this.onDisplayedColumnsWidthChanged();
-
         this.gridApi.registerGridComp(this);
-        this.alignedGridsService.registerGridComp(this);
         this.headerRootComp.registerGridComp(this);
         this.navigationService.registerGridComp(this);
         this.headerNavigationService.registerGridComp(this);
@@ -408,7 +392,6 @@ export class GridBodyComp extends Component implements LayoutView {
     }
 
     private addEventListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onDisplayedColumnsWidthChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.setFloatingHeights.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, this.onRowDataChanged.bind(this));
@@ -574,7 +557,6 @@ export class GridBodyComp extends Component implements LayoutView {
         this.animationFrameService.flushAllFrames();
     }
 
-    // + moveColumnController
     private getCenterWidth(): number {
         return this.controllersService.getCenterRowContainerCon().getCenterWidth();
     }
@@ -583,18 +565,6 @@ export class GridBodyComp extends Component implements LayoutView {
         const isAlwaysShowVerticalScroll = this.gridOptionsWrapper.isAlwaysShowVerticalScroll();
         addOrRemoveCssClass(this.eBodyViewport, 'ag-force-vertical-scroll', isAlwaysShowVerticalScroll);
         return isAlwaysShowVerticalScroll || isVerticalScrollShowing(this.eBodyViewport);
-    }
-
-    // this is to cater for AG-3274, where grid is removed from the dom and then inserted back in again.
-    // (which happens with some implementations of tabbing). this can result in horizontal scroll getting
-    // reset back to the left, however no scroll event is fired. so we need to get header to also scroll
-    // back to the left to be kept in sync.
-    // adding and removing the grid from the DOM both resets the scroll position and
-    // triggers a resize event, so notify listeners if the scroll position has changed
-    private checkScrollLeft(): void {
-        if (this.scrollLeft !== this.getCenterViewportScrollLeft()) {
-            this.onBodyHorizontalScroll(this.controllersService.getCenterRowContainerCon().getViewportElement());
-        }
     }
 
     public updateRowCount(): void {
@@ -673,7 +643,7 @@ export class GridBodyComp extends Component implements LayoutView {
         // it is possible that the ensureColumnVisible method is called from within AG Grid and
         // the caller will need to have the columns rendered to continue, which will be before
         // the event has been worked on (which is the case for cell navigation).
-        this.onHorizontalViewportChanged();
+        this.controllersService.getCenterRowContainerCon().onHorizontalViewportChanged();
 
         // so when we return back to user, the cells have rendered
         this.animationFrameService.flushAllFrames();
@@ -751,17 +721,6 @@ export class GridBodyComp extends Component implements LayoutView {
         return [this.eTop, this.eBottom];
     }
 
-    private onDisplayedColumnsWidthChanged(): void {
-        if (this.enableRtl) {
-            // because RTL is all backwards, a change in the width of the row
-            // can cause a change in the scroll position, without a scroll event,
-            // because the scroll position in RTL is a function that depends on
-            // the width. to be convinced of this, take out this line, enable RTL,
-            // scroll all the way to the left and then resize a column
-            this.horizontallyScrollHeaderCenterAndFloatingCenter();
-        }
-    }
-
     private checkBodyHeight(): void {
         const bodyHeight = getInnerHeight(this.eBodyViewport);
 
@@ -811,20 +770,7 @@ export class GridBodyComp extends Component implements LayoutView {
 
     // called by scrollHorizontally method and alignedGridsService
     public setHorizontalScrollPosition(hScrollPosition: number): void {
-        const minScrollLeft = 0;
-        const maxScrollLeft = this.centerContainer.getViewportElement().scrollWidth - this.getCenterWidth();
-
-        if (this.shouldBlockScrollUpdate('horizontal', hScrollPosition)) {
-            hScrollPosition = Math.min(Math.max(hScrollPosition, minScrollLeft), maxScrollLeft);
-        }
-
-        this.centerContainer.getViewportElement().scrollLeft = hScrollPosition;
-
-        // we need to manually do the event handling (rather than wait for the event)
-        // for the alignedGridsService, as if we don't, the aligned grid service gets
-        // notified async, and then it's 'consuming' flag doesn't get used right, and
-        // we can end up with an infinite loop
-        this.doHorizontalScroll(hScrollPosition);
+        this.controller.setHorizontalScrollPosition(hScrollPosition);
     }
 
     public setVerticalScrollPosition(vScrollPosition: number): void {
@@ -847,166 +793,8 @@ export class GridBodyComp extends Component implements LayoutView {
         return this.eBodyViewport.scrollTop - oldScrollPosition;
     }
 
-    private addScrollListener() {
-        this.addManagedListener(this.centerContainer.getViewportElement(), 'scroll', this.onCenterViewportScroll.bind(this));
-        this.addManagedListener(this.fakeHScroll.getViewport(), 'scroll', this.onFakeHorizontalScroll.bind(this));
-
-        const onVerticalScroll = this.gridOptionsWrapper.isDebounceVerticalScrollbar() ?
-            debounce(this.onVerticalScroll.bind(this), 100)
-            : this.onVerticalScroll.bind(this);
-
-        this.addManagedListener(this.eBodyViewport, 'scroll', onVerticalScroll);
-    }
-
-    private onVerticalScroll(): void {
-        const scrollTop: number = this.eBodyViewport.scrollTop;
-
-        if (this.shouldBlockScrollUpdate('vertical', scrollTop, true)) { return; }
-        this.animationFrameService.setScrollTop(scrollTop);
-        this.nextScrollTop = scrollTop;
-
-       if (this.gridOptionsWrapper.isSuppressAnimationFrame()) {
-           this.scrollTop = this.nextScrollTop;
-           this.redrawRowsAfterScroll();
-        } else {
-            this.animationFrameService.schedule();
-        }
-    }
-
-    public executeAnimationFrameScroll(): boolean {
-        const frameNeeded = this.scrollTop != this.nextScrollTop;
-
-        if (frameNeeded) {
-            this.scrollTop = this.nextScrollTop;
-            this.redrawRowsAfterScroll();
-        }
-
-        return frameNeeded;
-    }
-
-    private shouldBlockScrollUpdate(direction: ScrollDirection, scrollTo: number, touchOnly: boolean = false): boolean {
-        // touch devices allow elastic scroll - which temporally scrolls the panel outside of the viewport
-        // (eg user uses touch to go to the left of the grid, but drags past the left, the rows will actually
-        // scroll past the left until the user releases the mouse). when this happens, we want ignore the scroll,
-        // as otherwise it was causing the rows and header to flicker.
-
-        // sometimes when scrolling, we got values that extended the maximum scroll allowed. we used to
-        // ignore these scrolls. problem is the max scroll position could be skipped (eg the previous scroll event
-        // could be 10px before the max position, and then current scroll event could be 20px after the max position).
-        // if we just ignored the last event, we would be setting the scroll to 10px before the max position, when in
-        // actual fact the user has exceeded the max scroll and thus scroll should be set to the max.
-
-        if (touchOnly && !isIOSUserAgent()) { return false; }
-
-        if (direction === 'vertical') {
-            const clientHeight = getInnerHeight(this.eBodyViewport);
-            const { scrollHeight } = this.eBodyViewport;
-            if (scrollTo < 0 || (scrollTo + clientHeight > scrollHeight)) {
-                return true;
-            }
-        }
-
-        if (direction === 'horizontal') {
-            const clientWidth = this.getCenterWidth();
-            const { scrollWidth } = this.centerContainer.getViewportElement();
-
-            if (this.enableRtl && isRtlNegativeScroll()) {
-                if (scrollTo > 0) { return true; }
-            } else if (scrollTo < 0) { return true; }
-
-            if (Math.abs(scrollTo) + clientWidth > scrollWidth) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private isControllingScroll(eDiv: HTMLElement): boolean {
-        if (!this.lastHorizontalScrollElement) {
-            this.lastHorizontalScrollElement = eDiv;
-            return true;
-        }
-
-        return eDiv === this.lastHorizontalScrollElement;
-    }
-
-    private onFakeHorizontalScroll(): void {
-        if (!this.isControllingScroll(this.fakeHScroll.getViewport())) { return; }
-        this.onBodyHorizontalScroll(this.fakeHScroll.getViewport());
-    }
-
-    private onCenterViewportScroll(): void {
-        if (!this.isControllingScroll(this.centerContainer.getViewportElement())) { return; }
-        this.onBodyHorizontalScroll(this.centerContainer.getViewportElement());
-    }
-
-    private onBodyHorizontalScroll(eSource: HTMLElement): void {
-        const { scrollLeft } = this.centerContainer.getViewportElement();
-
-        if (this.shouldBlockScrollUpdate('horizontal', scrollLeft, true)) {
-            return;
-        }
-
-        this.doHorizontalScroll(Math.floor(getScrollLeft(eSource, this.enableRtl)));
-        this.resetLastHorizontalScrollElementDebounced();
-    }
-
-    private resetLastHorizontalScrollElement() {
-        this.lastHorizontalScrollElement = null;
-    }
-
-    private doHorizontalScroll(scrollLeft: number): void {
-        this.scrollLeft = scrollLeft;
-
-        const event: BodyScrollEvent = {
-            type: Events.EVENT_BODY_SCROLL,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-            direction: 'horizontal',
-            left: this.scrollLeft,
-            top: this.scrollTop
-        };
-
-        this.eventService.dispatchEvent(event);
-        this.horizontallyScrollHeaderCenterAndFloatingCenter(scrollLeft);
-        this.onHorizontalViewportChanged();
-    }
-
-    private onHorizontalViewportChanged(): void {
-        this.controllersService.getCenterRowContainerCon().onHorizontalViewportChanged();
-    }
-
-    private redrawRowsAfterScroll(): void {
-        const event: BodyScrollEvent = {
-            type: Events.EVENT_BODY_SCROLL,
-            direction: 'vertical',
-            api: this.gridApi,
-            columnApi: this.columnApi,
-            left: this.scrollLeft,
-            top: this.scrollTop
-        };
-        this.eventService.dispatchEvent(event);
-    }
-
     private getCenterViewportScrollLeft(): number {
         return this.controllersService.getCenterRowContainerCon().getCenterViewportScrollLeft();
-    }
-
-    public horizontallyScrollHeaderCenterAndFloatingCenter(scrollLeft?: number): void {
-        if (scrollLeft === undefined) {
-            scrollLeft = this.getCenterViewportScrollLeft();
-        }
-
-        const offset = this.enableRtl ? scrollLeft : -scrollLeft;
-
-        this.headerRootComp.setHorizontalScroll(offset);
-        this.bottomCenterContainer.getContainerElement().style.transform = `translateX(${offset}px)`;
-        this.topCenterContainer.getContainerElement().style.transform = `translateX(${offset}px)`;
-
-        const partner = this.lastHorizontalScrollElement === this.centerContainer.getViewportElement() ? this.fakeHScroll.getViewport() : this.centerContainer.getViewportElement();
-
-        setScrollLeft(partner, scrollLeft, this.enableRtl);
     }
 
     // + rangeController

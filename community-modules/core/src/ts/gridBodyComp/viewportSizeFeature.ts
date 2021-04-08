@@ -35,8 +35,8 @@ export class ViewportSizeFeature extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.controllersService.getGridBodyControllerAsync( gridBodyCon => {
-            this.gridBodyCon = gridBodyCon;
+        this.controllersService.whenReady( () => {
+            this.gridBodyCon = this.controllersService.getGridBodyController();
             this.listenForResize();
         });
         this.addManagedListener(this.eventService, Events.EVENT_SCROLLBAR_WIDTH_CHANGED, this.onScrollbarWidthChanged.bind(this));

@@ -42,6 +42,12 @@ export class RowContainerController extends BeanStub {
         this.forContainers([RowContainerNames.CENTER],
             ()=> this.controllersService.registerCenterRowContainerCon(this) )
 
+        this.forContainers([RowContainerNames.TOP_CENTER],
+            ()=> this.controllersService.registerTopCenterRowContainerCon(this) )
+
+        this.forContainers([RowContainerNames.BOTTOM_CENTER],
+            ()=> this.controllersService.registerBottomCenterRowContainerCon(this) )
+
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onDisplayedColumnsWidthChanged.bind(this));
     }
@@ -136,5 +142,9 @@ export class RowContainerController extends BeanStub {
 
     public getViewportElement(): HTMLElement {
         return this.eViewport;
+    }
+
+    public setContainerTranslateX(amount: number): void {
+        this.eContainer.style.transform = `translateX(${amount}px)`
     }
 }

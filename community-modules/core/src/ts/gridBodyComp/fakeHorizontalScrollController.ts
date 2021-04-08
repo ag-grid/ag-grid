@@ -5,6 +5,7 @@ import { ScrollVisibleService } from "./scrollVisibleService";
 import { Events } from "../eventKeys";
 import { ColumnController } from "../columnController/columnController";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { ControllersService } from "../controllersService";
 
 export interface FakeHorizontalScrollView {
     setHeight(height: number): void;
@@ -20,19 +21,22 @@ export class FakeHorizontalScrollController extends BeanStub {
 
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('controllersService') public controllersService: ControllersService;
 
     private view: FakeHorizontalScrollView;
 
     private enableRtl: boolean;
+    private eViewport: HTMLElement;
+    private eContainer: HTMLElement;
 
-    constructor(view: FakeHorizontalScrollView) {
+    constructor() {
         super();
-        this.view = view;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
-        this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
+    public setView(view: FakeHorizontalScrollView, eViewport: HTMLElement, eContainer: HTMLElement): void {
+        this.view = view;
+        this.eViewport = eViewport;
+        this.eContainer = eContainer;
 
         this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
         this.onScrollVisibilityChanged();
@@ -43,6 +47,13 @@ export class FakeHorizontalScrollController extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, spacerWidthsListener);
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, spacerWidthsListener);
         this.setFakeHScrollSpacerWidths();
+
+        this.controllersService.registerFakeHScrollCon(this);
+    }
+
+    @PostConstruct
+    private postConstruct(): void {
+        this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
     }
 
     private onScrollVisibilityChanged(): void {
@@ -91,5 +102,13 @@ export class FakeHorizontalScrollController extends BeanStub {
         // if the container has the same size as the scrollbar, the scroll button won't work
         this.view.setViewportHeight(scrollContainerSize + (addIEPadding ? 1 : 0));
         this.view.setContainerHeight(scrollContainerSize);
+    }
+
+    public getViewport(): HTMLElement {
+        return this.eViewport;
+    }
+
+    public getContainer(): HTMLElement {
+        return this.eContainer;
     }
 }

@@ -17,6 +17,7 @@ import { KeyName } from '../constants/keyName';
 import { SetPinnedLeftWidthFeature } from "../gridBodyComp/rowContainer/setPinnedLeftWidthFeature";
 import { PinnedWidthService } from "../gridBodyComp/pinnedWidthService";
 import { CenterWidthFeature } from "../gridBodyComp/centerWidthFeature";
+import { ControllersService } from "../controllersService";
 
 export type HeaderContainerPosition = 'left' | 'right' | 'center';
 
@@ -40,6 +41,7 @@ export class HeaderRootComp extends ManagedFocusComponent {
     @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
     @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
     @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
+    @Autowired('controllersService') private controllersService: ControllersService;
 
     private gridBodyComp: GridBodyComp;
     private printLayout: boolean;
@@ -97,6 +99,7 @@ export class HeaderRootComp extends ManagedFocusComponent {
         }
 
         this.setupHeaderHeight();
+        this.controllersService.registerHeaderRootComp(this);
     }
 
     private setupHeaderHeight(): void {
