@@ -186,7 +186,10 @@ export class GridBodyComp extends Component implements LayoutView {
             clearBodyHeight: ()=> this.bodyHeight = 0,
             setVerticalScrollPaddingVisible: this.setVerticalScrollPaddingVisible.bind(this),
             checkBodyHeight: this.checkBodyHeight.bind(this),
-            checkScrollLeft: this.checkScrollLeft.bind(this)
+            checkScrollLeft: this.checkScrollLeft.bind(this),
+            setColumnCount: count => {
+                setAriaColCount(this.getGui(), count)
+            }
         };
 
         this.controller = this.createManagedBean(new GridBodyController());
