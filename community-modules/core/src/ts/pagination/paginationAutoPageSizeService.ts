@@ -1,19 +1,25 @@
 import { BeanStub } from "../context/beanStub";
 import { Events } from "../events";
-import { Bean } from "../context/context";
+import { Autowired, Bean, PostConstruct } from "../context/context";
 import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
+import { ControllersService } from "../controllersService";
+import { GridBodyController } from "../gridBodyComp/gridBodyController";
 
 @Bean('paginationAutoPageSizeService')
 export class PaginationAutoPageSizeService extends BeanStub {
 
-    private gridBodyComp: GridBodyComp;
+    @Autowired('controllersService') private controllersService: ControllersService;
 
-    public registerGridComp(gridBodyComp: GridBodyComp): void {
-        this.gridBodyComp = gridBodyComp;
+    private gridBodyCon: GridBodyController;
 
-        this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.onBodyHeightChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
-        this.checkPageSize();
+    @PostConstruct
+    private postConstruct(): void {
+        this.controllersService.whenReady( ()=> {
+            this.gridBodyCon = this.controllersService.getGridBodyController();
+            this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.onBodyHeightChanged.bind(this));
+            this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
+            this.checkPageSize();
+        });
     }
 
     private notActive(): boolean {
@@ -34,7 +40,7 @@ export class PaginationAutoPageSizeService extends BeanStub {
         }
 
         const rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
-        const bodyHeight = this.gridBodyComp.getBodyHeight();
+        const bodyHeight = this.gridBodyCon.getBodyHeight();
 
         if (bodyHeight > 0) {
             const newPageSize = Math.floor(bodyHeight / rowHeight);

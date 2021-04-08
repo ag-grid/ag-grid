@@ -12,6 +12,10 @@ import { ScrollVisibleService, SetScrollsVisibleParams } from "./scrollVisibleSe
 import { getTarget } from "../utils/event";
 import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
 import { GridBodyScrollFeature } from "./gridBodyScrollFeature";
+import { getInnerHeight, isVerticalScrollShowing } from "../utils/dom";
+import { BodyHeightChangedEvent } from "../events";
+import { ColumnApi } from "../columnController/columnApi";
+import { GridApi } from "../gridApi";
 
 export enum RowAnimationCssClasses {
     ANIMATION_ON = 'ag-row-animation',
@@ -25,12 +29,8 @@ export interface GridBodyView extends  LayoutView {
     setProps(params: {enableRtl: boolean, printLayout: boolean}): void;
     setRowAnimationCssOnBodyViewport(animate: boolean): void;
     setAlwaysVerticalScrollClass(on: boolean): void;
-    isVerticalScrollShowing(): boolean;
-    getBodyHeight(): number;
     setVerticalScrollPaddingVisible(visible: boolean): void;
     registerBodyViewportResizeListener(listener: (()=>void)): void;
-    clearBodyHeight(): void;
-    checkBodyHeight(): void;
 }
 
 export class GridBodyController extends BeanStub {
@@ -40,6 +40,8 @@ export class GridBodyController extends BeanStub {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     private view: GridBodyView;
     private eGridBody: HTMLElement;
@@ -48,6 +50,8 @@ export class GridBodyController extends BeanStub {
     // properties we use a lot, so keep reference
     private enableRtl: boolean;
     private printLayout: boolean;
+
+    private bodyHeight: number;
 
     private horizontalScrollFeature: GridBodyScrollFeature;
 
@@ -99,11 +103,21 @@ export class GridBodyController extends BeanStub {
     }
 
     public checkBodyHeight(): void {
-        this.view.checkBodyHeight();
+        const bodyHeight = getInnerHeight(this.eBodyViewport);
+
+        if (this.bodyHeight !== bodyHeight) {
+            this.bodyHeight = bodyHeight;
+            const event: BodyHeightChangedEvent = {
+                type: Events.EVENT_BODY_HEIGHT_CHANGED,
+                api: this.gridApi,
+                columnApi: this.columnApi
+            };
+            this.eventService.dispatchEvent(event);
+        }
     }
 
     public clearBodyHeight(): void {
-        this.view.clearBodyHeight();
+        this.bodyHeight = 0;
     }
 
     public registerBodyViewportResizeListener(listener: (()=>void)): void {
@@ -127,7 +141,7 @@ export class GridBodyController extends BeanStub {
     }
 
     public getBodyHeight(): number {
-        return this.view.getBodyHeight();
+        return this.bodyHeight;
     }
 
     public setVerticalScrollPaddingVisible(visible: boolean): void {
@@ -137,7 +151,7 @@ export class GridBodyController extends BeanStub {
     public isVerticalScrollShowing(): boolean {
         const isAlwaysShowVerticalScroll = this.gridOptionsWrapper.isAlwaysShowVerticalScroll();
         this.view.setAlwaysVerticalScrollClass(isAlwaysShowVerticalScroll);
-        return this.view.isVerticalScrollShowing();
+        return isVerticalScrollShowing(this.eBodyViewport);
     }
 
     private setupRowAnimationCssClass(): void {

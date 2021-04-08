@@ -141,9 +141,6 @@ export class GridBodyComp extends Component implements LayoutView {
     @RefSelector('headerRoot') headerRootComp: HeaderRootComp;
     @RefSelector('overlayWrapper') private overlayWrapper: OverlayWrapperComponent;
 
-
-    private bodyHeight: number;
-
     // properties we use a lot, so keep reference
     private enableRtl: boolean;
     private printLayout: boolean;
@@ -168,18 +165,14 @@ export class GridBodyComp extends Component implements LayoutView {
             setRowAnimationCssOnBodyViewport: this.setRowAnimationCssOnBodyViewport.bind(this),
             setAlwaysVerticalScrollClass: on =>
                 addOrRemoveCssClass(this.eBodyViewport, CSS_CLASS_FORCE_VERTICAL_SCROLL, on),
-            isVerticalScrollShowing: () => isVerticalScrollShowing(this.eBodyViewport),
-            getBodyHeight: ()=> getInnerHeight(this.eBodyViewport),
             registerBodyViewportResizeListener: listener => {
                 const unsubscribeFromResize = this.resizeObserverService.observeResize(this.eBodyViewport, listener);
                 this.addDestroyFunc(() => unsubscribeFromResize());
             },
-            clearBodyHeight: ()=> this.bodyHeight = 0,
             setVerticalScrollPaddingVisible: show => {
                 const scroller = show ? 'scroll' : 'hidden';
                 this.eTop.style.overflowY = this.eBottom.style.overflowY = scroller;
             },
-            checkBodyHeight: this.checkBodyHeight.bind(this),
             setColumnCount: count => {
                 setAriaColCount(this.getGui(), count)
             }
@@ -215,7 +208,6 @@ export class GridBodyComp extends Component implements LayoutView {
         this.autoHeightCalculator.registerGridComp(this);
         this.columnAnimationService.registerGridComp(this);
         this.autoWidthCalculator.registerGridComp(this);
-        this.paginationAutoPageSizeService.registerGridComp(this);
         this.mouseEventService.registerGridComp(this);
         this.beans.registerGridComp(this);
         this.rowRenderer.registerGridComp(this);
@@ -721,20 +713,6 @@ export class GridBodyComp extends Component implements LayoutView {
         return [this.eTop, this.eBottom];
     }
 
-    private checkBodyHeight(): void {
-        const bodyHeight = getInnerHeight(this.eBodyViewport);
-
-        if (this.bodyHeight !== bodyHeight) {
-            this.bodyHeight = bodyHeight;
-            const event: BodyHeightChangedEvent = {
-                type: Events.EVENT_BODY_HEIGHT_CHANGED,
-                api: this.gridApi,
-                columnApi: this.columnApi
-            };
-            this.eventService.dispatchEvent(event);
-        }
-    }
-
     private setFloatingHeights(): void {
         const {pinnedRowModel, eTop, eBottom} = this;
 
@@ -761,11 +739,7 @@ export class GridBodyComp extends Component implements LayoutView {
         eBottom.style.height = floatingBottomHeightString;
         eBottom.style.display = floatingBottomHeight ? 'inherit' : 'none';
 
-        this.checkBodyHeight();
-    }
-
-    public getBodyHeight(): number {
-        return this.bodyHeight;
+        this.controller.checkBodyHeight();
     }
 
     // called by scrollHorizontally method and alignedGridsService
