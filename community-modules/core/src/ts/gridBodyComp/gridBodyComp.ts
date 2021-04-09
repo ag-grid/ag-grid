@@ -184,9 +184,6 @@ export class GridBodyComp extends Component implements LayoutView {
         this.addEventListeners();
         this.addDragListeners();
 
-        if (this.gridOptionsWrapper.isRowModelDefault() && !this.gridOptionsWrapper.getRowData()) {
-            this.showLoadingOverlay();
-        }
         this.setCellTextSelection(this.gridOptionsWrapper.isEnableCellTextSelect());
 
         this.setFloatingHeights();
@@ -242,29 +239,7 @@ export class GridBodyComp extends Component implements LayoutView {
         addOrRemoveCssClass(this.eBodyViewport, RowAnimationCssClasses.ANIMATION_OFF, !animateRows);
     }
 
-    private onRowDataChanged(): void {
-        this.showOrHideOverlay();
-    }
-
-    private showOrHideOverlay(): void {
-        const isEmpty = this.paginationProxy.isEmpty();
-        const isSuppressNoRowsOverlay = this.gridOptionsWrapper.isSuppressNoRowsOverlay();
-        if (isEmpty && !isSuppressNoRowsOverlay) {
-            this.showNoRowsOverlay();
-        } else {
-            this.hideOverlay();
-        }
-    }
-
     private onNewColumnsLoaded(): void {
-        // hide overlay if columns and rows exist, this can happen if columns are loaded after data.
-        // this problem exists before of the race condition between the services (column controller in this case)
-        // and the view (grid panel). if the model beans were all initialised first, and then the view beans second,
-        // this race condition would not happen.
-        if (this.columnController.isReady() && !this.paginationProxy.isEmpty()) {
-            this.hideOverlay();
-        }
-
         // we don't want each cellComp to register for events, as would increase rendering time.
         // so for newColumnsLoaded, we register once here (in rowRenderer) and then inform
         // each cell if / when event was fired.
@@ -373,8 +348,6 @@ export class GridBodyComp extends Component implements LayoutView {
 
     private addEventListeners(): void {
         this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.setFloatingHeights.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, this.onRowDataChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
 
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
@@ -619,22 +592,6 @@ export class GridBodyComp extends Component implements LayoutView {
 
         // so when we return back to user, the cells have rendered
         this.animationFrameService.flushAllFrames();
-    }
-
-    public showLoadingOverlay() {
-        if (!this.gridOptionsWrapper.isSuppressLoadingOverlay()) {
-            this.overlayWrapper.showLoadingOverlay();
-        }
-    }
-
-    public showNoRowsOverlay() {
-        if (!this.gridOptionsWrapper.isSuppressNoRowsOverlay()) {
-            this.overlayWrapper.showNoRowsOverlay();
-        }
-    }
-
-    public hideOverlay() {
-        this.overlayWrapper.hideOverlay();
     }
 
     // method will call itself if no available width. this covers if the grid

@@ -77,6 +77,7 @@ import { GridCompController } from "./gridComp/gridCompController";
 import { ISideBar } from "./interfaces/iSideBar";
 import { ControllersService } from "./controllersService";
 import { GridBodyController } from "./gridBodyComp/gridBodyController";
+import { OverlayWrapperComponent } from "./rendering/overlays/overlayWrapperComponent";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -185,6 +186,7 @@ export class GridApi {
     @Optional('ssrmTransactionManager') private serverSideTransactionManager: IServerSideTransactionManager;
     @Optional('controllersService') private controllersService: ControllersService;
 
+    private overlayWrapperComp: OverlayWrapperComponent;
     private gridBodyComp: GridBodyComp;
     private gridBodyCon: GridBodyController;
     private gridCompController: GridCompController;
@@ -202,6 +204,10 @@ export class GridApi {
 
     public registerGridComp(gridBodyComp: GridBodyComp): void {
         this.gridBodyComp = gridBodyComp;
+    }
+
+    public registerOverlayWrapperComp(overlayWrapperComp: OverlayWrapperComponent): void {
+        this.overlayWrapperComp = overlayWrapperComp;
     }
 
     public registerGridCompController(gridCompController: GridCompController): void {
@@ -732,15 +738,15 @@ export class GridApi {
     }
 
     public showLoadingOverlay(): void {
-        this.gridBodyComp.showLoadingOverlay();
+        this.overlayWrapperComp.showLoadingOverlay();
     }
 
     public showNoRowsOverlay(): void {
-        this.gridBodyComp.showNoRowsOverlay();
+        this.overlayWrapperComp.showNoRowsOverlay();
     }
 
     public hideOverlay(): void {
-        this.gridBodyComp.hideOverlay();
+        this.overlayWrapperComp.hideOverlay();
     }
 
     public isNodeSelected(node: any) {
