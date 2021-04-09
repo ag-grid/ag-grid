@@ -13,7 +13,7 @@ import {
 } from "../events";
 import { Constants } from "../constants/constants";
 import { CellComp } from "./cellComp";
-import { Autowired, Bean, Optional, Qualifier } from "../context/context";
+import { Autowired, Bean, Optional, PostConstruct, Qualifier } from "../context/context";
 import { ColumnApi } from "../columnController/columnApi";
 import { ColumnController } from "../columnController/columnController";
 import { Logger, LoggerFactory } from "../logger";
@@ -65,7 +65,7 @@ export class RowRenderer extends BeanStub {
     @Optional("rangeController") private rangeController: IRangeController;
     @Optional("controllersService") private controllersService: ControllersService;
 
-    private gridBodyComp: GridBodyComp;
+    // private gridBodyComp: GridBodyComp;
     private gridBodyCon: GridBodyController;
 
     private destroyFuncsForColumnListeners: (() => void)[] = [];
@@ -100,15 +100,22 @@ export class RowRenderer extends BeanStub {
         this.logger = loggerFactory.create("RowRenderer");
     }
 
-    public registerGridComp(gridBodyComp: GridBodyComp): void {
-        this.gridBodyComp = gridBodyComp;
+    @PostConstruct
+    private postConstruct(): void {
+        this.controllersService.whenReady( ()=> {
+            this.gridBodyCon = this.controllersService.getGridBodyController();
+            this.initialise();
+        });
+    }
 
+    private initialise(): void {
         this.addManagedListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onPageLoaded.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, this.redrawAfterScroll.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.redrawAfterScroll.bind(this));
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
 
         this.registerCellEventListeners();
 
@@ -116,10 +123,6 @@ export class RowRenderer extends BeanStub {
         this.embedFullWidthRows = this.printLayout || this.gridOptionsWrapper.isEmbedFullWidthRows();
 
         this.redrawAfterModelUpdate();
-
-        this.controllersService.whenReady( ()=> {
-            this.gridBodyCon = this.controllersService.getGridBodyController();
-        });
     }
 
     public getRowCons(): RowController[] {
@@ -467,7 +470,7 @@ export class RowRenderer extends BeanStub {
         const suppressScrollToTop = this.gridOptionsWrapper.isSuppressScrollOnNewData();
 
         if (scrollToTop && !suppressScrollToTop) {
-            this.gridBodyComp.scrollToTop();
+            this.gridBodyCon.getScrollFeature().scrollToTop();
         }
     }
 
@@ -523,6 +526,13 @@ export class RowRenderer extends BeanStub {
         this.forEachRowComp((key: string, rowComp: RowController) => {
             rowComp.stopEditing(cancel);
         });
+    }
+
+    private onNewColumnsLoaded(): void {
+        // we don't want each cellComp to register for events, as would increase rendering time.
+        // so for newColumnsLoaded, we register once here (in rowRenderer) and then inform
+        // each cell if / when event was fired.
+        this.forEachCellComp(cellComp => cellComp.onNewColumnsLoaded());
     }
 
     public forEachCellComp(callback: (cellComp: CellComp) => void): void {
@@ -827,7 +837,7 @@ export class RowRenderer extends BeanStub {
 
         this.updateAllRowCons();
         this.checkAngularCompile();
-        this.gridBodyComp.updateRowCount();
+        this.gridBodyCon.updateRowCount();
     }
 
     private dispatchDisplayedRowsChanged(): void {

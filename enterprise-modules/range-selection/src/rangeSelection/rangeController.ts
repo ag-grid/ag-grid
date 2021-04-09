@@ -733,8 +733,8 @@ class AutoScrollService {
     private doTick(): void {
         this.tickCount++;
 
-        const vScrollPosition = this.gridBodyCon.getVScrollPosition();
-        const hScrollPosition = this.gridBodyCon.getHScrollPosition();
+        const vScrollPosition = this.gridBodyCon.getScrollFeature().getVScrollPosition();
+        const hScrollPosition = this.gridBodyCon.getScrollFeature().getHScrollPosition();
 
         let tickAmount: number;
 

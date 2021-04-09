@@ -2,13 +2,13 @@ import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { ColumnApi } from '../columnController/columnApi';
 import { RowRenderer } from '../rendering/rowRenderer';
 import { Autowired, Optional, PostConstruct } from '../context/context';
-import { BodyHeightChangedEvent, BodyScrollEvent, Events } from '../events';
+import { Events } from '../events';
 import { DragListenerParams, DragService } from '../dragAndDrop/dragService';
 import { IRangeController } from '../interfaces/iRangeController';
 import { Constants } from '../constants/constants';
 import { MouseEventService } from './mouseEventService';
 import { IContextMenuFactory } from '../interfaces/iContextMenuFactory';
-import { ScrollVisibleService, SetScrollsVisibleParams } from './scrollVisibleService';
+import { ScrollVisibleService } from './scrollVisibleService';
 import { PaginationProxy } from '../pagination/paginationProxy';
 import { PaginationAutoPageSizeService } from '../pagination/paginationAutoPageSizeService';
 import { AlignedGridsService } from '../alignedGridsService';
@@ -31,21 +31,9 @@ import { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import { ColumnController } from '../columnController/columnController';
 import { HeaderNavigationService } from '../headerRendering/header/headerNavigationService';
 import { setAriaColCount, setAriaMultiSelectable, setAriaRowCount } from '../utils/aria';
-import { debounce } from '../utils/function';
-import {
-    addCssClass,
-    addOrRemoveCssClass,
-    getInnerHeight,
-    getInnerWidth,
-    getScrollLeft,
-    isRtlNegativeScroll,
-    isVerticalScrollShowing,
-    removeCssClass,
-    setScrollLeft
-} from '../utils/dom';
-import { getTabIndex, isIOSUserAgent } from '../utils/browser';
+import { addCssClass, addOrRemoveCssClass, getInnerWidth, isVerticalScrollShowing, removeCssClass } from '../utils/dom';
+import { getTabIndex } from '../utils/browser';
 import { missing } from '../utils/generic';
-import { getTarget } from '../utils/event';
 import { PopupService } from "../widgets/popupService";
 import { IMenuFactory } from "../interfaces/iMenuFactory";
 import { LayoutCssClasses, LayoutView, UpdateLayoutClassesParams } from "../styling/layoutFeature";
@@ -175,6 +163,9 @@ export class GridBodyComp extends Component implements LayoutView {
             },
             setColumnCount: count => {
                 setAriaColCount(this.getGui(), count)
+            },
+            setRowCount: count => {
+                setAriaRowCount(this.getGui(), count)
             }
         };
 
@@ -204,7 +195,6 @@ export class GridBodyComp extends Component implements LayoutView {
         this.columnAnimationService.registerGridComp(this);
         this.autoWidthCalculator.registerGridComp(this);
         this.beans.registerGridComp(this);
-        this.rowRenderer.registerGridComp(this);
         this.animationFrameService.registerGridComp(this);
         if (this.contextMenuFactory) {
             this.contextMenuFactory.registerGridComp(this);
@@ -236,13 +226,6 @@ export class GridBodyComp extends Component implements LayoutView {
     private setRowAnimationCssOnBodyViewport(animateRows: boolean): void {
         addOrRemoveCssClass(this.eBodyViewport, RowAnimationCssClasses.ANIMATION_ON, animateRows);
         addOrRemoveCssClass(this.eBodyViewport, RowAnimationCssClasses.ANIMATION_OFF, !animateRows);
-    }
-
-    private onNewColumnsLoaded(): void {
-        // we don't want each cellComp to register for events, as would increase rendering time.
-        // so for newColumnsLoaded, we register once here (in rowRenderer) and then inform
-        // each cell if / when event was fired.
-        this.rowRenderer.forEachCellComp(cellComp => cellComp.onNewColumnsLoaded());
     }
 
     public updateLayoutClasses(params: UpdateLayoutClassesParams): void {
@@ -347,7 +330,6 @@ export class GridBodyComp extends Component implements LayoutView {
 
     private addEventListeners(): void {
         this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.setFloatingHeights.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
 
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
     }
@@ -381,32 +363,10 @@ export class GridBodyComp extends Component implements LayoutView {
         });
     }
 
-    // gets called by rowRenderer when new data loaded, as it will want to scroll to the top
-    public scrollToTop(): void {
-        this.eBodyViewport.scrollTop = 0;
-    }
-
     public isVerticalScrollShowing(): boolean {
         const isAlwaysShowVerticalScroll = this.gridOptionsWrapper.isAlwaysShowVerticalScroll();
         addOrRemoveCssClass(this.eBodyViewport, 'ag-force-vertical-scroll', isAlwaysShowVerticalScroll);
         return isAlwaysShowVerticalScroll || isVerticalScrollShowing(this.eBodyViewport);
-    }
-
-    public updateRowCount(): void {
-        const headerCount = this.headerNavigationService.getHeaderRowCount();
-        const modelType = this.paginationProxy.getType();
-        let rowCount = -1;
-
-        if (modelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-            rowCount = 0;
-            this.paginationProxy.forEachNode(node => {
-                if (!node.group) { rowCount++; }
-            });
-        }
-
-        const total = rowCount === -1 ? -1 : (headerCount + rowCount);
-
-        setAriaRowCount(this.getGui(), total);
     }
 
     // method will call itself if no available width. this covers if the grid

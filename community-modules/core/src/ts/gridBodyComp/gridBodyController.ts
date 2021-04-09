@@ -14,6 +14,9 @@ import { getInnerHeight, isVerticalScrollShowing } from "../utils/dom";
 import { BodyHeightChangedEvent } from "../events";
 import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
+import { setAriaRowCount } from "../utils/aria";
+import { HeaderNavigationService } from "../headerRendering/header/headerNavigationService";
+import { PaginationProxy } from "../pagination/paginationProxy";
 
 export enum RowAnimationCssClasses {
     ANIMATION_ON = 'ag-row-animation',
@@ -24,6 +27,7 @@ export const CSS_CLASS_FORCE_VERTICAL_SCROLL = 'ag-force-vertical-scroll';
 
 export interface GridBodyView extends  LayoutView {
     setColumnCount(count: number): void;
+    setRowCount(count: number): void;
     setProps(params: {enableRtl: boolean, printLayout: boolean}): void;
     setRowAnimationCssOnBodyViewport(animate: boolean): void;
     setAlwaysVerticalScrollClass(on: boolean): void;
@@ -40,6 +44,8 @@ export class GridBodyController extends BeanStub {
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
+    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
 
     private view: GridBodyView;
     private eGridBody: HTMLElement;
@@ -102,6 +108,23 @@ export class GridBodyController extends BeanStub {
     private onGridColumnsChanged(): void {
         const columns = this.columnController.getAllGridColumns();
         this.view.setColumnCount(columns ? columns.length : 0);
+    }
+
+    public updateRowCount(): void {
+        const headerCount = this.headerNavigationService.getHeaderRowCount();
+        const modelType = this.paginationProxy.getType();
+        let rowCount = -1;
+
+        if (modelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+            rowCount = 0;
+            this.paginationProxy.forEachNode(node => {
+                if (!node.group) { rowCount++; }
+            });
+        }
+
+        const total = rowCount === -1 ? -1 : (headerCount + rowCount);
+
+        this.view.setRowCount(total);
     }
 
     public checkBodyHeight(): void {

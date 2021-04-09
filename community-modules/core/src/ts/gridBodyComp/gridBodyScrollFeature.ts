@@ -314,6 +314,11 @@ export class GridBodyScrollFeature extends BeanStub {
         return centerContainer.getViewportElement().scrollLeft - oldScrollPosition;
     }
 
+    // gets called by rowRenderer when new data loaded, as it will want to scroll to the top
+    public scrollToTop(): void {
+        this.eBodyViewport.scrollTop = 0;
+    }
+
     // Valid values for position are bottom, middle and top
     public ensureNodeVisible(comparator: any, position: string | null = null) {
 
