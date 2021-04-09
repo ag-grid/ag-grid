@@ -175,7 +175,7 @@ export class HeaderNavigationService extends BeanStub {
         // need to nudge the scrolls for the floating items. otherwise when we set focus on a non-visible
         // floating cell, the scrolls get out of sync
         const gridBodyCon = this.controllersService.getGridBodyController();
-        gridBodyCon.horizontallyScrollHeaderCenterAndFloatingCenter();
+        gridBodyCon.getScrollFeature().horizontallyScrollHeaderCenterAndFloatingCenter();
 
         // need to flush frames, to make sure the correct cells are rendered
         this.animationFrameService.flushAllFrames();

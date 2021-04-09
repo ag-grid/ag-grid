@@ -1,14 +1,12 @@
 import { BeanStub } from "../context/beanStub";
-import { Autowired, Optional, PostConstruct, PreConstruct } from "../context/context";
+import { Autowired, Optional, PostConstruct } from "../context/context";
 import { LayoutFeature, LayoutView } from "../styling/layoutFeature";
 import { Constants } from "../constants/constants";
 import { Events } from "../eventKeys";
 import { RowContainerHeightService } from "../rendering/rowContainerHeightService";
 import { ControllersService } from "../controllersService";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { setAriaColCount } from "../utils/aria";
 import { ColumnController } from "../columnController/columnController";
-import { ScrollVisibleService, SetScrollsVisibleParams } from "./scrollVisibleService";
+import { ScrollVisibleService } from "./scrollVisibleService";
 import { getTarget } from "../utils/event";
 import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
 import { GridBodyScrollFeature } from "./gridBodyScrollFeature";
@@ -128,26 +126,6 @@ export class GridBodyController extends BeanStub {
         this.view.registerBodyViewportResizeListener(listener);
     }
 
-    public checkScrollLeft(): void {
-        this.bodyScrollFeature.checkScrollLeft();
-    }
-
-    public horizontallyScrollHeaderCenterAndFloatingCenter(): void {
-        this.bodyScrollFeature.horizontallyScrollHeaderCenterAndFloatingCenter();
-    }
-
-    public executeAnimationFrameScroll(): boolean {
-        return this.bodyScrollFeature.executeAnimationFrameScroll();
-    }
-
-    public setHorizontalScrollPosition(hScrollPosition: number): void {
-        this.bodyScrollFeature.setHorizontalScrollPosition(hScrollPosition);
-    }
-
-    public setVerticalScrollPosition(vScrollPosition: number): void {
-        this.bodyScrollFeature.setVerticalScrollPosition(vScrollPosition);
-    }
-
     public getBodyHeight(): number {
         return this.bodyHeight;
     }
@@ -216,12 +194,8 @@ export class GridBodyController extends BeanStub {
     public scrollVertically(pixels: number): number {
         const oldScrollPosition = this.eBodyViewport.scrollTop;
 
-        this.setVerticalScrollPosition(oldScrollPosition + pixels);
+        this.bodyScrollFeature.setVerticalScrollPosition(oldScrollPosition + pixels);
         return this.eBodyViewport.scrollTop - oldScrollPosition;
-    }
-
-    public isHorizontalScrollShowing(): boolean {
-        return this.bodyScrollFeature.isHorizontalScrollShowing();
     }
 
     // + rangeController - used to know when to scroll when user is dragging outside the

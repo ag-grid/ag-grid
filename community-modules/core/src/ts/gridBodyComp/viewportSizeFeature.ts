@@ -85,7 +85,7 @@ export class ViewportSizeFeature extends BeanStub {
         // check for virtual columns for ColumnController
         this.onHorizontalViewportChanged();
 
-        this.gridBodyCon.checkScrollLeft();
+        this.gridBodyCon.getScrollFeature().checkScrollLeft();
     }
 
     private updateScrollVisibleService(): void {

@@ -40,6 +40,7 @@ import { last } from "../utils/array";
 import { doOnce, executeInAWhile } from "../utils/function";
 import { KeyCode } from '../constants/keyCode';
 import { ControllersService } from "../controllersService";
+import { GridBodyController } from "../gridBodyComp/gridBodyController";
 
 export interface RowMap {
     [key: string]: RowController
@@ -65,6 +66,7 @@ export class RowRenderer extends BeanStub {
     @Optional("controllersService") private controllersService: ControllersService;
 
     private gridBodyComp: GridBodyComp;
+    private gridBodyCon: GridBodyController;
 
     private destroyFuncsForColumnListeners: (() => void)[] = [];
 
@@ -114,6 +116,10 @@ export class RowRenderer extends BeanStub {
         this.embedFullWidthRows = this.printLayout || this.gridOptionsWrapper.isEmbedFullWidthRows();
 
         this.redrawAfterModelUpdate();
+
+        this.controllersService.whenReady( ()=> {
+            this.gridBodyCon = this.controllersService.getGridBodyController();
+        });
     }
 
     public getRowCons(): RowController[] {
@@ -1324,7 +1330,7 @@ export class RowRenderer extends BeanStub {
 
         // need to nudge the scrolls for the floating items. otherwise when we set focus on a non-visible
         // floating cell, the scrolls get out of sync
-        this.controllersService.getGridBodyController().horizontallyScrollHeaderCenterAndFloatingCenter();
+        this.gridBodyCon.getScrollFeature().horizontallyScrollHeaderCenterAndFloatingCenter();
 
         // need to flush frames, to make sure the correct cells are rendered
         this.animationFrameService.flushAllFrames();

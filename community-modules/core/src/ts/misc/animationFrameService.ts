@@ -121,7 +121,7 @@ export class AnimationFrameService extends BeanStub {
         const gridBodyCon = this.controllersService.getGridBodyController();
 
         while (noMaxMillis || duration < millis) {
-            const gridBodyDidSomething = gridBodyCon.executeAnimationFrameScroll();
+            const gridBodyDidSomething = gridBodyCon.getScrollFeature().executeAnimationFrameScroll();
 
             if (!gridBodyDidSomething) {
                 let task: () => void;
