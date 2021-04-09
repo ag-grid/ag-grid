@@ -10,7 +10,7 @@ import { ScrollVisibleService } from "./scrollVisibleService";
 import { getTarget } from "../utils/event";
 import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
 import { GridBodyScrollFeature } from "./gridBodyScrollFeature";
-import { getInnerHeight, isVerticalScrollShowing } from "../utils/dom";
+import { addOrRemoveCssClass, getInnerHeight, isVerticalScrollShowing } from "../utils/dom";
 import { BodyHeightChangedEvent } from "../events";
 import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
@@ -33,9 +33,12 @@ export enum RowAnimationCssClasses {
     ANIMATION_OFF = 'ag-row-no-animation'
 }
 
+export const CSS_CLASS_CELL_SELECTABLE = 'ag-selectable';
+
 export const CSS_CLASS_FORCE_VERTICAL_SCROLL = 'ag-force-vertical-scroll';
 
 export interface GridBodyView extends  LayoutView {
+    setCellSelectable(selectable: boolean): void;
     setTopHeight(height: number): void;
     setTopDisplay(display: string): void;
     setBottomHeight(height: number): void;
@@ -102,6 +105,8 @@ export class GridBodyController extends BeanStub {
 
         this.view.setProps({enableRtl: this.enableRtl});
 
+        this.setCellTextSelection(this.gridOptionsWrapper.isEnableCellTextSelect());
+
         this.createManagedBean(new LayoutFeature(this.view));
         this.bodyScrollFeature = this.createManagedBean(new GridBodyScrollFeature(this.eBodyViewport));
         this.addRowDragListener();
@@ -123,6 +128,10 @@ export class GridBodyController extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.setFloatingHeights.bind(this));
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
+    }
+
+    public setCellTextSelection(selectable: boolean = false): void {
+        this.view.setCellSelectable(selectable);
     }
 
     private onDomLayoutChanged(): void {
@@ -181,35 +190,6 @@ export class GridBodyController extends BeanStub {
 
         viewports.forEach((viewport) => this.addManagedListener(viewport, 'focusout', focusOutListener));
     }
-
-/*    private addDragListeners(): void {
-        if (
-            !this.gridOptionsWrapper.isEnableRangeSelection() || // no range selection if no property
-            missing(this.rangeController) // no range selection if not enterprise version
-        ) {
-            return;
-        }
-
-        const containers = [
-            this.leftContainer.getContainerElement(),
-            this.rightContainer.getContainerElement(),
-            this.centerContainer.getContainerElement(),
-            this.eTop,
-            this.eBottom
-        ];
-
-        containers.forEach(container => {
-            const params: DragListenerParams = {
-                eElement: container,
-                onDragStart: this.rangeController.onDragStart.bind(this.rangeController),
-                onDragStop: this.rangeController.onDragStop.bind(this.rangeController),
-                onDragging: this.rangeController.onDragging.bind(this.rangeController)
-            };
-
-            this.dragService.addDragSource(params);
-            this.addDestroyFunc(() => this.dragService.removeDragSource(params));
-        });
-    }*/
 
     public updateRowCount(): void {
         const headerCount = this.headerNavigationService.getHeaderRowCount();

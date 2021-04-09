@@ -35,6 +35,7 @@ import { PopupService } from "../widgets/popupService";
 import { IMenuFactory } from "../interfaces/iMenuFactory";
 import { LayoutCssClasses, LayoutView, UpdateLayoutClassesParams } from "../styling/layoutFeature";
 import {
+    CSS_CLASS_CELL_SELECTABLE,
     CSS_CLASS_FORCE_VERTICAL_SCROLL,
     GridBodyController,
     GridBodyView,
@@ -165,13 +166,15 @@ export class GridBodyComp extends Component implements LayoutView {
             setTopHeight: height => setHeight(height, this.eTop),
             setBottomHeight: height => setHeight(height, this.eBottom),
             setTopDisplay: display => this.eTop.style.display = display,
-            setBottomDisplay: display => this.eBottom.style.display = display
+            setBottomDisplay: display => this.eBottom.style.display = display,
+            setCellSelectable: selectable => {
+                [this.eTop, this.eBodyViewport, this.eBottom]
+                    .forEach(ct => addOrRemoveCssClass(ct, CSS_CLASS_CELL_SELECTABLE, selectable));
+            }
         };
 
         this.controller = this.createManagedBean(new GridBodyController());
         this.controller.setView(view, this.getGui(), this.eBodyViewport, this.eTop, this.eBottom);
-
-        this.setCellTextSelection(this.gridOptionsWrapper.isEnableCellTextSelect());
 
         if (this.$scope) {
             this.addAngularApplyCheck();
@@ -230,11 +233,6 @@ export class GridBodyComp extends Component implements LayoutView {
     // used by ColumnAnimationService
     public setColumnMovingCss(moving: boolean): void {
         this.addOrRemoveCssClass('ag-column-moving', moving);
-    }
-
-    public setCellTextSelection(selectable: boolean = false): void {
-        [this.eTop, this.eBodyViewport, this.eBottom]
-            .forEach(ct => addOrRemoveCssClass(ct, 'ag-selectable', selectable));
     }
 
     private addAngularApplyCheck(): void {

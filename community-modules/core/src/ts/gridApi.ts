@@ -965,7 +965,7 @@ export class GridApi {
     }
 
     public setEnableCellTextSelection(selectable: boolean) {
-        this.gridBodyComp.setCellTextSelection(selectable);
+        this.gridBodyCon.setCellTextSelection(selectable);
     }
 
     public setFillHandleDirection(direction: 'x' | 'y' | 'xy') {
