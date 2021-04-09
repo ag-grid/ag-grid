@@ -25,6 +25,7 @@ import { Beans } from "../../rendering/beans";
 import { Constants } from "../../constants/constants";
 import { ViewportSizeFeature } from "../viewportSizeFeature";
 import { CenterWidthFeature } from "../centerWidthFeature";
+import { DragListenerFeature } from "./dragListenerFeature";
 
 export enum RowContainerNames {
     LEFT = 'left',
@@ -165,17 +166,25 @@ export class RowContainerComp extends Component {
 
         this.stopHScrollOnPinnedRows();
 
-        this.forContainers([RowContainerNames.LEFT, RowContainerNames.BOTTOM_LEFT, RowContainerNames.TOP_LEFT],
-            ()=> this.createManagedBean(new SetPinnedLeftWidthFeature(this.eContainer)))
+        const allTopNoFW = [RowContainerNames.TOP_CENTER, RowContainerNames.TOP_LEFT, RowContainerNames.TOP_RIGHT];
+        const allBottomNoFW = [RowContainerNames.BOTTOM_CENTER, RowContainerNames.BOTTOM_LEFT, RowContainerNames.BOTTOM_RIGHT];
+        const allMiddleNoFW = [RowContainerNames.CENTER, RowContainerNames.LEFT, RowContainerNames.RIGHT];
+        const allNoFW = [...allTopNoFW, ...allBottomNoFW, ...allMiddleNoFW];
 
-        this.forContainers([RowContainerNames.RIGHT, RowContainerNames.BOTTOM_RIGHT, RowContainerNames.TOP_RIGHT],
-            ()=> this.createManagedBean(new SetPinnedRightWidthFeature(this.eContainer)))
+        const allMiddle = [RowContainerNames.CENTER, RowContainerNames.LEFT, RowContainerNames.RIGHT, RowContainerNames.FULL_WIDTH];
 
-        this.forContainers([RowContainerNames.CENTER, RowContainerNames.LEFT, RowContainerNames.RIGHT, RowContainerNames.FULL_WIDTH],
-            ()=> this.createManagedBean(new SetHeightFeature(this.eContainer, this.eWrapper)))
+        const allCenter = [RowContainerNames.CENTER, RowContainerNames.TOP_CENTER, RowContainerNames.BOTTOM_CENTER];
+        const allLeft = [RowContainerNames.LEFT, RowContainerNames.BOTTOM_LEFT, RowContainerNames.TOP_LEFT];
+        const allRight = [RowContainerNames.RIGHT, RowContainerNames.BOTTOM_RIGHT, RowContainerNames.TOP_RIGHT];
 
-        this.forContainers([RowContainerNames.CENTER, RowContainerNames.TOP_CENTER, RowContainerNames.BOTTOM_CENTER],
-            ()=> this.createManagedBean(new CenterWidthFeature(width => this.eContainer.style.width = `${width}px`)))
+        this.forContainers(allLeft,()=> this.createManagedBean(new SetPinnedLeftWidthFeature(this.eContainer)))
+        this.forContainers(allRight,()=> this.createManagedBean(new SetPinnedRightWidthFeature(this.eContainer)))
+        this.forContainers(allMiddle,()=> this.createManagedBean(new SetHeightFeature(this.eContainer, this.eWrapper)))
+        this.forContainers(allNoFW,()=> this.createManagedBean(new DragListenerFeature(this.eContainer)));
+
+        this.forContainers(allCenter, ()=> this.createManagedBean(
+            new CenterWidthFeature(width => this.eContainer.style.width = `${width}px`))
+        );
 
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_ROWS_CHANGED, this.onDisplayedRowsChanged.bind(this));
     }

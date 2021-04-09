@@ -25,6 +25,8 @@ import { RefSelector } from "../widgets/componentAnnotations";
 import { getTabIndex } from "../utils/browser";
 import { RowRenderer } from "../rendering/rowRenderer";
 import { PopupService } from "../widgets/popupService";
+import { missing } from "../utils/generic";
+import { DragListenerParams } from "../dragAndDrop/dragService";
 
 export enum RowAnimationCssClasses {
     ANIMATION_ON = 'ag-row-animation',
@@ -179,6 +181,35 @@ export class GridBodyController extends BeanStub {
 
         viewports.forEach((viewport) => this.addManagedListener(viewport, 'focusout', focusOutListener));
     }
+
+/*    private addDragListeners(): void {
+        if (
+            !this.gridOptionsWrapper.isEnableRangeSelection() || // no range selection if no property
+            missing(this.rangeController) // no range selection if not enterprise version
+        ) {
+            return;
+        }
+
+        const containers = [
+            this.leftContainer.getContainerElement(),
+            this.rightContainer.getContainerElement(),
+            this.centerContainer.getContainerElement(),
+            this.eTop,
+            this.eBottom
+        ];
+
+        containers.forEach(container => {
+            const params: DragListenerParams = {
+                eElement: container,
+                onDragStart: this.rangeController.onDragStart.bind(this.rangeController),
+                onDragStop: this.rangeController.onDragStop.bind(this.rangeController),
+                onDragging: this.rangeController.onDragging.bind(this.rangeController)
+            };
+
+            this.dragService.addDragSource(params);
+            this.addDestroyFunc(() => this.dragService.removeDragSource(params));
+        });
+    }*/
 
     public updateRowCount(): void {
         const headerCount = this.headerNavigationService.getHeaderRowCount();

@@ -171,8 +171,6 @@ export class GridBodyComp extends Component implements LayoutView {
         this.controller = this.createManagedBean(new GridBodyController());
         this.controller.setView(view, this.getGui(), this.eBodyViewport, this.eTop, this.eBottom);
 
-        this.addDragListeners();
-
         this.setCellTextSelection(this.gridOptionsWrapper.isEnableCellTextSelect());
 
         if (this.$scope) {
@@ -257,36 +255,6 @@ export class GridBodyComp extends Component implements LayoutView {
         // with columns added or removed
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, listener);
         this.addManagedListener(this.eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, listener);
-    }
-
-
-    private addDragListeners(): void {
-        if (
-            !this.gridOptionsWrapper.isEnableRangeSelection() || // no range selection if no property
-            missing(this.rangeController) // no range selection if not enterprise version
-        ) {
-            return;
-        }
-
-        const containers = [
-            this.leftContainer.getContainerElement(),
-            this.rightContainer.getContainerElement(),
-            this.centerContainer.getContainerElement(),
-            this.eTop,
-            this.eBottom
-        ];
-
-        containers.forEach(container => {
-            const params: DragListenerParams = {
-                eElement: container,
-                onDragStart: this.rangeController.onDragStart.bind(this.rangeController),
-                onDragStop: this.rangeController.onDragStop.bind(this.rangeController),
-                onDragging: this.rangeController.onDragging.bind(this.rangeController)
-            };
-
-            this.dragService.addDragSource(params);
-            this.addDestroyFunc(() => this.dragService.removeDragSource(params));
-        });
     }
 
     public isVerticalScrollShowing(): boolean {
