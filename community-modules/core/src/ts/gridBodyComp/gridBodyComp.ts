@@ -35,7 +35,7 @@ import { PopupService } from "../widgets/popupService";
 import { IMenuFactory } from "../interfaces/iMenuFactory";
 import { LayoutCssClasses, LayoutView, UpdateLayoutClassesParams } from "../styling/layoutFeature";
 import {
-    CSS_CLASS_CELL_SELECTABLE,
+    CSS_CLASS_CELL_SELECTABLE, CSS_CLASS_COLUMN_MOVING,
     CSS_CLASS_FORCE_VERTICAL_SCROLL,
     GridBodyController,
     GridBodyView,
@@ -71,7 +71,7 @@ const GRID_BODY_TEMPLATE = /* html */
         <ag-overlay-wrapper ref="overlayWrapper"></ag-overlay-wrapper>
     </div>`;
 
-export class GridBodyComp extends Component implements LayoutView {
+export class GridBodyComp extends Component {
 
     @Autowired('alignedGridsService') private alignedGridsService: AlignedGridsService;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
@@ -146,11 +146,26 @@ export class GridBodyComp extends Component implements LayoutView {
         };
 
         const view: GridBodyView = {
-            updateLayoutClasses: this.updateLayoutClasses.bind(this),
+            setRowAnimationCssOnBodyViewport: this.setRowAnimationCssOnBodyViewport.bind(this),
+            setColumnCount: count => setAriaColCount(this.getGui(), count),
+            setRowCount: count => setAriaRowCount(this.getGui(), count),
+            setTopHeight: height => setHeight(height, this.eTop),
+            setBottomHeight: height => setHeight(height, this.eBottom),
+            setTopDisplay: display => this.eTop.style.display = display,
+            setBottomDisplay: display => this.eBottom.style.display = display,
+            setColumnMovingCss: moving => this.addOrRemoveCssClass(CSS_CLASS_COLUMN_MOVING, moving),
+            updateLayoutClasses: params => {
+                addOrRemoveCssClass(this.eBodyViewport, LayoutCssClasses.AUTO_HEIGHT, params.autoHeight);
+                addOrRemoveCssClass(this.eBodyViewport, LayoutCssClasses.NORMAL, params.normal);
+                addOrRemoveCssClass(this.eBodyViewport, LayoutCssClasses.PRINT, params.print);
+
+                this.addOrRemoveCssClass(LayoutCssClasses.AUTO_HEIGHT, params.autoHeight);
+                this.addOrRemoveCssClass(LayoutCssClasses.NORMAL, params.normal);
+                this.addOrRemoveCssClass(LayoutCssClasses.PRINT, params.print);
+            },
             setProps: (params: { enableRtl: boolean; }) => {
                 this.enableRtl = params.enableRtl;
             },
-            setRowAnimationCssOnBodyViewport: this.setRowAnimationCssOnBodyViewport.bind(this),
             setAlwaysVerticalScrollClass: on =>
                 addOrRemoveCssClass(this.eBodyViewport, CSS_CLASS_FORCE_VERTICAL_SCROLL, on),
             registerBodyViewportResizeListener: listener => {
@@ -161,16 +176,10 @@ export class GridBodyComp extends Component implements LayoutView {
                 const scroller = show ? 'scroll' : 'hidden';
                 this.eTop.style.overflowY = this.eBottom.style.overflowY = scroller;
             },
-            setColumnCount: count => setAriaColCount(this.getGui(), count),
-            setRowCount: count => setAriaRowCount(this.getGui(), count),
-            setTopHeight: height => setHeight(height, this.eTop),
-            setBottomHeight: height => setHeight(height, this.eBottom),
-            setTopDisplay: display => this.eTop.style.display = display,
-            setBottomDisplay: display => this.eBottom.style.display = display,
-            setCellSelectable: selectable => {
+            setCellSelectableCss: selectable => {
                 [this.eTop, this.eBodyViewport, this.eBottom]
                     .forEach(ct => addOrRemoveCssClass(ct, CSS_CLASS_CELL_SELECTABLE, selectable));
-            }
+            },
         };
 
         this.controller = this.createManagedBean(new GridBodyController());
@@ -184,7 +193,6 @@ export class GridBodyComp extends Component implements LayoutView {
         this.headerRootComp.registerGridComp(this);
         this.headerNavigationService.registerGridComp(this);
         this.autoHeightCalculator.registerGridComp(this);
-        this.columnAnimationService.registerGridComp(this);
         this.autoWidthCalculator.registerGridComp(this);
         this.beans.registerGridComp(this);
         this.animationFrameService.registerGridComp(this);
@@ -218,21 +226,6 @@ export class GridBodyComp extends Component implements LayoutView {
     private setRowAnimationCssOnBodyViewport(animateRows: boolean): void {
         addOrRemoveCssClass(this.eBodyViewport, RowAnimationCssClasses.ANIMATION_ON, animateRows);
         addOrRemoveCssClass(this.eBodyViewport, RowAnimationCssClasses.ANIMATION_OFF, !animateRows);
-    }
-
-    public updateLayoutClasses(params: UpdateLayoutClassesParams): void {
-        addOrRemoveCssClass(this.eBodyViewport, LayoutCssClasses.AUTO_HEIGHT, params.autoHeight);
-        addOrRemoveCssClass(this.eBodyViewport, LayoutCssClasses.NORMAL, params.normal);
-        addOrRemoveCssClass(this.eBodyViewport, LayoutCssClasses.PRINT, params.print);
-
-        this.addOrRemoveCssClass(LayoutCssClasses.AUTO_HEIGHT, params.autoHeight);
-        this.addOrRemoveCssClass(LayoutCssClasses.NORMAL, params.normal);
-        this.addOrRemoveCssClass(LayoutCssClasses.PRINT, params.print);
-    }
-
-    // used by ColumnAnimationService
-    public setColumnMovingCss(moving: boolean): void {
-        this.addOrRemoveCssClass('ag-column-moving', moving);
     }
 
     private addAngularApplyCheck(): void {

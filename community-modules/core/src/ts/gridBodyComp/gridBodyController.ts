@@ -34,11 +34,12 @@ export enum RowAnimationCssClasses {
 }
 
 export const CSS_CLASS_CELL_SELECTABLE = 'ag-selectable';
-
 export const CSS_CLASS_FORCE_VERTICAL_SCROLL = 'ag-force-vertical-scroll';
+export const CSS_CLASS_COLUMN_MOVING = 'ag-column-moving';
 
-export interface GridBodyView extends  LayoutView {
-    setCellSelectable(selectable: boolean): void;
+export interface GridBodyView extends LayoutView {
+    setColumnMovingCss(selectable: boolean): void;
+    setCellSelectableCss(selectable: boolean): void;
     setTopHeight(height: number): void;
     setTopDisplay(display: string): void;
     setBottomHeight(height: number): void;
@@ -130,8 +131,13 @@ export class GridBodyController extends BeanStub {
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
     }
 
+    // used by ColumnAnimationService
+    public setColumnMovingCss(moving: boolean): void {
+        this.view.setColumnMovingCss(moving);
+    }
+
     public setCellTextSelection(selectable: boolean = false): void {
-        this.view.setCellSelectable(selectable);
+        this.view.setCellSelectableCss(selectable);
     }
 
     private onDomLayoutChanged(): void {
