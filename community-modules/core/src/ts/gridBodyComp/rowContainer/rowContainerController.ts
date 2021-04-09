@@ -6,7 +6,7 @@ import { RowContainerNames } from "./rowContainerComp";
 import { RowContainerEventsFeature } from "./rowContainerEventsFeature";
 import { DragService } from "../../dragAndDrop/dragService";
 import { ControllersService } from "../../controllersService";
-import { getInnerWidth, getScrollLeft, isHorizontalScrollShowing, isVisible } from "../../utils/dom";
+import { getInnerWidth, getScrollLeft, isHorizontalScrollShowing, isVisible, setScrollLeft } from "../../utils/dom";
 import { ColumnController } from "../../columnController/columnController";
 import { ResizeObserverService } from "../../misc/resizeObserverService";
 
@@ -154,5 +154,10 @@ export class RowContainerController extends BeanStub {
             right: this.eViewport.scrollLeft + this.eViewport.offsetWidth
         };
         return res;
+    }
+
+    public setCenterViewportScrollLeft(value: number): void {
+        // we defer to a util, as how you calculated scrollLeft when doing RTL depends on the browser
+        setScrollLeft(this.eViewport, value, this.enableRtl);
     }
 }

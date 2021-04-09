@@ -1007,7 +1007,7 @@ export class RowRenderer extends BeanStub {
             const maxDivHeightScaler = this.rowContainerHeightService.getOffset();
 
             const gridBodyCon = this.controllersService.getGridBodyController();
-            const bodyVRange = gridBodyCon.getVScrollPosition();
+            const bodyVRange = gridBodyCon.getScrollFeature().getVScrollPosition();
             const bodyTopPixel = bodyVRange.top;
             const bodyBottomPixel = bodyVRange.bottom;
 
@@ -1321,11 +1321,11 @@ export class RowRenderer extends BeanStub {
     public ensureCellVisible(gridCell: CellPosition): void {
         // this scrolls the row into view
         if (missing(gridCell.rowPinned)) {
-            this.gridBodyComp.ensureIndexVisible(gridCell.rowIndex);
+            this.gridBodyCon.getScrollFeature().ensureIndexVisible(gridCell.rowIndex);
         }
 
         if (!gridCell.column.isPinned()) {
-            this.gridBodyComp.ensureColumnVisible(gridCell.column);
+            this.gridBodyCon.getScrollFeature().ensureColumnVisible(gridCell.column);
         }
 
         // need to nudge the scrolls for the floating items. otherwise when we set focus on a non-visible

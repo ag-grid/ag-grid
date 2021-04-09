@@ -466,11 +466,11 @@ export class GridApi {
     }
 
     public getVerticalPixelRange(): { top: number, bottom: number; } {
-        return this.gridBodyCon.getVScrollPosition();
+        return this.gridBodyCon.getScrollFeature().getVScrollPosition();
     }
 
     public getHorizontalPixelRange(): { left: number, right: number; } {
-        return this.gridBodyCon.getHScrollPosition();
+        return this.gridBodyCon.getScrollFeature().getHScrollPosition();
     }
 
     public setAlwaysShowHorizontalScroll(show: boolean) {
@@ -780,17 +780,17 @@ export class GridApi {
     }
 
     public ensureColumnVisible(key: string | Column) {
-        this.gridBodyComp.ensureColumnVisible(key);
+        this.gridBodyCon.getScrollFeature().ensureColumnVisible(key);
     }
 
     // Valid values for position are bottom, middle and top
     public ensureIndexVisible(index: any, position?: string | null) {
-        this.gridBodyComp.ensureIndexVisible(index, position);
+        this.gridBodyCon.getScrollFeature().ensureIndexVisible(index, position);
     }
 
     // Valid values for position are bottom, middle and top
     public ensureNodeVisible(comparator: any, position: string | null = null) {
-        this.gridBodyComp.ensureNodeVisible(comparator, position);
+        this.gridBodyCon.getScrollFeature().ensureNodeVisible(comparator, position);
     }
 
     public forEachLeafNode(callback: (rowNode: RowNode) => void) {
@@ -1316,7 +1316,7 @@ export class GridApi {
         };
         const notPinned = missing(params.rowPinned);
         if (notPinned) {
-            this.gridBodyComp.ensureIndexVisible(params.rowIndex);
+            this.gridBodyCon.getScrollFeature().ensureIndexVisible(params.rowIndex);
         }
         this.rowRenderer.startEditingCell(cellPosition, params.keyPress, params.charPress);
     }

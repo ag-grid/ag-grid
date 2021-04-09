@@ -1,4 +1,4 @@
-import { Autowired, Bean, Optional } from "../context/context";
+import { Autowired, Bean, Optional, PostConstruct } from "../context/context";
 import { CellPosition } from "../entities/cellPosition";
 import { MouseEventService } from "./mouseEventService";
 import { PaginationProxy } from "../pagination/paginationProxy";
@@ -13,6 +13,7 @@ import { exists } from "../utils/generic";
 import { last } from "../utils/array";
 import { KeyCode } from '../constants/keyCode';
 import { ControllersService } from "../controllersService";
+import { GridBodyController } from "./gridBodyController";
 
 interface NavigateParams {
      // The rowIndex to vertically scroll to
@@ -37,12 +38,15 @@ export class NavigationService extends BeanStub {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('controllersService') public controllersService: ControllersService;
 
-    private gridPanel: GridBodyComp;
+    private gridBodyCon: GridBodyController;
 
     private timeLastPageEventProcessed = 0;
 
-    public registerGridComp(gridPanel: GridBodyComp): void {
-        this.gridPanel = gridPanel;
+    @PostConstruct
+    private postConstruct(): void {
+        this.controllersService.whenReady( p => {
+            this.gridBodyCon = p.gridBodyCon;
+        });
     }
 
     public handlePageScrollingKey(event: KeyboardEvent): boolean {
@@ -125,11 +129,11 @@ export class NavigationService extends BeanStub {
         const { scrollIndex, scrollType, scrollColumn, focusIndex, focusColumn } = navigateParams;
 
         if (exists(scrollColumn)) {
-            this.gridPanel.ensureColumnVisible(scrollColumn);
+            this.gridBodyCon.getScrollFeature().ensureColumnVisible(scrollColumn);
         }
 
         if (exists(scrollIndex)) {
-            this.gridPanel.ensureIndexVisible(scrollIndex, scrollType);
+            this.gridBodyCon.getScrollFeature().ensureIndexVisible(scrollIndex, scrollType);
         }
 
         // make sure the cell is rendered, needed if we are to focus
@@ -149,7 +153,7 @@ export class NavigationService extends BeanStub {
         if (this.isTimeSinceLastPageEventToRecent()) { return; }
 
         const gridBodyCon = this.controllersService.getGridBodyController();
-        const scrollPosition = gridBodyCon.getVScrollPosition();
+        const scrollPosition = gridBodyCon.getScrollFeature().getVScrollPosition();
         const scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
         let pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
 
@@ -187,7 +191,7 @@ export class NavigationService extends BeanStub {
         if (this.isTimeSinceLastPageEventToRecent()) { return; }
 
         const gridBodyCon = this.controllersService.getGridBodyController();
-        const scrollPosition = gridBodyCon.getVScrollPosition();
+        const scrollPosition = gridBodyCon.getScrollFeature().getVScrollPosition();
         const scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
         let pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
 

@@ -1,4 +1,4 @@
-import { Bean, Autowired } from "../../context/context";
+import { Bean, Autowired, PostConstruct } from "../../context/context";
 import { BeanStub } from "../../context/beanStub";
 import { HeaderContainer } from "../headerContainer";
 import { FocusController } from "../../focusController";
@@ -11,6 +11,7 @@ import { AnimationFrameService } from "../../misc/animationFrameService";
 import { HeaderRootComp, HeaderContainerPosition } from "../headerRootComp";
 import { last } from "../../utils/array";
 import { ControllersService } from "../../controllersService";
+import { GridBodyController } from "../../gridBodyComp/gridBodyController";
 
 export enum HeaderNavigationDirection {
     UP,
@@ -28,7 +29,15 @@ export class HeaderNavigationService extends BeanStub {
     @Autowired('controllersService') private controllersService: ControllersService;
 
     private gridBodyComp: GridBodyComp;
+    private gridBodyCon: GridBodyController;
     private headerRoot: HeaderRootComp;
+
+    @PostConstruct
+    private postConstruct(): void {
+        this.controllersService.whenReady( p => {
+            this.gridBodyCon = p.gridBodyCon;
+        });
+    }
 
     public registerGridComp(gridBodyComp: GridBodyComp): void {
         this.gridBodyComp = gridBodyComp;
@@ -170,12 +179,11 @@ export class HeaderNavigationService extends BeanStub {
             columnToScrollTo = column;
         }
 
-        this.gridBodyComp.ensureColumnVisible(columnToScrollTo);
+        this.gridBodyCon.getScrollFeature().ensureColumnVisible(columnToScrollTo);
 
         // need to nudge the scrolls for the floating items. otherwise when we set focus on a non-visible
         // floating cell, the scrolls get out of sync
-        const gridBodyCon = this.controllersService.getGridBodyController();
-        gridBodyCon.getScrollFeature().horizontallyScrollHeaderCenterAndFloatingCenter();
+        this.gridBodyCon.getScrollFeature().horizontallyScrollHeaderCenterAndFloatingCenter();
 
         // need to flush frames, to make sure the correct cells are rendered
         this.animationFrameService.flushAllFrames();

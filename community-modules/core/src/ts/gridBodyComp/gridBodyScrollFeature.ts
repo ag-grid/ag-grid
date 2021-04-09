@@ -9,6 +9,13 @@ import { isIOSUserAgent } from "../utils/browser";
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
+import { Constants } from "../constants/constants";
+import { PaginationProxy } from "../pagination/paginationProxy";
+import { IRowModel } from "../interfaces/iRowModel";
+import { RowContainerHeightService } from "../rendering/rowContainerHeightService";
+import { RowRenderer } from "../rendering/rowRenderer";
+import { ColumnController } from "../columnController/columnController";
+import { RowContainerController } from "./rowContainer/rowContainerController";
 
 type ScrollDirection = 'horizontal' | 'vertical';
 
@@ -18,6 +25,11 @@ export class GridBodyScrollFeature extends BeanStub {
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
+    @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('rowContainerHeightService') private heightScaler: RowContainerHeightService;
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
+    @Autowired('columnController') private columnController: ColumnController;
 
     private enableRtl: boolean;
 
@@ -31,6 +43,8 @@ export class GridBodyScrollFeature extends BeanStub {
 
     private readonly resetLastHorizontalScrollElementDebounced: () => void;
 
+    private centerRowContainerCon: RowContainerController;
+
     constructor(eBodyViewport: HTMLElement) {
         super();
         this.eBodyViewport = eBodyViewport;
@@ -42,7 +56,8 @@ export class GridBodyScrollFeature extends BeanStub {
         this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onDisplayedColumnsWidthChanged.bind(this));
 
-        this.controllersService.whenReady( ()=> {
+        this.controllersService.whenReady( p => {
+            this.centerRowContainerCon = p.centerRowContainerCon;
             this.onDisplayedColumnsWidthChanged();
             this.addScrollListener();
         });
@@ -299,4 +314,183 @@ export class GridBodyScrollFeature extends BeanStub {
         return centerContainer.getViewportElement().scrollLeft - oldScrollPosition;
     }
 
+    // Valid values for position are bottom, middle and top
+    public ensureNodeVisible(comparator: any, position: string | null = null) {
+
+        // look for the node index we want to display
+        const rowCount = this.rowModel.getRowCount();
+        const comparatorIsAFunction = typeof comparator === 'function';
+        let indexToSelect = -1;
+        // go through all the nodes, find the one we want to show
+        for (let i = 0; i < rowCount; i++) {
+            const node = this.rowModel.getRow(i);
+            if (comparatorIsAFunction) {
+                if (comparator(node)) {
+                    indexToSelect = i;
+                    break;
+                }
+            } else {
+                // check object equality against node and data
+                if (comparator === node || comparator === node!.data) {
+                    indexToSelect = i;
+                    break;
+                }
+            }
+        }
+        if (indexToSelect >= 0) {
+            this.ensureIndexVisible(indexToSelect, position);
+        }
+    }
+
+    // Valid values for position are bottom, middle and top
+    // position should be {'top','middle','bottom', or undefined/null}.
+    // if undefined/null, then the grid will to the minimal amount of scrolling,
+    // eg if grid needs to scroll up, it scrolls until row is on top,
+    //    if grid needs to scroll down, it scrolls until row is on bottom,
+    //    if row is already in view, grid does not scroll
+    public ensureIndexVisible(index: any, position?: string | null) {
+        // if for print or auto height, everything is always visible
+        if (this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT) { return; }
+
+        const rowCount = this.paginationProxy.getRowCount();
+
+        if (typeof index !== 'number' || index < 0 || index >= rowCount) {
+            console.warn('invalid row index for ensureIndexVisible: ' + index);
+            return;
+        }
+
+        const isPaging = this.gridOptionsWrapper.isPagination();
+        const paginationPanelEnabled = isPaging && !this.gridOptionsWrapper.isSuppressPaginationPanel();
+
+        if (!paginationPanelEnabled) {
+            this.paginationProxy.goToPageWithIndex(index);
+        }
+
+        const rowNode = this.paginationProxy.getRow(index);
+        let rowGotShiftedDuringOperation: boolean;
+
+        do {
+            const startingRowTop = rowNode!.rowTop;
+            const startingRowHeight = rowNode!.rowHeight;
+
+            const paginationOffset = this.paginationProxy.getPixelOffset();
+            const rowTopPixel = rowNode!.rowTop! - paginationOffset;
+            const rowBottomPixel = rowTopPixel + rowNode!.rowHeight!;
+
+            const scrollPosition = this.getVScrollPosition();
+            const heightOffset = this.heightScaler.getOffset();
+
+            const vScrollTop = scrollPosition.top + heightOffset;
+            const vScrollBottom = scrollPosition.bottom + heightOffset;
+
+            const viewportHeight = vScrollBottom - vScrollTop;
+
+            // work out the pixels for top, middle and bottom up front,
+            // make the if/else below easier to read
+            const pxTop = this.heightScaler.getScrollPositionForPixel(rowTopPixel);
+            const pxBottom = this.heightScaler.getScrollPositionForPixel(rowBottomPixel - viewportHeight);
+            // make sure if middle, the row is not outside the top of the grid
+            const pxMiddle = Math.min((pxTop + pxBottom) / 2, rowTopPixel);
+
+            const rowBelowViewport = vScrollTop > rowTopPixel;
+            const rowAboveViewport = vScrollBottom < rowBottomPixel;
+
+            let newScrollPosition: number | null = null;
+
+            if (position === 'top') {
+                newScrollPosition = pxTop;
+            } else if (position === 'bottom') {
+                newScrollPosition = pxBottom;
+            } else if (position === 'middle') {
+                newScrollPosition = pxMiddle;
+            } else if (rowBelowViewport) {
+                // if row is before, scroll up with row at top
+                newScrollPosition = pxTop;
+            } else if (rowAboveViewport) {
+                // if row is below, scroll down with row at bottom
+                newScrollPosition = pxBottom;
+            }
+
+            if (newScrollPosition !== null) {
+                this.eBodyViewport.scrollTop = newScrollPosition;
+                this.rowRenderer.redrawAfterScroll();
+            }
+
+            // the row can get shifted if during the rendering (during rowRenderer.redrawAfterScroll()),
+            // the height of a row changes due to lazy calculation of row heights when using
+            // colDef.autoHeight or gridOptions.getRowHeight.
+            // if row was shifted, then the position we scrolled to is incorrect.
+            rowGotShiftedDuringOperation = (startingRowTop !== rowNode!.rowTop)
+                || (startingRowHeight !== rowNode!.rowHeight);
+
+        } while (rowGotShiftedDuringOperation);
+
+        // so when we return back to user, the cells have rendered
+        this.animationFrameService.flushAllFrames();
+    }
+
+    public ensureColumnVisible(key: any): void {
+        const column = this.columnController.getGridColumn(key);
+
+        if (!column) { return; }
+
+        if (column.isPinned()) {
+            console.warn('calling ensureIndexVisible on a ' + column.getPinned() + ' pinned column doesn\'t make sense for column ' + column.getColId());
+            return;
+        }
+
+        if (!this.columnController.isColumnDisplayed(column)) {
+            console.warn('column is not currently visible');
+            return;
+        }
+
+        const colLeftPixel = column.getLeft();
+        const colRightPixel = colLeftPixel! + column.getActualWidth();
+
+        const viewportWidth = this.centerRowContainerCon.getCenterWidth();
+        const scrollPosition = this.getCenterViewportScrollLeft();
+
+        const bodyWidth = this.columnController.getBodyContainerWidth();
+
+        let viewportLeftPixel: number;
+        let viewportRightPixel: number;
+
+        // the logic of working out left and right viewport px is both here and in the ColumnController,
+        // need to refactor it out to one place
+        if (this.enableRtl) {
+            viewportLeftPixel = bodyWidth - scrollPosition - viewportWidth;
+            viewportRightPixel = bodyWidth - scrollPosition;
+        } else {
+            viewportLeftPixel = scrollPosition;
+            viewportRightPixel = viewportWidth + scrollPosition;
+        }
+
+        const viewportScrolledPastCol = viewportLeftPixel > colLeftPixel!;
+        const viewportScrolledBeforeCol = viewportRightPixel < colRightPixel;
+        const colToSmallForViewport = viewportWidth < column.getActualWidth();
+
+        const alignColToLeft = viewportScrolledPastCol || colToSmallForViewport;
+        const alignColToRight = viewportScrolledBeforeCol;
+
+        if (alignColToLeft || alignColToRight) {
+            let newScrollPosition: number;
+            if (this.enableRtl) {
+                newScrollPosition = alignColToLeft ? (bodyWidth - viewportWidth - colLeftPixel!) : (bodyWidth - colRightPixel);
+            } else {
+                newScrollPosition = alignColToLeft ? colLeftPixel! : (colRightPixel - viewportWidth);
+            }
+            this.centerRowContainerCon.setCenterViewportScrollLeft(newScrollPosition);
+        } else {
+            // otherwise, col is already in view, so do nothing
+        }
+
+        // this will happen anyway, as the move will cause a 'scroll' event on the body, however
+        // it is possible that the ensureColumnVisible method is called from within AG Grid and
+        // the caller will need to have the columns rendered to continue, which will be before
+        // the event has been worked on (which is the case for cell navigation).
+        this.controllersService.getCenterRowContainerCon().onHorizontalViewportChanged();
+
+        // so when we return back to user, the cells have rendered
+        this.animationFrameService.flushAllFrames();
+    }
 }

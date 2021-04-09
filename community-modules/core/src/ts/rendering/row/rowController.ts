@@ -946,7 +946,7 @@ export class RowController extends BeanStub {
     // at a speed the user can see.
     public roundRowTopToBounds(rowTop: number): number {
         const gridBodyCon = this.beans.controllersService.getGridBodyController();
-        const range = gridBodyCon.getVScrollPosition();
+        const range = gridBodyCon.getScrollFeature().getVScrollPosition();
         const minPixel = this.applyPaginationOffset(range.top, true) - 100;
         const maxPixel = this.applyPaginationOffset(range.bottom, true) + 100;
 

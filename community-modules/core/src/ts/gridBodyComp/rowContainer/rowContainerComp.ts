@@ -210,11 +210,6 @@ export class RowContainerComp extends Component {
         return this.eViewport;
     }
 
-    public setCenterViewportScrollLeft(value: number): void {
-        // we defer to a util, as how you calculated scrollLeft when doing RTL depends on the browser
-        setScrollLeft(this.eViewport, value, this.enableRtl);
-    }
-
     public getContainerElement(): HTMLElement {
         return this.eContainer;
     }

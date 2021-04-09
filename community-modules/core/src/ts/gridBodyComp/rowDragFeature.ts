@@ -273,7 +273,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private checkCenterForScrolling(pixel: number): void {
         // scroll if the mouse is within 50px of the grid edge
         const gridBodyCon = this.controllersService.getGridBodyController();
-        const pixelRange = gridBodyCon.getVScrollPosition();
+        const pixelRange = gridBodyCon.getScrollFeature().getVScrollPosition();
 
         // console.log(`pixelRange = (${pixelRange.top}, ${pixelRange.bottom})`);
 

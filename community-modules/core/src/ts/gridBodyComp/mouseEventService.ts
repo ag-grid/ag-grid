@@ -73,8 +73,8 @@ export class MouseEventService extends BeanStub {
 
         if (gridPanelHasScrolls) {
             const gridBodyCon = this.controllersService.getGridBodyController();
-            const vRange = gridBodyCon.getVScrollPosition();
-            const hRange = gridBodyCon.getHScrollPosition();
+            const vRange = gridBodyCon.getScrollFeature().getVScrollPosition();
+            const hRange = gridBodyCon.getScrollFeature().getHScrollPosition();
             x += hRange.left;
             y += vRange.top;
         }

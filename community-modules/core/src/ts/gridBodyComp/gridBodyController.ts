@@ -173,19 +173,6 @@ export class GridBodyController extends BeanStub {
         this.addManagedListener(this.eBodyViewport, 'contextmenu', listener);
     }
 
-    public getVScrollPosition(): { top: number, bottom: number; } {
-        const result = {
-            top: this.eBodyViewport.scrollTop,
-            bottom: this.eBodyViewport.scrollTop + this.eBodyViewport.offsetHeight
-        };
-        return result;
-    }
-
-    public getHScrollPosition(): { left: number, right: number; } {
-        const centerContainer = this.controllersService.getCenterRowContainerCon();
-        return centerContainer.getHScrollPosition();
-    }
-
     public getGui(): HTMLElement {
         return this.eGridBody;
     }

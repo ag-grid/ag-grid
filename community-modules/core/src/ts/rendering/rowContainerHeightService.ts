@@ -55,7 +55,7 @@ export class RowContainerHeightService extends BeanStub {
         if (!this.scaling) { return; }
 
         const gridBodyCon = this.controllersService.getGridBodyController();
-        const newScrollY = gridBodyCon.getVScrollPosition().top;
+        const newScrollY = gridBodyCon.getScrollFeature().getVScrollPosition().top;
         const newBodyHeight = this.getUiBodyHeight();
 
         const atLeastOneChanged = newScrollY !== this.scrollY || newBodyHeight !== this.uiBodyHeight;
@@ -120,7 +120,7 @@ export class RowContainerHeightService extends BeanStub {
 
     private getUiBodyHeight(): number {
         const gridBodyCon = this.controllersService.getGridBodyController();
-        const pos = gridBodyCon.getVScrollPosition();
+        const pos = gridBodyCon.getScrollFeature().getVScrollPosition();
         return pos.bottom - pos.top;
     }
 

@@ -10,6 +10,16 @@ import { Events } from "./eventKeys";
 // for all controllers that are singletons, they can register here so other parts
 // of the application can access them.
 
+interface ReadyParams {
+    gridCompCon: GridCompController;
+    gridBodyCon: GridBodyController;
+    centerRowContainerCon: RowContainerController;
+    bottomCenterRowContainerCon: RowContainerController;
+    topCenterRowContainerCon: RowContainerController;
+    fakeHScrollCon: FakeHorizontalScrollController;
+    headerRootComp: HeaderRootComp;
+}
+
 @Bean('controllersService')
 export class ControllersService extends BeanStub {
 
@@ -25,7 +35,7 @@ export class ControllersService extends BeanStub {
     private headerRootComp: HeaderRootComp;
 
     private ready = false;
-    private readyCallbacks: (()=>void)[] = [];
+    private readyCallbacks: ((p: ReadyParams)=>void)[] = [];
 
     private checkReady(): void {
         this.ready =
@@ -38,17 +48,38 @@ export class ControllersService extends BeanStub {
             && this.headerRootComp != null;
 
         if (this.ready) {
-            this.readyCallbacks.forEach( c => c() );
+            const p: ReadyParams = {
+                bottomCenterRowContainerCon: this.bottomCenterRowContainerCon,
+                centerRowContainerCon: this.centerRowContainerCon,
+                fakeHScrollCon: this.fakeHScrollCon,
+                gridBodyCon: this.gridBodyCon,
+                gridCompCon: this.gridCompCon,
+                headerRootComp: this.headerRootComp,
+                topCenterRowContainerCon: this.topCenterRowContainerCon
+            };
+            this.readyCallbacks.forEach( c => c(p) );
             this.readyCallbacks.length = 0;
         }
     }
 
-    public whenReady(callback: ()=>void): void {
+    public whenReady(callback: (p: ReadyParams)=>void): void {
         if (this.ready) {
-            callback();
+            callback(this.createParams());
         } else {
             this.readyCallbacks.push(callback);
         }
+    }
+
+    private createParams(): ReadyParams {
+        return {
+            bottomCenterRowContainerCon: this.bottomCenterRowContainerCon,
+            centerRowContainerCon: this.centerRowContainerCon,
+            fakeHScrollCon: this.fakeHScrollCon,
+            gridBodyCon: this.gridBodyCon,
+            gridCompCon: this.gridCompCon,
+            headerRootComp: this.headerRootComp,
+            topCenterRowContainerCon: this.topCenterRowContainerCon
+        };
     }
 
     public registerFakeHScrollCon(fakeHScrollCon: FakeHorizontalScrollController): void {
