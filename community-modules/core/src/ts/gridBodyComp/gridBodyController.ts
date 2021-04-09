@@ -22,6 +22,9 @@ import { RowDragFeature } from "./rowDragFeature";
 import { DragAndDropService } from "../dragAndDrop/dragAndDropService";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
 import { RefSelector } from "../widgets/componentAnnotations";
+import { getTabIndex } from "../utils/browser";
+import { RowRenderer } from "../rendering/rowRenderer";
+import { PopupService } from "../widgets/popupService";
 
 export enum RowAnimationCssClasses {
     ANIMATION_ON = 'ag-row-animation',
@@ -57,6 +60,8 @@ export class GridBodyController extends BeanStub {
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
+    @Autowired('popupService') public popupService: PopupService;
 
     private view: GridBodyView;
     private eGridBody: HTMLElement;
@@ -107,6 +112,8 @@ export class GridBodyController extends BeanStub {
         this.onGridColumnsChanged();
         this.addBodyViewportListener();
         this.setFloatingHeights();
+        this.disableBrowserDragging();
+        this.addStopEditingWhenGridLosesFocus();
     }
 
     private addEventListeners(): void {
@@ -128,6 +135,49 @@ export class GridBodyController extends BeanStub {
     private onGridColumnsChanged(): void {
         const columns = this.columnController.getAllGridColumns();
         this.view.setColumnCount(columns ? columns.length : 0);
+    }
+
+    // if we do not do this, then the user can select a pic in the grid (eg an image in a custom cell renderer)
+    // and then that will start the browser native drag n' drop, which messes up with our own drag and drop.
+    private disableBrowserDragging(): void {
+        this.addManagedListener(this.eGridBody, 'dragstart', (event: MouseEvent) => {
+            if (event.target instanceof HTMLImageElement) {
+                event.preventDefault();
+                return false;
+            }
+        });
+    }
+
+    private addStopEditingWhenGridLosesFocus(): void {
+        if (!this.gridOptionsWrapper.isStopEditingWhenGridLosesFocus()) { return; }
+
+        const viewports = [this.eBodyViewport, this.eBottom, this.eTop];
+
+        const focusOutListener = (event: FocusEvent): void => {
+            // this is the element the focus is moving to
+            const elementWithFocus = event.relatedTarget as HTMLElement;
+
+            if (getTabIndex(elementWithFocus) === null) {
+                this.rowRenderer.stopEditing();
+                return;
+            }
+
+            let clickInsideGrid = viewports.some(viewport => viewport.contains(elementWithFocus));
+
+            if (!clickInsideGrid) {
+                const popupService = this.popupService;
+
+                clickInsideGrid =
+                    popupService.getActivePopups().some(popup => popup.contains(elementWithFocus)) ||
+                    popupService.isElementWithinCustomPopup(elementWithFocus);
+            }
+
+            if (!clickInsideGrid) {
+                this.rowRenderer.stopEditing();
+            }
+        };
+
+        viewports.forEach((viewport) => this.addManagedListener(viewport, 'focusout', focusOutListener));
     }
 
     public updateRowCount(): void {

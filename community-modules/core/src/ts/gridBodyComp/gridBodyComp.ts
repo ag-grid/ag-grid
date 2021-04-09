@@ -175,9 +175,6 @@ export class GridBodyComp extends Component implements LayoutView {
 
         this.setCellTextSelection(this.gridOptionsWrapper.isEnableCellTextSelect());
 
-        this.disableBrowserDragging();
-        this.addStopEditingWhenGridLosesFocus();
-
         if (this.$scope) {
             this.addAngularApplyCheck();
         }
@@ -242,38 +239,6 @@ export class GridBodyComp extends Component implements LayoutView {
             .forEach(ct => addOrRemoveCssClass(ct, 'ag-selectable', selectable));
     }
 
-    private addStopEditingWhenGridLosesFocus(): void {
-        if (!this.gridOptionsWrapper.isStopEditingWhenGridLosesFocus()) { return; }
-
-        const viewports = [this.eBodyViewport, this.eBottom, this.eTop];
-
-        const focusOutListener = (event: FocusEvent): void => {
-            // this is the element the focus is moving to
-            const elementWithFocus = event.relatedTarget as HTMLElement;
-
-            if (getTabIndex(elementWithFocus) === null) {
-                this.rowRenderer.stopEditing();
-                return;
-            }
-
-            let clickInsideGrid = viewports.some(viewport => viewport.contains(elementWithFocus));
-
-            if (!clickInsideGrid) {
-                const popupService = this.popupService;
-
-                clickInsideGrid =
-                    popupService.getActivePopups().some(popup => popup.contains(elementWithFocus)) ||
-                    popupService.isElementWithinCustomPopup(elementWithFocus);
-            }
-
-            if (!clickInsideGrid) {
-                this.rowRenderer.stopEditing();
-            }
-        };
-
-        viewports.forEach((viewport) => this.addManagedListener(viewport, 'focusout', focusOutListener));
-    }
-
     private addAngularApplyCheck(): void {
         // this makes sure if we queue up requests, we only execute oe
         let applyTriggered = false;
@@ -294,16 +259,6 @@ export class GridBodyComp extends Component implements LayoutView {
         this.addManagedListener(this.eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, listener);
     }
 
-    // if we do not do this, then the user can select a pic in the grid (eg an image in a custom cell renderer)
-    // and then that will start the browser native drag n' drop, which messes up with our own drag and drop.
-    private disableBrowserDragging(): void {
-        this.addGuiEventListener('dragstart', (event: MouseEvent) => {
-            if (event.target instanceof HTMLImageElement) {
-                event.preventDefault();
-                return false;
-            }
-        });
-    }
 
     private addDragListeners(): void {
         if (
