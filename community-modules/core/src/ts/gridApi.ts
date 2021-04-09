@@ -941,7 +941,7 @@ export class GridApi {
     }
 
     public addRowDropZone(params: RowDropZoneParams): void {
-        this.gridBodyComp.getRowDragFeature().addRowDropZone(params);
+        this.gridBodyCon.getRowDragFeature().addRowDropZone(params);
     }
 
     public removeRowDropZone(params: RowDropZoneParams): void {
@@ -953,7 +953,7 @@ export class GridApi {
     }
 
     public getRowDropZoneParams(events: RowDropZoneEvents): RowDropZoneParams {
-        return this.gridBodyComp.getRowDragFeature().getRowDropZone(events);
+        return this.gridBodyCon.getRowDragFeature().getRowDropZone(events);
     }
 
     public setHeaderHeight(headerHeight?: number) {

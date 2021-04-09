@@ -1,11 +1,9 @@
-import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { ColumnApi } from '../columnController/columnApi';
 import { RowRenderer } from '../rendering/rowRenderer';
 import { Autowired, Optional, PostConstruct } from '../context/context';
 import { Events } from '../events';
 import { DragListenerParams, DragService } from '../dragAndDrop/dragService';
 import { IRangeController } from '../interfaces/iRangeController';
-import { Constants } from '../constants/constants';
 import { MouseEventService } from './mouseEventService';
 import { IContextMenuFactory } from '../interfaces/iContextMenuFactory';
 import { ScrollVisibleService } from './scrollVisibleService';
@@ -16,7 +14,6 @@ import { GridApi } from '../gridApi';
 import { AnimationFrameService } from '../misc/animationFrameService';
 import { NavigationService } from './navigationService';
 import { DragAndDropService } from '../dragAndDrop/dragAndDropService';
-import { RowDragFeature } from './rowDragFeature';
 import { RowContainerHeightService } from '../rendering/rowContainerHeightService';
 import { OverlayWrapperComponent } from '../rendering/overlays/overlayWrapperComponent';
 import { Component } from '../widgets/component';
@@ -131,9 +128,6 @@ export class GridBodyComp extends Component implements LayoutView {
 
     // properties we use a lot, so keep reference
     private enableRtl: boolean;
-    private printLayout: boolean;
-
-    private rowDragFeature: RowDragFeature;
 
     private controller: GridBodyController;
 
@@ -146,9 +140,8 @@ export class GridBodyComp extends Component implements LayoutView {
 
         const view: GridBodyView = {
             updateLayoutClasses: this.updateLayoutClasses.bind(this),
-            setProps: (params: { enableRtl: boolean; printLayout: boolean }) => {
+            setProps: (params: { enableRtl: boolean; }) => {
                 this.enableRtl = params.enableRtl;
-                this.printLayout = params.printLayout;
             },
             setRowAnimationCssOnBodyViewport: this.setRowAnimationCssOnBodyViewport.bind(this),
             setAlwaysVerticalScrollClass: on =>
@@ -181,8 +174,6 @@ export class GridBodyComp extends Component implements LayoutView {
 
         this.disableBrowserDragging();
         this.addStopEditingWhenGridLosesFocus();
-
-        this.addRowDragListener();
 
         if (this.$scope) {
             this.addAngularApplyCheck();
@@ -238,14 +229,6 @@ export class GridBodyComp extends Component implements LayoutView {
         this.addOrRemoveCssClass(LayoutCssClasses.PRINT, params.print);
     }
 
-    private onDomLayoutChanged(): void {
-        const newPrintLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
-
-        if (this.printLayout !== newPrintLayout) {
-            this.printLayout = newPrintLayout;
-        }
-    }
-
     // used by ColumnAnimationService
     public setColumnMovingCss(moving: boolean): void {
         this.addOrRemoveCssClass('ag-column-moving', moving);
@@ -256,14 +239,7 @@ export class GridBodyComp extends Component implements LayoutView {
             .forEach(ct => addOrRemoveCssClass(ct, 'ag-selectable', selectable));
     }
 
-    private addRowDragListener(): void {
-        this.rowDragFeature = this.createManagedBean(new RowDragFeature(this.eBodyViewport, this));
-        this.dragAndDropService.addDropTarget(this.rowDragFeature);
-    }
 
-    public getRowDragFeature(): RowDragFeature {
-        return this.rowDragFeature;
-    }
 
     private addStopEditingWhenGridLosesFocus(): void {
         if (!this.gridOptionsWrapper.isStopEditingWhenGridLosesFocus()) { return; }
@@ -330,8 +306,6 @@ export class GridBodyComp extends Component implements LayoutView {
 
     private addEventListeners(): void {
         this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.setFloatingHeights.bind(this));
-
-        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
     }
 
     private addDragListeners(): void {

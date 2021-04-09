@@ -61,7 +61,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private isGridFiltered: boolean = false;
     private isRowGroupActive: boolean = false;
 
-    constructor(eContainer: HTMLElement, gridPanel: GridBodyComp) {
+    constructor(eContainer: HTMLElement) {
         super();
         this.eContainer = eContainer;
     }

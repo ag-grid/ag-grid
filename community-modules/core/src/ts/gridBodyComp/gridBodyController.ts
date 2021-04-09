@@ -17,6 +17,9 @@ import { GridApi } from "../gridApi";
 import { setAriaRowCount } from "../utils/aria";
 import { HeaderNavigationService } from "../headerRendering/header/headerNavigationService";
 import { PaginationProxy } from "../pagination/paginationProxy";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { RowDragFeature } from "./rowDragFeature";
+import { DragAndDropService } from "../dragAndDrop/dragAndDropService";
 
 export enum RowAnimationCssClasses {
     ANIMATION_ON = 'ag-row-animation',
@@ -28,7 +31,7 @@ export const CSS_CLASS_FORCE_VERTICAL_SCROLL = 'ag-force-vertical-scroll';
 export interface GridBodyView extends  LayoutView {
     setColumnCount(count: number): void;
     setRowCount(count: number): void;
-    setProps(params: {enableRtl: boolean, printLayout: boolean}): void;
+    setProps(params: {enableRtl: boolean}): void;
     setRowAnimationCssOnBodyViewport(animate: boolean): void;
     setAlwaysVerticalScrollClass(on: boolean): void;
     setVerticalScrollPaddingVisible(visible: boolean): void;
@@ -46,6 +49,7 @@ export class GridBodyController extends BeanStub {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
+    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
 
     private view: GridBodyView;
     private eGridBody: HTMLElement;
@@ -58,6 +62,7 @@ export class GridBodyController extends BeanStub {
     private bodyHeight: number;
 
     private bodyScrollFeature: GridBodyScrollFeature;
+    private rowDragFeature: RowDragFeature;
 
     public getScrollFeature(): GridBodyScrollFeature {
         return this.bodyScrollFeature;
@@ -66,7 +71,7 @@ export class GridBodyController extends BeanStub {
     @PostConstruct
     private postConstruct(): void {
         this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
-        this.printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
+        this.onDomLayoutChanged();
     }
 
     public setView(view: GridBodyView, eGridBody: HTMLElement, eBodyViewport: HTMLElement): void {
@@ -74,10 +79,11 @@ export class GridBodyController extends BeanStub {
         this.eGridBody = eGridBody;
         this.eBodyViewport = eBodyViewport;
 
-        this.view.setProps({printLayout: this.printLayout, enableRtl: this.enableRtl});
+        this.view.setProps({enableRtl: this.enableRtl});
 
         this.createManagedBean(new LayoutFeature(this.view));
         this.bodyScrollFeature = this.createManagedBean(new GridBodyScrollFeature(this.eBodyViewport));
+        this.addRowDragListener();
 
         this.setupRowAnimationCssClass();
 
@@ -97,7 +103,11 @@ export class GridBodyController extends BeanStub {
         // this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, this.onRowDataChanged.bind(this));
         // this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
 
-        // this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
+        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
+    }
+
+    private onDomLayoutChanged(): void {
+        this.printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
     }
 
     private onScrollVisibilityChanged(): void {
@@ -215,4 +225,14 @@ export class GridBodyController extends BeanStub {
 
         return this.eBodyViewport.getBoundingClientRect();
     }
+
+    private addRowDragListener(): void {
+        this.rowDragFeature = this.createManagedBean(new RowDragFeature(this.eBodyViewport));
+        this.dragAndDropService.addDropTarget(this.rowDragFeature);
+    }
+
+    public getRowDragFeature(): RowDragFeature {
+        return this.rowDragFeature;
+    }
+
 }
