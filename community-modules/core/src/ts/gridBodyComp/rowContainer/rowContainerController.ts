@@ -45,23 +45,34 @@ export class RowContainerController extends BeanStub {
         this.forContainers([RowContainerNames.CENTER],
             ()=> this.viewportSizeFeature = this.createManagedBean(new ViewportSizeFeature(this)))
 
-        this.forContainers([RowContainerNames.CENTER],
-            ()=> this.controllersService.registerCenterRowContainerCon(this) )
-
-        this.forContainers([RowContainerNames.TOP_CENTER],
-            ()=> this.controllersService.registerTopCenterRowContainerCon(this) )
-
-        this.forContainers([RowContainerNames.BOTTOM_CENTER],
-            ()=> this.controllersService.registerBottomCenterRowContainerCon(this) )
+        this.registerWithControllersService();
 
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onDisplayedColumnsWidthChanged.bind(this));
+    }
+
+    private registerWithControllersService(): void {
+        switch (this.name) {
+            case RowContainerNames.CENTER: this.controllersService.registerCenterRowContainerCon(this); break;
+            case RowContainerNames.LEFT: this.controllersService.registerLeftRowContainerCon(this); break;
+            case RowContainerNames.RIGHT: this.controllersService.registerRightRowContainerCon(this); break;
+            case RowContainerNames.TOP_CENTER: this.controllersService.registerTopCenterRowContainerCon(this); break;
+            case RowContainerNames.TOP_LEFT: this.controllersService.registerTopLeftRowContainerCon(this); break;
+            case RowContainerNames.TOP_RIGHT: this.controllersService.registerTopRightRowContainerCon(this); break;
+            case RowContainerNames.BOTTOM_CENTER: this.controllersService.registerBottomCenterRowContainerCon(this); break;
+            case RowContainerNames.BOTTOM_LEFT: this.controllersService.registerBottomLeftRowContainerCon(this); break;
+            case RowContainerNames.BOTTOM_RIGHT: this.controllersService.registerBottomRightRowContainerCon(this); break;
+        }
     }
 
     private forContainers(names: RowContainerNames[], callback: (()=>void)): void {
         if (names.indexOf(this.name) >= 0) {
             callback();
         }
+    }
+
+    public getContainerElement(): HTMLElement {
+        return this.eContainer;
     }
 
     public getViewportSizeFeature(): ViewportSizeFeature {

@@ -46,7 +46,6 @@ export interface GridBodyView extends LayoutView {
     setBottomDisplay(display: string): void;
     setColumnCount(count: number): void;
     setRowCount(count: number): void;
-    setProps(params: {enableRtl: boolean}): void;
     setRowAnimationCssOnBodyViewport(animate: boolean): void;
     setAlwaysVerticalScrollClass(on: boolean): void;
     setVerticalScrollPaddingVisible(visible: boolean): void;
@@ -103,8 +102,6 @@ export class GridBodyController extends BeanStub {
         this.eBodyViewport = eBodyViewport;
         this.eTop = eTop;
         this.eBottom = eBottom;
-
-        this.view.setProps({enableRtl: this.enableRtl});
 
         this.setCellTextSelection(this.gridOptionsWrapper.isEnableCellTextSelect());
 

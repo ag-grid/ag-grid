@@ -1,50 +1,30 @@
-import { ColumnApi } from '../columnController/columnApi';
-import { RowRenderer } from '../rendering/rowRenderer';
 import { Autowired, Optional, PostConstruct } from '../context/context';
 import { Events } from '../events';
-import { DragListenerParams, DragService } from '../dragAndDrop/dragService';
 import { IRangeController } from '../interfaces/iRangeController';
-import { MouseEventService } from './mouseEventService';
 import { IContextMenuFactory } from '../interfaces/iContextMenuFactory';
-import { ScrollVisibleService } from './scrollVisibleService';
-import { PaginationProxy } from '../pagination/paginationProxy';
-import { PaginationAutoPageSizeService } from '../pagination/paginationAutoPageSizeService';
-import { AlignedGridsService } from '../alignedGridsService';
 import { GridApi } from '../gridApi';
 import { AnimationFrameService } from '../misc/animationFrameService';
-import { NavigationService } from './navigationService';
-import { DragAndDropService } from '../dragAndDrop/dragAndDropService';
-import { RowContainerHeightService } from '../rendering/rowContainerHeightService';
 import { OverlayWrapperComponent } from '../rendering/overlays/overlayWrapperComponent';
 import { Component } from '../widgets/component';
-import { AutoHeightCalculator } from '../rendering/row/autoHeightCalculator';
-import { ColumnAnimationService } from '../rendering/columnAnimationService';
-import { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
 import { Beans } from '../rendering/beans';
 import { RefSelector } from '../widgets/componentAnnotations';
 import { HeaderRootComp } from '../headerRendering/headerRootComp';
 import { ResizeObserverService } from '../misc/resizeObserverService';
-import { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
-import { ColumnController } from '../columnController/columnController';
 import { HeaderNavigationService } from '../headerRendering/header/headerNavigationService';
 import { setAriaColCount, setAriaMultiSelectable, setAriaRowCount } from '../utils/aria';
-import { addCssClass, addOrRemoveCssClass, getInnerWidth, isVerticalScrollShowing, removeCssClass } from '../utils/dom';
-import { getTabIndex } from '../utils/browser';
-import { missing } from '../utils/generic';
-import { PopupService } from "../widgets/popupService";
+import { addCssClass, addOrRemoveCssClass, removeCssClass } from '../utils/dom';
 import { IMenuFactory } from "../interfaces/iMenuFactory";
-import { LayoutCssClasses, LayoutView, UpdateLayoutClassesParams } from "../styling/layoutFeature";
+import { LayoutCssClasses } from "../styling/layoutFeature";
 import {
-    CSS_CLASS_CELL_SELECTABLE, CSS_CLASS_COLUMN_MOVING,
+    CSS_CLASS_CELL_SELECTABLE,
+    CSS_CLASS_COLUMN_MOVING,
     CSS_CLASS_FORCE_VERTICAL_SCROLL,
     GridBodyController,
     GridBodyView,
     RowAnimationCssClasses
 } from "./gridBodyController";
 import { FakeHorizontalScrollComp } from "./fakeHorizontalScrollComp";
-import { RowContainerComp, RowContainerNames } from "./rowContainer/rowContainerComp";
-import { IRowModel } from "../interfaces/iRowModel";
-import { ControllersService } from "../controllersService";
+import { RowContainerNames } from "./rowContainer/rowContainerComp";
 
 const GRID_BODY_TEMPLATE = /* html */
     `<div class="ag-root ag-unselectable" role="grid" unselectable="on">
@@ -73,31 +53,12 @@ const GRID_BODY_TEMPLATE = /* html */
 
 export class GridBodyComp extends Component {
 
-    @Autowired('alignedGridsService') private alignedGridsService: AlignedGridsService;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
-    @Autowired('navigationService') private navigationService: NavigationService;
-    @Autowired('autoHeightCalculator') private autoHeightCalculator: AutoHeightCalculator;
-    @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
-    @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
-    @Autowired('paginationAutoPageSizeService') private paginationAutoPageSizeService: PaginationAutoPageSizeService;
     @Autowired('beans') private beans: Beans;
-    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('dragService') private dragService: DragService;
-    @Autowired('mouseEventService') private mouseEventService: MouseEventService;
     @Autowired('$scope') private $scope: any;
-    @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
-    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('rowContainerHeightService') private heightScaler: RowContainerHeightService;
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
-    @Autowired('columnController') private columnController: ColumnController;
     @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
-    @Autowired('popupService') public popupService: PopupService;
-    @Autowired('controllersService') public controllersService: ControllersService;
 
     @Optional('rangeController') private rangeController: IRangeController;
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
@@ -110,25 +71,8 @@ export class GridBodyComp extends Component {
     // fake horizontal scroll
     @RefSelector('fakeHScroll') private fakeHScroll: FakeHorizontalScrollComp;
 
-    // Container Components
-    @RefSelector('leftContainer') private leftContainer: RowContainerComp;
-    @RefSelector('rightContainer') private rightContainer: RowContainerComp;
-    @RefSelector('centerContainer') private centerContainer: RowContainerComp;
-    @RefSelector('fullWidthContainer') private fullWidthContainer: RowContainerComp;
-    @RefSelector('topLeftContainer') private topLeftContainer: RowContainerComp;
-    @RefSelector('topRightContainer') private topRightContainer: RowContainerComp;
-    @RefSelector('topCenterContainer') private topCenterContainer: RowContainerComp;
-    @RefSelector('topFullWidthContainer') private topFullWidthContainer: RowContainerComp;
-    @RefSelector('bottomLeftContainer') private bottomLeftContainer: RowContainerComp;
-    @RefSelector('bottomCenterContainer') private bottomCenterContainer: RowContainerComp;
-    @RefSelector('bottomRightContainer') private bottomRightContainer: RowContainerComp;
-    @RefSelector('bottomFullWidthContainer') private bottomFullWidthContainer: RowContainerComp;
-
     @RefSelector('headerRoot') headerRootComp: HeaderRootComp;
     @RefSelector('overlayWrapper') private overlayWrapper: OverlayWrapperComponent;
-
-    // properties we use a lot, so keep reference
-    private enableRtl: boolean;
 
     private controller: GridBodyController;
 
@@ -163,9 +107,6 @@ export class GridBodyComp extends Component {
                 this.addOrRemoveCssClass(LayoutCssClasses.NORMAL, params.normal);
                 this.addOrRemoveCssClass(LayoutCssClasses.PRINT, params.print);
             },
-            setProps: (params: { enableRtl: boolean; }) => {
-                this.enableRtl = params.enableRtl;
-            },
             setAlwaysVerticalScrollClass: on =>
                 addOrRemoveCssClass(this.eBodyViewport, CSS_CLASS_FORCE_VERTICAL_SCROLL, on),
             registerBodyViewportResizeListener: listener => {
@@ -192,8 +133,6 @@ export class GridBodyComp extends Component {
         this.gridApi.registerGridComp(this);
         this.headerRootComp.registerGridComp(this);
         this.headerNavigationService.registerGridComp(this);
-        this.autoHeightCalculator.registerGridComp(this);
-        this.autoWidthCalculator.registerGridComp(this);
         this.beans.registerGridComp(this);
         this.animationFrameService.registerGridComp(this);
         if (this.contextMenuFactory) {
@@ -246,23 +185,6 @@ export class GridBodyComp extends Component {
         // with columns added or removed
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, listener);
         this.addManagedListener(this.eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, listener);
-    }
-
-    // used by autoWidthCalculator and autoHeightCalculator
-    public getCenterContainer(): HTMLElement {
-        return this.centerContainer.getContainerElement();
-    }
-
-    public getDropTargetBodyContainers(): HTMLElement[] {
-        return [this.eBodyViewport, this.topCenterContainer.getViewportElement(), this.bottomCenterContainer.getViewportElement()];
-    }
-
-    public getDropTargetLeftContainers(): HTMLElement[] {
-        return [this.leftContainer.getContainerElement(), this.bottomLeftContainer.getContainerElement(), this.topLeftContainer.getContainerElement()];
-    }
-
-    public getDropTargetRightContainers(): HTMLElement[] {
-        return [this.rightContainer.getContainerElement(), this.bottomRightContainer.getContainerElement(), this.topRightContainer.getContainerElement()];
     }
 
     public getFloatingTopBottom(): HTMLElement[] {

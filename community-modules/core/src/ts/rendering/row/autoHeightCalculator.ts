@@ -1,5 +1,5 @@
 import { GridBodyComp } from "../../gridBodyComp/gridBodyComp";
-import { Autowired, Bean } from "../../context/context";
+import { Autowired, Bean, PostConstruct } from "../../context/context";
 import { Beans } from "../beans";
 import { RowNode } from "../../entities/rowNode";
 import { CellComp } from "../cellComp";
@@ -8,6 +8,9 @@ import { BeanStub } from "../../context/beanStub";
 import { addCssClass } from "../../utils/dom";
 import { RowCssClassCalculator, RowCssClassCalculatorParams } from "./rowCssClassCalculator";
 import { AngularRowUtils } from "./angularRowUtils";
+import { GridBodyController } from "../../gridBodyComp/gridBodyController";
+import { ControllersService } from "../../controllersService";
+import { RowContainerController } from "../../gridBodyComp/rowContainer/rowContainerController";
 
 @Bean('autoHeightCalculator')
 export class AutoHeightCalculator extends BeanStub {
@@ -17,11 +20,15 @@ export class AutoHeightCalculator extends BeanStub {
     @Autowired("columnController") private columnController: ColumnController;
     @Autowired("rowCssClassCalculator") private rowCssClassCalculator: RowCssClassCalculator;
     @Autowired('$compile') public $compile: any;
+    @Autowired('controllersService') public controllersService: ControllersService;
 
-    private gridBodyComp: GridBodyComp;
+    private centerRowContainerCon: RowContainerController;
 
-    public registerGridComp(gridBodyComp: GridBodyComp): void {
-        this.gridBodyComp = gridBodyComp;
+    @PostConstruct
+    private postConstruct(): void {
+        this.controllersService.whenReady( p => {
+            this.centerRowContainerCon = p.centerRowContainerCon;
+        });
     }
 
     public getPreferredHeightForRow(rowNode: RowNode): number {
@@ -31,7 +38,7 @@ export class AutoHeightCalculator extends BeanStub {
 
         // we put the dummy into the body container, so it will inherit all the
         // css styles that the real cells are inheriting
-        const eBodyContainer = this.gridBodyComp.getCenterContainer();
+        const eBodyContainer = this.centerRowContainerCon.getContainerElement();
         eBodyContainer.appendChild(eDummyContainer);
 
         const scopeResult = AngularRowUtils.createChildScopeOrNull(rowNode, this.$scope, this.beans.gridOptionsWrapper);

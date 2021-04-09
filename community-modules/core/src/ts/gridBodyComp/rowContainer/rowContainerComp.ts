@@ -216,10 +216,6 @@ export class RowContainerComp extends Component {
         return this.eViewport;
     }
 
-    public getContainerElement(): HTMLElement {
-        return this.eContainer;
-    }
-
     public setVerticalScrollPosition(verticalScrollPosition: number): void {
         this.scrollTop = verticalScrollPosition;
     }

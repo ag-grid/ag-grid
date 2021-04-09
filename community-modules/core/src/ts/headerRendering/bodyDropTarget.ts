@@ -6,6 +6,8 @@ import { BodyDropPivotTarget } from "./bodyDropPivotTarget";
 import { ColumnController } from "../columnController/columnController";
 import { Constants } from "../constants/constants";
 import { BeanStub } from "../context/beanStub";
+import { ControllersService } from "../controllersService";
+import { RowContainerController } from "../gridBodyComp/rowContainer/rowContainerController";
 
 export interface DropListener {
     getIconName(): string | null;
@@ -21,8 +23,8 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
 
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('controllersService') private controllersService: ControllersService;
 
-    private gridBodyComp: GridBodyComp;
     private pinned: string | null;
     // public because it's part of the DropTarget interface
     private eContainer: HTMLElement;
@@ -38,16 +40,27 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
         this.eContainer = eContainer;
     }
 
+    @PostConstruct
+    private postConstruct(): void {
+        this.controllersService.whenReady( p => {
+            let containers: RowContainerController[];
+            switch (this.pinned) {
+                case Constants.PINNED_LEFT:
+                    containers = [p.leftRowContainerCon, p.bottomLeftRowContainerCon, p.topLeftRowContainerCon];
+                    break;
+                case Constants.PINNED_RIGHT:
+                    containers = [p.rightRowContainerCon, p.bottomRightRowContainerCon, p.topRightRowContainerCon];
+                    break;
+                default:
+                    containers = [p.centerRowContainerCon, p.bottomCenterRowContainerCon, p.topCenterRowContainerCon];
+                    break;
+            }
+            this.eSecondaryContainers = containers.map( c => c.getContainerElement() );
+        });
+    }
+
     public registerGridComp(gridBodyComp: GridBodyComp): void {
-        this.gridBodyComp = gridBodyComp;
-
         this.moveColumnController.registerGridComp(gridBodyComp);
-
-        switch (this.pinned) {
-            case Constants.PINNED_LEFT: this.eSecondaryContainers = this.gridBodyComp.getDropTargetLeftContainers(); break;
-            case Constants.PINNED_RIGHT: this.eSecondaryContainers = this.gridBodyComp.getDropTargetRightContainers(); break;
-            default: this.eSecondaryContainers = this.gridBodyComp.getDropTargetBodyContainers(); break;
-        }
     }
 
     public isInterestedIn(type: DragSourceType): boolean {
