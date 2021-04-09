@@ -722,23 +722,6 @@ export class GridBodyComp extends Component implements LayoutView {
         this.controller.checkBodyHeight();
     }
 
-    // called by scrollHorizontally method and alignedGridsService
-    public setHorizontalScrollPosition(hScrollPosition: number): void {
-        this.controller.setHorizontalScrollPosition(hScrollPosition);
-    }
-
-    public setVerticalScrollPosition(vScrollPosition: number): void {
-        this.controller.setVerticalScrollPosition(vScrollPosition);
-    }
-
-    // called by the headerRootComp and moveColumnController
-    public scrollHorizontally(pixels: number): number {
-        const oldScrollPosition = this.centerContainer.getViewportElement().scrollLeft;
-
-        this.setHorizontalScrollPosition(oldScrollPosition + pixels);
-        return this.centerContainer.getViewportElement().scrollLeft - oldScrollPosition;
-    }
-
     private getCenterViewportScrollLeft(): number {
         return this.controllersService.getCenterRowContainerCon().getCenterViewportScrollLeft();
     }

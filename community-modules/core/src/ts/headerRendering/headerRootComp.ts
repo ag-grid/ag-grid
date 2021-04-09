@@ -254,7 +254,8 @@ export class HeaderRootComp extends ManagedFocusComponent {
             // on the header, giving the impression that the header scrolled as expected.
             const scrollLeft = this.eHeaderViewport.scrollLeft;
             if (scrollLeft !== 0) {
-                this.gridBodyComp.scrollHorizontally(scrollLeft);
+                const gridBodyCon = this.controllersService.getGridBodyController();
+                gridBodyCon.getScrollFeature().scrollHorizontally(scrollLeft);
                 this.eHeaderViewport.scrollLeft = 0;
             }
         });

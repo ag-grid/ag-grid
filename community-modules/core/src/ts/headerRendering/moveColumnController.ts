@@ -11,6 +11,7 @@ import { ColumnEventType } from "../events";
 import { missing, exists } from "../utils/generic";
 import { sortNumerically, last, includes } from "../utils/array";
 import { ControllersService } from "../controllersService";
+import { GridBodyController } from "../gridBodyComp/gridBodyController";
 
 export class MoveColumnController implements DropListener {
 
@@ -21,6 +22,7 @@ export class MoveColumnController implements DropListener {
     @Autowired('controllersService') public controllersService: ControllersService;
 
     private gridBodyComp: GridBodyComp;
+    private gridBodyCon: GridBodyController;
 
     private needToMoveLeft = false;
     private needToMoveRight = false;
@@ -53,6 +55,9 @@ export class MoveColumnController implements DropListener {
     @PostConstruct
     public init(): void {
         this.logger = this.loggerFactory.create('MoveColumnController');
+        this.controllersService.whenReady( ()=> {
+            this.gridBodyCon = this.controllersService.getGridBodyController();
+        });
     }
 
     public getIconName(): string {
@@ -419,10 +424,11 @@ export class MoveColumnController implements DropListener {
         }
 
         let pixelsMoved: number | null = null;
+        const scrollFeature = this.gridBodyCon.getScrollFeature();
         if (this.needToMoveLeft) {
-            pixelsMoved = this.gridBodyComp.scrollHorizontally(-pixelsToMove);
+            pixelsMoved = scrollFeature.scrollHorizontally(-pixelsToMove);
         } else if (this.needToMoveRight) {
-            pixelsMoved = this.gridBodyComp.scrollHorizontally(pixelsToMove);
+            pixelsMoved = scrollFeature.scrollHorizontally(pixelsToMove);
         }
 
         if (pixelsMoved !== 0) {

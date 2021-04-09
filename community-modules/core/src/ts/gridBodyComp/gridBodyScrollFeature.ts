@@ -290,4 +290,13 @@ export class GridBodyScrollFeature extends BeanStub {
         return centerContainer.isHorizontalScrollShowing();
     }
 
+    // called by the headerRootComp and moveColumnController
+    public scrollHorizontally(pixels: number): number {
+        const centerContainer = this.controllersService.getCenterRowContainerCon();
+        const oldScrollPosition = centerContainer.getViewportElement().scrollLeft;
+
+        this.setHorizontalScrollPosition(oldScrollPosition + pixels);
+        return centerContainer.getViewportElement().scrollLeft - oldScrollPosition;
+    }
+
 }

@@ -55,6 +55,10 @@ export class GridBodyController extends BeanStub {
 
     private bodyScrollFeature: GridBodyScrollFeature;
 
+    public getScrollFeature(): GridBodyScrollFeature {
+        return this.bodyScrollFeature;
+    }
+
     @PostConstruct
     private postConstruct(): void {
         this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
