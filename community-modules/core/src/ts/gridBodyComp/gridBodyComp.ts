@@ -248,47 +248,6 @@ export class GridBodyComp extends Component {
         this.addManagedListener(this.eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, listener);
     }
 
-    public isVerticalScrollShowing(): boolean {
-        const isAlwaysShowVerticalScroll = this.gridOptionsWrapper.isAlwaysShowVerticalScroll();
-        addOrRemoveCssClass(this.eBodyViewport, 'ag-force-vertical-scroll', isAlwaysShowVerticalScroll);
-        return isAlwaysShowVerticalScroll || isVerticalScrollShowing(this.eBodyViewport);
-    }
-
-    // method will call itself if no available width. this covers if the grid
-    // isn't visible, but is just about to be visible.
-    public sizeColumnsToFit(nextTimeout?: number) {
-        const hasVerticalScroll = this.isVerticalScrollShowing();
-        let diff = 0;
-
-        if (hasVerticalScroll) {
-            diff = this.gridOptionsWrapper.getScrollbarWidth();
-        }
-
-        const availableWidth = getInnerWidth(this.eBodyViewport) - diff;
-
-        if (availableWidth > 0) {
-            this.columnController.sizeColumnsToFit(availableWidth, "sizeColumnsToFit");
-            return;
-        }
-
-        if (nextTimeout === undefined) {
-            window.setTimeout(() => {
-                this.sizeColumnsToFit(100);
-            }, 0);
-        } else if (nextTimeout === 100) {
-            window.setTimeout(() => {
-                this.sizeColumnsToFit(500);
-            }, 100);
-        } else if (nextTimeout === 500) {
-            window.setTimeout(() => {
-                this.sizeColumnsToFit(-1);
-            }, 500);
-        } else {
-            console.warn('AG Grid: tried to call sizeColumnsToFit() but the grid is coming back with ' +
-                'zero width, maybe the grid is not visible yet on the screen?');
-        }
-    }
-
     // used by autoWidthCalculator and autoHeightCalculator
     public getCenterContainer(): HTMLElement {
         return this.centerContainer.getContainerElement();

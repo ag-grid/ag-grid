@@ -734,7 +734,7 @@ export class GridApi {
     }
 
     public sizeColumnsToFit() {
-        this.gridBodyComp.sizeColumnsToFit();
+        this.gridBodyCon.sizeColumnsToFit();
     }
 
     public showLoadingOverlay(): void {

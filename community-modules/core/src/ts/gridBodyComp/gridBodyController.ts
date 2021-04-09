@@ -10,7 +10,7 @@ import { ScrollVisibleService } from "./scrollVisibleService";
 import { getTarget } from "../utils/event";
 import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
 import { GridBodyScrollFeature } from "./gridBodyScrollFeature";
-import { addOrRemoveCssClass, getInnerHeight, isVerticalScrollShowing } from "../utils/dom";
+import { addOrRemoveCssClass, getInnerHeight, getInnerWidth, isVerticalScrollShowing } from "../utils/dom";
 import { BodyHeightChangedEvent } from "../events";
 import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
@@ -225,7 +225,7 @@ export class GridBodyController extends BeanStub {
     public isVerticalScrollShowing(): boolean {
         const isAlwaysShowVerticalScroll = this.gridOptionsWrapper.isAlwaysShowVerticalScroll();
         this.view.setAlwaysVerticalScrollClass(isAlwaysShowVerticalScroll);
-        return isVerticalScrollShowing(this.eBodyViewport);
+        return isAlwaysShowVerticalScroll || isVerticalScrollShowing(this.eBodyViewport);
     }
 
     private setupRowAnimationCssClass(): void {
@@ -313,5 +313,40 @@ export class GridBodyController extends BeanStub {
 
         this.view.setTopDisplay(floatingTopHeight ? 'inherit' : 'none');
         this.view.setBottomDisplay(floatingBottomHeight ? 'inherit' : 'none');
+    }
+
+    // method will call itself if no available width. this covers if the grid
+    // isn't visible, but is just about to be visible.
+    public sizeColumnsToFit(nextTimeout?: number) {
+        const hasVerticalScroll = this.isVerticalScrollShowing();
+        let diff = 0;
+
+        if (hasVerticalScroll) {
+            diff = this.gridOptionsWrapper.getScrollbarWidth();
+        }
+
+        const availableWidth = getInnerWidth(this.eBodyViewport) - diff;
+
+        if (availableWidth > 0) {
+            this.columnController.sizeColumnsToFit(availableWidth, "sizeColumnsToFit");
+            return;
+        }
+
+        if (nextTimeout === undefined) {
+            window.setTimeout(() => {
+                this.sizeColumnsToFit(100);
+            }, 0);
+        } else if (nextTimeout === 100) {
+            window.setTimeout(() => {
+                this.sizeColumnsToFit(500);
+            }, 100);
+        } else if (nextTimeout === 500) {
+            window.setTimeout(() => {
+                this.sizeColumnsToFit(-1);
+            }, 500);
+        } else {
+            console.warn('AG Grid: tried to call sizeColumnsToFit() but the grid is coming back with ' +
+                'zero width, maybe the grid is not visible yet on the screen?');
+        }
     }
 }
