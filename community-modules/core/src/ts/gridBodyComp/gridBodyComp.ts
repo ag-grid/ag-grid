@@ -138,6 +138,12 @@ export class GridBodyComp extends Component implements LayoutView {
     @PostConstruct
     private init() {
 
+        const setHeight = (height: number, element: HTMLElement) => {
+            const heightString = `${height}px`;
+            element.style.minHeight = heightString;
+            element.style.height = heightString;
+        };
+
         const view: GridBodyView = {
             updateLayoutClasses: this.updateLayoutClasses.bind(this),
             setProps: (params: { enableRtl: boolean; }) => {
@@ -154,23 +160,20 @@ export class GridBodyComp extends Component implements LayoutView {
                 const scroller = show ? 'scroll' : 'hidden';
                 this.eTop.style.overflowY = this.eBottom.style.overflowY = scroller;
             },
-            setColumnCount: count => {
-                setAriaColCount(this.getGui(), count)
-            },
-            setRowCount: count => {
-                setAriaRowCount(this.getGui(), count)
-            }
+            setColumnCount: count => setAriaColCount(this.getGui(), count),
+            setRowCount: count => setAriaRowCount(this.getGui(), count),
+            setTopHeight: height => setHeight(height, this.eTop),
+            setBottomHeight: height => setHeight(height, this.eBottom),
+            setTopDisplay: display => this.eTop.style.display = display,
+            setBottomDisplay: display => this.eBottom.style.display = display
         };
 
         this.controller = this.createManagedBean(new GridBodyController());
-        this.controller.setView(view, this.getGui(), this.eBodyViewport);
+        this.controller.setView(view, this.getGui(), this.eBodyViewport, this.eTop, this.eBottom);
 
-        this.addEventListeners();
         this.addDragListeners();
 
         this.setCellTextSelection(this.gridOptionsWrapper.isEnableCellTextSelect());
-
-        this.setFloatingHeights();
 
         this.disableBrowserDragging();
         this.addStopEditingWhenGridLosesFocus();
@@ -239,8 +242,6 @@ export class GridBodyComp extends Component implements LayoutView {
             .forEach(ct => addOrRemoveCssClass(ct, 'ag-selectable', selectable));
     }
 
-
-
     private addStopEditingWhenGridLosesFocus(): void {
         if (!this.gridOptionsWrapper.isStopEditingWhenGridLosesFocus()) { return; }
 
@@ -302,10 +303,6 @@ export class GridBodyComp extends Component implements LayoutView {
                 return false;
             }
         });
-    }
-
-    private addEventListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.setFloatingHeights.bind(this));
     }
 
     private addDragListeners(): void {
@@ -397,39 +394,6 @@ export class GridBodyComp extends Component implements LayoutView {
 
     public getFloatingTopBottom(): HTMLElement[] {
         return [this.eTop, this.eBottom];
-    }
-
-    private setFloatingHeights(): void {
-        const {pinnedRowModel, eTop, eBottom} = this;
-
-        let floatingTopHeight = pinnedRowModel.getPinnedTopTotalHeight();
-
-        if (floatingTopHeight) {
-            // adding 1px for cell bottom border
-            floatingTopHeight += 1;
-        }
-
-        let floatingBottomHeight = pinnedRowModel.getPinnedBottomTotalHeight();
-
-        if (floatingBottomHeight) {
-            // adding 1px for cell bottom border
-            floatingBottomHeight += 1;
-        }
-        const floatingTopHeightString = `${floatingTopHeight}px`;
-        const floatingBottomHeightString = `${floatingBottomHeight}px`;
-
-        eTop.style.minHeight = floatingTopHeightString;
-        eTop.style.height = floatingTopHeightString;
-        eTop.style.display = floatingTopHeight ? 'inherit' : 'none';
-        eBottom.style.minHeight = floatingBottomHeightString;
-        eBottom.style.height = floatingBottomHeightString;
-        eBottom.style.display = floatingBottomHeight ? 'inherit' : 'none';
-
-        this.controller.checkBodyHeight();
-    }
-
-    private getCenterViewportScrollLeft(): number {
-        return this.controllersService.getCenterRowContainerCon().getCenterViewportScrollLeft();
     }
 
     // + rangeController

@@ -20,6 +20,8 @@ import { PaginationProxy } from "../pagination/paginationProxy";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { RowDragFeature } from "./rowDragFeature";
 import { DragAndDropService } from "../dragAndDrop/dragAndDropService";
+import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
+import { RefSelector } from "../widgets/componentAnnotations";
 
 export enum RowAnimationCssClasses {
     ANIMATION_ON = 'ag-row-animation',
@@ -29,6 +31,10 @@ export enum RowAnimationCssClasses {
 export const CSS_CLASS_FORCE_VERTICAL_SCROLL = 'ag-force-vertical-scroll';
 
 export interface GridBodyView extends  LayoutView {
+    setTopHeight(height: number): void;
+    setTopDisplay(display: string): void;
+    setBottomHeight(height: number): void;
+    setBottomDisplay(display: string): void;
     setColumnCount(count: number): void;
     setRowCount(count: number): void;
     setProps(params: {enableRtl: boolean}): void;
@@ -50,10 +56,13 @@ export class GridBodyController extends BeanStub {
     @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
+    @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
 
     private view: GridBodyView;
     private eGridBody: HTMLElement;
     private eBodyViewport: HTMLElement;
+    private eTop: HTMLElement;
+    private eBottom: HTMLElement;
 
     // properties we use a lot, so keep reference
     private enableRtl: boolean;
@@ -74,10 +83,13 @@ export class GridBodyController extends BeanStub {
         this.onDomLayoutChanged();
     }
 
-    public setView(view: GridBodyView, eGridBody: HTMLElement, eBodyViewport: HTMLElement): void {
+    public setView(view: GridBodyView, eGridBody: HTMLElement, eBodyViewport: HTMLElement,
+                   eTop: HTMLElement, eBottom: HTMLElement): void {
         this.view = view;
         this.eGridBody = eGridBody;
         this.eBodyViewport = eBodyViewport;
+        this.eTop = eTop;
+        this.eBottom = eBottom;
 
         this.view.setProps({enableRtl: this.enableRtl});
 
@@ -92,17 +104,13 @@ export class GridBodyController extends BeanStub {
         this.addEventListeners();
         this.onGridColumnsChanged();
         this.addBodyViewportListener();
+        this.setFloatingHeights();
     }
 
     private addEventListeners(): void {
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
-        // this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onDisplayedColumnsWidthChanged.bind(this));
-        // this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.setHeaderAndFloatingHeights.bind(this));
-        // this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
-        // this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, this.onRowDataChanged.bind(this));
-        // this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
-
+        this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.setFloatingHeights.bind(this));
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
     }
 
@@ -235,4 +243,43 @@ export class GridBodyController extends BeanStub {
         return this.rowDragFeature;
     }
 
+    private setFloatingHeights(): void {
+
+        const {pinnedRowModel, eTop, eBottom} = this;
+
+        let floatingTopHeight = pinnedRowModel.getPinnedTopTotalHeight();
+
+        if (floatingTopHeight) {
+            // adding 1px for cell bottom border
+            floatingTopHeight += 1;
+        }
+
+        let floatingBottomHeight = pinnedRowModel.getPinnedBottomTotalHeight();
+
+        if (floatingBottomHeight) {
+            // adding 1px for cell bottom border
+            floatingBottomHeight += 1;
+        }
+
+        this.view.setTopHeight(floatingTopHeight);
+        this.view.setBottomHeight(floatingBottomHeight);
+
+        this.view.setTopDisplay(floatingTopHeight ? 'inherit' : 'none');
+        this.view.setBottomDisplay(floatingBottomHeight ? 'inherit' : 'none');
+
+/*
+        const floatingTopHeightString = `${floatingTopHeight}px`;
+        const floatingBottomHeightString = `${floatingBottomHeight}px`;
+
+        eTop.style.minHeight = floatingTopHeightString;
+        eTop.style.height = floatingTopHeightString;
+        eTop.style.display = floatingTopHeight ? 'inherit' : 'none';
+
+        eBottom.style.minHeight = floatingBottomHeightString;
+        eBottom.style.height = floatingBottomHeightString;
+        eBottom.style.display = floatingBottomHeight ? 'inherit' : 'none';
+*/
+
+        this.checkBodyHeight();
+    }
 }
