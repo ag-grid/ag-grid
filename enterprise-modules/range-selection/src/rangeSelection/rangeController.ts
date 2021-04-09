@@ -707,7 +707,7 @@ class AutoScrollService {
         skipVerticalScroll = skipVerticalScroll || this.gridOptionsWrapper.getDomLayout() !== Constants.DOM_LAYOUT_NORMAL;
 
         // we don't do ticking if grid is auto height unless we have a horizontal scroller
-        if (skipVerticalScroll && !this.gridBodyCon.isHorizontalScrollShowing()) {
+        if (skipVerticalScroll && !this.gridBodyCon.getScrollFeature().isHorizontalScrollShowing()) {
             return;
         }
 
@@ -741,19 +741,19 @@ class AutoScrollService {
         tickAmount = this.tickCount > 20 ? 200 : (this.tickCount > 10 ? 80 : 40);
 
         if (this.tickUp) {
-            this.gridBodyCon.setVerticalScrollPosition(vScrollPosition.top - tickAmount);
+            this.gridBodyCon.getScrollFeature().setVerticalScrollPosition(vScrollPosition.top - tickAmount);
         }
 
         if (this.tickDown) {
-            this.gridBodyCon.setVerticalScrollPosition(vScrollPosition.top + tickAmount);
+            this.gridBodyCon.getScrollFeature().setVerticalScrollPosition(vScrollPosition.top + tickAmount);
         }
 
         if (this.tickLeft) {
-            this.gridBodyCon.setHorizontalScrollPosition(hScrollPosition.left - tickAmount);
+            this.gridBodyCon.getScrollFeature().setHorizontalScrollPosition(hScrollPosition.left - tickAmount);
         }
 
         if (this.tickRight) {
-            this.gridBodyCon.setHorizontalScrollPosition(hScrollPosition.left + tickAmount);
+            this.gridBodyCon.getScrollFeature().setHorizontalScrollPosition(hScrollPosition.left + tickAmount);
         }
     }
 
