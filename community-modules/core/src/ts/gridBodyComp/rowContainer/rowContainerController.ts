@@ -9,6 +9,7 @@ import { ControllersService } from "../../controllersService";
 import { getInnerWidth, getScrollLeft, isHorizontalScrollShowing, isVisible, setScrollLeft } from "../../utils/dom";
 import { ColumnController } from "../../columnController/columnController";
 import { ResizeObserverService } from "../../misc/resizeObserverService";
+import { ViewportSizeFeature } from "../viewportSizeFeature";
 
 export interface RowContainerView {
     setViewportHeight(height: string): void;
@@ -28,6 +29,8 @@ export class RowContainerController extends BeanStub {
     private eViewport: HTMLElement;
     private enableRtl: boolean;
 
+    private viewportSizeFeature: ViewportSizeFeature; // only center has this
+
     constructor(name: RowContainerNames) {
         super();
         this.name = name;
@@ -38,6 +41,9 @@ export class RowContainerController extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
 
         this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
+
+        this.forContainers([RowContainerNames.CENTER],
+            ()=> this.viewportSizeFeature = this.createManagedBean(new ViewportSizeFeature(this)))
 
         this.forContainers([RowContainerNames.CENTER],
             ()=> this.controllersService.registerCenterRowContainerCon(this) )
@@ -56,6 +62,10 @@ export class RowContainerController extends BeanStub {
         if (names.indexOf(this.name) >= 0) {
             callback();
         }
+    }
+
+    public getViewportSizeFeature(): ViewportSizeFeature {
+        return this.viewportSizeFeature;
     }
 
     public setView(view: RowContainerView, eContainer: HTMLElement, eViewport: HTMLElement): void {

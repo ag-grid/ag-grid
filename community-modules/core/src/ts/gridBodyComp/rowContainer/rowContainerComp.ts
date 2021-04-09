@@ -174,9 +174,6 @@ export class RowContainerComp extends Component {
         this.forContainers([RowContainerNames.CENTER, RowContainerNames.LEFT, RowContainerNames.RIGHT, RowContainerNames.FULL_WIDTH],
             ()=> this.createManagedBean(new SetHeightFeature(this.eContainer, this.eWrapper)))
 
-        this.forContainers([RowContainerNames.CENTER],
-            ()=> this.createManagedBean(new ViewportSizeFeature(con)))
-
         this.forContainers([RowContainerNames.CENTER, RowContainerNames.TOP_CENTER, RowContainerNames.BOTTOM_CENTER],
             ()=> this.createManagedBean(new CenterWidthFeature(width => this.eContainer.style.width = `${width}px`)))
 

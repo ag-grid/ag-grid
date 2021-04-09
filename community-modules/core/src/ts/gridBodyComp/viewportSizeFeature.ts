@@ -4,12 +4,13 @@ import { ResizeObserverService } from "../misc/resizeObserverService";
 import { ColumnController } from "../columnController/columnController";
 import { ScrollVisibleService, SetScrollsVisibleParams } from "../gridBodyComp/scrollVisibleService";
 import { GridBodyController } from "../gridBodyComp/gridBodyController";
-import { Events } from "../events";
+import { BodyHeightChangedEvent, Events } from "../events";
 import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
 import { RowContainerComp } from "./rowContainer/rowContainerComp";
 import { ControllersService } from "../controllersService";
 import { RowContainerController } from "./rowContainer/rowContainerController";
+import { getInnerHeight } from "../utils/dom";
 
 // listens to changes in the center viewport size, for column and row virtualisation,
 // and adjusts grid as necessary. there are two viewports, one for horizontal and one for
@@ -27,6 +28,7 @@ export class ViewportSizeFeature extends BeanStub {
     private gridBodyCon: GridBodyController;
 
     private centerWidth: number;
+    private bodyHeight: number;
 
     constructor(centerContainer: RowContainerController) {
         super();
@@ -69,7 +71,7 @@ export class ViewportSizeFeature extends BeanStub {
                 );
             }
         } else {
-            this.gridBodyCon.clearBodyHeight();
+            this.bodyHeight = 0;
         }
     }
 
@@ -80,12 +82,31 @@ export class ViewportSizeFeature extends BeanStub {
         this.updateScrollVisibleService();
 
         // fires event if height changes, used by PaginationService, HeightScalerService, RowRenderer
-        this.gridBodyCon.checkBodyHeight();
+        this.checkBodyHeight();
 
         // check for virtual columns for ColumnController
         this.onHorizontalViewportChanged();
 
         this.gridBodyCon.getScrollFeature().checkScrollLeft();
+    }
+
+    public getBodyHeight(): number {
+        return this.bodyHeight;
+    }
+
+    private checkBodyHeight(): void {
+        const eBodyViewport = this.gridBodyCon.getBodyViewportElement();
+        const bodyHeight = getInnerHeight(eBodyViewport);
+
+        if (this.bodyHeight !== bodyHeight) {
+            this.bodyHeight = bodyHeight;
+            const event: BodyHeightChangedEvent = {
+                type: Events.EVENT_BODY_HEIGHT_CHANGED,
+                api: this.gridApi,
+                columnApi: this.columnApi
+            };
+            this.eventService.dispatchEvent(event);
+        }
     }
 
     private updateScrollVisibleService(): void {

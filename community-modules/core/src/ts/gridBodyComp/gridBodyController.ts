@@ -68,13 +68,15 @@ export class GridBodyController extends BeanStub {
     private enableRtl: boolean;
     private printLayout: boolean;
 
-    private bodyHeight: number;
-
     private bodyScrollFeature: GridBodyScrollFeature;
     private rowDragFeature: RowDragFeature;
 
     public getScrollFeature(): GridBodyScrollFeature {
         return this.bodyScrollFeature;
+    }
+
+    public getBodyViewportElement(): HTMLElement {
+        return this.eBodyViewport;
     }
 
     @PostConstruct
@@ -145,30 +147,8 @@ export class GridBodyController extends BeanStub {
         this.view.setRowCount(total);
     }
 
-    public checkBodyHeight(): void {
-        const bodyHeight = getInnerHeight(this.eBodyViewport);
-
-        if (this.bodyHeight !== bodyHeight) {
-            this.bodyHeight = bodyHeight;
-            const event: BodyHeightChangedEvent = {
-                type: Events.EVENT_BODY_HEIGHT_CHANGED,
-                api: this.gridApi,
-                columnApi: this.columnApi
-            };
-            this.eventService.dispatchEvent(event);
-        }
-    }
-
-    public clearBodyHeight(): void {
-        this.bodyHeight = 0;
-    }
-
     public registerBodyViewportResizeListener(listener: (()=>void)): void {
         this.view.registerBodyViewportResizeListener(listener);
-    }
-
-    public getBodyHeight(): number {
-        return this.bodyHeight;
     }
 
     public setVerticalScrollPaddingVisible(visible: boolean): void {
@@ -266,20 +246,5 @@ export class GridBodyController extends BeanStub {
 
         this.view.setTopDisplay(floatingTopHeight ? 'inherit' : 'none');
         this.view.setBottomDisplay(floatingBottomHeight ? 'inherit' : 'none');
-
-/*
-        const floatingTopHeightString = `${floatingTopHeight}px`;
-        const floatingBottomHeightString = `${floatingBottomHeight}px`;
-
-        eTop.style.minHeight = floatingTopHeightString;
-        eTop.style.height = floatingTopHeightString;
-        eTop.style.display = floatingTopHeight ? 'inherit' : 'none';
-
-        eBottom.style.minHeight = floatingBottomHeightString;
-        eBottom.style.height = floatingBottomHeightString;
-        eBottom.style.display = floatingBottomHeight ? 'inherit' : 'none';
-*/
-
-        this.checkBodyHeight();
     }
 }

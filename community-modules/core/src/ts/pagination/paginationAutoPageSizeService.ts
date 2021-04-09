@@ -4,6 +4,7 @@ import { Autowired, Bean, PostConstruct } from "../context/context";
 import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
 import { ControllersService } from "../controllersService";
 import { GridBodyController } from "../gridBodyComp/gridBodyController";
+import { RowContainerController } from "../gridBodyComp/rowContainer/rowContainerController";
 
 @Bean('paginationAutoPageSizeService')
 export class PaginationAutoPageSizeService extends BeanStub {
@@ -11,11 +12,14 @@ export class PaginationAutoPageSizeService extends BeanStub {
     @Autowired('controllersService') private controllersService: ControllersService;
 
     private gridBodyCon: GridBodyController;
+    private centerRowContainerCon: RowContainerController;
 
     @PostConstruct
     private postConstruct(): void {
-        this.controllersService.whenReady( ()=> {
-            this.gridBodyCon = this.controllersService.getGridBodyController();
+        this.controllersService.whenReady( p => {
+            this.gridBodyCon = p.gridBodyCon;
+            this.centerRowContainerCon = p.centerRowContainerCon;
+
             this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.onBodyHeightChanged.bind(this));
             this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
             this.checkPageSize();
@@ -40,7 +44,7 @@ export class PaginationAutoPageSizeService extends BeanStub {
         }
 
         const rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
-        const bodyHeight = this.gridBodyCon.getBodyHeight();
+        const bodyHeight = this.centerRowContainerCon.getViewportSizeFeature().getBodyHeight();
 
         if (bodyHeight > 0) {
             const newPageSize = Math.floor(bodyHeight / rowHeight);

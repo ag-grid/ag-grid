@@ -64,10 +64,9 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     private addScrollListener() {
-        const centerContainer = this.controllersService.getCenterRowContainerCon();
         const fakeHScroll = this.controllersService.getFakeHScrollCon();
 
-        this.addManagedListener(centerContainer.getViewportElement(), 'scroll', this.onCenterViewportScroll.bind(this));
+        this.addManagedListener(this.centerRowContainerCon.getViewportElement(), 'scroll', this.onCenterViewportScroll.bind(this));
         this.addManagedListener(fakeHScroll.getViewport(), 'scroll', this.onFakeHorizontalScroll.bind(this));
 
         const onVerticalScroll = this.gridOptionsWrapper.isDebounceVerticalScrollbar() ?
@@ -91,12 +90,11 @@ export class GridBodyScrollFeature extends BeanStub {
     public horizontallyScrollHeaderCenterAndFloatingCenter(scrollLeft?: number): void {
 
         if (scrollLeft === undefined) {
-            scrollLeft = this.getCenterViewportScrollLeft();
+            scrollLeft = this.centerRowContainerCon.getCenterViewportScrollLeft();
         }
 
         const offset = this.enableRtl ? scrollLeft : -scrollLeft;
 
-        const centerContainer = this.controllersService.getCenterRowContainerCon();
         const topCenterContainer = this.controllersService.getTopCenterRowContainerCon();
         const bottomCenterContainer = this.controllersService.getBottomCenterRowContainerCon();
         const headerRootComp = this.controllersService.getHeaderRootComp();
@@ -106,13 +104,10 @@ export class GridBodyScrollFeature extends BeanStub {
         bottomCenterContainer.setContainerTranslateX(offset);
         topCenterContainer.setContainerTranslateX(offset);
 
-        const partner = this.lastHorizontalScrollElement === centerContainer.getViewportElement() ? fakeHScroll.getViewport() : centerContainer.getViewportElement();
+        const partner = this.lastHorizontalScrollElement === this.centerRowContainerCon.getViewportElement() ?
+                fakeHScroll.getViewport() : this.centerRowContainerCon.getViewportElement();
 
         setScrollLeft(partner, scrollLeft, this.enableRtl);
-    }
-
-    private getCenterViewportScrollLeft(): number {
-        return this.controllersService.getCenterRowContainerCon().getCenterViewportScrollLeft();
     }
 
     private isControllingScroll(eDiv: HTMLElement): boolean {
@@ -131,13 +126,13 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     private onCenterViewportScroll(): void {
-        const centerContainerViewport = this.controllersService.getCenterRowContainerCon().getViewportElement();
+        const centerContainerViewport = this.centerRowContainerCon.getViewportElement();
         if (!this.isControllingScroll(centerContainerViewport)) { return; }
         this.onBodyHorizontalScroll(centerContainerViewport);
     }
 
     private onBodyHorizontalScroll(eSource: HTMLElement): void {
-        const centerContainerViewport = this.controllersService.getCenterRowContainerCon().getViewportElement();
+        const centerContainerViewport = this.centerRowContainerCon.getViewportElement();
         const { scrollLeft } = centerContainerViewport;
 
         if (this.shouldBlockScrollUpdate('horizontal', scrollLeft, true)) {
@@ -207,9 +202,8 @@ export class GridBodyScrollFeature extends BeanStub {
         }
 
         if (direction === 'horizontal') {
-            const centerRowContainerCon = this.controllersService.getCenterRowContainerCon();
-            const clientWidth = centerRowContainerCon.getCenterWidth();
-            const { scrollWidth } = centerRowContainerCon.getViewportElement();
+            const clientWidth = this.centerRowContainerCon.getCenterWidth();
+            const { scrollWidth } = this.centerRowContainerCon.getViewportElement();
 
             if (this.enableRtl && isRtlNegativeScroll()) {
                 if (scrollTo > 0) { return true; }
@@ -236,7 +230,7 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     private onHorizontalViewportChanged(): void {
-        this.controllersService.getCenterRowContainerCon().onHorizontalViewportChanged();
+        this.centerRowContainerCon.onHorizontalViewportChanged();
     }
 
     // this is to cater for AG-3274, where grid is removed from the dom and then inserted back in again.
@@ -246,8 +240,8 @@ export class GridBodyScrollFeature extends BeanStub {
     // adding and removing the grid from the DOM both resets the scroll position and
     // triggers a resize event, so notify listeners if the scroll position has changed
     public checkScrollLeft(): void {
-        if (this.scrollLeft !== this.getCenterViewportScrollLeft()) {
-            this.onBodyHorizontalScroll(this.controllersService.getCenterRowContainerCon().getViewportElement());
+        if (this.scrollLeft !== this.centerRowContainerCon.getCenterViewportScrollLeft()) {
+            this.onBodyHorizontalScroll(this.centerRowContainerCon.getViewportElement());
         }
     }
 
@@ -265,16 +259,15 @@ export class GridBodyScrollFeature extends BeanStub {
     // called by scrollHorizontally method and alignedGridsService
     public setHorizontalScrollPosition(hScrollPosition: number): void {
 
-        const centerContainerCon = this.controllersService.getCenterRowContainerCon();
-
         const minScrollLeft = 0;
-        const maxScrollLeft = centerContainerCon.getViewportElement().scrollWidth - centerContainerCon.getCenterWidth();
+        const maxScrollLeft = this.centerRowContainerCon.getViewportElement().scrollWidth
+                                - this.centerRowContainerCon.getCenterWidth();
 
         if (this.shouldBlockScrollUpdate('horizontal', hScrollPosition)) {
             hScrollPosition = Math.min(Math.max(hScrollPosition, minScrollLeft), maxScrollLeft);
         }
 
-        centerContainerCon.getViewportElement().scrollLeft = hScrollPosition;
+        this.centerRowContainerCon.getViewportElement().scrollLeft = hScrollPosition;
 
         // we need to manually do the event handling (rather than wait for the event)
         // for the alignedGridsService, as if we don't, the aligned grid service gets
@@ -296,22 +289,19 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     public getHScrollPosition(): { left: number, right: number; } {
-        const centerContainer = this.controllersService.getCenterRowContainerCon();
-        return centerContainer.getHScrollPosition();
+        return this.centerRowContainerCon.getHScrollPosition();
     }
 
     public isHorizontalScrollShowing(): boolean {
-        const centerContainer = this.controllersService.getCenterRowContainerCon();
-        return centerContainer.isHorizontalScrollShowing();
+        return this.centerRowContainerCon.isHorizontalScrollShowing();
     }
 
     // called by the headerRootComp and moveColumnController
     public scrollHorizontally(pixels: number): number {
-        const centerContainer = this.controllersService.getCenterRowContainerCon();
-        const oldScrollPosition = centerContainer.getViewportElement().scrollLeft;
+        const oldScrollPosition = this.centerRowContainerCon.getViewportElement().scrollLeft;
 
         this.setHorizontalScrollPosition(oldScrollPosition + pixels);
-        return centerContainer.getViewportElement().scrollLeft - oldScrollPosition;
+        return this.centerRowContainerCon.getViewportElement().scrollLeft - oldScrollPosition;
     }
 
     // gets called by rowRenderer when new data loaded, as it will want to scroll to the top
@@ -453,7 +443,7 @@ export class GridBodyScrollFeature extends BeanStub {
         const colRightPixel = colLeftPixel! + column.getActualWidth();
 
         const viewportWidth = this.centerRowContainerCon.getCenterWidth();
-        const scrollPosition = this.getCenterViewportScrollLeft();
+        const scrollPosition = this.centerRowContainerCon.getCenterViewportScrollLeft();
 
         const bodyWidth = this.columnController.getBodyContainerWidth();
 
@@ -493,7 +483,7 @@ export class GridBodyScrollFeature extends BeanStub {
         // it is possible that the ensureColumnVisible method is called from within AG Grid and
         // the caller will need to have the columns rendered to continue, which will be before
         // the event has been worked on (which is the case for cell navigation).
-        this.controllersService.getCenterRowContainerCon().onHorizontalViewportChanged();
+        this.centerRowContainerCon.onHorizontalViewportChanged();
 
         // so when we return back to user, the cells have rendered
         this.animationFrameService.flushAllFrames();
