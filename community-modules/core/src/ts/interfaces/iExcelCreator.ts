@@ -113,9 +113,10 @@ export interface ExcelCell {
 }
 
 export interface ExcelImage {
-    path?: string;
-    base64?: string;
+    id: string;
+    base64: string;
     imageType: 'jpg' | 'png' | 'gif';
+    position?: string;
 }
 
 /*
@@ -181,6 +182,7 @@ export interface ExcelExportParams extends ExportParams<ExcelCell[][]> {
     pageSetup?: ExcelSheetPageSetup;
     headerFooterConfig?: ExcelHeaderFooterConfig;
     suppressTextAsCDATA?:boolean;
+    addImageToCell?: (rowIndex: number, column: Column, value: string) => ExcelImage | undefined;
 }
 
 export interface ExcelExportMultipleSheetParams {

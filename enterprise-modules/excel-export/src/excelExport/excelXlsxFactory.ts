@@ -1,6 +1,7 @@
 import {
     ExcelFactoryMode,
     ExcelHeaderFooterConfig,
+    ExcelImage,
     ExcelSheetMargin,
     ExcelSheetPageSetup,
     ExcelStyle,
@@ -10,6 +11,7 @@ import {
 
 import coreFactory from './files/ooxml/core';
 import contentTypesFactory from './files/ooxml/contentTypes';
+import drawingFactory from './files/ooxml/drawing';
 import officeThemeFactory from './files/ooxml/themes/office';
 import sharedStringsFactory from './files/ooxml/sharedStrings';
 import stylesheetFactory, { registerStyles } from './files/ooxml/styles/stylesheet';
@@ -26,6 +28,11 @@ export class ExcelXlsxFactory {
 
     private static sharedStrings: Map<string, number> = new Map();
     private static sheetNames: string[] = [];
+
+    public static images: Map<string, { sheetId: number, image: ExcelImage[] }[]> = new Map();
+    public static workbookImages: Map<ExcelImage, number> = new Map();
+    public static sheetImages: Map<number, ExcelImage[]> = new Map();
+
     public static factoryMode: ExcelFactoryMode = ExcelFactoryMode.SINGLE_SHEET;
 
     public static createExcel(
@@ -39,6 +46,40 @@ export class ExcelXlsxFactory {
         registerStyles(styles);
 
         return this.createWorksheet(worksheet, margins, pageSetup, headerFooterConfig);
+    }
+
+    public static buildImageMap(image: ExcelImage): void {
+        const currentSheetIndex = this.sheetNames.length;
+        const registeredImage = this.images.get(image.id);
+
+        if (registeredImage) {
+            const currentSheetImages = registeredImage.find((currentImage) => currentImage.sheetId === currentSheetIndex);
+            if (currentSheetImages) {
+                currentSheetImages.image.push(image);
+            } else {
+                registeredImage.push({
+                    sheetId: currentSheetIndex,
+                    image: [image]
+                });
+            }
+        } else {
+            this.images.set(image.id, [{ sheetId: currentSheetIndex, image: [image] }])
+            this.workbookImages.set(image, this.workbookImages.size);
+        }
+
+        this.buildSheetImageMap(currentSheetIndex, image);
+    }
+
+    private static buildSheetImageMap(sheetIndex: number, image: ExcelImage): void {
+        const sheetImages = this.sheetImages.get(sheetIndex);
+
+        if (!sheetImages) {
+            this.sheetImages.set(sheetIndex, [image]);
+        } else {
+            if (sheetImages.indexOf(image) === -1) {
+                sheetImages.push(image);
+            }
+        }
     }
 
     private static addSheetName(worksheet: ExcelWorksheet): void {
@@ -69,6 +110,11 @@ export class ExcelXlsxFactory {
 
     public static resetFactory(): void {
         this.sharedStrings = new Map();
+
+        this.images = new Map();
+        this.workbookImages = new Map();
+        this.sheetImages = new Map();
+        
         this.sheetNames = [];
         this.factoryMode = ExcelFactoryMode.SINGLE_SHEET;
     }
@@ -137,6 +183,31 @@ export class ExcelXlsxFactory {
         return this.createXmlPart(rs);
     }
 
+    public static createDrawing(sheetIndex: number) {
+        return this.createXmlPart(drawingFactory.getTemplate({ sheetIndex }));
+    }
+
+    public static createDrawingRel(sheetIndex: number) {
+        const sheetImages = this.sheetImages.get(sheetIndex);
+        const rs = relationshipsFactory.getTemplate(sheetImages!.map((image, idx) => ({
+                Id: `rId${idx + 1}`,
+                Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image',
+                Target: `../media/image${this.workbookImages.get(image)! + 1}.${image.imageType}`
+        })))
+
+        return this.createXmlPart(rs);
+    }
+
+    public static createWorksheetDrawingRel(currentRelationIndex: number) {
+        const rs = relationshipsFactory.getTemplate([{
+            Id: 'rId1',
+            Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing',
+            Target: `../drawings/drawing${currentRelationIndex + 1}.xml`
+        }]);
+
+        return this.createXmlPart(rs);
+    }
+
     private static createXmlPart(body: XmlElement): string {
         const header = XmlFactory.createHeader({
             encoding: 'UTF-8',
@@ -155,6 +226,7 @@ export class ExcelXlsxFactory {
     ): string {
         return this.createXmlPart(worksheetFactory.getTemplate({
             worksheet,
+            currentSheet: this.sheetNames.length - 1,
             margins,
             pageSetup,
             headerFooterConfig

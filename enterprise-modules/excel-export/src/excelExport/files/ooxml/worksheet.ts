@@ -14,6 +14,7 @@ import {
 import columnFactory from './column';
 import rowFactory from './row';
 import mergeCell from './mergeCell';
+import { ExcelXlsxFactory } from '../../excelXlsxFactory';
 
 const updateColMinMax = (col: ExcelColumn, min: number, range: number, prevCol?: ExcelColumn): void => {
     if (!col.min) {
@@ -273,14 +274,32 @@ const addHeaderFooter = (headerFooterConfig?: ExcelHeaderFooterConfig) => {
     }
 }
 
+const addDrawingRel = (currentSheet: number) => {
+    return (children: XmlElement[]) => {
+        if (ExcelXlsxFactory.sheetImages.get(currentSheet)) {
+            children.push({
+                name: 'drawing',
+                properties: {
+                    rawMap: {
+                        'r:id': 'rId1'
+                    }
+                }
+            });
+        }
+
+        return children;
+    }
+}
+
 const worksheetFactory: ExcelOOXMLTemplate = {
     getTemplate(params: {
         worksheet: ExcelWorksheet,
+        currentSheet: number,
         margins?: ExcelSheetMargin,
         pageSetup?: ExcelSheetPageSetup,
         headerFooterConfig?: ExcelHeaderFooterConfig
     }) {
-        const { worksheet, margins = {}, pageSetup, headerFooterConfig } = params;
+        const { worksheet, currentSheet, margins = {}, pageSetup, headerFooterConfig } = params;
         const { table } = worksheet;
         const { rows, columns } = table;
         const mergedCells = (columns && columns.length) ? getMergedCells(rows, columns) : [];
@@ -291,7 +310,8 @@ const worksheetFactory: ExcelOOXMLTemplate = {
             addMergeCells(mergedCells),
             addPageMargins(margins),
             addPageSetup(pageSetup),
-            addHeaderFooter(headerFooterConfig)
+            addHeaderFooter(headerFooterConfig),
+            addDrawingRel(currentSheet)
         );
 
         const children = createWorksheetChildren([]);

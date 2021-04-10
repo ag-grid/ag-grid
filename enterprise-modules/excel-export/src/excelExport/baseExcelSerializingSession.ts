@@ -5,6 +5,7 @@ import {
     ExcelCell,
     ExcelColumn,
     ExcelHeaderFooterConfig,
+    ExcelImage,
     ExcelRow,
     ExcelSheetMargin,
     ExcelSheetPageSetup,
@@ -33,6 +34,7 @@ export interface ExcelGridSerializingParams extends GridSerializingParams {
     rowHeight?: number;
     sheetName: string;
     styleLinker: (rowType: RowType, rowIndex: number, value: string, column?: Column, node?: RowNode) => string[];
+    addImageToCell?: (rowIndex: number, column: Column, value: string) => ExcelImage | undefined;
     suppressTextAsCDATA?: boolean;
 }
 
@@ -69,6 +71,7 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
     protected abstract getDataTypeForValue(valueForCell: string): T;
     protected abstract getType(type: T, style: ExcelStyle | null, value: string | null): T | null;
     protected abstract createCell(styleId: string | null, type: T, value: string): ExcelCell;
+    protected abstract addImage(rowIndex: number, column: Column, value: string): boolean;
     protected abstract createMergedCell(styleId: string | null, type: T, value: string, numOfCells: number): ExcelCell;
 
     public addCustomContent(customContent: ExcelCell[][]): void {
@@ -176,6 +179,8 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
             const styleIds: string[] = this.config.styleLinker(RowType.BODY, rowIndex, valueForCell, column, node);
             const excelStyleId: string | null = this.getStyleId(styleIds);
             const colSpan = column.getColSpan(node);
+
+            if (this.addImage(rowIndex, column, valueForCell)) { return; }
 
             if (colSpan > 1) {
                 skipCols = colSpan - 1;

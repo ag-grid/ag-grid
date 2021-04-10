@@ -1,4 +1,5 @@
 import {
+    Column,
     ExcelCell,
     ExcelOOXMLDataType,
     ExcelStyle,
@@ -53,9 +54,21 @@ export class ExcelXlsxSerializingSession extends BaseExcelSerializingSession<Exc
         return type;
     }
 
+    protected addImage(rowIndex: number, column: Column, value: string): boolean {
+        if (!this.config.addImageToCell) { return false; }
+
+        const image = this.config.addImageToCell(rowIndex, column, value);
+
+        if (!image) { return false; }
+
+        ExcelXlsxFactory.buildImageMap(image);
+
+        return true;
+    }
+
     protected createCell(styleId: string | null, type: ExcelOOXMLDataType, value: string): ExcelCell {
         const actualStyle: ExcelStyle | null = this.getStyleById(styleId);
-        const typeTransformed = this.getType(type, actualStyle, value) || type;;
+        const typeTransformed = this.getType(type, actualStyle, value) || type;
 
         return {
             styleId: actualStyle ? styleId! : undefined,

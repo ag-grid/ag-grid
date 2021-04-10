@@ -44,6 +44,10 @@ export class ExcelXmlSerializingSession extends BaseExcelSerializingSession<Exce
         return type;
     }
 
+    protected addImage(): boolean {
+        return false;
+    }
+
     protected createCell(styleId: string | null, type: ExcelDataType, value: string): ExcelCell {
         const actualStyle: ExcelStyle | null = this.getStyleById(styleId);
         const typeTransformed = (this.getType(type, actualStyle, value) || type) as ExcelDataType;

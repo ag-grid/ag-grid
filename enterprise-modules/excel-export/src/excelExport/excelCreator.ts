@@ -8,6 +8,7 @@ import {
     ExcelExportParams,
     ExcelFactoryMode,
     ExcelStyle,
+    ExcelImage,
     GridOptions,
     GridOptionsWrapper,
     IExcelCreator,
@@ -28,24 +29,50 @@ type SerializingSession = ExcelXlsxSerializingSession | ExcelXmlSerializingSessi
 
 export const getMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams): Blob | undefined => {
     const { data, fontSize = 11, author = 'AG Grid' } = params;
+
+    const hasImages = ExcelXlsxFactory.images.size > 0;
+
     ZipContainer.addFolders([
-        'xl/worksheets/',
+        '_rels/',
+        'docProps/',
         'xl/',
         'xl/theme/',
         'xl/_rels/',
-        'docProps/',
-        '_rels/'
+        'xl/worksheets/'
     ]);
+
+    if (hasImages) {
+        ZipContainer.addFolders([
+            'xl/worksheets/_rels',
+            'xl/drawings/',
+            'xl/drawings/_rels',
+            'xl/media/',
+
+        ]);
+
+        let imgCounter = 0;
+        ExcelXlsxFactory.images.forEach(value => {
+            const firstImage = value[0].image[0];
+            const ext = firstImage.imageType;
+            ZipContainer.addFile(`xl/media/image${++imgCounter}.${ext}`, firstImage.base64, true);
+        });
+    }
 
     if (!data || data.length === 0) {
         console.warn("AG Grid: Invalid params supplied to getMultipleSheetsAsExcel() - `ExcelExportParams.data` is empty.");
-        return undefined;
+        ExcelXlsxFactory.resetFactory();
+        return;
     }
 
     const sheetLen = data.length;
+    let imageRelationCounter = 0;
     data.forEach((value, idx) => {
         ZipContainer.addFile(`xl/worksheets/sheet${idx + 1}.xml`, value);
+        if (hasImages && ExcelXlsxFactory.sheetImages.get(idx)) {
+            createImageRelationsForSheet(idx, imageRelationCounter++);
+        }
     });
+
     ZipContainer.addFile('xl/workbook.xml', ExcelXlsxFactory.createWorkbook());
     ZipContainer.addFile('xl/styles.xml', ExcelXlsxFactory.createStylesheet(fontSize));
     ZipContainer.addFile('xl/sharedStrings.xml', ExcelXlsxFactory.createSharedStrings());
@@ -66,6 +93,17 @@ export const exportMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetPara
     if (contents) {
         Downloader.download(fileName, contents);
     }
+}
+
+const createImageRelationsForSheet = (sheetIndex: number, currentRelationIndex: number) => {
+    const drawingFolder = 'xl/drawings';
+    const drawingFileName = `${drawingFolder}/drawing${currentRelationIndex + 1}.xml`;
+    const relFileName = `${drawingFolder}/_rels/drawing${currentRelationIndex + 1}.xml.rels`;
+    const worksheetRelFile = `xl/worksheets/_rels/sheet${sheetIndex + 1}.xml.rels`;
+
+    ZipContainer.addFile(relFileName, ExcelXlsxFactory.createDrawingRel(sheetIndex));
+    ZipContainer.addFile(drawingFileName, ExcelXlsxFactory.createDrawing(sheetIndex));
+    ZipContainer.addFile(worksheetRelFile, ExcelXlsxFactory.createWorksheetDrawingRel(currentRelationIndex))
 }
 
 @Bean('excelCreator')
