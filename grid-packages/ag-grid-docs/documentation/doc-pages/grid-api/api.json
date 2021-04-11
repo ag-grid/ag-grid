@@ -653,7 +653,7 @@
             },
             "more": {
                 "name": "Excel Export",
-                "url": "/excel-export/"
+                "url": "/excel-export-api/"
             }
         },
         "getDataAsExcel()": {
@@ -669,7 +669,7 @@
             },
             "more": {
                 "name": "Excel Export",
-                "url": "/excel-export/"
+                "url": "/excel-export-api/"
             }
         },
         "getSheetDataForExcel()": {
@@ -682,7 +682,7 @@
             },
             "more": {
                 "name": "Excel Export",
-                "url": "/excel-export/"
+                "url": "/excel-export-api/"
             }
         },
         "exportMultipleSheetsAsExcel()": {
@@ -694,7 +694,7 @@
             },
             "more": {
                 "name": "Excel Export",
-                "url": "/excel-export/"
+                "url": "/excel-export-api/"
             }
         },
         "getMultipleSheetsAsExcel()": {
@@ -707,7 +707,7 @@
             },
             "more": {
                 "name": "Excel Export",
-                "url": "/excel-export/"
+                "url": "/excel-export-api/"
             }
         }
     },

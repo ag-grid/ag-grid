@@ -159,6 +159,21 @@ getIndentClass(params: CellClassParams): string[] | string {
 
 <grid-example title='Excel Export - Styling Row Groups' name='excel-export-styling-row-groups' type='generated' options='{ "enterprise": true }'></grid-example>
 
+## Handling Excel Style Errors
+
+If you get an error when opening the Excel file, the most likely reason is that there is an error in the definition of the styles. If that is the case, we recommend that you remove all style definitions from your configuration and add them one-by-one until you find the definition that is causing the error.
+
+Some of the most likely errors you can encounter when exporting to Excel are:
+
+- Not specifying all the attributes of an Excel Style property. If you specify the interior for an Excel style and don't provide a pattern, just color, Excel will fail to open the spreadsheet
+
+- Using invalid characters in attributes, we recommend you not to use special characters.
+
+- Not specifying the style associated to a cell, if a cell has an style that is not passed as part of the grid options, Excel won't fail opening the spreadsheet but the column won't be formatted.
+
+- Specifying an invalid enumerated property. It is also important to realise that Excel is case sensitive, so Solid is a valid pattern, but SOLID or solid are not.
+
+
 ## API
 
 ### API Methods

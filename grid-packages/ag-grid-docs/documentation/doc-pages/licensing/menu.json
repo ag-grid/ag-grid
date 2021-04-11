@@ -998,6 +998,11 @@
             "enterprise": true,
             "items": [
               {
+                "title": "API Reference",
+                "url": "/excel-export-api/",
+                "enterprise": true
+              },
+              {
                 "title": "Excel Styles",
                 "url": "/excel-export-styles/",
                 "enterprise": true
