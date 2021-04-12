@@ -210,7 +210,7 @@ interface CsvExportParams {
      *
      * Default: false
      */
-    skipGroups?: boolean;
+    skipRowGroups?: boolean;
 
     /**
      * Set to true if you don't want to export column headers.

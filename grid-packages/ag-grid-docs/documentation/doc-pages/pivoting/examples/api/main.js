@@ -53,9 +53,7 @@ function emptyPivotColumns() {
     });
 }
 function exportToCsv() {
-    gridOptions.api.exportDataAsCsv({
-        columnGroups: true
-    });
+    gridOptions.api.exportDataAsCsv();
 }
 
 // setup the grid after the page has finished loading

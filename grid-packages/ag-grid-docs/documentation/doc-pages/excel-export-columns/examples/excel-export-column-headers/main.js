@@ -61,7 +61,7 @@ function getBoolean(id) {
 
 function getParams() {
     return {
-        columnGroups: getBoolean('columnGroups'),
+        skipColumnGroups: getBoolean('columnGroups'),
         skipHeader: getBoolean('skipHeader')
     }
 }

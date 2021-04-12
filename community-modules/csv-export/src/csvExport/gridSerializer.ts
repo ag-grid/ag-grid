@@ -61,11 +61,16 @@ export class GridSerializer extends BeanStub {
         const skipSingleChildrenGroup = gridOptionsWrapper.isGroupRemoveSingleChildren();
         const hideOpenParents = gridOptionsWrapper.isGroupHideOpenParents();
         const skipLowestSingleChildrenGroup = gridOptionsWrapper.isGroupRemoveLowestSingleChildren();
+        const skipRowGroups = params.skipGroups || params.skipRowGroups;
         const shouldSkipLowestGroup = skipLowestSingleChildrenGroup && node.leafGroup;
         const shouldSkipCurrentGroup = node.allChildrenCount === 1 && (skipSingleChildrenGroup || shouldSkipLowestGroup);
 
+        if (skipRowGroups && params.skipGroups) {
+            console.warn('AG Grid: Since v25.2 `skipGroups` has been renamed to `skipRowGroups`.');
+        }
+
         if (
-            (node.group && (params.skipGroups || shouldSkipCurrentGroup || hideOpenParents)) ||
+            (node.group && (params.skipRowGroups || shouldSkipCurrentGroup || hideOpenParents)) ||
             (params.onlySelected && !node.isSelected()) ||
             (params.skipPinnedTop && node.rowPinned === 'top') ||
             (params.skipPinnedBottom && node.rowPinned === 'bottom')
@@ -131,7 +136,7 @@ export class GridSerializer extends BeanStub {
 
     private exportColumnGroups<T>(params: ExportParams<T>, columnsToExport: Column[]): (gridSerializingSession: GridSerializingSession<T>) => GridSerializingSession<T> {
         return (gridSerializingSession) => {
-            if (params.columnGroups) {
+            if (!params.skipColumnGroups) {
                 const groupInstanceIdCreator: GroupInstanceIdCreator = new GroupInstanceIdCreator();
                 const displayedGroups: ColumnGroupChild[] = this.displayedGroupCreator.createDisplayedGroups(
                     columnsToExport,

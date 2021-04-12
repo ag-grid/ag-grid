@@ -6,12 +6,12 @@ import { ColumnGroup } from "../entities/columnGroup";
 
 export interface BaseExportParams {
     allColumns?: boolean;
-    columnGroups?: boolean;
     columnKeys?: (string | Column)[];
     fileName?: string;
     onlySelected?: boolean;
     onlySelectedAllPages?: boolean;
-    skipGroups?: boolean;
+    skipColumnGroups?: boolean;
+    skipRowGroups?: boolean;
     skipHeader?: boolean;
     skipPinnedTop?: boolean;
     skipPinnedBottom?: boolean;
@@ -21,6 +21,11 @@ export interface BaseExportParams {
     processHeaderCallback?(params: ProcessHeaderForExportParams): string;
     processGroupHeaderCallback?(params: ProcessGroupHeaderForExportParams): string;
     processRowGroupCallback?(params: ProcessRowGroupForExportParams): string;
+
+    /** @deprecated */
+    columnGroups?: boolean;
+    /** @deprecated */
+    skipGroups?: boolean;
 }
 
 export interface ExportParams<T> extends BaseExportParams {

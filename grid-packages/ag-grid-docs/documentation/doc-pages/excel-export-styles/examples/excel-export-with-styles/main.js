@@ -253,8 +253,7 @@ function onBtExport() {
     var params = {
         fontSize: getBooleanValue('#fontSize') ? getNumericValue('#fontSizeValue') : undefined,
         rowHeight: getBooleanValue('#rowHeight') ? getNumericValue('#rowHeightValue') : undefined,
-        headerRowHeight: getBooleanValue('#headerRowHeight') ? getNumericValue('#headerRowHeightValue') : undefined,
-        columnGroups: true
+        headerRowHeight: getBooleanValue('#headerRowHeight') ? getNumericValue('#headerRowHeightValue') : undefined
     };
 
     gridOptions.api.exportDataAsExcel(params);
