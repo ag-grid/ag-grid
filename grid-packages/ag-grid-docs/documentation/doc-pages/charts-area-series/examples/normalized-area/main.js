@@ -22,10 +22,7 @@ var options = {
             type: 'number',
             position: 'left',
             label: {
-                format: '.0%',
-                // formatter: function(params) {
-                //     return params.value + '%';
-                // }
+                format: '.0%'
             }
         },
         {
