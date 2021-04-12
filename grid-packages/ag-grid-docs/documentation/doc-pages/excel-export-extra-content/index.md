@@ -33,3 +33,7 @@ These are used for printing and exporting to pdf.
 Note: you will need to open the Header Footer menu
 
 <grid-example title='Excel Export - Custom Header and Footer' name='excel-export-header-footer' type='generated' options='{ "enterprise": true, "exampleHeight": 815 }'></grid-example>
+
+## Export Cover Page
+<grid-example title='Excel Export - Cover Page' name='excel-export-cover-page' type='generated' options='{ "enterprise": true }'></grid-example>
+
