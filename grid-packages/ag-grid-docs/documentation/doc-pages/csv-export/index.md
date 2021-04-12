@@ -80,7 +80,7 @@ Note the following:
 
 ## Column Headers
 
-In some situations, you could be interested in exporting only the grid data, without exporting the header cells. For this scenario, we provide the `skipHeader=true` param. Also, by default, grouped headers are not exported, but these can be exported by using the `columnGroups=true` param.
+In some situations, you could be interested in exporting only the grid data, without exporting the header cells. For this scenario, we provide the `skipColumnHeaders=true` param. Also, by default, grouped headers are not exported, but these can be exported by using the `columnGroups=true` param.
 
 Note the following: 
 
@@ -172,12 +172,6 @@ interface CsvExportParams {
     allColumns?: boolean;
 
     /**
-     * Set to true to include header column groups.
-     * Default: false
-     */
-    columnGroups?: boolean;
-
-    /**
      * Provide a list (an array) of column keys or Column objects if you want to 
      * export specific columns.
      *
@@ -213,10 +207,16 @@ interface CsvExportParams {
     skipRowGroups?: boolean;
 
     /**
+     * Set to true to skip include header column groups.
+     * Default: false
+     */
+    skipColumnGroupHeaders?: boolean;
+
+    /**
      * Set to true if you don't want to export column headers.
      * Default: false
      */
-    skipHeader?: boolean;
+    skipColumnHeaders?: boolean;
 
     /**
      * Set to true to suppress exporting rows pinned to the top of the grid.

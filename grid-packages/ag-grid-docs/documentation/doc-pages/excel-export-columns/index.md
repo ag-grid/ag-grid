@@ -5,12 +5,12 @@ enterprise: true
 
 ## Column Headers
 
-In some situations, you could be interested in exporting only the grid data, without exporting the header cells. For this scenario, we provide the `skipHeader=true` param. Also, by default, grouped headers are not exported, but these can be exported by using the `columnGroups=true` param.
+In some situations, you could be interested in exporting only the grid data, without exporting the header cells. For this scenario, we provide the `skipColumnHeaders=true` param. Also, by default, grouped headers are not exported, but these can be exported by using the `columnGroups=true` param.
 
 Note the following:
 
 - Initially, grouped headers and header are exported.
-- Group Headers will be skipped if `Column Groups` is uncheked.
+- Group Headers will be skipped if `Column Groups` is unchecked.
 - Normal headers will be skipped if `Skip Header` is checked.
 - Uncheck `Column Groups` and check `Skip Header` to completely suppress headers.
 

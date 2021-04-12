@@ -10,9 +10,10 @@ export interface BaseExportParams {
     fileName?: string;
     onlySelected?: boolean;
     onlySelectedAllPages?: boolean;
-    skipColumnGroups?: boolean;
+
+    skipColumnGroupHeaders?: boolean;
+    skipColumnHeaders?:boolean;
     skipRowGroups?: boolean;
-    skipHeader?: boolean;
     skipPinnedTop?: boolean;
     skipPinnedBottom?: boolean;
 
@@ -26,6 +27,8 @@ export interface BaseExportParams {
     columnGroups?: boolean;
     /** @deprecated */
     skipGroups?: boolean;
+    /** @deprecated */
+    skipHeader?: boolean;
 }
 
 export interface ExportParams<T> extends BaseExportParams {

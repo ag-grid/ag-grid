@@ -136,7 +136,7 @@ export class GridSerializer extends BeanStub {
 
     private exportColumnGroups<T>(params: ExportParams<T>, columnsToExport: Column[]): (gridSerializingSession: GridSerializingSession<T>) => GridSerializingSession<T> {
         return (gridSerializingSession) => {
-            if (!params.skipColumnGroups) {
+            if (!params.skipColumnGroupHeaders) {
                 const groupInstanceIdCreator: GroupInstanceIdCreator = new GroupInstanceIdCreator();
                 const displayedGroups: ColumnGroupChild[] = this.displayedGroupCreator.createDisplayedGroups(
                     columnsToExport,
@@ -145,6 +145,8 @@ export class GridSerializer extends BeanStub {
                     null
                 );
                 this.recursivelyAddHeaderGroups(displayedGroups, gridSerializingSession, params.processGroupHeaderCallback);
+            } else if (params.columnGroups) {
+                console.warn('AG Grid: Since v25.2 the `columnGroups` param has deprecated, and groups are exported by default.')
             }
             return gridSerializingSession;
         }
@@ -152,11 +154,13 @@ export class GridSerializer extends BeanStub {
 
     private exportHeaders<T>(params: ExportParams<T>, columnsToExport: Column[]): (gridSerializingSession: GridSerializingSession<T>) => GridSerializingSession<T> {
         return (gridSerializingSession) => {
-            if (!params.skipHeader) {
+            if (!params.skipHeader && !params.skipColumnHeaders) {
                 const gridRowIterator = gridSerializingSession.onNewHeaderRow();
                 columnsToExport.forEach((column, index) => {
                 gridRowIterator.onColumn(column, index, undefined);
             });
+            } else if (params.skipHeader) {
+                console.warn('AG Grid: Since v25.2 the `skipHeader` param has been renamed to `skipColumnHeaders`.')
             }
             return gridSerializingSession;
         }

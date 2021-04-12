@@ -78,19 +78,19 @@
             "description": "xxx",
             "type": "ExcelSheetPageSetup"
         },
-        "skipColumnGroups": {
+        "skipColumnGroupHeaders": {
             "default": false,
             "description": "Set to `true` to exclude header column groups.",
+            "type": "boolean"
+        },
+        "skipColumnHeaders": {
+            "default": false,
+            "description": "Set to `true` if you don't want to export column headers.",
             "type": "boolean"
         },
         "skipRowGroups": {
             "default": false,
             "description": "Set to `true` to skip row group headers if grouping rows. Only relevant when grouping rows.",
-            "type": "boolean"
-        },
-        "skipHeader": {
-            "default": false,
-            "description": "Set to `true` if you don't want to export column headers.",
             "type": "boolean"
         },
         "skipPinnedBottom": {
@@ -162,7 +162,7 @@
             }
         },
         "processGroupHeaderCallback": {
-            "description": "A callback function invoked once per column group. Return a `string` to be displayed in the column group header. Note that column groups are exported by default, this option will not work with `skipColumnGroups=true`.",
+            "description": "A callback function invoked once per column group. Return a `string` to be displayed in the column group header. Note that column groups are exported by default, this option will not work with `skipColumnGroupHeaders=true`.",
             "type": {
                 "meta": {
                     "name": "ProcessGroupHeaderForExportParams"
