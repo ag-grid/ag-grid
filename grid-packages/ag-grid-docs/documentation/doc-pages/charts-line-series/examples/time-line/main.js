@@ -98,9 +98,7 @@ var options = {
             type: 'number',
             position: 'left',
             label: {
-                formatter: function(params) {
-                    return params.value + '°C';
-                }
+                format: '#{.1f} °C'
             }
         }
     ],

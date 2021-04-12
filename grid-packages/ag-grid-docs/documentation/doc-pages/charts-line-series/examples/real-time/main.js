@@ -37,9 +37,7 @@ var options = {
             type: 'number',
             position: 'left',
             label: {
-                formatter: function(params) {
-                    return params.value + 'V';
-                }
+                format: '#{.2f}V'
             }
         }
     ],

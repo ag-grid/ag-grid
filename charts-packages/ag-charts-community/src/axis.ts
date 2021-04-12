@@ -273,11 +273,12 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 this.tickFormatter = this.scale.tickFormat(this.tick.count, format);
             }
         } else {
-            // if (this.scale && this.scale.tickFormat) {
-            //     this.tickFormatter = this.scale.tickFormat(this.tick.count, undefined);
-            // } else {
+            if (this.scale && this.scale.tickFormat && (this as any).type === 'time') {
+                // For time axis labels to look nice, even if date format wasn't set.
+                this.tickFormatter = this.scale.tickFormat(this.tick.count, undefined);
+            } else {
                 this.tickFormatter = undefined;
-            // }
+            }
         }
     }
 

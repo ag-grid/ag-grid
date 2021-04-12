@@ -16,7 +16,7 @@ var options = {
         yNames: ['Used in last 3 months', 'Used over 3 months ago', 'Never used'],
         fills: ['#00c851', '#ffbb33', '#ff4444'],
         strokes: ['#006428', '#996500', '#a10000'],
-        normalizedTo: 100,
+        normalizedTo: 1,
     }],
     axes: [
         {
@@ -30,7 +30,7 @@ var options = {
             type: 'number',
             position: 'bottom',
             label: {
-                formatter: function(params) { return params.value + '%'; }
+                format: '.0%'
             }
         }
     ],
