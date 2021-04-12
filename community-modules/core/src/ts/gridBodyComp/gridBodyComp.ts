@@ -131,10 +131,7 @@ export class GridBodyComp extends Component {
         }
 
         this.gridApi.registerGridComp(this);
-        this.headerRootComp.registerGridComp(this);
-        this.headerNavigationService.registerGridComp(this);
         this.beans.registerGridComp(this);
-        this.animationFrameService.registerGridComp(this);
         if (this.contextMenuFactory) {
             this.contextMenuFactory.registerGridComp(this);
         }

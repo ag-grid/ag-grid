@@ -42,8 +42,6 @@ export class AnimationFrameService extends BeanStub {
     private taskCount = 0;
     private cancelledTasks = new Set();
 
-    private gridBodyComp: GridBodyComp;
-
     public setScrollTop(scrollTop: number): void {
         this.scrollGoingDown = scrollTop > this.lastScrollTop;
         this.lastScrollTop = scrollTop;
@@ -52,10 +50,6 @@ export class AnimationFrameService extends BeanStub {
     @PostConstruct
     private init(): void {
         this.useAnimationFrame = !this.gridOptionsWrapper.isSuppressAnimationFrame();
-    }
-
-    public registerGridComp(gridBodyComp: GridBodyComp): void {
-        this.gridBodyComp = gridBodyComp;
     }
 
     // this method is for our AG Grid sanity only - if animation frames are turned off,

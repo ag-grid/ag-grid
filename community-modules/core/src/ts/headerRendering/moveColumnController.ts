@@ -21,7 +21,6 @@ export class MoveColumnController implements DropListener {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('controllersService') public controllersService: ControllersService;
 
-    private gridBodyComp: GridBodyComp;
     private gridBodyCon: GridBodyController;
 
     private needToMoveLeft = false;
@@ -46,10 +45,6 @@ export class MoveColumnController implements DropListener {
         this.pinned = pinned;
         this.eContainer = eContainer;
         this.centerContainer = !exists(pinned);
-    }
-
-    public registerGridComp(gridBodyComp: GridBodyComp): void {
-        this.gridBodyComp = gridBodyComp;
     }
 
     @PostConstruct

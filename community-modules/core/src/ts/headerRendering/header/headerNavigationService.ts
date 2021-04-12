@@ -28,7 +28,6 @@ export class HeaderNavigationService extends BeanStub {
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Autowired('controllersService') private controllersService: ControllersService;
 
-    private gridBodyComp: GridBodyComp;
     private gridBodyCon: GridBodyController;
     private headerRoot: HeaderRootComp;
 
@@ -37,10 +36,6 @@ export class HeaderNavigationService extends BeanStub {
         this.controllersService.whenReady( p => {
             this.gridBodyCon = p.gridBodyCon;
         });
-    }
-
-    public registerGridComp(gridBodyComp: GridBodyComp): void {
-        this.gridBodyComp = gridBodyComp;
     }
 
     public registerHeaderRoot(headerRoot: HeaderRootComp): void {

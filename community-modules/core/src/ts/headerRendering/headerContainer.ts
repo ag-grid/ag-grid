@@ -53,6 +53,7 @@ export class HeaderContainer extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_SCROLLBAR_WIDTH_CHANGED, this.onScrollbarWidthChanged.bind(this));
+        this.setupDragAndDrop();
     }
 
     private onColumnResized(): void {
@@ -120,12 +121,11 @@ export class HeaderContainer extends BeanStub {
         this.refreshRowComps(keepColumns);
     }
 
-    public setupDragAndDrop(gridBodyComp: GridBodyComp): void {
+    private setupDragAndDrop(): void {
         // center section has viewport, but pinned sections do not
         const dropContainer = this.eViewport ? this.eViewport : this.eContainer;
         const bodyDropTarget = new BodyDropTarget(this.pinned, dropContainer);
         this.createManagedBean(bodyDropTarget);
-        bodyDropTarget.registerGridComp(gridBodyComp);
     }
 
     @PreDestroy

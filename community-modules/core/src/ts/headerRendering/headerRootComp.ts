@@ -43,7 +43,6 @@ export class HeaderRootComp extends ManagedFocusComponent {
     @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
     @Autowired('controllersService') private controllersService: ControllersService;
 
-    private gridBodyComp: GridBodyComp;
     private printLayout: boolean;
     private headerContainers: Map<HeaderContainerPosition, HeaderContainer> = new Map();
 
@@ -113,11 +112,6 @@ export class HeaderRootComp extends ManagedFocusComponent {
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_FLOATING_FILTERS_HEIGHT, listener);
 
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, listener);
-    }
-
-    public registerGridComp(gridBodyComp: GridBodyComp): void {
-        this.gridBodyComp = gridBodyComp;
-        this.headerContainers.forEach(c => c.setupDragAndDrop(gridBodyComp));
     }
 
     private registerHeaderContainer(headerContainer: HeaderContainer, type: HeaderContainerPosition): void {

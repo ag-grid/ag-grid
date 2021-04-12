@@ -59,10 +59,6 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
         });
     }
 
-    public registerGridComp(gridBodyComp: GridBodyComp): void {
-        this.moveColumnController.registerGridComp(gridBodyComp);
-    }
-
     public isInterestedIn(type: DragSourceType): boolean {
         return type === DragSourceType.HeaderCell ||
             (type === DragSourceType.ToolPanel && this.gridOptionsWrapper.isAllowDragFromColumnsToolPanel());
