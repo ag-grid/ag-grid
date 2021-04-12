@@ -10,9 +10,7 @@ import styles from './ApiDocumentation.module.scss';
  * These are used to create links from types to relevant documentation.
  */
 const types = {
-    Array: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array',
     Blob: 'https://developer.mozilla.org/en-US/docs/Web/API/Blob',
-    boolean: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean',
     CellPosition: '/keyboard-navigation/#cellposition',
     CellRange: '/range-selection/#range-selection-api',
     ChartModel: '/integrated-charts-api/#saving-and-restoring-charts',
@@ -41,7 +39,6 @@ const types = {
     ExcelSheetConfig: '/excel-export-api/#excelsheetconfig',
     ExcelSheetPageSetup: '/excel-export-api/#excelsheetpagesetup',
     ExcelSheetMargin: '/excel-export-api/#excelsheetmargin',
-    Function: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function',
     GridApi: '/grid-api/',
     HeaderPosition: '/keyboard-navigation/#headerposition',
     HTMLElement: 'https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement',
@@ -52,10 +49,8 @@ const types = {
     IViewportDatasource: '/viewport/#interface-iviewportdatasource',
     KeyboardEvent: 'https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent',
     MouseEvent: 'https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent',
-    number: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number',
     RowNode: '/row-object/',
     ServerSideTransaction: '/server-side-model-transactions/#transaction-api',
-    string: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String',
     Touch: 'https://developer.mozilla.org/en-US/docs/Web/API/Touch',
 };
 
