@@ -554,6 +554,11 @@
       "default": true,
       "description": "If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. Applies to continuous axes only ('number', 'time')."
     },
+    "base": {
+      "type": "number",
+      "default": true,
+      "description": "The base of the logarithm used by the 'log' axis."
+    },
     "min": {
       "type": "number",
       "description": "User override for the automatically determinted min value (based on series data). Only applied to \"number\" axes."

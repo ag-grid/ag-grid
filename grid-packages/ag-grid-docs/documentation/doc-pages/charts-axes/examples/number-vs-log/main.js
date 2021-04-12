@@ -31,7 +31,10 @@ var options = {
 var chart = agCharts.AgChart.create(options);
 
 function useNumberAxis() {
-    options.axes[1] = {
+    options.axes = [{
+        type: 'category',
+        position: 'bottom'
+    }, {
         type: 'number',
         position: 'left',
         min: 1,
@@ -41,12 +44,15 @@ function useNumberAxis() {
         tick: {
             count: 10
         }
-    };
+    }];
     agCharts.AgChart.update(chart, options);
 }
 
 function useLogAxis() {
-    options.axes[1] = {
+    options.axes = [{
+        type: 'category',
+        position: 'bottom'
+    }, {
         type: 'log',
         position: 'left',
         min: 10,
@@ -56,12 +62,15 @@ function useLogAxis() {
         tick: {
             count: 10
         }
-    };
+    }];
     agCharts.AgChart.update(chart, options);
 }
 
 function useBaseTwoLogAxis() {
-    options.axes[1] = {
+    options.axes = [{
+        type: 'category',
+        position: 'bottom'
+    }, {
         type: 'log',
         position: 'left',
         min: 10,
@@ -72,12 +81,15 @@ function useBaseTwoLogAxis() {
             count: 10
         },
         base: 2
-    };
+    }];
     agCharts.AgChart.update(chart, options);
 }
 
 function useLogAxisWithFewerTicks() {
-    options.axes[1] = {
+    options.axes = [{
+        type: 'category',
+        position: 'bottom'
+    }, {
         type: 'log',
         position: 'left',
         min: 10,
@@ -87,6 +99,6 @@ function useLogAxisWithFewerTicks() {
         tick: {
             count: 2 // a hint that we want a smaller tick count
         }
-    };
+    }];
     agCharts.AgChart.update(chart, options);
 }

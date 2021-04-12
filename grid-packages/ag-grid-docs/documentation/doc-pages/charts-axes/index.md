@@ -55,10 +55,10 @@ Here's the simplest number axis config:
 ## Log Axis
 
 If the range of values is very wide, the `log` axis can be used instead of the `number` axis.
-For example, because the `number` axis uses a linear scale, **same changes in magnitude result in the
-same pixel distance**.
+For example, because the `number` axis uses a linear scale, same changes in magnitude result in the
+same pixel distance.
 
-The `log` axis uses a log scale, where **same _percentage_ changes in magnitude result in the same pixel distance**.
+The `log` axis uses a log scale, where same _percentage_ changes in magnitude result in the same pixel distance.
 In other words, the pixel distance between 10 and 100, and 100 and 1000 will be the same because both ranges
 represent the same percentage increase. Whereas, if the `number` axis was used, the second distance would be
 10 times larger than the first.
@@ -68,11 +68,28 @@ return on an investment stays consistent over time, the investment value chart w
 
 By default, the `log` axis renders 10 ticks (and grid lines) per order of magnitude. If your range is wide
 enough, you may start getting too many ticks, in which case using a smaller value for the `tick: { count: xxx }`
-config might be necessary.
+config might be necessary:
+
+```js
+{
+    type: 'log',
+    position: 'left',
+    tick: {
+      count: 3
+    }
+}
+```
 
 The `log` axis uses the common logarithm (base 10) by default. The `base` config allows
-you to change the base to any number you like, for example `Math.E` for natural or `2` for binary
-logarithms.
+you to change the base to any number you like, for example `Math.E` for natural or `2` for binary logarithms:
+
+```js
+{
+    type: 'log',
+    position: 'left',
+    base: 2
+}
+```
 
 All of the above points are demonstrated by the example below.
 
@@ -95,7 +112,7 @@ The time axis also supports specifier strings to control the way time values are
 }
 ```
 
-## Title
+## Axis Title
 
 Sometimes it may not be obvious what a chart's dimension represents. For example, you might see numbers on a chart's axis and not be able to tell if they're millimetres, percentages, dollars, or something else! It can also be helpful to provide extra information. For example, category axis labels can clearly show people's names, but it might be worth knowing that they are a company's best performing sales people.
 
@@ -110,7 +127,7 @@ Please see the [API reference](#reference-axis.title) for axis title styling opt
 
 <chart-example title='Axis Title' name='axis-title' type='generated'></chart-example>
 
-## Ticks
+## Axis Ticks
 
 Category axes show a tick for every category. Number and time axes try to segment the whole range into a certain number of intervals (10 by default, giving 11 ticks in total).
 
@@ -127,7 +144,7 @@ The example below demonstrates how the `count` property of the number axis can b
 
 <chart-example title='Axis Tick Styling' name='axis-tick-count' type='generated'></chart-example>
 
-## Labels
+## Axis Labels
 
 The axis renders a label next to every tick to show the tick's value. Chart axis labels support the same font and colour options as the axis title. Additionally, the distance of the labels from the ticks and their rotation can be configured via the `padding` and `rotation` properties respectively.
 
@@ -267,7 +284,7 @@ Notice that the `label.format` property only affects label formatting but not se
 
 <chart-example title='Time Axis Label Format' name='time-axis-label-format' type='generated'></chart-example>
 
-## Grid Lines
+## Axis Grid Lines
 
 Chart axes feature grid lines by default. Grid lines extend from axis ticks on the other side of the axis into the series area, so that it's easy to trace a series item such as a marker to a corresponding tick/label.
 
@@ -284,6 +301,6 @@ Each config object in the `gridStyle` array is alternately applied to the grid l
 
 <chart-example title='Axis Grid Lines' name='axis-grid-lines' type='generated'></chart-example>
 
-## API Reference
+## Axis API Reference
 
 <api-documentation source='charts-api/api.json' section='axis' config='{ "showSnippets": true }'></api-documentation>
