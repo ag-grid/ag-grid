@@ -21,8 +21,8 @@ interface ExcelExportParams {
 
 ### ExcelSheetMargin
 
-<api-documentation source='excel-export/resources/excel-export-params.json' section='excelSheetMargin'></api-documentation>
+<api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelSheetMargin'></api-documentation>
 
 ### ExcelSheetPageSetup
 
-<api-documentation source='excel-export/resources/excel-export-params.json' section='excelSheetPageSetup'></api-documentation>
+<api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelSheetPageSetup'></api-documentation>
