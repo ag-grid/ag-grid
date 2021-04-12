@@ -20,7 +20,7 @@
             "type": "string"
         },
         "fontSize": {
-            "default": "11",
+            "default": 11,
             "description": "The default value for the font size of the Excel document.",
             "type": "number"
         },
@@ -212,7 +212,7 @@
             "type": "string"
         },
         "fontSize": {
-            "default": "11",
+            "default": 11,
             "description": "The default value for the font size of the Excel document.",
             "type": "number"
         }
@@ -511,32 +511,32 @@
     },
     "excelSheetMargin": {
         "top": {
-            "default": "0.75",
+            "default": 0.75,
             "description": "xxx",
             "type": "number"
         },
         "right": {
-            "default": "0.7",
+            "default": 0.7,
             "description": "xxx",
             "type": "number"
         },
         "bottom": {
-            "default": "0.75",
+            "default": 0.75,
             "description": "xxx",
             "type": "number"
         },
         "left": {
-            "default": "0.7",
+            "default": 0.7,
             "description": "xxx",
             "type": "number"
         },
         "header": {
-            "default": "0.3",
+            "default": 0.3,
             "description": "xxx",
             "type": "number"
         },
         "footer": {
-            "default": "0.3",
+            "default": 0.3,
             "description": "xxx",
             "type": "number"
         }
