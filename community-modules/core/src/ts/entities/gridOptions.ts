@@ -92,7 +92,7 @@ import { ChartMenuOptions, ChartOptions, ChartType } from "../interfaces/iChartO
 import { AgChartOptions, AgChartTheme, AgChartThemeOverrides } from "../interfaces/iAgChartOptions";
 import { ServerSideTransaction } from "../interfaces/serverSideTransaction";
 import { HeaderPosition } from "../headerRendering/header/headerPosition";
-import { ExcelStyle } from "../interfaces/iExcelCreator";
+import { ExcelExportParams, ExcelStyle } from "../interfaces/iExcelCreator";
 
 export interface GridOptions {
     /*******************************************************************************************************
@@ -283,7 +283,11 @@ export interface GridOptions {
     suppressAnimationFrame?: boolean;
     defaultColGroupDef?: ColGroupDef;
     defaultColDef?: ColDef;
-    defaultExportParams?: CsvExportParams;
+
+    /** @deprecated Use defaultCsvExportParams or defaultExcelExportParams */
+    defaultExportParams?: CsvExportParams | ExcelExportParams;
+    defaultCsvExportParams?: CsvExportParams;
+    defaultExcelExportParams?: ExcelExportParams;
 
     pivotSuppressAutoColumn?: boolean;
     groupSuppressAutoColumn?: boolean;

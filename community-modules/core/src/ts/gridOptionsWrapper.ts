@@ -33,7 +33,7 @@ import { IViewportDatasource } from './interfaces/iViewportDatasource';
 import { IDatasource } from './interfaces/iDatasource';
 import { CellPosition } from './entities/cellPosition';
 import { IServerSideDatasource } from './interfaces/iServerSideDatasource';
-import { BaseExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from './interfaces/exportParams';
+import { BaseExportParams, CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from './interfaces/exportParams';
 import { AgEvent } from './events';
 import { Environment, SASS_PROPERTIES } from './environment';
 import { PropertyKeys } from './propertyKeys';
@@ -53,6 +53,8 @@ import { doOnce } from './utils/function';
 import { addOrRemoveCssClass } from './utils/dom';
 import { getScrollbarWidth } from './utils/browser';
 import { HeaderPosition } from './headerRendering/header/headerPosition';
+import { ExcelExportParams } from './interfaces/iExcelCreator';
+import { capitalise } from './utils/string';
 
 const DEFAULT_ROW_HEIGHT = 25;
 const DEFAULT_DETAIL_ROW_HEIGHT = 300;
@@ -1100,8 +1102,22 @@ export class GridOptionsWrapper {
         return this.gridOptions.defaultColGroupDef;
     }
 
-    public getDefaultExportParams(): BaseExportParams | undefined {
-        return this.gridOptions.defaultExportParams;
+    public getDefaultExportParams(type: 'csv'): CsvExportParams | undefined;
+    public getDefaultExportParams(type: 'excel'): ExcelExportParams | undefined;
+    public getDefaultExportParams(type: 'csv' | 'excel'): CsvExportParams | ExcelExportParams | undefined {
+        if (this.gridOptions.defaultExportParams) {
+            console.warn(`AG Grid: Since v25.2 \`defaultExportParams\`  has been replaced by \`default${capitalise(type)}ExportParams\`'` );
+            if (type === 'csv') {
+                return this.gridOptions.defaultExportParams as CsvExportParams;
+            }
+            return this.gridOptions.defaultExportParams as ExcelExportParams;
+        }
+
+        if (type === 'csv' && this.gridOptions.defaultCsvExportParams) {
+            return this.gridOptions.defaultCsvExportParams;
+        } else if (type === 'excel' && this.gridOptions.defaultExcelExportParams) {
+            return this.gridOptions.defaultExcelExportParams;
+        }
     }
 
     public isSuppressCsvExport() {
@@ -1567,6 +1583,10 @@ export class GridOptionsWrapper {
         if (options.suppressColumnStateEvents) {
             console.warn('AG Grid: since v25, grid property suppressColumnStateEvents no longer works due to a refactor that we did. It should be possible to achieve similar using event.source, which would be "api" if the event was due to setting column state via the API');
             options.detailRowAutoHeight = true;
+        }
+        
+        if (options.defaultExportParams) {
+            console.warn('AG Grid: since v25.2, the grid property `defaultExportParams` has been replaced by `defaultCsvExportParams` and `defaultExcelExportParams`.');
         }
     }
 

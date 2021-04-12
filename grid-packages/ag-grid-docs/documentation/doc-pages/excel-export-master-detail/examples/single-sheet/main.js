@@ -1,3 +1,31 @@
+var defaultExportParams = {
+    getCustomContentBelowRow: function(params) {
+        return [
+            [
+                cell(''),
+                cell('Call Id', 'header'),
+                cell('Direction', 'header'),
+                cell('Number', 'header'),
+                cell('Duration', 'header'),
+                cell('Switch Code', 'header')
+            ]
+        ].concat(
+            params.node.data.callRecords.map(function(record) {
+                return [
+                    cell(''),
+                    cell(record.callId, 'body'),
+                    cell(record.direction, 'body'),
+                    cell(record.number, 'body'),
+                    cell(record.duration, 'body'),
+                    cell(record.switchCode, 'body'),
+                ];
+            }),
+            [[]]
+        );
+    },
+    columnWidth: 120
+};
+
 var gridOptions = {
     columnDefs: [
         // group cell renderer needed for expand / collapse icons
@@ -27,33 +55,8 @@ var gridOptions = {
             params.successCallback(params.data.callRecords);
         }
     },
-    defaultExportParams: {
-        getCustomContentBelowRow: function(params) {
-            return [
-                [
-                    cell(''),
-                    cell('Call Id', 'header'),
-                    cell('Direction', 'header'),
-                    cell('Number', 'header'),
-                    cell('Duration', 'header'),
-                    cell('Switch Code', 'header')
-                ]
-            ].concat(
-                params.node.data.callRecords.map(function(record) {
-                    return [
-                        cell(''),
-                        cell(record.callId, 'body'),
-                        cell(record.direction, 'body'),
-                        cell(record.number, 'body'),
-                        cell(record.duration, 'body'),
-                        cell(record.switchCode, 'body'),
-                    ];
-                }),
-                [[]]
-            );
-        },
-        columnWidth: 120
-    },
+    defaultCsvExportParams: defaultExportParams,
+    defaultExportParams: defaultExportParams,
     excelStyles: [
         {
             id: 'header',

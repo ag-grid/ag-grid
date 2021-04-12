@@ -10,6 +10,7 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
     }
 
     public abstract export(userParams?: P): string;
+    protected abstract getDefaultExportParams(): P | undefined;
 
     protected getFileName(fileName?: string): string {
         const extension = this.getDefaultFileExtension();
@@ -29,7 +30,7 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
     }
 
     private mergeDefaultParams(userParams?: P): P {
-        const baseParams: BaseExportParams | undefined = this.beans.gridOptionsWrapper.getDefaultExportParams();
+        const baseParams: P | undefined = this.getDefaultExportParams();
         const params: P = {} as P;
         _.assign(params, baseParams);
         _.assign(params, userParams);

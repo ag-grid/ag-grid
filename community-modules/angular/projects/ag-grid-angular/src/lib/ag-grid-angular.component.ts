@@ -187,6 +187,8 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public defaultColGroupDef: any = undefined;
     @Input() public defaultColDef: any = undefined;
     @Input() public defaultExportParams: any = undefined;
+    @Input() public defaultCsvExportParams: any = undefined;
+    @Input() public defaultExcelExportParams: any = undefined;
     @Input() public columnTypes: any = undefined;
     @Input() public rowClassRules: any = undefined;
     @Input() public detailGridOptions: any = undefined;

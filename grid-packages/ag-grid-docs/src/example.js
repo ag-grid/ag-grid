@@ -214,6 +214,14 @@ function toggleOptionsCollapsed() {
 
     optionsEl.classList.toggle('collapsed');
 }
+
+var defaultExportParams = {
+    columnGroups: false,
+    headerRowHeight: 30,
+    rowHeight: 22,
+    fontSize: 14
+}
+
 var gridOptions = {
     statusBar: {
         statusPanels: [
@@ -233,12 +241,8 @@ var gridOptions = {
         ratingRenderer: ratingRenderer,
         ratingFilterRenderer: ratingFilterRenderer
     },
-    defaultExportParams: {
-        columnGroups: false,
-        headerRowHeight: 30,
-        rowHeight: 22,
-        fontSize: 14
-    },
+    defaultCsvExportParams: defaultExportParams,
+    defaultExcelExportParams: defaultExportParams,
     defaultColDef: {
         minWidth: 50,
         sortable: true,

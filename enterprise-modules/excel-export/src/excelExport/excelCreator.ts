@@ -127,6 +127,10 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
         });
     }
 
+    protected getDefaultExportParams(): ExcelExportParams | undefined {
+        return this.gridOptionsWrapper.getDefaultExportParams('excel');
+    }
+
     public export(userParams?: ExcelExportParams): string {
         if (this.isExportSuppressed()) {
             console.warn(`ag-grid: Export cancelled. Export is not allowed as per your configuration.`);

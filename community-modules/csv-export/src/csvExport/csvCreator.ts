@@ -30,6 +30,10 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
         });
     }
 
+    protected getDefaultExportParams(): CsvExportParams | undefined {
+        return this.gridOptionsWrapper.getDefaultExportParams('csv');
+    }
+
     public export(userParams?: CsvExportParams): string {
         if (this.isExportSuppressed()) {
             console.warn(`ag-grid: Export cancelled. Export is not allowed as per your configuration.`);
