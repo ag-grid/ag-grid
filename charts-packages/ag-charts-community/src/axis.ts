@@ -273,11 +273,11 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 this.tickFormatter = this.scale.tickFormat(this.tick.count, format);
             }
         } else {
-            if (this.scale && this.scale.tickFormat) {
-                this.tickFormatter = this.scale.tickFormat(this.tick.count, undefined);
-            } else {
+            // if (this.scale && this.scale.tickFormat) {
+            //     this.tickFormatter = this.scale.tickFormat(this.tick.count, undefined);
+            // } else {
                 this.tickFormatter = undefined;
-            }
+            // }
         }
     }
 
@@ -493,13 +493,14 @@ export class Axis<S extends Scale<D, number>, D = any> {
                         formatter: tickFormatter,
                         axis: meta
                     })
-                    : fractionDigits
-                        // the `datum` is a floating point number
-                        ? (datum as any as number).toFixed(fractionDigits)
-                        // the `datum` is an integer, a string or an object
-                        : tickFormatter
-                            ? tickFormatter(datum)
+                    // the `datum` is an integer, a string or an object
+                    : tickFormatter
+                        ? tickFormatter(datum)
+                        : typeof datum === 'number' && fractionDigits >= 0
+                            // the `datum` is a floating point number
+                            ? datum.toFixed(fractionDigits)
                             : String(datum);
+
                 node.textAlign = parallelLabels
                     ? labelRotation ? (sideFlag * alignFlag === -1 ? 'end' : 'start') : 'center'
                     : sideFlag * regularFlipFlag === -1 ? 'end' : 'start';

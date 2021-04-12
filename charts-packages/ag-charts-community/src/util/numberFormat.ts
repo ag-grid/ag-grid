@@ -47,6 +47,9 @@ interface FormatSpecifierOptions {
     string?: string;
 }
 
+/**
+ * [[fill]align][sign][#][0][width][grouping_option][.precision][type]
+ */
 export class FormatSpecifier {
     /**
      * Can be any character.

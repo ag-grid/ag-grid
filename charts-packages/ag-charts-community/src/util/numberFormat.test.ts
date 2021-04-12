@@ -26,8 +26,11 @@ describe('formatNumerals', () => {
 });
 
 describe('format', () => {
-    const f = format('.1f');
-    for (let i = 0; i < 10; i++) {
-        console.log(f(0.1 * i));
-    }
+    describe('percent', () => {
+        test('multiply by 100 and add %', () => {
+            const f = format('.0%');
+            expect(f(0.3)).toBe('30%');
+            expect(f(40)).toBe('4000%');
+        });
+    });
 });
