@@ -5,14 +5,13 @@ enterprise: true
 
 ## Column Headers
 
-In some situations, you could be interested in exporting only the grid data, without exporting the header cells. For this scenario, we provide the `skipColumnHeaders=true` param. Also, by default, grouped headers are not exported, but these can be exported by using the `columnGroups=true` param.
+In some situations, you could be interested in exporting only the grid data, without exporting the header cells. For this scenario, we provide the `skipColumnGroupHeaders=true` and `skipColumnHeaders=true` params.
 
 Note the following:
 
 - Initially, grouped headers and header are exported.
-- Group Headers will be skipped if `Column Groups` is unchecked.
-- Normal headers will be skipped if `Skip Header` is checked.
-- Uncheck `Column Groups` and check `Skip Header` to completely suppress headers.
+- Group Headers will be skipped if `Skip Column Group Headers` is checked.
+- Normal headers will be skipped if `Skip Column Headers` is checked.
 
 <grid-example title='Excel Export - Column Headers' name='excel-export-column-headers' type='generated' options='{ "enterprise": true, "exampleHeight": 815 }'></grid-example>
 

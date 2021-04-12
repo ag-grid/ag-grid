@@ -80,14 +80,13 @@ Note the following:
 
 ## Column Headers
 
-In some situations, you could be interested in exporting only the grid data, without exporting the header cells. For this scenario, we provide the `skipColumnHeaders=true` param. Also, by default, grouped headers are not exported, but these can be exported by using the `columnGroups=true` param.
+In some situations, you could be interested in exporting only the grid data, without exporting the header cells. For this scenario, we provide the `skipColumnGroupHeaders=true` and `skipColumnHeaders=true` params.
 
 Note the following: 
 
 - Initially, grouped headers and header are exported.
-- Group Headers will be skipped if `Column Groups` is uncheked.
-- Normal headers will be skipped if `Skip Header` is checked.
-- Uncheck `Column Groups` and check `Skip Header` to completely suppress headers. 
+- Group Headers will be skipped if `Skip Column Group Headers` is checked.
+- Normal headers will be skipped if `Skip Column Headers` is checked.
 
 <grid-example title='CSV Export - Column Headers' name='csv-export-column-headers' type='generated' options='{ "enterprise": true, "exampleHeight": 400 }'></grid-example>
 
@@ -198,15 +197,7 @@ interface CsvExportParams {
      */
     onlySelectedAllPages?: boolean;
 
-    /**
-     * Set to true to skip row group headers if grouping rows.
-     * Only relevant when grouping rows.
-     *
-     * Default: false
-     */
-    skipRowGroups?: boolean;
-
-    /**
+        /**
      * Set to true to skip include header column groups.
      * Default: false
      */
@@ -217,6 +208,14 @@ interface CsvExportParams {
      * Default: false
      */
     skipColumnHeaders?: boolean;
+
+    /**
+     * Set to true to skip row group headers if grouping rows.
+     * Only relevant when grouping rows.
+     *
+     * Default: false
+     */
+    skipRowGroups?: boolean;
 
     /**
      * Set to true to suppress exporting rows pinned to the top of the grid.
