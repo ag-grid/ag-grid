@@ -60,6 +60,22 @@ function useLogAxis() {
     agCharts.AgChart.update(chart, options);
 }
 
+function useBaseTwoLogAxis() {
+    options.axes[1] = {
+        type: 'log',
+        position: 'left',
+        min: 10,
+        label: {
+            format: '.0f'
+        },
+        tick: {
+            count: 10
+        },
+        base: 2
+    };
+    agCharts.AgChart.update(chart, options);
+}
+
 function useLogAxisWithFewerTicks() {
     options.axes[1] = {
         type: 'log',

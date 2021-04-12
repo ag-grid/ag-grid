@@ -70,6 +70,10 @@ By default, the `log` axis renders 10 ticks (and grid lines) per order of magnit
 enough, you may start getting too many ticks, in which case using a smaller value for the `tick: { count: xxx }`
 config might be necessary.
 
+The `log` axis uses the common logarithm (base 10) by default. The `base` config allows
+you to change the base to any number you like, for example `Math.E` for natural or `2` for binary
+logarithms.
+
 All of the above points are demonstrated by the example below.
 
 ### Example: Number Axis vs Log Axis

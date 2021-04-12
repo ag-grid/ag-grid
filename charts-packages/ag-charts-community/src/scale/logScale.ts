@@ -45,13 +45,13 @@ export class LogScale extends ContinuousScale {
     }
 
     _base = 10;
-    set base(value) {
+    set base(value: number) {
         if (this._base !== value) {
             this._base = value;
             this.rescale();
         }
     }
-    get base() {
+    get base(): number {
         return this._base;
     }
 

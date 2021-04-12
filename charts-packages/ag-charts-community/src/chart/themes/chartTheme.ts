@@ -233,7 +233,8 @@ export class ChartTheme {
                 ...ChartTheme.getAxisDefaults()
             },
             log: {
-                ...ChartTheme.getAxisDefaults()
+                ...ChartTheme.getAxisDefaults(),
+                base: 10
             },
             category: {
                 ...ChartTheme.getAxisDefaults()

@@ -368,7 +368,8 @@ const mappings: any = {
                 meta: {
                     constructor: LogAxis,
                     setAsIs: ['gridStyle', 'visibleRange'],
-                    ...axisDefaults
+                    ...axisDefaults,
+                    base: 10
                 },
                 ...axisMappings
             },
