@@ -91,7 +91,7 @@ var gridOptions = {
     components: {
         personFilter: PersonFilter
     },
-    suppressEnterprise: true,
+    sideBar: true,
     rowGroupPanelShow: 'always', // on of ['always','onlyWhenGrouping']
     pivotPanelShow: 'always', // on of ['always','onlyWhenPivoting']
     enableRtl: true,
@@ -107,13 +107,6 @@ var gridOptions = {
     groupSelectsChildren: true, // one of [true, false]
     suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
     autoGroupColumnDef: groupColumn,
-    showToolPanel: true,
-    checkboxSelection: function(params) {
-        // we show checkbox selection in the first column, unless we are grouping,
-        // as the group column is configured to always show selection
-        var isGrouping = gridOptions.columnApi.getRowGroupColumns().length > 0;
-        return params.colIndex === 0 && !isGrouping;
-    },
     onRowSelected: rowSelected, //callback when row selected
     onSelectionChanged: selectionChanged, //callback when selection changed,
     getBusinessKeyForNode: function(node) {
@@ -122,54 +115,6 @@ var gridOptions = {
         } else {
             return '';
         }
-    },
-    // suppressRowHoverClass: true,
-    // isScrollLag: function() { return true; },
-    // suppressScrollLag: true,
-    // floatingTopRowData: [{},{},{}],
-    // floatingBottomRowData: [{},{},{}],
-    // callback when row clicked
-    onRowClicked: function(params) {
-        // console.log("Callback onRowClicked: " + (params.data?params.data.name:null) + " - " + params.event);
-    },
-    // onSortChanged: function (params) {
-    //     console.log("Callback onSortChanged");
-    // },
-    onRowDoubleClicked: function(params) {
-        // console.log("Callback onRowDoubleClicked: " + params.data.name + " - " + params.event);
-    },
-    // callback when cell clicked
-    onCellClicked: function(params) {
-        // console.log("Callback onCellClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
-    },
-    onRowDataChanged: function(params) {
-        console.log('Callback onRowDataChanged: ');
-    },
-    // callback when cell double clicked
-    onCellDoubleClicked: function(params) {
-        // console.log("Callback onCellDoubleClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
-    },
-    // callback when cell right clicked
-    onCellContextMenu: function(params) {
-        console.log('Callback onCellContextMenu: ' + params.value + ' - ' + params.colDef.field + ' - ' + params.event);
-    },
-    onCellFocused: function(params) {
-        // console.log('Callback onCellFocused: ' + params.rowIndex + " - " + params.colIndex);
-    },
-    onGridReady: function(event) {
-        console.log('Callback onGridReady: api = ' + event.api);
-        //event.api.addGlobalListener(function(type, event) {
-        //    console.log('event ' + type);
-        //});
-    },
-    onGridSizeChanged: function(event) {
-        console.log('Callback onGridSizeChanged: clientWidth = ' + event.clientWidth + ', clientHeight = ' + event.clientHeight);
-    },
-    onRowGroupOpened: function(event) {
-        console.log('Callback onRowGroupOpened: node = ' + event.node.key + ', ' + event.expanded);
-    },
-    onRangeSelectionChanged: function(event) {
-        // console.log('Callback onRangeSelectionChanged: finished = ' + event.finished);
     },
     getContextMenuItems: getContextMenuItems
 };

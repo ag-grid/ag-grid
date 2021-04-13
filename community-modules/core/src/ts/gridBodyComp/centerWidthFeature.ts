@@ -35,7 +35,7 @@ export class CenterWidthFeature extends BeanStub {
         const leftWidth = columnController.getDisplayedColumnsLeftWidth();
         const rightWidth = columnController.getDisplayedColumnsRightWidth();
 
-        const totalWidth = printLayout ? centerWidth : centerWidth + leftWidth + rightWidth;
+        const totalWidth = printLayout ? centerWidth + leftWidth + rightWidth : centerWidth;
 
         this.callback(totalWidth);
     }
