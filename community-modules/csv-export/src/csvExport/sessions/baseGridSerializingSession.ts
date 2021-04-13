@@ -23,7 +23,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     public processGroupHeaderCallback?: (params: ProcessGroupHeaderForExportParams) => string;
     public processRowGroupCallback?: (params: ProcessRowGroupForExportParams) => string;
 
-    private groupColumns: Column[] | null | undefined = [];
+    private groupColumns: Column[] = [];
 
     constructor(config: GridSerializingParams) {
         const {
@@ -48,7 +48,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     abstract parse(): string;
 
     public prepare(columnsToExport: Column[]): void {
-        this.groupColumns = _.filter(columnsToExport, col => !!col.getColDef().showRowGroup);
+        this.groupColumns = _.filter(columnsToExport, col => !!col.getColDef().showRowGroup)!;
     }
 
     public extractHeaderValue(column: Column): string {

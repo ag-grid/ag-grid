@@ -116,7 +116,12 @@ export interface ExcelImage {
     id: string;
     base64: string;
     imageType: 'jpg' | 'png' | 'gif';
-    position?: string;
+    position?: {
+        row: number;
+        column: number;
+        rowSpan?: number;
+        colSpan?: number;
+    };
 }
 
 /*
