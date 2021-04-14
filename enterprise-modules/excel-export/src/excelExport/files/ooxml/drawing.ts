@@ -1,22 +1,50 @@
 import { ExcelImage, ExcelOOXMLTemplate, XmlElement } from '@ag-grid-community/core';
 import { ExcelXlsxFactory } from '../../excelXlsxFactory';
 
-const getAnchor = (name: string, row: number, col: number): XmlElement => ({
-    name: `xdr:${name}`,
-    children: [{
-        name: 'xdr:col',
-        textNode: col.toString(),
-    }, {
-        name: 'xdr:colOff',
-        textNode: '0'
-    }, {
-        name: 'xdr:row',
-        textNode: row.toString()
-    }, {
-        name: 'xdr:rowOff',
-        textNode: '0'
-    }]
-});
+const PIXEL_TO_INCH = 0.0104166667;
+const INCH_TO_EXCEL = 914499;
+
+const convertFromPixelToExcel = (value: number): number => {
+    return Math.ceil(value * PIXEL_TO_INCH * INCH_TO_EXCEL);
+}
+
+const getAnchor = (name: string, image: ExcelImage): XmlElement => {
+    if (!image.width || !image.height) {
+        image.fitCell = true;
+    }
+    
+    const diff = name === 'to' && image.fitCell ? 1: 0;
+
+    let offsetX: number = 0
+    let offsetY: number = 0
+    let width: number = 0
+    let height: number = 0
+    
+    if (!image.fitCell) {
+        offsetX = convertFromPixelToExcel((image.position && image.position.offsetX) || 0);
+        offsetY = convertFromPixelToExcel((image.position && image.position.offsetY) || 0);
+        width = convertFromPixelToExcel(image.width!);
+        height = convertFromPixelToExcel(image.height!);
+    }
+
+
+    return {
+        name: `xdr:${name}`,
+        children: [{
+            name: 'xdr:col',
+            textNode: ((image.position!.column! + diff) - 1).toString()
+        }, {
+            name: 'xdr:colOff',
+            textNode: name === 'from' ? offsetX.toString() : image.fitCell ? '0' : (offsetX + width).toString()
+        }, {
+            name: 'xdr:row',
+            textNode: ((image.position!.row! + diff) - 1).toString()
+        }, {
+            name: 'xdr:rowOff',
+            textNode: name === 'from' ? offsetY.toString() : image.fitCell ? '0' : (offsetY + height).toString()
+        }]
+    }
+};
 
 const getPicture = (image: ExcelImage, sheetImages: ExcelImage[]): XmlElement => {
     const imageWorkBookId = ExcelXlsxFactory.workbookImages.get(image.id)!.index + 1;
@@ -55,12 +83,7 @@ const getPicture = (image: ExcelImage, sheetImages: ExcelImage[]): XmlElement =>
             }, {
                 name: 'xdr:cNvPicPr',
                 children: [{
-                    name: 'a:picLocks',
-                    properties: {
-                        rawMap: {
-                            noChangeAspect: 1
-                        }
-                    }
+                    name: 'a:picLocks'
                 }]
             }]
         }, {
@@ -126,8 +149,8 @@ const drawingFactory: ExcelOOXMLTemplate = {
         const children = sheetImages!.map(image => ({
             name: 'xdr:twoCellAnchor',
             children: [
-                getAnchor('from', image.position!.row - 1, image.position!.column - 1),
-                getAnchor('to', (image.position!.row + (image.position!.rowSpan || 1)) - 1, (image.position!.column + (image.position!.column || 1)) - 1),
+                getAnchor('from', image),
+                getAnchor('to', image),
                 getPicture(image, sheetImages!),
                 { name: 'xdr:clientData'}
             ]

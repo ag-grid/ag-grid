@@ -7,7 +7,8 @@ import {
     ExcelSheetPageSetup,
     ExcelStyle,
     ExcelWorksheet,
-    XmlElement
+    XmlElement,
+    _
 } from '@ag-grid-community/core';
 
 import coreFactory from './files/ooxml/core';
@@ -53,11 +54,13 @@ export class ExcelXlsxFactory {
         const currentSheetIndex = this.sheetNames.length;
         const registeredImage = this.images.get(image.id);
 
-        if (!image.position) {
-            image.position = {
+        if (!image.position || !image.position.row || !image.position.column) {
+            if (!image.position) { image.position = {}; }
+
+            image.position = _.assign({}, image.position, {
                 row: rowIndex,
                 column: columnsToExport.indexOf(column) + 1
-            }
+            });
         }
 
         if (registeredImage) {

@@ -40,7 +40,13 @@ function onBtExport() {
                 return {
                     id: countryCode,
                     base64: flags[countryCode],
-                    imageType: 'png'
+                    imageType: 'png',
+                    width: 20,
+                    height: 11,
+                    position: {
+                        offsetX: 30,
+                        offsetY: 5.5
+                    }
                 };
             }
         }
