@@ -244,13 +244,21 @@ export abstract class ProvidedFilter<T> extends ManagedFocusComponent implements
     }
 
     private onBtCancel(e: Event): void {
-        this.setModelIntoUi(this.getModel()!).then(() => {
+        const currentModel = this.getModel();
+
+        const afterAppliedFunc = () => {
             this.onUiChanged(false, 'prevent');
 
             if (this.providedFilterParams.closeOnApply) {
                 this.close(e);
             }
-        });
+        };
+
+        if (currentModel!=null) {
+            this.setModelIntoUi(currentModel).then(afterAppliedFunc);
+        } else {
+            this.resetUiToDefaults().then(afterAppliedFunc);
+        }
     }
 
     private onBtClear(): void {
