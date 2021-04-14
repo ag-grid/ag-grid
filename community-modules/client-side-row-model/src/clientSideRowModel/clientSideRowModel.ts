@@ -178,30 +178,44 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         }
     }
 
-    private resetRowTops(rowNode: RowNode, changedPath: ChangedPath): void {
-        rowNode.clearRowTopAndRowIndex();
-        if (rowNode.hasChildren()) {
-            if (rowNode.childrenAfterGroup) {
+    private resetRowTops(changedPath: ChangedPath): void {
 
-                // if a changedPath is active, it means we are here because of a transaction update or
-                // a change detection. neither of these impacts the open/closed state of groups. so if
-                // a group is not open this time, it was not open last time. so we know all closed groups
-                // already have their top positions cleared. so there is no need to traverse all the way
-                // when changedPath is active and the rowNode is not expanded.
-                const skipChildren = changedPath.isActive() && !rowNode.expanded;
-                if (!skipChildren) {
-                    for (let i = 0; i < rowNode.childrenAfterGroup.length; i++) {
-                        this.resetRowTops(rowNode.childrenAfterGroup[i], changedPath);
+        const displayedRowsMapped: RowNodeMap = {};
+        this.rowsToDisplay.forEach( rowNode => {
+            if (rowNode.id!=null) { displayedRowsMapped[rowNode.id] = rowNode }
+        } );
+
+        const clearIfNotDisplayed = (rowNode: RowNode) => {
+            if (rowNode && rowNode.id!=null && displayedRowsMapped[rowNode.id]==null) {
+                rowNode.clearRowTopAndRowIndex();
+            }
+        };
+
+        const recurse = (rowNode: RowNode) => {
+
+            clearIfNotDisplayed(rowNode);
+            clearIfNotDisplayed(rowNode.detailNode);
+            clearIfNotDisplayed(rowNode.sibling);
+
+            if (rowNode.hasChildren()) {
+                if (rowNode.childrenAfterGroup) {
+
+                    // if a changedPath is active, it means we are here because of a transaction update or
+                    // a change detection. neither of these impacts the open/closed state of groups. so if
+                    // a group is not open this time, it was not open last time. so we know all closed groups
+                    // already have their top positions cleared. so there is no need to traverse all the way
+                    // when changedPath is active and the rowNode is not expanded.
+                    const skipChildren = changedPath.isActive() && !rowNode.expanded;
+                    if (!skipChildren) {
+                        for (let i = 0; i < rowNode.childrenAfterGroup.length; i++) {
+                            recurse(rowNode.childrenAfterGroup[i]);
+                        }
                     }
                 }
             }
-            if (rowNode.sibling) {
-                rowNode.sibling.clearRowTopAndRowIndex();
-            }
-        }
-        if (rowNode.detailNode) {
-            rowNode.detailNode.clearRowTopAndRowIndex();
-        }
+        };
+
+        recurse(this.rootNode);
     }
 
     // returns false if row was moved, otherwise true
@@ -459,8 +473,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         // set all row tops to null, then set row tops on all visible rows. if we don't
         // do this, then the algorithm below only sets row tops, old row tops from old rows
         // will still lie around
-        this.resetRowTops(this.rootNode, changedPath);
         this.setRowTops();
+        this.resetRowTops(changedPath);
 
         const event: ModelUpdatedEvent = {
             type: Events.EVENT_MODEL_UPDATED,
