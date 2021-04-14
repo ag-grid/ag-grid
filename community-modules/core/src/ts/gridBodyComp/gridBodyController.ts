@@ -27,6 +27,7 @@ import { RowRenderer } from "../rendering/rowRenderer";
 import { PopupService } from "../widgets/popupService";
 import { missing } from "../utils/generic";
 import { DragListenerParams } from "../dragAndDrop/dragService";
+import { MouseEventService } from "./mouseEventService";
 
 export enum RowAnimationCssClasses {
     ANIMATION_ON = 'ag-row-animation',
@@ -67,6 +68,7 @@ export class GridBodyController extends BeanStub {
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('popupService') public popupService: PopupService;
+    @Autowired('mouseEventService') public mouseEventService: MouseEventService;
 
     private view: GridBodyView;
     private eGridBody: HTMLElement;
@@ -165,8 +167,6 @@ export class GridBodyController extends BeanStub {
     private addStopEditingWhenGridLosesFocus(): void {
         if (!this.gridOptionsWrapper.isStopEditingWhenGridLosesFocus()) { return; }
 
-        const viewports = [this.eBodyViewport, this.eBottom, this.eTop];
-
         const focusOutListener = (event: FocusEvent): void => {
             // this is the element the focus is moving to
             const elementWithFocus = event.relatedTarget as HTMLElement;
@@ -176,7 +176,11 @@ export class GridBodyController extends BeanStub {
                 return;
             }
 
-            let clickInsideGrid = viewports.some(viewport => viewport.contains(elementWithFocus));
+            let clickInsideGrid =
+                // see if click came from inside the viewports
+                viewports.some(viewport => viewport.contains(elementWithFocus))
+                // and also that it's not from a detail grid
+                && this.mouseEventService.isElementInThisGrid(elementWithFocus);
 
             if (!clickInsideGrid) {
                 const popupService = this.popupService;
@@ -191,7 +195,9 @@ export class GridBodyController extends BeanStub {
             }
         };
 
-        viewports.forEach((viewport) => this.addManagedListener(viewport, 'focusout', focusOutListener));
+        const viewports = [this.eBodyViewport, this.eBottom, this.eTop];
+
+        viewports.forEach( viewport => this.addManagedListener(viewport, 'focusout', focusOutListener));
     }
 
     public updateRowCount(): void {

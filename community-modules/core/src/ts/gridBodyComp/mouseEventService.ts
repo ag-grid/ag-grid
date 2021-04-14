@@ -36,19 +36,21 @@ export class MouseEventService extends BeanStub {
     // walks the path of the event, and returns true if this grid is the first one that it finds. if doing
     // master / detail grids, and a child grid is found, then it returns false. this stops things like copy/paste
     // getting executed on many grids at the same time.
-    public isEventFromThisGrid(event: MouseEvent | KeyboardEvent): boolean {
+    public isEventFromThisGrid(event: UIEvent): boolean {
+        const res = this.isElementInThisGrid(event.target as HTMLElement);
+        return res;
+    }
 
-        const path = getEventPath(event);
-
-        for (let i = 0; i < path.length; i++) {
-            const element = path[i];
-            const instanceId = (element as any)[MouseEventService.GRID_DOM_KEY];
+    public isElementInThisGrid(element: HTMLElement): boolean {
+        let pointer: HTMLElement | null = element;
+        while (pointer) {
+            const instanceId = (pointer as any)[MouseEventService.GRID_DOM_KEY];
             if (exists(instanceId)) {
                 const eventFromThisGrid = instanceId === this.gridInstanceId;
                 return eventFromThisGrid;
             }
+            pointer = pointer.parentElement;
         }
-
         return false;
     }
 
