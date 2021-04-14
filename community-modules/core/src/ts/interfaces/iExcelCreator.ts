@@ -190,7 +190,7 @@ export interface ExcelExportParams extends ExportParams<ExcelCell[][]> {
     pageSetup?: ExcelSheetPageSetup;
     headerFooterConfig?: ExcelHeaderFooterConfig;
     suppressTextAsCDATA?:boolean;
-    addImageToCell?: (rowIndex: number, column: Column, value: string) => ExcelImage | undefined;
+    addImageToCell?: (rowIndex: number, column: Column, value: string) => { image: ExcelImage, value?: string } | undefined;
 }
 
 export interface ExcelExportMultipleSheetParams {

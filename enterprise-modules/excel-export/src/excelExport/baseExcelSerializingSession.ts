@@ -34,7 +34,7 @@ export interface ExcelGridSerializingParams extends GridSerializingParams {
     rowHeight?: number;
     sheetName: string;
     styleLinker: (rowType: RowType, rowIndex: number, value: string, column?: Column, node?: RowNode) => string[];
-    addImageToCell?: (rowIndex: number, column: Column, value: string) => ExcelImage | undefined;
+    addImageToCell?: (rowIndex: number, column: Column, value: string) => { image: ExcelImage, value?: string } | undefined;
     suppressTextAsCDATA?: boolean;
 }
 
@@ -68,10 +68,10 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
     }
 
     protected abstract createExcel(data: ExcelWorksheet): string;
-    protected abstract getDataTypeForValue(valueForCell: string): T;
+    protected abstract getDataTypeForValue(valueForCell?: string): T;
     protected abstract getType(type: T, style: ExcelStyle | null, value: string | null): T | null;
     protected abstract createCell(styleId: string | null, type: T, value: string): ExcelCell;
-    protected abstract addImage(rowIndex: number, column: Column, value: string): boolean;
+    protected abstract addImage(rowIndex: number, column: Column, value: string): { image: ExcelImage, value?: string } | undefined;
     protected abstract createMergedCell(styleId: string | null, type: T, value: string, numOfCells: number): ExcelCell;
 
     public addCustomContent(customContent: ExcelCell[][]): void {
@@ -179,9 +179,10 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
             const styleIds: string[] = this.config.styleLinker(RowType.BODY, rowIndex, valueForCell, column, node);
             const excelStyleId: string | null = this.getStyleId(styleIds);
             const colSpan = column.getColSpan(node);
+            const addedImage = this.addImage(rowIndex, column, valueForCell);
 
-            if (this.addImage(rowIndex, column, valueForCell)) { 
-                currentCells.push(this.createCell(null, this.getDataTypeForValue('$_AG_GRID_IMAGE_EXPORT_$'), ''))
+            if (addedImage) {
+                currentCells.push(this.createCell(excelStyleId, this.getDataTypeForValue(addedImage.value), addedImage.value == null ? '' : addedImage.value))
             } else if (colSpan > 1) {
                 skipCols = colSpan - 1;
                 currentCells.push(this.createMergedCell(excelStyleId, this.getDataTypeForValue(valueForCell), valueForCell, colSpan - 1));
