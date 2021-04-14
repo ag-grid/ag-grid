@@ -2,15 +2,7 @@ import { Component, elementGettingCreated } from "../../widgets/component";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { Autowired, PostConstruct } from "../../context/context";
 import { RowContainerController, RowContainerView } from "./rowContainerController";
-import {
-    ensureDomOrder,
-    getInnerWidth,
-    getScrollLeft,
-    insertWithDomOrder,
-    isHorizontalScrollShowing,
-    isVisible,
-    setScrollLeft
-} from "../../utils/dom";
+import { ensureDomOrder, insertWithDomOrder } from "../../utils/dom";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { ResizeObserverService } from "../../misc/resizeObserverService";
 import { ColumnController } from "../../columnController/columnController";
@@ -23,7 +15,6 @@ import { RowComp } from "../../rendering/row/rowComp";
 import { RowController } from "../../rendering/row/rowController";
 import { Beans } from "../../rendering/beans";
 import { Constants } from "../../constants/constants";
-import { ViewportSizeFeature } from "../viewportSizeFeature";
 import { CenterWidthFeature } from "../centerWidthFeature";
 import { DragListenerFeature } from "./dragListenerFeature";
 
