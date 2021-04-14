@@ -180,9 +180,9 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
             const excelStyleId: string | null = this.getStyleId(styleIds);
             const colSpan = column.getColSpan(node);
 
-            if (this.addImage(rowIndex, column, valueForCell)) { return; }
-
-            if (colSpan > 1) {
+            if (this.addImage(rowIndex, column, valueForCell)) { 
+                currentCells.push(this.createCell(null, this.getDataTypeForValue('$_AG_GRID_IMAGE_EXPORT_$'), ''))
+            } else if (colSpan > 1) {
                 skipCols = colSpan - 1;
                 currentCells.push(this.createMergedCell(excelStyleId, this.getDataTypeForValue(valueForCell), valueForCell, colSpan - 1));
             } else {

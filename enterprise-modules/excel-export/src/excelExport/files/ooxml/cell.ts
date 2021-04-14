@@ -30,6 +30,8 @@ const cellFactory: ExcelOOXMLTemplate = {
             }
         };
 
+        if (convertedType === 'empty') { return obj; }
+
         let children;
 
         if (convertedType === 'str' && type === 'f') {

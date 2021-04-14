@@ -28,6 +28,7 @@ export class ExcelXlsxSerializingSession extends BaseExcelSerializingSession<Exc
     }
 
     protected getDataTypeForValue(valueForCell: string): ExcelOOXMLDataType {
+        if (valueForCell === '$_AG_GRID_IMAGE_EXPORT_$') { return 'empty' }
         return _.isNumeric(valueForCell) ? 'n' : 's';
     }
 
