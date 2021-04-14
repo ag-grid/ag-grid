@@ -1012,21 +1012,29 @@ export class RowRenderer extends BeanStub {
             newFirst = this.paginationProxy.getPageFirstRow();
             newLast = this.paginationProxy.getPageLastRow();
         } else {
-            const paginationOffset = this.paginationProxy.getPixelOffset();
-            const {pageFirstPixel, pageLastPixel} = this.paginationProxy.getCurrentPagePixelRange();
-            const maxDivHeightScaler = this.rowContainerHeightService.getOffset();
-
-            const gridBodyCon = this.controllersService.getGridBodyController();
-            const bodyVRange = gridBodyCon.getScrollFeature().getVScrollPosition();
-            const bodyTopPixel = bodyVRange.top;
-            const bodyBottomPixel = bodyVRange.bottom;
-
             const bufferPixels = this.gridOptionsWrapper.getRowBufferInPixels();
+            const gridBodyCon = this.controllersService.getGridBodyController();
 
-            const firstPixel = Math.max(bodyTopPixel + paginationOffset - bufferPixels, pageFirstPixel) + maxDivHeightScaler;
-            const lastPixel = Math.min(bodyBottomPixel + paginationOffset + bufferPixels, pageLastPixel) + maxDivHeightScaler;
+            let rowHeightsChanged = false;
+            let firstPixel: number;
+            let lastPixel: number;
+            do {
+                const paginationOffset = this.paginationProxy.getPixelOffset();
+                const {pageFirstPixel, pageLastPixel} = this.paginationProxy.getCurrentPagePixelRange();
+                const maxDivHeightOffset = this.rowContainerHeightService.getOffset();
 
-            this.ensureAllRowsInRangeHaveHeightsCalculated(firstPixel, lastPixel);
+                const bodyVRange = gridBodyCon.getScrollFeature().getVScrollPosition();
+                const bodyTopPixel = bodyVRange.top;
+                const bodyBottomPixel = bodyVRange.bottom;
+
+                firstPixel = Math.max(bodyTopPixel + paginationOffset - bufferPixels, pageFirstPixel) + maxDivHeightOffset;
+                lastPixel = Math.min(bodyBottomPixel + paginationOffset + bufferPixels, pageLastPixel) + maxDivHeightOffset;
+
+                // if the rows we are about to display get their heights changed, then that upsets the calcs from above.
+                rowHeightsChanged = this.ensureAllRowsInRangeHaveHeightsCalculated(firstPixel, lastPixel);
+
+            } while (rowHeightsChanged);
+
 
             let firstRowIndex = this.paginationProxy.getRowIndexAtPixel(firstPixel);
             let lastRowIndex = this.paginationProxy.getRowIndexAtPixel(lastPixel);
@@ -1096,14 +1104,16 @@ export class RowRenderer extends BeanStub {
         }
     }
 
-    private ensureAllRowsInRangeHaveHeightsCalculated(topPixel: number, bottomPixel: number): void {
+    private ensureAllRowsInRangeHaveHeightsCalculated(topPixel: number, bottomPixel: number): boolean {
         // ensureRowHeightsVisible only works with CSRM, as it's the only row model that allows lazy row height calcs.
         // all the other row models just hard code so the method just returns back false
-        const rowHeightsChanged = this.paginationProxy.ensureRowHeightsValid(topPixel, bottomPixel, -1, -1);
+        const res = this.paginationProxy.ensureRowHeightsValid(topPixel, bottomPixel, -1, -1);
 
-        if (rowHeightsChanged) {
+        if (res) {
             this.updateContainerHeights();
         }
+
+        return res;
     }
 
     public getFirstVirtualRenderedRow() {
