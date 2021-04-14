@@ -14,10 +14,8 @@ export function initialiseAgGridWithAngular1(angular: any) {
 
 function AngularDirectiveController($element: any, $scope: any, $compile: any, $attrs: any) {
     let gridOptions: GridOptions;
-    let quickFilterOnScope: any;
 
     const keyOfGridInScope = $attrs.agGrid;
-    quickFilterOnScope = keyOfGridInScope + '.quickFilterText';
     gridOptions = $scope.$eval(keyOfGridInScope);
     if (!gridOptions) {
         console.warn("WARNING - grid options for AG Grid not found. Please ensure the attribute ag-grid points to a valid object on the scope");
@@ -31,9 +29,12 @@ function AngularDirectiveController($element: any, $scope: any, $compile: any, $
     };
     let grid: Grid | null = new Grid(eGridDiv, gridOptions, gridParams);
 
-    const quickFilterUnregisterFn = this.$scope.$watch(
-        this.quickFilterOnScope,
-        (newFilter: any) => gridOptions.api!.setQuickFilter(newFilter)
+    const quickFilterOnScope = keyOfGridInScope + '.quickFilterText';
+    const quickFilterUnregisterFn = $scope.$watch(
+        quickFilterOnScope,
+        (newFilter: any) => {
+            gridOptions.api!.setQuickFilter(newFilter)
+        }
     );
 
     $scope.$on("$destroy", function() {
