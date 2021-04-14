@@ -18,7 +18,7 @@ export class ExcelXmlSerializingSession extends BaseExcelSerializingSession<Exce
         return ExcelXmlFactory.createExcel(this.excelStyles, data);
     }
 
-    protected getDataTypeForValue(valueForCell: string): ExcelDataType {
+    protected getDataTypeForValue(valueForCell?: string): ExcelDataType {
         return _.isNumeric(valueForCell) ? 'Number' : 'String';
     }
 
@@ -44,8 +44,8 @@ export class ExcelXmlSerializingSession extends BaseExcelSerializingSession<Exce
         return type;
     }
 
-    protected addImage(): boolean {
-        return false;
+    protected addImage(): undefined {
+        return;
     }
 
     protected createCell(styleId: string | null, type: ExcelDataType, value: string): ExcelCell {

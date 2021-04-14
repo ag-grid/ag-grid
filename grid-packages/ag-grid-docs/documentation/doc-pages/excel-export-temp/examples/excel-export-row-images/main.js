@@ -38,14 +38,16 @@ function onBtExport() {
             if (col.colId === 'country') {
                 var countryCode = countryCodes[value];
                 return {
-                    id: countryCode,
-                    base64: flags[countryCode],
-                    imageType: 'png',
-                    width: 20,
-                    height: 11,
-                    position: {
-                        offsetX: 30,
-                        offsetY: 5.5
+                    image: {
+                        id: countryCode,
+                        base64: flags[countryCode],
+                        imageType: 'png',
+                        width: 20,
+                        height: 11,
+                        position: {
+                            offsetX: 30,
+                            offsetY: 5.5
+                        }
                     }
                 };
             }

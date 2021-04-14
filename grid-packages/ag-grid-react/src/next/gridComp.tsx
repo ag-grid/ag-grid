@@ -36,7 +36,6 @@ export function GridComp(params: {context: Context}) {
 
         const eGui = headerRootComp.getGui();
         eGridBodyParent.current!.appendChild(eGui);
-        return ()=> context.destroyBean(headerRootComp);
 
         return ()=> {
             context.destroyBean(con);

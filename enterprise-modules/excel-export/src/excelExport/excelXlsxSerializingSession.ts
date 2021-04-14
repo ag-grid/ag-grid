@@ -1,6 +1,7 @@
 import {
     Column,
     ExcelCell,
+    ExcelImage,
     ExcelOOXMLDataType,
     ExcelStyle,
     ExcelWorksheet,
@@ -27,8 +28,8 @@ export class ExcelXlsxSerializingSession extends BaseExcelSerializingSession<Exc
         );
     }
 
-    protected getDataTypeForValue(valueForCell: string): ExcelOOXMLDataType {
-        if (valueForCell === '$_AG_GRID_IMAGE_EXPORT_$') { return 'empty' }
+    protected getDataTypeForValue(valueForCell?: string): ExcelOOXMLDataType {
+        if (valueForCell === undefined) { return 'empty' }
         return _.isNumeric(valueForCell) ? 'n' : 's';
     }
 
@@ -62,16 +63,16 @@ export class ExcelXlsxSerializingSession extends BaseExcelSerializingSession<Exc
         this.columnsToExport = [...columnsToExport];
     }
 
-    protected addImage(rowIndex: number, column: Column, value: string): boolean {
-        if (!this.config.addImageToCell) { return false; }
+    protected addImage(rowIndex: number, column: Column, value: string): { image: ExcelImage, value?: string } | undefined {
+        if (!this.config.addImageToCell) { return; }
 
-        const image = this.config.addImageToCell(rowIndex, column, value);
+        const addedImage = this.config.addImageToCell(rowIndex, column, value);
 
-        if (!image) { return false; }
+        if (!addedImage) { return; }
 
-        ExcelXlsxFactory.buildImageMap(image, rowIndex, column, this.columnsToExport);
+        ExcelXlsxFactory.buildImageMap(addedImage.image, rowIndex, column, this.columnsToExport);
 
-        return true;
+        return addedImage;
     }
 
     protected createCell(styleId: string | null, type: ExcelOOXMLDataType, value: string): ExcelCell {
