@@ -14,8 +14,8 @@ const contentTypesFactory: ExcelOOXMLTemplate = {
         const sheetsWithImages = ExcelXlsxFactory.sheetImages.size;
         const imageTypesObject: { [ key: string ]: boolean} = {};
 
-        ExcelXlsxFactory.workbookImages.forEach((v, image) => {
-            imageTypesObject[image.imageType] = true;
+        ExcelXlsxFactory.workbookImages.forEach((v) => {
+            imageTypesObject[v.type] = true;
         });
 
         const imageDocs = new Array(sheetsWithImages).fill(undefined).map((v, i) => ({

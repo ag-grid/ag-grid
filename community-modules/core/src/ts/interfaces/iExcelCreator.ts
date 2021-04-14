@@ -116,7 +116,15 @@ export interface ExcelImage {
     id: string;
     base64: string;
     imageType: 'jpg' | 'png' | 'gif';
-    position?: string;
+    fitCell?: boolean;
+    width?: number;
+    height?: number;
+    position?: {
+        row?: number;
+        column?: number;
+        offsetX?: number;
+        offsetY?: number;
+    };
 }
 
 /*

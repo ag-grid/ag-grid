@@ -1,4 +1,4 @@
-import { BaseExportParams, ExportParams, _ } from "@ag-grid-community/core";
+import { ExportParams, _ } from "@ag-grid-community/core";
 import { BaseCreatorBeans, GridSerializingSession } from "./interfaces";
 
 export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P extends ExportParams<T>> {

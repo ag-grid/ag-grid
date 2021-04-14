@@ -1,4 +1,5 @@
 import {
+    Column,
     ExcelFactoryMode,
     ExcelHeaderFooterConfig,
     ExcelImage,
@@ -6,7 +7,8 @@ import {
     ExcelSheetPageSetup,
     ExcelStyle,
     ExcelWorksheet,
-    XmlElement
+    XmlElement,
+    _
 } from '@ag-grid-community/core';
 
 import coreFactory from './files/ooxml/core';
@@ -30,7 +32,7 @@ export class ExcelXlsxFactory {
     private static sheetNames: string[] = [];
 
     public static images: Map<string, { sheetId: number, image: ExcelImage[] }[]> = new Map();
-    public static workbookImages: Map<ExcelImage, number> = new Map();
+    public static workbookImages: Map<string, { type: string, index: number }> = new Map();
     public static sheetImages: Map<number, ExcelImage[]> = new Map();
 
     public static factoryMode: ExcelFactoryMode = ExcelFactoryMode.SINGLE_SHEET;
@@ -48,9 +50,18 @@ export class ExcelXlsxFactory {
         return this.createWorksheet(worksheet, margins, pageSetup, headerFooterConfig);
     }
 
-    public static buildImageMap(image: ExcelImage): void {
+    public static buildImageMap(image: ExcelImage, rowIndex: number, column: Column, columnsToExport: Column[]): void {
         const currentSheetIndex = this.sheetNames.length;
         const registeredImage = this.images.get(image.id);
+
+        if (!image.position || !image.position.row || !image.position.column) {
+            if (!image.position) { image.position = {}; }
+
+            image.position = _.assign({}, image.position, {
+                row: rowIndex,
+                column: columnsToExport.indexOf(column) + 1
+            });
+        }
 
         if (registeredImage) {
             const currentSheetImages = registeredImage.find((currentImage) => currentImage.sheetId === currentSheetIndex);
@@ -64,7 +75,7 @@ export class ExcelXlsxFactory {
             }
         } else {
             this.images.set(image.id, [{ sheetId: currentSheetIndex, image: [image] }])
-            this.workbookImages.set(image, this.workbookImages.size);
+            this.workbookImages.set(image.id, { type: image.imageType, index: this.workbookImages.size });
         }
 
         this.buildSheetImageMap(currentSheetIndex, image);
@@ -111,9 +122,9 @@ export class ExcelXlsxFactory {
     public static resetFactory(): void {
         this.sharedStrings = new Map();
 
-        this.images = new Map();
-        this.workbookImages = new Map();
-        this.sheetImages = new Map();
+        this.images = new Map(); // Maps images to sheet
+        this.workbookImages = new Map(); // Maps all workbook images to a global Id
+        this.sheetImages = new Map(); // Maps sheets to images
         
         this.sheetNames = [];
         this.factoryMode = ExcelFactoryMode.SINGLE_SHEET;
@@ -188,11 +199,18 @@ export class ExcelXlsxFactory {
     }
 
     public static createDrawingRel(sheetIndex: number) {
-        const sheetImages = this.sheetImages.get(sheetIndex);
+        const imagesAdded: { [key: string]: boolean } = {};
+        const sheetImages = this.sheetImages.get(sheetIndex)!.reduce((prev, curr) => {
+            if (imagesAdded[curr.id]) { return prev; }
+            imagesAdded[curr.id] = true;
+            prev.push(curr);
+            return prev;
+        }, [] as ExcelImage[]);
+
         const rs = relationshipsFactory.getTemplate(sheetImages!.map((image, idx) => ({
                 Id: `rId${idx + 1}`,
                 Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image',
-                Target: `../media/image${this.workbookImages.get(image)! + 1}.${image.imageType}`
+                Target: `../media/image${this.workbookImages.get(image.id)!.index + 1}.${image.imageType}`
         })))
 
         return this.createXmlPart(rs);

@@ -12,6 +12,8 @@ import { BaseExcelSerializingSession } from './baseExcelSerializingSession';
 
 export class ExcelXlsxSerializingSession extends BaseExcelSerializingSession<ExcelOOXMLDataType> {
 
+    private columnsToExport: Column[];
+
     protected createExcel(data: ExcelWorksheet): string {
         const { excelStyles, config } = this;
         const { margins, pageSetup, headerFooterConfig } = config;
@@ -26,6 +28,7 @@ export class ExcelXlsxSerializingSession extends BaseExcelSerializingSession<Exc
     }
 
     protected getDataTypeForValue(valueForCell: string): ExcelOOXMLDataType {
+        if (valueForCell === '$_AG_GRID_IMAGE_EXPORT_$') { return 'empty' }
         return _.isNumeric(valueForCell) ? 'n' : 's';
     }
 
@@ -54,6 +57,11 @@ export class ExcelXlsxSerializingSession extends BaseExcelSerializingSession<Exc
         return type;
     }
 
+    public prepare(columnsToExport: Column[]): void {
+        super.prepare(columnsToExport);
+        this.columnsToExport = [...columnsToExport];
+    }
+
     protected addImage(rowIndex: number, column: Column, value: string): boolean {
         if (!this.config.addImageToCell) { return false; }
 
@@ -61,7 +69,7 @@ export class ExcelXlsxSerializingSession extends BaseExcelSerializingSession<Exc
 
         if (!image) { return false; }
 
-        ExcelXlsxFactory.buildImageMap(image);
+        ExcelXlsxFactory.buildImageMap(image, rowIndex, column, this.columnsToExport);
 
         return true;
     }

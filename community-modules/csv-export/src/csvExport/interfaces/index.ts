@@ -41,7 +41,6 @@ export interface CsvSerializingParams extends GridSerializingParams {
 
 export interface GridSerializingSession<T> {
     prepare(columnsToExport: Column[]): void;
-
     onNewHeaderGroupingRow(): RowSpanningAccumulator;
     onNewHeaderRow(): RowAccumulator;
     onNewBodyRow(): RowAccumulator;
