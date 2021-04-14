@@ -45,12 +45,14 @@ interface AgCartesianAxisThemeOptions<T> {
 }
 
 export interface AgNumberAxisThemeOptions extends Omit<AgNumberAxisOptions, 'type'>, AgCartesianAxisThemeOptions<AgNumberAxisOptions> {}
+export interface AgLogAxisThemeOptions extends Omit<AgLogAxisOptions, 'type'>, AgCartesianAxisThemeOptions<AgLogAxisOptions> {}
 export interface AgCategoryAxisThemeOptions extends Omit<AgCategoryAxisOptions, 'type'>, AgCartesianAxisThemeOptions<AgCategoryAxisOptions> {}
 export interface AgGroupedCategoryAxisThemeOptions extends Omit<AgGroupedCategoryAxisOptions, 'type'>, AgCartesianAxisThemeOptions<AgGroupedCategoryAxisOptions> {}
 export interface AgTimeAxisThemeOptions extends Omit<AgTimeAxisOptions, 'type'>, AgCartesianAxisThemeOptions<AgTimeAxisOptions> {}
 
 export interface AgCartesianAxesTheme {
     number?: AgNumberAxisThemeOptions;
+    log?: AgLogAxisThemeOptions;
     category?: AgCategoryAxisThemeOptions;
     groupedCategory?: AgGroupedCategoryAxisThemeOptions;
     time?: AgTimeAxisThemeOptions;
@@ -307,6 +309,14 @@ interface AgNumberAxisOptions extends AgBaseCartesianAxisOptions {
     max?: number;
 }
 
+interface AgLogAxisOptions extends AgBaseCartesianAxisOptions {
+    type: 'log';
+    nice?: boolean;
+    min?: number;
+    max?: number;
+    base?: number;
+}
+
 interface AgCategoryAxisOptions extends AgBaseCartesianAxisOptions {
     type: 'category';
     paddingInner?: number;
@@ -324,6 +334,7 @@ interface AgTimeAxisOptions extends AgBaseCartesianAxisOptions {
 
 export type AgCartesianAxisOptions =
     AgNumberAxisOptions |
+    AgLogAxisOptions |
     AgCategoryAxisOptions |
     AgGroupedCategoryAxisOptions |
     AgTimeAxisOptions;
