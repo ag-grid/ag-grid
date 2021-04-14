@@ -202,6 +202,14 @@ $version = 'latest';
         </section>
     </div>
 
+    <div>
+        <section>
+            <div style="margin: 20px; font-family: 'Roboto', sans-serif; font-size: 1.2rem; font-weight: 300; text-align: center;">
+                ng-Conf Attendees - Our Secret Word is "Feck"
+            </div>
+        </section>
+    </div>
+
     <script src="dist/homepage.js"></script>
     <script src="example-rich-grid/data.js"></script>
     <script src="example-rich-grid/example.js"></script>
