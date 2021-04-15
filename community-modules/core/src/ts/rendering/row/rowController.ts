@@ -520,7 +520,9 @@ export class RowController extends BeanStub {
 
         addOrRemoveCssClass(element, 'ag-full-width-focus', isFocused);
         if (isFocused) {
-            element.focus();
+            // we don't scroll normal rows into view when we focus them, so we don't want
+            // to scroll Full Width rows either.
+            element.focus({preventScroll: true});
         }
     }
 
