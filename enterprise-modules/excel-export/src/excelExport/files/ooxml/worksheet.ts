@@ -276,7 +276,7 @@ const addHeaderFooter = (headerFooterConfig?: ExcelHeaderFooterConfig) => {
 
 const addDrawingRel = (currentSheet: number) => {
     return (children: XmlElement[]) => {
-        if (ExcelXlsxFactory.sheetImages.get(currentSheet)) {
+        if (ExcelXlsxFactory.worksheetImages.get(currentSheet)) {
             children.push({
                 name: 'drawing',
                 properties: {

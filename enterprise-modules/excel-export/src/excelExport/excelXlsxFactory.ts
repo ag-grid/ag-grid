@@ -3,6 +3,7 @@ import {
     ExcelFactoryMode,
     ExcelHeaderFooterConfig,
     ExcelImage,
+    ExcelRelationship,
     ExcelSheetMargin,
     ExcelSheetPageSetup,
     ExcelStyle,
@@ -23,6 +24,8 @@ import relationshipsFactory from './files/ooxml/relationships';
 
 import { XmlFactory } from "@ag-grid-community/csv-export";
 
+type ImageIdMap = Map</** imageId */string, { type: string, index: number }>;
+
 /**
  * See https://www.ecma-international.org/news/TC45_current_work/OpenXML%20White%20Paper.pdf
  */
@@ -31,9 +34,14 @@ export class ExcelXlsxFactory {
     private static sharedStrings: Map<string, number> = new Map();
     private static sheetNames: string[] = [];
 
+    /** Maps images to sheet */
     public static images: Map<string, { sheetId: number, image: ExcelImage[] }[]> = new Map();
-    public static workbookImages: Map<string, { type: string, index: number }> = new Map();
-    public static sheetImages: Map<number, ExcelImage[]> = new Map();
+    /** Maps sheets to images */
+    public static worksheetImages: Map<number, ExcelImage[]> = new Map();
+    /** Maps all workbook images to a global Id */
+    public static workbookImageIds: ImageIdMap = new Map();
+    /** Maps all sheet images to unique Ids */
+    public static worksheetImageIds: Map<number, ImageIdMap> = new Map();
 
     public static factoryMode: ExcelFactoryMode = ExcelFactoryMode.SINGLE_SHEET;
 
@@ -75,20 +83,29 @@ export class ExcelXlsxFactory {
             }
         } else {
             this.images.set(image.id, [{ sheetId: currentSheetIndex, image: [image] }])
-            this.workbookImages.set(image.id, { type: image.imageType, index: this.workbookImages.size });
+            this.workbookImageIds.set(image.id, { type: image.imageType, index: this.workbookImageIds.size });
         }
 
         this.buildSheetImageMap(currentSheetIndex, image);
     }
 
     private static buildSheetImageMap(sheetIndex: number, image: ExcelImage): void {
-        const sheetImages = this.sheetImages.get(sheetIndex);
+        let worksheetImageIdMap = this.worksheetImageIds.get(sheetIndex);
+
+        if (!worksheetImageIdMap) {
+            worksheetImageIdMap = new Map();
+            this.worksheetImageIds.set(sheetIndex, worksheetImageIdMap);
+        }
+
+        const sheetImages = this.worksheetImages.get(sheetIndex);
 
         if (!sheetImages) {
-            this.sheetImages.set(sheetIndex, [image]);
+            this.worksheetImages.set(sheetIndex, [image]);
+            worksheetImageIdMap.set(image.id, { index: 0, type: image.imageType });
         } else {
-            if (sheetImages.indexOf(image) === -1) {
-                sheetImages.push(image);
+            sheetImages.push(image);
+            if (!worksheetImageIdMap.get(image.id)) {
+                worksheetImageIdMap.set(image.id, { index: worksheetImageIdMap.size, type: image.imageType });
             }
         }
     }
@@ -122,9 +139,12 @@ export class ExcelXlsxFactory {
     public static resetFactory(): void {
         this.sharedStrings = new Map();
 
-        this.images = new Map(); // Maps images to sheet
-        this.workbookImages = new Map(); // Maps all workbook images to a global Id
-        this.sheetImages = new Map(); // Maps sheets to images
+        this.images = new Map();
+        this.worksheetImages = new Map();
+
+        this.workbookImageIds = new Map();
+        this.worksheetImageIds = new Map();
+        
         
         this.sheetNames = [];
         this.factoryMode = ExcelFactoryMode.SINGLE_SHEET;
@@ -199,21 +219,19 @@ export class ExcelXlsxFactory {
     }
 
     public static createDrawingRel(sheetIndex: number) {
-        const imagesAdded: { [key: string]: boolean } = {};
-        const sheetImages = this.sheetImages.get(sheetIndex)!.reduce((prev, curr) => {
-            if (imagesAdded[curr.id]) { return prev; }
-            imagesAdded[curr.id] = true;
-            prev.push(curr);
-            return prev;
-        }, [] as ExcelImage[]);
+        const worksheetImageIds = this.worksheetImageIds.get(sheetIndex);
+        const XMLArr: ExcelRelationship[] = [];
 
-        const rs = relationshipsFactory.getTemplate(sheetImages!.map((image, idx) => ({
-                Id: `rId${idx + 1}`,
+        worksheetImageIds!.forEach((value, key) => {
+            XMLArr.push({
+                Id: `rId${value.index + 1}`,
                 Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image',
-                Target: `../media/image${this.workbookImages.get(image.id)!.index + 1}.${image.imageType}`
-        })))
+                Target: `../media/image${this.workbookImageIds.get(key)!.index + 1}.${value.type}`
+            })
+        });
 
-        return this.createXmlPart(rs);
+
+        return this.createXmlPart(relationshipsFactory.getTemplate(XMLArr));
     }
 
     public static createWorksheetDrawingRel(currentRelationIndex: number) {
