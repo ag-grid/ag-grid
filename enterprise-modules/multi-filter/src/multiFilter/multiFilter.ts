@@ -251,7 +251,6 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
         const setFilterModel = (filter: IFilterComp, filterModel: any) => {
             return new AgPromise<void>(resolve => {
                 const promise = filter.setModel(filterModel);
-
                 promise ? promise.then(() => resolve()) : resolve();
             });
         };
@@ -259,12 +258,17 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
         let promises: AgPromise<void>[] = [];
 
         if (model == null) {
-            promises = _.map(this.filters!, filter => setFilterModel(filter, null))!;
+            promises = _.map(this.filters!, (filter: IFilterComp, index: number) => {
+                const res = setFilterModel(filter, null);
+                this.updateActiveList(index);
+                return res;
+            } )!;
         } else {
             _.forEach(this.filters!, (filter, index) => {
                 const filterModel = model.filterModels!.length > index ? model.filterModels![index] : null;
-
-                promises.push(setFilterModel(filter, filterModel));
+                const res = setFilterModel(filter, filterModel);
+                promises.push(res);
+                this.updateActiveList(index);
             });
         }
 
@@ -345,7 +349,7 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
         return filterPromise;
     }
 
-    private filterChanged(index: number, additionalEventAttributes: any): void {
+    private updateActiveList(index: number): void {
         const changedFilter = this.filters![index];
 
         _.removeFromArray(this.activeFilterIndices, index);
@@ -353,8 +357,14 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
         if (changedFilter.isFilterActive()) {
             this.activeFilterIndices.push(index);
         }
+    }
+
+    private filterChanged(index: number, additionalEventAttributes: any): void {
+        this.updateActiveList(index);
+
 
         this.filterChangedCallback!(additionalEventAttributes);
+        const changedFilter = this.filters![index];
 
         _.forEach(this.filters!, filter => {
             if (filter === changedFilter) { return; }
