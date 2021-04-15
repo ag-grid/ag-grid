@@ -27,7 +27,6 @@ const getAnchor = (name: string, image: ExcelImage): XmlElement => {
         height = convertFromPixelToExcel(image.height!);
     }
 
-
     return {
         name: `xdr:${name}`,
         children: [{
@@ -46,8 +45,28 @@ const getAnchor = (name: string, image: ExcelImage): XmlElement => {
     }
 };
 
-const getPicture = (image: ExcelImage, sheetImages: ExcelImage[]): XmlElement => {
-    const imageWorkBookId = ExcelXlsxFactory.workbookImages.get(image.id)!.index + 1;
+const getExt = (): XmlElement => ({
+    name: 'a:extLst',
+    children: [{
+        name: 'a:ext',
+        properties: {
+            rawMap: {
+                uri: '{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}'
+            }
+        },
+        children: [{
+            name: 'a16:creationId',
+            properties: {
+                rawMap: {
+                    id: '{00000000-0008-0000-0000-000002000000}',
+                    'xmlns:a16': 'http://schemas.microsoft.com/office/drawing/2014/main'
+                }
+            }
+        }]
+    }]
+});
+
+const getPicture = (image: ExcelImage, currentIndex: number, worksheetImageIndex: number): XmlElement => {
     return {
         name: 'xdr:pic',
         children: [{
@@ -56,30 +75,11 @@ const getPicture = (image: ExcelImage, sheetImages: ExcelImage[]): XmlElement =>
                 name: 'xdr:cNvPr',
                 properties: {
                     rawMap: {
-                        id: sheetImages.indexOf(image) + 1,
+                        id: currentIndex + 1,
                         name: image.id
                     }
                 },
-                children: [{
-                    name: 'a:extLst',
-                    children: [{
-                        name: 'a:ext',
-                        properties: {
-                            rawMap: {
-                                uri: '{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}'
-                            }
-                        },
-                        children: [{
-                            name: 'a16:creationId',
-                            properties: {
-                                rawMap: {
-                                    id: '{00000000-0008-0000-0000-000002000000}',
-                                    'xmlns:a16': 'http://schemas.microsoft.com/office/drawing/2014/main'
-                                }
-                            }
-                        }]
-                    }]
-                }]
+                children: [getExt()]
             }, {
                 name: 'xdr:cNvPicPr',
                 children: [{
@@ -93,7 +93,7 @@ const getPicture = (image: ExcelImage, sheetImages: ExcelImage[]): XmlElement =>
                 properties: {
                     rawMap: {
                         cstate: 'print',
-                        'r:embed': `rId${imageWorkBookId}`,
+                        'r:embed': `rId${worksheetImageIndex + 1}`,
                         'xmlns:r': 'http://schemas.openxmlformats.org/officeDocument/2006/relationships'
                     }
                 }
@@ -144,14 +144,15 @@ const drawingFactory: ExcelOOXMLTemplate = {
         sheetIndex: number
     }) {
         const { sheetIndex } = config;
-        const sheetImages = ExcelXlsxFactory.sheetImages.get(sheetIndex);
+        const sheetImages = ExcelXlsxFactory.worksheetImages.get(sheetIndex);
+        const sheetImageIds = ExcelXlsxFactory.worksheetImageIds.get(sheetIndex);
 
-        const children = sheetImages!.map(image => ({
+        const children = sheetImages!.map((image, idx) => ({
             name: 'xdr:twoCellAnchor',
             children: [
                 getAnchor('from', image),
                 getAnchor('to', image),
-                getPicture(image, sheetImages!),
+                getPicture(image, idx, sheetImageIds!.get(image.id)!.index),
                 { name: 'xdr:clientData'}
             ]
         }));

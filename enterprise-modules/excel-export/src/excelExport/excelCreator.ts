@@ -8,7 +8,6 @@ import {
     ExcelExportParams,
     ExcelFactoryMode,
     ExcelStyle,
-    ExcelImage,
     GridOptions,
     GridOptionsWrapper,
     IExcelCreator,
@@ -68,7 +67,7 @@ export const getMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams)
     let imageRelationCounter = 0;
     data.forEach((value, idx) => {
         ZipContainer.addFile(`xl/worksheets/sheet${idx + 1}.xml`, value);
-        if (hasImages && ExcelXlsxFactory.sheetImages.get(idx)) {
+        if (hasImages && ExcelXlsxFactory.worksheetImages.get(idx)) {
             createImageRelationsForSheet(idx, imageRelationCounter++);
         }
     });

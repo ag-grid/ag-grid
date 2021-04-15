@@ -11,10 +11,10 @@ const contentTypesFactory: ExcelOOXMLTemplate = {
             PartName: `/xl/worksheets/sheet${i + 1}.xml`
         }));
 
-        const sheetsWithImages = ExcelXlsxFactory.sheetImages.size;
+        const sheetsWithImages = ExcelXlsxFactory.worksheetImages.size;
         const imageTypesObject: { [ key: string ]: boolean} = {};
 
-        ExcelXlsxFactory.workbookImages.forEach((v) => {
+        ExcelXlsxFactory.workbookImageIds.forEach((v) => {
             imageTypesObject[v.type] = true;
         });
 
