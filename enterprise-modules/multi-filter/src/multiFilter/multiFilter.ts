@@ -42,7 +42,7 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
     private filters: IFilterComp[] | null = [];
     private guiDestroyFuncs: (() => void)[] = [];
     private column: Column;
-    private filterChangedCallback: (() => void) | null;
+    private filterChangedCallback: ((additionalEventAttributes?: any) => void) | null;
     private lastOpenedInContainer?: ContainerType;
     private activeFilterIndices: number[] = [];
     private lastActivatedMenuItem: MenuItemComponent | null = null;
@@ -331,7 +331,7 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
         const filterParams: IFilterParams = {
             ...this.filterManager.createFilterParams(this.column, this.column.getColDef()),
             filterModifiedCallback,
-            filterChangedCallback: () => this.filterChanged(index),
+            filterChangedCallback: additionalEventAttributes => this.filterChanged(index, additionalEventAttributes),
             doesRowPassOtherFilter: (node: RowNode) =>
                 doesRowPassOtherFilter(node) && this.doesFilterPass({ node, data: node.data }, filterInstance),
         };
@@ -345,7 +345,7 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
         return filterPromise;
     }
 
-    private filterChanged(index: number): void {
+    private filterChanged(index: number, additionalEventAttributes: any): void {
         const changedFilter = this.filters![index];
 
         _.removeFromArray(this.activeFilterIndices, index);
@@ -354,7 +354,7 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
             this.activeFilterIndices.push(index);
         }
 
-        this.filterChangedCallback!();
+        this.filterChangedCallback!(additionalEventAttributes);
 
         _.forEach(this.filters!, filter => {
             if (filter === changedFilter) { return; }
