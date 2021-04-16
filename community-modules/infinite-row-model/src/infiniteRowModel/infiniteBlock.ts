@@ -150,22 +150,11 @@ export class InfiniteBlock extends RowNodeBlock {
     }
 
     protected processServerResult(params: LoadSuccessParams): void {
-        const rowNodesToRefresh: RowNode[] = [];
-
         this.rowNodes.forEach((rowNode: RowNode, index: number) => {
             const data = params.rowData ? params.rowData[index] : undefined;
-            if (rowNode.stub) {
-                rowNodesToRefresh.push(rowNode);
-            }
             this.setDataAndId(rowNode, data, this.startRow + index);
         });
-
-        if (rowNodesToRefresh.length > 0) {
-            this.rowRenderer.redrawRows(rowNodesToRefresh);
-        }
-
         const finalRowCount = params.rowCount != null && params.rowCount >= 0 ? params.rowCount : undefined;
-
         this.parentCache.pageLoaded(this, finalRowCount);
     }
 

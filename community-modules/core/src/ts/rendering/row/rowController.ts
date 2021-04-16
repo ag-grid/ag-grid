@@ -39,11 +39,11 @@ import { RowCssClassCalculatorParams } from "./rowCssClassCalculator";
 import { BeanStub } from "../../context/beanStub";
 
 export enum RowType {
-    Normal,
-    FullWidth,
-    FullWidthLoading,
-    FullWidthGroup,
-    FullWidthDetail
+    Normal = 'Normal',
+    FullWidth = 'FullWidth',
+    FullWidthLoading = 'FullWidthLoading',
+    FullWidthGroup = 'FullWidthGroup',
+    FullWidthDetail = 'FullWidthDetail'
 }
 
 export const FullWidthRenderers: Map<RowType, string> = new Map([

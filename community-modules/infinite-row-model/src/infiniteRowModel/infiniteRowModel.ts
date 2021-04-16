@@ -169,7 +169,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
             // maybe they should be true?
             newPage: false,
             newData: false,
-            keepRenderedRows: false,
+            keepRenderedRows: true,
             animate: false
         };
     }
