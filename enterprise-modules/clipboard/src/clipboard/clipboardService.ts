@@ -309,7 +309,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         const rowCallback: RowCallback = (currentRow: RowPosition, rowNode: RowNode, columns: Column[]) => {
             updatedRowNodes.push(rowNode);
             columns.forEach(column =>
-                this.updateCellValue(rowNode, column, value, currentRow, cellsToFlash, Constants.EXPORT_TYPE_CLIPBOARD, changedPath));
+                this.updateCellValue(rowNode, column, value, cellsToFlash, Constants.EXPORT_TYPE_CLIPBOARD, changedPath));
         };
 
         this.iterateActiveRanges(false, rowCallback);
@@ -413,41 +413,55 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         columnsToPasteInto: Column[],
         cellsToFlash: any,
         type: string,
-        changedPath: ChangedPath | undefined) {
+        changedPath: ChangedPath | undefined): void {
 
         let rowPointer = currentRow;
 
-        clipboardGridData.forEach(clipboardRowData => {
-            // if we have come to end of rows in grid, then skip
-            if (!rowPointer) { return; }
+        // if doing CSRM and NOT tree data, then it means groups are aggregates, which are read only,
+        // so we should skip them when doing paste operations.
+        const skipGroupRows = this.clientSideRowModel!=null && !this.gridOptionsWrapper.isTreeData();
 
-            const rowNode = this.rowPositionUtils.getRowNode(rowPointer);
-
-            if (rowNode) {
-                updatedRowNodes.push(rowNode);
-
-                clipboardRowData.forEach((value, index) =>
-                    this.updateCellValue(rowNode, columnsToPasteInto[index], value, rowPointer, cellsToFlash, type, changedPath));
-
+        const getNextGoodRowNode = ()=> {
+            while (true) {
+                if (!rowPointer) { return null; }
+                const res = this.rowPositionUtils.getRowNode(rowPointer);
                 // move to next row down for next set of values
                 rowPointer = this.cellNavigationService.getRowBelow({ rowPinned: rowPointer.rowPinned, rowIndex: rowPointer.rowIndex });
-            }
-        });
 
-        return rowPointer;
+                // if no more rows, return null
+                if (res==null) { return null; }
+
+
+                // skip details rows and footer rows, never paste into them as they don't hold data
+                const skipRow = res.detail || res.footer || (skipGroupRows && res.group);
+
+                // skipping row means we go into the next iteration of the while loop
+                if (!skipRow) { return res; }
+            }
+        };
+
+        clipboardGridData.forEach(clipboardRowData => {
+            const rowNode = getNextGoodRowNode();
+
+            // if we have come to end of rows in grid, then skip
+            if (!rowNode) { return; }
+
+            clipboardRowData.forEach((value, index) =>
+                this.updateCellValue(rowNode, columnsToPasteInto[index], value, cellsToFlash, type, changedPath));
+
+            updatedRowNodes.push(rowNode);
+        });
     }
 
     private updateCellValue(
         rowNode: RowNode | null,
         column: Column,
         value: string,
-        currentRow: RowPosition | null,
         cellsToFlash: any,
         type: string,
         changedPath: ChangedPath | undefined) {
         if (
             !rowNode ||
-            !currentRow ||
             !column ||
             !column.isCellEditable(rowNode) ||
             column.isSuppressPaste(rowNode)
@@ -456,7 +470,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         const processedValue = this.processCell(rowNode, column, value, type, this.gridOptionsWrapper.getProcessCellFromClipboardFunc());
         this.valueService.setValue(rowNode, column, processedValue, Constants.SOURCE_PASTE);
 
-        const cellId = this.cellPositionUtils.createIdFromValues(currentRow.rowIndex, column, currentRow.rowPinned);
+        const cellId = this.cellPositionUtils.createIdFromValues(rowNode.rowIndex!, column, rowNode.rowPinned);
         cellsToFlash[cellId] = true;
 
         if (changedPath) {
