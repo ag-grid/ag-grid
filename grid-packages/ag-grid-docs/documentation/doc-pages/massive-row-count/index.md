@@ -47,7 +47,7 @@ show this in practice.
 The grid achieves this by altering the vertical position of each row dependent on the scroll position.
 How much each row position is altered by we call the Row Offset.
 
-```
+```ts
 // see how many extra pixels we need to show all rows
 const additionalPixelsNeeded = combinedRowHeight - maxDivHeight;
 

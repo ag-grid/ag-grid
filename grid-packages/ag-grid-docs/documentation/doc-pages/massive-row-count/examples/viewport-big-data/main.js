@@ -65,5 +65,6 @@ function createViewportDatasource() {
 
     };
 
-    return MyViewportDataSource;
+
+    return new MyViewportDataSource();
 }
