@@ -279,6 +279,7 @@ export class Legend extends Observable {
     protected onMarkerShapeChange() {
         this.itemSelection = this.itemSelection.setData([]);
         this.itemSelection.exit.remove();
+        this.group.scene.cancelRender();
     }
 
     /**
