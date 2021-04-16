@@ -373,7 +373,7 @@ export class GridBodyScrollFeature extends BeanStub {
             const rowBottomPixel = rowTopPixel + rowNode!.rowHeight!;
 
             const scrollPosition = this.getVScrollPosition();
-            const heightOffset = this.heightScaler.getOffset();
+            const heightOffset = this.heightScaler.getDivStretchOffset();
 
             const vScrollTop = scrollPosition.top + heightOffset;
             const vScrollBottom = scrollPosition.bottom + heightOffset;

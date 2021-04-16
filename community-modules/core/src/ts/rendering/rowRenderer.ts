@@ -1021,14 +1021,14 @@ export class RowRenderer extends BeanStub {
             do {
                 const paginationOffset = this.paginationProxy.getPixelOffset();
                 const {pageFirstPixel, pageLastPixel} = this.paginationProxy.getCurrentPagePixelRange();
-                const maxDivHeightOffset = this.rowContainerHeightService.getOffset();
+                const divStretchOffset = this.rowContainerHeightService.getDivStretchOffset();
 
                 const bodyVRange = gridBodyCon.getScrollFeature().getVScrollPosition();
                 const bodyTopPixel = bodyVRange.top;
                 const bodyBottomPixel = bodyVRange.bottom;
 
-                firstPixel = Math.max(bodyTopPixel + paginationOffset - bufferPixels, pageFirstPixel) + maxDivHeightOffset;
-                lastPixel = Math.min(bodyBottomPixel + paginationOffset + bufferPixels, pageLastPixel) + maxDivHeightOffset;
+                firstPixel = Math.max(bodyTopPixel + paginationOffset - bufferPixels, pageFirstPixel) + divStretchOffset;
+                lastPixel = Math.min(bodyBottomPixel + paginationOffset + bufferPixels, pageLastPixel) + divStretchOffset;
 
                 // if the rows we are about to display get their heights changed, then that upsets the calcs from above.
                 rowHeightsChanged = this.ensureAllRowsInRangeHaveHeightsCalculated(firstPixel, lastPixel);

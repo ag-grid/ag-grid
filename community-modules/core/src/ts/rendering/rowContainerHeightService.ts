@@ -1,9 +1,10 @@
 import { BeanStub } from "../context/beanStub";
-import { Autowired, Bean, PostConstruct } from "../context/context";
+import { Autowired, Bean, PostConstruct, Qualifier } from "../context/context";
 import { Events } from "../eventKeys";
 import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
 import { getMaxDivHeight } from "../utils/browser";
 import { ControllersService } from "../controllersService";
+import { Logger, LoggerFactory } from "../logger";
 
 /**
  * This class solves the 'max height' problem, where the user might want to show more data than
@@ -17,17 +18,17 @@ export class RowContainerHeightService extends BeanStub {
 
     private maxDivHeight: number;
 
-    // if false, then scaling is not active, logic in this class is not used,
+    // if false, then stretching is not active, logic in this class is not used,
     // the pixel height of the row container matches what is actually needed,
     // no scaling applied.
-    private scaling: boolean;
+    private stretching: boolean;
 
     private modelHeight: number | null; // how many pixels the model needs
     private uiContainerHeight: number | null; // how many pixels we actually have
     private pixelsToShave: number; // the number of pixels we need to shave
 
     // the number of pixels we add to each rowTop - depends on the scroll position
-    private offset: number;
+    private divStretchOffset: number;
 
     // the scrollY position
     private scrollY = 0;
@@ -37,22 +38,29 @@ export class RowContainerHeightService extends BeanStub {
     // the max scroll position
     private maxScrollY: number;
 
+    private logger: Logger;
+
+    public agWire(@Qualifier("loggerFactory") loggerFactory: LoggerFactory) {
+        this.logger = loggerFactory.create("RowContainerHeightService");
+    }
+
     @PostConstruct
     private postConstruct(): void {
         this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.updateOffset.bind(this));
         this.maxDivHeight = getMaxDivHeight();
+        this.logger.log('maxDivHeight = ' + this.maxDivHeight);
     }
 
-    public isScaling(): boolean {
-        return this.scaling;
+    public isStretching(): boolean {
+        return this.stretching;
     }
 
-    public getOffset(): number {
-        return this.offset;
+    public getDivStretchOffset(): number {
+        return this.divStretchOffset;
     }
 
     public updateOffset(): void {
-        if (!this.scaling) { return; }
+        if (!this.stretching) { return; }
 
         const gridBodyCon = this.controllersService.getGridBodyController();
         const newScrollY = gridBodyCon.getScrollFeature().getVScrollPosition().top;
@@ -73,7 +81,11 @@ export class RowContainerHeightService extends BeanStub {
         this.maxScrollY = this.uiContainerHeight! - this.uiBodyHeight;
         const scrollPercent = this.scrollY / this.maxScrollY;
 
-        this.setOffset(scrollPercent * this.pixelsToShave);
+        const divStretchOffset = scrollPercent * this.pixelsToShave;
+
+        this.logger.log(`Div Stretch Offset = ${divStretchOffset} (${this.pixelsToShave} * ${scrollPercent})`)
+
+        this.setDivStretchOffset(divStretchOffset);
     }
 
     private setUiContainerHeight(height: number | null): void {
@@ -86,24 +98,24 @@ export class RowContainerHeightService extends BeanStub {
     private clearOffset(): void {
         this.setUiContainerHeight(this.modelHeight);
         this.pixelsToShave = 0;
-        this.setOffset(0);
+        this.setDivStretchOffset(0);
     }
 
-    private setOffset(newOffset: number): void {
+    private setDivStretchOffset(newOffset: number): void {
         // because we are talking pixels, no point in confusing things with half numbers
         const newOffsetFloor = typeof newOffset === 'number' ? Math.floor(newOffset) : null;
-        if (this.offset === newOffsetFloor) { return; }
+        if (this.divStretchOffset === newOffsetFloor) { return; }
 
-        this.offset = newOffsetFloor!;
+        this.divStretchOffset = newOffsetFloor!;
         this.eventService.dispatchEvent({type: Events.EVENT_HEIGHT_SCALE_CHANGED});
     }
 
     public setModelHeight(modelHeight: number | null): void {
         this.modelHeight = modelHeight;
-        this.scaling = modelHeight != null // null happens when in print layout
+        this.stretching = modelHeight != null // null happens when in print layout
                         && this.maxDivHeight > 0
                         && modelHeight! > this.maxDivHeight;
-        if (this.scaling) {
+        if (this.stretching) {
             this.calculateOffset();
         } else {
             this.clearOffset();
@@ -115,7 +127,7 @@ export class RowContainerHeightService extends BeanStub {
     }
 
     public getRealPixelPosition(modelPixel: number): number {
-        return modelPixel - this.offset;
+        return modelPixel - this.divStretchOffset;
     }
 
     private getUiBodyHeight(): number {
