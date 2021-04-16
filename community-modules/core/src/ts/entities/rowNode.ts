@@ -420,6 +420,8 @@ export class RowNode implements IEventEmitter {
     }
 
     public setRowTop(rowTop: number | null): void {
+        this.oldRowTop = this.rowTop;
+
         if (this.rowTop === rowTop) { return; }
 
         this.rowTop = rowTop;
@@ -432,7 +434,7 @@ export class RowNode implements IEventEmitter {
     }
 
     public clearRowTopAndRowIndex(): void {
-        this.oldRowTop = this.rowTop;
+        this.oldRowTop = null;
         this.setRowTop(null);
         this.setRowIndex(null);
     }
@@ -503,6 +505,8 @@ export class RowNode implements IEventEmitter {
     }
 
     public setRowIndex(rowIndex: number | null): void {
+        if (this.rowIndex===rowIndex) { return; }
+
         this.rowIndex = rowIndex;
 
         if (this.eventService) {
