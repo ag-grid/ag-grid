@@ -5,6 +5,35 @@ enterprise: true
 
 Formulas can be used to create `hyperlinks` while exporting an Excel Spreadsheet.
 
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        { field: 'company' },
+        { 
+            field: 'url', 
+            cellClass: 'hyperlinks' // references excel style 
+        }
+    ],
+    defaultExcelExportParams: {
+        autoConvertFormulas: true,
+        processCellCallback: params => {
+            const field = params.column.getColDef().field;
+            return field === 'url' ? `=HYPERLINK("${params.value}")` : params.value;
+        }
+    },
+    excelStyles: [
+        {
+            id: 'hyperlinks',
+            font: {
+                underline: 'Single',
+                color: '#358ccb'
+            }
+        }
+    ]
+}
+</snippet>
+
+
 Note the following:
 
 - The URL column has active links in the grid.
