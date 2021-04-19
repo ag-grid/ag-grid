@@ -116,7 +116,11 @@ export interface ExcelImage {
     id: string;
     base64: string;
     imageType: 'jpg' | 'png' | 'gif';
+    altText?: string;
     fitCell?: boolean;
+    transparency?: number;
+    rotation?: number;
+    recolor?: 'Grayscale' | 'Sepia' | 'Washout';
     width?: number;
     height?: number;
     position?: {
