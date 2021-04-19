@@ -33,7 +33,7 @@ import { IViewportDatasource } from './interfaces/iViewportDatasource';
 import { IDatasource } from './interfaces/iDatasource';
 import { CellPosition } from './entities/cellPosition';
 import { IServerSideDatasource } from './interfaces/iServerSideDatasource';
-import { BaseExportParams, CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from './interfaces/exportParams';
+import { CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from './interfaces/exportParams';
 import { AgEvent } from './events';
 import { Environment, SASS_PROPERTIES } from './environment';
 import { PropertyKeys } from './propertyKeys';
@@ -50,7 +50,6 @@ import { isNumeric } from './utils/number';
 import { exists, missing, values } from './utils/generic';
 import { fuzzyCheckStrings } from './utils/fuzzyMatch';
 import { doOnce } from './utils/function';
-import { addOrRemoveCssClass } from './utils/dom';
 import { getScrollbarWidth } from './utils/browser';
 import { HeaderPosition } from './headerRendering/header/headerPosition';
 import { ExcelExportParams } from './interfaces/iExcelCreator';
@@ -117,11 +116,50 @@ export class GridOptionsWrapper {
     public static PROP_SUPPRESS_ROW_DRAG = 'suppressRowDrag';
     public static PROP_SUPPRESS_MOVE_WHEN_ROW_DRAG = 'suppressMoveWhenRowDragging';
 
+    public static PROP_GET_ROW_CLASS = 'getRowClass';
+    public static PROP_GET_ROW_STYLE = 'getRowStyle';
+
+    public static PROP_GET_ROW_HEIGHT = 'getRowHeight';
+
     public static PROP_POPUP_PARENT = 'popupParent';
 
     public static PROP_DOM_LAYOUT = 'domLayout';
 
     public static PROP_FILL_HANDLE_DIRECTION = 'fillHandleDirection';
+
+    public static PROP_GROUP_ROW_AGG_NODES = 'groupRowAggNodes';
+    public static PROP_GET_BUSINESS_KEY_FOR_NODE = 'getBusinessKeyForNode';
+    public static PROP_GET_CHILD_COUNT = 'getChildCount';
+    public static PROP_PROCESS_ROW_POST_CREATE = 'processRowPostCreate';
+    public static PROP_GET_ROW_NODE_ID = 'getRowNodeId';
+    public static PROP_IS_FULL_WIDTH_CELL = 'isFullWidthCell';
+    public static PROP_IS_ROW_SELECTABLE = 'isRowSelectable';
+    public static PROP_IS_ROW_MASTER = 'isRowMaster';
+    public static PROP_POST_SORT = 'postSort';
+    public static PROP_GET_DOCUMENT = 'getDocument';
+    public static PROP_POST_PROCESS_POPUP = 'postProcessPopup';
+    public static PROP_DEFAULT_GROUP_SORT_COMPARATOR = 'defaultGroupSortComparator';
+    public static PROP_PAGINATION_NUMBER_FORMATTER = 'paginationNumberFormatter';
+
+    public static PROP_GET_CONTEXT_MENU_ITEMS = 'getContextMenuItems';
+    public static PROP_GET_MAIN_MENU_ITEMS = 'getMainMenuItems';
+
+    public static PROP_PROCESS_CELL_FOR_CLIPBOARD = 'processCellForClipboard';
+    public static PROP_PROCESS_CELL_FROM_CLIPBOARD = 'processCellFromClipboard';
+    public static PROP_SEND_TO_CLIPBOARD = 'sendToClipboard';
+
+    public static PROP_PROCESS_TO_SECONDARY_COLDEF = 'processSecondaryColDef';
+    public static PROP_PROCESS_SECONDARY_COL_GROUP_DEF = 'processSecondaryColGroupDef';
+
+    public static PROP_PROCESS_CHART_OPTIONS = 'processChartOptions';
+    public static PROP_GET_CHART_TOOLBAR_ITEMS = 'getChartToolbarItems';
+
+    public static PROP_GET_SERVER_SIDE_STORE_PARAMS = 'getServerSideStoreParams';
+    public static PROP_IS_SERVER_SIDE_GROUPS_OPEN_BY_DEFAULT = 'isServerSideGroupOpenByDefault';
+    public static PROP_IS_APPLY_SERVER_SIDE_TRANSACTION = 'isApplyServerSideTransaction';
+    public static PROP_IS_SERVER_SIDE_GROUP = 'isServerSideGroup';
+    public static PROP_GET_SERVER_SIDE_GROUP_KEY = 'getServerSideGroupKey';
+
 
     @Autowired('gridOptions') private readonly gridOptions: GridOptions;
     @Autowired('columnController') private readonly columnController: ColumnController;

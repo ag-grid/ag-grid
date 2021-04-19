@@ -22,7 +22,7 @@ import { IViewportDatasource } from "./interfaces/iViewportDatasource";
 import { IMenuFactory } from "./interfaces/iMenuFactory";
 import { IAggFuncService } from "./interfaces/iAggFuncService";
 import { IFilterComp } from "./interfaces/iFilter";
-import { CsvExportParams } from "./interfaces/exportParams";
+import {CsvExportParams, ProcessCellForExportParams} from "./interfaces/exportParams";
 import {
     ExcelExportMultipleSheetParams,
     ExcelExportParams,
