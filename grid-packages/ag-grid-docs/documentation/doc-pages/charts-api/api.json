@@ -1302,6 +1302,10 @@
         "default": true,
         "description": "Whether or not to show tooltips when the series are hovered over."
       },
+      "delay": {
+        "default": 0,
+        "description": "The time interval (in milliseconds) after which the tooltip is shown."
+      },
       "renderer": {
         "type": {
           "parameters": {
