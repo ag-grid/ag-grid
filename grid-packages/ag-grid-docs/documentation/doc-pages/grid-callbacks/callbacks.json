@@ -200,7 +200,8 @@
                     "headerRowCount": "number"
                 },
                 "returnType": "HeaderPosition"
-            }
+            },
+            "reactive": true
         },
         "tabToNextHeader": {
             "description": "Allows overriding the default behaviour for when user hits <kbd>Tab</kbd> key when a header is focused.",
@@ -218,7 +219,8 @@
                     "headerRowCount": "number"
                 },
                 "returnType": "HeaderPosition"
-            }
+            },
+            "reactive": true
         },
         "navigateToNextCell": {
             "description": "Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused.",
@@ -236,7 +238,8 @@
                     ]
                 },
                 "returnType": "CellPosition"
-            }
+            },
+            "reactive": true
         },
         "tabToNextCell": {
             "description": "Allows overriding the default behaviour for when user hits <kbd>Tab</kbd> key when a cell is focused.",
@@ -248,7 +251,8 @@
                     "nextCellPosition": "CellPosition"
                 },
                 "returnType": "CellPosition"
-            }
+            },
+            "reactive": true
         },
         "getDocument": {
             "description": "Allows overriding what `document` is used. Currently used by Drag and Drop (may extend to other places in the future). Use this when you want the grid to use a different `document` than the one available on the global scope. This can happen if docking out components (something which Electron supports).",
