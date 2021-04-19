@@ -906,11 +906,11 @@
       },
       "fill": {
         "default": "yellow",
-        "description": "The fill colour of the bars when hovered over."
+        "description": "The fill colour of the bars when hovered over. Use `undefined` for no highlight."
       },
       "stroke": {
         "type": "string",
-        "description": "The colour of the stroke around the bars when hovered over."
+        "description": "The colour of the stroke around the bars when hovered over. Use `undefined` for no highlight."
       }
     },
     "shadow": {
@@ -1219,11 +1219,11 @@
       },
       "fill": {
         "default": "yellow",
-        "description": "The fill colour of the markers when hovered over."
+        "description": "The fill colour of the markers when hovered over. Use `undefined` for no highlight."
       },
       "stroke": {
         "type": "string",
-        "description": "The colour of the stroke around the markers when hovered over."
+        "description": "The colour of the stroke around the markers when hovered over. Use `undefined` for no highlight."
       }
     },
     "lineDash": {
@@ -1454,11 +1454,11 @@
       },
       "fill": {
         "default": "yellow",
-        "description": "The fill colour of the markers when hovered over."
+        "description": "The fill colour of the markers when hovered over. Use `undefined` for no highlight."
       },
       "stroke": {
         "type": "string",
-        "description": "The colour of the stroke around the markers when hovered over."
+        "description": "The colour of the stroke around the markers when hovered over. Use `undefined` for no highlight."
       }
     },
     "lineDash": {
@@ -1703,11 +1703,11 @@
       },
       "fill": {
         "default": "yellow",
-        "description": "The fill colour of the markers when hovered over."
+        "description": "The fill colour of the markers when hovered over. Use `undefined` for no highlight."
       },
       "stroke": {
         "type": "string",
-        "description": "The colour of the stroke around the markers when hovered over."
+        "description": "The colour of the stroke around the markers when hovered over. Use `undefined` for no highlight."
       }
     },
     "listeners": {
@@ -1954,11 +1954,11 @@
       },
       "fill": {
         "default": "yellow",
-        "description": "The fill colour of the segments when hovered over."
+        "description": "The fill colour of the segments when hovered over. Use `undefined` for no highlight."
       },
       "stroke": {
         "type": "string",
-        "description": "The colour of the stroke around the segments when hovered over."
+        "description": "The colour of the stroke around the segments when hovered over. Use `undefined` for no highlight."
       }
     },
     "label": {
@@ -2239,11 +2239,11 @@
       },
       "fill": {
         "default": "yellow",
-        "description": "The fill colour of the bars when hovered over."
+        "description": "The fill colour of the bars when hovered over. Use `undefined` for no highlight."
       },
       "stroke": {
         "type": "string",
-        "description": "The colour of the stroke around the bars when hovered over."
+        "description": "The colour of the stroke around the bars when hovered over. Use `undefined` for no highlight."
       }
     },
     "fill": {
