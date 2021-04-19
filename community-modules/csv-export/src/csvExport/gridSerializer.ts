@@ -38,9 +38,9 @@ export class GridSerializer extends BeanStub {
         const columnsToExport = this.getColumnsToExport(params.allColumns, params.columnKeys);
 
         const serializeChain = _.compose(
-            this.prependContent(params),
-            this.prepareSession(columnsToExport),
             // first pass, put in the header names of the cols
+            this.prepareSession(columnsToExport),
+            this.prependContent(params),
             this.exportColumnGroups(params, columnsToExport),
             this.exportHeaders(params, columnsToExport),
             this.processPinnedTopRows(params, columnsToExport),

@@ -13,7 +13,7 @@ import { BaseExcelSerializingSession } from './baseExcelSerializingSession';
 
 export class ExcelXlsxSerializingSession extends BaseExcelSerializingSession<ExcelOOXMLDataType> {
 
-    private columnsToExport: Column[];
+    
 
     protected createExcel(data: ExcelWorksheet): string {
         const { excelStyles, config } = this;
@@ -56,11 +56,6 @@ export class ExcelXlsxSerializingSession extends BaseExcelSerializingSession<Exc
         }
 
         return type;
-    }
-
-    public prepare(columnsToExport: Column[]): void {
-        super.prepare(columnsToExport);
-        this.columnsToExport = [...columnsToExport];
     }
 
     protected addImage(rowIndex: number, column: Column, value: string): { image: ExcelImage, value?: string } | undefined {

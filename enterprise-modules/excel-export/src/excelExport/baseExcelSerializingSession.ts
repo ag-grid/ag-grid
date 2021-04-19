@@ -55,6 +55,7 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
 
     protected rows: ExcelRow[] = [];
     protected cols: ExcelColumn[];
+    protected columnsToExport: Column[];
 
 
     constructor(config: ExcelGridSerializingParams) {
@@ -75,7 +76,23 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
     protected abstract createMergedCell(styleId: string | null, type: T, value: string, numOfCells: number): ExcelCell;
 
     public addCustomContent(customContent: ExcelCell[][]): void {
-        customContent.forEach(cells => this.rows.push({cells}));
+        customContent.forEach(cells => {
+
+            this.rows.push({ cells: cells.map((cell, idx) => {
+                const image = this.addImage(this.rows.length + 1, this.columnsToExport[idx], cell.data.value as string);
+
+                if (image) {
+                    if (image.value != null) { 
+                        cell.data.value = image.value; 
+                    } else {
+                        cell.data.type = 'e';
+                        cell.data.value = null;
+                    }
+                }
+
+                return cell;
+            }) })
+        });
     }
 
     public onNewHeaderGroupingRow(): RowSpanningAccumulator {
@@ -102,6 +119,7 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
 
     public prepare(columnsToExport: Column[]): void {
         super.prepare(columnsToExport);
+        this.columnsToExport = [...columnsToExport];
         this.cols = columnsToExport.map((col, i) => this.convertColumnToExcel(col, i));
     }
 

@@ -125,7 +125,9 @@ export interface ExcelImage {
     height?: number;
     position?: {
         row?: number;
+        rowSpan?: number;
         column?: number;
+        colSpan?: number;
         offsetX?: number;
         offsetY?: number;
     };
