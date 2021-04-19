@@ -1,6 +1,7 @@
 import {
     Column,
     ColumnWidthCallbackParams,
+    RowHeightCallbackParams,
     Constants,
     ExcelCell,
     ExcelColumn,
@@ -28,10 +29,10 @@ export interface ExcelGridSerializingParams extends GridSerializingParams {
     baseExcelStyles: ExcelStyle[];
     columnWidth?: number | ((params: ColumnWidthCallbackParams) => number);
     headerFooterConfig?: ExcelHeaderFooterConfig;
-    headerRowHeight?: number;
+    headerRowHeight?: number | ((params: RowHeightCallbackParams) => number);
+    rowHeight?: number | ((params: RowHeightCallbackParams) => number);
     margins?: ExcelSheetMargin;
     pageSetup?: ExcelSheetPageSetup;
-    rowHeight?: number;
     sheetName: string;
     styleLinker: (rowType: RowType, rowIndex: number, value: string, column?: Column, node?: RowNode) => string[];
     addImageToCell?: (rowIndex: number, column: Column, value: string) => { image: ExcelImage, value?: string } | undefined;
@@ -76,10 +77,11 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
     protected abstract createMergedCell(styleId: string | null, type: T, value: string, numOfCells: number): ExcelCell;
 
     public addCustomContent(customContent: ExcelCell[][]): void {
-        customContent.forEach(cells => {
+        customContent.forEach(row => {
+            const rowLen = this.rows.length + 1;
 
-            this.rows.push({ cells: cells.map((cell, idx) => {
-                const image = this.addImage(this.rows.length + 1, this.columnsToExport[idx], cell.data.value as string);
+            row.forEach((cell, idx) => {
+                const image = this.addImage(rowLen, this.columnsToExport[idx], cell.data.value as string);
 
                 if (image) {
                     if (image.value != null) { 
@@ -89,9 +91,12 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
                         cell.data.value = null;
                     }
                 }
+            });
 
-                return cell;
-            }) })
+            this.rows.push({
+                height: this.getHeightFromProperty(rowLen, this.config.rowHeight),
+                cells: row
+            });
         });
     }
 
@@ -99,7 +104,7 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
         const currentCells: ExcelCell[] = [];
         this.rows.push({
             cells: currentCells,
-            height: this.config.headerRowHeight
+            height: this.getHeightFromProperty(this.rows.length + 1, this.config.headerRowHeight)
         });
         return {
             onColumn: (header: string, index: number, span: number) => {
@@ -175,11 +180,11 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
         };
     }
 
-    private onNewRow(onNewColumnAccumulator: (rowIndex: number, currentCells: ExcelCell[]) => (column: Column, index: number, node: RowNode) => void, height?: number): RowAccumulator {
+    private onNewRow(onNewColumnAccumulator: (rowIndex: number, currentCells: ExcelCell[]) => (column: Column, index: number, node: RowNode) => void, height?: number | ((params: RowHeightCallbackParams) => number)): RowAccumulator {
         const currentCells: ExcelCell[] = [];
         this.rows.push({
             cells: currentCells,
-            height
+            height: this.getHeightFromProperty(this.rows.length + 1, this.config.rowHeight)
         });
         return {
             onColumn: onNewColumnAccumulator.bind(this, this.rows.length, currentCells)()
@@ -208,6 +213,22 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
                 currentCells.push(this.createCell(excelStyleId, this.getDataTypeForValue(valueForCell), valueForCell));
             }
         };
+    }
+
+    private getHeightFromProperty(rowIndex: number, height?: number | ((params: RowHeightCallbackParams) => number)): number | undefined {
+        if (!height) { return; }
+
+        let finalHeight: number;
+
+        if (typeof height === 'number') {
+            finalHeight = height;
+        } else {
+            const heightFunc = height as Function;
+            finalHeight = heightFunc({ rowIndex });
+        }
+
+        // divide the height by 1.3333 because the height is provided in pixels, but Excel only accepts `pt`.
+        return Math.round(finalHeight / 1.333333);
     }
 
     private getStyleId(styleIds?: string[] | null): string | null {

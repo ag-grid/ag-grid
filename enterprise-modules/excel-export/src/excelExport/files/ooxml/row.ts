@@ -38,7 +38,7 @@ const addEmptyCells = (cells: ExcelCell[], rowIdx: number): void => {
 
 const rowFactory: ExcelOOXMLTemplate = {
     getTemplate(config: ExcelRow, idx: number) {
-        const {index, collapsed, hidden, height, s, cells = []} = config;
+        const { index, collapsed, hidden, height, s, cells = [] } = config;
         addEmptyCells(cells, idx);
         const children = cells.map(cellFactory.getTemplate);
 

@@ -183,14 +183,18 @@ export interface ColumnWidthCallbackParams {
     index: number;
 }
 
+export interface RowHeightCallbackParams {
+    rowIndex: number;
+}
+
 export interface ExcelExportParams extends ExportParams<ExcelCell[][]> {
     author?: string;
     autoConvertFormulas?: boolean;
     columnWidth?: number | ((params: ColumnWidthCallbackParams) => number);
     exportMode?: 'xlsx' | 'xml';
     fontSize?: number;
-    headerRowHeight?: number;
-    rowHeight?: number;
+    headerRowHeight?: number | ((params: RowHeightCallbackParams) => number);
+    rowHeight?: number | ((params: RowHeightCallbackParams) => number);
     sheetName?: string;
     margins?: ExcelSheetMargin;
     pageSetup?: ExcelSheetPageSetup;

@@ -264,8 +264,8 @@ function toggleOptionsCollapsed() {
 
 var defaultExportParams = {
     skipColumnGroupHeaders: true,
-    headerRowHeight: 30,
-    rowHeight: 22,
+    headerRowHeight: 40,
+    rowHeight: 30,
     fontSize: 14,
     addImageToCell: function(rowIndex, column, value) {
         if (column.colId === 'country') {
