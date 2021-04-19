@@ -549,6 +549,11 @@
         "left"
       ]
     },
+    "thickness": {
+      "type": "number",
+      "description": "If set to a non-zero value, the axis will have the specified thickness regardless of label size.",
+      "default": 0
+    },
     "nice": {
       "type": "boolean",
       "default": true,

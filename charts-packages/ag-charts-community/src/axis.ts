@@ -564,6 +564,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
         // bboxRect.height = bbox.height;
     }
 
+    thickness: number = 0;
+
     computeBBox(options?: { excludeTitle: boolean }): BBox {
         const { title, lineNode } = this;
         const labels = this.groupSelection.selectByClass(Text);
