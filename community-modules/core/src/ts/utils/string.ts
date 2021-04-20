@@ -104,6 +104,12 @@ export function utf8_encode(s: string | null): string {
     return byteString;
 }
 
+/**
+ * @param str The string to be padded
+ * @param totalLength The final length needed
+ * @param padStr The string to generate the padding
+ * @returns The padded string
+ */
 export function padStart(str: string, totalLength: number, padStr: string): string {
     if (str.length > totalLength) {
       return str;
