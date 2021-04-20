@@ -5,7 +5,7 @@
 }
 
 #myGrid {
-    flex: 1 1 0px;
+    flex: 1 1 0;
     width: 100%;
 }
 
@@ -15,23 +15,4 @@
     font-size: 13px;
     align-items: center;
     margin-bottom: 5px;
-}
-
-.example-header label {
-    margin-right: 15px;
-}
-
-.example-header button {
-    height: 25px;
-    cursor: pointer;
-}
-
-.greenBackground {
-    background-color: #008000;
-    color: #e0ffc1;
-}
-
-.blueBackground {
-    background-color: #00008B;
-    color: white;
 }

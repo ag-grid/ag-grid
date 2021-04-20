@@ -1,50 +1,30 @@
-var gridOptions = {
+const gridOptions = {
     columnDefs: [
         { headerName: 'As provided', field: "rawValue" },
         { headerName: 'As boolean', field: "rawValue", cellClass: 'booleanType' },
         { headerName: 'As string', field: "rawValue", cellClass: 'stringType' },
         { headerName: 'Date', field: "dateValue", cellClass: 'dateType', minWidth: 220 }
     ],
-
     defaultColDef: {
-        sortable: true,
-        filter: true,
+        flex: 1,
         minWidth: 100,
         resizable: true,
-        flex: 1
     },
-
+    excelStyles: [
+        { id: 'booleanType', dataType: 'Boolean' },
+        { id: 'stringType', dataType: 'String' },
+        { id: 'dateType', dataType: 'DateTime' }
+    ],
+    rowData: [{rawValue: 1, dateValue: '2009-04-20T00:00:00.000'}],
     popupParent: document.body,
-
-    rowData: [{
-        rawValue: 1,
-        dateValue: '2009-04-20T00:00:00.000'
-    }],
-
-    excelStyles:[
-        {
-            id: 'booleanType',
-            dataType: 'Boolean'
-        },{
-            id: 'stringType',
-            dataType: 'String'
-        },{
-            id: 'dateType',
-            dataType: 'DateTime'
-        }
-    ]
 };
 
-function getBooleanValue(cssSelector) {
-    return document.querySelector(cssSelector).checked === true;
-}
-
 function onBtExport() {
-    gridOptions.api.exportDataAsExcel({});
+    gridOptions.api.exportDataAsExcel();
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
-    var gridDiv = document.querySelector('#myGrid');
+document.addEventListener('DOMContentLoaded', () => {
+    const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 });
