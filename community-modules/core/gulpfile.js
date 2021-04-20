@@ -39,7 +39,7 @@ const tscSrcTask = () => {
     const tsProject = gulpTypescript.createProject('tsconfig.json', { typescript: typescript });
 
     const tsResult = gulp
-        .src(['src/ts/**/*.ts', '!src/ts/**/*.test.ts'])
+        .src(['src/ts/**/*.ts', '!src/ts/**/*.test.ts', '!src/ts/test-utils/mock.ts'])
         .pipe(sourcemaps.init())
         .pipe(tsProject());
 
@@ -58,7 +58,7 @@ const tscSrcEs6Task = () => {
     const tsProject = gulpTypescript.createProject('./tsconfig.es6.json', { typescript: typescript });
 
     const tsResult = gulp
-        .src(['src/ts/**/*.ts', '!src/ts/**/*.test.ts'])
+        .src(['src/ts/**/*.ts', '!src/ts/**/*.test.ts', '!src/ts/test-utils/mock.ts'])
         .pipe(tsProject());
 
     return merge([
