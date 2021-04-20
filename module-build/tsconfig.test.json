@@ -1,6 +1,17 @@
 {
     "extends": "./tsconfig.json",
     "compilerOptions": {
-        "types": ["jest"]
-    }
+        "module": "commonjs",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": false,
+        "declaration": true,
+        "target": "ES2015",
+        "noImplicitAny": true,
+        "sourceMap": true,
+        "types": ["jest"],
+        "lib": [
+            "es2015",
+            "dom"
+        ]
+    },
 }
