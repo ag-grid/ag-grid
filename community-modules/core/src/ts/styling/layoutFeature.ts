@@ -1,7 +1,7 @@
-import {Constants} from "../constants/constants";
-import {Autowired, PostConstruct} from "../context/context";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {BeanStub} from "../context/beanStub";
+import { Constants } from "../constants/constants";
+import { Autowired, PostConstruct } from "../context/context";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { BeanStub } from "../context/beanStub";
 
 export interface LayoutView {
     updateLayoutClasses(params: UpdateLayoutClassesParams): void;

@@ -12,9 +12,9 @@ export class PropertyKeys {
 
     public static OBJECT_PROPERTIES = [
         'components', 'frameworkComponents', 'rowStyle', 'context', 'autoGroupColumnDef', 'localeText', 'icons',
-        'datasource', 'serverSideDatasource', 'viewportDatasource', 'groupRowRendererParams', 'aggFuncs','fullWidthCellRendererParams', 
-        'defaultColGroupDef', 'defaultColDef', 'defaultExportParams', 'defaultCsvExportParams', 'defaultExcelExportParams','columnTypes', 
-        'rowClassRules', 'detailGridOptions', 'detailCellRendererParams', 'loadingCellRendererParams', 'loadingOverlayComponentParams', 
+        'datasource', 'serverSideDatasource', 'viewportDatasource', 'groupRowRendererParams', 'aggFuncs', 'fullWidthCellRendererParams',
+        'defaultColGroupDef', 'defaultColDef', 'defaultExportParams', 'defaultCsvExportParams', 'defaultExcelExportParams', 'columnTypes',
+        'rowClassRules', 'detailGridOptions', 'detailCellRendererParams', 'loadingCellRendererParams', 'loadingOverlayComponentParams',
         'noRowsOverlayComponentParams', 'popupParent', 'colResizeDefault', 'reduxStore', 'statusBar', 'sideBar', 'chartThemeOverrides',
         'customChartThemes'
     ];

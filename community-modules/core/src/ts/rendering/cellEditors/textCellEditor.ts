@@ -54,7 +54,7 @@ export class TextCellEditor extends PopupComponent implements ICellEditorComp {
             startValue = this.getStartValue(params);
         }
 
-        if (startValue!=null) {
+        if (startValue != null) {
             eInput.setValue(startValue, true);
         }
 

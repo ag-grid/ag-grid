@@ -17,6 +17,7 @@ import { Beans } from "../../rendering/beans";
 import { Constants } from "../../constants/constants";
 import { CenterWidthFeature } from "../centerWidthFeature";
 import { DragListenerFeature } from "./dragListenerFeature";
+import { getAllValuesInObject } from "../../utils/object";
 
 export enum RowContainerNames {
     LEFT = 'left',
@@ -72,7 +73,6 @@ function templateFactory(): string {
     let res: string;
 
     switch (name) {
-
         case RowContainerNames.LEFT :
         case RowContainerNames.RIGHT :
         case RowContainerNames.FULL_WIDTH :
@@ -83,7 +83,7 @@ function templateFactory(): string {
         case RowContainerNames.BOTTOM_RIGHT :
         case RowContainerNames.BOTTOM_FULL_WITH :
             res = /* html */
-            `<div class="${containerClass}" ref="eContainer" role="presentation" unselectable="on"></div>`
+            `<div class="${containerClass}" ref="eContainer" role="presentation" unselectable="on"></div>`;
             break;
 
         case RowContainerNames.CENTER :
@@ -100,7 +100,7 @@ function templateFactory(): string {
             res = /* html */
             `<div class="${viewportClass}" ref="eViewport" role="presentation" unselectable="on">
                 <div class="${containerClass}" ref="eContainer" role="presentation" unselectable="on"></div>
-            </div>`
+            </div>`;
             break;
 
         default: return '';
@@ -120,14 +120,11 @@ export class RowContainerComp extends Component {
     @RefSelector('eContainer') private eContainer: HTMLElement;
     @RefSelector('eWrapper') private eWrapper: HTMLElement;
 
-    private renderedRows: {[id: string]: RowComp} = {};
-
     private readonly name: RowContainerNames;
 
+    private renderedRows: {[id: string]: RowComp} = {};
     private enableRtl: boolean;
-
     private scrollTop: number;
-
     private embedFullWidthRows: boolean;
 
     // we ensure the rows are in the dom in the order in which they appear on screen when the
@@ -142,7 +139,6 @@ export class RowContainerComp extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-
         this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
         this.embedFullWidthRows = this.gridOptionsWrapper.isEmbedFullWidthRows();
 
@@ -168,19 +164,19 @@ export class RowContainerComp extends Component {
         const allLeft = [RowContainerNames.LEFT, RowContainerNames.BOTTOM_LEFT, RowContainerNames.TOP_LEFT];
         const allRight = [RowContainerNames.RIGHT, RowContainerNames.BOTTOM_RIGHT, RowContainerNames.TOP_RIGHT];
 
-        this.forContainers(allLeft,()=> this.createManagedBean(new SetPinnedLeftWidthFeature(this.eContainer)))
-        this.forContainers(allRight,()=> this.createManagedBean(new SetPinnedRightWidthFeature(this.eContainer)))
-        this.forContainers(allMiddle,()=> this.createManagedBean(new SetHeightFeature(this.eContainer, this.eWrapper)))
-        this.forContainers(allNoFW,()=> this.createManagedBean(new DragListenerFeature(this.eContainer)));
+        this.forContainers(allLeft, () => this.createManagedBean(new SetPinnedLeftWidthFeature(this.eContainer)));
+        this.forContainers(allRight, () => this.createManagedBean(new SetPinnedRightWidthFeature(this.eContainer)));
+        this.forContainers(allMiddle, () => this.createManagedBean(new SetHeightFeature(this.eContainer, this.eWrapper)));
+        this.forContainers(allNoFW, () => this.createManagedBean(new DragListenerFeature(this.eContainer)));
 
-        this.forContainers(allCenter, ()=> this.createManagedBean(
+        this.forContainers(allCenter, () => this.createManagedBean(
             new CenterWidthFeature(width => this.eContainer.style.width = `${width}px`))
         );
 
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_ROWS_CHANGED, this.onDisplayedRowsChanged.bind(this));
     }
 
-    private forContainers(names: RowContainerNames[], callback: (()=>void)): void {
+    private forContainers(names: RowContainerNames[], callback: (() => void)): void {
         if (names.indexOf(this.name) >= 0) {
             callback();
         }
@@ -190,8 +186,8 @@ export class RowContainerComp extends Component {
     // scroll the column into view. we do not want this, the pinned sections should never scroll.
     // so we listen to scrolls on these containers and reset the scroll if we find one.
     private stopHScrollOnPinnedRows(): void {
-        this.forContainers([RowContainerNames.TOP_CENTER, RowContainerNames.BOTTOM_CENTER], ()=> {
-            const resetScrollLeft = ()=> this.eViewport.scrollLeft = 0;
+        this.forContainers([RowContainerNames.TOP_CENTER, RowContainerNames.BOTTOM_CENTER], () => {
+            const resetScrollLeft = () => this.eViewport.scrollLeft = 0;
             this.addManagedListener(this.eViewport, 'scroll', resetScrollLeft);
         });
     }
@@ -265,7 +261,7 @@ export class RowContainerComp extends Component {
 
             const match = fullWithContainer ?
                 !this.embedFullWidthRows && fullWidthController
-                : this.embedFullWidthRows || !fullWidthController
+                : this.embedFullWidthRows || !fullWidthController;
 
             return match;
         };
@@ -274,7 +270,7 @@ export class RowContainerComp extends Component {
 
         rowConsToRender.filter(doesRowMatch).forEach(processRow);
 
-        Object.values(oldRows).forEach( rowComp => this.removeRow(rowComp.getGui()) );
+        getAllValuesInObject(oldRows).forEach(rowComp => this.removeRow(rowComp.getGui()));
     }
 
     private getRowCons(): RowController[] {

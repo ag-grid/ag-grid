@@ -4,7 +4,7 @@ const buildSharedString = (strMap: Map<string, number>): XmlElement[] => {
     const ret: XmlElement[] = [];
 
     strMap.forEach((val, key) => {
-        let textNode = key.toString();
+        const textNode = key.toString();
         const child: XmlElement = {
             name: 't',
             textNode: _.utf8_encode(_.escapeString(textNode))

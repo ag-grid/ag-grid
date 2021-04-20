@@ -13,14 +13,12 @@ import { BaseExcelSerializingSession } from './baseExcelSerializingSession';
 
 export class ExcelXlsxSerializingSession extends BaseExcelSerializingSession<ExcelOOXMLDataType> {
 
-    
-
     protected createExcel(data: ExcelWorksheet): string {
         const { excelStyles, config } = this;
         const { margins, pageSetup, headerFooterConfig } = config;
-        
+
         return ExcelXlsxFactory.createExcel(
-            excelStyles, 
+            excelStyles,
             data,
             margins,
             pageSetup,
@@ -88,7 +86,7 @@ export class ExcelXlsxSerializingSession extends BaseExcelSerializingSession<Exc
             styleId: !!this.getStyleById(styleId) ? styleId! : undefined,
             data: {
                 type: type,
-                value: type === 's'? ExcelXlsxFactory.getStringPosition(value == null ? '' : value).toString() : value
+                value: type === 's' ? ExcelXlsxFactory.getStringPosition(value == null ? '' : value).toString() : value
             },
             mergeAcross: numOfCells
         };
@@ -104,7 +102,7 @@ export class ExcelXlsxSerializingSession extends BaseExcelSerializingSession<Exc
                 return value.slice(1);
             case 'n':
                 return Number(value).toString();
-            default: 
+            default:
                 return value;
         }
     }

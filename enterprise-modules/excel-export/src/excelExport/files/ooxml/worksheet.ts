@@ -80,8 +80,8 @@ export const getExcelColumnName = (colIdx: number): string => {
 };
 
 const getPageOrientation = (orientation?: 'Portrait' | 'Landscape'): 'portrait' | 'landscape' => {
-    if (!orientation || (orientation !== 'Portrait' && orientation !== 'Landscape')) { 
-        return 'portrait'; 
+    if (!orientation || (orientation !== 'Portrait' && orientation !== 'Landscape')) {
+        return 'portrait';
     }
 
     return orientation.toLocaleLowerCase() as 'portrait' | 'landscape';
@@ -209,7 +209,7 @@ const processHeaderFooterContent = (content: ExcelHeaderFooterContent[]): string
 
             if (font.size) { output += `&amp;${font.size}` }
             if (font.strikeThrough) { output += '&amp;S' }
-            if (font.underline) { 
+            if (font.underline) {
                 output += `&amp;${font.underline === 'Double' ? 'E' : 'U'}`;
              }
             if (font.color) { output += `&amp;K${font.color.replace('#', '').toUpperCase()}` }
@@ -247,7 +247,7 @@ const buildHeaderFooter = (headerFooterConfig: ExcelHeaderFooterConfig): XmlElem
                 });
             }
         }
-        
+
     });
 
     return headersAndFooters;

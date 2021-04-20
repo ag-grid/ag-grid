@@ -42,7 +42,7 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
 
     @PostConstruct
     private postConstruct(): void {
-        this.controllersService.whenReady( p => {
+        this.controllersService.whenReady(p => {
             let containers: RowContainerController[];
             switch (this.pinned) {
                 case Constants.PINNED_LEFT:
@@ -55,7 +55,7 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
                     containers = [p.centerRowContainerCon, p.bottomCenterRowContainerCon, p.topCenterRowContainerCon];
                     break;
             }
-            this.eSecondaryContainers = containers.map( c => c.getContainerElement() );
+            this.eSecondaryContainers = containers.map(c => c.getContainerElement());
         });
     }
 

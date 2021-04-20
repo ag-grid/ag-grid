@@ -18,14 +18,14 @@ const getAnchor = (name: string, image: ExcelImage): XmlElement => {
     if (!image.width || !image.height) {
         image.fitCell = true;
     }
-    
-    const diff = name === 'to' && image.fitCell ? 1: 0;
+
+    const diff = name === 'to' && image.fitCell ? 1 : 0;
 
     let offsetX: number = 0
     let offsetY: number = 0
     let width: number = 0
     let height: number = 0
-    
+
     if (!image.fitCell) {
         offsetX = convertFromPixelToExcel((image.position && image.position.offsetX) || 0);
         offsetY = convertFromPixelToExcel((image.position && image.position.offsetY) || 0);
@@ -189,7 +189,7 @@ const getBlipFill = (image: ExcelImage, index: number) => {
 
     if (image.recolor) {
         if (!blipChildren) { blipChildren = []; }
-        switch(image.recolor.toLocaleLowerCase()) {
+        switch (image.recolor.toLocaleLowerCase()) {
             case 'grayscale':
                 blipChildren.push({ name: 'a:grayscl' })
                 break;
@@ -285,7 +285,7 @@ const getPicture = (image: ExcelImage, currentIndex: number, worksheetImageIndex
     return {
         name: 'xdr:pic',
         children: [
-            getNvPicPr(image, currentIndex + 1), 
+            getNvPicPr(image, currentIndex + 1),
             getBlipFill(image, worksheetImageIndex + 1),
             getSpPr(image)
         ]

@@ -95,10 +95,10 @@ export class RowCssClassCalculator {
         }
 
         if (params.fullWidthRow) {
-            if (params.pinned===Constants.PINNED_LEFT) {
+            if (params.pinned === Constants.PINNED_LEFT) {
                 classes.push('ag-cell-last-left-pinned');
             }
-            if (params.pinned===Constants.PINNED_RIGHT) {
+            if (params.pinned === Constants.PINNED_RIGHT) {
                 classes.push('ag-cell-first-right-pinned');
             }
         }

@@ -181,12 +181,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     private resetRowTops(changedPath: ChangedPath): void {
 
         const displayedRowsMapped: RowNodeMap = {};
-        this.rowsToDisplay.forEach( rowNode => {
-            if (rowNode.id!=null) { displayedRowsMapped[rowNode.id] = rowNode }
-        } );
+        this.rowsToDisplay.forEach(rowNode => {
+            if (rowNode.id != null) { displayedRowsMapped[rowNode.id] = rowNode }
+        });
 
         const clearIfNotDisplayed = (rowNode: RowNode) => {
-            if (rowNode && rowNode.id!=null && displayedRowsMapped[rowNode.id]==null) {
+            if (rowNode && rowNode.id != null && displayedRowsMapped[rowNode.id] == null) {
                 rowNode.clearRowTopAndRowIndex();
             }
         };

@@ -44,6 +44,6 @@ export class FakeHorizontalScrollComp extends Component {
         this.controller = this.createManagedBean(new FakeHorizontalScrollController());
         this.controller.setView(view, this.eViewport, this.eContainer);
 
-        this.createManagedBean(new CenterWidthFeature( width => this.eContainer.style.width = `${width}px`));
+        this.createManagedBean(new CenterWidthFeature(width => this.eContainer.style.width = `${width}px`));
     }
 }

@@ -148,7 +148,7 @@ export class RowController extends BeanStub {
         }
         if (this.fadeRowIn) {
             executeNextVMTurn(() => {
-                this.allRowComps.forEach( rowComp => removeCssClass(rowComp.getGui(), 'ag-opacity-zero'));
+                this.allRowComps.forEach(rowComp => removeCssClass(rowComp.getGui(), 'ag-opacity-zero'));
             });
         }
     }
@@ -268,7 +268,7 @@ export class RowController extends BeanStub {
 
         if (this.updateColumnListsPending) { return; }
         this.beans.taskQueue.createTask(
-            ()=> {
+            () => {
                 if (!this.active) { return; }
                 this.updateColumnListsImpl();
             },
@@ -289,7 +289,7 @@ export class RowController extends BeanStub {
             this.leftCols = this.beans.columnController.getDisplayedLeftColumnsForRow(this.rowNode);
             this.rightCols = this.beans.columnController.getDisplayedRightColumnsForRow(this.rowNode);
         }
-        this.allRowComps.forEach( rc => rc.onColumnChanged() );
+        this.allRowComps.forEach(rc => rc.onColumnChanged());
     }
 
     private setAnimateFlags(animateIn: boolean): void {
@@ -527,7 +527,7 @@ export class RowController extends BeanStub {
     }
 
     public refreshCell(cellComp: CellComp) {
-        this.allRowComps.forEach( rc => rc.destroyCells([cellComp]));
+        this.allRowComps.forEach(rc => rc.destroyCells([cellComp]));
         this.updateColumnLists();
     }
 
@@ -779,7 +779,7 @@ export class RowController extends BeanStub {
     }
 
     public forEachCellComp(callback: (renderedCell: CellComp) => void): void {
-        this.allRowComps.forEach( rc => rc.forEachCellComp(callback));
+        this.allRowComps.forEach(rc => rc.forEachCellComp(callback));
     }
 
     private postProcessClassesFromGridOptions(): void {
@@ -1019,7 +1019,7 @@ export class RowController extends BeanStub {
     }
 
     public destroySecondPass(): void {
-        this.allRowComps.forEach( c => c.destroy() );
+        this.allRowComps.forEach(c => c.destroy());
         this.allRowComps.length = 0;
     }
 
@@ -1102,10 +1102,10 @@ export class RowController extends BeanStub {
     }
 
     public getRenderedCellForColumn(column: Column): CellComp | null {
-        let cellComp = this.allRowComps.map( rc => rc.getCellComp(column.getColId()) ).find( c => c);
+        let cellComp = this.allRowComps.map(rc => rc.getCellComp(column.getColId())).find(c => c);
         if (cellComp) { return cellComp; }
-        cellComp = this.allRowComps.map( rc => rc.getCellCompSpanned(column) ).find( c => c);
-        if (cellComp) { return cellComp;} else {return null;}
+        cellComp = this.allRowComps.map(rc => rc.getCellCompSpanned(column)).find(c => c);
+        if (cellComp) { return cellComp; } else {return null; }
     }
 
     private onRowIndexChanged(): void {

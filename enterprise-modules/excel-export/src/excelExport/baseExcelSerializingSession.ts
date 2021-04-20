@@ -58,7 +58,6 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
     protected cols: ExcelColumn[];
     protected columnsToExport: Column[];
 
-
     constructor(config: ExcelGridSerializingParams) {
         super(config);
         this.config = _.assign({}, config);
@@ -84,8 +83,8 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
                 const image = this.addImage(rowLen, this.columnsToExport[idx], cell.data.value as string);
 
                 if (image) {
-                    if (image.value != null) { 
-                        cell.data.value = image.value; 
+                    if (image.value != null) {
+                        cell.data.value = image.value;
                     } else {
                         cell.data.type = 'e';
                         cell.data.value = null;

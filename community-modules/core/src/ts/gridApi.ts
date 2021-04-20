@@ -22,7 +22,7 @@ import { IViewportDatasource } from "./interfaces/iViewportDatasource";
 import { IMenuFactory } from "./interfaces/iMenuFactory";
 import { IAggFuncService } from "./interfaces/iAggFuncService";
 import { IFilterComp } from "./interfaces/iFilter";
-import {CsvExportParams, ProcessCellForExportParams} from "./interfaces/exportParams";
+import { CsvExportParams, ProcessCellForExportParams } from "./interfaces/exportParams";
 import {
     ExcelExportMultipleSheetParams,
     ExcelExportParams,
@@ -236,7 +236,7 @@ export class GridApi {
                 break;
         }
 
-        this.controllersService.whenReady( ()=> {
+        this.controllersService.whenReady(() => {
             this.gridBodyCon = this.controllersService.getGridBodyController();
         });
     }
@@ -1048,7 +1048,7 @@ export class GridApi {
 
     public doLayout() {
         const message = `AG Grid - since version 25.1, doLayout was taken out, as it's not needed. The grid responds to grid size changes automatically`;
-        doOnce(()=> console.warn(message), 'doLayoutDeprecated');
+        doOnce(() => console.warn(message), 'doLayoutDeprecated');
     }
 
     public resetRowHeights() {

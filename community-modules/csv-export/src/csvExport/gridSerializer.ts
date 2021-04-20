@@ -55,7 +55,7 @@ export class GridSerializer extends BeanStub {
     private processRow<T>(gridSerializingSession: GridSerializingSession<T>, params: ExportParams<T>, columnsToExport: Column[], node: RowNode): void {
         const rowSkipper: (params: ShouldRowBeSkippedParams) => boolean = params.shouldRowBeSkipped || (() => false);
         const gridOptionsWrapper = this.gridOptionsWrapper;
-        const context= gridOptionsWrapper.getContext();
+        const context = gridOptionsWrapper.getContext();
         const api = gridOptionsWrapper.getApi()!;
         const columnApi = gridOptionsWrapper.getColumnApi()!;
         const skipSingleChildrenGroup = gridOptionsWrapper.isGroupRemoveSingleChildren();
@@ -182,7 +182,6 @@ export class GridSerializer extends BeanStub {
             const onlySelectedNonStandardModel = !rowModelNormal && params.onlySelected;
             const processRow = this.processRow.bind(this, gridSerializingSession, params, columnsToExport);
 
-
             if (this.columnController.isPivotMode()) {
                 if (rowModelNormal) {
                     (rowModel as IClientSideRowModel).forEachPivotNode(processRow);
@@ -228,7 +227,7 @@ export class GridSerializer extends BeanStub {
         if (columnKeys && columnKeys.length) {
             return this.columnController.getGridColumns(columnKeys);
         }
-        
+
         if (allColumns && !isPivotMode) {
             // add auto group column for tree data
            const columns = this.gridOptionsWrapper.isTreeData()

@@ -262,7 +262,7 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
                 const res = setFilterModel(filter, null);
                 this.updateActiveList(index);
                 return res;
-            } )!;
+            })!;
         } else {
             _.forEach(this.filters!, (filter, index) => {
                 const filterModel = model.filterModels!.length > index ? model.filterModels![index] : null;
@@ -361,7 +361,6 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
 
     private filterChanged(index: number, additionalEventAttributes: any): void {
         this.updateActiveList(index);
-
 
         this.filterChangedCallback!(additionalEventAttributes);
         const changedFilter = this.filters![index];

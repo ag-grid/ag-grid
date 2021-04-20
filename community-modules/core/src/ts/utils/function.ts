@@ -40,10 +40,10 @@ export function executeInAWhile(funcs: Function[]): void {
     executeAfter(funcs, 400);
 }
 
-let executeNextVMTurnFuncs: Function[] = [];
+const executeNextVMTurnFuncs: Function[] = [];
 let executeNextVMTurnPending = false;
 
-export function executeNextVMTurn(func: ()=>void): void {
+export function executeNextVMTurn(func: () => void): void {
     executeNextVMTurnFuncs.push(func);
 
     if (executeNextVMTurnPending) { return; }

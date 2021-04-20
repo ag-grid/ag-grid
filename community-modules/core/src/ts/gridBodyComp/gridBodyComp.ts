@@ -45,7 +45,7 @@ const GRID_BODY_TEMPLATE = /* html */
             <ag-row-container ref="bottomLeftContainer" name="${RowContainerNames.BOTTOM_LEFT}"></ag-row-container>
             <ag-row-container ref="bottomCenterContainer" name="${RowContainerNames.BOTTOM_CENTER}"></ag-row-container>
             <ag-row-container ref="bottomRightContainer" name="${RowContainerNames.BOTTOM_RIGHT}"></ag-row-container>
-            <ag-row-container ref="bottomFullWidthContainer" name="${RowContainerNames.BOTTOM_FULL_WITH}"></ag-row-container> 
+            <ag-row-container ref="bottomFullWidthContainer" name="${RowContainerNames.BOTTOM_FULL_WITH}"></ag-row-container>
         </div>
         <ag-fake-horizontal-scroll ref="fakeHScroll"></ag-fake-horizontal-scroll>
         <ag-overlay-wrapper ref="overlayWrapper"></ag-overlay-wrapper>
