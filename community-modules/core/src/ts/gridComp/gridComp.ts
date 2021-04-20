@@ -37,7 +37,7 @@ export class GridComp extends ManagedFocusComponent {
 
         const view: GridCompView = {
             destroyGridUi:
-                ()=> this.destroyBean(this),
+                () => this.destroyBean(this),
             setRtlClass:
                 (cssClass: string) => addCssClass(this.getGui(), cssClass),
             addOrRemoveKeyboardFocusClass:

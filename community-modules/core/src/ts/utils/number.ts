@@ -1,11 +1,7 @@
-export function padStart(value: number, totalStringSize: number): string {
-    let asString = `${value}`;
+import { padStart } from "./string";
 
-    while (asString.length < totalStringSize) {
-        asString = `0${asString}`;
-    }
-
-    return asString;
+export function padStartWidthZeros(value: number, totalStringSize: number): string {
+    return padStart(value.toString(), totalStringSize, '0');
 }
 
 export function createArrayOfNumbers(first: number, last: number): number[] {

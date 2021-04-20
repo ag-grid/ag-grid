@@ -79,7 +79,7 @@ export class RangeController extends BeanStub implements IRangeController {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, this.refreshLastRangeStart.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.onColumnVisibleChange.bind(this));
 
-        this.controllersService.whenReady( () => {
+        this.controllersService.whenReady(() => {
             const gridBodyCon = this.controllersService.getGridBodyController();
             this.autoScrollService = new AutoScrollService(gridBodyCon, this.gridOptionsWrapper);
         });

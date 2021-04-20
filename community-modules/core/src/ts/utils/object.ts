@@ -100,9 +100,9 @@ export function getAllKeysInObjects(objects: any[]): string[] {
 
 export function getAllValuesInObject<T extends Object>(obj: T): any[] {
     if (!obj) { return []; }
-
-    if (typeof Object.values === 'function') {
-        return Object.values(obj);
+    const anyObject = Object as any;
+    if (typeof anyObject.values === 'function') {
+        return anyObject.values(obj);
     }
 
     const ret: any[] = [];

@@ -1,6 +1,6 @@
 import { Component } from "../../widgets/component";
 import { IComponent } from "../../interfaces/iComponent";
-import {GridApi} from "../../gridApi";
+import { GridApi } from "../../gridApi";
 
 export interface INoRowsOverlayParams {
     api: GridApi

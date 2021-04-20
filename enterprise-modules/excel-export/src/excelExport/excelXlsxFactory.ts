@@ -144,8 +144,7 @@ export class ExcelXlsxFactory {
 
         this.workbookImageIds = new Map();
         this.worksheetImageIds = new Map();
-        
-        
+
         this.sheetNames = [];
         this.factoryMode = ExcelFactoryMode.SINGLE_SHEET;
     }
@@ -229,7 +228,6 @@ export class ExcelXlsxFactory {
                 Target: `../media/image${this.workbookImageIds.get(key)!.index + 1}.${value.type}`
             })
         });
-
 
         return this.createXmlPart(relationshipsFactory.getTemplate(XMLArr));
     }

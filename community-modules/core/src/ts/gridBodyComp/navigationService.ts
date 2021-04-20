@@ -44,7 +44,7 @@ export class NavigationService extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.controllersService.whenReady( p => {
+        this.controllersService.whenReady(p => {
             this.gridBodyCon = p.gridBodyCon;
         });
     }

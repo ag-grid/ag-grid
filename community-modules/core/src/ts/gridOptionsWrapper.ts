@@ -160,7 +160,6 @@ export class GridOptionsWrapper {
     public static PROP_IS_SERVER_SIDE_GROUP = 'isServerSideGroup';
     public static PROP_GET_SERVER_SIDE_GROUP_KEY = 'getServerSideGroupKey';
 
-
     @Autowired('gridOptions') private readonly gridOptions: GridOptions;
     @Autowired('columnController') private readonly columnController: ColumnController;
     @Autowired('eventService') private readonly eventService: EventService;
@@ -1144,7 +1143,7 @@ export class GridOptionsWrapper {
     public getDefaultExportParams(type: 'excel'): ExcelExportParams | undefined;
     public getDefaultExportParams(type: 'csv' | 'excel'): CsvExportParams | ExcelExportParams | undefined {
         if (this.gridOptions.defaultExportParams) {
-            console.warn(`AG Grid: Since v25.2 \`defaultExportParams\`  has been replaced by \`default${capitalise(type)}ExportParams\`'` );
+            console.warn(`AG Grid: Since v25.2 \`defaultExportParams\`  has been replaced by \`default${capitalise(type)}ExportParams\`'`);
             if (type === 'csv') {
                 return this.gridOptions.defaultExportParams as CsvExportParams;
             }
@@ -1622,7 +1621,7 @@ export class GridOptionsWrapper {
             console.warn('AG Grid: since v25, grid property suppressColumnStateEvents no longer works due to a refactor that we did. It should be possible to achieve similar using event.source, which would be "api" if the event was due to setting column state via the API');
             options.detailRowAutoHeight = true;
         }
-        
+
         if (options.defaultExportParams) {
             console.warn('AG Grid: since v25.2, the grid property `defaultExportParams` has been replaced by `defaultCsvExportParams` and `defaultExcelExportParams`.');
         }

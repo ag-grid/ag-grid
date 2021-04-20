@@ -20,7 +20,7 @@ export class ColumnAnimationService extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.controllersService.whenReady( p => this.gridBodyCon = p.gridBodyCon );
+        this.controllersService.whenReady(p => this.gridBodyCon = p.gridBodyCon);
     }
 
     public isActive(): boolean {

@@ -43,7 +43,7 @@ export class SideBarComp extends Component implements ISideBar {
         this.sideBarButtonsComp.addEventListener(SideBarButtonsComp.EVENT_SIDE_BAR_BUTTON_CLICKED, this.onToolPanelButtonClicked.bind(this));
         this.setSideBarDef();
 
-        this.gridOptionsWrapper.addEventListener('sideBar', ()=> {
+        this.gridOptionsWrapper.addEventListener('sideBar', () => {
             this.clearDownUi();
             this.setSideBarDef();
         });

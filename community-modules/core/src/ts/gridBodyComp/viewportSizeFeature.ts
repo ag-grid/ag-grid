@@ -37,7 +37,7 @@ export class ViewportSizeFeature extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.controllersService.whenReady( () => {
+        this.controllersService.whenReady(() => {
             this.gridBodyCon = this.controllersService.getGridBodyController();
             this.listenForResize();
         });

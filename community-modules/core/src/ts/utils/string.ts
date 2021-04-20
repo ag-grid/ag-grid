@@ -66,7 +66,7 @@ export function utf8_encode(s: string | null): string {
 
     function encodeCodePoint(point: number): string {
         if (point >= 0 && point <= 31) {
-            return `_x${point.toString(16).toUpperCase().padStart(4, '0')}_`;
+            return padStart(`_x${point.toString(16).toUpperCase()}_`, 4, '0');
         }
 
         if ((point & 0xFFFFFF80) == 0) { // 1-byte sequence
@@ -102,6 +102,26 @@ export function utf8_encode(s: string | null): string {
     }
 
     return byteString;
+}
+
+/**
+ * @param str The string to be padded
+ * @param totalLength The final length needed
+ * @param padStr The string to generate the padding
+ * @returns The padded string
+ */
+export function padStart(str: string, totalLength: number, padStr: string): string {
+    if (str.length > totalLength) {
+      return str;
+    }
+
+    totalLength -=  str.length;
+
+    if (totalLength > padStr.length) {
+        padStr += padStr.repeat(totalLength / padStr.length);
+    }
+
+    return padStr.slice(0, totalLength) + str;
 }
 
 /**

@@ -35,38 +35,38 @@ const cleanDist = () => {
         .pipe(clean());
 };
 
-const tscSrcTask = () => {
+const tscSrcTask = async () => {
     const tsProject = gulpTypescript.createProject('tsconfig.json', { typescript: typescript });
 
     const tsResult = gulp
-        .src(['src/ts/**/*.ts', '!src/ts/**/*.test.ts'])
+        .src(['src/ts/**/*.ts', '!src/ts/**/*.test.ts', '!src/ts/test-utils/mock.ts'])
         .pipe(sourcemaps.init())
         .pipe(tsProject());
 
-    return merge([
+    return await merge([
         tsResult.dts
-            .pipe(header(dtsHeaderTemplate, { pkg: pkg }))
+            .pipe(header(dtsHeaderTemplate, {pkg: pkg}))
             .pipe(gulp.dest('dist/cjs')),
         tsResult.js
-            .pipe(header(headerTemplate, { pkg: pkg }))
+            .pipe(header(headerTemplate, {pkg: pkg}))
             .pipe(sourcemaps.write('.'))
             .pipe(gulp.dest('dist/cjs'))
     ]);
 };
 
-const tscSrcEs6Task = () => {
+const tscSrcEs6Task = async () => {
     const tsProject = gulpTypescript.createProject('./tsconfig.es6.json', { typescript: typescript });
 
     const tsResult = gulp
-        .src(['src/ts/**/*.ts', '!src/ts/**/*.test.ts'])
+        .src(['src/ts/**/*.ts', '!src/ts/**/*.test.ts', '!src/ts/test-utils/mock.ts'])
         .pipe(tsProject());
 
-    return merge([
+    return await merge([
         tsResult.dts
-            .pipe(header(dtsHeaderTemplate, { pkg: pkg }))
+            .pipe(header(dtsHeaderTemplate, {pkg: pkg}))
             .pipe(gulp.dest('dist/es6')),
         tsResult.js
-            .pipe(header(headerTemplate, { pkg: pkg }))
+            .pipe(header(headerTemplate, {pkg: pkg}))
             .pipe(gulp.dest('dist/es6'))
     ]);
 };
@@ -194,7 +194,7 @@ gulp.task('copy-styles-for-dist', copyGridCoreStyles);
 // tsc & scss/css related tasks
 gulp.task('tsc-es6-watch', series('tsc-no-clean-es6', watch));
 gulp.task('tsc-watch', series('tsc-no-clean', watchAndBuildBoth));
-gulp.task('tsc-scss-clean', series('clean', parallel('tsc-no-clean', series('scss-no-clean', 'minify-css'))));
+gulp.task('tsc-scss-clean', parallel('tsc-no-clean', series('scss-no-clean', 'minify-css')));
 gulp.task('tsc-scss-no-clean', parallel('tsc-no-clean', series('scss-no-clean', 'minify-css')));
 
 // default/release task

@@ -50,7 +50,7 @@ export class MoveColumnController implements DropListener {
     @PostConstruct
     public init(): void {
         this.logger = this.loggerFactory.create('MoveColumnController');
-        this.controllersService.whenReady( ()=> {
+        this.controllersService.whenReady(() => {
             this.gridBodyCon = this.controllersService.getGridBodyController();
         });
     }

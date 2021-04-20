@@ -9,7 +9,7 @@ import { FullWidthKeys, FullWidthRenderers, RowController, RowType } from "./row
 import { exists, missing } from "../../utils/generic";
 import { Column } from "../../entities/column";
 import { CellComp } from "../cellComp";
-import { iterateObject } from "../../utils/object";
+import { getAllValuesInObject, iterateObject } from "../../utils/object";
 import { Constants } from "../../constants/constants";
 import { ModuleRegistry } from "../../modules/moduleRegistry";
 import { ModuleNames } from "../../modules/moduleNames";
@@ -75,7 +75,7 @@ export class RowComp extends Component {
             if (this.isAlive()) {
                 const eGui = cellRenderer.getGui();
                 this.getGui().appendChild(eGui);
-                if (this.controller.getRowType()===RowType.FullWidthDetail) {
+                if (this.controller.getRowType() === RowType.FullWidthDetail) {
                     this.controller.setupDetailRowAutoHeight(eGui);
                 }
                 this.setFullWidthRowComp(cellRenderer);
@@ -120,20 +120,20 @@ export class RowComp extends Component {
             // it's possible there is a Cell Comp with correct Id, but it's referring to
             // a different column instance. Happens a lot with pivot, as pivot col id's are
             // reused eg  pivot_0, pivot_1 etc
-            if (existingCellComp && existingCellComp.getColumn()!==col) {
+            if (existingCellComp && existingCellComp.getColumn() !== col) {
                 this.destroyCells([existingCellComp]);
                 existingCellComp = null;
             }
 
-            if (existingCellComp == null ) {
+            if (existingCellComp == null) {
                 this.newCellComp(col);
             } else {
                 cellsToRemove[colId] = null;
             }
         });
 
-        const cellCompsToRemove = Object.values(cellsToRemove)
-            .filter( cellComp => cellComp ? this.isCellEligibleToBeRemoved(cellComp) : false );
+        const cellCompsToRemove = getAllValuesInObject(cellsToRemove)
+            .filter(cellComp => cellComp ? this.isCellEligibleToBeRemoved(cellComp) : false);
 
         this.destroyCells(cellCompsToRemove as CellComp[]);
 
@@ -144,7 +144,7 @@ export class RowComp extends Component {
         if (!this.beans.gridOptionsWrapper.isEnsureDomOrder()) { return; }
 
         const elementsInOrder: HTMLElement[] = [];
-        cols.forEach( col => {
+        cols.forEach(col => {
             const cellComp = this.cellComps[col.getColId()];
             if (cellComp) {
                 elementsInOrder.push(cellComp.getGui());
@@ -203,7 +203,7 @@ export class RowComp extends Component {
     }
 
     private destroyAllCells(): void {
-        const cellsToDestroy = Object.values(this.cellComps).filter(cp => cp!=null);
+        const cellsToDestroy = getAllValuesInObject(this.cellComps).filter(cp => cp != null);
         this.destroyCells(cellsToDestroy as CellComp[]);
     }
 
@@ -212,9 +212,12 @@ export class RowComp extends Component {
     }
 
     public setFullWidthRowComp(fullWidthRowComponent: ICellRendererComp): void {
-        if (this.fullWidthRowComponent) { console.error('AG Grid - should not be setting fullWidthRowComponent twice');}
+        if (this.fullWidthRowComponent) {
+            console.error('AG Grid - should not be setting fullWidthRowComponent twice');
+        }
+
         this.fullWidthRowComponent = fullWidthRowComponent;
-        this.addDestroyFunc( ()=> {
+        this.addDestroyFunc(() => {
             this.beans.detailRowCompCache.addOrDestroy(this.rowNode, this.pinned, fullWidthRowComponent);
             this.fullWidthRowComponent = null;
         });
@@ -296,14 +299,14 @@ export class RowComp extends Component {
     }
 
     public destroyCells(cellComps: CellComp[]): void {
-        cellComps.forEach( cellComp => {
+        cellComps.forEach(cellComp => {
 
             // could be old reference, ie removed cell
             if (!cellComp) { return; }
 
             // check cellComp belongs in this container
             const id = cellComp.getColumn().getId();
-            if (this.cellComps[id]!==cellComp) {return; }
+            if (this.cellComps[id] !== cellComp) {return; }
 
             cellComp.detach();
             cellComp.destroy();

@@ -24,7 +24,7 @@ const fontFactory: ExcelOOXMLTemplate = {
         if (italic) { children.push({ name: 'i' }); }
         if (bold) { children.push({ name: 'b' }); }
         if (strike) { children.push({ name: 'strike' }); }
-        if (outline) { children.push( {name: 'outline' }); }
+        if (outline) { children.push({name: 'outline' }); }
         if (shadow) { children.push({ name: 'shadow' }); }
         if (underline) {
             children.push({name: 'u', properties: { rawMap: { val: underline } }});

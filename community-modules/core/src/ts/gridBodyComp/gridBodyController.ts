@@ -50,7 +50,7 @@ export interface GridBodyView extends LayoutView {
     setRowAnimationCssOnBodyViewport(animate: boolean): void;
     setAlwaysVerticalScrollClass(on: boolean): void;
     setVerticalScrollPaddingVisible(visible: boolean): void;
-    registerBodyViewportResizeListener(listener: (()=>void)): void;
+    registerBodyViewportResizeListener(listener: (() => void)): void;
 }
 
 export class GridBodyController extends BeanStub {
@@ -197,7 +197,7 @@ export class GridBodyController extends BeanStub {
 
         const viewports = [this.eBodyViewport, this.eBottom, this.eTop];
 
-        viewports.forEach( viewport => this.addManagedListener(viewport, 'focusout', focusOutListener));
+        viewports.forEach(viewport => this.addManagedListener(viewport, 'focusout', focusOutListener));
     }
 
     public updateRowCount(): void {
@@ -217,7 +217,7 @@ export class GridBodyController extends BeanStub {
         this.view.setRowCount(total);
     }
 
-    public registerBodyViewportResizeListener(listener: (()=>void)): void {
+    public registerBodyViewportResizeListener(listener: (() => void)): void {
         this.view.registerBodyViewportResizeListener(listener);
     }
 

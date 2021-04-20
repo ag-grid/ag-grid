@@ -111,7 +111,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             this.pasteFromClipboardLegacy();
         }
     }
- 
+
     private pasteFromClipboardLegacy(): void {
         // Method 2 - if modern API fails, the old school hack
         this.executeOnTempElement(
@@ -419,9 +419,9 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
         // if doing CSRM and NOT tree data, then it means groups are aggregates, which are read only,
         // so we should skip them when doing paste operations.
-        const skipGroupRows = this.clientSideRowModel!=null && !this.gridOptionsWrapper.isTreeData();
+        const skipGroupRows = this.clientSideRowModel != null && !this.gridOptionsWrapper.isTreeData();
 
-        const getNextGoodRowNode = ()=> {
+        const getNextGoodRowNode = () => {
             while (true) {
                 if (!rowPointer) { return null; }
                 const res = this.rowPositionUtils.getRowNode(rowPointer);
@@ -429,8 +429,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                 rowPointer = this.cellNavigationService.getRowBelow({ rowPinned: rowPointer.rowPinned, rowIndex: rowPointer.rowIndex });
 
                 // if no more rows, return null
-                if (res==null) { return null; }
-
+                if (res == null) { return null; }
 
                 // skip details rows and footer rows, never paste into them as they don't hold data
                 const skipRow = res.detail || res.footer || (skipGroupRows && res.group);

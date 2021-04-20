@@ -26,7 +26,7 @@ export class AutoHeightCalculator extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.controllersService.whenReady( p => {
+        this.controllersService.whenReady(p => {
             this.centerRowContainerCon = p.centerRowContainerCon;
         });
     }
@@ -65,7 +65,7 @@ export class AutoHeightCalculator extends BeanStub {
             cellComps.push(cellComp);
         });
 
-        cellComps.forEach( cellComp => eDummyContainer.appendChild(cellComp.getGui()))
+        cellComps.forEach(cellComp => eDummyContainer.appendChild(cellComp.getGui()))
 
         if (scope) {
             this.$compile(eDummyContainer)(scope);

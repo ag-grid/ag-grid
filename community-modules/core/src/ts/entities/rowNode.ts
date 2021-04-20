@@ -505,7 +505,7 @@ export class RowNode implements IEventEmitter {
     }
 
     public setRowIndex(rowIndex: number | null): void {
-        if (this.rowIndex===rowIndex) { return; }
+        if (this.rowIndex === rowIndex) { return; }
 
         this.rowIndex = rowIndex;
 

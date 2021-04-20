@@ -146,7 +146,7 @@ export class Grid {
 // their own UI
 export class GridCoreCreator {
 
-    public create(eGridDiv: HTMLElement, gridOptions: GridOptions, uiCallback: (context: Context)=>void, params?: GridParams): void {
+    public create(eGridDiv: HTMLElement, gridOptions: GridOptions, uiCallback: (context: Context) => void, params?: GridParams): void {
 
         const debug = !!gridOptions.debug;
 

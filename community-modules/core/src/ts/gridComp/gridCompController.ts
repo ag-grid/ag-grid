@@ -113,7 +113,7 @@ export class GridCompController extends BeanStub {
     }
 
     public showWatermark(): boolean {
-        return ModuleRegistry.isRegistered(ModuleNames.EnterpriseCoreModule);;
+        return ModuleRegistry.isRegistered(ModuleNames.EnterpriseCoreModule); ;
     }
 
     private onGridSizeChanged(): void {
@@ -174,6 +174,5 @@ export class GridCompController extends BeanStub {
     public forceFocusOutOfContainer(up = false): void {
         this.view.forceFocusOutOfContainer(up);
     }
-
 
 }

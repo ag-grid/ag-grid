@@ -80,8 +80,8 @@ export const getExcelColumnName = (colIdx: number): string => {
 };
 
 const getPageOrientation = (orientation?: 'Portrait' | 'Landscape'): 'portrait' | 'landscape' => {
-    if (!orientation || (orientation !== 'Portrait' && orientation !== 'Landscape')) { 
-        return 'portrait'; 
+    if (!orientation || (orientation !== 'Portrait' && orientation !== 'Landscape')) {
+        return 'portrait';
     }
 
     return orientation.toLocaleLowerCase() as 'portrait' | 'landscape';
@@ -180,11 +180,11 @@ const replaceHeaderFooterTokens = (value: string): string => {
         '&[Tab]': '&A',
         '&[Path]': '&Z',
         '&[File]': '&F'
-    }
+    };
 
-    for (const [key, token] of Object.entries(map)) {
-        value = value.replace(key, token);
-    }
+    _.iterateObject<string>(map, (key, val) => {
+        value = value.replace(key, val);
+    });
 
     return value;
 }
@@ -209,7 +209,7 @@ const processHeaderFooterContent = (content: ExcelHeaderFooterContent[]): string
 
             if (font.size) { output += `&amp;${font.size}` }
             if (font.strikeThrough) { output += '&amp;S' }
-            if (font.underline) { 
+            if (font.underline) {
                 output += `&amp;${font.underline === 'Double' ? 'E' : 'U'}`;
              }
             if (font.color) { output += `&amp;K${font.color.replace('#', '').toUpperCase()}` }
@@ -231,11 +231,10 @@ const buildHeaderFooter = (headerFooterConfig: ExcelHeaderFooterConfig): XmlElem
 
         if (!headerFooter || (!headerFooter.header && !headerFooter.footer)) { return; }
 
-        for (const [key, value] of Object.entries(headerFooter)) {
+        _.iterateObject<ExcelHeaderFooterContent[]>((headerFooter as any), (key: string, value: ExcelHeaderFooterContent[]) => {
             const nameSuffix = `${key.charAt(0).toUpperCase()}${key.slice(1)}`;
-            const content = value as ExcelHeaderFooterContent[];
 
-            if (content) {
+            if (value) {
                 headersAndFooters.push({
                     name: `${namePrefix}${nameSuffix}`,
                     properties: {
@@ -243,11 +242,10 @@ const buildHeaderFooter = (headerFooterConfig: ExcelHeaderFooterConfig): XmlElem
                             'xml:space': 'preserve'
                         }
                     },
-                    textNode: processHeaderFooterContent(content)
+                    textNode: processHeaderFooterContent(value)
                 });
             }
-        }
-        
+        });
     });
 
     return headersAndFooters;

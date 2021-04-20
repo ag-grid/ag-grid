@@ -53,7 +53,7 @@ export class ControllersService extends BeanStub {
     private headerRootComp: HeaderRootComp;
 
     private ready = false;
-    private readyCallbacks: ((p: ReadyParams)=>void)[] = [];
+    private readyCallbacks: ((p: ReadyParams) => void)[] = [];
 
     private checkReady(): void {
         this.ready =
@@ -77,12 +77,12 @@ export class ControllersService extends BeanStub {
 
         if (this.ready) {
             const p = this.createReadyParams();
-            this.readyCallbacks.forEach( c => c(p) );
+            this.readyCallbacks.forEach(c => c(p));
             this.readyCallbacks.length = 0;
         }
     }
 
-    public whenReady(callback: (p: ReadyParams)=>void): void {
+    public whenReady(callback: (p: ReadyParams) => void): void {
         if (this.ready) {
             callback(this.createReadyParams());
         } else {

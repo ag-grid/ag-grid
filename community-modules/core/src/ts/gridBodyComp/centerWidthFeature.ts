@@ -9,9 +9,9 @@ export class CenterWidthFeature extends BeanStub {
 
     @Autowired('columnController') private columnController: ColumnController;
 
-    private callback: (width: number)=>void;
+    private callback: (width: number) => void;
 
-    constructor(callback: (width: number)=>void) {
+    constructor(callback: (width: number) => void) {
         super();
         this.callback = callback;
     }

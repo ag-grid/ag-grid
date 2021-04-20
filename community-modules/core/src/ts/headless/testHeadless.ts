@@ -1,6 +1,6 @@
-import {GridOptions} from "../entities/gridOptions";
-import {HeadlessService} from "./headlessService";
-import {clearElement} from "../utils/dom";
+import { GridOptions } from "../entities/gridOptions";
+import { HeadlessService } from "./headlessService";
+import { clearElement } from "../utils/dom";
 
 export class TestHeadless {
 
@@ -14,11 +14,11 @@ export class TestHeadless {
         clearElement(eDiv);
         const eTable = document.createElement('table');
 
-        headerRows.forEach( headerRow => {
+        headerRows.forEach(headerRow => {
             const eTr = document.createElement('tr');
             eTable.appendChild(eTr);
 
-            headerRow.columns.forEach( col => {
+            headerRow.columns.forEach(col => {
                 const eTh = document.createElement('th');
                 eTr.appendChild(eTh);
 
@@ -28,11 +28,11 @@ export class TestHeadless {
             });
         });
 
-        rows.forEach( row => {
+        rows.forEach(row => {
             const eTr = document.createElement('tr');
             eTable.appendChild(eTr);
 
-            row.cells.forEach( cell => {
+            row.cells.forEach(cell => {
                 const eTd = document.createElement('td');
                 eTr.appendChild(eTd);
 

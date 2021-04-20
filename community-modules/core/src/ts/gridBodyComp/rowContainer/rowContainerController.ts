@@ -43,7 +43,7 @@ export class RowContainerController extends BeanStub {
         this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
 
         this.forContainers([RowContainerNames.CENTER],
-            ()=> this.viewportSizeFeature = this.createManagedBean(new ViewportSizeFeature(this)))
+            () => this.viewportSizeFeature = this.createManagedBean(new ViewportSizeFeature(this)))
 
         this.registerWithControllersService();
 
@@ -65,7 +65,7 @@ export class RowContainerController extends BeanStub {
         }
     }
 
-    private forContainers(names: RowContainerNames[], callback: (()=>void)): void {
+    private forContainers(names: RowContainerNames[], callback: (() => void)): void {
         if (names.indexOf(this.name) >= 0) {
             callback();
         }
@@ -89,15 +89,15 @@ export class RowContainerController extends BeanStub {
     }
 
     public onDisplayedColumnsChanged(): void {
-        this.forContainers([RowContainerNames.CENTER], ()=> this.onHorizontalViewportChanged() )
+        this.forContainers([RowContainerNames.CENTER], () => this.onHorizontalViewportChanged())
     }
 
     private onDisplayedColumnsWidthChanged(): void {
-        this.forContainers([RowContainerNames.CENTER], ()=> this.onHorizontalViewportChanged() )
+        this.forContainers([RowContainerNames.CENTER], () => this.onHorizontalViewportChanged())
     }
 
     private onScrollVisibilityChanged(): void {
-        if (this.name!==RowContainerNames.CENTER) { return; }
+        if (this.name !== RowContainerNames.CENTER) { return; }
 
         const visible = this.scrollVisibleService.isHorizontalScrollShowing();
         const scrollbarWidth = visible ? (this.gridOptionsWrapper.getScrollbarWidth() || 0) : 0;
@@ -117,7 +117,7 @@ export class RowContainerController extends BeanStub {
         };
 
         this.eContainer.addEventListener('touchmove', preventScroll, { passive: false });
-        this.addDestroyFunc(() => this.eContainer.removeEventListener('touchmove', preventScroll) );
+        this.addDestroyFunc(() => this.eContainer.removeEventListener('touchmove', preventScroll));
     }
 
     // this gets called whenever a change in the viewport, so we can inform column controller it has to work
@@ -139,7 +139,7 @@ export class RowContainerController extends BeanStub {
         return getScrollLeft(this.eViewport, this.enableRtl);
     }
 
-    public registerViewportResizeListener(listener: (()=>void) ) {
+    public registerViewportResizeListener(listener: (() => void)) {
         const unsubscribeFromResize = this.resizeObserverService.observeResize(this.eViewport, listener);
         this.addDestroyFunc(() => unsubscribeFromResize());
     }

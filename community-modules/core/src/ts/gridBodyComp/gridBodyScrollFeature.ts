@@ -56,7 +56,7 @@ export class GridBodyScrollFeature extends BeanStub {
         this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onDisplayedColumnsWidthChanged.bind(this));
 
-        this.controllersService.whenReady( p => {
+        this.controllersService.whenReady(p => {
             this.centerRowContainerCon = p.centerRowContainerCon;
             this.onDisplayedColumnsWidthChanged();
             this.addScrollListener();

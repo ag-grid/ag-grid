@@ -6,7 +6,7 @@ import { ILoadingOverlayComp } from './loadingOverlayComponent';
 import { INoRowsOverlayComp } from './noRowsOverlayComponent';
 import { AgPromise } from '../../utils';
 import { addOrRemoveCssClass, clearElement } from '../../utils/dom';
-import {LayoutCssClasses, LayoutFeature, LayoutView, UpdateLayoutClassesParams} from "../../styling/layoutFeature";
+import { LayoutCssClasses, LayoutFeature, LayoutView, UpdateLayoutClassesParams } from "../../styling/layoutFeature";
 import { PaginationProxy } from "../../pagination/paginationProxy";
 import { Events } from "../../eventKeys";
 import { GridApi } from "../../gridApi";

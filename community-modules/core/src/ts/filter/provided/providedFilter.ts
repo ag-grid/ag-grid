@@ -254,7 +254,7 @@ export abstract class ProvidedFilter<T> extends ManagedFocusComponent implements
             }
         };
 
-        if (currentModel!=null) {
+        if (currentModel != null) {
             this.setModelIntoUi(currentModel).then(afterAppliedFunc);
         } else {
             this.resetUiToDefaults().then(afterAppliedFunc);

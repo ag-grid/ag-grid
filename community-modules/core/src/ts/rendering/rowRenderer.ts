@@ -34,7 +34,7 @@ import { IRowModel } from "../interfaces/iRowModel";
 import { RowPosition, RowPositionUtils } from "../entities/rowPosition";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
 import { exists, missing } from "../utils/generic";
-import { iterateObject } from "../utils/object";
+import { getAllValuesInObject, iterateObject } from "../utils/object";
 import { createArrayOfNumbers } from "../utils/number";
 import { last } from "../utils/array";
 import { doOnce, executeInAWhile } from "../utils/function";
@@ -43,7 +43,7 @@ import { ControllersService } from "../controllersService";
 import { GridBodyController } from "../gridBodyComp/gridBodyController";
 
 export interface RowMap {
-    [key: string]: RowController
+    [key: string]: RowController;
 }
 
 @Bean("rowRenderer")
@@ -102,7 +102,7 @@ export class RowRenderer extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.controllersService.whenReady( ()=> {
+        this.controllersService.whenReady(() => {
             this.gridBodyCon = this.controllersService.getGridBodyController();
             this.initialise();
         });
@@ -130,7 +130,7 @@ export class RowRenderer extends BeanStub {
     }
 
     private updateAllRowCons(): void {
-        this.allRowCons = [...Object.values(this.rowConsByRowIndex),...Object.values(this.zombieRowCons)];
+        this.allRowCons = [...getAllValuesInObject(this.rowConsByRowIndex), ...getAllValuesInObject(this.zombieRowCons)];
     }
 
     // in a clean design, each cell would register for each of these events. however when scrolling, all the cells
@@ -330,7 +330,7 @@ export class RowRenderer extends BeanStub {
 
         if (!rowNodes) { return; }
 
-        rowNodes.forEach( rowNode => {
+        rowNodes.forEach(rowNode => {
             const rowCon = new RowController(
                 this.$scope,
                 rowNode,
@@ -372,7 +372,7 @@ export class RowRenderer extends BeanStub {
 
     public redrawRows(rowNodes?: RowNode[]): void {
         // if no row nodes provided, then refresh everything
-        const partialRefresh = rowNodes!=null && rowNodes.length>0;
+        const partialRefresh = rowNodes != null && rowNodes.length > 0;
 
         if (partialRefresh) {
             const indexesToRemove = this.getRenderedIndexesForRowNodes(rowNodes!);
@@ -425,7 +425,7 @@ export class RowRenderer extends BeanStub {
 
         // after modelUpdate, row indexes can change, so we clear out the rowsByIndex map,
         // however we can reuse the rows, so we keep them but index by rowNode.id
-        let rowsToRecycle = recycleRows ? this.recycleRows() : null;
+        const rowsToRecycle = recycleRows ? this.recycleRows() : null;
         if (!recycleRows) {
             this.removeAllRowComps();
         }
@@ -712,7 +712,7 @@ export class RowRenderer extends BeanStub {
         // remove all stub nodes, they can't be reused, as no rowNode id
         const stubNodeIndexes: string[] = [];
         iterateObject(this.rowConsByRowIndex, (index: string, rowComp: RowController) => {
-            const stubNode = rowComp.getRowNode().id==null;
+            const stubNode = rowComp.getRowNode().id == null;
             if (stubNode) {
                 stubNodeIndexes.push(index);
             }
@@ -825,11 +825,11 @@ export class RowRenderer extends BeanStub {
         if (rowsToRecycle) {
             const useAnimationFrame = afterScroll && !this.gridOptionsWrapper.isSuppressAnimationFrame() && !this.printLayout;
             if (useAnimationFrame) {
-                this.beans.taskQueue.addDestroyTask(()=> {
+                this.beans.taskQueue.addDestroyTask(() => {
                     this.destroyRowCons(rowsToRecycle, animate);
                     this.updateAllRowCons();
                     this.dispatchDisplayedRowsChanged();
-                } );
+                });
             } else {
                 this.destroyRowCons(rowsToRecycle, animate);
             }
@@ -964,7 +964,7 @@ export class RowRenderer extends BeanStub {
     }
 
     private destroyRowCons(rowConsMap: { [key: string]: RowController; } | null | undefined, animate: boolean): void {
-        const executeInAWhileFuncs: (()=>void)[] = [];
+        const executeInAWhileFuncs: (() => void)[] = [];
         iterateObject(rowConsMap, (nodeId: string, rowCon: RowController) => {
             // if row was used, then it's null
             if (!rowCon) { return; }
@@ -972,7 +972,7 @@ export class RowRenderer extends BeanStub {
             rowCon.destroyFirstPass();
             if (animate) {
                 this.zombieRowCons[rowCon.getInstanceId()] = rowCon;
-                executeInAWhileFuncs.push( ()=> {
+                executeInAWhileFuncs.push(() => {
                     rowCon.destroySecondPass();
                     delete this.zombieRowCons[rowCon.getInstanceId()];
                 });
@@ -983,7 +983,7 @@ export class RowRenderer extends BeanStub {
         if (animate) {
             // this ensures we fire displayedRowsChanged AFTER all the 'executeInAWhileFuncs' get
             // executed, as we added it to the end of the list.
-            executeInAWhileFuncs.push(()=> {
+            executeInAWhileFuncs.push(() => {
                 this.updateAllRowCons();
                 this.dispatchDisplayedRowsChanged();
             });
@@ -1034,7 +1034,6 @@ export class RowRenderer extends BeanStub {
                 rowHeightsChanged = this.ensureAllRowsInRangeHaveHeightsCalculated(firstPixel, lastPixel);
 
             } while (rowHeightsChanged);
-
 
             let firstRowIndex = this.paginationProxy.getRowIndexAtPixel(firstPixel);
             let lastRowIndex = this.paginationProxy.getRowIndexAtPixel(lastPixel);
@@ -1262,9 +1261,9 @@ export class RowRenderer extends BeanStub {
             return;
         }
 
-        // in case we have col spanning we get the cellComp and use it to get the 
+        // in case we have col spanning we get the cellComp and use it to get the
         // position. This was we always focus the first cell inside the spanning.
-        const normalisedPosition = this.getNormalisedPosition(nextCell)
+        const normalisedPosition = this.getNormalisedPosition(nextCell);
         if (normalisedPosition) {
             this.focusPosition(normalisedPosition);
         } else {
@@ -1502,7 +1501,7 @@ export class RowRenderer extends BeanStub {
 
         // find the next cell to start editing
         const nextRenderedCell = this.findNextCellToFocusOn(gridCell, backwards, true) as CellComp;
-        const foundCell = nextRenderedCell!=null;
+        const foundCell = nextRenderedCell != null;
 
         // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
         // to the normal tabbing so user can exit the grid.
@@ -1519,7 +1518,7 @@ export class RowRenderer extends BeanStub {
         // find the next cell to start editing
         const nextCellComp = this.findNextCellToFocusOn(cellPos, backwards, true) as CellComp;
 
-        if (nextCellComp==null) { return false; }
+        if (nextCellComp == null) { return false; }
 
         const previousPos = previousCellComp.getCellPosition();
         const nextPos = nextCellComp.getCellPosition();
@@ -1671,11 +1670,12 @@ export class RowRenderer extends BeanStub {
 
     private isCellEditable(cell: CellPosition): boolean {
         const rowNode = this.lookupRowNodeForCell(cell);
+
         if (rowNode) {
             return cell.column.isCellEditable(rowNode);
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     private lookupRowNodeForCell(cell: CellPosition) {

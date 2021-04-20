@@ -21,7 +21,7 @@ const contentTypesFactory: ExcelOOXMLTemplate = {
         const imageDocs = new Array(sheetsWithImages).fill(undefined).map((v, i) => ({
             name: 'Override',
             ContentType: 'application/vnd.openxmlformats-officedocument.drawing+xml',
-            PartName: `/xl/drawings/drawing${i+ 1}.xml`
+            PartName: `/xl/drawings/drawing${i + 1}.xml`
         }));
 
         const imageTypes = Object.keys(imageTypesObject).map(ext => ({
@@ -44,7 +44,7 @@ const contentTypesFactory: ExcelOOXMLTemplate = {
                 name: 'Override',
                 ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml',
                 PartName: "/xl/workbook.xml"
-            }, 
+            },
             ...worksheets,
             {
                 name: 'Override',
@@ -58,7 +58,7 @@ const contentTypesFactory: ExcelOOXMLTemplate = {
                 name: 'Override',
                 ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml',
                 PartName: '/xl/sharedStrings.xml'
-            }, 
+            },
             ...imageDocs,
             {
                 name: 'Override',

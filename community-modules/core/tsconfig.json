@@ -3,9 +3,13 @@
   "compilerOptions": {
     "outDir": "dist/cjs",
     "rootDir": "src/ts",
-    "strictNullChecks": true
+    "strictNullChecks": true,
   },
   "include": [
     "src/ts/**/*"
+  ],
+  "exclude": [
+    "**/*.test.ts",
+    "src/ts/**/mock.ts"
   ]
 }

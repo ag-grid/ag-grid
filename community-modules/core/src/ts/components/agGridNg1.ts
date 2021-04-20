@@ -1,5 +1,5 @@
 import { Grid, GridParams } from "../grid";
-import {GridOptions} from "../entities/gridOptions";
+import { GridOptions } from "../entities/gridOptions";
 
 export function initialiseAgGridWithAngular1(angular: any) {
     const angularModule = angular.module("agGrid", []);

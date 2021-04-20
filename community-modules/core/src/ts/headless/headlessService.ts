@@ -1,13 +1,13 @@
-import {Autowired, Bean, PostConstruct} from "../context/context";
-import {ColumnController} from "../columnController/columnController";
-import {ColumnGroupChild} from "../entities/columnGroupChild";
-import {Column} from "../entities/column";
-import {ColumnGroup} from "../entities/columnGroup";
-import {IRowModel} from "../interfaces/iRowModel";
-import {PaginationProxy} from "../pagination/paginationProxy";
-import {ValueService} from "../valueService/valueService";
-import {BeanStub} from "../context/beanStub";
-import {Events} from "../eventKeys";
+import { Autowired, Bean, PostConstruct } from "../context/context";
+import { ColumnController } from "../columnController/columnController";
+import { ColumnGroupChild } from "../entities/columnGroupChild";
+import { Column } from "../entities/column";
+import { ColumnGroup } from "../entities/columnGroup";
+import { IRowModel } from "../interfaces/iRowModel";
+import { PaginationProxy } from "../pagination/paginationProxy";
+import { ValueService } from "../valueService/valueService";
+import { BeanStub } from "../context/beanStub";
+import { Events } from "../eventKeys";
 
 export interface HeaderRowSt {
     headerRowIndex: number;
@@ -74,7 +74,7 @@ export class HeadlessService extends BeanStub {
         this.onPageLoaded();
 
         this.addManagedListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onPageLoaded.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, ()=> {
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, () => {
             this.createHeaderRows();
             this.onPageLoaded();
         });
@@ -85,7 +85,7 @@ export class HeadlessService extends BeanStub {
 
         const headerRowCount = this.columnController.getHeaderRowCount();
         for (let i = 0; i < headerRowCount; i++) {
-            const groupLevel = i === (headerRowCount-1);
+            const groupLevel = i === (headerRowCount - 1);
             this.headerRows.push(this.createHeaderRow(i, groupLevel));
         }
 
@@ -103,7 +103,7 @@ export class HeadlessService extends BeanStub {
 
         const displayedColumns = this.columnController.getDisplayedColumns(null);
 
-        for (let rowIndex = firstRow; rowIndex<=lastRow; rowIndex++) {
+        for (let rowIndex = firstRow; rowIndex <= lastRow; rowIndex++) {
             const rowNode = this.paginationProxy.getRow(rowIndex);
             if (!rowNode) { continue; }
             const cells: CellSt[] = [];
@@ -114,7 +114,7 @@ export class HeadlessService extends BeanStub {
                 height: rowNode.rowHeight!,
                 top: rowNode.rowTop!
             };
-            displayedColumns.forEach( col => {
+            displayedColumns.forEach(col => {
                 cells.push({
                     value: this.valueService.getValue(col, rowNode),
                     colId: col.getId(),
