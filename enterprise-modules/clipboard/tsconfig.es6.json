@@ -8,9 +8,11 @@
         "node_modules/@ag-*/dist/es6/main"
       ]
     }
-
   },
   "include": [
     "src/**/*"
+  ],
+  "exclude": [
+    "**/*.test.ts"
   ]
 }
