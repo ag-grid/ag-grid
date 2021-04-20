@@ -1381,13 +1381,13 @@ export class RowRenderer extends BeanStub {
     }
 
     public getComponentForCell(cellPosition: CellPosition): CellComp | null {
-        const rowComponent = this.getRowConByPosition(cellPosition);
+        const rowComp = this.getRowConByPosition(cellPosition);
 
-        if (!rowComponent) {
+        if (!rowComp) {
             return null;
         }
 
-        const cellComponent =  rowComponent.getRenderedCellForColumn(cellPosition.column);
+        const cellComponent =  rowComp.getRenderedCellForColumn(cellPosition.column);
 
         return cellComponent;
     }
@@ -1403,13 +1403,21 @@ export class RowRenderer extends BeanStub {
         }
     }
 
+    // result of keyboard event
     public onTabKeyDown(previousRenderedCell: CellComp | RowController, keyboardEvent: KeyboardEvent): void {
         const backwards = keyboardEvent.shiftKey;
-        const success = this.moveToCellAfter(previousRenderedCell, backwards);
+        const movedToNextCell = this.tabToNextCellCommon(previousRenderedCell, backwards);
 
-        if (success) {
+        if (movedToNextCell) {
+            // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
+            // to the normal tabbing so user can exit the grid.
             keyboardEvent.preventDefault();
-        } else if (backwards) {
+            return;
+        }
+
+        // if we didn't move to next cell, then need to tab out of the cells, ie to the header (if going
+        // backwards)
+        if (backwards) {
             const { rowIndex, rowPinned } = previousRenderedCell.getRowPosition();
             const firstRow = rowPinned ? rowIndex === 0 : rowIndex === this.paginationProxy.getPageFirstRow();
             if (firstRow) {
@@ -1434,38 +1442,49 @@ export class RowRenderer extends BeanStub {
         }
     }
 
+    // comes from API
     public tabToNextCell(backwards: boolean): boolean {
         const focusedCell = this.focusController.getFocusedCell();
         // if no focus, then cannot navigate
-        if (missing(focusedCell)) { return false; }
+        if (!focusedCell) { return false; }
 
-        let renderedComp: CellComp | RowController | null = this.getComponentForCell(focusedCell);
+        let cellOrRowComp: CellComp | RowController | null = this.getComponentForCell(focusedCell);
 
         // if cell is not rendered, means user has scrolled away from the cell
         // or that the focusedCell is a Full Width Row
-        if (missing(renderedComp)) {
-            renderedComp = this.getRowConByPosition(focusedCell);
-            if (!renderedComp || !renderedComp.isFullWidth()) {
+        if (!cellOrRowComp) {
+            cellOrRowComp = this.getRowConByPosition(focusedCell);
+            if (!cellOrRowComp || !cellOrRowComp.isFullWidth()) {
                 return false;
             }
         }
 
-        return this.moveToCellAfter(renderedComp, backwards);
+        return this.tabToNextCellCommon(cellOrRowComp, backwards);
     }
 
-    private moveToCellAfter(previousRenderedCell: CellComp | RowController, backwards: boolean): boolean {
-        const editing = previousRenderedCell.isEditing();
+    private tabToNextCellCommon(previousCellOrRow: CellComp | RowController, backwards: boolean): boolean {
+        let editing = previousCellOrRow.isEditing();
+
+        // if cell is not editing, there is still chance row is editing if it's Full Row Editing
+        if (!editing && previousCellOrRow instanceof CellComp) {
+            const cellComp = previousCellOrRow as CellComp;
+            const rowCon = cellComp.getRenderedRow();
+            if (rowCon) {
+                editing = rowCon.isEditing();
+            }
+        }
+
         let res: boolean;
 
         if (editing) {
             // if we are editing, we know it's not a Full Width Row (RowComp)
             if (this.gridOptionsWrapper.isFullRowEdit()) {
-                res = this.moveToNextEditingRow(previousRenderedCell as CellComp, backwards);
+                res = this.moveToNextEditingRow(previousCellOrRow as CellComp, backwards);
             } else {
-                res = this.moveToNextEditingCell(previousRenderedCell as CellComp, backwards);
+                res = this.moveToNextEditingCell(previousCellOrRow as CellComp, backwards);
             }
         } else {
-            res = this.moveToNextCellNotEditing(previousRenderedCell, backwards);
+            res = this.moveToNextCellNotEditing(previousCellOrRow, backwards);
         }
 
         // if a cell wasn't found, it's possible that focus was moved to the header
@@ -1483,11 +1502,11 @@ export class RowRenderer extends BeanStub {
 
         // find the next cell to start editing
         const nextRenderedCell = this.findNextCellToFocusOn(gridCell, backwards, true) as CellComp;
-        const foundCell = exists(nextRenderedCell);
+        const foundCell = nextRenderedCell!=null;
 
         // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
         // to the normal tabbing so user can exit the grid.
-        if (foundCell && nextRenderedCell) {
+        if (foundCell) {
             nextRenderedCell.startEditingIfEnabled(null, null, true);
             nextRenderedCell.focusCell(false);
         }
@@ -1495,18 +1514,41 @@ export class RowRenderer extends BeanStub {
         return foundCell;
     }
 
-    private moveToNextEditingRow(previousRenderedCell: CellComp, backwards: boolean): boolean {
-        const gridCell = previousRenderedCell.getCellPosition();
+    private moveToNextEditingRow(previousCellComp: CellComp, backwards: boolean): boolean {
+        const cellPos = previousCellComp.getCellPosition();
         // find the next cell to start editing
-        const nextRenderedCell = this.findNextCellToFocusOn(gridCell, backwards, true) as CellComp;
-        const foundCell = exists(nextRenderedCell);
+        const nextCellComp = this.findNextCellToFocusOn(cellPos, backwards, true) as CellComp;
 
-        // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
-        // to the normal tabbing so user can exit the grid.
-        if (foundCell && nextRenderedCell) {
-            this.moveEditToNextCellOrRow(previousRenderedCell, nextRenderedCell);
+        if (nextCellComp==null) { return false; }
+
+        const previousPos = previousCellComp.getCellPosition();
+        const nextPos = nextCellComp.getCellPosition();
+
+        const previousEditable = this.isCellEditable(previousPos);
+        const nextEditable = this.isCellEditable(nextPos);
+
+        const rowsMatch = nextPos && previousPos.rowIndex === nextPos.rowIndex && previousPos.rowPinned === nextPos.rowPinned;
+
+        if (previousEditable) {
+            previousCellComp.setFocusOutOnEditor();
         }
-        return foundCell;
+
+        if (!rowsMatch) {
+            const pRow = previousCellComp.getRenderedRow();
+            pRow!.stopEditing();
+
+            const nRow = nextCellComp.getRenderedRow();
+            nRow!.startRowEditing();
+        }
+
+        if (nextEditable) {
+            nextCellComp.setFocusInOnEditor();
+            nextCellComp.focusCell();
+        } else {
+            nextCellComp.focusCell(true);
+        }
+
+        return true;
     }
 
     private moveToNextCellNotEditing(previousRenderedCell: CellComp | RowController, backwards: boolean): boolean {
@@ -1533,29 +1575,6 @@ export class RowRenderer extends BeanStub {
         }
 
         return exists(nextRenderedCell);
-    }
-
-    private moveEditToNextCellOrRow(previousRenderedCell: CellComp, nextRenderedCell: CellComp): void {
-        const pGridCell = previousRenderedCell.getCellPosition();
-        const nGridCell = nextRenderedCell.getCellPosition();
-        const rowsMatch = nGridCell && pGridCell.rowIndex === nGridCell.rowIndex && pGridCell.rowPinned === nGridCell.rowPinned;
-
-        if (rowsMatch) {
-            // same row, so we don't start / stop editing, we just move the focus along
-            previousRenderedCell.setFocusOutOnEditor();
-            nextRenderedCell.setFocusInOnEditor();
-        } else {
-            const pRow = previousRenderedCell.getRenderedRow();
-            const nRow = nextRenderedCell.getRenderedRow();
-
-            previousRenderedCell.setFocusOutOnEditor();
-            pRow!.stopEditing();
-
-            nRow!.startRowEditing();
-            nextRenderedCell.setFocusInOnEditor();
-        }
-
-        nextRenderedCell.focusCell();
     }
 
     // called by the cell, when tab is pressed while editing.
@@ -1613,9 +1632,10 @@ export class RowRenderer extends BeanStub {
             // the 'ensure index visible' and 'flush all frames', otherwise if we are skipping
             // a bunch of cells (eg 10 rows) then all the work on ensuring cell visible is useless
             // (except for the last one) which causes grid to stall for a while.
-            if (startEditing) {
-                const rowNode = this.lookupRowNodeForCell(nextCell);
-                const cellIsEditable = rowNode && nextCell.column.isCellEditable(rowNode);
+            // note - for full row edit, we do focus non-editable cells, as the row stays in edit mode.
+            const fullRowEdit = this.gridOptionsWrapper.isFullRowEdit();
+            if (startEditing && !fullRowEdit) {
+                const cellIsEditable = this.isCellEditable(nextCell);
                 if (!cellIsEditable) { continue; }
             }
 
@@ -1646,6 +1666,15 @@ export class RowRenderer extends BeanStub {
 
             // we successfully tabbed onto a grid cell, so return true
             return nextCellComp;
+        }
+    }
+
+    private isCellEditable(cell: CellPosition): boolean {
+        const rowNode = this.lookupRowNodeForCell(cell);
+        if (rowNode) {
+            return cell.column.isCellEditable(rowNode);
+        } else {
+            return false;
         }
     }
 
