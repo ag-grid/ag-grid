@@ -194,6 +194,7 @@ const chartMeta = {
 const axisDefaults: any = {
     defaults: {
         visibleRange: [0, 1],
+        thickness: 0,
         label: {},
         tick: {},
         title: {},

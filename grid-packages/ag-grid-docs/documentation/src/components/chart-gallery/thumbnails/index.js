@@ -14,6 +14,7 @@ import thumbnailGroupedBar from './grouped-bar.png';
 import thumbnailGroupedColumn from './grouped-column.png';
 import thumbnailHistogramWithSpecifiedBins from './histogram-with-specified-bins.png';
 import thumbnailLineWithGaps from './line-with-gaps.png';
+import thumbnailLogAxis from './log-axis.png';
 import thumbnailMarketIndexTreemap from './market-index-treemap.png';
 import thumbnailPerMarkerCustomisation from './per-marker-customisation.png';
 import thumbnailRealTimeDataUpdates from './real-time-data-updates.png';
@@ -49,6 +50,7 @@ const thumbnails = {
     'grouped-column': thumbnailGroupedColumn,
     'histogram-with-specified-bins': thumbnailHistogramWithSpecifiedBins,
     'line-with-gaps': thumbnailLineWithGaps,
+    'log-axis': thumbnailLogAxis,
     'market-index-treemap': thumbnailMarketIndexTreemap,
     'per-marker-customisation': thumbnailPerMarkerCustomisation,
     'real-time-data-updates': thumbnailRealTimeDataUpdates,

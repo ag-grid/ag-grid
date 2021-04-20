@@ -92,7 +92,7 @@ export class CartesianChart extends Chart {
 
         axes.forEach(axis => {
             axis.group.visible = true;
-            const axisThickness = Math.floor(axis.computeBBox().width);
+            const axisThickness = Math.floor(axis.thickness || axis.computeBBox().width);
             switch (axis.position) {
                 case ChartAxisPosition.Top:
                     shrinkRect.y += axisThickness;

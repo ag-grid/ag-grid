@@ -4,6 +4,12 @@ import { ExcelXlsxFactory } from '../../excelXlsxFactory';
 const PIXEL_TO_INCH = 0.0104166667;
 const INCH_TO_EXCEL = 914499;
 
+interface ImageColor {
+    color: string;
+    tint?: number;
+    saturation?: number;
+}
+
 const convertFromPixelToExcel = (value: number): number => {
     return Math.ceil(value * PIXEL_TO_INCH * INCH_TO_EXCEL);
 }
@@ -45,9 +51,8 @@ const getAnchor = (name: string, image: ExcelImage): XmlElement => {
     }
 };
 
-const getExt = (): XmlElement => ({
-    name: 'a:extLst',
-    children: [{
+const getExt = (image: ExcelImage): XmlElement => {
+    const children: XmlElement[] = [{
         name: 'a:ext',
         properties: {
             rawMap: {
@@ -58,84 +63,232 @@ const getExt = (): XmlElement => ({
             name: 'a16:creationId',
             properties: {
                 rawMap: {
-                    id: '{00000000-0008-0000-0000-000002000000}',
+                    id: '{822E6D20-D7BC-2841-A643-D49A6EF008A2}',
                     'xmlns:a16': 'http://schemas.microsoft.com/office/drawing/2014/main'
                 }
             }
         }]
+    }];
+    const recolor = image.recolor && image.recolor.toLowerCase();
+
+    switch (recolor) {
+        case 'grayscale':
+        case 'sepia':
+        case 'washout':
+            children.push({
+                name: 'a:ext',
+                properties: {
+                    rawMap: {
+                        uri: '{C183D7F6-B498-43B3-948B-1728B52AA6E4}'
+                    }
+                },
+                children: [{
+                    name: 'adec:decorative',
+                    properties: {
+                        rawMap: {
+                            val: '0',
+                            'xmlns:adec': 'http://schemas.microsoft.com/office/drawing/2017/decorative'
+                        }
+                    }
+                }]
+            });
+    }
+
+    return {
+        name: 'a:extLst',
+        children
+    }
+};
+
+const getNvPicPr = (image: ExcelImage, index: number) => ({
+    name: 'xdr:nvPicPr',
+    children: [{
+        name: 'xdr:cNvPr',
+        properties: {
+            rawMap: {
+                id: index,
+                name: image.id,
+                descr: image.altText != null ? image.altText : undefined
+            }
+        },
+        children: [getExt(image)]
+    }, {
+        name: 'xdr:cNvPicPr',
+        children: [{
+            name: 'a:picLocks'
+        }]
     }]
 });
+
+const getColorDetails = (color: ImageColor): XmlElement[] | undefined => {
+    if (!color.saturation && !color.tint) { return; }
+    const ret: XmlElement[] = [];
+
+    if (color.saturation) {
+        ret.push({
+            name: 'a:satMod',
+            properties: {
+                rawMap: {
+                    val: color.saturation * 1000
+                }
+            }
+        });
+    }
+
+    if (color.tint) {
+        ret.push({
+            name: 'a:tint',
+            properties: {
+                rawMap: {
+                    val: color.tint * 1000
+                }
+            }
+        });
+    }
+
+    return ret;
+}
+
+const getDuoTone = (primaryColor: ImageColor, secondaryColor: ImageColor): XmlElement => {
+    return ({
+        name: 'a:duotone',
+        children: [{
+            name: 'a:prstClr',
+            properties: {
+                rawMap: {
+                    val: primaryColor.color
+                }
+            },
+            children: getColorDetails(primaryColor)
+        }, {
+            name: 'a:srgbClr',
+            properties: {
+                rawMap: {
+                    val: secondaryColor.color
+                }
+            },
+            children: getColorDetails(secondaryColor)
+        }]
+    });
+};
+
+const getBlipFill = (image: ExcelImage, index: number) => {
+    let blipChildren: XmlElement[] | undefined;
+
+    if (image.transparency) {
+        const transparency = Math.min(Math.max(image.transparency, 0), 100);
+        blipChildren = [{
+            name: 'a:alphaModFix',
+            properties: {
+                rawMap: {
+                    amt: 100000 - Math.round(transparency * 1000),
+                }
+            }
+        }];
+    }
+
+    if (image.recolor) {
+        if (!blipChildren) { blipChildren = []; }
+        switch(image.recolor.toLocaleLowerCase()) {
+            case 'grayscale':
+                blipChildren.push({ name: 'a:grayscl' })
+                break;
+            case 'sepia':
+                blipChildren.push(getDuoTone({ color: 'black' }, { color: 'D9C3A5', tint: 50, saturation: 180 }));
+                break;
+            case 'washout':
+                blipChildren.push({
+                    name: 'a:lum',
+                    properties: {
+                        rawMap: {
+                            bright: '70000',
+                            contrast: '-70000'
+                        }
+                    }
+                });
+                break;
+            default:
+        }
+    }
+
+    return ({
+        name: 'xdr:blipFill',
+        children: [{
+            name: 'a:blip',
+            properties: {
+                rawMap: {
+                    cstate: 'print',
+                    'r:embed': `rId${index}`,
+                    'xmlns:r': 'http://schemas.openxmlformats.org/officeDocument/2006/relationships'
+                }
+            },
+            children: blipChildren
+        }, {
+            name:'a:stretch',
+            children: [{
+                name: 'a:fillRect'
+            }]
+        }]
+    })
+};
+
+const getSpPr = (image: ExcelImage) => {
+    const xfrm: XmlElement = {
+        name: 'a:xfrm',
+        children: [{
+            name: 'a:off',
+            properties: {
+                rawMap: {
+                    x: 0,
+                    y: 0
+                }
+            }
+        }, {
+            name: 'a:ext',
+            properties: {
+                rawMap: {
+                    cx: 0,
+                    cy: 0
+                }
+            }
+        }]
+    };
+
+    if (image.rotation) {
+        const rotation = image.rotation;
+        xfrm.properties = {
+            rawMap: {
+                rot: Math.min(Math.max(rotation, 0), 360) * 60000
+            }
+        }
+    }
+
+    const prstGeom: XmlElement = {
+        name: 'a:prstGeom',
+        properties: {
+            rawMap: {
+                prst: 'rect'
+            }
+        },
+        children: [{ name: 'a:avLst' }]
+    };
+
+    const ret = {
+        name: 'xdr:spPr',
+        children: [xfrm, prstGeom]
+    }
+
+    return ret;
+};
 
 const getPicture = (image: ExcelImage, currentIndex: number, worksheetImageIndex: number): XmlElement => {
     return {
         name: 'xdr:pic',
-        children: [{
-            name: 'xdr:nvPicPr',
-            children: [{
-                name: 'xdr:cNvPr',
-                properties: {
-                    rawMap: {
-                        id: currentIndex + 1,
-                        name: image.id
-                    }
-                },
-                children: [getExt()]
-            }, {
-                name: 'xdr:cNvPicPr',
-                children: [{
-                    name: 'a:picLocks'
-                }]
-            }]
-        }, {
-            name: 'xdr:blipFill',
-            children: [{
-                name: 'a:blip',
-                properties: {
-                    rawMap: {
-                        cstate: 'print',
-                        'r:embed': `rId${worksheetImageIndex + 1}`,
-                        'xmlns:r': 'http://schemas.openxmlformats.org/officeDocument/2006/relationships'
-                    }
-                }
-            }, {
-                name:'a:stretch',
-                children: [{
-                    name: 'a:fillRect'
-                }]
-            }]
-        }, {
-            name: 'xdr:spPr',
-            children: [{
-                name: 'a:xfrm',
-                children: [{
-                    name: 'a:off',
-                    properties: {
-                        rawMap: {
-                            x: 0,
-                            y: 0
-                        }
-                    }
-                }, {
-                    name: 'a:ext',
-                    properties: {
-                        rawMap: {
-                            cx: 0,
-                            cy: 0
-                        }
-                    }
-                }]
-            }, {
-                name: 'a:prstGeom',
-                properties: {
-                    rawMap: {
-                        prst: 'rect'
-                    }
-                },
-                children: [{
-                    name: 'a:avLst'
-                }]
-            }]
-        }]
+        children: [
+            getNvPicPr(image, currentIndex + 1), 
+            getBlipFill(image, worksheetImageIndex + 1),
+            getSpPr(image)
+        ]
     }
 }
 

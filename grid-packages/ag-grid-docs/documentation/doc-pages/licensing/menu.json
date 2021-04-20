@@ -1057,7 +1057,7 @@
                 "url": "/excel-export-temp/",
                 "enterprise": true
               }
-          ]
+            ]
           },
           {
             "title": "Clipboard",
@@ -1505,6 +1505,10 @@
                   {
                     "title": "Time Axis With Irregular Intervals",
                     "url": "/charts-overview/gallery/time-axis-with-irregular-intervals/"
+                  },
+                  {
+                    "title": "Log Axis",
+                    "url": "/charts-overview/gallery/log-axis/"
                   },
                   {
                     "title": "Real-Time Data Updates",

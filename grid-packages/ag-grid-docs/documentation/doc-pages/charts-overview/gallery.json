@@ -95,6 +95,9 @@
         "Time Axis With Irregular Intervals": {
             "description": "A time axis represents a continuous length of time, and so can be easily used to visualise data with irregular time intervals."
         },
+        "Log Axis": {
+            "description": "Log axis charts are great at showing the rate of change over time. If the line is straight, the rate of change is constant."
+        },
         "Real-Time Data Updates": {
             "description": "Charts will re-render immediately when new data is provided. This example demonstrates the performance of a chart with new data introduced every 50 milliseconds."
         },
