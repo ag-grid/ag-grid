@@ -5,6 +5,24 @@ enterprise: true
 
 ## Data types
 
+<snippet spaceBetweenProperties="true">
+const gridOptions = {
+    columnDefs: [
+        { headerName: 'As provided', field: "rawValue" },
+        { headerName: 'As boolean', field: "rawValue", cellClass: 'booleanType' },
+        { headerName: 'As string', field: "rawValue", cellClass: 'stringType' },
+        { headerName: 'Date', field: "dateValue", cellClass: 'dateType', minWidth: 220 }
+    ], 
+    excelStyles: [
+        { id: 'booleanType', dataType: 'Boolean' },
+        { id: 'stringType', dataType: 'String' },
+        { id: 'dateType', dataType: 'DateTime' }
+    ],
+    rowData: [{rawValue: 1, dateValue: '2009-04-20T00:00:00.000'}]
+};
+</snippet>
+
+
 The following example demonstrates how to use other data types for your export. Note that:
 
 - Boolean works off using 1 for true
@@ -16,6 +34,35 @@ The following example demonstrates how to use other data types for your export. 
 
 ## Dates
 When exporting dates to Excel format, you should use an Excel Style with `dataType="DateTime"`. The `DateTime` format only accepts dates in `ISO Format`, therefore, in order to get this to work, all dates need to be provided in the `yyyy-mm-ddThh:mm:ss` format. If your dates are not in ISO format, you should use the `processCellCallback` method to convert them. By default, these values are displayed as number, as demonstrated in [Data Types](/excel-export/#example-data-types). To make these numbers look like a regular date, the Excel Style should be combined with the `numberFormat` Excel Style.
+
+
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'date',
+            headerName: 'ISO Format',
+            cellClass: 'dateISO'
+        }
+    ], 
+    rowData: [
+        { date: '2020-05-30T10:01:00' },
+        { date: '2015-04-21T16:30:00' },
+        { date: '2010-02-19T12:02:00' },
+        { date: '1995-10-04T03:27:00' }
+    ],
+    excelStyles: [
+        {
+            id: 'dateISO',
+            dataType: 'DateTime',
+            numberFormat: {
+                format: 'yyy-mm-ddThh:mm:ss'
+            }
+        }
+    ]
+};
+</snippet>
+
 
 Note the following:
 

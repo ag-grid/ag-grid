@@ -1,9 +1,9 @@
-var gridOptions = {
+const gridOptions = {
     columnDefs: [
         {
             field: 'date',
             headerName: 'ISO Format',
-            cellClass: 'date',
+            cellClass: 'dateISO',
             minWidth: 150 
         },
         { 
@@ -50,25 +50,14 @@ var gridOptions = {
             }
         }
     ],
-
     defaultColDef: {
-        sortable: true,
-        filter: true,
-        resizable: true,
+        flex: 1,
         minWidth: 100,
-        flex: 1
+        resizable: true,
     },
-
-    rowData: [
-        { date: '2020-05-30T10:01:00' },
-        { date: '2015-04-21T16:30:00' },
-        { date: '2010-02-19T12:02:00' },
-        { date: '1995-10-04T03:27:00' }
-    ],
-
     excelStyles: [
         {
-            id: 'date',
+            id: 'dateISO',
             dataType: 'DateTime',
             numberFormat: {
                 format: 'yyy-mm-ddThh:mm:ss'
@@ -95,7 +84,13 @@ var gridOptions = {
                 format: 'dd/mm/yyy h:mm:ss AM/PM'
             }
         },
-    ]
+    ],
+    rowData: [
+        { date: '2020-05-30T10:01:00' },
+        { date: '2015-04-21T16:30:00' },
+        { date: '2010-02-19T12:02:00' },
+        { date: '1995-10-04T03:27:00' }
+    ],
 };
 
 function onBtnExportDataAsExcel() {
@@ -103,7 +98,7 @@ function onBtnExportDataAsExcel() {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
-    var gridDiv = document.querySelector('#myGrid');
+document.addEventListener('DOMContentLoaded', () => {
+    const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 });

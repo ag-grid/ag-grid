@@ -4,6 +4,8 @@
     "outDir": "dist-test",
     "rootDir": "src/ts",
     "lib": [
+      "es2015",
+      "dom",
       "esnext.bigint"
     ]
   },
