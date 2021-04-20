@@ -2,8 +2,7 @@ import { ColDef, ColGroupDef } from "../entities/colDef";
 import { Column } from "../entities/column";
 import { Bean } from "../context/context";
 import { deepCloneDefinition } from "../utils/object";
-import { ColumnGroup } from "../entities/columnGroup";
-import { ColumnGroupChild } from "../entities/columnGroupChild";
+import { OriginalColumnGroup } from "../entities/originalColumnGroup";
 
 @Bean('columnDefFactory')
 export class ColumnDefFactory {
@@ -20,24 +19,23 @@ export class ColumnDefFactory {
             let addToResult = true;
 
             let childDef: ColDef | ColGroupDef = colDef;
-            let child: ColumnGroupChild = col;
 
-            while (child.getParent()) {
+            let pointer = col.getOriginalParent();
 
-                const parent = child.getParent() as ColumnGroup;
+            while (pointer) {
 
                 let parentDef: ColGroupDef | null | undefined = null;
 
                 // we don't include padding groups, as the column groups provided
                 // by application didn't have these. the whole point of padding groups
                 // is to balance the column tree that the user provided.
-                if (parent.isPadding()) {
-                    child = parent;
+                if (pointer.isPadding()) {
+                    pointer = pointer.getOriginalParent();
                     continue;
                 }
 
                 // if colDef for this group already exists, use it
-                const existingParentDef = colGroupDefs[parent.getGroupId()];
+                const existingParentDef = colGroupDefs[pointer.getGroupId()];
                 if (existingParentDef) {
                     existingParentDef.children.push(childDef);
                     // if we added to result, it would be the second time we did it
@@ -47,13 +45,13 @@ export class ColumnDefFactory {
                     break;
                 }
 
-                parentDef = this.createDefFromGroup(parent);
+                parentDef = this.createDefFromGroup(pointer);
 
                 if (parentDef) {
                     parentDef.children = [childDef];
                     colGroupDefs[parentDef.groupId!] = parentDef;
                     childDef = parentDef;
-                    child = parent;
+                    pointer = pointer.getOriginalParent();
                 }
             }
 
@@ -65,7 +63,7 @@ export class ColumnDefFactory {
         return res;
     }
 
-    private createDefFromGroup(group: ColumnGroup): ColGroupDef | null | undefined {
+    private createDefFromGroup(group: OriginalColumnGroup): ColGroupDef | null | undefined {
         const defCloned = deepCloneDefinition(group.getColGroupDef(), ['children']);
 
         if (defCloned) {
