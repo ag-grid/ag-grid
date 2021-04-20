@@ -143,10 +143,10 @@
                         </div>
                         <div class="col-md-4">
                             <div>
-                                <img src='images/team/davis2.jpg' alt=" Davis Jaunbruns, Developer"/>
+                                <img src='images/team/alan.jpg' alt="Alan Richardson, Digital Marketing"/>
                             </div>
-                            <h3>Davis Jaunbruns</h3>
-                            <h4>Developer</h4>
+                            <h3>Alan Richardson</h3>
+                            <h4>Digital Marketing</h4>
                         </div>
                     </div>
                     <div class="row">
@@ -186,13 +186,6 @@
                             </div>
                             <h3>Kiril Matev</h3>
                             <h4>Developer</h4>
-                        </div>
-                        <div class="col-md-4">
-                            <div>
-                                <img src='images/team/max.jpg' alt="Max Koretskyi, Developer Advocate"/>
-                            </div>
-                            <h3>Max Koretskyi</h3>
-                            <h4>Developer Advocate</h4>
                         </div>
                     </div>
                 </article>
