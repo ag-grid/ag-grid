@@ -108,18 +108,32 @@ export class FormatSpecifier {
      */
     string?: string;
 
-    constructor(specifier: FormatSpecifierOptions) {
-        this.fill = specifier.fill === undefined ? ' ' : String(specifier.fill);
-        this.align = specifier.align === undefined ? '>' : String(specifier.align);
-        this.sign = specifier.sign === undefined ? '-' : String(specifier.sign);
-        this.symbol = specifier.symbol === undefined ? '' : String(specifier.symbol);
-        this.zero = !!specifier.zero;
-        this.width = specifier.width === undefined ? undefined : +specifier.width;
-        this.comma = !!specifier.comma;
-        this.precision = specifier.precision === undefined ? undefined : +specifier.precision;
-        this.trim = !!specifier.trim;
-        this.type = specifier.type === undefined ? '' : String(specifier.type) as FormatType;
-        this.string = specifier.string;
+    constructor(specifier: FormatSpecifierOptions | FormatSpecifier) {
+        if (specifier instanceof FormatSpecifier) {
+            this.fill = specifier.fill;
+            this.align = specifier.align;
+            this.sign = specifier.sign;
+            this.symbol = specifier.symbol;
+            this.zero = specifier.zero;
+            this.width = specifier.width;
+            this.comma = specifier.comma;
+            this.precision = specifier.precision;
+            this.trim = specifier.trim;
+            this.type = specifier.type;
+            this.string = specifier.string;
+        } else {
+            this.fill = specifier.fill === undefined ? ' ' : String(specifier.fill);
+            this.align = specifier.align === undefined ? '>' : String(specifier.align);
+            this.sign = specifier.sign === undefined ? '-' : String(specifier.sign);
+            this.symbol = specifier.symbol === undefined ? '' : String(specifier.symbol);
+            this.zero = !!specifier.zero;
+            this.width = specifier.width === undefined ? undefined : +specifier.width;
+            this.comma = !!specifier.comma;
+            this.precision = specifier.precision === undefined ? undefined : +specifier.precision;
+            this.trim = !!specifier.trim;
+            this.type = specifier.type === undefined ? '' : String(specifier.type) as FormatType;
+            this.string = specifier.string;
+        }
     }
 }
 
@@ -127,7 +141,11 @@ export class FormatSpecifier {
 const formatRegEx = /^(?:(.)?([<>=^]))?([+\-( ])?([$#])?(0)?(\d+)?(,)?(\.\d+)?(~)?([a-z%])?$/i;
 const interpolateRegEx = /(#\{(.*?)\})/g;
 
-export function makeFormatSpecifier(specifier: string): FormatSpecifier {
+export function makeFormatSpecifier(specifier: string | FormatSpecifier): FormatSpecifier {
+    if (specifier instanceof FormatSpecifier) {
+        return new FormatSpecifier(specifier);
+    }
+
     let found = false;
     let string = specifier.replace(interpolateRegEx, function () {
         if (!found) {
@@ -170,7 +188,7 @@ export function tickFormat(start: number, stop: number, count: number, specifier
                     formatSpecifier.precision = precision;
                 }
             }
-            return exports.formatPrefix(formatSpecifier, value);
+            return formatPrefix(formatSpecifier, value);
         }
         case '':
         case 'e':
@@ -337,7 +355,7 @@ function identity<T>(x: T): T {
 
 export let formatDefaultLocale: FormatLocale;
 export let format: (specifier: string | FormatSpecifier) => (n: number | { valueOf(): number }) => string;
-export let formatPrefix: (specifier: string, value: number) => (n: number | { valueOf(): number }) => string;
+export let formatPrefix: (specifier: string | FormatSpecifier, value: number) => (n: number | { valueOf(): number }) => string;
 
 defaultLocale({
     thousands: ',',
@@ -450,9 +468,7 @@ export function formatLocale(locale: FormatLocaleOptions): FormatLocale {
     const nan = locale.nan === undefined ? 'NaN' : String(locale.nan);
 
     function newFormat(specifier: string | FormatSpecifier): (x: number) => string {
-        const formatSpecifier = typeof specifier === 'string'
-            ? makeFormatSpecifier(specifier)
-            : specifier;
+        const formatSpecifier = makeFormatSpecifier(specifier);
 
         let fill = formatSpecifier.fill;
         let align = formatSpecifier.align;
@@ -587,7 +603,7 @@ export function formatLocale(locale: FormatLocaleOptions): FormatLocale {
         return format;
     }
 
-    function formatPrefix(specifier: string, value: number) {
+    function formatPrefix(specifier: string | FormatSpecifier, value: number) {
         const formatSpecifier = makeFormatSpecifier(specifier);
         formatSpecifier.type = 'f';
 
