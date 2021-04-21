@@ -18,6 +18,7 @@ import { Constants } from "../../constants/constants";
 import { CenterWidthFeature } from "../centerWidthFeature";
 import { DragListenerFeature } from "./dragListenerFeature";
 import { getAllValuesInObject } from "../../utils/object";
+import { convertToMap } from "../../utils/map";
 
 export enum RowContainerNames {
     LEFT = 'left',
@@ -36,7 +37,7 @@ export enum RowContainerNames {
     BOTTOM_FULL_WITH = 'bottomFullWidth'
 }
 
-const ContainerCssClasses: Map<RowContainerNames, string> = new Map([
+const ContainerCssClasses: Map<RowContainerNames, string> = convertToMap([
     [RowContainerNames.CENTER, 'ag-center-cols-container'],
     [RowContainerNames.LEFT, 'ag-pinned-left-cols-container'],
     [RowContainerNames.RIGHT, 'ag-pinned-right-cols-container'],
@@ -53,13 +54,13 @@ const ContainerCssClasses: Map<RowContainerNames, string> = new Map([
     [RowContainerNames.BOTTOM_FULL_WITH, 'ag-floating-bottom-full-width-container'],
 ]);
 
-const ViewportCssClasses: Map<RowContainerNames, string> = new Map([
+const ViewportCssClasses: Map<RowContainerNames, string> = convertToMap([
     [RowContainerNames.CENTER, 'ag-center-cols-viewport'],
     [RowContainerNames.TOP_CENTER, 'ag-floating-top-viewport'],
     [RowContainerNames.BOTTOM_CENTER, 'ag-floating-bottom-viewport'],
 ]);
 
-const WrapperCssClasses: Map<RowContainerNames, string> = new Map([
+const WrapperCssClasses: Map<RowContainerNames, string> = convertToMap([
     [RowContainerNames.CENTER, 'ag-center-cols-clipper'],
 ]);
 

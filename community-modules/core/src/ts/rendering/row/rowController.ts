@@ -37,6 +37,7 @@ import { RowComp } from "./rowComp";
 import { executeNextVMTurn } from "../../utils/function";
 import { RowCssClassCalculatorParams } from "./rowCssClassCalculator";
 import { BeanStub } from "../../context/beanStub";
+import { convertToMap } from "../../utils/map";
 
 export enum RowType {
     Normal = 'Normal',
@@ -46,13 +47,13 @@ export enum RowType {
     FullWidthDetail = 'FullWidthDetail'
 }
 
-export const FullWidthRenderers: Map<RowType, string> = new Map([
+export const FullWidthRenderers: Map<RowType, string> = convertToMap([
     [RowType.FullWidthLoading, 'agLoadingCellRenderer'],
     [RowType.FullWidthGroup, 'agGroupRowRenderer'],
     [RowType.FullWidthDetail, 'agDetailCellRenderer']
 ]);
 
-export const FullWidthKeys: Map<RowType, string> = new Map([
+export const FullWidthKeys: Map<RowType, string> = convertToMap([
     [RowType.FullWidth, 'fullWidthCellRenderer'],
     [RowType.FullWidthLoading, 'loadingCellRenderer'],
     [RowType.FullWidthGroup, 'groupRowRenderer'],
@@ -158,25 +159,25 @@ export class RowController extends BeanStub {
     }
 
     public setLeftRowComp(rowComp: RowComp): void {
-        if (this.leftRowComp) { console.error('AG Grid - should not set leftRowComp twice') }
+        if (this.leftRowComp) { console.error('AG Grid - should not set leftRowComp twice'); }
         this.leftRowComp = rowComp;
         this.allRowComps.push(rowComp);
     }
 
     public setRightRowComp(rowComp: RowComp): void {
-        if (this.rightRowComp) { console.error('AG Grid - should not set rightRowComp twice') }
+        if (this.rightRowComp) { console.error('AG Grid - should not set rightRowComp twice'); }
         this.rightRowComp = rowComp;
         this.allRowComps.push(rowComp);
     }
 
     public setCenterRowComp(rowComp: RowComp): void {
-        if (this.centerRowComp) { console.error('AG Grid - should not set centerRowComp twice') }
+        if (this.centerRowComp) { console.error('AG Grid - should not set centerRowComp twice'); }
         this.centerRowComp = rowComp;
         this.allRowComps.push(rowComp);
     }
 
     public setFullWidthRowComp(rowComp: RowComp): void {
-        if (this.fullWidthRowComp) { console.error('AG Grid - should not set fullWidthRowComp twice') }
+        if (this.fullWidthRowComp) { console.error('AG Grid - should not set fullWidthRowComp twice'); }
         this.fullWidthRowComp = rowComp;
         this.allRowComps.push(rowComp);
     }

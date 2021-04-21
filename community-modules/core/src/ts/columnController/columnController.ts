@@ -48,6 +48,7 @@ import { camelCaseToHumanText, startsWith } from '../utils/string';
 import { ColumnDefFactory } from "./columnDefFactory";
 import { IRowModel } from "../interfaces/iRowModel";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
+import { convertToMap } from '../utils/map';
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -1752,7 +1753,7 @@ export class ColumnController extends BeanStub {
 
     private orderColumnStateList(columnStateList: any[]): void {
         // for fast looking, store the index of each column
-        const gridColumnIdMap = new Map<string, number>(this.gridColumns.map((col, index) => [col.getColId(), index]));
+        const gridColumnIdMap = convertToMap<string, number>(this.gridColumns.map((col, index) => [col.getColId(), index]));
 
         columnStateList.sort((itemA: any, itemB: any) => {
             const posA = gridColumnIdMap.has(itemA.colId) ? gridColumnIdMap.get(itemA.colId) : -1;
@@ -3074,7 +3075,7 @@ export class ColumnController extends BeanStub {
     private orderGridColsLikeLastPrimary(): void {
         if (missing(this.lastPrimaryOrder)) { return; }
 
-        const lastPrimaryOrderMapped = new Map<Column, number>(this.lastPrimaryOrder.map((col, index) => [col, index]));
+        const lastPrimaryOrderMapped = convertToMap<Column, number>(this.lastPrimaryOrder.map((col, index) => [col, index]));
 
         // only do the sort if at least one column is accounted for. columns will be not accounted for
         // if changing from secondary to primary columns
@@ -3089,9 +3090,9 @@ export class ColumnController extends BeanStub {
 
         // order cols in the same order as before. we need to make sure that all
         // cols still exists, so filter out any that no longer exist.
-        const gridColsMap = new Map<Column, boolean>(this.gridColumns.map(col => [col, true]));
+        const gridColsMap = convertToMap<Column, boolean>(this.gridColumns.map(col => [col, true]));
         const oldColsOrdered = this.lastPrimaryOrder.filter(col => gridColsMap.has(col));
-        const oldColsMap = new Map<Column, boolean>(oldColsOrdered.map(col => [col, true]));
+        const oldColsMap = convertToMap<Column, boolean>(oldColsOrdered.map(col => [col, true]));
         const newColsOrdered = this.gridColumns.filter(col => !oldColsMap.has(col));
 
         // add in the new columns, at the end (if no group), or at the end of the group (if a group)
