@@ -22,7 +22,7 @@ import { RowDragFeature } from "./rowDragFeature";
 import { DragAndDropService } from "../dragAndDrop/dragAndDropService";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
 import { RefSelector } from "../widgets/componentAnnotations";
-import { getTabIndex } from "../utils/browser";
+import { getTabIndex, isBrowserIE } from "../utils/browser";
 import { RowRenderer } from "../rendering/rowRenderer";
 import { PopupService } from "../widgets/popupService";
 import { missing } from "../utils/generic";
@@ -321,14 +321,12 @@ export class GridBodyController extends BeanStub {
     // method will call itself if no available width. this covers if the grid
     // isn't visible, but is just about to be visible.
     public sizeColumnsToFit(nextTimeout?: number) {
-        const hasVerticalScroll = this.isVerticalScrollShowing();
-        let diff = 0;
-
-        if (hasVerticalScroll) {
-            diff = this.gridOptionsWrapper.getScrollbarWidth();
-        }
-
-        const availableWidth = getInnerWidth(this.eBodyViewport) - diff;
+        // IE is different to the other browsers, it already removes the scroll width
+        // while calling window.getComputedStyle() (which is called by getInnerWidth())
+        const removeScrollWidth = this.isVerticalScrollShowing() && !isBrowserIE();
+        const scrollWidthToRemove = removeScrollWidth ? this.gridOptionsWrapper.getScrollbarWidth() : 0;
+        const bodyViewportWidth = getInnerWidth(this.eBodyViewport);
+        const availableWidth = bodyViewportWidth - scrollWidthToRemove;
 
         if (availableWidth > 0) {
             this.columnController.sizeColumnsToFit(availableWidth, "sizeColumnsToFit");
