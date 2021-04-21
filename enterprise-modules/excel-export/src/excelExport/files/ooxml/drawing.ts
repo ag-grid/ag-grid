@@ -19,34 +19,33 @@ const getAnchor = (name: string, image: ExcelImage): XmlElement => {
         image.fitCell = true;
     }
 
-    const diff = name === 'to' && image.fitCell ? 1 : 0;
+    let { position = {}, width = 0, height = 0, fitCell } = image;
+    let { offsetX = 0, offsetY = 0, rowSpan = 1, colSpan = 1, column, row } = position;
 
-    let offsetX: number = 0
-    let offsetY: number = 0
-    let width: number = 0
-    let height: number = 0
+    const diffRow = name === 'to' && image.fitCell ? 1 : rowSpan - 1;
+    const diffCol = name === 'to' && image.fitCell ? 1 : colSpan - 1;
 
     if (!image.fitCell) {
-        offsetX = convertFromPixelToExcel((image.position && image.position.offsetX) || 0);
-        offsetY = convertFromPixelToExcel((image.position && image.position.offsetY) || 0);
-        width = convertFromPixelToExcel(image.width!);
-        height = convertFromPixelToExcel(image.height!);
+        offsetX = convertFromPixelToExcel((position.offsetX) || 0);
+        offsetY = convertFromPixelToExcel((position.offsetY) || 0);
+        width = convertFromPixelToExcel(width!);
+        height = convertFromPixelToExcel(height!);
     }
 
     return {
         name: `xdr:${name}`,
         children: [{
             name: 'xdr:col',
-            textNode: ((image.position!.column! + diff) - 1).toString()
+            textNode: ((column! + diffCol) - 1).toString()
         }, {
             name: 'xdr:colOff',
-            textNode: name === 'from' ? offsetX.toString() : image.fitCell ? '0' : (offsetX + width).toString()
+            textNode: name === 'from' ? offsetX.toString() : fitCell ? '0' : (offsetX + width).toString()
         }, {
             name: 'xdr:row',
-            textNode: ((image.position!.row! + diff) - 1).toString()
+            textNode: ((row! + diffRow) - 1).toString()
         }, {
             name: 'xdr:rowOff',
-            textNode: name === 'from' ? offsetY.toString() : image.fitCell ? '0' : (offsetY + height).toString()
+            textNode: name === 'from' ? offsetY.toString() : fitCell ? '0' : (offsetY + height).toString()
         }]
     }
 };
