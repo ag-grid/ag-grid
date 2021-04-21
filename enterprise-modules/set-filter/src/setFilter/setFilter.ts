@@ -507,6 +507,8 @@ export class SetFilter extends ProvidedFilter<SetFilterModel> {
     public onAnyFilterChanged(): void {
         // don't block the current action when updating the values for this filter
         setTimeout(() => {
+            if (!this.isAlive()) { return; }
+
             if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
             this.valueModel.refreshAfterAnyFilterChanged().then(() => this.refresh());
