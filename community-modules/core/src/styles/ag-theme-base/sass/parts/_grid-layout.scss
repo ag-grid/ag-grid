@@ -9,8 +9,8 @@
         @include ag-border(primary);
     }
     
-    // support 20 levels here because row group indentation is used for tree data which can be quite deep
-    @for $i from 1 to 20 {
+    // support 100 levels here because row group indentation is used for tree data which can be quite deep
+    @for $i from 1 to 100 {
         .ag-row > .ag-cell-wrapper.ag-row-group-indent-#{$i} {
             @include ag-theme-rtl(( padding-left: ag-param(cell-horizontal-padding) + $i * ag-param(row-group-indent-size) ));
         }
