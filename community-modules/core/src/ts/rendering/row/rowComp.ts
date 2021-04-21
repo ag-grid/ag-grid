@@ -9,7 +9,7 @@ import { FullWidthKeys, FullWidthRenderers, RowController, RowType } from "./row
 import { exists, missing } from "../../utils/generic";
 import { Column } from "../../entities/column";
 import { CellComp } from "../cellComp";
-import { getAllValuesInObject, iterateObject } from "../../utils/object";
+import { assign, getAllValuesInObject, iterateObject } from "../../utils/object";
 import { Constants } from "../../constants/constants";
 import { ModuleRegistry } from "../../modules/moduleRegistry";
 import { ModuleNames } from "../../modules/moduleNames";
@@ -111,7 +111,7 @@ export class RowComp extends Component {
 
     public onColumnChanged(): void {
         const cols = this.controller.getColsForRowComp(this.pinned);
-        const cellsToRemove = Object.assign({}, this.cellComps);
+        const cellsToRemove = assign({}, this.cellComps);
 
         cols.forEach(col => {
             const colId = col.getId();
