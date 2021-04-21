@@ -147,7 +147,7 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
 
     protected isFormula(value: string | null) {
         if (value == null) { return false; }
-        return this.config.autoConvertFormulas && value.toString().startsWith('=');
+        return this.config.autoConvertFormulas && _.startsWith(value.toString(), '=');
     }
 
     protected getStyleById(styleId?: string | null): ExcelStyle | null {

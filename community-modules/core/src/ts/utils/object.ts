@@ -11,7 +11,7 @@ export function iterateObject<T>(object: { [p: string]: T; } | T[] | null | unde
     }
 }
 
-export function cloneObject<T>(object: T): T {
+export function cloneObject<T extends {}>(object: T): T {
     const copy = {} as T;
     const keys = Object.keys(object);
 

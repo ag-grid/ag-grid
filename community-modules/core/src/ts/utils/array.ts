@@ -130,6 +130,14 @@ export function findIndex<T>(collection: T[], predicate: (item: T, idx: number, 
     return -1;
 }
 
+export function fill(collection: any[], value: any = null, start: number = 0, end: number = collection.length): any[] {
+    for (let i = start; i < end; i++) {
+        collection[i] = value;
+    }
+
+    return collection;
+}
+
 /**
  * The implementation of Array.prototype.every in browsers is always slower than just using a simple for loop, so
  * use this for improved performance.

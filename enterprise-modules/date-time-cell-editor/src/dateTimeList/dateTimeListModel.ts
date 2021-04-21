@@ -1,3 +1,5 @@
+import { _ } from "@ag-grid-community/core";
+
 export interface IDateTimeListModel {
     getPage(base: Date, number: number): Page;
     roundToValue(date: Date): Date;
@@ -114,8 +116,7 @@ export class DateTimeListModel implements IDateTimeListModel {
             });
         }
 
-        const columns = Array(options.columnCount(firstValue))
-            .fill(null)
+        const columns = _.fill(Array(options.columnCount(firstValue)), null)
             .map((_, i) => ({
                 label: options.columnTitle(entries[i].value),
             }));

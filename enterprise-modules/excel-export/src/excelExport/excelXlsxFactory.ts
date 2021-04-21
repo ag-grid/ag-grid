@@ -72,7 +72,7 @@ export class ExcelXlsxFactory {
         }
 
         if (registeredImage) {
-            const currentSheetImages = registeredImage.find((currentImage) => currentImage.sheetId === currentSheetIndex);
+            const currentSheetImages = _.find(registeredImage, (currentImage) => currentImage.sheetId === currentSheetIndex);
             if (currentSheetImages) {
                 currentSheetImages.image.push(image);
             } else {
@@ -188,7 +188,7 @@ export class ExcelXlsxFactory {
     }
 
     public static createWorkbookRels(sheetLen: number): string {
-        const worksheets = new Array(sheetLen).fill(undefined).map((v, i) => ({
+        const worksheets = _.fill(new Array(sheetLen), undefined).map((v, i) => ({
             Id: `rId${i + 1}`,
             Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet',
             Target: `worksheets/sheet${i + 1}.xml`

@@ -16,6 +16,7 @@ import { exists, missing, missingOrEmpty } from "../utils/generic";
 import { assign, getAllKeysInObjects } from "../utils/object";
 import { IServerSideStore } from "../interfaces/IServerSideStore";
 import { RowRenderer } from "../rendering/rowRenderer";
+import { startsWith } from "../utils/string";
 
 export interface SetSelectedParams {
     // true or false, whatever you want to set selection to
@@ -370,7 +371,7 @@ export class RowNode implements IEventEmitter {
                 this.id = getRowNodeId(this.data);
                 // make sure id provided doesn't start with 'row-group-' as this is reserved. also check that
                 // it has 'startsWith' in case the user provided a number.
-                if (this.id && this.id.startsWith && this.id.startsWith(RowNode.ID_PREFIX_ROW_GROUP)) {
+                if (this.id && startsWith(this.id, RowNode.ID_PREFIX_ROW_GROUP)) {
                     console.error(`AG Grid: Row ID's cannot start with ${RowNode.ID_PREFIX_ROW_GROUP}, this is a reserved prefix for AG Grid's row grouping feature.`);
                 }
             } else {

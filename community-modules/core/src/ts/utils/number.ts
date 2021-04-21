@@ -25,7 +25,7 @@ export function isNumeric(value: any): boolean {
 }
 
 export function getMaxSafeInteger(): number {
-    // eslint-disable-next-line
+    // @ts-ignore
     return Number.MAX_SAFE_INTEGER || 9007199254740991;
 }
 
