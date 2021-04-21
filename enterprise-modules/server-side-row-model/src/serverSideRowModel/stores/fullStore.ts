@@ -353,6 +353,10 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     }
 
     public getRowUsingDisplayIndex(displayRowIndex: number): RowNode | null {
+        // this can happen if asking for a row that doesn't exist in the model,
+        // eg if a cell range is selected, and the user filters so rows no longer exists
+        if (!this.isDisplayIndexInStore(displayRowIndex)) { return null; }
+
         const res = this.blockUtils.binarySearchForDisplayIndex(displayRowIndex, this.nodesAfterSort);
         return res;
     }
