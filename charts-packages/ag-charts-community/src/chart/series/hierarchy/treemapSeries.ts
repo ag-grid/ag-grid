@@ -79,6 +79,7 @@ export class TreemapSeries extends HierarchySeries {
 
     readonly title: TreemapSeriesLabel = (() => {
         const label = new TreemapSeriesLabel();
+        label.color = 'white';
         label.fontWeight = 'bold';
         label.fontSize = 12;
         label.fontFamily = 'Verdana, sans-serif';
@@ -88,6 +89,7 @@ export class TreemapSeries extends HierarchySeries {
 
     readonly subtitle: TreemapSeriesLabel = (() => {
         const label = new TreemapSeriesLabel();
+        label.color = 'white';
         label.fontSize = 9;
         label.fontFamily = 'Verdana, sans-serif';
         label.padding = 13;
@@ -97,18 +99,21 @@ export class TreemapSeries extends HierarchySeries {
     readonly labels = {
         large: (() => {
             const label = new Label();
+            label.color = 'white';
             label.fontWeight = 'bold';
             label.fontSize = 18;
             return label;
         })(),
         medium: (() => {
             const label = new Label();
+            label.color = 'white';
             label.fontWeight = 'bold';
             label.fontSize = 14;
             return label;
         })(),
         small: (() => {
             const label = new Label();
+            label.color = 'white';
             label.fontWeight = 'bold';
             label.fontSize = 10;
             return label;
