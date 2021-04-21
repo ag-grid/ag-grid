@@ -1102,10 +1102,15 @@ export class RowController extends BeanStub {
     }
 
     public getRenderedCellForColumn(column: Column): CellComp | null {
-        let cellComp = this.allRowComps.map(rc => rc.getCellComp(column.getColId())).find(c => c);
+        const cellComps = this.allRowComps.map(rc => rc.getCellComp(column.getColId()));
+        let cellComp = find(cellComps, c => !!c);
+
         if (cellComp) { return cellComp; }
-        cellComp = this.allRowComps.map(rc => rc.getCellCompSpanned(column)).find(c => c);
-        if (cellComp) { return cellComp; } else {return null; }
+
+        const spannedCellComps = this.allRowComps.map(rc => rc.getCellCompSpanned(column));
+        cellComp = find(spannedCellComps, c => !!c);
+
+        return cellComp || null;
     }
 
     private onRowIndexChanged(): void {
