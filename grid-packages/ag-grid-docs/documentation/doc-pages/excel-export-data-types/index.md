@@ -5,30 +5,67 @@ enterprise: true
 
 ## Data types
 
-<snippet spaceBetweenProperties="true">
+<snippet>
 const gridOptions = {
     columnDefs: [
-        { headerName: 'As provided', field: "rawValue" },
-        { headerName: 'As boolean', field: "rawValue", cellClass: 'booleanType' },
-        { headerName: 'As string', field: "rawValue", cellClass: 'stringType' },
-        { headerName: 'Date', field: "dateValue", cellClass: 'dateType', minWidth: 220 }
+        { headerName: 'provided', field: 'rawValue' },
+        { headerName: 'number', field: 'rawValue', cellClass: 'numberType' },
+        { headerName: 'currency', field: 'rawValue', cellClass: 'currencyFormat' },
+        { headerName: 'boolean', field: 'rawValue', cellClass: 'booleanType' },
+        { headerName: 'Negative', field: 'negativeValue', cellClass: 'negativeInBrackets' },
+        { headerName: 'string', field: 'rawValue', cellClass: 'stringType' },
+        { headerName: 'Date', field: 'dateValue', cellClass: 'dateType', minWidth: 220 },
     ], 
-    excelStyles: [
-        { id: 'booleanType', dataType: 'Boolean' },
-        { id: 'stringType', dataType: 'String' },
-        { id: 'dateType', dataType: 'DateTime' }
+    rowData: [
+        {
+            rawValue: 1,
+            negativeValue: -10,
+            dateValue: '2009-04-20T00:00:00.000',
+        },
     ],
-    rowData: [{rawValue: 1, dateValue: '2009-04-20T00:00:00.000'}]
+    excelStyles: [
+        {
+            id: 'numberType',
+            numberFormat: {
+                format: '0',
+            },
+        },
+        {
+            id: 'currencyFormat',
+            numberFormat: {
+                format: '#,##0.00 €',
+            },
+        },
+        {
+            id: 'negativeInBrackets',
+            numberFormat: {
+                format: '$[blue] #,##0;$ [red](#,##0)',
+            },
+        },
+        {
+            id: 'booleanType',
+            dataType: 'boolean',
+        },
+        {
+            id: 'stringType',
+            dataType: 'String',
+        },
+        {
+            id: 'dateType',
+            dataType: 'DateTime',
+        },
+    ],
+    popupParent: document.body
 };
 </snippet>
 
-
 The following example demonstrates how to use other data types for your export. Note that:
 
-- Boolean works off using 1 for true
-- The date time format for excel follows this format yyyy-mm-ddThh:MM:ss.mmm:
+- Boolean works off using `1` for `true`, `0` for `false`. All other values produce an error when exported to boolean.
+- When you provide a numberFormat, value gets exported as a number using the format provided. You can set the decimal places, format negative values differently and change the exported value color based on the value.
+- The date time format for excel follows this format `yyyy-mm-ddThh:MM:ss.mmm:`
 - If you try to pass data that is not compatible with the underlying data type Excel will throw an error
-- When using `dataType: 'DateTime'` Excel doesn't format the resultant value, in this example it shows 39923. You need to add the formatting inside Excel. You can see a better example of how to handle Date Formatting in the [Excel Export - Excel Styles](/excel-export-styles/#styling-dates) section.
+- When using `dataType: 'DateTime'` Excel doesn't format the resultant value, in this example it shows `39923`. You need to add the formatting inside Excel. You can see a better example of how to handle Date Formatting in the Excel Export - Excel Styles section.
 
 <grid-example title='Excel Data Types' name='excel-export-data-types' type='generated' options='{ "enterprise": true, "exampleHeight": 200 }'></grid-example>
 

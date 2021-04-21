@@ -1,3 +1,4 @@
+import { NumericTicks } from "../util/ticks";
 import { LogScale } from "./logScale";
 
 test('ticks', () => {
@@ -14,7 +15,7 @@ test('ticks', () => {
             400000,  500000, 600000, 700000, 800000,
             900000, 1000000
         ]);
-        expect(scale.ticks(4)).toEqual([100, 1000, 10000, 100000, 1000000]);
+        expect(scale.ticks(4)).toEqual(new NumericTicks(5, [100, 1000, 10000, 100000, 1000000]));
     }
 
     {
@@ -48,12 +49,12 @@ test('convert', () => {
 });
 
 test('base', () => {
-    const expTicks = [
+    const expTicks = new NumericTicks(4, [
         20.085536923187668,
         54.598150033144236,
         148.4131591025766,
         403.4287934927351
-    ];
+    ]);
     const scale = new LogScale();
     scale.domain = [10, 1000];
     expect(scale.ticks()).not.toEqual(expTicks);
