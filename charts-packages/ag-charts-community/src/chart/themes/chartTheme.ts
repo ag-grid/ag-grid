@@ -452,7 +452,68 @@ export class ChartTheme {
             ...ChartTheme.getChartDefaults(),
             series: {
                 treemap: {
-                    ...ChartTheme.getSeriesDefaults()
+                    ...ChartTheme.getSeriesDefaults(),
+                    showInLegend: false,
+                    labelKey: 'label',
+                    sizeKey: 'size',
+                    colorKey: 'color',
+                    colorDomain: [-5, 5],
+                    colorRange: ['#cb4b3f', '#6acb64'],
+                    colorParents: false,
+                    gradient: true,
+                    nodePadding: 2,
+                    title: {
+                        enabled: true,
+                        color: 'white',
+                        fontStyle: undefined,
+                        fontWeight: 'bold',
+                        fontSize: 12,
+                        fontFamily: 'Verdana, sans-serif',
+                        padding: 15
+                    },
+                    subtitle: {
+                        enabled: true,
+                        color: 'white',
+                        fontStyle: undefined,
+                        fontWeight: undefined,
+                        fontSize: 9,
+                        fontFamily: 'Verdana, sans-serif',
+                        padding: 13
+                    },
+                    labels: {
+                        large: {
+                            enabled: true,
+                            fontStyle: undefined,
+                            fontWeight: 'bold',
+                            fontSize: 18,
+                            fontFamily: 'Verdana, sans-serif',
+                            color: 'white'
+                        },
+                        medium: {
+                            enabled: true,
+                            fontStyle: undefined,
+                            fontWeight: 'bold',
+                            fontSize: 14,
+                            fontFamily: 'Verdana, sans-serif',
+                            color: 'white'
+                        },
+                        small: {
+                            enabled: true,
+                            fontStyle: undefined,
+                            fontWeight: 'bold',
+                            fontSize: 10,
+                            fontFamily: 'Verdana, sans-serif',
+                            color: 'white'
+                        },
+                        color: {
+                            enabled: true,
+                            fontStyle: undefined,
+                            fontWeight: undefined,
+                            fontSize: 12,
+                            fontFamily: 'Verdana, sans-serif',
+                            color: 'white'
+                        }
+                    }
                 }
             }
         }

@@ -345,7 +345,7 @@ export class TreemapSeries extends HierarchySeries {
 
             labelMap.set(index, text);
 
-            text.fill = highlighted ? 'black' : 'white';
+            text.fill = highlighted ? 'black' : label.color;
             text.fillShadow = hasLabel && !highlighted ? shadow : undefined;
             text.visible = hasTitle || hasLabel;
 

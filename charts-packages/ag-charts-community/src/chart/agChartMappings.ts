@@ -22,8 +22,9 @@ import { NavigatorHandle } from "./navigator/navigatorHandle";
 import { CartesianSeriesMarker } from "./series/cartesian/cartesianSeries";
 import { Chart } from "./chart";
 import { HierarchyChart } from "./hierarchyChart";
-import { TreemapSeries } from "./series/hierarchy/treemapSeries";
+import { TreemapSeries, TreemapSeriesLabel } from "./series/hierarchy/treemapSeries";
 import { LogAxis } from "./axis/logAxis";
+import { Label } from "./label";
 
 /*
     This file defines the specs for creating different kinds of charts, but
@@ -741,10 +742,116 @@ const mappings: any = {
                     constructor: TreemapSeries,
                     defaults: {
                         ...seriesDefaults,
-                        showInLegend: false
+                        showInLegend: false,
+                        labelKey: 'label',
+                        sizeKey: 'size',
+                        colorKey: 'color',
+                        colorDomain: [-5, 5],
+                        colorRange: ['#cb4b3f', '#6acb64'],
+                        colorParents: false,
+                        gradient: true,
+                        nodePadding: 2,
+                        title: {},
+                        subtitle: {},
+                        labels: {
+                            large: {},
+                            medium: {},
+                            small: {},
+                            color: {}
+                        }
                     }
                 },
                 ...tooltipMapping,
+                title: {
+                    meta: {
+                        constructor: TreemapSeriesLabel,
+                        defaults: {
+                            enabled: true,
+                            color: 'white',
+                            fontStyle: undefined,
+                            fontWeight: 'bold',
+                            fontSize: 12,
+                            fontFamily: 'Verdana, sans-serif',
+                            padding: 15
+                        }
+                    }
+                },
+                subtitle: {
+                    meta: {
+                        constructor: TreemapSeriesLabel,
+                        defaults: {
+                            enabled: true,
+                            color: 'white',
+                            fontStyle: undefined,
+                            fontWeight: undefined,
+                            fontSize: 9,
+                            fontFamily: 'Verdana, sans-serif',
+                            padding: 13
+                        }
+                    }
+                },
+                labels: {
+                    meta: {
+                        defaults: {
+                            large: {},
+                            medium: {},
+                            small: {},
+                            color: {}
+                        }
+                    },
+                    large: {
+                        meta: {
+                            constructor: Label,
+                            defaults: {
+                                enabled: true,
+                                fontStyle: undefined,
+                                fontWeight: 'bold',
+                                fontSize: 18,
+                                fontFamily: 'Verdana, sans-serif',
+                                color: 'white'
+                            }
+                        }
+                    },
+                    medium: {
+                        meta: {
+                            constructor: Label,
+                            defaults: {
+                                enabled: true,
+                                fontStyle: undefined,
+                                fontWeight: 'bold',
+                                fontSize: 14,
+                                fontFamily: 'Verdana, sans-serif',
+                                color: 'white'
+                            }
+                        }
+                    },
+                    small: {
+                        meta: {
+                            constructor: Label,
+                            defaults: {
+                                enabled: true,
+                                fontStyle: undefined,
+                                fontWeight: 'bold',
+                                fontSize: 10,
+                                fontFamily: 'Verdana, sans-serif',
+                                color: 'white'
+                            }
+                        }
+                    },
+                    color: {
+                        meta: {
+                            constructor: Label,
+                            defaults: {
+                                enabled: true,
+                                fontStyle: undefined,
+                                fontWeight: undefined,
+                                fontSize: 12,
+                                fontFamily: 'Verdana, sans-serif',
+                                color: 'white'
+                            }
+                        }
+                    }
+                }
             }
         }
     }
