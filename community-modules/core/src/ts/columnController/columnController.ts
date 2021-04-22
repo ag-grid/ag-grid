@@ -2116,7 +2116,7 @@ export class ColumnController extends BeanStub {
         const column: Column | null = changedColumns.length === 1 ? changedColumns[0] : null;
 
         // only include visible if it's common in all columns
-        const pinned = this.getCommonValue(changedColumns, col => col.getPinned())
+        const pinned = this.getCommonValue(changedColumns, col => col.getPinned());
 
         const event: ColumnPinnedEvent = {
             type: Events.EVENT_COLUMN_PINNED,
@@ -2154,7 +2154,7 @@ export class ColumnController extends BeanStub {
         const column: Column | null = changedColumns.length === 1 ? changedColumns[0] : null;
 
         // only include visible if it's common in all columns
-        const visible = this.getCommonValue(changedColumns, col => col.isVisible())
+        const visible = this.getCommonValue(changedColumns, col => col.isVisible());
 
         const event: ColumnVisibleEvent = {
             type: Events.EVENT_COLUMN_VISIBLE,
