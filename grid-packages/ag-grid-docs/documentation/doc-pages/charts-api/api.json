@@ -46,6 +46,10 @@
       "class": {
         "type": "string",
         "description": "A class name to be added to the tooltip element of the chart."
+      },
+      "delay": {
+        "default": 0,
+        "description": "The time interval (in milliseconds) after which the tooltip is shown."
       }
     },
     "padding": {
@@ -1307,10 +1311,6 @@
         "default": true,
         "description": "Whether or not to show tooltips when the series are hovered over."
       },
-      "delay": {
-        "default": 0,
-        "description": "The time interval (in milliseconds) after which the tooltip is shown."
-      },
       "renderer": {
         "type": {
           "parameters": {
@@ -2136,6 +2136,9 @@
         "description": "The listener to call when a pie slice is clicked."
       }
     }
+  },
+  "treemap": {
+
   },
   "histogram": {
     "data": {
