@@ -540,6 +540,7 @@
       "options": [
         "category",
         "number",
+        "log",
         "time"
       ]
     },
