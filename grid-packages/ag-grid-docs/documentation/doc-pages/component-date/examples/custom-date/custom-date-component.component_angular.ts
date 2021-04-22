@@ -1,50 +1,54 @@
 import {Component, ElementRef, ViewChild} from '@angular/core';
 
+import {IDateParams} from '@ag-grid-community/core';
+import {IDateAngularComp} from '@ag-grid-community/angular';
+
+// we'll be using the globally provided flatpickr for our example
+declare var flatpickr : any;
+
 @Component({
     selector: 'app-loading-overlay',
     template: `
-        <div #flatpickrEl class="ag-input-wrapper custom-date-filter" role="presentation">
-            <input type="text" #eInput data-input style="width: 100%;" />
-            <a class='input-button' title='clear' data-clear>
-                <i class='fa fa-times'></i>
-            </a>
-        </div>
+      <div #flatpickrEl class="ag-input-wrapper custom-date-filter" role="presentation">
+      <input type="text" #eInput data-input style="width: 100%;"/>
+      <a class='input-button' title='clear' data-clear>
+        <i class='fa fa-times'></i>
+      </a>
+      </div>
     `,
-    styles: [
-        `
-  .custom-date-filter a {
-    position: absolute;
-    right: 20px;
-    color: rgba(0, 0, 0, 0.54);
-    cursor: pointer;
-  }
+    styles: [        `
+            .custom-date-filter a {
+                position: absolute;
+                right: 20px;
+                color: rgba(0, 0, 0, 0.54);
+                cursor: pointer;
+            }
 
-  .custom-date-filter:after {
-    position: absolute;
-    content: '\f073';
-    display: block;
-    font-weight: 400;
-    font-family: 'Font Awesome 5 Free';
-    right: 5px;
-    pointer-events: none;
-    color: rgba(0, 0, 0, 0.54);
-  }
-    `
+            .custom-date-filter:after {
+                position: absolute;
+                content: '\f073';
+                display: block;
+                font-weight: 400;
+                font-family: 'Font Awesome 5 Free';
+                right: 5px;
+                pointer-events: none;
+                color: rgba(0, 0, 0, 0.54);
+            }
+        `
     ]
 })
-export class CustomDateComponent {
+export class CustomDateComponent implements IDateAngularComp {
     @ViewChild("flatpickrEl", {read: ElementRef}) flatpickrEl: ElementRef;
     @ViewChild("eInput", {read: ElementRef}) eInput: ElementRef;
     private date: Date;
-    private params: any;
+    private params: IDateParams;
     private picker: any;
 
-    agInit(params: any): void {
+    agInit(params: IDateParams): void {
         this.params = params;
     }
 
     ngAfterViewInit(): void {
-        // outputs `I am span`
         this.picker = flatpickr(this.flatpickrEl.nativeElement, {
             onChange: this.onDateChanged.bind(this),
             wrap: true
@@ -57,7 +61,7 @@ export class CustomDateComponent {
         console.log(`Destroying DateComponent`);
     }
 
-    onDateChanged(selectedDates) {
+    onDateChanged(selectedDates: any) {
         this.date = selectedDates[0] || null;
         this.params.onDateChanged();
     }
@@ -67,8 +71,8 @@ export class CustomDateComponent {
     }
 
     setDate(date: Date): void {
-       this.date = date || null;
-       this.picker.setDate(date);
+        this.date = date || null;
+        this.picker.setDate(date);
     }
 
     setInputPlaceholder(placeholder: string): void {

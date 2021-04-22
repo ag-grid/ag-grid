@@ -2,12 +2,12 @@ import Vue from "vue";
 
 export default Vue.extend({
     template: `
-        <div class="ag-input-wrapper custom-date-filter" role="presentation" ref="flatpickr">
-            <input type="text" ref="eInput" data-input style="width: 100%;" />
-            <a class="input-button" title="clear" data-clear>
-                <i class="fa fa-times"></i>
-            </a>
-        </div>
+      <div class="ag-input-wrapper custom-date-filter" role="presentation" ref="flatpickr">
+          <input type="text" ref="eInput" data-input style="width: 100%;"/>
+          <a class="input-button" title="clear" data-clear>
+              <i class="fa fa-times"></i>
+          </a>
+      </div>
     `,
     data: function () {
         return {

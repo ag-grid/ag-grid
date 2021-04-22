@@ -13,9 +13,9 @@
 || Full Width Cell Renderer      | Grid Option               | fullWidthCellRenderer    | 
 || Group Row Cell Renderer       | Grid Option               | groupRowRenderer         | 
 || Group Row Inner Cell Renderer | Grid Option               | groupRowInnerRenderer    | 
-|| Loading Cell Renderer         | Grid Option               | loadingCellRenderer      | 
-|| Loading Overlay               | Grid Option               | loadingOverlayRenderer   | 
-|| No Rows Overlay               | Grid Option               | noRowsOverlayRenderer    | 
+|| Loading Cell Renderer         | Grid Option               | loadingCellRenderer      |
+|| Loading Overlay               | Grid Option               | loadingOverlayComponent  | 
+|| No Rows Overlay               | Grid Option               | noRowsOverlayComponent   | 
 || Date Component                | Grid Option               | dateComponent            | 
 || Status Bar Component          | Grid Option -> Status Bar | statusPanel              | 
 || Cell Renderer                 | Column Definition         | cellRenderer             | 

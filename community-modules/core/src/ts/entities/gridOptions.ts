@@ -362,8 +362,6 @@ export interface GridOptions {
     postProcessPopup?: (params: PostProcessPopupParams) => void;
     frameworkComponents?: { [p: string]: { new(): any; }; } | any;
     components?: { [p: string]: AgGridRegisteredComponentInput<IComponent<any>>; };
-    dateComponent?: string | { new(): IDateComp; };
-    dateComponentFramework?: any;
     groupRowRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
     groupRowRendererFramework?: any;
     groupRowRendererParams?: any;
@@ -375,7 +373,6 @@ export interface GridOptions {
     fillOperation?: (params: FillOperationParams) => any;
 
     isExternalFilterPresent?(): boolean;
-
     doesExternalFilterPass?(node: RowNode): boolean;
 
     getRowStyle?: Function;
