@@ -1063,7 +1063,7 @@
             }
         },
         "rowBuffer": {
-            "default": 20,
+            "default": 10,
             "description": "The number of rows rendered outside the viewable area the grid renders. Having a buffer means the grid will have rows ready to show as the user slowly scrolls vertically."
         },
         "alignedGrids": {
