@@ -40,9 +40,16 @@ the 'Excel Export' context menu option, or the 'Export to Excel' button. Note th
 The [Default Excel Export](/excel-export/#default-excel-export) will meet the requirements of most applications, 
 however extensive customisation to the layout and styling of the exported spreadsheets are supported.
 
-[[warning]]
-| TODO: Unfinished Section!
+The following sub sections cover the various ways the exported Excel spreadsheets can be customised:
 
+- **[Styles](/excel-export-styles/)**: provide custom styling to exported spreadsheets.
+- **[Formulas](/excel-export-formulas/)**: export the grids value getters to Excel formulas.
+- **[Multiple Sheets](/excel-export-multiple-sheets/)**: export grid data across multiple sheets.
+- **[Data Types](/excel-export-data-types/)**: export values to Excels built-in data types.
+- **[Hyperlinks](/excel-export-hyperlinks/)**: add hyperlinks to exported spreadsheets.
+- **[Master Detail](/excel-export-master-detail/)**: master detail grids can be exported to single or multiple sheets.
+- **[Extra Content](/excel-export-extra-content/)**: extra content not shown in the grid can be added to the exported spreadsheets.
+- **[Page Setup](/excel-export-page-setup/)**: the page setup of the exported spreadsheets can be customised.
 
 ## Next Up
 
