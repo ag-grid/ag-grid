@@ -27,7 +27,7 @@ ModuleRegistry.registerModules(AllModules);
 // or only import minimal modules required for charts
 import { ModuleRegistry } from "@ag-grid-community/core";
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
-import { ChartsModule } from "@ag-grid-enterprise/charts";
+import { GridChartsModule } from "@ag-grid-enterprise/charts";
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, ChartsModule]);
 ```
