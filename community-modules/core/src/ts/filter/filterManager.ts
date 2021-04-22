@@ -40,7 +40,6 @@ export class FilterManager extends BeanStub {
     private activeAdvancedFilters: IFilterComp[] = [];
     private quickFilter: string | null = null;
     private quickFilterParts: string[] | null = null;
-    private externalFilterPresent: boolean;
 
     // this is true when the grid is processing the filter change. this is used by the cell comps, so that they
     // don't flash when data changes due to filter changes. there is no need to flash when filter changes as the
@@ -59,9 +58,6 @@ export class FilterManager extends BeanStub {
         this.setQuickFilterParts();
 
         this.allowShowChangeAfterFilter = this.gridOptionsWrapper.isAllowShowChangeAfterFilter();
-
-        // check this here, in case there is a filter from the start
-        this.checkExternalFilter();
     }
 
     private setQuickFilterParts(): void {
@@ -170,7 +166,7 @@ export class FilterManager extends BeanStub {
     }
 
     public isAnyFilterPresent(): boolean {
-        return this.isQuickFilterPresent() || this.isAdvancedFilterPresent() || this.externalFilterPresent;
+        return this.isQuickFilterPresent() || this.isAdvancedFilterPresent() || this.gridOptionsWrapper.isExternalFilterPresent();
     }
 
     private doAdvancedFiltersPass(node: RowNode, filterToSkip?: IFilterComp): boolean {
@@ -217,14 +213,9 @@ export class FilterManager extends BeanStub {
         }
     }
 
-    private checkExternalFilter(): void {
-        this.externalFilterPresent = this.gridOptionsWrapper.isExternalFilterPresent();
-    }
-
     public onFilterChanged(filterInstance?: IFilterComp, additionalEventAttributes?: any): void {
         this.updateActiveFilters();
         this.updateFilterFlagInColumns('filterChanged', additionalEventAttributes);
-        this.checkExternalFilter();
 
         this.allAdvancedFilters.forEach(filterWrapper => {
             filterWrapper.filterPromise!.then(filter => {
@@ -308,7 +299,7 @@ export class FilterManager extends BeanStub {
         }
 
         // secondly, give the client a chance to reject this row
-        if (this.externalFilterPresent && !this.gridOptionsWrapper.doesExternalFilterPass(params.rowNode)) {
+        if (this.gridOptionsWrapper.isExternalFilterPresent() && !this.gridOptionsWrapper.doesExternalFilterPass(params.rowNode)) {
             return false;
         }
 
