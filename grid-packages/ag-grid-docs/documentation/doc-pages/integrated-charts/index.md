@@ -29,7 +29,7 @@ import { ModuleRegistry } from "@ag-grid-community/core";
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
 import { GridChartsModule } from "@ag-grid-enterprise/charts";
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ChartsModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, GridChartsModule]);
 ```
 
 The charts module has been built from the ground up with zero dependencies on any third party libraries.
