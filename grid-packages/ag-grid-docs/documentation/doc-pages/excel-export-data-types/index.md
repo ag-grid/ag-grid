@@ -62,10 +62,10 @@ const gridOptions = {
 The following example demonstrates how to use other data types for your export. Note that:
 
 - Boolean works off using `1` for `true`, `0` for `false`. All other values produce an error when exported to boolean.
-- When you provide a numberFormat, value gets exported as a number using the format provided. You can set the decimal places, format negative values differently and change the exported value color based on the value.
-- The date time format for excel follows this format `yyyy-mm-ddThh:MM:ss.mmm:`
-- If you try to pass data that is not compatible with the underlying data type Excel will throw an error
-- When using `dataType: 'DateTime'` Excel doesn't format the resultant value, in this example it shows `39923`. You need to add the formatting inside Excel. You can see a better example of how to handle Date Formatting in the Excel Export - Excel Styles section.
+- When you provide a `numberFormat`, the value gets exported as a number using the format provided. You can set the decimal places, format negative values differently and change the exported value color based on the value.
+- When using dataType: 'DateTime', the date time format for Excel is `yyyy-mm-ddThh:MM:ss.mmm:`
+- If you try to export a value that is not compatible with the underlying data type Excel will display an error when opening the file.
+- When using `dataType: 'DateTime'` Excel doesn't format the resultant value, in this example it shows `39923`. You need to add the formatting inside Excel. You can see a better example of how to handle Date Formatting in the [Excel Styles](/excel-export-styles/) section.
 
 <grid-example title='Excel Data Types' name='excel-export-data-types' type='generated' options='{ "enterprise": true, "exampleHeight": 200 }'></grid-example>
 
