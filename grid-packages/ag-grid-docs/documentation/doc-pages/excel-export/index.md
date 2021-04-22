@@ -27,13 +27,26 @@ The default Excel export behaviour will export the current state of the data in 
 spreadsheet will match what is displayed in the grid at the time of export following any sorting, filtering, row 
 grouping etc...
 
-In the following example reorder some columns and apply some filter and sort operations - then export the data using
-the 'Excel Export' context menu option, or the 'Export to Excel' button. Note the following:
+Note that the raw values, and not the result from a cell renderer will be used, meaning the results from:
+- Value Getters will be used.
+- Cell Renderers / Formatters will **NOT** be used.
+
+Also note that cell styles are not exported by default, see [Export Excel Style](/excel-export-styles/) for a detailed guide on how to export styles.
+
+In the following example reorder some columns and apply some filter and sort operations - then export from the 'Excel Export' option 
+in the context menu, or the 'Export to Excel' button provided. Note the following:
 
 - The current order of the columns is exported and any hidden columns will not be exported.
 - Filtered out rows are not included in the export, and the sort order is maintained.
 
 <grid-example title='Default Excel Export' name='excel-default-export' type='generated' options='{ "enterprise": true, "exampleHeight": 600 }'></grid-example>
+
+[[note]]
+|1. The column width in Excel will be the same as the actual width of the column in the application at the time that the export happens, or 75px, whichever is wider. "Actual width" may be different from the width in the column definition if column has been resized or uses flex sizing. This can be overridden using the `columnWidth` export parameter.
+|
+|1. The data types of your columns are passed to Excel as part of the export so that if you can to work with the data within Excel in the correct format.
+|
+|1. The cells of the column header groups are merged in the same manner as the group headers in AG Grid.
 
 ## Custom Excel Export 
 
