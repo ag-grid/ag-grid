@@ -17,10 +17,15 @@ var gridOptions = {
         flex: 1,
         minWidth: 280,
     },
-
+    getServerSideStoreParams: function(params) {
+        var res = {
+            storeType: params.level == 0 ? 'partial' : 'full',
+        };
+        return res;
+    },
     rowModelType: 'serverSide',
-    serverSideStoreType: 'full',
     rowSelection: 'multiple',
+
 
     isServerSideGroupOpenByDefault: isServerSideGroupOpenByDefault,
     suppressAggFuncInHeader: true,

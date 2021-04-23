@@ -264,6 +264,7 @@ Below shows `isServerSideGroupOpenByDefault()` and `getRoute` in action. Note th
 - Note [Zimbabwe] and [Zimbabwe, Swimming] are visibly open by default.
 - Note [United States, Swimming] is not visibly open by default, as the parent group 'United States' is not open. However open 'United States' is open, it's 'Swimming' group is open.
 - Selecting a row and clicking 'Route of Selected' will print the route to the selected node.
+- The grid is configured with both Partial Store (top level) and Full Store (all other levels) to demonstrate the feature working with both.
 
 <grid-example title='Open by Default' name='open-by-default' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 

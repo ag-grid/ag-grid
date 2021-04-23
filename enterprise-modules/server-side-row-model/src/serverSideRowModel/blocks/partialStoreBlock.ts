@@ -244,6 +244,7 @@ export class PartialStoreBlock extends RowNodeBlock {
                 this.parentStore.removeDuplicateNode(newId!);
                 this.nodeManager.addRowNode(rowNode);
                 this.allNodesMap[rowNode.id!] = rowNode;
+                this.blockUtils.checkOpenByDefault(rowNode);
             }
             this.rowNodes.push(rowNode);
 
