@@ -12,7 +12,6 @@ var columnDefs = [
         maxWidth: 70,
         cellRenderer: countryCellRenderer
     },
-    { field: 'country'},
     { field: 'athlete'},
     { field: 'age' },
     { field: 'year' },
