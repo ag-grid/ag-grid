@@ -906,16 +906,7 @@ export class ColumnController extends BeanStub {
 
         this.updateDisplayedColumns(source);
 
-        const event: ColumnEvent = {
-            type: eventName,
-            columns: masterList,
-            column: masterList.length === 1 ? masterList[0] : null,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-            source: source
-        };
-
-        this.eventService.dispatchEvent(event);
+        this.fireColumnEvent(eventName, masterList, source);
     }
 
     public setValueColumns(colKeys: (string | Column)[], source: ColumnEventType = "api"): void {
@@ -1207,10 +1198,15 @@ export class ColumnController extends BeanStub {
         if (!column) { return; }
 
         column.setAggFunc(aggFunc);
+
+        this.fireColumnEvent(Events.EVENT_COLUMN_VALUE_CHANGED, [column], source);
+    }
+
+    private fireColumnEvent(type: string, columns: Column[], source: ColumnEventType): void {
         const event: ColumnValueChangedEvent = {
-            type: Events.EVENT_COLUMN_VALUE_CHANGED,
-            columns: [column],
-            column: column,
+            type: type,
+            columns: columns,
+            column: (columns && columns.length==1) ? columns[0] : null,
             api: this.gridApi,
             columnApi: this.columnApi,
             source: source
@@ -2089,11 +2085,24 @@ export class ColumnController extends BeanStub {
                 columnIdMapper
             );
 
-            raiseWhenListsDifferent(Events.EVENT_COLUMN_VALUE_CHANGED,
-                startState.valueColumns,
-                this.valueColumns,
-                columnIdMapper
-            );
+            const valueChangePredicate = (cs: ColumnState, c: Column) => {
+                const oldActive = cs.aggFunc != null;
+
+                const activeChanged = oldActive != c.isValueActive();
+                // we only check aggFunc if the agg is active
+                const aggFuncChanged = oldActive && cs.aggFunc != c.getAggFunc();
+
+                return activeChanged || aggFuncChanged;
+            }
+            const changedValues = getChangedColumns(valueChangePredicate);
+            if (changedValues.length > 0) {
+                // we pass all value columns, now the ones that changed. this is the same
+                // as pivot and rowGroup cols, but different to all other properties below.
+                // this is more for backwards compatibility, as it's always been this way.
+                // really it should be the other way, as the order of the cols makes no difference
+                // for valueColumns (apart from displaying them in the tool panel).
+                this.fireColumnEvent(Events.EVENT_COLUMN_VALUE_CHANGED, this.valueColumns, source);
+            }
 
             const resizeChangePredicate = (cs: ColumnState, c: Column) => cs.width != c.getActualWidth();
             this.fireColumnResizedEvent(getChangedColumns(resizeChangePredicate), true, source);
