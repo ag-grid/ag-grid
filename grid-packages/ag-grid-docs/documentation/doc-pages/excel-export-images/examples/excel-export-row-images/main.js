@@ -1,6 +1,8 @@
 var countryCodes = {};
 var base64flags = {};
 
+const countryCellRenderer = params => `<img alt="${params.data.country}" src="${base64flags[countryCodes[params.data.country]]}">`;
+
 var columnDefs = [
     { 
         field: 'country', 
@@ -8,9 +10,7 @@ var columnDefs = [
         minWidth: 70,
         width: 70,
         maxWidth: 70,
-        cellRenderer: function(params) {
-            return '<img src="' + base64flags[countryCodes[params.data.country]] + '">'
-        }
+        cellRenderer: countryCellRenderer
     },
     { field: 'country'},
     { field: 'athlete'},
@@ -50,17 +50,15 @@ var gridOptions = {
             };
         }
     },
-    onGridReady: onGridReady
+    onGridReady: params => {
+        fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
+        .then(response => createBase64FlagsFromResponse(response, countryCodes, base64flags))
+        .then(data => params.api.setRowData(data))
+    }
 };
 
 const onBtExport = () => {
     gridOptions.api.exportDataAsExcel();
-}
-
-const onGridReady = (params) => {
-    fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
-    .then(response => createBase64FlagsFromResponse(response, countryCodes, base64flags))
-    .then(data => params.api.setRowData(data))
 }
 
 // setup the grid after the page has finished loading
