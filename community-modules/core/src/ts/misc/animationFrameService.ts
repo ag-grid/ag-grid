@@ -3,7 +3,6 @@ import { Autowired, Bean, PostConstruct } from "../context/context";
 import { AnimationQueueEmptyEvent } from "../events";
 import { Events } from "../eventKeys";
 import { BeanStub } from "../context/beanStub";
-import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
 import { ControllersService } from "../controllersService";
 
 interface TaskItem {

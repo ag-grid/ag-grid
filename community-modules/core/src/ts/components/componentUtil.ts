@@ -1,10 +1,10 @@
-import {GridOptions} from '../entities/gridOptions';
-import {GridApi} from '../gridApi';
-import {ComponentStateChangedEvent, Events} from '../events';
-import {PropertyKeys} from '../propertyKeys';
-import {ColumnApi} from '../columnController/columnApi';
-import {iterateObject} from '../utils/object';
-import {values} from '../utils/generic';
+import { GridOptions } from '../entities/gridOptions';
+import { GridApi } from '../gridApi';
+import { ComponentStateChangedEvent, Events } from '../events';
+import { PropertyKeys } from '../propertyKeys';
+import { ColumnApi } from '../columnController/columnApi';
+import { iterateObject } from '../utils/object';
+import { values } from '../utils/generic';
 
 export class ComponentUtil {
     // all the events are populated in here AFTER this class (at the bottom of the file).

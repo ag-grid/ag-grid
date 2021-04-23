@@ -10,7 +10,6 @@ import { ICellRenderer, ICellRendererComp, ICellRendererFunc } from "../renderin
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./colDef";
 import { IDatasource } from "../interfaces/iDatasource";
 import { CellPosition } from "./cellPosition";
-import { IDateComp } from "../rendering/dateComponent";
 import { IServerSideDatasource } from "../interfaces/iServerSideDatasource";
 import { CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "../interfaces/exportParams";
 import {

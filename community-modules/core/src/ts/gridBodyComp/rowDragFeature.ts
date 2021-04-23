@@ -6,7 +6,6 @@ import { Autowired, Optional, PostConstruct } from "../context/context";
 import { ColumnController } from "../columnController/columnController";
 import { FocusController } from "../focusController";
 import { IRangeController } from "../interfaces/iRangeController";
-import { GridBodyComp } from "./gridBodyComp";
 import { RowDragEvent, RowDragEnterEvent, RowDragLeaveEvent, RowDragMoveEvent, RowDragEndEvent } from "../events";
 import { Events } from "../eventKeys";
 import { IRowModel } from "../interfaces/iRowModel";

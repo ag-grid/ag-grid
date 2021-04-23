@@ -4,8 +4,6 @@ import { Autowired } from "../context/context";
 import { Component } from "../widgets/component";
 import { ISideBar } from "../interfaces/iSideBar";
 import { RefSelector } from "../widgets/componentAnnotations";
-import { ModuleNames } from "../modules/moduleNames";
-import { ModuleRegistry } from "../modules/moduleRegistry";
 import { ManagedFocusComponent } from "../widgets/managedFocusComponent";
 import { ColumnController } from "../columnController/columnController";
 import { addCssClass, addOrRemoveCssClass, isVisible } from "../utils/dom";

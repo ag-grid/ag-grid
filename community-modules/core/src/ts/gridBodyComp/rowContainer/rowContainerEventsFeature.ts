@@ -9,7 +9,6 @@ import { Column } from "../../entities/column";
 import { IContextMenuFactory } from "../../interfaces/iContextMenuFactory";
 import { isIOSUserAgent } from "../../utils/browser";
 import { LongTapEvent, TouchListener } from "../../widgets/touchListener";
-import { DragService } from "../../dragAndDrop/dragService";
 import { ControllersService } from "../../controllersService";
 import { isUserSuppressingKeyboardEvent } from "../../utils/keyboard";
 import { CellKeyDownEvent, CellKeyPressEvent, Events } from "../../events";

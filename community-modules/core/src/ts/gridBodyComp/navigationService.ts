@@ -4,7 +4,6 @@ import { MouseEventService } from "./mouseEventService";
 import { PaginationProxy } from "../pagination/paginationProxy";
 import { Column } from "../entities/column";
 import { FocusController } from "../focusController";
-import { GridBodyComp } from "./gridBodyComp";
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { IRangeController } from "../interfaces/iRangeController";
 import { ColumnController } from "../columnController/columnController";

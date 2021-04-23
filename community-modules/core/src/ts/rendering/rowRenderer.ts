@@ -1,5 +1,4 @@
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
 import { RowController } from "./row/rowController";
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";

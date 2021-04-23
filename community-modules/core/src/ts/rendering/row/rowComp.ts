@@ -3,10 +3,9 @@ import { RowContainerComp } from "../../gridBodyComp/rowContainer/rowContainerCo
 import { ICellRendererComp } from "../cellRenderers/iCellRenderer";
 import { Beans } from "../beans";
 import { RowNode } from "../../entities/rowNode";
-import { addCssClass, setDomChildOrder } from "../../utils/dom";
+import { setDomChildOrder } from "../../utils/dom";
 import { escapeString } from "../../utils/string";
 import { FullWidthKeys, FullWidthRenderers, RowController, RowType } from "./rowController";
-import { exists, missing } from "../../utils/generic";
 import { Column } from "../../entities/column";
 import { CellComp } from "../cellComp";
 import { assign, getAllValuesInObject, iterateObject } from "../../utils/object";

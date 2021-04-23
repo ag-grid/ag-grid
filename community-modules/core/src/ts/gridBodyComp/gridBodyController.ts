@@ -10,23 +10,18 @@ import { ScrollVisibleService } from "./scrollVisibleService";
 import { getTarget } from "../utils/event";
 import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
 import { GridBodyScrollFeature } from "./gridBodyScrollFeature";
-import { addOrRemoveCssClass, getInnerHeight, getInnerWidth, isVerticalScrollShowing } from "../utils/dom";
-import { BodyHeightChangedEvent } from "../events";
+import { getInnerWidth, isVerticalScrollShowing } from "../utils/dom";
 import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
-import { setAriaRowCount } from "../utils/aria";
 import { HeaderNavigationService } from "../headerRendering/header/headerNavigationService";
 import { PaginationProxy } from "../pagination/paginationProxy";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { RowDragFeature } from "./rowDragFeature";
 import { DragAndDropService } from "../dragAndDrop/dragAndDropService";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
-import { RefSelector } from "../widgets/componentAnnotations";
 import { getTabIndex, isBrowserIE } from "../utils/browser";
 import { RowRenderer } from "../rendering/rowRenderer";
 import { PopupService } from "../widgets/popupService";
-import { missing } from "../utils/generic";
-import { DragListenerParams } from "../dragAndDrop/dragService";
 import { MouseEventService } from "./mouseEventService";
 
 export enum RowAnimationCssClasses {

@@ -32,7 +32,6 @@ import { cssStyleObjectToMarkup } from "../../utils/general";
 import { AngularRowUtils } from "./angularRowUtils";
 import { CellPosition } from "../../entities/cellPosition";
 import { RowPosition } from "../../entities/rowPosition";
-import { RowContainerComp } from "../../gridBodyComp/rowContainer/rowContainerComp";
 import { RowComp } from "./rowComp";
 import { executeNextVMTurn } from "../../utils/function";
 import { RowCssClassCalculatorParams } from "./rowCssClassCalculator";

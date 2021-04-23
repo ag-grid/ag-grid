@@ -1,7 +1,6 @@
 import { BeanStub } from "../context/beanStub";
 import { Autowired, Bean, PostConstruct, Qualifier } from "../context/context";
 import { Events } from "../eventKeys";
-import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
 import { getMaxDivHeight } from "../utils/browser";
 import { ControllersService } from "../controllersService";
 import { Logger, LoggerFactory } from "../logger";

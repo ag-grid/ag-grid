@@ -95,7 +95,7 @@ import { ISideBar } from "./interfaces/iSideBar";
 import { ControllersService } from "./controllersService";
 import { GridBodyController } from "./gridBodyComp/gridBodyController";
 import { OverlayWrapperComponent } from "./rendering/overlays/overlayWrapperComponent";
-import {HeaderPosition} from "./headerRendering/header/headerPosition";
+import { HeaderPosition } from "./headerRendering/header/headerPosition";
 
 export interface StartEditingCellParams {
     rowIndex: number;

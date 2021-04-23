@@ -1,5 +1,4 @@
 import { ColumnController } from "./columnController/columnController";
-import { GridBodyComp } from "./gridBodyComp/gridBodyComp";
 import { Logger } from "./logger";
 import { LoggerFactory } from "./logger";
 import {

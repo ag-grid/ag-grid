@@ -1,5 +1,4 @@
 import { Autowired, Bean, PostConstruct } from "../context/context";
-import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
 import { BeanStub } from "../context/beanStub";
 import { GridBodyController } from "../gridBodyComp/gridBodyController";
 import { ControllersService } from "../controllersService";

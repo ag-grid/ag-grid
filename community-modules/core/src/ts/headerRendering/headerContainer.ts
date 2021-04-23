@@ -8,7 +8,6 @@ import { Component } from '../widgets/component';
 import { Constants } from '../constants/constants';
 import { setFixedWidth } from '../utils/dom';
 import { BeanStub } from "../context/beanStub";
-import { GridBodyComp } from '../gridBodyComp/gridBodyComp';
 import { NumberSequence } from "../utils";
 
 export class HeaderContainer extends BeanStub {

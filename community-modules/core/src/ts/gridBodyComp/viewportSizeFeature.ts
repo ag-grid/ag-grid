@@ -7,7 +7,6 @@ import { GridBodyController } from "../gridBodyComp/gridBodyController";
 import { BodyHeightChangedEvent, Events } from "../events";
 import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
-import { RowContainerComp } from "./rowContainer/rowContainerComp";
 import { ControllersService } from "../controllersService";
 import { RowContainerController } from "./rowContainer/rowContainerController";
 import { getInnerHeight } from "../utils/dom";

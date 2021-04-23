@@ -1,4 +1,4 @@
-import { Autowired, Bean, PostConstruct } from "../context/context";
+import { Autowired, PostConstruct } from "../context/context";
 import { BeanStub } from "../context/beanStub";
 import { getInnerHeight, getScrollLeft, isRtlNegativeScroll, setScrollLeft } from "../utils/dom";
 import { ControllersService } from "../controllersService";

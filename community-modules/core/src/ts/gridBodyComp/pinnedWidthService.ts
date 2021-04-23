@@ -1,5 +1,4 @@
 import { BeanStub } from "../context/beanStub";
-import { setDisplayed, setFixedWidth } from "../utils/dom";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { Events } from "../eventKeys";

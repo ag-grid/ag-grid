@@ -1,7 +1,6 @@
 import {
     Column,
     ColumnController,
-    ExcelStyle,
     GridOptionsWrapper,
     ProcessCellForExportParams,
     ProcessGroupHeaderForExportParams,

@@ -5,7 +5,6 @@ import { RowContainerController } from "./gridBodyComp/rowContainer/rowContainer
 import { HeaderRootComp } from "./headerRendering/headerRootComp";
 import { FakeHorizontalScrollController } from "./gridBodyComp/fakeHorizontalScrollController";
 import { BeanStub } from "./context/beanStub";
-import { Events } from "./eventKeys";
 
 // for all controllers that are singletons, they can register here so other parts
 // of the application can access them.

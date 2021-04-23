@@ -226,7 +226,7 @@ function aggAvg(params: IAggFuncParams): { value: number | bigint | null; count:
         } else {
             value = sum / count;
         }
-        
+
     }
 
     // the result will be an object. when this cell is rendered, only the avg is shown.

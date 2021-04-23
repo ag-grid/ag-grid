@@ -17,7 +17,6 @@ import { RowRenderer } from "./rendering/rowRenderer";
 import { HeaderNavigationService } from "./headerRendering/header/headerNavigationService";
 import { ColumnGroup } from "./entities/columnGroup";
 import { ManagedFocusComponent } from "./widgets/managedFocusComponent";
-import { GridComp } from "./gridComp/gridComp";
 import { getTabIndex } from './utils/browser';
 import { findIndex, last } from './utils/array';
 import { makeNull } from './utils/generic';

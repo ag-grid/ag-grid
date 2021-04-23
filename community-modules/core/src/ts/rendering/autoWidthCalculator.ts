@@ -1,5 +1,4 @@
 import { RowRenderer } from "./rowRenderer";
-import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
 import { Column } from "../entities/column";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { HeaderWrapperComp } from "../headerRendering/header/headerWrapperComp";
@@ -8,7 +7,6 @@ import { HeaderRootComp } from "../headerRendering/headerRootComp";
 import { BeanStub } from "../context/beanStub";
 import { containsClass, addCssClass } from "../utils/dom";
 import { ControllersService } from "../controllersService";
-import { GridBodyController } from "../gridBodyComp/gridBodyController";
 import { RowContainerController } from "../gridBodyComp/rowContainer/rowContainerController";
 
 @Bean('autoWidthCalculator')

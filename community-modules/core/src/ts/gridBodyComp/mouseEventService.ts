@@ -1,13 +1,12 @@
-import { Bean, PostConstruct } from "../context/context";
+import { Bean } from "../context/context";
 import { Autowired } from "../context/context";
 import { CellPosition } from "../entities/cellPosition";
 import { CellComp } from "../rendering/cellComp";
 import { NumberSequence } from '../utils';
-import { GridBodyComp } from "./gridBodyComp";
 import { Constants } from "../constants/constants";
 import { DraggingEvent } from "../dragAndDrop/dragAndDropService";
 import { BeanStub } from "../context/beanStub";
-import { getEventPath, getComponentForEvent } from "../utils/event";
+import { getComponentForEvent } from "../utils/event";
 import { exists } from "../utils/generic";
 import { ControllersService } from "../controllersService";
 

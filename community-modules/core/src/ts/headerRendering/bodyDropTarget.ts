@@ -1,7 +1,6 @@
 import { DragAndDropService, DraggingEvent, DragSourceType, DropTarget } from "../dragAndDrop/dragAndDropService";
 import { Autowired, PostConstruct } from "../context/context";
 import { MoveColumnController } from "./moveColumnController";
-import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
 import { BodyDropPivotTarget } from "./bodyDropPivotTarget";
 import { ColumnController } from "../columnController/columnController";
 import { Constants } from "../constants/constants";

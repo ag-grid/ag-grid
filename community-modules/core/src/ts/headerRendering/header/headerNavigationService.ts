@@ -6,7 +6,6 @@ import { HeaderPosition, HeaderPositionUtils } from "./headerPosition";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { Column } from "../../entities/column";
 import { HeaderRowType } from "../headerRowComp";
-import { GridBodyComp } from "../../gridBodyComp/gridBodyComp";
 import { AnimationFrameService } from "../../misc/animationFrameService";
 import { HeaderRootComp, HeaderContainerPosition } from "../headerRootComp";
 import { last } from "../../utils/array";

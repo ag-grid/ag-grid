@@ -4,7 +4,6 @@ import { ColumnController } from "../columnController/columnController";
 import { Column } from "../entities/column";
 import { DragAndDropService, DraggingEvent, DragSourceType, HorizontalDirection } from "../dragAndDrop/dragAndDropService";
 import { DropListener } from "./bodyDropTarget";
-import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { Logger, LoggerFactory } from "../logger";
 import { ColumnEventType } from "../events";

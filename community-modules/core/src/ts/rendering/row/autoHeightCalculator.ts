@@ -1,4 +1,3 @@
-import { GridBodyComp } from "../../gridBodyComp/gridBodyComp";
 import { Autowired, Bean, PostConstruct } from "../../context/context";
 import { Beans } from "../beans";
 import { RowNode } from "../../entities/rowNode";
@@ -8,7 +7,6 @@ import { BeanStub } from "../../context/beanStub";
 import { addCssClass } from "../../utils/dom";
 import { RowCssClassCalculator, RowCssClassCalculatorParams } from "./rowCssClassCalculator";
 import { AngularRowUtils } from "./angularRowUtils";
-import { GridBodyController } from "../../gridBodyComp/gridBodyController";
 import { ControllersService } from "../../controllersService";
 import { RowContainerController } from "../../gridBodyComp/rowContainer/rowContainerController";
 

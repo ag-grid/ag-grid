@@ -1,6 +1,5 @@
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { ColumnController } from '../columnController/columnController';
-import { GridBodyComp } from '../gridBodyComp/gridBodyComp';
 import { Autowired } from '../context/context';
 import { HeaderContainer } from './headerContainer';
 import { Events } from '../events';
@@ -14,7 +13,6 @@ import { ManagedFocusComponent } from '../widgets/managedFocusComponent';
 import { HeaderNavigationService, HeaderNavigationDirection } from './header/headerNavigationService';
 import { exists } from '../utils/generic';
 import { KeyName } from '../constants/keyName';
-import { SetPinnedLeftWidthFeature } from "../gridBodyComp/rowContainer/setPinnedLeftWidthFeature";
 import { PinnedWidthService } from "../gridBodyComp/pinnedWidthService";
 import { CenterWidthFeature } from "../gridBodyComp/centerWidthFeature";
 import { ControllersService } from "../controllersService";

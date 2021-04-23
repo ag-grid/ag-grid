@@ -1,7 +1,6 @@
 import { BeanStub } from "../context/beanStub";
 import { Events } from "../events";
 import { Autowired, Bean, PostConstruct } from "../context/context";
-import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
 import { ControllersService } from "../controllersService";
 import { GridBodyController } from "../gridBodyComp/gridBodyController";
 import { RowContainerController } from "../gridBodyComp/rowContainer/rowContainerController";
