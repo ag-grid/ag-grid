@@ -643,6 +643,29 @@
           "description": "The maximum value for the axis."
         }
       },
+      "log": {
+        "meta": {
+          "type": "INumberAxis",
+          "description": "This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to number axes."
+        },
+        "nice": {
+          "default": true,
+          "description": "If `true`, the axis will adjust to align the left and right edge of the chart with a tick. Otherwise, the axis will be the minimum required width to show all the data."
+        },
+        "min": {
+          "type": "number",
+          "description": "The minimum value for the axis."
+        },
+        "max": {
+          "type": "number",
+          "description": "The maximum value for the axis."
+        },
+        "base": {
+          "type": "number",
+          "default": 10,
+          "description": "The logarithm base. For example, 10 for the common logarithm, Math.E for the natural logarithm, and so on."
+        }
+      },
       "category": {
         "meta": {
           "type": "ICategoryAxis",
