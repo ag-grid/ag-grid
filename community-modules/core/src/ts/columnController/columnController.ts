@@ -1900,10 +1900,11 @@ export class ColumnController extends BeanStub {
         }
 
         // anything left over, we got no data for, so add in the column as non-value, non-rowGroup and hidden
-        columnsWithNoState.forEach(col => {
+        const applyDefaultsFunc = (col: Column) =>
             this.syncColumnWithStateItem(col, null, params.defaultState, rowGroupIndexes,
-                pivotIndexes, false, source);
-        });
+                pivotIndexes, false, source)
+
+        columnsWithNoState.forEach(applyDefaultsFunc);
 
         // sort the lists according to the indexes that were provided
         const comparator = (indexes: { [key: string]: number; }, oldList: Column[], colA: Column, colB: Column) => {
@@ -1956,10 +1957,14 @@ export class ColumnController extends BeanStub {
         this.updateGridColumns();
 
         // sync newly created auto group columns with ColumnState
+        const autoGroupColsCopy = this.groupAutoColumns ? this.groupAutoColumns.slice() : [];
         autoGroupColumnStates.forEach(stateItem => {
             const autoCol = this.getAutoColumn(stateItem.colId!);
+            removeFromArray(autoGroupColsCopy, autoCol);
             this.syncColumnWithStateItem(autoCol, stateItem, params.defaultState, null, null, true, source);
         });
+        // autogroup cols with nothing else, apply the default
+        autoGroupColsCopy.forEach(applyDefaultsFunc);
 
         this.applyOrderAfterApplyState(params);
         this.updateDisplayedColumns(source);
