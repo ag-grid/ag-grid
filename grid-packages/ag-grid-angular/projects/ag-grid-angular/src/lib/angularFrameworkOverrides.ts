@@ -15,15 +15,21 @@ export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
     }
 
     public setTimeout(action: any, timeout?: any): void {
-        this._ngZone.runOutsideAngular(() => {
+        if (this._ngZone) {
+            this._ngZone.runOutsideAngular(() => {
+                window.setTimeout(() => {
+                    action();
+                }, timeout);
+            });
+        } else {
             window.setTimeout(() => {
                 action();
             }, timeout);
-        });
+        }
     }
 
     addEventListener(element: HTMLElement, eventType: string, listener: EventListener | EventListenerObject, useCapture?: boolean): void {
-        if (this.isOutsideAngular(eventType)) {
+        if (this.isOutsideAngular(eventType) && this._ngZone) {
             this._ngZone.runOutsideAngular(() => {
                 element.addEventListener(eventType, listener, useCapture);
             });
@@ -34,10 +40,14 @@ export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
 
     dispatchEvent(eventType: string, listener: () => {}): void {
         if (this.isOutsideAngular(eventType)) {
-            this._ngZone.runOutsideAngular(listener);
-        } else if(this.isEmitterUsed(eventType)) {
+            if (this._ngZone) {
+                this._ngZone.runOutsideAngular(listener);
+            } else {
+                listener();
+            }
+        } else if (this.isEmitterUsed(eventType)) {
             // only trigger off events (and potentially change detection) if actually used
-            if(!NgZone.isInAngularZone()) {
+            if (!NgZone.isInAngularZone() && this._ngZone) {
                 this._ngZone.run(listener);
             } else {
                 listener();
