@@ -27,15 +27,15 @@ const gridOptions = {
         }]],
         rowHeight: params => params.rowIndex === 1 ? 82 : 20,
         addImageToCell: (rowIndex, col, value) => {
-            if (rowIndex !== 1) { return; }
+            if (rowIndex !== 1 || col.colId !== 'athlete') { return; }
 
             return {
                 image: {
                     id: 'logo',
                     base64: value,
                     imageType: 'png',
-                    width: 232,
-                    height: 82,
+                    width: 295,
+                    height: 100,
                     position: {
                         colSpan: 2
                     }

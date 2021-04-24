@@ -63,7 +63,7 @@ export class ExcelXlsxSerializingSession extends BaseExcelSerializingSession<Exc
 
         if (!addedImage) { return; }
 
-        ExcelXlsxFactory.buildImageMap(addedImage.image, rowIndex, column, this.columnsToExport);
+        ExcelXlsxFactory.buildImageMap(addedImage.image, rowIndex, column, this.columnsToExport, this.config.rowHeight);
 
         return addedImage;
     }

@@ -131,6 +131,10 @@ export interface ExcelImage {
         offsetX?: number;
         offsetY?: number;
     };
+    /** @private */
+    totalWidth?: number;
+    /** @private */
+    totalHeight?: number;
 }
 
 /*

@@ -23,6 +23,7 @@ import {
     RowSpanningAccumulator,
     RowType
 } from "@ag-grid-community/csv-export";
+import { ExcelXlsxFactory } from "./excelXlsxFactory";
 
 export interface ExcelGridSerializingParams extends GridSerializingParams {
     autoConvertFormulas?: boolean;
@@ -93,7 +94,7 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
             });
 
             this.rows.push({
-                height: this.getHeightFromProperty(rowLen, this.config.rowHeight),
+                height: ExcelXlsxFactory.getHeightFromProperty(rowLen, this.config.rowHeight),
                 cells: row
             });
         });
@@ -103,7 +104,7 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
         const currentCells: ExcelCell[] = [];
         this.rows.push({
             cells: currentCells,
-            height: this.getHeightFromProperty(this.rows.length + 1, this.config.headerRowHeight)
+            height: ExcelXlsxFactory.getHeightFromProperty(this.rows.length + 1, this.config.headerRowHeight)
         });
         return {
             onColumn: (header: string, index: number, span: number) => {
@@ -161,7 +162,7 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
             if (typeof columnWidth === 'number') {
                 return { width: columnWidth };
             }
-            return { width: columnWidth({column, index}) };
+            return { width: columnWidth({ column, index }) };
         }
 
         if (column) {
@@ -183,7 +184,7 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
         const currentCells: ExcelCell[] = [];
         this.rows.push({
             cells: currentCells,
-            height: this.getHeightFromProperty(this.rows.length + 1, this.config.rowHeight)
+            height: ExcelXlsxFactory.getHeightFromProperty(this.rows.length + 1, height)
         });
         return {
             onColumn: onNewColumnAccumulator.bind(this, this.rows.length, currentCells)()
@@ -212,22 +213,6 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
                 currentCells.push(this.createCell(excelStyleId, this.getDataTypeForValue(valueForCell), valueForCell));
             }
         };
-    }
-
-    private getHeightFromProperty(rowIndex: number, height?: number | ((params: RowHeightCallbackParams) => number)): number | undefined {
-        if (!height) { return; }
-
-        let finalHeight: number;
-
-        if (typeof height === 'number') {
-            finalHeight = height;
-        } else {
-            const heightFunc = height as Function;
-            finalHeight = heightFunc({ rowIndex });
-        }
-
-        // divide the height by 1.3333 because the height is provided in pixels, but Excel only accepts `pt`.
-        return Math.round(finalHeight / 1.333333);
     }
 
     private getStyleId(styleIds?: string[] | null): string | null {

@@ -8,6 +8,7 @@ import {
     ExcelSheetPageSetup,
     ExcelStyle,
     ExcelWorksheet,
+    RowHeightCallbackParams,
     XmlElement,
     _
 } from '@ag-grid-community/core';
@@ -58,7 +59,72 @@ export class ExcelXlsxFactory {
         return this.createWorksheet(worksheet, margins, pageSetup, headerFooterConfig);
     }
 
-    public static buildImageMap(image: ExcelImage, rowIndex: number, column: Column, columnsToExport: Column[]): void {
+    public static getHeightFromProperty(rowIndex: number, height?: number | ((params: RowHeightCallbackParams) => number)): number | undefined {
+        if (!height) { return; }
+
+        let finalHeight: number;
+
+        if (typeof height === 'number') {
+            finalHeight = height;
+        } else {
+            const heightFunc = height as Function;
+            finalHeight = heightFunc({ rowIndex });
+        }
+
+        // divide the height by 1.3333 because the height is provided in pixels, but Excel only accepts `pt`.
+        return Math.round(finalHeight / 1.3333);
+    }
+
+    private static setExcelImageTotalWidth(image: ExcelImage, columnsToExport: Column[]): void {
+        const { colSpan, column } = image.position!;
+
+        if (image.width) {
+            if (colSpan) {
+                const columnsInSpan = columnsToExport.slice(column! - 1, column! + colSpan - 1);
+                let totalWidth = 0;
+                for (let i = 0; i < columnsInSpan.length; i++) {
+                    const colWidth = columnsInSpan[i].getActualWidth();
+                    if (image.width < totalWidth + colWidth) {
+                        image.position!.colSpan = i + 1;
+                        image.totalWidth = image.width;
+                        image.width = image.totalWidth - totalWidth;
+                        break;
+                    }
+                    totalWidth += colWidth;
+                }
+            } else { 
+                image.totalWidth = image.width;
+            }
+        }
+    }
+
+    private static setExcelImageTotalHeight(image: ExcelImage, rowHeight?: number | ((params: RowHeightCallbackParams) => number)): void {
+        const { rowSpan, row } = image.position!;
+
+        if (image.height) {
+            if (rowSpan) {
+                let totalHeight = 0;
+                let counter = 0;
+                for (let i = row!; i < row! + rowSpan; i++) {
+                    // we need to multiply by 1.33333 because getHeightFromProperty returns the rowHeight in `pt`.
+                    const nextRowHeight = Math.floor((ExcelXlsxFactory.getHeightFromProperty(i, rowHeight) || 20) * 1.33333);
+                    if (image.height < totalHeight + nextRowHeight) {
+                        image.position!.rowSpan = counter + 1;
+                        image.totalHeight = image.height;
+                        image.height = image.totalHeight - totalHeight;
+                        break;
+                    }
+                    totalHeight += nextRowHeight;
+                    counter++;
+                }
+            } else {
+                image.totalHeight = image.height;
+            }
+        }
+
+    }
+
+    public static buildImageMap(image: ExcelImage, rowIndex: number, col: Column, columnsToExport: Column[], rowHeight?: number | ((params: RowHeightCallbackParams) => number)): void {
         const currentSheetIndex = this.sheetNames.length;
         const registeredImage = this.images.get(image.id);
 
@@ -67,9 +133,12 @@ export class ExcelXlsxFactory {
 
             image.position = _.assign({}, image.position, {
                 row: rowIndex,
-                column: columnsToExport.indexOf(column) + 1
+                column: columnsToExport.indexOf(col) + 1
             });
         }
+
+        this.setExcelImageTotalWidth(image, columnsToExport);
+        this.setExcelImageTotalHeight(image, rowHeight);
 
         if (registeredImage) {
             const currentSheetImages = _.find(registeredImage, (currentImage) => currentImage.sheetId === currentSheetIndex);
