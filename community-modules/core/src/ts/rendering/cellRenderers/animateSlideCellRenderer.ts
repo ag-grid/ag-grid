@@ -1,4 +1,3 @@
-
 import { Autowired } from "../../context/context";
 import { ICellRenderer } from "./iCellRenderer";
 import { Component } from "../../widgets/component";
@@ -8,12 +7,10 @@ import { missing, exists } from "../../utils/generic";
 
 export class AnimateSlideCellRenderer extends Component implements ICellRenderer {
 
-    private static TEMPLATE =
-        '<span>' +
-        '<span class="ag-value-slide-current"></span>' +
-        '</span>';
-
-    private params: any;
+    private static TEMPLATE = /* html */
+        `<span>
+            <span class="ag-value-slide-current"></span>
+        </span>`;
 
     private eCurrent: HTMLElement;
     private ePrevious: HTMLElement | null;
@@ -26,12 +23,10 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
 
     constructor() {
         super(AnimateSlideCellRenderer.TEMPLATE);
-
         this.eCurrent = this.queryForHtmlElement('.ag-value-slide-current');
     }
 
     public init(params: any): void {
-        this.params = params;
         this.refresh(params);
     }
 

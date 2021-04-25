@@ -15,7 +15,6 @@ import {
     RowNodeBlock,
     RowNodeBlockLoader,
     RowNodeSorter,
-    RowRenderer,
     SelectionChangedEvent,
     ServerSideStoreParams,
     ServerSideStoreState,
@@ -38,7 +37,6 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     @Autowired('ssrmCacheUtils') private storeUtils: StoreUtils;
     @Autowired('ssrmBlockUtils') private blockUtils: BlockUtils;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
     @Autowired('rowNodeSorter') private rowNodeSorter: RowNodeSorter;
     @Autowired('sortController') private sortController: SortController;
@@ -50,13 +48,11 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     private readonly groupLevel: boolean | undefined;
     private readonly leafGroup: boolean;
     private readonly ssrmParams: SSRMParams;
-    private readonly storeParams: ServerSideStoreParams;
     private readonly parentRowNode: RowNode;
 
     private nodeIdSequence: NumberSequence = new NumberSequence();
 
     private usingTreeData: boolean;
-    private usingMasterDetail: boolean;
 
     private allRowNodes: RowNode[];
     private nodesAfterFilter: RowNode[];
@@ -81,7 +77,6 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         // finite block represents a cache with just one block, thus 0 is the id, it's the first block
         super(0);
         this.ssrmParams = ssrmParams;
-        this.storeParams = storeParams;
         this.parentRowNode = parentRowNode;
         this.level = parentRowNode.level + 1;
         this.groupLevel = ssrmParams.rowGroupCols ? this.level < ssrmParams.rowGroupCols.length : undefined;
@@ -91,7 +86,6 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     @PostConstruct
     private postConstruct(): void {
         this.usingTreeData = this.gridOptionsWrapper.isTreeData();
-        this.usingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
         this.nodeIdPrefix = this.blockUtils.createNodeIdPrefix(this.parentRowNode);
 
         if (!this.usingTreeData && this.groupLevel) {

@@ -108,7 +108,6 @@ export class RowController extends BeanStub {
     private rowLevel: number;
 
     private readonly printLayout: boolean;
-    private readonly embedFullWidth: boolean;
 
     private updateColumnListsPending = false;
 
@@ -118,8 +117,7 @@ export class RowController extends BeanStub {
         beans: Beans,
         animateIn: boolean,
         useAnimationFrameForCreate: boolean,
-        printLayout: boolean,
-        embedFullWidth: boolean
+        printLayout: boolean
     ) {
         super();
         this.parentScope = parentScope;
@@ -129,7 +127,6 @@ export class RowController extends BeanStub {
         this.paginationPage = this.beans.paginationProxy.getCurrentPage();
         this.useAnimationFrameForCreate = useAnimationFrameForCreate;
         this.printLayout = printLayout;
-        this.embedFullWidth = embedFullWidth;
 
         this.setAnimateFlags(animateIn);
 

@@ -6,14 +6,12 @@ import {
     ColumnController,
     IRowNodeStage,
     RowNode,
-    SelectionController,
     StageExecuteParams
 } from "@ag-grid-community/core";
 
 @Bean('flattenStage')
 export class FlattenStage extends BeanStub implements IRowNodeStage {
 
-    @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('columnController') private columnController: ColumnController;
 
     public execute(params: StageExecuteParams): RowNode[] {

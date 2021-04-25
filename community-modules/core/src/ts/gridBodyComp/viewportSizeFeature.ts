@@ -1,6 +1,5 @@
 import { BeanStub } from "../context/beanStub";
 import { Autowired, PostConstruct } from "../context/context";
-import { ResizeObserverService } from "../misc/resizeObserverService";
 import { ColumnController } from "../columnController/columnController";
 import { ScrollVisibleService, SetScrollsVisibleParams } from "../gridBodyComp/scrollVisibleService";
 import { GridBodyController } from "../gridBodyComp/gridBodyController";
@@ -17,7 +16,6 @@ import { getInnerHeight } from "../utils/dom";
 export class ViewportSizeFeature extends BeanStub {
 
     @Autowired('controllersService') private controllersService: ControllersService;
-    @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Autowired('columnApi') private columnApi: ColumnApi;

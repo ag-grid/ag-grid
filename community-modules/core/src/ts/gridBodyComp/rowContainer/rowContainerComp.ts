@@ -4,8 +4,6 @@ import { Autowired, PostConstruct } from "../../context/context";
 import { RowContainerController, RowContainerView } from "./rowContainerController";
 import { ensureDomOrder, insertWithDomOrder } from "../../utils/dom";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
-import { ResizeObserverService } from "../../misc/resizeObserverService";
-import { ColumnController } from "../../columnController/columnController";
 import { SetPinnedLeftWidthFeature } from "./setPinnedLeftWidthFeature";
 import { SetPinnedRightWidthFeature } from "./setPinnedRightWidthFeature";
 import { SetHeightFeature } from "./setHeightFeature";
@@ -111,9 +109,6 @@ function templateFactory(): string {
 }
 
 export class RowContainerComp extends Component {
-
-    @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
-    @Autowired('columnController') private columnController: ColumnController;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired("beans") private beans: Beans;
 
@@ -124,8 +119,6 @@ export class RowContainerComp extends Component {
     private readonly name: RowContainerNames;
 
     private renderedRows: {[id: string]: RowComp} = {};
-    private enableRtl: boolean;
-    private scrollTop: number;
     private embedFullWidthRows: boolean;
 
     // we ensure the rows are in the dom in the order in which they appear on screen when the
@@ -140,7 +133,6 @@ export class RowContainerComp extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
         this.embedFullWidthRows = this.gridOptionsWrapper.isEmbedFullWidthRows();
 
         const view: RowContainerView = {
@@ -202,10 +194,6 @@ export class RowContainerComp extends Component {
     // this is repeated inside the controller, need to remove where this one is called from
     public getViewportElement(): HTMLElement {
         return this.eViewport;
-    }
-
-    public setVerticalScrollPosition(verticalScrollPosition: number): void {
-        this.scrollTop = verticalScrollPosition;
     }
 
     public clearLastPlacedElement(): void {

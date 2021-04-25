@@ -14,7 +14,6 @@ import { RowNodeBlockLoader } from "../rowNodeCache/rowNodeBlockLoader";
 export class PaginationComp extends Component {
 
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
-    @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
 
     @RefSelector('btFirst') private btFirst: HTMLElement;

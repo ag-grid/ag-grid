@@ -3,9 +3,7 @@ import {
     LoadSuccessParams,
     Autowired,
     Column,
-    ColumnApi,
     ColumnController,
-    GridApi,
     Logger,
     LoggerFactory,
     NumberSequence,
@@ -15,8 +13,6 @@ import {
     RowBounds,
     RowNode,
     RowNodeBlock,
-    RowRenderer,
-    ValueService,
     ServerSideStoreParams,
     RowNodeBlockLoader
 } from "@ag-grid-community/core";
@@ -28,11 +24,7 @@ import { NodeManager } from "../nodeManager";
 
 export class PartialStoreBlock extends RowNodeBlock {
 
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('ssrmCacheUtils') private cacheUtils: StoreUtils;
     @Autowired('ssrmBlockUtils') private blockUtils: BlockUtils;
     @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
@@ -51,9 +43,7 @@ export class PartialStoreBlock extends RowNodeBlock {
     private readonly parentStore: PartialStore;
     private readonly parentRowNode: RowNode;
 
-    private defaultRowHeight: number;
     private usingTreeData: boolean;
-    private usingMasterDetail: boolean;
 
     private lastAccessed: number;
 
@@ -93,8 +83,6 @@ export class PartialStoreBlock extends RowNodeBlock {
     @PostConstruct
     protected postConstruct(): void {
         this.usingTreeData = this.gridOptionsWrapper.isTreeData();
-        this.usingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
-        this.defaultRowHeight  = this.gridOptionsWrapper.getRowHeightAsNumber();
 
         if (!this.usingTreeData && this.groupLevel) {
             const groupColVo = this.ssrmParams.rowGroupCols[this.level];

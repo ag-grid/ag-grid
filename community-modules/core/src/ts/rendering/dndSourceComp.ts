@@ -12,14 +12,12 @@ export class DndSourceComp extends Component {
 
     private readonly rowNode: RowNode;
     private readonly column: Column;
-    private readonly cellValue: string;
     private readonly eCell: HTMLElement;
 
-    constructor(rowNode: RowNode, column: Column, cellValue: string, beans: Beans, eCell: HTMLElement) {
+    constructor(rowNode: RowNode, column: Column, beans: Beans, eCell: HTMLElement) {
         super(`<div class="ag-drag-handle ag-row-drag" draggable="true"></div>`);
         this.rowNode = rowNode;
         this.column = column;
-        this.cellValue = cellValue;
         this.beans = beans;
         this.eCell = eCell;
     }

@@ -2116,7 +2116,7 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private addDndSource(): void {
-        const dndSourceComp = new DndSourceComp(this.rowNode, this.column, this.getValueToUse(), this.beans, this.getGui());
+        const dndSourceComp = new DndSourceComp(this.rowNode, this.column, this.beans, this.getGui());
         this.createManagedBean(dndSourceComp, this.beans.context);
 
         // put the checkbox in before the value

@@ -1,6 +1,5 @@
 import { Autowired, Optional, PostConstruct } from "../context/context";
 import { GridApi } from "../gridApi";
-import { RowRenderer } from "../rendering/rowRenderer";
 import { PopupService } from "../widgets/popupService";
 import { FocusController } from "../focusController";
 import { BeanStub } from "../context/beanStub";
@@ -13,8 +12,6 @@ import { Logger, LoggerFactory } from "../logger";
 import { ResizeObserverService } from "../misc/resizeObserverService";
 import { GridSizeChangedEvent } from "../events";
 import { ColumnApi } from "../columnController/columnApi";
-import { GridOptions } from "../entities/gridOptions";
-import { IRowModel } from "../interfaces/iRowModel";
 import { findIndex } from "../utils/array";
 import { Column } from "../entities/column";
 import { ColumnGroup } from "../entities/columnGroup";
@@ -34,14 +31,11 @@ export class GridCompController extends BeanStub {
 
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('focusController') protected readonly focusController: FocusController;
     @Optional('clipboardService') private clipboardService: IClipboardService;
     @Autowired('loggerFactory') loggerFactory: LoggerFactory;
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
-    @Autowired('gridOptions') private gridOptions: GridOptions;
-    @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('controllersService') private controllersService: ControllersService;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
@@ -58,7 +52,6 @@ export class GridCompController extends BeanStub {
 
     @PostConstruct
     protected postConstruct(): void {
-
         this.logger = this.loggerFactory.create('GridCompController');
 
         // register with services that need grid core
