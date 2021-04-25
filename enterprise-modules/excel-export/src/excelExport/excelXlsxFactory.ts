@@ -9,7 +9,6 @@ import {
     ExcelStyle,
     ExcelWorksheet,
     RowHeightCallbackParams,
-    XmlElement,
     _
 } from '@ag-grid-community/core';
 
@@ -23,9 +22,8 @@ import workbookFactory from './files/ooxml/workbook';
 import worksheetFactory from './files/ooxml/worksheet';
 import relationshipsFactory from './files/ooxml/relationships';
 
-import { XmlFactory } from "@ag-grid-community/csv-export";
-
-type ImageIdMap = Map</** imageId */string, { type: string, index: number }>;
+import { setExcelImageTotalHeight, setExcelImageTotalWidth, createXmlPart } from './assets/excelUtils';
+import { ImageIdMap, ExcelCalculatedImage } from './assets/excelInterfaces';
 
 /**
  * See https://www.ecma-international.org/news/TC45_current_work/OpenXML%20White%20Paper.pdf
@@ -36,9 +34,9 @@ export class ExcelXlsxFactory {
     private static sheetNames: string[] = [];
 
     /** Maps images to sheet */
-    public static images: Map<string, { sheetId: number, image: ExcelImage[] }[]> = new Map();
+    public static images: Map<string, { sheetId: number, image: ExcelCalculatedImage[] }[]> = new Map();
     /** Maps sheets to images */
-    public static worksheetImages: Map<number, ExcelImage[]> = new Map();
+    public static worksheetImages: Map<number, ExcelCalculatedImage[]> = new Map();
     /** Maps all workbook images to a global Id */
     public static workbookImageIds: ImageIdMap = new Map();
     /** Maps all sheet images to unique Ids */
@@ -59,71 +57,6 @@ export class ExcelXlsxFactory {
         return this.createWorksheet(worksheet, margins, pageSetup, headerFooterConfig);
     }
 
-    public static getHeightFromProperty(rowIndex: number, height?: number | ((params: RowHeightCallbackParams) => number)): number | undefined {
-        if (!height) { return; }
-
-        let finalHeight: number;
-
-        if (typeof height === 'number') {
-            finalHeight = height;
-        } else {
-            const heightFunc = height as Function;
-            finalHeight = heightFunc({ rowIndex });
-        }
-
-        // divide the height by 1.3333 because the height is provided in pixels, but Excel only accepts `pt`.
-        return Math.round(finalHeight / 1.3333);
-    }
-
-    private static setExcelImageTotalWidth(image: ExcelImage, columnsToExport: Column[]): void {
-        const { colSpan, column } = image.position!;
-
-        if (image.width) {
-            if (colSpan) {
-                const columnsInSpan = columnsToExport.slice(column! - 1, column! + colSpan - 1);
-                let totalWidth = 0;
-                for (let i = 0; i < columnsInSpan.length; i++) {
-                    const colWidth = columnsInSpan[i].getActualWidth();
-                    if (image.width < totalWidth + colWidth) {
-                        image.position!.colSpan = i + 1;
-                        image.totalWidth = image.width;
-                        image.width = image.totalWidth - totalWidth;
-                        break;
-                    }
-                    totalWidth += colWidth;
-                }
-            } else { 
-                image.totalWidth = image.width;
-            }
-        }
-    }
-
-    private static setExcelImageTotalHeight(image: ExcelImage, rowHeight?: number | ((params: RowHeightCallbackParams) => number)): void {
-        const { rowSpan, row } = image.position!;
-
-        if (image.height) {
-            if (rowSpan) {
-                let totalHeight = 0;
-                let counter = 0;
-                for (let i = row!; i < row! + rowSpan; i++) {
-                    // we need to multiply by 1.33333 because getHeightFromProperty returns the rowHeight in `pt`.
-                    const nextRowHeight = Math.floor((ExcelXlsxFactory.getHeightFromProperty(i, rowHeight) || 20) * 1.33333);
-                    if (image.height < totalHeight + nextRowHeight) {
-                        image.position!.rowSpan = counter + 1;
-                        image.totalHeight = image.height;
-                        image.height = image.totalHeight - totalHeight;
-                        break;
-                    }
-                    totalHeight += nextRowHeight;
-                    counter++;
-                }
-            } else {
-                image.totalHeight = image.height;
-            }
-        }
-
-    }
-
     public static buildImageMap(image: ExcelImage, rowIndex: number, col: Column, columnsToExport: Column[], rowHeight?: number | ((params: RowHeightCallbackParams) => number)): void {
         const currentSheetIndex = this.sheetNames.length;
         const registeredImage = this.images.get(image.id);
@@ -137,28 +70,30 @@ export class ExcelXlsxFactory {
             });
         }
 
-        this.setExcelImageTotalWidth(image, columnsToExport);
-        this.setExcelImageTotalHeight(image, rowHeight);
+        const calculatedImage = image as ExcelCalculatedImage;
+
+        setExcelImageTotalWidth(calculatedImage, columnsToExport);
+        setExcelImageTotalHeight(calculatedImage, rowHeight);
 
         if (registeredImage) {
             const currentSheetImages = _.find(registeredImage, (currentImage) => currentImage.sheetId === currentSheetIndex);
             if (currentSheetImages) {
-                currentSheetImages.image.push(image);
+                currentSheetImages.image.push(calculatedImage);
             } else {
                 registeredImage.push({
                     sheetId: currentSheetIndex,
-                    image: [image]
+                    image: [calculatedImage]
                 });
             }
         } else {
-            this.images.set(image.id, [{ sheetId: currentSheetIndex, image: [image] }])
-            this.workbookImageIds.set(image.id, { type: image.imageType, index: this.workbookImageIds.size });
+            this.images.set(calculatedImage.id, [{ sheetId: currentSheetIndex, image: [calculatedImage] }])
+            this.workbookImageIds.set(calculatedImage.id, { type: calculatedImage.imageType, index: this.workbookImageIds.size });
         }
 
-        this.buildSheetImageMap(currentSheetIndex, image);
+        this.buildSheetImageMap(currentSheetIndex, calculatedImage);
     }
 
-    private static buildSheetImageMap(sheetIndex: number, image: ExcelImage): void {
+    private static buildSheetImageMap(sheetIndex: number, image: ExcelCalculatedImage): void {
         let worksheetImageIdMap = this.worksheetImageIds.get(sheetIndex);
 
         if (!worksheetImageIdMap) {
@@ -219,23 +154,23 @@ export class ExcelXlsxFactory {
     }
 
     public static createWorkbook(): string {
-        return this.createXmlPart(workbookFactory.getTemplate(this.sheetNames));
+        return createXmlPart(workbookFactory.getTemplate(this.sheetNames));
     }
 
     public static createStylesheet(defaultFontSize: number): string {
-        return this.createXmlPart(stylesheetFactory.getTemplate(defaultFontSize));
+        return createXmlPart(stylesheetFactory.getTemplate(defaultFontSize));
     }
 
     public static createSharedStrings(): string {
-        return this.createXmlPart(sharedStringsFactory.getTemplate(this.sharedStrings));
+        return createXmlPart(sharedStringsFactory.getTemplate(this.sharedStrings));
     }
 
     public static createCore(author: string): string {
-        return this.createXmlPart(coreFactory.getTemplate(author));
+        return createXmlPart(coreFactory.getTemplate(author));
     }
 
     public static createContentTypes(sheetLen: number): string {
-        return this.createXmlPart(contentTypesFactory.getTemplate(sheetLen));
+        return createXmlPart(contentTypesFactory.getTemplate(sheetLen));
     }
 
     public static createRels(): string {
@@ -249,11 +184,11 @@ export class ExcelXlsxFactory {
             Target: 'docProps/core.xml'
         }]);
 
-        return this.createXmlPart(rs);
+        return createXmlPart(rs);
     }
 
     public static createTheme(): string {
-        return this.createXmlPart(officeThemeFactory.getTemplate());
+        return createXmlPart(officeThemeFactory.getTemplate());
     }
 
     public static createWorkbookRels(sheetLen: number): string {
@@ -279,11 +214,11 @@ export class ExcelXlsxFactory {
             Target: 'sharedStrings.xml'
         }]);
 
-        return this.createXmlPart(rs);
+        return createXmlPart(rs);
     }
 
     public static createDrawing(sheetIndex: number) {
-        return this.createXmlPart(drawingFactory.getTemplate({ sheetIndex }));
+        return createXmlPart(drawingFactory.getTemplate({ sheetIndex }));
     }
 
     public static createDrawingRel(sheetIndex: number) {
@@ -298,7 +233,7 @@ export class ExcelXlsxFactory {
             })
         });
 
-        return this.createXmlPart(relationshipsFactory.getTemplate(XMLArr));
+        return createXmlPart(relationshipsFactory.getTemplate(XMLArr));
     }
 
     public static createWorksheetDrawingRel(currentRelationIndex: number) {
@@ -308,18 +243,10 @@ export class ExcelXlsxFactory {
             Target: `../drawings/drawing${currentRelationIndex + 1}.xml`
         }]);
 
-        return this.createXmlPart(rs);
+        return createXmlPart(rs);
     }
 
-    private static createXmlPart(body: XmlElement): string {
-        const header = XmlFactory.createHeader({
-            encoding: 'UTF-8',
-            standalone: 'yes'
-        });
-
-        const xmlBody = XmlFactory.createXml(body);
-        return `${header}${xmlBody}`;
-    }
+    
 
     private static createWorksheet(
         worksheet: ExcelWorksheet,
@@ -327,7 +254,7 @@ export class ExcelXlsxFactory {
         pageSetup?: ExcelSheetPageSetup,
         headerFooterConfig?: ExcelHeaderFooterConfig,
     ): string {
-        return this.createXmlPart(worksheetFactory.getTemplate({
+        return createXmlPart(worksheetFactory.getTemplate({
             worksheet,
             currentSheet: this.sheetNames.length - 1,
             margins,

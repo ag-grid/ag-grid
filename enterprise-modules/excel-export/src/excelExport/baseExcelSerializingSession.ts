@@ -23,6 +23,7 @@ import {
     RowSpanningAccumulator,
     RowType
 } from "@ag-grid-community/csv-export";
+import { getHeightFromProperty } from "./assets/excelUtils";
 import { ExcelXlsxFactory } from "./excelXlsxFactory";
 
 export interface ExcelGridSerializingParams extends GridSerializingParams {
@@ -94,7 +95,7 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
             });
 
             this.rows.push({
-                height: ExcelXlsxFactory.getHeightFromProperty(rowLen, this.config.rowHeight),
+                height: getHeightFromProperty(rowLen, this.config.rowHeight),
                 cells: row
             });
         });
@@ -104,7 +105,7 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
         const currentCells: ExcelCell[] = [];
         this.rows.push({
             cells: currentCells,
-            height: ExcelXlsxFactory.getHeightFromProperty(this.rows.length + 1, this.config.headerRowHeight)
+            height: getHeightFromProperty(this.rows.length + 1, this.config.headerRowHeight)
         });
         return {
             onColumn: (header: string, index: number, span: number) => {
@@ -184,7 +185,7 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
         const currentCells: ExcelCell[] = [];
         this.rows.push({
             cells: currentCells,
-            height: ExcelXlsxFactory.getHeightFromProperty(this.rows.length + 1, height)
+            height: getHeightFromProperty(this.rows.length + 1, height)
         });
         return {
             onColumn: onNewColumnAccumulator.bind(this, this.rows.length, currentCells)()

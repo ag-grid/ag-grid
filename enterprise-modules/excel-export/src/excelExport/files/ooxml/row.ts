@@ -1,5 +1,5 @@
 import { ExcelOOXMLTemplate, ExcelRow, ExcelCell } from '@ag-grid-community/core';
-import { getExcelColumnName } from './worksheet';
+import { getExcelColumnName } from '../../assets/excelUtils';
 import cellFactory from './cell';
 
 const addEmptyCells = (cells: ExcelCell[], rowIdx: number): void => {

@@ -1,27 +1,8 @@
 import { ExcelImage, ExcelOOXMLTemplate, XmlElement } from '@ag-grid-community/core';
 import { ExcelXlsxFactory } from '../../excelXlsxFactory';
-
-const INCH_TO_EMU = 9525;
-
-interface ImageColor {
-    color: string;
-    tint?: number;
-    saturation?: number;
-}
-
-interface ImageAnchor {
-    row: number;
-    col: number;
-    offsetX: number;
-    offsetY: number;
-}
-
-interface ImageBoxSize {
-    from: ImageAnchor;
-    to: ImageAnchor;
-    height: number;
-    width: number;
-}
+import { ExcelCalculatedImage, ImageAnchor, ImageBoxSize, ImageColor } from '../../assets/excelInterfaces';
+import { INCH_TO_EMU } from '../../assets/excelConstants';
+import { pixelsToEMU } from '../../assets/excelUtils';
 
 const getAnchor = (name: string, imageAnchor: ImageAnchor): XmlElement => ({
     name: `xdr:${name}`,
@@ -275,12 +256,7 @@ const getSpPr = (image: ExcelImage, imageBoxSize: ImageBoxSize) => {
     return ret;
 };
 
-const convertPixelToEMU = (value: number): number => {
-return Math.ceil(value * INCH_TO_EMU);
-}
-
-
-const getImageBoxSize = (image: ExcelImage): ImageBoxSize => {
+const getImageBoxSize = (image: ExcelCalculatedImage): ImageBoxSize => {
     image.fitCell = !!image.fitCell || (!image.width || !image.height);
 
     const { position = {}, fitCell, width = 0, height = 0, totalHeight, totalWidth } = image;
@@ -290,17 +266,17 @@ const getImageBoxSize = (image: ExcelImage): ImageBoxSize => {
         from: {
             row: row - 1,
             col: column - 1,
-            offsetX: convertPixelToEMU(offsetX),
-            offsetY: convertPixelToEMU(offsetY)
+            offsetX: pixelsToEMU(offsetX),
+            offsetY: pixelsToEMU(offsetY)
         },
         to: {
             row: (row - 1) + (fitCell ? 1 : rowSpan - 1),
             col: (column - 1) + (fitCell ? 1 : colSpan - 1),
-            offsetX: convertPixelToEMU(width + offsetX),
-            offsetY: convertPixelToEMU(height + offsetY)
+            offsetX: pixelsToEMU(width + offsetX),
+            offsetY: pixelsToEMU(height + offsetY)
         },
-        height: convertPixelToEMU(totalHeight || height),
-        width: convertPixelToEMU(totalWidth || width)
+        height: pixelsToEMU(totalHeight || height),
+        width: pixelsToEMU(totalWidth || width)
     }
 }
 
