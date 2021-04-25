@@ -246,8 +246,6 @@ export class ExcelXlsxFactory {
         return createXmlPart(rs);
     }
 
-    
-
     private static createWorksheet(
         worksheet: ExcelWorksheet,
         margins?: ExcelSheetMargin,

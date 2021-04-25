@@ -5,6 +5,7 @@ import {
     Constants,
     ExcelCell,
     ExcelColumn,
+    ExcelData,
     ExcelHeaderFooterConfig,
     ExcelImage,
     ExcelRow,
@@ -24,7 +25,6 @@ import {
     RowType
 } from "@ag-grid-community/csv-export";
 import { getHeightFromProperty } from "./assets/excelUtils";
-import { ExcelXlsxFactory } from "./excelXlsxFactory";
 
 export interface ExcelGridSerializingParams extends GridSerializingParams {
     autoConvertFormulas?: boolean;
@@ -81,22 +81,23 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
         customContent.forEach(row => {
             const rowLen = this.rows.length + 1;
 
-            row.forEach((cell, idx) => {
-                const image = this.addImage(rowLen, this.columnsToExport[idx], cell.data.value as string);
-
-                if (image) {
-                    if (image.value != null) {
-                        cell.data.value = image.value;
-                    } else {
-                        cell.data.type = 'e';
-                        cell.data.value = null;
-                    }
-                }
-            });
-
             this.rows.push({
                 height: getHeightFromProperty(rowLen, this.config.rowHeight),
-                cells: row
+                cells: row.map((cell, idx) => {
+                    const image = this.addImage(rowLen, this.columnsToExport[idx], cell.data.value as string);
+                    const ret = { ...cell };
+
+                    if (image) {
+                        ret.data = {} as ExcelData;
+                        if (image.value != null) {
+                            ret.data.value = image.value;
+                        } else {
+                            ret.data.type = 'e';
+                            ret.data.value = null;
+                        }
+                    }
+                    return ret;
+                })
             });
         });
     }

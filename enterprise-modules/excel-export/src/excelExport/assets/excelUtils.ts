@@ -54,7 +54,7 @@ export const setExcelImageTotalWidth = (image: ExcelCalculatedImage, columnsToEx
                 }
                 totalWidth += colWidth;
             }
-        } else { 
+        } else {
             image.totalWidth = image.width;
         }
     }

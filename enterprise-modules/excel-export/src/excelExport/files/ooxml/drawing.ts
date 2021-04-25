@@ -1,7 +1,6 @@
 import { ExcelImage, ExcelOOXMLTemplate, XmlElement } from '@ag-grid-community/core';
 import { ExcelXlsxFactory } from '../../excelXlsxFactory';
 import { ExcelCalculatedImage, ImageAnchor, ImageBoxSize, ImageColor } from '../../assets/excelInterfaces';
-import { INCH_TO_EMU } from '../../assets/excelConstants';
 import { pixelsToEMU } from '../../assets/excelUtils';
 
 const getAnchor = (name: string, imageAnchor: ImageAnchor): XmlElement => ({

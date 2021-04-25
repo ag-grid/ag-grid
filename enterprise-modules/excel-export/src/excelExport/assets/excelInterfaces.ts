@@ -67,4 +67,3 @@ export interface ExcelCalculatedImage extends ExcelImage {
     totalWidth: number;
     totalHeight: number;
 }
-
