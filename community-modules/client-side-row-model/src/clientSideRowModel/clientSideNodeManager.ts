@@ -329,20 +329,4 @@ export class ClientSideNodeManager {
         }
         return level < expandByDefault!;
     }
-
-    // this is only used for doing legacy tree data
-    private setLeafChildren(node: RowNode): void {
-        node.allLeafChildren = [];
-        if (node.childrenAfterGroup) {
-            node.childrenAfterGroup.forEach(childAfterGroup => {
-                if (childAfterGroup.group) {
-                    if (childAfterGroup.allLeafChildren) {
-                        childAfterGroup.allLeafChildren.forEach(leafChild => node.allLeafChildren.push(leafChild));
-                    }
-                } else {
-                    node.allLeafChildren.push(childAfterGroup);
-                }
-            });
-        }
-    }
 }

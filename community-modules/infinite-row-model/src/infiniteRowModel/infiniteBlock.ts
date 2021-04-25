@@ -1,20 +1,16 @@
 import {
     _,
-    Autowired,
     IGetRowsParams,
     NumberSequence,
     PostConstruct,
     PreDestroy,
     RowNode,
     RowNodeBlock,
-    RowRenderer,
     LoadSuccessParams
 } from "@ag-grid-community/core";
 import { InfiniteCache, InfiniteCacheParams } from "./infiniteCache";
 
 export class InfiniteBlock extends RowNodeBlock {
-
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
     private readonly startRow: number;
     private readonly endRow: number;

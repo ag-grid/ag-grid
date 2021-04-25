@@ -2,9 +2,7 @@ import {
     Autowired,
     BeanStub,
     StoreUpdatedEvent,
-    ColumnApi,
     Events,
-    GridApi,
     IDatasource,
     Logger,
     LoggerFactory,
@@ -41,8 +39,6 @@ export class InfiniteCache extends BeanStub {
     // scrolled over are not needed to be loaded.
     private static MAX_EMPTY_BLOCKS_TO_KEEP = 2;
 
-    @Autowired('columnApi') private readonly columnApi: ColumnApi;
-    @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('rowRenderer') protected rowRenderer: RowRenderer;
     @Autowired("focusController") private focusController: FocusController;
 

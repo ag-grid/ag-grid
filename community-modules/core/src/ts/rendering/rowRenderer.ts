@@ -336,8 +336,7 @@ export class RowRenderer extends BeanStub {
                 this.beans,
                 false,
                 false,
-                this.printLayout,
-                this.embedFullWidthRows
+                this.printLayout
             );
 
             rowComps.push(rowCon);
@@ -1173,8 +1172,7 @@ export class RowRenderer extends BeanStub {
             this.beans,
             animate,
             useAnimationFrameForCreate,
-            this.printLayout,
-            this.embedFullWidthRows
+            this.printLayout
         );
 
         return res;

@@ -44,7 +44,6 @@ export interface RowContainerSt {
 export class HeadlessService extends BeanStub {
 
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('valueService') private valueService: ValueService;
 

@@ -10,13 +10,11 @@ export class PaginationAutoPageSizeService extends BeanStub {
 
     @Autowired('controllersService') private controllersService: ControllersService;
 
-    private gridBodyCon: GridBodyController;
     private centerRowContainerCon: RowContainerController;
 
     @PostConstruct
     private postConstruct(): void {
         this.controllersService.whenReady(p => {
-            this.gridBodyCon = p.gridBodyCon;
             this.centerRowContainerCon = p.centerRowContainerCon;
 
             this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.onBodyHeightChanged.bind(this));

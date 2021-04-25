@@ -13,7 +13,6 @@ import { ControllersService } from "../controllersService";
 @Bean('mouseEventService')
 export class MouseEventService extends BeanStub {
 
-    @Autowired('eGridDiv') private eGridDiv: HTMLElement;
     @Autowired('controllersService') private controllersService: ControllersService;
 
     private static gridInstanceSequence = new NumberSequence();

@@ -2,7 +2,6 @@ import {
     _,
     Autowired,
     BeanStub,
-    ColumnController,
     Events,
     IServerSideStore,
     LoadSuccessParams,
@@ -45,7 +44,6 @@ export class PartialStore extends BeanStub implements IServerSideStore {
     @Autowired('rowRenderer') protected rowRenderer: RowRenderer;
     @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
     @Autowired('ssrmCacheUtils') private storeUtils: StoreUtils;
-    @Autowired('columnController') private columnController: ColumnController;
     @Autowired("focusController") private focusController: FocusController;
 
     private readonly ssrmParams: SSRMParams;
@@ -57,8 +55,6 @@ export class PartialStore extends BeanStub implements IServerSideStore {
     private defaultRowHeight: number;
 
     private logger: Logger;
-
-    private blockCount = 0;
 
     private rowCount: number;
     private lastRowIndexKnown = false;
@@ -241,7 +237,6 @@ export class PartialStore extends BeanStub implements IServerSideStore {
     private destroyBlock(block: PartialStoreBlock): void {
         delete this.blocks[block.getId()];
         this.destroyBean(block);
-        this.blockCount--;
         this.rowNodeBlockLoader.removeBlock(block);
     }
 
@@ -654,7 +649,6 @@ export class PartialStore extends BeanStub implements IServerSideStore {
         block.setDisplayIndexes(new NumberSequence(displayIndex), nextRowTop);
 
         this.blocks[block.getId()] = block;
-        this.blockCount++;
         this.purgeBlocksIfNeeded(block);
 
         this.rowNodeBlockLoader.addBlock(block);
