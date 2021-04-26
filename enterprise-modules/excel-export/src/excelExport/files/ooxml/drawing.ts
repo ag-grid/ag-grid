@@ -1,54 +1,24 @@
 import { ExcelImage, ExcelOOXMLTemplate, XmlElement } from '@ag-grid-community/core';
 import { ExcelXlsxFactory } from '../../excelXlsxFactory';
+import { ExcelCalculatedImage, ImageAnchor, ImageBoxSize, ImageColor } from '../../assets/excelInterfaces';
+import { pixelsToEMU } from '../../assets/excelUtils';
 
-const PIXEL_TO_INCH = 0.0104166667;
-const INCH_TO_EXCEL = 914499;
-
-interface ImageColor {
-    color: string;
-    tint?: number;
-    saturation?: number;
-}
-
-const convertFromPixelToExcel = (value: number): number => {
-    return Math.ceil(value * PIXEL_TO_INCH * INCH_TO_EXCEL);
-}
-
-const getAnchor = (name: string, image: ExcelImage): XmlElement => {
-    if (!image.width || !image.height) {
-        image.fitCell = true;
-    }
-
-    let { position = {}, width = 0, height = 0, fitCell } = image;
-    let { offsetX = 0, offsetY = 0, rowSpan = 1, colSpan = 1, column, row } = position;
-
-    const diffRow = name === 'to' && image.fitCell ? 1 : rowSpan - 1;
-    const diffCol = name === 'to' && image.fitCell ? 1 : colSpan - 1;
-
-    if (!image.fitCell) {
-        offsetX = convertFromPixelToExcel((position.offsetX) || 0);
-        offsetY = convertFromPixelToExcel((position.offsetY) || 0);
-        width = convertFromPixelToExcel(width!);
-        height = convertFromPixelToExcel(height!);
-    }
-
-    return {
-        name: `xdr:${name}`,
-        children: [{
-            name: 'xdr:col',
-            textNode: ((column! + diffCol) - 1).toString()
-        }, {
-            name: 'xdr:colOff',
-            textNode: name === 'from' ? offsetX.toString() : fitCell ? '0' : (offsetX + width).toString()
-        }, {
-            name: 'xdr:row',
-            textNode: ((row! + diffRow) - 1).toString()
-        }, {
-            name: 'xdr:rowOff',
-            textNode: name === 'from' ? offsetY.toString() : fitCell ? '0' : (offsetY + height).toString()
-        }]
-    }
-};
+const getAnchor = (name: string, imageAnchor: ImageAnchor): XmlElement => ({
+    name: `xdr:${name}`,
+    children: [{
+        name: 'xdr:col',
+        textNode: (imageAnchor.col).toString()
+    }, {
+        name: 'xdr:colOff',
+        textNode: imageAnchor.offsetX.toString()
+    }, {
+        name: 'xdr:row',
+        textNode: imageAnchor.row.toString()
+    }, {
+        name: 'xdr:rowOff',
+        textNode: imageAnchor.offsetY.toString()
+    }]
+})
 
 const getExt = (image: ExcelImage): XmlElement => {
     const children: XmlElement[] = [{
@@ -113,6 +83,11 @@ const getNvPicPr = (image: ExcelImage, index: number) => ({
         children: [getExt(image)]
     }, {
         name: 'xdr:cNvPicPr',
+        properties: {
+            rawMap: {
+                preferRelativeResize: '0'
+            }
+        },
         children: [{
             name: 'a:picLocks'
         }]
@@ -231,7 +206,7 @@ const getBlipFill = (image: ExcelImage, index: number) => {
     })
 };
 
-const getSpPr = (image: ExcelImage) => {
+const getSpPr = (image: ExcelImage, imageBoxSize: ImageBoxSize) => {
     const xfrm: XmlElement = {
         name: 'a:xfrm',
         children: [{
@@ -246,8 +221,8 @@ const getSpPr = (image: ExcelImage) => {
             name: 'a:ext',
             properties: {
                 rawMap: {
-                    cx: 0,
-                    cy: 0
+                    cx: imageBoxSize.width,
+                    cy: imageBoxSize.height
                 }
             }
         }]
@@ -280,13 +255,42 @@ const getSpPr = (image: ExcelImage) => {
     return ret;
 };
 
-const getPicture = (image: ExcelImage, currentIndex: number, worksheetImageIndex: number): XmlElement => {
+const getImageBoxSize = (image: ExcelCalculatedImage): ImageBoxSize => {
+    image.fitCell = !!image.fitCell || (!image.width || !image.height);
+
+    const { position = {}, fitCell, width = 0, height = 0, totalHeight, totalWidth } = image;
+    const { offsetX = 0 , offsetY = 0, row = 1, rowSpan = 1, column = 1, colSpan = 1 } = position
+
+    return {
+        from: {
+            row: row - 1,
+            col: column - 1,
+            offsetX: pixelsToEMU(offsetX),
+            offsetY: pixelsToEMU(offsetY)
+        },
+        to: {
+            row: (row - 1) + (fitCell ? 1 : rowSpan - 1),
+            col: (column - 1) + (fitCell ? 1 : colSpan - 1),
+            offsetX: pixelsToEMU(width + offsetX),
+            offsetY: pixelsToEMU(height + offsetY)
+        },
+        height: pixelsToEMU(totalHeight || height),
+        width: pixelsToEMU(totalWidth || width)
+    }
+}
+
+const getPicture = (
+    image: ExcelImage,
+    currentIndex: number,
+    worksheetImageIndex: number,
+    imageBoxSize: ImageBoxSize
+): XmlElement => {
     return {
         name: 'xdr:pic',
         children: [
             getNvPicPr(image, currentIndex + 1),
             getBlipFill(image, worksheetImageIndex + 1),
-            getSpPr(image)
+            getSpPr(image, imageBoxSize)
         ]
     }
 }
@@ -299,15 +303,23 @@ const drawingFactory: ExcelOOXMLTemplate = {
         const sheetImages = ExcelXlsxFactory.worksheetImages.get(sheetIndex);
         const sheetImageIds = ExcelXlsxFactory.worksheetImageIds.get(sheetIndex);
 
-        const children = sheetImages!.map((image, idx) => ({
-            name: 'xdr:twoCellAnchor',
-            children: [
-                getAnchor('from', image),
-                getAnchor('to', image),
-                getPicture(image, idx, sheetImageIds!.get(image.id)!.index),
-                { name: 'xdr:clientData'}
-            ]
-        }));
+        const children = sheetImages!.map((image, idx) => {
+            const boxSize = getImageBoxSize(image);
+            return ({
+                name: 'xdr:twoCellAnchor',
+                properties: {
+                    rawMap: {
+                        editAs: 'absolute'
+                    }
+                },
+                children: [
+                    getAnchor('from', boxSize.from),
+                    getAnchor('to', boxSize.to),
+                    getPicture(image, idx, sheetImageIds!.get(image.id)!.index, boxSize),
+                    { name: 'xdr:clientData'}
+                ]
+            });
+        });
 
         return {
             name: 'xdr:wsDr',

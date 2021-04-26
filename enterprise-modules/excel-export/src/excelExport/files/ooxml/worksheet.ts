@@ -15,6 +15,7 @@ import columnFactory from './column';
 import rowFactory from './row';
 import mergeCell from './mergeCell';
 import { ExcelXlsxFactory } from '../../excelXlsxFactory';
+import { getExcelColumnName } from '../../assets/excelUtils';
 
 const updateColMinMax = (col: ExcelColumn, min: number, range: number, prevCol?: ExcelColumn): void => {
     if (!col.min) {
@@ -62,21 +63,6 @@ const getMergedCells = (rows: ExcelRow[], cols: ExcelColumn[]): string[] => {
     });
 
     return mergedCells;
-};
-
-export const getExcelColumnName = (colIdx: number): string => {
-    const startCode = 65;
-    const tableWidth = 26;
-    const fromCharCode = String.fromCharCode;
-
-    const pos = Math.floor(colIdx / tableWidth);
-    const tableIdx = colIdx % tableWidth;
-
-    if (!pos || colIdx === tableWidth) { return fromCharCode(startCode + colIdx - 1); }
-    if (!tableIdx) { return getExcelColumnName(pos - 1) + 'Z'; }
-    if (pos < tableWidth) { return fromCharCode(startCode + pos - 1) + fromCharCode(startCode + tableIdx - 1); }
-
-    return getExcelColumnName(pos) + fromCharCode(startCode + tableIdx - 1);
 };
 
 const getPageOrientation = (orientation?: 'Portrait' | 'Landscape'): 'portrait' | 'landscape' => {

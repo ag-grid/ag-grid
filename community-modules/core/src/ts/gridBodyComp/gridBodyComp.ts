@@ -3,14 +3,11 @@ import { Events } from '../events';
 import { IRangeController } from '../interfaces/iRangeController';
 import { IContextMenuFactory } from '../interfaces/iContextMenuFactory';
 import { GridApi } from '../gridApi';
-import { AnimationFrameService } from '../misc/animationFrameService';
-import { OverlayWrapperComponent } from '../rendering/overlays/overlayWrapperComponent';
 import { Component } from '../widgets/component';
 import { Beans } from '../rendering/beans';
 import { RefSelector } from '../widgets/componentAnnotations';
 import { HeaderRootComp } from '../headerRendering/headerRootComp';
 import { ResizeObserverService } from '../misc/resizeObserverService';
-import { HeaderNavigationService } from '../headerRendering/header/headerNavigationService';
 import { setAriaColCount, setAriaMultiSelectable, setAriaRowCount } from '../utils/aria';
 import { addCssClass, addOrRemoveCssClass, removeCssClass } from '../utils/dom';
 import { IMenuFactory } from "../interfaces/iMenuFactory";
@@ -23,7 +20,7 @@ import {
     GridBodyView,
     RowAnimationCssClasses
 } from "./gridBodyController";
-import { FakeHorizontalScrollComp } from "./fakeHorizontalScrollComp";
+
 import { RowContainerNames } from "./rowContainer/rowContainerComp";
 
 const GRID_BODY_TEMPLATE = /* html */
@@ -47,18 +44,16 @@ const GRID_BODY_TEMPLATE = /* html */
             <ag-row-container ref="bottomRightContainer" name="${RowContainerNames.BOTTOM_RIGHT}"></ag-row-container>
             <ag-row-container ref="bottomFullWidthContainer" name="${RowContainerNames.BOTTOM_FULL_WITH}"></ag-row-container>
         </div>
-        <ag-fake-horizontal-scroll ref="fakeHScroll"></ag-fake-horizontal-scroll>
-        <ag-overlay-wrapper ref="overlayWrapper"></ag-overlay-wrapper>
+        <ag-fake-horizontal-scroll></ag-fake-horizontal-scroll>
+        <ag-overlay-wrapper></ag-overlay-wrapper>
     </div>`;
 
 export class GridBodyComp extends Component {
 
-    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Autowired('beans') private beans: Beans;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('$scope') private $scope: any;
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
-    @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
 
     @Optional('rangeController') private rangeController: IRangeController;
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
@@ -67,12 +62,7 @@ export class GridBodyComp extends Component {
     @RefSelector('eBodyViewport') private eBodyViewport: HTMLElement;
     @RefSelector('eTop') private eTop: HTMLElement;
     @RefSelector('eBottom') private eBottom: HTMLElement;
-
-    // fake horizontal scroll
-    @RefSelector('fakeHScroll') private fakeHScroll: FakeHorizontalScrollComp;
-
     @RefSelector('headerRoot') headerRootComp: HeaderRootComp;
-    @RefSelector('overlayWrapper') private overlayWrapper: OverlayWrapperComponent;
 
     private controller: GridBodyController;
 

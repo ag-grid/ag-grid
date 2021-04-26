@@ -33,8 +33,8 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
         this.recreateChart();
     }
 
-    protected getDefaultOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<ScatterSeriesOptions> {
-        const options = super.getDefaultOptionsFromTheme(theme);
+    protected extractIChartOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<ScatterSeriesOptions> {
+        const options = super.extractIChartOptionsFromTheme(theme);
 
         const seriesDefaults = theme.getConfig<AgScatterSeriesOptions>('scatter.series.scatter');
         options.seriesDefaults = {
@@ -66,7 +66,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
     }
 
     protected createChart(options?: CartesianChartOptions<ScatterSeriesOptions>): CartesianChart {
-        options = options || this.chartOptions;
+        options = options || this.iChartOptions;
         const agChartOptions = options as AgCartesianChartOptions;
         agChartOptions.autoSize = true;
         agChartOptions.axes = [{
@@ -99,7 +99,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
             });
         }
 
-        const { seriesDefaults } = this.chartOptions as any;
+        const { seriesDefaults } = this.iChartOptions as any;
         const seriesDefinitions = this.getSeriesDefinitions(fields, seriesDefaults.paired);
 
         let dataDomain: number[] | undefined;
@@ -234,7 +234,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
     }
 
     public getTooltipsEnabled(): boolean {
-        return this.chartOptions.seriesDefaults.tooltip != null && !!this.chartOptions.seriesDefaults.tooltip.enabled;
+        return this.iChartOptions.seriesDefaults.tooltip != null && !!this.iChartOptions.seriesDefaults.tooltip.enabled;
     }
 
     public getMarkersEnabled = (): boolean => true; // markers are always enabled on scatter charts

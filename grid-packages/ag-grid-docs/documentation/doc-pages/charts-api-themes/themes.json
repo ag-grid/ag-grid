@@ -132,6 +132,29 @@
       "min": 1,
       "unit": "px"
     },
+    "tooltip": {
+      "meta": {
+        "description": "Global configuration that applies to all tooltips in the chart."
+      },
+      "enabled": {
+        "type": "boolean",
+        "default": true,
+        "description": "Set to false to disable tooltips for all series in the chart."
+      },
+      "tracking": {
+        "type": "boolean",
+        "default": true,
+        "description": "If true, for series with markers the tooltip will be shown to the closest marker."
+      },
+      "class": {
+        "type": "string",
+        "description": "A class name to be added to the tooltip element of the chart."
+      },
+      "delay": {
+        "default": 0,
+        "description": "The time interval (in milliseconds) after which the tooltip is shown."
+      }
+    },
     "padding": {
       "meta": {
         "description": "Configuration for the padding shown around the chart."
@@ -620,6 +643,29 @@
           "description": "The maximum value for the axis."
         }
       },
+      "log": {
+        "meta": {
+          "type": "INumberAxis",
+          "description": "This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to number axes."
+        },
+        "nice": {
+          "default": true,
+          "description": "If `true`, the axis will adjust to align the left and right edge of the chart with a tick. Otherwise, the axis will be the minimum required width to show all the data."
+        },
+        "min": {
+          "type": "number",
+          "description": "The minimum value for the axis."
+        },
+        "max": {
+          "type": "number",
+          "description": "The maximum value for the axis."
+        },
+        "base": {
+          "type": "number",
+          "default": 10,
+          "description": "The logarithm base. For example, 10 for the common logarithm, Math.E for the natural logarithm, and so on."
+        }
+      },
       "category": {
         "meta": {
           "type": "ICategoryAxis",
@@ -660,20 +706,31 @@
           "type": "IBarColumnSeries",
           "description": "Configuration for bar series."
         },
-        "tooltipRenderer": {
-          "type": {
-            "parameters": {
-              "datum": "any",
-              "title?": "string",
-              "color?": "string",
-              "xKey": "string",
-              "xName?": "string",
-              "yKey": "string",
-              "yName?": "string"
-            },
-            "returnType": "string"
+        "tooltip": {
+          "meta": {
+            "description": "Series-specific tooltip configuration."
           },
-          "description": "Function used to create the content for tooltips."
+          "enabled": {
+            "default": true,
+            "description": "Whether or not to show tooltips when the series are hovered over."
+          },
+          "renderer": {
+            "type": {
+              "parameters": {
+                "datum": "any",
+                "title?": "string",
+                "color?": "string",
+                "xKey": "string",
+                "xValue": "any",
+                "xName?": "string",
+                "yKey": "string",
+                "yValue": "any",
+                "yName?": "string"
+              },
+              "returnType": "string"
+            },
+            "description": "Function used to create the content for tooltips."
+          }
         },
         "grouped": {
           "default": false,
@@ -800,6 +857,14 @@
             "default": true,
             "description": "Whether or not the labels should be shown."
           },
+          "placement": {
+            "default": "inside",
+            "description": "Where to render series labels relative to the segments.",
+            "options": [
+              "inside",
+              "outside"
+            ]
+          },
           "color": {
             "default": "rgba(70, 70, 70, 1)",
             "description": "The colour to use for the labels."
@@ -864,24 +929,35 @@
           "type": "IHistogramSeries",
           "description": "Configuration for histogram series."
         },
-        "tooltipRenderer": {
-          "type": {
-            "parameters": {
-              "datum": "any",
-              "title?": "string",
-              "color?": "string",
-              "xKey": "string",
-              "xName?": "string",
-              "yKey": "string",
-              "yName?": "string",
-              "sizeKey?": "string",
-              "sizeName?": "string",
-              "labelKey?": "string",
-              "labelName?": "string"
-            },
-            "returnType": "string"
+        "tooltip": {
+          "meta": {
+            "description": "Series-specific tooltip configuration."
           },
-          "description": "Function used to create the content for tooltips."
+          "enabled": {
+            "default": true,
+            "description": "Whether or not to show tooltips when the series are hovered over."
+          },
+          "renderer": {
+            "type": {
+              "parameters": {
+                "datum": "any",
+                "title?": "string",
+                "color?": "string",
+                "xKey": "string",
+                "xValue": "any",
+                "xName?": "string",
+                "yKey": "string",
+                "yValue": "any",
+                "yName?": "string",
+                "sizeKey?": "string",
+                "sizeName?": "string",
+                "labelKey?": "string",
+                "labelName?": "string"
+              },
+              "returnType": "string"
+            },
+            "description": "Function used to create the content for tooltips."
+          }
         },
         "binCount": {
           "type": "number",
@@ -964,20 +1040,31 @@
           "type": "ILineSeries",
           "description": "Configuration for line series."
         },
-        "tooltipRenderer": {
-          "type": {
-            "parameters": {
-              "datum": "any",
-              "title?": "string",
-              "color?": "string",
-              "xKey": "string",
-              "xName?": "string",
-              "yKey": "string",
-              "yName?": "string"
-            },
-            "returnType": "string"
+        "tooltip": {
+          "meta": {
+            "description": "Series-specific tooltip configuration."
           },
-          "description": "Function used to create the content for tooltips."
+          "enabled": {
+            "default": true,
+            "description": "Whether or not to show tooltips when the series are hovered over."
+          },
+          "renderer": {
+            "type": {
+              "parameters": {
+                "datum": "any",
+                "title?": "string",
+                "color?": "string",
+                "xKey": "string",
+                "xValue": "any",
+                "xName?": "string",
+                "yKey": "string",
+                "yValue": "any",
+                "yName?": "string"
+              },
+              "returnType": "string"
+            },
+            "description": "Function used to create the content for tooltips."
+          }
         },
         "title": {
           "type": "string",
@@ -1103,20 +1190,31 @@
           "type": "IAreaSeries",
           "description": "Configuration for area series."
         },
-        "tooltipRenderer": {
-          "type": {
-            "parameters": {
-              "datum": "any",
-              "title?": "string",
-              "color?": "string",
-              "xKey": "string",
-              "xName?": "string",
-              "yKey": "string",
-              "yName?": "string"
-            },
-            "returnType": "string"
+        "tooltip": {
+          "meta": {
+            "description": "Series-specific tooltip configuration."
           },
-          "description": "Function used to create the content for tooltips."
+          "enabled": {
+            "default": true,
+            "description": "Whether or not to show tooltips when the series are hovered over."
+          },
+          "renderer": {
+            "type": {
+              "parameters": {
+                "datum": "any",
+                "title?": "string",
+                "color?": "string",
+                "xKey": "string",
+                "xValue": "any",
+                "xName?": "string",
+                "yKey": "string",
+                "yValue": "any",
+                "yName?": "string"
+              },
+              "returnType": "string"
+            },
+            "description": "Function used to create the content for tooltips."
+          }
         },
         "normalizedTo": {
           "type": "number",
@@ -1309,24 +1407,35 @@
           "type": "IScatterSeries",
           "description": "Configuration for scatter/bubble series."
         },
-        "tooltipRenderer": {
-          "type": {
-            "parameters": {
-              "datum": "any",
-              "title?": "string",
-              "color?": "string",
-              "xKey": "string",
-              "xName?": "string",
-              "yKey": "string",
-              "yName?": "string",
-              "sizeKey?": "string",
-              "sizeName?": "string",
-              "labelKey?": "string",
-              "labelName?": "string"
-            },
-            "returnType": "string"
+        "tooltip": {
+          "meta": {
+            "description": "Series-specific tooltip configuration."
           },
-          "description": "Function used to create the content for tooltips."
+          "enabled": {
+            "default": true,
+            "description": "Whether or not to show tooltips when the series are hovered over."
+          },
+          "renderer": {
+            "type": {
+              "parameters": {
+                "datum": "any",
+                "title?": "string",
+                "color?": "string",
+                "xKey": "string",
+                "xValue": "any",
+                "xName?": "string",
+                "yKey": "string",
+                "yValue": "any",
+                "yName?": "string",
+                "sizeKey?": "string",
+                "sizeName?": "string",
+                "labelKey?": "string",
+                "labelName?": "string"
+              },
+              "returnType": "string"
+            },
+            "description": "Function used to create the content for tooltips."
+          }
         },
         "title": {
           "type": "string",
@@ -1453,22 +1562,33 @@
           "type": "IPieSeries",
           "description": "Configuration for pie/doughnut series."
         },
-        "tooltipRenderer": {
-          "type": {
-            "parameters": {
-              "datum": "any",
-              "title?": "string",
-              "color?": "string",
-              "angleKey": "string",
-              "angleName?": "string",
-              "radiusKey?": "string",
-              "radiusName?": "string",
-              "labelKey?": "string",
-              "labelName?": "string"
-            },
-            "returnType": "string"
+        "tooltip": {
+          "meta": {
+            "description": "Series-specific tooltip configuration."
           },
-          "description": "Function used to create the content for tooltips."
+          "enabled": {
+            "default": true,
+            "description": "Whether or not to show tooltips when the series are hovered over."
+          },
+          "renderer": {
+            "type": {
+              "parameters": {
+                "datum": "any",
+                "title?": "string",
+                "color?": "string",
+                "angleKey": "string",
+                "angleValue": "any",
+                "angleName?": "string",
+                "radiusKey?": "string",
+                "radiusValue?": "any",
+                "radiusName?": "string",
+                "labelKey?": "string",
+                "labelName?": "string"
+              },
+              "returnType": "string"
+            },
+            "description": "Function used to create the content for tooltips."
+          }
         },
         "rotation": {
           "default": 0,
@@ -1802,6 +1922,11 @@
         "description": "An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above."
       }
     },
+    "thickness": {
+      "type": "number",
+      "description": "If set to a non-zero value, the axis will have the specified thickness regardless of label size.",
+      "default": 0
+    },
     "nice": {
       "type": "boolean",
       "default": true,
@@ -2038,10 +2163,6 @@
     "showInLegend": {
       "default": true,
       "description": "Whether or not to include the series in the legend."
-    },
-    "tooltipEnabled": {
-      "default": true,
-      "description": "Whether or not to show tooltips when the series are hovered over."
     },
     "listeners": {
       "type": "Object",

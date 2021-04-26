@@ -6,6 +6,8 @@
   "license": "0BSD",
   "scripts": {
     "generate-examples": "cd .. && node dev-server.js generate-examples && cd documentation",
+    "generate-chart-gallery": "node generate-chart-gallery.js",
+    "generate-chart-gallery-force": "node generate-chart-gallery.js --force-thumbnails",
     "customise": "node customise.js",
     "build": "npm run clean && npm run customise && npm run generate-examples",
     "package": "npm run build && npm run publish",

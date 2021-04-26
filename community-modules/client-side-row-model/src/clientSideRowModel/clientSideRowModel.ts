@@ -10,7 +10,6 @@ import {
     Events,
     ExpandCollapseAllEvent,
     FilterChangedEvent,
-    FilterManager,
     GridApi,
     GridOptionsWrapper,
     IClientSideRowModel,
@@ -28,7 +27,6 @@ import {
     RowNodeTransaction,
     SelectionController,
     ValueCache,
-    ValueService,
     AsyncTransactionsFlushed,
     AnimationFrameService
 } from "@ag-grid-community/core";
@@ -49,10 +47,8 @@ export interface RowNodeMap {
 export class ClientSideRowModel extends BeanStub implements IClientSideRowModel {
 
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('$scope') private $scope: any;
     @Autowired('selectionController') private selectionController: SelectionController;
-    @Autowired('valueService') private valueService: ValueService;
     @Autowired('valueCache') private valueCache: ValueCache;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;

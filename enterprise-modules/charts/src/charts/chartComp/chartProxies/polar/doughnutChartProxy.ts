@@ -34,8 +34,8 @@ export class DoughnutChartProxy extends PolarChartProxy {
         this.recreateChart();
     }
 
-    protected getDefaultOptionsFromTheme(theme: ChartTheme): PolarChartOptions<PieSeriesOptions> {
-        const options = super.getDefaultOptionsFromTheme(theme);
+    protected extractIChartOptionsFromTheme(theme: ChartTheme): PolarChartOptions<PieSeriesOptions> {
+        const options = super.extractIChartOptionsFromTheme(theme);
 
         const seriesDefaults = theme.getConfig<AgPieSeriesOptions>('pie.series.pie');
         options.seriesDefaults = {
@@ -66,7 +66,7 @@ export class DoughnutChartProxy extends PolarChartProxy {
     }
 
     protected createChart(options?: PolarChartOptions<PieSeriesOptions>): PolarChart {
-        options = options || this.chartOptions;
+        options = options || this.iChartOptions;
         const agChartOptions = options as AgPolarChartOptions;
         agChartOptions.type = 'pie';
         agChartOptions.autoSize = true;
@@ -93,7 +93,7 @@ export class DoughnutChartProxy extends PolarChartProxy {
             }
         });
 
-        const { seriesDefaults } = this.chartOptions;
+        const { seriesDefaults } = this.iChartOptions;
         const fills = seriesDefaults.fill.colors;
         const strokes = seriesDefaults.stroke.colors;
         const numFields = params.fields.length;

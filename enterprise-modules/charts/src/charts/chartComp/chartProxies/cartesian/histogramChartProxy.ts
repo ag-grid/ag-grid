@@ -18,8 +18,8 @@ export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOpti
         this.recreateChart();
     }
 
-    protected getDefaultOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<HistogramSeriesOptions> {
-        const options = super.getDefaultOptionsFromTheme(theme);
+    protected extractIChartOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<HistogramSeriesOptions> {
+        const options = super.extractIChartOptionsFromTheme(theme);
 
         const seriesDefaults = theme.getConfig<AgHistogramSeriesOptions>('histogram.series.histogram');
         options.seriesDefaults = {
@@ -51,7 +51,7 @@ export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOpti
         const { parentElement } = this.chartProxyParams;
         const seriesDefaults = this.getSeriesDefaults();
 
-        options = options || this.chartOptions;
+        options = options || this.iChartOptions;
         const agChartOptions = options as AgCartesianChartOptions;
         agChartOptions.autoSize = true;
         agChartOptions.axes = [{
@@ -124,7 +124,7 @@ export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOpti
 
     private getSeriesDefaults(): HistogramSeriesOptions {
         return {
-            ...this.chartOptions.seriesDefaults
+            ...this.iChartOptions.seriesDefaults
         };
     }
 }

@@ -1053,8 +1053,8 @@
                 "enterprise": true
               },
               {
-                "title": "Temp",
-                "url": "/excel-export-temp/",
+                "title": "Images",
+                "url": "/excel-export-images/",
                 "enterprise": true
               }
             ]

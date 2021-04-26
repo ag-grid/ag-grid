@@ -28,48 +28,11 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
         this.recreateChart();
     }
 
-    protected getDefaultOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<BarSeriesOptions> {
-        const options = super.getDefaultOptionsFromTheme(theme);
-
-        const { chartType: integratedChartType } = this;
-        const standaloneChartType = this.getStandaloneChartType();
-
-        const seriesType = integratedChartType === ChartType.GroupedBar
-            || integratedChartType === ChartType.StackedBar
-            || integratedChartType === ChartType.NormalizedBar ? 'bar' : 'column';
-
-        const seriesDefaults = theme.getConfig<AgBarSeriesOptions>(standaloneChartType + '.series.' + seriesType);
-
-        options.seriesDefaults = {
-            shadow: seriesDefaults.shadow as DropShadowOptions,
-            label: seriesDefaults.label as BarSeriesLabelOptions,
-            tooltip: {
-                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
-                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
-            },
-            fill: {
-                colors: seriesDefaults.fills || theme.palette.fills,
-                opacity: seriesDefaults.fillOpacity
-            },
-            stroke: {
-                colors: seriesDefaults.strokes || theme.palette.strokes,
-                opacity: seriesDefaults.strokeOpacity,
-                width: seriesDefaults.strokeWidth
-            },
-            lineDash: seriesDefaults.lineDash ? seriesDefaults.lineDash : [0],
-            lineDashOffset: seriesDefaults.lineDashOffset,
-            highlightStyle: seriesDefaults.highlightStyle as HighlightOptions,
-            listeners: seriesDefaults.listeners
-        } as BarSeriesOptions;
-
-        return options;
-    }
-
     protected createChart(options?: CartesianChartOptions<BarSeriesOptions>): CartesianChart {
         const { grouping, parentElement } = this.chartProxyParams;
         const isColumn = this.isColumnChart();
 
-        options = options || this.chartOptions;
+        options = options || this.iChartOptions;
         const { seriesDefaults } = options;
 
         const agChartOptions = options as AgCartesianChartOptions;
@@ -169,6 +132,43 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
         this.updateLabelRotation(params.category.id, !this.isColumnChart());
     }
 
+    protected extractIChartOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<BarSeriesOptions> {
+        const iChartOptions = super.extractIChartOptionsFromTheme(theme);
+
+        const { chartType: integratedChartType } = this;
+        const standaloneChartType = this.getStandaloneChartType();
+
+        const seriesType = integratedChartType === ChartType.GroupedBar
+            || integratedChartType === ChartType.StackedBar
+            || integratedChartType === ChartType.NormalizedBar ? 'bar' : 'column';
+
+        const themeSeriesDefaults = theme.getConfig<AgBarSeriesOptions>(standaloneChartType + '.series.' + seriesType);
+
+        iChartOptions.seriesDefaults = {
+            shadow: themeSeriesDefaults.shadow as DropShadowOptions,
+            label: themeSeriesDefaults.label as BarSeriesLabelOptions,
+            tooltip: {
+                enabled: themeSeriesDefaults.tooltip && themeSeriesDefaults.tooltip.enabled,
+                renderer: themeSeriesDefaults.tooltip && themeSeriesDefaults.tooltip.renderer
+            },
+            fill: {
+                colors: themeSeriesDefaults.fills || theme.palette.fills,
+                opacity: themeSeriesDefaults.fillOpacity
+            },
+            stroke: {
+                colors: themeSeriesDefaults.strokes || theme.palette.strokes,
+                opacity: themeSeriesDefaults.strokeOpacity,
+                width: themeSeriesDefaults.strokeWidth
+            },
+            lineDash: themeSeriesDefaults.lineDash ? themeSeriesDefaults.lineDash : [0],
+            lineDashOffset: themeSeriesDefaults.lineDashOffset,
+            highlightStyle: themeSeriesDefaults.highlightStyle as HighlightOptions,
+            listeners: themeSeriesDefaults.listeners
+        } as BarSeriesOptions;
+
+        return iChartOptions;
+    }
+
     protected getDefaultOptions(): CartesianChartOptions<BarSeriesOptions> {
         const fontOptions = this.getDefaultFontOptions();
         const options = this.getDefaultCartesianChartOptions() as CartesianChartOptions<BarSeriesOptions>;
@@ -199,7 +199,7 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
         const isNormalized = !this.crossFiltering && (chartType === ChartType.NormalizedColumn || chartType === ChartType.NormalizedBar);
 
         return {
-            ...this.chartOptions.seriesDefaults,
+            ...this.iChartOptions.seriesDefaults,
             type: isColumn ? 'column' : 'bar',
             grouped: isGrouped,
             normalizedTo: isNormalized ? 100 : undefined,

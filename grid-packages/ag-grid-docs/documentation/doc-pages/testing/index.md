@@ -652,7 +652,77 @@ title: "Testing AG Grid"
 |
 | We also use the Grid API to initiate and end testing as we're can't readily perform double clicks in a unit
 | testing environment (but could if doing e2e with something like Protractor for example).
-
+|
+|##Testing React Hooks with Enzyme
+|
+|By default testing libraries won't return an accessible instance of a hook - in order to get access to methods you'll need
+|to wrap your component with a `forwardRef` and then expose methods you want to test with the `useImperativeHandle` hook.
+|
+|```jsx
+|import React, {forwardRef, useImperativeHandle, useState} from 'react';
+|import {AgGridReact} from 'ag-grid-react';
+|
+|export default forwardRef(function (props, ref) {
+|    const columnDefs = [...columns...];
+|    const rowData = [...rowData...];
+|
+|    const [api, setApi] = useState(null);
+|
+|    const onGridReady = (params) => {
+|        setApi(params.api);
+|    };
+|
+|    useImperativeHandle(ref, () => {
+|        return {
+|            getApi() {
+|                return api;
+|            }
+|        }
+|    });
+|
+|    return (
+|        <AgGridReact
+|            columnDefs={columnDefs}
+|            onGridReady={onGridReady}
+|            rowData={rowData}
+|        />
+|    );
+|});
+|```
+|
+|You can then test this hook by accessing it via a `ref`:
+|
+|```jsx
+|const ensureGridApiHasBeenSet = async (componentRef) => {
+|    await act(async () => {
+|        await new Promise(function (resolve, reject) {
+|            (function waitForGridReady() {
+|               // access the exposed "getApi" method on our hook
+|                if (componentRef.current.getApi()) {
+|                    if (componentRef.current.getApi().getRowNode(8)) {
+|                        return resolve();
+|                    }
+|
+|                }
+|                setTimeout(waitForGridReady, 10);
+|            })();
+|        })
+|
+|    });
+|};
+|
+|beforeEach(async () => {
+|    const ref = React.createRef()
+|    component = mount(<App ref={ref}/>);
+|    agGridReact = component.find(AgGridReact).instance();
+|    await ensureGridApiHasBeenSet(ref);
+|});
+|```
+|
+|Note that we're accessing exposed `getApi` method via the `ref`:  `componentRef.current.getApi()`.
+|
+|A full working example can be found in the following [GitHub Repo](https://github.com/seanlandsman/ag-grid-react-hook-testing).
+|
 [[only-vue]]
 | We will walk through how you can use testing AG Grid as part of your Vue application, using default
 | build tools provided when using the [Vue CLI](https://cli.vuejs.org/) utility.

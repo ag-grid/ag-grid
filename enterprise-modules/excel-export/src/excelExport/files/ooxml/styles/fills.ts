@@ -1,5 +1,6 @@
 import { ExcelOOXMLTemplate } from '@ag-grid-community/core';
-import fillFactory, { Fill } from './fill';
+import { Fill } from '../../../assets/excelInterfaces';
+import fillFactory from './fill';
 
 const fillsFactory: ExcelOOXMLTemplate = {
     getTemplate(fills: Fill[]) {

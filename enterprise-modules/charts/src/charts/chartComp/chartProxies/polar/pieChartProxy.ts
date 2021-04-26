@@ -20,7 +20,7 @@ export class PieChartProxy extends PolarChartProxy {
     }
 
     protected createChart(options: PolarChartOptions<PieSeriesOptions>): PolarChart {
-        options = options || this.chartOptions;
+        options = options || this.iChartOptions;
         const seriesDefaults = options.seriesDefaults;
         const agChartOptions = options as AgPolarChartOptions;
 
@@ -38,8 +38,8 @@ export class PieChartProxy extends PolarChartProxy {
         return AgChart.create(agChartOptions, this.chartProxyParams.parentElement);
     }
 
-    protected getDefaultOptionsFromTheme(theme: ChartTheme): PolarChartOptions<PieSeriesOptions> {
-        const options = super.getDefaultOptionsFromTheme(theme);
+    protected extractIChartOptionsFromTheme(theme: ChartTheme): PolarChartOptions<PieSeriesOptions> {
+        const options = super.extractIChartOptionsFromTheme(theme);
 
         const seriesDefaults = theme.getConfig<AgPieSeriesOptions>('pie.series.pie');
         options.seriesDefaults = {
@@ -121,7 +121,7 @@ export class PieChartProxy extends PolarChartProxy {
     ) {
         const existingSeriesId = series && series.angleKey;
         const {fills, strokes} = this.getPalette();
-        const {seriesDefaults} = this.chartOptions;
+        const {seriesDefaults} = this.iChartOptions;
 
         let pieSeries = series;
         const calloutColors = seriesDefaults.callout && seriesDefaults.callout.colors;

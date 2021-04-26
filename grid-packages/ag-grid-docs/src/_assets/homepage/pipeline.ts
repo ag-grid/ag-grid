@@ -5,6 +5,7 @@ declare var jQuery;
 $(function () {
     $('.pipeline-page .info-page').each(function () {
         function debounce(func, wait, immediate = false) {
+            debugger
             var timeout;
             return function (_) {
                 var context = this,
@@ -14,6 +15,7 @@ $(function () {
                     if (!immediate) func.apply(context, args);
                 };
                 var callNow = immediate && !timeout;
+                window.clearTimeout(timeout);
                 window.clearTimeout(timeout);
                 timeout = window.setTimeout(later, wait);
                 if (callNow) func.apply(context, args);
@@ -119,13 +121,15 @@ $(function () {
             }
         }
 
+        var debounceProcessSearchValue = debounce(processSearchValue, 250);
+
         // global issue search
         $('#global_search').keyup(function (event) {
             if (skipKey(event.key)) {
                 return;
             }
 
-            processSearchValue();
+            debounceProcessSearchValue();
         });
 
         $("#fixVersionFilter").change(function () {

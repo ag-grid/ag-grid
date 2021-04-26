@@ -1,34 +1,5 @@
 import { ExcelOOXMLTemplate, ExcelAlignment } from '@ag-grid-community/core';
-
-const convertLegacyHorizontalAlignment = (alignment: string): string => {
-    const map:{[key: string]: string} = {
-        Automatic: 'general',
-        Left: 'left',
-        Center: 'center',
-        Right: 'right',
-        Fill: 'fill',
-        Justify: 'justify',
-        CenterAcrossSelection: 'centerContinuous',
-        Distributed: 'distributed',
-        JustifyDistributed: 'justify'
-    };
-
-    return map[alignment] || 'general';
-};
-
-const convertLegacyVerticalAlignment = (alignment: string): string | undefined => {
-    const map:{[key: string]: string | undefined} = {
-        Automatic: undefined,
-        Top: 'top',
-        Bottom: 'bottom',
-        Center: 'center',
-        Justify: 'justify',
-        Distributed: 'distributed',
-        JustifyDistributed: 'justify'
-    };
-
-    return map[alignment] || undefined;
-};
+import { convertLegacyHorizontalAlignment, convertLegacyVerticalAlignment } from '../../../assets/excelLegacyConvert';
 
 const getReadingOrderId = (readingOrder: string): number => {
     const order = ['Context', 'LeftToRight', 'RightToLeft'];
@@ -56,15 +27,5 @@ const alignmentFactory: ExcelOOXMLTemplate = {
         };
     }
 };
-
-export interface Alignment {
-    horizontal: string;
-    indent: number;
-    readingOrder: number;
-    textRotation: number;
-    shrinkToFit: boolean;
-    vertical: string;
-    wrapText: boolean;
-}
 
 export default alignmentFactory;

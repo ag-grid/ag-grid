@@ -1,5 +1,5 @@
 import { BeanStub } from "../context/beanStub";
-import { Autowired, Optional, PostConstruct } from "../context/context";
+import { Autowired, Optional } from "../context/context";
 import { LayoutFeature, LayoutView } from "../styling/layoutFeature";
 import { Constants } from "../constants/constants";
 import { Events } from "../eventKeys";
@@ -11,11 +11,8 @@ import { getTarget } from "../utils/event";
 import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
 import { GridBodyScrollFeature } from "./gridBodyScrollFeature";
 import { getInnerWidth, isVerticalScrollShowing } from "../utils/dom";
-import { ColumnApi } from "../columnController/columnApi";
-import { GridApi } from "../gridApi";
 import { HeaderNavigationService } from "../headerRendering/header/headerNavigationService";
 import { PaginationProxy } from "../pagination/paginationProxy";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { RowDragFeature } from "./rowDragFeature";
 import { DragAndDropService } from "../dragAndDrop/dragAndDropService";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
@@ -55,8 +52,6 @@ export class GridBodyController extends BeanStub {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
@@ -71,10 +66,6 @@ export class GridBodyController extends BeanStub {
     private eTop: HTMLElement;
     private eBottom: HTMLElement;
 
-    // properties we use a lot, so keep reference
-    private enableRtl: boolean;
-    private printLayout: boolean;
-
     private bodyScrollFeature: GridBodyScrollFeature;
     private rowDragFeature: RowDragFeature;
 
@@ -84,12 +75,6 @@ export class GridBodyController extends BeanStub {
 
     public getBodyViewportElement(): HTMLElement {
         return this.eBodyViewport;
-    }
-
-    @PostConstruct
-    private postConstruct(): void {
-        this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
-        this.onDomLayoutChanged();
     }
 
     public setView(view: GridBodyView, eGridBody: HTMLElement, eBodyViewport: HTMLElement,
@@ -122,7 +107,6 @@ export class GridBodyController extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.setFloatingHeights.bind(this));
-        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
     }
 
     // used by ColumnAnimationService
@@ -132,10 +116,6 @@ export class GridBodyController extends BeanStub {
 
     public setCellTextSelection(selectable: boolean = false): void {
         this.view.setCellSelectableCss(selectable);
-    }
-
-    private onDomLayoutChanged(): void {
-        this.printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
     }
 
     private onScrollVisibilityChanged(): void {
@@ -289,8 +269,7 @@ export class GridBodyController extends BeanStub {
     }
 
     private setFloatingHeights(): void {
-
-        const {pinnedRowModel, eTop, eBottom} = this;
+        const { pinnedRowModel } = this;
 
         let floatingTopHeight = pinnedRowModel.getPinnedTopTotalHeight();
 
