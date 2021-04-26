@@ -244,6 +244,7 @@
         <li>enableColResize (use resizable = true on the column definition)</li>
         <li>getNodeChildDetails() (use new tree data)</li>
         <li>doesDataFlower() (use new master detail)</li>
+        <li>processChartOptions() (use chartThemeOverrides)</li>
     </ul>
 
     <p><u>Column Definitions</u></p>
