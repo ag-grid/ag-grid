@@ -190,6 +190,23 @@
                 },
                 "returnType": "string"
             }
+        },
+        "addImageToCell": {
+            "description": "A callback function invoked once per cell. Return an `ExcelImage` object to add an image to the current cell.",
+            "type": {
+                "meta": {
+                    "name":  "AddImageToCellParams"
+                },
+                "parameters": {
+                    "rowIndex": "number",
+                    "column": "Column",
+                    "value": "string"
+                },
+                "returnType": {
+                    "image": "ExcelImage",
+                    "value": "string"
+                }
+            }
         }
     },
     "excelExportMultipleSheetParams": {
@@ -244,6 +261,82 @@
             "default": "xxx",
             "description": "xxx",
             "type": "string"
+        }
+    },
+    "excelImage": {
+        "id": {
+            "description": "xxx",
+            "type": "string",
+            "isRequired": true
+        },
+        "base64": {
+            "description": "xxx",
+            "type": "string",
+            "isRequired": true
+        },
+        "imageType": {
+            "description": "xxx",
+            "type": "string",
+            "options": ["jpg", "png", "gif"],
+            "isRequired": true
+        },
+        "fitCell": {
+            "default": false,
+            "description": "xxx",
+            "type": "boolean"
+        },
+        "transparency": {
+            "default": 0,
+            "description": "xxx",
+            "type": "number"
+        },
+        "rotation": {
+            "default": 0,
+            "description": "xxx",
+            "type": "number"
+        },
+        "recolor": {
+            "description": "xxx",
+            "type": "string",
+            "options": ["Grayscale", "Sepia","Washout"]
+        },
+        "width": {
+            "description": "xxx",
+            "type": "number"
+        },
+        "height": {
+            "description": "xxx",
+            "type": "number"
+        },
+        "position": {
+            "row": {
+                "description": "xxx",
+                "type": "number"
+            },
+            "rowSpan": {
+                "default": 1,
+                "description": "xxx",
+                "type": "number"
+            },
+            "column": {
+                "description": "xxx",
+                "type": "number"
+            },
+            "colSpan": {
+                "default": 1,
+                "description": "xxx",
+                "type": "number"
+            },
+            "offsetX": {
+                "default": 0,
+                "description": "xxx",
+                "type": "number"
+            },
+            "offsetY": {
+                "default": 0,
+                "description": "xxx",
+                "type": "number"
+            }
         }
     },
     "excelStyle": {

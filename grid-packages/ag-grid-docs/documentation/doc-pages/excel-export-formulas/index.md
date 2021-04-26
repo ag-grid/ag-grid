@@ -8,7 +8,7 @@ Excel Export provides a way to export Excel Formulas, this can be useful to repl
 
 There are two ways to export formulas.
 
-1. Use `dataType='Formula'` in the (Excel Styles)[/excel-export-styles/].
+1. Use `dataType='Formula'` in the [Excel Styles](../excel-export-styles/).
 1. Set `autoConvertFormulas=true` in the export params.
 
 ## Formula Data Type

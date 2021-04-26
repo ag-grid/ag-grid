@@ -30,6 +30,10 @@ This page documents the Excel Export API and Interfaces.
 
 <api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelData'></api-documentation>
 
+### ExcelImage
+
+<api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelImage'></api-documentation>
+
 ### ExcelStyle
 
 <api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelStyle'></api-documentation>
