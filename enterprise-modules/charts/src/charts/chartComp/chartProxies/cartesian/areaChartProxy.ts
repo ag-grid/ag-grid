@@ -20,7 +20,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
         this.recreateChart();
     }
 
-    protected createChart(options?: CartesianChartOptions<AreaSeriesOptions>): CartesianChart {
+    protected createChart(): CartesianChart {
         const { grouping, parentElement } = this.chartProxyParams;
         const seriesDefaults = this.getSeriesDefaults();
         const marker = { ...seriesDefaults.marker };
@@ -29,7 +29,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
             delete marker.type;
         }
 
-        options = options || this.iChartOptions;
+        const options = this.iChartOptions;
         const agChartOptions = options as AgCartesianChartOptions;
 
         const xAxisType = options.xAxis.type ? options.xAxis.type : 'category';

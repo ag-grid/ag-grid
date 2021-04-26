@@ -17,10 +17,10 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
         this.recreateChart();
     }
 
-    protected createChart(options?: CartesianChartOptions<LineSeriesOptions>): CartesianChart {
+    protected createChart(): CartesianChart {
         const { grouping, parentElement } = this.chartProxyParams;
 
-        options = options || this.iChartOptions;
+        const options = this.iChartOptions;
         const agChartOptions = options as AgCartesianChartOptions;
         agChartOptions.autoSize = true;
 

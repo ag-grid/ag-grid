@@ -207,7 +207,9 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
             };
         }
 
-        this.recreateChart(options);
+        this.iChartOptions = options;
+
+        this.recreateChart();
     }
 
     protected isTimeAxis(params: UpdateChartParams): boolean {

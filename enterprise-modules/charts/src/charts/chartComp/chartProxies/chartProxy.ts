@@ -106,12 +106,12 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
     protected abstract createChart(options?: TOptions): TChart;
 
-    public recreateChart(options?: TOptions): void {
+    public recreateChart(): void {
         if (this.chart) {
             this.destroyChart();
         }
 
-        this.chart = this.createChart(options);
+        this.chart = this.createChart();
 
         if (this.crossFiltering) {
             // add event listener to chart canvas to detect when user wishes to reset filters

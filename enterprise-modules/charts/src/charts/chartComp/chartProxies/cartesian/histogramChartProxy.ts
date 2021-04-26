@@ -18,40 +18,11 @@ export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOpti
         this.recreateChart();
     }
 
-    protected extractIChartOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<HistogramSeriesOptions> {
-        const options = super.extractIChartOptionsFromTheme(theme);
-
-        const seriesDefaults = theme.getConfig<AgHistogramSeriesOptions>('histogram.series.histogram');
-        options.seriesDefaults = {
-            shadow: this.getDefaultDropShadowOptions(),
-            label: seriesDefaults.label as BarSeriesLabelOptions,
-            tooltip: {
-                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
-                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
-            },
-            fill: {
-                colors: (seriesDefaults.fill && [seriesDefaults.fill]) || theme.palette.fills,
-                opacity: seriesDefaults.fillOpacity
-            },
-            stroke: {
-                colors: (seriesDefaults.stroke && [seriesDefaults.stroke]) || theme.palette.strokes,
-                opacity: seriesDefaults.strokeOpacity,
-                width: seriesDefaults.strokeWidth
-            },
-            lineDash: seriesDefaults.lineDash ? seriesDefaults.lineDash : [0],
-            lineDashOffset: seriesDefaults.lineDashOffset,
-            highlightStyle: seriesDefaults.highlightStyle as HighlightOptions,
-            listeners: seriesDefaults.listeners
-        } as HistogramSeriesOptions;
-
-        return options;
-    }
-
-    protected createChart(options?: CartesianChartOptions<HistogramSeriesOptions>): CartesianChart {
+    protected createChart(): CartesianChart {
         const { parentElement } = this.chartProxyParams;
         const seriesDefaults = this.getSeriesDefaults();
 
-        options = options || this.iChartOptions;
+        const options = this.iChartOptions;
         const agChartOptions = options as AgCartesianChartOptions;
         agChartOptions.autoSize = true;
         agChartOptions.axes = [{
@@ -96,6 +67,35 @@ export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOpti
         const { fills, strokes } = this.getPalette();
         series.fill = fills[0];
         series.stroke = strokes[0];
+    }
+
+    protected extractIChartOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<HistogramSeriesOptions> {
+        const options = super.extractIChartOptionsFromTheme(theme);
+
+        const seriesDefaults = theme.getConfig<AgHistogramSeriesOptions>('histogram.series.histogram');
+        options.seriesDefaults = {
+            shadow: this.getDefaultDropShadowOptions(),
+            label: seriesDefaults.label as BarSeriesLabelOptions,
+            tooltip: {
+                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
+            },
+            fill: {
+                colors: (seriesDefaults.fill && [seriesDefaults.fill]) || theme.palette.fills,
+                opacity: seriesDefaults.fillOpacity
+            },
+            stroke: {
+                colors: (seriesDefaults.stroke && [seriesDefaults.stroke]) || theme.palette.strokes,
+                opacity: seriesDefaults.strokeOpacity,
+                width: seriesDefaults.strokeWidth
+            },
+            lineDash: seriesDefaults.lineDash ? seriesDefaults.lineDash : [0],
+            lineDashOffset: seriesDefaults.lineDashOffset,
+            highlightStyle: seriesDefaults.highlightStyle as HighlightOptions,
+            listeners: seriesDefaults.listeners
+        } as HistogramSeriesOptions;
+
+        return options;
     }
 
     protected getDefaultOptions(): CartesianChartOptions<HistogramSeriesOptions> {

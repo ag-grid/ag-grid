@@ -28,11 +28,11 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
         this.recreateChart();
     }
 
-    protected createChart(options?: CartesianChartOptions<BarSeriesOptions>): CartesianChart {
+    protected createChart(): CartesianChart {
         const { grouping, parentElement } = this.chartProxyParams;
         const isColumn = this.isColumnChart();
 
-        options = options || this.iChartOptions;
+        const options = this.iChartOptions;
         const { seriesDefaults } = options;
 
         const agChartOptions = options as AgCartesianChartOptions;

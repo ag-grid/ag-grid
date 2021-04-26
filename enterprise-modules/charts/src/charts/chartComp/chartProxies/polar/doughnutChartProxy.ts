@@ -34,39 +34,8 @@ export class DoughnutChartProxy extends PolarChartProxy {
         this.recreateChart();
     }
 
-    protected extractIChartOptionsFromTheme(theme: ChartTheme): PolarChartOptions<PieSeriesOptions> {
-        const options = super.extractIChartOptionsFromTheme(theme);
-
-        const seriesDefaults = theme.getConfig<AgPieSeriesOptions>('pie.series.pie');
-        options.seriesDefaults = {
-            title: seriesDefaults.title,
-            label: seriesDefaults.label,
-            callout: seriesDefaults.callout,
-            shadow: seriesDefaults.shadow,
-            tooltip: {
-                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
-                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
-            },
-            fill: {
-                colors: seriesDefaults.fills || theme.palette.fills,
-                opacity: seriesDefaults.fillOpacity
-            },
-            stroke: {
-                colors: seriesDefaults.strokes || theme.palette.strokes,
-                opacity: seriesDefaults.strokeOpacity,
-                width: seriesDefaults.strokeWidth
-            },
-            lineDash: seriesDefaults.lineDash,
-            lineDashOffset: seriesDefaults.lineDashOffset,
-            highlightStyle: seriesDefaults.highlightStyle as HighlightOptions,
-            listeners: seriesDefaults.listeners
-        } as PieSeriesOptions;
-
-        return options;
-    }
-
-    protected createChart(options?: PolarChartOptions<PieSeriesOptions>): PolarChart {
-        options = options || this.iChartOptions;
+    protected createChart(): PolarChart {
+        const options = this.iChartOptions;
         const agChartOptions = options as AgPolarChartOptions;
         agChartOptions.type = 'pie';
         agChartOptions.autoSize = true;
@@ -272,6 +241,37 @@ export class DoughnutChartProxy extends PolarChartProxy {
         }
 
         return {updatedOffset: updateParams.offset, pieSeries};
+    }
+
+    protected extractIChartOptionsFromTheme(theme: ChartTheme): PolarChartOptions<PieSeriesOptions> {
+        const options = super.extractIChartOptionsFromTheme(theme);
+
+        const seriesDefaults = theme.getConfig<AgPieSeriesOptions>('pie.series.pie');
+        options.seriesDefaults = {
+            title: seriesDefaults.title,
+            label: seriesDefaults.label,
+            callout: seriesDefaults.callout,
+            shadow: seriesDefaults.shadow,
+            tooltip: {
+                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
+            },
+            fill: {
+                colors: seriesDefaults.fills || theme.palette.fills,
+                opacity: seriesDefaults.fillOpacity
+            },
+            stroke: {
+                colors: seriesDefaults.strokes || theme.palette.strokes,
+                opacity: seriesDefaults.strokeOpacity,
+                width: seriesDefaults.strokeWidth
+            },
+            lineDash: seriesDefaults.lineDash,
+            lineDashOffset: seriesDefaults.lineDashOffset,
+            highlightStyle: seriesDefaults.highlightStyle as HighlightOptions,
+            listeners: seriesDefaults.listeners
+        } as PieSeriesOptions;
+
+        return options;
     }
 
     protected getDefaultOptions(): PolarChartOptions<PieSeriesOptions> {

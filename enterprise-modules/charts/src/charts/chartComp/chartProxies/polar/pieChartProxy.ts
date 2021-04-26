@@ -19,8 +19,8 @@ export class PieChartProxy extends PolarChartProxy {
         this.recreateChart();
     }
 
-    protected createChart(options: PolarChartOptions<PieSeriesOptions>): PolarChart {
-        options = options || this.iChartOptions;
+    protected createChart(): PolarChart {
+        const options = this.iChartOptions;
         const seriesDefaults = options.seriesDefaults;
         const agChartOptions = options as AgPolarChartOptions;
 
@@ -36,37 +36,6 @@ export class PieChartProxy extends PolarChartProxy {
         }];
 
         return AgChart.create(agChartOptions, this.chartProxyParams.parentElement);
-    }
-
-    protected extractIChartOptionsFromTheme(theme: ChartTheme): PolarChartOptions<PieSeriesOptions> {
-        const options = super.extractIChartOptionsFromTheme(theme);
-
-        const seriesDefaults = theme.getConfig<AgPieSeriesOptions>('pie.series.pie');
-        options.seriesDefaults = {
-            title: seriesDefaults.title,
-            label: seriesDefaults.label,
-            callout: seriesDefaults.callout,
-            shadow: seriesDefaults.shadow,
-            tooltip: {
-                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
-                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
-            },
-            fill: {
-                colors: seriesDefaults.fills || theme.palette.fills,
-                opacity: seriesDefaults.fillOpacity
-            },
-            stroke: {
-                colors: seriesDefaults.strokes || theme.palette.strokes,
-                opacity: seriesDefaults.strokeOpacity,
-                width: seriesDefaults.strokeWidth
-            },
-            lineDash: seriesDefaults.lineDash,
-            lineDashOffset: seriesDefaults.lineDashOffset,
-            highlightStyle: seriesDefaults.highlightStyle as HighlightOptions,
-            listeners: seriesDefaults.listeners
-        } as PieSeriesOptions;
-
-        return options;
     }
 
     public update(params: UpdateChartParams): void {
@@ -199,6 +168,37 @@ export class PieChartProxy extends PolarChartProxy {
         chart.addSeries(pieSeries);
 
         return pieSeries;
+    }
+
+    protected extractIChartOptionsFromTheme(theme: ChartTheme): PolarChartOptions<PieSeriesOptions> {
+        const options = super.extractIChartOptionsFromTheme(theme);
+
+        const seriesDefaults = theme.getConfig<AgPieSeriesOptions>('pie.series.pie');
+        options.seriesDefaults = {
+            title: seriesDefaults.title,
+            label: seriesDefaults.label,
+            callout: seriesDefaults.callout,
+            shadow: seriesDefaults.shadow,
+            tooltip: {
+                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
+            },
+            fill: {
+                colors: seriesDefaults.fills || theme.palette.fills,
+                opacity: seriesDefaults.fillOpacity
+            },
+            stroke: {
+                colors: seriesDefaults.strokes || theme.palette.strokes,
+                opacity: seriesDefaults.strokeOpacity,
+                width: seriesDefaults.strokeWidth
+            },
+            lineDash: seriesDefaults.lineDash,
+            lineDashOffset: seriesDefaults.lineDashOffset,
+            highlightStyle: seriesDefaults.highlightStyle as HighlightOptions,
+            listeners: seriesDefaults.listeners
+        } as PieSeriesOptions;
+
+        return options;
     }
 
     protected getDefaultOptions(): PolarChartOptions<PieSeriesOptions> {
