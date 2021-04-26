@@ -20,7 +20,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
     protected createChart(options?: CartesianChartOptions<LineSeriesOptions>): CartesianChart {
         const { grouping, parentElement } = this.chartProxyParams;
 
-        options = options || this.chartOptions;
+        options = options || this.iChartOptions;
         const agChartOptions = options as AgCartesianChartOptions;
         agChartOptions.autoSize = true;
 
@@ -92,7 +92,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                 lineSeries.marker.stroke = stroke;
                 lineSeries.stroke = fill; // this is deliberate, so that the line colours match the fills of other series
             } else {
-                const { seriesDefaults } = this.chartOptions;
+                const { seriesDefaults } = this.iChartOptions;
                 const marker = {
                     ...seriesDefaults.marker,
                     fill,
@@ -135,8 +135,8 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
         this.updateLabelRotation(params.category.id, false, axisType);
     }
 
-    protected getDefaultOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<LineSeriesOptions> {
-        const options = super.getDefaultOptionsFromTheme(theme);
+    protected extractIChartOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<LineSeriesOptions> {
+        const options = super.extractIChartOptionsFromTheme(theme);
 
         const seriesDefaults = theme.getConfig<AgLineSeriesOptions>('line.series.line');
         options.seriesDefaults = {

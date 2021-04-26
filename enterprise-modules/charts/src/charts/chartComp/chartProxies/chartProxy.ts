@@ -89,7 +89,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
     protected chart: TChart;
     protected customPalette: AgChartThemePalette;
-    protected chartOptions: TOptions;
+    protected iChartOptions: TOptions;
     protected chartTheme: ChartTheme;
     protected crossFiltering: boolean;
     protected crossFilterCallback: (event: any, reset?: boolean) => void;
@@ -144,23 +144,22 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     protected abstract getDefaultOptions(): TOptions;
 
     protected initChartOptions(): void {
-        this.initChartTheme();
-
-        this.chartOptions = this.getDefaultOptionsFromTheme(this.chartTheme);
+        this.chartTheme = this.getInitialChartTheme();
+        this.iChartOptions = this.extractIChartOptionsFromTheme(this.chartTheme);
 
         // allow users to override options before they are applied
         const { processChartOptions } = this.chartProxyParams;
 
         if (processChartOptions) {
-            const originalOptions = deepMerge({}, this.chartOptions);
-            const params: ProcessChartOptionsParams = { type: this.chartType, options: this.chartOptions };
+            const originalOptions = deepMerge({}, this.iChartOptions);
+            const params: ProcessChartOptionsParams = { type: this.chartType, options: this.iChartOptions };
             const overriddenOptions = processChartOptions(params) as TOptions;
 
             // ensure we have everything we need, in case the processing removed necessary options
             const safeOptions = this.getDefaultOptions();
             _.mergeDeep(safeOptions, overriddenOptions, false);
             this.overridePalette(originalOptions, safeOptions);
-            this.chartOptions = safeOptions;
+            this.iChartOptions = safeOptions;
         }
     }
 
@@ -169,25 +168,23 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             !_.areEqual(originalOptions.seriesDefaults.stroke.colors, overriddenOptions.seriesDefaults.stroke.colors);
     }
 
-    private initChartTheme() {
+    private getInitialChartTheme() {
         const themeName = this.getSelectedTheme();
-        const stockTheme = this.isStockTheme(themeName);
-
         const gridOptionsThemeOverrides: AgChartThemeOverrides | undefined = this.chartProxyParams.getGridOptionsChartThemeOverrides();
         const apiThemeOverrides: AgChartThemeOverrides | undefined  = this.chartProxyParams.apiChartThemeOverrides;
 
+        let theme;
         if (gridOptionsThemeOverrides || apiThemeOverrides) {
             const themeOverrides = {
                 overrides: this.mergeThemeOverrides(gridOptionsThemeOverrides, apiThemeOverrides)
             };
-
             const getCustomTheme = () => deepMerge(this.lookupCustomChartTheme(themeName), themeOverrides);
-            const theme = stockTheme ? { baseTheme: themeName, ...themeOverrides } : getCustomTheme();
-
-            this.chartTheme = getChartTheme(theme);
+            theme = this.isStockTheme(themeName) ? { baseTheme: themeName, ...themeOverrides } : getCustomTheme();
         } else {
-            this.chartTheme = getChartTheme(stockTheme ? themeName : this.lookupCustomChartTheme(themeName));
+            theme = this.isStockTheme(themeName) ? themeName : this.lookupCustomChartTheme(themeName);
         }
+
+        return getChartTheme(theme);
     }
 
     public lookupCustomChartTheme(name: string) {
@@ -210,35 +207,6 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         if (!gridOptionsThemeOverrides) { return apiThemeOverrides; }
         if (!apiThemeOverrides) { return gridOptionsThemeOverrides; }
         return deepMerge(gridOptionsThemeOverrides, apiThemeOverrides);
-    }
-
-    private integratedToStandaloneChartType(integratedChartType: string): string {
-        switch (integratedChartType) {
-            case ChartType.GroupedBar:
-            case ChartType.StackedBar:
-            case ChartType.NormalizedBar:
-                return 'bar';
-            case ChartType.GroupedColumn:
-            case ChartType.StackedColumn:
-            case ChartType.NormalizedColumn:
-                return 'column';
-            case ChartType.Line:
-                return 'line';
-            case ChartType.Area:
-            case ChartType.StackedArea:
-            case ChartType.NormalizedArea:
-                return 'area';
-            case ChartType.Scatter:
-            case ChartType.Bubble:
-                return 'scatter';
-            case ChartType.Histogram:
-                return 'histogram';
-            case ChartType.Pie:
-            case ChartType.Doughnut:
-                return 'pie';
-            default:
-                return 'cartesian';
-        }
     }
 
     private overridePalette(originalOptions: TOptions, chartOptions: TOptions): void {
@@ -269,11 +237,36 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     }
 
     protected getStandaloneChartType(): string {
-        return this.integratedToStandaloneChartType(this.chartType);
+        switch (this.chartType) {
+            case ChartType.GroupedBar:
+            case ChartType.StackedBar:
+            case ChartType.NormalizedBar:
+                return 'bar';
+            case ChartType.GroupedColumn:
+            case ChartType.StackedColumn:
+            case ChartType.NormalizedColumn:
+                return 'column';
+            case ChartType.Line:
+                return 'line';
+            case ChartType.Area:
+            case ChartType.StackedArea:
+            case ChartType.NormalizedArea:
+                return 'area';
+            case ChartType.Scatter:
+            case ChartType.Bubble:
+                return 'scatter';
+            case ChartType.Histogram:
+                return 'histogram';
+            case ChartType.Pie:
+            case ChartType.Doughnut:
+                return 'pie';
+            default:
+                return 'cartesian';
+        }
     }
 
     // Merges theme defaults into default options. To be overridden in subclasses.
-    protected getDefaultOptionsFromTheme(theme: ChartTheme): TOptions {
+    protected extractIChartOptionsFromTheme(theme: ChartTheme): TOptions {
         const options = {} as TOptions;
 
         const standaloneChartType = this.getStandaloneChartType();
@@ -307,7 +300,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     }
 
     public getChartOptions(): TOptions {
-        return this.chartOptions;
+        return this.iChartOptions;
     }
 
     public getCustomPalette(): AgChartThemePalette | undefined {
@@ -315,16 +308,16 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     }
 
     public getChartOption<T = string>(expression: string): T {
-        return _.get(this.chartOptions, expression, undefined) as T;
+        return _.get(this.iChartOptions, expression, undefined) as T;
     }
 
     public setChartOption(expression: string, value: any): void {
-        if (_.get(this.chartOptions, expression, undefined) === value) {
+        if (_.get(this.iChartOptions, expression, undefined) === value) {
             // option is already set to the specified value
             return;
         }
 
-        _.set(this.chartOptions, expression, value);
+        _.set(this.iChartOptions, expression, value);
 
         const mappings: any = {
             'legend.item.marker.strokeWidth': 'legend.strokeWidth',
@@ -345,16 +338,16 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     }
 
     public getSeriesOption<T = string>(expression: string): T {
-        return _.get(this.chartOptions.seriesDefaults, expression, undefined) as T;
+        return _.get(this.iChartOptions.seriesDefaults, expression, undefined) as T;
     }
 
     public setSeriesOption(expression: string, value: any): void {
-        if (_.get(this.chartOptions.seriesDefaults, expression, undefined) === value) {
+        if (_.get(this.iChartOptions.seriesDefaults, expression, undefined) === value) {
             // option is already set to the specified value
             return;
         }
 
-        _.set(this.chartOptions.seriesDefaults, expression, value);
+        _.set(this.iChartOptions.seriesDefaults, expression, value);
 
         const mappings: { [key: string]: string; } = {
             'stroke.width': 'strokeWidth',
@@ -370,12 +363,12 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     }
 
     public setTitleOption(property: keyof CaptionOptions, value: any) {
-        if (_.get(this.chartOptions.title, property, undefined) === value) {
+        if (_.get(this.iChartOptions.title, property, undefined) === value) {
             // option is already set to the specified value
             return;
         }
 
-        (this.chartOptions.title as any)[property] = value;
+        (this.iChartOptions.title as any)[property] = value;
 
         if (!this.chart.title) {
             this.chart.title = {} as Caption;
@@ -391,13 +384,13 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     }
 
     public getTitleOption(property: keyof CaptionOptions) {
-        return (this.chartOptions.title as any)[property];
+        return (this.iChartOptions.title as any)[property];
     }
 
-    public getChartPaddingOption = (property: keyof PaddingOptions): string => this.chartOptions.padding ? `${this.chartOptions.padding[property]}` : '';
+    public getChartPaddingOption = (property: keyof PaddingOptions): string => this.iChartOptions.padding ? `${this.iChartOptions.padding[property]}` : '';
 
     public setChartPaddingOption(property: keyof PaddingOptions, value: number): void {
-        let { padding } = this.chartOptions;
+        let { padding } = this.iChartOptions;
 
         if (_.get(padding, property, undefined) === value) {
             // option is already set to the specified value
@@ -405,7 +398,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         }
 
         if (!padding) {
-            padding = this.chartOptions.padding = { top: 0, right: 0, bottom: 0, left: 0 };
+            padding = this.iChartOptions.padding = { top: 0, right: 0, bottom: 0, left: 0 };
             this.chart.padding = new Padding(0);
         }
 
@@ -420,13 +413,13 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     public getShadowEnabled = (): boolean => !!this.getShadowProperty('enabled');
 
     public getShadowProperty(property: keyof DropShadowOptions): any {
-        const { seriesDefaults } = this.chartOptions;
+        const { seriesDefaults } = this.iChartOptions;
 
         return seriesDefaults.shadow ? seriesDefaults.shadow[property] : '';
     }
 
     public setShadowProperty(property: keyof DropShadowOptions, value: any): void {
-        const { seriesDefaults } = this.chartOptions;
+        const { seriesDefaults } = this.iChartOptions;
 
         if (_.get(seriesDefaults.shadow, property, undefined) === value) {
             // option is already set to the specified value
@@ -470,7 +463,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             chartId: this.chartId,
             chartType: this.chartType,
             chartThemeName: this.chartProxyParams.getChartThemeName(),
-            chartOptions: this.chartOptions,
+            chartOptions: this.iChartOptions,
             api: this.gridApi,
             columnApi: this.columnApi,
         });

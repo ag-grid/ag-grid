@@ -24,8 +24,8 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
         super(params);
     }
 
-    protected getDefaultOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<T> {
-        const options = super.getDefaultOptionsFromTheme(theme);
+    protected extractIChartOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<T> {
+        const options = super.extractIChartOptionsFromTheme(theme);
         const standaloneChartType = this.getStandaloneChartType();
         const flipXY = standaloneChartType === 'bar';
 
@@ -52,12 +52,12 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
     }
 
     public getAxisProperty<T = string>(expression: string): T {
-        return _.get(this.chartOptions.xAxis, expression, undefined) as T;
+        return _.get(this.iChartOptions.xAxis, expression, undefined) as T;
     }
 
     public setAxisProperty(expression: string, value: any) {
-        _.set(this.chartOptions.xAxis, expression, value);
-        _.set(this.chartOptions.yAxis, expression, value);
+        _.set(this.iChartOptions.xAxis, expression, value);
+        _.set(this.iChartOptions.yAxis, expression, value);
 
         const chart = this.chart;
 
@@ -101,7 +101,7 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
         }
 
         if (categoryId !== ChartDataModel.DEFAULT_CATEGORY && !this.chartProxyParams.grouping) {
-            const { label } = this.chartOptions[axisKey];
+            const { label } = this.iChartOptions[axisKey];
 
             if (label) {
                 if (userThemeOverrideRotation !== undefined) {
@@ -187,7 +187,7 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
 
         if (baseAxis instanceof axisClass) { return; }
 
-        let options = this.chartOptions;
+        let options = this.iChartOptions;
 
         if (isHorizontalChart && !options.yAxis.type) {
             options = {
