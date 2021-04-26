@@ -89,8 +89,11 @@ export class GridChartComp extends Component {
     private chartType: ChartType;
     private chartThemeName?: string;
 
-    constructor(private readonly params: GridChartParams) {
+    private readonly params: GridChartParams;
+
+    constructor(params: GridChartParams) {
         super(GridChartComp.TEMPLATE);
+        this.params = params;
     }
 
     @PostConstruct
@@ -129,6 +132,9 @@ export class GridChartComp extends Component {
 
         // create chart before dialog to ensure dialog is correct size
         this.createChart();
+
+        // TODO should be removed along with processChartOptions()
+        this.params.processChartOptions = undefined;
 
         if (this.params.insideDialog) {
             this.addDialog();
