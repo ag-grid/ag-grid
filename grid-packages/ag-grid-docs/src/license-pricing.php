@@ -109,8 +109,8 @@ gtm_data_layer('community-enterprise');
                             It is free to use in your production environments.
                         </p>
                         <h3 style="margin-top: 26px;">AG Charts Community</h3>
-                        <p>
-                            AG Charts Community (a.k.a. <a href="./javascript-charts/">Standalone Charts</a>)
+                        <p>https://www.ag-grid.com/javascript-charts/overview/
+                            AG Charts Community (a.k.a. <a href="./javascript-charts/overview/">Standalone Charts</a>)
                             is a free to use product distributed under the
                             <a href="./eula/AG-Grid-Community-License.html">MIT License</a>.
                             It is free to use in your production environments.
