@@ -215,7 +215,7 @@ gtm_data_layer('community-enterprise');
                 <div>
                     <div style="text-align: center;">
                         <div style="max-width: 800px; display: inline-block;">
-                            Bulk pricing available. For up to 10 developers please use our e-commerce configurator to see pricing.
+                            Bulk pricing available. For up to 10 developers please use our <a href="https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=multi">e-commerce configurator</a> to see pricing.
                             For more than 10 developers or any questions with regards your purchase, please email
                             <a href="mailto:info@ag-grid.com">info@ag-grid.com</a>
                         </div>
