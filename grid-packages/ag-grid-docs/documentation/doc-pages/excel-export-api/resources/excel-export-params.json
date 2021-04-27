@@ -25,12 +25,12 @@
             "type": "number"
         },
         "headerRowHeight": {
-            "description": "The height in pixels of header rows. Defaults to Excel default value.",
-            "type": "number"
+            "description": "The height in pixels of header rows. Defaults to Excel default value. This property can also be supplied a callback function that returns a number: `(params: RowHeightCallbackParams) => number`.",
+            "type": "number | Function"
         },
         "rowHeight": {
-            "description": "The height in pixels of all rows. Defaults to Excel default value.",
-            "type": "number"
+            "description": "The height in pixels of all rows. Defaults to Excel default value. This property can also be supplied a callback function that returns a number: `(params: RowHeightCallbackParams) => number`.",
+            "type": "number | Function"
         },
         "sheetName": {
             "default": "ag-grid",
