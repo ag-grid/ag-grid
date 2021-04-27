@@ -645,7 +645,7 @@
       },
       "log": {
         "meta": {
-          "type": "INumberAxis",
+          "type": "ILogAxis",
           "description": "This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to number axes."
         },
         "nice": {
