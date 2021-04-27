@@ -98,14 +98,22 @@ var myTheme = {
         strokes: ['gray']
     },
     overrides: {
-        common: { title: { fontSize: 24 } },
+        common: {
+            title: {
+                fontSize: 24
+            }
+        },
         cartesian: {
             padding: {
                 left: 70,
                 right: 70
             },
             series: {
-                line: { marker: { shape: 'plus' } },
+                line: {
+                    marker: {
+                        shape: 'circle'
+                    }
+                },
                 column: {
                     label: {
                         enabled: true,
@@ -115,12 +123,20 @@ var myTheme = {
             },
             axes: {
                 category: {
-                    line: { color: 'gray' },
-                    tick: { color: 'gray' }
+                    line: {
+                        color: 'gray'
+                    },
+                    tick: {
+                        color: 'gray'
+                    }
                 },
                 number: {
-                    line: { color: 'gray' },
-                    tick: { color: 'gray' }
+                    line: {
+                        color: 'gray'
+                    },
+                    tick: {
+                        color: 'gray'
+                    }
                 }
             }
         },
@@ -129,11 +145,17 @@ var myTheme = {
                 top: 40,
                 bottom: 40
             },
-            legend: { position: 'left' },
+            legend: {
+                position: 'left'
+            },
             series: {
                 pie: {
-                    label: { enabled: true },
-                    callout: { colors: ['gray'] }
+                    label: {
+                        enabled: true
+                    },
+                    callout: {
+                        colors: ['gray']
+                    }
                 }
             }
         }
@@ -184,6 +206,15 @@ var data = [
 ];
 
 render(
-    (<div><Chart1 /><Chart2 /></div>),
+    (
+        <div id="charts">
+            <div id="chart1">
+                <Chart1 />
+            </div>
+            <div id="chart2">
+                <Chart2 />
+            </div>
+        </div>
+    ),
     document.querySelector('#root')
 )
