@@ -2147,7 +2147,414 @@
     }
   },
   "treemap": {
-
+    "meta": {
+      "displayName": "Treemap Series Configuration",
+      "description": "Configuration for the treemap series."
+    },
+    "title": {
+      "meta": {
+        "description": "The label configuration for the top-level parent tiles."
+      },
+      "color": {
+        "default": "white",
+        "description": "The colour of the text."
+      },
+      "fontStyle": {
+        "default": "normal",
+        "options": [
+          "normal",
+          "italic",
+          "oblique"
+        ],
+        "description": "The font style to use for the legend."
+      },
+      "fontWeight": {
+        "default": "bold",
+        "options": [
+          "normal",
+          "bold",
+          "bolder",
+          "lighter",
+          "100",
+          "200",
+          "300",
+          "400",
+          "500",
+          "600",
+          "700",
+          "800",
+          "900"
+        ],
+        "description": "The font weight to use for the legend.",
+        "breakIndex": 4
+      },
+      "fontSize": {
+        "default": 12,
+        "description": "The font size in pixels to use for the legend.",
+        "min": 1,
+        "max": 30,
+        "unit": "px"
+      },
+      "fontFamily": {
+        "default": "Verdana, sans-serif",
+        "suggestions": [
+          "Verdana, sans-serif",
+          "Arial, sans-serif",
+          "Times New Roman, serif"
+        ],
+        "description": "The font family to use for the legend."
+      },
+      "padding": {
+        "default": 15,
+        "description": "The amount of the tile's vertical space to reserve for the label.",
+        "min": 4,
+        "max": 20,
+        "unit": "px"
+      }
+    },
+    "subtitle": {
+      "meta": {
+        "description": "The label configuration for the children of the top-level parent tiles."
+      },
+      "color": {
+        "default": "white",
+        "description": "The colour of the text."
+      },
+      "fontStyle": {
+        "default": "normal",
+        "options": [
+          "normal",
+          "italic",
+          "oblique"
+        ],
+        "description": "The font style to use for the legend."
+      },
+      "fontWeight": {
+        "default": "bold",
+        "options": [
+          "normal",
+          "bold",
+          "bolder",
+          "lighter",
+          "100",
+          "200",
+          "300",
+          "400",
+          "500",
+          "600",
+          "700",
+          "800",
+          "900"
+        ],
+        "description": "The font weight to use for the legend.",
+        "breakIndex": 4
+      },
+      "fontSize": {
+        "default": 9,
+        "description": "The font size in pixels to use for the legend.",
+        "min": 1,
+        "max": 30,
+        "unit": "px"
+      },
+      "fontFamily": {
+        "default": "Verdana, sans-serif",
+        "suggestions": [
+          "Verdana, sans-serif",
+          "Arial, sans-serif",
+          "Times New Roman, serif"
+        ],
+        "description": "The font family to use for the legend."
+      },
+      "padding": {
+        "default": 13,
+        "description": "The amount of the tile's vertical space to reserve for the label.",
+        "min": 4,
+        "max": 20,
+        "unit": "px"
+      }
+    },
+    "labels": {
+      "meta": {
+        "description": "Configuration for the tile labels."
+      },
+      "large": {
+        "meta": {
+          "description": "The label configuration for the large leaf tiles."
+        },
+        "color": {
+          "default": "white",
+          "description": "The colour of the text."
+        },
+        "fontStyle": {
+          "default": "normal",
+          "options": [
+            "normal",
+            "italic",
+            "oblique"
+          ],
+          "description": "The font style to use for the legend."
+        },
+        "fontWeight": {
+          "default": "bold",
+          "options": [
+            "normal",
+            "bold",
+            "bolder",
+            "lighter",
+            "100",
+            "200",
+            "300",
+            "400",
+            "500",
+            "600",
+            "700",
+            "800",
+            "900"
+          ],
+          "description": "The font weight to use for the legend.",
+          "breakIndex": 4
+        },
+        "fontSize": {
+          "default": 18,
+          "description": "The font size in pixels to use for the legend.",
+          "min": 1,
+          "max": 30,
+          "unit": "px"
+        },
+        "fontFamily": {
+          "default": "Verdana, sans-serif",
+          "suggestions": [
+            "Verdana, sans-serif",
+            "Arial, sans-serif",
+            "Times New Roman, serif"
+          ],
+          "description": "The font family to use for the legend."
+        }
+      },
+      "medium": {
+        "meta": {
+          "description": "The label configuration for the medium-sized leaf tiles."
+        },
+        "color": {
+          "default": "white",
+          "description": "The colour of the text."
+        },
+        "fontStyle": {
+          "default": "normal",
+          "options": [
+            "normal",
+            "italic",
+            "oblique"
+          ],
+          "description": "The font style to use for the legend."
+        },
+        "fontWeight": {
+          "default": "bold",
+          "options": [
+            "normal",
+            "bold",
+            "bolder",
+            "lighter",
+            "100",
+            "200",
+            "300",
+            "400",
+            "500",
+            "600",
+            "700",
+            "800",
+            "900"
+          ],
+          "description": "The font weight to use for the legend.",
+          "breakIndex": 4
+        },
+        "fontSize": {
+          "default": 14,
+          "description": "The font size in pixels to use for the legend.",
+          "min": 1,
+          "max": 30,
+          "unit": "px"
+        },
+        "fontFamily": {
+          "default": "Verdana, sans-serif",
+          "suggestions": [
+            "Verdana, sans-serif",
+            "Arial, sans-serif",
+            "Times New Roman, serif"
+          ],
+          "description": "The font family to use for the legend."
+        }
+      },
+      "small": {
+        "meta": {
+          "description": "The label configuration for the small leaf tiles."
+        },
+        "color": {
+          "default": "white",
+          "description": "The colour of the text."
+        },
+        "fontStyle": {
+          "default": "normal",
+          "options": [
+            "normal",
+            "italic",
+            "oblique"
+          ],
+          "description": "The font style to use for the legend."
+        },
+        "fontWeight": {
+          "default": "bold",
+          "options": [
+            "normal",
+            "bold",
+            "bolder",
+            "lighter",
+            "100",
+            "200",
+            "300",
+            "400",
+            "500",
+            "600",
+            "700",
+            "800",
+            "900"
+          ],
+          "description": "The font weight to use for the legend.",
+          "breakIndex": 4
+        },
+        "fontSize": {
+          "default": 10,
+          "description": "The font size in pixels to use for the legend.",
+          "min": 1,
+          "max": 30,
+          "unit": "px"
+        },
+        "fontFamily": {
+          "default": "Verdana, sans-serif",
+          "suggestions": [
+            "Verdana, sans-serif",
+            "Arial, sans-serif",
+            "Times New Roman, serif"
+          ],
+          "description": "The font family to use for the legend."
+        }
+      },
+      "color": {
+        "meta": {
+          "description": "The configuration for the labels showing the value of the 'colorKey'."
+        },
+        "color": {
+          "default": "white",
+          "description": "The colour of the text."
+        },
+        "fontStyle": {
+          "default": "normal",
+          "options": [
+            "normal",
+            "italic",
+            "oblique"
+          ],
+          "description": "The font style to use for the legend."
+        },
+        "fontWeight": {
+          "default": "bold",
+          "options": [
+            "normal",
+            "bold",
+            "bolder",
+            "lighter",
+            "100",
+            "200",
+            "300",
+            "400",
+            "500",
+            "600",
+            "700",
+            "800",
+            "900"
+          ],
+          "description": "The font weight to use for the legend.",
+          "breakIndex": 4
+        },
+        "fontSize": {
+          "default": 12,
+          "description": "The font size in pixels to use for the legend.",
+          "min": 1,
+          "max": 30,
+          "unit": "px"
+        },
+        "fontFamily": {
+          "default": "Verdana, sans-serif",
+          "suggestions": [
+            "Verdana, sans-serif",
+            "Arial, sans-serif",
+            "Times New Roman, serif"
+          ],
+          "description": "The font family to use for the legend."
+        }
+      }
+    },
+    "labelKey": {
+      "type": "string",
+      "default": "label",
+      "description": "The name of the node key containing the label."
+    },
+    "sizeKey": {
+      "type": "string",
+      "default": "size",
+      "description": "The name of the node key containing the size value."
+    },
+    "colorKey": {
+      "type": "string",
+      "default": "color",
+      "description": "The name of the node key containing the color value. This value (along with `colorDomain` and `colorRange` configs) will be used to determine the tile color."
+    },
+    "colorDomain": {
+      "type": "number[]",
+      "default": "[-5, 5]",
+      "description": "The domain the 'colorKey' values belong to. The domain can contain more than two stops, for example `[-5, 0, -5]`. In that case the 'colorRange' should also use a matching number of colors."
+    },
+    "colorRange": {
+      "type": "string[]",
+      "default": "['#cb4b3f', '#6acb64']",
+      "description": "The color range to interpolate the numeric `colorDomain` into. For example, if the `colorDomain` is `[-5, 5]` and `colorRange` is `['red', 'green']`, a `colorKey` value of `-5` will be assigned the 'red' color, `5` - 'green' color and `0` a blend of 'red' and 'green'."
+    },
+    "colorParents": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether or not to assign colors to non-leaf nodes based on 'colorKey'."
+    },
+    "tooltip": {
+      "meta": {
+        "description": "Series-specific tooltip configuration."
+      },
+      "enabled": {
+        "default": true,
+        "description": "Whether or not to show tooltips when the series are hovered over."
+      },
+      "renderer": {
+        "type": {
+          "parameters": {
+            "datum": "any",
+            "labelKey": "string",
+            "sizeKey?": "string",
+            "colorKey?": "string"
+          },
+          "returnType": "string"
+        },
+        "description": "Function used to create the content for tooltips."
+      }
+    },
+    "nodePadding": {
+      "type": "number",
+      "default": 2,
+      "description": "The amount "
+    },
+    "gradient": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether or not to use gradients for treemap tiles."
+    }
   },
   "histogram": {
     "data": {
