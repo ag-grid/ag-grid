@@ -4,11 +4,11 @@ import { XmlElement } from "./iXmlFactory";
 
 // Excel Styles
 export interface ExcelStyle {
+    id: string;
     alignment?: ExcelAlignment;
     borders?: ExcelBorders;
     dataType?: ExcelDataType;
     font?: ExcelFont;
-    id: string;
     interior?: ExcelInterior;
     numberFormat?: ExcelNumberFormat;
     protection?: ExcelProtection;
@@ -47,7 +47,6 @@ export interface ExcelBorder {
 
 export interface ExcelFont {
     bold?: boolean;
-    charSet?: number;
     color?: string;
     family?: string;
     fontName?: string;
@@ -58,6 +57,10 @@ export interface ExcelFont {
     strikeThrough?: boolean;
     underline?: 'Single' | 'Double';
     verticalAlign?: 'Superscript' | 'Subscript';
+    /**
+     * @deprecated Legacy property
+     */
+    charSet?: number;
 }
 
 export interface ExcelInterior {

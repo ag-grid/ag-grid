@@ -25,7 +25,7 @@
             "type": "number"
         },
         "headerRowHeight": {
-            "description": "The height in pixels of header rows. Defaults to the grid's current `rowHeight` value.",
+            "description": "The height in pixels of header rows. Defaults to Excel default value.",
             "type": "number"
         },
         "rowHeight": {
@@ -71,11 +71,11 @@
             "type": "boolean"
         },
         "margins": {
-            "description": "xxx",
+            "description": "The Excel document page margins. Relevant for printing.",
             "type": "ExcelSheetMargin"
         },
         "pageSetup": {
-            "description": "xxx",
+            "description": "Allows you to setup the page orientation and size.",
             "type": "ExcelSheetPageSetup"
         },
         "skipColumnGroupHeaders": {
@@ -236,155 +236,151 @@
     },
     "excelCell": {
         "data": {
-            "default": "xxx",
-            "description": "xxx",
+            "description": "The data that will be added to the cell.",
             "type": "ExcelData"
         },
         "styleId": {
-            "default": "xxx",
-            "description": "style to apply",
+            "description": "The ExcelStyle id to be associated with the cell.",
             "type": "string"
         },
         "mergeAcross": {
-            "default": "xxx",
-            "description": "the of cells to span across, (1 means span 2 columns)",
+            "default": 0,
+            "description": "The number of cells to span across (1 means span 2 columns)",
             "type": "number"
         }
     },
     "excelData": {
         "type": {
-            "default": "xxx",
-            "description": "xxx",
-            "type": "ExcelDataType | ExcelOOXMLDataType"
+            "description": "The type of data being in the cell.",
+            "type": "ExcelDataType",
+            "isRequired": true
         },
         "value": {
-            "default": "xxx",
-            "description": "xxx",
-            "type": "string"
+            "description": "The value of the cell.",
+            "type": "string",
+            "isRequired": true
         }
+    },
+    "excelDataType": {
+        "type": "string",
+        "options": ["String", "Formula", "Number", "Boolean", "DateTime", "Error"]
     },
     "excelImage": {
         "id": {
-            "description": "xxx",
+            "description": "The image `id`. This field is required so the same image doesn't get imported multiple times.",
             "type": "string",
             "isRequired": true
         },
         "base64": {
-            "description": "xxx",
+            "description": "A base64 string that represents the image being imported. See more info about <a href=\"https://en.wikipedia.org/wiki/Base64\" target=\"_blank\">Base64</a>/",
             "type": "string",
             "isRequired": true
         },
         "imageType": {
-            "description": "xxx",
+            "description": "The type of image being exported.",
             "type": "string",
             "options": ["jpg", "png", "gif"],
             "isRequired": true
         },
         "fitCell": {
             "default": false,
-            "description": "xxx",
+            "description": "If set to `true`, the image will cover the whole cell that is being imported to.",
             "type": "boolean"
         },
         "transparency": {
             "default": 0,
-            "description": "xxx",
+            "description": "Set a value between 0 - 100 that will indicate the percentage of transparency of the image.",
             "type": "number"
         },
         "rotation": {
             "default": 0,
-            "description": "xxx",
+            "description": "Set a value between 0 - 359 that will indicate the number of degrees to rotate the image clockwise.",
             "type": "number"
         },
         "recolor": {
-            "description": "xxx",
+            "description": "Set this property to select a preset that changes the appearance of the image.",
             "type": "string",
             "options": ["Grayscale", "Sepia","Washout"]
         },
         "width": {
-            "description": "xxx",
+            "description": "The width of the image in pixels. If this value is not selected, `fitCell` will be automatically set to true.",
             "type": "number"
         },
         "height": {
-            "description": "xxx",
+            "description": "The height of the image in pixels. If this value is not selected, `fitCell` will be automatically set to true.",
             "type": "number"
         },
         "position": {
             "row": {
-                "description": "xxx",
+                "description": "The row containing this image. This property is set automatically, don't change it unless you know what you are doing.",
                 "type": "number"
             },
             "rowSpan": {
                 "default": 1,
-                "description": "xxx",
+                "description": "The amount of rows this image will cover.",
                 "type": "number"
             },
             "column": {
-                "description": "xxx",
+                "description": "The column containing this image. This property is set automatically, don't change it unless you know what you are doing.",
                 "type": "number"
             },
             "colSpan": {
                 "default": 1,
-                "description": "xxx",
+                "description": "The amount of columns this image will cover.",
                 "type": "number"
             },
             "offsetX": {
                 "default": 0,
-                "description": "xxx",
+                "description": "The amount in pixels the image should be offset horizontally.",
                 "type": "number"
             },
             "offsetY": {
                 "default": 0,
-                "description": "xxx",
+                "description": "The amount in pixels the image should be offset vertically.",
                 "type": "number"
             }
         }
     },
     "excelStyle": {
+        "id": {
+            "description": "The id of the Excel Style, this should match a CSS cell class.",
+            "type": "string",
+            "isRequired": true
+        },
         "alignment": {
-            "default": "xxx",
-            "description": "xxx",
+            "description": "Use this property to customise cell alignment properties.",
             "type": "ExcelAlignment"
         },
         "borders": {
-            "default": "xxx",
-            "description": "xxx",
+            "description": "Use this property to customise cell borders.",
             "type": "ExcelBorders"
         },
         "dataType": {
-            "default": "xxx",
-            "description": "xxx",
+            "default": "String",
+            "description": "Use this property to specify the type of data being exported.",
             "type": "ExcelDataType"
         },
         "font": {
-            "default": "xxx",
-            "description": "xxx",
+            "description": "Use this property to customise the font used in the cell.",
             "type": "ExcelFont"
         },
-        "id": {
-            "default": "xxx",
-            "description": "xxx",
-            "type": "string"
-        },
         "interior": {
-            "default": "xxx",
-            "description": "xxx",
+            "description": "Use this property to customise the cell background.",
             "type": "ExcelInterior"
         },
         "numberFormat": {
-            "default": "xxx",
-            "description": "xxx",
+            "description": "Use this property to customise the cell value as a formatted number.",
             "type": "ExcelNumberFormat"
         },
         "protection": {
-            "default": "xxx",
-            "description": "xxx",
+            "description": "Use this property to setup cell protection.",
             "type": "ExcelProtection"
         }
     },
     "excelAlignment": {
         "horizontal": {
-            "default": "xxx",
-            "description": "xxx",
+            "default": "Automatic",
+            "description": "Use this property to change the cell horizontal alignment.",
             "options": [
                 "Automatic",
                 "Left",
@@ -399,13 +395,13 @@
             "type": "string"
         },
         "indent": {
-            "default": "xxx",
-            "description": "xxx",
+            "default": 0,
+            "description": "Use this property to change the level of indentation in the cell.",
             "type": "number"
         },
         "readingOrder": {
-            "default": "xxx",
-            "description": "xxx",
+            "default": "LeftToRight",
+            "description": "Use this property to change the cell reading order.",
             "options": [
                 "RightToLeft",
                 "LeftToRight",
@@ -414,18 +410,18 @@
             "type": "string"
         },
         "rotate": {
-            "default": "xxx",
-            "description": "xxx",
+            "default": 0,
+            "description": "The number of degrees between 0 and 359 to rotate the text.",
             "type": "number"
         },
         "shrinkToFit": {
-            "default": "xxx",
-            "description": "xxx",
+            "default": false,
+            "description": "If set to `true`, the font size of the cell will automatically change to force the text to fit within the cell.",
             "type": "boolean"
         },
         "vertical": {
-            "default": "xxx",
-            "description": "xxx",
+            "default": "Automatic",
+            "description": "Use this property to change the cell vertical alignment.",
             "options": [
                 "Automatic",
                 "Top",
@@ -438,42 +434,38 @@
             "type": "string"
         },
         "wrapText": {
-            "default": "xxx",
-            "description": "xxx",
+            "default": false,
+            "description": "If set to `true`, multiline text will be displayed as multiline by Excel.",
             "type": "boolean"
         }
     },
     "excelBorders": {
         "borderBottom": {
-            "default": "xxx",
-            "description": "xxx",
+            "description": "Use to set the cell's bottom border.",
             "type": "ExcelBorder"
         },
         "borderLeft": {
-            "default": "xxx",
-            "description": "xxx",
+            "description": "Use to set the cell's left border.",
             "type": "ExcelBorder"
         },
         "borderRight": {
-            "default": "xxx",
-            "description": "xxx",
+            "description": "Use to set the cell's right border.",
             "type": "ExcelBorder"
         },
         "borderTop": {
-            "default": "xxx",
-            "description": "xxx",
+            "description": "Use to set the cell's top border.",
             "type": "ExcelBorder"
         }
     },
     "excelBorder": {
         "color": {
-            "default": "xxx",
-            "description": "xxx",
+            "default": "black",
+            "description": "The color of the border.",
             "type": "string"
         },
         "lineStyle": {
-            "default": "xxx",
-            "description": "xxx",
+            "default": "None",
+            "description": "The style of the border.",
             "options": [
                 "None",
                 "Continuous",
@@ -487,66 +479,60 @@
             "type": "string"
         },
         "weight": {
-            "default": "xxx",
-            "description": "xxx",
+            "default": 0,
+            "description": "The thickness of the border from 0 (thin) to 3 (thick)",
             "options": [0, 1, 2, 3],
             "type": "number"
         }
     },
     "excelFont": {
         "bold": {
-            "default": "xxx",
-            "description": "xxx",
+            "default": false,
+            "description": "Set to `true` to set the cell text to bold.",
             "type": "boolean"
         },
-        "charSet": {
-            "default": "xxx",
-            "description": "xxx",
-            "type": "number"
-        },
         "color": {
-            "default": "xxx",
-            "description": "xxx",
+            "default": "#000000",
+            "description": "The color of the cell font.",
             "type": "string"
         },
         "family": {
-            "default": "xxx",
-            "description": "xxx",
-            "type": "string"
+            "default": "Automatic",
+            "description": "The family of the font to used in the cell.",
+            "type": "string",
+            "options": ["Automatic", "Roman", "Swiss", "Modern", "Script", "Decorative"]
         },
         "fontName": {
-            "default": "xxx",
-            "description": "xxx",
+            "default": "Calibri",
+            "description": "The name of the font to be used in the cell.",
             "type": "string"
         },
         "italic": {
-            "default": "xxx",
-            "description": "xxx",
+            "default": false,
+            "description": "Set to `true` to display the cell font as italic.",
             "type": "boolean"
         },
         "outline": {
-            "default": "xxx",
-            "description": "xxx",
+            "default": false,
+            "description": "Set to `true` to add a text outline.",
             "type": "boolean"
         },
         "shadow": {
-            "default": "xxx",
-            "description": "xxx",
+            "default": false,
+            "description": "Set to `true` to add text shadow.",
             "type": "boolean"
         },
         "size": {
-            "default": "xxx",
-            "description": "xxx",
+            "description": "Set this property to used a different font size other than the default.",
             "type": "number"
         },
         "strikeThrough": {
-            "default": "xxx",
-            "description": "xxx",
+            "default": false,
+            "description": "Set to `true` to add a strikeThrough line.",
             "type": "boolean"
         },
         "underline": {
-            "default": "xxx",
-            "description": "xxx",
+            "description": "Use this property to underline the cell text.",
             "options": [
                 "Single",
                 "Double"
@@ -554,8 +540,7 @@
             "type": "string"
         },
         "verticalAlign": {
-            "default": "xxx",
-            "description": "xxx",
+            "description": "Use this property to change the default font alignment. Note: This is different than setting cell vertical alignment.",
             "options": [
                 "Superscript",
                 "Subscript"
@@ -565,79 +550,76 @@
     },
     "excelInterior": {
         "color": {
-            "default": "xxx",
-            "description": "xxx",
+            "description": "The colour of the cell background.",
             "type": "string"
         },
         "pattern": {
-            "default": "xxx",
-            "description": "xxx",
+            "default": "None",
+            "description": "Use this property to set background color patterns.",
             "options": [
                 "None", "Solid", "Gray75", "Gray50", "Gray25", "Gray125", "Gray0625", "HorzStripe", "VertStripe", "ReverseDiagStripe", "DiagStripe", "DiagCross", "ThickDiagCross", "ThinHorzStripe", "ThinVertStripe", "ThinReverseDiagStripe", "ThinDiagStripe", "ThinHorzCross", "ThinDiagCross"
             ],
             "type": "string"
         },
         "patternColor": {
-            "default": "xxx",
-            "description": "xxx",
+            "description": "The colour to be used as a secondary colour combined with patterns.",
             "type": "string"
         }
     },
     "excelNumberFormat": {
         "format": {
-            "default": "xxx",
-            "description": "xxx",
+            "description": "Use this property to provide a pattern to format a number. (eg. 10000 could become $10,000.00).",
             "type": "string"
         }
     },
     "excelProtection": {
         "protected": {
-            "default": "xxx",
-            "description": "xxx",
+            "default": false,
+            "description": "Set to `true` to enable cell protection",
             "type": "boolean"
         },
         "hideFormula": {
-            "default": "xxx",
-            "description": "xxx",
+            "default": false,
+            "description": "Set to `true` to hide formulas within protected cells",
             "type": "boolean"
         }
     },
     "excelSheetMargin": {
         "top": {
             "default": 0.75,
-            "description": "xxx",
+            "description": "The sheet top margin.",
             "type": "number"
         },
         "right": {
             "default": 0.7,
-            "description": "xxx",
+            "description": "The sheet right margin.",
             "type": "number"
         },
         "bottom": {
             "default": 0.75,
-            "description": "xxx",
+            "description": "The sheet bottom margin.",
             "type": "number"
         },
         "left": {
             "default": 0.7,
-            "description": "xxx",
+            "description": "The sheet left margin.",
             "type": "number"
         },
         "header": {
             "default": 0.3,
-            "description": "xxx",
+            "description": "The sheet header margin.",
             "type": "number"
         },
         "footer": {
             "default": 0.3,
-            "description": "xxx",
+            "description": "The sheet footer margin.",
             "type": "number"
         }
     },
     "excelSheetPageSetup": {
         "orientation": {
             "default": "Portrait",
-            "description": "xxx",
+            "description": "Use this property to change the print orientation.",
             "options": [
                 "Portrait",
                 "Landscape"
@@ -646,7 +628,7 @@
         },
         "pageSize": {
             "default": "Letter",
-            "description": "xxx",
+            "description": "Use this property to set the sheet size.",
             "options": [
                 "Letter",
                 "Letter Small",
