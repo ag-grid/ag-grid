@@ -29,7 +29,7 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
     }
 
     protected createChart(): CartesianChart {
-        const { grouping } = this.chartProxyParams;
+        const {grouping} = this.chartProxyParams;
         const isColumn = this.isColumnChart();
 
         const options = this.iChartOptions;
@@ -52,7 +52,7 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
             }
         ];
 
-        const { chartType } = this;
+        const {chartType} = this;
         const isGrouped = !this.crossFiltering && (chartType === ChartType.GroupedColumn || chartType === ChartType.GroupedBar);
         const isNormalized = !this.crossFiltering && (chartType === ChartType.NormalizedColumn || chartType === ChartType.NormalizedBar);
 
@@ -114,7 +114,7 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
 
             // hide 'filtered out' legend items
             const colIds = params.fields.map(f => f.colId);
-            barSeries.hideInLegend = colIds.filter(colId => colId.indexOf('-filtered-out') !== - 1);
+            barSeries.hideInLegend = colIds.filter(colId => colId.indexOf('-filtered-out') !== -1);
 
             // sync toggling of legend item with hidden 'filtered out' item
             chart.legend.addEventListener('click', (event: LegendClickEvent) => {
@@ -143,12 +143,12 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
     protected extractIChartOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<BarSeriesOptions> {
         const iChartOptions = super.extractIChartOptionsFromTheme(theme);
 
-        const { chartType: integratedChartType } = this;
+        const {chartType: integratedChartType} = this;
         const standaloneChartType = this.getStandaloneChartType();
 
         const seriesType = integratedChartType === ChartType.GroupedBar
-            || integratedChartType === ChartType.StackedBar
-            || integratedChartType === ChartType.NormalizedBar ? 'bar' : 'column';
+        || integratedChartType === ChartType.StackedBar
+        || integratedChartType === ChartType.NormalizedBar ? 'bar' : 'column';
 
         const themeSeriesDefaults = theme.getConfig<AgBarSeriesOptions>(standaloneChartType + '.series.' + seriesType);
 
