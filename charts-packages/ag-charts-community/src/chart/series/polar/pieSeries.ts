@@ -415,7 +415,7 @@ export class PieSeries extends PolarSeries {
 
         const {
             fills, strokes, fillOpacity, strokeOpacity, strokeWidth,
-            outerRadiusOffset, radiusScale, callout, shadow,
+            radiusScale, callout, shadow,
             highlightStyle: { fill, stroke, centerOffset },
             angleKey, radiusKey, formatter
         } = this;
@@ -426,7 +426,6 @@ export class PieSeries extends PolarSeries {
 
         this.groupSelection.selectByTag<Sector>(PieNodeTag.Sector).each((sector, datum, index) => {
             const radius = radiusScale.convert(datum.radius);
-            const outerRadius = Math.max(0, radius + outerRadiusOffset);
             const highlighted = datum === highlightedDatum;
             const sectorFill = highlighted && fill !== undefined ? fill : fills[index % fills.length];
             const sectorStroke = highlighted && stroke !== undefined ? stroke : strokes[index % strokes.length];
