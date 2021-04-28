@@ -1,4 +1,11 @@
-import { ExcelFactoryMode, XmlElement,  _ } from '@ag-grid-community/core';
+import {
+    ExcelStyle,
+    ExcelWorksheet,
+    ExcelXMLTemplate,
+    ExcelFactoryMode,
+    XmlElement,
+    _
+} from '@ag-grid-community/core';
 
 import workbook from './files/xml/workbook';
 import excelWorkbook from './files/xml/excelWorkbook';
@@ -13,7 +20,6 @@ import protection from './files/xml/styles/protection';
 import numberFormat from './files/xml/styles/numberFormat';
 import style from './files/xml/styles/style';
 
-import { ExcelStyle, ExcelWorksheet, ExcelXMLTemplate } from '@ag-grid-community/core';
 import { XmlFactory } from "@ag-grid-community/csv-export";
 
 /**
@@ -22,11 +28,11 @@ import { XmlFactory } from "@ag-grid-community/csv-export";
 export class ExcelXmlFactory {
     public static factoryMode: ExcelFactoryMode = ExcelFactoryMode.SINGLE_SHEET;
 
-    public static createExcel(styles: ExcelStyle[], worksheet: ExcelWorksheet): string {
+    public static createExcel(styles: ExcelStyle[], currentWorksheet: ExcelWorksheet): string {
         const header = this.excelXmlHeader();
         const docProps = documentProperties.getTemplate();
         const eWorkbook = excelWorkbook.getTemplate();
-        const wb = this.workbook(docProps, eWorkbook, styles, worksheet);
+        const wb = this.workbook(docProps, eWorkbook, styles, currentWorksheet);
 
         return `${header}${XmlFactory.createXml(wb, boolean => boolean ? '1' : '0')}`;
     }

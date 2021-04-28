@@ -117,7 +117,7 @@ export class DateTimeListModel implements IDateTimeListModel {
         }
 
         const columns = _.fill(Array(options.columnCount(firstValue)), null)
-            .map((_, i) => ({
+            .map((option, i) => ({
                 label: options.columnTitle(entries[i].value),
             }));
 

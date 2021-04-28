@@ -48,11 +48,21 @@ export class ExcelXmlSerializingSession extends BaseExcelSerializingSession<Exce
 
     protected createCell(styleId: string | null, type: ExcelDataType, value: string): ExcelCell {
         const actualStyle: ExcelStyle | null = this.getStyleById(styleId);
-        const typeTransformed = (this.getType(type, actualStyle, value) || type) as ExcelDataType;
+        const typeTransformed = (this.getType(type, actualStyle, value) || type);
 
-        const massageText = (val: string) => {
+        return {
+            styleId: !!actualStyle ? styleId! : undefined,
+            data: {
+                type: typeTransformed,
+                value: this.getValueTransformed(typeTransformed, value)
+            }
+        };
+    }
+
+    private getValueTransformed(typeTransformed: ExcelDataType, value: string): string {
+        const wrapText = (val: string): string => {
             if (this.config.suppressTextAsCDATA) {
-                return _.escapeString(val);
+                return _.escapeString(val) as string;
             }
             const cdataStart = '<![CDATA[';
             const cdataEnd = ']]>';
@@ -69,17 +79,16 @@ export class ExcelXmlSerializingSession extends BaseExcelSerializingSession<Exce
             return '1';
         };
 
-        return {
-            styleId: !!actualStyle ? styleId! : undefined,
-            data: {
-                type: typeTransformed,
-                value:
-                    typeTransformed === 'String' ? massageText(value) :
-                        typeTransformed === 'Number' ? Number(value).valueOf() + '' :
-                            typeTransformed === 'Boolean' ? convertBoolean(value) :
-                                value
-            }
-        };
+        switch (typeTransformed) {
+            case 'String':
+                return wrapText(value);
+            case 'Number':
+                return Number(value).valueOf() + '';
+            case 'Boolean':
+                return convertBoolean(value);
+            default:
+                return value;
+        }
     }
 
     protected createMergedCell(styleId: string | null, type: ExcelDataType, value: string, numOfCells: number): ExcelCell {
