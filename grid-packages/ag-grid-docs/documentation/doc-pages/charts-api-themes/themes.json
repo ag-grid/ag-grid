@@ -2117,7 +2117,7 @@
       },
       "format": {
         "type": "string",
-        "description": "Format string used when rendering labels for time axes. For more information on the structure of the string, [click here](/charts-axes/#time-label-format-string)."
+        "description": "Format string used when rendering labels for time axes. For more information on the structure of the string, [click here](/axes/#time-label-format-string)."
       },
       "formatter": {
         "type": {
