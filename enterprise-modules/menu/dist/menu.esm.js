@@ -12813,7 +12813,7 @@ var RowNode = /** @class */ (function () {
                 this.id = getRowNodeId(this.data);
                 // make sure id provided doesn't start with 'row-group-' as this is reserved. also check that
                 // it has 'startsWith' in case the user provided a number.
-                if (this.id && startsWith(this.id, RowNode.ID_PREFIX_ROW_GROUP)) {
+                if (this.id && typeof this.id === 'string' && startsWith(this.id, RowNode.ID_PREFIX_ROW_GROUP)) {
                     console.error("AG Grid: Row ID's cannot start with " + RowNode.ID_PREFIX_ROW_GROUP + ", this is a reserved prefix for AG Grid's row grouping feature.");
                 }
             }
@@ -17150,9 +17150,7 @@ var GridOptionsWrapper = /** @class */ (function () {
         if (usingTreeData) {
             return ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Tree Data');
         }
-        else {
-            return false;
-        }
+        return false;
     };
     GridOptionsWrapper.prototype.isValueCache = function () {
         return isTrue(this.gridOptions.valueCache);
@@ -45886,12 +45884,30 @@ var GroupStage = /** @class */ (function (_super) {
         }
         return _.areEqual(d1.groupedCols, d2.groupedCols);
     };
+    GroupStage.prototype.checkAllGroupDataAfterColsChanged = function (details) {
+        var _this = this;
+        var recurse = function (rowNodes) {
+            if (!rowNodes) {
+                return;
+            }
+            rowNodes.forEach(function (rowNode) {
+                var isLeafNode = !_this.usingTreeData && !rowNode.group;
+                if (isLeafNode) {
+                    return;
+                }
+                var groupInfo = {
+                    field: rowNode.field,
+                    key: rowNode.key,
+                    rowGroupColumn: rowNode.rowGroupColumn
+                };
+                _this.setGroupData(rowNode, groupInfo);
+                recurse(rowNode.childrenAfterGroup);
+            });
+        };
+        recurse(details.rootNode.childrenAfterGroup);
+    };
     GroupStage.prototype.shotgunResetEverything = function (details, afterColumnsChanged) {
-        var skipStage = afterColumnsChanged ?
-            this.usingTreeData || this.areGroupColsEqual(details, this.oldGroupingDetails)
-            : false;
-        this.oldGroupingDetails = details;
-        if (skipStage) {
+        if (this.processAfterColumnsChanged(details, afterColumnsChanged)) {
             return;
         }
         // because we are not creating the root node each time, we have the logic
@@ -45904,6 +45920,25 @@ var GroupStage = /** @class */ (function (_super) {
         details.rootNode.childrenMapped = {};
         details.rootNode.updateHasChildren();
         this.insertNodes(details.rootNode.allLeafChildren, details, false);
+    };
+    GroupStage.prototype.processAfterColumnsChanged = function (details, afterColumnsChanged) {
+        var noFurtherProcessingNeeded = false;
+        var groupDisplayColumns = this.columnController.getGroupDisplayColumns();
+        var newGroupDisplayColIds = groupDisplayColumns ?
+            groupDisplayColumns.map(function (c) { return c.getId(); }).join('-') : '';
+        if (afterColumnsChanged) {
+            // we only need to redo grouping if doing normal grouping (ie not tree data)
+            // and the group cols have changed.
+            noFurtherProcessingNeeded = this.usingTreeData || this.areGroupColsEqual(details, this.oldGroupingDetails);
+            // if the group display cols have changed, then we need to update rowNode.groupData
+            // (regardless of tree data or row grouping)
+            if (this.oldGroupDisplayColIds !== newGroupDisplayColIds) {
+                this.checkAllGroupDataAfterColsChanged(details);
+            }
+        }
+        this.oldGroupingDetails = details;
+        this.oldGroupDisplayColIds = newGroupDisplayColIds;
+        return noFurtherProcessingNeeded;
     };
     GroupStage.prototype.insertNodes = function (newRowNodes, details, isMove) {
         var _this = this;
@@ -45980,22 +46015,12 @@ var GroupStage = /** @class */ (function (_super) {
         return nextNode;
     };
     GroupStage.prototype.createGroup = function (groupInfo, parent, level, details) {
-        var _this = this;
         var groupNode = new RowNode();
         this.context.createBean(groupNode);
         groupNode.group = true;
         groupNode.field = groupInfo.field;
         groupNode.rowGroupColumn = groupInfo.rowGroupColumn;
-        groupNode.groupData = {};
-        var groupDisplayCols = this.columnController.getGroupDisplayColumns();
-        groupDisplayCols.forEach(function (col) {
-            // newGroup.rowGroupColumn=null when working off GroupInfo, and we always display the group in the group column
-            // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so
-            var displayGroupForCol = _this.usingTreeData || (groupNode.rowGroupColumn ? col.isRowGroupDisplayed(groupNode.rowGroupColumn.getId()) : false);
-            if (displayGroupForCol) {
-                groupNode.groupData[col.getColId()] = groupInfo.key;
-            }
-        });
+        this.setGroupData(groupNode, groupInfo);
         // we put 'row-group-' before the group id, so it doesn't clash with standard row id's. we also use 't-' and 'b-'
         // for top pinned and bottom pinned rows.
         groupNode.id = RowNode.ID_PREFIX_ROW_GROUP + this.groupIdSequence.next();
@@ -46020,6 +46045,19 @@ var GroupStage = /** @class */ (function (_super) {
         groupNode.updateHasChildren();
         groupNode.parent = details.includeParents ? parent : null;
         return groupNode;
+    };
+    GroupStage.prototype.setGroupData = function (groupNode, groupInfo) {
+        var _this = this;
+        groupNode.groupData = {};
+        var groupDisplayCols = this.columnController.getGroupDisplayColumns();
+        groupDisplayCols.forEach(function (col) {
+            // newGroup.rowGroupColumn=null when working off GroupInfo, and we always display the group in the group column
+            // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so
+            var displayGroupForCol = _this.usingTreeData || (groupNode.rowGroupColumn ? col.isRowGroupDisplayed(groupNode.rowGroupColumn.getId()) : false);
+            if (displayGroupForCol) {
+                groupNode.groupData[col.getColId()] = groupInfo.key;
+            }
+        });
     };
     GroupStage.prototype.getChildrenMappedKey = function (key, rowGroupColumn) {
         if (rowGroupColumn) {

@@ -285,7 +285,7 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
 
     private packageFile(params: ExcelExportMultipleSheetParams): Blob | undefined {
         if (this.getExportMode() === 'xml') {
-            return new Blob(["\ufeff", params.data![0]], {
+            return new Blob(["\ufeff", params.data[0]], {
                 // @ts-ignore
                 type: window.navigator.msSaveOrOpenBlob ? this.getMimeType() : 'octet/stream'
             });

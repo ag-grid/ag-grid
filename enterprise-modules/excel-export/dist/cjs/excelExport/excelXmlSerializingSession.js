@@ -53,10 +53,19 @@ var ExcelXmlSerializingSession = /** @class */ (function (_super) {
         return;
     };
     ExcelXmlSerializingSession.prototype.createCell = function (styleId, type, value) {
-        var _this = this;
         var actualStyle = this.getStyleById(styleId);
         var typeTransformed = (this.getType(type, actualStyle, value) || type);
-        var massageText = function (val) {
+        return {
+            styleId: !!actualStyle ? styleId : undefined,
+            data: {
+                type: typeTransformed,
+                value: this.getValueTransformed(typeTransformed, value)
+            }
+        };
+    };
+    ExcelXmlSerializingSession.prototype.getValueTransformed = function (typeTransformed, value) {
+        var _this = this;
+        var wrapText = function (val) {
             if (_this.config.suppressTextAsCDATA) {
                 return core_1._.escapeString(val);
             }
@@ -76,16 +85,16 @@ var ExcelXmlSerializingSession = /** @class */ (function (_super) {
             }
             return '1';
         };
-        return {
-            styleId: !!actualStyle ? styleId : undefined,
-            data: {
-                type: typeTransformed,
-                value: typeTransformed === 'String' ? massageText(value) :
-                    typeTransformed === 'Number' ? Number(value).valueOf() + '' :
-                        typeTransformed === 'Boolean' ? convertBoolean(value) :
-                            value
-            }
-        };
+        switch (typeTransformed) {
+            case 'String':
+                return wrapText(value);
+            case 'Number':
+                return Number(value).valueOf() + '';
+            case 'Boolean':
+                return convertBoolean(value);
+            default:
+                return value;
+        }
     };
     ExcelXmlSerializingSession.prototype.createMergedCell = function (styleId, type, value, numOfCells) {
         return {

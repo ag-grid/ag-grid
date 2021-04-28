@@ -7,6 +7,7 @@ export declare class GroupStage extends BeanStub implements IRowNodeStage {
     private getDataPath;
     private groupIdSequence;
     private oldGroupingDetails;
+    private oldGroupDisplayColIds;
     private postConstruct;
     execute(params: StageExecuteParams): void;
     private createGroupingDetails;
@@ -25,13 +26,16 @@ export declare class GroupStage extends BeanStub implements IRowNodeStage {
     private removeFromParent;
     private addToParent;
     private areGroupColsEqual;
+    private checkAllGroupDataAfterColsChanged;
     private shotgunResetEverything;
+    private processAfterColumnsChanged;
     private insertNodes;
     private insertOneNode;
     private findParentForNode;
     private swapGroupWithUserNode;
     private getOrCreateNextNode;
     private createGroup;
+    private setGroupData;
     private getChildrenMappedKey;
     private isExpanded;
     private getGroupInfo;

@@ -60,6 +60,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     // for leaf groups, rowNode.childrenAfterGroup = rowNode.allLeafChildren;
 
     private oldGroupingDetails: GroupingDetails;
+    private oldGroupDisplayColIds: string;
 
     @PostConstruct
     private postConstruct(): void {
@@ -387,13 +388,31 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         return _.areEqual(d1.groupedCols, d2.groupedCols);
     }
 
+    private checkAllGroupDataAfterColsChanged(details: GroupingDetails): void {
+
+        const recurse = (rowNodes: RowNode[] | null) => {
+            if (!rowNodes) { return; }
+            rowNodes.forEach( rowNode => {
+                const isLeafNode = !this.usingTreeData && !rowNode.group;
+                if (isLeafNode) { return; }
+                const groupInfo: GroupInfo = {
+                    field: rowNode.field,
+                    key: rowNode.key,
+                    rowGroupColumn: rowNode.rowGroupColumn
+                };
+                this.setGroupData(rowNode, groupInfo);
+                recurse(rowNode.childrenAfterGroup);
+            });
+        };
+
+        recurse(details.rootNode.childrenAfterGroup);
+    }
+
     private shotgunResetEverything(details: GroupingDetails, afterColumnsChanged: boolean): void {
 
-        const skipStage = afterColumnsChanged ?
-            this.usingTreeData || this.areGroupColsEqual(details, this.oldGroupingDetails)
-            : false;
-        this.oldGroupingDetails = details;
-        if (skipStage) { return; }
+        if (this.processAfterColumnsChanged(details, afterColumnsChanged)) {
+            return;
+        }
 
         // because we are not creating the root node each time, we have the logic
         // here to change leafGroup once.
@@ -407,6 +426,31 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         details.rootNode.updateHasChildren();
 
         this.insertNodes(details.rootNode.allLeafChildren, details, false);
+    }
+
+    private processAfterColumnsChanged(details: GroupingDetails, afterColumnsChanged: boolean): boolean {
+        let noFurtherProcessingNeeded = false;
+
+        const groupDisplayColumns = this.columnController.getGroupDisplayColumns();
+        const newGroupDisplayColIds = groupDisplayColumns ?
+            groupDisplayColumns.map( c => c.getId()).join('-') : '';
+
+        if (afterColumnsChanged) {
+            // we only need to redo grouping if doing normal grouping (ie not tree data)
+            // and the group cols have changed.
+            noFurtherProcessingNeeded = this.usingTreeData || this.areGroupColsEqual(details, this.oldGroupingDetails);
+
+            // if the group display cols have changed, then we need to update rowNode.groupData
+            // (regardless of tree data or row grouping)
+            if (this.oldGroupDisplayColIds !== newGroupDisplayColIds) {
+                this.checkAllGroupDataAfterColsChanged(details);
+            }
+        }
+
+        this.oldGroupingDetails = details;
+        this.oldGroupDisplayColIds = newGroupDisplayColIds;
+
+        return noFurtherProcessingNeeded;
     }
 
     private insertNodes(newRowNodes: RowNode[], details: GroupingDetails, isMove: boolean): void {
@@ -507,18 +551,8 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         groupNode.group = true;
         groupNode.field = groupInfo.field;
         groupNode.rowGroupColumn = groupInfo.rowGroupColumn;
-        groupNode.groupData = {};
 
-        const groupDisplayCols: Column[] = this.columnController.getGroupDisplayColumns();
-
-        groupDisplayCols.forEach(col => {
-            // newGroup.rowGroupColumn=null when working off GroupInfo, and we always display the group in the group column
-            // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so
-            const displayGroupForCol = this.usingTreeData || (groupNode.rowGroupColumn ? col.isRowGroupDisplayed(groupNode.rowGroupColumn.getId()) : false);
-            if (displayGroupForCol) {
-                groupNode.groupData[col.getColId()] = groupInfo.key;
-            }
-        });
+        this.setGroupData(groupNode, groupInfo);
 
         // we put 'row-group-' before the group id, so it doesn't clash with standard row id's. we also use 't-' and 'b-'
         // for top pinned and bottom pinned rows.
@@ -551,6 +585,19 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         groupNode.parent = details.includeParents ? parent : null;
 
         return groupNode;
+    }
+
+    private setGroupData(groupNode: RowNode, groupInfo: GroupInfo): void {
+        groupNode.groupData = {};
+        const groupDisplayCols: Column[] = this.columnController.getGroupDisplayColumns();
+        groupDisplayCols.forEach(col => {
+            // newGroup.rowGroupColumn=null when working off GroupInfo, and we always display the group in the group column
+            // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so
+            const displayGroupForCol = this.usingTreeData || (groupNode.rowGroupColumn ? col.isRowGroupDisplayed(groupNode.rowGroupColumn.getId()) : false);
+            if (displayGroupForCol) {
+                groupNode.groupData[col.getColId()] = groupInfo.key;
+            }
+        });
     }
 
     private getChildrenMappedKey(key: string, rowGroupColumn: Column | null): string {

@@ -12813,7 +12813,7 @@ var RowNode = /** @class */ (function () {
                 this.id = getRowNodeId(this.data);
                 // make sure id provided doesn't start with 'row-group-' as this is reserved. also check that
                 // it has 'startsWith' in case the user provided a number.
-                if (this.id && startsWith(this.id, RowNode.ID_PREFIX_ROW_GROUP)) {
+                if (this.id && typeof this.id === 'string' && startsWith(this.id, RowNode.ID_PREFIX_ROW_GROUP)) {
                     console.error("AG Grid: Row ID's cannot start with " + RowNode.ID_PREFIX_ROW_GROUP + ", this is a reserved prefix for AG Grid's row grouping feature.");
                 }
             }
@@ -17150,9 +17150,7 @@ var GridOptionsWrapper = /** @class */ (function () {
         if (usingTreeData) {
             return ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Tree Data');
         }
-        else {
-            return false;
-        }
+        return false;
     };
     GridOptionsWrapper.prototype.isValueCache = function () {
         return isTrue(this.gridOptions.valueCache);
@@ -61402,7 +61400,7 @@ var PieSeries = /** @class */ (function (_super) {
         if (!this.chart) {
             return;
         }
-        var _a = this, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, strokeWidth = _a.strokeWidth, outerRadiusOffset = _a.outerRadiusOffset, radiusScale = _a.radiusScale, callout = _a.callout, shadow = _a.shadow, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke, centerOffset = _b.centerOffset, angleKey = _a.angleKey, radiusKey = _a.radiusKey, formatter = _a.formatter;
+        var _a = this, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, strokeWidth = _a.strokeWidth, radiusScale = _a.radiusScale, callout = _a.callout, shadow = _a.shadow, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke, centerOffset = _b.centerOffset, angleKey = _a.angleKey, radiusKey = _a.radiusKey, formatter = _a.formatter;
         var highlightedDatum = this.chart.highlightedDatum;
         var centerOffsets = [];
         var innerRadius = radiusScale.convert(0);

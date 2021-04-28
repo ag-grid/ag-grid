@@ -61,6 +61,14 @@
           "url": "/charts-api-themes/#chart"
         }
       },
+      "hierarchy": {
+        "type": "IChart",
+        "description": "Specifies defaults for all hierarchy charts (used for treemap series).",
+        "more": {
+          "name": "Chart Configuration",
+          "url": "/charts-api-themes/#chart"
+        }
+      },
       "bar": {
         "type": "IChart",
         "description": "Specifies defaults for bar/column charts.",

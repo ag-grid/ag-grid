@@ -17,11 +17,11 @@ import { XmlFactory } from "@ag-grid-community/csv-export";
 var ExcelXmlFactory = /** @class */ (function () {
     function ExcelXmlFactory() {
     }
-    ExcelXmlFactory.createExcel = function (styles, worksheet) {
+    ExcelXmlFactory.createExcel = function (styles, currentWorksheet) {
         var header = this.excelXmlHeader();
         var docProps = documentProperties.getTemplate();
         var eWorkbook = excelWorkbook.getTemplate();
-        var wb = this.workbook(docProps, eWorkbook, styles, worksheet);
+        var wb = this.workbook(docProps, eWorkbook, styles, currentWorksheet);
         return "" + header + XmlFactory.createXml(wb, function (boolean) { return boolean ? '1' : '0'; });
     };
     ExcelXmlFactory.workbook = function (docProperties, eWorkbook, styles, currentWorksheet) {

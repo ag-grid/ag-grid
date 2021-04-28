@@ -82,11 +82,12 @@ export class ExcelXlsxSerializingSession extends BaseExcelSerializingSession<Exc
     }
 
     protected createMergedCell(styleId: string | null, type: ExcelOOXMLDataType, value: string, numOfCells: number): ExcelCell {
+        const valueToUse = value == null ? '' : value;
         return {
             styleId: !!this.getStyleById(styleId) ? styleId! : undefined,
             data: {
                 type: type,
-                value: type === 's' ? ExcelXlsxFactory.getStringPosition(value == null ? '' : value).toString() : value
+                value: type === 's' ? ExcelXlsxFactory.getStringPosition(valueToUse).toString() : value
             },
             mergeAcross: numOfCells
         };

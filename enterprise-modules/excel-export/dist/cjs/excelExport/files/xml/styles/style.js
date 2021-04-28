@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var style = {
     getTemplate: function (styleProperties) {
-        var _a = styleProperties, id = _a.id, name = _a.name;
+        var id = styleProperties.id, name = styleProperties.name;
         return {
             name: 'Style',
             properties: {

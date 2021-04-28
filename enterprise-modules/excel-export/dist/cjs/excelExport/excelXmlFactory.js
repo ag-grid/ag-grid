@@ -19,11 +19,11 @@ var csv_export_1 = require("@ag-grid-community/csv-export");
 var ExcelXmlFactory = /** @class */ (function () {
     function ExcelXmlFactory() {
     }
-    ExcelXmlFactory.createExcel = function (styles, worksheet) {
+    ExcelXmlFactory.createExcel = function (styles, currentWorksheet) {
         var header = this.excelXmlHeader();
         var docProps = documentProperties_1.default.getTemplate();
         var eWorkbook = excelWorkbook_1.default.getTemplate();
-        var wb = this.workbook(docProps, eWorkbook, styles, worksheet);
+        var wb = this.workbook(docProps, eWorkbook, styles, currentWorksheet);
         return "" + header + csv_export_1.XmlFactory.createXml(wb, function (boolean) { return boolean ? '1' : '0'; });
     };
     ExcelXmlFactory.workbook = function (docProperties, eWorkbook, styles, currentWorksheet) {

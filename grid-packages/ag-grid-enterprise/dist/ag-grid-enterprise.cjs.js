@@ -2301,12 +2301,30 @@ var GroupStage = /** @class */ (function (_super) {
         }
         return agGridCommunity._.areEqual(d1.groupedCols, d2.groupedCols);
     };
+    GroupStage.prototype.checkAllGroupDataAfterColsChanged = function (details) {
+        var _this = this;
+        var recurse = function (rowNodes) {
+            if (!rowNodes) {
+                return;
+            }
+            rowNodes.forEach(function (rowNode) {
+                var isLeafNode = !_this.usingTreeData && !rowNode.group;
+                if (isLeafNode) {
+                    return;
+                }
+                var groupInfo = {
+                    field: rowNode.field,
+                    key: rowNode.key,
+                    rowGroupColumn: rowNode.rowGroupColumn
+                };
+                _this.setGroupData(rowNode, groupInfo);
+                recurse(rowNode.childrenAfterGroup);
+            });
+        };
+        recurse(details.rootNode.childrenAfterGroup);
+    };
     GroupStage.prototype.shotgunResetEverything = function (details, afterColumnsChanged) {
-        var skipStage = afterColumnsChanged ?
-            this.usingTreeData || this.areGroupColsEqual(details, this.oldGroupingDetails)
-            : false;
-        this.oldGroupingDetails = details;
-        if (skipStage) {
+        if (this.processAfterColumnsChanged(details, afterColumnsChanged)) {
             return;
         }
         // because we are not creating the root node each time, we have the logic
@@ -2319,6 +2337,25 @@ var GroupStage = /** @class */ (function (_super) {
         details.rootNode.childrenMapped = {};
         details.rootNode.updateHasChildren();
         this.insertNodes(details.rootNode.allLeafChildren, details, false);
+    };
+    GroupStage.prototype.processAfterColumnsChanged = function (details, afterColumnsChanged) {
+        var noFurtherProcessingNeeded = false;
+        var groupDisplayColumns = this.columnController.getGroupDisplayColumns();
+        var newGroupDisplayColIds = groupDisplayColumns ?
+            groupDisplayColumns.map(function (c) { return c.getId(); }).join('-') : '';
+        if (afterColumnsChanged) {
+            // we only need to redo grouping if doing normal grouping (ie not tree data)
+            // and the group cols have changed.
+            noFurtherProcessingNeeded = this.usingTreeData || this.areGroupColsEqual(details, this.oldGroupingDetails);
+            // if the group display cols have changed, then we need to update rowNode.groupData
+            // (regardless of tree data or row grouping)
+            if (this.oldGroupDisplayColIds !== newGroupDisplayColIds) {
+                this.checkAllGroupDataAfterColsChanged(details);
+            }
+        }
+        this.oldGroupingDetails = details;
+        this.oldGroupDisplayColIds = newGroupDisplayColIds;
+        return noFurtherProcessingNeeded;
     };
     GroupStage.prototype.insertNodes = function (newRowNodes, details, isMove) {
         var _this = this;
@@ -2395,22 +2432,12 @@ var GroupStage = /** @class */ (function (_super) {
         return nextNode;
     };
     GroupStage.prototype.createGroup = function (groupInfo, parent, level, details) {
-        var _this = this;
         var groupNode = new agGridCommunity.RowNode();
         this.context.createBean(groupNode);
         groupNode.group = true;
         groupNode.field = groupInfo.field;
         groupNode.rowGroupColumn = groupInfo.rowGroupColumn;
-        groupNode.groupData = {};
-        var groupDisplayCols = this.columnController.getGroupDisplayColumns();
-        groupDisplayCols.forEach(function (col) {
-            // newGroup.rowGroupColumn=null when working off GroupInfo, and we always display the group in the group column
-            // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so
-            var displayGroupForCol = _this.usingTreeData || (groupNode.rowGroupColumn ? col.isRowGroupDisplayed(groupNode.rowGroupColumn.getId()) : false);
-            if (displayGroupForCol) {
-                groupNode.groupData[col.getColId()] = groupInfo.key;
-            }
-        });
+        this.setGroupData(groupNode, groupInfo);
         // we put 'row-group-' before the group id, so it doesn't clash with standard row id's. we also use 't-' and 'b-'
         // for top pinned and bottom pinned rows.
         groupNode.id = agGridCommunity.RowNode.ID_PREFIX_ROW_GROUP + this.groupIdSequence.next();
@@ -2435,6 +2462,19 @@ var GroupStage = /** @class */ (function (_super) {
         groupNode.updateHasChildren();
         groupNode.parent = details.includeParents ? parent : null;
         return groupNode;
+    };
+    GroupStage.prototype.setGroupData = function (groupNode, groupInfo) {
+        var _this = this;
+        groupNode.groupData = {};
+        var groupDisplayCols = this.columnController.getGroupDisplayColumns();
+        groupDisplayCols.forEach(function (col) {
+            // newGroup.rowGroupColumn=null when working off GroupInfo, and we always display the group in the group column
+            // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so
+            var displayGroupForCol = _this.usingTreeData || (groupNode.rowGroupColumn ? col.isRowGroupDisplayed(groupNode.rowGroupColumn.getId()) : false);
+            if (displayGroupForCol) {
+                groupNode.groupData[col.getColId()] = groupInfo.key;
+            }
+        });
     };
     GroupStage.prototype.getChildrenMappedKey = function (key, rowGroupColumn) {
         if (rowGroupColumn) {
@@ -5671,7 +5711,7 @@ var numberFormat = {
 
 var style = {
     getTemplate: function (styleProperties) {
-        var _a = styleProperties, id = _a.id, name = _a.name;
+        var id = styleProperties.id, name = styleProperties.name;
         return {
             name: 'Style',
             properties: {
@@ -6614,11 +6654,11 @@ var ZipContainer = /** @class */ (function () {
 var ExcelXmlFactory = /** @class */ (function () {
     function ExcelXmlFactory() {
     }
-    ExcelXmlFactory.createExcel = function (styles, worksheet) {
+    ExcelXmlFactory.createExcel = function (styles, currentWorksheet) {
         var header = this.excelXmlHeader();
         var docProps = documentProperties.getTemplate();
         var eWorkbook = excelWorkbook.getTemplate();
-        var wb = this.workbook(docProps, eWorkbook, styles, worksheet);
+        var wb = this.workbook(docProps, eWorkbook, styles, currentWorksheet);
         return "" + header + XmlFactory.createXml(wb, function (boolean) { return boolean ? '1' : '0'; });
     };
     ExcelXmlFactory.workbook = function (docProperties, eWorkbook, styles, currentWorksheet) {
@@ -7062,10 +7102,19 @@ var ExcelXmlSerializingSession = /** @class */ (function (_super) {
         return;
     };
     ExcelXmlSerializingSession.prototype.createCell = function (styleId, type, value) {
-        var _this = this;
         var actualStyle = this.getStyleById(styleId);
         var typeTransformed = (this.getType(type, actualStyle, value) || type);
-        var massageText = function (val) {
+        return {
+            styleId: !!actualStyle ? styleId : undefined,
+            data: {
+                type: typeTransformed,
+                value: this.getValueTransformed(typeTransformed, value)
+            }
+        };
+    };
+    ExcelXmlSerializingSession.prototype.getValueTransformed = function (typeTransformed, value) {
+        var _this = this;
+        var wrapText = function (val) {
             if (_this.config.suppressTextAsCDATA) {
                 return agGridCommunity._.escapeString(val);
             }
@@ -7085,16 +7134,16 @@ var ExcelXmlSerializingSession = /** @class */ (function (_super) {
             }
             return '1';
         };
-        return {
-            styleId: !!actualStyle ? styleId : undefined,
-            data: {
-                type: typeTransformed,
-                value: typeTransformed === 'String' ? massageText(value) :
-                    typeTransformed === 'Number' ? Number(value).valueOf() + '' :
-                        typeTransformed === 'Boolean' ? convertBoolean(value) :
-                            value
-            }
-        };
+        switch (typeTransformed) {
+            case 'String':
+                return wrapText(value);
+            case 'Number':
+                return Number(value).valueOf() + '';
+            case 'Boolean':
+                return convertBoolean(value);
+            default:
+                return value;
+        }
     };
     ExcelXmlSerializingSession.prototype.createMergedCell = function (styleId, type, value, numOfCells) {
         return {
@@ -9022,39 +9071,50 @@ var replaceHeaderFooterTokens = function (value) {
     });
     return value;
 };
+var getHeaderPosition = function (position) {
+    if (position === 'Center') {
+        return 'C';
+    }
+    else if (position === 'Right') {
+        return 'R';
+    }
+    return 'L';
+};
+var applyHeaderFontStyle = function (headerString, font) {
+    if (!font) {
+        return headerString;
+    }
+    headerString += '&amp;&quot;';
+    headerString += font.fontName || 'Calibri';
+    if (font.bold !== font.italic) {
+        headerString += font.bold ? ',Bold' : ',Italic';
+    }
+    else if (font.bold) {
+        headerString += ',Bold Italic';
+    }
+    else {
+        headerString += ',Regular';
+    }
+    headerString += '&quot;';
+    if (font.size) {
+        headerString += "&amp;" + font.size;
+    }
+    if (font.strikeThrough) {
+        headerString += '&amp;S';
+    }
+    if (font.underline) {
+        headerString += "&amp;" + (font.underline === 'Double' ? 'E' : 'U');
+    }
+    if (font.color) {
+        headerString += "&amp;K" + font.color.replace('#', '').toUpperCase();
+    }
+    return headerString;
+};
 var processHeaderFooterContent = function (content) {
     return content.reduce(function (prev, curr) {
-        var pos = curr.position === 'Center' ? 'C' : curr.position === 'Right' ? 'R' : 'L';
-        var output = prev += "&amp;" + pos;
-        var font = curr.font;
-        if (font) {
-            output += '&amp;&quot;';
-            output += font.fontName || 'Calibri';
-            if (font.bold !== font.italic) {
-                output += font.bold ? ',Bold' : ',Italic';
-            }
-            else if (font.bold) {
-                output += ',Bold Italic';
-            }
-            else {
-                output += ',Regular';
-            }
-            output += '&quot;';
-            if (font.size) {
-                output += "&amp;" + font.size;
-            }
-            if (font.strikeThrough) {
-                output += '&amp;S';
-            }
-            if (font.underline) {
-                output += "&amp;" + (font.underline === 'Double' ? 'E' : 'U');
-            }
-            if (font.color) {
-                output += "&amp;K" + font.color.replace('#', '').toUpperCase();
-            }
-        }
-        output += agGridCommunity._.escapeString(replaceHeaderFooterTokens(curr.value));
-        return output;
+        var pos = getHeaderPosition(curr.position);
+        var output = applyHeaderFontStyle(prev + "&amp;" + pos, curr.font);
+        return "" + output + agGridCommunity._.escapeString(replaceHeaderFooterTokens(curr.value));
     }, '');
 };
 var buildHeaderFooter = function (headerFooterConfig) {
@@ -9451,11 +9511,12 @@ var ExcelXlsxSerializingSession = /** @class */ (function (_super) {
         };
     };
     ExcelXlsxSerializingSession.prototype.createMergedCell = function (styleId, type, value, numOfCells) {
+        var valueToUse = value == null ? '' : value;
         return {
             styleId: !!this.getStyleById(styleId) ? styleId : undefined,
             data: {
                 type: type,
-                value: type === 's' ? ExcelXlsxFactory.getStringPosition(value == null ? '' : value).toString() : value
+                value: type === 's' ? ExcelXlsxFactory.getStringPosition(valueToUse).toString() : value
             },
             mergeAcross: numOfCells
         };
@@ -28522,7 +28583,7 @@ var PieSeries = /** @class */ (function (_super) {
         if (!this.chart) {
             return;
         }
-        var _a = this, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, strokeWidth = _a.strokeWidth, outerRadiusOffset = _a.outerRadiusOffset, radiusScale = _a.radiusScale, callout = _a.callout, shadow = _a.shadow, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke, centerOffset = _b.centerOffset, angleKey = _a.angleKey, radiusKey = _a.radiusKey, formatter = _a.formatter;
+        var _a = this, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, strokeWidth = _a.strokeWidth, radiusScale = _a.radiusScale, callout = _a.callout, shadow = _a.shadow, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke, centerOffset = _b.centerOffset, angleKey = _a.angleKey, radiusKey = _a.radiusKey, formatter = _a.formatter;
         var highlightedDatum = this.chart.highlightedDatum;
         var centerOffsets = [];
         var innerRadius = radiusScale.convert(0);

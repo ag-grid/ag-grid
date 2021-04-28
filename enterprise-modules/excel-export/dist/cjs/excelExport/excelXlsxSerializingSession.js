@@ -79,11 +79,12 @@ var ExcelXlsxSerializingSession = /** @class */ (function (_super) {
         };
     };
     ExcelXlsxSerializingSession.prototype.createMergedCell = function (styleId, type, value, numOfCells) {
+        var valueToUse = value == null ? '' : value;
         return {
             styleId: !!this.getStyleById(styleId) ? styleId : undefined,
             data: {
                 type: type,
-                value: type === 's' ? excelXlsxFactory_1.ExcelXlsxFactory.getStringPosition(value == null ? '' : value).toString() : value
+                value: type === 's' ? excelXlsxFactory_1.ExcelXlsxFactory.getStringPosition(valueToUse).toString() : value
             },
             mergeAcross: numOfCells
         };

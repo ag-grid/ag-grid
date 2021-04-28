@@ -52,7 +52,7 @@ var DateTimeListModel = /** @class */ (function () {
             });
         }
         var columns = _.fill(Array(options.columnCount(firstValue)), null)
-            .map(function (_, i) { return ({
+            .map(function (option, i) { return ({
             label: options.columnTitle(entries[i].value),
         }); });
         var titleFormat = new Intl.DateTimeFormat('default', { month: 'long', year: 'numeric' });

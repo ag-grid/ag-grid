@@ -140,39 +140,50 @@ var replaceHeaderFooterTokens = function (value) {
     });
     return value;
 };
+var getHeaderPosition = function (position) {
+    if (position === 'Center') {
+        return 'C';
+    }
+    else if (position === 'Right') {
+        return 'R';
+    }
+    return 'L';
+};
+var applyHeaderFontStyle = function (headerString, font) {
+    if (!font) {
+        return headerString;
+    }
+    headerString += '&amp;&quot;';
+    headerString += font.fontName || 'Calibri';
+    if (font.bold !== font.italic) {
+        headerString += font.bold ? ',Bold' : ',Italic';
+    }
+    else if (font.bold) {
+        headerString += ',Bold Italic';
+    }
+    else {
+        headerString += ',Regular';
+    }
+    headerString += '&quot;';
+    if (font.size) {
+        headerString += "&amp;" + font.size;
+    }
+    if (font.strikeThrough) {
+        headerString += '&amp;S';
+    }
+    if (font.underline) {
+        headerString += "&amp;" + (font.underline === 'Double' ? 'E' : 'U');
+    }
+    if (font.color) {
+        headerString += "&amp;K" + font.color.replace('#', '').toUpperCase();
+    }
+    return headerString;
+};
 var processHeaderFooterContent = function (content) {
     return content.reduce(function (prev, curr) {
-        var pos = curr.position === 'Center' ? 'C' : curr.position === 'Right' ? 'R' : 'L';
-        var output = prev += "&amp;" + pos;
-        var font = curr.font;
-        if (font) {
-            output += '&amp;&quot;';
-            output += font.fontName || 'Calibri';
-            if (font.bold !== font.italic) {
-                output += font.bold ? ',Bold' : ',Italic';
-            }
-            else if (font.bold) {
-                output += ',Bold Italic';
-            }
-            else {
-                output += ',Regular';
-            }
-            output += '&quot;';
-            if (font.size) {
-                output += "&amp;" + font.size;
-            }
-            if (font.strikeThrough) {
-                output += '&amp;S';
-            }
-            if (font.underline) {
-                output += "&amp;" + (font.underline === 'Double' ? 'E' : 'U');
-            }
-            if (font.color) {
-                output += "&amp;K" + font.color.replace('#', '').toUpperCase();
-            }
-        }
-        output += _.escapeString(replaceHeaderFooterTokens(curr.value));
-        return output;
+        var pos = getHeaderPosition(curr.position);
+        var output = applyHeaderFontStyle(prev + "&amp;" + pos, curr.font);
+        return "" + output + _.escapeString(replaceHeaderFooterTokens(curr.value));
     }, '');
 };
 var buildHeaderFooter = function (headerFooterConfig) {

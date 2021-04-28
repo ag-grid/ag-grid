@@ -859,9 +859,7 @@ var GridOptionsWrapper = /** @class */ (function () {
         if (usingTreeData) {
             return ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Tree Data');
         }
-        else {
-            return false;
-        }
+        return false;
     };
     GridOptionsWrapper.prototype.isValueCache = function () {
         return isTrue(this.gridOptions.valueCache);

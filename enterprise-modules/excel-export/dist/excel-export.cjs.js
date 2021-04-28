@@ -12817,7 +12817,7 @@ var RowNode = /** @class */ (function () {
                 this.id = getRowNodeId(this.data);
                 // make sure id provided doesn't start with 'row-group-' as this is reserved. also check that
                 // it has 'startsWith' in case the user provided a number.
-                if (this.id && startsWith(this.id, RowNode.ID_PREFIX_ROW_GROUP)) {
+                if (this.id && typeof this.id === 'string' && startsWith(this.id, RowNode.ID_PREFIX_ROW_GROUP)) {
                     console.error("AG Grid: Row ID's cannot start with " + RowNode.ID_PREFIX_ROW_GROUP + ", this is a reserved prefix for AG Grid's row grouping feature.");
                 }
             }
@@ -17154,9 +17154,7 @@ var GridOptionsWrapper = /** @class */ (function () {
         if (usingTreeData) {
             return ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Tree Data');
         }
-        else {
-            return false;
-        }
+        return false;
     };
     GridOptionsWrapper.prototype.isValueCache = function () {
         return isTrue(this.gridOptions.valueCache);
@@ -43890,7 +43888,7 @@ var numberFormat = {
 
 var style = {
     getTemplate: function (styleProperties) {
-        var _a = styleProperties, id = _a.id, name = _a.name;
+        var id = styleProperties.id, name = styleProperties.name;
         return {
             name: 'Style',
             properties: {
@@ -44833,11 +44831,11 @@ var ZipContainer = /** @class */ (function () {
 var ExcelXmlFactory = /** @class */ (function () {
     function ExcelXmlFactory() {
     }
-    ExcelXmlFactory.createExcel = function (styles, worksheet) {
+    ExcelXmlFactory.createExcel = function (styles, currentWorksheet) {
         var header = this.excelXmlHeader();
         var docProps = documentProperties.getTemplate();
         var eWorkbook = excelWorkbook.getTemplate();
-        var wb = this.workbook(docProps, eWorkbook, styles, worksheet);
+        var wb = this.workbook(docProps, eWorkbook, styles, currentWorksheet);
         return "" + header + XmlFactory.createXml(wb, function (boolean) { return boolean ? '1' : '0'; });
     };
     ExcelXmlFactory.workbook = function (docProperties, eWorkbook, styles, currentWorksheet) {
@@ -45281,10 +45279,19 @@ var ExcelXmlSerializingSession = /** @class */ (function (_super) {
         return;
     };
     ExcelXmlSerializingSession.prototype.createCell = function (styleId, type, value) {
-        var _this = this;
         var actualStyle = this.getStyleById(styleId);
         var typeTransformed = (this.getType(type, actualStyle, value) || type);
-        var massageText = function (val) {
+        return {
+            styleId: !!actualStyle ? styleId : undefined,
+            data: {
+                type: typeTransformed,
+                value: this.getValueTransformed(typeTransformed, value)
+            }
+        };
+    };
+    ExcelXmlSerializingSession.prototype.getValueTransformed = function (typeTransformed, value) {
+        var _this = this;
+        var wrapText = function (val) {
             if (_this.config.suppressTextAsCDATA) {
                 return _.escapeString(val);
             }
@@ -45304,16 +45311,16 @@ var ExcelXmlSerializingSession = /** @class */ (function (_super) {
             }
             return '1';
         };
-        return {
-            styleId: !!actualStyle ? styleId : undefined,
-            data: {
-                type: typeTransformed,
-                value: typeTransformed === 'String' ? massageText(value) :
-                    typeTransformed === 'Number' ? Number(value).valueOf() + '' :
-                        typeTransformed === 'Boolean' ? convertBoolean(value) :
-                            value
-            }
-        };
+        switch (typeTransformed) {
+            case 'String':
+                return wrapText(value);
+            case 'Number':
+                return Number(value).valueOf() + '';
+            case 'Boolean':
+                return convertBoolean(value);
+            default:
+                return value;
+        }
     };
     ExcelXmlSerializingSession.prototype.createMergedCell = function (styleId, type, value, numOfCells) {
         return {
@@ -47241,39 +47248,50 @@ var replaceHeaderFooterTokens = function (value) {
     });
     return value;
 };
+var getHeaderPosition = function (position) {
+    if (position === 'Center') {
+        return 'C';
+    }
+    else if (position === 'Right') {
+        return 'R';
+    }
+    return 'L';
+};
+var applyHeaderFontStyle = function (headerString, font) {
+    if (!font) {
+        return headerString;
+    }
+    headerString += '&amp;&quot;';
+    headerString += font.fontName || 'Calibri';
+    if (font.bold !== font.italic) {
+        headerString += font.bold ? ',Bold' : ',Italic';
+    }
+    else if (font.bold) {
+        headerString += ',Bold Italic';
+    }
+    else {
+        headerString += ',Regular';
+    }
+    headerString += '&quot;';
+    if (font.size) {
+        headerString += "&amp;" + font.size;
+    }
+    if (font.strikeThrough) {
+        headerString += '&amp;S';
+    }
+    if (font.underline) {
+        headerString += "&amp;" + (font.underline === 'Double' ? 'E' : 'U');
+    }
+    if (font.color) {
+        headerString += "&amp;K" + font.color.replace('#', '').toUpperCase();
+    }
+    return headerString;
+};
 var processHeaderFooterContent = function (content) {
     return content.reduce(function (prev, curr) {
-        var pos = curr.position === 'Center' ? 'C' : curr.position === 'Right' ? 'R' : 'L';
-        var output = prev += "&amp;" + pos;
-        var font = curr.font;
-        if (font) {
-            output += '&amp;&quot;';
-            output += font.fontName || 'Calibri';
-            if (font.bold !== font.italic) {
-                output += font.bold ? ',Bold' : ',Italic';
-            }
-            else if (font.bold) {
-                output += ',Bold Italic';
-            }
-            else {
-                output += ',Regular';
-            }
-            output += '&quot;';
-            if (font.size) {
-                output += "&amp;" + font.size;
-            }
-            if (font.strikeThrough) {
-                output += '&amp;S';
-            }
-            if (font.underline) {
-                output += "&amp;" + (font.underline === 'Double' ? 'E' : 'U');
-            }
-            if (font.color) {
-                output += "&amp;K" + font.color.replace('#', '').toUpperCase();
-            }
-        }
-        output += _.escapeString(replaceHeaderFooterTokens(curr.value));
-        return output;
+        var pos = getHeaderPosition(curr.position);
+        var output = applyHeaderFontStyle(prev + "&amp;" + pos, curr.font);
+        return "" + output + _.escapeString(replaceHeaderFooterTokens(curr.value));
     }, '');
 };
 var buildHeaderFooter = function (headerFooterConfig) {
@@ -47670,11 +47688,12 @@ var ExcelXlsxSerializingSession = /** @class */ (function (_super) {
         };
     };
     ExcelXlsxSerializingSession.prototype.createMergedCell = function (styleId, type, value, numOfCells) {
+        var valueToUse = value == null ? '' : value;
         return {
             styleId: !!this.getStyleById(styleId) ? styleId : undefined,
             data: {
                 type: type,
-                value: type === 's' ? ExcelXlsxFactory.getStringPosition(value == null ? '' : value).toString() : value
+                value: type === 's' ? ExcelXlsxFactory.getStringPosition(valueToUse).toString() : value
             },
             mergeAcross: numOfCells
         };
