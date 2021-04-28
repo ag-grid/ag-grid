@@ -74,6 +74,19 @@ This page documents the Excel Export API and Interfaces.
 
 <api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelSheetPageSetup'></api-documentation>
 
+### ExcelHeaderFooterConfig
+
+<api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelHeaderFooterConfig'></api-documentation>
+
+### ExcelHeaderFooter
+
+<api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelHeaderFooter'></api-documentation>
+
+### ExcelHeaderFooterContent
+
+<api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelHeaderFooterContent'></api-documentation>
+
+
 ## Types
 
 ### ExcelDataType

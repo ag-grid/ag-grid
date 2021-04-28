@@ -658,5 +658,46 @@
             ],
             "type": "string"
         }
+    },
+    "excelHeaderFooterConfig": {
+        "all": {
+            "description": "The configuration for header and footer on every page.",
+            "type": "ExcelHeaderFooter"
+        },
+        "first": {
+            "description": "The configuration for header and footer on the first page only.",
+            "type": "ExcelHeaderFooter"
+        },
+        "even": {
+            "description": "The configuration for header and footer on even numbered pages only..",
+            "type": "ExcelHeaderFooter"
+        }
+    },
+    "excelHeaderFooter": {
+        "header": {
+            "description": "An array of maximum 3 items (Left, Center, Right), containing header configurations.",
+            "type": "ExcelHeaderFooterContent[]"
+        },
+        "footer": {
+            "description": "An array of maximum 3 items (Left, Center, Right), containing footer configurations.",
+            "type": "ExcelHeaderFooterContent[]"
+        }
+    },
+    "excelHeaderFooterContent": {
+        "value": {
+            "description": "The value of the text to be included in the header.",
+            "type": "string",
+            "isRequired": true
+        },
+        "position": {
+            "description": "Configures where the text should be added (Left, Center, Right)",
+            "default": "Left",
+            "type": "string",
+            "options": ["Left", "Center", "Right"]
+        },
+        "font": {
+            "description": "The font style of the header/footer value.",
+            "type": "ExcelFont"
+        }
     }
 }
