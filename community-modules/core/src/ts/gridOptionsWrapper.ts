@@ -1234,9 +1234,9 @@ export class GridOptionsWrapper {
 
         if (usingTreeData) {
             return ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Tree Data');
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     public isValueCache(): boolean {
