@@ -579,7 +579,14 @@ export class ChartTheme {
     }
 
     getConfig<T = any>(path: string): T {
-        return getValue(this.config, path);
+        const value = getValue(this.config, path);
+        if (Array.isArray(value)) {
+            return deepMerge([], value, { arrayMerge });
+        }
+        if (isObject(value)) {
+            return deepMerge({}, value, { arrayMerge });
+        }
+        return value;
     }
 
     /**
