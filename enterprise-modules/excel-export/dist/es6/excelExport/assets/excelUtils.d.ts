@@ -1,0 +1,11 @@
+import { Column, RowHeightCallbackParams, XmlElement } from "@ag-grid-community/core";
+import { ExcelCalculatedImage } from "./excelInterfaces";
+export declare const pixelsToPoint: (pixels: number) => number;
+export declare const pointsToPixel: (points: number) => number;
+export declare const pixelsToEMU: (value: number) => number;
+export declare const getFontFamilyId: (name?: string) => number;
+export declare const getHeightFromProperty: (rowIndex: number, height?: number | ((params: RowHeightCallbackParams) => number)) => number;
+export declare const setExcelImageTotalWidth: (image: ExcelCalculatedImage, columnsToExport: Column[]) => void;
+export declare const setExcelImageTotalHeight: (image: ExcelCalculatedImage, rowHeight?: number | ((params: RowHeightCallbackParams) => number)) => void;
+export declare const createXmlPart: (body: XmlElement) => string;
+export declare const getExcelColumnName: (colIdx: number) => string;
