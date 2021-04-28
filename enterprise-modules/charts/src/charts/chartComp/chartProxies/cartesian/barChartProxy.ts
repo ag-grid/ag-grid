@@ -29,41 +29,49 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
     }
 
     protected createChart(): CartesianChart {
-        const { grouping, parentElement } = this.chartProxyParams;
+        const {grouping} = this.chartProxyParams;
         const isColumn = this.isColumnChart();
 
         const options = this.iChartOptions;
-        const { seriesDefaults } = options;
-
         const agChartOptions = options as AgCartesianChartOptions;
 
         if (grouping) {
             agChartOptions.type = 'groupedCategory';
         }
         agChartOptions.autoSize = true;
-        agChartOptions.axes = [{
-            ...(isColumn ? options.xAxis : options.yAxis),
-            position: isColumn ? 'bottom' : 'left',
-            type: grouping ? 'groupedCategory' : 'category'
-        }, {
-            ...(isColumn ? options.yAxis : options.xAxis),
-            position: isColumn ? 'left' : 'bottom',
-            type: 'number'
-        }];
+        agChartOptions.axes = [
+            {
+                ...(isColumn ? options.xAxis : options.yAxis),
+                position: isColumn ? 'bottom' : 'left',
+                type: grouping ? 'groupedCategory' : 'category'
+            },
+            {
+                ...(isColumn ? options.yAxis : options.xAxis),
+                position: isColumn ? 'left' : 'bottom',
+                type: 'number'
+            }
+        ];
+
+        const {chartType} = this;
+        const isGrouped = !this.crossFiltering && (chartType === ChartType.GroupedColumn || chartType === ChartType.GroupedBar);
+        const isNormalized = !this.crossFiltering && (chartType === ChartType.NormalizedColumn || chartType === ChartType.NormalizedBar);
+
+        const {seriesDefaults} = this.iChartOptions;
+
         agChartOptions.series = [{
-            ...this.getSeriesDefaults(),
+            type: isColumn ? 'column' : 'bar',
+            grouped: isGrouped,
+            normalizedTo: isNormalized ? 100 : undefined,
+            ...seriesDefaults,
+            // mapping for ag chart options
             fills: seriesDefaults.fill.colors,
             fillOpacity: seriesDefaults.fill.opacity,
             strokes: seriesDefaults.stroke.colors,
             strokeOpacity: seriesDefaults.stroke.opacity,
             strokeWidth: seriesDefaults.stroke.width,
-            tooltip: {
-                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
-                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
-            }
         }];
 
-        agChartOptions.container = parentElement;
+        agChartOptions.container = this.chartProxyParams.parentElement;
         return AgChart.create(agChartOptions);
     }
 
@@ -106,7 +114,7 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
 
             // hide 'filtered out' legend items
             const colIds = params.fields.map(f => f.colId);
-            barSeries.hideInLegend = colIds.filter(colId => colId.indexOf('-filtered-out') !== - 1);
+            barSeries.hideInLegend = colIds.filter(colId => colId.indexOf('-filtered-out') !== -1);
 
             // sync toggling of legend item with hidden 'filtered out' item
             chart.legend.addEventListener('click', (event: LegendClickEvent) => {
@@ -135,12 +143,12 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
     protected extractIChartOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<BarSeriesOptions> {
         const iChartOptions = super.extractIChartOptionsFromTheme(theme);
 
-        const { chartType: integratedChartType } = this;
+        const {chartType: integratedChartType} = this;
         const standaloneChartType = this.getStandaloneChartType();
 
         const seriesType = integratedChartType === ChartType.GroupedBar
-            || integratedChartType === ChartType.StackedBar
-            || integratedChartType === ChartType.NormalizedBar ? 'bar' : 'column';
+        || integratedChartType === ChartType.StackedBar
+        || integratedChartType === ChartType.NormalizedBar ? 'bar' : 'column';
 
         const themeSeriesDefaults = theme.getConfig<AgBarSeriesOptions>(standaloneChartType + '.series.' + seriesType);
 
@@ -169,6 +177,11 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
         return iChartOptions;
     }
 
+    private isColumnChart(): boolean {
+        return _.includes([ChartType.Column, ChartType.GroupedColumn, ChartType.StackedColumn, ChartType.NormalizedColumn], this.chartType);
+    }
+
+    // TODO: should be removed along with processChartOptions()
     protected getDefaultOptions(): CartesianChartOptions<BarSeriesOptions> {
         const fontOptions = this.getDefaultFontOptions();
         const options = this.getDefaultCartesianChartOptions() as CartesianChartOptions<BarSeriesOptions>;
@@ -186,23 +199,5 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
         };
 
         return options;
-    }
-
-    private isColumnChart(): boolean {
-        return _.includes([ChartType.Column, ChartType.GroupedColumn, ChartType.StackedColumn, ChartType.NormalizedColumn], this.chartType);
-    }
-
-    private getSeriesDefaults(): any {
-        const { chartType } = this;
-        const isColumn = this.isColumnChart();
-        const isGrouped = !this.crossFiltering && (chartType === ChartType.GroupedColumn || chartType === ChartType.GroupedBar);
-        const isNormalized = !this.crossFiltering && (chartType === ChartType.NormalizedColumn || chartType === ChartType.NormalizedBar);
-
-        return {
-            ...this.iChartOptions.seriesDefaults,
-            type: isColumn ? 'column' : 'bar',
-            grouped: isGrouped,
-            normalizedTo: isNormalized ? 100 : undefined,
-        };
     }
 }

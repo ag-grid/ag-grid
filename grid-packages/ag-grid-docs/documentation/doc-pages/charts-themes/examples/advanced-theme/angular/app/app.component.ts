@@ -95,7 +95,7 @@ var myTheme = {
             series: {
                 line: {
                     marker: {
-                        shape: 'plus'
+                        shape: 'circle'
                     }
                 },
                 column: {

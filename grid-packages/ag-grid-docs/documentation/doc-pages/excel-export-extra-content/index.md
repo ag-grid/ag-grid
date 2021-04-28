@@ -18,21 +18,33 @@ Note the following:
 
 ## Adding Headers and Footers
 
-These are used for printing and exporting to pdf.
+Extra content can also be added in a form of Headers and Footers. These are only visible when printing or exporting from Excel to PDF.
 
-- const rules: ['all', 'first', 'even'] = ['all', 'first', 'even'];
+To use export headers and footers, the `headerFooterConfig: ExcelHeaderFooterConfig` object should be configured.
 
-- '&[Page]': '&P',
-- '&[Pages]': '&N',
-- '&[Date]': '&D',
-- '&[Time]': '&T',
-- '&[Tab]': '&A',
-- '&[Path]': '&Z',
-- '&[File]': '&F'
+The header and footer object accepts some special configs as follows: 
 
-Note: you will need to open the Header Footer menu
+- `&[Page]`: Prints the current page number.
+- `&[Pages]`: Prints the total number of pages.
+- `&[Date]`: Prints the current date.
+- `&[Time]`: Prints the current time.
+- `&[Tab]`: Prints the current sheet name.
+- `&[Path]`: Prints the file path.
+- `&[File]`: Prints the file name.
 
 <grid-example title='Excel Export - Custom Header and Footer' name='excel-export-header-footer' type='generated' options='{ "enterprise": true, "exampleHeight": 815 }'></grid-example>
+
+### ExcelHeaderFooterConfig
+
+<api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelHeaderFooterConfig'></api-documentation>
+
+### ExcelHeaderFooter
+
+<api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelHeaderFooter'></api-documentation>
+
+### ExcelHeaderFooterContent
+
+<api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelHeaderFooterContent'></api-documentation>
 
 ## Export Cover Page
 <grid-example title='Excel Export - Cover Page' name='excel-export-cover-page' type='generated' options='{ "enterprise": true }'></grid-example>

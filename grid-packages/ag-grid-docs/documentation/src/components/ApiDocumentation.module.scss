@@ -28,6 +28,9 @@
     &__expander-cell {
         padding: 0 !important;
         width: 0.65rem !important;
+        + td {
+            width: 280px;
+        }
     }
 
     &__expander {
