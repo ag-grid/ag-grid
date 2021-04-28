@@ -3,6 +3,8 @@ title: "Excel Export - Columns"
 enterprise: true
 ---
 
+Excel Export exports the grid as you see it by default. However, it also allows for columns headers not to be export, or to select which columns should be exported.
+
 ## Column Headers
 
 In some situations, you could be interested in exporting only the grid data, without exporting the header cells. For this scenario, we provide the `skipColumnGroupHeaders=true` and `skipColumnHeaders=true` params.
