@@ -132,7 +132,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
 
     protected onDragStart(e: MouseEvent) {
         this.cellHoverListener = this.addManagedListener(
-            this.controllersService.getGridCompController().getRootGui(),
+            this.controllersService.getGridCompController().getGui(),
             'mousemove',
             this.updateValuesOnMove.bind(this)
         );
