@@ -51,11 +51,11 @@ var GridCompController = /** @class */ (function (_super) {
             this.clipboardService.registerGridCompController(this);
         }
     };
-    GridCompController.prototype.setView = function (view, eGridDiv, eGridComp) {
+    GridCompController.prototype.setView = function (view, eGridDiv, eGui) {
         var _this = this;
         this.view = view;
         this.eGridHostDiv = eGridDiv;
-        this.eGridComp = eGridComp;
+        this.eGui = eGui;
         this.mouseEventService.stampTopLevelGridCompWithGridInstance(eGridDiv);
         this.createManagedBean(new layoutFeature_1.LayoutFeature(this.view));
         // important to set rtl before doLayout, as setting the RTL class impacts the scroll position,
@@ -100,8 +100,8 @@ var GridCompController = /** @class */ (function (_super) {
     GridCompController.prototype.destroyGridUi = function () {
         this.view.destroyGridUi();
     };
-    GridCompController.prototype.getRootGui = function () {
-        return this.eGridComp;
+    GridCompController.prototype.getGui = function () {
+        return this.eGui;
     };
     GridCompController.prototype.focusNextInnerContainer = function (backwards) {
         var focusableContainers = this.view.getFocusableContainers();

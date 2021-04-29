@@ -9324,7 +9324,7 @@ var GridComp = /** @class */ (function (_super) {
         this.con = this.createManagedBean(new _gridCompController__WEBPACK_IMPORTED_MODULE_6__[/* GridCompController */ "a"]());
         var template = this.createTemplate();
         this.setTemplate(template);
-        this.con.setView(view, this.getGui(), this.eGridDiv);
+        this.con.setView(view, this.eGridDiv, this.getGui());
         this.insertGridIntoDom();
         _super.prototype.postConstruct.call(this);
     };
@@ -11038,7 +11038,7 @@ var GridOptionsWrapper = /** @class */ (function () {
         if (type === 'csv' && this.gridOptions.defaultCsvExportParams) {
             return this.gridOptions.defaultCsvExportParams;
         }
-        else if (type === 'excel' && this.gridOptions.defaultExcelExportParams) {
+        if (type === 'excel' && this.gridOptions.defaultExcelExportParams) {
             return this.gridOptions.defaultExcelExportParams;
         }
     };
@@ -16049,7 +16049,8 @@ var Column = /** @class */ (function () {
                 }
             }, key);
         }
-        if (!_modules_moduleRegistry__WEBPACK_IMPORTED_MODULE_4__[/* ModuleRegistry */ "a"].isRegistered(_modules_moduleNames__WEBPACK_IMPORTED_MODULE_3__[/* ModuleNames */ "a"].RowGroupingModule)) {
+        var usingCSRM = this.gridOptionsWrapper.isRowModelDefault();
+        if (usingCSRM && !_modules_moduleRegistry__WEBPACK_IMPORTED_MODULE_4__[/* ModuleRegistry */ "a"].isRegistered(_modules_moduleNames__WEBPACK_IMPORTED_MODULE_3__[/* ModuleNames */ "a"].RowGroupingModule)) {
             var rowGroupingItems = ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'enableValue', 'pivot', 'pivotIndex', 'aggFunc'];
             rowGroupingItems.forEach(function (item) {
                 if (Object(_utils_generic__WEBPACK_IMPORTED_MODULE_5__["exists"])(colDefAny[item])) {
@@ -18231,7 +18232,7 @@ var PopupService = /** @class */ (function (_super) {
         if (ePopupParent) {
             return ePopupParent;
         }
-        return this.gridCompController.getRootGui();
+        return this.gridCompController.getGui();
     };
     PopupService.prototype.positionPopupForMenu = function (params) {
         var sourceRect = params.eventSource.getBoundingClientRect();
@@ -36874,7 +36875,10 @@ function capitalise(str) {
     return str[0].toUpperCase() + str.substr(1).toLowerCase();
 }
 function escapeString(toEscape) {
-    return toEscape == null ? null : toEscape.toString().replace(reUnescapedHtml, function (chr) { return HTML_ESCAPES[chr]; });
+    // we call toString() twice, in case value is an object, where user provides
+    // a toString() method, and first call to toString() returns back something other
+    // than a string (eg a number to render)
+    return toEscape == null ? null : toEscape.toString().toString().replace(reUnescapedHtml, function (chr) { return HTML_ESCAPES[chr]; });
 }
 /**
  * Converts a camelCase string into regular text
@@ -42715,9 +42719,11 @@ var rowContainerComp_RowContainerComp = /** @class */ (function (_super) {
         };
         var doesRowMatch = function (rowCon) {
             var fullWidthController = rowCon.isFullWidth();
+            var printLayout = _this.gridOptionsWrapper.getDomLayout() === constants["a" /* Constants */].DOM_LAYOUT_PRINT;
+            var embedFW = _this.embedFullWidthRows || printLayout;
             var match = fullWithContainer ?
-                !_this.embedFullWidthRows && fullWidthController
-                : _this.embedFullWidthRows || !fullWidthController;
+                !embedFW && fullWidthController
+                : embedFW || !fullWidthController;
             return match;
         };
         var rowConsToRender = this.getRowCons();
@@ -49498,11 +49504,11 @@ var GridCompController = /** @class */ (function (_super) {
             this.clipboardService.registerGridCompController(this);
         }
     };
-    GridCompController.prototype.setView = function (view, eGridDiv, eGridComp) {
+    GridCompController.prototype.setView = function (view, eGridDiv, eGui) {
         var _this = this;
         this.view = view;
         this.eGridHostDiv = eGridDiv;
-        this.eGridComp = eGridComp;
+        this.eGui = eGui;
         this.mouseEventService.stampTopLevelGridCompWithGridInstance(eGridDiv);
         this.createManagedBean(new _styling_layoutFeature__WEBPACK_IMPORTED_MODULE_4__[/* LayoutFeature */ "b"](this.view));
         // important to set rtl before doLayout, as setting the RTL class impacts the scroll position,
@@ -49547,8 +49553,8 @@ var GridCompController = /** @class */ (function (_super) {
     GridCompController.prototype.destroyGridUi = function () {
         this.view.destroyGridUi();
     };
-    GridCompController.prototype.getRootGui = function () {
-        return this.eGridComp;
+    GridCompController.prototype.getGui = function () {
+        return this.eGui;
     };
     GridCompController.prototype.focusNextInnerContainer = function (backwards) {
         var focusableContainers = this.view.getFocusableContainers();

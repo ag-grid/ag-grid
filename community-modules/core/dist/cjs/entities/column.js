@@ -181,7 +181,8 @@ var Column = /** @class */ (function () {
                 }
             }, key);
         }
-        if (!moduleRegistry_1.ModuleRegistry.isRegistered(moduleNames_1.ModuleNames.RowGroupingModule)) {
+        var usingCSRM = this.gridOptionsWrapper.isRowModelDefault();
+        if (usingCSRM && !moduleRegistry_1.ModuleRegistry.isRegistered(moduleNames_1.ModuleNames.RowGroupingModule)) {
             var rowGroupingItems = ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'enableValue', 'pivot', 'pivotIndex', 'aggFunc'];
             rowGroupingItems.forEach(function (item) {
                 if (generic_1.exists(colDefAny[item])) {

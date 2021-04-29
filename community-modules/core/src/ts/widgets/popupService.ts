@@ -102,7 +102,7 @@ export class PopupService extends BeanStub {
 
         if (ePopupParent) { return ePopupParent; }
 
-        return this.gridCompController.getRootGui();
+        return this.gridCompController.getGui();
     }
 
     public positionPopupForMenu(params: { eventSource: HTMLElement, ePopup: HTMLElement; }): void {

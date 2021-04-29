@@ -168,7 +168,10 @@ function capitalise(str) {
 }
 exports.capitalise = capitalise;
 function escapeString(toEscape) {
-    return toEscape == null ? null : toEscape.toString().replace(reUnescapedHtml, function (chr) { return HTML_ESCAPES[chr]; });
+    // we call toString() twice, in case value is an object, where user provides
+    // a toString() method, and first call to toString() returns back something other
+    // than a string (eg a number to render)
+    return toEscape == null ? null : toEscape.toString().toString().replace(reUnescapedHtml, function (chr) { return HTML_ESCAPES[chr]; });
 }
 exports.escapeString = escapeString;
 /**

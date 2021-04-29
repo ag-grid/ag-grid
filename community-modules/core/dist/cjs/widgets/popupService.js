@@ -55,7 +55,7 @@ var PopupService = /** @class */ (function (_super) {
         if (ePopupParent) {
             return ePopupParent;
         }
-        return this.gridCompController.getRootGui();
+        return this.gridCompController.getGui();
     };
     PopupService.prototype.positionPopupForMenu = function (params) {
         var sourceRect = params.eventSource.getBoundingClientRect();

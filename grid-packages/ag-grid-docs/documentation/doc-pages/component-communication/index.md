@@ -16,11 +16,11 @@ frameworks: ["angular", "vue"]
 |import CubeComponent from './CubeComponent';
 |
 |@Component({
-|selector: 'app-root',
-|template: `
-|   <ag-grid-angular [context]="context" ...other properties>
-|   </ag-grid-angular>
-|`
+|   selector: 'app-root',
+|   template: `
+|       <ag-grid-angular [context]="context" ...other properties>
+|       </ag-grid-angular>
+|   `
 |})
 |export class AppComponent {
 |   constructor() {
@@ -36,10 +36,10 @@ frameworks: ["angular", "vue"]
 |}
 |
 |@Component({
-|selector: 'cell-renderer',
-|template: `
-|   ...component template...
-|`
+|   selector: 'cell-renderer',
+|   template: `
+|       ...component template...
+|   `
 |})
 |export class CellRendererComponent {
 |   params: any;

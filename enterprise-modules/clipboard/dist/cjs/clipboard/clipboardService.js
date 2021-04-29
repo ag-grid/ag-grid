@@ -570,7 +570,7 @@ var ClipboardService = /** @class */ (function (_super) {
         eTempInput.style.left = eDoc.documentElement.scrollLeft + 'px';
         eTempInput.style.position = 'absolute';
         eTempInput.style.opacity = '0';
-        var guiRoot = this.gridCompController.getRootGui();
+        var guiRoot = this.gridCompController.getGui();
         guiRoot.appendChild(eTempInput);
         try {
             callbackNow(eTempInput);

@@ -1,15 +1,4 @@
-var columnDefs = [
-    { field: 'athlete', minWidth: 200 },
-    { field: 'country', minWidth: 200, },
-
-    { field: 'sport', minWidth: 150 },
-    { field: 'gold', hide: true },
-    { field: 'silver', hide: true },
-    { field: 'bronze', hide: true },
-    { field: 'total', hide: true }
-];
-
-var gridOptions = {
+const gridOptions = {
     defaultColDef: {
         sortable: true,
         filter: true,
@@ -18,66 +7,77 @@ var gridOptions = {
         flex: 1
     },
 
-    columnDefs: columnDefs,
-
-    rowData: [
-        { 'athlete': 'Eamon Sullivan', 'country': 'Australia', 'sport': 'Swimming', 'gold': 0,' silver': 2, 'bronze': 1, 'total':3 },
-        { 'athlete': 'Dara Torres', 'country': 'United States', 'sport': 'Swimming', 'gold': 0,' silver': 3, 'bronze': 0, 'total':3 },
-        { 'athlete': 'Amanda Beard', 'country': 'United States', 'sport': 'Swimming', 'gold': 1,' silver': 2, 'bronze': 0, 'total':3 },
-        { 'athlete': 'Antje Buschschulte', 'country': 'Germany', 'sport': 'Swimming', 'gold': 0,' silver': 0, 'bronze': 3, 'total':3 },
-        { 'athlete': 'Kirsty Coventry', 'country': 'Zimbabwe', 'sport': 'Swimming', 'gold': 1,' silver': 1, 'bronze': 1, 'total':3 },
-        { 'athlete': 'Ian Crocker', 'country': 'United States', 'sport': 'Swimming', 'gold': 1,' silver': 1, 'bronze': 1, 'total':3 },
-        { 'athlete': 'Grant Hackett', 'country': 'Australia', 'sport': 'Swimming', 'gold': 1,' silver': 2, 'bronze': 0, 'total':3 },
-        { 'athlete': 'Brendan Hansen', 'country': 'United States', 'sport': 'Swimming', 'gold': 1,' silver': 1, 'bronze': 1, 'total':3 },
-        { 'athlete': 'Jodie Henry', 'country': 'Australia', 'sport': 'Swimming', 'gold': 3,' silver': 0, 'bronze': 0, 'total':3 },
-        { 'athlete': 'Otylia Jedrzejczak', 'country': 'Poland', 'sport': 'Swimming', 'gold': 1,' silver': 2, 'bronze': 0, 'total':3 },
-        { 'athlete': 'Leisel Jones', 'country': 'Australia', 'sport': 'Swimming', 'gold': 1,' silver': 1, 'bronze': 1, 'total':3 },
-        { 'athlete': 'Kosuke Kitajima', 'country': 'Japan', 'sport': 'Swimming', 'gold': 2,' silver': 0, 'bronze': 1, 'total': 3}
+    columnDefs: [
+        { field: 'athlete', minWidth: 200 },
+        { field: 'country', minWidth: 200, },
+        { field: 'sport', minWidth: 150 },
+        { field: 'gold', hide: true },
+        { field: 'silver', hide: true },
+        { field: 'bronze', hide: true },
+        { field: 'total', hide: true }
     ],
 
-    excelStyles: [{
-        id: 'cover',
-        font: {
-            size: 26,
-            bold: true
+    excelStyles: [
+        {
+            id: 'coverHeading',
+            font: {
+                size: 26,
+                bold: true,
+            },
+        },
+        {
+            id: 'coverText',
+            font: {
+                size: 14,
+            }
         }
-    }]
+    ]
 };
 
 
-function onBtExport() {
-    var spreadsheets = [];
+const onBtExport = () => {
+    const spreadsheets = [];
 
-    var filterInstance = gridOptions.api.getFilterInstance('athlete');
+    //set a filter condition ensuring no records are returned so only the header content is exported
+    const filterInstance = gridOptions.api.getFilterInstance('athlete');
 
     filterInstance.setModel({
-        values: [] 
+      values: [],
     });
+
     gridOptions.api.onFilterChanged();
-
-    spreadsheets.push(gridOptions.api.getSheetDataForExcel({
-        customHeader:[
-            [{ styleId: 'cover', data: { value: 'AG Grid', type: 'String' }}]
+  
+    //export custom content for cover page
+    spreadsheets.push(
+      gridOptions.api.getSheetDataForExcel({
+        prependContent: [
+          [{ styleId: 'coverHeading', mergeAcross: 3, data: { value: 'AG Grid', type: 'String',} }],
+          [{ styleId: 'coverHeading', mergeAcross: 3 , data: { value: '', type: 'String', } }],
+          [{ styleId: 'coverText', mergeAcross: 3, data: { value: 'Data shown lists Olympic medal winners for years 2000-2012', type: 'String',  } }],
+          [{ styleId: 'coverText', data: { value: 'This data includes a row for each participation record - athlete name, country, year, sport, count of gold, silver, bronze medals won during the sports event', type: 'String',  } }],
         ],
-        processHeaderCallback: function() {
-            return ''
-        },
-        sheetName: 'cover'
-    }));
-
+        processHeaderCallback: () => '',
+        sheetName: 'cover',
+      })
+    );
+  
+    //remove filter condition set above so all the grid data can be exported on a separate sheet
     filterInstance.setModel(null);
     gridOptions.api.onFilterChanged();
-
+  
     spreadsheets.push(gridOptions.api.getSheetDataForExcel());
-
+  
     gridOptions.api.exportMultipleSheetsAsExcel({
-        data: spreadsheets,
-        fileName: 'ag-grid.xlsx'
+      data: spreadsheets,
+      fileName: 'ag-grid.xlsx',
     });
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
-    var gridDiv = document.querySelector('#myGrid');
+document.addEventListener('DOMContentLoaded', () => {
+    const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
+
+    agGrid.simpleHttpRequest({url: 'https://www.ag-grid.com/example-assets/small-olympic-winners.json'})
+    .then((data) => gridOptions.api.setRowData(data.filter(rec => rec.country != null)));
 });

@@ -231,9 +231,11 @@ var RowContainerComp = /** @class */ (function (_super) {
         };
         var doesRowMatch = function (rowCon) {
             var fullWidthController = rowCon.isFullWidth();
+            var printLayout = _this.gridOptionsWrapper.getDomLayout() === constants_1.Constants.DOM_LAYOUT_PRINT;
+            var embedFW = _this.embedFullWidthRows || printLayout;
             var match = fullWithContainer ?
-                !_this.embedFullWidthRows && fullWidthController
-                : _this.embedFullWidthRows || !fullWidthController;
+                !embedFW && fullWidthController
+                : embedFW || !fullWidthController;
             return match;
         };
         var rowConsToRender = this.getRowCons();

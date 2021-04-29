@@ -22,26 +22,18 @@ var gridOptions = {
     ]
 };
 
-function getValue(inputSelector) {
-    var text = document.querySelector(inputSelector).value;
-    switch (text) {
-        case 'none':
-            return;
-        case 'true':
-            return true;
-        default:
-            return text;
-    }
+function getBoolean(inputSelector) {
+    return !!document.querySelector(inputSelector).checked;
 }
 
 function getParams() {
     return {
-        suppressQuotes: getValue('#suppressQuotes')
+        suppressQuotes: getBoolean('#suppressQuotes')
     };
 }
 
 function onBtnExport() {
-    var params = getParams();
+    const params = getParams();
     if (params.suppressQuotes) {
         alert('NOTE: you are downloading a file with non-standard quotes - it may not render correctly in Excel.');
     }

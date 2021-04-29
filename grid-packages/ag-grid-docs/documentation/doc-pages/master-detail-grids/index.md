@@ -82,7 +82,7 @@ For comparison, the default template is as follows. It is simplistic, only inten
     <div ref="eDetailGrid" class="ag-details-grid ag-details-grid-fixed-height"/>
 </div>
 
-<!-- for when auto-height (detailCellRendererParams.autoHeight=true) -->
+<!-- for when auto-height (detailRowAutoHeight=true) -->
 <div class="ag-details-row ag-details-row-auto-height">
     <div ref="eDetailGrid" class="ag-details-grid ag-details-grid-auto-height"/>
 </div>

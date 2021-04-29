@@ -25,11 +25,11 @@ export declare class GridCompController extends BeanStub {
     private mouseEventService;
     private view;
     private eGridHostDiv;
-    private eGridComp;
+    private eGui;
     private logger;
     constructor();
     protected postConstruct(): void;
-    setView(view: GridCompView, eGridDiv: HTMLElement, eGridComp: HTMLElement): void;
+    setView(view: GridCompView, eGridDiv: HTMLElement, eGui: HTMLElement): void;
     showDropZones(): boolean;
     showSideBar(): boolean;
     showStatusBar(): boolean;
@@ -37,7 +37,7 @@ export declare class GridCompController extends BeanStub {
     private onGridSizeChanged;
     private addRtlSupport;
     destroyGridUi(): void;
-    getRootGui(): HTMLElement;
+    getGui(): HTMLElement;
     focusNextInnerContainer(backwards: boolean): boolean;
     focusGridHeader(): boolean;
     forceFocusOutOfContainer(up?: boolean): void;

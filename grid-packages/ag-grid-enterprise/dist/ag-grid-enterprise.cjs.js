@@ -39161,7 +39161,7 @@ var AbstractSelectionHandle = /** @class */ (function (_super) {
         e.stopPropagation();
     };
     AbstractSelectionHandle.prototype.onDragStart = function (e) {
-        this.cellHoverListener = this.addManagedListener(this.controllersService.getGridCompController().getRootGui(), 'mousemove', this.updateValuesOnMove.bind(this));
+        this.cellHoverListener = this.addManagedListener(this.controllersService.getGridCompController().getGui(), 'mousemove', this.updateValuesOnMove.bind(this));
         agGridCommunity._.addCssClass(document.body, this.getDraggingCssClass());
     };
     AbstractSelectionHandle.prototype.getDraggingCssClass = function () {
@@ -48317,7 +48317,7 @@ var ClipboardService = /** @class */ (function (_super) {
         eTempInput.style.left = eDoc.documentElement.scrollLeft + 'px';
         eTempInput.style.position = 'absolute';
         eTempInput.style.opacity = '0';
-        var guiRoot = this.gridCompController.getRootGui();
+        var guiRoot = this.gridCompController.getGui();
         guiRoot.appendChild(eTempInput);
         try {
             callbackNow(eTempInput);

@@ -91,7 +91,7 @@ var AbstractSelectionHandle = /** @class */ (function (_super) {
         e.stopPropagation();
     };
     AbstractSelectionHandle.prototype.onDragStart = function (e) {
-        this.cellHoverListener = this.addManagedListener(this.controllersService.getGridCompController().getRootGui(), 'mousemove', this.updateValuesOnMove.bind(this));
+        this.cellHoverListener = this.addManagedListener(this.controllersService.getGridCompController().getGui(), 'mousemove', this.updateValuesOnMove.bind(this));
         _.addCssClass(document.body, this.getDraggingCssClass());
     };
     AbstractSelectionHandle.prototype.getDraggingCssClass = function () {

@@ -52,7 +52,7 @@ var GridComp = /** @class */ (function (_super) {
         this.con = this.createManagedBean(new GridCompController());
         var template = this.createTemplate();
         this.setTemplate(template);
-        this.con.setView(view, this.getGui(), this.eGridDiv);
+        this.con.setView(view, this.eGridDiv, this.getGui());
         this.insertGridIntoDom();
         _super.prototype.postConstruct.call(this);
     };

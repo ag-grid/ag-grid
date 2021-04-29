@@ -179,7 +179,8 @@ var Column = /** @class */ (function () {
                 }
             }, key);
         }
-        if (!ModuleRegistry.isRegistered(ModuleNames.RowGroupingModule)) {
+        var usingCSRM = this.gridOptionsWrapper.isRowModelDefault();
+        if (usingCSRM && !ModuleRegistry.isRegistered(ModuleNames.RowGroupingModule)) {
             var rowGroupingItems = ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'enableValue', 'pivot', 'pivotIndex', 'aggFunc'];
             rowGroupingItems.forEach(function (item) {
                 if (exists(colDefAny[item])) {

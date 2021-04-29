@@ -802,7 +802,7 @@ var GridOptionsWrapper = /** @class */ (function () {
         if (type === 'csv' && this.gridOptions.defaultCsvExportParams) {
             return this.gridOptions.defaultCsvExportParams;
         }
-        else if (type === 'excel' && this.gridOptions.defaultExcelExportParams) {
+        if (type === 'excel' && this.gridOptions.defaultExcelExportParams) {
             return this.gridOptions.defaultExcelExportParams;
         }
     };
