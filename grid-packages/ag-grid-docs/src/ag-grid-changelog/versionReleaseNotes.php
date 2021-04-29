@@ -1,3 +1,33 @@
+<div class="note" style="display: none" fixVersionNote id="fix_version_25_2_0">
+    <p><b>Release 25.2.0 (30th Apr 2021)</b></p>
+
+    <p>Minor release with bug fixes.</p>
+
+    <p><b>Feature Highlights:</b></p>
+
+    <ul>
+          <li>Excel Export Enhancements</li>
+          <ul>
+            <li>AG-2432 - Allow exporting images to Excel in the exported grid data cells</li>
+            <li>AG-1504 - Add author value to generated XML Excel to avoid edit error</li>
+            <li>AG-2553 - Allow customising of group column headers when exporting to Excel</li>
+            <li>AG-2333 - Allow inserting hyperlinks in the cells of the exported Excel file</li>
+            <li>AG-2303 - Allow exporting formulas to Excel</li>
+            <li>AG-5178 - Allow exporting an image in Excel export above and below the grid</li>
+            <li>AG-3439 - Allow carriage-returns / multiple line formatting when exporting to Excel</li>
+            <li>AG-3833 - Allow column spanning with Excel export</li>
+            <li>AG-5109 - Allow column spanning with ExcelAdd property to change the default font size</li>
+            <li>AG-2370 - Allow exporting multiple grids to a single Excel file by supporting multiple sheets</li>
+            <li>AG-5179 - Allow setting page size and layout orientation for the Excel export file</li>
+            <li>AG-5217 - Add support for Headers and Footers in the Excel export</li>
+            <li>AG-4471 - Allow exporting cell date-type values to Excel date format</li>
+            (see <a rel="nofollow" href="https://www.ag-grid.com/archive/25.2.0/react-grid/excel-export/">Excel Export</a>)
+          </ul>
+        <li>AG-3379 - Logarithmic Charts (see <a rel="nofollow" href="https://www.ag-grid.com/archive/25.2.0/react-charts/axes/#log-axis">Log Axis</a>)</li>
+    </ul>
+</div>
+
+
 <div class="note" style="display: none" fixVersionNote id="fix_version_25_1_0">
     <p><b>Release 25.1.0 (19th Feb 2021)</b></p>
 
