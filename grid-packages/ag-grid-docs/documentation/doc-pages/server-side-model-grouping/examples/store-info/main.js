@@ -33,7 +33,7 @@ var gridOptions = {
         if (noGroupingActive) {
             res = {
                 // infinite scrolling
-                storeType: 'infinite',
+                storeType: 'partial',
                 // 100 rows per block
                 cacheBlockSize: 100,
                 // purge blocks that are not needed
@@ -42,7 +42,7 @@ var gridOptions = {
         } else {
             var topLevelRows = params.level == 0;
             res = {
-                storeType: topLevelRows ? 'full' : 'infinite',
+                storeType: topLevelRows ? 'full' : 'partial',
                 cacheBlockSize: params.level == 1 ? 5 : 2,
                 maxBlocksInCache: -1 // never purge blocks
             };
@@ -56,8 +56,7 @@ var gridOptions = {
 
     suppressAggFuncInHeader: true,
 
-    animateRows: true,
-    // debug: true,
+    animateRows: true
 };
 
 function onBtStoreState() {
