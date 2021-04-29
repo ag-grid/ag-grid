@@ -1,6 +1,7 @@
 var columnDefs = [
     {
         headerName: "Country",
+        colId: "countryGroup",
         showRowGroup: 'country',
         minWidth: 200,
         cellRenderer: 'agGroupCellRenderer',
@@ -11,6 +12,7 @@ var columnDefs = [
     { field: 'country', rowGroup: true, hide: true },
     {
         headerName: "Year / Athlete",
+        colId: "yearAthleteGroup",
         minWidth: 220,
         showRowGroup: 'year',
         cellRenderer: 'agGroupCellRenderer',
