@@ -589,7 +589,7 @@ title: "Get Started with AG Grid"
 |
 | ![AG Grid final](resources/step3.png)
 |
-| Now, let's enable grouping! Change the configuration to this:
+| Now let's enable grouping! Change the configuration to this:
 |
 | ```js
 | const columnDefs = [
@@ -1140,7 +1140,7 @@ title: "Get Started with AG Grid"
 |
 | ![AG Grid final](resources/step3.png)
 |
-| Now, let's enable grouping! Add an `autoGroupColumnDef` property and change the
+| Now let's enable grouping! Add an `autoGroupColumnDef` property and change the
 | `columnDefs` to the following:
 |
 | ```ts
@@ -1462,6 +1462,8 @@ title: "Get Started with AG Grid"
 | grid component - We are using the HTML5 `fetch` API.
 |
 | ```diff
+| +  import React, { useState, useEffect } from 'react';
+|
 | -  const rowData = [
 | -      {make: "Toyota", model: "Celica", price: 35000},
 | -      {make: "Ford", model: "Mondeo", price: 32000},
@@ -1493,6 +1495,8 @@ title: "Get Started with AG Grid"
 | it is just a matter of adding and changing couple of properties, as well as accessing the Grid API via a `ref`:
 |
 |```diff
+|+ import { useEffect, useState, useRef } from 'react';
+|
 |const App = () => {
 |    const [rowData, setRowData] = useState([]);
 |+  const gridRef = useRef(null);
@@ -1522,7 +1526,8 @@ title: "Get Started with AG Grid"
 |                <AgGridColumn field="model" sortable={true} filter={true}></AgGridColumn>
 |                <AgGridColumn field="price" sortable={true} filter={true}></AgGridColumn>
 |            </AgGridReact>
-|        </div>);
+|        </div>
+|   );
 |};
 |```
 |
@@ -1580,17 +1585,16 @@ title: "Get Started with AG Grid"
 |
 | ![AG Grid final](resources/step3.png)
 |
-| Now, let's enable grouping! Update the `AgGridReact` configuration to this:
+| Now let's enable grouping! Update the `AgGridReact` configuration to this:
 |
 | ```diff
 |  <div className="ag-theme-alpine" style={{ height: 400, width: 600 }}>
 |      <button onClick={onButtonClick}>Get selected rows</button>
 |      <AgGridReact
-|          onGridReady={onGridReady}
 |          rowData={rowData}
 |          rowSelection="multiple"
 | +        groupSelectsChildren={true}
-| +        autoGroupColumnDef=<span>{</span>{
+| +        autoGroupColumnDef={{
 | +            headerName: "Model",
 | +            field: "model",
 | +            cellRenderer:'agGroupCellRenderer',
