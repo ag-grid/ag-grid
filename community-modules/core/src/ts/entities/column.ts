@@ -284,7 +284,8 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
             }, key);
         }
 
-        if (!ModuleRegistry.isRegistered(ModuleNames.RowGroupingModule)) {
+        const usingCSRM = this.gridOptionsWrapper.isRowModelDefault();
+        if (usingCSRM && !ModuleRegistry.isRegistered(ModuleNames.RowGroupingModule)) {
             const rowGroupingItems =
                 ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'enableValue', 'pivot', 'pivotIndex', 'aggFunc'];
             rowGroupingItems.forEach(item => {
