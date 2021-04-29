@@ -159,7 +159,7 @@ the `getServerSideStoreParams()` callback. The callback logs its results to the 
 
 - When no grouping is active, the store is configured to use infinite scroll and only keeps two blocks of rows in the store.<br/><br/>To observe this, remove all grouping and scroll down to load more blocks. Then scroll back up to observe the initial blocks getting reloaded.
 
-<grid-example title='Dynamic Params' name='dynamic-params' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
+<grid-example title='Dynamic Params' name='dynamic-params' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside","rowgrouping"] }'></grid-example>
 
 ## Store State & Store Info
 
