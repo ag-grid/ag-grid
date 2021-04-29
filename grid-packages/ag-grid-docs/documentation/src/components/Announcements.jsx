@@ -18,7 +18,7 @@ const Announcements = ({ framework }) => <div className={styles['announcements']
                 <DocumentationLink framework={framework} href="/excel-export/">Excel Export Enhancements</DocumentationLink>
             </li>
             <li className={styles['announcement__list-item']}>
-                <DocumentationLink framework={framework} href="/axes/#log-axis/">Log Charts</DocumentationLink>
+                <DocumentationLink framework={framework} href="/charts-axes/#log-axis">Log Charts</DocumentationLink>
             </li>
         </ul>
     </Announcement>
