@@ -17,7 +17,8 @@
         "exportMode": {
             "default": "xlsx",
             "description": "For backwards compatibility, this property could be set to `xml`, which will export an Excel Spreadsheet compatible with old Office versions (prior to Office 2007). Setting this to `xml` is not recommended as some features will not work in legacy mode.",
-            "type": "string"
+            "type": "string",
+            "options": ["xlsx", "xml"]
         },
         "fontSize": {
             "default": 11,
@@ -37,14 +38,13 @@
             "description": "The name of the sheet in Excel where the grid will be exported. There is a max limit of 31 characters.",
             "type": "string"
         },
-        "suppressTextAsCDATA": {
-            "default": false,
-            "description": "If `true`, text content will be encoded with XML character entities like `&amp;lt;` and `&amp;gt;`. This is only relevant when `exportMode='xml'`.",
-            "type": "boolean"
+        "appendContent": {
+            "description": "Content to put at the top of the exported sheet. A 2D array of ExcelCell objects (see <a href=\"../excel-export-extra-content/\">Extra Content</a> section).",
+            "type": "ExcelCell[][]"
         },
-        "customHeader": {
-            "description": "Content to put at the bottom of the file export. A 2D array of ExcelCell objects (see Custom Headers and Footers section).",
-            "type": "ExcelCell"
+        "prependContent": {
+            "description": "Content to put at the bottom of the exported sheet. A 2D array of ExcelCell objects (see <a href=\"../excel-export-extra-content/\">Extra Content</a> section).",
+            "type": "ExcelCell[][]"
         },
         "allColumns": {
             "default": false,
@@ -77,6 +77,11 @@
         "pageSetup": {
             "description": "Allows you to setup the page orientation and size.",
             "type": "ExcelSheetPageSetup"
+        },
+        "suppressTextAsCDATA": {
+            "default": false,
+            "description": "If `true`, text content will be encoded with XML character entities like `&amp;lt;` and `&amp;gt;`. This is only relevant when `exportMode='xml'`.",
+            "type": "boolean"
         },
         "skipColumnGroupHeaders": {
             "default": false,

@@ -1,4 +1,5 @@
-var columnDefs = [
+const gridOptions = {
+    columnDefs: [
         { field: 'athlete', minWidth: 200 },
         { field: 'country', minWidth: 200, },
         { field: 'sport', minWidth: 150 },
@@ -6,9 +7,7 @@ var columnDefs = [
         { field: 'silver' },
         { field: 'bronze' },
         { field: 'total' }
-];
-
-var gridOptions = {
+    ],
     defaultColDef: {
         sortable: true,
         filter: true,
@@ -17,39 +16,24 @@ var gridOptions = {
         flex: 1
     },
 
-    popupParent: document.body,
-
-    columnDefs: columnDefs,
-
-    rowData: [
-        { 'athlete': 'Eamon Sullivan', 'country': 'Australia', 'sport': 'Swimming', 'gold': 0,' silver': 2, 'bronze': 1, 'total':3 },
-        { 'athlete': 'Dara Torres', 'country': 'United States', 'sport': 'Swimming', 'gold': 0,' silver': 3, 'bronze': 0, 'total':3 },
-        { 'athlete': 'Amanda Beard', 'country': 'United States', 'sport': 'Swimming', 'gold': 1,' silver': 2, 'bronze': 0, 'total':3 },
-        { 'athlete': 'Antje Buschschulte', 'country': 'Germany', 'sport': 'Swimming', 'gold': 0,' silver': 0, 'bronze': 3, 'total':3 },
-        { 'athlete': 'Kirsty Coventry', 'country': 'Zimbabwe', 'sport': 'Swimming', 'gold': 1,' silver': 1, 'bronze': 1, 'total':3 },
-        { 'athlete': 'Ian Crocker', 'country': 'United States', 'sport': 'Swimming', 'gold': 1,' silver': 1, 'bronze': 1, 'total':3 },
-        { 'athlete': 'Grant Hackett', 'country': 'Australia', 'sport': 'Swimming', 'gold': 1,' silver': 2, 'bronze': 0, 'total':3 },
-        { 'athlete': 'Brendan Hansen', 'country': 'United States', 'sport': 'Swimming', 'gold': 1,' silver': 1, 'bronze': 1, 'total':3 },
-        { 'athlete': 'Jodie Henry', 'country': 'Australia', 'sport': 'Swimming', 'gold': 3,' silver': 0, 'bronze': 0, 'total':3 },
-        { 'athlete': 'Otylia Jedrzejczak', 'country': 'Poland', 'sport': 'Swimming', 'gold': 1,' silver': 2, 'bronze': 0, 'total':3 },
-        { 'athlete': 'Leisel Jones', 'country': 'Australia', 'sport': 'Swimming', 'gold': 1,' silver': 1, 'bronze': 1, 'total':3 },
-        { 'athlete': 'Kosuke Kitajima', 'country': 'Japan', 'sport': 'Swimming', 'gold': 2,' silver': 0, 'bronze': 1, 'total': 3}
-    ]
+    popupParent: document.body
 };
 
-function getValues(type) {
-    var value = document.querySelector('#' + type + 'Value').value;
+const getValues = type => {
+    const value = document.querySelector('#' + type + 'Value').value;
+
     if (value == null) { return; }
 
-    var obj = { 
+    const obj = { 
         value: value
     };
 
     obj.position = document.querySelector('#' + type + 'Position').value;
-    var fontName = document.querySelector('#' + type + 'FontName').value;
-    var fontSize = document.querySelector('#' + type + 'FontSize').value;
-    var fontWeight = document.querySelector('#' + type + 'FontWeight').value;
-    var underline = document.querySelector('#' + type + 'Underline').checked;
+
+    const fontName = document.querySelector('#' + type + 'FontName').value;
+    const fontSize = document.querySelector('#' + type + 'FontSize').value;
+    const fontWeight = document.querySelector('#' + type + 'FontWeight').value;
+    const underline = document.querySelector('#' + type + 'Underline').checked;
 
     if (fontName !== 'Calibri' || fontSize != 11 || fontWeight !== 'Regular' || underline) {
         obj.font = {};
@@ -76,9 +60,9 @@ function getValues(type) {
     return obj;
 }
 
-function getParams() {
-    var header = getValues('header'),
-        footer = getValues('footer');
+const getParams = () => {
+    const header = getValues('header');
+    const footer = getValues('footer');
 
     if (!header && !footer) { return; }
 
@@ -99,12 +83,14 @@ function getParams() {
     return obj;
 }
 
-function onBtExport() {
-    gridOptions.api.exportDataAsExcel(getParams());
-}
+const onBtExport = () => gridOptions.api.exportDataAsExcel(getParams());
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
-    var gridDiv = document.querySelector('#myGrid');
+document.addEventListener('DOMContentLoaded', () => {
+    const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
+
+    agGrid.simpleHttpRequest({url: 'https://www.ag-grid.com/example-assets/small-olympic-winners.json'})
+    .then(data =>
+        gridOptions.api.setRowData(data.filter(rec => rec.country != null)));
 });

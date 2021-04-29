@@ -1013,6 +1013,16 @@
                 "enterprise": true
               },
               {
+                "title": "Extra Content",
+                "url": "/excel-export-extra-content/",
+                "enterprise": true
+              },
+              {
+                "title": "Images",
+                "url": "/excel-export-images/",
+                "enterprise": true
+              },
+              {
                 "title": "Multiple Sheets",
                 "url": "/excel-export-multiple-sheets/",
                 "enterprise": true
@@ -1043,18 +1053,8 @@
                 "enterprise": true
               },
               {
-                "title": "Extra Content",
-                "url": "/excel-export-extra-content/",
-                "enterprise": true
-              },
-              {
                 "title": "Page Setup",
                 "url": "/excel-export-page-setup/",
-                "enterprise": true
-              },
-              {
-                "title": "Images",
-                "url": "/excel-export-images/",
                 "enterprise": true
               }
             ]

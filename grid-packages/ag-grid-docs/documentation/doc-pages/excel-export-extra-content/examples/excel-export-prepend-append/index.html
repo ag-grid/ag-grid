@@ -1,21 +1,7 @@
 <div class="container">
     <div class="columns">
-        <div class="column">
-            <label class="option" for="prependContent">
-                prependContent =
-                <select id="prependContent">
-                    <option>none</option>
-                    <option value="array">ExcelCell[][] (recommended format)</option>
-                </select>
-            </label>
-            <label class="option" for="appendContent">
-                appendContent =
-                <select id="appendContent">
-                    <option>none</option>
-                    <option value="array">ExcelCell[][] (recommended format)</option>
-                </select>
-            </label>
-        </div>
+        <label class="option" for="prependContent"><input type="checkbox" id="prependContent" />Prepend Content</label>
+        <label class="option" for="appendContent"><input type="checkbox" id="appendContent" /> Append Content</label>
     </div>
     <div>
         <button onclick="onBtExport()" style="margin: 5px 0px; font-weight: bold;">Export to Excel</button>

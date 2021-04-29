@@ -16,13 +16,13 @@ Note the following:
   
 <grid-example title='Excel Export - Custom Header and Footer' name='excel-export-prepend-append' type='generated' options='{ "enterprise": true, "exampleHeight": 815 }'></grid-example>
 
-## Adding Headers and Footers
+## Adding Header and Footer Content
 
-Extra content can also be added in a form of Headers and Footers. These are only visible when printing or exporting from Excel to PDF.
+Extra content can also be added in the form of Headers and Footers of the exported Excel file. Please note that this header and footer content is only visible when printing or exporting from Excel to PDF.
 
-To use export headers and footers, the `headerFooterConfig: ExcelHeaderFooterConfig` object should be configured.
+You can set header and footer content via the `headerFooterConfig: ExcelHeaderFooterConfig` object. See it documented further below.
 
-The header and footer object accepts some special configs as follows: 
+The header and footer object accepts the following placeholders: 
 
 - `&[Page]`: Prints the current page number.
 - `&[Pages]`: Prints the total number of pages.
@@ -47,5 +47,8 @@ The header and footer object accepts some special configs as follows:
 <api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelHeaderFooterContent'></api-documentation>
 
 ## Export Cover Page
+
+In addition to exporting the Grid in the Excel file, you can also provide additional content on a separate sheet of the Excel file. This can be useful when you'd like to add a cover page to provide your users additional details on the data in this file.
+
 <grid-example title='Excel Export - Cover Page' name='excel-export-cover-page' type='generated' options='{ "enterprise": true }'></grid-example>
 
