@@ -50,7 +50,7 @@ export class GridComp extends ManagedFocusComponent {
         const template = this.createTemplate();
         this.setTemplate(template);
 
-        this.con.setView(view, this.getGui(), this.eGridDiv);
+        this.con.setView(view, this.eGridDiv, this.getGui());
 
         this.insertGridIntoDom();
 

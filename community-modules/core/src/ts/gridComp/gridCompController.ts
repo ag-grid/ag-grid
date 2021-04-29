@@ -42,7 +42,7 @@ export class GridCompController extends BeanStub {
 
     private view: GridCompView;
     private eGridHostDiv: HTMLElement;
-    private eGridComp: HTMLElement;
+    private eGui: HTMLElement;
 
     private logger: Logger;
 
@@ -67,10 +67,10 @@ export class GridCompController extends BeanStub {
         }
     }
 
-    public setView(view: GridCompView, eGridDiv: HTMLElement, eGridComp: HTMLElement): void {
+    public setView(view: GridCompView, eGridDiv: HTMLElement, eGui: HTMLElement): void {
         this.view = view;
         this.eGridHostDiv = eGridDiv;
-        this.eGridComp = eGridComp;
+        this.eGui = eGui;
 
         this.mouseEventService.stampTopLevelGridCompWithGridInstance(eGridDiv);
 
@@ -129,8 +129,8 @@ export class GridCompController extends BeanStub {
         this.view.destroyGridUi();
     }
 
-    public getRootGui(): HTMLElement {
-        return this.eGridComp;
+    public getGui(): HTMLElement {
+        return this.eGui;
     }
 
     public focusNextInnerContainer(backwards: boolean): boolean {
