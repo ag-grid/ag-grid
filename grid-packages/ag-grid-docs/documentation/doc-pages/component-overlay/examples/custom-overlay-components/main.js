@@ -40,15 +40,15 @@ const gridOptions = {
     }
 };
 
-const onBtShowLoading = () => {
+function onBtShowLoading() {
     gridOptions.api.showLoadingOverlay();
 }
 
-const onBtShowNoRows = () => {
+function onBtShowNoRows() {
     gridOptions.api.showNoRowsOverlay();
 }
 
-const onBtHide = () => {
+function onBtHide() {
     gridOptions.api.hideOverlay();
 }
 
