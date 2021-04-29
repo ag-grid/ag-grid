@@ -2,7 +2,7 @@
     label, .row {
         box-sizing: border-box;
         display: block;
-        padding: 2px;
+        padding: 2px 0px;
     }
     .row label {
         display: inline;
@@ -32,11 +32,7 @@
     <div style="display: flex;">
         <div>
             <div class="row"> 
-                <label>suppressQuotes = </label>
-                <select id="suppressQuotes">
-                    <option value="none">(default)</option>
-                    <option value="true">true</option>
-                </select>
+                <label for="suppressQuotes"><input type="checkbox" id="suppressQuotes">suppressQuotes</label>
             </div>
         </div>
     </div>
