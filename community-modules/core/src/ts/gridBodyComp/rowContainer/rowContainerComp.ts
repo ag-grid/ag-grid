@@ -248,9 +248,13 @@ export class RowContainerComp extends Component {
         const doesRowMatch = (rowCon: RowController) => {
             const fullWidthController = rowCon.isFullWidth();
 
+            const printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
+
+            const embedFW = this.embedFullWidthRows || printLayout;
+
             const match = fullWithContainer ?
-                !this.embedFullWidthRows && fullWidthController
-                : this.embedFullWidthRows || !fullWidthController;
+                !embedFW && fullWidthController
+                : embedFW || !fullWidthController;
 
             return match;
         };
