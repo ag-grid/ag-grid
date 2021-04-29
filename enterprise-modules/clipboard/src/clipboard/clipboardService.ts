@@ -763,7 +763,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         eTempInput.style.position = 'absolute';
         eTempInput.style.opacity = '0';
 
-        const guiRoot = this.gridCompController.getRootGui();
+        const guiRoot = this.gridCompController.getGui();
 
         guiRoot.appendChild(eTempInput);
 
