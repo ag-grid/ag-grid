@@ -108,3 +108,7 @@ Note the following:
 - The `excelStyles` has a `numberFormat` for each date style (including the ISO Format), otherwise only a number would be displayed.
 
 <grid-example title='Excel Export - Styling Dates' name='excel-export-dates' type='generated' options='{ "enterprise": true }'></grid-example>
+
+## Next Up
+
+Continue to the next section: [Hyperlinks](../excel-export-hyperlinks/).

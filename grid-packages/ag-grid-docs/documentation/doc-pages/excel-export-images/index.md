@@ -77,3 +77,7 @@ Note the following:
 
 ### ExcelImage
 <api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelImage'></api-documentation>
+
+## Next Up
+
+Continue to the next section: [Multiple Sheets](../excel-export-multiple-sheets/).

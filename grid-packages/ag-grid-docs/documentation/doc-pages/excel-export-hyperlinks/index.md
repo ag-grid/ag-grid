@@ -45,3 +45,7 @@ Note the following:
 - In the exported Excel file, the URL column has active links for these URL values.
 
 <grid-example title='Excel Export - Hyperlinks' name='excel-export-hyperlinks' type='generated' options='{ "enterprise": true }'></grid-example>
+
+## Next Up
+
+Continue to the next section: [Master Detail](../excel-export-master-detail/).

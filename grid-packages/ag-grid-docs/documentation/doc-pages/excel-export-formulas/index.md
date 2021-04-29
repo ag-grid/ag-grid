@@ -88,3 +88,7 @@ Note the following:
 - As `autoConvertFormulas=true` there is no need to declare `dataType='Formula'`
 
 <grid-example title='Excel Export - Auto Convert Formulas' name='excel-export-auto-convert-formulas' type='generated' options='{ "enterprise": true }'></grid-example>
+
+## Next Up
+
+Continue to the next section: [Extra Content](../excel-export-extra-content/).

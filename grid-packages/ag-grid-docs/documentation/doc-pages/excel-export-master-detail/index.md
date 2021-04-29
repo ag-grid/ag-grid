@@ -30,3 +30,7 @@ Note the following:
 - The `Detail Grids` get exported into different sheets.
 
 <grid-example title='Excel Export - Multiple Sheets with Master Detail' name='multiple-sheets' type='generated' options='{ "enterprise": true }'></grid-example>
+
+## Next Up
+
+Continue to the next section: [Page Setup](../excel-export-page-setup/).

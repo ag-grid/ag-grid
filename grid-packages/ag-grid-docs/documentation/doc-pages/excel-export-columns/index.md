@@ -27,3 +27,7 @@ Note the following:
 - If `Export All Columns` is checked, the bronze, silver, and gold columns will be included in the export.
 
 <grid-example title='Excel Export - Hidden Columns' name='excel-export-hidden-columns' type='generated' options='{ "enterprise": true, "exampleHeight": 815 }'></grid-example>
+
+## Next Up
+
+Continue to the next section: [Data Types](../excel-export-data-types/).

@@ -27,3 +27,7 @@ Note the following:
 - If `Skip Pinned Bottom Rows` is checked, the rows pinned at the bottom will be skipped.
 
 <grid-example title='Excel Export - Pinned Rows' name='excel-export-pinned-rows' type='generated' options='{ "enterprise": true, "exampleHeight": 815 }'></grid-example>
+
+## Next Up
+
+Continue to the next section: [Columns](../excel-export-columns/).
