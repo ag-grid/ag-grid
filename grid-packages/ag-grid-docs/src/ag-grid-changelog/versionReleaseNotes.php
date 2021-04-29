@@ -21,9 +21,9 @@
             <li>AG-5179 - Allow setting page size and layout orientation for the Excel export file</li>
             <li>AG-5217 - Add support for Headers and Footers in the Excel export</li>
             <li>AG-4471 - Allow exporting cell date-type values to Excel date format</li>
-            (see <a rel="nofollow" href="https://www.ag-grid.com/archive/25.2.0/react-grid/excel-export/">Excel Export</a>)
+            (see <a rel="nofollow" href="https://www.ag-grid.com/archive/25.2.0/javascript-grid/excel-export/">Excel Export</a>)
           </ul>
-        <li>AG-3379 - Logarithmic Charts (see <a rel="nofollow" href="https://www.ag-grid.com/archive/25.2.0/react-charts/axes/#log-axis">Log Axis</a>)</li>
+        <li>AG-3379 - Logarithmic Charts (see <a rel="nofollow" href="https://www.ag-grid.com/archive/25.2.0/javascript-charts/axes/#log-axis">Log Axis</a>)</li>
     </ul>
 </div>
 

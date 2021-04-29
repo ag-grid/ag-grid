@@ -9,29 +9,16 @@ import styles from './Announcements.module.scss';
  * This are the announcement cards shown underneath the left-hand navigation menu.
  */
 const Announcements = ({ framework }) => <div className={styles['announcements']}>
-    <Announcement date="Feb 19" version="25.1.0">
+    <Announcement date="Apr 30" version="25.2.0">
         <p className="card-text">
             Minor release with bug fixes:
         </p>
         <ul>
             <li className={styles['announcement__list-item']}>
-                <DocumentationLink framework={framework} href="/charts-treemap-series/">Treemap Series</DocumentationLink>
-            </li>
-        </ul>
-    </Announcement>
-    <Announcement date="Jan 6" version="25.0.0">
-        <p className="card-text">
-            Major release with new features and bug fixes:
-        </p>
-        <ul>
-            <li className={styles['announcement__list-item']}>
-                <DocumentationLink framework={framework} href="/server-side-model/">Major SSRM Enhancements</DocumentationLink>
+                <DocumentationLink framework={framework} href="/excel-export/">Excel Export Enhancements</DocumentationLink>
             </li>
             <li className={styles['announcement__list-item']}>
-                <DocumentationLink framework={framework} href="/integrated-charts-cross-filtering/">Integrated Cross Filtering</DocumentationLink>
-            </li>
-            <li className={styles['announcement__list-item']}>
-                <DocumentationLink framework={framework} href="/clipboard/">Clipboard Performance Improvements</DocumentationLink>
+                <DocumentationLink framework={framework} href="/axes/#log-axis/">Log Charts</DocumentationLink>
             </li>
         </ul>
     </Announcement>
