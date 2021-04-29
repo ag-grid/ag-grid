@@ -16,12 +16,6 @@ There are two ways to include formulas as part of the exported Excel file.
 
 When a cell is exported with `dataType='Formula'`, the cell content will be automatically converted to an Excel formula. It is your responsibility to ensure the value in the grid cell is a valid Excel formula. 
 
-Note the following:
-
-- The `Full Name` column uses a `valueGetter` to combine `First Name` and `Last Name`.
-- The `processCellCallback` create a formula that has a similar function of the `valueGetter`.
-- The exported Excel Sheet will have the `Full Name` column computed using a formula that uses the `First Name` and `Last Name` columns as inputs.
-
 <snippet>
 const gridOptions = {
     columnDefs: [
@@ -51,6 +45,12 @@ const gridOptions = {
 }
 </snippet>
 
+
+Note the following:
+
+- The `Full Name` column uses a `valueGetter` to combine `First Name` and `Last Name`.
+- The `processCellCallback` create a formula that has a similar function of the `valueGetter`.
+- The exported Excel Sheet will have the `Full Name` column computed using a formula that uses the `First Name` and `Last Name` columns as inputs.
 
 <grid-example title='Excel Export - Formula DataType' name='excel-export-formula-data-type' type='generated' options='{ "enterprise": true }'></grid-example>
 
