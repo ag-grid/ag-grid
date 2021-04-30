@@ -65,7 +65,7 @@ export function utf8_encode(s: string | null): string {
     }
 
     function encodeCodePoint(point: number): string {
-        if (point >= 0 && point <= 31) {
+        if ((point >= 0 && point <= 7) || (point >= 14 && point <= 31)) {
             return padStart(`_x${point.toString(16).toUpperCase()}_`, 4, '0');
         }
 
