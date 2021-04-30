@@ -106,15 +106,23 @@ include '../jira_reports/jira_utilities.php';
 
         $report_type = 'changelog';
 
+        $requireUri = $_SERVER['REQUEST_URI'];
+        $uriParts = parse_url($requireUri);
+        parse_str($uriParts['query'], $query);
+        if(! empty($query['fixVersion'])) {
+            $currentFixVersion = htmlspecialchars($query['fixVersion']);
+        } else {
+            $currentFixVersion = 'all';
+        }
+
         $json_decoded = retrieveJiraFilterData($report_type);
         $fixVersions = extractFixVersions($json_decoded);
-        $currentFixVersion = isset($_GET["fixVersion"]) ? htmlspecialchars($_GET["fixVersion"]) : 'all';
+
         $moreInformationMap = extractMoreInformationMap($json_decoded);
         $keyToMoreInfo = $moreInformationMap['more_info'];
         $keyToBreakingChanges = $moreInformationMap['breaking'];
         $keyToDeprecations = $moreInformationMap['deprecation'];
         ?>
-
 
         <div class="info-page">
             <div class="row">
@@ -127,11 +135,11 @@ include '../jira_reports/jira_utilities.php';
                         For a list of up and coming Bug Fixes and Features please refer to our <a
                                 href="../ag-grid-pipeline">Pipeline</a>.
                         Documentation for previous versions can be found
-        <a href="https://www.ag-grid.com/archive/">here.</a>
+                        <a href="https://www.ag-grid.com/archive/">here.</a>
                     </div>
                     <div class="global-search-pane" style="display: inline-block;width:100%">
                         <input class="clearable global-report-search" style="float: left;height: 50px" type="text"
-                            id="global_search" name="" value="" placeholder="Issue Search (eg. AG-1111/popup/feature)..."/>
+                               id="global_search" name="" value="" placeholder="Issue Search (eg. AG-1111/popup/feature)..."/>
                         <div class="global-report-search-results" style="margin-left:20px;float: left">
                             <table>
                                 <tr>
@@ -162,10 +170,10 @@ include '../jira_reports/jira_utilities.php';
                     <div style="margin-top: 0;margin-bottom: 10px;float: right">
                         <span style="margin-right: 10px">
                             <img style="vertical-align: middle" src="<?= mapIssueIcon("Bug") ?>"
-                                height="16" width="16" border="0"/> Bug
+                                 height="16" width="16" border="0"/> Bug
                         <span style="margin-right: 10px">
                             <img style="vertical-align: middle" src="<?= mapIssueIcon("Feature Request") ?>"
-                                height="16" width="16" border="0"/> Feature Request
+                                 height="16" width="16" border="0"/> Feature Request
                         </span>
                         <span style="margin-right: 10px">
                             <i class="fas fa-external-link-alt"></i> Documentation URL
@@ -234,9 +242,9 @@ include '../jira_reports/jira_utilities.php';
                                     <td nowrap="true" class="jira-macro-table-underline-pdfexport">
                                         <span>
                                             <img style="vertical-align: middle"
-                                                src="<?= mapIssueIcon(filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'issuetype'}->{'name'}, FILTER_SANITIZE_STRING)) ?>"
-                                                height="16" width="16" border="0"
-                                                title="<?= mapIssueType(filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'issuetype'}->{'name'}, FILTER_SANITIZE_STRING)) ?>"/>
+                                                 src="<?= mapIssueIcon(filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'issuetype'}->{'name'}, FILTER_SANITIZE_STRING)) ?>"
+                                                 height="16" width="16" border="0"
+                                                 title="<?= mapIssueType(filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'issuetype'}->{'name'}, FILTER_SANITIZE_STRING)) ?>"/>
                                         </span>
                                     </td>
 
@@ -256,7 +264,7 @@ include '../jira_reports/jira_utilities.php';
                                         if (!empty($json_decoded->{'issues'}[$i]->{'fields'}->{'customfield_10523'})) {
                                             ?>
                                             <a href="<?= filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'customfield_10523'}, FILTER_SANITIZE_STRING); ?>"
-                                            target="_blank"><i class="fas fa-external-link-alt"></i></a>
+                                               target="_blank"><i class="fas fa-external-link-alt"></i></a>
                                             <?php
                                         }
                                         ?>
