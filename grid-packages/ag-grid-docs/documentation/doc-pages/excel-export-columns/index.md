@@ -5,7 +5,7 @@ enterprise: true
 
 Excel Export allows you to select which columns get exported to Excel.
 
-By default, all the columns in the grid are included in the Excel export. However, you can set which columns are exported to the Excel file.
+By default, all the currently visible columns in the grid are included in the Excel export. However, you can easily control which specific columns are exported to the Excel file.
 
 ## Column Headers
 
