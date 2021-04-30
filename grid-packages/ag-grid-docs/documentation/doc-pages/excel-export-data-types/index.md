@@ -3,7 +3,17 @@ title: "Excel Export - Data Types"
 enterprise: true
 ---
 
-## Data types
+Excel Exporter allows you to export values into different Excel data types.
+
+## Strings, Number and Booleans
+
+In order to correctly display cell values in the exported Excel file you need to set the appropriate formatting to use during the Excel export process. In the segment below, we're demonstrating different value formatting to export values into different Excel data types.
+
+Note that:
+
+- We define a list of Excel types/formats to export into in the `excelStyles` array. These styles include a **unique id**, and either a `dataType` or a `numberFormat`.
+
+- In the grid column definitions we link to the corresponding types defined in the `excelStyles` array storing the export configuration we want to apply for the column values.
 
 <snippet>
 const gridOptions = {
@@ -59,7 +69,9 @@ const gridOptions = {
 };
 </snippet>
 
-The following example demonstrates how to use other data types for your export. Note that:
+The following example demonstrates how to use other data types for your export. 
+
+Note that:
 
 - Boolean works off using `1` for `true`, `0` for `false`. All other values produce an error when exported to boolean.
 - When you provide a `numberFormat`, the value gets exported as a number using the format provided. You can set the decimal places, format negative values differently and change the exported value color based on the value.
@@ -70,8 +82,10 @@ The following example demonstrates how to use other data types for your export. 
 <grid-example title='Excel Data Types' name='excel-export-data-types' type='generated' options='{ "enterprise": true, "exampleHeight": 200 }'></grid-example>
 
 ## Dates
-When exporting dates to Excel format, you should use an Excel Style with `dataType="DateTime"`. The `DateTime` format only accepts dates in `ISO Format`, therefore, in order to get this to work, all dates need to be provided in the `yyyy-mm-ddThh:mm:ss` format. If your dates are not in ISO format, you should use the `processCellCallback` method to convert them. By default, these values are displayed as number, as demonstrated in [Data Types](/excel-export/#example-data-types). To make these numbers look like a regular date, the Excel Style should be combined with the `numberFormat` Excel Style.
 
+When exporting dates to Excel format, you should use an Excel Style with `dataType="DateTime"`. The DateTime format only accepts dates in ISO Format, so all date values need to be provided in the `yyyy-mm-ddThh:mm:ss` format. 
+
+If your date values are not in ISO format, please use the `processCellCallback` method to convert them. As demonstrated in example above, by default Excel displays these date values as numbers. To format these numbers like regular dates in Excel, please enter a numberFormat value containing the desired date value format in the Excel Style as shown below:
 
 <snippet>
 const gridOptions = {
