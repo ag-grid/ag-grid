@@ -67,4 +67,3 @@ The sections below cover the various ways the exported Excel spreadsheets can be
 ## Next Up
 
 Continue to the next section: [API Reference](../excel-export-api/).
-
