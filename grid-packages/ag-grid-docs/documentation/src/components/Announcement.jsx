@@ -13,7 +13,7 @@ export const Announcement = ({ title, date, children, version, highlight = true 
             {children}
             {version &&
                 <p className="text-right">
-                    <a href={`/ag-grid-changelog/?fixVersion=${version}`}>Change Log</a>
+                    <a href={`/ag-grid-changelog?fixVersion=${version}`}>Change Log</a>
                 </p>}
         </div>
     </div>;
