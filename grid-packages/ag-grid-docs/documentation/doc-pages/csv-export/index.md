@@ -29,8 +29,8 @@ The example below shows the default behaviour when exporting the grid's data to 
 
 Note the following: 
 
-- You can use the `Show api.getDataAsCsv() text` button, to preview the output.
-- You can use the `Download file (api.exportDataAsCsv())` button to download a csv file.
+- You can use the `Show CSV export content text` button, to preview the output.
+- You can use the `Download CSV export file` button to download a csv file.
 - The file will be exported using the default name: `export.csv`.
 
 <grid-example title='CSV Export' name='csv-export' type='generated' options='{ "enterprise": true, "exampleHeight": 400 }'></grid-example>
@@ -43,7 +43,7 @@ By default, a CSV file separates its columns using `,`. But this value `token` c
 Note the following: 
 
 - You can use the select field at the top to switch the value of the `columnSeparator` param.
-- You can use the `Show api.getDataAsCsv() text` button, to preview the output.
+- You can use the `Show CSV export content text` button, to preview the output.
 
 <grid-example title='CSV Export - Column Separator' name='csv-export-column-separator' type='generated' options='{ "enterprise": true, "exampleHeight": 400 }'></grid-example>
 
@@ -55,8 +55,8 @@ Note the following:
 
 - You can use the select field at the top to switch the value of the `suppressQuotes` param.
 - You can edit the cells to preview the results with different inputs.
-- You can use the `Show api.getDataAsCsv() text` button, to preview the output.
-- You can use the `Download file (api.exportDataAsCsv())` button to download a csv file.
+- You can use the `Show CSV export content text` button, to preview the output.
+- You can use the `Download CSV export file` button to download a csv file.
 
 <grid-example title='CSV Export - Suppress Quotes' name='csv-export-suppress-quotes' type='generated' options='{ "enterprise": true, "exampleHeight": 400 }'></grid-example>
 
@@ -73,8 +73,8 @@ Note the following:
     commas and quotes. These commas and quotes will be visible when opened in Excel because they have been escaped properly.
     - With `prependContent=string` or `appendContent=string`, a string to be inserted into the CSV file without any processing, and without being affected by suppressQuotes and columnSeparator. It contains commas and quotes that will not be visible in Excel.
 
-- You can use the `Show api.getDataAsCsv() text` button, to preview the output.
-- You can use the `Download file (api.exportDataAsCsv())` button to download a csv file.
+- You can use the `Show CSV export content text` button, to preview the output.
+- You can use the `Download CSV export file` button to download a csv file.
 
 <grid-example title='CSV Export - Custom Header and Footer' name='csv-export-header-footer' type='generated' options='{ "enterprise": true, "exampleHeight": 400 }'></grid-example>
 

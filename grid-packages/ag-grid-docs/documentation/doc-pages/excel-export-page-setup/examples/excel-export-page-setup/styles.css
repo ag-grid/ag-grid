@@ -20,7 +20,7 @@
     border: 1px solid gray;
     border-radius: 5px;
     padding: 10px;
-    width: 340px;
+    width: 360px;
     margin-left: 10px;
     display: flex;
     flex-wrap: wrap;
@@ -35,7 +35,7 @@
 }
 
 .column.margin-container label {
-    width: 110px;
+    width: 115px;
     white-space: nowrap;
     display: flex;
     overflow: hidden;
@@ -45,6 +45,7 @@
 
 .column.margin-container input {
     max-width: 40px;
+    margin: 2px;
 }
 
 .grid-wrapper > div {

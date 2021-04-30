@@ -29,7 +29,7 @@ const GridExample = () => {
 
     useEffect(() => {
         if (forceRefresh) {
-            gridApi.refreshCells({ force: true });
+            setTimeout(() => gridApi.refreshCells({ force: true }))
             setForceRefresh(false);
         }
     }, [forceRefresh]);

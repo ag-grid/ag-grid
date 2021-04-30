@@ -3,19 +3,23 @@ title: "Excel Export - Multiple Sheets"
 enterprise: true
 ---
 
-Excel Export provides a way to export an Excel file with multiple sheets, this can be useful when you need to combine different data sets into a single file.
+Excel Export provides a way to export an Excel file with multiple sheets. This can be useful when you need to export data from different grids into a single Excel file.
 
 ## How it works
 
-A raw Excel Sheet can be exported from the grid by calling the `getSheetDataForExcel` method. This will start the `Multiple Sheet Export` process. The results of calling `getSheetDataForExcel` should be stored in an Array, and once all needed sheets have been stored, the `exportMultipleSheetsAsExcel` or `getMultipleSheetsAsExcel` method should be called.
+Exporting the grid into different sheets follows a specific process:
+
+1. You start the process by calling the `getSheetDataForExcel` method on a grid instance to get the data exported for a specific sheet. 
+1. You call this method multiple times either on the same grid with different data (or different export params) or on different instances of the grid, and you store each exported data set as an element of an Array. 
+1. Once all the needed sheets have been stored in the Array, call the `exportMultipleSheetsAsExcel` or `getMultipleSheetsAsExcel` methods to package them in a single Excel workbook.
 
 [[note]]
 | When using modules, the `exportMultipleSheetsAsExcel` and `getMultipleSheetsAsExcel` functions can be imported directly from the `excel-export` module as `import { exportMultipleSheetsAsExcel, getMultipleSheetsAsExcel } from '@ag-grid-enterprise/excel-export'`.
 
 [[warning]]
-| Calling `getSheetDataForExcel` will start a Multiple Sheet export process, that can only be ended by calling `exportMultipleSheetsAsExcel` or `getMultipleSheetsAsExcel`. Before this process is ended, no data will be able to be exported from the grid using `exportDataAsExcel` or `getDataAsExcel`.
+| Calling `getSheetDataForExcel` starts a **Multiple Sheet** export process, that can only be ended by calling the `exportMultipleSheetsAsExcel` or `getMultipleSheetsAsExcel` methods. Until one of these two methods is called to complete the process, no data can be exported from the grid using `exportDataAsExcel` or `getDataAsExcel`.
 
-## Example with Data Selection
+## Using Selected Rows
 In this example, we combine the `onlySelected=true` property to limit the export to 100 rows per sheet.
 
 Note the following: 
@@ -25,7 +29,7 @@ Note the following:
 
 <grid-example title='Excel Export - Multiple Sheets with Data Selection' name='excel-export-multiple-sheets-selected' type='generated' options='{ "enterprise": true }'></grid-example>
 
-## Example with Data Filtering
+## Using Data Filtering
 
 Note the following: 
 
@@ -34,7 +38,7 @@ Note the following:
 
 <grid-example title='Excel Export - Multiple Sheets with Filtered Data' name='excel-export-multiple-sheets-by-filter' type='generated' options='{ "enterprise": true }'></grid-example>
 
-## Example with Multiple Grids
+## Multiple Grids to Multiple Sheets
 
 Note the following:
 
@@ -49,3 +53,7 @@ Note the following:
 ### API Methods
 
 <api-documentation source='grid-api/api.json' section='export' names='["getSheetDataForExcel()", "getMultipleSheetsAsExcel()", "exportMultipleSheetsAsExcel()"]'></api-documentation>
+
+## Next Up
+
+Continue to the next section: [Rows](../excel-export-rows/).

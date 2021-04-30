@@ -3,7 +3,9 @@ title: "Excel Export - Rows"
 enterprise: true
 ---
 
-Excel Export exports the grid as you see it by default. However, it also allows you to configure which rows should be exported and to configure how rows should be visible within excel.
+Excel Export allows you  to select which rows get exported to Excel.
+
+By default, all the rows in the grid are included in the Excel export. However, you can set which rows are exported and configure how they are rendered within the Excel file.
 
 ## Export Selected Rows
 
@@ -13,12 +15,13 @@ By default, all visible rows are exported, but by using the `onlySelected` param
 
 ## Export Multi Line Cells
 
-By default excel renders everything as a single line cell. If there is a requirement to display a cell as multi-line text, the [Excel Alignment](../excel-export-api/#excelalignment) `wrapText` option should be used.
+By default Excel renders every exported value in a cell using a single line. If you need to display a cell value on multiple lines, please set the [Excel Alignment](../excel-export-api/#excelalignment) `wrapText` option as shown in sample below.
+
 <grid-example title='Excel Export - Multi Line' name='excel-export-multi-line' type='generated' options='{ "enterprise": true }'></grid-example>
 
 ## Pinned Rows
 
-If the pinned rows are not relevant to the data, they can be excluded from the export by using the `skipPinnedTop=true` and `skipPinnedBottom=true` params.
+If you'd like to exclude pinned top/bottom rows in AG Grid from the Excel export, please set the `skipPinnedTop` and `skipPinnedBottom` properties to true.
 
 Note the following:
 
@@ -27,3 +30,7 @@ Note the following:
 - If `Skip Pinned Bottom Rows` is checked, the rows pinned at the bottom will be skipped.
 
 <grid-example title='Excel Export - Pinned Rows' name='excel-export-pinned-rows' type='generated' options='{ "enterprise": true, "exampleHeight": 815 }'></grid-example>
+
+## Next Up
+
+Continue to the next section: [Columns](../excel-export-columns/).

@@ -11,8 +11,9 @@ For compatibility with earlier versions of the Grid you can also pass a string, 
 
 Note the following:
 
-- You can use select fields at the top to switch the value of `prependContent` and `appendContent`.
-    - With `prependContent=ExcelCell[][]` or `appendContent=ExcelCell[][]`, custom content will be inserted containing commas and quotes. These commas and quotes will be visible when opened in Excel because they have been escaped properly.
+- You can check and uncheck the checkboxes to add extra content before and after the grid via the `prependContent` and `appendContent` properties.
+
+- With `prependContent=ExcelCell[][]` or `appendContent=ExcelCell[][]`, custom content will be inserted containing commas and quotes. These commas and quotes will be visible when opened in Excel because they have been escaped properly.
   
 <grid-example title='Excel Export - Custom Header and Footer' name='excel-export-prepend-append' type='generated' options='{ "enterprise": true, "exampleHeight": 815 }'></grid-example>
 
@@ -52,3 +53,6 @@ In addition to exporting the Grid in the Excel file, you can also provide additi
 
 <grid-example title='Excel Export - Cover Page' name='excel-export-cover-page' type='generated' options='{ "enterprise": true }'></grid-example>
 
+## Next Up
+
+Continue to the next section: [Images](../excel-export-images/).

@@ -1,21 +1,15 @@
-var columnDefs = [
-    {
-        field: 'address',
-        cellClass: 'multiline'
-    },
-    {
-      headerName: "Custom column",
-      cellClass: 'multiline',
-      valueGetter: function(param) {
-          return param.data.col1 + '\n' + param.data.col2;
-      },
-      cellRenderer: function(param){
-        return param.value.replace('\n', '<br/>');
-      }
-    }
-];
+const columnDefs = [{
+    field: 'address',
+    cellClass: 'multiline'
+}, {
+    headerName: 'Custom column',
+    cellClass: 'multiline',
+    autoHeight: true,
+    valueGetter: function(param) { return param.data.col1 + '\n' + param.data.col2; },
+    cellRenderer: function(param) { return param.value.replace('\n', '<br/>'); }
+}];
 
-var gridOptions = {
+const gridOptions = {
     defaultColDef: {
         sortable: true,
         filter: true,
@@ -42,12 +36,10 @@ var gridOptions = {
 };
 
 
-function onBtExport() {
-    gridOptions.api.exportDataAsExcel();
-}
+const onBtExport = () => gridOptions.api.exportDataAsExcel();
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
-    var gridDiv = document.querySelector('#myGrid');
+document.addEventListener('DOMContentLoaded', () => {
+    const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 });

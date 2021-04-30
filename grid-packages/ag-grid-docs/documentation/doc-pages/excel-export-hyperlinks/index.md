@@ -3,7 +3,12 @@ title: "Excel Export - Hyperlinks"
 enterprise: true
 ---
 
-Formulas can be used to create `hyperlinks` while exporting an Excel Spreadsheet.
+This section describes how to insert hyperlinks in the cells of the exported Excel file.
+
+## Exporting Formulas
+
+You can insert `hyperlinks` in the cells of the exported Excel file by outputting an Excel **HYPERLINK formula** with a URL value you provide. The code below inserts hyperlinks in the Excel export file for all values in the URL column.
+
 
 <snippet>
 const gridOptions = {
@@ -36,7 +41,11 @@ const gridOptions = {
 
 Note the following:
 
-- The URL column has active links in the grid.
-- The exported Excel Spreadsheet will have active working links for the in the URL column.
+- The URL column of the grid below has URL values.
+- In the exported Excel file, the URL column has active links for these URL values.
 
 <grid-example title='Excel Export - Hyperlinks' name='excel-export-hyperlinks' type='generated' options='{ "enterprise": true }'></grid-example>
+
+## Next Up
+
+Continue to the next section: [Master Detail](../excel-export-master-detail/).

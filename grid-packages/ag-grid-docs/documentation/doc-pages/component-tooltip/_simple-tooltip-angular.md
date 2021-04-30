@@ -10,7 +10,7 @@
 |@Component({
 |    selector: 'tooltip-component',
 |    template: `
-|      <div class="custom-tooltip" [style.background-color]="data.color">
+|      <div class="custom-tooltip" [style.background-color]="color">
 |          <p><span>{{ data.athlete }}</span></p>
 |          <p><span>Country: </span>{{ data.country }}</p>
 |          <p><span>Total: </span>{{ data.total }}</p>

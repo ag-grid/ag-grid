@@ -183,3 +183,7 @@ Some of the most likely errors you can encounter when exporting to Excel are:
 ### Grid Properties
 
 <api-documentation source='grid-properties/properties.json' section='miscellaneous' names='["excelStyles"]'></api-documentation>
+
+## Next Up
+
+Continue to the next section: [Formulas](../excel-export-formulas/).

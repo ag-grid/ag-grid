@@ -4,16 +4,16 @@ enterprise: true
 ---
 
 The grid provides in-built Excel (xlsx) export functionality without the need for any third party libraries. Exporting to 
-Excel can be performed from the [Context Menu](/context-menu/) or programmatically via the [Grid API](/grid-api/) and 
+Excel can be performed from the [Context Menu](../context-menu/) or programmatically via the [Grid API](../grid-api/) and 
 the exported spreadsheets can be fully customised and styled to meet user requirements.
 
 <image-caption src="excel-export/resources/excel-export-context-menu.png" alt="Excel Export" maxWidth="48rem" constrained="true" centered="true"></image-caption>
 
 ## Enabling Excel Export
 
-The enterprise version of the grid provides an 'Excel Export' option via the grids [Context Menu](/context-menu/) by default.
+The enterprise version of the grid provides an 'Excel Export' option via the grids [Context Menu](../context-menu/) by default.
 
-Excel export is also possible via the [Grid API](/grid-api/) using the following method: 
+Excel export is also possible via the [Grid API](../grid-api/) using the following method: 
 
 <snippet>
  gridOptions.api.exportDataAsExcel();
@@ -23,15 +23,13 @@ No special configurations or third party libraries are required for either appro
 
 ## Default Excel Export
 
-The default Excel export behaviour will export the current state of the data in the grid. This means the exported 
-spreadsheet will match what is displayed in the grid at the time of export following any sorting, filtering, row 
-grouping etc...
+The default Excel export behaviour will export the grid as it is currently rendered. This means the exported spreadsheet will match what is displayed in the grid at the time of export following any sorting, filtering, row grouping, columns visible, grouped columns etc...
 
 Note that the raw values, and not the result from a cell renderer will be used, meaning the results from:
-- Value Getters will be used.
-- Cell Renderers / Formatters will **NOT** be used.
 
-Also note that cell styles are not exported by default, see [Export Excel Style](/excel-export-styles/) for a detailed guide on how to export styles.
+- Value Getters will be used. 
+- Cell Renderers / Formatters will **NOT** be used. 
+- Cell styles will **NOT** be exported by default. 
 
 In the following example reorder some columns and apply some filter and sort operations - then export from the 'Excel Export' option 
 in the context menu, or the 'Export to Excel' button provided. Note the following:
@@ -50,21 +48,22 @@ in the context menu, or the 'Export to Excel' button provided. Note the followin
 
 ## Custom Excel Export 
 
-The [Default Excel Export](/excel-export/#default-excel-export) will meet the requirements of most applications, 
-however extensive customisation to the layout and styling of the exported spreadsheets are supported.
+The [Default Excel Export](../excel-export/#default-excel-export) behaviour will meet the requirements of most applications. However, you can apply extensive customisation to the values exported, layout, value formatting and styling of the exported spreadsheets.
 
-The following sub sections cover the various ways the exported Excel spreadsheets can be customised:
+The sections below cover the various ways the exported Excel spreadsheets can be customised:
 
-- **[Styles](/excel-export-styles/)**: provide custom styling to exported spreadsheets.
-- **[Formulas](/excel-export-formulas/)**: export the grids value getters to Excel formulas.
-- **[Multiple Sheets](/excel-export-multiple-sheets/)**: export grid data across multiple sheets.
-- **[Data Types](/excel-export-data-types/)**: export values to Excels built-in data types.
-- **[Hyperlinks](/excel-export-hyperlinks/)**: add hyperlinks to exported spreadsheets.
-- **[Master Detail](/excel-export-master-detail/)**: master detail grids can be exported to single or multiple sheets.
-- **[Extra Content](/excel-export-extra-content/)**: extra content not shown in the grid can be added to the exported spreadsheets.
-- **[Page Setup](/excel-export-page-setup/)**: the page setup of the exported spreadsheets can be customised.
+- **[Styles](../excel-export-styles/)**: Apply custom styling to exported spreadsheets
+- **[Formulas](../excel-export-formulas/)**: Export the grid's value getters to Excel formulas
+- **[Extra Content](../excel-export-extra-content/)**: Add to the exported spreadsheets extra content not shown in the grid
+- **[Images](../excel-export-images/)**: Export images as extra content or within grid cells
+- **[Multiple Sheets](../excel-export-multiple-sheets/)**: Export grid data across multiple sheets of an Excel workbook
+- **[Rows](../excel-export-rows/)**: Set which rows are exported
+- **[Columns](../excel-export-columns/)**: Set which columns are exported
+- **[Data Types](../excel-export-data-types/)**:  Export grid values to the Excel built-in data types.
+- **[Hyperlinks](../excel-export-hyperlinks/)**: Add hyperlinks to exported spreadsheets.
+- **[Master Detail](../excel-export-master-detail/)**: Export master detail grids to single or multiple sheets
+- **[Page Setup](../excel-export-page-setup/)**: Customize the page setup of the exported spreadsheets
 
 ## Next Up
 
-Continue to the next section: [API Reference](/excel-export-api/).
-
+Continue to the next section: [API Reference](../excel-export-api/).

@@ -3,11 +3,11 @@ title: "Excel Export - Page Setup"
 enterprise: true
 ---
 
-Excel Export exports allows you to configure the page settings when exporting your document.
+Excel Export allows you to configure the page settings for the exported Excel file.
 
 ## Page Setup
 
-By using the `pageSetup` and `margins` configs of the [Excel Export Params](../excel-export-api/#excelexportparams) it's possible to change how the document will look when printing or exporting to PDF.
+You can customise the Excel export page settings such as **page size**, **orientation**, and **margin**, using the `pageSetup` and `margins` configs of the [Excel Export Params](../excel-export-api/#excelexportparams). These settings are visible when printing the exported Excel file or exporting to PDF. 
 
 <snippet>
 const gridOptions = {
@@ -30,6 +30,12 @@ const gridOptions = {
 
 [[warning]]
 | The value of the margins must be provided in `inches`.
+
+Note the following:
+
+- The sample below allow you to configure the page size, orientation and margin values.
+- Page size and orientation are stored in the `pageSetup` object.
+- Margin values are stored in the `margins` object.
 
 <grid-example title='Excel Export - Page Setup' name='excel-export-page-setup' type='generated' options='{ "enterprise": true, "exampleHeight": 815 }'></grid-example>
 
