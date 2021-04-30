@@ -65,7 +65,7 @@ function utf8_encode(s) {
         return stringFromCharCode(((point >> shift) & 0x3F) | 0x80);
     }
     function encodeCodePoint(point) {
-        if (point >= 0 && point <= 31) {
+        if ((point >= 0 && point <= 7) || (point >= 14 && point <= 31)) {
             return padStart("_x" + point.toString(16).toUpperCase() + "_", 4, '0');
         }
         if ((point & 0xFFFFFF80) == 0) { // 1-byte sequence

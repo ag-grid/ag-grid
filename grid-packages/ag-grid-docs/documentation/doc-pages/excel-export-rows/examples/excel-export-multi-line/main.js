@@ -1,17 +1,17 @@
-const columnDefs = [{
-    field: 'address',
-    cellClass: 'multiline'
-}, {
-    headerName: 'Custom column',
-    cellClass: 'multiline',
-    autoHeight: true,
-    valueGetter: function(param) { return param.data.col1 + '\n' + param.data.col2; },
-    cellRenderer: function(param) { return param.value.replace('\n', '<br/>'); }
-}];
+const columnDefs = [
+    { field: 'address'}, 
+    {
+        headerName: 'Custom column',
+        autoHeight: true,
+        valueGetter: function(param) { return param.data.col1 + '\n' + param.data.col2; },
+        cellRenderer: function(param) { return param.value.replace('\n', '<br/>'); }
+    }
+];
 
 const gridOptions = {
     defaultColDef: {
         sortable: true,
+        cellClass: 'multiline',
         filter: true,
         resizable: true,
         minWidth: 100,
