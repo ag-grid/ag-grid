@@ -25,8 +25,23 @@
           </ul>
         <li>AG-3379 - Logarithmic Charts (see <a rel="nofollow" href="https://www.ag-grid.com/archive/25.2.0/javascript-charts/axes/#log-axis">Log Axis</a>)</li>
     </ul>
-</div>
 
+   <p><b>Deprecations:</b></p>
+
+    <p><u>ExcelExportParams</u></p>
+    <ul>
+        <li>columnGroups (use skipColumnGroupHeaders)</li>
+        <li>skipGroups (use skipRowGroups)</li>
+        <li>skipHeader (use skipColumnHeaders)</li>
+        <li>columnGroups (use prependContent)</li>
+        <li>customFooter (use appendContent)</li>
+    </ul>
+
+   <p><u>Grid Options</u></p>
+     <ul>
+         <li>suppressColumnStateEvents (no longer required)</li>
+     </ul>
+</div>
 
 <div class="note" style="display: none" fixVersionNote id="fix_version_25_1_0">
     <p><b>Release 25.1.0 (19th Feb 2021)</b></p>
