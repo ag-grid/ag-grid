@@ -66,7 +66,7 @@ const VueExample = {
         return {
             modules: [...AllCommunityModules, ExcelExportModule],
             leftRowData: null,
-            rightRowData: [],
+            rightRowData: null,
             leftApi: null,
             leftColumnApi: null,
             rightApi: null,
@@ -148,8 +148,8 @@ const VueExample = {
         },
 
         loadGrids() {
-            this.leftRowData = [...this.rawData];
-            this.rightRowData = [];
+            this.leftRowData = [...this.rawData.slice(0, this.rawData.length / 2)];
+            this.rightRowData = [...this.rawData.slice(this.rawData.length / 2)];
         },
 
         reset() {

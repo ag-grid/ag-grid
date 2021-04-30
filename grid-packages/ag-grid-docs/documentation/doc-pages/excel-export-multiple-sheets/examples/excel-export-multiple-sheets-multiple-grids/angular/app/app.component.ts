@@ -147,8 +147,8 @@ export class AppComponent {
     }
 
     loadGrids = () => {
-        this.leftRowData = [...this.rawData];
-        this.rightRowData = [];
+        this.leftRowData = [...this.rawData.slice(0, this.rawData.length / 2)];
+        this.rightRowData = [...this.rawData.slice(this.rawData.length / 2)];
     }
 
     reset = () => {

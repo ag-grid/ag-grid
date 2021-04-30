@@ -118,8 +118,8 @@ function loadGrids() {
                 athletes.push(data[pos]);
             }
 
-            loadGrid(leftGridOptions, 'Left', athletes);
-            loadGrid(rightGridOptions, 'Right', []);
+            loadGrid(leftGridOptions, 'Left', athletes.slice(0, athletes.length / 2));
+            loadGrid(rightGridOptions, 'Right', athletes.slice(athletes.length / 2));
         });
 }
 

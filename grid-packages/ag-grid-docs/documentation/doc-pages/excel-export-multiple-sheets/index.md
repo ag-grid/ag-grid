@@ -20,7 +20,7 @@ Exporting the grid into different sheets follows a specific process:
 | Calling `getSheetDataForExcel` starts a **Multiple Sheet** export process, that can only be ended by calling the `exportMultipleSheetsAsExcel` or `getMultipleSheetsAsExcel` methods. Until one of these two methods is called to complete the process, no data can be exported from the grid using `exportDataAsExcel` or `getDataAsExcel`.
 
 ## Using Selected Rows
-In this example, we combine the `onlySelected=true` property to limit the export to 100 rows per sheet.
+In this example, we use the `onlySelected=true` property to segment the grid data into multiple sheets, each containing 100 data rows.
 
 Note the following: 
 
@@ -31,6 +31,8 @@ Note the following:
 
 ## Using Data Filtering
 
+In this example, we filter on the sport column to segment the grid data into multiple sheets, each containing all the data for a specific sport value.
+
 Note the following: 
 
 - The exported Excel file will contain one sheet for each sport result.
@@ -39,6 +41,8 @@ Note the following:
 <grid-example title='Excel Export - Multiple Sheets with Filtered Data' name='excel-export-multiple-sheets-by-filter' type='generated' options='{ "enterprise": true }'></grid-example>
 
 ## Multiple Grids to Multiple Sheets
+
+In this example, we export two grids, each into a separate sheet of the same Excel file. Drag a few rows from the grid on the left into the grid on the right and click the export button above the grid.
 
 Note the following:
 
