@@ -392,7 +392,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
         const recurse = (rowNodes: RowNode[] | null) => {
             if (!rowNodes) { return; }
-            rowNodes.forEach( rowNode => {
+            rowNodes.forEach(rowNode => {
                 const isLeafNode = !this.usingTreeData && !rowNode.group;
                 if (isLeafNode) { return; }
                 const groupInfo: GroupInfo = {
@@ -433,7 +433,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
         const groupDisplayColumns = this.columnController.getGroupDisplayColumns();
         const newGroupDisplayColIds = groupDisplayColumns ?
-            groupDisplayColumns.map( c => c.getId()).join('-') : '';
+            groupDisplayColumns.map(c => c.getId()).join('-') : '';
 
         if (afterColumnsChanged) {
             // we only need to redo grouping if doing normal grouping (ie not tree data)

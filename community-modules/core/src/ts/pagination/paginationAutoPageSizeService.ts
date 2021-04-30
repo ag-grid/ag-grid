@@ -2,7 +2,6 @@ import { BeanStub } from "../context/beanStub";
 import { Events } from "../events";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { ControllersService } from "../controllersService";
-import { GridBodyController } from "../gridBodyComp/gridBodyController";
 import { RowContainerController } from "../gridBodyComp/rowContainer/rowContainerController";
 
 @Bean('paginationAutoPageSizeService')

@@ -3,7 +3,6 @@ import { ColumnController } from "../columnController/columnController";
 import { ColumnGroupChild } from "../entities/columnGroupChild";
 import { Column } from "../entities/column";
 import { ColumnGroup } from "../entities/columnGroup";
-import { IRowModel } from "../interfaces/iRowModel";
 import { PaginationProxy } from "../pagination/paginationProxy";
 import { ValueService } from "../valueService/valueService";
 import { BeanStub } from "../context/beanStub";

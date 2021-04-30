@@ -1206,7 +1206,7 @@ export class ColumnController extends BeanStub {
         const event: ColumnValueChangedEvent = {
             type: type,
             columns: columns,
-            column: (columns && columns.length==1) ? columns[0] : null,
+            column: (columns && columns.length == 1) ? columns[0] : null,
             api: this.gridApi,
             columnApi: this.columnApi,
             source: source

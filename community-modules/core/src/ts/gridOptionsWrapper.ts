@@ -1160,7 +1160,7 @@ export class GridOptionsWrapper {
 
         if (type === 'csv' && this.gridOptions.defaultCsvExportParams) {
             return this.gridOptions.defaultCsvExportParams;
-        } 
+        }
 
         if (type === 'excel' && this.gridOptions.defaultExcelExportParams) {
             return this.gridOptions.defaultExcelExportParams;
