@@ -73,7 +73,7 @@ export default class extends Component {
             rightApi: null,
             rawData: [],
             leftRowData: null,
-            rightRowData: [],
+            rightRowData: null,
         };
     }
 
@@ -101,8 +101,8 @@ export default class extends Component {
 
     loadGrids = () => {
         this.setState({ 
-            leftRowData: [...this.state.rawData],
-            rightRowData: []
+            leftRowData: [...this.state.rawData.slice(0, this.state.rawData.length)],
+            rightRowData: [...this.state.rawData.slice(this.state.rawData.length / 2)]
         });
         this.state.leftApi.deselectAll();
     }

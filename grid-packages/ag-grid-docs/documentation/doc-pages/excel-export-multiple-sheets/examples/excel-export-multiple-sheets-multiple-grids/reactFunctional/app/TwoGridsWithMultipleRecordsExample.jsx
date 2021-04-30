@@ -90,8 +90,8 @@ const TwoGridsWithMultipleRecordsExample = () => {
     }, [rawData]);
 
     const loadGrids = useCallback(() => {
-        setLeftRowData([...rawData]);
-        setRightRowData([]);
+        setLeftRowData([...rawData.slice(0, rawData.length / 2)]);
+        setRightRowData([...rawData.slice(rawData.length / 2)]);
         leftApi.deselectAll();
     }, [leftApi, rawData]);
 
