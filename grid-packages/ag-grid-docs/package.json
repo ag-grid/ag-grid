@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-docs",
-  "version": "25.2.0",
+  "version": "25.2.1",
   "description": "Documentation for AG Grid",
   "scripts": {
     "postinstall": "webdriver-manager update",

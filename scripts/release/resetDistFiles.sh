@@ -46,7 +46,9 @@ git reset community-modules/angular/dist
 git reset community-modules/client-side-row-model/dist
 git reset community-modules/core/dist
 git reset community-modules/core/typings
+git reset enterprise-modules/excel-export/typings
 git reset community-modules/csv-export/dist
+git reset community-modules/csv-export/typings
 git reset community-modules/infinite-row-model/dist
 git reset community-modules/react/lib
 git reset community-modules/react/bundles

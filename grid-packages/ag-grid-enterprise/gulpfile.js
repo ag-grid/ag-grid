@@ -25,8 +25,6 @@ const exportedEnterpriseModules = fs.readFileSync('./src/main.ts').toString().sp
     .filter(line => line.includes('export ') && line.includes('@ag-grid-enterprise'))
     .map(line => line.substring(line.indexOf("@ag-grid-enterprise"), line.lastIndexOf('"') === -1 ? line.lastIndexOf('\'') : line.lastIndexOf('"')))
 
-console.log(exportedCommunityModules);
-
 // Start of Typescript related tasks
 const tscMainTask = () => {
     const tsProject = gulpTypescript.createProject('./tsconfig-main.json', {typescript: typescript});
