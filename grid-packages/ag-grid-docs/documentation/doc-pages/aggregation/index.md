@@ -48,7 +48,7 @@ const gridOptions = {
         // this overrides the grids built-in sum function
         'mySum': params => {
             let sum = 0;
-            values.forEach(value => sum += value);
+            params.values.forEach(value => sum += value);
             return sum;
         }
     },
@@ -66,7 +66,7 @@ const gridOptions = {
             field: 'sales',
             aggFunc: params => {
                 let sum = 0;
-                values.forEach(value => sum += value);
+                params.values.forEach(value => sum += value);
                 return sum;
             }
         },
@@ -132,7 +132,7 @@ const gridOptions = {
             field: 'sales',
             aggFunc: params => {
                 let sum = 0;
-                values.forEach(value => sum += value);
+                params.values.forEach(value => sum += value);
                 return sum;
             }
         },
@@ -151,7 +151,7 @@ const gridOptions = {
         // this overrides the grids built-in sum function
         'mySum': params => {
             let sum = 0;
-            values.forEach(value => sum += value);
+            params.values.forEach(value => sum += value);
             return sum;
         }
     },
@@ -234,9 +234,10 @@ When values from multiple columns are required, a value object containing all th
 |                    }
 |                }
 |            },
-|            aggFunc: values => {
-|                let goldSum = 0, silverSum = 0;
-|                values.forEach(value => {
+|            aggFunc: (params) => {
+|                var goldSum = 0;
+|                var silverSum = 0;
+|                params.values.forEach(value => {
 |                    if (value && value.gold) {
 |                        goldSum += value.gold;
 |                    }
@@ -245,10 +246,12 @@ When values from multiple columns are required, a value object containing all th
 |                    }
 |                });
 |                return {
-|                     gold: params.data.gold,
-|                     silver: params.data.silver,
-|                     toString: () => (gold && silver) ? gold / silver : 0,
-|                 }
+|                    gold: goldSum,
+|                    silver: silverSum,
+|                    toString: () => {
+|                        return goldSum && silverSum ? goldSum / silverSum : 0;
+|                    },
+|                }
 |            }
 |        }
 |    ]
@@ -275,10 +278,10 @@ In this next example, `suppressAggFilteredOnly=true`. Note that the Year column 
 
 ## Aggregation API
 
-After the grid is initialised, there are two steps to set an aggregation on a column:
+After the grid is initialised an aggregation can be applied to a column using the following:
 
-1. Set the aggregation function on the column via `columnApi.setColumnAggFunc(colKey, aggFunc)`
-1. Add the columns to the list of value columns via `columnApi.addValueColumn(colKey)`
+1. Add the columns to the list of value columns via `columnApi.addValueColumn(colKey)` - the 'sum' `aggFunc` is used by default.
+1. (Optional) Modify the aggregation function on the column via `columnApi.setColumnAggFunc(colKey, aggFunc)`.
 
 When the grid initialises, any column definitions that have `aggFunc` set will be automatically added as a value column.
 
