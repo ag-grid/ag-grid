@@ -1,4 +1,6 @@
-import {Grid, GridOptions} from "@ag-grid-community/core";
+import {Grid, GridOptions} from "ag-grid-community";
+
+import "ag-grid-enterprise";
 
 export class SimpleGrid {
     private readonly gridOptions: GridOptions = {};

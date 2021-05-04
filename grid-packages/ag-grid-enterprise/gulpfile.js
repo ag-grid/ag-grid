@@ -27,8 +27,9 @@ const tscMainTask = () => {
 
     return merge([
         tsResult.dts
-            .pipe(replace("\"@ag-grid-enterprise/core", "\"./dist/lib/main"))
-            .pipe(replace("\"@ag-grid-enterprise/set-filter", "\"./dist/lib/main"))
+            .pipe(replace("@ag-grid-enterprise/core", "./dist/lib/main"))
+            .pipe(replace("@ag-grid-enterprise/set-filter", "./dist/lib/main"))
+            .pipe(replace("@ag-grid-enterprise/excel-export", "./dist/lib/main"))
             .pipe(header(dtsHeaderTemplate, {pkg: pkg}))
             .pipe(rename("main.d.ts"))
             .pipe(gulp.dest('./')),
@@ -54,7 +55,8 @@ const copyGridCoreStyles = (done) => {
 const copyAndConcatMainTypings = () => {
     return gulp.src([
         './node_modules/@ag-grid-enterprise/core/typings/main.*',
-        './node_modules/@ag-grid-enterprise/set-filter/typings/main.*'
+        './node_modules/@ag-grid-enterprise/set-filter/typings/main.*',
+        './node_modules/@ag-grid-enterprise/excel-export/typings/main.*'
     ])
         .pipe(concat('main.d.ts'))
         .pipe(gulp.dest('./dist/lib'));
@@ -67,14 +69,20 @@ const copyGridCoreTypings = (done) => {
     if (!fs.existsSync('./node_modules/@ag-grid-enterprise/set-filter/typings')) {
         done("node_modules/@ag-grid-enterprise/set-filter/typings doesn't exist - exiting")
     }
+    if (!fs.existsSync('./node_modules/@ag-grid-enterprise/excel-export/typings')) {
+        done("node_modules/@ag-grid-enterprise/excel-export/typings doesn't exist - exiting")
+    }
 
     return gulp.src([
         './node_modules/@ag-grid-enterprise/core/typings/**/*',
         '!./node_modules/@ag-grid-enterprise/core/typings/main.*',
         './node_modules/@ag-grid-enterprise/set-filter/typings/**/*',
-        '!./node_modules/@ag-grid-enterprise/set-filter/typings/main.*'
+        '!./node_modules/@ag-grid-enterprise/set-filter/typings/main.*',
+        './node_modules/@ag-grid-enterprise/excel-export/typings/**/*',
+        '!./node_modules/@ag-grid-enterprise/excel-export/typings/main.*'
     ])
         .pipe(replace("@ag-grid-community/core", "ag-grid-community"))
+        .pipe(replace("@ag-grid-community/csv-export", "ag-grid-community"))
         .pipe(gulp.dest('./dist/lib'));
 };
 

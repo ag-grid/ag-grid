@@ -10,6 +10,7 @@ const header = require('gulp-header');
 const merge = require('merge2');
 const pkg = require('./package.json');
 const replace = require('gulp-replace');
+const concat = require('gulp-concat');
 
 const headerTemplate = ['/**',
     ' * <%= pkg.name %> - <%= pkg.description %>',
@@ -35,6 +36,7 @@ const tscMainTask = () => {
     return merge([
         tsResult.dts
             .pipe(replace("\"@ag-grid-community/core", "\"./dist/lib/main"))
+            .pipe(replace("\"@ag-grid-community/csv-export", "\"./dist/lib/main"))
             .pipe(header(dtsHeaderTemplate, {pkg: pkg}))
             .pipe(rename("main.d.ts"))
             .pipe(gulp.dest('./')),
@@ -60,7 +62,7 @@ const copyGridCoreStyles = (done) => {
                 './node_modules/@ag-grid-community/core/src/styles/**/*'
             ]).pipe(gulp.dest('./src/styles')),
         ]
-    );
+        );
 };
 
 const copyGridCoreTypings = (done) => {
@@ -68,7 +70,35 @@ const copyGridCoreTypings = (done) => {
         done("node_modules/@ag-grid-community/core/typings doesn't exist - exiting")
     }
 
-    return gulp.src('./node_modules/@ag-grid-community/core/typings/**/*').pipe(gulp.dest('./dist/lib'));
+    if (!fs.existsSync('./node_modules/@ag-grid-community/csv-export/typings')) {
+        done("node_modules/@ag-grid-community/csv-export/typings doesn't exist - exiting")
+    }
+
+    return gulp.src([
+        './node_modules/@ag-grid-community/core/typings/**/*',
+        './node_modules/@ag-grid-community/csv-export/typings/**/*',
+        '!./node_modules/@ag-grid-community/csv-export/typings/main.*'
+    ])
+        .pipe(replace(/\@ag-grid-community\/core/, function() {
+            // replace references to @ag-grid-community/core with relative imports based on the file location
+            // ie a file in a/b/ importing from @ag-grid-community/core will instead import from '../../main'
+            const depth = (this.file.relative.match(/\//g) || []).length;
+            if(depth === 0) {
+                return './main';
+            } else {
+                return `${Array(depth).fill('../').join('')}main`;
+            }
+        }))
+        .pipe(gulp.dest('./dist/lib'));
+};
+
+const copyAndConcatMainTypings = () => {
+    return gulp.src([
+        './node_modules/@ag-grid-community/core/typings/main.*',
+        './node_modules/@ag-grid-community/csv-export/typings/main.*'
+    ])
+        .pipe(concat('main.d.ts'))
+        .pipe(gulp.dest('./dist/lib'));
 };
 
 const copyGridAllUmdFiles = (done) => {
@@ -85,6 +115,7 @@ const copyGridAllUmdFiles = (done) => {
 gulp.task('copy-grid-core-styles', copyGridCoreStyles);
 gulp.task('copy-umd-files', copyGridAllUmdFiles);
 gulp.task('copy-core-typings', copyGridCoreTypings);
+gulp.task('copy-and-concat-typings-main', copyAndConcatMainTypings);
 
 // Typescript related tasks
 gulp.task('clean', cleanDist);
@@ -92,7 +123,7 @@ gulp.task('tsc-no-clean', tscMainTask);
 gulp.task('tsc', series('clean', 'tsc-no-clean'));
 
 // webpack related tasks
-gulp.task('package', series('tsc', 'copy-grid-core-styles', 'copy-umd-files', 'copy-core-typings'));
+gulp.task('package', series('tsc', 'copy-grid-core-styles', 'copy-umd-files', 'copy-core-typings', 'copy-and-concat-typings-main'));
 
 // default/release task
 gulp.task('default', series('package'));
