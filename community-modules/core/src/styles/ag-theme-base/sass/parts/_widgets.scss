@@ -371,7 +371,6 @@
         @include ag-card();
         overflow: hidden;
         text-overflow: ellipsis;
-        z-index: 10;
         @include ag-border(secondary);
         @include ag-color-property(color, secondary-foreground-color);
         height: ag-param(header-height) !important;
