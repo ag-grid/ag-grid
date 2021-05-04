@@ -536,7 +536,7 @@ export class RowController extends BeanStub {
         }
     }
 
-    private createRowEvent(type: string, domEvent?: Event): RowEvent {
+    public createRowEvent(type: string, domEvent?: Event): RowEvent {
         return {
             type: type,
             node: this.rowNode,

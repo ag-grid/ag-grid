@@ -11,7 +11,7 @@ import { isIOSUserAgent } from "../../utils/browser";
 import { LongTapEvent, TouchListener } from "../../widgets/touchListener";
 import { ControllersService } from "../../controllersService";
 import { isUserSuppressingKeyboardEvent } from "../../utils/keyboard";
-import { CellKeyDownEvent, CellKeyPressEvent, Events } from "../../events";
+import { CellKeyDownEvent, CellKeyPressEvent, Events, FullWidthCellKeyDownEvent, FullWidthCellKeyPressEvent } from "../../events";
 import { KeyName } from "../../constants/keyName";
 import { NavigationService } from "./../navigationService";
 import { FocusController } from "../../focusController";
@@ -219,6 +219,16 @@ export class RowContainerEventsFeature extends BeanStub {
                     default:
                 }
             }
+        }
+
+        if (eventName === 'keydown') {
+            const cellKeyDownEvent: FullWidthCellKeyDownEvent = rowComp.createRowEvent(Events.EVENT_CELL_KEY_DOWN, keyboardEvent);
+            this.eventService.dispatchEvent(cellKeyDownEvent);
+        }
+
+        if (eventName === 'keypress') {
+            const cellKeyPressEvent: FullWidthCellKeyPressEvent = rowComp.createRowEvent(Events.EVENT_CELL_KEY_PRESS, keyboardEvent);
+            this.eventService.dispatchEvent(cellKeyPressEvent);
         }
     }
 

@@ -16,14 +16,12 @@ import { ModuleNames } from "../../modules/moduleNames";
 export class RowComp extends Component {
 
     private container: RowContainerComp;
-
     private fullWidthRowComponent: ICellRendererComp | null | undefined;
 
     private beans: Beans;
     private pinned: string | null;
 
     private rowNode: RowNode;
-
     private controller: RowController;
 
     private cellComps: { [key: string]: CellComp | null; } = {};
@@ -67,7 +65,6 @@ export class RowComp extends Component {
     }
 
     private createFullWidthRowCell(): void {
-
         const params = this.controller.createFullWidthParams(this.getGui(), this.pinned);
 
         const callback = (cellRenderer: ICellRendererComp) => {
@@ -91,7 +88,12 @@ export class RowComp extends Component {
             const cellRendererType = FullWidthKeys.get(this.controller.getRowType())!;
             const cellRendererName = FullWidthRenderers.get(this.controller.getRowType())!;
 
-            const res = this.beans.userComponentFactory.newFullWidthCellRenderer(params, cellRendererType, cellRendererName);
+            const res = this.beans.userComponentFactory.newFullWidthCellRenderer(
+                params,
+                cellRendererType,
+                cellRendererName
+            );
+
             if (res) {
                 res.then(callback);
             } else {
@@ -135,7 +137,6 @@ export class RowComp extends Component {
             .filter(cellComp => cellComp ? this.isCellEligibleToBeRemoved(cellComp) : false);
 
         this.destroyCells(cellCompsToRemove as CellComp[]);
-
         this.ensureDomOrder(cols);
     }
 
@@ -154,7 +155,6 @@ export class RowComp extends Component {
     }
 
     private isCellEligibleToBeRemoved(cellComp: CellComp): boolean {
-
         const REMOVE_CELL = true;
         const KEEP_CELL = false;
 
@@ -269,7 +269,6 @@ export class RowComp extends Component {
     }
 
     private afterRowAttached(): void {
-
         this.addDomData();
 
         const eRow = this.getGui();

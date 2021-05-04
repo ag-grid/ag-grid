@@ -338,7 +338,11 @@ export interface CellEvent extends RowEvent {
 
 export interface CellKeyDownEvent extends CellEvent { }
 
+export interface FullWidthCellKeyDownEvent extends RowEvent { }
+
 export interface CellKeyPressEvent extends CellEvent { }
+
+export interface FullWidthCellKeyPressEvent extends RowEvent { }
 
 export interface CellClickedEvent extends CellEvent { }
 

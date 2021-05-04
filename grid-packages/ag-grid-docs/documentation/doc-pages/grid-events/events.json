@@ -160,75 +160,96 @@
             "displayName": "Miscellaneous"
         },
         "gridReady": {
-            "description": "The grid has initialised. The name <code>'ready'</code> was influenced by the author's time programming the Commodore 64. Use this event if, for example, you need to use the grid's API to fix the columns to size."
+            "description": "The grid has initialised. The name <code>'ready'</code> was influenced by the author's time programming the Commodore 64. Use this event if, for example, you need to use the grid's API to fix the columns to size.",
+            "type": "GridReadyEvent"
         },
         "gridSizeChanged": {
-            "description": "The size of the grid <code>div</code> has changed. In other words, the grid was resized."
+            "description": "The size of the grid <code>div</code> has changed. In other words, the grid was resized.",
+            "type": "GridSizeChangedEvent"
         },
         "modelUpdated": {
-            "description": "Displayed rows have changed. Triggered after sort, filter or tree expand / collapse events."
+            "description": "Displayed rows have changed. Triggered after sort, filter or tree expand / collapse events.",
+            "type": "ModelUpdatedEvent"
         },
         "firstDataRendered": {
-            "description": "Fired the first time data is rendered into the grid."
+            "description": "Fired the first time data is rendered into the grid.",
+            "type": "FirstDataRendereredEvent"
         },
         "rowGroupOpened": {
-            "description": "A row group was opened or closed."
+            "description": "A row group was opened or closed.",
+            "type": "RowGroupOpenedEvent"
         },
         "expandOrCollapseAll": {
-            "description": "Fired when calling either of the API methods <code>expandAll()</code> or <code>collapseAll()</code>."
+            "description": "Fired when calling either of the API methods <code>expandAll()</code> or <code>collapseAll()</code>.",
+            "type": "ExpandCollapseAllEvent"
         },
         "paginationChanged": {
-            "description": "<p>Triggered every time the paging state changes. Some of the most common scenarios for this event to be triggered are:</p><ul class='content'><li>The page size changes</li><li>The current shown page is changed</li><li>New data is loaded onto the grid</li></ul>"
+            "description": "<p>Triggered every time the paging state changes. Some of the most common scenarios for this event to be triggered are:</p><ul class='content'><li>The page size changes</li><li>The current shown page is changed</li><li>New data is loaded onto the grid</li></ul>",
+            "type": "PaginationChangedEvent"
         },
         "pinnedRowDataChanged": {
-            "description": "The client has set new pinned row data into the grid."
+            "description": "The client has set new pinned row data into the grid.",
+            "type": "PinnedRowDataChangedEvent"
         },
         "virtualRowRemoved": {
-            "description": "A row was removed from the DOM, for any reason. Use to clean up resources (if any) used by the row."
+            "description": "A row was removed from the DOM, for any reason. Use to clean up resources (if any) used by the row.",
+            "type": "VirtualRowRemovedEvent"
         },
         "viewportChanged": {
-            "description": "Which rows are rendered in the DOM has changed."
+            "description": "Which rows are rendered in the DOM has changed.",
+            "type": "ViewportChangedEvent"
         },
         "bodyScroll": {
-            "description": "The body was scrolled horizontally or vertically."
+            "description": "The body was scrolled horizontally or vertically.",
+            "type": "BodyScrollEvent"
         },
         "dragStarted": {
-            "description": "When dragging starts. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc."
+            "description": "When dragging starts. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc.",
+            "type": "DragStartedEvent"
         },
         " dragStopped": {
-            "description": "When dragging stops. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc."
+            "description": "When dragging stops. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc.",
+            "type": "DragStoppedEvent"
         },
         "rowDataChanged": {
-            "description": "The client has set new data into the grid using <code>api.setRowData()</code> or by changing the <code>rowData</code> bound property."
+            "description": "The client has set new data into the grid using <code>api.setRowData()</code> or by changing the <code>rowData</code> bound property.",
+            "type": "RowDataChangedEvent"
         },
         "rowDataUpdated": {
-            "description": "The client has updated data for the grid using <code>api.applyTransaction(transaction)</code> or by changing the <code>rowData</code> bound property with <code>immutableData=true</code>."
+            "description": "The client has updated data for the grid using <code>api.applyTransaction(transaction)</code> or by changing the <code>rowData</code> bound property with <code>immutableData=true</code>.",
+            "type": "RowDataUpdatedEvent"
         },
         "toolPanelVisibleChanged": {
-            "description": "The tool panel was hidden or shown. Use <code>api.isToolPanelShowing()</code> to get status."
+            "description": "The tool panel was hidden or shown. Use <code>api.isToolPanelShowing()</code> to get status.",
+            "type": "ToolPanelVisibleChangedEvent"
         },
         "componentStateChanged": {
-            "description": "Only used by React, Angular and VueJS AG Grid components (not used if doing plain JavaScript or Angular 1.x). If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change."
+            "description": "Only used by React, Angular and VueJS AG Grid components (not used if doing plain JavaScript or Angular 1.x). If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change.",
+            "type": "ComponentStateChangedEvent"
         },
         "animationQueueEmpty": {
-            "description": "The grid draws rows and cells using animation frames. This event gets fired when the animation frame queue is empty. Normally used in conjunction with <code>api.isAnimationFrameQueueEmpty()</code> so user can check if animation frame is pending, and if so then can be notified when no animation frames are pending. Useful if your application needs to know when drawing of the grid is no longer pending, e.g. for sending to a printer."
+            "description": "The grid draws rows and cells using animation frames. This event gets fired when the animation frame queue is empty. Normally used in conjunction with <code>api.isAnimationFrameQueueEmpty()</code> so user can check if animation frame is pending, and if so then can be notified when no animation frames are pending. Useful if your application needs to know when drawing of the grid is no longer pending, e.g. for sending to a printer.",
+            "type": "AnimationQueueEmptyEvent"
         },
-        "AsyncTransactionsFlushed": {
-            "description": "Async transactions have been applied. Contains a list of all transaction results."
+        "asyncTransactionsFlushed": {
+            "description": "Async transactions have been applied. Contains a list of all transaction results.",
+            "type": " AsyncTransactionsFlushed"
         },
         "cellKeyDown": {
             "description": "DOM event <code>keyDown</code> happened on a cell.",
             "more": {
                 "name": "Keyboard Events",
                 "url": "/keyboard-navigation/#keyboard-events"
-            }
+            },
+            "type": "CellKeyDown | FullWidthCellKeyDown"
         },
         "cellKeyPress": {
-            "description": "DOM event keyPress happened on a cell.",
+            "description": "DOM event <code>keyPress</code> happened on a cell.",
             "more": {
                 "name": "Keyboard Events",
                 "url": "/keyboard-navigation/#keyboard-events"
-            }
+            },
+            "type": "CellKeyPress | FullWidthCellKeyPress"
         }
     }
 }

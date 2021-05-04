@@ -1092,6 +1092,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
     public createEvent(domEvent: Event | null, eventType: string): CellEvent {
         const event: CellEvent = {
+            type: eventType,
             node: this.rowNode,
             data: this.rowNode.data,
             value: this.value,
@@ -1102,7 +1103,6 @@ export class CellComp extends Component implements TooltipParentComp {
             columnApi: this.beans.columnApi,
             rowPinned: this.rowNode.rowPinned,
             event: domEvent,
-            type: eventType,
             rowIndex: this.rowNode.rowIndex!
         };
 
@@ -1767,7 +1767,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
     public onWidthChanged(): void {
         const width = this.getCellWidth();
-        this.getGui().style.width = width + 'px';
+        this.getGui().style.width = `${width}px`;
     }
 
     private getRangeBorders(): {
