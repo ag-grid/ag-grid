@@ -170,8 +170,8 @@ interface CellValueChangedEvent {
             }</span>
             ├── RowValueChangedEvent <span class="event-hierarchy__property">{}</span>
             ├── VirtualRowRemovedEvent <span class="event-hierarchy__property">{}</span>
-            ├── FullWidthCellKeyDown <span class="event-hierarchy__property">{}</span>
-            ├── FullWidthCellKeyPress <span class="event-hierarchy__property">{}</span>
+            ├── FullWidthRowKeyDownEvent <span class="event-hierarchy__property">{}</span>
+            ├── FullWidthRowKeyPressEvent <span class="event-hierarchy__property">{}</span>
             └── CellEvent <span class="event-hierarchy__property">{
                 │   <span class="event-hierarchy__attribute">column</span>: Column, // the column for the cell in question
                 │   <span class="event-hierarchy__attribute">colDef</span>: ColDef, // the column definition for the cell in question
@@ -184,8 +184,8 @@ interface CellValueChangedEvent {
                 ├── CellMouseOutEvent <span class="event-hierarchy__property">{}</span>
                 ├── CellContextMenuEvent <span class="event-hierarchy__property">{}</span>
                 ├── CellEditingStartedEvent <span class="event-hierarchy__property">{}</span>
-                ├── CellKeyDown <span class="event-hierarchy__property">{}</span>
-                ├── CellKeyPress <span class="event-hierarchy__property">{}</span>
+                ├── CellKeyDownEvent <span class="event-hierarchy__property">{}</span>
+                ├── CellKeyPressEvent <span class="event-hierarchy__property">{}</span>
                 ├── CellEditingStoppedEvent <span class="event-hierarchy__property">{
                         <span class="event-hierarchy__attribute">oldValue</span>: any, // the old value before editing
                         <span class="event-hierarchy__attribute">newValue</span>: any // the new value after editing
