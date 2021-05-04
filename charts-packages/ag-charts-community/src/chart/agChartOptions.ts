@@ -34,6 +34,9 @@ export interface AgChartThemeOverrides {
     polar?: AgPolarChartOptions<AgPolarAxesTheme, AgPolarSeriesTheme>;
     pie?: AgPolarChartOptions<AgPolarAxesTheme, AgPieSeriesOptions>;
 
+    hierarchy?: AgHierarchyChartOptions<AgHierarchySeriesTheme>;
+    treemap?: AgHierarchyChartOptions<AgHierarchySeriesOptions>;
+
     common?: any;
 }
 
@@ -74,6 +77,10 @@ export interface AgPolarAxesTheme {
 
 export interface AgPolarSeriesTheme {
     pie?: AgPieSeriesOptions;
+}
+
+export interface AgHierarchySeriesTheme {
+    treemap?: AgTreemapSeriesOptions;
 }
 
 export interface AgChartPaddingOptions {
@@ -740,9 +747,13 @@ export interface AgTreemapSeriesOptions extends AgBaseSeriesOptions {
         value?: AgChartLabelOptions;
     },
     labelKey?: string;
+    sizeKey?: string;
+    colorKey?: string;
+    colorDomain?: number[];
+    colorRange?: string[];
+    colorParents?: boolean;
     tooltip?: AgTreemapSeriesTooltip;
     nodePadding?: number;
-    colorParents?: boolean;
     gradient?: boolean;
 }
 

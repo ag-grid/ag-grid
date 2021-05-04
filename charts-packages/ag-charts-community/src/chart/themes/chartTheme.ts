@@ -543,6 +543,12 @@ export class ChartTheme {
                         defaults[seriesType] = deepMerge(defaults[seriesType], overrides.polar, mergeOptions);
                     });
                 }
+                if (overrides.hierarchy) {
+                    defaults.hierarchy = deepMerge(defaults.hierarchy, overrides.hierarchy, mergeOptions);
+                    ChartTheme.hierarchySeriesTypes.forEach(seriesType => {
+                        defaults[seriesType] = deepMerge(defaults[seriesType], overrides.hierarchy, mergeOptions);
+                    });
+                }
                 ChartTheme.seriesTypes.forEach(seriesType => {
                     const chartConfig = overrides[seriesType];
                     if (chartConfig) {
@@ -561,6 +567,7 @@ export class ChartTheme {
 
     private static cartesianSeriesTypes: (keyof AgChartThemeOverrides)[] = ['line', 'area', 'bar', 'column', 'scatter', 'histogram'];
     private static polarSeriesTypes: (keyof AgChartThemeOverrides)[] = ['pie'];
+    private static hierarchySeriesTypes: (keyof AgChartThemeOverrides)[] = ['treemap'];
     private static seriesTypes: (keyof AgChartThemeOverrides)[] = ChartTheme.cartesianSeriesTypes.concat(ChartTheme.polarSeriesTypes);
 
     private createChartConfigPerSeries(config: any) {

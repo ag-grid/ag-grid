@@ -105,7 +105,7 @@ Below is a code example of using the editing API methods.
 
 <snippet>
 |// start editing country cell on first row
-|gridOptions.api.startEditing({
+|gridOptions.api.startEditingCell({
 |    rowIndex: 0,
 |    colKey: 'country'
 |});
