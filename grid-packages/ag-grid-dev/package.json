@@ -21,5 +21,7 @@
     "typescript": "~3.6.0"
   },
   "dependencies": {
+    "ag-grid-community": "file:../ag-grid-community/ag-grid-community-25.2.0.tgz",
+    "ag-grid-enterprise": "file:../ag-grid-enterprise/ag-grid-enterprise-25.2.0.tgz"
   }
 }

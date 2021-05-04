@@ -12,18 +12,15 @@ const pkg = require('./package.json');
 const replace = require('gulp-replace');
 const concat = require('gulp-concat');
 
-const headerTemplate = ['/**',
-    ' * <%= pkg.name %> - <%= pkg.description %>',
-    ' * @version v<%= pkg.version %>',
-    ' * @link <%= pkg.homepage %>',
-    ' * @license <%= pkg.license %>',
-    ' */',
-    ''].join('\n');
-
 const dtsHeaderTemplate =
     '// Type definitions for <%= pkg.name %> v<%= pkg.version %>\n' +
     '// Project: <%= pkg.homepage %>\n' +
     '// Definitions by: Niall Crosby <https://github.com/ag-grid/>\n';
+
+const exportedCommunityModules = fs.readFileSync('./src/main.ts').toString().split("\n")
+    .filter(line => line.includes('export ') && line.includes('@ag-grid-community'))
+    .filter(line => !line.includes('@ag-grid-community/core'))
+    .map(line => line.substring(line.indexOf("@ag-grid-community"), line.lastIndexOf('"') === -1 ? line.lastIndexOf('\'') : line.lastIndexOf('"')))
 
 // Start of Typescript related tasks
 const tscMainTask = () => {
@@ -33,14 +30,13 @@ const tscMainTask = () => {
         .src('./src/main.ts')
         .pipe(tsProject());
 
-    return merge([
-        tsResult.dts
-            .pipe(replace("\"@ag-grid-community/core", "\"./dist/lib/main"))
-            .pipe(replace("\"@ag-grid-community/csv-export", "\"./dist/lib/main"))
-            .pipe(header(dtsHeaderTemplate, {pkg: pkg}))
-            .pipe(rename("main.d.ts"))
-            .pipe(gulp.dest('./')),
-    ]);
+    let result = tsResult.dts.pipe(replace("@ag-grid-community/core", "./dist/lib/main"));
+
+    exportedCommunityModules.forEach(exportedCommunityModule => result = result.pipe(replace(exportedCommunityModule, "./dist/lib/main")));
+
+    return result.pipe(header(dtsHeaderTemplate, {pkg: pkg}))
+        .pipe(rename("main.d.ts"))
+        .pipe(gulp.dest('./'));
 };
 
 const cleanDist = () => {
@@ -62,7 +58,7 @@ const copyGridCoreStyles = (done) => {
                 './node_modules/@ag-grid-community/core/src/styles/**/*'
             ]).pipe(gulp.dest('./src/styles')),
         ]
-        );
+    );
 };
 
 const copyGridCoreTypings = (done) => {
@@ -70,20 +66,27 @@ const copyGridCoreTypings = (done) => {
         done("node_modules/@ag-grid-community/core/typings doesn't exist - exiting")
     }
 
-    if (!fs.existsSync('./node_modules/@ag-grid-community/csv-export/typings')) {
-        done("node_modules/@ag-grid-community/csv-export/typings doesn't exist - exiting")
-    }
+    exportedCommunityModules.forEach(exportedCommunityModule => {
+        if (!fs.existsSync(`./node_modules/${exportedCommunityModule}/typings`)) {
+            done(`./node_modules/${exportedCommunityModule}/typings doesn't exist - exiting`)
+        }
+    })
+
+    const typingsDirs = exportedCommunityModules.map(exportedCommunityModule =>
+        [
+            `./node_modules/${exportedCommunityModule}/typings/**/*`,
+            `!./node_modules/${exportedCommunityModule}/typings/main.*`,
+        ]).flatMap(x => x)
 
     return gulp.src([
         './node_modules/@ag-grid-community/core/typings/**/*',
-        './node_modules/@ag-grid-community/csv-export/typings/**/*',
-        '!./node_modules/@ag-grid-community/csv-export/typings/main.*'
+        ...typingsDirs
     ])
-        .pipe(replace(/\@ag-grid-community\/core/, function() {
+        .pipe(replace(/\@ag-grid-community\/core/, function () {
             // replace references to @ag-grid-community/core with relative imports based on the file location
             // ie a file in a/b/ importing from @ag-grid-community/core will instead import from '../../main'
             const depth = (this.file.relative.match(/\//g) || []).length;
-            if(depth === 0) {
+            if (depth === 0) {
                 return './main';
             } else {
                 return `${Array(depth).fill('../').join('')}main`;
@@ -93,9 +96,11 @@ const copyGridCoreTypings = (done) => {
 };
 
 const copyAndConcatMainTypings = () => {
+    const typingsDirs = exportedCommunityModules.map(exportedCommunityModule => `./node_modules/${exportedCommunityModule}/typings/main.*`);
+
     return gulp.src([
         './node_modules/@ag-grid-community/core/typings/main.*',
-        './node_modules/@ag-grid-community/csv-export/typings/main.*'
+        ...typingsDirs
     ])
         .pipe(concat('main.d.ts'))
         .pipe(gulp.dest('./dist/lib'));
