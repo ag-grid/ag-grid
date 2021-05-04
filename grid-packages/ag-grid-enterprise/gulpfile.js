@@ -8,7 +8,6 @@ const gulpTypescript = require('gulp-typescript');
 const typescript = require('typescript');
 const header = require('gulp-header');
 const concat = require('gulp-concat');
-const merge = require('merge2');
 const pkg = require('./package.json');
 const replace = require('gulp-replace');
 
@@ -16,6 +15,15 @@ const dtsHeaderTemplate =
     '// Type definitions for <%= pkg.name %> v<%= pkg.version %>\n' +
     '// Project: <%= pkg.homepage %>\n' +
     '// Definitions by: Niall Crosby <https://github.com/ag-grid/>\n';
+
+const exportedCommunityModules = fs.readFileSync('../ag-grid-community/src/main.ts').toString().split("\n")
+    .filter(line => line.includes('export ') && line.includes('@ag-grid-community'))
+    .filter(line => !line.includes('@ag-grid-community/core'))
+    .map(line => line.substring(line.indexOf("@ag-grid-community"), line.lastIndexOf('"') === -1 ? line.lastIndexOf('\'') : line.lastIndexOf('"')))
+
+const exportedEnterpriseModules = fs.readFileSync('./src/main.ts').toString().split("\n")
+    .filter(line => line.includes('export ') && line.includes('@ag-grid-enterprise'))
+    .map(line => line.substring(line.indexOf("@ag-grid-enterprise"), line.lastIndexOf('"') === -1 ? line.lastIndexOf('\'') : line.lastIndexOf('"')))
 
 // Start of Typescript related tasks
 const tscMainTask = () => {
@@ -25,14 +33,13 @@ const tscMainTask = () => {
         .src('./src/main.ts')
         .pipe(tsProject());
 
-    return merge([
-        tsResult.dts
-            .pipe(replace("\"@ag-grid-enterprise/core", "\"./dist/lib/main"))
-            .pipe(replace("\"@ag-grid-enterprise/set-filter", "\"./dist/lib/main"))
-            .pipe(header(dtsHeaderTemplate, {pkg: pkg}))
-            .pipe(rename("main.d.ts"))
-            .pipe(gulp.dest('./')),
-    ]);
+    let result = tsResult.dts.pipe(replace("@ag-grid-enterprise/core", "./dist/lib/main"));
+
+    exportedEnterpriseModules.forEach(exportedEnterpriseModule => result = result.pipe(replace(exportedEnterpriseModule, "./dist/lib/main")));
+
+    return result.pipe(header(dtsHeaderTemplate, {pkg: pkg}))
+        .pipe(rename("main.d.ts"))
+        .pipe(gulp.dest('./'));
 };
 
 const cleanDist = () => {
@@ -52,9 +59,11 @@ const copyGridCoreStyles = (done) => {
 };
 
 const copyAndConcatMainTypings = () => {
+    const typingsDirs = exportedEnterpriseModules.map(exportedEnterpriseModule => `./node_modules/${exportedEnterpriseModule}/typings/main.*`)
+
     return gulp.src([
         './node_modules/@ag-grid-enterprise/core/typings/main.*',
-        './node_modules/@ag-grid-enterprise/set-filter/typings/main.*'
+        ...typingsDirs
     ])
         .pipe(concat('main.d.ts'))
         .pipe(gulp.dest('./dist/lib'));
@@ -64,18 +73,29 @@ const copyGridCoreTypings = (done) => {
     if (!fs.existsSync('./node_modules/@ag-grid-enterprise/core/typings')) {
         done("node_modules/@ag-grid-enterprise/core/typings doesn't exist - exiting")
     }
-    if (!fs.existsSync('./node_modules/@ag-grid-enterprise/set-filter/typings')) {
-        done("node_modules/@ag-grid-enterprise/set-filter/typings doesn't exist - exiting")
-    }
 
-    return gulp.src([
+    exportedEnterpriseModules.forEach(exportedEnterpriseModule => {
+        if (!fs.existsSync(`./node_modules/${exportedEnterpriseModule}/typings`)) {
+            done(`./node_modules/${exportedEnterpriseModule}/typings doesn't exist - exiting`)
+        }
+    })
+
+    const typingsDirs = exportedEnterpriseModules.map(exportedEnterpriseModule =>
+        [
+            `./node_modules/${exportedEnterpriseModule}/typings/**/*`,
+            `!./node_modules/${exportedEnterpriseModule}/typings/main.*`,
+        ]).flatMap(x => x)
+
+
+    let result = gulp.src([
         './node_modules/@ag-grid-enterprise/core/typings/**/*',
-        '!./node_modules/@ag-grid-enterprise/core/typings/main.*',
-        './node_modules/@ag-grid-enterprise/set-filter/typings/**/*',
-        '!./node_modules/@ag-grid-enterprise/set-filter/typings/main.*'
+        ...typingsDirs
     ])
-        .pipe(replace("@ag-grid-community/core", "ag-grid-community"))
-        .pipe(gulp.dest('./dist/lib'));
+        .pipe(replace("@ag-grid-community/core", "ag-grid-community"));
+
+    exportedCommunityModules.forEach(exportedCommunityModule => result = result.pipe(replace(exportedCommunityModule, "ag-grid-community")));
+
+    return result.pipe(gulp.dest('./dist/lib'));
 };
 
 const copyGridAllUmdFiles = (done) => {

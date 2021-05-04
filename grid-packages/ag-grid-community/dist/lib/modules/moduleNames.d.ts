@@ -1,5 +1,5 @@
 export declare enum ModuleNames {
-    CommunityCoreModule = "@ag-grid-community/core",
+    CommunityCoreModule = "../main",
     CommunityAllModules = "@ag-grid-community/all",
     InfiniteRowModelModule = "@ag-grid-community/infinite-row-model",
     ClientSideRowModelModule = "@ag-grid-community/client-side-row-model",

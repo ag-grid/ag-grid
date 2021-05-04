@@ -4,4 +4,4 @@
 export { VirtualList } from "ag-grid-community";
 export { LicenseManager } from "./dist/lib/main";
 export { SetFilter } from "./dist/lib/main";
-export { getMultipleSheetsAsExcel, exportMultipleSheetsAsExcel } from '@ag-grid-enterprise/excel-export';
+export { getMultipleSheetsAsExcel, exportMultipleSheetsAsExcel } from './dist/lib/main';
