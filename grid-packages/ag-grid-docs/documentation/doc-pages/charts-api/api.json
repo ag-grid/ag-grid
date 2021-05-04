@@ -566,7 +566,7 @@
     },
     "base": {
       "type": "number",
-      "default": true,
+      "default": 10,
       "description": "The base of the logarithm used by the 'log' axis."
     },
     "min": {
