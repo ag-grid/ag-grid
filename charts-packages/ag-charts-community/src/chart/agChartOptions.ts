@@ -747,9 +747,13 @@ export interface AgTreemapSeriesOptions extends AgBaseSeriesOptions {
         value?: AgChartLabelOptions;
     },
     labelKey?: string;
+    sizeKey?: string;
+    colorKey?: string;
+    colorDomain?: number[];
+    colorRange?: string[];
+    colorParents?: boolean;
     tooltip?: AgTreemapSeriesTooltip;
     nodePadding?: number;
-    colorParents?: boolean;
     gradient?: boolean;
 }
 
