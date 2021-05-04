@@ -16,4 +16,4 @@ npm i ../ag-grid-enterprise/$ENTERPRISE_FILE
 rm ../ag-grid-community/$COMMUNITY_FILE
 rm ../ag-grid-enterprise/$ENTERPRISE_FILE
 
-#git checkout package.json
+git checkout package.json
