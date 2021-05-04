@@ -2068,7 +2068,7 @@ export class CellComp extends Component implements TooltipParentComp {
                 describedByIds += this.addSelectionCheckbox().getCheckboxId();
             }
 
-            setAriaDescribedBy(this.getGui(), `${describedByIds} ${this.eCellValue.id}`);
+            setAriaDescribedBy(this.getGui(), `${describedByIds} ${this.eCellValue.id}`.trim());
         } else {
             this.eCellValue = this.getGui();
             this.eCellWrapper = this.eCellValue;
