@@ -22,7 +22,6 @@ export interface ToolPanelColumnCompParams extends IToolPanelParams {
     suppressValues: boolean;
     suppressPivots: boolean;
     suppressPivotMode: boolean;
-    suppressSideButtons: boolean;
     suppressColumnFilter: boolean;
     suppressColumnSelectAll: boolean;
     suppressColumnExpandAll: boolean;
@@ -62,7 +61,6 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
     public init(params: ToolPanelColumnCompParams): void {
         const defaultParams: ToolPanelColumnCompParams = {
-            suppressSideButtons: false,
             suppressColumnSelectAll: false,
             suppressColumnFilter: false,
             suppressColumnExpandAll: false,

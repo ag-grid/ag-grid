@@ -20,7 +20,6 @@ export interface ToolPanelColumnCompParams extends IToolPanelParams {
     suppressValues: boolean;
     suppressPivots: boolean;
     suppressPivotMode: boolean;
-    suppressSideButtons: boolean;
     suppressColumnFilter: boolean;
     suppressColumnSelectAll: boolean;
     suppressColumnExpandAll: boolean;

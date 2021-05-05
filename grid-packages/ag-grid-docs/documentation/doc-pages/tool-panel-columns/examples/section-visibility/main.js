@@ -29,7 +29,6 @@ var gridOptions = {
                 suppressValues: true,
                 suppressPivots: true,
                 suppressPivotMode: true,
-                suppressSideButtons: true,
                 suppressColumnFilter: true,
                 suppressColumnSelectAll: true,
                 suppressColumnExpandAll: true

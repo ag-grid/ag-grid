@@ -506,7 +506,6 @@ export class EnterpriseMenu extends BeanStub {
             suppressColumnExpandAll: !!columnsMenuParams.suppressColumnExpandAll,
             suppressColumnFilter: !!columnsMenuParams.suppressColumnFilter,
             suppressColumnSelectAll: !!columnsMenuParams.suppressColumnSelectAll,
-            suppressSideButtons: false,
             suppressSyncLayoutWithGrid: !!columnsMenuParams.suppressSyncLayoutWithGrid,
             api: this.gridApi,
             columnApi: this.columnApi
