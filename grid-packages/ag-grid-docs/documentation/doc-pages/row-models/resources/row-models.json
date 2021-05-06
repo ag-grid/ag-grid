@@ -213,7 +213,7 @@
         {
             "feature": "[Update via Transaction](/data-update-transactions/)",
             "clientSide": true,
-            "infinite": "add only",
+            "infinite": false,
             "serverSide": true,
             "viewport": false
         },
