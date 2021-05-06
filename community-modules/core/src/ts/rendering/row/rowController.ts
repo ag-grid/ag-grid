@@ -319,7 +319,6 @@ export class RowController extends BeanStub {
     }
 
     public refreshFullWidth(): boolean {
-
         // returns 'true' if refresh succeeded
         const tryRefresh = (rowComp: RowComp, pinned: string | null): boolean => {
             if (!rowComp) { return true; } // no refresh needed
@@ -693,10 +692,15 @@ export class RowController extends BeanStub {
             eGridCell: eRow,
             eParentOfValue: eRow,
             pinned: pinned,
-            addRenderedRowListener: this.addEventListener.bind(this)
+            addRenderedRowListener: this.addEventListener.bind(this),
+            registerRowDragger: (value: string, element: HTMLElement, dragStartPixels?: number) => this.fullWidthRowComp.addFullWidthRowDragging(value, element, dragStartPixels)
         };
 
         return params;
+    }
+
+    private addFullWidthRowDragging(element?: HTMLElement, dragStartPixels?: number): void {
+
     }
 
     private onUiLevelChanged(): void {

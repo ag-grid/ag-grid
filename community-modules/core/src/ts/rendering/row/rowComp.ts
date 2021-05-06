@@ -12,11 +12,13 @@ import { assign, getAllValuesInObject, iterateObject } from "../../utils/object"
 import { Constants } from "../../constants/constants";
 import { ModuleRegistry } from "../../modules/moduleRegistry";
 import { ModuleNames } from "../../modules/moduleNames";
+import { RowDragComp } from "./rowDragComp";
 
 export class RowComp extends Component {
 
     private container: RowContainerComp;
     private fullWidthRowComponent: ICellRendererComp | null | undefined;
+    private rowDraggingComp: RowDragComp | undefined;
 
     private beans: Beans;
     private pinned: string | null;
@@ -224,6 +226,21 @@ export class RowComp extends Component {
 
     public getFullWidthRowComp(): ICellRendererComp | null | undefined {
         return this.fullWidthRowComponent;
+    }
+
+    public addFullWidthRowDragging(value: string, element?: HTMLElement, dragStartPixels?: number): void {
+        if (!this.controller.isFullWidth()) { return; }
+
+        if (!this.rowDraggingComp) {
+            this.rowDraggingComp = new RowDragComp(() => value, this.beans, this.rowNode, undefined, element, dragStartPixels);
+            this.createManagedBean(this.rowDraggingComp, this.beans.context);
+        } else if (element) {
+            this.rowDraggingComp.setDragElement(element, dragStartPixels);
+        }
+
+        if (!element) {
+            this.getFullWidthRowComp()!.getGui().insertAdjacentElement('afterbegin', this.rowDraggingComp.getGui());
+        }
     }
 
     private createTemplate(): string {
