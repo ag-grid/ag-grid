@@ -42,8 +42,8 @@ var gridOptions = {
             axes: {
                 number: {
                     line: {
-                        width: 2,
-                        color: 'gray',
+                        width: 6,
+                        color: 'black',
                     },
                     tick: {
                         width: 2,

@@ -88,6 +88,24 @@ var gridOptions = {
                             paddingY: 20,
                         }
                     },
+                },
+                cartesian: {
+                    axes: {
+                        number: {
+                            bottom: {
+                                line: {
+                                    width: 5
+                                }
+                            }
+                        },
+                        category: {
+                            left: {
+                                line: {
+                                    width: 2
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
