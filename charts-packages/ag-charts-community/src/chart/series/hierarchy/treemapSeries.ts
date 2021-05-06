@@ -364,6 +364,7 @@ export class TreemapSeries extends HierarchySeries {
         });
 
         this.groupSelection.selectByTag<Text>(TextNodeTag.Value).each((text, datum, index) => {
+            const isLeaf = !datum.children;
             const innerNodeWidth = datum.x1 - datum.x0 - nodePadding * 2;
             const highlighted = datum === highlightedDatum;
             const value = datum.colorValue;
@@ -382,7 +383,7 @@ export class TreemapSeries extends HierarchySeries {
             const textBBox = text.computeBBox();
             const nameNode = labelMap.get(index);
             const hasLabel = !!nameNode && nameNode.visible;
-            const isVisible = !!colorKey && hasLabel && !!textBBox && textBBox.width < innerNodeWidth;
+            const isVisible = isLeaf && !!colorKey && hasLabel && !!textBBox && textBBox.width < innerNodeWidth;
 
             text.fill = highlighted ? 'black' : label.color;
             text.fillShadow = highlighted ? undefined : shadow;
