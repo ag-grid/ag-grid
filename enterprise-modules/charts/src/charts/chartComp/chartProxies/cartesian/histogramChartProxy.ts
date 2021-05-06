@@ -92,12 +92,21 @@ export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOpti
             lineDash: seriesDefaults.lineDash ? seriesDefaults.lineDash : [0],
             lineDashOffset: seriesDefaults.lineDashOffset,
             highlightStyle: seriesDefaults.highlightStyle as HighlightOptions,
-            listeners: seriesDefaults.listeners
+            listeners: seriesDefaults.listeners,
+            binCount: seriesDefaults.binCount,
+            bins: seriesDefaults.bins
         } as HistogramSeriesOptions;
 
         return options;
     }
 
+    private getSeriesDefaults(): HistogramSeriesOptions {
+        return {
+            ...this.iChartOptions.seriesDefaults
+        };
+    }
+
+    // TODO: should be removed along with processChartOptions()
     protected getDefaultOptions(): CartesianChartOptions<HistogramSeriesOptions> {
 
         const fontOptions = this.getDefaultFontOptions();
@@ -120,11 +129,5 @@ export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOpti
         };
 
         return options;
-    }
-
-    private getSeriesDefaults(): HistogramSeriesOptions {
-        return {
-            ...this.iChartOptions.seriesDefaults
-        };
     }
 }

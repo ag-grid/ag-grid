@@ -320,10 +320,6 @@ export class HistogramSeries extends CartesianSeries {
             return [];
         }
 
-        if (bins && binCount) {
-            console.warn('bins and bitCount are mutually exclusive properties.');
-        }
-
         if (bins) {
             return bins;
         }

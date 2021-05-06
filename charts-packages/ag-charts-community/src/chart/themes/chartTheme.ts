@@ -339,7 +339,7 @@ export class ChartTheme {
                 lineDash: undefined,
                 lineDashOffset: 0,
                 areaPlot: false,
-                binCount: undefined,
+                binCount: 10,
                 bins: undefined,
                 aggregation: 'sum',
                 tooltipRenderer: undefined,

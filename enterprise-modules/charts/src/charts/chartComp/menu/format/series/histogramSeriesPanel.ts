@@ -62,12 +62,12 @@ export class HistogramSeriesPanel extends Component {
             .hideEnabledCheckbox(true);
 
         this.initSeriesTooltips();
+        this.initBins();
         this.initSeriesStrokeWidth();
         this.initSeriesLineDash();
         this.initOpacity();
         this.initLabelPanel();
         this.initShadowPanel();
-        this.initBins();
     }
 
     private initSeriesTooltips() {
@@ -78,6 +78,16 @@ export class HistogramSeriesPanel extends Component {
             .setInputWidth(45)
             .setValue(this.getChartProxy().getSeriesOption("tooltip.enabled") || false)
             .onValueChange(newValue => this.getChartProxy().setSeriesOption("tooltip.enabled", newValue));
+    }
+
+    private initBins() {
+        this.seriesBinCountSlider
+            .setLabel(this.chartTranslator.translate("histogramBinCount"))
+            .setMinValue(4)
+            .setMaxValue(100)
+            .setTextFieldWidth(45)
+            .setValue(this.getChartProxy().getSeriesOption("binCount"))
+            .onValueChange(newValue => this.getChartProxy().setSeriesOption("binCount", newValue));
     }
 
     private initSeriesStrokeWidth() {
@@ -101,16 +111,6 @@ export class HistogramSeriesPanel extends Component {
     private initOpacity() {
         initLineOpacitySlider(this.seriesLineOpacitySlider, this.chartTranslator, this.getChartProxy());
         initFillOpacitySlider(this.seriesFillOpacitySlider, this.chartTranslator, this.getChartProxy());
-    }
-
-    private initBins() {
-        this.seriesBinCountSlider
-            .setLabel(this.chartTranslator.translate("histogramBinCount"))
-            .setMinValue(4)
-            .setMaxValue(100)
-            .setTextFieldWidth(45)
-            .setValue(this.getChartProxy().getSeriesOption("binCount"))
-            .onValueChange(newValue => this.getChartProxy().setSeriesOption("binCount", newValue));
     }
 
     private initLabelPanel() {
