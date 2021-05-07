@@ -4,9 +4,7 @@ import { Autowired } from "../../context/context";
 import { Component } from "../../widgets/component";
 import { ICellRendererComp, ICellRendererFunc, ICellRendererParams } from "./iCellRenderer";
 import { RowNode } from "../../entities/rowNode";
-import { ValueFormatterService } from "../valueFormatterService";
 import { CheckboxSelectionComponent } from "../checkboxSelectionComponent";
-import { ColumnController } from "../../columnController/columnController";
 import { Column } from "../../entities/column";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { ColDef } from "../../entities/colDef";
@@ -26,6 +24,10 @@ import { missing } from "../../utils/generic";
 import { isStopPropagationForAgGrid, stopPropagationForAgGrid, isElementInEventPath } from "../../utils/event";
 import { setAriaExpanded, removeAriaExpanded } from "../../utils/aria";
 import { KeyCode } from '../../constants/keyCode';
+import { ValueFormatterService } from "../valueFormatterService";
+import { ColumnController } from "../../columnController/columnController";
+import { RowRenderer } from "../rowRenderer";
+import { RowDragComp } from "../row/rowDragComp";
 
 export interface GroupCellRendererParams extends ICellRendererParams {
     // only when in fullWidth, this gives whether the comp is pinned or not.
@@ -40,6 +42,7 @@ export interface GroupCellRendererParams extends ICellRendererParams {
     footerValueGetter: any;
     suppressCount: boolean;
     checkbox: any;
+    rowDrag?: boolean;
 
     innerRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
     innerRendererFramework?: any;
@@ -62,6 +65,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
             <span class="ag-group-child-count" ref="eChildCount"></span>
         </span>`;
 
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('expressionService') private expressionService: ExpressionService;
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
     @Autowired('columnController') private columnController: ColumnController;
@@ -125,6 +129,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         if (this.cellIsBlank) { return; }
 
         this.setupDragOpenParents();
+        this.addFullWidthRowDraggerIfNeeded();
         this.addExpandAndContract();
         this.addCheckboxIfNeeded();
         this.addValueElement();
@@ -169,7 +174,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         const rowNode: RowNode = params.node;
         // if we are only showing one group column, we don't want to be indenting based on level
         const fullWithRow = !!params.colDef;
-        const manyDimensionThisColumn = !fullWithRow || params.colDef.showRowGroup === true;
+        const manyDimensionThisColumn = !fullWithRow || params.colDef!.showRowGroup === true;
         const paddingCount = manyDimensionThisColumn ? rowNode.uiLevel : 0;
         const userProvidedPaddingPixelsTheDeprecatedWay = params.padding >= 0;
 
@@ -245,7 +250,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         const params = this.params;
         const rowGroupColumn = this.displayedGroup.rowGroupColumn;
         // we try and use the cellRenderer of the column used for the grouping if we can
-        const columnToUse: Column = rowGroupColumn ? rowGroupColumn : params.column;
+        const columnToUse: Column = rowGroupColumn ? rowGroupColumn : params.column!;
         const groupName = this.params.value;
         const valueFormatted = columnToUse ?
             this.valueFormatterService.formatValue(columnToUse, params.node, params.scope, groupName) : null;
@@ -257,7 +262,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         rendererPromise = params.fullWidth
             ? this.useFullWidth(params)
             : this.useInnerRenderer(
-                this.params.colDef.cellRendererParams,
+                this.params.colDef!.cellRendererParams,
                 columnToUse.getColDef(),
                 params
             );
@@ -347,6 +352,15 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         }
 
         return cellRendererPromise;
+    }
+
+    private addFullWidthRowDraggerIfNeeded(): void {
+        if (!this.params.fullWidth || !this.params.rowDrag) { return; }
+
+        const rowDragComp = new RowDragComp(() => this.params.value, this.params.node);
+        this.createManagedBean(rowDragComp, this.context);
+
+        this.getGui().insertAdjacentElement('afterbegin', rowDragComp.getGui());
     }
 
     private addChildCount(): void {
@@ -469,7 +483,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
             if (rowGroupColumn) {
                 // if the displayGroup column for this col matches the rowGroupColumn we grouped by for this node,
                 // then nothing was dragged down
-                this.draggedFromHideOpenParents = !column.isRowGroupDisplayed(rowGroupColumn.getId());
+                this.draggedFromHideOpenParents = !column!.isRowGroupDisplayed(rowGroupColumn.getId());
             } else {
                 // the only way we can end up here (no column, but a group) is if we are at the root node,
                 // which only happens when 'groupIncludeTotalFooter' is true. here, we are never dragging
@@ -484,7 +498,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
                 if (missing(pointer)) {
                     break;
                 }
-                if (pointer.rowGroupColumn && column.isRowGroupDisplayed(pointer.rowGroupColumn.getId())) {
+                if (pointer.rowGroupColumn && column!.isRowGroupDisplayed(pointer.rowGroupColumn.getId())) {
                     this.displayedGroup = pointer;
                     break;
                 }

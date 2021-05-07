@@ -12,6 +12,7 @@ import { assign, getAllValuesInObject, iterateObject } from "../../utils/object"
 import { Constants } from "../../constants/constants";
 import { ModuleRegistry } from "../../modules/moduleRegistry";
 import { ModuleNames } from "../../modules/moduleNames";
+import { RowDragComp } from "./rowDragComp";
 
 export class RowComp extends Component {
 

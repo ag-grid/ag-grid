@@ -1001,7 +1001,7 @@ export class CellComp extends Component implements TooltipParentComp {
             eGridCell: this.getGui(),
             eParentOfValue: this.eCellValue,
 
-            registerRowDragger: (element, dragStartPixels) => this.addRowDragging(element, dragStartPixels),
+            registerRowDragger: (rowDraggerElement, dragStartPixels) => this.addRowDragging(rowDraggerElement, dragStartPixels),
 
             // these bits are not documented anywhere, so we could drop them?
             // it was in the olden days to allow user to register for when rendered
@@ -2101,7 +2101,7 @@ export class CellComp extends Component implements TooltipParentComp {
             }
         }
         if (!this.rowDraggingComp) {
-            this.rowDraggingComp = new RowDragComp(this.rowNode, this.column, () => this.value, this.beans, customElement, dragStartPixels);
+            this.rowDraggingComp = new RowDragComp(() => this.value, this.rowNode, this.column, customElement, dragStartPixels);
             this.createManagedBean(this.rowDraggingComp, this.beans.context);
         } else if (customElement) {
             // if the rowDraggingComp is already present, means we should only set the drag element

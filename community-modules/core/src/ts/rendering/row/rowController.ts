@@ -37,6 +37,8 @@ import { executeNextVMTurn } from "../../utils/function";
 import { RowCssClassCalculatorParams } from "./rowCssClassCalculator";
 import { BeanStub } from "../../context/beanStub";
 import { convertToMap } from "../../utils/map";
+import { RowDragComp } from "./rowDragComp";
+import { ICellRendererParams } from "../cellRenderers/iCellRenderer";
 
 export enum RowType {
     Normal = 'Normal',
@@ -319,7 +321,6 @@ export class RowController extends BeanStub {
     }
 
     public refreshFullWidth(): boolean {
-
         // returns 'true' if refresh succeeded
         const tryRefresh = (rowComp: RowComp, pinned: string | null): boolean => {
             if (!rowComp) { return true; } // no refresh needed
@@ -677,26 +678,39 @@ export class RowController extends BeanStub {
         checkRowSizeFunc();
     }
 
-    public createFullWidthParams(eRow: HTMLElement, pinned: string | null): any {
+    public createFullWidthParams(eRow: HTMLElement, pinned: string | null): ICellRendererParams {
         const params = {
             fullWidth: true,
             data: this.rowNode.data,
             node: this.rowNode,
             value: this.rowNode.key,
+            valueFormatted: this.rowNode.key,
             $scope: this.scope ? this.scope : this.parentScope,
             $compile: this.beans.$compile,
-            rowIndex: this.rowNode.rowIndex,
-            api: this.beans.gridOptionsWrapper.getApi(),
-            columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
+            rowIndex: this.rowNode.rowIndex!,
+            api: this.beans.gridOptionsWrapper.getApi()!,
+            columnApi: this.beans.gridOptionsWrapper.getColumnApi()!,
             context: this.beans.gridOptionsWrapper.getContext(),
             // these need to be taken out, as part of 'afterAttached' now
             eGridCell: eRow,
             eParentOfValue: eRow,
             pinned: pinned,
-            addRenderedRowListener: this.addEventListener.bind(this)
-        };
+            addRenderedRowListener: this.addEventListener.bind(this),
+            registerRowDragger: (rowDraggerElement, dragStartPixels, value) => this.addFullWidthRowDragging(rowDraggerElement, dragStartPixels, value)
+        } as ICellRendererParams;
 
         return params;
+    }
+
+    private addFullWidthRowDragging(
+        rowDraggerElement?: HTMLElement,
+        dragStartPixels?: number,
+        value: string = ''
+    ): void {
+        if (!this.isFullWidth()) { return; }
+
+        const rowDragComp = new RowDragComp(() => value, this.rowNode, undefined, rowDraggerElement, dragStartPixels);
+        this.createManagedBean(rowDragComp, this.beans.context);
     }
 
     private onUiLevelChanged(): void {
