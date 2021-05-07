@@ -27,6 +27,7 @@ import { KeyCode } from '../../constants/keyCode';
 import { ValueFormatterService } from "../valueFormatterService";
 import { ColumnController } from "../../columnController/columnController";
 import { RowRenderer } from "../rowRenderer";
+import { RowDragComp } from "../row/rowDragComp";
 
 export interface GroupCellRendererParams extends ICellRendererParams {
     // only when in fullWidth, this gives whether the comp is pinned or not.
@@ -173,7 +174,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         const rowNode: RowNode = params.node;
         // if we are only showing one group column, we don't want to be indenting based on level
         const fullWithRow = !!params.colDef;
-        const manyDimensionThisColumn = !fullWithRow || params.colDef.showRowGroup === true;
+        const manyDimensionThisColumn = !fullWithRow || params.colDef!.showRowGroup === true;
         const paddingCount = manyDimensionThisColumn ? rowNode.uiLevel : 0;
         const userProvidedPaddingPixelsTheDeprecatedWay = params.padding >= 0;
 
@@ -249,7 +250,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         const params = this.params;
         const rowGroupColumn = this.displayedGroup.rowGroupColumn;
         // we try and use the cellRenderer of the column used for the grouping if we can
-        const columnToUse: Column = rowGroupColumn ? rowGroupColumn : params.column;
+        const columnToUse: Column = rowGroupColumn ? rowGroupColumn : params.column!;
         const groupName = this.params.value;
         const valueFormatted = columnToUse ?
             this.valueFormatterService.formatValue(columnToUse, params.node, params.scope, groupName) : null;
@@ -261,7 +262,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         rendererPromise = params.fullWidth
             ? this.useFullWidth(params)
             : this.useInnerRenderer(
-                this.params.colDef.cellRendererParams,
+                this.params.colDef!.cellRendererParams,
                 columnToUse.getColDef(),
                 params
             );
@@ -355,14 +356,11 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
 
     private addFullWidthRowDraggerIfNeeded(): void {
         if (!this.params.fullWidth || !this.params.rowDrag) { return; }
-        const rowComp = this.rowRenderer.getRowConByPosition({
-            rowIndex: this.params.rowIndex,
-            rowPinned: this.params.pinned
-        });
 
-        if (rowComp) {
-            rowComp.addFullWidthRowDragging(undefined, undefined, this.params.value, this.getGui());
-        }
+        const rowDragComp = new RowDragComp(() => this.params.value, this.params.node);
+        this.createManagedBean(rowDragComp, this.context);
+
+        this.getGui().insertAdjacentElement('afterbegin', rowDragComp.getGui());
     }
 
     private addChildCount(): void {
@@ -485,7 +483,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
             if (rowGroupColumn) {
                 // if the displayGroup column for this col matches the rowGroupColumn we grouped by for this node,
                 // then nothing was dragged down
-                this.draggedFromHideOpenParents = !column.isRowGroupDisplayed(rowGroupColumn.getId());
+                this.draggedFromHideOpenParents = !column!.isRowGroupDisplayed(rowGroupColumn.getId());
             } else {
                 // the only way we can end up here (no column, but a group) is if we are at the root node,
                 // which only happens when 'groupIncludeTotalFooter' is true. here, we are never dragging
@@ -500,7 +498,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
                 if (missing(pointer)) {
                     break;
                 }
-                if (pointer.rowGroupColumn && column.isRowGroupDisplayed(pointer.rowGroupColumn.getId())) {
+                if (pointer.rowGroupColumn && column!.isRowGroupDisplayed(pointer.rowGroupColumn.getId())) {
                     this.displayedGroup = pointer;
                     break;
                 }

@@ -1,5 +1,5 @@
 import { Component } from "../../widgets/component";
-import { PostConstruct, PreDestroy } from "../../context/context";
+import { Autowired, PostConstruct, PreDestroy } from "../../context/context";
 import { RowNode } from "../../entities/rowNode";
 import { DragItem, DragSource, DragSourceType } from "../../dragAndDrop/dragAndDropService";
 import { Events } from "../../eventKeys";
@@ -19,12 +19,13 @@ export class RowDragComp extends Component {
 
     constructor(
         private readonly cellValueFn: () => string,
-        private readonly beans: Beans,
         private readonly rowNode: RowNode,
         private readonly column?: Column,
         private readonly customGui?: HTMLElement,
         private readonly dragStartPixels?: number
     ) { super(); }
+
+    @Autowired('beans') private beans: Beans;
 
     @PostConstruct
     private postConstruct(): void {

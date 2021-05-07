@@ -37,28 +37,8 @@ import { executeNextVMTurn } from "../../utils/function";
 import { RowCssClassCalculatorParams } from "./rowCssClassCalculator";
 import { BeanStub } from "../../context/beanStub";
 import { convertToMap } from "../../utils/map";
-import { GridApi } from "../../gridApi";
-import { ColumnApi } from "../../columnController/columnApi";
 import { RowDragComp } from "./rowDragComp";
-
-export interface FullWidthRowParams {
-    fullWidth: boolean;
-    data: any;
-    node: RowNode;
-    value: any;
-    $scope: any;
-    $compile: any;
-    rowIndex: number;
-    api: GridApi;
-    columnApi: ColumnApi;
-    context: any;
-
-    eGridCell: HTMLElement;
-    eParentOfValue: HTMLElement;
-    pinned: string | null;
-    addRenderedRowListener: () => void;
-    registerRowDragger: (rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string) => void;
-}
+import { ICellRendererParams } from "../cellRenderers/iCellRenderer";
 
 export enum RowType {
     Normal = 'Normal',
@@ -698,12 +678,13 @@ export class RowController extends BeanStub {
         checkRowSizeFunc();
     }
 
-    public createFullWidthParams(eRow: HTMLElement, pinned: string | null): any {
-        const params: FullWidthRowParams = {
+    public createFullWidthParams(eRow: HTMLElement, pinned: string | null): ICellRendererParams {
+        const params = {
             fullWidth: true,
             data: this.rowNode.data,
             node: this.rowNode,
             value: this.rowNode.key,
+            valueFormatted: this.rowNode.key,
             $scope: this.scope ? this.scope : this.parentScope,
             $compile: this.beans.$compile,
             rowIndex: this.rowNode.rowIndex!,
@@ -716,25 +697,20 @@ export class RowController extends BeanStub {
             pinned: pinned,
             addRenderedRowListener: this.addEventListener.bind(this),
             registerRowDragger: (rowDraggerElement, dragStartPixels, value) => this.addFullWidthRowDragging(rowDraggerElement, dragStartPixels, value)
-        };
+        } as ICellRendererParams;
 
         return params;
     }
 
-    public addFullWidthRowDragging(
+    private addFullWidthRowDragging(
         rowDraggerElement?: HTMLElement,
         dragStartPixels?: number,
-        value: string = '',
-        fullWidthContainer: HTMLElement = this.fullWidthRowComp.getGui()
+        value: string = ''
     ): void {
         if (!this.isFullWidth()) { return; }
 
-        const rowDragComp = new RowDragComp(() => value, this.beans, this.rowNode, undefined, rowDraggerElement, dragStartPixels);
+        const rowDragComp = new RowDragComp(() => value, this.rowNode, undefined, rowDraggerElement, dragStartPixels);
         this.createManagedBean(rowDragComp, this.beans.context);
-
-        if (!rowDraggerElement) {
-            fullWidthContainer.insertAdjacentElement('afterbegin', rowDragComp.getGui());
-        }
     }
 
     private onUiLevelChanged(): void {

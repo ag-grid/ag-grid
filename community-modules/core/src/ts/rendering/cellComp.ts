@@ -2101,7 +2101,7 @@ export class CellComp extends Component implements TooltipParentComp {
             }
         }
         if (!this.rowDraggingComp) {
-            this.rowDraggingComp = new RowDragComp(() => this.value, this.beans, this.rowNode, this.column, customElement, dragStartPixels);
+            this.rowDraggingComp = new RowDragComp(() => this.value, this.rowNode, this.column, customElement, dragStartPixels);
             this.createManagedBean(this.rowDraggingComp, this.beans.context);
         } else if (customElement) {
             // if the rowDraggingComp is already present, means we should only set the drag element
