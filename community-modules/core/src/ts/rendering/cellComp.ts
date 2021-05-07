@@ -1001,7 +1001,7 @@ export class CellComp extends Component implements TooltipParentComp {
             eGridCell: this.getGui(),
             eParentOfValue: this.eCellValue,
 
-            registerRowDragger: (element, dragStartPixels) => this.addRowDragging(element, dragStartPixels),
+            registerRowDragger: (rowDraggerElement, dragStartPixels) => this.addRowDragging(rowDraggerElement, dragStartPixels),
 
             // these bits are not documented anywhere, so we could drop them?
             // it was in the olden days to allow user to register for when rendered

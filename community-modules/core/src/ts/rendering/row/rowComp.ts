@@ -18,7 +18,6 @@ export class RowComp extends Component {
 
     private container: RowContainerComp;
     private fullWidthRowComponent: ICellRendererComp | null | undefined;
-    private rowDraggingComp: RowDragComp | undefined;
 
     private beans: Beans;
     private pinned: string | null;
@@ -226,17 +225,6 @@ export class RowComp extends Component {
 
     public getFullWidthRowComp(): ICellRendererComp | null | undefined {
         return this.fullWidthRowComponent;
-    }
-
-    public addFullWidthRowDragging(value: string, element?: HTMLElement, dragStartPixels?: number): void {
-        if (!this.controller.isFullWidth()) { return; }
-
-        const rowDragComp = new RowDragComp(() => value, this.beans, this.rowNode, undefined, element, dragStartPixels);
-        this.createManagedBean(rowDragComp, this.beans.context);
-
-        if (!element) {
-            this.getFullWidthRowComp()!.getGui().insertAdjacentElement('afterbegin', rowDragComp.getGui());
-        }
     }
 
     private createTemplate(): string {

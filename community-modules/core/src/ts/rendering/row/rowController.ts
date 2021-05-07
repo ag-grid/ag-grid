@@ -37,6 +37,28 @@ import { executeNextVMTurn } from "../../utils/function";
 import { RowCssClassCalculatorParams } from "./rowCssClassCalculator";
 import { BeanStub } from "../../context/beanStub";
 import { convertToMap } from "../../utils/map";
+import { GridApi } from "../../gridApi";
+import { ColumnApi } from "../../columnController/columnApi";
+import { RowDragComp } from "./rowDragComp";
+
+export interface FullWidthRowParams {
+    fullWidth: boolean;
+    data: any;
+    node: RowNode;
+    value: any;
+    $scope: any;
+    $compile: any;
+    rowIndex: number;
+    api: GridApi;
+    columnApi: ColumnApi;
+    context: any;
+
+    eGridCell: HTMLElement;
+    eParentOfValue: HTMLElement;
+    pinned: string | null;
+    addRenderedRowListener: () => void;
+    registerRowDragger: (rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string) => void;
+}
 
 export enum RowType {
     Normal = 'Normal',
@@ -677,26 +699,42 @@ export class RowController extends BeanStub {
     }
 
     public createFullWidthParams(eRow: HTMLElement, pinned: string | null): any {
-        const params = {
+        const params: FullWidthRowParams = {
             fullWidth: true,
             data: this.rowNode.data,
             node: this.rowNode,
             value: this.rowNode.key,
             $scope: this.scope ? this.scope : this.parentScope,
             $compile: this.beans.$compile,
-            rowIndex: this.rowNode.rowIndex,
-            api: this.beans.gridOptionsWrapper.getApi(),
-            columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
+            rowIndex: this.rowNode.rowIndex!,
+            api: this.beans.gridOptionsWrapper.getApi()!,
+            columnApi: this.beans.gridOptionsWrapper.getColumnApi()!,
             context: this.beans.gridOptionsWrapper.getContext(),
             // these need to be taken out, as part of 'afterAttached' now
             eGridCell: eRow,
             eParentOfValue: eRow,
             pinned: pinned,
             addRenderedRowListener: this.addEventListener.bind(this),
-            registerRowDragger: (value: string, element: HTMLElement, dragStartPixels?: number) => this.fullWidthRowComp.addFullWidthRowDragging(value, element, dragStartPixels)
+            registerRowDragger: (rowDraggerElement, dragStartPixels, value) => this.addFullWidthRowDragging(rowDraggerElement, dragStartPixels, value)
         };
 
         return params;
+    }
+
+    public addFullWidthRowDragging(
+        rowDraggerElement?: HTMLElement,
+        dragStartPixels?: number,
+        value: string = '',
+        fullWidthContainer: HTMLElement = this.fullWidthRowComp.getGui()
+    ): void {
+        if (!this.isFullWidth()) { return; }
+
+        const rowDragComp = new RowDragComp(() => value, this.beans, this.rowNode, undefined, rowDraggerElement, dragStartPixels);
+        this.createManagedBean(rowDragComp, this.beans.context);
+
+        if (!rowDraggerElement) {
+            fullWidthContainer.insertAdjacentElement('afterbegin', rowDragComp.getGui());
+        }
     }
 
     private onUiLevelChanged(): void {

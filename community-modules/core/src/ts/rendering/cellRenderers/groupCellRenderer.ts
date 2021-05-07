@@ -4,16 +4,13 @@ import { Autowired } from "../../context/context";
 import { Component } from "../../widgets/component";
 import { ICellRendererComp, ICellRendererFunc, ICellRendererParams } from "./iCellRenderer";
 import { RowNode } from "../../entities/rowNode";
-import { ValueFormatterService } from "../valueFormatterService";
 import { CheckboxSelectionComponent } from "../checkboxSelectionComponent";
-import { ColumnController } from "../../columnController/columnController";
 import { Column } from "../../entities/column";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { ColDef } from "../../entities/colDef";
 import {
     ComponentClassDef,
-    ComponentSource,
-    UserComponentFactory
+    ComponentSource
 } from "../../components/framework/userComponentFactory";
 import { AgPromise } from "../../utils";
 import { doOnce } from "../../utils/function";
@@ -26,6 +23,7 @@ import { missing } from "../../utils/generic";
 import { isStopPropagationForAgGrid, stopPropagationForAgGrid, isElementInEventPath } from "../../utils/event";
 import { setAriaExpanded, removeAriaExpanded } from "../../utils/aria";
 import { KeyCode } from '../../constants/keyCode';
+import { Beans } from "../beans";
 
 export interface GroupCellRendererParams extends ICellRendererParams {
     // only when in fullWidth, this gives whether the comp is pinned or not.
@@ -40,6 +38,7 @@ export interface GroupCellRendererParams extends ICellRendererParams {
     footerValueGetter: any;
     suppressCount: boolean;
     checkbox: any;
+    rowDrag?: boolean;
 
     innerRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
     innerRendererFramework?: any;
@@ -62,10 +61,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
             <span class="ag-group-child-count" ref="eChildCount"></span>
         </span>`;
 
-    @Autowired('expressionService') private expressionService: ExpressionService;
-    @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
-    @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
+    @Autowired('beans') private beans: Beans;
 
     @RefSelector('eExpanded') private eExpanded: HTMLElement;
     @RefSelector('eContracted') private eContracted: HTMLElement;
@@ -125,6 +121,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         if (this.cellIsBlank) { return; }
 
         this.setupDragOpenParents();
+        this.addFullWidthRowDraggerIfNeeded();
         this.addExpandAndContract();
         this.addCheckboxIfNeeded();
         this.addValueElement();
@@ -149,13 +146,13 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         const bodyCell = !pinnedLeftCell && !pinnedRightCell;
 
         if (this.gridOptionsWrapper.isEnableRtl()) {
-            if (this.columnController.isPinningLeft()) {
+            if (this.beans.columnController.isPinningLeft()) {
                 return !pinnedRightCell;
             }
             return !bodyCell;
         }
 
-        if (this.columnController.isPinningLeft()) {
+        if (this.beans.columnController.isPinningLeft()) {
             return !pinnedLeftCell;
         }
 
@@ -230,7 +227,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
             if (typeof footerValueGetter === 'function') {
                 footerValue = footerValueGetter(paramsClone);
             } else if (typeof footerValueGetter === 'string') {
-                footerValue = this.expressionService.evaluate(footerValueGetter, paramsClone);
+                footerValue = this.beans.expressionService.evaluate(footerValueGetter, paramsClone);
             } else {
                 console.warn('AG Grid: footerValueGetter should be either a function or a string (expression)');
             }
@@ -248,7 +245,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         const columnToUse: Column = rowGroupColumn ? rowGroupColumn : params.column;
         const groupName = this.params.value;
         const valueFormatted = columnToUse ?
-            this.valueFormatterService.formatValue(columnToUse, params.node, params.scope, groupName) : null;
+            this.beans.valueFormatterService.formatValue(columnToUse, params.node, params.scope, groupName) : null;
 
         params.valueFormatted = valueFormatted;
 
@@ -290,16 +287,16 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         let cellRendererPromise: AgPromise<ICellRendererComp> | null = null;
 
         // we check if cell renderer provided for the group cell renderer, eg colDef.cellRendererParams.innerRenderer
-        const groupInnerRendererClass: ComponentClassDef<any, any, any> = this.userComponentFactory
+        const groupInnerRendererClass: ComponentClassDef<any, any, any> = this.beans.userComponentFactory
             .lookupComponentClassDef(groupCellRendererParams, "innerRenderer")!;
 
         if (groupInnerRendererClass && groupInnerRendererClass.component != null
             && groupInnerRendererClass.source != ComponentSource.DEFAULT) {
             // use the renderer defined in cellRendererParams.innerRenderer
-            cellRendererPromise = this.userComponentFactory.newInnerCellRenderer(groupCellRendererParams, params);
+            cellRendererPromise = this.beans.userComponentFactory.newInnerCellRenderer(groupCellRendererParams, params);
         } else {
             // otherwise see if we can use the cellRenderer of the column we are grouping by
-            const groupColumnRendererClass: ComponentClassDef<any, any, any> = this.userComponentFactory
+            const groupColumnRendererClass: ComponentClassDef<any, any, any> = this.beans.userComponentFactory
                 .lookupComponentClassDef(groupedColumnDef, "cellRenderer")!;
 
             if (
@@ -307,7 +304,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
                 groupColumnRendererClass.source != ComponentSource.DEFAULT
             ) {
                 // Only if the original column is using a specific renderer, it it is a using a DEFAULT one ignore it
-                cellRendererPromise = this.userComponentFactory.newCellRenderer(groupedColumnDef, params);
+                cellRendererPromise = this.beans.userComponentFactory.newCellRenderer(groupedColumnDef, params);
             } else if (
                 groupColumnRendererClass &&
                 groupColumnRendererClass.source == ComponentSource.DEFAULT &&
@@ -315,10 +312,10 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
             ) {
                 // EDGE CASE - THIS COMES FROM A COLUMN WHICH HAS BEEN GROUPED DYNAMICALLY, THAT HAS AS RENDERER 'group'
                 // AND HAS A INNER CELL RENDERER
-                cellRendererPromise = this.userComponentFactory.newInnerCellRenderer(groupedColumnDef.cellRendererParams, params);
+                cellRendererPromise = this.beans.userComponentFactory.newInnerCellRenderer(groupedColumnDef.cellRendererParams, params);
             } else {
                 // This forces the retrieval of the default plain cellRenderer that just renders the values.
-                cellRendererPromise = this.userComponentFactory.newCellRenderer({}, params);
+                cellRendererPromise = this.beans.userComponentFactory.newCellRenderer({}, params);
             }
         }
 
@@ -338,7 +335,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     }
 
     private useFullWidth(params: ICellRendererParams): AgPromise<ICellRendererComp> | null {
-        const cellRendererPromise: AgPromise<ICellRendererComp> | null = this.userComponentFactory.newFullWidthGroupRowInnerCellRenderer(params);
+        const cellRendererPromise: AgPromise<ICellRendererComp> | null = this.beans.userComponentFactory.newFullWidthGroupRowInnerCellRenderer(params);
 
         if (cellRendererPromise != null) {
             bindCellRendererToHtmlElement(cellRendererPromise, this.eValue);
@@ -347,6 +344,18 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         }
 
         return cellRendererPromise;
+    }
+
+    private addFullWidthRowDraggerIfNeeded(): void {
+        if (!this.params.fullWidth || !this.params.rowDrag) { return; }
+        const rowComp = this.beans.rowRenderer.getRowConByPosition({
+            rowIndex: this.params.rowIndex,
+            rowPinned: this.params.pinned
+        });
+
+        if (rowComp) {
+            rowComp.addFullWidthRowDragging(undefined, undefined, this.params.value, this.getGui());
+        }
     }
 
     private addChildCount(): void {
@@ -551,7 +560,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         if (this.draggedFromHideOpenParents) { return true; }
 
         const rowNode = this.displayedGroup;
-        const reducedLeafNode = this.columnController.isPivotMode() && rowNode.leafGroup;
+        const reducedLeafNode = this.beans.columnController.isPivotMode() && rowNode.leafGroup;
         const expandableGroup = rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode;
 
         if (!expandableGroup) { return false; }
@@ -569,7 +578,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     }
 
     private showExpandAndContractIcons(): void {
-        const { eContracted, eExpanded, params, displayedGroup, columnController } = this;
+        const { eContracted, eExpanded, params, displayedGroup, beans } = this;
         const { eGridCell, node } = params;
 
         const isExpandable = this.isExpandable();
@@ -588,7 +597,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         }
 
         // compensation padding for leaf nodes, so there is blank space instead of the expand icon
-        const pivotMode = columnController.isPivotMode();
+        const pivotMode = beans.columnController.isPivotMode();
         const pivotModeAndLeafGroup = pivotMode && displayedGroup.leafGroup;
         const addExpandableCss = isExpandable && !pivotModeAndLeafGroup;
         const isTotalFooterNode = node.footer && node.level === -1;
