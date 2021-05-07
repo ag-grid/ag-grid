@@ -699,10 +699,6 @@ export class RowController extends BeanStub {
         return params;
     }
 
-    private addFullWidthRowDragging(element?: HTMLElement, dragStartPixels?: number): void {
-
-    }
-
     private onUiLevelChanged(): void {
         const newLevel = this.beans.rowCssClassCalculator.calculateRowLevel(this.rowNode);
         if (this.rowLevel != newLevel) {

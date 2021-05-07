@@ -231,15 +231,11 @@ export class RowComp extends Component {
     public addFullWidthRowDragging(value: string, element?: HTMLElement, dragStartPixels?: number): void {
         if (!this.controller.isFullWidth()) { return; }
 
-        if (!this.rowDraggingComp) {
-            this.rowDraggingComp = new RowDragComp(() => value, this.beans, this.rowNode, undefined, element, dragStartPixels);
-            this.createManagedBean(this.rowDraggingComp, this.beans.context);
-        } else if (element) {
-            this.rowDraggingComp.setDragElement(element, dragStartPixels);
-        }
+        const rowDragComp = new RowDragComp(() => value, this.beans, this.rowNode, undefined, element, dragStartPixels);
+        this.createManagedBean(rowDragComp, this.beans.context);
 
         if (!element) {
-            this.getFullWidthRowComp()!.getGui().insertAdjacentElement('afterbegin', this.rowDraggingComp.getGui());
+            this.getFullWidthRowComp()!.getGui().insertAdjacentElement('afterbegin', rowDragComp.getGui());
         }
     }
 
