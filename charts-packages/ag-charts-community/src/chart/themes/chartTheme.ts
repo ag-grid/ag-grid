@@ -585,8 +585,8 @@ export class ChartTheme {
         return config;
     }
 
-    getConfig<T = any>(path: string): T {
-        const value = getValue(this.config, path);
+    getConfig<T = any>(path: string, defaultValue?: T): T {
+        const value = getValue(this.config, path, defaultValue);
         if (Array.isArray(value)) {
             return deepMerge([], value, { arrayMerge });
         }
