@@ -16,6 +16,13 @@ This example shows how the `nodeClick` event listener can be used to listen to c
 
 <chart-example title='Node Click Event' name='node-click-event' type='generated'></chart-example>
 
+### Example: Toggling node's selected state
+
+This example shows how the `nodeClick` event listener can be used to toggle each node's selected state. Notice how we also provide
+a marker formatter to make selected nodes stand out.
+
+<chart-example title='Node Click Event' name='node-click-select' type='generated'></chart-example>
+
 ### nodeClick Event
 
 Fired when this series' node is clicked. Depending on the type of series, a node can mean a bar or a pie slice, or a marker, such as a line or an area series marker.
