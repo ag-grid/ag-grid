@@ -25,8 +25,14 @@ export interface ICellRendererParams {
     setValue?: (value: any) => void;
     formatValue?: (value: any) => any;
     refreshCell?: () => void;
-    registerRowDragger: (rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string) => void;
     addRenderedRowListener: (eventType: string, listener: Function) => void;
+    /**
+     * registerRowDragger: Function
+     * @param rowDraggerElement The HTMLElement to be used as Row Dragger
+     * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)
+     * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.
+     */
+     registerRowDragger: (rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string) => void;
 }
 
 export interface ISetFilterCellRendererParams {
@@ -42,9 +48,7 @@ export interface ICellRenderer {
     refresh(params: ICellRendererParams): boolean;
 }
 
-export interface ICellRendererComp extends ICellRenderer, IComponent<ICellRendererParams> {
-
-}
+export interface ICellRendererComp extends ICellRenderer, IComponent<ICellRendererParams> { }
 
 export interface ICellRendererFunc {
     (params: any): HTMLElement | string;

@@ -168,7 +168,7 @@ From the example the following can be noted:
 
 <grid-example title='Row Drag Events' name='dragging-events' type='generated'></grid-example>
 
-## Simple Unmanaged Example
+### Simple Unmanaged Example
 
 The example below shows how to implement simple row dragging using unmanaged row dragging and events. The example behaves the same as the [Managed Dragging](#managed-dragging) example above, however the logic for moving the rows is in the application rather than the grid.
 
@@ -186,6 +186,9 @@ From the example the following can be noted:
 The simple example doesn't add anything that managed dragging gives (the first
 example on this page). Things get interesting when we introduce complex scenarios
 such as row grouping or tree data, which are explained below.
+
+[[note]]
+|Dragging Multiple Rows with unmanaged row dragging, the application is in control of what gets dragged, so it is possible to use the events to drag more than one row at a time, e.g. to move all selected rows in one go if using row selection.
 
 ## Dragging & Row Grouping
 
@@ -237,10 +240,6 @@ The example above works, however it is not intuitive as the user is given no vis
 - The example uses [Refresh Cells](/view-refresh/#refresh-cells) to get the grid to execute the Cell Class Rules again over the destination folder when the destination folder changes.
 
 <grid-example title='Highlighting Drag with Tree Data' name='highlighting-drag-tree-data' type='generated' options='{ "enterprise": true, "extras": ["fontawesome"], "modules": ["clientside", "rowgrouping"] }'></grid-example>
-
-## Dragging Multiple Rows
-
-With unmanaged row dragging, the application is in control of what gets dragged, so it is possible to use the events to drag more than one row at a time, e.g. to move all selected rows in one go if using row selection.
 
 ## Other Row Models
 
@@ -355,6 +354,16 @@ The example below shows a custom cell renderer, with using the `registerRowDragg
 - When you hover the cells, an arrow will appear, and this arrow can be used to **drag** the rows.
 
 <grid-example title='Row Drag With Custom Cell Renderer' name='dragger-inside-custom-cell-renderer' type='generated' options='{ "extras": ["fontawesome"] }'></grid-example>
+
+### Full Width Row Dragging
+
+It is possible to drag [Full Width Rows](../full-width-rows/) by registering a [Custom Row Dragger](#row-dragger-inside-custom-cell-renderers).
+
+Note the following: 
+
+- Only the Full Width Rows are draggable.
+
+<grid-example title='Row Drag with Full Width Rows' name='dragger-inside-full-width-row' type='generated'></grid-example>
 
 ### Row Dragger with Custom Start Drag Pixels
 

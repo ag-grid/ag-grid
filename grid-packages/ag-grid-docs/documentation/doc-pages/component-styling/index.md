@@ -68,7 +68,8 @@ frameworks: ["react"]
 |            return {
 |                display: 'inline-block',
 |                height: '100%'
-|        };
+|            }
+|        }
 |    }));
 |
 |    //...rest of the hook
