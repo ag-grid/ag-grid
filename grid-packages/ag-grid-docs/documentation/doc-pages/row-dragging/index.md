@@ -31,7 +31,7 @@ const gridOptions = {
 }
 </snippet>
 
-The `rowDrag` property can also be a callback function in the the form:
+The `rowDrag`callback function has the following interface:
 
 ```ts
 // function to enable/disable RowDrag
