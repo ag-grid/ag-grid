@@ -12,6 +12,9 @@ const pkg = require('./package.json');
 const replace = require('gulp-replace');
 const concat = require('gulp-concat');
 
+const os = require('os');
+const WINDOWS = /^win/.test(os.platform());
+
 const dtsHeaderTemplate =
     '// Type definitions for <%= pkg.name %> v<%= pkg.version %>\n' +
     '// Project: <%= pkg.homepage %>\n' +
@@ -85,12 +88,12 @@ const copyGridCoreTypings = (done) => {
         .pipe(replace(/\@ag-grid-community\/core/, function () {
             // replace references to @ag-grid-community/core with relative imports based on the file location
             // ie a file in a/b/ importing from @ag-grid-community/core will instead import from '../../main'
-            const depth = (this.file.relative.match(/\//g) || []).length;
-            if (depth === 0) {
-                return './main';
-            } else {
-                return `${Array(depth).fill('../').join('')}main`;
-            }
+            const match = (this.file.relative.match(WINDOWS ? /\\/g : /\//g) || []);
+            const depth = match.length;
+
+            if (depth === 0) { return './main'; }
+
+            return `${Array(depth).fill('../').join('')}main`;
         }))
         .pipe(gulp.dest('./dist/lib'));
 };
