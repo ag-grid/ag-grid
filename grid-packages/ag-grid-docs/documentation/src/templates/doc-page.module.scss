@@ -30,7 +30,7 @@
     &__title {
         font-weight: 400;
 
-        &--enterprise:after {
+        &--enterprise::after {
             @extend %enterprise-icon;
             height: 1em;
             width: 1em;
@@ -38,14 +38,14 @@
         }
     }
 
-    enterprise-icon:after {
+    enterprise-icon::after {
         @extend %enterprise-icon;
         width: 1rem;
         margin-left: 0.25rem;
     }
 
     h2 {
-        enterprise-icon:after {
+        enterprise-icon::after {
             width: 1.5rem;
         }
     }

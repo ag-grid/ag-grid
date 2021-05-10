@@ -44,7 +44,7 @@
         @each $selector in $selectors {
             .#{$selector}:focus {
                 outline: none;
-                &:after {
+                &::after {
                     content: '';
                     position: absolute;
                     background-color: transparent;
@@ -108,7 +108,7 @@
 
 @mixin ag-icon-element($icon, $code) {
   .ag-icon-#{$icon} {
-      &:before {
+      &::before {
           content: $code;
       }
   }
@@ -192,15 +192,15 @@
   @include ag-icon-element('tree-open', ag-icon-char(tree-open));
   @include ag-icon-element('unlinked', ag-icon-char(unlinked));
 
-  .ag-icon-row-drag:before {
+  .ag-icon-row-drag::before {
       content: ag-icon-char(grip);
   }
 
-  .ag-left-arrow:before {
+  .ag-left-arrow::before {
       content: ag-icon-char(left);
   }
 
-  .ag-right-arrow:before {
+  .ag-right-arrow::before {
       content: ag-icon-char(right);
   }
 

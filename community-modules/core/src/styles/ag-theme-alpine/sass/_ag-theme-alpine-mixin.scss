@@ -27,14 +27,14 @@
     }
 
     .ag-ltr {
-        .ag-pinned-right-header .ag-header-row:after {
+        .ag-pinned-right-header .ag-header-row::after {
             @extend %ag-pinned-row-end;
             right: 0;
         }
     }
 
     .ag-rtl {
-        .ag-pinned-left-header .ag-header-row:before {
+        .ag-pinned-left-header .ag-header-row::before {
             @extend %ag-pinned-row-end;
             left: 0;
         }

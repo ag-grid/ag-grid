@@ -125,7 +125,7 @@
         opacity: 0.2;
     }
 
-    &:before {
+    &::before {
         // make expanded click area
         content: " ";
         display: block;
