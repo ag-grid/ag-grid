@@ -36,6 +36,7 @@ export class FakeHorizontalScrollComp extends Component {
             setViewportHeight: height => setFixedHeight(this.eViewport, height),
             setRightSpacerFixedWidth: width => setFixedWidth(this.eRightSpacer, width),
             setLeftSpacerFixedWidth: width => setFixedWidth(this.eLeftSpacer, width),
+            setInvisibleStyles: (isInvisible) => addOrRemoveCssClass(this.getGui(), 'ag-invisible-scrollbar', isInvisible),
             includeLeftSpacerScrollerCss: (cssClass: string, include: boolean) =>
                 addOrRemoveCssClass(this.eLeftSpacer, cssClass, include),
             includeRightSpacerScrollerCss: (cssClass: string, include: boolean) =>

@@ -71,7 +71,7 @@ export class RowContainerEventsFeature extends BeanStub {
 
         eventNames.forEach(eventName => {
             const listener = this.processMouseEvent.bind(this, eventName);
-            this.addManagedListener(this.element, eventName, listener)
+            this.addManagedListener(this.element, eventName, listener);
         });
     }
 
