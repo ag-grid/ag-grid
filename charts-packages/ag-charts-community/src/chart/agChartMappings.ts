@@ -210,6 +210,7 @@ const axisDefaults: any = {
 const seriesDefaults: any = {
     visible: true,
     showInLegend: true,
+    cursor: 'default',
     listeners: undefined
 };
 
