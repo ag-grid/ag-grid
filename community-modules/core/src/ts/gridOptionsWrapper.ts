@@ -1231,6 +1231,10 @@ export class GridOptionsWrapper {
         return this.gridOptions.tabToNextCell;
     }
 
+    public getGridTabIndex(): string {
+        return (this.gridOptions.tabIndex || 0).toString();
+    }
+
     public isTreeData(): boolean {
         const usingTreeData = isTrue(this.gridOptions.treeData);
 

@@ -195,7 +195,7 @@ export class ManagedFocusComponent extends Component {
     }
 
     private activateTabGuards(): void {
-        this.forEachTabGuard(guard => guard.setAttribute('tabIndex', '0'));
+        this.forEachTabGuard(guard => guard.setAttribute('tabIndex', this.gridOptionsWrapper.getGridTabIndex()));
     }
 
     private deactivateTabGuards(): void {
