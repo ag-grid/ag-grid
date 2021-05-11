@@ -18,8 +18,11 @@ This example shows how the `nodeClick` event listener can be used to listen to c
 
 ### Example: Toggling node's selected state
 
-This example shows how the `nodeClick` event listener can be used to toggle each node's selected state. Notice how we also provide
-a marker formatter to make selected nodes stand out.
+This example shows how the `nodeClick` event listener can be used to toggle each node's selected state.
+Notice how we also provide:
+
+- a marker formatter to make selected nodes stand out
+- set the series' `cursor` property to `pointer` to indicate that a node is clickable when hovered
 
 <chart-example title='Node Click Event' name='node-click-select' type='generated'></chart-example>
 

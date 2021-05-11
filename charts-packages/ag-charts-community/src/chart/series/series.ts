@@ -89,6 +89,8 @@ export abstract class Series extends Observable {
     @reactive('dataChange') visible = true;
     @reactive('layoutChange') showInLegend = true;
 
+    cursor = 'default';
+
     setColors(fills: string[], strokes: string[]) { }
 
     /**

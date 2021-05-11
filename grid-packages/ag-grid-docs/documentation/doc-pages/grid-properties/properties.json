@@ -1005,6 +1005,11 @@
             "type": "HTMLElement",
             "description": "DOM element to use as [popup parent](/context-menu/#popup-parent) for grid popups (context menu, column menu etc)."
         },
+        "tabIndex": {
+            "default": 0,
+            "type": "number",
+            "description": "Change this value to set the tabIndex order of the Grid within your application."
+        },
         "valueCache": {
             "default": false,
             "description": "Set to `true` to turn on the [value cache](/value-getters/#value-cache-properties)."

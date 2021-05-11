@@ -824,6 +824,11 @@
       "default": true,
       "description": "Whether or not to include the series in the legend."
     },
+    "cursor": {
+      "type": "string",
+      "default": "default",
+      "description": "The cursor to use for hovered bars/columns. This config is identicall to the CSS `cursor` property."
+    },
     "tooltip": {
       "meta": {
         "description": "Series-specific tooltip configuration."
@@ -1110,6 +1115,11 @@
       "default": true,
       "description": "Whether or not to include the series in the legend."
     },
+    "cursor": {
+      "type": "string",
+      "default": "default",
+      "description": "The cursor to use for hovered line markers. This config is identicall to the CSS `cursor` property."
+    },
     "tooltip": {
       "meta": {
         "description": "Series-specific tooltip configuration."
@@ -1311,6 +1321,11 @@
     "showInLegend": {
       "default": true,
       "description": "Whether or not to include the series in the legend."
+    },
+    "cursor": {
+      "type": "string",
+      "default": "default",
+      "description": "The cursor to use for hovered area markers. This config is identicall to the CSS `cursor` property."
     },
     "tooltip": {
       "meta": {
@@ -1579,6 +1594,11 @@
       "default": true,
       "description": "Whether or not to include the series in the legend."
     },
+    "cursor": {
+      "type": "string",
+      "default": "default",
+      "description": "The cursor to use for hovered scatter markers. This config is identicall to the CSS `cursor` property."
+    },
     "tooltip": {
       "meta": {
         "description": "Series-specific tooltip configuration."
@@ -1791,6 +1811,11 @@
     "showInLegend": {
       "default": true,
       "description": "Whether or not to include the series in the legend."
+    },
+    "cursor": {
+      "type": "string",
+      "default": "default",
+      "description": "The cursor to use for hovered pie slices. This config is identicall to the CSS `cursor` property."
     },
     "tooltip": {
       "meta": {
@@ -2554,6 +2579,11 @@
       "type": "boolean",
       "default": true,
       "description": "Whether or not to use gradients for treemap tiles."
+    },
+    "cursor": {
+      "type": "string",
+      "default": "default",
+      "description": "The cursor to use for hovered treemap tiles. This config is identicall to the CSS `cursor` property."
     }
   },
   "histogram": {
@@ -2569,6 +2599,11 @@
     "showInLegend": {
       "default": true,
       "description": "Whether or not to include the series in the legend."
+    },
+    "cursor": {
+      "type": "string",
+      "default": "default",
+      "description": "The cursor to use for hovered histogram bars. This config is identicall to the CSS `cursor` property."
     },
     "tooltip": {
       "meta": {

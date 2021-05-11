@@ -96,7 +96,8 @@ export class ChartTheme {
                 format: undefined
             },
             visible: true,
-            showInLegend: true
+            showInLegend: true,
+            cursor: 'default'
         };
     }
 

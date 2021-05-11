@@ -75,29 +75,27 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
     ) {
         let labelRotation = 0;
         const axisKey = isHorizontalChart ? 'yAxis' : 'xAxis';
-
-        const themeOverrides = this.chartProxyParams.getGridOptionsChartThemeOverrides();
         const axisPosition = isHorizontalChart ? ChartAxisPosition.Left : ChartAxisPosition.Bottom;
 
-        const chartType = this.getStandaloneChartType();
         let userThemeOverrideRotation;
+        if (this.mergedThemeOverrides && this.mergedThemeOverrides.overrides) {
+            const overrides = this.mergedThemeOverrides.overrides;
+            const chartType = this.getStandaloneChartType();
 
-        const commonRotation = _.get(themeOverrides, `common.axes.${axisType}.label.rotation`, undefined);
-        const cartesianRotation = _.get(themeOverrides, `cartesian.axes.${axisType}.label.rotation`, undefined);
-        const cartesianPositionRotation = _.get(themeOverrides, `cartesian.axes.${axisType}.${axisPosition}.label.rotation`, undefined);
-        const chartTypeRotation = _.get(themeOverrides, `${chartType}.axes.${axisType}.label.rotation`, undefined);
-        const chartTypePositionRotation = _.get(themeOverrides, `${chartType}.axes.${axisType}.${axisPosition}.label.rotation`, undefined);
+            const cartesianRotation = _.get(overrides, `cartesian.axes.${axisType}.label.rotation`, undefined);
+            const cartesianPositionRotation = _.get(overrides, `cartesian.axes.${axisType}.${axisPosition}.label.rotation`, undefined);
+            const chartTypeRotation = _.get(overrides, `${chartType}.axes.${axisType}.label.rotation`, undefined);
+            const chartTypePositionRotation = _.get(overrides, `${chartType}.axes.${axisType}.${axisPosition}.label.rotation`, undefined);
 
-        if (typeof chartTypePositionRotation === 'number' && isFinite(chartTypePositionRotation)) {
-            userThemeOverrideRotation = chartTypePositionRotation;
-        } else if (typeof chartTypeRotation === 'number' && isFinite(chartTypeRotation)) {
-            userThemeOverrideRotation = chartTypeRotation;
-        } else if (typeof cartesianPositionRotation === 'number' && isFinite(cartesianPositionRotation)) {
-            userThemeOverrideRotation = cartesianPositionRotation;
-        } else if (typeof cartesianRotation === 'number' && isFinite(cartesianRotation)) {
-            userThemeOverrideRotation = cartesianRotation;
-        } else if (typeof commonRotation === 'number' && isFinite(commonRotation)) {
-            userThemeOverrideRotation = commonRotation;
+            if (typeof chartTypePositionRotation === 'number' && isFinite(chartTypePositionRotation)) {
+                userThemeOverrideRotation = chartTypePositionRotation;
+            } else if (typeof chartTypeRotation === 'number' && isFinite(chartTypeRotation)) {
+                userThemeOverrideRotation = chartTypeRotation;
+            } else if (typeof cartesianPositionRotation === 'number' && isFinite(cartesianPositionRotation)) {
+                userThemeOverrideRotation = cartesianPositionRotation;
+            } else if (typeof cartesianRotation === 'number' && isFinite(cartesianRotation)) {
+                userThemeOverrideRotation = cartesianRotation;
+            }
         }
 
         if (categoryId !== ChartDataModel.DEFAULT_CATEGORY && !this.chartProxyParams.grouping) {

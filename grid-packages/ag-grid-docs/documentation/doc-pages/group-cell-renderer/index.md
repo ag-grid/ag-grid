@@ -26,7 +26,9 @@ const gridOptions = {
                 // provide an inner renderer
                 innerRenderer: myInnerRenderer,
                 // provide a footer value getter
-                footerValueGetter: myFooterValueGetter
+                footerValueGetter: myFooterValueGetter,
+                // renders a row dragger inside the group cell renderer (Only relevant with `groupUseEntireRow: true`).
+                rowDrag: true
             }
         }
     ]
@@ -42,6 +44,7 @@ The set of parameters for the group cell renderer are:
 - **suppressEnterExpand:** Set to `true` to suppress expand on <kbd>Enter</kbd> key.
 - **innerRenderer:** The renderer to use for inside the cell (after grouping functions are added).
 - **footerValueGetter:** The value getter for the footer text. Can be a function or expression.
+- **rowDrag:** Set to `true` to render a [Row Dragger](../row-dragging/) inside the GroupCellRenderer. (Only relevant with `groupUseEntireRow: true`).
 
 ### Example Group cellRenderer
 

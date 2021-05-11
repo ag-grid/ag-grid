@@ -1140,7 +1140,7 @@ export abstract class Chart extends Observable {
             event
         };
 
-        this.highlightDatum(datum);
+        this.highlightDatum(datum, node);
 
         const html = datum.series.tooltip.enabled && datum.series.getTooltipHtml(datum);
 
@@ -1151,13 +1151,20 @@ export abstract class Chart extends Observable {
 
     highlightedDatum?: SeriesNodeDatum;
 
-    highlightDatum(datum: SeriesNodeDatum): void {
+    highlightDatum(datum: SeriesNodeDatum, node?: Shape): void {
+        const { style } = this.scene.canvas.element;
         this.highlightedDatum = datum;
-        this.series.forEach(s => s.onHighlightChange());
+        this.series.forEach(s => {
+            if (node) {
+                style.cursor = s.cursor;
+            }
+            s.onHighlightChange();
+        });
     }
 
     dehighlightDatum(): void {
         if (this.highlightedDatum) {
+            this.scene.canvas.element.style.cursor = 'default';
             this.highlightedDatum = undefined;
             this.series.forEach(s => s.onHighlightChange());
         }

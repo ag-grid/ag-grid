@@ -31,7 +31,8 @@ var options = {
                     };
                 }
             }
-        }
+        },
+        cursor: 'pointer'
     }],
     axes: [{
         type: 'category',

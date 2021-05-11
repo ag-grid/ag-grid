@@ -356,6 +356,7 @@ interface AgBaseSeriesOptions {
     data?: any[];
     visible?: boolean;
     showInLegend?: boolean;
+    cursor?: string;
     listeners?: { [key in string]: Function };
 }
 
