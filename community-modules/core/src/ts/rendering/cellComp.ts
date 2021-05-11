@@ -500,7 +500,14 @@ export class CellComp extends Component implements TooltipParentComp {
         const colDef = this.getComponentHolder();
         const newData = params && params.newData;
         const suppressFlash = (params && params.suppressFlash) || colDef.suppressCellFlash;
-        const forceRefresh = params && params.forceRefresh;
+        // we always refresh if cell has no value - this can happen when user provides Cell Renderer and the
+        // cell renderer doesn't rely on a value, instead it could be looking directly at the data, or maybe
+        // printing the current time (which would be silly)???. Generally speaking
+        // non of {field, valueGetter, showRowGroup} is bad in the users application, however for this edge case, it's
+        // best always refresh and take the performance hit rather than never refresh and users complaining in support
+        // that cells are not updating.
+        const noValueProvided = colDef.field == null && colDef.valueGetter == null && colDef.showRowGroup == null;
+        const forceRefresh = (params && params.forceRefresh) || noValueProvided;
 
         const oldValue = this.value;
 
