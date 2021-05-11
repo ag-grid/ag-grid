@@ -3,6 +3,7 @@
 
 @mixin ag-theme-balham-dark($params: ()) {
     $params: ag-process-theme-variables($params, $ag-theme-balham-dark-default-params);
+    color-scheme: dark;
     @include ag-theme-balham($params);
 
     .ag-tooltip {
