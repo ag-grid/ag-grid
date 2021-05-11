@@ -90,6 +90,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     protected chart: TChart;
     protected customPalette: AgChartThemePalette;
     protected iChartOptions: TOptions;
+    protected mergedThemeOverrides: any;
     protected chartTheme: ChartTheme;
     protected crossFiltering: boolean;
     protected crossFilterCallback: (event: any, reset?: boolean) => void;
@@ -144,7 +145,13 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     protected abstract getDefaultOptions(): TOptions;
 
     protected initChartOptions(): void {
-        this.chartTheme = this.getInitialChartTheme();
+        // the theme object is used later to determine cartesian label rotation
+        this.mergedThemeOverrides = this.getMergedThemeOverrides();
+
+        // create the theme instance from the theme object
+        this.chartTheme = getChartTheme(this.mergedThemeOverrides);
+
+        // extract the iChartOptions from the theme instance - this is the backing model for integrated charts
         this.iChartOptions = this.extractIChartOptionsFromTheme(this.chartTheme);
 
         // allow users to override options before they are applied
@@ -168,23 +175,23 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             !_.areEqual(originalOptions.seriesDefaults.stroke.colors, overriddenOptions.seriesDefaults.stroke.colors);
     }
 
-    private getInitialChartTheme() {
+    private getMergedThemeOverrides() {
         const themeName = this.getSelectedTheme();
         const gridOptionsThemeOverrides: AgChartThemeOverrides | undefined = this.chartProxyParams.getGridOptionsChartThemeOverrides();
         const apiThemeOverrides: AgChartThemeOverrides | undefined  = this.chartProxyParams.apiChartThemeOverrides;
 
-        let theme;
+        let mergedThemeOverrides;
         if (gridOptionsThemeOverrides || apiThemeOverrides) {
             const themeOverrides = {
                 overrides: this.mergeThemeOverrides(gridOptionsThemeOverrides, apiThemeOverrides)
             };
             const getCustomTheme = () => deepMerge(this.lookupCustomChartTheme(themeName), themeOverrides);
-            theme = this.isStockTheme(themeName) ? { baseTheme: themeName, ...themeOverrides } : getCustomTheme();
+            mergedThemeOverrides = this.isStockTheme(themeName) ? { baseTheme: themeName, ...themeOverrides } : getCustomTheme();
         } else {
-            theme = this.isStockTheme(themeName) ? themeName : this.lookupCustomChartTheme(themeName);
+            mergedThemeOverrides = this.isStockTheme(themeName) ? themeName : this.lookupCustomChartTheme(themeName);
         }
 
-        return getChartTheme(theme);
+        return mergedThemeOverrides;
     }
 
     public lookupCustomChartTheme(name: string) {
