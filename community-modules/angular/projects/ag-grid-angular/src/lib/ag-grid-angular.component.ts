@@ -250,6 +250,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public undoRedoCellEditingLimit: any = undefined;
     @Input() public cellFlashDelay: any = undefined;
     @Input() public cellFadeDelay: any = undefined;
+    @Input() public tabIndex: any = undefined;
     @Input() public localeTextFunc: any = undefined;
     @Input() public groupRowInnerRenderer: any = undefined;
     @Input() public groupRowInnerRendererFramework: any = undefined;
