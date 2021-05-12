@@ -41,6 +41,7 @@ export class AxisPanel extends Component {
 
     private readonly chartController: ChartController;
     private activePanels: Component[] = [];
+    private axisLabelUpdateFuncs: Function[] = [];
 
     constructor(chartController: ChartController) {
         super();
@@ -58,6 +59,9 @@ export class AxisPanel extends Component {
         this.initAxis();
         this.initAxisTicks();
         this.initAxisLabels();
+
+        const updateAxisLabelRotations = () => this.axisLabelUpdateFuncs.forEach(func => func());
+        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, updateAxisLabelRotations);
     }
 
     private initAxis() {
@@ -152,13 +156,21 @@ export class AxisPanel extends Component {
     }
 
     private addAdditionalLabelComps(labelPanelComp: FontPanel) {
-        const createAngleComp = (label: string, initialValue: number, updateFunc: (value: number) => void) => {
-            const rotationInput = this.createBean(new AgAngleSelect()
+        const createAngleComp = (label: string, expression: string, updateFunc: (value: number) => void) => {
+            const value = this.getChartProxy().getChartOption(expression) as number;
+            const angleSelect = new AgAngleSelect()
                 .setLabel(label)
                 .setLabelWidth("flex")
-                .setValue(initialValue || 0)
-                .onValueChange(updateFunc));
+                .setValue(value || 0)
+                .onValueChange(updateFunc);
 
+            // the axis label rotation needs to be updated when the default category changes in the data panel
+            this.axisLabelUpdateFuncs.push(() => {
+                const value = this.getChartProxy().getChartOption(expression) as number;
+                angleSelect.setValue(value);
+            });
+
+            const rotationInput = this.createBean(angleSelect);
             labelPanelComp.addCompToPanel(rotationInput);
         };
 
@@ -170,11 +182,11 @@ export class AxisPanel extends Component {
 
             if (axis) {
                 axis.label!.rotation = newValue;
-                // if (axis.position === ChartAxisPosition.Bottom) {
-                //     // _.set(chartProxy.getChartOptions().xAxis, "label.rotation", newValue);
-                // } else if (axis.position === ChartAxisPosition.Left) {
-                //     // _.set(chartProxy.getChartOptions().yAxis, "label.rotation", newValue);
-                // }
+                if (axis.position === ChartAxisPosition.Bottom) {
+                    _.set(chartProxy.getChartOptions().xAxis, "label.rotation", newValue);
+                } else if (axis.position === ChartAxisPosition.Left) {
+                    _.set(chartProxy.getChartOptions().yAxis, "label.rotation", newValue);
+                }
                 chart.performLayout();
             }
         };
@@ -182,8 +194,8 @@ export class AxisPanel extends Component {
         const xRotationLabel = `${this.chartTranslator.translate("xRotation")} ${degreesSymbol}`;
         const yRotationLabel = `${this.chartTranslator.translate("yRotation")} ${degreesSymbol}`;
 
-        createAngleComp(xRotationLabel, this.getChartProxy().getChartOption("xAxis.label.rotation"), createLabelUpdateFunc(ChartAxisPosition.Bottom));
-        createAngleComp(yRotationLabel, this.getChartProxy().getChartOption("yAxis.label.rotation"), createLabelUpdateFunc(ChartAxisPosition.Left));
+        createAngleComp(xRotationLabel, "xAxis.label.rotation", createLabelUpdateFunc(ChartAxisPosition.Bottom));
+        createAngleComp(yRotationLabel, "yAxis.label.rotation", createLabelUpdateFunc(ChartAxisPosition.Left));
 
         const labelPaddingSlider = this.createBean(new AgSlider());
 
