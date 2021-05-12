@@ -302,6 +302,10 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     min-width: 0;
     overflow: hidden;
     min-height: 100%;
+    // translate3d is necessary here due to a BUG in Safari
+    // where it becomes impossible to click on scrollbars
+    // that are only visible during scroll.
+    transform: translate3d(0,0,0);
 }
 
 .ag-body-horizontal-scroll {
