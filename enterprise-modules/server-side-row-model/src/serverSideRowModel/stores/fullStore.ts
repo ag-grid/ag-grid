@@ -374,7 +374,8 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         // if pixel before block, return first row
         const pixelBeforeThisStore = pixel <= this.topPx;
         if (pixelBeforeThisStore) {
-            return this.nodesAfterSort[0].rowIndex!;
+            const firstNode = this.nodesAfterSort[0];
+            return firstNode.rowIndex!;
         }
         // if pixel after store, return last row, however the last
         // row could be a child store
@@ -383,7 +384,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
             const lastRowNode = this.nodesAfterSort[this.nodesAfterSort.length - 1];
             const lastRowNodeBottomPx = lastRowNode.rowTop! + lastRowNode.rowHeight!;
 
-            if (pixel >= lastRowNodeBottomPx && lastRowNode.expanded && lastRowNode.childStore) {
+            if (pixel >= lastRowNodeBottomPx && lastRowNode.expanded && lastRowNode.childStore && lastRowNode.childStore.getRowCount() > 0) {
                 return lastRowNode.childStore.getRowIndexAtPixel(pixel);
             }
 
