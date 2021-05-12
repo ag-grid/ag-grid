@@ -55,11 +55,25 @@ The example below shows multi-select with click. Clicking multiple rows will sel
 
 Checkbox selection can be used in two places: row selection and group selection.
 
-To include checkbox selection for a column, set the attribute `'checkboxSelection'` to `true` on the column definition. You can set this attribute on as many columns as you like, however it doesn't make sense to have it in more than one column in a table.
+To include checkbox selection for a column, set the attribute `'checkboxSelection'` to `true` on the column definition. 
+You can set this attribute on as many columns as you like, however it doesn't make sense to have it in more than one 
+column in a table.
 
-To enable checkbox selection for groups, set the attribute `'checkbox'` to `true` for the group renderer. See the grouping section for details on the group renderer.
+To enable checkbox selection for groups, set the attribute `'checkbox'` to `true` for the group renderer. See the 
+grouping section for details on the group renderer.
 
-`checkboxSelection` can also be specified as a function - use this if you want, for example, the first column to have checkbox selection regardless of which column it is (you would do this by looping the columns using the column API, and check if the first column is the current one).
+`checkboxSelection` can also be specified as a function. This allows dynamically setting whether a cell
+has a checkbox or not. The callback is called when the Cell is drawn, and called again if there are any changes
+to the row's data or the column positions (e.g. the callback could be showing the checkbox depending on what
+value is displayed, or if the column in question is the first column to show a checkbox for the first column only).
+
+If the function returns false, a selection checkbox will still be created and in the DOM, 
+however it will not be visible using CSS `visibility: hidden`. This is to ensure the following UX properties:
+
+1. Where a column has a checkbox for only some cells, the values will remain aligned.
+2. When a checkbox visibility changes, the cells contents don't jump.
+
+The interface for the callback is as follows:
 
 ```ts
 // function to enable/disable Checkbox Selection
@@ -75,6 +89,18 @@ interface CheckboxSelectionCallbackParams {
     api: GridApi;
     columnApi: ColumnApi;
 }
+```
+
+To be clear, there is a slight difference between a callback returning false, and false value provided explicitly.
+When a callback is used and returns false, the grid assumes a checkbox is sometimes used and as such creates one
+that is not visible.
+
+```ts
+// do not create checkbox
+colDef.checkboxSelection = false;
+
+// create checkbox, make checkbox not visible
+colDef.checkboxSelection = () => false;
 ```
 
 ## Group Selection

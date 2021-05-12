@@ -2140,7 +2140,7 @@ export class CellComp extends Component implements TooltipParentComp {
             visibleFunc = undefined;
         }
 
-        cbSelectionComponent.init({ rowNode: this.rowNode, column: this.column, visibleFunc });
+        cbSelectionComponent.init({ rowNode: this.rowNode, column: this.column });
         this.addDestroyFunc(() => this.beans.context.destroyBean(cbSelectionComponent));
 
         // put the checkbox in before the value

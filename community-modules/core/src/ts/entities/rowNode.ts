@@ -346,9 +346,7 @@ export class RowNode implements IEventEmitter {
 
     private checkRowSelectable() {
         const isRowSelectableFunc = this.gridOptionsWrapper.getIsRowSelectableFunc();
-        const shouldInvokeIsRowSelectable = isRowSelectableFunc && exists(this);
-
-        this.setRowSelectable(shouldInvokeIsRowSelectable ? isRowSelectableFunc!(this) : true);
+        this.setRowSelectable(isRowSelectableFunc ? isRowSelectableFunc!(this) : true);
     }
 
     public setRowSelectable(newVal: boolean) {
