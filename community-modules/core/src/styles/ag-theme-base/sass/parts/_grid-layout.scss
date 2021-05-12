@@ -125,7 +125,8 @@
     }
 
     // right-align numeric values in cells with wrappers
-    .ag-right-aligned-cell .ag-cell-value {
+    .ag-right-aligned-cell .ag-cell-value,
+    .ag-right-aligned-cell .ag-group-value {
         @include ag-theme-rtl(( margin-left: auto ));
     }
 
