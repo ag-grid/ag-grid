@@ -172,9 +172,7 @@ export class DoughnutChartProxy extends PolarChartProxy {
             }
         }
 
-        pieSeries.angleName = updateParams.field.displayName!;
         pieSeries.labelKey = updateParams.params.category.id;
-        pieSeries.labelName = updateParams.params.category.name;
         pieSeries.data = updateParams.params.data;
 
         // Normally all series provide legend items for every slice.
