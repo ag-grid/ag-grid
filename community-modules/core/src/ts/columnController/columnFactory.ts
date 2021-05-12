@@ -318,6 +318,11 @@ export class ColumnFactory extends BeanStub {
             const width = attrToNumber(colDef.width);
             if (width != null) {
                 column.setActualWidth(width);
+            } else {
+                // otherwise set the width again, in case min or max width has changed,
+                // and width needs to be adjusted.
+                const widthBeforeUpdate = column.getActualWidth();
+                column.setActualWidth(widthBeforeUpdate);
             }
         }
 

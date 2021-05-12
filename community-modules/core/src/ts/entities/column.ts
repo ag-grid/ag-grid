@@ -177,6 +177,8 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     public setColDef(colDef: ColDef, userProvidedColDef: ColDef | null): void {
         this.colDef = colDef;
         this.userProvidedColDef = userProvidedColDef;
+        this.initMinAndMaxWidths();
+        this.initDotNotation();
     }
 
     public getUserProvidedColDef(): ColDef | null {
@@ -202,6 +204,22 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     // this is done after constructor as it uses gridOptionsWrapper
     @PostConstruct
     private initialise(): void {
+        this.initMinAndMaxWidths();
+
+        this.resetActualWidth('gridInitializing');
+
+        this.initDotNotation();
+
+        this.validate();
+    }
+
+    private initDotNotation(): void {
+        const suppressDotNotation = this.gridOptionsWrapper.isSuppressFieldDotNotation();
+        this.fieldContainsDots = exists(this.colDef.field) && this.colDef.field.indexOf('.') >= 0 && !suppressDotNotation;
+        this.tooltipFieldContainsDots = exists(this.colDef.tooltipField) && this.colDef.tooltipField.indexOf('.') >= 0 && !suppressDotNotation;
+    }
+
+    private initMinAndMaxWidths(): void {
         const minColWidth = this.gridOptionsWrapper.getMinColWidth();
         const maxColWidth = this.gridOptionsWrapper.getMaxColWidth();
 
@@ -217,14 +235,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         } else {
             this.maxWidth = maxColWidth;
         }
-
-        this.resetActualWidth('gridInitializing');
-
-        const suppressDotNotation = this.gridOptionsWrapper.isSuppressFieldDotNotation();
-        this.fieldContainsDots = exists(this.colDef.field) && this.colDef.field.indexOf('.') >= 0 && !suppressDotNotation;
-        this.tooltipFieldContainsDots = exists(this.colDef.tooltipField) && this.colDef.tooltipField.indexOf('.') >= 0 && !suppressDotNotation;
-
-        this.validate();
     }
 
     public resetActualWidth(source: ColumnEventType = 'api'): void {
