@@ -313,10 +313,7 @@ var gridOptions = {
         sortable: true,
         filter: true,
         floatingFilter: !isSmall,
-        resizable: true,
-        // checkboxSelection: function(params) {
-        //     return false;
-        // }
+        resizable: true
     },
     enableCellChangeFlash: true,
     rowDragManaged: true,
@@ -824,12 +821,6 @@ var desktopDefaultCols = [
             },
             {
                 headerName: "Language", field: "language", width: 150, editable: true,
-                checkboxSelection: function(params) {
-                    return params.data.language == 'English';
-                },
-                rowDrag: function(params) {
-                    return params.data.language == 'English';
-                },
                 cellEditor: 'agSelectCellEditor',
                 cellClass: 'vAlign',
                 enableRowGroup: true,
