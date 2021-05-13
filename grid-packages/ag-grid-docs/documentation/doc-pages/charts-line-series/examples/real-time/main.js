@@ -21,7 +21,9 @@ var options = {
     series: [{
         xKey: 'time',
         yKey: 'voltage',
-        tooltipEnabled: false
+        tooltip: {
+            enabled: false
+        }
     }],
     axes: [
         {

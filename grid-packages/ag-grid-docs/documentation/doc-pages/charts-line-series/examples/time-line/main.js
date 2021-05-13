@@ -41,7 +41,9 @@ var options = {
                 fill: '#03a9f4',
                 stroke: '#0276ab'
             },
-            tooltipEnabled: false
+            tooltip: {
+                enabled: false
+            }
         },
         {
             data: [
@@ -86,7 +88,9 @@ var options = {
                 fill: '#8bc24a',
                 stroke: '#658d36'
             },
-            tooltipEnabled: false
+            tooltip: {
+                enabled: false
+            }
         }
     ],
     axes: [

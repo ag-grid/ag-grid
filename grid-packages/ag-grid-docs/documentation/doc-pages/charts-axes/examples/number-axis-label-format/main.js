@@ -7,7 +7,9 @@ var options = {
         type: 'line',
         xKey: 'date',
         yKey: 'temp',
-        tooltipEnabled: false
+        tooltip: {
+            enabled: false
+        }
     }],
     axes: [{
         type: 'number',
