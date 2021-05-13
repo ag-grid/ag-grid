@@ -113,6 +113,30 @@ export function debounce(func: (...args: any[]) => void, wait: number, immediate
     };
 }
 
+export function waitUntil(condition: () => boolean, callback: () => void, timeout: number = 100) {
+    const timeStamp = new Date().getTime();
+
+    let interval: number | null = null;
+    let executed: boolean = false;
+
+    const internalCallback = () => {
+        if (condition() || ((new Date().getTime()) - timeStamp) > timeout) {
+            callback();
+            executed = true;
+            if (interval != null) {
+                window.clearInterval(interval);
+                interval = null;
+            }
+        }
+    };
+
+    internalCallback();
+
+    if (!executed) {
+        interval = window.setInterval(internalCallback, 10);
+    }
+}
+
 export function compose(...fns: Function[]) {
     return (arg: any) => fns.reduce((composed, f) => f(composed), arg);
 }
