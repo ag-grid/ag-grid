@@ -53,7 +53,7 @@ export function executeNextVMTurn(func: () => void): void {
         const funcsCopy = executeNextVMTurnFuncs.slice();
         executeNextVMTurnFuncs.length = 0;
         executeNextVMTurnPending = false;
-        funcsCopy.forEach(func => func())
+        funcsCopy.forEach(func => func());
     }, 0);
 }
 
@@ -113,19 +113,24 @@ export function debounce(func: (...args: any[]) => void, wait: number, immediate
     };
 }
 
-export function waitUntil(condition: () => boolean, callback: () => void, timeout: number = 100) {
+export function waitUntil(condition: () => boolean, callback: () => void, timeout: number = 100, timeoutMessage?: string) {
     const timeStamp = new Date().getTime();
 
     let interval: number | null = null;
     let executed: boolean = false;
 
     const internalCallback = () => {
-        if (condition() || ((new Date().getTime()) - timeStamp) > timeout) {
+        const reachedTimeout = ((new Date().getTime()) - timeStamp) > timeout;
+        if (condition() || reachedTimeout) {
             callback();
             executed = true;
             if (interval != null) {
                 window.clearInterval(interval);
                 interval = null;
+            }
+
+            if (reachedTimeout && timeoutMessage) {
+                console.warn(timeoutMessage);
             }
         }
     };
