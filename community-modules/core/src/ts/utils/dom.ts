@@ -392,7 +392,6 @@ export function insertWithDomOrder(
     if (eChildBefore) {
         // if previous element exists, just slot in after the previous element
         eChildBefore.insertAdjacentElement('afterend', eToInsert);
-        eChildBefore.nextSibling as HTMLElement;
     } else {
         if (eContainer.firstChild) {
             // insert it at the first location
