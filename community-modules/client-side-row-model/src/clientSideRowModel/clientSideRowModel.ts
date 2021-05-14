@@ -786,8 +786,23 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         return this.nodeManager.getCopyOfNodesMap();
     }
 
-    public getRowNode(id: string): RowNode {
-        return this.nodeManager.getRowNode(id);
+    public getRowNode(id: string): RowNode | null {
+        const idIsGroup = id!=null && id.indexOf(RowNode.ID_PREFIX_ROW_GROUP)==0;
+        if (idIsGroup) {
+            // only one users complained about getRowNode not working for groups, after years of
+            // this working for normal rows. so have done quick implementation. if users complain
+            // about performance, then GroupStage should store / manage created groups in a map,
+            // which is a chunk of work.
+            let res: RowNode | null = null;
+            this.forEachNode( node => {
+                if (node.id === id) {
+                    res = node;
+                }
+            });
+            return res;
+        } else {
+            return this.nodeManager.getRowNode(id);
+        }
     }
 
     // rows: the rows to put into the model
