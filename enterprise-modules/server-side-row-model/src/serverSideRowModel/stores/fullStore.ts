@@ -274,7 +274,10 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         const sortOptions = this.sortController.getSortOptions();
         const noSortApplied = !sortOptions || sortOptions.length == 0;
 
-        if (noSortApplied) {
+        // if we reset after sort, it means the sorting is done on the server
+        const sortDoneOnServer = this.gridOptionsWrapper.isServerSideSortingAlwaysResets();
+
+        if (noSortApplied || sortDoneOnServer) {
             this.nodesAfterSort = this.nodesAfterFilter;
             return;
         }
@@ -284,9 +287,16 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
     private filterRowNodes(): void {
 
-        // filtering for InFullStore only words at lowest level details.
+        // if we reset after filter, it means the filtering is done on the server
+        const filterDoneOnServer = this.gridOptionsWrapper.isServerSideFilteringAlwaysResets();
+
+        // filtering for InFullStore only works at lowest level details.
         // reason is the logic for group filtering was to difficult to work out how it should work at time of writing.
-        if (this.groupLevel) {
+        const groupLevel = this.groupLevel;
+
+        const skipFilter = filterDoneOnServer || groupLevel;
+
+        if (skipFilter) {
             this.nodesAfterFilter = this.allRowNodes;
             return;
         }
