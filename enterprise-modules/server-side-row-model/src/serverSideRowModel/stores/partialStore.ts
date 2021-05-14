@@ -263,8 +263,9 @@ export class PartialStore extends BeanStub implements IServerSideStore {
         }
     }
 
-    public refreshStore(showLoading: boolean): void {
-        if (showLoading) {
+    public refreshStore(purge: boolean): void {
+        const noBlocksToRefresh = this.getRowCount() == 0;
+        if (noBlocksToRefresh || purge) {
             this.resetStore();
         } else {
             this.refreshBlocks();
