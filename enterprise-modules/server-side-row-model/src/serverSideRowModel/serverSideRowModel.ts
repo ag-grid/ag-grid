@@ -106,6 +106,15 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, resetListener);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, resetListener);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, resetListener);
+
+        this.verifyProps();
+    }
+
+    private verifyProps(): void {
+        if (this.gridOptionsWrapper.getDefaultGroupSortComparator()!=null) {
+            const message = `defaultGroupSortComparator cannot be used with Server Side Row Model. If using Full Store, then provide the rows to the grid in the desired sort order. If using Partial Store, then sorting is done on the server side, nothing to do with the client.`;
+            _.doOnce(() => console.warn(message), 'SSRM.DefaultGroupSortComparator');
+        }
     }
 
     public setDatasource(datasource: IServerSideDatasource): void {
