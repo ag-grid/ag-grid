@@ -147,8 +147,8 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
         const standaloneChartType = this.getStandaloneChartType();
 
         const seriesType = integratedChartType === ChartType.GroupedBar
-        || integratedChartType === ChartType.StackedBar
-        || integratedChartType === ChartType.NormalizedBar ? 'bar' : 'column';
+            || integratedChartType === ChartType.StackedBar
+            || integratedChartType === ChartType.NormalizedBar ? 'bar' : 'column';
 
         const themeSeriesDefaults = theme.getConfig<AgBarSeriesOptions>(standaloneChartType + '.series.' + seriesType);
 

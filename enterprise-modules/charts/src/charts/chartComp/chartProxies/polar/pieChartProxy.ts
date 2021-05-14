@@ -155,9 +155,6 @@ export class PieChartProxy extends PolarChartProxy {
 
             pieSeries.addEventListener("nodeClick", this.crossFilterCallback);
         } else {
-            pieSeries.fills = fills;
-            pieSeries.strokes = strokes;
-
             if (calloutColors) {
                 pieSeries.callout.colors = strokes;
             }
@@ -199,6 +196,7 @@ export class PieChartProxy extends PolarChartProxy {
         return options;
     }
 
+    // TODO: should be removed along with processChartOptions()
     protected getDefaultOptions(): PolarChartOptions<PieSeriesOptions> {
         const {strokes} = this.getPredefinedPalette();
         const options = this.getDefaultChartOptions() as PolarChartOptions<PieSeriesOptions>;

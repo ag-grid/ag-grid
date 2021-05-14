@@ -1,6 +1,6 @@
 import { Autowired, PostConstruct } from "../context/context";
 import { BeanStub } from "../context/beanStub";
-import { getInnerHeight, getScrollLeft, isRtlNegativeScroll, setScrollLeft } from "../utils/dom";
+import { getInnerHeight, getScrollLeft, isElement, isRtlNegativeScroll, setScrollLeft } from "../utils/dom";
 import { ControllersService } from "../controllersService";
 import { Events } from "../eventKeys";
 import { debounce } from "../utils/function";
@@ -88,13 +88,11 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     public horizontallyScrollHeaderCenterAndFloatingCenter(scrollLeft?: number): void {
-
         if (scrollLeft === undefined) {
             scrollLeft = this.centerRowContainerCon.getCenterViewportScrollLeft();
         }
 
         const offset = this.enableRtl ? scrollLeft : -scrollLeft;
-
         const topCenterContainer = this.controllersService.getTopCenterRowContainerCon();
         const bottomCenterContainer = this.controllersService.getBottomCenterRowContainerCon();
         const headerRootComp = this.controllersService.getHeaderRootComp();
@@ -107,7 +105,7 @@ export class GridBodyScrollFeature extends BeanStub {
         const partner = this.lastHorizontalScrollElement === this.centerRowContainerCon.getViewportElement() ?
                 fakeHScroll.getViewport() : this.centerRowContainerCon.getViewportElement();
 
-        setScrollLeft(partner, scrollLeft, this.enableRtl);
+        setScrollLeft(partner, Math.abs(scrollLeft), this.enableRtl);
     }
 
     private isControllingScroll(eDiv: HTMLElement): boolean {
@@ -258,16 +256,18 @@ export class GridBodyScrollFeature extends BeanStub {
 
     // called by scrollHorizontally method and alignedGridsService
     public setHorizontalScrollPosition(hScrollPosition: number): void {
-
         const minScrollLeft = 0;
-        const maxScrollLeft = this.centerRowContainerCon.getViewportElement().scrollWidth
-                                - this.centerRowContainerCon.getCenterWidth();
+        const maxScrollLeft = this.centerRowContainerCon.getViewportElement().scrollWidth - this.centerRowContainerCon.getCenterWidth();
 
         if (this.shouldBlockScrollUpdate('horizontal', hScrollPosition)) {
-            hScrollPosition = Math.min(Math.max(hScrollPosition, minScrollLeft), maxScrollLeft);
+            if (this.enableRtl && isRtlNegativeScroll()) {
+                hScrollPosition = hScrollPosition > 0 ? 0 : maxScrollLeft;
+            } else {
+                hScrollPosition = Math.min(Math.max(hScrollPosition, minScrollLeft), maxScrollLeft);
+            }
         }
 
-        this.centerRowContainerCon.getViewportElement().scrollLeft = hScrollPosition;
+        setScrollLeft(this.centerRowContainerCon.getViewportElement(), Math.abs(hScrollPosition), this.enableRtl);
 
         // we need to manually do the event handling (rather than wait for the event)
         // for the alignedGridsService, as if we don't, the aligned grid service gets
