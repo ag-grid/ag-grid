@@ -137,7 +137,7 @@ export class GridBodyScrollFeature extends BeanStub {
             return;
         }
 
-        this.doHorizontalScroll(Math.floor(getScrollLeft(eSource, this.enableRtl)));
+        this.doHorizontalScroll(Math.round(getScrollLeft(eSource, this.enableRtl)));
         this.resetLastHorizontalScrollElementDebounced();
     }
 
