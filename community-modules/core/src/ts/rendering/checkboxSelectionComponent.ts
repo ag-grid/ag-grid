@@ -68,7 +68,7 @@ export class CheckboxSelectionComponent extends Component {
         return updatedCount;
     }
 
-    public init(params: {rowNode: RowNode, column?: Column} ): void {
+    public init(params: {rowNode: RowNode, column?: Column}): void {
         this.rowNode = params.rowNode;
         this.column = params.column;
 

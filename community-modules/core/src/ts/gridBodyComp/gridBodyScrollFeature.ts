@@ -1,6 +1,6 @@
 import { Autowired, PostConstruct } from "../context/context";
 import { BeanStub } from "../context/beanStub";
-import { getInnerHeight, getScrollLeft, isElement, isRtlNegativeScroll, setScrollLeft } from "../utils/dom";
+import { getInnerHeight, getScrollLeft, isRtlNegativeScroll, setScrollLeft } from "../utils/dom";
 import { ControllersService } from "../controllersService";
 import { Events } from "../eventKeys";
 import { debounce } from "../utils/function";
