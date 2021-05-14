@@ -553,6 +553,8 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
             delete this.allNodesMap[rowNode.id!];
 
             rowNodeTransaction.remove!.push(rowNode);
+
+            this.nodeManager.removeNode(rowNode);
         });
 
         this.allRowNodes = this.allRowNodes.filter(rowNode => !rowIdsRemoved[rowNode.id!]);
