@@ -13,6 +13,7 @@ import { isStopPropagationForAgGrid, stopPropagationForAgGrid } from "../../util
 import { setDisplayed } from "../../utils/dom";
 import { createIconNoSpan } from "../../utils/icon";
 import { exists } from "../../utils/generic";
+import { doOnce } from "../../utils/function";
 
 export interface IHeaderGroupParams {
     columnGroup: ColumnGroup;
@@ -56,9 +57,20 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
     public init(params: IHeaderGroupParams): void {
         this.params = params;
 
+        this.checkWarnings();
+
         this.setupLabel();
         this.addGroupExpandIcon();
         this.setupExpandIcons();
+    }
+
+    private checkWarnings(): void {
+        const paramsAny = this.params as any;
+
+        if (paramsAny.template) {
+            const message = `A template was provided for Header Group Comp - templates are only supported for Header Comps (not groups)`;
+            doOnce( ()=> console.warn(message), 'HeaderGroupComp.templateNotSupported');
+        }
     }
 
     private setupExpandIcons(): void {
