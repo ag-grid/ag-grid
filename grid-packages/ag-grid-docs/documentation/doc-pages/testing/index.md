@@ -390,7 +390,7 @@ title: "Testing AG Grid"
 |                 style="width: 100%; height: 350px;" class="ag-theme-alpine"
 |                 [columnDefs]="columnDefs"
 |                 [rowData]="rowData"
-|                 [stopEditingWhenGridLosesFocus]="false"
+|                 [stopEditingWhenCellsLoseFocus]="false"
 |                 [frameworkComponents]="frameworkComponents"
 |                 (gridReady)="onGridReady($event)">
 |             </ag-grid-angular>

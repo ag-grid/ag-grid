@@ -800,8 +800,8 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressClickEdit);
     }
 
-    public isStopEditingWhenGridLosesFocus() {
-        return isTrue(this.gridOptions.stopEditingWhenGridLosesFocus);
+    public isStopEditingWhenCellsLoseFocus() {
+        return isTrue(this.gridOptions.stopEditingWhenCellsLoseFocus);
     }
 
     public getGroupDefaultExpanded(): number | undefined {
@@ -1638,6 +1638,11 @@ export class GridOptionsWrapper {
 
         if (options.defaultExportParams) {
             console.warn('AG Grid: since v25.2, the grid property `defaultExportParams` has been replaced by `defaultCsvExportParams` and `defaultExcelExportParams`.');
+        }
+
+        if (options.stopEditingWhenGridLosesFocus) {
+            console.warn('AG Grid: since v25.2.2, the grid property `stopEditingWhenGridLosesFocus`.');
+            options.stopEditingWhenCellsLoseFocus = true;
         }
     }
 

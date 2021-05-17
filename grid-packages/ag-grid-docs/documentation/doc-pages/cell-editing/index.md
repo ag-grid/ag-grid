@@ -301,18 +301,20 @@ The grid below has `suppressClickEdit = true` so that clicking doesn't started e
 
 ### Stop Editing When Grid Loses Focus
 
-By default, the grid will not stop editing the currently editing cell when the grid loses focus. This can be bad if, for example, you have a save button, and you need the grid to stop editing before you execute your save function (e.g. you want to make sure the edit is saved into the grid's state).
+By default, the grid will not stop editing the currently editing cell when the cell loses focus, unless another
+cell is clicked on. This means clicking on the grid header, or another part of your application, will not stop editing.
+This can be bad if, for example, you have a save button, and you need the grid to stop editing before you execute 
+your save function (e.g. you want to make sure the edit is saved into the grid's state).
 
-If you want the grid to stop editing when focus leaves, set the grid property `stopEditingWhenGridLosesFocus = true`.
+If you want the grid to stop editing when focus leaves the cell or the grid, set the grid property 
+`stopEditingWhenCellsLoseFocus = true`.
 
-By default, the grid will not stop editing if you focus outside. The default is good for custom popup cell editors as these can have the focus leave the grid (e.g. if using a popup calendar widget). This would be bad as the grid would stop editing as soon as your external popup appeared.
-
-The example below shows the editing with `stopEditingWhenGridLosesFocus = true`. Notice the following:
+The example below shows the editing with `stopEditingWhenCellsLoseFocus = true`. Notice the following:
 
 - Double-click to start editing 'Age', then click outside the grid (on the 'Dummy Save' button, or the dummy text field) and the grid will stop editing.
 - Double-click to start editing 'Year', a custom popup editor appears, you can click anywhere on the popup editor, but once you click outside the editor, the popup closes.
 
-<grid-example title='Stop Editing When Grid Loses Focus' name='stop-edit-when-grid-loses-focus' type='generated' options='{ "exampleHeight": 510 }'></grid-example>
+<grid-example title='Stop Editing When Cells Loses Focus' name='stop-edit-when-grid-loses-focus' type='generated' options='{ "exampleHeight": 510 }'></grid-example>
 
 [[note]]
 | Cell Editing can also be performed via Cell Editor Components; please see [Cell Editor Components](/component-cell-editor/) for more information.

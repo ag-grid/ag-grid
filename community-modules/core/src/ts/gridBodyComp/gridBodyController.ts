@@ -140,7 +140,7 @@ export class GridBodyController extends BeanStub {
     }
 
     private addStopEditingWhenGridLosesFocus(): void {
-        if (!this.gridOptionsWrapper.isStopEditingWhenGridLosesFocus()) { return; }
+        if (!this.gridOptionsWrapper.isStopEditingWhenCellsLoseFocus()) { return; }
 
         const focusOutListener = (event: FocusEvent): void => {
             // this is the element the focus is moving to

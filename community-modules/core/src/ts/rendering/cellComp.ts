@@ -1292,7 +1292,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         const popupService = this.beans.popupService;
 
-        const useModelPopup = this.beans.gridOptionsWrapper.isStopEditingWhenGridLosesFocus();
+        const useModelPopup = this.beans.gridOptionsWrapper.isStopEditingWhenCellsLoseFocus();
 
         const position = this.cellEditor && this.cellEditor.getPopupPosition ? this.cellEditor.getPopupPosition() : 'over';
 

@@ -154,7 +154,10 @@ export interface GridOptions {
     /** Allows user to suppress certain keyboard events */
     suppressKeyboardEvent?: (params: SuppressKeyboardEventParams) => boolean;
 
+    /** @deprecated Use stopEditingWhenCellsLoseFocus */
     stopEditingWhenGridLosesFocus?: boolean;
+
+    stopEditingWhenCellsLoseFocus?: boolean;
     debug?: boolean;
     icons?: any; // should be typed
     angularCompileRows?: boolean;

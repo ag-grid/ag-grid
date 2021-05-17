@@ -274,7 +274,7 @@
                 "url": "/flashing-cells/"
             }
         },
-        "stopEditingWhenGridLosesFocus": {
+        "stopEditingWhenCellsLoseFocus": {
             "default": false,
             "description": "Set this to `true` to [stop cell editing when grid loses focus](/cell-editing/#stop-editing-when-grid-loses-focus). The default is that the grid stays editing until focus goes onto another cell. For inline (non-popup) editors only."
         },
