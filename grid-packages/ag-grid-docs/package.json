@@ -5,7 +5,7 @@
   "scripts": {
     "postinstall": "webdriver-manager update",
     "build": "npm run hash",
-    "start": "gulp serve",
+    "start": "gulp serve  --max_old_space_size=4096",
     "serve-core-only": "gulp serve-core-only",
     "serve-with-formatting": "gulp serve-with-formatting",
     "tsc": "tsc -p tests/config/tsconfig.json",

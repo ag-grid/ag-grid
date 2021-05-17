@@ -27,6 +27,11 @@ export class VueComponentFactory {
         if (!componentDefinition) {
             console.error(`Could not find component with name of ${component}. Is it in Vue.components?`);
         }
+
+        if(componentDefinition.extends && componentDefinition.extends.setup) {
+            componentDefinition.setup = componentDefinition.extends.setup;
+        }
+
         return componentDefinition;
     }
 
