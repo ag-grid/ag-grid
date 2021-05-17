@@ -47,6 +47,8 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
     private activeFilterIndices: number[] = [];
     private lastActivatedMenuItem: MenuItemComponent | null = null;
 
+    private afterFiltersReadyFuncs: (()=>void) [] = [];
+
     constructor() {
         super(/* html */`<div class="ag-multi-filter ag-menu-list-compact"></div>`, true);
     }
@@ -81,7 +83,13 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
         // we have to refresh the GUI here to ensure that Angular components are not rendered in odd places
         return AgPromise
             .all(filterPromises)
-            .then(filters => { this.filters = filters as IFilterComp[]; this.refreshGui('columnMenu'); });
+            .then(filters => {
+                this.filters = filters as IFilterComp[];
+                this.refreshGui('columnMenu');
+
+                this.afterFiltersReadyFuncs.forEach( f => f() );
+                this.afterFiltersReadyFuncs.length = 0;
+            });
     }
 
     private refreshGui(container: ContainerType): void {
@@ -335,7 +343,9 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
         const filterParams: IFilterParams = {
             ...this.filterManager.createFilterParams(this.column, this.column.getColDef()),
             filterModifiedCallback,
-            filterChangedCallback: additionalEventAttributes => this.filterChanged(index, additionalEventAttributes),
+            filterChangedCallback: additionalEventAttributes => {
+                this.executeWhenAllFiltersReady(()=> this.filterChanged(index, additionalEventAttributes));
+            },
             doesRowPassOtherFilter: (node: RowNode) =>
                 doesRowPassOtherFilter(node) && this.doesFilterPass({ node, data: node.data }, filterInstance),
         };
@@ -347,6 +357,14 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
         }
 
         return filterPromise;
+    }
+
+    private executeWhenAllFiltersReady(action: ()=>void): void {
+        if (this.filters) {
+            action();
+        } else {
+            this.afterFiltersReadyFuncs.push(action);
+        }
     }
 
     private updateActiveList(index: number): void {
