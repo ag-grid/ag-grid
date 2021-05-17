@@ -4,6 +4,7 @@ import { RefSelector } from '../../../widgets/componentAnnotations';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { Autowired } from '../../../context/context';
 import { ColumnController } from '../../../columnController/columnController';
+import { doOnce } from "../../../utils/function";
 
 // optional floating filter for user provided filters - instead of providing a floating filter,
 // they can provide a getModelAsString() method on the filter instead. this class just displays
@@ -43,8 +44,10 @@ export class ReadOnlyFloatingFilter extends Component implements IFloatingFilter
         }
 
         this.params.parentFilterInstance(filterInstance => {
-            // getModelAsString should be present, as we check this
-            // in floatingFilterWrapper
+            // it would be nice to check if getModelAsString was present before creating this component,
+            // however that is not possible, as React Hooks and VueJS don't attached the methods to the Filter until
+            // AFTER the filter is created, not allowing inspection before this (we create floating filters as columns
+            // are drawn, but the parent filters are only created when needed).
             if (filterInstance.getModelAsString) {
                 const modelAsString = filterInstance.getModelAsString(parentModel);
                 this.eFloatingFilterText.setValue(modelAsString);

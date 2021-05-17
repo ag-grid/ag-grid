@@ -271,33 +271,13 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
         let promise = this.userComponentFactory.newFloatingFilterComponent(colDef, params, defaultFloatingFilterType);
 
         if (!promise) {
-            const filterComponent = this.getFilterComponentPrototype(colDef);
-            const getModelAsStringExists = filterComponent && filterComponent.prototype && filterComponent.prototype.getModelAsString;
+            const compInstance =
+                this.userComponentFactory.createUserComponentFromConcreteClass(ReadOnlyFloatingFilter, params);
 
-            if (getModelAsStringExists) {
-                const compInstance =
-                    this.userComponentFactory.createUserComponentFromConcreteClass(ReadOnlyFloatingFilter, params);
-
-                promise = AgPromise.resolve(compInstance);
-            }
+            promise = AgPromise.resolve(compInstance);
         }
 
         return promise;
-    }
-
-    private createDynamicParams(): any {
-        return {
-            column: this.column,
-            colDef: this.column.getColDef(),
-            api: this.gridApi,
-            columnApi: this.columnApi
-        };
-    }
-
-    private getFilterComponentPrototype(colDef: ColDef): { new(): any; } | null {
-        const resolvedComponent = this.userComponentFactory.lookupComponentClassDef(colDef, 'filter', this.createDynamicParams());
-
-        return resolvedComponent ? resolvedComponent.component : null;
     }
 
     private currentParentModel(): any {
