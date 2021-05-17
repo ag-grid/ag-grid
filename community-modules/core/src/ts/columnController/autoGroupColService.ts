@@ -81,47 +81,48 @@ export class AutoGroupColService extends BeanStub {
     }
 
     private generateDefaultColDef(rowGroupCol?: Column): ColDef {
-        const userAutoColDef = this.gridOptionsWrapper.getAutoGroupColumnDef();
+        const userDef = this.gridOptionsWrapper.getAutoGroupColumnDef();
         const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
 
-        const defaultAutoColDef: ColDef = {
+        const res: ColDef = {
             headerName: localeTextFunc('group', 'Group')
         };
 
         const userHasProvidedGroupCellRenderer =
-            userAutoColDef && (userAutoColDef.cellRenderer || userAutoColDef.cellRendererFramework);
+            userDef &&
+            (userDef.cellRenderer || userDef.cellRendererFramework || userDef.cellRendererSelector);
 
         // only add the default group cell renderer if user hasn't provided one
         if (!userHasProvidedGroupCellRenderer) {
-            defaultAutoColDef.cellRenderer = 'agGroupCellRenderer';
+            res.cellRenderer = 'agGroupCellRenderer';
         }
 
         // we never allow moving the group column
         // defaultAutoColDef.suppressMovable = true;
 
         if (rowGroupCol) {
-            const rowGroupColDef = rowGroupCol.getColDef();
-            assign(defaultAutoColDef, {
+            const colDef = rowGroupCol.getColDef();
+            assign(res, {
                 // cellRendererParams.groupKey: colDefToCopy.field;
                 headerName: this.columnController.getDisplayNameForColumn(rowGroupCol, 'header'),
-                headerValueGetter: rowGroupColDef.headerValueGetter
+                headerValueGetter: colDef.headerValueGetter
             });
 
-            if (rowGroupColDef.cellRenderer) {
-                assign(defaultAutoColDef, {
+            if (colDef.cellRenderer) {
+                assign(res, {
                     cellRendererParams: {
-                        innerRenderer: rowGroupColDef.cellRenderer,
-                        innerRendererParams: rowGroupColDef.cellRendererParams
+                        innerRenderer: colDef.cellRenderer,
+                        innerRendererParams: colDef.cellRendererParams
                     }
                 });
             }
 
-            defaultAutoColDef.showRowGroup = rowGroupCol.getColId();
+            res.showRowGroup = rowGroupCol.getColId();
         } else {
-            defaultAutoColDef.showRowGroup = true;
+            res.showRowGroup = true;
         }
 
-        return defaultAutoColDef;
+        return res;
     }
 
 }
