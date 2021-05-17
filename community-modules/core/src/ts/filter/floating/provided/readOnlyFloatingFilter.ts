@@ -4,7 +4,6 @@ import { RefSelector } from '../../../widgets/componentAnnotations';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { Autowired } from '../../../context/context';
 import { ColumnController } from '../../../columnController/columnController';
-import { doOnce } from "../../../utils/function";
 
 // optional floating filter for user provided filters - instead of providing a floating filter,
 // they can provide a getModelAsString() method on the filter instead. this class just displays

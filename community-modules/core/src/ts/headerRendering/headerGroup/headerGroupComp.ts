@@ -69,7 +69,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
 
         if (paramsAny.template) {
             const message = `A template was provided for Header Group Comp - templates are only supported for Header Comps (not groups)`;
-            doOnce( ()=> console.warn(message), 'HeaderGroupComp.templateNotSupported');
+            doOnce(() => console.warn(message), 'HeaderGroupComp.templateNotSupported');
         }
     }
 
