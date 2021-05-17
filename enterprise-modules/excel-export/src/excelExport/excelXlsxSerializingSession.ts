@@ -98,7 +98,7 @@ export class ExcelXlsxSerializingSession extends BaseExcelSerializingSession<Exc
 
         switch (type) {
             case 's':
-                return ExcelXlsxFactory.getStringPosition(value).toString();
+                return value === '' ? '' : ExcelXlsxFactory.getStringPosition(value).toString();
             case 'f':
                 return value.slice(1);
             case 'n':
