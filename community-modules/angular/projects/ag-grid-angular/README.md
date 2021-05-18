@@ -55,11 +55,11 @@ Use the setup instructions below or go through [a 5-minute-quickstart guide](htt
 
 #### Install dependencies
 
-    $ npm i --save ag-grid-community ag-grid-angular
+    $ npm i --save @ag-grid-community/core @ag-grid-community/client-side-row-model @ag-grid-community/angular
 
 #### Import `AgGridModule` and add it to the `App` module
 
-	import { AgGridModule } from 'ag-grid-angular';
+	import { AgGridModule } from '@ag-grid-community/angular';
 
 	@NgModule({
 	  declarations: [AppComponent],
@@ -71,13 +71,14 @@ Use the setup instructions below or go through [a 5-minute-quickstart guide](htt
 
 ### Import styles in `styles.css`
 
-    @import "~ag-grid-community/dist/styles/ag-grid.css";
-    @import "~ag-grid-community/dist/styles/ag-theme-balham.css";
+    @import "~@ag-grid-community/core/dist/styles/ag-grid.css";
+    @import "~@ag-grid-community/core/dist/styles/ag-theme-balham.css";
 
 ### Set the grid's configuration in a parent component
+    import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
 
 	export class AppComponent {
-		title = 'app';
+        modules = [ClientSideRowModelModule];
 
 		columnDefs = [
 			{headerName: 'Make', field: 'make' },
@@ -98,7 +99,8 @@ Use the setup instructions below or go through [a 5-minute-quickstart guide](htt
 		style="width: 500px; height: 500px;" 
 		class="ag-theme-balham"
 		[rowData]="rowData" 
-		[columnDefs]="columnDefs">
+		[columnDefs]="columnDefs"
+        [modules]="modules">
 	</ag-grid-angular>
 
 Issue Reporting
