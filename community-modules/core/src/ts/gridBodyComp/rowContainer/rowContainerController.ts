@@ -2,7 +2,6 @@ import { BeanStub } from "../../context/beanStub";
 import { Autowired, PostConstruct } from "../../context/context";
 import { ScrollVisibleService } from "../../gridBodyComp/scrollVisibleService";
 import { Events } from "../../eventKeys";
-import { RowContainerNames } from "./rowContainerComp";
 import { RowContainerEventsFeature } from "./rowContainerEventsFeature";
 import { DragService } from "../../dragAndDrop/dragService";
 import { ControllersService } from "../../controllersService";
@@ -10,6 +9,51 @@ import { getInnerWidth, getScrollLeft, isHorizontalScrollShowing, isVisible, set
 import { ColumnController } from "../../columnController/columnController";
 import { ResizeObserverService } from "../../misc/resizeObserverService";
 import { ViewportSizeFeature } from "../viewportSizeFeature";
+import { convertToMap } from "../../utils/map";
+
+export enum RowContainerNames {
+    LEFT = 'left',
+    RIGHT = 'right',
+    CENTER = 'center',
+    FULL_WIDTH = 'fullWidth',
+
+    TOP_LEFT = 'topLeft',
+    TOP_RIGHT = 'topRight',
+    TOP_CENTER = 'topCenter',
+    TOP_FULL_WITH = 'topFullWidth',
+
+    BOTTOM_LEFT = 'bottomLeft',
+    BOTTOM_RIGHT = 'bottomRight',
+    BOTTOM_CENTER = 'bottomCenter',
+    BOTTOM_FULL_WITH = 'bottomFullWidth'
+}
+
+export const ContainerCssClasses: Map<RowContainerNames, string> = convertToMap([
+    [RowContainerNames.CENTER, 'ag-center-cols-container'],
+    [RowContainerNames.LEFT, 'ag-pinned-left-cols-container'],
+    [RowContainerNames.RIGHT, 'ag-pinned-right-cols-container'],
+    [RowContainerNames.FULL_WIDTH, 'ag-full-width-container'],
+
+    [RowContainerNames.TOP_CENTER, 'ag-floating-top-container'],
+    [RowContainerNames.TOP_LEFT, 'ag-pinned-left-floating-top'],
+    [RowContainerNames.TOP_RIGHT, 'ag-pinned-right-floating-top'],
+    [RowContainerNames.TOP_FULL_WITH, 'ag-floating-top-full-width-container'],
+
+    [RowContainerNames.BOTTOM_CENTER, 'ag-floating-bottom-container'],
+    [RowContainerNames.BOTTOM_LEFT, 'ag-pinned-left-floating-bottom'],
+    [RowContainerNames.BOTTOM_RIGHT, 'ag-pinned-right-floating-bottom'],
+    [RowContainerNames.BOTTOM_FULL_WITH, 'ag-floating-bottom-full-width-container'],
+]);
+
+export const ViewportCssClasses: Map<RowContainerNames, string> = convertToMap([
+    [RowContainerNames.CENTER, 'ag-center-cols-viewport'],
+    [RowContainerNames.TOP_CENTER, 'ag-floating-top-viewport'],
+    [RowContainerNames.BOTTOM_CENTER, 'ag-floating-bottom-viewport'],
+]);
+
+export const WrapperCssClasses: Map<RowContainerNames, string> = convertToMap([
+    [RowContainerNames.CENTER, 'ag-center-cols-clipper'],
+]);
 
 export interface RowContainerView {
     setViewportHeight(height: string): void;

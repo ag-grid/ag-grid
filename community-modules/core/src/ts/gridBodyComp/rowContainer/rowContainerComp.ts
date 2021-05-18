@@ -1,7 +1,12 @@
 import { Component, elementGettingCreated } from "../../widgets/component";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { Autowired, PostConstruct } from "../../context/context";
-import { RowContainerController, RowContainerView } from "./rowContainerController";
+import {
+    ContainerCssClasses,
+    RowContainerController,
+    RowContainerNames,
+    RowContainerView, ViewportCssClasses, WrapperCssClasses
+} from "./rowContainerController";
 import { ensureDomOrder, insertWithDomOrder } from "../../utils/dom";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { SetPinnedLeftWidthFeature } from "./setPinnedLeftWidthFeature";
@@ -16,51 +21,6 @@ import { Constants } from "../../constants/constants";
 import { CenterWidthFeature } from "../centerWidthFeature";
 import { DragListenerFeature } from "./dragListenerFeature";
 import { getAllValuesInObject } from "../../utils/object";
-import { convertToMap } from "../../utils/map";
-
-export enum RowContainerNames {
-    LEFT = 'left',
-    RIGHT = 'right',
-    CENTER = 'center',
-    FULL_WIDTH = 'fullWidth',
-
-    TOP_LEFT = 'topLeft',
-    TOP_RIGHT = 'topRight',
-    TOP_CENTER = 'topCenter',
-    TOP_FULL_WITH = 'topFullWidth',
-
-    BOTTOM_LEFT = 'bottomLeft',
-    BOTTOM_RIGHT = 'bottomRight',
-    BOTTOM_CENTER = 'bottomCenter',
-    BOTTOM_FULL_WITH = 'bottomFullWidth'
-}
-
-const ContainerCssClasses: Map<RowContainerNames, string> = convertToMap([
-    [RowContainerNames.CENTER, 'ag-center-cols-container'],
-    [RowContainerNames.LEFT, 'ag-pinned-left-cols-container'],
-    [RowContainerNames.RIGHT, 'ag-pinned-right-cols-container'],
-    [RowContainerNames.FULL_WIDTH, 'ag-full-width-container'],
-
-    [RowContainerNames.TOP_CENTER, 'ag-floating-top-container'],
-    [RowContainerNames.TOP_LEFT, 'ag-pinned-left-floating-top'],
-    [RowContainerNames.TOP_RIGHT, 'ag-pinned-right-floating-top'],
-    [RowContainerNames.TOP_FULL_WITH, 'ag-floating-top-full-width-container'],
-
-    [RowContainerNames.BOTTOM_CENTER, 'ag-floating-bottom-container'],
-    [RowContainerNames.BOTTOM_LEFT, 'ag-pinned-left-floating-bottom'],
-    [RowContainerNames.BOTTOM_RIGHT, 'ag-pinned-right-floating-bottom'],
-    [RowContainerNames.BOTTOM_FULL_WITH, 'ag-floating-bottom-full-width-container'],
-]);
-
-const ViewportCssClasses: Map<RowContainerNames, string> = convertToMap([
-    [RowContainerNames.CENTER, 'ag-center-cols-viewport'],
-    [RowContainerNames.TOP_CENTER, 'ag-floating-top-viewport'],
-    [RowContainerNames.BOTTOM_CENTER, 'ag-floating-bottom-viewport'],
-]);
-
-const WrapperCssClasses: Map<RowContainerNames, string> = convertToMap([
-    [RowContainerNames.CENTER, 'ag-center-cols-clipper'],
-]);
 
 function templateFactory(): string {
     const name = elementGettingCreated.getAttribute('name') as RowContainerNames;
