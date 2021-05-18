@@ -5,21 +5,18 @@ import {
     ContainerCssClasses,
     RowContainerController,
     RowContainerNames,
-    RowContainerView, ViewportCssClasses, WrapperCssClasses
+    RowContainerView,
+    ViewportCssClasses,
+    WrapperCssClasses
 } from "./rowContainerController";
 import { ensureDomOrder, insertWithDomOrder } from "../../utils/dom";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
-import { SetPinnedLeftWidthFeature } from "./setPinnedLeftWidthFeature";
-import { SetPinnedRightWidthFeature } from "./setPinnedRightWidthFeature";
-import { SetHeightFeature } from "./setHeightFeature";
 import { Events } from "../../eventKeys";
 import { RowRenderer } from "../../rendering/rowRenderer";
 import { RowComp } from "../../rendering/row/rowComp";
 import { RowController } from "../../rendering/row/rowController";
 import { Beans } from "../../rendering/beans";
 import { Constants } from "../../constants/constants";
-import { CenterWidthFeature } from "../centerWidthFeature";
-import { DragListenerFeature } from "./dragListenerFeature";
 import { getAllValuesInObject } from "../../utils/object";
 
 function templateFactory(): string {
@@ -100,31 +97,11 @@ export class RowContainerComp extends Component {
         };
 
         const con = this.createManagedBean(new RowContainerController(this.name));
-        con.setView(view, this.eContainer, this.eViewport);
+        con.setView(view, this.eContainer, this.eViewport, this.eWrapper);
 
         this.listenOnDomOrder();
 
         this.stopHScrollOnPinnedRows();
-
-        const allTopNoFW = [RowContainerNames.TOP_CENTER, RowContainerNames.TOP_LEFT, RowContainerNames.TOP_RIGHT];
-        const allBottomNoFW = [RowContainerNames.BOTTOM_CENTER, RowContainerNames.BOTTOM_LEFT, RowContainerNames.BOTTOM_RIGHT];
-        const allMiddleNoFW = [RowContainerNames.CENTER, RowContainerNames.LEFT, RowContainerNames.RIGHT];
-        const allNoFW = [...allTopNoFW, ...allBottomNoFW, ...allMiddleNoFW];
-
-        const allMiddle = [RowContainerNames.CENTER, RowContainerNames.LEFT, RowContainerNames.RIGHT, RowContainerNames.FULL_WIDTH];
-
-        const allCenter = [RowContainerNames.CENTER, RowContainerNames.TOP_CENTER, RowContainerNames.BOTTOM_CENTER];
-        const allLeft = [RowContainerNames.LEFT, RowContainerNames.BOTTOM_LEFT, RowContainerNames.TOP_LEFT];
-        const allRight = [RowContainerNames.RIGHT, RowContainerNames.BOTTOM_RIGHT, RowContainerNames.TOP_RIGHT];
-
-        this.forContainers(allLeft, () => this.createManagedBean(new SetPinnedLeftWidthFeature(this.eContainer)));
-        this.forContainers(allRight, () => this.createManagedBean(new SetPinnedRightWidthFeature(this.eContainer)));
-        this.forContainers(allMiddle, () => this.createManagedBean(new SetHeightFeature(this.eContainer, this.eWrapper)));
-        this.forContainers(allNoFW, () => this.createManagedBean(new DragListenerFeature(this.eContainer)));
-
-        this.forContainers(allCenter, () => this.createManagedBean(
-            new CenterWidthFeature(width => this.eContainer.style.width = `${width}px`))
-        );
 
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_ROWS_CHANGED, this.onDisplayedRowsChanged.bind(this));
     }
