@@ -31,7 +31,7 @@ export function fuzzySuggestions(
     inputValue: string,
     allSuggestions: string[],
     hideIrrelevant?: boolean,
-    weighted?: true
+    weighted?: boolean
 ): string[] {
     const search = weighted ? string_weighted_distances : string_distances;
     let thisSuggestions: { value: string, relevance: number; }[] = allSuggestions.map((text) => ({
@@ -103,14 +103,11 @@ export function string_weighted_distances(str1: string, str2: string): number {
     let lastIndex = 0;
 
     for (let i = 0; i < a.length; i++) {
-        const idx = b.indexOf(a[i]);
-        if (idx === -1) {
-            continue;
-        }
+        const idx = b.indexOf(a[i], lastIndex);
+        if (idx === -1) { continue; }
 
         lastIndex = idx;
-        weight += ((b.length - lastIndex) * 100) / b.length;
-        weight *= weight;
+        weight += (100 - (lastIndex * 100 / 10000) * 100);
     }
 
     return weight;
