@@ -20,8 +20,7 @@ import {
     GridBodyView,
     RowAnimationCssClasses
 } from "./gridBodyController";
-
-import { RowContainerNames } from "./rowContainer/rowContainerComp";
+import { RowContainerNames } from "./rowContainer/rowContainerController";
 
 const GRID_BODY_TEMPLATE = /* html */
     `<div class="ag-root ag-unselectable" role="grid" unselectable="on">
