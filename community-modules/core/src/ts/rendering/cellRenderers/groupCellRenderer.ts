@@ -98,12 +98,34 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         super(GroupCellRenderer.TEMPLATE);
     }
 
+    private isTopLevelFooter(): boolean {
+        if (!this.gridOptionsWrapper.isGroupIncludeTotalFooter()) { return false; }
+
+        if (this.params.value!=null || this.params.node.level!=-1) { return false; }
+
+        // at this point, we know it's the root node and there is no value present, so it's a footer cell.
+        // the only thing to work out is if we are displaying groups  across multiple
+        // columns (groupMultiAutoColumn=true), we only want 'total' to appear in the first column.
+
+        const colDef = this.params.colDef;
+        const doingFullWidth = colDef==null;
+        if (doingFullWidth) { return true; }
+
+        if (colDef!.showRowGroup===true) { return true; }
+
+        const rowGroupCols = this.columnController.getRowGroupColumns();
+        // this is a sanity check, rowGroupCols should always be present
+        if (!rowGroupCols || rowGroupCols.length===0) { return true; }
+
+        const firstRowGroupCol = rowGroupCols[0];
+
+        return firstRowGroupCol.getId() === colDef!.showRowGroup;
+    }
+
     public init(params: GroupCellRendererParams): void {
         this.params = params;
 
-        if (this.gridOptionsWrapper.isGroupIncludeTotalFooter()) {
-            this.assignBlankValueToGroupFooterCell(params);
-        }
+        const topLevelFooter = this.isTopLevelFooter();
 
         const embeddedRowMismatch = this.isEmbeddedRowMismatch();
         // This allows for empty strings to appear as groups since
@@ -124,7 +146,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
             }
         }
 
-        this.cellIsBlank = embeddedRowMismatch || nullValue || skipCell;
+        this.cellIsBlank = topLevelFooter ? false : (embeddedRowMismatch || nullValue || skipCell);
 
         if (this.cellIsBlank) { return; }
 
@@ -134,13 +156,6 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         this.addCheckboxIfNeeded();
         this.addValueElement();
         this.setupIndent();
-    }
-
-    private assignBlankValueToGroupFooterCell(params: GroupCellRendererParams) {
-        // this is not ideal, but it was the only way we could get footer working for the root node
-        if (!params.value && params.node.level == -1) {
-            params.value = '';
-        }
     }
 
     // if we are doing embedded full width rows, we only show the renderer when
@@ -240,7 +255,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
                 console.warn('AG Grid: footerValueGetter should be either a function or a string (expression)');
             }
         } else {
-            footerValue = 'Total ' + this.params.value;
+            footerValue = 'Total ' + (this.params.value!=null ? this.params.value : '');
         }
 
         this.eValue.innerHTML = footerValue!;
