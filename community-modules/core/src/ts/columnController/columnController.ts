@@ -3713,10 +3713,9 @@ export class ColumnController extends BeanStub {
     }
 
     public hasFloatingFilters(): boolean {
-        const defaultColDef = this.gridOptionsWrapper.getDefaultColDef();
-
-        return (defaultColDef != null && defaultColDef.floatingFilter === true) ||
-            (this.columnDefs != null && this.columnDefs.some((c: ColDef) => c.floatingFilter === true));
+        if (!this.gridColumns) { return false; }
+        const res = this.gridColumns.some( col => col.getColDef().floatingFilter);
+        return res;
     }
 
     public getFirstDisplayedColumn(): Column | null {
