@@ -17,14 +17,6 @@ describe('hasFloatingFilters', () => {
         expect(controller.hasFloatingFilters()).toBe(false);
     });
 
-    it('returns true if floating filters are enabled on columns by default', () => {
-        const controller = createController({
-            getDefaultColDef: () => ({ floatingFilter: true })
-        });
-
-        expect(controller.hasFloatingFilters()).toBe(true);
-    });
-
     it('returns true if floating filters are enabled on any colDef', () => {
         const controller = createController({
             getDefaultColDef: () => { }
