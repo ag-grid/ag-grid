@@ -83,6 +83,8 @@ export class SortListener extends BeanStub {
 
     private onSortChanged(): void {
         const storeParams = this.serverSideRowModel.getParams();
+        if (!storeParams) { return; } // params is undefined if no datasource set
+
         const newSortModel = this.extractSortModel();
         const oldSortModel = storeParams.sortModel;
 
