@@ -554,16 +554,19 @@ const buildCoreModules = async (exitOnError) => {
             process.exit(result.status);
         }
 
-        return result.status;
+        return;
     }
+    console.log("Core Modules Built");
 
+    console.log("Rebuilding Packages Based on Change State");
     await rebuildPackagesBasedOnChangeState(false, false);
+    console.log("Changed Packages Rebuilt");
 
     // because we use TSC to build the core modules (and not npm) we need to manually update the changed
     // hashes on build
+    console.log("Updating Core Module Hashes");
     updateCoreModuleHashes();
-
-    return 0;
+    console.log("Core Module Hashes Updated");
 };
 
 function moduleChanged(moduleRoot) {
@@ -752,10 +755,14 @@ module.exports = async (skipFrameworks, skipExampleFormatting, done) => {
 
             updateWebpackConfigWithBundles(gridCommunityModules, gridEnterpriseModules);
 
+            console.log("Performing Initial Build");
             await performInitialBuild();
+
+            console.log("Watch Core Modules & CSS");
             await watchCoreModulesAndCss(skipFrameworks);
 
             if (!skipFrameworks) {
+                console.log("Watch Framework Modules");
                 watchFrameworkModules();
             }
 
@@ -767,6 +774,7 @@ module.exports = async (skipFrameworks, skipExampleFormatting, done) => {
             serveModuleAndPackages(app, gridCommunityModules, gridEnterpriseModules, chartCommunityModules);
 
             // regenerate examples and then watch them
+            console.log("Watch and Generate Examples");
             await watchAndGenerateExamples();
 
             // websites
