@@ -157,6 +157,14 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
     private refresh(): void {
         this.updateState();
+        this.refreshHeaderComp();
+        this.refreshFunctions.forEach(f => f());
+    }
+
+    private refreshHeaderComp(): void {
+        // if no header comp created yet, it's cos of async creation, so first version is yet
+        // to get here, in which case nothing to refresh
+        if (!this.headerComp) { return; }
 
         const colDef = this.column.getColDef();
         const newHeaderCompConfigured =
@@ -173,8 +181,6 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         } else {
             this.appendHeaderComp();
         }
-
-        this.refreshFunctions.forEach(f => f());
     }
 
     @PreDestroy
@@ -195,11 +201,8 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     }
 
     public attemptHeaderCompRefresh(): boolean {
-        // if no header comp created yet, it's cos of async creation, so first version is yet
-        // to get here, in which case we return true to say 'no need to refresh'.
-        if (!this.headerComp) { return true; }
         // if no refresh method, then we want to replace the headerComp
-        if (!this.headerComp.refresh) { return false; }
+        if (!this.headerComp!.refresh) { return false; }
 
         // if the cell renderer has a refresh method, we call this instead of doing a refresh
         const params = this.createParams();
@@ -207,7 +210,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         // take any custom params off of the user
         const finalParams = this.userComponentFactory.createFinalParams(this.getComponentHolder(), 'headerComponent', params);
 
-        const res = this.headerComp.refresh(finalParams);
+        const res = this.headerComp!.refresh(finalParams);
 
         return res;
     }
