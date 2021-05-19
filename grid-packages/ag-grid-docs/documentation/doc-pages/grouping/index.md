@@ -237,8 +237,7 @@ const gridOptions = {
 
 To provide your own Cell Renderer, use the grid properties `groupRowRenderer`, `groupRowRendererFramework` and `groupRowRendererParams`.
 
-Using your own Cell Renderer hands over rendering of the full row to your custom Cell Renderer. However that also means the customer Cell Renderer will also need
-to provide expand / collapse functionality.
+Using your own Cell Renderer hands over rendering of the full row to your custom Cell Renderer. However that also means the customer Cell Renderer will also need to provide expand / collapse functionality.
 
 <snippet>
 const gridOptions = {
@@ -263,6 +262,8 @@ const gridOptions = {
     groupRowRendererParams: {
         // puts a checkbox onto each group row
         checkbox: true,
+        // puts a row dragger onto each group row
+        rowDrag: true
     },
 }
 </snippet>
