@@ -1,4 +1,5 @@
 import {
+    _,
     Autowired,
     Bean,
     BeanStub,
@@ -12,12 +13,12 @@ import {
     GroupInstanceIdCreator,
     IClientSideRowModel,
     IRowModel,
+    IServerSideRowModel,
     PinnedRowModel,
     ProcessGroupHeaderForExportParams,
     RowNode,
     SelectionController,
-    ShouldRowBeSkippedParams,
-    _
+    ShouldRowBeSkippedParams
 } from "@ag-grid-community/core";
 import { GridSerializingSession, RowAccumulator, RowSpanningAccumulator } from "./interfaces";
 
@@ -178,12 +179,14 @@ export class GridSerializer extends BeanStub {
         return (gridSerializingSession) => {
             // when in pivot mode, we always render cols on screen, never 'all columns'
             const rowModel = this.rowModel;
-            const rowModelNormal = rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
-            const onlySelectedNonStandardModel = !rowModelNormal && params.onlySelected;
+            const rowModelType = rowModel.getType();
+            const usingCsrm = rowModelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
+            const usingSsrm = rowModelType === Constants.ROW_MODEL_TYPE_SERVER_SIDE;
+            const onlySelectedNonStandardModel = !usingCsrm && params.onlySelected;
             const processRow = this.processRow.bind(this, gridSerializingSession, params, columnsToExport);
 
             if (this.columnController.isPivotMode()) {
-                if (rowModelNormal) {
+                if (usingCsrm) {
                     (rowModel as IClientSideRowModel).forEachPivotNode(processRow);
                 } else {
                     // must be enterprise, so we can just loop through all the nodes
@@ -202,8 +205,10 @@ export class GridSerializer extends BeanStub {
                     // here is everything else - including standard row model and selected. we don't use
                     // the selection model even when just using selected, so that the result is the order
                     // of the rows appearing on the screen.
-                    if (rowModelNormal) {
+                    if (usingCsrm) {
                         (rowModel as IClientSideRowModel).forEachNodeAfterFilterAndSort(processRow);
+                    } else if (usingSsrm) {
+                        (rowModel as IServerSideRowModel).forEachNodeAfterFilterAndSort(processRow);
                     } else {
                         rowModel.forEachNode(processRow);
                     }

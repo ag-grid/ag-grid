@@ -2,6 +2,7 @@ import { IRowModel } from "./iRowModel";
 import { ServerSideTransaction, ServerSideTransactionResult } from "./serverSideTransaction";
 import { ServerSideStoreState } from "./IServerSideStore";
 import { IServerSideDatasource } from "./iServerSideDatasource";
+import { RowNode } from "../entities/rowNode";
 
 export interface IServerSideRowModel extends IRowModel {
     refreshStore(params: RefreshStoreParams): void;
@@ -10,6 +11,7 @@ export interface IServerSideRowModel extends IRowModel {
     retryLoads(): void;
     expandAll(value: boolean): void;
     setDatasource(datasource: IServerSideDatasource): void;
+    forEachNodeAfterFilterAndSort(callback: (node: RowNode, index: number) => void): void;
 }
 
 export interface IServerSideTransactionManager {

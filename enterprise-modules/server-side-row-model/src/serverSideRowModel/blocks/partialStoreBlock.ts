@@ -154,7 +154,7 @@ export class PartialStoreBlock extends RowNodeBlock {
     // this method is repeated, see forEachRowNode, why?
     private forEachNode(callback: (rowNode: RowNode, index: number) => void,
                         sequence: NumberSequence = new NumberSequence(),
-                        includeChildren: boolean): void {
+                        includeChildren: boolean, filterAndSort: boolean): void {
         this.rowNodes.forEach(rowNode => {
             callback(rowNode, sequence.next());
 
@@ -162,17 +162,25 @@ export class PartialStoreBlock extends RowNodeBlock {
             // row model doesn't have groups
             if (includeChildren && rowNode.childStore) {
                 const childStore = rowNode.childStore;
-                childStore.forEachNodeDeep(callback, sequence);
+                if (filterAndSort) {
+                    childStore.forEachNodeDeepAfterFilterAndSort(callback, sequence);
+                } else {
+                    childStore.forEachNodeDeep(callback, sequence);
+                }
             }
         });
     }
 
     public forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence?: NumberSequence): void {
-        this.forEachNode(callback, sequence, true);
+        this.forEachNode(callback, sequence, true, false);
+    }
+
+    public forEachNodeAfterFilterAndSort(callback: (rowNode: RowNode, index: number) => void, sequence?: NumberSequence): void {
+        this.forEachNode(callback, sequence, true, true);
     }
 
     public forEachNodeShallow(callback: (rowNode: RowNode) => void, sequence?: NumberSequence): void {
-        this.forEachNode(callback, sequence, false);
+        this.forEachNode(callback, sequence, false, false);
     }
 
     public getLastAccessed(): number {

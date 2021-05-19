@@ -226,6 +226,10 @@ export class PartialStore extends BeanStub implements IServerSideStore {
         this.getBlocksInOrder().forEach(block => block.forEachNodeDeep(callback, sequence));
     }
 
+    public forEachNodeDeepAfterFilterAndSort(callback: (rowNode: RowNode, index: number) => void, sequence = new NumberSequence()): void {
+        this.getBlocksInOrder().forEach(block => block.forEachNodeAfterFilterAndSort(callback, sequence));
+    }
+
     public getBlocksInOrder(): PartialStoreBlock[] {
         // get all page id's as NUMBERS (not strings, as we need to sort as numbers) and in descending order
         const blockComparator = (a: PartialStoreBlock, b: PartialStoreBlock) => a.getId() - b.getId();
