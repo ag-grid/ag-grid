@@ -507,7 +507,7 @@ export class CellComp extends Component implements TooltipParentComp {
         // best always refresh and take the performance hit rather than never refresh and users complaining in support
         // that cells are not updating.
         const noValueProvided = colDef.field == null && colDef.valueGetter == null && colDef.showRowGroup == null;
-        const forceRefresh = (params && params.forceRefresh) || noValueProvided;
+        const forceRefresh = (params && params.forceRefresh) || noValueProvided || newData;
 
         const oldValue = this.value;
 
