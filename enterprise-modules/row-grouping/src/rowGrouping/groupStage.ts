@@ -182,7 +182,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         let pointer = this.usingTreeData ? node : node.parent;
         while (pointer && pointer !== details.rootNode) {
             res.push({
-                key: pointer.key,
+                key: pointer.key!,
                 rowGroupColumn: pointer.rowGroupColumn,
                 field: pointer.field
             });
@@ -316,7 +316,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
             // because of the while loop below, it's possible we already moved the node,
             // so double check before trying to remove again.
-            const mapKey = this.getChildrenMappedKey(rowNode.key, rowNode.rowGroupColumn);
+            const mapKey = this.getChildrenMappedKey(rowNode.key!, rowNode.rowGroupColumn);
             const parentRowNode = rowNode.parent;
             const groupAlreadyRemoved = (parentRowNode && parentRowNode.childrenMapped) ?
                 !parentRowNode.childrenMapped[mapKey] : true;
@@ -362,7 +362,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
                 child.parent.updateHasChildren();
             }
         }
-        const mapKey = this.getChildrenMappedKey(child.key, child.rowGroupColumn);
+        const mapKey = this.getChildrenMappedKey(child.key!, child.rowGroupColumn);
         if (child.parent && child.parent.childrenMapped) {
             child.parent.childrenMapped[mapKey] = undefined;
         }
@@ -373,7 +373,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     }
 
     private addToParent(child: RowNode, parent: RowNode | null) {
-        const mapKey = this.getChildrenMappedKey(child.key, child.rowGroupColumn);
+        const mapKey = this.getChildrenMappedKey(child.key!, child.rowGroupColumn);
         if (parent) {
             if (parent.childrenMapped) {
                 parent.childrenMapped[mapKey] = child;
@@ -398,7 +398,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
                 if (isLeafNode) { return; }
                 const groupInfo: GroupInfo = {
                     field: rowNode.field,
-                    key: rowNode.key,
+                    key: rowNode.key!,
                     rowGroupColumn: rowNode.rowGroupColumn
                 };
                 this.setGroupData(rowNode, groupInfo);
@@ -600,10 +600,9 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         if (rowGroupColumn) {
             // grouping by columns
             return rowGroupColumn.getId() + '-' + key;
-        } else {
-            // tree data - we don't have rowGroupColumns
-            return key;
         }
+        // tree data - we don't have rowGroupColumns
+        return key;
     }
 
     private setExpandedInitialValue(details: GroupingDetails, groupNode: RowNode): void {// expandByDefault: number, level: number) {
@@ -621,7 +620,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             const params: IsGroupOpenByDefaultParams = {
                 rowNode: groupNode,
                 field: groupNode.field!,
-                key: groupNode.key,
+                key: groupNode.key!,
                 level: groupNode.level,
                 rowGroupColumn: groupNode.rowGroupColumn!
             };
@@ -641,9 +640,8 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     private getGroupInfo(rowNode: RowNode, details: GroupingDetails): GroupInfo[] {
         if (this.usingTreeData) {
             return this.getGroupInfoFromCallback(rowNode);
-        } else {
-            return this.getGroupInfoFromGroupColumns(rowNode, details);
         }
+        return this.getGroupInfoFromGroupColumns(rowNode, details);
     }
 
     private getGroupInfoFromCallback(rowNode: RowNode): GroupInfo[] {

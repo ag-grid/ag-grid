@@ -163,7 +163,7 @@ export class RowNode implements IEventEmitter {
     public rowGroupColumn: Column | null;
 
     /** Groups only - The key for the group eg Ireland, UK, USA */
-    public key: string;
+    public key: string | null = null;
 
     /** Used by server side row model, true if this row node is a stub */
     public stub: boolean;

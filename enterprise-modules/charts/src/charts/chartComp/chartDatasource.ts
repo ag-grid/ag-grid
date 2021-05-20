@@ -317,7 +317,7 @@ export class ChartDatasource extends BeanStub {
         while (rowNode && rowNode.level !== 0) {
             rowNode = rowNode.parent;
             if (rowNode) {
-                labels.push(rowNode.key);
+                labels.push(rowNode.key!);
             }
         }
         return labels;

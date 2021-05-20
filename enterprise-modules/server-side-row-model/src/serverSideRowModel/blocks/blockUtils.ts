@@ -298,16 +298,15 @@ export class BlockUtils extends BeanStub {
 
         // pull keys from all parent nodes, but do not include the root node
         while (rowNode && rowNode.level >= 0) {
-            parts.push(rowNode.key);
+            parts.push(rowNode.key!);
             rowNode = rowNode.parent;
         }
 
         if (parts.length > 0) {
             return parts.reverse().join('-');
-        } else {
-            // no prefix, so node id's are left as they are
-            return undefined;
         }
+        // no prefix, so node id's are left as they are
+        return undefined;
     }
 
     public checkOpenByDefault(rowNode: RowNode): void {
