@@ -241,7 +241,7 @@
                 "name": "Keyboard Events",
                 "url": "/keyboard-navigation/#keyboard-events"
             },
-            "type": "CellKeyDownEvent"
+            "type": "CellKeyDownEvent | FullWidthCellKeyDownEvent"
         },
         "cellKeyPress": {
             "description": "DOM event <code>keyPress</code> happened on a cell.",
@@ -249,23 +249,7 @@
                 "name": "Keyboard Events",
                 "url": "/keyboard-navigation/#keyboard-events"
             },
-            "type": "CellKeyPressEvent"
-        },
-        "fullWidthRowKeyDown": {
-            "description": "DOM event <code>keyDown</code> happened on a full width row.",
-            "more": {
-                "name": "Keyboard Events",
-                "url": "/keyboard-navigation/#keyboard-events"
-            },
-            "type": "FullWidthRowKeyDownEvent"
-        },
-        "fullWidthRowKeyPress": {
-            "description": "DOM event <code>keyPress</code> happened on a full width row.",
-            "more": {
-                "name": "Keyboard Events",
-                "url": "/keyboard-navigation/#keyboard-events"
-            },
-            "type": "FullWidthRowKeyPressEvent"
+            "type": "CellKeyPressEvent | FullWidthCellKeyPressEvent"
         }
     }
 }

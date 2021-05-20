@@ -101,9 +101,6 @@ export class Events {
     public static EVENT_CELL_KEY_DOWN = 'cellKeyDown';
     public static EVENT_CELL_KEY_PRESS = 'cellKeyPress';
 
-    public static EVENT_FULL_WIDTH_ROW_KEY_DOWN = 'fullWidthRowKeyDown';
-    public static EVENT_FULL_WIDTH_ROW_KEY_PRESS = 'fullWidthRowKeyPress';
-
     public static EVENT_CELL_MOUSE_OVER = 'cellMouseOver';
     public static EVENT_CELL_MOUSE_OUT = 'cellMouseOut';
 
