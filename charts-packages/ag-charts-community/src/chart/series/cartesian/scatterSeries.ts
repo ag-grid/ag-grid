@@ -344,7 +344,7 @@ export class ScatterSeries extends CartesianSeries {
     }
 
     getTooltipHtml(nodeDatum: ScatterNodeDatum): string {
-        const { xKey, yKey } = this;
+        const { xKey, yKey, xAxis, yAxis } = this;
 
         if (!xKey || !yKey) {
             return '';
@@ -367,9 +367,11 @@ export class ScatterSeries extends CartesianSeries {
         const datum = nodeDatum.seriesDatum;
         const xValue = datum[xKey];
         const yValue = datum[yKey];
+        const xString = xAxis.formatDatum(xValue, 2);
+        const yString = yAxis.formatDatum(yValue, 2);
 
-        let content = `<b>${xName || xKey}</b>: ${typeof xValue === 'number' ? toFixed(xValue) : xValue}`
-            + `<br><b>${yName || yKey}</b>: ${typeof yValue === 'number' ? toFixed(yValue) : yValue}`;
+        let content = `<b>${xName || xKey}</b>: ${xString}`
+            + `<br><b>${yName || yKey}</b>: ${yString}`;
 
         if (sizeKey) {
             content += `<br><b>${sizeName}</b>: ${datum[sizeKey]}`;

@@ -20,11 +20,11 @@ The default chart tooltip has the following template:
 </div>
 ```
 
-The title element may or may not exist but the content element is always present. In the screenshots below the content element of both tooltips contains `Jun: 50.00`:
+The title element may or may not exist but the content element is always present. In the screenshots below the content element of both tooltips contains `Jun: 50`:
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="tooltip-no-title.png" alt="Tooltip without the title element" width="250px" constrained="true">No Title</image-caption>
-    <image-caption src="tooltip-with-title.png" alt="Tooltip with a title element" width="250px" constrained="true">With Title</image-caption>
+    <image-caption src="resources/tooltip-no-title.png" alt="Tooltip without the title element" width="250px" constrained="true">No Title</image-caption>
+    <image-caption src="resources/tooltip-with-title.png" alt="Tooltip with a title element" width="250px" constrained="true">With Title</image-caption>
 </div>
 
 To make the tooltip title visible you need to specify the series' `yName` or `yNames`, or `labelName` in the case of `'pie'` series. These configs supply the keys used to fetch the display names, because the keys themselves may not be presentable or descriptive.

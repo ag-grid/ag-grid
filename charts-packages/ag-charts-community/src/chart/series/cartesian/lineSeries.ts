@@ -358,7 +358,7 @@ export class LineSeries extends CartesianSeries {
     }
 
     getTooltipHtml(nodeDatum: LineNodeDatum): string {
-        const { xKey, yKey } = this;
+        const { xKey, yKey, xAxis, yAxis } = this;
 
         if (!xKey || !yKey) {
             return '';
@@ -372,8 +372,8 @@ export class LineSeries extends CartesianSeries {
         const datum = nodeDatum.seriesDatum;
         const xValue = datum[xKey];
         const yValue = datum[yKey];
-        const xString = typeof xValue === 'number' ? toFixed(xValue) : String(xValue);
-        const yString = typeof yValue === 'number' ? toFixed(yValue) : String(yValue);
+        const xString = xAxis.formatDatum(xValue, 2);
+        const yString = yAxis.formatDatum(yValue, 2);
         const title = this.title || yName;
         const content = xString + ': ' + yString;
         const defaults: TooltipRendererResult = {

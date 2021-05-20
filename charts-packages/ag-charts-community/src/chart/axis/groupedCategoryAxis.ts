@@ -291,8 +291,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
                 } else {
                     node.text = labelFormatter
                         ? labelFormatter({
-                            value: String(datum.label),
-                            index
+                            value: String(datum.label)
                         })
                         : String(datum.label);
                     node.visible =

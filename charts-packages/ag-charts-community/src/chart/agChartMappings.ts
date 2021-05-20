@@ -220,7 +220,7 @@ const columnSeriesDefaults: any = {
     xKey: '',
     xName: '',
     yKeys: [],
-    yNames: [],
+    yNames: {},
     grouped: false,
     normalizedTo: undefined,
     strokeWidth: 1,

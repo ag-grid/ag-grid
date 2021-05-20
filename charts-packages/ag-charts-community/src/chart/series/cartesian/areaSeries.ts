@@ -36,6 +36,7 @@ export interface AreaSeriesNodeClickEvent extends TypedEvent {
 }
 
 interface MarkerSelectionDatum extends SeriesNodeDatum {
+    readonly index: number;
     readonly point: {
         readonly x: number;
         readonly y: number;
@@ -360,6 +361,7 @@ export class AreaSeries extends CartesianSeries {
 
                 if (marker) {
                     markerSelectionData.push({
+                        index: i,
                         series: this,
                         seriesDatum,
                         yValue,
@@ -558,26 +560,28 @@ export class AreaSeries extends CartesianSeries {
     }
 
     getTooltipHtml(nodeDatum: MarkerSelectionDatum): string {
-        const { xKey } = this;
+        const { xKey, xAxis, yAxis } = this;
         const { yKey } = nodeDatum;
 
         if (!xKey || !yKey) {
             return '';
         }
 
-        const { xName, yKeys, yNames, fills, tooltip } = this;
+        const { xName, yKeys, yNames, yData, fills, tooltip } = this;
+        const yGroup = yData[nodeDatum.index];
         const {
             renderer: tooltipRenderer = this.tooltipRenderer,
             format: tooltipFormat
         } = tooltip;
         const datum = nodeDatum.seriesDatum;
+        const yKeyIndex = yKeys.indexOf(yKey);
         const xValue = datum[xKey];
         const yValue = datum[yKey];
-        const yKeyIndex = yKeys.indexOf(yKey);
+        const processedYValue = yGroup[yKeyIndex];
         const yName = yNames[yKeyIndex];
         const color = fills[yKeyIndex % fills.length];
-        const xString = typeof xValue === 'number' ? toFixed(xValue) : String(xValue);
-        const yString = typeof yValue === 'number' ? toFixed(yValue) : String(yValue);
+        const xString = xAxis.formatDatum(xValue, 2);
+        const yString = yAxis.formatDatum(processedYValue, 2);
         const title = yName;
         const content = xString + ': ' + yString;
         const defaults: TooltipRendererResult = {
@@ -594,6 +598,7 @@ export class AreaSeries extends CartesianSeries {
                 xValue,
                 yKey,
                 yValue,
+                processedYValue,
                 yName,
                 color
             };

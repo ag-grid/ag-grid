@@ -20,10 +20,7 @@ var options = {
     data: getData(),
     series: [{
         xKey: 'time',
-        yKey: 'voltage',
-        tooltip: {
-            enabled: false
-        }
+        yKey: 'voltage'
     }],
     axes: [
         {

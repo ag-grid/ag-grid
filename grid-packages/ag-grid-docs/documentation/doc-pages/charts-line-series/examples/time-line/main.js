@@ -40,9 +40,6 @@ var options = {
             marker: {
                 fill: '#03a9f4',
                 stroke: '#0276ab'
-            },
-            tooltip: {
-                enabled: false
             }
         },
         {
@@ -87,9 +84,6 @@ var options = {
             marker: {
                 fill: '#8bc24a',
                 stroke: '#658d36'
-            },
-            tooltip: {
-                enabled: false
             }
         }
     ],

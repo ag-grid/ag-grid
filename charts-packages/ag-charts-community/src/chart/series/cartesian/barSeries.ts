@@ -7,7 +7,7 @@ import { DropShadow } from "../../../scene/dropShadow";
 import {
     HighlightStyle,
     SeriesNodeDatum,
-    CartesianTooltipRendererParams as BarTooltipRendererParams, SeriesTooltip
+    CartesianTooltipRendererParams, SeriesTooltip
 } from "../series";
 import { Label } from "../../label";
 import { PointerEvents } from "../../../scene/node";
@@ -29,9 +29,12 @@ export interface BarSeriesNodeClickEvent extends TypedEvent {
     readonly yKey: string;
 }
 
-export { BarTooltipRendererParams };
+export interface BarTooltipRendererParams extends CartesianTooltipRendererParams {
+    readonly processedYValue: any;
+}
 
 interface BarNodeDatum extends SeriesNodeDatum {
+    readonly index: number;
     readonly yKey: string;
     readonly yValue: number;
     readonly x: number;
@@ -584,6 +587,7 @@ export class BarSeries extends CartesianSeries {
 
                     const colorIndex = cumYKeyCount[stackIndex] + levelIndex;
                     nodeData.push({
+                        index: groupIndex,
                         series: this,
                         seriesDatum,
                         yValue,
@@ -737,32 +741,37 @@ export class BarSeries extends CartesianSeries {
     }
 
     getTooltipHtml(nodeDatum: BarNodeDatum): string {
-        const { xKey, yKeys } = this;
+        const { xKey, yKeys, xAxis, yAxis, yData } = this;
         const { yKey } = nodeDatum;
+        const yGroup = yData[nodeDatum.index];
 
         if (!xKey || !yKey) {
             return '';
         }
 
-        let yKeyIndex = 0;
-        for (const stack of yKeys) {
-            const i = stack.indexOf(yKey);
+        let fillIndex = 0;
+        let i = 0;
+        let j = 0;
+        for (; j < yKeys.length; j++) {
+            const stack = yKeys[j];
+            i = stack.indexOf(yKey);
             if (i >= 0) {
-                yKeyIndex += i;
+                fillIndex += i;
                 break;
             }
-            yKeyIndex += stack.length;
+            fillIndex += stack.length;
         }
 
         const { xName, yNames, fills, tooltip } = this;
         const { renderer: tooltipRenderer = this.tooltipRenderer } = tooltip; // TODO: remove deprecated tooltipRenderer
         const datum = nodeDatum.seriesDatum;
         const yName = yNames[yKey];
-        const color = fills[yKeyIndex % fills.length];
+        const color = fills[fillIndex % fills.length];
         const xValue = datum[xKey];
         const yValue = datum[yKey];
-        const xString = typeof xValue === 'number' ? toFixed(xValue) : String(xValue);
-        const yString = typeof yValue === 'number' ? toFixed(yValue) : String(yValue);
+        const processedYValue = yGroup[j][i];
+        const xString = xAxis.formatDatum(xValue, 2);
+        const yString = yAxis.formatDatum(processedYValue, 2);
         const title = yName;
         const content = xString + ': ' + yString;
         const defaults: TooltipRendererResult = {
@@ -779,6 +788,7 @@ export class BarSeries extends CartesianSeries {
                 xName,
                 yKey,
                 yValue,
+                processedYValue,
                 yName,
                 color
             }), defaults);

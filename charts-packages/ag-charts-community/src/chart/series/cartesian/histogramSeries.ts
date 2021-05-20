@@ -587,7 +587,7 @@ export class HistogramSeries extends CartesianSeries {
     }
 
     getTooltipHtml(nodeDatum: HistogramNodeDatum): string {
-        const { xKey, yKey } = this;
+        const { xKey, yKey, xAxis, yAxis } = this;
 
         if (!xKey) {
             return '';
@@ -597,9 +597,9 @@ export class HistogramSeries extends CartesianSeries {
         const { renderer: tooltipRenderer = this.tooltipRenderer } = tooltip;
         const bin: HistogramBin = nodeDatum.seriesDatum;
         const { aggregatedValue, frequency, domain: [rangeMin, rangeMax] } = bin;
-        const title = `${xName || xKey}: ${toFixed(rangeMin)} - ${toFixed(rangeMax)}`;
+        const title = `${xName || xKey}: ${xAxis.formatDatum(rangeMin, 2)} - ${xAxis.formatDatum(rangeMax, 2)}`;
         let content = yKey ?
-            `<b>${yName || yKey} (${aggregation})</b>: ${toFixed(aggregatedValue)}<br>` :
+            `<b>${yName || yKey} (${aggregation})</b>: ${yAxis.formatDatum(aggregatedValue, 2)}<br>` :
             '';
 
         content += `<b>Frequency</b>: ${frequency}`;

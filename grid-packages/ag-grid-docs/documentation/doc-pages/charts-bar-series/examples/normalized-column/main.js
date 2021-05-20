@@ -20,7 +20,7 @@ var options = {
             position: 'left',
             label: {
                 formatter: function(params) {
-                    return params.value + '%';
+                    return Math.round(params.value) + '%';
                 }
             }
         },

@@ -53,7 +53,6 @@ export class AxisTick {
 
 export interface AxisLabelFormatterParams {
     value: any;
-    index: number;
     fractionDigits?: number;
     formatter?: (x: any) => string;
     axis?: any;
@@ -166,7 +165,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
     set scale(value: S) {
         this._scale = value;
         this.requestedRange = value.range.slice();
-        this.onTickFormatChange();
+        this.onLabelFormatChange();
     }
     get scale(): S {
         return this._scale;
@@ -195,11 +194,15 @@ export class Axis<S extends Scale<D, number>, D = any> {
     readonly translation = { x: 0, y: 0 };
     rotation: number = 0; // axis rotation angle in degrees
 
+    /**
+     * Meant to be overridden in subclasses to provide extra context the the label formatter.
+     * The return value of this function will be passed to the laber.formatter as the `axis` parameter.
+     */
     getMeta(): any {}
 
     constructor() {
         this.groupSelection = Selection.select(this.group).selectAll<Group>();
-        this.label.onFormatChange = this.onTickFormatChange.bind(this);
+        this.label.onFormatChange = this.onLabelFormatChange.bind(this);
         this.group.append(this.lineNode);
         // this.group.append(this.bboxRect); // debug (bbox)
     }
@@ -266,18 +269,18 @@ export class Axis<S extends Scale<D, number>, D = any> {
         return this.scale.domain.slice();
     }
 
-    private tickFormatter?: (datum: any) => string;
-    private onTickFormatChange(format?: string) {
+    private labelFormatter?: (datum: any) => string;
+    private onLabelFormatChange(format?: string) {
         if (format) {
             if (this.scale && this.scale.tickFormat) {
-                this.tickFormatter = this.scale.tickFormat(this.tick.count, format);
+                this.labelFormatter = this.scale.tickFormat(this.tick.count, format);
             }
         } else {
             if (this.scale && this.scale.tickFormat && (this as any).type === 'time') {
                 // For time axis labels to look nice, even if date format wasn't set.
-                this.tickFormatter = this.scale.tickFormat(this.tick.count, undefined);
+                this.labelFormatter = this.scale.tickFormat(this.tick.count, undefined);
             } else {
-                this.tickFormatter = undefined;
+                this.labelFormatter = undefined;
             }
         }
     }
@@ -346,6 +349,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
     get radialGrid(): boolean {
         return this._radialGrid;
     }
+
+    private fractionDigits = 0;
 
     /**
      * Creates/removes/updates the scene graph nodes that constitute the axis.
@@ -471,10 +476,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
             });
         }
 
-        const { tickFormatter } = this;
-        const meta = this.getMeta();
         // `ticks instanceof NumericTicks` doesn't work here, so we feature detect.
-        const fractionDigits = (ticks as any).fractionDigits >= 0 ? (ticks as any).fractionDigits : 0;
+        this.fractionDigits = (ticks as any).fractionDigits >= 0 ? (ticks as any).fractionDigits : 0;
 
         const labelSelection = groupSelection.selectByClass(Text)
             .each((node, datum, index) => {
@@ -486,21 +489,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 node.textBaseline = parallelLabels && !labelRotation
                     ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom')
                     : 'middle';
-                node.text = label.formatter
-                    ? label.formatter({
-                        value: fractionDigits >= 0 ? datum : String(datum),
-                        index,
-                        fractionDigits,
-                        formatter: tickFormatter,
-                        axis: meta
-                    })
-                    // the `datum` is an integer, a string or an object
-                    : tickFormatter
-                        ? tickFormatter(datum)
-                        : typeof datum === 'number' && fractionDigits >= 0
-                            // the `datum` is a floating point number
-                            ? datum.toFixed(fractionDigits)
-                            : String(datum);
+                node.text = this.formatDatum(datum);
 
                 node.textAlign = parallelLabels
                     ? labelRotation ? (sideFlag * alignFlag === -1 ? 'end' : 'start') : 'center'
@@ -562,6 +551,38 @@ export class Axis<S extends Scale<D, number>, D = any> {
         // bboxRect.y = bbox.y;
         // bboxRect.width = bbox.width;
         // bboxRect.height = bbox.height;
+    }
+
+    /**
+     * Formats the values to show as axis tick labels. Since this method can be used
+     * by outside code to format values other than axis labels, extra precision might
+     * be required. For example, axis labels may not have any fractional part `[1, 2, 3, 4, 5]`,
+     * but if a data point falls somewhere between the ticks and has a value of `2.7348`,
+     * we probably don't want to format it as `2`. If that's the case, we can set
+     * `extraFractionDigits` to `2` and get the `2.7348` value displayed as `2.73`, that is
+     * with two fractional digits more than is used for axis labels.
+     * @param datum The datum to format. Usually a number, a string, or an object.
+     * @param extraFractionDigits In case the datum is a number, the extra fractional digits to use.
+     * @returns A string that represents the given datum.
+     */
+    formatDatum(datum: any, extraFractionDigits = 0): string {
+        const { label, labelFormatter, fractionDigits } = this;
+        const meta = this.getMeta();
+
+        return label.formatter
+            ? label.formatter({
+                value: fractionDigits >= 0 ? datum : String(datum),
+                fractionDigits,
+                formatter: labelFormatter,
+                axis: meta
+            })
+            : labelFormatter
+                ? labelFormatter(datum)
+                : typeof datum === 'number' && fractionDigits >= 0
+                    // the `datum` is a floating point number
+                    ? datum.toFixed(fractionDigits + extraFractionDigits)
+                    // the`datum` is an integer, a string or an object
+                    : String(datum);
     }
 
     thickness: number = 0;
