@@ -20,7 +20,7 @@ The default chart tooltip has the following template:
 </div>
 ```
 
-The title element may or may not exist but the content element is always present. In the screenshots below the content element of both tooltips contains `Jun: 50`:
+The title element may or may not exist but the content element is always present. In the screenshots below the content element of both tooltips contains `Jun: 50.00`:
 
 <div style="display: flex; justify-content: center;">
     <image-caption src="resources/tooltip-no-title.png" alt="Tooltip without the title element" width="250px" constrained="true">No Title</image-caption>
@@ -51,8 +51,31 @@ Notice that when we set the `yNames` of the `'column'` series:
 - The `yNames` changes are reflected in the legend as well.
 - The legend will use the `yKeys` when the `yNames` is not set. The tooltip however will only have a title if the `yNames` (or `title`) is set.
 
+Also note that for numeric values the tooltips show two digits after the decimal point by default, or two digits more than axis labels show,
+if the chart has axes (which is the case here).
 
 <chart-example title='Default Tooltip' name='default-tooltip' type='generated'></chart-example>
+
+If a chart has axes, series tooltips use the axis label `formatter` function or the axis label `format` string to format their values.
+For example, if we used the `'#{.0f} units'` format string for the left number axis to say that we want numbers formatted with no fractional
+digits followed by the `' units'` suffix, that format would be picked up and used by the series tooltip as well.
+
+```js
+axes: [{
+    type: 'number',
+    position: 'left',
+    label: {
+        format: '#{.0f} units'
+    }
+}, {
+    type: 'category',
+    position: 'bottom'
+}]
+```
+
+Hover a column segment in the example below to verify this is true:
+
+<chart-example title='Default tooltip using axis label format' name='default-tooltip-axis-format' type='generated'></chart-example>
 
 ## Styling the Default Tooltip
 
@@ -130,7 +153,8 @@ interface AgTooltipRendererParams {
 }
 ```
 
-Let's say we wanted to remove the digits after the decimal point from the values shown in tooltips (by default the tooltips show two digits after the decimal point for numeric values). We could use the following tooltip renderer to achieve that:
+Let's say we wanted to remove the digits after the decimal point from the values shown in tooltips.
+We could use the following tooltip renderer to achieve that:
 
 
 ```js
@@ -146,7 +170,7 @@ tooltip: {
 
 The example below demonstrates the above tooltip renderer in action:
 
-<chart-example title='Modifying Tooltips Content' name='tooltip-content-title' type='generated'></chart-example>
+<chart-example title='Modifying Tooltip Content' name='tooltip-content-title' type='generated'></chart-example>
 
 ## Using Custom Tooltips
 
