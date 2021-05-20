@@ -485,8 +485,6 @@ export class AgGridAngular implements AfterViewInit {
     @Output() public selectionChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public cellKeyDown: EventEmitter<any> = new EventEmitter<any>();
     @Output() public cellKeyPress: EventEmitter<any> = new EventEmitter<any>();
-    @Output() public fullWidthRowKeyDown: EventEmitter<any> = new EventEmitter<any>();
-    @Output() public fullWidthRowKeyPress: EventEmitter<any> = new EventEmitter<any>();
     @Output() public cellMouseOver: EventEmitter<any> = new EventEmitter<any>();
     @Output() public cellMouseOut: EventEmitter<any> = new EventEmitter<any>();
     @Output() public filterChanged: EventEmitter<any> = new EventEmitter<any>();

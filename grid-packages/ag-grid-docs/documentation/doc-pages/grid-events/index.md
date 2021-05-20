@@ -170,8 +170,8 @@ interface CellValueChangedEvent {
             }</span>
             ├── RowValueChangedEvent <span class="event-hierarchy__property">{}</span>
             ├── VirtualRowRemovedEvent <span class="event-hierarchy__property">{}</span>
-            ├── FullWidthRowKeyDownEvent <span class="event-hierarchy__property">{}</span>
-            ├── FullWidthRowKeyPressEvent <span class="event-hierarchy__property">{}</span>
+            ├── FullWidthCellKeyDownEvent <span class="event-hierarchy__property">{}</span>
+            ├── FullWidthCellKeyPressEvent <span class="event-hierarchy__property">{}</span>
             └── CellEvent <span class="event-hierarchy__property">{
                 │   <span class="event-hierarchy__attribute">column</span>: Column, // the column for the cell in question
                 │   <span class="event-hierarchy__attribute">colDef</span>: ColDef, // the column definition for the cell in question

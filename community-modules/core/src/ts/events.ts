@@ -326,9 +326,9 @@ export interface RowEditingStartedEvent extends RowEvent { }
 
 export interface RowEditingStoppedEvent extends RowEvent { }
 
-export interface FullWidthRowKeyDownEvent extends RowEvent { }
+export interface FullWidthCellKeyDownEvent extends RowEvent { }
 
-export interface FullWidthRowKeyPressEvent extends RowEvent { }
+export interface FullWidthCellKeyPressEvent extends RowEvent { }
 
 /**------------*/
 
