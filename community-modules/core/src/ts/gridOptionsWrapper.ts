@@ -8,7 +8,7 @@ import {
     GetRowNodeIdFunc,
     GetServerSideStoreParamsParams,
     GridOptions,
-    IsApplyServerSideTransaction,
+    IsApplyServerSideTransaction, IsGroupOpenByDefaultParams,
     IsRowMaster,
     IsRowSelectable, IsServerSideGroupOpenByDefaultParams,
     NavigateToNextCellParams,
@@ -1193,6 +1193,10 @@ export class GridOptionsWrapper {
 
     public getIsServerSideGroupOpenByDefaultFunc(): ((params: IsServerSideGroupOpenByDefaultParams) => boolean) | undefined {
         return this.gridOptions.isServerSideGroupOpenByDefault;
+    }
+
+    public getIsGroupOpenByDefaultFunc(): ((params: IsGroupOpenByDefaultParams) => boolean) | undefined {
+        return this.gridOptions.isGroupOpenByDefault;
     }
 
     public getServerSideGroupKeyFunc(): ((dataItem: any) => string) | undefined {

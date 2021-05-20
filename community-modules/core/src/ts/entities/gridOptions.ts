@@ -275,6 +275,7 @@ export interface GridOptions {
 
     getServerSideStoreParams?: (params: GetServerSideStoreParamsParams) => ServerSideStoreParams;
     isServerSideGroupOpenByDefault?: (params: IsServerSideGroupOpenByDefaultParams) => boolean;
+    isGroupOpenByDefault?: (params: IsGroupOpenByDefaultParams) => boolean;
 
     statusBar?: {
         statusPanels: StatusPanelDef[];
@@ -814,4 +815,12 @@ export interface GetServerSideStoreParamsParams {
 export interface IsServerSideGroupOpenByDefaultParams {
     data: any;
     rowNode: RowNode;
+}
+
+export interface IsGroupOpenByDefaultParams {
+    rowNode: RowNode;
+    rowGroupColumn: Column;
+    level: number;
+    field: string;
+    key: string;
 }

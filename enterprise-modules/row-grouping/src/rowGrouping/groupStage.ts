@@ -14,7 +14,8 @@ import {
     SelectableService,
     StageExecuteParams,
     ValueService,
-    _
+    _,
+    IsGroupOpenByDefaultParams
 } from "@ag-grid-community/core";
 import { BatchRemover } from "./batchRemover";
 
@@ -562,14 +563,6 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         groupNode.level = level;
         groupNode.leafGroup = this.usingTreeData ? false : level === (details.groupedColCount - 1);
 
-        // if doing pivoting, then the leaf group is never expanded,
-        // as we do not show leaf rows
-        if (details.pivotMode && groupNode.leafGroup) {
-            groupNode.expanded = false;
-        } else {
-            groupNode.expanded = this.isExpanded(details.expandByDefault, level);
-        }
-
         groupNode.allLeafChildren = [];
 
         // why is this done here? we are not updating the children count as we go,
@@ -583,6 +576,9 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         groupNode.updateHasChildren();
 
         groupNode.parent = details.includeParents ? parent : null;
+
+
+        this.setExpandedInitialValue(details, groupNode);
 
         return groupNode;
     }
@@ -610,11 +606,35 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         }
     }
 
-    private isExpanded(expandByDefault: number, level: number) {
-        if (expandByDefault === -1) {
-            return true;
+    private setExpandedInitialValue(details: GroupingDetails, groupNode: RowNode): void {// expandByDefault: number, level: number) {
+
+        // if doing pivoting, then the leaf group is never expanded,
+        // as we do not show leaf rows
+        if (details.pivotMode && groupNode.leafGroup) {
+            groupNode.expanded = false;
+            return;
+        }
+
+        // use callback if exists
+        const userCallback = this.gridOptionsWrapper.getIsGroupOpenByDefaultFunc();
+        if (userCallback) {
+            const params: IsGroupOpenByDefaultParams = {
+                rowNode: groupNode,
+                field: groupNode.field!,
+                key: groupNode.key,
+                level: groupNode.level,
+                rowGroupColumn: groupNode.rowGroupColumn!
+            };
+            groupNode.expanded = userCallback(params) == true;
+            return;
+        }
+
+        // otherwise use expandByDefault
+        const {expandByDefault} = details;
+        if (details.expandByDefault === -1) {
+            groupNode.expanded = true;
         } else {
-            return level < expandByDefault;
+            groupNode.expanded = groupNode.level < expandByDefault;
         }
     }
 

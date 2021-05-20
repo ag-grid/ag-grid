@@ -318,6 +318,7 @@ export {
 export {
     GridOptions,
     IsServerSideGroupOpenByDefaultParams,
+    IsGroupOpenByDefaultParams,
     IsApplyServerSideTransactionParams,
     IsApplyServerSideTransaction,
     GetContextMenuItemsParams,

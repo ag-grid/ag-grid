@@ -313,6 +313,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public isApplyServerSideTransaction: any = undefined;
     @Input() public getServerSideStoreParams: any = undefined;
     @Input() public isServerSideGroupOpenByDefault: any = undefined;
+    @Input() public isGroupOpenByDefault: any = undefined;
     @Input() public suppressMakeColumnVisibleAfterUnGroup: any = undefined;
     @Input() public suppressRowClickSelection: any = undefined;
     @Input() public suppressCellSelection: any = undefined;

@@ -96,6 +96,19 @@
             },
             "reactive": true
         },
+        "isGroupOpenByDefault": {
+            "description": "(Client-side Row Model only) Allows groups to be open by default.",
+            "type": {
+                "parameters": {
+                    "rowNode": "RowNode",
+                    "rowGroupColumn": "Column",
+                    "level": "number",
+                    "field": "string",
+                    "key": "string"
+                }
+            },
+            "reactive": true
+        },
         "getChildCount": {
             "description": "(For [Server-Side Row Model](/server-side-model/) only) Allows setting the child count for a group row.",
             "type": {
