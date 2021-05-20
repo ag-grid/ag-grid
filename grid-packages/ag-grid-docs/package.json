@@ -5,8 +5,8 @@
   "scripts": {
     "postinstall": "webdriver-manager update",
     "build": "npm run hash",
-    "start": "gulp serve  --max_old_space_size=6144",
-    "serve-core-only": "gulp serve-core-only",
+    "start": "gulp serve --max_old_space_size=6144",
+    "serve-core-only": "gulp --max_old_space_size=6144 serve-core-only",
     "serve-with-formatting": "gulp serve-with-formatting",
     "tsc": "tsc -p tests/config/tsconfig.json",
     "validate-es5": "eslint documentation/doc-pages",

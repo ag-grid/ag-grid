@@ -15,11 +15,9 @@ const buildDependencies = async (dependencies, command = 'build-css', arguments 
     console.log(`Running ${command} on the following packages: ${dependencies.join(' ')}`);
     console.log("------------------------------------------------------------------------------------------");
 
-    const {stdout: node} = await execa("which", ["node"])
-
     const scopedDependencies = dependencies.map(dependency => `--scope ${dependency}`).join(' ');
-    const lernaArgs = `--max-old-space-size=8000 ./node_modules/.bin/lerna run ${command} ${scopedDependencies} ${arguments}`.trim().split(" ");
-    return await execa(node, lernaArgs, { stdio: "inherit", cwd: '../../' });
+    const lernaArgs = `run ${command} ${scopedDependencies} ${arguments}`.trim().split(" ");
+    return await execa("./node_modules/.bin/lerna", lernaArgs, { stdio: "inherit", cwd: '../../' });
 };
 
 const buildDependencyChain = async (packageName, buildChains, command = "build-css") => {
