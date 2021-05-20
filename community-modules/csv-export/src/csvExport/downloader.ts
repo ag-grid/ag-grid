@@ -13,6 +13,7 @@ export class Downloader {
         } else {
             // Other Browsers
             const element = document.createElement('a');
+            // @ts-ignore
             const url = win.URL.createObjectURL(content);
             element.setAttribute('href', url);
             element.setAttribute('download', fileName);
@@ -28,6 +29,7 @@ export class Downloader {
             document.body.removeChild(element);
 
             win.setTimeout(() => {
+                // @ts-ignore
                 win.URL.revokeObjectURL(url);
             }, 0);
         }
