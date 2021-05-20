@@ -62,6 +62,7 @@ export class GridSerializer extends BeanStub {
         const skipSingleChildrenGroup = gridOptionsWrapper.isGroupRemoveSingleChildren();
         const hideOpenParents = gridOptionsWrapper.isGroupHideOpenParents();
         const skipLowestSingleChildrenGroup = gridOptionsWrapper.isGroupRemoveLowestSingleChildren();
+        const isLeafNode = this.columnController.isPivotMode() ? node.leafGroup : !node.group;
         const skipRowGroups = params.skipGroups || params.skipRowGroups;
         const shouldSkipLowestGroup = skipLowestSingleChildrenGroup && node.leafGroup;
         const shouldSkipCurrentGroup = node.allChildrenCount === 1 && (skipSingleChildrenGroup || shouldSkipLowestGroup);
@@ -71,7 +72,7 @@ export class GridSerializer extends BeanStub {
         }
 
         if (
-            (node.group && (params.skipRowGroups || shouldSkipCurrentGroup || hideOpenParents)) ||
+            (!isLeafNode && (params.skipRowGroups || shouldSkipCurrentGroup || hideOpenParents)) ||
             (params.onlySelected && !node.isSelected()) ||
             (params.skipPinnedTop && node.rowPinned === 'top') ||
             (params.skipPinnedBottom && node.rowPinned === 'bottom')
