@@ -3714,7 +3714,7 @@ export class ColumnController extends BeanStub {
 
     public hasFloatingFilters(): boolean {
         if (!this.gridColumns) { return false; }
-        const res = this.gridColumns.some( col => col.getColDef().floatingFilter);
+        const res = this.gridColumns.some(col => col.getColDef().floatingFilter);
         return res;
     }
 

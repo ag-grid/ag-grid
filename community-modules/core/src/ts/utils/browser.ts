@@ -126,7 +126,7 @@ export function getMaxDivHeight(): number {
 }
 
 export function getScrollbarWidth(): number | null {
-    if (browserScrollbarWidth==null) {
+    if (browserScrollbarWidth == null) {
         initScrollbarWidthAndVisibility();
     }
     return browserScrollbarWidth;
@@ -162,7 +162,7 @@ function initScrollbarWidthAndVisibility(): void {
 }
 
 export function isInvisibleScrollbar(): boolean {
-    if (invisibleScrollbar==null) {
+    if (invisibleScrollbar == null) {
         initScrollbarWidthAndVisibility();
     }
     return invisibleScrollbar;

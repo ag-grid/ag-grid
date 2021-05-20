@@ -101,21 +101,21 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     private isTopLevelFooter(): boolean {
         if (!this.gridOptionsWrapper.isGroupIncludeTotalFooter()) { return false; }
 
-        if (this.params.value!=null || this.params.node.level!=-1) { return false; }
+        if (this.params.value != null || this.params.node.level != -1) { return false; }
 
         // at this point, we know it's the root node and there is no value present, so it's a footer cell.
         // the only thing to work out is if we are displaying groups  across multiple
         // columns (groupMultiAutoColumn=true), we only want 'total' to appear in the first column.
 
         const colDef = this.params.colDef;
-        const doingFullWidth = colDef==null;
+        const doingFullWidth = colDef == null;
         if (doingFullWidth) { return true; }
 
-        if (colDef!.showRowGroup===true) { return true; }
+        if (colDef!.showRowGroup === true) { return true; }
 
         const rowGroupCols = this.columnController.getRowGroupColumns();
         // this is a sanity check, rowGroupCols should always be present
-        if (!rowGroupCols || rowGroupCols.length===0) { return true; }
+        if (!rowGroupCols || rowGroupCols.length === 0) { return true; }
 
         const firstRowGroupCol = rowGroupCols[0];
 
@@ -255,7 +255,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
                 console.warn('AG Grid: footerValueGetter should be either a function or a string (expression)');
             }
         } else {
-            footerValue = 'Total ' + (this.params.value!=null ? this.params.value : '');
+            footerValue = 'Total ' + (this.params.value != null ? this.params.value : '');
         }
 
         this.eValue.innerHTML = footerValue!;

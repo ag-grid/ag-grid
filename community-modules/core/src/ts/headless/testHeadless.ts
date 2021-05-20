@@ -44,7 +44,7 @@ export class TestHeadless {
 
         eDiv.append(eTable);
 
-        console.log('TestHeadless.doSomething');
+        console.warn('TestHeadless.doSomething');
     }
 
 }

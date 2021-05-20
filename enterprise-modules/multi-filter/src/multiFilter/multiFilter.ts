@@ -47,7 +47,7 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
     private activeFilterIndices: number[] = [];
     private lastActivatedMenuItem: MenuItemComponent | null = null;
 
-    private afterFiltersReadyFuncs: (()=>void) [] = [];
+    private afterFiltersReadyFuncs: (() => void) [] = [];
 
     constructor() {
         super(/* html */`<div class="ag-multi-filter ag-menu-list-compact"></div>`, true);
@@ -87,7 +87,7 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
                 this.filters = filters as IFilterComp[];
                 this.refreshGui('columnMenu');
 
-                this.afterFiltersReadyFuncs.forEach( f => f() );
+                this.afterFiltersReadyFuncs.forEach(f => f());
                 this.afterFiltersReadyFuncs.length = 0;
             });
     }
@@ -344,7 +344,7 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
             ...this.filterManager.createFilterParams(this.column, this.column.getColDef()),
             filterModifiedCallback,
             filterChangedCallback: additionalEventAttributes => {
-                this.executeWhenAllFiltersReady(()=> this.filterChanged(index, additionalEventAttributes));
+                this.executeWhenAllFiltersReady(() => this.filterChanged(index, additionalEventAttributes));
             },
             doesRowPassOtherFilter: (node: RowNode) =>
                 doesRowPassOtherFilter(node) && this.doesFilterPass({ node, data: node.data }, filterInstance),
@@ -359,7 +359,7 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
         return filterPromise;
     }
 
-    private executeWhenAllFiltersReady(action: ()=>void): void {
+    private executeWhenAllFiltersReady(action: () => void): void {
         if (this.filters) {
             action();
         } else {
