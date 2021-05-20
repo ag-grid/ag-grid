@@ -126,7 +126,13 @@ export function getMaxDivHeight(): number {
 }
 
 export function getScrollbarWidth(): number | null {
-    if (browserScrollbarWidth != null) { return browserScrollbarWidth; }
+    if (browserScrollbarWidth==null) {
+        initScrollbarWidthAndVisibility();
+    }
+    return browserScrollbarWidth;
+}
+
+function initScrollbarWidthAndVisibility(): void {
 
     const body = document.body;
     const div = document.createElement('div');
@@ -153,12 +159,12 @@ export function getScrollbarWidth(): number | null {
         browserScrollbarWidth = width;
         invisibleScrollbar = width === 0;
     }
-
-    return width;
 }
 
 export function isInvisibleScrollbar(): boolean {
-    getScrollbarWidth();
+    if (invisibleScrollbar==null) {
+        initScrollbarWidthAndVisibility();
+    }
     return invisibleScrollbar;
 }
 
