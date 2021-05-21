@@ -126,7 +126,7 @@ function format(source, parser) {
 }
 
 function createExampleGenerator(prefix, importTypes) {
-    const [parser, vanillaToVue, vanillaToReact, vanillaToReactFunctional, vanillaToAngular] = getGeneratorCode(prefix);
+    const [parser, vanillaToVue, vanillaToVue3, vanillaToReact, vanillaToReactFunctional, vanillaToAngular] = getGeneratorCode(prefix);
     const appModuleAngular = new Map();
 
     importTypes.forEach(importType => {
@@ -229,7 +229,7 @@ function createExampleGenerator(prefix, importTypes) {
 
             importTypes.forEach(importType => writeExampleFiles(importType, 'react', 'react', reactScripts, reactConfigs.get(importType)));
         }
-
+/*
         if (type === 'mixed' && providedExamples['reactFunctional']) {
             importTypes.forEach(importType => copyProvidedExample(importType, 'reactFunctional', providedExamples['reactFunctional']));
         } else {
@@ -295,9 +295,28 @@ function createExampleGenerator(prefix, importTypes) {
             // from index.html will still including other non-component files
             importTypes.forEach(importType => writeExampleFiles(importType, 'vue', 'vue', vueScripts, vueConfigs.get(importType), undefined, 'Vue'));
         }
+        */
+        if (type === 'mixed' && providedExamples['vue3']) {
+            importTypes.forEach(importType => copyProvidedExample(importType, 'vue3', providedExamples['vue3']));
+        } else {
+            const vueScripts = getMatchingPaths('*_vue3*');
+            const vueConfigs = new Map();
+            try {
+                const getSource = vanillaToVue3(bindings, extractComponentFileNames(vueScripts, '_vue3', 'Vue'));
+
+                importTypes.forEach(importType => vueConfigs.set(importType, { 'main.js': getSource(importType) }));
+            } catch (e) {
+                console.error(`Failed to process Vue 3 example in ${examplePath}`, e);
+                throw e;
+            }
+
+            // we rename the files so that they end with "Vue.js" - we do this so that we can (later, at runtime) exclude these
+            // from index.html will still including other non-component files
+            importTypes.forEach(importType => writeExampleFiles(importType, 'vue3', 'vue3', vueScripts, vueConfigs.get(importType), undefined, 'Vue'));
+        }
 
         inlineStyles = undefined; // unset these as they don't need to be copied for vanilla
-        const vanillaScripts = getMatchingPaths('*.{html,js}', { ignore: ['**/*_{angular,react,vue}.js'] });
+        const vanillaScripts = getMatchingPaths('*.{html,js}', { ignore: ['**/*_{angular,react,vue,vue3}.js'] });
         importTypes.forEach(importType => writeExampleFiles(importType, 'vanilla', 'vanilla', vanillaScripts, {}));
     };
 }
@@ -305,6 +324,7 @@ function createExampleGenerator(prefix, importTypes) {
 function getGeneratorCode(prefix) {
     const { parser } = require(`${prefix}vanilla-src-parser.ts`);
     const { vanillaToVue } = require(`${prefix}vanilla-to-vue.ts`);
+    const { vanillaToVue3 } = require(`${prefix}vanilla-to-vue3.ts`);
     const { vanillaToReact } = require(`${prefix}vanilla-to-react.ts`);
 
     // spl todo - add charts support in time
@@ -316,7 +336,7 @@ function getGeneratorCode(prefix) {
 
     const { vanillaToAngular } = require(`${prefix}vanilla-to-angular.ts`);
 
-    return [parser, vanillaToVue, vanillaToReact, vanillaToReactFunctional, vanillaToAngular];
+    return [parser, vanillaToVue, vanillaToVue3, vanillaToReact, vanillaToReactFunctional, vanillaToAngular];
 }
 
 function generateExamples(type, importTypes, scope, trigger, done) {
@@ -364,6 +384,7 @@ module.exports.generateDocumentationExamples = async (scope, trigger) => {
 
     return new Promise(resolve => {
         module.exports.generateGridExamples(
-            scope, trigger, () => module.exports.generateChartExamples(scope, trigger, () => resolve()));
+            scope, trigger, () => resolve() //module.exports.generateChartExamples(scope, trigger, () => resolve())
+        );
     });
 };

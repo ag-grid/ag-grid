@@ -22,11 +22,12 @@ import styles from './ExampleRunner.module.scss';
  */
 export const ExampleRunner = props => {
     return <GlobalContextConsumer>
-        {({ exampleImportType, useFunctionalReact, set }) => {
+        {({ exampleImportType, useFunctionalReact, useVue3, set }) => {
             const innerProps = {
                 ...props,
                 exampleImportType,
                 useFunctionalReact,
+                useVue3,
                 set,
             };
 
@@ -35,7 +36,7 @@ export const ExampleRunner = props => {
     </GlobalContextConsumer>;
 };
 
-const saveIndexHtmlPermutations = (nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, exampleImportType) => {
+const saveIndexHtmlPermutations = (nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, useVue3, exampleImportType) => {
     if (isGeneratedExample(type)) {
         // Need to generate the different permutations of index.html file:
         // 1. Default version (already saved)
@@ -43,36 +44,41 @@ const saveIndexHtmlPermutations = (nodes, library, pageName, name, title, type, 
         // 2. Alternative imports version
         const alternativeImport = exampleImportType === 'packages' ? 'modules' : 'packages';
         const alternativeImportExampleInfo =
-            getExampleInfo(nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, alternativeImport);
+            getExampleInfo(nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, useVue3, alternativeImport);
 
         writeIndexHtmlFile(alternativeImportExampleInfo);
 
         // 3. For React, the different styles
         if (framework === 'react') {
             const alternativeStyleModulesExampleInfo =
-                getExampleInfo(nodes, library, pageName, name, title, type, options, framework, !useFunctionalReact, 'modules');
+                getExampleInfo(nodes, library, pageName, name, title, type, options, framework, !useFunctionalReact, useVue3, 'modules');
 
             writeIndexHtmlFile(alternativeStyleModulesExampleInfo);
 
             const alternativeStylePackagesExampleInfo =
-                getExampleInfo(nodes, library, pageName, name, title, type, options, framework, !useFunctionalReact, 'packages');
+                getExampleInfo(nodes, library, pageName, name, title, type, options, framework, !useFunctionalReact, useVue3, 'packages');
 
             writeIndexHtmlFile(alternativeStylePackagesExampleInfo);
         }
     } else if (type === 'multi' && framework === 'react') {
         // Also generate the alternative React style
-        const functionalExampleInfo = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, !useFunctionalReact);
+        const functionalExampleInfo = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, !useFunctionalReact, useVue3);
+
+        writeIndexHtmlFile(functionalExampleInfo);
+    } else if (type === 'multi' && framework === 'vue') {
+        // Also generate the alternative React style
+        const functionalExampleInfo = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, !useVue3);
 
         writeIndexHtmlFile(functionalExampleInfo);
     }
 };
 
-const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, library, exampleImportType, useFunctionalReact, set }) => {
+const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, library, exampleImportType, useFunctionalReact, useVue3, set }) => {
     const nodes = useExampleFileNodes();
     const [showCode, setShowCode] = useState(!!(options && options.showCode));
     const exampleInfo = useMemo(
-        () => getExampleInfo(nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, exampleImportType),
-        [nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, exampleImportType]
+        () => getExampleInfo(nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, useVue3, exampleImportType),
+        [nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, useVue3, exampleImportType]
     );
 
     /*
@@ -85,7 +91,7 @@ const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, l
 
         if (library === 'grid') {
             // grid examples can have multiple permutations
-            saveIndexHtmlPermutations(nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, exampleImportType);
+            saveIndexHtmlPermutations(nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, useVue3, exampleImportType);
         }
     }
 
@@ -106,6 +112,11 @@ const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, l
                 <ReactStyleSelector
                     useFunctionalReact={useFunctionalReact}
                     onChange={event => set({ useFunctionalReact: JSON.parse(event.target.value) })} />
+            }
+            {library === 'grid' && exampleInfo.framework === 'vue' &&
+                <VueStyleSelector
+                    useVue3={useVue3}
+                    onChange={event => set({ useVue3: JSON.parse(event.target.value) })} />
             }
             {library === 'grid' && exampleInfo.framework !== 'javascript' && isGenerated &&
                 <ImportTypeSelector
@@ -173,6 +184,15 @@ const ReactStyleSelector = ({ useFunctionalReact, onChange }) => {
         {!isServerSideRendering() && <select className={styles['example-runner__react-style__select']} style={{ width: 120 }} value={JSON.stringify(useFunctionalReact)} onChange={onChange} onBlur={onChange}>
             <option value="false">Classes</option>
             <option value="true">Hooks</option>
+        </select>}
+    </div>;
+};
+
+const VueStyleSelector = ({ useVue3, onChange }) => {
+    return <div className={styles['example-runner__react-style']}>
+        {!isServerSideRendering() && <select className={styles['example-runner__react-style__select']} style={{ width: 120 }} value={JSON.stringify(useVue3)} onChange={onChange} onBlur={onChange}>
+            <option value="false">Vue 2</option>
+            <option value="true">Vue 3</option>
         </select>}
     </div>;
 };

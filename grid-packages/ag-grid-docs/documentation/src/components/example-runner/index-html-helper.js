@@ -5,6 +5,7 @@ import VanillaTemplate from './VanillaTemplate';
 import AngularTemplate from './AngularTemplate';
 import ReactTemplate from './ReactTemplate';
 import VueTemplate from './VueTemplate';
+import Vue3Template from './Vue3Template';
 import { getEntryFile } from './helpers';
 
 /**
@@ -67,7 +68,8 @@ export const getIndexHtml = (exampleInfo, isExecuting = false) => {
             const frameworkTemplates = {
                 angular: AngularTemplate,
                 react: ReactTemplate,
-                vue: VueTemplate
+                vue: VueTemplate,
+                vue3: Vue3Template
             };
 
             const FrameworkTemplate = frameworkTemplates[framework];

@@ -99,6 +99,7 @@ function launchPhpCP(app) {
 }
 
 function launchGatsby() {
+    console.log("Launching Gatsby");
     const npm = WINDOWS ? 'npm.cmd' : 'npm';
     const gatsby = cp.spawn(npm, ['start'], {
         cwd: 'documentation',
@@ -127,6 +128,8 @@ function serveCoreModules(app, gridCommunityModules, gridEnterpriseModules, char
     });
 }
 
+
+
 function getTscPath() {
     return WINDOWS ? 'node_modules\\.bin\\tsc.cmd' : 'node_modules/.bin/tsc';
 }
@@ -150,6 +153,7 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
     }
 
     lnk('../../community-modules/vue/', '_dev/@ag-grid-community', { force: true, type: linkType, rename: 'vue' });
+    lnk('../../community-modules/vue3/', '_dev/@ag-grid-community', { force: true, type: linkType, rename: 'vue3' });
     lnk('../../community-modules/angular/', '_dev/@ag-grid-community', {
         force: true,
         type: linkType,
@@ -229,6 +233,11 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
         force: true,
         type: linkType,
         rename: 'ag-grid-vue'
+    });
+    lnk('../../grid-packages/ag-grid-vue3/', '_dev/', {
+        force: true,
+        type: linkType,
+        rename: 'ag-grid-vue3'
     });
 }
 
@@ -449,7 +458,7 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
 const getLernaChainBuildInfo = async (skipFrameworks) => {
     const lernaBuildChainInfo = await getFlattenedBuildChainInfo();
 
-    const frameworks = ['angular', 'react', 'vue'];
+    const frameworks = ['angular', 'react', 'vue', 'vue3'];
 
     const filterBuildChain = filter => {
         Object.keys(lernaBuildChainInfo).forEach(packageName => {
@@ -601,7 +610,8 @@ function updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gr
     const systemJsFiles = [
         './documentation/static/example-runner/grid-angular-boilerplate/systemjs.config.dev.js',
         './documentation/static/example-runner/grid-react-boilerplate/systemjs.config.dev.js',
-        './documentation/static/example-runner/grid-vue-boilerplate/systemjs.config.dev.js'];
+        './documentation/static/example-runner/grid-vue-boilerplate/systemjs.config.dev.js',
+        './documentation/static/example-runner/grid-vue3-boilerplate/systemjs.config.dev.js'];
 
     const getModuleConfig = module => [
         `            '${module.publishedName}': {`,
@@ -664,7 +674,7 @@ const watchFrameworkModules = async () => {
         '.hash',
     ];
 
-    const moduleFrameworks = ['angular', 'vue', 'react'];
+    const moduleFrameworks = ['angular', 'vue', 'vue3', 'react'];
     const moduleRootDirectory = WINDOWS ? `..\\..\\community-modules\\` : `../../community-modules/`;
     moduleFrameworks.forEach(moduleFramework => {
         const frameworkDirectory = resolve(`${moduleRootDirectory}${moduleFramework}`);
@@ -689,6 +699,7 @@ const serveModuleAndPackages = (app, gridCommunityModules, gridEnterpriseModules
 
     servePackage(app, '@ag-grid-community/angular');
     servePackage(app, '@ag-grid-community/vue');
+    servePackage(app, '@ag-grid-community/vue3');
     servePackage(app, '@ag-grid-community/react');
     servePackage(app, 'ag-charts-react');
     servePackage(app, 'ag-charts-angular');
@@ -697,6 +708,7 @@ const serveModuleAndPackages = (app, gridCommunityModules, gridEnterpriseModules
     servePackage(app, 'ag-grid-enterprise');
     servePackage(app, 'ag-grid-angular');
     servePackage(app, 'ag-grid-vue');
+    servePackage(app, 'ag-grid-vue3');
     servePackage(app, 'ag-grid-react');
 };
 
@@ -776,6 +788,7 @@ module.exports = async (skipFrameworks, skipExampleFormatting, done) => {
             // regenerate examples and then watch them
             console.log("Watch and Generate Examples");
             await watchAndGenerateExamples();
+            console.log("Examples Generated");
 
             // websites
             launchPhpCP(app);

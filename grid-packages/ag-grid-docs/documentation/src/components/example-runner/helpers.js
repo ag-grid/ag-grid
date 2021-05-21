@@ -15,12 +15,15 @@ import isDevelopment from 'utils/is-development';
  * - 'reactFunctional' (React Hooks)
  * - 'angular' (Angular)
  * - 'vue' (Vue)
+ * - 'vue3' (Vue 3)
  */
-const getInternalFramework = (framework, useFunctionalReact) => {
+const getInternalFramework = (framework, useFunctionalReact, useVue3) => {
     if (framework === 'javascript') {
         return 'vanilla';
     } else if (framework === 'react' && useFunctionalReact) {
         return 'reactFunctional';
+    } else if(framework === 'vue' && useVue3) {
+        return 'vue3'
     }
 
     return framework;
@@ -36,14 +39,16 @@ export const getExampleInfo = (
     options = {},
     framework = 'javascript',
     useFunctionalReact = false,
+    useVue3 = false,
     importType = 'modules') => {
     if (library === 'charts') {
-        // no support for modules or React Hooks in charts yet
+        // no support for modules or React Hooks or Vue 3 in charts yet
         importType = 'packages';
         useFunctionalReact = false;
+        useVue3 = false;
     }
 
-    const internalFramework = getInternalFramework(framework, useFunctionalReact);
+    const internalFramework = getInternalFramework(framework, useFunctionalReact, useVue3);
     const boilerplatePath = `/example-runner/${library}-${framework}-boilerplate/`;
 
     let sourcePath = `${pageName}/examples/${name}/`;

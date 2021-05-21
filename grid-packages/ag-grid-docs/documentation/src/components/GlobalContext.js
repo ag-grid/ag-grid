@@ -4,6 +4,7 @@ import { LocalStorage } from 'utils/local-storage';
 const defaultContextValue = {
     exampleImportType: 'packages',
     useFunctionalReact: true,
+    useVue3: false,
     set: () => { },
 };
 

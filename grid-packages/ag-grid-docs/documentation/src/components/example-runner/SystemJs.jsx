@@ -30,6 +30,7 @@ const localConfiguration = {
         "@ag-grid-community/react": `${localPrefix}/@ag-grid-community/react`,
         "@ag-grid-community/angular": `${localPrefix}/@ag-grid-community/angular`,
         "@ag-grid-community/vue": `${localPrefix}/@ag-grid-community/vue`,
+        "@ag-grid-community/vue3": `${localPrefix}/@ag-grid-community/vue3`,
         "ag-charts-react": `${localPrefix}/ag-charts-react`,
         "ag-charts-angular": `${localPrefix}/ag-charts-angular`,
         "ag-charts-vue": `${localPrefix}/ag-charts-vue`,
@@ -37,7 +38,8 @@ const localConfiguration = {
         "ag-grid-enterprise": `${localPrefix}/ag-grid-enterprise`,
         "ag-grid-angular": `${localPrefix}/ag-grid-angular`,
         "ag-grid-react": `${localPrefix}/ag-grid-react`,
-        "ag-grid-vue": `${localPrefix}/ag-grid-vue`
+        "ag-grid-vue": `${localPrefix}/ag-grid-vue`,
+        "ag-grid-vue3": `${localPrefix}/ag-grid-vue3`
     },
     gridCommunityPaths: {
         /* START OF GRID COMMUNITY MODULES PATHS DEV - DO NOT DELETE */
@@ -115,11 +117,12 @@ const publishedConfiguration = {
         "@ag-grid-community/react": `https://unpkg.com/@ag-grid-community/react@${agGridVersion}/`,
         "@ag-grid-community/angular": `https://unpkg.com/@ag-grid-community/angular@${agGridVersion}/`,
         "@ag-grid-community/vue": `https://unpkg.com/@ag-grid-community/vue@${agGridVersion}/`,
+        "@ag-grid-community/vue3": `https://unpkg.com/@ag-grid-community/vue3@${agGridVersion}/`,
         "ag-grid-community": `https://unpkg.com/ag-grid-community@${agGridVersion}/`,
         "ag-grid-enterprise": `https://unpkg.com/ag-grid-enterprise@${agGridVersion}/`,
         "ag-grid-angular": `https://unpkg.com/ag-grid-angular@${agGridVersion}/`,
         "ag-grid-react": `https://unpkg.com/ag-grid-react@${agGridVersion}/`,
-        "ag-grid-vue": `https://unpkg.com/ag-grid-vue@${agGridVersion}/`
+        "ag-grid-vue3": `https://unpkg.com/ag-grid-vue3@${agGridVersion}/`
     },
     gridCommunityPaths: {
         /* START OF GRID COMMUNITY MODULES PATHS PROD - DO NOT DELETE */
