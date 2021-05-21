@@ -18,6 +18,7 @@ var options = {
         listeners: {
             nodeClick: function (event) {
                 event.datum.selected = !event.datum.selected;
+                event.series.update();
             }
         },
         marker: {

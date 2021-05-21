@@ -2171,7 +2171,7 @@
     "cursor": {
       "type": "string",
       "default": "default",
-      "description": "The cursor to use for hovered series items (such as bar segments or line markers). This config is identicall to the CSS `cursor` property."
+      "description": "The cursor to use for hovered series items (such as bar segments or line markers). This config is identical to the CSS `cursor` property."
     },
     "listeners": {
       "type": "Object",

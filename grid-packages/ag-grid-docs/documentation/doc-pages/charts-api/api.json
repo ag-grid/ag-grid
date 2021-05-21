@@ -826,7 +826,7 @@
     "cursor": {
       "type": "string",
       "default": "default",
-      "description": "The cursor to use for hovered bars/columns. This config is identicall to the CSS `cursor` property."
+      "description": "The cursor to use for hovered bars/columns. This config is identical to the CSS `cursor` property."
     },
     "tooltip": {
       "meta": {
@@ -1117,7 +1117,7 @@
     "cursor": {
       "type": "string",
       "default": "default",
-      "description": "The cursor to use for hovered line markers. This config is identicall to the CSS `cursor` property."
+      "description": "The cursor to use for hovered line markers. This config is identical to the CSS `cursor` property."
     },
     "tooltip": {
       "meta": {
@@ -1324,7 +1324,7 @@
     "cursor": {
       "type": "string",
       "default": "default",
-      "description": "The cursor to use for hovered area markers. This config is identicall to the CSS `cursor` property."
+      "description": "The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property."
     },
     "tooltip": {
       "meta": {
@@ -1596,7 +1596,7 @@
     "cursor": {
       "type": "string",
       "default": "default",
-      "description": "The cursor to use for hovered scatter markers. This config is identicall to the CSS `cursor` property."
+      "description": "The cursor to use for hovered scatter markers. This config is identical to the CSS `cursor` property."
     },
     "tooltip": {
       "meta": {
@@ -1802,7 +1802,7 @@
     "cursor": {
       "type": "string",
       "default": "default",
-      "description": "The cursor to use for hovered pie slices. This config is identicall to the CSS `cursor` property."
+      "description": "The cursor to use for hovered pie slices. This config is identical to the CSS `cursor` property."
     },
     "tooltip": {
       "meta": {
@@ -2567,7 +2567,7 @@
     "cursor": {
       "type": "string",
       "default": "default",
-      "description": "The cursor to use for hovered treemap tiles. This config is identicall to the CSS `cursor` property."
+      "description": "The cursor to use for hovered treemap tiles. This config is identical to the CSS `cursor` property."
     }
   },
   "histogram": {
@@ -2587,7 +2587,7 @@
     "cursor": {
       "type": "string",
       "default": "default",
-      "description": "The cursor to use for hovered histogram bars. This config is identicall to the CSS `cursor` property."
+      "description": "The cursor to use for hovered histogram bars. This config is identical to the CSS `cursor` property."
     },
     "tooltip": {
       "meta": {
