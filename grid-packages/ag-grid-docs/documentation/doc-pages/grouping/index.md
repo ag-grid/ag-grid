@@ -203,12 +203,12 @@ The example below demonstrates these two properties. Note the following:
 
 ## Open Groups by Default
 
-To have groups open by default, implement the grid callback `isGroupOpenByDefault`. The callback is called
+To have groups open by default, implement the grid callback `isGroupOpenByDefault`. This callback is invoked
 each time a group is created.
 
 <snippet>
 const gridOptions = {
-    // expand when year is 2004 or when country is United States
+    // expand when year is '2004' or when country is 'United States'
     isGroupOpenByDefault: params => {
         return (params.field == 'year' && params.key == '2004') ||
             (params.field == 'country' && params.key == 'United States');
@@ -220,16 +220,16 @@ The params passed to the callback are as follows:
 
 ```js
 interface IsGroupOpenByDefaultParams {
-  rowNode: RowNode; // the Row Node in question
+  rowNode: RowNode; // the Row Node being considered
   rowGroupColumn: Column; // the Column for which this row is grouping
-  level: number; // same as rowNode.level, what level the group is at, eg 0 for top level, 1 for second etc
-  field: string; // same as rowNode.field, the field we are grouping on eg 'country'
-  key: any; // same as rowNode.key, the value of this group, eg 'Ireland'
+  level: number; // same as rowNode.level - what level the group is at, e.g. 0 for top level, 1 for second etc
+  field: string; // same as rowNode.field - the field we are grouping on, e.g. 'country'
+  key: any; // same as rowNode.key, the value of this group, e.g. 'Ireland'
 }
 ```
 
-The example below expands country United States and year 2004. Note that in this example year 2004 is expanded for all
-countries, not just United States.
+In the example below, the country 'United States' and year '2004' are expanded by default. Note that year '2004' is expanded for all
+countries, not just 'United States'.
 
 <grid-example title='Open by Default' name='open-by-default' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
