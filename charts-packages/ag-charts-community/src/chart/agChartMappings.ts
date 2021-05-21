@@ -405,7 +405,7 @@ const mappings: any = {
             column: {
                 meta: {
                     constructor: BarSeries,
-                    setAsIs: ['lineDash'],
+                    setAsIs: ['lineDash', 'yNames'],
                     defaults: {
                         flipXY: false, // vertical bars
                         ...seriesDefaults,
@@ -420,7 +420,7 @@ const mappings: any = {
             [BarSeries.type]: {
                 meta: {
                     constructor: BarSeries,
-                    setAsIs: ['lineDash'],
+                    setAsIs: ['lineDash', 'yNames'],
                     defaults: {
                         flipXY: true, // horizontal bars
                         ...seriesDefaults,
