@@ -17,9 +17,9 @@ var gridOptions = {
         minWidth: 200,
     },
     animateRows: true,
-    isGroupOpenByDefault: function(params) {
-        return (params.field == 'year' && params.key == '2004') ||
-            (params.field == 'country' && params.key == 'United States');
+    isGroupOpenByDefault: params => {
+        return (params.field === 'year' && params.key === '2004') ||
+            (params.field === 'country' && params.key === 'United States');
     }
 };
 

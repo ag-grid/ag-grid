@@ -209,7 +209,7 @@ each time a group is created.
 <snippet>
 const gridOptions = {
     // expand when year is 2004 or when country is United States
-    isGroupOpenByDefault: function(params) {
+    isGroupOpenByDefault: params => {
         return (params.field == 'year' && params.key == '2004') ||
             (params.field == 'country' && params.key == 'United States');
     }
