@@ -820,6 +820,6 @@ class ModelWrapperWithSelectAll implements VirtualListModel {
     }
 
     public isRowSelected(index: number): boolean | undefined {
-        return index === 0 ? this.isSelectAllSelected() : this.model.isValueSelected(this.getRow(index - 1));
+        return index === 0 ? this.isSelectAllSelected() : this.model.isValueSelected(this.getRow(index));
     }
 }
