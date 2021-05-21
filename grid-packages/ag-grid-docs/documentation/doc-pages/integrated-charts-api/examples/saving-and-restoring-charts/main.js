@@ -40,8 +40,6 @@ function clearChart() {
 
 function restoreChart() {
     if (!chartModel) return;
-    clearChart();
-
     currentChartRef = gridOptions.api.restoreChart(chartModel);
 }
 
