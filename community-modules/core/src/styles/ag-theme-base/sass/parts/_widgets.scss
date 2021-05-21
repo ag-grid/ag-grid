@@ -490,7 +490,11 @@
     }
 
     .ag-column-select-virtual-list-viewport {
-        padding: (ag-param(widget-container-vertical-padding) / 2) ag-param(widget-container-horizontal-padding);
+        padding: (ag-param(widget-container-vertical-padding) / 2) 0px;
+    }
+
+    .ag-column-select-virtual-list-item {
+        margin: 0 ag-param(widget-container-horizontal-padding);
     }
 }
 
