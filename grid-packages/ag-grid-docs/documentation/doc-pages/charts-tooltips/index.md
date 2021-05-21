@@ -77,6 +77,12 @@ Hover a column segment in the example below to verify this is true:
 
 <chart-example title='Default tooltip using axis label format' name='default-tooltip-axis-format' type='generated'></chart-example>
 
+If both the axis label `format` and the axis label `formatter` are specified, the axis label `formatter` is used because of higher precedance.
+
+The example below illustrates this behavior:
+
+<chart-example title='Default tooltip using axis label formatter' name='default-tooltip-axis-formatter' type='generated'></chart-example>
+
 ## Styling the Default Tooltip
 
 The default tooltip already uses `ag-chart-tooltip`, `ag-chart-tooltip-title` and `ag-chart-tooltip-content` CSS classes, but these classes are not meant to be used directly to add custom CSS rules to, unless you want to change the styling of all the tooltips in your app. Instead, users of the charting library should provide their own tooltip class name via the `chart.tooltipClass` config. This class name will be added to the class list of the tooltip element for only that particular chart instance.
