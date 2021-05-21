@@ -229,7 +229,7 @@ function createExampleGenerator(prefix, importTypes) {
 
             importTypes.forEach(importType => writeExampleFiles(importType, 'react', 'react', reactScripts, reactConfigs.get(importType)));
         }
-/*
+
         if (type === 'mixed' && providedExamples['reactFunctional']) {
             importTypes.forEach(importType => copyProvidedExample(importType, 'reactFunctional', providedExamples['reactFunctional']));
         } else {
@@ -295,7 +295,7 @@ function createExampleGenerator(prefix, importTypes) {
             // from index.html will still including other non-component files
             importTypes.forEach(importType => writeExampleFiles(importType, 'vue', 'vue', vueScripts, vueConfigs.get(importType), undefined, 'Vue'));
         }
-        */
+
         if (type === 'mixed' && providedExamples['vue3']) {
             importTypes.forEach(importType => copyProvidedExample(importType, 'vue3', providedExamples['vue3']));
         } else {
@@ -384,7 +384,7 @@ module.exports.generateDocumentationExamples = async (scope, trigger) => {
 
     return new Promise(resolve => {
         module.exports.generateGridExamples(
-            scope, trigger, () => resolve() //module.exports.generateChartExamples(scope, trigger, () => resolve())
+            scope, trigger, () => module.exports.generateChartExamples(scope, trigger, () => resolve())
         );
     });
 };
