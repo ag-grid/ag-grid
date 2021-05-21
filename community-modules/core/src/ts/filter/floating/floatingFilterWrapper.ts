@@ -27,7 +27,7 @@ import { KeyCode } from '../../constants/keyCode';
 
 export class FloatingFilterWrapper extends AbstractHeaderWrapper {
     private static TEMPLATE = /* html */
-        `<div class="ag-header-cell" role="columnheader" tabindex="-1">
+        `<div class="ag-header-cell" role="gridcell" tabindex="-1">
             <div class="ag-floating-filter-full-body" ref="eFloatingFilterBody" role="presentation"></div>
             <div class="ag-floating-filter-button ag-hidden" ref="eButtonWrapper" role="presentation">
                 <button type="button" aria-label="Open Filter Menu" class="ag-floating-filter-button-button" ref="eButtonShowMainFilter" tabindex="-1"></button>
