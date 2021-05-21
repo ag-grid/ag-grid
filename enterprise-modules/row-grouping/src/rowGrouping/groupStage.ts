@@ -626,7 +626,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             return;
         }
 
-        // use expandByDefault
+        // use expandByDefault if exists
         const {expandByDefault} = details;
         if (details.expandByDefault === -1) {
             groupNode.expanded = true;
