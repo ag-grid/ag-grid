@@ -1,4 +1,5 @@
 import {
+    _,
     Autowired,
     Bean,
     BeanStub,
@@ -7,15 +8,14 @@ import {
     ColumnController,
     GetDataPath,
     IRowNodeStage,
+    IsGroupOpenByDefaultParams,
     NumberSequence,
     PostConstruct,
     RowNode,
     RowNodeTransaction,
     SelectableService,
     StageExecuteParams,
-    ValueService,
-    _,
-    IsGroupOpenByDefaultParams
+    ValueService
 } from "@ag-grid-community/core";
 import { BatchRemover } from "./batchRemover";
 
@@ -605,10 +605,8 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         return key;
     }
 
-    private setExpandedInitialValue(details: GroupingDetails, groupNode: RowNode): void {// expandByDefault: number, level: number) {
-
-        // if doing pivoting, then the leaf group is never expanded,
-        // as we do not show leaf rows
+    private setExpandedInitialValue(details: GroupingDetails, groupNode: RowNode): void {
+        // if pivoting the leaf group is never expanded as we do not show leaf rows
         if (details.pivotMode && groupNode.leafGroup) {
             groupNode.expanded = false;
             return;
@@ -628,13 +626,15 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             return;
         }
 
-        // otherwise use expandByDefault
+        // use expandByDefault
         const {expandByDefault} = details;
         if (details.expandByDefault === -1) {
             groupNode.expanded = true;
-        } else {
-            groupNode.expanded = groupNode.level < expandByDefault;
+            return;
         }
+
+        // otherwise
+        groupNode.expanded = groupNode.level < expandByDefault;
     }
 
     private getGroupInfo(rowNode: RowNode, details: GroupingDetails): GroupInfo[] {
