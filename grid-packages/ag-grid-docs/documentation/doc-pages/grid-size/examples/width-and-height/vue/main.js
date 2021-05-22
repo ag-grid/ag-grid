@@ -1,4 +1,4 @@
-import Vue from "vue";
+import {createApp} from "vue";
 import { AgGridVue } from "@ag-grid-community/vue";
 
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
@@ -85,9 +85,4 @@ var minRowHeight = 25;
 
 var currentRowHeight = minRowHeight;
 
-new Vue({
-    el: "#app",
-    components: {
-        "my-component": VueExample
-    }
-});
+createApp(VueExample).mount('#app');
