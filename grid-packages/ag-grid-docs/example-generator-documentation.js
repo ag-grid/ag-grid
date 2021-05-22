@@ -299,20 +299,22 @@ function createExampleGenerator(prefix, importTypes) {
         if (type === 'mixed' && providedExamples['vue3']) {
             importTypes.forEach(importType => copyProvidedExample(importType, 'vue3', providedExamples['vue3']));
         } else {
-            const vueScripts = getMatchingPaths('*_vue3*');
-            const vueConfigs = new Map();
-            try {
-                const getSource = vanillaToVue3(bindings, extractComponentFileNames(vueScripts, '_vue3', 'Vue'));
+            if(vanillaToVue3) {
+                const vueScripts = getMatchingPaths('*_vue3*');
+                const vueConfigs = new Map();
+                try {
+                    const getSource = vanillaToVue3(bindings, extractComponentFileNames(vueScripts, '_vue3', 'Vue'));
 
-                importTypes.forEach(importType => vueConfigs.set(importType, { 'main.js': getSource(importType) }));
-            } catch (e) {
-                console.error(`Failed to process Vue 3 example in ${examplePath}`, e);
-                throw e;
+                    importTypes.forEach(importType => vueConfigs.set(importType, { 'main.js': getSource(importType) }));
+                } catch (e) {
+                    console.error(`Failed to process Vue 3 example in ${examplePath}`, e);
+                    throw e;
+                }
+
+                // we rename the files so that they end with "Vue.js" - we do this so that we can (later, at runtime) exclude these
+                // from index.html will still including other non-component files
+                importTypes.forEach(importType => writeExampleFiles(importType, 'vue3', 'vue3', vueScripts, vueConfigs.get(importType), undefined, 'Vue'));
             }
-
-            // we rename the files so that they end with "Vue.js" - we do this so that we can (later, at runtime) exclude these
-            // from index.html will still including other non-component files
-            importTypes.forEach(importType => writeExampleFiles(importType, 'vue3', 'vue3', vueScripts, vueConfigs.get(importType), undefined, 'Vue'));
         }
 
         inlineStyles = undefined; // unset these as they don't need to be copied for vanilla
@@ -324,14 +326,15 @@ function createExampleGenerator(prefix, importTypes) {
 function getGeneratorCode(prefix) {
     const { parser } = require(`${prefix}vanilla-src-parser.ts`);
     const { vanillaToVue } = require(`${prefix}vanilla-to-vue.ts`);
-    const { vanillaToVue3 } = require(`${prefix}vanilla-to-vue3.ts`);
     const { vanillaToReact } = require(`${prefix}vanilla-to-react.ts`);
 
-    // spl todo - add charts support in time
+    // spl todo - add charts & vue 3 support in time
     let vanillaToReactFunctional = null;
+    let vanillaToVue3 = null;
 
     if (prefix === './src/example-generation/grid-') {
         vanillaToReactFunctional = require(`${prefix}vanilla-to-react-functional.ts`).vanillaToReactFunctional;
+        vanillaToVue3 = require(`${prefix}vanilla-to-vue3.ts`).vanillaToVue3;
     }
 
     const { vanillaToAngular } = require(`${prefix}vanilla-to-angular.ts`);
