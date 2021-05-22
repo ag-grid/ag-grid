@@ -79,7 +79,7 @@
   "devDependencies": {
     "babel-jest": "26.6.3",
     "babel-preset-gatsby": "1.0.0",
-    "canvas": "2.6.1",
+    "canvas": "2.8.0",
     "identity-obj-proxy": "3.0.0",
     "jest": "26.6.3",
     "jsdom": "16.4.0",

@@ -111,8 +111,8 @@ const scssTask = () => {
                             {
                                 loader: 'sass-loader',
                                 options: {
-                                    prependData: '$ag-compatibility-mode: false;\n$ag-suppress-all-theme-deprecation-warnings: true;',
-                                },
+                                    additionalData: '$ag-compatibility-mode: false;\n$ag-suppress-all-theme-deprecation-warnings: true;'
+                                }
                             }
                         ]
                     },
@@ -149,7 +149,7 @@ const scssTask = () => {
                 ]
             },
             plugins: [
-                new MiniCssExtractPlugin('[name].css')
+                new MiniCssExtractPlugin({ filename: '[name].css' })
             ]
         }))
         .pipe(f)
