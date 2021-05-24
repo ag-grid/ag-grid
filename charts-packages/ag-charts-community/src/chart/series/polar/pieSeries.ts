@@ -82,7 +82,14 @@ class PieSeriesLabel extends Label {
 }
 
 class PieSeriesCallout extends Observable {
-    @reactive('change') colors: string[] = [];
+    @reactive('change') colors: string[] = [
+        '#874349',
+        '#718661',
+        '#a48f5f',
+        '#5a7088',
+        '#7f637a',
+        '#5d8692'
+    ];
     @reactive('change') length: number = 10;
     @reactive('change') strokeWidth: number = 1;
 }
@@ -156,7 +163,6 @@ export class PieSeries extends PolarSeries {
         this.label.addEventListener('change', this.scheduleLayout, this);
         this.label.addEventListener('dataChange', this.scheduleData, this);
         this.callout.addEventListener('change', this.scheduleLayout, this);
-        this.callout.colors = this.strokes;
 
         this.addPropertyListener('data', event => {
             if (event.value) {
@@ -195,7 +201,6 @@ export class PieSeries extends PolarSeries {
     ];
     set fills(values: string[]) {
         this._fills = values;
-        this.strokes = values.map(color => Color.fromString(color).darker().toHexString());
         this.scheduleData();
     }
     get fills(): string[] {
@@ -212,7 +217,6 @@ export class PieSeries extends PolarSeries {
     ];
     set strokes(values: string[]) {
         this._strokes = values;
-        this.callout.colors = values;
         this.scheduleData();
     }
     get strokes(): string[] {

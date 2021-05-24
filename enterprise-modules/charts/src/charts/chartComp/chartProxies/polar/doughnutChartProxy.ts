@@ -162,7 +162,7 @@ export class DoughnutChartProxy extends PolarChartProxy {
             }
         };
 
-        const calloutColors = seriesOptions.callout && seriesOptions.callout.colors;
+        const calloutColors = seriesOptions.callout && seriesOptions.callout.colors || seriesOptions.strokes || [];
         const pieSeries = existingSeries || AgChart.createComponent(seriesOptions, 'pie.series') as PieSeries;
 
         if (!existingSeries) {
@@ -211,23 +211,19 @@ export class DoughnutChartProxy extends PolarChartProxy {
                 });
                 pieSeries.fills = updateParams.fills;
                 pieSeries.strokes = updateParams.strokes;
-                if (calloutColors) {
-                    pieSeries.callout.colors = updateParams.strokes;
-                }
+                pieSeries.callout.colors = calloutColors;
             }
 
             // disable series highlighting by default
             pieSeries.highlightStyle.fill = undefined;
 
-            pieSeries.addEventListener("nodeClick", this.crossFilterCallback);
+            pieSeries.addEventListener('nodeClick', this.crossFilterCallback);
 
             updateParams.doughnutChart.tooltip.delay = 500;
         } else {
             pieSeries.fills = updateParams.fills;
             pieSeries.strokes = updateParams.strokes;
-            if (calloutColors) {
-                pieSeries.callout.colors = updateParams.strokes;
-            }
+            pieSeries.callout.colors = calloutColors;
         }
 
         const offsetAmount = updateParams. numFields > 1 ? 20 : 40;
