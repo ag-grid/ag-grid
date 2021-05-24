@@ -10,22 +10,8 @@
             ]
         },
         "filterOptions": {
-            "description": "Array of [Filter Options](/filter-provided-simple/#simple-filter-options) to present to the user.",
+            "description": "Array of [Filter Options](/filter-provided-simple/#simple-filter-options) to present to the user. See [Filter Options](/filter-provided-simple/#simple-filter-options) for all options available to each filter type.",
             "type": "string[]",
-            "options": [
-                "equals",
-                "notEqual",
-                "contains",
-                "notContains",
-                "startsWith",
-                "endsWith",
-                "lessThan",
-                "lessThanOrEqual",
-                "greaterThan",
-                "greaterThanOrEqual",
-                "inRange",
-                "empty"
-            ],
             "relevantTo": [
                 "Text",
                 "Number",
@@ -35,20 +21,6 @@
         "defaultOption": {
             "description": "The default [Filter Option](/filter-provided-simple/#simple-filter-options) to be selected.",
             "type": "string",
-            "options": [
-                "equals",
-                "notEqual",
-                "contains",
-                "notContains",
-                "startsWith",
-                "endsWith",
-                "lessThan",
-                "lessThanOrEqual",
-                "greaterThan",
-                "greaterThanOrEqual",
-                "inRange",
-                "empty"
-            ],
             "relevantTo": [
                 "Text",
                 "Number",
