@@ -409,8 +409,11 @@ export class ChartTheme {
                         color: 'rgb(70, 70, 70)'
                     },
                     angleKey: '',
+                    angleName: '',
                     radiusKey: undefined,
+                    radiusName: undefined,
                     labelKey: undefined,
+                    labelName: undefined,
                     label: {
                         enabled: true,
                         fontStyle: undefined,
