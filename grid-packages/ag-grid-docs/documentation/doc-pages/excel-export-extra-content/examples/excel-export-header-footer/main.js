@@ -1,12 +1,12 @@
 const gridOptions = {
     columnDefs: [
-        { field: 'athlete', minWidth: 200 },
-        { field: 'country', minWidth: 200, },
-        { field: 'sport', minWidth: 150 },
-        { field: 'gold' },
-        { field: 'silver' },
-        { field: 'bronze' },
-        { field: 'total' }
+        {field: 'athlete', minWidth: 200},
+        {field: 'country', minWidth: 200,},
+        {field: 'sport', minWidth: 150},
+        {field: 'gold'},
+        {field: 'silver'},
+        {field: 'bronze'},
+        {field: 'total'}
     ],
     defaultColDef: {
         sortable: true,
@@ -22,9 +22,11 @@ const gridOptions = {
 const getValues = type => {
     const value = document.querySelector('#' + type + 'Value').value;
 
-    if (value == null) { return; }
+    if (value == null) {
+        return;
+    }
 
-    const obj = { 
+    const obj = {
         value: value
     };
 
@@ -64,15 +66,17 @@ const getParams = () => {
     const header = getValues('header');
     const footer = getValues('footer');
 
-    if (!header && !footer) { return; }
+    if (!header && !footer) {
+        return;
+    }
 
-    obj  = {
+    const obj = {
         headerFooterConfig: {
             all: {}
         }
     };
 
-    if (header){
+    if (header) {
         obj.headerFooterConfig.all.header = [header];
     }
 
@@ -83,7 +87,9 @@ const getParams = () => {
     return obj;
 }
 
-const onBtExport = () => gridOptions.api.exportDataAsExcel(getParams());
+function onBtExport() {
+    gridOptions.api.exportDataAsExcel(getParams());
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
@@ -91,6 +97,6 @@ document.addEventListener('DOMContentLoaded', () => {
     new agGrid.Grid(gridDiv, gridOptions);
 
     agGrid.simpleHttpRequest({url: 'https://www.ag-grid.com/example-assets/small-olympic-winners.json'})
-    .then(data =>
-        gridOptions.api.setRowData(data.filter(rec => rec.country != null)));
+        .then(data =>
+            gridOptions.api.setRowData(data.filter(rec => rec.country != null)));
 });
