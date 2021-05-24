@@ -127,7 +127,8 @@ export abstract class ScalarFilter<M extends ISimpleFilterModel, T> extends Simp
             }
 
             default:
-                throw new Error('Unexpected type of filter: ' + filterType);
+                console.warn('AG Grid: Unexpected type of filter "' + filterType + '", it looks like the filter was configured with incorrect Filter Options');
+                return true;
         }
     }
 }
