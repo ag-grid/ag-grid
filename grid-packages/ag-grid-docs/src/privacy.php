@@ -7,7 +7,7 @@ gtm_data_layer('privacy');
 <html lang="en">
 <head>
 <?php
-meta_and_links("AG Grid: Privacy Policy", "About AG Grid", "We take your privacy very seriously at AG Grid. This page outlines our privacy policy which we have updated in light of GDPR.", true);
+meta_and_links("AG Grid: Privacy Policy", "About AG Grid", "We take your privacy very seriously at AG Grid. This page outlines our privacy policy which we have updated in light of GDPR.", "privacy.php", true);
 ?>
 <script src="dist/homepage.js"></script>
 <link rel="stylesheet" href="dist/homepage.css">

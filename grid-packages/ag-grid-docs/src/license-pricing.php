@@ -7,7 +7,7 @@ gtm_data_layer('community-enterprise');
 <html lang="en">
 <head>
     <?php
-    meta_and_links("AG Grid: License and Pricing", "AG Grid Javascript Grid License and Pricing", "AG Grid is a feature-rich datagrid available in Community or Enterprise versions. This page describes the License and Pricing details for AG Grid Enterprise.", true);
+    meta_and_links("AG Grid: License and Pricing", "AG Grid Javascript Grid License and Pricing", "AG Grid is a feature-rich datagrid available in Community or Enterprise versions. This page describes the License and Pricing details for AG Grid Enterprise.", "license-pricing.php", true);
     ?>
 
     <!-- Facebook Pixel Code -->
@@ -112,7 +112,7 @@ gtm_data_layer('community-enterprise');
                         <p>
                             AG Charts Community (a.k.a. <a href="./javascript-charts/overview/">Standalone Charts</a>)
                             is a free to use product distributed under the
-                            <a href="./eula/AG-Grid-Community-License.html">MIT License</a>.
+                            <a href="/eula/AG-Grid-Community-License.html">MIT License</a>.
                             It is free to use in your production environments.
                         </p>
                     </div>
@@ -125,7 +125,7 @@ gtm_data_layer('community-enterprise');
                     <h3>AG Grid Enterprise</h3>
                         <p>
                             AG Grid Enterprise is a commercial product distributed under our
-                            <a href="./eula/AG-Grid-Enterprise-License-Latest.html">EULA</a> and supported by our
+                            <a href="/eula/AG-Grid-Enterprise-License-Latest.html">EULA</a> and supported by our
                             technical staff. It has advanced functionality like Row Grouping, Range Selection,
                             Master / Detail, Server Side Row Model and <a href="/javascript-grid/licensing/">more</a>.
                             AG Grid Enterprise also comes with <a href="/javascript-grid/integrated-charts/">Integrated Charts</a>, allowing users to create charts

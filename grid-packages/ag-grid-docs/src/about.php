@@ -8,7 +8,7 @@
 
 <head lang="en">
     <?php
-            meta_and_links("Our Mission, Our Principles and Our Team at AG Grid", "About AG Grid", "AG Grid is a feature-rich datagrid available in Community or Enterprise versions. This is the story of AG Grid and explains our mission, where we came from and who we are.", true);
+            meta_and_links("Our Mission, Our Principles and Our Team at AG Grid", "About AG Grid", "AG Grid is a feature-rich datagrid available in Community or Enterprise versions. This is the story of AG Grid and explains our mission, where we came from and who we are.", "about.php", true);
             ?>
     <link rel="stylesheet" href="dist/homepage.css">
     <script src="dist/homepage.js"></script>
@@ -309,7 +309,7 @@
                         <h3>Want to work with us?</h3>
                         <p> We are always looking for Javascript Developers with Enterprise Applications
                             experience. </p>
-                        <p>Check the <a href="./ag-grid-jobs-board/">jobs board</a>.</p>
+                        <p>Check the <a href="/ag-grid-jobs-board/">jobs board</a>.</p>
                     </div>
                 </article>
             </section>

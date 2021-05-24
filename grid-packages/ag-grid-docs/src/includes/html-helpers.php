@@ -22,7 +22,7 @@ function gtm_data_layer($pageCategory, $additional = array()) {
     $GLOBALS['GTM_DATA_LAYER'] = json_encode($additional);
 }
 
-function meta_and_links($title, $keywords, $description, $root = false) {
+function meta_and_links($title, $keywords, $description, $url, $root = false) {
     $socialImage = $GLOBALS['socialImage'];
 
     if ($socialImage) {
@@ -50,7 +50,7 @@ META;
         $prefix = "../";
     }
 
-    $canonicalUrl = 'https://www.ag-grid.com' . strtok($_SERVER["REQUEST_URI"], '?');
+    $canonicalUrl = 'https://www.ag-grid.com/' . $url;
 
     echo <<<META
     <script>var dataLayer = [${GLOBALS['GTM_DATA_LAYER']}]</script>

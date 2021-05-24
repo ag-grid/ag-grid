@@ -11,7 +11,7 @@ include '../jira_reports/jira_utilities.php';
 <html lang="en">
 <head lang="en">
     <?php
-    meta_and_links("AG Grid: Changelog of Delivered Features and Bug Fixes", "AG Grid javascript grid changelog release notes", "AG Grid is a feature-rich data grid supporting major JavaScript Frameworks. Our Changelog lists all delivered delivered new functionality and bux fixes.", false);
+    meta_and_links("AG Grid: Changelog of Delivered Features and Bug Fixes", "AG Grid javascript grid changelog release notes", "AG Grid is a feature-rich data grid supporting major JavaScript Frameworks. Our Changelog lists all delivered delivered new functionality and bux fixes.", "ag-grid-changelog/", false);
     ?>
     <link rel="stylesheet" href="../dist/homepage.css">
     <link rel="stylesheet" href="../dist/aui/css/aui.css" media="all">

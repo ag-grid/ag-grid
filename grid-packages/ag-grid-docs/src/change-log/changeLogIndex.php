@@ -10,7 +10,7 @@ require_once dirname(__FILE__) . '/../includes/html-helpers.php';
 <html lang="en">
 <head>
 <?php
-meta_and_links($pageTitle, $pageKeywords, $pageDescription, false);
+meta_and_links($pageTitle, $pageKeywords, $pageDescription, "change-log/changeLogIndex.php", false);
 ?>
 
 <link rel="stylesheet" href="../dist/homepage.css">

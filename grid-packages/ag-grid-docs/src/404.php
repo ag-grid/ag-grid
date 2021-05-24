@@ -5,7 +5,7 @@ gtm_data_layer('404');
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <?php meta_and_links("AG Grid: Page Not Found", "", "", true); ?>
+    <?php meta_and_links("AG Grid: Page Not Found", "", "", "404.php", true); ?>
 
     <meta name="robots" content="noindex" />
     <link rel="stylesheet" href="dist/homepage.css">
