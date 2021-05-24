@@ -8,6 +8,7 @@ import {
     ChartOptions,
     ChartOptionsChanged,
     ChartType,
+    Color,
     ColumnApi,
     DropShadowOptions,
     Events,
@@ -542,6 +543,13 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         const g = parseInt(hex.slice(3, 5), 16);
         const b = parseInt(hex.slice(5, 7), 16);
         return alpha ? `rgba(${r}, ${g}, ${b}, ${alpha})` : `rgba(${r}, ${g}, ${b})`;
+    }
+
+    protected changeOpacity(fills: string[], alpha: number) {
+        return fills.map(fill => {
+            const c = Color.fromString(fill);
+            return new Color(c.r, c.g, c.b, 0.3).toHexString();
+        });
     }
 
     public destroy(): void {
