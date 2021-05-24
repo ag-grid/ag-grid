@@ -22,12 +22,7 @@ const Announcements = ({ framework }) => <div className={styles['announcements']
             </li>
         </ul>
     </Announcement>
-    <Announcement title="Best Web Grids for 2020" date="Jan 27th">
-        <p className="card-text">
-            AG Grid is the "Absolute Winner" according
-            to <a href="https://www.crankuptheamps.com/blog/posts/2020/01/23/grid-comparison-2/">Best Web Grids for 2020</a>.
-        </p>
-    </Announcement>
+    <SimpleMailingListSignup />
     <Announcement title="Community or Enterprise?">
         <img style={{ width: '30px', float: 'left', marginRight: '6px' }} src={communitySvg} alt="Community" />
         <p >
@@ -41,44 +36,6 @@ const Announcements = ({ framework }) => <div className={styles['announcements']
             when you start developing for production.
         </p>
     </Announcement>
-    <Announcement title="Conferences 2020">
-        <p>Come see us at the following conferences that we are attending and sponsoring.</p>
-
-        <h6 className="card-subtitle mb-2 text-muted">Angular</h6>
-
-        <img src='https://flagcdn.com/h24/us.png' alt="United States" className={styles['announcement__flag']} />
-        <a href="https://www.ng-conf.org" target="_blank" rel="noreferrer">ng-Conf</a>
-        <p className="card-subtitle mb-2 text-muted" style={{ marginTop: '1px' }}>Postponed</p>
-
-        <img src='https://flagcdn.com/h24/no.png' alt="Norway" className={styles['announcement__flag']} />
-        <a href="https://ngvikings.org" target="_blank" rel="noreferrer">ngVikings</a>
-        <p className="card-subtitle mb-2 text-muted" style={{ marginTop: '1px' }}>Postponed</p>
-
-        <img src='https://flagcdn.com/h24/gb.png' alt="United Kingdom" className={styles['announcement__flag']} />
-        <a href="https://angularconnect.com" target="_blank" rel="noreferrer">Angular Connect</a>
-        <p className="card-subtitle mb-2 text-muted" style={{ marginTop: '1px' }}>Oct 13-14</p>
-
-        <p></p>
-
-        <h6 className="card-subtitle mb-2 text-muted">React</h6>
-
-        <img src='https://flagcdn.com/h24/nl.png' alt="Netherlands" className={styles['announcement__flag']} />
-        <a href="https://reactsummit.com" target="_blank" rel="noreferrer">React Summit</a>
-        <p className="card-subtitle mb-2 text-muted" style={{ marginTop: '1px' }}>11th September</p>
-
-        <img src='https://flagcdn.com/h24/gb.png' alt="United Kingdom" className={styles['announcement__flag']} />
-        <a href="https://reactadvanced.com" target="_blank" rel="noreferrer">React Advanced</a>
-        <p className="card-subtitle mb-2 text-muted" style={{ marginTop: '1px' }}>Oct 25</p>
-
-        <p></p>
-
-        <h6 className="card-subtitle mb-2 text-muted">JavaScript</h6>
-
-        <img src='https://flagcdn.com/h24/gb.png' alt="United Kingdom" className={styles['announcement__flag']} />
-        <a href="https://halfstackconf.com/online/" target="_blank" rel="noreferrer">Half Stack Online</a>
-        <p className="card-subtitle mb-2 text-muted" style={{ marginTop: '1px' }}>May 22</p>
-    </Announcement>
-    <SimpleMailingListSignup />
     <Announcement highlight={false}>
         <p>Work at AG Grid:</p>
         <h5 className="card-title"><a href="/ag-grid-jobs-board/">JavaScript Developers</a></h5>
@@ -86,6 +43,12 @@ const Announcements = ({ framework }) => <div className={styles['announcements']
         <p className="card-text">
             Would you like to join the AG Grid team in London?<br /><br />
             Check the <a href="/ag-grid-jobs-board/">jobs board</a>
+        </p>
+    </Announcement>
+    <Announcement title="Best Web Grids for 2020" date="Jan 27th">
+        <p className="card-text">
+            AG Grid is the "Absolute Winner" according
+            to <a href="https://www.crankuptheamps.com/blog/posts/2020/01/23/grid-comparison-2/">Best Web Grids for 2020</a>.
         </p>
     </Announcement>
 </div>;
