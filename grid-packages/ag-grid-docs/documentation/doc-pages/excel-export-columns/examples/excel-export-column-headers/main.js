@@ -32,14 +32,20 @@ const gridOptions = {
     popupParent: document.body
 };
 
-const getBoolean = id => !!document.querySelector('#' + id).checked;
+function getBoolean(id) {
+    return !!document.querySelector('#' + id).checked;
+}
 
-const getParams = () => ({
-    skipColumnGroupHeaders: getBoolean('columnGroups'),
-    skipColumnHeaders: getBoolean('skipHeader')
-});
+function getParams() {
+    return {
+        skipColumnGroupHeaders: getBoolean('columnGroups'),
+        skipColumnHeaders: getBoolean('skipHeader')
+    };
+}
 
-const onBtExport = () => gridOptions.api.exportDataAsExcel(getParams());
+function onBtExport() {
+    gridOptions.api.exportDataAsExcel(getParams());
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {

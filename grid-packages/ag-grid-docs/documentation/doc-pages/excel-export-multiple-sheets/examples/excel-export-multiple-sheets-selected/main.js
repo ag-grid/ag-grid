@@ -26,7 +26,7 @@ var gridOptions = {
 function onBtExport() {
     var spreadsheets = [];
 
-    gridOptions.api.forEachNode(function(node, index) {
+    gridOptions.api.forEachNode((node, index) => {
         if (index % 100 === 0) {
             gridOptions.api.deselectAll();
         }

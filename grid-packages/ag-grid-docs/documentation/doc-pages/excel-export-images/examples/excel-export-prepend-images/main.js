@@ -50,7 +50,7 @@ const gridOptions = {
     }
 };
 
-const onBtExport = () => {
+function onBtExport() {
     gridOptions.api.exportDataAsExcel();
 }
 

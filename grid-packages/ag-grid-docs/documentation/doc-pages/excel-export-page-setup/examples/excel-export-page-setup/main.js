@@ -20,7 +20,7 @@ const gridOptions = {
     popupParent: document.body
 };
 
-const getNumber = (id) => {
+function getNumber(id) {
     var el = document.querySelector(id);
 
     if (isNaN(el.value)) {
@@ -30,24 +30,28 @@ const getNumber = (id) => {
     return parseFloat(el.value);
 }
 
-const getValue = id => document.querySelector(id).value;
+function getValue(id) {
+    return document.querySelector(id).value;
+}
 
-const getSheetConfig = () => ({
-    pageSetup: {
-        orientation: getValue('#pageOrientation'),
-        pageSize: getValue('#pageSize')
-    },
-    margins: {
-        top: getNumber('#top'),
-        right: getNumber('#right'),
-        bottom: getNumber('#bottom'),
-        left: getNumber('#left'),
-        header: getNumber('#header'),
-        footer: getNumber('#footer'),
+function getSheetConfig() {
+    return {
+        pageSetup: {
+            orientation: getValue('#pageOrientation'),
+            pageSize: getValue('#pageSize')
+        },
+        margins: {
+            top: getNumber('#top'),
+            right: getNumber('#right'),
+            bottom: getNumber('#bottom'),
+            left: getNumber('#left'),
+            header: getNumber('#header'),
+            footer: getNumber('#footer'),
+        }
     }
-});
+}
 
-const onBtExport = () => {
+function onBtExport() {
     const { pageSetup, margins } = getSheetConfig();
     gridOptions.api.exportDataAsExcel({ pageSetup, margins});
 }
