@@ -71,6 +71,8 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     private logger: Logger;
     private gridCompController: GridCompController;
 
+    private navigatorApiFailed = false;
+
     public registerGridCompController(gridCompController: GridCompController): void {
         this.gridCompController = gridCompController;
     }
@@ -92,7 +94,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         // Some browsers (Firefox) do not allow Web Applications to read from
         // the clipboard so verify if not only the ClipboardAPI is available,
         // but also if the `readText` method is public.
-        if (allowNavigator && navigator.clipboard && navigator.clipboard.readText) {
+        if (allowNavigator && !this.navigatorApiFailed && navigator.clipboard && navigator.clipboard.readText) {
             navigator.clipboard.readText()
                 .then(this.processClipboardData.bind(this))
                 .catch((e) => {
@@ -105,6 +107,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                             'Either fix why Clipboard API is blocked, OR stop this message from appearing by setting grid ' +
                             'property suppressClipboardApi=true (which will default the grid to using the workaround rather than the API');
                     }, 'clipboardApiError');
+                    this.navigatorApiFailed = true;
                     this.pasteFromClipboardLegacy();
                 });
         } else {
