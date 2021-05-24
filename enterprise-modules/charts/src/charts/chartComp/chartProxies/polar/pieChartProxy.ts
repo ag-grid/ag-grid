@@ -116,7 +116,9 @@ export class PieChartProxy extends PolarChartProxy {
             }
         }
 
+        pieSeries.angleName = field.displayName!;
         pieSeries.labelKey = params.category.id;
+        pieSeries.labelName = params.category.name;
         pieSeries.data = params.data;
 
         if (this.crossFiltering) {
