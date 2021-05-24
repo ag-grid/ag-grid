@@ -21,6 +21,7 @@ const xfFactory: ExcelOOXMLTemplate = {
                     applyAlignment: alignment ? 1 : undefined,
                     applyProtection: protection ? 1 : undefined,
                     applyBorder: borderId ? 1 : undefined,
+                    applyFill: fillId ? 1 : undefined,
                     borderId,
                     fillId,
                     applyFont: fontId ? 1 : undefined,

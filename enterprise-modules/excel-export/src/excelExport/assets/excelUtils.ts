@@ -15,7 +15,9 @@ export const pixelsToEMU = (value: number): number => {
     return Math.ceil(value * INCH_TO_EMU);
 }
 
-export const getFontFamilyId = (name?: string): number => {
+export const getFontFamilyId = (name?: string): number | undefined => {
+    if (name === undefined) { return; }
+
     const families = ['Automatic', 'Roman', 'Swiss', 'Modern', 'Script', 'Decorative'];
     const pos = families.indexOf(name || 'Automatic');
 
