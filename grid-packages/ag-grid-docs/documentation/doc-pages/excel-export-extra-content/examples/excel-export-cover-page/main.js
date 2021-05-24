@@ -35,7 +35,7 @@ const gridOptions = {
 };
 
 
-const onBtExport = () => {
+function onBtExport() {
     const spreadsheets = [];
 
     //set a filter condition ensuring no records are returned so only the header content is exported
