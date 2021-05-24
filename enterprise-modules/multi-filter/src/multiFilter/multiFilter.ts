@@ -360,7 +360,7 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
     }
 
     private executeWhenAllFiltersReady(action: () => void): void {
-        if (this.filters) {
+        if (this.filters && this.filters.length > 0) {
             action();
         } else {
             this.afterFiltersReadyFuncs.push(action);
