@@ -1,0 +1,103 @@
+@import '../../ag-theme-base/sass/ag-theme-base';
+
+// helper to implement a classic-based theme
+@mixin ag-theme-classic-impl($theme-name, $params) {
+    @if not global-variable-exists('ag-suppress-#{$theme-name}-deprecation-warning') and not global-variable-exists('ag-suppress-all-theme-deprecation-warnings') {
+        @warn "#{$theme-name} is a legacy theme. We continue to include it in our distribution for backwards compatibility, but do not update and test it with each release so some features may not look exactly right. You may continue to use it but if you encounter issues you will need to add your own CSS rules to make the app look as you want. For more information, see the migration advice at https://www.ag-grid.com/javascript-grid-themes-v23-migration/ . To suppress this warning, define $ag-suppress-#{$theme-name}-deprecation-warning:true; before including the theme file.";
+    }
+
+    .#{$theme-name} {
+        @include ag-v22-to-v23-compatibility-mode();
+        @include ag-theme-classic($params);
+    }
+}
+
+@mixin ag-theme-classic($params) {
+    $params: map-merge($ag-theme-base-default-params, $params);
+    @include ag-theme-base(ag-theme-base-create-params-from-legacy-vars($params));
+
+    .ag-icon {
+        color: $ag-icon-color;
+        margin: 1px 1px 2px 1px;
+    }
+
+    .ag-icon-tree-closed::before {
+        content: map-get($ag-theme-base-icons-font-codes, "contracted");
+    }
+    
+    .ag-icon-tree-open::before {
+        content: map-get($ag-theme-base-icons-font-codes, "expanded"); 
+    }
+
+    @if $header-background-image {
+        .ag-header, .ag-column-drop-cell {
+            background-image: $header-background-image;
+        }
+    }
+
+    .ag-tab {
+        border: 1px solid transparent;
+        padding: ag-param(grid-size) ag-param(grid-size) * 2;
+        margin: ag-param(grid-size);
+        margin-bottom: -1px; // shift down 1px to make tab background blend with area below
+    }
+
+    .ag-tabs-body {
+        margin: ag-param(grid-size) / 2 0;
+    }
+
+    .ag-tab-selected {
+        @include ag-color-property(background-color, background-color);
+        @include ag-color-property(border-color, border-color);
+        border-bottom-color: transparent;
+    }
+
+    .ag-tabs-header {
+        @include ag-color-property(background-color, header-background-color);
+        border-bottom: 1px solid;
+        @include ag-color-property(border-bottom-color, border-color);
+    }
+
+    .ag-filter .ag-filter-apply-panel {
+        justify-content: flex-start;
+    }
+
+    .ag-menu-option-active {
+        @include ag-color-property(background-color, selected-row-background-color);
+    }
+
+    .ag-column-drop-cell {
+        border: 1px solid;
+        @include ag-color-property(border-color, border-color);
+        border-radius: 0;
+    }
+
+    .ag-column-drop-cell-button .ag-icon {
+        border: 1px solid transparent;
+    }
+
+    .ag-column-drop-cell-button:hover .ag-icon {
+        @include ag-color-property(border-color, border-color);
+    }
+
+    .ag-panel-title-bar-button-icon {
+        font-size: 20px;
+        line-height: 20px;
+    }
+
+    .ag-menu-option-part {
+        padding-top: ag-param(grid-size);
+        padding-bottom: ag-param(grid-size);
+    }
+
+    .ag-column-drop-vertical-title-bar {
+        margin-top: ag-param(grid-size);
+        margin-left: ag-param(grid-size);
+    }
+    .ag-column-drop-vertical-title {
+        margin-left: ag-param(grid-size);
+    }
+    .ag-column-drop-vertical-empty-message {
+        margin-left: ag-param(grid-size) * 3 + ag-param(icon-size);
+    }
+}

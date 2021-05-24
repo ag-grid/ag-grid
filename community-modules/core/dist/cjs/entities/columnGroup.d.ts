@@ -1,0 +1,65 @@
+// Type definitions for @ag-grid-community/core v25.3.0
+// Project: http://www.ag-grid.com/
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
+import { ColumnGroupChild } from "./columnGroupChild";
+import { ColGroupDef } from "./colDef";
+import { Column } from "./column";
+import { AbstractColDef } from "./colDef";
+import { OriginalColumnGroup } from "./originalColumnGroup";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+export declare class ColumnGroup implements ColumnGroupChild {
+    static HEADER_GROUP_SHOW_OPEN: string;
+    static HEADER_GROUP_SHOW_CLOSED: string;
+    static EVENT_LEFT_CHANGED: string;
+    static EVENT_DISPLAYED_CHILDREN_CHANGED: string;
+    static createUniqueId(groupId: string, instanceId: number): string;
+    gridOptionsWrapper: GridOptionsWrapper;
+    private children;
+    private displayedChildren;
+    private readonly groupId;
+    private readonly instanceId;
+    private readonly originalColumnGroup;
+    private readonly pinned;
+    private left;
+    private oldLeft;
+    private localEventService;
+    private parent;
+    constructor(originalColumnGroup: OriginalColumnGroup, groupId: string, instanceId: number, pinned: 'left' | 'right' | null);
+    reset(): void;
+    getParent(): ColumnGroup;
+    setParent(parent: ColumnGroup): void;
+    getUniqueId(): string;
+    isEmptyGroup(): boolean;
+    isMoving(): boolean;
+    checkLeft(): void;
+    getLeft(): number | null;
+    getOldLeft(): number | null;
+    setLeft(left: number | null): void;
+    getPinned(): 'left' | 'right' | null;
+    private createAgEvent;
+    addEventListener(eventType: string, listener: Function): void;
+    removeEventListener(eventType: string, listener: Function): void;
+    getGroupId(): string;
+    getInstanceId(): number;
+    isChildInThisGroupDeepSearch(wantedChild: ColumnGroupChild): boolean;
+    getActualWidth(): number;
+    isResizable(): boolean;
+    getMinWidth(): number;
+    addChild(child: ColumnGroupChild): void;
+    getDisplayedChildren(): ColumnGroupChild[] | null;
+    getLeafColumns(): Column[];
+    getDisplayedLeafColumns(): Column[];
+    getDefinition(): AbstractColDef | null;
+    getColGroupDef(): ColGroupDef | null;
+    isPadding(): boolean;
+    isExpandable(): boolean;
+    isExpanded(): boolean;
+    setExpanded(expanded: boolean): void;
+    private addDisplayedLeafColumns;
+    private addLeafColumns;
+    getChildren(): ColumnGroupChild[] | null;
+    getColumnGroupShow(): string | undefined;
+    getOriginalColumnGroup(): OriginalColumnGroup;
+    getPaddingLevel(): number;
+    calculateDisplayedColumns(): void;
+}

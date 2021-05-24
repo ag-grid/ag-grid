@@ -1,0 +1,164 @@
+@mixin ag-theme-base-part-menu {
+
+    .ag-menu {
+        @include ag-card();
+        padding: 0;
+    }
+
+    .ag-menu-list {
+        cursor: default;
+        padding: ag-param(grid-size) 0;
+    }
+
+    .ag-menu-separator {
+        height: (ag-param(grid-size) * 2) + 1;
+    }
+
+    .ag-menu-separator-part::after {
+        content: "";
+        display: block;
+        @include ag-border(critical, top);
+    }
+
+    .ag-menu-option-active, .ag-compact-menu-option-active {
+        @include ag-color-property(background-color, row-hover-color);
+    }
+
+    .ag-menu-option-part, .ag-compact-menu-option-part {
+        line-height: ag-param(icon-size);
+        padding: (ag-param(grid-size) + 2) 0;
+    }
+
+    .ag-menu-option-disabled, .ag-compact-menu-option-disabled {
+        opacity: 0.5;
+    }
+
+    .ag-menu-option-icon, .ag-compact-menu-option-icon {
+        @include ag-theme-rtl((padding-left: ag-param(grid-size) * 2));
+        width: ag-param(icon-size);
+    }
+
+    .ag-menu-option-text, .ag-compact-menu-option-text {
+        padding-left: ag-param(grid-size) * 2;
+        padding-right: ag-param(grid-size) * 2;
+    }
+
+    .ag-menu-option-shortcut, .ag-compact-menu-option-shortcut {
+        @include ag-theme-rtl((padding-right: ag-param(grid-size)));
+    }
+
+    .ag-menu-option-popup-pointer, .ag-compact-menu-option-popup-pointer {
+        padding-right: ag-param(grid-size);
+    }
+
+    ////////////////////////////////////////
+    // Column Filter
+    ////////////////////////////////////////
+    .ag-tabs-header {
+        min-width: 220px;
+        width: 100%;
+        display: flex;
+    }
+
+    .ag-tab {
+        border-bottom: ag-param(selected-tab-underline-width) solid transparent;
+        display: flex;
+        flex: none;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+
+        @if ag-param(full-width-tabs) {
+            flex: 1 1 auto;
+        }
+
+        @if ag-param(selected-tab-underline-transition-speed) {
+            transition: border-bottom ag-param(selected-tab-underline-transition-speed);
+        }
+    }
+
+    @include ag-keyboard-focus((ag-tab), 4px);
+
+    .ag-tab-selected {
+        @include ag-color-property(border-bottom-color, selected-tab-underline-color);
+    }
+
+    .ag-menu-header {
+        @include ag-color-property(color, secondary-foreground-color);
+    }
+
+    .ag-filter-separator {
+        @include ag-border(critical, top);
+    }
+
+    ////////////////////////////////////////
+    // Value Set Filter
+    ////////////////////////////////////////
+
+    .ag-filter-condition-operator {
+        height: 17px;
+    }
+
+    .ag-filter-condition-operator-or {
+        @include ag-theme-rtl((margin-left: ag-param(grid-size) * 2));
+    }
+
+    .ag-set-filter-select-all {
+        padding-top: ag-param(widget-container-vertical-padding);
+    }
+
+    .ag-set-filter-list, .ag-filter-no-matches {
+        height: ag-param(list-item-height) * 6;
+    }
+
+    .ag-set-filter-filter {
+        margin-top: ag-param(widget-container-vertical-padding);
+        margin-left: ag-param(widget-container-horizontal-padding);
+        margin-right: ag-param(widget-container-horizontal-padding);
+    }
+
+    .ag-filter-to {
+        margin-top: ag-param(widget-vertical-spacing);
+    }
+
+    .ag-mini-filter {
+        margin: ag-param(widget-container-vertical-padding) ag-param(widget-container-horizontal-padding);
+    }
+
+    .ag-set-filter-item {
+        margin: 0px ag-param(widget-container-horizontal-padding);
+    }
+
+    .ag-set-filter-item-value {
+        @include ag-theme-rtl((margin-left: ag-param(widget-container-horizontal-padding)));
+    }
+
+    .ag-filter-apply-panel {
+        padding: ag-param(widget-container-vertical-padding) ag-param(widget-container-horizontal-padding);
+        @include ag-border(secondary, top);
+    }
+
+    .ag-filter-apply-panel-button {
+        line-height: 1.5;
+        @include ag-theme-rtl((margin-left: ag-param(grid-size) * 2));
+    }
+
+    .ag-simple-filter-body-wrapper {
+        @include ag-vertical-widget-container();
+    }
+
+    .ag-filter-no-matches {
+        padding: ag-param(widget-container-vertical-padding) ag-param(widget-container-horizontal-padding);
+    }
+
+    .ag-multi-filter-menu-item {
+        margin: ag-param(grid-size) 0;
+    }
+
+    .ag-multi-filter-group-title-bar {
+        padding: ag-param(grid-size) * 2 ag-param(grid-size);
+        background-color: transparent;
+    }
+
+    @include ag-keyboard-focus((ag-multi-filter-group-title-bar), 4px);
+}
