@@ -171,6 +171,7 @@ const registerFont = (font: ExcelFont): number => {
             currentFont.strikeThrough != strikeThrough ||
             currentFont.underline != convertedUnderline ||
             currentFont.verticalAlign != convertedVerticalAlign ||
+            // @ts-ignore
             currentFont.family != familyId
         ) {
             return false;
