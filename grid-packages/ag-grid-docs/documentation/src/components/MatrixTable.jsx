@@ -82,8 +82,13 @@ const renderEnterprise = (value, isTree, rowData = {}) => {
 
 const processRows = (framework, rowArray, columnFields, isTree, booleanOnly, stringOnly, childPropertyName, level, group = 'root') => {
     return rowArray.reduce((allRows, currentRow, rowIdx) => {
-        const exclude = isTree && currentRow.title === 'See Also';
+        let exclude = false;
         const rowItems = currentRow[childPropertyName];
+
+        if (
+            (isTree && currentRow.title) === 'See Also' ||
+            (currentRow.frameworks && currentRow.frameworks.indexOf(framework) === -1)
+        ) { exclude = true; }
 
         if (isTree && rowItems != null && !currentRow.matrixExcludeChildren && !exclude) {
             const titleField = columnFields[0];
