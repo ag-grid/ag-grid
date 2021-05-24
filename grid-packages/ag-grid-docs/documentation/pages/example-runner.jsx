@@ -5,9 +5,9 @@ import ExampleRunnerResult from 'components/example-runner/ExampleRunnerResult';
 import { useExampleFileNodes } from 'components/example-runner/use-example-file-nodes';
 import { getExampleInfo } from 'components/example-runner/helpers';
 
-const ExampleRunnerPage = ({ query: { pageName, library, framework, useFunctionalReact, importType, name, title, type, options } }) => {
+const ExampleRunnerPage = ({ query: { pageName, library, framework, useFunctionalReact, useVue3, importType, name, title, type, options } }) => {
     const nodes = useExampleFileNodes();
-    const exampleInfo = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, importType);
+    const exampleInfo = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, useVue3, importType);
 
     return <div style={{ height: '100vh', width: '100%' }}>
         <Helmet title={title}>
@@ -22,6 +22,7 @@ export const ParameterConfig = {
     library: StringParam,
     framework: StringParam,
     useFunctionalReact: BooleanParam,
+    useVue3: BooleanParam,
     importType: StringParam,
     name: StringParam,
     title: StringParam,

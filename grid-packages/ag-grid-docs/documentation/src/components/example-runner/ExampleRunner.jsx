@@ -22,12 +22,13 @@ import styles from './ExampleRunner.module.scss';
  */
 export const ExampleRunner = props => {
     return <GlobalContextConsumer>
-        {({ exampleImportType, useFunctionalReact, useVue3, set }) => {
+        {({ exampleImportType, useFunctionalReact, enableVue3, useVue3, set }) => {
             const innerProps = {
                 ...props,
                 exampleImportType,
                 useFunctionalReact,
-                useVue3,
+                enableVue3,
+                useVue3: enableVue3 ? useVue3 : false,
                 set,
             };
 
@@ -73,7 +74,7 @@ const saveIndexHtmlPermutations = (nodes, library, pageName, name, title, type, 
     }
 };
 
-const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, library, exampleImportType, useFunctionalReact, useVue3, set }) => {
+const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, library, exampleImportType, useFunctionalReact, enableVue3, useVue3, set }) => {
     const nodes = useExampleFileNodes();
     const [showCode, setShowCode] = useState(!!(options && options.showCode));
     const exampleInfo = useMemo(
@@ -113,7 +114,7 @@ const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, l
                     useFunctionalReact={useFunctionalReact}
                     onChange={event => set({ useFunctionalReact: JSON.parse(event.target.value) })} />
             }
-            {library === 'grid' && exampleInfo.framework === 'vue' &&
+            {library === 'grid' && enableVue3 && exampleInfo.framework === 'vue' &&
                 <VueStyleSelector
                     useVue3={useVue3}
                     onChange={event => set({ useVue3: JSON.parse(event.target.value) })} />

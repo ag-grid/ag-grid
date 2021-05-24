@@ -86,7 +86,7 @@ import 'ag-grid-enterprise';
 |}
 |```
 [[only-vue]]
-|Finally, if you're using Angular you'll need to specify `ag-grid-vue` packages:
+|Finally, if you're using Vue you'll need to specify `ag-grid-vue` packages:
 |
 |```diff
 |"dependencies": {

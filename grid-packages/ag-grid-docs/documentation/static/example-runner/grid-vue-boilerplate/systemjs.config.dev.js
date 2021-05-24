@@ -27,11 +27,11 @@
                 'css': 'npm:systemjs-plugin-css/css.js',
 
                 // vuejs
-                'vue': 'npm:vue@3.0.0/dist/vue.esm-browser.js',
-                '@vue/reactivity': 'npm:@vue/reactivity@3.0.0/dist/reactivity.esm-browser.js',
+                'vue': 'npm:vue@2.6.12/dist/vue.min.js',
 
-                // vue class component
-                'vue-class-component': 'npm:vue-class-component@^8.0.0-beta.3/dist/vue-class-component.cjs.js',
+                // vue property decorator
+                'vue-class-component': 'npm:vue-class-component@6.3.2/dist/vue-class-component.min.js',
+                'vue-property-decorator': 'npm:vue-property-decorator@7.2.0/lib/vue-property-decorator.umd.js',
 
                 app: appLocation + 'app'
             },
@@ -51,7 +51,7 @@
             app: {
                 defaultExtension: 'js'
             },
-            'ag-grid-vue3': {
+            'ag-grid-vue': {
                 main: './lib/AgGridVue.js',
                 defaultExtension: 'js'
             },
@@ -63,7 +63,7 @@
                 main: './dist/ag-grid-enterprise.cjs.js',
                 defaultExtension: 'js'
             },
-            '@ag-grid-community/vue3': {
+            '@ag-grid-community/vue': {
                 main: './lib/AgGridVue.js',
                 defaultExtension: 'js'
             },
