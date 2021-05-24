@@ -550,7 +550,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     protected changeOpacity(fills: string[], alpha: number) {
         return fills.map(fill => {
             const c = Color.fromString(fill);
-            return new Color(c.r, c.g, c.b, 0.3).toHexString();
+            return new Color(c.r, c.g, c.b, alpha).toHexString();
         });
     }
 
