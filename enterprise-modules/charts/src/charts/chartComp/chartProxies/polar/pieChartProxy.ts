@@ -1,10 +1,4 @@
-import {
-    AgChart,
-    AgPolarChartOptions,
-    ChartTheme,
-    PieSeries,
-    PolarChart
-} from "ag-charts-community";
+import { AgChart, AgPolarChartOptions, ChartTheme, PieSeries, PolarChart } from "ag-charts-community";
 import { AgPieSeriesOptions, HighlightOptions, PieSeriesOptions, PolarChartOptions } from "@ag-grid-community/core";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { PolarChartProxy } from "./polarChartProxy";
@@ -89,11 +83,9 @@ export class PieChartProxy extends PolarChartProxy {
         opaqueSeries: PieSeries | undefined
     ) {
         const existingSeriesId = series && series.angleKey;
-        const {fills, strokes} = this.getPalette();
         const {seriesDefaults} = this.iChartOptions;
 
         let pieSeries = series;
-        const calloutColors = seriesDefaults.callout && seriesDefaults.callout.colors;
 
         if (existingSeriesId !== field.colId) {
             chart.removeSeries(series);
@@ -124,7 +116,9 @@ export class PieChartProxy extends PolarChartProxy {
             }
         }
 
+        pieSeries.angleName = field.displayName!;
         pieSeries.labelKey = params.category.id;
+        pieSeries.labelName = params.category.name;
         pieSeries.data = params.data;
 
         if (this.crossFiltering) {
@@ -133,8 +127,8 @@ export class PieChartProxy extends PolarChartProxy {
 
             const isOpaqueSeries = !opaqueSeries;
             if (isOpaqueSeries) {
-                pieSeries.fills = fills.map(fill => this.hexToRGBA(fill, '0.3'));
-                pieSeries.strokes = strokes.map(stroke => this.hexToRGBA(stroke, '0.3'));
+                pieSeries.fills = this.changeOpacity(pieSeries.fills, 0.3);
+                pieSeries.strokes = this.changeOpacity(pieSeries.strokes, 0.3);
                 pieSeries.showInLegend = false;
             } else {
                 chart.legend.addEventListener('click', (event: LegendClickEvent) => {
@@ -142,11 +136,6 @@ export class PieChartProxy extends PolarChartProxy {
                         opaqueSeries.toggleSeriesItem(event.itemId as any, event.enabled);
                     }
                 });
-                pieSeries.fills = fills;
-                pieSeries.strokes = strokes;
-                if (calloutColors) {
-                    pieSeries.callout.colors = strokes;
-                }
             }
             chart.tooltip.delay = 500;
 
@@ -154,10 +143,6 @@ export class PieChartProxy extends PolarChartProxy {
             pieSeries.highlightStyle.fill = undefined;
 
             pieSeries.addEventListener("nodeClick", this.crossFilterCallback);
-        } else {
-            if (calloutColors) {
-                pieSeries.callout.colors = strokes;
-            }
         }
 
         chart.addSeries(pieSeries);

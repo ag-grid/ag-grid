@@ -31,7 +31,7 @@ const resetStylesheetValues = (): void => {
     registeredBorders = [{ left: undefined, right: undefined, top: undefined, bottom: undefined, diagonal: undefined }];
     registeredCellStyleXfs = [{ borderId: 0, fillId: 0, fontId: 0, numFmtId: 0 }];
     registeredCellXfs = [{ borderId: 0, fillId: 0, fontId: 0, numFmtId: 0, xfId: 0 }];
-    registeredCellStyles = [{ builtinId: 0, name: 'normal', xfId: 0 }];
+    registeredCellStyles = [{ builtinId: 0, name: 'Normal', xfId: 0 }];
 };
 
 const registerFill = (fill: ExcelInterior): number => {
@@ -171,7 +171,7 @@ const registerFont = (font: ExcelFont): number => {
             currentFont.strikeThrough != strikeThrough ||
             currentFont.underline != convertedUnderline ||
             currentFont.verticalAlign != convertedVerticalAlign ||
-            currentFont.family != familyId.toString()
+            currentFont.family != familyId
         ) {
             return false;
         }
@@ -192,7 +192,7 @@ const registerFont = (font: ExcelFont): number => {
             strikeThrough,
             underline: convertedUnderline as any,
             verticalAlign: convertedVerticalAlign as any,
-            family: familyId.toString()
+            family: familyId != null ? familyId.toString() : undefined
         });
     }
 
@@ -253,7 +253,12 @@ const stylesheetFactory: ExcelOOXMLTemplate = {
             name: 'styleSheet',
             properties: {
                 rawMap: {
-                    xmlns: 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'
+                    'mc:Ignorable': 'x14ac x16r2 xr',
+                    'xmlns': 'http://schemas.openxmlformats.org/spreadsheetml/2006/main',
+                    'xmlns:mc': 'http://schemas.openxmlformats.org/markup-compatibility/2006',
+                    'xmlns:x14ac': 'http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac',
+                    'xmlns:x16r2': 'http://schemas.microsoft.com/office/spreadsheetml/2015/02/main',
+                    'xmlns:xr': 'http://schemas.microsoft.com/office/spreadsheetml/2014/revision'
                 }
             },
             children: [

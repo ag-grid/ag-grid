@@ -46,6 +46,7 @@ interface PieNodeDatum extends SeriesNodeDatum {
 
 export interface PieTooltipRendererParams extends PolarTooltipRendererParams {
     readonly labelKey?: string;
+    readonly labelName?: string;
 }
 
 interface PieHighlightStyle extends HighlightStyle {
@@ -169,6 +170,7 @@ export class PieSeries extends PolarSeries {
      * a pie slice angle).
      */
     @reactive('dataChange') angleKey = '';
+    @reactive('update') angleName = '';
 
     /**
      * The key of the numeric field to use to determine the radii of pie slices.
@@ -176,10 +178,12 @@ export class PieSeries extends PolarSeries {
      * proportionally smaller radii.
      */
     @reactive('dataChange') radiusKey?: string;
+    @reactive('update') radiusName?: string;
     @reactive('dataChange') radiusMin?: number;
     @reactive('dataChange') radiusMax?: number;
 
     @reactive('dataChange') labelKey?: string;
+    @reactive('update') labelName?: string;
 
     private _fills: string[] = [
         '#c16068',
@@ -525,8 +529,11 @@ export class PieSeries extends PolarSeries {
         const {
             fills,
             tooltip,
+            angleName,
             radiusKey,
+            radiusName,
             labelKey,
+            labelName,
         } = this;
 
         const { renderer: tooltipRenderer = this.tooltipRenderer } = tooltip;
@@ -548,9 +555,12 @@ export class PieSeries extends PolarSeries {
                 datum,
                 angleKey,
                 angleValue,
+                angleName,
                 radiusKey,
                 radiusValue: radiusKey ? datum[radiusKey] : undefined,
+                radiusName,
                 labelKey,
+                labelName,
                 title,
                 color,
             }), defaults);

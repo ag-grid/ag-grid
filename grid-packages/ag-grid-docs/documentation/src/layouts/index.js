@@ -37,7 +37,7 @@ const TopBar = ({ frameworks, framework, path, rootPage }) => (
  * This controls the layout template for all pages.
  */
 export const Layout = ({ children, pageContext: { frameworks, framework = 'javascript', layout, pageName }, location: { pathname: path }, data }) => {
-    const rootPage = data ? data.markdownRemark.frontmatter.rootPage : false;
+    const rootPage = (data && data.markdownRemark) ? data.markdownRemark.frontmatter.rootPage : false;
 
     if (layout === 'bare') { // only for on the fly example runner
         return children;

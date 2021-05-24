@@ -4,7 +4,7 @@ import { ExcelThemeFont } from '../../../assets/excelInterfaces';
 const fontFactory: ExcelOOXMLTemplate = {
     getTemplate(font: ExcelThemeFont) {
         const {
-            size, colorTheme, color = '00000000', fontName = 'Calibri', family, scheme,
+            size, colorTheme, color = 'FF000000', fontName = 'Calibri', family, scheme,
             italic, bold, strikeThrough, outline, shadow, underline, verticalAlign
         } = font;
 

@@ -1777,14 +1777,26 @@
       "isRequired": true,
       "description": "The key to use to retrieve angle values from the data."
     },
+    "angleName": {
+      "type": "string",
+      "description": "A human-readable description of the angle values."
+    },
     "labelKey": {
       "type": "string",
       "isRequired": true,
       "description": "The key to use to retrieve label values from the data."
     },
+    "labelName": {
+      "type": "string",
+      "description": "A human-readable description of the label values."
+    },
     "radiusKey": {
       "type": "string",
       "description": "The key to use to retrieve radius values from the data."
+    },
+    "radiusName": {
+      "type": "string",
+      "description": "A human-readable description of the radius values."
     },
     "data": {
       "type": "object[]",
@@ -1820,9 +1832,12 @@
             "color?": "string",
             "angleKey": "string",
             "angleValue": "any",
+            "angleName?": "string",
             "radiusKey?": "string",
             "radiusValue?": "any",
-            "labelKey?": "string"
+            "radiusName?": "string",
+            "labelKey?": "string",
+            "labelName?": "string"
           },
           "returnType": "string"
         },

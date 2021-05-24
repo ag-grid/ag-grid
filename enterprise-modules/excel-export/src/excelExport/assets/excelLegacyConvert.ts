@@ -78,7 +78,7 @@ export const convertLegacyColor = (color?: string): string | undefined => {
         color = color.substr(1);
     }
 
-    return color.length === 6 ? '00' + color : color;
+    return color.length === 6 ? 'FF' + color : color;
 };
 
 export const convertLegacyBorder = (type?: string, weight?: number): string => {

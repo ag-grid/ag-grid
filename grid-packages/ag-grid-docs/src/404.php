@@ -8,7 +8,7 @@ gtm_data_layer('404');
     <?php meta_and_links("AG Grid: Page Not Found", "", "", "404.php", true); ?>
 
     <meta name="robots" content="noindex" />
-    <link rel="stylesheet" href="dist/homepage.css">
+    <link rel="stylesheet" href="/dist/homepage.css">
 </head>
 
 <body ng-app="index">

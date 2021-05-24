@@ -1155,7 +1155,6 @@ export abstract class Chart extends Observable {
         const { style } = this.scene.canvas.element;
         this.highlightedDatum = datum;
         this.series.forEach(s => {
-            // If we have a node right under the mouse pointer (won't be true for tracking mode).
             if (node) {
                 style.cursor = s.cursor;
             }

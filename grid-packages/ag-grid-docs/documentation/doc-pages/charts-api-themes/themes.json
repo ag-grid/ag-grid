@@ -1586,9 +1586,12 @@
                 "color?": "string",
                 "angleKey": "string",
                 "angleValue": "any",
+                "angleName?": "string",
                 "radiusKey?": "string",
                 "radiusValue?": "any",
-                "labelKey?": "string"
+                "radiusName?": "string",
+                "labelKey?": "string",
+                "labelName?": "string"
               },
               "returnType": "string"
             },
