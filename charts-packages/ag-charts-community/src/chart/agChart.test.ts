@@ -1,3 +1,7 @@
+test('dummy', () => {
+    expect(true).toBe(true);
+});
+
 /*
 import { AgChart } from "./agChart";
 import 'jest-canvas-mock';

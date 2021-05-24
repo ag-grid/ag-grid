@@ -59,5 +59,26 @@
                 "url": "/cookies.php"
             }
         ]
+    },
+    {
+        "title": "FOLLOW",
+        "links": [
+            {
+                "name": "Github",
+                "url": "https://github.com/ag-grid/ag-grid"
+            },
+            {
+                "name": "Twitter",
+                "url": "https://twitter.com/ag_grid"
+            },
+            {
+                "name": "YouTube",
+                "url": "https://youtube.com/c/ag-grid"
+            },
+            {
+                "name": "LinkedIn",
+                "url": "https://www.linkedin.com/company/ag-grid"
+            }
+        ]
     }
 ]
