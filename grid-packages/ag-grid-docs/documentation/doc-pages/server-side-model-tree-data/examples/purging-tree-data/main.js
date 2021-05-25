@@ -23,8 +23,8 @@ var gridOptions = {
     cacheBlockSize: 10,
     isServerSideGroupOpenByDefault: function (params) {
         var isKathrynPowers = params.rowNode.level == 0 && params.data.employeeName == 'Kathryn Powers';
-        var isAddieMeyer = params.rowNode.level == 1 && params.data.employeeName == 'Addie Meyer';
-        return isKathrynPowers || isAddieMeyer;
+        var isMabelWard = params.rowNode.level == 1 && params.data.employeeName == 'Mabel Ward';
+        return isKathrynPowers || isMabelWard;
     },
     isServerSideGroup: function (dataItem) {
         // indicate if node is a group
