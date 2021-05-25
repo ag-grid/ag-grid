@@ -83,14 +83,14 @@ export class PieChartProxy extends PolarChartProxy {
         opaqueSeries: PieSeries | undefined
     ) {
         const existingSeriesId = series && series.angleKey;
-        const {seriesDefaults} = this.iChartOptions;
+        const { seriesDefaults } = this.iChartOptions;
 
         let pieSeries = series;
 
         if (existingSeriesId !== field.colId) {
             chart.removeSeries(series);
 
-            pieSeries = AgChart.createComponent({
+            const options = {
                 ...seriesDefaults,
                 type: 'pie',
                 angleKey: this.crossFiltering ? angleField.colId + '-total' : angleField.colId,
@@ -108,9 +108,10 @@ export class PieChartProxy extends PolarChartProxy {
                     enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
                     renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
                 },
-            }, 'pie.series');
+            };
+            pieSeries = AgChart.createComponent(options, 'pie.series');
 
-            if (this.crossFiltering && !pieSeries.tooltip.renderer) {
+            if (this.crossFiltering && pieSeries && !pieSeries.tooltip.renderer) {
                 // only add renderer if user hasn't provided one
                 this.addCrossFilteringTooltipRenderer(pieSeries);
             }
@@ -177,6 +178,11 @@ export class PieChartProxy extends PolarChartProxy {
             highlightStyle: seriesDefaults.highlightStyle as HighlightOptions,
             listeners: seriesDefaults.listeners
         } as PieSeriesOptions;
+
+        const { callout } = options.seriesDefaults;
+        if (callout && !callout.colors) {
+            callout.colors = options.seriesDefaults.fill.colors;
+        }
 
         return options;
     }

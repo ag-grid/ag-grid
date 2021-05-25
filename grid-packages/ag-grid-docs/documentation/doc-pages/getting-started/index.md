@@ -1390,7 +1390,7 @@ title: "Get Started with AG Grid"
 | ```
 |
 | The code above presents two essential configuration properties of the grid -
-| [the column definitions](/column-configuration/)
+| [the column definitions](/column-definitions/)
 | (`AgGridColumn`) and the data (`rowData`). In our case, the column definitions contain three columns;
 | each column entry specifies the header label and the data field to be displayed in the body of the table.
 |

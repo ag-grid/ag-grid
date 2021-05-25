@@ -1,7 +1,7 @@
 var countryCodes = {};
 var base64flags = {};
 
-const countryCellRenderer = params => {
+function countryCellRenderer(params) {
     const country = params.data.country;
     return `<img alt="${country}" src="${base64flags[countryCodes[country]]}"> ${country}`;
 }
@@ -64,7 +64,7 @@ var gridOptions = {
     }
 };
 
-const onBtExport = () => {
+function onBtExport() {
     gridOptions.api.exportDataAsExcel();
 }
 

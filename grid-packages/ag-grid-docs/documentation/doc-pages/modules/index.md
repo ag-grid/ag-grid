@@ -41,7 +41,7 @@ framework support - if you require framework support you need to explicitly spec
 `@ag-grid-enterprise/all-modules` can be considered to be equivalent to `ag-grid-enterprise`,
     but with the additional
     need to register modules within. If using this module you might be better off using `ag-grid-enterprise`
-    (along with `ag-grid-enterprise)` as the bundle size will be similar and will reduce the need to register
+    as the bundle size will be similar and will reduce the need to register
     modules.
 
 [[note]]
