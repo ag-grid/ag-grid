@@ -160,6 +160,8 @@ export declare class BarSeries extends CartesianSeries {
     };
     getDomain(direction: ChartAxisDirection): any[];
     fireNodeClickEvent(event: MouseEvent, datum: BarNodeDatum): void;
+    private getCategoryAxis;
+    private getValueAxis;
     private generateNodeData;
     update(): void;
     private updateRectSelection;

@@ -13990,14 +13990,20 @@
                 yKey: datum.yKey
             });
         };
+        BarSeries.prototype.getCategoryAxis = function () {
+            return this.flipXY ? this.yAxis : this.xAxis;
+        };
+        BarSeries.prototype.getValueAxis = function () {
+            return this.flipXY ? this.xAxis : this.yAxis;
+        };
         BarSeries.prototype.generateNodeData = function () {
             var _this = this;
             if (!this.data) {
                 return [];
             }
             var flipXY = this.flipXY;
-            var xAxis = flipXY ? this.yAxis : this.xAxis;
-            var yAxis = flipXY ? this.xAxis : this.yAxis;
+            var xAxis = this.getCategoryAxis();
+            var yAxis = this.getValueAxis();
             var xScale = xAxis.scale;
             var yScale = yAxis.scale;
             var _a = this, groupScale = _a.groupScale, yKeys = _a.yKeys, cumYKeyCount = _a.cumYKeyCount, fills = _a.fills, strokes = _a.strokes, strokeWidth = _a.strokeWidth, seriesItemEnabled = _a.seriesItemEnabled, data = _a.data, xData = _a.xData, yData = _a.yData, label = _a.label;
@@ -14201,7 +14207,9 @@
             });
         };
         BarSeries.prototype.getTooltipHtml = function (nodeDatum) {
-            var _a = this, xKey = _a.xKey, yKeys = _a.yKeys, xAxis = _a.xAxis, yAxis = _a.yAxis, yData = _a.yData;
+            var _a = this, xKey = _a.xKey, yKeys = _a.yKeys, yData = _a.yData;
+            var xAxis = this.getCategoryAxis();
+            var yAxis = this.getValueAxis();
             var yKey = nodeDatum.yKey;
             var yGroup = yData[nodeDatum.index];
             if (!xKey || !yKey) {
@@ -15009,9 +15017,9 @@
             if (!xKey || !yKey) {
                 return '';
             }
-            var _b = this, tooltip = _b.tooltip, xName = _b.xName, yName = _b.yName, sizeKey = _b.sizeKey, sizeName = _b.sizeName, labelKey = _b.labelKey, labelName = _b.labelName, fill = _b.fill;
+            var _b = this, tooltip = _b.tooltip, xName = _b.xName, yName = _b.yName, sizeKey = _b.sizeKey, sizeName = _b.sizeName, labelKey = _b.labelKey, labelName = _b.labelName;
             var _c = tooltip.renderer, tooltipRenderer = _c === void 0 ? this.tooltipRenderer : _c;
-            var color = fill || 'gray';
+            var color = this.marker.fill || this.fill || 'gray';
             var title = this.title || yName;
             var datum = nodeDatum.seriesDatum;
             var xValue = datum[xKey];
