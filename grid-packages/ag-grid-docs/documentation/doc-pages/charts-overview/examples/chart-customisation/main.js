@@ -99,9 +99,7 @@ var options = {
                 fontWeight: 'bold',
                 fontSize: 14,
                 fontFamily: 'Impact, Charcoal, Sans-Serif',
-                formatter: function(params) {
-                    return params.index % 2 === 1 ? params.value / 1000 + 'k' : '';
-                }
+                formatter: params => params.value / 1000 + 'k'
             },
             title: {
                 text: 'Total number',
