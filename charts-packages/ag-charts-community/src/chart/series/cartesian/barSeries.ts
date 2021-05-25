@@ -753,12 +753,12 @@ export class BarSeries extends CartesianSeries {
         const xAxis = this.getCategoryAxis();
         const yAxis = this.getValueAxis();
         const { yKey } = nodeDatum;
-        const yGroup = yData[nodeDatum.index];
 
-        if (!xKey || !yKey) {
+        if (!xKey || !yKey || !yData.length) {
             return '';
         }
 
+        const yGroup = yData[nodeDatum.index];
         let fillIndex = 0;
         let i = 0;
         let j = 0;
