@@ -4,6 +4,7 @@ const gridOptions = {
         { field: 'lastName' },
         {
             headerName: 'Full Name',
+            colId: 'fullName',
             cellClass: 'fullName', // references excel style
             valueGetter: function(params) {
                 return `${params.data.firstName} ${params.data.lastName}`;
