@@ -41,7 +41,7 @@ var options = {
             type: 'number',
             position: 'left',
             label: {
-                formatter: function(params) { return params.value + '%'; },
+                format: '#{.0f}%'
             },
         }],
     legend: {
