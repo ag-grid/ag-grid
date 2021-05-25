@@ -1779,7 +1779,7 @@
     },
     "angleName": {
       "type": "string",
-      "description": "A human-readable description of the angle values."
+      "description": "A human-readable description of the angle values. If supplied, this will be passed to the tooltip renderer as one of the parameters."
     },
     "labelKey": {
       "type": "string",
@@ -1788,7 +1788,7 @@
     },
     "labelName": {
       "type": "string",
-      "description": "A human-readable description of the label values."
+      "description": "A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters."
     },
     "radiusKey": {
       "type": "string",
@@ -1796,7 +1796,7 @@
     },
     "radiusName": {
       "type": "string",
-      "description": "A human-readable description of the radius values."
+      "description": "A human-readable description of the radius values. If supplied, this will be passed to the tooltip renderer as one of the parameters."
     },
     "data": {
       "type": "object[]",
