@@ -7,6 +7,14 @@ have their values changed by the grid (e.g. Column sort can be changed by the us
 Non-stateful attributes do not change from what is set in the Column Definition (e.g. once the Header Name is set as
 part of a Column Definition, it typically does not change).
 
+[[note]]
+| The DOM also has stateful vs non-stateful attributes. For example consider a DOM element and setting 
+| `element.style.width="100px"` will indefinitely set width to 100 pixels, the browser will not change this value. 
+| However setting `element.scrollTop=200` will set the scroll position, but the browser can change the scroll
+| position further following user interaction, thus scroll position is stateful as the browser can change
+| the state.
+
+
 The full list of stateful attributes of Columns are as follows:
 
 - Width

@@ -799,7 +799,7 @@
     },
     "xName": {
       "type": "string",
-      "description": "A human-readable description of the x-values."
+      "description": "A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters."
     },
     "yKeys": {
       "type": "string[]",
@@ -808,7 +808,7 @@
     },
     "yNames": {
       "type": "string[]",
-      "description": "Human-readable descriptions of the y-values."
+      "description": "Human-readable descriptions of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters."
     },
     "data": {
       "type": "object[]",
@@ -1090,7 +1090,7 @@
     },
     "xName": {
       "type": "string",
-      "description": "A human-readable description of the x-values."
+      "description": "A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters."
     },
     "yKey": {
       "type": "string",
@@ -1099,7 +1099,7 @@
     },
     "yName": {
       "type": "string",
-      "description": "A human-readable description of the y-values."
+      "description": "A human-readable description of the y-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters."
     },
     "data": {
       "type": "object[]",
@@ -1297,7 +1297,7 @@
     },
     "xName": {
       "type": "string",
-      "description": "A human-readable description of the x-values."
+      "description": "A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters."
     },
     "yKeys": {
       "type": "string[]",
@@ -1306,7 +1306,7 @@
     },
     "yNames": {
       "type": "string[]",
-      "description": "Human-readable descriptions of the y-values."
+      "description": "Human-readable descriptions of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters."
     },
     "data": {
       "type": "object[]",
@@ -1553,7 +1553,7 @@
     },
     "xName": {
       "type": "string",
-      "description": "A human-readable description of the x-values."
+      "description": "A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters."
     },
     "yKey": {
       "type": "string",
@@ -1562,7 +1562,7 @@
     },
     "yName": {
       "type": "string",
-      "description": "A human-readable description of the y-values."
+      "description": "A human-readable description of the y-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters."
     },
     "sizeKey": {
       "type": "string",
@@ -1570,7 +1570,7 @@
     },
     "sizeName": {
       "type": "string",
-      "description": "A human-readable description of the size values."
+      "description": "A human-readable description of the size values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters."
     },
     "labelKey": {
       "type": "string",
@@ -1578,7 +1578,7 @@
     },
     "labelName": {
       "type": "string",
-      "description": "A human-readable description of the label values."
+      "description": "A human-readable description of the label values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters."
     },
     "data": {
       "type": "object[]",
@@ -1779,7 +1779,7 @@
     },
     "angleName": {
       "type": "string",
-      "description": "A human-readable description of the angle values."
+      "description": "A human-readable description of the angle values. If supplied, this will be passed to the tooltip renderer as one of the parameters."
     },
     "labelKey": {
       "type": "string",
@@ -1788,7 +1788,7 @@
     },
     "labelName": {
       "type": "string",
-      "description": "A human-readable description of the label values."
+      "description": "A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters."
     },
     "radiusKey": {
       "type": "string",
@@ -1796,7 +1796,7 @@
     },
     "radiusName": {
       "type": "string",
-      "description": "A human-readable description of the radius values."
+      "description": "A human-readable description of the radius values. If supplied, this will be passed to the tooltip renderer as one of the parameters."
     },
     "data": {
       "type": "object[]",
@@ -2641,7 +2641,7 @@
     },
     "xName": {
       "type": "string",
-      "description": "A human-readable description of the x-values."
+      "description": "A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters."
     },
     "yKey": {
       "type": "string",
@@ -2650,7 +2650,7 @@
     },
     "yName": {
       "type": "string",
-      "description": "A human-readable description of the y-values."
+      "description": "A human-readable description of the y-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters."
     },
     "meta": {
       "displayName": "Histogram Series Configuration",

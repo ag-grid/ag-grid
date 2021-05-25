@@ -87,6 +87,6 @@ The example below shows the date filter in action, using some of the configurati
 - The **Date** column is using a Date Filter.
 - A custom `comparator` is provided to parse the data and allow date comparisons to be made.
 - The native date picker is forced to be used in every browser.
-- The minimum valid year is set to `2000`, so dates entered into the filter with a year less than 2000 will not be recognised.
+- The minimum valid year is set to `2000`, so dates entered into the filter with a year less than 2000 will not be recognised. This avoids the filter getting applied as the user is typing a year - for example suppose the user is typing the year "2008", the filter doesn't execute for values "2", "20" or "200" (as the text "2008" is partially typed).
 
 <grid-example title='Date Picker' name='date-filter' type='generated' options='{ "exampleHeight": 520 }'></grid-example>

@@ -105,12 +105,12 @@ gtm_data_layer('community-enterprise');
                         <h3>AG Grid Community</h3>
                         <p>
                             AG Grid Community is a free to use product distributed under the
-                            <a href="./eula/AG-Grid-Community-License.html">MIT License</a>.
+                            <a href="/eula/AG-Grid-Community-License.html">MIT License</a>.
                             It is free to use in your production environments.
                         </p>
                         <h3 style="margin-top: 26px;">AG Charts Community</h3>
                         <p>
-                            AG Charts Community (a.k.a. <a href="./javascript-charts/overview/">Standalone Charts</a>)
+                            AG Charts Community (a.k.a. <a href="/javascript-charts/overview/">Standalone Charts</a>)
                             is a free to use product distributed under the
                             <a href="/eula/AG-Grid-Community-License.html">MIT License</a>.
                             It is free to use in your production environments.
@@ -163,7 +163,7 @@ gtm_data_layer('community-enterprise');
                             <p>Per Developer</p>
                         </h4>
                         <div>
-                            <a class="btn" style="color: #009ede; border-color: #009ede" href="../ecommerce/#/ecommerce/?licenseType=single">BUY</a>
+                            <a class="btn" style="color: #009ede; border-color: #009ede" href="/ecommerce/#/ecommerce/?licenseType=single">BUY</a>
 <!--
                             <a class="btn" style="color: #009ede; border-color: #009ede" href="mailto:info@ag-grid.com">CONTACT US</a>
 -->
@@ -182,7 +182,7 @@ gtm_data_layer('community-enterprise');
                             <p>Per Developer</p>
                         </h4>
                         <div>
-                            <a class="btn" style="color: #009d70; border-color: #009d70" href="../ecommerce/#/ecommerce/?licenseType=multi">BUY</a>
+                            <a class="btn" style="color: #009d70; border-color: #009d70" href="/ecommerce/#/ecommerce/?licenseType=multi">BUY</a>
 <!--
                             <a class="btn" style="color: #009d70; border-color: #009d70" href="mailto:info@ag-grid.com">CONTACT US</a>
 -->
@@ -342,7 +342,7 @@ gtm_data_layer('community-enterprise');
                         <ul>
                             <li>
                                 A Deployment License Add-on allows making a project available
-                                to individuals (eg your customers) outside of your orginisation
+                                to individuals (eg your customers) outside of your organisation
                                 (sub-license).
                             </li>
                             <li>
@@ -365,9 +365,9 @@ gtm_data_layer('community-enterprise');
                                 They are considered part of the overall application production deployment.
                             </li>
                             <li>
-                                Multi-tennent deployments, where one application instance is serving
+                                Multi-tenant deployments, where one application instance is serving
                                 many customers over different URLs, is considered one deployment, as
-                                each tennent is getting serviced by the same application instance.
+                                each tenant is getting serviced by the same application instance.
                             </li>
                             <li>
                                 Different instances of the same application, where the instances
@@ -439,7 +439,7 @@ gtm_data_layer('community-enterprise');
                     <div>
                         <span>1-year Subscription to New Versions (included)</span>
                         <p>When you make a purchase you get a Subscription to license new versions of AG Grid Enterprise for 365 days.
-                            You can see our release list <a href="./ag-grid-changelog/">here</a>. After 365 days you will no longer be able to license the latest versions
+                            You can see our release list <a href="/ag-grid-changelog/">here</a>. After 365 days you will no longer be able to license the latest versions
                             of AG Grid Enterprise without renewing your subscription. You can continue to use your licensed versions
                             in perpetuity.
                         </p>

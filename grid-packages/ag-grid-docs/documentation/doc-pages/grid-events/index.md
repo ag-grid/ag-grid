@@ -35,8 +35,8 @@ interface CellValueChangedEvent {
     │     <span class="event-hierarchy__attribute">type</span>: string, // the event type, eg 'sortChanged' or 'columnResized'
     │   }</span>
     └── AgGridEvent
-        │     <span class="event-hierarchy__attribute">api</span>: GridAPI, // see [Grid API](/grid-api/)
-        │     <span class="event-hierarchy__attribute">columnApi</span>: ColumnAPI // see [Column API](/column-api/)
+        │     <span class="event-hierarchy__attribute">api</span>: GridAPI, // the Grid API
+        │     <span class="event-hierarchy__attribute">columnApi</span>: ColumnAPI // the Column API
         │   }</span>
         ├── GridReadyEvent <span class="event-hierarchy__property">{}</span>
         ├── SelectionChangedEvent <span class="event-hierarchy__property">{}</span>

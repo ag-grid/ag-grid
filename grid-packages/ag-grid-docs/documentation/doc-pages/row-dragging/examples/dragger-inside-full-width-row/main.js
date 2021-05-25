@@ -147,7 +147,8 @@ var gridOptions = {
         return isFullWidth(rowNode.data);
     },
     // see AG Grid docs cellRenderer for details on how to build cellRenderers
-    fullWidthCellRenderer: 'fullWidthCellRenderer'
+    fullWidthCellRenderer: 'fullWidthCellRenderer',
+    animateRows: true
 };
 
 function countryCellRenderer(params) {

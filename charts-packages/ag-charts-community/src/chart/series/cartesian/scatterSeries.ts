@@ -357,12 +357,11 @@ export class ScatterSeries extends CartesianSeries {
             sizeKey,
             sizeName,
             labelKey,
-            labelName,
-            fill
+            labelName
         } = this;
 
         const { renderer: tooltipRenderer = this.tooltipRenderer } = tooltip;
-        const color = fill || 'gray';
+        const color = this.marker.fill || this.fill || 'gray';
         const title = this.title || yName;
         const datum = nodeDatum.seriesDatum;
         const xValue = datum[xKey];
