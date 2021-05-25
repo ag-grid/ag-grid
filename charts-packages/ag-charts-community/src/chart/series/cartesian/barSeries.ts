@@ -13,12 +13,12 @@ import { Label } from "../../label";
 import { PointerEvents } from "../../../scene/node";
 import { LegendDatum } from "../../legend";
 import { CartesianSeries } from "./cartesianSeries";
-import { ChartAxisDirection, flipChartAxisDirection } from "../../chartAxis";
+import { ChartAxis, ChartAxisDirection, flipChartAxisDirection } from "../../chartAxis";
 import { TooltipRendererResult, toTooltipHtml } from "../../chart";
 import { findMinMax } from "../../../util/array";
-import { toFixed } from "../../../util/number";
 import { equal } from "../../../util/equal";
 import { reactive, TypedEvent } from "../../../util/observable";
+import Scale from "../../../scale/scale";
 
 export interface BarSeriesNodeClickEvent extends TypedEvent {
     readonly type: 'nodeClick';
@@ -480,14 +480,22 @@ export class BarSeries extends CartesianSeries {
         });
     }
 
+    private getCategoryAxis(): ChartAxis<Scale<any, number>> {
+        return this.flipXY ? this.yAxis : this.xAxis;
+    }
+
+    private getValueAxis(): ChartAxis<Scale<any, number>> {
+        return this.flipXY ? this.xAxis : this.yAxis;
+    }
+
     private generateNodeData(): BarNodeDatum[] {
         if (!this.data) {
             return [];
         }
 
         const { flipXY } = this;
-        const xAxis = flipXY ? this.yAxis : this.xAxis;
-        const yAxis = flipXY ? this.xAxis : this.yAxis;
+        const xAxis = this.getCategoryAxis();
+        const yAxis = this.getValueAxis();
         const xScale = xAxis.scale;
         const yScale = yAxis.scale;
 
@@ -741,7 +749,9 @@ export class BarSeries extends CartesianSeries {
     }
 
     getTooltipHtml(nodeDatum: BarNodeDatum): string {
-        const { xKey, yKeys, xAxis, yAxis, yData } = this;
+        const { xKey, yKeys, yData } = this;
+        const xAxis = this.getCategoryAxis();
+        const yAxis = this.getValueAxis();
         const { yKey } = nodeDatum;
         const yGroup = yData[nodeDatum.index];
 
