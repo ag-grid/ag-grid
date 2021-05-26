@@ -29,6 +29,10 @@ const gridOptions = {
         flex: 1
     },
 
+    onGridReady: function(params) {
+        document.getElementById("columnGroups").checked = true;
+    },
+
     popupParent: document.body
 };
 
