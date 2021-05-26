@@ -97,6 +97,4 @@ Fired when a node of any series in the chart is clicked. In case a chart has mul
 
 In this case the contents of the event object passed to the listener will depend on the type of series the clicked node belongs to.
 
-## Legend Events
-
 <api-documentation source='charts-api/api.json' section='chart.legend.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation>

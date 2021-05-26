@@ -6,10 +6,7 @@ var options = {
     series: [{
         type: 'line',
         xKey: 'date',
-        yKey: 'temp',
-        tooltip: {
-            enabled: false
-        }
+        yKey: 'temp'
     }],
     axes: [{
         type: 'number',
