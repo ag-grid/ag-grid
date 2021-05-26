@@ -31,7 +31,7 @@ var gridOptions = {
     ],
 
     onGridReady: function(params) {
-        document.getElementById("selectedOnly").checked = true;
+        document.getElementById("columnGroups").checked = true;
     }
 };
 
