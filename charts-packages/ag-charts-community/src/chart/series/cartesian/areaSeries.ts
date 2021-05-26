@@ -580,8 +580,8 @@ export class AreaSeries extends CartesianSeries {
         const processedYValue = yGroup[yKeyIndex];
         const yName = yNames[yKeyIndex];
         const color = fills[yKeyIndex % fills.length];
-        const xString = xAxis.formatDatum(xValue, 2);
-        const yString = yAxis.formatDatum(processedYValue, 2);
+        const xString = xAxis.formatDatum(xValue);
+        const yString = yAxis.formatDatum(yValue);
         const title = yName;
         const content = xString + ': ' + yString;
         const defaults: TooltipRendererResult = {

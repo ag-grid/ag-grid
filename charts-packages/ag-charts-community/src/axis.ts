@@ -2,7 +2,6 @@ import Scale from "./scale/scale";
 import { Group } from "./scene/group";
 import { Selection } from "./scene/selection";
 import { Line } from "./scene/shape/line";
-import { normalizeAngle360, normalizeAngle360Inclusive, toRadians } from "./util/angle";
 import { Text, FontStyle, FontWeight } from "./scene/shape/text";
 import { Arc } from "./scene/shape/arc";
 import { Shape } from "./scene/shape/shape";
@@ -10,6 +9,7 @@ import { BBox } from "./scene/bbox";
 import { Matrix } from "./scene/matrix";
 import { Caption } from "./caption";
 import { createId } from "./util/id";
+import { normalizeAngle360, normalizeAngle360Inclusive, toRadians } from "./util/angle";
 // import { Rect } from "./scene/shape/rect"; // debug (bbox)
 
 enum Tags {
@@ -53,6 +53,7 @@ export class AxisTick {
 
 export interface AxisLabelFormatterParams {
     value: any;
+    index: number;
     fractionDigits?: number;
     formatter?: (x: any) => string;
     axis?: any;
@@ -269,19 +270,14 @@ export class Axis<S extends Scale<D, number>, D = any> {
         return this.scale.domain.slice();
     }
 
-    private labelFormatter?: (datum: any) => string;
-    private onLabelFormatChange(format?: string) {
+    protected labelFormatter?: (datum: any) => string;
+    protected onLabelFormatChange(format?: string) {
         if (format) {
             if (this.scale && this.scale.tickFormat) {
                 this.labelFormatter = this.scale.tickFormat(this.tick.count, format);
             }
         } else {
-            if (this.scale && this.scale.tickFormat && (this as any).type === 'time') {
-                // For time axis labels to look nice, even if date format wasn't set.
-                this.labelFormatter = this.scale.tickFormat(this.tick.count, undefined);
-            } else {
-                this.labelFormatter = undefined;
-            }
+            this.labelFormatter = undefined;
         }
     }
 
@@ -489,7 +485,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 node.textBaseline = parallelLabels && !labelRotation
                     ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom')
                     : 'middle';
-                node.text = this.formatDatum(datum);
+                node.text = this.formatTickDatum(datum, index);
 
                 node.textAlign = parallelLabels
                     ? labelRotation ? (sideFlag * alignFlag === -1 ? 'end' : 'start') : 'center'
@@ -553,25 +549,15 @@ export class Axis<S extends Scale<D, number>, D = any> {
         // bboxRect.height = bbox.height;
     }
 
-    /**
-     * Formats the values to show as axis tick labels. Since this method can be used
-     * by outside code to format values other than axis labels, extra precision might
-     * be required. For example, axis labels may not have any fractional part `[1, 2, 3, 4, 5]`,
-     * but if a data point falls somewhere between the ticks and has a value of `2.7348`,
-     * we probably don't want to format it as `2`. If that's the case, we can set
-     * `extraFractionDigits` to `2` and get the `2.7348` value displayed as `2.73`, that is
-     * with two fractional digits more than is used for axis labels.
-     * @param datum The datum to format. Usually a number, a string, or an object.
-     * @param extraFractionDigits In case the datum is a number, the extra fractional digits to use.
-     * @returns A string that represents the given datum.
-     */
-    formatDatum(datum: any, extraFractionDigits = 0): string {
+    // For formatting (nice rounded) tick values.
+    formatTickDatum(datum: any, index: number): string {
         const { label, labelFormatter, fractionDigits } = this;
         const meta = this.getMeta();
 
         return label.formatter
             ? label.formatter({
                 value: fractionDigits >= 0 ? datum : String(datum),
+                index,
                 fractionDigits,
                 formatter: labelFormatter,
                 axis: meta
@@ -580,9 +566,14 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 ? labelFormatter(datum)
                 : typeof datum === 'number' && fractionDigits >= 0
                     // the `datum` is a floating point number
-                    ? datum.toFixed(fractionDigits + extraFractionDigits)
+                    ? datum.toFixed(fractionDigits)
                     // the`datum` is an integer, a string or an object
                     : String(datum);
+    }
+
+    // For formatting arbitrary values between the ticks.
+    formatDatum(datum: any): string {
+        return String(datum);
     }
 
     thickness: number = 0;

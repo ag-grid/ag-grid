@@ -372,8 +372,8 @@ export class LineSeries extends CartesianSeries {
         const datum = nodeDatum.seriesDatum;
         const xValue = datum[xKey];
         const yValue = datum[yKey];
-        const xString = xAxis.formatDatum(xValue, 2);
-        const yString = yAxis.formatDatum(yValue, 2);
+        const xString = xAxis.formatDatum(xValue);
+        const yString = yAxis.formatDatum(yValue);
         const title = this.title || yName;
         const content = xString + ': ' + yString;
         const defaults: TooltipRendererResult = {

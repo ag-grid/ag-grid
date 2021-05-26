@@ -366,8 +366,8 @@ export class ScatterSeries extends CartesianSeries {
         const datum = nodeDatum.seriesDatum;
         const xValue = datum[xKey];
         const yValue = datum[yKey];
-        const xString = xAxis.formatDatum(xValue, 2);
-        const yString = yAxis.formatDatum(yValue, 2);
+        const xString = xAxis.formatDatum(xValue);
+        const yString = yAxis.formatDatum(yValue);
 
         let content = `<b>${xName || xKey}</b>: ${xString}`
             + `<br><b>${yName || yKey}</b>: ${yString}`;
