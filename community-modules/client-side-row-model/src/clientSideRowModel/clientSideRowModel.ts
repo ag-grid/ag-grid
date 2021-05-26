@@ -787,7 +787,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     public getRowNode(id: string): RowNode | null {
-        const idIsGroup = id != null && id.indexOf(RowNode.ID_PREFIX_ROW_GROUP) == 0;
+        // although id is typed a string, this could be called by the user, and they could have passed a number
+        const idIsGroup = typeof id == 'string' && id.indexOf(RowNode.ID_PREFIX_ROW_GROUP) == 0;
         if (idIsGroup) {
             // only one users complained about getRowNode not working for groups, after years of
             // this working for normal rows. so have done quick implementation. if users complain
