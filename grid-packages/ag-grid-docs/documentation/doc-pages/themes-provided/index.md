@@ -56,11 +56,11 @@ You can load the structural styles and theme from a free CDN by adding this code
 ```html
 <link
   rel="stylesheet"
-  href="https://unpkg.com/@ag-grid-community/all-modules@25.1.0/dist/styles/ag-grid.css" />
+  href="https://unpkg.com/@ag-grid-community/all-modules@25.3.0/dist/styles/ag-grid.css" />
 
 <link
   rel="stylesheet"
-  href="https://unpkg.com/@ag-grid-community/all-modules@25.1.0/dist/styles/ag-theme-alpine.css" />
+  href="https://unpkg.com/@ag-grid-community/all-modules@25.3.0/dist/styles/ag-theme-alpine.css" />
 ```
 
 [[note]]

@@ -42,7 +42,7 @@ If you do decide to use `packages` you'll need to specify `ag-grid-community` as
 
 ```js
 "dependencies": {
-    "ag-grid-community": "~25.1.0"
+    "ag-grid-community": "~25.3.0"
     //...other dependencies...
 }
 ```
@@ -51,8 +51,8 @@ You can then (optionally) specify `ag-grid-enterprise` if you require Enterprise
 
 ```diff
 "dependencies": {
-    "ag-grid-community": "~25.1.0"
-+   "ag-grid-enterprise": "~25.1.0"
+    "ag-grid-community": "~25.3.0"
++   "ag-grid-enterprise": "~25.3.0"
     //...other dependencies...
 }
 ```
@@ -68,9 +68,9 @@ import 'ag-grid-enterprise';
 |
 |```diff
 |"dependencies": {
-|    "ag-grid-community": "~25.1.0"
-|    "ag-grid-enterprise": "~25.1.0"
-|+   "ag-grid-angular": "~25.1.0"
+|    "ag-grid-community": "~25.3.0"
+|    "ag-grid-enterprise": "~25.3.0"
+|+   "ag-grid-angular": "~25.3.0"
 |    //...other dependencies...
 |}
 |```
@@ -79,9 +79,9 @@ import 'ag-grid-enterprise';
 |
 |```diff
 |"dependencies": {
-|    "ag-grid-community": "~25.1.0"
-|    "ag-grid-enterprise": "~25.1.0"
-|+   "ag-grid-react": "~25.1.0"
+|    "ag-grid-community": "~25.3.0"
+|    "ag-grid-enterprise": "~25.3.0"
+|+   "ag-grid-react": "~25.3.0"
 |    //...other dependencies...
 |}
 |```
@@ -90,9 +90,9 @@ import 'ag-grid-enterprise';
 |
 |```diff
 |"dependencies": {
-|    "ag-grid-community": "~25.1.0"
-|    "ag-grid-enterprise": "~25.1.0"
-|+   "ag-grid-vue": "~25.1.0"
+|    "ag-grid-community": "~25.3.0"
+|    "ag-grid-enterprise": "~25.3.0"
+|+   "ag-grid-vue": "~25.3.0"
 |    //...other dependencies...
 |}
 |```

@@ -38,7 +38,7 @@ For example, let's assume you specify the following in your `package.json`:
 
 ```js
 "dependencies": {
-    "@ag-grid-community/client-side-row-model": "~25.1.0"
+    "@ag-grid-community/client-side-row-model": "~25.3.0"
 }
 ```
 
@@ -66,7 +66,7 @@ For example, let's assume you specify the following in your `package.json`:
 
 ```js
 "dependencies": {
-    "@ag-grid-enterprise/filter-tool-panel": "~25.1.0"
+    "@ag-grid-enterprise/filter-tool-panel": "~25.3.0"
 }
 ```
 
