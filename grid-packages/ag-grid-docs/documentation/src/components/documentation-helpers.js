@@ -22,7 +22,7 @@ const prefixRegex = new RegExp(`^${withPrefix('/')}`);
 export const convertUrl = (href, framework) => {
     const link = href || '';
 
-    if (link.startsWith('/static/')) { return link; }
+    if (link.includes('/static/')) { return link; }
 
     return link.startsWith('/') ?
         // strip the prefix is case it's been applied, before creating the proper URL
