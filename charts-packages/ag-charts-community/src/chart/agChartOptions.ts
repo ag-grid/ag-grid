@@ -276,6 +276,7 @@ interface AgAxisTickOptions {
 
 interface AgAxisLabelFormatterParams {
     readonly value: any;
+    readonly index: number;
     readonly fractionDigits?: number;
     readonly formatter?: (x: any) => string;
 }

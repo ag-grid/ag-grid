@@ -760,6 +760,7 @@
         "type": {
           "parameters": {
             "value": "any",
+            "index": "number",
             "fractionDigits": "number",
             "formatter": "(x: any) => string"
           },
