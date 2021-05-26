@@ -99,6 +99,12 @@ var gridOptions = {
 
     columnDefs: columnDefs,
 
+    onGridReady: function(params) {
+        document.getElementById("fontSize").checked = true;
+        document.getElementById("rowHeight").checked = true;
+        document.getElementById("headerRowHeight").checked = true;
+    },
+
     pinnedTopRowData: [
         {
             athlete: 'Floating <Top> Athlete',
