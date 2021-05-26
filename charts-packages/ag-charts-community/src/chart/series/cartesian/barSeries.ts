@@ -753,12 +753,12 @@ export class BarSeries extends CartesianSeries {
         const xAxis = this.getCategoryAxis();
         const yAxis = this.getValueAxis();
         const { yKey } = nodeDatum;
-        const yGroup = yData[nodeDatum.index];
 
-        if (!xKey || !yKey) {
+        if (!xKey || !yKey || !yData.length) {
             return '';
         }
 
+        const yGroup = yData[nodeDatum.index];
         let fillIndex = 0;
         let i = 0;
         let j = 0;
@@ -780,8 +780,8 @@ export class BarSeries extends CartesianSeries {
         const xValue = datum[xKey];
         const yValue = datum[yKey];
         const processedYValue = yGroup[j][i];
-        const xString = xAxis.formatDatum(xValue, 2);
-        const yString = yAxis.formatDatum(processedYValue, 2);
+        const xString = xAxis.formatDatum(xValue);
+        const yString = yAxis.formatDatum(yValue);
         const title = yName;
         const content = xString + ': ' + yString;
         const defaults: TooltipRendererResult = {

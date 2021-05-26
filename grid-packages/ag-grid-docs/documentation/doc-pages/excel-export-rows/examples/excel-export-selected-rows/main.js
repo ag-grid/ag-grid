@@ -19,7 +19,10 @@ const gridOptions = {
     },
     suppressRowClickSelection: true,
     columnDefs: columnDefs,
-    rowSelection: 'multiple'
+    rowSelection: 'multiple',
+    onGridReady: function(params) {
+        document.getElementById("selectedOnly").checked = true;
+    }
 };
 
 

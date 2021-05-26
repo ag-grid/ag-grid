@@ -19,9 +19,7 @@ var gridOptions = {
         resizable: true
     },
 
-
     enableRangeSelection: true,
-    rowSelection: 'multiple',
     clipboardDeliminator: ','
 };
 

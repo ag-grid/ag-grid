@@ -28,7 +28,11 @@ var gridOptions = {
         { make: 'Toyota', model: 'Celica', price: 35000 },
         { make: 'Ford', model: 'Mondeo', price: 32000 },
         { make: 'Porsche', model: 'Boxter', price: 72000 }
-    ]
+    ],
+
+    onGridReady: function(params) {
+        document.getElementById("selectedOnly").checked = true;
+    }
 };
 
 function getBoolean(id) {

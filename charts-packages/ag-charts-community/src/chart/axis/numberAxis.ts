@@ -66,4 +66,8 @@ export class NumberAxis extends ChartAxis {
     get max(): number {
         return this._max;
     }
+
+    formatDatum(datum: number): string {
+        return datum.toFixed(2);
+    }
 }
