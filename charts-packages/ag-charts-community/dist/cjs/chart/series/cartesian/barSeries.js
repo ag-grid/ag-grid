@@ -646,10 +646,10 @@ var BarSeries = /** @class */ (function (_super) {
         var xAxis = this.getCategoryAxis();
         var yAxis = this.getValueAxis();
         var yKey = nodeDatum.yKey;
-        var yGroup = yData[nodeDatum.index];
-        if (!xKey || !yKey) {
+        if (!xKey || !yKey || !yData.length) {
             return '';
         }
+        var yGroup = yData[nodeDatum.index];
         var fillIndex = 0;
         var i = 0;
         var j = 0;
@@ -670,8 +670,8 @@ var BarSeries = /** @class */ (function (_super) {
         var xValue = datum[xKey];
         var yValue = datum[yKey];
         var processedYValue = yGroup[j][i];
-        var xString = xAxis.formatDatum(xValue, 2);
-        var yString = yAxis.formatDatum(processedYValue, 2);
+        var xString = xAxis.formatDatum(xValue);
+        var yString = yAxis.formatDatum(yValue);
         var title = yName;
         var content = xString + ': ' + yString;
         var defaults = {

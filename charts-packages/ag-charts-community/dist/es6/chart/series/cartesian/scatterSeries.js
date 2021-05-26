@@ -312,8 +312,8 @@ var ScatterSeries = /** @class */ (function (_super) {
         var datum = nodeDatum.seriesDatum;
         var xValue = datum[xKey];
         var yValue = datum[yKey];
-        var xString = xAxis.formatDatum(xValue, 2);
-        var yString = yAxis.formatDatum(yValue, 2);
+        var xString = xAxis.formatDatum(xValue);
+        var yString = yAxis.formatDatum(yValue);
         var content = "<b>" + (xName || xKey) + "</b>: " + xString
             + ("<br><b>" + (yName || yKey) + "</b>: " + yString);
         if (sizeKey) {

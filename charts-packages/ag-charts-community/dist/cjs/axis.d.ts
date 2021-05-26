@@ -34,6 +34,7 @@ export declare class AxisTick {
 }
 export interface AxisLabelFormatterParams {
     value: any;
+    index: number;
     fractionDigits?: number;
     formatter?: (x: any) => string;
     axis?: any;
@@ -145,8 +146,8 @@ export declare class Axis<S extends Scale<D, number>, D = any> {
     protected _visibleRange: number[];
     visibleRange: number[];
     domain: D[];
-    private labelFormatter?;
-    private onLabelFormatChange;
+    protected labelFormatter?: (datum: any) => string;
+    protected onLabelFormatChange(format?: string): void;
     protected _title: Caption | undefined;
     title: Caption | undefined;
     /**
@@ -185,19 +186,8 @@ export declare class Axis<S extends Scale<D, number>, D = any> {
      * it will also make it harder to reason about the program.
      */
     update(): void;
-    /**
-     * Formats the values to show as axis tick labels. Since this method can be used
-     * by outside code to format values other than axis labels, extra precision might
-     * be required. For example, axis labels may not have any fractional part `[1, 2, 3, 4, 5]`,
-     * but if a data point falls somewhere between the ticks and has a value of `2.7348`,
-     * we probably don't want to format it as `2`. If that's the case, we can set
-     * `extraFractionDigits` to `2` and get the `2.7348` value displayed as `2.73`, that is
-     * with two fractional digits more than is used for axis labels.
-     * @param datum The datum to format. Usually a number, a string, or an object.
-     * @param extraFractionDigits In case the datum is a number, the extra fractional digits to use.
-     * @returns A string that represents the given datum.
-     */
-    formatDatum(datum: any, extraFractionDigits?: number): string;
+    formatTickDatum(datum: any, index: number): string;
+    formatDatum(datum: any): string;
     thickness: number;
     computeBBox(options?: {
         excludeTitle: boolean;

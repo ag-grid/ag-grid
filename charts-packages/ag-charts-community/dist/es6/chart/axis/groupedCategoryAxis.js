@@ -254,7 +254,8 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
             else {
                 node.text = labelFormatter
                     ? labelFormatter({
-                        value: String(datum.label)
+                        value: String(datum.label),
+                        index: index
                     })
                     : String(datum.label);
                 node.visible =

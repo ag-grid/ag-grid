@@ -520,9 +520,9 @@ var HistogramSeries = /** @class */ (function (_super) {
         var _c = tooltip.renderer, tooltipRenderer = _c === void 0 ? this.tooltipRenderer : _c;
         var bin = nodeDatum.seriesDatum;
         var aggregatedValue = bin.aggregatedValue, frequency = bin.frequency, _d = bin.domain, rangeMin = _d[0], rangeMax = _d[1];
-        var title = (xName || xKey) + ": " + xAxis.formatDatum(rangeMin, 2) + " - " + xAxis.formatDatum(rangeMax, 2);
+        var title = (xName || xKey) + ": " + xAxis.formatDatum(rangeMin) + " - " + xAxis.formatDatum(rangeMax);
         var content = yKey ?
-            "<b>" + (yName || yKey) + " (" + aggregation + ")</b>: " + yAxis.formatDatum(aggregatedValue, 2) + "<br>" :
+            "<b>" + (yName || yKey) + " (" + aggregation + ")</b>: " + yAxis.formatDatum(aggregatedValue) + "<br>" :
             '';
         content += "<b>Frequency</b>: " + frequency;
         var defaults = {

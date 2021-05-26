@@ -87,6 +87,9 @@ var NumberAxis = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    NumberAxis.prototype.formatDatum = function (datum) {
+        return datum.toFixed(2);
+    };
     NumberAxis.className = 'NumberAxis';
     NumberAxis.type = 'number';
     return NumberAxis;

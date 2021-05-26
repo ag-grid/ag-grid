@@ -4363,46 +4363,6 @@ var Line = /** @class */ (function (_super) {
     return Line;
 }(Shape));
 
-var twoPi = Math.PI * 2;
-/**
- * Normalize the given angle to be in the [0, 2π) interval.
- * @param radians Angle in radians.
- */
-function normalizeAngle360(radians) {
-    radians %= twoPi;
-    radians += twoPi;
-    radians %= twoPi;
-    return radians;
-}
-function normalizeAngle360Inclusive(radians) {
-    radians %= twoPi;
-    radians += twoPi;
-    if (radians !== twoPi) {
-        radians %= twoPi;
-    }
-    return radians;
-}
-/**
- * Normalize the given angle to be in the [-π, π) interval.
- * @param radians Angle in radians.
- */
-function normalizeAngle180(radians) {
-    radians %= twoPi;
-    if (radians < -Math.PI) {
-        radians += twoPi;
-    }
-    else if (radians >= Math.PI) {
-        radians -= twoPi;
-    }
-    return radians;
-}
-function toRadians(degrees) {
-    return degrees / 180 * Math.PI;
-}
-function toDegrees(radians) {
-    return radians / Math.PI * 180;
-}
-
 // @ts-ignore Suppress tsc error: Property 'sign' does not exist on type 'Math'
 var sign = Math.sign ? Math.sign : function (x) {
     x = +x;
@@ -5307,6 +5267,46 @@ var Path = /** @class */ (function (_super) {
     return Path;
 }(Shape));
 
+var twoPi = Math.PI * 2;
+/**
+ * Normalize the given angle to be in the [0, 2π) interval.
+ * @param radians Angle in radians.
+ */
+function normalizeAngle360(radians) {
+    radians %= twoPi;
+    radians += twoPi;
+    radians %= twoPi;
+    return radians;
+}
+function normalizeAngle360Inclusive(radians) {
+    radians %= twoPi;
+    radians += twoPi;
+    if (radians !== twoPi) {
+        radians %= twoPi;
+    }
+    return radians;
+}
+/**
+ * Normalize the given angle to be in the [-π, π) interval.
+ * @param radians Angle in radians.
+ */
+function normalizeAngle180(radians) {
+    radians %= twoPi;
+    if (radians < -Math.PI) {
+        radians += twoPi;
+    }
+    else if (radians >= Math.PI) {
+        radians -= twoPi;
+    }
+    return radians;
+}
+function toRadians(degrees) {
+    return degrees / 180 * Math.PI;
+}
+function toDegrees(radians) {
+    return radians / Math.PI * 180;
+}
+
 function isEqual(a, b, epsilon) {
     if (epsilon === void 0) { epsilon = 1e-10; }
     return Math.abs(a - b) < epsilon;
@@ -5774,13 +5774,7 @@ var Axis = /** @class */ (function () {
             }
         }
         else {
-            if (this.scale && this.scale.tickFormat && this.type === 'time') {
-                // For time axis labels to look nice, even if date format wasn't set.
-                this.labelFormatter = this.scale.tickFormat(this.tick.count, undefined);
-            }
-            else {
-                this.labelFormatter = undefined;
-            }
+            this.labelFormatter = undefined;
         }
     };
     Object.defineProperty(Axis.prototype, "title", {
@@ -5951,7 +5945,7 @@ var Axis = /** @class */ (function () {
             node.textBaseline = parallelLabels && !labelRotation
                 ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom')
                 : 'middle';
-            node.text = _this.formatDatum(datum);
+            node.text = _this.formatTickDatum(datum, index);
             node.textAlign = parallelLabels
                 ? labelRotation ? (sideFlag * alignFlag === -1 ? 'end' : 'start') : 'center'
                 : sideFlag * regularFlipFlag === -1 ? 'end' : 'start';
@@ -6005,25 +5999,14 @@ var Axis = /** @class */ (function () {
         // bboxRect.width = bbox.width;
         // bboxRect.height = bbox.height;
     };
-    /**
-     * Formats the values to show as axis tick labels. Since this method can be used
-     * by outside code to format values other than axis labels, extra precision might
-     * be required. For example, axis labels may not have any fractional part `[1, 2, 3, 4, 5]`,
-     * but if a data point falls somewhere between the ticks and has a value of `2.7348`,
-     * we probably don't want to format it as `2`. If that's the case, we can set
-     * `extraFractionDigits` to `2` and get the `2.7348` value displayed as `2.73`, that is
-     * with two fractional digits more than is used for axis labels.
-     * @param datum The datum to format. Usually a number, a string, or an object.
-     * @param extraFractionDigits In case the datum is a number, the extra fractional digits to use.
-     * @returns A string that represents the given datum.
-     */
-    Axis.prototype.formatDatum = function (datum, extraFractionDigits) {
-        if (extraFractionDigits === void 0) { extraFractionDigits = 0; }
+    // For formatting (nice rounded) tick values.
+    Axis.prototype.formatTickDatum = function (datum, index) {
         var _a = this, label = _a.label, labelFormatter = _a.labelFormatter, fractionDigits = _a.fractionDigits;
         var meta = this.getMeta();
         return label.formatter
             ? label.formatter({
                 value: fractionDigits >= 0 ? datum : String(datum),
+                index: index,
                 fractionDigits: fractionDigits,
                 formatter: labelFormatter,
                 axis: meta
@@ -6032,9 +6015,13 @@ var Axis = /** @class */ (function () {
                 ? labelFormatter(datum)
                 : typeof datum === 'number' && fractionDigits >= 0
                     // the `datum` is a floating point number
-                    ? datum.toFixed(fractionDigits + extraFractionDigits)
+                    ? datum.toFixed(fractionDigits)
                     // the`datum` is an integer, a string or an object
                     : String(datum);
+    };
+    // For formatting arbitrary values between the ticks.
+    Axis.prototype.formatDatum = function (datum) {
+        return String(datum);
     };
     Axis.prototype.computeBBox = function (options) {
         var _a = this, title = _a.title, lineNode = _a.lineNode;
@@ -6274,6 +6261,9 @@ var NumberAxis = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    NumberAxis.prototype.formatDatum = function (datum) {
+        return datum.toFixed(2);
+    };
     NumberAxis.className = 'NumberAxis';
     NumberAxis.type = 'number';
     return NumberAxis;
@@ -7183,7 +7173,8 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
             else {
                 node.text = labelFormatter
                     ? labelFormatter({
-                        value: String(datum.label)
+                        value: String(datum.label),
+                        index: index
                     })
                     : String(datum.label);
                 node.visible =
@@ -8543,10 +8534,12 @@ var TimeAxis = /** @class */ (function (_super) {
     __extends$f(TimeAxis, _super);
     function TimeAxis() {
         var _this = _super.call(this) || this;
+        _this.datumFormat = '%m/%d/%y, %H:%M:%S';
         _this._nice = true;
         var scale = new TimeScale();
         scale.clamp = true;
         _this.scale = scale;
+        _this.datumFormatter = scale.tickFormat(_this.tick.count, _this.datumFormat);
         return _this;
     }
     Object.defineProperty(TimeAxis.prototype, "nice", {
@@ -8577,6 +8570,18 @@ var TimeAxis = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    TimeAxis.prototype.onLabelFormatChange = function (format) {
+        if (format) {
+            _super.prototype.onLabelFormatChange.call(this, format);
+        }
+        else {
+            // For time axis labels to look nice, even if date format wasn't set.
+            this.labelFormatter = this.scale.tickFormat(this.tick.count, undefined);
+        }
+    };
+    TimeAxis.prototype.formatDatum = function (datum) {
+        return this.datumFormatter(datum);
+    };
     TimeAxis.className = 'TimeAxis';
     TimeAxis.type = 'time';
     return TimeAxis;
@@ -13439,8 +13444,8 @@ var AreaSeries = /** @class */ (function (_super) {
         var processedYValue = yGroup[yKeyIndex];
         var yName = yNames[yKeyIndex];
         var color = fills[yKeyIndex % fills.length];
-        var xString = xAxis.formatDatum(xValue, 2);
-        var yString = yAxis.formatDatum(processedYValue, 2);
+        var xString = xAxis.formatDatum(xValue);
+        var yString = yAxis.formatDatum(yValue);
         var title = yName;
         var content = xString + ': ' + yString;
         var defaults = {
@@ -14212,10 +14217,10 @@ var BarSeries = /** @class */ (function (_super) {
         var xAxis = this.getCategoryAxis();
         var yAxis = this.getValueAxis();
         var yKey = nodeDatum.yKey;
-        var yGroup = yData[nodeDatum.index];
-        if (!xKey || !yKey) {
+        if (!xKey || !yKey || !yData.length) {
             return '';
         }
+        var yGroup = yData[nodeDatum.index];
         var fillIndex = 0;
         var i = 0;
         var j = 0;
@@ -14236,8 +14241,8 @@ var BarSeries = /** @class */ (function (_super) {
         var xValue = datum[xKey];
         var yValue = datum[yKey];
         var processedYValue = yGroup[j][i];
-        var xString = xAxis.formatDatum(xValue, 2);
-        var yString = yAxis.formatDatum(processedYValue, 2);
+        var xString = xAxis.formatDatum(xValue);
+        var yString = yAxis.formatDatum(yValue);
         var title = yName;
         var content = xString + ': ' + yString;
         var defaults = {
@@ -14642,8 +14647,8 @@ var LineSeries = /** @class */ (function (_super) {
         var datum = nodeDatum.seriesDatum;
         var xValue = datum[xKey];
         var yValue = datum[yKey];
-        var xString = xAxis.formatDatum(xValue, 2);
-        var yString = yAxis.formatDatum(yValue, 2);
+        var xString = xAxis.formatDatum(xValue);
+        var yString = yAxis.formatDatum(yValue);
         var title = this.title || yName;
         var content = xString + ': ' + yString;
         var defaults = {
@@ -15025,8 +15030,8 @@ var ScatterSeries = /** @class */ (function (_super) {
         var datum = nodeDatum.seriesDatum;
         var xValue = datum[xKey];
         var yValue = datum[yKey];
-        var xString = xAxis.formatDatum(xValue, 2);
-        var yString = yAxis.formatDatum(yValue, 2);
+        var xString = xAxis.formatDatum(xValue);
+        var yString = yAxis.formatDatum(yValue);
         var content = "<b>" + (xName || xKey) + "</b>: " + xString
             + ("<br><b>" + (yName || yKey) + "</b>: " + yString);
         if (sizeKey) {
@@ -15605,9 +15610,9 @@ var HistogramSeries = /** @class */ (function (_super) {
         var _c = tooltip.renderer, tooltipRenderer = _c === void 0 ? this.tooltipRenderer : _c;
         var bin = nodeDatum.seriesDatum;
         var aggregatedValue = bin.aggregatedValue, frequency = bin.frequency, _d = bin.domain, rangeMin = _d[0], rangeMax = _d[1];
-        var title = (xName || xKey) + ": " + xAxis.formatDatum(rangeMin, 2) + " - " + xAxis.formatDatum(rangeMax, 2);
+        var title = (xName || xKey) + ": " + xAxis.formatDatum(rangeMin) + " - " + xAxis.formatDatum(rangeMax);
         var content = yKey ?
-            "<b>" + (yName || yKey) + " (" + aggregation + ")</b>: " + yAxis.formatDatum(aggregatedValue, 2) + "<br>" :
+            "<b>" + (yName || yKey) + " (" + aggregation + ")</b>: " + yAxis.formatDatum(aggregatedValue) + "<br>" :
             '';
         content += "<b>Frequency</b>: " + frequency;
         var defaults = {

@@ -44122,7 +44122,8 @@ var ClientSideRowModel = /** @class */ (function (_super) {
         return this.nodeManager.getCopyOfNodesMap();
     };
     ClientSideRowModel.prototype.getRowNode = function (id) {
-        var idIsGroup = id != null && id.indexOf(RowNode.ID_PREFIX_ROW_GROUP) == 0;
+        // although id is typed a string, this could be called by the user, and they could have passed a number
+        var idIsGroup = typeof id == 'string' && id.indexOf(RowNode.ID_PREFIX_ROW_GROUP) == 0;
         if (idIsGroup) {
             // only one users complained about getRowNode not working for groups, after years of
             // this working for normal rows. so have done quick implementation. if users complain

@@ -10,4 +10,5 @@ export declare class NumberAxis extends ChartAxis {
     min: number;
     protected _max: number;
     max: number;
+    formatDatum(datum: number): string;
 }
