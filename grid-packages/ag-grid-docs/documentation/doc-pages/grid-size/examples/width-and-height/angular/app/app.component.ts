@@ -77,7 +77,6 @@ export class AppComponent {
 
     setWidthAndHeight(width, height) {
         this.style = {
-            marginTop: '20px',
             width: width,
             height: height
         };
