@@ -9,20 +9,14 @@ import styles from './Announcements.module.scss';
  * This are the announcement cards shown underneath the left-hand navigation menu.
  */
 const Announcements = ({ framework }) => <div className={styles['announcements']}>
-    <Announcement date="Apr 30" version="25.2.0">
+    <Announcement date="Apr 27" version="25.3.0">
         <p className="card-text">
             Minor release with bug fixes:
         </p>
-        <ul>
-            <li className={styles['announcement__list-item']}>
-                <DocumentationLink framework={framework} href="/excel-export/">Excel Export Enhancements</DocumentationLink>
-            </li>
-            <li className={styles['announcement__list-item']}>
-                <DocumentationLink framework={framework} href="/charts-axes/#log-axis">Log Charts</DocumentationLink>
-            </li>
-        </ul>
     </Announcement>
+
     <SimpleMailingListSignup />
+
     <Announcement title="Community or Enterprise?">
         <img style={{ width: '30px', float: 'left', marginRight: '6px' }} src={communitySvg} alt="Community" />
         <p >
@@ -36,6 +30,7 @@ const Announcements = ({ framework }) => <div className={styles['announcements']
             when you start developing for production.
         </p>
     </Announcement>
+
     <Announcement highlight={false}>
         <p>Work at AG Grid:</p>
         <h5 className="card-title"><a href="/ag-grid-jobs-board/">JavaScript Developers</a></h5>
@@ -45,6 +40,7 @@ const Announcements = ({ framework }) => <div className={styles['announcements']
             Check the <a href="/ag-grid-jobs-board/">jobs board</a>
         </p>
     </Announcement>
+
     <Announcement title="Best Web Grids for 2020" date="Jan 27th">
         <p className="card-text">
             AG Grid is the "Absolute Winner" according
