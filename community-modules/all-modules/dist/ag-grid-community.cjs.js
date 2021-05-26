@@ -44411,11 +44411,11 @@ var ClientSideRowModel = /** @class */ (function (_super) {
                     // a group is not open this time, it was not open last time. so we know all closed groups
                     // already have their top positions cleared. so there is no need to traverse all the way
                     // when changedPath is active and the rowNode is not expanded.
-                    var skipChildren = changedPath.isActive() && !rowNode.expanded;
+                    var isRootNode = rowNode.level == -1; // we need to give special consideration for root node,
+                    // as expanded=undefined for root node
+                    var skipChildren = changedPath.isActive() && !isRootNode && !rowNode.expanded;
                     if (!skipChildren) {
-                        for (var i = 0; i < rowNode.childrenAfterGroup.length; i++) {
-                            recurse(rowNode.childrenAfterGroup[i]);
-                        }
+                        rowNode.childrenAfterGroup.forEach(recurse);
                     }
                 }
             }
