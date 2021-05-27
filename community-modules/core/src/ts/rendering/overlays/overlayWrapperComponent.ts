@@ -10,7 +10,7 @@ import { LayoutCssClasses, LayoutFeature, LayoutView, UpdateLayoutClassesParams 
 import { PaginationProxy } from "../../pagination/paginationProxy";
 import { Events } from "../../eventKeys";
 import { GridApi } from "../../gridApi";
-import { ColumnModel } from "../../columnController/columnModel";
+import { ColumnModel } from "../../columns/columnModel";
 
 enum LoadingType { Loading, NoRows }
 

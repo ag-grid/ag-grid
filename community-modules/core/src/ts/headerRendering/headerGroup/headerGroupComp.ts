@@ -1,8 +1,8 @@
 import { Component } from "../../widgets/component";
 import { IComponent } from "../../interfaces/iComponent";
 import { ColumnGroup } from "../../entities/columnGroup";
-import { ColumnApi } from "../../columnController/columnApi";
-import { ColumnModel } from "../../columnController/columnModel";
+import { ColumnApi } from "../../columns/columnApi";
+import { ColumnModel } from "../../columns/columnModel";
 import { Autowired } from "../../context/context";
 import { TouchListener } from "../../widgets/touchListener";
 import { RefSelector } from "../../widgets/componentAnnotations";

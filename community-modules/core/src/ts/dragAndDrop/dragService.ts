@@ -1,7 +1,7 @@
 import { Bean, PreDestroy, Autowired, PostConstruct } from "../context/context";
 import { LoggerFactory, Logger } from "../logger";
 import { DragStartedEvent, DragStoppedEvent, Events } from "../events";
-import { ColumnApi } from "../columnController/columnApi";
+import { ColumnApi } from "../columns/columnApi";
 import { GridApi } from "../gridApi";
 import { BeanStub } from "../context/beanStub";
 import { find, exists } from "../utils/generic";

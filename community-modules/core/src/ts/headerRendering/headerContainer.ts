@@ -1,5 +1,5 @@
 import { Autowired, PostConstruct, PreDestroy } from '../context/context';
-import { ColumnModel } from '../columnController/columnModel';
+import { ColumnModel } from '../columns/columnModel';
 import { Events } from '../events';
 import { HeaderRowComp, HeaderRowType } from './headerRowComp';
 import { BodyDropTarget } from './bodyDropTarget';

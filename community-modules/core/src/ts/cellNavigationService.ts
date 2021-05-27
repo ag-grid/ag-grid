@@ -1,7 +1,7 @@
 import { Autowired, Bean } from "./context/context";
 import { BeanStub } from "./context/beanStub";
 import { Constants } from "./constants/constants";
-import { ColumnModel } from "./columnController/columnModel";
+import { ColumnModel } from "./columns/columnModel";
 import { IRowModel } from "./interfaces/iRowModel";
 import { CellPosition } from "./entities/cellPosition";
 import { RowNode } from "./entities/rowNode";

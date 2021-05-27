@@ -2,7 +2,7 @@ import { Column } from "../../entities/column";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { Bean, Autowired } from "../../context/context";
 import { BeanStub } from "../../context/beanStub";
-import { ColumnModel } from "../../columnController/columnModel";
+import { ColumnModel } from "../../columns/columnModel";
 import { HeaderNavigationService } from "./headerNavigationService";
 import { HeaderRowType } from "../headerRowComp";
 

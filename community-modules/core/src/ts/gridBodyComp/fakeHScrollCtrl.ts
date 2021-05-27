@@ -3,7 +3,7 @@ import { isBrowserIE, isInvisibleScrollbar } from "../utils/browser";
 import { Autowired, PostConstruct } from "../context/context";
 import { ScrollVisibleService } from "./scrollVisibleService";
 import { Events } from "../eventKeys";
-import { ColumnModel } from "../columnController/columnModel";
+import { ColumnModel } from "../columns/columnModel";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ControllersService } from "../controllersService";
 

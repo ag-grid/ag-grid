@@ -1,6 +1,6 @@
 import { Autowired, PostConstruct } from "../context/context";
 import { BeanStub } from "../context/beanStub";
-import { ColumnApi } from "../columnController/columnApi";
+import { ColumnApi } from "../columns/columnApi";
 import { Component } from "./component";
 import { GridApi } from "../gridApi";
 import { ITooltipComp, ITooltipParams } from "../rendering/tooltipComponent";

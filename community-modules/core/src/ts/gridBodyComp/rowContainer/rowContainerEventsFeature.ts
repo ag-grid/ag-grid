@@ -20,7 +20,7 @@ import { UndoRedoService } from "../../undoRedo/undoRedoService";
 import { Constants } from "../../constants/constants";
 import { missingOrEmpty } from "../../utils/generic";
 import { last } from "../../utils/array";
-import { ColumnModel } from "../../columnController/columnModel";
+import { ColumnModel } from "../../columns/columnModel";
 import { PaginationProxy } from "../../pagination/paginationProxy";
 import { PinnedRowModel } from "../../pinnedRowModel/pinnedRowModel";
 import { IRangeController } from "../../interfaces/iRangeController";

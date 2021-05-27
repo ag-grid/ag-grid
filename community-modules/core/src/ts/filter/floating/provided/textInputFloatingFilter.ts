@@ -9,7 +9,7 @@ import { ISimpleFilterModel, SimpleFilter } from '../../provided/simpleFilter';
 import { FilterChangedEvent } from '../../../events';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { isKeyPressed } from '../../../utils/keyboard';
-import { ColumnModel } from '../../../columnController/columnModel';
+import { ColumnModel } from '../../../columns/columnModel';
 import { KeyCode } from '../../../constants/keyCode';
 import { ITextFilterParams, TextFilter } from '../../provided/text/textFilter';
 

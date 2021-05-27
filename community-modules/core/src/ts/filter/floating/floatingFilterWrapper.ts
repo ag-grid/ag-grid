@@ -12,7 +12,7 @@ import { ColDef } from '../../entities/colDef';
 import { IFilterComp, IFilterDef } from '../../interfaces/iFilter';
 import { UserComponentFactory } from '../../components/framework/userComponentFactory';
 import { GridApi } from '../../gridApi';
-import { ColumnApi } from '../../columnController/columnApi';
+import { ColumnApi } from '../../columns/columnApi';
 import { FilterManager } from './../filterManager';
 import { ReadOnlyFloatingFilter } from './provided/readOnlyFloatingFilter';
 import { ModuleNames } from '../../modules/moduleNames';

@@ -5,7 +5,7 @@ import { Constants } from "../constants/constants";
 import { Events } from "../eventKeys";
 import { RowContainerHeightService } from "../rendering/rowContainerHeightService";
 import { ControllersService } from "../controllersService";
-import { ColumnModel } from "../columnController/columnModel";
+import { ColumnModel } from "../columns/columnModel";
 import { ScrollVisibleService } from "./scrollVisibleService";
 import { getTarget } from "../utils/event";
 import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";

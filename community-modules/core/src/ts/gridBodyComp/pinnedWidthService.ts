@@ -2,7 +2,7 @@ import { BeanStub } from "../context/beanStub";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { Events } from "../eventKeys";
-import { ColumnModel } from "../columnController/columnModel";
+import { ColumnModel } from "../columns/columnModel";
 import { Constants } from "../constants/constants";
 
 @Bean('pinnedWidthService')

@@ -1,7 +1,7 @@
 import { Bean, Autowired, PostConstruct } from "../context/context";
 import { BeanStub } from "../context/beanStub";
 import { Events, ScrollVisibilityChangedEvent } from "../events";
-import { ColumnApi } from "../columnController/columnApi";
+import { ColumnApi } from "../columns/columnApi";
 import { GridApi } from "../gridApi";
 import { ControllersService } from "../controllersService";
 

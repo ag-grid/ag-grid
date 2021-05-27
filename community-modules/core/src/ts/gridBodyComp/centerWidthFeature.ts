@@ -1,6 +1,6 @@
 import { BeanStub } from "../context/beanStub";
 import { Autowired, PostConstruct } from "../context/context";
-import { ColumnModel } from "../columnController/columnModel";
+import { ColumnModel } from "../columns/columnModel";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { Constants } from "../constants/constants";
 import { Events } from "../eventKeys";

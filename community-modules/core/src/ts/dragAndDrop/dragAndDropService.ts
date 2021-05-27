@@ -1,7 +1,7 @@
 import { BeanStub } from "../context/beanStub";
 import { PostConstruct, Bean, Autowired, PreDestroy } from "../context/context";
 import { Column } from "../entities/column";
-import { ColumnApi } from "../columnController/columnApi";
+import { ColumnApi } from "../columns/columnApi";
 import { GridApi } from "../gridApi";
 import { DragService, DragListenerParams } from "./dragService";
 import { Environment } from "../environment";

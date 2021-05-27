@@ -1,5 +1,5 @@
 import { Autowired, Bean, PostConstruct } from "../context/context";
-import { ColumnModel } from "../columnController/columnModel";
+import { ColumnModel } from "../columns/columnModel";
 import { ColumnGroupChild } from "../entities/columnGroupChild";
 import { Column } from "../entities/column";
 import { ColumnGroup } from "../entities/columnGroup";

@@ -1,5 +1,5 @@
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
-import { ColumnModel } from '../columnController/columnModel';
+import { ColumnModel } from '../columns/columnModel';
 import { Autowired } from '../context/context';
 import { HeaderContainer } from './headerContainer';
 import { Events } from '../events';

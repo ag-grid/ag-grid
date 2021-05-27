@@ -1,9 +1,9 @@
 import { ColGroupDef } from "../../entities/colDef";
 import { Column } from "../../entities/column";
 import { ColumnGroup } from "../../entities/columnGroup";
-import { ColumnApi } from "../../columnController/columnApi";
+import { ColumnApi } from "../../columns/columnApi";
 import { Constants } from "../../constants/constants";
-import { ColumnModel, ColumnResizeSet } from "../../columnController/columnModel";
+import { ColumnModel, ColumnResizeSet } from "../../columns/columnModel";
 import { HorizontalResizeService } from "../horizontalResizeService";
 import { Autowired } from "../../context/context";
 import { CssClassApplier } from "../cssClassApplier";

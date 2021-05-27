@@ -3,7 +3,7 @@ import { Component } from '../../../widgets/component';
 import { RefSelector } from '../../../widgets/componentAnnotations';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { Autowired } from '../../../context/context';
-import { ColumnModel } from '../../../columnController/columnModel';
+import { ColumnModel } from '../../../columns/columnModel';
 
 // optional floating filter for user provided filters - instead of providing a floating filter,
 // they can provide a getModelAsString() method on the filter instead. this class just displays

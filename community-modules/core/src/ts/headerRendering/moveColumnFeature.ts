@@ -1,6 +1,6 @@
 import { Autowired, PostConstruct } from "../context/context";
 import { Constants } from "../constants/constants";
-import { ColumnModel } from "../columnController/columnModel";
+import { ColumnModel } from "../columns/columnModel";
 import { Column } from "../entities/column";
 import { DragAndDropService, DraggingEvent, DragSourceType, HorizontalDirection } from "../dragAndDrop/dragAndDropService";
 import { DropListener } from "./bodyDropTarget";
@@ -12,7 +12,7 @@ import { sortNumerically, last, includes } from "../utils/array";
 import { ControllersService } from "../controllersService";
 import { GridBodyCtrl } from "../gridBodyComp/gridBodyCtrl";
 
-export class MoveColumnController implements DropListener {
+export class MoveColumnFeature implements DropListener {
 
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('columnModel') private columnModel: ColumnModel;

@@ -3,7 +3,7 @@
  ************************************************************************************************/
 import { RowNode } from "./rowNode";
 import { GridApi } from "../gridApi";
-import { ColumnApi } from "../columnController/columnApi";
+import { ColumnApi } from "../columns/columnApi";
 import { Column } from "./column";
 import { IViewportDatasource } from "../interfaces/iViewportDatasource";
 import { ICellRenderer, ICellRendererComp, ICellRendererFunc } from "../rendering/cellRenderers/iCellRenderer";

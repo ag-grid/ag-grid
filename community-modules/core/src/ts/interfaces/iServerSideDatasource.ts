@@ -3,7 +3,7 @@
 // over the wire
 import { RowNode } from "../entities/rowNode";
 import { ColumnVO } from "./iColumnVO";
-import { ColumnApi } from "../columnController/columnApi";
+import { ColumnApi } from "../columns/columnApi";
 import { GridApi } from "../gridApi";
 import { LoadSuccessParams } from "../rowNodeCache/rowNodeBlock";
 

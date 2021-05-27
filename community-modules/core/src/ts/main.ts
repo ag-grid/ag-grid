@@ -8,13 +8,13 @@ globalObj.HTMLInputElement = typeof HTMLInputElement === 'undefined' ? {} : HTML
 globalObj.Node = typeof Node === 'undefined' ? {} : Node;
 globalObj.MouseEvent = typeof MouseEvent === 'undefined' ? {} : MouseEvent;
 
-// columnModel
-export { ColumnFactory } from "./columnController/columnFactory";
-export { ColumnModel, ColumnState } from "./columnController/columnModel";
-export { ColumnKeyCreator } from "./columnController/columnKeyCreator";
-export { ColumnUtils } from "./columnController/columnUtils";
-export { DisplayedGroupCreator } from "./columnController/displayedGroupCreator";
-export { GroupInstanceIdCreator } from "./columnController/groupInstanceIdCreator";
+// columns
+export { ColumnFactory } from "./columns/columnFactory";
+export { ColumnModel, ColumnState } from "./columns/columnModel";
+export { ColumnKeyCreator } from "./columns/columnKeyCreator";
+export { ColumnUtils } from "./columns/columnUtils";
+export { DisplayedGroupCreator } from "./columns/displayedGroupCreator";
+export { GroupInstanceIdCreator } from "./columns/groupInstanceIdCreator";
 
 // headless
 export { HeadlessService, RowContainerSt, HeaderRowSt, CellSt, ColumnSt, RowSt } from "./headless/headlessService";
@@ -134,7 +134,7 @@ export { HeaderContainer } from "./headerRendering/headerContainer";
 export { HeaderRootComp, HeaderContainerPosition } from "./headerRendering/headerRootComp";
 export { HeaderRowComp } from "./headerRendering/headerRowComp";
 export { HorizontalResizeService } from "./headerRendering/horizontalResizeService";
-export { MoveColumnController } from "./headerRendering/moveColumnController";
+export { MoveColumnFeature } from "./headerRendering/moveColumnFeature";
 export { StandardMenuFactory } from "./headerRendering/standardMenu";
 
 // layout
@@ -359,7 +359,7 @@ export { IComponent } from "./interfaces/iComponent";
 export { IEventEmitter } from "./interfaces/iEventEmitter";
 export { IHeaderParams, IHeader } from "./headerRendering/header/headerComp";
 export { IHeaderGroupParams, IHeaderGroup } from "./headerRendering/headerGroup/headerGroupComp";
-export { ColumnApi } from "./columnController/columnApi";
+export { ColumnApi } from "./columns/columnApi";
 export { IRichCellEditorParams } from "./interfaces/iRichCellEditorParams";
 export { WrapableInterface, BaseComponentWrapper, FrameworkComponentWrapper } from "./components/framework/frameworkComponentWrapper";
 export { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";

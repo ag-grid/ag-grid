@@ -7,14 +7,14 @@ import { debounce } from "../utils/function";
 import { BodyScrollEvent } from "../events";
 import { isIOSUserAgent } from "../utils/browser";
 import { AnimationFrameService } from "../misc/animationFrameService";
-import { ColumnApi } from "../columnController/columnApi";
+import { ColumnApi } from "../columns/columnApi";
 import { GridApi } from "../gridApi";
 import { Constants } from "../constants/constants";
 import { PaginationProxy } from "../pagination/paginationProxy";
 import { IRowModel } from "../interfaces/iRowModel";
 import { RowContainerHeightService } from "../rendering/rowContainerHeightService";
 import { RowRenderer } from "../rendering/rowRenderer";
-import { ColumnModel } from "../columnController/columnModel";
+import { ColumnModel } from "../columns/columnModel";
 import { RowContainerCtrl } from "./rowContainer/rowContainerCtrl";
 
 type ScrollDirection = 'horizontal' | 'vertical';

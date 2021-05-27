@@ -1,7 +1,7 @@
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
 import { GridApi } from "../gridApi";
-import { ColumnApi } from "../columnController/columnApi";
+import { ColumnApi } from "../columns/columnApi";
 import { ColumnGroup } from "../entities/columnGroup";
 
 export interface BaseExportParams {

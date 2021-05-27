@@ -1,6 +1,6 @@
 import { IComponent } from "./iComponent";
 import { GridApi } from "../gridApi";
-import { ColumnApi } from "../columnController/columnApi";
+import { ColumnApi } from "../columns/columnApi";
 import { ColDef, ColGroupDef } from "../entities/colDef";
 import { ColumnEventType } from "../events";
 

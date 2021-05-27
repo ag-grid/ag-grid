@@ -25,7 +25,7 @@ import { isStopPropagationForAgGrid, stopPropagationForAgGrid, isElementInEventP
 import { setAriaExpanded, removeAriaExpanded } from "../../utils/aria";
 import { KeyCode } from '../../constants/keyCode';
 import { ValueFormatterService } from "../valueFormatterService";
-import { ColumnModel } from "../../columnController/columnModel";
+import { ColumnModel } from "../../columns/columnModel";
 import { RowRenderer } from "../rowRenderer";
 import { RowDragComp } from "../row/rowDragComp";
 

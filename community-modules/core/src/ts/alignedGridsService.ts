@@ -1,4 +1,4 @@
-import { ColumnModel } from "./columnController/columnModel";
+import { ColumnModel } from "./columns/columnModel";
 import { Logger } from "./logger";
 import { LoggerFactory } from "./logger";
 import {

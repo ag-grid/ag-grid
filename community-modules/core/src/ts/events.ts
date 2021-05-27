@@ -2,7 +2,7 @@ import { RowNode } from './entities/rowNode';
 import { Column } from './entities/column';
 import { ColDef } from './entities/colDef';
 import { GridApi } from './gridApi';
-import { ColumnApi } from './columnController/columnApi';
+import { ColumnApi } from './columns/columnApi';
 import { OriginalColumnGroup } from './entities/originalColumnGroup';
 import { FilterRequestSource } from './filter/filterManager';
 import { ChartOptions, ChartType } from './interfaces/iChartOptions';

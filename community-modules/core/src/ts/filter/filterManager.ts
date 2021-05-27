@@ -1,7 +1,7 @@
 import { AgPromise } from '../utils';
 import { ValueService } from '../valueService/valueService';
-import { ColumnModel } from '../columnController/columnModel';
-import { ColumnApi } from '../columnController/columnApi';
+import { ColumnModel } from '../columns/columnModel';
+import { ColumnApi } from '../columns/columnApi';
 import { RowNode } from '../entities/rowNode';
 import { Column } from '../entities/column';
 import { Autowired, Bean, PostConstruct, PreDestroy } from '../context/context';

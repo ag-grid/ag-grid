@@ -3,7 +3,7 @@ import { Autowired, PostConstruct, PreDestroy } from '../context/context';
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { ColumnGroupChild } from '../entities/columnGroupChild';
 import { ColumnGroup } from '../entities/columnGroup';
-import { ColumnModel } from '../columnController/columnModel';
+import { ColumnModel } from '../columns/columnModel';
 import { Column } from '../entities/column';
 import { Events } from '../events';
 import { HeaderWrapperComp } from './header/headerWrapperComp';

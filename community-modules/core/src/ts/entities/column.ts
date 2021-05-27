@@ -12,11 +12,11 @@ import {
 import { EventService } from "../eventService";
 import { Autowired, Context, PostConstruct } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { ColumnUtils } from "../columnController/columnUtils";
+import { ColumnUtils } from "../columns/columnUtils";
 import { RowNode } from "./rowNode";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { ColumnEvent, ColumnEventType } from "../events";
-import { ColumnApi } from "../columnController/columnApi";
+import { ColumnApi } from "../columns/columnApi";
 import { GridApi } from "../gridApi";
 import { ColumnGroup } from "./columnGroup";
 import { OriginalColumnGroup } from "./originalColumnGroup";

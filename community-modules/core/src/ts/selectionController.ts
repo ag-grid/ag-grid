@@ -9,7 +9,7 @@ import { Autowired } from "./context/context";
 import { IRowModel } from "./interfaces/iRowModel";
 import { PostConstruct } from "./context/context";
 import { Constants } from "./constants/constants";
-import { ColumnApi } from "./columnController/columnApi";
+import { ColumnApi } from "./columns/columnApi";
 import { GridApi } from "./gridApi";
 import { ChangedPath } from "./utils/changedPath";
 import { IClientSideRowModel } from "./interfaces/iClientSideRowModel";

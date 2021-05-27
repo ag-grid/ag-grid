@@ -1,6 +1,6 @@
 import { Autowired, Bean, Context, Optional, PostConstruct } from "../context/context";
-import { ColumnApi } from "../columnController/columnApi";
-import { ColumnModel } from "../columnController/columnModel";
+import { ColumnApi } from "../columns/columnApi";
+import { ColumnModel } from "../columns/columnModel";
 import { HeaderNavigationService } from "../headerRendering/header/headerNavigationService";
 import { GridApi } from "../gridApi";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";

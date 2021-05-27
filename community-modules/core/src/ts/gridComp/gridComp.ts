@@ -5,7 +5,7 @@ import { Component } from "../widgets/component";
 import { ISideBar } from "../interfaces/iSideBar";
 import { RefSelector } from "../widgets/componentAnnotations";
 import { ManagedFocusComponent } from "../widgets/managedFocusComponent";
-import { ColumnModel } from "../columnController/columnModel";
+import { ColumnModel } from "../columns/columnModel";
 import { addCssClass, addOrRemoveCssClass, isVisible } from "../utils/dom";
 import { last } from "../utils/array";
 import { FocusController } from "../focusController";

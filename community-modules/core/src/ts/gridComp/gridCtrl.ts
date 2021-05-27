@@ -11,11 +11,11 @@ import { Events } from "../eventKeys";
 import { Logger, LoggerFactory } from "../logger";
 import { ResizeObserverService } from "../misc/resizeObserverService";
 import { GridSizeChangedEvent } from "../events";
-import { ColumnApi } from "../columnController/columnApi";
+import { ColumnApi } from "../columns/columnApi";
 import { findIndex } from "../utils/array";
 import { Column } from "../entities/column";
 import { ColumnGroup } from "../entities/columnGroup";
-import { ColumnModel } from "../columnController/columnModel";
+import { ColumnModel } from "../columns/columnModel";
 import { ControllersService } from "../controllersService";
 import { MouseEventService } from "../gridBodyComp/mouseEventService";
 

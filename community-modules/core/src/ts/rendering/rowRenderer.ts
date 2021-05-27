@@ -13,8 +13,8 @@ import {
 import { Constants } from "../constants/constants";
 import { CellComp } from "./cellComp";
 import { Autowired, Bean, Optional, PostConstruct, Qualifier } from "../context/context";
-import { ColumnApi } from "../columnController/columnApi";
-import { ColumnModel } from "../columnController/columnModel";
+import { ColumnApi } from "../columns/columnApi";
+import { ColumnModel } from "../columns/columnModel";
 import { Logger, LoggerFactory } from "../logger";
 import { FocusController } from "../focusController";
 import { IRangeController } from "../interfaces/iRangeController";

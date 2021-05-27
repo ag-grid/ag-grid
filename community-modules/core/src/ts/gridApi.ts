@@ -1,7 +1,7 @@
 import { RowRenderer } from "./rendering/rowRenderer";
 import { FilterManager } from "./filter/filterManager";
-import { ColumnModel, ColumnState } from "./columnController/columnModel";
-import { ColumnApi } from "./columnController/columnApi";
+import { ColumnModel, ColumnState } from "./columns/columnModel";
+import { ColumnApi } from "./columns/columnApi";
 import { SelectionController } from "./selectionController";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { GridBodyComp } from "./gridBodyComp/gridBodyComp";
