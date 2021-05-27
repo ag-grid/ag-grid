@@ -6,7 +6,7 @@ import {
     ToolPanelDef,
     RefSelector,
     PreDestroy,
-    FocusController,
+    FocusService,
     HeaderPositionUtils,
     _,
     KeyCode
@@ -22,7 +22,7 @@ export class SideBarButtonsComp extends Component {
     private static readonly TEMPLATE: string = /* html */ `<div class="ag-side-buttons"></div>`;
     private buttonComps: SideBarButtonComp[] = [];
 
-    @Autowired('focusController') private focusController: FocusController;
+    @Autowired('focusService') private focusService: FocusService;
     @Autowired('headerPositionUtils') private headerPositionUtils: HeaderPositionUtils;
 
     constructor() {
@@ -36,13 +36,13 @@ export class SideBarButtonsComp extends Component {
 
     private handleKeyDown(e: KeyboardEvent): void {
         if (e.keyCode !== KeyCode.TAB || !e.shiftKey) { return; }
-        const prevEl = this.focusController.findNextFocusableElement(this.getFocusableElement(), null, true);
+        const prevEl = this.focusService.findNextFocusableElement(this.getFocusableElement(), null, true);
 
         if (!prevEl) {
             const headerPosition = this.headerPositionUtils.findColAtEdgeForHeaderRow(0, 'start');
             if (!headerPosition) { return; }
             e.preventDefault();
-            this.focusController.focusHeaderPosition(headerPosition);
+            this.focusService.focusHeaderPosition(headerPosition);
         }
     }
 

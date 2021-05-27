@@ -8,7 +8,7 @@ import { ManagedFocusComponent } from "../widgets/managedFocusComponent";
 import { ColumnModel } from "../columns/columnModel";
 import { addCssClass, addOrRemoveCssClass, isVisible } from "../utils/dom";
 import { last } from "../utils/array";
-import { FocusController } from "../focusController";
+import { FocusService } from "../focusService";
 import { GridCtrl, IGridComp } from "./gridCtrl";
 import { LayoutCssClasses, UpdateLayoutClassesParams } from "../styling/layoutFeature";
 
@@ -39,7 +39,7 @@ export class GridComp extends ManagedFocusComponent {
             setRtlClass:
                 (cssClass: string) => addCssClass(this.getGui(), cssClass),
             addOrRemoveKeyboardFocusClass:
-                (addOrRemove: boolean) => this.addOrRemoveCssClass(FocusController.AG_KEYBOARD_FOCUS, addOrRemove),
+                (addOrRemove: boolean) => this.addOrRemoveCssClass(FocusService.AG_KEYBOARD_FOCUS, addOrRemove),
             forceFocusOutOfContainer: this.forceFocusOutOfContainer.bind(this),
             updateLayoutClasses: this.updateLayoutClasses.bind(this),
             getFocusableContainers: this.getFocusableContainers.bind(this)
@@ -120,11 +120,11 @@ export class GridComp extends ManagedFocusComponent {
 
         if (fromBottom) {
             if (focusableContainers.length > 1) {
-                return this.focusController.focusInto(last(focusableContainers));
+                return this.focusService.focusInto(last(focusableContainers));
             }
 
             const lastColumn = last(this.columnModel.getAllDisplayedColumns());
-            if (this.focusController.focusGridView(lastColumn, true)) { return true; }
+            if (this.focusService.focusGridView(lastColumn, true)) { return true; }
         }
 
         return this.ctrl.focusGridHeader();

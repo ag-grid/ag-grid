@@ -467,7 +467,7 @@ export class GridChartComp extends Component {
         }
 
         this.chartController.setChartRange(true);
-        (this.gridApi as any).focusController.clearFocusedCell();
+        (this.gridApi as any).focusService.clearFocusedCell();
     }
 
     private raiseChartCreatedEvent(): void {

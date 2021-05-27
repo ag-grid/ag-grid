@@ -260,7 +260,7 @@ export { KeyName } from "./constants/keyName";
 export { Grid, GridParams, GridCoreCreator } from "./grid";
 export { GridApi, RedrawRowsParams, RefreshCellsParams, StartEditingCellParams, DetailGridInfo, CreateRangeChartParams, CreatePivotChartParams, CreateCrossFilterChartParams } from "./gridApi";
 export { Events } from "./eventKeys";
-export { FocusController } from "./focusController";
+export { FocusService } from "./focusService";
 export { defaultGroupComparator } from "./functions";
 export { GridOptionsWrapper } from "./gridOptionsWrapper";
 export { EventService } from "./eventService";

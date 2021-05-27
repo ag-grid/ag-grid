@@ -132,7 +132,7 @@ export class RowCtrl extends BeanStub {
 
         this.setAnimateFlags(animateIn);
 
-        this.rowFocused = this.beans.focusController.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned);
+        this.rowFocused = this.beans.focusService.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned);
         this.setupAngular1Scope();
         this.rowLevel = this.beans.rowCssClassCalculator.calculateRowLevel(this.rowNode);
 
@@ -485,7 +485,7 @@ export class RowCtrl extends BeanStub {
         if (!isFullWidthContainerFocused) { return; }
 
         const node = this.rowNode;
-        const lastFocusedCell = this.beans.focusController.getFocusedCell();
+        const lastFocusedCell = this.beans.focusService.getFocusedCell();
         const cellPosition: CellPosition = {
             rowIndex: node.rowIndex!,
             rowPinned: node.rowPinned,
@@ -504,7 +504,7 @@ export class RowCtrl extends BeanStub {
         let nextEl: HTMLElement | null = null;
 
         if (!isFullWidthContainerFocused) {
-            nextEl = this.beans.focusController.findNextFocusableElement(currentFullWidthContainer!, false, keyboardEvent.shiftKey);
+            nextEl = this.beans.focusService.findNextFocusableElement(currentFullWidthContainer!, false, keyboardEvent.shiftKey);
         }
 
         if ((this.isFullWidth() && isFullWidthContainerFocused) || !nextEl) {
@@ -581,7 +581,7 @@ export class RowCtrl extends BeanStub {
         const node = this.rowNode;
         const columnModel = this.beans.columnModel;
 
-        this.beans.focusController.setFocusedCell(
+        this.beans.focusService.setFocusedCell(
             node.rowIndex!,
             columnModel.getAllDisplayedColumns()[0],
             node.rowPinned, true
@@ -1037,7 +1037,7 @@ export class RowCtrl extends BeanStub {
     }
 
     private onCellFocusChanged(): void {
-        const rowFocused = this.beans.focusController.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned);
+        const rowFocused = this.beans.focusService.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned);
 
         if (rowFocused !== this.rowFocused) {
             this.allRowComps.forEach(rowComp => {

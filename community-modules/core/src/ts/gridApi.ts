@@ -14,7 +14,7 @@ import { Column } from "./entities/column";
 import { Autowired, Bean, Context, Optional, PostConstruct, PreDestroy } from "./context/context";
 import { IRowModel } from "./interfaces/iRowModel";
 import { SortController } from "./sortController";
-import { FocusController } from "./focusController";
+import { FocusService } from "./focusService";
 import { CellRange, CellRangeParams, IRangeController } from "./interfaces/iRangeController";
 import { CellPosition } from "./entities/cellPosition";
 import { IClipboardService } from "./interfaces/iClipboardService";
@@ -187,7 +187,7 @@ export class GridApi {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
-    @Autowired('focusController') private focusController: FocusController;
+    @Autowired('focusService') private focusService: FocusService;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Optional('rangeController') private rangeController: IRangeController;
     @Optional('clipboardService') private clipboardService: IClipboardService;
@@ -935,15 +935,15 @@ export class GridApi {
     }
 
     public getFocusedCell(): CellPosition | null {
-        return this.focusController.getFocusedCell();
+        return this.focusService.getFocusedCell();
     }
 
     public clearFocusedCell(): void {
-        return this.focusController.clearFocusedCell();
+        return this.focusService.clearFocusedCell();
     }
 
     public setFocusedCell(rowIndex: number, colKey: string | Column, floating?: string) {
-        this.focusController.setFocusedCell(rowIndex, colKey, floating, true);
+        this.focusService.setFocusedCell(rowIndex, colKey, floating, true);
     }
 
     public setSuppressRowDrag(value: boolean): void {

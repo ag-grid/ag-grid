@@ -14,7 +14,7 @@ import { isBrowserSafari } from '../utils/browser';
 import { missing } from '../utils/generic';
 import { removeFromArray } from '../utils/array';
 import { setDomChildOrder } from '../utils/dom';
-import { FocusController } from '../focusController';
+import { FocusService } from '../focusService';
 import { AbstractHeaderWrapper } from './header/abstractHeaderWrapper';
 import { setAriaRowIndex } from '../utils/aria';
 
@@ -25,7 +25,7 @@ export enum HeaderRowType {
 export class HeaderRowComp extends Component {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('focusController') private focusController: FocusController;
+    @Autowired('focusService') private focusService: FocusService;
 
     private readonly pinned: string | null;
 
@@ -252,7 +252,7 @@ export class HeaderRowComp extends Component {
         // we want to keep columns that are focused, otherwise keyboard navigation breaks
         const isFocusedAndDisplayed = (colId: string) => {
             const wrapper = this.headerComps[colId];
-            const isFocused = this.focusController.isHeaderWrapperFocused(wrapper);
+            const isFocused = this.focusService.isHeaderWrapperFocused(wrapper);
             if (!isFocused) { return false; }
             const isDisplayed = this.columnModel.isDisplayed(wrapper.getColumn());
             return isDisplayed;

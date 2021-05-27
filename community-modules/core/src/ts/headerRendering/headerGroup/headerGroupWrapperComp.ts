@@ -91,7 +91,7 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
     protected onFocusIn(e: FocusEvent) {
         if (!this.getGui().contains(e.relatedTarget as HTMLElement)) {
             const headerRow = this.getParentComponent() as HeaderRowComp;
-            this.beans.focusController.setFocusedHeader(
+            this.beans.focusService.setFocusedHeader(
                 headerRow.getRowIndex(),
                 this.getColumn()
             );

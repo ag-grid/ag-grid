@@ -16,7 +16,7 @@ import {
     CsvExportParams,
     Events,
     FlashCellsEvent,
-    FocusController,
+    FocusService,
     GridApi,
     GridCtrl,
     IClipboardService,
@@ -58,7 +58,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     @Autowired('rowModel') private rowModel: IRowModel;
 
     @Autowired('valueService') private valueService: ValueService;
-    @Autowired('focusController') private focusController: FocusController;
+    @Autowired('focusService') private focusService: FocusService;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
@@ -189,7 +189,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
         const cellsToFlash = {} as any;
         const updatedRowNodes: RowNode[] = [];
-        const focusedCell = this.focusController.getFocusedCell();
+        const focusedCell = this.focusService.getFocusedCell();
 
         pasteOperationFunc(cellsToFlash, updatedRowNodes, focusedCell, changedPath);
 
@@ -205,7 +205,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         // so need to put it back. otherwise paste operation loosed focus on cell and keyboard
         // navigation stops.
         if (focusedCell) {
-            this.focusController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.rowPinned, true);
+            this.focusService.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.rowPinned, true);
         }
 
         this.eventService.dispatchEvent({
@@ -497,7 +497,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         } else if (selectedRowsToCopy) {
             // otherwise copy selected rows if they exist
             this.copySelectedRowsToClipboard(includeHeaders);
-        } else if (this.focusController.isAnyCellFocused()) {
+        } else if (this.focusService.isAnyCellFocused()) {
             // if there is a focused cell, copy this
             this.copyFocusedCellToClipboard(includeHeaders);
         } else {
@@ -599,7 +599,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     }
 
     private copyFocusedCellToClipboard(includeHeaders = false): void {
-        const focusedCell = this.focusController.getFocusedCell();
+        const focusedCell = this.focusService.getFocusedCell();
 
         if (focusedCell == null) { return; }
 

@@ -23,8 +23,8 @@ import { makeNull } from './utils/generic';
 import { Constants } from "./constants/constants";
 import { GridCtrl } from "./gridComp/gridCtrl";
 
-@Bean('focusController')
-export class FocusController extends BeanStub {
+@Bean('focusService')
+export class FocusService extends BeanStub {
 
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('headerNavigationService') private readonly headerNavigationService: HeaderNavigationService;
@@ -51,16 +51,16 @@ export class FocusController extends BeanStub {
      * @param gridCore {GridComp} - The GridCore to be monitored.
      */
     private static addKeyboardModeEvents(doc: Document, controller: GridCtrl): void {
-        const docControllers = FocusController.instancesMonitored.get(doc);
+        const docControllers = FocusService.instancesMonitored.get(doc);
 
         if (docControllers && docControllers.length > 0) {
             if (docControllers.indexOf(controller) === -1) {
                 docControllers.push(controller);
             }
         } else {
-            FocusController.instancesMonitored.set(doc, [controller]);
-            doc.addEventListener('keydown', FocusController.toggleKeyboardMode);
-            doc.addEventListener('mousedown', FocusController.toggleKeyboardMode);
+            FocusService.instancesMonitored.set(doc, [controller]);
+            doc.addEventListener('keydown', FocusService.toggleKeyboardMode);
+            doc.addEventListener('mousedown', FocusService.toggleKeyboardMode);
         }
     }
 
@@ -72,7 +72,7 @@ export class FocusController extends BeanStub {
      * @param gridCore {GridComp} - The GridCore to be removed.
      */
     private static removeKeyboardModeEvents(doc: Document, controller: GridCtrl): void {
-        const docControllers = FocusController.instancesMonitored.get(doc);
+        const docControllers = FocusService.instancesMonitored.get(doc);
 
         let newControllers: GridCtrl[] = [];
 
@@ -80,12 +80,12 @@ export class FocusController extends BeanStub {
             newControllers = [...docControllers].filter(
                 currentGridCore => currentGridCore !== controller
             );
-            FocusController.instancesMonitored.set(doc, newControllers);
+            FocusService.instancesMonitored.set(doc, newControllers);
         }
 
         if (newControllers.length === 0) {
-            doc.removeEventListener('keydown', FocusController.toggleKeyboardMode);
-            doc.removeEventListener('mousedown', FocusController.toggleKeyboardMode);
+            doc.removeEventListener('keydown', FocusService.toggleKeyboardMode);
+            doc.removeEventListener('mousedown', FocusService.toggleKeyboardMode);
         }
     }
 
@@ -97,7 +97,7 @@ export class FocusController extends BeanStub {
      * @param event {KeyboardEvent | MouseEvent | TouchEvent} - The event triggered.
      */
     private static toggleKeyboardMode(event: KeyboardEvent | MouseEvent | TouchEvent): void {
-        const isKeyboardActive = FocusController.keyboardModeActive;
+        const isKeyboardActive = FocusService.keyboardModeActive;
         const isKeyboardEvent = event.type === 'keydown';
 
         if (isKeyboardEvent) {
@@ -107,12 +107,12 @@ export class FocusController extends BeanStub {
 
         if (isKeyboardActive && isKeyboardEvent || !isKeyboardActive && !isKeyboardEvent) { return; }
 
-        FocusController.keyboardModeActive = isKeyboardEvent;
+        FocusService.keyboardModeActive = isKeyboardEvent;
         const doc = (event.target as HTMLElement).ownerDocument;
 
         if (!doc) { return; }
 
-        const controllersForDoc = FocusController.instancesMonitored.get(doc);
+        const controllersForDoc = FocusService.instancesMonitored.get(doc);
 
         if (controllersForDoc) {
             controllersForDoc.forEach(controller => {
@@ -135,14 +135,14 @@ export class FocusController extends BeanStub {
         this.gridCompController = gridCompController;
 
         const doc = this.gridOptionsWrapper.getDocument();
-        FocusController.addKeyboardModeEvents(doc, gridCompController);
+        FocusService.addKeyboardModeEvents(doc, gridCompController);
         this.addDestroyFunc(() => this.unregisterGridCompController(gridCompController));
     }
 
     public unregisterGridCompController(gridCompController: GridCtrl): void {
         const doc = this.gridOptionsWrapper.getDocument();
 
-        FocusController.removeKeyboardModeEvents(doc, gridCompController);
+        FocusService.removeKeyboardModeEvents(doc, gridCompController);
     }
 
     public onColumnEverythingChanged(): void {
@@ -159,7 +159,7 @@ export class FocusController extends BeanStub {
     }
 
     public isKeyboardMode(): boolean {
-        return FocusController.keyboardModeActive;
+        return FocusService.keyboardModeActive;
     }
 
     // we check if the browser is focusing something, and if it is, and

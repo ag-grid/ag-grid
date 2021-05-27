@@ -41,7 +41,7 @@ export class MenuList extends ManagedFocusComponent {
                 const topMenu = this.findTopMenu();
 
                 if (topMenu) {
-                    this.focusController.focusInto(topMenu.getGui());
+                    this.focusService.focusInto(topMenu.getGui());
                 }
 
                 break;

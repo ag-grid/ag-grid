@@ -3,7 +3,7 @@ import { CellPosition } from "../entities/cellPosition";
 import { MouseEventService } from "./mouseEventService";
 import { PaginationProxy } from "../pagination/paginationProxy";
 import { Column } from "../entities/column";
-import { FocusController } from "../focusController";
+import { FocusService } from "../focusService";
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { IRangeController } from "../interfaces/iRangeController";
 import { ColumnModel } from "../columns/columnModel";
@@ -31,7 +31,7 @@ export class NavigationService extends BeanStub {
 
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
-    @Autowired('focusController') private focusController: FocusController;
+    @Autowired('focusService') private focusService: FocusService;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Optional('rangeController') private rangeController: IRangeController;
     @Autowired('columnModel') private columnModel: ColumnModel;
@@ -140,7 +140,7 @@ export class NavigationService extends BeanStub {
 
         // if we don't do this, the range will be left on the last cell, which will leave the last focused cell
         // highlighted.
-        this.focusController.setFocusedCell(focusIndex, focusColumn, null, true);
+        this.focusService.setFocusedCell(focusIndex, focusColumn, null, true);
 
         if (this.rangeController) {
             const cellPosition: CellPosition = { rowIndex: focusIndex, rowPinned: null, column: focusColumn };

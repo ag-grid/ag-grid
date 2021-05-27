@@ -123,7 +123,7 @@ export class HeaderRootComp extends ManagedFocusComponent {
             : HeaderNavigationDirection.RIGHT;
 
         if (this.headerNavigationService.navigateHorizontally(direction, true, e) ||
-            this.focusController.focusNextGridCoreContainer(e.shiftKey)
+            this.focusService.focusNextGridCoreContainer(e.shiftKey)
         ) {
             e.preventDefault();
         }
@@ -163,7 +163,7 @@ export class HeaderRootComp extends ManagedFocusComponent {
         if (!relatedTarget && eGui.contains(document.activeElement)) { return; }
 
         if (!eGui.contains(relatedTarget as HTMLElement)) {
-            this.focusController.clearFocusedHeader();
+            this.focusService.clearFocusedHeader();
         }
     }
 

@@ -11,7 +11,7 @@ import { ValueService } from "../valueService/valueService";
 import { EventService } from "../eventService";
 import { ColumnAnimationService } from "./columnAnimationService";
 import { IRangeController, ISelectionHandleFactory } from "../interfaces/iRangeController";
-import { FocusController } from "../focusController";
+import { FocusService } from "../focusService";
 import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
 import { PopupService } from "../widgets/popupService";
 import { ValueFormatterService } from "./valueFormatterService";
@@ -61,7 +61,7 @@ export class Beans {
     @Autowired('headerNavigationService') public headerNavigationService: HeaderNavigationService;
     @Autowired('columnAnimationService') public columnAnimationService: ColumnAnimationService;
     @Optional('rangeController') public rangeController: IRangeController;
-    @Autowired('focusController') public focusController: FocusController;
+    @Autowired('focusService') public focusService: FocusService;
     @Optional('contextMenuFactory') public contextMenuFactory: IContextMenuFactory;
     @Autowired('popupService') public popupService: PopupService;
     @Autowired('valueFormatterService') public valueFormatterService: ValueFormatterService;

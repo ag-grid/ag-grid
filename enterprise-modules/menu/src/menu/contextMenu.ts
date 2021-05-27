@@ -9,7 +9,7 @@ import {
     Column,
     ColumnModel,
     Component,
-    FocusController,
+    FocusService,
     GetContextMenuItems,
     GetContextMenuItemsParams,
     GridBodyComp,
@@ -211,7 +211,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
 class ContextMenu extends Component {
 
     @Autowired('menuItemMapper') private menuItemMapper: MenuItemMapper;
-    @Autowired('focusController') private focusController: FocusController;
+    @Autowired('focusService') private focusService: FocusService;
     @Autowired('cellPositionUtils') private cellPositionUtils: CellPositionUtils;
 
     private menuItems: (MenuItemDef | string)[];
@@ -241,22 +241,22 @@ class ContextMenu extends Component {
             this.addDestroyFunc(params.hidePopup);
         }
 
-        this.focusedCell = this.focusController.getFocusedCell();
+        this.focusedCell = this.focusService.getFocusedCell();
 
         if (this.menuList) {
-            this.focusController.focusInto(this.menuList.getGui());
+            this.focusService.focusInto(this.menuList.getGui());
         }
     }
 
     private restoreFocusedCell(): void {
-        const currentFocusedCell = this.focusController.getFocusedCell();
+        const currentFocusedCell = this.focusService.getFocusedCell();
 
         if (currentFocusedCell && this.focusedCell && this.cellPositionUtils.equals(currentFocusedCell, this.focusedCell)) {
             const { rowIndex, rowPinned, column } = this.focusedCell;
             const doc = this.gridOptionsWrapper.getDocument();
 
             if (doc.activeElement === doc.body) {
-                this.focusController.setFocusedCell(rowIndex, column, rowPinned, true);
+                this.focusService.setFocusedCell(rowIndex, column, rowPinned, true);
             }
         }
     }

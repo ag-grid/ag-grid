@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import {LayoutCssClasses, UpdateLayoutClassesParams, FocusController, GridBodyComp, GridCompView, GridCompController, Context, GridOptions, HeaderRowSt, HeadlessService, RowSt, RowContainerSt} from "@ag-grid-community/core";
+import { Context, FocusService, GridBodyComp, GridCtrl, IGridComp, LayoutCssClasses } from "@ag-grid-community/core";
 
 export function GridComp(params: {context: Context}) {
 
@@ -13,15 +13,15 @@ export function GridComp(params: {context: Context}) {
     const {context} = params;
 
     useEffect( ()=> {
-        const con = context.createBean(new GridCompController());
+        const ctrl = context.createBean(new GridCtrl());
 
-        const view: GridCompView = {
+        const view: IGridComp = {
             destroyGridUi:
                 ()=> {}, // do nothing, as framework users destroy grid by removing the comp
             setRtlClass:
                 (cssClass: string) => setRtlClass(cssClass),
             addOrRemoveKeyboardFocusClass:
-                (addOrRemove: boolean) => setKeyboardFocusClass(addOrRemove ? FocusController.AG_KEYBOARD_FOCUS : ''),
+                (addOrRemove: boolean) => setKeyboardFocusClass(addOrRemove ? FocusService.AG_KEYBOARD_FOCUS : ''),
             forceFocusOutOfContainer: ()=>{},//this.forceFocusOutOfContainer.bind(this),
             updateLayoutClasses: params =>
                 setLayoutClass(params.normal ? LayoutCssClasses.NORMAL :
@@ -29,7 +29,7 @@ export function GridComp(params: {context: Context}) {
             getFocusableContainers: ()=>[],//this.getFocusableContainers.bind(this)
         };
 
-        con.setView(view, eRootWrapper.current!, eRootWrapper.current!);
+        ctrl.setComp(view, eRootWrapper.current!, eRootWrapper.current!);
 
         const headerRootComp = new GridBodyComp();
         context.createBean(headerRootComp);
@@ -38,7 +38,7 @@ export function GridComp(params: {context: Context}) {
         eGridBodyParent.current!.appendChild(eGui);
 
         return ()=> {
-            context.destroyBean(con);
+            context.destroyBean(ctrl);
             context.destroyBean(headerRootComp);
         };
     }, []);

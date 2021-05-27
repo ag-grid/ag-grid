@@ -14,7 +14,7 @@ import { isUserSuppressingKeyboardEvent } from "../../utils/keyboard";
 import { CellKeyDownEvent, CellKeyPressEvent, Events, FullWidthCellKeyDownEvent, FullWidthCellKeyPressEvent } from "../../events";
 import { KeyName } from "../../constants/keyName";
 import { NavigationService } from "./../navigationService";
-import { FocusController } from "../../focusController";
+import { FocusService } from "../../focusService";
 import { KeyCode } from "../../constants/keyCode";
 import { UndoRedoService } from "../../undoRedo/undoRedoService";
 import { Constants } from "../../constants/constants";
@@ -35,7 +35,7 @@ export class RowContainerEventsFeature extends BeanStub {
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
     @Autowired('controllersService') private controllersService: ControllersService;
     @Autowired('navigationService') private navigationService: NavigationService;
-    @Autowired('focusController') private focusController: FocusController;
+    @Autowired('focusService') private focusService: FocusService;
     @Autowired('undoRedoService') private undoRedoService: UndoRedoService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
@@ -202,7 +202,7 @@ export class RowContainerEventsFeature extends BeanStub {
 
     private processFullWidthRowKeyboardEvent(rowComp: RowCtrl, eventName: string, keyboardEvent: KeyboardEvent) {
         const rowNode = rowComp.getRowNode();
-        const focusedCell = this.focusController.getFocusedCell();
+        const focusedCell = this.focusService.getFocusedCell();
         const column = (focusedCell && focusedCell.column) as Column;
         const gridProcessingAllowed = !isUserSuppressingKeyboardEvent(this.gridOptionsWrapper, keyboardEvent, rowNode, column, false);
 

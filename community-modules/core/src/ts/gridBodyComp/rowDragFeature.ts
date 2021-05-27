@@ -4,7 +4,7 @@ import {
 } from "../dragAndDrop/dragAndDropService";
 import { Autowired, Optional, PostConstruct } from "../context/context";
 import { ColumnModel } from "../columns/columnModel";
-import { FocusController } from "../focusController";
+import { FocusService } from "../focusService";
 import { IRangeController } from "../interfaces/iRangeController";
 import { RowDragEvent, RowDragEnterEvent, RowDragLeaveEvent, RowDragMoveEvent, RowDragEndEvent } from "../events";
 import { Events } from "../eventKeys";
@@ -40,7 +40,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('focusController') private focusController: FocusController;
+    @Autowired('focusService') private focusService: FocusService;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('selectionController') private selectionController: SelectionController;
@@ -262,7 +262,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         const rowWasMoved = this.clientSideRowModel.ensureRowsAtPixel(rowNodes, pixel, increment);
 
         if (rowWasMoved) {
-            this.focusController.clearFocusedCell();
+            this.focusService.clearFocusedCell();
             if (this.rangeController) {
                 this.rangeController.removeAllCellRanges();
             }

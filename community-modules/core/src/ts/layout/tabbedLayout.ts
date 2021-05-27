@@ -62,21 +62,21 @@ export class TabbedLayout extends ManagedFocusComponent {
     protected onTabKeyDown(e: KeyboardEvent) {
         if (e.defaultPrevented) { return; }
 
-        const { focusController, eHeader, eBody, activeItem } = this;
+        const { focusService, eHeader, eBody, activeItem } = this;
         const activeElement = document.activeElement as HTMLElement;
 
         e.preventDefault();
 
         if (eHeader.contains(activeElement)) {
             // focus is in header, move into body of popup
-            focusController.focusInto(eBody, e.shiftKey);
+            focusService.focusInto(eBody, e.shiftKey);
         } else {
             // focus is in body, establish if it should return to header
-            if (focusController.isFocusUnderManagedComponent(eBody)) {
+            if (focusService.isFocusUnderManagedComponent(eBody)) {
                 // focus was in a managed focus component and has now left, so we can return to the header
                 activeItem.eHeaderButton.focus();
             } else {
-                const nextEl = focusController.findNextFocusableElement(eBody, false, e.shiftKey);
+                const nextEl = focusService.findNextFocusableElement(eBody, false, e.shiftKey);
 
                 if (nextEl) {
                     // if another element exists in the body that can be focussed, go to that
@@ -175,9 +175,9 @@ export class TabbedLayout extends ManagedFocusComponent {
 
         wrapper.tabbedItem.bodyPromise.then(body => {
             this.eBody.appendChild(body!);
-            const onlyUnmanaged = !this.focusController.isKeyboardMode();
+            const onlyUnmanaged = !this.focusService.isKeyboardMode();
 
-            this.focusController.focusInto(this.eBody, false, onlyUnmanaged);
+            this.focusService.focusInto(this.eBody, false, onlyUnmanaged);
 
             if (wrapper.tabbedItem.afterAttachedCallback) {
                 wrapper.tabbedItem.afterAttachedCallback(this.afterAttachedParams);

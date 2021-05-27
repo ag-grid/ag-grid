@@ -1,7 +1,7 @@
 import { Autowired, Optional, PostConstruct } from "../context/context";
 import { GridApi } from "../gridApi";
 import { PopupService } from "../widgets/popupService";
-import { FocusController } from "../focusController";
+import { FocusService } from "../focusService";
 import { BeanStub } from "../context/beanStub";
 import { ModuleRegistry } from "../modules/moduleRegistry";
 import { ModuleNames } from "../modules/moduleNames";
@@ -32,7 +32,7 @@ export class GridCtrl extends BeanStub {
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('popupService') private popupService: PopupService;
-    @Autowired('focusController') protected readonly focusController: FocusController;
+    @Autowired('focusService') protected readonly focusService: FocusService;
     @Optional('clipboardService') private clipboardService: IClipboardService;
     @Autowired('loggerFactory') loggerFactory: LoggerFactory;
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
@@ -58,7 +58,7 @@ export class GridCtrl extends BeanStub {
         [
             this.gridApi,
             this.popupService,
-            this.focusController,
+            this.focusService,
             this.controllersService
         ].forEach(service => service.registerGridCompController(this));
 
@@ -146,7 +146,7 @@ export class GridCtrl extends BeanStub {
             return this.focusGridHeader();
         }
 
-        return this.focusController.focusInto(focusableContainers[nextIdx]);
+        return this.focusService.focusInto(focusableContainers[nextIdx]);
     }
 
     public focusGridHeader(): boolean {
@@ -157,7 +157,7 @@ export class GridCtrl extends BeanStub {
             firstColumn = this.columnModel.getColumnGroupAtLevel(firstColumn, 0)!;
         }
 
-        this.focusController.focusHeaderPosition(
+        this.focusService.focusHeaderPosition(
             { headerRowIndex: 0, column: firstColumn }
         );
 

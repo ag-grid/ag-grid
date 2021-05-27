@@ -25,7 +25,7 @@ import { StandardMenuFactory } from "./headerRendering/standardMenu";
 import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
 import { DragService } from "./dragAndDrop/dragService";
 import { SortController } from "./sortController";
-import { FocusController } from "./focusController";
+import { FocusService } from "./focusService";
 import { MouseEventService } from "./gridBodyComp/mouseEventService";
 import { CellNavigationService } from "./cellNavigationService";
 import { Events, GridReadyEvent } from "./events";
@@ -301,7 +301,7 @@ export class GridCoreCreator {
             PaginationProxy, RowRenderer, ExpressionService, ColumnFactory, TemplateService,
             AlignedGridsService, NavigationService, ValueCache, ValueService, LoggerFactory,
             ColumnUtils, AutoWidthCalculator, StandardMenuFactory, DragAndDropService, ColumnApi,
-            FocusController, MouseEventService, Environment, CellNavigationService, ValueFormatterService,
+            FocusService, MouseEventService, Environment, CellNavigationService, ValueFormatterService,
             StylingService, ScrollVisibleService, SortController, ColumnHoverService, ColumnAnimationService,
             SelectableService, AutoGroupColService, ChangeDetectionService, AnimationFrameService,
             DetailRowCompCache, UndoRedoService, AgStackComponentsRegistry, ColumnDefFactory,

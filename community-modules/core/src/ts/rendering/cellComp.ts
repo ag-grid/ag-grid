@@ -165,7 +165,7 @@ export class CellComp extends Component implements TooltipParentComp {
         this.createGridCellVo();
 
         this.rangeSelectionEnabled = this.beans.rangeController && beans.gridOptionsWrapper.isEnableRangeSelection();
-        this.cellFocused = this.beans.focusController.isCellFocused(this.cellPosition);
+        this.cellFocused = this.beans.focusService.isCellFocused(this.cellPosition);
         this.firstRightPinned = this.column.isFirstRightPinned();
         this.lastLeftPinned = this.column.isLastLeftPinned();
 
@@ -1413,7 +1413,7 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     public focusCell(forceBrowserFocus = false): void {
-        this.beans.focusController.setFocusedCell(this.cellPosition.rowIndex, this.column, this.rowNode.rowPinned, forceBrowserFocus);
+        this.beans.focusService.setFocusedCell(this.cellPosition.rowIndex, this.column, this.rowNode.rowPinned, forceBrowserFocus);
     }
 
     public setFocusInOnEditor(): void {
@@ -2162,7 +2162,7 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     public onCellFocused(event?: any): void {
-        const cellFocused = this.beans.focusController.isCellFocused(this.cellPosition);
+        const cellFocused = this.beans.focusService.isCellFocused(this.cellPosition);
 
         // see if we need to change the classes on this cell
         if (cellFocused !== this.cellFocused) {

@@ -23,7 +23,7 @@ import {
     AgPromise,
     TabbedItem,
     TabbedLayout,
-    FocusController,
+    FocusService,
     IAfterGuiAttachedParams,
     GridBodyComp
 } from '@ag-grid-community/core';
@@ -41,7 +41,7 @@ export interface TabSelectedEvent extends AgEvent {
 export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
 
     @Autowired('popupService') private popupService: PopupService;
-    @Autowired('focusController') private focusController: FocusController;
+    @Autowired('focusService') private focusService: FocusService;
 
     private lastSelectedTab: string;
     private activeMenu: EnterpriseMenu | null;
@@ -127,7 +127,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             const isKeyboardEvent = e instanceof KeyboardEvent;
 
             if (isKeyboardEvent && eventSource && _.isVisible(eventSource)) {
-                const focusableEl = this.focusController.findTabbableParent(eventSource);
+                const focusableEl = this.focusService.findTabbableParent(eventSource);
 
                 if (focusableEl) { focusableEl.focus(); }
             }
@@ -203,7 +203,7 @@ export class EnterpriseMenu extends BeanStub {
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('menuItemMapper') private menuItemMapper: MenuItemMapper;
     @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('focusController') private focusController: FocusController;
+    @Autowired('focusService') private focusService: FocusService;
 
     private tabbedLayout: TabbedLayout;
     private hidePopupFunc: Function;
@@ -452,11 +452,11 @@ export class EnterpriseMenu extends BeanStub {
 
         // this method only gets called when the menu was closed by selection an option
         // in this case we highlight the cell that was previously highlighted
-        const focusedCell = this.focusController.getFocusedCell();
+        const focusedCell = this.focusService.getFocusedCell();
 
         if (focusedCell) {
             const { rowIndex, rowPinned, column } = focusedCell;
-            this.focusController.setFocusedCell(rowIndex, column, rowPinned, true);
+            this.focusService.setFocusedCell(rowIndex, column, rowPinned, true);
         }
     }
 

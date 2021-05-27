@@ -164,7 +164,7 @@ export class RowComp extends Component {
 
         // we want to try and keep editing and focused cells
         const editing = cellComp.isEditing();
-        const focused = this.beans.focusController.isCellFocused(cellComp.getCellPosition());
+        const focused = this.beans.focusService.isCellFocused(cellComp.getCellPosition());
 
         const mightWantToKeepCell = editing || focused;
 

@@ -23,7 +23,7 @@ import {
     ServerSideTransactionResultStatus,
     StoreRefreshAfterParams,
     StoreUpdatedEvent,
-    FocusController
+    FocusService
 } from "@ag-grid-community/core";
 import { SSRMParams } from "../serverSideRowModel";
 import { StoreUtils } from "./storeUtils";
@@ -44,7 +44,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
     @Autowired('rowRenderer') protected rowRenderer: RowRenderer;
     @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
     @Autowired('ssrmCacheUtils') private storeUtils: StoreUtils;
-    @Autowired("focusController") private focusController: FocusController;
+    @Autowired("focusService") private focusService: FocusService;
 
     private readonly ssrmParams: SSRMParams;
     private readonly storeParams: ServerSideStoreParams;
@@ -183,7 +183,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
     }
 
     private isBlockFocused(block: PartialStoreBlock): boolean {
-        const focusedCell = this.focusController.getFocusCellToUseAfterRefresh();
+        const focusedCell = this.focusService.getFocusCellToUseAfterRefresh();
         if (!focusedCell) { return false; }
         if (focusedCell.rowPinned != null) { return false; }
 

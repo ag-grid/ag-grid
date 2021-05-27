@@ -13,7 +13,7 @@ import {
     RowNodeBlockLoader,
     RowRenderer,
     _,
-    FocusController
+    FocusService
 } from "@ag-grid-community/core";
 import { InfiniteBlock } from "./infiniteBlock";
 
@@ -40,7 +40,7 @@ export class InfiniteCache extends BeanStub {
     private static MAX_EMPTY_BLOCKS_TO_KEEP = 2;
 
     @Autowired('rowRenderer') protected rowRenderer: RowRenderer;
-    @Autowired("focusController") private focusController: FocusController;
+    @Autowired("focusService") private focusService: FocusService;
 
     private readonly params: InfiniteCacheParams;
 
@@ -174,7 +174,7 @@ export class InfiniteCache extends BeanStub {
     }
 
     private isBlockFocused(block: InfiniteBlock): boolean {
-        const focusedCell = this.focusController.getFocusCellToUseAfterRefresh();
+        const focusedCell = this.focusService.getFocusCellToUseAfterRefresh();
         if (!focusedCell) { return false; }
         if (focusedCell.rowPinned != null) { return false; }
 

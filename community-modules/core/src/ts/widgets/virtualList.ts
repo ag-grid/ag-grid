@@ -81,7 +81,7 @@ export class VirtualList extends ManagedFocusComponent {
             e.preventDefault();
         } else {
             // focus on the first or last focusable element to ensure that any other handlers start from there
-            this.focusController.focusInto(this.getGui(), !e.shiftKey);
+            this.focusService.focusInto(this.getGui(), !e.shiftKey);
         }
     }
 

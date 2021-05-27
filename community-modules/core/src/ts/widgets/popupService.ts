@@ -16,7 +16,7 @@ import {
 import { findIndex, forEach, last } from '../utils/array';
 import { isElementInEventPath } from '../utils/event';
 import { KeyCode } from '../constants/keyCode';
-import { FocusController } from "../focusController";
+import { FocusService } from "../focusService";
 import { GridCtrl } from "../gridComp/gridCtrl";
 
 export interface PopupEventParams {
@@ -80,7 +80,7 @@ export class PopupService extends BeanStub {
     // really this should be using eGridDiv, not sure why it's not working.
     // maybe popups in the future should be parent to the body??
     @Autowired('environment') private environment: Environment;
-    @Autowired('focusController') private focusController: FocusController;
+    @Autowired('focusService') private focusService: FocusService;
 
     private gridCompController: GridCtrl;
     private popupList: AgPopup[] = [];
@@ -89,11 +89,11 @@ export class PopupService extends BeanStub {
         this.gridCompController = gridCompController;
 
         this.addManagedListener(this.gridCompController, Events.EVENT_KEYBOARD_FOCUS, () => {
-            forEach(this.popupList, popup => addCssClass(popup.element, FocusController.AG_KEYBOARD_FOCUS));
+            forEach(this.popupList, popup => addCssClass(popup.element, FocusService.AG_KEYBOARD_FOCUS));
         });
 
         this.addManagedListener(this.gridCompController, Events.EVENT_MOUSE_FOCUS, () => {
-            forEach(this.popupList, popup => removeCssClass(popup.element, FocusController.AG_KEYBOARD_FOCUS));
+            forEach(this.popupList, popup => removeCssClass(popup.element, FocusService.AG_KEYBOARD_FOCUS));
         });
     }
 
@@ -496,8 +496,8 @@ export class PopupService extends BeanStub {
         addCssClass(eChild, this.gridOptionsWrapper.isEnableRtl() ? 'ag-rtl' : 'ag-ltr');
         addCssClass(eChild, 'ag-popup-child');
 
-        if (this.focusController.isKeyboardMode()) {
-            addCssClass(eChild, FocusController.AG_KEYBOARD_FOCUS)
+        if (this.focusService.isKeyboardMode()) {
+            addCssClass(eChild, FocusService.AG_KEYBOARD_FOCUS)
         }
 
         eWrapper.appendChild(eChild);
