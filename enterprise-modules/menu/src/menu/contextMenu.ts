@@ -7,7 +7,7 @@ import {
     CellPosition,
     CellPositionUtils,
     Column,
-    ColumnController,
+    ColumnModel,
     Component,
     FocusController,
     GetContextMenuItems,
@@ -36,7 +36,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
 
     @Autowired('popupService') private popupService: PopupService;
     @Optional('rangeController') private rangeController: IRangeController;
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
 
     private activeMenu: ContextMenu | null;
     private gridBodyComp: GridBodyComp;
@@ -62,7 +62,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
         if (this.gridOptionsWrapper.isEnableCharts() &&
             ModuleRegistry.isRegistered(ModuleNames.RangeSelectionModule) &&
             ModuleRegistry.isRegistered(ModuleNames.GridChartsModule)) {
-            if (this.columnController.isPivotMode()) {
+            if (this.columnModel.isPivotMode()) {
                 defaultMenuOptions.push('pivotChart');
             }
 

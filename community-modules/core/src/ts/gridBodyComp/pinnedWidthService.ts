@@ -2,13 +2,13 @@ import { BeanStub } from "../context/beanStub";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { Events } from "../eventKeys";
-import { ColumnController } from "../columnController/columnController";
+import { ColumnModel } from "../columnController/columnModel";
 import { Constants } from "../constants/constants";
 
 @Bean('pinnedWidthService')
 export class PinnedWidthService extends BeanStub {
 
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
 
     private leftWidth: number;
     private rightWidth: number;
@@ -25,8 +25,8 @@ export class PinnedWidthService extends BeanStub {
 
         const printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
 
-        const newLeftWidth = printLayout ? 0 : this.columnController.getDisplayedColumnsLeftWidth();
-        const newRightWidth = printLayout ? 0 : this.columnController.getDisplayedColumnsRightWidth();
+        const newLeftWidth = printLayout ? 0 : this.columnModel.getDisplayedColumnsLeftWidth();
+        const newRightWidth = printLayout ? 0 : this.columnModel.getDisplayedColumnsRightWidth();
 
         if (newLeftWidth != this.leftWidth) {
             this.leftWidth = newLeftWidth;

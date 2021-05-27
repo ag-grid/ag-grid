@@ -5,7 +5,7 @@ import { Constants } from "../constants/constants";
 import { Events } from "../eventKeys";
 import { RowContainerHeightService } from "../rendering/rowContainerHeightService";
 import { ControllersService } from "../controllersService";
-import { ColumnController } from "../columnController/columnController";
+import { ColumnModel } from "../columnController/columnModel";
 import { ScrollVisibleService } from "./scrollVisibleService";
 import { getTarget } from "../utils/event";
 import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
@@ -30,7 +30,7 @@ export const CSS_CLASS_CELL_SELECTABLE = 'ag-selectable';
 export const CSS_CLASS_FORCE_VERTICAL_SCROLL = 'ag-force-vertical-scroll';
 export const CSS_CLASS_COLUMN_MOVING = 'ag-column-moving';
 
-export interface GridBodyView extends LayoutView {
+export interface IGridBodyComp extends LayoutView {
     setColumnMovingCss(selectable: boolean): void;
     setCellSelectableCss(selectable: boolean): void;
     setTopHeight(height: number): void;
@@ -45,11 +45,11 @@ export interface GridBodyView extends LayoutView {
     registerBodyViewportResizeListener(listener: (() => void)): void;
 }
 
-export class GridBodyController extends BeanStub {
+export class GridBodyCtrl extends BeanStub {
 
     @Autowired('rowContainerHeightService') private rowContainerHeightService: RowContainerHeightService;
     @Autowired('controllersService') private controllersService: ControllersService;
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
     @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
@@ -60,7 +60,7 @@ export class GridBodyController extends BeanStub {
     @Autowired('popupService') public popupService: PopupService;
     @Autowired('mouseEventService') public mouseEventService: MouseEventService;
 
-    private view: GridBodyView;
+    private view: IGridBodyComp;
     private eGridBody: HTMLElement;
     private eBodyViewport: HTMLElement;
     private eTop: HTMLElement;
@@ -77,7 +77,7 @@ export class GridBodyController extends BeanStub {
         return this.eBodyViewport;
     }
 
-    public setView(view: GridBodyView, eGridBody: HTMLElement, eBodyViewport: HTMLElement,
+    public setComp(view: IGridBodyComp, eGridBody: HTMLElement, eBodyViewport: HTMLElement,
                    eTop: HTMLElement, eBottom: HTMLElement): void {
         this.view = view;
         this.eGridBody = eGridBody;
@@ -124,7 +124,7 @@ export class GridBodyController extends BeanStub {
     }
 
     private onGridColumnsChanged(): void {
-        const columns = this.columnController.getAllGridColumns();
+        const columns = this.columnModel.getAllGridColumns();
         this.view.setColumnCount(columns ? columns.length : 0);
     }
 
@@ -303,7 +303,7 @@ export class GridBodyController extends BeanStub {
         const availableWidth = bodyViewportWidth - scrollWidthToRemove;
 
         if (availableWidth > 0) {
-            this.columnController.sizeColumnsToFit(availableWidth, "sizeColumnsToFit");
+            this.columnModel.sizeColumnsToFit(availableWidth, "sizeColumnsToFit");
             return;
         }
 

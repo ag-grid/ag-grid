@@ -2,14 +2,14 @@ import { BeanStub } from "../context/beanStub";
 import { Events } from "../events";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { ControllersService } from "../controllersService";
-import { RowContainerController } from "../gridBodyComp/rowContainer/rowContainerController";
+import { RowContainerCtrl } from "../gridBodyComp/rowContainer/rowContainerCtrl";
 
 @Bean('paginationAutoPageSizeService')
 export class PaginationAutoPageSizeService extends BeanStub {
 
     @Autowired('controllersService') private controllersService: ControllersService;
 
-    private centerRowContainerCon: RowContainerController;
+    private centerRowContainerCon: RowContainerCtrl;
 
     @PostConstruct
     private postConstruct(): void {

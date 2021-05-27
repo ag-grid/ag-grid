@@ -6,7 +6,7 @@ import {
     Bean,
     BeanStub,
     Column,
-    ColumnController,
+    ColumnModel,
     PostConstruct,
     RowNode,
     ValueService,
@@ -18,7 +18,7 @@ import { NodeManager } from "../nodeManager";
 export class BlockUtils extends BeanStub {
 
     @Autowired('valueService') private valueService: ValueService;
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
 
     private rowHeight: number;
@@ -139,7 +139,7 @@ export class BlockUtils extends BeanStub {
     }
 
     private setGroupDataIntoRowNode(rowNode: RowNode): void {
-        const groupDisplayCols: Column[] = this.columnController.getGroupDisplayColumns();
+        const groupDisplayCols: Column[] = this.columnModel.getGroupDisplayColumns();
 
         const usingTreeData = this.gridOptionsWrapper.isTreeData();
 

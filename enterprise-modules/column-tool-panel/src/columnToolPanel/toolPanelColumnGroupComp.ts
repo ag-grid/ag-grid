@@ -3,7 +3,7 @@ import {
     AgCheckbox,
     Autowired,
     Column,
-    ColumnController,
+    ColumnModel,
     ColumnEventType,
     Component,
     CssClassApplier,
@@ -33,7 +33,7 @@ export class ToolPanelColumnGroupComp extends Component {
             <span class="ag-column-select-column-label" ref="eLabel"></span>
         </div>`;
 
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('modelItemUtils') private modelItemUtils: ModelItemUtils;
 
@@ -74,7 +74,7 @@ export class ToolPanelColumnGroupComp extends Component {
         _.addCssClass(this.eDragHandle, 'ag-column-select-column-group-drag-handle');
         this.cbSelect.getGui().insertAdjacentElement('afterend', this.eDragHandle);
 
-        this.displayName = this.columnController.getDisplayNameForOriginalColumnGroup(null, this.columnGroup, this.eventType);
+        this.displayName = this.columnModel.getDisplayNameForOriginalColumnGroup(null, this.columnGroup, this.eventType);
 
         if (_.missing(this.displayName)) {
             this.displayName = '>>';
@@ -249,7 +249,7 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private workOutSelectedValue(): boolean | undefined {
-        const pivotMode = this.columnController.isPivotMode();
+        const pivotMode = this.columnModel.isPivotMode();
 
         const visibleLeafColumns = this.getVisibleLeafColumns();
 
@@ -274,7 +274,7 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private workOutReadOnlyValue(): boolean {
-        const pivotMode = this.columnController.isPivotMode();
+        const pivotMode = this.columnModel.isPivotMode();
 
         let colsThatCanAction = 0;
 

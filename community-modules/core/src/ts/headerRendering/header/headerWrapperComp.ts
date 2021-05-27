@@ -6,7 +6,7 @@ import { DragAndDropService, DragItem, DragSource, DragSourceType } from "../../
 import { ColDef } from "../../entities/colDef";
 import { Constants } from "../../constants/constants";
 import { ColumnApi } from "../../columnController/columnApi";
-import { ColumnController } from "../../columnController/columnController";
+import { ColumnModel } from "../../columnController/columnModel";
 import { ColumnHoverService } from "../../rendering/columnHoverService";
 import { CssClassApplier } from "../cssClassApplier";
 import { Events } from "../../events";
@@ -38,7 +38,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         </div>`;
 
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('horizontalResizeService') private horizontalResizeService: HorizontalResizeService;
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
     @Autowired('gridApi') private gridApi: GridApi;
@@ -82,7 +82,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     protected postConstruct(): void {
         super.postConstruct();
 
-        this.colDefVersion = this.columnController.getColDefVersion();
+        this.colDefVersion = this.columnModel.getColDefVersion();
 
         this.updateState();
 
@@ -144,11 +144,11 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     }
 
     private calculateDisplayName(): string | null {
-        return this.columnController.getDisplayNameForColumn(this.column, 'header', true);
+        return this.columnModel.getDisplayNameForColumn(this.column, 'header', true);
     }
 
     private onNewColumnsLoaded(): void {
-        const colDefVersionNow = this.columnController.getColDefVersion();
+        const colDefVersionNow = this.columnModel.getColDefVersion();
         if (colDefVersionNow != this.colDefVersion) {
             this.colDefVersion = colDefVersionNow;
             this.refresh();
@@ -448,7 +448,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
                 const skipHeaderOnAutoSize = this.gridOptionsWrapper.isSkipHeaderOnAutoSize();
 
                 const autoSizeColListener = () => {
-                    this.columnController.autoSizeColumn(this.column, skipHeaderOnAutoSize, "uiColumnResized");
+                    this.columnModel.autoSizeColumn(this.column, skipHeaderOnAutoSize, "uiColumnResized");
                 };
 
                 this.eResize.addEventListener('dblclick', autoSizeColListener);
@@ -488,7 +488,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     public onResizing(finished: boolean, resizeAmount: number): void {
         const resizeAmountNormalised = this.normaliseResizeAmount(resizeAmount);
         const columnWidths = [{ key: this.column, newWidth: this.resizeStartWidth + resizeAmountNormalised }];
-        this.columnController.setColumnWidths(columnWidths, this.resizeWithShiftKey, finished, "uiColumnDragged");
+        this.columnModel.setColumnWidths(columnWidths, this.resizeWithShiftKey, finished, "uiColumnDragged");
 
         if (finished) {
             removeCssClass(this.getGui(), 'ag-column-resizing');

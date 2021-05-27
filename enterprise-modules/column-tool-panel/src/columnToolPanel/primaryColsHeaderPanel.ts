@@ -1,7 +1,7 @@
 import {
     _,
     Autowired,
-    ColumnController,
+    ColumnModel,
     Events,
     RefSelector,
     ToolPanelColumnCompParams,
@@ -15,7 +15,7 @@ import {
 export enum ExpandState { EXPANDED, COLLAPSED, INDETERMINATE }
 
 export class PrimaryColsHeaderPanel extends Component {
-    @Autowired('columnController') private readonly columnController: ColumnController;
+    @Autowired('columnModel') private readonly columnModel: ColumnModel;
 
     @RefSelector('eExpand') private readonly eExpand: HTMLElement;
     @RefSelector('eSelect') private readonly eSelect: AgCheckbox;
@@ -78,7 +78,7 @@ export class PrimaryColsHeaderPanel extends Component {
     public init(params: ToolPanelColumnCompParams): void {
         this.params = params;
 
-        if (this.columnController.isReady()) {
+        if (this.columnModel.isReady()) {
             this.showOrHideOptions();
         }
     }
@@ -104,7 +104,7 @@ export class PrimaryColsHeaderPanel extends Component {
         const showFilter = !this.params.suppressColumnFilter;
         const showSelect = !this.params.suppressColumnSelectAll;
         const showExpand = !this.params.suppressColumnExpandAll;
-        const groupsPresent = this.columnController.isPrimaryColumnGroupsPresent();
+        const groupsPresent = this.columnModel.isPrimaryColumnGroupsPresent();
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         this.eFilterTextField.setInputPlaceholder(translate('searchOoo', 'Search...'));

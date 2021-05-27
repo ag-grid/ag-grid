@@ -1,6 +1,6 @@
 import { AgPromise } from '../utils';
 import { ValueService } from '../valueService/valueService';
-import { ColumnController } from '../columnController/columnController';
+import { ColumnModel } from '../columnController/columnModel';
 import { ColumnApi } from '../columnController/columnApi';
 import { RowNode } from '../entities/rowNode';
 import { Column } from '../entities/column';
@@ -28,7 +28,7 @@ export class FilterManager extends BeanStub {
     @Autowired('$compile') private $compile: any;
     @Autowired('$scope') private $scope: any;
     @Autowired('valueService') private valueService: ValueService;
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
@@ -80,7 +80,7 @@ export class FilterManager extends BeanStub {
 
             // at this point, processedFields contains data for which we don't have a filter working yet
             modelKeys.forEach(colId => {
-                const column = this.columnController.getPrimaryColumn(colId);
+                const column = this.columnModel.getPrimaryColumn(colId);
 
                 if (!column) {
                     console.warn('Warning ag-grid setFilterModel - no column found for colId ' + colId);
@@ -259,7 +259,7 @@ export class FilterManager extends BeanStub {
     }
 
     private doesRowPassQuickFilterNoCache(node: RowNode, filterPart: string): boolean {
-        const columns = this.columnController.getAllColumnsForQuickFilter();
+        const columns = this.columnModel.getAllColumnsForQuickFilter();
 
         return some(columns, column => {
             const part = this.getQuickFilterTextForColumn(column, node);
@@ -334,7 +334,7 @@ export class FilterManager extends BeanStub {
 
     private aggregateRowForQuickFilter(node: RowNode): void {
         const stringParts: string[] = [];
-        const columns = this.columnController.getAllColumnsForQuickFilter();
+        const columns = this.columnModel.getAllColumnsForQuickFilter();
 
         forEach(columns, column => {
             const part = this.getQuickFilterTextForColumn(column, node);
@@ -519,7 +519,7 @@ export class FilterManager extends BeanStub {
         let atLeastOneFilterGone = false;
 
         this.allAdvancedFilters.forEach(filterWrapper => {
-            const oldColumn = !this.columnController.getPrimaryColumn(filterWrapper.column);
+            const oldColumn = !this.columnModel.getPrimaryColumn(filterWrapper.column);
 
             if (oldColumn) {
                 atLeastOneFilterGone = true;

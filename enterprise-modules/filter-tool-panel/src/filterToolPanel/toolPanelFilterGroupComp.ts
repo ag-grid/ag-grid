@@ -3,7 +3,7 @@ import {
     AgGroupComponent,
     Autowired,
     Column,
-    ColumnController,
+    ColumnModel,
     Component,
     Events,
     FilterOpenedEvent,
@@ -27,7 +27,7 @@ export class ToolPanelFilterGroupComp extends Component {
 
     @RefSelector('filterGroupComp') private filterGroupComp: AgGroupComponent;
 
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
 
     private readonly depth: number;
     private readonly columnGroup: OriginalColumnGroupChild;
@@ -207,11 +207,11 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     private getColumnGroupName(columnGroup: OriginalColumnGroup): string | null {
-        return this.columnController.getDisplayNameForOriginalColumnGroup(null, columnGroup, 'filterToolPanel');
+        return this.columnModel.getDisplayNameForOriginalColumnGroup(null, columnGroup, 'filterToolPanel');
     }
 
     private getColumnName(column: Column): string | null {
-        return this.columnController.getDisplayNameForColumn(column, 'filterToolPanel', false);
+        return this.columnModel.getDisplayNameForColumn(column, 'filterToolPanel', false);
     }
 
     private destroyFilters() {

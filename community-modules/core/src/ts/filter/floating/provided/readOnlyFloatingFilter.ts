@@ -3,14 +3,14 @@ import { Component } from '../../../widgets/component';
 import { RefSelector } from '../../../widgets/componentAnnotations';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { Autowired } from '../../../context/context';
-import { ColumnController } from '../../../columnController/columnController';
+import { ColumnModel } from '../../../columnController/columnModel';
 
 // optional floating filter for user provided filters - instead of providing a floating filter,
 // they can provide a getModelAsString() method on the filter instead. this class just displays
 // the string returned from getModelAsString()
 export class ReadOnlyFloatingFilter extends Component implements IFloatingFilterComp {
     @RefSelector('eFloatingFilterText') private eFloatingFilterText: AgInputTextField;
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
 
     private params: IFloatingFilterParams;
 
@@ -29,7 +29,7 @@ export class ReadOnlyFloatingFilter extends Component implements IFloatingFilter
 
     public init(params: IFloatingFilterParams): void {
         this.params = params;
-        const displayName = this.columnController.getDisplayNameForColumn(params.column, 'header', true);
+        const displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
         this.eFloatingFilterText
             .setDisabled(true)

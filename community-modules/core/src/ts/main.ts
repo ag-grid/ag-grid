@@ -8,9 +8,9 @@ globalObj.HTMLInputElement = typeof HTMLInputElement === 'undefined' ? {} : HTML
 globalObj.Node = typeof Node === 'undefined' ? {} : Node;
 globalObj.MouseEvent = typeof MouseEvent === 'undefined' ? {} : MouseEvent;
 
-// columnController
+// columnModel
 export { ColumnFactory } from "./columnController/columnFactory";
-export { ColumnController, ColumnState } from "./columnController/columnController";
+export { ColumnModel, ColumnState } from "./columnController/columnModel";
 export { ColumnKeyCreator } from "./columnController/columnKeyCreator";
 export { ColumnUtils } from "./columnController/columnUtils";
 export { DisplayedGroupCreator } from "./columnController/displayedGroupCreator";
@@ -122,7 +122,7 @@ export { FloatingFilterMapper } from './filter/floating/floatingFilterMapper';
 
 // gridPanel
 export { GridBodyComp } from "./gridBodyComp/gridBodyComp";
-export { GridBodyController } from "./gridBodyComp/gridBodyController";
+export { GridBodyCtrl } from "./gridBodyComp/gridBodyCtrl";
 export { ScrollVisibleService } from "./gridBodyComp/scrollVisibleService";
 export { MouseEventService } from "./gridBodyComp/mouseEventService";
 
@@ -181,7 +181,7 @@ export { SetLeftFeature } from "./rendering/features/setLeftFeature";
 export { AutoWidthCalculator } from "./rendering/autoWidthCalculator";
 export { CheckboxSelectionComponent } from "./rendering/checkboxSelectionComponent";
 export { CellComp } from "./rendering/cellComp";
-export { RowController } from "./rendering/row/rowController";
+export { RowCtrl } from "./rendering/row/rowCtrl";
 export { RowRenderer } from "./rendering/rowRenderer";
 export { ValueFormatterService } from "./rendering/valueFormatterService";
 export { ILoadingCellRenderer, ILoadingCellRendererParams } from "./rendering/cellRenderers/loadingCellRenderer";
@@ -268,7 +268,7 @@ export { SelectableService } from "./rowNodes/selectableService";
 export { RowNodeSorter, SortedRowNode, SortOption } from "./rowNodes/rowNodeSorter";
 export { ControllersService } from "./controllersService";
 export { GridComp } from "./gridComp/gridComp";
-export { GridCompController, GridCompView } from "./gridComp/gridCompController";
+export { GridCtrl, IGridComp } from "./gridComp/gridCtrl";
 export { Logger, LoggerFactory } from "./logger";
 export { SelectionController } from "./selectionController";
 export { SortController, SortModelItem } from "./sortController";

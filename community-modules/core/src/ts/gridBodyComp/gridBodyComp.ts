@@ -16,11 +16,11 @@ import {
     CSS_CLASS_CELL_SELECTABLE,
     CSS_CLASS_COLUMN_MOVING,
     CSS_CLASS_FORCE_VERTICAL_SCROLL,
-    GridBodyController,
-    GridBodyView,
+    GridBodyCtrl,
+    IGridBodyComp,
     RowAnimationCssClasses
-} from "./gridBodyController";
-import { RowContainerNames } from "./rowContainer/rowContainerController";
+} from "./gridBodyCtrl";
+import { RowContainerNames } from "./rowContainer/rowContainerCtrl";
 
 const GRID_BODY_TEMPLATE = /* html */
     `<div class="ag-root ag-unselectable" role="grid" unselectable="on">
@@ -63,7 +63,7 @@ export class GridBodyComp extends Component {
     @RefSelector('eBottom') private eBottom: HTMLElement;
     @RefSelector('headerRoot') headerRootComp: HeaderRootComp;
 
-    private controller: GridBodyController;
+    private ctrl: GridBodyCtrl;
 
     constructor() {
         super(GRID_BODY_TEMPLATE);
@@ -78,7 +78,7 @@ export class GridBodyComp extends Component {
             element.style.height = heightString;
         };
 
-        const view: GridBodyView = {
+        const compProxy: IGridBodyComp = {
             setRowAnimationCssOnBodyViewport: this.setRowAnimationCssOnBodyViewport.bind(this),
             setColumnCount: count => setAriaColCount(this.getGui(), count),
             setRowCount: count => setAriaRowCount(this.getGui(), count),
@@ -112,8 +112,8 @@ export class GridBodyComp extends Component {
             },
         };
 
-        this.controller = this.createManagedBean(new GridBodyController());
-        this.controller.setView(view, this.getGui(), this.eBodyViewport, this.eTop, this.eBottom);
+        this.ctrl = this.createManagedBean(new GridBodyCtrl());
+        this.ctrl.setComp(compProxy, this.getGui(), this.eBodyViewport, this.eTop, this.eBottom);
 
         if (this.$scope) {
             this.addAngularApplyCheck();

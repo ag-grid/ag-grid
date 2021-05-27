@@ -1,11 +1,11 @@
 import { Component } from "../widgets/component";
 import { RefSelector } from "../widgets/componentAnnotations";
 import { PostConstruct } from "../context/context";
-import { FakeHorizontalScrollController, FakeHorizontalScrollView } from "./fakeHorizontalScrollController";
+import { FakeHScrollCtrl, IFakeHScrollComp } from "./fakeHScrollCtrl";
 import { addOrRemoveCssClass, setFixedHeight, setFixedWidth } from "../utils/dom";
 import { CenterWidthFeature } from "./centerWidthFeature";
 
-export class FakeHorizontalScrollComp extends Component {
+export class FakeHScrollComp extends Component {
 
     private static TEMPLATE = /* html */
         `<div class="ag-body-horizontal-scroll" aria-hidden="true">
@@ -22,15 +22,15 @@ export class FakeHorizontalScrollComp extends Component {
     @RefSelector('eViewport') private eViewport: HTMLElement;
     @RefSelector('eContainer') private eContainer: HTMLElement;
 
-    private controller: FakeHorizontalScrollController;
+    private controller: FakeHScrollCtrl;
 
     constructor() {
-        super(FakeHorizontalScrollComp.TEMPLATE);
+        super(FakeHScrollComp.TEMPLATE);
     }
 
     @PostConstruct
     private postConstruct(): void {
-        const view: FakeHorizontalScrollView = {
+        const compProxy: IFakeHScrollComp = {
             setHeight: height => setFixedHeight(this.getGui(), height),
             setContainerHeight: height => setFixedHeight(this.eContainer, height),
             setViewportHeight: height => setFixedHeight(this.eViewport, height),
@@ -42,8 +42,8 @@ export class FakeHorizontalScrollComp extends Component {
             includeRightSpacerScrollerCss: (cssClass: string, include: boolean) =>
                 addOrRemoveCssClass(this.eRightSpacer, cssClass, include),
         };
-        this.controller = this.createManagedBean(new FakeHorizontalScrollController());
-        this.controller.setView(view, this.eViewport, this.eContainer);
+        this.controller = this.createManagedBean(new FakeHScrollCtrl());
+        this.controller.setComp(compProxy, this.eViewport, this.eContainer);
 
         this.createManagedBean(new CenterWidthFeature(width => this.eContainer.style.width = `${width}px`));
     }

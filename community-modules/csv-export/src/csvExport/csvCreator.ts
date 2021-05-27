@@ -1,7 +1,7 @@
 import {
     Autowired,
     Bean,
-    ColumnController,
+    ColumnModel,
     CsvCustomContent,
     CsvExportParams,
     GridOptionsWrapper,
@@ -17,7 +17,7 @@ import { CsvSerializingSession } from "./sessions/csvSerializingSession";
 @Bean('csvCreator')
 export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSession, CsvExportParams> implements ICsvCreator {
 
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('gridSerializer') private gridSerializer: GridSerializer;
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
@@ -73,7 +73,7 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
     }
 
     public createSerializingSession(params?: CsvExportParams): CsvSerializingSession {
-        const { columnController, valueService, gridOptionsWrapper } = this;
+        const { columnModel, valueService, gridOptionsWrapper } = this;
         const {
             processCellCallback,
             processHeaderCallback,
@@ -84,7 +84,7 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
         } = params!;
 
         return new CsvSerializingSession({
-            columnController,
+            columnModel: columnModel,
             valueService,
             gridOptionsWrapper,
             processCellCallback: processCellCallback || undefined,

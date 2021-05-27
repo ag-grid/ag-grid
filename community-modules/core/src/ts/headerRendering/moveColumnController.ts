@@ -1,6 +1,6 @@
 import { Autowired, PostConstruct } from "../context/context";
 import { Constants } from "../constants/constants";
-import { ColumnController } from "../columnController/columnController";
+import { ColumnModel } from "../columnController/columnModel";
 import { Column } from "../entities/column";
 import { DragAndDropService, DraggingEvent, DragSourceType, HorizontalDirection } from "../dragAndDrop/dragAndDropService";
 import { DropListener } from "./bodyDropTarget";
@@ -10,17 +10,17 @@ import { ColumnEventType } from "../events";
 import { missing, exists } from "../utils/generic";
 import { sortNumerically, last, includes } from "../utils/array";
 import { ControllersService } from "../controllersService";
-import { GridBodyController } from "../gridBodyComp/gridBodyController";
+import { GridBodyCtrl } from "../gridBodyComp/gridBodyCtrl";
 
 export class MoveColumnController implements DropListener {
 
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('controllersService') public controllersService: ControllersService;
 
-    private gridBodyCon: GridBodyController;
+    private gridBodyCon: GridBodyCtrl;
 
     private needToMoveLeft = false;
     private needToMoveRight = false;
@@ -96,14 +96,14 @@ export class MoveColumnController implements DropListener {
     public setColumnsVisible(columns: Column[] | null | undefined, visible: boolean, source: ColumnEventType = "api") {
         if (columns) {
             const allowedCols = columns.filter(c => !c.getColDef().lockVisible);
-            this.columnController.setColumnsVisible(allowedCols, visible, source);
+            this.columnModel.setColumnsVisible(allowedCols, visible, source);
         }
     }
 
     public setColumnsPinned(columns: Column[] | null | undefined, pinned: string | null, source: ColumnEventType = "api") {
         if (columns) {
             const allowedCols = columns.filter(c => !c.getColDef().lockPinned);
-            this.columnController.setColumnsPinned(allowedCols, pinned, source);
+            this.columnModel.setColumnsPinned(allowedCols, pinned, source);
         }
     }
 
@@ -200,7 +200,7 @@ export class MoveColumnController implements DropListener {
     // returns the index of the first column in the list ONLY if the cols are all beside
     // each other. if the cols are not beside each other, then returns null
     private calculateOldIndex(movingCols: Column[]): number | null {
-        const gridCols: Column[] = this.columnController.getAllGridColumns();
+        const gridCols: Column[] = this.columnModel.getAllGridColumns();
         const indexes = sortNumerically(movingCols.map(col => gridCols.indexOf(col)));
         const firstIndex = indexes[0];
         const lastIndex = last(indexes);
@@ -218,7 +218,7 @@ export class MoveColumnController implements DropListener {
         // could themselves be part of 'married children' groups, which means we need to maintain the order within
         // the moving list.
         const allMovingColumnsOrdered = allMovingColumns.slice();
-        this.columnController.sortColumnsLikeGridColumns(allMovingColumnsOrdered);
+        this.columnModel.sortColumnsLikeGridColumns(allMovingColumnsOrdered);
 
         const validMoves = this.calculateValidMoves(allMovingColumnsOrdered, draggingRight, mouseX);
 
@@ -258,11 +258,11 @@ export class MoveColumnController implements DropListener {
         for (let i = 0; i < validMoves.length; i++) {
             const move: number = validMoves[i];
 
-            if (!this.columnController.doesMovePassRules(allMovingColumnsOrdered, move)) {
+            if (!this.columnModel.doesMovePassRules(allMovingColumnsOrdered, move)) {
                 continue;
             }
 
-            this.columnController.moveColumns(allMovingColumnsOrdered, move, "uiColumnDragged");
+            this.columnModel.moveColumns(allMovingColumnsOrdered, move, "uiColumnDragged");
 
             // important to return here, so once we do the first valid move, we don't try do any more
             return;
@@ -274,10 +274,10 @@ export class MoveColumnController implements DropListener {
 
         if (isMoveBlocked) { return []; }
         // this is the list of cols on the screen, so it's these we use when comparing the x mouse position
-        const allDisplayedCols = this.columnController.getDisplayedColumns(this.pinned);
+        const allDisplayedCols = this.columnModel.getDisplayedColumns(this.pinned);
         // but this list is the list of all cols, when we move a col it's the index within this list that gets used,
         // so the result we return has to be and index location for this list
-        const allGridCols = this.columnController.getAllGridColumns();
+        const allGridCols = this.columnModel.getAllGridColumns();
 
         const movingDisplayedCols = allDisplayedCols.filter(col => includes(movingCols, col));
         const otherDisplayedCols = allDisplayedCols.filter(col => !includes(movingCols, col));

@@ -17,7 +17,7 @@ import { findIndex, forEach, last } from '../utils/array';
 import { isElementInEventPath } from '../utils/event';
 import { KeyCode } from '../constants/keyCode';
 import { FocusController } from "../focusController";
-import { GridCompController } from "../gridComp/gridCompController";
+import { GridCtrl } from "../gridComp/gridCtrl";
 
 export interface PopupEventParams {
     originalMouseEvent?: MouseEvent | Touch | null;
@@ -82,10 +82,10 @@ export class PopupService extends BeanStub {
     @Autowired('environment') private environment: Environment;
     @Autowired('focusController') private focusController: FocusController;
 
-    private gridCompController: GridCompController;
+    private gridCompController: GridCtrl;
     private popupList: AgPopup[] = [];
 
-    public registerGridCompController(gridCompController: GridCompController): void {
+    public registerGridCompController(gridCompController: GridCtrl): void {
         this.gridCompController = gridCompController;
 
         this.addManagedListener(this.gridCompController, Events.EVENT_KEYBOARD_FOCUS, () => {

@@ -1,6 +1,6 @@
 import { RowRenderer } from "./rendering/rowRenderer";
 import { FilterManager } from "./filter/filterManager";
-import { ColumnController, ColumnState } from "./columnController/columnController";
+import { ColumnModel, ColumnState } from "./columnController/columnModel";
 import { ColumnApi } from "./columnController/columnApi";
 import { SelectionController } from "./selectionController";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
@@ -90,10 +90,10 @@ import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 import { ServerSideTransaction, ServerSideTransactionResult } from "./interfaces/serverSideTransaction";
 import { ServerSideStoreState } from "./interfaces/IServerSideStore";
 import { HeadlessService } from "./headless/headlessService";
-import { GridCompController } from "./gridComp/gridCompController";
+import { GridCtrl } from "./gridComp/gridCtrl";
 import { ISideBar } from "./interfaces/iSideBar";
 import { ControllersService } from "./controllersService";
-import { GridBodyController } from "./gridBodyComp/gridBodyController";
+import { GridBodyCtrl } from "./gridBodyComp/gridBodyCtrl";
 import { OverlayWrapperComponent } from "./rendering/overlays/overlayWrapperComponent";
 import { HeaderPosition } from "./headerRendering/header/headerPosition";
 
@@ -176,7 +176,7 @@ export class GridApi {
     @Optional('excelCreator') private excelCreator: IExcelCreator;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('valueService') private valueService: ValueService;
@@ -206,8 +206,8 @@ export class GridApi {
 
     private overlayWrapperComp: OverlayWrapperComponent;
     private gridBodyComp: GridBodyComp;
-    private gridBodyCon: GridBodyController;
-    private gridCompController: GridCompController;
+    private gridBodyCon: GridBodyCtrl;
+    private gridCompController: GridCtrl;
     private sideBarComp: ISideBar;
 
     private headerRootComp: HeaderRootComp;
@@ -228,7 +228,7 @@ export class GridApi {
         this.overlayWrapperComp = overlayWrapperComp;
     }
 
-    public registerGridCompController(gridCompController: GridCompController): void {
+    public registerGridCompController(gridCompController: GridCtrl): void {
         this.gridCompController = gridCompController;
     }
 
@@ -472,7 +472,7 @@ export class GridApi {
     }
 
     public setColumnDefs(colDefs: (ColDef | ColGroupDef)[], source: ColumnEventType = "api") {
-        this.columnController.setColumnDefs(colDefs, source);
+        this.columnModel.setColumnDefs(colDefs, source);
     }
 
     public setAutoGroupColumnDef(colDef: ColDef, source: ColumnEventType = "api") {
@@ -836,7 +836,7 @@ export class GridApi {
     }
 
     public getFilterInstance(key: string | Column, callback?: (filter: IFilterComp) => void): IFilterComp | null | undefined {
-        const column = this.columnController.getPrimaryColumn(key);
+        const column = this.columnModel.getPrimaryColumn(key);
 
         if (column) {
             const filterPromise = this.filterManager.getFilterComponent(column, 'NO_UI');
@@ -860,7 +860,7 @@ export class GridApi {
     }
 
     public destroyFilter(key: string | Column) {
-        const column = this.columnController.getPrimaryColumn(key);
+        const column = this.columnModel.getPrimaryColumn(key);
         if (column) {
             return this.filterManager.destroyFilter(column, "filterDestroyed");
         }
@@ -873,14 +873,14 @@ export class GridApi {
     }
 
     public getColumnDef(key: string | Column) {
-        const column = this.columnController.getPrimaryColumn(key);
+        const column = this.columnModel.getPrimaryColumn(key);
         if (column) {
             return column.getColDef();
         }
         return null;
     }
 
-    public getColumnDefs(): (ColDef | ColGroupDef)[] { return this.columnController.getColumnDefs(); }
+    public getColumnDefs(): (ColDef | ColGroupDef)[] { return this.columnModel.getColumnDefs(); }
 
     public onFilterChanged() {
         this.filterManager.onFilterChanged();
@@ -902,12 +902,12 @@ export class GridApi {
                 });
             });
         }
-        this.columnController.applyColumnState({ state: columnState, defaultState: { sort: null } });
+        this.columnModel.applyColumnState({ state: columnState, defaultState: { sort: null } });
     }
 
     public getSortModel() {
         console.warn('AG Grid: as of version 24.0.0, getSortModel() is deprecated, sort information is now part of Column State. Please use columnApi.getColumnState() instead.');
-        const columnState = this.columnController.getColumnState();
+        const columnState = this.columnModel.getColumnState();
         const filteredStates = columnState.filter(item => item.sort != null);
 
         const indexes: { [colId: string]: number; } = {};
@@ -1236,9 +1236,9 @@ export class GridApi {
     }
 
     public getValue(colKey: string | Column, rowNode: RowNode): any {
-        let column = this.columnController.getPrimaryColumn(colKey);
+        let column = this.columnModel.getPrimaryColumn(colKey);
         if (missing(column)) {
-            column = this.columnController.getGridColumn(colKey);
+            column = this.columnModel.getGridColumn(colKey);
         }
         if (missing(column)) {
             return null;
@@ -1408,16 +1408,16 @@ export class GridApi {
 
     public showColumnMenuAfterButtonClick(colKey: string | Column, buttonElement: HTMLElement): void {
         // use grid column so works with pivot mode
-        const column = this.columnController.getGridColumn(colKey);
+        const column = this.columnModel.getGridColumn(colKey);
         this.menuFactory.showMenuAfterButtonClick(column, buttonElement);
     }
 
     public showColumnMenuAfterMouseClick(colKey: string | Column, mouseEvent: MouseEvent | Touch): void {
         // use grid column so works with pivot mode
-        let column = this.columnController.getGridColumn(colKey);
+        let column = this.columnModel.getGridColumn(colKey);
 
         if (!column) {
-            column = this.columnController.getPrimaryColumn(colKey);
+            column = this.columnModel.getPrimaryColumn(colKey);
         }
 
         if (!column) {
@@ -1466,7 +1466,7 @@ export class GridApi {
     }
 
     public startEditingCell(params: StartEditingCellParams): void {
-        const column = this.columnController.getGridColumn(params.colKey);
+        const column = this.columnModel.getGridColumn(params.colKey);
         if (!column) {
             console.warn(`AG Grid: no column found for ${params.colKey}`);
             return;

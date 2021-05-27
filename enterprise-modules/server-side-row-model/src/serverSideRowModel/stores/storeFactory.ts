@@ -8,7 +8,7 @@ import {
     ServerSideStoreParams,
     GetServerSideStoreParamsParams,
     ServerSideStoreType,
-    ColumnController
+    ColumnModel
 } from "@ag-grid-community/core";
 import { PartialStore } from "./partialStore";
 import { SSRMParams } from "../serverSideRowModel";
@@ -18,7 +18,7 @@ import { FullStore } from "./fullStore";
 export class StoreFactory {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
 
     public createStore(ssrmParams: SSRMParams, parentNode: RowNode): IServerSideStore {
         const storeParams = this.getStoreParams(ssrmParams, parentNode);
@@ -68,7 +68,7 @@ export class StoreFactory {
             return undefined;
         }
 
-        if (this.columnController.isAutoRowHeightActive()) {
+        if (this.columnModel.isAutoRowHeightActive()) {
             const message = 'AG Grid: Server Side Row Model does not support Auto Row Height and Cache Purging. ' +
                 'Either a) remove colDef.autoHeight or b) remove maxBlocksInCache property. Purging has been disabled.';
             _.doOnce(() => console.warn(message), 'storeFactory.maxBlocksInCache.autoRowHeightActive');
@@ -100,9 +100,9 @@ export class StoreFactory {
         const params: GetServerSideStoreParamsParams = {
             level: parentNode.level + 1,
             parentRowNode: parentNode.level >= 0 ? parentNode : undefined,
-            rowGroupColumns: this.columnController.getRowGroupColumns(),
-            pivotColumns: this.columnController.getPivotColumns(),
-            pivotMode: this.columnController.isPivotMode()
+            rowGroupColumns: this.columnModel.getRowGroupColumns(),
+            pivotColumns: this.columnModel.getPivotColumns(),
+            pivotMode: this.columnModel.isPivotMode()
         };
 
         return callback(params);

@@ -1,4 +1,4 @@
-import { ColumnController } from "./columnController/columnController";
+import { ColumnModel } from "./columnController/columnModel";
 import { Logger } from "./logger";
 import { LoggerFactory } from "./logger";
 import {
@@ -19,7 +19,7 @@ import { ControllersService } from "./controllersService";
 @Bean('alignedGridsService')
 export class AlignedGridsService extends BeanStub {
 
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('controllersService') private controllersService: ControllersService;
 
     private logger: Logger;
@@ -151,13 +151,13 @@ export class AlignedGridsService extends BeanStub {
 
         if (masterColumnGroup) {
             const groupId = masterColumnGroup.getGroupId();
-            otherColumnGroup = this.columnController.getOriginalColumnGroup(groupId);
+            otherColumnGroup = this.columnModel.getOriginalColumnGroup(groupId);
         }
 
         if (masterColumnGroup && !otherColumnGroup) { return; }
 
         this.logger.log('onColumnEvent-> processing ' + groupOpenedEvent + ' expanded = ' + masterColumnGroup.isExpanded());
-        this.columnController.setColumnGroupOpened(otherColumnGroup, masterColumnGroup.isExpanded(), "alignedGridChanged");
+        this.columnModel.setColumnGroupOpened(otherColumnGroup, masterColumnGroup.isExpanded(), "alignedGridChanged");
     }
 
     private processColumnEvent(colEvent: ColumnEvent): void {
@@ -167,7 +167,7 @@ export class AlignedGridsService extends BeanStub {
         let otherColumn: Column | null = null;
 
         if (masterColumn) {
-            otherColumn = this.columnController.getPrimaryColumn(masterColumn.getColId());
+            otherColumn = this.columnModel.getPrimaryColumn(masterColumn.getColId());
         }
         // if event was with respect to a master column, that is not present in this
         // grid, then we ignore the event
@@ -186,7 +186,7 @@ export class AlignedGridsService extends BeanStub {
                     const movedEvent = colEvent as ColumnMovedEvent;
                     const srcColState = colEvent.columnApi.getColumnState();
                     const destColState = srcColState.map(s => ({ colId: s.colId }));
-                    this.columnController.applyColumnState(
+                    this.columnModel.applyColumnState(
                         {state: destColState, applyOrder: true}, "alignedGridChanged");
                     this.logger.log(`onColumnEvent-> processing ${colEvent.type} toIndex = ${movedEvent.toIndex}`);
                 }
@@ -199,7 +199,7 @@ export class AlignedGridsService extends BeanStub {
                     const visibleEvent = colEvent as ColumnVisibleEvent;
                     const srcColState = colEvent.columnApi.getColumnState();
                     const destColState = srcColState.map(s => ({ colId: s.colId, hide: s.hide }));
-                    this.columnController.applyColumnState({state: destColState}, "alignedGridChanged");
+                    this.columnModel.applyColumnState({state: destColState}, "alignedGridChanged");
                     this.logger.log(`onColumnEvent-> processing ${colEvent.type} visible = ${visibleEvent.visible}`);
                 }
                 break;
@@ -208,7 +208,7 @@ export class AlignedGridsService extends BeanStub {
                     const pinnedEvent = colEvent as ColumnPinnedEvent;
                     const srcColState = colEvent.columnApi.getColumnState();
                     const destColState = srcColState.map(s => ({ colId: s.colId, pinned: s.pinned }));
-                    this.columnController.applyColumnState({state: destColState}, "alignedGridChanged");
+                    this.columnModel.applyColumnState({state: destColState}, "alignedGridChanged");
                     this.logger.log(`onColumnEvent-> processing ${colEvent.type} pinned = ${pinnedEvent.pinned}`);
                 }
                 break;
@@ -218,7 +218,7 @@ export class AlignedGridsService extends BeanStub {
                 masterColumns.forEach((column: Column) => {
                     this.logger.log(`onColumnEvent-> processing ${colEvent.type} actualWidth = ${column.getActualWidth()}`);
                     const columnWidths = [{key: column.getColId(), newWidth: column.getActualWidth()}];
-                    this.columnController.setColumnWidths(columnWidths, false, resizedEvent.finished, "alignedGridChanged");
+                    this.columnModel.setColumnWidths(columnWidths, false, resizedEvent.finished, "alignedGridChanged");
                 });
                 break;
         }

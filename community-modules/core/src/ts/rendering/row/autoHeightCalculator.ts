@@ -2,25 +2,25 @@ import { Autowired, Bean, PostConstruct } from "../../context/context";
 import { Beans } from "../beans";
 import { RowNode } from "../../entities/rowNode";
 import { CellComp } from "../cellComp";
-import { ColumnController } from "../../columnController/columnController";
+import { ColumnModel } from "../../columnController/columnModel";
 import { BeanStub } from "../../context/beanStub";
 import { addCssClass } from "../../utils/dom";
 import { RowCssClassCalculator, RowCssClassCalculatorParams } from "./rowCssClassCalculator";
 import { AngularRowUtils } from "./angularRowUtils";
 import { ControllersService } from "../../controllersService";
-import { RowContainerController } from "../../gridBodyComp/rowContainer/rowContainerController";
+import { RowContainerCtrl } from "../../gridBodyComp/rowContainer/rowContainerCtrl";
 
 @Bean('autoHeightCalculator')
 export class AutoHeightCalculator extends BeanStub {
 
     @Autowired('beans') private beans: Beans;
     @Autowired("$scope") private $scope: any;
-    @Autowired("columnController") private columnController: ColumnController;
+    @Autowired("columnModel") private columnModel: ColumnModel;
     @Autowired("rowCssClassCalculator") private rowCssClassCalculator: RowCssClassCalculator;
     @Autowired('$compile') public $compile: any;
     @Autowired('controllersService') public controllersService: ControllersService;
 
-    private centerRowContainerCon: RowContainerController;
+    private centerRowContainerCon: RowContainerCtrl;
 
     @PostConstruct
     private postConstruct(): void {
@@ -44,8 +44,8 @@ export class AutoHeightCalculator extends BeanStub {
         const scopeDestroyFunc = scopeResult ? scopeResult.scopeDestroyFunc : undefined;
 
         const cellComps: CellComp[] = [];
-        const autoRowHeightCols = this.columnController.getAllAutoRowHeightCols();
-        const displayedCols = this.columnController.getAllDisplayedColumns();
+        const autoRowHeightCols = this.columnModel.getAllAutoRowHeightCols();
+        const displayedCols = this.columnModel.getAllDisplayedColumns();
         const visibleAutoRowHeightCols = autoRowHeightCols.filter(col => displayedCols.indexOf(col) >= 0);
 
         visibleAutoRowHeightCols.forEach(col => {

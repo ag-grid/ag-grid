@@ -1,13 +1,13 @@
 import { BeanStub } from "../context/beanStub";
 import { Autowired, PostConstruct } from "../context/context";
-import { ColumnController } from "../columnController/columnController";
+import { ColumnModel } from "../columnController/columnModel";
 import { ScrollVisibleService, SetScrollsVisibleParams } from "../gridBodyComp/scrollVisibleService";
-import { GridBodyController } from "../gridBodyComp/gridBodyController";
+import { GridBodyCtrl } from "./gridBodyCtrl";
 import { BodyHeightChangedEvent, Events } from "../events";
 import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
 import { ControllersService } from "../controllersService";
-import { RowContainerController } from "./rowContainer/rowContainerController";
+import { RowContainerCtrl } from "./rowContainer/rowContainerCtrl";
 import { getInnerHeight } from "../utils/dom";
 
 // listens to changes in the center viewport size, for column and row virtualisation,
@@ -16,18 +16,18 @@ import { getInnerHeight } from "../utils/dom";
 export class ViewportSizeFeature extends BeanStub {
 
     @Autowired('controllersService') private controllersService: ControllersService;
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 
-    private centerContainerCon: RowContainerController;
-    private gridBodyCon: GridBodyController;
+    private centerContainerCon: RowContainerCtrl;
+    private gridBodyCon: GridBodyCtrl;
 
     private centerWidth: number;
     private bodyHeight: number;
 
-    constructor(centerContainer: RowContainerController) {
+    constructor(centerContainer: RowContainerCtrl) {
         super();
         this.centerContainerCon = centerContainer;
     }
@@ -63,7 +63,7 @@ export class ViewportSizeFeature extends BeanStub {
 
             if (newWidth !== this.centerWidth) {
                 this.centerWidth = newWidth;
-                this.columnController.refreshFlexedColumns(
+                this.columnModel.refreshFlexedColumns(
                     { viewportWidth: this.centerWidth, updateBodyWidths: true, fireResizedEvent: true }
                 );
             }
@@ -141,6 +141,6 @@ export class ViewportSizeFeature extends BeanStub {
         const scrollWidth = this.centerContainerCon.getCenterWidth();
         const scrollPosition = this.centerContainerCon.getViewportScrollLeft();
 
-        this.columnController.setViewportPosition(scrollWidth, scrollPosition);
+        this.columnModel.setViewportPosition(scrollWidth, scrollPosition);
     }
 }

@@ -1,13 +1,13 @@
 import { BeanStub } from "../context/beanStub";
 import { Autowired, PostConstruct } from "../context/context";
-import { ColumnController } from "../columnController/columnController";
+import { ColumnModel } from "../columnController/columnModel";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { Constants } from "../constants/constants";
 import { Events } from "../eventKeys";
 
 export class CenterWidthFeature extends BeanStub {
 
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
 
     private callback: (width: number) => void;
 
@@ -27,13 +27,13 @@ export class CenterWidthFeature extends BeanStub {
     }
 
     private setWidth(): void {
-        const {columnController} = this;
+        const {columnModel} = this;
 
         const printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
 
-        const centerWidth = columnController.getBodyContainerWidth();
-        const leftWidth = columnController.getDisplayedColumnsLeftWidth();
-        const rightWidth = columnController.getDisplayedColumnsRightWidth();
+        const centerWidth = columnModel.getBodyContainerWidth();
+        const leftWidth = columnModel.getDisplayedColumnsLeftWidth();
+        const rightWidth = columnModel.getDisplayedColumnsRightWidth();
 
         const totalWidth = printLayout ? centerWidth + leftWidth + rightWidth : centerWidth;
 

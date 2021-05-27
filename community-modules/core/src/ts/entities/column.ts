@@ -694,7 +694,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.flex || 0;
     }
 
-    // this method should only be used by the columnController to
+    // this method should only be used by the columnModel to
     // change flex when required by the setColumnState method.
     public setFlex(flex: number | null) {
         if (this.flex !== flex) { this.flex = flex; }

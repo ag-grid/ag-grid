@@ -5,7 +5,7 @@ import {
     BeanStub,
     ChangedPath,
     Column,
-    ColumnController,
+    ColumnModel,
     GetDataPath,
     IRowNodeStage,
     IsGroupOpenByDefaultParams,
@@ -40,7 +40,7 @@ interface GroupingDetails {
 @Bean('groupStage')
 export class GroupStage extends BeanStub implements IRowNodeStage {
 
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('selectableService') private selectableService: SelectableService;
     @Autowired('valueService') private valueService: ValueService;
 
@@ -90,7 +90,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     private createGroupingDetails(params: StageExecuteParams): GroupingDetails {
         const { rowNode, changedPath, rowNodeTransactions, rowNodeOrder } = params;
 
-        const groupedCols = this.usingTreeData ? null : this.columnController.getRowGroupColumns();
+        const groupedCols = this.usingTreeData ? null : this.columnModel.getRowGroupColumns();
 
         const details: GroupingDetails = {
             // someone complained that the parent attribute was causing some change detection
@@ -100,7 +100,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             expandByDefault: this.gridOptionsWrapper.getGroupDefaultExpanded()!,
             groupedCols: groupedCols!,
             rootNode: rowNode,
-            pivotMode: this.columnController.isPivotMode(),
+            pivotMode: this.columnModel.isPivotMode(),
             groupedColCount: this.usingTreeData || !groupedCols ? 0 : groupedCols.length,
             rowNodeOrder: rowNodeOrder!,
             transactions: rowNodeTransactions!,
@@ -432,7 +432,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     private processAfterColumnsChanged(details: GroupingDetails, afterColumnsChanged: boolean): boolean {
         let noFurtherProcessingNeeded = false;
 
-        const groupDisplayColumns = this.columnController.getGroupDisplayColumns();
+        const groupDisplayColumns = this.columnModel.getGroupDisplayColumns();
         const newGroupDisplayColIds = groupDisplayColumns ?
             groupDisplayColumns.map(c => c.getId()).join('-') : '';
 
@@ -585,7 +585,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
     private setGroupData(groupNode: RowNode, groupInfo: GroupInfo): void {
         groupNode.groupData = {};
-        const groupDisplayCols: Column[] = this.columnController.getGroupDisplayColumns();
+        const groupDisplayCols: Column[] = this.columnModel.getGroupDisplayColumns();
         groupDisplayCols.forEach(col => {
             // newGroup.rowGroupColumn=null when working off GroupInfo, and we always display the group in the group column
             // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so

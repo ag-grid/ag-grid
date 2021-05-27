@@ -3,7 +3,7 @@ import {
     LoadSuccessParams,
     Autowired,
     Column,
-    ColumnController,
+    ColumnModel,
     Logger,
     LoggerFactory,
     NumberSequence,
@@ -24,7 +24,7 @@ import { NodeManager } from "../nodeManager";
 
 export class PartialStoreBlock extends RowNodeBlock {
 
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('ssrmCacheUtils') private cacheUtils: StoreUtils;
     @Autowired('ssrmBlockUtils') private blockUtils: BlockUtils;
     @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
@@ -87,7 +87,7 @@ export class PartialStoreBlock extends RowNodeBlock {
         if (!this.usingTreeData && this.groupLevel) {
             const groupColVo = this.ssrmParams.rowGroupCols[this.level];
             this.groupField = groupColVo.field!;
-            this.rowGroupColumn = this.columnController.getRowGroupColumns()[this.level];
+            this.rowGroupColumn = this.columnModel.getRowGroupColumns()[this.level];
         }
 
         this.nodeIdPrefix = this.blockUtils.createNodeIdPrefix(this.parentRowNode);

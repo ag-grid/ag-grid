@@ -2,7 +2,7 @@ import { Component } from "../../widgets/component";
 import { IComponent } from "../../interfaces/iComponent";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { ColumnApi } from "../../columnController/columnApi";
-import { ColumnController } from "../../columnController/columnController";
+import { ColumnModel } from "../../columnController/columnModel";
 import { Autowired } from "../../context/context";
 import { TouchListener } from "../../widgets/touchListener";
 import { RefSelector } from "../../widgets/componentAnnotations";
@@ -30,7 +30,7 @@ export interface IHeaderGroupComp extends IHeaderGroup, IComponent<IHeaderGroupP
 
 export class HeaderGroupComp extends Component implements IHeaderGroupComp {
 
-    @Autowired("columnController") private columnController: ColumnController;
+    @Autowired("columnModel") private columnModel: ColumnModel;
 
     static TEMPLATE = /* html */
         `<div class="ag-header-group-cell-label" ref="agContainer" role="presentation">
@@ -83,7 +83,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
             }
 
             const newExpandedValue = !this.params.columnGroup.isExpanded();
-            this.columnController.setColumnGroupOpened(this.params.columnGroup.getOriginalColumnGroup(), newExpandedValue, "uiColumnExpanded");
+            this.columnModel.setColumnGroupOpened(this.params.columnGroup.getOriginalColumnGroup(), newExpandedValue, "uiColumnExpanded");
         };
 
         this.addTouchAndClickListeners(this.eCloseIcon, expandAction);

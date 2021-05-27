@@ -1,6 +1,6 @@
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { BeanStub } from "../context/beanStub";
-import { GridBodyController } from "../gridBodyComp/gridBodyController";
+import { GridBodyCtrl } from "../gridBodyComp/gridBodyCtrl";
 import { ControllersService } from "../controllersService";
 
 @Bean('columnAnimationService')
@@ -8,7 +8,7 @@ export class ColumnAnimationService extends BeanStub {
 
     @Autowired('controllersService') private controllersService: ControllersService;
 
-    private gridBodyCon: GridBodyController;
+    private gridBodyCon: GridBodyCtrl;
 
     private executeNextFuncs: Function[] = [];
     private executeLaterFuncs: Function[] = [];

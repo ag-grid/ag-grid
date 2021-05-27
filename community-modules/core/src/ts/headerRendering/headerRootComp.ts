@@ -1,5 +1,5 @@
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
-import { ColumnController } from '../columnController/columnController';
+import { ColumnModel } from '../columnController/columnModel';
 import { Autowired } from '../context/context';
 import { HeaderContainer } from './headerContainer';
 import { Events } from '../events';
@@ -34,7 +34,7 @@ export class HeaderRootComp extends ManagedFocusComponent {
     @RefSelector('eHeaderContainer') private eHeaderContainer: HTMLElement;
     @RefSelector('eHeaderViewport') private eHeaderViewport: HTMLElement;
 
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
     @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
@@ -91,7 +91,7 @@ export class HeaderRootComp extends ManagedFocusComponent {
 
         this.createManagedBean(new CenterWidthFeature(width => this.eHeaderContainer.style.width = `${width}px`));
 
-        if (this.columnController.isReady()) {
+        if (this.columnModel.isReady()) {
             this.refreshHeader();
         }
 
@@ -192,26 +192,26 @@ export class HeaderRootComp extends ManagedFocusComponent {
     }
 
     private onPivotModeChanged(): void {
-        const pivotMode = this.columnController.isPivotMode();
+        const pivotMode = this.columnModel.isPivotMode();
 
         addOrRemoveCssClass(this.getGui(), 'ag-pivot-on', pivotMode);
         addOrRemoveCssClass(this.getGui(), 'ag-pivot-off', !pivotMode);
     }
 
     private setHeaderHeight(): void {
-        const {columnController, gridOptionsWrapper} = this;
+        const {columnModel, gridOptionsWrapper} = this;
 
         let numberOfFloating = 0;
-        let headerRowCount = columnController.getHeaderRowCount();
+        let headerRowCount = columnModel.getHeaderRowCount();
         let totalHeaderHeight: number;
         let groupHeight: number | null | undefined;
         let headerHeight: number | null | undefined;
 
-        if (columnController.isPivotMode()) {
+        if (columnModel.isPivotMode()) {
             groupHeight = gridOptionsWrapper.getPivotGroupHeaderHeight();
             headerHeight = gridOptionsWrapper.getPivotHeaderHeight();
         } else {
-            const hasFloatingFilters = columnController.hasFloatingFilters();
+            const hasFloatingFilters = columnModel.hasFloatingFilters();
 
             if (hasFloatingFilters) {
                 headerRowCount++;

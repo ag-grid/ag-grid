@@ -4,7 +4,7 @@ import {
     Autowired,
     Column,
     ColumnApi,
-    ColumnController,
+    ColumnModel,
     Component,
     Events,
     GridApi,
@@ -25,7 +25,7 @@ export class FiltersToolPanelListPanel extends Component {
     @Autowired("gridApi") private gridApi: GridApi;
     @Autowired("columnApi") private columnApi: ColumnApi;
     @Autowired('toolPanelColDefService') private toolPanelColDefService: ToolPanelColDefService;
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
 
     private initialised = false;
 
@@ -66,13 +66,13 @@ export class FiltersToolPanelListPanel extends Component {
             }
         });
 
-        if (this.columnController.isReady()) {
+        if (this.columnModel.isReady()) {
             this.onColumnsChanged();
         }
     }
 
     public onColumnsChanged(): void {
-        const pivotModeActive = this.columnController.isPivotMode();
+        const pivotModeActive = this.columnModel.isPivotMode();
         const shouldSyncColumnLayoutWithGrid = !this.params.suppressSyncLayoutWithGrid && !pivotModeActive;
         shouldSyncColumnLayoutWithGrid ? this.syncFilterLayout() : this.buildTreeFromProvidedColumnDefs();
     }
@@ -83,7 +83,7 @@ export class FiltersToolPanelListPanel extends Component {
 
     private buildTreeFromProvidedColumnDefs(): void {
         this.destroyFilters();
-        const columnTree: OriginalColumnGroupChild[] = this.columnController.getPrimaryColumnTree();
+        const columnTree: OriginalColumnGroupChild[] = this.columnModel.getPrimaryColumnTree();
         this.filterGroupComps = this.recursivelyAddComps(columnTree, 0);
         const len = this.filterGroupComps.length;
 

@@ -1,5 +1,5 @@
 import { ExpressionService } from "./expressionService";
-import { ColumnController } from "../columnController/columnController";
+import { ColumnModel } from "../columnController/columnModel";
 import { NewValueParams, ValueGetterParams } from "../entities/colDef";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { RowNode } from "../entities/rowNode";
@@ -15,7 +15,7 @@ import { doOnce } from "../utils/function";
 export class ValueService extends BeanStub {
 
     @Autowired('expressionService') private expressionService: ExpressionService;
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('valueCache') private valueCache: ValueCache;
 
     private cellExpressions: boolean;
@@ -111,7 +111,7 @@ export class ValueService extends BeanStub {
     }
 
     public setValue(rowNode: RowNode, colKey: string | Column, newValue: any, eventSource?: string): void {
-        const column = this.columnController.getPrimaryColumn(colKey);
+        const column = this.columnModel.getPrimaryColumn(colKey);
 
         if (!rowNode || !column) {
             return;
@@ -275,7 +275,7 @@ export class ValueService extends BeanStub {
     }
 
     private getValueCallback(node: RowNode, field: string | Column): any {
-        const otherColumn = this.columnController.getPrimaryColumn(field);
+        const otherColumn = this.columnModel.getPrimaryColumn(field);
 
         if (otherColumn) {
             return this.getValue(otherColumn, node);

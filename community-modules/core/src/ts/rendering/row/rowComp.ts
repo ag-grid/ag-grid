@@ -5,7 +5,7 @@ import { Beans } from "../beans";
 import { RowNode } from "../../entities/rowNode";
 import { setDomChildOrder } from "../../utils/dom";
 import { escapeString } from "../../utils/string";
-import { FullWidthKeys, FullWidthRenderers, RowController, RowType } from "./rowController";
+import { FullWidthKeys, FullWidthRenderers, RowCtrl, RowType } from "./rowCtrl";
 import { Column } from "../../entities/column";
 import { CellComp } from "../cellComp";
 import { assign, getAllValuesInObject, iterateObject } from "../../utils/object";
@@ -22,11 +22,11 @@ export class RowComp extends Component {
     private pinned: string | null;
 
     private rowNode: RowNode;
-    private controller: RowController;
+    private controller: RowCtrl;
 
     private cellComps: { [key: string]: CellComp | null; } = {};
 
-    constructor(controller: RowController, container: RowContainerComp, beans: Beans, pinned: string | null) {
+    constructor(controller: RowCtrl, container: RowContainerComp, beans: Beans, pinned: string | null) {
         super();
 
         this.container = container;
@@ -170,7 +170,7 @@ export class RowComp extends Component {
 
         if (mightWantToKeepCell) {
             const column = cellComp.getColumn();
-            const displayedColumns = this.beans.columnController.getAllDisplayedColumns();
+            const displayedColumns = this.beans.columnModel.getAllDisplayedColumns();
             const cellStillDisplayed = displayedColumns.indexOf(column) >= 0;
             return cellStillDisplayed ? KEEP_CELL : REMOVE_CELL;
         }
@@ -290,9 +290,9 @@ export class RowComp extends Component {
 
     private addDomData(): void {
         const gow = this.beans.gridOptionsWrapper;
-        gow.setDomData(this.getGui(), RowController.DOM_DATA_KEY_RENDERED_ROW, this.controller);
+        gow.setDomData(this.getGui(), RowCtrl.DOM_DATA_KEY_RENDERED_ROW, this.controller);
         this.addDestroyFunc(
-            () => gow.setDomData(this.getGui(), RowController.DOM_DATA_KEY_RENDERED_ROW, null)
+            () => gow.setDomData(this.getGui(), RowCtrl.DOM_DATA_KEY_RENDERED_ROW, null)
         );
     }
 

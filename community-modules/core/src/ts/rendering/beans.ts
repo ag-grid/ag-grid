@@ -1,6 +1,6 @@
 import { Autowired, Bean, Context, Optional, PostConstruct } from "../context/context";
 import { ColumnApi } from "../columnController/columnApi";
-import { ColumnController } from "../columnController/columnController";
+import { ColumnModel } from "../columnController/columnModel";
 import { HeaderNavigationService } from "../headerRendering/header/headerNavigationService";
 import { GridApi } from "../gridApi";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
@@ -57,7 +57,7 @@ export class Beans {
     @Autowired('templateService') public templateService: TemplateService;
     @Autowired('valueService') public valueService: ValueService;
     @Autowired('eventService') public eventService: EventService;
-    @Autowired('columnController') public columnController: ColumnController;
+    @Autowired('columnModel') public columnModel: ColumnModel;
     @Autowired('headerNavigationService') public headerNavigationService: HeaderNavigationService;
     @Autowired('columnAnimationService') public columnAnimationService: ColumnAnimationService;
     @Optional('rangeController') public rangeController: IRangeController;

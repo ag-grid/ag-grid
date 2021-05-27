@@ -1,7 +1,7 @@
 import { Autowired, Bean } from "../context/context";
 import { Column } from "../entities/column";
 import { ColDef } from "../entities/colDef";
-import { ColumnController } from "./columnController";
+import { ColumnModel } from "./columnModel";
 import { ColumnFactory } from "./columnFactory";
 import { Constants } from "../constants/constants";
 import { BeanStub } from "../context/beanStub";
@@ -13,7 +13,7 @@ export class AutoGroupColService extends BeanStub {
 
     public static GROUP_AUTO_COLUMN_BUNDLE_ID = Constants.GROUP_AUTO_COLUMN_ID;
 
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('columnFactory') private columnFactory: ColumnFactory;
 
     public createAutoGroupColumns(rowGroupColumns: Column[]): Column[] {
@@ -104,7 +104,7 @@ export class AutoGroupColService extends BeanStub {
             const colDef = rowGroupCol.getColDef();
             assign(res, {
                 // cellRendererParams.groupKey: colDefToCopy.field;
-                headerName: this.columnController.getDisplayNameForColumn(rowGroupCol, 'header'),
+                headerName: this.columnModel.getDisplayNameForColumn(rowGroupCol, 'header'),
                 headerValueGetter: colDef.headerValueGetter
             });
 

@@ -2,11 +2,11 @@ import { DragAndDropService, DraggingEvent, DragSourceType, DropTarget } from ".
 import { Autowired, PostConstruct } from "../context/context";
 import { MoveColumnController } from "./moveColumnController";
 import { BodyDropPivotTarget } from "./bodyDropPivotTarget";
-import { ColumnController } from "../columnController/columnController";
+import { ColumnModel } from "../columnController/columnModel";
 import { Constants } from "../constants/constants";
 import { BeanStub } from "../context/beanStub";
 import { ControllersService } from "../controllersService";
-import { RowContainerController } from "../gridBodyComp/rowContainer/rowContainerController";
+import { RowContainerCtrl } from "../gridBodyComp/rowContainer/rowContainerCtrl";
 
 export interface DropListener {
     getIconName(): string | null;
@@ -21,7 +21,7 @@ enum DropType { ColumnMove, Pivot }
 export class BodyDropTarget extends BeanStub implements DropTarget {
 
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('controllersService') private controllersService: ControllersService;
 
     private pinned: string | null;
@@ -42,7 +42,7 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
     @PostConstruct
     private postConstruct(): void {
         this.controllersService.whenReady(p => {
-            let containers: RowContainerController[];
+            let containers: RowContainerCtrl[];
             switch (this.pinned) {
                 case Constants.PINNED_LEFT:
                     containers = [p.leftRowContainerCon, p.bottomLeftRowContainerCon, p.topLeftRowContainerCon];
@@ -93,7 +93,7 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
     // and we are in pivot mode, as it has to logic to set pivot/value/group on the columns when
     // dropped into the grid's body.
     private getDropType(draggingEvent: DraggingEvent): DropType {
-        if (this.columnController.isPivotMode()) {
+        if (this.columnModel.isPivotMode()) {
             // in pivot mode, then if moving a column (ie didn't come from toolpanel) then it's
             // a standard column move, however if it came from the toolpanel, then we are introducing
             // dimensions or values to the grid

@@ -10,7 +10,7 @@ import { AnimationFrameService } from "../../misc/animationFrameService";
 import { HeaderRootComp, HeaderContainerPosition } from "../headerRootComp";
 import { last } from "../../utils/array";
 import { ControllersService } from "../../controllersService";
-import { GridBodyController } from "../../gridBodyComp/gridBodyController";
+import { GridBodyCtrl } from "../../gridBodyComp/gridBodyCtrl";
 
 export enum HeaderNavigationDirection {
     UP,
@@ -27,7 +27,7 @@ export class HeaderNavigationService extends BeanStub {
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Autowired('controllersService') private controllersService: ControllersService;
 
-    private gridBodyCon: GridBodyController;
+    private gridBodyCon: GridBodyCtrl;
     private headerRoot: HeaderRootComp;
 
     @PostConstruct

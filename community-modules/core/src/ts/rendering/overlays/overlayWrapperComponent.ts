@@ -10,7 +10,7 @@ import { LayoutCssClasses, LayoutFeature, LayoutView, UpdateLayoutClassesParams 
 import { PaginationProxy } from "../../pagination/paginationProxy";
 import { Events } from "../../eventKeys";
 import { GridApi } from "../../gridApi";
-import { ColumnController } from "../../columnController/columnController";
+import { ColumnModel } from "../../columnController/columnModel";
 
 enum LoadingType { Loading, NoRows }
 
@@ -28,7 +28,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     @Autowired('userComponentFactory') userComponentFactory: UserComponentFactory;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
 
     @RefSelector('eOverlayWrapper') eOverlayWrapper: HTMLElement;
 
@@ -158,7 +158,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         // this problem exists before of the race condition between the services (column controller in this case)
         // and the view (grid panel). if the model beans were all initialised first, and then the view beans second,
         // this race condition would not happen.
-        if (this.columnController.isReady() && !this.paginationProxy.isEmpty()) {
+        if (this.columnModel.isReady() && !this.paginationProxy.isEmpty()) {
             this.hideOverlay();
         }
     }

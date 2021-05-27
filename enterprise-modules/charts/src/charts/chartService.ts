@@ -9,7 +9,7 @@ import {
     ChartOptions,
     ChartRef,
     ChartType,
-    ColumnController,
+    ColumnModel,
     CreateCrossFilterChartParams,
     CreatePivotChartParams,
     CreateRangeChartParams,
@@ -33,7 +33,7 @@ export interface CrossFilteringContext {
 export class ChartService extends BeanStub implements IChartService {
 
     @Optional('rangeController') private rangeController: IRangeController;
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('environment') private environment: Environment;
 
     // we destroy all charts bound to this grid when grid is destroyed. activeCharts contains all charts, including
@@ -97,15 +97,15 @@ export class ChartService extends BeanStub implements IChartService {
 
     public createPivotChart(params: CreatePivotChartParams): ChartRef | undefined {
         // if required enter pivot mode
-        if (!this.columnController.isPivotMode()) {
-            this.columnController.setPivotMode(true, "pivotChart");
+        if (!this.columnModel.isPivotMode()) {
+            this.columnModel.setPivotMode(true, "pivotChart");
         }
 
         // pivot chart range contains all visible column without a row range to include all rows
         const chartAllRangeParams: CellRangeParams = {
             rowStartIndex: null,
             rowEndIndex: null,
-            columns: this.columnController.getAllDisplayedColumns().map(col => col.getColId())
+            columns: this.columnModel.getAllDisplayedColumns().map(col => col.getColId())
         };
 
         const cellRange = this.rangeController

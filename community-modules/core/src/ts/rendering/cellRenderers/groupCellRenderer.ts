@@ -25,7 +25,7 @@ import { isStopPropagationForAgGrid, stopPropagationForAgGrid, isElementInEventP
 import { setAriaExpanded, removeAriaExpanded } from "../../utils/aria";
 import { KeyCode } from '../../constants/keyCode';
 import { ValueFormatterService } from "../valueFormatterService";
-import { ColumnController } from "../../columnController/columnController";
+import { ColumnModel } from "../../columnController/columnModel";
 import { RowRenderer } from "../rowRenderer";
 import { RowDragComp } from "../row/rowDragComp";
 
@@ -68,7 +68,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('expressionService') private expressionService: ExpressionService;
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
     @RefSelector('eExpanded') private eExpanded: HTMLElement;
@@ -113,7 +113,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
 
         if (colDef!.showRowGroup === true) { return true; }
 
-        const rowGroupCols = this.columnController.getRowGroupColumns();
+        const rowGroupCols = this.columnModel.getRowGroupColumns();
         // this is a sanity check, rowGroupCols should always be present
         if (!rowGroupCols || rowGroupCols.length === 0) { return true; }
 
@@ -169,13 +169,13 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         const bodyCell = !pinnedLeftCell && !pinnedRightCell;
 
         if (this.gridOptionsWrapper.isEnableRtl()) {
-            if (this.columnController.isPinningLeft()) {
+            if (this.columnModel.isPinningLeft()) {
                 return !pinnedRightCell;
             }
             return !bodyCell;
         }
 
-        if (this.columnController.isPinningLeft()) {
+        if (this.columnModel.isPinningLeft()) {
             return !pinnedLeftCell;
         }
 
@@ -580,7 +580,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         if (this.draggedFromHideOpenParents) { return true; }
 
         const rowNode = this.displayedGroup;
-        const reducedLeafNode = this.columnController.isPivotMode() && rowNode.leafGroup;
+        const reducedLeafNode = this.columnModel.isPivotMode() && rowNode.leafGroup;
         const expandableGroup = rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode;
 
         if (!expandableGroup) { return false; }
@@ -598,7 +598,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     }
 
     private showExpandAndContractIcons(): void {
-        const { eContracted, eExpanded, params, displayedGroup, columnController } = this;
+        const { eContracted, eExpanded, params, displayedGroup, columnModel } = this;
         const { eGridCell, node } = params;
 
         const isExpandable = this.isExpandable();
@@ -617,7 +617,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         }
 
         // compensation padding for leaf nodes, so there is blank space instead of the expand icon
-        const pivotMode = columnController.isPivotMode();
+        const pivotMode = columnModel.isPivotMode();
         const pivotModeAndLeafGroup = pivotMode && displayedGroup.leafGroup;
         const addExpandableCss = isExpandable && !pivotModeAndLeafGroup;
         const isTotalFooterNode = node.footer && node.level === -1;

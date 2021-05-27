@@ -5,16 +5,16 @@ import { Component } from "../widgets/component";
 import { ISideBar } from "../interfaces/iSideBar";
 import { RefSelector } from "../widgets/componentAnnotations";
 import { ManagedFocusComponent } from "../widgets/managedFocusComponent";
-import { ColumnController } from "../columnController/columnController";
+import { ColumnModel } from "../columnController/columnModel";
 import { addCssClass, addOrRemoveCssClass, isVisible } from "../utils/dom";
 import { last } from "../utils/array";
 import { FocusController } from "../focusController";
-import { GridCompController, GridCompView } from "./gridCompController";
+import { GridCtrl, IGridComp } from "./gridCtrl";
 import { LayoutCssClasses, UpdateLayoutClassesParams } from "../styling/layoutFeature";
 
 export class GridComp extends ManagedFocusComponent {
 
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
 
     @RefSelector('gridBody') private gridBodyComp: GridBodyComp;
@@ -23,7 +23,7 @@ export class GridComp extends ManagedFocusComponent {
 
     private logger: Logger;
     private eGridDiv: HTMLElement;
-    private con: GridCompController;
+    private ctrl: GridCtrl;
 
     constructor(eGridDiv: HTMLElement) {
         super(undefined, true);
@@ -33,7 +33,7 @@ export class GridComp extends ManagedFocusComponent {
     protected postConstruct(): void {
         this.logger = this.loggerFactory.create('GridComp');
 
-        const view: GridCompView = {
+        const compProxy: IGridComp = {
             destroyGridUi:
                 () => this.destroyBean(this),
             setRtlClass:
@@ -45,12 +45,12 @@ export class GridComp extends ManagedFocusComponent {
             getFocusableContainers: this.getFocusableContainers.bind(this)
         };
 
-        this.con = this.createManagedBean(new GridCompController());
+        this.ctrl = this.createManagedBean(new GridCtrl());
 
         const template = this.createTemplate();
         this.setTemplate(template);
 
-        this.con.setView(view, this.eGridDiv, this.getGui());
+        this.ctrl.setComp(compProxy, this.eGridDiv, this.getGui());
 
         this.insertGridIntoDom();
 
@@ -77,10 +77,10 @@ export class GridComp extends ManagedFocusComponent {
     }
 
     private createTemplate(): string {
-        const dropZones = this.con.showDropZones() ? '<ag-grid-header-drop-zones></ag-grid-header-drop-zones>' : '';
-        const sideBar = this.con.showSideBar() ? '<ag-side-bar ref="sideBar"></ag-side-bar>' : '';
-        const statusBar = this.con.showStatusBar() ? '<ag-status-bar ref="statusBar"></ag-status-bar>' : '';
-        const watermark = this.con.showWatermark() ? '<ag-watermark></ag-watermark>' : '';
+        const dropZones = this.ctrl.showDropZones() ? '<ag-grid-header-drop-zones></ag-grid-header-drop-zones>' : '';
+        const sideBar = this.ctrl.showSideBar() ? '<ag-side-bar ref="sideBar"></ag-side-bar>' : '';
+        const statusBar = this.ctrl.showStatusBar() ? '<ag-status-bar ref="statusBar"></ag-status-bar>' : '';
+        const watermark = this.ctrl.showWatermark() ? '<ag-watermark></ag-watermark>' : '';
 
         const template = /* html */
             `<div ref="eRootWrapper" class="ag-root-wrapper">
@@ -123,11 +123,11 @@ export class GridComp extends ManagedFocusComponent {
                 return this.focusController.focusInto(last(focusableContainers));
             }
 
-            const lastColumn = last(this.columnController.getAllDisplayedColumns());
+            const lastColumn = last(this.columnModel.getAllDisplayedColumns());
             if (this.focusController.focusGridView(lastColumn, true)) { return true; }
         }
 
-        return this.con.focusGridHeader();
+        return this.ctrl.focusGridHeader();
     }
 
     protected onTabKeyDown(): void { }

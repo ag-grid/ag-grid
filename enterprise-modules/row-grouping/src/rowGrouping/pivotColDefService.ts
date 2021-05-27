@@ -5,7 +5,7 @@ import {
     ColDef,
     ColGroupDef,
     Column,
-    ColumnController,
+    ColumnModel,
     NumberSequence,
     _
 } from "@ag-grid-community/core";
@@ -20,17 +20,17 @@ export class PivotColDefService extends BeanStub {
 
     public static PIVOT_ROW_TOTAL_PREFIX = 'PivotRowTotal_';
 
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
 
     public createPivotColumnDefs(uniqueValues: any): PivotColDefServiceResult {
 
-        // this is passed to the columnController, to configure the columns and groups we show
+        // this is passed to the columnModel, to configure the columns and groups we show
         const pivotColumnGroupDefs: (ColDef | ColGroupDef)[] = [];
         // this is used by the aggregation stage, to do the aggregation based on the pivot columns
         const pivotColumnDefs: ColDef[] = [];
 
-        const pivotColumns = this.columnController.getPivotColumns();
-        const valueColumns = this.columnController.getValueColumns();
+        const pivotColumns = this.columnModel.getPivotColumns();
+        const valueColumns = this.columnModel.getValueColumns();
         const levelsDeep = pivotColumns.length;
         const columnIdSequence = new NumberSequence();
 
@@ -86,7 +86,7 @@ export class PivotColDefService extends BeanStub {
                 parentChildren.push(groupDef);
                 this.recursivelyAddGroup(groupDef.children, pivotColumnDefs, index + 1, value, newPivotKeys, columnIdSequence, levelsDeep, primaryPivotColumns);
             } else {
-                const measureColumns = this.columnController.getValueColumns();
+                const measureColumns = this.columnModel.getValueColumns();
                 const valueGroup: ColGroupDef = {
                     children: [],
                     headerName: key,
@@ -104,7 +104,7 @@ export class PivotColDefService extends BeanStub {
                     pivotColumnDefs.push(colDef);
                 } else {
                     measureColumns.forEach(measureColumn => {
-                        const columnName: string | null = this.columnController.getDisplayNameForColumn(measureColumn, 'header');
+                        const columnName: string | null = this.columnModel.getDisplayNameForColumn(measureColumn, 'header');
                         const colDef = this.createColDef(measureColumn, columnName, newPivotKeys, columnIdSequence);
                         colDef.columnGroupShow = 'open';
                         valueGroup.children.push(colDef);
@@ -151,8 +151,8 @@ export class PivotColDefService extends BeanStub {
 
                 const firstGroup = !group.children.some(child => (child as ColGroupDef).children);
 
-                this.columnController.getValueColumns().forEach(valueColumn => {
-                    const columnName: string | null = this.columnController.getDisplayNameForColumn(valueColumn, 'header');
+                this.columnModel.getValueColumns().forEach(valueColumn => {
+                    const columnName: string | null = this.columnModel.getDisplayNameForColumn(valueColumn, 'header');
                     const totalColDef = this.createColDef(valueColumn, columnName, groupDef.pivotKeys, currentColumnIdSequence);
                     totalColDef.pivotTotalColumnIds = childAcc.get(valueColumn.getColId());
 
@@ -197,7 +197,7 @@ export class PivotColDefService extends BeanStub {
 
         const insertAfter = this.gridOptionsWrapper.getPivotColumnGroupTotals() === 'after';
 
-        const valueCols = this.columnController.getValueColumns();
+        const valueCols = this.columnModel.getValueColumns();
         const aggFuncs = valueCols.map(valueCol => valueCol.getAggFunc());
 
         // don't add pivot totals if there is less than 1 aggFunc or they are not all the same
@@ -303,7 +303,7 @@ export class PivotColDefService extends BeanStub {
 
         const newPivotKeys = pivotKeys.slice(0);
 
-        const measureColumns = this.columnController.getValueColumns();
+        const measureColumns = this.columnModel.getValueColumns();
         const valueGroup: ColGroupDef = {
             children: [],
             pivotKeys: newPivotKeys,
@@ -315,7 +315,7 @@ export class PivotColDefService extends BeanStub {
             valueGroup.children.push(colDef);
             pivotColumnDefs.push(colDef);
         } else {
-            const columnName: string | null = this.columnController.getDisplayNameForColumn(valueColumn, 'header');
+            const columnName: string | null = this.columnModel.getDisplayNameForColumn(valueColumn, 'header');
             const colDef = this.createColDef(valueColumn, columnName, newPivotKeys, columnIdSequence);
             colDef.pivotTotalColumnIds = colIds;
             valueGroup.children.push(colDef);

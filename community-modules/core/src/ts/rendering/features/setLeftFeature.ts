@@ -111,10 +111,10 @@ export class SetLeftFeature extends BeanStub {
             return leftPosition;
         }
 
-        const leftWidth = this.beans.columnController.getDisplayedColumnsLeftWidth();
+        const leftWidth = this.beans.columnModel.getDisplayedColumnsLeftWidth();
 
         if (colOrGroup.getPinned() === Constants.PINNED_RIGHT) {
-            const bodyWidth = this.beans.columnController.getBodyContainerWidth();
+            const bodyWidth = this.beans.columnModel.getBodyContainerWidth();
             return leftWidth + bodyWidth + leftPosition;
         }
 
@@ -147,7 +147,7 @@ export class SetLeftFeature extends BeanStub {
             indexColumn = children[0];
         }
 
-        const index = this.beans.columnController.getAriaColumnIndex(indexColumn);
+        const index = this.beans.columnModel.getAriaColumnIndex(indexColumn);
         setAriaColIndex(this.ariaEl, index);
     }
 }

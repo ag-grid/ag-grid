@@ -3,7 +3,7 @@ import { BeanStub } from "./context/beanStub";
 import { Column } from "./entities/column";
 import { CellFocusedEvent, Events } from "./events";
 import { ColumnApi } from "./columnController/columnApi";
-import { ColumnController } from "./columnController/columnController";
+import { ColumnModel } from "./columnController/columnModel";
 import { CellPosition } from "./entities/cellPosition";
 import { RowNode } from "./entities/rowNode";
 import { GridApi } from "./gridApi";
@@ -21,12 +21,12 @@ import { getTabIndex } from './utils/browser';
 import { findIndex, last } from './utils/array';
 import { makeNull } from './utils/generic';
 import { Constants } from "./constants/constants";
-import { GridCompController } from "./gridComp/gridCompController";
+import { GridCtrl } from "./gridComp/gridCtrl";
 
 @Bean('focusController')
 export class FocusController extends BeanStub {
 
-    @Autowired('columnController') private readonly columnController: ColumnController;
+    @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('headerNavigationService') private readonly headerNavigationService: HeaderNavigationService;
     @Autowired('columnApi') private readonly columnApi: ColumnApi;
     @Autowired('gridApi') private readonly gridApi: GridApi;
@@ -36,12 +36,12 @@ export class FocusController extends BeanStub {
 
     public static AG_KEYBOARD_FOCUS: string = 'ag-keyboard-focus';
 
-    private gridCompController: GridCompController;
+    private gridCompController: GridCtrl;
     private focusedCellPosition: CellPosition | null;
     private focusedHeaderPosition: HeaderPosition | null;
 
     private static keyboardModeActive: boolean = false;
-    private static instancesMonitored: Map<Document, GridCompController[]> = new Map();
+    private static instancesMonitored: Map<Document, GridCtrl[]> = new Map();
 
     /**
      * Adds a gridCore to the list of the gridCores monitoring Keyboard Mode
@@ -50,7 +50,7 @@ export class FocusController extends BeanStub {
      * @param doc {Document} - The Document containing the gridCore.
      * @param gridCore {GridComp} - The GridCore to be monitored.
      */
-    private static addKeyboardModeEvents(doc: Document, controller: GridCompController): void {
+    private static addKeyboardModeEvents(doc: Document, controller: GridCtrl): void {
         const docControllers = FocusController.instancesMonitored.get(doc);
 
         if (docControllers && docControllers.length > 0) {
@@ -71,10 +71,10 @@ export class FocusController extends BeanStub {
      * @param doc {Document} - The Document containing the gridCore.
      * @param gridCore {GridComp} - The GridCore to be removed.
      */
-    private static removeKeyboardModeEvents(doc: Document, controller: GridCompController): void {
+    private static removeKeyboardModeEvents(doc: Document, controller: GridCtrl): void {
         const docControllers = FocusController.instancesMonitored.get(doc);
 
-        let newControllers: GridCompController[] = [];
+        let newControllers: GridCtrl[] = [];
 
         if (docControllers && docControllers.length) {
             newControllers = [...docControllers].filter(
@@ -131,7 +131,7 @@ export class FocusController extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, clearFocusedCellListener);
     }
 
-    public registerGridCompController(gridCompController: GridCompController): void {
+    public registerGridCompController(gridCompController: GridCtrl): void {
         this.gridCompController = gridCompController;
 
         const doc = this.gridOptionsWrapper.getDocument();
@@ -139,7 +139,7 @@ export class FocusController extends BeanStub {
         this.addDestroyFunc(() => this.unregisterGridCompController(gridCompController));
     }
 
-    public unregisterGridCompController(gridCompController: GridCompController): void {
+    public unregisterGridCompController(gridCompController: GridCtrl): void {
         const doc = this.gridOptionsWrapper.getDocument();
 
         FocusController.removeKeyboardModeEvents(doc, gridCompController);
@@ -151,9 +151,9 @@ export class FocusController extends BeanStub {
         if (!this.focusedCellPosition) { return; }
 
         const col = this.focusedCellPosition.column;
-        const colFromColumnController = this.columnController.getGridColumn(col.getId());
+        const colFromColumnModel = this.columnModel.getGridColumn(col.getId());
 
-        if (col !== colFromColumnController) {
+        if (col !== colFromColumnModel) {
             this.clearFocusedCell();
         }
     }
@@ -209,7 +209,7 @@ export class FocusController extends BeanStub {
     }
 
     public setFocusedCell(rowIndex: number, colKey: string | Column, floating: string | null | undefined, forceBrowserFocus = false): void {
-        const gridColumn = this.columnController.getGridColumn(colKey);
+        const gridColumn = this.columnModel.getGridColumn(colKey);
 
         // if column doesn't exist, then blank the focused cell and return. this can happen when user sets new columns,
         // and the focused cell is in a column that no longer exists. after columns change, the grid refreshes and tries

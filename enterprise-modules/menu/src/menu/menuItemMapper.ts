@@ -5,7 +5,7 @@ import {
     BeanStub,
     ChartType,
     Column,
-    ColumnController,
+    ColumnModel,
     Constants,
     GridApi,
     IAggFuncService,
@@ -19,7 +19,7 @@ import {
 @Bean('menuItemMapper')
 export class MenuItemMapper extends BeanStub {
 
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('gridApi') private gridApi: GridApi;
     @Optional('clipboardService') private clipboardService: IClipboardService;
     @Optional('aggFuncService') private aggFuncService: IAggFuncService;
@@ -72,19 +72,19 @@ export class MenuItemMapper extends BeanStub {
             case 'pinLeft':
                 return {
                     name: localeTextFunc('pinLeft', 'Pin Left'),
-                    action: () => this.columnController.setColumnPinned(column, Constants.PINNED_LEFT, "contextMenu"),
+                    action: () => this.columnModel.setColumnPinned(column, Constants.PINNED_LEFT, "contextMenu"),
                     checked: !!column && column.isPinnedLeft()
                 };
             case 'pinRight':
                 return {
                     name: localeTextFunc('pinRight', 'Pin Right'),
-                    action: () => this.columnController.setColumnPinned(column, Constants.PINNED_RIGHT, "contextMenu"),
+                    action: () => this.columnModel.setColumnPinned(column, Constants.PINNED_RIGHT, "contextMenu"),
                     checked: !!column && column.isPinnedRight()
                 };
             case 'clearPinned':
                 return {
                     name: localeTextFunc('noPin', 'No Pin'),
-                    action: () => this.columnController.setColumnPinned(column, null, "contextMenu"),
+                    action: () => this.columnModel.setColumnPinned(column, null, "contextMenu"),
                     checked: !!column && !column.isPinned()
                 };
             case 'valueAggSubMenu':
@@ -100,29 +100,29 @@ export class MenuItemMapper extends BeanStub {
             case 'autoSizeThis':
                 return {
                     name: localeTextFunc('autosizeThiscolumn', 'Autosize This Column'),
-                    action: () => this.columnController.autoSizeColumn(column, skipHeaderOnAutoSize, "contextMenu")
+                    action: () => this.columnModel.autoSizeColumn(column, skipHeaderOnAutoSize, "contextMenu")
                 };
             case 'autoSizeAll':
                 return {
                     name: localeTextFunc('autosizeAllColumns', 'Autosize All Columns'),
-                    action: () => this.columnController.autoSizeAllColumns(skipHeaderOnAutoSize, "contextMenu")
+                    action: () => this.columnModel.autoSizeAllColumns(skipHeaderOnAutoSize, "contextMenu")
                 };
             case 'rowGroup':
                 return {
-                    name: localeTextFunc('groupBy', 'Group by') + ' ' + _.escapeString(this.columnController.getDisplayNameForColumn(column, 'header')),
-                    action: () => this.columnController.addRowGroupColumn(column, "contextMenu"),
+                    name: localeTextFunc('groupBy', 'Group by') + ' ' + _.escapeString(this.columnModel.getDisplayNameForColumn(column, 'header')),
+                    action: () => this.columnModel.addRowGroupColumn(column, "contextMenu"),
                     icon: _.createIconNoSpan('menuAddRowGroup', this.gridOptionsWrapper, null)
                 };
             case 'rowUnGroup':
                 return {
-                    name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + _.escapeString(this.columnController.getDisplayNameForColumn(column, 'header')),
-                    action: () => this.columnController.removeRowGroupColumn(column, "contextMenu"),
+                    name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + _.escapeString(this.columnModel.getDisplayNameForColumn(column, 'header')),
+                    action: () => this.columnModel.removeRowGroupColumn(column, "contextMenu"),
                     icon: _.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsWrapper, null)
                 };
             case 'resetColumns':
                 return {
                     name: localeTextFunc('resetColumns', 'Reset Columns'),
-                    action: () => this.columnController.resetColumnState("contextMenu")
+                    action: () => this.columnModel.resetColumnState("contextMenu")
                 };
             case 'expandAll':
                 return {
@@ -427,8 +427,8 @@ export class MenuItemMapper extends BeanStub {
             result.push({
                 name: localeTextFunc(funcName, funcName),
                 action: () => {
-                    this.columnController.setColumnAggFunc(columnToUse, funcName, "contextMenu");
-                    this.columnController.addValueColumn(columnToUse, "contextMenu");
+                    this.columnModel.setColumnAggFunc(columnToUse, funcName, "contextMenu");
+                    this.columnModel.addValueColumn(columnToUse, "contextMenu");
                 },
                 checked: columnIsAlreadyAggValue && columnToUse!.getAggFunc() === funcName
             });

@@ -1,16 +1,16 @@
-import { ColumnController } from './columnController';
+import { ColumnModel } from './columnModel';
 
-function createController(gridOptionsWrapper: any): ColumnController {
-    const columnController = new ColumnController();
+function createModel(gridOptionsWrapper: any): ColumnModel {
+    const columnModel = new ColumnModel();
 
-    (columnController as any).gridOptionsWrapper = gridOptionsWrapper;
+    (columnModel as any).gridOptionsWrapper = gridOptionsWrapper;
 
-    return columnController;
+    return columnModel;
 }
 
 describe('hasFloatingFilters', () => {
     it('returns false by default', () => {
-        const controller = createController({
+        const controller = createModel({
             getDefaultColDef: () => { }
         });
 

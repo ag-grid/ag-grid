@@ -3,7 +3,7 @@ import {
     AgCheckbox,
     Autowired,
     Column,
-    ColumnController,
+    ColumnModel,
     Component,
     CssClassApplier,
     DragAndDropService,
@@ -25,7 +25,7 @@ export class ToolPanelColumnComp extends Component {
             <span class="ag-column-select-column-label" ref="eLabel"></span>
         </div>`;
 
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('modelItemUtils') private modelItemUtils: ModelItemUtils;
 
@@ -55,7 +55,7 @@ export class ToolPanelColumnComp extends Component {
         _.addCssClass(this.eDragHandle, 'ag-column-select-column-drag-handle');
         this.cbSelect.getGui().insertAdjacentElement('afterend', this.eDragHandle);
 
-        this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'columnToolPanel');
+        this.displayName = this.columnModel.getDisplayNameForColumn(this.column, 'columnToolPanel');
         const displayNameSanitised: any = _.escapeString(this.displayName);
         this.eLabel.innerHTML = displayNameSanitised;
 
@@ -179,7 +179,7 @@ export class ToolPanelColumnComp extends Component {
 
     private onColumnStateChanged(): void {
         this.processingColumnStateChange = true;
-        const isPivotMode = this.columnController.isPivotMode();
+        const isPivotMode = this.columnModel.isPivotMode();
         if (isPivotMode) {
             // if reducing, checkbox means column is one of pivot, value or group
             const anyFunctionActive = this.column.isAnyFunctionActive();

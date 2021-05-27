@@ -1,6 +1,6 @@
 import {
     Column,
-    ColumnController,
+    ColumnModel,
     GridOptionsWrapper,
     ProcessCellForExportParams,
     ProcessGroupHeaderForExportParams,
@@ -14,7 +14,7 @@ import {
 import { GridSerializingParams, GridSerializingSession, RowAccumulator, RowSpanningAccumulator } from "../interfaces";
 
 export abstract class BaseGridSerializingSession<T> implements GridSerializingSession<T> {
-    public columnController: ColumnController;
+    public columnModel: ColumnModel;
     public valueService: ValueService;
     public gridOptionsWrapper: GridOptionsWrapper;
     public processCellCallback?: (params: ProcessCellForExportParams) => string;
@@ -26,12 +26,12 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
 
     constructor(config: GridSerializingParams) {
         const {
-            columnController, valueService, gridOptionsWrapper, processCellCallback,
+            columnModel, valueService, gridOptionsWrapper, processCellCallback,
             processHeaderCallback, processGroupHeaderCallback,
             processRowGroupCallback
         } = config;
 
-        this.columnController = columnController;
+        this.columnModel = columnModel;
         this.valueService = valueService;
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.processCellCallback = processCellCallback;
@@ -65,7 +65,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
                 // in the group column if groups appear in regular grid cells
                 index === groupIndex && this.groupColumns!.indexOf(column) !== -1
                 // or the first cell in the row, if we're doing full width rows
-                || (index === 0 && this.gridOptionsWrapper.isGroupUseEntireRow(this.columnController.isPivotMode()))
+                || (index === 0 && this.gridOptionsWrapper.isGroupUseEntireRow(this.columnModel.isPivotMode()))
             );
 
         let valueForCell: string;
@@ -88,7 +88,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             });
         }
 
-        return this.columnController.getDisplayNameForColumn(column, 'csv', true);
+        return this.columnModel.getDisplayNameForColumn(column, 'csv', true);
     }
 
     private createValueForGroupNode(node: RowNode): string {

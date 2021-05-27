@@ -5,7 +5,7 @@ import {
     ChangedPath,
     ColDef,
     Column,
-    ColumnController,
+    ColumnModel,
     IRowNodeStage,
     RowNode,
     StageExecuteParams,
@@ -19,7 +19,7 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
 
     // these should go into the pivot column creator
     @Autowired('valueService') private valueService: ValueService;
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('pivotColDefService') private pivotColDefService: PivotColDefService;
 
     private uniqueValues: any = {};
@@ -32,7 +32,7 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
     public execute(params: StageExecuteParams): void {
         const rootNode = params.rowNode;
         const changedPath = params.changedPath;
-        if (this.columnController.isPivotActive()) {
+        if (this.columnModel.isPivotActive()) {
             this.executePivotOn(rootNode, changedPath);
         } else {
             this.executePivotOff(changedPath);
@@ -42,8 +42,8 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
     private executePivotOff(changedPath: ChangedPath | undefined): void {
         this.aggregationColumnsHashLastTime = null;
         this.uniqueValues = {};
-        if (this.columnController.isSecondaryColumnsPresent()) {
-            this.columnController.setSecondaryColumns(null, "rowModelUpdated");
+        if (this.columnModel.isSecondaryColumnsPresent()) {
+            this.columnModel.setSecondaryColumns(null, "rowModelUpdated");
             if (changedPath) {
                 changedPath.setInactive();
             }
@@ -55,7 +55,7 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
 
         const uniqueValuesChanged = this.setUniqueValues(uniqueValues);
 
-        const aggregationColumns = this.columnController.getValueColumns();
+        const aggregationColumns = this.columnModel.getValueColumns();
         const aggregationColumnsHash = aggregationColumns.map((column) => column.getId()).join('#');
         const aggregationFuncsHash = aggregationColumns.map((column) => column.getAggFunc()!.toString()).join('#');
 
@@ -67,7 +67,7 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
         if (uniqueValuesChanged || aggregationColumnsChanged || aggregationFuncsChanged) {
             const {pivotColumnGroupDefs, pivotColumnDefs} = this.pivotColDefService.createPivotColumnDefs(this.uniqueValues);
             this.pivotColumnDefs = pivotColumnDefs;
-            this.columnController.setSecondaryColumns(pivotColumnGroupDefs, "rowModelUpdated");
+            this.columnModel.setSecondaryColumns(pivotColumnGroupDefs, "rowModelUpdated");
             // because the secondary columns have changed, then the aggregation needs to visit the whole
             // tree again, so we make the changedPath not active, to force aggregation to visit all paths.
             if (changedPath) {
@@ -116,7 +116,7 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
 
     private bucketRowNode(rowNode: RowNode, uniqueValues: any): void {
 
-        const pivotColumns = this.columnController.getPivotColumns();
+        const pivotColumns = this.columnModel.getPivotColumns();
 
         if (pivotColumns.length === 0) {
             rowNode.childrenMapped = null;

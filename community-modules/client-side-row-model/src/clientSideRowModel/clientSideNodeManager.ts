@@ -1,7 +1,7 @@
 import {
     _,
     ColumnApi,
-    ColumnController,
+    ColumnModel,
     Context,
     Events,
     EventService,
@@ -26,7 +26,7 @@ export class ClientSideNodeManager {
     private gridOptionsWrapper: GridOptionsWrapper;
     private context: Context;
     private eventService: EventService;
-    private columnController: ColumnController;
+    private columnModel: ColumnModel;
     private selectionController: SelectionController;
 
     private nextId = 0;
@@ -43,13 +43,13 @@ export class ClientSideNodeManager {
     private allNodesMap: {[id:string]: RowNode} = {};
 
     constructor(rootNode: RowNode, gridOptionsWrapper: GridOptionsWrapper, context: Context, eventService: EventService,
-                columnController: ColumnController, gridApi: GridApi, columnApi: ColumnApi,
+                columnModel: ColumnModel, gridApi: GridApi, columnApi: ColumnApi,
                 selectionController: SelectionController) {
         this.rootNode = rootNode;
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.context = context;
         this.eventService = eventService;
-        this.columnController = columnController;
+        this.columnModel = columnModel;
         this.gridApi = gridApi;
         this.columnApi = columnApi;
         this.selectionController = selectionController;
@@ -311,7 +311,7 @@ export class ClientSideNodeManager {
             }
 
             if (setExpanded) {
-                const rowGroupColumns = this.columnController.getRowGroupColumns();
+                const rowGroupColumns = this.columnModel.getRowGroupColumns();
                 const numRowGroupColumns = rowGroupColumns ? rowGroupColumns.length : 0;
 
                 // need to take row group into account when determining level

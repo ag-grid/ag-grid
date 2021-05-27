@@ -71,8 +71,8 @@ export interface ColumnState {
     sortIndex?: number | null;
 }
 
-@Bean('columnController')
-export class ColumnController extends BeanStub {
+@Bean('columnModel')
+export class ColumnModel extends BeanStub {
 
     @Autowired('expressionService') private expressionService: ExpressionService;
     @Autowired('columnFactory') private columnFactory: ColumnFactory;
@@ -457,7 +457,7 @@ export class ColumnController extends BeanStub {
     }
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
-        this.logger = loggerFactory.create('ColumnController');
+        this.logger = loggerFactory.create('columnModel');
     }
 
     private setFirstRightAndLastLeftPinned(source: ColumnEventType): void {

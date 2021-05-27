@@ -3,7 +3,7 @@ import {
     Autowired,
     Column,
     ColumnApi,
-    ColumnController,
+    ColumnModel,
     ColumnPivotChangeRequestEvent,
     DragAndDropService,
     Events,
@@ -16,7 +16,7 @@ import { BaseDropZonePanel } from "./baseDropZonePanel";
 
 export class PivotDropZonePanel extends BaseDropZonePanel {
 
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
 
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
@@ -67,7 +67,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
     }
 
     private checkVisibility(): void {
-        const pivotMode = this.columnController.isPivotMode();
+        const pivotMode = this.columnModel.isPivotMode();
 
         if (this.isHorizontal()) {
             // what we do for horizontal (ie the pivot panel at the top) depends
@@ -77,7 +77,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
                     this.setDisplayed(pivotMode);
                     break;
                 case 'onlyWhenPivoting':
-                    const pivotActive = this.columnController.isPivotActive();
+                    const pivotActive = this.columnModel.isPivotActive();
                     this.setDisplayed(pivotMode && pivotActive);
                     break;
                 default:
@@ -109,7 +109,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
 
             this.eventService.dispatchEvent(event);
         } else {
-            this.columnController.setPivotColumns(columns, "toolPanelUi");
+            this.columnModel.setPivotColumns(columns, "toolPanelUi");
         }
     }
 
@@ -118,6 +118,6 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
     }
 
     protected getExistingColumns(): Column[] {
-        return this.columnController.getPivotColumns();
+        return this.columnModel.getPivotColumns();
     }
 }

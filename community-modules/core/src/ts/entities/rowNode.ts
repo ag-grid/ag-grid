@@ -4,7 +4,7 @@ import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { SelectionController } from "../selectionController";
 import { Column } from "./column";
 import { ValueService } from "../valueService/valueService";
-import { ColumnController } from "../columnController/columnController";
+import { ColumnModel } from "../columnController/columnModel";
 import { ColumnApi } from "../columnController/columnApi";
 import { Autowired, Context } from "../context/context";
 import { IRowModel } from "../interfaces/iRowModel";
@@ -80,7 +80,7 @@ export class RowNode implements IEventEmitter {
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('selectionController') private selectionController: SelectionController;
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('context') private context: Context;
@@ -570,7 +570,7 @@ export class RowNode implements IEventEmitter {
     // this method is for the client to call, so the cell listens for the change
     // event, and also flashes the cell when the change occurs.
     public setDataValue(colKey: string | Column, newValue: any): void {
-        const column = this.columnController.getPrimaryColumn(colKey)!;
+        const column = this.columnModel.getPrimaryColumn(colKey)!;
         const oldValue = this.valueService.getValue(column, this);
 
         this.valueService.setValue(this, column, newValue);
@@ -578,7 +578,7 @@ export class RowNode implements IEventEmitter {
     }
 
     public setGroupValue(colKey: string | Column, newValue: any): void {
-        const column = this.columnController.getGridColumn(colKey)!;
+        const column = this.columnModel.getGridColumn(colKey)!;
 
         if (missing(this.groupData)) { this.groupData = {}; }
 
@@ -602,7 +602,7 @@ export class RowNode implements IEventEmitter {
         // if no event service, nobody has registered for events, so no need fire event
         if (this.eventService) {
             colIds.forEach(colId => {
-                const column = this.columnController.getGridColumn(colId)!;
+                const column = this.columnModel.getGridColumn(colId)!;
                 const value = this.aggData ? this.aggData[colId] : undefined;
                 const oldValue = oldAggData ? oldAggData[colId] : undefined;
                 this.dispatchCellChangedEvent(column, value, oldValue);

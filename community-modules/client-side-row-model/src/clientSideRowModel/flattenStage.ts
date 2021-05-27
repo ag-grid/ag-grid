@@ -3,7 +3,7 @@ import {
     Autowired,
     Bean,
     BeanStub,
-    ColumnController,
+    ColumnModel,
     IRowNodeStage,
     RowNode,
     StageExecuteParams
@@ -12,7 +12,7 @@ import {
 @Bean('flattenStage')
 export class FlattenStage extends BeanStub implements IRowNodeStage {
 
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
 
     public execute(params: StageExecuteParams): RowNode[] {
         const rootNode = params.rowNode;
@@ -22,7 +22,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
         const result: RowNode[] = [];
         // putting value into a wrapper so it's passed by reference
         const nextRowTop: NumberWrapper = {value: 0};
-        const skipLeafNodes = this.columnController.isPivotMode();
+        const skipLeafNodes = this.columnModel.isPivotMode();
         // if we are reducing, and not grouping, then we want to show the root node, as that
         // is where the pivot values are
         const showRootNode = skipLeafNodes && rootNode.leafGroup;

@@ -7,7 +7,7 @@ import { HeaderRootComp } from "../headerRendering/headerRootComp";
 import { BeanStub } from "../context/beanStub";
 import { containsClass, addCssClass } from "../utils/dom";
 import { ControllersService } from "../controllersService";
-import { RowContainerController } from "../gridBodyComp/rowContainer/rowContainerController";
+import { RowContainerCtrl } from "../gridBodyComp/rowContainer/rowContainerCtrl";
 
 @Bean('autoWidthCalculator')
 export class AutoWidthCalculator extends BeanStub {
@@ -15,7 +15,7 @@ export class AutoWidthCalculator extends BeanStub {
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('controllersService') private controllersService: ControllersService;
 
-    private centerRowContainerCon: RowContainerController;
+    private centerRowContainerCon: RowContainerCtrl;
     private headerRootComp: HeaderRootComp;
 
     @PostConstruct

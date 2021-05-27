@@ -4,7 +4,7 @@ import {
     BeanStub,
     CellRange,
     Column,
-    ColumnController,
+    ColumnModel,
     ColumnGroup,
     IAggFunc,
     IAggregationStage,
@@ -41,7 +41,7 @@ interface IData {
 export class ChartDatasource extends BeanStub {
     @Autowired('rowModel') private readonly gridRowModel: IRowModel;
     @Autowired('valueService') private readonly valueService: ValueService;
-    @Autowired('columnController') private readonly columnController: ColumnController;
+    @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('rowNodeSorter') private readonly rowNodeSorter: RowNodeSorter;
     @Autowired('sortController') private sortController: SortController;
     @Optional('aggregationStage') private readonly aggregationStage: IAggregationStage;
@@ -102,7 +102,7 @@ export class ChartDatasource extends BeanStub {
             // first get data for dimensions columns
             params.dimensionCols.forEach(col => {
                 const colId = col.colId;
-                const column = this.columnController.getGridColumn(colId);
+                const column = this.columnModel.getGridColumn(colId);
 
                 if (column) {
                     const valueObject = this.valueService.getValue(column, rowNode);
@@ -280,7 +280,7 @@ export class ChartDatasource extends BeanStub {
     }
 
     private updatePivotKeysForSSRM() {
-        const secondaryColumns = this.columnController.getSecondaryColumns();
+        const secondaryColumns = this.columnModel.getSecondaryColumns();
 
         if (!secondaryColumns) { return; }
 

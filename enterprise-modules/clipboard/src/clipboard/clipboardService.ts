@@ -11,14 +11,14 @@ import {
     IClientSideRowModel,
     Column,
     ColumnApi,
-    ColumnController,
+    ColumnModel,
     Constants,
     CsvExportParams,
     Events,
     FlashCellsEvent,
     FocusController,
     GridApi,
-    GridCompController,
+    GridCtrl,
     IClipboardService,
     IRowModel,
     Logger,
@@ -60,7 +60,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('focusController') private focusController: FocusController;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
@@ -69,12 +69,12 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
     private clientSideRowModel: IClientSideRowModel;
     private logger: Logger;
-    private gridCompController: GridCompController;
+    private gridCtrl: GridCtrl;
 
     private navigatorApiFailed = false;
 
-    public registerGridCompController(gridCompController: GridCompController): void {
-        this.gridCompController = gridCompController;
+    public registerGridCompController(gridCtrl: GridCtrl): void {
+        this.gridCtrl = gridCtrl;
     }
 
     @PostConstruct
@@ -283,7 +283,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         if (!focusedCell) { return; }
 
         const currentRow: RowPosition = { rowIndex: focusedCell.rowIndex, rowPinned: focusedCell.rowPinned };
-        const columnsToPasteInto = this.columnController.getDisplayedColumnsStartingAt(focusedCell.column);
+        const columnsToPasteInto = this.columnModel.getDisplayedColumnsStartingAt(focusedCell.column);
 
         if (this.isPasteSingleValueIntoRange(parsedData)) {
             this.pasteSingleValueIntoRange(parsedData, updatedRowNodes, cellsToFlash, changedPath);
@@ -561,7 +561,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
             const processHeaderForClipboardFunc = this.gridOptionsWrapper.getProcessHeaderForClipboardFunc();
             const columnNames = columns.map(column => {
-                const name = this.columnController.getDisplayNameForColumn(column, 'clipboard', true);
+                const name = this.columnModel.getDisplayNameForColumn(column, 'clipboard', true);
                 return this.processHeader(column, name, processHeaderForClipboardFunc) || '';
             });
 
@@ -618,7 +618,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         let data: string;
 
         if (includeHeaders) {
-            const headerValue = this.columnController.getDisplayNameForColumn(column, 'clipboard', true);
+            const headerValue = this.columnModel.getDisplayNameForColumn(column, 'clipboard', true);
             data = this.processHeader(column, headerValue, this.gridOptionsWrapper.getProcessHeaderForClipboardFunc()) + '\r\n' + processedValue;
         } else {
             data = processedValue;
@@ -766,7 +766,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         eTempInput.style.position = 'absolute';
         eTempInput.style.opacity = '0';
 
-        const guiRoot = this.gridCompController.getGui();
+        const guiRoot = this.gridCtrl.getGui();
 
         guiRoot.appendChild(eTempInput);
 

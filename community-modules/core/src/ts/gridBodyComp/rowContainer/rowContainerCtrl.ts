@@ -6,7 +6,7 @@ import { RowContainerEventsFeature } from "./rowContainerEventsFeature";
 import { DragService } from "../../dragAndDrop/dragService";
 import { ControllersService } from "../../controllersService";
 import { getInnerWidth, getScrollLeft, isHorizontalScrollShowing, isVisible, setScrollLeft } from "../../utils/dom";
-import { ColumnController } from "../../columnController/columnController";
+import { ColumnModel } from "../../columnController/columnModel";
 import { ResizeObserverService } from "../../misc/resizeObserverService";
 import { ViewportSizeFeature } from "../viewportSizeFeature";
 import { convertToMap } from "../../utils/map";
@@ -60,19 +60,19 @@ export const WrapperCssClasses: Map<RowContainerNames, string> = convertToMap([
     [RowContainerNames.CENTER, 'ag-center-cols-clipper'],
 ]);
 
-export interface RowContainerView {
+export interface IRowContainerComp {
     setViewportHeight(height: string): void;
 }
 
-export class RowContainerController extends BeanStub {
+export class RowContainerCtrl extends BeanStub {
 
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Autowired('dragService') private dragService: DragService;
     @Autowired('controllersService') private controllersService: ControllersService;
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
 
-    private view: RowContainerView;
+    private comp: IRowContainerComp;
     private name: RowContainerNames;
     private eContainer: HTMLElement;
     private eViewport: HTMLElement;
@@ -129,8 +129,8 @@ export class RowContainerController extends BeanStub {
         return this.viewportSizeFeature;
     }
 
-    public setView(view: RowContainerView, eContainer: HTMLElement, eViewport: HTMLElement, eWrapper: HTMLElement): void {
-        this.view = view;
+    public setComp(view: IRowContainerComp, eContainer: HTMLElement, eViewport: HTMLElement, eWrapper: HTMLElement): void {
+        this.comp = view;
         this.eContainer = eContainer;
         this.eViewport = eViewport;
         this.eWrapper = eWrapper;
@@ -173,7 +173,7 @@ export class RowContainerController extends BeanStub {
         const visible = this.scrollVisibleService.isHorizontalScrollShowing();
         const scrollbarWidth = visible ? (this.gridOptionsWrapper.getScrollbarWidth() || 0) : 0;
         const height = scrollbarWidth == 0 ? '100%' : `calc(100% + ${scrollbarWidth}px)`;
-        this.view.setViewportHeight(height);
+        this.comp.setViewportHeight(height);
     }
 
     // this methods prevents the grid views from being scrolled while the dragService is being used
@@ -198,7 +198,7 @@ export class RowContainerController extends BeanStub {
         const scrollWidth = this.getCenterWidth();
         const scrollPosition = this.getCenterViewportScrollLeft();
 
-        this.columnController.setViewportPosition(scrollWidth, scrollPosition);
+        this.columnModel.setViewportPosition(scrollWidth, scrollPosition);
     }
 
     public getCenterWidth(): number {

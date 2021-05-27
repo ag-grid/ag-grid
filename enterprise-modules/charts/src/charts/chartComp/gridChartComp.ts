@@ -10,7 +10,7 @@ import {
     ChartOptions,
     ChartType,
     ColumnApi,
-    ColumnController,
+    ColumnModel,
     Component,
     Environment,
     Events,
@@ -71,7 +71,7 @@ export class GridChartComp extends Component {
 
     @Autowired('environment') private readonly environment: Environment;
     @Autowired('chartTranslator') private readonly chartTranslator: ChartTranslator;
-    @Autowired('columnController') private readonly columnController: ColumnController;
+    @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('chartCrossFilter') private readonly crossFilter: ChartCrossFilter;
 
     @Autowired('gridApi') private readonly gridApi: GridApi;
@@ -401,7 +401,7 @@ export class GridChartComp extends Component {
     }
 
     private getChartDataType(colId: string): string | undefined {
-        const column = this.columnController.getPrimaryColumn(colId);
+        const column = this.columnModel.getPrimaryColumn(colId);
         return column ? column.getColDef().chartDataType : undefined;
     }
 

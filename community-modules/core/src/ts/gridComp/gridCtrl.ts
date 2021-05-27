@@ -15,11 +15,11 @@ import { ColumnApi } from "../columnController/columnApi";
 import { findIndex } from "../utils/array";
 import { Column } from "../entities/column";
 import { ColumnGroup } from "../entities/columnGroup";
-import { ColumnController } from "../columnController/columnController";
+import { ColumnModel } from "../columnController/columnModel";
 import { ControllersService } from "../controllersService";
 import { MouseEventService } from "../gridBodyComp/mouseEventService";
 
-export interface GridCompView extends LayoutView {
+export interface IGridComp extends LayoutView {
     setRtlClass(cssClass: string): void;
     destroyGridUi(): void;
     forceFocusOutOfContainer(up: boolean): void;
@@ -27,7 +27,7 @@ export interface GridCompView extends LayoutView {
     getFocusableContainers(): HTMLElement[];
 }
 
-export class GridCompController extends BeanStub {
+export class GridCtrl extends BeanStub {
 
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
@@ -36,11 +36,11 @@ export class GridCompController extends BeanStub {
     @Optional('clipboardService') private clipboardService: IClipboardService;
     @Autowired('loggerFactory') loggerFactory: LoggerFactory;
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('controllersService') private controllersService: ControllersService;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
 
-    private view: GridCompView;
+    private view: IGridComp;
     private eGridHostDiv: HTMLElement;
     private eGui: HTMLElement;
 
@@ -67,7 +67,7 @@ export class GridCompController extends BeanStub {
         }
     }
 
-    public setView(view: GridCompView, eGridDiv: HTMLElement, eGui: HTMLElement): void {
+    public setComp(view: IGridComp, eGridDiv: HTMLElement, eGui: HTMLElement): void {
         this.view = view;
         this.eGridHostDiv = eGridDiv;
         this.eGui = eGui;
@@ -150,11 +150,11 @@ export class GridCompController extends BeanStub {
     }
 
     public focusGridHeader(): boolean {
-        let firstColumn: Column | ColumnGroup = this.columnController.getAllDisplayedColumns()[0];
+        let firstColumn: Column | ColumnGroup = this.columnModel.getAllDisplayedColumns()[0];
         if (!firstColumn) { return false; }
 
         if (firstColumn.getParent()) {
-            firstColumn = this.columnController.getColumnGroupAtLevel(firstColumn, 0)!;
+            firstColumn = this.columnModel.getColumnGroupAtLevel(firstColumn, 0)!;
         }
 
         this.focusController.focusHeaderPosition(

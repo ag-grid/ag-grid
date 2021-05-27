@@ -5,7 +5,7 @@ import {
     DragService,
     Component,
     MouseEventService,
-    ColumnController,
+    ColumnModel,
     CellNavigationService,
     CellRange,
     RowPosition,
@@ -25,7 +25,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
     @Autowired("dragService") protected dragService: DragService;
     @Autowired("rangeController") protected rangeController: RangeController;
     @Autowired("mouseEventService") protected mouseEventService: MouseEventService;
-    @Autowired("columnController") protected columnController: ColumnController;
+    @Autowired("columnModel") protected columnModel: ColumnModel;
     @Autowired("cellNavigationService") protected cellNavigationService: CellNavigationService;
     @Autowired('rowPositionUtils') protected rowPositionUtils: RowPositionUtils;
     @Autowired('controllersService') protected controllersService: ControllersService;

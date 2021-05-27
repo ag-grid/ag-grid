@@ -1,10 +1,10 @@
-import { _, Autowired, Bean, BeanStub, ColumnController, GridApi, RowNode } from "@ag-grid-community/core";
+import { _, Autowired, Bean, BeanStub, ColumnModel, GridApi, RowNode } from "@ag-grid-community/core";
 
 @Bean("chartCrossFilter")
 export class ChartCrossFilter extends BeanStub {
 
     @Autowired('gridApi') private readonly gridApi: GridApi;
-    @Autowired('columnController') private readonly columnController: ColumnController;
+    @Autowired('columnModel') private readonly columnModel: ColumnModel;
 
     public filter(event: any, reset: boolean = false): void {
         const filterModel = this.gridApi.getFilterModel();
@@ -105,7 +105,7 @@ export class ChartCrossFilter extends BeanStub {
     }
 
     private getColumnFilterType(colId: any) {
-        let gridColumn = this.columnController.getGridColumn(colId);
+        let gridColumn = this.columnModel.getGridColumn(colId);
         return gridColumn ? gridColumn.getColDef().filter : undefined;
     }
 }

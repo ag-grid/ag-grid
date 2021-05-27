@@ -20,7 +20,7 @@ import { CheckboxSelectionComponent } from "./checkboxSelectionComponent";
 import { CellClassParams, ColDef, NewValueParams } from "../entities/colDef";
 import { CellPosition } from "../entities/cellPosition";
 import { CellRangeType, ISelectionHandle, SelectionHandleType } from "../interfaces/iRangeController";
-import { RowController } from "./row/rowController";
+import { RowCtrl } from "./row/rowCtrl";
 import { RowDragComp } from "./row/rowDragComp";
 import { PopupEditorWrapper } from "./cellEditors/popupEditorWrapper";
 import { AgPromise } from "../utils";
@@ -123,7 +123,7 @@ export class CellComp extends Component implements TooltipParentComp {
     private firstRightPinned: boolean;
     private lastLeftPinned: boolean;
 
-    private rowComp: RowController | null;
+    private rowComp: RowCtrl | null;
 
     private rangeSelectionEnabled: boolean;
 
@@ -150,7 +150,7 @@ export class CellComp extends Component implements TooltipParentComp {
     private cellEditorVersion = 0;
     private cellRendererVersion = 0;
 
-    constructor(scope: any, beans: Beans, column: Column, rowNode: RowNode, rowComp: RowController | null,
+    constructor(scope: any, beans: Beans, column: Column, rowNode: RowNode, rowComp: RowCtrl | null,
         autoHeightCell: boolean, printLayout: boolean, eRow: HTMLElement, editingRow: boolean) {
         super();
         this.scope = scope;
@@ -210,7 +210,7 @@ export class CellComp extends Component implements TooltipParentComp {
         const cssClasses = this.getInitialCssClasses();
 
         const stylesForRowSpanning = this.getStylesForRowSpanning();
-        const colIdxSanitised = escapeString(this.beans.columnController.getAriaColumnIndex(this.column).toString());
+        const colIdxSanitised = escapeString(this.beans.columnModel.getAriaColumnIndex(this.column).toString());
 
         templateParts.push(`<div`);
         templateParts.push(` tabindex="-1"`);
@@ -355,7 +355,7 @@ export class CellComp extends Component implements TooltipParentComp {
             const pinned = this.column.getPinned();
             for (let i = 0; pointer && i < colSpan; i++) {
                 colsSpanning.push(pointer);
-                pointer = this.beans.columnController.getDisplayedColAfter(pointer);
+                pointer = this.beans.columnModel.getDisplayedColAfter(pointer);
                 if (!pointer || missing(pointer)) {
                     break;
                 }
@@ -380,7 +380,7 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private refreshAriaIndex(): void {
-        const colIdx = this.beans.columnController.getAriaColumnIndex(this.column);
+        const colIdx = this.beans.columnModel.getAriaColumnIndex(this.column);
         setAriaColIndex(this.getGui(), colIdx);
     }
 
@@ -458,7 +458,7 @@ export class CellComp extends Component implements TooltipParentComp {
         return this.getValueToUse();
     }
 
-    public getRenderedRow(): RowController | null {
+    public getRenderedRow(): RowCtrl | null {
         return this.rowComp;
     }
 
@@ -1045,7 +1045,7 @@ export class CellComp extends Component implements TooltipParentComp {
         // allowing the user to open leaf groups. confused? remember for pivot mode we don't allow
         // opening leaf groups, so we have to force leafGroups to be closed in case the user expanded
         // them via the API, or user user expanded them in the UI before turning on pivot mode
-        const lockedClosedGroup = this.rowNode.leafGroup && this.beans.columnController.isPivotMode();
+        const lockedClosedGroup = this.rowNode.leafGroup && this.beans.columnModel.isPivotMode();
 
         const isOpenGroup = this.rowNode.group && this.rowNode.expanded && !this.rowNode.footer && !lockedClosedGroup;
 
@@ -1761,10 +1761,10 @@ export class CellComp extends Component implements TooltipParentComp {
             return leftPosition;
         }
 
-        const leftWidth = this.beans.columnController.getDisplayedColumnsLeftWidth();
+        const leftWidth = this.beans.columnModel.getDisplayedColumnsLeftWidth();
 
         if (this.column.getPinned() === Constants.PINNED_RIGHT) {
-            const bodyWidth = this.beans.columnController.getBodyContainerWidth();
+            const bodyWidth = this.beans.columnModel.getBodyContainerWidth();
             return leftWidth + bodyWidth + (leftPosition || 0);
         }
 
@@ -1791,17 +1791,17 @@ export class CellComp extends Component implements TooltipParentComp {
         let left = false;
 
         const thisCol = this.cellPosition.column;
-        const { rangeController, columnController } = this.beans;
+        const { rangeController, columnModel } = this.beans;
 
         let leftCol: Column | null;
         let rightCol: Column | null;
 
         if (isRtl) {
-            leftCol = columnController.getDisplayedColAfter(thisCol);
-            rightCol = columnController.getDisplayedColBefore(thisCol);
+            leftCol = columnModel.getDisplayedColAfter(thisCol);
+            rightCol = columnModel.getDisplayedColBefore(thisCol);
         } else {
-            leftCol = columnController.getDisplayedColBefore(thisCol);
-            rightCol = columnController.getDisplayedColAfter(thisCol);
+            leftCol = columnModel.getDisplayedColBefore(thisCol);
+            rightCol = columnModel.getDisplayedColAfter(thisCol);
         }
 
         const ranges = rangeController.getCellRanges().filter(

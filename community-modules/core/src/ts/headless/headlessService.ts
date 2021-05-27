@@ -1,5 +1,5 @@
 import { Autowired, Bean, PostConstruct } from "../context/context";
-import { ColumnController } from "../columnController/columnController";
+import { ColumnModel } from "../columnController/columnModel";
 import { ColumnGroupChild } from "../entities/columnGroupChild";
 import { Column } from "../entities/column";
 import { ColumnGroup } from "../entities/columnGroup";
@@ -42,7 +42,7 @@ export interface RowContainerSt {
 @Bean('headlessService')
 export class HeadlessService extends BeanStub {
 
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('valueService') private valueService: ValueService;
 
@@ -81,7 +81,7 @@ export class HeadlessService extends BeanStub {
     private createHeaderRows(): void {
         this.headerRows = [];
 
-        const headerRowCount = this.columnController.getHeaderRowCount();
+        const headerRowCount = this.columnModel.getHeaderRowCount();
         for (let i = 0; i < headerRowCount; i++) {
             const groupLevel = i === (headerRowCount - 1);
             this.headerRows.push(this.createHeaderRow(i, groupLevel));
@@ -99,7 +99,7 @@ export class HeadlessService extends BeanStub {
         // first and last rows are -1 if no rows to display
         if (firstRow < 0 || lastRow < 0) { return; }
 
-        const displayedColumns = this.columnController.getDisplayedColumns(null);
+        const displayedColumns = this.columnModel.getDisplayedColumns(null);
 
         for (let rowIndex = firstRow; rowIndex <= lastRow; rowIndex++) {
             const rowNode = this.paginationProxy.getRow(rowIndex);
@@ -127,19 +127,19 @@ export class HeadlessService extends BeanStub {
 
         this.centerRowContainer = {
             height: Math.max(this.paginationProxy.getCurrentPageHeight(), 1),
-            width: this.columnController.getBodyContainerWidth()
+            width: this.columnModel.getBodyContainerWidth()
         };
         this.dispatchEvent({type: HeadlessService.EVENT_ROW_CONTAINER_UPDATED});
     }
 
     private createHeaderRow(depth: number, groupLevel: boolean): HeaderRowSt {
-        const items = this.columnController.getVirtualHeaderGroupRow(null, depth);
+        const items = this.columnModel.getVirtualHeaderGroupRow(null, depth);
 
         const mapColumn = (item: ColumnGroupChild): ColumnSt => {
             const isCol = item instanceof Column;
             const name = isCol
-                ? this.columnController.getDisplayNameForColumn(item as Column, 'header')
-                : this.columnController.getDisplayNameForColumnGroup(item as ColumnGroup, 'header');
+                ? this.columnModel.getDisplayNameForColumn(item as Column, 'header')
+                : this.columnModel.getDisplayNameForColumnGroup(item as ColumnGroup, 'header');
             const res: ColumnSt = {
                 name,
                 id: item.getUniqueId()

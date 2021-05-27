@@ -7,7 +7,7 @@ import {
     CellRangeType,
     ChartType,
     Column,
-    ColumnController,
+    ColumnModel,
     IAggFunc,
     IRangeController,
     PostConstruct,
@@ -41,7 +41,7 @@ export class ChartDataModel extends BeanStub {
 
     public static DEFAULT_CATEGORY = 'AG-GRID-DEFAULT-CATEGORY';
 
-    @Autowired('columnController') private readonly columnController: ColumnController;
+    @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('valueService') private readonly valueService: ValueService;
     @Autowired('rangeController') private readonly rangeController: IRangeController;
     @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
@@ -123,24 +123,24 @@ export class ChartDataModel extends BeanStub {
 
     private isGroupActive() {
         const usingTreeData = this.gridOptionsWrapper.isTreeData();
-        const groupedCols = usingTreeData ? null : this.columnController.getRowGroupColumns();
+        const groupedCols = usingTreeData ? null : this.columnModel.getRowGroupColumns();
         return usingTreeData || (groupedCols && groupedCols.length > 0);
     }
 
     public isGrouping(): boolean {
         // charts only group when the selected category is a group column
         const colId = this.getSelectedDimension().colId;
-        const displayedGroupCols = this.columnController.getGroupDisplayColumns();
+        const displayedGroupCols = this.columnModel.getGroupDisplayColumns();
         const groupDimensionSelected = displayedGroupCols.map(col => col.getColId()).some(id => id === colId);
         return !!this.isGroupActive() && groupDimensionSelected;
     }
 
     public isPivotActive(): boolean {
-        return this.columnController.isPivotActive();
+        return this.columnModel.isPivotActive();
     }
 
     public isPivotMode(): boolean {
-        return this.columnController.isPivotMode();
+        return this.columnModel.isPivotMode();
     }
 
     public isPivotChart(): boolean {
@@ -235,7 +235,7 @@ export class ChartDataModel extends BeanStub {
 
     private getAllColumnsFromRanges(): Set<Column> {
         if (this.pivotChart) {
-            return _.convertToSet(this.columnController.getAllDisplayedColumns());
+            return _.convertToSet(this.columnModel.getAllDisplayedColumns());
         }
 
         const columns = this.dimensionCellRange || this.valueCellRange ? [] : this.referenceCellRange.columns;
@@ -252,7 +252,7 @@ export class ChartDataModel extends BeanStub {
     }
 
     private getColDisplayName(col: Column): string | null {
-        return this.columnController.getDisplayNameForColumn(col, 'chart');
+        return this.columnModel.getDisplayNameForColumn(col, 'chart');
     }
 
     private getRowIndexes(): { startRow: number; endRow: number; } {
@@ -269,7 +269,7 @@ export class ChartDataModel extends BeanStub {
     }
 
     private getAllChartColumns(): { dimensionCols: Set<Column>; valueCols: Set<Column>; } {
-        const displayedCols = this.columnController.getAllDisplayedColumns();
+        const displayedCols = this.columnModel.getAllDisplayedColumns();
 
         const dimensionCols = new Set<Column>();
         const valueCols = new Set<Column>();

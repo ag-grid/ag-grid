@@ -3,7 +3,7 @@ import {
     Autowired,
     Bean,
     Column,
-    ColumnController,
+    ColumnModel,
     ExcelCell,
     ExcelExportParams,
     ExcelFactoryMode,
@@ -108,7 +108,7 @@ const createImageRelationsForSheet = (sheetIndex: number, currentRelationIndex: 
 @Bean('excelCreator')
 export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession, ExcelExportParams> implements IExcelCreator {
 
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('stylingService') private stylingService: StylingService;
@@ -210,7 +210,7 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
     }
 
     public createSerializingSession(params: ExcelExportParams): SerializingSession {
-        const { columnController, valueService, gridOptionsWrapper } = this;
+        const { columnModel, valueService, gridOptionsWrapper } = this;
         const isXlsx = this.getExportMode() === 'xlsx';
 
         let sheetName = 'ag-grid';
@@ -221,7 +221,7 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
         const config: ExcelGridSerializingParams = {
             ...params,
             sheetName,
-            columnController,
+            columnModel,
             valueService,
             gridOptionsWrapper,
             headerRowHeight: params.headerRowHeight || params.rowHeight,

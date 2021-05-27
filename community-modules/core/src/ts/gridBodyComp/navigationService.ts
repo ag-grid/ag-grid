@@ -6,13 +6,13 @@ import { Column } from "../entities/column";
 import { FocusController } from "../focusController";
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { IRangeController } from "../interfaces/iRangeController";
-import { ColumnController } from "../columnController/columnController";
+import { ColumnModel } from "../columnController/columnModel";
 import { BeanStub } from "../context/beanStub";
 import { exists } from "../utils/generic";
 import { last } from "../utils/array";
 import { KeyCode } from '../constants/keyCode';
 import { ControllersService } from "../controllersService";
-import { GridBodyController } from "./gridBodyController";
+import { GridBodyCtrl } from "./gridBodyCtrl";
 
 interface NavigateParams {
      // The rowIndex to vertically scroll to
@@ -34,10 +34,10 @@ export class NavigationService extends BeanStub {
     @Autowired('focusController') private focusController: FocusController;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Optional('rangeController') private rangeController: IRangeController;
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('controllersService') public controllersService: ControllersService;
 
-    private gridBodyCon: GridBodyController;
+    private gridBodyCon: GridBodyCtrl;
 
     private timeLastPageEventProcessed = 0;
 
@@ -256,7 +256,7 @@ export class NavigationService extends BeanStub {
     // ctrl + left/right will bring focus to same row, first/last cell. no vertical scrolling.
     private onCtrlLeftOrRight(key: number, gridCell: CellPosition): void {
         const leftKey = key === KeyCode.LEFT;
-        const allColumns: Column[] = this.columnController.getAllDisplayedColumns();
+        const allColumns: Column[] = this.columnModel.getAllDisplayedColumns();
         const columnToSelect: Column = leftKey ? allColumns[0] : last(allColumns);
 
         this.navigateTo({
@@ -272,7 +272,7 @@ export class NavigationService extends BeanStub {
     // same cell into view (which means either scroll all the way up, or all the way down).
     private onHomeOrEndKey(key: number): void {
         const homeKey = key === KeyCode.PAGE_HOME;
-        const allColumns: Column[] = this.columnController.getAllDisplayedColumns();
+        const allColumns: Column[] = this.columnModel.getAllDisplayedColumns();
         const columnToSelect = homeKey ? allColumns[0] : last(allColumns);
         const scrollIndex = homeKey ? this.paginationProxy.getPageFirstRow() : this.paginationProxy.getPageLastRow();
 

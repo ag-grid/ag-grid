@@ -6,7 +6,7 @@ import {
     CellPositionUtils,
     Column,
     ColumnApi,
-    ColumnController,
+    ColumnModel,
     Constants,
     Events,
     GridApi,
@@ -25,7 +25,7 @@ import {
     RowPositionUtils,
     PinnedRowModel,
     BeanStub,
-    GridBodyController,
+    GridBodyCtrl,
     ControllersService,
     _
 } from "@ag-grid-community/core";
@@ -35,7 +35,7 @@ export class RangeController extends BeanStub implements IRangeController {
 
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
@@ -122,7 +122,7 @@ export class RangeController extends BeanStub implements IRangeController {
             return false;
         }
 
-        const allColumns = this.columnController.getAllDisplayedColumns();
+        const allColumns = this.columnModel.getAllDisplayedColumns();
         const allPositions = rangeColumns.map(c => allColumns.indexOf(c)).sort((a, b) => a - b);
 
         return _.last(allPositions) - allPositions[0] + 1 === rangeColumns.length;
@@ -279,7 +279,7 @@ export class RangeController extends BeanStub implements IRangeController {
     }
 
     public getRangeEdgeColumns(cellRange: CellRange): { left: Column, right: Column; } {
-        const allColumns = this.columnController.getAllDisplayedColumns();
+        const allColumns = this.columnModel.getAllDisplayedColumns();
         const allIndices = cellRange.columns
             .map(c => allColumns.indexOf(c))
             .filter(i => i > -1)
@@ -360,10 +360,10 @@ export class RangeController extends BeanStub implements IRangeController {
         let columns: Column[] | undefined;
 
         if (params.columns) {
-            columns = params.columns.map(c => this.columnController.getColumnWithValidation(c)!).filter(c => c);
+            columns = params.columns.map(c => this.columnModel.getColumnWithValidation(c)!).filter(c => c);
         } else {
-            const columnStart = this.columnController.getColumnWithValidation(params.columnStart);
-            const columnEnd = this.columnController.getColumnWithValidation(params.columnEnd);
+            const columnStart = this.columnModel.getColumnWithValidation(params.columnStart);
+            const columnEnd = this.columnModel.getColumnWithValidation(params.columnEnd);
 
             if (!columnStart || !columnEnd) {
                 return;
@@ -476,7 +476,7 @@ export class RangeController extends BeanStub implements IRangeController {
     }
 
     public isBottomRightCell(cellRange: CellRange, cell: CellPosition): boolean {
-        const allColumns = this.columnController.getAllDisplayedColumns();
+        const allColumns = this.columnModel.getAllDisplayedColumns();
         const allPositions = cellRange.columns.map(c => allColumns.indexOf(c)).sort((a, b) => a - b);
         const { startRow, endRow } = cellRange;
         const lastRow = this.rowPositionUtils.before(startRow!, endRow!) ? endRow : startRow;
@@ -651,7 +651,7 @@ export class RangeController extends BeanStub implements IRangeController {
     }
 
     private calculateColumnsBetween(columnFrom: Column, columnTo: Column): Column[] | undefined {
-        const allColumns = this.columnController.getAllDisplayedColumns();
+        const allColumns = this.columnModel.getAllDisplayedColumns();
         const isSameColumn = columnFrom === columnTo;
         const fromIndex = allColumns.indexOf(columnFrom);
 
@@ -692,22 +692,22 @@ class AutoScrollService {
     private tickUp: boolean;
     private tickDown: boolean;
 
-    private gridBodyCon: GridBodyController;
+    private gridBodyCtrl: GridBodyCtrl;
     private gridOptionsWrapper: GridOptionsWrapper;
 
     private tickCount: number;
 
-    constructor(gridBodyCon: GridBodyController, gridOptionsWrapper: GridOptionsWrapper) {
-        this.gridBodyCon = gridBodyCon;
+    constructor(gridBodyCtrl: GridBodyCtrl, gridOptionsWrapper: GridOptionsWrapper) {
+        this.gridBodyCtrl = gridBodyCtrl;
         this.gridOptionsWrapper = gridOptionsWrapper;
     }
 
     public check(mouseEvent: MouseEvent, skipVerticalScroll: boolean = false): void {
-        const rect: ClientRect = this.gridBodyCon.getBodyClientRect()!;
+        const rect: ClientRect = this.gridBodyCtrl.getBodyClientRect()!;
         skipVerticalScroll = skipVerticalScroll || this.gridOptionsWrapper.getDomLayout() !== Constants.DOM_LAYOUT_NORMAL;
 
         // we don't do ticking if grid is auto height unless we have a horizontal scroller
-        if (skipVerticalScroll && !this.gridBodyCon.getScrollFeature().isHorizontalScrollShowing()) {
+        if (skipVerticalScroll && !this.gridBodyCtrl.getScrollFeature().isHorizontalScrollShowing()) {
             return;
         }
 
@@ -733,27 +733,27 @@ class AutoScrollService {
     private doTick(): void {
         this.tickCount++;
 
-        const vScrollPosition = this.gridBodyCon.getScrollFeature().getVScrollPosition();
-        const hScrollPosition = this.gridBodyCon.getScrollFeature().getHScrollPosition();
+        const vScrollPosition = this.gridBodyCtrl.getScrollFeature().getVScrollPosition();
+        const hScrollPosition = this.gridBodyCtrl.getScrollFeature().getHScrollPosition();
 
         let tickAmount: number;
 
         tickAmount = this.tickCount > 20 ? 200 : (this.tickCount > 10 ? 80 : 40);
 
         if (this.tickUp) {
-            this.gridBodyCon.getScrollFeature().setVerticalScrollPosition(vScrollPosition.top - tickAmount);
+            this.gridBodyCtrl.getScrollFeature().setVerticalScrollPosition(vScrollPosition.top - tickAmount);
         }
 
         if (this.tickDown) {
-            this.gridBodyCon.getScrollFeature().setVerticalScrollPosition(vScrollPosition.top + tickAmount);
+            this.gridBodyCtrl.getScrollFeature().setVerticalScrollPosition(vScrollPosition.top + tickAmount);
         }
 
         if (this.tickLeft) {
-            this.gridBodyCon.getScrollFeature().setHorizontalScrollPosition(hScrollPosition.left - tickAmount);
+            this.gridBodyCtrl.getScrollFeature().setHorizontalScrollPosition(hScrollPosition.left - tickAmount);
         }
 
         if (this.tickRight) {
-            this.gridBodyCon.getScrollFeature().setHorizontalScrollPosition(hScrollPosition.left + tickAmount);
+            this.gridBodyCtrl.getScrollFeature().setHorizontalScrollPosition(hScrollPosition.left + tickAmount);
         }
     }
 

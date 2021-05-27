@@ -7,7 +7,7 @@ import {
     IFloatingFilterParams,
     AgInputTextField,
     _,
-    ColumnController,
+    ColumnModel,
     ISetFilterParams
 } from '@ag-grid-community/core';
 
@@ -19,7 +19,7 @@ import { DEFAULT_LOCALE_TEXT } from './localeText';
 export class SetFloatingFilterComp extends Component implements IFloatingFilter {
     @RefSelector('eFloatingFilterText') private readonly eFloatingFilterText: AgInputTextField;
     @Autowired('valueFormatterService') private readonly valueFormatterService: ValueFormatterService;
-    @Autowired('columnController') private readonly columnController: ColumnController;
+    @Autowired('columnModel') private readonly columnModel: ColumnModel;
 
     private params: IFloatingFilterParams;
     private lastKnownModel: SetFilterModel;
@@ -40,7 +40,7 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
     }
 
     public init(params: IFloatingFilterParams): void {
-        const displayName = this.columnController.getDisplayNameForColumn(params.column, 'header', true);
+        const displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         this.eFloatingFilterText

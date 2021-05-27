@@ -3,11 +3,11 @@ import { isBrowserIE, isInvisibleScrollbar } from "../utils/browser";
 import { Autowired, PostConstruct } from "../context/context";
 import { ScrollVisibleService } from "./scrollVisibleService";
 import { Events } from "../eventKeys";
-import { ColumnController } from "../columnController/columnController";
+import { ColumnModel } from "../columnController/columnModel";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ControllersService } from "../controllersService";
 
-export interface FakeHorizontalScrollView {
+export interface IFakeHScrollComp {
     setHeight(height: number): void;
     setViewportHeight(height: number): void;
     setContainerHeight(height: number): void;
@@ -18,13 +18,13 @@ export interface FakeHorizontalScrollView {
     includeRightSpacerScrollerCss(cssClass: string, include: boolean): void;
 }
 
-export class FakeHorizontalScrollController extends BeanStub {
+export class FakeHScrollCtrl extends BeanStub {
 
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('controllersService') public controllersService: ControllersService;
 
-    private view: FakeHorizontalScrollView;
+    private view: IFakeHScrollComp;
 
     private enableRtl: boolean;
     private eViewport: HTMLElement;
@@ -34,7 +34,7 @@ export class FakeHorizontalScrollController extends BeanStub {
         super();
     }
 
-    public setView(view: FakeHorizontalScrollView, eViewport: HTMLElement, eContainer: HTMLElement): void {
+    public setComp(view: IFakeHScrollComp, eViewport: HTMLElement, eContainer: HTMLElement): void {
         this.view = view;
         this.eViewport = eViewport;
         this.eContainer = eContainer;
@@ -67,7 +67,7 @@ export class FakeHorizontalScrollController extends BeanStub {
 
         // we pad the right based on a) if cols are pinned to the right and
         // b) if v scroll is showing on the right (normal position of scroll)
-        let rightSpacing = this.columnController.getDisplayedColumnsRightWidth();
+        let rightSpacing = this.columnModel.getDisplayedColumnsRightWidth();
         const scrollOnRight = !this.enableRtl && vScrollShowing;
         const scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
 
@@ -79,7 +79,7 @@ export class FakeHorizontalScrollController extends BeanStub {
 
         // we pad the left based on a) if cols are pinned to the left and
         // b) if v scroll is showing on the left (happens in LTR layout only)
-        let leftSpacing = this.columnController.getDisplayedColumnsLeftWidth();
+        let leftSpacing = this.columnModel.getDisplayedColumnsLeftWidth();
         const scrollOnLeft = this.enableRtl && vScrollShowing;
 
         if (scrollOnLeft) {

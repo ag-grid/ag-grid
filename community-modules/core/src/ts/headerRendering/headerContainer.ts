@@ -1,5 +1,5 @@
 import { Autowired, PostConstruct, PreDestroy } from '../context/context';
-import { ColumnController } from '../columnController/columnController';
+import { ColumnModel } from '../columnController/columnModel';
 import { Events } from '../events';
 import { HeaderRowComp, HeaderRowType } from './headerRowComp';
 import { BodyDropTarget } from './bodyDropTarget';
@@ -12,7 +12,7 @@ import { NumberSequence } from "../utils";
 
 export class HeaderContainer extends BeanStub {
 
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
 
     private eContainer: HTMLElement;
@@ -74,7 +74,7 @@ export class HeaderContainer extends BeanStub {
     private setWidthOfPinnedContainer(): void {
         const pinningLeft = this.pinned === Constants.PINNED_LEFT;
         const pinningRight = this.pinned === Constants.PINNED_RIGHT;
-        const controller = this.columnController;
+        const controller = this.columnModel;
         const isRtl = this.gridOptionsWrapper.isEnableRtl();
         const scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
 
@@ -153,7 +153,7 @@ export class HeaderContainer extends BeanStub {
         const sequence = new NumberSequence();
 
         const refreshColumnGroups = () => {
-            const groupRowCount = this.columnController.getHeaderRowCount() - 1;
+            const groupRowCount = this.columnModel.getHeaderRowCount() - 1;
 
             this.groupsRowComps.forEach(this.destroyRowComp.bind(this));
             this.groupsRowComps = [];
@@ -184,7 +184,7 @@ export class HeaderContainer extends BeanStub {
 
         const refreshFilters = () => {
 
-            const includeFloatingFilter = !this.columnController.isPivotMode() && this.columnController.hasFloatingFilters();
+            const includeFloatingFilter = !this.columnModel.isPivotMode() && this.columnModel.hasFloatingFilters();
 
             const destroyPreviousComp = () => {
                 this.destroyRowComp(this.filtersRowComp);

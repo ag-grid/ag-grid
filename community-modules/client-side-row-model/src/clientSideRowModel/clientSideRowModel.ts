@@ -5,7 +5,7 @@ import {
     BeanStub,
     ChangedPath,
     ColumnApi,
-    ColumnController,
+    ColumnModel,
     Constants,
     Events,
     ExpandCollapseAllEvent,
@@ -46,7 +46,7 @@ export interface RowNodeMap {
 @Bean('rowModel')
 export class ClientSideRowModel extends BeanStub implements IClientSideRowModel {
 
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('$scope') private $scope: any;
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('valueCache') private valueCache: ValueCache;
@@ -105,7 +105,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
         this.rootNode = new RowNode();
         this.nodeManager = new ClientSideNodeManager(this.rootNode, this.gridOptionsWrapper,
-            this.getContext(), this.eventService, this.columnController, this.gridApi, this.columnApi,
+            this.getContext(), this.eventService, this.columnModel, this.gridApi, this.columnApi,
             this.selectionController);
 
         this.createBean(this.rootNode);
@@ -379,7 +379,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     private onValueChanged(): void {
-        if (this.columnController.isPivotActive()) {
+        if (this.columnModel.isPivotActive()) {
             this.refreshModel({ step: ClientSideRowModelSteps.PIVOT });
         } else {
             this.refreshModel({ step: ClientSideRowModelSteps.AGGREGATE });
@@ -492,7 +492,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
     public isEmpty(): boolean {
         const rowsMissing = _.missing(this.rootNode.allLeafChildren) || this.rootNode.allLeafChildren.length === 0;
-        return _.missing(this.rootNode) || rowsMissing || !this.columnController.isReady();
+        return _.missing(this.rootNode) || rowsMissing || !this.columnModel.isReady();
     }
 
     public isRowsToRender(): boolean {

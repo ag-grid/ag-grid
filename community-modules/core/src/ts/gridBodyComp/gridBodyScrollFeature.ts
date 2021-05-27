@@ -14,8 +14,8 @@ import { PaginationProxy } from "../pagination/paginationProxy";
 import { IRowModel } from "../interfaces/iRowModel";
 import { RowContainerHeightService } from "../rendering/rowContainerHeightService";
 import { RowRenderer } from "../rendering/rowRenderer";
-import { ColumnController } from "../columnController/columnController";
-import { RowContainerController } from "./rowContainer/rowContainerController";
+import { ColumnModel } from "../columnController/columnModel";
+import { RowContainerCtrl } from "./rowContainer/rowContainerCtrl";
 
 type ScrollDirection = 'horizontal' | 'vertical';
 
@@ -29,7 +29,7 @@ export class GridBodyScrollFeature extends BeanStub {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('rowContainerHeightService') private heightScaler: RowContainerHeightService;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
 
     private enableRtl: boolean;
 
@@ -43,7 +43,7 @@ export class GridBodyScrollFeature extends BeanStub {
 
     private readonly resetLastHorizontalScrollElementDebounced: () => void;
 
-    private centerRowContainerCon: RowContainerController;
+    private centerRowContainerCon: RowContainerCtrl;
 
     constructor(eBodyViewport: HTMLElement) {
         super();
@@ -431,7 +431,7 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     public ensureColumnVisible(key: any): void {
-        const column = this.columnController.getGridColumn(key);
+        const column = this.columnModel.getGridColumn(key);
 
         if (!column) { return; }
 
@@ -440,7 +440,7 @@ export class GridBodyScrollFeature extends BeanStub {
             return;
         }
 
-        if (!this.columnController.isColumnDisplayed(column)) {
+        if (!this.columnModel.isColumnDisplayed(column)) {
             console.warn('column is not currently visible');
             return;
         }
@@ -451,7 +451,7 @@ export class GridBodyScrollFeature extends BeanStub {
         const viewportWidth = this.centerRowContainerCon.getCenterWidth();
         const scrollPosition = this.centerRowContainerCon.getCenterViewportScrollLeft();
 
-        const bodyWidth = this.columnController.getBodyContainerWidth();
+        const bodyWidth = this.columnModel.getBodyContainerWidth();
 
         let viewportLeftPixel: number;
         let viewportRightPixel: number;

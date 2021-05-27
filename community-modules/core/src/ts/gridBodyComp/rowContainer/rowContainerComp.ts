@@ -3,18 +3,18 @@ import { RefSelector } from "../../widgets/componentAnnotations";
 import { Autowired, PostConstruct } from "../../context/context";
 import {
     ContainerCssClasses,
-    RowContainerController,
+    RowContainerCtrl,
     RowContainerNames,
-    RowContainerView,
+    IRowContainerComp,
     ViewportCssClasses,
     WrapperCssClasses
-} from "./rowContainerController";
+} from "./rowContainerCtrl";
 import { ensureDomOrder, insertWithDomOrder } from "../../utils/dom";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { Events } from "../../eventKeys";
 import { RowRenderer } from "../../rendering/rowRenderer";
 import { RowComp } from "../../rendering/row/rowComp";
-import { RowController } from "../../rendering/row/rowController";
+import { RowCtrl } from "../../rendering/row/rowCtrl";
 import { Beans } from "../../rendering/beans";
 import { Constants } from "../../constants/constants";
 import { getAllValuesInObject } from "../../utils/object";
@@ -92,12 +92,12 @@ export class RowContainerComp extends Component {
     private postConstruct(): void {
         this.embedFullWidthRows = this.gridOptionsWrapper.isEmbedFullWidthRows();
 
-        const view: RowContainerView = {
+        const compProxy: IRowContainerComp = {
             setViewportHeight: height => this.eViewport.style.height = height,
         };
 
-        const con = this.createManagedBean(new RowContainerController(this.name));
-        con.setView(view, this.eContainer, this.eViewport, this.eWrapper);
+        const ctrl = this.createManagedBean(new RowContainerCtrl(this.name));
+        ctrl.setComp(compProxy, this.eContainer, this.eViewport, this.eWrapper);
 
         this.listenOnDomOrder();
 
@@ -168,7 +168,7 @@ export class RowContainerComp extends Component {
 
         this.clearLastPlacedElement();
 
-        const processRow = (rowCon: RowController) => {
+        const processRow = (rowCon: RowCtrl) => {
             const instanceId = rowCon.getInstanceId();
             const existingRowComp = oldRows[instanceId];
             if (existingRowComp) {
@@ -182,7 +182,7 @@ export class RowContainerComp extends Component {
             }
         };
 
-        const doesRowMatch = (rowCon: RowController) => {
+        const doesRowMatch = (rowCon: RowCtrl) => {
             const fullWidthController = rowCon.isFullWidth();
 
             const printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
@@ -203,7 +203,7 @@ export class RowContainerComp extends Component {
         getAllValuesInObject(oldRows).forEach(rowComp => this.removeRow(rowComp.getGui()));
     }
 
-    private getRowCons(): RowController[] {
+    private getRowCons(): RowCtrl[] {
         switch (this.name) {
             case RowContainerNames.TOP_CENTER:
             case RowContainerNames.TOP_LEFT:
@@ -222,7 +222,7 @@ export class RowContainerComp extends Component {
         }
     }
 
-    private newRowComp(rowCon: RowController): RowComp {
+    private newRowComp(rowCon: RowCtrl): RowComp {
         let pinned: string | null;
         switch (this.name) {
             case RowContainerNames.BOTTOM_LEFT:

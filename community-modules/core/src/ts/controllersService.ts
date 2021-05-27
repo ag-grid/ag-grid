@@ -1,53 +1,53 @@
-import { GridCompController } from "./gridComp/gridCompController";
+import { GridCtrl } from "./gridComp/gridCtrl";
 import { Bean } from "./context/context";
-import { GridBodyController } from "./gridBodyComp/gridBodyController";
-import { RowContainerController } from "./gridBodyComp/rowContainer/rowContainerController";
+import { GridBodyCtrl } from "./gridBodyComp/gridBodyCtrl";
+import { RowContainerCtrl } from "./gridBodyComp/rowContainer/rowContainerCtrl";
 import { HeaderRootComp } from "./headerRendering/headerRootComp";
-import { FakeHorizontalScrollController } from "./gridBodyComp/fakeHorizontalScrollController";
+import { FakeHScrollCtrl } from "./gridBodyComp/fakeHScrollCtrl";
 import { BeanStub } from "./context/beanStub";
 
 // for all controllers that are singletons, they can register here so other parts
 // of the application can access them.
 
 interface ReadyParams {
-    gridCompCon: GridCompController;
-    gridBodyCon: GridBodyController;
+    gridCompCon: GridCtrl;
+    gridBodyCon: GridBodyCtrl;
 
-    centerRowContainerCon: RowContainerController;
-    leftRowContainerCon: RowContainerController;
-    rightRowContainerCon: RowContainerController;
+    centerRowContainerCon: RowContainerCtrl;
+    leftRowContainerCon: RowContainerCtrl;
+    rightRowContainerCon: RowContainerCtrl;
 
-    bottomCenterRowContainerCon: RowContainerController;
-    bottomLeftRowContainerCon: RowContainerController;
-    bottomRightRowContainerCon: RowContainerController;
+    bottomCenterRowContainerCon: RowContainerCtrl;
+    bottomLeftRowContainerCon: RowContainerCtrl;
+    bottomRightRowContainerCon: RowContainerCtrl;
 
-    topCenterRowContainerCon: RowContainerController;
-    topLeftRowContainerCon: RowContainerController;
-    topRightRowContainerCon: RowContainerController;
+    topCenterRowContainerCon: RowContainerCtrl;
+    topLeftRowContainerCon: RowContainerCtrl;
+    topRightRowContainerCon: RowContainerCtrl;
 
-    fakeHScrollCon: FakeHorizontalScrollController;
+    fakeHScrollCon: FakeHScrollCtrl;
     headerRootComp: HeaderRootComp;
 }
 
 @Bean('controllersService')
 export class ControllersService extends BeanStub {
 
-    private gridCompCon: GridCompController;
-    private gridBodyCon: GridBodyController;
+    private gridCompCon: GridCtrl;
+    private gridBodyCon: GridBodyCtrl;
 
-    private centerRowContainerCon: RowContainerController;
-    private leftRowContainerCon: RowContainerController;
-    private rightRowContainerCon: RowContainerController;
+    private centerRowContainerCon: RowContainerCtrl;
+    private leftRowContainerCon: RowContainerCtrl;
+    private rightRowContainerCon: RowContainerCtrl;
 
-    private bottomCenterRowContainerCon: RowContainerController;
-    private bottomLeftRowContainerCon: RowContainerController;
-    private bottomRightRowContainerCon: RowContainerController;
+    private bottomCenterRowContainerCon: RowContainerCtrl;
+    private bottomLeftRowContainerCon: RowContainerCtrl;
+    private bottomRightRowContainerCon: RowContainerCtrl;
 
-    private topCenterRowContainerCon: RowContainerController;
-    private topLeftRowContainerCon: RowContainerController;
-    private topRightRowContainerCon: RowContainerController;
+    private topCenterRowContainerCon: RowContainerCtrl;
+    private topLeftRowContainerCon: RowContainerCtrl;
+    private topRightRowContainerCon: RowContainerCtrl;
 
-    private fakeHScrollCon: FakeHorizontalScrollController;
+    private fakeHScrollCon: FakeHScrollCtrl;
 
     private headerRootComp: HeaderRootComp;
 
@@ -110,7 +110,7 @@ export class ControllersService extends BeanStub {
         };
     }
 
-    public registerFakeHScrollCon(con: FakeHorizontalScrollController): void {
+    public registerFakeHScrollCon(con: FakeHScrollCtrl): void {
         this.fakeHScrollCon = con;
         this.checkReady();
     }
@@ -120,62 +120,62 @@ export class ControllersService extends BeanStub {
         this.checkReady();
     }
 
-    public registerCenterRowContainerCon(con: RowContainerController): void {
+    public registerCenterRowContainerCon(con: RowContainerCtrl): void {
         this.centerRowContainerCon = con;
         this.checkReady();
     }
 
-    public registerLeftRowContainerCon(con: RowContainerController): void {
+    public registerLeftRowContainerCon(con: RowContainerCtrl): void {
         this.leftRowContainerCon = con;
         this.checkReady();
     }
 
-    public registerRightRowContainerCon(con: RowContainerController): void {
+    public registerRightRowContainerCon(con: RowContainerCtrl): void {
         this.rightRowContainerCon = con;
         this.checkReady();
     }
 
-    public registerTopCenterRowContainerCon(con: RowContainerController): void {
+    public registerTopCenterRowContainerCon(con: RowContainerCtrl): void {
         this.topCenterRowContainerCon = con;
         this.checkReady();
     }
 
-    public registerTopLeftRowContainerCon(con: RowContainerController): void {
+    public registerTopLeftRowContainerCon(con: RowContainerCtrl): void {
         this.topLeftRowContainerCon = con;
         this.checkReady();
     }
 
-    public registerTopRightRowContainerCon(con: RowContainerController): void {
+    public registerTopRightRowContainerCon(con: RowContainerCtrl): void {
         this.topRightRowContainerCon = con;
         this.checkReady();
     }
 
-    public registerBottomCenterRowContainerCon(con: RowContainerController): void {
+    public registerBottomCenterRowContainerCon(con: RowContainerCtrl): void {
         this.bottomCenterRowContainerCon = con;
         this.checkReady();
     }
 
-    public registerBottomLeftRowContainerCon(con: RowContainerController): void {
+    public registerBottomLeftRowContainerCon(con: RowContainerCtrl): void {
         this.bottomLeftRowContainerCon = con;
         this.checkReady();
     }
 
-    public registerBottomRightRowContainerCon(con: RowContainerController): void {
+    public registerBottomRightRowContainerCon(con: RowContainerCtrl): void {
         this.bottomRightRowContainerCon = con;
         this.checkReady();
     }
 
-    public registerGridBodyController(con: GridBodyController): void {
+    public registerGridBodyController(con: GridBodyCtrl): void {
         this.gridBodyCon = con;
         this.checkReady();
     }
 
-    public registerGridCompController(con: GridCompController): void {
+    public registerGridCompController(con: GridCtrl): void {
         this.gridCompCon = con;
         this.checkReady();
     }
 
-    public getFakeHScrollCon(): FakeHorizontalScrollController {
+    public getFakeHScrollCon(): FakeHScrollCtrl {
         return this.fakeHScrollCon;
     }
 
@@ -183,23 +183,23 @@ export class ControllersService extends BeanStub {
         return this.headerRootComp;
     }
 
-    public getGridCompController(): GridCompController {
+    public getGridCompController(): GridCtrl {
         return this.gridCompCon;
     }
 
-    public getCenterRowContainerCon(): RowContainerController {
+    public getCenterRowContainerCon(): RowContainerCtrl {
         return this.centerRowContainerCon;
     }
 
-    public getTopCenterRowContainerCon(): RowContainerController {
+    public getTopCenterRowContainerCon(): RowContainerCtrl {
         return this.topCenterRowContainerCon;
     }
 
-    public getBottomCenterRowContainerCon(): RowContainerController {
+    public getBottomCenterRowContainerCon(): RowContainerCtrl {
         return this.bottomCenterRowContainerCon;
     }
 
-    public getGridBodyController(): GridBodyController {
+    public getGridBodyController(): GridBodyCtrl {
         return this.gridBodyCon;
     }
 }

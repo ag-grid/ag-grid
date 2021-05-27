@@ -6,7 +6,7 @@ import {
     BeanStub,
     Column,
     ColumnApi,
-    ColumnController,
+    ColumnModel,
     Constants,
     Events,
     FilterManager,
@@ -197,7 +197,7 @@ export class EnterpriseMenu extends BeanStub {
     public static TABS_DEFAULT = [EnterpriseMenu.TAB_GENERAL, EnterpriseMenu.TAB_FILTER, EnterpriseMenu.TAB_COLUMNS];
     public static MENU_ITEM_SEPARATOR = 'separator';
 
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
@@ -369,14 +369,14 @@ export class EnterpriseMenu extends BeanStub {
 
         const allowPinning = !this.column.getColDef().lockPinned;
 
-        const rowGroupCount = this.columnController.getRowGroupColumns().length;
+        const rowGroupCount = this.columnModel.getRowGroupColumns().length;
         const doingGrouping = rowGroupCount > 0;
 
-        const groupedByThisColumn = this.columnController.getRowGroupColumns().indexOf(this.column) >= 0;
+        const groupedByThisColumn = this.columnModel.getRowGroupColumns().indexOf(this.column) >= 0;
         const allowValue = this.column.isAllowValue();
         const allowRowGroup = this.column.isAllowRowGroup();
         const isPrimary = this.column.isPrimary();
-        const pivotModeOn = this.columnController.isPivotMode();
+        const pivotModeOn = this.columnModel.isPivotMode();
 
         const isInMemoryRowModel = this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
 

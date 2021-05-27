@@ -3,7 +3,7 @@ import {
     VerticalDirection
 } from "../dragAndDrop/dragAndDropService";
 import { Autowired, Optional, PostConstruct } from "../context/context";
-import { ColumnController } from "../columnController/columnController";
+import { ColumnModel } from "../columnController/columnModel";
 import { FocusController } from "../focusController";
 import { IRangeController } from "../interfaces/iRangeController";
 import { RowDragEvent, RowDragEnterEvent, RowDragLeaveEvent, RowDragMoveEvent, RowDragEndEvent } from "../events";
@@ -39,7 +39,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     // this feature is only created when row model is ClientSide, so we can type it as ClientSide
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('focusController') private focusController: FocusController;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('filterManager') private filterManager: FilterManager;
@@ -89,7 +89,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     private onRowGroupChanged(): void {
-        const rowGroups = this.columnController.getRowGroupColumns();
+        const rowGroups = this.columnModel.getRowGroupColumns();
         this.isRowGroupActive = !missingOrEmpty(rowGroups);
     }
 

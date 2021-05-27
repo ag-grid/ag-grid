@@ -103,9 +103,9 @@ export abstract class BaseDropZonePanel extends Component {
         this.addManagedListener(this.beans.gridOptionsWrapper, 'functionsReadOnly', this.refreshGui.bind(this));
 
         this.setupDropTarget();
-        // we don't know if this bean will be initialised before columnController.
-        // if columnController first, then below will work
-        // if columnController second, then below will put blank in, and then above event gets first when columnController is set up
+        // we don't know if this bean will be initialised before columnModel.
+        // if columnModel first, then below will work
+        // if columnModel second, then below will put blank in, and then above event gets first when columnModel is set up
         this.refreshGui();
     }
 
