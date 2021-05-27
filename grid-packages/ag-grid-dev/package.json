@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-dev",
-  "version": "25.2.1",
+  "version": "25.3.0",
   "description": "AG Grid Package Tests",
   "main": "index.js",
   "private": true,
@@ -20,6 +20,5 @@
   "devDependencies": {
     "typescript": "~3.6.0"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }
