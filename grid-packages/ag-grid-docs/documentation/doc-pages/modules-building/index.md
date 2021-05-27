@@ -38,9 +38,9 @@ In this section we describe how you can cherry pick modules to provide the featu
 |
 | ```js
 | "dependencies": {
-|     "@ag-grid-community/client-side-row-model": "~25.1.0",
-|     "@ag-grid-enterprise/excel-export": "~25.1.0",
-|     "@ag-grid-enterprise/menu": "~25.1.0"
+|     "@ag-grid-community/client-side-row-model": "~25.3.0",
+|     "@ag-grid-enterprise/excel-export": "~25.3.0",
+|     "@ag-grid-enterprise/menu": "~25.3.0"
 |
 |     //...other dependencies...
 | }
@@ -88,9 +88,9 @@ In this section we describe how you can cherry pick modules to provide the featu
 |
 | ```js
 | "dependencies": {
-|     "@ag-grid-community/client-side-row-model": "~25.1.0",
-|     "@ag-grid-enterprise/excel-export": "~25.1.0",
-|     "@ag-grid-enterprise/menu": "~25.1.0"
+|     "@ag-grid-community/client-side-row-model": "~25.3.0",
+|     "@ag-grid-enterprise/excel-export": "~25.3.0",
+|     "@ag-grid-enterprise/menu": "~25.3.0"
 |
 |     //...other dependencies...
 | }

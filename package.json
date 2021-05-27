@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-community",
-  "version": "25.0.0",
+  "version": "25.3.0",
   "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
   "main": "./main.js",
   "typings": "./main.d.ts",
@@ -50,8 +50,10 @@
     "docsWithFormatting": "cd grid-packages/ag-grid-docs && npm run serve-with-formatting",
     "updateAndRebuild": "npm i && npm run bootstrap && npm run build",
     "cleanAndRebuild": "npm run clean && npm run updateAndRebuild",
+    "ciBuildNoTest": "cd grid-packages/ag-grid-docs && node -e 'require(\"./lernaOperations.js\").rebuildPackagesBasedOnChangeStateNoTest()'",
     "ciBuildAndTest": "cd grid-packages/ag-grid-docs && node -e 'require(\"./lernaOperations.js\").rebuildPackagesBasedOnChangeState()'",
-    "ciUpdateRebuildAndTest": "npm i && npm run bootstrap && npm run ciBuildAndTest"
+    "ciUpdateRebuildAndTest": "npm i && npm run bootstrap && npm run ciBuildAndTest",
+    "ciUpdateRebuild": "npm i && npm run bootstrap && npm run ciBuildNoTest"
   },
   "devDependencies": {
     "archiver": "^3.0.0",
