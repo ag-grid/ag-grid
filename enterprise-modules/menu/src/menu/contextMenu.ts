@@ -15,7 +15,7 @@ import {
     GridBodyComp,
     IAfterGuiAttachedParams,
     IContextMenuFactory,
-    IRangeController,
+    IRangeService,
     MenuItemDef,
     ModuleNames,
     ModuleRegistry,
@@ -35,7 +35,7 @@ const CSS_CONTEXT_MENU_OPEN = ' ag-context-menu-open';
 export class ContextMenuFactory extends BeanStub implements IContextMenuFactory {
 
     @Autowired('popupService') private popupService: PopupService;
-    @Optional('rangeController') private rangeController: IRangeController;
+    @Optional('rangeService') private rangeService: IRangeService;
     @Autowired('columnModel') private columnModel: ColumnModel;
 
     private activeMenu: ContextMenu | null;
@@ -66,7 +66,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
                 defaultMenuOptions.push('pivotChart');
             }
 
-            if (this.rangeController && !this.rangeController.isEmpty()) {
+            if (this.rangeService && !this.rangeService.isEmpty()) {
                 defaultMenuOptions.push('chartRange');
             }
         }

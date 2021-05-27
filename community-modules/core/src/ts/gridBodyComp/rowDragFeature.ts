@@ -5,7 +5,7 @@ import {
 import { Autowired, Optional, PostConstruct } from "../context/context";
 import { ColumnModel } from "../columns/columnModel";
 import { FocusService } from "../focusService";
-import { IRangeController } from "../interfaces/iRangeController";
+import { IRangeService } from "../interfaces/IRangeService";
 import { RowDragEvent, RowDragEnterEvent, RowDragLeaveEvent, RowDragMoveEvent, RowDragEndEvent } from "../events";
 import { Events } from "../eventKeys";
 import { IRowModel } from "../interfaces/iRowModel";
@@ -44,7 +44,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     @Autowired('sortController') private sortController: SortController;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('selectionController') private selectionController: SelectionController;
-    @Optional('rangeController') private rangeController: IRangeController;
+    @Optional('rangeService') private rangeService: IRangeService;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
     @Autowired('controllersService') private controllersService: ControllersService;
 
@@ -263,8 +263,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
         if (rowWasMoved) {
             this.focusService.clearFocusedCell();
-            if (this.rangeController) {
-                this.rangeController.removeAllCellRanges();
+            if (this.rangeService) {
+                this.rangeService.removeAllCellRanges();
             }
         }
     }

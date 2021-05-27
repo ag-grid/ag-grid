@@ -1,12 +1,12 @@
 import { BeanStub } from "../../context/beanStub";
 import { missing } from "../../utils/generic";
 import { Autowired, Optional, PostConstruct } from "../../context/context";
-import { IRangeController } from "../../interfaces/iRangeController";
+import { IRangeService } from "../../interfaces/IRangeService";
 import { DragListenerParams, DragService } from "../../dragAndDrop/dragService";
 
 export class DragListenerFeature extends BeanStub {
 
-    @Optional('rangeController') private rangeController: IRangeController;
+    @Optional('rangeService') private rangeService: IRangeService;
     @Autowired('dragService') private dragService: DragService;
 
     private eContainer: HTMLElement;
@@ -20,16 +20,16 @@ export class DragListenerFeature extends BeanStub {
     private postConstruct(): void {
         if (
             !this.gridOptionsWrapper.isEnableRangeSelection() || // no range selection if no property
-            missing(this.rangeController) // no range selection if not enterprise version
+            missing(this.rangeService) // no range selection if not enterprise version
         ) {
             return;
         }
 
         const params: DragListenerParams = {
             eElement: this.eContainer,
-            onDragStart: this.rangeController.onDragStart.bind(this.rangeController),
-            onDragStop: this.rangeController.onDragStop.bind(this.rangeController),
-            onDragging: this.rangeController.onDragging.bind(this.rangeController)
+            onDragStart: this.rangeService.onDragStart.bind(this.rangeService),
+            onDragStop: this.rangeService.onDragStop.bind(this.rangeService),
+            onDragging: this.rangeService.onDragging.bind(this.rangeService)
         };
 
         this.dragService.addDragSource(params);

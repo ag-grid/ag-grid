@@ -11,7 +11,7 @@ import { RowNode } from "../entities/rowNode";
 import { Constants } from "../constants/constants";
 import { ModuleNames } from "../modules/moduleNames";
 import { ModuleRegistry } from "../modules/moduleRegistry";
-import { CellRange, CellRangeParams } from "../interfaces/iRangeController";
+import { CellRange, CellRangeParams } from "../interfaces/IRangeService";
 import { BeanStub } from "../context/beanStub";
 
 @Bean('undoRedoService')

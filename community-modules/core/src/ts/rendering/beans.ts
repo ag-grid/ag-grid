@@ -10,7 +10,7 @@ import { TemplateService } from "../templateService";
 import { ValueService } from "../valueService/valueService";
 import { EventService } from "../eventService";
 import { ColumnAnimationService } from "./columnAnimationService";
-import { IRangeController, ISelectionHandleFactory } from "../interfaces/iRangeController";
+import { IRangeService, ISelectionHandleFactory } from "../interfaces/IRangeService";
 import { FocusService } from "../focusService";
 import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
 import { PopupService } from "../widgets/popupService";
@@ -60,7 +60,7 @@ export class Beans {
     @Autowired('columnModel') public columnModel: ColumnModel;
     @Autowired('headerNavigationService') public headerNavigationService: HeaderNavigationService;
     @Autowired('columnAnimationService') public columnAnimationService: ColumnAnimationService;
-    @Optional('rangeController') public rangeController: IRangeController;
+    @Optional('rangeService') public rangeService: IRangeService;
     @Autowired('focusService') public focusService: FocusService;
     @Optional('contextMenuFactory') public contextMenuFactory: IContextMenuFactory;
     @Autowired('popupService') public popupService: PopupService;

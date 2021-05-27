@@ -9,7 +9,7 @@ import {
     Column,
     ColumnModel,
     IAggFunc,
-    IRangeController,
+    IRangeService,
     PostConstruct,
     RowNode,
     RowRenderer,
@@ -43,7 +43,7 @@ export class ChartDataModel extends BeanStub {
 
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('valueService') private readonly valueService: ValueService;
-    @Autowired('rangeController') private readonly rangeController: IRangeController;
+    @Autowired('rangeService') private readonly rangeService: IRangeService;
     @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
     @Autowired('chartTranslator') private readonly chartTranslator: ChartTranslator;
 
@@ -257,12 +257,12 @@ export class ChartDataModel extends BeanStub {
 
     private getRowIndexes(): { startRow: number; endRow: number; } {
         let startRow = 0, endRow = 0;
-        const { rangeController } = this;
+        const { rangeService } = this;
         const { valueCellRange: range } = this;
 
-        if (rangeController && range) {
-            startRow = rangeController.getRangeStartRow(range).rowIndex;
-            endRow = rangeController.getRangeEndRow(range).rowIndex;
+        if (rangeService && range) {
+            startRow = rangeService.getRangeStartRow(range).rowIndex;
+            endRow = rangeService.getRangeEndRow(range).rowIndex;
         }
 
         return { startRow, endRow };

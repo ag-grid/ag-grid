@@ -19,7 +19,7 @@ import { ICellRendererComp, ICellRendererParams } from "./cellRenderers/iCellRen
 import { CheckboxSelectionComponent } from "./checkboxSelectionComponent";
 import { CellClassParams, ColDef, NewValueParams } from "../entities/colDef";
 import { CellPosition } from "../entities/cellPosition";
-import { CellRangeType, ISelectionHandle, SelectionHandleType } from "../interfaces/iRangeController";
+import { CellRangeType, ISelectionHandle, SelectionHandleType } from "../interfaces/IRangeService";
 import { RowCtrl } from "./row/rowCtrl";
 import { RowDragComp } from "./row/rowDragComp";
 import { PopupEditorWrapper } from "./cellEditors/popupEditorWrapper";
@@ -164,14 +164,14 @@ export class CellComp extends Component implements TooltipParentComp {
 
         this.createGridCellVo();
 
-        this.rangeSelectionEnabled = this.beans.rangeController && beans.gridOptionsWrapper.isEnableRangeSelection();
+        this.rangeSelectionEnabled = this.beans.rangeService && beans.gridOptionsWrapper.isEnableRangeSelection();
         this.cellFocused = this.beans.focusService.isCellFocused(this.cellPosition);
         this.firstRightPinned = this.column.isFirstRightPinned();
         this.lastLeftPinned = this.column.isLastLeftPinned();
 
-        if (this.rangeSelectionEnabled && this.beans.rangeController) {
-            const { rangeController } = this.beans;
-            this.rangeCount = rangeController.getCellRangeCount(this.cellPosition);
+        if (this.rangeSelectionEnabled && this.beans.rangeService) {
+            const { rangeService } = this.beans;
+            this.rangeCount = rangeService.getCellRangeCount(this.cellPosition);
             this.hasChartRange = this.getHasChartRange();
         }
 
@@ -1483,9 +1483,9 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private onShiftRangeSelect(key: number): void {
-        if (!this.beans.rangeController) { return; }
+        if (!this.beans.rangeService) { return; }
 
-        const endCell = this.beans.rangeController.extendLatestRangeInDirection(key);
+        const endCell = this.beans.rangeService.extendLatestRangeInDirection(key);
 
         if (endCell) {
             this.beans.rowRenderer.ensureCellVisible(endCell);
@@ -1598,21 +1598,21 @@ export class CellComp extends Component implements TooltipParentComp {
     private onMouseDown(mouseEvent: MouseEvent): void {
         const { ctrlKey, metaKey, shiftKey } = mouseEvent;
         const target = mouseEvent.target as HTMLElement;
-        const { eventService, rangeController } = this.beans;
+        const { eventService, rangeService } = this.beans;
 
         // do not change the range for right-clicks inside an existing range
         if (this.isRightClickInExistingRange(mouseEvent)) {
             return;
         }
 
-        if (!shiftKey || (rangeController && !rangeController.getCellRanges().length)) {
+        if (!shiftKey || (rangeService && !rangeService.getCellRanges().length)) {
             // We only need to pass true to focusCell when the browser is IE/Edge and we are trying
             // to focus the cell itself. This should never be true if the mousedown was triggered
             // due to a click on a cell editor for example.
             const forceBrowserFocus = (isBrowserIE() || isBrowserEdge()) && !this.editingCell && !isFocusableFormField(target);
 
             this.focusCell(forceBrowserFocus);
-        } else if (rangeController) {
+        } else if (rangeService) {
             // if a range is being changed, we need to make sure the focused cell does not change.
             mouseEvent.preventDefault();
         }
@@ -1621,14 +1621,14 @@ export class CellComp extends Component implements TooltipParentComp {
         // is focused but we don't want to change the range selection, so return here.
         if (this.containsWidget(target)) { return; }
 
-        if (rangeController) {
+        if (rangeService) {
             const thisCell = this.cellPosition;
 
             if (shiftKey) {
-                rangeController.extendLatestRangeToCell(thisCell);
+                rangeService.extendLatestRangeToCell(thisCell);
             } else {
                 const ctrlKeyPressed = ctrlKey || metaKey;
-                rangeController.setRangeToCell(thisCell, ctrlKeyPressed);
+                rangeService.setRangeToCell(thisCell, ctrlKeyPressed);
             }
         }
 
@@ -1636,10 +1636,10 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private isRightClickInExistingRange(mouseEvent: MouseEvent): boolean {
-        const { rangeController } = this.beans;
+        const { rangeService } = this.beans;
 
-        if (rangeController) {
-            const cellInRange = rangeController.isCellInAnyRange(this.getCellPosition());
+        if (rangeService) {
+            const cellInRange = rangeService.isCellInAnyRange(this.getCellPosition());
 
             if (cellInRange && mouseEvent.button === 2) {
                 return true;
@@ -1791,7 +1791,7 @@ export class CellComp extends Component implements TooltipParentComp {
         let left = false;
 
         const thisCol = this.cellPosition.column;
-        const { rangeController, columnModel } = this.beans;
+        const { rangeService, columnModel } = this.beans;
 
         let leftCol: Column | null;
         let rightCol: Column | null;
@@ -1804,8 +1804,8 @@ export class CellComp extends Component implements TooltipParentComp {
             rightCol = columnModel.getDisplayedColAfter(thisCol);
         }
 
-        const ranges = rangeController.getCellRanges().filter(
-            range => rangeController.isCellInSpecificRange(this.cellPosition, range)
+        const ranges = rangeService.getCellRanges().filter(
+            range => rangeService.isCellInSpecificRange(this.cellPosition, range)
         );
 
         // this means we are the first column in the grid
@@ -1822,8 +1822,8 @@ export class CellComp extends Component implements TooltipParentComp {
             if (top && right && bottom && left) { break; }
 
             const range = ranges[i];
-            const startRow = rangeController.getRangeStartRow(range);
-            const endRow = rangeController.getRangeEndRow(range);
+            const startRow = rangeService.getRangeStartRow(range);
+            const endRow = rangeService.getRangeEndRow(range);
 
             if (!top && this.beans.rowPositionUtils.sameRow(startRow, this.cellPosition)) {
                 top = true;
@@ -1893,13 +1893,13 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     public onRangeSelectionChanged(): void {
-        const { rangeController } = this.beans;
+        const { rangeService } = this.beans;
 
-        if (!rangeController) { return; }
+        if (!rangeService) { return; }
 
         const { cellPosition, rangeCount } = this;
 
-        const newRangeCount = rangeController.getCellRangeCount(cellPosition);
+        const newRangeCount = rangeService.getCellRangeCount(cellPosition);
         const element = this.getGui();
 
         if (rangeCount !== newRangeCount) {
@@ -1928,20 +1928,20 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private getHasChartRange(): boolean {
-        const { rangeController } = this.beans;
+        const { rangeService } = this.beans;
 
-        if (!this.rangeCount || !rangeController) {
+        if (!this.rangeCount || !rangeService) {
             return false;
         }
 
-        const cellRanges = rangeController.getCellRanges();
+        const cellRanges = rangeService.getCellRanges();
 
         return cellRanges.length > 0 && cellRanges.every(range => includes([CellRangeType.DIMENSION, CellRangeType.VALUE], range.type));
     }
 
     private shouldHaveSelectionHandle(): boolean {
-        const { gridOptionsWrapper, rangeController } = this.beans;
-        const cellRanges = rangeController.getCellRanges();
+        const { gridOptionsWrapper, rangeService } = this.beans;
+        const cellRanges = rangeService.getCellRanges();
         const rangesLen = cellRanges.length;
 
         if (this.rangeCount < 1 || rangesLen < 1) {
@@ -1956,7 +1956,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         if (this.hasChartRange) {
             const hasCategoryRange = cellRanges[0].type === CellRangeType.DIMENSION;
-            const isCategoryCell = hasCategoryRange && rangeController.isCellInSpecificRange(cellPosition, cellRanges[0]);
+            const isCategoryCell = hasCategoryRange && rangeService.isCellInSpecificRange(cellPosition, cellRanges[0]);
 
             this.addOrRemoveCssClass(CSS_RANGE_CHART_CATEGORY, isCategoryCell);
             fillHandleIsAvailable = cellRange.type === CellRangeType.VALUE;
@@ -1964,13 +1964,13 @@ export class CellComp extends Component implements TooltipParentComp {
 
         return fillHandleIsAvailable &&
             cellRange.endRow != null &&
-            rangeController.isContiguousRange(cellRange) &&
-            rangeController.isBottomRightCell(cellRange, cellPosition);
+            rangeService.isContiguousRange(cellRange) &&
+            rangeService.isBottomRightCell(cellRange, cellPosition);
     }
 
     private addSelectionHandle() {
-        const { gridOptionsWrapper, rangeController } = this.beans;
-        const cellRangeType = last(rangeController.getCellRanges()).type;
+        const { gridOptionsWrapper, rangeService } = this.beans;
+        const cellRangeType = last(rangeService.getCellRanges()).type;
         const selectionHandleFill = gridOptionsWrapper.isEnableFillHandle() && missing(cellRangeType);
         const type = selectionHandleFill ? SelectionHandleType.FILL : SelectionHandleType.RANGE;
 
@@ -1994,7 +1994,7 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private refreshHandle(): void {
-        if (!this.beans.rangeController) { return; }
+        if (!this.beans.rangeService) { return; }
 
         const shouldHaveSelectionHandle = this.shouldHaveSelectionHandle();
 
@@ -2156,9 +2156,9 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private isSingleCell(): boolean {
-        const { rangeController } = this.beans;
+        const { rangeService } = this.beans;
 
-        return this.rangeCount === 1 && rangeController && !rangeController.isMoreThanOneCell();
+        return this.rangeCount === 1 && rangeService && !rangeService.isMoreThanOneCell();
     }
 
     public onCellFocused(event?: any): void {

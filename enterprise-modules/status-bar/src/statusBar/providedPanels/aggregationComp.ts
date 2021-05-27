@@ -9,7 +9,7 @@ import {
     IStatusPanelComp,
     PostConstruct,
     RefSelector,
-    IRangeController,
+    IRangeService,
     ValueService,
     _, CellPositionUtils,
     RowPositionUtils,
@@ -28,7 +28,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
             <ag-name-value ref="sumAggregationComp"></ag-name-value>
         </div>`;
 
-    @Optional('rangeController') private rangeController: IRangeController;
+    @Optional('rangeService') private rangeService: IRangeService;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
@@ -115,7 +115,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     }
 
     private onRangeSelectionChanged(): void {
-        const cellRanges = this.rangeController ? this.rangeController.getCellRanges() : undefined;
+        const cellRanges = this.rangeService ? this.rangeService.getCellRanges() : undefined;
 
         let sum = 0;
         let count = 0;
@@ -129,8 +129,8 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
             cellRanges.forEach((cellRange) => {
 
-                let currentRow: RowPosition | null = this.rangeController.getRangeStartRow(cellRange);
-                const lastRow = this.rangeController.getRangeEndRow(cellRange);
+                let currentRow: RowPosition | null = this.rangeService.getRangeStartRow(cellRange);
+                const lastRow = this.rangeService.getRangeEndRow(cellRange);
 
                 while (true) {
 

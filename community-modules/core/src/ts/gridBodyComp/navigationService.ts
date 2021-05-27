@@ -5,7 +5,7 @@ import { PaginationProxy } from "../pagination/paginationProxy";
 import { Column } from "../entities/column";
 import { FocusService } from "../focusService";
 import { AnimationFrameService } from "../misc/animationFrameService";
-import { IRangeController } from "../interfaces/iRangeController";
+import { IRangeService } from "../interfaces/IRangeService";
 import { ColumnModel } from "../columns/columnModel";
 import { BeanStub } from "../context/beanStub";
 import { exists } from "../utils/generic";
@@ -33,7 +33,7 @@ export class NavigationService extends BeanStub {
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
-    @Optional('rangeController') private rangeController: IRangeController;
+    @Optional('rangeService') private rangeService: IRangeService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('controllersService') public controllersService: ControllersService;
 
@@ -142,9 +142,9 @@ export class NavigationService extends BeanStub {
         // highlighted.
         this.focusService.setFocusedCell(focusIndex, focusColumn, null, true);
 
-        if (this.rangeController) {
+        if (this.rangeService) {
             const cellPosition: CellPosition = { rowIndex: focusIndex, rowPinned: null, column: focusColumn };
-            this.rangeController.setRangeToCell(cellPosition);
+            this.rangeService.setRangeToCell(cellPosition);
         }
     }
 

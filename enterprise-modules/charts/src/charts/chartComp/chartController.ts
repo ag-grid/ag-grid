@@ -11,7 +11,7 @@ import {
     Events,
     GetChartImageDataUrlParams,
     GridApi,
-    IRangeController,
+    IRangeService,
     PostConstruct,
 } from "@ag-grid-community/core";
 import { ChartDataModel, ColState } from "./chartDataModel";
@@ -26,7 +26,7 @@ export class ChartController extends BeanStub {
 
     public static EVENT_CHART_UPDATED = 'chartUpdated';
 
-    @Autowired('rangeController') private readonly rangeController: IRangeController;
+    @Autowired('rangeService') private readonly rangeService: IRangeService;
     @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('columnApi') private readonly columnApi: ColumnApi;
 
@@ -47,8 +47,8 @@ export class ChartController extends BeanStub {
         });
 
         if (this.model.isUnlinked()) {
-            if (this.rangeController) {
-                this.rangeController.setCellRanges([]);
+            if (this.rangeService) {
+                this.rangeService.setCellRanges([]);
             }
         }
 
@@ -163,8 +163,8 @@ export class ChartController extends BeanStub {
     }
 
     public setChartRange(silent = false): void {
-        if (this.rangeController && !this.model.isSuppressChartRanges() && !this.model.isUnlinked()) {
-            this.rangeController.setCellRanges(this.model.getCellRanges());
+        if (this.rangeService && !this.model.isSuppressChartRanges() && !this.model.isUnlinked()) {
+            this.rangeService.setCellRanges(this.model.getCellRanges());
         }
 
         if (!silent) {
@@ -178,8 +178,8 @@ export class ChartController extends BeanStub {
 
         if (this.model.isUnlinked()) {
             // remove range from grid
-            if (this.rangeController) {
-                this.rangeController.setCellRanges([]);
+            if (this.rangeService) {
+                this.rangeService.setCellRanges([]);
             }
         } else {
             // update chart data may have changed
@@ -231,8 +231,8 @@ export class ChartController extends BeanStub {
     protected destroy(): void {
         super.destroy();
 
-        if (this.rangeController) {
-            this.rangeController.setCellRanges([]);
+        if (this.rangeService) {
+            this.rangeService.setCellRanges([]);
         }
     }
 

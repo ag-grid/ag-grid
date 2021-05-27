@@ -1,4 +1,4 @@
-import { CellRange } from "../interfaces/iRangeController";
+import { CellRange } from "../interfaces/IRangeService";
 
 export interface CellValueChange {
     rowPinned: string | null;

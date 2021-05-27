@@ -1,6 +1,6 @@
 import { Autowired, Optional, PostConstruct } from '../context/context';
 import { Events } from '../events';
-import { IRangeController } from '../interfaces/iRangeController';
+import { IRangeService } from '../interfaces/IRangeService';
 import { IContextMenuFactory } from '../interfaces/iContextMenuFactory';
 import { GridApi } from '../gridApi';
 import { Component } from '../widgets/component';
@@ -54,7 +54,7 @@ export class GridBodyComp extends Component {
     @Autowired('$scope') private $scope: any;
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
 
-    @Optional('rangeController') private rangeController: IRangeController;
+    @Optional('rangeService') private rangeService: IRangeService;
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
     @Optional('menuFactory') private menuFactory: IMenuFactory;
 
@@ -128,10 +128,10 @@ export class GridBodyComp extends Component {
             this.menuFactory.registerGridComp(this);
         }
 
-        if (this.rangeController || this.gridOptionsWrapper.isRowSelectionMulti()) {
+        if (this.rangeService || this.gridOptionsWrapper.isRowSelectionMulti()) {
             setAriaMultiSelectable(this.getGui(), true);
-            if (this.rangeController) {
-                this.rangeController.registerGridComp(this);
+            if (this.rangeService) {
+                this.rangeService.registerGridComp(this);
             }
         }
 
@@ -177,12 +177,12 @@ export class GridBodyComp extends Component {
         return [this.eTop, this.eBottom];
     }
 
-    // + rangeController
+    // + rangeService
     public addScrollEventListener(listener: () => void): void {
         this.eBodyViewport.addEventListener('scroll', listener);
     }
 
-    // + rangeController
+    // + focusService
     public removeScrollEventListener(listener: () => void): void {
         this.eBodyViewport.removeEventListener('scroll', listener);
     }

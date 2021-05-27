@@ -251,7 +251,7 @@ export class GridBodyCtrl extends BeanStub {
         return this.eBodyViewport.scrollTop - oldScrollPosition;
     }
 
-    // + rangeController - used to know when to scroll when user is dragging outside the
+    // + focusService - used to know when to scroll when user is dragging outside the
     // main viewport while doing a range selection
     public getBodyClientRect(): ClientRect | undefined {
         if (!this.eBodyViewport) { return; }

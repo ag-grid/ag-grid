@@ -17,7 +17,7 @@ import { ColumnApi } from "../columns/columnApi";
 import { ColumnModel } from "../columns/columnModel";
 import { Logger, LoggerFactory } from "../logger";
 import { FocusService } from "../focusService";
-import { IRangeController } from "../interfaces/iRangeController";
+import { IRangeService } from "../interfaces/IRangeService";
 import { CellNavigationService } from "../cellNavigationService";
 import { CellPosition } from "../entities/cellPosition";
 import { NavigateToNextCellParams, TabToNextCellParams } from "../entities/gridOptions";
@@ -61,7 +61,7 @@ export class RowRenderer extends BeanStub {
     @Autowired("rowContainerHeightService") private rowContainerHeightService: RowContainerHeightService;
     @Autowired("animationFrameService") private animationFrameService: AnimationFrameService;
     @Autowired("rowPositionUtils") private rowPositionUtils: RowPositionUtils;
-    @Optional("rangeController") private rangeController: IRangeController;
+    @Optional("rangeService") private rangeService: IRangeService;
     @Optional("controllersService") private controllersService: ControllersService;
 
     // private gridBodyComp: GridBodyComp;
@@ -1306,8 +1306,8 @@ export class RowRenderer extends BeanStub {
     private focusPosition(cellPosition: CellPosition) {
         this.focusService.setFocusedCell(cellPosition.rowIndex, cellPosition.column, cellPosition.rowPinned, true);
 
-        if (this.rangeController) {
-            this.rangeController.setRangeToCell(cellPosition);
+        if (this.rangeService) {
+            this.rangeService.setRangeToCell(cellPosition);
         }
     }
 
@@ -1656,8 +1656,8 @@ export class RowRenderer extends BeanStub {
 
             // by default, when we click a cell, it gets selected into a range, so to keep keyboard navigation
             // consistent, we set into range here also.
-            if (this.rangeController) {
-                this.rangeController.setRangeToCell(nextCell);
+            if (this.rangeService) {
+                this.rangeService.setRangeToCell(nextCell);
             }
 
             // we successfully tabbed onto a grid cell, so return true

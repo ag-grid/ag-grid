@@ -23,7 +23,7 @@ import { last } from "../../utils/array";
 import { ColumnModel } from "../../columns/columnModel";
 import { PaginationProxy } from "../../pagination/paginationProxy";
 import { PinnedRowModel } from "../../pinnedRowModel/pinnedRowModel";
-import { IRangeController } from "../../interfaces/iRangeController";
+import { IRangeService } from "../../interfaces/IRangeService";
 import { ModuleRegistry } from "../../modules/moduleRegistry";
 import { ModuleNames } from "../../modules/moduleNames";
 import { IClipboardService } from "../../interfaces/iClipboardService";
@@ -40,7 +40,7 @@ export class RowContainerEventsFeature extends BeanStub {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
-    @Optional('rangeController') private rangeController: IRangeController;
+    @Optional('rangeService') private rangeService: IRangeService;
     @Optional('clipboardService') private clipboardService: IClipboardService;
 
     private element: HTMLElement;
@@ -263,10 +263,10 @@ export class RowContainerEventsFeature extends BeanStub {
 
     private onCtrlAndA(event: KeyboardEvent): void {
 
-        const { pinnedRowModel, paginationProxy, rangeController } = this;
+        const { pinnedRowModel, paginationProxy, rangeService } = this;
         const { PINNED_BOTTOM, PINNED_TOP } = Constants;
 
-        if (rangeController && paginationProxy.isRowsToRender()) {
+        if (rangeService && paginationProxy.isRowsToRender()) {
             const [isEmptyPinnedTop, isEmptyPinnedBottom] = [
                 pinnedRowModel.isEmpty(PINNED_TOP),
                 pinnedRowModel.isEmpty(PINNED_BOTTOM)
@@ -287,7 +287,7 @@ export class RowContainerEventsFeature extends BeanStub {
             const allDisplayedColumns = this.columnModel.getAllDisplayedColumns();
             if (missingOrEmpty(allDisplayedColumns)) { return; }
 
-            rangeController.setCellRange({
+            rangeService.setCellRange({
                 rowStartIndex: 0,
                 rowStartPinned: floatingStart,
                 rowEndIndex: rowEnd,

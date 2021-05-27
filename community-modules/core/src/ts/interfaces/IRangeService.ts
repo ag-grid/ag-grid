@@ -4,7 +4,7 @@ import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
 import { RowPosition } from "../entities/rowPosition";
 import { CellComp } from "../rendering/cellComp";
 
-export interface IRangeController {
+export interface IRangeService {
     isEmpty(): boolean;
     removeAllCellRanges(): void;
     getCellRangeCount(cell: CellPosition): number;

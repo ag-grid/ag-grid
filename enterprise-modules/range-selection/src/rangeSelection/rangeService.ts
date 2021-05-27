@@ -12,7 +12,7 @@ import {
     GridApi,
     GridOptionsWrapper,
     GridBodyComp,
-    IRangeController,
+    IRangeService,
     IRowModel,
     Logger,
     LoggerFactory,
@@ -30,8 +30,8 @@ import {
     _
 } from "@ag-grid-community/core";
 
-@Bean('rangeController')
-export class RangeController extends BeanStub implements IRangeController {
+@Bean('rangeService')
+export class RangeService extends BeanStub implements IRangeService {
 
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('rowModel') private rowModel: IRowModel;
@@ -68,7 +68,7 @@ export class RangeController extends BeanStub implements IRangeController {
 
     @PostConstruct
     private init(): void {
-        this.logger = this.loggerFactory.create('RangeController');
+        this.logger = this.loggerFactory.create('rangeService');
 
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.removeAllCellRanges.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.removeAllCellRanges.bind(this));

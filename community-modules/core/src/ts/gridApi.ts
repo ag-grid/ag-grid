@@ -15,7 +15,7 @@ import { Autowired, Bean, Context, Optional, PostConstruct, PreDestroy } from ".
 import { IRowModel } from "./interfaces/iRowModel";
 import { SortController } from "./sortController";
 import { FocusService } from "./focusService";
-import { CellRange, CellRangeParams, IRangeController } from "./interfaces/iRangeController";
+import { CellRange, CellRangeParams, IRangeService } from "./interfaces/IRangeService";
 import { CellPosition } from "./entities/cellPosition";
 import { IClipboardService } from "./interfaces/iClipboardService";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
@@ -189,7 +189,7 @@ export class GridApi {
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Optional('rangeController') private rangeController: IRangeController;
+    @Optional('rangeService') private rangeService: IRangeService;
     @Optional('clipboardService') private clipboardService: IClipboardService;
     @Optional('aggFuncService') private aggFuncService: IAggFuncService;
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
@@ -1314,8 +1314,8 @@ export class GridApi {
     }
 
     public getCellRanges(): CellRange[] | null {
-        if (this.rangeController) {
-            return this.rangeController.getCellRanges();
+        if (this.rangeService) {
+            return this.rangeService.getCellRanges();
         }
 
         console.warn('AG Grid: cell range selection is only available in AG Grid Enterprise');
@@ -1331,13 +1331,13 @@ export class GridApi {
     }
 
     public addCellRange(params: CellRangeParams): void {
-        if (!this.rangeController) { console.warn('AG Grid: cell range selection is only available in AG Grid Enterprise'); }
-        this.rangeController.addCellRange(params);
+        if (!this.rangeService) { console.warn('AG Grid: cell range selection is only available in AG Grid Enterprise'); }
+        this.rangeService.addCellRange(params);
     }
 
     public clearRangeSelection(): void {
-        if (!this.rangeController) { console.warn('AG Grid: cell range selection is only available in AG Grid Enterprise'); }
-        this.rangeController.removeAllCellRanges();
+        if (!this.rangeService) { console.warn('AG Grid: cell range selection is only available in AG Grid Enterprise'); }
+        this.rangeService.removeAllCellRanges();
     }
 
     public undoCellEditing(): void {

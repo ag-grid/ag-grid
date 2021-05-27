@@ -12,7 +12,7 @@ import { HeaderRowComp } from "./headerRendering/headerRowComp";
 import { AbstractHeaderWrapper } from "./headerRendering/header/abstractHeaderWrapper";
 import { HeaderPosition } from "./headerRendering/header/headerPosition";
 import { RowPositionUtils } from "./entities/rowPosition";
-import { IRangeController } from "./interfaces/iRangeController";
+import { IRangeService } from "./interfaces/IRangeService";
 import { RowRenderer } from "./rendering/rowRenderer";
 import { HeaderNavigationService } from "./headerRendering/header/headerNavigationService";
 import { ColumnGroup } from "./entities/columnGroup";
@@ -32,7 +32,7 @@ export class FocusService extends BeanStub {
     @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
     @Autowired('rowPositionUtils') private readonly rowPositionUtils: RowPositionUtils;
-    @Optional('rangeController') private readonly rangeController: IRangeController;
+    @Optional('rangeService') private readonly rangeService: IRangeService;
 
     public static AG_KEYBOARD_FOCUS: string = 'ag-keyboard-focus';
 
@@ -460,9 +460,9 @@ export class FocusService extends BeanStub {
 
         this.setFocusedCell(rowIndex, column, makeNull(rowPinned), true);
 
-        if (this.rangeController) {
+        if (this.rangeService) {
             const cellPosition = { rowIndex, rowPinned, column };
-            this.rangeController.setRangeToCell(cellPosition);
+            this.rangeService.setRangeToCell(cellPosition);
         }
 
         return true;

@@ -16,7 +16,7 @@ import {
     Environment,
     IAggFunc,
     IChartService,
-    IRangeController,
+    IRangeService,
     Optional,
     PreDestroy,
     ProcessChartOptionsParams,
@@ -32,7 +32,7 @@ export interface CrossFilteringContext {
 @Bean('chartService')
 export class ChartService extends BeanStub implements IChartService {
 
-    @Optional('rangeController') private rangeController: IRangeController;
+    @Optional('rangeService') private rangeService: IRangeService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('environment') private environment: Environment;
 
@@ -73,8 +73,8 @@ export class ChartService extends BeanStub implements IChartService {
     }
 
     public createRangeChart(params: CreateRangeChartParams): ChartRef | undefined {
-        const cellRange = this.rangeController
-            ? this.rangeController.createCellRangeFromCellRangeParams(params.cellRange)
+        const cellRange = this.rangeService
+            ? this.rangeService.createCellRangeFromCellRangeParams(params.cellRange)
             : undefined;
 
         if (!cellRange) {
@@ -108,8 +108,8 @@ export class ChartService extends BeanStub implements IChartService {
             columns: this.columnModel.getAllDisplayedColumns().map(col => col.getColId())
         };
 
-        const cellRange = this.rangeController
-            ? this.rangeController.createCellRangeFromCellRangeParams(chartAllRangeParams)
+        const cellRange = this.rangeService
+            ? this.rangeService.createCellRangeFromCellRangeParams(chartAllRangeParams)
             : undefined;
 
         if (!cellRange) {
@@ -131,8 +131,8 @@ export class ChartService extends BeanStub implements IChartService {
     }
 
     public createCrossFilterChart(params: CreateCrossFilterChartParams): ChartRef | undefined {
-        const cellRange = this.rangeController
-            ? this.rangeController.createCellRangeFromCellRangeParams(params.cellRange)
+        const cellRange = this.rangeService
+            ? this.rangeService.createCellRangeFromCellRangeParams(params.cellRange)
             : undefined;
 
         if (!cellRange) {
@@ -242,7 +242,7 @@ export class ChartService extends BeanStub implements IChartService {
     }
 
     private getSelectedRange(): CellRange {
-        const ranges = this.rangeController.getCellRanges();
+        const ranges = this.rangeService.getCellRanges();
         return ranges.length > 0 ? ranges[0] : {} as CellRange;
     }
 
