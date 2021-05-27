@@ -9,7 +9,7 @@ import styles from './Announcements.module.scss';
  * This are the announcement cards shown underneath the left-hand navigation menu.
  */
 const Announcements = ({ framework }) => <div className={styles['announcements']}>
-    <Announcement date="Apr 27" version="25.3.0">
+    <Announcement date="May 27" version="25.3.0">
         <p className="card-text">
             Minor release with bug fixes:
         </p>
