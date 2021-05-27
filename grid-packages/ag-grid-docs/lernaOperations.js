@@ -300,7 +300,7 @@ let getLastBuild = function() {
     return null;
 };
 
-const rebuildPackagesBasedOnChangeState = async () => {
+const rebuildPackagesBasedOnChangeState = async (runTests = true) => {
     const buildChain = await getAgBuildChain();
     const modulesState = readModulesState();
 
@@ -331,11 +331,13 @@ const rebuildPackagesBasedOnChangeState = async () => {
             result = await buildPackages(packagesToRun, 'package', '--parallel');
             buildFailed = result.exitCode !== 0 || result.failed === 1 || buildFailed;
 
-            result = await buildPackages(packagesToRun, 'test');
-            buildFailed = result.exitCode !== 0 || result.failed === 1 || buildFailed;
+            if (runTests) {
+                result = await buildPackages(packagesToRun, 'test');
+                buildFailed = result.exitCode !== 0 || result.failed === 1 || buildFailed;
 
-            result = await buildPackages(packagesToRun, 'test:e2e');
-            buildFailed = result.exitCode !== 0 || result.failed === 1 || buildFailed;
+                result = await buildPackages(packagesToRun, 'test:e2e');
+                buildFailed = result.exitCode !== 0 || result.failed === 1 || buildFailed;
+            }
         } catch (e) {
             buildFailed = true;
         }
@@ -351,6 +353,7 @@ const rebuildPackagesBasedOnChangeState = async () => {
 /* To be extracted/refactored */
 
 exports.rebuildPackagesBasedOnChangeState = rebuildPackagesBasedOnChangeState;
+exports.rebuildPackagesBasedOnChangeStateNoTest = rebuildPackagesBasedOnChangeState.bind(null, false);
 exports.buildPackages = buildPackages;
 exports.getFlattenedBuildChainInfo = getFlattenedBuildChainInfo;
 exports.buildCss = buildCss;

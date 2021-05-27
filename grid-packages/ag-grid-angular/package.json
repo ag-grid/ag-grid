@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-angular",
-  "version": "25.2.1",
+  "version": "25.3.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -35,7 +35,7 @@
     "zone.js": "~0.10.2"
   },
   "devDependencies": {
-    "@ag-grid-community/angular": "~25.2.0",
+    "@ag-grid-community/angular": "~25.3.0",
     "@angular-devkit/build-angular": "~0.900.1",
     "@angular-devkit/build-ng-packagr": "~0.900.1",
     "@angular/cli": "~9.0.1",
@@ -44,7 +44,7 @@
     "@types/jasmine": "~3.5.0",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "^12.11.1",
-    "ag-grid-community": "~25.2.0",
+    "ag-grid-community": "~25.3.0",
     "codelyzer": "^5.1.2",
     "jasmine-core": "~3.5.0",
     "jasmine-spec-reporter": "~4.2.1",

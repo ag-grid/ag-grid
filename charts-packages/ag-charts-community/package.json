@@ -1,6 +1,6 @@
 {
   "name": "ag-charts-community",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "description": "Advanced Charting / Charts supporting Javascript / React / Angular",
   "main": "./dist/cjs/main.js",
   "module": "./dist/es6/main.js",

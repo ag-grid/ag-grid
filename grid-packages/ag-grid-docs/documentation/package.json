@@ -2,7 +2,7 @@
   "name": "ag-grid-documentation",
   "private": true,
   "description": "The website for AG Grid",
-  "version": "0.1.0",
+  "version": "25.3.0",
   "license": "0BSD",
   "scripts": {
     "generate-examples": "cd .. && node dev-server.js generate-examples && cd documentation",
