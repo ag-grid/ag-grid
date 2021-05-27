@@ -29,7 +29,7 @@ import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 import { DetailRowCompCache } from "./row/detailRowCompCache";
 import { CellPositionUtils } from "../entities/cellPosition";
 import { RowPositionUtils } from "../entities/rowPosition";
-import { SelectionController } from "../selectionController";
+import { SelectionService } from "../selectionService";
 import { RowCssClassCalculator } from "./row/rowCssClassCalculator";
 import { IRowModel } from "../interfaces/iRowModel";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
@@ -77,7 +77,7 @@ export class Beans {
     @Autowired('detailRowCompCache') public detailRowCompCache: DetailRowCompCache;
     @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
     @Autowired('rowPositionUtils') public rowPositionUtils: RowPositionUtils;
-    @Autowired('selectionController') public selectionController: SelectionController;
+    @Autowired('selectionService') public selectionService: SelectionService;
     @Optional('selectionHandleFactory') public selectionHandleFactory: ISelectionHandleFactory;
     @Autowired('rowCssClassCalculator') public rowCssClassCalculator: RowCssClassCalculator;
     @Autowired('rowModel') public rowModel: IRowModel;

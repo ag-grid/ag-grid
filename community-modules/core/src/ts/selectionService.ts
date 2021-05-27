@@ -16,8 +16,8 @@ import { IClientSideRowModel } from "./interfaces/iClientSideRowModel";
 import { iterateObject } from "./utils/object";
 import { exists } from "./utils/generic";
 
-@Bean('selectionController')
-export class SelectionController extends BeanStub {
+@Bean('selectionService')
+export class SelectionService extends BeanStub {
 
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('columnApi') private columnApi: ColumnApi;
@@ -32,7 +32,7 @@ export class SelectionController extends BeanStub {
     private groupSelectsChildren: boolean;
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
-        this.logger = loggerFactory.create('SelectionController');
+        this.logger = loggerFactory.create('selectionService');
         this.reset();
 
         if (this.gridOptionsWrapper.isRowModelDefault()) {

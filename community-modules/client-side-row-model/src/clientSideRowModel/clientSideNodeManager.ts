@@ -12,7 +12,7 @@ import {
     RowNode,
     RowNodeTransaction,
     SelectionChangedEvent,
-    SelectionController
+    SelectionService
 } from "@ag-grid-community/core";
 
 export class ClientSideNodeManager {
@@ -27,7 +27,7 @@ export class ClientSideNodeManager {
     private context: Context;
     private eventService: EventService;
     private columnModel: ColumnModel;
-    private selectionController: SelectionController;
+    private selectionService: SelectionService;
 
     private nextId = 0;
 
@@ -44,7 +44,7 @@ export class ClientSideNodeManager {
 
     constructor(rootNode: RowNode, gridOptionsWrapper: GridOptionsWrapper, context: Context, eventService: EventService,
                 columnModel: ColumnModel, gridApi: GridApi, columnApi: ColumnApi,
-                selectionController: SelectionController) {
+                selectionService: SelectionService) {
         this.rootNode = rootNode;
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.context = context;
@@ -52,7 +52,7 @@ export class ClientSideNodeManager {
         this.columnModel = columnModel;
         this.gridApi = gridApi;
         this.columnApi = columnApi;
-        this.selectionController = selectionController;
+        this.selectionService = selectionService;
 
         this.rootNode.group = true;
         this.rootNode.level = -1;
@@ -140,7 +140,7 @@ export class ClientSideNodeManager {
         // a new node was inserted, so a parent that was previously selected (as all
         // children were selected) should not be tri-state (as new one unselected against
         // all other selected children).
-        this.selectionController.updateGroupsFromChildrenSelections();
+        this.selectionService.updateGroupsFromChildrenSelections();
 
         if (selectionChanged) {
             const event: SelectionChangedEvent = {

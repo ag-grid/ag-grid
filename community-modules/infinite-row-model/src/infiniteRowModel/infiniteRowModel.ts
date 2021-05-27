@@ -17,7 +17,7 @@ import {
     RowNode,
     RowNodeBlockLoader,
     RowRenderer,
-    SelectionController,
+    SelectionService,
     SortController,
     IInfiniteRowModel
 } from "@ag-grid-community/core";
@@ -28,7 +28,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
 
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('sortController') private readonly sortController: SortController;
-    @Autowired('selectionController') private readonly selectionController: SelectionController;
+    @Autowired('selectionService') private readonly selectionService: SelectionService;
     @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('columnApi') private readonly columnApi: ColumnApi;
     @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
@@ -160,7 +160,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         const userGeneratingIds = _.exists(this.gridOptionsWrapper.getRowNodeIdFunc());
 
         if (!userGeneratingIds) {
-            this.selectionController.reset();
+            this.selectionService.reset();
         }
 
         this.resetCache();

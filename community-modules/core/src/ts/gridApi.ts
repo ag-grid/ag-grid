@@ -2,7 +2,7 @@ import { RowRenderer } from "./rendering/rowRenderer";
 import { FilterManager } from "./filter/filterManager";
 import { ColumnModel, ColumnState } from "./columns/columnModel";
 import { ColumnApi } from "./columns/columnApi";
-import { SelectionController } from "./selectionController";
+import { SelectionService } from "./selectionService";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { GridBodyComp } from "./gridBodyComp/gridBodyComp";
 import { ValueService } from "./valueService/valueService";
@@ -177,7 +177,7 @@ export class GridApi {
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('selectionController') private selectionController: SelectionController;
+    @Autowired('selectionService') private selectionService: SelectionService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('alignedGridsService') private alignedGridsService: AlignedGridsService;
@@ -403,7 +403,7 @@ export class GridApi {
                     this.rowRenderer.refreshFullWidthRows(nodeTransaction.update);
                 }
             } else {
-                this.selectionController.reset();
+                this.selectionService.reset();
                 this.clientSideRowModel.setRowData(rowData);
             }
         } else {
@@ -702,7 +702,7 @@ export class GridApi {
         if (suppressEvents) {
             console.warn('AG Grid: suppressEvents is no longer supported, stop listening for the event if you no longer want it');
         }
-        this.selectionController.selectIndex(index, tryMulti);
+        this.selectionService.selectIndex(index, tryMulti);
     }
 
     public deselectIndex(index: number, suppressEvents: boolean = false) {
@@ -710,7 +710,7 @@ export class GridApi {
         if (suppressEvents) {
             console.warn('AG Grid: suppressEvents is no longer supported, stop listening for the event if you no longer want it');
         }
-        this.selectionController.deselectIndex(index);
+        this.selectionService.deselectIndex(index);
     }
 
     public selectNode(node: RowNode, tryMulti: boolean = false, suppressEvents: boolean = false) {
@@ -730,19 +730,19 @@ export class GridApi {
     }
 
     public selectAll() {
-        this.selectionController.selectAllRowNodes();
+        this.selectionService.selectAllRowNodes();
     }
 
     public deselectAll() {
-        this.selectionController.deselectAllRowNodes();
+        this.selectionService.deselectAllRowNodes();
     }
 
     public selectAllFiltered() {
-        this.selectionController.selectAllRowNodes(true);
+        this.selectionService.selectAllRowNodes(true);
     }
 
     public deselectAllFiltered() {
-        this.selectionController.deselectAllRowNodes(true);
+        this.selectionService.deselectAllRowNodes(true);
     }
 
     public recomputeAggregates(): void {
@@ -778,15 +778,15 @@ export class GridApi {
     }
 
     public getSelectedNodes(): RowNode[] {
-        return this.selectionController.getSelectedNodes();
+        return this.selectionService.getSelectedNodes();
     }
 
     public getSelectedRows(): any[] {
-        return this.selectionController.getSelectedRows();
+        return this.selectionService.getSelectedRows();
     }
 
     public getBestCostNodeSelection() {
-        return this.selectionController.getBestCostNodeSelection();
+        return this.selectionService.getBestCostNodeSelection();
     }
 
     public getRenderedNodes() {

@@ -270,7 +270,7 @@ export { ControllersService } from "./controllersService";
 export { GridComp } from "./gridComp/gridComp";
 export { GridCtrl, IGridComp } from "./gridComp/gridCtrl";
 export { Logger, LoggerFactory } from "./logger";
-export { SelectionController } from "./selectionController";
+export { SelectionService } from "./selectionService";
 export { SortController, SortModelItem } from "./sortController";
 export { TemplateService } from "./templateService";
 export * from "./utils";

@@ -33,7 +33,7 @@ import {
     RowPositionUtils,
     RowRenderer,
     RowValueChangedEvent,
-    SelectionController,
+    SelectionService,
     ValueService,
     ICsvCreator,
     IRangeService,
@@ -53,7 +53,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
     @Autowired('csvCreator') private csvCreator: ICsvCreator;
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
-    @Autowired('selectionController') private selectionController: SelectionController;
+    @Autowired('selectionService') private selectionService: SelectionService;
     @Optional('rangeService') private rangeService: IRangeService;
     @Autowired('rowModel') private rowModel: IRowModel;
 
@@ -488,7 +488,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             includeHeaders = this.gridOptionsWrapper.isCopyHeadersToClipboard();
         }
 
-        const selectedRowsToCopy = !this.selectionController.isEmpty()
+        const selectedRowsToCopy = !this.selectionService.isEmpty()
             && !this.gridOptionsWrapper.isSuppressCopyRowsToClipboard();
 
         // default is copy range if exists, otherwise rows

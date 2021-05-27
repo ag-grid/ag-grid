@@ -11,7 +11,7 @@ import { Events } from "../eventKeys";
 import { IRowModel } from "../interfaces/iRowModel";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 import { RowNode } from "../entities/rowNode";
-import { SelectionController } from "../selectionController";
+import { SelectionService } from "../selectionService";
 import { MouseEventService } from "./mouseEventService";
 import { last } from '../utils/array';
 import { SortController } from "../sortController";
@@ -43,7 +43,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('selectionController') private selectionController: SelectionController;
+    @Autowired('selectionService') private selectionService: SelectionService;
     @Optional('rangeService') private rangeService: IRangeService;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
     @Autowired('controllersService') private controllersService: ControllersService;
@@ -121,7 +121,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         }
 
         const enableMultiRowDragging = this.gridOptionsWrapper.isEnableMultiRowDragging();
-        const selectedNodes = this.selectionController.getSelectedNodes();
+        const selectedNodes = this.selectionService.getSelectedNodes();
         const currentNode = draggingEvent.dragItem.rowNode!;
 
         if (enableMultiRowDragging && selectedNodes.indexOf(currentNode) !== -1) {
@@ -188,7 +188,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             rowNodes = [draggingEvent.dragItem.rowNode!];
 
             if (this.isMultiRowDrag) {
-                rowNodes = [...this.selectionController.getSelectedNodes()].sort(
+                rowNodes = [...this.selectionService.getSelectedNodes()].sort(
                     (a, b) => this.getRowIndexNumber(a) - this.getRowIndexNumber(b)
                 );
             }

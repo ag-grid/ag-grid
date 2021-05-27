@@ -1,7 +1,7 @@
 import { EventService } from "../eventService";
 import { AgEvent, Events, RowEvent, RowSelectedEvent, SelectionChangedEvent } from "../events";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { SelectionController } from "../selectionController";
+import { SelectionService } from "../selectionService";
 import { Column } from "./column";
 import { ValueService } from "../valueService/valueService";
 import { ColumnModel } from "../columns/columnModel";
@@ -79,7 +79,7 @@ export class RowNode implements IEventEmitter {
     @Autowired('eventService') private mainEventService: EventService;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('selectionController') private selectionController: SelectionController;
+    @Autowired('selectionService') private selectionService: SelectionService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('rowModel') private rowModel: IRowModel;
@@ -336,7 +336,7 @@ export class RowNode implements IEventEmitter {
         this.data = data;
         this.updateDataOnDetailNode();
         this.setId(id);
-        this.selectionController.syncInRowNode(this, oldNode);
+        this.selectionService.syncInRowNode(this, oldNode);
         this.checkRowSelectable();
 
         const event: DataChangedEvent = this.createDataChangedEvent(data, oldData, false);
@@ -755,12 +755,12 @@ export class RowNode implements IEventEmitter {
             return this.sibling.setSelectedParams(params);
         }
 
-        if (rangeSelect && this.selectionController.getLastSelectedNode()) {
-            const newRowClicked = this.selectionController.getLastSelectedNode() !== this;
+        if (rangeSelect && this.selectionService.getLastSelectedNode()) {
+            const newRowClicked = this.selectionService.getLastSelectedNode() !== this;
             const allowMultiSelect = this.gridOptionsWrapper.isRowSelectionMulti();
             if (newRowClicked && allowMultiSelect) {
                 const nodesChanged = this.doRowRangeSelection(params.newValue);
-                this.selectionController.setLastSelectedNode(this);
+                this.selectionService.setLastSelectedNode(this);
                 return nodesChanged;
             }
         }
@@ -788,12 +788,12 @@ export class RowNode implements IEventEmitter {
         if (!suppressFinishActions) {
             const clearOtherNodes = newValue && (clearSelection || !this.gridOptionsWrapper.isRowSelectionMulti());
             if (clearOtherNodes) {
-                updatedCount += this.selectionController.clearOtherNodes(this);
+                updatedCount += this.selectionService.clearOtherNodes(this);
             }
 
             // only if we selected something, then update groups and fire events
             if (updatedCount > 0) {
-                this.selectionController.updateGroupsFromChildrenSelections();
+                this.selectionService.updateGroupsFromChildrenSelections();
 
                 // this is the very end of the 'action node', so we are finished all the updates,
                 // include any parent / child changes that this method caused
@@ -807,7 +807,7 @@ export class RowNode implements IEventEmitter {
 
             // so if user next does shift-select, we know where to start the selection from
             if (newValue) {
-                this.selectionController.setLastSelectedNode(this);
+                this.selectionService.setLastSelectedNode(this);
             }
         }
 
@@ -819,7 +819,7 @@ export class RowNode implements IEventEmitter {
     // holding down 'shift'.
     private doRowRangeSelection(value: boolean = true): number {
         const groupsSelectChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
-        const lastSelectedNode = this.selectionController.getLastSelectedNode();
+        const lastSelectedNode = this.selectionService.getLastSelectedNode();
         const nodesToSelect = this.rowModel.getNodesInRangeForSelection(this, lastSelectedNode);
 
         let updatedCount = 0;
@@ -833,7 +833,7 @@ export class RowNode implements IEventEmitter {
             }
         });
 
-        this.selectionController.updateGroupsFromChildrenSelections();
+        this.selectionService.updateGroupsFromChildrenSelections();
 
         const event: SelectionChangedEvent = {
             type: Events.EVENT_SELECTION_CHANGED,

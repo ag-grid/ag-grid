@@ -17,7 +17,7 @@ import {
     PinnedRowModel,
     ProcessGroupHeaderForExportParams,
     RowNode,
-    SelectionController,
+    SelectionService,
     ShouldRowBeSkippedParams
 } from "@ag-grid-community/core";
 import { GridSerializingSession, RowAccumulator, RowSpanningAccumulator } from "./interfaces";
@@ -33,7 +33,7 @@ export class GridSerializer extends BeanStub {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
-    @Autowired('selectionController') private selectionController: SelectionController;
+    @Autowired('selectionService') private selectionService: SelectionService;
 
     public serialize<T>(gridSerializingSession: GridSerializingSession<T>, params: ExportParams<T> = {}): string {
         const columnsToExport = this.getColumnsToExport(params.allColumns, params.columnKeys);
@@ -200,7 +200,7 @@ export class GridSerializer extends BeanStub {
                 // onlySelectedNonStandardModel: if user wants selected in non standard row model
                 // (eg viewport) then again RowModel cannot be used, so need to use selected instead.
                 if (params.onlySelectedAllPages || onlySelectedNonStandardModel) {
-                    const selectedNodes = this.selectionController.getSelectedNodes();
+                    const selectedNodes = this.selectionService.getSelectedNodes();
                     selectedNodes.forEach(processRow);
                 } else {
                     // here is everything else - including standard row model and selected. we don't use

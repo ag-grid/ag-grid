@@ -25,7 +25,7 @@ import {
     RowDataUpdatedEvent,
     RowNode,
     RowNodeTransaction,
-    SelectionController,
+    SelectionService,
     ValueCache,
     AsyncTransactionsFlushed,
     AnimationFrameService
@@ -48,7 +48,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('$scope') private $scope: any;
-    @Autowired('selectionController') private selectionController: SelectionController;
+    @Autowired('selectionService') private selectionService: SelectionService;
     @Autowired('valueCache') private valueCache: ValueCache;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
@@ -106,7 +106,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         this.rootNode = new RowNode();
         this.nodeManager = new ClientSideNodeManager(this.rootNode, this.gridOptionsWrapper,
             this.getContext(), this.eventService, this.columnModel, this.gridApi, this.columnApi,
-            this.selectionController);
+            this.selectionService);
 
         this.createBean(this.rootNode);
     }
@@ -732,7 +732,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
                 });
             } else {
                 // groups are about to get disposed, so need to deselect any that are selected
-                this.selectionController.removeGroupsFromSelection();
+                this.selectionService.removeGroupsFromSelection();
                 this.groupStage.execute({
                     rowNode: this.rootNode,
                     changedPath: changedPath,
@@ -743,7 +743,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             }
 
             if (this.gridOptionsWrapper.isGroupSelectsChildren()) {
-                this.selectionController.updateGroupsFromChildrenSelections(changedPath);
+                this.selectionService.updateGroupsFromChildrenSelections(changedPath);
             }
 
         } else {

@@ -1,6 +1,6 @@
 import { GridOptions } from "./entities/gridOptions";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
-import { SelectionController } from "./selectionController";
+import { SelectionService } from "./selectionService";
 import { ColumnApi } from "./columns/columnApi";
 import { ColumnModel } from "./columns/columnModel";
 import { RowRenderer } from "./rendering/rowRenderer";
@@ -297,7 +297,7 @@ export class GridCoreCreator {
             ComponentMetadataProvider, ResizeObserverService, UserComponentFactory,
             RowContainerHeightService, AutoHeightCalculator, HorizontalResizeService,
             PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsWrapper,
-            PopupService, SelectionController, FilterManager, ColumnModel, HeaderNavigationService,
+            PopupService, SelectionService, FilterManager, ColumnModel, HeaderNavigationService,
             PaginationProxy, RowRenderer, ExpressionService, ColumnFactory, TemplateService,
             AlignedGridsService, NavigationService, ValueCache, ValueService, LoggerFactory,
             ColumnUtils, AutoWidthCalculator, StandardMenuFactory, DragAndDropService, ColumnApi,
