@@ -83,6 +83,7 @@ export interface IFilterParams {
     valueGetter: (rowNode: RowNode) => any;
     doesRowPassOtherFilter: (rowNode: RowNode) => boolean; // TODO: this method should be "doesRowPassOtherFilters"
     context: any;
+    data: any;
 }
 
 /** @deprecated, use iFilter */
