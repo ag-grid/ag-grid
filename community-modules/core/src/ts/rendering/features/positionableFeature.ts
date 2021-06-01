@@ -71,6 +71,7 @@ export class PositionableFeature extends BeanStub {
     private positioned = false;
     private resizersAdded = false;
 
+    private resizeListeners: DragListenerParams[] = [];
     private moveElementDragListener: DragListenerParams | undefined;
 
     private popupParent: HTMLElement;
@@ -332,8 +333,45 @@ export class PositionableFeature extends BeanStub {
         this.isMoving = false;
     }
 
+    public init(): void {
+        const { minHeight, minWidth, width, height, centered, x, y } = this.config;
+        this.minHeight = minHeight || 0;
+        this.minWidth = minWidth || 0;
+
+        this.popupParent = this.popupService.getPopupParent();
+
+        if (width) {
+            this.setWidth(width);
+        }
+
+        if (height) {
+            this.setHeight(height);
+        }
+
+        if (!width || !height) {
+            this.refreshSize();
+        }
+
+        if (centered) {
+            this.center();
+        } else if (x || y) {
+            this.offsetElement(x!, y!);
+        }
+
+        this.positioned = true;
+    }
+
+    private clearResizeParams(): void {
+        while (this.resizeListeners.length) {
+            const params = this.resizeListeners.pop()!;
+            this.dragService.removeDragSource(params);
+        }
+    }
+
     public setResizable(resizable: boolean | ResizableStructure) {
         if (resizable) { this.addResizers(); }
+
+        this.clearResizeParams();
 
         if (typeof resizable === 'boolean') {
             resizable = {
@@ -345,31 +383,29 @@ export class PositionableFeature extends BeanStub {
                 bottom: resizable,
                 bottomLeft: resizable,
                 left: resizable
-            };
+            } as ResizableStructure;
         }
 
-        Object.keys(resizable).forEach(side => {
-            const r = resizable as ResizableStructure;
-            const s = side as ResizableSides;
-            const val = !!r[s];
-            const el = this.getResizerElement(s);
+        Object.keys(resizable).forEach((side: ResizableSides) => {
+            const resizableStructure = resizable as ResizableStructure;
+            const val = !!resizableStructure[side];
+            const resizerEl = this.getResizerElement(side);
 
-            const params: DragListenerParams = this.resizerMap[s].dragSource! || {
-                eElement: el,
+            const params: DragListenerParams = {
+                eElement: resizerEl!,
                 onDragStart: this.onResizeStart.bind(this),
-                onDragging: (e: MouseEvent) => this.onResize(e, s),
+                onDragging: (e: MouseEvent) => this.onResize(e, side),
                 onDragStop: this.onResizeEnd.bind(this),
             };
 
-            if (!!this.resizable[s] !== val || (!this.isAlive() && !val)) {
+            if (!!this.resizable[side] !== val || (!this.isAlive() && !val)) {
                 if (val) {
                     this.dragService.addDragSource(params);
-                    el!.style.pointerEvents = 'all';
+                    this.resizeListeners.push(params);
+                    resizerEl!.style.pointerEvents = 'all';
                 } else {
-                    this.dragService.removeDragSource(params);
-                    el!.style.pointerEvents = 'none';
+                    resizerEl!.style.pointerEvents = 'none';
                 }
-                this.resizerMap[s].dragSource = val ? params : undefined;
             }
         });
     }
@@ -397,34 +433,6 @@ export class PositionableFeature extends BeanStub {
 
     public isPositioned(): boolean {
         return this.positioned;
-    }
-
-    public init(): void {
-        const { minHeight, minWidth, width, height, centered, x, y } = this.config;
-        this.minHeight = minHeight || 0;
-        this.minWidth = minWidth || 0;
-
-        this.popupParent = this.popupService.getPopupParent();
-
-        if (width) {
-            this.setWidth(width);
-        }
-
-        if (height) {
-            this.setHeight(height);
-        }
-
-        if (!width || !height) {
-            this.refreshSize();
-        }
-
-        if (centered) {
-            this.center();
-        } else if (x || y) {
-            this.offsetElement(x!, y!);
-        }
-
-        this.positioned = true;
     }
 
     public getHeight(): number | undefined {
@@ -518,5 +526,15 @@ export class PositionableFeature extends BeanStub {
 
         this.position.x = parseInt(ePopup.style.left!, 10);
         this.position.y = parseInt(ePopup.style.top!, 10);
+    }
+
+    protected destroy() {
+        super.destroy();
+
+        if (this.moveElementDragListener) {
+            this.dragService.removeDragSource(this.moveElementDragListener);
+        }
+
+        this.clearResizeParams();
     }
 }

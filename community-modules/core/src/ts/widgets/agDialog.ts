@@ -121,9 +121,6 @@ export class AgDialog extends AgPanel {
     }
 
     protected destroy(): void {
-        this.setResizable(false);
-        this.setMovable(false);
-
         this.maximizeButtonComp = this.destroyBean(this.maximizeButtonComp);
 
         this.clearMaximizebleListeners();
