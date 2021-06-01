@@ -2,7 +2,6 @@ import { BeanStub } from "../../context/beanStub";
 import { Autowired } from "../../context/context";
 import { DragListenerParams, DragService } from "../../dragAndDrop/dragService";
 import { getAbsoluteHeight, getAbsoluteWidth, setFixedHeight, setFixedWidth } from "../../utils/dom";
-import { Component } from "../../widgets/component";
 import { PopupService } from "../../widgets/popupService";
 
 const RESIZE_TEMPLATE = /* html */
@@ -18,12 +17,12 @@ const RESIZE_TEMPLATE = /* html */
     </div>`;
 
 export interface PositionableOptions {
-    component?: Component;
     minWidth?: number | null;
     width?: number | string | null;
     minHeight?: number | null;
     height?: number | string | null;
     centered?: boolean | null;
+    calculateTopBuffer?: () => number;
     x?: number | null;
     y?: number | null;
 }
@@ -84,7 +83,10 @@ export class PositionableFeature extends BeanStub {
     @Autowired('popupService') protected readonly popupService: PopupService;
     @Autowired('dragService') private readonly dragService: DragService;
 
-    constructor(private readonly config: PositionableOptions) {
+    constructor(
+        private readonly element: HTMLElement,
+        private readonly config: PositionableOptions
+    ) {
         super();
     }
 
@@ -177,7 +179,7 @@ export class PositionableFeature extends BeanStub {
     }
 
     private createResizeMap() {
-        const eGui = this.config.component!.getGui();
+        const eGui = this.element;
 
         this.resizerMap = {
             topLeft: { element: eGui.querySelector('[ref=eTopLeftResizer]') as HTMLElement },
@@ -193,7 +195,7 @@ export class PositionableFeature extends BeanStub {
 
     private addResizers() {
         if (this.resizersAdded) { return; }
-        const eGui = this.config.component!.getGui();
+        const eGui = this.element;
 
         if (!eGui) { return; }
 
@@ -290,7 +292,7 @@ export class PositionableFeature extends BeanStub {
 
     private refreshSize() {
         const { width, height } = this.size;
-        const eGui = this.config.component!.getGui();
+        const eGui = this.element;
 
         if (!width) {
             this.setWidth(eGui.offsetWidth);
@@ -309,11 +311,10 @@ export class PositionableFeature extends BeanStub {
     private onMove(e: MouseEvent) {
         if (!this.isMoving) { return; }
         const { x, y } = this.position;
-        const comp = this.config.component as any;
         let topBuffer;
 
-        if (comp.getBodyHeight) {
-            topBuffer = this.getHeight()! - comp.getBodyHeight();
+        if (this.config.calculateTopBuffer) {
+            topBuffer = this.config.calculateTopBuffer();
         }
 
         const { movementX, movementY } = this.calculateMouseMovement({
@@ -431,7 +432,7 @@ export class PositionableFeature extends BeanStub {
     }
 
     public setHeight(height: number | string) {
-        const eGui = this.config.component!.getGui();
+        const eGui = this.element;
         let isPercent = false;
 
         if (typeof height === 'string' && height.indexOf('%') !== -1) {
@@ -463,7 +464,7 @@ export class PositionableFeature extends BeanStub {
     }
 
     public setWidth(width: number | string) {
-        const eGui = this.config.component!.getGui();
+        const eGui = this.element;
         let isPercent = false;
 
         if (typeof width === 'string' && width.indexOf('%') !== -1) {
@@ -491,7 +492,7 @@ export class PositionableFeature extends BeanStub {
     }
 
     public center() {
-        const eGui = this.config.component!.getGui();
+        const eGui = this.element;
 
         const x = (eGui.offsetParent!.clientWidth / 2) - (this.getWidth()! / 2);
         const y = (eGui.offsetParent!.clientHeight / 2) - (this.getHeight()! / 2);
@@ -504,7 +505,7 @@ export class PositionableFeature extends BeanStub {
     }
 
     public offsetElement(x = 0, y = 0) {
-        const ePopup = this.config.component!.getGui();
+        const ePopup = this.element;
 
         this.popupService.positionPopup({
             ePopup,

@@ -6,6 +6,7 @@ import { createIconNoSpan } from "../utils/icon";
 import { PositionableFeature, PositionableOptions, ResizableStructure } from "../rendering/features/positionableFeature";
 
 export interface PanelOptions extends PositionableOptions {
+    component?: Component;
     hideTitleBar?: boolean | null;
     closable?: boolean | null;
     resizable?: boolean | ResizableStructure;
@@ -60,7 +61,11 @@ export class AgPanel extends Component {
             y
         } = this.config as PanelOptions;
 
-        this.positionableFeature = new PositionableFeature({ component: this, minWidth, width, minHeight, height, centered, x, y });
+        this.positionableFeature = new PositionableFeature(this.getGui(), {
+            minWidth, width, minHeight, height, centered, x, y,
+            calculateTopBuffer: () => this.positionableFeature.getHeight()! - this.getBodyHeight()
+        });
+
         this.createManagedBean(this.positionableFeature);
 
         const eGui = this.getGui();
