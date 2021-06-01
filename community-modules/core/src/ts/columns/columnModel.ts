@@ -2038,8 +2038,8 @@ export class ColumnModel extends BeanStub {
 
             // raises generic ColumnEvents where all columns are returned rather than what has changed
             const raiseWhenListsDifferent = (eventType: string, colsBefore: Column[], colsAfter: Column[], idMapper: (column: Column) => string) => {
-                const beforeList = colsBefore.map(idMapper).sort();
-                const afterList = colsAfter.map(idMapper).sort();
+                const beforeList = colsBefore.map(idMapper);
+                const afterList = colsAfter.map(idMapper);
                 const unchanged = areEqual(beforeList, afterList);
 
                 if (unchanged) { return; }
