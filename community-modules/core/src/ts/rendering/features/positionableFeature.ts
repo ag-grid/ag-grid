@@ -17,6 +17,7 @@ const RESIZE_TEMPLATE = /* html */
     </div>`;
 
 export interface PositionableOptions {
+    popup?: boolean;
     minWidth?: number | null;
     width?: number | string | null;
     minHeight?: number | null;
@@ -74,7 +75,7 @@ export class PositionableFeature extends BeanStub {
     private resizeListeners: DragListenerParams[] = [];
     private moveElementDragListener: DragListenerParams | undefined;
 
-    private popupParent: HTMLElement;
+    private offsetParent: HTMLElement;
 
     private isResizing: boolean = false;
     private isMoving = false;
@@ -86,9 +87,197 @@ export class PositionableFeature extends BeanStub {
 
     constructor(
         private readonly element: HTMLElement,
-        private readonly config: PositionableOptions
+        private readonly config: PositionableOptions = { popup: false }
     ) {
         super();
+    }
+
+    public center() {
+        const eGui = this.element;
+
+        const x = (eGui.offsetParent!.clientWidth / 2) - (this.getWidth()! / 2);
+        const y = (eGui.offsetParent!.clientHeight / 2) - (this.getHeight()! / 2);
+
+        this.offsetElement(x, y);
+    }
+
+    public initialisePosition(): void {
+        const { centered, minWidth, width, minHeight, height, x, y } = this.config;
+        this.minHeight = minHeight || 0;
+        this.minWidth = minWidth || 0;
+
+        if (!this.offsetParent) { this.setOffsetParent(); }
+
+        if (width) {
+            this.setWidth(width);
+        }
+
+        if (height) {
+            this.setHeight(height);
+        }
+
+        if (!width || !height) {
+            this.refreshSize();
+        }
+
+        if (centered) {
+            this.center();
+        } else if (x || y) {
+            this.offsetElement(x!, y!);
+        }
+
+        this.positioned = true;
+    }
+
+    public isPositioned(): boolean {
+        return this.positioned;
+    }
+
+    public getPosition(): { x: number; y: number } {
+        return this.position;
+    }
+
+    public setMovable(movable: boolean, moveElement: HTMLElement) {
+        if (!this.config.popup || movable === this.movable) { return; }
+
+        this.movable = movable;
+
+        const params: DragListenerParams = this.moveElementDragListener || {
+            eElement: moveElement,
+            onDragStart: this.onMoveStart.bind(this),
+            onDragging: this.onMove.bind(this),
+            onDragStop: this.onMoveEnd.bind(this)
+        };
+
+        if (movable) {
+            this.dragService.addDragSource(params);
+            this.moveElementDragListener = params;
+        } else {
+            this.dragService.removeDragSource(params);
+            this.moveElementDragListener = undefined;
+        }
+    }
+
+    public setResizable(resizable: boolean | ResizableStructure) {
+        if (resizable) { this.addResizers(); }
+
+        this.clearResizeParams();
+
+        if (typeof resizable === 'boolean') {
+            resizable = {
+                topLeft: resizable,
+                top: resizable,
+                topRight: resizable,
+                right: resizable,
+                bottomRight: resizable,
+                bottom: resizable,
+                bottomLeft: resizable,
+                left: resizable
+            } as ResizableStructure;
+        }
+
+        Object.keys(resizable).forEach((side: ResizableSides) => {
+            const resizableStructure = resizable as ResizableStructure;
+            const val = !!resizableStructure[side];
+            const resizerEl = this.getResizerElement(side);
+
+            const params: DragListenerParams = {
+                eElement: resizerEl!,
+                onDragStart: this.onResizeStart.bind(this),
+                onDragging: (e: MouseEvent) => this.onResize(e, side),
+                onDragStop: this.onResizeEnd.bind(this),
+            };
+
+            if (!!this.resizable[side] !== val || (!this.isAlive() && !val)) {
+                if (val) {
+                    this.dragService.addDragSource(params);
+                    this.resizeListeners.push(params);
+                    resizerEl!.style.pointerEvents = 'all';
+                } else {
+                    resizerEl!.style.pointerEvents = 'none';
+                }
+            }
+        });
+    }
+
+    public getHeight(): number | undefined {
+        return this.size.height;
+    }
+
+    public setHeight(height: number | string) {
+        const eGui = this.element;
+        let isPercent = false;
+
+        if (typeof height === 'string' && height.indexOf('%') !== -1) {
+            setFixedHeight(eGui, height);
+            height = getAbsoluteHeight(eGui);
+            isPercent = true;
+        } else {
+            height = Math.max(this.minHeight!, height as number);
+            const offsetParent = eGui.offsetParent;
+            if (offsetParent && offsetParent.clientHeight && (height + this.position.y > offsetParent.clientHeight)) {
+                height = offsetParent.clientHeight - this.position.y;
+            }
+        }
+
+        if (this.size.height === height) { return; }
+
+        this.size.height = height;
+
+        if (!isPercent) {
+            setFixedHeight(eGui, height);
+        } else {
+            eGui.style.maxHeight = 'unset';
+            eGui.style.minHeight = 'unset';
+        }
+    }
+
+    public getWidth(): number | undefined {
+        return this.size.width;
+    }
+
+    public setWidth(width: number | string) {
+        const eGui = this.element;
+        let isPercent = false;
+
+        if (typeof width === 'string' && width.indexOf('%') !== -1) {
+            setFixedWidth(eGui, width);
+            width = getAbsoluteWidth(eGui);
+            isPercent = true;
+        } else {
+            width = Math.max(this.minWidth, width as number);
+            const offsetParent = eGui.offsetParent;
+
+            if (offsetParent && offsetParent.clientWidth && (width + this.position.x > offsetParent.clientWidth)) {
+                width = offsetParent.clientWidth - this.position.x;
+            }
+        }
+
+        if (this.size.width === width) { return; }
+
+        this.size.width = width;
+        if (!isPercent) {
+            setFixedWidth(eGui, width);
+        } else {
+            eGui.style.maxWidth = 'unset';
+            eGui.style.minWidth = 'unset';
+        }
+    }
+
+    public offsetElement(x = 0, y = 0) {
+        const ePopup = this.element;
+
+        this.popupService.positionPopup({
+            ePopup,
+            x,
+            y,
+            minWidth: this.minWidth,
+            minHeight: this.minHeight,
+            keepWithinBounds: true
+        });
+
+        this.position.x = parseInt(ePopup.style.left!, 10);
+        this.position.y = parseInt(ePopup.style.top!, 10);
     }
 
     private updateDragStartPosition(x: number, y: number) {
@@ -102,7 +291,7 @@ export class PositionableFeature extends BeanStub {
         isLeft?: boolean,
         isTop?: boolean;
     }): { movementX: number, movementY: number; } {
-        const parentRect = this.popupParent.getBoundingClientRect();
+        const parentRect = this.offsetParent.getBoundingClientRect();
         const { e, isLeft, isTop, anywhereWithin, topBuffer } = params;
         let movementX = e.clientX - this.dragStartPosition.x;
         let movementY = e.clientY - this.dragStartPosition.y;
@@ -149,30 +338,35 @@ export class PositionableFeature extends BeanStub {
 
         movementX = skipX ? 0 : movementX;
 
-        const skipY = (
-            // skip if cursor is outside of popupParent vertically
+        // skip if cursor is outside of popupParent vertically
+        let skipY = (
             parentRect.top >= e.clientY && this.position.y <= 0 ||
-            parentRect.bottom <= e.clientY && parentRect.bottom <= this.position.y + parentRect.top + height! ||
-            isTop && (
-                // skip if we are moving to towards top and the cursor is
-                // below the top anchor + topBuffer
-                // note: topBuffer is used when moving the dialog using the title bar
-                (movementY < 0 && e.clientY > this.position.y + parentRect.top + (topBuffer || 0)) ||
-                // skip if we are moving to the bottom and the cursor is
-                // above the top anchor
-                (movementY > 0 && e.clientY < this.position.y + parentRect.top)
-            ) ||
-            // we are anchored to the bottom of the dialog
-            !isTop && (
-                // skip if we are moving towards the top and the cursor
-                // is below the bottom anchor
-                (movementY < 0 && e.clientY > this.position.y + parentRect.top + height!) ||
-
-                // skip if we are moving towards the bottom and the cursor
-                // is above the bottom anchor
-                (movementY > 0 && e.clientY < this.position.y + parentRect.top + height!)
-            )
+            parentRect.bottom <= e.clientY && parentRect.bottom <= this.position.y + parentRect.top + height!
         );
+
+        if (!skipY) {
+            const offsetY = this.config.popup ? 0 : this.element.offsetTop;
+            if (isTop) {
+                skipY = (
+                    // skip if we are moving to towards top and the cursor is
+                    // below the top anchor + topBuffer
+                    // note: topBuffer is used when moving the dialog using the title bar
+                    (movementY < 0 && e.clientY > this.position.y + parentRect.top + offsetY + (topBuffer || 0)) ||
+                    // skip if we are moving to the bottom and the cursor is
+                    // above the top anchor
+                    (movementY > 0 && e.clientY < this.position.y + parentRect.top + offsetY)
+                );
+            } else {
+                skipY = (
+                    // skip if we are moving towards the top and the cursor
+                    // is below the bottom anchor
+                    (movementY < 0 && e.clientY > this.position.y + parentRect.top + offsetY + height!) ||
+                    // skip if we are moving towards the bottom and the cursor
+                    // is above the bottom anchor
+                    (movementY > 0 && e.clientY < this.position.y + parentRect.top + offsetY + height!)
+                );
+            }
+        }
 
         movementY = skipY ? 0 : movementY;
 
@@ -213,6 +407,8 @@ export class PositionableFeature extends BeanStub {
     }
 
     private onResizeStart(e: MouseEvent) {
+        if (!this.positioned) { this.initialisePosition(); }
+
         this.isResizing = true;
         this.updateDragStartPosition(e.clientX, e.clientY);
     }
@@ -295,17 +491,23 @@ export class PositionableFeature extends BeanStub {
         const { width, height } = this.size;
         const eGui = this.element;
 
-        if (!width) {
-            this.setWidth(eGui.offsetWidth);
-        }
+        if (this.config.popup) {
+            if (!width) {
+                this.setWidth(eGui.offsetWidth);
+            }
 
-        if (!height) {
-            this.setHeight(eGui.offsetHeight);
+            if (!height) {
+                this.setHeight(eGui.offsetHeight);
+            }
+        } else {
+            this.size.width = this.element.offsetWidth;
+            this.size.height = this.element.offsetHeight;
         }
     }
 
     private onMoveStart(e: MouseEvent) {
         this.isMoving = true;
+        if (!this.positioned) { this.initialisePosition(); }
         this.updateDragStartPosition(e.clientX, e.clientY);
     }
 
@@ -314,7 +516,7 @@ export class PositionableFeature extends BeanStub {
         const { x, y } = this.position;
         let topBuffer;
 
-        if (this.config.calculateTopBuffer) {
+        if (this.config && this.config.calculateTopBuffer) {
             topBuffer = this.config.calculateTopBuffer();
         }
 
@@ -333,32 +535,8 @@ export class PositionableFeature extends BeanStub {
         this.isMoving = false;
     }
 
-    public init(): void {
-        const { minHeight, minWidth, width, height, centered, x, y } = this.config;
-        this.minHeight = minHeight || 0;
-        this.minWidth = minWidth || 0;
-
-        this.popupParent = this.popupService.getPopupParent();
-
-        if (width) {
-            this.setWidth(width);
-        }
-
-        if (height) {
-            this.setHeight(height);
-        }
-
-        if (!width || !height) {
-            this.refreshSize();
-        }
-
-        if (centered) {
-            this.center();
-        } else if (x || y) {
-            this.offsetElement(x!, y!);
-        }
-
-        this.positioned = true;
+    private setOffsetParent() {
+        this.offsetParent = this.config.popup ? this.popupService.getPopupParent() : this.element.offsetParent as HTMLElement;
     }
 
     private clearResizeParams(): void {
@@ -366,166 +544,6 @@ export class PositionableFeature extends BeanStub {
             const params = this.resizeListeners.pop()!;
             this.dragService.removeDragSource(params);
         }
-    }
-
-    public setResizable(resizable: boolean | ResizableStructure) {
-        if (resizable) { this.addResizers(); }
-
-        this.clearResizeParams();
-
-        if (typeof resizable === 'boolean') {
-            resizable = {
-                topLeft: resizable,
-                top: resizable,
-                topRight: resizable,
-                right: resizable,
-                bottomRight: resizable,
-                bottom: resizable,
-                bottomLeft: resizable,
-                left: resizable
-            } as ResizableStructure;
-        }
-
-        Object.keys(resizable).forEach((side: ResizableSides) => {
-            const resizableStructure = resizable as ResizableStructure;
-            const val = !!resizableStructure[side];
-            const resizerEl = this.getResizerElement(side);
-
-            const params: DragListenerParams = {
-                eElement: resizerEl!,
-                onDragStart: this.onResizeStart.bind(this),
-                onDragging: (e: MouseEvent) => this.onResize(e, side),
-                onDragStop: this.onResizeEnd.bind(this),
-            };
-
-            if (!!this.resizable[side] !== val || (!this.isAlive() && !val)) {
-                if (val) {
-                    this.dragService.addDragSource(params);
-                    this.resizeListeners.push(params);
-                    resizerEl!.style.pointerEvents = 'all';
-                } else {
-                    resizerEl!.style.pointerEvents = 'none';
-                }
-            }
-        });
-    }
-
-    public setMovable(movable: boolean, moveElement: HTMLElement) {
-        if (movable === this.movable) { return; }
-
-        this.movable = movable;
-
-        const params: DragListenerParams = this.moveElementDragListener || {
-            eElement: moveElement,
-            onDragStart: this.onMoveStart.bind(this),
-            onDragging: this.onMove.bind(this),
-            onDragStop: this.onMoveEnd.bind(this)
-        };
-
-        if (movable) {
-            this.dragService.addDragSource(params);
-            this.moveElementDragListener = params;
-        } else {
-            this.dragService.removeDragSource(params);
-            this.moveElementDragListener = undefined;
-        }
-    }
-
-    public isPositioned(): boolean {
-        return this.positioned;
-    }
-
-    public getHeight(): number | undefined {
-        return this.size.height;
-    }
-
-    public setHeight(height: number | string) {
-        const eGui = this.element;
-        let isPercent = false;
-
-        if (typeof height === 'string' && height.indexOf('%') !== -1) {
-            setFixedHeight(eGui, height);
-            height = getAbsoluteHeight(eGui);
-            isPercent = true;
-        } else {
-            height = Math.max(this.minHeight!, height as number);
-            const offsetParent = eGui.offsetParent;
-            if (offsetParent && offsetParent.clientHeight && (height + this.position.y > offsetParent.clientHeight)) {
-                height = offsetParent.clientHeight - this.position.y;
-            }
-        }
-
-        if (this.size.height === height) { return; }
-
-        this.size.height = height;
-
-        if (!isPercent) {
-            setFixedHeight(eGui, height);
-        } else {
-            eGui.style.maxHeight = 'unset';
-            eGui.style.minHeight = 'unset';
-        }
-    }
-
-    public getWidth(): number | undefined {
-        return this.size.width;
-    }
-
-    public setWidth(width: number | string) {
-        const eGui = this.element;
-        let isPercent = false;
-
-        if (typeof width === 'string' && width.indexOf('%') !== -1) {
-            setFixedWidth(eGui, width);
-            width = getAbsoluteWidth(eGui);
-            isPercent = true;
-        } else {
-            width = Math.max(this.minWidth, width as number);
-            const offsetParent = eGui.offsetParent;
-
-            if (offsetParent && offsetParent.clientWidth && (width + this.position.x > offsetParent.clientWidth)) {
-                width = offsetParent.clientWidth - this.position.x;
-            }
-        }
-
-        if (this.size.width === width) { return; }
-
-        this.size.width = width;
-        if (!isPercent) {
-            setFixedWidth(eGui, width);
-        } else {
-            eGui.style.maxWidth = 'unset';
-            eGui.style.minWidth = 'unset';
-        }
-    }
-
-    public center() {
-        const eGui = this.element;
-
-        const x = (eGui.offsetParent!.clientWidth / 2) - (this.getWidth()! / 2);
-        const y = (eGui.offsetParent!.clientHeight / 2) - (this.getHeight()! / 2);
-
-        this.offsetElement(x, y);
-    }
-
-    public getPosition(): { x: number; y: number } {
-        return this.position;
-    }
-
-    public offsetElement(x = 0, y = 0) {
-        const ePopup = this.element;
-
-        this.popupService.positionPopup({
-            ePopup,
-            x,
-            y,
-            minWidth: this.minWidth,
-            minHeight: this.minHeight,
-            keepWithinBounds: true
-        });
-
-        this.position.x = parseInt(ePopup.style.left!, 10);
-        this.position.y = parseInt(ePopup.style.top!, 10);
     }
 
     protected destroy() {

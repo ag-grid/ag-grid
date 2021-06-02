@@ -6,6 +6,7 @@ import {
     IPrimaryColsPanel,
     ManagedFocusComponent,
     ColumnEventType,
+    PositionableFeature,
 } from "@ag-grid-community/core";
 import { PrimaryColsListPanel } from "./primaryColsListPanel";
 import { PrimaryColsHeaderPanel } from "./primaryColsHeaderPanel";
@@ -55,6 +56,9 @@ export class PrimaryColsPanel extends ManagedFocusComponent implements IPrimaryC
         this.addManagedListener(this.primaryColsHeaderPanel, 'selectAll', this.onSelectAll.bind(this));
         this.addManagedListener(this.primaryColsHeaderPanel, 'unselectAll', this.onUnselectAll.bind(this));
         this.addManagedListener(this.primaryColsHeaderPanel, 'filterChanged', this.onFilterChanged.bind(this));
+
+        const positionableFeature = this.createManagedBean(new PositionableFeature(this.getGui()));
+        positionableFeature.setResizable({ bottom: true });
     }
 
     public onExpandAll(): void {

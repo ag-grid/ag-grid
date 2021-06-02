@@ -57,12 +57,13 @@ export class AgPanel extends Component {
             minHeight = 250,
             height,
             centered,
+            popup,
             x,
             y
         } = this.config as PanelOptions;
 
         this.positionableFeature = new PositionableFeature(this.getGui(), {
-            minWidth, width, minHeight, height, centered, x, y,
+            minWidth, width, minHeight, height, centered, x, y, popup,
             calculateTopBuffer: () => this.positionableFeature.getHeight()! - this.getBodyHeight()
         });
 
@@ -96,14 +97,16 @@ export class AgPanel extends Component {
             }
         });
 
-        if (this.positionableFeature.isPositioned()) { return; }
+        if (popup && this.positionableFeature.isPositioned()) { return; }
 
         if (this.renderComponent) {
             this.renderComponent();
         }
 
-        this.positionableFeature.init();
-        this.eContentWrapper.style.height = '0';
+        if (popup) {
+            this.positionableFeature.initialisePosition();
+            this.eContentWrapper.style.height = '0';
+        }
     }
 
     protected renderComponent() {

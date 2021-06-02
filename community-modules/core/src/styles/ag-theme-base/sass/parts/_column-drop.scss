@@ -73,7 +73,6 @@
 
     .ag-column-drop-vertical {
         min-height: 50px;
-        max-height: 150px;
         
         @include ag-border(secondary, bottom);
         &.ag-last-column-drop {

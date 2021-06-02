@@ -176,6 +176,7 @@ export { INoRowsOverlayComp, INoRowsOverlayParams } from "./rendering/overlays/n
 
 // features
 export { SetLeftFeature } from "./rendering/features/setLeftFeature";
+export { PositionableFeature, ResizableStructure, ResizableSides, PositionableOptions } from "./rendering/features/positionableFeature";
 
 // rendering
 export { AutoWidthCalculator } from "./rendering/autoWidthCalculator";

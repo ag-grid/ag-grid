@@ -45,7 +45,7 @@ export class AgDialog extends AgPanel {
     protected config: DialogOptions | undefined;
 
     constructor(config: DialogOptions) {
-        super(config);
+        super({...config, popup: true });
     }
 
     protected postConstruct() {
