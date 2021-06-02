@@ -15,7 +15,7 @@ import {
 } from "../../components/framework/userComponentFactory";
 import { AgPromise } from "../../utils";
 import { doOnce } from "../../utils/function";
-import { get, cloneObject } from "../../utils/object";
+import { get, cloneObject, iterateObject } from "../../utils/object";
 import { bindCellRendererToHtmlElement } from "../../utils/general";
 import { addOrRemoveCssClass, setDisplayed } from "../../utils/dom";
 import { createIconNoSpan } from "../../utils/icon";
@@ -483,28 +483,43 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         this.onExpandOrContract();
     }
 
+    private isDraggedFromParent(): boolean {
+        const rowNode: RowNode = this.params.node;
+        const column = this.params.column as Column;
+
+        if (!this.gridOptionsWrapper.isGroupHideOpenParents()) { return false; }
+
+        if (this.gridOptionsWrapper.isTreeData()) {
+            const msg = `AG Grid: The property hideOpenParents dose not work with Tree Data. This is because Tree Data has values at the group level, it doesn't make sense to hide them (as opposed to Row Grouping, which only has Aggregated Values at the group level).`;
+            doOnce(() => console.warn(msg), 'groupCellRenderer.hideOpenParentsWithTreeData');
+            return false;
+        }
+
+        // hideOpenParents means rowNode.groupData can have data for the group this column is displaying, even though
+        // this rowNode isn't grouping by the column we are displaying
+
+        // if no groupData at all, we are not showing a parent value
+        if (!rowNode.groupData) { return false; }
+
+        // this is the normal case, in that we are showing a group for which this column is configured. note that
+        // this means the Row Group is closed (if it was open, we would not be displaying it)
+        const thisColumnShowingGroupForThisNode = rowNode.rowGroupColumn
+            && column.isRowGroupDisplayed(rowNode.rowGroupColumn.getId());
+        // if showing group as normal, we didn't take group info from parent
+        if (thisColumnShowingGroupForThisNode) { return false; }
+
+        // see if we are showing a Group Value for the Displayed Group. if we are showing a group value, and this Row Node
+        // is not grouping by this Displayed Group, we must of gotten the value from a parent node
+        const valPresent = rowNode.groupData[column.getId()] != null;
+
+        return valPresent;
+    }
+
     private setupDragOpenParents(): void {
         const column = this.params.column;
         const rowNode: RowNode = this.params.node;
 
-        if (!this.gridOptionsWrapper.isGroupHideOpenParents()) {
-            this.draggedFromHideOpenParents = false;
-        } else if (!rowNode.hasChildren()) {
-            // if we are here, and we are not a group, then we must of been dragged down,
-            // as otherwise the cell would be blank, and if cell is blank, this method is never called.
-            this.draggedFromHideOpenParents = true;
-        } else {
-            const rowGroupColumn = rowNode.rowGroupColumn;
-            if (rowGroupColumn) {
-                // if the displayGroup column for this col matches the rowGroupColumn we grouped by for this node,
-                // then nothing was dragged down
-                this.draggedFromHideOpenParents = !column!.isRowGroupDisplayed(rowGroupColumn.getId());
-            } else {
-                // the only way we can end up here (no column, but a group) is if we are at the root node,
-                // which only happens when 'groupIncludeTotalFooter' is true. here, we are never dragging
-                this.draggedFromHideOpenParents = false;
-            }
-        }
+        this.draggedFromHideOpenParents = this.isDraggedFromParent();
 
         if (this.draggedFromHideOpenParents) {
             let pointer = rowNode.parent;
