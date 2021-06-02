@@ -476,7 +476,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 .ag-column-panel {
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow: auto;
     flex: 1 1 auto;
 }
 
@@ -485,9 +485,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    flex-grow: 3;
-    flex-shrink: 1;
-    flex-basis: 0;
+    flex: 3 1 0px;
 }
 
 .ag-column-select-header {
@@ -514,6 +512,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 }
 
 .ag-column-drop {
+    position: relative;
     display: inline-flex;
     align-items: center;
     overflow: auto;
@@ -541,8 +540,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    flex: 1 1 0px;
     align-items: stretch;
+    flex: 1 1 0px;
 }
 
 .ag-column-drop-vertical-title-bar {

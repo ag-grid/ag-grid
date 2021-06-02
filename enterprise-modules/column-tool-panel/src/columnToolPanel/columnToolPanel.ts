@@ -141,7 +141,6 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             this.rowGroupDropZonePanel = this.createManagedBean(new RowGroupDropZonePanel(false));
             this.appendChild(this.rowGroupDropZonePanel);
         }
-
         this.setLastVisible();
     }
 
@@ -154,7 +153,6 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             this.valuesDropZonePanel = this.createManagedBean(new ValuesDropZonePanel(false));
             this.appendChild(this.valuesDropZonePanel);
         }
-
         this.setLastVisible();
     }
 
@@ -168,8 +166,20 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             this.appendChild(this.pivotDropZonePanel);
             this.pivotDropZonePanel.setDisplayed(visible);
         }
-
         this.setLastVisible();
+    }
+
+    private setResizers(): void {
+        [
+            this.primaryColsPanel,
+            this.rowGroupDropZonePanel,
+            this.valuesDropZonePanel,
+            this.pivotDropZonePanel
+        ].forEach(panel => {
+            if (!panel) { return; }
+            const eGui = panel.getGui();
+            panel.toggleResizable(!!eGui.nextSibling && !_.containsClass(eGui, 'ag-last-column-drop'));
+        });
     }
 
     private setLastVisible(): void {
@@ -185,6 +195,8 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         if (lastVisible) {
             _.addCssClass(lastVisible, 'ag-last-column-drop');
         }
+
+        this.setResizers();
     }
 
     private isRowGroupingModuleLoaded(): boolean {

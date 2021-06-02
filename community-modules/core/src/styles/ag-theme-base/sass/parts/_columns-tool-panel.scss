@@ -2,6 +2,7 @@
 @mixin ag-theme-base-part-columns-tool-panel {
     
     .ag-pivot-mode-panel {
+        min-height: ag-param(header-height);
         height: ag-param(header-height);
         display: flex;
     }

@@ -5,8 +5,10 @@ import { getAbsoluteHeight, getAbsoluteWidth, setFixedHeight, setFixedWidth } fr
 import { assign } from "../../utils/object";
 import { PopupService } from "../../widgets/popupService";
 
+const RESIZE_CONTAINER_STYLE = 'ag-resizer-wrapper';
+
 const RESIZE_TEMPLATE = /* html */
-    `<div class="ag-resizer-wrapper">
+    `<div class="${RESIZE_CONTAINER_STYLE}">
         <div ref="eTopLeftResizer" class="ag-resizer ag-resizer-topLeft"></div>
         <div ref="eTopResizer" class="ag-resizer ag-resizer-top"></div>
         <div ref="eTopRightResizer" class="ag-resizer ag-resizer-topRight"></div>
@@ -66,7 +68,7 @@ export class PositionableFeature extends BeanStub {
 
     private resizerMap: {
         [key in ResizableSides]: MappedResizer
-    };
+    } | undefined;
 
     private minWidth: number;
     private minHeight?: number;
@@ -160,11 +162,17 @@ export class PositionableFeature extends BeanStub {
     }
 
     public setResizable(resizable: boolean | ResizableStructure) {
-        if (resizable) { this.addResizers(); }
+        this.clearResizeListeners();
 
-        this.clearResizeParams();
+        if (resizable) {
+            this.addResizers();
+        } else {
+            this.removeResizers();
+        }
 
         if (typeof resizable === 'boolean') {
+            if (resizable === false) { return; }
+
             resizable = {
                 topLeft: resizable,
                 top: resizable,
@@ -403,8 +411,18 @@ export class PositionableFeature extends BeanStub {
         this.resizersAdded = true;
     }
 
+    private removeResizers() {
+        this.resizerMap = undefined;
+        const resizerEl = this.element.querySelector(`.${RESIZE_CONTAINER_STYLE}`);
+
+        if (resizerEl) {
+            this.element.removeChild(resizerEl);
+        }
+        this.resizersAdded = false;
+    }
+
     private getResizerElement(side: ResizableSides): HTMLElement | null {
-        return this.resizerMap[side].element;
+        return this.resizerMap![side].element;
     }
 
     private onResizeStart(e: MouseEvent) {
@@ -540,7 +558,7 @@ export class PositionableFeature extends BeanStub {
         this.offsetParent = this.config.popup ? this.popupService.getPopupParent() : this.element.offsetParent as HTMLElement;
     }
 
-    private clearResizeParams(): void {
+    private clearResizeListeners(): void {
         while (this.resizeListeners.length) {
             const params = this.resizeListeners.pop()!;
             this.dragService.removeDragSource(params);
@@ -554,6 +572,7 @@ export class PositionableFeature extends BeanStub {
             this.dragService.removeDragSource(this.moveElementDragListener);
         }
 
-        this.clearResizeParams();
+        this.clearResizeListeners();
+        this.removeResizers();
     }
 }

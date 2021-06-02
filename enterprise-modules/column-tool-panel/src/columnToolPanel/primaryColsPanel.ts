@@ -25,6 +25,7 @@ export class PrimaryColsPanel extends ManagedFocusComponent implements IPrimaryC
     private allowDragging: boolean;
     private params: ToolPanelColumnCompParams;
     private eventType: ColumnEventType;
+    private positionableFeature: PositionableFeature;
 
     constructor() {
         super(PrimaryColsPanel.TEMPLATE, true);
@@ -57,9 +58,12 @@ export class PrimaryColsPanel extends ManagedFocusComponent implements IPrimaryC
         this.addManagedListener(this.primaryColsHeaderPanel, 'unselectAll', this.onUnselectAll.bind(this));
         this.addManagedListener(this.primaryColsHeaderPanel, 'filterChanged', this.onFilterChanged.bind(this));
 
-        const positionableFeature = new PositionableFeature(this.getGui(), { minHeight: 100 });
-        this.createManagedBean(positionableFeature);
-        positionableFeature.setResizable({ bottom: true });
+        this.positionableFeature = new PositionableFeature(this.getGui(), { minHeight: 100 });
+        this.createManagedBean(this.positionableFeature);
+    }
+
+    public toggleResizable(resizable: boolean) {
+        this.positionableFeature.setResizable(resizable ? { bottom: true } : false);
     }
 
     public onExpandAll(): void {

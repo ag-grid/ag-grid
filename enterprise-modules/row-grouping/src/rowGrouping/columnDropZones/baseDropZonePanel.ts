@@ -11,6 +11,7 @@ import {
     GridOptionsWrapper,
     HorizontalDirection,
     LoggerFactory,
+    PositionableFeature,
     VerticalDirection,
     _
 } from "@ag-grid-community/core";
@@ -59,12 +60,12 @@ export abstract class BaseDropZonePanel extends Component {
     // reuse it.
     private eColumnDropList: HTMLElement;
 
+    private positionableFeature: PositionableFeature;
+    private resizeEnabled: boolean = false;
+
     protected abstract isColumnDroppable(column: Column): boolean;
-
     protected abstract updateColumns(columns: Column[]): void;
-
     protected abstract getExistingColumns(): Column[];
-
     protected abstract getIconName(): string;
 
     constructor(private horizontal: boolean, private valueColumn: boolean) {
@@ -76,6 +77,11 @@ export abstract class BaseDropZonePanel extends Component {
 
     public isHorizontal(): boolean {
         return this.horizontal;
+    }
+
+    public toggleResizable(resizable: boolean) {
+        this.positionableFeature.setResizable(resizable ? { bottom: true } : false);
+        this.resizeEnabled = resizable;
     }
 
     public setBeans(beans: BaseDropZonePanelBeans): void {
@@ -99,10 +105,13 @@ export abstract class BaseDropZonePanel extends Component {
         this.params = params;
 
         this.addManagedListener(this.beans.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.refreshGui.bind(this));
-
         this.addManagedListener(this.beans.gridOptionsWrapper, 'functionsReadOnly', this.refreshGui.bind(this));
 
         this.setupDropTarget();
+
+        this.positionableFeature = new PositionableFeature(this.getGui(), { minHeight: 100 });
+        this.createManagedBean(this.positionableFeature);
+
         // we don't know if this bean will be initialised before columnModel.
         // if columnModel first, then below will work
         // if columnModel second, then below will put blank in, and then above event gets first when columnModel is set up
@@ -299,10 +308,10 @@ export abstract class BaseDropZonePanel extends Component {
 
         if (_.areEqual(newColumnList, this.getExistingColumns())) {
             return false;
-        } else {
-            this.updateColumns(newColumnList);
-            return true;
         }
+
+        this.updateColumns(newColumnList);
+        return true;
     }
 
     public refreshGui(): void {
@@ -313,7 +322,8 @@ export abstract class BaseDropZonePanel extends Component {
         // reordering the list - we want to prevent the resetting of the scroll.
         // this is relevant for vertical display only (as horizontal has no scroll)
         const scrollTop = this.eColumnDropList.scrollTop;
-
+        const resizeEnabled = this.resizeEnabled;
+        this.toggleResizable(false);
         this.destroyGui();
 
         this.addIconAndTitleToGui();
@@ -323,6 +333,11 @@ export abstract class BaseDropZonePanel extends Component {
         if (!this.isHorizontal()) {
             this.eColumnDropList.scrollTop = scrollTop;
         }
+
+        if (resizeEnabled) {
+            this.toggleResizable(resizeEnabled);
+        }
+
     }
 
     private getNonGhostColumns(): Column[] {
@@ -330,9 +345,8 @@ export abstract class BaseDropZonePanel extends Component {
 
         if (this.isPotentialDndColumns()) {
             return existingColumns.filter(column => !_.includes(this.potentialDndColumns, column));
-        } else {
-            return existingColumns;
         }
+        return existingColumns;
     }
 
     private addColumnsToGui(): void {

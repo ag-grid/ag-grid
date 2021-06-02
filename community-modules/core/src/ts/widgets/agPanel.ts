@@ -103,10 +103,8 @@ export class AgPanel extends Component {
             this.renderComponent();
         }
 
-        if (popup) {
-            this.positionableFeature.initialisePosition();
-            this.eContentWrapper.style.height = '0';
-        }
+        this.positionableFeature.initialisePosition();
+        this.eContentWrapper.style.height = '0';
     }
 
     protected renderComponent() {
