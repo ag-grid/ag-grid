@@ -84,6 +84,7 @@ export class PositionableFeature extends BeanStub {
     private isMoving = false;
     private resizable: ResizableStructure = {};
     private movable = false;
+    private currentResizer: { isTop: boolean, isRight: boolean, isBottom: boolean, isLeft: boolean } | null = null;
 
     @Autowired('popupService') protected readonly popupService: PopupService;
     @Autowired('dragService') private readonly dragService: DragService;
@@ -192,8 +193,8 @@ export class PositionableFeature extends BeanStub {
 
             const params: DragListenerParams = {
                 eElement: resizerEl!,
-                onDragStart: this.onResizeStart.bind(this),
-                onDragging: (e: MouseEvent) => this.onResize(e, side),
+                onDragStart: (e: MouseEvent) => this.onResizeStart(e, side),
+                onDragging: this.onResize.bind(this),
                 onDragStop: this.onResizeEnd.bind(this),
             };
 
@@ -425,22 +426,46 @@ export class PositionableFeature extends BeanStub {
         return this.resizerMap![side].element;
     }
 
-    private onResizeStart(e: MouseEvent) {
+    private onResizeStart(e: MouseEvent, side: ResizableSides) {
         if (!this.positioned) { this.initialisePosition(); }
+        this.currentResizer = {
+            isTop: !!side.match(/top/i),
+            isRight: !!side.match(/right/i),
+            isBottom: !!side.match(/bottom/i),
+            isLeft: !!side.match(/left/i),
+        }
+        if (!this.config.popup) {
+            if (this.currentResizer.isBottom || this.currentResizer.isRight) {
+                this.applySizeToSiblings(this.currentResizer.isBottom, true);
+            } else {
+                this.applySizeToSiblings(this.currentResizer.isTop, false);
+            }
+        }
 
         this.isResizing = true;
         this.updateDragStartPosition(e.clientX, e.clientY);
     }
 
-    private onResize(e: MouseEvent, side: ResizableSides) {
-        if (!this.isResizing) { return; }
+    private applySizeToSiblings(vertical: boolean, backwards: boolean) {
+        let el: HTMLElement = this.element;
+        while (el) {
+            if (el.offsetParent) {
+                if (vertical) {
+                    setFixedHeight(el, el.offsetHeight);
+                } else {
+                    setFixedWidth(el, el.offsetWidth);
+                }
+            }
+            el = (backwards ? el.previousElementSibling : el.nextElementSibling) as HTMLElement;
+        }
+    }
 
-        const isLeft = !!side.match(/left/i);
-        const isRight = !!side.match(/right/i);
-        const isTop = !!side.match(/top/i);
-        const isBottom = !!side.match(/bottom/i);
-        const isHorizontal = isLeft || isRight;
-        const isVertical = isTop || isBottom;
+    private onResize(e: MouseEvent) {
+        if (!this.isResizing || !this.currentResizer) { return; }
+
+        const { isTop, isRight, isBottom, isLeft } = this.currentResizer;
+        const isHorizontal = isRight || isLeft;
+        const isVertical = isBottom || isTop;
         const { movementX, movementY } = this.calculateMouseMovement({ e, isLeft, isTop });
 
         let offsetLeft = 0;
@@ -496,6 +521,7 @@ export class PositionableFeature extends BeanStub {
 
     private onResizeEnd() {
         this.isResizing = false;
+        this.currentResizer = null;
 
         const params = {
             type: 'resize',
