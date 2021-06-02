@@ -444,8 +444,8 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressTouch);
     }
 
-    public isApplyColumnDefOrder() {
-        return isTrue(this.gridOptions.applyColumnDefOrder);
+    public isMaintainColumnOrder() {
+        return isTrue(this.gridOptions.maintainColumnOrder);
     }
 
     public isSuppressRowTransform() {
@@ -1649,6 +1649,10 @@ export class GridOptionsWrapper {
         if (options.stopEditingWhenGridLosesFocus) {
             console.warn('AG Grid: since v25.2.2, the grid property `stopEditingWhenGridLosesFocus`.');
             options.stopEditingWhenCellsLoseFocus = true;
+        }
+
+        if (options.applyColumnDefOrder) {
+            console.warn('AG Grid: since v26.0, the grid property `applyColumnDefOrder` is no longer needed, as this is the default behaviour. To turn this behaviour off, set maintainColumnOrder=true');
         }
     }
 

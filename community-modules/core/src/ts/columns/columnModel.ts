@@ -263,7 +263,7 @@ export class ColumnModel extends BeanStub {
         this.ready = true;
 
         this.updateGridColumns();
-        if (colsPreviouslyExisted && this.gridColsArePrimary && this.gridOptionsWrapper.isApplyColumnDefOrder()) {
+        if (colsPreviouslyExisted && this.gridColsArePrimary && !this.gridOptionsWrapper.isMaintainColumnOrder()) {
             this.orderGridColumnsLikePrimary();
         }
         this.updateDisplayedColumns(source);

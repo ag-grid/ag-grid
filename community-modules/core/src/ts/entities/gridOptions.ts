@@ -111,7 +111,9 @@ export interface GridOptions {
     deltaRowDataMode?: boolean;
     /** @deprecated */
     deltaColumnMode?: boolean;
-    applyColumnDefOrder?: boolean;
+    /** @deprecated */
+    applyColumnDefOrder?: boolean; // is now the default, to turn off, set maintainColumnOrder
+    maintainColumnOrder?: boolean;
     immutableData?: boolean;
     /** @deprecated */
     immutableColumns?: boolean;

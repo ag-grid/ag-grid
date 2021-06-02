@@ -78,12 +78,12 @@
             "default": false,
             "description": "Allow reordering and pinning columns by dragging columns from the [Columns Tool Panel](/tool-panel-columns/) to the grid."
         },
-        "applyColumnDefOrder": {
+        "maintainColumnOrder": {
             "default": false,
-            "description": "Sorts the grid columns in the order that Column Definitions are provided when they are updated.",
+            "description": "Keeps the order of Columns maintained after new Column Definitions are updated.",
             "more": {
-                "name": "Apply Column Order",
-                "url": "/column-updating-definitions/#applying-column-order"
+                "name": "Maintain Column Order",
+                "url": "/column-updating-definitions/#maintain-column-order"
             }
         }
     },

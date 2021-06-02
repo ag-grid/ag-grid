@@ -443,6 +443,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public suppressClipboardApi: any = undefined;
     @Input() public suppressModelUpdateAfterUpdateTransaction: any = undefined;
     @Input() public stopEditingWhenCellsLoseFocus: any = undefined;
+    @Input() public maintainColumnOrder: any = undefined;
 
     @Output() public columnEverythingChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public newColumnsLoaded: EventEmitter<any> = new EventEmitter<any>();
