@@ -57,7 +57,8 @@ export class PrimaryColsPanel extends ManagedFocusComponent implements IPrimaryC
         this.addManagedListener(this.primaryColsHeaderPanel, 'unselectAll', this.onUnselectAll.bind(this));
         this.addManagedListener(this.primaryColsHeaderPanel, 'filterChanged', this.onFilterChanged.bind(this));
 
-        const positionableFeature = this.createManagedBean(new PositionableFeature(this.getGui()));
+        const positionableFeature = new PositionableFeature(this.getGui(), { minHeight: 100 });
+        this.createManagedBean(positionableFeature);
         positionableFeature.setResizable({ bottom: true });
     }
 

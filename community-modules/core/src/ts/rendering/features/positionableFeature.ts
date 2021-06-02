@@ -2,6 +2,7 @@ import { BeanStub } from "../../context/beanStub";
 import { Autowired } from "../../context/context";
 import { DragListenerParams, DragService } from "../../dragAndDrop/dragService";
 import { getAbsoluteHeight, getAbsoluteWidth, setFixedHeight, setFixedWidth } from "../../utils/dom";
+import { assign } from "../../utils/object";
 import { PopupService } from "../../widgets/popupService";
 
 const RESIZE_TEMPLATE = /* html */
@@ -87,7 +88,7 @@ export class PositionableFeature extends BeanStub {
 
     constructor(
         private readonly element: HTMLElement,
-        private readonly config: PositionableOptions = { popup: false }
+        private readonly config: PositionableOptions = assign({}, { popup: false }, config)
     ) {
         super();
     }
