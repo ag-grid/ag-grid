@@ -1,3 +1,8 @@
+export function AgGridReactNext(props: any) {
+    return <div></div>;
+}
+
+/*
 import {AgGridColumn} from "../agGridColumn";
 import {ComponentUtil, GridCoreCreator, Context, GridOptions} from "@ag-grid-community/core";
 import React, { useEffect, useRef, useState } from "react";
@@ -47,3 +52,4 @@ export function AgGridReactNext(props: any) {
         </>
     );
 }
+*/
