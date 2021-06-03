@@ -178,7 +178,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         ].forEach(panel => {
             if (!panel) { return; }
             const eGui = panel.getGui();
-            panel.toggleResizable(!_.containsClass(eGui, 'ag-hidden'));
+            panel.toggleResizable(!_.containsClass(eGui, 'ag-last-column-drop') && !_.containsClass(eGui, 'ag-hidden'));
         });
     }
 
