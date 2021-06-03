@@ -42,7 +42,14 @@ export class GridComp extends ManagedFocusComponent {
                 (addOrRemove: boolean) => this.addOrRemoveCssClass(FocusService.AG_KEYBOARD_FOCUS, addOrRemove),
             forceFocusOutOfContainer: this.forceFocusOutOfContainer.bind(this),
             updateLayoutClasses: this.updateLayoutClasses.bind(this),
-            getFocusableContainers: this.getFocusableContainers.bind(this)
+            getFocusableContainers: this.getFocusableContainers.bind(this),
+            setUserSelect: value => {
+                this.getGui().style.userSelect = value != null ? value : '';
+                this.getGui().style.webkitUserSelect = value != null ? value : '';
+            },
+            setCursor: value => {
+                this.getGui().style.cursor = value != null ? value : ''
+            }
         };
 
         this.ctrl = this.createManagedBean(new GridCtrl());
@@ -66,7 +73,7 @@ export class GridComp extends ManagedFocusComponent {
         });
     }
 
-    private updateLayoutClasses(params: UpdateLayoutClassesParams): void {
+    private updateLayoutClasses(cssClass: string, params: UpdateLayoutClassesParams): void {
         addOrRemoveCssClass(this.eRootWrapperBody, LayoutCssClasses.AUTO_HEIGHT, params.autoHeight);
         addOrRemoveCssClass(this.eRootWrapperBody, LayoutCssClasses.NORMAL, params.normal);
         addOrRemoveCssClass(this.eRootWrapperBody, LayoutCssClasses.PRINT, params.print);

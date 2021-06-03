@@ -21,7 +21,7 @@ export type HeaderContainerPosition = 'left' | 'right' | 'center';
 
 export class HeaderRootComp extends ManagedFocusComponent {
     private static TEMPLATE = /* html */
-        `<div class="ag-header" role="presentation">
+        `<div class="ag-header" role="presentation" unselectable="on">
             <div class="ag-pinned-left-header" ref="ePinnedLeftHeader" role="presentation"></div>
             <div class="ag-header-viewport" ref="eHeaderViewport" role="presentation">
                 <div class="ag-header-container" ref="eHeaderContainer" role="rowgroup"></div>

@@ -182,7 +182,6 @@ export class GridOptionsWrapper {
 
     // we store this locally, so we are not calling getScrollWidth() multiple times as it's an expensive operation
     private scrollbarWidth: number;
-    private updateLayoutClassesListener: any;
 
     private destroyed = false;
 
@@ -200,7 +199,6 @@ export class GridOptionsWrapper {
         // of the grid to be picked up by the garbage collector
         this.gridOptions.api = null;
         this.gridOptions.columnApi = null;
-        this.removeEventListener(GridOptionsWrapper.PROP_DOM_LAYOUT, this.updateLayoutClassesListener);
 
         this.destroyed = true;
     }

@@ -25,9 +25,9 @@ export interface VisibleChangedEvent extends AgEvent {
     visible: boolean;
 }
 
-export let elementGettingCreated: HTMLElement;
-
 export class Component extends BeanStub {
+
+    public static elementGettingCreated: any;
 
     public static EVENT_DISPLAYED_CHANGED = 'displayedChanged';
     private eGui: HTMLElement;
@@ -124,10 +124,13 @@ export class Component extends BeanStub {
                 return;
             }
 
-            const childComp = this.createComponentFromElement(childNode, comp => {
+            const childComp = this.createComponentFromElement(childNode, childComp => {
                 // copy over all attributes, including css classes, so any attributes user put on the tag
                 // wll be carried across
-                this.copyAttributesFromNode(childNode, comp.getGui());
+                const childGui = childComp.getGui()
+                if (childGui) {
+                    this.copyAttributesFromNode(childNode, childComp.getGui());
+                }
             }, paramsMap);
 
             if (childComp) {
@@ -157,7 +160,7 @@ export class Component extends BeanStub {
         const ComponentClass = this.agStackComponentsRegistry.getComponentClass(key);
 
         if (ComponentClass) {
-            elementGettingCreated = element;
+            Component.elementGettingCreated = element;
             const newComponent = new ComponentClass(componentParams) as Component;
             newComponent.setParentComponent(this);
 

@@ -27,9 +27,13 @@ const App = () => {
         <div style={{display: "flex"}}>
             <div className="ag-theme-alpine" style={{ height: 400, width: 600, margin: 10 }}>
                 <AgGridReactNext
+                    defaultColDef={{
+                        resizable: true,
+                        filter: true
+                    }}
                     onGridReady={onGridReady}
                     rowData={rowData}
-                    rowHeight={42}
+                    // rowHeight={42}
                     modules={[ClientSideRowModelModule]}>
                     <AgGridColumn field="make"></AgGridColumn>
                     <AgGridColumn field="model"></AgGridColumn>

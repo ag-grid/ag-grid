@@ -40,7 +40,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         super(OverlayWrapperComponent.TEMPLATE);
     }
 
-    public updateLayoutClasses(params: UpdateLayoutClassesParams): void {
+    public updateLayoutClasses(cssClass: string, params: UpdateLayoutClassesParams): void {
         addOrRemoveCssClass(this.eOverlayWrapper, LayoutCssClasses.AUTO_HEIGHT, params.autoHeight);
         addOrRemoveCssClass(this.eOverlayWrapper, LayoutCssClasses.NORMAL, params.normal);
         addOrRemoveCssClass(this.eOverlayWrapper, LayoutCssClasses.PRINT, params.print);

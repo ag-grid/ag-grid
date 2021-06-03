@@ -1,10 +1,10 @@
-import { Component, elementGettingCreated } from "../../widgets/component";
+import { Component } from "../../widgets/component";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { Autowired, PostConstruct } from "../../context/context";
 import {
     ContainerCssClasses,
     RowContainerCtrl,
-    RowContainerNames,
+    RowContainerName,
     IRowContainerComp,
     ViewportCssClasses,
     WrapperCssClasses
@@ -20,7 +20,7 @@ import { Constants } from "../../constants/constants";
 import { getAllValuesInObject } from "../../utils/object";
 
 function templateFactory(): string {
-    const name = elementGettingCreated.getAttribute('name') as RowContainerNames;
+    const name = Component.elementGettingCreated.getAttribute('name') as RowContainerName;
 
     const containerClass = ContainerCssClasses.get(name);
     const viewportClass = ViewportCssClasses.get(name);
@@ -29,20 +29,20 @@ function templateFactory(): string {
     let res: string;
 
     switch (name) {
-        case RowContainerNames.LEFT :
-        case RowContainerNames.RIGHT :
-        case RowContainerNames.FULL_WIDTH :
-        case RowContainerNames.TOP_LEFT :
-        case RowContainerNames.TOP_RIGHT :
-        case RowContainerNames.TOP_FULL_WITH :
-        case RowContainerNames.BOTTOM_LEFT :
-        case RowContainerNames.BOTTOM_RIGHT :
-        case RowContainerNames.BOTTOM_FULL_WITH :
+        case RowContainerName.LEFT :
+        case RowContainerName.RIGHT :
+        case RowContainerName.FULL_WIDTH :
+        case RowContainerName.TOP_LEFT :
+        case RowContainerName.TOP_RIGHT :
+        case RowContainerName.TOP_FULL_WITH :
+        case RowContainerName.BOTTOM_LEFT :
+        case RowContainerName.BOTTOM_RIGHT :
+        case RowContainerName.BOTTOM_FULL_WITH :
             res = /* html */
             `<div class="${containerClass}" ref="eContainer" role="presentation" unselectable="on"></div>`;
             break;
 
-        case RowContainerNames.CENTER :
+        case RowContainerName.CENTER :
             res =  /* html */
             `<div class="${wrapperClass}" ref="eWrapper" role="presentation" unselectable="on">
                 <div class="${viewportClass}" ref="eViewport" role="presentation">
@@ -51,8 +51,8 @@ function templateFactory(): string {
             </div>`;
             break;
 
-        case RowContainerNames.TOP_CENTER :
-        case RowContainerNames.BOTTOM_CENTER :
+        case RowContainerName.TOP_CENTER :
+        case RowContainerName.BOTTOM_CENTER :
             res = /* html */
             `<div class="${viewportClass}" ref="eViewport" role="presentation" unselectable="on">
                 <div class="${containerClass}" ref="eContainer" role="presentation" unselectable="on"></div>
@@ -73,7 +73,7 @@ export class RowContainerComp extends Component {
     @RefSelector('eContainer') private eContainer: HTMLElement;
     @RefSelector('eWrapper') private eWrapper: HTMLElement;
 
-    private readonly name: RowContainerNames;
+    private readonly name: RowContainerName;
 
     private renderedRows: {[id: string]: RowComp} = {};
     private embedFullWidthRows: boolean;
@@ -85,7 +85,7 @@ export class RowContainerComp extends Component {
 
     constructor() {
         super(templateFactory());
-        this.name = elementGettingCreated.getAttribute('name')! as RowContainerNames;
+        this.name = Component.elementGettingCreated.getAttribute('name') as RowContainerName;
     }
 
     @PostConstruct
@@ -106,7 +106,7 @@ export class RowContainerComp extends Component {
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_ROWS_CHANGED, this.onDisplayedRowsChanged.bind(this));
     }
 
-    private forContainers(names: RowContainerNames[], callback: (() => void)): void {
+    private forContainers(names: RowContainerName[], callback: (() => void)): void {
         if (names.indexOf(this.name) >= 0) {
             callback();
         }
@@ -116,7 +116,7 @@ export class RowContainerComp extends Component {
     // scroll the column into view. we do not want this, the pinned sections should never scroll.
     // so we listen to scrolls on these containers and reset the scroll if we find one.
     private stopHScrollOnPinnedRows(): void {
-        this.forContainers([RowContainerNames.TOP_CENTER, RowContainerNames.BOTTOM_CENTER], () => {
+        this.forContainers([RowContainerName.TOP_CENTER, RowContainerName.BOTTOM_CENTER], () => {
             const resetScrollLeft = () => this.eViewport.scrollLeft = 0;
             this.addManagedListener(this.eViewport, 'scroll', resetScrollLeft);
         });
@@ -159,9 +159,9 @@ export class RowContainerComp extends Component {
 
     private onDisplayedRowsChanged(): void {
         const fullWithContainer =
-            this.name === RowContainerNames.TOP_FULL_WITH
-            || this.name === RowContainerNames.BOTTOM_FULL_WITH
-            || this.name === RowContainerNames.FULL_WIDTH;
+            this.name === RowContainerName.TOP_FULL_WITH
+            || this.name === RowContainerName.BOTTOM_FULL_WITH
+            || this.name === RowContainerName.FULL_WIDTH;
 
         const oldRows = {...this.renderedRows};
         this.renderedRows = {};
@@ -205,16 +205,16 @@ export class RowContainerComp extends Component {
 
     private getRowCons(): RowCtrl[] {
         switch (this.name) {
-            case RowContainerNames.TOP_CENTER:
-            case RowContainerNames.TOP_LEFT:
-            case RowContainerNames.TOP_RIGHT:
-            case RowContainerNames.TOP_FULL_WITH:
+            case RowContainerName.TOP_CENTER:
+            case RowContainerName.TOP_LEFT:
+            case RowContainerName.TOP_RIGHT:
+            case RowContainerName.TOP_FULL_WITH:
                 return this.rowRenderer.getTopRowCons();
 
-            case RowContainerNames.BOTTOM_CENTER:
-            case RowContainerNames.BOTTOM_LEFT:
-            case RowContainerNames.BOTTOM_RIGHT:
-            case RowContainerNames.BOTTOM_FULL_WITH:
+            case RowContainerName.BOTTOM_CENTER:
+            case RowContainerName.BOTTOM_LEFT:
+            case RowContainerName.BOTTOM_RIGHT:
+            case RowContainerName.BOTTOM_FULL_WITH:
                 return this.rowRenderer.getBottomRowCons();
 
             default:
@@ -225,14 +225,14 @@ export class RowContainerComp extends Component {
     private newRowComp(rowCon: RowCtrl): RowComp {
         let pinned: string | null;
         switch (this.name) {
-            case RowContainerNames.BOTTOM_LEFT:
-            case RowContainerNames.TOP_LEFT:
-            case RowContainerNames.LEFT:
+            case RowContainerName.BOTTOM_LEFT:
+            case RowContainerName.TOP_LEFT:
+            case RowContainerName.LEFT:
                 pinned = Constants.PINNED_LEFT;
                 break;
-            case RowContainerNames.BOTTOM_RIGHT:
-            case RowContainerNames.TOP_RIGHT:
-            case RowContainerNames.RIGHT:
+            case RowContainerName.BOTTOM_RIGHT:
+            case RowContainerName.TOP_RIGHT:
+            case RowContainerName.RIGHT:
                 pinned = Constants.PINNED_RIGHT;
                 break;
             default:

@@ -31,17 +31,17 @@ export const CSS_CLASS_FORCE_VERTICAL_SCROLL = 'ag-force-vertical-scroll';
 export const CSS_CLASS_COLUMN_MOVING = 'ag-column-moving';
 
 export interface IGridBodyComp extends LayoutView {
-    setColumnMovingCss(selectable: boolean): void;
-    setCellSelectableCss(selectable: boolean): void;
+    setColumnMovingCss(cssClass: string | null, on: boolean): void;
+    setCellSelectableCss(cssClass: string | null, on: boolean): void;
     setTopHeight(height: number): void;
     setTopDisplay(display: string): void;
     setBottomHeight(height: number): void;
     setBottomDisplay(display: string): void;
     setColumnCount(count: number): void;
     setRowCount(count: number): void;
-    setRowAnimationCssOnBodyViewport(animate: boolean): void;
-    setAlwaysVerticalScrollClass(on: boolean): void;
-    setVerticalScrollPaddingVisible(visible: boolean): void;
+    setRowAnimationCssOnBodyViewport(cssClass: string, animate: boolean): void;
+    setAlwaysVerticalScrollClass(cssClass: string | null, on: boolean): void;
+    setPinnedTopBottomOverflowY(overflow: string): void;
     registerBodyViewportResizeListener(listener: (() => void)): void;
 }
 
@@ -111,16 +111,17 @@ export class GridBodyCtrl extends BeanStub {
 
     // used by ColumnAnimationService
     public setColumnMovingCss(moving: boolean): void {
-        this.view.setColumnMovingCss(moving);
+        this.view.setColumnMovingCss(moving ? CSS_CLASS_COLUMN_MOVING : null, moving);
     }
 
     public setCellTextSelection(selectable: boolean = false): void {
-        this.view.setCellSelectableCss(selectable);
+        const cssClass = selectable ? CSS_CLASS_CELL_SELECTABLE : null;
+        this.view.setCellSelectableCss(cssClass, selectable);
     }
 
     private onScrollVisibilityChanged(): void {
-        const show = this.scrollVisibleService.isVerticalScrollShowing();
-        this.view.setVerticalScrollPaddingVisible(show);
+        const visible = this.scrollVisibleService.isVerticalScrollShowing();
+        this.setVerticalScrollPaddingVisible(visible);
     }
 
     private onGridColumnsChanged(): void {
@@ -197,13 +198,15 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     public setVerticalScrollPaddingVisible(visible: boolean): void {
-        this.view.setVerticalScrollPaddingVisible(visible);
+        const overflowY = visible ? 'scroll' : 'hidden'
+        this.view.setPinnedTopBottomOverflowY(overflowY);
     }
 
     public isVerticalScrollShowing(): boolean {
-        const isAlwaysShowVerticalScroll = this.gridOptionsWrapper.isAlwaysShowVerticalScroll();
-        this.view.setAlwaysVerticalScrollClass(isAlwaysShowVerticalScroll);
-        return isAlwaysShowVerticalScroll || isVerticalScrollShowing(this.eBodyViewport);
+        const show = this.gridOptionsWrapper.isAlwaysShowVerticalScroll();
+        const cssClass = show ? CSS_CLASS_FORCE_VERTICAL_SCROLL : null;
+        this.view.setAlwaysVerticalScrollClass(cssClass, show);
+        return show || isVerticalScrollShowing(this.eBodyViewport);
     }
 
     private setupRowAnimationCssClass(): void {
@@ -211,7 +214,8 @@ export class GridBodyCtrl extends BeanStub {
             // we don't want to use row animation if scaling, as rows jump strangely as you scroll,
             // when scaling and doing row animation.
             const animateRows = this.gridOptionsWrapper.isAnimateRows() && !this.rowContainerHeightService.isStretching();
-            this.view.setRowAnimationCssOnBodyViewport(animateRows);
+            const animateRowsCssClass = animateRows ? RowAnimationCssClasses.ANIMATION_ON : RowAnimationCssClasses.ANIMATION_OFF;
+            this.view.setRowAnimationCssOnBodyViewport(animateRowsCssClass, animateRows);
         };
 
         listener();

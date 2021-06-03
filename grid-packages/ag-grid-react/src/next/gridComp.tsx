@@ -1,11 +1,21 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Context, FocusService, GridBodyComp, GridCtrl, IGridComp, LayoutCssClasses } from "ag-grid-community";
+import {
+    Autowired,
+    Context,
+    FocusService,
+    GridBodyComp,
+    GridCtrl,
+    IGridComp,
+    LayoutCssClasses
+} from "ag-grid-community";
+import { AgStackComponentsRegistry } from "ag-grid-community/dist/cjs/components/agStackComponentsRegistry";
 
 export function GridComp(params: {context: Context}) {
 
     const [rtlClass, setRtlClass] = useState<string>('');
     const [keyboardFocusClass, setKeyboardFocusClass] = useState<string>('');
     const [layoutClass, setLayoutClass] = useState<string>('');
+    // const [ctrl, setCtrl] = useState<GridCtrl>();
 
     const eRootWrapper = useRef<HTMLDivElement>(null);
     const eGridBodyParent = useRef<HTMLDivElement>(null);
@@ -15,7 +25,7 @@ export function GridComp(params: {context: Context}) {
     useEffect( ()=> {
         const ctrl = context.createBean(new GridCtrl());
 
-        const view: IGridComp = {
+        const compProxy: IGridComp = {
             destroyGridUi:
                 ()=> {}, // do nothing, as framework users destroy grid by removing the comp
             setRtlClass:
@@ -29,13 +39,15 @@ export function GridComp(params: {context: Context}) {
             getFocusableContainers: ()=>[],//this.getFocusableContainers.bind(this)
         };
 
-        ctrl.setComp(view, eRootWrapper.current!, eRootWrapper.current!);
+        ctrl.setComp(compProxy, eRootWrapper.current!, eRootWrapper.current!);
+        // setCtrl(ctrl);
+
+        const agStackComponentsRegistry: AgStackComponentsRegistry = context.getBean('agStackComponentsRegistry');
+        // agStackComponentsRegistry.getComponentClass();
 
         const headerRootComp = new GridBodyComp();
         context.createBean(headerRootComp);
-
-        const eGui = headerRootComp.getGui();
-        eGridBodyParent.current!.appendChild(eGui);
+        eGridBodyParent.current!.appendChild(headerRootComp.getGui());
 
         return ()=> {
             context.destroyBean(ctrl);
@@ -53,3 +65,26 @@ export function GridComp(params: {context: Context}) {
         </div>
     );
 }
+
+
+/*
+private createTemplate(): string {
+    const dropZones = this.ctrl.showDropZones() ? '<ag-grid-header-drop-zones></ag-grid-header-drop-zones>' : '';
+    const sideBar = this.ctrl.showSideBar() ? '<ag-side-bar ref="sideBar"></ag-side-bar>' : '';
+    const statusBar = this.ctrl.showStatusBar() ? '<ag-status-bar ref="statusBar"></ag-status-bar>' : '';
+    const watermark = this.ctrl.showWatermark() ? '<ag-watermark></ag-watermark>' : '';
+
+    const template = /!* html *!/
+        `<div ref="eRootWrapper" class="ag-root-wrapper">
+                ${dropZones}
+                <div class="ag-root-wrapper-body" ref="rootWrapperBody">
+                    <ag-grid-body ref="gridBody"></ag-grid-body>
+                    ${sideBar}
+                </div>
+                ${statusBar}
+                <ag-pagination></ag-pagination>
+                ${watermark}
+            </div>`;
+
+    return template;
+}*/

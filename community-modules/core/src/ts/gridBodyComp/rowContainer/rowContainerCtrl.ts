@@ -16,7 +16,7 @@ import { SetHeightFeature } from "./setHeightFeature";
 import { DragListenerFeature } from "./dragListenerFeature";
 import { CenterWidthFeature } from "../centerWidthFeature";
 
-export enum RowContainerNames {
+export enum RowContainerName {
     LEFT = 'left',
     RIGHT = 'right',
     CENTER = 'center',
@@ -33,31 +33,31 @@ export enum RowContainerNames {
     BOTTOM_FULL_WITH = 'bottomFullWidth'
 }
 
-export const ContainerCssClasses: Map<RowContainerNames, string> = convertToMap([
-    [RowContainerNames.CENTER, 'ag-center-cols-container'],
-    [RowContainerNames.LEFT, 'ag-pinned-left-cols-container'],
-    [RowContainerNames.RIGHT, 'ag-pinned-right-cols-container'],
-    [RowContainerNames.FULL_WIDTH, 'ag-full-width-container'],
+export const ContainerCssClasses: Map<RowContainerName, string> = convertToMap([
+    [RowContainerName.CENTER, 'ag-center-cols-container'],
+    [RowContainerName.LEFT, 'ag-pinned-left-cols-container'],
+    [RowContainerName.RIGHT, 'ag-pinned-right-cols-container'],
+    [RowContainerName.FULL_WIDTH, 'ag-full-width-container'],
 
-    [RowContainerNames.TOP_CENTER, 'ag-floating-top-container'],
-    [RowContainerNames.TOP_LEFT, 'ag-pinned-left-floating-top'],
-    [RowContainerNames.TOP_RIGHT, 'ag-pinned-right-floating-top'],
-    [RowContainerNames.TOP_FULL_WITH, 'ag-floating-top-full-width-container'],
+    [RowContainerName.TOP_CENTER, 'ag-floating-top-container'],
+    [RowContainerName.TOP_LEFT, 'ag-pinned-left-floating-top'],
+    [RowContainerName.TOP_RIGHT, 'ag-pinned-right-floating-top'],
+    [RowContainerName.TOP_FULL_WITH, 'ag-floating-top-full-width-container'],
 
-    [RowContainerNames.BOTTOM_CENTER, 'ag-floating-bottom-container'],
-    [RowContainerNames.BOTTOM_LEFT, 'ag-pinned-left-floating-bottom'],
-    [RowContainerNames.BOTTOM_RIGHT, 'ag-pinned-right-floating-bottom'],
-    [RowContainerNames.BOTTOM_FULL_WITH, 'ag-floating-bottom-full-width-container'],
+    [RowContainerName.BOTTOM_CENTER, 'ag-floating-bottom-container'],
+    [RowContainerName.BOTTOM_LEFT, 'ag-pinned-left-floating-bottom'],
+    [RowContainerName.BOTTOM_RIGHT, 'ag-pinned-right-floating-bottom'],
+    [RowContainerName.BOTTOM_FULL_WITH, 'ag-floating-bottom-full-width-container'],
 ]);
 
-export const ViewportCssClasses: Map<RowContainerNames, string> = convertToMap([
-    [RowContainerNames.CENTER, 'ag-center-cols-viewport'],
-    [RowContainerNames.TOP_CENTER, 'ag-floating-top-viewport'],
-    [RowContainerNames.BOTTOM_CENTER, 'ag-floating-bottom-viewport'],
+export const ViewportCssClasses: Map<RowContainerName, string> = convertToMap([
+    [RowContainerName.CENTER, 'ag-center-cols-viewport'],
+    [RowContainerName.TOP_CENTER, 'ag-floating-top-viewport'],
+    [RowContainerName.BOTTOM_CENTER, 'ag-floating-bottom-viewport'],
 ]);
 
-export const WrapperCssClasses: Map<RowContainerNames, string> = convertToMap([
-    [RowContainerNames.CENTER, 'ag-center-cols-clipper'],
+export const WrapperCssClasses: Map<RowContainerName, string> = convertToMap([
+    [RowContainerName.CENTER, 'ag-center-cols-clipper'],
 ]);
 
 export interface IRowContainerComp {
@@ -73,7 +73,7 @@ export class RowContainerCtrl extends BeanStub {
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
 
     private comp: IRowContainerComp;
-    private name: RowContainerNames;
+    private name: RowContainerName;
     private eContainer: HTMLElement;
     private eViewport: HTMLElement;
     private eWrapper: HTMLElement;
@@ -81,7 +81,7 @@ export class RowContainerCtrl extends BeanStub {
 
     private viewportSizeFeature: ViewportSizeFeature; // only center has this
 
-    constructor(name: RowContainerNames) {
+    constructor(name: RowContainerName) {
         super();
         this.name = name;
     }
@@ -92,7 +92,7 @@ export class RowContainerCtrl extends BeanStub {
 
         this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
 
-        this.forContainers([RowContainerNames.CENTER],
+        this.forContainers([RowContainerName.CENTER],
             () => this.viewportSizeFeature = this.createManagedBean(new ViewportSizeFeature(this)))
 
         this.registerWithControllersService();
@@ -103,19 +103,19 @@ export class RowContainerCtrl extends BeanStub {
 
     private registerWithControllersService(): void {
         switch (this.name) {
-            case RowContainerNames.CENTER: this.controllersService.registerCenterRowContainerCon(this); break;
-            case RowContainerNames.LEFT: this.controllersService.registerLeftRowContainerCon(this); break;
-            case RowContainerNames.RIGHT: this.controllersService.registerRightRowContainerCon(this); break;
-            case RowContainerNames.TOP_CENTER: this.controllersService.registerTopCenterRowContainerCon(this); break;
-            case RowContainerNames.TOP_LEFT: this.controllersService.registerTopLeftRowContainerCon(this); break;
-            case RowContainerNames.TOP_RIGHT: this.controllersService.registerTopRightRowContainerCon(this); break;
-            case RowContainerNames.BOTTOM_CENTER: this.controllersService.registerBottomCenterRowContainerCon(this); break;
-            case RowContainerNames.BOTTOM_LEFT: this.controllersService.registerBottomLeftRowContainerCon(this); break;
-            case RowContainerNames.BOTTOM_RIGHT: this.controllersService.registerBottomRightRowContainerCon(this); break;
+            case RowContainerName.CENTER: this.controllersService.registerCenterRowContainerCon(this); break;
+            case RowContainerName.LEFT: this.controllersService.registerLeftRowContainerCon(this); break;
+            case RowContainerName.RIGHT: this.controllersService.registerRightRowContainerCon(this); break;
+            case RowContainerName.TOP_CENTER: this.controllersService.registerTopCenterRowContainerCon(this); break;
+            case RowContainerName.TOP_LEFT: this.controllersService.registerTopLeftRowContainerCon(this); break;
+            case RowContainerName.TOP_RIGHT: this.controllersService.registerTopRightRowContainerCon(this); break;
+            case RowContainerName.BOTTOM_CENTER: this.controllersService.registerBottomCenterRowContainerCon(this); break;
+            case RowContainerName.BOTTOM_LEFT: this.controllersService.registerBottomLeftRowContainerCon(this); break;
+            case RowContainerName.BOTTOM_RIGHT: this.controllersService.registerBottomRightRowContainerCon(this); break;
         }
     }
 
-    private forContainers(names: RowContainerNames[], callback: (() => void)): void {
+    private forContainers(names: RowContainerName[], callback: (() => void)): void {
         if (names.indexOf(this.name) >= 0) {
             callback();
         }
@@ -138,16 +138,16 @@ export class RowContainerCtrl extends BeanStub {
         this.createManagedBean(new RowContainerEventsFeature(this.eContainer));
         this.addPreventScrollWhileDragging();
 
-        const allTopNoFW = [RowContainerNames.TOP_CENTER, RowContainerNames.TOP_LEFT, RowContainerNames.TOP_RIGHT];
-        const allBottomNoFW = [RowContainerNames.BOTTOM_CENTER, RowContainerNames.BOTTOM_LEFT, RowContainerNames.BOTTOM_RIGHT];
-        const allMiddleNoFW = [RowContainerNames.CENTER, RowContainerNames.LEFT, RowContainerNames.RIGHT];
+        const allTopNoFW = [RowContainerName.TOP_CENTER, RowContainerName.TOP_LEFT, RowContainerName.TOP_RIGHT];
+        const allBottomNoFW = [RowContainerName.BOTTOM_CENTER, RowContainerName.BOTTOM_LEFT, RowContainerName.BOTTOM_RIGHT];
+        const allMiddleNoFW = [RowContainerName.CENTER, RowContainerName.LEFT, RowContainerName.RIGHT];
         const allNoFW = [...allTopNoFW, ...allBottomNoFW, ...allMiddleNoFW];
 
-        const allMiddle = [RowContainerNames.CENTER, RowContainerNames.LEFT, RowContainerNames.RIGHT, RowContainerNames.FULL_WIDTH];
+        const allMiddle = [RowContainerName.CENTER, RowContainerName.LEFT, RowContainerName.RIGHT, RowContainerName.FULL_WIDTH];
 
-        const allCenter = [RowContainerNames.CENTER, RowContainerNames.TOP_CENTER, RowContainerNames.BOTTOM_CENTER];
-        const allLeft = [RowContainerNames.LEFT, RowContainerNames.BOTTOM_LEFT, RowContainerNames.TOP_LEFT];
-        const allRight = [RowContainerNames.RIGHT, RowContainerNames.BOTTOM_RIGHT, RowContainerNames.TOP_RIGHT];
+        const allCenter = [RowContainerName.CENTER, RowContainerName.TOP_CENTER, RowContainerName.BOTTOM_CENTER];
+        const allLeft = [RowContainerName.LEFT, RowContainerName.BOTTOM_LEFT, RowContainerName.TOP_LEFT];
+        const allRight = [RowContainerName.RIGHT, RowContainerName.BOTTOM_RIGHT, RowContainerName.TOP_RIGHT];
 
         this.forContainers(allLeft, () => this.createManagedBean(new SetPinnedLeftWidthFeature(this.eContainer)));
         this.forContainers(allRight, () => this.createManagedBean(new SetPinnedRightWidthFeature(this.eContainer)));
@@ -160,15 +160,15 @@ export class RowContainerCtrl extends BeanStub {
     }
 
     public onDisplayedColumnsChanged(): void {
-        this.forContainers([RowContainerNames.CENTER], () => this.onHorizontalViewportChanged())
+        this.forContainers([RowContainerName.CENTER], () => this.onHorizontalViewportChanged())
     }
 
     private onDisplayedColumnsWidthChanged(): void {
-        this.forContainers([RowContainerNames.CENTER], () => this.onHorizontalViewportChanged())
+        this.forContainers([RowContainerName.CENTER], () => this.onHorizontalViewportChanged())
     }
 
     private onScrollVisibilityChanged(): void {
-        if (this.name !== RowContainerNames.CENTER) { return; }
+        if (this.name !== RowContainerName.CENTER) { return; }
 
         const visible = this.scrollVisibleService.isHorizontalScrollShowing();
         const scrollbarWidth = visible ? (this.gridOptionsWrapper.getScrollbarWidth() || 0) : 0;

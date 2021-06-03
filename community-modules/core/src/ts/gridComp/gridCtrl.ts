@@ -25,6 +25,8 @@ export interface IGridComp extends LayoutView {
     forceFocusOutOfContainer(up: boolean): void;
     addOrRemoveKeyboardFocusClass(value: boolean): void;
     getFocusableContainers(): HTMLElement[];
+    setCursor(value: string | null): void;
+    setUserSelect(value: string | null): void;
 }
 
 export class GridCtrl extends BeanStub {
@@ -131,6 +133,14 @@ export class GridCtrl extends BeanStub {
 
     public getGui(): HTMLElement {
         return this.eGui;
+    }
+
+    public setResizeCursor(on: boolean): void {
+        this.view.setCursor(on ? 'ew-resize' : null);
+    }
+
+    public disableUserSelect(on: boolean): void {
+        this.view.setUserSelect(on ? 'none' : null);
     }
 
     public focusNextInnerContainer(backwards: boolean): boolean {

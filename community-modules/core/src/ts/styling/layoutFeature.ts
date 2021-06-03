@@ -4,7 +4,7 @@ import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { BeanStub } from "../context/beanStub";
 
 export interface LayoutView {
-    updateLayoutClasses(params: UpdateLayoutClassesParams): void;
+    updateLayoutClasses(layoutClass: string, params: UpdateLayoutClassesParams): void;
 }
 
 export enum LayoutCssClasses {
@@ -38,12 +38,14 @@ export class LayoutFeature extends BeanStub {
 
     private updateLayoutClasses(): void {
         const domLayout = this.gridOptionsWrapper.getDomLayout();
-
-        this.view.updateLayoutClasses({
+        const params = {
             autoHeight: domLayout === Constants.DOM_LAYOUT_AUTO_HEIGHT,
             normal: domLayout === Constants.DOM_LAYOUT_NORMAL,
             print: domLayout === Constants.DOM_LAYOUT_PRINT
-        })
+        };
+        const cssClass = params.autoHeight ? LayoutCssClasses.AUTO_HEIGHT :
+                            params.print ? LayoutCssClasses.PRINT : LayoutCssClasses.NORMAL;
+        this.view.updateLayoutClasses(cssClass, params);
     }
 
 }

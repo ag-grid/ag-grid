@@ -22,6 +22,7 @@ export { TestHeadless } from "./headless/testHeadless";
 
 // components
 export { ComponentUtil } from "./components/componentUtil";
+export { AgStackComponentsRegistry } from "./components/agStackComponentsRegistry";
 
 export { ColDefUtil } from "./components/colDefUtil";
 export { UserComponentRegistry } from "./components/framework/userComponentRegistry";
@@ -122,9 +123,13 @@ export { FloatingFilterMapper } from './filter/floating/floatingFilterMapper';
 
 // gridPanel
 export { GridBodyComp } from "./gridBodyComp/gridBodyComp";
-export { GridBodyCtrl } from "./gridBodyComp/gridBodyCtrl";
+export { GridBodyCtrl, IGridBodyComp, RowAnimationCssClasses } from "./gridBodyComp/gridBodyCtrl";
 export { ScrollVisibleService } from "./gridBodyComp/scrollVisibleService";
 export { MouseEventService } from "./gridBodyComp/mouseEventService";
+
+// rowContainer
+export { RowContainerComp } from "./gridBodyComp/rowContainer/rowContainerComp";
+export { RowContainerName, IRowContainerComp, RowContainerCtrl } from "./gridBodyComp/rowContainer/rowContainerCtrl";
 
 // headerRendering
 export { BodyDropPivotTarget } from "./headerRendering/bodyDropPivotTarget";

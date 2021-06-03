@@ -1,11 +1,21 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Context, FocusService, GridBodyComp, GridCtrl, IGridComp, LayoutCssClasses } from "@ag-grid-community/core";
+import {
+    Context,
+    FocusService,
+    GridCtrl,
+    IGridComp,
+    AgStackComponentsRegistry
+} from "@ag-grid-community/core";
+import { GridBodyComp } from "./gridBodyComp";
+import { classesList } from "./utils";
 
 export function GridComp(params: {context: Context}) {
 
     const [rtlClass, setRtlClass] = useState<string>('');
     const [keyboardFocusClass, setKeyboardFocusClass] = useState<string>('');
     const [layoutClass, setLayoutClass] = useState<string>('');
+    const [cursor, setCursor] = useState<string | null>(null);
+    const [userSelect, setUserSelect] = useState<string | null>(null);
 
     const eRootWrapper = useRef<HTMLDivElement>(null);
     const eGridBodyParent = useRef<HTMLDivElement>(null);
@@ -13,42 +23,49 @@ export function GridComp(params: {context: Context}) {
     const {context} = params;
 
     useEffect( ()=> {
-        const ctrl = context.createBean(new GridCtrl());
+        const beansToDestroy: any[] = [];
 
-        const view: IGridComp = {
+        const ctrl = context.createBean(new GridCtrl());
+        beansToDestroy.push(ctrl);
+
+        const compProxy: IGridComp = {
             destroyGridUi:
                 ()=> {}, // do nothing, as framework users destroy grid by removing the comp
-            setRtlClass:
-                (cssClass: string) => setRtlClass(cssClass),
+            setRtlClass: setRtlClass,
             addOrRemoveKeyboardFocusClass:
                 (addOrRemove: boolean) => setKeyboardFocusClass(addOrRemove ? FocusService.AG_KEYBOARD_FOCUS : ''),
-            forceFocusOutOfContainer: ()=>{},//this.forceFocusOutOfContainer.bind(this),
-            updateLayoutClasses: params =>
-                setLayoutClass(params.normal ? LayoutCssClasses.NORMAL :
-                        params.autoHeight ? LayoutCssClasses.AUTO_HEIGHT : LayoutCssClasses.PRINT),
+            forceFocusOutOfContainer: ()=> {},//this.forceFocusOutOfContainer.bind(this),
+            updateLayoutClasses: setLayoutClass,
             getFocusableContainers: ()=>[],//this.getFocusableContainers.bind(this)
+            setCursor: setCursor,
+            setUserSelect: setUserSelect
         };
 
-        ctrl.setComp(view, eRootWrapper.current!, eRootWrapper.current!);
+        ctrl.setComp(compProxy, eRootWrapper.current!, eRootWrapper.current!);
 
-        const headerRootComp = new GridBodyComp();
-        context.createBean(headerRootComp);
+        // should be shared
+        const insertFirstPosition = (parent: HTMLElement, child: HTMLElement) => parent.insertBefore(child, parent.firstChild);
 
-        const eGui = headerRootComp.getGui();
-        eGridBodyParent.current!.appendChild(eGui);
+        const agStackComponentsRegistry: AgStackComponentsRegistry = context.getBean('agStackComponentsRegistry');
+        const HeaderDropZonesClass = agStackComponentsRegistry.getComponentClass('AG-GRID-HEADER-DROP-ZONES');
+        if (ctrl.showDropZones() && HeaderDropZonesClass) {
+            const headerDropZonesComp = context.createBean(new HeaderDropZonesClass());
+            insertFirstPosition(eRootWrapper.current!, headerDropZonesComp.getGui());
+            beansToDestroy.push(headerDropZonesComp);
+        }
 
         return ()=> {
-            context.destroyBean(ctrl);
-            context.destroyBean(headerRootComp);
+            beansToDestroy.forEach( b => context.destroyBean(b) );
         };
     }, []);
 
-    const rootWrapperClasses = ['ag-root-wrapper', rtlClass, keyboardFocusClass, layoutClass].join(' ');
-    const rootWrapperBodyClasses = ['ag-root-wrapper-body', layoutClass].join(' ');
+    const rootWrapperClasses = classesList('ag-root-wrapper', rtlClass, keyboardFocusClass, layoutClass);
+    const rootWrapperBodyClasses = classesList('ag-root-wrapper-body', layoutClass);
 
     return (
         <div ref={eRootWrapper} className={rootWrapperClasses}>
             <div className={rootWrapperBodyClasses} ref={eGridBodyParent}>
+                <GridBodyComp context={context}/>
             </div>
         </div>
     );

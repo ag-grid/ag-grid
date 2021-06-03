@@ -172,10 +172,14 @@ export class GridCoreCreator {
 
         uiCallback(context);
 
-        this.setColumnsAndData(context);
-        this.dispatchGridReadyEvent(context, gridOptions);
-        const isEnterprise = ModuleRegistry.isRegistered(ModuleNames.EnterpriseCoreModule);
-        logger.log(`initialised successfully, enterprise = ${isEnterprise}`);
+        // we wait until the UI has finished initialising before setting in columns and rows
+        const controllersService: ControllersService = context.getBean('controllersService');
+        controllersService.whenReady( ()=> {
+            this.setColumnsAndData(context);
+            this.dispatchGridReadyEvent(context, gridOptions);
+            const isEnterprise = ModuleRegistry.isRegistered(ModuleNames.EnterpriseCoreModule);
+            logger.log(`initialised successfully, enterprise = ${isEnterprise}`);
+        });
     }
 
     private registerStackComponents(context: Context, registeredModules: Module[]): void {
