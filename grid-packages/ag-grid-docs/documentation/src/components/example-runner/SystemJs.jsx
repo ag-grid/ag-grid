@@ -122,7 +122,7 @@ const publishedConfiguration = {
         "ag-grid-enterprise": `https://unpkg.com/ag-grid-enterprise@${agGridVersion}/`,
         "ag-grid-angular": `https://unpkg.com/ag-grid-angular@${agGridVersion}/`,
         "ag-grid-react": `https://unpkg.com/ag-grid-react@${agGridVersion}/`,
-        "ag-grid-vue": `https://unpkg.com/ag-grid-vue@${agGridVersion}/`
+        "ag-grid-vue": `https://unpkg.com/ag-grid-vue@${agGridVersion}/`,
         "ag-grid-vue3": `https://unpkg.com/ag-grid-vue3@${agGridVersion}/`
     },
     gridCommunityPaths: {
