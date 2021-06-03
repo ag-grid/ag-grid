@@ -33,7 +33,7 @@ const App = () => {
                     }}
                     onGridReady={onGridReady}
                     rowData={rowData}
-                    // rowHeight={42}
+                    rowHeight={42}
                     modules={[ClientSideRowModelModule]}>
                     <AgGridColumn field="make"></AgGridColumn>
                     <AgGridColumn field="model"></AgGridColumn>

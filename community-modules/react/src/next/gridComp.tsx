@@ -62,8 +62,14 @@ export function GridComp(params: {context: Context}) {
     const rootWrapperClasses = classesList('ag-root-wrapper', rtlClass, keyboardFocusClass, layoutClass);
     const rootWrapperBodyClasses = classesList('ag-root-wrapper-body', layoutClass);
 
+    const topStyle = {
+        userSelect: userSelect!=null ? userSelect : '',
+        webkitUserSelect: userSelect!=null ? userSelect : '',
+        cursor: cursor!=null ? cursor : ''
+    };
+
     return (
-        <div ref={eRootWrapper} className={rootWrapperClasses}>
+        <div ref={eRootWrapper} className={rootWrapperClasses} style={topStyle}>
             <div className={rootWrapperBodyClasses} ref={eGridBodyParent}>
                 <GridBodyComp context={context}/>
             </div>
