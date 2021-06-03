@@ -451,11 +451,13 @@ export class PositionableFeature extends BeanStub {
         const element = this.element;
         const parent = element.parentElement;
         if (!parent) { return; }
-        let containerToFlex: HTMLElement;
+        let containerToFlex: HTMLElement | null = null;
         const siblings = Array.prototype.slice.call(parent.children).filter((el: HTMLElement) => !containsClass(el, 'ag-hidden'));
 
-        siblings.forEach((el: HTMLElement, idx: number) => {
-            if (el === containerToFlex) { return; }
+        for (let i = 0; i < siblings.length; i++) {
+            const el = siblings[i];
+
+            if (el === containerToFlex) { continue; }
 
             if (vertical) {
                 setFixedHeight(el, el.offsetHeight);
@@ -465,11 +467,11 @@ export class PositionableFeature extends BeanStub {
             el.style.removeProperty('flex');
 
             if (el === this.element) {
-                containerToFlex = siblings[idx + 1];
+                containerToFlex = siblings[i + 1];
             }
-        });
+        }
 
-        if (containerToFlex!) {
+        if (containerToFlex) {
             containerToFlex.style.removeProperty('height');
             containerToFlex.style.removeProperty('min-height');
             containerToFlex.style.removeProperty('max-height');
