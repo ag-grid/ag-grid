@@ -44,7 +44,9 @@ export class RowComp extends Component {
         const compProxy: IRowComp = {
             onColumnChanged: () => this.onColumnChanged(),
             getFullWidthRowComp: ()=> this.getFullWidthRowComp(),
-            addOrRemoveCssClass: (name, on)=> this.addOrRemoveCssClass(name, on),
+            addOrRemoveCssClass: (name, on) => {
+                this.addOrRemoveCssClass(name, on)
+            },
             setAriaExpanded: on => setAriaExpanded(this.getGui(), on),
             destroyCells: cellComps => this.destroyCells(cellComps),
             forEachCellComp: callback => this.forEachCellComp(callback),
@@ -60,21 +62,7 @@ export class RowComp extends Component {
             setAriaRowIndex: rowIndex => setAriaRowIndex(this.getGui(), rowIndex)
         };
 
-        switch (pinned) {
-            case Constants.PINNED_LEFT:
-                controller.setLeftRowComp(compProxy, this.getGui());
-                break;
-            case Constants.PINNED_RIGHT:
-                controller.setRightRowComp(compProxy, this.getGui());
-                break;
-            default:
-                if (controller.isFullWidth() && !beans.gridOptionsWrapper.isEmbedFullWidthRows()) {
-                    controller.setFullWidthRowComp(compProxy, this.getGui());
-                } else {
-                    controller.setCenterRowComp(compProxy, this.getGui());
-                }
-                break;
-        }
+        controller.setComp(compProxy, this.getGui(), pinned);
 
         if (controller.isFullWidth()) {
             this.createFullWidthRowCell();
@@ -252,23 +240,16 @@ export class RowComp extends Component {
         const con = this.controller;
 
         const templateParts: string[] = [];
-        const rowHeight = this.rowNode.rowHeight;
-        const rowClasses = con.getInitialRowClasses(this.pinned).join(' ');
         const rowIdSanitised = escapeString(this.rowNode.id!);
         const userRowStyles = con.preProcessStylesFromGridOptions();
         const businessKey = con.getRowBusinessKey();
         const businessKeySanitised = escapeString(businessKey!);
-        const rowTopStyle = con.getInitialRowTopStyle();
-        const rowIdx = this.rowNode.getRowIndexString();
-        const headerRowCount = this.beans.headerNavigationService.getHeaderRowCount();
 
         templateParts.push(`<div`);
         templateParts.push(` role="row"`);
-        templateParts.push(` row-index="${rowIdx}" aria-rowindex="${headerRowCount + this.rowNode.rowIndex! + 1}"`);
         templateParts.push(rowIdSanitised ? ` row-id="${rowIdSanitised}"` : ``);
         templateParts.push(businessKey ? ` row-business-key="${businessKeySanitised}"` : ``);
         templateParts.push(` comp-id="${this.getCompId()}"`);
-        templateParts.push(` class="${rowClasses}"`);
 
         if (con.isFullWidth()) {
             templateParts.push(` tabindex="-1"`);
@@ -282,7 +263,7 @@ export class RowComp extends Component {
             templateParts.push(` aria-expanded=${this.rowNode.expanded ? 'true' : 'false'}`);
         }
 
-        templateParts.push(` style="height: ${rowHeight}px; ${rowTopStyle} ${userRowStyles}">`);
+        templateParts.push(` style="${userRowStyles}">`);
 
         // add in the template for the cells
         templateParts.push(`</div>`);

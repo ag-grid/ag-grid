@@ -17,7 +17,6 @@ import { DragListenerFeature } from "./dragListenerFeature";
 import { CenterWidthFeature } from "../centerWidthFeature";
 import { RowCtrl } from "../../rendering/row/rowCtrl";
 import { Constants } from "../../constants/constants";
-import { getAllValuesInObject } from "../../utils/object";
 import { RowRenderer } from "../../rendering/rowRenderer";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 
@@ -67,9 +66,9 @@ const WrapperCssClasses: Map<RowContainerName, string> = convertToMap([
 
 export interface IRowContainerComp {
     setViewportHeight(height: string): void;
-    setRowCrtls(rowCrtls: RowCtrl[]): void;
+    setRowCtrls(rowCtrls: RowCtrl[]): void;
     setDomOrder(domOrder: boolean): void;
-    setWidth(width: string): void;
+    setContainerWidth(width: string): void;
 }
 
 export class RowContainerCtrl extends BeanStub {
@@ -79,6 +78,22 @@ export class RowContainerCtrl extends BeanStub {
         const viewportClass = ViewportCssClasses.get(name);
         const wrapperClass = WrapperCssClasses.get(name);
         return {container: containerClass, viewport: viewportClass, wrapper: wrapperClass};
+    }
+
+    public static getPinned(name: RowContainerName): string | null {
+        switch (name) {
+            case RowContainerName.BOTTOM_LEFT:
+            case RowContainerName.TOP_LEFT:
+            case RowContainerName.LEFT:
+                return Constants.PINNED_LEFT;
+            case RowContainerName.BOTTOM_RIGHT:
+            case RowContainerName.TOP_RIGHT:
+            case RowContainerName.RIGHT:
+                return Constants.PINNED_RIGHT;
+            default:
+                return null;
+        }
+
     }
 
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
@@ -176,7 +191,7 @@ export class RowContainerCtrl extends BeanStub {
         this.forContainers(allNoFW, () => this.createManagedBean(new DragListenerFeature(this.eContainer)));
 
         this.forContainers(allCenter, () => this.createManagedBean(
-            new CenterWidthFeature(width => this.comp.setWidth(`${width}px`))
+            new CenterWidthFeature(width => this.comp.setContainerWidth(`${width}px`))
         ));
     }
 
@@ -296,16 +311,16 @@ export class RowContainerCtrl extends BeanStub {
             || this.name === RowContainerName.BOTTOM_FULL_WITH
             || this.name === RowContainerName.FULL_WIDTH;
 
-        const doesRowMatch = (rowCon: RowCtrl) => {
-            const fullWidthController = rowCon.isFullWidth();
+        const doesRowMatch = (rowCtrl: RowCtrl) => {
+            const fullWidthRow = rowCtrl.isFullWidth();
 
             const printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
 
             const embedFW = this.embedFullWidthRows || printLayout;
 
             const match = fullWithContainer ?
-                !embedFW && fullWidthController
-                : embedFW || !fullWidthController;
+                !embedFW && fullWidthRow
+                : embedFW || !fullWidthRow;
 
             return match;
         };
@@ -315,7 +330,7 @@ export class RowContainerCtrl extends BeanStub {
         // this filters out rows not for this container, eg if it's a full with row, but we are not full with container
         const rowsThisContainer = allRowsRegardlessOfFullWidth.filter(doesRowMatch);
 
-        this.comp.setRowCrtls(rowsThisContainer);
+        this.comp.setRowCtrls(rowsThisContainer);
     }
 
     private getRowCons(): RowCtrl[] {

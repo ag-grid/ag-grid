@@ -26,6 +26,7 @@ const App = () => {
     return (
         <div style={{display: "flex"}}>
             <div className="ag-theme-alpine" style={{ height: 400, width: 600, margin: 10 }}>
+                {/*<AgGridReact*/}
                 <GridComp
                     defaultColDef={{
                         resizable: true,
@@ -41,6 +42,7 @@ const App = () => {
                     <AgGridColumn field="model"></AgGridColumn>
                     <AgGridColumn field="price"></AgGridColumn>
                 </GridComp>
+                {/*</AgGridReact>*/}
             </div>
 {/*
             <div className="ag-theme-alpine" style={{ height: 400, width: 600, margin: 10 }}>

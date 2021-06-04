@@ -85,6 +85,7 @@ export interface IRowComp {
 interface CompAndElement {
     comp: IRowComp;
     element: HTMLElement;
+    pinned: string | null;
 }
 
 export class RowCtrl extends BeanStub {
@@ -122,8 +123,6 @@ export class RowCtrl extends BeanStub {
     private slideRowIn: boolean;
     private readonly useAnimationFrameForCreate: boolean;
 
-    private rowIsEven: boolean;
-
     private paginationPage: number;
 
     private parentScope: any;
@@ -149,7 +148,6 @@ export class RowCtrl extends BeanStub {
         this.parentScope = parentScope;
         this.beans = beans;
         this.rowNode = rowNode;
-        this.rowIsEven = this.rowNode.rowIndex! % 2 === 0;
         this.paginationPage = this.beans.paginationProxy.getCurrentPage();
         this.useAnimationFrameForCreate = useAnimationFrameForCreate;
         this.printLayout = printLayout;
@@ -180,28 +178,38 @@ export class RowCtrl extends BeanStub {
         return this.instanceId;
     }
 
-    public setLeftRowComp(rowComp: IRowComp, element: HTMLElement): void {
-        if (this.leftComp) { console.error('AG Grid - should not set leftRowComp twice'); }
-        this.leftComp = {comp: rowComp, element: element};
-        this.allComps.push(this.leftComp);
+    public setComp(rowComp: IRowComp, element: HTMLElement, pinned: string | null): void {
+        const compAndElement: CompAndElement = {comp: rowComp, element: element, pinned: pinned};
+        this.allComps.push(compAndElement);
+
+        if (pinned===Constants.PINNED_LEFT) {
+            this.leftComp = compAndElement;
+        } else if (pinned===Constants.PINNED_RIGHT) {
+            this.rightComp = compAndElement;
+        } else if (this.isFullWidth() && !this.beans.gridOptionsWrapper.isEmbedFullWidthRows()) {
+            this.fullWidthComp = compAndElement;
+        } else {
+            this.centerComp = compAndElement;
+        }
+
+        const allNormalPresent = this.leftComp!=null && this.rightComp!=null && this.centerComp!=null;
+        const fullWidthPresent = this.fullWidthComp!=null;
+        if (allNormalPresent || fullWidthPresent) {
+            this.initialiseRowComps();
+        }
     }
 
-    public setRightRowComp(rowComp: IRowComp, element: HTMLElement): void {
-        if (this.rightComp) { console.error('AG Grid - should not set rightRowComp twice'); }
-        this.rightComp = {comp: rowComp, element: element};
-        this.allComps.push(this.rightComp);
-    }
+    private initialiseRowComps(): void {
+        this.onRowHeightChanged();
+        this.updateRowIndexes();
+        this.setFocusedClasses();
+        this.setInitialRowTop();
 
-    public setCenterRowComp(rowComp: IRowComp, element: HTMLElement): void {
-        if (this.centerComp) { console.error('AG Grid - should not set centerRowComp twice'); }
-        this.centerComp = {comp: rowComp, element: element};
-        this.allComps.push(this.centerComp);
-    }
+        this.allComps.forEach( c => {
+            const initialRowClasses = this.getInitialRowClasses(c.pinned);
+            initialRowClasses.forEach( name => c.comp.addOrRemoveCssClass(name, true));
+        });
 
-    public setFullWidthRowComp(rowComp: IRowComp, element: HTMLElement): void {
-        if (this.fullWidthComp) { console.error('AG Grid - should not set fullWidthRowComp twice'); }
-        this.fullWidthComp = {comp: rowComp, element: element};
-        this.allComps.push(this.fullWidthComp);
     }
 
     public getColsForRowComp(pinned: string | null): Column[] {
@@ -840,21 +848,6 @@ export class RowCtrl extends BeanStub {
         const rowStyles = this.processStylesFromGridOptions();
         this.allComps.forEach(c => c.comp.addStylesToElement(rowStyles));
     }
-
-    public getInitialRowTopStyle() {
-        // print layout uses normal flow layout for row positioning
-        if (this.printLayout) { return ''; }
-
-        // if sliding in, we take the old row top. otherwise we just set the current row top.
-        const pixels = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop!) : this.rowNode.rowTop;
-        const afterPaginationPixels = this.applyPaginationOffset(pixels!);
-        // we don't apply scaling if row is pinned
-        const afterScalingPixels = this.rowNode.isRowPinned() ? afterPaginationPixels : this.beans.rowContainerHeightService.getRealPixelPosition(afterPaginationPixels);
-        const isSuppressRowTransform = this.beans.gridOptionsWrapper.isSuppressRowTransform();
-
-        return isSuppressRowTransform ? `top: ${afterScalingPixels}px; ` : `transform: translateY(${afterScalingPixels}px);`;
-    }
-
     public getRowBusinessKey(): string | undefined {
         const businessKeyForNodeFunc = this.beans.gridOptionsWrapper.getBusinessKeyForNodeFunc();
         if (typeof businessKeyForNodeFunc !== 'function') { return; }
@@ -867,7 +860,7 @@ export class RowCtrl extends BeanStub {
             rowNode: this.rowNode,
             rowFocused: this.rowFocused,
             fadeRowIn: this.fadeRowIn,
-            rowIsEven: this.rowIsEven,
+            rowIsEven: this.rowNode.rowIndex! % 2 === 0,
             rowLevel: this.rowLevel,
             fullWidthRow: this.isFullWidth(),
             firstRowOnPage: this.isFirstRowOnPage(),
@@ -1053,15 +1046,19 @@ export class RowCtrl extends BeanStub {
         this.allComps.length = 0;
     }
 
+    private setFocusedClasses(): void {
+        this.allComps.forEach(c => {
+            c.comp.addOrRemoveCssClass('ag-row-focus', this.rowFocused);
+            c.comp.addOrRemoveCssClass('ag-row-no-focus', !this.rowFocused);
+        });
+    }
+
     private onCellFocusChanged(): void {
         const rowFocused = this.beans.focusService.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned);
 
         if (rowFocused !== this.rowFocused) {
-            this.allComps.forEach(c => {
-                c.comp.addOrRemoveCssClass('ag-row-focus', rowFocused);
-                c.comp.addOrRemoveCssClass('ag-row-no-focus', !rowFocused);
-            });
             this.rowFocused = rowFocused;
+            this.setFocusedClasses();
         }
 
         // if we are editing, then moving the focus out of a row will stop editing
@@ -1113,14 +1110,30 @@ export class RowCtrl extends BeanStub {
             const afterPaginationPixels = this.applyPaginationOffset(pixels);
             const afterScalingPixels = this.rowNode.isRowPinned() ? afterPaginationPixels : this.beans.rowContainerHeightService.getRealPixelPosition(afterPaginationPixels);
             const topPx = `${afterScalingPixels}px`;
-
-            const suppressRowTransform = this.beans.gridOptionsWrapper.isSuppressRowTransform();
-            this.allComps.forEach(
-                c => suppressRowTransform ?
-                    c.comp.setTop(topPx) :
-                    c.comp.setTransform(`translateY(${topPx})`)
-            );
+            this.setRowTopStyle(topPx);
         }
+    }
+
+    private setInitialRowTop() {
+        // print layout uses normal flow layout for row positioning
+        if (this.printLayout) { return ''; }
+
+        // if sliding in, we take the old row top. otherwise we just set the current row top.
+        const pixels = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop!) : this.rowNode.rowTop;
+        const afterPaginationPixels = this.applyPaginationOffset(pixels!);
+        // we don't apply scaling if row is pinned
+        const afterScalingPixels = this.rowNode.isRowPinned() ? afterPaginationPixels : this.beans.rowContainerHeightService.getRealPixelPosition(afterPaginationPixels);
+
+        this.setRowTopStyle(afterScalingPixels + 'px');
+    }
+
+    private setRowTopStyle(topPx: string): void {
+        const suppressRowTransform = this.beans.gridOptionsWrapper.isSuppressRowTransform();
+        this.allComps.forEach(
+            c => suppressRowTransform ?
+                c.comp.setTop(topPx) :
+                c.comp.setTransform(`translateY(${topPx})`)
+        );
     }
 
     public getRowNode(): RowNode {
@@ -1156,20 +1169,12 @@ export class RowCtrl extends BeanStub {
 
     private updateRowIndexes(): void {
         const rowIndexStr = this.rowNode.getRowIndexString();
-        const rowIsEven = this.rowNode.rowIndex! % 2 === 0;
-        const rowIsEvenChanged = this.rowIsEven !== rowIsEven;
         const headerRowCount = this.beans.headerNavigationService.getHeaderRowCount();
-
-        if (rowIsEvenChanged) {
-            this.rowIsEven = rowIsEven;
-        }
+        const rowIsEven = this.rowNode.rowIndex! % 2 === 0;
 
         this.allComps.forEach(c => {
             c.comp.setRowIndex(rowIndexStr);
             c.comp.setAriaRowIndex(headerRowCount + this.rowNode.rowIndex! + 1);
-
-            if (!rowIsEvenChanged) { return; }
-
             c.comp.addOrRemoveCssClass('ag-row-even', rowIsEven);
             c.comp.addOrRemoveCssClass('ag-row-odd', !rowIsEven);
         });

@@ -6,7 +6,6 @@ import { ensureDomOrder, insertWithDomOrder } from "../../utils/dom";
 import { RowComp } from "../../rendering/row/rowComp";
 import { RowCtrl } from "../../rendering/row/rowCtrl";
 import { Beans } from "../../rendering/beans";
-import { Constants } from "../../constants/constants";
 import { getAllValuesInObject } from "../../utils/object";
 
 function templateFactory(): string {
@@ -65,18 +64,18 @@ export class RowContainerComp extends Component {
     private postConstruct(): void {
         const compProxy: IRowContainerComp = {
             setViewportHeight: height => this.eViewport.style.height = height,
-            setRowCrtls: rowCrtls => this.setRowCrtls(rowCrtls),
+            setRowCtrls: rowCrtls => this.setRowCtrls(rowCrtls),
             setDomOrder: domOrder => {
                 this.domOrder = domOrder
             },
-            setWidth: width => this.eContainer.style.width = width
+            setContainerWidth: width => this.eContainer.style.width = width
         };
 
         const ctrl = this.createManagedBean(new RowContainerCtrl(this.name));
         ctrl.setComp(compProxy, this.eContainer, this.eViewport, this.eWrapper);
     }
 
-    private setRowCrtls(rowCtrls: RowCtrl[]): void {
+    private setRowCtrls(rowCtrls: RowCtrl[]): void {
         const oldRows = {...this.rowComps};
         this.rowComps = {};
 
@@ -117,22 +116,7 @@ export class RowContainerComp extends Component {
     }
 
     private newRowComp(rowCon: RowCtrl): RowComp {
-        let pinned: string | null;
-        switch (this.name) {
-            case RowContainerName.BOTTOM_LEFT:
-            case RowContainerName.TOP_LEFT:
-            case RowContainerName.LEFT:
-                pinned = Constants.PINNED_LEFT;
-                break;
-            case RowContainerName.BOTTOM_RIGHT:
-            case RowContainerName.TOP_RIGHT:
-            case RowContainerName.RIGHT:
-                pinned = Constants.PINNED_RIGHT;
-                break;
-            default:
-                pinned = null;
-                break;
-        }
+        const pinned = RowContainerCtrl.getPinned(this.name);
         const res = new RowComp(rowCon, this, this.beans, pinned);
         return res;
     }
