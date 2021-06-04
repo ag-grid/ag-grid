@@ -45,6 +45,8 @@ interface BarNodeDatum extends SeriesNodeDatum {
     readonly stroke?: string;
     readonly strokeWidth: number;
     readonly label?: {
+        readonly x: number;
+        readonly y: number;
         readonly text: string;
         readonly fontStyle?: FontStyle;
         readonly fontWeight?: FontWeight;
@@ -53,8 +55,6 @@ interface BarNodeDatum extends SeriesNodeDatum {
         readonly textAlign: CanvasTextAlign;
         readonly textBaseline: CanvasTextBaseline;
         readonly fill: string;
-        readonly x: number;
-        readonly y: number;
     };
 }
 
