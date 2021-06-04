@@ -47,7 +47,6 @@ function templateFactory(): string {
 }
 
 export class RowContainerComp extends Component {
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired("beans") private beans: Beans;
 
     @RefSelector('eViewport') private eViewport: HTMLElement;
@@ -57,7 +56,6 @@ export class RowContainerComp extends Component {
     private readonly name: RowContainerName;
 
     private renderedRows: {[id: string]: RowComp} = {};
-    private embedFullWidthRows: boolean;
 
     // we ensure the rows are in the dom in the order in which they appear on screen when the
     // user requests this via gridOptions.ensureDomOrder. this is typically used for screen readers.
@@ -71,10 +69,9 @@ export class RowContainerComp extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        this.embedFullWidthRows = this.gridOptionsWrapper.isEmbedFullWidthRows();
-
         const compProxy: IRowContainerComp = {
             setViewportHeight: height => this.eViewport.style.height = height,
+            setRowCrtls: rowCrtls => this.rowCrtls(rowCrtls)
         };
 
         const ctrl = this.createManagedBean(new RowContainerCtrl(this.name));
@@ -83,8 +80,31 @@ export class RowContainerComp extends Component {
         this.listenOnDomOrder();
 
         this.stopHScrollOnPinnedRows();
+    }
 
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_ROWS_CHANGED, this.onDisplayedRowsChanged.bind(this));
+    private rowCrtls(rowCtrls: RowCtrl[]): void {
+        const oldRows = {...this.renderedRows};
+        this.renderedRows = {};
+
+        this.clearLastPlacedElement();
+
+        const processRow = (rowCon: RowCtrl) => {
+            const instanceId = rowCon.getInstanceId();
+            const existingRowComp = oldRows[instanceId];
+            if (existingRowComp) {
+                this.renderedRows[instanceId] = existingRowComp;
+                delete oldRows[instanceId];
+                this.ensureDomOrder(existingRowComp.getGui());
+            } else {
+                const rowComp = this.newRowComp(rowCon);
+                this.renderedRows[instanceId] = rowComp;
+                this.appendRow(rowComp.getGui());
+            }
+        };
+
+        rowCtrls.forEach(processRow);
+
+        getAllValuesInObject(oldRows).forEach(rowComp => this.removeRow(rowComp.getGui()));
     }
 
     private forContainers(names: RowContainerName[], callback: (() => void)): void {
@@ -136,71 +156,6 @@ export class RowContainerComp extends Component {
 
     public removeRow(eRow: HTMLElement): void {
         this.eContainer.removeChild(eRow);
-    }
-
-    private onDisplayedRowsChanged(): void {
-        const fullWithContainer =
-            this.name === RowContainerName.TOP_FULL_WITH
-            || this.name === RowContainerName.BOTTOM_FULL_WITH
-            || this.name === RowContainerName.FULL_WIDTH;
-
-        const oldRows = {...this.renderedRows};
-        this.renderedRows = {};
-
-        this.clearLastPlacedElement();
-
-        const processRow = (rowCon: RowCtrl) => {
-            const instanceId = rowCon.getInstanceId();
-            const existingRowComp = oldRows[instanceId];
-            if (existingRowComp) {
-                this.renderedRows[instanceId] = existingRowComp;
-                delete oldRows[instanceId];
-                this.ensureDomOrder(existingRowComp.getGui());
-            } else {
-                const rowComp = this.newRowComp(rowCon);
-                this.renderedRows[instanceId] = rowComp;
-                this.appendRow(rowComp.getGui());
-            }
-        };
-
-        const doesRowMatch = (rowCon: RowCtrl) => {
-            const fullWidthController = rowCon.isFullWidth();
-
-            const printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
-
-            const embedFW = this.embedFullWidthRows || printLayout;
-
-            const match = fullWithContainer ?
-                !embedFW && fullWidthController
-                : embedFW || !fullWidthController;
-
-            return match;
-        };
-
-        const rowConsToRender = this.getRowCons();
-
-        rowConsToRender.filter(doesRowMatch).forEach(processRow);
-
-        getAllValuesInObject(oldRows).forEach(rowComp => this.removeRow(rowComp.getGui()));
-    }
-
-    private getRowCons(): RowCtrl[] {
-        switch (this.name) {
-            case RowContainerName.TOP_CENTER:
-            case RowContainerName.TOP_LEFT:
-            case RowContainerName.TOP_RIGHT:
-            case RowContainerName.TOP_FULL_WITH:
-                return this.rowRenderer.getTopRowCons();
-
-            case RowContainerName.BOTTOM_CENTER:
-            case RowContainerName.BOTTOM_LEFT:
-            case RowContainerName.BOTTOM_RIGHT:
-            case RowContainerName.BOTTOM_FULL_WITH:
-                return this.rowRenderer.getBottomRowCons();
-
-            default:
-                return this.rowRenderer.getRowCons();
-        }
     }
 
     private newRowComp(rowCon: RowCtrl): RowComp {

@@ -15,6 +15,10 @@ import { SetPinnedRightWidthFeature } from "./setPinnedRightWidthFeature";
 import { SetHeightFeature } from "./setHeightFeature";
 import { DragListenerFeature } from "./dragListenerFeature";
 import { CenterWidthFeature } from "../centerWidthFeature";
+import { RowCtrl } from "../../rendering/row/rowCtrl";
+import { Constants } from "../../constants/constants";
+import { getAllValuesInObject } from "../../utils/object";
+import { RowRenderer } from "../../rendering/rowRenderer";
 
 export enum RowContainerName {
     LEFT = 'left',
@@ -62,6 +66,7 @@ const WrapperCssClasses: Map<RowContainerName, string> = convertToMap([
 
 export interface IRowContainerComp {
     setViewportHeight(height: string): void;
+    setRowCrtls(rowCrtls: RowCtrl[]): void;
 }
 
 export class RowContainerCtrl extends BeanStub {
@@ -78,6 +83,7 @@ export class RowContainerCtrl extends BeanStub {
     @Autowired('controllersService') private controllersService: ControllersService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
     private comp: IRowContainerComp;
     private name: RowContainerName;
@@ -85,6 +91,7 @@ export class RowContainerCtrl extends BeanStub {
     private eViewport: HTMLElement;
     private eWrapper: HTMLElement;
     private enableRtl: boolean;
+    private embedFullWidthRows: boolean;
 
     private viewportSizeFeature: ViewportSizeFeature; // only center has this
 
@@ -95,17 +102,19 @@ export class RowContainerCtrl extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
-
         this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
+        this.embedFullWidthRows = this.gridOptionsWrapper.isEmbedFullWidthRows();
+
+        this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onDisplayedColumnsWidthChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_ROWS_CHANGED, this.onDisplayedRowsChanged.bind(this));
 
         this.forContainers([RowContainerName.CENTER],
             () => this.viewportSizeFeature = this.createManagedBean(new ViewportSizeFeature(this)))
 
         this.registerWithControllersService();
 
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onDisplayedColumnsWidthChanged.bind(this));
     }
 
     private registerWithControllersService(): void {
@@ -258,5 +267,52 @@ export class RowContainerCtrl extends BeanStub {
     public setCenterViewportScrollLeft(value: number): void {
         // we defer to a util, as how you calculated scrollLeft when doing RTL depends on the browser
         setScrollLeft(this.eViewport, value, this.enableRtl);
+    }
+
+    private onDisplayedRowsChanged(): void {
+        const fullWithContainer =
+            this.name === RowContainerName.TOP_FULL_WITH
+            || this.name === RowContainerName.BOTTOM_FULL_WITH
+            || this.name === RowContainerName.FULL_WIDTH;
+
+        const doesRowMatch = (rowCon: RowCtrl) => {
+            const fullWidthController = rowCon.isFullWidth();
+
+            const printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
+
+            const embedFW = this.embedFullWidthRows || printLayout;
+
+            const match = fullWithContainer ?
+                !embedFW && fullWidthController
+                : embedFW || !fullWidthController;
+
+            return match;
+        };
+
+        // this list contains either all pinned top, center or pinned bottom rows
+        const allRowsRegardlessOfFullWidth = this.getRowCons();
+        // this filters out rows not for this container, eg if it's a full with row, but we are not full with container
+        const rowsThisContainer = allRowsRegardlessOfFullWidth.filter(doesRowMatch);
+
+        this.comp.setRowCrtls(rowsThisContainer);
+    }
+
+    private getRowCons(): RowCtrl[] {
+        switch (this.name) {
+            case RowContainerName.TOP_CENTER:
+            case RowContainerName.TOP_LEFT:
+            case RowContainerName.TOP_RIGHT:
+            case RowContainerName.TOP_FULL_WITH:
+                return this.rowRenderer.getTopRowCons();
+
+            case RowContainerName.BOTTOM_CENTER:
+            case RowContainerName.BOTTOM_LEFT:
+            case RowContainerName.BOTTOM_RIGHT:
+            case RowContainerName.BOTTOM_FULL_WITH:
+                return this.rowRenderer.getBottomRowCons();
+
+            default:
+                return this.rowRenderer.getRowCons();
+        }
     }
 }
