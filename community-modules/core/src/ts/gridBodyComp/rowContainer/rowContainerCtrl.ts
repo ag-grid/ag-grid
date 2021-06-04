@@ -19,6 +19,7 @@ import { RowCtrl } from "../../rendering/row/rowCtrl";
 import { Constants } from "../../constants/constants";
 import { getAllValuesInObject } from "../../utils/object";
 import { RowRenderer } from "../../rendering/rowRenderer";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 
 export enum RowContainerName {
     LEFT = 'left',
@@ -67,6 +68,8 @@ const WrapperCssClasses: Map<RowContainerName, string> = convertToMap([
 export interface IRowContainerComp {
     setViewportHeight(height: string): void;
     setRowCrtls(rowCrtls: RowCtrl[]): void;
+    setDomOrder(domOrder: boolean): void;
+    setWidth(width: string): void;
 }
 
 export class RowContainerCtrl extends BeanStub {
@@ -153,6 +156,8 @@ export class RowContainerCtrl extends BeanStub {
 
         this.createManagedBean(new RowContainerEventsFeature(this.eContainer));
         this.addPreventScrollWhileDragging();
+        this.listenOnDomOrder();
+        this.stopHScrollOnPinnedRows();
 
         const allTopNoFW = [RowContainerName.TOP_CENTER, RowContainerName.TOP_LEFT, RowContainerName.TOP_RIGHT];
         const allBottomNoFW = [RowContainerName.BOTTOM_CENTER, RowContainerName.BOTTOM_LEFT, RowContainerName.BOTTOM_RIGHT];
@@ -171,8 +176,24 @@ export class RowContainerCtrl extends BeanStub {
         this.forContainers(allNoFW, () => this.createManagedBean(new DragListenerFeature(this.eContainer)));
 
         this.forContainers(allCenter, () => this.createManagedBean(
-            new CenterWidthFeature(width => this.eContainer.style.width = `${width}px`))
-        );
+            new CenterWidthFeature(width => this.comp.setWidth(`${width}px`))
+        ));
+    }
+
+    private listenOnDomOrder(): void {
+        const listener = ()=> this.comp.setDomOrder(this.gridOptionsWrapper.isEnsureDomOrder())
+        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, listener);
+        listener();
+    }
+
+    // when editing a pinned row, if the cell is half outside the scrollable area, the browser can
+    // scroll the column into view. we do not want this, the pinned sections should never scroll.
+    // so we listen to scrolls on these containers and reset the scroll if we find one.
+    private stopHScrollOnPinnedRows(): void {
+        this.forContainers([RowContainerName.TOP_CENTER, RowContainerName.BOTTOM_CENTER], () => {
+            const resetScrollLeft = () => this.eViewport.scrollLeft = 0;
+            this.addManagedListener(this.eViewport, 'scroll', resetScrollLeft);
+        });
     }
 
     public onDisplayedColumnsChanged(): void {
