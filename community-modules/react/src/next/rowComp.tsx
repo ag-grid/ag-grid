@@ -29,10 +29,7 @@ export function RowComp(params: {context: Context, rowCtrl: RowCtrl, pinned: str
         const compProxy: IRowComp = {
             setHeight: setHeight,
             setTop: setTop,
-            setTransform: t => {
-                console.log('setting transform ' + t);
-                setTransform(t);
-            },
+            setTransform: setTransform,
             addOrRemoveCssClass: (name, on) => {
                 setAddOrRemoveClasses( prev => {
                     const next = {...prev};

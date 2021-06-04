@@ -32,7 +32,20 @@ export function RowContainerComp(params: {context: Context, name: RowContainerNa
 
         const compProxy: IRowContainerComp = {
             setViewportHeight: setViewportHeight,
-            setRowCtrls: rowCtrls => setRowCtrls(rowCtrls),
+            setRowCtrls: rowCtrls => {
+                setRowCtrls( prev => {
+                    if (domOrder) {
+                        return rowCtrls;
+                    } else {
+                        // if dom order not important, we don't want to change the order
+                        // of the elements in the dom, as this would break transition styls
+                        const oldRows = prev.filter( r => rowCtrls.indexOf(r) >= 0);
+                        const newRows = rowCtrls.filter( r => oldRows.indexOf(r) < 0);
+                        const next = [...oldRows, ...newRows];
+                        return next;
+                    }
+                });
+            },
             setDomOrder: domOrder => setDomOrder(domOrder),
             setContainerWidth: width => setContainerWidth(width)
         };
