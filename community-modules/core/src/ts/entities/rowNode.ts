@@ -47,6 +47,8 @@ export interface CellChangedEvent extends RowNodeEvent {
     oldValue: any;
 }
 
+export enum RowHighlightPosition {Above, Below}
+
 export class RowNode implements IEventEmitter {
 
     public static ID_PREFIX_ROW_GROUP = 'row-group-';
@@ -244,7 +246,7 @@ export class RowNode implements IEventEmitter {
     /** True when nodes with the same id are being removed and added as part of the same batch transaction */
     public alreadyRendered = false;
 
-    public highlighted: 'above' | 'below' | null = null;
+    public highlighted: RowHighlightPosition | null = null;
 
     private selected: boolean | undefined = false;
     private eventService: EventService | null;
@@ -458,7 +460,7 @@ export class RowNode implements IEventEmitter {
         }
     }
 
-    public setHighlighted(highlighted: 'above' | 'below' | null): void {
+    public setHighlighted(highlighted: RowHighlightPosition | null): void {
         if (highlighted === this.highlighted) { return; }
 
         this.highlighted = highlighted;

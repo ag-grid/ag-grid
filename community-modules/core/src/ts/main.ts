@@ -100,7 +100,7 @@ export { IRowDragItem } from "./rendering/row/rowDragComp";
 export { Column } from "./entities/column";
 export { ColumnGroup } from "./entities/columnGroup";
 export { OriginalColumnGroup } from "./entities/originalColumnGroup";
-export { RowNode } from "./entities/rowNode";
+export { RowNode, RowHighlightPosition } from "./entities/rowNode";
 export { SideBarDef, ToolPanelDef } from "./entities/sideBar";
 
 // filter

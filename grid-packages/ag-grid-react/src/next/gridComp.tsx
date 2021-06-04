@@ -1,90 +1,119 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-    Autowired,
     Context,
     FocusService,
-    GridBodyComp,
-    GridCtrl,
+    GridCtrl,GridOptions,ComponentUtil,GridCoreCreator,
     IGridComp,
-    LayoutCssClasses
+    AgStackComponentsRegistry
 } from "ag-grid-community";
-import { AgStackComponentsRegistry } from "ag-grid-community/dist/cjs/components/agStackComponentsRegistry";
+import { GridBodyComp } from "./gridBodyComp";
+import { classesList } from "./utils";
+import { AgGridColumn } from "../agGridColumn";
 
-export function GridComp(params: {context: Context}) {
+export function GridComp(props: any) {
+
+    const [context, setContext] = useState<Context>();
 
     const [rtlClass, setRtlClass] = useState<string>('');
     const [keyboardFocusClass, setKeyboardFocusClass] = useState<string>('');
     const [layoutClass, setLayoutClass] = useState<string>('');
-    // const [ctrl, setCtrl] = useState<GridCtrl>();
+    const [cursor, setCursor] = useState<string | null>(null);
+    const [userSelect, setUserSelect] = useState<string | null>(null);
 
     const eRootWrapper = useRef<HTMLDivElement>(null);
     const eGridBodyParent = useRef<HTMLDivElement>(null);
 
-    const {context} = params;
+    // initialise the grid core
+    useEffect(()=> {
 
+        const modules = props.modules || [];
+        const gridParams = {
+            // providedBeanInstances: {
+            //     agGridReact: this,
+            //     frameworkComponentWrapper: new ReactFrameworkComponentWrapper(this)
+            // },
+            modules
+        };
+
+        let gridOptions: GridOptions = {...props.gridOptions};
+        const {children} = props;
+
+        if (AgGridColumn.hasChildColumns(children)) {
+            gridOptions.columnDefs = AgGridColumn.mapChildColumnDefs(children);
+        }
+
+        gridOptions = ComponentUtil.copyAttributesToGridOptions(gridOptions, props);
+
+        const destroyFuncs: (()=>void)[] = [];
+
+        // don't need the return value
+        const gridCoreCreator = new GridCoreCreator();
+        gridCoreCreator.create(eRootWrapper.current!, gridOptions, context => {
+            setContext(context);
+        }, gridParams);
+
+        // new Grid(null!, gridOptions, gridParams);
+        destroyFuncs.push( ()=>gridOptions.api!.destroy() );
+
+        return ()=> destroyFuncs.forEach( f => f() );
+    }, []);
+
+    // initialise the UI
     useEffect( ()=> {
+        if (!context) { return; }
+
+        const beansToDestroy: any[] = [];
+
         const ctrl = context.createBean(new GridCtrl());
+        beansToDestroy.push(ctrl);
 
         const compProxy: IGridComp = {
             destroyGridUi:
                 ()=> {}, // do nothing, as framework users destroy grid by removing the comp
-            setRtlClass:
-                (cssClass: string) => setRtlClass(cssClass),
+            setRtlClass: setRtlClass,
             addOrRemoveKeyboardFocusClass:
                 (addOrRemove: boolean) => setKeyboardFocusClass(addOrRemove ? FocusService.AG_KEYBOARD_FOCUS : ''),
-            forceFocusOutOfContainer: ()=>{},//this.forceFocusOutOfContainer.bind(this),
-            updateLayoutClasses: params =>
-                setLayoutClass(params.normal ? LayoutCssClasses.NORMAL :
-                        params.autoHeight ? LayoutCssClasses.AUTO_HEIGHT : LayoutCssClasses.PRINT),
+            forceFocusOutOfContainer: ()=> {},//this.forceFocusOutOfContainer.bind(this),
+            updateLayoutClasses: setLayoutClass,
             getFocusableContainers: ()=>[],//this.getFocusableContainers.bind(this)
+            setCursor: setCursor,
+            setUserSelect: setUserSelect
         };
 
         ctrl.setComp(compProxy, eRootWrapper.current!, eRootWrapper.current!);
-        // setCtrl(ctrl);
+
+        // should be shared
+        const insertFirstPosition = (parent: HTMLElement, child: HTMLElement) => parent.insertBefore(child, parent.firstChild);
 
         const agStackComponentsRegistry: AgStackComponentsRegistry = context.getBean('agStackComponentsRegistry');
-        // agStackComponentsRegistry.getComponentClass();
-
-        const headerRootComp = new GridBodyComp();
-        context.createBean(headerRootComp);
-        eGridBodyParent.current!.appendChild(headerRootComp.getGui());
+        const HeaderDropZonesClass = agStackComponentsRegistry.getComponentClass('AG-GRID-HEADER-DROP-ZONES');
+        if (ctrl.showDropZones() && HeaderDropZonesClass) {
+            const headerDropZonesComp = context.createBean(new HeaderDropZonesClass());
+            insertFirstPosition(eRootWrapper.current!, headerDropZonesComp.getGui());
+            beansToDestroy.push(headerDropZonesComp);
+        }
 
         return ()=> {
-            context.destroyBean(ctrl);
-            context.destroyBean(headerRootComp);
+            beansToDestroy.forEach( b => context.destroyBean(b) );
         };
-    }, []);
+    }, [context]);
 
-    const rootWrapperClasses = ['ag-root-wrapper', rtlClass, keyboardFocusClass, layoutClass].join(' ');
-    const rootWrapperBodyClasses = ['ag-root-wrapper-body', layoutClass].join(' ');
+    const rootWrapperClasses = classesList('ag-root-wrapper', rtlClass, keyboardFocusClass, layoutClass);
+    const rootWrapperBodyClasses = classesList('ag-root-wrapper-body', layoutClass);
+
+    const topStyle = {
+        userSelect: userSelect!=null ? userSelect : '',
+        WebkitUserSelect: userSelect!=null ? userSelect : '',
+        cursor: cursor!=null ? cursor : ''
+    };
 
     return (
-        <div ref={eRootWrapper} className={rootWrapperClasses}>
-            <div className={rootWrapperBodyClasses} ref={eGridBodyParent}>
+        <div ref={eRootWrapper} className={rootWrapperClasses} style={topStyle}>
+            { context &&
+            <div className={ rootWrapperBodyClasses } ref={ eGridBodyParent }>
+                <GridBodyComp context={ context }/>
             </div>
+            }
         </div>
     );
 }
-
-
-/*
-private createTemplate(): string {
-    const dropZones = this.ctrl.showDropZones() ? '<ag-grid-header-drop-zones></ag-grid-header-drop-zones>' : '';
-    const sideBar = this.ctrl.showSideBar() ? '<ag-side-bar ref="sideBar"></ag-side-bar>' : '';
-    const statusBar = this.ctrl.showStatusBar() ? '<ag-status-bar ref="statusBar"></ag-status-bar>' : '';
-    const watermark = this.ctrl.showWatermark() ? '<ag-watermark></ag-watermark>' : '';
-
-    const template = /!* html *!/
-        `<div ref="eRootWrapper" class="ag-root-wrapper">
-                ${dropZones}
-                <div class="ag-root-wrapper-body" ref="rootWrapperBody">
-                    <ag-grid-body ref="gridBody"></ag-grid-body>
-                    ${sideBar}
-                </div>
-                ${statusBar}
-                <ag-pagination></ag-pagination>
-                ${watermark}
-            </div>`;
-
-    return template;
-}*/

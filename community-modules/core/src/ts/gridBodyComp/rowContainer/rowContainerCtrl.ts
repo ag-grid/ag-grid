@@ -33,7 +33,7 @@ export enum RowContainerName {
     BOTTOM_FULL_WITH = 'bottomFullWidth'
 }
 
-export const ContainerCssClasses: Map<RowContainerName, string> = convertToMap([
+const ContainerCssClasses: Map<RowContainerName, string> = convertToMap([
     [RowContainerName.CENTER, 'ag-center-cols-container'],
     [RowContainerName.LEFT, 'ag-pinned-left-cols-container'],
     [RowContainerName.RIGHT, 'ag-pinned-right-cols-container'],
@@ -50,13 +50,13 @@ export const ContainerCssClasses: Map<RowContainerName, string> = convertToMap([
     [RowContainerName.BOTTOM_FULL_WITH, 'ag-floating-bottom-full-width-container'],
 ]);
 
-export const ViewportCssClasses: Map<RowContainerName, string> = convertToMap([
+const ViewportCssClasses: Map<RowContainerName, string> = convertToMap([
     [RowContainerName.CENTER, 'ag-center-cols-viewport'],
     [RowContainerName.TOP_CENTER, 'ag-floating-top-viewport'],
     [RowContainerName.BOTTOM_CENTER, 'ag-floating-bottom-viewport'],
 ]);
 
-export const WrapperCssClasses: Map<RowContainerName, string> = convertToMap([
+const WrapperCssClasses: Map<RowContainerName, string> = convertToMap([
     [RowContainerName.CENTER, 'ag-center-cols-clipper'],
 ]);
 
@@ -65,6 +65,13 @@ export interface IRowContainerComp {
 }
 
 export class RowContainerCtrl extends BeanStub {
+
+    public static getRowContainerCssClasses(name: RowContainerName): {container?: string, viewport?: string, wrapper?: string} {
+        const containerClass = ContainerCssClasses.get(name);
+        const viewportClass = ViewportCssClasses.get(name);
+        const wrapperClass = WrapperCssClasses.get(name);
+        return {container: containerClass, viewport: viewportClass, wrapper: wrapperClass};
+    }
 
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Autowired('dragService') private dragService: DragService;

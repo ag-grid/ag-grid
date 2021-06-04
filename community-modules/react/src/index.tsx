@@ -6,7 +6,6 @@ import {AgGridColumn} from "./agGridColumn"
 
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
-import {AgGridReactNext} from "./next/agGridReactNext";
 import { GridComp } from "./next/gridComp";
 
 const App = () => {
@@ -31,8 +30,10 @@ const App = () => {
                     defaultColDef={{
                         resizable: true,
                         filter: true,
-                        flex: 1
+                        flex: 1,
+                        sortable: true
                     }}
+                    animateRows={true}
                     onGridReady={onGridReady}
                     rowData={rowData}
                     modules={[ClientSideRowModelModule]}>

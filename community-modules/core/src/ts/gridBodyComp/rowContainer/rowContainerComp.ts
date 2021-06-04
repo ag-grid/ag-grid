@@ -2,12 +2,9 @@ import { Component } from "../../widgets/component";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { Autowired, PostConstruct } from "../../context/context";
 import {
-    ContainerCssClasses,
     RowContainerCtrl,
     RowContainerName,
-    IRowContainerComp,
-    ViewportCssClasses,
-    WrapperCssClasses
+    IRowContainerComp
 } from "./rowContainerCtrl";
 import { ensureDomOrder, insertWithDomOrder } from "../../utils/dom";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
@@ -22,44 +19,28 @@ import { getAllValuesInObject } from "../../utils/object";
 function templateFactory(): string {
     const name = Component.elementGettingCreated.getAttribute('name') as RowContainerName;
 
-    const containerClass = ContainerCssClasses.get(name);
-    const viewportClass = ViewportCssClasses.get(name);
-    const wrapperClass = WrapperCssClasses.get(name);
+    const cssClasses = RowContainerCtrl.getRowContainerCssClasses(name);
 
     let res: string;
 
-    switch (name) {
-        case RowContainerName.LEFT :
-        case RowContainerName.RIGHT :
-        case RowContainerName.FULL_WIDTH :
-        case RowContainerName.TOP_LEFT :
-        case RowContainerName.TOP_RIGHT :
-        case RowContainerName.TOP_FULL_WITH :
-        case RowContainerName.BOTTOM_LEFT :
-        case RowContainerName.BOTTOM_RIGHT :
-        case RowContainerName.BOTTOM_FULL_WITH :
-            res = /* html */
-            `<div class="${containerClass}" ref="eContainer" role="presentation" unselectable="on"></div>`;
-            break;
+    const template1 = name === RowContainerName.CENTER;
+    const template2 = name === RowContainerName.TOP_CENTER || name === RowContainerName.BOTTOM_CENTER;
 
-        case RowContainerName.CENTER :
-            res =  /* html */
-            `<div class="${wrapperClass}" ref="eWrapper" role="presentation" unselectable="on">
-                <div class="${viewportClass}" ref="eViewport" role="presentation">
-                    <div class="${containerClass}" ref="eContainer" role="rowgroup" unselectable="on"></div>
+    if (template1) {
+        res = /* html */
+            `<div class="${cssClasses.wrapper}" ref="eWrapper" role="presentation" unselectable="on">
+                <div class="${cssClasses.viewport}" ref="eViewport" role="presentation">
+                    <div class="${cssClasses.container}" ref="eContainer" role="rowgroup" unselectable="on"></div>
                 </div>
             </div>`;
-            break;
-
-        case RowContainerName.TOP_CENTER :
-        case RowContainerName.BOTTOM_CENTER :
-            res = /* html */
-            `<div class="${viewportClass}" ref="eViewport" role="presentation" unselectable="on">
-                <div class="${containerClass}" ref="eContainer" role="presentation" unselectable="on"></div>
-            </div>`;
-            break;
-
-        default: return '';
+    } else if (template2) {
+        res = /* html */
+            `<div class="${cssClasses.viewport}" ref="eViewport" role="presentation" unselectable="on">
+                <div class="${cssClasses.container}" ref="eContainer" role="presentation" unselectable="on"></div>
+            </div>`
+    } else {
+        res = /* html */
+            `<div class="${cssClasses.container}" ref="eContainer" role="presentation" unselectable="on"></div>`;
     }
 
     return res;

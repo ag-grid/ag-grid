@@ -6,7 +6,7 @@ import {AgGridColumn} from "./agGridColumn"
 
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
-import {AgGridReactNext} from "./next/agGridReactNext";
+import { GridComp } from "./next/gridComp";
 
 const App = () => {
     const [gridApi, setGridApi] = useState(null);
@@ -26,15 +26,21 @@ const App = () => {
     return (
         <div style={{display: "flex"}}>
             <div className="ag-theme-alpine" style={{ height: 400, width: 600, margin: 10 }}>
-                <AgGridReactNext
+                <GridComp
+                    defaultColDef={{
+                        resizable: true,
+                        filter: true,
+                        flex: 1,
+                        sortable: true
+                    }}
+                    animateRows={true}
                     onGridReady={onGridReady}
                     rowData={rowData}
-                    rowHeight={42}
                     modules={[ClientSideRowModelModule]}>
                     <AgGridColumn field="make"></AgGridColumn>
                     <AgGridColumn field="model"></AgGridColumn>
                     <AgGridColumn field="price"></AgGridColumn>
-                </AgGridReactNext>
+                </GridComp>
             </div>
 {/*
             <div className="ag-theme-alpine" style={{ height: 400, width: 600, margin: 10 }}>

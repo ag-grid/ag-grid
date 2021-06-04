@@ -3,15 +3,16 @@ import { RowContainerComp } from "../../gridBodyComp/rowContainer/rowContainerCo
 import { ICellRendererComp } from "../cellRenderers/iCellRenderer";
 import { Beans } from "../beans";
 import { RowNode } from "../../entities/rowNode";
-import { setDomChildOrder } from "../../utils/dom";
+import { addOrRemoveCssClass, addStylesToElement, setDomChildOrder } from "../../utils/dom";
 import { escapeString } from "../../utils/string";
-import { FullWidthKeys, FullWidthRenderers, RowCtrl, RowType } from "./rowCtrl";
+import { FullWidthKeys, FullWidthRenderers, IRowComp, RowCtrl, RowType } from "./rowCtrl";
 import { Column } from "../../entities/column";
 import { CellComp } from "../cellComp";
 import { assign, getAllValuesInObject, iterateObject } from "../../utils/object";
 import { Constants } from "../../constants/constants";
 import { ModuleRegistry } from "../../modules/moduleRegistry";
 import { ModuleNames } from "../../modules/moduleNames";
+import { setAriaExpanded, setAriaRowIndex, setAriaSelected } from "../../utils/aria";
 
 export class RowComp extends Component {
 
@@ -40,18 +41,37 @@ export class RowComp extends Component {
 
         this.afterRowAttached();
 
+        const compProxy: IRowComp = {
+            onColumnChanged: () => this.onColumnChanged(),
+            getFullWidthRowComp: ()=> this.getFullWidthRowComp(),
+            addOrRemoveCssClass: (name, on)=> this.addOrRemoveCssClass(name, on),
+            setAriaExpanded: on => setAriaExpanded(this.getGui(), on),
+            destroyCells: cellComps => this.destroyCells(cellComps),
+            forEachCellComp: callback => this.forEachCellComp(callback),
+            addStylesToElement: styles => addStylesToElement(this.getGui(), styles),
+            setAriaSelected: value => setAriaSelected(this.getGui(), value),
+            setHeight: height => this.getGui().style.height = height,
+            destroy: ()=> this.destroy(),
+            setTop: top => this.getGui().style.top = top,
+            setTransform: transform => this.getGui().style.transform = transform,
+            getCellComp: colId => this.getCellComp(colId),
+            getAllCellComps: () => Object.keys(this.cellComps).map(k => this.cellComps[k]).filter(c => c!=null) as CellComp[],
+            setRowIndex: rowIndex => this.getGui().setAttribute('row-index', rowIndex),
+            setAriaRowIndex: rowIndex => setAriaRowIndex(this.getGui(), rowIndex)
+        };
+
         switch (pinned) {
             case Constants.PINNED_LEFT:
-                controller.setLeftRowComp(this);
+                controller.setLeftRowComp(compProxy, this.getGui());
                 break;
             case Constants.PINNED_RIGHT:
-                controller.setRightRowComp(this);
+                controller.setRightRowComp(compProxy, this.getGui());
                 break;
             default:
                 if (controller.isFullWidth() && !beans.gridOptionsWrapper.isEmbedFullWidthRows()) {
-                    controller.setFullWidthRowComp(this);
+                    controller.setFullWidthRowComp(compProxy, this.getGui());
                 } else {
-                    controller.setCenterRowComp(this);
+                    controller.setCenterRowComp(compProxy, this.getGui());
                 }
                 break;
         }
@@ -189,12 +209,14 @@ export class RowComp extends Component {
         return this.cellComps[id];
     }
 
+/*
     public getCellCompSpanned(column: Column): CellComp | null {
         const spanList = Object.keys(this.cellComps)
             .map(name => this.cellComps[name])
             .filter(cmp => cmp && cmp.getColSpanningList().indexOf(column) !== -1);
         return spanList.length ? spanList[0] : null;
     }
+*/
 
     public destroy(): void {
         super.destroy();

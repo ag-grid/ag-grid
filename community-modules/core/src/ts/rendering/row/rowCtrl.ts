@@ -1,6 +1,6 @@
 import { Beans } from "../beans";
 import { CellComp } from "../cellComp";
-import { DataChangedEvent, RowNode } from "../../entities/rowNode";
+import { DataChangedEvent, RowHighlightPosition, RowNode } from "../../entities/rowNode";
 import { Column } from "../../entities/column";
 import {
     CellFocusedEvent,
@@ -38,7 +38,7 @@ import { RowCssClassCalculatorParams } from "./rowCssClassCalculator";
 import { BeanStub } from "../../context/beanStub";
 import { convertToMap } from "../../utils/map";
 import { RowDragComp } from "./rowDragComp";
-import { ICellRendererParams } from "../cellRenderers/iCellRenderer";
+import { ICellRendererComp, ICellRendererParams } from "../cellRenderers/iCellRenderer";
 
 export enum RowType {
     Normal = 'Normal',
@@ -63,6 +63,30 @@ export const FullWidthKeys: Map<RowType, string> = convertToMap([
 
 let instanceIdSequence = 0;
 
+export interface IRowComp {
+    addOrRemoveCssClass(cssClassName: string, on: boolean): void;
+    onColumnChanged(): void;
+    getFullWidthRowComp(): ICellRendererComp | null | undefined;
+    setAriaExpanded(on: boolean): void;
+    destroyCells(cellComps: CellComp[]): void;
+    forEachCellComp(callback: (comp: CellComp) => void): void;
+    addStylesToElement(styles: any): void;
+    setAriaSelected(selected: boolean): void;
+    setHeight(height: string): void;
+    destroy(): void;
+    setTop(top: string): void;
+    setTransform(transform: string): void;
+    getCellComp(colId: string): CellComp | null;
+    getAllCellComps(): CellComp[];
+    setRowIndex(rowIndex: string): void;
+    setAriaRowIndex(rowIndex: number): void;
+}
+
+interface CompAndElement {
+    comp: IRowComp;
+    element: HTMLElement;
+}
+
 export class RowCtrl extends BeanStub {
 
     public static DOM_DATA_KEY_RENDERED_ROW = 'renderedRow';
@@ -75,12 +99,12 @@ export class RowCtrl extends BeanStub {
 
     private rowType: RowType;
 
-    private allRowComps: RowComp[] = [];
+    private leftComp: CompAndElement;
+    private centerComp: CompAndElement;
+    private rightComp: CompAndElement;
+    private fullWidthComp: CompAndElement;
 
-    private leftRowComp: RowComp;
-    private rightRowComp: RowComp;
-    private centerRowComp: RowComp;
-    private fullWidthRowComp: RowComp;
+    private allComps: CompAndElement[] = [];
 
     private firstRowOnPage: boolean;
     private lastRowOnPage: boolean;
@@ -147,7 +171,7 @@ export class RowCtrl extends BeanStub {
         }
         if (this.fadeRowIn) {
             executeNextVMTurn(() => {
-                this.allRowComps.forEach(rowComp => removeCssClass(rowComp.getGui(), 'ag-opacity-zero'));
+                this.allComps.forEach(rowComp => rowComp.comp.addOrRemoveCssClass('ag-opacity-zero', false));
             });
         }
     }
@@ -156,28 +180,28 @@ export class RowCtrl extends BeanStub {
         return this.instanceId;
     }
 
-    public setLeftRowComp(rowComp: RowComp): void {
-        if (this.leftRowComp) { console.error('AG Grid - should not set leftRowComp twice'); }
-        this.leftRowComp = rowComp;
-        this.allRowComps.push(rowComp);
+    public setLeftRowComp(rowComp: IRowComp, element: HTMLElement): void {
+        if (this.leftComp) { console.error('AG Grid - should not set leftRowComp twice'); }
+        this.leftComp = {comp: rowComp, element: element};
+        this.allComps.push(this.leftComp);
     }
 
-    public setRightRowComp(rowComp: RowComp): void {
-        if (this.rightRowComp) { console.error('AG Grid - should not set rightRowComp twice'); }
-        this.rightRowComp = rowComp;
-        this.allRowComps.push(rowComp);
+    public setRightRowComp(rowComp: IRowComp, element: HTMLElement): void {
+        if (this.rightComp) { console.error('AG Grid - should not set rightRowComp twice'); }
+        this.rightComp = {comp: rowComp, element: element};
+        this.allComps.push(this.rightComp);
     }
 
-    public setCenterRowComp(rowComp: RowComp): void {
-        if (this.centerRowComp) { console.error('AG Grid - should not set centerRowComp twice'); }
-        this.centerRowComp = rowComp;
-        this.allRowComps.push(rowComp);
+    public setCenterRowComp(rowComp: IRowComp, element: HTMLElement): void {
+        if (this.centerComp) { console.error('AG Grid - should not set centerRowComp twice'); }
+        this.centerComp = {comp: rowComp, element: element};
+        this.allComps.push(this.centerComp);
     }
 
-    public setFullWidthRowComp(rowComp: RowComp): void {
-        if (this.fullWidthRowComp) { console.error('AG Grid - should not set fullWidthRowComp twice'); }
-        this.fullWidthRowComp = rowComp;
-        this.allRowComps.push(rowComp);
+    public setFullWidthRowComp(rowComp: IRowComp, element: HTMLElement): void {
+        if (this.fullWidthComp) { console.error('AG Grid - should not set fullWidthRowComp twice'); }
+        this.fullWidthComp = {comp: rowComp, element: element};
+        this.allComps.push(this.fullWidthComp);
     }
 
     public getColsForRowComp(pinned: string | null): Column[] {
@@ -214,9 +238,9 @@ export class RowCtrl extends BeanStub {
         if (!func) { return; }
 
         const params: ProcessRowParams = {
-            eRow: this.centerRowComp ? this.centerRowComp.getGui() : undefined!,
-            ePinnedLeftRow: this.leftRowComp ? this.leftRowComp.getGui() : undefined!,
-            ePinnedRightRow: this.rightRowComp ? this.rightRowComp.getGui() : undefined!,
+            eRow: this.centerComp ? this.centerComp.element : undefined!,
+            ePinnedLeftRow: this.leftComp ? this.leftComp.element : undefined!,
+            ePinnedRightRow: this.rightComp ? this.rightComp.element : undefined!,
             node: this.rowNode,
             api: this.beans.gridOptionsWrapper.getApi()!,
             rowIndex: this.rowNode.rowIndex!,
@@ -288,7 +312,7 @@ export class RowCtrl extends BeanStub {
             this.leftCols = this.beans.columnModel.getDisplayedLeftColumnsForRow(this.rowNode);
             this.rightCols = this.beans.columnModel.getDisplayedRightColumnsForRow(this.rowNode);
         }
-        this.allRowComps.forEach(rc => rc.onColumnChanged());
+        this.allComps.forEach(c => c.comp.onColumnChanged());
     }
 
     private setAnimateFlags(animateIn: boolean): void {
@@ -322,28 +346,28 @@ export class RowCtrl extends BeanStub {
 
     public refreshFullWidth(): boolean {
         // returns 'true' if refresh succeeded
-        const tryRefresh = (rowComp: RowComp, pinned: string | null): boolean => {
-            if (!rowComp) { return true; } // no refresh needed
+        const tryRefresh = (compAndElement: CompAndElement, pinned: string | null): boolean => {
+            if (!compAndElement) { return true; } // no refresh needed
 
-            const cellComp = rowComp.getFullWidthRowComp();
+            const cellComp = compAndElement.comp.getFullWidthRowComp();
 
             if (!cellComp) { return true; } // no refresh needed
 
             // no refresh method present, so can't refresh, hard refresh needed
             if (!cellComp.refresh) { return false; }
 
-            const params = this.createFullWidthParams(rowComp.getGui(), pinned);
+            const params = this.createFullWidthParams(compAndElement.element, pinned);
             const refreshSucceeded = cellComp.refresh(params);
 
             return refreshSucceeded;
         };
 
-        const normalSuccess = tryRefresh(this.fullWidthRowComp, null);
-        const bodySuccess = tryRefresh(this.centerRowComp, null);
-        const leftSuccess = tryRefresh(this.leftRowComp, Constants.PINNED_LEFT);
-        const rightSuccess = tryRefresh(this.rightRowComp, Constants.PINNED_RIGHT);
+        const fullWidthSuccess = tryRefresh(this.fullWidthComp, null);
+        const centerSuccess = tryRefresh(this.centerComp,null);
+        const leftSuccess = tryRefresh(this.leftComp, Constants.PINNED_LEFT);
+        const rightSuccess = tryRefresh(this.rightComp, Constants.PINNED_RIGHT);
 
-        const allFullWidthRowsRefreshed = normalSuccess && bodySuccess && leftSuccess && rightSuccess;
+        const allFullWidthRowsRefreshed = fullWidthSuccess && centerSuccess && leftSuccess && rightSuccess;
 
         return allFullWidthRowsRefreshed;
     }
@@ -427,13 +451,11 @@ export class RowCtrl extends BeanStub {
     private onRowNodeHighlightChanged(): void {
         const highlighted = this.rowNode.highlighted;
 
-        this.allRowComps.forEach(rowComp => {
-            const eGui = rowComp.getGui();
-            removeCssClass(eGui, 'ag-row-highlight-above');
-            removeCssClass(eGui, 'ag-row-highlight-below');
-            if (highlighted) {
-                addCssClass(eGui, 'ag-row-highlight-' + highlighted);
-            }
+        this.allComps.forEach(c => {
+            const aboveOn = highlighted === RowHighlightPosition.Above;
+            const belowOn = highlighted === RowHighlightPosition.Below;
+            c.comp.addOrRemoveCssClass('ag-row-highlight-above', aboveOn);
+            c.comp.addOrRemoveCssClass('ag-row-highlight-below', belowOn);
         });
     }
 
@@ -443,7 +465,7 @@ export class RowCtrl extends BeanStub {
 
     private postProcessRowDragging(): void {
         const dragging = this.rowNode.dragging;
-        this.allRowComps.forEach(rowComp => addOrRemoveCssClass(rowComp.getGui(), 'ag-row-dragging', dragging));
+        this.allComps.forEach(c => c.comp.addOrRemoveCssClass('ag-row-dragging', dragging));
     }
 
     private updateExpandedCss(): void {
@@ -451,12 +473,11 @@ export class RowCtrl extends BeanStub {
         const expandable = this.rowNode.isExpandable();
         const expanded = this.rowNode.expanded == true;
 
-        this.allRowComps.forEach(rowComp => {
-            const eRow = rowComp.getGui();
-            addOrRemoveCssClass(eRow, 'ag-row-group', expandable);
-            addOrRemoveCssClass(eRow, 'ag-row-group-expanded', expandable && expanded);
-            addOrRemoveCssClass(eRow, 'ag-row-group-contracted', expandable && !expanded);
-            setAriaExpanded(eRow, expandable && expanded);
+        this.allComps.forEach(c => {
+            c.comp.addOrRemoveCssClass('ag-row-group', expandable);
+            c.comp.addOrRemoveCssClass('ag-row-group-expanded', expandable && expanded);
+            c.comp.addOrRemoveCssClass('ag-row-group-contracted', expandable && !expanded);
+            c.comp.setAriaExpanded(expandable && expanded);
         });
     }
 
@@ -478,8 +499,8 @@ export class RowCtrl extends BeanStub {
     }
 
     public onKeyboardNavigate(keyboardEvent: KeyboardEvent) {
-        const currentFullWidthComp = find(this.allRowComps, rowComp => rowComp.getGui().contains(keyboardEvent.target as HTMLElement));
-        const currentFullWidthContainer = currentFullWidthComp ? currentFullWidthComp.getGui() : null;
+        const currentFullWidthComp = find(this.allComps, c => c.element.contains(keyboardEvent.target as HTMLElement));
+        const currentFullWidthContainer = currentFullWidthComp ? currentFullWidthComp.element : null;
         const isFullWidthContainerFocused = currentFullWidthContainer === keyboardEvent.target;
 
         if (!isFullWidthContainerFocused) { return; }
@@ -498,8 +519,8 @@ export class RowCtrl extends BeanStub {
 
     public onTabKeyDown(keyboardEvent: KeyboardEvent) {
         if (keyboardEvent.defaultPrevented || isStopPropagationForAgGrid(keyboardEvent)) { return; }
-        const currentFullWidthComp = find(this.allRowComps, rowComp => rowComp.getGui().contains(keyboardEvent.target as HTMLElement));
-        const currentFullWidthContainer = currentFullWidthComp ? currentFullWidthComp.getGui() : null;
+        const currentFullWidthComp = find(this.allComps, c => c.element.contains(keyboardEvent.target as HTMLElement));
+        const currentFullWidthContainer = currentFullWidthComp ? currentFullWidthComp.element : null;
         const isFullWidthContainerFocused = currentFullWidthContainer === keyboardEvent.target;
         let nextEl: HTMLElement | null = null;
 
@@ -516,7 +537,7 @@ export class RowCtrl extends BeanStub {
         const node = this.rowNode;
         const isFocused = this.isFullWidth() && event.rowIndex === node.rowIndex && event.rowPinned == node.rowPinned;
 
-        const element = this.fullWidthRowComp ? this.fullWidthRowComp.getGui() : this.centerRowComp.getGui();
+        const element = this.fullWidthComp ? this.fullWidthComp.element : this.centerComp.element;
 
         addOrRemoveCssClass(element, 'ag-full-width-focus', isFocused);
         if (isFocused) {
@@ -527,7 +548,7 @@ export class RowCtrl extends BeanStub {
     }
 
     public refreshCell(cellComp: CellComp) {
-        this.allRowComps.forEach(rc => rc.destroyCells([cellComp]));
+        this.allComps.forEach(c => c.comp.destroyCells([cellComp]));
         this.updateColumnLists();
     }
 
@@ -720,10 +741,9 @@ export class RowCtrl extends BeanStub {
         if (this.rowLevel != newLevel) {
             const classToAdd = 'ag-row-level-' + newLevel;
             const classToRemove = 'ag-row-level-' + this.rowLevel;
-            this.allRowComps.forEach(rowComp => {
-                const eGui = rowComp.getGui();
-                addCssClass(eGui, classToAdd);
-                removeCssClass(eGui, classToRemove);
+            this.allComps.forEach(c => {
+                c.comp.addOrRemoveCssClass(classToAdd, true);
+                c.comp.addOrRemoveCssClass(classToRemove, false);
             });
         }
         this.rowLevel = newLevel;
@@ -743,11 +763,11 @@ export class RowCtrl extends BeanStub {
 
         if (this.firstRowOnPage !== newFirst) {
             this.firstRowOnPage = newFirst;
-            this.allRowComps.forEach(rowComp => addOrRemoveCssClass(rowComp.getGui(), 'ag-row-first', newFirst));
+            this.allComps.forEach(c => c.comp.addOrRemoveCssClass('ag-row-first', newFirst));
         }
         if (this.lastRowOnPage !== newLast) {
             this.lastRowOnPage = newLast;
-            this.allRowComps.forEach(rowComp => addOrRemoveCssClass(rowComp.getGui(), 'ag-row-last', newLast));
+            this.allComps.forEach(c => c.comp.addOrRemoveCssClass('ag-row-last', newLast));
         }
     }
 
@@ -767,7 +787,7 @@ export class RowCtrl extends BeanStub {
 
     private setEditingRow(value: boolean): void {
         this.editingRow = value;
-        this.allRowComps.forEach(rowComp => addOrRemoveCssClass(rowComp.getGui(), 'ag-row-editing', value));
+        this.allComps.forEach(c => c.comp.addOrRemoveCssClass('ag-row-editing', value));
 
         const event: RowEvent = value ?
             this.createRowEvent(Events.EVENT_ROW_EDITING_STARTED) as RowEditingStartedEvent
@@ -792,7 +812,7 @@ export class RowCtrl extends BeanStub {
     }
 
     public forEachCellComp(callback: (renderedCell: CellComp) => void): void {
-        this.allRowComps.forEach(rc => rc.forEachCellComp(callback));
+        this.allComps.forEach(c => c.comp.forEachCellComp(callback));
     }
 
     private postProcessClassesFromGridOptions(): void {
@@ -800,7 +820,7 @@ export class RowCtrl extends BeanStub {
         if (!cssClasses || !cssClasses.length) { return; }
 
         cssClasses.forEach(classStr => {
-            this.allRowComps.forEach(rowComp => addCssClass(rowComp.getGui(), classStr));
+            this.allComps.forEach(c => c.comp.addOrRemoveCssClass(classStr, true));
         });
     }
 
@@ -808,17 +828,17 @@ export class RowCtrl extends BeanStub {
         this.beans.rowCssClassCalculator.processRowClassRules(
             this.rowNode, this.scope,
             (className: string) => {
-                this.allRowComps.forEach(rowComp => addCssClass(rowComp.getGui(), className));
+                this.allComps.forEach(c => c.comp.addOrRemoveCssClass(className, true));
             },
             (className: string) => {
-                this.allRowComps.forEach(rowComp => removeCssClass(rowComp.getGui(), className));
+                this.allComps.forEach(c => c.comp.addOrRemoveCssClass(className, false));
             }
         );
     }
 
     private postProcessStylesFromGridOptions(): void {
         const rowStyles = this.processStylesFromGridOptions();
-        this.allRowComps.forEach(rowComp => addStylesToElement(rowComp.getGui(), rowStyles));
+        this.allComps.forEach(c => c.comp.addStylesToElement(rowStyles));
     }
 
     public getInitialRowTopStyle() {
@@ -896,17 +916,16 @@ export class RowCtrl extends BeanStub {
 
     private onRowSelected(): void {
         const selected = this.rowNode.isSelected()!;
-        this.allRowComps.forEach(rowComp => {
-            const eGui = rowComp.getGui();
-            setAriaSelected(eGui, selected);
-            addOrRemoveCssClass(eGui, 'ag-row-selected', selected);
-            this.refreshAriaLabel(eGui, selected);
+        this.allComps.forEach(c => {
+            c.comp.setAriaSelected(selected);
+            c.comp.addOrRemoveCssClass('ag-row-selected', selected);
+            this.refreshAriaLabel(c.element, selected);
         });
     }
 
-    public refreshAriaLabel(node: HTMLElement, selected: boolean): void {
+    public refreshAriaLabel(element: HTMLElement, selected: boolean): void {
         if (selected && this.beans.gridOptionsWrapper.isSuppressRowDeselection()) {
-            node.removeAttribute('aria-label');
+            element.removeAttribute('aria-label');
             return;
         }
 
@@ -916,7 +935,7 @@ export class RowCtrl extends BeanStub {
             `Press SPACE to ${selected ? 'deselect' : 'select'} this row.`
         );
 
-        setAriaLabel(node, label);
+        setAriaLabel(element, label);
     }
 
     public isUseAnimationFrameForCreate(): boolean {
@@ -979,7 +998,7 @@ export class RowCtrl extends BeanStub {
         if (exists(this.rowNode.rowHeight)) {
             const heightPx = `${this.rowNode.rowHeight}px`;
 
-            this.allRowComps.forEach(rowComp => rowComp.getGui().style.height = heightPx);
+            this.allComps.forEach(c => c.comp.setHeight(heightPx));
         }
     }
 
@@ -1025,25 +1044,22 @@ export class RowCtrl extends BeanStub {
             const rowTop = this.roundRowTopToBounds(this.rowNode.rowTop!);
             this.setRowTop(rowTop);
         } else {
-            this.allRowComps.forEach(rowComp => {
-                addCssClass(rowComp.getGui(), 'ag-opacity-zero');
-            });
+            this.allComps.forEach(c => c.comp.addOrRemoveCssClass('ag-opacity-zero', true) );
         }
     }
 
     public destroySecondPass(): void {
-        this.allRowComps.forEach(c => c.destroy());
-        this.allRowComps.length = 0;
+        this.allComps.forEach(c => c.comp.destroy());
+        this.allComps.length = 0;
     }
 
     private onCellFocusChanged(): void {
         const rowFocused = this.beans.focusService.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned);
 
         if (rowFocused !== this.rowFocused) {
-            this.allRowComps.forEach(rowComp => {
-                const eRow = rowComp.getGui();
-                addOrRemoveCssClass(eRow, 'ag-row-focus', rowFocused);
-                addOrRemoveCssClass(eRow, 'ag-row-no-focus', !rowFocused);
+            this.allComps.forEach(c => {
+                c.comp.addOrRemoveCssClass('ag-row-focus', rowFocused);
+                c.comp.addOrRemoveCssClass('ag-row-no-focus', !rowFocused);
             });
             this.rowFocused = rowFocused;
         }
@@ -1099,14 +1115,11 @@ export class RowCtrl extends BeanStub {
             const topPx = `${afterScalingPixels}px`;
 
             const suppressRowTransform = this.beans.gridOptionsWrapper.isSuppressRowTransform();
-            this.allRowComps.forEach(rowComp => {
-                const eGui = rowComp.getGui();
-                if (suppressRowTransform) {
-                    eGui.style.top = topPx;
-                } else {
-                    eGui.style.transform = `translateY(${topPx})`;
-                }
-            });
+            this.allComps.forEach(
+                c => suppressRowTransform ?
+                    c.comp.setTop(topPx) :
+                    c.comp.setTransform(`translateY(${topPx})`)
+            );
         }
     }
 
@@ -1115,12 +1128,17 @@ export class RowCtrl extends BeanStub {
     }
 
     public getRenderedCellForColumn(column: Column): CellComp | null {
-        const cellComps = this.allRowComps.map(rc => rc.getCellComp(column.getColId()));
+        const cellComps = this.allComps.map(c => c.comp.getCellComp(column.getColId()));
         let cellComp = find(cellComps, c => !!c);
 
         if (cellComp) { return cellComp; }
 
-        const spannedCellComps = this.allRowComps.map(rc => rc.getCellCompSpanned(column));
+        const spannedCellComps = this.allComps.map(c => {
+            const allCellComps = c.comp.getAllCellComps();
+            const compsWithThisCol = allCellComps
+                .filter(cmp => cmp.getColSpanningList().indexOf(column) >= 0);
+            return compsWithThisCol.length >= 0 ? compsWithThisCol[0] : null;
+        });
         cellComp = find(spannedCellComps, c => !!c);
 
         return cellComp || null;
@@ -1146,35 +1164,35 @@ export class RowCtrl extends BeanStub {
             this.rowIsEven = rowIsEven;
         }
 
-        this.allRowComps.forEach(rowComp => {
-            const eRow = rowComp.getGui();
-            eRow.setAttribute('row-index', rowIndexStr);
-            setAriaRowIndex(eRow, headerRowCount + this.rowNode.rowIndex! + 1);
+        this.allComps.forEach(c => {
+            c.comp.setRowIndex(rowIndexStr);
+            c.comp.setAriaRowIndex(headerRowCount + this.rowNode.rowIndex! + 1);
 
             if (!rowIsEvenChanged) { return; }
-            addOrRemoveCssClass(eRow, 'ag-row-even', rowIsEven);
-            addOrRemoveCssClass(eRow, 'ag-row-odd', !rowIsEven);
+
+            c.comp.addOrRemoveCssClass('ag-row-even', rowIsEven);
+            c.comp.addOrRemoveCssClass('ag-row-odd', !rowIsEven);
         });
     }
 
     // returns the pinned left container, either the normal one, or the embedded full with one if exists
     public getPinnedLeftRowElement(): HTMLElement {
-        return this.leftRowComp ? this.leftRowComp.getGui() : undefined!;
+        return this.leftComp ? this.leftComp.element : undefined!;
     }
 
     // returns the pinned right container, either the normal one, or the embedded full with one if exists
     public getPinnedRightRowElement(): HTMLElement {
-        return this.rightRowComp ? this.rightRowComp.getGui() : undefined!;
+        return this.rightComp ? this.rightComp.element : undefined!;
     }
 
     // returns the body container, either the normal one, or the embedded full with one if exists
     public getBodyRowElement(): HTMLElement {
-        return this.centerRowComp ? this.centerRowComp.getGui() : undefined!;
+        return this.centerComp ? this.centerComp.element : undefined!;
     }
 
     // returns the full width container
     public getFullWidthRowElement(): HTMLElement {
-        return this.fullWidthRowComp ? this.fullWidthRowComp.getGui() : undefined!;
+        return this.fullWidthComp ? this.fullWidthComp.element : undefined!;
     }
 
 }

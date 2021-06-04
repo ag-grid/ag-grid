@@ -24,6 +24,7 @@ import {
     RowDataTransaction,
     RowDataUpdatedEvent,
     RowNode,
+    RowHighlightPosition,
     RowNodeTransaction,
     SelectionService,
     ValueCache,
@@ -264,17 +265,17 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         this.lastHighlightedRow = rowNodeAtPixelNow;
     }
 
-    public getHighlightPosition(pixel: number, rowNode?: RowNode): 'above' | 'below' {
+    public getHighlightPosition(pixel: number, rowNode?: RowNode): RowHighlightPosition {
         if (!rowNode) {
             const index = this.getRowIndexAtPixel(pixel);
             rowNode = this.getRow(index || 0);
 
-            if (!rowNode) { return 'below'; }
+            if (!rowNode) { return RowHighlightPosition.Below; }
         }
 
         const { rowTop, rowHeight } = rowNode;
 
-        return pixel - rowTop! < rowHeight! / 2 ? 'above' : 'below';
+        return pixel - rowTop! < rowHeight! / 2 ? RowHighlightPosition.Above : RowHighlightPosition.Below;
     }
 
     public getLastHighlightedRowNode(): RowNode | null {

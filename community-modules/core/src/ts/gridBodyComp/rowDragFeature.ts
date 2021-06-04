@@ -1,16 +1,19 @@
 import {
-    DragAndDropService, DraggingEvent, DragSourceType, DropTarget,
+    DragAndDropService,
+    DraggingEvent,
+    DragSourceType,
+    DropTarget,
     VerticalDirection
 } from "../dragAndDrop/dragAndDropService";
 import { Autowired, Optional, PostConstruct } from "../context/context";
 import { ColumnModel } from "../columns/columnModel";
 import { FocusService } from "../focusService";
 import { IRangeService } from "../interfaces/IRangeService";
-import { RowDragEvent, RowDragEnterEvent, RowDragLeaveEvent, RowDragMoveEvent, RowDragEndEvent } from "../events";
+import { RowDragEndEvent, RowDragEnterEvent, RowDragEvent, RowDragLeaveEvent, RowDragMoveEvent } from "../events";
 import { Events } from "../eventKeys";
 import { IRowModel } from "../interfaces/iRowModel";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
-import { RowNode } from "../entities/rowNode";
+import { RowHighlightPosition, RowNode } from "../entities/rowNode";
 import { SelectionService } from "../selectionService";
 import { MouseEventService } from "./mouseEventService";
 import { last } from '../utils/array';
@@ -219,7 +222,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
     private moveRowAndClearHighlight(draggingEvent: DraggingEvent): void {
         const lastHighlightedRowNode = this.clientSideRowModel.getLastHighlightedRowNode();
-        const isBelow = lastHighlightedRowNode && lastHighlightedRowNode.highlighted === 'below';
+        const isBelow = lastHighlightedRowNode && lastHighlightedRowNode.highlighted === RowHighlightPosition.Below;
         const pixel = this.mouseEventService.getNormalisedPosition(draggingEvent).y;
         const rowNodes = draggingEvent.dragItem.rowNodes;
 
@@ -237,7 +240,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
             let addIndex = this.clientSideRowModel.getRowIndexAtPixel(pixel) + 1;
 
-            if (this.clientSideRowModel.getHighlightPosition(pixel) === 'above') {
+            if (this.clientSideRowModel.getHighlightPosition(pixel) === RowHighlightPosition.Above) {
                 addIndex--;
             }
 
