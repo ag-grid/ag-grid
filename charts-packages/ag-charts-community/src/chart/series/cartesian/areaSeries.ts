@@ -20,6 +20,7 @@ import { toFixed } from "../../../util/number";
 import { equal } from "../../../util/equal";
 import { reactive, TypedEvent } from "../../../util/observable";
 import { interpolate } from "../../../util/string";
+import { sanitizeHtml } from "../../../util/sanitize";
 
 interface AreaSelectionDatum {
     readonly yKey: string;
@@ -582,8 +583,8 @@ export class AreaSeries extends CartesianSeries {
         const color = fills[yKeyIndex % fills.length];
         const xString = xAxis.formatDatum(xValue);
         const yString = yAxis.formatDatum(yValue);
-        const title = yName;
-        const content = xString + ': ' + yString;
+        const title = sanitizeHtml(yName);
+        const content = sanitizeHtml(xString + ': ' + yString);
         const defaults: TooltipRendererResult = {
             title,
             backgroundColor: color,

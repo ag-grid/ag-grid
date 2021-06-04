@@ -431,6 +431,10 @@ export interface AgSeriesTooltip {
     enabled?: boolean;
 }
 
+interface AgLineSeriesLabelOptions extends AgChartLabelOptions {
+    formatter?: (params: { value: any; }) => string;
+}
+
 export interface AgLineSeriesTooltip extends AgSeriesTooltip {
     renderer?: (params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
 }
@@ -452,6 +456,7 @@ export interface AgLineSeriesOptions extends AgBaseSeriesOptions {
         fill?: string;
         stroke?: string;
     };
+    label?: AgLineSeriesLabelOptions;
     tooltip?: AgLineSeriesTooltip;
     /**
      * @deprecated Use `tooltip.renderer` instead.

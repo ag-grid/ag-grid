@@ -1039,6 +1039,15 @@
           "Times New Roman, serif"
         ],
         "description": "The font family to use for the labels."
+      },
+      "formatter": {
+        "type": {
+          "parameters": {
+            "value": "number"
+          },
+          "returnType": "string"
+        },
+        "description": "Function used to turn 'yKey' values into text to be displayed by a label. Be default the values are simply stringified."
       }
     },
     "formatter": {
@@ -1238,6 +1247,73 @@
           }
         },
         "description": "Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted, the <code>highlighted</code> property will be set to <code>true</code>; make sure to check this if you want to differentiate between the highlighted and un-highlighted states."
+      }
+    },
+    "label": {
+      "meta": {
+        "description": "Configuration for the labels shown on top of data points."
+      },
+      "enabled": {
+        "default": true,
+        "description": "Whether or not the labels should be shown."
+      },
+      "color": {
+        "default": "rgba(70, 70, 70, 1)",
+        "description": "The colour to use for the labels."
+      },
+      "fontStyle": {
+        "default": "normal",
+        "options": [
+          "normal",
+          "italic",
+          "oblique"
+        ],
+        "description": "The font style to use for the labels."
+      },
+      "fontWeight": {
+        "default": "normal",
+        "options": [
+          "normal",
+          "bold",
+          "bolder",
+          "lighter",
+          "100",
+          "200",
+          "300",
+          "400",
+          "500",
+          "600",
+          "700",
+          "800",
+          "900"
+        ],
+        "description": "The font weight to use for the labels.",
+        "breakIndex": 4
+      },
+      "fontSize": {
+        "default": 12,
+        "description": "The font size in pixels to use for the labels.",
+        "min": 1,
+        "max": 30,
+        "unit": "px"
+      },
+      "fontFamily": {
+        "default": "Verdana, sans-serif",
+        "suggestions": [
+          "Verdana, sans-serif",
+          "Arial, sans-serif",
+          "Times New Roman, serif"
+        ],
+        "description": "The font family to use for the labels."
+      },
+      "formatter": {
+        "type": {
+          "parameters": {
+            "value": "any"
+          },
+          "returnType": "string"
+        },
+        "description": "Function used to turn 'yKey' values into text to be displayed by a label. Be default the values are simply stringified."
       }
     },
     "highlightStyle": {

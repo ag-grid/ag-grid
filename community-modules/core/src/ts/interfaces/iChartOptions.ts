@@ -264,9 +264,14 @@ export interface BarTooltipRendererParams extends CartesianTooltipRendererParams
 
 export interface LineSeriesOptions extends SeriesOptions {
     marker: MarkerOptions;
+    label: LineSeriesLabelOptions;
     tooltip: TooltipOptions<LineTooltipRendererParams>;
     lineDash: number[];
     lineDashOffset: number;
+}
+
+export interface LineSeriesLabelOptions extends SeriesLabelOptions {
+    formatter?: (params: { value: any }) => string;
 }
 
 export interface MarkerOptions {

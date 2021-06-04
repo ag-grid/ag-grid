@@ -1,5 +1,6 @@
 import {
     AgLineSeriesOptions,
+    LineSeriesLabelOptions,
     CartesianChartOptions,
     HighlightOptions,
     LineSeriesOptions
@@ -153,6 +154,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                 opacity: seriesDefaults.strokeOpacity,
                 width: seriesDefaults.strokeWidth
             },
+            label: seriesDefaults.label as LineSeriesLabelOptions,
             marker: {
                 enabled: seriesDefaults.marker!.enabled,
                 shape: seriesDefaults.marker!.shape,

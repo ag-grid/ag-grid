@@ -22,7 +22,7 @@ import { NavigatorHandle } from "./navigator/navigatorHandle";
 import { CartesianSeriesMarker } from "./series/cartesian/cartesianSeries";
 import { Chart } from "./chart";
 import { HierarchyChart } from "./hierarchyChart";
-import { TreemapSeries, TreemapSeriesLabel } from "./series/hierarchy/treemapSeries";
+import { TreemapSeries } from "./series/hierarchy/treemapSeries";
 import { LogAxis } from "./axis/logAxis";
 import { Label } from "./label";
 
@@ -454,6 +454,14 @@ const mappings: any = {
                 },
                 ...tooltipMapping,
                 highlightStyle: {},
+                label: {
+                    meta: {
+                        defaults: {
+                            ...labelDefaults,
+                            formatter: undefined
+                        }
+                    }
+                },
                 marker: {
                     meta: {
                         constructor: CartesianSeriesMarker,
@@ -765,7 +773,6 @@ const mappings: any = {
                 ...tooltipMapping,
                 title: {
                     meta: {
-                        constructor: TreemapSeriesLabel,
                         defaults: {
                             enabled: true,
                             color: 'white',
@@ -779,7 +786,6 @@ const mappings: any = {
                 },
                 subtitle: {
                     meta: {
-                        constructor: TreemapSeriesLabel,
                         defaults: {
                             enabled: true,
                             color: 'white',

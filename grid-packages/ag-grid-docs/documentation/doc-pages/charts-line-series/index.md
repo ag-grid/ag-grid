@@ -24,6 +24,23 @@ series: [{
 
 The chart expects the data (`chart.data` property) to be an array of objects, where each object is a table row or a database record and each key is a column. To plot anything on a plane, we need at least two coordinates: `x` and `y`. The `xKey` and `yKey` line series configs tell the series which keys should be used to fetch the values of these coordinates from each object in the `data` array.
 
+Showing labels on top of data points is also an option with the `label` config. Labels can be enabled independently of series markers.
+For example, to show bold labels on top of each data point (and in this case a marker) we would use the following config:
+
+```js
+series: [{
+    ...
+    label: {
+        enabled: true,
+        fontWeight: 'bold'
+    }
+}]
+```
+
+The above config is used in the example below. Feel free to open it in Pluker and experiment with other [label options](#reference-line.label).
+
+<chart-example title='Line Series With Labels' name='basic-line-labels' type='generated'></chart-example>
+
 ## Multiple Series
 
 If we have more than two fields inside each object in the `data` array, we can create a multi-series line chart. For example, if a datum looks like this:
