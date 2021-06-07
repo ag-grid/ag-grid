@@ -205,13 +205,15 @@ export class RowCtrl extends BeanStub {
     }
 
     private initialiseRowComps(): void {
+        const gow = this.beans.gridOptionsWrapper;
+
         this.onRowHeightChanged();
         this.updateRowIndexes();
         this.setFocusedClasses();
         this.setInitialRowTop();
         this.setStylesFromGridOptions();
 
-        if (this.beans.gridOptionsWrapper.isRowSelection() && this.rowNode.selectable) {
+        if (gow.isRowSelection() && this.rowNode.selectable) {
             this.onRowSelected();
         }
 
@@ -237,7 +239,27 @@ export class RowCtrl extends BeanStub {
             if (this.isFullWidth()) {
                 c.comp.setTabIndex(-1);
             }
+
+            // DOM DATA
+            gow.setDomData(c.element, RowCtrl.DOM_DATA_KEY_RENDERED_ROW, this);
+            this.addDestroyFunc(
+                () => gow.setDomData(c.element, RowCtrl.DOM_DATA_KEY_RENDERED_ROW, null)
+            );
+
+            // adding hover functionality adds listener to this row, so we
+            // do it lazily in an animation frame
+            if (this.useAnimationFrameForCreate) {
+                this.beans.taskQueue.createTask(
+                    this.addHoverFunctionality.bind(this, c.element),
+                    this.rowNode.rowIndex!,
+                    'createTasksP2'
+                );
+            } else {
+                this.addHoverFunctionality(c.element);
+            }
         });
+
+        this.executeProcessRowPostCreateFunc();
     }
 
     public getColsForRowComp(pinned: string | null): Column[] {

@@ -38,8 +38,6 @@ export class RowComp extends Component {
 
         this.setTemplate(`<div role="row" comp-id="${this.getCompId()}"/>`);
 
-        this.afterRowAttached();
-
         const compProxy: IRowComp = {
             onColumnChanged: () => this.onColumnChanged(),
             getFullWidthRowComp: ()=> this.getFullWidthRowComp(),
@@ -228,34 +226,6 @@ export class RowComp extends Component {
 
     public getFullWidthRowComp(): ICellRendererComp | null | undefined {
         return this.fullWidthRowComponent;
-    }
-
-    private afterRowAttached(): void {
-        this.addDomData();
-
-        const eRow = this.getGui();
-
-        // adding hover functionality adds listener to this row, so we
-        // do it lazily in an animation frame
-        if (this.controller.isUseAnimationFrameForCreate()) {
-            this.beans.taskQueue.createTask(
-                this.controller.addHoverFunctionality.bind(this.controller, eRow),
-                this.rowNode.rowIndex!,
-                'createTasksP2'
-            );
-        } else {
-            this.controller.addHoverFunctionality(eRow);
-        }
-
-        this.controller.executeProcessRowPostCreateFunc();
-    }
-
-    private addDomData(): void {
-        const gow = this.beans.gridOptionsWrapper;
-        gow.setDomData(this.getGui(), RowCtrl.DOM_DATA_KEY_RENDERED_ROW, this.controller);
-        this.addDestroyFunc(
-            () => gow.setDomData(this.getGui(), RowCtrl.DOM_DATA_KEY_RENDERED_ROW, null)
-        );
     }
 
     public destroyCells(cellComps: CellComp[]): void {
