@@ -1,16 +1,6 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import {
-    Context,
-    IRowContainerComp,
-    IRowComp,
-    RowContainerCtrl,
-    RowContainerName,
-    RowCtrl,
-    CellComp
-} from "ag-grid-community";
-import { classesList } from "./utils";
-import { setAriaExpanded, setAriaRowIndex, setAriaSelected } from "ag-grid-community/dist/cjs/utils/aria";
-import { addStylesToElement } from "ag-grid-community/dist/cjs/utils/dom";
+import React, { useEffect, useRef, useState } from "react";
+import { Context, IRowComp, RowCtrl } from "ag-grid-community";
+import { CssClasses } from "./utils";
 
 export function RowComp(params: {context: Context, rowCtrl: RowCtrl, pinned: string | null}) {
 
@@ -19,7 +9,10 @@ export function RowComp(params: {context: Context, rowCtrl: RowCtrl, pinned: str
     const [height, setHeight] = useState<string>('');
     const [top, setTop] = useState<string>('');
     const [transform, setTransform] = useState<string>('');
-    const [addOrRemoveClasses, setAddOrRemoveClasses] = useState<{[name:string]:boolean}>({});
+    const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses());
+    const [rowIndex, setRowIndex] = useState<string>('');
+    const [ariaRowIndex, setAriaRowIndex] = useState<number>();
+    const [ariaExpanded, setAriaExpanded] = useState<boolean>();
 
     const eGui = useRef<HTMLDivElement>(null);
 
@@ -30,25 +23,19 @@ export function RowComp(params: {context: Context, rowCtrl: RowCtrl, pinned: str
             setHeight: setHeight,
             setTop: setTop,
             setTransform: setTransform,
-            addOrRemoveCssClass: (name, on) => {
-                setAddOrRemoveClasses( prev => {
-                    const next = {...prev};
-                    next[name] = on;
-                    return next;
-                });
-            },
-            onColumnChanged: () => true,
-            getFullWidthRowComp: ()=> null,
-            setAriaExpanded: on => true,
-            destroyCells: cellComps => true,
+            addOrRemoveCssClass: ()=>true,//(name, on) => setCssClasses( prev => prev.setClass(name, on) ),
+            setRowIndex: setRowIndex,
+            setAriaRowIndex: setAriaRowIndex,
+            setAriaExpanded: setAriaExpanded,
             forEachCellComp: callback => true,
             addStylesToElement: styles => true,
             setAriaSelected: value => true,
             destroy: ()=> true,
             getCellComp: colId => null,
             getAllCellComps: () => [],
-            setRowIndex: rowIndex => null,
-            setAriaRowIndex: rowIndex => null
+            onColumnChanged: () => true,
+            destroyCells: cellComps => true,
+            getFullWidthRowComp: ()=> null,
         };
 
         rowCtrl.setComp(compProxy, eGui.current!, pinned);
@@ -66,9 +53,9 @@ export function RowComp(params: {context: Context, rowCtrl: RowCtrl, pinned: str
         transform
     };
 
-    const rowClasses = Object.keys(addOrRemoveClasses).filter( key => addOrRemoveClasses[key] ).join(' ');
+    const className = cssClasses.toString();
 
     return (
-        <div ref={eGui} className={rowClasses} style={rowStyles} role="row">Row Comp {rowCtrl.getInstanceId()}</div>
+        <div ref={eGui} className={className} style={rowStyles} role="row" row-index={rowIndex} aria-rowindex={ariaRowIndex} aria-expanded={ariaExpanded}>{rowCtrl.getRowNode().data.make}</div>
     );
 }

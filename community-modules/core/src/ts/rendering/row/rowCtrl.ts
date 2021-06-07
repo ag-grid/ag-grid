@@ -210,6 +210,10 @@ export class RowCtrl extends BeanStub {
             initialRowClasses.forEach( name => c.comp.addOrRemoveCssClass(name, true));
         });
 
+        if (this.rowNode.group) {
+            this.allComps.forEach( c => c.comp.setAriaExpanded(this.rowNode.expanded==true) );
+        }
+
     }
 
     public getColsForRowComp(pinned: string | null): Column[] {

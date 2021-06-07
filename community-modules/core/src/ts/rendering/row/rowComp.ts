@@ -197,15 +197,6 @@ export class RowComp extends Component {
         return this.cellComps[id];
     }
 
-/*
-    public getCellCompSpanned(column: Column): CellComp | null {
-        const spanList = Object.keys(this.cellComps)
-            .map(name => this.cellComps[name])
-            .filter(cmp => cmp && cmp.getColSpanningList().indexOf(column) !== -1);
-        return spanList.length ? spanList[0] : null;
-    }
-*/
-
     public destroy(): void {
         super.destroy();
         this.destroyAllCells();
@@ -257,10 +248,6 @@ export class RowComp extends Component {
 
         if (this.beans.gridOptionsWrapper.isRowSelection()) {
             templateParts.push(` aria-selected="${this.rowNode.isSelected() ? 'true' : 'false'}"`);
-        }
-
-        if (this.rowNode.group) {
-            templateParts.push(` aria-expanded=${this.rowNode.expanded ? 'true' : 'false'}`);
         }
 
         templateParts.push(` style="${userRowStyles}">`);
