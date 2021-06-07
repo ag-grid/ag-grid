@@ -11,7 +11,8 @@ import styles from './Search.module.scss';
  * The website uses Algolia to power its search functionality. This component builds on components provided by Algolia
  * to render the search box and results.
  */
-const Search = ({ currentFramework }) => {
+const Search = ({ delay, currentFramework }) => {
+    const [timerId, setTimerId] = useState();
     const [query, setQuery] = useState();
 
     // It is important to memoise the client, otherwise we end up creating a new one on every re-render, resulting in
@@ -21,11 +22,20 @@ const Search = ({ currentFramework }) => {
 
     const indices = [{ name: `ag-grid${isDevelopment() ? '-dev' : ''}_${currentFramework}` }];
 
+    const onChangeDebounced = ({ query }) => {
+        clearTimeout(timerId);
+        setTimerId(setTimeout(() => {
+            console.log("setting value", query);
+            setQuery(query)
+        }, delay));
+    };
+
+
     return (
         <InstantSearch
             searchClient={searchClient}
             indexName={indices[0].name}
-            onSearchStateChange={({ query }) => setQuery(query)}>
+            onSearchStateChange={onChangeDebounced}>
             <SearchComponents indices={indices} query={query} />
         </InstantSearch>
     );
