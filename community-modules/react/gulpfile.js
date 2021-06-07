@@ -31,7 +31,8 @@ const tscTask = async () => {
     const tscProject = gulpTypescript.createProject(tsConfig);
     const tsResult = await gulp.src(
         [
-            'src/**/*.ts',
+            'src/**/*.ts*',
+            '!src/**/old/**/*',
             '!src/**/__tests__/**/*',
             '!src/**/setupTests.ts'
         ]
