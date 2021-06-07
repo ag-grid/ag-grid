@@ -229,7 +229,12 @@ export class PositionableFeature extends BeanStub {
         if (this.getHeight() === height) { return; }
 
         if (!isPercent) {
-            setFixedHeight(eGui, height);
+            if (this.config.popup) {
+                setFixedHeight(eGui, height);
+            } else {
+                eGui.style.height = `${height}px`;
+                eGui.style.flex = 'unset';
+            }
         } else {
             eGui.style.maxHeight = 'unset';
             eGui.style.minHeight = 'unset';
@@ -261,7 +266,12 @@ export class PositionableFeature extends BeanStub {
         if (this.getWidth() === width) { return; }
 
         if (!isPercent) {
-            setFixedWidth(eGui, width);
+            if (this.config.popup) {
+                setFixedWidth(eGui, width);
+            } else {
+                eGui.style.width = `${width}px`;
+                eGui.style.flex = ' unset';
+            }
         } else {
             eGui.style.maxWidth = 'unset';
             eGui.style.minWidth = 'unset';
@@ -502,11 +512,11 @@ export class PositionableFeature extends BeanStub {
             if (el === containerToFlex) { continue; }
 
             if (vertical) {
-                setFixedHeight(el, el.offsetHeight);
+                el.style.height = `${el.offsetHeight}px`;
             } else {
-                setFixedWidth(el, el.offsetWidth);
+                el.style.width = `${el.offsetWidth}px`;
             }
-            el.style.removeProperty('flex');
+            el.style.flex = 'unset';
 
             if (el === this.element) {
                 containerToFlex = siblings[i + 1];
