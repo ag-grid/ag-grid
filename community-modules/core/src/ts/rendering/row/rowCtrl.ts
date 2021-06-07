@@ -83,7 +83,7 @@ export interface IRowComp {
     setRowId(rowId: string): void;
     setRowBusinessKey(businessKey: string): void;
     setTabIndex(tabIndex: number): void;
-    setAriaLabel(label: string): void;
+    setAriaLabel(label: string | undefined): void;
     setUserStyles(styles: any): void;
 }
 
@@ -211,7 +211,7 @@ export class RowCtrl extends BeanStub {
         this.setInitialRowTop();
         this.setStylesFromGridOptions();
 
-        if (this.beans.gridOptionsWrapper.isRowSelection()) {
+        if (this.beans.gridOptionsWrapper.isRowSelection() && this.rowNode.selectable) {
             this.onRowSelected();
         }
 
@@ -936,14 +936,14 @@ export class RowCtrl extends BeanStub {
         this.allComps.forEach(c => {
             c.comp.setAriaSelected(selected);
             c.comp.addOrRemoveCssClass('ag-row-selected', selected);
-            this.refreshAriaLabel(c.element, selected);
+            c.comp.setAriaLabel(this.createAriaLabel());
         });
     }
 
-    public refreshAriaLabel(element: HTMLElement, selected: boolean): void {
+    private createAriaLabel(): string | undefined {
+        const selected = this.rowNode.isSelected()!;
         if (selected && this.beans.gridOptionsWrapper.isSuppressRowDeselection()) {
-            element.removeAttribute('aria-label');
-            return;
+            return undefined;
         }
 
         const translate = this.beans.gridOptionsWrapper.getLocaleTextFunc();
@@ -952,7 +952,7 @@ export class RowCtrl extends BeanStub {
             `Press SPACE to ${selected ? 'deselect' : 'select'} this row.`
         );
 
-        setAriaLabel(element, label);
+        return label;
     }
 
     public isUseAnimationFrameForCreate(): boolean {

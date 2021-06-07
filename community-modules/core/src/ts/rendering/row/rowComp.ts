@@ -36,22 +36,26 @@ export class RowComp extends Component {
         this.pinned = pinned;
         this.controller = controller;
 
-        this.setTemplate(`<div  role="row" comp-id="${this.getCompId()}" </div>`);
+        this.setTemplate(`<div role="row" comp-id="${this.getCompId()}"/>`);
 
         this.afterRowAttached();
 
         const compProxy: IRowComp = {
             onColumnChanged: () => this.onColumnChanged(),
             getFullWidthRowComp: ()=> this.getFullWidthRowComp(),
-            addOrRemoveCssClass: (name, on) => {
-                this.addOrRemoveCssClass(name, on)
-            },
+            addOrRemoveCssClass: (name, on) => this.addOrRemoveCssClass(name, on),
             setAriaExpanded: on => setAriaExpanded(this.getGui(), on),
             destroyCells: cellComps => this.destroyCells(cellComps),
             forEachCellComp: callback => this.forEachCellComp(callback),
             setUserStyles: styles => addStylesToElement(this.getGui(), styles),
             setAriaSelected: value => setAriaSelected(this.getGui(), value),
-            setAriaLabel: value => this.getGui().setAttribute('aria-label', value),
+            setAriaLabel: value => {
+                if (value==null) {
+                    this.getGui().removeAttribute('aria-label');
+                } else {
+                    this.getGui().setAttribute('aria-label', value)
+                }
+            },
             setHeight: height => this.getGui().style.height = height,
             destroy: ()=> this.destroy(),
             setTop: top => this.getGui().style.top = top,
@@ -71,7 +75,6 @@ export class RowComp extends Component {
             this.createFullWidthRowCell();
         } else {
             this.onColumnChanged();
-            this.controller.refreshAriaLabel(this.getGui(), !!this.rowNode.isSelected());
         }
     }
 
@@ -116,9 +119,6 @@ export class RowComp extends Component {
                 }
             }
         }
-
-        // fixme - what to do here?
-        // this.angular1Compile(eRow);
     }
 
     public onColumnChanged(): void {
