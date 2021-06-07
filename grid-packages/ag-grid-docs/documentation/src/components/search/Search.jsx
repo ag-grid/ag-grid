@@ -11,8 +11,7 @@ import styles from './Search.module.scss';
  * The website uses Algolia to power its search functionality. This component builds on components provided by Algolia
  * to render the search box and results.
  */
-const Search = ({ delay, currentFramework }) => {
-    const [timerId, setTimerId] = useState();
+const Search = ({ currentFramework }) => {
     const [query, setQuery] = useState();
 
     // It is important to memoise the client, otherwise we end up creating a new one on every re-render, resulting in
@@ -22,19 +21,11 @@ const Search = ({ delay, currentFramework }) => {
 
     const indices = [{ name: `ag-grid${isDevelopment() ? '-dev' : ''}_${currentFramework}` }];
 
-    const onChangeDebounced = ({ query }) => {
-        clearTimeout(timerId);
-        setTimerId(setTimeout(() => {
-            setQuery(query)
-        }, delay));
-    };
-
-
     return (
         <InstantSearch
             searchClient={searchClient}
             indexName={indices[0].name}
-            onSearchStateChange={onChangeDebounced}>
+            onSearchStateChange={({ query }) => setQuery(query)}>
             <SearchComponents indices={indices} query={query} />
         </InstantSearch>
     );
@@ -48,7 +39,7 @@ const SearchComponents = connectSearchBox(({ indices, query, refine }) => {
     useClickOutside(rootRef, () => setFocus(false));
 
     return <div className={styles['search-form']} ref={rootRef}>
-        <SearchBox onFocus={() => setFocus(true)} hasFocus={hasFocus} />
+        <SearchBox onFocus={() => setFocus(true)} hasFocus={hasFocus} delay={250} />
         <SearchResult
             show={query && query.length > 0 && hasFocus}
             indices={indices}

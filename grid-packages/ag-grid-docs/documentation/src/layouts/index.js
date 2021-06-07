@@ -24,7 +24,7 @@ const TopBar = ({ frameworks, framework, path, rootPage }) => (
                     aria-label="Toggle navigation">
                     <span className={styles['top-bar__nav-button-icon']}></span>
                 </button>
-                <Search currentFramework={framework} delay={250} />
+                <Search currentFramework={framework} />
             </div>
             <div className={styles['top-bar__framework-selector']}>
                 {!rootPage && <FrameworkSelector frameworks={frameworks} path={path} currentFramework={framework} />}
