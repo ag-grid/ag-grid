@@ -39,7 +39,7 @@ const SearchComponents = connectSearchBox(({ indices, query, refine }) => {
     useClickOutside(rootRef, () => setFocus(false));
 
     return <div className={styles['search-form']} ref={rootRef}>
-        <SearchBox onFocus={() => setFocus(true)} hasFocus={hasFocus} />
+        <SearchBox onFocus={() => setFocus(true)} hasFocus={hasFocus} delay={250} />
         <SearchResult
             show={query && query.length > 0 && hasFocus}
             indices={indices}
