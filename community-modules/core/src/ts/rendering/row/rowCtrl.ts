@@ -39,6 +39,7 @@ import { BeanStub } from "../../context/beanStub";
 import { convertToMap } from "../../utils/map";
 import { RowDragComp } from "./rowDragComp";
 import { ICellRendererComp, ICellRendererParams } from "../cellRenderers/iCellRenderer";
+import { escapeString } from "../../utils/string";
 
 export enum RowType {
     Normal = 'Normal',
@@ -70,7 +71,6 @@ export interface IRowComp {
     setAriaExpanded(on: boolean): void;
     destroyCells(cellComps: CellComp[]): void;
     forEachCellComp(callback: (comp: CellComp) => void): void;
-    addStylesToElement(styles: any): void;
     setAriaSelected(selected: boolean): void;
     setHeight(height: string): void;
     destroy(): void;
@@ -80,6 +80,11 @@ export interface IRowComp {
     getAllCellComps(): CellComp[];
     setRowIndex(rowIndex: string): void;
     setAriaRowIndex(rowIndex: number): void;
+    setRowId(rowId: string): void;
+    setRowBusinessKey(businessKey: string): void;
+    setTabIndex(tabIndex: number): void;
+    setAriaLabel(label: string): void;
+    setUserStyles(styles: any): void;
 }
 
 interface CompAndElement {
@@ -204,16 +209,35 @@ export class RowCtrl extends BeanStub {
         this.updateRowIndexes();
         this.setFocusedClasses();
         this.setInitialRowTop();
+        this.setStylesFromGridOptions();
+
+        if (this.beans.gridOptionsWrapper.isRowSelection()) {
+            this.onRowSelected();
+        }
+
+        const businessKey = this.getRowBusinessKey();
+        const rowIdSanitised = escapeString(this.rowNode.id!);
+        const businessKeySanitised = escapeString(businessKey!);
 
         this.allComps.forEach( c => {
             const initialRowClasses = this.getInitialRowClasses(c.pinned);
             initialRowClasses.forEach( name => c.comp.addOrRemoveCssClass(name, true));
+
+            if (this.rowNode.group) {
+                c.comp.setAriaExpanded(this.rowNode.expanded==true);
+            }
+
+            if (rowIdSanitised!=null) {
+                c.comp.setRowId(rowIdSanitised);
+            }
+            if (businessKeySanitised!=null) {
+                c.comp.setRowBusinessKey(businessKeySanitised);
+            }
+
+            if (this.isFullWidth()) {
+                c.comp.setTabIndex(-1);
+            }
         });
-
-        if (this.rowNode.group) {
-            this.allComps.forEach( c => c.comp.setAriaExpanded(this.rowNode.expanded==true) );
-        }
-
     }
 
     public getColsForRowComp(pinned: string | null): Column[] {
@@ -454,7 +478,7 @@ export class RowCtrl extends BeanStub {
     }
 
     private postProcessCss(): void {
-        this.postProcessStylesFromGridOptions();
+        this.setStylesFromGridOptions();
         this.postProcessClassesFromGridOptions();
         this.postProcessRowClassRules();
         this.postProcessRowDragging();
@@ -848,10 +872,11 @@ export class RowCtrl extends BeanStub {
         );
     }
 
-    private postProcessStylesFromGridOptions(): void {
+    private setStylesFromGridOptions(): void {
         const rowStyles = this.processStylesFromGridOptions();
-        this.allComps.forEach(c => c.comp.addStylesToElement(rowStyles));
+        this.allComps.forEach(c => c.comp.setUserStyles(rowStyles));
     }
+
     public getRowBusinessKey(): string | undefined {
         const businessKeyForNodeFunc = this.beans.gridOptionsWrapper.getBusinessKeyForNodeFunc();
         if (typeof businessKeyForNodeFunc !== 'function') { return; }
@@ -875,11 +900,6 @@ export class RowCtrl extends BeanStub {
             pinned: pinned
         };
         return this.beans.rowCssClassCalculator.getInitialRowClasses(params);
-    }
-
-    public preProcessStylesFromGridOptions(): string {
-        const rowStyles = this.processStylesFromGridOptions();
-        return cssStyleObjectToMarkup(rowStyles);
     }
 
     public processStylesFromGridOptions(): any {

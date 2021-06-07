@@ -34,6 +34,7 @@ const App = () => {
                         flex: 1,
                         sortable: true
                     }}
+                    rowSelection="multiple"
                     animateRows={true}
                     onGridReady={onGridReady}
                     rowData={rowData}

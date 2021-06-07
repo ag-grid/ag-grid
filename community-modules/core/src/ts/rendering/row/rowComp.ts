@@ -12,7 +12,7 @@ import { assign, getAllValuesInObject, iterateObject } from "../../utils/object"
 import { Constants } from "../../constants/constants";
 import { ModuleRegistry } from "../../modules/moduleRegistry";
 import { ModuleNames } from "../../modules/moduleNames";
-import { setAriaExpanded, setAriaRowIndex, setAriaSelected } from "../../utils/aria";
+import { setAriaExpanded, setAriaLabel, setAriaRowIndex, setAriaSelected } from "../../utils/aria";
 
 export class RowComp extends Component {
 
@@ -36,8 +36,7 @@ export class RowComp extends Component {
         this.pinned = pinned;
         this.controller = controller;
 
-        const template = this.createTemplate();
-        this.setTemplate(template);
+        this.setTemplate(`<div  role="row" comp-id="${this.getCompId()}" </div>`);
 
         this.afterRowAttached();
 
@@ -50,8 +49,9 @@ export class RowComp extends Component {
             setAriaExpanded: on => setAriaExpanded(this.getGui(), on),
             destroyCells: cellComps => this.destroyCells(cellComps),
             forEachCellComp: callback => this.forEachCellComp(callback),
-            addStylesToElement: styles => addStylesToElement(this.getGui(), styles),
+            setUserStyles: styles => addStylesToElement(this.getGui(), styles),
             setAriaSelected: value => setAriaSelected(this.getGui(), value),
+            setAriaLabel: value => this.getGui().setAttribute('aria-label', value),
             setHeight: height => this.getGui().style.height = height,
             destroy: ()=> this.destroy(),
             setTop: top => this.getGui().style.top = top,
@@ -59,7 +59,10 @@ export class RowComp extends Component {
             getCellComp: colId => this.getCellComp(colId),
             getAllCellComps: () => Object.keys(this.cellComps).map(k => this.cellComps[k]).filter(c => c!=null) as CellComp[],
             setRowIndex: rowIndex => this.getGui().setAttribute('row-index', rowIndex),
-            setAriaRowIndex: rowIndex => setAriaRowIndex(this.getGui(), rowIndex)
+            setAriaRowIndex: rowIndex => setAriaRowIndex(this.getGui(), rowIndex),
+            setRowId: (rowId: string) => this.getGui().setAttribute('row-id', rowId),
+            setRowBusinessKey: businessKey => this.getGui().setAttribute('row-business-key', businessKey),
+            setTabIndex: tabIndex => this.getGui().setAttribute('tabindex', tabIndex.toString())
         };
 
         controller.setComp(compProxy, this.getGui(), pinned);
@@ -225,37 +228,6 @@ export class RowComp extends Component {
 
     public getFullWidthRowComp(): ICellRendererComp | null | undefined {
         return this.fullWidthRowComponent;
-    }
-
-    private createTemplate(): string {
-        const con = this.controller;
-
-        const templateParts: string[] = [];
-        const rowIdSanitised = escapeString(this.rowNode.id!);
-        const userRowStyles = con.preProcessStylesFromGridOptions();
-        const businessKey = con.getRowBusinessKey();
-        const businessKeySanitised = escapeString(businessKey!);
-
-        templateParts.push(`<div`);
-        templateParts.push(` role="row"`);
-        templateParts.push(rowIdSanitised ? ` row-id="${rowIdSanitised}"` : ``);
-        templateParts.push(businessKey ? ` row-business-key="${businessKeySanitised}"` : ``);
-        templateParts.push(` comp-id="${this.getCompId()}"`);
-
-        if (con.isFullWidth()) {
-            templateParts.push(` tabindex="-1"`);
-        }
-
-        if (this.beans.gridOptionsWrapper.isRowSelection()) {
-            templateParts.push(` aria-selected="${this.rowNode.isSelected() ? 'true' : 'false'}"`);
-        }
-
-        templateParts.push(` style="${userRowStyles}">`);
-
-        // add in the template for the cells
-        templateParts.push(`</div>`);
-
-        return templateParts.join('');
     }
 
     private afterRowAttached(): void {
