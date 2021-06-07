@@ -447,12 +447,54 @@ export class PositionableFeature extends BeanStub {
         this.updateDragStartPosition(e.clientX, e.clientY);
     }
 
-    private applySizeToSiblings(vertical: boolean) {
+    private getSiblings(): HTMLElement[] | null {
         const element = this.element;
         const parent = element.parentElement;
-        if (!parent) { return; }
+        if (!parent) { return null; }
+
+        return Array.prototype.slice.call(parent.children).filter((el: HTMLElement) => !containsClass(el, 'ag-hidden'));
+    }
+
+    private getMinSizeOfSiblings(): { height: number, width: number } {
+        const siblings = this.getSiblings() || [];
+
+        let height = 0;
+        let width = 0;
+
+        for (let i = 0; i < siblings.length; i++) {
+            const currentEl = siblings[i];
+            const isFlex = !!currentEl.style.flex;
+
+            if (currentEl === this.element) { continue; }
+
+            let nextHeight = this.minHeight || 0;
+            let nextWidth = this.minWidth || 0;
+
+            if (isFlex) {
+                const computedStyle = window.getComputedStyle(currentEl);
+                if (computedStyle.minHeight) {
+                    nextHeight = parseInt(computedStyle.minHeight, 10);
+                }
+                if (computedStyle.minWidth) {
+                    nextWidth = parseInt(computedStyle.minWidth, 10);
+                }
+            } else {
+                nextHeight = currentEl.offsetHeight;
+                nextWidth = currentEl.offsetWidth;
+            }
+
+            height += nextHeight;
+            width += nextWidth;
+        }
+
+        return { height, width };
+    }
+
+    private applySizeToSiblings(vertical: boolean) {
         let containerToFlex: HTMLElement | null = null;
-        const siblings = Array.prototype.slice.call(parent.children).filter((el: HTMLElement) => !containsClass(el, 'ag-hidden'));
+        const siblings = this.getSiblings();
+
+        if (!siblings) { return; }
 
         for (let i = 0; i < siblings.length; i++) {
             const el = siblings[i];
@@ -522,6 +564,15 @@ export class PositionableFeature extends BeanStub {
                 if (yPosition + offsetTop <= 0 || newHeight <= this.minHeight!) {
                     skipHeight = true;
                     offsetTop = 0;
+                }
+            } else {
+                // do not let the size of all siblings be higher than the parent container
+                if (
+                    !this.config.popup &&
+                    oldHeight! < newHeight &&
+                    (this.getMinSizeOfSiblings().height + newHeight) > this.element.parentElement!.offsetHeight
+                ) {
+                    skipHeight = true;
                 }
             }
 
