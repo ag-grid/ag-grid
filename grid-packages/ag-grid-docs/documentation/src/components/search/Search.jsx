@@ -25,7 +25,6 @@ const Search = ({ delay, currentFramework }) => {
     const onChangeDebounced = ({ query }) => {
         clearTimeout(timerId);
         setTimerId(setTimeout(() => {
-            console.log("setting value", query);
             setQuery(query)
         }, delay));
     };
