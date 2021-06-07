@@ -33,16 +33,12 @@ export function RowComp(params: {context: Context, rowCtrl: RowCtrl, pinned: str
             setRowIndex: value => setRowIndex(value),
             setAriaRowIndex: value => setAriaRowIndex(value),
             setAriaExpanded: value => setAriaExpanded(value),
-            setAriaLabel: value => {
-                setAriaLabel(value)
-            },
+            setAriaLabel: value => setAriaLabel(value),
             setRowId: value => setRowId(value),
             setRowBusinessKey: value => setRowBusinessKey(value),
             setTabIndex: value => setTabIndex(value),
             setUserStyles: styles => setUserStyles(styles),
-            setAriaSelected: value => {
-                setAriaSelected(value)
-            },
+            setAriaSelected: value => setAriaSelected(value),
             forEachCellComp: callback => true,
             destroy: ()=> true,
             getCellComp: colId => null,
