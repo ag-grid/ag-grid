@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Context, IRowComp, RowCtrl } from "@ag-grid-community/core";
+import { Context, IRowComp, RowCtrl, _ } from "@ag-grid-community/core";
 import { CssClasses } from "./utils";
 
 export function RowComp(params: {context: Context, rowCtrl: RowCtrl, pinned: string | null}) {
@@ -62,6 +62,8 @@ export function RowComp(params: {context: Context, rowCtrl: RowCtrl, pinned: str
         top,
         transform
     };
+
+    _.assign(rowStyles, userStyles);
 
     const className = cssClasses.toString();
 
