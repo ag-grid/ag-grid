@@ -119,14 +119,14 @@ export function GridBodyComp(params: {context: Context}) {
         height: topHeight,
         minHeight: topHeight,
         display: topDisplay,
-        "overflowY": topAndBottomOverflowY
+        "overflow-y": topAndBottomOverflowY
     };
 
     const bottomStyle = {
         height: bottomHeight,
         minHeight: bottomHeight,
         display: bottomDisplay,
-        "overflowY": topAndBottomOverflowY
+        "overflow-y": topAndBottomOverflowY
     };
 
     return (

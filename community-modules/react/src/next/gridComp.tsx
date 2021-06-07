@@ -102,8 +102,8 @@ export function GridComp(props: any) {
     const rootWrapperBodyClasses = classesList('ag-root-wrapper-body', layoutClass);
 
     const topStyle = {
-        userSelect: userSelect!=null ? userSelect : '',
-        WebkitUserSelect: userSelect!=null ? userSelect : '',
+        'user-select': userSelect!=null ? userSelect : '',
+        '-webkit-user-select': userSelect!=null ? userSelect : '',
         cursor: cursor!=null ? cursor : ''
     };
 
