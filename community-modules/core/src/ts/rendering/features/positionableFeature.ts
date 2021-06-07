@@ -233,7 +233,7 @@ export class PositionableFeature extends BeanStub {
                 setFixedHeight(eGui, height);
             } else {
                 eGui.style.height = `${height}px`;
-                eGui.style.flex = 'unset';
+                eGui.style.flex = '0 0 auto';
             }
         } else {
             eGui.style.maxHeight = 'unset';
@@ -473,7 +473,7 @@ export class PositionableFeature extends BeanStub {
 
         for (let i = 0; i < siblings.length; i++) {
             const currentEl = siblings[i];
-            const isFlex = !!currentEl.style.flex;
+            const isFlex = !!currentEl.style.flex && currentEl.style.flex !== '0 0 auto';
 
             if (currentEl === this.element) { continue; }
 
@@ -516,7 +516,7 @@ export class PositionableFeature extends BeanStub {
             } else {
                 el.style.width = `${el.offsetWidth}px`;
             }
-            el.style.flex = 'unset';
+            el.style.flex = '0 0 auto';
 
             if (el === this.element) {
                 containerToFlex = siblings[i + 1];

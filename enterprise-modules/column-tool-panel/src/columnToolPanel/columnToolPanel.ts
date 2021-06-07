@@ -110,7 +110,10 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             }
 
             this.setLastVisible();
-            const pivotModeListener = this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.setLastVisible.bind(this));
+            const pivotModeListener = this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, () => {
+                this.resetChildrenHeight();
+                this.setLastVisible();
+            });
             this.childDestroyFuncs.push(() => pivotModeListener!());
         }
 
@@ -197,6 +200,17 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         }
 
         this.setResizers();
+    }
+
+    private resetChildrenHeight(): void {
+        const eGui = this.getGui();
+        const children = eGui.children;
+
+        for (let i = 0; i < children.length; i++) {
+            const child = children[i] as HTMLElement;
+            child.style.removeProperty('height');
+            child.style.removeProperty('flex');
+        }
     }
 
     private isRowGroupingModuleLoaded(): boolean {
