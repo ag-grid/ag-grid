@@ -5,6 +5,7 @@
   "scripts": {
     "postinstall": "webdriver-manager update",
     "build": "npm run hash",
+    "start-react-fire": "AG_GENERATE_REACT_FIRE=true gulp serve --max_old_space_size=6144",
     "start": "gulp serve --max_old_space_size=6144",
     "serve-core-only": "gulp --max_old_space_size=6144 serve-core-only",
     "serve-with-formatting": "gulp serve-with-formatting",
