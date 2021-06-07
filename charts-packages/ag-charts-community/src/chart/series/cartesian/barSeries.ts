@@ -19,6 +19,7 @@ import { findMinMax } from "../../../util/array";
 import { equal } from "../../../util/equal";
 import { reactive, TypedEvent } from "../../../util/observable";
 import Scale from "../../../scale/scale";
+import { sanitizeHtml } from "../../../util/sanitize";
 
 export interface BarSeriesNodeClickEvent extends TypedEvent {
     readonly type: 'nodeClick';
@@ -780,9 +781,9 @@ export class BarSeries extends CartesianSeries {
         const xValue = datum[xKey];
         const yValue = datum[yKey];
         const processedYValue = yGroup[j][i];
-        const xString = xAxis.formatDatum(xValue);
-        const yString = yAxis.formatDatum(yValue);
-        const title = yName;
+        const xString = sanitizeHtml(xAxis.formatDatum(xValue));
+        const yString = sanitizeHtml(yAxis.formatDatum(yValue));
+        const title = sanitizeHtml(yName);
         const content = xString + ': ' + yString;
         const defaults: TooltipRendererResult = {
             title,

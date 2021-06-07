@@ -11,6 +11,7 @@ import { ChartAxisDirection } from "../../chartAxis";
 import { getMarker } from "../../marker/util";
 import { TooltipRendererResult, toTooltipHtml } from "../../chart";
 import ContinuousScale from "../../../scale/continuousScale";
+import { sanitizeHtml } from "../../../util/sanitize";
 
 interface ScatterNodeDatum extends SeriesNodeDatum {
     readonly point: {
@@ -366,18 +367,18 @@ export class ScatterSeries extends CartesianSeries {
         const datum = nodeDatum.seriesDatum;
         const xValue = datum[xKey];
         const yValue = datum[yKey];
-        const xString = xAxis.formatDatum(xValue);
-        const yString = yAxis.formatDatum(yValue);
+        const xString = sanitizeHtml(xAxis.formatDatum(xValue));
+        const yString = sanitizeHtml(yAxis.formatDatum(yValue));
 
-        let content = `<b>${xName || xKey}</b>: ${xString}`
-            + `<br><b>${yName || yKey}</b>: ${yString}`;
+        let content = `<b>${sanitizeHtml(xName || xKey)}</b>: ${xString}`
+            + `<br><b>${sanitizeHtml(yName || yKey)}</b>: ${yString}`;
 
         if (sizeKey) {
-            content += `<br><b>${sizeName}</b>: ${datum[sizeKey]}`;
+            content += `<br><b>${sanitizeHtml(sizeName || sizeKey)}</b>: ${sanitizeHtml(datum[sizeKey])}`;
         }
 
         if (labelKey) {
-            content = `<b>${labelName}</b>: ${datum[labelKey]}<br>` + content;
+            content = `<b>${sanitizeHtml(labelName || labelKey)}</b>: ${sanitizeHtml(datum[labelKey])}<br>` + content;
         }
 
         const defaults: TooltipRendererResult = {

@@ -15,9 +15,9 @@ import { CartesianSeries } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import { TooltipRendererResult, toTooltipHtml } from "../../chart";
 import { numericExtent, finiteExtent } from "../../../util/array";
-import { toFixed } from "../../../util/number";
 import { reactive, TypedEvent } from "../../../util/observable";
 import ticks, { tickStep } from "../../../util/ticks";
+import { sanitizeHtml } from "../../../util/sanitize";
 
 enum HistogramSeriesNodeTag {
     Bin,
@@ -597,9 +597,9 @@ export class HistogramSeries extends CartesianSeries {
         const { renderer: tooltipRenderer = this.tooltipRenderer } = tooltip;
         const bin: HistogramBin = nodeDatum.seriesDatum;
         const { aggregatedValue, frequency, domain: [rangeMin, rangeMax] } = bin;
-        const title = `${xName || xKey}: ${xAxis.formatDatum(rangeMin)} - ${xAxis.formatDatum(rangeMax)}`;
+        const title = `${sanitizeHtml(xName || xKey)}: ${xAxis.formatDatum(rangeMin)} - ${xAxis.formatDatum(rangeMax)}`;
         let content = yKey ?
-            `<b>${yName || yKey} (${aggregation})</b>: ${yAxis.formatDatum(aggregatedValue)}<br>` :
+            `<b>${sanitizeHtml(yName || yKey)} (${aggregation})</b>: ${yAxis.formatDatum(aggregatedValue)}<br>` :
             '';
 
         content += `<b>Frequency</b>: ${frequency}`;
