@@ -3,16 +3,14 @@ import { RowContainerComp } from "../../gridBodyComp/rowContainer/rowContainerCo
 import { ICellRendererComp } from "../cellRenderers/iCellRenderer";
 import { Beans } from "../beans";
 import { RowNode } from "../../entities/rowNode";
-import { addOrRemoveCssClass, addStylesToElement, setDomChildOrder } from "../../utils/dom";
-import { escapeString } from "../../utils/string";
+import { addStylesToElement, setDomChildOrder } from "../../utils/dom";
 import { FullWidthKeys, FullWidthRenderers, IRowComp, RowCtrl, RowType } from "./rowCtrl";
 import { Column } from "../../entities/column";
 import { CellComp } from "../cellComp";
 import { assign, getAllValuesInObject, iterateObject } from "../../utils/object";
-import { Constants } from "../../constants/constants";
 import { ModuleRegistry } from "../../modules/moduleRegistry";
 import { ModuleNames } from "../../modules/moduleNames";
-import { setAriaExpanded, setAriaLabel, setAriaRowIndex, setAriaSelected } from "../../utils/aria";
+import { setAriaExpanded, setAriaRowIndex, setAriaSelected } from "../../utils/aria";
 
 export class RowComp extends Component {
 
@@ -36,11 +34,11 @@ export class RowComp extends Component {
         this.pinned = pinned;
         this.ctrl = controller;
 
-        this.setTemplate(`<div role="row" comp-id="${this.getCompId()}"/>`);
+        this.setTemplate(/* html */`<div role="row" comp-id="${this.getCompId()}" />`);
 
         const compProxy: IRowComp = {
             setColumns: columns => this.setColumns(columns),
-            getFullWidthRowComp: ()=> this.getFullWidthRowComp(),
+            getFullWidthRowComp: () => this.getFullWidthRowComp(),
             addOrRemoveCssClass: (name, on) => this.addOrRemoveCssClass(name, on),
             setAriaExpanded: on => setAriaExpanded(this.getGui(), on),
             destroyCells: cellComps => this.destroyCells(cellComps),
@@ -48,18 +46,18 @@ export class RowComp extends Component {
             setUserStyles: styles => addStylesToElement(this.getGui(), styles),
             setAriaSelected: value => setAriaSelected(this.getGui(), value),
             setAriaLabel: value => {
-                if (value==null) {
+                if (value == null) {
                     this.getGui().removeAttribute('aria-label');
                 } else {
-                    this.getGui().setAttribute('aria-label', value)
+                    this.getGui().setAttribute('aria- label', value);
                 }
             },
             setHeight: height => this.getGui().style.height = height,
-            destroy: ()=> this.destroy(),
+            destroy: () => this.destroy(),
             setTop: top => this.getGui().style.top = top,
             setTransform: transform => this.getGui().style.transform = transform,
             getCellComp: colId => this.getCellComp(colId),
-            getAllCellComps: () => Object.keys(this.cellComps).map(k => this.cellComps[k]).filter(c => c!=null) as CellComp[],
+            getAllCellComps: () => Object.keys(this.cellComps).map(k => this.cellComps[k]).filter(c => c != null) as CellComp[],
             setRowIndex: rowIndex => this.getGui().setAttribute('row-index', rowIndex),
             setAriaRowIndex: rowIndex => setAriaRowIndex(this.getGui(), rowIndex),
             setRowId: (rowId: string) => this.getGui().setAttribute('row-id', rowId),

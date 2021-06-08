@@ -21,10 +21,6 @@ export class HorizontalResizeService extends BeanStub {
     private dragStartX: number;
     private resizeAmount: number;
 
-    private oldBodyCursor: string;
-    private oldUserSelect: string;
-    private oldWebkitUserSelect: string | null;
-
     public addResizeBar(params: HorizontalResizeParams): () => void {
         const dragSource: DragListenerParams = {
             dragStartPixels: params.dragStartPixels || 0,
@@ -59,7 +55,6 @@ export class HorizontalResizeService extends BeanStub {
         ctrl.setResizeCursor(true);
         // we don't want text selection outside the grid (otherwise it looks weird as text highlights when we move)
         ctrl.disableUserSelect(true);
-
 
         // this.oldBodyCursor = this.eGridDiv.style.cursor;
         // this.oldUserSelect = this.eGridDiv.style.userSelect;

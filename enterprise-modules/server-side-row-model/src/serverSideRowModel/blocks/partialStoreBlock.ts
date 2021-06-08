@@ -127,7 +127,7 @@ export class PartialStoreBlock extends RowNodeBlock {
     }
 
     private prefixId(id: number): string {
-        if (this.nodeIdPrefix!=null) {
+        if (this.nodeIdPrefix != null) {
             return this.nodeIdPrefix + '-' + id;
         } else {
             return id.toString();

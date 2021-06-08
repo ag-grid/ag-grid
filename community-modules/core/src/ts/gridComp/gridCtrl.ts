@@ -108,7 +108,7 @@ export class GridCtrl extends BeanStub {
     }
 
     public showWatermark(): boolean {
-        return ModuleRegistry.isRegistered(ModuleNames.EnterpriseCoreModule); ;
+        return ModuleRegistry.isRegistered(ModuleNames.EnterpriseCoreModule);
     }
 
     private onGridSizeChanged(): void {

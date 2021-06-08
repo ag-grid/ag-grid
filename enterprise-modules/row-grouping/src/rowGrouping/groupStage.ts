@@ -577,7 +577,6 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
         groupNode.parent = details.includeParents ? parent : null;
 
-
         this.setExpandedInitialValue(details, groupNode);
 
         return groupNode;

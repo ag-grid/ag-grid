@@ -17,22 +17,18 @@ import {
 import { ProcessRowParams, RowClassParams } from "../../entities/gridOptions";
 import { IFrameworkOverrides } from "../../interfaces/iFrameworkOverrides";
 import { Constants } from "../../constants/constants";
-import { setAriaExpanded, setAriaLabel, setAriaRowIndex, setAriaSelected } from "../../utils/aria";
 import {
     addCssClass,
     addOrRemoveCssClass,
-    addStylesToElement,
     isElementChildOfClass,
     removeCssClass
 } from "../../utils/dom";
 import { exists, find } from "../../utils/generic";
 import { isStopPropagationForAgGrid } from "../../utils/event";
 import { assign } from "../../utils/object";
-import { cssStyleObjectToMarkup } from "../../utils/general";
 import { AngularRowUtils } from "./angularRowUtils";
 import { CellPosition } from "../../entities/cellPosition";
 import { RowPosition } from "../../entities/rowPosition";
-import { RowComp } from "./rowComp";
 import { executeNextVMTurn } from "../../utils/function";
 import { RowCssClassCalculatorParams } from "./rowCssClassCalculator";
 import { BeanStub } from "../../context/beanStub";
@@ -176,9 +172,9 @@ export class RowCtrl extends BeanStub {
         const compAndElement: CompAndElement = {comp: rowComp, element: element, pinned: pinned};
         this.allComps.push(compAndElement);
 
-        if (pinned===Constants.PINNED_LEFT) {
+        if (pinned === Constants.PINNED_LEFT) {
             this.leftComp = compAndElement;
-        } else if (pinned===Constants.PINNED_RIGHT) {
+        } else if (pinned === Constants.PINNED_RIGHT) {
             this.rightComp = compAndElement;
         } else if (this.isFullWidth() && !this.beans.gridOptionsWrapper.isEmbedFullWidthRows()) {
             this.fullWidthComp = compAndElement;
@@ -186,8 +182,8 @@ export class RowCtrl extends BeanStub {
             this.centerComp = compAndElement;
         }
 
-        const allNormalPresent = this.leftComp!=null && this.rightComp!=null && this.centerComp!=null;
-        const fullWidthPresent = this.fullWidthComp!=null;
+        const allNormalPresent = this.leftComp != null && this.rightComp != null && this.centerComp != null;
+        const fullWidthPresent = this.fullWidthComp != null;
         if (allNormalPresent || fullWidthPresent) {
             this.initialiseRowComps();
         }
@@ -221,18 +217,18 @@ export class RowCtrl extends BeanStub {
         const rowIdSanitised = escapeString(this.rowNode.id!);
         const businessKeySanitised = escapeString(businessKey!);
 
-        this.allComps.forEach( c => {
+        this.allComps.forEach(c => {
             const initialRowClasses = this.getInitialRowClasses(c.pinned);
-            initialRowClasses.forEach( name => c.comp.addOrRemoveCssClass(name, true));
+            initialRowClasses.forEach(name => c.comp.addOrRemoveCssClass(name, true));
 
             if (this.rowNode.group) {
-                c.comp.setAriaExpanded(this.rowNode.expanded==true);
+                c.comp.setAriaExpanded(this.rowNode.expanded == true);
             }
 
-            if (rowIdSanitised!=null) {
+            if (rowIdSanitised != null) {
                 c.comp.setRowId(rowIdSanitised);
             }
-            if (businessKeySanitised!=null) {
+            if (businessKeySanitised != null) {
                 c.comp.setRowBusinessKey(businessKeySanitised);
             }
 
@@ -426,7 +422,7 @@ export class RowCtrl extends BeanStub {
         };
 
         const fullWidthSuccess = tryRefresh(this.fullWidthComp, null);
-        const centerSuccess = tryRefresh(this.centerComp,null);
+        const centerSuccess = tryRefresh(this.centerComp, null);
         const leftSuccess = tryRefresh(this.leftComp, Constants.PINNED_LEFT);
         const rightSuccess = tryRefresh(this.rightComp, Constants.PINNED_RIGHT);
 
@@ -1088,7 +1084,7 @@ export class RowCtrl extends BeanStub {
             const rowTop = this.roundRowTopToBounds(this.rowNode.rowTop!);
             this.setRowTop(rowTop);
         } else {
-            this.allComps.forEach(c => c.comp.addOrRemoveCssClass('ag-opacity-zero', true) );
+            this.allComps.forEach(c => c.comp.addOrRemoveCssClass('ag-opacity-zero', true));
         }
     }
 

@@ -15,7 +15,7 @@ import {
 } from "../../components/framework/userComponentFactory";
 import { AgPromise } from "../../utils";
 import { doOnce } from "../../utils/function";
-import { get, cloneObject, iterateObject } from "../../utils/object";
+import { get, cloneObject } from "../../utils/object";
 import { bindCellRendererToHtmlElement } from "../../utils/general";
 import { addOrRemoveCssClass, setDisplayed } from "../../utils/dom";
 import { createIconNoSpan } from "../../utils/icon";

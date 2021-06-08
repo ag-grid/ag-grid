@@ -29,7 +29,7 @@ function templateFactory(): string {
         res = /* html */
             `<div class="${cssClasses.viewport}" ref="eViewport" role="presentation" unselectable="on">
                 <div class="${cssClasses.container}" ref="eContainer" role="presentation" unselectable="on"></div>
-            </div>`
+            </div>`;
     } else {
         res = /* html */
             `<div class="${cssClasses.container}" ref="eContainer" role="presentation" unselectable="on"></div>`;
@@ -66,7 +66,7 @@ export class RowContainerComp extends Component {
             setViewportHeight: height => this.eViewport.style.height = height,
             setRowCtrls: rowCrtls => this.setRowCtrls(rowCrtls),
             setDomOrder: domOrder => {
-                this.domOrder = domOrder
+                this.domOrder = domOrder;
             },
             setContainerWidth: width => this.eContainer.style.width = width
         };
@@ -96,7 +96,7 @@ export class RowContainerComp extends Component {
         };
 
         rowCtrls.forEach(processRow);
-        getAllValuesInObject(oldRows).forEach( rc => this.eContainer.removeChild(rc.getGui()) );
+        getAllValuesInObject(oldRows).forEach(rc => this.eContainer.removeChild(rc.getGui()));
     }
 
     public appendRow(element: HTMLElement) {
