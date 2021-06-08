@@ -7,6 +7,7 @@ import {AgGridColumn} from "./agGridColumn"
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 import { GridComp } from "./next/gridComp";
+import { AgGridReactFire } from "./next/agGridReactFire";
 
 const App = () => {
     const [gridApi, setGridApi] = useState(null);
@@ -27,7 +28,7 @@ const App = () => {
         <div style={{display: "flex"}}>
             <div className="ag-theme-alpine" style={{ height: 400, width: 600, margin: 10 }}>
                 {/*<AgGridReact*/}
-                <GridComp
+                <AgGridReactFire
                     defaultColDef={{
                         resizable: true,
                         filter: true,
@@ -42,7 +43,7 @@ const App = () => {
                     <AgGridColumn field="make"></AgGridColumn>
                     <AgGridColumn field="model"></AgGridColumn>
                     <AgGridColumn field="price"></AgGridColumn>
-                </GridComp>
+                </AgGridReactFire>
                 {/*</AgGridReact>*/}
             </div>
 {/*

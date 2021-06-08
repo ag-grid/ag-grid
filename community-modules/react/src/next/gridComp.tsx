@@ -10,9 +10,7 @@ import { GridBodyComp } from "./gridBodyComp";
 import { classesList } from "./utils";
 import { AgGridColumn } from "../agGridColumn";
 
-export function GridComp(props: any) {
-
-    const [context, setContext] = useState<Context>();
+export function GridComp(props: { context: Context }) {
 
     const [rtlClass, setRtlClass] = useState<string>('');
     const [keyboardFocusClass, setKeyboardFocusClass] = useState<string>('');
@@ -23,44 +21,12 @@ export function GridComp(props: any) {
     const eRootWrapper = useRef<HTMLDivElement>(null);
     const eGridBodyParent = useRef<HTMLDivElement>(null);
 
-    // initialise the grid core
-    useEffect(()=> {
 
-        const modules = props.modules || [];
-        const gridParams = {
-            // providedBeanInstances: {
-            //     agGridReact: this,
-            //     frameworkComponentWrapper: new ReactFrameworkComponentWrapper(this)
-            // },
-            modules
-        };
-
-        let gridOptions: GridOptions = {...props.gridOptions};
-        const {children} = props;
-
-        if (AgGridColumn.hasChildColumns(children)) {
-            gridOptions.columnDefs = AgGridColumn.mapChildColumnDefs(children);
-        }
-
-        gridOptions = ComponentUtil.copyAttributesToGridOptions(gridOptions, props);
-
-        const destroyFuncs: (()=>void)[] = [];
-
-        // don't need the return value
-        const gridCoreCreator = new GridCoreCreator();
-        gridCoreCreator.create(eRootWrapper.current!, gridOptions, context => {
-            setContext(context);
-        }, gridParams);
-
-        // new Grid(null!, gridOptions, gridParams);
-        destroyFuncs.push( ()=>gridOptions.api!.destroy() );
-
-        return ()=> destroyFuncs.forEach( f => f() );
-    }, []);
 
     // initialise the UI
     useEffect( ()=> {
-        if (!context) { return; }
+
+        const {context} = props;
 
         const beansToDestroy: any[] = [];
 
@@ -96,22 +62,22 @@ export function GridComp(props: any) {
         return ()=> {
             beansToDestroy.forEach( b => context.destroyBean(b) );
         };
-    }, [context]);
+    }, []);
 
     const rootWrapperClasses = classesList('ag-root-wrapper', rtlClass, keyboardFocusClass, layoutClass);
     const rootWrapperBodyClasses = classesList('ag-root-wrapper-body', layoutClass);
 
     const topStyle = {
-        'user-select': userSelect!=null ? userSelect : '',
-        '-webkit-user-select': userSelect!=null ? userSelect : '',
+        userSelect: userSelect!=null ? userSelect : '',
+        'WebkitUserSelect': userSelect!=null ? userSelect : '',
         cursor: cursor!=null ? cursor : ''
     };
 
     return (
         <div ref={eRootWrapper} className={rootWrapperClasses} style={topStyle}>
-            { context &&
+            { props.context &&
             <div className={ rootWrapperBodyClasses } ref={ eGridBodyParent }>
-                <GridBodyComp context={ context }/>
+                <GridBodyComp context={ props.context }/>
             </div>
             }
         </div>

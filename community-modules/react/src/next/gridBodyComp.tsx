@@ -67,11 +67,6 @@ export function GridBodyComp(params: {context: Context}) {
         addRowContainer(eTop.current!, RowContainerName.TOP_RIGHT);
         addRowContainer(eTop.current!, RowContainerName.TOP_FULL_WITH);
 
-        // addRowContainer(eBodyViewport.current!, RowContainerName.LEFT);
-        // addRowContainer(eBodyViewport.current!, RowContainerName.CENTER);
-        // addRowContainer(eBodyViewport.current!, RowContainerName.RIGHT);
-        // addRowContainer(eBodyViewport.current!, RowContainerName.FULL_WIDTH);
-
         addRowContainer(eBottom.current!, RowContainerName.BOTTOM_LEFT);
         addRowContainer(eBottom.current!, RowContainerName.BOTTOM_CENTER);
         addRowContainer(eBottom.current!, RowContainerName.BOTTOM_RIGHT);
@@ -119,14 +114,14 @@ export function GridBodyComp(params: {context: Context}) {
         height: topHeight,
         minHeight: topHeight,
         display: topDisplay,
-        "overflow-y": topAndBottomOverflowY
+        overflowY: topAndBottomOverflowY
     };
 
     const bottomStyle = {
         height: bottomHeight,
         minHeight: bottomHeight,
         display: bottomDisplay,
-        "overflow-y": topAndBottomOverflowY
+        overflowY: topAndBottomOverflowY
     };
 
     return (
