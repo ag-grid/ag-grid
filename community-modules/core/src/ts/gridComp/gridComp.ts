@@ -48,7 +48,7 @@ export class GridComp extends ManagedFocusComponent {
                 this.getGui().style.webkitUserSelect = value != null ? value : '';
             },
             setCursor: value => {
-                this.getGui().style.cursor = value != null ? value : ''
+                this.getGui().style.cursor = value != null ? value : '';
             }
         };
 

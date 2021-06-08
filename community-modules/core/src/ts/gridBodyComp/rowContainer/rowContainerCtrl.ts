@@ -129,7 +129,7 @@ export class RowContainerCtrl extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_ROWS_CHANGED, this.onDisplayedRowsChanged.bind(this));
 
         this.forContainers([RowContainerName.CENTER],
-            () => this.viewportSizeFeature = this.createManagedBean(new ViewportSizeFeature(this)))
+            () => this.viewportSizeFeature = this.createManagedBean(new ViewportSizeFeature(this)));
 
         this.registerWithControllersService();
 
@@ -196,7 +196,7 @@ export class RowContainerCtrl extends BeanStub {
     }
 
     private listenOnDomOrder(): void {
-        const listener = ()=> this.comp.setDomOrder(this.gridOptionsWrapper.isEnsureDomOrder())
+        const listener = () => this.comp.setDomOrder(this.gridOptionsWrapper.isEnsureDomOrder());
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, listener);
         listener();
     }
@@ -212,11 +212,11 @@ export class RowContainerCtrl extends BeanStub {
     }
 
     public onDisplayedColumnsChanged(): void {
-        this.forContainers([RowContainerName.CENTER], () => this.onHorizontalViewportChanged())
+        this.forContainers([RowContainerName.CENTER], () => this.onHorizontalViewportChanged());
     }
 
     private onDisplayedColumnsWidthChanged(): void {
-        this.forContainers([RowContainerName.CENTER], () => this.onHorizontalViewportChanged())
+        this.forContainers([RowContainerName.CENTER], () => this.onHorizontalViewportChanged());
     }
 
     private onScrollVisibilityChanged(): void {
@@ -289,7 +289,7 @@ export class RowContainerCtrl extends BeanStub {
     }
 
     public setContainerTranslateX(amount: number): void {
-        this.eContainer.style.transform = `translateX(${amount}px)`
+        this.eContainer.style.transform = `translateX(${amount}px)`;
     }
 
     public getHScrollPosition(): { left: number, right: number; } {

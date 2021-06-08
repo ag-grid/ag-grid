@@ -198,7 +198,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     public setVerticalScrollPaddingVisible(visible: boolean): void {
-        const overflowY = visible ? 'scroll' : 'hidden'
+        const overflowY = visible ? 'scroll' : 'hidden';
         this.view.setPinnedTopBottomOverflowY(overflowY);
     }
 

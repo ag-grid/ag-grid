@@ -174,7 +174,7 @@ export class GridCoreCreator {
 
         // we wait until the UI has finished initialising before setting in columns and rows
         const controllersService: ControllersService = context.getBean('controllersService');
-        controllersService.whenReady( ()=> {
+        controllersService.whenReady(() => {
             this.setColumnsAndData(context);
             this.dispatchGridReadyEvent(context, gridOptions);
             const isEnterprise = ModuleRegistry.isRegistered(ModuleNames.EnterpriseCoreModule);
