@@ -1,7 +1,7 @@
 import { BeanStub } from "../../context/beanStub";
 import { Autowired } from "../../context/context";
 import { DragListenerParams, DragService } from "../../dragAndDrop/dragService";
-import { containsClass, getAbsoluteHeight, getAbsoluteWidth, setFixedHeight, setFixedWidth } from "../../utils/dom";
+import { addCssClass, containsClass, getAbsoluteHeight, getAbsoluteWidth, removeCssClass, setFixedHeight, setFixedWidth } from "../../utils/dom";
 import { assign } from "../../utils/object";
 import { PopupService } from "../../widgets/popupService";
 
@@ -187,10 +187,11 @@ export class PositionableFeature extends BeanStub {
             const resizerEl = this.getResizerElement(side);
 
             const params: DragListenerParams = {
+                dragStartPixels: 0,
                 eElement: resizerEl!,
                 onDragStart: (e: MouseEvent) => this.onResizeStart(e, side),
                 onDragging: this.onResize.bind(this),
-                onDragStop: this.onResizeEnd.bind(this),
+                onDragStop: (e: MouseEvent) => this.onResizeEnd(e, side),
             };
 
             if (!!this.resizable[side] !== val || (!this.isAlive() && !val)) {
@@ -449,6 +450,9 @@ export class PositionableFeature extends BeanStub {
             isLeft: !!side.match(/left/i),
         };
 
+        addCssClass(this.element, 'ag-resizing');
+        addCssClass(this.resizerMap![side].element, 'ag-active');
+
         if (!this.config.popup) {
             this.applySizeToSiblings(this.currentResizer.isBottom || this.currentResizer.isTop);
         }
@@ -601,7 +605,7 @@ export class PositionableFeature extends BeanStub {
         }
     }
 
-    private onResizeEnd() {
+    private onResizeEnd(e: MouseEvent, side: ResizableSides) {
         this.isResizing = false;
         this.currentResizer = null;
 
@@ -610,6 +614,9 @@ export class PositionableFeature extends BeanStub {
             api: this.gridOptionsWrapper.getApi(),
             columnApi: this.gridOptionsWrapper.getColumnApi()
         };
+
+        removeCssClass(this.element, 'ag-resizing');
+        removeCssClass(this.resizerMap![side].element, 'ag-active');
 
         this.dispatchEvent(params);
     }
@@ -631,6 +638,7 @@ export class PositionableFeature extends BeanStub {
     private onMoveStart(e: MouseEvent) {
         this.isMoving = true;
         if (!this.positioned) { this.initialisePosition(); }
+        addCssClass(this.element, 'ag-moving');
         this.updateDragStartPosition(e.clientX, e.clientY);
     }
 
@@ -656,6 +664,7 @@ export class PositionableFeature extends BeanStub {
 
     private onMoveEnd() {
         this.isMoving = false;
+        removeCssClass(this.element, 'ag-moving');
     }
 
     private setOffsetParent() {
