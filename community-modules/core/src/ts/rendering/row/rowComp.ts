@@ -49,7 +49,7 @@ export class RowComp extends Component {
                 if (value == null) {
                     this.getGui().removeAttribute('aria-label');
                 } else {
-                    this.getGui().setAttribute('aria- label', value);
+                    this.getGui().setAttribute('aria-label', value);
                 }
             },
             setHeight: height => this.getGui().style.height = height,
