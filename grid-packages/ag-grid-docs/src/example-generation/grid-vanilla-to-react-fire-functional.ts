@@ -95,11 +95,11 @@ function getTemplate(bindings: any, componentAttributes: string[], columnDefs: s
                     height: '${gridSettings.height}',
                     width: '${gridSettings.width}'}}
                     className="${gridSettings.theme}">
-            <GridComp
+            <AgGridReactFire
                 ${componentAttributes.join('\n')}
             >
                 ${columnDefs.join("")}
-            </GridComp>
+            </AgGridReactFire>
             </div>`;
 
     const template = bindings.template ? bindings.template.replace(templatePlaceholder, agGridTag.replace('$', '$$$$')) : agGridTag;

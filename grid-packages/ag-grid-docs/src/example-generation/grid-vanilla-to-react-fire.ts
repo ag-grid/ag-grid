@@ -88,7 +88,7 @@ function getTemplate(bindings: any, componentAttributes: string[]): string {
                     height: '${gridSettings.height}',
                     width: '${gridSettings.width}'}}
                     className="${gridSettings.theme}">
-            <GridComp
+            <AgGridReactFire
                 ${componentAttributes.join('\n')}
             />
             </div>`;
