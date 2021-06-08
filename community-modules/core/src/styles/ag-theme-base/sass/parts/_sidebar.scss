@@ -6,6 +6,7 @@
     }
 
     .ag-tool-panel-wrapper {
+        width: ag-param(side-bar-panel-width);
         @include ag-color-property(background-color, control-panel-background-color);
     }
 

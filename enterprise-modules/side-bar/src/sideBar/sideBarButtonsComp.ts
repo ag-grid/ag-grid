@@ -107,7 +107,7 @@ class SideBarButtonComp extends Component {
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
         const def = this.toolPanelDef;
         const label = translate(def.labelKey, def.labelDefault);
-        const res =
+        const res = /* html */
             `<div class="ag-side-button">
                 <button type="button" ref="eToggleButton" class="ag-side-button-button">
                     <div ref="eIconWrapper" class="ag-side-button-icon-wrapper"></div>

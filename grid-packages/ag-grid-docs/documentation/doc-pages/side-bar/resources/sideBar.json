@@ -32,6 +32,20 @@
         "iconKey": {
             "description": "The [key of the icon](/custom-icons/) to be used as a graphical aid beside the label in the side bar."
         },
+        "minWidth": {
+            "default": 100,
+            "description": "The min width of the tool panel."
+        },
+        "maxWidth": {
+            "default": "undefined",
+            "type": "number",
+            "description": "The max width of the tool panel."
+        },
+        "width": {
+            "default": "$side-bar-panel-width (theme variable)",
+            "type": "number",
+            "description": "The initial width of the tool panel."
+        },
         "toolPanel<br />toolPanelFramework<br />toolPanelParams": {
             "description": "The tool panel component to use as the panel. The provided panels use components <code>agColumnsToolPanel</code> and <code>agFiltersToolPanel</code>. To provide your own custom panel component, you reference it by name here."
         }
