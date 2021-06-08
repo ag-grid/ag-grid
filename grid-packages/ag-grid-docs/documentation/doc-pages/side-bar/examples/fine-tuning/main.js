@@ -24,13 +24,7 @@ var gridOptions = {
     },
     sideBar: {
         toolPanels: [
-            {
-                id: 'columns',
-                labelDefault: 'Columns',
-                labelKey: 'columns',
-                iconKey: 'columns',
-                toolPanel: 'agColumnsToolPanel'
-            },
+            'columns',
             {
                 id: 'filters',
                 labelKey: 'filters',
