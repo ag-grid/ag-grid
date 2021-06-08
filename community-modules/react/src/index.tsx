@@ -8,6 +8,7 @@ import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
 import { GridComp } from "./next/gridComp";
 import { AgGridReactFire } from "./next/agGridReactFire";
+import row from "../../../enterprise-modules/excel-export/typings/excelExport/files/xml/row";
 
 const App = () => {
     const [gridApi, setGridApi] = useState(null);
@@ -22,6 +23,7 @@ const App = () => {
     const onGridReady = (params:any) => {
         setGridApi(params.api);
         setGridColumnApi(params.columnApi);
+        setTimeout( ()=> setRowData([...rowData, ...rowData]), 2000);
     }
 
     return (

@@ -10,7 +10,7 @@ function getModuleImports(bindings: any, componentFilenames: string[]): string[]
     const imports = [
         "import React, { useState } from 'react';",
         "import { render } from 'react-dom';",
-        "import { GridComp, AgGridColumn } from '@ag-grid-community/react';"
+        "import { AgGridReactFire, AgGridColumn } from '@ag-grid-community/react';"
     ];
 
     if (modules) {
