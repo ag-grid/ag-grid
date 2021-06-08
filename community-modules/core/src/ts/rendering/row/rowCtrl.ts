@@ -65,6 +65,7 @@ export const FullWidthKeys: Map<RowType, string> = convertToMap([
 let instanceIdSequence = 0;
 
 export interface IRowComp {
+    setDomOrder(domOrder: boolean): void;
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     setColumns(columns: Column[]): void;
     getFullWidthRowComp(): ICellRendererComp | null | undefined;
@@ -260,14 +261,6 @@ export class RowCtrl extends BeanStub {
         });
 
         this.executeProcessRowPostCreateFunc();
-    }
-
-    public getColsForRowComp(pinned: string | null): Column[] {
-        switch (pinned) {
-            case Constants.PINNED_RIGHT : return this.rightCols;
-            case Constants.PINNED_LEFT : return this.leftCols;
-            default : return this.centerCols;
-        }
     }
 
     public getScope(): any {

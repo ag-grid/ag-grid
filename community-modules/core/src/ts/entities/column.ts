@@ -27,6 +27,8 @@ import { attrToNumber, attrToBoolean, exists, missing } from "../utils/generic";
 import { doOnce } from "../utils/function";
 import { mergeDeep } from "../utils/object";
 
+let instanceIdSequence = 0;
+
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).
 // This class implements both interfaces ColumnGroupChild and OriginalColumnGroupChild as the class can
@@ -70,6 +72,9 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     private readonly colId: any;
     private colDef: ColDef;
+
+    // used by React (and possibly other frameworks) as key for rendering
+    private instanceId = instanceIdSequence++;
 
     // We do NOT use this anywhere, we just keep a reference. this is to check object equivalence
     // when the user provides an updated list of columns - so we can check if we have a column already
@@ -119,6 +124,10 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         this.primary = primary;
 
         this.setState(colDef);
+    }
+
+    public getInstanceId(): number {
+        return this.instanceId;
     }
 
     private setState(colDef: ColDef): void {

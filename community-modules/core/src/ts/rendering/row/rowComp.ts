@@ -25,6 +25,7 @@ export class RowComp extends Component {
     private rowNode: RowNode;
     private ctrl: RowCtrl;
 
+    private domOrder: boolean;
     private cellComps: { [key: string]: CellComp | null; } = {};
 
     constructor(controller: RowCtrl, container: RowContainerComp, beans: Beans, pinned: string | null) {
@@ -39,6 +40,7 @@ export class RowComp extends Component {
         this.setTemplate(`<div role="row" comp-id="${this.getCompId()}"/>`);
 
         const compProxy: IRowComp = {
+            setDomOrder: domOrder => this.domOrder = domOrder,
             setColumns: columns => this.setColumns(columns),
             getFullWidthRowComp: ()=> this.getFullWidthRowComp(),
             addOrRemoveCssClass: (name, on) => this.addOrRemoveCssClass(name, on),

@@ -38,7 +38,7 @@ export function RowContainerComp(params: {context: Context, name: RowContainerNa
                         return rowCtrls;
                     } else {
                         // if dom order not important, we don't want to change the order
-                        // of the elements in the dom, as this would break transition styls
+                        // of the elements in the dom, as this would break transition styles
                         const oldRows = prev.filter( r => rowCtrls.indexOf(r) >= 0);
                         const newRows = rowCtrls.filter( r => oldRows.indexOf(r) < 0);
                         const next = [...oldRows, ...newRows];
