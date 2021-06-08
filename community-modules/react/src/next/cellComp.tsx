@@ -1,7 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Context, IRowComp, RowCtrl, _, RowNode, Column } from "@ag-grid-community/core";
+import { Context,  _, RowNode, Column } from "@ag-grid-community/core";
 import { CssClasses } from "./utils";
 
 export function CellComp(props: {column: Column, rowNode: RowNode, context: Context}) {
-    return (<span></span>)
+
+    const {column, rowNode, context} = props;
+    const colDef = column.getColDef();
+    const value = (colDef.field && rowNode.data) ? rowNode.data[colDef.field] : '';
+
+    return (<span>{value}</span>)
 }

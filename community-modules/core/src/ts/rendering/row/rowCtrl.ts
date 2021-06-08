@@ -66,7 +66,7 @@ let instanceIdSequence = 0;
 
 export interface IRowComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
-    onColumnChanged(): void;
+    setColumns(columns: Column[]): void;
     getFullWidthRowComp(): ICellRendererComp | null | undefined;
     setAriaExpanded(on: boolean): void;
     destroyCells(cellComps: CellComp[]): void;
@@ -165,18 +165,7 @@ export class RowCtrl extends BeanStub {
 
         this.setRowType();
 
-        this.updateColumnLists(!this.useAnimationFrameForCreate);
-
         this.addListeners();
-
-        if (this.slideRowIn) {
-            executeNextVMTurn(this.onTopChanged.bind(this));
-        }
-        if (this.fadeRowIn) {
-            executeNextVMTurn(() => {
-                this.allComps.forEach(rowComp => rowComp.comp.addOrRemoveCssClass('ag-opacity-zero', false));
-            });
-        }
     }
 
     public getInstanceId(): number {
@@ -215,6 +204,17 @@ export class RowCtrl extends BeanStub {
 
         if (gow.isRowSelection() && this.rowNode.selectable) {
             this.onRowSelected();
+        }
+
+        this.updateColumnLists(!this.useAnimationFrameForCreate);
+
+        if (this.slideRowIn) {
+            executeNextVMTurn(this.onTopChanged.bind(this));
+        }
+        if (this.fadeRowIn) {
+            executeNextVMTurn(() => {
+                this.allComps.forEach(rowComp => rowComp.comp.addOrRemoveCssClass('ag-opacity-zero', false));
+            });
         }
 
         const businessKey = this.getRowBusinessKey();
@@ -370,7 +370,12 @@ export class RowCtrl extends BeanStub {
             this.leftCols = this.beans.columnModel.getDisplayedLeftColumnsForRow(this.rowNode);
             this.rightCols = this.beans.columnModel.getDisplayedRightColumnsForRow(this.rowNode);
         }
-        this.allComps.forEach(c => c.comp.onColumnChanged());
+
+        this.allComps.forEach(c => {
+            const cols = c.pinned === Constants.PINNED_LEFT ? this.leftCols :
+                        c.pinned === Constants.PINNED_RIGHT ? this.rightCols : this.centerCols;
+            c.comp.setColumns(cols);
+        });
     }
 
     private setAnimateFlags(animateIn: boolean): void {

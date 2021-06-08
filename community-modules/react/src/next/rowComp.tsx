@@ -43,7 +43,7 @@ export function RowComp(params: {context: Context, rowCtrl: RowCtrl, pinned: str
             destroy: ()=> true,
             getCellComp: colId => null,
             getAllCellComps: () => [],
-            onColumnChanged: () => true,
+            setColumns: cols => true,
             destroyCells: cellComps => true,
             getFullWidthRowComp: ()=> null,
         };

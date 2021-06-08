@@ -23,7 +23,7 @@ export class RowComp extends Component {
     private pinned: string | null;
 
     private rowNode: RowNode;
-    private controller: RowCtrl;
+    private ctrl: RowCtrl;
 
     private cellComps: { [key: string]: CellComp | null; } = {};
 
@@ -34,12 +34,12 @@ export class RowComp extends Component {
         this.beans = beans;
         this.rowNode = controller.getRowNode();
         this.pinned = pinned;
-        this.controller = controller;
+        this.ctrl = controller;
 
         this.setTemplate(`<div role="row" comp-id="${this.getCompId()}"/>`);
 
         const compProxy: IRowComp = {
-            onColumnChanged: () => this.onColumnChanged(),
+            setColumns: columns => this.setColumns(columns),
             getFullWidthRowComp: ()=> this.getFullWidthRowComp(),
             addOrRemoveCssClass: (name, on) => this.addOrRemoveCssClass(name, on),
             setAriaExpanded: on => setAriaExpanded(this.getGui(), on),
@@ -71,20 +71,18 @@ export class RowComp extends Component {
 
         if (controller.isFullWidth()) {
             this.createFullWidthRowCell();
-        } else {
-            this.onColumnChanged();
         }
     }
 
     private createFullWidthRowCell(): void {
-        const params = this.controller.createFullWidthParams(this.getGui(), this.pinned);
+        const params = this.ctrl.createFullWidthParams(this.getGui(), this.pinned);
 
         const callback = (cellRenderer: ICellRendererComp) => {
             if (this.isAlive()) {
                 const eGui = cellRenderer.getGui();
                 this.getGui().appendChild(eGui);
-                if (this.controller.getRowType() === RowType.FullWidthDetail) {
-                    this.controller.setupDetailRowAutoHeight(eGui);
+                if (this.ctrl.getRowType() === RowType.FullWidthDetail) {
+                    this.ctrl.setupDetailRowAutoHeight(eGui);
                 }
                 this.setFullWidthRowComp(cellRenderer);
             } else {
@@ -97,8 +95,8 @@ export class RowComp extends Component {
         if (cachedDetailComp) {
             callback(cachedDetailComp);
         } else {
-            const cellRendererType = FullWidthKeys.get(this.controller.getRowType())!;
-            const cellRendererName = FullWidthRenderers.get(this.controller.getRowType())!;
+            const cellRendererType = FullWidthKeys.get(this.ctrl.getRowType())!;
+            const cellRendererName = FullWidthRenderers.get(this.ctrl.getRowType())!;
 
             const res = this.beans.userComponentFactory.newFullWidthCellRenderer(
                 params,
@@ -119,8 +117,7 @@ export class RowComp extends Component {
         }
     }
 
-    public onColumnChanged(): void {
-        const cols = this.controller.getColsForRowComp(this.pinned);
+    public setColumns(cols: Column[]): void {
         const cellsToRemove = assign({}, this.cellComps);
 
         cols.forEach(col => {
@@ -188,8 +185,8 @@ export class RowComp extends Component {
     }
 
     private newCellComp(col: Column): void {
-        const cellComp = new CellComp(this.controller.getScope(), this.beans, col, this.rowNode, this.controller,
-            false, this.controller.isPrintLayout(), this.getGui(), this.controller.isEditing());
+        const cellComp = new CellComp(this.ctrl.getScope(), this.beans, col, this.rowNode, this.ctrl,
+            false, this.ctrl.isPrintLayout(), this.getGui(), this.ctrl.isEditing());
         this.cellComps[col.getId()] = cellComp;
         this.getGui().appendChild(cellComp.getGui());
     }
