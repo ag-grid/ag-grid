@@ -49,7 +49,8 @@ export const getExampleInfo = (
     }
 
     const internalFramework = getInternalFramework(framework, useFunctionalReact, useVue3);
-    const boilerplatePath = `/example-runner/${library}-${framework}-boilerplate/`;
+    const boilerPlateFramework = framework === 'vue' ? useVue3 ? 'vue3' : 'vue' : framework;
+    const boilerplatePath = `/example-runner/${library}-${boilerPlateFramework}-boilerplate/`;
 
     let sourcePath = `${pageName}/examples/${name}/`;
     let appLocation = `/examples/${pageName}/${name}/`;

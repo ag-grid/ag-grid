@@ -12,6 +12,8 @@ export class HorizontalResizeComp extends Component {
     private startingWidth: number;
     private elementToResize: HTMLElement;
     private inverted: boolean;
+    private minWidth: number = 100;
+    private maxWidth: number | null = null;
 
     constructor() {
         super(/* html */ `<div class="ag-tool-panel-horizontal-resize"></div>`);
@@ -41,11 +43,27 @@ export class HorizontalResizeComp extends Component {
 
     private onResizing(delta: number): void {
         const direction = this.inverted ? -1 : 1;
-        const newWidth = Math.max(100, Math.floor(this.startingWidth - (delta * direction)));
+        let newWidth = Math.max(this.minWidth, Math.floor(this.startingWidth - (delta * direction)));
+
+        if (this.maxWidth != null) {
+            newWidth = Math.min(this.maxWidth, newWidth);
+        }
         this.elementToResize.style.width = `${newWidth}px`;
     }
 
     public setInverted(inverted: boolean) {
         this.inverted = inverted;
+    }
+
+    public setMaxWidth(value: number | null) {
+        this.maxWidth = value;
+    }
+
+    public setMinWidth(value: number | null) {
+        if (value != null) {
+            this.minWidth = value;
+        } else {
+            this.minWidth = 100;
+        }
     }
 }

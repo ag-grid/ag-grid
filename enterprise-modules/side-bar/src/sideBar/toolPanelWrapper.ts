@@ -20,9 +20,20 @@ export class ToolPanelWrapper extends Component {
     private toolPanelCompInstance: IToolPanelComp;
     private toolPanelId: string;
     private resizeBar: HorizontalResizeComp;
+    private width: number | undefined;
 
     constructor() {
         super(ToolPanelWrapper.TEMPLATE);
+    }
+
+    @PostConstruct
+    private setupResize(): void {
+        const eGui = this.getGui();
+        const resizeBar = this.resizeBar = new HorizontalResizeComp();
+
+        this.getContext().createBean(resizeBar);
+        resizeBar.setElementToResize(eGui);
+        this.appendChild(resizeBar);
     }
 
     public getToolPanelId(): string {
@@ -30,7 +41,10 @@ export class ToolPanelWrapper extends Component {
     }
 
     public setToolPanelDef(toolPanelDef: ToolPanelDef): void {
-        this.toolPanelId = toolPanelDef.id;
+        const { id, minWidth, maxWidth, width } = toolPanelDef;
+
+        this.toolPanelId = id;
+        this.width = width;
 
         const params: IToolPanelParams = {
             api: this.gridOptionsWrapper.getApi()!,
@@ -41,18 +55,18 @@ export class ToolPanelWrapper extends Component {
             toolPanelDef, params);
 
         if (componentPromise == null) {
-            console.warn(`ag-grid: error processing tool panel component ${toolPanelDef.id}. You need to specify either 'toolPanel' or 'toolPanelFramework'`);
+            console.warn(`ag-grid: error processing tool panel component ${id}. You need to specify either 'toolPanel' or 'toolPanelFramework'`);
             return;
         }
         componentPromise.then(this.setToolPanelComponent.bind(this));
-    }
 
-    @PostConstruct
-    private setupResize(): void {
-        const resizeBar = this.resizeBar = new HorizontalResizeComp();
-        this.getContext().createBean(resizeBar);
-        resizeBar.setElementToResize(this.getGui());
-        this.appendChild(resizeBar);
+        if (minWidth != null) {
+            this.resizeBar.setMinWidth(minWidth);
+        }
+
+        if (maxWidth != null) {
+            this.resizeBar.setMaxWidth(maxWidth);
+        }
     }
 
     private setToolPanelComponent(compInstance: IToolPanelComp): void {
@@ -62,6 +76,10 @@ export class ToolPanelWrapper extends Component {
         this.addDestroyFunc(() => {
             this.destroyBean(compInstance);
         });
+
+        if (this.width) {
+            this.getGui().style.width = `${this.width}px`;
+        }
     }
 
     public getToolPanelInstance(): IToolPanelComp {

@@ -275,6 +275,8 @@ borders-secondary: ag-derived(borders),
 // Draw borders around sidebar tabs so that the active tab appears connected to the current tool panel
 borders-side-button: ag-derived(borders),
 
+side-bar-panel-width: 200px,
+
 border-radius: 0px,
 
 // Colour for border around major UI components like the grid itself, headers, footers and tool panels

@@ -331,8 +331,6 @@ function getGeneratorCode(prefix) {
         console.warn("********************************************");
         console.warn("************ React Fire Enabled ************");
         console.warn("********************************************");
-    } else {
-        console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
     }
 
     const { parser } = require(`${prefix}vanilla-src-parser.ts`);

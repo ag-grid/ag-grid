@@ -30,6 +30,9 @@ var gridOptions = {
                 labelKey: 'columns',
                 iconKey: 'columns',
                 toolPanel: 'agColumnsToolPanel',
+                minWidth: 225,
+                width: 225,
+                maxWidth: 225
             },
             {
                 id: 'filters',
@@ -37,6 +40,9 @@ var gridOptions = {
                 labelKey: 'filters',
                 iconKey: 'filter',
                 toolPanel: 'agFiltersToolPanel',
+                minWidth: 180,
+                maxWidth: 400,
+                width: 250
             }
         ],
         position: 'left',

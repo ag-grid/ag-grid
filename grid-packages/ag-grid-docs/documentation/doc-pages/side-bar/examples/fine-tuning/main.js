@@ -30,7 +30,7 @@ var gridOptions = {
                 labelKey: 'filters',
                 labelDefault: 'Filters',
                 iconKey: 'menu',
-                toolPanel: 'agFiltersToolPanel',
+                toolPanel: 'agFiltersToolPanel'
             },
             {
                 id: 'filters 2',
