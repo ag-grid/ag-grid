@@ -1,16 +1,10 @@
-import { includes, pushAll } from "../../utils/array";
-import { RowCtrl } from "./../row/rowCtrl";
 import { Beans } from "./../beans";
 import { Column } from "../../entities/column";
 import { CellClassParams, ColDef } from "../../entities/colDef";
-import { addStylesToElement } from "../../utils/dom";
-import { cssStyleObjectToMarkup } from "../../utils/general";
 import { RowNode } from "../../entities/rowNode";
 import { CellPosition } from "../../entities/cellPosition";
-import { setAriaSelected } from "../../utils/aria";
 import { CellFocusedEvent } from "../../events";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
-import { CellRangeType } from "../../interfaces/IRangeService";
 import { CellRangeFeature } from "./cellRangeFeature";
 
 //////// theses should not be imported, remove them once CellComp has been refactored
@@ -46,6 +40,11 @@ export interface ICellComp {
     setUserStyles(styles: any): void;
     setAriaSelected(selected: boolean): void;
     getFocusableElement(): HTMLElement;
+
+    // temp to get things compiling
+    isEditing(): boolean;
+    getValue(): any;
+    stopRowOrCellEdit(): void;
 }
 
 export class CellCtrl {
@@ -57,7 +56,6 @@ export class CellCtrl {
     private rowNode: RowNode;
 
     private autoHeightCell: boolean;
-    private cellFocused: boolean;
 
     // just passed in
     private scope: any;
@@ -65,26 +63,23 @@ export class CellCtrl {
 
     private cellRangeFeature: CellRangeFeature;
 
-    ////////// not yet set to anything meaningful, needs to be fixed
-    private value: any;
-    private cellPosition: CellPosition; // set on init only, needs to be set when rowIndexChanged
-    private selectionHandle: boolean;
-    private editingCell: boolean;
+    private cellPosition: CellPosition;
 
-    private stopRowOrCellEdit(): void {}
+    constructor(column: Column, rowNode: RowNode) {
+        this.column = column;
+        this.rowNode = rowNode;
+        this.createCellPosition();
+    }
 
-    public setComp(comp: ICellComp, beans: Beans, autoHeightCell: boolean, column: Column, rowNode: RowNode,
+    public setComp(comp: ICellComp, beans: Beans, autoHeightCell: boolean,
                    usingWrapper: boolean, scope: any): void {
         this.comp = comp;
         this.beans = beans;
-        this.column = column;
-        this.rowNode = rowNode;
         this.usingWrapper = usingWrapper;
         this.autoHeightCell = autoHeightCell;
         this.gow = this.beans.gridOptionsWrapper;
         this.scope = scope;
 
-        this.createCellPosition();
 
         this.onCellFocused();
 
@@ -146,14 +141,14 @@ export class CellCtrl {
     }
 
     public onCellFocused(event?: CellFocusedEvent): void {
-        this.cellFocused = this.beans.focusService.isCellFocused(this.cellPosition);
+        const cellFocused = this.beans.focusService.isCellFocused(this.cellPosition);
 
         if (!this.gow.isSuppressCellSelection()) {
-            this.comp.addOrRemoveCssClass(CSS_CELL_FOCUS, this.cellFocused);
+            this.comp.addOrRemoveCssClass(CSS_CELL_FOCUS, cellFocused);
         }
 
         // see if we need to force browser focus - this can happen if focus is programmatically set
-        if (this.cellFocused && event && event.forceBrowserFocus) {
+        if (cellFocused && event && event.forceBrowserFocus) {
             const focusEl = this.comp.getFocusableElement();
             focusEl.focus();
             // Fix for AG-3465 "IE11 - After editing cell's content, selection doesn't go one cell below on enter"
@@ -166,8 +161,8 @@ export class CellCtrl {
         // if another cell was focused, and we are editing, then stop editing
         const fullRowEdit = this.beans.gridOptionsWrapper.isFullRowEdit();
 
-        if (!this.cellFocused && !fullRowEdit && this.editingCell) {
-            this.stopRowOrCellEdit();
+        if (!cellFocused && !fullRowEdit && this.comp.isEditing()) {
+            this.comp.stopRowOrCellEdit();
         }
     }
 
@@ -235,7 +230,7 @@ export class CellCtrl {
         if (typeof colDef.cellStyle === 'function') {
             const cellStyleParams = {
                 column: this.column,
-                value: this.value,
+                value: this.comp.getValue(),
                 colDef: colDef,
                 data: this.rowNode.data,
                 node: this.rowNode,
@@ -261,7 +256,7 @@ export class CellCtrl {
     private applyCellClassRules(): void {
         const colDef = this.getComponentHolder();
         const cellClassParams: CellClassParams = {
-            value: this.value,
+            value: this.comp.getValue(),
             data: this.rowNode.data,
             node: this.rowNode,
             colDef: colDef,
@@ -295,7 +290,7 @@ export class CellCtrl {
 
         const colDef = this.getComponentHolder();
         const cellClassParams: CellClassParams = {
-            value: this.value,
+            value: this.comp.getValue(),
             data: this.rowNode.data,
             node: this.rowNode,
             colDef: colDef,

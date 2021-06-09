@@ -6,7 +6,7 @@ import {
     CellContextMenuEvent,
     CellDoubleClickedEvent,
     CellEditingStartedEvent,
-    CellEvent, CellFocusedEvent,
+    CellEvent,
     CellMouseOutEvent,
     CellMouseOverEvent,
     Events,
@@ -17,7 +17,7 @@ import { Component } from "../../widgets/component";
 import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
 import { ICellRendererComp, ICellRendererParams } from "./../cellRenderers/iCellRenderer";
 import { CheckboxSelectionComponent } from "./../checkboxSelectionComponent";
-import { CellClassParams, ColDef, NewValueParams } from "../../entities/colDef";
+import { ColDef, NewValueParams } from "../../entities/colDef";
 import { CellPosition } from "../../entities/cellPosition";
 import { CellRangeType, ISelectionHandle, SelectionHandleType } from "../../interfaces/IRangeService";
 import { RowCtrl } from "./../row/rowCtrl";
@@ -26,16 +26,20 @@ import { PopupEditorWrapper } from "./../cellEditors/popupEditorWrapper";
 import { AgPromise } from "../../utils";
 import { IFrameworkOverrides } from "../../interfaces/iFrameworkOverrides";
 import { DndSourceComp } from "./../dndSourceComp";
-import { TooltipFeature } from "../../widgets/tooltipFeature";
-import { TooltipParentComp } from '../../widgets/tooltipFeature';
+import { TooltipFeature, TooltipParentComp } from "../../widgets/tooltipFeature";
 import { setAriaColIndex, setAriaDescribedBy, setAriaSelected } from "../../utils/aria";
 import { get, getValueUsingField } from "../../utils/object";
 import { escapeString } from "../../utils/string";
 import { exists, missing } from "../../utils/generic";
-import { addOrRemoveCssClass, clearElement, addStylesToElement, isElementChildOfClass, isFocusableFormField } from "../../utils/dom";
-import { last, areEqual, includes } from "../../utils/array";
-import { cssStyleObjectToMarkup } from "../../utils/general";
-import { isStopPropagationForAgGrid, getTarget, isEventSupported } from "../../utils/event";
+import {
+    addOrRemoveCssClass,
+    addStylesToElement,
+    clearElement,
+    isElementChildOfClass,
+    isFocusableFormField
+} from "../../utils/dom";
+import { areEqual, last } from "../../utils/array";
+import { getTarget, isEventSupported, isStopPropagationForAgGrid } from "../../utils/event";
 import { isEventFromPrintableCharacter } from "../../utils/keyboard";
 import { isBrowserEdge, isBrowserIE, isIOSUserAgent } from "../../utils/browser";
 import { doOnce } from "../../utils/function";
@@ -43,22 +47,13 @@ import { KeyCode } from '../../constants/keyCode';
 import { ITooltipParams } from "./../tooltipComponent";
 import { RowPosition } from "../../entities/rowPosition";
 import {
-    CellCtrl, CSS_CELL_FIRST_RIGHT_PINNED, CSS_CELL_FOCUS,
-    CSS_CELL_INLINE_EDITING, CSS_CELL_LAST_LEFT_PINNED,
+    CellCtrl,
+    CSS_CELL_INLINE_EDITING,
     CSS_CELL_NOT_INLINE_EDITING,
     CSS_CELL_POPUP_EDITING,
-    CSS_CELL_RANGE_BOTTOM,
-    CSS_CELL_RANGE_CHART,
     CSS_CELL_RANGE_CHART_CATEGORY,
     CSS_CELL_RANGE_HANDLE,
-    CSS_CELL_RANGE_LEFT,
-    CSS_CELL_RANGE_RIGHT,
-    CSS_CELL_RANGE_SELECTED,
-    CSS_CELL_RANGE_SINGLE_CELL,
-    CSS_CELL_RANGE_TOP,
     CSS_CELL_VALUE,
-    CSS_CELL_WRAP_TEXT,
-    CSS_COLUMN_HOVER,
     ICellComp
 } from "./cellCtrl";
 
@@ -76,7 +71,7 @@ export class CellComp extends Component implements TooltipParentComp {
     private column: Column;
     private rowNode: RowNode;
     private eRow: HTMLElement;
-//    private cellPosition: CellPosition;
+
     private rangeCount: number;
     private hasChartRange = false;
 
@@ -149,6 +144,9 @@ export class CellComp extends Component implements TooltipParentComp {
         this.printLayout = printLayout;
         this.eRow = eRow;
 
+        // we need to do this early, as we need CellPosition before we call setComp()
+        this.ctrl = new CellCtrl(column, rowNode);
+
         this.getValueAndFormat();
         this.setUsingWrapper();
         this.chooseCellRenderer();
@@ -157,14 +155,18 @@ export class CellComp extends Component implements TooltipParentComp {
 
         this.setTemplate(this.getCreateTemplate());
 
-        this.ctrl = new CellCtrl();
         const compProxy: ICellComp = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setUserStyles: styles => addStylesToElement(this.getGui(), styles),
             setAriaSelected: selected => setAriaSelected(this.getGui(), selected),
             getFocusableElement: ()=> this.getFocusableElement(),
+
+            // temp items
+            isEditing: ()=> this.editingCell,
+            getValue: ()=> this.value,
+            stopRowOrCellEdit: ()=> this.stopRowOrCellEdit()
         };
-        this.ctrl.setComp(compProxy, beans, false, column, this.rowNode, this.usingWrapper,
+        this.ctrl.setComp(compProxy, beans, false, this.usingWrapper,
             this.scope);
         this.addDestroyFunc( ()=> this.ctrl.destroy() );
 
