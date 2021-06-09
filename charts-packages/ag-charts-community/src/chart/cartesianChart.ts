@@ -1,5 +1,4 @@
 import { Chart } from "./chart";
-import { numericExtent } from "../util/array";
 import { CategoryAxis } from "./axis/categoryAxis";
 import { GroupedCategoryAxis } from "./axis/groupedCategoryAxis";
 import { ChartAxisPosition, ChartAxisDirection } from "./chartAxis";
@@ -265,8 +264,7 @@ export class CartesianChart extends Chart {
                     domains.push(series.getDomain(direction));
                 });
 
-                const domain = new Array<any>().concat(...domains);
-                axis.domain = numericExtent(domain) || domain; // if numeric extent can't be found, it's categories
+                axis.domain = new Array<any>().concat(...domains);
             }
 
             if (axis.direction === ChartAxisDirection.X) {

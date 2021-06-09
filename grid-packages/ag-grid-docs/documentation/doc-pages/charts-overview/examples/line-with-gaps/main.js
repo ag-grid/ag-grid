@@ -198,14 +198,14 @@ var options = {
     ],
     axes: [
         {
-            type: 'number',
+            type: 'category',
             position: 'bottom',
             title: {
                 text: 'Week'
             },
-            min: 1,
-            max: 52,
-            nice: false,
+            label: {
+                formatter: params => params.index % 3 ? '' : params.value
+            }
         },
         {
             type: 'number',
