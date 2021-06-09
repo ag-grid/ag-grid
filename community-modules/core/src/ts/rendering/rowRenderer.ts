@@ -11,7 +11,7 @@ import {
     ViewportChangedEvent
 } from "../events";
 import { Constants } from "../constants/constants";
-import { CellComp } from "./cellComp";
+import { CellComp } from "./cell/cellComp";
 import { Autowired, Bean, Optional, PostConstruct, Qualifier } from "../context/context";
 import { ColumnApi } from "../columns/columnApi";
 import { ColumnModel } from "../columns/columnModel";
@@ -137,7 +137,7 @@ export class RowRenderer extends BeanStub {
     // all active cells.
     private registerCellEventListeners(): void {
         this.addManagedListener(this.eventService, Events.EVENT_CELL_FOCUSED, (event: CellFocusedEvent) => {
-            this.forEachCellComp(cellComp => cellComp.onCellFocused(event));
+            this.forEachCellComp(cellComp => cellComp.getCtrl().onCellFocused(event));
             this.forEachRowComp((key: string, rowComp: RowCtrl) => {
                 if (rowComp.isFullWidth()) {
                     rowComp.onFullWidthRowFocused(event);

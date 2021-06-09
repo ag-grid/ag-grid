@@ -186,7 +186,7 @@ export { PositionableFeature, ResizableStructure, ResizableSides, PositionableOp
 // rendering
 export { AutoWidthCalculator } from "./rendering/autoWidthCalculator";
 export { CheckboxSelectionComponent } from "./rendering/checkboxSelectionComponent";
-export { CellComp } from "./rendering/cellComp";
+export { CellComp } from "./rendering/cell/cellComp";
 export { RowCtrl, IRowComp } from "./rendering/row/rowCtrl";
 export { RowRenderer } from "./rendering/rowRenderer";
 export { ValueFormatterService } from "./rendering/valueFormatterService";

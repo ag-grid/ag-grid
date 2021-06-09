@@ -7,7 +7,7 @@ import { ColumnModel } from "./columns/columnModel";
 import { CellPosition } from "./entities/cellPosition";
 import { RowNode } from "./entities/rowNode";
 import { GridApi } from "./gridApi";
-import { CellComp } from "./rendering/cellComp";
+import { CellComp } from "./rendering/cell/cellComp";
 import { HeaderRowComp } from "./headerRendering/headerRowComp";
 import { AbstractHeaderWrapper } from "./headerRendering/header/abstractHeaderWrapper";
 import { HeaderPosition } from "./headerRendering/header/headerPosition";

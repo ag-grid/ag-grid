@@ -89,7 +89,7 @@ export function RowComp(params: {context: Context, rowCtrl: RowCtrl, pinned: str
             destroyCells: cellComps => true,
             getFullWidthRowComp: ()=> null,
         };
-        
+
         rowCtrl.setComp(compProxy, eGui.current!, pinned);
 
         // return ()=> {

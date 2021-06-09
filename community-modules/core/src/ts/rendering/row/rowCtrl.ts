@@ -1,5 +1,5 @@
 import { Beans } from "../beans";
-import { CellComp } from "../cellComp";
+import { CellComp } from "../cell/cellComp";
 import { DataChangedEvent, RowHighlightPosition, RowNode } from "../../entities/rowNode";
 import { Column } from "../../entities/column";
 import {
@@ -163,6 +163,10 @@ export class RowCtrl extends BeanStub {
         this.setRowType();
 
         this.addListeners();
+    }
+
+    public getBeans(): Beans {
+        return this.beans;
     }
 
     public getInstanceId(): number {
@@ -458,7 +462,7 @@ export class RowCtrl extends BeanStub {
     private addListenersForCellComps(): void {
 
         this.addManagedListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, () => {
-            this.forEachCellComp(cellComp => cellComp.onRowIndexChanged());
+            this.forEachCellComp(cellComp => cellComp.getCtrl().onRowIndexChanged());
         });
         this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, event => {
             this.forEachCellComp(cellComp => cellComp.onCellChanged(event));

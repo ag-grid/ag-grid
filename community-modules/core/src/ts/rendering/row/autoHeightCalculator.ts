@@ -1,7 +1,7 @@
 import { Autowired, Bean, PostConstruct } from "../../context/context";
 import { Beans } from "../beans";
 import { RowNode } from "../../entities/rowNode";
-import { CellComp } from "../cellComp";
+import { CellComp } from "../cell/cellComp";
 import { ColumnModel } from "../../columns/columnModel";
 import { BeanStub } from "../../context/beanStub";
 import { addCssClass } from "../../utils/dom";

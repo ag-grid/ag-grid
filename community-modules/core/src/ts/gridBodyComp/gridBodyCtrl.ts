@@ -60,7 +60,7 @@ export class GridBodyCtrl extends BeanStub {
     @Autowired('popupService') public popupService: PopupService;
     @Autowired('mouseEventService') public mouseEventService: MouseEventService;
 
-    private view: IGridBodyComp;
+    private comp: IGridBodyComp;
     private eGridBody: HTMLElement;
     private eBodyViewport: HTMLElement;
     private eTop: HTMLElement;
@@ -77,9 +77,9 @@ export class GridBodyCtrl extends BeanStub {
         return this.eBodyViewport;
     }
 
-    public setComp(view: IGridBodyComp, eGridBody: HTMLElement, eBodyViewport: HTMLElement,
+    public setComp(comp: IGridBodyComp, eGridBody: HTMLElement, eBodyViewport: HTMLElement,
                    eTop: HTMLElement, eBottom: HTMLElement): void {
-        this.view = view;
+        this.comp = comp;
         this.eGridBody = eGridBody;
         this.eBodyViewport = eBodyViewport;
         this.eTop = eTop;
@@ -87,7 +87,7 @@ export class GridBodyCtrl extends BeanStub {
 
         this.setCellTextSelection(this.gridOptionsWrapper.isEnableCellTextSelect());
 
-        this.createManagedBean(new LayoutFeature(this.view));
+        this.createManagedBean(new LayoutFeature(this.comp));
         this.bodyScrollFeature = this.createManagedBean(new GridBodyScrollFeature(this.eBodyViewport));
         this.addRowDragListener();
 
@@ -111,12 +111,12 @@ export class GridBodyCtrl extends BeanStub {
 
     // used by ColumnAnimationService
     public setColumnMovingCss(moving: boolean): void {
-        this.view.setColumnMovingCss(moving ? CSS_CLASS_COLUMN_MOVING : null, moving);
+        this.comp.setColumnMovingCss(moving ? CSS_CLASS_COLUMN_MOVING : null, moving);
     }
 
     public setCellTextSelection(selectable: boolean = false): void {
         const cssClass = selectable ? CSS_CLASS_CELL_SELECTABLE : null;
-        this.view.setCellSelectableCss(cssClass, selectable);
+        this.comp.setCellSelectableCss(cssClass, selectable);
     }
 
     private onScrollVisibilityChanged(): void {
@@ -126,7 +126,7 @@ export class GridBodyCtrl extends BeanStub {
 
     private onGridColumnsChanged(): void {
         const columns = this.columnModel.getAllGridColumns();
-        this.view.setColumnCount(columns ? columns.length : 0);
+        this.comp.setColumnCount(columns ? columns.length : 0);
     }
 
     // if we do not do this, then the user can select a pic in the grid (eg an image in a custom cell renderer)
@@ -190,22 +190,22 @@ export class GridBodyCtrl extends BeanStub {
 
         const total = rowCount === -1 ? -1 : (headerCount + rowCount);
 
-        this.view.setRowCount(total);
+        this.comp.setRowCount(total);
     }
 
     public registerBodyViewportResizeListener(listener: (() => void)): void {
-        this.view.registerBodyViewportResizeListener(listener);
+        this.comp.registerBodyViewportResizeListener(listener);
     }
 
     public setVerticalScrollPaddingVisible(visible: boolean): void {
         const overflowY = visible ? 'scroll' : 'hidden';
-        this.view.setPinnedTopBottomOverflowY(overflowY);
+        this.comp.setPinnedTopBottomOverflowY(overflowY);
     }
 
     public isVerticalScrollShowing(): boolean {
         const show = this.gridOptionsWrapper.isAlwaysShowVerticalScroll();
         const cssClass = show ? CSS_CLASS_FORCE_VERTICAL_SCROLL : null;
-        this.view.setAlwaysVerticalScrollClass(cssClass, show);
+        this.comp.setAlwaysVerticalScrollClass(cssClass, show);
         return show || isVerticalScrollShowing(this.eBodyViewport);
     }
 
@@ -215,7 +215,7 @@ export class GridBodyCtrl extends BeanStub {
             // when scaling and doing row animation.
             const animateRows = this.gridOptionsWrapper.isAnimateRows() && !this.rowContainerHeightService.isStretching();
             const animateRowsCssClass = animateRows ? RowAnimationCssClasses.ANIMATION_ON : RowAnimationCssClasses.ANIMATION_OFF;
-            this.view.setRowAnimationCssOnBodyViewport(animateRowsCssClass, animateRows);
+            this.comp.setRowAnimationCssOnBodyViewport(animateRowsCssClass, animateRows);
         };
 
         listener();
@@ -289,11 +289,11 @@ export class GridBodyCtrl extends BeanStub {
             floatingBottomHeight += 1;
         }
 
-        this.view.setTopHeight(floatingTopHeight);
-        this.view.setBottomHeight(floatingBottomHeight);
+        this.comp.setTopHeight(floatingTopHeight);
+        this.comp.setBottomHeight(floatingBottomHeight);
 
-        this.view.setTopDisplay(floatingTopHeight ? 'inherit' : 'none');
-        this.view.setBottomDisplay(floatingBottomHeight ? 'inherit' : 'none');
+        this.comp.setTopDisplay(floatingTopHeight ? 'inherit' : 'none');
+        this.comp.setBottomDisplay(floatingBottomHeight ? 'inherit' : 'none');
     }
 
     // method will call itself if no available width. this covers if the grid

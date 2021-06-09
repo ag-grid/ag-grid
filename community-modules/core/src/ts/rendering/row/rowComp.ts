@@ -6,7 +6,7 @@ import { RowNode } from "../../entities/rowNode";
 import { addStylesToElement, setDomChildOrder } from "../../utils/dom";
 import { FullWidthKeys, FullWidthRenderers, IRowComp, RowCtrl, RowType } from "./rowCtrl";
 import { Column } from "../../entities/column";
-import { CellComp } from "../cellComp";
+import { CellComp } from "../cell/cellComp";
 import { assign, getAllValuesInObject, iterateObject } from "../../utils/object";
 import { ModuleRegistry } from "../../modules/moduleRegistry";
 import { ModuleNames } from "../../modules/moduleNames";
