@@ -1,12 +1,17 @@
 import React from 'react';
 import { LocalStorage } from 'utils/local-storage';
 
+// bypasses local storage
+const storageOverrides = {
+    enableVue3: true       // enables Vue 3 functionality in docs
+}
+
 const defaultContextValue = {
     exampleImportType: 'packages',
     useFunctionalReact: true,
-    enableVue3: true,
-    useVue3: false,
+    useVue3: false,         // determines whether the user is going to see vue 2 or vue 3 examples (only applicable if enableVue3 is true)
     set: () => { },
+    ...storageOverrides
 };
 
 const { Provider, Consumer } = React.createContext(defaultContextValue);
@@ -33,6 +38,7 @@ class GlobalContextProvider extends React.PureComponent {
                 contextValue = {
                     ...contextValue,
                     ...storedContext,
+                    ...storageOverrides
                 };
             }
         }
