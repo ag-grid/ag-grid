@@ -26,16 +26,18 @@ export class RowComp extends Component {
     private domOrder: boolean;
     private cellComps: { [key: string]: CellComp | null; } = {};
 
-    constructor(controller: RowCtrl, container: RowContainerComp, beans: Beans, pinned: string | null) {
+    constructor(ctrl: RowCtrl, container: RowContainerComp, beans: Beans, pinned: string | null) {
         super();
 
         this.container = container;
         this.beans = beans;
-        this.rowNode = controller.getRowNode();
+        this.rowNode = ctrl.getRowNode();
         this.pinned = pinned;
-        this.ctrl = controller;
+        this.ctrl = ctrl;
 
-        this.setTemplate(/* html */`<div role="row" comp-id="${this.getCompId()}" />`);
+
+
+        this.setTemplate(/* html */`<div role="row" comp-id="${this.getCompId()}" style="${this.getInitialStyle()}"/>`);
 
         const compProxy: IRowComp = {
             setDomOrder: domOrder => this.domOrder = domOrder,
@@ -67,11 +69,17 @@ export class RowComp extends Component {
             setTabIndex: tabIndex => this.getGui().setAttribute('tabindex', tabIndex.toString())
         };
 
-        controller.setComp(compProxy, this.getGui(), pinned);
+        ctrl.setComp(compProxy, this.getGui(), pinned);
 
-        if (controller.isFullWidth()) {
+        if (ctrl.isFullWidth()) {
             this.createFullWidthRowCell();
         }
+    }
+
+    private getInitialStyle(): string {
+        const transform = this.ctrl.getInitialTransform();
+        const top = this.ctrl.getInitialRowTop();
+        return transform ? `transform: ${transform}` : `top: ${top}`;
     }
 
     private createFullWidthRowCell(): void {

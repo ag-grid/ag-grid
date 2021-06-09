@@ -44,8 +44,8 @@ export function RowComp(params: {context: Context, rowCtrl: RowCtrl, pinned: str
     const {context, rowCtrl, pinned} = params;
 
     const [height, setHeight] = useState<string>();
-    const [top, setTop] = useState<string>();
-    const [transform, setTransform] = useState<string>();
+    const [top, setTop] = useState<string | undefined>(rowCtrl.getInitialRowTop());
+    const [transform, setTransform] = useState<string | undefined>(rowCtrl.getInitialTransform()),
     const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses());
     const [rowIndex, setRowIndex] = useState<string>();
     const [rowId, setRowId] = useState<string>();

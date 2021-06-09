@@ -138,6 +138,16 @@ export class RowCtrl extends BeanStub {
 
     private updateColumnListsPending = false;
 
+    // the top needs to be set into the DOM element when the element is created, not updated afterwards.
+    // otherwise the transition would not work, as it would be transitioning from zero (the unset value).
+    // for example, suppose a row that is outside the viewport, then user does a filter to remove other rows
+    // and this row now appears in the viewport, and the row moves up (ie it was under the viewport and not rendered,
+    // but now is in the viewport) then a new RowComp is created, however it should have it's position initialised
+    // to below the viewport, so the row will appear to animate up. if we didn't set the initial position at creation
+    // time, the row would animate down (ie from position zero).
+    private initialTop: string;
+    private initialTransform: string;
+
     constructor(
         parentScope: any,
         rowNode: RowNode,
@@ -163,6 +173,8 @@ export class RowCtrl extends BeanStub {
         this.setRowType();
 
         this.addListeners();
+
+        this.setInitialRowTop();
     }
 
     public getBeans(): Beans {
@@ -200,7 +212,6 @@ export class RowCtrl extends BeanStub {
         this.onRowHeightChanged();
         this.updateRowIndexes();
         this.setFocusedClasses();
-        this.setInitialRowTop();
         this.setStylesFromGridOptions();
 
         if (gow.isRowSelection() && this.rowNode.selectable) {
@@ -1158,6 +1169,14 @@ export class RowCtrl extends BeanStub {
         }
     }
 
+    public getInitialRowTop(): string | undefined {
+        return this.initialTop;
+    }
+
+    public getInitialTransform(): string | undefined {
+        return this.initialTransform;
+    }
+
     private setInitialRowTop() {
         // print layout uses normal flow layout for row positioning
         if (this.printLayout) { return ''; }
@@ -1168,7 +1187,14 @@ export class RowCtrl extends BeanStub {
         // we don't apply scaling if row is pinned
         const afterScalingPixels = this.rowNode.isRowPinned() ? afterPaginationPixels : this.beans.rowContainerHeightService.getRealPixelPosition(afterPaginationPixels);
 
-        this.setRowTopStyle(afterScalingPixels + 'px');
+        const res = afterScalingPixels + 'px';
+
+        const suppressRowTransform = this.beans.gridOptionsWrapper.isSuppressRowTransform();
+        if (suppressRowTransform) {
+            this.initialTop = res;
+        } else {
+            this.initialTransform = `translateY(${res})`;
+        }
     }
 
     private setRowTopStyle(topPx: string): void {
