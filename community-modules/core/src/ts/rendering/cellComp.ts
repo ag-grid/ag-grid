@@ -1386,6 +1386,23 @@ export class CellComp extends Component implements TooltipParentComp {
         }
     }
 
+    private defaultValueParser(params: NewValueParams) {
+        // The default value parser attempts to preserve the type of the field
+        // if the field is a Number or BigInt
+
+        if (typeof params.oldValue === 'number') {
+            let tryParseNumber = Number(params.newValue)
+            if (!Number.isNaN(tryParseNumber)) return tryParseNumber
+
+        } else if (typeof params.oldValue === 'bigint') {
+            try {
+                return BigInt(params.newValue)
+            } catch {
+                return params.newValue;
+            }
+        }
+        return params.newValue;
+    }
     private parseValue(newValue: any): any {
         const colDef = this.getComponentHolder();
         const params: NewValueParams = {
@@ -1402,7 +1419,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         const valueParser = colDef.valueParser;
 
-        return exists(valueParser) ? this.beans.expressionService.evaluate(valueParser, params) : newValue;
+        return exists(valueParser) ? this.beans.expressionService.evaluate(valueParser, params) : this.defaultValueParser(params);
     }
 
     public focusCell(forceBrowserFocus = false): void {
