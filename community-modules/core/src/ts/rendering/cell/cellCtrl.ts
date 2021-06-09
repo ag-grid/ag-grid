@@ -40,6 +40,8 @@ export interface ICellComp {
     setUserStyles(styles: any): void;
     setAriaSelected(selected: boolean): void;
     getFocusableElement(): HTMLElement;
+    // setValue(value: any): void;
+    // setValueFormatted(value: string): void;
 
     // temp to get things compiling
     isEditing(): boolean;
@@ -49,6 +51,7 @@ export interface ICellComp {
 
 export class CellCtrl {
 
+    private eGui: HTMLElement;
     private comp: ICellComp;
     private beans: Beans;
     private gow: GridOptionsWrapper;
@@ -72,13 +75,14 @@ export class CellCtrl {
     }
 
     public setComp(comp: ICellComp, beans: Beans, autoHeightCell: boolean,
-                   usingWrapper: boolean, scope: any): void {
+                   usingWrapper: boolean, scope: any, eGui: HTMLElement): void {
         this.comp = comp;
         this.beans = beans;
         this.usingWrapper = usingWrapper;
         this.autoHeightCell = autoHeightCell;
         this.gow = this.beans.gridOptionsWrapper;
         this.scope = scope;
+        this.eGui = eGui;
 
 
         this.onCellFocused();
@@ -95,6 +99,16 @@ export class CellCtrl {
         const rangeSelectionEnabled = this.beans.rangeService && beans.gridOptionsWrapper.isEnableRangeSelection();
         if (rangeSelectionEnabled) {
             this.cellRangeFeature = new CellRangeFeature(beans, comp, this);
+        }
+    }
+
+    public appendChild(htmlElement: HTMLElement): void {
+        this.eGui.appendChild(htmlElement);
+    }
+
+    public refreshHandle(): void {
+        if (this.cellRangeFeature) {
+            this.cellRangeFeature.refreshHandle();
         }
     }
 

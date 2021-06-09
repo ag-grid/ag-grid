@@ -1,6 +1,7 @@
 import {
     Autowired,
     CellComp,
+    CellCtrl,
     RowRenderer,
     DragService,
     Component,
@@ -30,7 +31,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
     @Autowired('rowPositionUtils') protected rowPositionUtils: RowPositionUtils;
     @Autowired('controllersService') protected controllersService: ControllersService;
 
-    private cellComp: CellComp;
+    private cellComp: CellCtrl;
     private cellRange: CellRange;
 
     private rangeStartRow: RowPosition;
@@ -89,11 +90,11 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
         return this.dragging;
     }
 
-    protected getCellComp(): CellComp | undefined {
+    protected getCellComp(): CellCtrl | undefined {
         return this.cellComp;
     }
 
-    protected setCellComp(cellComp: CellComp) {
+    protected setCellComp(cellComp: CellCtrl) {
         this.cellComp = cellComp;
     }
 
@@ -157,7 +158,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
         return this.type;
     }
 
-    public refresh(cellComp: CellComp) {
+    public refresh(cellCtrl: CellCtrl) {
         const oldCellComp = this.getCellComp();
         const eGui = this.getGui();
 
@@ -178,11 +179,11 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
             }
         }
 
-        if (oldCellComp !== cellComp || !_.isVisible(eGui)) {
-            this.setCellComp(cellComp);
+        if (oldCellComp !== cellCtrl || !_.isVisible(eGui)) {
+            this.setCellComp(cellCtrl);
             window.setTimeout(() => {
                 if (this.isAlive()) {
-                    cellComp.appendChild(eGui);
+                    cellCtrl.appendChild(eGui);
                 }
             }, 1);
         }

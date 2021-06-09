@@ -72,9 +72,6 @@ export class CellComp extends Component implements TooltipParentComp {
     private rowNode: RowNode;
     private eRow: HTMLElement;
 
-    private rangeCount: number;
-    private hasChartRange = false;
-
     private usingWrapper: boolean;
 
     private includeSelectionComponent: boolean;
@@ -101,7 +98,6 @@ export class CellComp extends Component implements TooltipParentComp {
     // the GUI is initially element or string, however once the UI is created, it becomes UI
     private cellRendererGui: HTMLElement | null;
     private cellEditor: ICellEditorComp | null;
-    private selectionHandle: ISelectionHandle | null | undefined;
 
     private autoHeightCell: boolean;
 
@@ -167,7 +163,7 @@ export class CellComp extends Component implements TooltipParentComp {
             stopRowOrCellEdit: ()=> this.stopRowOrCellEdit()
         };
         this.ctrl.setComp(compProxy, beans, false, this.usingWrapper,
-            this.scope);
+            this.scope, this.getGui());
         this.addDestroyFunc( ()=> this.ctrl.destroy() );
 
         this.afterAttached();
@@ -254,7 +250,7 @@ export class CellComp extends Component implements TooltipParentComp {
         this.populateTemplate();
         this.createCellRendererInstance(true);
         this.angular1Compile();
-        this.refreshHandle();
+        this.ctrl.refreshHandle();
 
         if (exists(this.tooltip)) {
             this.createTooltipFeatureIfNeeded();
@@ -1551,7 +1547,6 @@ export class CellComp extends Component implements TooltipParentComp {
 
         this.stopEditing();
         this.cellRenderer = this.beans.context.destroyBean(this.cellRenderer);
-        this.beans.context.destroyBean(this.selectionHandle);
 
         super.destroy();
     }
@@ -1583,70 +1578,8 @@ export class CellComp extends Component implements TooltipParentComp {
         this.getGui().style.width = `${width}px`;
     }
 
-    private shouldHaveSelectionHandle(): boolean {
-        const { gridOptionsWrapper, rangeService } = this.beans;
-        const cellRanges = rangeService.getCellRanges();
-        const rangesLen = cellRanges.length;
-
-        if (this.rangeCount < 1 || rangesLen < 1) {
-            return false;
-        }
-
-        const cellRange = last(cellRanges);
-        const cellPosition = this.getCellPosition();
-        let fillHandleIsAvailable = rangesLen === 1 &&
-            (gridOptionsWrapper.isEnableFillHandle() || gridOptionsWrapper.isEnableRangeHandle()) &&
-            !this.editingCell;
-
-        if (this.hasChartRange) {
-            const hasCategoryRange = cellRanges[0].type === CellRangeType.DIMENSION;
-            const isCategoryCell = hasCategoryRange && rangeService.isCellInSpecificRange(cellPosition, cellRanges[0]);
-
-            this.addOrRemoveCssClass(CSS_CELL_RANGE_CHART_CATEGORY, isCategoryCell);
-            fillHandleIsAvailable = cellRange.type === CellRangeType.VALUE;
-        }
-
-        return fillHandleIsAvailable &&
-            cellRange.endRow != null &&
-            rangeService.isContiguousRange(cellRange) &&
-            rangeService.isBottomRightCell(cellRange, cellPosition);
-    }
-
-    private addSelectionHandle() {
-        const { gridOptionsWrapper, rangeService } = this.beans;
-        const cellRangeType = last(rangeService.getCellRanges()).type;
-        const selectionHandleFill = gridOptionsWrapper.isEnableFillHandle() && missing(cellRangeType);
-        const type = selectionHandleFill ? SelectionHandleType.FILL : SelectionHandleType.RANGE;
-
-        if (this.selectionHandle && this.selectionHandle.getType() !== type) {
-            this.selectionHandle = this.beans.context.destroyBean(this.selectionHandle);
-        }
-
-        if (!this.selectionHandle) {
-            this.selectionHandle = this.beans.selectionHandleFactory.createSelectionHandle(type);
-        }
-
-        this.selectionHandle.refresh(this);
-    }
-
     public onNewColumnsLoaded(): void {
         this.ctrl.temp_applyOnNewColumnsLoaded();
-    }
-
-    private refreshHandle(): void {
-        if (!this.beans.rangeService) { return; }
-
-        const shouldHaveSelectionHandle = this.shouldHaveSelectionHandle();
-
-        if (this.selectionHandle && !shouldHaveSelectionHandle) {
-            this.selectionHandle = this.beans.context.destroyBean(this.selectionHandle);
-        }
-
-        if (shouldHaveSelectionHandle) {
-            this.addSelectionHandle();
-        }
-
-        this.addOrRemoveCssClass(CSS_CELL_RANGE_HANDLE, !!this.selectionHandle);
     }
 
     public onFirstRightPinnedChanged(): void {
@@ -1849,7 +1782,7 @@ export class CellComp extends Component implements TooltipParentComp {
         }
 
         this.setInlineEditingClass();
-        this.refreshHandle();
+        this.ctrl.refreshHandle();
 
         if (newValueExists && newValue !== oldValue) {
             // we suppressRefreshCell because the call to rowNode.setDataValue() results in change detection

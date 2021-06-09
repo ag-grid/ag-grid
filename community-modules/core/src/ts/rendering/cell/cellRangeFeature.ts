@@ -1,14 +1,21 @@
 import { Beans } from "../beans";
 import {
-    CellCtrl, CSS_CELL_RANGE_BOTTOM,
-    CSS_CELL_RANGE_CHART, CSS_CELL_RANGE_LEFT, CSS_CELL_RANGE_RIGHT,
+    CellCtrl,
+    CSS_CELL_RANGE_BOTTOM,
+    CSS_CELL_RANGE_CHART,
+    CSS_CELL_RANGE_CHART_CATEGORY,
+    CSS_CELL_RANGE_HANDLE,
+    CSS_CELL_RANGE_LEFT,
+    CSS_CELL_RANGE_RIGHT,
     CSS_CELL_RANGE_SELECTED,
-    CSS_CELL_RANGE_SINGLE_CELL, CSS_CELL_RANGE_TOP,
+    CSS_CELL_RANGE_SINGLE_CELL,
+    CSS_CELL_RANGE_TOP,
     ICellComp
 } from "./cellCtrl";
-import { includes } from "../../utils/array";
-import { CellRangeType } from "../../interfaces/IRangeService";
+import { includes, last } from "../../utils/array";
+import { CellRangeType, ISelectionHandle, SelectionHandleType } from "../../interfaces/IRangeService";
 import { Column } from "../../entities/column";
+import { missing } from "../../utils/generic";
 
 export class CellRangeFeature {
 
@@ -19,7 +26,7 @@ export class CellRangeFeature {
     private rangeCount: number;
     private hasChartRange: boolean;
 
-    private refreshHandle(): void {}
+    private selectionHandle: ISelectionHandle | null | undefined;
 
     constructor(beans: Beans, cellComp: ICellComp, ctrl: CellCtrl) {
         this.beans = beans;
@@ -154,8 +161,70 @@ export class CellRangeFeature {
         return { top, right, bottom, left };
     }
 
-    public destroy(): void {
+    public refreshHandle(): void {
+        if (!this.beans.rangeService) { return; }
 
+        const shouldHaveSelectionHandle = this.shouldHaveSelectionHandle();
+
+        if (this.selectionHandle && !shouldHaveSelectionHandle) {
+            this.selectionHandle = this.beans.context.destroyBean(this.selectionHandle);
+        }
+
+        if (shouldHaveSelectionHandle) {
+            this.addSelectionHandle();
+        }
+
+        this.comp.addOrRemoveCssClass(CSS_CELL_RANGE_HANDLE, !!this.selectionHandle);
+    }
+
+    private shouldHaveSelectionHandle(): boolean {
+        const { gridOptionsWrapper, rangeService } = this.beans;
+        const cellRanges = rangeService.getCellRanges();
+        const rangesLen = cellRanges.length;
+
+        if (this.rangeCount < 1 || rangesLen < 1) {
+            return false;
+        }
+
+        const cellRange = last(cellRanges);
+        const cellPosition = this.ctrl.getCellPosition();
+        let fillHandleIsAvailable = rangesLen === 1 &&
+            (gridOptionsWrapper.isEnableFillHandle() || gridOptionsWrapper.isEnableRangeHandle()) &&
+            !this.comp.isEditing();
+
+        if (this.hasChartRange) {
+            const hasCategoryRange = cellRanges[0].type === CellRangeType.DIMENSION;
+            const isCategoryCell = hasCategoryRange && rangeService.isCellInSpecificRange(cellPosition, cellRanges[0]);
+
+            this.comp.addOrRemoveCssClass(CSS_CELL_RANGE_CHART_CATEGORY, isCategoryCell);
+            fillHandleIsAvailable = cellRange.type === CellRangeType.VALUE;
+        }
+
+        return fillHandleIsAvailable &&
+            cellRange.endRow != null &&
+            rangeService.isContiguousRange(cellRange) &&
+            rangeService.isBottomRightCell(cellRange, cellPosition);
+    }
+
+    private addSelectionHandle() {
+        const { gridOptionsWrapper, rangeService } = this.beans;
+        const cellRangeType = last(rangeService.getCellRanges()).type;
+        const selectionHandleFill = gridOptionsWrapper.isEnableFillHandle() && missing(cellRangeType);
+        const type = selectionHandleFill ? SelectionHandleType.FILL : SelectionHandleType.RANGE;
+
+        if (this.selectionHandle && this.selectionHandle.getType() !== type) {
+            this.selectionHandle = this.beans.context.destroyBean(this.selectionHandle);
+        }
+
+        if (!this.selectionHandle) {
+            this.selectionHandle = this.beans.selectionHandleFactory.createSelectionHandle(type);
+        }
+
+        this.selectionHandle.refresh(this.ctrl);
+    }
+
+    public destroy(): void {
+        this.beans.context.destroyBean(this.selectionHandle);
     }
 
 }

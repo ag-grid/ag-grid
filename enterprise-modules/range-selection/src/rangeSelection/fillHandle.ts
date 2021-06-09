@@ -11,7 +11,7 @@ import {
     FillEndEvent,
     FillStartEvent,
     SelectionHandleType,
-    _
+    _, CellCtrl
 } from '@ag-grid-community/core';
 import { AbstractSelectionHandle } from "./abstractSelectionHandle";
 
@@ -553,7 +553,7 @@ export class FillHandle extends AbstractSelectionHandle {
         });
     }
 
-    public refresh(cellComp: CellComp) {
+    public refresh(cellCtrl: CellCtrl) {
         const cellRange = this.rangeService.getCellRanges()[0];
         const isColumnRange = !cellRange.startRow || !cellRange.endRow;
 
@@ -562,6 +562,6 @@ export class FillHandle extends AbstractSelectionHandle {
             return;
         }
 
-        super.refresh(cellComp);
+        super.refresh(cellCtrl);
     }
 }

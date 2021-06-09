@@ -3,6 +3,7 @@ import { CellPosition } from "../entities/cellPosition";
 import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
 import { RowPosition } from "../entities/rowPosition";
 import { CellComp } from "../rendering/cell/cellComp";
+import { CellCtrl } from "../rendering/cell/cellCtrl";
 
 export interface IRangeService {
     isEmpty(): boolean;
@@ -33,7 +34,7 @@ export interface IRangeService {
 export interface ISelectionHandle {
     getGui(): HTMLElement;
     getType(): SelectionHandleType;
-    refresh(cellComp: CellComp): void;
+    refresh(cellCtrl: CellCtrl): void;
 }
 
 export interface ISelectionHandleFactory {
