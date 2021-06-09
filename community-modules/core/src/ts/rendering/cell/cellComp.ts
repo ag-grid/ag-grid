@@ -76,7 +76,7 @@ export class CellComp extends Component implements TooltipParentComp {
     private column: Column;
     private rowNode: RowNode;
     private eRow: HTMLElement;
-    private cellPosition: CellPosition;
+//    private cellPosition: CellPosition;
     private rangeCount: number;
     private hasChartRange = false;
 
@@ -111,8 +111,6 @@ export class CellComp extends Component implements TooltipParentComp {
     private autoHeightCell: boolean;
 
     private rowComp: RowCtrl | null;
-
-    private rangeSelectionEnabled: boolean;
 
     private value: any;
     private valueFormatted: any;
@@ -151,13 +149,6 @@ export class CellComp extends Component implements TooltipParentComp {
         this.printLayout = printLayout;
         this.eRow = eRow;
 
-        this.rangeSelectionEnabled = this.beans.rangeService && beans.gridOptionsWrapper.isEnableRangeSelection();
-
-        if (this.rangeSelectionEnabled) {
-            this.rangeCount = this.beans.rangeService.getCellRangeCount(this.cellPosition);
-            this.hasChartRange = this.getHasChartRange();
-        }
-
         this.getValueAndFormat();
         this.setUsingWrapper();
         this.chooseCellRenderer();
@@ -174,7 +165,8 @@ export class CellComp extends Component implements TooltipParentComp {
             getFocusableElement: ()=> this.getFocusableElement(),
         };
         this.ctrl.setComp(compProxy, beans, false, column, this.rowNode, this.usingWrapper,
-            this.scope, this.rangeSelectionEnabled);
+            this.scope);
+        this.addDestroyFunc( ()=> this.ctrl.destroy() );
 
         this.afterAttached();
 
@@ -309,7 +301,7 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     public onFlashCells(event: FlashCellsEvent): void {
-        const cellId = this.beans.cellPositionUtils.createId(this.cellPosition);
+        const cellId = this.beans.cellPositionUtils.createId(this.ctrl.getCellPosition());
         const shouldFlash = event.cells[cellId];
         if (shouldFlash) {
             this.animateCell('highlight');
@@ -684,7 +676,7 @@ export class CellComp extends Component implements TooltipParentComp {
             location: 'cell',
             colDef: this.getComponentHolder(),
             column: this.getColumn(),
-            rowIndex: this.cellPosition.rowIndex,
+            rowIndex: this.ctrl.getCellPosition().rowIndex,
             node: this.rowNode,
             data: this.rowNode.data,
             value: this.getTooltipText(),
@@ -819,7 +811,7 @@ export class CellComp extends Component implements TooltipParentComp {
             colDef: this.getComponentHolder(),
             column: this.column,
             $scope: this.scope,
-            rowIndex: this.cellPosition.rowIndex,
+            rowIndex: this.ctrl.getCellPosition().rowIndex,
             api: this.beans.gridOptionsWrapper.getApi(),
             columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
             context: this.beans.gridOptionsWrapper.getContext(),
@@ -1186,7 +1178,7 @@ export class CellComp extends Component implements TooltipParentComp {
             charPress: charPress,
             column: this.column,
             colDef: this.column.getColDef(),
-            rowIndex: this.cellPosition.rowIndex,
+            rowIndex: this.ctrl.getCellPosition().rowIndex,
             node: this.rowNode,
             data: this.rowNode.data,
             api: this.beans.gridOptionsWrapper.getApi(),
@@ -1233,7 +1225,7 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     public focusCell(forceBrowserFocus = false): void {
-        this.beans.focusService.setFocusedCell(this.cellPosition.rowIndex, this.column, this.rowNode.rowPinned, forceBrowserFocus);
+        this.beans.focusService.setFocusedCell(this.ctrl.getCellPosition().rowIndex, this.column, this.rowNode.rowPinned, forceBrowserFocus);
     }
 
     public setFocusInOnEditor(): void {
@@ -1292,10 +1284,10 @@ export class CellComp extends Component implements TooltipParentComp {
     private onNavigationKeyPressed(event: KeyboardEvent, key: number): void {
         if (this.editingCell) { return; }
 
-        if (event.shiftKey && this.rangeSelectionEnabled) {
+        if (event.shiftKey && this.ctrl.temp_isRangeSelectionEnabled()) {
             this.onShiftRangeSelect(key);
         } else {
-            this.beans.rowRenderer.navigateToNextCell(event, key, this.cellPosition, true);
+            this.beans.rowRenderer.navigateToNextCell(event, key, this.ctrl.getCellPosition(), true);
         }
 
         // if we don't prevent default, the grid will scroll with the navigation keys
@@ -1327,7 +1319,7 @@ export class CellComp extends Component implements TooltipParentComp {
             this.stopEditingAndFocus();
         } else {
             if (this.beans.gridOptionsWrapper.isEnterMovesDown()) {
-                this.beans.rowRenderer.navigateToNextCell(null, KeyCode.DOWN, this.cellPosition, false);
+                this.beans.rowRenderer.navigateToNextCell(null, KeyCode.DOWN, this.ctrl.getCellPosition(), false);
             } else {
                 this.startRowOrCellEdit(KeyCode.ENTER);
                 if (this.editingCell) {
@@ -1349,7 +1341,7 @@ export class CellComp extends Component implements TooltipParentComp {
         const enterMovesDownAfterEdit = this.beans.gridOptionsWrapper.isEnterMovesDownAfterEdit();
 
         if (enterMovesDownAfterEdit) {
-            this.beans.rowRenderer.navigateToNextCell(null, KeyCode.DOWN, this.cellPosition, false);
+            this.beans.rowRenderer.navigateToNextCell(null, KeyCode.DOWN, this.ctrl.getCellPosition(), false);
         }
     }
 
@@ -1442,7 +1434,7 @@ export class CellComp extends Component implements TooltipParentComp {
         if (this.containsWidget(target)) { return; }
 
         if (rangeService) {
-            const thisCell = this.cellPosition;
+            const thisCell = this.ctrl.getCellPosition();
 
             if (shiftKey) {
                 rangeService.extendLatestRangeToCell(thisCell);
@@ -1515,13 +1507,13 @@ export class CellComp extends Component implements TooltipParentComp {
 
     public getRowPosition(): RowPosition {
         return {
-            rowIndex: this.cellPosition.rowIndex,
-            rowPinned: this.cellPosition.rowPinned
+            rowIndex: this.ctrl.getCellPosition().rowIndex,
+            rowPinned: this.ctrl.getCellPosition().rowPinned
         };
     }
 
     public getCellPosition(): CellPosition {
-        return this.cellPosition;
+        return this.ctrl.getCellPosition();
     }
 
     public getParentRow(): HTMLElement {
@@ -1587,18 +1579,6 @@ export class CellComp extends Component implements TooltipParentComp {
     public onWidthChanged(): void {
         const width = this.getCellWidth();
         this.getGui().style.width = `${width}px`;
-    }
-
-    private getHasChartRange(): boolean {
-        const { rangeService } = this.beans;
-
-        if (!this.rangeCount || !rangeService) {
-            return false;
-        }
-
-        const cellRanges = rangeService.getCellRanges();
-
-        return cellRanges.length > 0 && cellRanges.every(range => includes([CellRangeType.DIMENSION, CellRangeType.VALUE], range.type));
     }
 
     private shouldHaveSelectionHandle(): boolean {

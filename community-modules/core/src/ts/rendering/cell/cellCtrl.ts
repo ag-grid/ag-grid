@@ -1,4 +1,4 @@
-import { pushAll } from "../../utils/array";
+import { includes, pushAll } from "../../utils/array";
 import { RowCtrl } from "./../row/rowCtrl";
 import { Beans } from "./../beans";
 import { Column } from "../../entities/column";
@@ -10,6 +10,8 @@ import { CellPosition } from "../../entities/cellPosition";
 import { setAriaSelected } from "../../utils/aria";
 import { CellFocusedEvent } from "../../events";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { CellRangeType } from "../../interfaces/IRangeService";
+import { CellRangeFeature } from "./cellRangeFeature";
 
 //////// theses should not be imported, remove them once CellComp has been refactored
 export const CSS_CELL = 'ag-cell';
@@ -60,22 +62,19 @@ export class CellCtrl {
     // just passed in
     private scope: any;
     private usingWrapper: boolean;
-    private rangeSelectionEnabled: boolean;
+
+    private cellRangeFeature: CellRangeFeature;
 
     ////////// not yet set to anything meaningful, needs to be fixed
     private value: any;
     private cellPosition: CellPosition; // set on init only, needs to be set when rowIndexChanged
-    private rangeCount: number;
-    private hasChartRange: boolean;
     private selectionHandle: boolean;
     private editingCell: boolean;
 
-    private getHasChartRange(): boolean {return false; }
-    private refreshHandle(): void {}
     private stopRowOrCellEdit(): void {}
 
     public setComp(comp: ICellComp, beans: Beans, autoHeightCell: boolean, column: Column, rowNode: RowNode,
-                   usingWrapper: boolean, scope: any, rangeSelectionEnabled: boolean): void {
+                   usingWrapper: boolean, scope: any): void {
         this.comp = comp;
         this.beans = beans;
         this.column = column;
@@ -84,9 +83,8 @@ export class CellCtrl {
         this.autoHeightCell = autoHeightCell;
         this.gow = this.beans.gridOptionsWrapper;
         this.scope = scope;
-        this.rangeSelectionEnabled = rangeSelectionEnabled;
 
-        this.createGridCellVo();
+        this.createCellPosition();
 
         this.onCellFocused();
 
@@ -95,20 +93,46 @@ export class CellCtrl {
         this.applyUserStyles();
         this.applyClassesFromColDef();
 
-        this.onRangeSelectionChanged();
         this.onFirstRightPinnedChanged();
         this.onLastLeftPinnedChanged();
         this.onColumnHover();
+
+        const rangeSelectionEnabled = this.beans.rangeService && beans.gridOptionsWrapper.isEnableRangeSelection();
+        if (rangeSelectionEnabled) {
+            this.cellRangeFeature = new CellRangeFeature(beans, comp, this);
+        }
+    }
+
+    public getCellPosition(): CellPosition {
+        return this.cellPosition;
+    }
+
+    public updateRangeBordersIfRangeCount(): void {
+        if (this.cellRangeFeature) {
+            this.cellRangeFeature.updateRangeBordersIfRangeCount();
+        }
+    }
+
+    public onRangeSelectionChanged(): void {
+        if (this.cellRangeFeature) {
+            this.cellRangeFeature.onRangeSelectionChanged();
+        }
+    }
+
+    public temp_isRangeSelectionEnabled(): boolean {
+        return this.cellRangeFeature != null;
     }
 
     public onRowIndexChanged(): void {
         // when index changes, this influences items that need the index, so we update the
         // grid cell so they are working off the new index.
-        this.createGridCellVo();
+        this.createCellPosition();
         // when the index of the row changes, ie means the cell may have lost or gained focus
         this.onCellFocused();
         // check range selection
-        this.onRangeSelectionChanged();
+        if (this.cellRangeFeature) {
+            this.cellRangeFeature.onRangeSelectionChanged();
+        }
     }
 
     public onFirstRightPinnedChanged(): void {
@@ -147,7 +171,7 @@ export class CellCtrl {
         }
     }
 
-    private createGridCellVo(): void {
+    private createCellPosition(): void {
         this.cellPosition = {
             rowIndex: this.rowNode.rowIndex!,
             rowPinned: this.rowNode.rowPinned,
@@ -266,117 +290,6 @@ export class CellCtrl {
         this.comp.addOrRemoveCssClass(CSS_CELL_WRAP_TEXT, value);
     }
 
-    public onRangeSelectionChanged(): void {
-        if (!this.rangeSelectionEnabled) { return; }
-
-        const { rangeService } = this.beans;
-
-        if (!rangeService) { return; }
-
-        const { cellPosition, rangeCount } = this;
-
-        const newRangeCount = rangeService.getCellRangeCount(cellPosition);
-
-        if (rangeCount !== newRangeCount) {
-            this.comp.addOrRemoveCssClass(CSS_CELL_RANGE_SELECTED, newRangeCount !== 0);
-            this.comp.addOrRemoveCssClass(`${CSS_CELL_RANGE_SELECTED}-1`, newRangeCount === 1);
-            this.comp.addOrRemoveCssClass(`${CSS_CELL_RANGE_SELECTED}-2`, newRangeCount === 2);
-            this.comp.addOrRemoveCssClass(`${CSS_CELL_RANGE_SELECTED}-3`, newRangeCount === 3);
-            this.comp.addOrRemoveCssClass(`${CSS_CELL_RANGE_SELECTED}-4`, newRangeCount >= 4);
-            this.rangeCount = newRangeCount;
-        }
-
-        this.comp.setAriaSelected(this.rangeCount > 0);
-
-        const hasChartRange = this.getHasChartRange();
-
-        if (hasChartRange !== this.hasChartRange) {
-            this.hasChartRange = hasChartRange;
-            this.comp.addOrRemoveCssClass(CSS_CELL_RANGE_CHART, this.hasChartRange);
-        }
-
-        this.updateRangeBorders();
-
-        this.comp.addOrRemoveCssClass(CSS_CELL_RANGE_SINGLE_CELL, this.isSingleCell());
-
-        this.refreshHandle();
-    }
-
-    public updateRangeBordersIfRangeCount(): void {
-        // we only need to update range borders if we are in a range
-        if (this.rangeCount > 0) {
-            this.updateRangeBorders();
-            this.refreshHandle();
-        }
-    }
-
-    private getRangeBorders(): {
-        top: boolean,
-        right: boolean,
-        bottom: boolean,
-        left: boolean;
-    } {
-        const isRtl = this.beans.gridOptionsWrapper.isEnableRtl();
-
-        let top = false;
-        let right = false;
-        let bottom = false;
-        let left = false;
-
-        const thisCol = this.cellPosition.column;
-        const { rangeService, columnModel } = this.beans;
-
-        let leftCol: Column | null;
-        let rightCol: Column | null;
-
-        if (isRtl) {
-            leftCol = columnModel.getDisplayedColAfter(thisCol);
-            rightCol = columnModel.getDisplayedColBefore(thisCol);
-        } else {
-            leftCol = columnModel.getDisplayedColBefore(thisCol);
-            rightCol = columnModel.getDisplayedColAfter(thisCol);
-        }
-
-        const ranges = rangeService.getCellRanges().filter(
-            range => rangeService.isCellInSpecificRange(this.cellPosition, range)
-        );
-
-        // this means we are the first column in the grid
-        if (!leftCol) {
-            left = true;
-        }
-
-        // this means we are the last column in the grid
-        if (!rightCol) {
-            right = true;
-        }
-
-        for (let i = 0; i < ranges.length; i++) {
-            if (top && right && bottom && left) { break; }
-
-            const range = ranges[i];
-            const startRow = rangeService.getRangeStartRow(range);
-            const endRow = rangeService.getRangeEndRow(range);
-
-            if (!top && this.beans.rowPositionUtils.sameRow(startRow, this.cellPosition)) {
-                top = true;
-            }
-
-            if (!bottom && this.beans.rowPositionUtils.sameRow(endRow, this.cellPosition)) {
-                bottom = true;
-            }
-
-            if (!left && leftCol && range.columns.indexOf(leftCol) < 0) {
-                left = true;
-            }
-
-            if (!right && rightCol && range.columns.indexOf(rightCol) < 0) {
-                right = true;
-            }
-        }
-
-        return { top, right, bottom, left };
-    }
 
     private applyClassesFromColDef() {
 
@@ -400,22 +313,10 @@ export class CellCtrl {
         );
     }
 
-    private updateRangeBorders(): void {
-        const rangeBorders = this.getRangeBorders();
-        const isSingleCell = this.isSingleCell();
-        const isTop = !isSingleCell && rangeBorders.top;
-        const isRight = !isSingleCell && rangeBorders.right;
-        const isBottom = !isSingleCell && rangeBorders.bottom;
-        const isLeft = !isSingleCell && rangeBorders.left;
 
-        this.comp.addOrRemoveCssClass(CSS_CELL_RANGE_TOP, isTop);
-        this.comp.addOrRemoveCssClass(CSS_CELL_RANGE_RIGHT, isRight);
-        this.comp.addOrRemoveCssClass(CSS_CELL_RANGE_BOTTOM, isBottom);
-        this.comp.addOrRemoveCssClass(CSS_CELL_RANGE_LEFT, isLeft);
+
+    public destroy(): void {
+        if (this.cellRangeFeature) { this.cellRangeFeature.destroy(); }
     }
 
-    private isSingleCell(): boolean {
-        const { rangeService } = this.beans;
-        return this.rangeCount === 1 && rangeService && !rangeService.isMoreThanOneCell();
-    }
 }
