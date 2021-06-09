@@ -8,7 +8,6 @@ import { HoverFeature } from '../../headerRendering/hoverFeature';
 import { Events, FilterChangedEvent } from '../../events';
 import { ColumnHoverService } from '../../rendering/columnHoverService';
 import { AgPromise } from '../../utils';
-import { ColDef } from '../../entities/colDef';
 import { IFilterComp, IFilterDef } from '../../interfaces/iFilter';
 import { UserComponentFactory } from '../../components/framework/userComponentFactory';
 import { GridApi } from '../../gridApi';
@@ -37,7 +36,6 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
     @Autowired('columnHoverService') private readonly columnHoverService: ColumnHoverService;
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
     @Autowired('gridApi') private readonly gridApi: GridApi;
-    @Autowired('columnApi') private readonly columnApi: ColumnApi;
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('menuFactory') private readonly menuFactory: IMenuFactory;
     @Autowired('beans') protected readonly beans: Beans;

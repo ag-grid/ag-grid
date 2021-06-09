@@ -15,6 +15,7 @@ import {
     IAfterGuiAttachedParams,
     AgPromise,
     KeyCode,
+    PositionableFeature,
     _,
 } from '@ag-grid-community/core';
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
@@ -34,6 +35,7 @@ export class SetFilter extends ProvidedFilter<SetFilterModel> {
     private valueModel: SetValueModel | null = null;
     private setFilterParams: ISetFilterParams | null = null;
     private virtualList: VirtualList | null = null;
+    private positionableFeature: PositionableFeature;
 
     // To make the filtering super fast, we store the values in an object, and check for the boolean value.
     // Although Set would be a more natural choice of data structure, its performance across browsers is
@@ -42,6 +44,12 @@ export class SetFilter extends ProvidedFilter<SetFilterModel> {
 
     constructor() {
         super('setFilter');
+    }
+
+    protected postConstruct() {
+        super.postConstruct();
+        this.positionableFeature = new PositionableFeature(this.eSetFilterList, { contained: false });
+        this.createBean(this.positionableFeature);
     }
 
     // unlike the simple filters, nothing in the set filter UI shows/hides.
@@ -399,6 +407,9 @@ export class SetFilter extends ProvidedFilter<SetFilterModel> {
         if (!params || !params.suppressFocus) {
             eMiniFilter.getFocusableElement().focus();
         }
+
+        const resizable = !!(params && params.hidePopup);
+        this.positionableFeature.setResizable(resizable ? { bottom: true, bottomRight: true, right: true } : false);
     }
 
     public applyModel(): boolean {

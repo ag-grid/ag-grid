@@ -8,7 +8,6 @@ import {
     ColumnApi,
     ColumnModel,
     Constants,
-    Events,
     FilterManager,
     FilterWrapper,
     GridApi,
@@ -221,8 +220,6 @@ export class EnterpriseMenu extends BeanStub {
     private includeChecks: { [p: string]: () => boolean; } = {};
     private restrictTo?: string[];
 
-    private timeOfLastColumnChange = Date.now();
-
     constructor(column: Column, initialSelection: string, restrictTo?: string[]) {
         super();
         this.column = column;
@@ -257,8 +254,6 @@ export class EnterpriseMenu extends BeanStub {
         if (this.mainMenuList) {
             this.mainMenuList.setParentComponent(this.tabbedLayout);
         }
-
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
     }
 
     private getTabsToCreate() {
@@ -534,9 +529,5 @@ export class EnterpriseMenu extends BeanStub {
 
     public getGui(): HTMLElement {
         return this.tabbedLayout.getGui();
-    }
-
-    private onDisplayedColumnsChanged() {
-        this.timeOfLastColumnChange = Date.now();
     }
 }

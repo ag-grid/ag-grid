@@ -27,6 +27,7 @@ export interface PositionableOptions {
     height?: number | string | null;
     centered?: boolean | null;
     calculateTopBuffer?: () => number;
+    contained?: boolean;
     x?: number | null;
     y?: number | null;
 }
@@ -86,26 +87,41 @@ export class PositionableFeature extends BeanStub {
 
     constructor(
         private readonly element: HTMLElement,
-        private readonly config: PositionableOptions = assign({}, { popup: false }, config)
+        private readonly config: PositionableOptions = assign({}, { popup: false, contained: true }, config)
     ) {
         super();
     }
 
     public center() {
-        const eGui = this.element;
+        const { clientHeight, clientWidth } = this.offsetParent;
 
-        const x = (eGui.offsetParent!.clientWidth / 2) - (this.getWidth()! / 2);
-        const y = (eGui.offsetParent!.clientHeight / 2) - (this.getHeight()! / 2);
+        const x = (clientWidth / 2) - (this.getWidth()! / 2);
+        const y = (clientHeight / 2) - (this.getHeight()! / 2);
 
         this.offsetElement(x, y);
     }
 
     public initialisePosition(): void {
         const { centered, minWidth, width, minHeight, height, x, y } = this.config;
-        this.minHeight = minHeight || 0;
-        this.minWidth = minWidth || 0;
 
         if (!this.offsetParent) { this.setOffsetParent(); }
+
+        let computedMinHeight = 0;
+        let computedMinWidth = 0;
+
+        if (this.offsetParent) {
+            const offsetParentComputedStyles = window.getComputedStyle(this.offsetParent);
+            if (offsetParentComputedStyles.minWidth != null) {
+                computedMinWidth = parseInt(offsetParentComputedStyles.minWidth, 10);
+            }
+
+            if (offsetParentComputedStyles.minHeight != null) {
+                computedMinHeight = parseInt(offsetParentComputedStyles.minHeight, 10);
+            }
+        }
+
+        this.minHeight = minHeight || computedMinHeight;
+        this.minWidth = minWidth || computedMinWidth;
 
         if (width) {
             this.setWidth(width);
@@ -125,7 +141,7 @@ export class PositionableFeature extends BeanStub {
             this.offsetElement(x!, y!);
         }
 
-        this.positioned = true;
+        this.positioned = !!this.offsetParent;
     }
 
     public isPositioned(): boolean {
@@ -211,26 +227,29 @@ export class PositionableFeature extends BeanStub {
     }
 
     public setHeight(height: number | string) {
+        const { popup, contained } = this.config;
         const eGui = this.element;
+
         let isPercent = false;
 
         if (typeof height === 'string' && height.indexOf('%') !== -1) {
             setFixedHeight(eGui, height);
             height = getAbsoluteHeight(eGui);
             isPercent = true;
-        } else {
+        } else if (this.positioned) {
             height = Math.max(this.minHeight!, height as number);
-            const offsetParent = eGui.offsetParent;
-            const yPosition = this.config.popup ? this.position.y : this.element.offsetTop;
-            if (offsetParent && offsetParent.clientHeight && (height + yPosition > offsetParent.clientHeight)) {
-                height = offsetParent.clientHeight - yPosition;
+            const { clientHeight } = this.offsetParent;
+            const yPosition = popup ? this.position.y : this.element.getBoundingClientRect().top;
+
+            if (contained && clientHeight && (height + yPosition > clientHeight)) {
+                height = clientHeight - yPosition;
             }
         }
 
         if (this.getHeight() === height) { return; }
 
         if (!isPercent) {
-            if (this.config.popup) {
+            if (popup) {
                 setFixedHeight(eGui, height);
             } else {
                 eGui.style.height = `${height}px`;
@@ -248,19 +267,21 @@ export class PositionableFeature extends BeanStub {
 
     public setWidth(width: number | string) {
         const eGui = this.element;
+        const { popup, contained } = this.config;
+
         let isPercent = false;
 
         if (typeof width === 'string' && width.indexOf('%') !== -1) {
             setFixedWidth(eGui, width);
             width = getAbsoluteWidth(eGui);
             isPercent = true;
-        } else {
+        } else if (this.positioned) {
             width = Math.max(this.minWidth, width as number);
-            const offsetParent = eGui.offsetParent;
-            const xPosition = this.config.popup ? this.position.x : this.element.offsetLeft;
+            const { clientWidth } = this.offsetParent;
+            const xPosition = popup ? this.position.x : this.element.getBoundingClientRect().left;
 
-            if (offsetParent && offsetParent.clientWidth && (width + xPosition > offsetParent.clientWidth)) {
-                width = offsetParent.clientWidth - xPosition;
+            if (contained && clientWidth && (width + xPosition > clientWidth)) {
+                width = clientWidth - xPosition;
             }
         }
 
@@ -315,18 +336,22 @@ export class PositionableFeature extends BeanStub {
     }): { movementX: number, movementY: number; } {
         const parentRect = this.offsetParent.getBoundingClientRect();
         const { e, isLeft, isTop, anywhereWithin, topBuffer } = params;
+        const { contained, popup } = this.config;
+        const boundingClientRect = this.element.getBoundingClientRect();
         const width = this.getWidth();
         const height = this.getHeight();
-        const xPosition = this.config.popup ? this.position.x : this.element.offsetLeft;
-        const yPosition = this.config.popup ? this.position.y : this.element.offsetTop;
+        const xPosition = popup ? this.position.x : boundingClientRect.left;
+        const yPosition = popup ? this.position.y : boundingClientRect.top;
 
         let movementX = e.clientX - this.dragStartPosition.x;
         let movementY = e.clientY - this.dragStartPosition.y;
 
         // skip if cursor is outside of popupParent horizontally
         let skipX = (
-            parentRect.left >= e.clientX && xPosition <= 0 ||
-            parentRect.right <= e.clientX && parentRect.right <= xPosition + parentRect.left + width!
+            contained && (
+                parentRect.left >= e.clientX && xPosition <= 0 ||
+                parentRect.right <= e.clientX && parentRect.right <= xPosition + parentRect.left + width!
+            )
         );
 
         if (!skipX) {
@@ -347,7 +372,7 @@ export class PositionableFeature extends BeanStub {
                         (movementX < 0 && e.clientX > xPosition + parentRect.left + width!) ||
                         (movementX > 0 && e.clientX < xPosition + parentRect.left)
                     );
-                } else {
+                } else if (contained) {
                     skipX = (
                         // if the movement is bound to the right side of the dialog
                         // we skip if we are moving to the left and the cursor
@@ -365,8 +390,10 @@ export class PositionableFeature extends BeanStub {
 
         // skip if cursor is outside of popupParent vertically
         let skipY = (
-            parentRect.top >= e.clientY && yPosition <= 0 ||
-            parentRect.bottom <= e.clientY && parentRect.bottom <= yPosition + parentRect.top + height!
+            contained && (
+                parentRect.top >= e.clientY && yPosition <= 0 ||
+                parentRect.bottom <= e.clientY && parentRect.bottom <= yPosition + parentRect.top + height!
+            )
         );
 
         if (!skipY) {
@@ -380,7 +407,7 @@ export class PositionableFeature extends BeanStub {
                     // above the top anchor
                     (movementY > 0 && e.clientY < yPosition + parentRect.top)
                 );
-            } else {
+            } else if (contained) {
                 skipY = (
                     // skip if we are moving towards the top and the cursor
                     // is below the bottom anchor
@@ -414,6 +441,7 @@ export class PositionableFeature extends BeanStub {
 
     private addResizers() {
         if (this.resizersAdded) { return; }
+
         const eGui = this.element;
 
         if (!eGui) { return; }
@@ -453,7 +481,7 @@ export class PositionableFeature extends BeanStub {
         addCssClass(this.element, 'ag-resizing');
         addCssClass(this.resizerMap![side].element, 'ag-active');
 
-        if (!this.config.popup) {
+        if (!this.config.popup && !this.config.contained) {
             this.applySizeToSiblings(this.currentResizer.isBottom || this.currentResizer.isTop);
         }
 
@@ -542,8 +570,8 @@ export class PositionableFeature extends BeanStub {
         const isHorizontal = isRight || isLeft;
         const isVertical = isBottom || isTop;
         const { movementX, movementY } = this.calculateMouseMovement({ e, isLeft, isTop });
-        const xPosition = this.config.popup ? this.position.x : this.element.offsetLeft;
-        const yPosition = this.config.popup ? this.position.y : this.element.offsetTop;
+        const xPosition = this.config.popup ? this.position.x : this.element.getBoundingClientRect().left;
+        const yPosition = this.config.popup ? this.position.y : this.element.getBoundingClientRect().top;
 
         let offsetLeft = 0;
         let offsetTop = 0;
@@ -583,6 +611,7 @@ export class PositionableFeature extends BeanStub {
                 // do not let the size of all siblings be higher than the parent container
                 if (
                     !this.config.popup &&
+                    !this.config.contained &&
                     oldHeight! < newHeight &&
                     (this.getMinSizeOfSiblings().height + newHeight) > this.element.parentElement!.offsetHeight
                 ) {
@@ -636,18 +665,21 @@ export class PositionableFeature extends BeanStub {
     }
 
     private onMoveStart(e: MouseEvent) {
-        this.isMoving = true;
         if (!this.positioned) { this.initialisePosition(); }
+
+        this.isMoving = true;
+
         addCssClass(this.element, 'ag-moving');
         this.updateDragStartPosition(e.clientX, e.clientY);
     }
 
     private onMove(e: MouseEvent) {
         if (!this.isMoving) { return; }
+
         const { x, y } = this.position;
         let topBuffer;
 
-        if (this.config && this.config.calculateTopBuffer) {
+        if (this.config.calculateTopBuffer) {
             topBuffer = this.config.calculateTopBuffer();
         }
 
@@ -668,7 +700,7 @@ export class PositionableFeature extends BeanStub {
     }
 
     private setOffsetParent() {
-        this.offsetParent = this.config.popup ? this.popupService.getPopupParent() : this.element.offsetParent as HTMLElement;
+        this.offsetParent = this.element.offsetParent as HTMLElement;
     }
 
     private clearResizeListeners(): void {

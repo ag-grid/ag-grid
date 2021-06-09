@@ -86,7 +86,6 @@ export abstract class ProvidedFilter<T> extends ManagedFocusComponent implements
         return !!this.appliedModel;
     }
 
-    @PostConstruct
     protected postConstruct(): void {
         this.resetTemplate(); // do this first to create the DOM
         super.postConstruct();
