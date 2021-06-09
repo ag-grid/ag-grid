@@ -101,7 +101,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private autoHeightCell: boolean;
 
-    private rowComp: RowCtrl | null;
+    private rowCtrl: RowCtrl | null;
 
     private value: any;
     private valueFormatted: any;
@@ -135,7 +135,7 @@ export class CellComp extends Component implements TooltipParentComp {
         this.beans = beans;
         this.column = column;
         this.rowNode = rowNode;
-        this.rowComp = rowComp;
+        this.rowCtrl = rowComp;
         this.autoHeightCell = autoHeightCell;
         this.printLayout = printLayout;
         this.eRow = eRow;
@@ -393,7 +393,7 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     public getRenderedRow(): RowCtrl | null {
-        return this.rowComp;
+        return this.rowCtrl;
     }
 
     public isSuppressNavigable(): boolean {
@@ -825,11 +825,11 @@ export class CellComp extends Component implements TooltipParentComp {
             // row was removed (the row comp was removed), however now that the user
             // can provide components for cells, the destroy method gets call when this
             // happens so no longer need to fire event.
-            addRowCompListener: this.rowComp ? this.rowComp.addEventListener.bind(this.rowComp) : null,
+            addRowCompListener: this.rowCtrl ? this.rowCtrl.addEventListener.bind(this.rowCtrl) : null,
             addRenderedRowListener: (eventType: string, listener: Function) => {
                 console.warn('AG Grid: since AG Grid .v11, params.addRenderedRowListener() is now params.addRowCompListener()');
-                if (this.rowComp) {
-                    this.rowComp.addEventListener(eventType, listener);
+                if (this.rowCtrl) {
+                    this.rowCtrl.addEventListener(eventType, listener);
                 }
             }
         } as ICellRendererParams;
@@ -965,7 +965,7 @@ export class CellComp extends Component implements TooltipParentComp {
     // called by rowRenderer when user navigates via tab key
     public startRowOrCellEdit(keyPress?: number | null, charPress?: string | null): void {
         if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
-            this.rowComp!.startRowEditing(keyPress, charPress, this);
+            this.rowCtrl!.startRowEditing(keyPress, charPress, this);
         } else {
             this.startEditingIfEnabled(keyPress, charPress, true);
         }
@@ -1313,7 +1313,7 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private onEnterKeyDown(e: KeyboardEvent): void {
-        if (this.editingCell || this.rowComp!.isEditing()) {
+        if (this.editingCell || this.rowCtrl!.isEditing()) {
             this.stopEditingAndFocus();
         } else {
             if (this.beans.gridOptionsWrapper.isEnterMovesDown()) {
@@ -1711,7 +1711,7 @@ export class CellComp extends Component implements TooltipParentComp {
     // pass in 'true' to cancel the editing.
     public stopRowOrCellEdit(cancel: boolean = false) {
         if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
-            this.rowComp!.stopRowEditing(cancel);
+            this.rowCtrl!.stopRowEditing(cancel);
         } else {
             this.stopEditing(cancel);
         }
