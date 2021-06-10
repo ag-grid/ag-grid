@@ -290,6 +290,8 @@ export class UserComponentFactory extends BeanStub {
         let HardcodedFwComponent: { new(): B; } | null = null;
         let componentSelectorFunc: ((params: TParams | null) => ComponentSelectorResult) | null = null;
 
+        const componentSelectorFuncKey = propertyName + "Selector";
+
         if (definitionObject != null) {
             const componentPropertyValue: AgComponentPropertyInput<IComponent<TParams>, TParams> = (definitionObject as any)[propertyName];
             // for filters only, we allow 'true' for the component, which means default filter to be used
@@ -307,7 +309,7 @@ export class UserComponentFactory extends BeanStub {
                 }
             }
             HardcodedFwComponent = (definitionObject as any)[propertyName + "Framework"];
-            componentSelectorFunc = (definitionObject as any)[propertyName + "Selector"];
+            componentSelectorFunc = (definitionObject as any)[componentSelectorFuncKey];
         }
 
         /**
@@ -369,14 +371,24 @@ export class UserComponentFactory extends BeanStub {
             return this.agComponentUtils.adaptFunction(propertyName, hardcodedJsFunction, false, ComponentSource.HARDCODED) as ComponentClassDef<A, B, TParams>;
         }
 
-        const selectorResult = componentSelectorFunc ? componentSelectorFunc(params) : null;
-
         let componentNameToUse: string | null | undefined;
-        if (selectorResult && selectorResult.component) {
-            componentNameToUse = selectorResult.component;
-        } else if (hardcodedNameComponent) {
+        let paramsFromSelector: any;
+
+        if (componentSelectorFunc) {
+            const selectorResult = componentSelectorFunc ? componentSelectorFunc(params) : null;
+            if (selectorResult==null || selectorResult.component==null) {
+                console.warn(`AG Grid - ${componentSelectorFuncKey} must return something. If you don't want a particular row to use a Cell Renderer, then return a simple Cell Renderer that just displays the value.`, params);
+            } else {
+                componentNameToUse = selectorResult.component;
+                paramsFromSelector = selectorResult.params;
+            }
+        }
+
+        if (componentNameToUse==null) {
             componentNameToUse = hardcodedNameComponent;
-        } else {
+        }
+
+        if (componentNameToUse==null) {
             componentNameToUse = defaultComponentName;
         }
 
@@ -394,7 +406,7 @@ export class UserComponentFactory extends BeanStub {
             componentFromFramework: registeredCompClassDef.componentFromFramework,
             component: registeredCompClassDef.component,
             source: registeredCompClassDef.source,
-            paramsFromSelector: selectorResult ? selectorResult.params : null
+            paramsFromSelector: paramsFromSelector
         };
     }
 

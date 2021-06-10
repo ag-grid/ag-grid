@@ -184,14 +184,16 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     cellEditorParams?: any;
     cellEditorSelector?: (params: ICellEditorParams) => ComponentSelectorResult;
 
-    /** A function for rendering a pinned row cell. */
+    /** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. */
     pinnedRowCellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
+    /** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. */
     pinnedRowCellRendererFramework?: any;
+    /** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. */
     pinnedRowCellRendererParams?: any;
 
     /** A function to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
     valueFormatter?: ((params: ValueFormatterParams) => string) | string;
-    /** A function to format a pinned row value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
+    /** @deprecated Use valueFormatter for pinned rows, and check params.node.rowPinned. */
     pinnedRowValueFormatter?: ((params: ValueFormatterParams) => string) | string;
 
     /** Gets called after editing, converts the value in the cell. */

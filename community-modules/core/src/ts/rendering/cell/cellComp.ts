@@ -95,7 +95,6 @@ export class CellComp extends Component implements TooltipParentComp {
 
     // instance of the cellRenderer class
     private cellRenderer: ICellRendererComp | null | undefined;
-    // the GUI is initially element or string, however once the UI is created, it becomes UI
     private cellRendererGui: HTMLElement | null;
     private cellEditor: ICellEditorComp | null;
 
@@ -162,8 +161,9 @@ export class CellComp extends Component implements TooltipParentComp {
             getValue: ()=> this.value,
             stopRowOrCellEdit: ()=> this.stopRowOrCellEdit()
         };
-        this.ctrl.setComp(compProxy, beans, false, this.usingWrapper,
-            this.scope, this.getGui());
+
+        this.ctrl.setComp(compProxy, beans, false, this.usingWrapper, this.scope, this.getGui());
+
         this.addDestroyFunc( ()=> this.ctrl.destroy() );
 
         this.afterAttached();
@@ -362,13 +362,9 @@ export class CellComp extends Component implements TooltipParentComp {
         setAriaColIndex(this.getGui(), colIdx);
     }
 
-
     public getInitialValueToRender(): string {
-        // if using a cellRenderer, then render the html from the cell renderer if it exists
+        // if using a cellRenderer, then render blank cell
         if (this.usingCellRenderer) {
-            if (typeof this.cellRendererGui === 'string') {
-                return this.cellRendererGui as string;
-            }
             return '';
         }
 
