@@ -11,7 +11,7 @@ import { Constants } from "../../constants/constants";
 import { setAriaColIndex } from "../../utils/aria";
 import { missing } from "../../utils/generic";
 import { BeanStub } from "../../context/beanStub";
-import { CellLeftAndWidthFeature } from "./cellLeftAndWidthFeature";
+import { CellPositionFeature } from "./cellPositionFeature";
 
 //////// theses should not be imported, remove them once CellComp has been refactored
 export const CSS_CELL = 'ag-cell';
@@ -50,6 +50,8 @@ export interface ICellComp {
     setLeft(left: string): void;
     setWidth(width: string): void;
     setAriaColIndex(index: number): void;
+    setHeight(height: string): void;
+    setZIndex(zIndex: string): void;
 
     // setValue(value: any): void;
     // setValueFormatted(value: string): void;
@@ -77,7 +79,7 @@ export class CellCtrl extends BeanStub {
     private usingWrapper: boolean;
 
     private cellRangeFeature: CellRangeFeature;
-    private leftAndWidthFeature: CellLeftAndWidthFeature;
+    private cellPositionFeature: CellPositionFeature;
 
     private cellPosition: CellPosition;
 
@@ -89,8 +91,8 @@ export class CellCtrl extends BeanStub {
 
         this.createCellPosition();
 
-        this.leftAndWidthFeature = new CellLeftAndWidthFeature(this, this.beans);
-        this.addDestroyFunc( ()=> this.leftAndWidthFeature.destroy() );
+        this.cellPositionFeature = new CellPositionFeature(this, this.beans);
+        this.addDestroyFunc( ()=> this.cellPositionFeature.destroy() );
     }
 
     public setComp(comp: ICellComp, autoHeightCell: boolean,
@@ -119,19 +121,19 @@ export class CellCtrl extends BeanStub {
             this.cellRangeFeature = new CellRangeFeature(this.beans, comp, this);
         }
 
-        this.leftAndWidthFeature.setComp(comp);
+        this.cellPositionFeature.setComp(comp);
     }
 
     public getColSpanningList(): Column[] {
-        return this.leftAndWidthFeature.getColSpanningList();
+        return this.cellPositionFeature.getColSpanningList();
     }
 
     public onLeftChanged(): void {
-        return this.leftAndWidthFeature.onLeftChanged();
+        return this.cellPositionFeature.onLeftChanged();
     }
 
     public onWidthChanged(): void {
-        return this.leftAndWidthFeature.onWidthChanged();
+        return this.cellPositionFeature.onWidthChanged();
     }
 
     public getColumn(): Column {

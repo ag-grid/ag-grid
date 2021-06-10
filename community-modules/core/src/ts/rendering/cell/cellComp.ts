@@ -95,7 +95,6 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private value: any;
     private valueFormatted: any;
-    private rowSpan: number;
 
     private suppressRefreshCell = false;
 
@@ -134,18 +133,21 @@ export class CellComp extends Component implements TooltipParentComp {
         this.getValueAndFormat();
         this.setUsingWrapper();
 
-        this.rowSpan = this.column.getRowSpan(this.rowNode);
-
         this.setTemplate(this.getCreateTemplate());
+
+        const eGui = this.getGui();
+        const style = eGui.style;
 
         const compProxy: ICellComp = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
-            setUserStyles: styles => addStylesToElement(this.getGui(), styles),
-            setAriaSelected: selected => setAriaSelected(this.getGui(), selected),
+            setUserStyles: styles => addStylesToElement(eGui, styles),
+            setAriaSelected: selected => setAriaSelected(eGui, selected),
             getFocusableElement: ()=> this.getFocusableElement(),
-            setLeft: left => this.getGui().style.left = left,
-            setWidth: width => this.getGui().style.width = width,
+            setLeft: left => style.left = left,
+            setWidth: width => style.width = width,
             setAriaColIndex: index => setAriaColIndex(this.getGui(), index),
+            setHeight: height => style.height = height,
+            setZIndex: zIndex => style.zIndex = zIndex,
 
             // temp items
             isEditing: ()=> this.editingCell,
@@ -182,7 +184,6 @@ export class CellComp extends Component implements TooltipParentComp {
         const tooltipSanitised = escapeString(this.tooltip);
         const colIdSanitised = escapeString(col.getId());
 
-        const stylesForRowSpanning = this.getStylesForRowSpanning();
         const colIdxSanitised = escapeString(this.beans.columnModel.getAriaColumnIndex(this.column).toString());
 
         templateParts.push(`<div`);
@@ -198,7 +199,7 @@ export class CellComp extends Component implements TooltipParentComp {
             templateParts.push(` title="${tooltipSanitised}"`);
         }
 
-        templateParts.push(` style="${escapeString(stylesForRowSpanning)}">`);
+        templateParts.push(`>`);
 
         if (this.usingWrapper) {
             templateParts.push(this.getCellWrapperString(valueSanitised));
@@ -221,15 +222,6 @@ export class CellComp extends Component implements TooltipParentComp {
         </div>`;
 
         return wrapper;
-    }
-
-    private getStylesForRowSpanning(): string {
-        if (this.rowSpan === 1) { return ''; }
-
-        const singleRowHeight = this.beans.gridOptionsWrapper.getRowHeightAsNumber();
-        const totalRowHeight = singleRowHeight * this.rowSpan;
-
-        return `height: ${totalRowHeight}px; z-index: 1;`;
     }
 
     public afterAttached(): void {

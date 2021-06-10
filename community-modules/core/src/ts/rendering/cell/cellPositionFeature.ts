@@ -9,7 +9,7 @@ import { BeanStub } from "../../context/beanStub";
 import { Beans } from "../beans";
 import { RowNode } from "../../entities/rowNode";
 
-export class CellLeftAndWidthFeature extends BeanStub {
+export class CellPositionFeature extends BeanStub {
 
     private ctrl: CellCtrl;
     private comp: ICellComp;
@@ -17,9 +17,10 @@ export class CellLeftAndWidthFeature extends BeanStub {
     private readonly column: Column;
     private readonly rowNode: RowNode;
 
-    private beans: Beans;
-
     private colsSpanning: Column[];
+    private rowSpan: number;
+
+    private beans: Beans;
 
     constructor(ctrl: CellCtrl, beans: Beans) {
         super();
@@ -31,12 +32,18 @@ export class CellLeftAndWidthFeature extends BeanStub {
         this.rowNode = ctrl.getRowNode();
 
         this.setupColSpan();
+        this.setupRowSpan();
+    }
+
+    private setupRowSpan(): void {
+        this.rowSpan = this.column.getRowSpan(this.rowNode);
     }
 
     public setComp(comp: ICellComp): void {
         this.comp = comp;
         this.onLeftChanged();
         this.onWidthChanged();
+        this.applyRowSpan();
     }
 
     private onDisplayColumnsChanged(): void {
@@ -142,6 +149,17 @@ export class CellLeftAndWidthFeature extends BeanStub {
 
         // is in body
         return leftWidth + (leftPosition || 0);
+    }
+
+    private applyRowSpan(): void {
+
+        if (this.rowSpan === 1) { return; }
+
+        const singleRowHeight = this.beans.gridOptionsWrapper.getRowHeightAsNumber();
+        const totalRowHeight = singleRowHeight * this.rowSpan;
+
+        this.comp.setHeight(`${totalRowHeight}px`);
+        this.comp.setZIndex('1');
     }
 
     // overriding to make public, as we don't dispose this bean via context
