@@ -352,16 +352,16 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         }
 
         if (colDefAny.pinnedRowCellRenderer) {
-            warnOnce('AG Grid: pinnedRowCellRenderer is deprecated, use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned.', 'colDef.pinnedRowCellRenderer-deprecated');
+            warnOnce('AG Grid: pinnedRowCellRenderer no longer exists, use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. This was an unfortunate (but necessary) change we had to do to allow future plans we have of re-skinng the data grid in frameworks such as React, Angular and Vue. See https://www.ag-grid.com/javascript-grid/cell-rendering/#many-renderers-one-column', 'colDef.pinnedRowCellRenderer-deprecated');
         }
         if (colDefAny.pinnedRowCellRendererParams) {
-            warnOnce('AG Grid: pinnedRowCellRenderer is deprecated, use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned.', 'colDef.pinnedRowCellRenderer-deprecated');
+            warnOnce('AG Grid: pinnedRowCellRenderer no longer exists, use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. This was an unfortunate (but necessary) change we had to do to allow future plans we have of re-skinng the data grid in frameworks such as React, Angular and Vue. See https://www.ag-grid.com/javascript-grid/cell-rendering/#many-renderers-one-column', 'colDef.pinnedRowCellRenderer-deprecated');
         }
         if (colDefAny.pinnedRowCellRendererFramework) {
-            warnOnce('AG Grid: pinnedRowCellRenderer is deprecated, use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned.', 'colDef.pinnedRowCellRenderer-deprecated');
+            warnOnce('AG Grid: pinnedRowCellRenderer no longer exists, use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. This was an unfortunate (but necessary) change we had to do to allow future plans we have of re-skinng the data grid in frameworks such as React, Angular and Vue. See https://www.ag-grid.com/javascript-grid/cell-rendering/#many-renderers-one-column', 'colDef.pinnedRowCellRenderer-deprecated');
         }
         if (colDefAny.pinnedRowValueGetter) {
-            warnOnce('AG Grid: pinnedRowCellRenderer is deprecated, use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned.', 'colDef.pinnedRowCellRenderer-deprecated');
+            warnOnce('AG Grid: pinnedRowCellRenderer is deprecated, use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. This was an unfortunate (but necessary) change we had to do to allow future plans we have of re-skinng the data grid in frameworks such as React, Angular and Vue.', 'colDef.pinnedRowCellRenderer-deprecated');
         }
     }
 
