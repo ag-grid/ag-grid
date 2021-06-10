@@ -48,7 +48,7 @@ export class SetFilter extends ProvidedFilter<SetFilterModel> {
 
     protected postConstruct() {
         super.postConstruct();
-        this.positionableFeature = new PositionableFeature(this.eSetFilterList, { contained: false });
+        this.positionableFeature = new PositionableFeature(this.eSetFilterList, { forcePopupParentAsOffsetParent: true });
         this.createBean(this.positionableFeature);
     }
 
