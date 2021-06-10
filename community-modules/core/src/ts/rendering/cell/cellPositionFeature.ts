@@ -1,5 +1,4 @@
 import { CellCtrl, ICellComp } from "./cellCtrl";
-import { CellComp } from "./cellComp";
 import { Column } from "../../entities/column";
 import { areEqual, last } from "../../utils/array";
 import { Events } from "../../eventKeys";
@@ -9,6 +8,12 @@ import { BeanStub } from "../../context/beanStub";
 import { Beans } from "../beans";
 import { RowNode } from "../../entities/rowNode";
 
+/**
+ * Takes care of:
+ *  #) Cell Width (including when doing cell spanning, which makes width cover many columns)
+ *  #) Cell Height (when doing row span, otherwise we don't touch the height as it's just row height)
+ *  #) Cell Left (the horizontal positioning of the cell, the vertical positioning is on the row)
+ */
 export class CellPositionFeature extends BeanStub {
 
     private ctrl: CellCtrl;
