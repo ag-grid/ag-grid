@@ -1,5 +1,6 @@
 import ContinuousScale from "../../scale/continuousScale";
 import { LinearScale } from "../../scale/linearScale";
+import { numericExtent } from "../../util/array";
 import { ChartAxis } from "../chartAxis";
 
 export class NumberAxis extends ChartAxis {
@@ -25,13 +26,16 @@ export class NumberAxis extends ChartAxis {
         return this._nice;
     }
 
-    set domain(value: number[]) {
+    set domain(domain: number[]) {
+        if (domain.length > 2) {
+            domain = numericExtent(domain) || [0, 1];
+        }
         const { scale, min, max } = this;
-        value = [
-            isNaN(min) ? value[0] : min,
-            isNaN(max) ? value[1] : max
+        domain = [
+            isNaN(min) ? domain[0] : min,
+            isNaN(max) ? domain[1] : max
         ];
-        scale.domain = value;
+        scale.domain = domain;
         (scale as ContinuousScale).clamp = true;
         if (this.nice && this.scale.nice) {
             this.scale.nice(this.tick.count);

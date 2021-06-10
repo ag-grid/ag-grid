@@ -1,4 +1,5 @@
 import { TimeScale } from "../../scale/timeScale";
+import { numericExtent } from "../../util/array";
 import { ChartAxis } from "../chartAxis";
 
 export class TimeAxis extends ChartAxis<TimeScale> {
@@ -30,8 +31,11 @@ export class TimeAxis extends ChartAxis<TimeScale> {
         return this._nice;
     }
 
-    set domain(value: Date[]) {
-        this.scale.domain = value;
+    set domain(domain: Date[]) {
+        if (domain.length > 2) {
+            domain = (numericExtent(domain) || [0, 1000]).map(x => new Date(x));
+        }
+        this.scale.domain = domain;
         if (this.nice && this.scale.nice) {
             this.scale.nice(10);
         }

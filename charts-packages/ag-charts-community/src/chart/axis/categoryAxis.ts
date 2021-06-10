@@ -26,4 +26,13 @@ export class CategoryAxis extends ChartAxis<BandScale<string>> {
     get paddingOuter(): number {
         return this.scale.paddingOuter;
     }
+
+    set domain(values: string[]) {
+        // Prevent duplicate categories.
+        this.scale.domain = values
+            .filter((s, i, arr) => arr.indexOf(s) === i)
+    }
+    get domain(): string[] {
+        return this.scale.domain.slice();
+    }
 }
