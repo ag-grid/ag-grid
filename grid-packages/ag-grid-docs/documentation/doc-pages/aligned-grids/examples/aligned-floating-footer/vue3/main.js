@@ -1,36 +1,35 @@
 import {createApp} from 'vue';
-import { AgGridVue } from "@ag-grid-community/vue";
+import {AgGridVue} from "@ag-grid-community/vue3";
 
-import { AllCommunityModules } from '@ag-grid-community/all-modules';
+import {AllCommunityModules} from '@ag-grid-community/all-modules';
 
 import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
 import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
 
 const VueExample = {
     template: `
-        <div style="height: 100%; display: flex; flex-direction: column" class="ag-theme-alpine">
-            <ag-grid-vue style="flex: 1 1 auto;"
-                         :gridOptions="topGridOptions"
-                         @grid-ready="onGridReady"
-                         @first-data-rendered="onFirstDataRendered"
-                         :columnDefs="columnDefs"
-                         :rowData="rowData"
-                         :modules="modules"
-            ></ag-grid-vue>
-            <ag-grid-vue style="height: 60px; flex: none;"
-                         :gridOptions="bottomGridOptions"
-                         :headerHeight="0"
-                         :columnDefs="columnDefs"
-                         :rowData="bottomData"
-                         :modules="modules"
-                         :rowStyle="rowStyle"
-            ></ag-grid-vue>
-        </div>
+      <div style="height: 100%; display: flex; flex-direction: column" class="ag-theme-alpine">
+          <ag-grid-vue style="flex: 1 1 auto;"
+                       :gridOptions="topGridOptions"
+                       @first-data-rendered="onFirstDataRendered"
+                       :columnDefs="columnDefs"
+                       :rowData="rowData"
+                       :modules="modules">            
+          </ag-grid-vue>
+          <ag-grid-vue style="height: 60px; flex: none;"
+                       :gridOptions="bottomGridOptions"
+                       :headerHeight="0"
+                       :columnDefs="columnDefs"
+                       :rowData="bottomData"
+                       :modules="modules"
+                       :rowStyle="rowStyle">            
+          </ag-grid-vue>
+      </div>
     `,
     components: {
         "ag-grid-vue": AgGridVue
     },
-    data: function() {
+    data: function () {
         return {
             topGridOptions: null,
             bottomGridOptions: null,
@@ -42,7 +41,7 @@ const VueExample = {
             athleteVisible: true,
             ageVisible: true,
             countryVisible: true,
-            rowStyle: { fontWeight: 'bold' },
+            rowStyle: {fontWeight: 'bold'},
             modules: AllCommunityModules
         };
     },
@@ -84,16 +83,14 @@ const VueExample = {
                 minWidth: 100
             }
         };
-        this.topGridOptions.alignedGrids.push(this.bottomGridOptions);
-        this.bottomGridOptions.alignedGrids.push(this.topGridOptions);
 
         this.columnDefs = [
-            { field: 'athlete', width: 200, hide: !this.athleteVisible },
-            { field: 'age', width: 150, hide: !this.ageVisible },
-            { field: 'country', width: 150, hide: !this.countryVisible },
-            { field: 'year', width: 120 },
-            { field: 'date', width: 150 },
-            { field: 'sport', width: 150 },
+            {field: 'athlete', width: 200, hide: !this.athleteVisible},
+            {field: 'age', width: 150, hide: !this.ageVisible},
+            {field: 'country', width: 150, hide: !this.countryVisible},
+            {field: 'year', width: 120},
+            {field: 'date', width: 150},
+            {field: 'sport', width: 150},
             // in the total col, we have a value getter, which usually means we don't need to provide a field
             // however the master/slave depends on the column id (which is derived from the field if provided) in
             // order ot match up the columns
@@ -111,27 +108,18 @@ const VueExample = {
     mounted() {
         this.gridApi = this.topGridOptions.api;
         this.gridColumnApi = this.topGridOptions.columnApi;
+
+        this.topGridOptions.alignedGrids.push(this.bottomGridOptions);
+        this.bottomGridOptions.alignedGrids.push(this.topGridOptions);
+
+        fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+            .then(resp => resp.json())
+            .then(rowData => {
+                this.rowData = rowData
+            });
     },
     methods: {
-        onGridReady(params) {
-            const httpRequest = new XMLHttpRequest();
-            const updateData = data => {
-                this.rowData = data;
-            };
-
-            httpRequest.open(
-                "GET",
-                'https://www.ag-grid.com/example-assets/olympic-winners.json'
-            );
-            httpRequest.send();
-            httpRequest.onreadystatechange = () => {
-                if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-                    updateData(JSON.parse(httpRequest.responseText));
-                }
-            };
-        },
-
-        onFirstDataRendered: function() {
+        onFirstDataRendered: function () {
             this.gridColumnApi.autoSizeAllColumns();
         }
     },

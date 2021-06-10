@@ -1,5 +1,5 @@
 import {createApp} from 'vue';
-import { AgGridVue } from 'ag-grid-vue';
+import { AgGridVue } from 'ag-grid-vue3';
 import 'ag-grid-enterprise';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
@@ -12,7 +12,7 @@ const VueExample = {
                 class="ag-theme-alpine"
                 id="myGrid"
                 :gridOptions="topOptions"
-                @grid-ready="onGridReady"
+                @first-data-rendered="onFirstDataRendered($event)"
                 :columnDefs="columnDefs"
                 :defaultColDef="defaultColDef"
                 :rowData="rowData">
@@ -23,7 +23,6 @@ const VueExample = {
                 class="ag-theme-alpine"
                 id="myGrid"
                 :gridOptions="bottomOptions"
-                @grid-ready="onGridReady"
                 :columnDefs="columnDefs"
                 :defaultColDef="defaultColDef"
                 :rowData="rowData">
@@ -61,79 +60,66 @@ const VueExample = {
             bottomGridApi: null,
             topColumnApi: null,
             bottomColumnApi: null,
-            columnDefs: null,
-            defaultColDef: null,
+            columnDefs: [
+                {
+                    headerName: 'Group 1',
+                    headerClass: 'blue',
+                    groupId: 'Group1',
+                    children: [
+                        { field: 'athlete', pinned: true, width: 100 },
+                        { field: 'age', pinned: true, columnGroupShow: 'open', width: 100 },
+                        { field: 'country', width: 100 },
+                        { field: 'year', columnGroupShow: 'open', width: 100 },
+                        { field: 'date', width: 100 },
+                        { field: 'sport', columnGroupShow: 'open', width: 100 },
+                        { field: 'date', width: 100 },
+                        { field: 'sport', columnGroupShow: 'open', width: 100 }
+                    ]
+                },
+                {
+                    headerName: 'Group 2',
+                    headerClass: 'green',
+                    groupId: 'Group2',
+                    children: [
+                        { field: 'athlete', pinned: true, width: 100 },
+                        { field: 'age', pinned: true, columnGroupShow: 'open', width: 100 },
+                        { field: 'country', width: 100 },
+                        { field: 'year', columnGroupShow: 'open', width: 100 },
+                        { field: 'date', width: 100 },
+                        { field: 'sport', columnGroupShow: 'open', width: 100 },
+                        { field: 'date', width: 100 },
+                        { field: 'sport', columnGroupShow: 'open', width: 100 }
+                    ]
+                }
+            ],
+            defaultColDef: {
+                resizable: true
+            },
             rowData: null
         };
-    },
-    beforeMount() {
-        this.columnDefs = [
-            {
-                headerName: 'Group 1',
-                headerClass: 'blue',
-                groupId: 'Group1',
-                children: [
-                    { field: 'athlete', pinned: true, width: 100 },
-                    { field: 'age', pinned: true, columnGroupShow: 'open', width: 100 },
-                    { field: 'country', width: 100 },
-                    { field: 'year', columnGroupShow: 'open', width: 100 },
-                    { field: 'date', width: 100 },
-                    { field: 'sport', columnGroupShow: 'open', width: 100 },
-                    { field: 'date', width: 100 },
-                    { field: 'sport', columnGroupShow: 'open', width: 100 }
-                ]
-            },
-            {
-                headerName: 'Group 2',
-                headerClass: 'green',
-                groupId: 'Group2',
-                children: [
-                    { field: 'athlete', pinned: true, width: 100 },
-                    { field: 'age', pinned: true, columnGroupShow: 'open', width: 100 },
-                    { field: 'country', width: 100 },
-                    { field: 'year', columnGroupShow: 'open', width: 100 },
-                    { field: 'date', width: 100 },
-                    { field: 'sport', columnGroupShow: 'open', width: 100 },
-                    { field: 'date', width: 100 },
-                    { field: 'sport', columnGroupShow: 'open', width: 100 }
-                ]
-            }
-        ];
-        this.defaultColDef = {
-            resizable: true
-        };
-
-        this.topOptions.alignedGrids.push(this.bottomOptions);
-        this.bottomOptions.alignedGrids.push(this.topOptions);
     },
     mounted() {
         this.topGridApi = this.topOptions.api;
         this.topColumnApi = this.topOptions.columnApi;
         this.bottomGridApi = this.bottomOptions.api;
         this.bottomColumnApi = this.bottomOptions.columnApi;
+
+        this.topOptions.alignedGrids.push(this.bottomOptions);
+        this.bottomOptions.alignedGrids.push(this.topOptions);
+
+        fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+            .then(resp => resp.json())
+            .then(rowData => {
+                this.rowData = rowData
+
+                // mix up some columns
+                this.topColumnApi.moveColumnByIndex(11, 4);
+                this.topColumnApi.moveColumnByIndex(11, 4);
+            });
     },
     methods: {
-        onGridReady(params) {
-            const httpRequest = new XMLHttpRequest();
-            const updateData = data => {
-                this.rowData = data;
-            };
-
+        onFirstDataRendered(params) {
             this.topGridApi.sizeColumnsToFit();
-
-            httpRequest.open(
-                'GET',
-                'https://www.ag-grid.com/example-assets/olympic-winners.json'
-            );
-            httpRequest.send();
-            httpRequest.onreadystatechange = () => {
-                if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-                    updateData(JSON.parse(httpRequest.responseText));
-                    // mix up some columns
-                    this.topColumnApi.moveColumnByIndex(11, 4);
-                    this.topColumnApi.moveColumnByIndex(11, 4);
-                }
-            };
         }
     }
 };
