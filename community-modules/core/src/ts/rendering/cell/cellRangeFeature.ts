@@ -28,11 +28,13 @@ export class CellRangeFeature {
 
     private selectionHandle: ISelectionHandle | null | undefined;
 
-    constructor(beans: Beans, cellComp: ICellComp, ctrl: CellCtrl) {
+    constructor(beans: Beans, ctrl: CellCtrl) {
         this.beans = beans;
-        this.comp = cellComp;
         this.ctrl = ctrl;
+    }
 
+    public setComp(cellComp: ICellComp): void {
+        this.comp = cellComp;
         this.onRangeSelectionChanged();
     }
 

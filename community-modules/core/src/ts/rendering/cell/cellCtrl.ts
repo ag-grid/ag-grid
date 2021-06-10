@@ -52,6 +52,7 @@ export interface ICellComp {
     setAriaColIndex(index: number): void;
     setHeight(height: string): void;
     setZIndex(zIndex: string): void;
+    setTabIndex(tabIndex: number): void;
 
     // setValue(value: any): void;
     // setValueFormatted(value: string): void;
@@ -90,9 +91,17 @@ export class CellCtrl extends BeanStub {
         this.beans = beans;
 
         this.createCellPosition();
+        this.addFeatures();
+    }
 
+    private addFeatures(): void {
         this.cellPositionFeature = new CellPositionFeature(this, this.beans);
         this.addDestroyFunc( ()=> this.cellPositionFeature.destroy() );
+
+        const rangeSelectionEnabled = this.beans.rangeService && this.beans.gridOptionsWrapper.isEnableRangeSelection();
+        if (rangeSelectionEnabled) {
+            this.cellRangeFeature = new CellRangeFeature(this.beans, this);
+        }
     }
 
     public setComp(comp: ICellComp, autoHeightCell: boolean,
@@ -116,12 +125,10 @@ export class CellCtrl extends BeanStub {
         this.onLastLeftPinnedChanged();
         this.onColumnHover();
 
-        const rangeSelectionEnabled = this.beans.rangeService && this.beans.gridOptionsWrapper.isEnableRangeSelection();
-        if (rangeSelectionEnabled) {
-            this.cellRangeFeature = new CellRangeFeature(this.beans, comp, this);
-        }
+        this.comp.setTabIndex(-1);
 
         this.cellPositionFeature.setComp(comp);
+        if (this.cellRangeFeature) { this.cellRangeFeature.setComp(comp); }
     }
 
     public getColSpanningList(): Column[] {
