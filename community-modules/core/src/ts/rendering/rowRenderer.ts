@@ -160,7 +160,7 @@ export class RowRenderer extends BeanStub {
         // in different containers so doesn't impact.
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, () => {
             if (this.printLayout) {
-                this.forEachCellComp(cellComp => cellComp.onLeftChanged());
+                this.forEachCellComp(cellComp => cellComp.getCtrl().onLeftChanged());
             }
         });
 
@@ -217,10 +217,10 @@ export class RowRenderer extends BeanStub {
             };
 
             const leftChangedListener = () => {
-                forEachCellWithThisCol(cellComp => cellComp.onLeftChanged());
+                forEachCellWithThisCol(cellComp => cellComp.getCtrl().onLeftChanged());
             };
             const widthChangedListener = () => {
-                forEachCellWithThisCol(cellComp => cellComp.onWidthChanged());
+                forEachCellWithThisCol(cellComp => cellComp.getCtrl().onWidthChanged());
             };
             const firstRightPinnedChangedListener = () => {
                 forEachCellWithThisCol(cellComp => cellComp.onFirstRightPinnedChanged());
@@ -1323,7 +1323,7 @@ export class RowRenderer extends BeanStub {
 
         if (!cellComp) { return cell; }
 
-        const colSpanningList = cellComp.getColSpanningList();
+        const colSpanningList = cellComp.getCtrl().getColSpanningList();
 
         if (colSpanningList.length === 1) { return cell; }
 

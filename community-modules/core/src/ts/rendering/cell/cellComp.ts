@@ -95,7 +95,6 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private value: any;
     private valueFormatted: any;
-    private colsSpanning: Column[];
     private rowSpan: number;
 
     private suppressRefreshCell = false;
@@ -130,11 +129,11 @@ export class CellComp extends Component implements TooltipParentComp {
         this.eRow = eRow;
 
         // we need to do this early, as we need CellPosition before we call setComp()
-        this.ctrl = new CellCtrl(column, rowNode);
+        this.ctrl = new CellCtrl(column, rowNode, beans);
 
         this.getValueAndFormat();
         this.setUsingWrapper();
-        this.setupColSpan();
+
         this.rowSpan = this.column.getRowSpan(this.rowNode);
 
         this.setTemplate(this.getCreateTemplate());
@@ -144,6 +143,9 @@ export class CellComp extends Component implements TooltipParentComp {
             setUserStyles: styles => addStylesToElement(this.getGui(), styles),
             setAriaSelected: selected => setAriaSelected(this.getGui(), selected),
             getFocusableElement: ()=> this.getFocusableElement(),
+            setLeft: left => this.getGui().style.left = left,
+            setWidth: width => this.getGui().style.width = width,
+            setAriaColIndex: index => setAriaColIndex(this.getGui(), index),
 
             // temp items
             isEditing: ()=> this.editingCell,
@@ -151,7 +153,8 @@ export class CellComp extends Component implements TooltipParentComp {
             stopRowOrCellEdit: ()=> this.stopRowOrCellEdit()
         };
 
-        this.ctrl.setComp(compProxy, beans, false, this.usingWrapper, this.scope, this.getGui());
+        this.ctrl.setComp(compProxy, false, this.usingWrapper, this.scope, this.getGui(),
+            this.printLayout);
 
         this.addDestroyFunc( ()=> this.ctrl.destroy() );
 
@@ -172,9 +175,6 @@ export class CellComp extends Component implements TooltipParentComp {
         const unselectable = !this.beans.gridOptionsWrapper.isEnableCellTextSelection() ? ' unselectable="on"' : '';
         const templateParts: string[] = [];
         const col = this.column;
-
-        const width = this.getCellWidth();
-        const left = this.modifyLeftForPrintLayout(this.getCellLeft());
 
         const valueToRender = this.getInitialValueToRender();
         const valueSanitised = get(this.column, 'colDef.template', null) ? valueToRender : escapeString(valueToRender);
@@ -198,7 +198,7 @@ export class CellComp extends Component implements TooltipParentComp {
             templateParts.push(` title="${tooltipSanitised}"`);
         }
 
-        templateParts.push(` style="width: ${Number(width)}px; left: ${Number(left)}px; ${escapeString(stylesForRowSpanning)}">`);
+        templateParts.push(` style="${escapeString(stylesForRowSpanning)}">`);
 
         if (this.usingWrapper) {
             templateParts.push(this.getCellWrapperString(valueSanitised));
@@ -267,25 +267,6 @@ export class CellComp extends Component implements TooltipParentComp {
         }
     }
 
-    private getCellLeft(): number | null {
-        let mostLeftCol: Column;
-
-        if (this.beans.gridOptionsWrapper.isEnableRtl() && this.colsSpanning) {
-            mostLeftCol = last(this.colsSpanning);
-        } else {
-            mostLeftCol = this.column;
-        }
-
-        return mostLeftCol.getLeft();
-    }
-
-    private getCellWidth(): number {
-        if (!this.colsSpanning) {
-            return this.column.getActualWidth();
-        }
-
-        return this.colsSpanning.reduce((width, col) => width + col.getActualWidth(), 0);
-    }
 
     public onFlashCells(event: FlashCellsEvent): void {
         const cellId = this.beans.cellPositionUtils.createId(this.ctrl.getCellPosition());
@@ -293,62 +274,6 @@ export class CellComp extends Component implements TooltipParentComp {
         if (shouldFlash) {
             this.animateCell('highlight');
         }
-    }
-
-    private setupColSpan(): void {
-        // if no col span is active, then we don't set it up, as it would be wasteful of CPU
-        if (missing(this.getComponentHolder().colSpan)) { return; }
-
-        // because we are col spanning, a reorder of the cols can change what cols we are spanning over
-        this.addManagedListener(this.beans.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayColumnsChanged.bind(this));
-        // because we are spanning over multiple cols, we check for width any time any cols width changes.
-        // this is expensive - really we should be explicitly checking only the cols we are spanning over
-        // instead of every col, however it would be tricky code to track the cols we are spanning over, so
-        // because hardly anyone will be using colSpan, am favouring this easier way for more maintainable code.
-        this.addManagedListener(this.beans.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onWidthChanged.bind(this));
-
-        this.colsSpanning = this.getColSpanningList();
-    }
-
-    public getColSpanningList(): Column[] {
-        const colSpan = this.column.getColSpan(this.rowNode);
-        const colsSpanning: Column[] = [];
-
-        // if just one col, the col span is just the column we are in
-        if (colSpan === 1) {
-            colsSpanning.push(this.column);
-        } else {
-            let pointer: Column | null = this.column;
-            const pinned = this.column.getPinned();
-            for (let i = 0; pointer && i < colSpan; i++) {
-                colsSpanning.push(pointer);
-                pointer = this.beans.columnModel.getDisplayedColAfter(pointer);
-                if (!pointer || missing(pointer)) {
-                    break;
-                }
-                // we do not allow col spanning to span outside of pinned areas
-                if (pinned !== pointer.getPinned()) {
-                    break;
-                }
-            }
-        }
-
-        return colsSpanning;
-    }
-
-    private onDisplayColumnsChanged(): void {
-        const colsSpanning: Column[] = this.getColSpanningList();
-
-        if (!areEqual(this.colsSpanning, colsSpanning)) {
-            this.colsSpanning = colsSpanning;
-            this.onWidthChanged();
-            this.onLeftChanged(); // left changes when doing RTL
-        }
-    }
-
-    private refreshAriaIndex(): void {
-        const colIdx = this.beans.columnModel.getAriaColumnIndex(this.column);
-        setAriaColIndex(this.getGui(), colIdx);
     }
 
     private isUsingCellRenderer(): boolean {
@@ -702,6 +627,7 @@ export class CellComp extends Component implements TooltipParentComp {
         this.includeRowDraggingComponent = rowDraggableIsFunc || colDef.rowDrag === true;
         this.includeDndSourceComponent = dndSourceIsFunc || colDef.dndSource === true;
 
+        // text selection requires the value to be wrapped in anoter element
         const enableTextSelection = this.beans.gridOptionsWrapper.isEnableCellTextSelection();
 
         this.usingWrapper = enableTextSelection || this.includeRowDraggingComponent || this.includeSelectionComponent || this.includeDndSourceComponent;
@@ -1507,33 +1433,6 @@ export class CellComp extends Component implements TooltipParentComp {
         this.cellRenderer = this.beans.context.destroyBean(this.cellRenderer);
 
         super.destroy();
-    }
-
-    public onLeftChanged(): void {
-        const left = this.modifyLeftForPrintLayout(this.getCellLeft());
-        this.getGui().style.left = left + 'px';
-        this.refreshAriaIndex();
-    }
-
-    private modifyLeftForPrintLayout(leftPosition: number | null): number | null {
-        if (!this.printLayout || this.column.getPinned() === Constants.PINNED_LEFT) {
-            return leftPosition;
-        }
-
-        const leftWidth = this.beans.columnModel.getDisplayedColumnsLeftWidth();
-
-        if (this.column.getPinned() === Constants.PINNED_RIGHT) {
-            const bodyWidth = this.beans.columnModel.getBodyContainerWidth();
-            return leftWidth + bodyWidth + (leftPosition || 0);
-        }
-
-        // is in body
-        return leftWidth + (leftPosition || 0);
-    }
-
-    public onWidthChanged(): void {
-        const width = this.getCellWidth();
-        this.getGui().style.width = `${width}px`;
     }
 
     public onNewColumnsLoaded(): void {

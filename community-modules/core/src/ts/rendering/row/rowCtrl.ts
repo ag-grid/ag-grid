@@ -1219,7 +1219,7 @@ export class RowCtrl extends BeanStub {
         const spannedCellComps = this.allComps.map(c => {
             const allCellComps = c.comp.getAllCellComps();
             const compsWithThisCol = allCellComps
-                .filter(cmp => cmp.getColSpanningList().indexOf(column) >= 0);
+                .filter(cmp => cmp.getCtrl().getColSpanningList().indexOf(column) >= 0);
             return compsWithThisCol.length >= 0 ? compsWithThisCol[0] : null;
         });
         cellComp = find(spannedCellComps, c => !!c);

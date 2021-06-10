@@ -3,9 +3,15 @@ import { Column } from "../../entities/column";
 import { CellClassParams, ColDef } from "../../entities/colDef";
 import { RowNode } from "../../entities/rowNode";
 import { CellPosition } from "../../entities/cellPosition";
-import { CellFocusedEvent } from "../../events";
+import { CellFocusedEvent, Events } from "../../events";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { CellRangeFeature } from "./cellRangeFeature";
+import { areEqual, last } from "../../utils/array";
+import { Constants } from "../../constants/constants";
+import { setAriaColIndex } from "../../utils/aria";
+import { missing } from "../../utils/generic";
+import { BeanStub } from "../../context/beanStub";
+import { CellLeftAndWidthFeature } from "./cellLeftAndWidthFeature";
 
 //////// theses should not be imported, remove them once CellComp has been refactored
 export const CSS_CELL = 'ag-cell';
@@ -40,6 +46,11 @@ export interface ICellComp {
     setUserStyles(styles: any): void;
     setAriaSelected(selected: boolean): void;
     getFocusableElement(): HTMLElement;
+
+    setLeft(left: string): void;
+    setWidth(width: string): void;
+    setAriaColIndex(index: number): void;
+
     // setValue(value: any): void;
     // setValueFormatted(value: string): void;
 
@@ -49,7 +60,7 @@ export interface ICellComp {
     stopRowOrCellEdit(): void;
 }
 
-export class CellCtrl {
+export class CellCtrl extends BeanStub {
 
     private eGui: HTMLElement;
     private comp: ICellComp;
@@ -59,31 +70,38 @@ export class CellCtrl {
     private rowNode: RowNode;
 
     private autoHeightCell: boolean;
+    private printLayout: boolean;
 
     // just passed in
     private scope: any;
     private usingWrapper: boolean;
 
     private cellRangeFeature: CellRangeFeature;
+    private leftAndWidthFeature: CellLeftAndWidthFeature;
 
     private cellPosition: CellPosition;
 
-    constructor(column: Column, rowNode: RowNode) {
+    constructor(column: Column, rowNode: RowNode, beans: Beans) {
+        super();
         this.column = column;
         this.rowNode = rowNode;
+        this.beans = beans;
+
         this.createCellPosition();
+
+        this.leftAndWidthFeature = new CellLeftAndWidthFeature(this, this.beans);
+        this.addDestroyFunc( ()=> this.leftAndWidthFeature.destroy() );
     }
 
-    public setComp(comp: ICellComp, beans: Beans, autoHeightCell: boolean,
-                   usingWrapper: boolean, scope: any, eGui: HTMLElement): void {
+    public setComp(comp: ICellComp, autoHeightCell: boolean,
+                   usingWrapper: boolean, scope: any, eGui: HTMLElement, printLayout: boolean): void {
         this.comp = comp;
-        this.beans = beans;
         this.usingWrapper = usingWrapper;
         this.autoHeightCell = autoHeightCell;
         this.gow = this.beans.gridOptionsWrapper;
         this.scope = scope;
         this.eGui = eGui;
-
+        this.printLayout = printLayout;
 
         this.onCellFocused();
 
@@ -96,10 +114,36 @@ export class CellCtrl {
         this.onLastLeftPinnedChanged();
         this.onColumnHover();
 
-        const rangeSelectionEnabled = this.beans.rangeService && beans.gridOptionsWrapper.isEnableRangeSelection();
+        const rangeSelectionEnabled = this.beans.rangeService && this.beans.gridOptionsWrapper.isEnableRangeSelection();
         if (rangeSelectionEnabled) {
-            this.cellRangeFeature = new CellRangeFeature(beans, comp, this);
+            this.cellRangeFeature = new CellRangeFeature(this.beans, comp, this);
         }
+
+        this.leftAndWidthFeature.setComp(comp);
+    }
+
+    public getColSpanningList(): Column[] {
+        return this.leftAndWidthFeature.getColSpanningList();
+    }
+
+    public onLeftChanged(): void {
+        return this.leftAndWidthFeature.onLeftChanged();
+    }
+
+    public onWidthChanged(): void {
+        return this.leftAndWidthFeature.onWidthChanged();
+    }
+
+    public getColumn(): Column {
+        return this.column;
+    }
+
+    public getRowNode(): RowNode {
+        return this.rowNode;
+    }
+
+    public isPrintLayout(): boolean {
+        return this.printLayout;
     }
 
     public appendChild(htmlElement: HTMLElement): void {

@@ -120,10 +120,8 @@ export class UserComponentFactory extends BeanStub {
 
     public newCellRenderer(
         target: ColDef | IRichCellEditorParams,
-        params: ICellRendererParams,
-        isPinned = false): AgPromise<ICellRendererComp> | null {
-        return this.createAndInitUserComponent(
-            target, params, isPinned ? PinnedRowCellRendererComponent : CellRendererComponent, null, true);
+        params: ICellRendererParams): AgPromise<ICellRendererComp> | null {
+        return this.createAndInitUserComponent(target, params, CellRendererComponent, null, true);
     }
 
     public newCellEditor(colDef: ColDef, params: ICellEditorParams): AgPromise<ICellEditorComp> | null {
