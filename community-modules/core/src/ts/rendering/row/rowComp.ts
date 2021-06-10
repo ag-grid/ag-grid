@@ -35,38 +35,40 @@ export class RowComp extends Component {
         this.pinned = pinned;
         this.ctrl = ctrl;
 
+        this.setTemplate(/* html */`<div comp-id="${this.getCompId()}" style="${this.getInitialStyle()}"/>`);
 
-
-        this.setTemplate(/* html */`<div role="row" comp-id="${this.getCompId()}" style="${this.getInitialStyle()}"/>`);
+        const eGui = this.getGui();
+        const style = eGui.style;
 
         const compProxy: IRowComp = {
             setDomOrder: domOrder => this.domOrder = domOrder,
             setColumns: columns => this.setColumns(columns),
             getFullWidthRowComp: () => this.getFullWidthRowComp(),
             addOrRemoveCssClass: (name, on) => this.addOrRemoveCssClass(name, on),
-            setAriaExpanded: on => setAriaExpanded(this.getGui(), on),
+            setAriaExpanded: on => setAriaExpanded(eGui, on),
             destroyCells: cellComps => this.destroyCells(cellComps),
             forEachCellComp: callback => this.forEachCellComp(callback),
-            setUserStyles: styles => addStylesToElement(this.getGui(), styles),
-            setAriaSelected: value => setAriaSelected(this.getGui(), value),
+            setUserStyles: styles => addStylesToElement(eGui, styles),
+            setAriaSelected: value => setAriaSelected(eGui, value),
             setAriaLabel: value => {
                 if (value == null) {
-                    this.getGui().removeAttribute('aria-label');
+                    eGui.removeAttribute('aria-label');
                 } else {
-                    this.getGui().setAttribute('aria-label', value);
+                    eGui.setAttribute('aria-label', value);
                 }
             },
-            setHeight: height => this.getGui().style.height = height,
+            setHeight: height => style.height = height,
             destroy: () => this.destroy(),
-            setTop: top => this.getGui().style.top = top,
-            setTransform: transform => this.getGui().style.transform = transform,
+            setTop: top => style.top = top,
+            setTransform: transform => style.transform = transform,
             getCellComp: colId => this.getCellComp(colId),
             getAllCellComps: () => Object.keys(this.cellComps).map(k => this.cellComps[k]).filter(c => c != null) as CellComp[],
-            setRowIndex: rowIndex => this.getGui().setAttribute('row-index', rowIndex),
+            setRowIndex: rowIndex => eGui.setAttribute('row-index', rowIndex),
+            setRole: role => eGui.setAttribute('role', role),
             setAriaRowIndex: rowIndex => setAriaRowIndex(this.getGui(), rowIndex),
-            setRowId: (rowId: string) => this.getGui().setAttribute('row-id', rowId),
-            setRowBusinessKey: businessKey => this.getGui().setAttribute('row-business-key', businessKey),
-            setTabIndex: tabIndex => this.getGui().setAttribute('tabindex', tabIndex.toString())
+            setRowId: (rowId: string) => eGui.setAttribute('row-id', rowId),
+            setRowBusinessKey: businessKey => eGui.setAttribute('row-business-key', businessKey),
+            setTabIndex: tabIndex => eGui.setAttribute('tabindex', tabIndex.toString())
         };
 
         ctrl.setComp(compProxy, this.getGui(), pinned);

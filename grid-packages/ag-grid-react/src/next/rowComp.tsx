@@ -49,6 +49,7 @@ export function RowComp(params: {context: Context, rowCtrl: RowCtrl, pinned: str
     const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses());
     const [rowIndex, setRowIndex] = useState<string>();
     const [rowId, setRowId] = useState<string>();
+    const [role, setRole] = useState<string>();
     const [rowBusinessKey, setRowBusinessKey] = useState<string>();
     const [tabIndex, setTabIndex] = useState<number>();
     const [ariaRowIndex, setAriaRowIndex] = useState<number>();
@@ -79,6 +80,7 @@ export function RowComp(params: {context: Context, rowCtrl: RowCtrl, pinned: str
             setTabIndex: value => setTabIndex(value),
             setUserStyles: styles => setUserStyles(styles),
             setAriaSelected: value => setAriaSelected(value),
+            setRole: value => setRole(value),
             // if we don't maintain the order, then cols will be ripped out and into the dom
             // when cols reordered, which would stop the CSS transitions from working
             setColumns: next => setColumns( prev => maintainOrderOnColumns(prev, next, domOrder) ),
@@ -109,7 +111,7 @@ export function RowComp(params: {context: Context, rowCtrl: RowCtrl, pinned: str
     const className = cssClasses.toString();
 
     return (
-        <div ref={eGui} role="row" className={className} style={rowStyles} row-index={rowIndex}
+        <div ref={eGui} role={role} className={className} style={rowStyles} row-index={rowIndex}
              aria-rowindex={ariaRowIndex} aria-expanded={ariaExpanded} aria-label={ariaLabel}
              aria-selected={ariaSelected} row-id={rowId} row-business-key={rowBusinessKey} tabIndex={tabIndex}>
             {

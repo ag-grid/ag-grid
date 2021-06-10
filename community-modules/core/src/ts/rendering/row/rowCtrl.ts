@@ -82,6 +82,7 @@ export interface IRowComp {
     setTabIndex(tabIndex: number): void;
     setAriaLabel(label: string | undefined): void;
     setUserStyles(styles: any): void;
+    setRole(role: string): void;
 }
 
 interface CompAndElement {
@@ -234,22 +235,26 @@ export class RowCtrl extends BeanStub {
         const businessKeySanitised = escapeString(businessKey!);
 
         this.allComps.forEach(c => {
+            const comp = c.comp;
+
+            comp.setRole('row');
+
             const initialRowClasses = this.getInitialRowClasses(c.pinned);
-            initialRowClasses.forEach(name => c.comp.addOrRemoveCssClass(name, true));
+            initialRowClasses.forEach(name => comp.addOrRemoveCssClass(name, true));
 
             if (this.rowNode.group) {
-                c.comp.setAriaExpanded(this.rowNode.expanded == true);
+                comp.setAriaExpanded(this.rowNode.expanded == true);
             }
 
             if (rowIdSanitised != null) {
-                c.comp.setRowId(rowIdSanitised);
+                comp.setRowId(rowIdSanitised);
             }
             if (businessKeySanitised != null) {
-                c.comp.setRowBusinessKey(businessKeySanitised);
+                comp.setRowBusinessKey(businessKeySanitised);
             }
 
             if (this.isFullWidth()) {
-                c.comp.setTabIndex(-1);
+                comp.setTabIndex(-1);
             }
 
             // DOM DATA

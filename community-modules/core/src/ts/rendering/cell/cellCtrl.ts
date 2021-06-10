@@ -53,6 +53,7 @@ export interface ICellComp {
     setHeight(height: string): void;
     setZIndex(zIndex: string): void;
     setTabIndex(tabIndex: number): void;
+    setRole(role: string): void;
 
     // setValue(value: any): void;
     // setValueFormatted(value: string): void;
@@ -126,6 +127,7 @@ export class CellCtrl extends BeanStub {
         this.onColumnHover();
 
         this.comp.setTabIndex(-1);
+        this.comp.setRole('gridcell');
 
         this.cellPositionFeature.setComp(comp);
         if (this.cellRangeFeature) { this.cellRangeFeature.setComp(comp); }

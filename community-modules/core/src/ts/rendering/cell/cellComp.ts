@@ -149,6 +149,7 @@ export class CellComp extends Component implements TooltipParentComp {
             setHeight: height => style.height = height,
             setZIndex: zIndex => style.zIndex = zIndex,
             setTabIndex: tabIndex => eGui.setAttribute('tabindex', tabIndex.toString()),
+            setRole: role => eGui.setAttribute('role', role),
 
             // temp items
             isEditing: ()=> this.editingCell,
@@ -190,10 +191,7 @@ export class CellComp extends Component implements TooltipParentComp {
         templateParts.push(`<div comp-id="${this.getCompId()}"`);
 
         templateParts.push(`${unselectable}`); // THIS IS FOR IE ONLY so text selection doesn't bubble outside of the grid
-        templateParts.push(` role="gridcell"`);
         templateParts.push(` aria-colindex="${colIdxSanitised}"`);
-
-        templateParts.push(` `);
         templateParts.push(` col-id="${colIdSanitised}"`);
 
         if (this.beans.gridOptionsWrapper.isEnableBrowserTooltips() && exists(tooltipSanitised)) {
