@@ -120,7 +120,7 @@ export class PositionableFeature extends BeanStub {
         // here we don't use the main offset parent but the element's offsetParent
         // in order to calculated the minWidth and minHeight correctly
         if (this.element.offsetParent) {
-            const offsetParentComputedStyles = window.getComputedStyle(this.element.offsetParent);
+            const offsetParentComputedStyles = window.getComputedStyle(this.findBoundaryElement());
             if (offsetParentComputedStyles.minWidth != null) {
                 computedMinWidth = parseInt(offsetParentComputedStyles.minWidth, 10);
             }
@@ -501,7 +501,7 @@ export class PositionableFeature extends BeanStub {
         addCssClass(this.element, 'ag-resizing');
         addCssClass(this.resizerMap![side].element, 'ag-active');
 
-        if (!this.config.popup) {
+        if (!this.config.popup && !this.config.forcePopupParentAsOffsetParent) {
             this.applySizeToSiblings(this.currentResizer.isBottom || this.currentResizer.isTop);
         }
 
@@ -632,6 +632,7 @@ export class PositionableFeature extends BeanStub {
                 // do not let the size of all siblings be higher than the parent container
                 if (
                     !this.config.popup &&
+                    !this.config.forcePopupParentAsOffsetParent &&
                     oldHeight! < newHeight &&
                     (this.getMinSizeOfSiblings().height + newHeight) > this.element.parentElement!.offsetHeight
                 ) {
