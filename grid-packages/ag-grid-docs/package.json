@@ -138,6 +138,7 @@
     "webpack-filter-warnings-plugin": "1.2.1",
     "webpack-hot-middleware": "2.23.1",
     "webpack-stream": "5.1.1",
-    "zone.js": "0.8.29"
+    "zone.js": "0.8.29",
+    "json5": "2.2.0"
   }
 }

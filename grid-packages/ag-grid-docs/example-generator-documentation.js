@@ -125,6 +125,10 @@ function format(source, parser) {
     return prettier.format(formatted, { parser, singleQuote: true, trailingComma: 'es5' });
 }
 
+function deepCloneObject(object) {
+    return JSON.parse(JSON.stringify(object));
+}
+
 function createExampleGenerator(prefix, importTypes) {
     const [parser, vanillaToVue, vanillaToVue3, vanillaToReact, vanillaToReactFunctional, vanillaToAngular] = getGeneratorCode(prefix);
     const appModuleAngular = new Map();
@@ -213,6 +217,8 @@ function createExampleGenerator(prefix, importTypes) {
         const style = /<style>(.*)<\/style>/s.exec(indexHtml);
         let inlineStyles = style && style.length > 0 && format(style[1], 'css');
 
+        debugger
+
         if (type === 'mixed' && providedExamples['react']) {
             importTypes.forEach(importType => copyProvidedExample(importType, 'react', providedExamples['react']));
         } else {
@@ -220,7 +226,7 @@ function createExampleGenerator(prefix, importTypes) {
             const reactConfigs = new Map();
 
             try {
-                const getSource = vanillaToReact(bindings, extractComponentFileNames(reactScripts, '_react'));
+                const getSource = vanillaToReact(deepCloneObject(bindings), extractComponentFileNames(reactScripts, '_react'));
                 importTypes.forEach(importType => reactConfigs.set(importType, { 'index.jsx': getSource(importType) }));
             } catch (e) {
                 console.error(`Failed to process React example in ${examplePath}`, e);
@@ -229,6 +235,7 @@ function createExampleGenerator(prefix, importTypes) {
 
             importTypes.forEach(importType => writeExampleFiles(importType, 'react', 'react', reactScripts, reactConfigs.get(importType)));
         }
+        debugger
 
         if (type === 'mixed' && providedExamples['reactFunctional']) {
             importTypes.forEach(importType => copyProvidedExample(importType, 'reactFunctional', providedExamples['reactFunctional']));
@@ -243,7 +250,7 @@ function createExampleGenerator(prefix, importTypes) {
                 reactDeclarativeScripts = getMatchingPaths(`*_${reactScriptPostfix}.*`);
 
                 try {
-                    const getSource = vanillaToReactFunctional(bindings, extractComponentFileNames(reactDeclarativeScripts, `_${reactScriptPostfix}`));
+                    const getSource = vanillaToReactFunctional(deepCloneObject(bindings), extractComponentFileNames(reactDeclarativeScripts, `_${reactScriptPostfix}`));
                     importTypes.forEach(importType => reactDeclarativeConfigs.set(importType, { 'index.jsx': getSource(importType) }));
                 } catch (e) {
                     console.error(`Failed to process React example in ${examplePath}`, e);
@@ -254,6 +261,7 @@ function createExampleGenerator(prefix, importTypes) {
             }
         }
 
+        debugger
         if (type === 'mixed' && providedExamples['angular']) {
             importTypes.forEach(importType => copyProvidedExample(importType, 'angular', providedExamples['angular']));
         } else {
@@ -261,7 +269,7 @@ function createExampleGenerator(prefix, importTypes) {
             const angularConfigs = new Map();
             try {
                 const angularComponentFileNames = extractComponentFileNames(angularScripts, '_angular');
-                const getSource = vanillaToAngular(bindings, angularComponentFileNames);
+                const getSource = vanillaToAngular(deepCloneObject(bindings), angularComponentFileNames);
 
                 importTypes.forEach(importType => {
                     angularConfigs.set(importType, {
@@ -277,13 +285,14 @@ function createExampleGenerator(prefix, importTypes) {
             importTypes.forEach(importType => writeExampleFiles(importType, 'angular', 'angular', angularScripts, angularConfigs.get(importType), 'app'));
         }
 
+        debugger
         if (type === 'mixed' && providedExamples['vue']) {
             importTypes.forEach(importType => copyProvidedExample(importType, 'vue', providedExamples['vue']));
         } else {
             const vueScripts = getMatchingPaths('*_vue*');
             const vueConfigs = new Map();
             try {
-                const getSource = vanillaToVue(bindings, extractComponentFileNames(vueScripts, '_vue', 'Vue'));
+                const getSource = vanillaToVue(deepCloneObject(bindings), extractComponentFileNames(vueScripts, '_vue', 'Vue'));
 
                 importTypes.forEach(importType => vueConfigs.set(importType, { 'main.js': getSource(importType) }));
             } catch (e) {
@@ -300,10 +309,10 @@ function createExampleGenerator(prefix, importTypes) {
             importTypes.forEach(importType => copyProvidedExample(importType, 'vue3', providedExamples['vue3']));
         } else {
             if(vanillaToVue3) { // not defined for charts yet
-                const vueScripts = getMatchingPaths('*_vue3*');
+                const vueScripts = getMatchingPaths('*_vue*');
                 const vueConfigs = new Map();
                 try {
-                    const getSource = vanillaToVue3(bindings, extractComponentFileNames(vueScripts, '_vue3', 'Vue'));
+                    const getSource = vanillaToVue3(bindings, extractComponentFileNames(vueScripts, '_vue', 'Vue'));
 
                     importTypes.forEach(importType => vueConfigs.set(importType, { 'main.js': getSource(importType) }));
                 } catch (e) {
@@ -313,7 +322,7 @@ function createExampleGenerator(prefix, importTypes) {
 
                 // we rename the files so that they end with "Vue.js" - we do this so that we can (later, at runtime) exclude these
                 // from index.html will still including other non-component files
-                importTypes.forEach(importType => writeExampleFiles(importType, 'vue3', 'vue3', vueScripts, vueConfigs.get(importType), undefined, 'Vue'));
+                importTypes.forEach(importType => writeExampleFiles(importType, 'vue3', 'vue', vueScripts, vueConfigs.get(importType), undefined, 'Vue'));
             }
         }
 
