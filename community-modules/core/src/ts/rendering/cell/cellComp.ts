@@ -150,6 +150,7 @@ export class CellComp extends Component implements TooltipParentComp {
             setZIndex: zIndex => style.zIndex = zIndex,
             setTabIndex: tabIndex => eGui.setAttribute('tabindex', tabIndex.toString()),
             setRole: role => eGui.setAttribute('role', role),
+            setColId: colId => eGui.setAttribute('col-id', colId),
 
             // temp items
             isEditing: ()=> this.editingCell,
@@ -178,21 +179,15 @@ export class CellComp extends Component implements TooltipParentComp {
     private getCreateTemplate(): string {
         const unselectable = !this.beans.gridOptionsWrapper.isEnableCellTextSelection() ? ' unselectable="on"' : '';
         const templateParts: string[] = [];
-        const col = this.column;
 
         const valueToRender = this.getInitialValueToRender();
         const valueSanitised = get(this.column, 'colDef.template', null) ? valueToRender : escapeString(valueToRender);
         this.tooltip = this.getToolTip();
         const tooltipSanitised = escapeString(this.tooltip);
-        const colIdSanitised = escapeString(col.getId());
-
-        const colIdxSanitised = escapeString(this.beans.columnModel.getAriaColumnIndex(this.column).toString());
 
         templateParts.push(`<div comp-id="${this.getCompId()}"`);
 
         templateParts.push(`${unselectable}`); // THIS IS FOR IE ONLY so text selection doesn't bubble outside of the grid
-        templateParts.push(` aria-colindex="${colIdxSanitised}"`);
-        templateParts.push(` col-id="${colIdSanitised}"`);
 
         if (this.beans.gridOptionsWrapper.isEnableBrowserTooltips() && exists(tooltipSanitised)) {
             templateParts.push(` title="${tooltipSanitised}"`);

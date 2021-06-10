@@ -12,6 +12,7 @@ import { setAriaColIndex } from "../../utils/aria";
 import { missing } from "../../utils/generic";
 import { BeanStub } from "../../context/beanStub";
 import { CellPositionFeature } from "./cellPositionFeature";
+import { escapeString } from "../../utils/string";
 
 //////// theses should not be imported, remove them once CellComp has been refactored
 export const CSS_CELL = 'ag-cell';
@@ -54,6 +55,7 @@ export interface ICellComp {
     setZIndex(zIndex: string): void;
     setTabIndex(tabIndex: number): void;
     setRole(role: string): void;
+    setColId(colId: string): void;
 
     // setValue(value: any): void;
     // setValueFormatted(value: string): void;
@@ -126,8 +128,13 @@ export class CellCtrl extends BeanStub {
         this.onLastLeftPinnedChanged();
         this.onColumnHover();
 
+        const colIdSanitised = escapeString(this.column.getId());
+        const ariaColIndex = this.beans.columnModel.getAriaColumnIndex(this.column);
+
         this.comp.setTabIndex(-1);
         this.comp.setRole('gridcell');
+        this.comp.setAriaColIndex(ariaColIndex);
+        this.comp.setColId(colIdSanitised!);
 
         this.cellPositionFeature.setComp(comp);
         if (this.cellRangeFeature) { this.cellRangeFeature.setComp(comp); }
@@ -138,7 +145,13 @@ export class CellCtrl extends BeanStub {
     }
 
     public onLeftChanged(): void {
-        return this.cellPositionFeature.onLeftChanged();
+        this.cellPositionFeature.onLeftChanged();
+        this.refreshAriaIndex(); // should change this to listen for when column order changes
+    }
+
+    private refreshAriaIndex(): void {
+        const colIdx = this.beans.columnModel.getAriaColumnIndex(this.column);
+        this.comp.setAriaColIndex(colIdx);
     }
 
     public onWidthChanged(): void {
@@ -354,7 +367,6 @@ export class CellCtrl extends BeanStub {
         this.comp.addOrRemoveCssClass(CSS_CELL_WRAP_TEXT, value);
     }
 
-
     private applyClassesFromColDef() {
 
         const colDef = this.getComponentHolder();
@@ -377,10 +389,7 @@ export class CellCtrl extends BeanStub {
         );
     }
 
-
-
     public destroy(): void {
         if (this.cellRangeFeature) { this.cellRangeFeature.destroy(); }
     }
-
 }

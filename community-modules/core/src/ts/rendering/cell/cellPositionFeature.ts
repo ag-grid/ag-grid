@@ -120,12 +120,6 @@ export class CellPositionFeature extends BeanStub {
         if (!this.comp) { return; }
         const left = this.modifyLeftForPrintLayout(this.getCellLeft());
         this.comp.setLeft(left + 'px');
-        this.refreshAriaIndex();
-    }
-
-    private refreshAriaIndex(): void {
-        const colIdx = this.beans.columnModel.getAriaColumnIndex(this.column);
-        this.comp.setAriaColIndex(colIdx);
     }
 
     private getCellLeft(): number | null {
