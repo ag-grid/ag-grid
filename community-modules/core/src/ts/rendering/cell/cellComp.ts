@@ -160,10 +160,18 @@ export class CellComp extends Component implements TooltipParentComp {
 
         this.ctrl.setComp(compProxy, false, this.usingWrapper, this.scope, this.getGui(),
             this.printLayout);
-
         this.addDestroyFunc( ()=> this.ctrl.destroy() );
 
-        this.afterAttached();
+        // all of these have dependencies on the eGui, so only do them after eGui is set
+        this.addDomData();
+        this.populateTemplate();
+        this.createCellRendererInstance(true);
+        this.angular1Compile();
+        this.ctrl.refreshHandle();
+
+        if (exists(this.tooltip)) {
+            this.createTooltipFeatureIfNeeded();
+        }
 
         // if we are editing the row, then the cell needs to turn
         // into edit mode
@@ -216,20 +224,6 @@ export class CellComp extends Component implements TooltipParentComp {
         </div>`;
 
         return wrapper;
-    }
-
-    public afterAttached(): void {
-
-        // all of these have dependencies on the eGui, so only do them after eGui is set
-        this.addDomData();
-        this.populateTemplate();
-        this.createCellRendererInstance(true);
-        this.angular1Compile();
-        this.ctrl.refreshHandle();
-
-        if (exists(this.tooltip)) {
-            this.createTooltipFeatureIfNeeded();
-        }
     }
 
     private createTooltipFeatureIfNeeded(): void {
@@ -1526,12 +1520,6 @@ export class CellComp extends Component implements TooltipParentComp {
         const cbSelectionComponent = new CheckboxSelectionComponent();
         this.beans.context.createBean(cbSelectionComponent);
 
-        let visibleFunc = this.getComponentHolder().checkboxSelection;
-
-        if (typeof visibleFunc !== 'function') {
-            visibleFunc = undefined;
-        }
-
         cbSelectionComponent.init({ rowNode: this.rowNode, column: this.column });
         this.addDestroyFunc(() => this.beans.context.destroyBean(cbSelectionComponent));
 
@@ -1546,10 +1534,6 @@ export class CellComp extends Component implements TooltipParentComp {
 
         this.addDestroyFunc(() => this.beans.gridOptionsWrapper.setDomData(element, CellComp.DOM_DATA_KEY_CELL_COMP, null));
     }
-
-    // public onCellFocused(event?: CellFocusedEvent): void {
-    //     this.ctrl.onCellFocused(event);
-    // }
 
     // pass in 'true' to cancel the editing.
     public stopRowOrCellEdit(cancel: boolean = false) {
