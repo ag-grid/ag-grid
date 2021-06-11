@@ -120,10 +120,10 @@
                         </div>
                         <div class="col-md-4">
                             <div>
-                                <img src='images/team/adrian.jpg' alt="Adrian Lowdon, Lead Developer"/>
+                                <img src='images/team/alan.jpg' alt="Alan Richardson, Digital Marketing"/>
                             </div>
-                            <h3>Adrian Lowdon</h3>
-                            <h4>Lead Developer, Grid Core</h4>
+                            <h3>Alan Richardson</h3>
+                            <h4>Digital Marketing</h4>
                         </div>
                     </div>
                     <div class="row">
@@ -143,16 +143,16 @@
                         </div>
                         <div class="col-md-4">
                             <div>
-                                <img src='images/team/alan.jpg' alt="Alan Richardson, Digital Marketing"/>
+                                <img src='images/team/marats.jpeg' alt="Marats Stelihs, Developer"/>
                             </div>
-                            <h3>Alan Richardson</h3>
-                            <h4>Digital Marketing</h4>
+                            <h3>Marats Stelihs</h3>
+                            <h4>Developer</h4>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-4">
                             <div>
-                                <img src='images/team/ahmed2.jpg' alt=" Ahmed Gadir, Developer"/>
+                                <img src='src/images/team/ahmed.jpeg' alt=" Ahmed Gadir, Developer"/>
                             </div>
                             <h3>Ahmed Gadir</h3>
                             <h4>Developer</h4>
@@ -226,10 +226,10 @@
                         </div>
                         <div class="col-md-4">
                             <div>
-                                <img src='images/team/ashley2.jpg' alt="Ashley Lam, Business Development Manager"/>
+                                <img src='images/team/nathan.jpeg' alt="Nathan Gauge-Klein, General Council"/>
                             </div>
-                            <h3>Ashley Lam</h3>
-                            <h4>Business Development Manager</h4>
+                            <h3>Nathan Gauge-Klein</h3>
+                            <h4>General Council</h4>
                         </div>
                         <div class="col-md-4">
                             <div>
@@ -256,7 +256,7 @@
                         </div>
                         <div class="col-md-4">
                             <div>
-                                <img src='images/team/victoria.jpg'
+                                <img src='images/team/victoria.jpeg'
                                      alt="Victoria Tennant, Business Development Manager"/>
                             </div>
                             <h3>Victoria Tennant</h3>
@@ -283,6 +283,22 @@
                                 <img src='images/team/ryan.png' alt="Ryan Short, Customer Experience Manager"/>
                             </div>
                             <h3>Ryan Short</h3>
+                            <h4>Customer Experience Manager</h4>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div>
+                                <img src='images/team/seweety.jpeg' alt="Seweety Kumar, Customer Experience Manager"/>
+                            </div>
+                            <h3>Seweety Kumar</h3>
+                            <h4>Customer Experience Manager</h4>
+                        </div>
+                        <div class="col-md-4">
+                            <div>
+                                <img src='images/team/shannon.jpeg' alt="Shannan Monrose, Customer Experience Manager"/>
+                            </div>
+                            <h3>Shannan Monrose</h3>
                             <h4>Customer Experience Manager</h4>
                         </div>
                     </div>
