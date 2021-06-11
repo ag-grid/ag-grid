@@ -9,11 +9,15 @@ import { CellRangeFeature } from "./cellRangeFeature";
 import { areEqual, last } from "../../utils/array";
 import { Constants } from "../../constants/constants";
 import { setAriaColIndex } from "../../utils/aria";
-import { missing } from "../../utils/generic";
+import { exists, missing } from "../../utils/generic";
 import { BeanStub } from "../../context/beanStub";
 import { CellPositionFeature } from "./cellPositionFeature";
 import { escapeString } from "../../utils/string";
 import { CellCustomStyleFeature } from "./cellCustomStyleFeature";
+import { TooltipFeature } from "../../widgets/tooltipFeature";
+import { getValueUsingField } from "../../utils/object";
+import { ITooltipParams } from "../tooltipComponent";
+import { CellTooltipFeature } from "./cellTooltipFeature";
 
 //////// theses should not be imported, remove them once CellComp has been refactored
 export const CSS_CELL = 'ag-cell';
@@ -57,6 +61,7 @@ export interface ICellComp {
     setTabIndex(tabIndex: number): void;
     setRole(role: string): void;
     setColId(colId: string): void;
+    setTitle(title: string | null): void;
 
     // setValue(value: any): void;
     // setValueFormatted(value: string): void;
@@ -64,6 +69,7 @@ export interface ICellComp {
     // temp to get things compiling
     isEditing(): boolean;
     getValue(): any;
+    getValueFormatted(): string;
     stopRowOrCellEdit(): void;
 }
 
@@ -86,6 +92,7 @@ export class CellCtrl extends BeanStub {
     private cellRangeFeature: CellRangeFeature;
     private cellPositionFeature: CellPositionFeature;
     private cellCustomStyleFeature: CellCustomStyleFeature;
+    private cellTooltipFeature: CellTooltipFeature;
 
     private cellPosition: CellPosition;
 
@@ -105,6 +112,9 @@ export class CellCtrl extends BeanStub {
 
         this.cellCustomStyleFeature = new CellCustomStyleFeature(this, this.beans);
         this.addDestroyFunc( ()=> this.cellCustomStyleFeature.destroy() );
+
+        this.cellTooltipFeature = new CellTooltipFeature(this, this.beans);
+        this.addDestroyFunc( ()=> this.cellTooltipFeature.destroy() );
 
         const rangeSelectionEnabled = this.beans.rangeService && this.beans.gridOptionsWrapper.isEnableRangeSelection();
         if (rangeSelectionEnabled) {
@@ -140,7 +150,16 @@ export class CellCtrl extends BeanStub {
 
         this.cellPositionFeature.setComp(comp);
         this.cellCustomStyleFeature.setComp(comp, scope);
+        this.cellTooltipFeature.setComp(comp);
         if (this.cellRangeFeature) { this.cellRangeFeature.setComp(comp); }
+    }
+
+    public getGui(): HTMLElement {
+        return this.eGui;
+    }
+
+    public refreshToolTip(): void {
+        this.cellTooltipFeature.refreshToolTip();
     }
 
     public getColSpanningList(): Column[] {
@@ -304,9 +323,9 @@ export class CellCtrl extends BeanStub {
         this.onNewColumnsLoaded();
     }
 
-    public getComponentHolder(): ColDef {
-        return this.column.getColDef();
-    }
+    // public getComponentHolder(): ColDef {
+    //     return this.column.getColDef();
+    // }
 
     public onNewColumnsLoaded(): void {
         this.postProcessWrapText();

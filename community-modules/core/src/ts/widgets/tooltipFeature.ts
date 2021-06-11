@@ -9,8 +9,9 @@ import { UserComponentFactory } from "../components/framework/userComponentFacto
 import { addCssClass, containsClass } from "../utils/dom";
 import { exists } from "../utils/generic";
 
-export interface TooltipParentComp extends Component {
+export interface TooltipParentComp {
     getTooltipParams(): ITooltipParams;
+    getGui(): HTMLElement;
 }
 
 enum TooltipStates { NOTHING, WAITING_TO_SHOW, SHOWING }

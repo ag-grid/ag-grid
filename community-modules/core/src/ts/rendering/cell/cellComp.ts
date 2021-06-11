@@ -98,9 +98,6 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private suppressRefreshCell = false;
 
-    private tooltipFeatureEnabled = false;
-    private tooltip: any;
-
     private scope: any = null;
 
     private ctrl: CellCtrl;
@@ -138,6 +135,14 @@ export class CellComp extends Component implements TooltipParentComp {
         const eGui = this.getGui();
         const style = eGui.style;
 
+        const setAttribute = (name: string, value: string | null) => {
+            if (value!=null && value!='') {
+                eGui.setAttribute(name, value);
+            } else {
+                eGui.removeAttribute(name);
+            }
+        };
+
         const compProxy: ICellComp = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setUserStyles: styles => addStylesToElement(eGui, styles),
@@ -148,13 +153,15 @@ export class CellComp extends Component implements TooltipParentComp {
             setAriaColIndex: index => setAriaColIndex(this.getGui(), index),
             setHeight: height => style.height = height,
             setZIndex: zIndex => style.zIndex = zIndex,
-            setTabIndex: tabIndex => eGui.setAttribute('tabindex', tabIndex.toString()),
-            setRole: role => eGui.setAttribute('role', role),
-            setColId: colId => eGui.setAttribute('col-id', colId),
+            setTabIndex: tabIndex => setAttribute('tabindex', tabIndex.toString()),
+            setRole: role => setAttribute('role', role),
+            setColId: colId => setAttribute('col-id', colId),
+            setTitle: title => setAttribute('title', title),
 
             // temp items
             isEditing: ()=> this.editingCell,
             getValue: ()=> this.value,
+            getValueFormatted: ()=> this.valueFormatted,
             stopRowOrCellEdit: ()=> this.stopRowOrCellEdit()
         };
 
@@ -169,9 +176,6 @@ export class CellComp extends Component implements TooltipParentComp {
         this.angular1Compile();
         this.ctrl.refreshHandle();
 
-        if (exists(this.tooltip)) {
-            this.createTooltipFeatureIfNeeded();
-        }
 
         // if we are editing the row, then the cell needs to turn
         // into edit mode
@@ -190,25 +194,13 @@ export class CellComp extends Component implements TooltipParentComp {
 
         const valueToRender = this.getInitialValueToRender();
         const valueSanitised = get(this.column, 'colDef.template', null) ? valueToRender : escapeString(valueToRender);
-        this.tooltip = this.getToolTip();
-        const tooltipSanitised = escapeString(this.tooltip);
 
-        templateParts.push(`<div comp-id="${this.getCompId()}"`);
-
-        templateParts.push(`${unselectable}`); // THIS IS FOR IE ONLY so text selection doesn't bubble outside of the grid
-
-        if (this.beans.gridOptionsWrapper.isEnableBrowserTooltips() && exists(tooltipSanitised)) {
-            templateParts.push(` title="${tooltipSanitised}"`);
-        }
-
-        templateParts.push(`>`);
-
+        templateParts.push(`<div comp-id="${this.getCompId()}" ${unselectable}>`);
         if (this.usingWrapper) {
             templateParts.push(this.getCellWrapperString(valueSanitised));
         } else if (valueSanitised != null) {
             templateParts.push(valueSanitised);
         }
-
         templateParts.push(`</div>`);
 
         return templateParts.join('');
@@ -224,16 +216,6 @@ export class CellComp extends Component implements TooltipParentComp {
         </div>`;
 
         return wrapper;
-    }
-
-    private createTooltipFeatureIfNeeded(): void {
-        if (
-            this.beans.gridOptionsWrapper.isEnableBrowserTooltips() ||
-            this.tooltipFeatureEnabled
-        ) { return; }
-
-        this.createManagedBean(new TooltipFeature(this), this.beans.context);
-        this.tooltipFeatureEnabled = true;
     }
 
     public onColumnHover(): void {
@@ -389,7 +371,7 @@ export class CellComp extends Component implements TooltipParentComp {
         // and recompile (if applicable)
         this.updateAngular1ScopeAndCompile();
 
-        this.refreshToolTip();
+        this.ctrl.refreshToolTip();
 
         this.ctrl.temp_applyRules();
     }
@@ -516,28 +498,6 @@ export class CellComp extends Component implements TooltipParentComp {
         return result === true || result === undefined;
     }
 
-    private refreshToolTip() {
-        const newTooltip = this.getToolTip();
-
-        if (this.tooltip === newTooltip) { return; }
-
-        this.createTooltipFeatureIfNeeded();
-
-        const hasNewTooltip = exists(newTooltip);
-
-        if (hasNewTooltip && this.tooltip === newTooltip!.toString()) { return; }
-
-        this.tooltip = newTooltip;
-
-        if (this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
-            if (hasNewTooltip) {
-                this.eCellValue.setAttribute('title', this.tooltip);
-            } else {
-                this.eCellValue.removeAttribute('title');
-            }
-        }
-    }
-
     private valuesAreEqual(val1: any, val2: any): boolean {
         // if the user provided an equals method, use that, otherwise do simple comparison
         const colDef = this.getComponentHolder();
@@ -546,45 +506,6 @@ export class CellComp extends Component implements TooltipParentComp {
         return equalsMethod ? equalsMethod(val1, val2) : val1 === val2;
     }
 
-    private getToolTip(): string | null {
-        const colDef = this.getComponentHolder();
-        const data = this.rowNode.data;
-
-        if (colDef.tooltipField && exists(data)) {
-            return getValueUsingField(data, colDef.tooltipField, this.column.isTooltipFieldContainsDots());
-        }
-
-        const valueGetter = colDef.tooltipValueGetter;
-
-        if (valueGetter) {
-            return valueGetter({
-                api: this.beans.gridOptionsWrapper.getApi(),
-                columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
-                context: this.beans.gridOptionsWrapper.getContext(),
-                ...this.getTooltipParams(),
-                value: this.value
-            });
-        }
-
-        return null;
-    }
-
-    public getTooltipParams(): ITooltipParams {
-        return {
-            location: 'cell',
-            colDef: this.getComponentHolder(),
-            column: this.getColumn(),
-            rowIndex: this.ctrl.getCellPosition().rowIndex,
-            node: this.rowNode,
-            data: this.rowNode.data,
-            value: this.getTooltipText(),
-            valueFormatted: this.valueFormatted,
-        };
-    }
-
-    private getTooltipText(escape: boolean = true) {
-        return escape ? escapeString(this.tooltip) : this.tooltip;
-    }
 
     // a wrapper is used when we are putting a selection checkbox in the cell with the value
     public setUsingWrapper(): void {
