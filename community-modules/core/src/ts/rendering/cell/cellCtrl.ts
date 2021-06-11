@@ -224,6 +224,10 @@ export class CellCtrl extends BeanStub {
         return this.cellRangeFeature != null;
     }
 
+    public focusCell(forceBrowserFocus = false): void {
+        this.beans.focusService.setFocusedCell(this.getCellPosition().rowIndex, this.column, this.rowNode.rowPinned, forceBrowserFocus);
+    }
+
     public onRowIndexChanged(): void {
         // when index changes, this influences items that need the index, so we update the
         // grid cell so they are working off the new index.

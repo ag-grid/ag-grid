@@ -783,7 +783,7 @@ export class CellComp extends Component implements TooltipParentComp {
         const cellEditorAsync = missing(this.cellEditor);
 
         if (cellEditorAsync && cellStartedEdit) {
-            this.focusCell(true);
+            this.ctrl.focusCell(true);
         }
     }
 
@@ -981,7 +981,7 @@ export class CellComp extends Component implements TooltipParentComp {
     // than what we pick up on. eg selecting from a dropdown ends editing.
     private stopEditingAndFocus(suppressNavigateAfterEdit = false): void {
         this.stopRowOrCellEdit();
-        this.focusCell(true);
+        this.ctrl.focusCell(true);
 
         if (!suppressNavigateAfterEdit) {
             this.navigateAfterEdit();
@@ -1007,10 +1007,6 @@ export class CellComp extends Component implements TooltipParentComp {
         return exists(valueParser) ? this.beans.expressionService.evaluate(valueParser, params) : newValue;
     }
 
-    public focusCell(forceBrowserFocus = false): void {
-        this.beans.focusService.setFocusedCell(this.ctrl.getCellPosition().rowIndex, this.column, this.rowNode.rowPinned, forceBrowserFocus);
-    }
-
     public setFocusInOnEditor(): void {
         if (this.editingCell) {
             if (this.cellEditor && this.cellEditor.focusIn) {
@@ -1020,7 +1016,7 @@ export class CellComp extends Component implements TooltipParentComp {
                 // if the editor is not present, it means async cell editor (eg React fibre)
                 // and we are trying to set focus before the cell editor is present, so we
                 // focus the cell instead
-                this.focusCell(true);
+                this.ctrl.focusCell(true);
             }
         }
     }
@@ -1137,7 +1133,7 @@ export class CellComp extends Component implements TooltipParentComp {
     private onEscapeKeyDown(): void {
         if (this.editingCell) {
             this.stopRowOrCellEdit(true);
-            this.focusCell(true);
+            this.ctrl.focusCell(true);
         }
     }
 
@@ -1206,7 +1202,7 @@ export class CellComp extends Component implements TooltipParentComp {
             // due to a click on a cell editor for example.
             const forceBrowserFocus = (isBrowserIE() || isBrowserEdge()) && !this.editingCell && !isFocusableFormField(target);
 
-            this.focusCell(forceBrowserFocus);
+            this.ctrl.focusCell(forceBrowserFocus);
         } else if (rangeService) {
             // if a range is being changed, we need to make sure the focused cell does not change.
             mouseEvent.preventDefault();

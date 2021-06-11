@@ -1429,7 +1429,7 @@ export class RowRenderer extends BeanStub {
             // in order for the tab navigation to work, we need to focus the browser back onto the
             // previous cell.
             if (previousRenderedCell instanceof CellComp) {
-                previousRenderedCell.focusCell(true);
+                previousRenderedCell.getCtrl().focusCell(true);
             }
 
             if (this.focusService.focusNextGridCoreContainer(false)) {
@@ -1504,7 +1504,7 @@ export class RowRenderer extends BeanStub {
         // to the normal tabbing so user can exit the grid.
         if (foundCell) {
             nextRenderedCell.startEditingIfEnabled(null, null, true);
-            nextRenderedCell.focusCell(false);
+            nextRenderedCell.getCtrl().focusCell(false);
         }
 
         return foundCell;
@@ -1539,9 +1539,9 @@ export class RowRenderer extends BeanStub {
 
         if (nextEditable) {
             nextCellComp.setFocusInOnEditor();
-            nextCellComp.focusCell();
+            nextCellComp.getCtrl().focusCell();
         } else {
-            nextCellComp.focusCell(true);
+            nextCellComp.getCtrl().focusCell(true);
         }
 
         return true;
@@ -1565,7 +1565,7 @@ export class RowRenderer extends BeanStub {
         // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
         // to the normal tabbing so user can exit the grid.
         if (nextRenderedCell instanceof CellComp) {
-            nextRenderedCell.focusCell(true);
+            nextRenderedCell.getCtrl().focusCell(true);
         } else if (nextRenderedCell) {
             return this.tryToFocusFullWidthRow(nextRenderedCell.getRowPosition(), backwards);
         }
