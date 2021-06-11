@@ -125,7 +125,7 @@ export class CellComp extends Component implements TooltipParentComp {
         this.eRow = eRow;
 
         // we need to do this early, as we need CellPosition before we call setComp()
-        this.ctrl = new CellCtrl(column, rowNode, beans);
+        this.ctrl = new CellCtrl(column, rowNode, beans, rowComp);
 
         this.getValueAndFormat();
         this.setUsingWrapper();
@@ -163,7 +163,12 @@ export class CellComp extends Component implements TooltipParentComp {
             isEditing: ()=> this.editingCell,
             getValue: ()=> this.value,
             getValueFormatted: ()=> this.valueFormatted,
-            stopRowOrCellEdit: ()=> this.stopRowOrCellEdit()
+            setFocusOutOnEditor: ()=> this.setFocusOutOnEditor(),
+            setFocusInOnEditor: ()=> this.setFocusInOnEditor(),
+            stopRowOrCellEdit: ()=> this.stopRowOrCellEdit(),
+            stopEditing: ()=> this.stopEditing(),
+            startRowOrCellEdit: (keyPress, charPress)=> this.startRowOrCellEdit(keyPress, charPress),
+            startEditingIfEnabled: (keyPress, charPress, cellStartedEdit)=> this.startEditingIfEnabled(keyPress, charPress, cellStartedEdit)
         };
 
         this.ctrl.setComp(compProxy, false, this.usingWrapper, this.scope, this.getGui(),
@@ -281,10 +286,6 @@ export class CellComp extends Component implements TooltipParentComp {
 
     public getRenderedRow(): RowCtrl | null {
         return this.rowCtrl;
-    }
-
-    public isSuppressNavigable(): boolean {
-        return this.column.isSuppressNavigable(this.rowNode);
     }
 
     public getCellRenderer(): ICellRendererComp | null | undefined {
@@ -1084,7 +1085,7 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private onTabKeyDown(event: KeyboardEvent): void {
-        this.beans.rowRenderer.onTabKeyDown(this, event);
+        this.beans.rowRenderer.onTabKeyDown(this.ctrl, event);
     }
 
     private onBackspaceOrDeleteKeyPressed(key: number): void {
@@ -1282,13 +1283,6 @@ export class CellComp extends Component implements TooltipParentComp {
         if (editOnSingleClick) {
             this.startRowOrCellEdit();
         }
-    }
-
-    public getRowPosition(): RowPosition {
-        return {
-            rowIndex: this.ctrl.getCellPosition().rowIndex,
-            rowPinned: this.ctrl.getCellPosition().rowPinned
-        };
     }
 
     public getCellPosition(): CellPosition {

@@ -430,7 +430,7 @@ export class FocusService extends BeanStub {
 
             event.column = this.focusedCellPosition.column;
 
-            const rowCon = this.rowRenderer.getRowConByPosition({ rowIndex, rowPinned });
+            const rowCon = this.rowRenderer.getRowByPosition({ rowIndex, rowPinned });
 
             if (rowCon) {
                 event.isFullWidthCell = rowCon.isFullWidth();

@@ -18,6 +18,8 @@ import { TooltipFeature } from "../../widgets/tooltipFeature";
 import { getValueUsingField } from "../../utils/object";
 import { ITooltipParams } from "../tooltipComponent";
 import { CellTooltipFeature } from "./cellTooltipFeature";
+import { RowPosition } from "../../entities/rowPosition";
+import { RowCtrl } from "../row/rowCtrl";
 
 //////// theses should not be imported, remove them once CellComp has been refactored
 export const CSS_CELL = 'ag-cell';
@@ -72,6 +74,11 @@ export interface ICellComp {
     getValue(): any;
     getValueFormatted(): string;
     stopRowOrCellEdit(): void;
+    stopEditing(): void;
+    setFocusOutOnEditor(): void;
+    setFocusInOnEditor(): void;
+    startRowOrCellEdit(keyPress?: number | null, charPress?: string | null): void;
+    startEditingIfEnabled(keyPress?: number | null, charPress?: string | null, cellStartedEdit?: boolean): void;
 }
 
 export class CellCtrl extends BeanStub {
@@ -82,6 +89,7 @@ export class CellCtrl extends BeanStub {
     private gow: GridOptionsWrapper;
     private column: Column;
     private rowNode: RowNode;
+    private rowCtrl: RowCtrl | null;
 
     private autoHeightCell: boolean;
     private printLayout: boolean;
@@ -97,11 +105,12 @@ export class CellCtrl extends BeanStub {
 
     private cellPosition: CellPosition;
 
-    constructor(column: Column, rowNode: RowNode, beans: Beans) {
+    constructor(column: Column, rowNode: RowNode, beans: Beans, rowCtrl: RowCtrl | null) {
         super();
         this.column = column;
         this.rowNode = rowNode;
         this.beans = beans;
+        this.rowCtrl = rowCtrl;
 
         this.createCellPosition();
         this.addFeatures();
@@ -156,12 +165,20 @@ export class CellCtrl extends BeanStub {
         if (this.cellRangeFeature) { this.cellRangeFeature.setComp(comp); }
     }
 
+    public setFocusInOnEditor(): void {
+        this.comp.setFocusInOnEditor();
+    }
+
     public getGui(): HTMLElement {
         return this.eGui;
     }
 
     public refreshToolTip(): void {
         this.cellTooltipFeature.refreshToolTip();
+    }
+
+    public setFocusOutOnEditor(): void {
+        this.comp.setFocusOutOnEditor();
     }
 
     public getColSpanningList(): Column[] {
@@ -176,6 +193,18 @@ export class CellCtrl extends BeanStub {
     private refreshAriaIndex(): void {
         const colIdx = this.beans.columnModel.getAriaColumnIndex(this.column);
         this.comp.setAriaColIndex(colIdx);
+    }
+
+    public startEditingIfEnabled(keyPress: number | null = null, charPress: string | null = null, cellStartedEdit = false): void {
+        this.comp.startEditingIfEnabled(keyPress, charPress, cellStartedEdit);
+    }
+
+    public isSuppressNavigable(): boolean {
+        return this.column.isSuppressNavigable(this.rowNode);
+    }
+
+    public stopEditing(): void {
+        this.comp.stopEditing();
     }
 
     public onWidthChanged(): void {
@@ -206,6 +235,25 @@ export class CellCtrl extends BeanStub {
 
     public getCellPosition(): CellPosition {
         return this.cellPosition;
+    }
+
+    public isEditing(): boolean {
+        return this.comp.isEditing();
+    }
+
+    public startRowOrCellEdit(keyPress?: number | null, charPress?: string | null): void {
+        this.comp.startRowOrCellEdit(keyPress, charPress);
+    }
+
+    public getRowCtrl(): RowCtrl | null {
+        return this.rowCtrl;
+    }
+
+    public getRowPosition(): RowPosition {
+        return {
+            rowIndex: this.cellPosition.rowIndex,
+            rowPinned: this.cellPosition.rowPinned
+        };
     }
 
     public updateRangeBordersIfRangeCount(): void {

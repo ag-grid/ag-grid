@@ -296,7 +296,7 @@ export class RowCtrl extends BeanStub {
     }
 
     public getCellForCol(column: Column): HTMLElement | null {
-        const cellComp = this.getRenderedCellForColumn(column);
+        const cellComp = this.getCellForColumn(column);
         return cellComp ? cellComp.getGui() : null;
     }
 
@@ -1215,7 +1215,7 @@ export class RowCtrl extends BeanStub {
         return this.rowNode;
     }
 
-    public getRenderedCellForColumn(column: Column): CellComp | null {
+    public getCellForColumn(column: Column): CellComp | null {
         const cellComps = this.allComps.map(c => c.comp.getCellComp(column.getColId()));
         let cellComp = find(cellComps, c => !!c);
 
