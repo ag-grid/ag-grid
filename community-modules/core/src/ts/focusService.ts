@@ -22,6 +22,7 @@ import { findIndex, last } from './utils/array';
 import { makeNull } from './utils/generic';
 import { Constants } from "./constants/constants";
 import { GridCtrl } from "./gridComp/gridCtrl";
+import { NavigationService } from "./gridBodyComp/navigationService";
 
 @Bean('focusService')
 export class FocusService extends BeanStub {
@@ -33,6 +34,7 @@ export class FocusService extends BeanStub {
     @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
     @Autowired('rowPositionUtils') private readonly rowPositionUtils: RowPositionUtils;
     @Optional('rangeService') private readonly rangeService: IRangeService;
+    @Autowired('navigationService') public navigationService: NavigationService;
 
     public static AG_KEYBOARD_FOCUS: string = 'ag-keyboard-focus';
 
@@ -430,10 +432,10 @@ export class FocusService extends BeanStub {
 
             event.column = this.focusedCellPosition.column;
 
-            const rowCon = this.rowRenderer.getRowByPosition({ rowIndex, rowPinned });
+            const rowCtrl = this.rowRenderer.getRowByPosition({ rowIndex, rowPinned });
 
-            if (rowCon) {
-                event.isFullWidthCell = rowCon.isFullWidth();
+            if (rowCtrl) {
+                event.isFullWidthCell = rowCtrl.isFullWidth();
             }
         }
 
@@ -456,7 +458,7 @@ export class FocusService extends BeanStub {
 
         if (rowIndex == null || !column) { return false; }
 
-        this.rowRenderer.ensureCellVisible({ rowIndex, column, rowPinned });
+        this.navigationService.ensureCellVisible({ rowIndex, column, rowPinned });
 
         this.setFocusedCell(rowIndex, column, makeNull(rowPinned), true);
 

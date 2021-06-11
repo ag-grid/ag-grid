@@ -16,7 +16,8 @@ import {
     RowPositionUtils,
     _,
     SelectionHandleType,
-    ControllersService
+    ControllersService,
+    NavigationService
 } from "@ag-grid-community/core";
 import { RangeService } from "./rangeService";
 
@@ -28,6 +29,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
     @Autowired("mouseEventService") protected mouseEventService: MouseEventService;
     @Autowired("columnModel") protected columnModel: ColumnModel;
     @Autowired("cellNavigationService") protected cellNavigationService: CellNavigationService;
+    @Autowired("navigationService") protected navigationService: NavigationService;
     @Autowired('rowPositionUtils') protected rowPositionUtils: RowPositionUtils;
     @Autowired('controllersService') protected controllersService: ControllersService;
 

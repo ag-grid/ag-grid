@@ -585,7 +585,7 @@ export class RowCtrl extends BeanStub {
             column: (lastFocusedCell && lastFocusedCell.column) as Column
         };
 
-        this.beans.rowRenderer.navigateToNextCell(keyboardEvent, keyboardEvent.keyCode, cellPosition, true);
+        this.beans.navigationService.navigateToNextCell(keyboardEvent, keyboardEvent.keyCode, cellPosition, true);
         keyboardEvent.preventDefault();
     }
 
@@ -601,7 +601,7 @@ export class RowCtrl extends BeanStub {
         }
 
         if ((this.isFullWidth() && isFullWidthContainerFocused) || !nextEl) {
-            this.beans.rowRenderer.onTabKeyDown(this, keyboardEvent);
+            this.beans.navigationService.onTabKeyDown(this, keyboardEvent);
         }
     }
 

@@ -169,6 +169,10 @@ export class CellCtrl extends BeanStub {
         this.comp.setFocusInOnEditor();
     }
 
+    public getComp(): ICellComp {
+        return this.comp;
+    }
+
     public getGui(): HTMLElement {
         return this.eGui;
     }

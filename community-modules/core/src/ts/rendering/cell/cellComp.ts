@@ -1067,7 +1067,7 @@ export class CellComp extends Component implements TooltipParentComp {
         if (event.shiftKey && this.ctrl.temp_isRangeSelectionEnabled()) {
             this.onShiftRangeSelect(key);
         } else {
-            this.beans.rowRenderer.navigateToNextCell(event, key, this.ctrl.getCellPosition(), true);
+            this.beans.navigationService.navigateToNextCell(event, key, this.ctrl.getCellPosition(), true);
         }
 
         // if we don't prevent default, the grid will scroll with the navigation keys
@@ -1080,12 +1080,12 @@ export class CellComp extends Component implements TooltipParentComp {
         const endCell = this.beans.rangeService.extendLatestRangeInDirection(key);
 
         if (endCell) {
-            this.beans.rowRenderer.ensureCellVisible(endCell);
+            this.beans.navigationService.ensureCellVisible(endCell);
         }
     }
 
     private onTabKeyDown(event: KeyboardEvent): void {
-        this.beans.rowRenderer.onTabKeyDown(this.ctrl, event);
+        this.beans.navigationService.onTabKeyDown(this.ctrl, event);
     }
 
     private onBackspaceOrDeleteKeyPressed(key: number): void {
@@ -1099,7 +1099,7 @@ export class CellComp extends Component implements TooltipParentComp {
             this.stopEditingAndFocus();
         } else {
             if (this.beans.gridOptionsWrapper.isEnterMovesDown()) {
-                this.beans.rowRenderer.navigateToNextCell(null, KeyCode.DOWN, this.ctrl.getCellPosition(), false);
+                this.beans.navigationService.navigateToNextCell(null, KeyCode.DOWN, this.ctrl.getCellPosition(), false);
             } else {
                 this.startRowOrCellEdit(KeyCode.ENTER);
                 if (this.editingCell) {
@@ -1121,7 +1121,7 @@ export class CellComp extends Component implements TooltipParentComp {
         const enterMovesDownAfterEdit = this.beans.gridOptionsWrapper.isEnterMovesDownAfterEdit();
 
         if (enterMovesDownAfterEdit) {
-            this.beans.rowRenderer.navigateToNextCell(null, KeyCode.DOWN, this.ctrl.getCellPosition(), false);
+            this.beans.navigationService.navigateToNextCell(null, KeyCode.DOWN, this.ctrl.getCellPosition(), false);
         }
     }
 

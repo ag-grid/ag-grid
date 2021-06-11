@@ -36,6 +36,7 @@ import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 import { IServerSideRowModel } from "../interfaces/iServerSideRowModel";
 import { ResizeObserverService } from "../misc/resizeObserverService";
 import { ControllersService } from "../controllersService";
+import { NavigationService } from "../gridBodyComp/navigationService";
 
 /** Using the IoC has a slight performance consideration, which is no problem most of the
  * time, unless we are trashing objects - which is the case when scrolling and rowComp
@@ -59,6 +60,7 @@ export class Beans {
     @Autowired('eventService') public eventService: EventService;
     @Autowired('columnModel') public columnModel: ColumnModel;
     @Autowired('headerNavigationService') public headerNavigationService: HeaderNavigationService;
+    @Autowired('navigationService') public navigationService: NavigationService;
     @Autowired('columnAnimationService') public columnAnimationService: ColumnAnimationService;
     @Optional('rangeService') public rangeService: IRangeService;
     @Autowired('focusService') public focusService: FocusService;
