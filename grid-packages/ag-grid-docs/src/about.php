@@ -152,7 +152,7 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div>
-                                <img src='src/images/team/ahmed.jpeg' alt=" Ahmed Gadir, Developer"/>
+                                <img src='images/team/ahmed.jpeg' alt=" Ahmed Gadir, Developer"/>
                             </div>
                             <h3>Ahmed Gadir</h3>
                             <h4>Developer</h4>
