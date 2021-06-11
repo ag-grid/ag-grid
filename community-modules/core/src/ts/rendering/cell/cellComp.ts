@@ -1299,14 +1299,6 @@ export class CellComp extends Component implements TooltipParentComp {
         return this.ctrl.getCellPosition();
     }
 
-    public getParentRow(): HTMLElement {
-        return this.eRow;
-    }
-
-    public setParentRow(eParentRow: HTMLElement): void {
-        this.eRow = eParentRow;
-    }
-
     public getColumn(): Column {
         return this.column;
     }
