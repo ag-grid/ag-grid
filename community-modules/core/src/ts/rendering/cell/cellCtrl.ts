@@ -62,6 +62,7 @@ export interface ICellComp {
     setRole(role: string): void;
     setColId(colId: string): void;
     setTitle(title: string | null): void;
+    setUnselectable(value: string | null): void;
 
     // setValue(value: any): void;
     // setValueFormatted(value: string): void;
@@ -147,6 +148,7 @@ export class CellCtrl extends BeanStub {
         this.comp.setRole('gridcell');
         this.comp.setAriaColIndex(ariaColIndex);
         this.comp.setColId(colIdSanitised!);
+        this.comp.setUnselectable(!this.beans.gridOptionsWrapper.isEnableCellTextSelection() ? 'on' : null);
 
         this.cellPositionFeature.setComp(comp);
         this.cellCustomStyleFeature.setComp(comp, scope);

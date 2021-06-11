@@ -157,6 +157,7 @@ export class CellComp extends Component implements TooltipParentComp {
             setRole: role => setAttribute('role', role),
             setColId: colId => setAttribute('col-id', colId),
             setTitle: title => setAttribute('title', title),
+            setUnselectable: value => setAttribute('unselectable', value),
 
             // temp items
             isEditing: ()=> this.editingCell,
@@ -189,13 +190,12 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private getCreateTemplate(): string {
-        const unselectable = !this.beans.gridOptionsWrapper.isEnableCellTextSelection() ? ' unselectable="on"' : '';
         const templateParts: string[] = [];
 
         const valueToRender = this.getInitialValueToRender();
         const valueSanitised = get(this.column, 'colDef.template', null) ? valueToRender : escapeString(valueToRender);
 
-        templateParts.push(`<div comp-id="${this.getCompId()}" ${unselectable}>`);
+        templateParts.push(`<div comp-id="${this.getCompId()}">`);
         if (this.usingWrapper) {
             templateParts.push(this.getCellWrapperString(valueSanitised));
         } else if (valueSanitised != null) {
