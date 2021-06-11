@@ -1,9 +1,10 @@
-import { getFunctionName, ImportType, isInstanceMethod, modulesProcessor, removeFunctionKeyword } from './parser-utils';
-import { convertTemplate, getImport, toAssignment, toConst, toInput, toMember, toOutput } from './vue-utils';
-import { templatePlaceholder } from "./grid-vanilla-src-parser";
+import {getFunctionName, ImportType, isInstanceMethod, modulesProcessor, removeFunctionKeyword} from './parser-utils';
+import {convertTemplate, getImport, toAssignment, toConst, toInput, toMember, toOutput} from './vue-utils';
+import {templatePlaceholder} from "./grid-vanilla-src-parser";
+import * as JSON5 from "json5";
 
 function getOnGridReadyCode(bindings: any): string {
-    const { onGridReady, resizeToFit, data } = bindings;
+    const {onGridReady, resizeToFit, data} = bindings;
     const additionalLines = [];
 
     if (onGridReady) {
@@ -15,7 +16,7 @@ function getOnGridReadyCode(bindings: any): string {
     }
 
     if (data) {
-        const { url, callback } = data;
+        const {url, callback} = data;
 
         const setRowDataBlock = callback.indexOf('api.setRowData') >= 0 ?
             callback.replace("params.api.setRowData(data);", "this.rowData = data;") :
@@ -35,8 +36,8 @@ function getOnGridReadyCode(bindings: any): string {
 }
 
 function getModuleImports(bindings: any, componentFileNames: string[]): string[] {
-    const { gridSettings } = bindings;
-    const { modules } = gridSettings;
+    const {gridSettings} = bindings;
+    const {modules} = gridSettings;
 
     const imports = [
         "import Vue from 'vue';",
@@ -48,7 +49,7 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
         if (modules === true) {
             exampleModules = ['clientside'];
         }
-        const { moduleImports, suppliedModules } = modulesProcessor(exampleModules);
+        const {moduleImports, suppliedModules} = modulesProcessor(exampleModules);
 
         imports.push(...moduleImports);
         bindings.gridSuppliedModules = `[${suppliedModules.join(', ')}]`;
@@ -82,7 +83,7 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
 }
 
 function getPackageImports(bindings: any, componentFileNames: string[]): string[] {
-    const { gridSettings } = bindings;
+    const {gridSettings} = bindings;
 
     const imports = [
         "import Vue from 'vue';",
@@ -114,32 +115,30 @@ function getImports(bindings: any, componentFileNames: string[], importType: Imp
     }
 }
 
-function getPropertyBindings(bindings: any, componentFileNames: string[], importType: ImportType): [string[], string[], string[]] {
+function getPropertyBindings(bindings: any, componentFileNames: string[], importType: ImportType): [string[], string[], string[], string[]] {
     const propertyAssignments = [];
     const propertyVars = [];
     const propertyAttributes = [];
 
     bindings.properties
-        .filter(property => property.name !== 'onGridReady')
+        .filter(property => property.name !== 'onGridReady' && property.name !== 'columnDefs')
         .forEach(property => {
             if (componentFileNames.length > 0 && property.name === 'components') {
-                property.name = 'frameworkComponents';
-            }
-
-            if (property.value === 'true' || property.value === 'false') {
+                // we use bindings.components for vue examples
+            } else if (property.value === 'true' || property.value === 'false') {
                 propertyAttributes.push(toConst(property));
             } else if (property.value === null || property.value === 'null') {
                 propertyAttributes.push(toInput(property));
             } else {
-                // for when binding a method
-                // see javascript-grid-keyboard-navigation for an example
-                // tabToNextCell needs to be bound to the react component
-                if (!isInstanceMethod(bindings.instanceMethods, property)) {
-                    propertyAttributes.push(toInput(property));
-                    propertyVars.push(toMember(property));
-                }
+                    // for when binding a method
+                    // see javascript-grid-keyboard-navigation for an example
+                    // tabToNextCell needs to be bound to the react component
+                    if (!isInstanceMethod(bindings.instanceMethods, property)) {
+                        propertyAttributes.push(toInput(property));
+                        propertyVars.push(toMember(property));
+                    }
 
-                propertyAssignments.push(toAssignment(property));
+                    propertyAssignments.push(toAssignment(property));
             }
         });
 
@@ -158,17 +157,20 @@ function getPropertyBindings(bindings: any, componentFileNames: string[], import
         }
     }
 
-    return [propertyAssignments, propertyVars, propertyAttributes];
+    const vueComponents = bindings.components.map(component => `${component.name}:${component.value}`);
+
+    return [propertyAssignments, propertyVars, propertyAttributes, vueComponents];
 }
 
 function getTemplate(bindings: any, attributes: string[]): string {
-    const { gridSettings } = bindings;
+    const {gridSettings} = bindings;
     const style = gridSettings.noStyle ? '' : `style="width: ${gridSettings.width}; height: ${gridSettings.height};"`;
 
     const agGridTag = `<ag-grid-vue
     ${style}
     class="${gridSettings.theme}"
     id="myGrid"
+    :columnDefs="columnDefs"
     :gridOptions="gridOptions"
     @grid-ready="onGridReady"
     ${attributes.join('\n    ')}></ag-grid-vue>`;
@@ -217,14 +219,96 @@ function getAllMethods(bindings: any): [string[], string[], string[], string[]] 
     return [eventHandlers, externalEventHandlers, instanceMethods, utilFunctions];
 }
 
+const GRID_COMPONENTS = [
+    'detailCellRendererFramework',
+    'fullWidthCellRenderer',
+    'groupRowRenderer',
+    'groupRowInnerRenderer',
+    'loadingCellRenderer',
+    'loadingOverlayComponent',
+    'noRowsOverlayComponent',
+    'dateComponent',
+    'statusPanel',
+    'cellRenderer',
+    'pinnedRowCellRenderer',
+    'cellEditor',
+    'filter',
+    'floatingFilterComponent',
+    'headerComponent',
+    'headerGroupComponent',
+];
+
+function isComponent(property) {
+    return GRID_COMPONENTS.indexOf(property) !== -1;
+}
+
+function convertColumnDefs(rawColumnDefs): string[] {
+    const columnDefs = [];
+    const parseFunction = value => value.replace('AG_FUNCTION_', '').replace(/^function\s*\((.*?)\)/, '($1) => ');
+
+    const processObject = obj => {
+        const output = JSON.stringify(obj);
+
+        return output
+            .replace(/"AG_LITERAL_(.*?)"/g, '$1')
+            .replace(/"AG_FUNCTION_(.*?)"/g, match => parseFunction(JSON.parse(match)));
+    };
+
+    rawColumnDefs.forEach(rawColumnDef => {
+        const columnProperties = [];
+        let children = [];
+
+        Object.keys(rawColumnDef).forEach(columnProperty => {
+            if (columnProperty === 'children') {
+                children = convertColumnDefs(rawColumnDef[columnProperty]);
+            } else {
+                let value = rawColumnDef[columnProperty];
+
+                if (typeof value === "string") {
+                    if (value.startsWith('AG_LITERAL_')) {
+                        // values starting with AG_LITERAL_ are actually function references
+                        // grid-vanilla-src-parser converts the original values to a string that we can convert back to the function reference here
+                        // ...all of this is necessary so that we can parse the json string
+                        columnProperties.push(`${columnProperty}:${value.replace('AG_LITERAL_', '')}`);
+                    } else if (value.startsWith('AG_FUNCTION_')) {
+                        // values starting with AG_FUNCTION_ are actually function definitions, which we extract and
+                        // turn into lambda functions here
+                        columnProperties.push(`${columnProperty}:${parseFunction(value)}`);
+                    } else {
+                        let propertyName = columnProperty;
+                        // if a framework component then add a "Framework" postfix - ie cellRenderer => cellRendererFramework
+                        if (isComponent(columnProperty)) {
+                            propertyName = `${columnProperty}Framework`;
+                        }
+                        // ensure any double quotes inside the string are replaced with single quotes
+                        columnProperties.push(`${propertyName}:"${value.replace(/(?<!\\)"/g, '\'')}"`);
+                    }
+                } else if (typeof value === 'object') {
+                    columnProperties.push(`${columnProperty}:${processObject(value)}`);
+                } else {
+                    columnProperties.push(`${columnProperty}:${value}`);
+                }
+            }
+        });
+
+        if (children.length !== 0) {
+            columnProperties['children'] = children;
+        }
+        columnDefs.push(`{${columnProperties.join(',\n')}}`);
+    });
+
+    return columnDefs;
+}
+
 export function vanillaToVue(bindings: any, componentFileNames: string[]): (importType: ImportType) => string {
     const onGridReady = getOnGridReadyCode(bindings);
     const eventAttributes = bindings.eventHandlers.filter(event => event.name !== 'onGridReady').map(toOutput);
     const [eventHandlers, externalEventHandlers, instanceMethods, utilFunctions] = getAllMethods(bindings);
+    const columnDefs = bindings.parsedColDefs ? convertColumnDefs(JSON5.parse(bindings.parsedColDefs)) : [];
 
     return importType => {
         const imports = getImports(bindings, componentFileNames, importType);
-        const [propertyAssignments, propertyVars, propertyAttributes] = getPropertyBindings(bindings, componentFileNames, importType);
+        const [propertyAssignments, propertyVars, propertyAttributes, vueComponents] = getPropertyBindings(bindings, componentFileNames, importType);
         const template = getTemplate(bindings, propertyAttributes.concat(eventAttributes));
 
         return `
@@ -237,10 +321,12 @@ const VueExample = {
         </div>
     \`,
     components: {
-        'ag-grid-vue': AgGridVue
+        'ag-grid-vue': AgGridVue,
+        ${vueComponents.join(',\n')}
     },
     data: function() {
         return {
+            columnDefs: [${columnDefs}],
             gridOptions: null,
             gridApi: null,
             columnApi: null,
@@ -257,11 +343,11 @@ const VueExample = {
     },
     methods: {
         ${eventHandlers
-                .concat(externalEventHandlers)
-                .concat(onGridReady)
-                .concat(instanceMethods)
-                .map(snippet => `${snippet.trim()},`)
-                .join('\n')}
+            .concat(externalEventHandlers)
+            .concat(onGridReady)
+            .concat(instanceMethods)
+            .map(snippet => `${snippet.trim()},`)
+            .join('\n')}
     }
 }
 

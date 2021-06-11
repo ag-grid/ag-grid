@@ -1,7 +1,7 @@
 import { generate } from 'escodegen';
 import * as esprima from 'esprima';
-import { Events } from '../../../../community-modules/core/src/ts/eventKeys';
-import { PropertyKeys } from '../../../../community-modules/core/src/ts/propertyKeys';
+import {Events} from '../../../../community-modules/core/src/ts/eventKeys';
+import {PropertyKeys} from '../../../../community-modules/core/src/ts/propertyKeys';
 import * as $ from 'jquery';
 import {
     collect,
@@ -66,17 +66,25 @@ function processColDefsForFunctionalReact(propertyName: string, exampleType, exa
     return false;
 }
 
+function processComponentsForVue(propertyName: string, exampleType, providedExamples) {
+    if (propertyName === 'components') {
+        return exampleType === 'generated' || (exampleType === 'mixed' && !providedExamples['vue']);
+    }
+
+    return false;
+}
+
 export function parser(js, html, exampleSettings, exampleType, providedExamples) {
     const domTree = $(`<div>${html}</div>`);
 
     domTree.find('style').remove();
 
     const domEventHandlers = extractEventHandlers(domTree, recognizedDomEvents);
-    const tree = esprima.parseScript(js, { comment: true });
+    const tree = esprima.parseScript(js, {comment: true});
     const collectors = [];
     const gridOptionsCollectors = [];
     const onReadyCollectors = [];
-    const indentOne = { format: { indent: { base: 1 }, quotes: 'double' } };
+    const indentOne = {format: {indent: {base: 1}, quotes: 'double'}};
     const registered = ['gridOptions'];
 
     // handler is the function name, params are any function parameters
@@ -127,7 +135,7 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
             const url = node.expression.arguments[1].raw;
             const callback = '{ params.api.setRowData(data); }';
 
-            bindings.data = { url, callback };
+            bindings.data = {url, callback};
         }
     });
 
@@ -138,7 +146,7 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
             const url = node.expression.callee.object.arguments[0].properties[0].value.raw;
             const callback = generate(node.expression.arguments[0].body).replace(/gridOptions/g, 'params');
 
-            bindings.data = { url, callback };
+            bindings.data = {url, callback};
         }
     });
 
@@ -186,7 +194,7 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
             matches: node => nodeIsFunctionWithName(node, functionName),
             apply: (bindings, node) => {
                 bindings.instanceMethods.push(generateWithReplacedGridOptions(node, indentOne));
-                bindings.properties.push({ name: functionName, value: null });
+                bindings.properties.push({name: functionName, value: null});
             }
         });
     });
@@ -251,9 +259,8 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
                         node.declarations[0].init.type === 'ArrayExpression') {
                         bindings.parsedColDefs = extractAndParseColDefs(node.declarations[0].init);
                     }
-
                     const code = generate(node.declarations[0].init, indentOne);
-                    bindings.properties.push({ name: propertyName, value: code });
+                    bindings.properties.push({name: propertyName, value: code});
                 } catch (e) {
                     console.error('We failed generating', node, node.declarations[0].id);
                     throw e;
@@ -267,6 +274,12 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
                 if (processColDefsForFunctionalReact(propertyName, exampleType, exampleSettings, providedExamples) &&
                     node.value.type === 'ArrayExpression') {
                     bindings.parsedColDefs = extractAndParseColDefs(node.value);
+                }
+                if (processComponentsForVue(propertyName, exampleType, providedExamples) && node.value.type === 'ObjectExpression') {
+                    const componentDefinition = node.value.properties[0];
+                    if(componentDefinition.value.type !== 'CallExpression' && componentDefinition.value.type !== 'FunctionExpression') {
+                        bindings.components.push({name: componentDefinition.key.name, value: componentDefinition.value.name});
+                    }
                 }
 
                 bindings.properties.push({
@@ -294,6 +307,7 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
      * externalEventHandlers -> onclick, onchange etc in index.html
      * eventHandlers -> grid related events
      * properties -> grid related properties
+     * components -> name value pair of component name to actual component (ie name: myCustomCell, value: CustomCellRenderer)
      * parsedColDefs -> col defs with function values replaced with tokenised strings - for the functional react example generator
      * utils -> none grid related methods/variables (or methods that don't reference the gridApi/columnApi) (i.e. non-instance)
      * instanceMethods -> methods that are either marked as "inScope" or ones that reference the gridApi/columnApi
@@ -306,6 +320,7 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
         {
             eventHandlers: [],
             properties: [],
+            components: [],
             parsedColDefs: '',
             instanceMethods: [],
             externalEventHandlers: [],

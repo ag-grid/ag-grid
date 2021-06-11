@@ -16,6 +16,7 @@ import {
     AgPromise,
     KeyCode,
     PositionableFeature,
+    ResizableStructure,
     _,
 } from '@ag-grid-community/core';
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
@@ -409,7 +410,15 @@ export class SetFilter extends ProvidedFilter<SetFilterModel> {
         }
 
         const resizable = !!(params && params.hidePopup);
-        this.positionableFeature.setResizable(resizable ? { bottom: true, bottomRight: true, right: true } : false);
+        let resizableObject: ResizableStructure;
+
+        if (this.gridOptionsWrapper.isEnableRtl()) {
+            resizableObject = { bottom: true, bottomLeft: true, left: true };
+        } else {
+            resizableObject = { bottom: true, bottomRight: true, right: true };
+        }
+
+        this.positionableFeature.setResizable(resizable ? resizableObject : false);
     }
 
     public applyModel(): boolean {

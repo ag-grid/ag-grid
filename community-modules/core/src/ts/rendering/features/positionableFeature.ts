@@ -81,6 +81,7 @@ export class PositionableFeature extends BeanStub {
     private moveElementDragListener: DragListenerParams | undefined;
 
     private offsetParent: HTMLElement;
+    private boundaryEl: HTMLElement | null = null;
 
     private isResizing: boolean = false;
     private isMoving = false;
@@ -119,7 +120,7 @@ export class PositionableFeature extends BeanStub {
         // here we don't use the main offset parent but the element's offsetParent
         // in order to calculated the minWidth and minHeight correctly
         if (this.element.offsetParent) {
-            const offsetParentComputedStyles = window.getComputedStyle(this.element.offsetParent);
+            const offsetParentComputedStyles = window.getComputedStyle(this.findBoundaryElement());
             if (offsetParentComputedStyles.minWidth != null) {
                 computedMinWidth = parseInt(offsetParentComputedStyles.minWidth, 10);
             }
@@ -347,93 +348,99 @@ export class PositionableFeature extends BeanStub {
         isLeft?: boolean,
         isTop?: boolean;
     }): { movementX: number, movementY: number; } {
+        const { e, isLeft, isTop, anywhereWithin, topBuffer } = params;
+
+        const xDiff = e.clientX - this.dragStartPosition.x;
+        const yDiff = e.clientY - this.dragStartPosition.y;
+
+        const movementX = this.shouldSkipX(e, !!isLeft, !!anywhereWithin, xDiff) ? 0 : xDiff;
+        const movementY = this.shouldSkipY(e, !!isTop, topBuffer, yDiff) ? 0 : yDiff;
+
+        return { movementX, movementY };
+    }
+
+    private shouldSkipX(e: MouseEvent, isLeft: boolean, anywhereWithin: boolean, diff: number): boolean {
         const elRect = this.element.getBoundingClientRect();
         const parentRect = this.offsetParent.getBoundingClientRect();
-        const { e, isLeft, isTop, anywhereWithin, topBuffer } = params;
-        const { popup } = this.config;
-        
-        const width = this.getWidth();
-        const height = this.getHeight();
-        const xPosition = popup ? this.position.x : elRect.left;
-        const yPosition = popup ? this.position.y : elRect.top;
-        const parentTop = popup ? parentRect.top : 0;
-
-        let movementX = e.clientX - this.dragStartPosition.x;
-        let movementY = e.clientY - this.dragStartPosition.y;
-
+        const boundaryElRect = this.boundaryEl!.getBoundingClientRect();
+        const xPosition = this.config.popup ? this.position.x : elRect.left;
         // skip if cursor is outside of popupParent horizontally
         let skipX = (
-            parentRect.left >= e.clientX && xPosition <= 0 ||
-            parentRect.right <= e.clientX && parentRect.right <= xPosition + parentRect.left + width!
-        
+            (xPosition <= 0 && parentRect.left >= e.clientX) ||
+            (parentRect.right <= e.clientX && parentRect.right <= boundaryElRect.right)
         );
 
-        if (!skipX) {
-            if (isLeft) {
+        if (skipX) { return true; }
+
+        if (isLeft) {
+            skipX = (
+                // skip if we are moving to the left and the cursor
+                // is positioned to the right of the left side anchor
+                (diff < 0 && e.clientX > xPosition + parentRect.left) ||
+                // skip if we are moving to the right and the cursor
+                // is positioned to the left of the dialog
+                (diff > 0 && e.clientX < xPosition + parentRect.left)
+            );
+        } else {
+            if (anywhereWithin) {
+                // if anywhereWithin is true, we allow to move
+                // as long as the cursor is within the dialog
                 skipX = (
-                    // skip if we are moving to the left and the cursor
-                    // is positioned to the right of the left side anchor
-                    (movementX < 0 && e.clientX > xPosition + parentRect.left) ||
-                    // skip if we are moving to the right and the cursor
-                    // is positioned to the left of the dialog
-                    (movementX > 0 && e.clientX < xPosition + parentRect.left)
+                    (diff < 0 && e.clientX > boundaryElRect.right) ||
+                    (diff > 0 && e.clientX < xPosition + parentRect.left)
                 );
             } else {
-                if (anywhereWithin) {
-                    // if anywhereWithin is true, we allow to move
-                    // as long as the cursor is within the dialog
-                    skipX = (
-                        (movementX < 0 && e.clientX > xPosition + parentRect.left + width!) ||
-                        (movementX > 0 && e.clientX < xPosition + parentRect.left)
-                    );
-                } else {
-                    skipX = (
-                        // if the movement is bound to the right side of the dialog
-                        // we skip if we are moving to the left and the cursor
-                        // is to the right of the dialog
-                        (movementX < 0 && e.clientX > xPosition + parentRect.left + width!) ||
-                        // or skip if we are moving to the right and the cursor
-                        // is to the left of the right side anchor
-                        (movementX > 0 && e.clientX < xPosition + parentRect.left + width!)
-                    );
-                }
+                skipX = (
+                    // if the movement is bound to the right side of the dialog
+                    // we skip if we are moving to the left and the cursor
+                    // is to the right of the dialog
+                    (diff < 0 && e.clientX > boundaryElRect.right) ||
+                    // or skip if we are moving to the right and the cursor
+                    // is to the left of the right side anchor
+                    (diff > 0 && e.clientX < boundaryElRect.right)
+                );
             }
         }
 
-        movementX = skipX ? 0 : movementX;
+        return skipX;
+    }
+
+    private shouldSkipY(e: MouseEvent, isTop: boolean, topBuffer: number = 0, diff: number): boolean {
+        const elRect = this.element.getBoundingClientRect();
+        const parentRect = this.offsetParent.getBoundingClientRect();
+        const boundaryElRect = this.boundaryEl!.getBoundingClientRect();
+        const yPosition = this.config.popup ? this.position.y : elRect.top;
 
         // skip if cursor is outside of popupParent vertically
         let skipY = (
-            parentTop >= e.clientY && yPosition <= 0 ||
-            parentRect.bottom <= e.clientY && parentRect.bottom <= yPosition + parentTop + height!
+            (yPosition <= 0 && parentRect.top >= e.clientY) ||
+            (parentRect.bottom <= e.clientX && parentRect.bottom <= boundaryElRect.bottom)
         );
 
-        if (!skipY) {
-            if (isTop) {
-                skipY = (
-                    // skip if we are moving to towards top and the cursor is
-                    // below the top anchor + topBuffer
-                    // note: topBuffer is used when moving the dialog using the title bar
-                    (movementY < 0 && e.clientY > yPosition + parentTop + (topBuffer || 0)) ||
-                    // skip if we are moving to the bottom and the cursor is
-                    // above the top anchor
-                    (movementY > 0 && e.clientY < yPosition + parentTop)
-                );
-            } else {
-                skipY = (
-                    // skip if we are moving towards the top and the cursor
-                    // is below the bottom anchor
-                    (movementY < 0 && e.clientY > yPosition + parentTop + height!) ||
-                    // skip if we are moving towards the bottom and the cursor
-                    // is above the bottom anchor
-                    (movementY > 0 && e.clientY < yPosition + parentTop  + height!)
-                );
-            }
+        if (skipY) { return true; }
+
+        if (isTop) {
+            skipY = (
+                // skip if we are moving to towards top and the cursor is
+                // below the top anchor + topBuffer
+                // note: topBuffer is used when moving the dialog using the title bar
+                (diff < 0 && e.clientY > yPosition + parentRect.top + topBuffer) ||
+                // skip if we are moving to the bottom and the cursor is
+                // above the top anchor
+                (diff > 0 && e.clientY < yPosition + parentRect.top)
+            );
+        } else {
+            skipY = (
+                // skip if we are moving towards the top and the cursor
+                // is below the bottom anchor
+                (diff < 0 && e.clientY > boundaryElRect.bottom) ||
+                // skip if we are moving towards the bottom and the cursor
+                // is above the bottom anchor
+                (diff > 0 && e.clientY < boundaryElRect.bottom)
+            );
         }
 
-        movementY = skipY ? 0 : movementY;
-
-        return { movementX, movementY };
+        return skipY;
     }
 
     private createResizeMap() {
@@ -482,6 +489,7 @@ export class PositionableFeature extends BeanStub {
 
     private onResizeStart(e: MouseEvent, side: ResizableSides) {
         if (!this.positioned) { this.initialisePosition(); }
+        this.boundaryEl = this.findBoundaryElement();
 
         this.currentResizer = {
             isTop: !!side.match(/top/i),
@@ -493,7 +501,7 @@ export class PositionableFeature extends BeanStub {
         addCssClass(this.element, 'ag-resizing');
         addCssClass(this.resizerMap![side].element, 'ag-active');
 
-        if (!this.config.popup) {
+        if (!this.config.popup && !this.config.forcePopupParentAsOffsetParent) {
             this.applySizeToSiblings(this.currentResizer.isBottom || this.currentResizer.isTop);
         }
 
@@ -624,6 +632,7 @@ export class PositionableFeature extends BeanStub {
                 // do not let the size of all siblings be higher than the parent container
                 if (
                     !this.config.popup &&
+                    !this.config.forcePopupParentAsOffsetParent &&
                     oldHeight! < newHeight &&
                     (this.getMinSizeOfSiblings().height + newHeight) > this.element.parentElement!.offsetHeight
                 ) {
@@ -649,6 +658,7 @@ export class PositionableFeature extends BeanStub {
     private onResizeEnd(e: MouseEvent, side: ResizableSides) {
         this.isResizing = false;
         this.currentResizer = null;
+        this.boundaryEl = null;
 
         const params = {
             type: 'resize',
@@ -678,6 +688,7 @@ export class PositionableFeature extends BeanStub {
 
     private onMoveStart(e: MouseEvent) {
         if (!this.positioned) { this.initialisePosition(); }
+        this.boundaryEl = this.findBoundaryElement();
 
         this.isMoving = true;
 
@@ -708,6 +719,7 @@ export class PositionableFeature extends BeanStub {
 
     private onMoveEnd() {
         this.isMoving = false;
+        this.boundaryEl = null;
         removeCssClass(this.element, 'ag-moving');
     }
 
@@ -717,6 +729,16 @@ export class PositionableFeature extends BeanStub {
         } else {
             this.offsetParent = this.element.offsetParent as HTMLElement;
         }
+    }
+
+    private findBoundaryElement(): HTMLElement {
+        let el = this.element;
+        while (el) {
+            if (window.getComputedStyle(el).position !== 'static') { return el; }
+            el = el.parentElement as HTMLElement;
+        }
+
+        return this.element;
     }
 
     private clearResizeListeners(): void {

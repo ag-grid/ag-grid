@@ -1,15 +1,14 @@
-import Vue from "vue";
-
-export default Vue.extend({
-    template: /* html */
-        `<div class="my-custom-cell-renderer">
-            <div class="athlete-info">
-                <span>{{athlete}}</span>
-                <span>{{country}}</span>
-            </div>
-            <span>{{year}}</span>
-            <i class="fas fa-arrows-alt-v" ref="myRef"></i>
-        </div>`,
+export default {
+    template:
+        `
+          <div class="my-custom-cell-renderer">
+              <div class="athlete-info">
+                <span>{{ athlete }}</span>
+                <span>{{ country }}</span>
+              </div>
+              <span>{{ year }}</span>
+              <i class="fas fa-arrows-alt-v" ref="myRef"></i>
+          </div>`,
     data: function () {
         return {
             athlete: '',
@@ -25,4 +24,4 @@ export default Vue.extend({
     mounted() {
         this.params.registerRowDragger(this.$refs.myRef);
     }
-});
+};
