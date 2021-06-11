@@ -13,6 +13,7 @@ import { missing } from "../../utils/generic";
 import { BeanStub } from "../../context/beanStub";
 import { CellPositionFeature } from "./cellPositionFeature";
 import { escapeString } from "../../utils/string";
+import { CellCustomStyleFeature } from "./cellCustomStyleFeature";
 
 //////// theses should not be imported, remove them once CellComp has been refactored
 export const CSS_CELL = 'ag-cell';
@@ -84,6 +85,7 @@ export class CellCtrl extends BeanStub {
 
     private cellRangeFeature: CellRangeFeature;
     private cellPositionFeature: CellPositionFeature;
+    private cellCustomStyleFeature: CellCustomStyleFeature;
 
     private cellPosition: CellPosition;
 
@@ -100,6 +102,9 @@ export class CellCtrl extends BeanStub {
     private addFeatures(): void {
         this.cellPositionFeature = new CellPositionFeature(this, this.beans);
         this.addDestroyFunc( ()=> this.cellPositionFeature.destroy() );
+
+        this.cellCustomStyleFeature = new CellCustomStyleFeature(this, this.beans);
+        this.addDestroyFunc( ()=> this.cellCustomStyleFeature.destroy() );
 
         const rangeSelectionEnabled = this.beans.rangeService && this.beans.gridOptionsWrapper.isEnableRangeSelection();
         if (rangeSelectionEnabled) {
@@ -120,9 +125,6 @@ export class CellCtrl extends BeanStub {
         this.onCellFocused();
 
         this.applyStaticCssClasses();
-        this.applyCellClassRules();
-        this.applyUserStyles();
-        this.applyClassesFromColDef();
 
         this.onFirstRightPinnedChanged();
         this.onLastLeftPinnedChanged();
@@ -137,6 +139,7 @@ export class CellCtrl extends BeanStub {
         this.comp.setColId(colIdSanitised!);
 
         this.cellPositionFeature.setComp(comp);
+        this.cellCustomStyleFeature.setComp(comp, scope);
         if (this.cellRangeFeature) { this.cellRangeFeature.setComp(comp); }
     }
 
@@ -258,25 +261,24 @@ export class CellCtrl extends BeanStub {
 
     // CSS Classes that only get applied once, they never change
     private applyStaticCssClasses(): void {
-        const cssClasses = [CSS_CELL, CSS_CELL_NOT_INLINE_EDITING];
+        this.comp.addOrRemoveCssClass(CSS_CELL, true);
+        this.comp.addOrRemoveCssClass(CSS_CELL_NOT_INLINE_EDITING, true);
 
         // if we are putting the cell into a dummy container, to work out it's height,
         // then we don't put the height css in, as we want cell to fit height in that case.
         if (!this.autoHeightCell) {
-            cssClasses.push(CSS_AUTO_HEIGHT);
+            this.comp.addOrRemoveCssClass(CSS_AUTO_HEIGHT, true);
         }
 
         // if using the wrapper, this class goes on the wrapper instead
         if (!this.usingWrapper) {
-            cssClasses.push(CSS_CELL_VALUE);
+            this.comp.addOrRemoveCssClass(CSS_CELL_VALUE, true);
         }
 
         const wrapText = this.column.getColDef().wrapText == true;
         if (wrapText) {
-            cssClasses.push(CSS_CELL_WRAP_TEXT);
+            this.comp.addOrRemoveCssClass(CSS_CELL_WRAP_TEXT, true);
         }
-
-        cssClasses.forEach(c => this.comp.addOrRemoveCssClass(c, true));
     }
 
     public onColumnHover(): void {
@@ -287,106 +289,33 @@ export class CellCtrl extends BeanStub {
     public temp_applyRules(): void {
         // we do cellClassRules even if the value has not changed, so that users who have rules that
         // look at other parts of the row (where the other part of the row might of changed) will work.
-        this.applyCellClassRules();
+        this.cellCustomStyleFeature.applyCellClassRules();
     }
 
     public temp_applyClasses(): void {
-        this.applyClassesFromColDef();
+        this.cellCustomStyleFeature.applyClassesFromColDef();
     }
 
     public temp_applyStyles(): void {
-        this.applyUserStyles();
+        this.cellCustomStyleFeature.applyUserStyles();
     }
 
     public temp_applyOnNewColumnsLoaded(): void {
         this.onNewColumnsLoaded();
     }
 
-    private applyUserStyles() {
-        const colDef = this.column.getColDef();
-
-        if (!colDef.cellStyle) { return; }
-
-        let styles: {};
-
-        if (typeof colDef.cellStyle === 'function') {
-            const cellStyleParams = {
-                column: this.column,
-                value: this.comp.getValue(),
-                colDef: colDef,
-                data: this.rowNode.data,
-                node: this.rowNode,
-                rowIndex: this.rowNode.rowIndex!,
-                $scope: this.scope,
-                api: this.beans.gridOptionsWrapper.getApi()!,
-                columnApi: this.beans.gridOptionsWrapper.getColumnApi()!,
-                context: this.beans.gridOptionsWrapper.getContext(),
-            } as CellClassParams;
-            const cellStyleFunc = colDef.cellStyle as Function;
-            styles = cellStyleFunc(cellStyleParams);
-        } else {
-            styles = colDef.cellStyle;
-        }
-
-        this.comp.setUserStyles(styles);
-    }
-
     public getComponentHolder(): ColDef {
         return this.column.getColDef();
     }
 
-    private applyCellClassRules(): void {
-        const colDef = this.getComponentHolder();
-        const cellClassParams: CellClassParams = {
-            value: this.comp.getValue(),
-            data: this.rowNode.data,
-            node: this.rowNode,
-            colDef: colDef,
-            rowIndex: this.cellPosition.rowIndex,
-            api: this.beans.gridOptionsWrapper.getApi()!,
-            columnApi: this.beans.gridOptionsWrapper.getColumnApi()!,
-            $scope: this.scope,
-            context: this.beans.gridOptionsWrapper.getContext()
-        };
-
-        this.beans.stylingService.processClassRules(
-            colDef.cellClassRules,
-            cellClassParams,
-            className => this.comp.addOrRemoveCssClass(className, true),
-            className => this.comp.addOrRemoveCssClass(className, false)
-        );
-    }
-
     public onNewColumnsLoaded(): void {
         this.postProcessWrapText();
-        this.applyCellClassRules();
+        this.cellCustomStyleFeature.applyCellClassRules();
     }
 
     private postProcessWrapText(): void {
         const value = this.column.getColDef().wrapText == true;
         this.comp.addOrRemoveCssClass(CSS_CELL_WRAP_TEXT, value);
-    }
-
-    private applyClassesFromColDef() {
-
-        const colDef = this.getComponentHolder();
-        const cellClassParams: CellClassParams = {
-            value: this.comp.getValue(),
-            data: this.rowNode.data,
-            node: this.rowNode,
-            colDef: colDef,
-            rowIndex: this.rowNode.rowIndex!,
-            $scope: this.scope,
-            api: this.beans.gridOptionsWrapper.getApi()!,
-            columnApi: this.beans.gridOptionsWrapper.getColumnApi()!,
-            context: this.beans.gridOptionsWrapper.getContext()
-        };
-
-        this.beans.stylingService.processStaticCellClasses(
-            colDef,
-            cellClassParams,
-            className => this.comp.addOrRemoveCssClass(className, true)
-        );
     }
 
     public destroy(): void {
