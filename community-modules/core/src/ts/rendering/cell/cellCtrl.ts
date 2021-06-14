@@ -108,6 +108,9 @@ export class CellCtrl extends BeanStub {
     private autoHeightCell: boolean;
     private printLayout: boolean;
 
+    private value: any;
+    private valueFormatted: any;
+
     // just passed in
     private scope: any;
     private usingWrapper: boolean;
@@ -164,6 +167,8 @@ export class CellCtrl extends BeanStub {
         this.eGui = eGui;
         this.printLayout = printLayout;
 
+        this.calculatedValueAndFormat();
+
         this.addDomData();
 
         this.onCellFocused();
@@ -189,6 +194,51 @@ export class CellCtrl extends BeanStub {
         this.cellMouseListenerFeature.setComp(comp);
         this.cellKeyboardListenerFeature.setComp(comp, this.eGui);
         if (this.cellRangeFeature) { this.cellRangeFeature.setComp(comp); }
+    }
+
+    private calculatedValueAndFormat(): void {
+        this.value = this.calculateValue();
+        this.valueFormatted = this.beans.valueFormatterService.formatValue(this.column, this.rowNode, this.scope, this.value);
+    }
+
+    public formatValue(): void {
+        this.valueFormatted = this.beans.valueFormatterService.formatValue(this.column, this.rowNode, this.scope, this.value);
+    }
+
+    public calculateValue(): any {
+        // if we don't check this, then the grid will render leaf groups as open even if we are not
+        // allowing the user to open leaf groups. confused? remember for pivot mode we don't allow
+        // opening leaf groups, so we have to force leafGroups to be closed in case the user expanded
+        // them via the API, or user user expanded them in the UI before turning on pivot mode
+        const lockedClosedGroup = this.rowNode.leafGroup && this.beans.columnModel.isPivotMode();
+
+        const isOpenGroup = this.rowNode.group && this.rowNode.expanded && !this.rowNode.footer && !lockedClosedGroup;
+
+        // are we showing group footers
+        const groupFootersEnabled = this.beans.gridOptionsWrapper.isGroupIncludeFooter();
+
+        // if doing footers, we normally don't show agg data at group level when group is open
+        const groupAlwaysShowAggData = this.beans.gridOptionsWrapper.isGroupSuppressBlankHeader();
+
+        // if doing grouping and footers, we don't want to include the agg value
+        // in the header when the group is open
+        const ignoreAggData = (isOpenGroup && groupFootersEnabled) && !groupAlwaysShowAggData;
+
+        const value = this.beans.valueService.getValue(this.column, this.rowNode, false, ignoreAggData);
+
+        return value;
+    }
+
+    public getValue(): any {
+        return this.value;
+    }
+
+    public getValueFormatted(): string {
+        return this.valueFormatted;
+    }
+
+    public getValueToUse(): any {
+        return this.valueFormatted != null ? this.valueFormatted : this.value;
     }
 
     private addDomData(): void {

@@ -89,9 +89,6 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private rowCtrl: RowCtrl | null;
 
-    private value: any;
-    private valueFormatted: any;
-
     private suppressRefreshCell = false;
 
     private scope: any = null;
@@ -123,19 +120,17 @@ export class CellComp extends Component implements TooltipParentComp {
         // we need to do this early, as we need CellPosition before we call setComp()
         this.ctrl = new CellCtrl(column, rowNode, beans, rowComp);
 
-        this.getValueAndFormat();
-        this.setUsingWrapper();
-
-        this.setTemplate(this.getCreateTemplate());
+        this.populateTemplate();
 
         const eGui = this.getGui();
         const style = eGui.style;
 
-        const setAttribute = (name: string, value: string | null) => {
+        const setAttribute = (name: string, value: string | null, element?: HTMLElement) => {
+            const actualElement = element ? element : eGui;
             if (value!=null && value!='') {
-                eGui.setAttribute(name, value);
+                actualElement.setAttribute(name, value);
             } else {
-                eGui.removeAttribute(name);
+                actualElement.removeAttribute(name);
             }
         };
 
@@ -153,12 +148,12 @@ export class CellComp extends Component implements TooltipParentComp {
             setRole: role => setAttribute('role', role),
             setColId: colId => setAttribute('col-id', colId),
             setTitle: title => setAttribute('title', title),
-            setUnselectable: value => setAttribute('unselectable', value),
+            setUnselectable: value => setAttribute('unselectable', value, this.eCellValue),
 
             // temp items
             isEditing: ()=> this.editingCell,
-            getValue: ()=> this.value,
-            getValueFormatted: ()=> this.valueFormatted,
+            getValue: ()=> this.ctrl.getValue(),
+            getValueFormatted: ()=> this.ctrl.getValueFormatted(),
             setFocusOutOnEditor: ()=> this.setFocusOutOnEditor(),
             setFocusInOnEditor: ()=> this.setFocusInOnEditor(),
             stopRowOrCellEdit: cancel => this.stopRowOrCellEdit(cancel),
@@ -173,11 +168,10 @@ export class CellComp extends Component implements TooltipParentComp {
         this.addDestroyFunc( ()=> this.ctrl.destroy() );
 
         // all of these have dependencies on the eGui, so only do them after eGui is set
-        this.populateTemplate();
+        this.setInitialValue();
         this.createCellRendererInstance(true);
         this.angular1Compile();
         this.ctrl.refreshHandle();
-
 
         // if we are editing the row, then the cell needs to turn
         // into edit mode
@@ -190,29 +184,53 @@ export class CellComp extends Component implements TooltipParentComp {
         return this.ctrl;
     }
 
-    private getCreateTemplate(): string {
-        const templateParts: string[] = [];
+    private populateTemplate(): void {
 
-        const valueToRender = this.getInitialValueToRender();
-        const valueSanitised = get(this.column, 'colDef.template', null) ? valueToRender : escapeString(valueToRender);
+        this.setUsingWrapper();
 
-        templateParts.push(`<div comp-id="${this.getCompId()}">`);
+        this.setTemplate(`<div comp-id="${this.getCompId()}"/>`);
+
         if (this.usingWrapper) {
-            templateParts.push(this.getCellWrapperString(valueSanitised));
-        } else if (valueSanitised != null) {
-            templateParts.push(valueSanitised);
-        }
-        templateParts.push(`</div>`);
 
-        return templateParts.join('');
+            this.getGui().innerHTML = this.getCellWrapperString();
+
+            this.eCellValue = this.getRefElement('eCellValue');
+            this.eCellWrapper = this.getRefElement('eCellWrapper');
+            this.eCellValue.id = `cell-${this.getCompId()}`;
+            let describedByIds = '';
+
+            if (this.includeRowDraggingComponent) {
+                this.addRowDragging();
+            }
+
+            if (this.includeDndSourceComponent) {
+                this.addDndSource();
+            }
+
+            if (this.includeSelectionComponent) {
+                describedByIds += this.addSelectionCheckbox().getCheckboxId();
+            }
+
+            setAriaDescribedBy(this.getGui(), `${describedByIds} ${this.eCellValue.id}`.trim());
+        } else {
+            this.eCellValue = this.getGui();
+            this.eCellWrapper = this.eCellValue;
+        }
     }
 
-    private getCellWrapperString(value: string | null = ''): string {
+    private setInitialValue(): void {
+        const valueToRender = this.getInitialValueToRender();
+        const valueSanitised = get(this.column, 'colDef.template', null) ? valueToRender : escapeString(valueToRender);
+        if (valueSanitised!=null) {
+            this.eCellValue.innerHTML = valueSanitised;
+        }
+    }
+
+    private getCellWrapperString(): string {
         const unselectable = !this.beans.gridOptionsWrapper.isEnableCellTextSelection() ? ' unselectable="on"' : '';
         const wrapper = /* html */
         `<div ref="eCellWrapper" class="ag-cell-wrapper" role="presentation">
             <span ref="eCellValue" role="presentation" class="${CSS_CELL_VALUE}"${unselectable}>
-                ${value != null ? value : ''}
             </span>
         </div>`;
 
@@ -273,7 +291,7 @@ export class CellComp extends Component implements TooltipParentComp {
             return template || '';
         }
 
-        return this.getValueToUse();
+        return this.ctrl.getValueToUse();
     }
 
     public getRenderedRow(): RowCtrl | null {
@@ -318,20 +336,21 @@ export class CellComp extends Component implements TooltipParentComp {
         const noValueProvided = colDef.field == null && colDef.valueGetter == null && colDef.showRowGroup == null;
         const forceRefresh = (params && params.forceRefresh) || noValueProvided || newData;
 
-        const oldValue = this.value;
+        const oldValue = this.ctrl.getValue();
 
         // get latest value without invoking the value formatter as we may not be updating the cell
-        this.value = this.getValue();
+        this.ctrl.calculateValue();
+        const newValue = this.ctrl.getValue();
 
         // for simple values only (not objects), see if the value is the same, and if it is, skip the refresh.
         // when never allow skipping after an edit, as after editing, we need to put the GUI back to the way
         // if was before the edit.
-        const valuesDifferent = !this.valuesAreEqual(oldValue, this.value);
+        const valuesDifferent = !this.valuesAreEqual(oldValue, newValue);
         const dataNeedsUpdating = forceRefresh || valuesDifferent;
 
         if (dataNeedsUpdating) {
             // now invoke the value formatter as we are going to update cell
-            this.valueFormatted = this.beans.valueFormatterService.formatValue(this.column, this.rowNode, this.scope, this.value);
+            this.ctrl.formatValue();
 
             // if it's 'new data', then we don't refresh the cellRenderer, even if refresh method is available.
             // this is because if the whole data is new (ie we are showing stock price 'BBA' now and not 'SSD')
@@ -462,7 +481,7 @@ export class CellComp extends Component implements TooltipParentComp {
             if (this.isUsingCellRenderer()) {
                 this.createCellRendererInstance();
             } else {
-                const valueToUse = this.getValueToUse();
+                const valueToUse = this.ctrl.getValueToUse();
 
                 if (valueToUse != null) {
                     this.eCellValue.innerHTML = escapeString(valueToUse) || '';
@@ -578,9 +597,9 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private createCellRendererParams(): ICellRendererParams {
         return {
-            value: this.value,
-            valueFormatted: this.valueFormatted,
-            getValue: this.getValue.bind(this),
+            value: this.ctrl.getValue(),
+            valueFormatted: this.ctrl.getValueFormatted(),
+            getValue: this.ctrl.calculateValue.bind(this.ctrl),
             setValue: value => this.beans.valueService.setValue(this.rowNode, this.column, value),
             formatValue: this.formatValue.bind(this),
             data: this.rowNode.data,
@@ -618,39 +637,6 @@ export class CellComp extends Component implements TooltipParentComp {
         const valueFormatted = this.beans.valueFormatterService.formatValue(this.column, this.rowNode, this.scope, value);
 
         return valueFormatted != null ? valueFormatted : value;
-    }
-
-    private getValueToUse(): any {
-        return this.valueFormatted != null ? this.valueFormatted : this.value;
-    }
-
-    private getValueAndFormat(): void {
-        this.value = this.getValue();
-        this.valueFormatted = this.beans.valueFormatterService.formatValue(this.column, this.rowNode, this.scope, this.value);
-    }
-
-    private getValue(): any {
-        // if we don't check this, then the grid will render leaf groups as open even if we are not
-        // allowing the user to open leaf groups. confused? remember for pivot mode we don't allow
-        // opening leaf groups, so we have to force leafGroups to be closed in case the user expanded
-        // them via the API, or user user expanded them in the UI before turning on pivot mode
-        const lockedClosedGroup = this.rowNode.leafGroup && this.beans.columnModel.isPivotMode();
-
-        const isOpenGroup = this.rowNode.group && this.rowNode.expanded && !this.rowNode.footer && !lockedClosedGroup;
-
-        // are we showing group footers
-        const groupFootersEnabled = this.beans.gridOptionsWrapper.isGroupIncludeFooter();
-
-        // if doing footers, we normally don't show agg data at group level when group is open
-        const groupAlwaysShowAggData = this.beans.gridOptionsWrapper.isGroupSuppressBlankHeader();
-
-        // if doing grouping and footers, we don't want to include the agg value
-        // in the header when the group is open
-        const ignoreAggData = (isOpenGroup && groupFootersEnabled) && !groupAlwaysShowAggData;
-
-        const value = this.beans.valueService.getValue(this.column, this.rowNode, false, ignoreAggData);
-
-        return value;
     }
 
     // called by rowRenderer when user navigates via tab key
@@ -861,7 +847,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private createCellEditorParams(keyPress: number | null, charPress: string | null, cellStartedEdit: boolean): ICellEditorParams {
         return {
-            value: this.getValue(),
+            value: this.ctrl.calculateValue(),
             keyPress: keyPress,
             charPress: charPress,
             column: this.column,
@@ -887,7 +873,7 @@ export class CellComp extends Component implements TooltipParentComp {
         const params: NewValueParams = {
             node: this.rowNode,
             data: this.rowNode.data,
-            oldValue: this.value,
+            oldValue: this.ctrl.getValue(),
             newValue: newValue,
             colDef: colDef,
             column: this.column,
@@ -1007,33 +993,6 @@ export class CellComp extends Component implements TooltipParentComp {
             isIncludingSelection !== this.includeSelectionComponent;
     }
 
-    private populateTemplate(): void {
-        if (this.usingWrapper) {
-
-            this.eCellValue = this.getRefElement('eCellValue');
-            this.eCellWrapper = this.getRefElement('eCellWrapper');
-            this.eCellValue.id = `cell-${this.getCompId()}`;
-            let describedByIds = '';
-
-            if (this.includeRowDraggingComponent) {
-                this.addRowDragging();
-            }
-
-            if (this.includeDndSourceComponent) {
-                this.addDndSource();
-            }
-
-            if (this.includeSelectionComponent) {
-                describedByIds += this.addSelectionCheckbox().getCheckboxId();
-            }
-
-            setAriaDescribedBy(this.getGui(), `${describedByIds} ${this.eCellValue.id}`.trim());
-        } else {
-            this.eCellValue = this.getGui();
-            this.eCellWrapper = this.eCellValue;
-        }
-    }
-
     protected getFrameworkOverrides(): IFrameworkOverrides {
         return this.beans.frameworkOverrides;
     }
@@ -1060,7 +1019,7 @@ export class CellComp extends Component implements TooltipParentComp {
             }
         }
         if (!this.rowDraggingComp) {
-            this.rowDraggingComp = new RowDragComp(() => this.value, this.rowNode, this.column, customElement, dragStartPixels);
+            this.rowDraggingComp = new RowDragComp(() => this.ctrl.getValue(), this.rowNode, this.column, customElement, dragStartPixels);
             this.createManagedBean(this.rowDraggingComp, this.beans.context);
         } else if (customElement) {
             // if the rowDraggingComp is already present, means we should only set the drag element
@@ -1113,7 +1072,7 @@ export class CellComp extends Component implements TooltipParentComp {
             return;
         }
 
-        const oldValue = this.getValue();
+        const oldValue = this.ctrl.calculateValue();
         let newValueExists = false;
         let newValue: any;
 
