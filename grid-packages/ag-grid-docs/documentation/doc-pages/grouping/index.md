@@ -27,8 +27,12 @@ const gridOptions = {
 | set `enableRowGroup=true` on the required columns. Otherwise you won't be able to drag
 | and drop the columns to the grouping drop zone from the Tool Panel.
 
-## Auto Column Group
+## Custom Sorting
 
+<grid-example title='Custom Group Sort' name='custom-group-sort' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "setfilter"] }'></grid-example>
+
+
+## Auto Column Group
 
 As you can see in the example below, as soon as there is at least one active row group, the grid will provide an additional column for displaying the groups in a tree structure with expand/collapse navigation.
 
@@ -376,10 +380,10 @@ The example below shows grouping on the county, with country an object within ea
 rowItem = {
     athlete: 'Michael Phelps',
     country: {
-        name: 'United States',
-        code: 'US'
-    }
-    ....
+      name: 'United States',
+      code: 'US'
+    },
+    ...
 }
 ```
 
