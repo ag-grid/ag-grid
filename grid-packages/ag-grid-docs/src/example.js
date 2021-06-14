@@ -893,10 +893,6 @@ var desktopDefaultCols = [
                         "Italy", "Malta", "Portugal", "Norway", "Peru", "Spain", "Sweden", "United Kingdom",
                         "Uruguay", "Venezuela", "Belgium", "Luxembourg"]
                 },
-                comparator: (a, b) => {
-                    console.log('country comparator');
-                    return a < b ? 1 : a > b ? -1 : 0;
-                },
                 // pinned: 'left',
                 floatCell: true,
                 filter: 'agSetColumnFilter',
