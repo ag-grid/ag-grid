@@ -169,16 +169,16 @@ export class RowRenderer extends BeanStub {
         if (rangeSelectionEnabled) {
 
             this.addManagedListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, () => {
-                this.forEachCellComp(cellComp => cellComp.onRangeSelectionChanged());
+                this.forEachCellComp(cellComp => cellComp.getCtrl().onRangeSelectionChanged());
             });
             this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, () => {
-                this.forEachCellComp(cellComp => cellComp.updateRangeBordersIfRangeCount());
+                this.forEachCellComp(cellComp => cellComp.getCtrl().updateRangeBordersIfRangeCount());
             });
             this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, () => {
-                this.forEachCellComp(cellComp => cellComp.updateRangeBordersIfRangeCount());
+                this.forEachCellComp(cellComp => cellComp.getCtrl().updateRangeBordersIfRangeCount());
             });
             this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, () => {
-                this.forEachCellComp(cellComp => cellComp.updateRangeBordersIfRangeCount());
+                this.forEachCellComp(cellComp => cellComp.getCtrl().updateRangeBordersIfRangeCount());
             });
 
         }
@@ -564,7 +564,7 @@ export class RowRenderer extends BeanStub {
         };
         this.forEachCellCompFiltered(params.rowNodes, params.columns, cellComp => {
             if (cellComp.refreshShouldDestroy()) {
-                const rowComp = cellComp.getRenderedRow();
+                const rowComp = cellComp.getRowCtrl();
                 if (rowComp) {
                     rowComp.refreshCell(cellComp);
                 }

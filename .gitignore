@@ -29,7 +29,12 @@ release*.zip
 archive*.zip
 
 # latest only
-dist
+#dist
+
+charts-packages/**/dist
+community-modules/**/dist
+enterprise-modules/**/dist
+grid-packages/**/dist
 
 grid-packages/ag-grid-angular/aot/**
 grid-packages/ag-grid-angular/dist/**
