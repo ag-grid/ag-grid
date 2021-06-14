@@ -69,8 +69,7 @@ export class RowNodeSorter {
     private getComparator(sortOption: SortOption, rowNode: RowNode) {
         let column = sortOption.column;
 
-        const autoColumnGroup = column.getColId().indexOf(Constants.GROUP_AUTO_COLUMN_ID) === 0;
-        if (autoColumnGroup) {
+        if (column.getColDef().showRowGroup) {
             // first check if there is a group comparator supplied on the autoGroupColumnDef
             const autoColumnGroupComparator = column.getColDef().comparator;
             if (autoColumnGroupComparator) {
