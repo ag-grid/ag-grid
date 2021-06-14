@@ -98,7 +98,7 @@ export class CellCtrl extends BeanStub {
     public static DOM_DATA_KEY_CELL_CTRL = 'cellCtrl';
 
     private eGui: HTMLElement;
-    private comp: ICellComp;
+    private cellComp: ICellComp;
     private beans: Beans;
     private gow: GridOptionsWrapper;
     private column: Column;
@@ -156,7 +156,7 @@ export class CellCtrl extends BeanStub {
 
     public setComp(comp: ICellComp, autoHeightCell: boolean,
                    usingWrapper: boolean, scope: any, eGui: HTMLElement, printLayout: boolean): void {
-        this.comp = comp;
+        this.cellComp = comp;
         this.usingWrapper = usingWrapper;
         this.autoHeightCell = autoHeightCell;
         this.gow = this.beans.gridOptionsWrapper;
@@ -177,11 +177,11 @@ export class CellCtrl extends BeanStub {
         const colIdSanitised = escapeString(this.column.getId());
         const ariaColIndex = this.beans.columnModel.getAriaColumnIndex(this.column);
 
-        this.comp.setTabIndex(-1);
-        this.comp.setRole('gridcell');
-        this.comp.setAriaColIndex(ariaColIndex);
-        this.comp.setColId(colIdSanitised!);
-        this.comp.setUnselectable(!this.beans.gridOptionsWrapper.isEnableCellTextSelection() ? 'on' : null);
+        this.cellComp.setTabIndex(-1);
+        this.cellComp.setRole('gridcell');
+        this.cellComp.setAriaColIndex(ariaColIndex);
+        this.cellComp.setColId(colIdSanitised!);
+        this.cellComp.setUnselectable(!this.beans.gridOptionsWrapper.isEnableCellTextSelection() ? 'on' : null);
 
         this.cellPositionFeature.setComp(comp);
         this.cellCustomStyleFeature.setComp(comp, scope);
@@ -203,7 +203,7 @@ export class CellCtrl extends BeanStub {
             type: eventType,
             node: this.rowNode,
             data: this.rowNode.data,
-            value: this.comp.getValue(),
+            value: this.cellComp.getValue(),
             column: this.column,
             colDef: this.column.getColDef(),
             context: this.beans.gridOptionsWrapper.getContext(),
@@ -235,11 +235,11 @@ export class CellCtrl extends BeanStub {
     }
 
     public setFocusInOnEditor(): void {
-        this.comp.setFocusInOnEditor();
+        this.cellComp.setFocusInOnEditor();
     }
 
     public getComp(): ICellComp {
-        return this.comp;
+        return this.cellComp;
     }
 
     public getGui(): HTMLElement {
@@ -251,7 +251,7 @@ export class CellCtrl extends BeanStub {
     }
 
     public setFocusOutOnEditor(): void {
-        this.comp.setFocusOutOnEditor();
+        this.cellComp.setFocusOutOnEditor();
     }
 
     public getColSpanningList(): Column[] {
@@ -265,11 +265,11 @@ export class CellCtrl extends BeanStub {
 
     private refreshAriaIndex(): void {
         const colIdx = this.beans.columnModel.getAriaColumnIndex(this.column);
-        this.comp.setAriaColIndex(colIdx);
+        this.cellComp.setAriaColIndex(colIdx);
     }
 
     public startEditingIfEnabled(keyPress: number | null = null, charPress: string | null = null, cellStartedEdit = false): void {
-        this.comp.startEditingIfEnabled(keyPress, charPress, cellStartedEdit);
+        this.cellComp.startEditingIfEnabled(keyPress, charPress, cellStartedEdit);
     }
 
     public isSuppressNavigable(): boolean {
@@ -277,7 +277,7 @@ export class CellCtrl extends BeanStub {
     }
 
     public stopEditing(): void {
-        this.comp.stopEditing();
+        this.cellComp.stopEditing();
     }
 
     public onWidthChanged(): void {
@@ -311,11 +311,11 @@ export class CellCtrl extends BeanStub {
     }
 
     public isEditing(): boolean {
-        return this.comp.isEditing();
+        return this.cellComp.isEditing();
     }
 
     public startRowOrCellEdit(keyPress?: number | null, charPress?: string | null): void {
-        this.comp.startRowOrCellEdit(keyPress, charPress);
+        this.cellComp.startRowOrCellEdit(keyPress, charPress);
     }
 
     public getRowCtrl(): RowCtrl | null {
@@ -363,24 +363,24 @@ export class CellCtrl extends BeanStub {
 
     public onFirstRightPinnedChanged(): void {
         const firstRightPinned = this.column.isFirstRightPinned();
-        this.comp.addOrRemoveCssClass(CSS_CELL_FIRST_RIGHT_PINNED, firstRightPinned);
+        this.cellComp.addOrRemoveCssClass(CSS_CELL_FIRST_RIGHT_PINNED, firstRightPinned);
     }
 
     public onLastLeftPinnedChanged(): void {
         const lastLeftPinned = this.column.isLastLeftPinned();
-        this.comp.addOrRemoveCssClass(CSS_CELL_LAST_LEFT_PINNED, lastLeftPinned);
+        this.cellComp.addOrRemoveCssClass(CSS_CELL_LAST_LEFT_PINNED, lastLeftPinned);
     }
 
     public onCellFocused(event?: CellFocusedEvent): void {
         const cellFocused = this.beans.focusService.isCellFocused(this.cellPosition);
 
         if (!this.gow.isSuppressCellSelection()) {
-            this.comp.addOrRemoveCssClass(CSS_CELL_FOCUS, cellFocused);
+            this.cellComp.addOrRemoveCssClass(CSS_CELL_FOCUS, cellFocused);
         }
 
         // see if we need to force browser focus - this can happen if focus is programmatically set
         if (cellFocused && event && event.forceBrowserFocus) {
-            const focusEl = this.comp.getFocusableElement();
+            const focusEl = this.cellComp.getFocusableElement();
             focusEl.focus();
             // Fix for AG-3465 "IE11 - After editing cell's content, selection doesn't go one cell below on enter"
             // IE can fail to focus the cell after the first call to focus(), and needs a second call
@@ -392,8 +392,8 @@ export class CellCtrl extends BeanStub {
         // if another cell was focused, and we are editing, then stop editing
         const fullRowEdit = this.beans.gridOptionsWrapper.isFullRowEdit();
 
-        if (!cellFocused && !fullRowEdit && this.comp.isEditing()) {
-            this.comp.stopRowOrCellEdit();
+        if (!cellFocused && !fullRowEdit && this.cellComp.isEditing()) {
+            this.cellComp.stopRowOrCellEdit();
         }
     }
 
@@ -407,29 +407,29 @@ export class CellCtrl extends BeanStub {
 
     // CSS Classes that only get applied once, they never change
     private applyStaticCssClasses(): void {
-        this.comp.addOrRemoveCssClass(CSS_CELL, true);
-        this.comp.addOrRemoveCssClass(CSS_CELL_NOT_INLINE_EDITING, true);
+        this.cellComp.addOrRemoveCssClass(CSS_CELL, true);
+        this.cellComp.addOrRemoveCssClass(CSS_CELL_NOT_INLINE_EDITING, true);
 
         // if we are putting the cell into a dummy container, to work out it's height,
         // then we don't put the height css in, as we want cell to fit height in that case.
         if (!this.autoHeightCell) {
-            this.comp.addOrRemoveCssClass(CSS_AUTO_HEIGHT, true);
+            this.cellComp.addOrRemoveCssClass(CSS_AUTO_HEIGHT, true);
         }
 
         // if using the wrapper, this class goes on the wrapper instead
         if (!this.usingWrapper) {
-            this.comp.addOrRemoveCssClass(CSS_CELL_VALUE, true);
+            this.cellComp.addOrRemoveCssClass(CSS_CELL_VALUE, true);
         }
 
         const wrapText = this.column.getColDef().wrapText == true;
         if (wrapText) {
-            this.comp.addOrRemoveCssClass(CSS_CELL_WRAP_TEXT, true);
+            this.cellComp.addOrRemoveCssClass(CSS_CELL_WRAP_TEXT, true);
         }
     }
 
     public onColumnHover(): void {
         const isHovered = this.beans.columnHoverService.isHovered(this.column);
-        this.comp.addOrRemoveCssClass(CSS_COLUMN_HOVER, isHovered);
+        this.cellComp.addOrRemoveCssClass(CSS_COLUMN_HOVER, isHovered);
     }
 
     public temp_applyRules(): void {
@@ -457,7 +457,7 @@ export class CellCtrl extends BeanStub {
 
     private postProcessWrapText(): void {
         const value = this.column.getColDef().wrapText == true;
-        this.comp.addOrRemoveCssClass(CSS_CELL_WRAP_TEXT, value);
+        this.cellComp.addOrRemoveCssClass(CSS_CELL_WRAP_TEXT, value);
     }
 
     public dispatchCellContextMenuEvent(event: Event | null) {
