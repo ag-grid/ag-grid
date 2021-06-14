@@ -133,7 +133,7 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
 
         // map the children out based on the pivot column
         children.forEach((child: RowNode) => {
-            let {key, rawKeyValue} = this.valueService.getKeyForNode(pivotColumn, child);
+            let {key} = this.valueService.getKeyForNode(pivotColumn, child);
 
             if (_.missing(key)) {
                 key = '';
