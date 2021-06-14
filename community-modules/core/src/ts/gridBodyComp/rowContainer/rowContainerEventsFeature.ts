@@ -184,7 +184,7 @@ export class RowContainerEventsFeature extends BeanStub {
 
                     break;
                 case 'keypress':
-                    cellComp.onKeyPress(keyboardEvent);
+                    cellComp.getCtrl().onKeyPress(keyboardEvent);
                     break;
             }
         }
