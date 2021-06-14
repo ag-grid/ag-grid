@@ -169,7 +169,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         // all of these have dependencies on the eGui, so only do them after eGui is set
         this.setInitialValue();
-        this.createCellRendererInstance(true);
+        this.createCellRendererInstance();
         this.angular1Compile();
         this.ctrl.refreshHandle();
 
@@ -294,7 +294,7 @@ export class CellComp extends Component implements TooltipParentComp {
         return this.ctrl.getValueToUse();
     }
 
-    public getRenderedRow(): RowCtrl | null {
+    public getRowCtrl(): RowCtrl | null {
         return this.rowCtrl;
     }
 
@@ -304,14 +304,6 @@ export class CellComp extends Component implements TooltipParentComp {
 
     public getCellEditor(): ICellEditorComp | null {
         return this.cellEditor;
-    }
-
-    public updateRangeBordersIfRangeCount(): void {
-        this.ctrl.updateRangeBordersIfRangeCount();
-    }
-
-    public onRangeSelectionChanged(): void {
-        this.ctrl.onRangeSelectionChanged();
     }
 
     // + stop editing {forceRefresh: true, suppressFlash: true}
@@ -336,21 +328,10 @@ export class CellComp extends Component implements TooltipParentComp {
         const noValueProvided = colDef.field == null && colDef.valueGetter == null && colDef.showRowGroup == null;
         const forceRefresh = (params && params.forceRefresh) || noValueProvided || newData;
 
-        const oldValue = this.ctrl.getValue();
-
-        // get latest value without invoking the value formatter as we may not be updating the cell
-        this.ctrl.calculateValue();
-        const newValue = this.ctrl.getValue();
-
-        // for simple values only (not objects), see if the value is the same, and if it is, skip the refresh.
-        // when never allow skipping after an edit, as after editing, we need to put the GUI back to the way
-        // if was before the edit.
-        const valuesDifferent = !this.valuesAreEqual(oldValue, newValue);
+        const valuesDifferent = this.ctrl.updateAndFormatValue();
         const dataNeedsUpdating = forceRefresh || valuesDifferent;
 
         if (dataNeedsUpdating) {
-            // now invoke the value formatter as we are going to update cell
-            this.ctrl.formatValue();
 
             // if it's 'new data', then we don't refresh the cellRenderer, even if refresh method is available.
             // this is because if the whole data is new (ie we are showing stock price 'BBA' now and not 'SSD')
@@ -510,15 +491,6 @@ export class CellComp extends Component implements TooltipParentComp {
         return result === true || result === undefined;
     }
 
-    private valuesAreEqual(val1: any, val2: any): boolean {
-        // if the user provided an equals method, use that, otherwise do simple comparison
-        const colDef = this.getComponentHolder();
-        const equalsMethod = colDef ? colDef.equals : null;
-
-        return equalsMethod ? equalsMethod(val1, val2) : val1 === val2;
-    }
-
-
     // a wrapper is used when we are putting a selection checkbox in the cell with the value
     public setUsingWrapper(): void {
         const colDef = this.getComponentHolder();
@@ -546,7 +518,7 @@ export class CellComp extends Component implements TooltipParentComp {
         this.usingWrapper = enableTextSelection || this.includeRowDraggingComponent || this.includeSelectionComponent || this.includeDndSourceComponent;
     }
 
-    private createCellRendererInstance(useTaskService = false): void {
+    private createCellRendererInstance(): void {
         // never use task service if angularCompileRows=true, as that assume the cell renderers
         // are finished when the row is created. also we never use it if animation frame service
         // is turned off.
@@ -554,8 +526,7 @@ export class CellComp extends Component implements TooltipParentComp {
         // row height directly after the cell is created, it doesn't wait around for the tasks to complete
         const angularCompileRows = this.beans.gridOptionsWrapper.isAngularCompileRows();
         const suppressAnimationFrame = this.beans.gridOptionsWrapper.isSuppressAnimationFrame();
-
-        if (angularCompileRows || suppressAnimationFrame || this.autoHeightCell) { useTaskService = false; }
+        const useTaskService = !angularCompileRows && !suppressAnimationFrame && !this.autoHeightCell;
 
         const params = this.createCellRendererParams();
 
@@ -599,7 +570,7 @@ export class CellComp extends Component implements TooltipParentComp {
         return {
             value: this.ctrl.getValue(),
             valueFormatted: this.ctrl.getValueFormatted(),
-            getValue: this.ctrl.calculateValue.bind(this.ctrl),
+            getValue: this.ctrl.getValueFromValueService.bind(this.ctrl),
             setValue: value => this.beans.valueService.setValue(this.rowNode, this.column, value),
             formatValue: this.formatValue.bind(this),
             data: this.rowNode.data,
@@ -847,7 +818,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private createCellEditorParams(keyPress: number | null, charPress: string | null, cellStartedEdit: boolean): ICellEditorParams {
         return {
-            value: this.ctrl.calculateValue(),
+            value: this.ctrl.getValueFromValueService(),
             keyPress: keyPress,
             charPress: charPress,
             column: this.column,
@@ -1072,7 +1043,7 @@ export class CellComp extends Component implements TooltipParentComp {
             return;
         }
 
-        const oldValue = this.ctrl.calculateValue();
+        const oldValue = this.ctrl.getValueFromValueService();
         let newValueExists = false;
         let newValue: any;
 

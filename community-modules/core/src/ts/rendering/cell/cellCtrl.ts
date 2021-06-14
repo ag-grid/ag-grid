@@ -167,7 +167,9 @@ export class CellCtrl extends BeanStub {
         this.eGui = eGui;
         this.printLayout = printLayout;
 
-        this.calculatedValueAndFormat();
+        // we force to make sure formatter gets called at least once,
+        // even if value has not changed (is is undefined)
+        this.updateAndFormatValue(true);
 
         this.addDomData();
 
@@ -196,16 +198,27 @@ export class CellCtrl extends BeanStub {
         if (this.cellRangeFeature) { this.cellRangeFeature.setComp(comp); }
     }
 
-    private calculatedValueAndFormat(): void {
-        this.value = this.calculateValue();
-        this.valueFormatted = this.beans.valueFormatterService.formatValue(this.column, this.rowNode, this.scope, this.value);
-    }
-
     public formatValue(): void {
         this.valueFormatted = this.beans.valueFormatterService.formatValue(this.column, this.rowNode, this.scope, this.value);
     }
 
-    public calculateValue(): any {
+    public updateAndFormatValue(force = false): boolean {
+        const newValue = this.getValueFromValueService();
+        const valuesDifferent = force ? true : !this.valuesAreEqual(newValue, this.value);
+        this.value = newValue;
+        if (valuesDifferent) {
+            this.formatValue();
+        }
+        return valuesDifferent;
+    }
+
+    private valuesAreEqual(val1: any, val2: any): boolean {
+        // if the user provided an equals method, use that, otherwise do simple comparison
+        const colDef = this.column.getColDef();
+        return colDef.equals ? colDef.equals(val1, val2) : val1 === val2;
+    }
+
+    public getValueFromValueService(): any {
         // if we don't check this, then the grid will render leaf groups as open even if we are not
         // allowing the user to open leaf groups. confused? remember for pivot mode we don't allow
         // opening leaf groups, so we have to force leafGroups to be closed in case the user expanded
