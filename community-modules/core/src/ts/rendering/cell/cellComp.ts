@@ -57,8 +57,6 @@ import {
 
 export class CellComp extends Component implements TooltipParentComp {
 
-    public static DOM_DATA_KEY_CELL_COMP = 'cellComp';
-
     private static CELL_RENDERER_TYPE_NORMAL = 'cellRenderer';
 
     private eCellWrapper: HTMLElement;
@@ -175,7 +173,6 @@ export class CellComp extends Component implements TooltipParentComp {
         this.addDestroyFunc( ()=> this.ctrl.destroy() );
 
         // all of these have dependencies on the eGui, so only do them after eGui is set
-        this.addDomData();
         this.populateTemplate();
         this.createCellRendererInstance(true);
         this.angular1Compile();
@@ -660,17 +657,6 @@ export class CellComp extends Component implements TooltipParentComp {
         return value;
     }
 
-    public dispatchCellContextMenuEvent(event: Event | null) {
-        const colDef = this.getComponentHolder();
-        const cellContextMenuEvent: CellContextMenuEvent = this.ctrl.createEvent(event, Events.EVENT_CELL_CONTEXT_MENU);
-        this.beans.eventService.dispatchEvent(cellContextMenuEvent);
-
-        if (colDef.onCellContextMenu) {
-            // to make the callback async, do in a timeout
-            window.setTimeout(() => (colDef.onCellContextMenu as any)(cellContextMenuEvent), 0);
-        }
-    }
-
     // called by rowRenderer when user navigates via tab key
     public startRowOrCellEdit(keyPress?: number | null, charPress?: string | null): void {
         if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
@@ -1110,13 +1096,6 @@ export class CellComp extends Component implements TooltipParentComp {
         // put the checkbox in before the value
         this.eCellWrapper.insertBefore(cbSelectionComponent.getGui(), this.eCellValue);
         return cbSelectionComponent;
-    }
-
-    private addDomData(): void {
-        const element = this.getGui();
-        this.beans.gridOptionsWrapper.setDomData(element, CellComp.DOM_DATA_KEY_CELL_COMP, this);
-
-        this.addDestroyFunc(() => this.beans.gridOptionsWrapper.setDomData(element, CellComp.DOM_DATA_KEY_CELL_COMP, null));
     }
 
     // pass in 'true' to cancel the editing.

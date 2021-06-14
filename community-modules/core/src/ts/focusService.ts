@@ -23,6 +23,7 @@ import { makeNull } from './utils/generic';
 import { Constants } from "./constants/constants";
 import { GridCtrl } from "./gridComp/gridCtrl";
 import { NavigationService } from "./gridBodyComp/navigationService";
+import { CellCtrl } from "./rendering/cell/cellCtrl";
 
 @Bean('focusService')
 export class FocusService extends BeanStub {
@@ -189,10 +190,10 @@ export class FocusService extends BeanStub {
         let ePointer = eBrowserCell;
 
         while (ePointer) {
-            const cellComp = this.gridOptionsWrapper.getDomData(ePointer, CellComp.DOM_DATA_KEY_CELL_COMP) as CellComp;
+            const cellCtrl = this.gridOptionsWrapper.getDomData(ePointer, CellCtrl.DOM_DATA_KEY_CELL_CTRL) as CellCtrl;
 
-            if (cellComp) {
-                return cellComp.getCellPosition();
+            if (cellCtrl) {
+                return cellCtrl.getCellPosition();
             }
 
             ePointer = ePointer.parentNode;

@@ -3,7 +3,14 @@ import { Column } from "../../entities/column";
 import { CellClassParams, ColDef } from "../../entities/colDef";
 import { RowNode } from "../../entities/rowNode";
 import { CellPosition } from "../../entities/cellPosition";
-import { CellClickedEvent, CellDoubleClickedEvent, CellEvent, CellFocusedEvent, Events } from "../../events";
+import {
+    CellClickedEvent,
+    CellContextMenuEvent,
+    CellDoubleClickedEvent,
+    CellEvent,
+    CellFocusedEvent,
+    Events
+} from "../../events";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { CellRangeFeature } from "./cellRangeFeature";
 import { areEqual, last } from "../../utils/array";
@@ -88,6 +95,8 @@ export interface ICellComp {
 
 export class CellCtrl extends BeanStub {
 
+    public static DOM_DATA_KEY_CELL_CTRL = 'cellCtrl';
+
     private eGui: HTMLElement;
     private comp: ICellComp;
     private beans: Beans;
@@ -155,6 +164,8 @@ export class CellCtrl extends BeanStub {
         this.eGui = eGui;
         this.printLayout = printLayout;
 
+        this.addDomData();
+
         this.onCellFocused();
 
         this.applyStaticCssClasses();
@@ -178,6 +189,13 @@ export class CellCtrl extends BeanStub {
         this.cellMouseListenerFeature.setComp(comp);
         this.cellKeyboardListenerFeature.setComp(comp, this.eGui);
         if (this.cellRangeFeature) { this.cellRangeFeature.setComp(comp); }
+    }
+
+    private addDomData(): void {
+        const element = this.getGui();
+        this.beans.gridOptionsWrapper.setDomData(element, CellCtrl.DOM_DATA_KEY_CELL_CTRL, this);
+
+        this.addDestroyFunc(() => this.beans.gridOptionsWrapper.setDomData(element, CellCtrl.DOM_DATA_KEY_CELL_CTRL, null));
     }
 
     public createEvent(domEvent: Event | null, eventType: string): CellEvent {
@@ -440,6 +458,17 @@ export class CellCtrl extends BeanStub {
     private postProcessWrapText(): void {
         const value = this.column.getColDef().wrapText == true;
         this.comp.addOrRemoveCssClass(CSS_CELL_WRAP_TEXT, value);
+    }
+
+    public dispatchCellContextMenuEvent(event: Event | null) {
+        const colDef = this.column.getColDef();
+        const cellContextMenuEvent: CellContextMenuEvent = this.createEvent(event, Events.EVENT_CELL_CONTEXT_MENU);
+        this.beans.eventService.dispatchEvent(cellContextMenuEvent);
+
+        if (colDef.onCellContextMenu) {
+            // to make the callback async, do in a timeout
+            window.setTimeout(() => (colDef.onCellContextMenu as any)(cellContextMenuEvent), 0);
+        }
     }
 
     public destroy(): void {

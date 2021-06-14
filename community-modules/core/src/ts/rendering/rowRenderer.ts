@@ -397,7 +397,7 @@ export class RowRenderer extends BeanStub {
         // the cell, and not the textfield. that means if the user is in a text field, and the grid refreshes,
         // the focus is lost from the text field. we do not want this.
         const activeElement = document.activeElement;
-        const domData = this.gridOptionsWrapper.getDomData(activeElement, CellComp.DOM_DATA_KEY_CELL_COMP);
+        const domData = this.gridOptionsWrapper.getDomData(activeElement, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
         const elementIsNotACellDev = missing(domData);
 
         return elementIsNotACellDev ? null : focusedCell;
