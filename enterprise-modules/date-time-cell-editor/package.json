@@ -6,9 +6,9 @@
   "module": "./dist/es6/main.js",
   "types": "./dist/cjs/main.d.ts",
   "scripts": {
-    "build-cjs": "tsc -p tsconfig.json",
-    "build-es6": "tsc -p tsconfig.es6.json",
-    "start": "webpack-dev-server --config dev/webpack.config.js --open",
+    "build-cjs": "npx tsc -p tsconfig.json",
+    "build-es6": "npx tsc -p tsconfig.es6.json",
+    "start": "npx webpack-dev-server --config dev/webpack.config.js --open",
     "package": "node ../../module-build/rollup/build.js",
     "build": "npm run build-cjs && npm run build-es6 && npm run hash",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"

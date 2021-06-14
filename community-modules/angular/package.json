@@ -2,12 +2,12 @@
   "name": "@ag-grid-community/angular",
   "version": "25.3.0",
   "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
-    "build": "npm run update-properties && ng build --prod && npm run verify-properties && npm run hash",
+    "ng": "npx @angular/cli",
+    "start": "npx @angular/cli serve",
+    "build": "npm run update-properties && npx @angular/cli build --prod && npm run verify-properties && npm run hash",
     "build-cjs": "npm run build",
-    "test": "ng test --watch false --browsers ChromeHeadless",
-    "lint": "ng lint",
+    "test": "npx @angular/cli test --watch false --browsers ChromeHeadless",
+    "lint": "npx @angular/cli lint",
     "update-properties": "node -e \"require('./updateGridAndColumnProperties.js').updatePropertiesBuilt()\"",
     "verify-properties": "node agGridPropertiesCheck.js",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"

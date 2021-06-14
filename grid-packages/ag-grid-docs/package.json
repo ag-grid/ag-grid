@@ -3,16 +3,17 @@
   "version": "25.3.0",
   "description": "Documentation for AG Grid",
   "scripts": {
-    "postinstall": "webdriver-manager update",
+    "postinstall": "npx webdriver-manager update",
     "build": "npm run hash",
-    "start-react-fire": "AG_GENERATE_REACT_FIRE=true gulp serve --max_old_space_size=6144",
-    "start": "gulp serve --max_old_space_size=6144",
-    "serve-core-only": "gulp --max_old_space_size=6144 serve-core-only",
-    "serve-with-formatting": "gulp serve-with-formatting",
-    "tsc": "tsc -p tests/config/tsconfig.json",
-    "validate-es5": "eslint documentation/doc-pages",
-    "test": "jest && cd documentation && npm run test",
-    "hash": "sh ../../scripts/hashDirectory.sh > .hash"
+    "start-react-fire": "AG_GENERATE_REACT_FIRE=true npm run start",
+    "start": "npx gulp serve --max_old_space_size=6144",
+    "serve-core-only": "npx gulp --max_old_space_size=6144 serve-core-only",
+    "serve-with-formatting": "npx gulp serve-with-formatting",
+    "tsc": "npx tsc -p tests/config/tsconfig.json",
+    "validate-es5": "npx eslint documentation/doc-pages",
+    "test": "npx jest && cd documentation && npm run test",
+    "hash": "sh ../../scripts/hashDirectory.sh > .hash",
+    "testtt": "node dev-server.js"
   },
   "repository": {
     "type": "git",
