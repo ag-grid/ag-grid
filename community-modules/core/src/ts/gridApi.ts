@@ -96,6 +96,7 @@ import { ControllersService } from "./controllersService";
 import { GridBodyCtrl } from "./gridBodyComp/gridBodyCtrl";
 import { OverlayWrapperComponent } from "./rendering/overlays/overlayWrapperComponent";
 import { HeaderPosition } from "./headerRendering/header/headerPosition";
+import { NavigationService } from "./gridBodyComp/navigationService";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -175,6 +176,7 @@ export class GridApi {
     @Optional('csvCreator') private csvCreator: ICsvCreator;
     @Optional('excelCreator') private excelCreator: IExcelCreator;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
+    @Autowired('navigationService') private navigationService: NavigationService;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('selectionService') private selectionService: SelectionService;
@@ -1442,11 +1444,11 @@ export class GridApi {
     }
 
     public tabToNextCell(): boolean {
-        return this.rowRenderer.tabToNextCell(false);
+        return this.navigationService.tabToNextCell(false);
     }
 
     public tabToPreviousCell(): boolean {
-        return this.rowRenderer.tabToNextCell(true);
+        return this.navigationService.tabToNextCell(true);
     }
 
     public getCellRendererInstances(params: GetCellRendererInstancesParams = {}): ICellRendererComp[] {
@@ -1476,11 +1478,14 @@ export class GridApi {
             rowPinned: params.rowPinned || null,
             column: column
         };
-        const notPinned = missing(params.rowPinned);
+        const notPinned = params.rowPinned == null;
         if (notPinned) {
             this.gridBodyCon.getScrollFeature().ensureIndexVisible(params.rowIndex);
         }
-        this.rowRenderer.startEditingCell(cellPosition, params.keyPress, params.charPress);
+
+        const cell = this.navigationService.getCellByPosition(cellPosition);
+        if (!cell) { return; }
+        cell.startRowOrCellEdit(params.keyPress, params.charPress);
     }
 
     public addAggFunc(key: string, aggFunc: IAggFunc): void {

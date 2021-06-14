@@ -21,6 +21,7 @@ import { BatchRemover } from "./batchRemover";
 
 interface GroupInfo {
     key: string; // e.g. 'Ireland'
+    rawKeyValue?: any;
     field: string | null; // e.g. 'country'
     rowGroupColumn: Column | null;
 }
@@ -591,6 +592,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             const displayGroupForCol = this.usingTreeData || (groupNode.rowGroupColumn ? col.isRowGroupDisplayed(groupNode.rowGroupColumn.getId()) : false);
             if (displayGroupForCol) {
                 groupNode.groupData[col.getColId()] = groupInfo.key;
+                groupNode.groupData.rawKeyValue = groupInfo.rawKeyValue;
             }
         });
     }
@@ -659,7 +661,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     private getGroupInfoFromGroupColumns(rowNode: RowNode, details: GroupingDetails) {
         const res: GroupInfo[] = [];
         details.groupedCols.forEach(groupCol => {
-            let key: string = this.valueService.getKeyForNode(groupCol, rowNode);
+            let {key, rawKeyValue} = this.valueService.getKeyForNode(groupCol, rowNode);
             let keyExists = key !== null && key !== undefined;
 
             // unbalanced tree and pivot mode don't work together - not because of the grid, it doesn't make
@@ -672,9 +674,10 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
             if (keyExists) {
                 const item = {
-                    key: key,
+                    key,
+                    rawKeyValue,
                     field: groupCol.getColDef().field,
-                    rowGroupColumn: groupCol
+                    rowGroupColumn: groupCol,
                 } as GroupInfo;
                 res.push(item);
             }

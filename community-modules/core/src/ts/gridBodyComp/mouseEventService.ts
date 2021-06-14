@@ -6,9 +6,10 @@ import { NumberSequence } from '../utils';
 import { Constants } from "../constants/constants";
 import { DraggingEvent } from "../dragAndDrop/dragAndDropService";
 import { BeanStub } from "../context/beanStub";
-import { getComponentForEvent } from "../utils/event";
+import { getCtrlForEvent } from "../utils/event";
 import { exists } from "../utils/generic";
 import { ControllersService } from "../controllersService";
+import { CellCtrl } from "../rendering/cell/cellCtrl";
 
 @Bean('mouseEventService')
 export class MouseEventService extends BeanStub {
@@ -27,8 +28,8 @@ export class MouseEventService extends BeanStub {
         (eGridDiv as any)[MouseEventService.GRID_DOM_KEY] = this.gridInstanceId;
     }
 
-    public getRenderedCellForEvent(event: Event): CellComp | null {
-        return getComponentForEvent<CellComp>(this.gridOptionsWrapper, event, 'cellComp');
+    public getRenderedCellForEvent(event: Event): CellCtrl | null {
+        return getCtrlForEvent<CellCtrl>(this.gridOptionsWrapper, event, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
     }
 
     // walks the path of the event, and returns true if this grid is the first one that it finds. if doing

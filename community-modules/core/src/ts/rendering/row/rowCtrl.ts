@@ -296,7 +296,7 @@ export class RowCtrl extends BeanStub {
     }
 
     public getCellForCol(column: Column): HTMLElement | null {
-        const cellComp = this.getRenderedCellForColumn(column);
+        const cellComp = this.getCellForColumn(column);
         return cellComp ? cellComp.getGui() : null;
     }
 
@@ -585,7 +585,7 @@ export class RowCtrl extends BeanStub {
             column: (lastFocusedCell && lastFocusedCell.column) as Column
         };
 
-        this.beans.rowRenderer.navigateToNextCell(keyboardEvent, keyboardEvent.keyCode, cellPosition, true);
+        this.beans.navigationService.navigateToNextCell(keyboardEvent, keyboardEvent.keyCode, cellPosition, true);
         keyboardEvent.preventDefault();
     }
 
@@ -601,7 +601,7 @@ export class RowCtrl extends BeanStub {
         }
 
         if ((this.isFullWidth() && isFullWidthContainerFocused) || !nextEl) {
-            this.beans.rowRenderer.onTabKeyDown(this, keyboardEvent);
+            this.beans.navigationService.onTabKeyDown(this, keyboardEvent);
         }
     }
 
@@ -1215,7 +1215,7 @@ export class RowCtrl extends BeanStub {
         return this.rowNode;
     }
 
-    public getRenderedCellForColumn(column: Column): CellComp | null {
+    public getCellForColumn(column: Column): CellComp | null {
         const cellComps = this.allComps.map(c => c.comp.getCellComp(column.getColId()));
         let cellComp = find(cellComps, c => !!c);
 

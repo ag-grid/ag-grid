@@ -1,0 +1,184 @@
+import { BeanStub } from "../../context/beanStub";
+import { CellCtrl, ICellComp } from "./cellCtrl";
+import { Beans } from "../beans";
+import { Column } from "../../entities/column";
+import { RowNode } from "../../entities/rowNode";
+import { KeyCode } from "../../constants/keyCode";
+import { RowCtrl } from "../row/rowCtrl";
+import { getTarget } from "../../utils/event";
+import { isEventFromPrintableCharacter } from "../../utils/keyboard";
+
+export class CellKeyboardListenerFeature extends BeanStub {
+
+    private readonly ctrl: CellCtrl;
+    private readonly beans: Beans;
+    private readonly column: Column;
+    private readonly rowNode: RowNode;
+    private readonly rowCtrl: RowCtrl | null;
+    private readonly scope: any;
+
+    private comp: ICellComp;
+    private eGui: HTMLElement;
+
+    constructor(ctrl: CellCtrl, beans: Beans, column: Column, rowNode: RowNode, scope: any, rowCtrl: RowCtrl | null) {
+        super();
+        this.ctrl = ctrl;
+        this.beans = beans;
+        this.column = column;
+        this.rowNode = rowNode;
+        this.scope = scope;
+        this.rowCtrl = rowCtrl;
+    }
+
+    public setComp(comp: ICellComp, eGui: HTMLElement): void {
+        this.comp = comp;
+        this.eGui = eGui;
+    }
+
+    public onKeyDown(event: KeyboardEvent): void {
+        const key = event.which || event.keyCode;
+
+        switch (key) {
+            case KeyCode.ENTER:
+                this.onEnterKeyDown(event);
+                break;
+            case KeyCode.F2:
+                this.onF2KeyDown();
+                break;
+            case KeyCode.ESCAPE:
+                this.onEscapeKeyDown();
+                break;
+            case KeyCode.TAB:
+                this.onTabKeyDown(event);
+                break;
+            case KeyCode.BACKSPACE:
+            case KeyCode.DELETE:
+                this.onBackspaceOrDeleteKeyPressed(key);
+                break;
+            case KeyCode.DOWN:
+            case KeyCode.UP:
+            case KeyCode.RIGHT:
+            case KeyCode.LEFT:
+                this.onNavigationKeyPressed(event, key);
+                break;
+        }
+    }
+
+    private onNavigationKeyPressed(event: KeyboardEvent, key: number): void {
+        if (this.ctrl.isEditing()) { return; }
+
+        if (event.shiftKey && this.ctrl.temp_isRangeSelectionEnabled()) {
+            this.onShiftRangeSelect(key);
+        } else {
+            this.beans.navigationService.navigateToNextCell(event, key, this.ctrl.getCellPosition(), true);
+        }
+
+        // if we don't prevent default, the grid will scroll with the navigation keys
+        event.preventDefault();
+    }
+
+    private onShiftRangeSelect(key: number): void {
+        if (!this.beans.rangeService) { return; }
+
+        const endCell = this.beans.rangeService.extendLatestRangeInDirection(key);
+
+        if (endCell) {
+            this.beans.navigationService.ensureCellVisible(endCell);
+        }
+    }
+
+    private onTabKeyDown(event: KeyboardEvent): void {
+        this.beans.navigationService.onTabKeyDown(this.ctrl, event);
+    }
+
+    private onBackspaceOrDeleteKeyPressed(key: number): void {
+        if (!this.ctrl.isEditing()) {
+            this.comp.startRowOrCellEdit(key);
+        }
+    }
+
+    private onEnterKeyDown(e: KeyboardEvent): void {
+        if (this.ctrl.isEditing() || this.rowCtrl!.isEditing()) {
+            this.comp.stopEditingAndFocus();
+        } else {
+            if (this.beans.gridOptionsWrapper.isEnterMovesDown()) {
+                this.beans.navigationService.navigateToNextCell(null, KeyCode.DOWN, this.ctrl.getCellPosition(), false);
+            } else {
+                this.comp.startRowOrCellEdit(KeyCode.ENTER);
+                if (this.ctrl.isEditing()) {
+                    // if we started editing, then we need to prevent default, otherwise the Enter action can get
+                    // applied to the cell editor. this happened, for example, with largeTextCellEditor where not
+                    // preventing default results in a 'new line' character getting inserted in the text area
+                    // when the editing was started
+                    e.preventDefault();
+                }
+            }
+        }
+    }
+
+    private onF2KeyDown(): void {
+        if (!this.comp.isEditing()) {
+            this.comp.startRowOrCellEdit(KeyCode.F2);
+        }
+    }
+
+    private onEscapeKeyDown(): void {
+        if (this.comp.isEditing()) {
+            this.comp.stopRowOrCellEdit(true);
+            this.ctrl.focusCell(true);
+        }
+    }
+
+    public onKeyPress(event: KeyboardEvent): void {
+        // check this, in case focus is on a (for example) a text field inside the cell,
+        // in which cse we should not be listening for these key pressed
+        const eventTarget = getTarget(event);
+        const eventOnChildComponent = eventTarget !== this.eGui;
+
+        if (eventOnChildComponent || this.ctrl.isEditing()) { return; }
+
+        const pressedChar = String.fromCharCode(event.charCode);
+        if (pressedChar === ' ') {
+            this.onSpaceKeyPressed(event);
+        } else if (isEventFromPrintableCharacter(event)) {
+            this.comp.startRowOrCellEdit(null, pressedChar);
+            // if we don't prevent default, then the keypress also gets applied to the text field
+            // (at least when doing the default editor), but we need to allow the editor to decide
+            // what it wants to do. we only do this IF editing was started - otherwise it messes
+            // up when the use is not doing editing, but using rendering with text fields in cellRenderer
+            // (as it would block the the user from typing into text fields).
+            event.preventDefault();
+        }
+    }
+
+    private onSpaceKeyPressed(event: KeyboardEvent): void {
+        const { gridOptionsWrapper } = this.beans;
+
+        if (!this.ctrl.isEditing() && gridOptionsWrapper.isRowSelection()) {
+            const currentSelection = this.rowNode.isSelected();
+            const newSelection = !currentSelection;
+            if (newSelection || !gridOptionsWrapper.isSuppressRowDeselection()) {
+                const groupSelectsFiltered = this.beans.gridOptionsWrapper.isGroupSelectsFiltered();
+                const updatedCount = this.rowNode.setSelectedParams({
+                    newValue: newSelection,
+                    rangeSelect: event.shiftKey,
+                    groupSelectsFiltered: groupSelectsFiltered
+                });
+                if (currentSelection === undefined && updatedCount === 0) {
+                    this.rowNode.setSelectedParams({
+                        newValue: false,
+                        rangeSelect: event.shiftKey,
+                        groupSelectsFiltered: groupSelectsFiltered
+                    });
+                }
+            }
+        }
+
+        // prevent default as space key, by default, moves browser scroll down
+        event.preventDefault();
+    }
+
+    public destroy(): void {
+    }
+
+}

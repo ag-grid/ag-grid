@@ -126,6 +126,7 @@ export { GridBodyComp } from "./gridBodyComp/gridBodyComp";
 export { GridBodyCtrl, IGridBodyComp, RowAnimationCssClasses } from "./gridBodyComp/gridBodyCtrl";
 export { ScrollVisibleService } from "./gridBodyComp/scrollVisibleService";
 export { MouseEventService } from "./gridBodyComp/mouseEventService";
+export { NavigationService } from "./gridBodyComp/navigationService";
 
 // rowContainer
 export { RowContainerComp } from "./gridBodyComp/rowContainer/rowContainerComp";

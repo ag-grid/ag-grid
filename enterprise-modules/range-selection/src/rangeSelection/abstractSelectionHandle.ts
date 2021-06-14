@@ -16,7 +16,8 @@ import {
     RowPositionUtils,
     _,
     SelectionHandleType,
-    ControllersService
+    ControllersService,
+    NavigationService
 } from "@ag-grid-community/core";
 import { RangeService } from "./rangeService";
 
@@ -28,10 +29,11 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
     @Autowired("mouseEventService") protected mouseEventService: MouseEventService;
     @Autowired("columnModel") protected columnModel: ColumnModel;
     @Autowired("cellNavigationService") protected cellNavigationService: CellNavigationService;
+    @Autowired("navigationService") protected navigationService: NavigationService;
     @Autowired('rowPositionUtils') protected rowPositionUtils: RowPositionUtils;
     @Autowired('controllersService') protected controllersService: ControllersService;
 
-    private cellComp: CellCtrl;
+    private cellCtrl: CellCtrl;
     private cellRange: CellRange;
 
     private rangeStartRow: RowPosition;
@@ -90,12 +92,12 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
         return this.dragging;
     }
 
-    protected getCellComp(): CellCtrl | undefined {
-        return this.cellComp;
+    protected getCellCtrl(): CellCtrl | undefined {
+        return this.cellCtrl;
     }
 
-    protected setCellComp(cellComp: CellCtrl) {
-        this.cellComp = cellComp;
+    protected setCellCtrl(cellComp: CellCtrl) {
+        this.cellCtrl = cellComp;
     }
 
     protected getCellRange(): CellRange {
@@ -159,7 +161,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
     }
 
     public refresh(cellCtrl: CellCtrl) {
-        const oldCellComp = this.getCellComp();
+        const oldCellComp = this.getCellCtrl();
         const eGui = this.getGui();
 
         const cellRange = _.last(this.rangeService.getCellRanges());
@@ -180,7 +182,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
         }
 
         if (oldCellComp !== cellCtrl || !_.isVisible(eGui)) {
-            this.setCellComp(cellCtrl);
+            this.setCellCtrl(cellCtrl);
             window.setTimeout(() => {
                 if (this.isAlive()) {
                     cellCtrl.appendChild(eGui);

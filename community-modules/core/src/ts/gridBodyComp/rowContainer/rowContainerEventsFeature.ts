@@ -1,5 +1,5 @@
 import { BeanStub } from "../../context/beanStub";
-import { getComponentForEvent, getTarget, isStopPropagationForAgGrid } from "../../utils/event";
+import { getCtrlForEvent, getTarget, isStopPropagationForAgGrid } from "../../utils/event";
 import { Autowired, Optional, PostConstruct } from "../../context/context";
 import { MouseEventService } from "./../mouseEventService";
 import { RowCtrl } from "../../rendering/row/rowCtrl";
@@ -27,6 +27,7 @@ import { IRangeService } from "../../interfaces/IRangeService";
 import { ModuleRegistry } from "../../modules/moduleRegistry";
 import { ModuleNames } from "../../modules/moduleNames";
 import { IClipboardService } from "../../interfaces/iClipboardService";
+import { CellCtrl } from "../../rendering/cell/cellCtrl";
 
 export class RowContainerEventsFeature extends BeanStub {
 
@@ -84,13 +85,13 @@ export class RowContainerEventsFeature extends BeanStub {
         }
 
         const rowComp = this.getRowForEvent(mouseEvent);
-        const cellComp = this.mouseEventService.getRenderedCellForEvent(mouseEvent)!;
+        const cellCtrl = this.mouseEventService.getRenderedCellForEvent(mouseEvent)!;
 
         if (eventName === "contextmenu") {
-            this.handleContextMenuMouseEvent(mouseEvent, null, rowComp, cellComp);
+            this.handleContextMenuMouseEvent(mouseEvent, null, rowComp, cellCtrl);
         } else {
-            if (cellComp) {
-                cellComp.onMouseEvent(eventName, mouseEvent);
+            if (cellCtrl) {
+                cellCtrl.onMouseEvent(eventName, mouseEvent);
             }
             if (rowComp) {
                 rowComp.onMouseEvent(eventName, mouseEvent);
@@ -129,20 +130,20 @@ export class RowContainerEventsFeature extends BeanStub {
         return null;
     }
 
-    private handleContextMenuMouseEvent(mouseEvent: MouseEvent | null, touchEvent: TouchEvent | null, rowComp: RowCtrl | null, cellComp: CellComp) {
+    private handleContextMenuMouseEvent(mouseEvent: MouseEvent | null, touchEvent: TouchEvent | null, rowComp: RowCtrl | null, cellCtrl: CellCtrl) {
         const rowNode = rowComp ? rowComp.getRowNode() : null;
-        const column = cellComp ? cellComp.getColumn() : null;
+        const column = cellCtrl ? cellCtrl.getColumn() : null;
         let value = null;
 
         if (column) {
             const event = mouseEvent ? mouseEvent : touchEvent;
-            cellComp.dispatchCellContextMenuEvent(event);
+            cellCtrl.dispatchCellContextMenuEvent(event);
             value = this.valueService.getValue(column, rowNode);
         }
 
         // if user clicked on a cell, anchor to that cell, otherwise anchor to the grid panel
         const gridBodyCon = this.controllersService.getGridBodyController();
-        const anchorToElement = cellComp ? cellComp.getGui() : gridBodyCon.getGridBodyElement();
+        const anchorToElement = cellCtrl ? cellCtrl.getGui() : gridBodyCon.getGridBodyElement();
 
         if (this.contextMenuFactory) {
             this.contextMenuFactory.onContextMenu(mouseEvent, touchEvent, rowNode, column, value, anchorToElement);
@@ -150,8 +151,8 @@ export class RowContainerEventsFeature extends BeanStub {
     }
 
     private processKeyboardEvent(eventName: string, keyboardEvent: KeyboardEvent): void {
-        const cellComp = getComponentForEvent<CellComp>(this.gridOptionsWrapper, keyboardEvent, 'cellComp');
-        const rowComp = getComponentForEvent<RowCtrl>(this.gridOptionsWrapper, keyboardEvent, 'renderedRow');
+        const cellComp = getCtrlForEvent<CellCtrl>(this.gridOptionsWrapper, keyboardEvent, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
+        const rowComp = getCtrlForEvent<RowCtrl>(this.gridOptionsWrapper, keyboardEvent, RowCtrl.DOM_DATA_KEY_RENDERED_ROW);
 
         if (keyboardEvent.defaultPrevented) { return; }
         if (cellComp) {
@@ -161,10 +162,10 @@ export class RowContainerEventsFeature extends BeanStub {
         }
     }
 
-    private processCellKeyboardEvent(cellComp: CellComp, eventName: string, keyboardEvent: KeyboardEvent): void {
-        const rowNode = cellComp.getRenderedRow()!.getRowNode();
-        const column = cellComp.getColumn();
-        const editing = cellComp.isEditing();
+    private processCellKeyboardEvent(cellCtrl: CellCtrl, eventName: string, keyboardEvent: KeyboardEvent): void {
+        const rowNode = cellCtrl.getRowNode();
+        const column = cellCtrl.getColumn();
+        const editing = cellCtrl.isEditing();
 
         const gridProcessingAllowed = !isUserSuppressingKeyboardEvent(this.gridOptionsWrapper, keyboardEvent, rowNode, column, editing);
 
@@ -176,26 +177,26 @@ export class RowContainerEventsFeature extends BeanStub {
 
                     // if not a scroll key, then we pass onto cell
                     if (!wasScrollKey) {
-                        cellComp.onKeyDown(keyboardEvent);
+                        cellCtrl.onKeyDown(keyboardEvent);
                     }
 
                     // perform clipboard and undo / redo operations
-                    this.doGridOperations(keyboardEvent, cellComp);
+                    this.doGridOperations(keyboardEvent, cellCtrl.isEditing());
 
                     break;
                 case 'keypress':
-                    cellComp.onKeyPress(keyboardEvent);
+                    cellCtrl.onKeyPress(keyboardEvent);
                     break;
             }
         }
 
         if (eventName === 'keydown') {
-            const cellKeyDownEvent: CellKeyDownEvent = cellComp.createEvent(keyboardEvent, Events.EVENT_CELL_KEY_DOWN);
+            const cellKeyDownEvent: CellKeyDownEvent = cellCtrl.createEvent(keyboardEvent, Events.EVENT_CELL_KEY_DOWN);
             this.eventService.dispatchEvent(cellKeyDownEvent);
         }
 
         if (eventName === 'keypress') {
-            const cellKeyPressEvent: CellKeyPressEvent = cellComp.createEvent(keyboardEvent, Events.EVENT_CELL_KEY_PRESS);
+            const cellKeyPressEvent: CellKeyPressEvent = cellCtrl.createEvent(keyboardEvent, Events.EVENT_CELL_KEY_PRESS);
             this.eventService.dispatchEvent(cellKeyPressEvent);
         }
     }
@@ -232,14 +233,14 @@ export class RowContainerEventsFeature extends BeanStub {
         }
     }
 
-    private doGridOperations(keyboardEvent: KeyboardEvent, cellComp: CellComp): void {
+    private doGridOperations(keyboardEvent: KeyboardEvent, editing: boolean): void {
         // check if ctrl or meta key pressed
         if (!keyboardEvent.ctrlKey && !keyboardEvent.metaKey) { return; }
 
         // if the cell the event came from is editing, then we do not
         // want to do the default shortcut keys, otherwise the editor
         // (eg a text field) would not be able to do the normal cut/copy/paste
-        if (cellComp.isEditing()) { return; }
+        if (editing) { return; }
 
         // for copy / paste, we don't want to execute when the event
         // was from a child grid (happens in master detail)
