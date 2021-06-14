@@ -151,7 +151,7 @@ export class RowRenderer extends BeanStub {
         });
 
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, () => {
-            this.forEachCellComp(cellComp => cellComp.onColumnHover());
+            this.forEachCellComp(cellComp => cellComp.getCtrl().onColumnHover());
         });
 
         // only for printLayout - because we are rendering all the cells in the same row, regardless of pinned state,

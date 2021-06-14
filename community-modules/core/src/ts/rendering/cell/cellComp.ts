@@ -219,10 +219,6 @@ export class CellComp extends Component implements TooltipParentComp {
         return wrapper;
     }
 
-    public onColumnHover(): void {
-        this.ctrl.onColumnHover();
-    }
-
     public onCellChanged(event: CellChangedEvent): void {
         const eventImpactsThisCell = event.column === this.column;
         if (eventImpactsThisCell) {
