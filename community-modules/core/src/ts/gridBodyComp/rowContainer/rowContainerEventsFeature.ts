@@ -176,7 +176,7 @@ export class RowContainerEventsFeature extends BeanStub {
 
                     // if not a scroll key, then we pass onto cell
                     if (!wasScrollKey) {
-                        cellComp.onKeyDown(keyboardEvent);
+                        cellComp.getCtrl().onKeyDown(keyboardEvent);
                     }
 
                     // perform clipboard and undo / redo operations

@@ -23,6 +23,7 @@ import { RowCtrl } from "../row/rowCtrl";
 import { isEventSupported, isStopPropagationForAgGrid } from "../../utils/event";
 import { isIOSUserAgent } from "../../utils/browser";
 import { CellMouseListenerFeature } from "./cellMouseListenerFeature";
+import { CellKeyboardListenerFeature } from "./cellKeyboardListenerFeature";
 
 //////// theses should not be imported, remove them once CellComp has been refactored
 export const CSS_CELL = 'ag-cell';
@@ -76,10 +77,11 @@ export interface ICellComp {
     isEditing(): boolean;
     getValue(): any;
     getValueFormatted(): string;
-    stopRowOrCellEdit(): void;
+    stopRowOrCellEdit(flag?: boolean): void;
     stopEditing(): void;
     setFocusOutOnEditor(): void;
     setFocusInOnEditor(): void;
+    stopEditingAndFocus(): void;
     startRowOrCellEdit(keyPress?: number | null, charPress?: string | null): void;
     startEditingIfEnabled(keyPress?: number | null, charPress?: string | null, cellStartedEdit?: boolean): void;
 }
@@ -106,6 +108,7 @@ export class CellCtrl extends BeanStub {
     private cellCustomStyleFeature: CellCustomStyleFeature;
     private cellTooltipFeature: CellTooltipFeature;
     private cellMouseListenerFeature: CellMouseListenerFeature;
+    private cellKeyboardListenerFeature: CellKeyboardListenerFeature;
 
     private cellPosition: CellPosition;
 
@@ -132,6 +135,9 @@ export class CellCtrl extends BeanStub {
 
         this.cellMouseListenerFeature = new CellMouseListenerFeature(this, this.beans, this.column, this.rowNode, this.scope);
         this.addDestroyFunc( ()=> this.cellMouseListenerFeature.destroy() );
+
+        this.cellKeyboardListenerFeature = new CellKeyboardListenerFeature(this, this.beans, this.column, this.rowNode, this.scope, this.rowCtrl);
+        this.addDestroyFunc( ()=> this.cellKeyboardListenerFeature.destroy() );
 
         const rangeSelectionEnabled = this.beans.rangeService && this.beans.gridOptionsWrapper.isEnableRangeSelection();
         if (rangeSelectionEnabled) {
@@ -170,6 +176,7 @@ export class CellCtrl extends BeanStub {
         this.cellCustomStyleFeature.setComp(comp, scope);
         this.cellTooltipFeature.setComp(comp);
         this.cellMouseListenerFeature.setComp(comp);
+        this.cellKeyboardListenerFeature.setComp(comp);
         if (this.cellRangeFeature) { this.cellRangeFeature.setComp(comp); }
     }
 
@@ -195,6 +202,10 @@ export class CellCtrl extends BeanStub {
         }
 
         return event;
+    }
+
+    public onKeyDown(event: KeyboardEvent): void {
+        this.cellKeyboardListenerFeature.onKeyDown(event);
     }
 
     public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {

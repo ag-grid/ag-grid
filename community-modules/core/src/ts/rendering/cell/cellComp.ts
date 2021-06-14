@@ -163,8 +163,9 @@ export class CellComp extends Component implements TooltipParentComp {
             getValueFormatted: ()=> this.valueFormatted,
             setFocusOutOnEditor: ()=> this.setFocusOutOnEditor(),
             setFocusInOnEditor: ()=> this.setFocusInOnEditor(),
-            stopRowOrCellEdit: ()=> this.stopRowOrCellEdit(),
+            stopRowOrCellEdit: cancel => this.stopRowOrCellEdit(cancel),
             stopEditing: ()=> this.stopEditing(),
+            stopEditingAndFocus: () => this.stopEditingAndFocus(),
             startRowOrCellEdit: (keyPress?, charPress?)=> this.startRowOrCellEdit(keyPress, charPress),
             startEditingIfEnabled: (keyPress, charPress, cellStartedEdit)=> this.startEditingIfEnabled(keyPress, charPress, cellStartedEdit)
         };
@@ -891,23 +892,12 @@ export class CellComp extends Component implements TooltipParentComp {
             columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
             context: this.beans.gridOptionsWrapper.getContext(),
             $scope: this.scope,
-            onKeyDown: this.onKeyDown.bind(this),
+            onKeyDown: this.ctrl.onKeyDown.bind(this.ctrl),
             stopEditing: this.stopEditingAndFocus.bind(this),
             eGridCell: this.getGui(),
             parseValue: this.parseValue.bind(this),
             formatValue: this.formatValue.bind(this)
         };
-    }
-
-    // cell editors call this, when they want to stop for reasons other
-    // than what we pick up on. eg selecting from a dropdown ends editing.
-    private stopEditingAndFocus(suppressNavigateAfterEdit = false): void {
-        this.stopRowOrCellEdit();
-        this.ctrl.focusCell(true);
-
-        if (!suppressNavigateAfterEdit) {
-            this.navigateAfterEdit();
-        }
     }
 
     private parseValue(newValue: any): any {
@@ -929,6 +919,29 @@ export class CellComp extends Component implements TooltipParentComp {
         return exists(valueParser) ? this.beans.expressionService.evaluate(valueParser, params) : newValue;
     }
 
+    // cell editors call this, when they want to stop for reasons other
+    // than what we pick up on. eg selecting from a dropdown ends editing.
+    public stopEditingAndFocus(suppressNavigateAfterEdit = false): void {
+        this.stopRowOrCellEdit();
+        this.ctrl.focusCell(true);
+
+        if (!suppressNavigateAfterEdit) {
+            this.navigateAfterEdit();
+        }
+    }
+
+    private navigateAfterEdit(): void {
+        const fullRowEdit = this.beans.gridOptionsWrapper.isFullRowEdit();
+
+        if (fullRowEdit) { return; }
+
+        const enterMovesDownAfterEdit = this.beans.gridOptionsWrapper.isEnterMovesDownAfterEdit();
+
+        if (enterMovesDownAfterEdit) {
+            this.beans.navigationService.navigateToNextCell(null, KeyCode.DOWN, this.ctrl.getCellPosition(), false);
+        }
+    }
+
     public setFocusInOnEditor(): void {
         if (this.editingCell) {
             if (this.cellEditor && this.cellEditor.focusIn) {
@@ -947,115 +960,9 @@ export class CellComp extends Component implements TooltipParentComp {
         return this.editingCell;
     }
 
-    public onKeyDown(event: KeyboardEvent): void {
-        const key = event.which || event.keyCode;
-
-        switch (key) {
-            case KeyCode.ENTER:
-                this.onEnterKeyDown(event);
-                break;
-            case KeyCode.F2:
-                this.onF2KeyDown();
-                break;
-            case KeyCode.ESCAPE:
-                this.onEscapeKeyDown();
-                break;
-            case KeyCode.TAB:
-                this.onTabKeyDown(event);
-                break;
-            case KeyCode.BACKSPACE:
-            case KeyCode.DELETE:
-                this.onBackspaceOrDeleteKeyPressed(key);
-                break;
-            case KeyCode.DOWN:
-            case KeyCode.UP:
-            case KeyCode.RIGHT:
-            case KeyCode.LEFT:
-                this.onNavigationKeyPressed(event, key);
-                break;
-        }
-    }
-
     public setFocusOutOnEditor(): void {
         if (this.editingCell && this.cellEditor && this.cellEditor.focusOut) {
             this.cellEditor.focusOut();
-        }
-    }
-
-    private onNavigationKeyPressed(event: KeyboardEvent, key: number): void {
-        if (this.editingCell) { return; }
-
-        if (event.shiftKey && this.ctrl.temp_isRangeSelectionEnabled()) {
-            this.onShiftRangeSelect(key);
-        } else {
-            this.beans.navigationService.navigateToNextCell(event, key, this.ctrl.getCellPosition(), true);
-        }
-
-        // if we don't prevent default, the grid will scroll with the navigation keys
-        event.preventDefault();
-    }
-
-    private onShiftRangeSelect(key: number): void {
-        if (!this.beans.rangeService) { return; }
-
-        const endCell = this.beans.rangeService.extendLatestRangeInDirection(key);
-
-        if (endCell) {
-            this.beans.navigationService.ensureCellVisible(endCell);
-        }
-    }
-
-    private onTabKeyDown(event: KeyboardEvent): void {
-        this.beans.navigationService.onTabKeyDown(this.ctrl, event);
-    }
-
-    private onBackspaceOrDeleteKeyPressed(key: number): void {
-        if (!this.editingCell) {
-            this.startRowOrCellEdit(key);
-        }
-    }
-
-    private onEnterKeyDown(e: KeyboardEvent): void {
-        if (this.editingCell || this.rowCtrl!.isEditing()) {
-            this.stopEditingAndFocus();
-        } else {
-            if (this.beans.gridOptionsWrapper.isEnterMovesDown()) {
-                this.beans.navigationService.navigateToNextCell(null, KeyCode.DOWN, this.ctrl.getCellPosition(), false);
-            } else {
-                this.startRowOrCellEdit(KeyCode.ENTER);
-                if (this.editingCell) {
-                    // if we started editing, then we need to prevent default, otherwise the Enter action can get
-                    // applied to the cell editor. this happened, for example, with largeTextCellEditor where not
-                    // preventing default results in a 'new line' character getting inserted in the text area
-                    // when the editing was started
-                    e.preventDefault();
-                }
-            }
-        }
-    }
-
-    private navigateAfterEdit(): void {
-        const fullRowEdit = this.beans.gridOptionsWrapper.isFullRowEdit();
-
-        if (fullRowEdit) { return; }
-
-        const enterMovesDownAfterEdit = this.beans.gridOptionsWrapper.isEnterMovesDownAfterEdit();
-
-        if (enterMovesDownAfterEdit) {
-            this.beans.navigationService.navigateToNextCell(null, KeyCode.DOWN, this.ctrl.getCellPosition(), false);
-        }
-    }
-
-    private onF2KeyDown(): void {
-        if (!this.editingCell) {
-            this.startRowOrCellEdit(KeyCode.F2);
-        }
-    }
-
-    private onEscapeKeyDown(): void {
-        if (this.editingCell) {
-            this.stopRowOrCellEdit(true);
-            this.ctrl.focusCell(true);
         }
     }
 
