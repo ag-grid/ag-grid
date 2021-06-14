@@ -39,9 +39,9 @@ var gridOptions = {
                 return inverted ? a - b : b - a;
             },
         },
+        { field: 'sale', aggFunc: 'sum' },
         { field: 'salesRep' },
         { field: 'handset' },
-        { field: 'sale' },
     ],
     defaultColDef: {
         flex: 1,
@@ -60,7 +60,7 @@ var gridOptions = {
         },
         sort: 'desc',
         sortingOrder: ['desc', 'asc'],
-        minWidth: 220,
+        minWidth: 250,
     },
     rowData: generateData(),
     // expand first group level by default
