@@ -591,7 +591,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so
             const displayGroupForCol = this.usingTreeData || (groupNode.rowGroupColumn ? col.isRowGroupDisplayed(groupNode.rowGroupColumn.getId()) : false);
             if (displayGroupForCol) {
-                groupNode.groupData[col.getColId()] = groupInfo.key;
+                groupNode.groupData![col.getColId()] = groupInfo.key;
                 groupNode.rawKeyValue = groupInfo.rawKeyValue;
             }
         });
