@@ -402,7 +402,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
                     key: rowNode.key!,
                     rowGroupColumn: rowNode.rowGroupColumn
                 };
-                this.setGroupData(rowNode, groupInfo);
+                this.setGroupInfo(rowNode, groupInfo);
                 recurse(rowNode.childrenAfterGroup);
             });
         };
@@ -554,7 +554,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         groupNode.field = groupInfo.field;
         groupNode.rowGroupColumn = groupInfo.rowGroupColumn;
 
-        this.setGroupData(groupNode, groupInfo);
+        this.setGroupInfo(groupNode, groupInfo);
 
         // we put 'row-group-' before the group id, so it doesn't clash with standard row id's. we also use 't-' and 'b-'
         // for top pinned and bottom pinned rows.
@@ -583,7 +583,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         return groupNode;
     }
 
-    private setGroupData(groupNode: RowNode, groupInfo: GroupInfo): void {
+    private setGroupInfo(groupNode: RowNode, groupInfo: GroupInfo): void {
         groupNode.groupData = {};
         const groupDisplayCols: Column[] = this.columnModel.getGroupDisplayColumns();
         groupDisplayCols.forEach(col => {
@@ -592,7 +592,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             const displayGroupForCol = this.usingTreeData || (groupNode.rowGroupColumn ? col.isRowGroupDisplayed(groupNode.rowGroupColumn.getId()) : false);
             if (displayGroupForCol) {
                 groupNode.groupData[col.getColId()] = groupInfo.key;
-                groupNode.groupData.rawKeyValue = groupInfo.rawKeyValue;
+                groupNode.rawKeyValue = groupInfo.rawKeyValue;
             }
         });
     }

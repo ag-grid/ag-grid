@@ -65,7 +65,7 @@ export class ValueService extends BeanStub {
         } else if (this.gridOptionsWrapper.isTreeData() && (field && data)) {
             result = getValueUsingField(data, field, column.isFieldContainsDots());
         } else if (groupDataExists) {
-            result = useRawKeyValue ? rowNode.groupData.rawKeyValue : rowNode.groupData[colId];
+            result = useRawKeyValue ? rowNode.rawKeyValue : rowNode.groupData![colId];
         } else if (aggDataExists) {
             result = rowNode.aggData[colId];
         } else if (colDef.valueGetter) {
