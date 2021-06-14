@@ -381,10 +381,6 @@ export class CellCtrl extends BeanStub {
         this.onNewColumnsLoaded();
     }
 
-    // public getComponentHolder(): ColDef {
-    //     return this.column.getColDef();
-    // }
-
     public onNewColumnsLoaded(): void {
         this.postProcessWrapText();
         this.cellCustomStyleFeature.applyCellClassRules();
