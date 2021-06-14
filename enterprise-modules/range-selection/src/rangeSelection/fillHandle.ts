@@ -1,6 +1,5 @@
 import {
     Autowired,
-    CellComp,
     CellPosition,
     CellRange,
     Column,
@@ -73,10 +72,10 @@ export class FillHandle extends AbstractSelectionHandle {
 
     protected onDrag(e: MouseEvent) {
         if (!this.initialPosition) {
-            const cellComp = this.getCellComp();
-            if (!cellComp) { return; }
+            const cellCtrl = this.getCellCtrl();
+            if (!cellCtrl) { return; }
 
-            this.initialPosition = cellComp.getCellPosition();
+            this.initialPosition = cellCtrl.getCellPosition();
         }
 
         const lastCellHovered = this.getLastCellHovered();
@@ -424,14 +423,14 @@ export class FillHandle extends AbstractSelectionHandle {
 
                     if (cell) {
                         this.markedCells.push(cell);
-                        const cellComp = cell.getComp();
+                        const cellCtrl = cell.getComp();
 
                         if (!cellInRange) {
-                            cellComp.addOrRemoveCssClass('ag-selection-fill-left', i === 0);
-                            cellComp.addOrRemoveCssClass('ag-selection-fill-right', i === colLen - 1);
+                            cellCtrl.addOrRemoveCssClass('ag-selection-fill-left', i === 0);
+                            cellCtrl.addOrRemoveCssClass('ag-selection-fill-right', i === colLen - 1);
                         }
 
-                        cellComp.addOrRemoveCssClass(
+                        cellCtrl.addOrRemoveCssClass(
                             isMovingUp ? 'ag-selection-fill-top' : 'ag-selection-fill-bottom',
                             this.rowPositionUtils.sameRow(row, endPosition)
                         );
