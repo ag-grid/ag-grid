@@ -176,7 +176,7 @@ export class CellCtrl extends BeanStub {
         this.cellCustomStyleFeature.setComp(comp, scope);
         this.cellTooltipFeature.setComp(comp);
         this.cellMouseListenerFeature.setComp(comp);
-        this.cellKeyboardListenerFeature.setComp(comp);
+        this.cellKeyboardListenerFeature.setComp(comp, this.eGui);
         if (this.cellRangeFeature) { this.cellRangeFeature.setComp(comp); }
     }
 
@@ -202,6 +202,10 @@ export class CellCtrl extends BeanStub {
         }
 
         return event;
+    }
+
+    public onKeyPress(event: KeyboardEvent): void {
+        this.cellKeyboardListenerFeature.onKeyPress(event);
     }
 
     public onKeyDown(event: KeyboardEvent): void {

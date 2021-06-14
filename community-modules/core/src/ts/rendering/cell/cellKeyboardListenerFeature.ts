@@ -5,6 +5,8 @@ import { Column } from "../../entities/column";
 import { RowNode } from "../../entities/rowNode";
 import { KeyCode } from "../../constants/keyCode";
 import { RowCtrl } from "../row/rowCtrl";
+import { getTarget } from "../../utils/event";
+import { isEventFromPrintableCharacter } from "../../utils/keyboard";
 
 export class CellKeyboardListenerFeature extends BeanStub {
 
@@ -16,6 +18,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
     private readonly scope: any;
 
     private comp: ICellComp;
+    private eGui: HTMLElement;
 
     constructor(ctrl: CellCtrl, beans: Beans, column: Column, rowNode: RowNode, scope: any, rowCtrl: RowCtrl | null) {
         super();
@@ -27,8 +30,9 @@ export class CellKeyboardListenerFeature extends BeanStub {
         this.rowCtrl = rowCtrl;
     }
 
-    public setComp(comp: ICellComp): void {
+    public setComp(comp: ICellComp, eGui: HTMLElement): void {
         this.comp = comp;
+        this.eGui = eGui;
     }
 
     public onKeyDown(event: KeyboardEvent): void {
@@ -123,6 +127,55 @@ export class CellKeyboardListenerFeature extends BeanStub {
             this.comp.stopRowOrCellEdit(true);
             this.ctrl.focusCell(true);
         }
+    }
+
+    public onKeyPress(event: KeyboardEvent): void {
+        // check this, in case focus is on a (for example) a text field inside the cell,
+        // in which cse we should not be listening for these key pressed
+        const eventTarget = getTarget(event);
+        const eventOnChildComponent = eventTarget !== this.eGui;
+
+        if (eventOnChildComponent || this.ctrl.isEditing()) { return; }
+
+        const pressedChar = String.fromCharCode(event.charCode);
+        if (pressedChar === ' ') {
+            this.onSpaceKeyPressed(event);
+        } else if (isEventFromPrintableCharacter(event)) {
+            this.comp.startRowOrCellEdit(null, pressedChar);
+            // if we don't prevent default, then the keypress also gets applied to the text field
+            // (at least when doing the default editor), but we need to allow the editor to decide
+            // what it wants to do. we only do this IF editing was started - otherwise it messes
+            // up when the use is not doing editing, but using rendering with text fields in cellRenderer
+            // (as it would block the the user from typing into text fields).
+            event.preventDefault();
+        }
+    }
+
+    private onSpaceKeyPressed(event: KeyboardEvent): void {
+        const { gridOptionsWrapper } = this.beans;
+
+        if (!this.ctrl.isEditing() && gridOptionsWrapper.isRowSelection()) {
+            const currentSelection = this.rowNode.isSelected();
+            const newSelection = !currentSelection;
+            if (newSelection || !gridOptionsWrapper.isSuppressRowDeselection()) {
+                const groupSelectsFiltered = this.beans.gridOptionsWrapper.isGroupSelectsFiltered();
+                const updatedCount = this.rowNode.setSelectedParams({
+                    newValue: newSelection,
+                    rangeSelect: event.shiftKey,
+                    groupSelectsFiltered: groupSelectsFiltered
+                });
+                if (currentSelection === undefined && updatedCount === 0) {
+                    this.rowNode.setSelectedParams({
+                        newValue: false,
+                        rangeSelect: event.shiftKey,
+                        groupSelectsFiltered: groupSelectsFiltered
+                    });
+                }
+            }
+        }
+
+        // prevent default as space key, by default, moves browser scroll down
+        event.preventDefault();
     }
 
     public destroy(): void {
