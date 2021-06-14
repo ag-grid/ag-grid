@@ -83,8 +83,6 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private createCellRendererFunc: (() => void) | null;
 
-    private lastIPadMouseClickEvent: number;
-
     // instance of the cellRenderer class
     private cellRenderer: ICellRendererComp | null | undefined;
     private cellEditor: ICellEditorComp | null;
@@ -167,7 +165,7 @@ export class CellComp extends Component implements TooltipParentComp {
             setFocusInOnEditor: ()=> this.setFocusInOnEditor(),
             stopRowOrCellEdit: ()=> this.stopRowOrCellEdit(),
             stopEditing: ()=> this.stopEditing(),
-            startRowOrCellEdit: (keyPress, charPress)=> this.startRowOrCellEdit(keyPress, charPress),
+            startRowOrCellEdit: (keyPress?, charPress?)=> this.startRowOrCellEdit(keyPress, charPress),
             startEditingIfEnabled: (keyPress, charPress, cellStartedEdit)=> this.startEditingIfEnabled(keyPress, charPress, cellStartedEdit)
         };
 
@@ -661,91 +659,14 @@ export class CellComp extends Component implements TooltipParentComp {
         return value;
     }
 
-    public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
-        if (isStopPropagationForAgGrid(mouseEvent)) { return; }
-
-        switch (eventName) {
-            case 'click':
-                this.onCellClicked(mouseEvent);
-                break;
-            case 'mousedown':
-                this.onMouseDown(mouseEvent);
-                break;
-            case 'dblclick':
-                this.onCellDoubleClicked(mouseEvent);
-                break;
-            case 'mouseout':
-                this.onMouseOut(mouseEvent);
-                break;
-            case 'mouseover':
-                this.onMouseOver(mouseEvent);
-                break;
-        }
-    }
-
     public dispatchCellContextMenuEvent(event: Event | null) {
         const colDef = this.getComponentHolder();
-        const cellContextMenuEvent: CellContextMenuEvent = this.createEvent(event, Events.EVENT_CELL_CONTEXT_MENU);
+        const cellContextMenuEvent: CellContextMenuEvent = this.ctrl.createEvent(event, Events.EVENT_CELL_CONTEXT_MENU);
         this.beans.eventService.dispatchEvent(cellContextMenuEvent);
 
         if (colDef.onCellContextMenu) {
             // to make the callback async, do in a timeout
             window.setTimeout(() => (colDef.onCellContextMenu as any)(cellContextMenuEvent), 0);
-        }
-    }
-
-    public createEvent(domEvent: Event | null, eventType: string): CellEvent {
-        const event: CellEvent = {
-            type: eventType,
-            node: this.rowNode,
-            data: this.rowNode.data,
-            value: this.value,
-            column: this.column,
-            colDef: this.getComponentHolder(),
-            context: this.beans.gridOptionsWrapper.getContext(),
-            api: this.beans.gridApi,
-            columnApi: this.beans.columnApi,
-            rowPinned: this.rowNode.rowPinned,
-            event: domEvent,
-            rowIndex: this.rowNode.rowIndex!
-        };
-
-        // because we are hacking in $scope for angular 1, we have to de-reference
-        if (this.scope) {
-            (event as any).$scope = this.scope;
-        }
-
-        return event;
-    }
-
-    private onMouseOut(mouseEvent: MouseEvent): void {
-        const cellMouseOutEvent: CellMouseOutEvent = this.createEvent(mouseEvent, Events.EVENT_CELL_MOUSE_OUT);
-        this.beans.eventService.dispatchEvent(cellMouseOutEvent);
-        this.beans.columnHoverService.clearMouseOver();
-    }
-
-    private onMouseOver(mouseEvent: MouseEvent): void {
-        const cellMouseOverEvent: CellMouseOverEvent = this.createEvent(mouseEvent, Events.EVENT_CELL_MOUSE_OVER);
-        this.beans.eventService.dispatchEvent(cellMouseOverEvent);
-        this.beans.columnHoverService.setMouseOver([this.column]);
-    }
-
-    private onCellDoubleClicked(mouseEvent: MouseEvent) {
-        const colDef = this.getComponentHolder();
-        // always dispatch event to eventService
-        const cellDoubleClickedEvent: CellDoubleClickedEvent = this.createEvent(mouseEvent, Events.EVENT_CELL_DOUBLE_CLICKED);
-        this.beans.eventService.dispatchEvent(cellDoubleClickedEvent);
-
-        // check if colDef also wants to handle event
-        if (typeof colDef.onCellDoubleClicked === 'function') {
-            // to make the callback async, do in a timeout
-            window.setTimeout(() => (colDef.onCellDoubleClicked as any)(cellDoubleClickedEvent), 0);
-        }
-
-        const editOnDoubleClick = !this.beans.gridOptionsWrapper.isSingleClickEdit()
-            && !this.beans.gridOptionsWrapper.isSuppressClickEdit();
-        if (editOnDoubleClick) {
-            this.startRowOrCellEdit();
         }
     }
 
@@ -860,7 +781,7 @@ export class CellComp extends Component implements TooltipParentComp {
             cellEditor.afterGuiAttached();
         }
 
-        const event: CellEditingStartedEvent = this.createEvent(null, Events.EVENT_CELL_EDITING_STARTED);
+        const event: CellEditingStartedEvent = this.ctrl.createEvent(null, Events.EVENT_CELL_EDITING_STARTED);
         this.beans.eventService.dispatchEvent(event);
     }
 
@@ -1187,104 +1108,6 @@ export class CellComp extends Component implements TooltipParentComp {
         event.preventDefault();
     }
 
-    private onMouseDown(mouseEvent: MouseEvent): void {
-        const { ctrlKey, metaKey, shiftKey } = mouseEvent;
-        const target = mouseEvent.target as HTMLElement;
-        const { eventService, rangeService } = this.beans;
-
-        // do not change the range for right-clicks inside an existing range
-        if (this.isRightClickInExistingRange(mouseEvent)) {
-            return;
-        }
-
-        if (!shiftKey || (rangeService && !rangeService.getCellRanges().length)) {
-            // We only need to pass true to focusCell when the browser is IE/Edge and we are trying
-            // to focus the cell itself. This should never be true if the mousedown was triggered
-            // due to a click on a cell editor for example.
-            const forceBrowserFocus = (isBrowserIE() || isBrowserEdge()) && !this.editingCell && !isFocusableFormField(target);
-
-            this.ctrl.focusCell(forceBrowserFocus);
-        } else if (rangeService) {
-            // if a range is being changed, we need to make sure the focused cell does not change.
-            mouseEvent.preventDefault();
-        }
-
-        // if we are clicking on a checkbox, we need to make sure the cell wrapping that checkbox
-        // is focused but we don't want to change the range selection, so return here.
-        if (this.containsWidget(target)) { return; }
-
-        if (rangeService) {
-            const thisCell = this.ctrl.getCellPosition();
-
-            if (shiftKey) {
-                rangeService.extendLatestRangeToCell(thisCell);
-            } else {
-                const ctrlKeyPressed = ctrlKey || metaKey;
-                rangeService.setRangeToCell(thisCell, ctrlKeyPressed);
-            }
-        }
-
-        eventService.dispatchEvent(this.createEvent(mouseEvent, Events.EVENT_CELL_MOUSE_DOWN));
-    }
-
-    private isRightClickInExistingRange(mouseEvent: MouseEvent): boolean {
-        const { rangeService } = this.beans;
-
-        if (rangeService) {
-            const cellInRange = rangeService.isCellInAnyRange(this.getCellPosition());
-
-            if (cellInRange && mouseEvent.button === 2) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private containsWidget(target: HTMLElement): boolean {
-        return isElementChildOfClass(target, 'ag-selection-checkbox', 3);
-    }
-
-    // returns true if on iPad and this is second 'click' event in 200ms
-    private isDoubleClickOnIPad(): boolean {
-        if (!isIOSUserAgent() || isEventSupported('dblclick')) { return false; }
-
-        const nowMillis = new Date().getTime();
-        const res = nowMillis - this.lastIPadMouseClickEvent < 200;
-        this.lastIPadMouseClickEvent = nowMillis;
-
-        return res;
-    }
-
-    private onCellClicked(mouseEvent: MouseEvent): void {
-        // iPad doesn't have double click - so we need to mimic it to enable editing for iPad.
-        if (this.isDoubleClickOnIPad()) {
-            this.onCellDoubleClicked(mouseEvent);
-            mouseEvent.preventDefault(); // if we don't do this, then iPad zooms in
-
-            return;
-        }
-
-        const { eventService, gridOptionsWrapper } = this.beans;
-
-        const cellClickedEvent: CellClickedEvent = this.createEvent(mouseEvent, Events.EVENT_CELL_CLICKED);
-        eventService.dispatchEvent(cellClickedEvent);
-
-        const colDef = this.getComponentHolder();
-
-        if (colDef.onCellClicked) {
-            // to make callback async, do in a timeout
-            window.setTimeout(() => colDef.onCellClicked!(cellClickedEvent), 0);
-        }
-
-        const editOnSingleClick = (gridOptionsWrapper.isSingleClickEdit() || colDef.singleClickEdit)
-            && !gridOptionsWrapper.isSuppressClickEdit();
-
-        if (editOnSingleClick) {
-            this.startRowOrCellEdit();
-        }
-    }
-
     public getCellPosition(): CellPosition {
         return this.ctrl.getCellPosition();
     }
@@ -1516,7 +1339,7 @@ export class CellComp extends Component implements TooltipParentComp {
         this.refreshCell({ forceRefresh: true, suppressFlash: true });
 
         const editingStoppedEvent = {
-            ...this.createEvent(null, Events.EVENT_CELL_EDITING_STOPPED),
+            ...this.ctrl.createEvent(null, Events.EVENT_CELL_EDITING_STOPPED),
             oldValue,
             newValue
         };

@@ -3,7 +3,7 @@ import { Column } from "../../entities/column";
 import { CellClassParams, ColDef } from "../../entities/colDef";
 import { RowNode } from "../../entities/rowNode";
 import { CellPosition } from "../../entities/cellPosition";
-import { CellFocusedEvent, Events } from "../../events";
+import { CellClickedEvent, CellDoubleClickedEvent, CellEvent, CellFocusedEvent, Events } from "../../events";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { CellRangeFeature } from "./cellRangeFeature";
 import { areEqual, last } from "../../utils/array";
@@ -20,6 +20,9 @@ import { ITooltipParams } from "../tooltipComponent";
 import { CellTooltipFeature } from "./cellTooltipFeature";
 import { RowPosition } from "../../entities/rowPosition";
 import { RowCtrl } from "../row/rowCtrl";
+import { isEventSupported, isStopPropagationForAgGrid } from "../../utils/event";
+import { isIOSUserAgent } from "../../utils/browser";
+import { CellMouseListenerFeature } from "./cellMouseListenerFeature";
 
 //////// theses should not be imported, remove them once CellComp has been refactored
 export const CSS_CELL = 'ag-cell';
@@ -102,6 +105,7 @@ export class CellCtrl extends BeanStub {
     private cellPositionFeature: CellPositionFeature;
     private cellCustomStyleFeature: CellCustomStyleFeature;
     private cellTooltipFeature: CellTooltipFeature;
+    private cellMouseListenerFeature: CellMouseListenerFeature;
 
     private cellPosition: CellPosition;
 
@@ -125,6 +129,9 @@ export class CellCtrl extends BeanStub {
 
         this.cellTooltipFeature = new CellTooltipFeature(this, this.beans);
         this.addDestroyFunc( ()=> this.cellTooltipFeature.destroy() );
+
+        this.cellMouseListenerFeature = new CellMouseListenerFeature(this, this.beans, this.column, this.rowNode, this.scope);
+        this.addDestroyFunc( ()=> this.cellMouseListenerFeature.destroy() );
 
         const rangeSelectionEnabled = this.beans.rangeService && this.beans.gridOptionsWrapper.isEnableRangeSelection();
         if (rangeSelectionEnabled) {
@@ -162,7 +169,36 @@ export class CellCtrl extends BeanStub {
         this.cellPositionFeature.setComp(comp);
         this.cellCustomStyleFeature.setComp(comp, scope);
         this.cellTooltipFeature.setComp(comp);
+        this.cellMouseListenerFeature.setComp(comp);
         if (this.cellRangeFeature) { this.cellRangeFeature.setComp(comp); }
+    }
+
+    public createEvent(domEvent: Event | null, eventType: string): CellEvent {
+        const event: CellEvent = {
+            type: eventType,
+            node: this.rowNode,
+            data: this.rowNode.data,
+            value: this.comp.getValue(),
+            column: this.column,
+            colDef: this.column.getColDef(),
+            context: this.beans.gridOptionsWrapper.getContext(),
+            api: this.beans.gridApi,
+            columnApi: this.beans.columnApi,
+            rowPinned: this.rowNode.rowPinned,
+            event: domEvent,
+            rowIndex: this.rowNode.rowIndex!
+        };
+
+        // because we are hacking in $scope for angular 1, we have to de-reference
+        if (this.scope) {
+            (event as any).$scope = this.scope;
+        }
+
+        return event;
+    }
+
+    public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
+        this.cellMouseListenerFeature.onMouseEvent(eventName, mouseEvent);
     }
 
     public setFocusInOnEditor(): void {

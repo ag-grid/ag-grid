@@ -90,7 +90,7 @@ export class RowContainerEventsFeature extends BeanStub {
             this.handleContextMenuMouseEvent(mouseEvent, null, rowComp, cellComp);
         } else {
             if (cellComp) {
-                cellComp.onMouseEvent(eventName, mouseEvent);
+                cellComp.getCtrl().onMouseEvent(eventName, mouseEvent);
             }
             if (rowComp) {
                 rowComp.onMouseEvent(eventName, mouseEvent);
@@ -190,12 +190,12 @@ export class RowContainerEventsFeature extends BeanStub {
         }
 
         if (eventName === 'keydown') {
-            const cellKeyDownEvent: CellKeyDownEvent = cellComp.createEvent(keyboardEvent, Events.EVENT_CELL_KEY_DOWN);
+            const cellKeyDownEvent: CellKeyDownEvent = cellComp.getCtrl().createEvent(keyboardEvent, Events.EVENT_CELL_KEY_DOWN);
             this.eventService.dispatchEvent(cellKeyDownEvent);
         }
 
         if (eventName === 'keypress') {
-            const cellKeyPressEvent: CellKeyPressEvent = cellComp.createEvent(keyboardEvent, Events.EVENT_CELL_KEY_PRESS);
+            const cellKeyPressEvent: CellKeyPressEvent = cellComp.getCtrl().createEvent(keyboardEvent, Events.EVENT_CELL_KEY_PRESS);
             this.eventService.dispatchEvent(cellKeyPressEvent);
         }
     }
