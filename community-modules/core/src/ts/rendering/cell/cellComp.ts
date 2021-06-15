@@ -93,7 +93,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private scope: any = null;
 
-    private ctrl: CellCtrl;
+    private cellCtrl: CellCtrl;
 
     private readonly printLayout: boolean;
 
@@ -118,7 +118,7 @@ export class CellComp extends Component implements TooltipParentComp {
         this.eRow = eRow;
 
         // we need to do this early, as we need CellPosition before we call setComp()
-        this.ctrl = new CellCtrl(column, rowNode, beans, rowComp);
+        this.cellCtrl = new CellCtrl(column, rowNode, beans, rowComp);
 
         this.createAndSetTemplate();
 
@@ -152,8 +152,8 @@ export class CellComp extends Component implements TooltipParentComp {
 
             // temp items
             isEditing: ()=> this.editingCell,
-            getValue: ()=> this.ctrl.getValue(),
-            getValueFormatted: ()=> this.ctrl.getValueFormatted(),
+            getValue: ()=> this.cellCtrl.getValue(),
+            getValueFormatted: ()=> this.cellCtrl.getValueFormatted(),
             setFocusOutOnEditor: ()=> this.setFocusOutOnEditor(),
             setFocusInOnEditor: ()=> this.setFocusInOnEditor(),
             stopRowOrCellEdit: cancel => this.stopRowOrCellEdit(cancel),
@@ -163,15 +163,15 @@ export class CellComp extends Component implements TooltipParentComp {
             startEditingIfEnabled: (keyPress, charPress, cellStartedEdit)=> this.startEditingIfEnabled(keyPress, charPress, cellStartedEdit)
         };
 
-        this.ctrl.setComp(compProxy, false, this.usingWrapper, this.scope, this.getGui(),
+        this.cellCtrl.setComp(compProxy, false, this.usingWrapper, this.scope, this.getGui(),
             this.printLayout);
-        this.addDestroyFunc( ()=> this.ctrl.destroy() );
+        this.addDestroyFunc( ()=> this.cellCtrl.destroy() );
 
         // all of these have dependencies on the eGui, so only do them after eGui is set
         this.setInitialValue();
         this.createCellRendererInstance();
         this.angular1Compile();
-        this.ctrl.refreshHandle();
+        this.cellCtrl.refreshHandle();
 
         // if we are editing the row, then the cell needs to turn
         // into edit mode
@@ -181,7 +181,7 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     public getCtrl(): CellCtrl {
-        return this.ctrl;
+        return this.cellCtrl;
     }
 
     private createAndSetTemplate(): void {
@@ -239,7 +239,7 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     public onFlashCells(event: FlashCellsEvent): void {
-        const cellId = this.beans.cellPositionUtils.createId(this.ctrl.getCellPosition());
+        const cellId = this.beans.cellPositionUtils.createId(this.cellCtrl.getCellPosition());
         const shouldFlash = event.cells[cellId];
         if (shouldFlash) {
             this.animateCell('highlight');
@@ -284,7 +284,7 @@ export class CellComp extends Component implements TooltipParentComp {
             return template || '';
         }
 
-        return this.ctrl.getValueToUse();
+        return this.cellCtrl.getValueToUse();
     }
 
     public getRowCtrl(): RowCtrl | null {
@@ -321,7 +321,7 @@ export class CellComp extends Component implements TooltipParentComp {
         const noValueProvided = colDef.field == null && colDef.valueGetter == null && colDef.showRowGroup == null;
         const forceRefresh = (params && params.forceRefresh) || noValueProvided || newData;
 
-        const valuesDifferent = this.ctrl.updateAndFormatValue();
+        const valuesDifferent = this.cellCtrl.updateAndFormatValue();
         const dataNeedsUpdating = forceRefresh || valuesDifferent;
 
         if (dataNeedsUpdating) {
@@ -349,17 +349,17 @@ export class CellComp extends Component implements TooltipParentComp {
                 this.flashCell();
             }
 
-            this.ctrl.temp_applyStyles();
-            this.ctrl.temp_applyClasses();
+            this.cellCtrl.temp_applyStyles();
+            this.cellCtrl.temp_applyClasses();
         }
 
         // we can't readily determine if the data in an angularjs template has changed, so here we just update
         // and recompile (if applicable)
         this.updateAngular1ScopeAndCompile();
 
-        this.ctrl.refreshToolTip();
+        this.cellCtrl.refreshToolTip();
 
-        this.ctrl.temp_applyRules();
+        this.cellCtrl.temp_applyRules();
     }
 
     // user can also call this via API
@@ -455,7 +455,7 @@ export class CellComp extends Component implements TooltipParentComp {
             if (this.isUsingCellRenderer()) {
                 this.createCellRendererInstance();
             } else {
-                const valueToUse = this.ctrl.getValueToUse();
+                const valueToUse = this.cellCtrl.getValueToUse();
 
                 if (valueToUse != null) {
                     this.eCellValue.innerHTML = escapeString(valueToUse) || '';
@@ -561,9 +561,9 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private createCellRendererParams(): ICellRendererParams {
         return {
-            value: this.ctrl.getValue(),
-            valueFormatted: this.ctrl.getValueFormatted(),
-            getValue: this.ctrl.getValueFromValueService.bind(this.ctrl),
+            value: this.cellCtrl.getValue(),
+            valueFormatted: this.cellCtrl.getValueFormatted(),
+            getValue: this.cellCtrl.getValueFromValueService.bind(this.cellCtrl),
             setValue: value => this.beans.valueService.setValue(this.rowNode, this.column, value),
             formatValue: this.formatValue.bind(this),
             data: this.rowNode.data,
@@ -571,7 +571,7 @@ export class CellComp extends Component implements TooltipParentComp {
             colDef: this.getComponentHolder(),
             column: this.column,
             $scope: this.scope,
-            rowIndex: this.ctrl.getCellPosition().rowIndex,
+            rowIndex: this.cellCtrl.getCellPosition().rowIndex,
             api: this.beans.gridOptionsWrapper.getApi(),
             columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
             context: this.beans.gridOptionsWrapper.getContext(),
@@ -638,7 +638,7 @@ export class CellComp extends Component implements TooltipParentComp {
         const cellEditorAsync = missing(this.cellEditor);
 
         if (cellEditorAsync && cellStartedEdit) {
-            this.ctrl.focusCell(true);
+            this.cellCtrl.focusCell(true);
         }
     }
 
@@ -714,7 +714,7 @@ export class CellComp extends Component implements TooltipParentComp {
             cellEditor.afterGuiAttached();
         }
 
-        const event: CellEditingStartedEvent = this.ctrl.createEvent(null, Events.EVENT_CELL_EDITING_STARTED);
+        const event: CellEditingStartedEvent = this.cellCtrl.createEvent(null, Events.EVENT_CELL_EDITING_STARTED);
         this.beans.eventService.dispatchEvent(event);
     }
 
@@ -811,12 +811,12 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private createCellEditorParams(keyPress: number | null, charPress: string | null, cellStartedEdit: boolean): ICellEditorParams {
         return {
-            value: this.ctrl.getValueFromValueService(),
+            value: this.cellCtrl.getValueFromValueService(),
             keyPress: keyPress,
             charPress: charPress,
             column: this.column,
             colDef: this.column.getColDef(),
-            rowIndex: this.ctrl.getCellPosition().rowIndex,
+            rowIndex: this.cellCtrl.getCellPosition().rowIndex,
             node: this.rowNode,
             data: this.rowNode.data,
             api: this.beans.gridOptionsWrapper.getApi(),
@@ -824,7 +824,7 @@ export class CellComp extends Component implements TooltipParentComp {
             columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
             context: this.beans.gridOptionsWrapper.getContext(),
             $scope: this.scope,
-            onKeyDown: this.ctrl.onKeyDown.bind(this.ctrl),
+            onKeyDown: this.cellCtrl.onKeyDown.bind(this.cellCtrl),
             stopEditing: this.stopEditingAndFocus.bind(this),
             eGridCell: this.getGui(),
             parseValue: this.parseValue.bind(this),
@@ -837,7 +837,7 @@ export class CellComp extends Component implements TooltipParentComp {
         const params: NewValueParams = {
             node: this.rowNode,
             data: this.rowNode.data,
-            oldValue: this.ctrl.getValue(),
+            oldValue: this.cellCtrl.getValue(),
             newValue: newValue,
             colDef: colDef,
             column: this.column,
@@ -855,7 +855,7 @@ export class CellComp extends Component implements TooltipParentComp {
     // than what we pick up on. eg selecting from a dropdown ends editing.
     public stopEditingAndFocus(suppressNavigateAfterEdit = false): void {
         this.stopRowOrCellEdit();
-        this.ctrl.focusCell(true);
+        this.cellCtrl.focusCell(true);
 
         if (!suppressNavigateAfterEdit) {
             this.navigateAfterEdit();
@@ -870,7 +870,7 @@ export class CellComp extends Component implements TooltipParentComp {
         const enterMovesDownAfterEdit = this.beans.gridOptionsWrapper.isEnterMovesDownAfterEdit();
 
         if (enterMovesDownAfterEdit) {
-            this.beans.navigationService.navigateToNextCell(null, KeyCode.DOWN, this.ctrl.getCellPosition(), false);
+            this.beans.navigationService.navigateToNextCell(null, KeyCode.DOWN, this.cellCtrl.getCellPosition(), false);
         }
     }
 
@@ -883,7 +883,7 @@ export class CellComp extends Component implements TooltipParentComp {
                 // if the editor is not present, it means async cell editor (eg React fibre)
                 // and we are trying to set focus before the cell editor is present, so we
                 // focus the cell instead
-                this.ctrl.focusCell(true);
+                this.cellCtrl.focusCell(true);
             }
         }
     }
@@ -899,7 +899,7 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     public getCellPosition(): CellPosition {
-        return this.ctrl.getCellPosition();
+        return this.cellCtrl.getCellPosition();
     }
 
     public getColumn(): Column {
@@ -932,7 +932,7 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     public onNewColumnsLoaded(): void {
-        this.ctrl.temp_applyOnNewColumnsLoaded();
+        this.cellCtrl.temp_applyOnNewColumnsLoaded();
     }
 
     public refreshShouldDestroy(): boolean {
@@ -975,7 +975,7 @@ export class CellComp extends Component implements TooltipParentComp {
             }
         }
         if (!this.rowDraggingComp) {
-            this.rowDraggingComp = new RowDragComp(() => this.ctrl.getValue(), this.rowNode, this.column, customElement, dragStartPixels);
+            this.rowDraggingComp = new RowDragComp(() => this.cellCtrl.getValue(), this.rowNode, this.column, customElement, dragStartPixels);
             this.createManagedBean(this.rowDraggingComp, this.beans.context);
         } else if (customElement) {
             // if the rowDraggingComp is already present, means we should only set the drag element
@@ -1028,7 +1028,7 @@ export class CellComp extends Component implements TooltipParentComp {
             return;
         }
 
-        const oldValue = this.ctrl.getValueFromValueService();
+        const oldValue = this.cellCtrl.getValueFromValueService();
         let newValueExists = false;
         let newValue: any;
 
@@ -1069,7 +1069,7 @@ export class CellComp extends Component implements TooltipParentComp {
         }
 
         this.setInlineEditingClass();
-        this.ctrl.refreshHandle();
+        this.cellCtrl.refreshHandle();
 
         if (newValueExists && newValue !== oldValue) {
             // we suppressRefreshCell because the call to rowNode.setDataValue() results in change detection
@@ -1087,7 +1087,7 @@ export class CellComp extends Component implements TooltipParentComp {
         this.refreshCell({ forceRefresh: true, suppressFlash: true });
 
         const editingStoppedEvent = {
-            ...this.ctrl.createEvent(null, Events.EVENT_CELL_EDITING_STOPPED),
+            ...this.cellCtrl.createEvent(null, Events.EVENT_CELL_EDITING_STOPPED),
             oldValue,
             newValue
         };
