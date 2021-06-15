@@ -28,8 +28,6 @@ interface LineNodeDatum extends SeriesNodeDatum {
         readonly y: number;
     }
     readonly label?: {
-        readonly x: number;
-        readonly y: number;
         readonly text: string;
         readonly fontStyle?: FontStyle;
         readonly fontWeight?: FontWeight;
@@ -115,6 +113,7 @@ export class LineSeries extends CartesianSeries {
         marker.addPropertyListener('enabled', this.onMarkerEnabledChange, this);
         marker.addEventListener('change', this.update, this);
 
+        label.enabled = false;
         label.addEventListener('change', this.update, this);
     }
 
@@ -307,9 +306,7 @@ export class LineSeries extends CartesianSeries {
                         fontFamily: label.fontFamily,
                         textAlign: 'center',
                         textBaseline: 'bottom',
-                        fill: label.color,
-                        x,
-                        y: y - 10
+                        fill: label.color
                     } : undefined
                 });
             }
@@ -399,7 +396,7 @@ export class LineSeries extends CartesianSeries {
 
         this.nodeSelection.selectByClass(Text)
             .each((text, datum) => {
-                const label = datum.label;
+                const { point, label } = datum;
 
                 if (label && labelEnabled) {
                     text.fontStyle = label.fontStyle;
@@ -409,8 +406,8 @@ export class LineSeries extends CartesianSeries {
                     text.textAlign = label.textAlign;
                     text.textBaseline = label.textBaseline;
                     text.text = label.text;
-                    text.x = label.x;
-                    text.y = label.y;
+                    text.x = point.x;
+                    text.y = point.y - 10;
                     text.fill = label.fill;
                     text.visible = true;
                 } else {
