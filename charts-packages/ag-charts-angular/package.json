@@ -2,10 +2,10 @@
   "name": "ag-charts-angular",
   "version": "3.3.0",
   "scripts": {
-    "ng": "ng",
-    "build": "ng build && npm run hash",
-    "test": "ng test  --watch false --browsers ChromeHeadless",
-    "lint": "ng lint",
+    "ng": "npx @angular/cli",
+    "build": "npx @angular/cli build && npm run hash",
+    "test": "npx @angular/cli test --watch false --browsers ChromeHeadless",
+    "lint": "npx @angular/cli lint",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
   "repository": {

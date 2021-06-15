@@ -17,7 +17,7 @@
     "start": "npm run customise && npm run develop",
     "serve": "npx gatsby serve --prefix-paths -H 0.0.0.0",
     "clean": "npx gatsby clean",
-    "test": "jest"
+    "test": "npx jest"
   },
   "dependencies": {
     "@ag-grid-community/core": "^25.1.0",

@@ -5,15 +5,15 @@
   "main": "main.js",
   "typings": "./main.d.ts",
   "scripts": {
-    "start": "cross-env NODE_ENV=development webpack serve",
-    "build": "gulp && npm run hash",
-    "umd": "rollup -c",
-    "test": "jest",
-    "test:e2eX": "gulp link-umd-e2e && npm run cypress:e2e && npm run cypress:components",
+    "start": "npx cross-env NODE_ENV=development webpack serve",
+    "build": "npx gulp && npm run hash",
+    "umd": "npx rollup -c",
+    "test": "npx jest",
+    "test:e2eX": "npx gulp link-umd-e2e && npm run cypress:e2e && npm run cypress:components",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
-    "cypress:open": "cross-env NODE_ENV=test cypress open",
-    "cypress:e2e": "cross-env NODE_ENV=test cypress run --spec 'cypress/integration/*spec.js'",
-    "cypress:components": "cross-env NODE_ENV=test cypress run --spec 'cypress/components/**/*spec.js'",
+    "cypress:open": "npx cross-env NODE_ENV=test cypress open",
+    "cypress:e2e": "npx cross-env NODE_ENV=test cypress run --spec 'cypress/integration/*spec.js'",
+    "cypress:components": "npx cross-env NODE_ENV=test cypress run --spec 'cypress/components/**/*spec.js'",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
   "repository": {
