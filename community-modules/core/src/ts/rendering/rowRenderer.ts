@@ -224,10 +224,10 @@ export class RowRenderer extends BeanStub {
                 forEachCellWithThisCol(cellComp => cellComp.getCtrl().onWidthChanged());
             };
             const firstRightPinnedChangedListener = () => {
-                forEachCellWithThisCol(cellComp => cellComp.onFirstRightPinnedChanged());
+                forEachCellWithThisCol(cellComp => cellComp.getCtrl().onFirstRightPinnedChanged());
             };
             const lastLeftPinnedChangedListener = () => {
-                forEachCellWithThisCol(cellComp => cellComp.onLastLeftPinnedChanged());
+                forEachCellWithThisCol(cellComp => cellComp.getCtrl().onLastLeftPinnedChanged());
             };
 
             col.addEventListener(Column.EVENT_LEFT_CHANGED, leftChangedListener);

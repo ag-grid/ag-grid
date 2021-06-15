@@ -120,7 +120,7 @@ export class CellComp extends Component implements TooltipParentComp {
         // we need to do this early, as we need CellPosition before we call setComp()
         this.ctrl = new CellCtrl(column, rowNode, beans, rowComp);
 
-        this.populateTemplate();
+        this.createAndSetTemplate();
 
         const eGui = this.getGui();
         const style = eGui.style;
@@ -184,7 +184,7 @@ export class CellComp extends Component implements TooltipParentComp {
         return this.ctrl;
     }
 
-    private populateTemplate(): void {
+    private createAndSetTemplate(): void {
 
         this.setUsingWrapper();
 
@@ -192,7 +192,12 @@ export class CellComp extends Component implements TooltipParentComp {
 
         if (this.usingWrapper) {
 
-            this.getGui().innerHTML = this.getCellWrapperString();
+            const unselectable = !this.beans.gridOptionsWrapper.isEnableCellTextSelection() ? ' unselectable="on"' : '';
+
+            this.getGui().innerHTML = /* html */
+                `<div ref="eCellWrapper" class="ag-cell-wrapper" role="presentation">
+                    <span ref="eCellValue" role="presentation" class="${CSS_CELL_VALUE}"${unselectable}></span>
+                </div>`;
 
             this.eCellValue = this.getRefElement('eCellValue');
             this.eCellWrapper = this.getRefElement('eCellWrapper');
@@ -226,24 +231,12 @@ export class CellComp extends Component implements TooltipParentComp {
         }
     }
 
-    private getCellWrapperString(): string {
-        const unselectable = !this.beans.gridOptionsWrapper.isEnableCellTextSelection() ? ' unselectable="on"' : '';
-        const wrapper = /* html */
-        `<div ref="eCellWrapper" class="ag-cell-wrapper" role="presentation">
-            <span ref="eCellValue" role="presentation" class="${CSS_CELL_VALUE}"${unselectable}>
-            </span>
-        </div>`;
-
-        return wrapper;
-    }
-
     public onCellChanged(event: CellChangedEvent): void {
         const eventImpactsThisCell = event.column === this.column;
         if (eventImpactsThisCell) {
             this.refreshCell({});
         }
     }
-
 
     public onFlashCells(event: FlashCellsEvent): void {
         const cellId = this.beans.cellPositionUtils.createId(this.ctrl.getCellPosition());
@@ -940,14 +933,6 @@ export class CellComp extends Component implements TooltipParentComp {
 
     public onNewColumnsLoaded(): void {
         this.ctrl.temp_applyOnNewColumnsLoaded();
-    }
-
-    public onFirstRightPinnedChanged(): void {
-        this.ctrl.onFirstRightPinnedChanged();
-    }
-
-    public onLastLeftPinnedChanged(): void {
-        this.ctrl.onLastLeftPinnedChanged();
     }
 
     public refreshShouldDestroy(): boolean {
