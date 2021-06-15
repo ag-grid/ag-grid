@@ -66,21 +66,23 @@ export class RowNodeSorter {
         return sortedNodeA.currentPos - sortedNodeB.currentPos;
     }
 
-    private getComparator(sortOption: SortOption, rowNode: RowNode) {
+    private getComparator(sortOption: SortOption, rowNode: RowNode):
+        ((valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode, isInverted: boolean) => number) | undefined {
+
         let column = sortOption.column;
 
+        // comparator on col get preference over everything else
+        const comparatorOnCol = column.getColDef().comparator;
+        if (comparatorOnCol!=null) {
+            return comparatorOnCol;
+        }
+
+        // if no comparator on col, see if we are showing a group, and if we are, get comparator from row group col
+        if (rowNode.rowGroupColumn) {
+            return rowNode.rowGroupColumn.getColDef().comparator;
+        }
+
         if (column.getColDef().showRowGroup) {
-            // first check if there is a group comparator supplied on the autoGroupColumnDef
-            const autoColumnGroupComparator = column.getColDef().comparator;
-            if (autoColumnGroupComparator) {
-                return autoColumnGroupComparator;
-            }
-
-            // then check for a comparator on the underlying row group column
-            if (rowNode.rowGroupColumn) {
-                return rowNode.rowGroupColumn.getColDef().comparator;
-            }
-
             // if a 'field' is supplied on the autoGroupColumnDef we need to use the associated column comparator
             const groupLeafField = !rowNode.group && column.getColDef().field;
             if (groupLeafField) {
@@ -91,9 +93,6 @@ export class RowNodeSorter {
                 }
             }
         }
-
-        // otherwise use comparator on sorted column
-        return column.getColDef().comparator;
     }
 
     private getValue(nodeA: RowNode, column: Column): string {

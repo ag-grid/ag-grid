@@ -98,7 +98,7 @@ export class RowNode implements IEventEmitter {
     public groupData: { [key: string]: string | null; } | null;
 
     /** The aggregated data */
-    public aggData: any;
+    public aggData: { [key: string]: any | null; } | null;
 
     /** The user provided data */
     public data: any;
