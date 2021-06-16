@@ -334,6 +334,15 @@ export class ChartTheme {
                 marker: {
                     ...ChartTheme.getCartesianSeriesMarkerDefaults(),
                     enabled: false
+                },
+                label: {
+                    enabled: false,
+                    fontStyle: undefined,
+                    fontWeight: undefined,
+                    fontSize: 12,
+                    fontFamily: ChartTheme.fontFamily,
+                    color: 'rgb(70, 70, 70)',
+                    formatter: undefined
                 }
             },
             histogram: {

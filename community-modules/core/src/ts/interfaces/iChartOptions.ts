@@ -303,8 +303,13 @@ export interface ScatterTooltipRendererParams extends CartesianTooltipRendererPa
     labelName?: string;
 }
 
+export interface AreaSeriesLabelOptions extends SeriesLabelOptions {
+    formatter?: (params: { value: any }) => string;
+}
+
 export interface AreaSeriesOptions extends SeriesOptions {
     marker: MarkerOptions;
+    label: AreaSeriesLabelOptions;
     shadow: DropShadowOptions;
     tooltip: TooltipOptions<AreaTooltipRendererParams>;
     lineDash: number[];

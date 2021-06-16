@@ -421,7 +421,7 @@ export class AreaSeries extends CartesianSeries {
                 if (label) {
                     labelSelectionData.push({
                         index: i,
-                        point: { x, y: y - 10},
+                        point: { x, y },
                         label: labelText ? {
                             text: labelText,
                             fontStyle: label.fontStyle,

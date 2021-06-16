@@ -5,7 +5,8 @@ import {
     CartesianChartOptions,
     ChartType,
     DropShadowOptions,
-    HighlightOptions
+    HighlightOptions,
+    LineSeriesLabelOptions
 } from "@ag-grid-community/core";
 import { AgChart, AreaSeries, CartesianChart, ChartTheme } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
@@ -212,6 +213,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                 opacity: seriesDefaults.strokeOpacity,
                 width: seriesDefaults.strokeWidth
             },
+            label: seriesDefaults.label as LineSeriesLabelOptions,
             marker: {
                 enabled: seriesDefaults.marker!.enabled,
                 shape: seriesDefaults.marker!.shape,
