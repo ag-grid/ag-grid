@@ -304,7 +304,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
             this.SYNCHRONOUS_CHANGE_PROPERTIES.forEach((synchronousChangeProperty: string) => {
                 if (asyncChanges[synchronousChangeProperty]) {
                     synchronousChanges[synchronousChangeProperty] = asyncChanges[synchronousChangeProperty];
-                    delete asyncChanges.context;
+                    delete asyncChanges[synchronousChangeProperty];
                 }
             })
 
