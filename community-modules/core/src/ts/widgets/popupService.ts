@@ -39,6 +39,8 @@ interface Rect {
     bottom: number;
 }
 
+enum DIRECTION { vertical, horizontal }
+
 export interface AfterGuiAttachedParams {
     hidePopup: () => void;
 }
@@ -108,7 +110,7 @@ export class PopupService extends BeanStub {
     public positionPopupForMenu(params: { eventSource: HTMLElement, ePopup: HTMLElement; }): void {
         const sourceRect = params.eventSource.getBoundingClientRect();
         const parentRect = this.getParentRect();
-        const y = this.keepYWithinBounds(params, sourceRect.top - parentRect.top);
+        const y = this.keepXYWithinBounds(params.ePopup, sourceRect.top - parentRect.top, DIRECTION.vertical);
 
         const minWidth = (params.ePopup.clientWidth > 0) ? params.ePopup.clientWidth : 200;
         params.ePopup.style.minWidth = `${minWidth}px`;
@@ -281,25 +283,22 @@ export class PopupService extends BeanStub {
         y: number,
         keepWithinBounds?: boolean;
     }): void {
+        const { ePopup, keepWithinBounds, nudgeX, nudgeY, minHeight, minWidth } = params;
+        let { x, y } = params;
 
-        let x = params.x;
-        let y = params.y;
-
-        if (params.nudgeX) {
-            x += params.nudgeX;
-        }
-        if (params.nudgeY) {
-            y += params.nudgeY;
-        }
+        if (nudgeX) { x += nudgeX; }
+        if (nudgeY) { y += nudgeY; }
+        if (minWidth) { ePopup.style.minWidth = `${minWidth}px`; }
+        if (minHeight) { ePopup.style.minHeight = `${minHeight}px`; }
 
         // if popup is overflowing to the bottom, move it up
-        if (params.keepWithinBounds) {
-            x = this.keepXWithinBounds(params, x);
-            y = this.keepYWithinBounds(params, y);
+        if (keepWithinBounds) {
+            x = this.keepXYWithinBounds(ePopup, x, DIRECTION.horizontal);
+            y = this.keepXYWithinBounds(ePopup, y, DIRECTION.vertical);
         }
 
-        params.ePopup.style.left = `${x}px`;
-        params.ePopup.style.top = `${y}px`;
+        ePopup.style.left = `${x}px`;
+        ePopup.style.top = `${y}px`;
     }
 
     public getActivePopups(): HTMLElement[] {
@@ -326,7 +325,17 @@ export class PopupService extends BeanStub {
         };
     }
 
-    private keepYWithinBounds(params: { ePopup: HTMLElement, minHeight?: number; }, y: number): number {
+    private keepXYWithinBounds(
+        ePopup: HTMLElement,
+        position: number,
+        direction: DIRECTION
+    ): number {
+        const isVertical = direction === DIRECTION.vertical;
+        const sizeProperty = isVertical ? 'height' : 'width';
+        const anchorProperty = isVertical ? 'top' : 'left';
+        const offsetProperty = isVertical ? 'offsetHeight' : 'offsetWidth';
+        const scrollPositionProperty = isVertical ? 'scrollTop' : 'scrollLeft';
+
         const eDocument = this.gridOptionsWrapper.getDocument();
         const docElement = eDocument.documentElement;
         const popupParent = this.getPopupParent();
@@ -334,56 +343,18 @@ export class PopupService extends BeanStub {
         const documentRect = eDocument.documentElement.getBoundingClientRect();
         const isBody = popupParent === eDocument.body;
 
-        let minHeight = Math.min(200, parentRect.height);
-        let diff = 0;
+        const offsetSize = ePopup[offsetProperty];
+        const getSize = isVertical ? getAbsoluteHeight : getAbsoluteWidth;
 
-        if (params.minHeight && params.minHeight < minHeight) {
-            minHeight = params.minHeight;
-        } else if (params.ePopup.offsetHeight > 0) {
-            minHeight = params.ePopup.clientHeight;
-            diff = getAbsoluteHeight(params.ePopup) - minHeight;
-        }
-
-        let heightOfParent = isBody ? (getAbsoluteHeight(docElement) + docElement.scrollTop) : parentRect.height;
+        let sizeOfParent = isBody ? (getSize(docElement) + docElement[scrollPositionProperty]) : parentRect[sizeProperty];
 
         if (isBody) {
-            heightOfParent -= Math.abs(documentRect.top - parentRect.top);
+            sizeOfParent -= Math.abs(documentRect[anchorProperty] - parentRect[anchorProperty]);
         }
 
-        const maxY = heightOfParent - minHeight - diff;
+        const max = sizeOfParent - offsetSize;
 
-        return Math.min(Math.max(y, 0), Math.abs(maxY));
-    }
-
-    private keepXWithinBounds(params: { minWidth?: number, ePopup: HTMLElement; }, x: number): number {
-        const eDocument = this.gridOptionsWrapper.getDocument();
-        const docElement = eDocument.documentElement;
-        const popupParent = this.getPopupParent();
-        const parentRect = popupParent.getBoundingClientRect();
-        const documentRect = eDocument.documentElement.getBoundingClientRect();
-        const isBody = popupParent === eDocument.body;
-        const ePopup = params.ePopup;
-
-        let minWidth = Math.min(200, parentRect.width);
-        let diff = 0;
-
-        if (params.minWidth && params.minWidth < minWidth) {
-            minWidth = params.minWidth;
-        } else if (ePopup.offsetWidth > 0) {
-            minWidth = ePopup.offsetWidth;
-            ePopup.style.minWidth = `${minWidth}px`;
-            diff = getAbsoluteWidth(ePopup) - minWidth;
-        }
-
-        let widthOfParent = isBody ? (getAbsoluteWidth(docElement) + docElement.scrollLeft) : parentRect.width;
-
-        if (isBody) {
-            widthOfParent -= Math.abs(documentRect.left - parentRect.left);
-        }
-
-        const maxX = widthOfParent - minWidth - diff;
-
-        return Math.min(Math.max(x, 0), Math.abs(maxX));
+        return Math.min(Math.max(position, 0), Math.abs(max));
     }
 
     private keepPopupPositionedRelativeTo(params: {
@@ -497,7 +468,7 @@ export class PopupService extends BeanStub {
         addCssClass(eChild, 'ag-popup-child');
 
         if (this.focusService.isKeyboardMode()) {
-            addCssClass(eChild, FocusService.AG_KEYBOARD_FOCUS)
+            addCssClass(eChild, FocusService.AG_KEYBOARD_FOCUS);
         }
 
         eWrapper.appendChild(eChild);

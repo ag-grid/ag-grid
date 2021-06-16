@@ -158,10 +158,8 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             ePopup: eMenuGui,
             // move one pixel away so that accidentally double clicking
             // won't show the browser's contextmenu
-            nudgeX: 1,
             nudgeY: 1
         };
-        const positionCallback = this.popupService.positionPopupUnderMouseEvent.bind(this.popupService, positionParams);
 
         const addPopupRes = this.popupService.addPopup({
             modal: true,
@@ -172,7 +170,11 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
                 this.destroyBean(menu);
             },
             click: mouseEvent,
-            positionCallback: positionCallback,
+            positionCallback: () => {
+                this.popupService.positionPopupUnderMouseEvent(_.assign({}, {
+                    nudgeX: this.gridOptionsWrapper.isEnableRtl() ? (eMenuGui.offsetWidth + 1) * -1 : 1
+                }, positionParams));
+            },
             // so when browser is scrolled down, or grid is scrolled, context menu stays with cell
             anchorToElement: anchorToElement
         });
