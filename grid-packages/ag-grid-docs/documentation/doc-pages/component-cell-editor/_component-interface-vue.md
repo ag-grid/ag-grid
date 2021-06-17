@@ -1,5 +1,5 @@
 [[only-vue]]
-|## Cell Renderer Component
+|## Cell Editor Component
 |
 |When a Vue component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell &
 |row values available to you via `this.params`.

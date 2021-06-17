@@ -1,4 +1,4 @@
-var columnDefs = [
+const columnDefs = [
     {
         headerName: "String (editable)",
         field: "simple",
@@ -13,7 +13,7 @@ var columnDefs = [
         headerName: "Good Number (editable)",
         field: "numberGood",
         editable: true,
-        valueFormatter: '"£" + Math.floor(value).toString().replace(/(\\d)(?=(\\d{3})+(?!\\d))/g, "$1,")',
+        valueFormatter: `"£" + Math.floor(value).toString().replace(/(\\d)(?=(\\d{3})+(?!\\d))/g, "$1,")`,
         valueParser: 'Number(newValue)'
     },
     {
@@ -22,23 +22,23 @@ var columnDefs = [
         valueGetter: 'data.firstName + " " + data.lastName',
         valueSetter:
             // an expression can span multiple lines!!!
-            'var nameSplit = newValue.split(" ");' +
-            'var newFirstName = nameSplit[0];' +
-            'var newLastName = nameSplit[1];' +
-            'if (data.firstName !== newFirstName || data.lastName !== newLastName) {' +
-            '  data.firstName = newFirstName;' +
-            '  data.lastName = newLastName;' +
-            '  return true;' +
-            '} else {' +
-            '  return false;' +
-            '}'
+            `var nameSplit = newValue.split(" ");
+             var newFirstName = nameSplit[0];
+             var newLastName = nameSplit[1];
+             if (data.firstName !== newFirstName || data.lastName !== newLastName) {  
+                data.firstName = newFirstName;  
+                data.lastName = newLastName;  
+                return true;
+            } else {  
+                return false;
+            }`
     },
-    { headerName: "A", field: 'a', maxWidth: 120 },
-    { headerName: "B", field: 'b', maxWidth: 120 },
-    { headerName: "A + B", valueGetter: 'data.a + data.b', maxWidth: 120 }
+    {headerName: "A", field: 'a', maxWidth: 120},
+    {headerName: "B", field: 'b', maxWidth: 120},
+    {headerName: "A + B", valueGetter: 'data.a + data.b', maxWidth: 120}
 ];
 
-var gridOptions = {
+const gridOptions = {
     columnDefs: columnDefs,
     defaultColDef: {
         flex: 1,
@@ -51,14 +51,14 @@ var gridOptions = {
 };
 
 function createRowData() {
-    var rowData = [];
+    const rowData = [];
 
-    var words = ['One', 'Apple', 'Moon', 'Sugar', 'Grid', 'Banana', 'Sunshine', 'Stars', 'Black', 'White', 'Salt', 'Beach'];
-    var firstNames = ['Niall', 'John', 'Rob', 'Alberto', 'Bas', 'Dimple', 'Sean'];
-    var lastNames = ['Pink', 'Black', 'White', 'Brown', 'Smith', 'Smooth', 'Anderson'];
+    const words = ['One', 'Apple', 'Moon', 'Sugar', 'Grid', 'Banana', 'Sunshine', 'Stars', 'Black', 'White', 'Salt', 'Beach'];
+    const firstNames = ['Niall', 'John', 'Rob', 'Alberto', 'Bas', 'Dimple', 'Sean'];
+    const lastNames = ['Pink', 'Black', 'White', 'Brown', 'Smith', 'Smooth', 'Anderson'];
 
-    for (var i = 0; i < 100; i++) {
-        var randomWords = words[i % words.length] + ' ' + words[i * 17 % words.length];
+    for (let i = 0; i < 100; i++) {
+        const randomWords = words[i % words.length] + ' ' + words[i * 17 % words.length];
         rowData.push({
             simple: randomWords,
             numberBad: Math.floor(((i + 2) * 173456) % 10000),
@@ -79,7 +79,7 @@ function onCellValueChanged(event) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
-    var gridDiv = document.querySelector('#myGrid');
+    const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
     gridOptions.api.sizeColumnsToFit();
 });

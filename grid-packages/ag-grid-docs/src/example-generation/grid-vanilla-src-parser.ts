@@ -58,9 +58,10 @@ function generateWithReplacedGridOptions(node, options?) {
         .replace(/gridOptions\.columnApi/g, 'this.gridColumnApi');
 }
 
-function processColDefsForFunctionalReact(propertyName: string, exampleType, exampleSettings, providedExamples) {
+function processColDefsForFunctionalReactOrVue(propertyName: string, exampleType, exampleSettings, providedExamples) {
     if (propertyName === 'columnDefs' && exampleSettings.reactFunctional !== false) {
-        return exampleType === 'generated' || (exampleType === 'mixed' && !providedExamples['reactFunctional']);
+        return exampleType === 'generated' ||
+            (exampleType === 'mixed' && !providedExamples['reactFunctional'] && !providedExamples['vue'] && !providedExamples['vue3']);
     }
 
     return false;
@@ -68,7 +69,7 @@ function processColDefsForFunctionalReact(propertyName: string, exampleType, exa
 
 function processComponentsForVue(propertyName: string, exampleType, providedExamples) {
     if (propertyName === 'components') {
-        return exampleType === 'generated' || (exampleType === 'mixed' && !providedExamples['vue']);
+        return exampleType === 'generated' || (exampleType === 'mixed' && !providedExamples['vue'] && !providedExamples['vue3']);
     }
 
     return false;
@@ -76,7 +77,7 @@ function processComponentsForVue(propertyName: string, exampleType, providedExam
 
 function processDefaultColumnDefForVue(propertyName: string, exampleType, providedExamples) {
     if (propertyName === 'defaultColDef') {
-        return exampleType === 'generated' || (exampleType === 'mixed' && !providedExamples['vue']);
+        return exampleType === 'generated' || (exampleType === 'mixed' && !providedExamples['vue'] && !providedExamples['vue3']);
     }
 
     return false;
@@ -271,7 +272,7 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
             matches: node => nodeIsVarWithName(node, propertyName),
             apply: (bindings, node) => {
                 try {
-                    if (processColDefsForFunctionalReact(propertyName, exampleType, exampleSettings, providedExamples) &&
+                    if (processColDefsForFunctionalReactOrVue(propertyName, exampleType, exampleSettings, providedExamples) &&
                         node.declarations[0].init.type === 'ArrayExpression') {
                         bindings.parsedColDefs = extractAndParseColDefs(node.declarations[0].init);
                     }
@@ -287,7 +288,7 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
         gridOptionsCollectors.push({
             matches: node => nodeIsPropertyWithName(node, propertyName),
             apply: (bindings, node) => {
-                if (processColDefsForFunctionalReact(propertyName, exampleType, exampleSettings, providedExamples) &&
+                if (processColDefsForFunctionalReactOrVue(propertyName, exampleType, exampleSettings, providedExamples) &&
                     node.value.type === 'ArrayExpression') {
                     bindings.parsedColDefs = extractAndParseColDefs(node.value);
                 }

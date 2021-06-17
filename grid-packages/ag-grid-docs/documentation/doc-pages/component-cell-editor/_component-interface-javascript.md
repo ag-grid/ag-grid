@@ -1,7 +1,7 @@
 [[only-javascript]]
-|## Cell Renderer Component
+|## Cell Editor Component
 |
-|The interface for the cell renderer component is as follows:
+|The interface for the cell editor component is as follows:
 |
 |```ts
 |interface ICellEditorComp {
