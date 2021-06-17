@@ -1,6 +1,6 @@
 import Vue from "vue";
 
-export default Vue.extend({
+export default {
     template: `
         <div class="ag-header-group-cell-label">
             <div class="customHeaderLabel">{{params.displayName}}</div>
@@ -28,4 +28,4 @@ export default Vue.extend({
             this.groupExpanded = this.params.columnGroup.getOriginalColumnGroup().isExpanded();
         }
     }
-});
+};

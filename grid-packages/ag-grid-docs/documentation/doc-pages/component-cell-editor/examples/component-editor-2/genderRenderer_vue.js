@@ -1,12 +1,10 @@
-import Vue from "vue";
-
-export default Vue.extend({
+export default {
     template: `
-            <span>
-                <img :src="imageSource" >{{value}}
+      <span>
+                <img :src="imageSource">{{ value }}
             </span>
     `,
-    data: function() {
+    data: function () {
         return {
             imageSource: null,
             value: ''
@@ -20,4 +18,4 @@ export default Vue.extend({
     mounted() {
     },
     methods: {}
-});
+};

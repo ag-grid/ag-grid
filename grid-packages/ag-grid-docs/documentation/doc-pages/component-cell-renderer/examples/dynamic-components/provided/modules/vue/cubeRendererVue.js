@@ -1,9 +1,7 @@
-import Vue from "vue";
-
-export default Vue.extend({
+export default {
     template: `
-        <span>
-            {{this.value}}
+      <span>
+            {{ this.value }}
         </span>
     `,
     data: function () {
@@ -21,4 +19,4 @@ export default Vue.extend({
             return this.params.value * this.params.value * this.params.value;
         }
     }
-});
+};

@@ -1,6 +1,4 @@
-import Vue from "vue";
-
-export default Vue.extend({
+export default {
     template: '<img width="20px" :src="imgForMood" />',
     data() {
         return {
@@ -22,4 +20,4 @@ export default Vue.extend({
     created() {
         this.setMood(this.params);
     }
-});
+};

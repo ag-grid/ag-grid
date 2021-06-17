@@ -200,7 +200,7 @@ There are two ways you can get fix this problem:
 |
 | ```ts
 | // let's assume a VueJS component as follows
-| export default Vue.extend({
+| export default {
 |     template: `<input style="height: 20px" :ref="'input'" v-model="text">`,
 |     data() {
 |         ...data

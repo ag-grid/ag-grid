@@ -1,30 +1,29 @@
-import Vue from "vue";
-import { AgGridVue } from "ag-grid-vue";
+import {AgGridVue} from "ag-grid-vue";
 import 'ag-grid-enterprise';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 
-export default Vue.extend({
+export default {
     template: `
-        <div class="full-width-panel">
-            <div class="full-width-details">
-                <div class="full-width-detail"><b>Name: </b>{{params.data.name}}</div>
-                <div class="full-width-detail"><b>Account: </b>{{params.data.account}}</div>
-             </div>
-             <ag-grid-vue style="height: 100%;"
-                 class="full-width-grid ag-theme-alpine"
-                 :gridOptions="gridOptions"
-                 :columnDefs="colDefs"
-                 :defaultColDef="defaultColDef"
-                 :rowData="rowData"
-                 @grid-ready="onGridReady">
-            </ag-grid-vue>
-        </div>
+      <div class="full-width-panel">
+      <div class="full-width-details">
+        <div class="full-width-detail"><b>Name: </b>{{ params.data.name }}</div>
+        <div class="full-width-detail"><b>Account: </b>{{ params.data.account }}</div>
+      </div>
+      <ag-grid-vue style="height: 100%;"
+                   class="full-width-grid ag-theme-alpine"
+                   :gridOptions="gridOptions"
+                   :columnDefs="colDefs"
+                   :defaultColDef="defaultColDef"
+                   :rowData="rowData"
+                   @grid-ready="onGridReady">
+      </ag-grid-vue>
+      </div>
     `,
     components: {
         'ag-grid-vue': AgGridVue
     },
-    data: function() {
+    data: function () {
         return {
             gridOptions: null,
             colDefs: null,
@@ -34,11 +33,11 @@ export default Vue.extend({
     beforeMount() {
         this.gridOptions = {};
         this.colDefs = [
-            { field: 'callId' },
-            { field: 'direction' },
-            { field: 'number' },
-            { field: 'duration', valueFormatter: "x.toLocaleString() + 's'" },
-            { field: 'switchCode' }
+            {field: 'callId'},
+            {field: 'direction'},
+            {field: 'number'},
+            {field: 'duration', valueFormatter: "x.toLocaleString() + 's'"},
+            {field: 'switchCode'}
         ];
         this.defaultColDef = {
             flex: 1,
@@ -66,4 +65,4 @@ export default Vue.extend({
             this.masterGridApi.addDetailGridInfo(this.rowId, gridInfo);
         }
     }
-});
+};

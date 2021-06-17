@@ -1,11 +1,11 @@
 import Vue from 'vue';
 
-export default Vue.extend({
+export default {
     template: `
-        <div :ref="'container'" class="mood" tabindex="0" @keydown="onKeyDown">
-            <img src="https://www.ag-grid.com/example-assets/smileys/happy.png" @click="onClick(true)" :class="{ selected: happy, default: !happy }">
-            <img src="https://www.ag-grid.com/example-assets/smileys/sad.png" @click="onClick(false)" :class="{ selected: !happy, default: happy }">
-        </div>
+      <div :ref="'container'" class="mood" tabindex="0" @keydown="onKeyDown">
+      <img src="https://www.ag-grid.com/example-assets/smileys/happy.png" @click="onClick(true)" :class="{ selected: happy, default: !happy }">
+      <img src="https://www.ag-grid.com/example-assets/smileys/sad.png" @click="onClick(false)" :class="{ selected: !happy, default: happy }">
+      </div>
     `,
     data() {
         return {
@@ -52,4 +52,4 @@ export default Vue.extend({
             this.$refs.container.focus();
         });
     }
-});
+};

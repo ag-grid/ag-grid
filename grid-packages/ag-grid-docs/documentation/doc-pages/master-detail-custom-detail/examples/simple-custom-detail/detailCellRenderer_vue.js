@@ -1,5 +1,3 @@
-import Vue from "vue";
-
-export default Vue.extend({
+export default {
     template: `<h1 style="padding: 20px;">My Custom Detail</h1>`,
-});
+};

@@ -1,8 +1,6 @@
-import Vue from "vue";
-
-export default Vue.extend({
+export default {
     template: `
-        <span>{{formattedValue}}</span>
+      <span>{{ formattedValue }}</span>
     `,
     data: function () {
         return {};
@@ -11,10 +9,6 @@ export default Vue.extend({
         formattedValue: function () {
             return this.formatValueToCurrency('EUR', this.params.value)
         }
-    },
-    beforeMount() {
-    },
-    mounted() {
     },
     methods: {
         formatValueToCurrency(currency, value) {
@@ -27,4 +21,4 @@ export default Vue.extend({
             return true;
         }
     }
-});
+};

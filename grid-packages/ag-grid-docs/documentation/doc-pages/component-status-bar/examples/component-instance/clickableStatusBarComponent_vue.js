@@ -1,23 +1,17 @@
-import Vue from "vue";
-
-export default Vue.extend({
+export default {
     template: `
-            <div class="container" v-if="visible">
-                <div>
-                    <span class="component">Status Bar Component&nbsp;
-                        <input type="button" v-on:click="onClick" value="Click Me"/>
-                    </span>
-                </div>
-            </div>
+      <div class="container" v-if="visible">
+      <div>
+          <span class="component">Status Bar Component&nbsp;
+            <input type="button" v-on:click="onClick" value="Click Me"/>
+          </span>
+      </div>
+      </div>
     `,
     data: function () {
         return {
             visible: true
         };
-    },
-    beforeMount() {
-    },
-    mounted() {
     },
     methods: {
         onClick() {
@@ -30,4 +24,4 @@ export default Vue.extend({
             return this.visible;
         }
     }
-});
+};

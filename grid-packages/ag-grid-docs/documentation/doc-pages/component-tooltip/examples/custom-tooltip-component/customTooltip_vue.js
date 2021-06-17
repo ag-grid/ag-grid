@@ -1,6 +1,4 @@
-import Vue from "vue";
-
-export default Vue.extend({
+export default {
     template: `
       <div class="custom-tooltip" v-bind:style="{ backgroundColor: color }">
           <p><span>{{ data.athlete }}</span></p>
@@ -20,4 +18,4 @@ export default Vue.extend({
         this.data = this.params.api.getDisplayedRowAtIndex(this.params.rowIndex).data;
         this.color = this.params.color || 'white';
     }
-});
+};

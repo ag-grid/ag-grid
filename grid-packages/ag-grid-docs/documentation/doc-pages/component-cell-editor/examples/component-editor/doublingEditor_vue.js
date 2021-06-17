@@ -1,7 +1,7 @@
 import Vue from 'vue';
 
-export default Vue.extend({
-    template: `<input type="number" v-model="value" ref="input" style="width: 100%" />`,
+export default {
+    template: `<input type="number" v-model="value" ref="input" style="width: 100%"/>`,
     data() {
         return {
             value: null
@@ -32,4 +32,4 @@ export default Vue.extend({
         this.value = this.params.value;
         Vue.nextTick(() => this.$refs.input.focus());
     }
-});
+};

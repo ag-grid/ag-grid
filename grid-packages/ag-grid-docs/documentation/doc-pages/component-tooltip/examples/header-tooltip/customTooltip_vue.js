@@ -1,19 +1,17 @@
-import Vue from "vue";
-
-export default Vue.extend({
+export default {
     template: `
       <div class="custom-tooltip" v-if="isHeader">
-      <p>Group Name: {{ params.value }}</p>
-      <hr v-if="isGroupedHeader"></hr>
-      <div v-if="isGroupedHeader" >
-        <p v-for="(header, idx) in params.colDef.children">
-          Child {{ (idx + 1) }} - {{ header.headerName }}
-        </p>
-      </div>
-      </div>
-      <div class="custom-tooltip" v-else>
-      <p><span>Athlete's Name:</span></p>
-      <p><span>{{ athlete }}</span></p>
+          <p>Group Name: {{ params.value }}</p>
+          <hr v-if="isGroupedHeader"></hr>
+          <div v-if="isGroupedHeader">
+            <p v-for="(header, idx) in params.colDef.children">
+              Child {{ (idx + 1) }} - {{ header.headerName }}
+            </p>
+          </div>
+          </div>
+          <div class="custom-tooltip" v-else>
+          <p><span>Athlete's Name:</span></p>
+          <p><span>{{ athlete }}</span></p>
       </div>
     `,
     data: function () {
@@ -27,4 +25,4 @@ export default Vue.extend({
         this.isHeader = params.rowIndex === undefined;
         this.isGroupedHeader = !!params.colDef.children;
     }
-});
+};

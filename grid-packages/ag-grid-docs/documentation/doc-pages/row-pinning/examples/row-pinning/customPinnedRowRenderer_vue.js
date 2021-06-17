@@ -1,17 +1,8 @@
-import Vue from "vue";
-
-export default Vue.extend({
+export default {
     template: `
-        <span :style="params.style">{{params.value}}</span>
+      <span :style="params.style">{{ params.value }}</span>
     `,
     data: function () {
-        return {
-        };
+        return {};
     },
-    beforeMount() {
-    },
-    mounted() {
-    },
-    methods: {
-    }
-});
+};

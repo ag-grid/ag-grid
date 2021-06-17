@@ -1,8 +1,6 @@
-import Vue from "vue";
-
-export default Vue.extend({
+export default {
     template: `
-        <span>
+      <span>
               <span>{{ cellValue }}</span>
               <button @click="buttonClicked()">Push For Total</button>
           </span>
@@ -32,4 +30,4 @@ export default Vue.extend({
             return params.valueFormatted ? params.valueFormatted : params.value;
         }
     }
-});
+};

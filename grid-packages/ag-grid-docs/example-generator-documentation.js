@@ -217,9 +217,7 @@ function createExampleGenerator(prefix, importTypes) {
         const style = /<style>(.*)<\/style>/s.exec(indexHtml);
         let inlineStyles = style && style.length > 0 && format(style[1], 'css');
 
-        debugger
-
-        if (type === 'mixed' && providedExamples['react']) {
+       if (type === 'mixed' && providedExamples['react']) {
             importTypes.forEach(importType => copyProvidedExample(importType, 'react', providedExamples['react']));
         } else {
             const reactScripts = getMatchingPaths('*_react.*');
@@ -235,7 +233,6 @@ function createExampleGenerator(prefix, importTypes) {
 
             importTypes.forEach(importType => writeExampleFiles(importType, 'react', 'react', reactScripts, reactConfigs.get(importType)));
         }
-        debugger
 
         if (type === 'mixed' && providedExamples['reactFunctional']) {
             importTypes.forEach(importType => copyProvidedExample(importType, 'reactFunctional', providedExamples['reactFunctional']));
@@ -261,7 +258,6 @@ function createExampleGenerator(prefix, importTypes) {
             }
         }
 
-        debugger
         if (type === 'mixed' && providedExamples['angular']) {
             importTypes.forEach(importType => copyProvidedExample(importType, 'angular', providedExamples['angular']));
         } else {
@@ -285,7 +281,6 @@ function createExampleGenerator(prefix, importTypes) {
             importTypes.forEach(importType => writeExampleFiles(importType, 'angular', 'angular', angularScripts, angularConfigs.get(importType), 'app'));
         }
 
-        debugger
         if (type === 'mixed' && providedExamples['vue']) {
             importTypes.forEach(importType => copyProvidedExample(importType, 'vue', providedExamples['vue']));
         } else {

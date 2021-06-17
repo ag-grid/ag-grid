@@ -1,6 +1,4 @@
-import Vue from "vue";
-
-export default Vue.extend({
+export default {
     template:
         `
           <div class="custom-tooltip">
@@ -12,6 +10,7 @@ export default Vue.extend({
               <h4 style="white-space: nowrap;">{{ athlete }}</h4>
               <p>Total: {{ total }}</p>
             </div>
+          </div>
           </div>`,
     data: function () {
         return {
@@ -28,4 +27,4 @@ export default Vue.extend({
         this.country = data.country;
         this.total = data.total;
     }
-});
+};

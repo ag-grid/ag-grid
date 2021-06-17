@@ -3,8 +3,8 @@ import Vue from 'vue';
 const KEY_BACKSPACE = 8;
 const KEY_DELETE = 46;
 
-export default Vue.extend({
-    template: `<input v-model="value" :ref="'input'" />`,
+export default {
+    template: `<input v-model="value" :ref="'input'"/>`,
     data() {
         return {
             value: null
@@ -47,4 +47,4 @@ export default Vue.extend({
             this.$refs.input.focus();
         });
     }
-});
+};

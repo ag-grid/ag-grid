@@ -1,6 +1,4 @@
-import Vue from "vue";
-
-export default Vue.extend({
+export default {
     template: '<img width="20px" :src="imgForMood" />',
     data() {
         return {
@@ -16,10 +14,10 @@ export default Vue.extend({
 
         setMood(params) {
             this.mood = params.value;
-            this.imgForMood = 'https://www.ag-grid.com/example-assets/smileys/' + (this.mood === 'Happy' ? 'happy.png' : 'sad.png');
+            this.imgForMood = `https://www.ag-grid.com/example-assets/smileys/${this.mood === 'Happy' ? 'happy.png' : 'sad.png'}`;
         }
     },
     created() {
         this.setMood(this.params);
     }
-});
+};

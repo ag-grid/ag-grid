@@ -74,6 +74,22 @@ function processComponentsForVue(propertyName: string, exampleType, providedExam
     return false;
 }
 
+function processDefaultColumnDefForVue(propertyName: string, exampleType, providedExamples) {
+    if (propertyName === 'defaultColDef') {
+        return exampleType === 'generated' || (exampleType === 'mixed' && !providedExamples['vue']);
+    }
+
+    return false;
+}
+
+function processGlobalComponentsForVue(propertyName: string, exampleType, providedExamples) {
+    if (propertyName === 'dateComponent') {
+        return exampleType === 'generated' || (exampleType === 'mixed' && !providedExamples['vue']);
+    }
+
+    return false;
+}
+
 export function parser(js, html, exampleSettings, exampleType, providedExamples) {
     const domTree = $(`<div>${html}</div>`);
 
@@ -278,8 +294,14 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
                 if (processComponentsForVue(propertyName, exampleType, providedExamples) && node.value.type === 'ObjectExpression') {
                     const componentDefinition = node.value.properties[0];
                     if(componentDefinition.value.type !== 'CallExpression' && componentDefinition.value.type !== 'FunctionExpression') {
-                        bindings.components.push({name: componentDefinition.key.name, value: componentDefinition.value.name});
+                        bindings.components.push({name: componentDefinition.key.type === 'Identifier' ? componentDefinition.key.name : componentDefinition.key.value , value: componentDefinition.value.name});
                     }
+                }
+                if (processDefaultColumnDefForVue(propertyName, exampleType, providedExamples) && node.value.type === 'ObjectExpression') {
+                    bindings.defaultColDef = generate(node.value);
+                }
+                if (processGlobalComponentsForVue(propertyName, exampleType, providedExamples) && node.value.type === 'Literal') {
+                    bindings.globalComponents.push(generate(node));
                 }
 
                 bindings.properties.push({
@@ -321,6 +343,8 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
             eventHandlers: [],
             properties: [],
             components: [],
+            defaultColDef: null,
+            globalComponents: [],
             parsedColDefs: '',
             instanceMethods: [],
             externalEventHandlers: [],

@@ -1,8 +1,6 @@
-import Vue from "vue";
-
-export default Vue.extend({
+export default {
     template: `
-        &gt; <input style="width: 30px" type="number" min="0" v-model="currentValue" v-on:input="onInputBoxChanged()"/>
+      &gt; <input style="width: 30px" type="number" min="0" v-model="currentValue" v-on:input="onInputBoxChanged()"/>
     `,
     data: function () {
         return {
@@ -34,4 +32,4 @@ export default Vue.extend({
         }
 
     }
-});
+};

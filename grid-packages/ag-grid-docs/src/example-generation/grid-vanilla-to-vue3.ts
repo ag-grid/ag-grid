@@ -3,6 +3,31 @@ import {convertTemplate, getImport, toAssignment, toConst, toInput, toMember, to
 import {templatePlaceholder} from "./grid-vanilla-src-parser";
 import * as JSON5 from "json5";
 
+const GLOBAL_COMPONENTS = ['dateComponent'];
+
+const GRID_COMPONENTS = [
+    'detailCellRendererFramework',
+    'fullWidthCellRenderer',
+    'groupRowRenderer',
+    'groupRowInnerRenderer',
+    'loadingCellRenderer',
+    'loadingOverlayComponent',
+    'noRowsOverlayComponent',
+    'dateComponent',
+    'statusPanel',
+    'cellRenderer',
+    'pinnedRowCellRenderer',
+    'cellEditor',
+    'filter',
+    'floatingFilterComponent',
+    'headerComponent',
+    'headerGroupComponent',
+];
+
+const PARAMS_PROPERTIES = [
+    'cellEditorParams', 'filterParams'
+]
+
 function getOnGridReadyCode(bindings: any): string {
     const {onGridReady, resizeToFit, data} = bindings;
     const additionalLines = [];
@@ -121,7 +146,10 @@ function getPropertyBindings(bindings: any, componentFileNames: string[], import
     const propertyAttributes = [];
 
     bindings.properties
-        .filter(property => property.name !== 'onGridReady' && property.name !== 'columnDefs')
+        .filter(property => property.name !== 'onGridReady' &&
+            property.name !== 'columnDefs' &&
+            property.name !== 'defaultColDef' &&
+            GLOBAL_COMPONENTS.indexOf(property.name) !== -1)
         .forEach(property => {
                 if (componentFileNames.length > 0 && property.name === 'components') {
                     // we use bindings.components for vue examples
@@ -220,30 +248,16 @@ function getAllMethods(bindings: any): [string[], string[], string[], string[]] 
     return [eventHandlers, externalEventHandlers, instanceMethods, utilFunctions];
 }
 
-const GRID_COMPONENTS = [
-    'detailCellRendererFramework',
-    'fullWidthCellRenderer',
-    'groupRowRenderer',
-    'groupRowInnerRenderer',
-    'loadingCellRenderer',
-    'loadingOverlayComponent',
-    'noRowsOverlayComponent',
-    'dateComponent',
-    'statusPanel',
-    'cellRenderer',
-    'pinnedRowCellRenderer',
-    'cellEditor',
-    'filter',
-    'floatingFilterComponent',
-    'headerComponent',
-    'headerGroupComponent',
-];
-
 function isComponent(property) {
     return GRID_COMPONENTS.indexOf(property) !== -1;
 }
 
-function convertColumnDefs(rawColumnDefs): string[] {
+function isParamsProperty(property) {
+    return PARAMS_PROPERTIES.indexOf(property) !== -1;
+
+}
+
+function convertColumnDefs(rawColumnDefs, userComponentNames): string[] {
     const columnDefs = [];
     const parseFunction = value => value.replace('AG_FUNCTION_', '').replace(/^function\s*\((.*?)\)/, '($1) => ');
 
@@ -261,9 +275,14 @@ function convertColumnDefs(rawColumnDefs): string[] {
 
         Object.keys(rawColumnDef).forEach(columnProperty => {
             if (columnProperty === 'children') {
-                children = convertColumnDefs(rawColumnDef[columnProperty]);
+                children = convertColumnDefs(rawColumnDef[columnProperty], userComponentNames);
             } else {
                 let value = rawColumnDef[columnProperty];
+
+                if (isParamsProperty(columnProperty) && value.cellRenderer) {
+                    Object.defineProperty(value, 'cellRendererFramework', Object.getOwnPropertyDescriptor(value, 'cellRenderer'));
+                    delete value['cellRenderer'];
+                }
 
                 if (typeof value === "string") {
                     if (value.startsWith('AG_LITERAL_')) {
@@ -278,7 +297,7 @@ function convertColumnDefs(rawColumnDefs): string[] {
                     } else {
                         let propertyName = columnProperty;
                         // if a framework component then add a "Framework" postfix - ie cellRenderer => cellRendererFramework
-                        if (isComponent(columnProperty)) {
+                        if (isComponent(columnProperty) && userComponentNames.indexOf(value) !== -1) {
                             propertyName = `${columnProperty}Framework`;
                         }
                         // ensure any double quotes inside the string are replaced with single quotes
@@ -301,11 +320,28 @@ function convertColumnDefs(rawColumnDefs): string[] {
     return columnDefs;
 }
 
+function convertDefaultColDef(defaultColDef): string {
+    return defaultColDef.replace('headerComponent', 'headerComponentFramework');
+}
+
+function convertGlobalComponents(globalComponents): string {
+    return globalComponents.map(globalComponent => {
+        let result = globalComponent;
+        GLOBAL_COMPONENTS.forEach(globalComponentName => {
+            result = result.replace(globalComponentName, `${globalComponentName}Framework`)
+        })
+
+        return result;
+    });
+}
+
 export function vanillaToVue3(bindings: any, componentFileNames: string[]): (importType: ImportType) => string {
     const onGridReady = getOnGridReadyCode(bindings);
     const eventAttributes = bindings.eventHandlers.filter(event => event.name !== 'onGridReady').map(toOutput);
     const [eventHandlers, externalEventHandlers, instanceMethods, utilFunctions] = getAllMethods(bindings);
-    const columnDefs = bindings.parsedColDefs ? convertColumnDefs(JSON5.parse(bindings.parsedColDefs)) : [];
+    const columnDefs = bindings.parsedColDefs ? convertColumnDefs(JSON5.parse(bindings.parsedColDefs), bindings.components.map(component => component.name)) : [];
+    const defaultColDef = bindings.defaultColDef ? convertDefaultColDef(bindings.defaultColDef) : null;
+    const globalComponents = bindings.globalComponents ? convertGlobalComponents(bindings.globalComponents) : null;
 
     return importType => {
         const imports = getImports(bindings, componentFileNames, importType);
@@ -331,6 +367,8 @@ const VueExample = {
             gridOptions: null,
             gridApi: null,
             columnApi: null,
+            ${defaultColDef ? `defaultColDef: ${defaultColDef},` : ''}
+            ${globalComponents.length > 0 ? `${globalComponents},` : ''}
             ${propertyVars.join(',\n')}
         }
     },
