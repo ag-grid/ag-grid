@@ -365,7 +365,7 @@ export class NavigationService extends BeanStub {
         // if cell is not editing, there is still chance row is editing if it's Full Row Editing
         if (!editing && previous instanceof CellCtrl) {
             const cell = previous as CellCtrl;
-            const row = cell.getRowCtrl()
+            const row = cell.getRowCtrl();
             if (row) {
                 editing = row.isEditing();
             }
