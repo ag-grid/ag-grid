@@ -54,7 +54,7 @@ export interface ICellComp {
     setColId(colId: string): void;
     setTitle(title: string | null): void;
     setUnselectable(value: string | null): void;
-    setTransition(value: string | null): void;
+    setTransition(value: string | undefined): void;
 
     setIncludeSelection(include: boolean): void;
     setIncludeRowDrag(include: boolean): void;

@@ -115,7 +115,11 @@ export function RowComp(params: {context: Context, rowCtrl: RowCtrl, pinned: str
              aria-rowindex={ariaRowIndex} aria-expanded={ariaExpanded} aria-label={ariaLabel}
              aria-selected={ariaSelected} row-id={rowId} row-business-key={rowBusinessKey} tabIndex={tabIndex}>
             {
-                columns && columns.list.map( col => <CellComp context={context} column={col} rowCtrl={rowCtrl} key={col.getInstanceId()}/>)
+                columns && columns.list.map( col =>
+                    <CellComp context={context} column={col} rowCtrl={rowCtrl}
+                              editingRow={rowCtrl.isEditing()} printLayout={rowCtrl.isPrintLayout()}
+                              key={col.getInstanceId()}/>
+                )
             }
         </div>
     );

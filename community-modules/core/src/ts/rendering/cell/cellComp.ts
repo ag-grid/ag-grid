@@ -73,19 +73,19 @@ export class CellComp extends Component implements TooltipParentComp {
     // the first 19.
     private latestCompRequestVersion = 0;
 
-    constructor(scope: any, beans: Beans, column: Column, rowNode: RowNode, rowComp: RowCtrl | null,
+    constructor(scope: any, beans: Beans, column: Column, rowNode: RowNode, rowCtrl: RowCtrl | null,
         autoHeightCell: boolean, printLayout: boolean, eRow: HTMLElement, editingRow: boolean) {
         super();
         this.scope = scope;
         this.beans = beans;
         this.column = column;
         this.rowNode = rowNode;
-        this.rowCtrl = rowComp;
+        this.rowCtrl = rowCtrl;
         this.autoHeightCell = autoHeightCell;
         this.eRow = eRow;
 
         // we need to do this early, as we need CellPosition before we call setComp()
-        this.cellCtrl = new CellCtrl(column, rowNode, beans, rowComp);
+        this.cellCtrl = new CellCtrl(column, rowNode, beans, rowCtrl);
 
         this.setTemplate(`<div comp-id="${this.getCompId()}"/>`);
 
