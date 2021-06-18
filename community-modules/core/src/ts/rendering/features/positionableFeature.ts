@@ -333,8 +333,6 @@ export class PositionableFeature extends BeanStub {
             ePopup,
             x,
             y,
-            minWidth: this.minWidth,
-            minHeight: this.minHeight,
             keepWithinBounds: true
         });
 

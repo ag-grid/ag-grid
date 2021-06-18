@@ -54,8 +54,11 @@
     ////////////////////////////////////////
     // Column Filter
     ////////////////////////////////////////
-    .ag-tabs-header {
+    .ag-tabs {
         min-width: 220px;
+    }
+
+    .ag-tabs-header {
         width: 100%;
         display: flex;
     }

@@ -193,8 +193,6 @@ export class PopupService extends BeanStub {
         ePopup: HTMLElement,
         column?: Column,
         rowNode?: RowNode,
-        minWidth?: number,
-        minHeight?: number,
         nudgeX?: number,
         nudgeY?: number,
         alignSide?: 'left' | 'right',
@@ -212,8 +210,6 @@ export class PopupService extends BeanStub {
 
         this.positionPopup({
             ePopup: params.ePopup,
-            minWidth: params.minWidth,
-            minHeight: params.minHeight,
             nudgeX: params.nudgeX,
             nudgeY: params.nudgeY,
             x,
@@ -230,7 +226,6 @@ export class PopupService extends BeanStub {
         ePopup: HTMLElement,
         column: Column,
         rowNode: RowNode,
-        minWidth?: number,
         nudgeX?: number,
         nudgeY?: number,
         keepWithinBounds?: boolean;
@@ -240,7 +235,6 @@ export class PopupService extends BeanStub {
 
         this.positionPopup({
             ePopup: params.ePopup,
-            minWidth: params.minWidth,
             nudgeX: params.nudgeX,
             nudgeY: params.nudgeY,
             x: sourceRect.left - parentRect.left,
@@ -275,21 +269,17 @@ export class PopupService extends BeanStub {
 
     public positionPopup(params: {
         ePopup: HTMLElement,
-        minWidth?: number,
-        minHeight?: number,
         nudgeX?: number,
         nudgeY?: number,
         x: number,
         y: number,
         keepWithinBounds?: boolean;
     }): void {
-        const { ePopup, keepWithinBounds, nudgeX, nudgeY, minHeight, minWidth } = params;
+        const { ePopup, keepWithinBounds, nudgeX, nudgeY } = params;
         let { x, y } = params;
 
         if (nudgeX) { x += nudgeX; }
         if (nudgeY) { y += nudgeY; }
-        if (minWidth) { ePopup.style.minWidth = `${minWidth}px`; }
-        if (minHeight) { ePopup.style.minHeight = `${minHeight}px`; }
 
         // if popup is overflowing to the bottom, move it up
         if (keepWithinBounds) {

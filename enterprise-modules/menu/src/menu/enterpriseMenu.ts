@@ -91,8 +91,6 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
                 column,
                 eventSource,
                 ePopup,
-                minWidth,
-                minHeight,
                 alignSide,
                 nudgeX: 9 * multiplier,
                 nudgeY: -23,
