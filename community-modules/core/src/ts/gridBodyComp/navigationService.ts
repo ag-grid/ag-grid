@@ -400,7 +400,7 @@ export class NavigationService extends BeanStub {
         // find the next cell to start editing
         const nextCell = this.findNextCellToFocusOn(previousPos, backwards, true) as CellCtrl;
 
-        if (nextCell==null) { return false; }
+        if (nextCell == null) { return false; }
 
         // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
         // to the normal tabbing so user can exit the grid.

@@ -93,42 +93,6 @@ export class TabbedLayout extends ManagedFocusComponent {
         this.afterAttachedParams = params;
     }
 
-    public getMinDimensions(): { width: number, height: number; } {
-        const eDummyContainer = this.getGui().cloneNode(true) as HTMLElement;
-        const eDummyBody = eDummyContainer.querySelector('[ref="eBody"]') as HTMLElement;
-
-        // position fixed, so it isn't restricted to the boundaries of the parent
-        eDummyContainer.style.position = 'fixed';
-
-        // we put the dummy into the body container, so it will inherit all the
-        // css styles that the real cells are inheriting
-        this.getGui().appendChild(eDummyContainer);
-
-        let minWidth = 0;
-        let minHeight = 0;
-
-        this.items.forEach((itemWrapper: TabbedItemWrapper) => {
-            clearElement(eDummyBody);
-
-            const eClone: HTMLElement = itemWrapper.tabbedItem.bodyPromise.resolveNow(null, body => body!.cloneNode(true)) as HTMLElement;
-            if (eClone == null) { return; }
-
-            eDummyBody.appendChild(eClone);
-
-            if (minWidth < eDummyContainer.offsetWidth) {
-                minWidth = eDummyContainer.offsetWidth;
-            }
-
-            if (minHeight < eDummyContainer.offsetHeight) {
-                minHeight = eDummyContainer.offsetHeight;
-            }
-        });
-
-        this.getGui().removeChild(eDummyContainer);
-
-        return { height: minHeight, width: minWidth };
-    }
-
     public showFirstItem(): void {
         if (this.items.length > 0) {
             this.showItemWrapper(this.items[0]);

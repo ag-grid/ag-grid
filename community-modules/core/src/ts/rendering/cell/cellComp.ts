@@ -1,14 +1,7 @@
 import { Column } from "../../entities/column";
 import { CellChangedEvent, RowNode } from "../../entities/rowNode";
-import { Constants } from "../../constants/constants";
 import {
-    CellClickedEvent,
-    CellContextMenuEvent,
-    CellDoubleClickedEvent,
     CellEditingStartedEvent,
-    CellEvent,
-    CellMouseOutEvent,
-    CellMouseOverEvent,
     Events,
     FlashCellsEvent
 } from "../../events";
@@ -19,33 +12,26 @@ import { ICellRendererComp, ICellRendererParams } from "./../cellRenderers/iCell
 import { CheckboxSelectionComponent } from "./../checkboxSelectionComponent";
 import { ColDef, NewValueParams } from "../../entities/colDef";
 import { CellPosition } from "../../entities/cellPosition";
-import { CellRangeType, ISelectionHandle, SelectionHandleType } from "../../interfaces/IRangeService";
 import { RowCtrl } from "./../row/rowCtrl";
 import { RowDragComp } from "./../row/rowDragComp";
 import { PopupEditorWrapper } from "./../cellEditors/popupEditorWrapper";
 import { AgPromise } from "../../utils";
 import { IFrameworkOverrides } from "../../interfaces/iFrameworkOverrides";
 import { DndSourceComp } from "./../dndSourceComp";
-import { TooltipFeature, TooltipParentComp } from "../../widgets/tooltipFeature";
+import { TooltipParentComp } from "../../widgets/tooltipFeature";
 import { setAriaColIndex, setAriaDescribedBy, setAriaSelected } from "../../utils/aria";
-import { get, getValueUsingField } from "../../utils/object";
+import { get } from "../../utils/object";
 import { escapeString } from "../../utils/string";
 import { exists, missing } from "../../utils/generic";
 import {
     addOrRemoveCssClass,
     addStylesToElement,
-    clearElement,
-    isElementChildOfClass,
-    isFocusableFormField
+    clearElement
 } from "../../utils/dom";
-import { areEqual, last } from "../../utils/array";
-import { getTarget, isEventSupported, isStopPropagationForAgGrid } from "../../utils/event";
-import { isEventFromPrintableCharacter } from "../../utils/keyboard";
-import { isBrowserEdge, isBrowserIE, isIOSUserAgent } from "../../utils/browser";
+import { isBrowserIE } from "../../utils/browser";
 import { doOnce } from "../../utils/function";
 import { KeyCode } from '../../constants/keyCode';
-import { ITooltipParams } from "./../tooltipComponent";
-import { RowPosition } from "../../entities/rowPosition";
+
 import {
     CellCtrl,
     CSS_CELL_INLINE_EDITING,
@@ -127,7 +113,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         const setAttribute = (name: string, value: string | null, element?: HTMLElement) => {
             const actualElement = element ? element : eGui;
-            if (value!=null && value!='') {
+            if (value != null && value != '') {
                 actualElement.setAttribute(name, value);
             } else {
                 actualElement.removeAttribute(name);
@@ -138,7 +124,7 @@ export class CellComp extends Component implements TooltipParentComp {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setUserStyles: styles => addStylesToElement(eGui, styles),
             setAriaSelected: selected => setAriaSelected(eGui, selected),
-            getFocusableElement: ()=> this.getFocusableElement(),
+            getFocusableElement: () => this.getFocusableElement(),
             setLeft: left => style.left = left,
             setWidth: width => style.width = width,
             setAriaColIndex: index => setAriaColIndex(this.getGui(), index),
@@ -151,21 +137,21 @@ export class CellComp extends Component implements TooltipParentComp {
             setUnselectable: value => setAttribute('unselectable', value, this.eCellValue),
 
             // temp items
-            isEditing: ()=> this.editingCell,
-            getValue: ()=> this.ctrl.getValue(),
-            getValueFormatted: ()=> this.ctrl.getValueFormatted(),
-            setFocusOutOnEditor: ()=> this.setFocusOutOnEditor(),
-            setFocusInOnEditor: ()=> this.setFocusInOnEditor(),
+            isEditing: () => this.editingCell,
+            getValue: () => this.ctrl.getValue(),
+            getValueFormatted: () => this.ctrl.getValueFormatted(),
+            setFocusOutOnEditor: () => this.setFocusOutOnEditor(),
+            setFocusInOnEditor: () => this.setFocusInOnEditor(),
             stopRowOrCellEdit: cancel => this.stopRowOrCellEdit(cancel),
-            stopEditing: ()=> this.stopEditing(),
+            stopEditing: () => this.stopEditing(),
             stopEditingAndFocus: () => this.stopEditingAndFocus(),
-            startRowOrCellEdit: (keyPress?, charPress?)=> this.startRowOrCellEdit(keyPress, charPress),
-            startEditingIfEnabled: (keyPress, charPress, cellStartedEdit)=> this.startEditingIfEnabled(keyPress, charPress, cellStartedEdit)
+            startRowOrCellEdit: (keyPress?, charPress?) => this.startRowOrCellEdit(keyPress, charPress),
+            startEditingIfEnabled: (keyPress, charPress, cellStartedEdit) => this.startEditingIfEnabled(keyPress, charPress, cellStartedEdit)
         };
 
         this.ctrl.setComp(compProxy, false, this.usingWrapper, this.scope, this.getGui(),
             this.printLayout);
-        this.addDestroyFunc( ()=> this.ctrl.destroy() );
+        this.addDestroyFunc(() => this.ctrl.destroy());
 
         // all of these have dependencies on the eGui, so only do them after eGui is set
         this.setInitialValue();
@@ -185,13 +171,10 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private createAndSetTemplate(): void {
-
         this.setUsingWrapper();
-
         this.setTemplate(`<div comp-id="${this.getCompId()}"/>`);
 
         if (this.usingWrapper) {
-
             const unselectable = !this.beans.gridOptionsWrapper.isEnableCellTextSelection() ? ' unselectable="on"' : '';
 
             this.getGui().innerHTML = /* html */
@@ -226,13 +209,14 @@ export class CellComp extends Component implements TooltipParentComp {
     private setInitialValue(): void {
         const valueToRender = this.getInitialValueToRender();
         const valueSanitised = get(this.column, 'colDef.template', null) ? valueToRender : escapeString(valueToRender);
-        if (valueSanitised!=null) {
+        if (valueSanitised != null) {
             this.eCellValue.innerHTML = valueSanitised;
         }
     }
 
     public onCellChanged(event: CellChangedEvent): void {
         const eventImpactsThisCell = event.column === this.column;
+
         if (eventImpactsThisCell) {
             this.refreshCell({});
         }
@@ -241,6 +225,7 @@ export class CellComp extends Component implements TooltipParentComp {
     public onFlashCells(event: FlashCellsEvent): void {
         const cellId = this.beans.cellPositionUtils.createId(this.ctrl.getCellPosition());
         const shouldFlash = event.cells[cellId];
+
         if (shouldFlash) {
             this.animateCell('highlight');
         }
@@ -248,8 +233,8 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private isUsingCellRenderer(): boolean {
         const colDef = this.column.getColDef();
+        const usingAngular1Template = colDef.template != null || colDef.templateUrl != null;
 
-        const usingAngular1Template = colDef.template!=null || colDef.templateUrl!=null;
         if (usingAngular1Template) {
             return false;
         }
@@ -553,8 +538,10 @@ export class CellComp extends Component implements TooltipParentComp {
         }
 
         this.cellRenderer = cellRenderer;
+
         const eGui = this.cellRenderer.getGui();
-        if (eGui!=null) {
+
+        if (eGui != null) {
             this.eCellValue.appendChild(eGui);
         }
     }

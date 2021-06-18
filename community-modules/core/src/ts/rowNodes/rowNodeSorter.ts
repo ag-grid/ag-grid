@@ -73,7 +73,7 @@ export class RowNodeSorter {
     private getComparator(sortOption: SortOption, rowNode: RowNode):
         ((valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode, isInverted: boolean) => number) | undefined {
 
-        let column = sortOption.column;
+        const column = sortOption.column;
 
         // comparator on col get preference over everything else
         const comparatorOnCol = column.getColDef().comparator;
@@ -90,7 +90,7 @@ export class RowNodeSorter {
             // if a 'field' is supplied on the autoGroupColumnDef we need to use the associated column comparator
             const groupLeafField = !rowNode.group && column.getColDef().field;
             if (groupLeafField) {
-                let primaryColumn = this.columnModel.getPrimaryColumn(column.getColDef().field!);
+                const primaryColumn = this.columnModel.getPrimaryColumn(column.getColDef().field!);
                 const groupLeafComparator = primaryColumn!.getColDef().comparator;
                 if (groupLeafComparator) {
                     return groupLeafComparator;

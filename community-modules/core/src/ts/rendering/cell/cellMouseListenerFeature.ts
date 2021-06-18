@@ -2,7 +2,6 @@ import { Beans } from "../beans";
 import {
     CellClickedEvent,
     CellDoubleClickedEvent,
-    CellEvent,
     CellMouseOutEvent,
     CellMouseOverEvent,
     Events
@@ -159,7 +158,6 @@ export class CellMouseListenerFeature extends Beans {
 
         eventService.dispatchEvent(this.ctrl.createEvent(mouseEvent, Events.EVENT_CELL_MOUSE_DOWN));
     }
-
 
     private isRightClickInExistingRange(mouseEvent: MouseEvent): boolean {
         const { rangeService } = this.beans;

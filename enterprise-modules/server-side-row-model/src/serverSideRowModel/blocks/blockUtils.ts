@@ -150,7 +150,7 @@ export class BlockUtils extends BeanStub {
             if (usingTreeData) {
                 rowNode.groupData[col.getColId()] = rowNode.key;
             } else if (col.isRowGroupDisplayed(rowNode.rowGroupColumn!.getId())) {
-                let {key, rawKeyValue} = this.valueService.getKeyForNode(rowNode.rowGroupColumn!, rowNode);
+                const { key, rawKeyValue } = this.valueService.getKeyForNode(rowNode.rowGroupColumn!, rowNode);
                 rowNode.groupData[col.getColId()] = key;
                 rowNode.rawKeyValue = rawKeyValue;
             }

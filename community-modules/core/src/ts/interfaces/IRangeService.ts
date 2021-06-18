@@ -2,7 +2,6 @@ import { Column } from "../entities/column";
 import { CellPosition } from "../entities/cellPosition";
 import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
 import { RowPosition } from "../entities/rowPosition";
-import { CellComp } from "../rendering/cell/cellComp";
 import { CellCtrl } from "../rendering/cell/cellCtrl";
 
 export interface IRangeService {

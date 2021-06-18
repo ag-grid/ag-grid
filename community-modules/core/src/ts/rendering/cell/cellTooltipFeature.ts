@@ -57,11 +57,11 @@ export class CellTooltipFeature extends BeanStub {
     }
 
     private createTooltipFeatureIfNeeded(): void {
-        if (this.genericTooltipFeature!=null) { return; }
+        if (this.genericTooltipFeature != null) { return; }
 
         const parent: TooltipParentComp = {
-            getTooltipParams: ()=> this.getTooltipParams(),
-            getGui: ()=> this.ctrl.getGui()
+            getTooltipParams: () => this.getTooltipParams(),
+            getGui: () => this.ctrl.getGui()
         };
 
         this.genericTooltipFeature = this.createManagedBean(new TooltipFeature(parent), this.beans.context);

@@ -1,34 +1,22 @@
 import { Beans } from "./../beans";
 import { Column } from "../../entities/column";
-import { CellClassParams, ColDef } from "../../entities/colDef";
 import { RowNode } from "../../entities/rowNode";
 import { CellPosition } from "../../entities/cellPosition";
 import {
-    CellClickedEvent,
     CellContextMenuEvent,
-    CellDoubleClickedEvent,
     CellEvent,
     CellFocusedEvent,
     Events
 } from "../../events";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { CellRangeFeature } from "./cellRangeFeature";
-import { areEqual, last } from "../../utils/array";
-import { Constants } from "../../constants/constants";
-import { setAriaColIndex } from "../../utils/aria";
-import { exists, missing } from "../../utils/generic";
 import { BeanStub } from "../../context/beanStub";
 import { CellPositionFeature } from "./cellPositionFeature";
 import { escapeString } from "../../utils/string";
 import { CellCustomStyleFeature } from "./cellCustomStyleFeature";
-import { TooltipFeature } from "../../widgets/tooltipFeature";
-import { getValueUsingField } from "../../utils/object";
-import { ITooltipParams } from "../tooltipComponent";
 import { CellTooltipFeature } from "./cellTooltipFeature";
 import { RowPosition } from "../../entities/rowPosition";
 import { RowCtrl } from "../row/rowCtrl";
-import { isEventSupported, isStopPropagationForAgGrid } from "../../utils/event";
-import { isIOSUserAgent } from "../../utils/browser";
 import { CellMouseListenerFeature } from "./cellMouseListenerFeature";
 import { CellKeyboardListenerFeature } from "./cellKeyboardListenerFeature";
 
@@ -137,19 +125,19 @@ export class CellCtrl extends BeanStub {
 
     private addFeatures(): void {
         this.cellPositionFeature = new CellPositionFeature(this, this.beans);
-        this.addDestroyFunc( ()=> this.cellPositionFeature.destroy() );
+        this.addDestroyFunc(() => this.cellPositionFeature.destroy());
 
         this.cellCustomStyleFeature = new CellCustomStyleFeature(this, this.beans);
-        this.addDestroyFunc( ()=> this.cellCustomStyleFeature.destroy() );
+        this.addDestroyFunc(() => this.cellCustomStyleFeature.destroy());
 
         this.cellTooltipFeature = new CellTooltipFeature(this, this.beans);
-        this.addDestroyFunc( ()=> this.cellTooltipFeature.destroy() );
+        this.addDestroyFunc(() => this.cellTooltipFeature.destroy());
 
         this.cellMouseListenerFeature = new CellMouseListenerFeature(this, this.beans, this.column, this.rowNode, this.scope);
-        this.addDestroyFunc( ()=> this.cellMouseListenerFeature.destroy() );
+        this.addDestroyFunc(() => this.cellMouseListenerFeature.destroy());
 
         this.cellKeyboardListenerFeature = new CellKeyboardListenerFeature(this, this.beans, this.column, this.rowNode, this.scope, this.rowCtrl);
-        this.addDestroyFunc( ()=> this.cellKeyboardListenerFeature.destroy() );
+        this.addDestroyFunc(() => this.cellKeyboardListenerFeature.destroy());
 
         const rangeSelectionEnabled = this.beans.rangeService && this.beans.gridOptionsWrapper.isEnableRangeSelection();
         if (rangeSelectionEnabled) {
