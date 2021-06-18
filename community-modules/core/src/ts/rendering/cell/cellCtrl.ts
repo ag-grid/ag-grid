@@ -67,7 +67,6 @@ export interface ICellComp {
     showRenderer(params: ICellRendererParams, forceNewCellRendererInstance: boolean): void;
     showEditor(params: ICellEditorParams): void;
 
-
     // hacks
     addRowDragging(customElement?: HTMLElement, dragStartPixels?: number): void;
 }
@@ -123,19 +122,19 @@ export class CellCtrl extends BeanStub {
 
     private addFeatures(): void {
         this.cellPositionFeature = new CellPositionFeature(this, this.beans);
-        this.addDestroyFunc( ()=> this.cellPositionFeature.destroy() );
+        this.addDestroyFunc(() => this.cellPositionFeature.destroy());
 
         this.cellCustomStyleFeature = new CellCustomStyleFeature(this, this.beans);
-        this.addDestroyFunc( ()=> this.cellCustomStyleFeature.destroy() );
+        this.addDestroyFunc(() => this.cellCustomStyleFeature.destroy());
 
         this.cellTooltipFeature = new CellTooltipFeature(this, this.beans);
-        this.addDestroyFunc( ()=> this.cellTooltipFeature.destroy() );
+        this.addDestroyFunc(() => this.cellTooltipFeature.destroy());
 
         this.cellMouseListenerFeature = new CellMouseListenerFeature(this, this.beans, this.column, this.rowNode, this.scope);
-        this.addDestroyFunc( ()=> this.cellMouseListenerFeature.destroy() );
+        this.addDestroyFunc(() => this.cellMouseListenerFeature.destroy());
 
         this.cellKeyboardListenerFeature = new CellKeyboardListenerFeature(this, this.beans, this.column, this.rowNode, this.scope, this.rowCtrl);
-        this.addDestroyFunc( ()=> this.cellKeyboardListenerFeature.destroy() );
+        this.addDestroyFunc(() => this.cellKeyboardListenerFeature.destroy());
 
         const rangeSelectionEnabled = this.beans.rangeService && this.beans.gridOptionsWrapper.isEnableRangeSelection();
         if (rangeSelectionEnabled) {
@@ -244,7 +243,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private setEditing(editing: boolean): void {
-        if (this.editing===editing) { return; }
+        if (this.editing === editing) { return; }
         this.editing = editing;
         this.setInlineEditingClass();
     }
@@ -261,7 +260,7 @@ export class CellCtrl extends BeanStub {
     private takeValueFromCellEditor(cancel: boolean): { newValue?: any, newValueExists: boolean } {
         const noValueResult = { newValueExists: false };
 
-        if (cancel) { return noValueResult; };
+        if (cancel) { return noValueResult; }
         const cellEditor =  this.cellComp.getCellEditor();
         if (!cellEditor) { return noValueResult; }
 
@@ -328,7 +327,6 @@ export class CellCtrl extends BeanStub {
         // note: one of {ag-cell-inline-editing, ag-cell-not-inline-editing} is always present, they toggle.
         //       however {ag-cell-popup-editing} shows when popup, so you have both {ag-cell-popup-editing}
         //       and {ag-cell-not-inline-editing} showing at the same time.
-
 
         ///////// FIX FIX FIX FIX for popup
 
@@ -465,8 +463,8 @@ export class CellCtrl extends BeanStub {
         if (this.suppressRefreshCell || this.editing) { return; }
 
         const colDef = this.column.getColDef();
-        const newData = params!=null && !!params.newData;
-        const suppressFlash = (params!=null && !!params.suppressFlash) || !!colDef.suppressCellFlash;
+        const newData = params != null && !!params.newData;
+        const suppressFlash = (params != null && !!params.suppressFlash) || !!colDef.suppressCellFlash;
         // we always refresh if cell has no value - this can happen when user provides Cell Renderer and the
         // cell renderer doesn't rely on a value, instead it could be looking directly at the data, or maybe
         // printing the current time (which would be silly)???. Generally speaking

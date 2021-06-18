@@ -5,12 +5,9 @@ import { Component } from "../../widgets/component";
 import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
 import { ICellRendererComp, ICellRendererParams } from "./../cellRenderers/iCellRenderer";
 import { CheckboxSelectionComponent } from "./../checkboxSelectionComponent";
-import { ColDef } from "../../entities/colDef";
-import { CellPosition } from "../../entities/cellPosition";
 import { RowCtrl } from "./../row/rowCtrl";
 import { RowDragComp } from "./../row/rowDragComp";
 import { PopupEditorWrapper } from "./../cellEditors/popupEditorWrapper";
-import { IFrameworkOverrides } from "../../interfaces/iFrameworkOverrides";
 import { DndSourceComp } from "./../dndSourceComp";
 import { TooltipParentComp } from "../../widgets/tooltipFeature";
 import { setAriaColIndex, setAriaDescribedBy, setAriaSelected } from "../../utils/aria";
@@ -23,7 +20,7 @@ import { CellCtrl, ICellComp } from "./cellCtrl";
 
 export const CSS_CELL_VALUE = 'ag-cell-value';
 
-enum ShowingState {ShowRenderer, ShowEditor};
+enum ShowingState { ShowRenderer, ShowEditor }
 
 export class CellComp extends Component implements TooltipParentComp {
 
@@ -94,7 +91,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         const setAttribute = (name: string, value: string | null, element?: HTMLElement) => {
             const actualElement = element ? element : eGui;
-            if (value!=null && value!='') {
+            if (value != null && value != '') {
                 actualElement.setAttribute(name, value);
             } else {
                 actualElement.removeAttribute(name);
@@ -105,7 +102,7 @@ export class CellComp extends Component implements TooltipParentComp {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setUserStyles: styles => addStylesToElement(eGui, styles),
             setAriaSelected: selected => setAriaSelected(eGui, selected),
-            getFocusableElement: ()=> this.getFocusableElement(),
+            getFocusableElement: () => this.getFocusableElement(),
             setLeft: left => style.left = left,
             setWidth: width => style.width = width,
             setAriaColIndex: index => setAriaColIndex(this.getGui(), index),
@@ -125,15 +122,15 @@ export class CellComp extends Component implements TooltipParentComp {
             setIncludeDndSource: include => this.includeDndSource = include,
             setForceWrapper: force => this.forceWrapper = force,
 
-            getCellEditor: ()=> this.cellEditor ? this.cellEditor : null,
-            getParentOfValue: ()=> this.eCellValue ? this.eCellValue : null,
+            getCellEditor: () => this.cellEditor ? this.cellEditor : null,
+            getParentOfValue: () => this.eCellValue ? this.eCellValue : null,
 
             // hacks
             addRowDragging: (customElement?: HTMLElement, dragStartPixels?: number) => this.addRowDragging(customElement, dragStartPixels)
         };
 
         this.cellCtrl.setComp(compProxy, false, this.scope, this.getGui(), printLayout, editingRow);
-        this.addDestroyFunc( ()=> this.cellCtrl.destroy() );
+        this.addDestroyFunc(() => this.cellCtrl.destroy());
     }
 
     private showRenderer(params: ICellRendererParams, forceNewCellRendererInstance: boolean): void {
@@ -203,7 +200,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private updateCssCellValue(): void {
         // when using the wrapper, this CSS class appears inside the wrapper instead
-        const includeAtTop = this.eCellWrapper==null;
+        const includeAtTop = this.eCellWrapper == null;
         this.addOrRemoveCssClass(CSS_CELL_VALUE, includeAtTop);
     }
 
@@ -245,8 +242,8 @@ export class CellComp extends Component implements TooltipParentComp {
         this.eCellValue = this.getRefElement('eCellValue');
         this.eCellWrapper = this.getRefElement('eCellWrapper');
 
-        this.eCellValue.id = `cell-${this.getCompId()}`;
-        let describedByIds: string[] = [];
+        const id = this.eCellValue.id = `cell-${this.getCompId()}`;
+        const describedByIds: string[] = [];
 
         if (this.includeRowDrag) {
             this.addRowDragging();
@@ -260,7 +257,7 @@ export class CellComp extends Component implements TooltipParentComp {
             describedByIds.push(this.addSelectionCheckbox().getCheckboxId());
         }
 
-        describedByIds.push();
+        describedByIds.push(id);
 
         setAriaDescribedBy(this.getGui(), describedByIds.join(' '));
     }
@@ -271,7 +268,7 @@ export class CellComp extends Component implements TooltipParentComp {
         const cellEditorPromise = this.beans.userComponentFactory.newCellEditor(this.column.getColDef(), params);
         if (!cellEditorPromise) { return; } // if empty, userComponentFactory already did a console message
 
-        cellEditorPromise.then( c => this.afterCellEditorCreated(versionCopy, c!, params) );
+        cellEditorPromise.then(c => this.afterCellEditorCreated(versionCopy, c!, params));
 
         // if we don't do this, and editor component is async, then there will be a period
         // when the component isn't present and keyboard navigation won't work - so example
@@ -303,8 +300,8 @@ export class CellComp extends Component implements TooltipParentComp {
     private insertValueWithoutCellRenderer(params: ICellRendererParams): void {
         const { valueFormatted, value } = params;
         const valueToDisplay = valueFormatted != null ? valueFormatted : value;
-        const escapedValue = valueToDisplay!=null ? escapeString(valueToDisplay) : null;
-        if (escapedValue!=null) {
+        const escapedValue = valueToDisplay != null ? escapeString(valueToDisplay) : null;
+        if (escapedValue != null) {
             this.eCellValue.innerHTML = escapedValue;
         } else {
             clearElement(this.eCellValue);
@@ -313,16 +310,16 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private insertValueUsingAngular1Template(params: ICellRendererParams): void {
         if (!params.colDef) { return; }
-        const {template, templateUrl} = params.colDef;
+        const { template, templateUrl } = params.colDef;
 
-        if (template!=null) {
+        if (template != null) {
             this.eCellValue.innerHTML = template;
-        } else if (templateUrl!=null) {
+        } else if (templateUrl != null) {
             // first time this happens it will return nothing, as the template will still be loading async,
             // however once loaded it will refresh the cell and second time around it will be returned sync
             // as in cache.
             const templateFromUrl = this.beans.templateService.getTemplate(templateUrl,
-                ()=> this.cellCtrl.refreshCell({forceRefresh: true}));
+                () => this.cellCtrl.refreshCell({forceRefresh: true}));
             this.eCellValue.innerHTML = templateFromUrl || '';
         } else {
             // should never happen, as we only enter this method when template or templateUrl exist
@@ -337,7 +334,7 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private refreshCellRenderer(params: ICellRendererParams): boolean {
-        if (this.cellRenderer==null || this.cellRenderer.refresh==null) { return false; }
+        if (this.cellRenderer == null || this.cellRenderer.refresh == null) { return false; }
 
         // take any custom params off of the user
         const finalParams = this.beans.userComponentFactory.mergeParmsWithApplicationProvidedParams(this.column.getColDef(), CellComp.CELL_RENDERER_TYPE_NORMAL, params);
@@ -364,7 +361,7 @@ export class CellComp extends Component implements TooltipParentComp {
         const displayComponentVersionCopy = this.latestCompRequestVersion;
 
         const createCellRendererFunc = () => {
-            const staleTask = this.latestCompRequestVersion!==displayComponentVersionCopy || !this.isAlive();
+            const staleTask = this.latestCompRequestVersion !== displayComponentVersionCopy || !this.isAlive();
             if (staleTask) { return; }
 
             // this can return null in the event that the user has switched from a renderer component to nothing, for example
@@ -424,7 +421,8 @@ export class CellComp extends Component implements TooltipParentComp {
 
         this.cellRenderer = cellRenderer;
         const eGui = this.cellRenderer.getGui();
-        if (eGui!=null) {
+
+        if (eGui != null) {
             this.eCellValue.appendChild(eGui);
         }
     }
