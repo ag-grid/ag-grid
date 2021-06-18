@@ -1,65 +1,35 @@
 import { Column } from "../../entities/column";
-import { CellChangedEvent, RowNode } from "../../entities/rowNode";
-import { Constants } from "../../constants/constants";
-import {
-    CellClickedEvent,
-    CellContextMenuEvent,
-    CellDoubleClickedEvent,
-    CellEditingStartedEvent,
-    CellEvent,
-    CellMouseOutEvent,
-    CellMouseOverEvent,
-    Events,
-    FlashCellsEvent
-} from "../../events";
+import { RowNode } from "../../entities/rowNode";
 import { Beans } from "./../beans";
 import { Component } from "../../widgets/component";
 import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
 import { ICellRendererComp, ICellRendererParams } from "./../cellRenderers/iCellRenderer";
 import { CheckboxSelectionComponent } from "./../checkboxSelectionComponent";
-import { ColDef, NewValueParams } from "../../entities/colDef";
+import { ColDef } from "../../entities/colDef";
 import { CellPosition } from "../../entities/cellPosition";
-import { CellRangeType, ISelectionHandle, SelectionHandleType } from "../../interfaces/IRangeService";
 import { RowCtrl } from "./../row/rowCtrl";
 import { RowDragComp } from "./../row/rowDragComp";
 import { PopupEditorWrapper } from "./../cellEditors/popupEditorWrapper";
-import { AgPromise } from "../../utils";
 import { IFrameworkOverrides } from "../../interfaces/iFrameworkOverrides";
 import { DndSourceComp } from "./../dndSourceComp";
-import { TooltipFeature, TooltipParentComp } from "../../widgets/tooltipFeature";
+import { TooltipParentComp } from "../../widgets/tooltipFeature";
 import { setAriaColIndex, setAriaDescribedBy, setAriaSelected } from "../../utils/aria";
-import { get, getValueUsingField } from "../../utils/object";
 import { escapeString } from "../../utils/string";
-import { exists, missing } from "../../utils/generic";
-import {
-    addOrRemoveCssClass,
-    addStylesToElement,
-    clearElement,
-    isElementChildOfClass,
-    isFocusableFormField
-} from "../../utils/dom";
-import { areEqual, last } from "../../utils/array";
-import { getTarget, isEventSupported, isStopPropagationForAgGrid } from "../../utils/event";
-import { isEventFromPrintableCharacter } from "../../utils/keyboard";
-import { isBrowserEdge, isBrowserIE, isIOSUserAgent } from "../../utils/browser";
+import { missing } from "../../utils/generic";
+import { addStylesToElement, clearElement } from "../../utils/dom";
+import { isBrowserIE } from "../../utils/browser";
 import { doOnce } from "../../utils/function";
-import { KeyCode } from '../../constants/keyCode';
-import { ITooltipParams } from "./../tooltipComponent";
-import { RowPosition } from "../../entities/rowPosition";
-import {
-    CellCtrl,
-    CSS_CELL_INLINE_EDITING,
-    CSS_CELL_NOT_INLINE_EDITING,
-    CSS_CELL_POPUP_EDITING,
-    CSS_CELL_VALUE,
-    ICellComp
-} from "./cellCtrl";
+import { CellCtrl, ICellComp } from "./cellCtrl";
+
+export const CSS_CELL_VALUE = 'ag-cell-value';
+
+enum ShowingState {ShowRenderer, ShowEditor};
 
 export class CellComp extends Component implements TooltipParentComp {
 
     private static CELL_RENDERER_TYPE_NORMAL = 'cellRenderer';
 
-    private eCellWrapper: HTMLElement;
+    private eCellWrapper: HTMLElement | null;
     private eCellValue: HTMLElement;
 
     private beans: Beans;
@@ -67,35 +37,33 @@ export class CellComp extends Component implements TooltipParentComp {
     private rowNode: RowNode;
     private eRow: HTMLElement;
 
-    private usingWrapper: boolean;
+    private includeSelection: boolean;
+    private includeRowDrag: boolean;
+    private includeDndSource: boolean;
 
-    private includeSelectionComponent: boolean;
-    private includeRowDraggingComponent: boolean;
-    private includeDndSourceComponent: boolean;
+    private forceWrapper: boolean;
 
+    private checkboxSelectionComp: CheckboxSelectionComponent | undefined;
+    private dndSourceComp: DndSourceComp | undefined;
     private rowDraggingComp: RowDragComp | undefined;
 
-    private editingCell = false;
     private cellEditorInPopup: boolean;
     private hideEditorPopup: Function | null;
 
-    private createCellRendererFunc: (() => void) | null;
-
     // instance of the cellRenderer class
     private cellRenderer: ICellRendererComp | null | undefined;
-    private cellEditor: ICellEditorComp | null;
+    private cellEditor: ICellEditorComp | null | undefined;
 
     private autoHeightCell: boolean;
 
     private rowCtrl: RowCtrl | null;
 
-    private suppressRefreshCell = false;
-
     private scope: any = null;
 
     private cellCtrl: CellCtrl;
 
-    private readonly printLayout: boolean;
+    private cellState: ShowingState;
+    private firstRender: boolean;
 
     // every time we go into edit mode, or back again, this gets incremented.
     // it's the components way of dealing with the async nature of framework components,
@@ -103,7 +71,7 @@ export class CellComp extends Component implements TooltipParentComp {
     // is still relevant when creating is finished. eg we could click edit / un-edit 20
     // times before the first React edit component comes back - we should discard
     // the first 19.
-    private displayComponentVersion = 0;
+    private latestCompRequestVersion = 0;
 
     constructor(scope: any, beans: Beans, column: Column, rowNode: RowNode, rowComp: RowCtrl | null,
         autoHeightCell: boolean, printLayout: boolean, eRow: HTMLElement, editingRow: boolean) {
@@ -114,13 +82,12 @@ export class CellComp extends Component implements TooltipParentComp {
         this.rowNode = rowNode;
         this.rowCtrl = rowComp;
         this.autoHeightCell = autoHeightCell;
-        this.printLayout = printLayout;
         this.eRow = eRow;
 
         // we need to do this early, as we need CellPosition before we call setComp()
         this.cellCtrl = new CellCtrl(column, rowNode, beans, rowComp);
 
-        this.createAndSetTemplate();
+        this.setTemplate(`<div comp-id="${this.getCompId()}"/>`);
 
         const eGui = this.getGui();
         const style = eGui.style;
@@ -149,142 +116,290 @@ export class CellComp extends Component implements TooltipParentComp {
             setColId: colId => setAttribute('col-id', colId),
             setTitle: title => setAttribute('title', title),
             setUnselectable: value => setAttribute('unselectable', value, this.eCellValue),
+            setTransition: transition => style.transition = transition ? transition : '',
+            showRenderer: (params, force) => this.showRenderer(params, force),
+            showEditor: params => this.showEditor(params),
 
-            // temp items
-            isEditing: ()=> this.editingCell,
-            getValue: ()=> this.cellCtrl.getValue(),
-            getValueFormatted: ()=> this.cellCtrl.getValueFormatted(),
-            setFocusOutOnEditor: ()=> this.setFocusOutOnEditor(),
-            setFocusInOnEditor: ()=> this.setFocusInOnEditor(),
-            stopRowOrCellEdit: cancel => this.stopRowOrCellEdit(cancel),
-            stopEditing: ()=> this.stopEditing(),
-            stopEditingAndFocus: () => this.stopEditingAndFocus(),
-            startRowOrCellEdit: (keyPress?, charPress?)=> this.startRowOrCellEdit(keyPress, charPress),
-            startEditingIfEnabled: (keyPress, charPress, cellStartedEdit)=> this.startEditingIfEnabled(keyPress, charPress, cellStartedEdit)
+            setIncludeSelection: include => this.includeSelection = include,
+            setIncludeRowDrag: include => this.includeRowDrag = include,
+            setIncludeDndSource: include => this.includeDndSource = include,
+            setForceWrapper: force => this.forceWrapper = force,
+
+            getCellEditor: ()=> this.cellEditor ? this.cellEditor : null,
+            getParentOfValue: ()=> this.eCellValue ? this.eCellValue : null,
+
+            // hacks
+            addRowDragging: (customElement?: HTMLElement, dragStartPixels?: number) => this.addRowDragging(customElement, dragStartPixels)
         };
 
-        this.cellCtrl.setComp(compProxy, false, this.usingWrapper, this.scope, this.getGui(),
-            this.printLayout);
+        this.cellCtrl.setComp(compProxy, false, this.scope, this.getGui(), printLayout, editingRow);
         this.addDestroyFunc( ()=> this.cellCtrl.destroy() );
+    }
+
+    private showRenderer(params: ICellRendererParams, forceNewCellRendererInstance: boolean): void {
+        this.setCellState(ShowingState.ShowRenderer);
+        const usingCellRenderer = this.isUsingCellRenderer(params);
+        const usingAngular1Template = this.isUsingAngular1Template(params);
+
+        // this will go to cellCtrl in time
+        if (this.hideEditorPopup) {
+            this.hideEditorPopup();
+            this.hideEditorPopup = null;
+        }
+
+        // if display template has changed, means any previous Cell Renderer is in the wrong location
+        const controlWrapperChanged = this.setupControlsWrapper();
 
         // all of these have dependencies on the eGui, so only do them after eGui is set
-        this.setInitialValue();
-        this.createCellRendererInstance();
-        this.angular1Compile();
-        this.cellCtrl.refreshHandle();
-
-        // if we are editing the row, then the cell needs to turn
-        // into edit mode
-        if (editingRow) {
-            this.startEditingIfEnabled();
+        if (usingCellRenderer) {
+            const neverRefresh = forceNewCellRendererInstance || controlWrapperChanged;
+            const cellRendererRefreshSuccessful = neverRefresh ? false : this.refreshCellRenderer(params);
+            if (!cellRendererRefreshSuccessful) {
+                this.destroyEditorAndRenderer();
+                this.createCellRendererInstance(params);
+            }
+        } else {
+            this.destroyEditorAndRenderer();
+            if (usingAngular1Template) {
+                this.insertValueUsingAngular1Template(params);
+            } else {
+                this.insertValueWithoutCellRenderer(params);
+            }
         }
+
+        this.updateAngular1ScopeAndCompile();
+    }
+
+    private showEditor(params: ICellEditorParams): void {
+        this.setCellState(ShowingState.ShowEditor);
+
+        this.destroyEditorAndRenderer();
+        this.createCellEditorInstance(params);
+
+        this.updateAngular1ScopeAndCompile();
+    }
+
+    private setCellState(state: ShowingState): void {
+        if (this.cellState === state) { return; }
+
+        this.firstRender = this.cellState == null;
+        this.cellState = state;
+
+        this.removeControlsWrapper();
+        this.destroyEditorAndRenderer();
+        this.clearCellElement();
+    }
+
+    private removeControlsWrapper(): void {
+        this.eCellValue = this.getGui();
+        this.eCellWrapper = null;
+
+        this.checkboxSelectionComp = this.beans.context.destroyBean(this.checkboxSelectionComp);
+        this.dndSourceComp = this.beans.context.destroyBean(this.dndSourceComp);
+        this.rowDraggingComp = this.beans.context.destroyBean(this.rowDraggingComp);
+
+        this.updateCssCellValue();
+    }
+
+    private updateCssCellValue(): void {
+        // when using the wrapper, this CSS class appears inside the wrapper instead
+        const includeAtTop = this.eCellWrapper==null;
+        this.addOrRemoveCssClass(CSS_CELL_VALUE, includeAtTop);
+    }
+
+    // returns true if wrapper was changed
+    private setupControlsWrapper(): boolean {
+
+        const usingWrapper = this.includeRowDrag || this.includeDndSource || this.includeSelection || this.forceWrapper;
+
+        const changed = true;
+        const notChanged = false;
+
+        // turn wrapper on
+        if (usingWrapper && !this.eCellWrapper) {
+            this.addControlsWrapper();
+            return changed;
+        }
+
+        // turn wrapper off
+        if (!usingWrapper && this.eCellWrapper) {
+            this.removeControlsWrapper();
+            return changed;
+        }
+
+        return notChanged;
+    }
+
+    private addControlsWrapper(): void {
+        const unselectable = !this.beans.gridOptionsWrapper.isEnableCellTextSelection() ? ' unselectable="on"' : '';
+
+        this.updateCssCellValue();
+
+        const eGui = this.getGui();
+        eGui.innerHTML = 'TEST';
+        eGui.innerHTML = /* html */
+            `<div ref="eCellWrapper" class="ag-cell-wrapper" role="presentation">
+                    <span ref="eCellValue" role="presentation" class="${CSS_CELL_VALUE}"${unselectable}></span>
+                </div>`;
+
+        this.eCellValue = this.getRefElement('eCellValue');
+        this.eCellWrapper = this.getRefElement('eCellWrapper');
+
+        this.eCellValue.id = `cell-${this.getCompId()}`;
+        let describedByIds: string[] = [];
+
+        if (this.includeRowDrag) {
+            this.addRowDragging();
+        }
+
+        if (this.includeDndSource) {
+            this.addDndSource();
+        }
+
+        if (this.includeSelection) {
+            describedByIds.push(this.addSelectionCheckbox().getCheckboxId());
+        }
+
+        describedByIds.push();
+
+        setAriaDescribedBy(this.getGui(), describedByIds.join(' '));
+    }
+
+    private createCellEditorInstance(params: ICellEditorParams): void {
+        const versionCopy = this.latestCompRequestVersion;
+
+        const cellEditorPromise = this.beans.userComponentFactory.newCellEditor(this.column.getColDef(), params);
+        if (!cellEditorPromise) { return; } // if empty, userComponentFactory already did a console message
+
+        cellEditorPromise.then( c => this.afterCellEditorCreated(versionCopy, c!, params) );
+
+        // if we don't do this, and editor component is async, then there will be a period
+        // when the component isn't present and keyboard navigation won't work - so example
+        // of user hitting tab quickly (more quickly than renderers getting created) won't work
+        const cellEditorAsync = missing(this.cellEditor);
+        if (cellEditorAsync && params.cellStartedEdit) {
+            this.cellCtrl.focusCell(true);
+        }
+    }
+
+    private wrapPopupEditor(params: ICellEditorParams, cellEditor: ICellEditorComp): ICellEditorComp {
+        const cellEditorComp = cellEditor!;
+        const isPopup = cellEditorComp.isPopup && cellEditorComp.isPopup();
+
+        if (!isPopup) { return cellEditorComp; }
+
+        if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
+            console.warn('AG Grid: popup cellEditor does not work with fullRowEdit - you cannot use them both ' +
+                '- either turn off fullRowEdit, or stop using popup editors.');
+        }
+
+        // if a popup, then we wrap in a popup editor and return the popup
+        const popupEditorWrapper = this.beans.context.createBean(new PopupEditorWrapper(cellEditorComp));
+        popupEditorWrapper.init(params);
+
+        return popupEditorWrapper;
+    }
+
+    private insertValueWithoutCellRenderer(params: ICellRendererParams): void {
+        const { valueFormatted, value } = params;
+        const valueToDisplay = valueFormatted != null ? valueFormatted : value;
+        const escapedValue = valueToDisplay!=null ? escapeString(valueToDisplay) : null;
+        if (escapedValue!=null) {
+            this.eCellValue.innerHTML = escapedValue;
+        } else {
+            clearElement(this.eCellValue);
+        }
+    }
+
+    private insertValueUsingAngular1Template(params: ICellRendererParams): void {
+        if (!params.colDef) { return; }
+        const {template, templateUrl} = params.colDef;
+
+        if (template!=null) {
+            this.eCellValue.innerHTML = template;
+        } else if (templateUrl!=null) {
+            // first time this happens it will return nothing, as the template will still be loading async,
+            // however once loaded it will refresh the cell and second time around it will be returned sync
+            // as in cache.
+            const templateFromUrl = this.beans.templateService.getTemplate(templateUrl,
+                ()=> this.cellCtrl.refreshCell({forceRefresh: true}));
+            this.eCellValue.innerHTML = templateFromUrl || '';
+        } else {
+            // should never happen, as we only enter this method when template or templateUrl exist
+        }
+    }
+
+    private destroyEditorAndRenderer(): void {
+        this.cellRenderer = this.beans.context.destroyBean(this.cellRenderer);
+        this.cellEditor = this.beans.context.destroyBean(this.cellEditor);
+        // increase version, so if any async comps return, they will be destroyed
+        this.latestCompRequestVersion++;
+    }
+
+    private refreshCellRenderer(params: ICellRendererParams): boolean {
+        if (this.cellRenderer==null || this.cellRenderer.refresh==null) { return false; }
+
+        // take any custom params off of the user
+        const finalParams = this.beans.userComponentFactory.mergeParmsWithApplicationProvidedParams(this.column.getColDef(), CellComp.CELL_RENDERER_TYPE_NORMAL, params);
+
+        const result = this.cellRenderer.refresh(finalParams);
+
+        // NOTE on undefined: previous version of the cellRenderer.refresh() interface
+        // returned nothing, if the method existed, we assumed it refreshed. so for
+        // backwards compatibility, we assume if method exists and returns nothing,
+        // that it was successful.
+        return result === true || result === undefined;
+    }
+
+    private createCellRendererInstance(params: ICellRendererParams): void {
+        // never use task service if angularCompileRows=true, as that assume the cell renderers
+        // are finished when the row is created. also we never use it if animation frame service
+        // is turned off.
+        // and lastly we never use it if doing auto-height, as the auto-height service checks the
+        // row height directly after the cell is created, it doesn't wait around for the tasks to complete
+        const angularCompileRows = this.beans.gridOptionsWrapper.isAngularCompileRows();
+        const suppressAnimationFrame = this.beans.gridOptionsWrapper.isSuppressAnimationFrame();
+        const useTaskService = !angularCompileRows && !suppressAnimationFrame && !this.autoHeightCell;
+
+        const displayComponentVersionCopy = this.latestCompRequestVersion;
+
+        const createCellRendererFunc = () => {
+            const staleTask = this.latestCompRequestVersion!==displayComponentVersionCopy || !this.isAlive();
+            if (staleTask) { return; }
+
+            // this can return null in the event that the user has switched from a renderer component to nothing, for example
+            // when using a cellRendererSelect to return a component or null depending on row data etc
+            const componentPromise = this.beans.userComponentFactory.newCellRenderer(this.column.getColDef(), params);
+            const callback = this.afterCellRendererCreated.bind(this, displayComponentVersionCopy);
+            if (componentPromise) {
+                componentPromise.then(callback);
+            }
+        };
+
+        // we only use task service when rendering for first time, which means it is not used when doing edits.
+        // if we changed this (always use task service) would make sense, however it would break tests, possibly
+        // test of users.
+        if (useTaskService && this.firstRender) {
+            this.beans.taskQueue.createTask(createCellRendererFunc, this.rowNode.rowIndex!, 'createTasksP2');
+        } else {
+            createCellRendererFunc();
+        }
+    }
+
+    private isUsingCellRenderer(params: ICellRendererParams): boolean {
+        const colDef = params.colDef!;
+        const res = colDef.cellRenderer != null || colDef.cellRendererFramework != null || colDef.cellRendererSelector != null;
+        return res;
+    }
+
+    private isUsingAngular1Template(params: ICellRendererParams): boolean {
+        const colDef = params.colDef!;
+        const res = colDef.template != null || colDef.templateUrl != null;
+        return res;
     }
 
     public getCtrl(): CellCtrl {
         return this.cellCtrl;
-    }
-
-    private createAndSetTemplate(): void {
-
-        this.setUsingWrapper();
-
-        this.setTemplate(`<div comp-id="${this.getCompId()}"/>`);
-
-        if (this.usingWrapper) {
-
-            const unselectable = !this.beans.gridOptionsWrapper.isEnableCellTextSelection() ? ' unselectable="on"' : '';
-
-            this.getGui().innerHTML = /* html */
-                `<div ref="eCellWrapper" class="ag-cell-wrapper" role="presentation">
-                    <span ref="eCellValue" role="presentation" class="${CSS_CELL_VALUE}"${unselectable}></span>
-                </div>`;
-
-            this.eCellValue = this.getRefElement('eCellValue');
-            this.eCellWrapper = this.getRefElement('eCellWrapper');
-            this.eCellValue.id = `cell-${this.getCompId()}`;
-            let describedByIds = '';
-
-            if (this.includeRowDraggingComponent) {
-                this.addRowDragging();
-            }
-
-            if (this.includeDndSourceComponent) {
-                this.addDndSource();
-            }
-
-            if (this.includeSelectionComponent) {
-                describedByIds += this.addSelectionCheckbox().getCheckboxId();
-            }
-
-            setAriaDescribedBy(this.getGui(), `${describedByIds} ${this.eCellValue.id}`.trim());
-        } else {
-            this.eCellValue = this.getGui();
-            this.eCellWrapper = this.eCellValue;
-        }
-    }
-
-    private setInitialValue(): void {
-        const valueToRender = this.getInitialValueToRender();
-        const valueSanitised = get(this.column, 'colDef.template', null) ? valueToRender : escapeString(valueToRender);
-        if (valueSanitised!=null) {
-            this.eCellValue.innerHTML = valueSanitised;
-        }
-    }
-
-    public onCellChanged(event: CellChangedEvent): void {
-        const eventImpactsThisCell = event.column === this.column;
-        if (eventImpactsThisCell) {
-            this.refreshCell({});
-        }
-    }
-
-    public onFlashCells(event: FlashCellsEvent): void {
-        const cellId = this.beans.cellPositionUtils.createId(this.cellCtrl.getCellPosition());
-        const shouldFlash = event.cells[cellId];
-        if (shouldFlash) {
-            this.animateCell('highlight');
-        }
-    }
-
-    private isUsingCellRenderer(): boolean {
-        const colDef = this.column.getColDef();
-
-        const usingAngular1Template = colDef.template!=null || colDef.templateUrl!=null;
-        if (usingAngular1Template) {
-            return false;
-        }
-
-        const res = colDef.cellRenderer != null
-                 || colDef.cellRendererFramework != null
-                 || colDef.cellRendererSelector != null;
-
-        return res;
-    }
-
-    public getInitialValueToRender(): string {
-        // if using a cellRenderer, then render blank cell
-        if (this.isUsingCellRenderer()) {
-            return '';
-        }
-
-        const colDef = this.getComponentHolder();
-
-        if (colDef.template) {
-            // template is really only used for angular 1 - as people using ng1 are used to providing templates with
-            // bindings in it. in ng2, people will hopefully want to provide components, not templates.
-            return colDef.template;
-        }
-
-        if (colDef.templateUrl) {
-            // likewise for templateUrl - it's for ng1 really - when we move away from ng1, we can take these out.
-            // niall was pro angular 1 when writing template and templateUrl, if writing from scratch now, would
-            // not do these, but would follow a pattern that was friendly towards components, not templates.
-            const template = this.beans.templateService.getTemplate(colDef.templateUrl, this.refreshCell.bind(this, true));
-
-            return template || '';
-        }
-
-        return this.cellCtrl.getValueToUse();
     }
 
     public getRowCtrl(): RowCtrl | null {
@@ -295,259 +410,14 @@ export class CellComp extends Component implements TooltipParentComp {
         return this.cellRenderer;
     }
 
-    public getCellEditor(): ICellEditorComp | null {
+    public getCellEditor(): ICellEditorComp | null | undefined {
         return this.cellEditor;
     }
 
-    // + stop editing {forceRefresh: true, suppressFlash: true}
-    // + event cellChanged {}
-    // + cellRenderer.params.refresh() {} -> method passes 'as is' to the cellRenderer, so params could be anything
-    // + rowComp: event dataChanged {animate: update, newData: !update}
-    // + rowComp: api refreshCells() {animate: true/false}
-    // + rowRenderer: api softRefreshView() {}
-    public refreshCell(params?: { suppressFlash?: boolean, newData?: boolean, forceRefresh?: boolean; }) {
-        // if we are in the middle of 'stopEditing', then we don't refresh here, as refresh gets called explicitly
-        if (this.suppressRefreshCell || this.editingCell) { return; }
-
-        const colDef = this.getComponentHolder();
-        const newData = params && params.newData;
-        const suppressFlash = (params && params.suppressFlash) || colDef.suppressCellFlash;
-        // we always refresh if cell has no value - this can happen when user provides Cell Renderer and the
-        // cell renderer doesn't rely on a value, instead it could be looking directly at the data, or maybe
-        // printing the current time (which would be silly)???. Generally speaking
-        // non of {field, valueGetter, showRowGroup} is bad in the users application, however for this edge case, it's
-        // best always refresh and take the performance hit rather than never refresh and users complaining in support
-        // that cells are not updating.
-        const noValueProvided = colDef.field == null && colDef.valueGetter == null && colDef.showRowGroup == null;
-        const forceRefresh = (params && params.forceRefresh) || noValueProvided || newData;
-
-        const valuesDifferent = this.cellCtrl.updateAndFormatValue();
-        const dataNeedsUpdating = forceRefresh || valuesDifferent;
-
-        if (dataNeedsUpdating) {
-
-            // if it's 'new data', then we don't refresh the cellRenderer, even if refresh method is available.
-            // this is because if the whole data is new (ie we are showing stock price 'BBA' now and not 'SSD')
-            // then we are not showing a movement in the stock price, rather we are showing different stock.
-            const cellRendererRefreshed = newData ? false : this.attemptCellRendererRefresh();
-
-            // we do the replace if not doing refresh, or if refresh was unsuccessful.
-            // the refresh can be unsuccessful if we are using a framework (eg ng2 or react) and the framework
-            // wrapper has the refresh method, but the underlying component doesn't
-            if (!cellRendererRefreshed) {
-                this.replaceContentsAfterRefresh();
-            }
-
-            // we don't want to flash the cells when processing a filter change, as otherwise the UI would
-            // be to busy. see comment in FilterManager with regards processingFilterChange
-            const processingFilterChange = this.beans.filterManager.isSuppressFlashingCellsBecauseFiltering();
-
-            const flashCell = !suppressFlash && !processingFilterChange &&
-                (this.beans.gridOptionsWrapper.isEnableCellChangeFlash() || colDef.enableCellChangeFlash);
-
-            if (flashCell) {
-                this.flashCell();
-            }
-
-            this.cellCtrl.temp_applyStyles();
-            this.cellCtrl.temp_applyClasses();
-        }
-
-        // we can't readily determine if the data in an angularjs template has changed, so here we just update
-        // and recompile (if applicable)
-        this.updateAngular1ScopeAndCompile();
-
-        this.cellCtrl.refreshToolTip();
-
-        this.cellCtrl.temp_applyRules();
-    }
-
-    // user can also call this via API
-    public flashCell(delays?: { flashDelay?: number | null; fadeDelay?: number | null; }): void {
-        const flashDelay = delays && delays.flashDelay;
-        const fadeDelay = delays && delays.fadeDelay;
-
-        this.animateCell('data-changed', flashDelay, fadeDelay);
-    }
-
-    private animateCell(cssName: string, flashDelay?: number | null, fadeDelay?: number | null): void {
-        const fullName = `ag-cell-${cssName}`;
-        const animationFullName = `ag-cell-${cssName}-animation`;
-        const element = this.getGui();
-        const { gridOptionsWrapper } = this.beans;
-
-        if (!flashDelay) {
-            flashDelay = gridOptionsWrapper.getCellFlashDelay();
-        }
-
-        if (!exists(fadeDelay)) {
-            fadeDelay = gridOptionsWrapper.getCellFadeDelay();
-        }
-
-        // we want to highlight the cells, without any animation
-        this.addCssClass(fullName);
-        this.removeCssClass(animationFullName);
-
-        // then once that is applied, we remove the highlight with animation
-        window.setTimeout(() => {
-            this.removeCssClass(fullName);
-            this.addCssClass(animationFullName);
-            element.style.transition = `background-color ${fadeDelay}ms`;
-            window.setTimeout(() => {
-                // and then to leave things as we got them, we remove the animation
-                this.removeCssClass(animationFullName);
-                element.style.removeProperty('transition');
-            }, fadeDelay!);
-        }, flashDelay);
-    }
-
-    private replaceContentsAfterRefresh(): void {
-        this.setUsingWrapper();
-        clearElement(this.eCellValue);
-
-        // remove old renderer component if it exists
-        this.cellRenderer = this.beans.context.destroyBean(this.cellRenderer);
-
-        // populate
-        this.putDataIntoCellAfterRefresh();
-        this.updateAngular1ScopeAndCompile();
-    }
-
-    private updateAngular1ScopeAndCompile() {
-        if (this.beans.gridOptionsWrapper.isAngularCompileRows() && this.scope) {
-            this.scope.data = { ...this.rowNode.data };
-            this.angular1Compile();
-        }
-    }
-
-    private angular1Compile(): void {
-        // if angular compiling, then need to also compile the cell again (angular compiling sucks, please wait...)
-        if (this.beans.gridOptionsWrapper.isAngularCompileRows()) {
-            const eGui = this.getGui();
-
-            // only compile the node if it hasn't already been done
-            // this prevents "orphaned" node leaks
-            if (!eGui.classList.contains('ng-scope') || eGui.childElementCount === 0) {
-                const compiledElement = this.beans.$compile(eGui)(this.scope);
-                this.addDestroyFunc(() => compiledElement.remove());
-            }
-        }
-    }
-
-    private putDataIntoCellAfterRefresh() {
-        // template gets preference, then cellRenderer, then do it ourselves
-        const colDef = this.getComponentHolder();
-
-        if (colDef.template) {
-            // template is really only used for angular 1 - as people using ng1 are used to providing templates with
-            // bindings in it. in ng2, people will hopefully want to provide components, not templates.
-            this.eCellValue.innerHTML = colDef.template;
-        } else if (colDef.templateUrl) {
-            // likewise for templateUrl - it's for ng1 really - when we move away from ng1, we can take these out.
-            // niall was pro angular 1 when writing template and templateUrl, if writing from scratch now, would
-            // not do these, but would follow a pattern that was friendly towards components, not templates.
-            const template = this.beans.templateService.getTemplate(colDef.templateUrl, this.refreshCell.bind(this, true));
-
-            if (template) {
-                this.eCellValue.innerHTML = template;
-            }
-        } else {
-            if (this.isUsingCellRenderer()) {
-                this.createCellRendererInstance();
-            } else {
-                const valueToUse = this.cellCtrl.getValueToUse();
-
-                if (valueToUse != null) {
-                    this.eCellValue.innerHTML = escapeString(valueToUse) || '';
-                }
-            }
-        }
-    }
-
-    public attemptCellRendererRefresh(): boolean {
-        if (missing(this.cellRenderer) || !this.cellRenderer || missing(this.cellRenderer.refresh)) {
-            return false;
-        }
-
-        // if the cell renderer has a refresh method, we call this instead of doing a refresh
-        const params = this.createCellRendererParams();
-
-        // take any custom params off of the user
-        const finalParams = this.beans.userComponentFactory.createFinalParams(this.getComponentHolder(), CellComp.CELL_RENDERER_TYPE_NORMAL, params);
-
-        const result: boolean | void = this.cellRenderer.refresh(finalParams);
-
-        // NOTE on undefined: previous version of the cellRenderer.refresh() interface
-        // returned nothing, if the method existed, we assumed it refreshed. so for
-        // backwards compatibility, we assume if method exists and returns nothing,
-        // that it was successful.
-        return result === true || result === undefined;
-    }
-
-    // a wrapper is used when we are putting a selection checkbox in the cell with the value
-    public setUsingWrapper(): void {
-        const colDef = this.getComponentHolder();
-
-        // never allow selection or dragging on pinned rows
-        if (this.rowNode.rowPinned) {
-            this.usingWrapper = false;
-            this.includeSelectionComponent = false;
-            this.includeRowDraggingComponent = false;
-            this.includeDndSourceComponent = false;
-            return;
-        }
-
-        const cbSelectionIsFunc = typeof colDef.checkboxSelection === 'function';
-        const rowDraggableIsFunc = typeof colDef.rowDrag === 'function';
-        const dndSourceIsFunc = typeof colDef.dndSource === 'function';
-
-        this.includeSelectionComponent = cbSelectionIsFunc || colDef.checkboxSelection === true;
-        this.includeRowDraggingComponent = rowDraggableIsFunc || colDef.rowDrag === true;
-        this.includeDndSourceComponent = dndSourceIsFunc || colDef.dndSource === true;
-
-        // text selection requires the value to be wrapped in anoter element
-        const enableTextSelection = this.beans.gridOptionsWrapper.isEnableCellTextSelection();
-
-        this.usingWrapper = enableTextSelection || this.includeRowDraggingComponent || this.includeSelectionComponent || this.includeDndSourceComponent;
-    }
-
-    private createCellRendererInstance(): void {
-        // never use task service if angularCompileRows=true, as that assume the cell renderers
-        // are finished when the row is created. also we never use it if animation frame service
-        // is turned off.
-        // and lastly we never use it if doing auto-height, as the auto-height service checks the
-        // row height directly after the cell is created, it doesn't wait around for the tasks to complete
-        const angularCompileRows = this.beans.gridOptionsWrapper.isAngularCompileRows();
-        const suppressAnimationFrame = this.beans.gridOptionsWrapper.isSuppressAnimationFrame();
-        const useTaskService = !angularCompileRows && !suppressAnimationFrame && !this.autoHeightCell;
-
-        const params = this.createCellRendererParams();
-
-        this.displayComponentVersion++;
-
-        const callback = this.afterCellRendererCreated.bind(this, this.displayComponentVersion);
-
-        this.createCellRendererFunc = () => {
-            this.createCellRendererFunc = null;
-            // this can return null in the event that the user has switched from a renderer component to nothing, for example
-            // when using a cellRendererSelect to return a component or null depending on row data etc
-            const componentPromise = this.beans.userComponentFactory.newCellRenderer(this.getComponentHolder(), params);
-            if (componentPromise) {
-                componentPromise.then(callback);
-            }
-        };
-
-        if (useTaskService) {
-            this.beans.taskQueue.createTask(this.createCellRendererFunc, this.rowNode.rowIndex!, 'createTasksP2');
-        } else {
-            this.createCellRendererFunc();
-        }
-    }
-
     private afterCellRendererCreated(cellRendererVersion: number, cellRenderer: ICellRendererComp): void {
-        const cellRendererNotRequired = !this.isAlive() || cellRendererVersion !== this.displayComponentVersion;
+        const staleTask = !this.isAlive() || cellRendererVersion !== this.latestCompRequestVersion;
 
-        if (cellRendererNotRequired) {
+        if (staleTask) {
             this.beans.context.destroyBean(cellRenderer);
             return;
         }
@@ -559,121 +429,14 @@ export class CellComp extends Component implements TooltipParentComp {
         }
     }
 
-    private createCellRendererParams(): ICellRendererParams {
-        return {
-            value: this.cellCtrl.getValue(),
-            valueFormatted: this.cellCtrl.getValueFormatted(),
-            getValue: this.cellCtrl.getValueFromValueService.bind(this.cellCtrl),
-            setValue: value => this.beans.valueService.setValue(this.rowNode, this.column, value),
-            formatValue: this.formatValue.bind(this),
-            data: this.rowNode.data,
-            node: this.rowNode,
-            colDef: this.getComponentHolder(),
-            column: this.column,
-            $scope: this.scope,
-            rowIndex: this.cellCtrl.getCellPosition().rowIndex,
-            api: this.beans.gridOptionsWrapper.getApi(),
-            columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
-            context: this.beans.gridOptionsWrapper.getContext(),
-            refreshCell: this.refreshCell.bind(this),
-
-            eGridCell: this.getGui(),
-            eParentOfValue: this.eCellValue,
-
-            registerRowDragger: (rowDraggerElement, dragStartPixels) => this.addRowDragging(rowDraggerElement, dragStartPixels),
-
-            // these bits are not documented anywhere, so we could drop them?
-            // it was in the olden days to allow user to register for when rendered
-            // row was removed (the row comp was removed), however now that the user
-            // can provide components for cells, the destroy method gets call when this
-            // happens so no longer need to fire event.
-            addRowCompListener: this.rowCtrl ? this.rowCtrl.addEventListener.bind(this.rowCtrl) : null,
-            addRenderedRowListener: (eventType: string, listener: Function) => {
-                console.warn('AG Grid: since AG Grid .v11, params.addRenderedRowListener() is now params.addRowCompListener()');
-                if (this.rowCtrl) {
-                    this.rowCtrl.addEventListener(eventType, listener);
-                }
-            }
-        } as ICellRendererParams;
-    }
-
-    private formatValue(value: any): any {
-        const valueFormatted = this.beans.valueFormatterService.formatValue(this.column, this.rowNode, this.scope, value);
-
-        return valueFormatted != null ? valueFormatted : value;
-    }
-
-    // called by rowRenderer when user navigates via tab key
-    public startRowOrCellEdit(keyPress?: number | null, charPress?: string | null): void {
-        if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
-            this.rowCtrl!.startRowEditing(keyPress, charPress, this);
-        } else {
-            this.startEditingIfEnabled(keyPress, charPress, true);
-        }
-    }
-
-    public isCellEditable() {
-        return this.column.isCellEditable(this.rowNode);
-    }
-
-    // either called internally if single cell editing, or called by rowRenderer if row editing
-    public startEditingIfEnabled(keyPress: number | null = null, charPress: string | null = null, cellStartedEdit = false): void {
-        // don't do it if not editable
-        if (!this.isCellEditable()) { return; }
-
-        // don't do it if already editing
-        if (this.editingCell) { return; }
-
-        this.editingCell = true;
-
-        this.displayComponentVersion++;
-        const callback = this.afterCellEditorCreated.bind(this, this.displayComponentVersion);
-
-        const params = this.createCellEditorParams(keyPress, charPress, cellStartedEdit);
-        this.createCellEditor(params).then(callback);
-
-        // if we don't do this, and editor component is async, then there will be a period
-        // when the component isn't present and keyboard navigation won't work - so example
-        // of user hitting tab quickly (more quickly than renderers getting created) won't work
-        const cellEditorAsync = missing(this.cellEditor);
-
-        if (cellEditorAsync && cellStartedEdit) {
-            this.cellCtrl.focusCell(true);
-        }
-    }
-
-    private createCellEditor(params: ICellEditorParams): AgPromise<ICellEditorComp> {
-        const cellEditorPromise = this.beans.userComponentFactory.newCellEditor(this.column.getColDef(), params);
-
-        return cellEditorPromise!.then(cellEditor => {
-            const cellEditorComp = cellEditor!;
-            const isPopup = cellEditorComp.isPopup && cellEditorComp.isPopup();
-
-            if (!isPopup) { return cellEditorComp; }
-
-            if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
-                console.warn('AG Grid: popup cellEditor does not work with fullRowEdit - you cannot use them both ' +
-                    '- either turn off fullRowEdit, or stop using popup editors.');
-            }
-
-            // if a popup, then we wrap in a popup editor and return the popup
-            const popupEditorWrapper = new PopupEditorWrapper(cellEditorComp);
-            this.beans.context.createBean(popupEditorWrapper);
-            popupEditorWrapper.init(params);
-
-            return popupEditorWrapper;
-        });
-    }
-
-    private afterCellEditorCreated(cellEditorVersion: number, cellEditor: ICellEditorComp): void {
+    private afterCellEditorCreated(requestVersion: number, cellEditor: ICellEditorComp, params: ICellEditorParams): void {
 
         // if editingCell=false, means user cancelled the editor before component was ready.
         // if versionMismatch, then user cancelled the edit, then started the edit again, and this
         //   is the first editor which is now stale.
-        const versionMismatch = cellEditorVersion !== this.displayComponentVersion;
+        const staleComp = requestVersion !== this.latestCompRequestVersion;
 
-        const cellEditorNotNeeded = versionMismatch || !this.editingCell;
-        if (cellEditorNotNeeded) {
+        if (staleComp) {
             this.beans.context.destroyBean(cellEditor);
             return;
         }
@@ -681,41 +444,29 @@ export class CellComp extends Component implements TooltipParentComp {
         const editingCancelledByUserComp = cellEditor.isCancelBeforeStart && cellEditor.isCancelBeforeStart();
         if (editingCancelledByUserComp) {
             this.beans.context.destroyBean(cellEditor);
-            this.editingCell = false;
+            this.cellCtrl.stopEditing();
             return;
         }
 
         if (!cellEditor.getGui) {
             console.warn(`AG Grid: cellEditor for column ${this.column.getId()} is missing getGui() method`);
-
-            // no getGui, for React guys, see if they attached a react component directly
-            if ((cellEditor as any).render) {
-                console.warn(`AG Grid: we found 'render' on the component, are you trying to set a React renderer but added it as colDef.cellEditor instead of colDef.cellEditorFmk?`);
-            }
-
             this.beans.context.destroyBean(cellEditor);
-            this.editingCell = false;
-
             return;
         }
 
-        this.cellEditor = cellEditor;
-
         this.cellEditorInPopup = cellEditor.isPopup !== undefined && cellEditor.isPopup();
-        this.setInlineEditingClass();
 
         if (this.cellEditorInPopup) {
+            this.cellEditor = this.wrapPopupEditor(params, cellEditor);
             this.addPopupCellEditor();
         } else {
+            this.cellEditor = cellEditor;
             this.addInCellEditor();
         }
 
         if (cellEditor.afterGuiAttached) {
             cellEditor.afterGuiAttached();
         }
-
-        const event: CellEditingStartedEvent = this.cellCtrl.createEvent(null, Events.EVENT_CELL_EDITING_STARTED);
-        this.beans.eventService.dispatchEvent(event);
     }
 
     private addInCellEditor(): void {
@@ -731,8 +482,6 @@ export class CellComp extends Component implements TooltipParentComp {
         this.cellRenderer = this.beans.context.destroyBean(this.cellRenderer);
 
         eGui.appendChild(this.cellEditor!.getGui());
-
-        this.angular1Compile();
     }
 
     private addPopupCellEditor(): void {
@@ -770,8 +519,6 @@ export class CellComp extends Component implements TooltipParentComp {
         if (addPopupRes) {
             this.hideEditorPopup = addPopupRes.hideFunc;
         }
-
-        this.angular1Compile();
     }
 
     private onPopupEditorClosed(): void {
@@ -780,134 +527,10 @@ export class CellComp extends Component implements TooltipParentComp {
         // before this, eg if 'enter key' was pressed on
         // the editor.
 
-        if (!this.editingCell) { return; }
+        if (!this.cellCtrl.isEditing()) { return; }
         // note: this only happens when use clicks outside of the grid. if use clicks on another
         // cell, then the editing will have already stopped on this cell
-        this.stopRowOrCellEdit();
-    }
-
-    // if we are editing inline, then we don't have the padding in the cell (set in the themes)
-    // to allow the text editor full access to the entire cell
-    private setInlineEditingClass(): void {
-        if (!this.isAlive()) { return; }
-
-        // ag-cell-inline-editing - appears when user is inline editing
-        // ag-cell-not-inline-editing - appears when user is no inline editing
-        // ag-cell-popup-editing - appears when user is editing cell in popup (appears on the cell, not on the popup)
-
-        // note: one of {ag-cell-inline-editing, ag-cell-not-inline-editing} is always present, they toggle.
-        //       however {ag-cell-popup-editing} shows when popup, so you have both {ag-cell-popup-editing}
-        //       and {ag-cell-not-inline-editing} showing at the same time.
-
-        const editingInline = this.editingCell && !this.cellEditorInPopup;
-        const popupEditorShowing = this.editingCell && this.cellEditorInPopup;
-
-        this.addOrRemoveCssClass(CSS_CELL_INLINE_EDITING, editingInline);
-        this.addOrRemoveCssClass(CSS_CELL_NOT_INLINE_EDITING, !editingInline);
-        this.addOrRemoveCssClass(CSS_CELL_POPUP_EDITING, popupEditorShowing);
-        addOrRemoveCssClass(this.getGui().parentNode as HTMLElement, "ag-row-inline-editing", editingInline);
-        addOrRemoveCssClass(this.getGui().parentNode as HTMLElement, "ag-row-not-inline-editing", !editingInline);
-    }
-
-    private createCellEditorParams(keyPress: number | null, charPress: string | null, cellStartedEdit: boolean): ICellEditorParams {
-        return {
-            value: this.cellCtrl.getValueFromValueService(),
-            keyPress: keyPress,
-            charPress: charPress,
-            column: this.column,
-            colDef: this.column.getColDef(),
-            rowIndex: this.cellCtrl.getCellPosition().rowIndex,
-            node: this.rowNode,
-            data: this.rowNode.data,
-            api: this.beans.gridOptionsWrapper.getApi(),
-            cellStartedEdit: cellStartedEdit,
-            columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
-            context: this.beans.gridOptionsWrapper.getContext(),
-            $scope: this.scope,
-            onKeyDown: this.cellCtrl.onKeyDown.bind(this.cellCtrl),
-            stopEditing: this.stopEditingAndFocus.bind(this),
-            eGridCell: this.getGui(),
-            parseValue: this.parseValue.bind(this),
-            formatValue: this.formatValue.bind(this)
-        };
-    }
-
-    private parseValue(newValue: any): any {
-        const colDef = this.getComponentHolder();
-        const params: NewValueParams = {
-            node: this.rowNode,
-            data: this.rowNode.data,
-            oldValue: this.cellCtrl.getValue(),
-            newValue: newValue,
-            colDef: colDef,
-            column: this.column,
-            api: this.beans.gridOptionsWrapper.getApi(),
-            columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
-            context: this.beans.gridOptionsWrapper.getContext()
-        };
-
-        const valueParser = colDef.valueParser;
-
-        return exists(valueParser) ? this.beans.expressionService.evaluate(valueParser, params) : newValue;
-    }
-
-    // cell editors call this, when they want to stop for reasons other
-    // than what we pick up on. eg selecting from a dropdown ends editing.
-    public stopEditingAndFocus(suppressNavigateAfterEdit = false): void {
-        this.stopRowOrCellEdit();
-        this.cellCtrl.focusCell(true);
-
-        if (!suppressNavigateAfterEdit) {
-            this.navigateAfterEdit();
-        }
-    }
-
-    private navigateAfterEdit(): void {
-        const fullRowEdit = this.beans.gridOptionsWrapper.isFullRowEdit();
-
-        if (fullRowEdit) { return; }
-
-        const enterMovesDownAfterEdit = this.beans.gridOptionsWrapper.isEnterMovesDownAfterEdit();
-
-        if (enterMovesDownAfterEdit) {
-            this.beans.navigationService.navigateToNextCell(null, KeyCode.DOWN, this.cellCtrl.getCellPosition(), false);
-        }
-    }
-
-    public setFocusInOnEditor(): void {
-        if (this.editingCell) {
-            if (this.cellEditor && this.cellEditor.focusIn) {
-                // if the editor is present, then we just focus it
-                this.cellEditor.focusIn();
-            } else {
-                // if the editor is not present, it means async cell editor (eg React fibre)
-                // and we are trying to set focus before the cell editor is present, so we
-                // focus the cell instead
-                this.cellCtrl.focusCell(true);
-            }
-        }
-    }
-
-    public isEditing(): boolean {
-        return this.editingCell;
-    }
-
-    public setFocusOutOnEditor(): void {
-        if (this.editingCell && this.cellEditor && this.cellEditor.focusOut) {
-            this.cellEditor.focusOut();
-        }
-    }
-
-    public getCellPosition(): CellPosition {
-        return this.cellCtrl.getCellPosition();
-    }
-
-    public getColumn(): Column {
-        return this.column;
-    }
-
-    public getComponentHolder(): ColDef {
-        return this.column.getColDef();
+        this.cellCtrl.stopRowOrCellEdit();
     }
 
     public detach(): void {
@@ -921,36 +544,12 @@ export class CellComp extends Component implements TooltipParentComp {
     //
     // note - this is NOT called by context, as we don't wire / unwire the CellComp for performance reasons.
     public destroy(): void {
-        if (this.createCellRendererFunc) {
-            this.beans.taskQueue.cancelTask(this.createCellRendererFunc);
-        }
+        this.cellCtrl.stopEditing();
 
-        this.stopEditing();
-        this.cellRenderer = this.beans.context.destroyBean(this.cellRenderer);
+        this.destroyEditorAndRenderer();
+        this.removeControlsWrapper();
 
         super.destroy();
-    }
-
-    public onNewColumnsLoaded(): void {
-        this.cellCtrl.temp_applyOnNewColumnsLoaded();
-    }
-
-    public refreshShouldDestroy(): boolean {
-        const isUsingWrapper = this.usingWrapper;
-        const isIncludingRowDragging = this.includeRowDraggingComponent;
-        const isIncludingDndSource = this.includeDndSourceComponent;
-        const isIncludingSelection = this.includeSelectionComponent;
-
-        this.setUsingWrapper();
-
-        return isUsingWrapper !== this.usingWrapper ||
-            isIncludingRowDragging !== this.includeRowDraggingComponent ||
-            isIncludingDndSource !== this.includeDndSourceComponent ||
-            isIncludingSelection !== this.includeSelectionComponent;
-    }
-
-    protected getFrameworkOverrides(): IFrameworkOverrides {
-        return this.beans.frameworkOverrides;
     }
 
     private addRowDragging(customElement?: HTMLElement, dragStartPixels?: number): void {
@@ -976,7 +575,7 @@ export class CellComp extends Component implements TooltipParentComp {
         }
         if (!this.rowDraggingComp) {
             this.rowDraggingComp = new RowDragComp(() => this.cellCtrl.getValue(), this.rowNode, this.column, customElement, dragStartPixels);
-            this.createManagedBean(this.rowDraggingComp, this.beans.context);
+            this.beans.context.createBean(this.rowDraggingComp);
         } else if (customElement) {
             // if the rowDraggingComp is already present, means we should only set the drag element
             this.rowDraggingComp.setDragElement(customElement, dragStartPixels);
@@ -985,16 +584,16 @@ export class CellComp extends Component implements TooltipParentComp {
         // If there is a custom element, the Cell Renderer is responsible for displaying it.
         if (!customElement) {
             // put the checkbox in before the value
-            this.eCellWrapper.insertBefore(this.rowDraggingComp.getGui(), this.eCellValue);
+            this.eCellWrapper!.insertBefore(this.rowDraggingComp.getGui(), this.eCellValue);
         }
     }
 
     private addDndSource(): void {
         const dndSourceComp = new DndSourceComp(this.rowNode, this.column, this.beans, this.getGui());
-        this.createManagedBean(dndSourceComp, this.beans.context);
+        this.beans.context.createBean(dndSourceComp);
 
         // put the checkbox in before the value
-        this.eCellWrapper.insertBefore(dndSourceComp.getGui(), this.eCellValue);
+        this.eCellWrapper!.insertBefore(dndSourceComp.getGui(), this.eCellValue);
     }
 
     private addSelectionCheckbox(): CheckboxSelectionComponent {
@@ -1002,97 +601,10 @@ export class CellComp extends Component implements TooltipParentComp {
         this.beans.context.createBean(cbSelectionComponent);
 
         cbSelectionComponent.init({ rowNode: this.rowNode, column: this.column });
-        this.addDestroyFunc(() => this.beans.context.destroyBean(cbSelectionComponent));
 
         // put the checkbox in before the value
-        this.eCellWrapper.insertBefore(cbSelectionComponent.getGui(), this.eCellValue);
+        this.eCellWrapper!.insertBefore(cbSelectionComponent.getGui(), this.eCellValue);
         return cbSelectionComponent;
-    }
-
-    // pass in 'true' to cancel the editing.
-    public stopRowOrCellEdit(cancel: boolean = false) {
-        if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
-            this.rowCtrl!.stopRowEditing(cancel);
-        } else {
-            this.stopEditing(cancel);
-        }
-    }
-
-    public stopEditing(cancel = false): void {
-        if (!this.editingCell) { return; }
-
-        // if no cell editor, this means due to async, that the cell editor never got initialised,
-        // so we just carry on regardless as if the editing was never started.
-        if (!this.cellEditor) {
-            this.editingCell = false;
-            return;
-        }
-
-        const oldValue = this.cellCtrl.getValueFromValueService();
-        let newValueExists = false;
-        let newValue: any;
-
-        if (!cancel) {
-            // also have another option here to cancel after editing, so for example user could have a popup editor and
-            // it is closed by user clicking outside the editor. then the editor will close automatically (with false
-            // passed above) and we need to see if the editor wants to accept the new value.
-            const userWantsToCancel = this.cellEditor.isCancelAfterEnd && this.cellEditor.isCancelAfterEnd();
-
-            if (!userWantsToCancel) {
-                newValue = this.cellEditor.getValue();
-                newValueExists = true;
-            }
-        }
-
-        // it is important we set this after setValue() above, as otherwise the cell will flash
-        // when editing stops. the 'refresh' method checks editing, and doesn't refresh editing cells.
-        // thus it will skip the refresh on this cell until the end of this method where we call
-        // refresh directly and we suppress the flash.
-        this.editingCell = false;
-
-        // important to clear this out - as parts of the code will check for
-        // this to see if an async cellEditor has yet to be created
-        this.beans.context.destroyBean(this.cellEditor);
-        this.cellEditor = null;
-
-        if (this.cellEditorInPopup && this.hideEditorPopup) {
-            this.hideEditorPopup();
-            this.hideEditorPopup = null;
-        } else {
-            this.clearCellElement();
-            const eGui = this.getGui();
-            // put the cell back the way it was before editing
-            if (this.usingWrapper) {
-                // if wrapper, then put the wrapper back
-                eGui.appendChild(this.eCellWrapper);
-            }
-        }
-
-        this.setInlineEditingClass();
-        this.cellCtrl.refreshHandle();
-
-        if (newValueExists && newValue !== oldValue) {
-            // we suppressRefreshCell because the call to rowNode.setDataValue() results in change detection
-            // getting triggered, which results in all cells getting refreshed. we do not want this refresh
-            // to happen on this call as we want to call it explicitly below. otherwise refresh gets called twice.
-            // if we only did this refresh (and not the one below) then the cell would flash and not be forced.
-            this.suppressRefreshCell = true;
-            this.rowNode.setDataValue(this.column, newValue);
-            this.suppressRefreshCell = false;
-        }
-
-        // we suppress the flash, as it is not correct to flash the cell the user has finished editing,
-        // the user doesn't need to flash as they were the one who did the edit, the flash is pointless
-        // (as the flash is meant to draw the user to a change that they didn't manually do themselves).
-        this.refreshCell({ forceRefresh: true, suppressFlash: true });
-
-        const editingStoppedEvent = {
-            ...this.cellCtrl.createEvent(null, Events.EVENT_CELL_EDITING_STOPPED),
-            oldValue,
-            newValue
-        };
-
-        this.beans.eventService.dispatchEvent(editingStoppedEvent);
     }
 
     private clearCellElement(): void {
@@ -1107,5 +619,20 @@ export class CellComp extends Component implements TooltipParentComp {
         }
 
         clearElement(eGui);
+    }
+
+    private updateAngular1ScopeAndCompile() {
+        if (this.beans.gridOptionsWrapper.isAngularCompileRows() && this.scope) {
+            this.scope.data = { ...this.rowNode.data };
+
+            const eGui = this.getGui();
+
+            // only compile the node if it hasn't already been done
+            // this prevents "orphaned" node leaks
+            if (!eGui.classList.contains('ng-scope') || eGui.childElementCount === 0) {
+                const compiledElement = this.beans.$compile(eGui)(this.scope);
+                this.addDestroyFunc(() => compiledElement.remove());
+            }
+        }
     }
 }

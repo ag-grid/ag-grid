@@ -36,6 +36,7 @@ import { convertToMap } from "../../utils/map";
 import { RowDragComp } from "./rowDragComp";
 import { ICellRendererComp, ICellRendererParams } from "../cellRenderers/iCellRenderer";
 import { escapeString } from "../../utils/string";
+import { CellCtrl } from "../cell/cellCtrl";
 
 export enum RowType {
     Normal = 'Normal',
@@ -481,7 +482,10 @@ export class RowCtrl extends BeanStub {
             this.forEachCellComp(cellComp => cellComp.getCtrl().onRowIndexChanged());
         });
         this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, event => {
-            this.forEachCellComp(cellComp => cellComp.onCellChanged(event));
+            this.forEachCellComp(cellComp => {
+                const ctrl = cellComp.getCtrl();
+                ctrl.onCellChanged(event)
+            });
         });
 
     }
@@ -491,7 +495,7 @@ export class RowCtrl extends BeanStub {
         // into the cellRenderer refresh method. otherwise this might be completely new data, in which case
         // we will want to completely replace the cells
         this.forEachCellComp(cellComp =>
-            cellComp.refreshCell({
+            cellComp.getCtrl().refreshCell({
                 suppressFlash: !event.update,
                 newData: !event.update
             })
@@ -845,7 +849,7 @@ export class RowCtrl extends BeanStub {
 
     public stopEditing(cancel = false): void {
         this.forEachCellComp(renderedCell => {
-            renderedCell.stopEditing(cancel);
+            renderedCell.getCtrl().stopEditing(cancel);
         });
 
         if (!this.editingRow) { return; }
@@ -855,6 +859,13 @@ export class RowCtrl extends BeanStub {
             this.beans.eventService.dispatchEvent(event);
         }
         this.setEditingRow(false);
+    }
+
+    public setInlineEditingCss(editing: boolean): void {
+        this.allComps.forEach( c => {
+            c.comp.addOrRemoveCssClass("ag-row-inline-editing", editing);
+            c.comp.addOrRemoveCssClass("ag-row-not-inline-editing", !editing);
+        });
     }
 
     private setEditingRow(value: boolean): void {
@@ -868,16 +879,16 @@ export class RowCtrl extends BeanStub {
         this.beans.eventService.dispatchEvent(event);
     }
 
-    public startRowEditing(keyPress: number | null = null, charPress: string | null = null, sourceRenderedCell: CellComp | null = null): void {
+    public startRowEditing(keyPress: number | null = null, charPress: string | null = null, sourceRenderedCell: CellCtrl | null = null): void {
         // don't do it if already editing
         if (this.editingRow) { return; }
 
-        this.forEachCellComp(renderedCell => {
-            const cellStartedEdit = renderedCell === sourceRenderedCell;
+        this.forEachCellComp(cellComp => {
+            const cellStartedEdit = cellComp.getCtrl() === sourceRenderedCell;
             if (cellStartedEdit) {
-                renderedCell.startEditingIfEnabled(keyPress, charPress, cellStartedEdit);
+                cellComp.getCtrl().startEditing(keyPress, charPress, cellStartedEdit);
             } else {
-                renderedCell.startEditingIfEnabled(null, null, cellStartedEdit);
+                cellComp.getCtrl().startEditing(null, null, cellStartedEdit);
             }
         });
         this.setEditingRow(true);

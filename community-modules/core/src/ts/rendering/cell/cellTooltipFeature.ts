@@ -11,12 +11,12 @@ import { ITooltipParams } from "../tooltipComponent";
 
 export class CellTooltipFeature extends BeanStub {
 
-    private readonly ctrl: CellCtrl;
+    private readonly cellCtrl: CellCtrl;
     private readonly column: Column;
     private readonly rowNode: RowNode;
     private readonly beans: Beans;
 
-    private comp: ICellComp;
+    private cellComp: ICellComp;
 
     private tooltip: any;
     private tooltipSanatised: string | null;
@@ -28,7 +28,7 @@ export class CellTooltipFeature extends BeanStub {
     constructor(ctrl: CellCtrl, beans: Beans) {
         super();
 
-        this.ctrl = ctrl;
+        this.cellCtrl = ctrl;
         this.beans = beans;
 
         this.column = ctrl.getColumn();
@@ -36,7 +36,7 @@ export class CellTooltipFeature extends BeanStub {
     }
 
     public setComp(comp: ICellComp): void {
-        this.comp = comp;
+        this.cellComp = comp;
         this.setupTooltip();
     }
 
@@ -45,7 +45,7 @@ export class CellTooltipFeature extends BeanStub {
         this.updateTooltipText();
 
         if (this.browserTooltips) {
-            this.comp.setTitle(this.tooltipSanatised);
+            this.cellComp.setTitle(this.tooltipSanatised);
         } else {
             this.createTooltipFeatureIfNeeded();
         }
@@ -61,7 +61,7 @@ export class CellTooltipFeature extends BeanStub {
 
         const parent: TooltipParentComp = {
             getTooltipParams: ()=> this.getTooltipParams(),
-            getGui: ()=> this.ctrl.getGui()
+            getGui: ()=> this.cellCtrl.getGui()
         };
 
         this.genericTooltipFeature = this.createManagedBean(new TooltipFeature(parent), this.beans.context);
@@ -71,7 +71,7 @@ export class CellTooltipFeature extends BeanStub {
         this.updateTooltipText();
 
         if (this.browserTooltips) {
-            this.comp.setTitle(this.tooltipSanatised);
+            this.cellComp.setTitle(this.tooltipSanatised);
         }
     }
 
@@ -91,7 +91,7 @@ export class CellTooltipFeature extends BeanStub {
                 columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
                 context: this.beans.gridOptionsWrapper.getContext(),
                 ...this.getTooltipParams(),
-                value: this.comp.getValue()
+                value: this.cellCtrl.getValue()
             });
         }
 
@@ -103,11 +103,11 @@ export class CellTooltipFeature extends BeanStub {
             location: 'cell',
             colDef: this.column.getColDef(),
             column: this.column,
-            rowIndex: this.ctrl.getCellPosition().rowIndex,
+            rowIndex: this.cellCtrl.getCellPosition().rowIndex,
             node: this.rowNode,
             data: this.rowNode.data,
             value: this.getTooltipText(),
-            valueFormatted: this.comp.getValueFormatted(),
+            valueFormatted: this.cellCtrl.getValueFormatted(),
         };
     }
 

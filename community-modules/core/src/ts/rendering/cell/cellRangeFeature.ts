@@ -1,15 +1,6 @@
 import { Beans } from "../beans";
 import {
     CellCtrl,
-    CSS_CELL_RANGE_BOTTOM,
-    CSS_CELL_RANGE_CHART,
-    CSS_CELL_RANGE_CHART_CATEGORY,
-    CSS_CELL_RANGE_HANDLE,
-    CSS_CELL_RANGE_LEFT,
-    CSS_CELL_RANGE_RIGHT,
-    CSS_CELL_RANGE_SELECTED,
-    CSS_CELL_RANGE_SINGLE_CELL,
-    CSS_CELL_RANGE_TOP,
     ICellComp
 } from "./cellCtrl";
 import { includes, last } from "../../utils/array";
@@ -17,11 +8,21 @@ import { CellRangeType, ISelectionHandle, SelectionHandleType } from "../../inte
 import { Column } from "../../entities/column";
 import { missing } from "../../utils/generic";
 
+const CSS_CELL_RANGE_SELECTED = 'ag-cell-range-selected';
+const CSS_CELL_RANGE_CHART = 'ag-cell-range-chart';
+const CSS_CELL_RANGE_SINGLE_CELL = 'ag-cell-range-single-cell';
+const CSS_CELL_RANGE_CHART_CATEGORY = 'ag-cell-range-chart-category';
+const CSS_CELL_RANGE_HANDLE = 'ag-cell-range-handle';
+const CSS_CELL_RANGE_TOP = 'ag-cell-range-top';
+const CSS_CELL_RANGE_RIGHT = 'ag-cell-range-right';
+const CSS_CELL_RANGE_BOTTOM = 'ag-cell-range-bottom';
+const CSS_CELL_RANGE_LEFT = 'ag-cell-range-left';
+
 export class CellRangeFeature {
 
     private beans: Beans;
-    private comp: ICellComp;
-    private ctrl: CellCtrl;
+    private cellComp: ICellComp;
+    private cellCtrl: CellCtrl;
 
     private rangeCount: number;
     private hasChartRange: boolean;
@@ -30,28 +31,28 @@ export class CellRangeFeature {
 
     constructor(beans: Beans, ctrl: CellCtrl) {
         this.beans = beans;
-        this.ctrl = ctrl;
+        this.cellCtrl = ctrl;
     }
 
     public setComp(cellComp: ICellComp): void {
-        this.comp = cellComp;
+        this.cellComp = cellComp;
         this.onRangeSelectionChanged();
     }
 
     public onRangeSelectionChanged(): void {
 
-        this.rangeCount = this.beans.rangeService.getCellRangeCount(this.ctrl.getCellPosition());
+        this.rangeCount = this.beans.rangeService.getCellRangeCount(this.cellCtrl.getCellPosition());
         this.hasChartRange = this.getHasChartRange();
 
-        this.comp.addOrRemoveCssClass(CSS_CELL_RANGE_SELECTED, this.rangeCount !== 0);
-        this.comp.addOrRemoveCssClass(`${CSS_CELL_RANGE_SELECTED}-1`, this.rangeCount === 1);
-        this.comp.addOrRemoveCssClass(`${CSS_CELL_RANGE_SELECTED}-2`, this.rangeCount === 2);
-        this.comp.addOrRemoveCssClass(`${CSS_CELL_RANGE_SELECTED}-3`, this.rangeCount === 3);
-        this.comp.addOrRemoveCssClass(`${CSS_CELL_RANGE_SELECTED}-4`, this.rangeCount >= 4);
-        this.comp.addOrRemoveCssClass(CSS_CELL_RANGE_CHART, this.hasChartRange);
+        this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_SELECTED, this.rangeCount !== 0);
+        this.cellComp.addOrRemoveCssClass(`${CSS_CELL_RANGE_SELECTED}-1`, this.rangeCount === 1);
+        this.cellComp.addOrRemoveCssClass(`${CSS_CELL_RANGE_SELECTED}-2`, this.rangeCount === 2);
+        this.cellComp.addOrRemoveCssClass(`${CSS_CELL_RANGE_SELECTED}-3`, this.rangeCount === 3);
+        this.cellComp.addOrRemoveCssClass(`${CSS_CELL_RANGE_SELECTED}-4`, this.rangeCount >= 4);
+        this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_CHART, this.hasChartRange);
 
-        this.comp.setAriaSelected(this.rangeCount > 0);
-        this.comp.addOrRemoveCssClass(CSS_CELL_RANGE_SINGLE_CELL, this.isSingleCell());
+        this.cellComp.setAriaSelected(this.rangeCount > 0);
+        this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_SINGLE_CELL, this.isSingleCell());
 
         this.updateRangeBorders();
 
@@ -66,10 +67,10 @@ export class CellRangeFeature {
         const isBottom = !isSingleCell && rangeBorders.bottom;
         const isLeft = !isSingleCell && rangeBorders.left;
 
-        this.comp.addOrRemoveCssClass(CSS_CELL_RANGE_TOP, isTop);
-        this.comp.addOrRemoveCssClass(CSS_CELL_RANGE_RIGHT, isRight);
-        this.comp.addOrRemoveCssClass(CSS_CELL_RANGE_BOTTOM, isBottom);
-        this.comp.addOrRemoveCssClass(CSS_CELL_RANGE_LEFT, isLeft);
+        this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_TOP, isTop);
+        this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_RIGHT, isRight);
+        this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_BOTTOM, isBottom);
+        this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_LEFT, isLeft);
     }
 
     private isSingleCell(): boolean {
@@ -108,7 +109,7 @@ export class CellRangeFeature {
         let bottom = false;
         let left = false;
 
-        const thisCol = this.ctrl.getCellPosition().column;
+        const thisCol = this.cellCtrl.getCellPosition().column;
         const { rangeService, columnModel } = this.beans;
 
         let leftCol: Column | null;
@@ -123,7 +124,7 @@ export class CellRangeFeature {
         }
 
         const ranges = rangeService.getCellRanges().filter(
-            range => rangeService.isCellInSpecificRange(this.ctrl.getCellPosition(), range)
+            range => rangeService.isCellInSpecificRange(this.cellCtrl.getCellPosition(), range)
         );
 
         // this means we are the first column in the grid
@@ -143,11 +144,11 @@ export class CellRangeFeature {
             const startRow = rangeService.getRangeStartRow(range);
             const endRow = rangeService.getRangeEndRow(range);
 
-            if (!top && this.beans.rowPositionUtils.sameRow(startRow, this.ctrl.getCellPosition())) {
+            if (!top && this.beans.rowPositionUtils.sameRow(startRow, this.cellCtrl.getCellPosition())) {
                 top = true;
             }
 
-            if (!bottom && this.beans.rowPositionUtils.sameRow(endRow, this.ctrl.getCellPosition())) {
+            if (!bottom && this.beans.rowPositionUtils.sameRow(endRow, this.cellCtrl.getCellPosition())) {
                 bottom = true;
             }
 
@@ -176,7 +177,7 @@ export class CellRangeFeature {
             this.addSelectionHandle();
         }
 
-        this.comp.addOrRemoveCssClass(CSS_CELL_RANGE_HANDLE, !!this.selectionHandle);
+        this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_HANDLE, !!this.selectionHandle);
     }
 
     private shouldHaveSelectionHandle(): boolean {
@@ -189,16 +190,16 @@ export class CellRangeFeature {
         }
 
         const cellRange = last(cellRanges);
-        const cellPosition = this.ctrl.getCellPosition();
+        const cellPosition = this.cellCtrl.getCellPosition();
         let fillHandleIsAvailable = rangesLen === 1 &&
             (gridOptionsWrapper.isEnableFillHandle() || gridOptionsWrapper.isEnableRangeHandle()) &&
-            !this.comp.isEditing();
+            !this.cellCtrl.isEditing();
 
         if (this.hasChartRange) {
             const hasCategoryRange = cellRanges[0].type === CellRangeType.DIMENSION;
             const isCategoryCell = hasCategoryRange && rangeService.isCellInSpecificRange(cellPosition, cellRanges[0]);
 
-            this.comp.addOrRemoveCssClass(CSS_CELL_RANGE_CHART_CATEGORY, isCategoryCell);
+            this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_CHART_CATEGORY, isCategoryCell);
             fillHandleIsAvailable = cellRange.type === CellRangeType.VALUE;
         }
 
@@ -222,7 +223,7 @@ export class CellRangeFeature {
             this.selectionHandle = this.beans.selectionHandleFactory.createSelectionHandle(type);
         }
 
-        this.selectionHandle.refresh(this.ctrl);
+        this.selectionHandle.refresh(this.cellCtrl);
     }
 
     public destroy(): void {

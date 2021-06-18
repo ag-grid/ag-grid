@@ -7,19 +7,19 @@ import { Beans } from "../beans";
 
 export class CellCustomStyleFeature extends BeanStub {
 
-    private readonly ctrl: CellCtrl;
+    private readonly cellCtrl: CellCtrl;
     private readonly column: Column;
     private readonly rowNode: RowNode;
     private readonly beans: Beans;
 
-    private comp: ICellComp;
+    private cellComp: ICellComp;
 
     private scope: any;
 
     constructor(ctrl: CellCtrl, beans: Beans) {
         super();
 
-        this.ctrl = ctrl;
+        this.cellCtrl = ctrl;
         this.beans = beans;
 
         this.column = ctrl.getColumn();
@@ -27,7 +27,7 @@ export class CellCustomStyleFeature extends BeanStub {
     }
 
     public setComp(comp: ICellComp, scope: any): void {
-        this.comp = comp;
+        this.cellComp = comp;
         this.scope = scope;
 
         this.applyUserStyles();
@@ -38,7 +38,7 @@ export class CellCustomStyleFeature extends BeanStub {
     public applyCellClassRules(): void {
         const colDef = this.column.getColDef();
         const cellClassParams: CellClassParams = {
-            value: this.comp.getValue(),
+            value: this.cellCtrl.getValue(),
             data: this.rowNode.data,
             node: this.rowNode,
             colDef: colDef,
@@ -52,8 +52,8 @@ export class CellCustomStyleFeature extends BeanStub {
         this.beans.stylingService.processClassRules(
             colDef.cellClassRules,
             cellClassParams,
-            className => this.comp.addOrRemoveCssClass(className, true),
-            className => this.comp.addOrRemoveCssClass(className, false)
+            className => this.cellComp.addOrRemoveCssClass(className, true),
+            className => this.cellComp.addOrRemoveCssClass(className, false)
         );
     }
 
@@ -67,7 +67,7 @@ export class CellCustomStyleFeature extends BeanStub {
         if (typeof colDef.cellStyle === 'function') {
             const cellStyleParams = {
                 column: this.column,
-                value: this.comp.getValue(),
+                value: this.cellCtrl.getValue(),
                 colDef: colDef,
                 data: this.rowNode.data,
                 node: this.rowNode,
@@ -83,13 +83,13 @@ export class CellCustomStyleFeature extends BeanStub {
             styles = colDef.cellStyle;
         }
 
-        this.comp.setUserStyles(styles);
+        this.cellComp.setUserStyles(styles);
     }
 
     public applyClassesFromColDef() {
         const colDef = this.column.getColDef();
         const cellClassParams: CellClassParams = {
-            value: this.comp.getValue(),
+            value: this.cellCtrl.getValue(),
             data: this.rowNode.data,
             node: this.rowNode,
             colDef: colDef,
@@ -103,7 +103,7 @@ export class CellCustomStyleFeature extends BeanStub {
         this.beans.stylingService.processStaticCellClasses(
             colDef,
             cellClassParams,
-            className => this.comp.addOrRemoveCssClass(className, true)
+            className => this.cellComp.addOrRemoveCssClass(className, true)
         );
     }
 

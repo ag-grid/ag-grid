@@ -103,8 +103,9 @@ export class RowContainerCtrl extends BeanStub {
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
+    private readonly name: RowContainerName;
+
     private comp: IRowContainerComp;
-    private name: RowContainerName;
     private eContainer: HTMLElement;
     private eViewport: HTMLElement;
     private eWrapper: HTMLElement;

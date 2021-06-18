@@ -16,8 +16,8 @@ import { RowNode } from "../../entities/rowNode";
  */
 export class CellPositionFeature extends BeanStub {
 
-    private ctrl: CellCtrl;
-    private comp: ICellComp;
+    private cellCtrl: CellCtrl;
+    private cellComp: ICellComp;
 
     private readonly column: Column;
     private readonly rowNode: RowNode;
@@ -30,7 +30,7 @@ export class CellPositionFeature extends BeanStub {
     constructor(ctrl: CellCtrl, beans: Beans) {
         super();
 
-        this.ctrl = ctrl;
+        this.cellCtrl = ctrl;
         this.beans = beans;
 
         this.column = ctrl.getColumn();
@@ -45,7 +45,7 @@ export class CellPositionFeature extends BeanStub {
     }
 
     public setComp(comp: ICellComp): void {
-        this.comp = comp;
+        this.cellComp = comp;
         this.onLeftChanged();
         this.onWidthChanged();
         this.applyRowSpan();
@@ -77,9 +77,9 @@ export class CellPositionFeature extends BeanStub {
     }
 
     public onWidthChanged(): void {
-        if (!this.comp) { return; }
+        if (!this.cellComp) { return; }
         const width = this.getCellWidth();
-        this.comp.setWidth(`${width}px`);
+        this.cellComp.setWidth(`${width}px`);
     }
 
     private getCellWidth(): number {
@@ -117,9 +117,9 @@ export class CellPositionFeature extends BeanStub {
     }
 
     public onLeftChanged(): void {
-        if (!this.comp) { return; }
+        if (!this.cellComp) { return; }
         const left = this.modifyLeftForPrintLayout(this.getCellLeft());
-        this.comp.setLeft(left + 'px');
+        this.cellComp.setLeft(left + 'px');
     }
 
     private getCellLeft(): number | null {
@@ -135,7 +135,7 @@ export class CellPositionFeature extends BeanStub {
     }
 
     private modifyLeftForPrintLayout(leftPosition: number | null): number | null {
-        if (!this.ctrl.isPrintLayout() || this.column.getPinned() === Constants.PINNED_LEFT) {
+        if (!this.cellCtrl.isPrintLayout() || this.column.getPinned() === Constants.PINNED_LEFT) {
             return leftPosition;
         }
 
@@ -157,8 +157,8 @@ export class CellPositionFeature extends BeanStub {
         const singleRowHeight = this.beans.gridOptionsWrapper.getRowHeightAsNumber();
         const totalRowHeight = singleRowHeight * this.rowSpan;
 
-        this.comp.setHeight(`${totalRowHeight}px`);
-        this.comp.setZIndex('1');
+        this.cellComp.setHeight(`${totalRowHeight}px`);
+        this.cellComp.setZIndex('1');
     }
 
     // overriding to make public, as we don't dispose this bean via context

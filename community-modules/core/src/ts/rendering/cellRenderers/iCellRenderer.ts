@@ -25,7 +25,6 @@ export interface ICellRendererParams {
     setValue?: (value: any) => void;
     formatValue?: (value: any) => any;
     refreshCell?: () => void;
-    addRenderedRowListener: (eventType: string, listener: Function) => void;
     /**
      * registerRowDragger: Function
      * @param rowDraggerElement The HTMLElement to be used as Row Dragger

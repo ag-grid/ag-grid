@@ -147,7 +147,7 @@ export class RowRenderer extends BeanStub {
         });
 
         this.addManagedListener(this.eventService, Events.EVENT_FLASH_CELLS, event => {
-            this.forEachCellComp(cellComp => cellComp.onFlashCells(event));
+            this.forEachCellComp(cellComp => cellComp.getCtrl().onFlashCells(event));
         });
 
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, () => {
@@ -211,7 +211,7 @@ export class RowRenderer extends BeanStub {
         cols.forEach(col => {
             const forEachCellWithThisCol = (callback: (cellComp: CellComp) => void) => {
                 this.forEachCellComp(cellComp => {
-                    if (cellComp.getColumn() === col) {
+                    if (cellComp.getCtrl().getColumn() === col) {
                         callback(cellComp);
                     }
                 });
@@ -531,7 +531,7 @@ export class RowRenderer extends BeanStub {
         // we don't want each cellComp to register for events, as would increase rendering time.
         // so for newColumnsLoaded, we register once here (in rowRenderer) and then inform
         // each cell if / when event was fired.
-        this.forEachCellComp(cellComp => cellComp.onNewColumnsLoaded());
+        this.forEachCellComp(cellComp => cellComp.getCtrl().onNewColumnsLoaded());
     }
 
     public forEachCellComp(callback: (cellComp: CellComp) => void): void {
@@ -553,7 +553,7 @@ export class RowRenderer extends BeanStub {
 
     public flashCells(params: FlashCellsParams = {}): void {
         const { flashDelay, fadeDelay } = params;
-        this.forEachCellCompFiltered(params.rowNodes, params.columns, cellComp => cellComp.flashCell({ flashDelay, fadeDelay }));
+        this.forEachCellCompFiltered(params.rowNodes, params.columns, cellComp => cellComp.getCtrl().flashCell({ flashDelay, fadeDelay }));
     }
 
     public refreshCells(params: RefreshCellsParams = {}): void {
@@ -563,13 +563,13 @@ export class RowRenderer extends BeanStub {
             suppressFlash: params.suppressFlash
         };
         this.forEachCellCompFiltered(params.rowNodes, params.columns, cellComp => {
-            if (cellComp.refreshShouldDestroy()) {
+            if (cellComp.getCtrl().refreshShouldDestroy()) {
                 const rowComp = cellComp.getRowCtrl();
                 if (rowComp) {
                     rowComp.refreshCell(cellComp);
                 }
             } else {
-                cellComp.refreshCell(refreshCellParams);
+                cellComp.getCtrl().refreshCell(refreshCellParams);
             }
         });
     }
@@ -608,8 +608,8 @@ export class RowRenderer extends BeanStub {
         const res: CellPosition[] = [];
 
         this.forEachCellComp(cellComp => {
-            if (cellComp.isEditing()) {
-                const cellPosition = cellComp.getCellPosition();
+            if (cellComp.getCtrl().isEditing()) {
+                const cellPosition = cellComp.getCtrl().getCellPosition();
                 res.push(cellPosition);
             }
         });
@@ -676,7 +676,7 @@ export class RowRenderer extends BeanStub {
             }
 
             rowComp.forEachCellComp(cellComp => {
-                const colId: string = cellComp.getColumn().getId();
+                const colId: string = cellComp.getCtrl().getColumn().getId();
                 const excludeColFromRefresh = colIdsMap && !colIdsMap[colId];
 
                 if (excludeColFromRefresh) { return; }

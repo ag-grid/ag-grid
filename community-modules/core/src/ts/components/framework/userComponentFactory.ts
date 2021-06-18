@@ -203,7 +203,7 @@ export class UserComponentFactory extends BeanStub {
         const componentInstance = componentAndParams.componentInstance;
 
         // Wire the component and call the init method with the correct params
-        const params = this.createFinalParams(
+        const params = this.mergeParmsWithApplicationProvidedParams(
             definitionObject, componentType.propertyName, paramsFromGrid, componentAndParams.paramsFromSelector);
 
         this.addReactHacks(params);
@@ -458,7 +458,7 @@ export class UserComponentFactory extends BeanStub {
      *      specified by the user in the configuration
      * @returns {TParams} It merges the user agGridParams with the actual params specified by the user.
      */
-    public createFinalParams<TParams>(
+    public mergeParmsWithApplicationProvidedParams<TParams>(
         definitionObject: DefinitionObject,
         propertyName: string,
         paramsFromGrid: TParams,

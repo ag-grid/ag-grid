@@ -10,19 +10,19 @@ import { isEventFromPrintableCharacter } from "../../utils/keyboard";
 
 export class CellKeyboardListenerFeature extends BeanStub {
 
-    private readonly ctrl: CellCtrl;
+    private readonly cellCtrl: CellCtrl;
     private readonly beans: Beans;
     private readonly column: Column;
     private readonly rowNode: RowNode;
     private readonly rowCtrl: RowCtrl | null;
     private readonly scope: any;
 
-    private comp: ICellComp;
+    private cellComp: ICellComp;
     private eGui: HTMLElement;
 
     constructor(ctrl: CellCtrl, beans: Beans, column: Column, rowNode: RowNode, scope: any, rowCtrl: RowCtrl | null) {
         super();
-        this.ctrl = ctrl;
+        this.cellCtrl = ctrl;
         this.beans = beans;
         this.column = column;
         this.rowNode = rowNode;
@@ -31,7 +31,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
     }
 
     public setComp(comp: ICellComp, eGui: HTMLElement): void {
-        this.comp = comp;
+        this.cellComp = comp;
         this.eGui = eGui;
     }
 
@@ -65,12 +65,12 @@ export class CellKeyboardListenerFeature extends BeanStub {
     }
 
     private onNavigationKeyPressed(event: KeyboardEvent, key: number): void {
-        if (this.ctrl.isEditing()) { return; }
+        if (this.cellCtrl.isEditing()) { return; }
 
-        if (event.shiftKey && this.ctrl.temp_isRangeSelectionEnabled()) {
+        if (event.shiftKey && this.cellCtrl.isRangeSelectionEnabled()) {
             this.onShiftRangeSelect(key);
         } else {
-            this.beans.navigationService.navigateToNextCell(event, key, this.ctrl.getCellPosition(), true);
+            this.beans.navigationService.navigateToNextCell(event, key, this.cellCtrl.getCellPosition(), true);
         }
 
         // if we don't prevent default, the grid will scroll with the navigation keys
@@ -88,24 +88,24 @@ export class CellKeyboardListenerFeature extends BeanStub {
     }
 
     private onTabKeyDown(event: KeyboardEvent): void {
-        this.beans.navigationService.onTabKeyDown(this.ctrl, event);
+        this.beans.navigationService.onTabKeyDown(this.cellCtrl, event);
     }
 
     private onBackspaceOrDeleteKeyPressed(key: number): void {
-        if (!this.ctrl.isEditing()) {
-            this.comp.startRowOrCellEdit(key);
+        if (!this.cellCtrl.isEditing()) {
+            this.cellCtrl.startRowOrCellEdit(key);
         }
     }
 
     private onEnterKeyDown(e: KeyboardEvent): void {
-        if (this.ctrl.isEditing() || this.rowCtrl!.isEditing()) {
-            this.comp.stopEditingAndFocus();
+        if (this.cellCtrl.isEditing() || this.rowCtrl!.isEditing()) {
+            this.cellCtrl.stopEditingAndFocus();
         } else {
             if (this.beans.gridOptionsWrapper.isEnterMovesDown()) {
-                this.beans.navigationService.navigateToNextCell(null, KeyCode.DOWN, this.ctrl.getCellPosition(), false);
+                this.beans.navigationService.navigateToNextCell(null, KeyCode.DOWN, this.cellCtrl.getCellPosition(), false);
             } else {
-                this.comp.startRowOrCellEdit(KeyCode.ENTER);
-                if (this.ctrl.isEditing()) {
+                this.cellCtrl.startRowOrCellEdit(KeyCode.ENTER);
+                if (this.cellCtrl.isEditing()) {
                     // if we started editing, then we need to prevent default, otherwise the Enter action can get
                     // applied to the cell editor. this happened, for example, with largeTextCellEditor where not
                     // preventing default results in a 'new line' character getting inserted in the text area
@@ -117,15 +117,15 @@ export class CellKeyboardListenerFeature extends BeanStub {
     }
 
     private onF2KeyDown(): void {
-        if (!this.comp.isEditing()) {
-            this.comp.startRowOrCellEdit(KeyCode.F2);
+        if (!this.cellCtrl.isEditing()) {
+            this.cellCtrl.startRowOrCellEdit(KeyCode.F2);
         }
     }
 
     private onEscapeKeyDown(): void {
-        if (this.comp.isEditing()) {
-            this.comp.stopRowOrCellEdit(true);
-            this.ctrl.focusCell(true);
+        if (this.cellCtrl.isEditing()) {
+            this.cellCtrl.stopRowOrCellEdit(true);
+            this.cellCtrl.focusCell(true);
         }
     }
 
@@ -135,13 +135,13 @@ export class CellKeyboardListenerFeature extends BeanStub {
         const eventTarget = getTarget(event);
         const eventOnChildComponent = eventTarget !== this.eGui;
 
-        if (eventOnChildComponent || this.ctrl.isEditing()) { return; }
+        if (eventOnChildComponent || this.cellCtrl.isEditing()) { return; }
 
         const pressedChar = String.fromCharCode(event.charCode);
         if (pressedChar === ' ') {
             this.onSpaceKeyPressed(event);
         } else if (isEventFromPrintableCharacter(event)) {
-            this.comp.startRowOrCellEdit(null, pressedChar);
+            this.cellCtrl.startRowOrCellEdit(null, pressedChar);
             // if we don't prevent default, then the keypress also gets applied to the text field
             // (at least when doing the default editor), but we need to allow the editor to decide
             // what it wants to do. we only do this IF editing was started - otherwise it messes
@@ -154,7 +154,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
     private onSpaceKeyPressed(event: KeyboardEvent): void {
         const { gridOptionsWrapper } = this.beans;
 
-        if (!this.ctrl.isEditing() && gridOptionsWrapper.isRowSelection()) {
+        if (!this.cellCtrl.isEditing() && gridOptionsWrapper.isRowSelection()) {
             const currentSelection = this.rowNode.isSelected();
             const newSelection = !currentSelection;
             if (newSelection || !gridOptionsWrapper.isSuppressRowDeselection()) {

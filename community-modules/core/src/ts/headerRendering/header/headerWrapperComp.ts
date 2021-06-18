@@ -208,7 +208,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         const params = this.createParams();
 
         // take any custom params off of the user
-        const finalParams = this.userComponentFactory.createFinalParams(this.getComponentHolder(), 'headerComponent', params);
+        const finalParams = this.userComponentFactory.mergeParmsWithApplicationProvidedParams(this.getComponentHolder(), 'headerComponent', params);
 
         const res = this.headerComp!.refresh(finalParams);
 

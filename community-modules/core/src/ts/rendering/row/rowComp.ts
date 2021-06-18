@@ -137,7 +137,7 @@ export class RowComp extends Component {
             // it's possible there is a Cell Comp with correct Id, but it's referring to
             // a different column instance. Happens a lot with pivot, as pivot col id's are
             // reused eg  pivot_0, pivot_1 etc
-            if (existingCellComp && existingCellComp.getColumn() !== col) {
+            if (existingCellComp && existingCellComp.getCtrl().getColumn() !== col) {
                 this.destroyCells([existingCellComp]);
                 existingCellComp = null;
             }
@@ -175,17 +175,17 @@ export class RowComp extends Component {
         const KEEP_CELL = false;
 
         // always remove the cell if it's not rendered or if it's in the wrong pinned location
-        const column = cellComp.getColumn();
+        const column = cellComp.getCtrl().getColumn();
         if (column.getPinned() != this.pinned) { return REMOVE_CELL; }
 
         // we want to try and keep editing and focused cells
-        const editing = cellComp.isEditing();
-        const focused = this.beans.focusService.isCellFocused(cellComp.getCellPosition());
+        const editing = cellComp.getCtrl().isEditing();
+        const focused = this.beans.focusService.isCellFocused(cellComp.getCtrl().getCellPosition());
 
         const mightWantToKeepCell = editing || focused;
 
         if (mightWantToKeepCell) {
-            const column = cellComp.getColumn();
+            const column = cellComp.getCtrl().getColumn();
             const displayedColumns = this.beans.columnModel.getAllDisplayedColumns();
             const cellStillDisplayed = displayedColumns.indexOf(column) >= 0;
             return cellStillDisplayed ? KEEP_CELL : REMOVE_CELL;
@@ -242,7 +242,7 @@ export class RowComp extends Component {
             if (!cellComp) { return; }
 
             // check cellComp belongs in this container
-            const id = cellComp.getColumn().getId();
+            const id = cellComp.getCtrl().getColumn().getId();
             if (this.cellComps[id] !== cellComp) {return; }
 
             cellComp.detach();

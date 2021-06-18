@@ -404,7 +404,7 @@ export class NavigationService extends BeanStub {
 
         // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
         // to the normal tabbing so user can exit the grid.
-        nextCell.startEditingIfEnabled(null, null, true);
+        nextCell.startEditing(null, null, true);
         nextCell.focusCell(false);
         return true;
     }
