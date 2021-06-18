@@ -59,9 +59,9 @@ function generateWithReplacedGridOptions(node, options?) {
 }
 
 function processColDefsForFunctionalReactOrVue(propertyName: string, exampleType, exampleSettings, providedExamples) {
-    if (propertyName === 'columnDefs' && exampleSettings.reactFunctional !== false) {
+    if (propertyName === 'columnDefs') {
         return exampleType === 'generated' ||
-            (exampleType === 'mixed' && !providedExamples['reactFunctional'] && !providedExamples['vue'] && !providedExamples['vue3']);
+            (exampleType === 'mixed' && !(providedExamples['reactFunctional'] && providedExamples['vue'] && providedExamples['vue3']));
     }
 
     return false;
@@ -69,7 +69,7 @@ function processColDefsForFunctionalReactOrVue(propertyName: string, exampleType
 
 function processComponentsForVue(propertyName: string, exampleType, providedExamples) {
     if (propertyName === 'components') {
-        return exampleType === 'generated' || (exampleType === 'mixed' && !providedExamples['vue'] && !providedExamples['vue3']);
+        return exampleType === 'generated' || (exampleType === 'mixed' && !(providedExamples['vue'] && providedExamples['vue3']));
     }
 
     return false;
@@ -77,7 +77,7 @@ function processComponentsForVue(propertyName: string, exampleType, providedExam
 
 function processDefaultColumnDefForVue(propertyName: string, exampleType, providedExamples) {
     if (propertyName === 'defaultColDef') {
-        return exampleType === 'generated' || (exampleType === 'mixed' && !providedExamples['vue'] && !providedExamples['vue3']);
+        return exampleType === 'generated' || (exampleType === 'mixed' && !(providedExamples['vue'] && providedExamples['vue3']));
     }
 
     return false;
@@ -85,7 +85,7 @@ function processDefaultColumnDefForVue(propertyName: string, exampleType, provid
 
 function processGlobalComponentsForVue(propertyName: string, exampleType, providedExamples) {
     if (propertyName === 'dateComponent') {
-        return exampleType === 'generated' || (exampleType === 'mixed' && !providedExamples['vue']);
+        return exampleType === 'generated' || (exampleType === 'mixed' && !(providedExamples['vue'] && providedExamples['vue3']));
     }
 
     return false;
@@ -293,9 +293,10 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
                     bindings.parsedColDefs = extractAndParseColDefs(node.value);
                 }
                 if (processComponentsForVue(propertyName, exampleType, providedExamples) && node.value.type === 'ObjectExpression') {
-                    const componentDefinition = node.value.properties[0];
-                    if(componentDefinition.value.type !== 'CallExpression' && componentDefinition.value.type !== 'FunctionExpression') {
-                        bindings.components.push({name: componentDefinition.key.type === 'Identifier' ? componentDefinition.key.name : componentDefinition.key.value , value: componentDefinition.value.name});
+                    for (const componentDefinition of node.value.properties) {
+                        if(componentDefinition.value.type !== 'CallExpression' && componentDefinition.value.type !== 'FunctionExpression') {
+                            bindings.components.push({name: componentDefinition.key.type === 'Identifier' ? componentDefinition.key.name : componentDefinition.key.value , value: componentDefinition.value.name});
+                        }
                     }
                 }
                 if (processDefaultColumnDefForVue(propertyName, exampleType, providedExamples) && node.value.type === 'ObjectExpression') {

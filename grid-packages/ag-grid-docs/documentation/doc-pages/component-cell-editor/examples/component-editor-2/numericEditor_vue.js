@@ -1,4 +1,4 @@
-import Vue from 'vue';
+import {nextTick} from 'vue';
 
 const KEY_BACKSPACE = 8;
 const KEY_DELETE = 46;

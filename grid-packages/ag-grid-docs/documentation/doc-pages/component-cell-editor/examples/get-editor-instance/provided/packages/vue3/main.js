@@ -1,8 +1,7 @@
-import Vue from 'vue';
-import {AgGridVue} from '@ag-grid-community/vue';
-import {AllModules} from '@ag-grid-enterprise/all-modules';
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
+import {createApp} from 'vue';
+import {AgGridVue} from 'ag-grid-vue3';
+import 'ag-grid-community/dist/styles/ag-grid.css';
+import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 import MySimpleEditor from './mySimpleEditorVue.js';
 
 const VueExample = {
@@ -14,7 +13,6 @@ const VueExample = {
               :columnDefs="columnDefs"
               :defaultColDef="defaultColDef"
               :rowData="rowData"
-              :modules="modules"
               @grid-ready="onGridReady">
           </ag-grid-vue>
       </div>
@@ -72,7 +70,6 @@ const VueExample = {
                 filter: true,
                 resizable: true
             },
-            modules: AllModules,
             rowData: this.createRowData(),
             interval: null
         }
@@ -151,9 +148,5 @@ const VueExample = {
     }
 }
 
-new Vue({
-    el: '#app',
-    components: {
-        'my-component': VueExample
-    }
-});
+createApp(VueExample)
+    .mount("#app")

@@ -1,5 +1,5 @@
 export default {
-    template: '<img width="20px" :src="imgForMood" />',
+    template: '<img style="width: 20px;" :src="imgForMood" />',
     data() {
         return {
             mood: 'Happy',

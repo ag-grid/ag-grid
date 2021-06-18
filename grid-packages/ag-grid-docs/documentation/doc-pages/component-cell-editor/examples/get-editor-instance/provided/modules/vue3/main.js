@@ -1,5 +1,5 @@
-import Vue from 'vue';
-import {AgGridVue} from '@ag-grid-community/vue';
+import {createApp} from 'vue';
+import {AgGridVue} from '@ag-grid-community/vue3';
 import {AllModules} from '@ag-grid-enterprise/all-modules';
 import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
 import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
@@ -151,9 +151,5 @@ const VueExample = {
     }
 }
 
-new Vue({
-    el: '#app',
-    components: {
-        'my-component': VueExample
-    }
-});
+createApp(VueExample)
+    .mount("#app")

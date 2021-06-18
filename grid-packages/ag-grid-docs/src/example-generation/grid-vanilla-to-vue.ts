@@ -56,7 +56,10 @@ function getOnGridReadyCode(bindings: any): string {
         );
     }
 
-    return `onGridReady(params) {${additionalLines.length > 0 ? `\n\n        ${additionalLines.join('\n        ')}` : ''}
+    return `onGridReady(params) {
+        this.gridApi = params.api;
+        this.gridColumnApi = params.columnApi;
+        ${additionalLines.length > 0 ? `\n\n        ${additionalLines.join('\n        ')}` : ''}
     }`;
 }
 
@@ -146,10 +149,11 @@ function getPropertyBindings(bindings: any, componentFileNames: string[], import
     const propertyAttributes = [];
 
     bindings.properties
-        .filter(property => property.name !== 'onGridReady' &&
+        .filter(property =>
+            property.name !== 'onGridReady' &&
             property.name !== 'columnDefs' &&
-            property.name !== 'defaultColDef' &&
-            GLOBAL_COMPONENTS.indexOf(property.name) !== -1)
+            GLOBAL_COMPONENTS.indexOf(property.name) === -1
+        )
         .forEach(property => {
             if (componentFileNames.length > 0 && property.name === 'components') {
                 // we use bindings.components for vue examples
@@ -163,7 +167,10 @@ function getPropertyBindings(bindings: any, componentFileNames: string[], import
                     // tabToNextCell needs to be bound to the react component
                     if (!isInstanceMethod(bindings.instanceMethods, property)) {
                         propertyAttributes.push(toInput(property));
-                        propertyVars.push(toMember(property));
+
+                        if(property.name !== 'defaultColDef') {
+                            propertyVars.push(toMember(property));
+                        }
                     }
 
                     propertyAssignments.push(toAssignment(property));
@@ -199,7 +206,6 @@ function getTemplate(bindings: any, attributes: string[]): string {
     class="${gridSettings.theme}"
     id="myGrid"
     :columnDefs="columnDefs"
-    :gridOptions="gridOptions"
     @grid-ready="onGridReady"
     ${attributes.join('\n    ')}></ag-grid-vue>`;
 
@@ -363,7 +369,6 @@ const VueExample = {
     data: function() {
         return {
             columnDefs: [${columnDefs}],
-            gridOptions: null,
             gridApi: null,
             columnApi: null,
             ${defaultColDef ? `defaultColDef: ${defaultColDef},` : ''}
@@ -372,12 +377,7 @@ const VueExample = {
         }
     },
     beforeMount() {
-        this.gridOptions = {};
         ${propertyAssignments.join(';\n')}
-    },
-    mounted() {
-        this.gridApi = this.gridOptions.api;
-        this.gridColumnApi = this.gridOptions.columnApi;
     },
     methods: {
         ${eventHandlers

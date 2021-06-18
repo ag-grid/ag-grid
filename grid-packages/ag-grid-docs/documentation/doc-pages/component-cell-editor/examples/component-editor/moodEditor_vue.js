@@ -1,4 +1,4 @@
-import Vue from 'vue';
+import {nextTick} from 'vue';
 
 export default {
     template: `
@@ -48,7 +48,7 @@ export default {
         this.setHappy(this.params.value === 'Happy');
     },
     mounted() {
-        Vue.nextTick(() => {
+        nextTick(() => {
             this.$refs.container.focus();
         });
     }

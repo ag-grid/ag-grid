@@ -66,6 +66,9 @@ export class VueComponentFactory {
             data: () => ({...componentParams, ...componentDefinition.data()}),
             created() { // note: function - don't use arrow functions here (for the correct "this" to be used)
                 componentInstance = (this as any).$root;
+                if (componentDefinition.created) {
+                    componentDefinition.created.bind(this)();
+                }
             }
         });
 

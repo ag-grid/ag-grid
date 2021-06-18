@@ -1,4 +1,4 @@
-import Vue from 'vue';
+import {nextTick} from 'vue';
 
 export default {
     template: `<input type="number" v-model="value" ref="input" style="width: 100%"/>`,
@@ -30,6 +30,6 @@ export default {
     },
     mounted() {
         this.value = this.params.value;
-        Vue.nextTick(() => this.$refs.input.focus());
+        nextTick(() => this.$refs.input.focus());
     }
 };
