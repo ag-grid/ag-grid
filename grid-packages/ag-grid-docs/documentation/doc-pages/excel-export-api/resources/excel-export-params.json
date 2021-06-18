@@ -579,8 +579,8 @@
     },
     "excelProtection": {
         "protected": {
-            "default": false,
-            "description": "Set to `true` to enable cell protection",
+            "default": true,
+            "description": "Set to `false` to disable cell protection (locking)",
             "type": "boolean"
         },
         "hideFormula": {

@@ -14,14 +14,14 @@ const VueExample = {
               :columnDefs="columnDefs"
               :defaultColDef="defaultColDef"
               :rowData="rowData"
-              :frameworkComponents="frameworkComponents"
               :modules="modules"
               @grid-ready="onGridReady">
           </ag-grid-vue>
       </div>
     `,
     components: {
-        'ag-grid-vue': AgGridVue
+        'ag-grid-vue': AgGridVue,
+        mySimpleEditor: MySimpleEditor
     },
     data: function () {
         return {
@@ -41,27 +41,27 @@ const VueExample = {
                 {
                     field: "gender",
                     width: 100,
-                    cellEditor: "mySimpleEditor"
+                    cellEditorFramework: "mySimpleEditor"
                 },
                 {
                     field: "age",
                     width: 80,
-                    cellEditor: "mySimpleEditor"
+                    cellEditorFramework: "mySimpleEditor"
                 },
                 {
                     field: "mood",
                     width: 90,
-                    cellEditor: "mySimpleEditor"
+                    cellEditorFramework: "mySimpleEditor"
                 },
                 {
                     field: "country",
                     width: 110,
-                    cellEditor: "mySimpleEditor"
+                    cellEditorFramework: "mySimpleEditor"
                 },
                 {
                     field: "address",
                     width: 502,
-                    cellEditor: "mySimpleEditor"
+                    cellEditorFramework: "mySimpleEditor"
                 }
             ],
             defaultColDef: {
@@ -72,7 +72,6 @@ const VueExample = {
                 filter: true,
                 resizable: true
             },
-            frameworkComponents: {mySimpleEditor: MySimpleEditor},
             modules: AllModules,
             rowData: this.createRowData(),
             interval: null

@@ -58,7 +58,11 @@ export class RowNodeSorter {
                 comparatorResult = _.defaultComparator(valueA, valueB, this.gridOptionsWrapper.isAccentedSort());
             }
 
-            if (comparatorResult !== 0) {
+            // user provided comparators can return 'NaN' if they don't correctly handle 'undefined' values, this
+            // typically occurs when the comparator is used on a group row
+            const validResult = !isNaN(comparatorResult);
+
+            if (validResult && comparatorResult !== 0) {
                 return sortOption.sort === Constants.SORT_ASC ? comparatorResult : comparatorResult * -1;
             }
         }
@@ -73,7 +77,7 @@ export class RowNodeSorter {
 
         // comparator on col get preference over everything else
         const comparatorOnCol = column.getColDef().comparator;
-        if (comparatorOnCol!=null) {
+        if (comparatorOnCol != null) {
             return comparatorOnCol;
         }
 

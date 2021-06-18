@@ -58,9 +58,10 @@ function generateWithReplacedGridOptions(node, options?) {
         .replace(/gridOptions\.columnApi/g, 'this.gridColumnApi');
 }
 
-function processColDefsForFunctionalReact(propertyName: string, exampleType, exampleSettings, providedExamples) {
-    if (propertyName === 'columnDefs' && exampleSettings.reactFunctional !== false) {
-        return exampleType === 'generated' || (exampleType === 'mixed' && !providedExamples['reactFunctional']);
+function processColDefsForFunctionalReactOrVue(propertyName: string, exampleType, exampleSettings, providedExamples) {
+    if (propertyName === 'columnDefs') {
+        return exampleType === 'generated' ||
+            (exampleType === 'mixed' && !(providedExamples['reactFunctional'] && providedExamples['vue'] && providedExamples['vue3']));
     }
 
     return false;
@@ -68,7 +69,23 @@ function processColDefsForFunctionalReact(propertyName: string, exampleType, exa
 
 function processComponentsForVue(propertyName: string, exampleType, providedExamples) {
     if (propertyName === 'components') {
-        return exampleType === 'generated' || (exampleType === 'mixed' && !providedExamples['vue']);
+        return exampleType === 'generated' || (exampleType === 'mixed' && !(providedExamples['vue'] && providedExamples['vue3']));
+    }
+
+    return false;
+}
+
+function processDefaultColumnDefForVue(propertyName: string, exampleType, providedExamples) {
+    if (propertyName === 'defaultColDef') {
+        return exampleType === 'generated' || (exampleType === 'mixed' && !(providedExamples['vue'] && providedExamples['vue3']));
+    }
+
+    return false;
+}
+
+function processGlobalComponentsForVue(propertyName: string, exampleType, providedExamples) {
+    if (propertyName === 'dateComponent') {
+        return exampleType === 'generated' || (exampleType === 'mixed' && !(providedExamples['vue'] && providedExamples['vue3']));
     }
 
     return false;
@@ -255,7 +272,7 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
             matches: node => nodeIsVarWithName(node, propertyName),
             apply: (bindings, node) => {
                 try {
-                    if (processColDefsForFunctionalReact(propertyName, exampleType, exampleSettings, providedExamples) &&
+                    if (processColDefsForFunctionalReactOrVue(propertyName, exampleType, exampleSettings, providedExamples) &&
                         node.declarations[0].init.type === 'ArrayExpression') {
                         bindings.parsedColDefs = extractAndParseColDefs(node.declarations[0].init);
                     }
@@ -271,15 +288,22 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
         gridOptionsCollectors.push({
             matches: node => nodeIsPropertyWithName(node, propertyName),
             apply: (bindings, node) => {
-                if (processColDefsForFunctionalReact(propertyName, exampleType, exampleSettings, providedExamples) &&
+                if (processColDefsForFunctionalReactOrVue(propertyName, exampleType, exampleSettings, providedExamples) &&
                     node.value.type === 'ArrayExpression') {
                     bindings.parsedColDefs = extractAndParseColDefs(node.value);
                 }
                 if (processComponentsForVue(propertyName, exampleType, providedExamples) && node.value.type === 'ObjectExpression') {
-                    const componentDefinition = node.value.properties[0];
-                    if(componentDefinition.value.type !== 'CallExpression' && componentDefinition.value.type !== 'FunctionExpression') {
-                        bindings.components.push({name: componentDefinition.key.name, value: componentDefinition.value.name});
+                    for (const componentDefinition of node.value.properties) {
+                        if(componentDefinition.value.type !== 'CallExpression' && componentDefinition.value.type !== 'FunctionExpression') {
+                            bindings.components.push({name: componentDefinition.key.type === 'Identifier' ? componentDefinition.key.name : componentDefinition.key.value , value: componentDefinition.value.name});
+                        }
                     }
+                }
+                if (processDefaultColumnDefForVue(propertyName, exampleType, providedExamples) && node.value.type === 'ObjectExpression') {
+                    bindings.defaultColDef = generate(node.value);
+                }
+                if (processGlobalComponentsForVue(propertyName, exampleType, providedExamples) && node.value.type === 'Literal') {
+                    bindings.globalComponents.push(generate(node));
                 }
 
                 bindings.properties.push({
@@ -321,6 +345,8 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
             eventHandlers: [],
             properties: [],
             components: [],
+            defaultColDef: null,
+            globalComponents: [],
             parsedColDefs: '',
             instanceMethods: [],
             externalEventHandlers: [],

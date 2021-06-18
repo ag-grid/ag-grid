@@ -1,7 +1,5 @@
-import Vue from "vue";
-
-export default Vue.extend({
-    template: '<img width="20px" :src="imgForMood" />',
+export default {
+    template: '<img style="width: 20px;" :src="imgForMood" />',
     data() {
         return {
             mood: 'Happy',
@@ -22,4 +20,4 @@ export default Vue.extend({
     created() {
         this.setMood(this.params);
     }
-});
+};

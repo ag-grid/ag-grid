@@ -1,30 +1,28 @@
-var columnDefs = [
-    {
-        headerName: "Doubling",
-        field: "number",
-        cellEditor: "doublingEditor",
-        editable: true,
-        width: 300
-    },
-    {
-        field: "mood",
-        cellRenderer: "moodRenderer",
-        cellEditor: "moodEditor",
-        editable: true,
-        width: 300
-    },
-    {
-        headerName: "Numeric",
-        field: "number",
-        cellEditor: "numericEditor",
-        editable: true,
-        width: 280
-    }
-];
-
-// inScope[createRowData]
-function createRowData() {
-    return [
+const gridOptions = {
+    columnDefs: [
+        {
+            headerName: "Doubling",
+            field: "number",
+            cellEditor: "doublingEditor",
+            editable: true,
+            width: 300
+        },
+        {
+            field: "mood",
+            cellRenderer: "moodRenderer",
+            cellEditor: "moodEditor",
+            editable: true,
+            width: 300
+        },
+        {
+            headerName: "Numeric",
+            field: "number",
+            cellEditor: "numericEditor",
+            editable: true,
+            width: 280
+        }
+    ],
+    rowData: [
         {name: "Bob", mood: "Happy", number: 10},
         {name: "Harry", mood: "Sad", number: 3},
         {name: "Sally", mood: "Happy", number: 20},
@@ -38,13 +36,7 @@ function createRowData() {
         {name: "Fred", mood: "Sad", number: 532},
         {name: "Jenny", mood: "Happy", number: 34},
         {name: "Larry", mood: "Happy", number: 13},
-    ];
-}
-
-
-var gridOptions = {
-    columnDefs: columnDefs,
-    rowData: this.createRowData(),
+    ],
     components: {
         doublingEditor: DoublingEditor,
         moodRenderer: MoodRenderer,
@@ -63,7 +55,6 @@ var gridOptions = {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector('#myGrid');
+    const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
-    // gridOptions.api.sizeColumnsToFit();
 });

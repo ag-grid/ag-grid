@@ -110,7 +110,7 @@ export class PositionableFeature extends BeanStub {
     }
 
     public initialisePosition(): void {
-        const { centered, minWidth, width, minHeight, height, x, y } = this.config;
+        const { centered, forcePopupParentAsOffsetParent, minWidth, width, minHeight, height, x, y } = this.config;
 
         if (!this.offsetParent) { this.setOffsetParent(); }
 
@@ -119,14 +119,18 @@ export class PositionableFeature extends BeanStub {
 
         // here we don't use the main offset parent but the element's offsetParent
         // in order to calculated the minWidth and minHeight correctly
-        if (this.element.offsetParent) {
-            const offsetParentComputedStyles = window.getComputedStyle(this.findBoundaryElement());
+        const isVisible = !!this.element.offsetParent;
+        if (isVisible) {
+            const boundaryEl = this.findBoundaryElement();
+            const offsetParentComputedStyles = window.getComputedStyle(boundaryEl);
             if (offsetParentComputedStyles.minWidth != null) {
-                computedMinWidth = parseInt(offsetParentComputedStyles.minWidth, 10);
+                const paddingWidth = boundaryEl.offsetWidth - this.element.offsetWidth;
+                computedMinWidth = parseInt(offsetParentComputedStyles.minWidth, 10) - paddingWidth;
             }
 
             if (offsetParentComputedStyles.minHeight != null) {
-                computedMinHeight = parseInt(offsetParentComputedStyles.minHeight, 10);
+                const paddingHeight = boundaryEl.offsetHeight - this.element.offsetHeight;
+                computedMinHeight = parseInt(offsetParentComputedStyles.minHeight, 10) - paddingHeight;
             }
         }
 
@@ -149,6 +153,14 @@ export class PositionableFeature extends BeanStub {
             this.center();
         } else if (x || y) {
             this.offsetElement(x!, y!);
+        } else if (isVisible && forcePopupParentAsOffsetParent && this.boundaryEl) {
+            const top = parseFloat(this.boundaryEl.style.top!);
+            const left = parseFloat(this.boundaryEl.style.left!);
+
+            this.offsetElement(
+                isNaN(left) ? 0 : left,
+                isNaN(top) ? 0 : top
+            );
         }
 
         this.positioned = !!this.offsetParent;
@@ -315,20 +327,18 @@ export class PositionableFeature extends BeanStub {
     }
 
     public offsetElement(x = 0, y = 0) {
-        const ePopup = this.element;
+        const ePopup = this.config.forcePopupParentAsOffsetParent ? this.boundaryEl! : this.element;
 
         this.popupService.positionPopup({
             ePopup,
             x,
             y,
-            minWidth: this.minWidth,
-            minHeight: this.minHeight,
             keepWithinBounds: true
         });
 
         this.setPosition(
-            parseInt(ePopup.style.left!, 10),
-            parseInt(ePopup.style.top!, 10)
+            parseFloat(ePopup.style.left!),
+            parseFloat(ePopup.style.top!)
         );
     }
 
@@ -414,7 +424,7 @@ export class PositionableFeature extends BeanStub {
         // skip if cursor is outside of popupParent vertically
         let skipY = (
             (yPosition <= 0 && parentRect.top >= e.clientY) ||
-            (parentRect.bottom <= e.clientX && parentRect.bottom <= boundaryElRect.bottom)
+            (parentRect.bottom <= e.clientY && parentRect.bottom <= boundaryElRect.bottom)
         );
 
         if (skipY) { return true; }
@@ -488,8 +498,9 @@ export class PositionableFeature extends BeanStub {
     }
 
     private onResizeStart(e: MouseEvent, side: ResizableSides) {
-        if (!this.positioned) { this.initialisePosition(); }
         this.boundaryEl = this.findBoundaryElement();
+
+        if (!this.positioned) { this.initialisePosition(); }
 
         this.currentResizer = {
             isTop: !!side.match(/top/i),
@@ -501,7 +512,9 @@ export class PositionableFeature extends BeanStub {
         addCssClass(this.element, 'ag-resizing');
         addCssClass(this.resizerMap![side].element, 'ag-active');
 
-        if (!this.config.popup && !this.config.forcePopupParentAsOffsetParent) {
+        const { popup, forcePopupParentAsOffsetParent } = this.config;
+
+        if (!popup && !forcePopupParentAsOffsetParent) {
             this.applySizeToSiblings(this.currentResizer.isBottom || this.currentResizer.isTop);
         }
 
@@ -586,13 +599,14 @@ export class PositionableFeature extends BeanStub {
     private onResize(e: MouseEvent) {
         if (!this.isResizing || !this.currentResizer) { return; }
 
+        const { popup, forcePopupParentAsOffsetParent } = this.config;
         const { isTop, isRight, isBottom, isLeft } = this.currentResizer;
         const isHorizontal = isRight || isLeft;
         const isVertical = isBottom || isTop;
         const { movementX, movementY } = this.calculateMouseMovement({ e, isLeft, isTop });
-        const elRect = this.element.getBoundingClientRect();
-        const xPosition = this.config.popup ? this.position.x : elRect.left;
-        const yPosition = this.config.popup ? this.position.y : elRect.top;
+
+        const xPosition = this.position.x;
+        const yPosition = this.position.y;
 
         let offsetLeft = 0;
         let offsetTop = 0;
@@ -647,7 +661,7 @@ export class PositionableFeature extends BeanStub {
 
         this.updateDragStartPosition(e.clientX, e.clientY);
 
-        if (offsetLeft || offsetTop) {
+        if ((popup || forcePopupParentAsOffsetParent) && offsetLeft || offsetTop) {
             this.offsetElement(
                 xPosition + offsetLeft,
                 yPosition + offsetTop
@@ -687,8 +701,9 @@ export class PositionableFeature extends BeanStub {
     }
 
     private onMoveStart(e: MouseEvent) {
-        if (!this.positioned) { this.initialisePosition(); }
         this.boundaryEl = this.findBoundaryElement();
+
+        if (!this.positioned) { this.initialisePosition(); }
 
         this.isMoving = true;
 

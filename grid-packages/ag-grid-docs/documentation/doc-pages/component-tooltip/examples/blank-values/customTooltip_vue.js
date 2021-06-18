@@ -1,6 +1,4 @@
-import Vue from "vue";
-
-export default Vue.extend({
+export default {
     template: `
       <div class="custom-tooltip">
           <p><span>Athlete's Name:</span></p>
@@ -15,4 +13,4 @@ export default Vue.extend({
     beforeMount() {
         this.athlete = this.params.value.value || '- Missing -'
     }
-});
+};

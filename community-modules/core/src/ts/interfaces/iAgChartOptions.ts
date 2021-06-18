@@ -440,9 +440,14 @@ export interface AgAreaSeriesTooltip extends AgSeriesTooltip {
     format?: string;
 }
 
+export interface AgAreaSeriesLabelOptions extends AgChartLabelOptions {
+    formatter?: (params: { value: any; }) => string;
+}
+
 export interface AgAreaSeriesOptions extends AgBaseSeriesOptions {
     type?: 'area';
     marker?: AgCartesianSeriesMarker;
+    label?: AgAreaSeriesLabelOptions;
     xKey?: string;
     yKeys?: string[];
     xName?: string;

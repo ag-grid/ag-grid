@@ -1,11 +1,9 @@
-import Vue from "vue";
-
-export default Vue.extend({
+export default {
     template: `
       <div style="border: 2px solid #22ff22;border-radius: 5px; background-color: #bbffbb; width: 200px; height: 50px">
-          <div style="margin-left: 20px">
-            Partial Match Filter: <input style="height: 20px" :ref="'input'" v-model="text">
-          </div>
+      <div style="margin-left: 20px">
+        Partial Match Filter: <input style="height: 20px" :ref="'input'" v-model="text">
+      </div>
       </div>
     `,
     data() {
@@ -55,4 +53,4 @@ export default Vue.extend({
     created() {
         this.valueGetter = this.params.valueGetter;
     }
-})
+}

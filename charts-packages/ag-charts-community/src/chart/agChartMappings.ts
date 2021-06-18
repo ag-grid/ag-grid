@@ -538,6 +538,14 @@ const mappings: any = {
                 },
                 ...tooltipMapping,
                 highlightStyle: {},
+                label: {
+                    meta: {
+                        defaults: {
+                            ...labelDefaults,
+                            formatter: undefined
+                        }
+                    }
+                },
                 marker: {
                     meta: {
                         constructor: CartesianSeriesMarker,

@@ -1,12 +1,10 @@
-import Vue from "vue";
-
-export default Vue.extend({
+export default {
     template: `
-            <div class="ag-status-name-value">
-                    <span>Row Count Component&nbsp;:</span>
-                    <span class="ag-status-name-value-value">{{count}}</span>
-                </div>
-            </div>
+      <div class="ag-status-name-value">
+      <span>Row Count Component&nbsp;:</span>
+      <span class="ag-status-name-value-value">{{ count }}</span>
+      </div>
+      </div>
     `,
     data: function () {
         return {
@@ -23,4 +21,4 @@ export default Vue.extend({
             this.count = this.params.api.getModel().rowsToDisplay.length;
         }
     }
-});
+};

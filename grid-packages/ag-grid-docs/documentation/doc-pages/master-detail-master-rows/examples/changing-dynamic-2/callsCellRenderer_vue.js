@@ -1,44 +1,38 @@
-import Vue from "vue";
-
-export default Vue.extend({
+export default {
     template: `
-        <span class="calls-cell-renderer">
+      <span class="calls-cell-renderer">
             <button v-on:click="onAdd">+</button>
             <button v-on:click="onRemove">-</button>
-            <span>{{value}}</span>
+            <span>{{ value }}</span>
         </span>
     `,
-    data: {
-    },
+    data: {},
     computed: {
-        value: function() {
+        value: function () {
             return this.params.value;
         },
     },
-    beforeMount() {
-    },
-    mounted() {
-    },
     methods: {
-        onAdd: function() {
-            var oldData = this.params.node.data;
+        onAdd: function () {
+            const oldData = this.params.node.data;
+            const oldCallRecords = oldData.callRecords;
+            const newCallRecords = oldCallRecords.slice(0); // make a copy
 
-            var oldCallRecords = oldData.callRecords;
-
-            var newCallRecords = oldCallRecords.slice(0); // make a copy
             newCallRecords.push({
-                name: ["Bob","Paul","David","John"][Math.floor(Math.random()*4)],
-                callId: Math.floor(Math.random()*1000),
-                duration: Math.floor(Math.random()*100) + 1,
+                name: ["Bob", "Paul", "David", "John"][Math.floor(Math.random() * 4)],
+                callId: Math.floor(Math.random() * 1000),
+                duration: Math.floor(Math.random() * 100) + 1,
                 switchCode: "SW5",
                 direction: "Out",
-                number: "(02) " + Math.floor(Math.random()*1000000)
+                number: "(02) " + Math.floor(Math.random() * 1000000)
             }); // add one item
 
-            var minutes = 0;
-            newCallRecords.forEach( function(r) { minutes += r.duration });
+            let minutes = 0;
+            newCallRecords.forEach(function (r) {
+                minutes += r.duration
+            });
 
-            var newData = {
+            const newData = {
                 name: oldData.name,
                 account: oldData.account,
                 calls: newCallRecords.length,
@@ -50,20 +44,24 @@ export default Vue.extend({
 
             this.params.node.setExpanded(true);
         },
-        onRemove: function() {
-            var oldData = this.params.node.data;
+        onRemove: function () {
+            const oldData = this.params.node.data;
 
-            var oldCallRecords = oldData.callRecords;
+            const oldCallRecords = oldData.callRecords;
 
-            if (oldCallRecords.length==0) { return; }
+            if (oldCallRecords.length === 0) {
+                return;
+            }
 
-            var newCallRecords = oldCallRecords.slice(0); // make a copy
+            const newCallRecords = oldCallRecords.slice(0); // make a copy
             newCallRecords.pop(); // remove one item
 
-            var minutes = 0;
-            newCallRecords.forEach( function(r) { minutes += r.duration });
+            let minutes = 0;
+            newCallRecords.forEach(function (r) {
+                minutes += r.duration
+            });
 
-            var newData = {
+            const newData = {
                 name: oldData.name,
                 account: oldData.account,
                 calls: newCallRecords.length,
@@ -74,4 +72,4 @@ export default Vue.extend({
             this.params.api.applyTransaction({update: [newData]});
         }
     }
-});
+};

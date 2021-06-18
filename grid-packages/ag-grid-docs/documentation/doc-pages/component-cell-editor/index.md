@@ -4,7 +4,7 @@ title: "Cell Editors"
 
 Create your own cell editor by providing a cell editor component.
 
-## Simple Cell Renderer
+## Simple Cell Editor
 
 md-include:simple-editor-javascript.md
 md-include:simple-editor-angular.md
@@ -144,7 +144,7 @@ interface SuppressKeyboardEventParams {
     colDef: ColDef;
     context: any;
     api: GridApi;
-    columnApi: Co lumnApi;
+    columnApi: ColumnApi;
 }
 ```
 

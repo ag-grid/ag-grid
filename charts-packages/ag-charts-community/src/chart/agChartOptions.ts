@@ -533,6 +533,10 @@ export interface AgAreaSeriesTooltip extends AgSeriesTooltip {
     format?: string;
 }
 
+interface AgAreaSeriesLabelOptions extends AgChartLabelOptions {
+    formatter?: (params: { value: any; }) => string;
+}
+
 export interface AgAreaSeriesOptions extends AgBaseSeriesOptions {
     type?: 'area';
     marker?: AgCartesianSeriesMarker;
@@ -552,6 +556,7 @@ export interface AgAreaSeriesOptions extends AgBaseSeriesOptions {
         fill?: string;
         stroke?: string;
     };
+    label?: AgAreaSeriesLabelOptions;
     tooltip?: AgAreaSeriesTooltip;
     /**
     * @deprecated Use `tooltip.renderer` instead.
