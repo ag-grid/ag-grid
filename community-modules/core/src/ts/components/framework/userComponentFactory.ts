@@ -41,7 +41,6 @@ import {
     InnerRendererComponent,
     LoadingOverlayComponent,
     NoRowsOverlayComponent,
-    PinnedRowCellRendererComponent,
     StatusPanelComponent,
     ToolPanelComponent,
     TooltipComponent
@@ -374,7 +373,7 @@ export class UserComponentFactory extends BeanStub {
 
         if (componentSelectorFunc) {
             const selectorResult = componentSelectorFunc ? componentSelectorFunc(params) : null;
-            if (selectorResult==null || selectorResult.component==null) {
+            if (selectorResult == null || selectorResult.component == null) {
                 console.warn(`AG Grid - ${componentSelectorFuncKey} must return something. If you don't want a particular row to use a Cell Renderer, then return a simple Cell Renderer that just displays the value.`, params);
             } else {
                 componentNameToUse = selectorResult.component;
@@ -382,11 +381,11 @@ export class UserComponentFactory extends BeanStub {
             }
         }
 
-        if (componentNameToUse==null) {
+        if (componentNameToUse == null) {
             componentNameToUse = hardcodedNameComponent;
         }
 
-        if (componentNameToUse==null) {
+        if (componentNameToUse == null) {
             componentNameToUse = defaultComponentName;
         }
 

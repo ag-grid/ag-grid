@@ -1,5 +1,5 @@
 import { IDoesFilterPassParams, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
-import { Autowired, PostConstruct } from '../../context/context';
+import { Autowired } from '../../context/context';
 import { IRowModel } from '../../interfaces/iRowModel';
 import { Constants } from '../../constants/constants';
 import { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';

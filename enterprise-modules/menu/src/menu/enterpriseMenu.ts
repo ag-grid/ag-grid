@@ -82,8 +82,6 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         }
 
         this.showMenu(column, (menu: EnterpriseMenu) => {
-            const minDims = menu.getMinDimensions();
-            const { width: minWidth, height: minHeight } = minDims;
             const ePopup = menu.getGui();
 
             this.popupService.positionPopupUnderComponent({
@@ -230,10 +228,6 @@ export class EnterpriseMenu extends BeanStub {
         this.includeChecks[EnterpriseMenu.TAB_FILTER] = () => column.isFilterAllowed();
         this.includeChecks[EnterpriseMenu.TAB_COLUMNS] = () => true;
         this.restrictTo = restrictTo;
-    }
-
-    public getMinDimensions(): { width: number, height: number; } {
-        return this.tabbedLayout.getMinDimensions();
     }
 
     @PostConstruct

@@ -20,7 +20,6 @@ import { FocusService } from "../focusService";
 import { IRangeService } from "../interfaces/IRangeService";
 import { CellNavigationService } from "../cellNavigationService";
 import { CellPosition } from "../entities/cellPosition";
-import { NavigateToNextCellParams, TabToNextCellParams } from "../entities/gridOptions";
 import { BeanStub } from "../context/beanStub";
 import { PaginationProxy } from "../pagination/paginationProxy";
 import { FlashCellsParams, GetCellRendererInstancesParams, GridApi, RefreshCellsParams } from "../gridApi";
@@ -35,9 +34,7 @@ import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
 import { exists, missing } from "../utils/generic";
 import { getAllValuesInObject, iterateObject } from "../utils/object";
 import { createArrayOfNumbers } from "../utils/number";
-import { last } from "../utils/array";
-import { doOnce, executeInAWhile } from "../utils/function";
-import { KeyCode } from '../constants/keyCode';
+import { executeInAWhile } from "../utils/function";
 import { ControllersService } from "../controllersService";
 import { GridBodyCtrl } from "../gridBodyComp/gridBodyCtrl";
 import { CellCtrl } from "./cell/cellCtrl";
@@ -55,14 +52,10 @@ export class RowRenderer extends BeanStub {
     @Autowired("pinnedRowModel") private pinnedRowModel: PinnedRowModel;
     @Autowired("rowModel") private rowModel: IRowModel;
     @Autowired("focusService") private focusService: FocusService;
-    @Autowired("cellNavigationService") private cellNavigationService: CellNavigationService;
     @Autowired("columnApi") private columnApi: ColumnApi;
     @Autowired("gridApi") private gridApi: GridApi;
     @Autowired("beans") private beans: Beans;
     @Autowired("rowContainerHeightService") private rowContainerHeightService: RowContainerHeightService;
-    @Autowired("animationFrameService") private animationFrameService: AnimationFrameService;
-    @Autowired("rowPositionUtils") private rowPositionUtils: RowPositionUtils;
-    @Optional("rangeService") private rangeService: IRangeService;
     @Optional("controllersService") private controllersService: ControllersService;
 
     // private gridBodyComp: GridBodyComp;
@@ -1201,7 +1194,6 @@ export class RowRenderer extends BeanStub {
 
         return rowComponent;
     }
-
 
     public getRowNode(gridRow: RowPosition): RowNode | null {
         switch (gridRow.rowPinned) {

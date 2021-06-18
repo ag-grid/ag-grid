@@ -3,7 +3,6 @@ import { getCtrlForEvent, getTarget, isStopPropagationForAgGrid } from "../../ut
 import { Autowired, Optional, PostConstruct } from "../../context/context";
 import { MouseEventService } from "./../mouseEventService";
 import { RowCtrl } from "../../rendering/row/rowCtrl";
-import { CellComp } from "../../rendering/cell/cellComp";
 import { ValueService } from "../../valueService/valueService";
 import { Column } from "../../entities/column";
 import { IContextMenuFactory } from "../../interfaces/iContextMenuFactory";

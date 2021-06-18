@@ -1,6 +1,5 @@
 import {
     Autowired,
-    CellComp,
     CellCtrl,
     RowRenderer,
     DragService,

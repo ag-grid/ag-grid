@@ -1,7 +1,6 @@
 import { Bean } from "../context/context";
 import { Autowired } from "../context/context";
 import { CellPosition } from "../entities/cellPosition";
-import { CellComp } from "../rendering/cell/cellComp";
 import { NumberSequence } from '../utils';
 import { Constants } from "../constants/constants";
 import { DraggingEvent } from "../dragAndDrop/dragAndDropService";
