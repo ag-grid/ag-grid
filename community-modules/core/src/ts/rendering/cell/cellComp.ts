@@ -70,19 +70,16 @@ export class CellComp extends Component implements TooltipParentComp {
     // the first 19.
     private latestCompRequestVersion = 0;
 
-    constructor(scope: any, beans: Beans, column: Column, rowNode: RowNode, rowCtrl: RowCtrl | null,
+    constructor(scope: any, beans: Beans, cellCtrl: CellCtrl,
         autoHeightCell: boolean, printLayout: boolean, eRow: HTMLElement, editingRow: boolean) {
         super();
         this.scope = scope;
         this.beans = beans;
-        this.column = column;
-        this.rowNode = rowNode;
-        this.rowCtrl = rowCtrl;
+        this.column = cellCtrl.getColumn();
+        this.rowNode = cellCtrl.getRowNode();
+        this.rowCtrl = cellCtrl.getRowCtrl();
         this.autoHeightCell = autoHeightCell;
         this.eRow = eRow;
-
-        // we need to do this early, as we need CellPosition before we call setComp()
-        this.cellCtrl = new CellCtrl(column, rowNode, beans, rowCtrl);
 
         this.setTemplate(`<div comp-id="${this.getCompId()}"/>`);
 
@@ -129,8 +126,8 @@ export class CellComp extends Component implements TooltipParentComp {
             addRowDragging: (customElement?: HTMLElement, dragStartPixels?: number) => this.addRowDragging(customElement, dragStartPixels)
         };
 
-        this.cellCtrl.setComp(compProxy, false, this.scope, this.getGui(), printLayout, editingRow);
-        this.addDestroyFunc(() => this.cellCtrl.destroy());
+        this.cellCtrl = cellCtrl;
+        cellCtrl.setComp(compProxy, false, this.scope, this.getGui(), printLayout, editingRow);
     }
 
     private showRenderer(params: ICellRendererParams, forceNewCellRendererInstance: boolean): void {

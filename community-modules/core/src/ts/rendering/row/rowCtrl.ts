@@ -64,7 +64,7 @@ let instanceIdSequence = 0;
 export interface IRowComp {
     setDomOrder(domOrder: boolean): void;
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
-    setColumns(columns: Column[]): void;
+    setCellCtrls(cellCtrls: CellCtrl[]): void;
     getFullWidthRowComp(): ICellRendererComp | null | undefined;
     setAriaExpanded(on: boolean): void;
     destroyCells(cellComps: CellComp[]): void;
@@ -90,6 +90,11 @@ interface CompAndElement {
     comp: IRowComp;
     element: HTMLElement;
     pinned: string | null;
+}
+
+interface CellCtrls {
+    list: CellCtrl[];
+    map: {[key: string]: CellCtrl};
 }
 
 export class RowCtrl extends BeanStub {
@@ -119,9 +124,13 @@ export class RowCtrl extends BeanStub {
     private editingRow: boolean;
     private rowFocused: boolean;
 
-    private centerCols: Column[] = [];
-    private leftCols: Column[] = [];
-    private rightCols: Column[] = [];
+    // private centerCols: Column[] = [];
+    // private leftCols: Column[] = [];
+    // private rightCols: Column[] = [];
+
+    private centerCellCtrls: CellCtrls = {list: [], map: {}};
+    private leftCellCtrls: CellCtrls = {list: [], map: {}};
+    private rightCellCtrls: CellCtrls = {list: [], map: {}};
 
     private fadeRowIn: boolean;
     private slideRowIn: boolean;
@@ -369,22 +378,48 @@ export class RowCtrl extends BeanStub {
         this.updateColumnListsPending = true;
     }
 
+    private createCellCtrls(prev: CellCtrls, cols: Column[]): CellCtrls {
+        const res: CellCtrls = {
+            list: [],
+            map: {}
+        };
+        cols.forEach( col => {
+            // we use instanceId's rather than colId as it's possible there is a Column with same Id,
+            // but it's referring to a different column instance. Happens a lot with pivot, as pivot col id's are
+            // reused eg pivot_0, pivot_1 etc
+            const instanceId = col.getInstanceId();
+            let cellCtrl = prev.map[instanceId];
+            if (!cellCtrl) {
+                cellCtrl = new CellCtrl(col, this.rowNode, this.beans, this);
+            }
+            res.list.push(cellCtrl);
+            res.map[instanceId] = cellCtrl;
+        });
+        return res;
+    }
+
     private updateColumnListsImpl(): void {
         this.updateColumnListsPending = false;
+        const columnModel = this.beans.columnModel;
         if (this.printLayout) {
-            this.centerCols = this.beans.columnModel.getAllDisplayedColumns();
-            this.leftCols = [];
-            this.rightCols = [];
+            this.centerCellCtrls = this.createCellCtrls(this.centerCellCtrls, columnModel.getAllDisplayedColumns());
+            this.leftCellCtrls = {list: [], map: {}};
+            this.rightCellCtrls = {list: [], map: {}};
         } else {
-            this.centerCols = this.beans.columnModel.getViewportCenterColumnsForRow(this.rowNode);
-            this.leftCols = this.beans.columnModel.getDisplayedLeftColumnsForRow(this.rowNode);
-            this.rightCols = this.beans.columnModel.getDisplayedRightColumnsForRow(this.rowNode);
+            const centerCols = columnModel.getViewportCenterColumnsForRow(this.rowNode);
+            this.centerCellCtrls = this.createCellCtrls(this.centerCellCtrls, centerCols);
+
+            const leftCols = columnModel.getDisplayedLeftColumnsForRow(this.rowNode);
+            this.leftCellCtrls = this.createCellCtrls(this.centerCellCtrls, leftCols);
+
+            const rightCols = columnModel.getDisplayedRightColumnsForRow(this.rowNode);
+            this.rightCellCtrls = this.createCellCtrls(this.centerCellCtrls, rightCols);
         }
 
         this.allComps.forEach(c => {
-            const cols = c.pinned === Constants.PINNED_LEFT ? this.leftCols :
-                        c.pinned === Constants.PINNED_RIGHT ? this.rightCols : this.centerCols;
-            c.comp.setColumns(cols);
+            const cellControls = c.pinned === Constants.PINNED_LEFT ? this.leftCellCtrls :
+                        c.pinned === Constants.PINNED_RIGHT ? this.rightCellCtrls : this.centerCellCtrls;
+            c.comp.setCellCtrls(cellControls.list);
         });
     }
 
@@ -895,6 +930,8 @@ export class RowCtrl extends BeanStub {
     }
 
     public forEachCellComp(callback: (renderedCell: CellComp) => void): void {
+        // const allCellCtrls = [...this.centerCellCtrls.list, ...this.leftCellCtrls.list, ...this.rightCellCtrls.list];
+        // allCellCtrls
         this.allComps.forEach(c => c.comp.forEachCellComp(callback));
     }
 
@@ -1115,6 +1152,15 @@ export class RowCtrl extends BeanStub {
     public destroySecondPass(): void {
         this.allComps.forEach(c => c.comp.destroy());
         this.allComps.length = 0;
+
+        const destroyCellCtrls = (ctrls: CellCtrls): CellCtrls => {
+            ctrls.list.forEach( c => c.destroy() );
+            return {list: [], map: {}};
+        };
+
+        this.centerCellCtrls = destroyCellCtrls(this.centerCellCtrls);
+        this.leftCellCtrls = destroyCellCtrls(this.leftCellCtrls);
+        this.rightCellCtrls = destroyCellCtrls(this.rightCellCtrls);
     }
 
     private setFocusedClasses(): void {

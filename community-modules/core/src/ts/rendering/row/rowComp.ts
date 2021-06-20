@@ -11,6 +11,7 @@ import { assign, getAllValuesInObject, iterateObject } from "../../utils/object"
 import { ModuleRegistry } from "../../modules/moduleRegistry";
 import { ModuleNames } from "../../modules/moduleNames";
 import { setAriaExpanded, setAriaRowIndex, setAriaSelected } from "../../utils/aria";
+import { CellCtrl } from "../cell/cellCtrl";
 
 export class RowComp extends Component {
 
@@ -42,7 +43,7 @@ export class RowComp extends Component {
 
         const compProxy: IRowComp = {
             setDomOrder: domOrder => this.domOrder = domOrder,
-            setColumns: columns => this.setColumns(columns),
+            setCellCtrls: cellCtrls => this.setCellCtrls(cellCtrls),
             getFullWidthRowComp: () => this.getFullWidthRowComp(),
             addOrRemoveCssClass: (name, on) => this.addOrRemoveCssClass(name, on),
             setAriaExpanded: on => setAriaExpanded(eGui, on),
@@ -127,25 +128,18 @@ export class RowComp extends Component {
         }
     }
 
-    public setColumns(cols: Column[]): void {
+    public setCellCtrls(cellCtrls: CellCtrl[]): void {
         const cellsToRemove = assign({}, this.cellComps);
 
-        cols.forEach(col => {
-            const colId = col.getId();
-            let existingCellComp = this.cellComps[colId];
+        cellCtrls.forEach(cellCtrl => {
+            const key = cellCtrl.getInstanceId();
 
-            // it's possible there is a Cell Comp with correct Id, but it's referring to
-            // a different column instance. Happens a lot with pivot, as pivot col id's are
-            // reused eg  pivot_0, pivot_1 etc
-            if (existingCellComp && existingCellComp.getCtrl().getColumn() !== col) {
-                this.destroyCells([existingCellComp]);
-                existingCellComp = null;
-            }
+            let existingCellComp = this.cellComps[key];
 
             if (existingCellComp == null) {
-                this.newCellComp(col);
+                this.newCellComp(cellCtrl);
             } else {
-                cellsToRemove[colId] = null;
+                cellsToRemove[key] = null;
             }
         });
 
@@ -153,15 +147,15 @@ export class RowComp extends Component {
             .filter(cellComp => cellComp ? this.isCellEligibleToBeRemoved(cellComp) : false);
 
         this.destroyCells(cellCompsToRemove as CellComp[]);
-        this.ensureDomOrder(cols);
+        this.ensureDomOrder(cellCtrls);
     }
 
-    private ensureDomOrder(cols: Column[]): void {
+    private ensureDomOrder(cellCtrls: CellCtrl[]): void {
         if (!this.beans.gridOptionsWrapper.isEnsureDomOrder()) { return; }
 
         const elementsInOrder: HTMLElement[] = [];
-        cols.forEach(col => {
-            const cellComp = this.cellComps[col.getColId()];
+        cellCtrls.forEach(cellCtrl => {
+            const cellComp = this.cellComps[cellCtrl.getInstanceId()];
             if (cellComp) {
                 elementsInOrder.push(cellComp.getGui());
             }
@@ -194,10 +188,10 @@ export class RowComp extends Component {
         return REMOVE_CELL;
     }
 
-    private newCellComp(col: Column): void {
-        const cellComp = new CellComp(this.rowCtrl.getScope(), this.beans, col, this.rowNode, this.rowCtrl,
+    private newCellComp(cellCtrl: CellCtrl): void {
+        const cellComp = new CellComp(this.rowCtrl.getScope(), this.beans, cellCtrl,
             false, this.rowCtrl.isPrintLayout(), this.getGui(), this.rowCtrl.isEditing());
-        this.cellComps[col.getId()] = cellComp;
+        this.cellComps[cellCtrl.getInstanceId()] = cellComp;
         this.getGui().appendChild(cellComp.getGui());
     }
 

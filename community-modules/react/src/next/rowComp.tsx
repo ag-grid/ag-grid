@@ -1,38 +1,38 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Context, IRowComp, RowCtrl, _, Column, RowNode } from "@ag-grid-community/core";
+import { Context, IRowComp, RowCtrl, _, Column, RowNode, CellCtrl } from "@ag-grid-community/core";
 import { CssClasses } from "./utils";
 import { CellComp } from "./cellComp";
 
-interface ColumnMap {
-    [instanceId: number]:Column
+interface CellCtrlMap {
+    [instanceId: number]:CellCtrl
 }
 
-interface Columns {
-    list: Column[],
-    instanceIdMap: ColumnMap
+interface CellCtrls {
+    list: CellCtrl[],
+    instanceIdMap: CellCtrlMap
 }
 
-function maintainOrderOnColumns(prev: Columns, next: Column[], domOrder: boolean): Columns {
+function maintainOrderOnColumns(prev: CellCtrls, next: CellCtrl[], domOrder: boolean): CellCtrls {
     if (domOrder) {
-        const res: Columns = {list: next, instanceIdMap: {}};
+        const res: CellCtrls = {list: next, instanceIdMap: {}};
         next.forEach(c => res.instanceIdMap[c.getInstanceId()] = c);
         return res;
     } else {
         // if dom order not important, we don't want to change the order
         // of the elements in the dom, as this would break transition styles
-        const oldCols: Column[] = [];
-        const newCols: Column[] = [];
-        const newInstanceIdMap: ColumnMap = {};
+        const oldCellCtrls: CellCtrl[] = [];
+        const newCellCtrls: CellCtrl[] = [];
+        const newInstanceIdMap: CellCtrlMap = {};
         next.forEach(c => {
             if (prev.instanceIdMap[c.getInstanceId()]!=null) {
-                oldCols.push(c);
+                oldCellCtrls.push(c);
             } else {
-                newCols.push(c);
+                newCellCtrls.push(c);
             }
             newInstanceIdMap[c.getInstanceId()] = c;
         });
-        const res: Columns = {
-            list: [...oldCols, ...newCols],
+        const res: CellCtrls = {
+            list: [...oldCellCtrls, ...newCellCtrls],
             instanceIdMap: newInstanceIdMap
         };
         return res;
@@ -57,7 +57,7 @@ export function RowComp(params: {context: Context, rowCtrl: RowCtrl, pinned: str
     const [ariaLabel, setAriaLabel] = useState<string>();
     const [ariaSelected, setAriaSelected] = useState<boolean>();
     const [userStyles, setUserStyles] = useState<any>();
-    const [columns, setColumns] = useState<Columns>({ list: [], instanceIdMap: {} });
+    const [cellCtrls, setCellCtrls] = useState<CellCtrls>({ list: [], instanceIdMap: {} });
     const [domOrder, setDomOrder] = useState<boolean>(false);
 
     const eGui = useRef<HTMLDivElement>(null);
@@ -83,7 +83,7 @@ export function RowComp(params: {context: Context, rowCtrl: RowCtrl, pinned: str
             setRole: value => setRole(value),
             // if we don't maintain the order, then cols will be ripped out and into the dom
             // when cols reordered, which would stop the CSS transitions from working
-            setColumns: next => setColumns( prev => maintainOrderOnColumns(prev, next, domOrder) ),
+            setCellCtrls: next => setCellCtrls( prev => maintainOrderOnColumns(prev, next, domOrder) ),
             forEachCellComp: callback => true,
             destroy: ()=> true,
             getCellComp: colId => null,
@@ -115,10 +115,10 @@ export function RowComp(params: {context: Context, rowCtrl: RowCtrl, pinned: str
              aria-rowindex={ariaRowIndex} aria-expanded={ariaExpanded} aria-label={ariaLabel}
              aria-selected={ariaSelected} row-id={rowId} row-business-key={rowBusinessKey} tabIndex={tabIndex}>
             {
-                columns && columns.list.map( col =>
-                    <CellComp context={context} column={col} rowCtrl={rowCtrl}
+                cellCtrls && cellCtrls.list.map( cellCtrl =>
+                    <CellComp context={context} cellCtrl={cellCtrl}
                               editingRow={rowCtrl.isEditing()} printLayout={rowCtrl.isPrintLayout()}
-                              key={col.getInstanceId()}/>
+                              key={cellCtrl.getInstanceId()}/>
                 )
             }
         </div>

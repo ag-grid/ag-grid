@@ -2,10 +2,10 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Context, _, RowNode, Column, RowCtrl, ICellComp, CellCtrl, ICellRendererParams, ICellEditorParams } from "ag-grid-community";
 import { CssClasses } from "./utils";
 
-export function CellComp(props: {column: Column, rowCtrl: RowCtrl, context: Context,
+export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
                                 printLayout: boolean, editingRow: boolean}) {
 
-    const { column, rowCtrl, context, printLayout, editingRow } = props;
+    const { cellCtrl, context, printLayout, editingRow } = props;
 
     const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses());
     const [userStyles, setUserStyles] = useState<any>();
@@ -19,11 +19,7 @@ export function CellComp(props: {column: Column, rowCtrl: RowCtrl, context: Cont
     const eGui = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        const beansToDestroy: any[] = [];
-
-        // we need to do this early, as we need CellPosition before we call setComp()
-        const cellCtrl = new CellCtrl(column, rowCtrl.getRowNode(), rowCtrl.getBeans(), rowCtrl);
-        beansToDestroy.push(cellCtrl);
+        // const beansToDestroy: any[] = [];
 
         const compProxy: ICellComp = {
             addOrRemoveCssClass: (name, on) => setCssClasses(prev => prev.setClass(name, on)),
@@ -58,9 +54,9 @@ export function CellComp(props: {column: Column, rowCtrl: RowCtrl, context: Cont
 
         cellCtrl.setComp(compProxy, false, null, eGui.current!, printLayout, editingRow);
 
-        return () => {
-            beansToDestroy.forEach(b => context.destroyBean(b));
-        };
+        // return () => {
+        //     beansToDestroy.forEach(b => context.destroyBean(b));
+        // };
 
     }, []);
 

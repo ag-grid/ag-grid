@@ -9,6 +9,7 @@ import { RowCssClassCalculator, RowCssClassCalculatorParams } from "./rowCssClas
 import { AngularRowUtils } from "./angularRowUtils";
 import { ControllersService } from "../../controllersService";
 import { RowContainerCtrl } from "../../gridBodyComp/rowContainer/rowContainerCtrl";
+import { CellCtrl } from "../cell/cellCtrl";
 
 @Bean('autoHeightCalculator')
 export class AutoHeightCalculator extends BeanStub {
@@ -44,23 +45,24 @@ export class AutoHeightCalculator extends BeanStub {
         const scopeDestroyFunc = scopeResult ? scopeResult.scopeDestroyFunc : undefined;
 
         const cellComps: CellComp[] = [];
+        const cellCtrls: CellCtrl[] = [];
         const autoRowHeightCols = this.columnModel.getAllAutoRowHeightCols();
         const displayedCols = this.columnModel.getAllDisplayedColumns();
         const visibleAutoRowHeightCols = autoRowHeightCols.filter(col => displayedCols.indexOf(col) >= 0);
 
         visibleAutoRowHeightCols.forEach(col => {
+            const cellCtrl = new CellCtrl(col, rowNode, this.beans, null);
             const cellComp = new CellComp(
                 scope,
                 this.beans,
-                col,
-                rowNode,
-                null,
+                cellCtrl,
                 true,
                 false,
                 eDummyContainer,
                 false
             );
             cellComps.push(cellComp);
+            cellCtrls.push(cellCtrl);
         });
 
         cellComps.forEach(cellComp => eDummyContainer.appendChild(cellComp.getGui()))
@@ -87,6 +89,11 @@ export class AutoHeightCalculator extends BeanStub {
             // dunno why we need to detach first, doing it here to be consistent with code in RowComp
             cellComp.detach();
             cellComp.destroy();
+        });
+
+        cellCtrls.forEach(cellCtrl => {
+            // dunno why we need to detach first, doing it here to be consistent with code in RowComp
+            cellCtrl.destroy();
         });
 
         if (scopeDestroyFunc) {

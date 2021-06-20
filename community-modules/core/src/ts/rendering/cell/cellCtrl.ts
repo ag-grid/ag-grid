@@ -190,6 +190,10 @@ export class CellCtrl extends BeanStub {
         }
     }
 
+    public getInstanceId(): number {
+        return this.column.getInstanceId();
+    }
+
     private showRenderer(forceNewCellRendererInstance = false): void {
         this.setEditing(false);
         const params = this.createCellRendererParams();
