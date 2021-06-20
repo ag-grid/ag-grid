@@ -11,7 +11,6 @@ import {
     Events,
     GridApi,
     GridOptionsWrapper,
-    GridBodyComp,
     IRangeService,
     IRowModel,
     Logger,
@@ -46,7 +45,6 @@ export class RangeService extends BeanStub implements IRangeService {
     @Autowired('controllersService') public controllersService: ControllersService;
 
     private logger: Logger;
-    private gridBodyComp: GridBodyComp;
     private cellRanges: CellRange[] = [];
     private lastMouseEvent: MouseEvent | null;
     private bodyScrollListener = this.onBodyScroll.bind(this);
@@ -61,10 +59,6 @@ export class RangeService extends BeanStub implements IRangeService {
     private draggingRange?: CellRange;
 
     public autoScrollService: AutoScrollService;
-
-    public registerGridComp(gridBodyComp: GridBodyComp): void {
-        this.gridBodyComp = gridBodyComp;
-    }
 
     @PostConstruct
     private init(): void {
@@ -573,7 +567,7 @@ export class RangeService extends BeanStub implements IRangeService {
             this.cellRanges.push(this.draggingRange);
         }
 
-        this.gridBodyComp.addScrollEventListener(this.bodyScrollListener);
+        this.controllersService.getGridBodyController().addScrollEventListener(this.bodyScrollListener);
 
         this.dispatchChangedEvent(true, false, this.draggingRange.id);
     }
@@ -628,7 +622,7 @@ export class RangeService extends BeanStub implements IRangeService {
 
         this.autoScrollService.ensureCleared();
 
-        this.gridBodyComp.removeScrollEventListener(this.bodyScrollListener);
+        this.controllersService.getGridBodyController().removeScrollEventListener(this.bodyScrollListener);
         this.lastMouseEvent = null;
         this.dragging = false;
         this.draggingRange = undefined;

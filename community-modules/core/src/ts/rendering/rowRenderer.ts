@@ -528,7 +528,7 @@ export class RowRenderer extends BeanStub {
     }
 
     public forEachCellComp(callback: (cellComp: CellComp) => void): void {
-        this.forEachRowComp((key: string, rowComp: RowCtrl) => rowComp.forEachCellComp(callback));
+        this.forEachRowComp((key: string, rowCtrl: RowCtrl) => rowCtrl.forEachCellComp(callback));
     }
 
     private forEachRowComp(callback: (key: string, rowComp: RowCtrl) => void): void {

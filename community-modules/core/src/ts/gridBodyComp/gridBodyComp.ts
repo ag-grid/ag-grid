@@ -127,9 +127,6 @@ export class GridBodyComp extends Component {
 
         if (this.rangeService || this.gridOptionsWrapper.isRowSelectionMulti()) {
             setAriaMultiSelectable(this.getGui(), true);
-            if (this.rangeService) {
-                this.rangeService.registerGridComp(this);
-            }
         }
 
         [this.eTop, this.eBodyViewport, this.eBottom].forEach(element => {
@@ -172,15 +169,5 @@ export class GridBodyComp extends Component {
 
     public getFloatingTopBottom(): HTMLElement[] {
         return [this.eTop, this.eBottom];
-    }
-
-    // + rangeService
-    public addScrollEventListener(listener: () => void): void {
-        this.eBodyViewport.addEventListener('scroll', listener);
-    }
-
-    // + focusService
-    public removeScrollEventListener(listener: () => void): void {
-        this.eBodyViewport.removeEventListener('scroll', listener);
     }
 }

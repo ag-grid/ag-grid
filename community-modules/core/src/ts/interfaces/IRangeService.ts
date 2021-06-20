@@ -23,7 +23,6 @@ export interface IRangeService {
     extendLatestRangeInDirection(key: number): CellPosition | undefined;
     extendLatestRangeToCell(cell: CellPosition): void;
     updateRangeEnd(cellRange: CellRange, cellPosition: CellPosition, silent?: boolean): void;
-    registerGridComp(gridPanel: GridBodyComp): void;
     getRangeStartRow(cellRange: CellRange): RowPosition;
     getRangeEndRow(cellRange: CellRange): RowPosition;
     createCellRangeFromCellRangeParams(params: CellRangeParams): CellRange | undefined;

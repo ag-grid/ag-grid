@@ -50,7 +50,7 @@ export function CellComp(props: {column: Column, rowCtrl: RowCtrl, context: Cont
             setForceWrapper: force => false, // this.forceWrapper = force,
 
             getCellEditor: () => null, // this.cellEditor ? this.cellEditor : null,
-            getParentOfValue: () => null, // this.eCellValue ? this.eCellValue : null,
+            getParentOfValue: () => eGui.current, // this.eCellValue ? this.eCellValue : null,
 
             // hacks
             addRowDragging: (customElement?: HTMLElement, dragStartPixels?: number) => false, // this.addRowDragging(customElement, dragStartPixels)

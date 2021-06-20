@@ -328,4 +328,15 @@ export class GridBodyCtrl extends BeanStub {
                 'zero width, maybe the grid is not visible yet on the screen?');
         }
     }
+
+    // + rangeService
+    public addScrollEventListener(listener: () => void): void {
+        this.eBodyViewport.addEventListener('scroll', listener);
+    }
+
+    // + focusService
+    public removeScrollEventListener(listener: () => void): void {
+        this.eBodyViewport.removeEventListener('scroll', listener);
+    }
+
 }
