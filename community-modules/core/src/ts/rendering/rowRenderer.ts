@@ -131,7 +131,7 @@ export class RowRenderer extends BeanStub {
     // all active cells.
     private registerCellEventListeners(): void {
         this.addManagedListener(this.eventService, Events.EVENT_CELL_FOCUSED, (event: CellFocusedEvent) => {
-            this.forEachCellComp(cellComp => cellComp.getCtrl().onCellFocused(event));
+            this.forEachCellComp(cellCtrl => cellCtrl.onCellFocused(event));
             this.forEachRowComp((key: string, rowComp: RowCtrl) => {
                 if (rowComp.isFullWidth()) {
                     rowComp.onFullWidthRowFocused(event);
@@ -140,11 +140,11 @@ export class RowRenderer extends BeanStub {
         });
 
         this.addManagedListener(this.eventService, Events.EVENT_FLASH_CELLS, event => {
-            this.forEachCellComp(cellComp => cellComp.getCtrl().onFlashCells(event));
+            this.forEachCellComp(cellCtrl => cellCtrl.onFlashCells(event));
         });
 
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, () => {
-            this.forEachCellComp(cellComp => cellComp.getCtrl().onColumnHover());
+            this.forEachCellComp(cellCtrl => cellCtrl.onColumnHover());
         });
 
         // only for printLayout - because we are rendering all the cells in the same row, regardless of pinned state,
@@ -154,7 +154,7 @@ export class RowRenderer extends BeanStub {
         // in different containers so doesn't impact.
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, () => {
             if (this.printLayout) {
-                this.forEachCellComp(cellComp => cellComp.getCtrl().onLeftChanged());
+                this.forEachCellComp(cellCtrl => cellCtrl.onLeftChanged());
             }
         });
 
@@ -162,16 +162,16 @@ export class RowRenderer extends BeanStub {
         if (rangeSelectionEnabled) {
 
             this.addManagedListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, () => {
-                this.forEachCellComp(cellComp => cellComp.getCtrl().onRangeSelectionChanged());
+                this.forEachCellComp(cellCtrl => cellCtrl.onRangeSelectionChanged());
             });
             this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, () => {
-                this.forEachCellComp(cellComp => cellComp.getCtrl().updateRangeBordersIfRangeCount());
+                this.forEachCellComp(cellCtrl => cellCtrl.updateRangeBordersIfRangeCount());
             });
             this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, () => {
-                this.forEachCellComp(cellComp => cellComp.getCtrl().updateRangeBordersIfRangeCount());
+                this.forEachCellComp(cellCtrl => cellCtrl.updateRangeBordersIfRangeCount());
             });
             this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, () => {
-                this.forEachCellComp(cellComp => cellComp.getCtrl().updateRangeBordersIfRangeCount());
+                this.forEachCellComp(cellCtrl => cellCtrl.updateRangeBordersIfRangeCount());
             });
 
         }
@@ -202,25 +202,25 @@ export class RowRenderer extends BeanStub {
         if (!cols) { return; }
 
         cols.forEach(col => {
-            const forEachCellWithThisCol = (callback: (cellComp: CellComp) => void) => {
-                this.forEachCellComp(cellComp => {
-                    if (cellComp.getCtrl().getColumn() === col) {
-                        callback(cellComp);
+            const forEachCellWithThisCol = (callback: (cellCtrl: CellCtrl) => void) => {
+                this.forEachCellComp(cellCtrl => {
+                    if (cellCtrl.getColumn() === col) {
+                        callback(cellCtrl);
                     }
                 });
             };
 
             const leftChangedListener = () => {
-                forEachCellWithThisCol(cellComp => cellComp.getCtrl().onLeftChanged());
+                forEachCellWithThisCol(cellCtrl => cellCtrl.onLeftChanged());
             };
             const widthChangedListener = () => {
-                forEachCellWithThisCol(cellComp => cellComp.getCtrl().onWidthChanged());
+                forEachCellWithThisCol(cellCtrl => cellCtrl.onWidthChanged());
             };
             const firstRightPinnedChangedListener = () => {
-                forEachCellWithThisCol(cellComp => cellComp.getCtrl().onFirstRightPinnedChanged());
+                forEachCellWithThisCol(cellCtrl => cellCtrl.onFirstRightPinnedChanged());
             };
             const lastLeftPinnedChangedListener = () => {
-                forEachCellWithThisCol(cellComp => cellComp.getCtrl().onLastLeftPinnedChanged());
+                forEachCellWithThisCol(cellCtrl => cellCtrl.onLastLeftPinnedChanged());
             };
 
             col.addEventListener(Column.EVENT_LEFT_CHANGED, leftChangedListener);
@@ -524,10 +524,10 @@ export class RowRenderer extends BeanStub {
         // we don't want each cellComp to register for events, as would increase rendering time.
         // so for newColumnsLoaded, we register once here (in rowRenderer) and then inform
         // each cell if / when event was fired.
-        this.forEachCellComp(cellComp => cellComp.getCtrl().onNewColumnsLoaded());
+        this.forEachCellComp(cellCtrl => cellCtrl.onNewColumnsLoaded());
     }
 
-    public forEachCellComp(callback: (cellComp: CellComp) => void): void {
+    public forEachCellComp(callback: (cellCtrl: CellCtrl) => void): void {
         this.forEachRowComp((key: string, rowCtrl: RowCtrl) => rowCtrl.forEachCellComp(callback));
     }
 
@@ -546,7 +546,7 @@ export class RowRenderer extends BeanStub {
 
     public flashCells(params: FlashCellsParams = {}): void {
         const { flashDelay, fadeDelay } = params;
-        this.forEachCellCompFiltered(params.rowNodes, params.columns, cellComp => cellComp.getCtrl().flashCell({ flashDelay, fadeDelay }));
+        this.forEachCellCompFiltered(params.rowNodes, params.columns, cellCtrl => cellCtrl.flashCell({ flashDelay, fadeDelay }));
     }
 
     public refreshCells(params: RefreshCellsParams = {}): void {
@@ -555,14 +555,14 @@ export class RowRenderer extends BeanStub {
             newData: false,
             suppressFlash: params.suppressFlash
         };
-        this.forEachCellCompFiltered(params.rowNodes, params.columns, cellComp => {
-            if (cellComp.getCtrl().refreshShouldDestroy()) {
-                const rowComp = cellComp.getRowCtrl();
+        this.forEachCellCompFiltered(params.rowNodes, params.columns, cellCtrl => {
+            if (cellCtrl.refreshShouldDestroy()) {
+                const rowComp = cellCtrl.getRowCtrl();
                 if (rowComp) {
-                    rowComp.refreshCell(cellComp);
+                    rowComp.refreshCell(cellCtrl);
                 }
             } else {
-                cellComp.getCtrl().refreshCell(refreshCellParams);
+                cellCtrl.refreshCell(refreshCellParams);
             }
         });
     }
@@ -571,8 +571,8 @@ export class RowRenderer extends BeanStub {
 
         const res: ICellRendererComp[] = [];
 
-        this.forEachCellCompFiltered(params.rowNodes, params.columns, cellComp => {
-            const cellRenderer = cellComp.getCellRenderer();
+        this.forEachCellCompFiltered(params.rowNodes, params.columns, cellCtrl => {
+            const cellRenderer = cellCtrl.getCellRenderer() as ICellRendererComp;
 
             if (cellRenderer) {
                 res.push(cellRenderer);
@@ -586,8 +586,8 @@ export class RowRenderer extends BeanStub {
 
         const res: ICellEditorComp[] = [];
 
-        this.forEachCellCompFiltered(params.rowNodes, params.columns, cellComp => {
-            const cellEditor = cellComp.getCellEditor();
+        this.forEachCellCompFiltered(params.rowNodes, params.columns, cellCtrl => {
+            const cellEditor = cellCtrl.getCellEditor() as ICellEditorComp;
 
             if (cellEditor) {
                 res.push(cellEditor);
@@ -600,9 +600,9 @@ export class RowRenderer extends BeanStub {
     public getEditingCells(): CellPosition[] {
         const res: CellPosition[] = [];
 
-        this.forEachCellComp(cellComp => {
-            if (cellComp.getCtrl().isEditing()) {
-                const cellPosition = cellComp.getCtrl().getCellPosition();
+        this.forEachCellComp(cellCtrl => {
+            if (cellCtrl.isEditing()) {
+                const cellPosition = cellCtrl.getCellPosition();
                 res.push(cellPosition);
             }
         });
@@ -612,7 +612,7 @@ export class RowRenderer extends BeanStub {
 
     // calls the callback for each cellComp that match the provided rowNodes and columns. eg if one row node
     // and two columns provided, that identifies 4 cells, so callback gets called 4 times, once for each cell.
-    private forEachCellCompFiltered(rowNodes?: RowNode[] | null, columns?: (string | Column)[], callback?: (cellComp: CellComp) => void): void {
+    private forEachCellCompFiltered(rowNodes?: RowNode[] | null, columns?: (string | Column)[], callback?: (cellCtrl: CellCtrl) => void): void {
         let rowIdsMap: any;
 
         if (exists(rowNodes)) {
@@ -668,12 +668,12 @@ export class RowRenderer extends BeanStub {
                 }
             }
 
-            rowComp.forEachCellComp(cellComp => {
-                const colId: string = cellComp.getCtrl().getColumn().getId();
+            rowComp.forEachCellComp(cellCtrl => {
+                const colId: string = cellCtrl.getColumn().getId();
                 const excludeColFromRefresh = colIdsMap && !colIdsMap[colId];
 
                 if (excludeColFromRefresh) { return; }
-                if (callback) { callback(cellComp); }
+                if (callback) { callback(cellCtrl); }
             });
         };
 

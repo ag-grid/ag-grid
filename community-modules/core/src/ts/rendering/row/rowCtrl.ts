@@ -124,10 +124,6 @@ export class RowCtrl extends BeanStub {
     private editingRow: boolean;
     private rowFocused: boolean;
 
-    // private centerCols: Column[] = [];
-    // private leftCols: Column[] = [];
-    // private rightCols: Column[] = [];
-
     private centerCellCtrls: CellCtrls = {list: [], map: {}};
     private leftCellCtrls: CellCtrls = {list: [], map: {}};
     private rightCellCtrls: CellCtrls = {list: [], map: {}};
@@ -387,14 +383,21 @@ export class RowCtrl extends BeanStub {
             // we use instanceId's rather than colId as it's possible there is a Column with same Id,
             // but it's referring to a different column instance. Happens a lot with pivot, as pivot col id's are
             // reused eg pivot_0, pivot_1 etc
-            const instanceId = col.getInstanceId();
-            let cellCtrl = prev.map[instanceId];
+            const colInstanceId = col.getInstanceId();
+            let cellCtrl = prev.map[colInstanceId];
             if (!cellCtrl) {
                 cellCtrl = new CellCtrl(col, this.rowNode, this.beans, this);
             }
             res.list.push(cellCtrl);
-            res.map[instanceId] = cellCtrl;
+            res.map[colInstanceId] = cellCtrl;
         });
+        prev.list.forEach( prevCellCtrl => {
+            const cellCtrlNotInResult = !res.map[prevCellCtrl.getColumn().getInstanceId()];
+            if (cellCtrlNotInResult) {
+                prevCellCtrl.destroy();
+            }
+        });
+
         return res;
     }
 
@@ -514,13 +517,10 @@ export class RowCtrl extends BeanStub {
     private addListenersForCellComps(): void {
 
         this.addManagedListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, () => {
-            this.forEachCellComp(cellComp => cellComp.getCtrl().onRowIndexChanged());
+            this.forEachCellComp(cellCtrl => cellCtrl.onRowIndexChanged());
         });
         this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, event => {
-            this.forEachCellComp(cellComp => {
-                const ctrl = cellComp.getCtrl();
-                ctrl.onCellChanged(event)
-            });
+            this.forEachCellComp(cellCtrl => cellCtrl.onCellChanged(event) );
         });
 
     }
@@ -529,8 +529,8 @@ export class RowCtrl extends BeanStub {
         // if this is an update, we want to refresh, as this will allow the user to put in a transition
         // into the cellRenderer refresh method. otherwise this might be completely new data, in which case
         // we will want to completely replace the cells
-        this.forEachCellComp(cellComp =>
-            cellComp.getCtrl().refreshCell({
+        this.forEachCellComp(cellCtrl =>
+            cellCtrl.refreshCell({
                 suppressFlash: !event.update,
                 newData: !event.update
             })
@@ -658,9 +658,24 @@ export class RowCtrl extends BeanStub {
         }
     }
 
-    public refreshCell(cellComp: CellComp) {
-        this.allComps.forEach(c => c.comp.destroyCells([cellComp]));
+    public refreshCell(cellCtrl: CellCtrl) {
+        this.centerCellCtrls = this.removeCellCtrl(this.centerCellCtrls, cellCtrl);
+        this.leftCellCtrls = this.removeCellCtrl(this.leftCellCtrls, cellCtrl);
+        this.rightCellCtrls = this.removeCellCtrl(this.rightCellCtrls, cellCtrl);
         this.updateColumnLists();
+    }
+
+    private removeCellCtrl(prev: CellCtrls, cellCtrlToRemove: CellCtrl): CellCtrls {
+        const res: CellCtrls = {
+            list: [],
+            map: {}
+        };
+        prev.list.forEach( cellCtrl => {
+            if (cellCtrl===cellCtrlToRemove) { return; }
+            res.list.push(cellCtrl);
+            res.map[cellCtrl.getInstanceId()] = cellCtrl;
+        });
+        return res;
     }
 
     public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
@@ -883,9 +898,7 @@ export class RowCtrl extends BeanStub {
     }
 
     public stopEditing(cancel = false): void {
-        this.forEachCellComp(renderedCell => {
-            renderedCell.getCtrl().stopEditing(cancel);
-        });
+        this.forEachCellComp(cellCtrl => cellCtrl.stopEditing(cancel) );
 
         if (!this.editingRow) { return; }
 
@@ -918,21 +931,20 @@ export class RowCtrl extends BeanStub {
         // don't do it if already editing
         if (this.editingRow) { return; }
 
-        this.forEachCellComp(cellComp => {
-            const cellStartedEdit = cellComp.getCtrl() === sourceRenderedCell;
+        this.forEachCellComp(cellCtrl => {
+            const cellStartedEdit = cellCtrl === sourceRenderedCell;
             if (cellStartedEdit) {
-                cellComp.getCtrl().startEditing(keyPress, charPress, cellStartedEdit);
+                cellCtrl.startEditing(keyPress, charPress, cellStartedEdit);
             } else {
-                cellComp.getCtrl().startEditing(null, null, cellStartedEdit);
+                cellCtrl.startEditing(null, null, cellStartedEdit);
             }
         });
         this.setEditingRow(true);
     }
 
-    public forEachCellComp(callback: (renderedCell: CellComp) => void): void {
-        // const allCellCtrls = [...this.centerCellCtrls.list, ...this.leftCellCtrls.list, ...this.rightCellCtrls.list];
-        // allCellCtrls
-        this.allComps.forEach(c => c.comp.forEachCellComp(callback));
+    public forEachCellComp(callback: (cellCtrl: CellCtrl) => void): void {
+        const allCellCtrls = [...this.centerCellCtrls.list, ...this.leftCellCtrls.list, ...this.rightCellCtrls.list];
+        allCellCtrls.forEach(callback);
     }
 
     private postProcessClassesFromGridOptions(): void {

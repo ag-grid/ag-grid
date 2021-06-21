@@ -23,7 +23,7 @@ import { RowPosition } from "../../entities/rowPosition";
 import { RowCtrl } from "../row/rowCtrl";
 import { CellMouseListenerFeature } from "./cellMouseListenerFeature";
 import { CellKeyboardListenerFeature } from "./cellKeyboardListenerFeature";
-import { ICellRendererParams } from "../cellRenderers/iCellRenderer";
+import { ICellRenderer, ICellRendererParams } from "../cellRenderers/iCellRenderer";
 import { ICellEditor, ICellEditorParams } from "../../interfaces/iCellEditor";
 import { KeyCode } from "../../constants/keyCode";
 
@@ -62,6 +62,7 @@ export interface ICellComp {
     setForceWrapper(force: boolean): void;
 
     getCellEditor(): ICellEditor | null;
+    getCellRenderer(): ICellRenderer | null;
     getParentOfValue(): HTMLElement | null;
 
     showRenderer(params: ICellRendererParams, forceNewCellRendererInstance: boolean): void;
@@ -71,9 +72,13 @@ export interface ICellComp {
     addRowDragging(customElement?: HTMLElement, dragStartPixels?: number): void;
 }
 
+let instanceIdSequence = 0;
+
 export class CellCtrl extends BeanStub {
 
     public static DOM_DATA_KEY_CELL_CTRL = 'cellCtrl';
+
+    private instanceId = instanceIdSequence++;
 
     private eGui: HTMLElement;
     private cellComp: ICellComp;
@@ -191,7 +196,7 @@ export class CellCtrl extends BeanStub {
     }
 
     public getInstanceId(): number {
-        return this.column.getInstanceId();
+        return this.instanceId;
     }
 
     private showRenderer(forceNewCellRendererInstance = false): void {
@@ -801,16 +806,19 @@ export class CellCtrl extends BeanStub {
     }
 
     public onFirstRightPinnedChanged(): void {
+        if (!this.cellComp) { return; }
         const firstRightPinned = this.column.isFirstRightPinned();
         this.cellComp.addOrRemoveCssClass(CSS_CELL_FIRST_RIGHT_PINNED, firstRightPinned);
     }
 
     public onLastLeftPinnedChanged(): void {
+        if (!this.cellComp) { return; }
         const lastLeftPinned = this.column.isLastLeftPinned();
         this.cellComp.addOrRemoveCssClass(CSS_CELL_LAST_LEFT_PINNED, lastLeftPinned);
     }
 
     public onCellFocused(event?: CellFocusedEvent): void {
+        if (!this.cellComp) { return; }
         const cellFocused = this.beans.focusService.isCellFocused(this.cellPosition);
 
         if (!this.gow.isSuppressCellSelection()) {
@@ -862,11 +870,13 @@ export class CellCtrl extends BeanStub {
     }
 
     public onColumnHover(): void {
+        if (!this.cellComp) { return; }
         const isHovered = this.beans.columnHoverService.isHovered(this.column);
         this.cellComp.addOrRemoveCssClass(CSS_COLUMN_HOVER, isHovered);
     }
 
     public onNewColumnsLoaded(): void {
+        if (!this.cellComp) { return; }
         this.postProcessWrapText();
         this.cellCustomStyleFeature.applyCellClassRules();
     }
@@ -885,6 +895,14 @@ export class CellCtrl extends BeanStub {
             // to make the callback async, do in a timeout
             window.setTimeout(() => (colDef.onCellContextMenu as any)(cellContextMenuEvent), 0);
         }
+    }
+
+    public getCellRenderer(): ICellRenderer | null {
+        return this.cellComp ? this.cellComp.getCellRenderer() : null;
+    }
+
+    public getCellEditor(): ICellEditor | null {
+        return this.cellComp ? this.cellComp.getCellEditor() : null;
     }
 
     public destroy(): void {

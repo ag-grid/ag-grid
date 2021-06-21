@@ -120,6 +120,7 @@ export class CellComp extends Component implements TooltipParentComp {
             setForceWrapper: force => this.forceWrapper = force,
 
             getCellEditor: () => this.cellEditor ? this.cellEditor : null,
+            getCellRenderer: () => this.cellRenderer ? this.cellRenderer : null,
             getParentOfValue: () => this.eCellValue ? this.eCellValue : null,
 
             // hacks
@@ -174,9 +175,10 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private setCellState(state: ShowingState): void {
+        this.firstRender = (this.cellState == null);
+
         if (this.cellState === state) { return; }
 
-        this.firstRender = this.cellState == null;
         this.cellState = state;
 
         this.removeControlsWrapper();
@@ -420,6 +422,7 @@ export class CellComp extends Component implements TooltipParentComp {
         const eGui = this.cellRenderer.getGui();
 
         if (eGui != null) {
+            clearElement(this.eCellValue);
             this.eCellValue.appendChild(eGui);
         }
     }

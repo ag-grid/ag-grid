@@ -46,6 +46,7 @@ export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
             setForceWrapper: force => false, // this.forceWrapper = force,
 
             getCellEditor: () => null, // this.cellEditor ? this.cellEditor : null,
+            getCellRenderer: () => null, // this.cellEditor ? this.cellEditor : null,
             getParentOfValue: () => eGui.current, // this.eCellValue ? this.eCellValue : null,
 
             // hacks

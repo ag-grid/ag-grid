@@ -236,12 +236,12 @@ export class RowComp extends Component {
             if (!cellComp) { return; }
 
             // check cellComp belongs in this container
-            const id = cellComp.getCtrl().getColumn().getId();
-            if (this.cellComps[id] !== cellComp) {return; }
+            const instanceId = cellComp.getCtrl().getInstanceId();
+            if (this.cellComps[instanceId] !== cellComp) {return; }
 
             cellComp.detach();
             cellComp.destroy();
-            this.cellComps[id] = null;
+            this.cellComps[instanceId] = null;
         });
     }
 
