@@ -48,6 +48,23 @@ The final result can be seen in the example below.
 
 <chart-example title='Single Area Series with Markers' name='single-area-markers' type='generated'></chart-example>
 
+Showing labels on top of data points is also an option with the `label` config. Labels can be enabled independently of series markers.
+For example, to show bold labels on top of each data point (and in this case a marker) we would use the following config:
+
+```js
+series: [{
+    ...
+    label: {
+        enabled: true,
+        fontWeight: 'bold'
+    }
+}]
+```
+
+The above config is used in the example below. Feel free to open it in Pluker and experiment with other [label options](#reference-area.label).
+
+<chart-example title='Single Area Series with Markers and Labels' name='single-area-markers-labels' type='generated'></chart-example>
+
 ## Multiple Area Series
 
 It is possible to use more than one `'area'` series in a single chart. For example, if we want one series to show the magnitude of change in market share of Internet Explorer and the other series the change in market share of Chrome, we could use the following `series` config:
