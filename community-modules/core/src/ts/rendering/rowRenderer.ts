@@ -131,20 +131,20 @@ export class RowRenderer extends BeanStub {
     // all active cells.
     private registerCellEventListeners(): void {
         this.addManagedListener(this.eventService, Events.EVENT_CELL_FOCUSED, (event: CellFocusedEvent) => {
-            this.forEachCellComp(cellCtrl => cellCtrl.onCellFocused(event));
-            this.forEachRowComp((key: string, rowComp: RowCtrl) => {
-                if (rowComp.isFullWidth()) {
-                    rowComp.onFullWidthRowFocused(event);
+            this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onCellFocused(event));
+            this.getAllRowCtrls().forEach(rowCtrl => {
+                if (rowCtrl.isFullWidth()) {
+                    rowCtrl.onFullWidthRowFocused(event);
                 }
             });
         });
 
         this.addManagedListener(this.eventService, Events.EVENT_FLASH_CELLS, event => {
-            this.forEachCellComp(cellCtrl => cellCtrl.onFlashCells(event));
+            this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onFlashCells(event));
         });
 
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, () => {
-            this.forEachCellComp(cellCtrl => cellCtrl.onColumnHover());
+            this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onColumnHover());
         });
 
         // only for printLayout - because we are rendering all the cells in the same row, regardless of pinned state,
@@ -154,7 +154,7 @@ export class RowRenderer extends BeanStub {
         // in different containers so doesn't impact.
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, () => {
             if (this.printLayout) {
-                this.forEachCellComp(cellCtrl => cellCtrl.onLeftChanged());
+                this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onLeftChanged());
             }
         });
 
@@ -162,16 +162,16 @@ export class RowRenderer extends BeanStub {
         if (rangeSelectionEnabled) {
 
             this.addManagedListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, () => {
-                this.forEachCellComp(cellCtrl => cellCtrl.onRangeSelectionChanged());
+                this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onRangeSelectionChanged());
             });
             this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, () => {
-                this.forEachCellComp(cellCtrl => cellCtrl.updateRangeBordersIfRangeCount());
+                this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.updateRangeBordersIfRangeCount());
             });
             this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, () => {
-                this.forEachCellComp(cellCtrl => cellCtrl.updateRangeBordersIfRangeCount());
+                this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.updateRangeBordersIfRangeCount());
             });
             this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, () => {
-                this.forEachCellComp(cellCtrl => cellCtrl.updateRangeBordersIfRangeCount());
+                this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.updateRangeBordersIfRangeCount());
             });
 
         }
@@ -203,7 +203,7 @@ export class RowRenderer extends BeanStub {
 
         cols.forEach(col => {
             const forEachCellWithThisCol = (callback: (cellCtrl: CellCtrl) => void) => {
-                this.forEachCellComp(cellCtrl => {
+                this.getAllCellCtrls().forEach(cellCtrl => {
                     if (cellCtrl.getColumn() === col) {
                         callback(cellCtrl);
                     }
@@ -515,8 +515,8 @@ export class RowRenderer extends BeanStub {
     }
 
     public stopEditing(cancel: boolean = false) {
-        this.forEachRowComp((key: string, rowComp: RowCtrl) => {
-            rowComp.stopEditing(cancel);
+        this.getAllRowCtrls().forEach(rowCtrl => {
+            rowCtrl.stopEditing(cancel);
         });
     }
 
@@ -524,17 +524,19 @@ export class RowRenderer extends BeanStub {
         // we don't want each cellComp to register for events, as would increase rendering time.
         // so for newColumnsLoaded, we register once here (in rowRenderer) and then inform
         // each cell if / when event was fired.
-        this.forEachCellComp(cellCtrl => cellCtrl.onNewColumnsLoaded());
+        this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onNewColumnsLoaded());
     }
 
-    public forEachCellComp(callback: (cellCtrl: CellCtrl) => void): void {
-        this.forEachRowComp((key: string, rowCtrl: RowCtrl) => rowCtrl.forEachCellComp(callback));
+    public getAllCellCtrls(): CellCtrl[] {
+        let res: CellCtrl[] = [];
+        this.getAllRowCtrls().forEach(rowCtrl => res = res.concat(rowCtrl.getCellCtrls()));
+        return res;
     }
 
-    private forEachRowComp(callback: (key: string, rowComp: RowCtrl) => void): void {
-        iterateObject(this.rowConsByRowIndex, callback);
-        iterateObject(this.topRowCons, callback);
-        iterateObject(this.bottomRowCons, callback);
+    private getAllRowCtrls(): RowCtrl[] {
+        const res = [...this.topRowCons, ...this.bottomRowCons];
+        Object.keys(this.rowConsByRowIndex).forEach(key => res.push(this.rowConsByRowIndex[key]));
+        return res;
     }
 
     public addRenderedRowListener(eventName: string, rowIndex: number, callback: Function): void {
@@ -600,7 +602,7 @@ export class RowRenderer extends BeanStub {
     public getEditingCells(): CellPosition[] {
         const res: CellPosition[] = [];
 
-        this.forEachCellComp(cellCtrl => {
+        this.getAllCellCtrls().forEach(cellCtrl => {
             if (cellCtrl.isEditing()) {
                 const cellPosition = cellCtrl.getCellPosition();
                 res.push(cellPosition);
@@ -668,7 +670,7 @@ export class RowRenderer extends BeanStub {
                 }
             }
 
-            rowComp.forEachCellComp(cellCtrl => {
+            rowComp.getCellCtrls().forEach(cellCtrl => {
                 const colId: string = cellCtrl.getColumn().getId();
                 const excludeColFromRefresh = colIdsMap && !colIdsMap[colId];
 

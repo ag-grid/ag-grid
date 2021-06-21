@@ -517,10 +517,10 @@ export class RowCtrl extends BeanStub {
     private addListenersForCellComps(): void {
 
         this.addManagedListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, () => {
-            this.forEachCellComp(cellCtrl => cellCtrl.onRowIndexChanged());
+            this.getCellCtrls().forEach(cellCtrl => cellCtrl.onRowIndexChanged());
         });
         this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, event => {
-            this.forEachCellComp(cellCtrl => cellCtrl.onCellChanged(event) );
+            this.getCellCtrls().forEach(cellCtrl => cellCtrl.onCellChanged(event) );
         });
 
     }
@@ -529,7 +529,7 @@ export class RowCtrl extends BeanStub {
         // if this is an update, we want to refresh, as this will allow the user to put in a transition
         // into the cellRenderer refresh method. otherwise this might be completely new data, in which case
         // we will want to completely replace the cells
-        this.forEachCellComp(cellCtrl =>
+        this.getCellCtrls().forEach(cellCtrl =>
             cellCtrl.refreshCell({
                 suppressFlash: !event.update,
                 newData: !event.update
@@ -898,7 +898,7 @@ export class RowCtrl extends BeanStub {
     }
 
     public stopEditing(cancel = false): void {
-        this.forEachCellComp(cellCtrl => cellCtrl.stopEditing(cancel) );
+        this.getCellCtrls().forEach(cellCtrl => cellCtrl.stopEditing(cancel) );
 
         if (!this.editingRow) { return; }
 
@@ -931,7 +931,7 @@ export class RowCtrl extends BeanStub {
         // don't do it if already editing
         if (this.editingRow) { return; }
 
-        this.forEachCellComp(cellCtrl => {
+        this.getCellCtrls().forEach(cellCtrl => {
             const cellStartedEdit = cellCtrl === sourceRenderedCell;
             if (cellStartedEdit) {
                 cellCtrl.startEditing(keyPress, charPress, cellStartedEdit);
@@ -942,9 +942,9 @@ export class RowCtrl extends BeanStub {
         this.setEditingRow(true);
     }
 
-    public forEachCellComp(callback: (cellCtrl: CellCtrl) => void): void {
-        const allCellCtrls = [...this.centerCellCtrls.list, ...this.leftCellCtrls.list, ...this.rightCellCtrls.list];
-        allCellCtrls.forEach(callback);
+    public getCellCtrls(): CellCtrl[] {
+        const res = [...this.centerCellCtrls.list, ...this.leftCellCtrls.list, ...this.rightCellCtrls.list];
+        return res;
     }
 
     private postProcessClassesFromGridOptions(): void {
