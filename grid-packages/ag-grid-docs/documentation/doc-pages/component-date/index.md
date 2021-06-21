@@ -80,9 +80,6 @@ You can use your own date picker to AG Grid by providing a custom Date Component
 |    },
 |```
 |
-|[[note]]
-||Date Components are the only components in Vue that require the use of `frameworkComponents` to tie components to their usage. All other component
-||registration types specify their usage in column definitions or on the `AgGridVue` component itself. 
  
 Please see [Provided Components](../components/#grid-provided-components) for more information about overrided AG Grid provided components (as we're doing here
 by overriding `agDateInput`).

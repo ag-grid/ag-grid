@@ -28,6 +28,16 @@ const PARAMS_PROPERTIES = [
     'cellEditorParams', 'filterParams'
 ]
 
+const OVERRIDABLE_AG_COMPONENTS = ['agDateInput',
+    'agColumnHeader',
+    'agColumnGroupHeader',
+    'agLoadingCellRenderer',
+    'agLoadingOverlay',
+    'agNoRowsOverlay',
+    'agTextCellEditor',
+    'agDetailCellRenderer',
+];
+
 function getOnGridReadyCode(bindings: any): string {
     const {onGridReady, resizeToFit, data} = bindings;
     const additionalLines = [];
@@ -156,11 +166,16 @@ function getPropertyBindings(bindings: any, componentFileNames: string[], import
         )
         .forEach(property => {
             if (componentFileNames.length > 0 && property.name === 'components') {
-                // we use bindings.components for vue examples (and not frameworkComponents), except for agDateInput, which we still need
+                // we use bindings.components for vue examples (and not frameworkComponents), except for agDateInput, agColumnHeader, etc which we still need
                 // frameworkComponents for
-                if(bindings.components && bindings.components.some(component => component.name === 'agDateInput')) {
-                    propertyAttributes.push(':frameworkComponents="frameworkComponents"');
-                    propertyAssignments.push("this.frameworkComponents = { agDateInput: 'agDateInput' } ")
+                if(bindings.components) {
+                    const userAgComponents = OVERRIDABLE_AG_COMPONENTS.filter(agComponentName => bindings.components.some(component => component.name === agComponentName))
+                        .map(agComponentName => `${agComponentName}: '${agComponentName}'`);
+
+                    if(userAgComponents.length > 0) {
+                        propertyAttributes.push(':frameworkComponents="frameworkComponents"');
+                        propertyAssignments.push(`this.frameworkComponents = { ${userAgComponents.join('\n,')} } `)
+                    }
                 }
             } else if (property.value === 'true' || property.value === 'false') {
                 propertyAttributes.push(toConst(property));

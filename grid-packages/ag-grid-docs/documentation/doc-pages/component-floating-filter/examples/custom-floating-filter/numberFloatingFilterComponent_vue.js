@@ -1,7 +1,9 @@
 export default {
     template: `
-      &gt; <input v-bind:style="{ color: params.color, width: '30px' }" type="number" min="0" v-model="currentValue"
-                  v-on:input="onInputBoxChanged()"/>
+      <span>
+        &gt; <input v-bind:style="{ color: params.color, width: '30px' }" type="number" min="0" v-model="currentValue"
+             v-on:input="onInputBoxChanged()"/>
+      </span>
     `,
     data: function () {
         return {
