@@ -83,8 +83,10 @@ function processDefaultColumnDefForVue(propertyName: string, exampleType, provid
     return false;
 }
 
+const GLOBAL_COMPONENTS = ['dateComponent', 'loadingCellRenderer', 'loadingOverlayComponent', 'noRowsOverlayComponent'];
+
 function processGlobalComponentsForVue(propertyName: string, exampleType, providedExamples) {
-    if (propertyName === 'dateComponent') {
+    if (GLOBAL_COMPONENTS.indexOf(propertyName) !== -1) {
         return exampleType === 'generated' || (exampleType === 'mixed' && !(providedExamples['vue'] && providedExamples['vue3']));
     }
 

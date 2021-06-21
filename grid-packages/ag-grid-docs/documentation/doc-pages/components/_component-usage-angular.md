@@ -15,9 +15,9 @@
 || Group Row Cell Renderer       | Grid Option               | groupRowRenderer         | groupRowRenderer**Framework**        |
 || Group Row Inner Cell Renderer | Grid Option               | groupRowInnerRenderer    | groupRowInnerRenderer**Framework**   |
 || Loading Cell Renderer         | Grid Option               | loadingCellRenderer      | loadingCellRenderer**Framework**     |
-|| Loading Overlay               | Grid Option               | loadingOverlayComponent  | loadingOverlayComponent**Framework**  |
-|| No Rows Overlay               | Grid Option               | noRowsOverlayComponent   | noRowsOverlayComponent**Framework**   |
-|| Date Component                | Grid Option               | dateComponent            | dateComponent**Framework**           |
+|| Loading Overlay               | Grid Option               | loadingOverlayComponent  | loadingOverlayComponent**Framework** |
+|| No Rows Overlay               | Grid Option               | noRowsOverlayComponent   | noRowsOverlayComponent**Framework**  |
+|| Date Component                | Grid Option               | agDateInput              | agDateInput                          |
 || Status Bar Component          | Grid Option -> Status Bar | statusPanel              | statusPanel**Framework**             |
 || Cell Renderer                 | Column Definition         | cellRenderer             | cellRenderer**Framework**            |
 || Pinned Row Cell Renderer      | Column Definition         | pinnedRowCellRenderer    | pinnedRowCellRenderer**Framework**   |

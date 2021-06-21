@@ -15,8 +15,8 @@
 || Group Row Inner Cell Renderer | Grid Option               | groupRowInnerRenderer    | 
 || Loading Cell Renderer         | Grid Option               | loadingCellRenderer      |
 || Loading Overlay               | Grid Option               | loadingOverlayComponent  | 
-|| No Rows Overlay               | Grid Option               | noRowsOverlayComponent   | 
-|| Date Component                | Grid Option               | dateComponent            | 
+|| No Rows Overlay               | Grid Option               | noRowsOverlayComponent   |
+|| Date Component                | Grid Option               | agDateInput              | 
 || Status Bar Component          | Grid Option -> Status Bar | statusPanel              | 
 || Cell Renderer                 | Column Definition         | cellRenderer             | 
 || Pinned Row Cell Renderer      | Column Definition         | pinnedRowCellRenderer    | 

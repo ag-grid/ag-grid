@@ -63,7 +63,7 @@ export class VueComponentFactory {
         let componentInstance: any = null;
         const extendedComponentDefinition = defineComponent({
             ...componentDefinition,
-            data: () => ({...componentParams, ...componentDefinition.data()}),
+            data: () => ({...componentParams, ...componentDefinition.data ? componentDefinition.data() : {}}),
             created() { // note: function - don't use arrow functions here (for the correct "this" to be used)
                 componentInstance = (this as any).$root;
                 if (componentDefinition.created) {
