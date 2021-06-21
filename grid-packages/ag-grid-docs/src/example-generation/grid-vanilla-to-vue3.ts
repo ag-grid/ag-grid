@@ -154,7 +154,12 @@ function getPropertyBindings(bindings: any, componentFileNames: string[], import
             GLOBAL_COMPONENTS.indexOf(property.name) === -1)
         .forEach(property => {
                 if (componentFileNames.length > 0 && property.name === 'components') {
-                    // we use bindings.components for vue examples
+                    // we use bindings.components for vue examples (and not frameworkComponents), except for agDateInput, which we still need
+                    // frameworkComponents for
+                    if(bindings.components && bindings.components.some(component => component.name === 'agDateInput')) {
+                        propertyAttributes.push(':frameworkComponents="frameworkComponents"');
+                        propertyAssignments.push("this.frameworkComponents = { agDateInput: 'agDateInput' } ")
+                    }
                 } else if (property.value === 'true' || property.value === 'false') {
                     propertyAttributes.push(toConst(property));
                 } else if (property.value === null || property.value === 'null') {
