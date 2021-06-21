@@ -337,7 +337,7 @@ function convertColumnDefs(rawColumnDefs, userComponentNames): string[] {
         });
 
         if (children.length !== 0) {
-            columnProperties['children'] = children;
+            columnProperties.push(`children: [${children.join(',\n')}]`);
         }
         columnDefs.push(`{${columnProperties.join(',\n')}}`);
     });

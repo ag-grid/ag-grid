@@ -1,5 +1,3 @@
-import Vue from "vue";
-
 export default {
     template: `
         <div class="ag-header-group-cell-label">
