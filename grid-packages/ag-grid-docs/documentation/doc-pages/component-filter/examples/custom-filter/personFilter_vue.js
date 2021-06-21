@@ -11,7 +11,6 @@ export default {
         <img src="https://www.ag-grid.com/images/ag-Grid2-200.png"
              style="width: 150px; text-align: center; padding: 10px; margin: 10px; border: 1px solid lightgrey;"/>
       </div>
-      {{ filterText }}
       </div>
     `,
     data: function () {
