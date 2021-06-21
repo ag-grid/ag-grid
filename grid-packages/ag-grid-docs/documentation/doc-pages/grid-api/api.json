@@ -748,14 +748,6 @@
                     "listener": "Function"
                 }
             }
-        },
-        "dispatchEvent()": {
-            "description": "Dispatch an event through the grid. Useful if you are using a custom `cellRenderer` and want to fire events such as `cellValueChanged`.",
-            "type": {
-                "arguments": {
-                    "event": "object"
-                }
-            }
         }
     },
     "rowGroups": {
