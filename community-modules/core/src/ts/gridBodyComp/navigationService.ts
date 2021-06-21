@@ -574,13 +574,9 @@ export class NavigationService extends BeanStub {
     }
 
     public getCellByPosition(cellPosition: CellPosition): CellCtrl | null {
-        const rowComp = this.rowRenderer.getRowByPosition(cellPosition);
-
-        if (!rowComp) { return null; }
-
-        const cellComp =  rowComp.getCellForColumn(cellPosition.column);
-
-        return cellComp ? cellComp.getCtrl() : null;
+        const rowCtrl = this.rowRenderer.getRowByPosition(cellPosition);
+        if (!rowCtrl) { return null; }
+        return rowCtrl.getCellCtrl(cellPosition.column);
     }
 
     private lookupRowNodeForCell(cell: CellPosition) {

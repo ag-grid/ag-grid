@@ -39,7 +39,7 @@ import { ControllersService } from "../controllersService";
 import { GridBodyCtrl } from "../gridBodyComp/gridBodyCtrl";
 import { CellCtrl } from "./cell/cellCtrl";
 
-export interface RowMap {
+export interface RowCtrlMap {
     [key: string]: RowCtrl;
 }
 
@@ -68,8 +68,8 @@ export class RowRenderer extends BeanStub {
 
     // map of row ids to row objects. keeps track of which elements
     // are rendered for which rows in the dom.
-    private rowConsByRowIndex: RowMap = {};
-    private zombieRowCons: RowMap = {};
+    private rowConsByRowIndex: RowCtrlMap = {};
+    private zombieRowCons: RowCtrlMap = {};
     private allRowCons: RowCtrl[] = [];
 
     private topRowCons: RowCtrl[] = [];
@@ -279,18 +279,14 @@ export class RowRenderer extends BeanStub {
     }
 
     public getAllCellsForColumn(column: Column): HTMLElement[] {
-        const eCells: HTMLElement[] = [];
+        const res: HTMLElement[] = [];
 
-        function callback(key: any, rowComp: RowCtrl) {
-            const eCell = rowComp.getCellForCol(column);
-            if (eCell) { eCells.push(eCell); }
-        }
+        this.getAllRowCtrls().forEach( rowCtrl => {
+            const eCell = rowCtrl.getCellElement(column);
+            if (eCell) { res.push(eCell); }
+        });
 
-        iterateObject(this.rowConsByRowIndex, callback);
-        iterateObject(this.bottomRowCons, callback);
-        iterateObject(this.topRowCons, callback);
-
-        return eCells;
+        return res;
     }
 
     public refreshFloatingRowComps(): void {
@@ -529,7 +525,7 @@ export class RowRenderer extends BeanStub {
 
     public getAllCellCtrls(): CellCtrl[] {
         let res: CellCtrl[] = [];
-        this.getAllRowCtrls().forEach(rowCtrl => res = res.concat(rowCtrl.getCellCtrls()));
+        this.getAllRowCtrls().forEach(rowCtrl => res = res.concat(rowCtrl.getAllCellCtrls()));
         return res;
     }
 
@@ -670,7 +666,7 @@ export class RowRenderer extends BeanStub {
                 }
             }
 
-            rowComp.getCellCtrls().forEach(cellCtrl => {
+            rowComp.getAllCellCtrls().forEach(cellCtrl => {
                 const colId: string = cellCtrl.getColumn().getId();
                 const excludeColFromRefresh = colIdsMap && !colIdsMap[colId];
 
@@ -702,7 +698,7 @@ export class RowRenderer extends BeanStub {
         this.removeRowComps(rowIndexesToRemove);
     }
 
-    private recycleRows(): RowMap {
+    private recycleRows(): RowCtrlMap {
         // remove all stub nodes, they can't be reused, as no rowNode id
         const stubNodeIndexes: string[] = [];
         iterateObject(this.rowConsByRowIndex, (index: string, rowComp: RowCtrl) => {
@@ -714,7 +710,7 @@ export class RowRenderer extends BeanStub {
         this.removeRowComps(stubNodeIndexes);
 
         // then clear out rowCompsByIndex, but before that take a copy, but index by id, not rowIndex
-        const nodesByIdMap: RowMap = {};
+        const nodesByIdMap: RowCtrlMap = {};
         iterateObject(this.rowConsByRowIndex, (index: string, rowComp: RowCtrl) => {
             const rowNode = rowComp.getRowNode();
             nodesByIdMap[rowNode.id!] = rowComp;

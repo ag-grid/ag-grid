@@ -84,10 +84,7 @@ export function RowComp(params: {context: Context, rowCtrl: RowCtrl, pinned: str
             // if we don't maintain the order, then cols will be ripped out and into the dom
             // when cols reordered, which would stop the CSS transitions from working
             setCellCtrls: next => setCellCtrls( prev => maintainOrderOnColumns(prev, next, domOrder) ),
-            forEachCellComp: callback => true,
             destroy: ()=> true,
-            getCellComp: colId => null,
-            getAllCellComps: () => [],
             destroyCells: cellComps => true,
             getFullWidthRowComp: ()=> null,
         };

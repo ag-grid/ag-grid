@@ -89,8 +89,8 @@ export class AutoWidthCalculator extends BeanStub {
     }
 
     private putRowCellsIntoDummyContainer(column: Column, eDummyContainer: HTMLElement): void {
-        const eCells = this.rowRenderer.getAllCellsForColumn(column);
-        eCells.forEach(eCell  => this.cloneItemIntoDummy(eCell, eDummyContainer));
+        const eCellElements = this.rowRenderer.getAllCellsForColumn(column);
+        eCellElements.forEach(eCell  => this.cloneItemIntoDummy(eCell, eDummyContainer));
     }
 
     private cloneItemIntoDummy(eCell: HTMLElement, eDummyContainer: HTMLElement): void {

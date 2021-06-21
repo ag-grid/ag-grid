@@ -48,7 +48,6 @@ export class RowComp extends Component {
             addOrRemoveCssClass: (name, on) => this.addOrRemoveCssClass(name, on),
             setAriaExpanded: on => setAriaExpanded(eGui, on),
             destroyCells: cellComps => this.destroyCells(cellComps),
-            forEachCellComp: callback => this.forEachCellComp(callback),
             setUserStyles: styles => addStylesToElement(eGui, styles),
             setAriaSelected: value => setAriaSelected(eGui, value),
             setAriaLabel: value => {
@@ -62,8 +61,6 @@ export class RowComp extends Component {
             destroy: () => this.destroy(),
             setTop: top => style.top = top,
             setTransform: transform => style.transform = transform,
-            getCellComp: colId => this.getCellComp(colId),
-            getAllCellComps: () => Object.keys(this.cellComps).map(k => this.cellComps[k]).filter(c => c != null) as CellComp[],
             setRowIndex: rowIndex => eGui.setAttribute('row-index', rowIndex),
             setRole: role => eGui.setAttribute('role', role),
             setAriaRowIndex: rowIndex => setAriaRowIndex(this.getGui(), rowIndex),
