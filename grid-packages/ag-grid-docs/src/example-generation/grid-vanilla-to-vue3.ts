@@ -22,6 +22,7 @@ const GRID_COMPONENTS = [
     'floatingFilterComponent',
     'headerComponent',
     'headerGroupComponent',
+    'tooltipComponent'
 ];
 
 const PARAMS_PROPERTIES = [
@@ -377,7 +378,7 @@ function convertColumnDefs(rawColumnDefs, userComponentNames): string[] {
 }
 
 function convertDefaultColDef(defaultColDef): string {
-    return defaultColDef.replace('headerComponent', 'headerComponentFramework');
+    return GRID_COMPONENTS.reduce((acc, componentName) => defaultColDef.replace(componentName, `${componentName}Framework`), defaultColDef)
 }
 
 export function vanillaToVue3(bindings: any, componentFileNames: string[]): (importType: ImportType) => string {
