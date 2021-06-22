@@ -9,6 +9,11 @@ export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
 
     const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses());
     const [userStyles, setUserStyles] = useState<any>();
+    const [showEditor, setShowEditor] = useState<boolean>();
+    const [showRenderer, setShowRenderer] = useState<boolean>();
+    const [editorComp, setEditorComp] = useState<any>();
+    const [rendererComp, setRendererComp] = useState<any>();
+
     const [left, setLeft] = useState<string | undefined>();
     const [width, setWidth] = useState<string | undefined>();
     const [height, setHeight] = useState<string | undefined>();
@@ -40,15 +45,24 @@ export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
             setTitle: title => false, //  setAttribute('title', title),
             setUnselectable: value => false, //  setAttribute('unselectable', value, this.eCellValue),
             setTransition: transition => setTransition(transition),
-            showRenderer: (params, force) => setRendererParams(params),
-            showEditor: params => setEditorParams(params),
-
+            showRenderer: (params, force) => {
+                setRendererParams(params);
+                setShowRenderer(true);
+                setEditorParams(undefined);
+                setShowEditor(false);
+            },
+            showEditor: params => {
+                setEditorParams(params)
+                setShowEditor(true);
+                setRendererParams(undefined);
+                setShowRenderer(false);
+            },
             setIncludeSelection: include => false, // this.includeSelection = include,
             setIncludeRowDrag: include => false, // this.includeRowDrag = include,
             setIncludeDndSource: include => false, // this.includeDndSource = include,
             setForceWrapper: force => false, // this.forceWrapper = force,
 
-            getCellEditor: () => null, // this.cellEditor ? this.cellEditor : null,
+            getCellEditor: () => cellEditorRef.current,
             getCellRenderer: () => cellRendererRef.current,
             getParentOfValue: () => eGui.current, // this.eCellValue ? this.eCellValue : null,
 
@@ -77,17 +91,35 @@ export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
 
     const cellRendererExists = rendererParams && rendererParams.colDef && rendererParams.colDef.cellRendererFramework;
 
+    // const cellEditorExists = editorParams && editorParams.colDef && editorParams.colDef.cellEditorFramework;
+
     return (
         <div ref={ eGui } className={ className } style={ cellStyles } tabIndex={tabIndex}>
-            { rendererParams && !cellRendererExists && (rendererParams.valueFormatted != null ? rendererParams.valueFormatted : rendererParams.value) }
-            { rendererParams && cellRendererExists && useCellRenderer(rendererParams, cellRendererRef) }
+            { showRenderer && !cellRendererExists && createValueJsx(rendererParams!) }
+            { showRenderer && cellRendererExists && createRendererJsx(rendererParams!, cellRendererRef) }
+            { showEditor && createEditorJsx(editorParams!, cellEditorRef) }
         </div>
     );
 }
 
-function useCellRenderer(params: ICellRendererParams, cellRendererRef: MutableRefObject<any>) {
+function createValueJsx(params: ICellRendererParams) {
+    const valueToRender = params.valueFormatted != null ? params.valueFormatted : params.value;
+    return (
+        <>{valueToRender}</>
+    );
+}
+
+function createRendererJsx(params: ICellRendererParams, cellRendererRef: MutableRefObject<any>) {
     const CellRendererClass = params.colDef!.cellRendererFramework!;
     return (
         <CellRendererClass {...params} ref={cellRendererRef}></CellRendererClass>
+    );
+}
+
+function createEditorJsx(params: ICellEditorParams, cellEditorRef: MutableRefObject<any>) {
+    const CellEditorClass = params.colDef!.cellEditorFramework!;
+    if (!CellEditorClass) { return; }
+    return (
+        <CellEditorClass {...params} ref={cellEditorRef}></CellEditorClass>
     );
 }
