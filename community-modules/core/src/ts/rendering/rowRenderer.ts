@@ -26,8 +26,8 @@ import { FlashCellsParams, GetCellRendererInstancesParams, GridApi, RefreshCells
 import { Beans } from "./beans";
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { RowContainerHeightService } from "./rowContainerHeightService";
-import { ICellRendererComp } from "./cellRenderers/iCellRenderer";
-import { ICellEditorComp } from "../interfaces/iCellEditor";
+import { ICellRenderer, ICellRendererComp } from "./cellRenderers/iCellRenderer";
+import { ICellEditor, ICellEditorComp } from "../interfaces/iCellEditor";
 import { IRowModel } from "../interfaces/iRowModel";
 import { RowPosition, RowPositionUtils } from "../entities/rowPosition";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
@@ -544,7 +544,8 @@ export class RowRenderer extends BeanStub {
 
     public flashCells(params: FlashCellsParams = {}): void {
         const { flashDelay, fadeDelay } = params;
-        this.forEachCellCompFiltered(params.rowNodes, params.columns, cellCtrl => cellCtrl.flashCell({ flashDelay, fadeDelay }));
+        this.getCellCtrls(params.rowNodes, params.columns)
+            .forEach(cellCtrl => cellCtrl.flashCell({ flashDelay, fadeDelay }));
     }
 
     public refreshCells(params: RefreshCellsParams = {}): void {
@@ -553,39 +554,32 @@ export class RowRenderer extends BeanStub {
             newData: false,
             suppressFlash: params.suppressFlash
         };
-        this.forEachCellCompFiltered(params.rowNodes, params.columns, cellCtrl => {
-            if (cellCtrl.refreshShouldDestroy()) {
-                const rowComp = cellCtrl.getRowCtrl();
-                if (rowComp) {
-                    rowComp.refreshCell(cellCtrl);
+        this.getCellCtrls(params.rowNodes, params.columns)
+            .forEach(cellCtrl => {
+                if (cellCtrl.refreshShouldDestroy()) {
+                    const rowComp = cellCtrl.getRowCtrl();
+                    if (rowComp) {
+                        rowComp.refreshCell(cellCtrl);
+                    }
+                } else {
+                    cellCtrl.refreshCell(refreshCellParams);
                 }
-            } else {
-                cellCtrl.refreshCell(refreshCellParams);
-            }
-        });
+            });
     }
 
-    public getCellRendererInstances(params: GetCellRendererInstancesParams): ICellRendererComp[] {
-
-        const res: ICellRendererComp[] = [];
-
-        this.forEachCellCompFiltered(params.rowNodes, params.columns, cellCtrl => {
-            const cellRenderer = cellCtrl.getCellRenderer() as ICellRendererComp;
-
-            if (cellRenderer) {
-                res.push(cellRenderer);
-            }
-        });
-
+    public getCellRendererInstances(params: GetCellRendererInstancesParams): ICellRenderer[] {
+        const res = this.getCellCtrls(params.rowNodes, params.columns)
+            .map(cellCtrl => cellCtrl.getCellRenderer())
+            .filter(renderer => renderer!=null) as ICellRenderer[];
         return res;
     }
 
-    public getCellEditorInstances(params: GetCellRendererInstancesParams): ICellEditorComp[] {
+    public getCellEditorInstances(params: GetCellRendererInstancesParams): ICellEditor[] {
 
-        const res: ICellEditorComp[] = [];
+        const res: ICellEditor[] = [];
 
-        this.forEachCellCompFiltered(params.rowNodes, params.columns, cellCtrl => {
-            const cellEditor = cellCtrl.getCellEditor() as ICellEditorComp;
+        this.getCellCtrls(params.rowNodes, params.columns).forEach(cellCtrl => {
+            const cellEditor = cellCtrl.getCellEditor() as ICellEditor;
 
             if (cellEditor) {
                 res.push(cellEditor);
@@ -608,10 +602,12 @@ export class RowRenderer extends BeanStub {
         return res;
     }
 
-    // calls the callback for each cellComp that match the provided rowNodes and columns. eg if one row node
-    // and two columns provided, that identifies 4 cells, so callback gets called 4 times, once for each cell.
-    private forEachCellCompFiltered(rowNodes?: RowNode[] | null, columns?: (string | Column)[], callback?: (cellCtrl: CellCtrl) => void): void {
+    // returns CellCtrl's that match the provided rowNodes and columns. eg if one row node
+    // and two columns provided, that identifies 4 cells, so 4 CellCtrl's returned.
+    private getCellCtrls(rowNodes?: RowNode[] | null, columns?: (string | Column)[]): CellCtrl[] {
         let rowIdsMap: any;
+
+        const res: CellCtrl[] = [];
 
         if (exists(rowNodes)) {
             rowIdsMap = {
@@ -671,7 +667,8 @@ export class RowRenderer extends BeanStub {
                 const excludeColFromRefresh = colIdsMap && !colIdsMap[colId];
 
                 if (excludeColFromRefresh) { return; }
-                if (callback) { callback(cellCtrl); }
+
+                res.push(cellCtrl);
             });
         };
 
@@ -686,6 +683,8 @@ export class RowRenderer extends BeanStub {
         if (this.bottomRowCons) {
             this.bottomRowCons.forEach(processRow);
         }
+
+        return res;
     }
 
     protected destroy(): void {

@@ -36,8 +36,8 @@ import { ValueCache } from "./valueService/valueCache";
 import { AlignedGridsService } from "./alignedGridsService";
 import { AgEvent, ColumnEventType } from "./events";
 import { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
-import { ICellRendererComp } from "./rendering/cellRenderers/iCellRenderer";
-import { ICellEditorComp } from "./interfaces/iCellEditor";
+import { ICellRenderer } from "./rendering/cellRenderers/iCellRenderer";
+import { ICellEditor } from "./interfaces/iCellEditor";
 import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
 import { HeaderRootComp } from "./headerRendering/headerRootComp";
 import { AnimationFrameService } from "./misc/animationFrameService";
@@ -56,16 +56,21 @@ import {
     GetChartToolbarItems,
     GetContextMenuItems,
     GetMainMenuItems,
-    GetRowNodeIdFunc, GetServerSideGroupKey,
-    GetServerSideStoreParamsParams, IsApplyServerSideTransaction,
+    GetRowNodeIdFunc,
+    GetServerSideGroupKey,
+    GetServerSideStoreParamsParams,
+    IsApplyServerSideTransaction,
     IsRowMaster,
-    IsRowSelectable, IsServerSideGroup, IsServerSideGroupOpenByDefaultParams,
+    IsRowSelectable,
+    IsServerSideGroup,
+    IsServerSideGroupOpenByDefaultParams,
     NavigateToNextCellParams,
     NavigateToNextHeaderParams,
     PaginationNumberFormatterParams,
     PostProcessPopupParams,
     ProcessChartOptionsParams,
-    ProcessRowParams, ServerSideStoreParams,
+    ProcessRowParams,
+    ServerSideStoreParams,
     TabToNextCellParams,
     TabToNextHeaderParams
 } from "./entities/gridOptions";
@@ -1451,11 +1456,11 @@ export class GridApi {
         return this.navigationService.tabToNextCell(true);
     }
 
-    public getCellRendererInstances(params: GetCellRendererInstancesParams = {}): ICellRendererComp[] {
+    public getCellRendererInstances(params: GetCellRendererInstancesParams = {}): ICellRenderer[] {
         return this.rowRenderer.getCellRendererInstances(params);
     }
 
-    public getCellEditorInstances(params: GetCellEditorInstancesParams = {}): ICellEditorComp[] {
+    public getCellEditorInstances(params: GetCellEditorInstancesParams = {}): ICellEditor[] {
         return this.rowRenderer.getCellEditorInstances(params);
     }
 

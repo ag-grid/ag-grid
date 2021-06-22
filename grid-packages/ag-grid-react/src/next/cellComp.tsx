@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { MutableRefObject, useEffect, useMemo, useRef, useState } from "react";
 import { Context, _, RowNode, Column, RowCtrl, ICellComp, CellCtrl, ICellRendererParams, ICellEditorParams } from "ag-grid-community";
 import { CssClasses } from "./utils";
 
@@ -15,8 +15,11 @@ export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
     const [transition, setTransition] = useState<string | undefined>();
     const [rendererParams, setRendererParams] = useState<ICellRendererParams>();
     const [editorParams, setEditorParams] = useState<ICellEditorParams>();
+    const [tabIndex, setTabIndex] = useState<number>();
 
     const eGui = useRef<HTMLDivElement>(null);
+    const cellRendererRef = useRef<any>(null);
+    const cellEditorRef = useRef<any>(null);
 
     useEffect(() => {
         // const beansToDestroy: any[] = [];
@@ -31,7 +34,7 @@ export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
             setAriaColIndex: index => false, //  setAriaColIndex(this.getGui(), index),
             setHeight: height => setHeight(height),
             setZIndex: zIndex => false, //  style.zIndex = zIndex,
-            setTabIndex: tabIndex => false, //  setAttribute('tabindex', tabIndex.toString()),
+            setTabIndex: tabIndex => setTabIndex(tabIndex),
             setRole: role => false, //  setAttribute('role', role),
             setColId: colId => false, //  setAttribute('col-id', colId),
             setTitle: title => false, //  setAttribute('title', title),
@@ -46,7 +49,7 @@ export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
             setForceWrapper: force => false, // this.forceWrapper = force,
 
             getCellEditor: () => null, // this.cellEditor ? this.cellEditor : null,
-            getCellRenderer: () => null, // this.cellEditor ? this.cellEditor : null,
+            getCellRenderer: () => cellRendererRef.current,
             getParentOfValue: () => eGui.current, // this.eCellValue ? this.eCellValue : null,
 
             // hacks
@@ -75,16 +78,16 @@ export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
     const cellRendererExists = rendererParams && rendererParams.colDef && rendererParams.colDef.cellRendererFramework;
 
     return (
-        <div ref={ eGui } className={ className } style={ cellStyles }>
+        <div ref={ eGui } className={ className } style={ cellStyles } tabIndex={tabIndex}>
             { rendererParams && !cellRendererExists && (rendererParams.valueFormatted != null ? rendererParams.valueFormatted : rendererParams.value) }
-            { rendererParams && cellRendererExists && useCellRenderer(rendererParams) }
+            { rendererParams && cellRendererExists && useCellRenderer(rendererParams, cellRendererRef) }
         </div>
     );
 }
 
-function useCellRenderer(params: ICellRendererParams) {
+function useCellRenderer(params: ICellRendererParams, cellRendererRef: MutableRefObject<any>) {
     const CellRendererClass = params.colDef!.cellRendererFramework!;
     return (
-        <CellRendererClass {...params}></CellRendererClass>
+        <CellRendererClass {...params} ref={cellRendererRef}></CellRendererClass>
     );
 }
