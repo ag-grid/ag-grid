@@ -1,9 +1,8 @@
 export default {
     template: `
       <div class="ag-status-name-value">
-      <span>Row Count Component&nbsp;:</span>
-      <span class="ag-status-name-value-value">{{ count }}</span>
-      </div>
+        <span>Row Count Component&nbsp;:</span>
+        <span class="ag-status-name-value-value">{{ count }}</span>
       </div>
     `,
     data: function () {
@@ -12,12 +11,11 @@ export default {
         };
     },
     beforeMount() {
-    },
-    mounted() {
         this.params.api.addEventListener('gridReady', this.onGridReady.bind(this));
     },
     methods: {
         onGridReady(params) {
+            console.log("here");
             this.count = this.params.api.getModel().rowsToDisplay.length;
         }
     }

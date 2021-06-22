@@ -164,7 +164,20 @@ function getPropertyBindings(bindings: any, componentFileNames: string[], import
             property.name !== 'columnDefs'
         )
         .forEach(property => {
-            if (componentFileNames.length > 0 && property.name === 'components') {
+            if (property.name === 'statusBar') {
+                const jsonStatusBar = JSON5.parse(property.value);
+                jsonStatusBar.statusPanels.forEach(panel => {
+                    if (typeof panel.statusPanel === 'string' && bindings.components.some(component => component.name === panel.statusPanel)) {
+                        panel['statusPanelFramework'] = panel.statusPanel;
+                        delete panel['statusPanel']
+                    }
+                });
+                property.value = JSON.stringify(jsonStatusBar);
+
+                propertyAttributes.push(toInput(property));
+                propertyVars.push(toMember(property));
+                propertyAssignments.push(toAssignment(property));
+            } else if (componentFileNames.length > 0 && property.name === 'components') {
                 // we use bindings.components for vue examples (and not frameworkComponents), except for agDateInput, agColumnHeader, etc which we still need
                 // frameworkComponents for
                 if (bindings.components) {
