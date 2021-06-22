@@ -24,13 +24,14 @@ const gridOptions = {
     },
     columnDefs: columnDefs,
     sideBar: {
-        toolPanels: [{
-            id: 'columns',
-            labelDefault: 'Columns',
-            labelKey: 'columns',
-            iconKey: 'columns',
-            toolPanel: 'agColumnsToolPanel',
-        },
+        toolPanels: [
+            {
+                id: 'columns',
+                labelDefault: 'Columns',
+                labelKey: 'columns',
+                iconKey: 'columns',
+                toolPanel: 'agColumnsToolPanel',
+            },
             {
                 id: 'filters',
                 labelDefault: 'Filters',
@@ -44,7 +45,8 @@ const gridOptions = {
                 labelKey: 'customStats',
                 iconKey: 'custom-stats',
                 toolPanel: 'customStatsToolPanel',
-            }],
+            }
+        ],
         defaultToolPanel: 'customStats'
     },
     components: {
@@ -57,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
+    agGrid.simpleHttpRequest({url: 'https://www.ag-grid.com/example-assets/olympic-winners.json'})
         .then(data => {
             gridOptions.api.setRowData(data);
         });

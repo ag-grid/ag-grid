@@ -164,7 +164,20 @@ function getPropertyBindings(bindings: any, componentFileNames: string[], import
                 property.name !== 'columnDefs'
         )
         .forEach(property => {
-                if (property.name === 'statusBar') {
+                if (property.name === 'sideBar') {
+                    const jsonSidBar = JSON5.parse(property.value);
+                    jsonSidBar.toolPanels.forEach(panel => {
+                        if (typeof panel.toolPanel === 'string' && bindings.components.some(component => component.name === panel.toolPanel)) {
+                            panel['toolPanelFramework'] = panel.toolPanel;
+                            delete panel['toolPanel']
+                        }
+                    });
+                    property.value = JSON.stringify(jsonSidBar);
+
+                    propertyAttributes.push(toInput(property));
+                    propertyVars.push(toMember(property));
+                    propertyAssignments.push(toAssignment(property));
+                } else if (property.name === 'statusBar') {
                     const jsonStatusBar = JSON5.parse(property.value);
                     jsonStatusBar.statusPanels.forEach(panel => {
                         if(typeof panel.statusPanel === 'string' && bindings.components.some(component => component.name === panel.statusPanel)) {
