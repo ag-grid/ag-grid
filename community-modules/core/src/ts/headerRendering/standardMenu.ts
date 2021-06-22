@@ -8,6 +8,7 @@ import { FocusService } from '../focusService';
 import { addCssClass, isVisible } from '../utils/dom';
 import { KeyCode } from '../constants/keyCode';
 import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
+import { ContainerType } from '../interfaces/iAfterGuiAttachedParams';
 
 @Bean('menuFactory')
 export class StandardMenuFactory extends BeanStub implements IMenuFactory {
@@ -42,10 +43,10 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
         }, mouseEvent.target as HTMLElement);
     }
 
-    public showMenuAfterButtonClick(column: Column, eventSource: HTMLElement): void {
+    public showMenuAfterButtonClick(column: Column, eventSource: HTMLElement, containerType: ContainerType): void {
         this.showPopup(column, eMenu => {
             this.popupService.positionPopupUnderComponent({
-                type: 'columnMenu',
+                type: containerType,
                 eventSource,
                 ePopup: eMenu,
                 keepWithinBounds: true,

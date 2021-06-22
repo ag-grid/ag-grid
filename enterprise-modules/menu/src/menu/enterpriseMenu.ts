@@ -24,13 +24,13 @@ import {
     TabbedLayout,
     FocusService,
     IAfterGuiAttachedParams,
-    GridBodyComp
+    GridBodyComp,
+    ContainerType
 } from '@ag-grid-community/core';
 import { MenuList } from './menuList';
 import { MenuItemComponent } from './menuItemComponent';
 import { MenuItemMapper } from './menuItemMapper';
 import { PrimaryColsPanel } from '@ag-grid-enterprise/column-tool-panel';
-import { AfterGuiAttachedParams } from '@ag-grid-community/core/dist/cjs/widgets/popupService';
 
 export interface TabSelectedEvent extends AgEvent {
     key: string;
@@ -69,10 +69,10 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             if (defaultTab) {
                 menu.showTab(defaultTab);
             }
-        }, defaultTab, undefined, mouseEvent.target as HTMLElement);
+        }, 'columnMenu', defaultTab, undefined, mouseEvent.target as HTMLElement);
     }
 
-    public showMenuAfterButtonClick(column: Column, eventSource: HTMLElement, defaultTab?: string, restrictToTabs?: string[]): void {
+    public showMenuAfterButtonClick(column: Column, eventSource: HTMLElement, containerType: ContainerType, defaultTab?: string, restrictToTabs?: string[]): void {
         let multiplier = -1;
         let alignSide: 'left' | 'right' = 'left';
 
@@ -85,7 +85,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             const ePopup = menu.getGui();
 
             this.popupService.positionPopupUnderComponent({
-                type: 'columnMenu',
+                type: containerType,
                 column,
                 eventSource,
                 ePopup,
@@ -98,12 +98,13 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             if (defaultTab) {
                 menu.showTab(defaultTab);
             }
-        }, defaultTab, restrictToTabs, eventSource);
+        }, containerType, defaultTab, restrictToTabs, eventSource);
     }
 
     public showMenu(
         column: Column,
         positionCallback: (menu: EnterpriseMenu) => void,
+        containerType: ContainerType,
         defaultTab?: string,
         restrictToTabs?: string[],
         eventSource?: HTMLElement
@@ -137,7 +138,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             closedCallback: (e?: Event) => { // menu closed callback
                 closedFuncs.forEach(f => f(e));
             },
-            afterGuiAttached: params => menu.afterGuiAttached(params),
+            afterGuiAttached: params => menu.afterGuiAttached(_.assign({}, {container: containerType }, params)),
             positionCallback: () => positionCallback(menu),
             anchorToElement
         });
@@ -511,12 +512,15 @@ export class EnterpriseMenu extends BeanStub {
         return this.tabItemColumns;
     }
 
-    public afterGuiAttached(params: AfterGuiAttachedParams): void {
-        const { hidePopup } = params;
+    public afterGuiAttached(params: IAfterGuiAttachedParams): void {
+        const { container, hidePopup } = params;
 
-        this.tabbedLayout.setAfterAttachedParams({ container: 'columnMenu', hidePopup });
-        this.hidePopupFunc = hidePopup;
-        this.addDestroyFunc(hidePopup);
+        this.tabbedLayout.setAfterAttachedParams({ container, hidePopup });
+
+        if (hidePopup) {
+            this.hidePopupFunc = hidePopup;
+            this.addDestroyFunc(hidePopup);
+        }
     }
 
     public getGui(): HTMLElement {

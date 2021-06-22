@@ -1416,7 +1416,7 @@ export class GridApi {
     public showColumnMenuAfterButtonClick(colKey: string | Column, buttonElement: HTMLElement): void {
         // use grid column so works with pivot mode
         const column = this.columnModel.getGridColumn(colKey);
-        this.menuFactory.showMenuAfterButtonClick(column, buttonElement);
+        this.menuFactory.showMenuAfterButtonClick(column, buttonElement, 'columnMenu');
     }
 
     public showColumnMenuAfterMouseClick(colKey: string | Column, mouseEvent: MouseEvent | Touch): void {

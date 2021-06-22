@@ -289,7 +289,7 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
 
     public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
         if (params) {
-            this.refreshGui(params.container);
+            this.refreshGui(params.container!);
         }
 
         const { filters } = this.params;
