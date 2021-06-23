@@ -1,6 +1,6 @@
 import { Beans } from "./../beans";
 import { Column } from "../../entities/column";
-import { NewValueParams } from "../../entities/colDef";
+import { ColDef, NewValueParams } from "../../entities/colDef";
 import { CellChangedEvent, RowNode } from "../../entities/rowNode";
 import { CellPosition } from "../../entities/cellPosition";
 import {
@@ -26,6 +26,7 @@ import { CellKeyboardListenerFeature } from "./cellKeyboardListenerFeature";
 import { ICellRenderer, ICellRendererParams } from "../cellRenderers/iCellRenderer";
 import { ICellEditor, ICellEditorParams } from "../../interfaces/iCellEditor";
 import { KeyCode } from "../../constants/keyCode";
+import { CellRendererComponent } from "../../components/framework/componentTypes";
 
 const CSS_CELL = 'ag-cell';
 const CSS_AUTO_HEIGHT = 'ag-cell-auto-height';
@@ -85,6 +86,7 @@ export class CellCtrl extends BeanStub {
     private beans: Beans;
     private gow: GridOptionsWrapper;
     private column: Column;
+    private colDef: ColDef;
     private rowNode: RowNode;
     private rowCtrl: RowCtrl | null;
 
@@ -117,6 +119,7 @@ export class CellCtrl extends BeanStub {
     constructor(column: Column, rowNode: RowNode, beans: Beans, rowCtrl: RowCtrl | null) {
         super();
         this.column = column;
+        this.colDef = column.getColDef();
         this.rowNode = rowNode;
         this.beans = beans;
         this.rowCtrl = rowCtrl;
@@ -204,6 +207,11 @@ export class CellCtrl extends BeanStub {
         const params = this.createCellRendererParams();
         this.cellComp.showRenderer(params,  forceNewCellRendererInstance);
         this.refreshHandle();
+    }
+
+    private pickCellRenderer(params: ICellRendererParams): any {
+        this.beans.userComponentFactory.lookupComponentClassDef(
+            this.colDef, CellRendererComponent.propertyName, params, null);
     }
 
     private setupControlComps(): void {

@@ -310,7 +310,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         let cellRendererPromise: AgPromise<ICellRendererComp> | null = null;
 
         // we check if cell renderer provided for the group cell renderer, eg colDef.cellRendererParams.innerRenderer
-        const groupInnerRendererClass: ComponentClassDef<any, any, any> = this.userComponentFactory
+        const groupInnerRendererClass: ComponentClassDef = this.userComponentFactory
             .lookupComponentClassDef(groupCellRendererParams, "innerRenderer")!;
 
         if (groupInnerRendererClass && groupInnerRendererClass.component != null
@@ -319,7 +319,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
             cellRendererPromise = this.userComponentFactory.newInnerCellRenderer(groupCellRendererParams, params);
         } else {
             // otherwise see if we can use the cellRenderer of the column we are grouping by
-            const groupColumnRendererClass: ComponentClassDef<any, any, any> = this.userComponentFactory
+            const groupColumnRendererClass: ComponentClassDef = this.userComponentFactory
                 .lookupComponentClassDef(groupedColumnDef, "cellRenderer")!;
 
             if (

@@ -4,8 +4,6 @@ import { FrameworkComponentWrapper } from "./frameworkComponentWrapper";
 import { IComponent } from "../../interfaces/iComponent";
 import { ColDef, ColGroupDef } from "../../entities/colDef";
 import {
-    AgGridComponentFunctionInput,
-    AgGridRegisteredComponentInput,
     RegisteredComponent,
     RegisteredComponentSource,
     UserComponentRegistry
@@ -58,9 +56,6 @@ export type DefinitionObject =
     | ToolPanelDef
     | StatusPanelDef;
 
-export type AgComponentPropertyInput<A extends IComponent<TParams>, TParams> =
-    AgGridRegisteredComponentInput<A> | string | boolean;
-
 export enum ComponentSource {
     DEFAULT, REGISTERED_BY_NAME, HARDCODED
 }
@@ -74,11 +69,17 @@ export interface ComponentSelectorResult {
  * B the business interface (ie IHeader)
  * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
  */
-export interface ComponentClassDef<A extends IComponent<TParams> & B, B, TParams> {
-    component: { new(): A; } | { new(): B; } | null;
+export interface ComponentClassDef {
+    component: any; // not typing, as can be component from any framework
     componentFromFramework: boolean; // true if component came from framework eg React or Angular
     source: ComponentSource; // [Default, Registered by Name, Hard Coded]
-    paramsFromSelector: TParams | null; // Params the selector function provided, if any
+    paramsFromSelector: any; // Params the selector function provided, if any
+}
+
+export interface ComponentAndParams {
+    component: any;
+    componentFromFramework: boolean;
+    params: any;
 }
 
 @Bean('userComponentFactory')
@@ -123,6 +124,10 @@ export class UserComponentFactory extends BeanStub {
         return this.createAndInitUserComponent(target, params, CellRendererComponent, null, true);
     }
 
+    public getCellRendererDetails(defObject: ColDef | IRichCellEditorParams, params: ICellRendererParams): any {
+        return this.getCompDetails(defObject, CellRendererComponent.propertyName, params);
+    }
+
     public newCellEditor(colDef: ColDef, params: ICellEditorParams): AgPromise<ICellEditorComp> | null {
         return this.createAndInitUserComponent(colDef, params, CellEditorComponent, 'agCellEditor');
     }
@@ -163,6 +168,24 @@ export class UserComponentFactory extends BeanStub {
 
     public newStatusPanelComponent(def: StatusPanelDef, params: IStatusPanelParams): AgPromise<IStatusPanelComp> | null {
         return this.createAndInitUserComponent(def, params, StatusPanelComponent);
+    }
+
+    public getCompDetails(defObject: DefinitionObject, propName: string, params: ICellRendererParams, mandatory = false): ComponentAndParams | null {
+        const compClassDef = this.lookupComponentClassDef(defObject, propName, params);
+        if (!compClassDef || !compClassDef.component) {
+            if (mandatory) {
+                this.logComponentMissing(defObject, propName);
+            }
+            return null;
+        }
+        const paramsMerged = this.mergeParmsWithApplicationProvidedParams(
+            defObject, propName, params, compClassDef.paramsFromSelector);
+
+        return {
+            component: compClassDef.component,
+            componentFromFramework: compClassDef.componentFromFramework,
+            params: paramsMerged
+        };
     }
 
     /**
@@ -267,12 +290,12 @@ export class UserComponentFactory extends BeanStub {
      *      invoked
      *  @param defaultComponentName: The name of the component to load if there is no component specified
      */
-    public lookupComponentClassDef<A extends IComponent<TParams> & B, B, TParams>(
+    public lookupComponentClassDef(
         definitionObject: DefinitionObject,
         propertyName: string,
-        params: TParams | null = null,
+        params: any = null,
         defaultComponentName?: string | null
-    ): ComponentClassDef<A, B, TParams> | null {
+    ): ComponentClassDef | null {
         /**
          * There are five things that can happen when resolving a component.
          *  a) HardcodedFwComponent: That holder[propertyName]Framework has associated a Framework native component
@@ -282,15 +305,15 @@ export class UserComponentFactory extends BeanStub {
          *  e) That none of the three previous are specified, then we need to use the DefaultRegisteredComponent
          */
         let hardcodedNameComponent: string | null = null;
-        let HardcodedJsComponent: { new(): A; } | null = null;
-        let hardcodedJsFunction: AgGridComponentFunctionInput | null = null;
-        let HardcodedFwComponent: { new(): B; } | null = null;
-        let componentSelectorFunc: ((params: TParams | null) => ComponentSelectorResult) | null = null;
+        let HardcodedJsComponent: any = null;
+        let hardcodedJsFunction: any = null;
+        let HardcodedFwComponent: any = null;
+        let componentSelectorFunc: ((params: any) => ComponentSelectorResult) | null = null;
 
         const componentSelectorFuncKey = propertyName + "Selector";
 
         if (definitionObject != null) {
-            const componentPropertyValue: AgComponentPropertyInput<IComponent<TParams>, TParams> = (definitionObject as any)[propertyName];
+            const componentPropertyValue = (definitionObject as any)[propertyName];
             // for filters only, we allow 'true' for the component, which means default filter to be used
             const usingDefaultComponent = componentPropertyValue === true;
             if (componentPropertyValue != null && !usingDefaultComponent) {
@@ -300,9 +323,9 @@ export class UserComponentFactory extends BeanStub {
                     // never happens, as we test for usingDefaultComponent above,
                     // however it's needed for the next block to compile
                 } else if (this.agComponentUtils.doesImplementIComponent(componentPropertyValue)) {
-                    HardcodedJsComponent = componentPropertyValue as { new(): A; };
+                    HardcodedJsComponent = componentPropertyValue;
                 } else {
-                    hardcodedJsFunction = componentPropertyValue as AgGridComponentFunctionInput;
+                    hardcodedJsFunction = componentPropertyValue;
                 }
             }
             HardcodedFwComponent = (definitionObject as any)[propertyName + "Framework"];
@@ -365,7 +388,7 @@ export class UserComponentFactory extends BeanStub {
         if (hardcodedJsFunction) {
             // console.warn(`ag-grid: Since version 12.1.0 specifying a function directly is deprecated, you should register the component by name`);
             // console.warn(`${hardcodedJsFunction}`);
-            return this.agComponentUtils.adaptFunction(propertyName, hardcodedJsFunction, false, ComponentSource.HARDCODED) as ComponentClassDef<A, B, TParams>;
+            return this.agComponentUtils.adaptFunction(propertyName, hardcodedJsFunction, false, ComponentSource.HARDCODED);
         }
 
         let componentNameToUse: string | null | undefined;
@@ -393,7 +416,7 @@ export class UserComponentFactory extends BeanStub {
             return null;
         }
 
-        const registeredCompClassDef = this.lookupFromRegisteredComponents(propertyName, componentNameToUse) as ComponentClassDef<A, B, TParams>;
+        const registeredCompClassDef = this.lookupFromRegisteredComponents(propertyName, componentNameToUse);
 
         if (!registeredCompClassDef) {
             return null;
@@ -410,9 +433,9 @@ export class UserComponentFactory extends BeanStub {
     private lookupFromRegisteredComponents<A extends IComponent<TParams> & B, B, TParams>(
         propertyName: string,
         componentNameOpt?: string
-    ): ComponentClassDef<A, B, TParams> | null {
+    ): any {
         const componentName: string = componentNameOpt != null ? componentNameOpt : propertyName;
-        const registeredComponent: RegisteredComponent<A, B> | null = this.userComponentRegistry.retrieve(componentName);
+        const registeredComponent: any = this.userComponentRegistry.retrieve(componentName);
 
         if (registeredComponent == null) {
             return null;
@@ -429,7 +452,7 @@ export class UserComponentFactory extends BeanStub {
         }
 
         //If it is JS it may be a function or a component
-        if (this.agComponentUtils.doesImplementIComponent(registeredComponent.component as AgGridRegisteredComponentInput<A>)) {
+        if (this.agComponentUtils.doesImplementIComponent(registeredComponent.component)) {
             return {
                 component: registeredComponent.component as { new(): A; },
                 componentFromFramework: false,
@@ -441,7 +464,7 @@ export class UserComponentFactory extends BeanStub {
         // This is a function
         return this.agComponentUtils.adaptFunction(
             propertyName,
-            registeredComponent.component as AgGridComponentFunctionInput,
+            registeredComponent.component,
             registeredComponent.componentFromFramework,
             (registeredComponent.source == RegisteredComponentSource.REGISTERED) ? ComponentSource.REGISTERED_BY_NAME : ComponentSource.DEFAULT
         );
@@ -482,34 +505,38 @@ export class UserComponentFactory extends BeanStub {
         return params;
     }
 
-    private createComponentInstance<A extends IComponent<TParams> & B, B, TParams>(
+    private logComponentMissing(holder: any, propertyName: string, defaultComponentName?: string | null): void {
+        // to help the user, we print out the name they are looking for, rather than the default name.
+        // i don't know why the default name was originally printed out (that doesn't help the user)
+        const overrideName = holder ? (holder as any)[propertyName] : defaultComponentName;
+        const nameToReport = overrideName ? overrideName : defaultComponentName;
+        console.error(`Could not find component ${nameToReport}, did you forget to configure this component?`);
+    }
+
+    private createComponentInstance(
         holder: DefinitionObject,
         componentType: ComponentType,
-        paramsForSelector: TParams,
+        paramsForSelector: any,
         defaultComponentName: string | null | undefined,
         optional: boolean
-    ): { componentInstance: A, paramsFromSelector: any; } | null {
+    ): { componentInstance: any, paramsFromSelector: any; } | null {
         const propertyName = componentType.propertyName;
-        const componentToUse: ComponentClassDef<A, B, TParams> =
-            this.lookupComponentClassDef(holder, propertyName, paramsForSelector, defaultComponentName) as ComponentClassDef<A, B, TParams>;
 
-        const missing = !componentToUse || !componentToUse.component;
-        if (missing) {
-            // to help the user, we print out the name they are looking for, rather than the default name.
-            // i don't know why the default name was originally printed out (that doesn't help the user)
-            const overrideName = holder ? (holder as any)[propertyName] : defaultComponentName;
-            const nameToReport = overrideName ? overrideName : defaultComponentName;
+        const componentToUse =
+            this.lookupComponentClassDef(holder, propertyName, paramsForSelector, defaultComponentName);
+
+        if (!componentToUse || !componentToUse.component) {
             if (!optional) {
-                console.error(`Could not find component ${nameToReport}, did you forget to configure this component?`);
+                this.logComponentMissing(holder, propertyName, defaultComponentName);
             }
             return null;
         }
 
-        let componentInstance: A;
+        let componentInstance: any;
 
         if (componentToUse.componentFromFramework) {
             // Using framework component
-            const FrameworkComponentRaw: { new(): B; } | null = componentToUse.component;
+            const FrameworkComponentRaw: any = componentToUse.component;
             const thisComponentConfig: ComponentMetadata = this.componentMetadataProvider.retrieve(propertyName);
             componentInstance = this.frameworkComponentWrapper.wrap(
                 FrameworkComponentRaw,
@@ -520,7 +547,7 @@ export class UserComponentFactory extends BeanStub {
             );
         } else {
             // Using plain JavaScript component
-            componentInstance = new componentToUse.component!() as A;
+            componentInstance = new componentToUse.component!();
         }
 
         return { componentInstance: componentInstance, paramsFromSelector: componentToUse.paramsFromSelector };

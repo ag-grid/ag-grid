@@ -82,7 +82,6 @@ import {
     VirtualRowRemovedEvent
 } from "../events";
 import { IComponent } from "../interfaces/iComponent";
-import { AgGridRegisteredComponentInput } from "../components/framework/userComponentRegistry";
 import { ILoadingOverlayComp } from "../rendering/overlays/loadingOverlayComponent";
 import { INoRowsOverlayComp } from "../rendering/overlays/noRowsOverlayComponent";
 import { StatusPanelDef } from "../interfaces/iStatusPanel";
@@ -367,7 +366,7 @@ export interface GridOptions {
     paginationNumberFormatter?: (params: PaginationNumberFormatterParams) => string;
     postProcessPopup?: (params: PostProcessPopupParams) => void;
     frameworkComponents?: { [p: string]: { new(): any; }; } | any;
-    components?: { [p: string]: AgGridRegisteredComponentInput<IComponent<any>>; };
+    components?: { [p: string]: any; };
     groupRowRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
     groupRowRendererFramework?: any;
     groupRowRendererParams?: any;

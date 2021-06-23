@@ -47,7 +47,7 @@ import { ValueCache } from "./valueService/valueCache";
 import { ChangeDetectionService } from "./valueService/changeDetectionService";
 import { AlignedGridsService } from "./alignedGridsService";
 import { UserComponentFactory } from "./components/framework/userComponentFactory";
-import { AgGridRegisteredComponentInput, UserComponentRegistry } from "./components/framework/userComponentRegistry";
+import { UserComponentRegistry } from "./components/framework/userComponentRegistry";
 import { AgComponentUtils } from "./components/framework/agComponentUtils";
 import { ComponentMetadataProvider } from "./components/framework/componentMetadataProvider";
 import { Beans } from "./rendering/beans";
@@ -226,7 +226,7 @@ export class GridCoreCreator {
     private registerModuleUserComponents(context: Context, registeredModules: Module[]): void {
         const userComponentRegistry: UserComponentRegistry = context.getBean('userComponentRegistry');
 
-        const moduleUserComps: { componentName: string, componentClass: AgGridRegisteredComponentInput<IComponent<any>>; }[]
+        const moduleUserComps: { componentName: string, componentClass: any; }[]
             = this.extractModuleEntity(registeredModules,
                 (module) => module.userComponents ? module.userComponents : []);
 

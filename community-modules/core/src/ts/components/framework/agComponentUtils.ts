@@ -1,8 +1,7 @@
 import { Autowired, Bean } from "../../context/context";
-import { AgGridComponentFunctionInput, AgGridRegisteredComponentInput } from "./userComponentRegistry";
 import { IComponent } from "../../interfaces/iComponent";
 import { ComponentMetadata, ComponentMetadataProvider } from "./componentMetadataProvider";
-import { ComponentClassDef, ComponentSource } from "./userComponentFactory";
+import { ComponentSource } from "./userComponentFactory";
 import { ICellRendererComp, ICellRendererParams } from "../../rendering/cellRenderers/iCellRenderer";
 import { BeanStub } from "../../context/beanStub";
 import { loadTemplate } from "../../utils/dom";
@@ -15,10 +14,10 @@ export class AgComponentUtils extends BeanStub {
 
     public adaptFunction<A extends IComponent<any> & B, B, TParams>(
         propertyName: string,
-        hardcodedJsFunction: AgGridComponentFunctionInput,
+        hardcodedJsFunction: any,
         componentFromFramework: boolean,
         source: ComponentSource
-    ): ComponentClassDef<A, B, TParams> | null {
+    ): any {
         if (hardcodedJsFunction == null) {
             return {
                 component: null,
@@ -40,7 +39,7 @@ export class AgComponentUtils extends BeanStub {
         return null;
     }
 
-    public adaptCellRendererFunction(callback: AgGridComponentFunctionInput): { new(): IComponent<ICellRendererParams>; } {
+    public adaptCellRendererFunction(callback: any): { new(): IComponent<ICellRendererParams>; } {
         class Adapter implements ICellRendererComp {
             private params: ICellRendererParams;
 
@@ -65,7 +64,7 @@ export class AgComponentUtils extends BeanStub {
         return Adapter;
     }
 
-    public doesImplementIComponent(candidate: AgGridRegisteredComponentInput<IComponent<any>>): boolean {
+    public doesImplementIComponent(candidate: any): boolean {
         if (!candidate) { return false; }
         return (candidate as any).prototype && 'getGui' in (candidate as any).prototype;
     }

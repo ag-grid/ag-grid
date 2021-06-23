@@ -34,17 +34,11 @@ export enum RegisteredComponentSource {
  * B the business interface (ie IHeader)
  * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
  */
-export interface RegisteredComponent<A extends IComponent<any> & B, B> {
-    component: RegisteredComponentInput<A, B>;
+export interface RegisteredComponent {
+    component: any;
     componentFromFramework: boolean;
     source: RegisteredComponentSource;
 }
-
-export type RegisteredComponentInput<A extends IComponent<any> & B, B> =
-    AgGridRegisteredComponentInput<A>
-    | { new(): B; };
-export type AgGridRegisteredComponentInput<A extends IComponent<any>> = AgGridComponentFunctionInput | { new(): A; };
-export type AgGridComponentFunctionInput = (params: any) => string | HTMLElement;
 
 export interface DeprecatedComponentName {
     propertyHolder: string;
@@ -57,7 +51,7 @@ export class UserComponentRegistry extends BeanStub {
     @Autowired('gridOptions')
     private gridOptions: GridOptions;
 
-    private agGridDefaults: { [key: string]: AgGridRegisteredComponentInput<any>; } = {
+    private agGridDefaults: { [key: string]: any } = {
         //date
         agDateInput: DefaultDateComponent,
 
@@ -156,8 +150,8 @@ export class UserComponentRegistry extends BeanStub {
         }
 
     };
-    private jsComponents: { [key: string]: AgGridRegisteredComponentInput<any>; } = {};
-    private frameworkComponents: { [key: string]: { new(): any; }; } = {};
+    private jsComponents: { [key: string]: any } = {};
+    private frameworkComponents: { [key: string]: any } = {};
 
     @PostConstruct
     private init(): void {
@@ -171,7 +165,7 @@ export class UserComponentRegistry extends BeanStub {
         }
     }
 
-    public registerDefaultComponent<A extends IComponent<any>>(rawName: string, component: AgGridRegisteredComponentInput<A>) {
+    public registerDefaultComponent(rawName: string, component: any) {
         const name = this.translateIfDeprecated(rawName);
 
         if (this.agGridDefaults[name]) {
@@ -182,7 +176,7 @@ export class UserComponentRegistry extends BeanStub {
         this.agGridDefaults[name] = component;
     }
 
-    public registerComponent<A extends IComponent<any>>(rawName: string, component: AgGridRegisteredComponentInput<A>) {
+    public registerComponent(rawName: string, component: any) {
         const name = this.translateIfDeprecated(rawName);
 
         if (this.frameworkComponents[name]) {
@@ -212,14 +206,14 @@ export class UserComponentRegistry extends BeanStub {
      * B the business interface (ie IHeader)
      * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
      */
-    public retrieve<A extends IComponent<any> & B, B>(rawName: string): RegisteredComponent<A, B> | null {
+    public retrieve(rawName: string): any {
         const name = this.translateIfDeprecated(rawName);
         const frameworkComponent = this.frameworkComponents[name];
 
         if (frameworkComponent) {
             return {
                 componentFromFramework: true,
-                component: frameworkComponent as { new(): B; },
+                component: frameworkComponent,
                 source: RegisteredComponentSource.REGISTERED
             };
         }
@@ -229,7 +223,7 @@ export class UserComponentRegistry extends BeanStub {
         if (jsComponent) {
             return {
                 componentFromFramework: false,
-                component: jsComponent as { new(): A; },
+                component: jsComponent,
                 source: RegisteredComponentSource.REGISTERED
             };
         }
@@ -239,7 +233,7 @@ export class UserComponentRegistry extends BeanStub {
         if (defaultComponent) {
             return {
                 componentFromFramework: false,
-                component: defaultComponent as { new(): A; },
+                component: defaultComponent,
                 source: RegisteredComponentSource.DEFAULT
             };
         }
