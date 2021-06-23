@@ -336,7 +336,7 @@ export class CellComp extends Component implements TooltipParentComp {
         if (this.cellRenderer == null || this.cellRenderer.refresh == null) { return false; }
 
         // take any custom params off of the user
-        const finalParams = this.beans.userComponentFactory.mergeParmsWithApplicationProvidedParams(this.column.getColDef(), CellComp.CELL_RENDERER_TYPE_NORMAL, params);
+        const finalParams = this.beans.userComponentFactory.mergeParamsWithApplicationProvidedParams(this.column.getColDef(), CellComp.CELL_RENDERER_TYPE_NORMAL, params);
 
         const result = this.cellRenderer.refresh(finalParams);
 

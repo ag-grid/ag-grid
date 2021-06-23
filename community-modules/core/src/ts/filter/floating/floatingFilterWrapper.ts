@@ -248,7 +248,7 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
         const colDef = this.column.getColDef();
         const defaultFloatingFilterType = FloatingFilterWrapper.getDefaultFloatingFilterType(colDef);
         const filterParams = this.filterManager.createFilterParams(this.column, colDef);
-        const finalFilterParams = this.userComponentFactory.mergeParmsWithApplicationProvidedParams(colDef, 'filter', filterParams);
+        const finalFilterParams = this.userComponentFactory.mergeParamsWithApplicationProvidedParams(colDef, 'filter', filterParams);
 
         const params: IFloatingFilterParams = {
             api: this.gridApi,
