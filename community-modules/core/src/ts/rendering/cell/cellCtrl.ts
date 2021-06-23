@@ -27,6 +27,7 @@ import { ICellRenderer, ICellRendererParams } from "../cellRenderers/iCellRender
 import { ICellEditor, ICellEditorParams } from "../../interfaces/iCellEditor";
 import { KeyCode } from "../../constants/keyCode";
 import { CellRendererComponent } from "../../components/framework/componentTypes";
+import { CompClassAndParams } from "../../components/framework/userComponentFactory";
 
 const CSS_CELL = 'ag-cell';
 const CSS_AUTO_HEIGHT = 'ag-cell-auto-height';
@@ -66,8 +67,8 @@ export interface ICellComp {
     getCellRenderer(): ICellRenderer | null;
     getParentOfValue(): HTMLElement | null;
 
-    showRenderer(params: ICellRendererParams, forceNewCellRendererInstance: boolean): void;
-    showEditor(params: ICellEditorParams): void;
+    showRenderer(valueToDisplay: any, compClassAndParams: CompClassAndParams | undefined, forceNewCellRendererInstance: boolean): void;
+    showEditor(compClassAndParams: CompClassAndParams): void;
 
     // hacks
     addRowDragging(customElement?: HTMLElement, dragStartPixels?: number): void;
@@ -204,14 +205,11 @@ export class CellCtrl extends BeanStub {
 
     private showRenderer(forceNewCellRendererInstance = false): void {
         this.setEditing(false);
+        const valueToDisplay = this.valueFormatted != null ? this.valueFormatted : this.value;
         const params = this.createCellRendererParams();
-        this.cellComp.showRenderer(params,  forceNewCellRendererInstance);
+        const cellRendererDetails = this.beans.userComponentFactory.getCellRendererDetails(this.colDef, params);
+        this.cellComp.showRenderer(valueToDisplay, cellRendererDetails, forceNewCellRendererInstance);
         this.refreshHandle();
-    }
-
-    private pickCellRenderer(params: ICellRendererParams): any {
-        this.beans.userComponentFactory.lookupComponentClassDef(
-            this.colDef, CellRendererComponent.propertyName, params, null);
     }
 
     private setupControlComps(): void {
@@ -253,7 +251,8 @@ export class CellCtrl extends BeanStub {
         this.setEditing(true);
 
         const editorParams = this.createCellEditorParams(keyPress, charPress, cellStartedEdit);
-        this.cellComp.showEditor(editorParams);
+        const compAndParams = this.beans.userComponentFactory.getCellEditorDetails(this.colDef, editorParams);
+        this.cellComp.showEditor(compAndParams!);
 
         const event: CellEditingStartedEvent = this.createEvent(null, Events.EVENT_CELL_EDITING_STARTED);
         this.beans.eventService.dispatchEvent(event);
@@ -391,8 +390,8 @@ export class CellCtrl extends BeanStub {
         } : null;
 
         return {
-            value: this.getValue(),
-            valueFormatted: this.getValueFormatted(),
+            value: this.value,
+            valueFormatted: this.valueFormatted,
             getValue: this.getValueFromValueService.bind(this),
             setValue: value => this.beans.valueService.setValue(this.rowNode, this.column, value),
             formatValue: this.formatValue.bind(this),

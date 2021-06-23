@@ -1,25 +1,25 @@
 import React, { MutableRefObject, useEffect, useMemo, useRef, useState } from "react";
 import { Context, _, RowNode, Column, RowCtrl, ICellComp, CellCtrl, ICellRendererParams, ICellEditorParams } from "ag-grid-community";
 import { CssClasses } from "./utils";
+import { CompClassAndParams } from "ag-grid-community/dist/cjs/components/framework/userComponentFactory";
 
 export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
                                 printLayout: boolean, editingRow: boolean}) {
 
-    const { cellCtrl, context, printLayout, editingRow } = props;
+    const { cellCtrl, printLayout, editingRow } = props;
 
     const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses());
     const [userStyles, setUserStyles] = useState<any>();
     const [showEditor, setShowEditor] = useState<boolean>();
     const [showRenderer, setShowRenderer] = useState<boolean>();
-    const [editorComp, setEditorComp] = useState<any>();
-    const [rendererComp, setRendererComp] = useState<any>();
 
     const [left, setLeft] = useState<string | undefined>();
     const [width, setWidth] = useState<string | undefined>();
     const [height, setHeight] = useState<string | undefined>();
     const [transition, setTransition] = useState<string | undefined>();
-    const [rendererParams, setRendererParams] = useState<ICellRendererParams>();
-    const [editorParams, setEditorParams] = useState<ICellEditorParams>();
+    const [rendererCompDetails, setRendererCompDetails] = useState<CompClassAndParams>();
+    const [valueToDisplay, setValueToDisplay] = useState<any>();
+    const [editorCompDetails, setEditorCompDetails] = useState<CompClassAndParams>();
     const [tabIndex, setTabIndex] = useState<number>();
 
     const eGui = useRef<HTMLDivElement>(null);
@@ -45,16 +45,17 @@ export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
             setTitle: title => false, //  setAttribute('title', title),
             setUnselectable: value => false, //  setAttribute('unselectable', value, this.eCellValue),
             setTransition: transition => setTransition(transition),
-            showRenderer: (params, force) => {
-                setRendererParams(params);
+            showRenderer: (valueToDisplay, compClassAndParams, force) => {
+                setRendererCompDetails(compClassAndParams);
+                setValueToDisplay(valueToDisplay);
                 setShowRenderer(true);
-                setEditorParams(undefined);
+                setEditorCompDetails(undefined);
                 setShowEditor(false);
             },
-            showEditor: params => {
-                setEditorParams(params)
+            showEditor: compClassAndParams => {
+                setEditorCompDetails(compClassAndParams)
                 setShowEditor(true);
-                setRendererParams(undefined);
+                setRendererCompDetails(undefined);
                 setShowRenderer(false);
             },
             setIncludeSelection: include => false, // this.includeSelection = include,
@@ -89,37 +90,31 @@ export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
 
     _.assign(cellStyles, userStyles);
 
-    const cellRendererExists = rendererParams && rendererParams.colDef && rendererParams.colDef.cellRendererFramework;
-
-    // const cellEditorExists = editorParams && editorParams.colDef && editorParams.colDef.cellEditorFramework;
-
     return (
         <div ref={ eGui } className={ className } style={ cellStyles } tabIndex={tabIndex}>
-            { showRenderer && !cellRendererExists && createValueJsx(rendererParams!) }
-            { showRenderer && cellRendererExists && createRendererJsx(rendererParams!, cellRendererRef) }
-            { showEditor && createEditorJsx(editorParams!, cellEditorRef) }
+            { showRenderer && !rendererCompDetails && createValueJsx(valueToDisplay) }
+            { showRenderer && rendererCompDetails && createRendererJsx(rendererCompDetails, cellRendererRef) }
+            { showEditor && editorCompDetails && createEditorJsx(editorCompDetails, cellEditorRef) }
         </div>
     );
 }
 
-function createValueJsx(params: ICellRendererParams) {
-    const valueToRender = params.valueFormatted != null ? params.valueFormatted : params.value;
+function createValueJsx(valueToDisplay: any) {
     return (
-        <>{valueToRender}</>
+        <>{valueToDisplay}</>
     );
 }
 
-function createRendererJsx(params: ICellRendererParams, cellRendererRef: MutableRefObject<any>) {
-    const CellRendererClass = params.colDef!.cellRendererFramework!;
+function createRendererJsx(rendererCompDetails: CompClassAndParams, cellRendererRef: MutableRefObject<any>) {
+    const CellRendererClass = rendererCompDetails.componentClass;
     return (
-        <CellRendererClass {...params} ref={cellRendererRef}></CellRendererClass>
+        <CellRendererClass {...rendererCompDetails.params} ref={cellRendererRef}></CellRendererClass>
     );
 }
 
-function createEditorJsx(params: ICellEditorParams, cellEditorRef: MutableRefObject<any>) {
-    const CellEditorClass = params.colDef!.cellEditorFramework!;
-    if (!CellEditorClass) { return; }
+function createEditorJsx(editorCompDetails: CompClassAndParams, cellEditorRef: MutableRefObject<any>) {
+    const CellEditorClass = editorCompDetails.componentClass;
     return (
-        <CellEditorClass {...params} ref={cellEditorRef}></CellEditorClass>
+        <CellEditorClass {...editorCompDetails.params} ref={cellEditorRef}></CellEditorClass>
     );
 }

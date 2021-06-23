@@ -118,23 +118,31 @@ export class UserComponentFactory extends BeanStub {
             cellRendererName);
     }
 
+    // CELL RENDERER
     public newCellRenderer(
         def: ColDef | IRichCellEditorParams,
         params: ICellRendererParams): AgPromise<ICellRendererComp> | null {
         return this.lookupAndCreateComponent(def, params, CellRendererComponent, null, true);
     }
-
-    public getCellRendererDetails(defObject: ColDef | IRichCellEditorParams, params: ICellRendererParams): any {
-        return this.lookupComponentAndParams(defObject, CellRendererComponent.propertyName, null, params);
+    public getCellRendererDetails(def: ColDef | IRichCellEditorParams, params: ICellRendererParams): CompClassAndParams | undefined {
+        return this.getCompDetails(def, CellRendererComponent.propertyName, null, params);
     }
-
     public createCellRenderer(compClassAndParams: CompClassAndParams): AgPromise<ICellRendererComp> | null {
         return this.createAndInitComponent(compClassAndParams, CellRendererComponent)
     }
 
+    // CELL EDITOR
     public newCellEditor(colDef: ColDef, params: ICellEditorParams): AgPromise<ICellEditorComp> | null {
         return this.lookupAndCreateComponent(colDef, params, CellEditorComponent, 'agCellEditor');
     }
+    public getCellEditorDetails(def: ColDef, params: ICellEditorParams): CompClassAndParams | undefined {
+        return this.getCompDetails(def, CellEditorComponent.propertyName, 'agCellEditor', params, true);
+    }
+    public createCellEditor(compClassAndParams: CompClassAndParams): AgPromise<ICellEditorComp> | null {
+        return this.createAndInitComponent(compClassAndParams, CellEditorComponent)
+    }
+
+
 
     public newInnerCellRenderer(def: GroupCellRendererParams, params: ICellRendererParams): AgPromise<ICellRendererComp> | null {
         return this.lookupAndCreateComponent(def, params, InnerRendererComponent, null);
@@ -174,14 +182,15 @@ export class UserComponentFactory extends BeanStub {
         return this.lookupAndCreateComponent(def, params, StatusPanelComponent);
     }
 
-    public lookupComponentAndParams(defObject: DefinitionObject, propName: string, defaultName: string | null | undefined, params: any, mandatory = false): CompClassAndParams | undefined {
-        const compClassDef = this.lookupComponentClassDef(defObject, propName, params, defaultName);
+    private getCompDetails(defObject: DefinitionObject, propName: string, defaultName: string | null | undefined, params: any, mandatory = false): CompClassAndParams | undefined {
+        const compClassDef = this.lookupComponent(defObject, propName, params, defaultName);
         if (!compClassDef || !compClassDef.component) {
             if (mandatory) {
                 this.logComponentMissing(defObject, propName);
             }
             return undefined;
         }
+
         const paramsMerged = this.mergeParamsWithApplicationProvidedParams(
             defObject, propName, params, compClassDef.paramsFromSelector);
 
@@ -215,7 +224,7 @@ export class UserComponentFactory extends BeanStub {
         optional = false
     ): AgPromise<any> | null {
 
-        const compClassAndParams = this.lookupComponentAndParams(
+        const compClassAndParams = this.getCompDetails(
             def, componentType.propertyName, defaultComponentName, paramsFromGrid, !optional);
 
         if (!compClassAndParams) { return null; }
@@ -292,7 +301,7 @@ export class UserComponentFactory extends BeanStub {
      *      invoked
      *  @param defaultComponentName: The name of the component to load if there is no component specified
      */
-    public lookupComponentClassDef(
+    public lookupComponent(
         definitionObject: DefinitionObject,
         propertyName: string,
         params: any = null,
@@ -345,10 +354,6 @@ export class UserComponentFactory extends BeanStub {
             (hardcodedJsFunction && HardcodedFwComponent)
         ) {
             throw Error("ag-grid: you are trying to specify: " + propertyName + " twice as a component.");
-        }
-
-        if (HardcodedFwComponent && !this.frameworkComponentWrapper) {
-            throw Error("ag-grid: you are specifying a framework component but you are not using a framework version of ag-grid for : " + propertyName);
         }
 
         if (componentSelectorFunc && (hardcodedNameComponent || HardcodedJsComponent || hardcodedJsFunction || HardcodedFwComponent)) {
