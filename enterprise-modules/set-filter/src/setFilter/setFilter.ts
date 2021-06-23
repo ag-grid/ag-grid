@@ -409,7 +409,7 @@ export class SetFilter extends ProvidedFilter<SetFilterModel> {
             eMiniFilter.getFocusableElement().focus();
         }
 
-        const resizable = !!(params && params.hidePopup);
+        const resizable = !!(params && params.container === 'floatingFilter');
         let resizableObject: ResizableStructure;
 
         if (this.gridOptionsWrapper.isEnableRtl()) {
@@ -418,7 +418,13 @@ export class SetFilter extends ProvidedFilter<SetFilterModel> {
             resizableObject = { bottom: true, bottomRight: true, right: true };
         }
 
-        this.positionableFeature.setResizable(resizable ? resizableObject : false);
+        if (resizable) {
+            this.positionableFeature.restoreLastSize();
+            this.positionableFeature.setResizable(resizableObject);
+        } else {
+            this.positionableFeature.removeSizeFromEl();
+            this.positionableFeature.setResizable(false);
+        }
     }
 
     public applyModel(): boolean {

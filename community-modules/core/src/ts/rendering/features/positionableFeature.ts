@@ -67,6 +67,11 @@ export class PositionableFeature extends BeanStub {
         y: 0
     };
 
+    private lastSize = {
+        width: -1,
+        height: -1
+    };
+
     private resizerMap: {
         [key in ResizableSides]: MappedResizer
     } | undefined;
@@ -244,6 +249,26 @@ export class PositionableFeature extends BeanStub {
         });
     }
 
+    public removeSizeFromEl(): void {
+        this.element.style.removeProperty('height');
+        this.element.style.removeProperty('width');
+        this.element.style.removeProperty('flex');
+    }
+
+    public restoreLastSize(): void {
+        this.element.style.flex = '0 0 auto';
+
+        const { height, width } = this.lastSize;
+
+        if (width !== -1) {
+            this.element.style.width = `${width}px`;
+        }
+
+        if (height !== -1) {
+            this.element.style.height = `${height}px`;
+        }
+    }
+
     public getHeight(): number | undefined {
         return this.element.offsetHeight;
     }
@@ -280,6 +305,7 @@ export class PositionableFeature extends BeanStub {
             } else {
                 eGui.style.height = `${height}px`;
                 eGui.style.flex = '0 0 auto';
+                this.lastSize.height = typeof height === 'number' ? height : parseFloat(height);
             }
         } else {
             eGui.style.maxHeight = 'unset';
@@ -319,6 +345,7 @@ export class PositionableFeature extends BeanStub {
             } else {
                 eGui.style.width = `${width}px`;
                 eGui.style.flex = ' unset';
+                this.lastSize.width = typeof width === 'number' ? width : parseFloat(width);
             }
         } else {
             eGui.style.maxWidth = 'unset';

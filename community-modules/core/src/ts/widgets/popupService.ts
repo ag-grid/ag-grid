@@ -18,6 +18,7 @@ import { isElementInEventPath } from '../utils/event';
 import { KeyCode } from '../constants/keyCode';
 import { FocusService } from "../focusService";
 import { GridCtrl } from "../gridComp/gridCtrl";
+import { IAfterGuiAttachedParams } from "../interfaces/iAfterGuiAttachedParams";
 
 export interface PopupEventParams {
     originalMouseEvent?: MouseEvent | Touch | null;
@@ -41,10 +42,6 @@ interface Rect {
 
 enum DIRECTION { vertical, horizontal }
 
-export interface AfterGuiAttachedParams {
-    hidePopup: () => void;
-}
-
 export interface AddPopupParams {
     // if true then listens to background checking for clicks, so that when the background is clicked,
     // the child is removed again, giving a model look to popups.
@@ -58,7 +55,7 @@ export interface AddPopupParams {
     // if a clicked caused the popup (eg click a button) then the click that caused it
     click?: MouseEvent | Touch | null;
     alwaysOnTop?: boolean;
-    afterGuiAttached?: (params: AfterGuiAttachedParams) => void;
+    afterGuiAttached?: (params: IAfterGuiAttachedParams) => void;
     // this gets called after the popup is created. the called could just call positionCallback themselves,
     // however it needs to be called first before anchorToElement is called, so must provide this callback
     // here if setting anchorToElement

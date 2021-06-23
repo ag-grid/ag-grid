@@ -222,7 +222,7 @@ export class HeaderComp extends Component implements IHeaderComp {
             eventSource = this.eMenu;
         }
 
-        this.menuFactory.showMenuAfterButtonClick(this.params.column, eventSource);
+        this.menuFactory.showMenuAfterButtonClick(this.params.column, eventSource, 'columnMenu');
     }
 
     private removeSortIcons(): void {
