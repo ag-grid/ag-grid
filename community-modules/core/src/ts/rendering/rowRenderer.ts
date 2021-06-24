@@ -58,8 +58,7 @@ export class RowRenderer extends BeanStub {
     @Autowired("rowContainerHeightService") private rowContainerHeightService: RowContainerHeightService;
     @Optional("controllersService") private controllersService: ControllersService;
 
-    // private gridBodyComp: GridBodyComp;
-    private gridBodyCon: GridBodyCtrl;
+    private gridBodyCtrl: GridBodyCtrl;
 
     private destroyFuncsForColumnListeners: (() => void)[] = [];
 
@@ -68,12 +67,12 @@ export class RowRenderer extends BeanStub {
 
     // map of row ids to row objects. keeps track of which elements
     // are rendered for which rows in the dom.
-    private rowConsByRowIndex: RowCtrlMap = {};
-    private zombieRowCons: RowCtrlMap = {};
-    private allRowCons: RowCtrl[] = [];
+    private rowCtrlsByRowIndex: RowCtrlMap = {};
+    private zombieRowCtrls: RowCtrlMap = {};
+    private allRowCtrls: RowCtrl[] = [];
 
-    private topRowCons: RowCtrl[] = [];
-    private bottomRowCons: RowCtrl[] = [];
+    private topRowCtrls: RowCtrl[] = [];
+    private bottomRowCtrls: RowCtrl[] = [];
 
     private pinningLeft: boolean;
     private pinningRight: boolean;
@@ -96,7 +95,7 @@ export class RowRenderer extends BeanStub {
     @PostConstruct
     private postConstruct(): void {
         this.controllersService.whenReady(() => {
-            this.gridBodyCon = this.controllersService.getGridBodyController();
+            this.gridBodyCtrl = this.controllersService.getGridBodyController();
             this.initialise();
         });
     }
@@ -118,12 +117,12 @@ export class RowRenderer extends BeanStub {
         this.redrawAfterModelUpdate();
     }
 
-    public getRowCons(): RowCtrl[] {
-        return this.allRowCons;
+    public getRowCtrls(): RowCtrl[] {
+        return this.allRowCtrls;
     }
 
     private updateAllRowCons(): void {
-        this.allRowCons = [...getAllValuesInObject(this.rowConsByRowIndex), ...getAllValuesInObject(this.zombieRowCons)];
+        this.allRowCtrls = [...getAllValuesInObject(this.rowCtrlsByRowIndex), ...getAllValuesInObject(this.zombieRowCtrls)];
     }
 
     // in a clean design, each cell would register for each of these events. however when scrolling, all the cells
@@ -259,7 +258,7 @@ export class RowRenderer extends BeanStub {
     public datasourceChanged(): void {
         this.firstRenderedRow = 0;
         this.lastRenderedRow = -1;
-        const rowIndexesToRemove = Object.keys(this.rowConsByRowIndex);
+        const rowIndexesToRemove = Object.keys(this.rowCtrlsByRowIndex);
         this.removeRowComps(rowIndexesToRemove);
     }
 
@@ -291,22 +290,22 @@ export class RowRenderer extends BeanStub {
 
     public refreshFloatingRowComps(): void {
         this.refreshFloatingRows(
-            this.topRowCons,
+            this.topRowCtrls,
             this.pinnedRowModel.getPinnedTopRowData()
         );
 
         this.refreshFloatingRows(
-            this.bottomRowCons,
+            this.bottomRowCtrls,
             this.pinnedRowModel.getPinnedBottomRowData()
         );
     }
 
-    public getTopRowCons(): RowCtrl[] {
-        return this.topRowCons;
+    public getTopRowCtrls(): RowCtrl[] {
+        return this.topRowCtrls;
     }
 
-    public getBottomRowCons(): RowCtrl[] {
-        return this.bottomRowCons;
+    public getBottomRowCtrls(): RowCtrl[] {
+        return this.bottomRowCtrls;
     }
 
     private refreshFloatingRows(rowComps: RowCtrl[], rowNodes: RowNode[]): void {
@@ -348,7 +347,7 @@ export class RowRenderer extends BeanStub {
 
         if (missing(rowNodes)) { return result; }
 
-        iterateObject(this.rowConsByRowIndex, (index: string, renderedRow: RowCtrl) => {
+        iterateObject(this.rowCtrlsByRowIndex, (index: string, renderedRow: RowCtrl) => {
             const rowNode = renderedRow.getRowNode();
             if (rowNodes.indexOf(rowNode) >= 0) {
                 result.push(index);
@@ -458,7 +457,7 @@ export class RowRenderer extends BeanStub {
         const suppressScrollToTop = this.gridOptionsWrapper.isSuppressScrollOnNewData();
 
         if (scrollToTop && !suppressScrollToTop) {
-            this.gridBodyCon.getScrollFeature().scrollToTop();
+            this.gridBodyCtrl.getScrollFeature().scrollToTop();
         }
     }
 
@@ -530,13 +529,13 @@ export class RowRenderer extends BeanStub {
     }
 
     private getAllRowCtrls(): RowCtrl[] {
-        const res = [...this.topRowCons, ...this.bottomRowCons];
-        Object.keys(this.rowConsByRowIndex).forEach(key => res.push(this.rowConsByRowIndex[key]));
+        const res = [...this.topRowCtrls, ...this.bottomRowCtrls];
+        Object.keys(this.rowCtrlsByRowIndex).forEach(key => res.push(this.rowCtrlsByRowIndex[key]));
         return res;
     }
 
     public addRenderedRowListener(eventName: string, rowIndex: number, callback: Function): void {
-        const rowComp = this.rowConsByRowIndex[rowIndex];
+        const rowComp = this.rowCtrlsByRowIndex[rowIndex];
         if (rowComp) {
             rowComp.addEventListener(eventName, callback);
         }
@@ -672,16 +671,16 @@ export class RowRenderer extends BeanStub {
             });
         };
 
-        iterateObject(this.rowConsByRowIndex, (index: string, rowComp: RowCtrl) => {
+        iterateObject(this.rowCtrlsByRowIndex, (index: string, rowComp: RowCtrl) => {
             processRow(rowComp);
         });
 
-        if (this.topRowCons) {
-            this.topRowCons.forEach(processRow);
+        if (this.topRowCtrls) {
+            this.topRowCtrls.forEach(processRow);
         }
 
-        if (this.bottomRowCons) {
-            this.bottomRowCons.forEach(processRow);
+        if (this.bottomRowCtrls) {
+            this.bottomRowCtrls.forEach(processRow);
         }
 
         return res;
@@ -693,14 +692,14 @@ export class RowRenderer extends BeanStub {
     }
 
     private removeAllRowComps(): void {
-        const rowIndexesToRemove = Object.keys(this.rowConsByRowIndex);
+        const rowIndexesToRemove = Object.keys(this.rowCtrlsByRowIndex);
         this.removeRowComps(rowIndexesToRemove);
     }
 
     private recycleRows(): RowCtrlMap {
         // remove all stub nodes, they can't be reused, as no rowNode id
         const stubNodeIndexes: string[] = [];
-        iterateObject(this.rowConsByRowIndex, (index: string, rowComp: RowCtrl) => {
+        iterateObject(this.rowCtrlsByRowIndex, (index: string, rowComp: RowCtrl) => {
             const stubNode = rowComp.getRowNode().id == null;
             if (stubNode) {
                 stubNodeIndexes.push(index);
@@ -710,11 +709,11 @@ export class RowRenderer extends BeanStub {
 
         // then clear out rowCompsByIndex, but before that take a copy, but index by id, not rowIndex
         const nodesByIdMap: RowCtrlMap = {};
-        iterateObject(this.rowConsByRowIndex, (index: string, rowComp: RowCtrl) => {
+        iterateObject(this.rowCtrlsByRowIndex, (index: string, rowComp: RowCtrl) => {
             const rowNode = rowComp.getRowNode();
             nodesByIdMap[rowNode.id!] = rowComp;
         });
-        this.rowConsByRowIndex = {};
+        this.rowCtrlsByRowIndex = {};
 
         return nodesByIdMap;
     }
@@ -724,12 +723,12 @@ export class RowRenderer extends BeanStub {
         // if no fromIndex then set to -1, which will refresh everything
         // let realFromIndex = -1;
         rowsToRemove.forEach(indexToRemove => {
-            const rowComp = this.rowConsByRowIndex[indexToRemove];
+            const rowComp = this.rowCtrlsByRowIndex[indexToRemove];
             if (rowComp) {
                 rowComp.destroyFirstPass();
                 rowComp.destroySecondPass();
             }
-            delete this.rowConsByRowIndex[indexToRemove];
+            delete this.rowCtrlsByRowIndex[indexToRemove];
         });
     }
 
@@ -749,7 +748,7 @@ export class RowRenderer extends BeanStub {
         const indexesToDrawMap: { [index: string]: boolean; } = {};
         indexesToDraw.forEach(index => (indexesToDrawMap[index] = true));
 
-        const existingIndexes = Object.keys(this.rowConsByRowIndex);
+        const existingIndexes = Object.keys(this.rowCtrlsByRowIndex);
         const indexesNotToDraw: string[] = existingIndexes.filter(index => !indexesToDrawMap[index]);
 
         this.removeRowComps(indexesNotToDraw);
@@ -770,7 +769,7 @@ export class RowRenderer extends BeanStub {
         };
 
         // if we are redrawing due to scrolling change, then old rows are in this.rowCompsByIndex
-        iterateObject(this.rowConsByRowIndex, checkRowToDraw);
+        iterateObject(this.rowCtrlsByRowIndex, checkRowToDraw);
 
         // if we are redrawing due to model update, then old rows are in rowsToRecycle
         iterateObject(rowsToRecycle, checkRowToDraw);
@@ -826,7 +825,7 @@ export class RowRenderer extends BeanStub {
 
         this.updateAllRowCons();
         this.checkAngularCompile();
-        this.gridBodyCon.updateRowCount();
+        this.gridBodyCtrl.updateRowCount();
     }
 
     private dispatchDisplayedRowsChanged(): void {
@@ -856,7 +855,7 @@ export class RowRenderer extends BeanStub {
         // embedded, as what appears in each section depends on whether we are pinned or not
         const rowsToRemove: string[] = [];
 
-        iterateObject(this.rowConsByRowIndex, (id: string, rowComp: RowCtrl) => {
+        iterateObject(this.rowCtrlsByRowIndex, (id: string, rowComp: RowCtrl) => {
             if (rowComp.isFullWidth()) {
                 const rowIndex = rowComp.getRowNode().rowIndex;
 
@@ -879,7 +878,7 @@ export class RowRenderer extends BeanStub {
             rowNodesToRefresh!.forEach(r => idsToRefresh[r.id!] = true);
         }
 
-        iterateObject(this.rowConsByRowIndex, (id: string, rowComp: RowCtrl) => {
+        iterateObject(this.rowCtrlsByRowIndex, (id: string, rowComp: RowCtrl) => {
             if (!rowComp.isFullWidth()) { return; }
 
             const rowNode = rowComp.getRowNode();
@@ -913,7 +912,7 @@ export class RowRenderer extends BeanStub {
         afterScroll: boolean
     ): RowCtrl | null | undefined {
         let rowNode: RowNode | null = null;
-        let rowCon: RowCtrl | null = this.rowConsByRowIndex[rowIndex];
+        let rowCon: RowCtrl | null = this.rowCtrlsByRowIndex[rowIndex];
 
         // if no row comp, see if we can get it from the previous rowComps
         if (!rowCon) {
@@ -947,7 +946,7 @@ export class RowRenderer extends BeanStub {
             rowNode.alreadyRendered = true;
         }
 
-        this.rowConsByRowIndex[rowIndex] = rowCon!;
+        this.rowCtrlsByRowIndex[rowIndex] = rowCon!;
 
         return rowCon;
     }
@@ -960,10 +959,10 @@ export class RowRenderer extends BeanStub {
 
             rowCon.destroyFirstPass();
             if (animate) {
-                this.zombieRowCons[rowCon.getInstanceId()] = rowCon;
+                this.zombieRowCtrls[rowCon.getInstanceId()] = rowCon;
                 executeInAWhileFuncs.push(() => {
                     rowCon.destroySecondPass();
-                    delete this.zombieRowCons[rowCon.getInstanceId()];
+                    delete this.zombieRowCtrls[rowCon.getInstanceId()];
                 });
             } else {
                 rowCon.destroySecondPass();
@@ -1170,7 +1169,7 @@ export class RowRenderer extends BeanStub {
     }
 
     public getRenderedNodes() {
-        const renderedRows = this.rowConsByRowIndex;
+        const renderedRows = this.rowCtrlsByRowIndex;
 
         return Object.keys(renderedRows).map(key => renderedRows[key]!.getRowNode());
     }
@@ -1179,13 +1178,13 @@ export class RowRenderer extends BeanStub {
         let rowComponent: RowCtrl | null;
         switch (rowPosition.rowPinned) {
             case Constants.PINNED_TOP:
-                rowComponent = this.topRowCons[rowPosition.rowIndex];
+                rowComponent = this.topRowCtrls[rowPosition.rowIndex];
                 break;
             case Constants.PINNED_BOTTOM:
-                rowComponent = this.bottomRowCons[rowPosition.rowIndex];
+                rowComponent = this.bottomRowCtrls[rowPosition.rowIndex];
                 break;
             default:
-                rowComponent = this.rowConsByRowIndex[rowPosition.rowIndex];
+                rowComponent = this.rowCtrlsByRowIndex[rowPosition.rowIndex];
                 break;
         }
 

@@ -327,29 +327,29 @@ export class RowContainerCtrl extends BeanStub {
         };
 
         // this list contains either all pinned top, center or pinned bottom rows
-        const allRowsRegardlessOfFullWidth = this.getRowCons();
+        const allRowsRegardlessOfFullWidth = this.getRowCtrls();
         // this filters out rows not for this container, eg if it's a full with row, but we are not full with container
         const rowsThisContainer = allRowsRegardlessOfFullWidth.filter(doesRowMatch);
 
         this.comp.setRowCtrls(rowsThisContainer);
     }
 
-    private getRowCons(): RowCtrl[] {
+    private getRowCtrls(): RowCtrl[] {
         switch (this.name) {
             case RowContainerName.TOP_CENTER:
             case RowContainerName.TOP_LEFT:
             case RowContainerName.TOP_RIGHT:
             case RowContainerName.TOP_FULL_WITH:
-                return this.rowRenderer.getTopRowCons();
+                return this.rowRenderer.getTopRowCtrls();
 
             case RowContainerName.BOTTOM_CENTER:
             case RowContainerName.BOTTOM_LEFT:
             case RowContainerName.BOTTOM_RIGHT:
             case RowContainerName.BOTTOM_FULL_WITH:
-                return this.rowRenderer.getBottomRowCons();
+                return this.rowRenderer.getBottomRowCtrls();
 
             default:
-                return this.rowRenderer.getRowCons();
+                return this.rowRenderer.getRowCtrls();
         }
     }
 }
