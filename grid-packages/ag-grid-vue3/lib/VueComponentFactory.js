@@ -62,8 +62,11 @@ var VueComponentFactory = /** @class */ (function () {
         // the inner defineComponent allows us to re-declare the component, with the outer one allowing us to
         // provide the grid's params and capture the resulting component instance
         var componentInstance = null;
-        var extendedComponentDefinition = defineComponent(__assign(__assign({}, componentDefinition), { data: function () { return componentParams; }, created: function () {
+        var extendedComponentDefinition = defineComponent(__assign(__assign({}, componentDefinition), { data: function () { return (__assign(__assign({}, componentParams), componentDefinition.data ? componentDefinition.data() : {})); }, created: function () {
                 componentInstance = this.$root;
+                if (componentDefinition.created) {
+                    componentDefinition.created.bind(this)();
+                }
             } }));
         // with vue 3 we need to provide a container to mount into (not necessary in vue 2), so create a wrapper div here
         var container = document.createElement('div');
