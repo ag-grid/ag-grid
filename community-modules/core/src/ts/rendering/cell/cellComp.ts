@@ -113,9 +113,9 @@ export class CellComp extends Component implements TooltipParentComp {
             setTitle: title => setAttribute('title', title),
             setUnselectable: value => setAttribute('unselectable', value, this.eCellValue),
             setTransition: transition => style.transition = transition ? transition : '',
-            showRenderer: (valueToDisplay, compClassAndParams, force) =>
-                this.showRenderer(valueToDisplay, compClassAndParams, force),
-            showEditor: compClassAndParams => this.showEditor(compClassAndParams),
+            showValue: (valueToDisplay, compClassAndParams, force) =>
+                this.showValue(valueToDisplay, compClassAndParams, force),
+            editValue: compClassAndParams => this.editValue(compClassAndParams),
 
             setIncludeSelection: include => this.includeSelection = include,
             setIncludeRowDrag: include => this.includeRowDrag = include,
@@ -134,7 +134,7 @@ export class CellComp extends Component implements TooltipParentComp {
         cellCtrl.setComp(compProxy, false, this.scope, this.getGui(), printLayout, editingRow);
     }
 
-    private showRenderer(valueToDisplay: any, compClassAndParams: CompClassAndParams | undefined, forceNewCellRendererInstance: boolean): void {
+    private showValue(valueToDisplay: any, compClassAndParams: CompClassAndParams | undefined, forceNewCellRendererInstance: boolean): void {
         this.setCellState(ShowingState.ShowRenderer);
         const usingAngular1Template = this.isUsingAngular1Template();
 
@@ -167,7 +167,7 @@ export class CellComp extends Component implements TooltipParentComp {
         this.updateAngular1ScopeAndCompile();
     }
 
-    private showEditor(compClassAndParams: CompClassAndParams): void {
+    private editValue(compClassAndParams: CompClassAndParams): void {
         this.setCellState(ShowingState.ShowEditor);
 
         this.destroyEditorAndRenderer();

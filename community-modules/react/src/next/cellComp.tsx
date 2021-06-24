@@ -1,7 +1,20 @@
 import React, { MutableRefObject, useEffect, useMemo, useRef, useState } from "react";
-import { Context, _, RowNode, Column, RowCtrl, ICellComp, CellCtrl, ICellRendererParams, ICellEditorParams } from "@ag-grid-community/core";
+import {
+    Context,
+    _,
+    RowNode,
+    Column,
+    RowCtrl,
+    ICellComp,
+    CellCtrl,
+    ICellRendererParams,
+    ICellEditorParams,
+    CellSt
+} from "@ag-grid-community/core";
 import { CssClasses } from "./utils";
 import { CompClassAndParams } from "@ag-grid-community/core/dist/cjs/components/framework/userComponentFactory";
+
+enum CellState {ShowValue, EditValue}
 
 export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
                                 printLayout: boolean, editingRow: boolean}) {
@@ -10,8 +23,10 @@ export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
 
     const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses());
     const [userStyles, setUserStyles] = useState<any>();
-    const [showEditor, setShowEditor] = useState<boolean>();
-    const [showRenderer, setShowRenderer] = useState<boolean>();
+
+    const [cellState, setCellState] = useState<CellState>();
+    // const [editValue, setEditValue] = useState<boolean>();
+    // const [showValue, setShowValue] = useState<boolean>();
 
     const [left, setLeft] = useState<string | undefined>();
     const [width, setWidth] = useState<string | undefined>();
@@ -25,6 +40,8 @@ export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
     const eGui = useRef<HTMLDivElement>(null);
     const cellRendererRef = useRef<any>(null);
     const cellEditorRef = useRef<any>(null);
+    const jsCellRendererRef = useRef<any>(null);
+    const jsCellEditorRef = useRef<any>(null);
 
     useEffect(() => {
         // const beansToDestroy: any[] = [];
@@ -45,18 +62,16 @@ export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
             setTitle: title => false, //  setAttribute('title', title),
             setUnselectable: value => false, //  setAttribute('unselectable', value, this.eCellValue),
             setTransition: transition => setTransition(transition),
-            showRenderer: (valueToDisplay, compClassAndParams, force) => {
+            showValue: (valueToDisplay, compClassAndParams, force) => {
                 setRendererCompDetails(compClassAndParams);
                 setValueToDisplay(valueToDisplay);
-                setShowRenderer(true);
                 setEditorCompDetails(undefined);
-                setShowEditor(false);
+                setCellState(CellState.ShowValue);
             },
-            showEditor: compClassAndParams => {
+            editValue: compClassAndParams => {
                 setEditorCompDetails(compClassAndParams)
-                setShowEditor(true);
                 setRendererCompDetails(undefined);
-                setShowRenderer(false);
+                setCellState(CellState.EditValue);
             },
             setIncludeSelection: include => false, // this.includeSelection = include,
             setIncludeRowDrag: include => false, // this.includeRowDrag = include,
@@ -90,31 +105,50 @@ export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
 
     _.assign(cellStyles, userStyles);
 
+    const showValue = cellState === CellState.ShowValue;
+    const showValueNoCellRenderer = showValue && !rendererCompDetails;
+    const showValueReactCellRenderer = showValue && rendererCompDetails && rendererCompDetails.componentFromFramework;
+    const showValueJsCellRenderer = showValue && rendererCompDetails && !rendererCompDetails.componentFromFramework;
+
+    const editValue = cellState === CellState.EditValue;
+    const editValueReactCellRenderer = editValue && editorCompDetails && editorCompDetails.componentFromFramework;
+    const editValueJsCellRenderer = editValue && editorCompDetails && !editorCompDetails.componentFromFramework;
+
     return (
         <div ref={ eGui } className={ className } style={ cellStyles } tabIndex={tabIndex}>
-            { showRenderer && !rendererCompDetails && createValueJsx(valueToDisplay) }
-            { showRenderer && rendererCompDetails && createRendererJsx(rendererCompDetails, cellRendererRef) }
-            { showEditor && editorCompDetails && createEditorJsx(editorCompDetails, cellEditorRef) }
+            { showValueNoCellRenderer && jsxShowValueNoCellRenderer(valueToDisplay) }
+            { showValueReactCellRenderer && jsxShowValueReactCellRenderer(rendererCompDetails!, cellRendererRef) }
+            { showValueJsCellRenderer && jsxShowValueReactCellRenderer(rendererCompDetails!, cellRendererRef) }
+            { editValueReactCellRenderer && jsxEditValueReactCellRenderer(editorCompDetails!, cellEditorRef) }
+            { editValueJsCellRenderer && jsxEditValueReactCellRenderer(editorCompDetails!, cellEditorRef) }
         </div>
     );
 }
 
-function createValueJsx(valueToDisplay: any) {
+function jsxShowValueNoCellRenderer(valueToDisplay: any) {
     return (
         <>{valueToDisplay}</>
     );
 }
 
-function createRendererJsx(rendererCompDetails: CompClassAndParams, cellRendererRef: MutableRefObject<any>) {
+function jsxShowValueReactCellRenderer(rendererCompDetails: CompClassAndParams, cellRendererRef: MutableRefObject<any>) {
     const CellRendererClass = rendererCompDetails.componentClass;
     return (
         <CellRendererClass {...rendererCompDetails.params} ref={cellRendererRef}></CellRendererClass>
     );
 }
 
-function createEditorJsx(editorCompDetails: CompClassAndParams, cellEditorRef: MutableRefObject<any>) {
+function jsxShowValueJsCellRenderer(rendererCompDetails: CompClassAndParams, cellRendererRef: MutableRefObject<any>) {
+    return (<>Please write your Cell Renderer as a React Component</>);
+}
+
+function jsxEditValueReactCellRenderer(editorCompDetails: CompClassAndParams, cellEditorRef: MutableRefObject<any>) {
     const CellEditorClass = editorCompDetails.componentClass;
     return (
         <CellEditorClass {...editorCompDetails.params} ref={cellEditorRef}></CellEditorClass>
     );
+}
+
+function jsxEditValueJsCellRenderer(editorCompDetails: CompClassAndParams, cellEditorRef: MutableRefObject<any>) {
+    return (<>Please write yoru Cell Editor as a React Component</>);
 }

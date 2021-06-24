@@ -67,8 +67,8 @@ export interface ICellComp {
     getCellRenderer(): ICellRenderer | null;
     getParentOfValue(): HTMLElement | null;
 
-    showRenderer(valueToDisplay: any, compClassAndParams: CompClassAndParams | undefined, forceNewCellRendererInstance: boolean): void;
-    showEditor(compClassAndParams: CompClassAndParams): void;
+    showValue(valueToDisplay: any, compClassAndParams: CompClassAndParams | undefined, forceNewCellRendererInstance: boolean): void;
+    editValue(compClassAndParams: CompClassAndParams): void;
 
     // hacks
     addRowDragging(customElement?: HTMLElement, dragStartPixels?: number): void;
@@ -195,7 +195,7 @@ export class CellCtrl extends BeanStub {
         if (startEditing && this.isCellEditable()) {
             this.startEditing();
         } else {
-            this.showRenderer();
+            this.showValue();
         }
     }
 
@@ -203,12 +203,12 @@ export class CellCtrl extends BeanStub {
         return this.instanceId;
     }
 
-    private showRenderer(forceNewCellRendererInstance = false): void {
+    private showValue(forceNewCellRendererInstance = false): void {
         this.setEditing(false);
         const valueToDisplay = this.valueFormatted != null ? this.valueFormatted : this.value;
         const params = this.createCellRendererParams();
         const cellRendererDetails = this.beans.userComponentFactory.getCellRendererDetails(this.colDef, params);
-        this.cellComp.showRenderer(valueToDisplay, cellRendererDetails, forceNewCellRendererInstance);
+        this.cellComp.showValue(valueToDisplay, cellRendererDetails, forceNewCellRendererInstance);
         this.refreshHandle();
     }
 
@@ -252,7 +252,7 @@ export class CellCtrl extends BeanStub {
 
         const editorParams = this.createCellEditorParams(keyPress, charPress, cellStartedEdit);
         const compAndParams = this.beans.userComponentFactory.getCellEditorDetails(this.colDef, editorParams);
-        this.cellComp.showEditor(compAndParams!);
+        this.cellComp.editValue(compAndParams!);
 
         const event: CellEditingStartedEvent = this.createEvent(null, Events.EVENT_CELL_EDITING_STARTED);
         this.beans.eventService.dispatchEvent(event);
@@ -498,7 +498,7 @@ export class CellCtrl extends BeanStub {
             // if it's 'new data', then we don't refresh the cellRenderer, even if refresh method is available.
             // this is because if the whole data is new (ie we are showing stock price 'BBA' now and not 'SSD')
             // then we are not showing a movement in the stock price, rather we are showing different stock.
-            this.showRenderer(newData);
+            this.showValue(newData);
 
             // we don't want to flash the cells when processing a filter change, as otherwise the UI would
             // be to busy. see comment in FilterManager with regards processingFilterChange
