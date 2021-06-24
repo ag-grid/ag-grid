@@ -118,9 +118,9 @@ export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
         <div ref={ eGui } className={ className } style={ cellStyles } tabIndex={tabIndex}>
             { showValueNoCellRenderer && jsxShowValueNoCellRenderer(valueToDisplay) }
             { showValueReactCellRenderer && jsxShowValueReactCellRenderer(rendererCompDetails!, cellRendererRef) }
-            { showValueJsCellRenderer && jsxShowValueReactCellRenderer(rendererCompDetails!, cellRendererRef) }
+            { showValueJsCellRenderer && jsxShowValueJsCellRenderer() }
             { editValueReactCellRenderer && jsxEditValueReactCellRenderer(editorCompDetails!, cellEditorRef) }
-            { editValueJsCellRenderer && jsxEditValueReactCellRenderer(editorCompDetails!, cellEditorRef) }
+            { editValueJsCellRenderer && jsxEditValueJsCellRenderer() }
         </div>
     );
 }
@@ -138,7 +138,7 @@ function jsxShowValueReactCellRenderer(rendererCompDetails: CompClassAndParams, 
     );
 }
 
-function jsxShowValueJsCellRenderer(rendererCompDetails: CompClassAndParams, cellRendererRef: MutableRefObject<any>) {
+function jsxShowValueJsCellRenderer() {
     return (<>Please write your Cell Renderer as a React Component</>);
 }
 
@@ -149,6 +149,6 @@ function jsxEditValueReactCellRenderer(editorCompDetails: CompClassAndParams, ce
     );
 }
 
-function jsxEditValueJsCellRenderer(editorCompDetails: CompClassAndParams, cellEditorRef: MutableRefObject<any>) {
+function jsxEditValueJsCellRenderer() {
     return (<>Please write yoru Cell Editor as a React Component</>);
 }
