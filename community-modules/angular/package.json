@@ -1,6 +1,6 @@
 {
   "name": "@ag-grid-community/angular",
-  "version": "25.3.0",
+  "version": "25.3.1",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",

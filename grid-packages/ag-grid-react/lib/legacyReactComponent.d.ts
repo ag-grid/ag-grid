@@ -1,4 +1,4 @@
-// ag-grid-react v25.3.0
+// ag-grid-react v25.3.1
 import { AgPromise } from 'ag-grid-community';
 import { ReactComponent } from './reactComponent';
 export declare class LegacyReactComponent extends ReactComponent {

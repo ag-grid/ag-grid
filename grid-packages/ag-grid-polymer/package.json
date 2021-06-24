@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-polymer",
-  "version": "25.3.0",
+  "version": "25.3.1",
   "description": "AG Grid Polymer 3 Web Component",
   "main": "index.js",
   "scripts": {

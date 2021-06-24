@@ -1,4 +1,4 @@
-// @ag-grid-community/react v25.3.0
+// @ag-grid-community/react v25.3.1
 import { ComponentType, IComponent, WrapableInterface } from '@ag-grid-community/core';
 import { AgGridReact } from "./agGridReact";
 import { ReactPortal } from "react";
