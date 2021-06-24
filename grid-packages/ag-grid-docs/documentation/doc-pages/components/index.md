@@ -25,7 +25,7 @@ md-include:declare-angular.md
 
 md-include:register-javascript.md
 md-include:register-angular.md
-md-include:register-react.md
+md-include:register-react.md 
 md-include:register-vue.md
 
 [[only-angular]]
@@ -184,12 +184,13 @@ It is also possible to override components. Where the grid uses a default value,
 - **agLoadingCellRenderer**: To change the default loading cell renderer for Enterprise Row Model.
 - **agLoadingOverlay**: To change the default 'loading' overlay.
 - **agNoRowsOverlay**: To change the default loading 'no rows' overlay.
-- **agTextCellEditor**: To change the default text cell editor.
+- **agTextCellEditor**: To change the default text cell editor. 
 - **agDetailCellRenderer**: To change the default detail panel for master / detail grids.
-
+ 
 [[only-vue]]
 |[[note]]
 ||Overridable grid components are the only components you need to additionally specify with `frameworkComponents` in order to tie their usage to the 
 ||actual component. All other registration types specify their usage in column definitions or on the `AgGridVue` component itself.
 ||
 ||For an example of this please refer to the [Date Component](../component-date/#registering-date-components) documentation.
+ 
