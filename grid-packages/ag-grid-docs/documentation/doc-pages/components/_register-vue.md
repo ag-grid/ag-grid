@@ -95,7 +95,8 @@
 |```
 |### 2. By Direct Reference
 |
-|When registering components within the Grid by direct reference the target components *must* be wrapped in `Vue.extend(...)`:
+|When registering components within the Grid by direct reference the target components *must* be wrapped in `Vue.extend(...)` (for Vue 2), or
+|`defineComponent(...)` (for Vue 3):
 |
 |```js
 |<template>
