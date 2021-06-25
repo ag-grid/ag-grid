@@ -382,7 +382,7 @@ function convertColumnDefs(rawColumnDefs, userComponentNames): string[] {
 }
 
 function convertDefaultColDef(defaultColDef): string {
-    return GRID_COMPONENTS.reduce((acc, componentName) => defaultColDef.replace(componentName, `${componentName}Framework`), defaultColDef)
+    return GRID_COMPONENTS.reduce((acc, componentName) => acc.replace(componentName, `${componentName}Framework`), defaultColDef)
 }
 
 export function vanillaToVue3(bindings: any, componentFileNames: string[]): (importType: ImportType) => string {
