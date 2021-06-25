@@ -25,8 +25,6 @@ export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
     const [userStyles, setUserStyles] = useState<any>();
 
     const [cellState, setCellState] = useState<CellState>();
-    // const [editValue, setEditValue] = useState<boolean>();
-    // const [showValue, setShowValue] = useState<boolean>();
 
     const [left, setLeft] = useState<string | undefined>();
     const [width, setWidth] = useState<string | undefined>();
@@ -36,12 +34,11 @@ export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
     const [valueToDisplay, setValueToDisplay] = useState<any>();
     const [editorCompDetails, setEditorCompDetails] = useState<UserCompDetails>();
     const [tabIndex, setTabIndex] = useState<number>();
+    const [ariaSelected, setAriaSelected] = useState<boolean>();
 
     const eGui = useRef<HTMLDivElement>(null);
     const cellRendererRef = useRef<any>(null);
     const cellEditorRef = useRef<any>(null);
-    const jsCellRendererRef = useRef<any>(null);
-    const jsCellEditorRef = useRef<any>(null);
 
     useEffect(() => {
         // const beansToDestroy: any[] = [];
@@ -49,7 +46,7 @@ export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
         const compProxy: ICellComp = {
             addOrRemoveCssClass: (name, on) => setCssClasses(prev => prev.setClass(name, on)),
             setUserStyles: styles => setUserStyles(styles),
-            setAriaSelected: selected => false, //  setAriaSelected(eGui, selected),
+            setAriaSelected: value => setAriaSelected(value),
             getFocusableElement: () => null as any as HTMLElement, //  this.getFocusableElement(),
             setLeft: left => setLeft(left),
             setWidth: width => setWidth(width),
@@ -115,7 +112,8 @@ export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
     const editValueJsCellRenderer = editValue && editorCompDetails && !editorCompDetails.componentFromFramework;
 
     return (
-        <div ref={ eGui } className={ className } style={ cellStyles } tabIndex={tabIndex}>
+        <div ref={ eGui } className={ className } style={ cellStyles } tabIndex={tabIndex}
+             aria-selected={ariaSelected}>
             { showValueNoCellRenderer && jsxShowValueNoCellRenderer(valueToDisplay) }
             { showValueReactCellRenderer && jsxShowValueReactCellRenderer(rendererCompDetails!, cellRendererRef) }
             { showValueJsCellRenderer && jsxShowValueJsCellRenderer() }

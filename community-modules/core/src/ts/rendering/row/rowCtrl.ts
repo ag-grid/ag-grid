@@ -68,7 +68,7 @@ export interface IRowComp {
     getFullWidthRowComp(): ICellRendererComp | null | undefined;
     setAriaExpanded(on: boolean): void;
     destroyCells(cellComps: CellComp[]): void;
-    setAriaSelected(selected: boolean): void;
+    setAriaSelected(selected: boolean | undefined): void;
     setHeight(height: string): void;
     destroy(): void;
     setTop(top: string): void;
@@ -1028,7 +1028,7 @@ export class RowCtrl extends BeanStub {
     private onRowSelected(): void {
         const selected = this.rowNode.isSelected()!;
         this.allRowComps.forEach(c => {
-            c.comp.setAriaSelected(selected);
+            c.comp.setAriaSelected(selected ? true : undefined);
             c.comp.addOrRemoveCssClass('ag-row-selected', selected);
             c.comp.setAriaLabel(this.createAriaLabel());
         });

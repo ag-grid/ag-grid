@@ -51,7 +51,7 @@ export class CellRangeFeature {
         this.cellComp.addOrRemoveCssClass(`${CSS_CELL_RANGE_SELECTED}-4`, this.rangeCount >= 4);
         this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_CHART, this.hasChartRange);
 
-        this.cellComp.setAriaSelected(this.rangeCount > 0);
+        this.cellComp.setAriaSelected(this.rangeCount > 0 ? true : undefined);
         this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_SINGLE_CELL, this.isSingleCell());
 
         this.updateRangeBorders();

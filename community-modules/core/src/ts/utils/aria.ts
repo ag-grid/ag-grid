@@ -111,7 +111,7 @@ export function removeAriaSort(element: HTMLElement): void {
     removeAriaAttribute(element, 'sort');
 }
 
-export function setAriaSelected(element: HTMLElement, selected: boolean): void {
+export function setAriaSelected(element: HTMLElement, selected: boolean | undefined): void {
     const attributeName = 'selected';
 
     if (selected) {

@@ -42,7 +42,7 @@ const CSS_CELL_WRAP_TEXT = 'ag-cell-wrap-text';
 export interface ICellComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     setUserStyles(styles: any): void;
-    setAriaSelected(selected: boolean): void;
+    setAriaSelected(selected: boolean | undefined): void;
     getFocusableElement(): HTMLElement;
 
     setLeft(left: string): void;
