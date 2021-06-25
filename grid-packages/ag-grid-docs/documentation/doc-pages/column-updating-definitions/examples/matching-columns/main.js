@@ -1,6 +1,6 @@
-var athleteColumn = {
+const athleteColumn = {
     headerName: 'Athlete',
-    valueGetter: function(params) {
+    valueGetter: function (params) {
         return params.data.athlete;
     }
 };
@@ -47,7 +47,7 @@ function getColDefsMedalsExcluded() {
     ];
 }
 
-var gridOptions = {
+const gridOptions = {
     defaultColDef: {
         initialWidth: 100,
         sortable: true,
@@ -66,7 +66,7 @@ function onBtIncludeMedalColumns() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
-    var gridDiv = document.querySelector('#myGrid');
+    const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
     agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
