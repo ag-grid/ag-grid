@@ -86,7 +86,7 @@ export class CellComp extends Component implements TooltipParentComp {
         const eGui = this.getGui();
         const style = eGui.style;
 
-        const setAttribute = (name: string, value: string | null, element?: HTMLElement) => {
+        const setAttribute = (name: string, value: string | null | undefined, element?: HTMLElement) => {
             const actualElement = element ? element : eGui;
             if (value != null && value != '') {
                 actualElement.setAttribute(name, value);

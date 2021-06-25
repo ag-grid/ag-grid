@@ -2,14 +2,8 @@ import React, { MutableRefObject, useEffect, useMemo, useRef, useState } from "r
 import {
     Context,
     _,
-    RowNode,
-    Column,
-    RowCtrl,
     ICellComp,
     CellCtrl,
-    ICellRendererParams,
-    ICellEditorParams,
-    CellSt,
     UserCompDetails
 } from "@ag-grid-community/core";
 import { CssClasses } from "./utils";
@@ -36,6 +30,10 @@ export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
     const [tabIndex, setTabIndex] = useState<number>();
     const [ariaSelected, setAriaSelected] = useState<boolean|undefined>();
     const [ariaColIndex, setAriaColIndex] = useState<number>();
+    const [zIndex, setZIndex] = useState<string>();
+    const [role, setRole] = useState<string>();
+    const [colId, setColId] = useState<string>();
+    const [title, setTitle] = useState<string|undefined>();
 
     const eGui = useRef<HTMLDivElement>(null);
     const cellRendererRef = useRef<any>(null);
@@ -53,11 +51,11 @@ export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
             setWidth: width => setWidth(width),
             setAriaColIndex: index => setAriaColIndex(index),
             setHeight: height => setHeight(height),
-            setZIndex: zIndex => false, //  style.zIndex = zIndex,
+            setZIndex: zIndex => setZIndex(zIndex),
             setTabIndex: tabIndex => setTabIndex(tabIndex),
-            setRole: role => false, //  setAttribute('role', role),
-            setColId: colId => false, //  setAttribute('col-id', colId),
-            setTitle: title => false, //  setAttribute('title', title),
+            setRole: role => setRole(role),
+            setColId: colId => setColId(colId),
+            setTitle: title => setTitle(title),
             setUnselectable: value => false, //  setAttribute('unselectable', value, this.eCellValue),
             setTransition: transition => setTransition(transition),
             showValue: (valueToDisplay, compDetails, force) => {
@@ -98,7 +96,8 @@ export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
         left,
         width,
         height,
-        transition
+        transition,
+        "z-index": zIndex
     };
 
     _.assign(cellStyles, userStyles);
@@ -114,7 +113,8 @@ export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
 
     return (
         <div ref={ eGui } className={ className } style={ cellStyles } tabIndex={tabIndex}
-             aria-selected={ariaSelected} aria-colindex={ariaColIndex}>
+             aria-selected={ariaSelected} aria-colindex={ariaColIndex} role={role}
+             col-id={colId} title={title}>
             { showValueNoCellRenderer && jsxShowValueNoCellRenderer(valueToDisplay) }
             { showValueReactCellRenderer && jsxShowValueReactCellRenderer(rendererCompDetails!, cellRendererRef) }
             { showValueJsCellRenderer && jsxShowValueJsCellRenderer() }

@@ -45,7 +45,7 @@ export class CellTooltipFeature extends BeanStub {
         this.updateTooltipText();
 
         if (this.browserTooltips) {
-            this.cellComp.setTitle(this.tooltipSanatised);
+            this.cellComp.setTitle(this.tooltipSanatised != null ? this.tooltipSanatised : undefined);
         } else {
             this.createTooltipFeatureIfNeeded();
         }
@@ -71,7 +71,7 @@ export class CellTooltipFeature extends BeanStub {
         this.updateTooltipText();
 
         if (this.browserTooltips) {
-            this.cellComp.setTitle(this.tooltipSanatised);
+            this.cellComp.setTitle(this.tooltipSanatised != null ? this.tooltipSanatised : undefined);
         }
     }
 

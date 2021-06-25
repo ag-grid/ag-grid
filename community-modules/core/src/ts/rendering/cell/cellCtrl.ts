@@ -53,7 +53,7 @@ export interface ICellComp {
     setTabIndex(tabIndex: number): void;
     setRole(role: string): void;
     setColId(colId: string): void;
-    setTitle(title: string | null): void;
+    setTitle(title: string | undefined): void;
     setUnselectable(value: string | null): void;
     setTransition(value: string | undefined): void;
 
