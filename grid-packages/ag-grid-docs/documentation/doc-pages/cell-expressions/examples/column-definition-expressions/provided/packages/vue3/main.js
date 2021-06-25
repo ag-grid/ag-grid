@@ -1,3 +1,4 @@
+import {createApp} from 'vue';
 import {AgGridVue} from 'ag-grid-vue3';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine-dark.css';
@@ -23,6 +24,7 @@ const VueExample = {
     },
     data: function () {
         return {
+            gridOptions: {},
             gridApi: null,
             columnApi: null,
             columnDefs: [
@@ -127,9 +129,6 @@ const VueExample = {
     },
 };
 
-new Vue({
-    el: '#app',
-    components: {
-        'my-component': VueExample,
-    },
-});
+createApp(VueExample)
+    .mount("#app")
+

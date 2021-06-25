@@ -26,6 +26,7 @@ const VueExample = {
     },
     data: function () {
         return {
+            gridOptions: {},
             gridApi: null,
             columnApi: null,
             columnDefs: [

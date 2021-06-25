@@ -1,5 +1,5 @@
-import Vue from 'vue';
-import {AgGridVue} from '@ag-grid-community/vue';
+import {createApp} from 'vue';
+import {AgGridVue} from '@ag-grid-community/vue3';
 import {AllCommunityModules} from '@ag-grid-community/all-modules';
 import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
 import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine-dark.css';
@@ -26,6 +26,7 @@ const VueExample = {
     },
     data: function () {
         return {
+            gridOptions: {},
             gridApi: null,
             columnApi: null,
             columnDefs: [
@@ -131,9 +132,6 @@ const VueExample = {
     },
 };
 
-new Vue({
-    el: '#app',
-    components: {
-        'my-component': VueExample,
-    },
-});
+createApp(VueExample)
+    .mount("#app")
+
