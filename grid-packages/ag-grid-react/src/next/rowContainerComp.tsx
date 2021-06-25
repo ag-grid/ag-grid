@@ -21,10 +21,6 @@ export function RowContainerComp(params: {context: Context, name: RowContainerNa
     const cssClasses = useMemo( ()=> RowContainerCtrl.getRowContainerCssClasses(name), []);
     const pinned = useMemo( ()=> RowContainerCtrl.getPinned(name), []);
 
-    const template1 = name === RowContainerName.CENTER;
-    const template2 = name === RowContainerName.TOP_CENTER || name === RowContainerName.BOTTOM_CENTER;
-    const template3 = !template1 && !template2;
-
     const eWrapper = useRef<HTMLDivElement>(null);
     const eViewport = useRef<HTMLDivElement>(null);
     const eContainer = useRef<HTMLDivElement>(null);
@@ -83,6 +79,10 @@ export function RowContainerComp(params: {context: Context, name: RowContainerNa
             }
         </div>
     );
+
+    const template1 = name === RowContainerName.CENTER;
+    const template2 = name === RowContainerName.TOP_CENTER || name === RowContainerName.BOTTOM_CENTER;
+    const template3 = !template1 && !template2;
 
     return (
         <>
