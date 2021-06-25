@@ -78,7 +78,18 @@ function onBtFilterOn() {
 }
 
 function onBtFilterOff() {
-    const columnDefs = getColumnDefs();
+    const columnDefs = [
+        {field: "athlete"},
+        {field: "age"},
+        {field: "country"},
+        {field: "year"},
+        {field: "date"},
+        {field: "sport"},
+        {field: "gold"},
+        {field: "silver"},
+        {field: "bronze"},
+        {field: "total"}
+    ];
     columnDefs.forEach(function (c) {
         c.filter = false;
     });

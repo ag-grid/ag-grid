@@ -1,8 +1,8 @@
 'use strict';
 
-import React, { useState } from 'react';
-import { render } from 'react-dom';
-import { AgGridColumn, AgGridReact } from 'ag-grid-react';
+import React, {useState} from 'react';
+import {render} from 'react-dom';
+import {AgGridColumn, AgGridReact} from 'ag-grid-react';
 
 import 'ag-grid-enterprise';
 import 'ag-grid-community/dist/styles/ag-grid.css';
@@ -10,14 +10,14 @@ import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 
 const GridExample = () => {
     const [columns, setColumns] = useState([
-        { field: 'athlete' },
-        { field: 'age' },
-        { field: 'country' },
-        { field: 'sport' },
-        { field: 'gold' },
-        { field: 'silver' },
-        { field: 'bronze' }
-    ]
+            {field: 'athlete'},
+            {field: 'age'},
+            {field: 'country'},
+            {field: 'sport'},
+            {field: 'gold'},
+            {field: 'silver'},
+            {field: 'bronze'}
+        ]
     );
     const [gridApi, setGridApi] = useState(null);
     const [gridColumnApi, setGridColumnApi] = useState(null);
@@ -174,43 +174,43 @@ const GridExample = () => {
     };
 
     return (
-        <div style={{ width: '100%', height: '100%' }}>
+        <div style={{width: '100%', height: '100%'}}>
             <div className="test-container">
                 <div className="test-header">
                     <div className="test-button-row">
                         <div className="test-button-group">
                             <button onClick={() => onBtSortOn()}>Sort On</button>
-                            <br />
+                            <br/>
                             <button onClick={() => onBtSortOff()}>Sort Off</button>
                         </div>
                         <div className="test-button-group">
                             <button onClick={() => onBtWidthNarrow()}>Width Narrow</button>
-                            <br />
+                            <br/>
                             <button onClick={() => onBtWidthNormal()}>Width Normal</button>
                         </div>
                         <div className="test-button-group">
                             <button onClick={() => onBtHide()}>Hide Cols</button>
-                            <br />
+                            <br/>
                             <button onClick={() => onBtShow()}>Show Cols</button>
                         </div>
                         <div className="test-button-group">
                             <button onClick={() => onBtPivotOn()}>Pivot On</button>
-                            <br />
+                            <br/>
                             <button onClick={() => onBtPivotOff()}>Pivot Off</button>
                         </div>
                         <div className="test-button-group">
                             <button onClick={() => onBtRowGroupOn()}>Row Group On</button>
-                            <br />
+                            <br/>
                             <button onClick={() => onBtRowGroupOff()}>Row Group Off</button>
                         </div>
                         <div className="test-button-group">
                             <button onClick={() => onBtAggFuncOn()}>Agg Func On</button>
-                            <br />
+                            <br/>
                             <button onClick={() => onBtAggFuncOff()}>Agg Func Off</button>
                         </div>
                         <div className="test-button-group">
                             <button onClick={() => onBtPinnedOn()}>Pinned On</button>
-                            <br />
+                            <br/>
                             <button onClick={() => onBtPinnedOff()}>Pinned Off</button>
                         </div>
                     </div>
@@ -249,6 +249,6 @@ const GridExample = () => {
 };
 
 render(
-    <GridExample />,
+    <GridExample/>,
     document.querySelector('#root')
 );
