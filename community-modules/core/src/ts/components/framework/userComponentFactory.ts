@@ -76,7 +76,7 @@ export interface ComponentClassDef {
     paramsFromSelector: any; // Params the selector function provided, if any
 }
 
-export interface CompClassAndParams {
+export interface UserCompDetails {
     componentClass: any;
     componentFromFramework: boolean;
     params: any;
@@ -124,21 +124,36 @@ export class UserComponentFactory extends BeanStub {
         params: ICellRendererParams): AgPromise<ICellRendererComp> | null {
         return this.lookupAndCreateComponent(def, params, CellRendererComponent, null, true);
     }
-    public getCellRendererDetails(def: ColDef | IRichCellEditorParams, params: ICellRendererParams): CompClassAndParams | undefined {
+
+
+
+
+
+
+
+
+
+    public getCellRendererDetails(def: ColDef | IRichCellEditorParams, params: ICellRendererParams): UserCompDetails | undefined {
         return this.getCompDetails(def, CellRendererComponent.propertyName, null, params);
     }
-    public createCellRenderer(compClassAndParams: CompClassAndParams): AgPromise<ICellRendererComp> | null {
+
+
+
+    public createCellRenderer(compClassAndParams: UserCompDetails): AgPromise<ICellRendererComp> | null {
         return this.createAndInitComponent(compClassAndParams, CellRendererComponent)
     }
+
+
+
 
     // CELL EDITOR
     public newCellEditor(colDef: ColDef, params: ICellEditorParams): AgPromise<ICellEditorComp> | null {
         return this.lookupAndCreateComponent(colDef, params, CellEditorComponent, 'agCellEditor');
     }
-    public getCellEditorDetails(def: ColDef, params: ICellEditorParams): CompClassAndParams | undefined {
+    public getCellEditorDetails(def: ColDef, params: ICellEditorParams): UserCompDetails | undefined {
         return this.getCompDetails(def, CellEditorComponent.propertyName, 'agCellEditor', params, true);
     }
-    public createCellEditor(compClassAndParams: CompClassAndParams): AgPromise<ICellEditorComp> | null {
+    public createCellEditor(compClassAndParams: UserCompDetails): AgPromise<ICellEditorComp> | null {
         return this.createAndInitComponent(compClassAndParams, CellEditorComponent)
     }
 
@@ -182,7 +197,7 @@ export class UserComponentFactory extends BeanStub {
         return this.lookupAndCreateComponent(def, params, StatusPanelComponent);
     }
 
-    private getCompDetails(defObject: DefinitionObject, propName: string, defaultName: string | null | undefined, params: any, mandatory = false): CompClassAndParams | undefined {
+    private getCompDetails(defObject: DefinitionObject, propName: string, defaultName: string | null | undefined, params: any, mandatory = false): UserCompDetails | undefined {
         const compClassDef = this.lookupComponent(defObject, propName, params, defaultName);
         if (!compClassDef || !compClassDef.component) {
             if (mandatory) {
@@ -232,7 +247,7 @@ export class UserComponentFactory extends BeanStub {
         return this.createAndInitComponent(compClassAndParams, componentType, defaultComponentName);
     }
 
-    private createAndInitComponent(compClassAndParams: CompClassAndParams, componentType: ComponentType, defaultComponentName?: string | null): AgPromise<any> | null {
+    private createAndInitComponent(compClassAndParams: UserCompDetails, componentType: ComponentType, defaultComponentName?: string | null): AgPromise<any> | null {
         if (!compClassAndParams) { return null; }
 
         const {params, componentClass, componentFromFramework} = compClassAndParams;

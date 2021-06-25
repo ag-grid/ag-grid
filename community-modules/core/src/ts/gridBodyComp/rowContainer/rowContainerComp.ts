@@ -115,9 +115,9 @@ export class RowContainerComp extends Component {
         }
     }
 
-    private newRowComp(rowCon: RowCtrl): RowComp {
+    private newRowComp(rowCtrl: RowCtrl): RowComp {
         const pinned = RowContainerCtrl.getPinned(this.name);
-        const res = new RowComp(rowCon, this, this.beans, pinned);
+        const res = new RowComp(rowCtrl, this, this.beans, pinned);
         return res;
     }
 

@@ -17,15 +17,13 @@ import { addStylesToElement, clearElement } from "../../utils/dom";
 import { isBrowserIE } from "../../utils/browser";
 import { doOnce } from "../../utils/function";
 import { CellCtrl, ICellComp } from "./cellCtrl";
-import { CompClassAndParams } from "../../components/framework/userComponentFactory";
+import { UserCompDetails } from "../../components/framework/userComponentFactory";
 
 export const CSS_CELL_VALUE = 'ag-cell-value';
 
-enum ShowingState { ShowRenderer, ShowEditor }
+enum DisplayState { ShowValue, EditValue }
 
 export class CellComp extends Component implements TooltipParentComp {
-
-    private static CELL_RENDERER_TYPE_NORMAL = 'cellRenderer';
 
     private eCellWrapper: HTMLElement | null;
     private eCellValue: HTMLElement;
@@ -61,7 +59,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private cellCtrl: CellCtrl;
 
-    private cellState: ShowingState;
+    private cellState: DisplayState;
     private firstRender: boolean;
 
     // every time we go into edit mode, or back again, this gets incremented.
@@ -134,8 +132,8 @@ export class CellComp extends Component implements TooltipParentComp {
         cellCtrl.setComp(compProxy, false, this.scope, this.getGui(), printLayout, editingRow);
     }
 
-    private showValue(valueToDisplay: any, compClassAndParams: CompClassAndParams | undefined, forceNewCellRendererInstance: boolean): void {
-        this.setCellState(ShowingState.ShowRenderer);
+    private showValue(valueToDisplay: any, compDetails: UserCompDetails | undefined, forceNewCellRendererInstance: boolean): void {
+        this.setCellState(DisplayState.ShowValue);
         const usingAngular1Template = this.isUsingAngular1Template();
 
         // this will go to cellCtrl in time
@@ -148,12 +146,12 @@ export class CellComp extends Component implements TooltipParentComp {
         const controlWrapperChanged = this.setupControlsWrapper();
 
         // all of these have dependencies on the eGui, so only do them after eGui is set
-        if (compClassAndParams) {
+        if (compDetails) {
             const neverRefresh = forceNewCellRendererInstance || controlWrapperChanged;
-            const cellRendererRefreshSuccessful = neverRefresh ? false : this.refreshCellRenderer(compClassAndParams);
+            const cellRendererRefreshSuccessful = neverRefresh ? false : this.refreshCellRenderer(compDetails);
             if (!cellRendererRefreshSuccessful) {
                 this.destroyEditorAndRenderer();
-                this.createCellRendererInstance(compClassAndParams);
+                this.createCellRendererInstance(compDetails);
             }
         } else {
             this.destroyEditorAndRenderer();
@@ -167,8 +165,8 @@ export class CellComp extends Component implements TooltipParentComp {
         this.updateAngular1ScopeAndCompile();
     }
 
-    private editValue(compClassAndParams: CompClassAndParams): void {
-        this.setCellState(ShowingState.ShowEditor);
+    private editValue(compClassAndParams: UserCompDetails): void {
+        this.setCellState(DisplayState.EditValue);
 
         this.destroyEditorAndRenderer();
         this.createCellEditorInstance(compClassAndParams);
@@ -176,7 +174,7 @@ export class CellComp extends Component implements TooltipParentComp {
         this.updateAngular1ScopeAndCompile();
     }
 
-    private setCellState(state: ShowingState): void {
+    private setCellState(state: DisplayState): void {
         this.firstRender = (this.cellState == null);
 
         if (this.cellState === state) { return; }
@@ -263,7 +261,7 @@ export class CellComp extends Component implements TooltipParentComp {
         setAriaDescribedBy(this.getGui(), describedByIds.join(' '));
     }
 
-    private createCellEditorInstance(compClassAndParams: CompClassAndParams): void {
+    private createCellEditorInstance(compClassAndParams: UserCompDetails): void {
         const versionCopy = this.latestCompRequestVersion;
 
         const cellEditorPromise = this.beans.userComponentFactory.createCellEditor(compClassAndParams);
@@ -332,7 +330,7 @@ export class CellComp extends Component implements TooltipParentComp {
         this.latestCompRequestVersion++;
     }
 
-    private refreshCellRenderer(compClassAndParams: CompClassAndParams): boolean {
+    private refreshCellRenderer(compClassAndParams: UserCompDetails): boolean {
         if (this.cellRenderer == null || this.cellRenderer.refresh == null) { return false; }
 
         // if different Cell Renderer configured this time (eg user is using selector, and
@@ -349,7 +347,7 @@ export class CellComp extends Component implements TooltipParentComp {
         return result === true || result === undefined;
     }
 
-    private createCellRendererInstance(compClassAndParams: CompClassAndParams): void {
+    private createCellRendererInstance(compClassAndParams: UserCompDetails): void {
         // never use task service if angularCompileRows=true, as that assume the cell renderers
         // are finished when the row is created. also we never use it if animation frame service
         // is turned off.

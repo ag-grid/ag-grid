@@ -26,7 +26,7 @@ export { AgStackComponentsRegistry } from "./components/agStackComponentsRegistr
 
 export { ColDefUtil } from "./components/colDefUtil";
 export { UserComponentRegistry } from "./components/framework/userComponentRegistry";
-export { UserComponentFactory } from "./components/framework/userComponentFactory";
+export { UserComponentFactory, UserCompDetails } from "./components/framework/userComponentFactory";
 export { ComponentType } from "./components/framework/componentTypes";
 export { initialiseAgGridWithAngular1 } from "./components/agGridNg1";
 export { initialiseAgGridWithWebComponents } from "./components/agGridWebComponent";

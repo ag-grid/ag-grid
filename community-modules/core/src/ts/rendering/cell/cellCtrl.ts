@@ -26,8 +26,7 @@ import { CellKeyboardListenerFeature } from "./cellKeyboardListenerFeature";
 import { ICellRenderer, ICellRendererParams } from "../cellRenderers/iCellRenderer";
 import { ICellEditor, ICellEditorParams } from "../../interfaces/iCellEditor";
 import { KeyCode } from "../../constants/keyCode";
-import { CellRendererComponent } from "../../components/framework/componentTypes";
-import { CompClassAndParams } from "../../components/framework/userComponentFactory";
+import { UserCompDetails } from "../../components/framework/userComponentFactory";
 
 const CSS_CELL = 'ag-cell';
 const CSS_AUTO_HEIGHT = 'ag-cell-auto-height';
@@ -67,8 +66,8 @@ export interface ICellComp {
     getCellRenderer(): ICellRenderer | null;
     getParentOfValue(): HTMLElement | null;
 
-    showValue(valueToDisplay: any, compClassAndParams: CompClassAndParams | undefined, forceNewCellRendererInstance: boolean): void;
-    editValue(compClassAndParams: CompClassAndParams): void;
+    showValue(valueToDisplay: any, compDetails: UserCompDetails | undefined, forceNewCellRendererInstance: boolean): void;
+    editValue(compClassAndParams: UserCompDetails): void;
 
     // hacks
     addRowDragging(customElement?: HTMLElement, dragStartPixels?: number): void;
