@@ -605,12 +605,15 @@ export class CellCtrl extends BeanStub {
     }
 
     public updateAndFormatValue(force = false): boolean {
-        const newValue = this.getValueFromValueService();
-        const valuesDifferent = force ? true : !this.valuesAreEqual(newValue, this.value);
-        this.value = newValue;
-        if (valuesDifferent) {
-            this.formatValue();
-        }
+        const oldValue = this.value;
+        const oldValueFormatted = this.valueFormatted;
+
+        this.value = this.getValueFromValueService();
+        this.formatValue();
+
+        const valuesDifferent = force ? true :
+            !this.valuesAreEqual(oldValue, this.value) || this.valueFormatted != oldValueFormatted;
+
         return valuesDifferent;
     }
 
