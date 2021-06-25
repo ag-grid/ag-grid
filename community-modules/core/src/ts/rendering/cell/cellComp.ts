@@ -18,6 +18,7 @@ import { isBrowserIE } from "../../utils/browser";
 import { doOnce } from "../../utils/function";
 import { CellCtrl, ICellComp } from "./cellCtrl";
 import { UserCompDetails } from "../../components/framework/userComponentFactory";
+import { CellTools } from "./cellTools";
 
 export const CSS_CELL_VALUE = 'ag-cell-value';
 
@@ -232,7 +233,6 @@ export class CellComp extends Component implements TooltipParentComp {
         this.updateCssCellValue();
 
         const eGui = this.getGui();
-        eGui.innerHTML = 'TEST';
         eGui.innerHTML = /* html */
             `<div ref="eCellWrapper" class="ag-cell-wrapper" role="presentation">
                     <span ref="eCellValue" role="presentation" class="${CSS_CELL_VALUE}"${unselectable}></span>
@@ -244,6 +244,8 @@ export class CellComp extends Component implements TooltipParentComp {
         const id = this.eCellValue.id = `cell-${this.getCompId()}`;
         const describedByIds: string[] = [];
 
+        const cellTools = new CellTools();
+
         if (this.includeRowDrag) {
             this.addRowDragging();
         }
@@ -253,7 +255,9 @@ export class CellComp extends Component implements TooltipParentComp {
         }
 
         if (this.includeSelection) {
-            describedByIds.push(this.addSelectionCheckbox().getCheckboxId());
+            const selectionComp = cellTools.createSelectionCheckbox(this.rowNode, this.column, this.beans);
+            this.eCellWrapper!.insertBefore(selectionComp.getGui(), this.eCellValue);
+            describedByIds.push(selectionComp.getCheckboxId());
         }
 
         describedByIds.push(id);
@@ -589,17 +593,6 @@ export class CellComp extends Component implements TooltipParentComp {
 
         // put the checkbox in before the value
         this.eCellWrapper!.insertBefore(dndSourceComp.getGui(), this.eCellValue);
-    }
-
-    private addSelectionCheckbox(): CheckboxSelectionComponent {
-        const cbSelectionComponent = new CheckboxSelectionComponent();
-        this.beans.context.createBean(cbSelectionComponent);
-
-        cbSelectionComponent.init({ rowNode: this.rowNode, column: this.column });
-
-        // put the checkbox in before the value
-        this.eCellWrapper!.insertBefore(cbSelectionComponent.getGui(), this.eCellValue);
-        return cbSelectionComponent;
     }
 
     private clearCellElement(): void {

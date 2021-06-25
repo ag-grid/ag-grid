@@ -740,6 +740,10 @@ export class CellCtrl extends BeanStub {
         return this.rowNode;
     }
 
+    public getBeans(): Beans {
+        return this.beans;
+    }
+
     public isPrintLayout(): boolean {
         return this.printLayout;
     }

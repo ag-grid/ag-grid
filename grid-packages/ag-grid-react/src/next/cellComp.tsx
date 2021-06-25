@@ -1,10 +1,11 @@
-import React, { MutableRefObject, useEffect, useMemo, useRef, useState } from "react";
+import React, { MutableRefObject, useEffect, useMemo, useRef, useState, useCallback } from "react";
 import {
     Context,
     _,
     ICellComp,
     CellCtrl,
-    UserCompDetails
+    CellTools,
+    UserCompDetails, CheckboxSelectionComponent
 } from "ag-grid-community";
 import { CssClasses } from "./utils";
 
@@ -34,10 +35,35 @@ export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
     const [role, setRole] = useState<string>();
     const [colId, setColId] = useState<string>();
     const [title, setTitle] = useState<string|undefined>();
+    const [includeSelection, setIncludeSelection] = useState<boolean>();
 
     const eGui = useRef<HTMLDivElement>(null);
     const cellRendererRef = useRef<any>(null);
     const cellEditorRef = useRef<any>(null);
+
+    const [toolsSpan, setToolsSpan] = useState<HTMLElement>();
+
+    // const cellWrapperRef = useRef<any>(null);
+
+    // const [selectionComp, setSelectionComp] = useState<CheckboxSelectionComponent|undefined>();
+
+    useEffect( ()=> {
+        if (!toolsSpan) { return; }
+
+        const comp = new CellTools().createSelectionCheckbox(
+            cellCtrl.getRowNode(), cellCtrl.getColumn(), cellCtrl.getBeans());
+
+        toolsSpan.insertAdjacentElement('afterbegin', comp.getGui());
+
+        return ()=> {
+            props.context.destroyBean(comp);
+        };
+
+    }, [toolsSpan, includeSelection]);
+
+    const toolsCallback = useCallback( (ref: HTMLElement)=> {
+        setToolsSpan(ref);
+    }, []);
 
     useEffect(() => {
         // const beansToDestroy: any[] = [];
@@ -69,7 +95,7 @@ export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
                 setRendererCompDetails(undefined);
                 setCellState(CellState.EditValue);
             },
-            setIncludeSelection: include => false, // this.includeSelection = include,
+            setIncludeSelection: include => setIncludeSelection(include),
             setIncludeRowDrag: include => false, // this.includeRowDrag = include,
             setIncludeDndSource: include => false, // this.includeDndSource = include,
             setForceWrapper: force => false, // this.forceWrapper = force,
@@ -103,25 +129,59 @@ export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
     _.assign(cellStyles, userStyles);
 
     const showValue = cellState === CellState.ShowValue;
-    const showValueNoCellRenderer = showValue && !rendererCompDetails;
-    const showValueReactCellRenderer = showValue && rendererCompDetails && rendererCompDetails.componentFromFramework;
-    const showValueJsCellRenderer = showValue && rendererCompDetails && !rendererCompDetails.componentFromFramework;
-
     const editValue = cellState === CellState.EditValue;
-    const editValueReactCellRenderer = editValue && editorCompDetails && editorCompDetails.componentFromFramework;
-    const editValueJsCellRenderer = editValue && editorCompDetails && !editorCompDetails.componentFromFramework;
+
+    const showTools = !!includeSelection;
 
     return (
         <div ref={ eGui } className={ className } style={ cellStyles } tabIndex={tabIndex}
              aria-selected={ariaSelected} aria-colindex={ariaColIndex} role={role}
              col-id={colId} title={title}>
-            { showValueNoCellRenderer && jsxShowValueNoCellRenderer(valueToDisplay) }
-            { showValueReactCellRenderer && jsxShowValueReactCellRenderer(rendererCompDetails!, cellRendererRef) }
-            { showValueJsCellRenderer && jsxShowValueJsCellRenderer() }
-            { editValueReactCellRenderer && jsxEditValueReactCellRenderer(editorCompDetails!, cellEditorRef) }
-            { editValueJsCellRenderer && jsxEditValueJsCellRenderer() }
+
+            { showValue && jsxShowValue(rendererCompDetails, cellRendererRef, valueToDisplay, showTools, toolsCallback) }
+            { editValue && jsxEditValue(editorCompDetails, cellEditorRef) }
+
         </div>
     );
+}
+
+function jsxShowValue(
+            rendererCompDetails: UserCompDetails | undefined, cellRendererRef: MutableRefObject<any>, valueToDisplay: any,
+            showTools: boolean,
+            toolsCallback: (ref:any)=>void
+            ) {
+    const noCellRenderer = !rendererCompDetails;
+    const reactCellRenderer = rendererCompDetails && rendererCompDetails.componentFromFramework;
+    const jsCellRenderer = rendererCompDetails && !rendererCompDetails.componentFromFramework;
+
+    const bodyJsxFunc = ()=> (<>
+            { noCellRenderer && jsxShowValueNoCellRenderer(valueToDisplay) }
+            { reactCellRenderer && jsxShowValueReactCellRenderer(rendererCompDetails!, cellRendererRef) }
+            { jsCellRenderer && jsxShowValueJsCellRenderer() }
+        </>);
+
+    ///////// Need to fix unselectable=on, should be set by the ctrl
+    return (
+        <>
+            { showTools && <div className="ag-cell-wrapper" role="presentation" ref={toolsCallback}>
+                                <span role="presentation" className={"ag-cell-value"} unselectable="on">
+                                    {bodyJsxFunc()}
+                                </span>
+                            </div> }
+            { !showTools && bodyJsxFunc() }
+        </>
+    );
+}
+
+function jsxEditValue(editorCompDetails: UserCompDetails | undefined, cellEditorRef: MutableRefObject<any>) {
+    const reactCellRenderer = editorCompDetails && editorCompDetails.componentFromFramework;
+    const jsCellRenderer = editorCompDetails && !editorCompDetails.componentFromFramework;
+    return (
+        <>
+            { reactCellRenderer && jsxEditValueReactCellRenderer(editorCompDetails!, cellEditorRef) }
+            { jsCellRenderer && jsxEditValueJsCellRenderer() }
+        </>
+    )
 }
 
 function jsxShowValueNoCellRenderer(valueToDisplay: any) {
