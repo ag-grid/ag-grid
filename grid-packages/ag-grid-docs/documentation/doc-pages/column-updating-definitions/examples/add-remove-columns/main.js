@@ -1,26 +1,26 @@
-var colDefsMedalsIncluded = [
-    { field: 'athlete' },
-    { field: 'age' },
-    { field: 'country' },
-    { field: 'sport' },
-    { field: 'year' },
-    { field: 'date' },
-    { field: 'gold' },
-    { field: 'silver' },
-    { field: 'bronze' },
-    { field: 'total' }
+const colDefsMedalsIncluded = [
+    {field: 'athlete'},
+    {field: 'age'},
+    {field: 'country'},
+    {field: 'sport'},
+    {field: 'year'},
+    {field: 'date'},
+    {field: 'gold'},
+    {field: 'silver'},
+    {field: 'bronze'},
+    {field: 'total'}
 ];
 
-var colDefsMedalsExcluded = [
-    { field: 'athlete' },
-    { field: 'age' },
-    { field: 'country' },
-    { field: 'sport' },
-    { field: 'year' },
-    { field: 'date' }
+const colDefsMedalsExcluded = [
+    {field: 'athlete'},
+    {field: 'age'},
+    {field: 'country'},
+    {field: 'sport'},
+    {field: 'year'},
+    {field: 'date'}
 ];
 
-var gridOptions = {
+const gridOptions = {
     defaultColDef: {
         initialWidth: 100,
         sortable: true,
@@ -38,12 +38,12 @@ function onBtIncludeMedalColumns() {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
-    var gridDiv = document.querySelector('#myGrid');
+document.addEventListener('DOMContentLoaded', () => {
+    const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
     agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
+        .then(data => {
             this.onBtIncludeMedalColumns();
             gridOptions.api.setRowData(data);
         });
