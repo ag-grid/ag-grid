@@ -34,7 +34,8 @@ export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
     const [valueToDisplay, setValueToDisplay] = useState<any>();
     const [editorCompDetails, setEditorCompDetails] = useState<UserCompDetails>();
     const [tabIndex, setTabIndex] = useState<number>();
-    const [ariaSelected, setAriaSelected] = useState<boolean>();
+    const [ariaSelected, setAriaSelected] = useState<boolean|undefined>();
+    const [ariaColIndex, setAriaColIndex] = useState<number>();
 
     const eGui = useRef<HTMLDivElement>(null);
     const cellRendererRef = useRef<any>(null);
@@ -50,7 +51,7 @@ export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
             getFocusableElement: () => null as any as HTMLElement, //  this.getFocusableElement(),
             setLeft: left => setLeft(left),
             setWidth: width => setWidth(width),
-            setAriaColIndex: index => false, //  setAriaColIndex(this.getGui(), index),
+            setAriaColIndex: index => setAriaColIndex(index),
             setHeight: height => setHeight(height),
             setZIndex: zIndex => false, //  style.zIndex = zIndex,
             setTabIndex: tabIndex => setTabIndex(tabIndex),
@@ -113,7 +114,7 @@ export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
 
     return (
         <div ref={ eGui } className={ className } style={ cellStyles } tabIndex={tabIndex}
-             aria-selected={ariaSelected}>
+             aria-selected={ariaSelected} aria-colindex={ariaColIndex}>
             { showValueNoCellRenderer && jsxShowValueNoCellRenderer(valueToDisplay) }
             { showValueReactCellRenderer && jsxShowValueReactCellRenderer(rendererCompDetails!, cellRendererRef) }
             { showValueJsCellRenderer && jsxShowValueJsCellRenderer() }
