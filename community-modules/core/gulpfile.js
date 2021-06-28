@@ -1,5 +1,5 @@
 const gulp = require('gulp');
-const { series, parallel } = gulp;
+const {series, parallel} = gulp;
 const sourcemaps = require('gulp-sourcemaps');
 const clean = require('gulp-clean');
 const rename = require("gulp-rename");
@@ -31,12 +31,12 @@ const dtsHeaderTemplate =
 // Start of Typescript related tasks
 const cleanDist = () => {
     return gulp
-        .src('dist', { read: false, allowEmpty: true })
+        .src('dist', {read: false, allowEmpty: true})
         .pipe(clean());
 };
 
 const tscSrcTask = async () => {
-    const tsProject = gulpTypescript.createProject('tsconfig.json', { typescript: typescript });
+    const tsProject = gulpTypescript.createProject('tsconfig.json', {typescript: typescript});
 
     const tsResult = gulp
         .src(['src/ts/**/*.ts', '!src/ts/**/*.test.ts', '!src/ts/test-utils/mock.ts'])
@@ -55,7 +55,7 @@ const tscSrcTask = async () => {
 };
 
 const tscSrcEs6Task = async () => {
-    const tsProject = gulpTypescript.createProject('./tsconfig.es6.json', { typescript: typescript });
+    const tsProject = gulpTypescript.createProject('./tsconfig.es6.json', {typescript: typescript});
 
     const tsResult = gulp
         .src(['src/ts/**/*.ts', '!src/ts/**/*.test.ts', '!src/ts/test-utils/mock.ts'])
@@ -83,7 +83,7 @@ const watchAndBuildBoth = () => {
 
 // Start of scss/css related tasks
 const scssTask = () => {
-    var f = filter(["**/*.css", '*Font*.css'], { restore: true });
+    var f = filter(["**/*.css", '*Font*.css'], {restore: true});
 
     return gulp.src([
         'src/styles/**/*.scss',
@@ -149,7 +149,7 @@ const scssTask = () => {
                 ]
             },
             plugins: [
-                new MiniCssExtractPlugin({ filename: '[name].css' })
+                new MiniCssExtractPlugin({filename: '[name].css'})
             ]
         }))
         .pipe(f)
@@ -173,7 +173,10 @@ const minifyCss = () => {
 };
 
 const copyGridCoreStyles = () => {
-    return gulp.src('./src/styles/**/*').pipe(gulp.dest('./dist/styles'));
+    return gulp.src(['./src/styles/**/*',
+        '!./src/styles/**/package.json',
+        '!./src/styles/**/generate-web-fonts.js'
+    ]).pipe(gulp.dest('./dist/styles'));
 };
 
 // End of scss/css related tasks
