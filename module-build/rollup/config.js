@@ -56,6 +56,7 @@ function genConfig(buildsToUse, buildName, sourceDirectory, moduleName) {
         plugins: [
             node()      // for utils package - defaulting to use index.js
         ].concat(build.plugins || []),
+        external: id => /@ag-grid-/.test(id), // all other @ag-grid deps should be treated as externals so as to prevent duplicate modules when using more than one cjs file
         output: {
             file: path.resolve(sourceDirectory, `./dist/${moduleName}${build.extension}`),
             format: build.format,
