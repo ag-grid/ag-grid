@@ -66,13 +66,7 @@ export class Text extends Shape {
     get font(): string {
         if (this.dirtyFont) {
             this.dirtyFont = false;
-
-            this._font = [
-                this.fontStyle || '',
-                this.fontWeight || '',
-                this.fontSize + 'px',
-                this.fontFamily
-            ].join(' ').trim();
+            this._font = getFont(this.fontSize, this.fontFamily, this.fontStyle, this.fontWeight);
         }
 
         return this._font!;
@@ -312,4 +306,13 @@ export class Text extends Shape {
 
         this.dirty = false;
     }
+}
+
+export function getFont(fontSize: number, fontFamily: string, fontStyle ?: string, fontWeight ?: string): string {
+    return [
+        fontStyle || '',
+        fontWeight || '',
+        fontSize + 'px',
+        fontFamily
+    ].join(' ').trim();
 }
