@@ -229,10 +229,13 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
     inRangeEx(x: number, width = 0, tolerance = 0): -1 | 0 | 1 {
         const { range } = this;
-        if ((x + width) < (range[0] - tolerance)) {
-            return -1; // left or range
+        // Account for inverted ranges, for example [500, 100] as well as [100, 500]
+        const min = Math.min(range[0], range[1]);
+        const max = Math.max(range[0], range[1]);
+        if ((x + width) < (min - tolerance)) {
+            return -1; // left of range
         }
-        if (x > (range[1] + tolerance)) {
+        if (x > (max + tolerance)) {
             return 1; // right of range
         }
         return 0; // in range
