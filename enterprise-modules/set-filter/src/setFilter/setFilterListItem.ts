@@ -78,8 +78,9 @@ export class SetFilterListItem extends Component {
         }
 
         if (this.params.showTooltips) {
-            const tooltipText = _.escapeString(formattedValue != null ? formattedValue : value);
-            this.setTooltip(tooltipText);
+            const isBrowserTooltip = this.gridOptionsWrapper.isEnableBrowserTooltips();
+            const tooltipValue = formattedValue != null ? formattedValue : value;
+            this.setTooltip(isBrowserTooltip ? tooltipValue : _.escapeString(tooltipValue));
         }
 
         const params: ISetFilterCellRendererParams = {

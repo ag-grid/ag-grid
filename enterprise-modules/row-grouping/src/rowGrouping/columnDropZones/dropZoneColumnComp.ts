@@ -76,10 +76,10 @@ export class DropZoneColumnComp extends Component {
     }
 
     private setupTooltip(): void {
-
+        const isBrowserTooltip = this.gridOptionsWrapper.isEnableBrowserTooltips();
         const refresh = () => {
             const newTooltipText = this.column.getColDef().headerTooltip;
-            this.setTooltip(_.escapeString(newTooltipText));
+            this.setTooltip(isBrowserTooltip ? newTooltipText : _.escapeString(newTooltipText));
         };
 
         refresh();

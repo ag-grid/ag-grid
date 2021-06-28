@@ -510,10 +510,11 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     }
 
     private setupTooltip(): void {
+        const isBrowserTooltip = this.gridOptionsWrapper.isEnableBrowserTooltips();
 
         const refresh = () => {
             const newTooltipText = this.column.getColDef().headerTooltip;
-            this.setTooltip(escapeString(newTooltipText));
+            this.setTooltip(isBrowserTooltip ? newTooltipText : escapeString(newTooltipText));
         };
 
         refresh();

@@ -79,10 +79,11 @@ export class ToolPanelFilterGroupComp extends Component {
         // tooltip shows but cos we didn't leave the group the group tooltip remains. this should be fixed in the future,
         // maye the group shouldn't contain the children form a DOM perspective.
         if (!this.showingColumn) { return; }
+        const isBrowserTooltip = this.gridOptionsWrapper.isEnableBrowserTooltips();
 
         const refresh = () => {
             const newTooltipText = (this.columnGroup as Column).getColDef().headerTooltip;
-            this.setTooltip(_.escapeString(newTooltipText));
+            this.setTooltip(isBrowserTooltip ? newTooltipText : _.escapeString(newTooltipText));
         };
 
         refresh();
