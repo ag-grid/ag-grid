@@ -112,7 +112,11 @@ export class CellTooltipFeature extends BeanStub {
     }
 
     private getTooltipText(escape: boolean = true) {
-        return escape ? escapeString(this.tooltip) : this.tooltip;
+        if (typeof this.tooltip === 'string') {
+            return escape ? escapeString(this.tooltip) : this.tooltip;
+        }
+
+        return this.tooltip;
     }
 
     // overriding to make public, as we don't dispose this bean via context
