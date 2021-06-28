@@ -13,7 +13,7 @@ import {
     GridOptions,
     Module,
     WrapableInterface
-} from "@ag-grid-community/core";
+} from "ag-grid-community";
 import {AgGridColumn} from "./agGridColumn";
 import {ChangeDetectionService, ChangeDetectionStrategyType} from "./changeDetectionService";
 import {ReactComponent} from "./reactComponent";
@@ -22,6 +22,7 @@ import {NewReactComponent} from "./newReactComponent";
 
 export interface AgGridReactProps extends GridOptions {
     gridOptions?: GridOptions;
+    className?: string,
     modules?: Module[];
     rowDataChangeDetectionStrategy?: ChangeDetectionStrategyType;
     componentWrappingElement?: string;
@@ -31,7 +32,7 @@ export interface AgGridReactProps extends GridOptions {
     containerStyle?: any;
 }
 
-export class AgGridReact extends Component<AgGridReactProps, {}> {
+export class AgGridReactLegacy extends Component<AgGridReactProps, {}> {
     private static MAX_COMPONENT_CREATION_TIME_IN_MS: number = 1000; // a second should be more than enough to instantiate a component
 
     static propTypes: any;
@@ -39,7 +40,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
     static defaultProps = {
         legacyComponentRendering: false,
         disableStaticMarkup: false,
-        maxComponentCreationTimeMs: AgGridReact.MAX_COMPONENT_CREATION_TIME_IN_MS
+        maxComponentCreationTimeMs: AgGridReactLegacy.MAX_COMPONENT_CREATION_TIME_IN_MS
     };
 
     gridOptions!: GridOptions;
@@ -102,6 +103,8 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
 
         this.api = this.gridOptions.api!;
         this.columnApi = this.gridOptions.columnApi!;
+
+        this.props.setGridApi(this.api, this.columnApi);
     }
 
     waitForInstance(reactComponent: ReactComponent, resolve: (value: any) => void, startTime = Date.now()): void {
@@ -122,7 +125,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
                     return;
                 }
 
-                console.error(`AG Grid: React Component '${reactComponent.getReactComponentName()}' not created within ${AgGridReact.MAX_COMPONENT_CREATION_TIME_IN_MS}ms`);
+                console.error(`AG Grid: React Component '${reactComponent.getReactComponentName()}' not created within ${AgGridReactLegacy.MAX_COMPONENT_CREATION_TIME_IN_MS}ms`);
                 return;
             }
 
@@ -327,7 +330,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
     }
 }
 
-AgGridReact.propTypes = {
+AgGridReactLegacy.propTypes = {
     gridOptions: PropTypes.object
 };
 
@@ -341,14 +344,14 @@ addProperties(ComponentUtil.FUNCTION_PROPERTIES, PropTypes.func);
 
 function addProperties(listOfProps: string[], propType: any) {
     listOfProps.forEach(propKey => {
-        (AgGridReact as any)[propKey] = propType;
+        (AgGridReactLegacy as any)[propKey] = propType;
     });
 }
 
 class ReactFrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterface> implements FrameworkComponentWrapper {
-    private readonly agGridReact!: AgGridReact;
+    private readonly agGridReact!: AgGridReactLegacy;
 
-    constructor(agGridReact: AgGridReact) {
+    constructor(agGridReact: AgGridReactLegacy) {
         super();
         this.agGridReact = agGridReact;
     }

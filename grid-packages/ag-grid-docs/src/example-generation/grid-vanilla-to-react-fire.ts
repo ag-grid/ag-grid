@@ -9,7 +9,7 @@ function getModuleImports(bindings: any, componentFilenames: string[]): string[]
     const imports = [
         "import React, { Component } from 'react';",
         "import { render } from 'react-dom';",
-        "import { AgGridReactFire } from '@ag-grid-community/react';"
+        "import { AgGridReact } from '@ag-grid-community/react';"
     ];
 
     if (modules) {
@@ -88,7 +88,8 @@ function getTemplate(bindings: any, componentAttributes: string[]): string {
                     height: '${gridSettings.height}',
                     width: '${gridSettings.width}'}}
                     className="${gridSettings.theme}">
-            <AgGridReactFire
+            <AgGridReact
+                enableReactUi={true}
                 ${componentAttributes.join('\n')}
             />
             </div>`;

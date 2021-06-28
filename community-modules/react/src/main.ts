@@ -1,5 +1,5 @@
 export {AgGridReact} from './agGridReact';
+export {AgGridReactLegacy} from './agGridReactLegacy'
 export {AgGridReactFire} from './next/agGridReactFire'
 export {AgGridColumn} from './agGridColumn';
-// export {AgGridReactNext} from './next/agGridReactNext';
 export {ChangeDetectionStrategyType} from './changeDetectionService';

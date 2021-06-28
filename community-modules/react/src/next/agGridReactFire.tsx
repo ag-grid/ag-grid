@@ -1,61 +1,12 @@
 import * as React from "react";
-import { Component, ReactPortal, RefObject, useEffect } from "react";
-import * as PropTypes from "prop-types";
-import {
-    _,
-    BaseComponentWrapper,
-    ColumnApi,
-    ComponentType,
-    ComponentUtil,
-    FrameworkComponentWrapper,
-    Grid,
-    GridApi,GridCoreCreator,
-    GridOptions,
-    Module,Context,
-    WrapableInterface
-} from "@ag-grid-community/core";
+import {Component} from "react";
+import {_, ColumnApi, ComponentUtil, Context, GridApi, GridCoreCreator, GridOptions} from "@ag-grid-community/core";
 import {AgGridColumn} from "../agGridColumn";
 import {ChangeDetectionService, ChangeDetectionStrategyType} from "../changeDetectionService";
-import {ReactComponent} from "../reactComponent";
-import {LegacyReactComponent} from "../legacyReactComponent";
-import {NewReactComponent} from "../newReactComponent";
-import { GridComp } from "./gridComp";
+import {GridComp} from "./gridComp";
+import {AgReactUiProps} from "../interfaces";
 
-export interface AgGridReactProps extends GridOptions {
-    gridOptions?: GridOptions;
-    modules?: Module[];
-    rowDataChangeDetectionStrategy?: ChangeDetectionStrategyType;
-    componentWrappingElement?: string;
-    disableStaticMarkup?: boolean;  // only used when legacyComponentRendering is true
-    maxComponentCreationTimeMs?: number,
-    legacyComponentRendering?: boolean,
-    containerStyle?: any;
-}
-
-export class AgGridReactFire extends Component<AgGridReactProps, {context: Context | undefined}> {
-
-/*
-    private static MAX_COMPONENT_CREATION_TIME_IN_MS: number = 1000; // a second should be more than enough to instantiate a component
-
-    static propTypes: any;
-
-    static defaultProps = {
-        legacyComponentRendering: false,
-        disableStaticMarkup: false,
-        maxComponentCreationTimeMs: AgGridReact.MAX_COMPONENT_CREATION_TIME_IN_MS
-    };
-
-    gridOptions!: GridOptions;
-
-    changeDetectionService = new ChangeDetectionService();
-
-    portals: ReactPortal[] = [];
-    hasPendingPortalUpdate = false;
-
-    destroyed = false;
-
-    protected eGridDiv!: HTMLElement;
-*/
+export class AgGridReactFire extends Component<AgReactUiProps, { context: Context | undefined }> {
 
     private readonly SYNCHRONOUS_CHANGE_PROPERTIES = ['context']
 
@@ -64,7 +15,7 @@ export class AgGridReactFire extends Component<AgGridReactProps, {context: Conte
 
     private gridOptions!: GridOptions;
 
-    private destroyFuncs: (()=>void)[] = [];
+    private destroyFuncs: (() => void)[] = [];
     private changeDetectionService = new ChangeDetectionService();
     private eGui = React.createRef<HTMLDivElement>();
 
@@ -75,18 +26,11 @@ export class AgGridReactFire extends Component<AgGridReactProps, {context: Conte
 
     public render() {
         return (
-            <div style={this.createStyleForDiv()} className={this.props.className} ref={ this.eGui }>
-                { this.state.context && <GridComp context={this.state.context}/> }
+            <div style={this.createStyleForDiv()} className={this.props.className} ref={this.eGui}>
+                {this.state.context && <GridComp context={this.state.context}/>}
             </div>
         );
 
-        // return React.createElement('div', {
-        //     style: this.createStyleForDiv(),
-        //     className: this.props.className,
-        //     ref: (e: HTMLElement) => {
-        //         this.eGridDiv = e;
-        //     }
-        // }, this.portals);
     }
 
     private createStyleForDiv() {
@@ -119,17 +63,19 @@ export class AgGridReactFire extends Component<AgGridReactProps, {context: Conte
         // don't need the return value
         const gridCoreCreator = new GridCoreCreator();
         gridCoreCreator.create(this.eGui.current!, this.gridOptions, context => {
-            this.setState({context: context} );
+            this.setState({context: context});
         }, gridParams);
 
-        this.destroyFuncs.push( ()=>this.gridOptions.api!.destroy() );
+        this.destroyFuncs.push(() => this.gridOptions.api!.destroy());
 
         this.api = this.gridOptions.api!;
         this.columnApi = this.gridOptions.columnApi!;
+
+        this.props.setGridApi(this.api, this.columnApi);
     }
 
     public componentWillUnmount() {
-        this.destroyFuncs.forEach( f => f() );
+        this.destroyFuncs.forEach(f => f());
     }
 
     public componentDidUpdate(prevProps: any) {
@@ -226,7 +172,7 @@ export class AgGridReactFire extends Component<AgGridReactProps, {context: Conte
                 }
             })
 
-            if(Object.keys(synchronousChanges).length > 0 && !!this.api) {
+            if (Object.keys(synchronousChanges).length > 0 && !!this.api) {
                 ComponentUtil.processOnChange(synchronousChanges, this.gridOptions, this.api, this.columnApi)
             }
         }

@@ -1,7 +1,7 @@
 import { ReactPortal, createElement } from 'react';
 import { createPortal } from 'react-dom';
 import { ComponentType, AgPromise } from '@ag-grid-community/core';
-import { AgGridReact } from "./agGridReact";
+import { AgGridReactLegacy } from "./agGridReactLegacy";
 import { ReactComponent } from './reactComponent';
 import generateNewKey from "./keyGenerator";
 import { renderToStaticMarkup } from "react-dom/server";
@@ -13,7 +13,7 @@ export class NewReactComponent extends ReactComponent {
     private reactElement: any;
     private params: any;
 
-    constructor(reactComponent: any, parentComponent: AgGridReact, componentType: ComponentType) {
+    constructor(reactComponent: any, parentComponent: AgGridReactLegacy, componentType: ComponentType) {
         super(reactComponent, parentComponent, componentType);
 
         this.key = generateNewKey();

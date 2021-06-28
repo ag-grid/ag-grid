@@ -10,7 +10,7 @@ function getModuleImports(bindings: any, componentFilenames: string[]): string[]
     const imports = [
         "import React, { useState } from 'react';",
         "import { render } from 'react-dom';",
-        "import { AgGridReactFire, AgGridColumn } from '@ag-grid-community/react';"
+        "import { AgGridReact, AgGridColumn } from '@ag-grid-community/react';"
     ];
 
     if (modules) {
@@ -95,11 +95,12 @@ function getTemplate(bindings: any, componentAttributes: string[], columnDefs: s
                     height: '${gridSettings.height}',
                     width: '${gridSettings.width}'}}
                     className="${gridSettings.theme}">
-            <AgGridReactFire
+            <AgGridReact
+                enableReactUi={true}
                 ${componentAttributes.join('\n')}
             >
                 ${columnDefs.join("")}
-            </AgGridReactFire>
+            </AgGridReact>
             </div>`;
 
     const template = bindings.template ? bindings.template.replace(templatePlaceholder, agGridTag.replace('$', '$$$$')) : agGridTag;

@@ -1,3 +1,28 @@
+import {GridOptions, Module} from "ag-grid-community";
+import {ChangeDetectionStrategyType} from "./changeDetectionService";
+
+export interface SharedProps extends GridOptions {
+    enableReactUi?: boolean;
+}
+
+export interface AgReactUiProps extends SharedProps {
+    gridOptions?: GridOptions;
+    className?: string;
+    containerStyle?: any;
+    modules?: Module[];
+}
+
+export interface AgGridReactProps extends SharedProps {
+    gridOptions?: GridOptions;
+    modules?: Module[];
+    rowDataChangeDetectionStrategy?: ChangeDetectionStrategyType;
+    componentWrappingElement?: string;
+    disableStaticMarkup?: boolean;  // only used when legacyComponentRendering is true
+    maxComponentCreationTimeMs?: number,
+    legacyComponentRendering?: boolean,
+    containerStyle?: any;
+}
+
 import {
     ICellEditor,
     ICellEditorParams,
