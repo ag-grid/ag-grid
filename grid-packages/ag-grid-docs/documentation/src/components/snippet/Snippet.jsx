@@ -31,5 +31,6 @@ const extractOptions = props => {
     return {
         suppressFrameworkContext: asBoolean(props['suppressframeworkcontext']),
         spaceBetweenProperties: asBoolean(props['spacebetweenproperties']),
+        inlineReactProperties: asBoolean(props['inlinereactproperties']),
     };
 };

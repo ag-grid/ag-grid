@@ -2,14 +2,11 @@ var gridOptions = {
     columnDefs: [
         { field: 'country', rowGroupIndex: 1, hide: true },
         { field: 'year', rowGroupIndex: 0, hide: true },
-        { field: 'sport', minWidth: 200 },
-        { field: 'athlete', minWidth: 200 },
+        { field: 'sport', },
+        { field: 'athlete' },
         { field: 'gold' },
         { field: 'silver' },
         { field: 'bronze' },
-        { field: 'total' },
-        { field: 'age' },
-        { field: 'date', minWidth: 140 },
     ],
     defaultColDef: {
         flex: 1,
@@ -20,7 +17,6 @@ var gridOptions = {
     autoGroupColumnDef: {
         minWidth: 250,
     },
-    enableRangeSelection: true,
     animateRows: true,
 };
 

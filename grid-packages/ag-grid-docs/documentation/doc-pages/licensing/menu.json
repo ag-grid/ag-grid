@@ -909,7 +909,64 @@
             "title": "Row Grouping",
             "url": "/grouping/",
             "enterprise": true,
-            "showInCollapsed": true
+            "showInCollapsed": true,
+            "matrixExcludeChildren": true,
+            "items": [
+              {
+                "title": "Single Group Column",
+                "url": "/grouping-single-group-column/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Multiple Group Columns",
+                "url": "/grouping-multiple-group-columns/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Full Width Groups",
+                "url": "/grouping-full-width-groups/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Group Customisation",
+                "url": "/grouping-customisation/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Sorting",
+                "url": "/grouping-sorting/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Filtering",
+                "url": "/grouping-filtering/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Group Footers",
+                "url": "/grouping-footers/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Provided Groups",
+                "url": "/grouping-provided-groups/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Other",
+                "url": "/grouping-other/",
+                "enterprise": true,
+                "showInCollapsed": false
+              }
+            ]
           },
           {
             "title": "Master Detail",

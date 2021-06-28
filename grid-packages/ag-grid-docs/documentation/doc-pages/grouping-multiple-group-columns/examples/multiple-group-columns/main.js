@@ -16,7 +16,6 @@ var gridOptions = {
         minWidth: 200,
     },
     groupMultiAutoColumn: true,
-    enableRangeSelection: true,
     animateRows: true,
 };
 
