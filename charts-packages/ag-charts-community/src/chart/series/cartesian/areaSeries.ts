@@ -551,9 +551,8 @@ export class AreaSeries extends CartesianSeries {
     }
 
     private updateMarkerSelection(markerSelectionData: MarkerSelectionDatum[]): void {
-        const { marker } = this;
-        const data = marker.shape ? markerSelectionData : [];
-        const MarkerShape = getMarker(marker.shape);
+        const data = this.marker.shape ? markerSelectionData : [];
+        const MarkerShape = getMarker(this.marker.shape);
         const updateMarkers = this.markerSelection.setData(data);
         updateMarkers.exit.remove();
         const enterMarkers = updateMarkers.enter.append(MarkerShape);

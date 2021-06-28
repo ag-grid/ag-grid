@@ -2,7 +2,6 @@ import { Selection } from "../../../scene/selection";
 import { Group } from "../../../scene/group";
 import { SeriesNodeDatum, CartesianTooltipRendererParams, HighlightStyle, SeriesTooltip } from "../series";
 import { finiteExtent } from "../../../util/array";
-import { toFixed } from "../../../util/number";
 import { LegendDatum } from "../../legend";
 import { LinearScale } from "../../../scale/linearScale";
 import { reactive, TypedEvent } from "../../../util/observable";
@@ -12,6 +11,11 @@ import { getMarker } from "../../marker/util";
 import { TooltipRendererResult, toTooltipHtml } from "../../chart";
 import ContinuousScale from "../../../scale/continuousScale";
 import { sanitizeHtml } from "../../../util/sanitize";
+import { Label } from "../../label";
+import { Text } from "../../../scene/shape/text";
+import { HdpiCanvas } from "../../../canvas/hdpiCanvas";
+import { Marker } from "../../marker/marker";
+import { MeasuredLabel, PlacedLabel, placeLabels } from "./labelPlacement";
 
 interface ScatterNodeDatum extends SeriesNodeDatum {
     readonly point: {
@@ -19,6 +23,7 @@ interface ScatterNodeDatum extends SeriesNodeDatum {
         readonly y: number;
     };
     readonly size: number;
+    readonly label: MeasuredLabel;
 }
 
 export interface ScatterSeriesNodeClickEvent extends TypedEvent {
@@ -55,10 +60,15 @@ export class ScatterSeries extends CartesianSeries {
     private sizeData: number[] = [];
     private sizeScale = new LinearScale();
 
-    private nodeSelection: Selection<Group, Group, ScatterNodeDatum, any> = Selection.select(this.group).selectAll<Group>();
     private nodeData: ScatterNodeDatum[] = [];
+    private markerSelection: Selection<Marker, Group, ScatterNodeDatum, any> = Selection.select(this.pickGroup).selectAll<Marker>();
+
+    private labelData: MeasuredLabel[] = [];
+    private labelSelection: Selection<Text, Group, PlacedLabel, any> = Selection.select(this.group).selectAll<Text>();
 
     readonly marker = new CartesianSeriesMarker();
+
+    readonly label = new Label();
 
     private _fill: string | undefined = '#c16068';
     set fill(value: string | undefined) {
@@ -123,7 +133,7 @@ export class ScatterSeries extends CartesianSeries {
     highlightStyle: HighlightStyle = { fill: 'yellow' };
 
     onHighlightChange() {
-        this.updateNodes();
+        this.updateMarkerNodes();
     }
 
     @reactive('layoutChange') title?: string;
@@ -146,18 +156,24 @@ export class ScatterSeries extends CartesianSeries {
     constructor() {
         super();
 
-        const { marker } = this;
+        const { marker, label } = this;
+
         marker.addPropertyListener('shape', this.onMarkerShapeChange, this);
         marker.addEventListener('change', this.update, this);
 
         this.addPropertyListener('xKey', () => this.xData = []);
         this.addPropertyListener('yKey', () => this.yData = []);
         this.addPropertyListener('sizeKey', () => this.sizeData = []);
+
+        label.enabled = false;
+        label.addEventListener('change', this.update, this);
+        label.addEventListener('dataChange', this.scheduleData, this);
+        label.addPropertyListener('fontSize', this.scheduleData, this);
     }
 
     onMarkerShapeChange() {
-        this.nodeSelection = this.nodeSelection.setData([]);
-        this.nodeSelection.exit.remove();
+        this.markerSelection = this.markerSelection.setData([]);
+        this.markerSelection.exit.remove();
         this.update();
 
         this.fireEvent({ type: 'legendChange' });
@@ -171,18 +187,24 @@ export class ScatterSeries extends CartesianSeries {
     }
 
     processData(): boolean {
-        const { xKey, yKey, sizeKey, xAxis, yAxis, marker } = this;
+        const { xKey, yKey, sizeKey, labelKey, xAxis, yAxis, marker, label } = this;
 
         const data = xKey && yKey && this.data ? this.data : [];
 
         this.xData = data.map(d => d[xKey]);
         this.yData = data.map(d => d[yKey]);
 
-        if (sizeKey) {
-            this.sizeData = data.map(d => d[sizeKey]);
-        } else {
-            this.sizeData = [];
-        }
+        this.sizeData = sizeKey ? data.map(d => d[sizeKey]) : [];
+
+        const font = label.getFont();
+        this.labelData = labelKey ? data.map(d => {
+            const text = String(d[labelKey]);
+            const size = HdpiCanvas.getTextSize(text, font);
+            return {
+                text,
+                ...size
+            };
+        }) : [];
 
         this.sizeScale.domain = marker.domain ? marker.domain : finiteExtent(this.sizeData) || [1, 1];
         if (xAxis.scale instanceof ContinuousScale) {
@@ -223,9 +245,9 @@ export class ScatterSeries extends CartesianSeries {
         });
     }
 
-    private generateNodeData(): ScatterNodeDatum[] {
+    private generateNodeData(): void {
         if (!this.data) {
-            return [];
+            return;
         }
 
         const { xAxis, yAxis } = this;
@@ -235,12 +257,12 @@ export class ScatterSeries extends CartesianSeries {
         const isContinuousY = yScale instanceof ContinuousScale;
         const xOffset = (xScale.bandwidth || 0) / 2;
         const yOffset = (yScale.bandwidth || 0) / 2;
-
         const { data, xData, yData, sizeData, sizeScale, marker } = this;
+        const nodeData: ScatterNodeDatum[] = [];
+        const labelData: any[] = [];
 
         sizeScale.range = [marker.size, marker.maxSize];
 
-        const nodeData: ScatterNodeDatum[] = [];
         for (let i = 0; i < xData.length; i++) {
             const xDatum = xData[i];
             const yDatum = yData[i];
@@ -252,21 +274,22 @@ export class ScatterSeries extends CartesianSeries {
             }
 
             const x = xScale.convert(xDatum) + xOffset;
-            if (!xAxis.inRange(x)) {
+            const y = yScale.convert(yDatum) + yOffset;
+            if (!(xAxis.inRange(x) && yAxis.inRange(y))) {
                 continue;
             }
+
             nodeData.push({
                 series: this,
                 seriesDatum: data[i],
-                point: {
-                    x,
-                    y: yScale.convert(yData[i]) + yOffset
-                },
-                size: sizeData.length ? sizeScale.convert(sizeData[i]) : marker.size
+                point: { x, y },
+                size: sizeData.length ? sizeScale.convert(sizeData[i]) : marker.size,
+                label: this.labelData[i]
             });
+            labelData.push(this.labelData[i]);
         }
 
-        return nodeData;
+        this.nodeData = nodeData;
     }
 
     update(): void {
@@ -278,25 +301,55 @@ export class ScatterSeries extends CartesianSeries {
             return;
         }
 
-        const nodeData = this.nodeData = this.generateNodeData();
+        this.generateNodeData();
 
-        this.updateNodeSelection(nodeData);
-        this.updateNodes();
+        this.updateMarkerSelection(this.nodeData);
+        this.updateLabelSelection(this.nodeData);
+
+        this.updateMarkerNodes();
+        this.updateLabelNodes();
     }
 
-    private updateNodeSelection(nodeData: ScatterNodeDatum[]): void {
+    private updateLabelSelection(nodeData: ScatterNodeDatum[]): void {
+        const seriesRect = this.chart && this.chart.getSeriesRect();
+        const boundsRect = {
+            x: 0,
+            y: 0,
+            width: seriesRect && seriesRect.width || Infinity,
+            height: seriesRect && seriesRect.height || Infinity
+        };
+        const placedLabels = this.label.enabled ? placeLabels(nodeData, boundsRect) : [];
+        const updateLabels = this.labelSelection.setData(placedLabels);
+        updateLabels.exit.remove();
+        const enterLabels = updateLabels.enter.append(Text);
+        this.labelSelection = updateLabels.merge(enterLabels);
+    }
+
+    private updateMarkerSelection(nodeData: ScatterNodeDatum[]): void {
         const MarkerShape = getMarker(this.marker.shape);
-
-        const updateSelection = this.nodeSelection.setData(nodeData);
-        updateSelection.exit.remove();
-
-        const enterSelection = updateSelection.enter.append(Group);
-        enterSelection.append(MarkerShape);
-
-        this.nodeSelection = updateSelection.merge(enterSelection);
+        const updateMarkers = this.markerSelection.setData(nodeData);
+        updateMarkers.exit.remove();
+        const enterMarkers = updateMarkers.enter.append(MarkerShape);
+        this.markerSelection = updateMarkers.merge(enterMarkers);
     }
 
-    private updateNodes(): void {
+    private updateLabelNodes() {
+        const { label } = this;
+        this.labelSelection.each((text, datum) => {
+            text.text = datum.text;
+            text.fill = label.color;
+            text.x = datum.x;
+            text.y = datum.y;
+            text.fontStyle = label.fontStyle;
+            text.fontWeight = label.fontWeight;
+            text.fontSize = label.fontSize;
+            text.fontFamily = label.fontFamily;
+            text.textAlign = 'left';
+            text.textBaseline = 'top';
+        });
+    }
+
+    private updateMarkerNodes(): void {
         if (!this.chart) {
             return;
         }
@@ -305,43 +358,41 @@ export class ScatterSeries extends CartesianSeries {
         const { marker, xKey, yKey, fill, stroke, strokeWidth, fillOpacity, strokeOpacity } = this;
         const { fill: highlightFill, stroke: highlightStroke } = this.highlightStyle;
         const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : strokeWidth;
-        const MarkerShape = getMarker(marker.shape);
         const markerFormatter = marker.formatter;
 
-        this.nodeSelection.selectByClass(MarkerShape)
-            .each((node, datum) => {
-                const highlighted = datum === highlightedDatum;
-                const markerFill = highlighted && highlightFill !== undefined ? highlightFill : marker.fill || fill;
-                const markerStroke = highlighted && highlightStroke !== undefined ? highlightStroke : marker.stroke || stroke;
-                let markerFormat: CartesianSeriesMarkerFormat | undefined = undefined;
+        this.markerSelection.each((node, datum) => {
+            const highlighted = datum === highlightedDatum;
+            const markerFill = highlighted && highlightFill !== undefined ? highlightFill : marker.fill || fill;
+            const markerStroke = highlighted && highlightStroke !== undefined ? highlightStroke : marker.stroke || stroke;
+            let markerFormat: CartesianSeriesMarkerFormat | undefined = undefined;
 
-                if (markerFormatter) {
-                    markerFormat = markerFormatter({
-                        datum: datum.seriesDatum,
-                        xKey,
-                        yKey,
-                        fill: markerFill,
-                        stroke: markerStroke,
-                        strokeWidth: markerStrokeWidth,
-                        size: datum.size,
-                        highlighted
-                    });
-                }
+            if (markerFormatter) {
+                markerFormat = markerFormatter({
+                    datum: datum.seriesDatum,
+                    xKey,
+                    yKey,
+                    fill: markerFill,
+                    stroke: markerStroke,
+                    strokeWidth: markerStrokeWidth,
+                    size: datum.size,
+                    highlighted
+                });
+            }
 
-                node.fill = markerFormat && markerFormat.fill || markerFill;
-                node.stroke = markerFormat && markerFormat.stroke || markerStroke;
-                node.strokeWidth = markerFormat && markerFormat.strokeWidth !== undefined
-                    ? markerFormat.strokeWidth
-                    : markerStrokeWidth;
-                node.size = markerFormat && markerFormat.size !== undefined
-                    ? markerFormat.size
-                    : datum.size;
-                node.fillOpacity = fillOpacity;
-                node.strokeOpacity = strokeOpacity;
-                node.translationX = datum.point.x;
-                node.translationY = datum.point.y;
-                node.visible = marker.enabled && node.size > 0;
-            });
+            node.fill = markerFormat && markerFormat.fill || markerFill;
+            node.stroke = markerFormat && markerFormat.stroke || markerStroke;
+            node.strokeWidth = markerFormat && markerFormat.strokeWidth !== undefined
+                ? markerFormat.strokeWidth
+                : markerStrokeWidth;
+            node.size = markerFormat && markerFormat.size !== undefined
+                ? markerFormat.size
+                : datum.size;
+            node.fillOpacity = fillOpacity;
+            node.strokeOpacity = strokeOpacity;
+            node.translationX = datum.point.x;
+            node.translationY = datum.point.y;
+            node.visible = marker.enabled && node.size > 0;
+        });
     }
 
     getTooltipHtml(nodeDatum: ScatterNodeDatum): string {

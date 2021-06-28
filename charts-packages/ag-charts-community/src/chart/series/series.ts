@@ -66,10 +66,11 @@ export abstract class Series extends Observable {
         return (this.constructor as any).type || '';
     }
 
-    /**
-     * The group node that contains all the nodes used to render this series.
-     */
+    // The group node that contains all the nodes used to render this series.
     readonly group: Group = new Group();
+
+    // The group node that contains all the nodes that can be "picked" (react to hover, tap, click).
+    readonly pickGroup: Group = this.group.appendChild(new Group());
 
     // Package-level visibility, not meant to be set by the user.
     chart?: Chart;
@@ -93,9 +94,7 @@ export abstract class Series extends Observable {
 
     setColors(fills: string[], strokes: string[]) { }
 
-    /**
-     * Returns the actual keys used (to fetch the values from `data` items) for the given direction.
-     */
+    // Returns the actual keys used (to fetch the values from `data` items) for the given direction.
     getKeys(direction: ChartAxisDirection): string[] {
         const { directionKeys } = this;
         const keys = directionKeys && directionKeys[direction];
