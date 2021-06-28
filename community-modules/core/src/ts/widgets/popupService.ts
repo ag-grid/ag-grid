@@ -318,7 +318,7 @@ export class PopupService extends BeanStub {
         direction: DIRECTION
     ): number {
         const isVertical = direction === DIRECTION.vertical;
-        const sizeProperty = isVertical ? 'height' : 'width';
+        const sizeProperty = isVertical ? 'clientHeight' : 'clientWidth';
         const anchorProperty = isVertical ? 'top' : 'left';
         const offsetProperty = isVertical ? 'offsetHeight' : 'offsetWidth';
         const scrollPositionProperty = isVertical ? 'scrollTop' : 'scrollLeft';
@@ -333,7 +333,7 @@ export class PopupService extends BeanStub {
         const offsetSize = ePopup[offsetProperty];
         const getSize = isVertical ? getAbsoluteHeight : getAbsoluteWidth;
 
-        let sizeOfParent = isBody ? (getSize(docElement) + docElement[scrollPositionProperty]) : parentRect[sizeProperty];
+        let sizeOfParent = isBody ? (getSize(docElement) + docElement[scrollPositionProperty]) : popupParent[sizeProperty];
 
         if (isBody) {
             sizeOfParent -= Math.abs(documentRect[anchorProperty] - parentRect[anchorProperty]);
