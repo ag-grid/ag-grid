@@ -930,7 +930,7 @@ export abstract class Chart extends Observable {
         series: Series,
         node: Node
     } | undefined {
-        if (!this.seriesRect || !this.seriesRect.containsPoint(x, y)) {
+        if (!(this.seriesRect && this.seriesRect.containsPoint(x, y))) {
             return undefined;
         }
 
@@ -938,7 +938,10 @@ export abstract class Chart extends Observable {
         let node: Node | undefined = undefined;
         for (let i = allSeries.length - 1; i >= 0; i--) {
             const series = allSeries[i];
-            node = series.group.pickNode(x, y);
+            if (!series.visible) {
+                continue;
+            }
+            node = series.pickGroup.pickNode(x, y);
             if (node) {
                 return {
                     series,
