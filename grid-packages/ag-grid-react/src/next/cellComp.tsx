@@ -43,10 +43,6 @@ export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
 
     const [toolsSpan, setToolsSpan] = useState<HTMLElement>();
 
-    // const cellWrapperRef = useRef<any>(null);
-
-    // const [selectionComp, setSelectionComp] = useState<CheckboxSelectionComponent|undefined>();
-
     useEffect( ()=> {
         if (!toolsSpan) { return; }
 
@@ -61,9 +57,10 @@ export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
 
     }, [toolsSpan, includeSelection]);
 
-    const toolsCallback = useCallback( (ref: HTMLElement)=> {
-        setToolsSpan(ref);
-    }, []);
+    // attaching the ref to state makes sure we render again when state is set. this is
+    // how we make sure the tools are added, as it's not possible to have an effect depend
+    // on a reference, as reference is not state, it doesn't create another render cycle.
+    const toolsCallback = useCallback( ref => setToolsSpan(ref), []);
 
     useEffect(() => {
         // const beansToDestroy: any[] = [];

@@ -246,6 +246,7 @@ export class ClientSideNodeManager {
             rowNode = _.find(this.rootNode.allLeafChildren, node => node.data === data);
             if (!rowNode) {
                 console.error(`AG Grid: could not find data item as object was not found`, data);
+                console.error(`Consider using getRowNodeId to help the Grid find matching row data`);
                 return null;
             }
         }
