@@ -11,6 +11,8 @@
 
 // Define a derived parameter. Derived values are lazily evaluated. This function is
 // sugar for defining a data structure to record the derived value's parameters.
+@use "sass:math";
+
 @function ag-derived(
     $reference-name,
     $times: null,
@@ -310,7 +312,7 @@ $-ag-params: null !default;
 @function -ag-operator-function-divide($params, $lhs, $rhs) {
     $lhs: -ag-require-type($lhs, "number", "value before $divide");
     $rhs: -ag-require-type($rhs, "number", "argument to $divide");
-    @return $lhs / $rhs;
+    @return math.div($lhs, $rhs);
 }
 
 @function -ag-operator-function-plus($params, $lhs, $rhs) {

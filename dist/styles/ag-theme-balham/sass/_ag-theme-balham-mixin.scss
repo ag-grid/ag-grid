@@ -123,7 +123,7 @@
     }
 
     .ag-chart-tab {
-        padding-top: ag-param(grid-size) / 2;
+        padding-top: ag-param(grid-size) * 0.5;
     }
 
     .ag-charts-format-sub-level-group-item {
