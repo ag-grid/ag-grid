@@ -39,10 +39,10 @@ const addEmptyCells = (cells: ExcelCell[], rowIdx: number): void => {
 const shouldDisplayCell = (cell: ExcelCell) => cell.data.value !== '' || cell.styleId !== undefined;
 
 const rowFactory: ExcelOOXMLTemplate = {
-    getTemplate(config: ExcelRow, idx: number) {
+    getTemplate(config: ExcelRow, idx: number, currentSheet: number) {
         const { index, collapsed, hidden, height, s, cells = [] } = config;
         addEmptyCells(cells, idx);
-        const children = cells.filter(shouldDisplayCell).map(cellFactory.getTemplate);
+        const children = cells.filter(shouldDisplayCell).map((cell, idx) => cellFactory.getTemplate(cell, idx, currentSheet));
 
         return {
             name: "row",

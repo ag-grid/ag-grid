@@ -14,7 +14,7 @@ import {
 
 import columnFactory from './column';
 import rowFactory from './row';
-import mergeCell from './mergeCell';
+import mergeCellFactory from './mergeCell';
 import { ExcelXlsxFactory } from '../../excelXlsxFactory';
 import { getExcelColumnName } from '../../assets/excelUtils';
 
@@ -88,19 +88,19 @@ const addColumns = (columns: ExcelColumn[]) => {
         if (columns.length) {
             children.push({
                 name: 'cols',
-                children: columns.map(columnFactory.getTemplate)
+                children: columns.map(column => columnFactory.getTemplate(column))
             });
         }
         return children;
     }
 }
 
-const addSheetData = (rows: ExcelRow[]) => {
+const addSheetData = (rows: ExcelRow[], sheetNumber: number) => {
     return (children: XmlElement[]) => {
         if (rows.length) {
             children.push({
                 name: 'sheetData',
-                children: rows.map(rowFactory.getTemplate)
+                children: rows.map((row, idx) => rowFactory.getTemplate(row, idx, sheetNumber))
             });
         }
         return children;
@@ -117,7 +117,7 @@ const addMergeCells = (mergeCells: string[]) => {
                         count: mergeCells.length
                     }
                 },
-                children: mergeCells.map(mergeCell.getTemplate)
+                children: mergeCells.map(mergedCell => mergeCellFactory.getTemplate(mergedCell))
             });
         }
         return children;
@@ -299,7 +299,7 @@ const worksheetFactory: ExcelOOXMLTemplate = {
 
         const createWorksheetChildren = _.compose(
             addColumns(columns),
-            addSheetData(rows),
+            addSheetData(rows, currentSheet + 1),
             addMergeCells(mergedCells),
             addPageMargins(margins),
             addPageSetup(pageSetup),

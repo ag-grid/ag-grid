@@ -230,7 +230,7 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
 
     private addNewMixedStyle(styleIds: string[]): void {
         this.mixedStyleCounter += 1;
-        const excelId = 'mixedStyle' + this.mixedStyleCounter;
+        const excelId = `mixedStyle${this.mixedStyleCounter}`
         const resultantStyle: ExcelStyle = {} as ExcelStyle;
 
         styleIds.forEach((styleId: string) => {

@@ -11,7 +11,7 @@ const fillsFactory: ExcelOOXMLTemplate = {
                     count: fills.length
                 }
             },
-            children: fills.map(fillFactory.getTemplate)
+            children: fills.map(fill => fillFactory.getTemplate(fill))
         };
     }
 };

@@ -10,7 +10,7 @@ const cellStylesFactory: ExcelOOXMLTemplate = {
                     count: cellStyles.length
                 }
             },
-            children: cellStyles.map(cellStyleFactory.getTemplate)
+            children: cellStyles.map(cellStyle => cellStyleFactory.getTemplate(cellStyle))
         };
     }
 };

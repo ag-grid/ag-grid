@@ -11,7 +11,7 @@ const bordersFactory: ExcelOOXMLTemplate = {
                     count: borders.length
                 }
             },
-            children: borders.map(borderFactory.getTemplate)
+            children: borders.map(border => borderFactory.getTemplate(border))
         };
     }
 };

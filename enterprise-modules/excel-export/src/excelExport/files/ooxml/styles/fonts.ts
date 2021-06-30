@@ -11,7 +11,7 @@ const fontsFactory: ExcelOOXMLTemplate = {
                     count: fonts.length
                 }
             },
-            children: fonts.map(fontFactory.getTemplate)
+            children: fonts.map(font => fontFactory.getTemplate(font))
         };
     }
 };

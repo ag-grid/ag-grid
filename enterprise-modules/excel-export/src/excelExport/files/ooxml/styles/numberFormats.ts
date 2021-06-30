@@ -11,7 +11,7 @@ const numberFormatsFactory: ExcelOOXMLTemplate = {
                     count: numberFormats.length
                 }
             },
-            children: numberFormats.map(numberFormatFactory.getTemplate)
+            children: numberFormats.map(numberFormat => numberFormatFactory.getTemplate(numberFormat))
         };
     }
 };

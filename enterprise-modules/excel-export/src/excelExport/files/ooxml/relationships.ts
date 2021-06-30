@@ -3,7 +3,7 @@ import relationshipFactory from './relationship';
 
 const relationshipsFactory: ExcelOOXMLTemplate = {
     getTemplate(c: ExcelRelationship[]) {
-        const children = c.map(relationshipFactory.getTemplate);
+        const children = c.map(relationship => relationshipFactory.getTemplate(relationship));
 
         return {
             name: "Relationships",

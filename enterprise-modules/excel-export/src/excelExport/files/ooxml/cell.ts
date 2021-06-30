@@ -8,7 +8,7 @@ const convertLegacyType = (type: string): string => {
 };
 
 const cellFactory: ExcelOOXMLTemplate = {
-    getTemplate(config: ExcelCell) {
+    getTemplate(config: ExcelCell, idx: number, currentSheet: number) {
         const { ref, data, styleId } = config;
         const { type, value } = data;
         let convertedType: string = type;
@@ -25,7 +25,7 @@ const cellFactory: ExcelOOXMLTemplate = {
                 rawMap: {
                     r: ref,
                     t: convertedType === 'empty' ? undefined : convertedType,
-                    s: styleId ? getStyleId(styleId) : undefined
+                    s: styleId ? getStyleId(styleId, currentSheet) : undefined
                 }
             }
         };

@@ -174,7 +174,7 @@ export interface ExcelXMLTemplate {
 }
 
 export interface ExcelOOXMLTemplate {
-    getTemplate(config?: any, idx?: number): XmlElement;
+    getTemplate(config?: any, idx?: number, currentSheet?: number): XmlElement;
     convertType?(type: string): string;
 }
 

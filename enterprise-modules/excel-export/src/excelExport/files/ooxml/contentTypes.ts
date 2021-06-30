@@ -65,7 +65,7 @@ const contentTypesFactory: ExcelOOXMLTemplate = {
                 ContentType: 'application/vnd.openxmlformats-package.core-properties+xml',
                 PartName: '/docProps/core.xml'
             }
-        ].map(contentTypeFactory.getTemplate);
+        ].map(contentType => contentTypeFactory.getTemplate(contentType));
 
         return {
             name: "Types",

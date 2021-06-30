@@ -22,6 +22,14 @@ let registeredBorders: BorderSet[];
 let registeredCellStyleXfs: Xf[];
 let registeredCellXfs: Xf[];
 let registeredCellStyles: CellStyle[];
+let currentSheet: number;
+
+const getStyleName = (name: string, currentSheet: number): string => {
+    if (name.indexOf('mixedStyle') !== -1 && currentSheet > 1) {
+        name += `_${currentSheet}`;
+    }
+    return name;
+}
 
 const resetStylesheetValues = (): void => {
     stylesMap = { base: 0 };
@@ -201,13 +209,18 @@ const registerFont = (font: ExcelFont): number => {
 };
 
 const registerStyle = (config: ExcelStyle): void => {
-    const { id, alignment, borders, font, interior, numberFormat, protection } = config;
+    const { alignment, borders, font, interior, numberFormat, protection } = config;
+    let { id } = config;
     let currentFill = 0;
     let currentBorder = 0;
     let currentFont = 0;
     let currentNumberFmt = 0;
 
-    if (!id || stylesMap[id] != undefined) { return; }
+    if (!id) { return; }
+
+    id = getStyleName(id, currentSheet);
+
+    if (stylesMap[id] != undefined) { return; }
 
     if (interior) {
         currentFill = registerFill(interior);
@@ -285,12 +298,17 @@ const stylesheetFactory: ExcelOOXMLTemplate = {
     }
 };
 
-export const getStyleId = (name: string): number => {
-    return stylesMap[name] || 0;
+export const getStyleId = (name: string, currentSheet: number): number => {
+    return stylesMap[getStyleName(name, currentSheet)] || 0;
 };
 
-export const registerStyles = (styles: ExcelStyle[]): void => {
-    resetStylesheetValues();
+export const registerStyles = (styles: ExcelStyle[], _currentSheet: number): void => {
+    currentSheet = _currentSheet;
+
+    if (currentSheet === 1) {
+        resetStylesheetValues();
+    }
+
     styles.forEach(registerStyle);
 };
 

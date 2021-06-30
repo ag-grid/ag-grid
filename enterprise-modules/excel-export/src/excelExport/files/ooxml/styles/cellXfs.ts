@@ -2,15 +2,15 @@ import { ExcelOOXMLTemplate } from '@ag-grid-community/core';
 import xfFactory, { Xf } from './xf';
 
 const cellXfsFactory: ExcelOOXMLTemplate = {
-    getTemplate(xf: Xf[]) {
+    getTemplate(xfs: Xf[]) {
         return {
             name: "cellXfs",
             properties: {
                 rawMap: {
-                    count: xf.length
+                    count: xfs.length
                 }
             },
-            children: xf.map(xfFactory.getTemplate)
+            children: xfs.map(xf => xfFactory.getTemplate(xf))
         };
     }
 };

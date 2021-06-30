@@ -52,7 +52,7 @@ export class ExcelXlsxFactory {
         headerFooterConfig?: ExcelHeaderFooterConfig
     ): string {
         this.addSheetName(worksheet);
-        registerStyles(styles);
+        registerStyles(styles, this.sheetNames.length);
 
         return this.createWorksheet(worksheet, margins, pageSetup, headerFooterConfig);
     }
