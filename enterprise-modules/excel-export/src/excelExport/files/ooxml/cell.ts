@@ -37,7 +37,7 @@ const cellFactory: ExcelOOXMLTemplate = {
         if (convertedType === 'str' && type === 'f') {
             children = [{
                 name: 'f',
-                textNode: value
+                textNode: _.escapeString(_.utf8_encode(value))
             }];
         } else if (convertedType === 'inlineStr') {
             children = [{
