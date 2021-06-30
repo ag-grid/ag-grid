@@ -3,7 +3,7 @@ import { RowNode } from "../../entities/rowNode";
 import { Beans } from "./../beans";
 import { Component } from "../../widgets/component";
 import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
-import { ICellRendererComp, ICellRendererParams } from "./../cellRenderers/iCellRenderer";
+import { ICellRendererComp } from "./../cellRenderers/iCellRenderer";
 import { CheckboxSelectionComponent } from "./../checkboxSelectionComponent";
 import { RowCtrl } from "./../row/rowCtrl";
 import { RowDragComp } from "./../row/rowDragComp";
