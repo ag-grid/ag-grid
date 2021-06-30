@@ -625,10 +625,6 @@
                 "arguments": {
                     "params": "CsvExportParams"
                 }
-            },
-            "more": {
-                "name": "CSV Export",
-                "url": "/csv-export/"
             }
         },
         "getDataAsCsv()": {
@@ -638,10 +634,6 @@
                     "params": "CsvExportParams"
                 },
                 "returnType": "string"
-            },
-            "more": {
-                "name": "CSV Export",
-                "url": "/csv-export/"
             }
         },
         "exportDataAsExcel()": {
@@ -650,10 +642,6 @@
                 "arguments": {
                     "params": "ExcelExportParams"
                 }
-            },
-            "more": {
-                "name": "Excel Export",
-                "url": "/excel-export-api/"
             }
         },
         "getDataAsExcel()": {
@@ -666,10 +654,6 @@
                     "string",
                     "Blob"
                 ]
-            },
-            "more": {
-                "name": "Excel Export",
-                "url": "/excel-export-api/"
             }
         },
         "getSheetDataForExcel()": {
@@ -679,10 +663,6 @@
                     "params": "ExcelExportParams"
                 },
                 "returnType": "string"
-            },
-            "more": {
-                "name": "Excel Export",
-                "url": "/excel-export-api/"
             }
         },
         "exportMultipleSheetsAsExcel()": {
@@ -691,10 +671,6 @@
                 "arguments": {
                     "params": "ExcelExportMultipleSheetParams"
                 }
-            },
-            "more": {
-                "name": "Excel Export",
-                "url": "/excel-export-api/"
             }
         },
         "getMultipleSheetsAsExcel()": {
@@ -704,10 +680,6 @@
                     "params": "ExcelExportMultipleSheetParams"
                 },
                 "returnType": "Blob"
-            },
-            "more": {
-                "name": "Excel Export",
-                "url": "/excel-export-api/"
             }
         }
     },
