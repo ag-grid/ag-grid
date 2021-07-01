@@ -75,7 +75,7 @@
     "gulp-postcss": "^8.0.0",
     "gulp-rename": "^1.4.0",
     "gulp-replace": "^1.0.0",
-    "gulp-sass": "^4.0.0",
+    "gulp-dart-sass": "^1.0.2",
     "gulp-sourcemaps": "^2.6.0",
     "gulp-stylus": "^2.7.0",
     "gulp-tsd": "^0.1.0",
