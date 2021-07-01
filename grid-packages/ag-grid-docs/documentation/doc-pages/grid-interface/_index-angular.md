@@ -44,7 +44,7 @@
 |    #myGrid // assign an angular ID to the grid - optional
 |
 |    // provide gridReady callback to the grid
-|    (onGridReady)="onGridReady($event)"
+|    (gridReady)="onGridReady($event)"
 |    // ...
 | />
 |
