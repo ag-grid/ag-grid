@@ -12,10 +12,10 @@ import { addOrRemoveCssClass, setDisplayed } from '../utils/dom';
 import { ManagedFocusComponent } from '../widgets/managedFocusComponent';
 import { HeaderNavigationService, HeaderNavigationDirection } from './header/headerNavigationService';
 import { exists } from '../utils/generic';
-import { KeyName } from '../constants/keyName';
 import { PinnedWidthService } from "../gridBodyComp/pinnedWidthService";
 import { CenterWidthFeature } from "../gridBodyComp/centerWidthFeature";
 import { ControllersService } from "../controllersService";
+import { KeyCode } from '../constants/keyCode';
 
 export type HeaderContainerPosition = 'left' | 'right' | 'center';
 
@@ -132,18 +132,18 @@ export class HeaderRootComp extends ManagedFocusComponent {
     protected handleKeyDown(e: KeyboardEvent): void {
         let direction: HeaderNavigationDirection | null = null;
 
-        switch (e.key) {
-            case KeyName.LEFT:
+        switch (e.keyCode) {
+            case KeyCode.LEFT:
                 direction = HeaderNavigationDirection.LEFT;
-            case KeyName.RIGHT:
+            case KeyCode.RIGHT:
                 if (!exists(direction)) {
                     direction = HeaderNavigationDirection.RIGHT;
                 }
                 this.headerNavigationService.navigateHorizontally(direction, false, e);
                 break;
-            case KeyName.UP:
+            case KeyCode.UP:
                 direction = HeaderNavigationDirection.UP;
-            case KeyName.DOWN:
+            case KeyCode.DOWN:
                 if (!exists(direction)) {
                     direction = HeaderNavigationDirection.DOWN;
                 }

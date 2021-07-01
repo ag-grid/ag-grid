@@ -11,7 +11,6 @@ import { LongTapEvent, TouchListener } from "../../widgets/touchListener";
 import { ControllersService } from "../../controllersService";
 import { isUserSuppressingKeyboardEvent } from "../../utils/keyboard";
 import { CellKeyDownEvent, CellKeyPressEvent, Events, FullWidthCellKeyDownEvent, FullWidthCellKeyPressEvent } from "../../events";
-import { KeyName } from "../../constants/keyName";
 import { NavigationService } from "./../navigationService";
 import { FocusService } from "../../focusService";
 import { KeyCode } from "../../constants/keyCode";
@@ -207,14 +206,14 @@ export class RowContainerEventsFeature extends BeanStub {
         const gridProcessingAllowed = !isUserSuppressingKeyboardEvent(this.gridOptionsWrapper, keyboardEvent, rowNode, column, false);
 
         if (gridProcessingAllowed) {
-            const key = keyboardEvent.key;
+            const key = keyboardEvent.keyCode;
             if (eventName === 'keydown') {
                 switch (key) {
-                    case KeyName.UP:
-                    case KeyName.DOWN:
+                    case KeyCode.UP:
+                    case KeyCode.DOWN:
                         rowComp.onKeyboardNavigate(keyboardEvent);
                         break;
-                    case KeyName.TAB:
+                    case KeyCode.TAB:
                         rowComp.onTabKeyDown(keyboardEvent);
                     default:
                 }

@@ -10,8 +10,8 @@ import {
     UserComponentFactory,
     RefSelector,
     VirtualList,
-    KeyName,
-    _
+    KeyCode,
+    _,
 } from "@ag-grid-community/core";
 import { RichSelectRow } from "./richSelectRow";
 
@@ -99,14 +99,14 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
     }
 
     private onKeyDown(event: KeyboardEvent): void {
-        const key = event.key;
+        const key = event.keyCode;
 
         switch (key) {
-            case KeyName.ENTER:
+            case KeyCode.ENTER:
                 this.onEnterKeyDown();
                 break;
-            case KeyName.DOWN:
-            case KeyName.UP:
+            case KeyCode.DOWN:
+            case KeyCode.UP:
                 this.onNavigationKeyPressed(event, key);
                 break;
             default:
@@ -119,11 +119,11 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         this.params.stopEditing();
     }
 
-    private onNavigationKeyPressed(event: any, key: string): void {
+    private onNavigationKeyPressed(event: any, key: number): void {
         // if we don't preventDefault the page body and/or grid scroll will move.
         event.preventDefault();
         const oldIndex = this.params.values.indexOf(this.selectedValue);
-        const newIndex = key === KeyName.UP ? oldIndex - 1 : oldIndex + 1;
+        const newIndex = key === KeyCode.UP ? oldIndex - 1 : oldIndex + 1;
 
         if (newIndex >= 0 && newIndex < this.params.values.length) {
             const valueToSelect = this.params.values[newIndex];
@@ -133,16 +133,16 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
 
     private searchText(key: KeyboardEvent | string) {
         if (typeof key !== 'string') {
-            let keyName = key.key;
+            let keyCode = key.keyCode;
 
-            if (keyName === KeyName.BACKSPACE) {
+            if (keyCode === KeyCode.BACKSPACE) {
                 this.searchString = this.searchString.slice(0, -1);
-                keyName = '';
+                key = '';
             } else if (!_.isEventFromPrintableCharacter(key)) {
                 return;
             }
 
-            this.searchText(keyName);
+            this.searchText(key);
             return;
         }
 

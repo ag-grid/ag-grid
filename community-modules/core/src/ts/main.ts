@@ -265,7 +265,6 @@ export { CellNavigationService } from "./cellNavigationService";
 export { AlignedGridsService } from "./alignedGridsService";
 export { Constants } from "./constants/constants";
 export { KeyCode } from "./constants/keyCode";
-export { KeyName } from "./constants/keyName";
 export { Grid, GridParams, GridCoreCreator } from "./grid";
 export { GridApi, RedrawRowsParams, RefreshCellsParams, StartEditingCellParams, DetailGridInfo, CreateRangeChartParams, CreatePivotChartParams, CreateCrossFilterChartParams } from "./gridApi";
 export { Events } from "./eventKeys";
