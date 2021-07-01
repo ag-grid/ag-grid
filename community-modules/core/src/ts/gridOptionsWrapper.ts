@@ -1645,7 +1645,7 @@ export class GridOptionsWrapper {
         }
 
         if (options.stopEditingWhenGridLosesFocus) {
-            console.warn('AG Grid: since v25.2.2, the grid property `stopEditingWhenGridLosesFocus`.');
+            console.warn('AG Grid: since v25.2.2, the grid property `stopEditingWhenGridLosesFocus` has been replaced by `stopEditingWhenCellsLoseFocus`.');
             options.stopEditingWhenCellsLoseFocus = true;
         }
 
