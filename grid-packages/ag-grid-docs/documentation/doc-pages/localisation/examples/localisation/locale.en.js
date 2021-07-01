@@ -20,8 +20,8 @@ const AG_GRID_LOCALE_EN = {
     lessThanOrEqual: 'Less than or equal',
     greaterThanOrEqual: 'Greater than or equal',
     inRange: 'In range',
-    inRangeStart: 'to',
-    inRangeEnd: 'from',
+    inRangeStart: 'from',
+    inRangeEnd: 'to',
 
     // Text Filter
     contains: 'Contains',
