@@ -28,6 +28,7 @@ var columnDefs = [
     { field: 'total', enableValue: true }
 ];
 
+
 var localeText = AG_GRID_LOCALE_ZZZ;
 
 var gridOptions = {

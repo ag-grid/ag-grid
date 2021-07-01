@@ -16,7 +16,7 @@ An example full locale file is provided below. To support other languages, the f
 
 You can download the full file from [here](../../examples/localisation/localisation/locale.en.js).
 
-There is one locale file for all of the grid. The file covers all modules across all of AG Grid Enterprise and AG Grid Community. This was done on purpose as having multiple files for each module would provide to much confusion. The decision was made to keep it simple in one file.
+There is one locale file for all the grid. The file covers all modules across all of AG Grid Enterprise and AG Grid Community. This was done on purpose as having multiple files for each module would provide to much confusion. The decision was made to keep it simple in one file.
 
 ## Installing a Locale
 
@@ -40,7 +40,7 @@ The grid uses the locale as it is needed. It does not refresh as the locale chan
 
 Providing a locale for the grid does not fit in with localisation libraries or localisation for a broader application. If you want the grid to take from an application wide locale, then implement the `localeTextFunc` to act as a bridge between the grid and the applications localisation.
 
-The example below shows providing a callback for the grid's localisation. The example for simplicity just returns back the default value in upper case. In a real world application, the callback would use the applications localisation.
+The example below shows providing a callback for the grid's localisation. The example for simplicity just returns the default value in upper case. In a real world application, the callback would use the applications localisation.
 
 <grid-example title='Callback' name='callback' type='generated' options='{ "enterprise": true, "exampleHeight": 650 }'></grid-example>
 

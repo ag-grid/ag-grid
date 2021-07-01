@@ -111,6 +111,9 @@ const AG_GRID_LOCALE_EN = {
     firstPage: 'First Page',
     previousPage: 'Previous Page',
 
+    // Pivoting
+    pivotColumnGroupTotals: 'Total',
+
     // Enterprise Menu (Charts)
     pivotChartAndPivotMode: 'Pivot Chart & Pivot Mode',
     pivotChart: 'Pivot Chart',
