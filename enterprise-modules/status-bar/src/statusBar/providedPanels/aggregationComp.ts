@@ -60,7 +60,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
             return;
         }
 
-        this.avgAggregationComp.setLabel('average', 'Average');
+        this.avgAggregationComp.setLabel('avg', 'Average');
         this.countAggregationComp.setLabel('count', 'Count');
         this.minAggregationComp.setLabel('min', 'Min');
         this.maxAggregationComp.setLabel('max', 'Max');
