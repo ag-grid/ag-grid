@@ -6,6 +6,7 @@ import { ColumnGroup } from "../entities/columnGroup";
 import { Column } from "../entities/column";
 import { Autowired, Bean, PreDestroy } from "../context/context";
 import { _ } from "../utils";
+import { ColumnEventType } from "../events";
 
 @Bean('columnApi')
 export class ColumnApi {
@@ -68,11 +69,11 @@ export class ColumnApi {
     public moveRowGroupColumn(fromIndex: number, toIndex: number): void { this.columnController.moveRowGroupColumn(fromIndex, toIndex); }
     public setColumnAggFunc(key: string | Column, aggFunc: string): void { this.columnController.setColumnAggFunc(key, aggFunc); }
 
-    public setColumnWidth(key: string | Column, newWidth: number, finished: boolean = true): void {
-        this.columnController.setColumnWidths([{key, newWidth}], false, finished);
+    public setColumnWidth(key: string | Column, newWidth: number, finished: boolean = true, source?: ColumnEventType): void {
+        this.columnController.setColumnWidths([{key, newWidth}], false, finished, source);
     }
-    public setColumnWidths(columnWidths: {key: string | Column, newWidth: number}[], finished: boolean = true): void {
-        this.columnController.setColumnWidths(columnWidths, false, finished);
+    public setColumnWidths(columnWidths: {key: string | Column, newWidth: number}[], finished: boolean = true, source?: ColumnEventType): void {
+        this.columnController.setColumnWidths(columnWidths, false, finished, source);
     }
 
     public setPivotMode(pivotMode: boolean): void { this.columnController.setPivotMode(pivotMode); }
