@@ -1249,6 +1249,18 @@
                 "name": "Pivot Chart API",
                 "url": "/integrated-charts-api/#pivot-charts"
             }
+        },
+        "createCrossFilterChart()": {
+            "description": "Used to programmatically create cross filter charts from a range.",
+            "type": {
+                "arguments": {
+                    "params": "CreateCrossFilterChartParams"
+                }
+            },
+            "more": {
+                "name": "Cross-filter API",
+                "url": "/integrated-charts-cross-filtering/#cross-filter-api"
+            }
         }
     },
     "miscellaneous": {
