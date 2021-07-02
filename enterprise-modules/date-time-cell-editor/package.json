@@ -51,7 +51,7 @@
     "awesome-typescript-loader": "^5.2.1",
     "css-loader": "^3.4.2",
     "html-webpack-plugin": "^4.0.1",
-    "node-sass": "6.0.0",
+    "sass": "^1.35.1",
     "sass-loader": "~10.2.0",
     "source-map-loader": "^0.2.4",
     "style-loader": "^1.1.3",
