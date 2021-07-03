@@ -1,10 +1,8 @@
 import { Autowired, Bean, Optional } from "../../context/context";
 import { GridOptions } from "../../entities/gridOptions";
 import { FrameworkComponentWrapper } from "./frameworkComponentWrapper";
-import { IComponent } from "../../interfaces/iComponent";
 import { ColDef, ColGroupDef } from "../../entities/colDef";
 import {
-    RegisteredComponent,
     RegisteredComponentSource,
     UserComponentRegistry
 } from "./userComponentRegistry";
@@ -125,26 +123,13 @@ export class UserComponentFactory extends BeanStub {
         return this.lookupAndCreateComponent(def, params, CellRendererComponent, null, true);
     }
 
-
-
-
-
-
-
-
-
     public getCellRendererDetails(def: ColDef | IRichCellEditorParams, params: ICellRendererParams): UserCompDetails | undefined {
         return this.getCompDetails(def, CellRendererComponent.propertyName, null, params);
     }
 
-
-
     public createCellRenderer(compClassAndParams: UserCompDetails): AgPromise<ICellRendererComp> | null {
         return this.createAndInitComponent(compClassAndParams, CellRendererComponent)
     }
-
-
-
 
     // CELL EDITOR
     public newCellEditor(colDef: ColDef, params: ICellEditorParams): AgPromise<ICellEditorComp> | null {
@@ -156,8 +141,6 @@ export class UserComponentFactory extends BeanStub {
     public createCellEditor(compClassAndParams: UserCompDetails): AgPromise<ICellEditorComp> | null {
         return this.createAndInitComponent(compClassAndParams, CellEditorComponent)
     }
-
-
 
     public newInnerCellRenderer(def: GroupCellRendererParams, params: ICellRendererParams): AgPromise<ICellRendererComp> | null {
         return this.lookupAndCreateComponent(def, params, InnerRendererComponent, null);

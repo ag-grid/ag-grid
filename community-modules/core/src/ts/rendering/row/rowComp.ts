@@ -5,7 +5,6 @@ import { Beans } from "../beans";
 import { RowNode } from "../../entities/rowNode";
 import { addStylesToElement, setDomChildOrder } from "../../utils/dom";
 import { FullWidthKeys, FullWidthRenderers, IRowComp, RowCtrl, RowType } from "./rowCtrl";
-import { Column } from "../../entities/column";
 import { CellComp } from "../cell/cellComp";
 import { assign, getAllValuesInObject, iterateObject } from "../../utils/object";
 import { ModuleRegistry } from "../../modules/moduleRegistry";
@@ -130,8 +129,7 @@ export class RowComp extends Component {
 
         cellCtrls.forEach(cellCtrl => {
             const key = cellCtrl.getInstanceId();
-
-            let existingCellComp = this.cellComps[key];
+            const existingCellComp = this.cellComps[key];
 
             if (existingCellComp == null) {
                 this.newCellComp(cellCtrl);

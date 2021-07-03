@@ -133,7 +133,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
 
     private searchText(key: KeyboardEvent | string) {
         if (typeof key !== 'string') {
-            let keyCode = key.keyCode;
+            const keyCode = key.keyCode;
 
             if (keyCode === KeyCode.BACKSPACE) {
                 this.searchString = this.searchString.slice(0, -1);

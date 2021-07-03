@@ -377,7 +377,7 @@ export class RowCtrl extends BeanStub {
             list: [],
             map: {}
         };
-        cols.forEach( col => {
+        cols.forEach(col => {
             // we use instanceId's rather than colId as it's possible there is a Column with same Id,
             // but it's referring to a different column instance. Happens a lot with pivot, as pivot col id's are
             // reused eg pivot_0, pivot_1 etc
@@ -389,7 +389,7 @@ export class RowCtrl extends BeanStub {
             res.list.push(cellCtrl);
             res.map[colInstanceId] = cellCtrl;
         });
-        prev.list.forEach( prevCellCtrl => {
+        prev.list.forEach(prevCellCtrl => {
             const cellCtrlNotInResult = !res.map[prevCellCtrl.getColumn().getInstanceId()];
             if (cellCtrlNotInResult) {
                 prevCellCtrl.destroy();
@@ -518,7 +518,7 @@ export class RowCtrl extends BeanStub {
             this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onRowIndexChanged());
         });
         this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, event => {
-            this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onCellChanged(event) );
+            this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onCellChanged(event));
         });
 
     }
@@ -668,8 +668,8 @@ export class RowCtrl extends BeanStub {
             list: [],
             map: {}
         };
-        prev.list.forEach( cellCtrl => {
-            if (cellCtrl===cellCtrlToRemove) { return; }
+        prev.list.forEach(cellCtrl => {
+            if (cellCtrl === cellCtrlToRemove) { return; }
             res.list.push(cellCtrl);
             res.map[cellCtrl.getInstanceId()] = cellCtrl;
         });
@@ -896,7 +896,7 @@ export class RowCtrl extends BeanStub {
     }
 
     public stopEditing(cancel = false): void {
-        this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.stopEditing(cancel) );
+        this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.stopEditing(cancel));
 
         if (!this.editingRow) { return; }
 
@@ -908,7 +908,7 @@ export class RowCtrl extends BeanStub {
     }
 
     public setInlineEditingCss(editing: boolean): void {
-        this.allRowComps.forEach( c => {
+        this.allRowComps.forEach(c => {
             c.comp.addOrRemoveCssClass("ag-row-inline-editing", editing);
             c.comp.addOrRemoveCssClass("ag-row-not-inline-editing", !editing);
         });
@@ -1164,7 +1164,7 @@ export class RowCtrl extends BeanStub {
         this.allRowComps.length = 0;
 
         const destroyCellCtrls = (ctrls: CellCtrlListAndMap): CellCtrlListAndMap => {
-            ctrls.list.forEach( c => c.destroy() );
+            ctrls.list.forEach(c => c.destroy());
             return {list: [], map: {}};
         };
 
@@ -1285,20 +1285,20 @@ export class RowCtrl extends BeanStub {
     public getCellCtrl(column: Column): CellCtrl | null {
         // first up, check for cell directly linked to this column
         let res: CellCtrl | null = null;
-        this.getAllCellCtrls().forEach( cellCtrl => {
-            if (cellCtrl.getColumn()==column) {
+        this.getAllCellCtrls().forEach(cellCtrl => {
+            if (cellCtrl.getColumn() == column) {
                 res = cellCtrl;
             }
         });
 
-        if (res!=null) { return res; }
+        if (res != null) { return res; }
 
         // second up, if not found, then check for spanned cols.
         // we do this second (and not at the same time) as this is
         // more expensive, as spanning cols is a
         // infrequently used feature so we don't need to do this most
         // of the time
-        this.getAllCellCtrls().forEach( cellCtrl => {
+        this.getAllCellCtrls().forEach(cellCtrl => {
             if (cellCtrl.getColSpanningList().indexOf(column) >= 0) {
                 res = cellCtrl;
             }

@@ -1,5 +1,4 @@
 import { ComponentMeta } from "../context/context";
-import { IComponent } from "./iComponent";
 import { IRowModel } from "./iRowModel";
 
 export interface Module {

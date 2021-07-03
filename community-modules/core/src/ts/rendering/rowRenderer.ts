@@ -11,25 +11,21 @@ import {
     ViewportChangedEvent
 } from "../events";
 import { Constants } from "../constants/constants";
-import { CellComp } from "./cell/cellComp";
 import { Autowired, Bean, Optional, PostConstruct, Qualifier } from "../context/context";
 import { ColumnApi } from "../columns/columnApi";
 import { ColumnModel } from "../columns/columnModel";
 import { Logger, LoggerFactory } from "../logger";
 import { FocusService } from "../focusService";
-import { IRangeService } from "../interfaces/IRangeService";
-import { CellNavigationService } from "../cellNavigationService";
 import { CellPosition } from "../entities/cellPosition";
 import { BeanStub } from "../context/beanStub";
 import { PaginationProxy } from "../pagination/paginationProxy";
 import { FlashCellsParams, GetCellRendererInstancesParams, GridApi, RefreshCellsParams } from "../gridApi";
 import { Beans } from "./beans";
-import { AnimationFrameService } from "../misc/animationFrameService";
 import { RowContainerHeightService } from "./rowContainerHeightService";
-import { ICellRenderer, ICellRendererComp } from "./cellRenderers/iCellRenderer";
-import { ICellEditor, ICellEditorComp } from "../interfaces/iCellEditor";
+import { ICellRenderer } from "./cellRenderers/iCellRenderer";
+import { ICellEditor } from "../interfaces/iCellEditor";
 import { IRowModel } from "../interfaces/iRowModel";
-import { RowPosition, RowPositionUtils } from "../entities/rowPosition";
+import { RowPosition } from "../entities/rowPosition";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
 import { exists, missing } from "../utils/generic";
 import { getAllValuesInObject, iterateObject } from "../utils/object";
@@ -280,7 +276,7 @@ export class RowRenderer extends BeanStub {
     public getAllCellsForColumn(column: Column): HTMLElement[] {
         const res: HTMLElement[] = [];
 
-        this.getAllRowCtrls().forEach( rowCtrl => {
+        this.getAllRowCtrls().forEach(rowCtrl => {
             const eCell = rowCtrl.getCellElement(column);
             if (eCell) { res.push(eCell); }
         });
@@ -569,7 +565,7 @@ export class RowRenderer extends BeanStub {
     public getCellRendererInstances(params: GetCellRendererInstancesParams): ICellRenderer[] {
         const res = this.getCellCtrls(params.rowNodes, params.columns)
             .map(cellCtrl => cellCtrl.getCellRenderer())
-            .filter(renderer => renderer!=null) as ICellRenderer[];
+            .filter(renderer => renderer != null) as ICellRenderer[];
         return res;
     }
 

@@ -77,7 +77,6 @@ import { DetailRowCompCache } from "./rendering/row/detailRowCompCache";
 import { RowPositionUtils } from "./entities/rowPosition";
 import { CellPositionUtils } from "./entities/cellPosition";
 import { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
-import { IComponent } from "./interfaces/iComponent";
 import { ModuleRegistry } from "./modules/moduleRegistry";
 import { ModuleNames } from "./modules/moduleNames";
 import { UndoRedoService } from "./undoRedo/undoRedoService";
