@@ -2706,44 +2706,35 @@ export class ColumnModel extends BeanStub {
 
             let include: boolean;
 
-            if (colIsNew) {
-                // col is new, use values if present, otherwise use default values if present
-                const valuePresent = value !== undefined || index !== undefined;
-                if (valuePresent) {
-                    if (value !== undefined) {
-                        // if boolean value present, we take it's value, even if 'false'
-                        include = value;
-                    } else {
-                        // otherwise we based on number value. note that 'null' resets, however 'undefined' doesn't
-                        // go through this code path (undefined means 'ignore').
-                        include = index! >= 0;
-                    }
+            const valuePresent = value !== undefined;
+            const indexPresent = index !== undefined;
+
+            if (valuePresent) {
+                include = value!; // boolean value is guaranteed as attrToBoolean() is used above!
+            } else if (indexPresent) {
+                if (index === null) {
+                    // if col is new we don't want to use the default / initial if index is set to null. Similarly,
+                    // we don't want to include the property for existing columns, i.e. we want to 'clear' it.
+                    include = false;
                 } else {
-                    include = initialValue || initialIndex! >= 0;
+                    // note that 'null >= 0' evaluates to true which means 'rowGroupIndex = null' would enable row
+                    // grouping if the null check didn't exist above.
+                    include = index! >= 0;
                 }
             } else {
-                // col is not new, we ignore the default values, just use the values if provided
-                if (value !== undefined) { // value is never null, as attrToBoolean converts null to false
-                    include = value;
-                } else if (index !== undefined) {
-                    if (index === null) {
-                        include = false;
-                    } else {
-                        include = index >= 0;
-                    }
+                if (colIsNew) {
+                    // as no value or index is 'present' we use the default / initial when col is new
+                    include = initialValue || initialIndex! >= 0;
                 } else {
-                    // no values provided, we include if it was included last time
+                    // otherwise include it if included last time, e.g. if we are extracting row group cols and this col
+                    // is an existing row group col (i.e. it exists in 'previousCols') then we should include it.
                     include = previousCols.indexOf(col) >= 0;
                 }
             }
 
             if (include) {
                 const useIndex = colIsNew ? (index != null || initialIndex != null) : index != null;
-                if (useIndex) {
-                    colsWithIndex.push(col);
-                } else {
-                    colsWithValue.push(col);
-                }
+                useIndex ? colsWithIndex.push(col) : colsWithValue.push(col);
             }
         });
 

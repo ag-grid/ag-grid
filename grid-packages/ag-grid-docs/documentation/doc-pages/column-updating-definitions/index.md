@@ -141,7 +141,7 @@ In other words, to have the grid correctly match Columns make sure each Column h
 
 The example below demonstrates the different matching strategies. Note the following:
 
-- All columns, with the exception of Country, are matched correctly. This means any column width, sort, position etc
+- All columns, with the exception of Country, are matched correctly. This means any column width, sort etc
 will be kept between changes to the columns. Country will have its state reset, as it will be treated as a new column
 each time.
 - Athlete column is matched by object equality as the same column definition instance is provided to the grid each time.
