@@ -2708,9 +2708,11 @@ export class ColumnModel extends BeanStub {
 
             const valuePresent = value !== undefined;
             const indexPresent = index !== undefined;
+            const initialValuePresent = initialValue !== undefined;
+            const initialIndexPresent = initialIndex !== undefined;
 
             if (valuePresent) {
-                include = value!; // boolean value is guaranteed as attrToBoolean() is used above!
+                include = value == true; // boolean value is guaranteed as attrToBoolean() is used above
             } else if (indexPresent) {
                 if (index === null) {
                     // if col is new we don't want to use the default / initial if index is set to null. Similarly,
@@ -2724,7 +2726,13 @@ export class ColumnModel extends BeanStub {
             } else {
                 if (colIsNew) {
                     // as no value or index is 'present' we use the default / initial when col is new
-                    include = initialValue || initialIndex! >= 0;
+                    if (initialValuePresent) {
+                        include = initialValue == true;
+                    } else if (initialIndexPresent) {
+                        include = initialIndex != null && initialIndex >= 0;
+                    } else {
+                        include = false;
+                    }
                 } else {
                     // otherwise include it if included last time, e.g. if we are extracting row group cols and this col
                     // is an existing row group col (i.e. it exists in 'previousCols') then we should include it.
