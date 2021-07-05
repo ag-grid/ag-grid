@@ -2712,7 +2712,7 @@ export class ColumnModel extends BeanStub {
             const initialIndexPresent = initialIndex !== undefined;
 
             if (valuePresent) {
-                include = value == true; // boolean value is guaranteed as attrToBoolean() is used above
+                include = value!; // boolean value is guaranteed as attrToBoolean() is used above
             } else if (indexPresent) {
                 if (index === null) {
                     // if col is new we don't want to use the default / initial if index is set to null. Similarly,
@@ -2727,7 +2727,7 @@ export class ColumnModel extends BeanStub {
                 if (colIsNew) {
                     // as no value or index is 'present' we use the default / initial when col is new
                     if (initialValuePresent) {
-                        include = initialValue == true;
+                        include = initialValue!;
                     } else if (initialIndexPresent) {
                         include = initialIndex != null && initialIndex >= 0;
                     } else {
