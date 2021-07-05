@@ -111,11 +111,7 @@ export class CellTooltipFeature extends BeanStub {
         };
     }
 
-    private getTooltipText(escape: boolean = true) {
-        if (typeof this.tooltip === 'string') {
-            return escape ? escapeString(this.tooltip) : this.tooltip;
-        }
-
+    private getTooltipText() {
         return this.tooltip;
     }
 

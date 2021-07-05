@@ -108,11 +108,9 @@ export class ToolPanelColumnGroupComp extends Component {
 
         if (!colGroupDef) { return; }
 
-        const isBrowserTooltip = this.gridOptionsWrapper.isEnableBrowserTooltips();
-
         const refresh = () => {
             const newTooltipText = colGroupDef.headerTooltip;
-            this.setTooltip(isBrowserTooltip ? newTooltipText : _.escapeString(newTooltipText));
+            this.setTooltip(newTooltipText);
         };
 
         refresh();
