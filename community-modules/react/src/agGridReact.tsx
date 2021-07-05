@@ -26,4 +26,3 @@ export class AgGridReact extends Component<AgGridReactProps | AgReactUiProps, {}
         return <AgGridReactLegacy {...this.props} setGridApi={this.setGridApi} />;
     }
 }
-

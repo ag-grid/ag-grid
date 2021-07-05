@@ -19,18 +19,7 @@ import {ChangeDetectionService, ChangeDetectionStrategyType} from "./changeDetec
 import {ReactComponent} from "./reactComponent";
 import {LegacyReactComponent} from "./legacyReactComponent";
 import {NewReactComponent} from "./newReactComponent";
-
-export interface AgGridReactProps extends GridOptions {
-    gridOptions?: GridOptions;
-    className?: string,
-    modules?: Module[];
-    rowDataChangeDetectionStrategy?: ChangeDetectionStrategyType;
-    componentWrappingElement?: string;
-    disableStaticMarkup?: boolean;  // only used when legacyComponentRendering is true
-    maxComponentCreationTimeMs?: number,
-    legacyComponentRendering?: boolean,
-    containerStyle?: any;
-}
+import { AgGridReactProps } from "./interfaces";
 
 export class AgGridReactLegacy extends Component<AgGridReactProps, {}> {
     private static MAX_COMPONENT_CREATION_TIME_IN_MS: number = 1000; // a second should be more than enough to instantiate a component
@@ -58,7 +47,7 @@ export class AgGridReactLegacy extends Component<AgGridReactProps, {}> {
 
     readonly SYNCHRONOUS_CHANGE_PROPERTIES = ['context']
 
-    constructor(public props: any) {
+    constructor(public props: AgGridReactProps) {
         super(props);
     }
 
@@ -117,7 +106,7 @@ export class AgGridReactLegacy extends Component<AgGridReactProps, {}> {
         if (reactComponent.rendered()) {
             resolve(reactComponent);
         } else {
-            if (Date.now() - startTime >= this.props.maxComponentCreationTimeMs && !this.hasPendingPortalUpdate) {
+            if (Date.now() - startTime >= this.props.maxComponentCreationTimeMs! && !this.hasPendingPortalUpdate) {
                 // last check - we check if this is a null value being rendered - we do this last as using SSR to check the value
                 // can mess up contexts
                 if (reactComponent.isNullValue()) {
@@ -270,7 +259,8 @@ export class AgGridReactLegacy extends Component<AgGridReactProps, {}> {
         });
 
         ComponentUtil.getEventCallbacks().forEach(funcName => {
-            if (this.props[funcName] !== nextProps[funcName]) {
+            const propsAny = this.props as any;
+            if (propsAny[funcName] !== nextProps[funcName]) {
                 if (debugLogging) {
                     console.log(`agGridReact: [${funcName}] event callback changed`);
                 }
@@ -293,11 +283,11 @@ export class AgGridReactLegacy extends Component<AgGridReactProps, {}> {
     }
 
     public isDisableStaticMarkup(): boolean {
-        return this.props.disableStaticMarkup;
+        return this.props.disableStaticMarkup === true;
     }
 
     public isLegacyComponentRendering(): boolean {
-        return this.props.legacyComponentRendering;
+        return this.props.legacyComponentRendering === true;
     }
 
     private processSynchronousChanges(changes: any): {} {

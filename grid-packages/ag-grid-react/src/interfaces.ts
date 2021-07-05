@@ -1,28 +1,5 @@
-import {GridOptions, Module} from "ag-grid-community";
+import { ColumnApi, GridApi, GridOptions, Module } from "ag-grid-community";
 import {ChangeDetectionStrategyType} from "./changeDetectionService";
-
-export interface SharedProps extends GridOptions {
-    enableReactUi?: boolean;
-}
-
-export interface AgReactUiProps extends SharedProps {
-    gridOptions?: GridOptions;
-    className?: string;
-    containerStyle?: any;
-    modules?: Module[];
-}
-
-export interface AgGridReactProps extends SharedProps {
-    gridOptions?: GridOptions;
-    modules?: Module[];
-    rowDataChangeDetectionStrategy?: ChangeDetectionStrategyType;
-    componentWrappingElement?: string;
-    disableStaticMarkup?: boolean;  // only used when legacyComponentRendering is true
-    maxComponentCreationTimeMs?: number,
-    legacyComponentRendering?: boolean,
-    containerStyle?: any;
-}
-
 import {
     ICellEditor,
     ICellEditorParams,
@@ -45,6 +22,29 @@ import {
     IAfterGuiAttachedParams,
     IStatusPanelParams
 } from 'ag-grid-community';
+
+export interface SharedProps extends GridOptions {
+    enableReactUi?: boolean;
+    gridOptions?: GridOptions;
+    modules?: Module[];
+    containerStyle?: any;
+    className?: string;
+    setGridApi: (gridApi: GridApi, columnApi: ColumnApi)=>void;
+}
+
+export interface AgReactUiProps extends SharedProps {
+}
+
+export interface AgGridReactProps extends SharedProps {
+    children?: any;
+    rowDataChangeDetectionStrategy?: ChangeDetectionStrategyType;
+    componentWrappingElement?: string;
+    disableStaticMarkup?: boolean;  // only used when legacyComponentRendering is true
+    maxComponentCreationTimeMs?: number,
+    legacyComponentRendering?: boolean,
+}
+
+
 
 export interface AgReactFrameworkComponent<T> {
     afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
