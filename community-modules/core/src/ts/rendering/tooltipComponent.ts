@@ -1,5 +1,6 @@
 import { PopupComponent } from '../widgets/popupComponent';
 import { IComponent } from '../interfaces/iComponent';
+import { escapeString } from '../utils/string';
 
 export interface ITooltipParams {
     location: string;
@@ -25,6 +26,6 @@ export class TooltipComponent extends PopupComponent implements ITooltipComp {
     // will need to type params
     public init(params: ITooltipParams): void {
         const { value } = params;
-        this.getGui().innerHTML = value;
+        this.getGui().innerHTML = escapeString(value) as string;
     }
 }

@@ -77,13 +77,12 @@ export class ToolPanelFilterGroupComp extends Component {
         // we don't show tooltips for groups, as when the group expands, it's div contains the columns which also
         // have tooltips, so the tooltips would clash. Eg mouse over group, tooltip shows, mouse over column, another
         // tooltip shows but cos we didn't leave the group the group tooltip remains. this should be fixed in the future,
-        // maye the group shouldn't contain the children form a DOM perspective.
+        // maybe the group shouldn't contain the children form a DOM perspective.
         if (!this.showingColumn) { return; }
-        const isBrowserTooltip = this.gridOptionsWrapper.isEnableBrowserTooltips();
 
         const refresh = () => {
             const newTooltipText = (this.columnGroup as Column).getColDef().headerTooltip;
-            this.setTooltip(isBrowserTooltip ? newTooltipText : _.escapeString(newTooltipText));
+            this.setTooltip(newTooltipText);
         };
 
         refresh();

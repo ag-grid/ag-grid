@@ -171,10 +171,9 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
     private setupTooltip(): void {
         const colGroupDef = this.getComponentHolder();
         const tooltipText = colGroupDef && colGroupDef.headerTooltip;
-        const isBrowserTooltip = this.gridOptionsWrapper.isEnableBrowserTooltips();
 
         if (tooltipText != null) {
-            this.setTooltip(isBrowserTooltip ? tooltipText : escapeString(tooltipText));
+            this.setTooltip(tooltipText);
         }
     }
 
