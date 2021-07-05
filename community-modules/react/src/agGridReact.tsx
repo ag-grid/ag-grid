@@ -20,7 +20,7 @@ export class AgGridReact extends Component<AgGridReactProps | AgReactUiProps, {}
     }
 
     render() {
-        if (this.props.enableReactUi) {
+        if (this.props.reactUi) {
             return <AgGridReactFire {...this.props} setGridApi={this.setGridApi} />;
         }
         return <AgGridReactLegacy {...this.props} setGridApi={this.setGridApi} />;

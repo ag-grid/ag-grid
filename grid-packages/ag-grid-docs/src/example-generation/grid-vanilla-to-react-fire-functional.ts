@@ -96,7 +96,7 @@ function getTemplate(bindings: any, componentAttributes: string[], columnDefs: s
                     width: '${gridSettings.width}'}}
                     className="${gridSettings.theme}">
             <AgGridReact
-                enableReactUi={true}
+                reactUi={true}
                 ${componentAttributes.join('\n')}
             >
                 ${columnDefs.join("")}

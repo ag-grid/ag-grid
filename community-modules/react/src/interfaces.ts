@@ -24,7 +24,7 @@ import {
 } from '@ag-grid-community/core';
 
 export interface SharedProps extends GridOptions {
-    enableReactUi?: boolean;
+    reactUi?: boolean;
     gridOptions?: GridOptions;
     modules?: Module[];
     containerStyle?: any;
