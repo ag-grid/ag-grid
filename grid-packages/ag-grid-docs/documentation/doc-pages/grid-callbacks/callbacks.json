@@ -3,143 +3,510 @@
         "meta": {
             "displayName": "Callbacks"
         },
-        "isExternalFilterPresent()": {
-            "description": "Grid calls this method to know if external filter is present."
+        "isExternalFilterPresent": {
+            "description": "Grid calls this method to know if an external filter is present.",
+            "type": {
+                "arguments": {},
+                "returnType": "boolean"
+            },
+            "reactive": true
         },
-        "doesExternalFilterPass(node)": {
-            "description": "Should return <code>true</code> if external filter passes, otherwise <code>false</code>."
+        "doesExternalFilterPass": {
+            "description": "Should return `true` if external filter passes, otherwise `false`.",
+            "type": {
+                "arguments": {
+                    "node": "RowNode"
+                },
+                "returnType": "boolean"
+            },
+            "reactive": true
         },
-        "getRowClass(params)": {
-            "description": "Callback version of property <code>rowClass</code>. Function should return a string or an array of strings."
+        "getRowClass": {
+            "description": "Callback version of property `rowClass`. Function should return a string or an array of strings.",
+            "type": {
+                "parameters": {
+                    "data": "object",
+                    "node": "RowNode",
+                    "rowIndex": "number",
+                    "$scope": "object",
+                    "api": "GridApi",
+                    "columnApi": "ColumnApi",
+                    "context": "object"
+                },
+                "returnType": [
+                    "string",
+                    "string[]"
+                ]
+            },
+            "reactive": true
         },
-        "getRowStyle(params)": {
-            "description": "Callback version of property <code>rowStyle</code>. Function should return an object of CSS values."
+        "getRowStyle": {
+            "description": "Callback version of property `rowStyle`. Function should return an object of CSS values.",
+            "type": {
+                "parameters": {
+                    "data": "object",
+                    "node": "RowNode",
+                    "rowIndex": "number",
+                    "$scope": "object",
+                    "api": "GridApi",
+                    "columnApi": "ColumnApi",
+                    "context": "object"
+                },
+                "returnType": "object"
+            },
+            "reactive": true
         },
-        "getRowHeight(params)": {
-            "description": "Callback version of property <code>rowHeight</code>. Function should return a positive number, or return <code>null</code>/<code>undefined</code> to use the default row height."
+        "getRowHeight": {
+            "description": "Callback version of property `rowHeight`. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height.",
+            "type": {
+                "parameters": {
+                    "node": "RowNode",
+                    "data": "object",
+                    "api": "GridApi",
+                    "context": "object"
+                },
+                "returnType": [
+                    "number",
+                    "null"
+                ]
+            },
+            "reactive": true
         },
-        "headerCellRenderer(params)": {
-            "description": "Provide a function for custom header rendering."
-        },
-        "groupRowAggNodes(nodes)": {
+        "groupRowAggNodes": {
             "description": "Callback for grouping.",
+            "type": {
+                "arguments": {
+                    "nodes": "RowNode[]"
+                },
+                "returnType": "object"
+            },
             "more": {
                 "name": "Row Grouping",
-                "url": "../grouping/#reference-callbacks"
-            }
+                "url": "/grouping/#reference-callbacks"
+            },
+            "reactive": true
         },
-        "getBusinessKeyForNode(node)": {
-            "description": "Return a business key for the node. If implemented, each row in the DOM will have an attribute <code>row-id='abc'</code> where <code>abc</code> is what you return as the business key. This is useful for automated testing, as it provides a way for your tool to identify rules based on unique business keys."
+        "getBusinessKeyForNode": {
+            "description": "Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key. This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.",
+            "type": {
+                "arguments": {
+                    "node": "RowNode"
+                },
+                "returnType": "string"
+            },
+            "reactive": true
         },
-        "getHeaderCellTemplate": {
-            "description": "Function to use instead of <code>headerCellTemplate</code>. Should return string or HTML DOM element."
+        "isGroupOpenByDefault": {
+            "description": "(Client-side Row Model only) Allows groups to be open by default.",
+            "type": {
+                "parameters": {
+                    "rowNode": "RowNode",
+                    "rowGroupColumn": "Column",
+                    "level": "number",
+                    "field": "string",
+                    "key": "string"
+                }
+            },
+            "reactive": true
         },
-        "getChildCount(data)": {
-            "description": "(For <a href='../server-side-model/'>Server-Side Row Model</a> only) Allows setting the child count for a group row."
+        "getChildCount": {
+            "description": "(For [Server-Side Row Model](/server-side-model/) only) Allows setting the child count for a group row.",
+            "type": {
+                "arguments": {
+                    "data": "object"
+                },
+                "returnType": "number"
+            },
+            "reactive": true
         },
-        "processRowPostCreate(params)": {
-            "description": "Allows you to process rows after they are created, so you can do final adding of custom attributes etc."
+        "processRowPostCreate": {
+            "description": "Allows you to process rows after they are created, so you can do final adding of custom attributes etc.",
+            "type": {
+                "parameters": {
+                    "meta": {
+                        "name": "ProcessRowParams"
+                    },
+                    "eRow": "HTMLElement",
+                    "ePinnedLeftRow": "HTMLElement",
+                    "ePinnedRightRow": "HTMLElement",
+                    "rowIndex": "number",
+                    "node": "RowNode",
+                    "api": "GridApi",
+                    "columnApi": "ColumnApi",
+                    "addRenderedRowListener": "(eventType: string, listener: Function) => void",
+                    "context": "object"
+                }
+            },
+            "reactive": true
         },
-        "getRowNodeId(data)": {
-            "description": "Allows you to set the ID for a particular row node based on the data. Useful for selection and server side sorting and filtering for paging and virtual pagination."
+        "getRowNodeId": {
+            "description": "Allows you to set the ID for a particular row node based on the data. Useful for selection and server side sorting and filtering for paging and virtual pagination.",
+            "type": {
+                "arguments": {
+                    "data": "object"
+                },
+                "returnType": "string"
+            },
+            "reactive": true
         },
-        "isFullWidthCell(rowNode)": {
-            "description": "Tells the grid if this row should be rendered using <a href='../master-detail/'>fullWidth</a>"
+        "isFullWidthCell": {
+            "description": "Tells the grid if this row should be rendered as [full width](/master-detail/).",
+            "type": {
+                "arguments": {
+                    "node": "RowNode"
+                },
+                "returnType": "boolean"
+            },
+            "reactive": true
         },
-        "isRowSelectable(rowNode)": {
-            "description": "Callback to be used to determine which rows are selectable. By default rows are selectable, so return <code>false</code> to make a row un-selectable.",
+        "isRowSelectable": {
+            "description": "Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.",
+            "type": {
+                "arguments": {
+                    "node": "RowNode"
+                },
+                "returnType": "boolean"
+            },
             "more": {
                 "name": "Specify Selectable Rows",
-                "url": "../row-selection/#specify-selectable-rows"
-            }
+                "url": "/row-selection/#specify-selectable-rows"
+            },
+            "reactive": true
         },
-        "isRowMaster(dataItem)": {
-            "description": "Callback to be used with <a href='../master-detail/'>Master Detail</a> to determine if a row should be a master row. If <code>false</code> is returned no detail row will exist for this row."
+        "isRowMaster": {
+            "description": "Callback to be used with [Master Detail](/master-detail/) to determine if a row should be a master row. If `false` is returned no detail row will exist for this row.",
+            "type": {
+                "arguments": {
+                    "data": "object"
+                },
+                "returnType": "boolean"
+            },
+            "reactive": true
         },
-        "postSort(rowNodes)": {
+        "postSort": {
             "description": "Callback to perform additional sorting after the grid has sorted the rows.",
+            "type": {
+                "arguments": {
+                    "nodes": "RowNode[]"
+                }
+            },
             "more": {
                 "name": "Post Sort",
-                "url": "../row-sorting/#post-sort"
-            }
+                "url": "/row-sorting/#post-sort"
+            },
+            "reactive": true
         },
-        "navigateToNextHeader(params)": {
-            "description": "Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused."
+        "navigateToNextHeader": {
+            "description": "Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused.",
+            "type": {
+                "parameters": {
+                    "key": "string",
+                    "previousHeaderPosition": [
+                        "HeaderPosition",
+                        "null"
+                    ],
+                    "nextHeaderPosition": [
+                        "HeaderPosition",
+                        "null"
+                    ],
+                    "event": "KeyboardEvent",
+                    "headerRowCount": "number"
+                },
+                "returnType": "HeaderPosition"
+            },
+            "reactive": true
         },
-        "tabToNextHeader(params)": {
-            "description": "Allows overriding the default behaviour for when user hits tab key when a header is focused."
+        "tabToNextHeader": {
+            "description": "Allows overriding the default behaviour for when user hits <kbd>Tab</kbd> key when a header is focused.",
+            "type": {
+                "parameters": {
+                    "backwards": "boolean",
+                    "previousHeaderPosition": [
+                        "HeaderPosition",
+                        "null"
+                    ],
+                    "nextHeaderPosition": [
+                        "HeaderPosition",
+                        "null"
+                    ],
+                    "headerRowCount": "number"
+                },
+                "returnType": "HeaderPosition"
+            },
+            "reactive": true
         },
-        "navigateToNextCell(params)": {
-            "description": "Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused."
+        "navigateToNextCell": {
+            "description": "Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused.",
+            "type": {
+                "parameters": {
+                    "key": "number",
+                    "previousCellPosition": "CellPosition",
+                    "nextCellPosition": [
+                        "CellPosition",
+                        "null"
+                    ],
+                    "event": [
+                        "KeyboardEvent",
+                        "null"
+                    ]
+                },
+                "returnType": "CellPosition"
+            },
+            "reactive": true
         },
-        "tabToNextCell(params)": {
-            "description": "Allows overriding the default behaviour for when user hits tab key when a cell is focused."
+        "tabToNextCell": {
+            "description": "Allows overriding the default behaviour for when user hits <kbd>Tab</kbd> key when a cell is focused.",
+            "type": {
+                "parameters": {
+                    "backwards": "boolean",
+                    "editing": "boolean",
+                    "previousCellPosition": "CellPosition",
+                    "nextCellPosition": "CellPosition"
+                },
+                "returnType": "CellPosition"
+            },
+            "reactive": true
         },
-        "getDocument()": {
-            "description": "Allows overriding what <code>document</code> is used. Currently used by Drag and Drop (may extend to other places in the future). Use this when you want the grid to use a different <code>document</code> than the one available on the global scope. This can happen if docking out components (something which Electron supports)."
+        "getDocument": {
+            "description": "Allows overriding what `document` is used. Currently used by Drag and Drop (may extend to other places in the future). Use this when you want the grid to use a different `document` than the one available on the global scope. This can happen if docking out components (something which Electron supports).",
+            "type": {
+                "arguments": {},
+                "returnType": "Document"
+            },
+            "reactive": true
         },
-        "getContextMenuItems(params)": {
-            "description": "For customising the context menu."
+        "getContextMenuItems": {
+            "description": "For customising the context menu.",
+            "type": {
+                "parameters": {
+                    "defaultItems?": "string[]",
+                    "column": "Column",
+                    "node": "RowNode",
+                    "value": "object",
+                    "api?": "GridApi",
+                    "columnApi?": "ColumnApi",
+                    "context": "object"
+                },
+                "returnType": "(string | MenuItemDef)[]"
+            },
+            "reactive": true
         },
-        "getMainMenuItems(params)": {
-            "description": "For customising the main 'column header' menu."
+        "getMainMenuItems": {
+            "description": "For customising the main 'column header' menu.",
+            "type": {
+                "parameters": {
+                    "column": "Column",
+                    "api?": "GridApi",
+                    "columnApi?": "ColumnApi",
+                    "context": "object",
+                    "defaultItems": "string[]"
+                }
+            },
+            "reactive": true
         },
-        "processCellForClipboard(params)": {
-            "description": "Allows you to process cells for the clipboard. Handy if for example you have <code>Date</code> objects that need to have a particular format if importing into Excel."
+        "processCellForClipboard": {
+            "description": "Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel.",
+            "type": {
+                "parameters": {
+                    "value": "object",
+                    "accumulatedRowIndex?": "number",
+                    "node?": "RowNode",
+                    "column": "Column",
+                    "api?": "GridApi",
+                    "columnApi?": "ColumnApi",
+                    "context": "object",
+                    "type": "string"
+                },
+                "returnType": "object"
+            },
+            "reactive": true
         },
-        "processCellFromClipboard(params)": {
-            "description": "Allows you to process cells from the clipboard. Handy if for example you have number fields, and want to block non-numbers from getting into the grid."
+        "processCellFromClipboard": {
+            "description": "Allows you to process cells from the clipboard. Handy if for example you have number fields, and want to block non-numbers from getting into the grid.",
+            "type": {
+                "parameters": {
+                    "value": "object",
+                    "accumulatedRowIndex?": "number",
+                    "node?": "RowNode",
+                    "column": "Column",
+                    "api?": "GridApi",
+                    "columnApi?": "ColumnApi",
+                    "context": "object",
+                    "type": "string"
+                },
+                "returnType": "object"
+            },
+            "reactive": true
         },
-        "sendToClipboard(params)": {
-            "description": "Allows you to get the data that would otherwise go to the clipboard. To be used when you want to control the 'copy to clipboard' operation yourself."
+        "sendToClipboard": {
+            "description": "Allows you to get the data that would otherwise go to the clipboard. To be used when you want to control the 'copy to clipboard' operation yourself.",
+            "type": {
+                "parameters": {
+                    "data": "string"
+                }
+            },
+            "reactive": true
         },
-        "processSecondaryColDef(colDef)": {
-            "description": "Callback to be used with pivoting, to allow changing the second column definition."
+        "processSecondaryColDef": {
+            "description": "Callback to be used with pivoting, to allow changing the second column definition.",
+            "type": {
+                "arguments": {
+                    "colDef": "ColDef"
+                }
+            },
+            "reactive": true
         },
-        "processSecondaryColGroupDef(colGroupDef)": {
-            "description": "Callback to be used with pivoting, to allow changing the second column group definition."
+        "processSecondaryColGroupDef": {
+            "description": "Callback to be used with pivoting, to allow changing the second column group definition.",
+            "type": {
+                "arguments": {
+                    "colGroupDef": "ColGroupDef"
+                }
+            },
+            "reactive": true
         },
-        "postProcessPopup(params)": {
-            "description": "Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup."
+        "postProcessPopup": {
+            "description": "Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup.",
+            "type": {
+                "parameters": {
+                    "column?": "Column",
+                    "rowNode?": "RowNode",
+                    "ePopup": "HTMLElement",
+                    "type": "string",
+                    "eventSource?": "HTMLElement",
+                    "mouseEvent?": [
+                        "MouseEvent",
+                        "Touch"
+                    ]
+                }
+            },
+            "reactive": true
         },
-        "defaultGroupSortComparator(nodeA, nodeB)": {
+        "defaultGroupSortComparator": {
             "description": "Allows default sorting of groups.",
+            "type": {
+                "arguments": {
+                    "nodeA": "RowNode",
+                    "nodeB": "RowNode"
+                },
+                "returnType": "number"
+            },
             "more": {
                 "name": "Default Group Order",
-                "url": "../grouping/#default-group-order"
-            }
+                "url": "/grouping/#default-group-order"
+            },
+            "reactive": true
         },
-        "processChartOptions(params)": {
+        "processChartOptions": {
             "description": "Callback to be used to with charts to override default chart options.",
+            "type": {
+                "parameters": {
+                    "type": "ChartType",
+                    "options": "ChartOptions"
+                }
+            },
             "more": {
                 "name": "Overriding Chart Options",
-                "url": "../integrated-charts-customisation/#example-common-chart-overrides"
-            }
+                "url": "/integrated-charts-customisation/#example-common-chart-overrides"
+            },
+            "reactive": true
         },
-        "getChartToolbarItems(params)": {
+        "getChartToolbarItems": {
             "description": "Callback to be used to customise the chart toolbar items.",
+            "options": [
+                "chartSettings",
+                "chartData",
+                "chartFormat",
+                "chartLink",
+                "chartUnlink",
+                "chartDownload"
+            ],
+            "type": {
+                "parameters": {
+                    "defaultItems?": "ChartMenuOptions[]",
+                    "api?": "GridApi",
+                    "columnApi?": "ColumnApi"
+                },
+                "returnType": "ChartMenuOptions[]"
+            },
             "more": {
                 "name": "Configuring Toolbar Items",
-                "url": "../integrated-charts-toolbar/#configuring-toolbar-items-and-menu-panels"
-            }
+                "url": "/integrated-charts-toolbar/#configuring-toolbar-items-and-menu-panels"
+            },
+            "reactive": true
         },
-        "paginationNumberFormatter(params)": {
-            "description": "Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use <code>valueFormatter</code> in the column definitions."
+        "paginationNumberFormatter": {
+            "description": "Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions.",
+            "type": {
+                "parameters": {
+                    "value": "number"
+                },
+                "returnType": "string"
+            },
+            "reactive": true
         },
-        "getServerSideStoreParams(params)": {
-            "description": "Server-side Row Model only - allows providing different params for different levels of grouping."
+        "getServerSideStoreParams": {
+            "description": "(Server-side Row Model only) Allows providing different params for different levels of grouping.",
+            "type": {
+                "parameters": {
+                    "level": "number",
+                    "parentRowNode?": "RowNode",
+                    "rowGroupColumns": "Column[]",
+                    "pivotColumns": "Column[]",
+                    "pivotMode": "boolean"
+                },
+                "returnType": {
+                    "storeType?": [
+                        "'full'",
+                        "'partial'"
+                    ],
+                    "maxBlocksInCache?": "number",
+                    "cacheBlockSize?": "number"
+                }
+            },
+            "reactive": true
         },
-        "isServerSideGroupOpenByDefault(params)": {
-            "description": "Server-side Row Model only - allows groups to be open by default."
+        "isServerSideGroupOpenByDefault": {
+            "description": "(Server-side Row Model only) Allows groups to be open by default.",
+            "type": {
+                "parameters": {
+                    "data": "object",
+                    "rowNode": "RowNode"
+                }
+            },
+            "reactive": true
         },
-        "isApplyServerSideTransaction(params)": {
-            "description": "Server-side Row Model only - allows cancelling transactions."
+        "isApplyServerSideTransaction": {
+            "description": "(Server-side Row Model only) Allows cancelling transactions.",
+            "type": {
+                "parameters": {
+                    "transaction": "ServerSideTransaction",
+                    "parentNode": "RowNode",
+                    "storeInfo": "object"
+                },
+                "returnType": "boolean"
+            },
+            "reactive": true
         },
-        "isServerSideGroup(data)": {
-            "description": "Server-side Row Model and Tree Data only - allows specifying which rows are expandable."
+        "isServerSideGroup": {
+            "description": "(Server-side Row Model and Tree Data only) Allows specifying which rows are expandable.",
+            "type": {
+                "arguments": {
+                    "data": "object"
+                },
+                "returnType": "boolean"
+            },
+            "reactive": true
         },
-        "getServerSideGroupKey(data)": {
-            "description": "Server-side Row Model and Tree Data only - allows specifying group keys."
+        "getServerSideGroupKey": {
+            "description": "(Server-side Row Model and Tree Data only) Allows specifying group keys.",
+            "type": {
+                "arguments": {
+                    "data": "object"
+                },
+                "returnType": "string"
+            },
+            "reactive": true
         }
     }
 }

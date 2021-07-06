@@ -22,7 +22,7 @@ var gridOptions = {
     },
     // this property tells grid to stop editing if the
     // grid loses focus
-    stopEditingWhenGridLosesFocus: true
+    stopEditingWhenCellsLoseFocus: true
 };
 
 function getYearCellEditor() {

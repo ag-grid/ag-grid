@@ -42,5 +42,5 @@ From the example below, the following can be noted:
 
 ## Next Up
 
-Continue to the next section to learn about: [Cross Filtering](../integrated-charts-cross-filtering/).
+Continue to the next section to learn about: [Cross Filtering](/integrated-charts-cross-filtering/).
 

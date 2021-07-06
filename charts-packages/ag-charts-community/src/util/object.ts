@@ -14,12 +14,20 @@ export function chainObjects<P extends object, C extends object>(parent: P, chil
     return obj as P & C;
 }
 
-export function getValue(object: any, path: string | string[]) {
+export function getValue(object: any, path: string | string[], defaultValue?: any): any {
     const parts = Array.isArray(path) ? path : path.split('.');
     let value = object;
-    parts.forEach(part => {
-        value = value[part];
-    });
+    try {
+        parts.forEach(part => {
+            value = value[part];
+        });
+    } catch (e) {
+        if (arguments.length === 3) {
+            value = defaultValue;
+        } else {
+            throw e;
+        }
+    }
     return value;
 }
 

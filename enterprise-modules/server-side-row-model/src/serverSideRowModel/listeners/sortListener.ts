@@ -3,7 +3,7 @@ import {
     Autowired,
     Bean,
     BeanStub,
-    ColumnController,
+    ColumnModel,
     Constants,
     Events,
     PostConstruct,
@@ -19,7 +19,7 @@ import { ListenerUtils } from "./listenerUtils";
 export class SortListener extends BeanStub {
 
     @Autowired('sortController') private sortController: SortController;
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
     @Autowired('ssrmListenerUtils') private listenerUtils: ListenerUtils;
 
@@ -73,7 +73,7 @@ export class SortListener extends BeanStub {
             const isNotInSortModel = (col: Column) => sortModel.filter(sm => sm.colId === col.getColId()).length == 0;
             const mapColumnToSortModel = (col: Column) => ({ colId: col.getId(), sort: autoGroupSortModel.sort});
 
-            const newModels = this.columnController.getRowGroupColumns()
+            const newModels = this.columnModel.getRowGroupColumns()
                 .filter(isNotInSortModel)
                 .map(mapColumnToSortModel);
 
@@ -83,6 +83,8 @@ export class SortListener extends BeanStub {
 
     private onSortChanged(): void {
         const storeParams = this.serverSideRowModel.getParams();
+        if (!storeParams) { return; } // params is undefined if no datasource set
+
         const newSortModel = this.extractSortModel();
         const oldSortModel = storeParams.sortModel;
 

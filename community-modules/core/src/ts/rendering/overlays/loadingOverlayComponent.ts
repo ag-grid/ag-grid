@@ -1,7 +1,10 @@
 import { Component } from "../../widgets/component";
 import { IComponent } from "../../interfaces/iComponent";
+import { GridApi } from "../../gridApi";
 
-export interface ILoadingOverlayParams {}
+export interface ILoadingOverlayParams {
+    api: GridApi
+}
 
 export interface ILoadingOverlayComp extends IComponent<ILoadingOverlayParams> {}
 

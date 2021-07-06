@@ -1,7 +1,7 @@
 import {
     _,
     ColumnApi,
-    ColumnController,
+    ColumnModel,
     Context,
     Events,
     EventService,
@@ -12,7 +12,7 @@ import {
     RowNode,
     RowNodeTransaction,
     SelectionChangedEvent,
-    SelectionController
+    SelectionService
 } from "@ag-grid-community/core";
 
 export class ClientSideNodeManager {
@@ -26,8 +26,8 @@ export class ClientSideNodeManager {
     private gridOptionsWrapper: GridOptionsWrapper;
     private context: Context;
     private eventService: EventService;
-    private columnController: ColumnController;
-    private selectionController: SelectionController;
+    private columnModel: ColumnModel;
+    private selectionService: SelectionService;
 
     private nextId = 0;
 
@@ -43,16 +43,16 @@ export class ClientSideNodeManager {
     private allNodesMap: {[id:string]: RowNode} = {};
 
     constructor(rootNode: RowNode, gridOptionsWrapper: GridOptionsWrapper, context: Context, eventService: EventService,
-                columnController: ColumnController, gridApi: GridApi, columnApi: ColumnApi,
-                selectionController: SelectionController) {
+                columnModel: ColumnModel, gridApi: GridApi, columnApi: ColumnApi,
+                selectionService: SelectionService) {
         this.rootNode = rootNode;
         this.gridOptionsWrapper = gridOptionsWrapper;
         this.context = context;
         this.eventService = eventService;
-        this.columnController = columnController;
+        this.columnModel = columnModel;
         this.gridApi = gridApi;
         this.columnApi = columnApi;
-        this.selectionController = selectionController;
+        this.selectionService = selectionService;
 
         this.rootNode.group = true;
         this.rootNode.level = -1;
@@ -140,7 +140,7 @@ export class ClientSideNodeManager {
         // a new node was inserted, so a parent that was previously selected (as all
         // children were selected) should not be tri-state (as new one unselected against
         // all other selected children).
-        this.selectionController.updateGroupsFromChildrenSelections();
+        this.selectionService.updateGroupsFromChildrenSelections();
 
         if (selectionChanged) {
             const event: SelectionChangedEvent = {
@@ -156,19 +156,24 @@ export class ClientSideNodeManager {
         const {add, addIndex} = rowDataTran;
         if (_.missingOrEmpty(add)) { return; }
 
+        // create new row nodes for each data item
+        const newNodes: RowNode[] = add!.map(item => this.createNode(item, this.rootNode, ClientSideNodeManager.TOP_LEVEL));
+
+        // add new row nodes to the root nodes 'allLeafChildren'
         const useIndex = typeof addIndex === 'number' && addIndex >= 0;
         if (useIndex) {
-            // items get inserted in reverse order for index insertion
-            add!.reverse().forEach(item => {
-                const newRowNode: RowNode = this.addRowNode(item, addIndex!);
-                rowNodeTransaction.add.push(newRowNode);
-            });
+            // new rows are inserted in one go by concatenating them in between the existing rows at the desired index.
+            // this is much faster than splicing them individually into 'allLeafChildren' when there are large inserts.
+            const existingLeafChildren = this.rootNode.allLeafChildren;
+            const nodesBeforeIndex = existingLeafChildren.slice(0, addIndex!);
+            const nodesAfterIndex = existingLeafChildren.slice(addIndex!, existingLeafChildren.length);
+            this.rootNode.allLeafChildren = [...nodesBeforeIndex, ...newNodes, ...nodesAfterIndex];
         } else {
-            add!.forEach(item => {
-                const newRowNode: RowNode = this.addRowNode(item);
-                rowNodeTransaction.add.push(newRowNode);
-            });
+            this.rootNode.allLeafChildren = [...this.rootNode.allLeafChildren, ...newNodes];
         }
+
+        // add new row nodes to the transaction add items
+        rowNodeTransaction.add = newNodes;
     }
 
     private executeRemove(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction, nodesToUnselect: RowNode[]): void {
@@ -224,18 +229,6 @@ export class ClientSideNodeManager {
         });
     }
 
-    private addRowNode(data: any, index?: number): RowNode {
-        const newNode = this.createNode(data, this.rootNode, ClientSideNodeManager.TOP_LEVEL);
-
-        if (_.exists(index)) {
-            _.insertIntoArray(this.rootNode.allLeafChildren, newNode, index);
-        } else {
-            this.rootNode.allLeafChildren.push(newNode);
-        }
-
-        return newNode;
-    }
-
     private lookupRowNode(data: any): RowNode | null {
         const rowNodeIdFunc = this.gridOptionsWrapper.getRowNodeIdFunc();
 
@@ -253,6 +246,7 @@ export class ClientSideNodeManager {
             rowNode = _.find(this.rootNode.allLeafChildren, node => node.data === data);
             if (!rowNode) {
                 console.error(`AG Grid: could not find data item as object was not found`, data);
+                console.error(`Consider using getRowNodeId to help the Grid find matching row data`);
                 return null;
             }
         }
@@ -318,7 +312,7 @@ export class ClientSideNodeManager {
             }
 
             if (setExpanded) {
-                const rowGroupColumns = this.columnController.getRowGroupColumns();
+                const rowGroupColumns = this.columnModel.getRowGroupColumns();
                 const numRowGroupColumns = rowGroupColumns ? rowGroupColumns.length : 0;
 
                 // need to take row group into account when determining level
@@ -335,21 +329,5 @@ export class ClientSideNodeManager {
             return true;
         }
         return level < expandByDefault!;
-    }
-
-    // this is only used for doing legacy tree data
-    private setLeafChildren(node: RowNode): void {
-        node.allLeafChildren = [];
-        if (node.childrenAfterGroup) {
-            node.childrenAfterGroup.forEach(childAfterGroup => {
-                if (childAfterGroup.group) {
-                    if (childAfterGroup.allLeafChildren) {
-                        childAfterGroup.allLeafChildren.forEach(leafChild => node.allLeafChildren.push(leafChild));
-                    }
-                } else {
-                    node.allLeafChildren.push(childAfterGroup);
-                }
-            });
-        }
     }
 }

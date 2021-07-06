@@ -12,11 +12,11 @@ import {
 import { EventService } from "../eventService";
 import { Autowired, Context, PostConstruct } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { ColumnUtils } from "../columnController/columnUtils";
+import { ColumnUtils } from "../columns/columnUtils";
 import { RowNode } from "./rowNode";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { ColumnEvent, ColumnEventType } from "../events";
-import { ColumnApi } from "../columnController/columnApi";
+import { ColumnApi } from "../columns/columnApi";
 import { GridApi } from "../gridApi";
 import { ColumnGroup } from "./columnGroup";
 import { OriginalColumnGroup } from "./originalColumnGroup";
@@ -26,6 +26,8 @@ import { ModuleRegistry } from "../modules/moduleRegistry";
 import { attrToNumber, attrToBoolean, exists, missing } from "../utils/generic";
 import { doOnce } from "../utils/function";
 import { mergeDeep } from "../utils/object";
+
+let instanceIdSequence = 0;
 
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).
@@ -70,6 +72,9 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     private readonly colId: any;
     private colDef: ColDef;
+
+    // used by React (and possibly other frameworks) as key for rendering
+    private instanceId = instanceIdSequence++;
 
     // We do NOT use this anywhere, we just keep a reference. this is to check object equivalence
     // when the user provides an updated list of columns - so we can check if we have a column already
@@ -119,6 +124,10 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         this.primary = primary;
 
         this.setState(colDef);
+    }
+
+    public getInstanceId(): number {
+        return this.instanceId;
     }
 
     private setState(colDef: ColDef): void {
@@ -177,6 +186,8 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     public setColDef(colDef: ColDef, userProvidedColDef: ColDef | null): void {
         this.colDef = colDef;
         this.userProvidedColDef = userProvidedColDef;
+        this.initMinAndMaxWidths();
+        this.initDotNotation();
     }
 
     public getUserProvidedColDef(): ColDef | null {
@@ -202,6 +213,22 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     // this is done after constructor as it uses gridOptionsWrapper
     @PostConstruct
     private initialise(): void {
+        this.initMinAndMaxWidths();
+
+        this.resetActualWidth('gridInitializing');
+
+        this.initDotNotation();
+
+        this.validate();
+    }
+
+    private initDotNotation(): void {
+        const suppressDotNotation = this.gridOptionsWrapper.isSuppressFieldDotNotation();
+        this.fieldContainsDots = exists(this.colDef.field) && this.colDef.field.indexOf('.') >= 0 && !suppressDotNotation;
+        this.tooltipFieldContainsDots = exists(this.colDef.tooltipField) && this.colDef.tooltipField.indexOf('.') >= 0 && !suppressDotNotation;
+    }
+
+    private initMinAndMaxWidths(): void {
         const minColWidth = this.gridOptionsWrapper.getMinColWidth();
         const maxColWidth = this.gridOptionsWrapper.getMaxColWidth();
 
@@ -217,14 +244,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         } else {
             this.maxWidth = maxColWidth;
         }
-
-        this.resetActualWidth('gridInitializing');
-
-        const suppressDotNotation = this.gridOptionsWrapper.isSuppressFieldDotNotation();
-        this.fieldContainsDots = exists(this.colDef.field) && this.colDef.field.indexOf('.') >= 0 && !suppressDotNotation;
-        this.tooltipFieldContainsDots = exists(this.colDef.tooltipField) && this.colDef.tooltipField.indexOf('.') >= 0 && !suppressDotNotation;
-
-        this.validate();
     }
 
     public resetActualWidth(source: ColumnEventType = 'api'): void {
@@ -284,7 +303,8 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
             }, key);
         }
 
-        if (!ModuleRegistry.isRegistered(ModuleNames.RowGroupingModule)) {
+        const usingCSRM = this.gridOptionsWrapper.isRowModelDefault();
+        if (usingCSRM && !ModuleRegistry.isRegistered(ModuleNames.RowGroupingModule)) {
             const rowGroupingItems =
                 ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'enableValue', 'pivot', 'pivotIndex', 'aggFunc'];
             rowGroupingItems.forEach(item => {
@@ -329,6 +349,19 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
         if (exists(this.colDef.width) && typeof this.colDef.width !== 'number') {
             warnOnce('AG Grid: colDef.width should be a number, not ' + typeof this.colDef.width, 'ColumnCheck_asdfawef');
+        }
+
+        if (colDefAny.pinnedRowCellRenderer) {
+            warnOnce('AG Grid: pinnedRowCellRenderer no longer exists, use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. This was an unfortunate (but necessary) change we had to do to allow future plans we have of re-skinng the data grid in frameworks such as React, Angular and Vue. See https://www.ag-grid.com/javascript-grid/cell-rendering/#many-renderers-one-column', 'colDef.pinnedRowCellRenderer-deprecated');
+        }
+        if (colDefAny.pinnedRowCellRendererParams) {
+            warnOnce('AG Grid: pinnedRowCellRenderer no longer exists, use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. This was an unfortunate (but necessary) change we had to do to allow future plans we have of re-skinng the data grid in frameworks such as React, Angular and Vue. See https://www.ag-grid.com/javascript-grid/cell-rendering/#many-renderers-one-column', 'colDef.pinnedRowCellRenderer-deprecated');
+        }
+        if (colDefAny.pinnedRowCellRendererFramework) {
+            warnOnce('AG Grid: pinnedRowCellRenderer no longer exists, use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. This was an unfortunate (but necessary) change we had to do to allow future plans we have of re-skinng the data grid in frameworks such as React, Angular and Vue. See https://www.ag-grid.com/javascript-grid/cell-rendering/#many-renderers-one-column', 'colDef.pinnedRowCellRenderer-deprecated');
+        }
+        if (colDefAny.pinnedRowValueGetter) {
+            warnOnce('AG Grid: pinnedRowCellRenderer is deprecated, use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. This was an unfortunate (but necessary) change we had to do to allow future plans we have of re-skinng the data grid in frameworks such as React, Angular and Vue.', 'colDef.pinnedRowCellRenderer-deprecated');
         }
     }
 
@@ -683,7 +716,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.flex || 0;
     }
 
-    // this method should only be used by the columnController to
+    // this method should only be used by the columnModel to
     // change flex when required by the setColumnState method.
     public setFlex(flex: number | null) {
         if (this.flex !== flex) { this.flex = flex; }

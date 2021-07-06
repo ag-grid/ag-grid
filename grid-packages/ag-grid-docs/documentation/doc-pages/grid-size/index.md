@@ -111,7 +111,7 @@ There are three DOM Layout values the grid can have 'normal', 'autoHeight' and '
 
 - **normal**: This is the default if nothing is specified. The grid fits the width and height of the div you provide and scrolls in both directions.
 - **autoHeight**: The grid's height is set to fit the number of rows so no vertical scrollbar is provided by the grid. The grid scrolls horizontally as normal.
-- **print**: No scroll bars are used and the grid renders all rows and columns. This layout is explained in [Printing](../printing/).
+- **print**: No scroll bars are used and the grid renders all rows and columns. This layout is explained in [Printing](/printing/).
 
 ## Min Height with Auto Height
 

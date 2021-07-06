@@ -1,51 +1,34 @@
 import {
     Column,
     ExcelCell,
+    ExcelImage,
     ExcelOOXMLDataType,
     ExcelStyle,
     ExcelWorksheet,
-    RowNode,
     _
 } from '@ag-grid-community/core';
 
-import { RowSpanningAccumulator, RowType } from "@ag-grid-community/csv-export";
 import { ExcelXlsxFactory } from './excelXlsxFactory';
 import { BaseExcelSerializingSession } from './baseExcelSerializingSession';
 
-export class ExcelXlsxSerializingSession extends BaseExcelSerializingSession<ExcelOOXMLDataType, ExcelXlsxFactory> {
+export class ExcelXlsxSerializingSession extends BaseExcelSerializingSession<ExcelOOXMLDataType> {
 
-    private stringList: string[] = [];
-    private stringMap: {[key: string]: number} = {};
+    protected createExcel(data: ExcelWorksheet): string {
+        const { excelStyles, config } = this;
+        const { margins, pageSetup, headerFooterConfig } = config;
 
-    public onNewHeaderGroupingRow(): RowSpanningAccumulator {
-        const currentCells: ExcelCell[] = [];
-
-        this.rows.push({
-            cells: currentCells,
-            height: this.config.headerRowHeight
-        });
-        return {
-            onColumn: (header: string, index: number, span: number) => {
-                const styleIds: string[] = this.config.styleLinker(RowType.HEADER_GROUPING, 1, index, "grouping-" + header, undefined, undefined);
-                currentCells.push(this.createMergedCell((styleIds && styleIds.length > 0) ? styleIds[0] : null, 's', header, span));
-            }
-        };
+        return ExcelXlsxFactory.createExcel(
+            excelStyles,
+            data,
+            margins,
+            pageSetup,
+            headerFooterConfig
+        );
     }
 
-    protected createExcel(data: ExcelWorksheet[]): string {
-        return this.config.excelFactory.createExcel(this.excelStyles, data, this.stringList);
-    }
-
-    protected getDataTypeForValue(valueForCell: string): ExcelOOXMLDataType {
+    protected getDataTypeForValue(valueForCell?: string): ExcelOOXMLDataType {
+        if (valueForCell === undefined) { return 'empty' }
         return _.isNumeric(valueForCell) ? 'n' : 's';
-    }
-
-    protected onNewHeaderColumn(rowIndex: number, currentCells: ExcelCell[]): (column: Column, index: number, node?: RowNode) => void {
-        return (column: Column, index: number, node?: RowNode) => {
-            const nameForCol = this.extractHeaderValue(column);
-            const styleIds: string[] = this.config.styleLinker(RowType.HEADER, rowIndex, index, nameForCol, column, undefined);
-            currentCells.push(this.createCell((styleIds && styleIds.length > 0) ? styleIds[0] : null, 's', nameForCol));
-        };
     }
 
     protected getType(type: ExcelOOXMLDataType, style: ExcelStyle | null, value: string | null): ExcelOOXMLDataType | null {
@@ -73,9 +56,21 @@ export class ExcelXlsxSerializingSession extends BaseExcelSerializingSession<Exc
         return type;
     }
 
+    protected addImage(rowIndex: number, column: Column, value: string): { image: ExcelImage, value?: string } | undefined {
+        if (!this.config.addImageToCell) { return; }
+
+        const addedImage = this.config.addImageToCell(rowIndex, column, value);
+
+        if (!addedImage) { return; }
+
+        ExcelXlsxFactory.buildImageMap(addedImage.image, rowIndex, column, this.columnsToExport, this.config.rowHeight);
+
+        return addedImage;
+    }
+
     protected createCell(styleId: string | null, type: ExcelOOXMLDataType, value: string): ExcelCell {
         const actualStyle: ExcelStyle | null = this.getStyleById(styleId);
-        const typeTransformed = this.getType(type, actualStyle, value) || type;;
+        const typeTransformed = this.getType(type, actualStyle, value) || type;
 
         return {
             styleId: actualStyle ? styleId! : undefined,
@@ -87,38 +82,28 @@ export class ExcelXlsxSerializingSession extends BaseExcelSerializingSession<Exc
     }
 
     protected createMergedCell(styleId: string | null, type: ExcelOOXMLDataType, value: string, numOfCells: number): ExcelCell {
+        const valueToUse = value == null ? '' : value;
         return {
             styleId: !!this.getStyleById(styleId) ? styleId! : undefined,
             data: {
                 type: type,
-                value: value
+                value: type === 's' ? ExcelXlsxFactory.getStringPosition(valueToUse).toString() : value
             },
             mergeAcross: numOfCells
         };
     }
 
-    private getStringPosition(val: string): number {
-        let pos: number | undefined = this.stringMap[val];
-
-        if (pos === undefined) {
-            pos = this.stringMap[val] = this.stringList.length;
-            this.stringList.push(val);
-        }
-
-        return pos;
-    }
-
     private getCellValue(type: ExcelOOXMLDataType, value: string | null): string | null {
-        if (value == null) { return this.getStringPosition('').toString(); }
+        if (value == null) { return ExcelXlsxFactory.getStringPosition('').toString(); }
 
         switch (type) {
             case 's':
-                return this.getStringPosition(value).toString();
+                return value === '' ? '' : ExcelXlsxFactory.getStringPosition(value).toString();
             case 'f':
                 return value.slice(1);
             case 'n':
                 return Number(value).toString();
-            default: 
+            default:
                 return value;
         }
     }

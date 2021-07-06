@@ -4,7 +4,7 @@ title: "Column Filter"
 
 Column filters are filters that are applied to the data at the column level. Many column filters can be active at once (e.g. filters set on different columns) and the grid will display rows that pass every column's filter.
 
-Column filters are accessed in the grid UI either through the [Column Menu](../column-menu/) or the [Tool Panel](../tool-panel/).
+Column filters are accessed in the grid UI either through the [Column Menu](/column-menu/) or the [Tool Panel](/tool-panel/).
 
 <div style="display: flex; justify-content: center;">
     <image-caption src="filtering/resources/open-column.gif" alt="Open Column" width="25rem" constrained="true">
@@ -15,7 +15,7 @@ Column filters are accessed in the grid UI either through the [Column Menu](../c
     </image-caption>
 </div>
 
-You can use the [Provided Filters](../filter-provided/) that come with the grid, or you can build your own [Filter Components](../component-filter/) if you want to customise the filter experience to your application.
+You can use the [Provided Filters](/filter-provided/) that come with the grid, or you can build your own [Filter Components](/component-filter/) if you want to customise the filter experience to your application.
 
 ### Example: Simple Filters
 
@@ -31,7 +31,7 @@ The example below demonstrates simple filters. The following can be noted:
 
 Set filtering on a column using the column definition property `filter`. The property can have one of the following values:
 
-- `boolean`: Set to `true` to enable the default filter. The default is [Text Filter](../filter-text/) for AG Grid Community and [Set Filter](../filter-set/) for AG Grid Enterprise.
+- `boolean`: Set to `true` to enable the default filter. The default is [Text Filter](/filter-text/) for AG Grid Community and [Set Filter](/filter-set/) for AG Grid Enterprise.
 - `string` / `Component`: Provide a specific filter to use instead of the default filter.
 
 The code below shows some column definitions with filters set:
@@ -54,7 +54,7 @@ The code below shows some column definitions with filters set:
 |}
 </snippet>
 
-If you want to enable filters on all columns, you should set a filter on the [Default Column Definition](../column-definitions/#default-column-definitions). The following code snippet shows setting `filter=true` for all columns via the `defaultColDef` and then setting `filter=false` for the Sport column, so all columns have a filter except Sport.
+If you want to enable filters on all columns, you should set a filter on the [Default Column Definition](/column-definitions/#default-column-definitions). The following code snippet shows setting `filter=true` for all columns via the `defaultColDef` and then setting `filter=false` for the Sport column, so all columns have a filter except Sport.
 
 <snippet spaceBetweenProperties="true">
 |const gridOptions = {
@@ -78,7 +78,7 @@ If you want to enable filters on all columns, you should set a filter on the [De
 
 Each filter can take additional filter parameters by setting `colDef.filterParams`. The parameters each filter type accepts are specific to each filter; parameters for the provided filters are explained in their relevant sections.
 
-The code below shows configuring the text filter on the Athlete column and providing extra filter parameters (what the `buttons` do is explained in [Apply, Clear, Reset and Cancel Buttons](../filter-provided/#apply-clear-reset-and-cancel-buttons)).
+The code below shows configuring the text filter on the Athlete column and providing extra filter parameters (what the `buttons` do is explained in [Apply, Clear, Reset and Cancel Buttons](/filter-provided/#apply-clear-reset-and-cancel-buttons)).
 
 <snippet spaceBetweenProperties="true">
 const gridOptions = {
@@ -110,7 +110,7 @@ To enable animation of the rows when filtering, set the grid property `animateRo
 
 ## Relation to Quick Filter and External Filter
 
-Column filters work independently of [Quick Filter](../filter-quick/) and [External Filter](../filter-external/). If a quick filter and / or external filter are applied along with a column filter, each filter type is considered and the row will only show if it passes all three types.
+Column filters work independently of [Quick Filter](/filter-quick/) and [External Filter](/filter-external/). If a quick filter and / or external filter are applied along with a column filter, each filter type is considered and the row will only show if it passes all three types.
 
 Column filters are tied to a specific column. Quick filter and external filter are not tied to any particular column. This section of the documentation talks about column filters only. For quick filter and external filter, click the links above to learn more.
 
@@ -120,4 +120,4 @@ There are four filters that are provided by the grid. These are as follows:
 
 <api-documentation source='filtering/resources/filtering.json' section="providedFilters"></api-documentation>
 
-See the [Provided Filters](../filter-provided/) section for more details on using them.
+See the [Provided Filters](/filter-provided/) section for more details on using them.

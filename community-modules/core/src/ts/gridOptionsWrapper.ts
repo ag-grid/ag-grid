@@ -9,8 +9,10 @@ import {
     GetServerSideStoreParamsParams,
     GridOptions,
     IsApplyServerSideTransaction,
+    IsGroupOpenByDefaultParams,
     IsRowMaster,
-    IsRowSelectable, IsServerSideGroupOpenByDefaultParams,
+    IsRowSelectable,
+    IsServerSideGroupOpenByDefaultParams,
     NavigateToNextCellParams,
     NavigateToNextHeaderParams,
     PaginationNumberFormatterParams,
@@ -27,13 +29,13 @@ import { ComponentUtil } from './components/componentUtil';
 import { GridApi } from './gridApi';
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from './entities/colDef';
 import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from './context/context';
-import { ColumnApi } from './columnController/columnApi';
-import { ColumnController } from './columnController/columnController';
+import { ColumnApi } from './columns/columnApi';
+import { ColumnModel } from './columns/columnModel';
 import { IViewportDatasource } from './interfaces/iViewportDatasource';
 import { IDatasource } from './interfaces/iDatasource';
 import { CellPosition } from './entities/cellPosition';
 import { IServerSideDatasource } from './interfaces/iServerSideDatasource';
-import { BaseExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from './interfaces/exportParams';
+import { CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from './interfaces/exportParams';
 import { AgEvent } from './events';
 import { Environment, SASS_PROPERTIES } from './environment';
 import { PropertyKeys } from './propertyKeys';
@@ -50,9 +52,10 @@ import { isNumeric } from './utils/number';
 import { exists, missing, values } from './utils/generic';
 import { fuzzyCheckStrings } from './utils/fuzzyMatch';
 import { doOnce } from './utils/function';
-import { addOrRemoveCssClass } from './utils/dom';
 import { getScrollbarWidth } from './utils/browser';
 import { HeaderPosition } from './headerRendering/header/headerPosition';
+import { ExcelExportParams } from './interfaces/iExcelCreator';
+import { capitalise } from './utils/string';
 
 const DEFAULT_ROW_HEIGHT = 25;
 const DEFAULT_DETAIL_ROW_HEIGHT = 300;
@@ -109,11 +112,24 @@ export class GridOptionsWrapper {
     public static PROP_GROUP_HEADER_HEIGHT = 'groupHeaderHeight';
     public static PROP_PIVOT_GROUP_HEADER_HEIGHT = 'pivotGroupHeaderHeight';
 
+    public static PROP_NAVIGATE_TO_NEXT_CELL = 'navigateToNextCell';
+    public static PROP_TAB_TO_NEXT_CELL = 'tabToNextCell';
+    public static PROP_NAVIGATE_TO_NEXT_HEADER = 'navigateToNextHeader';
+    public static PROP_TAB_TO_NEXT_HEADER = 'tabToNextHeader';
+
+    public static PROP_IS_EXTERNAL_FILTER_PRESENT = 'isExternalFilterPresentFunc';
+    public static PROP_DOES_EXTERNAL_FILTER_PASS = 'doesExternalFilterPass';
+
     public static PROP_FLOATING_FILTERS_HEIGHT = 'floatingFiltersHeight';
 
     public static PROP_SUPPRESS_ROW_CLICK_SELECTION = 'suppressRowClickSelection';
     public static PROP_SUPPRESS_ROW_DRAG = 'suppressRowDrag';
     public static PROP_SUPPRESS_MOVE_WHEN_ROW_DRAG = 'suppressMoveWhenRowDragging';
+
+    public static PROP_GET_ROW_CLASS = 'getRowClass';
+    public static PROP_GET_ROW_STYLE = 'getRowStyle';
+
+    public static PROP_GET_ROW_HEIGHT = 'getRowHeight';
 
     public static PROP_POPUP_PARENT = 'popupParent';
 
@@ -121,8 +137,41 @@ export class GridOptionsWrapper {
 
     public static PROP_FILL_HANDLE_DIRECTION = 'fillHandleDirection';
 
+    public static PROP_GROUP_ROW_AGG_NODES = 'groupRowAggNodes';
+    public static PROP_GET_BUSINESS_KEY_FOR_NODE = 'getBusinessKeyForNode';
+    public static PROP_GET_CHILD_COUNT = 'getChildCount';
+    public static PROP_PROCESS_ROW_POST_CREATE = 'processRowPostCreate';
+    public static PROP_GET_ROW_NODE_ID = 'getRowNodeId';
+    public static PROP_IS_FULL_WIDTH_CELL = 'isFullWidthCell';
+    public static PROP_IS_ROW_SELECTABLE = 'isRowSelectable';
+    public static PROP_IS_ROW_MASTER = 'isRowMaster';
+    public static PROP_POST_SORT = 'postSort';
+    public static PROP_GET_DOCUMENT = 'getDocument';
+    public static PROP_POST_PROCESS_POPUP = 'postProcessPopup';
+    public static PROP_DEFAULT_GROUP_SORT_COMPARATOR = 'defaultGroupSortComparator';
+    public static PROP_PAGINATION_NUMBER_FORMATTER = 'paginationNumberFormatter';
+
+    public static PROP_GET_CONTEXT_MENU_ITEMS = 'getContextMenuItems';
+    public static PROP_GET_MAIN_MENU_ITEMS = 'getMainMenuItems';
+
+    public static PROP_PROCESS_CELL_FOR_CLIPBOARD = 'processCellForClipboard';
+    public static PROP_PROCESS_CELL_FROM_CLIPBOARD = 'processCellFromClipboard';
+    public static PROP_SEND_TO_CLIPBOARD = 'sendToClipboard';
+
+    public static PROP_PROCESS_TO_SECONDARY_COLDEF = 'processSecondaryColDef';
+    public static PROP_PROCESS_SECONDARY_COL_GROUP_DEF = 'processSecondaryColGroupDef';
+
+    public static PROP_PROCESS_CHART_OPTIONS = 'processChartOptions';
+    public static PROP_GET_CHART_TOOLBAR_ITEMS = 'getChartToolbarItems';
+
+    public static PROP_GET_SERVER_SIDE_STORE_PARAMS = 'getServerSideStoreParams';
+    public static PROP_IS_SERVER_SIDE_GROUPS_OPEN_BY_DEFAULT = 'isServerSideGroupOpenByDefault';
+    public static PROP_IS_APPLY_SERVER_SIDE_TRANSACTION = 'isApplyServerSideTransaction';
+    public static PROP_IS_SERVER_SIDE_GROUP = 'isServerSideGroup';
+    public static PROP_GET_SERVER_SIDE_GROUP_KEY = 'getServerSideGroupKey';
+
     @Autowired('gridOptions') private readonly gridOptions: GridOptions;
-    @Autowired('columnController') private readonly columnController: ColumnController;
+    @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('eventService') private readonly eventService: EventService;
     @Autowired('environment') private readonly environment: Environment;
     @Autowired('autoHeightCalculator') private readonly autoHeightCalculator: AutoHeightCalculator;
@@ -131,11 +180,8 @@ export class GridOptionsWrapper {
 
     private domDataKey = '__AG_' + Math.random().toString();
 
-    private layoutElements: HTMLElement[] = [];
-
     // we store this locally, so we are not calling getScrollWidth() multiple times as it's an expensive operation
     private scrollbarWidth: number;
-    private updateLayoutClassesListener: any;
 
     private destroyed = false;
 
@@ -153,7 +199,6 @@ export class GridOptionsWrapper {
         // of the grid to be picked up by the garbage collector
         this.gridOptions.api = null;
         this.gridOptions.columnApi = null;
-        this.removeEventListener(GridOptionsWrapper.PROP_DOM_LAYOUT, this.updateLayoutClassesListener);
 
         this.destroyed = true;
     }
@@ -227,10 +272,6 @@ export class GridOptionsWrapper {
         warnOfDeprecaredIcon('checkboxChecked');
         warnOfDeprecaredIcon('checkboxUnchecked');
         warnOfDeprecaredIcon('checkboxIndeterminate');
-
-        this.updateLayoutClassesListener = this.updateLayoutClasses.bind(this);
-
-        this.addEventListener(GridOptionsWrapper.PROP_DOM_LAYOUT, this.updateLayoutClassesListener);
 
         // sets an initial calculation for the scrollbar width
         this.getScrollbarWidth();
@@ -401,8 +442,8 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressTouch);
     }
 
-    public isApplyColumnDefOrder() {
-        return isTrue(this.gridOptions.applyColumnDefOrder);
+    public isMaintainColumnOrder() {
+        return isTrue(this.gridOptions.maintainColumnOrder);
     }
 
     public isSuppressRowTransform() {
@@ -759,8 +800,8 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressClickEdit);
     }
 
-    public isStopEditingWhenGridLosesFocus() {
-        return isTrue(this.gridOptions.stopEditingWhenGridLosesFocus);
+    public isStopEditingWhenCellsLoseFocus() {
+        return isTrue(this.gridOptions.stopEditingWhenCellsLoseFocus);
     }
 
     public getGroupDefaultExpanded(): number | undefined {
@@ -811,7 +852,7 @@ export class GridOptionsWrapper {
 
     // this property is different - we never allow groupUseEntireRow if in pivot mode,
     // as otherwise we don't see the pivot values.
-    public isGroupUseEntireRow(pivotMode: boolean) {
+    public isGroupUseEntireRow(pivotMode: boolean): boolean {
         return pivotMode ? false : isTrue(this.gridOptions.groupUseEntireRow);
     }
 
@@ -1106,8 +1147,24 @@ export class GridOptionsWrapper {
         return this.gridOptions.defaultColGroupDef;
     }
 
-    public getDefaultExportParams(): BaseExportParams | undefined {
-        return this.gridOptions.defaultExportParams;
+    public getDefaultExportParams(type: 'csv'): CsvExportParams | undefined;
+    public getDefaultExportParams(type: 'excel'): ExcelExportParams | undefined;
+    public getDefaultExportParams(type: 'csv' | 'excel'): CsvExportParams | ExcelExportParams | undefined {
+        if (this.gridOptions.defaultExportParams) {
+            console.warn(`AG Grid: Since v25.2 \`defaultExportParams\`  has been replaced by \`default${capitalise(type)}ExportParams\`'`);
+            if (type === 'csv') {
+                return this.gridOptions.defaultExportParams as CsvExportParams;
+            }
+            return this.gridOptions.defaultExportParams as ExcelExportParams;
+        }
+
+        if (type === 'csv' && this.gridOptions.defaultCsvExportParams) {
+            return this.gridOptions.defaultCsvExportParams;
+        }
+
+        if (type === 'excel' && this.gridOptions.defaultExcelExportParams) {
+            return this.gridOptions.defaultExcelExportParams;
+        }
     }
 
     public isSuppressCsvExport() {
@@ -1136,6 +1193,10 @@ export class GridOptionsWrapper {
 
     public getIsServerSideGroupOpenByDefaultFunc(): ((params: IsServerSideGroupOpenByDefaultParams) => boolean) | undefined {
         return this.gridOptions.isServerSideGroupOpenByDefault;
+    }
+
+    public getIsGroupOpenByDefaultFunc(): ((params: IsGroupOpenByDefaultParams) => boolean) | undefined {
+        return this.gridOptions.isGroupOpenByDefault;
     }
 
     public getServerSideGroupKeyFunc(): ((dataItem: any) => string) | undefined {
@@ -1174,14 +1235,18 @@ export class GridOptionsWrapper {
         return this.gridOptions.tabToNextCell;
     }
 
+    public getGridTabIndex(): string {
+        return (this.gridOptions.tabIndex || 0).toString();
+    }
+
     public isTreeData(): boolean {
         const usingTreeData = isTrue(this.gridOptions.treeData);
 
         if (usingTreeData) {
             return ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Tree Data');
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     public isValueCache(): boolean {
@@ -1286,26 +1351,6 @@ export class GridOptionsWrapper {
             };
             this.propertyEventService.dispatchEvent(event);
         }
-    }
-
-    // this logic is repeated in lots of places. any element that had different CSS
-    // dependent on the layout needs to have the layout class added ot it.
-    public addLayoutElement(element: HTMLElement): void {
-        this.layoutElements.push(element);
-        this.updateLayoutClasses();
-    }
-
-    private updateLayoutClasses(): void {
-        const domLayout = this.getDomLayout();
-        const domLayoutAutoHeight = domLayout === Constants.DOM_LAYOUT_AUTO_HEIGHT;
-        const domLayoutPrint = domLayout === Constants.DOM_LAYOUT_PRINT;
-        const domLayoutNormal = domLayout === Constants.DOM_LAYOUT_NORMAL;
-
-        this.layoutElements.forEach(e => {
-            addOrRemoveCssClass(e, 'ag-layout-auto-height', domLayoutAutoHeight);
-            addOrRemoveCssClass(e, 'ag-layout-normal', domLayoutNormal);
-            addOrRemoveCssClass(e, 'ag-layout-print', domLayoutPrint);
-        });
     }
 
     public addEventListener(key: string, listener: Function): void {
@@ -1589,6 +1634,24 @@ export class GridOptionsWrapper {
             console.warn('AG Grid: since v25, grid property suppressEnterpriseResetOnNewColumns is deprecated. This was a temporary property to allow changing columns in Server Side Row Model without triggering a reload. Now that it is possible to dynamically change columns in the grid, this is no longer needed.');
             options.detailRowAutoHeight = true;
         }
+
+        if (options.suppressColumnStateEvents) {
+            console.warn('AG Grid: since v25, grid property suppressColumnStateEvents no longer works due to a refactor that we did. It should be possible to achieve similar using event.source, which would be "api" if the event was due to setting column state via the API');
+            options.detailRowAutoHeight = true;
+        }
+
+        if (options.defaultExportParams) {
+            console.warn('AG Grid: since v25.2, the grid property `defaultExportParams` has been replaced by `defaultCsvExportParams` and `defaultExcelExportParams`.');
+        }
+
+        if (options.stopEditingWhenGridLosesFocus) {
+            console.warn('AG Grid: since v25.2.2, the grid property `stopEditingWhenGridLosesFocus` has been replaced by `stopEditingWhenCellsLoseFocus`.');
+            options.stopEditingWhenCellsLoseFocus = true;
+        }
+
+        if (options.applyColumnDefOrder) {
+            console.warn('AG Grid: since v26.0, the grid property `applyColumnDefOrder` is no longer needed, as this is the default behaviour. To turn this behaviour off, set maintainColumnOrder=true');
+        }
     }
 
     private checkForViolations() {
@@ -1697,7 +1760,7 @@ export class GridOptionsWrapper {
 
         const minRowHeight = exists(rowHeight) ? Math.min(defaultRowHeight, rowHeight) : defaultRowHeight;
 
-        if (this.columnController.isAutoRowHeightActive()) {
+        if (this.columnModel.isAutoRowHeightActive()) {
             if (allowEstimate) {
                 return { height: rowHeight, estimated: true };
             }

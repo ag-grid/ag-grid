@@ -16,10 +16,13 @@ import { ChartAxisDirection } from "../../chartAxis";
 import { getMarker } from "../../marker/util";
 import { TooltipRendererResult, toTooltipHtml } from "../../chart";
 import { findMinMax } from "../../../util/array";
-import { toFixed } from "../../../util/number";
 import { equal } from "../../../util/equal";
 import { reactive, TypedEvent } from "../../../util/observable";
 import { interpolate } from "../../../util/string";
+import { Text } from "../../../scene/shape/text";
+import { Label } from "../../label";
+import { sanitizeHtml } from "../../../util/sanitize";
+import { FontStyle, FontWeight } from "../../../scene/shape/text";
 
 interface AreaSelectionDatum {
     readonly yKey: string;
@@ -36,6 +39,7 @@ export interface AreaSeriesNodeClickEvent extends TypedEvent {
 }
 
 interface MarkerSelectionDatum extends SeriesNodeDatum {
+    readonly index: number;
     readonly point: {
         readonly x: number;
         readonly y: number;
@@ -46,7 +50,29 @@ interface MarkerSelectionDatum extends SeriesNodeDatum {
     readonly yValue: number;
 }
 
+interface LabelSelectionDatum {
+    readonly index: number;
+    readonly point: {
+        readonly x: number;
+        readonly y: number;
+    }
+    readonly label?: {
+        readonly text: string;
+        readonly fontStyle?: FontStyle;
+        readonly fontWeight?: FontWeight;
+        readonly fontSize: number;
+        readonly fontFamily: string;
+        readonly textAlign: CanvasTextAlign;
+        readonly textBaseline: CanvasTextBaseline;
+        readonly fill: string;
+    };
+}
+
 export { AreaTooltipRendererParams };
+
+class AreaSeriesLabel extends Label {
+    @reactive('change') formatter?: (params: { value: any }) => string;
+}
 
 export class AreaSeriesTooltip extends SeriesTooltip {
     @reactive('change') renderer?: (params: AreaTooltipRendererParams) => string | TooltipRendererResult;
@@ -67,11 +93,13 @@ export class AreaSeries extends CartesianSeries {
     private areaGroup = this.group.appendChild(new Group);
     private strokeGroup = this.group.appendChild(new Group);
     private markerGroup = this.group.appendChild(new Group);
+    private labelGroup = this.group.appendChild(new Group);
 
     private areaSelection: Selection<Path, Group, AreaSelectionDatum, any> = Selection.select(this.areaGroup).selectAll<Path>();
     private strokeSelection: Selection<Path, Group, AreaSelectionDatum, any> = Selection.select(this.strokeGroup).selectAll<Path>();
     private markerSelection: Selection<Marker, Group, any, any> = Selection.select(this.markerGroup).selectAll<Marker>();
     private markerSelectionData: MarkerSelectionDatum[] = [];
+    private labelSelection: Selection<Text, Group, any, any> = Selection.select(this.labelGroup).selectAll<Text>();
 
     /**
      * The assumption is that the values will be reset (to `true`)
@@ -89,6 +117,8 @@ export class AreaSeries extends CartesianSeries {
     };
 
     readonly marker = new CartesianSeriesMarker();
+
+    readonly label = new AreaSeriesLabel();
 
     @reactive('dataChange') fills: string[] = [
         '#c16068',
@@ -119,9 +149,14 @@ export class AreaSeries extends CartesianSeries {
 
         this.addEventListener('update', this.update);
 
-        this.marker.enabled = false;
-        this.marker.addPropertyListener('shape', this.onMarkerShapeChange, this);
-        this.marker.addEventListener('change', this.update, this);
+        const { marker, label } = this;
+
+        marker.enabled = false;
+        marker.addPropertyListener('shape', this.onMarkerShapeChange, this);
+        marker.addEventListener('change', this.update, this);
+
+        label.enabled = false;
+        label.addEventListener('change', this.update, this);
     }
 
     onMarkerShapeChange() {
@@ -318,23 +353,26 @@ export class AreaSeries extends CartesianSeries {
             return;
         }
 
-        const { areaSelectionData, markerSelectionData } = selectionData;
+        const { areaSelectionData, markerSelectionData, labelSelectionData } = selectionData;
         this.updateAreaSelection(areaSelectionData);
         this.updateStrokeSelection(areaSelectionData);
         this.updateMarkerSelection(markerSelectionData);
         this.updateMarkerNodes();
+        this.updateLabelSelection(labelSelectionData);
+        this.updateLabelNodes();
         this.markerSelectionData = markerSelectionData;
     }
 
     private generateSelectionData(): {
         areaSelectionData: AreaSelectionDatum[],
-        markerSelectionData: MarkerSelectionDatum[]
+        markerSelectionData: MarkerSelectionDatum[],
+        labelSelectionData: LabelSelectionDatum[]
     } | undefined {
         if (!this.data) {
             return;
         }
         const {
-            yKeys, data, xData, yData, marker, fills, strokes,
+            yKeys, data, xData, yData, marker, label, fills, strokes,
             xAxis: { scale: xScale }, yAxis: { scale: yScale }
         } = this;
 
@@ -342,6 +380,7 @@ export class AreaSeries extends CartesianSeries {
         const yOffset = (yScale.bandwidth || 0) / 2;
         const areaSelectionData: AreaSelectionDatum[] = [];
         const markerSelectionData: MarkerSelectionDatum[] = [];
+        const labelSelectionData: LabelSelectionDatum[] = [];
         const last = xData.length * 2 - 1;
 
         xData.forEach((xDatum, i) => {
@@ -356,10 +395,11 @@ export class AreaSeries extends CartesianSeries {
                 const prev = curr < 0 ? prevMin : prevMax;
                 const y = yScale.convert(prev + curr) + yOffset;
                 const yKey = yKeys[j];
-                const yValue = seriesDatum[yKey];
+                const yValue: number = seriesDatum[yKey];
 
                 if (marker) {
                     markerSelectionData.push({
+                        index: i,
                         series: this,
                         seriesDatum,
                         yValue,
@@ -367,6 +407,31 @@ export class AreaSeries extends CartesianSeries {
                         point: { x, y },
                         fill: fills[j % fills.length],
                         stroke: strokes[j % strokes.length]
+                    });
+                }
+
+                let labelText: string;
+
+                if (label.formatter) {
+                    labelText = label.formatter({ value: yValue });
+                } else {
+                    labelText = isFinite(yValue) ? yValue.toFixed(2) : yValue ? String(yValue) : '';
+                }
+
+                if (label) {
+                    labelSelectionData.push({
+                        index: i,
+                        point: { x, y },
+                        label: labelText ? {
+                            text: labelText,
+                            fontStyle: label.fontStyle,
+                            fontWeight: label.fontWeight,
+                            fontSize: label.fontSize,
+                            fontFamily: label.fontFamily,
+                            textAlign: 'center',
+                            textBaseline: 'bottom',
+                            fill: label.color
+                        } : undefined
                     });
                 }
 
@@ -384,7 +449,7 @@ export class AreaSeries extends CartesianSeries {
             });
         });
 
-        return { areaSelectionData, markerSelectionData };
+        return { areaSelectionData, markerSelectionData, labelSelectionData };
     }
 
     private updateAreaSelection(areaSelectionData: AreaSelectionDatum[]): void {
@@ -486,9 +551,8 @@ export class AreaSeries extends CartesianSeries {
     }
 
     private updateMarkerSelection(markerSelectionData: MarkerSelectionDatum[]): void {
-        const { marker } = this;
-        const data = marker.shape ? markerSelectionData : [];
-        const MarkerShape = getMarker(marker.shape);
+        const data = this.marker.shape ? markerSelectionData : [];
+        const MarkerShape = getMarker(this.marker.shape);
         const updateMarkers = this.markerSelection.setData(data);
         updateMarkers.exit.remove();
         const enterMarkers = updateMarkers.enter.append(MarkerShape);
@@ -542,6 +606,43 @@ export class AreaSeries extends CartesianSeries {
         });
     }
 
+    private updateLabelSelection(labelSelectionData: LabelSelectionDatum[]): void {
+        const { label } = this;
+        const data = label.enabled ? labelSelectionData : [];
+        const updateLabels = this.labelSelection.setData(data);
+        updateLabels.exit.remove();
+        const enterLabels = updateLabels.enter.append(Text);
+        this.labelSelection = updateLabels.merge(enterLabels);
+    }
+
+    private updateLabelNodes(): void {
+        if (!this.chart) {
+            return;
+        }
+
+        const labelEnabled = this.label.enabled;
+
+        this.labelSelection.each((text, datum) => {
+            const { point, label } = datum;
+
+            if (label && labelEnabled) {
+                text.fontStyle = label.fontStyle;
+                text.fontWeight = label.fontWeight;
+                text.fontSize = label.fontSize;
+                text.fontFamily = label.fontFamily;
+                text.textAlign = label.textAlign;
+                text.textBaseline = label.textBaseline;
+                text.text = label.text;
+                text.x = point.x;
+                text.y = point.y - 10;
+                text.fill = label.fill;
+                text.visible = true;
+            } else {
+                text.visible = false;
+            }
+        });
+    }
+
     getNodeData(): MarkerSelectionDatum[] {
         return this.markerSelectionData;
     }
@@ -558,28 +659,30 @@ export class AreaSeries extends CartesianSeries {
     }
 
     getTooltipHtml(nodeDatum: MarkerSelectionDatum): string {
-        const { xKey } = this;
+        const { xKey, xAxis, yAxis } = this;
         const { yKey } = nodeDatum;
 
         if (!xKey || !yKey) {
             return '';
         }
 
-        const { xName, yKeys, yNames, fills, tooltip } = this;
+        const { xName, yKeys, yNames, yData, fills, tooltip } = this;
+        const yGroup = yData[nodeDatum.index];
         const {
             renderer: tooltipRenderer = this.tooltipRenderer,
             format: tooltipFormat
         } = tooltip;
         const datum = nodeDatum.seriesDatum;
+        const yKeyIndex = yKeys.indexOf(yKey);
         const xValue = datum[xKey];
         const yValue = datum[yKey];
-        const yKeyIndex = yKeys.indexOf(yKey);
+        const processedYValue = yGroup[yKeyIndex];
         const yName = yNames[yKeyIndex];
         const color = fills[yKeyIndex % fills.length];
-        const xString = typeof xValue === 'number' ? toFixed(xValue) : String(xValue);
-        const yString = typeof yValue === 'number' ? toFixed(yValue) : String(yValue);
-        const title = yName;
-        const content = xString + ': ' + yString;
+        const xString = xAxis.formatDatum(xValue);
+        const yString = yAxis.formatDatum(yValue);
+        const title = sanitizeHtml(yName);
+        const content = sanitizeHtml(xString + ': ' + yString);
         const defaults: TooltipRendererResult = {
             title,
             backgroundColor: color,
@@ -594,6 +697,7 @@ export class AreaSeries extends CartesianSeries {
                 xValue,
                 yKey,
                 yValue,
+                processedYValue,
                 yName,
                 color
             };

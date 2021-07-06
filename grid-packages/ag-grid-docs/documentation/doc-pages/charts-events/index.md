@@ -16,6 +16,18 @@ This example shows how the `nodeClick` event listener can be used to listen to c
 
 <chart-example title='Node Click Event' name='node-click-event' type='generated'></chart-example>
 
+### Example: Toggling node's selected state
+
+This example shows how the `nodeClick` event listener can be used to toggle each node's selected state.
+Notice how we also provide:
+
+- a marker formatter to make selected nodes stand out
+- set the series' `cursor` property to `pointer` to indicate that a node is clickable when hovered
+
+Also note how we call the `event.series.update()` method to redraw the series after altering one of its data points.
+
+<chart-example title='Node Click Event' name='node-click-select' type='generated'></chart-example>
+
 ### nodeClick Event
 
 Fired when this series' node is clicked. Depending on the type of series, a node can mean a bar or a pie slice, or a marker, such as a line or an area series marker.
@@ -84,7 +96,5 @@ In this case, instead of adding the `nodeClick` event to both line and column se
 Fired when a node of any series in the chart is clicked. In case a chart has multiple series, it can be handy to be able to provide a single listener that will be called when a node is clicked in any of them.
 
 In this case the contents of the event object passed to the listener will depend on the type of series the clicked node belongs to.
-
-## Legend Events
 
 <api-documentation source='charts-api/api.json' section='chart.legend.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation>

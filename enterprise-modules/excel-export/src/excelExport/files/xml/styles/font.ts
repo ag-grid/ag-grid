@@ -1,5 +1,4 @@
-import { XmlElement } from '@ag-grid-community/core';
-import { ExcelStyle, ExcelXMLTemplate } from '@ag-grid-community/core';
+import { ExcelStyle, ExcelXMLTemplate, XmlElement } from '@ag-grid-community/core';
 
 const font: ExcelXMLTemplate = {
     getTemplate(styleProperties: ExcelStyle): XmlElement {
@@ -16,7 +15,7 @@ const font: ExcelXMLTemplate = {
             verticalAlign,
             charSet,
             family,
-        } = styleProperties.font;
+        } = styleProperties.font!;
         return {
             name: "Font",
             properties: {

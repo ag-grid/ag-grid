@@ -131,14 +131,14 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 [[only-angular]]
 | ```jsx
 | import { Component } from '@angular/core';
-| 
+|
 | @Component({
 |     selector: 'my-app',
 |     templateUrl: './app.component.html'
 | })
 | export class AppComponent {
 |     private options: any;
-| 
+|
 |     beverageSpending = [
 |         {
 |             beverage: 'Coffee',
@@ -186,7 +186,7 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 | ```jsx
 | import React, { Component } from 'react';
 | import { AgChartsReact } from 'ag-charts-react';
-| 
+|
 | export default class ChartExample extends Component {
 |     data = [
 |         {
@@ -211,10 +211,10 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 |             Q4: 200,
 |         },
 |     ];
-| 
+|
 |     constructor(props) {
 |         super(props);
-| 
+|
 |         this.state = {
 |             options: {
 |                 data: this.data,
@@ -237,7 +237,7 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 |             },
 |         };
 |     }
-| 
+|
 |     render() {
 |         return <AgChartsReact options={this.state.options} />;
 |     }
@@ -251,10 +251,10 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 |         <ag-charts-vue :options="options"></ag-charts-vue>
 |     </div>
 | </template>
-| 
+|
 | <script>
 |     import {AgChartsVue} from 'ag-charts-vue';
-| 
+|
 |     export default {
 |         name: 'App',
 |         components: {
@@ -306,7 +306,7 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 |         }
 |     };
 | </script>
-| 
+|
 | <style>
 | </style>
 | ```
@@ -321,7 +321,7 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 | import { NgModule } from '@angular/core';
 | import { AgChartsAngularModule } from 'ag-charts-angular';
 | import { AppComponent } from './app.component';
-| 
+|
 | @NgModule({
 |     imports: [
 |         BrowserModule,
@@ -370,9 +370,9 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 | ```jsx
 | import Vue from 'vue'
 | import App from './App.vue'
-| 
+|
 | Vue.config.productionTip = false
-| 
+|
 | new Vue({
 |   render: h => h(App),
 | }).$mount('#app')
@@ -1138,4 +1138,4 @@ Now that you've had a taste of what it's like to use AG Charts, we encourage you
 
 ## Next Up
 
-Continue to the next section to see the [API Reference](../charts-api/).
+Continue to the next section to see the [API Reference](/charts-api/).

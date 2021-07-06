@@ -5,7 +5,7 @@
             "description": "Set to `true` to apply the Set Filter immediately when the user is typing in the Mini Filter.",
             "more": {
                 "name": "Keyboard Shortcuts",
-                "url": "../filter-set-mini-filter/#keyboard-shortcuts"
+                "url": "/filter-set-mini-filter/#keyboard-shortcuts"
             }
         },
         "cellHeight": {
@@ -15,14 +15,14 @@
             "description": "Similar to the Cell Renderer for the grid. Setting it separately here allows for the value to be rendered differently in the filter.",
             "more": {
                 "name": "Filter List Cell Renderer",
-                "url": "../filter-set-filter-list/#cell-renderer"
+                "url": "/filter-set-filter-list/#cell-renderer"
             }
         },
         "comparator(a, b)": {
             "description": "Comparator for sorting. If not provided, the Column Definition comparator is used. If Column Definition comparator is also not provided, the default (grid provided) comparator is used.",
             "more": {
                 "name": "Sorting Filter Lists",
-                "url": "../filter-set-filter-list/#sorting-filter-lists"
+                "url": "/filter-set-filter-list/#sorting-filter-lists"
             }
         },
         "defaultToNothingSelected": {
@@ -30,14 +30,14 @@
             "description": "By default, when the Set Filter is opened all values are shown selected. Set this to `true` to instead show all values as de-selected by default.",
             "more": {
                 "name": "Default State",
-                "url": "../filter-set-filter-list/#default-state"
+                "url": "/filter-set-filter-list/#default-state"
             }
         },
         "excelMode": {
             "description": "Changes the behaviour of the Set Filter to match that of Excel's AutoFilter.",
             "more": {
                 "name": "Excel Mode",
-                "url": "../filter-set-excel-mode/"
+                "url": "/filter-set-excel-mode/"
             }
         },
         "showTooltips": {
@@ -45,7 +45,7 @@
             "description": "If `true`, hovering over a value in the Set Filter will show a tooltip containing the full, untruncated value.",
             "more": {
                 "name": "Filter Value Tooltips",
-                "url": "../filter-set-filter-list/#filter-value-tooltips"
+                "url": "/filter-set-filter-list/#filter-value-tooltips"
             }
         },
         "suppressMiniFilter": {
@@ -53,7 +53,7 @@
             "description": "Set to `true` to hide the Mini Filter.",
             "more": {
                 "name": "Hiding the Mini Filter",
-                "url": "../filter-set-mini-filter/#hiding-the-mini-filter"
+                "url": "/filter-set-mini-filter/#hiding-the-mini-filter"
             }
         },
         "suppressSelectAll": {
@@ -65,21 +65,21 @@
             "description": "If `true`, the Set Filter values will not be sorted. Use this if you are providing your own values and don't want them sorted as you are providing in the order you want.",
             "more": {
                 "name": "Supplying Filter Values",
-                "url": "../filter-set-filter-list/#supplying-filter-values"
+                "url": "/filter-set-filter-list/#supplying-filter-values"
             }
         },
         "textFormatter": {
             "description": "If specified, this formats the text before applying the Mini Filter compare logic, useful for instance to substitute accented characters.",
             "more": {
                 "name": "Custom Searches",
-                "url": "../filter-set-mini-filter/#custom-searches"
+                "url": "/filter-set-mini-filter/#custom-searches"
             }
         },
         "values": {
             "description": "The values to display in the Filter List. If this is not set, the filter will takes its values from what is loaded in the table.",
             "more": {
                 "name": "Supplying Filter Values",
-                "url": "../filter-set-filter-list/#supplying-filter-values"
+                "url": "/filter-set-filter-list/#supplying-filter-values"
             }
         }
     }

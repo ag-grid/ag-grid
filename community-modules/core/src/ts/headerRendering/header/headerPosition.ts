@@ -2,7 +2,7 @@ import { Column } from "../../entities/column";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { Bean, Autowired } from "../../context/context";
 import { BeanStub } from "../../context/beanStub";
-import { ColumnController } from "../../columnController/columnController";
+import { ColumnModel } from "../../columns/columnModel";
 import { HeaderNavigationService } from "./headerNavigationService";
 import { HeaderRowType } from "../headerRowComp";
 
@@ -14,7 +14,7 @@ export interface HeaderPosition {
 @Bean('headerPositionUtils')
 export class HeaderPositionUtils extends BeanStub {
 
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
 
     public findHeader(focusedHeader: HeaderPosition, direction: 'Before' | 'After'): HeaderPosition | undefined {
@@ -24,10 +24,10 @@ export class HeaderPositionUtils extends BeanStub {
 
         if (focusedHeader.column instanceof ColumnGroup) {
             getGroupMethod = `getDisplayedGroup${direction}` as any;
-            nextColumn = this.columnController[getGroupMethod](focusedHeader.column)!;
+            nextColumn = this.columnModel[getGroupMethod](focusedHeader.column)!;
         } else {
             getColMethod = `getDisplayedCol${direction}` as any;
-            nextColumn = this.columnController[getColMethod](focusedHeader.column)!;
+            nextColumn = this.columnModel[getColMethod](focusedHeader.column)!;
         }
 
         if (nextColumn) {
@@ -39,7 +39,7 @@ export class HeaderPositionUtils extends BeanStub {
     }
 
     public findColAtEdgeForHeaderRow(level: number, position: 'start' | 'end'): HeaderPosition | undefined {
-        const displayedColumns = this.columnController.getAllDisplayedColumns();
+        const displayedColumns = this.columnModel.getAllDisplayedColumns();
         const column = displayedColumns[position === 'start' ? 0 : displayedColumns.length - 1];
 
         if (!column) { return; }
@@ -49,7 +49,7 @@ export class HeaderPositionUtils extends BeanStub {
         const type = headerRowComp && headerRowComp.getType();
 
         if (type == HeaderRowType.COLUMN_GROUP) {
-            const columnGroup = this.columnController.getColumnGroupAtLevel(column, level);
+            const columnGroup = this.columnModel.getColumnGroupAtLevel(column, level);
             return {
                 headerRowIndex: level,
                 column: columnGroup!

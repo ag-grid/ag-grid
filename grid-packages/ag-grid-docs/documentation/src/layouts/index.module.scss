@@ -25,7 +25,6 @@ main {
 .header {
     composes: d-flex align-items-center px-2 px-md-3 py-1 from global;
     position: relative;
-
     background-image: linear-gradient(to top left, $primary, darken($primary, 25%));
 
     &__wrapper {
@@ -35,10 +34,9 @@ main {
     &__logo {
         composes: d-block from global;
 
-        background-image: url("../images/ag-grid.svg");
-        background-repeat: no-repeat;
-        background-size: contain;
-        min-width: 15rem;
+        img {
+            height: 40px;
+        }
     }
 }
 
@@ -46,7 +44,7 @@ main {
     composes: px-2 px-md-3 from global;
     position: relative;
     background-color: transparentize($light, 0.05);
-    border-bottom: 1px solid lighten($secondary, 40%);
+    border-bottom: 1px solid $ag-light-grey;
 
     @include media-breakpoint-up(lg) {
         @supports (position: sticky) {
@@ -91,7 +89,7 @@ main {
     flex: none;
     width: auto;
     border-width: 1px;
-    border-color: lighten($secondary, 40%);
+    border-color: $ag-light-grey;
     border-bottom-style: solid;
     background-color: $white;
 }
@@ -143,6 +141,8 @@ main {
         background-position: 1rem 1rem;
         padding-left: 5rem;
         min-height: 5rem;
+        display: flex;
+        align-items: center;
 
         :global(code.language-text) {
             background-color: $pink;

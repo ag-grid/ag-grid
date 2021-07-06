@@ -10,6 +10,7 @@ The charting library supports three axis types:
 
 - [Category](#category-axis)
 - [Number](#number-axis)
+- [Log](#log-axis)
 - [Time](#time-axis)
 
 Each type is tailored to be used with certain types of data. An axis can be positioned to any side of a chart &mdash; `'top'`, `'right'`, `'bottom'`, or `'left'`. Just like with series, the axes can be specified by setting the corresponding `axes` array property of a chart.
@@ -51,6 +52,53 @@ Here's the simplest number axis config:
 }
 ```
 
+## Log Axis
+
+If the range of values is very wide, the `log` axis can be used instead of the `number` axis.
+For example, because the `number` axis uses a linear scale, same changes in magnitude result in the
+same pixel distance.
+
+The `log` axis uses a log scale, where same _percentage_ changes in magnitude result in the same pixel distance.
+In other words, the pixel distance between 10 and 100, and 100 and 1000 will be the same because both ranges
+represent the same percentage increase. Whereas, if the `number` axis was used, the second distance would be
+10 times larger than the first.
+
+The above property of the log axis can also be useful in financial charts. For example, if your rate of
+return on an investment stays consistent over time, the investment value chart will look like a straight line.
+
+By default, the `log` axis renders 10 ticks (and grid lines) per order of magnitude. If your range is wide
+enough, you may start getting too many ticks, in which case using a smaller value for the `tick: { count: xxx }`
+config might be necessary:
+
+```js
+{
+    type: 'log',
+    position: 'left',
+    tick: {
+      count: 3
+    }
+}
+```
+
+The `log` axis uses the common logarithm (base 10) by default. The `base` config allows
+you to change the base to any number you like, for example `Math.E` for natural or `2` for binary logarithms:
+
+```js
+{
+    type: 'log',
+    position: 'left',
+    base: 2
+}
+```
+
+All of the above points are demonstrated by the example below.
+
+### Example: Number Axis vs Log Axis
+
+<chart-example title='Number Axis vs Log Axis' name='number-vs-log' type='generated'></chart-example>
+
+[[note]]
+| The range of a log axis should be strictly positive or strictly negative (because there's no power you can raise a number to that will yield zero). For that reason, any non-conforming range will be clipped to conformity, leaving only the larger segment. For example, `[0, 10]` will be clipped to  `[Number.EPSILON, 10]`, while `[-10, 5]` will be clipped to `[-10, -Number.EPSILON]`. Since there can be orders of magnitude difference between `Number.EPSILON` and the other range value, it is often desirable to set the `min` or `max` property of the axis manually. In this case it can be `min: 1` and `max: -1`, respectively.
 ## Time Axis
 
 The time axis is similar to the number axis in the sense that it is also used to plot continuous values. The time axis can even be used with numeric data (in addition to `Date` objects), but the numbers will be interpreted as Unix timestamps. The time axis differs from the number axis in tick segmentation and label formatting. For example, you could choose to place a tick every 5 minutes, every month, or every Friday.
@@ -64,7 +112,7 @@ The time axis also supports specifier strings to control the way time values are
 }
 ```
 
-## Title
+## Axis Title
 
 Sometimes it may not be obvious what a chart's dimension represents. For example, you might see numbers on a chart's axis and not be able to tell if they're millimetres, percentages, dollars, or something else! It can also be helpful to provide extra information. For example, category axis labels can clearly show people's names, but it might be worth knowing that they are a company's best performing sales people.
 
@@ -79,7 +127,7 @@ Please see the [API reference](#reference-axis.title) for axis title styling opt
 
 <chart-example title='Axis Title' name='axis-title' type='generated'></chart-example>
 
-## Ticks
+## Axis Ticks
 
 Category axes show a tick for every category. Number and time axes try to segment the whole range into a certain number of intervals (10 by default, giving 11 ticks in total).
 
@@ -96,7 +144,7 @@ The example below demonstrates how the `count` property of the number axis can b
 
 <chart-example title='Axis Tick Styling' name='axis-tick-count' type='generated'></chart-example>
 
-## Labels
+## Axis Labels
 
 The axis renders a label next to every tick to show the tick's value. Chart axis labels support the same font and colour options as the axis title. Additionally, the distance of the labels from the ticks and their rotation can be configured via the `padding` and `rotation` properties respectively.
 
@@ -121,9 +169,65 @@ formatter: function(params) {
 
 <chart-example title='Axis Label Formatter' name='axis-label-formatter' type='generated'></chart-example>
 
+### Number Label Format String
+
+For number axes, a format string can be provided, which will be used to format the numbers for display as axis labels.
+The format string may contain the following directives, which reflect those from Python's <a href="https://docs.python.org/3/library/string.html#format-specification-mini-language" target="_blank">format specification</a>:
+
+`[[fill]align][sign][#][0][width][grouping_option][.precision][type]`
+
+Where:
+
+- `fill` - Can be any character.
+- `align`:
+  - `>` - Forces the field to be right-aligned within the available space (default).
+  - `<` - Forces the field to be left-aligned within the available space.
+  - `^` - Forces the field to be centered within the available space.
+  - `=` - Like >, but with any sign and symbol to the left of any padding.
+- `sign`:
+  - `-` - Nothing for zero or positive and a minus sign for negative (default).
+  - `+` - A plus sign for zero or positive and a minus sign for negative.
+  - `(` - Nothing for zero or positive and parentheses for negative.
+  - ` ` - A space for zero or positive and a minus sign for negative.
+- `symbol`:
+  - `$` - Apply currency symbols per the locale definition.
+  - `#` - For binary, octal, or hexadecimal notation, prefix by `0b`, `0o`, or `0x`, respectively.
+- `zero` - The `0` option enables zero-padding. Implicitly sets fill to `0` and align to `=`.
+- `width` - The width defines the minimum field width. If not specified, then the width will be determined by the content.
+- `comma` - The comma `,` option enables the use of a group separator, such as a comma for thousands.
+- `precision` - Depending on the type, the precision either indicates the number of digits that follow the decimal point (types `f` and `%`), or the number of significant digits (types ` `​, `e`, `g`, `r`, `s` and `p`). If the precision is not specified, it defaults to 6 for all types except `​ ` (none), which defaults to 12. Precision is ignored for integer formats (types `b`, `o`, `d`, `x`, `X` and `c`).
+- `trim` - The `~` option trims insignificant trailing zeros across all format types. This is most commonly used in conjunction with types `r`, `e`, `s` and `%`.
+- `type` - Determines how the data should be presented:
+  - `%` - Multiply by 100, and then decimal notation with a percent sign.
+  - `b` - Binary notation, rounded to integer.
+  - `c` - Converts the integer to the corresponding unicode character before printing.
+  - `d` - Decimal notation, rounded to integer.
+  - `e` - Exponent notation.
+  - `f` - Fixed point notation.
+  - `g` - Either decimal or exponent notation, rounded to significant digits.
+  - `o` - Octal notation, rounded to integer.
+  - `p` - Multiply by 100, round to significant digits, and then decimal notation with a percent sign.
+  - `r` - Decimal notation, rounded to significant digits.
+  - `s` - Decimal notation with a SI prefix, rounded to significant digits.
+  - `x` - Hexadecimal notation, using lower-case letters, rounded to integer.
+  - `X` - Hexadecimal notation, using upper-case letters, rounded to integer.
+
+[[note]]
+|If you want to have a formatted value in the middle of some string, you have to wrap it in `#{}`,
+| so that it's clear where the number format begins and ends. For example: `I'm #{0>2.0f} years old`.
+
+### Example: Number Label Format
+
+The `label` config of the left axis in the example below uses the `'🌧️ #{0>2.1f} °C'` specifier string for the `format` property to format numbers as integers padded to left with zeros to achieve a consistent 2-digit width.
+
+Notice that we wrapped the number format in `#{}` since we want to prepend the formatted value with the weather icon
+and to append the units used at the end.
+
+<chart-example title='Number Axis Label Format' name='number-axis-label-format' type='generated'></chart-example>
+
 ### Time Label Format String
 
-For time axes, a format string can be provided, which will be used to format the data for display as axis labels. The format string may contain the following directives, which reflect those from Python's <a href="https://strftime.org/" target="_blank">strftime</a>:
+For time axes, a format string can be provided, which will be used to format the dates for display as axis labels. The format string may contain the following directives, which reflect those from Python's <a href="https://strftime.org/" target="_blank">strftime</a>:
 
 - `%a` - abbreviated weekday name.*
 - `%A` - full weekday name.*
@@ -180,7 +284,7 @@ Notice that the `label.format` property only affects label formatting but not se
 
 <chart-example title='Time Axis Label Format' name='time-axis-label-format' type='generated'></chart-example>
 
-## Grid Lines
+## Axis Grid Lines
 
 Chart axes feature grid lines by default. Grid lines extend from axis ticks on the other side of the axis into the series area, so that it's easy to trace a series item such as a marker to a corresponding tick/label.
 
@@ -197,6 +301,25 @@ Each config object in the `gridStyle` array is alternately applied to the grid l
 
 <chart-example title='Axis Grid Lines' name='axis-grid-lines' type='generated'></chart-example>
 
-## API Reference
+## Multiple axes in a single direction
+
+If you have two different datasets (each represented by its own series) but they are on vastly different scales, it is possible to have
+one series be coordinated by one axis and the other series coordinated by another axis, all in a single chart.
+
+If this is the case, the charting library will need some help in the form of an extra axis config to figure out which series should be
+coordinated by which axes. By setting the axis' `keys` config to the keys of the series in question, you let the charting library know
+that all series that use that those keys will be coordinated by this axis, as illustrated by the example below.
+
+### Example: Multiple y-axes
+
+Note, that we are:
+- using two number axis configurations in the `axes` array
+- position one number axis to the `left` and the other to the `right` of the chart
+- set the left number axis `keys` to match the `yKeys` of the `column` series
+- set the right number axis `keys` to match the `yKey` of the `line` series
+
+<chart-example title='Multiple y-axes' name='multiple-axes' type='generated'></chart-example>
+
+## Axis API Reference
 
 <api-documentation source='charts-api/api.json' section='axis' config='{ "showSnippets": true }'></api-documentation>

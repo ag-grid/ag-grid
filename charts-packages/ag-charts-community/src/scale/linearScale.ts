@@ -1,10 +1,13 @@
 import ContinuousScale from "./continuousScale";
 import ticks, { tickIncrement } from "../util/ticks";
+import { tickFormat } from "../util/numberFormat";
 
 /**
  * Maps continuous domain to a continuous range.
  */
 export class LinearScale extends ContinuousScale {
+    readonly type = 'linear';
+
     ticks(count = 10) {
         const d = this._domain;
         return ticks(d[0], d[d.length - 1], count);
@@ -53,5 +56,10 @@ export class LinearScale extends ContinuousScale {
             d[i1] = Math.floor(stop * step) / step;
             this.domain = d;
         }
+    }
+
+    tickFormat(count?: number, specifier?: string) {
+        const d = this.domain;
+        return tickFormat(d[0], d[d.length - 1], count == undefined ? 10 : count, specifier);
     }
 }

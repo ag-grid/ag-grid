@@ -9,6 +9,9 @@ import {
     IAggFuncParams
 } from '@ag-grid-community/core';
 
+// @ts-ignore
+const AGBigInt = typeof BigInt === 'undefined' ? null : BigInt;
+
 @Bean('aggFuncService')
 export class AggFuncService extends BeanStub implements IAggFuncService {
 
@@ -96,13 +99,17 @@ function aggSum(params: IAggFuncParams): number | bigint {
             if (result === null) {
                 result = value;
             } else {
-                result += typeof result === 'number' ? value : BigInt(value);
+                if (AGBigInt) {
+                    result += typeof result === 'number' ? value : AGBigInt(value);
+                } else {
+                    result += value;
+                }
             }
         } else if (typeof value === 'bigint') {
             if (result === null) {
                 result = value;
             } else {
-                result = (typeof result === 'bigint' ? result : BigInt(result)) + value;
+                result = (typeof result === 'bigint' ? result : AGBigInt(result)) + value;
             }
         }
     }
@@ -191,14 +198,22 @@ function aggAvg(params: IAggFuncParams): { value: number | bigint | null; count:
             count++;
         } else if (currentValue != null && (typeof currentValue.value === 'number' || typeof currentValue.value === 'bigint') && typeof currentValue.count === 'number') {
             // we are aggregating groups, so we take the aggregated values to calculated a weighted average
-            valueToAdd = currentValue.value * (typeof currentValue.value === 'number' ? currentValue.count : BigInt(currentValue.count));
+            if (AGBigInt) {
+                valueToAdd = currentValue.value * (typeof currentValue.value === 'number' ? currentValue.count : AGBigInt(currentValue.count));
+            } else {
+                valueToAdd = currentValue.value * currentValue.count;
+            }
             count += currentValue.count;
         }
 
         if (typeof valueToAdd === 'number') {
-            sum += typeof sum === 'number' ? valueToAdd : BigInt(valueToAdd);
+            if (AGBigInt) {
+                sum += typeof sum === 'number' ? valueToAdd : AGBigInt(valueToAdd);
+            } else {
+                sum += valueToAdd;
+            }
         } else if (typeof valueToAdd === 'bigint') {
-            sum = (typeof sum === 'bigint' ? sum : BigInt(sum)) + valueToAdd;
+            sum = (typeof sum === 'bigint' ? sum : AGBigInt(sum)) + valueToAdd;
         }
     }
 
@@ -206,7 +221,12 @@ function aggAvg(params: IAggFuncParams): { value: number | bigint | null; count:
 
     // avoid divide by zero error
     if (count > 0) {
-        value = sum / ((typeof sum === 'number' ? count : BigInt(count)) as any);
+        if (AGBigInt) {
+            value = sum / ((typeof sum === 'number' ? count : AGBigInt(count)) as any);
+        } else {
+            value = sum / count;
+        }
+
     }
 
     // the result will be an object. when this cell is rendered, only the avg is shown.

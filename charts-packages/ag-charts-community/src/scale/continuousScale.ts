@@ -47,7 +47,7 @@ export default abstract class ContinuousScale implements Scale<any, any> {
         this.rescale();
     }
 
-    private _clamp = identity;
+    protected _clamp = identity;
     set clamp(value: boolean) {
         this._clamp = value ? clamper(this.domain) : identity;
     }

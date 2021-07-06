@@ -12,11 +12,11 @@ export class PropertyKeys {
 
     public static OBJECT_PROPERTIES = [
         'components', 'frameworkComponents', 'rowStyle', 'context', 'autoGroupColumnDef', 'localeText', 'icons',
-        'datasource', 'serverSideDatasource', 'viewportDatasource', 'groupRowRendererParams', 'aggFuncs',
-        'fullWidthCellRendererParams', 'defaultColGroupDef', 'defaultColDef', 'defaultExportParams', 'columnTypes',
-        'rowClassRules', 'detailGridOptions', 'detailCellRendererParams', 'loadingCellRendererParams',
-        'loadingOverlayComponentParams', 'noRowsOverlayComponentParams', 'popupParent', 'colResizeDefault',
-        'reduxStore', 'statusBar', 'sideBar', 'chartThemeOverrides', 'customChartThemes'
+        'datasource', 'serverSideDatasource', 'viewportDatasource', 'groupRowRendererParams', 'aggFuncs', 'fullWidthCellRendererParams',
+        'defaultColGroupDef', 'defaultColDef', 'defaultExportParams', 'defaultCsvExportParams', 'defaultExcelExportParams', 'columnTypes',
+        'rowClassRules', 'detailGridOptions', 'detailCellRendererParams', 'loadingCellRendererParams', 'loadingOverlayComponentParams',
+        'noRowsOverlayComponentParams', 'popupParent', 'colResizeDefault', 'reduxStore', 'statusBar', 'sideBar', 'chartThemeOverrides',
+        'customChartThemes'
     ];
 
     public static ARRAY_PROPERTIES = [
@@ -29,7 +29,7 @@ export class PropertyKeys {
         'viewportRowModelBufferSize', 'autoSizePadding', 'maxBlocksInCache', 'maxConcurrentDatasourceRequests', 'tooltipShowDelay',
         'cacheOverflowSize', 'paginationPageSize', 'cacheBlockSize', 'infiniteInitialRowCount', 'scrollbarWidth',
         'batchUpdateWaitMillis', 'asyncTransactionWaitMillis', 'blockLoadDebounceMillis', 'keepDetailRowsCount',
-        'undoRedoCellEditingLimit', 'cellFlashDelay', 'cellFadeDelay'
+        'undoRedoCellEditingLimit', 'cellFlashDelay', 'cellFadeDelay', 'tabIndex'
     ];
 
     public static BOOLEAN_PROPERTIES = [
@@ -60,7 +60,7 @@ export class PropertyKeys {
         'undoRedoCellEditing', 'allowDragFromColumnsToolPanel', 'immutableData', 'immutableColumns', 'pivotSuppressAutoColumn',
         'suppressExpandablePivotGroups', 'applyColumnDefOrder', 'debounceVerticalScrollbar', 'detailRowAutoHeight',
         'serverSideFilteringAlwaysResets', 'suppressAggFilteredOnly', 'showOpenedGroup', 'suppressClipboardApi',
-        'suppressModelUpdateAfterUpdateTransaction'
+        'suppressModelUpdateAfterUpdateTransaction', 'stopEditingWhenCellsLoseFocus', 'maintainColumnOrder'
     ];
 
     /** You do not need to include event callbacks in this list, as they are generated automatically. */
@@ -75,7 +75,7 @@ export class PropertyKeys {
         'noRowsOverlayComponentFramework', 'detailCellRenderer', 'detailCellRendererFramework', 'defaultGroupSortComparator', 'isRowMaster',
         'isRowSelectable', 'postSort', 'processHeaderForClipboard', 'paginationNumberFormatter', 'processDataFromClipboard', 'getServerSideGroupKey',
         'isServerSideGroup', 'suppressKeyboardEvent', 'createChartContainer', 'processChartOptions', 'getChartToolbarItems', 'fillOperation',
-        'isApplyServerSideTransaction', 'getServerSideStoreParams', 'isServerSideGroupOpenByDefault'
+        'isApplyServerSideTransaction', 'getServerSideStoreParams', 'isServerSideGroupOpenByDefault', 'isGroupOpenByDefault'
     ];
 
     public static ALL_PROPERTIES = [

@@ -67,5 +67,5 @@ The example also demonstrates having the quick filter cache turned on or off. Th
 
 ## Server Side Data
 
-Quick Filters only make sense with client side data (i.e. when using the [client-side row model](../client-side-model/)). For the other row models you would need to implement your own server-side filtering to replicate Quick Filter functionality.
+Quick Filters only make sense with client side data (i.e. when using the [client-side row model](/client-side-model/)). For the other row models you would need to implement your own server-side filtering to replicate Quick Filter functionality.
 

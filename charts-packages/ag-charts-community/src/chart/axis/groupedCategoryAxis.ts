@@ -10,41 +10,28 @@ import { BandScale } from "../../scale/bandScale";
 import { ticksToTree, TreeLayout, treeLayout } from "../../layout/tree";
 import { AxisLabel } from "../../axis";
 import { ChartAxis } from "../chartAxis";
-import { createId } from "../../util/id";
 
 class GroupedCategoryAxisLabel extends AxisLabel {
     grid: boolean = false;
 }
 
-/**
- * A general purpose linear axis with no notion of orientation.
- * The axis is always rendered vertically, with horizontal labels positioned to the left
- * of the axis line by default. The axis can be {@link rotation | rotated} by an arbitrary angle,
- * so that it can be used as a top, right, bottom, left, radial or any other kind
- * of linear axis.
- * The generic `D` parameter is the type of the domain of the axis' scale.
- * The output range of the axis' scale is always numeric (screen coordinates).
- */
-export class GroupedCategoryAxis extends ChartAxis {
+export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
     // debug (bbox)
     // private bboxRect = (() => {
     //     const rect = new Rect();
     //     rect.fill = undefined;
     //     rect.stroke = 'red';
     //     rect.strokeWidth = 1;
-    //     rect.strokeOpacity = 0.7;
+    //     rect.strokeOpacity = 0.2;
     //     return rect;
     // })();
 
     static className = 'GroupedCategoryAxis';
     static type = 'groupedCategory';
 
-    readonly id = createId(this);
     // Label scale (labels are positionsed between ticks, tick count = label count + 1).
     // We don't call is `labelScale` for consistency with other axes.
-    readonly scale: BandScale<string | number>;
     readonly tickScale = new BandScale<string | number>();
-    readonly group = new Group();
 
     private gridLineSelection: Selection<Line, Group, any, any>;
     private axisLineSelection: Selection<Line, Group, any, any>;
@@ -54,13 +41,15 @@ export class GroupedCategoryAxis extends ChartAxis {
     private longestSeparatorLength = 0;
 
     constructor() {
-        super(new BandScale<string | number>());
+        super();
 
-        const { group, scale, tickScale } = this;
+        const { group, tickScale } = this;
 
+        const scale = new BandScale<string | number>();
         scale.paddingOuter = 0.1;
         scale.paddingInner = scale.paddingOuter * 2;
         this.requestedRange = scale.range.slice();
+        this.scale = scale;
 
         tickScale.paddingInner = 1;
         tickScale.paddingOuter = 0;
@@ -73,12 +62,12 @@ export class GroupedCategoryAxis extends ChartAxis {
         // this.group.append(this.bboxRect); // debug (bbox)
     }
 
-    set domain(value: any[]) {
-        this.scale.domain = value;
-        const tickTree = ticksToTree(value);
+    set domain(values: any[]) {
+        this.scale.domain = values;
+        const tickTree = ticksToTree(values);
         this.tickTreeLayout = treeLayout(tickTree);
 
-        const domain = value.slice();
+        const domain = values.slice();
         domain.push('');
         this.tickScale.domain = domain;
 

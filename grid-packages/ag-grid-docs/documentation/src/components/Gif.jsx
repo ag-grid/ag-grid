@@ -5,12 +5,16 @@ import isServerSideRendering from 'utils/is-server-side-rendering';
 import isDevelopment from 'utils/is-development';
 import styles from './Gif.module.scss';
 
+/**
+ * This renders a player for GIFs, so a static image of the first frame will be loaded when the page first loads, and a
+ * play button will be shown over it, which the user can click to load and play the GIF image.
+ */
 const Gif = ({ pageName, src, alt, autoPlay, className, wrapped, children, ...props }) => {
     const { images } = useImageFileNodes();
     const image = getImage(images, pageName, src);
 
     if (!image) {
-        throw new Error(`Could not find requested image: ${src}`);
+        throw new Error(`Could not find ${src} for ${pageName}`);
     }
 
     const classes = classnames(styles['gif'], { [styles['gif--wrapped']]: wrapped }, className);

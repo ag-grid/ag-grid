@@ -2,7 +2,7 @@ $container-max-widths: (
     sm: 540px,
     md: 970px,
     lg: 1140px,
-    xl: 1400px
+    xl: 1400px,
 );
 
 // only import Bootstrap that does not output CSS, to avoid bloating our generated CSS
@@ -10,13 +10,11 @@ $container-max-widths: (
 @import "~bootstrap/scss/variables";
 @import "~bootstrap/scss/mixins";
 
-$blue-1: #00407f;
-$blue-2: #0084e7;
-$blue-3: #8abde3;
-$blue-4: #f1f7ff;
-$blue-5: #f9fcff;
-
-$grey-1: #6d6d6d;
-$grey-2: #a3a4a5;
-$grey-3: #c2c2c2;
-$grey-4: #ebebeb;
+$ag-dark-blue: #00407f;
+$ag-blue: #0084e7;
+$ag-light-blue: #55b2c6;
+$ag-grey: #b4bbbf;
+$ag-light-grey: lighten($ag-grey, 10%);
+$ag-orange: #ff8b00;
+$ag-red: #ff0000;
+$primary: $ag-blue;

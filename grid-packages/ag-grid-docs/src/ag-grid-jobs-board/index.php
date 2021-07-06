@@ -1,6 +1,6 @@
 <?php
 $navKey = "about";
-include_once '../includes/html-helpers.php';
+require_once '../includes/html-helpers.php';
 gtm_data_layer('jobs');
 ?>
 <!DOCTYPE html>
@@ -10,14 +10,14 @@ gtm_data_layer('jobs');
 $socialUrl = "https://www.ag-grid.com/ag-grid-jobs-board/";
 $socialImage = "https://www.ag-grid.com/ag-grid-jobs-board/images/jobs_board.png";
 
-meta_and_links("Current Opportunities at AG Grid", "AG Grid jobs", "We are looking for the best and the brightest to join us on our mission to create the best datagrid in the world. This page lists our current opportunities. We are always looking for JavaScript Developers.", false);
+meta_and_links("Current Opportunities at AG Grid", "AG Grid jobs", "We are looking for the best and the brightest to join us on our mission to create the best datagrid in the world. This page lists our current opportunities. We are always looking for JavaScript Developers.", "ag-grid-jobs-board/", false);
 ?>
 <script src="../dist/homepage.js"></script>
 <link rel="stylesheet" href="../dist/homepage.css">
 </head>
 <body>
 <header id="nav" class="compact">
-<?php 
+<?php
     $version = 'latest';
     include '../includes/navbar.php';
 ?>
@@ -36,8 +36,8 @@ meta_and_links("Current Opportunities at AG Grid", "AG Grid jobs", "We are looki
                 <h4>Life at AG Grid</h4>
                 <p>
                 We are a young successful start-up where you will experience our growth from small to very big. The current development team
-                have a background building enterprise applications with extensive experience using Java, C# and C++. There are plenty of opportunities 
-                to learn from experienced team members. We now would like to grow our team with people at all levels of experience. Our culture is 
+                have a background building enterprise applications with extensive experience using Java, C# and C++. There are plenty of opportunities
+                to learn from experienced team members. We now would like to grow our team with people at all levels of experience. Our culture is
                 friendly and relaxed with an emphasis on continuing to deliver our world leading product, customer support and service level.
                 </p>
                 <p>
@@ -50,7 +50,7 @@ meta_and_links("Current Opportunities at AG Grid", "AG Grid jobs", "We are looki
                         <li>Travel to and represent AG Grid at international conferences.</li>
                         <li>Experience a company grow from a few people to world domination.</li>
                     </ul>
-            </div>  
+            </div>
 
             <div class="job">
                 <div class="col-md-12">
@@ -109,7 +109,7 @@ meta_and_links("Current Opportunities at AG Grid", "AG Grid jobs", "We are looki
                         </ul>
                         </li>
                     </ul>
-                    
+
                     <h3>How to Apply</h3>
                     <p>
                     If you think this sounds like the place for you, please send your CV to <a href="mailto:info@ag-grid.com">info@ag-grid.com</a>.

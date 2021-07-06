@@ -11,6 +11,9 @@ import MetaData from './MetaData';
 
 const getCacheBustingUrl = (url, timestamp) => `${url}?t=${timestamp}`;
 
+/**
+ * This is the template for executing vanilla JavaScript examples in the example runner.
+ */
 const VanillaTemplate = ({ isExecuting, modifiedTimeMs, library, appLocation, options, scriptFiles, styleFiles, indexFragment }) =>
     <html lang="en">
         <head>
@@ -27,7 +30,6 @@ const VanillaTemplate = ({ isExecuting, modifiedTimeMs, library, appLocation, op
             indexFragment={indexFragment} />
     </html>;
 
-// we have to use this function to avoid a wrapping div around the fragment
 const VanillaBody = ({ library, appLocation, options, scriptFiles, indexFragment }) => {
     let scriptPath;
 
@@ -55,6 +57,7 @@ const VanillaBody = ({ library, appLocation, options, scriptFiles, indexFragment
         </>
     );
 
+    // Setting the HTML like this avoids a wrapping div around the fragment
     return <body dangerouslySetInnerHTML={{ __html: `${indexFragment}\n${bodySuffix}` }}></body>;
 };
 

@@ -4,9 +4,12 @@ export interface ToolPanelDef {
     id: string;
     labelDefault: string;
     labelKey: string;
+    minWidth?: number;
+    maxWidth?: number;
+    width?: number;
     // To allow binding this to an specific icon
     iconKey: string;
-    toolPanel?: {new(): IToolPanelComp} | string;
+    toolPanel?: { new(): IToolPanelComp } | string;
     toolPanelFramework?: any;
     toolPanelParams?: any;
 }

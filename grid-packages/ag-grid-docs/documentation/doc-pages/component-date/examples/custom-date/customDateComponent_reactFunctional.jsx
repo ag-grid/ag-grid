@@ -69,7 +69,7 @@ export default forwardRef((props, ref) => {
         }
     }));
 
-    //Inlining styles to make simpler the component
+    // inlining styles to make simpler the component
     return (
         <div className="ag-input-wrapper custom-date-filter" role="presentation" ref={refFlatPickr}>
             <input type="text" ref={refInput} data-input style={{ width: "100%" }} />

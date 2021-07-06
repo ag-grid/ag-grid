@@ -4,7 +4,7 @@ title: "Accessing Client-Side Data"
 
 This section covers the ways data can be accessed once it has been supplied to the grid.
 
-Each time you pass data to the grid, the grid wraps each data item with a [Row Node](../row-object/) object. For example, if your data has 20 rows, the grid creates 20 Row Node objects, each Row Node wrapping one item of your data.
+Each time you pass data to the grid, the grid wraps each data item with a [Row Node](/row-object/) object. For example, if your data has 20 rows, the grid creates 20 Row Node objects, each Row Node wrapping one item of your data.
 
 It is sometimes handy to access these Row Nodes. One example where it is handy is if you want to select a row, you can call `rowNode.setSelected(true)` to select it. This section details the different ways a Row Node can be accessed.
 
@@ -26,7 +26,7 @@ const gridOptions = {
 }
 </snippet>
 
-To lookup a Row Node use `getRowNode()` on the Grid API as follows: 
+To lookup a Row Node use `getRowNode()` on the Grid API as follows:
 
 <snippet>
 // get the row node with ID 55
@@ -60,9 +60,9 @@ gridOptions.api.forEachLeafNode((rowNode, index) => {
 </snippet>
 
 [[note]]
-| All of the methods above work with the [Client-Side](../client-side-model/)
-| row model. For all the other row models ([Viewport](../viewport/),
-| [Infinite](../infinite-scrolling/) and [Server-Side](../server-side-model/)) the only method
+| All of the methods above work with the [Client-Side](/client-side-model/)
+| row model. For all the other row models ([Viewport](/viewport/),
+| [Infinite](/infinite-scrolling/) and [Server-Side](/server-side-model/)) the only method
 | that is supported is `api.forEachNode()` and that will return back Row Nodes that are loaded into
 | browser memory only (as each of these row models use a data source to lazy load rows).
 

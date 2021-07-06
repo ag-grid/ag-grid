@@ -1,6 +1,6 @@
 import { PostConstruct, Autowired } from '../context/context';
 import { Component } from './component';
-import { FocusController } from '../focusController';
+import { FocusService } from '../focusService';
 import { isNodeOrElement, addCssClass, clearElement } from '../utils/dom';
 import { KeyCode } from '../constants/keyCode';
 import { isStopPropagationForAgGrid, stopPropagationForAgGrid } from '../utils/event';
@@ -25,7 +25,7 @@ export class ManagedFocusComponent extends Component {
     private bottomTabGuard: HTMLElement;
     private skipTabGuardFocus: boolean = false;
 
-    @Autowired('focusController') protected readonly focusController: FocusController;
+    @Autowired('focusService') protected readonly focusService: FocusService;
 
     /*
      * Set isFocusableContainer to true if this component will contain multiple focus-managed
@@ -62,7 +62,7 @@ export class ManagedFocusComponent extends Component {
      * Override this method if focusing the default element requires special logic.
      */
     protected focusInnerElement(fromBottom = false): void {
-        const focusable = this.focusController.findFocusableElements(this.getFocusableElement());
+        const focusable = this.focusService.findFocusableElements(this.getFocusableElement());
 
         if (this.isFocusableContainer && this.tabGuardsAreActive()) {
             // remove tab guards from this component from list of focusable elements
@@ -87,7 +87,7 @@ export class ManagedFocusComponent extends Component {
             this.deactivateTabGuards();
         }
 
-        const nextRoot = this.focusController.findNextFocusableElement(this.getFocusableElement(), false, e.shiftKey);
+        const nextRoot = this.focusService.findNextFocusableElement(this.getFocusableElement(), false, e.shiftKey);
 
         if (this.isFocusableContainer && tabGuardsAreActive) {
             // ensure the tab guards are only re-instated once the event has finished processing, to avoid the browser
@@ -195,7 +195,7 @@ export class ManagedFocusComponent extends Component {
     }
 
     private activateTabGuards(): void {
-        this.forEachTabGuard(guard => guard.setAttribute('tabIndex', '0'));
+        this.forEachTabGuard(guard => guard.setAttribute('tabIndex', this.gridOptionsWrapper.getGridTabIndex()));
     }
 
     private deactivateTabGuards(): void {

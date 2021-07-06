@@ -25,7 +25,7 @@ export class StoreUtils extends BeanStub {
 
         let pointer: RowNode | null = groupNode;
         while (pointer && pointer.level >= 0) {
-            keys.push(pointer.key);
+            keys.push(pointer.key!);
             pointer = pointer.parent;
         }
 
@@ -45,7 +45,7 @@ export class StoreUtils extends BeanStub {
         endRow?: number}
     ): void {
         const groupKeys = this.createGroupKeys(p.parentNode);
-        const {storeParams} = p;
+        const { storeParams } = p;
 
         if (!storeParams.datasource) { return; }
 

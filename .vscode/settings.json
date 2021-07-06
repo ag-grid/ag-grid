@@ -16,11 +16,6 @@
         "trans"
     ],
     "files.exclude": {
-        "grid-packages/ag-grid-community": true,
-        "grid-packages/ag-grid-enterprise": true,
-        "grid-packages/ag-grid-angular": true,
-        "grid-packages/ag-grid-react": true,
-        "grid-packages/ag-grid-vue": true,
         "**/.git": true,
         "**/.DS_Store": true,
         "**/node_modules": true,

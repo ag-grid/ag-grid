@@ -1,5 +1,8 @@
 import { graphql, useStaticQuery } from 'gatsby';
 
+/**
+ * This returns information about all example files, including the HTML fragment from template index.html files.
+ */
 export const useExampleFileNodes = () => {
     const { allFile: { nodes } } = useStaticQuery(graphql`
     {

@@ -42,12 +42,19 @@ export enum LegendPosition {
     Left = 'left'
 }
 
+interface LegendLabelFormatterParams {
+    id: string;
+    itemId: any;
+    value: string;
+}
+
 export class LegendLabel extends Observable {
     @reactive('change') color = 'black';
     @reactive('layoutChange') fontStyle?: FontStyle;
     @reactive('layoutChange') fontWeight?: FontWeight;
     @reactive('layoutChange') fontSize = 12;
     @reactive('layoutChange') fontFamily = 'Verdana, sans-serif';
+    @reactive() formatter?: (params: LegendLabelFormatterParams) => string;
 }
 
 export class LegendMarker extends Observable {
@@ -272,6 +279,9 @@ export class Legend extends Observable {
     protected onMarkerShapeChange() {
         this.itemSelection = this.itemSelection.setData([]);
         this.itemSelection.exit.remove();
+        if (this.group.scene) {
+            this.group.scene.cancelRender();
+        }
     }
 
     /**

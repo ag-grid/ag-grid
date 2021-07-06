@@ -78,10 +78,18 @@ export interface PieSeriesFormat {
 class PieSeriesLabel extends Label {
     @reactive('change') offset = 3; // from the callout line
     @reactive('dataChange') minAngle = 20; // in degrees
+    @reactive('dataChange') formatter?: (params: { value: any }) => string;
 }
 
 class PieSeriesCallout extends Observable {
-    @reactive('change') colors: string[] = [];
+    @reactive('change') colors: string[] = [
+        '#874349',
+        '#718661',
+        '#a48f5f',
+        '#5a7088',
+        '#7f637a',
+        '#5d8692'
+    ];
     @reactive('change') length: number = 10;
     @reactive('change') strokeWidth: number = 1;
 }
@@ -155,7 +163,6 @@ export class PieSeries extends PolarSeries {
         this.label.addEventListener('change', this.scheduleLayout, this);
         this.label.addEventListener('dataChange', this.scheduleData, this);
         this.callout.addEventListener('change', this.scheduleLayout, this);
-        this.callout.colors = this.strokes;
 
         this.addPropertyListener('data', event => {
             if (event.value) {
@@ -194,7 +201,6 @@ export class PieSeries extends PolarSeries {
     ];
     set fills(values: string[]) {
         this._fills = values;
-        this.strokes = values.map(color => Color.fromString(color).darker().toHexString());
         this.scheduleData();
     }
     get fills(): string[] {
@@ -211,7 +217,6 @@ export class PieSeries extends PolarSeries {
     ];
     set strokes(values: string[]) {
         this._strokes = values;
-        this.callout.colors = values;
         this.scheduleData();
     }
     get strokes(): string[] {
@@ -260,7 +265,7 @@ export class PieSeries extends PolarSeries {
     }
 
     processData(): boolean {
-        const { angleKey, radiusKey, seriesItemEnabled, angleScale, groupSelectionData } = this;
+        const { angleKey, radiusKey, seriesItemEnabled, angleScale, groupSelectionData, label } = this;
         const data = angleKey && this.data ? this.data : [];
 
         const angleData: number[] = data.map((datum, index) => seriesItemEnabled[index] && Math.abs(+datum[angleKey]) || 0);
@@ -273,9 +278,18 @@ export class PieSeries extends PolarSeries {
             return angleData.map(datum => sum += datum / angleDataTotal);
         })();
 
-        const labelKey = this.label.enabled && this.labelKey;
-        const labelData = labelKey ? data.map(datum => String(datum[labelKey])) : [];
+        const labelFormatter = label.formatter;
+        const labelKey = label.enabled && this.labelKey;
+        let labelData: string[] = [];
         let radiusData: number[] = [];
+
+        if (labelKey) {
+            if (labelFormatter) {
+                labelData = data.map(datum => labelFormatter({ value: datum[labelKey] }));
+            } else {
+                labelData = data.map(datum => String(datum[labelKey]));
+            }
+        }
 
         if (radiusKey) {
             const { radiusMin, radiusMax } = this;
@@ -305,7 +319,7 @@ export class PieSeries extends PolarSeries {
             const midCos = Math.cos(midAngle);
             const midSin = Math.sin(midAngle);
 
-            const labelMinAngle = toRadians(this.label.minAngle);
+            const labelMinAngle = toRadians(label.minAngle);
             const labelVisible = labelKey && span > labelMinAngle;
             const midAngle180 = normalizeAngle180(midAngle);
 
@@ -405,7 +419,7 @@ export class PieSeries extends PolarSeries {
 
         const {
             fills, strokes, fillOpacity, strokeOpacity, strokeWidth,
-            outerRadiusOffset, radiusScale, callout, shadow,
+            radiusScale, callout, shadow,
             highlightStyle: { fill, stroke, centerOffset },
             angleKey, radiusKey, formatter
         } = this;
@@ -416,7 +430,6 @@ export class PieSeries extends PolarSeries {
 
         this.groupSelection.selectByTag<Sector>(PieNodeTag.Sector).each((sector, datum, index) => {
             const radius = radiusScale.convert(datum.radius);
-            const outerRadius = Math.max(0, radius + outerRadiusOffset);
             const highlighted = datum === highlightedDatum;
             const sectorFill = highlighted && fill !== undefined ? fill : fills[index % fills.length];
             const sectorStroke = highlighted && stroke !== undefined ? stroke : strokes[index % strokes.length];

@@ -78,7 +78,7 @@ From the example the following can be noted:
 When you move columns around it is possible to change their visibility as follows:
 
 - You can hide a column by dragging it outside of the grid.
-- You can show a column by dragging it from the [tool panel](../tool-panel/) onto the grid.
+- You can show a column by dragging it from the [tool panel](/tool-panel/) onto the grid.
 
 The column property `lockVisible` will stop individual columns from been made visible or hidden via the UI. When `lockVisible=true`, the column will not hide when it is dragged out of the grid, and columns dragged from the tool panel onto the grid will not become visible.
 

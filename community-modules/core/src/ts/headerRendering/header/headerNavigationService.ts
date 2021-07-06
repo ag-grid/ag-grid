@@ -1,15 +1,16 @@
-import { Bean, Autowired } from "../../context/context";
+import { Bean, Autowired, PostConstruct } from "../../context/context";
 import { BeanStub } from "../../context/beanStub";
 import { HeaderContainer } from "../headerContainer";
-import { FocusController } from "../../focusController";
+import { FocusService } from "../../focusService";
 import { HeaderPosition, HeaderPositionUtils } from "./headerPosition";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { Column } from "../../entities/column";
 import { HeaderRowType } from "../headerRowComp";
-import { GridPanel } from "../../gridPanel/gridPanel";
 import { AnimationFrameService } from "../../misc/animationFrameService";
 import { HeaderRootComp, HeaderContainerPosition } from "../headerRootComp";
 import { last } from "../../utils/array";
+import { ControllersService } from "../../controllersService";
+import { GridBodyCtrl } from "../../gridBodyComp/gridBodyCtrl";
 
 export enum HeaderNavigationDirection {
     UP,
@@ -21,15 +22,19 @@ export enum HeaderNavigationDirection {
 @Bean('headerNavigationService')
 export class HeaderNavigationService extends BeanStub {
 
-    @Autowired('focusController') private focusController: FocusController;
+    @Autowired('focusService') private focusService: FocusService;
     @Autowired('headerPositionUtils') private headerPositionUtils: HeaderPositionUtils;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
+    @Autowired('controllersService') private controllersService: ControllersService;
 
-    private gridPanel: GridPanel;
+    private gridBodyCon: GridBodyCtrl;
     private headerRoot: HeaderRootComp;
 
-    public registerGridComp(gridPanel: GridPanel): void {
-        this.gridPanel = gridPanel;
+    @PostConstruct
+    private postConstruct(): void {
+        this.controllersService.whenReady(p => {
+            this.gridBodyCon = p.gridBodyCon;
+        });
     }
 
     public registerHeaderRoot(headerRoot: HeaderRootComp): void {
@@ -62,7 +67,7 @@ export class HeaderNavigationService extends BeanStub {
      */
     public navigateVertically(direction: HeaderNavigationDirection, fromHeader: HeaderPosition | null, event: KeyboardEvent): boolean {
         if (!fromHeader) {
-            fromHeader = this.focusController.getFocusedHeader();
+            fromHeader = this.focusService.getFocusedHeader();
         }
 
         if (!fromHeader) { return false; }
@@ -100,7 +105,7 @@ export class HeaderNavigationService extends BeanStub {
             if (!nextFocusColumn) { return false; }
         }
 
-        return this.focusController.focusHeaderPosition(
+        return this.focusService.focusHeaderPosition(
             { headerRowIndex: nextRow, column: nextFocusColumn! },
             undefined,
             false,
@@ -114,7 +119,7 @@ export class HeaderNavigationService extends BeanStub {
      * @return {boolean} true to preventDefault on the event that caused this navigation.
      */
     public navigateHorizontally(direction: HeaderNavigationDirection, fromTab: boolean = false, event: KeyboardEvent): boolean {
-        const focusedHeader = this.focusController.getFocusedHeader()!;
+        const focusedHeader = this.focusService.getFocusedHeader()!;
         const isLeft = direction === HeaderNavigationDirection.LEFT;
         const isRtl = this.gridOptionsWrapper.isEnableRtl();
         let nextHeader: HeaderPosition;
@@ -130,7 +135,7 @@ export class HeaderNavigationService extends BeanStub {
         }
 
         if (nextHeader) {
-            return this.focusController.focusHeaderPosition(nextHeader, normalisedDirection, fromTab, true, event);
+            return this.focusService.focusHeaderPosition(nextHeader, normalisedDirection, fromTab, true, event);
         }
 
         if (!fromTab) { return true; }
@@ -153,7 +158,7 @@ export class HeaderNavigationService extends BeanStub {
             nextPosition = this.headerPositionUtils.findColAtEdgeForHeaderRow(nextRowIndex, 'start')!;
         }
 
-        return this.focusController.focusHeaderPosition(nextPosition, direction, true, true, event);
+        return this.focusService.focusHeaderPosition(nextPosition, direction, true, true, event);
     }
 
     public scrollToColumn(column: Column | ColumnGroup, direction: 'Before' | 'After' | null = 'After'): void {
@@ -168,11 +173,11 @@ export class HeaderNavigationService extends BeanStub {
             columnToScrollTo = column;
         }
 
-        this.gridPanel.ensureColumnVisible(columnToScrollTo);
+        this.gridBodyCon.getScrollFeature().ensureColumnVisible(columnToScrollTo);
 
         // need to nudge the scrolls for the floating items. otherwise when we set focus on a non-visible
         // floating cell, the scrolls get out of sync
-        this.gridPanel.horizontallyScrollHeaderCenterAndFloatingCenter();
+        this.gridBodyCon.getScrollFeature().horizontallyScrollHeaderCenterAndFloatingCenter();
 
         // need to flush frames, to make sure the correct cells are rendered
         this.animationFrameService.flushAllFrames();

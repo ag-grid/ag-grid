@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": false,
+        "target": "ES2015",
+        "types": ["jest"],
+        "lib": [
+            "es2015",
+            "dom"
+        ]
+    },
+}

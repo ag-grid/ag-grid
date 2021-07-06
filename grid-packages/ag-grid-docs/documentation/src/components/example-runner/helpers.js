@@ -6,11 +6,24 @@ import { getIndexHtml } from './index-html-helper';
 import { ParameterConfig } from '../../../pages/example-runner';
 import isDevelopment from 'utils/is-development';
 
-const getInternalFramework = (framework, useFunctionalReact) => {
+/**
+ * The "internalFramework" is the framework name we use inside the example runner depending on which options the
+ * user has selected. It can be one of the following:
+ *
+ * - 'vanilla' (JavaScript)
+ * - 'react' (React Classes)
+ * - 'reactFunctional' (React Hooks)
+ * - 'angular' (Angular)
+ * - 'vue' (Vue)
+ * - 'vue3' (Vue 3)
+ */
+const getInternalFramework = (framework, useFunctionalReact, useVue3) => {
     if (framework === 'javascript') {
         return 'vanilla';
     } else if (framework === 'react' && useFunctionalReact) {
         return 'reactFunctional';
+    } else if(framework === 'vue' && useVue3) {
+        return 'vue3'
     }
 
     return framework;
@@ -26,15 +39,18 @@ export const getExampleInfo = (
     options = {},
     framework = 'javascript',
     useFunctionalReact = false,
+    useVue3 = false,
     importType = 'modules') => {
     if (library === 'charts') {
-        // no support for modules or React Hooks in charts yet
+        // no support for modules or React Hooks or Vue 3 in charts yet
         importType = 'packages';
         useFunctionalReact = false;
+        useVue3 = false;
     }
 
-    const internalFramework = getInternalFramework(framework, useFunctionalReact);
-    const boilerplatePath = `/example-runner/${library}-${framework}-boilerplate/`;
+    const internalFramework = getInternalFramework(framework, useFunctionalReact, useVue3);
+    const boilerPlateFramework = framework === 'vue' ? useVue3 ? 'vue3' : 'vue' : framework;
+    const boilerplatePath = `/example-runner/${library}-${boilerPlateFramework}-boilerplate/`;
 
     let sourcePath = `${pageName}/examples/${name}/`;
     let appLocation = `/examples/${pageName}/${name}/`;
@@ -204,6 +220,7 @@ export const getIndexHtmlUrl = exampleInfo => {
             library,
             framework,
             useFunctionalReact,
+            useVue3,
             importType,
             name,
             title,
@@ -218,6 +235,7 @@ export const getIndexHtmlUrl = exampleInfo => {
                 library,
                 framework,
                 useFunctionalReact,
+                useVue3,
                 importType,
                 name,
                 title,

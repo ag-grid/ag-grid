@@ -9,9 +9,9 @@ The ability to nest grids within grids is commonly referred to as Master / Detai
 Here the top-level grid is referred to as the 'master grid' and the nested grid is referred to as the 'detail grid'.
 
 Master / Details is configured the same way for the Server-Side Row Model and the Client-Side Row Model.
-For a comprehensive look at Master / Detail configurations, see: [Client-Side Master / Detail](../master-detail/).
+For a comprehensive look at Master / Detail configurations, see: [Client-Side Master / Detail](/master-detail/).
 
-Because the configuation is already discussed in [Client-Side Master / Detail](../master-detail/),
+Because the configuation is already discussed in [Client-Side Master / Detail](/master-detail/),
 this pages focuses on areas that are of particular interest to this Server-Side version.
 
 ## Enabling Master / Detail
@@ -67,7 +67,7 @@ This example shows a simple Master / Detail setup which includes the infinite sc
 
 ## Combining Row Grouping with Master Detail
 
-It is possible to combine [Server-Side Grouping](../server-side-model-grouping/) with Master Detail.
+It is possible to combine [Server-Side Grouping](/server-side-model-grouping/) with Master Detail.
 
 The following snippet shows row grouping on the 'country' column by setting `rowGroup = true`:
 
@@ -119,7 +119,7 @@ The height of detail rows can be configured in one of the following ways:
 
 1. Using the `detailRowHeight` grid option property to set a fixed height for each detail row.
 1. Using the `getRowHeight()` grid option callback to explicitly set height for each row individually. This callback will need to work out the pixel height of each detail row.
-1. Using the `detailCellRendererParams.autoHeight=true` property to let the grid automatically size the detail rows / grids to fit their rows.
+1. Using the `detailRowAutoHeight=true` property to let the grid automatically size the detail rows / grids to fit their rows.
 
 The following snippets compares these approaches:
 
@@ -170,25 +170,25 @@ The following example explicitly sets detail row heights based on the number of 
 
 <grid-example title='Dynamic Detail Row Height' name='dynamic-detail-row-height' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
 
-See [Master Detail Dynamic Height](../master-detail-height/#dynamic-height) for more details.
+See [Master Detail Dynamic Height](/master-detail-height/#dynamic-height) for more details.
 
 ### Example Using Property autoHeight
 
-The following example gets the grid to auto-size all details sections to fit their rows. This is done by setting `masterGridOptions.detailCellRendererParams.autoHeight = true`.
+The following example gets the grid to auto-size all details sections to fit their rows. This is done by setting `masterGridOptions.detailRowAutoHeight = true`.
 
 
 <grid-example title='Auto Detail Row Height' name='auto-detail-row-height' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
 
-See [Master Detail Auto Height](../master-detail-height/#auto-height) for more details.
+See [Master Detail Auto Height](/master-detail-height/#auto-height) for more details.
 
 
 ## Lazy Loading Detail Rows
 
-In the examples above, the data for the detail grid was returned with the master row. However it is also possible to lazy-load data for the detail row, see: [Providing Rows](../master-detail-grids/#providing-rows).
+In the examples above, the data for the detail grid was returned with the master row. However it is also possible to lazy-load data for the detail row, see: [Providing Rows](/master-detail-grids/#providing-rows).
 
 However note that detail rows will be purged once the master row is closed, or if the detail row leaves the viewport through scrolling. In both cases data will need to be fetched again.
 
 ## Next Up
 
-Continue to the next section to learn how to work with [Tree Data](../server-side-model-tree-data/).
+Continue to the next section to learn how to work with [Tree Data](/server-side-model-tree-data/).
 

@@ -1,29 +1,27 @@
-import {Component, ViewChild, ViewContainerRef} from "@angular/core";
-
-import {IToolPanel, IToolPanelParams} from "@ag-grid-community/all-modules";
+import {Component} from "@angular/core";
+import {IToolPanel, IToolPanelParams, RowNode} from "@ag-grid-community/all-modules";
 
 @Component({
     selector: 'custom-stats',
     template: `
-        <div style="text-align: center">
-        <span>
-            <h2><i class="fa fa-calculator"></i> Custom Stats</h2>
-            <dl style="font-size: large; padding: 30px 40px 10px 30px">
-                <dt class="totalStyle">Total Medals: <b>{{numMedals}}</b></dt>
-                <dt class="totalStyle">Total Gold: <b>{{numGold}}</b></dt>
-                <dt class="totalStyle">Total Silver: <b>{{numSilver}}</b></dt>
-                <dt class="totalStyle">Total Bronze: <b>{{numBronze}}</b></dt>
-            </dl>
-        </span>
-        </div>`, styles: [
-        `            
-            .totalStyle {
-                padding-bottom: 15px
-            }
-        `
-    ]
+      <div style="text-align: center">
+      <span>
+                <h2><i class="fa fa-calculator"></i> Custom Stats</h2>
+                <dl style="font-size: large; padding: 30px 40px 10px 30px">
+                    <dt class="totalStyle">Total Medals: <b>{{ numMedals }}</b></dt>
+                    <dt class="totalStyle">Total Gold: <b>{{ numGold }}</b></dt>
+                    <dt class="totalStyle">Total Silver: <b>{{ numSilver }}</b></dt>
+                    <dt class="totalStyle">Total Bronze: <b>{{ numBronze }}</b></dt>
+                </dl>
+            </span>
+      </div>`,
+    styles: [`
+        .totalStyle {
+            padding-bottom: 15px
+        }
+    `]
 })
-export class CustomStatsToolPanel implements IToolPanel{
+export class CustomStatsToolPanel implements IToolPanel {
     private params: IToolPanelParams;
 
     private numMedals: number;
@@ -44,10 +42,10 @@ export class CustomStatsToolPanel implements IToolPanel{
     }
 
     updateTotals(): void {
-        var numGold = 0, numSilver = 0, numBronze = 0;
+        let numGold = 0, numSilver = 0, numBronze = 0;
 
-        this.params.api.forEachNode(function (rowNode) {
-            let data = rowNode.data;
+        this.params.api.forEachNode((rowNode:RowNode) => {
+            const data = rowNode.data;
             if (data.gold) numGold += data.gold;
             if (data.silver) numSilver += data.silver;
             if (data.bronze) numBronze += data.bronze;

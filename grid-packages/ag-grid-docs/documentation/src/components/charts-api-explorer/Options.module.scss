@@ -45,7 +45,7 @@
 
     &__content {
         margin-top: 10px;
-        border: 2px solid #0084e7;
+        border: 2px solid $primary;
         border-radius: 10px;
         overflow: hidden;
 
@@ -76,7 +76,7 @@
     }
 
     &__type {
-        color: #0084e7;
+        color: $primary;
         user-select: none;
     }
 
@@ -86,7 +86,7 @@
     }
 
     code {
-        color: #0084e7;
+        color: $primary;
         font-size: 14px;
         line-height: 1rem;
     }
@@ -98,7 +98,7 @@
     padding: 10px;
     display: flex;
     justify-content: space-between;
-    background-color: #0084e7;
+    background-color: $primary;
 
     &__title {
         h2 {

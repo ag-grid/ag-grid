@@ -13,13 +13,13 @@ const VueExample = {
               :columnDefs="columnDefs"
               :defaultColDef="defaultColDef"
               :rowData="rowData"
-              :frameworkComponents="frameworkComponents"
               @grid-ready="onGridReady">
           </ag-grid-vue>
       </div>
     `,
     components: {
-        'ag-grid-vue': AgGridVue
+        'ag-grid-vue': AgGridVue,
+        mySimpleEditor: MySimpleEditor
     },
     data: function () {
         return {
@@ -39,27 +39,27 @@ const VueExample = {
                 {
                     field: "gender",
                     width: 100,
-                    cellEditor: "mySimpleEditor"
+                    cellEditorFramework: "mySimpleEditor"
                 },
                 {
                     field: "age",
                     width: 80,
-                    cellEditor: "mySimpleEditor"
+                    cellEditorFramework: "mySimpleEditor"
                 },
                 {
                     field: "mood",
                     width: 90,
-                    cellEditor: "mySimpleEditor"
+                    cellEditorFramework: "mySimpleEditor"
                 },
                 {
                     field: "country",
                     width: 110,
-                    cellEditor: "mySimpleEditor"
+                    cellEditorFramework: "mySimpleEditor"
                 },
                 {
                     field: "address",
                     width: 502,
-                    cellEditor: "mySimpleEditor"
+                    cellEditorFramework: "mySimpleEditor"
                 }
             ],
             defaultColDef: {
@@ -70,7 +70,6 @@ const VueExample = {
                 filter: true,
                 resizable: true
             },
-            frameworkComponents: {mySimpleEditor: MySimpleEditor},
             rowData: this.createRowData(),
             interval: null
         }
@@ -83,9 +82,9 @@ const VueExample = {
             this.interval = setInterval(() => {
                 const instances = params.api.getCellEditorInstances();
                 if (instances.length > 0) {
-                    const instance = instances[0].getFrameworkComponentInstance();
-                    if (instance.myCustomFunction) {
-                        const result = instance.myCustomFunction();
+                    const instance = instances[0];
+                    if (instance.getFrameworkComponentInstance && instance.getFrameworkComponentInstance().myCustomFunction) {
+                        const result = instance.getFrameworkComponentInstance().myCustomFunction();
                         console.log(`found editing cell: row index = ${result.rowIndex}, column = ${result.colId}.`);
                     } else {
                         console.log('found editing cell, but method myCustomFunction not found, must be the default editor.');

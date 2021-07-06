@@ -2,9 +2,9 @@
   "name": "vr-testing",
   "private": true,
   "scripts": {
-    "generate": "ts-node index.ts tmp-dev-reference --update",
-    "compare": "ts-node index.ts tmp-dev-reference",
-    "view": "ts-node index.ts tmp-dev-reference --view"
+    "generate": "npx ts-node index.ts tmp-dev-reference --update",
+    "compare": "npx ts-node index.ts tmp-dev-reference",
+    "view": "npx ts-node index.ts tmp-dev-reference --view"
   },
   "devDependencies": {
     "@types/inquirer": "^6.5.0",

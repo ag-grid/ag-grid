@@ -209,12 +209,15 @@ export class HdpiCanvas {
         if (this._has) {
             return this._has;
         }
+        const isChrome = navigator.userAgent.indexOf('Chrome') > -1;
+        const isFirefox = navigator.userAgent.indexOf('Firefox') > -1;
+        const isSafari = !isChrome && navigator.userAgent.indexOf('Safari') > -1;
         return this._has = Object.freeze({
             textMetrics: this.textMeasuringContext.measureText('test').actualBoundingBoxDescent !== undefined
                 // Firefox implemented advanced TextMetrics object in v74:
                 // https://bugzilla.mozilla.org/show_bug.cgi?id=1102584
                 // but it's buggy, so we'll keed using the SVG for text measurement in Firefox for now.
-                && !/Firefox\/\d+(.\d)+/.test(window.navigator.userAgent),
+                && !isFirefox && !isSafari,
             getTransform: this.textMeasuringContext.getTransform !== undefined
         });
     }

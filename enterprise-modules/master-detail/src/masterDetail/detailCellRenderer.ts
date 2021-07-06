@@ -52,13 +52,6 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
             this.createDetailsGrid(autoHeight);
             this.registerDetailWithMaster();
             this.loadRowData();
-
-            window.setTimeout(() => {
-                // ensure detail grid api still exists (grid may be destroyed when async call tries to set data)
-                if (this.detailGridOptions.api) {
-                    this.detailGridOptions.api.doLayout();
-                }
-            }, 0);
         } else {
             console.warn('AG Grid: reference to eDetailGrid was missing from the details template. ' +
                 'Please add ref="eDetailGrid" to the template.');
@@ -67,8 +60,6 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
         this.addManagedListener(params.node.parent!, RowNode.EVENT_DATA_CHANGED, () => {
             this.needRefresh = true;
         });
-
-        // this.setupAutoGridHeight();
     }
 
     public refresh(): boolean {

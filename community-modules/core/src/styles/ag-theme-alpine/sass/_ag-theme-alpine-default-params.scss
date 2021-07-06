@@ -76,7 +76,8 @@ $ag-theme-alpine-default-params: (
     full-width-tabs: true,
 
     card-shadow: 0 1px 4px 1px rgba(186, 191, 199, 0.4),
-    popup-shadow: ag-derived(card-shadow)
+    popup-shadow: ag-derived(card-shadow),
+    side-bar-panel-width: 250px
 );
 
 $ag-theme-alpine-default-params: map-merge($ag-theme-base-default-params, $ag-theme-alpine-default-params);

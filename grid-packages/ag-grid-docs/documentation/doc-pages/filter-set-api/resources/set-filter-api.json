@@ -1,0 +1,34 @@
+{
+    "api": {
+        "setModel()": {
+            "description": "Sets the state of the filter using the supplied model. Providing `null` as the model will de-activate the filter.<br /><br />**Note:** if you are [providing values asynchronously](/filter-set-filter-list/#asynchronous-values) to the Set Filter, you need to wait for these changes to be applied before performing any further actions by waiting on the returned grid promise, e.g. `filter.setModel({ values: ['a', 'b'] }).then(function() { gridApi.onFilterChanged(); });`",
+            "type": {
+                "arguments": {
+                    "model": "object | null"
+                }
+            }
+        },
+        "getValues()": {
+            "description": "Returns the full list of unique values used by the Set Filter."
+        },
+        "setMiniFilter(text)": {
+            "description": "Sets the text in the Mini Filter at the top of the filter (the 'quick search' in the popup)."
+        },
+        "getMiniFilter()": {
+            "description": "Gets the Mini Filter text."
+        },
+        "refreshFilterValues()": {
+            "description": "Refreshes the values shown in the filter from the original source. For example, if a callback was provided, the callback will be executed again and the filter will refresh using the values returned.",
+            "more": {
+                "name": "Refreshing Values",
+                "url": "/filter-set-filter-list/#refreshing-values"
+            }
+        },
+        "setFilterValues(values[])": {
+            "description": "Sets the values used in the Set Filter on the fly."
+        },
+        "resetFilterValues()": {
+            "description": "Resets the Set Filter to use values from the grid, rather than any values that have been provided directly."
+        }
+    }
+}

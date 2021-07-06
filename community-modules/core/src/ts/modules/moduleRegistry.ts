@@ -18,7 +18,7 @@ export class ModuleRegistry {
             if (ModuleRegistry.moduleBased !== moduleBased) {
                 doOnce(() => {
                     console.warn(`AG Grid: You are mixing modules (i.e. @ag-grid-community/core) and packages (ag-grid-community) - you can only use one or the other of these mechanisms.`);
-                    console.warn('Please see https://www.ag-grid.com/documentation/javascript/packages-modules/ for more information.');
+                    console.warn('Please see https://www.ag-grid.com/javascript-grid/packages-modules/ for more information.');
 
                 },
                     'ModulePackageCheck');
@@ -40,7 +40,7 @@ export class ModuleRegistry {
         }
 
         const warningKey = reason + moduleName;
-        const warningMessage = `AG Grid: unable to use ${reason} as module ${moduleName} is not present. Please see: https://www.ag-grid.com/documentation/javascript/modules/`;
+        const warningMessage = `AG Grid: unable to use ${reason} as module ${moduleName} is not present. Please see: https://www.ag-grid.com/javascript-grid/modules/`;
 
         doOnce(() => {
             console.warn(warningMessage);

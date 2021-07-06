@@ -1,6 +1,6 @@
 import {
     Autowired,
-    ColumnController,
+    ColumnModel,
     Component,
     Constants,
     Events,
@@ -12,7 +12,7 @@ import { PivotDropZonePanel } from "./pivotDropZonePanel";
 
 export class GridHeaderDropZones extends Component {
 
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
 
     private rowGroupComp: Component;
     private pivotComp: Component;
@@ -70,7 +70,7 @@ export class GridHeaderDropZones extends Component {
         if (rowGroupPanelShow === Constants.ALWAYS) {
             this.rowGroupComp.setDisplayed(true);
         } else if (rowGroupPanelShow === Constants.ONLY_WHEN_GROUPING) {
-            const grouping = !this.columnController.isRowGroupEmpty();
+            const grouping = !this.columnModel.isRowGroupEmpty();
             this.rowGroupComp.setDisplayed(grouping);
         } else {
             this.rowGroupComp.setDisplayed(false);

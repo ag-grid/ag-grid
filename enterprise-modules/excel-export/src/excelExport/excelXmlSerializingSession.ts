@@ -1,48 +1,23 @@
 import {
-    Column,
     ExcelCell,
-    ExcelDataType,
     ExcelStyle,
+    ExcelDataType,
     ExcelWorksheet,
-    RowNode,
     _
 } from '@ag-grid-community/core';
 
 import { ExcelXmlFactory } from './excelXmlFactory';
-import { RowType, RowSpanningAccumulator } from "@ag-grid-community/csv-export";
+
 import { BaseExcelSerializingSession } from './baseExcelSerializingSession';
 
-export class ExcelXmlSerializingSession extends BaseExcelSerializingSession<ExcelDataType, ExcelXmlFactory> {
+export class ExcelXmlSerializingSession extends BaseExcelSerializingSession<ExcelDataType> {
 
-    public onNewHeaderGroupingRow(): RowSpanningAccumulator {
-        const currentCells: ExcelCell[] = [];
-        this.rows.push({
-            cells: currentCells,
-            height: this.config.headerRowHeight
-        });
-        return {
-            onColumn: (header: string, index: number, span: number) => {
-                const styleIds: string[] = this.config.styleLinker(RowType.HEADER_GROUPING, 1, index, "grouping-" + header, undefined, undefined);
-                currentCells.push(this.createMergedCell((styleIds && styleIds.length > 0) ? styleIds[0] : null, "String", header, span));
-            }
-        };
+    protected createExcel(data: ExcelWorksheet): string {
+        return ExcelXmlFactory.createExcel(this.excelStyles, data);
     }
 
-    protected createExcel(data: ExcelWorksheet[]): string {
-        return this.config.excelFactory.createExcel(this.excelStyles, data, []);
-    }
-    
-
-    protected getDataTypeForValue(valueForCell: string): ExcelDataType {
+    protected getDataTypeForValue(valueForCell?: string): ExcelDataType {
         return _.isNumeric(valueForCell) ? 'Number' : 'String';
-    }
-
-    protected onNewHeaderColumn(rowIndex: number, currentCells: ExcelCell[]): (column: Column, index: number, node: RowNode) => void {
-        return (column, index) => {
-            const nameForCol = this.extractHeaderValue(column);
-            const styleIds: string[] = this.config.styleLinker(RowType.HEADER, rowIndex, index, nameForCol, column, undefined);
-            currentCells.push(this.createCell((styleIds && styleIds.length > 0) ? styleIds[0] : null, 'String', nameForCol));
-        };
     }
 
     protected getType(type: ExcelDataType, style: ExcelStyle | null, value: string | null): ExcelDataType | null {
@@ -67,13 +42,27 @@ export class ExcelXmlSerializingSession extends BaseExcelSerializingSession<Exce
         return type;
     }
 
+    protected addImage(): undefined {
+        return;
+    }
+
     protected createCell(styleId: string | null, type: ExcelDataType, value: string): ExcelCell {
         const actualStyle: ExcelStyle | null = this.getStyleById(styleId);
-        const typeTransformed = (this.getType(type, actualStyle, value) || type) as ExcelDataType;
+        const typeTransformed = (this.getType(type, actualStyle, value) || type);
 
-        const massageText = (val: string) => {
+        return {
+            styleId: !!actualStyle ? styleId! : undefined,
+            data: {
+                type: typeTransformed,
+                value: this.getValueTransformed(typeTransformed, value)
+            }
+        };
+    }
+
+    private getValueTransformed(typeTransformed: ExcelDataType, value: string): string {
+        const wrapText = (val: string): string => {
             if (this.config.suppressTextAsCDATA) {
-                return _.escapeString(val);
+                return _.escapeString(val) as string;
             }
             const cdataStart = '<![CDATA[';
             const cdataEnd = ']]>';
@@ -90,17 +79,16 @@ export class ExcelXmlSerializingSession extends BaseExcelSerializingSession<Exce
             return '1';
         };
 
-        return {
-            styleId: !!actualStyle ? styleId! : undefined,
-            data: {
-                type: typeTransformed,
-                value:
-                    typeTransformed === 'String' ? massageText(value) :
-                        typeTransformed === 'Number' ? Number(value).valueOf() + '' :
-                            typeTransformed === 'Boolean' ? convertBoolean(value) :
-                                value
-            }
-        };
+        switch (typeTransformed) {
+            case 'String':
+                return wrapText(value);
+            case 'Number':
+                return Number(value).valueOf() + '';
+            case 'Boolean':
+                return convertBoolean(value);
+            default:
+                return value;
+        }
     }
 
     protected createMergedCell(styleId: string | null, type: ExcelDataType, value: string, numOfCells: number): ExcelCell {

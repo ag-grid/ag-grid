@@ -1,13 +1,13 @@
 <?php
 $navKey = "licenseAndPricing";
-include_once 'includes/html-helpers.php';
+require_once 'includes/html-helpers.php';
 gtm_data_layer('community-enterprise');
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <?php
-    meta_and_links("AG Grid: License and Pricing", "AG Grid Javascript Grid License and Pricing", "AG Grid is a feature-rich datagrid available in Community or Enterprise versions. This page describes the License and Pricing details for AG Grid Enterprise.", true);
+    meta_and_links("AG Grid: License and Pricing", "AG Grid Javascript Grid License and Pricing", "AG Grid is a feature-rich datagrid available in Community or Enterprise versions. This page describes the License and Pricing details for AG Grid Enterprise.", "license-pricing.php", true);
     ?>
 
     <!-- Facebook Pixel Code -->
@@ -105,14 +105,14 @@ gtm_data_layer('community-enterprise');
                         <h3>AG Grid Community</h3>
                         <p>
                             AG Grid Community is a free to use product distributed under the
-                            <a href="./eula/AG-Grid-Community-License.html">MIT License</a>.
+                            <a href="/eula/AG-Grid-Community-License.html">MIT License</a>.
                             It is free to use in your production environments.
                         </p>
                         <h3 style="margin-top: 26px;">AG Charts Community</h3>
                         <p>
-                            AG Charts Community (a.k.a. <a href="./documentation/javascript/charts/">Standalone Charts</a>)
+                            AG Charts Community (a.k.a. <a href="/javascript-charts/overview/">Standalone Charts</a>)
                             is a free to use product distributed under the
-                            <a href="./eula/AG-Grid-Community-License.html">MIT License</a>.
+                            <a href="/eula/AG-Grid-Community-License.html">MIT License</a>.
                             It is free to use in your production environments.
                         </p>
                     </div>
@@ -125,10 +125,10 @@ gtm_data_layer('community-enterprise');
                     <h3>AG Grid Enterprise</h3>
                         <p>
                             AG Grid Enterprise is a commercial product distributed under our
-                            <a href="./eula/AG-Grid-Enterprise-License-Latest.html">EULA</a> and supported by our
+                            <a href="/eula/AG-Grid-Enterprise-License-Latest.html">EULA</a> and supported by our
                             technical staff. It has advanced functionality like Row Grouping, Range Selection,
-                            Master / Detail, Server Side Row Model and <a href="/documentation/javascript/licensing/">more</a>.
-                            AG Grid Enterprise also comes with <a href="./documentation/javascript/integrated-charts/">Integrated Charts</a>, allowing users to create charts
+                            Master / Detail, Server Side Row Model and <a href="/javascript-grid/licensing/">more</a>.
+                            AG Grid Enterprise also comes with <a href="/javascript-grid/integrated-charts/">Integrated Charts</a>, allowing users to create charts
                             using the grid's UI.
                         </p>
                         <p>
@@ -163,7 +163,7 @@ gtm_data_layer('community-enterprise');
                             <p>Per Developer</p>
                         </h4>
                         <div>
-                            <a class="btn" style="color: #009ede; border-color: #009ede" href="../ecommerce/#/ecommerce/?licenseType=single">BUY</a>
+                            <a class="btn" style="color: #009ede; border-color: #009ede" href="/ecommerce/#/ecommerce/?licenseType=single">BUY</a>
 <!--
                             <a class="btn" style="color: #009ede; border-color: #009ede" href="mailto:info@ag-grid.com">CONTACT US</a>
 -->
@@ -182,7 +182,7 @@ gtm_data_layer('community-enterprise');
                             <p>Per Developer</p>
                         </h4>
                         <div>
-                            <a class="btn" style="color: #009d70; border-color: #009d70" href="../ecommerce/#/ecommerce/?licenseType=multi">BUY</a>
+                            <a class="btn" style="color: #009d70; border-color: #009d70" href="/ecommerce/#/ecommerce/?licenseType=multi">BUY</a>
 <!--
                             <a class="btn" style="color: #009d70; border-color: #009d70" href="mailto:info@ag-grid.com">CONTACT US</a>
 -->
@@ -215,9 +215,9 @@ gtm_data_layer('community-enterprise');
                 <div>
                     <div style="text-align: center;">
                         <div style="max-width: 800px; display: inline-block;">
-                            Bulk pricing available. For up to 10 developers please use our e-commerce configurator to see pricing.
+                            Bulk pricing discounts available. Use the BUY buttons above to see pricing for up to 10 developers.
                             For more than 10 developers or any questions with regards your purchase, please email
-                            <a href="mailto:info@ag-grid.com">info@ag-grid.com</a>
+                            <a href="mailto:info@ag-grid.com">info@ag-grid.com</a>.
                         </div>
                     </div>
                 </div>
@@ -227,7 +227,7 @@ gtm_data_layer('community-enterprise');
                 <div>
                     <div>&nbsp;</div>
                     <div style="text-decoration: underline; color: orange;">
-                        <h1 style="color: black">DEFINITIONS</h1>
+                        <h2 style="color: black; font-size: 2.5rem;">DEFINITIONS</h2>
                     </div>
                 </div>
                 <div>
@@ -342,7 +342,7 @@ gtm_data_layer('community-enterprise');
                         <ul>
                             <li>
                                 A Deployment License Add-on allows making a project available
-                                to individuals (eg your customers) outside of your orginisation
+                                to individuals (eg your customers) outside of your organisation
                                 (sub-license).
                             </li>
                             <li>
@@ -365,9 +365,9 @@ gtm_data_layer('community-enterprise');
                                 They are considered part of the overall application production deployment.
                             </li>
                             <li>
-                                Multi-tennent deployments, where one application instance is serving
+                                Multi-tenant deployments, where one application instance is serving
                                 many customers over different URLs, is considered one deployment, as
-                                each tennent is getting serviced by the same application instance.
+                                each tenant is getting serviced by the same application instance.
                             </li>
                             <li>
                                 Different instances of the same application, where the instances
@@ -408,7 +408,7 @@ gtm_data_layer('community-enterprise');
                 <div>
                     <div>&nbsp;</div>
                     <div style="text-decoration: underline; color: magenta;">
-                        <h1 style="color: black">LICENSE TIMELINE</h1>
+                        <h2 style="color: black; font-size: 2.5rem;">LICENSE TIMELINE</h2>
                     </div>
                 </div>
                 <div>
@@ -439,7 +439,7 @@ gtm_data_layer('community-enterprise');
                     <div>
                         <span>1-year Subscription to New Versions (included)</span>
                         <p>When you make a purchase you get a Subscription to license new versions of AG Grid Enterprise for 365 days.
-                            You can see our release list <a href="./ag-grid-changelog/">here</a>. After 365 days you will no longer be able to license the latest versions
+                            You can see our release list <a href="/ag-grid-changelog/">here</a>. After 365 days you will no longer be able to license the latest versions
                             of AG Grid Enterprise without renewing your subscription. You can continue to use your licensed versions
                             in perpetuity.
                         </p>
@@ -511,7 +511,7 @@ gtm_data_layer('community-enterprise');
                 <div>
                     <div>&nbsp;</div>
                     <div style="text-decoration: underline; color: red;">
-                        <h1 style="color: black">DEEPER DIVE</h1>
+                        <h2 style="color: black; font-size: 2.5rem;">DEEPER DIVE</h2>
                     </div>
                 </div>
                 <div>

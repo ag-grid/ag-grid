@@ -3,7 +3,7 @@ title: "Aggregation"
 enterprise: true
 ---
 
-When grouping, you can apply an aggregation function to any column to populate the group row with values. 
+When grouping, you can apply an aggregation function to any column to populate the group row with values.
 You can pick from the grid's built in aggregation functions or provide your own.
 
 ## Defining Aggregations
@@ -14,12 +14,12 @@ You can define aggregations on columns in the following three ways:
    one of these, set `colDef.aggFunc` to the string of the function you require.
 
     [[note]]
-    | The built-in functions will support `bigint` values if you have them in your data, but the `avg` 
+    | The built-in functions will support `bigint` values if you have them in your data, but the `avg`
     | function will lose precision as it can only use integer arithmetic if `bigint` is used.
 
 1. **User Registered Functions:** You can install your own aggregation functions into the
-grid and reference them as if they were grid provided functions by calling `api.addAggFunc(key, func)` or by declaring 
-them using the grid option `aggFuncs` property. 
+grid and reference them as if they were grid provided functions by calling `api.addAggFunc(key, func)` or by declaring
+them using the grid option `aggFuncs` property.
 
 1. **Direct Functions:** Lastly you can provide a function directly by setting `colDef.aggFunc` to your custom function. Direct functions do not appear in the toolPanel when selecting functions for your columns.
 
@@ -31,7 +31,7 @@ Option 1 - use the built-in 'sum' function:
 
 <snippet>
 const gridOptions = {
-    columnDefs: [ 
+    columnDefs: [
         { field: 'sales', aggFunc: 'sum' },
     ]
 }
@@ -41,14 +41,14 @@ Option 2 - register aggFunc with the grid called 'mySum', then reference by name
 
 <snippet>
 const gridOptions = {
-    columnDefs: [ 
+    columnDefs: [
         { field: 'sales', aggFunc: 'mySum' },
     ],
     aggFuncs: {
         // this overrides the grids built-in sum function
         'mySum': params => {
             let sum = 0;
-            values.forEach(value => sum += value);
+            params.values.forEach(value => sum += value);
             return sum;
         }
     },
@@ -61,14 +61,14 @@ Option 3 - column uses a function directly:
 
 <snippet>
 const gridOptions = {
-    columnDefs: [ 
-        { 
-            field: 'sales', 
+    columnDefs: [
+        {
+            field: 'sales',
             aggFunc: params => {
                 let sum = 0;
-                values.forEach(value => sum += value);
+                params.values.forEach(value => sum += value);
                 return sum;
-            } 
+            }
         },
     ]
 }
@@ -76,7 +76,7 @@ const gridOptions = {
 
 [[note]]
 | Using a function directly will not work with column state, like
-| [Saving and Applying Column State](../column-state/#save-and-apply).
+| [Saving and Applying Column State](/column-state/#save-and-apply).
 | If you require state management with custom aggregation, use `addAggFunc` to register it.
 
 ## Restricting Functions
@@ -91,7 +91,7 @@ const gridOptions = {
             // allow gui to set aggregations for this column
             enableValue: true,
             // restrict aggregations to sum, min and max
-            allowedAggFuncs: ['sum', 'min', 'max'], 
+            allowedAggFuncs: ['sum', 'min', 'max'],
         }
     ]
 }
@@ -112,13 +112,13 @@ The example below shows simple aggregation using the built in functions. The fol
 <grid-example title='Built-In Functions' name='built-in-functions' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel", "setfilter"] }'></grid-example>
 
 [[note]]
-| Remember to mark value columns with `enableValue=true` when using the [Tool Panel](../tool-panel/).
+| Remember to mark value columns with `enableValue=true` when using the [Tool Panel](/tool-panel/).
 | Otherwise you won't be able to drag and drop them to the 'Values' section in the Tool Panel.
 
 ## Custom Aggregation Functions
 
 
-It is possible to add your own custom aggregation to the grid. Custom aggregation functions can be applied directly to 
+It is possible to add your own custom aggregation to the grid. Custom aggregation functions can be applied directly to
 the column or registered to the grid and reference by name (similar to grid provided functions).
 
 A custom aggregation function takes values to aggregate and aggregates them.
@@ -127,14 +127,14 @@ Option 1 - reference the function directly with a column
 
 <snippet>
 const gridOptions = {
-    columnDefs: [ 
-        { 
-            field: 'sales', 
+    columnDefs: [
+        {
+            field: 'sales',
             aggFunc: params => {
                 let sum = 0;
-                values.forEach(value => sum += value);
+                params.values.forEach(value => sum += value);
                 return sum;
-            }  
+            }
         },
     ]
 }
@@ -144,14 +144,14 @@ Option 2 - register the function with the grid property aggFuncs
 
 <snippet>
 const gridOptions = {
-    columnDefs: [ 
+    columnDefs: [
         { field: 'sales', aggFunc: 'mySum' },
     ],
     aggFuncs: {
         // this overrides the grids built-in sum function
         'mySum': params => {
             let sum = 0;
-            values.forEach(value => sum += value);
+            params.values.forEach(value => sum += value);
             return sum;
         }
     },
@@ -205,7 +205,7 @@ the grid would complain 'Function not found' as it tries to use the function bef
 
 Note that custom aggregations will get called for the top level rows to calculate a 'Grand Total', not just for row groups. For example if you have 10 rows in the grid, the grid will still call the aggregation with 10 values to get a grand total aggregation.
 
-The grand total aggregation is normally not seen, unless the grid is configured with [Grouping Total Footers](../grouping/#grouping-footers). Total footers display the result of the aggregation for top level, for example displaying a grand total even if no row grouping is active.
+The grand total aggregation is normally not seen, unless the grid is configured with [Grouping Total Footers](/grouping/#grouping-footers). Total footers display the result of the aggregation for top level, for example displaying a grand total even if no row grouping is active.
 
 When the grid is empty, the aggregations are still called once with an empty set. This is to calculate the grand total aggregation for the top level.
 
@@ -221,9 +221,9 @@ When values from multiple columns are required, a value object containing all th
 |    columnDefs: [
 |        { field: 'gold', aggFunc: 'sum' },
 |        { field: 'silver', aggFunc: 'sum' },
-|        { 
-|            headerName: 'Ratio', 
-|            colId: 'ratio', 
+|        {
+|            headerName: 'Ratio',
+|            colId: 'ratio',
 |            valueGetter: params => {
 |                if (!params.node.group) {
 |                    // no need to handle group levels - calculated in the 'ratioAggFunc'
@@ -233,10 +233,11 @@ When values from multiple columns are required, a value object containing all th
 |                        toString: () => (gold && silver) ? gold / silver : 0,
 |                    }
 |                }
-|            }, 
-|            aggFunc: values => {
-|                let goldSum = 0, silverSum = 0;
-|                values.forEach(value => {
+|            },
+|            aggFunc: (params) => {
+|                var goldSum = 0;
+|                var silverSum = 0;
+|                params.values.forEach(value => {
 |                    if (value && value.gold) {
 |                        goldSum += value.gold;
 |                    }
@@ -245,11 +246,13 @@ When values from multiple columns are required, a value object containing all th
 |                    }
 |                });
 |                return {
-|                     gold: params.data.gold,
-|                     silver: params.data.silver,
-|                     toString: () => (gold && silver) ? gold / silver : 0,
-|                 }
-|            } 
+|                    gold: goldSum,
+|                    silver: silverSum,
+|                    toString: () => {
+|                        return goldSum && silverSum ? goldSum / silverSum : 0;
+|                    },
+|                }
+|            }
 |        }
 |    ]
 |}
@@ -275,10 +278,10 @@ In this next example, `suppressAggFilteredOnly=true`. Note that the Year column 
 
 ## Aggregation API
 
-After the grid is initialised, there are two steps to set an aggregation on a column:
+After the grid is initialised an aggregation can be applied to a column using the following:
 
-1. Set the aggregation function on the column via `columnApi.setColumnAggFunc(colKey, aggFunc)`
-1. Add the columns to the list of value columns via `columnApi.addValueColumn(colKey)`
+1. Add the columns to the list of value columns via `columnApi.addValueColumn(colKey)` - the 'sum' `aggFunc` is used by default.
+1. (Optional) Modify the aggregation function on the column via `columnApi.setColumnAggFunc(colKey, aggFunc)`.
 
 When the grid initialises, any column definitions that have `aggFunc` set will be automatically added as a value column.
 

@@ -4,7 +4,7 @@ title: "Value Parsers"
 
 After editing cells in the grid you have the opportunity to parse the value before inserting it into your data. This is done using Value Parsers.
 
-A Value Parser is the inverse of a [Value Formatter](../value-formatters/).
+A Value Parser is the inverse of a [Value Formatter](/value-formatters/).
 
 The parameters passed to a value parser are as follows:
 

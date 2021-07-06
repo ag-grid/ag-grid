@@ -1,8 +1,12 @@
 import React from 'react';
-import { withPrefix } from 'gatsby';
+import { convertUrl } from './documentation-helpers';
 
-export const DocumentationLink = ({ framework, href, children, ...props }) =>
-    <a href={withPrefix(`/${framework}${href}`)} {...props}>{children}</a>;
-;
+/**
+ * Creates anchor links with automatically-converted URLs.
+ */
+export const DocumentationLink = ({ framework, href, children, ...props }) => {
+    return <a href={convertUrl(href, framework)} {...props}>{children}</a>;
+};
+
 
 export default DocumentationLink;

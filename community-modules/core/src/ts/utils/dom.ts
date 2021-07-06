@@ -384,28 +384,23 @@ export function setDomChildOrder(eContainer: HTMLElement, orderedChildren: (HTML
     }
 }
 
-export function insertTemplateWithDomOrder(
+export function insertWithDomOrder(
     eContainer: HTMLElement,
-    htmlTemplate: string,
+    eToInsert: HTMLElement,
     eChildBefore: HTMLElement | null
-): HTMLElement {
-    let res: HTMLElement;
-
+): void {
     if (eChildBefore) {
         // if previous element exists, just slot in after the previous element
-        eChildBefore.insertAdjacentHTML('afterend', htmlTemplate);
-        res = eChildBefore.nextSibling as HTMLElement;
+        eChildBefore.insertAdjacentElement('afterend', eToInsert);
     } else {
         if (eContainer.firstChild) {
             // insert it at the first location
-            eContainer.insertAdjacentHTML('afterbegin', htmlTemplate);
+            eContainer.insertAdjacentElement('afterbegin', eToInsert);
         } else {
             // otherwise eContainer is empty, so just append it
-            eContainer.innerHTML = htmlTemplate;
+            eContainer.appendChild(eToInsert);
         }
-        res = eContainer.firstChild as HTMLElement;
     }
-    return res;
 }
 
 /** @deprecated */

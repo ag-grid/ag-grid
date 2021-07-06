@@ -1,9 +1,10 @@
-import { DragListenerParams, DragService } from "../dragAndDrop/dragService";
 import { Autowired } from "../context/context";
 import { PanelOptions, AgPanel } from "./agPanel";
 import { Component } from "./component";
 import { addCssClass, setDisplayed } from "../utils/dom";
 import { createIconNoSpan } from "../utils/icon";
+import { PopupService } from "./popupService";
+import { ResizableStructure } from "../rendering/features/positionableFeature";
 
 export type ResizableSides = 'topLeft' |
     'top' |
@@ -14,48 +15,18 @@ export type ResizableSides = 'topLeft' |
     'bottomLeft' |
     'left';
 
-export type ResizableStructure = {
-    [key in ResizableSides]?: boolean;
-};
-
-interface MappedResizer {
-    element: HTMLElement;
-    dragSource?: DragListenerParams;
-}
-
 export interface DialogOptions extends PanelOptions {
     eWrapper?: HTMLElement;
     modal?: boolean;
-    alwaysOnTop?: boolean;
     movable?: boolean;
-    resizable?: boolean | ResizableStructure;
+    alwaysOnTop?: boolean;
     maximizable?: boolean;
-    x?: number;
-    y?: number;
-    centered?: boolean;
 }
 
 export class AgDialog extends AgPanel {
 
-    private RESIZE_TEMPLATE = /* html */
-        `<div class="ag-resizer-wrapper">
-            <div ref="eTopLeftResizer" class="ag-resizer ag-resizer-topLeft"></div>
-            <div ref="eTopResizer" class="ag-resizer ag-resizer-top"></div>
-            <div ref="eTopRightResizer" class="ag-resizer ag-resizer-topRight"></div>
-            <div ref="eRightResizer" class="ag-resizer ag-resizer-right"></div>
-            <div ref="eBottomRightResizer" class="ag-resizer ag-resizer-bottomRight"></div>
-            <div ref="eBottomResizer" class="ag-resizer ag-resizer-bottom"></div>
-            <div ref="eBottomLeftResizer" class="ag-resizer ag-resizer-bottomLeft"></div>
-            <div ref="eLeftResizer" class="ag-resizer ag-resizer-left"></div>
-        </div>`;
+    @Autowired('popupService') private popupService: PopupService;
 
-    @Autowired('dragService') private dragService: DragService;
-
-    private moveElement: HTMLElement;
-    private moveElementDragListener: DragListenerParams | undefined;
-    private resizable: ResizableStructure = {};
-    private movable = false;
-    private isMoving = false;
     private isMaximizable: boolean = false;
     private isMaximized: boolean = false;
     private maximizeListeners: (() => void)[] = [];
@@ -63,12 +34,6 @@ export class AgDialog extends AgPanel {
     private maximizeIcon: HTMLElement | undefined;
     private minimizeIcon: HTMLElement | undefined;
     private resizeListenerDestroy: (() => void) | null | undefined = null;
-
-    private resizerMap: {
-        [key in ResizableSides]: MappedResizer
-    };
-
-    private isResizing: boolean = false;
 
     private lastPosition = {
         x: 0,
@@ -79,8 +44,8 @@ export class AgDialog extends AgPanel {
 
     protected config: DialogOptions | undefined;
 
-    constructor(config?: DialogOptions) {
-        super(config);
+    constructor(config: DialogOptions) {
+        super({...config, popup: true });
     }
 
     protected postConstruct() {
@@ -88,7 +53,6 @@ export class AgDialog extends AgPanel {
         const { movable, resizable, maximizable } = this.config as DialogOptions;
 
         addCssClass(eGui, 'ag-dialog');
-        this.moveElement = this.eTitleBar;
 
         super.postConstruct();
 
@@ -97,13 +61,8 @@ export class AgDialog extends AgPanel {
             this.popupService.bringPopupToFront(eGui);
         });
 
-        if (movable) {
-            this.setMovable(movable);
-        }
-
+        if (movable) { this.setMovable(movable); }
         if (maximizable) { this.setMaximizable(maximizable); }
-
-        this.addResizers();
         if (resizable) { this.setResizable(resizable); }
     }
 
@@ -123,152 +82,19 @@ export class AgDialog extends AgPanel {
         }
     }
 
-    private addResizers() {
-        const eGui = this.getGui();
-
-        if (!eGui) { return; }
-
-        const parser = new DOMParser();
-        const resizers = parser.parseFromString(this.RESIZE_TEMPLATE, 'text/html').body;
-
-        eGui.appendChild(resizers.firstChild!);
-        this.createMap();
-    }
-
-    private createMap() {
-        const eGui = this.getGui();
-        this.resizerMap = {
-            topLeft: { element: eGui.querySelector('[ref=eTopLeftResizer]') as HTMLElement },
-            top: { element: eGui.querySelector('[ref=eTopResizer]') as HTMLElement },
-            topRight: { element: eGui.querySelector('[ref=eTopRightResizer]') as HTMLElement },
-            right: { element: eGui.querySelector('[ref=eRightResizer]') as HTMLElement },
-            bottomRight: { element: eGui.querySelector('[ref=eBottomRightResizer]') as HTMLElement },
-            bottom: { element: eGui.querySelector('[ref=eBottomResizer]') as HTMLElement },
-            bottomLeft: { element: eGui.querySelector('[ref=eBottomLeftResizer]') as HTMLElement },
-            left: { element: eGui.querySelector('[ref=eLeftResizer]') as HTMLElement }
-        };
-    }
-
-    private getResizerElement(side: ResizableSides): HTMLElement | null {
-        return this.resizerMap[side].element;
-    }
-
-    private onResizeStart(e: MouseEvent) {
-        this.isResizing = true;
-        this.updateDragStartPosition(e.clientX, e.clientY);
-    }
-
-    private onResize(e: MouseEvent, side: ResizableSides) {
-        if (!this.isResizing) { return; }
-
-        const isLeft = !!side.match(/left/i);
-        const isRight = !!side.match(/right/i);
-        const isTop = !!side.match(/top/i);
-        const isBottom = !!side.match(/bottom/i);
-        const isHorizontal = isLeft || isRight;
-        const isVertical = isTop || isBottom;
-        const { movementX, movementY } = this.calculateMouseMovement({ e, isLeft, isTop });
-
-        let offsetLeft = 0;
-        let offsetTop = 0;
-
-        if (isHorizontal && movementX) {
-            const direction = isLeft ? -1 : 1;
-            const oldWidth = this.getWidth();
-            const newWidth = oldWidth! + (movementX * direction);
-            let skipWidth = false;
-
-            if (isLeft) {
-                offsetLeft = oldWidth! - newWidth;
-                if (this.position.x + offsetLeft <= 0 || newWidth <= this.minWidth) {
-                    skipWidth = true;
-                    offsetLeft = 0;
-                }
-            }
-
-            if (!skipWidth) {
-                this.setWidth(newWidth);
-            }
-        }
-
-        if (isVertical && movementY) {
-            const direction = isTop ? -1 : 1;
-            const oldHeight = this.getHeight();
-            const newHeight = oldHeight! + (movementY * direction);
-            let skipHeight = false;
-
-            if (isTop) {
-                offsetTop = oldHeight! - newHeight;
-                if (this.position.y + offsetTop <= 0 || newHeight <= this.minHeight!) {
-                    skipHeight = true;
-                    offsetTop = 0;
-                }
-            }
-
-            if (!skipHeight) {
-                this.setHeight(newHeight);
-            }
-        }
-
-        this.updateDragStartPosition(e.clientX, e.clientY);
-
-        if (offsetLeft || offsetTop) {
-            this.offsetElement(
-                this.position.x + offsetLeft,
-                this.position.y + offsetTop
-            );
-        }
-    }
-
-    private onResizeEnd() {
-        this.isResizing = false;
-
-        const params = {
-            type: 'resize',
-            api: this.gridOptionsWrapper.getApi(),
-            columnApi: this.gridOptionsWrapper.getColumnApi()
-        };
-
-        this.dispatchEvent(params);
-    }
-
-    private onMoveStart(e: MouseEvent) {
-        this.isMoving = true;
-        this.updateDragStartPosition(e.clientX, e.clientY);
-    }
-
-    private onMove(e: MouseEvent) {
-        if (!this.isMoving) { return; }
-        const { x, y } = this.position;
-        const { movementX, movementY } = this.calculateMouseMovement({
-            e,
-            isTop: true,
-            anywhereWithin: true,
-            topBuffer: this.getHeight()! - this.getBodyHeight()
-        });
-
-        this.offsetElement(x + movementX, y + movementY);
-
-        this.updateDragStartPosition(e.clientX, e.clientY);
-    }
-
-    private onMoveEnd() {
-        this.isMoving = false;
-    }
-
     private toggleMaximize() {
+        const position = this.positionableFeature.getPosition();
         if (this.isMaximized) {
             const { x, y, width, height } = this.lastPosition;
-
             this.setWidth(width);
             this.setHeight(height);
-            this.offsetElement(x, y);
+            this.positionableFeature.offsetElement(x, y);
         } else {
             this.lastPosition.width = this.getWidth()!;
             this.lastPosition.height = this.getHeight()!;
-            this.lastPosition.x = this.position.x;
-            this.lastPosition.y = this.position.y;
-            this.offsetElement(0, 0);
+            this.lastPosition.x = position.x;
+            this.lastPosition.y = position.y;
+            this.positionableFeature.offsetElement(0, 0);
             this.setHeight('100%');
             this.setWidth('100%');
         }
@@ -295,9 +121,6 @@ export class AgDialog extends AgPanel {
     }
 
     protected destroy(): void {
-        this.setResizable(false);
-        this.setMovable(false);
-
         this.maximizeButtonComp = this.destroyBean(this.maximizeButtonComp);
 
         this.clearMaximizebleListeners();
@@ -305,64 +128,11 @@ export class AgDialog extends AgPanel {
     }
 
     public setResizable(resizable: boolean | ResizableStructure) {
-        if (typeof resizable === 'boolean') {
-            resizable = {
-                topLeft: resizable,
-                top: resizable,
-                topRight: resizable,
-                right: resizable,
-                bottomRight: resizable,
-                bottom: resizable,
-                bottomLeft: resizable,
-                left: resizable
-            };
-        }
-
-        Object.keys(resizable).forEach(side => {
-            const r = resizable as ResizableStructure;
-            const s = side as ResizableSides;
-            const val = !!r[s];
-            const el = this.getResizerElement(s);
-
-            const params: DragListenerParams = this.resizerMap[s].dragSource! || {
-                eElement: el,
-                onDragStart: this.onResizeStart.bind(this),
-                onDragging: (e: MouseEvent) => this.onResize(e, s),
-                onDragStop: this.onResizeEnd.bind(this),
-            };
-
-            if (!!this.resizable[s] !== val || (!this.isAlive() && !val)) {
-                if (val) {
-                    this.dragService.addDragSource(params);
-                    el!.style.pointerEvents = 'all';
-                } else {
-                    this.dragService.removeDragSource(params);
-                    el!.style.pointerEvents = 'none';
-                }
-                this.resizerMap[s].dragSource = val ? params : undefined;
-            }
-        });
+        this.positionableFeature.setResizable(resizable);
     }
 
     public setMovable(movable: boolean) {
-        if (movable === this.movable) { return; }
-
-        this.movable = movable;
-
-        const params: DragListenerParams = this.moveElementDragListener || {
-            eElement: this.moveElement,
-            onDragStart: this.onMoveStart.bind(this),
-            onDragging: this.onMove.bind(this),
-            onDragStop: this.onMoveEnd.bind(this)
-        };
-
-        if (movable) {
-            this.dragService.addDragSource(params);
-            this.moveElementDragListener = params;
-        } else {
-            this.dragService.removeDragSource(params);
-            this.moveElementDragListener = undefined;
-        }
+        this.positionableFeature.setMovable(movable, this.eTitleBar);
     }
 
     public setMaximizable(maximizable: boolean) {

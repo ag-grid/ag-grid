@@ -20,8 +20,8 @@ const AG_GRID_LOCALE_EN = {
     lessThanOrEqual: 'Less than or equal',
     greaterThanOrEqual: 'Greater than or equal',
     inRange: 'In range',
-    inRangeStart: 'to',
-    inRangeEnd: 'from',
+    inRangeStart: 'from',
+    inRangeEnd: 'to',
 
     // Text Filter
     contains: 'Contains',
@@ -89,8 +89,7 @@ const AG_GRID_LOCALE_EN = {
     ctrlV: 'Ctrl+V',
     export: 'Export',
     csvExport: 'CSV Export',
-    excelExport: 'Excel Export (.xlsx)',
-    excelXmlExport: 'Excel Export (.xml)',
+    excelExport: 'Excel Export',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Sum',
@@ -111,6 +110,9 @@ const AG_GRID_LOCALE_EN = {
     lastPage: 'Last Page',
     firstPage: 'First Page',
     previousPage: 'Previous Page',
+
+    // Pivoting
+    pivotColumnGroupTotals: 'Total',
 
     // Enterprise Menu (Charts)
     pivotChartAndPivotMode: 'Pivot Chart & Pivot Mode',

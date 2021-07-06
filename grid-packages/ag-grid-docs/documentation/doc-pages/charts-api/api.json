@@ -46,6 +46,10 @@
       "class": {
         "type": "string",
         "description": "A class name to be added to the tooltip element of the chart."
+      },
+      "delay": {
+        "default": 0,
+        "description": "The time interval (in milliseconds) after which the tooltip is shown."
       }
     },
     "padding": {
@@ -241,101 +245,127 @@
         "max": 40,
         "unit": "px"
       },
-      "layoutHorizontalSpacing": {
-        "default": 16,
-        "description": "The horizontal spacing in pixels to use between legend items.",
-        "min": 0,
-        "max": 40,
-        "unit": "px"
-      },
-      "layoutVerticalSpacing": {
-        "default": 8,
-        "description": "The vertical spacing in pixels to use between legend items.",
-        "min": 0,
-        "max": 40,
-        "unit": "px"
-      },
-      "itemSpacing": {
-        "default": 8,
-        "description": "The spacing in pixels between a legend marker and the corresponding label.",
-        "min": 0,
-        "max": 40,
-        "unit": "px"
-      },
-      "markerShape": {
-        "type": "string",
-        "description": "If set, overrides the marker shape from the series and the legend will show the specified marker shape instead. If not set, will use a marker shape matching the shape from the series, or fall back to <code>'square'</code> if there is none.",
-        "options": [
-          "circle",
-          "cross",
-          "diamond",
-          "plus",
-          "square",
-          "triangle"
-        ]
-      },
-      "markerSize": {
-        "default": 15,
-        "description": "The size in pixels of the markers in the legend.",
-        "min": 0,
-        "max": 30,
-        "unit": "px"
-      },
-      "strokeWidth": {
-        "default": 1,
-        "description": "The width in pixels of the stroke for markers in the legend.",
-        "min": 0,
-        "max": 10,
-        "unit": "px"
-      },
-      "color": {
-        "default": "black",
-        "description": "The colour of the text."
-      },
-      "fontStyle": {
-        "default": "normal",
-        "options": [
-          "normal",
-          "italic",
-          "oblique"
-        ],
-        "description": "The font style to use for the legend."
-      },
-      "fontWeight": {
-        "default": "normal",
-        "options": [
-          "normal",
-          "bold",
-          "bolder",
-          "lighter",
-          "100",
-          "200",
-          "300",
-          "400",
-          "500",
-          "600",
-          "700",
-          "800",
-          "900"
-        ],
-        "description": "The font weight to use for the legend.",
-        "breakIndex": 4
-      },
-      "fontSize": {
-        "default": 12,
-        "description": "The font size in pixels to use for the legend.",
-        "min": 1,
-        "max": 30,
-        "unit": "px"
-      },
-      "fontFamily": {
-        "default": "Verdana, sans-serif",
-        "suggestions": [
-          "Verdana, sans-serif",
-          "Arial, sans-serif",
-          "Times New Roman, serif"
-        ],
-        "description": "The font family to use for the legend."
+      "item": {
+        "meta": {
+          "description": "Configuration for the legend items that consist of a marker and a label."
+        },
+        "paddingX": {
+          "default": 16,
+          "description": "The horizontal spacing in pixels to use between legend items.",
+          "min": 0,
+          "max": 40,
+          "unit": "px"
+        },
+        "paddingY": {
+          "default": 8,
+          "description": "The vertical spacing in pixels to use between legend items.",
+          "min": 0,
+          "max": 40,
+          "unit": "px"
+        },
+        "marker": {
+          "meta": {
+            "description": "Configuration for the legend markers."
+          },
+          "padding": {
+            "default": 8,
+            "description": "The padding in pixels between a legend marker and the corresponding label.",
+            "min": 0,
+            "max": 40,
+            "unit": "px"
+          },
+          "shape": {
+            "type": "string",
+            "description": "If set, overrides the marker shape from the series and the legend will show the specified marker shape instead. If not set, will use a marker shape matching the shape from the series, or fall back to <code>'square'</code> if there is none.",
+            "options": [
+              "circle",
+              "cross",
+              "diamond",
+              "plus",
+              "square",
+              "triangle"
+            ]
+          },
+          "size": {
+            "default": 15,
+            "description": "The size in pixels of the markers in the legend.",
+            "min": 0,
+            "max": 30,
+            "unit": "px"
+          },
+          "strokeWidth": {
+            "default": 1,
+            "description": "The width in pixels of the stroke for markers in the legend.",
+            "min": 0,
+            "max": 10,
+            "unit": "px"
+          }
+        },
+        "label": {
+          "meta": {
+            "description": "Configuration for the legend labels."
+          },
+          "color": {
+            "default": "black",
+            "description": "The colour of the text."
+          },
+          "fontStyle": {
+            "default": "normal",
+            "options": [
+              "normal",
+              "italic",
+              "oblique"
+            ],
+            "description": "The font style to use for the legend."
+          },
+          "fontWeight": {
+            "default": "normal",
+            "options": [
+              "normal",
+              "bold",
+              "bolder",
+              "lighter",
+              "100",
+              "200",
+              "300",
+              "400",
+              "500",
+              "600",
+              "700",
+              "800",
+              "900"
+            ],
+            "description": "The font weight to use for the legend.",
+            "breakIndex": 4
+          },
+          "fontSize": {
+            "default": 12,
+            "description": "The font size in pixels to use for the legend.",
+            "min": 1,
+            "max": 30,
+            "unit": "px"
+          },
+          "fontFamily": {
+            "default": "Verdana, sans-serif",
+            "suggestions": [
+              "Verdana, sans-serif",
+              "Arial, sans-serif",
+              "Times New Roman, serif"
+            ],
+            "description": "The font family to use for the legend."
+          },
+          "formatter": {
+            "type": {
+              "parameters": {
+                "id": "string",
+                "itemId": "any",
+                "value": "string"
+              },
+              "returnType": "string"
+            },
+            "description": "Function used to render legend labels. Where <code>id</code> is a series ID, <code>itemId</code> is component ID within a series, such as a field name or an item index."
+          }
+        }
       }
     },
     "navigator": {
@@ -510,6 +540,7 @@
       "options": [
         "category",
         "number",
+        "log",
         "time"
       ]
     },
@@ -522,6 +553,21 @@
         "bottom",
         "left"
       ]
+    },
+    "thickness": {
+      "type": "number",
+      "description": "If set to a non-zero value, the axis will have the specified thickness regardless of label size.",
+      "default": 0
+    },
+    "nice": {
+      "type": "boolean",
+      "default": true,
+      "description": "If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. Applies to continuous axes only ('number', 'time')."
+    },
+    "base": {
+      "type": "number",
+      "default": 10,
+      "description": "The base of the logarithm used by the 'log' axis."
     },
     "min": {
       "type": "number",
@@ -708,7 +754,7 @@
       },
       "format": {
         "type": "string",
-        "description": "Format string used when rendering labels for time axes. For more information on the structure of the string, <a href=\"../charts-axes/#time-label-format-string\">click here</a>."
+        "description": "Format string used when rendering labels for time axes. For more information on the structure of the string, <a href=\"../axes/#time-label-format-string\">click here</a>."
       },
       "formatter": {
         "type": {
@@ -754,7 +800,7 @@
     },
     "xName": {
       "type": "string",
-      "description": "A human-readable description of the x-values."
+      "description": "A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters."
     },
     "yKeys": {
       "type": "string[]",
@@ -763,7 +809,7 @@
     },
     "yNames": {
       "type": "string[]",
-      "description": "Human-readable descriptions of the y-values."
+      "description": "Human-readable descriptions of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters."
     },
     "data": {
       "type": "object[]",
@@ -777,6 +823,11 @@
     "showInLegend": {
       "default": true,
       "description": "Whether or not to include the series in the legend."
+    },
+    "cursor": {
+      "type": "string",
+      "default": "default",
+      "description": "The cursor to use for hovered bars/columns. This config is identical to the CSS `cursor` property."
     },
     "tooltip": {
       "meta": {
@@ -870,11 +921,11 @@
       },
       "fill": {
         "default": "yellow",
-        "description": "The fill colour of the bars when hovered over."
+        "description": "The fill colour of the bars when hovered over. Use `undefined` for no highlight."
       },
       "stroke": {
         "type": "string",
-        "description": "The colour of the stroke around the bars when hovered over."
+        "description": "The colour of the stroke around the bars when hovered over. Use `undefined` for no highlight."
       }
     },
     "shadow": {
@@ -932,6 +983,14 @@
         "default": true,
         "description": "Whether or not the labels should be shown."
       },
+      "placement": {
+        "default": "inside",
+        "description": "Where to render series labels relative to the segments.",
+        "options": [
+          "inside",
+          "outside"
+        ]
+      },
       "color": {
         "default": "rgba(70, 70, 70, 1)",
         "description": "The colour to use for the labels."
@@ -980,6 +1039,15 @@
           "Times New Roman, serif"
         ],
         "description": "The font family to use for the labels."
+      },
+      "formatter": {
+        "type": {
+          "parameters": {
+            "value": "number"
+          },
+          "returnType": "string"
+        },
+        "description": "Function used to turn 'yKey' values into text to be displayed by a label. Be default the values are simply stringified."
       }
     },
     "formatter": {
@@ -1032,7 +1100,7 @@
     },
     "xName": {
       "type": "string",
-      "description": "A human-readable description of the x-values."
+      "description": "A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters."
     },
     "yKey": {
       "type": "string",
@@ -1041,7 +1109,7 @@
     },
     "yName": {
       "type": "string",
-      "description": "A human-readable description of the y-values."
+      "description": "A human-readable description of the y-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters."
     },
     "data": {
       "type": "object[]",
@@ -1055,6 +1123,11 @@
     "showInLegend": {
       "default": true,
       "description": "Whether or not to include the series in the legend."
+    },
+    "cursor": {
+      "type": "string",
+      "default": "default",
+      "description": "The cursor to use for hovered line markers. This config is identical to the CSS `cursor` property."
     },
     "tooltip": {
       "meta": {
@@ -1176,6 +1249,73 @@
         "description": "Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted, the <code>highlighted</code> property will be set to <code>true</code>; make sure to check this if you want to differentiate between the highlighted and un-highlighted states."
       }
     },
+    "label": {
+      "meta": {
+        "description": "Configuration for the labels shown on top of data points."
+      },
+      "enabled": {
+        "default": true,
+        "description": "Whether or not the labels should be shown."
+      },
+      "color": {
+        "default": "rgba(70, 70, 70, 1)",
+        "description": "The colour to use for the labels."
+      },
+      "fontStyle": {
+        "default": "normal",
+        "options": [
+          "normal",
+          "italic",
+          "oblique"
+        ],
+        "description": "The font style to use for the labels."
+      },
+      "fontWeight": {
+        "default": "normal",
+        "options": [
+          "normal",
+          "bold",
+          "bolder",
+          "lighter",
+          "100",
+          "200",
+          "300",
+          "400",
+          "500",
+          "600",
+          "700",
+          "800",
+          "900"
+        ],
+        "description": "The font weight to use for the labels.",
+        "breakIndex": 4
+      },
+      "fontSize": {
+        "default": 12,
+        "description": "The font size in pixels to use for the labels.",
+        "min": 1,
+        "max": 30,
+        "unit": "px"
+      },
+      "fontFamily": {
+        "default": "Verdana, sans-serif",
+        "suggestions": [
+          "Verdana, sans-serif",
+          "Arial, sans-serif",
+          "Times New Roman, serif"
+        ],
+        "description": "The font family to use for the labels."
+      },
+      "formatter": {
+        "type": {
+          "parameters": {
+            "value": "any"
+          },
+          "returnType": "string"
+        },
+        "description": "Function used to turn 'yKey' values into text to be displayed by a label. Be default the values are simply stringified."
+      }
+    },
     "highlightStyle": {
       "meta": {
         "requiresWholeObject": true,
@@ -1183,11 +1323,11 @@
       },
       "fill": {
         "default": "yellow",
-        "description": "The fill colour of the markers when hovered over."
+        "description": "The fill colour of the markers when hovered over. Use `undefined` for no highlight."
       },
       "stroke": {
         "type": "string",
-        "description": "The colour of the stroke around the markers when hovered over."
+        "description": "The colour of the stroke around the markers when hovered over. Use `undefined` for no highlight."
       }
     },
     "lineDash": {
@@ -1234,7 +1374,7 @@
     },
     "xName": {
       "type": "string",
-      "description": "A human-readable description of the x-values."
+      "description": "A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters."
     },
     "yKeys": {
       "type": "string[]",
@@ -1243,7 +1383,7 @@
     },
     "yNames": {
       "type": "string[]",
-      "description": "Human-readable descriptions of the y-values."
+      "description": "Human-readable descriptions of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters."
     },
     "data": {
       "type": "object[]",
@@ -1257,6 +1397,11 @@
     "showInLegend": {
       "default": true,
       "description": "Whether or not to include the series in the legend."
+    },
+    "cursor": {
+      "type": "string",
+      "default": "default",
+      "description": "The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property."
     },
     "tooltip": {
       "meta": {
@@ -1411,6 +1556,73 @@
         "description": "Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted, the <code>highlighted</code> property will be set to <code>true</code>; make sure to check this if you want to differentiate between the highlighted and un-highlighted states."
       }
     },
+    "label": {
+      "meta": {
+        "description": "Configuration for the labels shown on top of data points."
+      },
+      "enabled": {
+        "default": true,
+        "description": "Whether or not the labels should be shown."
+      },
+      "color": {
+        "default": "rgba(70, 70, 70, 1)",
+        "description": "The colour to use for the labels."
+      },
+      "fontStyle": {
+        "default": "normal",
+        "options": [
+          "normal",
+          "italic",
+          "oblique"
+        ],
+        "description": "The font style to use for the labels."
+      },
+      "fontWeight": {
+        "default": "normal",
+        "options": [
+          "normal",
+          "bold",
+          "bolder",
+          "lighter",
+          "100",
+          "200",
+          "300",
+          "400",
+          "500",
+          "600",
+          "700",
+          "800",
+          "900"
+        ],
+        "description": "The font weight to use for the labels.",
+        "breakIndex": 4
+      },
+      "fontSize": {
+        "default": 12,
+        "description": "The font size in pixels to use for the labels.",
+        "min": 1,
+        "max": 30,
+        "unit": "px"
+      },
+      "fontFamily": {
+        "default": "Verdana, sans-serif",
+        "suggestions": [
+          "Verdana, sans-serif",
+          "Arial, sans-serif",
+          "Times New Roman, serif"
+        ],
+        "description": "The font family to use for the labels."
+      },
+      "formatter": {
+        "type": {
+          "parameters": {
+            "value": "any"
+          },
+          "returnType": "string"
+        },
+        "description": "Function used to turn 'yKey' values into text to be displayed by a label. Be default the values are simply stringified."
+      }
+    },
     "highlightStyle": {
       "meta": {
         "requiresWholeObject": true,
@@ -1418,11 +1630,11 @@
       },
       "fill": {
         "default": "yellow",
-        "description": "The fill colour of the markers when hovered over."
+        "description": "The fill colour of the markers when hovered over. Use `undefined` for no highlight."
       },
       "stroke": {
         "type": "string",
-        "description": "The colour of the stroke around the markers when hovered over."
+        "description": "The colour of the stroke around the markers when hovered over. Use `undefined` for no highlight."
       }
     },
     "lineDash": {
@@ -1485,7 +1697,7 @@
     },
     "xName": {
       "type": "string",
-      "description": "A human-readable description of the x-values."
+      "description": "A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters."
     },
     "yKey": {
       "type": "string",
@@ -1494,7 +1706,7 @@
     },
     "yName": {
       "type": "string",
-      "description": "A human-readable description of the y-values."
+      "description": "A human-readable description of the y-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters."
     },
     "sizeKey": {
       "type": "string",
@@ -1502,7 +1714,7 @@
     },
     "sizeName": {
       "type": "string",
-      "description": "A human-readable description of the size values."
+      "description": "A human-readable description of the size values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters."
     },
     "labelKey": {
       "type": "string",
@@ -1510,7 +1722,7 @@
     },
     "labelName": {
       "type": "string",
-      "description": "A human-readable description of the label values."
+      "description": "A human-readable description of the label values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters."
     },
     "data": {
       "type": "object[]",
@@ -1524,6 +1736,11 @@
     "showInLegend": {
       "default": true,
       "description": "Whether or not to include the series in the legend."
+    },
+    "cursor": {
+      "type": "string",
+      "default": "default",
+      "description": "The cursor to use for hovered scatter markers. This config is identical to the CSS `cursor` property."
     },
     "tooltip": {
       "meta": {
@@ -1667,11 +1884,11 @@
       },
       "fill": {
         "default": "yellow",
-        "description": "The fill colour of the markers when hovered over."
+        "description": "The fill colour of the markers when hovered over. Use `undefined` for no highlight."
       },
       "stroke": {
         "type": "string",
-        "description": "The colour of the stroke around the markers when hovered over."
+        "description": "The colour of the stroke around the markers when hovered over. Use `undefined` for no highlight."
       }
     },
     "listeners": {
@@ -1706,7 +1923,7 @@
     },
     "angleName": {
       "type": "string",
-      "description": "A human-readable description of the angle values."
+      "description": "A human-readable description of the angle values. If supplied, this will be passed to the tooltip renderer as one of the parameters."
     },
     "labelKey": {
       "type": "string",
@@ -1715,7 +1932,7 @@
     },
     "labelName": {
       "type": "string",
-      "description": "A human-readable description of the label values."
+      "description": "A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters."
     },
     "radiusKey": {
       "type": "string",
@@ -1723,7 +1940,7 @@
     },
     "radiusName": {
       "type": "string",
-      "description": "A human-readable description of the radius values."
+      "description": "A human-readable description of the radius values. If supplied, this will be passed to the tooltip renderer as one of the parameters."
     },
     "data": {
       "type": "object[]",
@@ -1737,6 +1954,11 @@
     "showInLegend": {
       "default": true,
       "description": "Whether or not to include the series in the legend."
+    },
+    "cursor": {
+      "type": "string",
+      "default": "default",
+      "description": "The cursor to use for hovered pie slices. This config is identical to the CSS `cursor` property."
     },
     "tooltip": {
       "meta": {
@@ -1918,11 +2140,11 @@
       },
       "fill": {
         "default": "yellow",
-        "description": "The fill colour of the segments when hovered over."
+        "description": "The fill colour of the segments when hovered over. Use `undefined` for no highlight."
       },
       "stroke": {
         "type": "string",
-        "description": "The colour of the stroke around the segments when hovered over."
+        "description": "The colour of the stroke around the segments when hovered over. Use `undefined` for no highlight."
       }
     },
     "label": {
@@ -1995,6 +2217,15 @@
         "min": 0,
         "max": 360,
         "unit": "&deg;"
+      },
+      "formatter": {
+        "type": {
+          "parameters": {
+            "value": "string"
+          },
+          "returnType": "string"
+        },
+        "description": "Function used to turn 'labelKey' values into text to be displayed next to each pie sector. Be default the values are simply stringified."
       }
     },
     "callout": {
@@ -2083,6 +2314,421 @@
       }
     }
   },
+  "treemap": {
+    "meta": {
+      "displayName": "Treemap Series Configuration",
+      "description": "Configuration for the treemap series."
+    },
+    "title": {
+      "meta": {
+        "description": "The label configuration for the top-level parent tiles."
+      },
+      "color": {
+        "default": "white",
+        "description": "The colour of the text."
+      },
+      "fontStyle": {
+        "default": "normal",
+        "options": [
+          "normal",
+          "italic",
+          "oblique"
+        ],
+        "description": "The font style to use for the legend."
+      },
+      "fontWeight": {
+        "default": "bold",
+        "options": [
+          "normal",
+          "bold",
+          "bolder",
+          "lighter",
+          "100",
+          "200",
+          "300",
+          "400",
+          "500",
+          "600",
+          "700",
+          "800",
+          "900"
+        ],
+        "description": "The font weight to use for the legend.",
+        "breakIndex": 4
+      },
+      "fontSize": {
+        "default": 12,
+        "description": "The font size in pixels to use for the legend.",
+        "min": 1,
+        "max": 30,
+        "unit": "px"
+      },
+      "fontFamily": {
+        "default": "Verdana, sans-serif",
+        "suggestions": [
+          "Verdana, sans-serif",
+          "Arial, sans-serif",
+          "Times New Roman, serif"
+        ],
+        "description": "The font family to use for the legend."
+      },
+      "padding": {
+        "default": 15,
+        "description": "The amount of the tile's vertical space to reserve for the label.",
+        "min": 4,
+        "max": 20,
+        "unit": "px"
+      }
+    },
+    "subtitle": {
+      "meta": {
+        "description": "The label configuration for the children of the top-level parent tiles."
+      },
+      "color": {
+        "default": "white",
+        "description": "The colour of the text."
+      },
+      "fontStyle": {
+        "default": "normal",
+        "options": [
+          "normal",
+          "italic",
+          "oblique"
+        ],
+        "description": "The font style to use for the legend."
+      },
+      "fontWeight": {
+        "default": "bold",
+        "options": [
+          "normal",
+          "bold",
+          "bolder",
+          "lighter",
+          "100",
+          "200",
+          "300",
+          "400",
+          "500",
+          "600",
+          "700",
+          "800",
+          "900"
+        ],
+        "description": "The font weight to use for the legend.",
+        "breakIndex": 4
+      },
+      "fontSize": {
+        "default": 9,
+        "description": "The font size in pixels to use for the legend.",
+        "min": 1,
+        "max": 30,
+        "unit": "px"
+      },
+      "fontFamily": {
+        "default": "Verdana, sans-serif",
+        "suggestions": [
+          "Verdana, sans-serif",
+          "Arial, sans-serif",
+          "Times New Roman, serif"
+        ],
+        "description": "The font family to use for the legend."
+      },
+      "padding": {
+        "default": 13,
+        "description": "The amount of the tile's vertical space to reserve for the label.",
+        "min": 4,
+        "max": 20,
+        "unit": "px"
+      }
+    },
+    "labels": {
+      "meta": {
+        "description": "Configuration for the tile labels."
+      },
+      "large": {
+        "meta": {
+          "description": "The label configuration for the large leaf tiles."
+        },
+        "color": {
+          "default": "white",
+          "description": "The colour of the text."
+        },
+        "fontStyle": {
+          "default": "normal",
+          "options": [
+            "normal",
+            "italic",
+            "oblique"
+          ],
+          "description": "The font style to use for the legend."
+        },
+        "fontWeight": {
+          "default": "bold",
+          "options": [
+            "normal",
+            "bold",
+            "bolder",
+            "lighter",
+            "100",
+            "200",
+            "300",
+            "400",
+            "500",
+            "600",
+            "700",
+            "800",
+            "900"
+          ],
+          "description": "The font weight to use for the legend.",
+          "breakIndex": 4
+        },
+        "fontSize": {
+          "default": 18,
+          "description": "The font size in pixels to use for the legend.",
+          "min": 1,
+          "max": 30,
+          "unit": "px"
+        },
+        "fontFamily": {
+          "default": "Verdana, sans-serif",
+          "suggestions": [
+            "Verdana, sans-serif",
+            "Arial, sans-serif",
+            "Times New Roman, serif"
+          ],
+          "description": "The font family to use for the legend."
+        }
+      },
+      "medium": {
+        "meta": {
+          "description": "The label configuration for the medium-sized leaf tiles."
+        },
+        "color": {
+          "default": "white",
+          "description": "The colour of the text."
+        },
+        "fontStyle": {
+          "default": "normal",
+          "options": [
+            "normal",
+            "italic",
+            "oblique"
+          ],
+          "description": "The font style to use for the legend."
+        },
+        "fontWeight": {
+          "default": "bold",
+          "options": [
+            "normal",
+            "bold",
+            "bolder",
+            "lighter",
+            "100",
+            "200",
+            "300",
+            "400",
+            "500",
+            "600",
+            "700",
+            "800",
+            "900"
+          ],
+          "description": "The font weight to use for the legend.",
+          "breakIndex": 4
+        },
+        "fontSize": {
+          "default": 14,
+          "description": "The font size in pixels to use for the legend.",
+          "min": 1,
+          "max": 30,
+          "unit": "px"
+        },
+        "fontFamily": {
+          "default": "Verdana, sans-serif",
+          "suggestions": [
+            "Verdana, sans-serif",
+            "Arial, sans-serif",
+            "Times New Roman, serif"
+          ],
+          "description": "The font family to use for the legend."
+        }
+      },
+      "small": {
+        "meta": {
+          "description": "The label configuration for the small leaf tiles."
+        },
+        "color": {
+          "default": "white",
+          "description": "The colour of the text."
+        },
+        "fontStyle": {
+          "default": "normal",
+          "options": [
+            "normal",
+            "italic",
+            "oblique"
+          ],
+          "description": "The font style to use for the legend."
+        },
+        "fontWeight": {
+          "default": "bold",
+          "options": [
+            "normal",
+            "bold",
+            "bolder",
+            "lighter",
+            "100",
+            "200",
+            "300",
+            "400",
+            "500",
+            "600",
+            "700",
+            "800",
+            "900"
+          ],
+          "description": "The font weight to use for the legend.",
+          "breakIndex": 4
+        },
+        "fontSize": {
+          "default": 10,
+          "description": "The font size in pixels to use for the legend.",
+          "min": 1,
+          "max": 30,
+          "unit": "px"
+        },
+        "fontFamily": {
+          "default": "Verdana, sans-serif",
+          "suggestions": [
+            "Verdana, sans-serif",
+            "Arial, sans-serif",
+            "Times New Roman, serif"
+          ],
+          "description": "The font family to use for the legend."
+        }
+      },
+      "color": {
+        "meta": {
+          "description": "The configuration for the labels showing the value of the 'colorKey'."
+        },
+        "color": {
+          "default": "white",
+          "description": "The colour of the text."
+        },
+        "fontStyle": {
+          "default": "normal",
+          "options": [
+            "normal",
+            "italic",
+            "oblique"
+          ],
+          "description": "The font style to use for the legend."
+        },
+        "fontWeight": {
+          "default": "bold",
+          "options": [
+            "normal",
+            "bold",
+            "bolder",
+            "lighter",
+            "100",
+            "200",
+            "300",
+            "400",
+            "500",
+            "600",
+            "700",
+            "800",
+            "900"
+          ],
+          "description": "The font weight to use for the legend.",
+          "breakIndex": 4
+        },
+        "fontSize": {
+          "default": 12,
+          "description": "The font size in pixels to use for the legend.",
+          "min": 1,
+          "max": 30,
+          "unit": "px"
+        },
+        "fontFamily": {
+          "default": "Verdana, sans-serif",
+          "suggestions": [
+            "Verdana, sans-serif",
+            "Arial, sans-serif",
+            "Times New Roman, serif"
+          ],
+          "description": "The font family to use for the legend."
+        }
+      }
+    },
+    "labelKey": {
+      "type": "string",
+      "default": "label",
+      "description": "The name of the node key containing the label."
+    },
+    "sizeKey": {
+      "type": "string",
+      "default": "size",
+      "description": "The name of the node key containing the size value."
+    },
+    "colorKey": {
+      "type": "string",
+      "default": "color",
+      "description": "The name of the node key containing the color value. This value (along with `colorDomain` and `colorRange` configs) will be used to determine the tile color."
+    },
+    "colorDomain": {
+      "type": "number[]",
+      "default": "[-5, 5]",
+      "description": "The domain the 'colorKey' values belong to. The domain can contain more than two stops, for example `[-5, 0, -5]`. In that case the 'colorRange' should also use a matching number of colors."
+    },
+    "colorRange": {
+      "type": "string[]",
+      "default": "['#cb4b3f', '#6acb64']",
+      "description": "The color range to interpolate the numeric `colorDomain` into. For example, if the `colorDomain` is `[-5, 5]` and `colorRange` is `['red', 'green']`, a `colorKey` value of `-5` will be assigned the 'red' color, `5` - 'green' color and `0` a blend of 'red' and 'green'."
+    },
+    "colorParents": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether or not to assign colors to non-leaf nodes based on 'colorKey'."
+    },
+    "tooltip": {
+      "meta": {
+        "description": "Series-specific tooltip configuration."
+      },
+      "enabled": {
+        "default": true,
+        "description": "Whether or not to show tooltips when the series are hovered over."
+      },
+      "renderer": {
+        "type": {
+          "parameters": {
+            "datum": "any",
+            "labelKey": "string",
+            "sizeKey?": "string",
+            "colorKey?": "string"
+          },
+          "returnType": "string"
+        },
+        "description": "Function used to create the content for tooltips."
+      }
+    },
+    "nodePadding": {
+      "type": "number",
+      "default": 2,
+      "description": "The amount "
+    },
+    "gradient": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether or not to use gradients for treemap tiles."
+    },
+    "cursor": {
+      "type": "string",
+      "default": "default",
+      "description": "The cursor to use for hovered treemap tiles. This config is identical to the CSS `cursor` property."
+    }
+  },
   "histogram": {
     "data": {
       "type": "object[]",
@@ -2096,6 +2742,11 @@
     "showInLegend": {
       "default": true,
       "description": "Whether or not to include the series in the legend."
+    },
+    "cursor": {
+      "type": "string",
+      "default": "default",
+      "description": "The cursor to use for hovered histogram bars. This config is identical to the CSS `cursor` property."
     },
     "tooltip": {
       "meta": {
@@ -2134,7 +2785,7 @@
     },
     "xName": {
       "type": "string",
-      "description": "A human-readable description of the x-values."
+      "description": "A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters."
     },
     "yKey": {
       "type": "string",
@@ -2143,7 +2794,7 @@
     },
     "yName": {
       "type": "string",
-      "description": "A human-readable description of the y-values."
+      "description": "A human-readable description of the y-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters."
     },
     "meta": {
       "displayName": "Histogram Series Configuration",
@@ -2194,11 +2845,11 @@
       },
       "fill": {
         "default": "yellow",
-        "description": "The fill colour of the bars when hovered over."
+        "description": "The fill colour of the bars when hovered over. Use `undefined` for no highlight."
       },
       "stroke": {
         "type": "string",
-        "description": "The colour of the stroke around the bars when hovered over."
+        "description": "The colour of the stroke around the bars when hovered over. Use `undefined` for no highlight."
       }
     },
     "fill": {

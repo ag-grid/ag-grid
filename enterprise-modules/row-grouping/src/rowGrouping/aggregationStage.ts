@@ -3,7 +3,7 @@ import {
     BeanStub,
     IRowNodeStage,
     Autowired,
-    ColumnController,
+    ColumnModel,
     ValueService,
     RowNode,
     Column,
@@ -27,7 +27,7 @@ interface AggregationDetails {
 @Bean('aggregationStage')
 export class AggregationStage extends BeanStub implements IRowNodeStage {
 
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('pivotStage') private pivotStage: PivotStage;
     @Autowired('aggFuncService') private aggFuncService: AggFuncService;
@@ -44,7 +44,7 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
         // and there is no cleanup to be done (as value columns don't change between transactions or change
         // detections). if no value columns and no changed path, means we have to go through all nodes in
         // case we need to clean up agg data from before.
-        const noValueColumns = _.missingOrEmpty(this.columnController.getValueColumns());
+        const noValueColumns = _.missingOrEmpty(this.columnModel.getValueColumns());
         const noUserAgg = !this.gridOptionsWrapper.getGroupRowAggNodesFunc();
         const changedPathActive = params.changedPath && params.changedPath.isActive();
         if (noValueColumns && noUserAgg && changedPathActive) { return; }
@@ -56,10 +56,10 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
 
     private createAggDetails(params: StageExecuteParams): AggregationDetails {
 
-        const pivotActive = this.columnController.isPivotActive();
+        const pivotActive = this.columnModel.isPivotActive();
 
-        const measureColumns = this.columnController.getValueColumns();
-        const pivotColumns = pivotActive ? this.columnController.getPivotColumns() : [];
+        const measureColumns = this.columnModel.getValueColumns();
+        const pivotColumns = pivotActive ? this.columnModel.getPivotColumns() : [];
 
         const aggDetails = {
             changedPath: params.changedPath,
@@ -92,7 +92,7 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
             //https://ag-grid.atlassian.net/browse/AG-388
             const isRootNode = rowNode.level === -1;
             if (isRootNode) {
-                const notPivoting = !this.columnController.isPivotMode();
+                const notPivoting = !this.columnModel.isPivotMode();
                 const suppressAggAtRootLevel = this.gridOptionsWrapper.isSuppressAggAtRootLevel();
                 if (suppressAggAtRootLevel && notPivoting) { return; }
             }

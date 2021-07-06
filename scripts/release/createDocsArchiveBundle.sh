@@ -7,13 +7,11 @@ if [ "$#" -lt 1 ]
     exit 1
 fi
 
-ZIP_PREFIX=`date +%Y%m%d`
 RAW_VERSION=$1
 VERSION=""${RAW_VERSION//./}""
 
 echo "Starting Archive Docs Bundle Process"
 cd grid-packages/ag-grid-docs
-rm -rf dist
 
 echo "Gatsby Archive Package"
 cd documentation
@@ -24,8 +22,11 @@ echo "Building Docs Archive"
 npx gulp release-archive
 cd ../../
 
-OUTPUT=$(node scripts/release/createDocsArchiveBundle.js $RAW_VERSION | tee /dev/tty)
-ARCHIVE_FILENAME=`echo $OUTPUT | sed 's/.*Archive Complete://'`
+ARCHIVE_FILENAME="archive_`date +%Y%m%d`_$RAW_VERSION.tar"
+node scripts/release/createDocsArchiveBundle.js $RAW_VERSION $ARCHIVE_FILENAME
 
-echo "Archive Created: $ARCHIVE_FILENAME"
+echo "Gzipping $ARCHIVE_FILENAME"
+gzip --force $ARCHIVE_FILENAME
+
+echo "Archive Created: $ARCHIVE_FILENAME.gz"
 

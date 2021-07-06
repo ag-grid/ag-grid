@@ -1,7 +1,10 @@
 import { Component } from "../../widgets/component";
 import { IComponent } from "../../interfaces/iComponent";
+import { GridApi } from "../../gridApi";
 
-export interface INoRowsOverlayParams {}
+export interface INoRowsOverlayParams {
+    api: GridApi
+}
 
 export interface INoRowsOverlayComp extends IComponent<INoRowsOverlayParams> {}
 

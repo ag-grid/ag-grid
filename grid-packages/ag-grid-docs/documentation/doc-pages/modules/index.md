@@ -2,7 +2,7 @@
 title: "AG Grid Modules - Overview"
 ---
 
-AG Grid `modules` allow you to pick and choose which features you require, resulting in a smaller application size overall, with the trade-off being that you need to register the modules you require.
+AG Grid `modules` allow you to just import the features which you need, resulting in a smaller application size overall.
 
 [[note]]
 | The introduction of modules in version 22.0.0 is a significant first step towards reducing
@@ -41,7 +41,7 @@ framework support - if you require framework support you need to explicitly spec
 `@ag-grid-enterprise/all-modules` can be considered to be equivalent to `ag-grid-enterprise`,
     but with the additional
     need to register modules within. If using this module you might be better off using `ag-grid-enterprise`
-    (along with `ag-grid-enterprise)` as the bundle size will be similar and will reduce the need to register
+    as the bundle size will be similar and will reduce the need to register
     modules.
 
 [[note]]
@@ -62,15 +62,15 @@ You **cannot** mix `packages` and `modules` - in other words you cannot have a m
 
 ```js
 "dependencies": {
-    "ag-grid-community": "~25.1.0" <- a package dependency
-    "@ag-grid-enterprise/all-modules": "~25.1.0"  <- a module dependency
+    "ag-grid-community": "~25.3.0" <- a package dependency
+    "@ag-grid-enterprise/all-modules": "~25.3.0"  <- a module dependency
     //...other dependencies...
 }
 ```
 
 ## Installing AG Grid Modules
 
-If you choose to select individual modules then at a minimum the a [Row Model](../row-models/) need to be specified. After that all other modules are optional depending on your requirements.
+If you choose to select individual modules then at a minimum the a [Row Model](/row-models/) need to be specified. After that all other modules are optional depending on your requirements.
 
 There are two ways to supply modules to the grid - either globally or by individual grid.
 
@@ -86,11 +86,11 @@ A real-world example might be that we wish to use the `Client Side Row Model` (t
 
 ```js
 "dependencies": {
-    "@ag-grid-community/client-side-row-model": "~25.1.0",
-    "@ag-grid-community/csv-export": "~25.1.0",
-    "@ag-grid-enterprise/excel-export": "~25.1.0",
-    "@ag-grid-enterprise/master-detail": "~25.1.0",
-    "@ag-grid-community/react": "~25.1.0",
+    "@ag-grid-community/client-side-row-model": "~25.3.0",
+    "@ag-grid-community/csv-export": "~25.3.0",
+    "@ag-grid-enterprise/excel-export": "~25.3.0",
+    "@ag-grid-enterprise/master-detail": "~25.3.0",
+    "@ag-grid-community/react": "~25.3.0",
     //...other dependencies...
 }
 ```
@@ -129,11 +129,11 @@ Using the same real-world example above let us assume that we wish to use the `C
 
 ```js
 "dependencies": {
-    "@ag-grid-community/client-side-row-model": "~25.1.0",
-    "@ag-grid-community/csv-export": "~25.1.0",
-    "@ag-grid-enterprise/excel-export": "~25.1.0",
-    "@ag-grid-enterprise/master-detail": "~25.1.0",
-    "@ag-grid-community/react": "~25.1.0",
+    "@ag-grid-community/client-side-row-model": "~25.3.0",
+    "@ag-grid-community/csv-export": "~25.3.0",
+    "@ag-grid-enterprise/excel-export": "~25.3.0",
+    "@ag-grid-enterprise/master-detail": "~25.3.0",
+    "@ag-grid-community/react": "~25.3.0",
     //...other dependencies...
 }
 ```
@@ -223,11 +223,11 @@ Let us assume we have the following modules specified:
 
 ```js
 "dependencies": {
-    "@ag-grid-community/client-side-row-model": "~25.1.0",
-    "@ag-grid-community/csv-export": "~25.1.0",
-    "@ag-grid-enterprise/excel-export": "~25.1.0",
-    "@ag-grid-enterprise/master-detail": "~25.1.0",
-    "@ag-grid-community/react": "~25.1.0",
+    "@ag-grid-community/client-side-row-model": "~25.3.0",
+    "@ag-grid-community/csv-export": "~25.3.0",
+    "@ag-grid-enterprise/excel-export": "~25.3.0",
+    "@ag-grid-enterprise/master-detail": "~25.3.0",
+    "@ag-grid-community/react": "~25.3.0",
     //...other dependencies...
 }
 ```

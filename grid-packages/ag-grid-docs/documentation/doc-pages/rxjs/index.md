@@ -3,7 +3,7 @@ title: "Use with RxJS"
 frameworks: ["angular", "react", "vue"]
 ---
 
-It is possible to use RxJS with AG Grid - with the rich [API](../grid-api/) and numerous [Data Update Options](../data-update/) the two can interoperate very well.
+It is possible to use RxJS with AG Grid - with the rich [API](/grid-api/) and numerous [Data Update Options](/data-update/) the two can interoperate very well.
 
 There are many ways you can use RxJS with AG Grid. Below we describe two ways to do updates: One that processes just updated rows, and another that supplies the full Row Dataset but with altered rows within it.
 
@@ -26,7 +26,7 @@ const gridOptions = {
 }
 </snippet>
 
-- A manner of letting AG Grid know the type of update we're doing - for this we make use of the [Transaction](../data-update/) method:
+- A manner of letting AG Grid know the type of update we're doing - for this we make use of the [Transaction](/data-update/) method:
 
 <snippet>
 updates.subscribe(updates => gridOptions.api.applyTransaction({ update: updates }));
@@ -46,7 +46,7 @@ This time however the second subscription has the full row data, with altered ro
 To efficiently process this data we need two things:
 
 - A unique key per row - we do this by making use of the `getRowNodeId` callback.
-- A manner of letting AG Grid know that we're supplying the full data again, but with altered data within - for this we make use of the [Immutable Data](../immutable-data/) method.
+- A manner of letting AG Grid know that we're supplying the full data again, but with altered data within - for this we make use of the [Immutable Data](/immutable-data/) method.
 
 <snippet spaceBetweenProperties="true">
 const gridOptions = {

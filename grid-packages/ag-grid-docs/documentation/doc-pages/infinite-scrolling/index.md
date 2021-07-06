@@ -3,30 +3,30 @@ title: "Infinite Row Model"
 ---
 
 [[note]]
-| If you are an Enterprise user you should consider using the 
-| [Server-Side Row Model](../server-side-model/) instead of the Infinite Row Model. 
+| If you are an Enterprise user you should consider using the
+| [Server-Side Row Model](/server-side-model/) instead of the Infinite Row Model.
 | It offers the same functionality with many more features.<br /><br />
-| The differences between row models can be found in our [row models summary page](../row-models/).
+| The differences between row models can be found in our [row models summary page](/row-models/).
 
-Infinite scrolling allows the grid to lazy-load rows from the server depending on what the scroll 
+Infinite scrolling allows the grid to lazy-load rows from the server depending on what the scroll
 position is of the grid. In its simplest form, the more the user scrolls down, the more rows get loaded.
 
 
-The grid will have an 'auto extending' vertical scroll. That means as the scroll reaches 
-the bottom position, the grid will extend the height to allow scrolling even further down, 
-almost making it impossible for the user to reach the bottom. This will stop happening 
+The grid will have an 'auto extending' vertical scroll. That means as the scroll reaches
+the bottom position, the grid will extend the height to allow scrolling even further down,
+almost making it impossible for the user to reach the bottom. This will stop happening
 once the grid has extended the scroll to reach the last record in the table.
 
 ## How it Works
 
-The grid will ask your application, via a datasource, for the rows in blocks. Each block 
+The grid will ask your application, via a datasource, for the rows in blocks. Each block
 contains a subset of rows of the entire dataset. The following diagram is a high-level overview.
 
 
 <img src="resources/high-level.png" alt="high-level" style="max-width: 100%; margin-bottom: 1rem;" />
 
-When the grid scrolls to a position where there is no corresponding block of rows loaded, the model 
-uses the provided datasource to get the rows for the requested block. In the diagram, the datasource 
+When the grid scrolls to a position where there is no corresponding block of rows loaded, the model
+uses the provided datasource to get the rows for the requested block. In the diagram, the datasource
 is getting the rows from a database in a remote server.
 
 ## Turning On Infinite Scrolling
@@ -44,7 +44,7 @@ gridOptions.api.setDatasource(myDataSource);
 
 ## Datasource
 
-A datasource must be provided to do infinite scrolling. You specify the datasource as a grid 
+A datasource must be provided to do infinite scrolling. You specify the datasource as a grid
 property or using the grid API.
 
 
@@ -58,7 +58,7 @@ gridOptions.api.setDatasource(myDatasource);
 
 ### Changing the Datasource
 
-Changing the datasource after the grid is initialised will reset the infinite scrolling in the grid. 
+Changing the datasource after the grid is initialised will reset the infinite scrolling in the grid.
 This is useful if the context of your data changes, i.e. if you want to look at a different set of data.
 
 
@@ -73,8 +73,8 @@ This is useful if the context of your data changes, i.e. if you want to look at 
 
 ### Datasource Interface
 
-In a nutshell, every time the grid wants more rows, it will call `getRows()` on the datasource. The 
-datasource responds with the rows requested. Your datasource for infinite scrolling should implement 
+In a nutshell, every time the grid wants more rows, it will call `getRows()` on the datasource. The
+datasource responds with the rows requested. Your datasource for infinite scrolling should implement
 the following interface:
 
 ```ts
@@ -119,7 +119,7 @@ interface IGetRowsParams {
 
 ### getRows()
 
-The `getRows()` function is called by the grid to load a block of rows into the browser-side cache of blocks. 
+The `getRows()` function is called by the grid to load a block of rows into the browser-side cache of blocks.
 It takes the following as parameters:
 
 - The `startRow` and `endRow` define the range expected for the call. For example, if block size is 100, the `getRows` function will be called with `startRow: 0` and `endRow: 100` and the grid will expect a result with 100 rows (rows 0 to 99).
@@ -127,12 +127,12 @@ It takes the following as parameters:
 - The `successCallback(rowsThisBlock, lastRow)` should be called when you successfully receive data from the server. The callback has the following parameters:
     - `rowsThisBlock` should be the rows you have received for the current block.
     - `lastRow` should be the index of the last row if known.
-    
+
 - The `failCallback()` should be called if the loading failed. Either one of `successCallback()` or `failCallback()` should be called exactly once.
 
 - The `filterModel()` and `sortModel()` are passed for doing server-side sorting and filtering.
 
-- The [context](../context/) is just passed as is and nothing to do with infinite scrolling. It's there if you need it for providing application state to your datasource.
+- The [context](/context/) is just passed as is and nothing to do with infinite scrolling. It's there if you need it for providing application state to your datasource.
 
 ### Setting Last Row Index
 
@@ -156,7 +156,7 @@ It is also possible to debounce the loading to prevent blocks loading until scro
 
 ### Aggregation and Grouping
 
-Aggregation and grouping are not available in infinite scrolling. This is because to do so would require the grid knowing the entire dataset, which is not possible when using the Infinite Row Model. If you need aggregation and / or grouping for large datasets, check the [Server-Side Row Model](../server-side-model/) for doing aggregations on the server-side.
+Aggregation and grouping are not available in infinite scrolling. This is because to do so would require the grid knowing the entire dataset, which is not possible when using the Infinite Row Model. If you need aggregation and / or grouping for large datasets, check the [Server-Side Row Model](/server-side-model/) for doing aggregations on the server-side.
 
 
 ### Sorting & Filtering
@@ -253,7 +253,7 @@ loadingSpinnerColumn = {
 }
 ```
 
-Refer to section [Cell Rendering](../component-cell-renderer/) for how to build cell renderers.
+Refer to section [Cell Rendering](/component-cell-renderer/) for how to build cell renderers.
 
 ### More Control via Properties and API
 
@@ -285,14 +285,14 @@ Below demonstrates the different API methods via the buttons. The example output
 - **Refresh Cache**: Calls for the cache to be refreshed.
 - **Purge Cache**: Calls for the cache to be purged.
 
-The example also makes each Honda row bold - demonstrating that the callbacks `getRowStyle` and `getRowClass` 
+The example also makes each Honda row bold - demonstrating that the callbacks `getRowStyle` and `getRowClass`
 get called after the data is set as well as when the row is created (when the data may not yet be available).
 
 <grid-example title='Insert And Remove Example' name='insert-remove' type='generated' options='{ "modules": ["infinite"] }'></grid-example>
 
 ## Changing Columns
 
-[Changing columns](../column-updating-definitions/) is possible using infinite scroll and it does not require the data getting fetched again from the server. If the change of columns impacts the sort or filter (i.e. a column with a sort or filter applied is removed), the grid will fetch data again similar to how data is fetched again after the user changes the sort or filter explicitly.
+[Changing columns](/column-updating-definitions/) is possible using infinite scroll and it does not require the data getting fetched again from the server. If the change of columns impacts the sort or filter (i.e. a column with a sort or filter applied is removed), the grid will fetch data again similar to how data is fetched again after the user changes the sort or filter explicitly.
 
 
 The example below demonstrates changing columns on the infinite row model. The following can be noted:
@@ -331,6 +331,6 @@ This example demonstrates having the page and block sizes equal. Here the server
 
 ## Overlays
 
-The infinite row model does not use [overlays](../overlays/) like the Client-Side Row Model. It does not use 'loading' overlay as rows load in blocks and it would be wrong to hide all the grid because some rows are getting loaded. The grid does not use 'no rows' overlay as the 'no rows' could be because you have a filter set, and a grid with a filter shows an empty grid when no rows pass the filter.
+The infinite row model does not use [overlays](/overlays/) like the Client-Side Row Model. It does not use 'loading' overlay as rows load in blocks and it would be wrong to hide all the grid because some rows are getting loaded. The grid does not use 'no rows' overlay as the 'no rows' could be because you have a filter set, and a grid with a filter shows an empty grid when no rows pass the filter.
 
-If you do want to show overlays, then please see [overlays](../overlays/) section for details on how to show the overlays manually.
+If you do want to show overlays, then please see [overlays](/overlays/) section for details on how to show the overlays manually.

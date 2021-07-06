@@ -1,11 +1,11 @@
 import {
     Autowired,
-    CellComp,
+    CellCtrl,
     RowRenderer,
     DragService,
     Component,
     MouseEventService,
-    ColumnController,
+    ColumnModel,
     CellNavigationService,
     CellRange,
     RowPosition,
@@ -14,22 +14,25 @@ import {
     ISelectionHandle,
     RowPositionUtils,
     _,
-
-    SelectionHandleType
+    SelectionHandleType,
+    ControllersService,
+    NavigationService
 } from "@ag-grid-community/core";
-import { RangeController } from "./rangeController";
+import { RangeService } from "./rangeService";
 
 export abstract class AbstractSelectionHandle extends Component implements ISelectionHandle {
 
     @Autowired("rowRenderer") protected rowRenderer: RowRenderer;
     @Autowired("dragService") protected dragService: DragService;
-    @Autowired("rangeController") protected rangeController: RangeController;
+    @Autowired("rangeService") protected rangeService: RangeService;
     @Autowired("mouseEventService") protected mouseEventService: MouseEventService;
-    @Autowired("columnController") protected columnController: ColumnController;
+    @Autowired("columnModel") protected columnModel: ColumnModel;
     @Autowired("cellNavigationService") protected cellNavigationService: CellNavigationService;
+    @Autowired("navigationService") protected navigationService: NavigationService;
     @Autowired('rowPositionUtils') protected rowPositionUtils: RowPositionUtils;
+    @Autowired('controllersService') protected controllersService: ControllersService;
 
-    private cellComp: CellComp;
+    private cellCtrl: CellCtrl;
     private cellRange: CellRange;
 
     private rangeStartRow: RowPosition;
@@ -51,7 +54,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
             onDragStart: this.onDragStart.bind(this),
             onDragging: (e: MouseEvent | Touch) => {
                 this.dragging = true;
-                this.rangeController.autoScrollService.check(e as MouseEvent);
+                this.rangeService.autoScrollService.check(e as MouseEvent);
 
                 if (this.changedCalculatedValues) {
                     this.onDrag(e);
@@ -62,7 +65,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
                 this.dragging = false;
                 this.onDragEnd(e);
                 this.clearValues();
-                this.rangeController.autoScrollService.ensureCleared();
+                this.rangeService.autoScrollService.ensureCleared();
 
                 // TODO: this causes a bug where if there are multiple grids in the same page, all of them will
                 // be affected by a drag on any. Move it to the root element.
@@ -88,12 +91,12 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
         return this.dragging;
     }
 
-    protected getCellComp(): CellComp | undefined {
-        return this.cellComp;
+    protected getCellCtrl(): CellCtrl | undefined {
+        return this.cellCtrl;
     }
 
-    protected setCellComp(cellComp: CellComp) {
-        this.cellComp = cellComp;
+    protected setCellCtrl(cellComp: CellCtrl) {
+        this.cellCtrl = cellComp;
     }
 
     protected getCellRange(): CellRange {
@@ -131,7 +134,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
 
     protected onDragStart(e: MouseEvent) {
         this.cellHoverListener = this.addManagedListener(
-            this.rowRenderer.getGridCore().getRootGui(),
+            this.controllersService.getGridCompController().getGui(),
             'mousemove',
             this.updateValuesOnMove.bind(this)
         );
@@ -156,11 +159,11 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
         return this.type;
     }
 
-    public refresh(cellComp: CellComp) {
-        const oldCellComp = this.getCellComp();
+    public refresh(cellCtrl: CellCtrl) {
+        const oldCellComp = this.getCellCtrl();
         const eGui = this.getGui();
 
-        const cellRange = _.last(this.rangeController.getCellRanges());
+        const cellRange = _.last(this.rangeService.getCellRanges());
 
         const start = cellRange.startRow;
         const end = cellRange.endRow;
@@ -177,11 +180,11 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
             }
         }
 
-        if (oldCellComp !== cellComp || !_.isVisible(eGui)) {
-            this.setCellComp(cellComp);
+        if (oldCellComp !== cellCtrl || !_.isVisible(eGui)) {
+            this.setCellCtrl(cellCtrl);
             window.setTimeout(() => {
                 if (this.isAlive()) {
-                    cellComp.appendChild(eGui);
+                    cellCtrl.appendChild(eGui);
                 }
             }, 1);
         }

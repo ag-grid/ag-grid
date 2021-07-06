@@ -38,8 +38,13 @@ export function tickIncrement(a: number, b: number, count: number): number {
 export class NumericTicks extends Array<number> {
     readonly fractionDigits: number;
 
-    constructor(fractionDigits: number, size = 0) {
-        super(size);
+    constructor(fractionDigits: number, elements?: Array<number>) {
+        super();
+        if (elements) {
+            for (let i = 0, n = elements.length; i < n; i++) {
+                this[i] = elements[i];
+            }
+        }
         this.fractionDigits = fractionDigits;
     }
 }
@@ -51,7 +56,7 @@ function range(a: number, b: number, step: number = 1): NumericTicks {
         : 0;
     const f = Math.pow(10, fractionDigits);
     const n = Math.max(0, Math.ceil((b - a) / step)) || 0;
-    const values = new NumericTicks(fractionDigits, n);
+    const values = new NumericTicks(fractionDigits);
 
     for (let i = 0; i < n; i++) {
         const value = a + step * i;

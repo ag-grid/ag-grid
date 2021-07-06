@@ -62,21 +62,21 @@ export class TabbedLayout extends ManagedFocusComponent {
     protected onTabKeyDown(e: KeyboardEvent) {
         if (e.defaultPrevented) { return; }
 
-        const { focusController, eHeader, eBody, activeItem } = this;
+        const { focusService, eHeader, eBody, activeItem } = this;
         const activeElement = document.activeElement as HTMLElement;
 
         e.preventDefault();
 
         if (eHeader.contains(activeElement)) {
             // focus is in header, move into body of popup
-            focusController.focusInto(eBody, e.shiftKey);
+            focusService.focusInto(eBody, e.shiftKey);
         } else {
             // focus is in body, establish if it should return to header
-            if (focusController.isFocusUnderManagedComponent(eBody)) {
+            if (focusService.isFocusUnderManagedComponent(eBody)) {
                 // focus was in a managed focus component and has now left, so we can return to the header
                 activeItem.eHeaderButton.focus();
             } else {
-                const nextEl = focusController.findNextFocusableElement(eBody, false, e.shiftKey);
+                const nextEl = focusService.findNextFocusableElement(eBody, false, e.shiftKey);
 
                 if (nextEl) {
                     // if another element exists in the body that can be focussed, go to that
@@ -91,42 +91,6 @@ export class TabbedLayout extends ManagedFocusComponent {
 
     public setAfterAttachedParams(params: IAfterGuiAttachedParams): void {
         this.afterAttachedParams = params;
-    }
-
-    public getMinDimensions(): { width: number, height: number; } {
-        const eDummyContainer = this.getGui().cloneNode(true) as HTMLElement;
-        const eDummyBody = eDummyContainer.querySelector('[ref="eBody"]') as HTMLElement;
-
-        // position fixed, so it isn't restricted to the boundaries of the parent
-        eDummyContainer.style.position = 'fixed';
-
-        // we put the dummy into the body container, so it will inherit all the
-        // css styles that the real cells are inheriting
-        this.getGui().appendChild(eDummyContainer);
-
-        let minWidth = 0;
-        let minHeight = 0;
-
-        this.items.forEach((itemWrapper: TabbedItemWrapper) => {
-            clearElement(eDummyBody);
-
-            const eClone: HTMLElement = itemWrapper.tabbedItem.bodyPromise.resolveNow(null, body => body!.cloneNode(true)) as HTMLElement;
-            if (eClone == null) { return; }
-
-            eDummyBody.appendChild(eClone);
-
-            if (minWidth < eDummyContainer.offsetWidth) {
-                minWidth = eDummyContainer.offsetWidth;
-            }
-
-            if (minHeight < eDummyContainer.offsetHeight) {
-                minHeight = eDummyContainer.offsetHeight;
-            }
-        });
-
-        this.getGui().removeChild(eDummyContainer);
-
-        return { height: minHeight, width: minWidth };
     }
 
     public showFirstItem(): void {
@@ -175,9 +139,9 @@ export class TabbedLayout extends ManagedFocusComponent {
 
         wrapper.tabbedItem.bodyPromise.then(body => {
             this.eBody.appendChild(body!);
-            const onlyUnmanaged = !this.focusController.isKeyboardMode();
+            const onlyUnmanaged = !this.focusService.isKeyboardMode();
 
-            this.focusController.focusInto(this.eBody, false, onlyUnmanaged);
+            this.focusService.focusInto(this.eBody, false, onlyUnmanaged);
 
             if (wrapper.tabbedItem.afterAttachedCallback) {
                 wrapper.tabbedItem.afterAttachedCallback(this.afterAttachedParams);

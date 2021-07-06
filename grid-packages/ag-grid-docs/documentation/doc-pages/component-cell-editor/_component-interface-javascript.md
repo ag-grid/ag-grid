@@ -1,7 +1,7 @@
 [[only-javascript]]
-|## Cell Renderer Component
+|## Cell Editor Component
 |
-|The interface for the cell renderer component is as follows:
+|The interface for the cell editor component is as follows:
 |
 |```ts
 |interface ICellEditorComp {
@@ -38,7 +38,7 @@
 |    // cancel the editing before it even starts.
 |    isCancelBeforeStart?(): boolean;
 |
-|    // Gets called once when editing is finished (eg if enter is pressed).
+|    // Gets called once when editing is finished (eg if Enter is pressed).
 |    // If you return true, then the result of the edit will be ignored.
 |    isCancelAfterEnd?(): boolean;
 |

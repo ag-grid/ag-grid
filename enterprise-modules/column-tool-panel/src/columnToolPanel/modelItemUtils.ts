@@ -1,6 +1,6 @@
 import { ColumnModelItem } from "./columnModelItem";
 import {
-    ColumnController,
+    ColumnModel,
     Events,
     GridApi,
     ColumnApi,
@@ -20,7 +20,7 @@ import {
 export class ModelItemUtils {
 
     @Autowired('aggFuncService') aggFuncService: IAggFuncService;
-    @Autowired('columnController') columnController: ColumnController;
+    @Autowired('columnModel') columnModel: ColumnModel;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
@@ -36,7 +36,7 @@ export class ModelItemUtils {
     }
 
     public setAllColumns(cols: Column[], selectAllChecked: boolean, eventType: ColumnEventType): void {
-        if (this.columnController.isPivotMode()) {
+        if (this.columnModel.isPivotMode()) {
             this.setAllPivot(cols, selectAllChecked, eventType);
         } else {
             this.setAllVisible(cols, selectAllChecked, eventType);
@@ -77,7 +77,7 @@ export class ModelItemUtils {
         });
 
         if (colStateItems.length > 0) {
-            this.columnController.applyColumnState({state: colStateItems}, eventType);
+            this.columnModel.applyColumnState({state: colStateItems}, eventType);
         }
     }
 
@@ -91,9 +91,9 @@ export class ModelItemUtils {
 
     private setAllPivotPassive(columns: Column[], value: boolean): void {
 
-        const copyOfPivotColumns = this.columnController.getPivotColumns().slice();
-        const copyOfValueColumns = this.columnController.getValueColumns().slice();
-        const copyOfRowGroupColumns = this.columnController.getRowGroupColumns().slice();
+        const copyOfPivotColumns = this.columnModel.getPivotColumns().slice();
+        const copyOfValueColumns = this.columnModel.getValueColumns().slice();
+        const copyOfRowGroupColumns = this.columnModel.getRowGroupColumns().slice();
 
         let pivotChanged = false;
         let valueChanged = false;
@@ -212,7 +212,7 @@ export class ModelItemUtils {
         columns.forEach(action);
 
         if (colStateItems.length > 0) {
-            this.columnController.applyColumnState({state: colStateItems}, eventType);
+            this.columnModel.applyColumnState({state: colStateItems}, eventType);
         }
     }
 

@@ -7,7 +7,7 @@ import { TapEvent, LongTapEvent, TouchListener } from "../../widgets/touchListen
 import { IComponent } from "../../interfaces/iComponent";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { Events } from "../../events";
-import { ColumnApi } from "../../columnController/columnApi";
+import { ColumnApi } from "../../columns/columnApi";
 import { GridApi } from "../../gridApi";
 import { escapeString } from "../../utils/string";
 import { createIconNoSpan } from "../../utils/icon";
@@ -222,7 +222,7 @@ export class HeaderComp extends Component implements IHeaderComp {
             eventSource = this.eMenu;
         }
 
-        this.menuFactory.showMenuAfterButtonClick(this.params.column, eventSource);
+        this.menuFactory.showMenuAfterButtonClick(this.params.column, eventSource, 'columnMenu');
     }
 
     private removeSortIcons(): void {

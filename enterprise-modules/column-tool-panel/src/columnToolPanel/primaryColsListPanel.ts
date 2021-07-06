@@ -5,7 +5,7 @@ import {
     ColGroupDef,
     Column,
     ColumnApi,
-    ColumnController,
+    ColumnModel,
     ColumnEventType,
     Component,
     Events,
@@ -23,7 +23,7 @@ import { ExpandState } from "./primaryColsHeaderPanel";
 import { ColumnModelItem } from "./columnModelItem";
 import { ModelItemUtils } from "./modelItemUtils";
 
-class ColumnModel implements VirtualListModel {
+class UIColumnModel implements VirtualListModel {
 
     private readonly items: ColumnModelItem[];
 
@@ -44,7 +44,7 @@ export class PrimaryColsListPanel extends Component {
 
     public static TEMPLATE = /* html */ `<div class="ag-column-select-list" role="tree"></div>`;
 
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('toolPanelColDefService') private colDefService: ToolPanelColDefService;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('modelItemUtils') private modelItemUtils: ModelItemUtils;
@@ -112,7 +112,7 @@ export class PrimaryColsListPanel extends Component {
             (item: ColumnModelItem, listItemElement: HTMLElement) => this.createComponentFromItem(item, listItemElement)
         );
 
-        if (this.columnController.isReady()) {
+        if (this.columnModel.isReady()) {
             this.onColumnsChanged();
         }
     }
@@ -134,7 +134,7 @@ export class PrimaryColsListPanel extends Component {
     public onColumnsChanged(): void {
         const expandedStates = this.getExpandedStates();
 
-        const pivotModeActive = this.columnController.isPivotMode();
+        const pivotModeActive = this.columnModel.isPivotMode();
         const shouldSyncColumnLayoutWithGrid = !this.params.suppressSyncLayoutWithGrid && !pivotModeActive;
 
         if (shouldSyncColumnLayoutWithGrid) {
@@ -199,8 +199,8 @@ export class PrimaryColsListPanel extends Component {
 
     private buildTreeFromProvidedColumnDefs(): void {
         // add column / group comps to tool panel
-        this.buildListModel(this.columnController.getPrimaryColumnTree());
-        this.groupsExist = this.columnController.isPrimaryColumnGroupsPresent();
+        this.buildListModel(this.columnModel.getPrimaryColumnTree());
+        this.groupsExist = this.columnModel.isPrimaryColumnGroupsPresent();
     }
 
     private buildListModel(columnTree: OriginalColumnGroupChild[]): void {
@@ -231,7 +231,7 @@ export class PrimaryColsListPanel extends Component {
                 return;
             }
 
-            const displayName = this.columnController.getDisplayNameForOriginalColumnGroup(null, columnGroup, this.eventType);
+            const displayName = this.columnModel.getDisplayNameForOriginalColumnGroup(null, columnGroup, this.eventType);
             const item: ColumnModelItem = new ColumnModelItem(displayName, columnGroup, dept, true, this.expandGroupsByDefault);
 
             parentList.push(item);
@@ -245,7 +245,7 @@ export class PrimaryColsListPanel extends Component {
 
             if (skipThisColumn) { return; }
 
-            const displayName = this.columnController.getDisplayNameForColumn(column, 'columnToolPanel');
+            const displayName = this.columnModel.getDisplayNameForColumn(column, 'columnToolPanel');
 
             parentList.push(new ColumnModelItem(displayName, column, dept));
         };
@@ -271,7 +271,7 @@ export class PrimaryColsListPanel extends Component {
 
         this.allColsTree.forEach(recursiveFunc);
 
-        this.virtualList.setModel(new ColumnModel(this.displayedColsList));
+        this.virtualList.setModel(new UIColumnModel(this.displayedColsList));
         const focusedRow = this.virtualList.getLastFocusedRow();
         this.virtualList.refresh();
 
@@ -367,7 +367,7 @@ export class PrimaryColsListPanel extends Component {
         let checkedCount = 0;
         let uncheckedCount = 0;
 
-        const pivotMode = this.columnController.isPivotMode();
+        const pivotMode = this.columnModel.isPivotMode();
 
         this.forEachItem(item => {
             if (item.isGroup()) { return; }

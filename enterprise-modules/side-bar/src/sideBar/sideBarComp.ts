@@ -11,7 +11,9 @@ import {
     RefSelector,
     SideBarDef,
     ToolPanelDef,
-    ToolPanelVisibleChangedEvent
+    GridApi,
+    ToolPanelVisibleChangedEvent,
+    Autowired
 } from "@ag-grid-community/core";
 import { SideBarButtonClickedEvent, SideBarButtonsComp } from "./sideBarButtonsComp";
 import { ToolPanelWrapper } from "./toolPanelWrapper";
@@ -23,6 +25,7 @@ export interface IToolPanelChildComp extends IComponent<any> {
 export class SideBarComp extends Component implements ISideBar {
 
     @RefSelector('sideBarButtons') private sideBarButtonsComp: SideBarButtonsComp;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     private toolPanelWrappers: ToolPanelWrapper[] = [];
 
@@ -39,6 +42,13 @@ export class SideBarComp extends Component implements ISideBar {
     private postConstruct(): void {
         this.sideBarButtonsComp.addEventListener(SideBarButtonsComp.EVENT_SIDE_BAR_BUTTON_CLICKED, this.onToolPanelButtonClicked.bind(this));
         this.setSideBarDef();
+
+        this.gridOptionsWrapper.addEventListener('sideBar', () => {
+            this.clearDownUi();
+            this.setSideBarDef();
+        });
+
+        this.gridApi.registerSideBarComp(this);
     }
 
     private onToolPanelButtonClicked(event: SideBarButtonClickedEvent): void {
@@ -186,12 +196,6 @@ export class SideBarComp extends Component implements ISideBar {
             }
         });
         return activeToolPanel;
-    }
-
-    // get called after user sets new sideBarDef via the API
-    public reset(): void {
-        this.clearDownUi();
-        this.setSideBarDef();
     }
 
     private destroyToolPanelWrappers(): void {

@@ -7,5 +7,9 @@
   },
   "include": [
     "src/**/*"
+  ],
+  "exclude": [
+    "**/*.test.ts",
+    "**/test-utils/mock.ts"
   ]
 }

@@ -1,4 +1,4 @@
-import { padStart } from './number';
+import { padStartWidthZeros } from './number';
 
 /**
  * Serialises a Date to a string of format `yyyy-MM-dd HH:mm:ss`.
@@ -10,10 +10,10 @@ import { padStart } from './number';
 export function serialiseDate(date: Date | null, includeTime = true, separator = '-'): string | null {
     if (!date) { return null; }
 
-    let serialised = [date.getFullYear(), date.getMonth() + 1, date.getDate()].map(part => padStart(part, 2)).join(separator);
+    let serialised = [date.getFullYear(), date.getMonth() + 1, date.getDate()].map(part => padStartWidthZeros(part, 2)).join(separator);
 
     if (includeTime) {
-        serialised += ' ' + [date.getHours(), date.getMinutes(), date.getSeconds()].map(part => padStart(part, 2)).join(':');
+        serialised += ' ' + [date.getHours(), date.getMinutes(), date.getSeconds()].map(part => padStartWidthZeros(part, 2)).join(':');
     }
 
     return serialised;

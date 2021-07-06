@@ -6,7 +6,7 @@ import {
     Autowired,
     Bean,
     ChangedPath,
-    ColumnController,
+    ColumnModel,
     PostConstruct,
     RowNode,
     BeanStub
@@ -17,7 +17,7 @@ import { RowNodeMap } from "./clientSideRowModel";
 @Bean('sortService')
 export class SortService extends BeanStub {
 
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('rowNodeSorter') private rowNodeSorter: RowNodeSorter;
 
     private postSortFunc: ((rowNodes: RowNode[]) => void) | undefined;
@@ -199,7 +199,7 @@ export class SortService extends BeanStub {
         if (!this.gridOptionsWrapper.isGroupHideOpenParents() || _.missing(rowNodes)) { return; }
 
         rowNodes.forEach(childRowNode => {
-            const groupDisplayCols = this.columnController.getGroupDisplayColumns();
+            const groupDisplayCols = this.columnModel.getGroupDisplayColumns();
             groupDisplayCols.forEach(groupDisplayCol => {
 
                 const showRowGroup = groupDisplayCol.getColDef().showRowGroup;
@@ -209,14 +209,14 @@ export class SortService extends BeanStub {
                 }
 
                 const displayingGroupKey = showRowGroup;
-                const rowGroupColumn = this.columnController.getPrimaryColumn(displayingGroupKey);
+                const rowGroupColumn = this.columnModel.getPrimaryColumn(displayingGroupKey);
                 const thisRowNodeMatches = rowGroupColumn === childRowNode.rowGroupColumn;
 
                 if (thisRowNodeMatches) { return; }
 
                 if (clearOperation) {
                     // if doing a clear operation, we clear down the value for every possible group column
-                    childRowNode.setGroupValue(groupDisplayCol.getId(), null);
+                    childRowNode.setGroupValue(groupDisplayCol.getId(), undefined);
                 } else {
                     // if doing a set operation, we set only where the pull down is to occur
                     const parentToStealFrom = childRowNode.getFirstChildOfFirstChild(rowGroupColumn);

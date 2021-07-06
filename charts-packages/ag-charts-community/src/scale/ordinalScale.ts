@@ -5,6 +5,8 @@ import Scale from "./scale";
  * For example, a category index to its color.
  */
 export class OrdinalScale<D, R> implements Scale<D, R> {
+    readonly type = 'ordinal';
+
     unknown: R;
 
     /**

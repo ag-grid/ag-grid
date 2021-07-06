@@ -1,8 +1,9 @@
 import { ExcelOOXMLTemplate } from '@ag-grid-community/core';
-import fontFactory, { Font } from './font';
+import { ExcelThemeFont } from '../../../assets/excelInterfaces';
+import fontFactory from './font';
 
 const fontsFactory: ExcelOOXMLTemplate = {
-    getTemplate(fonts: Font[]) {
+    getTemplate(fonts: ExcelThemeFont[]) {
         return {
             name: "fonts",
             properties: {
@@ -10,7 +11,7 @@ const fontsFactory: ExcelOOXMLTemplate = {
                     count: fonts.length
                 }
             },
-            children: fonts.map(fontFactory.getTemplate)
+            children: fonts.map(font => fontFactory.getTemplate(font))
         };
     }
 };

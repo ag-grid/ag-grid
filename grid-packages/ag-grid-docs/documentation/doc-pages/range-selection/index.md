@@ -3,7 +3,7 @@ title: "Range Selection"
 enterprise: true
 ---
 
-Range selection allows Excel-like range selection of cells. Range selections are useful for visually highlighting data, copying data to the [Clipboard](../clipboard/), or for doing aggregations using the [Status Bar](../status-bar/).
+Range selection allows Excel-like range selection of cells. Range selections are useful for visually highlighting data, copying data to the [Clipboard](/clipboard/), or for doing aggregations using the [Status Bar](/status-bar/).
 
 ## Selecting Ranges
 
@@ -11,11 +11,11 @@ Ranges can be selected in the following ways:
 
 - **Mouse Drag:** Click the mouse down on a cell and drag and release the mouse over another cell. A range will be created between the two cells and clear any existing ranges.
 
-- **Ctrl & Mouse Drag:** Holding **Ctrl** key while creating a range using mouse drag will create a new range selection and keep any existing ranges.
+- **Ctrl & Mouse Drag:** Holding <kbd>Ctrl</kbd> key while creating a range using mouse drag will create a new range selection and keep any existing ranges.
 
-- **Shift & Click:** Clicking on one cell to focus that cell, then holding down **Shift** while clicking another cell, will create a range between both cells.
+- **Shift & Click:** Clicking on one cell to focus that cell, then holding down <kbd>Shift</kbd> while clicking another cell, will create a range between both cells.
 
-- **Shift & Arrow Keys:** Focusing a cell and then holding down **Shift** and using the arrow keys will create a range starting from the focused cell.
+- **Shift & Arrow Keys:** Focusing a cell and then holding down <kbd>Shift</kbd> and using the arrow keys will create a range starting from the focused cell.
 
 Range Selection is enabled using the following grid option property `enableRangeSelection=true`.
 
@@ -25,8 +25,7 @@ The example below demonstrates simple range selection. Ranges can be selected in
 
 ## Suppress Multi Range Selection
 
-
-By default multiple ranges can be selected. To restrict range selection to a single range, even if the **Ctrl** key is held down, enable the following grid options property: `suppressMultiRangeSelection=true`.
+By default multiple ranges can be selected. To restrict range selection to a single range, even if the <kbd>Ctrl</kbd> key is held down, enable the following grid options property: `suppressMultiRangeSelection=true`.
 
 The following example demonstrates single range selection:
 
@@ -89,11 +88,11 @@ interface AddCellRangeParams {
     // start row
     rowStartIndex: number | null;
     rowStartPinned?: string; // either 'top', 'bottom' or undefined
-    
+
     // end row
     rowEndIndex: number | null;
     rowEndPinned?: string; // either 'top', 'bottom' or undefined
-    
+
     // columns
     columnStart?: string | Column;
     columnEnd?: string | Column;
@@ -104,7 +103,7 @@ interface AddCellRangeParams {
 Ranges are normally bounded by a start and end row. However it is also possible to define a range unbounded by rows (i.e. to contain all rows). For an unbounded range, do not provide start or end row positions.
 
 
-Row positions are defined by a row index and pinned. Row indexes start at zero and increment. Pinned can be either `'top'` (row is in pinned top section), `'bottom'` (row is in pinned bottom section) or `undefined` (row is in the main body). See [Row Pinning](../row-pinning/) for information on row pinning.
+Row positions are defined by a row index and pinned. Row indexes start at zero and increment. Pinned can be either `'top'` (row is in pinned top section), `'bottom'` (row is in pinned bottom section) or `undefined` (row is in the main body). See [Row Pinning](/row-pinning/) for information on row pinning.
 
 Ranges are defined by a list of columns. Pass in either a) a list of columns or b) a start and end column and let the grid work out the columns in between. Passing a list of columns instead of a start and end column has the advantage that the columns do not need to be contiguous.
 
@@ -116,10 +115,9 @@ The callback params has the following attributes: `value, node, column, api, col
 
 ## Copy Range Down
 
-When you have more than one row selected in a range, pressing keys **Ctrl + D** will copy the range down.
+When you have more than one row selected in a range, pressing keys <kbd>Ctrl</kbd>+<kbd>D</kbd> will copy the range down.
 
 ## Example: Advanced Range Selection
-
 
 The example below demonstrates a more complex range selection scenario. The example listens for the `rangeSelectionChanged` event and creates a sum of all the number values that are in the range (it ignores all non-number values). The `finished` flag is used to update the eager and lazy figures separately.
 

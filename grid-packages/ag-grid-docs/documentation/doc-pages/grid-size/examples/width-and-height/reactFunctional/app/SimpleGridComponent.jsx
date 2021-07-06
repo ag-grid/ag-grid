@@ -20,12 +20,6 @@ export default () => {
         }
     }, [rowData]);
 
-    useEffect(() => {
-        if (gridApi) {
-            gridApi.doLayout();
-        }
-    }, [style]);
-
     const onGridReady = (params) => {
         setGridApi(params.api);
 

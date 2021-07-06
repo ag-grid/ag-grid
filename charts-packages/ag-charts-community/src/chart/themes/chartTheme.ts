@@ -46,6 +46,7 @@ export class ChartTheme {
             right: {},
             bottom: {},
             left: {},
+            thickness: 0,
             title: {
                 padding: {
                     top: 10,
@@ -95,7 +96,8 @@ export class ChartTheme {
                 format: undefined
             },
             visible: true,
-            showInLegend: true
+            showInLegend: true,
+            cursor: 'default'
         };
     }
 
@@ -125,7 +127,8 @@ export class ChartTheme {
                 fontSize: 12,
                 fontFamily: this.fontFamily,
                 color: 'rgb(70, 70, 70)',
-                formatter: undefined
+                formatter: undefined,
+                placement: 'inside'
             },
             shadow: {
                 enabled: false,
@@ -211,7 +214,8 @@ export class ChartTheme {
                         fontStyle: undefined,
                         fontWeight: undefined,
                         fontSize: 12,
-                        fontFamily: this.fontFamily
+                        fontFamily: this.fontFamily,
+                        formatter: undefined
                     }
                 }
             },
@@ -229,6 +233,10 @@ export class ChartTheme {
         axes: {
             number: {
                 ...ChartTheme.getAxisDefaults()
+            },
+            log: {
+                ...ChartTheme.getAxisDefaults(),
+                base: 10
             },
             category: {
                 ...ChartTheme.getAxisDefaults()
@@ -266,6 +274,15 @@ export class ChartTheme {
                 },
                 marker: {
                     ...ChartTheme.getCartesianSeriesMarkerDefaults()
+                },
+                label: {
+                    enabled: false,
+                    fontStyle: undefined,
+                    fontWeight: undefined,
+                    fontSize: 12,
+                    fontFamily: ChartTheme.fontFamily,
+                    color: 'rgb(70, 70, 70)',
+                    formatter: undefined
                 }
             },
             scatter: {
@@ -317,6 +334,15 @@ export class ChartTheme {
                 marker: {
                     ...ChartTheme.getCartesianSeriesMarkerDefaults(),
                     enabled: false
+                },
+                label: {
+                    enabled: false,
+                    fontStyle: undefined,
+                    fontWeight: undefined,
+                    fontSize: 12,
+                    fontFamily: ChartTheme.fontFamily,
+                    color: 'rgb(70, 70, 70)',
+                    formatter: undefined
                 }
             },
             histogram: {
@@ -332,7 +358,7 @@ export class ChartTheme {
                 lineDash: undefined,
                 lineDashOffset: 0,
                 areaPlot: false,
-                binCount: undefined,
+                binCount: 10,
                 bins: undefined,
                 aggregation: 'sum',
                 tooltipRenderer: undefined,
@@ -445,7 +471,68 @@ export class ChartTheme {
             ...ChartTheme.getChartDefaults(),
             series: {
                 treemap: {
-                    ...ChartTheme.getSeriesDefaults()
+                    ...ChartTheme.getSeriesDefaults(),
+                    showInLegend: false,
+                    labelKey: 'label',
+                    sizeKey: 'size',
+                    colorKey: 'color',
+                    colorDomain: [-5, 5],
+                    colorRange: ['#cb4b3f', '#6acb64'],
+                    colorParents: false,
+                    gradient: true,
+                    nodePadding: 2,
+                    title: {
+                        enabled: true,
+                        color: 'white',
+                        fontStyle: undefined,
+                        fontWeight: 'bold',
+                        fontSize: 12,
+                        fontFamily: 'Verdana, sans-serif',
+                        padding: 15
+                    },
+                    subtitle: {
+                        enabled: true,
+                        color: 'white',
+                        fontStyle: undefined,
+                        fontWeight: undefined,
+                        fontSize: 9,
+                        fontFamily: 'Verdana, sans-serif',
+                        padding: 13
+                    },
+                    labels: {
+                        large: {
+                            enabled: true,
+                            fontStyle: undefined,
+                            fontWeight: 'bold',
+                            fontSize: 18,
+                            fontFamily: 'Verdana, sans-serif',
+                            color: 'white'
+                        },
+                        medium: {
+                            enabled: true,
+                            fontStyle: undefined,
+                            fontWeight: 'bold',
+                            fontSize: 14,
+                            fontFamily: 'Verdana, sans-serif',
+                            color: 'white'
+                        },
+                        small: {
+                            enabled: true,
+                            fontStyle: undefined,
+                            fontWeight: 'bold',
+                            fontSize: 10,
+                            fontFamily: 'Verdana, sans-serif',
+                            color: 'white'
+                        },
+                        color: {
+                            enabled: true,
+                            fontStyle: undefined,
+                            fontWeight: undefined,
+                            fontSize: 12,
+                            fontFamily: 'Verdana, sans-serif',
+                            color: 'white'
+                        }
+                    }
                 }
             }
         }
@@ -475,6 +562,12 @@ export class ChartTheme {
                         defaults[seriesType] = deepMerge(defaults[seriesType], overrides.polar, mergeOptions);
                     });
                 }
+                if (overrides.hierarchy) {
+                    defaults.hierarchy = deepMerge(defaults.hierarchy, overrides.hierarchy, mergeOptions);
+                    ChartTheme.hierarchySeriesTypes.forEach(seriesType => {
+                        defaults[seriesType] = deepMerge(defaults[seriesType], overrides.hierarchy, mergeOptions);
+                    });
+                }
                 ChartTheme.seriesTypes.forEach(seriesType => {
                     const chartConfig = overrides[seriesType];
                     if (chartConfig) {
@@ -493,6 +586,7 @@ export class ChartTheme {
 
     private static cartesianSeriesTypes: (keyof AgChartThemeOverrides)[] = ['line', 'area', 'bar', 'column', 'scatter', 'histogram'];
     private static polarSeriesTypes: (keyof AgChartThemeOverrides)[] = ['pie'];
+    private static hierarchySeriesTypes: (keyof AgChartThemeOverrides)[] = ['treemap'];
     private static seriesTypes: (keyof AgChartThemeOverrides)[] = ChartTheme.cartesianSeriesTypes.concat(ChartTheme.polarSeriesTypes);
 
     private createChartConfigPerSeries(config: any) {
@@ -510,8 +604,15 @@ export class ChartTheme {
         return config;
     }
 
-    getConfig<T = any>(path: string): T {
-        return getValue(this.config, path);
+    getConfig<T = any>(path: string, defaultValue?: T): T {
+        const value = getValue(this.config, path, defaultValue);
+        if (Array.isArray(value)) {
+            return deepMerge([], value, { arrayMerge });
+        }
+        if (isObject(value)) {
+            return deepMerge({}, value, { arrayMerge });
+        }
+        return value;
     }
 
     /**

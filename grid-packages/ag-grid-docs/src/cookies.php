@@ -1,6 +1,6 @@
 <?php
 $navKey = "cookies";
-include_once 'includes/html-helpers.php';
+require_once 'includes/html-helpers.php';
 gtm_data_layer('cookies');
 ?>
 <!DOCTYPE html>
@@ -8,7 +8,7 @@ gtm_data_layer('cookies');
 <head>
 <?php
 meta_and_links("AG Grid: Cookies Policy", "About AG Grid", "This page outlines our policy in relation to
-  the cookies that we collect on our website.", true);
+  the cookies that we collect on our website.", "cookies.php", true);
 ?>
 <script src="dist/homepage.js"></script>
 <link rel="stylesheet" href="dist/homepage.css">
@@ -56,7 +56,7 @@ meta_and_links("AG Grid: Cookies Policy", "About AG Grid", "This page outlines o
               any patterns with regards how you are using our website. This helps us to develop and improve our website as
               well as products and / or services in response to what you might need or want.
             </p>
-            <h3 class="text-uppercase">Cookies are either:</h2>
+            <h3 class="text-uppercase">Cookies are either:</h3>
             <ul>
               <li>
                 <strong>Session cookies:</strong> these are only stored on your computer during your web session and are
@@ -70,7 +70,7 @@ meta_and_links("AG Grid: Cookies Policy", "About AG Grid", "This page outlines o
                 that website again. We use persistent cookies for Google Analytics.
               </li>
             </ul>
-            <h3 class="text-uppercase">Cookies can also be categorised as follows:</strong></h2>
+            <h3 class="text-uppercase">Cookies can also be categorised as follows:</strong></h3>
             <ul>
               <li>
                 <strong>Strictly necessary cookies:</strong> These cookies are essential to enable you to use the website

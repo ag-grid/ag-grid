@@ -3,7 +3,7 @@ import { ICellEditorComp, ICellEditorParams } from "../interfaces/iCellEditor";
 import { ICellRendererComp, ICellRendererFunc, ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
 import { Column } from "./column";
 import { GridApi } from "../gridApi";
-import { ColumnApi } from "../columnController/columnApi";
+import { ColumnApi } from "../columns/columnApi";
 import { IHeaderGroupComp } from "../headerRendering/headerGroup/headerGroupComp";
 import { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent } from "../events";
 import { ITooltipComp, ITooltipParams } from "../rendering/tooltipComponent";
@@ -184,14 +184,16 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     cellEditorParams?: any;
     cellEditorSelector?: (params: ICellEditorParams) => ComponentSelectorResult;
 
-    /** A function for rendering a pinned row cell. */
+    /** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. */
     pinnedRowCellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
+    /** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. */
     pinnedRowCellRendererFramework?: any;
+    /** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. */
     pinnedRowCellRendererParams?: any;
 
     /** A function to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
     valueFormatter?: ((params: ValueFormatterParams) => string) | string;
-    /** A function to format a pinned row value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
+    /** @deprecated Use valueFormatter for pinned rows, and check params.node.rowPinned. */
     pinnedRowValueFormatter?: ((params: ValueFormatterParams) => string) | string;
 
     /** Gets called after editing, converts the value in the cell. */

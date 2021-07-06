@@ -9,12 +9,12 @@ import { ISimpleFilterModel, SimpleFilter } from '../../provided/simpleFilter';
 import { FilterChangedEvent } from '../../../events';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { isKeyPressed } from '../../../utils/keyboard';
-import { ColumnController } from '../../../columnController/columnController';
+import { ColumnModel } from '../../../columns/columnModel';
 import { KeyCode } from '../../../constants/keyCode';
 import { ITextFilterParams, TextFilter } from '../../provided/text/textFilter';
 
 export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
-    @Autowired('columnController') private readonly columnController: ColumnController;
+    @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @RefSelector('eFloatingFilterInput') private readonly eFloatingFilterInput: AgInputTextField;
 
     protected params: IFloatingFilterParams;
@@ -67,7 +67,7 @@ export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
             this.eFloatingFilterInput.setDisabled(true);
         }
 
-        const displayName = this.columnController.getDisplayNameForColumn(params.column, 'header', true);
+        const displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
         this.eFloatingFilterInput.setInputAriaLabel(`${displayName} ${translate('ariaFilterInput', 'Filter Input')}`);
     }

@@ -40,8 +40,7 @@ var options = {
             marker: {
                 fill: '#03a9f4',
                 stroke: '#0276ab'
-            },
-            tooltipEnabled: false
+            }
         },
         {
             data: [
@@ -85,8 +84,7 @@ var options = {
             marker: {
                 fill: '#8bc24a',
                 stroke: '#658d36'
-            },
-            tooltipEnabled: false
+            }
         }
     ],
     axes: [
@@ -98,9 +96,7 @@ var options = {
             type: 'number',
             position: 'left',
             label: {
-                formatter: function(params) {
-                    return params.value + '°C';
-                }
+                format: '#{.1f} °C'
             }
         }
     ],

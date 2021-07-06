@@ -1,3 +1,9 @@
+/**
+ * There are some issues which we have had to resolve by editing plugins as it was the only way to achieve what we
+ * needed to. This script applies these customisations by replacing content inside the node_modules after they've been
+ * installed; perhaps we should fork the plugins properly and point to those instead.
+ */
+
 const fs = require('fs-extra');
 
 const applyCustomisation = (packageName, expectedVersion, customisation) => {
@@ -88,7 +94,7 @@ const fixFileLoadingIssue = () => {
   const createAndProcessNode = path => {
     return createFileNode(path, createNodeId, pluginOptions)
       .catch(() => {
-        reporter.warn(\`Failed to create filenode for \${path}. Re-trying...\`);
+        reporter.warn(\`Failed to create FileNode for \${path}. Re-trying...\`);
         return createFileNode(path, createNodeId, pluginOptions);
       })
       .then(fileNode => {
@@ -96,9 +102,22 @@ const fixFileLoadingIssue = () => {
         return null;
       })
       .catch(error => {
-        reporter.panic(\`Failed to create node for \${path}\`, error);
+        reporter.error(\`Failed to create FileNode for \${path}\`, error);
       });
   };`
+        )
+    });
+};
+
+const restrictSearchForPageQueries = () => {
+    // restricts the files that Gatsby searches for queries, which improves performance
+
+    return applyCustomisation('gatsby', '2.32.9', {
+        name: 'Restrict search for page queries',
+        apply: () => updateFileContents(
+            './node_modules/gatsby/dist/query/query-compiler.js',
+            `path.join(base, \`src\`),`,
+            `path.join(base, \`src\`, \`templates\`),`,
         )
     });
 };
@@ -110,6 +129,7 @@ const success = [
     addMarkdownIncludeSupport(),
     fixScrollingIssue(),
     fixFileLoadingIssue(),
+    restrictSearchForPageQueries(),
 ].every(x => x);
 
 if (success) {

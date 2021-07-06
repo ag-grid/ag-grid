@@ -64,13 +64,41 @@ function createColSetB() {
     ];
 }
 
-var gridOptions = {
+const gridOptions = {
     defaultColDef: {
         initialWidth: 100,
         sortable: true,
         resizable: true
     },
-    columnDefs: createColSetA()
+    columnDefs: [
+        {
+            headerName: 'Group A',
+            groupId: 'groupA',
+            children: [
+                {field: 'athlete'},
+                {field: 'age'},
+                {field: 'country', columnGroupShow: 'open'},
+            ],
+        },
+        {
+            headerName: 'Group B',
+            children: [
+                {field: 'sport'},
+                {field: 'year'},
+                {field: 'date', columnGroupShow: 'open'}
+            ]
+        },
+        {
+            headerName: 'Group C',
+            groupId: 'groupC',
+            children: [
+                {field: 'total'},
+                {field: 'gold', columnGroupShow: 'open'},
+                {field: 'silver', columnGroupShow: 'open'},
+                {field: 'bronze', columnGroupShow: 'open'}
+            ],
+        }
+    ]
 };
 
 function onBtSetA() {
@@ -82,12 +110,12 @@ function onBtSetB() {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
-    var gridDiv = document.querySelector('#myGrid');
+document.addEventListener('DOMContentLoaded', () => {
+    const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
     agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
+        .then(data => {
             gridOptions.api.setRowData(data);
         });
 });

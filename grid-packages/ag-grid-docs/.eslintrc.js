@@ -1,14 +1,11 @@
 module.exports = {
     "env": {
         "browser": true,
-        "es6": false
+        "es2021": true
     },
     "globals": {
         "Atomics": "readonly",
         "SharedArrayBuffer": "readonly"
-    },
-    "parserOptions": {
-        "ecmaVersion": 5
     },
     "rules": {
     }

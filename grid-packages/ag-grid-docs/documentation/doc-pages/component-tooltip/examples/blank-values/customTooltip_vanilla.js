@@ -1,16 +1,15 @@
-function CustomTooltip() { }
+class CustomTooltip {
+    init(params) {
+        const eGui = this.eGui = document.createElement('div');
+        eGui.classList.add('custom-tooltip');
 
-CustomTooltip.prototype.init = function(params) {
-    var eGui = this.eGui = document.createElement('div');
-    eGui.classList.add('custom-tooltip');
+        const valueToDisplay = params.value.value ? params.value.value : '- Missing -';
 
-    var valueToDisplay = params.value.value ? params.value.value : '- Missing -';
+        eGui.innerHTML = `<p>Athlete's name:</p><p><span class"name">${valueToDisplay}</span></p>`;
+    }
 
-    eGui.innerHTML =
-        '<p>Athlete\'s name:</p>' +
-        '<p><span class"name">' + valueToDisplay + '</span></p>';
-};
+    getGui() {
+        return this.eGui;
+    }
+}
 
-CustomTooltip.prototype.getGui = function() {
-    return this.eGui;
-};

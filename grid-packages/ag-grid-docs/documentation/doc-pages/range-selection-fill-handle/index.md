@@ -9,7 +9,6 @@ When working with a Range Selection, a Fill Handle allows you to run operations 
 
 To enable the Fill Handle, simply set `enableFillHandle` to `true` in the `gridOptions`.
 
-
 The `fillHandleDirection` property can be set to `x`, `y` and `xy` in the `gridOptions` to force the preferred axis for the `Fill Handle`. This value is `xy` by default.
 
 [[note]]
@@ -20,17 +19,11 @@ The `fillHandleDirection` property can be set to `x`, `y` and `xy` in the `gridO
 The example below demonstrates the basic features of the fill handle:
 
 - When a range of numbers is selected and that range is extended, the Grid will detect the linear progression of the selected items and fill the extra cells with calculated values.
-
 - When a range of strings or a mix of strings and numbers are selected and that range is extended, the range items will be copied in order until all new cells have been properly filled.
-
-- When a range of numbers is selected and the range is increased while pressing the `Option / Alt` key, the behaviour will be the same as when a range of strings or mixed values is selected.
-
+- When a range of numbers is selected and the range is increased while pressing the <kbd>Alt</kbd>/<kbd>Option</kbd> key, the behaviour will be the same as when a range of strings or mixed values is selected.
 - When a single cell is selected and the range is increased, the value of that cell will be copied to the cells added to the range.
-
-- When a single cell containing a **number** value is selected and the range is increased while pressing the `Option / Alt` key, that value will be incremented (or decremented if dragging to the left or up) by the value of one until all new cells have been filled.
-
+- When a single cell containing a **number** value is selected and the range is increased while pressing the <kbd>Alt</kbd>/<kbd>Option</kbd> key, that value will be incremented (or decremented if dragging to the left or up) by the value of one until all new cells have been filled.
 - When reducing the size of the range, cells that are no longer part of the range will be cleared (set to `null`).
-
 
 <grid-example title='Fill Handle' name='fill-handle' type='generated' options='{ "enterprise": true, "exampleHeight": 560, "modules": ["clientside", "range"] }'></grid-example>
 

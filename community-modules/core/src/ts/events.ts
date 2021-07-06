@@ -2,12 +2,12 @@ import { RowNode } from './entities/rowNode';
 import { Column } from './entities/column';
 import { ColDef } from './entities/colDef';
 import { GridApi } from './gridApi';
-import { ColumnApi } from './columnController/columnApi';
+import { ColumnApi } from './columns/columnApi';
 import { OriginalColumnGroup } from './entities/originalColumnGroup';
 import { FilterRequestSource } from './filter/filterManager';
 import { ChartOptions, ChartType } from './interfaces/iChartOptions';
 import { IFilterComp } from './interfaces/iFilter';
-import { CellRange, CellRangeParams } from './interfaces/iRangeController';
+import { CellRange, CellRangeParams } from './interfaces/IRangeService';
 import { ChartModel } from './interfaces/IChartService';
 import { ServerSideTransactionResult } from "./interfaces/serverSideTransaction";
 import { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
@@ -24,6 +24,13 @@ export interface ModelUpdatedEvent extends AgGridEvent {
      * gets the grid to scroll to the top again. */
     newData: boolean | undefined;
     /** True when pagination and a new page is navigated to. */
+    newPage: boolean;
+}
+
+export interface PaginationChangedEvent extends AgGridEvent {
+    animate?: boolean;
+    keepRenderedRows?: boolean;
+    newData?: boolean;
     newPage: boolean;
 }
 
@@ -211,13 +218,6 @@ export interface FlashCellsEvent extends AgGridEvent {
     cells: any;
 }
 
-export interface PaginationChangedEvent extends AgGridEvent {
-    animate?: boolean;
-    keepRenderedRows?: boolean;
-    newData?: boolean;
-    newPage: boolean;
-}
-
 export interface PaginationPixelOffsetChangedEvent extends AgGridEvent {
 }
 
@@ -226,7 +226,8 @@ export interface PaginationPixelOffsetChangedEvent extends AgGridEvent {
 export interface CellFocusedEvent extends AgGridEvent {
     rowIndex: number | null;
     column: Column | null;
-    rowPinned?: string | null;
+    rowPinned: string | null;
+    isFullWidthCell: boolean;
     forceBrowserFocus?: boolean;
     // floating is for backwards compatibility, this is the same as rowPinned.
     // this is because the focus service doesn't keep references to rowNodes
@@ -325,6 +326,10 @@ export interface RowEditingStartedEvent extends RowEvent { }
 
 export interface RowEditingStoppedEvent extends RowEvent { }
 
+export interface FullWidthCellKeyDownEvent extends RowEvent { }
+
+export interface FullWidthCellKeyPressEvent extends RowEvent { }
+
 /**------------*/
 
 /** CELL EVENTS */
@@ -387,3 +392,10 @@ export interface ColumnAggFuncChangeRequestEvent extends ColumnRequestEvent {
 export interface ScrollVisibilityChangedEvent extends AgGridEvent { } // not documented
 
 export interface StoreUpdatedEvent extends AgEvent {} // not documented
+
+export interface LeftPinnedWidthChangedEvent extends AgEvent {} // not documented
+export interface RightPinnedWidthChangedEvent extends AgEvent {} // not documented
+
+export interface RowContainerHeightChanged extends AgEvent {} // not documented
+
+export interface DisplayedRowsChangedEvent extends AgEvent {} // not documented

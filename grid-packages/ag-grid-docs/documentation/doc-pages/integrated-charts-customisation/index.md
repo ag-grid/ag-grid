@@ -5,7 +5,7 @@ enterprise: true
 
 Chart themes can be used to customise the look and feel of your charts to match your application.
 
-AG Charts support [Chart Themes](../charts-themes/) to change how charts are styled. There are a number of chart themes provided out of the box by the grid. You can also provide your own custom chart theme to the grid to customise the colours of charts along with other styling options. Alternatively, you can just provide overrides to tweak the provided chart themes in the way you want.
+AG Charts support [Chart Themes](/charts-themes/) to change how charts are styled. There are a number of chart themes provided out of the box by the grid. You can also provide your own custom chart theme to the grid to customise the colours of charts along with other styling options. Alternatively, you can just provide overrides to tweak the provided chart themes in the way you want.
 
 ## Provided Themes
 
@@ -22,31 +22,30 @@ You can change which themes are available by setting the `chartThemes` property 
 ## Custom Chart Themes
 
 You can create your own chart theme and provide it to the grid in the `customChartThemes` map on `gridOptions`. Your theme should then be specified in `chartThemes` to make it available to your users.
-<snippet>
-const gridOptions = {
-    customChartThemes: {
-        myCustomTheme: {
-            baseTheme: 'ag-pastel',
-            palette: {
-                fills: ['#c16068', '#a2bf8a', '#ebcc87'],
-                strokes: ['#874349', '#718661', '#a48f5f']
-            },
-            overrides: {
-                common: {
-                    title: {
-                        fontSize: 22,
-                        fontFamily: 'Arial, sans-serif'
-                    }
-                }
-            }
-        }
-    },
-    chartThemes: ['myCustomTheme', 'ag-vivid']
-}
+<snippet spaceBetweenProperties="true">
+|const gridOptions = {
+|    customChartThemes: {
+|        myCustomTheme: {
+|            baseTheme: 'ag-pastel',
+|            palette: {
+|                fills: ['#c16068', '#a2bf8a', '#ebcc87'],
+|                strokes: ['#874349', '#718661', '#a48f5f']
+|            },
+|            overrides: {
+|                common: {
+|                    title: {
+|                        fontSize: 22,
+|                        fontFamily: 'Arial, sans-serif'
+|                    }
+|                }
+|            }
+|        }
+|    },
+|    chartThemes: ['myCustomTheme', 'ag-vivid']
+|}
 </snippet>
 
 The example below shows a custom chart theme being used with the grid. Note that other provided themes can be used alongside a custom theme, and are unaffected by the settings in the custom theme.
-
 
 <grid-example title='Custom Chart Theme' name='custom-chart-theme' type='generated' options='{ "exampleHeight": 660,"enterprise": true }'></grid-example>
 
@@ -107,7 +106,7 @@ These overrides can be used with any cartesian chart.
 
 ## Next Up
 
-Continue to the next section to learn about: [Chart Containers](../integrated-charts-container/).
+Continue to the next section to learn about: [Chart Containers](/integrated-charts-container/).
 
 
 

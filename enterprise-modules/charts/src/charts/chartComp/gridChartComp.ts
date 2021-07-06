@@ -10,7 +10,7 @@ import {
     ChartOptions,
     ChartType,
     ColumnApi,
-    ColumnController,
+    ColumnModel,
     Component,
     Environment,
     Events,
@@ -71,7 +71,7 @@ export class GridChartComp extends Component {
 
     @Autowired('environment') private readonly environment: Environment;
     @Autowired('chartTranslator') private readonly chartTranslator: ChartTranslator;
-    @Autowired('columnController') private readonly columnController: ColumnController;
+    @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('chartCrossFilter') private readonly crossFilter: ChartCrossFilter;
 
     @Autowired('gridApi') private readonly gridApi: GridApi;
@@ -89,8 +89,11 @@ export class GridChartComp extends Component {
     private chartType: ChartType;
     private chartThemeName?: string;
 
-    constructor(private readonly params: GridChartParams) {
+    private readonly params: GridChartParams;
+
+    constructor(params: GridChartParams) {
         super(GridChartComp.TEMPLATE);
+        this.params = params;
     }
 
     @PostConstruct
@@ -129,6 +132,9 @@ export class GridChartComp extends Component {
 
         // create chart before dialog to ensure dialog is correct size
         this.createChart();
+
+        // TODO should be removed along with processChartOptions()
+        this.params.processChartOptions = undefined;
 
         if (this.params.insideDialog) {
             this.addDialog();
@@ -395,7 +401,7 @@ export class GridChartComp extends Component {
     }
 
     private getChartDataType(colId: string): string | undefined {
-        const column = this.columnController.getPrimaryColumn(colId);
+        const column = this.columnModel.getPrimaryColumn(colId);
         return column ? column.getColDef().chartDataType : undefined;
     }
 
@@ -461,7 +467,7 @@ export class GridChartComp extends Component {
         }
 
         this.chartController.setChartRange(true);
-        (this.gridApi as any).focusController.clearFocusedCell();
+        (this.gridApi as any).focusService.clearFocusedCell();
     }
 
     private raiseChartCreatedEvent(): void {

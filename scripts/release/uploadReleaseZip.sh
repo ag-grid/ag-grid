@@ -17,15 +17,31 @@ function checkFileExists {
 }
 
 FILENAME=$1
+CREDENTIALS_LOCATION=$HOME/$CREDENTIALS_FILE
+SSH_LOCATION=$HOME/$SSH_FILE
+
+# a few safety checks
+if [ -z "$CREDENTIALS_LOCATION" ]
+then
+      echo "\$CREDENTIALS_LOCATION is not set"
+      exit;
+fi
+
+if [ -z "$SSH_LOCATION" ]
+then
+      echo "\$SSH_LOCATION is not set"
+      exit;
+fi
 
 checkFileExists $FILENAME
-checkFileExists ~/.ssh/ag_ssh
-checkFileExists ~/Documents/aggrid/aggrid/.creds
+checkFileExists $CREDENTIALS_LOCATION
+checkFileExists $SSH_LOCATION
+
 
 # upload file - note that this will be uploaded to the archive dir as this is where this ftps home account is
 # we'll move this file up one in the next step
-curl --netrc-file ~/Documents/aggrid/aggrid/.creds --ftp-create-dirs -T $FILENAME ftp://ag-grid.com/
+curl --netrc-file $CREDENTIALS_LOCATION --ftp-create-dirs -T $FILENAME ftp://ag-grid.com/
 
 # move file from the archives dir to the root
-ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com "mv public_html/archive/$FILENAME ./"
+ssh -i $SSH_LOCATION ceolter@ag-grid.com "mv public_html/archive/$FILENAME ./"
 

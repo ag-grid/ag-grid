@@ -72,21 +72,27 @@ export class SetLeftFeature extends BeanStub {
     }
 
     private animateInLeft(): void {
-        const left = this.getColumnOrGroup().getLeft();
-        const oldLeft = this.getColumnOrGroup().getOldLeft();
-        this.setLeft(oldLeft!);
+        const colOrGroup = this.getColumnOrGroup();
+
+        const left = colOrGroup.getLeft();
+        const oldLeft = colOrGroup.getOldLeft();
+
+        const oldActualLeft = this.modifyLeftForPrintLayout(colOrGroup, oldLeft!);
+        const actualLeft = this.modifyLeftForPrintLayout(colOrGroup, left!);
+
+        this.setLeft(oldActualLeft!);
 
         // we must keep track of the left we want to set to, as this would otherwise lead to a race
         // condition, if the user changed the left value many times in one VM turn, then we want to make
         // make sure the actualLeft we set in the timeout below (in the next VM turn) is the correct left
         // position. eg if user changes column position twice, then setLeft() below executes twice in next
         // VM turn, but only one (the correct one) should get applied.
-        this.actualLeft = left!;
+        this.actualLeft = actualLeft;
 
         this.beans.columnAnimationService.executeNextVMTurn(() => {
             // test this left value is the latest one to be applied, and if not, do nothing
-            if (this.actualLeft === left) {
-                this.setLeft(left);
+            if (this.actualLeft === actualLeft) {
+                this.setLeft(actualLeft);
             }
         });
     }
@@ -105,10 +111,10 @@ export class SetLeftFeature extends BeanStub {
             return leftPosition;
         }
 
-        const leftWidth = this.beans.columnController.getDisplayedColumnsLeftWidth();
+        const leftWidth = this.beans.columnModel.getDisplayedColumnsLeftWidth();
 
         if (colOrGroup.getPinned() === Constants.PINNED_RIGHT) {
-            const bodyWidth = this.beans.columnController.getBodyContainerWidth();
+            const bodyWidth = this.beans.columnModel.getBodyContainerWidth();
             return leftWidth + bodyWidth + leftPosition;
         }
 
@@ -141,7 +147,7 @@ export class SetLeftFeature extends BeanStub {
             indexColumn = children[0];
         }
 
-        const index = this.beans.columnController.getAriaColumnIndex(indexColumn);
+        const index = this.beans.columnModel.getAriaColumnIndex(indexColumn);
         setAriaColIndex(this.ariaEl, index);
     }
 }

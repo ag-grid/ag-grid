@@ -3,14 +3,10 @@
 @import "../common/syntax-highlight.scss";
 @import "../common/grid.scss";
 @import "../common/nav.scss";
-@import "../common/fontawesome";
 @import "../common/footer.scss";
 @import "../common/content.scss";
 @import "../common/note.scss";
-@import "../common/roadshow.scss";
 @import "../common/mixins.scss";
-@import "../common/animated_example.scss";
-@import "./punch.scss";
 @import "./demo.scss";
 @import "../pages/media_pages";
 @import "../pages/about.scss";
@@ -23,8 +19,6 @@
 @import "../pages/blog.scss";
 @import "../pages/privacy.scss";
 @import "../pages/cookies";
-@import "../pages/features-overview.scss";
-@import "../docs/example-runner.scss";
 
 html,
 body {
@@ -112,14 +106,19 @@ body {
         }
 
         .framework-boxes {
-            display: flex;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            @include media-breakpoint-up(sm) {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            @include media-breakpoint-up(lg) {
+                grid-template-columns: repeat(4, 1fr);
+            }
             box-sizing: border-box;
         }
 
         .framework-box {
             padding: 20px;
-            flex-basis: 25%;
         }
 
         .box-shadow {
@@ -386,109 +385,5 @@ body {
         #bestHtml5Grid.small:not(.tall) {
             height: 320px;
         }
-    }
-}
-
-#stage-show-me-more {
-    padding-top: 3rem;
-    margin-bottom: 0;
-    border-bottom: 0;
-    @extend .pb-5;
-    & > h2 {
-        @extend .display-4, .text-center, .full-width-row, .mb-5;
-    }
-
-    & > a {
-        @extend .btn, .btn-link, .btn-lg, .mx-auto, .d-block;
-        width: 25%;
-    }
-}
-
-#stage-feature-highlights {
-    padding-top: 3rem;
-    margin-bottom: 0;
-    border-bottom: 0;
-    @extend .pb-5;
-    & > h2 {
-        @extend .display-4, .text-center, .full-width-row, .mb-4;
-    }
-
-    #feature-content {
-        @extend .full-width-row, .row;
-
-        $border-width: 2px;
-
-        aside {
-            @extend .col-sm-2;
-            > .scroll-wrapper {
-                height: 100vh;
-                overflow: auto;
-                position: -webkit-sticky;
-                position: sticky;
-                padding-right: 3rem;
-                top: 0rem;
-
-                & > ul {
-                    font-size: 80%;
-                }
-
-                li {
-                    margin-bottom: 0.5rem;
-                }
-
-                a + ul {
-                    margin-top: 0.5rem;
-                    margin-bottom: 1.5rem;
-                }
-
-                ul {
-                    -webkit-padding-start: 0;
-                    padding-inline-start: 0;
-                    list-style-type: none;
-
-                    ul {
-                        font-weight: 300;
-                    }
-
-                    a {
-                        display: block;
-                        color: $gray-700;
-                    }
-
-                    a:hover {
-                        text-decoration: none;
-                    }
-
-                    .current-feature {
-                        > a,
-                        > a:hover {
-                            color: $blue-2;
-                            text-decoration: none;
-                            cursor: default;
-                        }
-                    }
-                }
-            }
-        }
-
-        section {
-            @extend .col-sm-9, .ml-auto;
-            @include roadshow;
-        }
-    }
-}
-
-div.animated-example {
-    img {
-        vertical-align: unset;
-    }
-
-    button:focus,
-    img:focus {
-        outline: none;
-    }
-
-    canvas {
-        opacity: 0.4;
     }
 }

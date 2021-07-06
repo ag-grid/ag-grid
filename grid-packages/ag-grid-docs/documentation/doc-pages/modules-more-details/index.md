@@ -2,7 +2,7 @@
 title: "AG Grid Modules - More Details"
 ---
 
-AG Grid `modules` allow you to pick and choose which features you require, resulting in a smaller application size overall, with the trade-off being that you need to register the modules you require.
+AG Grid `modules` allow you to pick and choose which features you need, resulting in a smaller application size overall, with the trade-off being that you need to register the modules you require.
 
 ## Introduction
 
@@ -14,7 +14,7 @@ AG Grid `modules` allow you to pick and choose which features you require, resul
 
 ### @ag-grid-enterprise/all-modules
 
-`@ag-grid-enterprise/all-modules` can be considered to be equivalent to `ag-grid-enterprise`, but with the additional need to register modules within. If using this module you might be better off using `ag-grid-enterprise` (along with `ag-grid-enterprise)` as the bundle size will be similar and will reduce the need to register modules.
+`@ag-grid-enterprise/all-modules` can be considered to be equivalent to `ag-grid-enterprise`, but with the additional need to register modules within. If using this module you might be better off using `ag-grid-enterprise` as the bundle size will be similar and will reduce the need to register modules.
 
 ![Enterprise All Modules](resources/enterprise-all-modules.png)
 
@@ -22,7 +22,7 @@ AG Grid `modules` allow you to pick and choose which features you require, resul
 
 [[note]]
 | If you decide to use `@ag-grid-enterprise/all-modules` then you do **not** need to
-| specify `@ag-grid-community/all-modules` too. `@ag-grid-enterprise/all-modules` 
+| specify `@ag-grid-community/all-modules` too. `@ag-grid-enterprise/all-modules`
 | will contain all Community modules.
 
 ### @ag-grid-community/core
@@ -38,7 +38,7 @@ For example, let's assume you specify the following in your `package.json`:
 
 ```js
 "dependencies": {
-    "@ag-grid-community/client-side-row-model": "~25.1.0"
+    "@ag-grid-community/client-side-row-model": "~25.3.0"
 }
 ```
 
@@ -66,7 +66,7 @@ For example, let's assume you specify the following in your `package.json`:
 
 ```js
 "dependencies": {
-    "@ag-grid-enterprise/filter-tool-panel": "~25.1.0"
+    "@ag-grid-enterprise/filter-tool-panel": "~25.3.0"
 }
 ```
 

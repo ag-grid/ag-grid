@@ -1,17 +1,14 @@
+![alt text](./github-banner.png "AG Grid")
 
-![alt text](./github-banner.png "Logo Title Text 1")
+[![CDNJS](https://img.shields.io/cdnjs/v/ag-grid)](https://cdnjs.com/libraries/ag-grid) [![npm](https://img.shields.io/npm/dm/ag-grid-angular)](https://www.npmjs.com/package/ag-grid-angular) [![Bundle Phobia](https://badgen.net/bundlephobia/minzip/ag-grid-angular)](https://bundlephobia.com/result?p=ag-grid-angular) [![Github Stars](https://img.shields.io/github/stars/ag-grid/ag-grid?style=social)](https://github.com/ag-grid/ag-grid) [![Twitter](https://img.shields.io/twitter/follow/ag_grid?style=social)](https://twitter.com/ag_grid)
 
-[![CDNJS](https://img.shields.io/cdnjs/v/ag-grid.svg)](https://cdnjs.com/libraries/ag-grid)
-[![npm](https://img.shields.io/npm/dm/ag-grid.svg)](https://www.npmjs.com/package/ag-grid)
-[![npm](https://img.shields.io/npm/dt/ag-grid.svg)](https://www.npmjs.com/package/ag-grid)
-
-ag-Grid Angular Component
+AG Grid Angular Component
 ------
 
-ag-Grid is a fully-featured and highly customizable JavaScript data grid.
+AG Grid is a fully-featured and highly customizable JavaScript data grid.
 It delivers [outstanding performance](https://www.ag-grid.com/example.php?utm_source=ag-grid-angular-readme&utm_medium=repository&utm_campaign=github#/performance/1), has no 3rd party dependencies and integrates smoothly with Angular as Angular Component. Here's how our grid looks like with multiple filters and grouping enabled:
 
-![alt text](./github-grid-demo.jpg "Logo Title Text 1")
+![alt text](./github-grid-demo.jpg "AG Grid")
 
 <br/>Version 22.1.1 of <code>ag-grid-angular</code> is the last version that supports Angular 5 and before.<br/>Version 23 onwards of <code>ag-grid-angular</code> will support Angular 6+ only.
 
@@ -25,7 +22,7 @@ Besides the standard set of features you'd expect from any grid:
 * Sorting
 * Row Selection
 
-Here are some of the features that make ag-Grid stand out:
+Here are some of the features that make AG Grid stand out:
 
 * Grouping / Aggregation*
 * Custom Filtering
@@ -116,7 +113,7 @@ Look for similar problems on [StackOverflow](https://stackoverflow.com/questions
 
 Contributing
 ------------
-ag-Grid is developed by a team of co-located developers in London. If you want to join the team check out our [jobs listing](https://www.ag-grid.com/ag-grid-jobs-board?utm_source=ag-grid-angular-readme&utm_medium=repository&utm_campaign=github) or send your application to info@ag-grid.com.
+AG Grid is developed by a team of co-located developers in London. If you want to join the team check out our [jobs listing](https://www.ag-grid.com/ag-grid-jobs-board?utm_source=ag-grid-angular-readme&utm_medium=repository&utm_campaign=github) or send your application to info@ag-grid.com.
 
 License
 ------------------

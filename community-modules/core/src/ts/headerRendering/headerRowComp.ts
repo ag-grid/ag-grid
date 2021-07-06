@@ -3,7 +3,7 @@ import { Autowired, PostConstruct, PreDestroy } from '../context/context';
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { ColumnGroupChild } from '../entities/columnGroupChild';
 import { ColumnGroup } from '../entities/columnGroup';
-import { ColumnController } from '../columnController/columnController';
+import { ColumnModel } from '../columns/columnModel';
 import { Column } from '../entities/column';
 import { Events } from '../events';
 import { HeaderWrapperComp } from './header/headerWrapperComp';
@@ -14,7 +14,7 @@ import { isBrowserSafari } from '../utils/browser';
 import { missing } from '../utils/generic';
 import { removeFromArray } from '../utils/array';
 import { setDomChildOrder } from '../utils/dom';
-import { FocusController } from '../focusController';
+import { FocusService } from '../focusService';
 import { AbstractHeaderWrapper } from './header/abstractHeaderWrapper';
 import { setAriaRowIndex } from '../utils/aria';
 
@@ -24,8 +24,8 @@ export enum HeaderRowType {
 
 export class HeaderRowComp extends Component {
 
-    @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('focusController') private focusController: FocusController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('focusService') private focusService: FocusService;
 
     private readonly pinned: string | null;
 
@@ -85,18 +85,18 @@ export class HeaderRowComp extends Component {
     }
 
     private onRowHeightChanged(): void {
-        let headerRowCount = this.columnController.getHeaderRowCount();
+        let headerRowCount = this.columnModel.getHeaderRowCount();
         const sizes: number[] = [];
 
         let numberOfFloating = 0;
         let groupHeight: number | null | undefined;
         let headerHeight: number | null | undefined;
 
-        if (this.columnController.isPivotMode()) {
+        if (this.columnModel.isPivotMode()) {
             groupHeight = this.gridOptionsWrapper.getPivotGroupHeaderHeight();
             headerHeight = this.gridOptionsWrapper.getPivotHeaderHeight();
         } else {
-            if (this.columnController.hasFloatingFilters()) {
+            if (this.columnModel.hasFloatingFilters()) {
                 headerRowCount++;
                 numberOfFloating = 1;
             }
@@ -159,16 +159,16 @@ export class HeaderRowComp extends Component {
             const centerRow = missing(this.pinned);
 
             if (centerRow) {
-                return this.columnController.getContainerWidth(Constants.PINNED_RIGHT)
-                    + this.columnController.getContainerWidth(Constants.PINNED_LEFT)
-                    + this.columnController.getContainerWidth(null);
+                return this.columnModel.getContainerWidth(Constants.PINNED_RIGHT)
+                    + this.columnModel.getContainerWidth(Constants.PINNED_LEFT)
+                    + this.columnModel.getContainerWidth(null);
             }
 
             return 0;
         }
 
         // if not printing, just return the width as normal
-        return this.columnController.getContainerWidth(this.pinned);
+        return this.columnModel.getContainerWidth(this.pinned);
     }
 
     private onDisplayedColumnsChanged(): void {
@@ -189,7 +189,7 @@ export class HeaderRowComp extends Component {
         const actualDepth = this.getActualDepth();
 
         [Constants.PINNED_LEFT, null, Constants.PINNED_RIGHT].forEach(pinned => {
-            const items = this.columnController.getVirtualHeaderGroupRow(pinned, actualDepth);
+            const items = this.columnModel.getVirtualHeaderGroupRow(pinned, actualDepth);
             viewportColumns = viewportColumns.concat(items);
         });
 
@@ -202,7 +202,7 @@ export class HeaderRowComp extends Component {
 
     private getColumnsInViewportNormalLayout(): ColumnGroupChild[] {
         // when in normal layout, we add the columns for that container only
-        return this.columnController.getVirtualHeaderGroupRow(this.pinned, this.getActualDepth());
+        return this.columnModel.getVirtualHeaderGroupRow(this.pinned, this.getActualDepth());
     }
 
     private onVirtualColumnsChanged(): void {
@@ -252,9 +252,9 @@ export class HeaderRowComp extends Component {
         // we want to keep columns that are focused, otherwise keyboard navigation breaks
         const isFocusedAndDisplayed = (colId: string) => {
             const wrapper = this.headerComps[colId];
-            const isFocused = this.focusController.isHeaderWrapperFocused(wrapper);
+            const isFocused = this.focusService.isHeaderWrapperFocused(wrapper);
             if (!isFocused) { return false; }
-            const isDisplayed = this.columnController.isDisplayed(wrapper.getColumn());
+            const isDisplayed = this.columnModel.isDisplayed(wrapper.getColumn());
             return isDisplayed;
         };
 

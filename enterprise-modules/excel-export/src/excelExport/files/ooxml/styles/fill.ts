@@ -1,4 +1,5 @@
 import { ExcelOOXMLTemplate, XmlElement } from '@ag-grid-community/core';
+import { Fill } from '../../../assets/excelInterfaces';
 
 const fillFactory: ExcelOOXMLTemplate = {
     getTemplate(fill: Fill) {
@@ -46,12 +47,3 @@ const fillFactory: ExcelOOXMLTemplate = {
 };
 
 export default fillFactory;
-
-export interface Fill {
-    patternType: string;
-    fgTheme?: string;
-    fgTint?: string;
-    fgRgb?: string;
-    bgIndexed?: string;
-    bgRgb?: string;
-}

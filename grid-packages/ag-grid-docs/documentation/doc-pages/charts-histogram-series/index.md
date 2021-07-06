@@ -50,7 +50,8 @@ series: [{
 }]
 ```
 
-Note that if you give the `bins` property you should not also give `binCount`, but if both are present `bins` takes precedence.
+[[warning]]
+| Note that if you give the `bins` property you should not also give `binCount`, but if both are present `bins` takes precedence.
 
 <chart-example title='Irregular Intervals' name='irregular-intervals' type='generated'></chart-example>
 
@@ -97,4 +98,4 @@ series: [{
 
 ## Next Up
 
-Continue to the next section to learn about [area series](../charts-area-series/).
+Continue to the next section to learn about [area series](/charts-area-series/).

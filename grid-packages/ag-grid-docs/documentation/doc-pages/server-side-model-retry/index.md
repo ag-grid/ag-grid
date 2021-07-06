@@ -13,7 +13,7 @@ Failed loads can be retried by using the grid API `retryServerSideLoads()`. This
 
 ### Examples
 
-Below shows two examples demonstrating retrying failed loads. One example uses the Full Store while the 
+Below shows two examples demonstrating retrying failed loads. One example uses the Full Store while the
 other uses the Partial Store. Both examples otherwise work identically. Note the following:
 
 - When the checkbox 'Make Loads Fail' is checked, all subsequent loads will fail, i.e. the Datasource will call `fail()` instead of `success()`. Try checking the checkbox and expand a few groups to observe failed loading.
@@ -32,5 +32,5 @@ The following is the retry example with Full Store:
 
 ## Next Up
 
-Continue to the next section to learn how to set [Row Height](../server-side-model-row-height/).
+Continue to the next section to learn how to set [Row Height](/server-side-model-row-height/).
 

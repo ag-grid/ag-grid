@@ -19,11 +19,13 @@ export function toFixed(value: number, fractionOrSignificantDigits: number = 2):
     return value.toFixed(Math.abs(power) - 1 + fractionOrSignificantDigits); // significant digits
 }
 
-const numberUnits = ["", "K", "M", "B", "T"];
+const numberUnits = ['', 'K', 'M', 'B', 'T'];
 
 export function log10(x: number): number {
     return Math.log(x) * Math.LOG10E;
 }
+
+export const EPSILON = Number.EPSILON || Math.pow(2, -52);
 
 export function toReadableNumber(value: number, fractionDigits: number = 2): string {
     // For example: toReadableNumber(10550000000) yields "10.6B"

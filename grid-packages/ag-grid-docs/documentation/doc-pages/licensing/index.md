@@ -23,7 +23,7 @@ The below table summarizes the features included in AG Grid Community and AG Gri
 
 ## Installing AG Grid Enterprise
 
-Each of the [Getting Started](../getting-started/) guides gives step by step instructions on how
+Each of the [Getting Started](/getting-started/) guides gives step by step instructions on how
 to get started using AG Grid Enterprise for the framework in question. In most cases, you do one of
 the following:
 
@@ -31,7 +31,7 @@ the following:
 
     ```js
     "dependencies": {
-        "@ag-grid-enterprise/all-modules": "~25.1.0"
+        "@ag-grid-enterprise/all-modules": "~25.3.0"
         ...
     }
     ```
@@ -77,7 +77,7 @@ the following:
     | </ag-grid-vue>
     | ```
 
-    Here we are including all modules provided by AG Grid - if you want to only pull in the modules you need (and thus reduce your overall bundle size) then please refer to the [modules](../modules/) documentation. How you use AG Grid (eg how you create a grid) does not change. With the one 'import' line of code above the grid will have all of the enterprise features at your disposal.
+    Here we are including all modules provided by AG Grid - if you want to only pull in the modules you need (and thus reduce your overall bundle size) then please refer to the [modules](/modules/) documentation. How you use AG Grid (eg how you create a grid) does not change. With the one 'import' line of code above the grid will have all of the enterprise features at your disposal.
 
     [[note]]
     | The versions of the modules you use (for example `@ag-grid-community/all-modules` and `@ag-grid-enterprise/all-modules` should match. They are released in tandem and expect the same version of each other.

@@ -1,7 +1,7 @@
 import { ChartOptions, ChartType } from "./iChartOptions";
 import { ChartRef } from "../entities/gridOptions";
 import { CreateCrossFilterChartParams, CreatePivotChartParams, CreateRangeChartParams } from "../gridApi";
-import { CellRangeParams } from "./iRangeController";
+import { CellRangeParams } from "./IRangeService";
 import { IAggFunc } from "../entities/colDef";
 
 export interface GetChartImageDataUrlParams {

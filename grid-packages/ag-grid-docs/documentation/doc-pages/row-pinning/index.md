@@ -38,4 +38,3 @@ Pinned rows are not part of the main row model. For this reason, the following i
 - **Filtering**: Pinned rows are not filtered.
 - **Row Grouping**: Pinned rows cannot be grouped.
 - **Row Selection**: Pinned rows cannot be selected.
-- `domLayout='print'`: Pinned rows cannot be printed.

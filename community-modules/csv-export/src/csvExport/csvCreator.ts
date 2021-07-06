@@ -1,7 +1,7 @@
 import {
     Autowired,
     Bean,
-    ColumnController,
+    ColumnModel,
     CsvCustomContent,
     CsvExportParams,
     GridOptionsWrapper,
@@ -17,20 +17,39 @@ import { CsvSerializingSession } from "./sessions/csvSerializingSession";
 @Bean('csvCreator')
 export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSession, CsvExportParams> implements ICsvCreator {
 
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('valueService') private valueService: ValueService;
-
-    @Autowired('downloader') private downloader: Downloader;
     @Autowired('gridSerializer') private gridSerializer: GridSerializer;
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
 
     @PostConstruct
     public postConstruct(): void {
         this.setBeans({
-            downloader: this.downloader,
             gridSerializer: this.gridSerializer,
             gridOptionsWrapper: this.gridOptionsWrapper
         });
+    }
+
+    protected getDefaultExportParams(): CsvExportParams | undefined {
+        return this.gridOptionsWrapper.getDefaultExportParams('csv');
+    }
+
+    public export(userParams?: CsvExportParams): string {
+        if (this.isExportSuppressed()) {
+            console.warn(`ag-grid: Export cancelled. Export is not allowed as per your configuration.`);
+            return '';
+        }
+
+        const { mergedParams, data } = this.getMergedParamsAndData(userParams);
+
+        const packagedFile = new Blob(["\ufeff", data], {
+            // @ts-ignore
+            type: window.navigator.msSaveOrOpenBlob ? this.getMimeType() : 'octet/stream'
+        });
+
+        Downloader.download(this.getFileName(mergedParams.fileName), packagedFile);
+
+        return data;
     }
 
     public exportDataAsCsv(params?: CsvExportParams): string {
@@ -38,7 +57,7 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
     }
 
     public getDataAsCsv(params?: CsvExportParams): string {
-        return this.getData(params);
+        return this.getMergedParamsAndData(params).data;
     }
 
     public getMimeType(): string {
@@ -54,7 +73,7 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
     }
 
     public createSerializingSession(params?: CsvExportParams): CsvSerializingSession {
-        const { columnController, valueService, gridOptionsWrapper } = this;
+        const { columnModel, valueService, gridOptionsWrapper } = this;
         const {
             processCellCallback,
             processHeaderCallback,
@@ -65,7 +84,7 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
         } = params!;
 
         return new CsvSerializingSession({
-            columnController,
+            columnModel: columnModel,
             valueService,
             gridOptionsWrapper,
             processCellCallback: processCellCallback || undefined,

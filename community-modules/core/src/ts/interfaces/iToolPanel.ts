@@ -1,6 +1,6 @@
 import { IComponent } from "./iComponent";
 import { GridApi } from "../gridApi";
-import { ColumnApi } from "../columnController/columnApi";
+import { ColumnApi } from "../columns/columnApi";
 import { ColDef, ColGroupDef } from "../entities/colDef";
 import { ColumnEventType } from "../events";
 
@@ -20,7 +20,6 @@ export interface ToolPanelColumnCompParams extends IToolPanelParams {
     suppressValues: boolean;
     suppressPivots: boolean;
     suppressPivotMode: boolean;
-    suppressSideButtons: boolean;
     suppressColumnFilter: boolean;
     suppressColumnSelectAll: boolean;
     suppressColumnExpandAll: boolean;

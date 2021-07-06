@@ -14,7 +14,7 @@ function getColumnDefs() {
     ];
 }
 
-var gridOptions = {
+const gridOptions = {
     defaultColDef: {
         initialWidth: 100,
         sortable: true,
@@ -25,7 +25,7 @@ var gridOptions = {
 };
 
 function setHeaderNames() {
-    var columnDefs = getColumnDefs();
+    const columnDefs = getColumnDefs();
     columnDefs.forEach(function(colDef, index) {
         colDef.headerName = 'C' + index;
     });
@@ -33,7 +33,7 @@ function setHeaderNames() {
 }
 
 function removeHeaderNames() {
-    var columnDefs = getColumnDefs();
+    const columnDefs = getColumnDefs();
     columnDefs.forEach(function(colDef, index) {
         colDef.headerName = undefined;
     });
@@ -41,7 +41,7 @@ function removeHeaderNames() {
 }
 
 function setValueFormatters() {
-    var columnDefs = getColumnDefs();
+    const columnDefs = getColumnDefs();
     columnDefs.forEach(function(colDef, index) {
         colDef.valueFormatter = function(params) {
             return '[ ' + params.value + ' ]';
@@ -52,7 +52,7 @@ function setValueFormatters() {
 }
 
 function removeValueFormatters() {
-    var columnDefs = getColumnDefs();
+    const columnDefs = getColumnDefs();
     columnDefs.forEach(function(colDef, index) {
         colDef.valueFormatter = undefined;
     });
@@ -61,12 +61,12 @@ function removeValueFormatters() {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
-    var gridDiv = document.querySelector('#myGrid');
+document.addEventListener('DOMContentLoaded', () => {
+    const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
     agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
+        .then(data => {
             gridOptions.api.setRowData(data);
         });
 });

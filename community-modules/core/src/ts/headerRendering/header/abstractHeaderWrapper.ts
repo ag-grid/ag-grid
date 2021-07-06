@@ -11,7 +11,7 @@ export abstract class AbstractHeaderWrapper extends ManagedFocusComponent {
     protected abstract onFocusIn(e: FocusEvent): void;
 
     protected shouldStopEventPropagation(e: KeyboardEvent): boolean {
-        const { headerRowIndex, column } = this.focusController.getFocusedHeader()!;
+        const { headerRowIndex, column } = this.focusService.getFocusedHeader()!;
 
         return isUserSuppressingHeaderKeyboardEvent(
             this.gridOptionsWrapper,

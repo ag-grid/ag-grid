@@ -1,5 +1,5 @@
-var columnDefs = [
-    { field: 'athlete', filter: false },
+const columnDefs = [
+    {field: 'athlete', filter: false},
     {
         field: 'gold',
         filter: 'agNumberColumnFilter',
@@ -42,7 +42,7 @@ var columnDefs = [
     }
 ];
 
-var gridOptions = {
+const gridOptions = {
     defaultColDef: {
         editable: true,
         sortable: true,
@@ -53,67 +53,19 @@ var gridOptions = {
         resizable: true,
     },
     components: {
-        customNumberFloatingFilter: getNumberFloatingFilterComponent()
+        customNumberFloatingFilter: NumberFloatingFilterComponent
     },
     columnDefs: columnDefs,
     rowData: null
 };
 
-function getNumberFloatingFilterComponent() {
-    function NumberFloatingFilter() {
-    }
-
-    NumberFloatingFilter.prototype.init = function(params) {
-        this.eGui = document.createElement('div');
-        this.eGui.innerHTML = '&gt; <input style="width: 30px" type="number" min="0" />';
-        this.currentValue = null;
-        this.eFilterInput = this.eGui.querySelector('input');
-        this.eFilterInput.style.color = params.color;
-        var that = this;
-
-        function onInputBoxChanged() {
-            if (that.eFilterInput.value === '') {
-                // Remove the filter
-                params.parentFilterInstance(function(instance) {
-                    instance.onFloatingFilterChanged(null, null);
-                });
-                return;
-            }
-
-            that.currentValue = Number(that.eFilterInput.value);
-            params.parentFilterInstance(function(instance) {
-                instance.onFloatingFilterChanged('greaterThan', that.currentValue);
-            });
-        }
-
-        this.eFilterInput.addEventListener('input', onInputBoxChanged);
-    };
-
-    NumberFloatingFilter.prototype.onParentModelChanged = function(parentModel) {
-        // When the filter is empty we will receive a null message her
-        if (!parentModel) {
-            this.eFilterInput.value = '';
-            this.currentValue = null;
-        } else {
-            this.eFilterInput.value = parentModel.filter + '';
-            this.currentValue = parentModel.filter;
-        }
-    };
-
-    NumberFloatingFilter.prototype.getGui = function() {
-        return this.eGui;
-    };
-
-    return NumberFloatingFilter;
-}
-
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
-    var gridDiv = document.querySelector('#myGrid');
+document.addEventListener('DOMContentLoaded', () => {
+    const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
+    agGrid.simpleHttpRequest({url: 'https://www.ag-grid.com/example-assets/olympic-winners.json'})
+        .then(data => {
             gridOptions.api.setRowData(data);
         });
 });

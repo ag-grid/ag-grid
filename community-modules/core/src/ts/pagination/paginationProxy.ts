@@ -3,7 +3,7 @@ import { BeanStub } from "../context/beanStub";
 import { Events, ModelUpdatedEvent, PaginationChangedEvent } from "../events";
 import { RowNode } from "../entities/rowNode";
 import { Autowired, Bean, PostConstruct } from "../context/context";
-import { ColumnApi } from "../columnController/columnApi";
+import { ColumnApi } from "../columns/columnApi";
 import { GridApi } from "../gridApi";
 import { missing, exists } from "../utils/generic";
 import { isNumeric } from "../utils/number";

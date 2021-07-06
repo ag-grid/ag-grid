@@ -12,7 +12,7 @@ var options = {
         xKey: 'year',
         yKeys: ['ie', 'firefox', 'safari', 'chrome'],
         yNames: ['IE', 'Firefox', 'Safari', 'Chrome'],
-        normalizedTo: 100,
+        normalizedTo: 1,
         marker: {
             enabled: true
         }
@@ -22,9 +22,7 @@ var options = {
             type: 'number',
             position: 'left',
             label: {
-                formatter: function(params) {
-                    return params.value + '%';
-                }
+                format: '.0%'
             }
         },
         {

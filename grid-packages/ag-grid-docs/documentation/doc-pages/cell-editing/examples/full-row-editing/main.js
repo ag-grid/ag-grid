@@ -8,9 +8,10 @@ var gridOptions = {
             }
         },
         {  field: 'model' },
+        {  field: 'field4', headerName: 'Read Only', editable: false },
         {  field: 'price', cellEditor: 'numericCellEditor' },
         {  headerName: 'Suppress Navigable', field: 'field5', suppressNavigable: true, minWidth: 200 },
-        {  headerName: 'Not Editable', field: 'field6', editable: false }
+        {  headerName: 'Read Only', field: 'field6', editable: false }
     ],
     defaultColDef: {
         flex: 1,
@@ -38,9 +39,9 @@ function onRowValueChanged(event) {
 function getRowData() {
     var rowData = [];
     for (var i = 0; i < 10; i++) {
-        rowData.push({ make: 'Toyota', model: 'Celica', price: 35000 + i * 1000, field5: 'Sample 22', field6: 'Sample 23' });
-        rowData.push({ make: 'Ford', model: 'Mondeo', price: 32000 + i * 1000, field5: 'Sample 24', field6: 'Sample 25' });
-        rowData.push({ make: 'Porsche', model: 'Boxter', price: 72000 + i * 1000, field5: 'Sample 26', field6: 'Sample 27' });
+        rowData.push({ make: 'Toyota', model: 'Celica', price: 35000 + i * 1000, field4: 'Sample XX', field5: 'Sample 22', field6: 'Sample 23' });
+        rowData.push({ make: 'Ford', model: 'Mondeo', price: 32000 + i * 1000, field4: 'Sample YY', field5: 'Sample 24', field6: 'Sample 25' });
+        rowData.push({ make: 'Porsche', model: 'Boxter', price: 72000 + i * 1000, field4: 'Sample ZZ', field5: 'Sample 26', field6: 'Sample 27' });
     }
     return rowData;
 }

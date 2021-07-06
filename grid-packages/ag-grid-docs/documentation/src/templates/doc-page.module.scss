@@ -30,7 +30,7 @@
     &__title {
         font-weight: 400;
 
-        &--enterprise:after {
+        &--enterprise::after {
             @extend %enterprise-icon;
             height: 1em;
             width: 1em;
@@ -38,14 +38,14 @@
         }
     }
 
-    enterprise-icon:after {
+    enterprise-icon::after {
         @extend %enterprise-icon;
         width: 1rem;
         margin-left: 0.25rem;
     }
 
     h2 {
-        enterprise-icon:after {
+        enterprise-icon::after {
             width: 1.5rem;
         }
     }
@@ -89,7 +89,27 @@
     a {
         &:hover {
             text-decoration: none;
-            color: $cyan;
+            color: $ag-orange;
         }
+    }
+
+    :global(.nav-link) {
+        p {
+            margin: 0;
+        }
+    }
+
+    kbd {
+        background-color: #f7f7f7;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2), 0 0 0 2px #fff inset;
+        color: #333;
+        display: inline-block;
+        font-family: Arial, Helvetica, sans-serif;
+        line-height: 1.4;
+        margin: 0 0.1em;
+        padding: 0.1em 0.6em;
+        text-shadow: 0 1px 0 #fff;
     }
 }

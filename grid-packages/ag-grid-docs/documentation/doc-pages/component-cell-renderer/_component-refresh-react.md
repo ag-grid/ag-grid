@@ -9,7 +9,7 @@
 |If you provide a `refresh` method then this method will be called over the component's props being refreshed.
 |
 |Note that if you're using Hooks for a Cell Renderer and decide to implement the `refresh` method then you'll need to expose it with
-|`forwardRef` & `useImperativeHandle`. Please refer to the [Hook](../react-hooks) documentation (or the examples on this page) for more information.
+|`forwardRef` & `useImperativeHandle`. Please refer to the [Hook](/react-hooks/) documentation (or the examples on this page) for more information.
 |
 |In the context of "refresh" being referenced from here on then it'll refer to either of the mechanisms above, whichever you choose to implement.
 |
@@ -19,10 +19,10 @@
 |
 |- Calling `rowNode.setDataValue(colKey, value)` to set a value directly onto the `rowNode`. This is the preferred API way to change one value from outside of the grid.
 |- When editing a cell and editing is stopped, so that cell displays new value after editing.
-|- Calling `api.refreshCells()` to inform grid data has changed (see [Refresh](../view-refresh/)).
-|- Bound `rowData` changes and `immutableData` is set (see [Immutable Data](../immutable-data/)).
+|- Calling `api.refreshCells()` to inform grid data has changed (see [Refresh](/view-refresh/)).
+|- Bound `rowData` changes and `immutableData` is set (see [Immutable Data](/immutable-data/)).
 |
-|If any of the above occur and the grid confirms the data has changed via [Change Detection](../change-detection/), then the `refresh()` method will be called.
+|If any of the above occur and the grid confirms the data has changed via [Change Detection](/change-detection/), then the `refresh()` method will be called.
 |
 |The following will **not** result in the cell renderer's refresh method being called:
 |
@@ -33,15 +33,15 @@
 |
 |[[note]]
 ||If the grid cannot safely determine a given row then cell components will always be replaced, instead of refreshed - as such
-||we strongly encourage [Immutable Data](../immutable-data/) be used whenever possible.
+||we strongly encourage [Immutable Data](/immutable-data/) be used whenever possible.
 ||
-||Doing so will allow ag-Grid to intelligently determine which cells have changed in a given update and only refresh those cells.
+||Doing so will allow AG Grid to intelligently determine which cells have changed in a given update and only refresh those cells.
 ||
 ||Using Immutable Data is analogous to providing a `key` to an array of components in React - it allows for cells to be refreshed (if possible) instead
 ||of being replaced.
 |
 |### Grid vs Component Refresh
 |
-|If you choose to implement the `refresh` method, then note that this method returns back a boolean value. If you do not 
-|want to handle the refresh in the cell renderer, just return back `false` from an otherwise empty method. This will 
+|If you choose to implement the `refresh` method, then note that this method returns back a boolean value. If you do not
+|want to handle the refresh in the cell renderer, just return back `false` from an otherwise empty method. This will
 |indicate to the grid that you did not refresh and the grid will instead destroy the component and create another instance of your component from scratch instead.

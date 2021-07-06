@@ -298,6 +298,7 @@ export class ColumnGroup implements ColumnGroupChild {
         // it not expandable, everything is visible
         if (!isExpandable) {
             this.displayedChildren = this.children;
+            this.localEventService.dispatchEvent(this.createAgEvent(ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED));
             return;
         }
 

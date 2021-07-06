@@ -5,6 +5,7 @@ import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { Autowired, Bean } from "../../context/context";
 import { StylingService } from "../../styling/stylingService";
 import { RowClassParams } from "../../entities/gridOptions";
+import { Constants } from "../../constants/constants";
 export interface RowCssClassCalculatorParams {
     rowNode: RowNode;
     rowIsEven: boolean;
@@ -15,6 +16,7 @@ export interface RowCssClassCalculatorParams {
     printLayout: boolean;
     expandable: boolean;
 
+    pinned?: string | null;
     extraCssClass?: string;
     rowFocused?: boolean;
     fadeRowIn?: boolean;
@@ -90,6 +92,15 @@ export class RowCssClassCalculator {
 
         if (params.lastRowOnPage) {
             classes.push('ag-row-last');
+        }
+
+        if (params.fullWidthRow) {
+            if (params.pinned === Constants.PINNED_LEFT) {
+                classes.push('ag-cell-last-left-pinned');
+            }
+            if (params.pinned === Constants.PINNED_RIGHT) {
+                classes.push('ag-cell-first-right-pinned');
+            }
         }
 
         return classes;

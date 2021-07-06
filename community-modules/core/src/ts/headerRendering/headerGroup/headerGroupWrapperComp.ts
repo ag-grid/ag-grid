@@ -1,9 +1,9 @@
 import { ColGroupDef } from "../../entities/colDef";
 import { Column } from "../../entities/column";
 import { ColumnGroup } from "../../entities/columnGroup";
-import { ColumnApi } from "../../columnController/columnApi";
+import { ColumnApi } from "../../columns/columnApi";
 import { Constants } from "../../constants/constants";
-import { ColumnController, ColumnResizeSet } from "../../columnController/columnController";
+import { ColumnModel, ColumnResizeSet } from "../../columns/columnModel";
 import { HorizontalResizeService } from "../horizontalResizeService";
 import { Autowired } from "../../context/context";
 import { CssClassApplier } from "../cssClassApplier";
@@ -27,6 +27,7 @@ import { removeFromArray } from "../../utils/array";
 import { removeFromParent, addCssClass, removeCssClass, addOrRemoveCssClass } from "../../utils/dom";
 import { KeyCode } from '../../constants/keyCode';
 import { ITooltipParams } from "../../rendering/tooltipComponent";
+import { escapeString } from "../../utils/string";
 
 export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
 
@@ -35,7 +36,7 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
             <div ref="agResize" class="ag-header-cell-resize" role="presentation"></div>
         </div>`;
 
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('horizontalResizeService') private horizontalResizeService: HorizontalResizeService;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
@@ -71,7 +72,7 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
 
         CssClassApplier.addHeaderClassesFromColDef(this.getComponentHolder(), this.getGui(), this.gridOptionsWrapper, null, this.column);
 
-        const displayName = this.columnController.getDisplayNameForColumnGroup(this.column, 'header');
+        const displayName = this.columnModel.getDisplayNameForColumnGroup(this.column, 'header');
 
         this.appendHeaderGroupComp(displayName!);
 
@@ -90,7 +91,7 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
     protected onFocusIn(e: FocusEvent) {
         if (!this.getGui().contains(e.relatedTarget as HTMLElement)) {
             const headerRow = this.getParentComponent() as HeaderRowComp;
-            this.beans.focusController.setFocusedHeader(
+            this.beans.focusService.setFocusedHeader(
                 headerRow.getRowIndex(),
                 this.getColumn()
             );
@@ -108,7 +109,7 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
             const column = this.getColumn() as ColumnGroup;
             const newExpandedValue = !column.isExpanded();
 
-            this.columnController.setColumnGroupOpened(column.getOriginalColumnGroup(), newExpandedValue, "uiColumnExpanded");
+            this.columnModel.setColumnGroupOpened(column.getOriginalColumnGroup(), newExpandedValue, "uiColumnExpanded");
         }
     }
 
@@ -170,6 +171,7 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
     private setupTooltip(): void {
         const colGroupDef = this.getComponentHolder();
         const tooltipText = colGroupDef && colGroupDef.headerTooltip;
+
         if (tooltipText != null) {
             this.setTooltip(tooltipText);
         }
@@ -191,7 +193,7 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
             displayName: displayName,
             columnGroup: this.column,
             setExpanded: (expanded: boolean) => {
-                this.columnController.setColumnGroupOpened(this.column.getOriginalColumnGroup(), expanded, "gridInitializing");
+                this.columnModel.setColumnGroupOpened(this.column.getOriginalColumnGroup(), expanded, "gridInitializing");
             },
             api: this.gridApi,
             columnApi: this.columnApi,
@@ -218,7 +220,7 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
             }
 
             if (!displayName) {
-                displayName = leafCols ? this.columnController.getDisplayNameForColumn(leafCols[0], 'header', true)! : '';
+                displayName = leafCols ? this.columnModel.getDisplayNameForColumn(leafCols[0], 'header', true)! : '';
             }
         }
 
@@ -275,7 +277,7 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
         allColumnsOriginalOrder.forEach(column => visibleState[column.getId()] = column.isVisible());
 
         const allColumnsCurrentOrder: Column[] = [];
-        this.columnController.getAllDisplayedColumns().forEach(column => {
+        this.columnModel.getAllDisplayedColumns().forEach(column => {
             if (allColumnsOriginalOrder.indexOf(column) >= 0) {
                 allColumnsCurrentOrder.push(column);
                 removeFromArray(allColumnsOriginalOrder, column);
@@ -382,7 +384,7 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
                 });
 
                 if (keys.length > 0) {
-                    this.columnController.autoSizeColumns(keys, skipHeaderOnAutoSize, "uiColumnResized");
+                    this.columnModel.autoSizeColumns(keys, skipHeaderOnAutoSize, "uiColumnResized");
                 }
             });
         }
@@ -399,7 +401,7 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
         let takeFromGroup: ColumnGroup | null = null;
 
         if (shiftKey) {
-            takeFromGroup = this.columnController.getDisplayedGroupAfter(this.column);
+            takeFromGroup = this.columnModel.getDisplayedGroupAfter(this.column);
         }
 
         if (takeFromGroup) {
@@ -439,7 +441,7 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
             });
         }
 
-        this.columnController.resizeColumnSets(resizeSets, finished, 'uiColumnDragged');
+        this.columnModel.resizeColumnSets(resizeSets, finished, 'uiColumnDragged');
 
         if (finished) {
             removeCssClass(this.getGui(), 'ag-column-resizing');

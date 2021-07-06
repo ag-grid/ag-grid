@@ -5,6 +5,9 @@ import { getIndexHtmlUrl } from './helpers';
 import { getIndexHtml } from './index-html-helper';
 import isDevelopment from 'utils/is-development';
 
+/**
+ * This executes the given example in an iframe.
+ */
 const ExampleRunnerResult = ({ isOnScreen = true, resultFrameIsVisible = true, exampleInfo }) => {
     const [isExecuting, setExecuting] = useState(isOnScreen && resultFrameIsVisible);
     const { pageName, name, internalFramework, importType } = exampleInfo;

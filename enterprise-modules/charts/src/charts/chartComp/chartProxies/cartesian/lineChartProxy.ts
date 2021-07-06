@@ -1,5 +1,6 @@
 import {
     AgLineSeriesOptions,
+    LineSeriesLabelOptions,
     CartesianChartOptions,
     HighlightOptions,
     LineSeriesOptions
@@ -17,10 +18,10 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
         this.recreateChart();
     }
 
-    protected createChart(options?: CartesianChartOptions<LineSeriesOptions>): CartesianChart {
+    protected createChart(): CartesianChart {
         const { grouping, parentElement } = this.chartProxyParams;
 
-        options = options || this.chartOptions;
+        const options = this.iChartOptions;
         const agChartOptions = options as AgCartesianChartOptions;
         agChartOptions.autoSize = true;
 
@@ -92,7 +93,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                 lineSeries.marker.stroke = stroke;
                 lineSeries.stroke = fill; // this is deliberate, so that the line colours match the fills of other series
             } else {
-                const { seriesDefaults } = this.chartOptions;
+                const { seriesDefaults } = this.iChartOptions;
                 const marker = {
                     ...seriesDefaults.marker,
                     fill,
@@ -135,8 +136,8 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
         this.updateLabelRotation(params.category.id, false, axisType);
     }
 
-    protected getDefaultOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<LineSeriesOptions> {
-        const options = super.getDefaultOptionsFromTheme(theme);
+    protected extractIChartOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<LineSeriesOptions> {
+        const options = super.extractIChartOptionsFromTheme(theme);
 
         const seriesDefaults = theme.getConfig<AgLineSeriesOptions>('line.series.line');
         options.seriesDefaults = {
@@ -149,10 +150,11 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                 opacity: 1
             },
             stroke: {
-                colors: theme.palette.strokes,
+                colors: (seriesDefaults.stroke && [seriesDefaults.stroke]) || theme.palette.strokes,
                 opacity: seriesDefaults.strokeOpacity,
                 width: seriesDefaults.strokeWidth
             },
+            label: seriesDefaults.label as LineSeriesLabelOptions,
             marker: {
                 enabled: seriesDefaults.marker!.enabled,
                 shape: seriesDefaults.marker!.shape,

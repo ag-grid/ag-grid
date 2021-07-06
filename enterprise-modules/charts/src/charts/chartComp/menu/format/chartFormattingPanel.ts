@@ -53,8 +53,8 @@ export class ChartFormattingPanel extends Component {
             case ChartType.StackedBar:
             case ChartType.NormalizedBar:
                 this.addComponent(new AxisPanel(this.chartController));
-                this.addComponent(new NavigatorPanel(this.chartController));
                 this.addComponent(new BarSeriesPanel(this.chartController));
+                this.addComponent(new NavigatorPanel(this.chartController));
                 break;
             case ChartType.Pie:
             case ChartType.Doughnut:
@@ -62,26 +62,26 @@ export class ChartFormattingPanel extends Component {
                 break;
             case ChartType.Line:
                 this.addComponent(new AxisPanel(this.chartController));
-                this.addComponent(new NavigatorPanel(this.chartController));
                 this.addComponent(new LineSeriesPanel(this.chartController));
+                this.addComponent(new NavigatorPanel(this.chartController));
                 break;
             case ChartType.Scatter:
             case ChartType.Bubble:
                 this.addComponent(new AxisPanel(this.chartController));
-                this.addComponent(new NavigatorPanel(this.chartController));
                 this.addComponent(new ScatterSeriesPanel(this.chartController));
+                this.addComponent(new NavigatorPanel(this.chartController));
                 break;
             case ChartType.Area:
             case ChartType.StackedArea:
             case ChartType.NormalizedArea:
                 this.addComponent(new AxisPanel(this.chartController));
-                this.addComponent(new NavigatorPanel(this.chartController));
                 this.addComponent(new AreaSeriesPanel(this.chartController));
+                this.addComponent(new NavigatorPanel(this.chartController));
                 break;
             case ChartType.Histogram:
                 this.addComponent(new AxisPanel(this.chartController));
-                this.addComponent(new NavigatorPanel(this.chartController));
                 this.addComponent(new HistogramSeriesPanel(this.chartController));
+                this.addComponent(new NavigatorPanel(this.chartController));
                 break;
             default:
                 console.warn(`AG Grid: ChartFormattingPanel - unexpected chart type index: ${chartType} supplied`);

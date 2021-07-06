@@ -10,21 +10,8 @@
             ]
         },
         "filterOptions": {
-            "description": "Array of <a href='../filter-provided-simple/#simple-filter-options'>Filter Options</a> to present to the user.",
-            "options": [
-                "equals",
-                "notEqual",
-                "contains",
-                "notContains",
-                "startsWith",
-                "endsWith",
-                "lessThan",
-                "lessThanOrEqual",
-                "greaterThan",
-                "greaterThanOrEqual",
-                "inRange",
-                "empty"
-            ],
+            "description": "Array of [Filter Options](/filter-provided-simple/#simple-filter-options) to present to the user. See [Filter Options](/filter-provided-simple/#simple-filter-options) for all options available to each filter type.",
+            "type": "string[]",
             "relevantTo": [
                 "Text",
                 "Number",
@@ -32,21 +19,8 @@
             ]
         },
         "defaultOption": {
-            "description": "The default <a href='../filter-provided-simple/#simple-filter-options'>Filter Option</a> to be selected.",
-            "options": [
-                "equals",
-                "notEqual",
-                "contains",
-                "notContains",
-                "startsWith",
-                "endsWith",
-                "lessThan",
-                "lessThanOrEqual",
-                "greaterThan",
-                "greaterThanOrEqual",
-                "inRange",
-                "empty"
-            ],
+            "description": "The default [Filter Option](/filter-provided-simple/#simple-filter-options) to be selected.",
+            "type": "string",
             "relevantTo": [
                 "Text",
                 "Number",
@@ -55,6 +29,7 @@
         },
         "defaultJoinOperator": {
             "description": "By default, the two conditions are combined using `AND`. You can change this default by setting this property.",
+            "type": "string",
             "options": [
                 "AND",
                 "OR"
@@ -78,7 +53,7 @@
             "description": "Used to override how to filter based on the user input.",
             "more": {
                 "name": "Text Custom Comparator",
-                "url": "../filter-text/#text-custom-comparator"
+                "url": "/filter-text/#text-custom-comparator"
             },
             "relevantTo": [
                 "Text"

@@ -24,10 +24,12 @@ function getMergeFunction(key: string, options: any) {
 }
 
 function getEnumerableOwnPropertySymbols(target: any): any[] {
-    return Object.getOwnPropertySymbols
+    // @ts-ignore
+    return Object.getOwnPropertySymbols 
+    // @ts-ignore
         ? Object.getOwnPropertySymbols(target).filter(function(symbol) {
             return target.propertyIsEnumerable(symbol);
-        })
+        }) 
         : [];
 }
 

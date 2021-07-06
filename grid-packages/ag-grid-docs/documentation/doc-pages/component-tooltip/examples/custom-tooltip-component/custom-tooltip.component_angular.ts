@@ -1,14 +1,15 @@
-import {Component, ViewEncapsulation} from '@angular/core';
+import {Component} from '@angular/core';
+import {ITooltipParams} from "@ag-grid-community/core";
 import {ITooltipAngularComp} from "@ag-grid-community/angular";
 
 @Component({
     selector: 'tooltip-component',
     template: `
-        <div class="custom-tooltip" [style.background-color]="data.color">
-            <p><span>{{data.athlete}}</span></p>
-            <p><span>Country: </span>{{data.country}}</p>
-            <p><span>Total: </span>{{data.total}}</p>
-        </div>`,
+      <div class="custom-tooltip" [style.background-color]="color">
+          <p><span>{{ data.athlete }}</span></p>
+          <p><span>Country: </span>{{ data.country }}</p>
+          <p><span>Total: </span>{{ data.total }}</p>
+      </div>`,
     styles: [
         `
             :host {
@@ -35,15 +36,14 @@ import {ITooltipAngularComp} from "@ag-grid-community/angular";
     ]
 })
 export class CustomTooltip implements ITooltipAngularComp {
+    private params: {color: string} & ITooltipParams;
+    private data: any[];
+    private color: string;
 
-    private params: any;
-    private data: any;
-
-    agInit(params): void {
+    agInit(params: {color: string} & ITooltipParams): void {
         this.params = params;
 
-
         this.data = params.api.getDisplayedRowAtIndex(params.rowIndex).data;
-        this.data.color = this.params.color || 'white';
+        this.color = this.params.color || 'white';
     }
 }

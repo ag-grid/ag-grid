@@ -63,7 +63,6 @@ export default class extends Component {
     }
 
     componentDidUpdate() {
-        this.gridApi.doLayout();
     }
 
     setWidthAndHeight(width, height) {

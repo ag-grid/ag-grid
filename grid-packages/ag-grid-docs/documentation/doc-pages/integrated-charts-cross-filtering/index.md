@@ -40,7 +40,7 @@ const gridOptions = {
 </snippet>
 
 [[note]]
-| Cross-filtering requires that grid filtering is enabled with either a [Set Filter](../filter-set/) or [Multi Filter](../filter-multi/) configured on the category column used in the chart. It is also important to define the [Chart Data Type](../integrated-charts-range-chart/#coldefchartdatatype) as it's not possible to infer the type when all data is filtered out..
+| Cross-filtering requires that grid filtering is enabled with either a [Set Filter](/filter-set/) or [Multi Filter](/filter-multi/) configured on the category column used in the chart. It is also important to define the [Chart Data Type](/integrated-charts-range-chart/#coldefchartdatatype) as it's not possible to infer the type when all data is filtered out..
 
 The following example shows how to create a simple cross-filtering pie chart. Note the following:
 
@@ -52,7 +52,7 @@ The following example shows how to create a simple cross-filtering pie chart. No
 
 ## Cross-filter API
 
-The cross-filter api shares a similar api to [Range Chart](../integrated-charts-api/#range-charts), however there are
+The cross-filter api shares a similar api to [Range Chart](/integrated-charts-api/#range-charts), however there are
 different defaults which make sense for cross-filtering.
 
 ```ts
@@ -79,4 +79,4 @@ The following examples show the different chart types that support cross-filteri
 
 ## Next Up
 
-Continue to the next section to learn about: [Time Series](../integrated-charts-time-series/).
+Continue to the next section to learn about: [Time Series](/integrated-charts-time-series/).

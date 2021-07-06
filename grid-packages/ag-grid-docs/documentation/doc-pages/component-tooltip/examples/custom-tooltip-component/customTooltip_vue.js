@@ -1,14 +1,12 @@
-import Vue from "vue";
-
-export default Vue.extend({
+export default {
     template: `
-            <div class="custom-tooltip">
-                <p><span>{{athlete}}</span></p>
-                <p><span>Country: </span>{{country}}</p>
-                <p><span>Total: </span>{{total}}</p>
-            </div>
+      <div class="custom-tooltip" v-bind:style="{ backgroundColor: color }">
+          <p><span>{{ data.athlete }}</span></p>
+          <p><span>Country: </span>{{ data.country }}</p>
+          <p><span>Total: </span>{{ data.total }}</p>
+      </div>
     `,
-    data: function() {
+    data: function () {
         return {
             color: null,
             athlete: null,
@@ -17,18 +15,7 @@ export default Vue.extend({
         };
     },
     beforeMount() {
-        var data = this.params.api.getDisplayedRowAtIndex(this.params.rowIndex).data;
-        data.color = this.params.color || 'white';
-        this.setState(data);
-    },
-    mounted() {
-        this.$el.style['background-color'] = this.color;
-    },
-    methods: {
-        setState(obj) {
-            const that = this;
-
-            Object.keys(obj).forEach(function(key) { that[key] = obj[key]; });
-        }
+        this.data = this.params.api.getDisplayedRowAtIndex(this.params.rowIndex).data;
+        this.color = this.params.color || 'white';
     }
-});
+};

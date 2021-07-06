@@ -28,7 +28,7 @@ mv ./$FILENAME public_html_tmp/
 cd public_html_tmp/ && unzip $FILENAME
 cd ..
 
-# copy non versionsed files & directories over
+# copy non versioned files & directories over
 echo "Copying non-versioned directories"
 cp -R ./public_html/support public_html_tmp/
 cp -R ./public_html/example-assets public_html_tmp/
@@ -42,6 +42,7 @@ cp -R ./public_html/__shared public_html_tmp/
 # jira stuff
 echo "Copying JIRA stuff"
 cp -R public_html/jira_reports/prod public_html_tmp/jira_reports/
+cp -R public_html/jira_reports/cache/changelog.json public_html_tmp/jira_reports/cache/changelog.json
 cp -R public_html/jira_reports/jira_config.json public_html_tmp/jira_reports/
 cp -R public_html/dist/aui public_html_tmp/dist
 

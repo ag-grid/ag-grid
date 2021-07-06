@@ -37,7 +37,7 @@ In the example below `getDisplayedRowCount()` will return back 7. This is compos
 ## Displayed Rows & Loading
 
 
-If using [Server-Side Row Model](../server-side-model/) or [Infinite Row Model](../infinite-scrolling/), the `getDisplayedRowCount()` will include the 'loading rows'. This is because Displayed Rows are a concern of the grid's rendering engine and not the underlying data. As far as the rendering engine is concerned, the 'loading row' is just another row to render.
+If using [Server-Side Row Model](/server-side-model/) or [Infinite Row Model](/infinite-scrolling/), the `getDisplayedRowCount()` will include the 'loading rows'. This is because Displayed Rows are a concern of the grid's rendering engine and not the underlying data. As far as the rendering engine is concerned, the 'loading row' is just another row to render.
 
 For example, calling `getDisplayedRowCount()` below will return 5 as there are 4 normal rows and 1 loading row.
 

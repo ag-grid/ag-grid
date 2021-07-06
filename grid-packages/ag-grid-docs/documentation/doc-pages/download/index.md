@@ -3,12 +3,12 @@ title: "Download AG Grid"
 frameworks: ["javascript"]
 ---
 
-If your project does not use package manager and you don't want to refer AG Grid from CDN, 
+If your project does not use package manager and you don't want to refer AG Grid from CDN,
 you can download the AG Grid's source files and keep them in your project structure.
 
 
 [[note]]
-| **Disclaimer:** This makes upgrading more complex and prone to errors. We recommend using AG Grid 
+| **Disclaimer:** This makes upgrading more complex and prone to errors. We recommend using AG Grid
 | from an NPM package or from CDN.
 
 ## Download AG Grid bundle
@@ -35,9 +35,9 @@ Again there are four bundle files in the distribution:
 - `dist/ag-grid-enterprise.noStyle.js` — standard bundle containing JavaScript without CSS
 - `dist/ag-grid-enterprise.min.noStyle.js ` — minified bundle containing JavaScript without CSS
 
-Should you decide to use the `noStyle` versions of the bundle, you should use the style files from 
+Should you decide to use the `noStyle` versions of the bundle, you should use the style files from
 the AG Grid bundle (all the styles needed for community and enterprise are in the community CSS files).
 
 
-After downloading the bundles, you can refer to the files in the same way as you would from CDN. Refer [the getting started section](../getting-started/) for step-by-step guide on that.
+After downloading the bundles, you can refer to the files in the same way as you would from CDN. Refer [the getting started section](/getting-started/) for step-by-step guide on that.
 

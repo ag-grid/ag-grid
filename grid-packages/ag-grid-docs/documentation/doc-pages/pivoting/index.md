@@ -19,7 +19,7 @@ Pivot mode is required to be turned on for pivoting to work. When the grid is in
 If pivot mode is off, then adding or removing pivot columns will have no effect.
 
 [[note]]
-| To allow a column to be used as pivot column via the [Tool Panel](../tool-panel/),
+| To allow a column to be used as pivot column via the [Tool Panel](/tool-panel/),
 | set `enablePivot=true` on the required columns. Otherwise you won't be able to drag
 | and drop the columns to the pivot drop zone from the Tool Panel.
 
@@ -92,7 +92,7 @@ As mentioned above, the secondary columns in the grid are created by the grid by
 |// look up the column that pivots on country Ireland and aggregates gold
 |const irelandGoldColumn = gridOptions.columnApi.getSecondaryPivotColumn(['Ireland'],'gold');
 |
-|// change the width of the secondary column 
+|// change the width of the secondary column
 |gridOptions.columnApi.setColumnWidth(irelandGoldColumn, newWidth);
 |
 |// look up the column that pivots on country SausageKingdom and year 2002 and aggregates silver
@@ -198,7 +198,7 @@ If you are not happy with the secondary columns provided by the grid, you have t
 
 ## Hide Open Parents
 
-The example below shows mixing in different options for the row group column. For more info on these properties, see [Grouping Rows](../grouping/).
+The example below shows mixing in different options for the row group column. For more info on these properties, see [Grouping Rows](/grouping/).
 
 - `groupHideOpenParents=true: ` So that when the row group is expanded, the parent row is not shown.
 - `groupMultiAutoColumn=true: ` So that one group column is created for each row group column (country and athlete).
@@ -210,4 +210,4 @@ The example below shows mixing in different options for the row group column. Fo
 
 While pivoting, you can do delta changes to your data and have the grid reflect this delta changes with animations.
 
-This is demonstrated in the section on [Change Detection and Pivot](../change-detection/#change-detection-and-pivot), so rather that repeat, check out the example there.
+This is demonstrated in the section on [Change Detection and Pivot](/change-detection/#change-detection-and-pivot), so rather that repeat, check out the example there.

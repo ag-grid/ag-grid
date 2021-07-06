@@ -1,22 +1,20 @@
 ![alt text](./github-banner.png "AG Grid")
 
-[![CDNJS](https://img.shields.io/cdnjs/v/ag-grid.svg)](https://cdnjs.com/libraries/ag-grid)
-[![npm](https://img.shields.io/npm/dm/ag-grid-community.svg)](https://www.npmjs.com/package/ag-grid-community)
-[![npm](https://img.shields.io/npm/dt/ag-grid-community.svg)](https://www.npmjs.com/package/ag-grid-community)
+[![CDNJS](https://img.shields.io/cdnjs/v/ag-grid)](https://cdnjs.com/libraries/ag-grid) [![Github Stars](https://img.shields.io/github/stars/ag-grid/ag-grid?style=social)](https://github.com/ag-grid/ag-grid) [![Twitter](https://img.shields.io/twitter/follow/ag_grid?style=social)](https://twitter.com/ag_grid)
 
-| Module              | SonarCloud Status |
+| Module              | Info |
 | --------------------|------------------:|
-| ag-grid-community   | [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ag-grid-community&metric=alert_status)](https://sonarcloud.io/dashboard?id=ag-grid-community) <br> |
-| ag-grid-enterprise  | [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ag-grid-enterprise&metric=alert_status)](https://sonarcloud.io/dashboard?id=ag-grid-enterprise) |
+| ag-grid-community   | [![npm](https://img.shields.io/npm/dm/ag-grid-community)](https://www.npmjs.com/package/ag-grid-community) <br> [![Bundle Phobia](https://badgen.net/bundlephobia/minzip/ag-grid-community)](https://bundlephobia.com/result?p=ag-grid-community) <br> [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ag-grid-community&metric=alert_status)](https://sonarcloud.io/dashboard?id=ag-grid-community) <br> |
+| ag-grid-enterprise  | [![npm](https://img.shields.io/npm/dm/ag-grid-enterprise)](https://www.npmjs.com/package/ag-grid-enterprise) <br> [![Bundle Phobia](https://badgen.net/bundlephobia/minzip/ag-grid-enterprise)](https://bundlephobia.com/result?p=ag-grid-enterprise) <br> [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ag-grid-enterprise&metric=alert_status)](https://sonarcloud.io/dashboard?id=ag-grid-enterprise) |
 
 # AG Grid
 
 AG Grid is a fully-featured and highly customizable JavaScript data grid.
-It delivers [outstanding performance](https://www.ag-grid.com/example.php?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github), has no third-party dependencies and [integrates smoothly with all major JavaScript frameworks](https://www.ag-grid.com/documentation/javascript/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github).
+It delivers [outstanding performance](https://www.ag-grid.com/example.php?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github), has no third-party dependencies and [integrates smoothly with all major JavaScript frameworks](https://www.ag-grid.com/javascript-grid/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github).
 
 Here's how our grid looks with multiple filters and grouping enabled:
 
-![alt text](./github-grid-demo.jpg "AG Grid demo")
+![alt text](./github-grid-demo.jpg "AG Grid Demo")
 
 ## Features
 
@@ -55,10 +53,10 @@ Check out the [developer documentation](https://www.ag-grid.com/documentation/?u
 
 ## Looking for a framework specific solution?
 
-* [Get Started with Angular](https://www.ag-grid.com/documentation/angular/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
-* [Get Started with React](https://www.ag-grid.com/documentation/react/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
-* [Get Started with Vue](https://www.ag-grid.com/documentation/vue/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
-* [Get Started with AngularJS](https://www.ag-grid.com/documentation/angular/angularjs/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
+* [Get Started with Angular](https://www.ag-grid.com/angular-grid/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
+* [Get Started with React](https://www.ag-grid.com/react-grid/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
+* [Get Started with Vue](https://www.ag-grid.com/vue-grid/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
+* [Get Started with AngularJS](https://www.ag-grid.com/angular-grid/angularjs/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
 
 ## Getting started
 
@@ -107,7 +105,7 @@ var eGridDiv = document.querySelector('#myGrid');
 new Grid(eGridDiv, this.gridOptions);
 ```
 
-For more information on how to integrate the grid into your project see [TypeScript - Building with Webpack 2](https://www.ag-grid.com/documentation/javascript/building-typescript/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github).
+For more information on how to integrate the grid into your project see [TypeScript - Building with Webpack 2](https://www.ag-grid.com/javascript-grid/building-typescript/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github).
 
 ## Issue Reporting
 

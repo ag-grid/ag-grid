@@ -1,4 +1,28 @@
-var rowData = [
+const countyToCityMap = match => {
+    const map = {
+        'Ireland': ['Dublin', 'Cork', 'Galway'],
+        'USA': ['New York', 'Los Angeles', 'Chicago', 'Houston']
+    };
+
+    return map[match];
+};
+
+const onCellValueChanged = params => {
+    const colId = params.column.getId();
+
+    if (colId === 'country') {
+        const selectedCountry = params.data.country;
+        const selectedCity = params.data.city;
+        const allowedCities = countyToCityMap(selectedCountry);
+        const cityMismatch = allowedCities.indexOf(selectedCity) < 0;
+
+        if (cityMismatch) {
+            params.node.setDataValue('city', null);
+        }
+    }
+}
+
+const rowData = [
     {
         name: 'Bob Harrison',
         gender: 'Male',
@@ -187,19 +211,17 @@ var rowData = [
     },
 ];
 
-function cellCellEditorParams(params) {
-    var selectedCountry = params.data.country;
-    var allowedCities = countyToCityMap(selectedCountry);
+const cellCellEditorParams = params => {
+    const selectedCountry = params.data.country;
+    const allowedCities = countyToCityMap(selectedCountry);
 
     return {
         values: allowedCities,
-        formatValue: function (value) {
-            return value + ' (' + selectedCountry + ')';
-        }
+        formatValue: value => `${value} (${selectedCountry})`
     };
-}
+};
 
-var gridOptions = {
+const gridOptions = {
     columnDefs: [
         {field: 'name'},
         {
@@ -239,32 +261,8 @@ var gridOptions = {
     onCellValueChanged: onCellValueChanged
 };
 
-function countyToCityMap(match) {
-    var map = {
-        'Ireland': ['Dublin', 'Cork', 'Galway'],
-        'USA': ['New York', 'Los Angeles', 'Chicago', 'Houston']
-    };
-
-    return map[match];
-}
-
-function onCellValueChanged(params) {
-    var colId = params.column.getId();
-
-    if (colId === 'country') {
-        var selectedCountry = params.data.country;
-        var selectedCity = params.data.city;
-        var allowedCities = countyToCityMap(selectedCountry);
-        var cityMismatch = allowedCities.indexOf(selectedCity) < 0;
-
-        if (cityMismatch) {
-            params.node.setDataValue('city', null);
-        }
-    }
-}
-
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector('#myGrid');
+document.addEventListener('DOMContentLoaded', () => {
+    const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 });

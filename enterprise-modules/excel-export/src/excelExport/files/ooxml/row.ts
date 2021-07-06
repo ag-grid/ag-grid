@@ -1,9 +1,9 @@
 import { ExcelOOXMLTemplate, ExcelRow, ExcelCell } from '@ag-grid-community/core';
-import { getExcelColumnName } from './worksheet';
+import { getExcelColumnName } from '../../assets/excelUtils';
 import cellFactory from './cell';
 
 const addEmptyCells = (cells: ExcelCell[], rowIdx: number): void => {
-    const mergeMap: {pos: number, excelPos: number}[] = [];
+    const mergeMap: { pos: number, excelPos: number }[] = [];
     let posCounter = 0;
     for (let i = 0; i < cells.length; i++) {
         const cell = cells[i];
@@ -36,11 +36,13 @@ const addEmptyCells = (cells: ExcelCell[], rowIdx: number): void => {
     }
 };
 
+const shouldDisplayCell = (cell: ExcelCell) => cell.data.value !== '' || cell.styleId !== undefined;
+
 const rowFactory: ExcelOOXMLTemplate = {
-    getTemplate(config: ExcelRow, idx: number) {
-        const {index, collapsed, hidden, height, s, cells = []} = config;
+    getTemplate(config: ExcelRow, idx: number, currentSheet: number) {
+        const { index, collapsed, hidden, height, s, cells = [] } = config;
         addEmptyCells(cells, idx);
-        const children = cells.map(cellFactory.getTemplate);
+        const children = cells.filter(shouldDisplayCell).map((cell, idx) => cellFactory.getTemplate(cell, idx, currentSheet));
 
         return {
             name: "row",

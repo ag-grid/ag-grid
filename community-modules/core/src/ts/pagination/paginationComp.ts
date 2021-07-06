@@ -3,7 +3,6 @@ import { Autowired, PostConstruct } from "../context/context";
 import { RefSelector } from "../widgets/componentAnnotations";
 import { Events } from "../events";
 import { PaginationProxy } from "./paginationProxy";
-import { IRowModel } from "../interfaces/iRowModel";
 import { createIconNoSpan } from "../utils/icon";
 import { formatNumberCommas } from "../utils/number";
 import { addOrRemoveCssClass } from "../utils/dom";
@@ -14,7 +13,6 @@ import { RowNodeBlockLoader } from "../rowNodeCache/rowNodeBlockLoader";
 export class PaginationComp extends Component {
 
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
-    @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
 
     @RefSelector('btFirst') private btFirst: HTMLElement;

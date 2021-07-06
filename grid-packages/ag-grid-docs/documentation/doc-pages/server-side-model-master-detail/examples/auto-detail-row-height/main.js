@@ -18,6 +18,7 @@ var gridOptions = {
 
     // enable master detail
     masterDetail: true,
+    detailRowAutoHeight: true,
 
     detailCellRendererParams: {
         detailGridOptions: {
@@ -35,8 +36,7 @@ var gridOptions = {
         getDetailRowData: function(params) {
             // supply details records to detail cell renderer (i.e. detail grid)
             params.successCallback(params.data.callRecords);
-        },
-        autoHeight: true
+        }
     },
 
     onGridReady: function(params) {

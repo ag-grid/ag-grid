@@ -15,6 +15,8 @@ import {
     IAfterGuiAttachedParams,
     AgPromise,
     KeyCode,
+    PositionableFeature,
+    ResizableStructure,
     _,
 } from '@ag-grid-community/core';
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
@@ -34,6 +36,7 @@ export class SetFilter extends ProvidedFilter<SetFilterModel> {
     private valueModel: SetValueModel | null = null;
     private setFilterParams: ISetFilterParams | null = null;
     private virtualList: VirtualList | null = null;
+    private positionableFeature: PositionableFeature;
 
     // To make the filtering super fast, we store the values in an object, and check for the boolean value.
     // Although Set would be a more natural choice of data structure, its performance across browsers is
@@ -42,6 +45,12 @@ export class SetFilter extends ProvidedFilter<SetFilterModel> {
 
     constructor() {
         super('setFilter');
+    }
+
+    protected postConstruct() {
+        super.postConstruct();
+        this.positionableFeature = new PositionableFeature(this.eSetFilterList, { forcePopupParentAsOffsetParent: true });
+        this.createBean(this.positionableFeature);
     }
 
     // unlike the simple filters, nothing in the set filter UI shows/hides.
@@ -399,6 +408,23 @@ export class SetFilter extends ProvidedFilter<SetFilterModel> {
         if (!params || !params.suppressFocus) {
             eMiniFilter.getFocusableElement().focus();
         }
+
+        const resizable = !!(params && params.container === 'floatingFilter');
+        let resizableObject: ResizableStructure;
+
+        if (this.gridOptionsWrapper.isEnableRtl()) {
+            resizableObject = { bottom: true, bottomLeft: true, left: true };
+        } else {
+            resizableObject = { bottom: true, bottomRight: true, right: true };
+        }
+
+        if (resizable) {
+            this.positionableFeature.restoreLastSize();
+            this.positionableFeature.setResizable(resizableObject);
+        } else {
+            this.positionableFeature.removeSizeFromEl();
+            this.positionableFeature.setResizable(false);
+        }
     }
 
     public applyModel(): boolean {
@@ -507,6 +533,8 @@ export class SetFilter extends ProvidedFilter<SetFilterModel> {
     public onAnyFilterChanged(): void {
         // don't block the current action when updating the values for this filter
         setTimeout(() => {
+            if (!this.isAlive()) { return; }
+
             if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
             this.valueModel.refreshAfterAnyFilterChanged().then(() => this.refresh());
@@ -818,6 +846,6 @@ class ModelWrapperWithSelectAll implements VirtualListModel {
     }
 
     public isRowSelected(index: number): boolean | undefined {
-        return index === 0 ? this.isSelectAllSelected() : this.model.isValueSelected(this.getRow(index - 1));
+        return index === 0 ? this.isSelectAllSelected() : this.model.isValueSelected(this.getRow(index));
     }
 }

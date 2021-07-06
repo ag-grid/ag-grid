@@ -243,7 +243,7 @@
     }
 
     .group-item {
-        margin: ag-param(grid-size) / 2 0;
+        margin: ag-param(grid-size) * 0.5 0;
     }
 
     .ag-label {
@@ -252,7 +252,7 @@
     }
 
     .ag-label-align-top .ag-label {
-        margin-bottom: ag-param(grid-size) / 2;
+        margin-bottom: ag-param(grid-size) * 0.5;
     }
 
     .ag-slider-field,
@@ -371,7 +371,6 @@
         @include ag-card();
         overflow: hidden;
         text-overflow: ellipsis;
-        z-index: 10;
         @include ag-border(secondary);
         @include ag-color-property(color, secondary-foreground-color);
         height: ag-param(header-height) !important;
@@ -491,7 +490,11 @@
     }
 
     .ag-column-select-virtual-list-viewport {
-        padding: (ag-param(widget-container-vertical-padding) / 2) ag-param(widget-container-horizontal-padding);
+        padding: (ag-param(widget-container-vertical-padding) * 0.5) 0px;
+    }
+
+    .ag-column-select-virtual-list-item {
+        margin: 0 ag-param(widget-container-horizontal-padding);
     }
 }
 
@@ -621,7 +624,7 @@
     width: ag-param(toggle-button-width);
     height: ag-param(toggle-button-height);
     @include ag-color-property(background-color, toggle-button-off-background-color);
-    border-radius: ag-param(toggle-button-height) / 2;
+    border-radius: ag-param(toggle-button-height) * 0.5;
     position: relative;
     flex: none;
     border: $border-width solid;
@@ -657,7 +660,7 @@
         height: ag-param(toggle-button-height);
         width: ag-param(toggle-button-height);
         @include ag-color-property(background-color, toggle-button-switch-background-color);
-        border-radius: ag-param(toggle-button-height) / 2;
+        border-radius: ag-param(toggle-button-height) * 0.5;
         transition: left 100ms;
         border: $border-width solid;
         @include ag-color-property(border-color, toggle-button-switch-border-color);

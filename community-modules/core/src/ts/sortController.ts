@@ -2,8 +2,8 @@ import { Autowired, Bean } from "./context/context";
 import { BeanStub } from "./context/beanStub";
 import { Column } from "./entities/column";
 import { Constants } from "./constants/constants";
-import { ColumnApi } from "./columnController/columnApi";
-import { ColumnController } from "./columnController/columnController";
+import { ColumnApi } from "./columns/columnApi";
+import { ColumnModel } from "./columns/columnModel";
 import { ColumnEventType, Events, SortChangedEvent } from "./events";
 import { GridApi } from "./gridApi";
 import { SortOption } from "./rowNodes/rowNodeSorter";
@@ -18,7 +18,7 @@ export class SortController extends BeanStub {
 
     private static DEFAULT_SORTING_ORDER = [Constants.SORT_ASC, Constants.SORT_DESC, null];
 
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 
@@ -65,7 +65,7 @@ export class SortController extends BeanStub {
         }
 
         // clear sort index on all cols not sorting
-        const allCols = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
+        const allCols = this.columnModel.getPrimaryAndSecondaryAndAutoColumns();
         allCols.filter(col => col.getSort() == null).forEach(col => col.setSortIndex());
     }
 
@@ -77,7 +77,7 @@ export class SortController extends BeanStub {
 
     public isSortActive(): boolean {
         // pull out all the columns that have sorting set
-        const allCols = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
+        const allCols = this.columnModel.getPrimaryAndSecondaryAndAutoColumns();
         const sortedCols = allCols.filter(column => !!column.getSort());
         return sortedCols && sortedCols.length > 0;
     }
@@ -92,7 +92,7 @@ export class SortController extends BeanStub {
     }
 
     private clearSortBarThisColumn(columnToSkip: Column, source: ColumnEventType): void {
-        this.columnController.getPrimaryAndSecondaryAndAutoColumns().forEach((columnToClear: Column) => {
+        this.columnModel.getPrimaryAndSecondaryAndAutoColumns().forEach((columnToClear: Column) => {
             // Do not clear if either holding shift, or if column in question was clicked
             if (columnToClear !== columnToSkip) {
                 // setting to 'undefined' as null means 'none' rather than cleared, otherwise issue will arise
@@ -140,7 +140,7 @@ export class SortController extends BeanStub {
 
     public getColumnsWithSortingOrdered(): Column[] {
         // pull out all the columns that have sorting set
-        const allColumnsIncludingAuto = this.columnController.getPrimaryAndSecondaryAndAutoColumns();
+        const allColumnsIncludingAuto = this.columnModel.getPrimaryAndSecondaryAndAutoColumns();
         const columnsWithSorting = allColumnsIncludingAuto.filter(column => !!column.getSort());
 
         // when both cols are missing sortIndex, we use the position of the col in all cols list.

@@ -93,10 +93,6 @@ export class TabbedChartMenu extends Component {
         };
     }
 
-    public getMinDimensions(): { width: number, height: number; } {
-        return this.tabbedLayout.getMinDimensions();
-    }
-
     public updateCurrentChartType(chartType: ChartType) {
         _.removeCssClass(this.chartIcons[this.currentChartType], 'ag-selected');
         this.currentChartType = chartType;

@@ -12,7 +12,7 @@ We walk through the main steps required when using AG Grid with Rollup.js.
 [[note]]
 | This walkthrough uses the `@ag-grid-community/all-modules` package which will include all
 | features of AG Grid. If you're using Rollup to reduce your bundle size you probably want to be selective
-| in which packages you include - please see the [Modules](../modules/) documentation for more
+| in which packages you include - please see the [Modules](/modules/) documentation for more
 | information.
 
 ## Initialise Project

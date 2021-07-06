@@ -13,14 +13,10 @@ VERSION=""${RAW_VERSION//./}""
 
 echo "Starting Docs Bundle Process"
 cd grid-packages/ag-grid-docs
-rm -rf dist
 
 echo "Gatsby Package"
 cd documentation
 GATSBY_HOST=www.ag-grid.com GATSBY_USE_PUBLISHED_PACKAGES=true npm run package
-
-echo "Update Algolia"
-node ./update-algolia.js
 cd ..
 
 echo "Building Docs Release Bundle"

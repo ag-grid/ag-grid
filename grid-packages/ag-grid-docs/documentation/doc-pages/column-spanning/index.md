@@ -9,8 +9,8 @@ By default, each cell will take up the width of one column. You can change this 
 Column spanning is set configured at the column definition level. To have a cell span more than one column, return how many columns to span in the callback `colDef.colSpan`.
 
 <snippet>
-const gridOptions = { 
-    columnDefs: [         
+const gridOptions = {
+    columnDefs: [
         {
             field: 'country',
             // col span is 2 for rows with Russia, but 1 for everything else
@@ -62,4 +62,4 @@ Column spanning will typically be used for creating reports with AG Grid. Below 
 
 Column Spanning breaks out of the row / cell calculations that a lot of features in the grid are based on. If using Column Spanning, be aware of the following:
 
-- [Range Selection](../range-selection/) will not work correctly when spanning cells. This is because it is not possible to cover all scenarios, as a range is no longer a perfect rectangle.
+- [Range Selection](/range-selection/) will not work correctly when spanning cells. This is because it is not possible to cover all scenarios, as a range is no longer a perfect rectangle.

@@ -13,6 +13,8 @@ import { ChartController } from "../../../chartController";
 import { MarkersPanel } from "./markersPanel";
 import { ChartTranslator } from "../../../chartTranslator";
 import { LineChartProxy } from "../../../chartProxies/cartesian/lineChartProxy";
+import { initFontPanelParams } from "../widgetInitialiser";
+import { FontPanel, FontPanelParams } from "../fontPanel";
 
 export class LineSeriesPanel extends Component {
 
@@ -54,6 +56,7 @@ export class LineSeriesPanel extends Component {
         this.initSeriesLineWidth();
         this.initSeriesLineDash();
         this.initMarkersPanel();
+        this.initLabelPanel();
     }
 
     private initSeriesGroup() {
@@ -95,6 +98,13 @@ export class LineSeriesPanel extends Component {
         const markersPanelComp = this.createBean(new MarkersPanel(this.chartController));
         this.seriesGroup.addItem(markersPanelComp);
         this.activePanels.push(markersPanelComp);
+    }
+
+    private initLabelPanel() {
+        const params: FontPanelParams = initFontPanelParams(this.chartTranslator, this.getChartProxy());
+        const labelPanelComp = this.createBean(new FontPanel(params));
+        this.activePanels.push(labelPanelComp);
+        this.seriesGroup.addItem(labelPanelComp);
     }
 
     private destroyActivePanels(): void {

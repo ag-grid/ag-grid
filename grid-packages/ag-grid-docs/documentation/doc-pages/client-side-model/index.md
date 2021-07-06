@@ -2,11 +2,11 @@
 title: "Client-Side Data"
 ---
 
-By default the grid expects you to provide all the data up front. In other words, your application loads the full set of data into the client and then passes it in its entirety to the grid. This is in contrast to [Server-Side Data](../row-models/) where the data is mostly kept on the server and loaded into the grid in parts.
+By default the grid expects you to provide all the data up front. In other words, your application loads the full set of data into the client and then passes it in its entirety to the grid. This is in contrast to [Server-Side Data](/row-models/) where the data is mostly kept on the server and loaded into the grid in parts.
 
 ## Row Models
 
-The grid has different Row Models depending on whether you want to use client-side or server-side data. There is only one client-side row model, aptly named the "Client-Side Row Model". You don't need to configure the grid to use the Client-Side Row Model as it's used by default. Check [Server-Side Data](../row-models/) to see what other row models are available and how to use them.
+The grid has different Row Models depending on whether you want to use client-side or server-side data. There is only one client-side row model, aptly named the "Client-Side Row Model". You don't need to configure the grid to use the Client-Side Row Model as it's used by default. Check [Server-Side Data](/row-models/) to see what other row models are available and how to use them.
 
 ## Client-Side Row-Model
 

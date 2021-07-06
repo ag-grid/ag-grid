@@ -46,7 +46,7 @@
                 color: $light;
             }
             @include media-breakpoint-up(sm) {
-                &:after {
+                &::after {
                     content: "";
                     height: 0.2rem;
                     width: 100%;

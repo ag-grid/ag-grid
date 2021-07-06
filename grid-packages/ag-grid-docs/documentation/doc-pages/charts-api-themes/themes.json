@@ -42,7 +42,7 @@
         "description": "Specifies defaults for all chart types. Be careful to only use properties that apply to all chart types here. For example, don't specify `navigator` configuration here as navigators are only available in cartesian charts.",
         "more": {
           "name": "Chart Configuration",
-          "url": "../charts-api-themes/#chart"
+          "url": "/charts-api-themes/#chart"
         }
       },
       "cartesian": {
@@ -50,7 +50,7 @@
         "description": "Specifies defaults for all cartesian charts (used for bar, column, histogram, line, scatter and area series).",
         "more": {
           "name": "Chart Configuration",
-          "url": "../charts-api-themes/#chart"
+          "url": "/charts-api-themes/#chart"
         }
       },
       "polar": {
@@ -58,7 +58,15 @@
         "description": "Specifies defaults for all polar charts (used for pie series).",
         "more": {
           "name": "Chart Configuration",
-          "url": "../charts-api-themes/#chart"
+          "url": "/charts-api-themes/#chart"
+        }
+      },
+      "hierarchy": {
+        "type": "IChart",
+        "description": "Specifies defaults for all hierarchy charts (used for treemap series).",
+        "more": {
+          "name": "Chart Configuration",
+          "url": "/charts-api-themes/#chart"
         }
       },
       "bar": {
@@ -66,7 +74,7 @@
         "description": "Specifies defaults for bar/column charts.",
         "more": {
           "name": "Chart Configuration",
-          "url": "../charts-api-themes/#chart"
+          "url": "/charts-api-themes/#chart"
         }
       },
       "histogram": {
@@ -74,7 +82,7 @@
         "description": "Specifies defaults for histogram charts.",
         "more": {
           "name": "Chart Configuration",
-          "url": "../charts-api-themes/#chart"
+          "url": "/charts-api-themes/#chart"
         }
       },
       "line": {
@@ -82,7 +90,7 @@
         "description": "Specifies defaults for line charts.",
         "more": {
           "name": "Chart Configuration",
-          "url": "../charts-api-themes/#chart"
+          "url": "/charts-api-themes/#chart"
         }
       },
       "scatter": {
@@ -90,7 +98,7 @@
         "description": "Specifies defaults for scatter/bubble charts.",
         "more": {
           "name": "Chart Configuration",
-          "url": "../charts-api-themes/#chart"
+          "url": "/charts-api-themes/#chart"
         }
       },
       "area": {
@@ -98,7 +106,7 @@
         "description": "Specifies defaults for line charts.",
         "more": {
           "name": "Chart Configuration",
-          "url": "../charts-api-themes/#chart"
+          "url": "/charts-api-themes/#chart"
         }
       },
       "pie": {
@@ -106,7 +114,7 @@
         "description": "Specifies defaults for pie/doughnut charts.",
         "more": {
           "name": "Chart Configuration",
-          "url": "../charts-api-themes/#chart"
+          "url": "/charts-api-themes/#chart"
         }
       }
     }
@@ -114,7 +122,7 @@
   "chart": {
     "meta": {
       "displayName": "Chart Configuration",
-      "description": "This is the common configuration shared by all types of chart, as used in the <a href='../charts-api-themes/#reference-theme.overrides'>overrides</a> object."
+      "description": "This is the common configuration shared by all types of chart, as used in the [overrides](/charts-api-themes/#reference-theme.overrides) object."
     },
     "autoSize": {
       "default": true,
@@ -131,6 +139,29 @@
       "description": "The height of the chart in pixels. Has no effect if `autoSize` is set to `true`.",
       "min": 1,
       "unit": "px"
+    },
+    "tooltip": {
+      "meta": {
+        "description": "Global configuration that applies to all tooltips in the chart."
+      },
+      "enabled": {
+        "type": "boolean",
+        "default": true,
+        "description": "Set to false to disable tooltips for all series in the chart."
+      },
+      "tracking": {
+        "type": "boolean",
+        "default": true,
+        "description": "If true, for series with markers the tooltip will be shown to the closest marker."
+      },
+      "class": {
+        "type": "string",
+        "description": "A class name to be added to the tooltip element of the chart."
+      },
+      "delay": {
+        "default": 0,
+        "description": "The time interval (in milliseconds) after which the tooltip is shown."
+      }
     },
     "padding": {
       "meta": {
@@ -325,101 +356,127 @@
         "max": 40,
         "unit": "px"
       },
-      "layoutHorizontalSpacing": {
-        "default": 16,
-        "description": "The horizontal spacing in pixels to use between legend items.",
-        "min": 0,
-        "max": 40,
-        "unit": "px"
-      },
-      "layoutVerticalSpacing": {
-        "default": 8,
-        "description": "The vertical spacing in pixels to use between legend items.",
-        "min": 0,
-        "max": 40,
-        "unit": "px"
-      },
-      "itemSpacing": {
-        "default": 8,
-        "description": "The spacing in pixels between a legend marker and the corresponding label.",
-        "min": 0,
-        "max": 40,
-        "unit": "px"
-      },
-      "markerShape": {
-        "type": "string",
-        "description": "If set, overrides the marker shape from the series and the Legend will show the specified marker shape instead. If not set, will use a marker shape matching the shape from the series, or fall back to square if there is none.",
-        "options": [
-          "circle",
-          "cross",
-          "diamond",
-          "plus",
-          "square",
-          "triangle"
-        ]
-      },
-      "markerSize": {
-        "default": 15,
-        "description": "The size in pixels of the markers in the legend.",
-        "min": 0,
-        "max": 30,
-        "unit": "px"
-      },
-      "strokeWidth": {
-        "default": 1,
-        "description": "The width in pixels of the stroke for markers in the legend.",
-        "min": 0,
-        "max": 10,
-        "unit": "px"
-      },
-      "color": {
-        "default": "black",
-        "description": "The colour of the text."
-      },
-      "fontStyle": {
-        "default": "normal",
-        "options": [
-          "normal",
-          "italic",
-          "oblique"
-        ],
-        "description": "The font style to use for the legend."
-      },
-      "fontWeight": {
-        "default": "normal",
-        "options": [
-          "normal",
-          "bold",
-          "bolder",
-          "lighter",
-          "100",
-          "200",
-          "300",
-          "400",
-          "500",
-          "600",
-          "700",
-          "800",
-          "900"
-        ],
-        "description": "The font weight to use for the legend.",
-        "breakIndex": 4
-      },
-      "fontSize": {
-        "default": 12,
-        "description": "The font size in pixels to use for the legend.",
-        "min": 1,
-        "max": 30,
-        "unit": "px"
-      },
-      "fontFamily": {
-        "default": "Verdana, sans-serif",
-        "suggestions": [
-          "Verdana, sans-serif",
-          "Arial, sans-serif",
-          "Times New Roman, serif"
-        ],
-        "description": "The font family to use for the legend."
+      "item": {
+        "meta": {
+          "description": "Configuration for the legend items that consist of a marker and a label."
+        },
+        "paddingX": {
+          "default": 16,
+          "description": "The horizontal spacing in pixels to use between legend items.",
+          "min": 0,
+          "max": 40,
+          "unit": "px"
+        },
+        "paddingY": {
+          "default": 8,
+          "description": "The vertical spacing in pixels to use between legend items.",
+          "min": 0,
+          "max": 40,
+          "unit": "px"
+        },
+        "marker": {
+          "meta": {
+            "description": "Configuration for the legend markers."
+          },
+          "padding": {
+            "default": 8,
+            "description": "The padding in pixels between a legend marker and the corresponding label.",
+            "min": 0,
+            "max": 40,
+            "unit": "px"
+          },
+          "shape": {
+            "type": "string",
+            "description": "If set, overrides the marker shape from the series and the legend will show the specified marker shape instead. If not set, will use a marker shape matching the shape from the series, or fall back to <code>'square'</code> if there is none.",
+            "options": [
+              "circle",
+              "cross",
+              "diamond",
+              "plus",
+              "square",
+              "triangle"
+            ]
+          },
+          "size": {
+            "default": 15,
+            "description": "The size in pixels of the markers in the legend.",
+            "min": 0,
+            "max": 30,
+            "unit": "px"
+          },
+          "strokeWidth": {
+            "default": 1,
+            "description": "The width in pixels of the stroke for markers in the legend.",
+            "min": 0,
+            "max": 10,
+            "unit": "px"
+          }
+        },
+        "label": {
+          "meta": {
+            "description": "Configuration for the legend labels."
+          },
+          "color": {
+            "default": "black",
+            "description": "The colour of the text."
+          },
+          "fontStyle": {
+            "default": "normal",
+            "options": [
+              "normal",
+              "italic",
+              "oblique"
+            ],
+            "description": "The font style to use for the legend."
+          },
+          "fontWeight": {
+            "default": "normal",
+            "options": [
+              "normal",
+              "bold",
+              "bolder",
+              "lighter",
+              "100",
+              "200",
+              "300",
+              "400",
+              "500",
+              "600",
+              "700",
+              "800",
+              "900"
+            ],
+            "description": "The font weight to use for the legend.",
+            "breakIndex": 4
+          },
+          "fontSize": {
+            "default": 12,
+            "description": "The font size in pixels to use for the legend.",
+            "min": 1,
+            "max": 30,
+            "unit": "px"
+          },
+          "fontFamily": {
+            "default": "Verdana, sans-serif",
+            "suggestions": [
+              "Verdana, sans-serif",
+              "Arial, sans-serif",
+              "Times New Roman, serif"
+            ],
+            "description": "The font family to use for the legend."
+          },
+          "formatter": {
+            "type": {
+              "parameters": {
+                "id": "string",
+                "itemId": "any",
+                "label": "{ text: string }"
+              },
+              "returnType": "string"
+            },
+            "description": "Function used to render legend labels. Where <code>id</code> is a series ID, <code>itemId</code> is component ID within a series, such as a field name or an item index."
+          }
+        }
       }
     },
     "navigator": {
@@ -579,7 +636,7 @@
       "number": {
         "meta": {
           "type": "INumberAxis",
-          "description": "This extends the <a href='../charts-api-themes/#reference-axis'>common axis configuration</a> with options specific to number axes."
+          "description": "This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to number axes."
         },
         "nice": {
           "default": true,
@@ -594,10 +651,33 @@
           "description": "The maximum value for the axis."
         }
       },
+      "log": {
+        "meta": {
+          "type": "ILogAxis",
+          "description": "This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to number axes."
+        },
+        "nice": {
+          "default": true,
+          "description": "If `true`, the axis will adjust to align the left and right edge of the chart with a tick. Otherwise, the axis will be the minimum required width to show all the data."
+        },
+        "min": {
+          "type": "number",
+          "description": "The minimum value for the axis."
+        },
+        "max": {
+          "type": "number",
+          "description": "The maximum value for the axis."
+        },
+        "base": {
+          "type": "number",
+          "default": 10,
+          "description": "The logarithm base. For example, 10 for the common logarithm, Math.E for the natural logarithm, and so on."
+        }
+      },
       "category": {
         "meta": {
           "type": "ICategoryAxis",
-          "description": "This extends the <a href=''../charts-api-themes/#reference-axes'>common axis configuration</a> with options specific to category axes."
+          "description": "This extends the [common axis configuration](/charts-api-themes/#reference-axes) with options specific to category axes."
         },
         "paddingInner": {
           "type": "number",
@@ -611,13 +691,13 @@
       "groupedCategory": {
         "meta": {
           "type": "IGroupedCategoryAxis",
-          "description": "This extends the <a href='../charts-api-themes/#reference-axis'>common axis configuration</a> with options specific to grouped category axes. Currently there are no additional options beyond the common configuration."
+          "description": "This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to grouped category axes. Currently there are no additional options beyond the common configuration."
         }
       },
       "time": {
         "meta": {
           "type": "ITimeCategoryAxis",
-          "description": "This extends the <a href='../charts-api-themes/#reference-axis'>common axis configuration</a> with options specific to time axes."
+          "description": "This extends the [common axis configuration](/charts-api-themes/#reference-axis) with options specific to time axes."
         },
         "nice": {
           "default": true,
@@ -634,20 +714,31 @@
           "type": "IBarColumnSeries",
           "description": "Configuration for bar series."
         },
-        "tooltipRenderer": {
-          "type": {
-            "parameters": {
-              "datum": "any",
-              "title?": "string",
-              "color?": "string",
-              "xKey": "string",
-              "xName?": "string",
-              "yKey": "string",
-              "yName?": "string"
-            },
-            "returnType": "string"
+        "tooltip": {
+          "meta": {
+            "description": "Series-specific tooltip configuration."
           },
-          "description": "Function used to create the content for tooltips."
+          "enabled": {
+            "default": true,
+            "description": "Whether or not to show tooltips when the series are hovered over."
+          },
+          "renderer": {
+            "type": {
+              "parameters": {
+                "datum": "any",
+                "title?": "string",
+                "color?": "string",
+                "xKey": "string",
+                "xValue": "any",
+                "xName?": "string",
+                "yKey": "string",
+                "yValue": "any",
+                "yName?": "string"
+              },
+              "returnType": "string"
+            },
+            "description": "Function used to create the content for tooltips."
+          }
         },
         "grouped": {
           "default": false,
@@ -725,11 +816,11 @@
           },
           "fill": {
             "default": "yellow",
-            "description": "The fill colour of the bars when hovered over."
+            "description": "The fill colour of the bars when hovered over.  Use `undefined` for no highlight."
           },
           "stroke": {
             "type": "string",
-            "description": "The colour of the stroke around the bars when hovered over."
+            "description": "The colour of the stroke around the bars when hovered over.  Use `undefined` for no highlight."
           }
         },
         "shadow": {
@@ -773,6 +864,14 @@
           "enabled": {
             "default": true,
             "description": "Whether or not the labels should be shown."
+          },
+          "placement": {
+            "default": "inside",
+            "description": "Where to render series labels relative to the segments.",
+            "options": [
+              "inside",
+              "outside"
+            ]
           },
           "color": {
             "default": "rgba(70, 70, 70, 1)",
@@ -838,24 +937,35 @@
           "type": "IHistogramSeries",
           "description": "Configuration for histogram series."
         },
-        "tooltipRenderer": {
-          "type": {
-            "parameters": {
-              "datum": "any",
-              "title?": "string",
-              "color?": "string",
-              "xKey": "string",
-              "xName?": "string",
-              "yKey": "string",
-              "yName?": "string",
-              "sizeKey?": "string",
-              "sizeName?": "string",
-              "labelKey?": "string",
-              "labelName?": "string"
-            },
-            "returnType": "string"
+        "tooltip": {
+          "meta": {
+            "description": "Series-specific tooltip configuration."
           },
-          "description": "Function used to create the content for tooltips."
+          "enabled": {
+            "default": true,
+            "description": "Whether or not to show tooltips when the series are hovered over."
+          },
+          "renderer": {
+            "type": {
+              "parameters": {
+                "datum": "any",
+                "title?": "string",
+                "color?": "string",
+                "xKey": "string",
+                "xValue": "any",
+                "xName?": "string",
+                "yKey": "string",
+                "yValue": "any",
+                "yName?": "string",
+                "sizeKey?": "string",
+                "sizeName?": "string",
+                "labelKey?": "string",
+                "labelName?": "string"
+              },
+              "returnType": "string"
+            },
+            "description": "Function used to create the content for tooltips."
+          }
         },
         "binCount": {
           "type": "number",
@@ -896,11 +1006,11 @@
           },
           "fill": {
             "default": "yellow",
-            "description": "The fill colour of the bars when hovered over."
+            "description": "The fill colour of the bars when hovered over. Use `undefined` for no highlight."
           },
           "stroke": {
             "type": "string",
-            "description": "The colour of the stroke around the bars when hovered over."
+            "description": "The colour of the stroke around the bars when hovered over. Use `undefined` for no highlight."
           }
         },
         "fill": {
@@ -938,20 +1048,31 @@
           "type": "ILineSeries",
           "description": "Configuration for line series."
         },
-        "tooltipRenderer": {
-          "type": {
-            "parameters": {
-              "datum": "any",
-              "title?": "string",
-              "color?": "string",
-              "xKey": "string",
-              "xName?": "string",
-              "yKey": "string",
-              "yName?": "string"
-            },
-            "returnType": "string"
+        "tooltip": {
+          "meta": {
+            "description": "Series-specific tooltip configuration."
           },
-          "description": "Function used to create the content for tooltips."
+          "enabled": {
+            "default": true,
+            "description": "Whether or not to show tooltips when the series are hovered over."
+          },
+          "renderer": {
+            "type": {
+              "parameters": {
+                "datum": "any",
+                "title?": "string",
+                "color?": "string",
+                "xKey": "string",
+                "xValue": "any",
+                "xName?": "string",
+                "yKey": "string",
+                "yValue": "any",
+                "yName?": "string"
+              },
+              "returnType": "string"
+            },
+            "description": "Function used to create the content for tooltips."
+          }
         },
         "title": {
           "type": "string",
@@ -1064,11 +1185,11 @@
           },
           "fill": {
             "default": "yellow",
-            "description": "The fill colour of the markers when hovered over."
+            "description": "The fill colour of the markers when hovered over. Use `undefined` for no highlight."
           },
           "stroke": {
             "type": "string",
-            "description": "The colour of the stroke around the markers when hovered over."
+            "description": "The colour of the stroke around the markers when hovered over. Use `undefined` for no highlight."
           }
         }
       },
@@ -1077,20 +1198,31 @@
           "type": "IAreaSeries",
           "description": "Configuration for area series."
         },
-        "tooltipRenderer": {
-          "type": {
-            "parameters": {
-              "datum": "any",
-              "title?": "string",
-              "color?": "string",
-              "xKey": "string",
-              "xName?": "string",
-              "yKey": "string",
-              "yName?": "string"
-            },
-            "returnType": "string"
+        "tooltip": {
+          "meta": {
+            "description": "Series-specific tooltip configuration."
           },
-          "description": "Function used to create the content for tooltips."
+          "enabled": {
+            "default": true,
+            "description": "Whether or not to show tooltips when the series are hovered over."
+          },
+          "renderer": {
+            "type": {
+              "parameters": {
+                "datum": "any",
+                "title?": "string",
+                "color?": "string",
+                "xKey": "string",
+                "xValue": "any",
+                "xName?": "string",
+                "yKey": "string",
+                "yValue": "any",
+                "yName?": "string"
+              },
+              "returnType": "string"
+            },
+            "description": "Function used to create the content for tooltips."
+          }
         },
         "normalizedTo": {
           "type": "number",
@@ -1236,11 +1368,11 @@
           },
           "fill": {
             "default": "yellow",
-            "description": "The fill colour of the markers when hovered over."
+            "description": "The fill colour of the markers when hovered over. Use `undefined` for no highlight."
           },
           "stroke": {
             "type": "string",
-            "description": "The colour of the stroke around the markers when hovered over."
+            "description": "The colour of the stroke around the markers when hovered over. Use `undefined` for no highlight."
           }
         },
         "shadow": {
@@ -1283,24 +1415,35 @@
           "type": "IScatterSeries",
           "description": "Configuration for scatter/bubble series."
         },
-        "tooltipRenderer": {
-          "type": {
-            "parameters": {
-              "datum": "any",
-              "title?": "string",
-              "color?": "string",
-              "xKey": "string",
-              "xName?": "string",
-              "yKey": "string",
-              "yName?": "string",
-              "sizeKey?": "string",
-              "sizeName?": "string",
-              "labelKey?": "string",
-              "labelName?": "string"
-            },
-            "returnType": "string"
+        "tooltip": {
+          "meta": {
+            "description": "Series-specific tooltip configuration."
           },
-          "description": "Function used to create the content for tooltips."
+          "enabled": {
+            "default": true,
+            "description": "Whether or not to show tooltips when the series are hovered over."
+          },
+          "renderer": {
+            "type": {
+              "parameters": {
+                "datum": "any",
+                "title?": "string",
+                "color?": "string",
+                "xKey": "string",
+                "xValue": "any",
+                "xName?": "string",
+                "yKey": "string",
+                "yValue": "any",
+                "yName?": "string",
+                "sizeKey?": "string",
+                "sizeName?": "string",
+                "labelKey?": "string",
+                "labelName?": "string"
+              },
+              "returnType": "string"
+            },
+            "description": "Function used to create the content for tooltips."
+          }
         },
         "title": {
           "type": "string",
@@ -1414,11 +1557,11 @@
           },
           "fill": {
             "default": "yellow",
-            "description": "The fill colour of the markers when hovered over."
+            "description": "The fill colour of the markers when hovered over. Use `undefined` for no highlight."
           },
           "stroke": {
             "type": "string",
-            "description": "The colour of the stroke around the markers when hovered over."
+            "description": "The colour of the stroke around the markers when hovered over. Use `undefined` for no highlight."
           }
         }
       },
@@ -1427,22 +1570,33 @@
           "type": "IPieSeries",
           "description": "Configuration for pie/doughnut series."
         },
-        "tooltipRenderer": {
-          "type": {
-            "parameters": {
-              "datum": "any",
-              "title?": "string",
-              "color?": "string",
-              "angleKey": "string",
-              "angleName?": "string",
-              "radiusKey?": "string",
-              "radiusName?": "string",
-              "labelKey?": "string",
-              "labelName?": "string"
-            },
-            "returnType": "string"
+        "tooltip": {
+          "meta": {
+            "description": "Series-specific tooltip configuration."
           },
-          "description": "Function used to create the content for tooltips."
+          "enabled": {
+            "default": true,
+            "description": "Whether or not to show tooltips when the series are hovered over."
+          },
+          "renderer": {
+            "type": {
+              "parameters": {
+                "datum": "any",
+                "title?": "string",
+                "color?": "string",
+                "angleKey": "string",
+                "angleValue": "any",
+                "angleName?": "string",
+                "radiusKey?": "string",
+                "radiusValue?": "any",
+                "radiusName?": "string",
+                "labelKey?": "string",
+                "labelName?": "string"
+              },
+              "returnType": "string"
+            },
+            "description": "Function used to create the content for tooltips."
+          }
         },
         "rotation": {
           "default": 0,
@@ -1593,11 +1747,11 @@
           },
           "fill": {
             "default": "yellow",
-            "description": "The fill colour of the segments when hovered over."
+            "description": "The fill colour of the segments when hovered over. Use `undefined` for no highlight."
           },
           "stroke": {
             "type": "string",
-            "description": "The colour of the stroke around the segments when hovered over."
+            "description": "The colour of the stroke around the segments when hovered over. Use `undefined` for no highlight."
           }
         },
         "label": {
@@ -1670,6 +1824,15 @@
             "min": 0,
             "max": 360,
             "unit": "&deg;"
+          },
+          "formatter": {
+            "type": {
+              "parameters": {
+                "value": "string"
+              },
+              "returnType": "string"
+            },
+            "description": "Function used to turn 'labelKey' values into text to be displayed next to each pie sector. Be default the values are simply stringified."
           }
         },
         "callout": {
@@ -1766,6 +1929,24 @@
       "meta": {
         "description": "An object with axis theme overrides for the `left` positioned axes. Same configs apply here as one level above."
       }
+    },
+    "thickness": {
+      "type": "number",
+      "description": "If set to a non-zero value, the axis will have the specified thickness regardless of label size.",
+      "default": 0
+    },
+    "nice": {
+      "type": "boolean",
+      "default": true,
+      "description": "If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. Applies to continuous axes only ('number', 'time')."
+    },
+    "min": {
+      "type": "number",
+      "description": "User override for the automatically determinted min value (based on series data). Only applied to \"number\" axes."
+    },
+    "max": {
+      "type": "number",
+      "description": "User override for the automatically determinted max value (based on series data). Only applied to \"number\" axes."
     },
     "title": {
       "meta": {
@@ -1944,7 +2125,7 @@
       },
       "format": {
         "type": "string",
-        "description": "Format string used when rendering labels for time axes. For more information on the structure of the string, <a href='../charts-axes/#time-label-format-string'>click here</a>."
+        "description": "Format string used when rendering labels for time axes. For more information on the structure of the string, [click here](/charts-axes/#time-label-format-string)."
       },
       "formatter": {
         "type": {
@@ -1991,9 +2172,10 @@
       "default": true,
       "description": "Whether or not to include the series in the legend."
     },
-    "tooltipEnabled": {
-      "default": true,
-      "description": "Whether or not to show tooltips when the series are hovered over."
+    "cursor": {
+      "type": "string",
+      "default": "default",
+      "description": "The cursor to use for hovered series items (such as bar segments or line markers). This config is identical to the CSS `cursor` property."
     },
     "listeners": {
       "type": "Object",

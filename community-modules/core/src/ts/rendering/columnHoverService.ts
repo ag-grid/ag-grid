@@ -2,7 +2,7 @@ import { Autowired, Bean } from "../context/context";
 import { Events, ColumnHoverChangedEvent } from "../events";
 import { Column } from "../entities/column";
 import { BeanStub } from "../context/beanStub";
-import { ColumnApi } from "../columnController/columnApi";
+import { ColumnApi } from "../columns/columnApi";
 import { GridApi } from "../gridApi";
 
 @Bean('columnHoverService')

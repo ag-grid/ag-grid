@@ -9,6 +9,8 @@ let isEdge: boolean;
 let isChrome: boolean;
 let isFirefox: boolean;
 let isIOS: boolean;
+let invisibleScrollbar: boolean;
+let browserScrollbarWidth: number;
 
 export function isBrowserIE(): boolean {
     if (isIE === undefined) {
@@ -124,6 +126,14 @@ export function getMaxDivHeight(): number {
 }
 
 export function getScrollbarWidth(): number | null {
+    if (browserScrollbarWidth == null) {
+        initScrollbarWidthAndVisibility();
+    }
+    return browserScrollbarWidth;
+}
+
+function initScrollbarWidthAndVisibility(): void {
+
     const body = document.body;
     const div = document.createElement('div');
 
@@ -145,7 +155,17 @@ export function getScrollbarWidth(): number | null {
         div.parentNode.removeChild(div);
     }
 
-    return width;
+    if (width != null) {
+        browserScrollbarWidth = width;
+        invisibleScrollbar = width === 0;
+    }
+}
+
+export function isInvisibleScrollbar(): boolean {
+    if (invisibleScrollbar == null) {
+        initScrollbarWidthAndVisibility();
+    }
+    return invisibleScrollbar;
 }
 
 /** @deprecated */

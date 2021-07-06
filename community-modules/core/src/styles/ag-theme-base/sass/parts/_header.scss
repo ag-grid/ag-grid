@@ -78,7 +78,7 @@
             display: block;
             width: ag-param(header-column-separator-width);
             height: ag-param(header-column-separator-height);
-            top: calc(50% - #{ag-param(header-column-separator-height) / 2});
+            top: calc(50% - #{ag-param(header-column-separator-height) * 0.5});
             @include ag-color-property(background-color, header-column-separator-color);
 
             @include ag-theme-rtl(( right: 0 ));
@@ -96,10 +96,10 @@
             position: absolute;
             z-index: 1;
             display: block;
-            left: calc(50% - #{ag-param(header-column-resize-handle-width) / 2});
+            left: calc(50% - #{ag-param(header-column-resize-handle-width) * 0.5});
             width: ag-param(header-column-resize-handle-width);
             height: ag-param(header-column-resize-handle-height);
-            top: calc(50% - #{ag-param(header-column-resize-handle-height) / 2});
+            top: calc(50% - #{ag-param(header-column-resize-handle-height) * 0.5});
             @include ag-color-property(background-color, header-column-resize-handle-color);
         }
 

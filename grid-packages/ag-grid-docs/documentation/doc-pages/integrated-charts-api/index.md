@@ -61,7 +61,7 @@ interface CreatePivotChartParams {
 }
 ```
 
-The pivot chart params share the same behaviour as the [Range Chart Params](../integrated-charts-api/#reference-params) above.
+The pivot chart params share the same behaviour as the [Range Chart Params](/integrated-charts-api/#reference-params) above.
 
 
 ### Example: Pivot Chart
@@ -125,6 +125,6 @@ It also shows how you can retrieve images rendered from the chart in multiple fo
 
 ## Next Up
 
-Continue to the next section to learn about: [Chart Customisation](../integrated-charts-customisation/).
+Continue to the next section to learn about: [Chart Customisation](/integrated-charts-customisation/).
 
 

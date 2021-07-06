@@ -30,7 +30,8 @@ tscTask = async () => {
     const tscProject = gulpTypescript.createProject(tsConfig);
     const tsResult = await gulp.src(
         [
-            'src/**/*.ts',
+            'src/**/*.ts*',
+            '!src/**/old/**/*',
             '!src/**/__tests__/**/*',
             '!src/**/setupTests.ts'
         ]
@@ -123,7 +124,8 @@ const copyFromModuleSource = () => {
     const copySource = gulp.src(
         [
             "**/*",
-            '!**/__tests__*/**/*'
+            '!**/__tests__*/**/*',
+            '!**/*Test*'
         ], {cwd: '../../community-modules/react/src'})
         .pipe(replace('@ag-grid-community/core', 'ag-grid-community'))
         .pipe(replace('@ag-grid-enterprise', 'ag-grid-enterprise'))

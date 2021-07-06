@@ -2,24 +2,20 @@ const walk = require('walk');
 const fs = require('fs');
 const archiver = require('archiver');
 
-const LATEST_HASH = require('child_process').execSync('cat .git/refs/heads/latest').toString().trim();
+const LATEST_HASH = require('child_process').execSync('grep origin/latest .git/packed-refs | cut -d " " -f1').toString().trim();
 const LATEST_HASH_TIMESTAMP = require('child_process').execSync(`git show -s --format=%ci ${LATEST_HASH}`).toString().trim();
 
-if (process.argv.length !== 3) {
-    console.log("Usage: node scripts/release/createDocsArchiveBundle.js [Version Number]");
+if (process.argv.length !== 4) {
+    console.log("Usage: node scripts/release/createDocsArchiveBundle.js [Version Number] [archive filename]");
     console.log("For example: node scripts/release/createDocsArchiveBundle.js 19.1.0");
     console.log("Note: This script should be run from the root of the monorepo");
     process.exit(1);
 }
 
-const [exec, scriptPath, newVersion] = process.argv;
+const [exec, scriptPath, newVersion, archiveFileName] = process.argv;
 
 const DIST_PATH = 'grid-packages/ag-grid-docs/dist';
 
-function getArchiveFilename() {
-    const now = new Date();
-    return `archive_${now.getFullYear()}${now.getMonth() + 1}${now.getDate()}_${newVersion}.zip`
-}
 
 function isRootIndexPhp(filename) {
     return filename === `${DIST_PATH}/index.php`;
@@ -29,38 +25,38 @@ function isDocHeaderPhp(filename) {
     return filename === `${DIST_PATH}/documentation-main/documentation_header.php`;
 }
 
-function preProcessRootIndex(fileContents) {
+function createRootIndex() {
     return `
         <!DOCTYPE html>
         <html style="height: 100%">
         <head lang="en">
         <meta charset="UTF-8">
         <meta http-equiv="refresh" content="0; URL='https://www.ag-grid.com/archive/${newVersion}/documentation/'" />
-        </head>        
+        </head>
         <body class="big-text">
         </body>
-        </html>`
+        </html>`;
 }
 
 function preDocHeader(fileContents, latestHash, latestHashTimestamp) {
     // replace $version with archive version (determines root - ie /archive/<version> instead of just /)
     let re = /\$version.*=.*'latest'/;
-    const {index} = re.exec(fileContents);
+    const { index } = re.exec(fileContents);
 
     let startIndex = fileContents.indexOf("'latest'", index) + 1;
     let endIndex = fileContents.indexOf("'", startIndex);
 
-    fileContents=`${fileContents.substr(0, startIndex)}${newVersion}${fileContents.substr(endIndex, fileContents.length)}`;
+    fileContents = `${fileContents.substr(0, startIndex)}${newVersion}${fileContents.substr(endIndex, fileContents.length)}`;
 
     // insert latest hash - useful to determine which changes should be in a given archive
     startIndex = fileContents.indexOf("''", index) + 1;
     endIndex = fileContents.indexOf("'", startIndex);
-    fileContents=`${fileContents.substr(0, startIndex)}${latestHash}${fileContents.substr(endIndex, fileContents.length)}`;
+    fileContents = `${fileContents.substr(0, startIndex)}${latestHash}${fileContents.substr(endIndex, fileContents.length)}`;
 
     // insert latest hash timestamp - useful to determine which changes should be in a given archive
     startIndex = fileContents.indexOf("''", index) + 1;
     endIndex = fileContents.indexOf("'", startIndex);
-    fileContents=`${fileContents.substr(0, startIndex)}${latestHashTimestamp}${fileContents.substr(endIndex, fileContents.length)}`;
+    fileContents = `${fileContents.substr(0, startIndex)}${latestHashTimestamp}${fileContents.substr(endIndex, fileContents.length)}`;
 
     return fileContents;
 }
@@ -74,11 +70,13 @@ function deleteArchive() {
 
 function createArchive(filename) {
     const output = fs.createWriteStream(`./${filename}`);
-    const archive = archiver('zip', {
-        zlib: {level: 9} // Sets the compression level.
+    const archive = archiver('tar', {
+        // we don't use gzip here as we'll get a "too many files" error if we do
+        // post creation we'll zip the resulting tar file
+        zlib: { level: 9 } // Sets the compression level.
     });
     output.on('close', () => {
-       console.log(`Archive Complete: ${filename}`);
+        console.log(`Archive Complete: ${filename}`);
     });
     archive.pipe(output);
     return archive;
@@ -86,7 +84,6 @@ function createArchive(filename) {
 
 const walker = walk.walk(DIST_PATH, {});
 
-const archiveFileName = getArchiveFilename();
 deleteArchive(archiveFileName);
 const archive = createArchive(archiveFileName);
 
@@ -95,8 +92,9 @@ walker.on("file", (root, fileStats, next) => {
     const fullFileName = `${root}/${fileStats.name}`;
 
     let fileContents = null;
+
     if (isRootIndexPhp(fullFileName)) {
-        fileContents = preProcessRootIndex(fs.readFileSync(fullFileName, 'utf8'));
+        fileContents = createRootIndex();
     } else if (isDocHeaderPhp(fullFileName, fileStats)) {
         fileContents = preDocHeader(fs.readFileSync(fullFileName, 'utf8'), LATEST_HASH, LATEST_HASH_TIMESTAMP);
     } else {

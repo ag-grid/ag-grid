@@ -82,7 +82,7 @@ For comparison, the default template is as follows. It is simplistic, only inten
     <div ref="eDetailGrid" class="ag-details-grid ag-details-grid-fixed-height"/>
 </div>
 
-<!-- for when auto-height (detailCellRendererParams.autoHeight=true) -->
+<!-- for when auto-height (detailRowAutoHeight=true) -->
 <div class="ag-details-row ag-details-row-auto-height">
     <div ref="eDetailGrid" class="ag-details-grid ag-details-grid-auto-height"/>
 </div>
@@ -142,7 +142,7 @@ In this second example, the template is set dynamically. Note the following:
 
 The Master Grid manages all the Detail Grid instances. You can access the API of the underlying Detail Grids to call API methods directly on those grids. The Master Grid stores references to the Detail Grid API's in Detail Grid Info objects.
 
-The Detail Grid Info objects contain a reference to the underlying [Grid API](../grid-api/) and [Column API](../column-api/) for each detail grid. The interface for Detail Grid Info is as follows:
+The Detail Grid Info objects contain a reference to the underlying [Grid API](/grid-api/) and [Column API](/column-api/) for each detail grid. The interface for Detail Grid Info is as follows:
 
 ```ts
 interface DetailGridInfo {
@@ -211,6 +211,6 @@ The full list of Detail Cell Renderer Params are as follows:
 
 <api-documentation source='master-detail-grids/resources/properties.json' section='detailCellRenderer'></api-documentation>
 
-The pattern of setting components such as Cell Renderers and providing parameters to those components is consistent across the grid and explained in [Grid Components](../components/).
+The pattern of setting components such as Cell Renderers and providing parameters to those components is consistent across the grid and explained in [Grid Components](/components/).
 
 As with all components, the parameters object (in this case `detailCellRendererParams`) can either be a JSON Object, or it can be a function that returns a JSON Object. The latter allows providing different parameters for each Detail Grid, allowing Detail Grids to be configured differently.

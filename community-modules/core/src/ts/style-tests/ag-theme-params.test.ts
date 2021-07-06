@@ -1,4 +1,4 @@
-import * as sass from 'node-sass';
+import * as sass from 'sass';
 import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
@@ -132,7 +132,8 @@ describe('ag-param', () => {
     });
 
     it('throws an error when used with a color property and color access is disabled', () => {
-        const rendered = renderScss(`
+        expect(() => {
+            renderScss(`
             @import "../../styles/mixins/ag-theme-params";
             @include ag-register-params((
                  my-color: red
@@ -142,11 +143,7 @@ describe('ag-param', () => {
                 x: ag-param(my-color);
             }
         `);
-        expect(rendered.css).toMatchInlineSnapshot(`""`);
-        expect(rendered.message).toMatchInlineSnapshot(
-            `"Illegal call to ag-param(my-color) - all colour params must be accessed through the ag-color-property mixin."`
-        );
-        expect(rendered.isFatalError).toBe(true);
+        }).toThrowError("Illegal call to ag-param(my-color) - all colour params must be accessed through the ag-color-property mixin.");
     });
 });
 
@@ -387,7 +384,7 @@ describe('ag-color-property', () => {
   color: var(--ag-a, var(--ag-b));
 }"
 `);
-        expect(rendered.message).toMatchInlineSnapshot(
+        expect(rendered.message.split('\n')[0]).toMatchInlineSnapshot(
             `"WARNING: Problem while calculating theme parameter \`b: ag-derived(c, $opacity: 0.5)\`. This rule attempts to modify the color of \`c\` using $opacity, but (c: var(--foo)) is a CSS variable and can't be modified at compile time. Either set \`c\` to a CSS color value (e.g. #ffffff) or provide a value for \`b\` that does not use $opacity"`
         );
         expect(rendered.isFatalError).toBe(false);
@@ -398,11 +395,9 @@ const renderScss = (scss: string) => {
     const tmpFile = path.join(os.tmpdir(), `ag-theme-params-test-${Math.random()}.scss`);
     fs.writeFileSync(tmpFile, scss);
     try {
-        const process = child_process.spawnSync(path.join(__dirname, '../../../node_modules/.bin/node-sass'), [
+        const process = child_process.spawnSync(path.join(__dirname, '../../../node_modules/.bin/sass'), [
             tmpFile,
-            '--output-style',
-            'expanded',
-            '--include-path',
+            '--load-path',
             __dirname,
         ]);
         let message = process.stderr.toString();

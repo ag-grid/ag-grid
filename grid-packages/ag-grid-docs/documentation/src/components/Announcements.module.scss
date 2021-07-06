@@ -6,7 +6,7 @@
     composes: card my-2 from global;
 
     &--highlighted {
-        background-color: $blue-4 !important;
+        background-color: #f1f7ff !important;
     }
 
     p {

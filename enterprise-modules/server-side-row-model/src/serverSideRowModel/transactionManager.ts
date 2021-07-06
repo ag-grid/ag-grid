@@ -124,8 +124,8 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
     public applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult | undefined {
         let res: ServerSideTransactionResult | undefined;
 
-        this.serverSideRowModel.executeOnStore(transaction.route!, cache => {
-            res = cache.applyTransaction(transaction);
+        this.serverSideRowModel.executeOnStore(transaction.route!, store => {
+            res = store.applyTransaction(transaction);
         });
 
         if (res) {

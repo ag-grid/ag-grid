@@ -2,7 +2,6 @@ import Scale from "./scale/scale";
 import { Group } from "./scene/group";
 import { Selection } from "./scene/selection";
 import { Line } from "./scene/shape/line";
-import { normalizeAngle360, normalizeAngle360Inclusive, toRadians } from "./util/angle";
 import { Text, FontStyle, FontWeight } from "./scene/shape/text";
 import { Arc } from "./scene/shape/arc";
 import { Shape } from "./scene/shape/shape";
@@ -10,6 +9,7 @@ import { BBox } from "./scene/bbox";
 import { Matrix } from "./scene/matrix";
 import { Caption } from "./caption";
 import { createId } from "./util/id";
+import { normalizeAngle360, normalizeAngle360Inclusive, toRadians } from "./util/angle";
 // import { Rect } from "./scene/shape/rect"; // debug (bbox)
 
 enum Tags {
@@ -121,7 +121,7 @@ export class AxisLabel {
 
     onFormatChange?: (format?: string) => void;
 
-    private _format?: string;
+    private _format: string | undefined;
     set format(value: string | undefined) {
         // See `TimeLocaleObject` docs for the list of supported format directives.
         if (this._format !== value) {
@@ -162,7 +162,16 @@ export class Axis<S extends Scale<D, number>, D = any> {
     private groupSelection: Selection<Group, Group, D, D>;
     private lineNode = new Line();
 
-    readonly scale: S;
+    protected _scale: S;
+    set scale(value: S) {
+        this._scale = value;
+        this.requestedRange = value.range.slice();
+        this.onLabelFormatChange();
+    }
+    get scale(): S {
+        return this._scale;
+    }
+
     readonly group = new Group();
 
     readonly line: {
@@ -186,15 +195,16 @@ export class Axis<S extends Scale<D, number>, D = any> {
     readonly translation = { x: 0, y: 0 };
     rotation: number = 0; // axis rotation angle in degrees
 
+    /**
+     * Meant to be overridden in subclasses to provide extra context the the label formatter.
+     * The return value of this function will be passed to the laber.formatter as the `axis` parameter.
+     */
     getMeta(): any {}
 
-    constructor(scale: S) {
-        this.scale = scale;
-        this.requestedRange = scale.range.slice();
+    constructor() {
         this.groupSelection = Selection.select(this.group).selectAll<Group>();
-        this.label.onFormatChange = this.onTickFormatChange.bind(this);
+        this.label.onFormatChange = this.onLabelFormatChange.bind(this);
         this.group.append(this.lineNode);
-        this.onTickFormatChange();
         // this.group.append(this.bboxRect); // debug (bbox)
     }
 
@@ -219,10 +229,13 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
     inRangeEx(x: number, width = 0, tolerance = 0): -1 | 0 | 1 {
         const { range } = this;
-        if ((x + width) < (range[0] - tolerance)) {
-            return -1; // left or range
+        // Account for inverted ranges, for example [500, 100] as well as [100, 500]
+        const min = Math.min(range[0], range[1]);
+        const max = Math.max(range[0], range[1]);
+        if ((x + width) < (min - tolerance)) {
+            return -1; // left of range
         }
-        if (x > (range[1] + tolerance)) {
+        if (x > (max + tolerance)) {
             return 1; // right of range
         }
         return 0; // in range
@@ -260,18 +273,14 @@ export class Axis<S extends Scale<D, number>, D = any> {
         return this.scale.domain.slice();
     }
 
-    private tickFormatter?: (datum: any) => string;
-    private onTickFormatChange(format?: string) {
+    protected labelFormatter?: (datum: any) => string;
+    protected onLabelFormatChange(format?: string) {
         if (format) {
-            if (this.scale.tickFormat) {
-                this.tickFormatter = this.scale.tickFormat(10, format);
+            if (this.scale && this.scale.tickFormat) {
+                this.labelFormatter = this.scale.tickFormat(this.tick.count, format);
             }
         } else {
-            if (this.scale.tickFormat) {
-                this.tickFormatter = this.scale.tickFormat(10, undefined);
-            } else {
-                this.tickFormatter = undefined;
-            }
+            this.labelFormatter = undefined;
         }
     }
 
@@ -339,6 +348,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
     get radialGrid(): boolean {
         return this._radialGrid;
     }
+
+    private fractionDigits = 0;
 
     /**
      * Creates/removes/updates the scene graph nodes that constitute the axis.
@@ -464,10 +475,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
             });
         }
 
-        const { tickFormatter } = this;
-        const meta = this.getMeta();
         // `ticks instanceof NumericTicks` doesn't work here, so we feature detect.
-        const fractionDigits = (ticks as any).fractionDigits >= 0 ? (ticks as any).fractionDigits : 0;
+        this.fractionDigits = (ticks as any).fractionDigits >= 0 ? (ticks as any).fractionDigits : 0;
 
         const labelSelection = groupSelection.selectByClass(Text)
             .each((node, datum, index) => {
@@ -479,21 +488,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 node.textBaseline = parallelLabels && !labelRotation
                     ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom')
                     : 'middle';
-                node.text = label.formatter
-                    ? label.formatter({
-                        value: fractionDigits >= 0 ? datum : String(datum),
-                        index,
-                        fractionDigits,
-                        formatter: tickFormatter,
-                        axis: meta
-                    })
-                    : fractionDigits
-                        // the `datum` is a floating point number
-                        ? (datum as any as number).toFixed(fractionDigits)
-                        // the `datum` is an integer, a string or an object
-                        : tickFormatter
-                            ? tickFormatter(datum)
-                            : String(datum);
+                node.text = this.formatTickDatum(datum, index);
+
                 node.textAlign = parallelLabels
                     ? labelRotation ? (sideFlag * alignFlag === -1 ? 'end' : 'start') : 'center'
                     : sideFlag * regularFlipFlag === -1 ? 'end' : 'start';
@@ -555,6 +551,35 @@ export class Axis<S extends Scale<D, number>, D = any> {
         // bboxRect.width = bbox.width;
         // bboxRect.height = bbox.height;
     }
+
+    // For formatting (nice rounded) tick values.
+    formatTickDatum(datum: any, index: number): string {
+        const { label, labelFormatter, fractionDigits } = this;
+        const meta = this.getMeta();
+
+        return label.formatter
+            ? label.formatter({
+                value: fractionDigits >= 0 ? datum : String(datum),
+                index,
+                fractionDigits,
+                formatter: labelFormatter,
+                axis: meta
+            })
+            : labelFormatter
+                ? labelFormatter(datum)
+                : typeof datum === 'number' && fractionDigits >= 0
+                    // the `datum` is a floating point number
+                    ? datum.toFixed(fractionDigits)
+                    // the`datum` is an integer, a string or an object
+                    : String(datum);
+    }
+
+    // For formatting arbitrary values between the ticks.
+    formatDatum(datum: any): string {
+        return String(datum);
+    }
+
+    thickness: number = 0;
 
     computeBBox(options?: { excludeTitle: boolean }): BBox {
         const { title, lineNode } = this;

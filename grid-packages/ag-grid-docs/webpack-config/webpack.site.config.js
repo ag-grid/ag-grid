@@ -5,7 +5,6 @@ const autoprefixer = require('autoprefixer');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 let homepage = './src/_assets/homepage/homepage.ts';
-let docs = './src/_assets/docs/docs.ts';
 
 module.exports = {
     mode: 'development',
@@ -13,7 +12,6 @@ module.exports = {
 
     entry: {
         homepage: homepage,
-        docs: docs,
     },
     output: {
         filename: '[name].js',
@@ -21,7 +19,7 @@ module.exports = {
     },
 
     resolve: {
-        extensions: [ '.ts', '.js', '.json' ]
+        extensions: ['.ts', '.js', '.json']
     },
 
     externals: {
@@ -35,7 +33,7 @@ module.exports = {
             {
                 test: /\.ts$/,
                 use: [
-                    {loader: 'cache-loader'},
+                    { loader: 'cache-loader' },
                     {
                         loader: 'thread-loader',
                         options: {
@@ -73,8 +71,8 @@ module.exports = {
                     {
                         loader: 'sass-loader',
                         options: {
-                            prependData: '$ag-compatibility-mode: false;\n$ag-suppress-all-theme-deprecation-warnings: true;',
-                        },
+                            additionalData: '$ag-compatibility-mode: false;\n$ag-suppress-all-theme-deprecation-warnings: true;'
+                        }
                     },
                 ]
             },
@@ -83,14 +81,14 @@ module.exports = {
                 use: [
                     {
                         loader: 'url-loader',
-                        options: {limit: 8192}
+                        options: { limit: 8192 }
                     }
                 ]
             },
             {
                 test: /\.(svg)$/,
                 use: [
-                    {loader: 'url-loader', options: {limit: 20000}}
+                    { loader: 'url-loader', options: { limit: 20000 } }
                 ]
             }
         ]
@@ -98,7 +96,7 @@ module.exports = {
 
     plugins: [
         new webpack.NamedModulesPlugin(),
-        new MiniCssExtractPlugin({filename: '[name].css'}),
+        new MiniCssExtractPlugin({ filename: '[name].css' }),
         new webpack.ProvidePlugin({
             $: 'jquery',
             jQuery: 'jquery',

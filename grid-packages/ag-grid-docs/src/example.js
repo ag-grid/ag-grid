@@ -51,7 +51,7 @@ function axisLabelFormatter(params) {
     var hasAreaSeries = false;
     var hasLineSeries = false;
     var flipXY = false;
-    params.axis.boundSeries.forEach(function (series) {
+    params.axis.boundSeries.forEach(function(series) {
         if (series.normalizedTo) {
             isNormalized = true;
         }
@@ -125,7 +125,7 @@ var isSmall = docEl.clientHeight <= 415 || docEl.clientWidth < 768;
 var colNames = ["Station", "Railway", "Street", "Address", "Toy", "Soft Box", "Make and Model", "Longest Day", "Shortest Night"];
 
 var countries = [
-    { country: "Ireland", continent: "Europe", language: "English" },
+    { country: "Ireland", codecontinent: "Europe", language: "English" },
     { country: "Spain", continent: "Europe", language: "Spanish" },
     { country: "United Kingdom", continent: "Europe", language: "English" },
     { country: "France", continent: "Europe", language: "French" },
@@ -146,6 +146,53 @@ var countries = [
     { country: "Uruguay", continent: "South America", language: "Spanish" },
     { country: "Belgium", continent: "Europe", language: "French" }
 ];
+
+var COUNTRY_CODES = {
+    Ireland: "ie",
+    Luxembourg: "lu",
+    Belgium: "be",
+    Spain: "es",
+    "United Kingdom": "gb",
+    France: "fr",
+    Germany: "de",
+    Sweden: "se",
+    Italy: "it",
+    Greece: "gr",
+    Iceland: "is",
+    Portugal: "pt",
+    Malta: "mt",
+    Norway: "no",
+    Brazil: "br",
+    Argentina: "ar",
+    Colombia: "co",
+    Peru: "pe",
+    Venezuela: "ve",
+    Uruguay: "uy"
+};
+
+var base64Flags = {}; 
+
+(function createBase64Flags(data) {
+    var flags = {};
+    var promiseArray = countries.map(function(country) {
+        var countryCode = COUNTRY_CODES[country.country];
+
+        return fetch('https://flagcdn.com/w20/' + countryCode + '.png')
+            .then(function(response) { return response.blob(); })
+            .then(function(blob) { return new Promise(function(res) {
+                var reader = new FileReader();
+                reader.onloadend = function() {
+                    flags[countryCode] = reader.result;
+                    res(reader.result);
+                }
+                reader.readAsDataURL(blob);
+            })})
+    });
+    
+    return Promise.all(promiseArray).then(function() { return flags; })
+})().then(function(flags) {
+    base64Flags = flags;
+});
 
 var games = ["Chess", "Cross and Circle", "Daldos", "Downfall", "DVONN", "Fanorona", "Game of the Generals", "Ghosts",
     "Abalone", "Agon", "Backgammon", "Battleship", "Blockade", "Blood Bowl", "Bul", "Camelot", "Checkers",
@@ -214,6 +261,32 @@ function toggleOptionsCollapsed() {
 
     optionsEl.classList.toggle('collapsed');
 }
+
+var defaultExportParams = {
+    skipColumnGroupHeaders: true,
+    headerRowHeight: 40,
+    rowHeight: 30,
+    fontSize: 14,
+    addImageToCell: function(rowIndex, column, value) {
+        if (column.colId === 'country') {
+            return {
+                image: {
+                    id: value,
+                    base64: base64Flags[COUNTRY_CODES[value]],
+                    imageType: 'png',
+                    width: 20,
+                    height: 12,
+                    position: {
+                        offsetX: 17,
+                        offsetY: 14
+                    }
+                },
+                value: value
+            }
+        }
+    }
+}
+
 var gridOptions = {
     statusBar: {
         statusPanels: [
@@ -233,11 +306,8 @@ var gridOptions = {
         ratingRenderer: ratingRenderer,
         ratingFilterRenderer: ratingFilterRenderer
     },
-    defaultExportParams: {
-        columnGroups: true,
-        headerRowHeight: 30,
-        rowHeight: 22
-    },
+    defaultCsvExportParams: defaultExportParams,
+    defaultExcelExportParams: defaultExportParams,
     defaultColDef: {
         minWidth: 50,
         sortable: true,
@@ -385,8 +455,6 @@ var gridOptions = {
     // suppressMenuColumnPanel: true,
     // forPrint: true,
     // rowClass: function(params) { return (params.data.country === 'Ireland') ? "theClass" : null; },
-    // headerCellRenderer: headerCellRenderer_text,
-    // headerCellRenderer: headerCellRenderer_dom,
     onRowSelected: rowSelected, //callback when row selected
     onSelectionChanged: selectionChanged, //callback when selection changed,
     aggFuncs: {
@@ -398,11 +466,8 @@ var gridOptions = {
         return node.data ? node.data.name : '';
     },
     defaultGroupSortComparator: function(nodeA, nodeB) {
-        if (nodeA.key < nodeB.key) {
-            return -1;
-        } else if (nodeA.key > nodeB.key) {
-            return 1;
-        }
+        if (nodeA.key < nodeB.key) { return -1; }
+        if (nodeA.key > nodeB.key) { return 1; }
 
         return 0;
 
@@ -433,7 +498,7 @@ var gridOptions = {
     //     {name: 'Mr Pinned Bottom 3', language: 'English', country: 'Ireland', continent:"Europe", game:{name:"Hare and Hounds",bought:"true"}, totalWinnings: 342424, bankBalance:75700.9,rating:2,jan:20478.54,feb:2253.06,mar:39308.65,apr:98710.13,may:96186.55,jun:91925.91,jul:1149.47,aug:32493.69,sep:19279.44,oct:21624.14,nov:71239.81,dec:80031.35},
     // ],
     // callback when row clicked
-    // stopEditingWhenGridLosesFocus: true,
+    // stopEditingWhenCellsLoseFocus: true,
     // allowShowChangeAfterFilter: true,
     onRowClicked: function(params) {
         // console.log("Callback onRowClicked: " + (params.data?params.data.name:null) + " - " + params.event);
@@ -504,7 +569,7 @@ var gridOptions = {
                         enabled: false
                     },
                     tooltip: {
-                        renderer: function (params) {
+                        renderer: function(params) {
                             return {
                                 content: '$' + formatThousands(Math.round(params.datum[params.angleKey]))
                             };
@@ -527,43 +592,43 @@ var gridOptions = {
             series: {
                 column: {
                     tooltip: {
-                        renderer: function (params) {
+                        renderer: function(params) {
                             return {
                                 content: '$' + formatThousands(Math.round(params.datum[params.yKey]))
-                            }
+                            };
                         }
                     }
                 },
                 bar: {
                     tooltip: {
-                        renderer: function (params) {
+                        renderer: function(params) {
                             return {
                                 content: '$' + formatThousands(Math.round(params.datum[params.yKey]))
-                            }
+                            };
                         }
                     }
                 },
                 line: {
                     tooltip: {
-                        renderer: function (params) {
+                        renderer: function(params) {
                             return {
                                 content: '$' + formatThousands(Math.round(params.datum[params.yKey]))
-                            }
+                            };
                         }
                     }
                 },
                 area: {
                     tooltip: {
-                        renderer: function (params) {
+                        renderer: function(params) {
                             return {
                                 content: '$' + formatThousands(Math.round(params.datum[params.yKey]))
-                            }
+                            };
                         }
                     }
                 },
                 scatter: {
                     tooltip: {
-                        renderer: function (params) {
+                        renderer: function(params) {
                             var label = params.labelKey ? params.datum[params.labelKey] + '<br>' : '';
                             var xValue = params.xName + ': $' + formatThousands(params.datum[params.xKey]);
                             var yValue = params.yName + ': $' + formatThousands(params.datum[params.yKey]);
@@ -579,7 +644,7 @@ var gridOptions = {
                 },
                 histogram: {
                     tooltip: {
-                        renderer: function (params) {
+                        renderer: function(params) {
                             return {
                                 title: (params.xName || params.xKey) + ': $' + formatThousands(params.datum.domain[0]) + ' - $' + formatThousands(params.datum.domain[1]),
                                 // With a yKey, the value is the total of the yKey value for the population of the bin.
@@ -685,6 +750,12 @@ var gridOptions = {
             alignment: {
                 vertical: 'Center'
             }
+        },
+        {
+            id: 'countryCell',
+            alignment: {
+                indent: 4
+            }
         }
     ]
 };
@@ -784,7 +855,7 @@ var desktopDefaultCols = [
                 cellRenderer: 'countryCellRenderer',
                 // pivotIndex: 1,
                 // rowGroupIndex: 1,
-                cellClass: 'vAlign',
+                cellClass: ['countryCell', 'vAlign'],
                 // colSpan: function(params) {
                 //     if (params.data && params.data.country==='Ireland') {
                 //         return 2;
@@ -1254,28 +1325,6 @@ function onFilterChanged(newFilter) {
     }, 300);
 }
 
-var COUNTRY_CODES = {
-    Ireland: "ie",
-    Luxembourg: "lu",
-    Belgium: "be",
-    Spain: "es",
-    "United Kingdom": "gb",
-    France: "fr",
-    Germany: "de",
-    Sweden: "se",
-    Italy: "it",
-    Greece: "gr",
-    Iceland: "is",
-    Portugal: "pt",
-    Malta: "mt",
-    Norway: "no",
-    Brazil: "br",
-    Argentina: "ar",
-    Colombia: "co",
-    Peru: "pe",
-    Venezuela: "ve",
-    Uruguay: "uy"
-};
 
 function numberParser(params) {
     return sharedNumberParser(params.newValue);
@@ -1284,9 +1333,8 @@ function numberParser(params) {
 function sharedNumberParser(value) {
     if (value === null || value === undefined || value === '') {
         return null;
-    } else {
-        return parseFloat(value);
     }
+    return parseFloat(value);
 }
 
 function PersonFilter() {
@@ -1441,19 +1489,13 @@ WinningsFilter.prototype.getGui = function() {
 WinningsFilter.prototype.doesFilterPass = function(node) {
 
     var value = this.valueGetter(node);
-    if (this.cbNoFilter.checked) {
-        return true;
-    } else if (this.cbPositive.checked) {
-        return value >= 0;
-    } else if (this.cbNegative.checked) {
-        return value < 0;
-    } else if (this.cbGreater50.checked) {
-        return value >= 50000;
-    } else if (this.cbGreater90.checked) {
-        return value >= 90000;
-    } else {
-        console.error('invalid checkbox selection');
-    }
+    if (this.cbNoFilter.checked) { return true; }
+    if (this.cbPositive.checked) { return value >= 0; }
+    if (this.cbNegative.checked) { return value < 0; }
+    if (this.cbGreater50.checked) { return value >= 50000; }
+    if (this.cbGreater90.checked) { return value >= 90000; }
+
+    console.error('invalid checkbox selection');
 };
 
 WinningsFilter.prototype.isFilterActive = function() {
@@ -1465,21 +1507,12 @@ WinningsFilter.prototype.getModelAsString = function(model) {
 };
 
 WinningsFilter.prototype.getModel = function() {
-    if (this.cbNoFilter.checked) {
-        return '';
-    }
-    if (this.cbPositive.checked) {
-        return 'value >= 0';
-    }
-    if (this.cbNegative.checked) {
-        return 'value < 0';
-    }
-    if (this.cbGreater50.checked) {
-        return 'value >= 50000';
-    }
-    if (this.cbGreater90.checked) {
-        return 'value >= 90000';
-    }
+    if (this.cbNoFilter.checked) { return ''; }
+    if (this.cbPositive.checked) { return 'value >= 0'; }
+    if (this.cbNegative.checked) { return 'value < 0'; }
+    if (this.cbGreater50.checked) { return 'value >= 50000'; }
+    if (this.cbGreater90.checked) { return 'value >= 90000'; }
+
     console.error('invalid checkbox selection');
 };
 // lazy, the example doesn't use setModel()
@@ -1489,9 +1522,8 @@ WinningsFilter.prototype.setModel = function() {
 function currencyCssFunc(params) {
     if (params.value !== null && params.value !== undefined && params.value < 0) {
         return { "color": "red", "font-weight": "bold" };
-    } else {
-        return {};
     }
+    return {};
 }
 
 function ratingFilterRenderer(params) {
@@ -1531,35 +1563,43 @@ var formatThousands = function(value) {
 function currencyRenderer(params) {
     if (params.value === null || params.value === undefined) {
         return null;
-    } else if (isNaN(params.value)) {
-        return 'NaN';
-    } else {
-        // if we are doing 'count', then we do not show pound sign
-        if (params.node.group && params.column.aggFunc === 'count') {
-            return params.value;
-        } else {
-            return '&pound;' + formatThousands(Math.floor(params.value));
-        }
     }
+    
+    if (isNaN(params.value)) {
+        return 'NaN';
+    }
+
+    // if we are doing 'count', then we do not show pound sign
+    if (params.node.group && params.column.aggFunc === 'count') {
+        return params.value;
+    }
+
+    return '&pound;' + formatThousands(Math.floor(params.value));
+
 }
 
 function currencyFormatter(params) {
     if (params.value === null || params.value === undefined) {
         return null;
-    } else if (isNaN(params.value)) {
-        return 'NaN';
-    } else {
-        // if we are doing 'count', then we do not show pound sign
-        if (params.node.group && params.column.aggFunc === 'count') {
-            return params.value;
-        } else {
-            var result = '$' + formatThousands(Math.floor(Math.abs(params.value)));
-            if (params.value < 0) {
-                result = '(' + result + ')';
-            }
-            return result;
-        }
     }
+
+    if (isNaN(params.value)) {
+        return 'NaN';
+    }
+
+    // if we are doing 'count', then we do not show pound sign
+    if (params.node.group && params.column.aggFunc === 'count') {
+        return params.value;
+    }
+
+    var result = '$' + formatThousands(Math.floor(Math.abs(params.value)));
+
+    if (params.value < 0) {
+        result = '(' + result + ')';
+    }
+
+    return result;
+
 }
 
 function booleanComparator(value1, value2) {
@@ -1579,15 +1619,19 @@ function booleanCellRenderer(params) {
     }
 
     var valueCleaned = booleanCleaner(params.value);
+
     if (valueCleaned === true) {
         return "<span title='true' class='ag-icon ag-icon-tick content-icon'></span>";
-    } else if (valueCleaned === false) {
-        return "<span title='false' class='ag-icon ag-icon-cross content-icon'></span>";
-    } else if (params.value !== null && params.value !== undefined) {
-        return params.value.toString();
-    } else {
-        return null;
     }
+
+    if (valueCleaned === false) {
+        return "<span title='false' class='ag-icon ag-icon-cross content-icon'></span>";
+    }
+
+    if (params.value !== null && params.value !== undefined) {
+        return params.value.toString();
+    }
+    return null;
 }
 
 function booleanFilterCellRenderer(params) {
@@ -1595,23 +1639,27 @@ function booleanFilterCellRenderer(params) {
 
     if (valueCleaned === true) {
         return "<span title='true' class='ag-icon ag-icon-tick content-icon'></span>";
-    } else if (valueCleaned === false) {
-        return "<span title='false' class='ag-icon ag-icon-cross content-icon'></span>";
-    } else if (params.value === '(Select All)') {
-        return params.value;
-    } else {
-        return "(empty)";
     }
+
+    if (valueCleaned === false) {
+        return "<span title='false' class='ag-icon ag-icon-cross content-icon'></span>";
+    }
+
+    if (params.value === '(Select All)') {
+        return params.value;
+    }
+    return "(empty)";
 }
 
 function booleanCleaner(value) {
     if (value === "true" || value === true || value === 1) {
         return true;
-    } else if (value === "false" || value === false || value === 0) {
-        return false;
-    } else {
-        return null;
     }
+
+    if (value === "false" || value === false || value === 0) {
+        return false;
+    }
+    return null;
 }
 
 function CountryFloatingFilterComponent() {
@@ -1634,24 +1682,26 @@ CountryFloatingFilterComponent.prototype.getGui = function() {
 };
 
 CountryFloatingFilterComponent.prototype.onParentModelChanged = function(dataModel) {
+    var model, flagsHtml, printDotDotDot, toPrint;
     // add in child, one for each flat
     if (dataModel) {
+        model = dataModel.values;
+        flagsHtml = [];
+        printDotDotDot = false;
 
-        var model = dataModel.values;
-
-        var flagsHtml = [];
-        var printDotDotDot = false;
         if (model.length > 4) {
-            var toPrint = model.slice(0, 4);
+            toPrint = model.slice(0, 4);
             printDotDotDot = true;
         } else {
-            var toPrint = model;
+            toPrint = model;
         }
+
         toPrint.forEach(function(country) {
             flagsHtml.push('<img class="flag" style="border: 0px; width: 15px; height: 10px; margin-left: 2px" ' +
                 'src="https://flags.fmcdn.net/data/flags/mini/'
                 + COUNTRY_CODES[country] + '.png">');
         });
+
         this.eGui.innerHTML = '(' + model.length + ') ' + flagsHtml.join('');
         if (printDotDotDot) {
             this.eGui.innerHTML = this.eGui.innerHTML + '...';
@@ -1662,11 +1712,12 @@ CountryFloatingFilterComponent.prototype.onParentModelChanged = function(dataMod
 };
 
 function countryCellRenderer(params) {
+    var flag;
     //get flags from here: http://www.freeflagicons.com/
     if (params.value == null || params.value === "" || params.value === '(Select All)') {
         return params.value;
-    } else {
-        var flag = '<img class="flag" alt="' + params.value + '" border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/' + COUNTRY_CODES[params.value] + '.png">';
-        return flag + ' ' + params.value;
     }
+
+    flag = '<img class="flag" alt="' + params.value + '" border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/' + COUNTRY_CODES[params.value] + '.png">';
+    return flag + ' ' + params.value;
 }

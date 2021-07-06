@@ -5,7 +5,7 @@ import {
     BeanStub,
     Column,
     ColumnApi,
-    ColumnController,
+    ColumnModel,
     ColumnVO,
     Constants,
     Events,
@@ -50,7 +50,7 @@ export interface SSRMParams {
 @Bean('rowModel')
 export class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
 
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('gridApi') private gridApi: GridApi;
@@ -106,6 +106,15 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, resetListener);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, resetListener);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, resetListener);
+
+        this.verifyProps();
+    }
+
+    private verifyProps(): void {
+        if (this.gridOptionsWrapper.getDefaultGroupSortComparator() != null) {
+            const message = `AG Grid: defaultGroupSortComparator cannot be used with Server Side Row Model. If using Full Store, then provide the rows to the grid in the desired sort order. If using Partial Store, then sorting is done on the server side, nothing to do with the client.`;
+            _.doOnce(() => console.warn(message), 'SSRM.DefaultGroupSortComparator');
+        }
     }
 
     public setDatasource(datasource: IServerSideDatasource): void {
@@ -138,9 +147,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
         // check if anything pertaining to fetching data has changed, and if it has, reset, but if
         // it has not, don't reset
-        const rowGroupColumnVos = this.columnsToValueObjects(this.columnController.getRowGroupColumns());
-        const valueColumnVos = this.columnsToValueObjects(this.columnController.getValueColumns());
-        const pivotColumnVos = this.columnsToValueObjects(this.columnController.getPivotColumns());
+        const rowGroupColumnVos = this.columnsToValueObjects(this.columnModel.getRowGroupColumns());
+        const valueColumnVos = this.columnsToValueObjects(this.columnModel.getValueColumns());
+        const pivotColumnVos = this.columnsToValueObjects(this.columnModel.getPivotColumns());
 
         const sortModelDifferent = !_.jsonEquals(this.storeParams.sortModel, this.sortController.getSortModel());
         const rowGroupDifferent = !_.jsonEquals(this.storeParams.rowGroupCols, rowGroupColumnVos);
@@ -206,16 +215,16 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         return columns.map(col => ({
             id: col.getId(),
             aggFunc: col.getAggFunc(),
-            displayName: this.columnController.getDisplayNameForColumn(col, 'model'),
+            displayName: this.columnModel.getDisplayNameForColumn(col, 'model'),
             field: col.getColDef().field
         }) as ColumnVO);
     }
 
     private createStoreParams(): SSRMParams {
 
-        const rowGroupColumnVos = this.columnsToValueObjects(this.columnController.getRowGroupColumns());
-        const valueColumnVos = this.columnsToValueObjects(this.columnController.getValueColumns());
-        const pivotColumnVos = this.columnsToValueObjects(this.columnController.getPivotColumns());
+        const rowGroupColumnVos = this.columnsToValueObjects(this.columnModel.getRowGroupColumns());
+        const valueColumnVos = this.columnsToValueObjects(this.columnModel.getValueColumns());
+        const pivotColumnVos = this.columnsToValueObjects(this.columnModel.getPivotColumns());
 
         const dynamicRowHeight = this.gridOptionsWrapper.isDynamicRowHeight();
 
@@ -224,7 +233,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             valueCols: valueColumnVos,
             rowGroupCols: rowGroupColumnVos,
             pivotCols: pivotColumnVos,
-            pivotMode: this.columnController.isPivotMode(),
+            pivotMode: this.columnModel.isPivotMode(),
 
             // sort and filter model
             filterModel: this.filterManager.getFilterModel(),
@@ -374,6 +383,12 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         const rootStore = this.getRootStore();
         if (!rootStore) { return; }
         rootStore.forEachNodeDeep(callback);
+    }
+
+    public forEachNodeAfterFilterAndSort(callback: (node: RowNode, index: number) => void): void {
+        const rootStore = this.getRootStore();
+        if (!rootStore) { return; }
+        rootStore.forEachNodeDeepAfterFilterAndSort(callback);
     }
 
     public executeOnStore(route: string[], callback: (cache: IServerSideStore) => void) {

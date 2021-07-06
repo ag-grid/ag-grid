@@ -4,7 +4,7 @@ title: "Number Filter"
 
 Number filters allow you to filter number data.
 
-The [Provided Filters](../filter-provided/) and [Simple Filters](../filter-provided-simple/) pages explain the parts of the Number Filter that the same as the other Provided Filters. This page builds on that and explains some details that are specific to the Number Filter.
+The [Provided Filters](/filter-provided/) and [Simple Filters](/filter-provided-simple/) pages explain the parts of the Number Filter that the same as the other Provided Filters. This page builds on that and explains some details that are specific to the Number Filter.
 
 ## Number Filter Parameters
 

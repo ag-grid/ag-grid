@@ -39,10 +39,12 @@ Below shows an example of column group configuration.
 
 ## Column Definitions vs Column Group Definitions
 
-The list of columns in `gridOptions.columnDefs` can be a mix of columns and column groups. You can mix and match at will, every level can have any number of columns and groups and in any order. What you need to understand when defining as follows:
+The list of Columns in `gridOptions.columnDefs` can be a mix of Columns and Column Groups.
+You can mix and match at will, every level can have any number of Columns and Column Groups and in any order.
+The difference in Column vs Column Group definitions is as follows:
 
-- The 'children' attribute is mandatory for groups and not applicable for columns.
-- If a definition has a 'children' attribute, it is treated as a group. If it does not have a 'children' attribute, it is treated as a column.
+- The 'children' attribute is mandatory for Column Groups and not applicable for Columns.
+- If a definition has a 'children' attribute, it is treated as a Column Group. If it does not have a 'children' attribute, it is treated as a Column.
 - Most other attributes are not common across groups and columns (eg 'groupId' is only used for groups). If you provide attributes that are not applicable (eg you give a column a 'groupId') they will be ignored.
 
 ## Showing / Hiding Columns

@@ -4,7 +4,7 @@ title: "Text Filter"
 
 Text filters allow you to filter string data.
 
-The [Provided Filters](../filter-provided/) and [Simple Filters](../filter-provided-simple/) pages explain the parts of the Text Filter that the same as the other Provided Filters. This page builds on that and explains some details that are specific to the Text Filter.
+The [Provided Filters](/filter-provided/) and [Simple Filters](/filter-provided-simple/) pages explain the parts of the Text Filter that the same as the other Provided Filters. This page builds on that and explains some details that are specific to the Text Filter.
 
 ## Text Filter Parameters
 

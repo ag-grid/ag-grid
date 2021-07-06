@@ -5,12 +5,11 @@ import {
     BeanStub,
     ChangedPath,
     ColumnApi,
-    ColumnController,
+    ColumnModel,
     Constants,
     Events,
     ExpandCollapseAllEvent,
     FilterChangedEvent,
-    FilterManager,
     GridApi,
     GridOptionsWrapper,
     IClientSideRowModel,
@@ -25,10 +24,10 @@ import {
     RowDataTransaction,
     RowDataUpdatedEvent,
     RowNode,
+    RowHighlightPosition,
     RowNodeTransaction,
-    SelectionController,
+    SelectionService,
     ValueCache,
-    ValueService,
     AsyncTransactionsFlushed,
     AnimationFrameService
 } from "@ag-grid-community/core";
@@ -48,11 +47,9 @@ export interface RowNodeMap {
 @Bean('rowModel')
 export class ClientSideRowModel extends BeanStub implements IClientSideRowModel {
 
-    @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('filterManager') private filterManager: FilterManager;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('$scope') private $scope: any;
-    @Autowired('selectionController') private selectionController: SelectionController;
-    @Autowired('valueService') private valueService: ValueService;
+    @Autowired('selectionService') private selectionService: SelectionService;
     @Autowired('valueCache') private valueCache: ValueCache;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
@@ -109,8 +106,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
         this.rootNode = new RowNode();
         this.nodeManager = new ClientSideNodeManager(this.rootNode, this.gridOptionsWrapper,
-            this.getContext(), this.eventService, this.columnController, this.gridApi, this.columnApi,
-            this.selectionController);
+            this.getContext(), this.eventService, this.columnModel, this.gridApi, this.columnApi,
+            this.selectionService);
 
         this.createBean(this.rootNode);
     }
@@ -178,30 +175,44 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         }
     }
 
-    private resetRowTops(rowNode: RowNode, changedPath: ChangedPath): void {
-        rowNode.clearRowTopAndRowIndex();
-        if (rowNode.hasChildren()) {
-            if (rowNode.childrenAfterGroup) {
+    private resetRowTops(changedPath: ChangedPath): void {
 
-                // if a changedPath is active, it means we are here because of a transaction update or
-                // a change detection. neither of these impacts the open/closed state of groups. so if
-                // a group is not open this time, it was not open last time. so we know all closed groups
-                // already have their top positions cleared. so there is no need to traverse all the way
-                // when changedPath is active and the rowNode is not expanded.
-                const skipChildren = changedPath.isActive() && !rowNode.expanded;
-                if (!skipChildren) {
-                    for (let i = 0; i < rowNode.childrenAfterGroup.length; i++) {
-                        this.resetRowTops(rowNode.childrenAfterGroup[i], changedPath);
+        const displayedRowsMapped: RowNodeMap = {};
+        this.rowsToDisplay.forEach(rowNode => {
+            if (rowNode.id != null) { displayedRowsMapped[rowNode.id] = rowNode }
+        });
+
+        const clearIfNotDisplayed = (rowNode: RowNode) => {
+            if (rowNode && rowNode.id != null && displayedRowsMapped[rowNode.id] == null) {
+                rowNode.clearRowTopAndRowIndex();
+            }
+        };
+
+        const recurse = (rowNode: RowNode) => {
+
+            clearIfNotDisplayed(rowNode);
+            clearIfNotDisplayed(rowNode.detailNode);
+            clearIfNotDisplayed(rowNode.sibling);
+
+            if (rowNode.hasChildren()) {
+                if (rowNode.childrenAfterGroup) {
+
+                    // if a changedPath is active, it means we are here because of a transaction update or
+                    // a change detection. neither of these impacts the open/closed state of groups. so if
+                    // a group is not open this time, it was not open last time. so we know all closed groups
+                    // already have their top positions cleared. so there is no need to traverse all the way
+                    // when changedPath is active and the rowNode is not expanded.
+                    const isRootNode = rowNode.level == -1; // we need to give special consideration for root node,
+                                                            // as expanded=undefined for root node
+                    const skipChildren = changedPath.isActive() && !isRootNode && !rowNode.expanded;
+                    if (!skipChildren) {
+                        rowNode.childrenAfterGroup.forEach(recurse);
                     }
                 }
             }
-            if (rowNode.sibling) {
-                rowNode.sibling.clearRowTopAndRowIndex();
-            }
-        }
-        if (rowNode.detailNode) {
-            rowNode.detailNode.clearRowTopAndRowIndex();
-        }
+        };
+
+        recurse(this.rootNode);
     }
 
     // returns false if row was moved, otherwise true
@@ -254,17 +265,17 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         this.lastHighlightedRow = rowNodeAtPixelNow;
     }
 
-    public getHighlightPosition(pixel: number, rowNode?: RowNode): 'above' | 'below' {
+    public getHighlightPosition(pixel: number, rowNode?: RowNode): RowHighlightPosition {
         if (!rowNode) {
             const index = this.getRowIndexAtPixel(pixel);
             rowNode = this.getRow(index || 0);
 
-            if (!rowNode) { return 'below'; }
+            if (!rowNode) { return RowHighlightPosition.Below; }
         }
 
         const { rowTop, rowHeight } = rowNode;
 
-        return pixel - rowTop! < rowHeight! / 2 ? 'above' : 'below';
+        return pixel - rowTop! < rowHeight! / 2 ? RowHighlightPosition.Above : RowHighlightPosition.Below;
     }
 
     public getLastHighlightedRowNode(): RowNode | null {
@@ -369,7 +380,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     private onValueChanged(): void {
-        if (this.columnController.isPivotActive()) {
+        if (this.columnModel.isPivotActive()) {
             this.refreshModel({ step: ClientSideRowModelSteps.PIVOT });
         } else {
             this.refreshModel({ step: ClientSideRowModelSteps.AGGREGATE });
@@ -459,8 +470,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         // set all row tops to null, then set row tops on all visible rows. if we don't
         // do this, then the algorithm below only sets row tops, old row tops from old rows
         // will still lie around
-        this.resetRowTops(this.rootNode, changedPath);
         this.setRowTops();
+        this.resetRowTops(changedPath);
 
         const event: ModelUpdatedEvent = {
             type: Events.EVENT_MODEL_UPDATED,
@@ -482,7 +493,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
     public isEmpty(): boolean {
         const rowsMissing = _.missing(this.rootNode.allLeafChildren) || this.rootNode.allLeafChildren.length === 0;
-        return _.missing(this.rootNode) || rowsMissing || !this.columnController.isReady();
+        return _.missing(this.rootNode) || rowsMissing || !this.columnModel.isReady();
     }
 
     public isRowsToRender(): boolean {
@@ -722,7 +733,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
                 });
             } else {
                 // groups are about to get disposed, so need to deselect any that are selected
-                this.selectionController.removeGroupsFromSelection();
+                this.selectionService.removeGroupsFromSelection();
                 this.groupStage.execute({
                     rowNode: this.rootNode,
                     changedPath: changedPath,
@@ -733,7 +744,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             }
 
             if (this.gridOptionsWrapper.isGroupSelectsChildren()) {
-                this.selectionController.updateGroupsFromChildrenSelections(changedPath);
+                this.selectionService.updateGroupsFromChildrenSelections(changedPath);
             }
 
         } else {
@@ -776,8 +787,24 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         return this.nodeManager.getCopyOfNodesMap();
     }
 
-    public getRowNode(id: string): RowNode {
-        return this.nodeManager.getRowNode(id);
+    public getRowNode(id: string): RowNode | null {
+        // although id is typed a string, this could be called by the user, and they could have passed a number
+        const idIsGroup = typeof id == 'string' && id.indexOf(RowNode.ID_PREFIX_ROW_GROUP) == 0;
+        if (idIsGroup) {
+            // only one users complained about getRowNode not working for groups, after years of
+            // this working for normal rows. so have done quick implementation. if users complain
+            // about performance, then GroupStage should store / manage created groups in a map,
+            // which is a chunk of work.
+            let res: RowNode | null = null;
+            this.forEachNode(node => {
+                if (node.id === id) {
+                    res = node;
+                }
+            });
+            return res;
+        } else {
+            return this.nodeManager.getRowNode(id);
+        }
     }
 
     // rows: the rows to put into the model

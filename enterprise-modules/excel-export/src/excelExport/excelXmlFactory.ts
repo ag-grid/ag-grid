@@ -1,5 +1,11 @@
-import { XmlElement,  _ } from '@ag-grid-community/core';
-import { Bean, BeanStub, Autowired } from '@ag-grid-community/core';
+import {
+    ExcelStyle,
+    ExcelWorksheet,
+    ExcelXMLTemplate,
+    ExcelFactoryMode,
+    XmlElement,
+    _
+} from '@ag-grid-community/core';
 
 import workbook from './files/xml/workbook';
 import excelWorkbook from './files/xml/excelWorkbook';
@@ -14,50 +20,47 @@ import protection from './files/xml/styles/protection';
 import numberFormat from './files/xml/styles/numberFormat';
 import style from './files/xml/styles/style';
 
-import { ExcelStyle, ExcelWorksheet, ExcelXMLTemplate } from '@ag-grid-community/core';
 import { XmlFactory } from "@ag-grid-community/csv-export";
 
 /**
  * See https://msdn.microsoft.com/en-us/library/aa140066(v=office.10).aspx
  */
-@Bean('excelXmlFactory')
-export class ExcelXmlFactory extends BeanStub {
+export class ExcelXmlFactory {
+    public static factoryMode: ExcelFactoryMode = ExcelFactoryMode.SINGLE_SHEET;
 
-    @Autowired('xmlFactory') private xmlFactory: XmlFactory;
-
-    public createExcel(styles: ExcelStyle[], worksheets: ExcelWorksheet[], sharedStrings?: string[]): string {
+    public static createExcel(styles: ExcelStyle[], currentWorksheet: ExcelWorksheet): string {
         const header = this.excelXmlHeader();
         const docProps = documentProperties.getTemplate();
         const eWorkbook = excelWorkbook.getTemplate();
-        const wb = this.workbook(docProps, eWorkbook, styles, worksheets);
+        const wb = this.workbook(docProps, eWorkbook, styles, currentWorksheet);
 
-        return `${header}${this.xmlFactory.createXml(wb, boolean => boolean ? '1' : '0')}`;
+        return `${header}${XmlFactory.createXml(wb, boolean => boolean ? '1' : '0')}`;
     }
 
-    private workbook(docProperties: XmlElement, eWorkbook: XmlElement, styles: ExcelStyle[], worksheets: ExcelWorksheet[]): XmlElement {
+    private static workbook(docProperties: XmlElement, eWorkbook: XmlElement, styles: ExcelStyle[], currentWorksheet: ExcelWorksheet): XmlElement {
         const children: XmlElement[] = [
             docProperties,
             eWorkbook,
             this.stylesXmlElement(styles)
-        ].concat(worksheets.map(it => worksheet.getTemplate(it)));
+        ].concat(worksheet.getTemplate(currentWorksheet));
 
         return _.assign({}, workbook.getTemplate(), {children});
     }
 
-    private excelXmlHeader(): string {
+    private static excelXmlHeader(): string {
         return `<?xml version="1.0" ?>
         <?mso-application progid="Excel.Sheet" ?>
         `;
     }
 
-    private stylesXmlElement(styles:ExcelStyle[]): XmlElement {
+    private static stylesXmlElement(styles:ExcelStyle[]): XmlElement {
         return {
             name: 'Styles',
             children:styles ? styles.map(it => this.styleXmlElement(it)) : []
         };
     }
 
-    private styleXmlElement(styleProperties: ExcelStyle): XmlElement {
+    private static styleXmlElement(styleProperties: ExcelStyle): XmlElement {
         const children = _.compose(
             this.addProperty('alignment', styleProperties),
             this.addProperty('borders', styleProperties),
@@ -70,7 +73,7 @@ export class ExcelXmlFactory extends BeanStub {
         return _.assign({}, style.getTemplate(styleProperties), {children});
     }
 
-    private addProperty<K extends keyof ExcelStyle>(property: K, styleProperties: ExcelStyle) {
+    private static addProperty<K extends keyof ExcelStyle>(property: K, styleProperties: ExcelStyle) {
         return (children: XmlElement[]) => {
             if (!styleProperties[property]) { return children; }
 

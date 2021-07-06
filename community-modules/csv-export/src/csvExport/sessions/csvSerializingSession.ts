@@ -22,8 +22,6 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
     public addCustomContent(content: CsvCustomContent) {
         if (!content) { return; }
         if (typeof content === 'string') {
-            // we used to require the customFooter to be prefixed with a newline but no longer do,
-            // so only add the newline if the user has not supplied one
             if (!/^\s*\n/.test(content)) {
                 this.beginNewLine();
             }
@@ -97,7 +95,7 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
         if (index != 0) {
             this.result += this.columnSeparator;
         }
-        this.result += this.putInQuotes(this.extractRowCellValue(column, index, Constants.EXPORT_TYPE_CSV, node));
+        this.result += this.putInQuotes(this.extractRowCellValue(column, index, index, Constants.EXPORT_TYPE_CSV, node));
     }
 
     private putInQuotes(value: any): string {

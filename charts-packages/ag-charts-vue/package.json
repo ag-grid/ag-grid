@@ -1,7 +1,7 @@
 {
   "name": "ag-charts-vue",
   "description": "AG Charts Vue Component",
-  "version": "3.1.0",
+  "version": "3.3.0",
   "author": "Sean Landsman <sean@thelandsmans.com>",
   "license": "MIT",
   "main": "main.js",
@@ -23,14 +23,14 @@
     "vuejs"
   ],
   "scripts": {
-    "bundle": "vue-cli-service build --target lib src/AgChartsVue.ts",
-    "npm": "tsc  -p tsconfig-lib.json",
+    "bundle": "npx vue-cli-service build --target lib src/AgChartsVue.ts",
+    "npm": "npx tsc -p tsconfig-lib.json",
     "build": "npm run npm && npm run bundle && npm run hash",
-    "lint": "vue-cli-service lint",
+    "lint": "npx vue-cli-service lint",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
   "devDependencies": {
-    "ag-charts-community": "~3.1.0",
+    "ag-charts-community": "~3.3.0",
     "@types/node": "12.12.22",
     "@vue/cli-plugin-typescript": "^3.11.0",
     "@vue/cli-plugin-unit-jest": "^3.11.0",
@@ -44,7 +44,7 @@
     "vue-template-compiler": "^2.6.10"
   },
   "peerDependencies": {
-    "ag-charts-community": "~3.1.0",
+    "ag-charts-community": "~3.3.0",
     "vue": ">= 2.2 <= 2.5.17 || >= 2.5.20",
     "vue-property-decorator": "^7.2.0 || ^8.0.0"
   },

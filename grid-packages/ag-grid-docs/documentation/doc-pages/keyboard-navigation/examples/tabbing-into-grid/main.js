@@ -30,10 +30,10 @@ var myInput = document.getElementById("my-input");
 
 // intercept key strokes within input element
 myInput.addEventListener("keydown", function(event) {
-    // code for tab key
+    // code for Tab key
     var tabKeyCode = 9;
 
-    // ignore non tab key strokes
+    // ignore non Tab key strokes
     if (event.keyCode !== tabKeyCode) return;
 
     // prevents tabbing into the url section

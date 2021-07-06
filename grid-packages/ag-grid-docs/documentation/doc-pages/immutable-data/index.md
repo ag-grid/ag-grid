@@ -4,9 +4,9 @@ title: "Client-Side Data - Immutable Data"
 
 In some applications it's desirable to bind the grid's `rowData` property to an immutable store such that the grid's data is kept in sync with the store.
 
-Under normal operation when new data is set into the grid (e.g. the `rowData` bound property is updated with new data) the grid assumes the new data is a brand new set of data. It is common for applications to desire this behaviour. However as explained in [Setting Fresh Row Data](../data-update/#setting-fresh-row-data) this can be undesirable as grid state (selected rows etc.) is lost.
+Under normal operation when new data is set into the grid (e.g. the `rowData` bound property is updated with new data) the grid assumes the new data is a brand new set of data. It is common for applications to desire this behaviour. However as explained in [Setting Fresh Row Data](/data-update/#setting-fresh-row-data) this can be undesirable as grid state (selected rows etc.) is lost.
 
-For most applications, using grid [Transaction Updates](../data-update-transactions/) are what you should do if you want to make changes to the dataset rather than replace it. However this is not in line with how applications based on immutable stores desire to work.
+For most applications, using grid [Transaction Updates](/data-update-transactions/) are what you should do if you want to make changes to the dataset rather than replace it. However this is not in line with how applications based on immutable stores desire to work.
 
 In applications using immutable stores (e.g. React and Redux) it could be desirable to treat changes to the bound `rowData` as updates to the current dataset rather than a brand new dataset. The grid has a mode of operation where it does exactly this. It works out what rows are added, removed and updated when new row data is provided by inspecting the new row data. This mode is called Immutable Data Mode and is enabled by setting the property `immutableData=true`.
 
@@ -18,7 +18,7 @@ When in Immutable Data Mode, the grid assumes it is fed with data from an immuta
 - Changes to a single row data item results in a new row data item object instance.
 - Any changes within the list or row data results in a new list.
 
-For the Immutable Data Mode to work, you must be providing IDs for the row nodes as explained in [Application Assigned IDs](../row-object/#application-assigned-ids).
+For the Immutable Data Mode to work, you must be providing IDs for the row nodes as explained in [Application Assigned IDs](/row-object/#application-assigned-ids).
 
 The grid works out what changes need to be applied to the grid using the following rules:
 
@@ -47,7 +47,7 @@ The example demonstrates the following:
 
 - Note that if a grid sort is applied, the grid sorting order gets preference to the order of the data in the provided list.
 
-- **Remove Selected**: Removes the selected items. Try selecting multiple rows (`Ctrl` + click for multiple, or `Shift` + click for range) and remove multiple rows at the same time. Notice how the remaining rows animate to new positions.
+- **Remove Selected**: Removes the selected items. Try selecting multiple rows (<kbd>Ctrl</kbd> + click for multiple, or <kbd>Shift</kbd> + click for range) and remove multiple rows at the same time. Notice how the remaining rows animate to new positions.
 
 - **Update Prices**: Updates all the prices. Try ordering by price and notice the order change as the prices change. Also try highlighting a range on prices and see the aggregations appear in the status bar. As you update the prices, the aggregation values recalculate.
 
@@ -69,11 +69,11 @@ Below is a dataset with over 11,000 rows with Row Grouping and Aggregation over 
 
 ## Comparison to Transaction Updates
 
-When in Immutable Data Mode and the grid receives new data, it creates a [Transaction Update](../data-update-transactions/) underneath the hood. In other words, once the grid has worked out what rows have been added, updated and removed, it then creates a transaction with these details and applies it. This means all the operational benefits to Transaction Updates equally apply to Immutable Data Mode.
+When in Immutable Data Mode and the grid receives new data, it creates a [Transaction Update](/data-update-transactions/) underneath the hood. In other words, once the grid has worked out what rows have been added, updated and removed, it then creates a transaction with these details and applies it. This means all the operational benefits to Transaction Updates equally apply to Immutable Data Mode.
 
 There are however some difference with Immutable Data Mode and Transaction Updates which are as follows:
 
 - When in Immutable Data Mode, the grid stores the data in the same order as the data was provided. For example if you provide a new list with data added in the middle of the list, the grid will also put the data into the middle of the list rather than just appending to the end. This decides the order of data when there is no grid sort applied. If this is not required by your application, then you can suppress this behaviour for a performance boost by setting `suppressMaintainUnsortedOrder=true`.
 
-- There is no equivalent of [Async Transactions](../data-update-high-frequency/) when it comes to Immutable Data Mode. If you want a grid that manages high frequency data changes, it is advised to not use Immutable Data Mode and use [Async Transactions](../data-update-high-frequency/) instead.
+- There is no equivalent of [Async Transactions](/data-update-high-frequency/) when it comes to Immutable Data Mode. If you want a grid that manages high frequency data changes, it is advised to not use Immutable Data Mode and use [Async Transactions](/data-update-high-frequency/) instead.
 

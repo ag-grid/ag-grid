@@ -64,10 +64,18 @@ export function utf8_encode(s: string | null): string {
         return stringFromCharCode(((point >> shift) & 0x3F) | 0x80);
     }
 
-    function encodeCodePoint(point: number) {
+    function encodeCodePoint(point: number): string {
+        if ((point >= 0 && point <= 31 && point !== 10)) {
+            const convertedCode = point.toString(16).toUpperCase();
+            const paddedCode = padStart(convertedCode, 4, '0');
+
+            return `_x${paddedCode}_`;
+        }
+
         if ((point & 0xFFFFFF80) == 0) { // 1-byte sequence
             return stringFromCharCode(point);
         }
+
         let symbol = '';
 
         if ((point & 0xFFFFF800) == 0) { // 2-byte sequence
@@ -100,6 +108,45 @@ export function utf8_encode(s: string | null): string {
 }
 
 /**
+ * @param str The string to be repeated
+ * @param len The size of the output string
+ * @returns A string with size len created from repeated `str`.
+ */
+export function stringRepeat(str: string, len: number): string {
+    len = Math.floor(len);
+    if (str.length === 0 || len === 0) { return ''; }
+
+    const maxCount = str.length * len;
+    len = Math.floor(Math.log(len) / Math.log(2));
+    while (len) {
+       str += str;
+       len--;
+    }
+    str += str.substring(0, maxCount - str.length);
+    return str;
+}
+
+/**
+ * @param str The string to be padded
+ * @param totalLength The final length needed
+ * @param padStr The string to generate the padding
+ * @returns The padded string
+ */
+export function padStart(str: string, totalLength: number, padStr: string): string {
+    if (str.length > totalLength) {
+      return str;
+    }
+
+    totalLength -=  str.length;
+
+    if (totalLength > padStr.length) {
+        padStr += stringRepeat(padStr, totalLength / padStr.length);
+    }
+
+    return padStr.slice(0, totalLength) + str;
+}
+
+/**
  * Converts a camelCase string into hyphenated string
  * from https://gist.github.com/youssman/745578062609e8acac9f
  * @param {string} str
@@ -128,8 +175,11 @@ export function capitalise(str: string): string {
     return str[0].toUpperCase() + str.substr(1).toLowerCase();
 }
 
-export function escapeString(toEscape: string | null): string | null {
-    return toEscape == null || !toEscape.replace ? toEscape : toEscape.replace(reUnescapedHtml, chr => HTML_ESCAPES[chr]);
+export function escapeString(toEscape?: string | null): string | null {
+    // we call toString() twice, in case value is an object, where user provides
+    // a toString() method, and first call to toString() returns back something other
+    // than a string (eg a number to render)
+    return toEscape == null ? null : toEscape.toString().toString().replace(reUnescapedHtml, chr => HTML_ESCAPES[chr]);
 }
 
 /**

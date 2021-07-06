@@ -1,18 +1,16 @@
-import Vue from "vue";
-
-export default Vue.extend({
+export default {
     template: `
-        <div style="text-align: center">
-            <span>
-               <h2><i class="fa fa-calculator"></i> Custom Stats</h2>
-               <dl style="font-size: large; padding: 30px 40px 10px 30px">
-                 <dt style="padding-bottom: 15px">Total Medals: <b>{{numGold + numSilver + numBronze}}</b></dt>
-                 <dt style="padding-bottom: 15px">Total Gold: <b>{{numGold}}</b></dt>
-                 <dt style="padding-bottom: 15px">Total Silver: <b>{{numSilver}}</b></dt>
-                 <dt style="padding-bottom: 15px">Total Bronze: <b>{{numBronze}}</b></dt>
-               </dl>
-            </span>
-        </div>
+      <div style="text-align: center">
+      <span>
+           <h2><i class="fa fa-calculator"></i> Custom Stats</h2>
+           <dl style="font-size: large; padding: 30px 40px 10px 30px">
+             <dt style="padding-bottom: 15px">Total Medals: <b>{{ numGold + numSilver + numBronze }}</b></dt>
+             <dt style="padding-bottom: 15px">Total Gold: <b>{{ numGold }}</b></dt>
+             <dt style="padding-bottom: 15px">Total Silver: <b>{{ numSilver }}</b></dt>
+             <dt style="padding-bottom: 15px">Total Bronze: <b>{{ numBronze }}</b></dt>
+           </dl>
+      </span>
+      </div>
     `,
     data() {
         return {
@@ -34,4 +32,4 @@ export default Vue.extend({
     created() {
         this.params.api.addEventListener('modelUpdated', this.renderStats.bind(this));
     }
-});
+};

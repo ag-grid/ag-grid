@@ -20,8 +20,7 @@ var options = {
     data: getData(),
     series: [{
         xKey: 'time',
-        yKey: 'voltage',
-        tooltipEnabled: false
+        yKey: 'voltage'
     }],
     axes: [
         {
@@ -37,9 +36,7 @@ var options = {
             type: 'number',
             position: 'left',
             label: {
-                formatter: function(params) {
-                    return params.value + 'V';
-                }
+                format: '#{.2f}V'
             }
         }
     ],

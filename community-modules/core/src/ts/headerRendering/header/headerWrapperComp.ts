@@ -5,8 +5,8 @@ import { Column } from "../../entities/column";
 import { DragAndDropService, DragItem, DragSource, DragSourceType } from "../../dragAndDrop/dragAndDropService";
 import { ColDef } from "../../entities/colDef";
 import { Constants } from "../../constants/constants";
-import { ColumnApi } from "../../columnController/columnApi";
-import { ColumnController } from "../../columnController/columnController";
+import { ColumnApi } from "../../columns/columnApi";
+import { ColumnModel } from "../../columns/columnModel";
 import { ColumnHoverService } from "../../rendering/columnHoverService";
 import { CssClassApplier } from "../cssClassApplier";
 import { Events } from "../../events";
@@ -27,6 +27,7 @@ import { setAriaSort, getAriaSortState, removeAriaSort } from "../../utils/aria"
 import { addCssClass, addOrRemoveCssClass, removeCssClass, setDisplayed } from "../../utils/dom";
 import { KeyCode } from '../../constants/keyCode';
 import { ITooltipParams } from "../../rendering/tooltipComponent";
+import { escapeString } from "../../utils/string";
 
 export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
@@ -37,7 +38,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         </div>`;
 
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('horizontalResizeService') private horizontalResizeService: HorizontalResizeService;
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
     @Autowired('gridApi') private gridApi: GridApi;
@@ -81,7 +82,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     protected postConstruct(): void {
         super.postConstruct();
 
-        this.colDefVersion = this.columnController.getColDefVersion();
+        this.colDefVersion = this.columnModel.getColDefVersion();
 
         this.updateState();
 
@@ -143,11 +144,11 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     }
 
     private calculateDisplayName(): string | null {
-        return this.columnController.getDisplayNameForColumn(this.column, 'header', true);
+        return this.columnModel.getDisplayNameForColumn(this.column, 'header', true);
     }
 
     private onNewColumnsLoaded(): void {
-        const colDefVersionNow = this.columnController.getColDefVersion();
+        const colDefVersionNow = this.columnModel.getColDefVersion();
         if (colDefVersionNow != this.colDefVersion) {
             this.colDefVersion = colDefVersionNow;
             this.refresh();
@@ -156,6 +157,14 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
     private refresh(): void {
         this.updateState();
+        this.refreshHeaderComp();
+        this.refreshFunctions.forEach(f => f());
+    }
+
+    private refreshHeaderComp(): void {
+        // if no header comp created yet, it's cos of async creation, so first version is yet
+        // to get here, in which case nothing to refresh
+        if (!this.headerComp) { return; }
 
         const colDef = this.column.getColDef();
         const newHeaderCompConfigured =
@@ -172,8 +181,6 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         } else {
             this.appendHeaderComp();
         }
-
-        this.refreshFunctions.forEach(f => f());
     }
 
     @PreDestroy
@@ -194,19 +201,16 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     }
 
     public attemptHeaderCompRefresh(): boolean {
-        // if no header comp created yet, it's cos of async creation, so first version is yet
-        // to get here, in which case we return true to say 'no need to refresh'.
-        if (!this.headerComp) { return true; }
         // if no refresh method, then we want to replace the headerComp
-        if (!this.headerComp.refresh) { return false; }
+        if (!this.headerComp!.refresh) { return false; }
 
         // if the cell renderer has a refresh method, we call this instead of doing a refresh
         const params = this.createParams();
 
         // take any custom params off of the user
-        const finalParams = this.userComponentFactory.createFinalParams(this.getComponentHolder(), 'headerComponent', params);
+        const finalParams = this.userComponentFactory.mergeParamsWithApplicationProvidedParams(this.getComponentHolder(), 'headerComponent', params);
 
-        const res = this.headerComp.refresh(finalParams);
+        const res = this.headerComp!.refresh(finalParams);
 
         return res;
     }
@@ -224,7 +228,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     protected onFocusIn(e: FocusEvent) {
         if (!this.getGui().contains(e.relatedTarget as HTMLElement)) {
             const headerRow = this.getParentComponent() as HeaderRowComp;
-            this.focusController.setFocusedHeader(
+            this.focusService.setFocusedHeader(
                 headerRow.getRowIndex(),
                 this.getColumn()
             );
@@ -444,7 +448,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
                 const skipHeaderOnAutoSize = this.gridOptionsWrapper.isSkipHeaderOnAutoSize();
 
                 const autoSizeColListener = () => {
-                    this.columnController.autoSizeColumn(this.column, skipHeaderOnAutoSize, "uiColumnResized");
+                    this.columnModel.autoSizeColumn(this.column, skipHeaderOnAutoSize, "uiColumnResized");
                 };
 
                 this.eResize.addEventListener('dblclick', autoSizeColListener);
@@ -484,7 +488,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     public onResizing(finished: boolean, resizeAmount: number): void {
         const resizeAmountNormalised = this.normaliseResizeAmount(resizeAmount);
         const columnWidths = [{ key: this.column, newWidth: this.resizeStartWidth + resizeAmountNormalised }];
-        this.columnController.setColumnWidths(columnWidths, this.resizeWithShiftKey, finished, "uiColumnDragged");
+        this.columnModel.setColumnWidths(columnWidths, this.resizeWithShiftKey, finished, "uiColumnDragged");
 
         if (finished) {
             removeCssClass(this.getGui(), 'ag-column-resizing');
@@ -506,7 +510,6 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     }
 
     private setupTooltip(): void {
-
         const refresh = () => {
             const newTooltipText = this.column.getColDef().headerTooltip;
             this.setTooltip(newTooltipText);

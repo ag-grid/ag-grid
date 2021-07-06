@@ -1,7 +1,7 @@
-import Vue from 'vue';
+import {nextTick} from 'vue';
 
-export default Vue.extend({
-    template: `<input type="number" v-model="value" ref="input" style="width: 100%" />`,
+export default {
+    template: `<input type="number" v-model="value" ref="input" style="width: 100%"/>`,
     data() {
         return {
             value: null
@@ -21,7 +21,7 @@ export default Vue.extend({
             return false;
         },
 
-        // Gets called once when editing is finished (eg if enter is pressed).
+        // Gets called once when editing is finished (eg if Enter is pressed).
         // If you return true, then the result of the edit will be ignored.
         isCancelAfterEnd() {
             // our editor will reject any value greater than 1000
@@ -30,6 +30,6 @@ export default Vue.extend({
     },
     mounted() {
         this.value = this.params.value;
-        Vue.nextTick(() => this.$refs.input.focus());
+        nextTick(() => this.$refs.input.focus());
     }
-});
+};

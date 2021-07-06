@@ -25,7 +25,7 @@ export class RangeHandle extends AbstractSelectionHandle {
 
         if (!lastCellHovered) { return; }
 
-        const cellRanges = this.rangeController.getCellRanges();
+        const cellRanges = this.rangeService.getCellRanges();
         const lastRange = _.last(cellRanges);
 
         if (!this.rangeFixed) {
@@ -41,11 +41,11 @@ export class RangeHandle extends AbstractSelectionHandle {
 
         // check if the cell ranges are for a chart
         if (cellRanges.length === 2 && cellRanges[0].type === CellRangeType.DIMENSION && lastRange.type === CellRangeType.VALUE) {
-            const rowChanged = !this.rowPositionUtils.sameRow(this.endPosition, this.rangeController.getRangeEndRow(lastRange));
+            const rowChanged = !this.rowPositionUtils.sameRow(this.endPosition, this.rangeService.getRangeEndRow(lastRange));
 
             if (rowChanged) {
                 // ensure the dimension range is kept in sync with the value range (which has the handle)
-                this.rangeController.updateRangeEnd(
+                this.rangeService.updateRangeEnd(
                     cellRanges[0],
                     {
                         ...this.endPosition,
@@ -56,19 +56,19 @@ export class RangeHandle extends AbstractSelectionHandle {
             }
         }
 
-        this.rangeController.extendLatestRangeToCell(this.endPosition);
+        this.rangeService.extendLatestRangeToCell(this.endPosition);
     }
 
     protected onDragEnd(e: MouseEvent) {
-        const cellRange = _.last(this.rangeController.getCellRanges())!;
+        const cellRange = _.last(this.rangeService.getCellRanges())!;
 
         this.fixRangeStartEnd(cellRange);
         this.rangeFixed = false;
     }
 
     private fixRangeStartEnd(cellRange: CellRange): void {
-        const startRow = this.rangeController.getRangeStartRow(cellRange);
-        const endRow = this.rangeController.getRangeEndRow(cellRange);
+        const startRow = this.rangeService.getRangeStartRow(cellRange);
+        const endRow = this.rangeService.getRangeEndRow(cellRange);
         const column = cellRange.columns[0];
 
         cellRange.startRow = startRow;

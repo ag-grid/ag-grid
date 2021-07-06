@@ -6,8 +6,7 @@ var options = {
     series: [{
         type: 'line',
         xKey: 'date',
-        yKey: 'temp',
-        tooltipEnabled: false
+        yKey: 'temp'
     }],
     axes: [{
         type: 'time',

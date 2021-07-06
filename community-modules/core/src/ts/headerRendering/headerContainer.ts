@@ -1,19 +1,18 @@
 import { Autowired, PostConstruct, PreDestroy } from '../context/context';
-import { ColumnController } from '../columnController/columnController';
+import { ColumnModel } from '../columns/columnModel';
 import { Events } from '../events';
 import { HeaderRowComp, HeaderRowType } from './headerRowComp';
 import { BodyDropTarget } from './bodyDropTarget';
-import { ScrollVisibleService } from '../gridPanel/scrollVisibleService';
+import { ScrollVisibleService } from '../gridBodyComp/scrollVisibleService';
 import { Component } from '../widgets/component';
 import { Constants } from '../constants/constants';
 import { setFixedWidth } from '../utils/dom';
 import { BeanStub } from "../context/beanStub";
-import { GridPanel } from '../gridPanel/gridPanel';
 import { NumberSequence } from "../utils";
 
 export class HeaderContainer extends BeanStub {
 
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
 
     private eContainer: HTMLElement;
@@ -53,6 +52,7 @@ export class HeaderContainer extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_SCROLLBAR_WIDTH_CHANGED, this.onScrollbarWidthChanged.bind(this));
+        this.setupDragAndDrop();
     }
 
     private onColumnResized(): void {
@@ -74,7 +74,7 @@ export class HeaderContainer extends BeanStub {
     private setWidthOfPinnedContainer(): void {
         const pinningLeft = this.pinned === Constants.PINNED_LEFT;
         const pinningRight = this.pinned === Constants.PINNED_RIGHT;
-        const controller = this.columnController;
+        const controller = this.columnModel;
         const isRtl = this.gridOptionsWrapper.isEnableRtl();
         const scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
 
@@ -120,12 +120,11 @@ export class HeaderContainer extends BeanStub {
         this.refreshRowComps(keepColumns);
     }
 
-    public setupDragAndDrop(gridComp: GridPanel): void {
+    private setupDragAndDrop(): void {
         // center section has viewport, but pinned sections do not
         const dropContainer = this.eViewport ? this.eViewport : this.eContainer;
         const bodyDropTarget = new BodyDropTarget(this.pinned, dropContainer);
         this.createManagedBean(bodyDropTarget);
-        bodyDropTarget.registerGridComp(gridComp);
     }
 
     @PreDestroy
@@ -154,7 +153,7 @@ export class HeaderContainer extends BeanStub {
         const sequence = new NumberSequence();
 
         const refreshColumnGroups = () => {
-            const groupRowCount = this.columnController.getHeaderRowCount() - 1;
+            const groupRowCount = this.columnModel.getHeaderRowCount() - 1;
 
             this.groupsRowComps.forEach(this.destroyRowComp.bind(this));
             this.groupsRowComps = [];
@@ -185,7 +184,7 @@ export class HeaderContainer extends BeanStub {
 
         const refreshFilters = () => {
 
-            const includeFloatingFilter = !this.columnController.isPivotMode() && this.columnController.hasFloatingFilters();
+            const includeFloatingFilter = !this.columnModel.isPivotMode() && this.columnModel.hasFloatingFilters();
 
             const destroyPreviousComp = () => {
                 this.destroyRowComp(this.filtersRowComp);

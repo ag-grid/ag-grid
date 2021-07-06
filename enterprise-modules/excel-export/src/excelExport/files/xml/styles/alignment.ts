@@ -1,5 +1,4 @@
-import { XmlElement } from '@ag-grid-community/core';
-import { ExcelStyle, ExcelXMLTemplate } from '@ag-grid-community/core';
+import { ExcelStyle, ExcelXMLTemplate, XmlElement } from '@ag-grid-community/core';
 
 const alignment: ExcelXMLTemplate = {
     getTemplate(styleProperties: ExcelStyle): XmlElement {
@@ -12,7 +11,7 @@ const alignment: ExcelXMLTemplate = {
             shrinkToFit,
             verticalText,
             wrapText
-        } = styleProperties.alignment;
+        } = styleProperties.alignment!;
         return {
             name: 'Alignment',
             properties: {

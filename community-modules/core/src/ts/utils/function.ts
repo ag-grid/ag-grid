@@ -40,8 +40,21 @@ export function executeInAWhile(funcs: Function[]): void {
     executeAfter(funcs, 400);
 }
 
-export function executeNextVMTurn(funcs: Function[]): void {
-    executeAfter(funcs, 0);
+const executeNextVMTurnFuncs: Function[] = [];
+let executeNextVMTurnPending = false;
+
+export function executeNextVMTurn(func: () => void): void {
+    executeNextVMTurnFuncs.push(func);
+
+    if (executeNextVMTurnPending) { return; }
+
+    executeNextVMTurnPending = true;
+    window.setTimeout(() => {
+        const funcsCopy = executeNextVMTurnFuncs.slice();
+        executeNextVMTurnFuncs.length = 0;
+        executeNextVMTurnPending = false;
+        funcsCopy.forEach(func => func());
+    }, 0);
 }
 
 export function executeAfter(funcs: Function[], milliseconds = 0): void {
@@ -98,6 +111,35 @@ export function debounce(func: (...args: any[]) => void, wait: number, immediate
             func.apply(context, args);
         }
     };
+}
+
+export function waitUntil(condition: () => boolean, callback: () => void, timeout: number = 100, timeoutMessage?: string) {
+    const timeStamp = new Date().getTime();
+
+    let interval: number | null = null;
+    let executed: boolean = false;
+
+    const internalCallback = () => {
+        const reachedTimeout = ((new Date().getTime()) - timeStamp) > timeout;
+        if (condition() || reachedTimeout) {
+            callback();
+            executed = true;
+            if (interval != null) {
+                window.clearInterval(interval);
+                interval = null;
+            }
+
+            if (reachedTimeout && timeoutMessage) {
+                console.warn(timeoutMessage);
+            }
+        }
+    };
+
+    internalCallback();
+
+    if (!executed) {
+        interval = window.setInterval(internalCallback, 10);
+    }
 }
 
 export function compose(...fns: Function[]) {

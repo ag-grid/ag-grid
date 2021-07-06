@@ -25,6 +25,7 @@ var gridOptions = {
     chartThemeOverrides: {
         histogram: {
             series: {
+                bins: [[0, 10], [10, 40], [40, 80], [80, 100]],
                 fillOpacity: 0.8,
                 strokeOpacity: 0.8,
                 strokeWidth: 4,

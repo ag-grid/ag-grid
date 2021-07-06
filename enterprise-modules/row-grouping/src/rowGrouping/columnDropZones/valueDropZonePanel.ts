@@ -3,7 +3,7 @@ import {
     Autowired,
     Column,
     ColumnApi,
-    ColumnController,
+    ColumnModel,
     ColumnValueChangeRequestEvent,
     DragAndDropService,
     Events,
@@ -16,7 +16,7 @@ import { BaseDropZonePanel } from "./baseDropZonePanel";
 
 export class ValuesDropZonePanel extends BaseDropZonePanel {
 
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
 
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
@@ -78,11 +78,11 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
             };
             this.eventService.dispatchEvent(event);
         } else {
-            this.columnController.setValueColumns(columns, "toolPanelUi");
+            this.columnModel.setValueColumns(columns, "toolPanelUi");
         }
     }
 
     protected getExistingColumns(): Column[] {
-        return this.columnController.getValueColumns();
+        return this.columnModel.getValueColumns();
     }
 }

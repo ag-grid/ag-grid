@@ -1,4 +1,4 @@
-var columnDefs = [
+const columnDefs = [
     {
         field: "row"
     },
@@ -7,8 +7,17 @@ var columnDefs = [
     }
 ];
 
-function createRowData() {
-    return [
+const gridOptions = {
+    defaultColDef: {
+        editable: true,
+        sortable: true,
+        flex: 1,
+        minWidth: 100,
+        filter: true,
+        resizable: true
+    },
+    columnDefs: columnDefs,
+    rowData: [
         {"row": "Row 1", "name": "Michael Phelps"},
         {"row": "Row 2", "name": "Natalie Coughlin"},
         {"row": "Row 3", "name": "Aleksey Nemov"},
@@ -23,20 +32,7 @@ function createRowData() {
         {"row": "Row 12", "name": "Sarah McCoy"},
         {"row": "Row 13", "name":  "Jane Jack"},
         {"row": "Row 14", "name": "Tina Wills"}
-    ];
-}
-
-var gridOptions = {
-    defaultColDef: {
-        editable: true,
-        sortable: true,
-        flex: 1,
-        minWidth: 100,
-        filter: true,
-        resizable: true
-    },
-    columnDefs: columnDefs,
-    rowData: createRowData(),
+    ],
     enableRangeSelection: true,
     rowSelection: "multiple",
     components: {
@@ -62,8 +58,8 @@ var gridOptions = {
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector('#myGrid');
+document.addEventListener('DOMContentLoaded', () => {
+    const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
     gridOptions.api.sizeColumnsToFit();
 });

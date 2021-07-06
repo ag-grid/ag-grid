@@ -31,7 +31,7 @@ const gridOptions = {
 }
 </snippet>
 
-The `rowDrag` property can also be a callback function in the the form: 
+The `rowDrag`callback function has the following interface:
 
 ```ts
 // function to enable/disable RowDrag
@@ -68,8 +68,8 @@ The example below shows simple managed dragging. The following can be noted:
 
 The logic for managed dragging is simple and has the following constraints:
 
-- Works with [Client-Side](../client-side-model/) row model only; not with the [Infinite](../infinite-scrolling/), [Server-Side](../server-side-model/) or [Viewport](../viewport/) row models.
-- Does not work if [Pagination](../row-pagination/) is enabled.
+- Works with [Client-Side](/client-side-model/) row model only; not with the [Infinite](/infinite-scrolling/), [Server-Side](/server-side-model/) or [Viewport](/viewport/) row models.
+- Does not work if [Pagination](/row-pagination/) is enabled.
 - Does not work when sorting is applied. This is because the sort order of the rows depends on the data and moving the data would break the sort order.
 - Does not work when filtering is applied. This is because a filter removes rows making it impossible to know what 'real' order of rows when some are missing.
 - Does not work when row grouping or pivot is active. This is because moving rows between groups would require a knowledge of the underlying data which only your application knows.
@@ -168,7 +168,7 @@ From the example the following can be noted:
 
 <grid-example title='Row Drag Events' name='dragging-events' type='generated'></grid-example>
 
-## Simple Unmanaged Example
+### Simple Unmanaged Example
 
 The example below shows how to implement simple row dragging using unmanaged row dragging and events. The example behaves the same as the [Managed Dragging](#managed-dragging) example above, however the logic for moving the rows is in the application rather than the grid.
 
@@ -179,7 +179,7 @@ From the example the following can be noted:
   in the example doesn't cover these scenarios and wants to prevent row
   dragging when sorting or filtering is active.
 
-- To update the data the example uses an [Immutable Data Store](../immutable-data/) and sets `immutableData=true`. The application is free to use any update mechanism it wants; see [Updating Data](../data-update/) for different options.
+- To update the data the example uses an [Immutable Data Store](/immutable-data/) and sets `immutableData=true`. The application is free to use any update mechanism it wants; see [Updating Data](/data-update/) for different options.
 
 <grid-example title='Row Drag Simple Unmanaged' name='simple-unmanaged' type='generated'></grid-example>
 
@@ -187,13 +187,16 @@ The simple example doesn't add anything that managed dragging gives (the first
 example on this page). Things get interesting when we introduce complex scenarios
 such as row grouping or tree data, which are explained below.
 
+[[note]]
+|Dragging Multiple Rows with unmanaged row dragging, the application is in control of what gets dragged, so it is possible to use the events to drag more than one row at a time, e.g. to move all selected rows in one go if using row selection.
+
 ## Dragging & Row Grouping
 
-[Row Grouping](../grouping/) in the grid allows grouping rows by a particular column. Dragging rows while grouping is possible when doing unmanaged row dragging. The application is responsible for updating the data based on the drag events fired by the grid.
+[Row Grouping](/grouping/) in the grid allows grouping rows by a particular column. Dragging rows while grouping is possible when doing unmanaged row dragging. The application is responsible for updating the data based on the drag events fired by the grid.
 
 The example below uses row dragging to place rows into groups. It does not try to order the rows within the group. For this reason, the logic works regardless of sorting or filtering.
 
-The example below shows row dragging with [Row Grouping](../grouping/) where the following can be noted:
+The example below shows row dragging with [Row Grouping](/grouping/) where the following can be noted:
 
 - The **Athlete** column has row drag enabled for non-group rows. This is achieved using the function variant of the `rowDrag` property.
 - The grid has not set the `rowDragManaged` property which results in unmanaged row dragging.
@@ -205,13 +208,13 @@ The example below shows row dragging with [Row Grouping](../grouping/) where the
 
 ## Row Dragging & Tree Data
 
-[Tree Data](../tree-data/) in the grid allows providing data to the grid in parent / child relationships, similar to that required for a file browser. Dragging rows with tree data is possible when doing unmanaged row dragging. The application is responsible for updating the data based on the drag events fired by the grid.
+[Tree Data](/tree-data/) in the grid allows providing data to the grid in parent / child relationships, similar to that required for a file browser. Dragging rows with tree data is possible when doing unmanaged row dragging. The application is responsible for updating the data based on the drag events fired by the grid.
 
 ### Example Tree Data
 
-The example below shows [Tree Data](../tree-data/) and row dragging where the following can be noted:
+The example below shows [Tree Data](/tree-data/) and row dragging where the following can be noted:
 
-- The [auto-group column](../grouping/#auto-column-group) has row drag `true` for all rows.
+- The [auto-group column](/grouping/#auto-column-group) has row drag `true` for all rows.
 
 -  The example registers for `onRowDragEnd` events and rearranges
    the rows when the drag completes.
@@ -232,19 +235,15 @@ The example above works, however it is not intuitive as the user is given no vis
 
 - The application does NOT rearrange the rows as the drag is happening. As with the previous example, it waits for the `onRowDragEnd` event before updating the data.
 
-- The example uses [Cell Class Rules](../cell-styles/#cell-class-rules) to highlight the destination folder. The example adds a CSS class `hover-over` to all the cells of the destination folder.
+- The example uses [Cell Class Rules](/cell-styles/#cell-class-rules) to highlight the destination folder. The example adds a CSS class `hover-over` to all the cells of the destination folder.
 
-- The example uses [Refresh Cells](../view-refresh/#refresh-cells) to get the grid to execute the Cell Class Rules again over the destination folder when the destination folder changes.
+- The example uses [Refresh Cells](/view-refresh/#refresh-cells) to get the grid to execute the Cell Class Rules again over the destination folder when the destination folder changes.
 
 <grid-example title='Highlighting Drag with Tree Data' name='highlighting-drag-tree-data' type='generated' options='{ "enterprise": true, "extras": ["fontawesome"], "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
-## Dragging Multiple Rows
-
-With unmanaged row dragging, the application is in control of what gets dragged, so it is possible to use the events to drag more than one row at a time, e.g. to move all selected rows in one go if using row selection.
-
 ## Other Row Models
 
-Unmanaged row dragging will work with any of the row models [Infinite](../infinite-scrolling/), [Server-Side](../server-side-model/) and [Viewport](../viewport/). With unmanaged dragging, the implementation of what happens when a particular drag happens is up to your application.
+Unmanaged row dragging will work with any of the row models [Infinite](/infinite-scrolling/), [Server-Side](/server-side-model/) and [Viewport](/viewport/). With unmanaged dragging, the implementation of what happens when a particular drag happens is up to your application.
 
 Because the grid implementation with regards to row dragging is identical to the above, examples of row dragging with the other row models are not given. How your application behaves with regards to the row drag events is the difficult bit, but that part is specific to your application and how your application stores its state. Giving an example here with a different data store would be redundant.
 
@@ -298,7 +297,7 @@ The example below shows dragging with custom text. The following can be noted:
 
 ### Row Dragger inside Custom Cell Renderers
 
-Due to the complexity of some applications, it could be handy to render the Row Drag Component inside of a Custom Cell Renderer. This can be achieved, by using the `registerRowDragger` method in the [ICellRendererParams](../component-cell-renderer/#cell-renderer-component) as follows: 
+Due to the complexity of some applications, it could be handy to render the Row Drag Component inside of a Custom Cell Renderer. This can be achieved, by using the `registerRowDragger` method in the [ICellRendererParams](/component-cell-renderer/#cell-renderer-component) as follows:
 
 [[only-javascript]]
 | ```js
@@ -318,7 +317,7 @@ Due to the complexity of some applications, it could be handy to render the Row 
 | agInit(params: ICellRendererParams): void {
 |     this.cellRendererParams = params;
 | }
-| 
+|
 | ngAfterViewInit() {
 |     this.cellRendererParams.registerRowDragger(this.myRef.nativeElement);
 | }
@@ -347,7 +346,7 @@ Due to the complexity of some applications, it could be handy to render the Row 
 | ```
 
 [[warning]]
-| When using `registerRowDragger` you should **not** set the property `rowDrag=true` in the Column Definition. 
+| When using `registerRowDragger` you should **not** set the property `rowDrag=true` in the Column Definition.
 | Doing that will cause the cell to have two row draggers.
 
 The example below shows a custom cell renderer, with using the `registerRowDragger` callback to render the Row Dragger inside itself.
@@ -355,3 +354,23 @@ The example below shows a custom cell renderer, with using the `registerRowDragg
 - When you hover the cells, an arrow will appear, and this arrow can be used to **drag** the rows.
 
 <grid-example title='Row Drag With Custom Cell Renderer' name='dragger-inside-custom-cell-renderer' type='generated' options='{ "extras": ["fontawesome"] }'></grid-example>
+
+### Full Width Row Dragging
+
+It is possible to drag [Full Width Rows](../full-width-rows/) by registering a [Custom Row Dragger](#row-dragger-inside-custom-cell-renderers).
+
+Note the following: 
+
+- Only the Full Width Rows are draggable.
+
+<grid-example title='Row Drag with Full Width Rows' name='dragger-inside-full-width-row' type='generated'></grid-example>
+
+### Row Dragger with Custom Start Drag Pixels
+
+By default, the drag event only starts after the **Row Drag Element** has been dragged by `4px`, but sometimes it might be useful to start the drag with a different drag threshold, for example, start dragging as soon as the `mousedown` event happens (dragged by `0px`). For that reason, the `registerRowDragger` takes a second parameter to specify the number of pixels that will start the drag event.
+
+Note the following:
+
+- The drag event starts as soon as `mousedown` is fired.
+
+<grid-example title='Row Drag With Custom Start Drag Pixels' name='dragger-inside-custom-start-drag-pixels' type='generated' options='{ "extras": ["fontawesome"] }'></grid-example>

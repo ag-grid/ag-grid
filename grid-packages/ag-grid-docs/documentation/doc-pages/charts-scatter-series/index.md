@@ -5,7 +5,7 @@ title: "Scatter Series"
 Scatter charts use two axes to plot `(x,y)` pairs of numeric variables as points at the intersection of `x` and `y`.
 
 [[note]]
-| Scatter series configuration is largely the same as line series configuration (please refer to the [line series documentation](../charts-line-series/) to learn more),so here we'll just give some examples and cover only the differences.
+| Scatter series configuration is largely the same as line series configuration (please refer to the [line series documentation](/charts-line-series/) to learn more),so here we'll just give some examples and cover only the differences.
 
 ## Scatter Plot
 
@@ -50,4 +50,4 @@ The example below uses both `'circle'` and `'square'` markers to represent the a
 
 ## Next Up
 
-Continue to the next section to learn about [pie and doughnut series](../charts-pie-series/).
+Continue to the next section to learn about [pie and doughnut series](/charts-pie-series/).

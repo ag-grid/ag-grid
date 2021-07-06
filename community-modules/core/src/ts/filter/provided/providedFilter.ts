@@ -1,5 +1,5 @@
 import { IDoesFilterPassParams, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
-import { Autowired, PostConstruct } from '../../context/context';
+import { Autowired } from '../../context/context';
 import { IRowModel } from '../../interfaces/iRowModel';
 import { Constants } from '../../constants/constants';
 import { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
@@ -86,7 +86,6 @@ export abstract class ProvidedFilter<T> extends ManagedFocusComponent implements
         return !!this.appliedModel;
     }
 
-    @PostConstruct
     protected postConstruct(): void {
         this.resetTemplate(); // do this first to create the DOM
         super.postConstruct();
@@ -244,13 +243,21 @@ export abstract class ProvidedFilter<T> extends ManagedFocusComponent implements
     }
 
     private onBtCancel(e: Event): void {
-        this.setModelIntoUi(this.getModel()!).then(() => {
+        const currentModel = this.getModel();
+
+        const afterAppliedFunc = () => {
             this.onUiChanged(false, 'prevent');
 
             if (this.providedFilterParams.closeOnApply) {
                 this.close(e);
             }
-        });
+        };
+
+        if (currentModel != null) {
+            this.setModelIntoUi(currentModel).then(afterAppliedFunc);
+        } else {
+            this.resetUiToDefaults().then(afterAppliedFunc);
+        }
     }
 
     private onBtClear(): void {

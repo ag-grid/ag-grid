@@ -2,7 +2,7 @@ import { GridOptions } from '../entities/gridOptions';
 import { GridApi } from '../gridApi';
 import { ComponentStateChangedEvent, Events } from '../events';
 import { PropertyKeys } from '../propertyKeys';
-import { ColumnApi } from '../columnController/columnApi';
+import { ColumnApi } from '../columns/columnApi';
 import { iterateObject } from '../utils/object';
 import { values } from '../utils/generic';
 
@@ -63,17 +63,23 @@ export class ComponentUtil {
     }
 
     public static getCallbackForEvent(eventName: string): string {
-        if (!eventName || eventName.length < 2) { return eventName; }
+        if (!eventName || eventName.length < 2) {
+            return eventName;
+        }
 
         return 'on' + eventName[0].toUpperCase() + eventName.substr(1);
     }
 
     public static processOnChange(changes: any, gridOptions: GridOptions, api: GridApi, columnApi: ColumnApi): void {
-        if (!changes) { return; }
+        if (!changes) {
+            return;
+        }
+
+        const changesToApply = {...changes};
 
         // to allow array style lookup in TypeScript, take type away from 'this' and 'gridOptions'
         const pGridOptions = gridOptions as any;
-        const keyExists = (key: string) => changes[key];
+        const keyExists = (key: string) => changesToApply[key];
 
         // check if any change for the simple types, and if so, then just copy in the new value
         [
@@ -83,83 +89,87 @@ export class ComponentUtil {
             ...ComponentUtil.getEventCallbacks(),
         ]
             .filter(keyExists)
-            .forEach(key => pGridOptions[key] = changes[key].currentValue);
+            .forEach(key => pGridOptions[key] = changesToApply[key].currentValue);
 
         ComponentUtil.BOOLEAN_PROPERTIES
             .filter(keyExists)
-            .forEach(key => pGridOptions[key] = ComponentUtil.toBoolean(changes[key].currentValue));
+            .forEach(key => pGridOptions[key] = ComponentUtil.toBoolean(changesToApply[key].currentValue));
 
         ComponentUtil.NUMBER_PROPERTIES
             .filter(keyExists)
-            .forEach(key => pGridOptions[key] = ComponentUtil.toNumber(changes[key].currentValue));
+            .forEach(key => pGridOptions[key] = ComponentUtil.toNumber(changesToApply[key].currentValue));
 
-        if (changes.enableCellTextSelection) {
-            api.setEnableCellTextSelection(ComponentUtil.toBoolean(changes.enableCellTextSelection.currentValue));
+        if (changesToApply.enableCellTextSelection) {
+            api.setEnableCellTextSelection(ComponentUtil.toBoolean(changesToApply.enableCellTextSelection.currentValue));
+            delete changesToApply.enableCellTextSelection;
         }
 
-        if (changes.quickFilterText) {
-            api.setQuickFilter(changes.quickFilterText.currentValue);
+        if (changesToApply.quickFilterText) {
+            api.setQuickFilter(changesToApply.quickFilterText.currentValue);
+            delete changesToApply.quickFilterText;
         }
 
-        if (changes.rowData) {
-            api.setRowData(changes.rowData.currentValue);
+        if (changesToApply.autoGroupColumnDef) {
+            api.setAutoGroupColumnDef(changesToApply.autoGroupColumnDef.currentValue, "gridOptionsChanged");
+            delete changesToApply.autoGroupColumnDef;
         }
 
-        if (changes.pinnedTopRowData) {
-            api.setPinnedTopRowData(changes.pinnedTopRowData.currentValue);
+        if (changesToApply.columnDefs) {
+            api.setColumnDefs(changesToApply.columnDefs.currentValue, "gridOptionsChanged");
+            delete changesToApply.columnDefs;
         }
 
-        if (changes.pinnedBottomRowData) {
-            api.setPinnedBottomRowData(changes.pinnedBottomRowData.currentValue);
+        if (changesToApply.paginationPageSize) {
+            api.paginationSetPageSize(ComponentUtil.toNumber(changesToApply.paginationPageSize.currentValue));
+            delete changesToApply.paginationPageSize;
         }
 
-        if (changes.autoGroupColumnDef) {
-            api.setAutoGroupColumnDef(changes.autoGroupColumnDef.currentValue, "gridOptionsChanged");
+        if (changesToApply.pivotMode) {
+            columnApi.setPivotMode(ComponentUtil.toBoolean(changesToApply.pivotMode.currentValue));
+            delete changesToApply.pivotMode;
         }
 
-        if (changes.columnDefs) {
-            api.setColumnDefs(changes.columnDefs.currentValue, "gridOptionsChanged");
+        if (changesToApply.groupRemoveSingleChildren) {
+            api.setGroupRemoveSingleChildren(ComponentUtil.toBoolean(changesToApply.groupRemoveSingleChildren.currentValue));
+            delete changesToApply.groupRemoveSingleChildren;
         }
 
-        if (changes.datasource) {
-            api.setDatasource(changes.datasource.currentValue);
+        if (changesToApply.suppressRowDrag) {
+            api.setSuppressRowDrag(ComponentUtil.toBoolean(changesToApply.suppressRowDrag.currentValue));
+            delete changesToApply.suppressRowDrag;
         }
 
-        if (changes.headerHeight) {
-            api.setHeaderHeight(ComponentUtil.toNumber(changes.headerHeight.currentValue));
+        if (changesToApply.suppressMoveWhenRowDragging) {
+            api.setSuppressMoveWhenRowDragging(ComponentUtil.toBoolean(changesToApply.suppressMoveWhenRowDragging.currentValue));
+            delete changesToApply.suppressMoveWhenRowDragging;
         }
 
-        if (changes.paginationPageSize) {
-            api.paginationSetPageSize(ComponentUtil.toNumber(changes.paginationPageSize.currentValue));
+        if (changesToApply.suppressRowClickSelection) {
+            api.setSuppressRowClickSelection(ComponentUtil.toBoolean(changesToApply.suppressRowClickSelection.currentValue));
+            delete changesToApply.suppressRowClickSelection;
         }
 
-        if (changes.pivotMode) {
-            columnApi.setPivotMode(ComponentUtil.toBoolean(changes.pivotMode.currentValue));
+        if (changesToApply.suppressClipboardPaste) {
+            api.setSuppressClipboardPaste(ComponentUtil.toBoolean(changesToApply.suppressClipboardPaste.currentValue));
+            delete changesToApply.suppressClipboardPaste;
         }
 
-        if (changes.groupRemoveSingleChildren) {
-            api.setGroupRemoveSingleChildren(ComponentUtil.toBoolean(changes.groupRemoveSingleChildren.currentValue));
+        if (changesToApply.headerHeight) {
+            api.setHeaderHeight(ComponentUtil.toNumber(changesToApply.headerHeight.currentValue));
+            delete changesToApply.headerHeight;
         }
 
-        if (changes.suppressRowDrag) {
-            api.setSuppressRowDrag(ComponentUtil.toBoolean(changes.suppressRowDrag.currentValue));
-        }
+        // any remaining properties can be set in a generic way
+        // ie the setter takes the form of setXXX and the argument requires no formatting/translation first
+        const dynamicApi = (api as any);
+        Object.keys(changesToApply)
+            .forEach(property => {
+                const setterName = `set${property.charAt(0).toUpperCase()}${property.substring(1)}`
 
-        if (changes.suppressMoveWhenRowDragging) {
-            api.setSuppressMoveWhenRowDragging(ComponentUtil.toBoolean(changes.suppressMoveWhenRowDragging.currentValue));
-        }
-
-        if (changes.suppressRowClickSelection) {
-            api.setSuppressRowClickSelection(ComponentUtil.toBoolean(changes.suppressRowClickSelection.currentValue));
-        }
-
-        if (changes.suppressClipboardPaste) {
-            api.setSuppressClipboardPaste(ComponentUtil.toBoolean(changes.suppressClipboardPaste.currentValue));
-        }
-
-        if (changes.sideBar) {
-            api.setSideBar(changes.sideBar.currentValue);
-        }
+                if (dynamicApi[setterName]) {
+                    dynamicApi[setterName](changes[property].currentValue);
+                }
+            })
 
         // copy changes into an event for dispatch
         const event: ComponentStateChangedEvent = {
@@ -176,7 +186,9 @@ export class ComponentUtil {
     }
 
     public static toBoolean(value: any): boolean {
-        if (typeof value === 'boolean') { return value; }
+        if (typeof value === 'boolean') {
+            return value;
+        }
 
         if (typeof value === 'string') {
             // for boolean, compare to empty String to allow attributes appearing with
@@ -188,9 +200,13 @@ export class ComponentUtil {
     }
 
     public static toNumber(value: any): number | undefined {
-        if (typeof value === 'number') { return value; }
+        if (typeof value === 'number') {
+            return value;
+        }
 
-        if (typeof value === 'string') { return Number(value); }
+        if (typeof value === 'string') {
+            return Number(value);
+        }
     }
 }
 

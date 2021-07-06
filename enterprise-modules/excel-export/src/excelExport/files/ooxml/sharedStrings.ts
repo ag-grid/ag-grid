@@ -1,41 +1,46 @@
 import { ExcelOOXMLTemplate, XmlElement, _ } from '@ag-grid-community/core';
 
-const buildSharedString = (textNode: string): XmlElement => {
-    textNode = textNode.toString();
+const buildSharedString = (strMap: Map<string, number>): XmlElement[] => {
+    const ret: XmlElement[] = [];
 
-    const child: XmlElement = {
-        name: 't',
-        textNode: _.utf8_encode(_.escapeString(textNode))
-    };
-    // if we have leading or trailing spaces, instruct Excel not to trim them
-    const preserveSpaces = textNode.replace(/^\s*|\s*$/g, '').length !== textNode.length;
-
-    if (preserveSpaces) {
-        child.properties = {
-            rawMap: {
-                "xml:space": "preserve"
-            }
+    strMap.forEach((val, key) => {
+        const textNode = key.toString();
+        const child: XmlElement = {
+            name: 't',
+            textNode: _.utf8_encode(_.escapeString(textNode))
         };
-    }
 
-    return {
-        name: 'si',
-        children: [child]
-    };
+        // if we have leading or trailing spaces, instruct Excel not to trim them
+        const preserveSpaces = textNode.replace(/^\s*|\s*$/g, '').length !== textNode.length;
+
+        if (preserveSpaces) {
+            child.properties = {
+                rawMap: {
+                    "xml:space": "preserve"
+                }
+            };
+        }
+        ret.push({
+            name: 'si',
+            children: [child]
+        })
+    });
+
+    return ret;
 };
 
 const sharedStrings: ExcelOOXMLTemplate = {
-    getTemplate(strings: string[]) {
+    getTemplate(strings: Map<string, number>) {
         return {
             name: "sst",
             properties: {
                 rawMap: {
                     xmlns: 'http://schemas.openxmlformats.org/spreadsheetml/2006/main',
-                    count: strings.length,
-                    uniqueCount: strings.length
+                    count: strings.size,
+                    uniqueCount: strings.size
                 }
             },
-            children: strings.map(buildSharedString)
+            children: buildSharedString(strings)
         };
     }
 };

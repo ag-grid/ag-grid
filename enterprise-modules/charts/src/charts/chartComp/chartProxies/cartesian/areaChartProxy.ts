@@ -5,7 +5,8 @@ import {
     CartesianChartOptions,
     ChartType,
     DropShadowOptions,
-    HighlightOptions
+    HighlightOptions,
+    LineSeriesLabelOptions
 } from "@ag-grid-community/core";
 import { AgChart, AreaSeries, CartesianChart, ChartTheme } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
@@ -20,7 +21,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
         this.recreateChart();
     }
 
-    protected createChart(options?: CartesianChartOptions<AreaSeriesOptions>): CartesianChart {
+    protected createChart(): CartesianChart {
         const { grouping, parentElement } = this.chartProxyParams;
         const seriesDefaults = this.getSeriesDefaults();
         const marker = { ...seriesDefaults.marker };
@@ -29,7 +30,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
             delete marker.type;
         }
 
-        options = options || this.chartOptions;
+        const options = this.iChartOptions;
         const agChartOptions = options as AgCartesianChartOptions;
 
         const xAxisType = options.xAxis.type ? options.xAxis.type : 'category';
@@ -193,8 +194,8 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
         });
     }
 
-    protected getDefaultOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<AreaSeriesOptions> {
-        const options = super.getDefaultOptionsFromTheme(theme);
+    protected extractIChartOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<AreaSeriesOptions> {
+        const options = super.extractIChartOptionsFromTheme(theme);
 
         const seriesDefaults = theme.getConfig<AgAreaSeriesOptions>('area.series.area');
         options.seriesDefaults = {
@@ -204,14 +205,15 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                 renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
             },
             fill: {
-                colors: theme.palette.fills,
+                colors: seriesDefaults.fills || theme.palette.fills,
                 opacity: seriesDefaults.fillOpacity
             },
             stroke: {
-                colors: theme.palette.strokes,
+                colors: seriesDefaults.strokes || theme.palette.strokes,
                 opacity: seriesDefaults.strokeOpacity,
                 width: seriesDefaults.strokeWidth
             },
+            label: seriesDefaults.label as LineSeriesLabelOptions,
             marker: {
                 enabled: seriesDefaults.marker!.enabled,
                 shape: seriesDefaults.marker!.shape,
@@ -260,7 +262,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
 
     private getSeriesDefaults(): any /*InternalAreaSeriesOptions*/ {
         return {
-            ...this.chartOptions.seriesDefaults,
+            ...this.iChartOptions.seriesDefaults,
             type: 'area',
             normalizedTo: this.chartType === ChartType.NormalizedArea ? 100 : undefined,
         };

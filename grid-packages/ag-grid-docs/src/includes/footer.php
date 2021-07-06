@@ -3,7 +3,7 @@
         <div>
             <h5>Documentation</h5>
             <ul>
-                <li><a href="/documentation/javascript/getting-started/">Getting Started</a></li>
+                <li><a href="/javascript-grid/getting-started/">Getting Started</a></li>
                 <li><a href="/ag-grid-changelog/">Changelog</a></li>
                 <li><a href="/ag-grid-pipeline/">Pipeline</a></li>
                 <li><a href="/archive/">Documentation Archive</a></li>
@@ -27,18 +27,17 @@
                   <li><a href="/cookies.php">Cookies Policy</a><li>
             </ul>
         </div>
-
-
-
         <div>
+            <h5>Follow</h5>
             <ul>
-                <li><a class="github-button" href="https://github.com/ag-grid/ag-grid" data-show-count="true" aria-label="Star ag-grid/ag-grid on GitHub">Star</a></li>
-                <li><a class="twitter-follow-button"
-  href="https://twitter.com/ag_grid">
-Follow @ag_grid</a></li>
-
+                <li><a href="https://github.com/ag-grid/ag-grid">Github</a></li>
+                <li><a href="https://twitter.com/ag_grid">Twitter</a></li>
+                <li><a href="https://youtube.com/c/ag-grid">YouTube</a><li>
+                  <li><a href="https://www.linkedin.com/company/ag-grid">LinkedIn</a><li>
             </ul>
         </div>
+
+
     </div>
 
     <div id="copy">
@@ -47,8 +46,6 @@ Follow @ag_grid</a></li>
     </div>
 </footer>
 
-<script async defer src="https://platform.twitter.com/widgets.js"></script>
-<script async defer src="https://buttons.github.io/buttons.js"></script>
 
 <div id="cookie-warning" style="display: none;">
   <div style="margin-bottom: 5px">
@@ -68,7 +65,4 @@ Follow @ag_grid</a></li>
       families: ['Roboto:300,400,500,900']
     }
   });
-  window.onload = function() {
-    window.Gifffer && window.Gifffer();
-  }
 </script>

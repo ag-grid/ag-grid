@@ -177,6 +177,7 @@ class ReactTransformer extends SnippetTransformer {
     expressionSnippet = false;
     externalisedProperties = [];
     inlineProperties = [];
+    inlinePropertiesWithValues = [];
 
     parseProperty(property, depth) {
         const propertyName = getName(property);
@@ -195,6 +196,7 @@ class ReactTransformer extends SnippetTransformer {
         let comment = extraLine + (property.comment ? `//${property.comment}\n` : '');
         this.externalisedProperties.push(comment + this.extractExternalProperty(property));
         this.inlineProperties.push(`${propertyName}={${propertyName}}`);
+        this.inlinePropertiesWithValues.push(`${propertyName}=${getReactValue(property)}`);
 
         return ''; // react grid options are gathered and added later in the framework context
     }
@@ -228,6 +230,12 @@ class ReactTransformer extends SnippetTransformer {
             // framework context is only hidden if no grid options exists (columnDefs excluded)
             return decreaseIndent(result.trim());
         }
+
+        if (this.options.inlineReactProperties && this.inlinePropertiesWithValues.length > 0) {
+            const space = this.inlinePropertiesWithValues.length > 0 ? ' ' : '';
+            return `<AgGridReact${space}${this.inlinePropertiesWithValues.join(' ')}>${colDefs}\n</AgGridReact>`;
+        }
+
         if (this.inlineProperties.length > 2) {
             return externalSnippet +
                    `<AgGridReact\n${tab(1)}${this.inlineProperties.join(`\n${tab(1)}`).trim()}\n>` +

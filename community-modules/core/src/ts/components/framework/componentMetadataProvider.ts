@@ -1,13 +1,12 @@
 import { Autowired, Bean, PostConstruct } from "../../context/context";
 import { IComponent } from "../../interfaces/iComponent";
-import { AgGridComponentFunctionInput } from "./userComponentRegistry";
 import { AgComponentUtils } from "./agComponentUtils";
 import { BeanStub } from "../../context/beanStub";
 
 export interface ComponentMetadata {
     mandatoryMethodList: string[];
     optionalMethodList: string[];
-    functionAdapter?: (callback: AgGridComponentFunctionInput) => { new(): IComponent<any> };
+    functionAdapter?: (callback: any) => { new(): IComponent<any> };
 }
 
 @Bean("componentMetadataProvider")

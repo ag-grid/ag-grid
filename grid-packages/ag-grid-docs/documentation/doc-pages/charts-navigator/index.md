@@ -72,4 +72,4 @@ The example below uses various navigator configs (in a deliberately exaggerated 
 
 ## Next Up
 
-Continue to the next section to learn more about [markers](../charts-markers/).
+Continue to the next section to learn more about [markers](/charts-markers/).

@@ -1,35 +1,81 @@
+![alt text](./github-banner.png "AG Grid")
 
-ag-Grid-Enterprise
-==============
+[![CDNJS](https://img.shields.io/cdnjs/v/ag-grid)](https://cdnjs.com/libraries/ag-grid) [![Github Stars](https://img.shields.io/github/stars/ag-grid/ag-grid?style=social)](https://github.com/ag-grid/ag-grid) [![Twitter](https://img.shields.io/twitter/follow/ag_grid?style=social)](https://twitter.com/ag_grid)
 
-This project contains ag-Grid-Enterprise features.
+| Module              | Info |
+| --------------------|------------------:|
+| ag-grid-enterprise  | [![npm](https://img.shields.io/npm/dm/ag-grid-enterprise)](https://www.npmjs.com/package/ag-grid-enterprise) <br> [![Bundle Phobia](https://badgen.net/bundlephobia/minzip/ag-grid-enterprise)](https://bundlephobia.com/result?p=ag-grid-enterprise) <br> [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ag-grid-enterprise&metric=alert_status)](https://sonarcloud.io/dashboard?id=ag-grid-enterprise) |
 
-See [www.ag-grid.com](http://www.ag-grid.com) for an overview and full documentation.
+# AG Grid Enterprise
+------
 
-Frameworks Supported
-====================
-Framework specific Getting Started guides:
-
-[Angular 1](https://www.ag-grid.com/angular-grid/) | [Angular 2](https://www.ag-grid.com/angular-grid/) | [Javascript](https://www.ag-grid.com/javascript-grid/) | [Polymer](https://www.ag-grid.com/best-polymer-data-grid/) | [React](https://www.ag-grid.com/react-grid/) | [TypeScript](https://www.ag-grid.com/ag-grid-typescript-webpack-2/) | [VueJS](https://www.ag-grid.com/vuejs-grid/) | [Web Components](https://www.ag-grid.com/best-web-component-data-grid/) | [Aurelia](https://www.ag-grid.com/best-aurelia-data-grid/) 
+AG Grid is a fully-featured and highly customizable JavaScript data grid.
+It delivers [outstanding performance](https://www.ag-grid.com/example.php?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github), has no third-party dependencies and [integrates smoothly with all major JavaScript frameworks](https://www.ag-grid.com/javascript-grid/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github).
 
 This is not free software, this software is covered by copyright and to use you need a commercial license.
 
-Please see files:
-LICENSE.md
-SUPPORT_AND_MAINTENANCE.md
+![alt text](./github-grid-demo.jpg "AG Grid Demo")
+
+
+Features
+--------------
+
+Besides the standard set of features you'd expect from any grid:
+
+* Column Interactions (resize, reorder, and pin columns)
+* Pagination
+* Sorting
+* Row Selection
+
+Here are some of the features that make AG Grid stand out:
+
+* Grouping / Aggregation*
+* Custom Filtering
+* In-place Cell Editing
+* Records Lazy Loading *
+* Server-Side Records Operations *
+* Live Stream Updates
+* Hierarchical Data Support & Tree View *
+* Customizable Appearance
+* Customizable Cell Contents
+* Excel-like Pivoting *
+* State Persistence
+* Keyboard navigation
+* Data Export to CSV
+* Data Export to Excel *
+* Row Reordering
+* Copy / Paste
+* Column Spanning
+* Pinned Rows
+* Full Width Rows
+
+* The features marked with an asterisk are available in the [enterprise version](https://www.ag-grid.com/license-pricing.php?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github) only.
+
+Check out [developers documentation](https://www.ag-grid.com/documentation-main/documentation.php?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github) for a complete list of features or visit [our official docs](https://www.ag-grid.com/features-overview?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github) for tutorials and feature demos.
+
+* [Get Started with JavaScript](https://www.ag-grid.com/javascript-grid?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
+* [Get Started with Angular](https://www.ag-grid.com/angular-grid?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
+* [Get Started with React](https://www.ag-grid.com/react-grid?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
+* [Get Started with Vue](https://www.ag-grid.com/vue-getting-started?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
 
 Issue Reporting
-==============
+----------
 
-If you are an Enterprise customer (or are Evaluating ag-Grid Enterprise) and wish to report a Bug or raise a new Feature Request please do so on our [Members Forum](https://ag-grid.com/forum/forumdisplay.php?fid=5).
+If you are an Enterprise customer (or are evaluating AG Grid Enterprise) and wish to report a Bug or raise a new Feature Request please do so on our [Support Portal](https://ag-grid.zendesk.com/).
 
 To Sign Up:
 Send an email to accounts@ag-grid.com with your license key
 
-Building
-==============
+Asking Questions
+-------------
 
-To build:
-- `npm install`
-- `npm install gulp -g`
-- `gulp` or `gulp release`
+Look for similar problems on [StackOverflow](https://stackoverflow.com/questions/tagged/ag-grid) using the `ag-grid` tag, or refer to our [Support Portal](https://ag-grid.zendesk.com/). If nothing seems related, post a new message there. Do not use GitHub issues to ask questions.
+
+Contributing
+------------
+AG Grid is developed by a team of co-located developers in London. If you want to join the team check out our [jobs listing](https://www.ag-grid.com/ag-grid-jobs-board?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github) or send your application to info@ag-grid.com.
+
+License
+------------------
+
+Please refer to the [LICENSE](LICENSE.md) and [SUPPORT_AND_MAINTENANCE](SUPPORT_AND_MAINTENANCE.md).

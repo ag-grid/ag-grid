@@ -42,8 +42,8 @@ formatter: params => ({
 
 <chart-example title='Series Formatter' name='series-formatter' type='generated'></chart-example>
 
-Please use the [API reference](../charts-api/) to learn more about the marker and series formatters, the inputs they receive and the attributes they allow to customize.
+Please use the [API reference](/charts-api/) to learn more about the marker and series formatters, the inputs they receive and the attributes they allow to customize.
 
 ## Next Up
 
-Continue to the next section to learn about [tooltips](../charts-tooltips/).
+Continue to the next section to learn about [tooltips](/charts-tooltips/).

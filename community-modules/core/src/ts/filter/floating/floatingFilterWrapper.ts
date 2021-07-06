@@ -8,11 +8,9 @@ import { HoverFeature } from '../../headerRendering/hoverFeature';
 import { Events, FilterChangedEvent } from '../../events';
 import { ColumnHoverService } from '../../rendering/columnHoverService';
 import { AgPromise } from '../../utils';
-import { ColDef } from '../../entities/colDef';
 import { IFilterComp, IFilterDef } from '../../interfaces/iFilter';
 import { UserComponentFactory } from '../../components/framework/userComponentFactory';
 import { GridApi } from '../../gridApi';
-import { ColumnApi } from '../../columnController/columnApi';
 import { FilterManager } from './../filterManager';
 import { ReadOnlyFloatingFilter } from './provided/readOnlyFloatingFilter';
 import { ModuleNames } from '../../modules/moduleNames';
@@ -27,7 +25,7 @@ import { KeyCode } from '../../constants/keyCode';
 
 export class FloatingFilterWrapper extends AbstractHeaderWrapper {
     private static TEMPLATE = /* html */
-        `<div class="ag-header-cell" role="columnheader" tabindex="-1">
+        `<div class="ag-header-cell ag-floating-filter" role="gridcell" tabindex="-1">
             <div class="ag-floating-filter-full-body" ref="eFloatingFilterBody" role="presentation"></div>
             <div class="ag-floating-filter-button ag-hidden" ref="eButtonWrapper" role="presentation">
                 <button type="button" aria-label="Open Filter Menu" class="ag-floating-filter-button-button" ref="eButtonShowMainFilter" tabindex="-1"></button>
@@ -37,7 +35,6 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
     @Autowired('columnHoverService') private readonly columnHoverService: ColumnHoverService;
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
     @Autowired('gridApi') private readonly gridApi: GridApi;
-    @Autowired('columnApi') private readonly columnApi: ColumnApi;
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('menuFactory') private readonly menuFactory: IMenuFactory;
     @Autowired('beans') protected readonly beans: Beans;
@@ -80,7 +77,7 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
 
         e.preventDefault();
 
-        const nextFocusableEl = this.focusController.findNextFocusableElement(eGui, null, e.shiftKey);
+        const nextFocusableEl = this.focusService.findNextFocusableElement(eGui, null, e.shiftKey);
 
         if (nextFocusableEl) {
             nextFocusableEl.focus();
@@ -106,7 +103,7 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
                 e.stopPropagation();
             case KeyCode.ENTER:
                 if (wrapperHasFocus) {
-                    if (this.focusController.focusInto(eGui)) {
+                    if (this.focusService.focusInto(eGui)) {
                         e.preventDefault();
                     }
                 }
@@ -123,7 +120,7 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
 
         if (!eGui.contains(e.relatedTarget as HTMLElement)) {
             const headerRow = this.getParentComponent() as HeaderRowComp;
-            this.beans.focusController.setFocusedHeader(headerRow.getRowIndex(), this.getColumn());
+            this.beans.focusService.setFocusedHeader(headerRow.getRowIndex(), this.getColumn());
         }
     }
 
@@ -165,7 +162,7 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
     private showParentFilter() {
         const eventSource = this.suppressFilterButton ? this.eFloatingFilterBody : this.eButtonShowMainFilter;
 
-        this.menuFactory.showMenuAfterButtonClick(this.column, eventSource, 'filterMenuTab', ['filterMenuTab']);
+        this.menuFactory.showMenuAfterButtonClick(this.column, eventSource, 'floatingFilter', 'filterMenuTab', ['filterMenuTab']);
     }
 
     private setupColumnHover(): void {
@@ -251,7 +248,7 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
         const colDef = this.column.getColDef();
         const defaultFloatingFilterType = FloatingFilterWrapper.getDefaultFloatingFilterType(colDef);
         const filterParams = this.filterManager.createFilterParams(this.column, colDef);
-        const finalFilterParams = this.userComponentFactory.createFinalParams(colDef, 'filter', filterParams);
+        const finalFilterParams = this.userComponentFactory.mergeParamsWithApplicationProvidedParams(colDef, 'filter', filterParams);
 
         const params: IFloatingFilterParams = {
             api: this.gridApi,
@@ -271,33 +268,13 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
         let promise = this.userComponentFactory.newFloatingFilterComponent(colDef, params, defaultFloatingFilterType);
 
         if (!promise) {
-            const filterComponent = this.getFilterComponentPrototype(colDef);
-            const getModelAsStringExists = filterComponent && filterComponent.prototype && filterComponent.prototype.getModelAsString;
+            const compInstance =
+                this.userComponentFactory.createUserComponentFromConcreteClass(ReadOnlyFloatingFilter, params);
 
-            if (getModelAsStringExists) {
-                const compInstance =
-                    this.userComponentFactory.createUserComponentFromConcreteClass(ReadOnlyFloatingFilter, params);
-
-                promise = AgPromise.resolve(compInstance);
-            }
+            promise = AgPromise.resolve(compInstance);
         }
 
         return promise;
-    }
-
-    private createDynamicParams(): any {
-        return {
-            column: this.column,
-            colDef: this.column.getColDef(),
-            api: this.gridApi,
-            columnApi: this.columnApi
-        };
-    }
-
-    private getFilterComponentPrototype(colDef: ColDef): { new(): any; } | null {
-        const resolvedComponent = this.userComponentFactory.lookupComponentClassDef(colDef, 'filter', this.createDynamicParams());
-
-        return resolvedComponent ? resolvedComponent.component : null;
     }
 
     private currentParentModel(): any {

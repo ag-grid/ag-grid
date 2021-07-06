@@ -42,10 +42,12 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
     private filters: IFilterComp[] | null = [];
     private guiDestroyFuncs: (() => void)[] = [];
     private column: Column;
-    private filterChangedCallback: (() => void) | null;
+    private filterChangedCallback: ((additionalEventAttributes?: any) => void) | null;
     private lastOpenedInContainer?: ContainerType;
     private activeFilterIndices: number[] = [];
     private lastActivatedMenuItem: MenuItemComponent | null = null;
+
+    private afterFiltersReadyFuncs: (() => void) [] = [];
 
     constructor() {
         super(/* html */`<div class="ag-multi-filter ag-menu-list-compact"></div>`, true);
@@ -81,7 +83,13 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
         // we have to refresh the GUI here to ensure that Angular components are not rendered in odd places
         return AgPromise
             .all(filterPromises)
-            .then(filters => { this.filters = filters as IFilterComp[]; this.refreshGui('columnMenu'); });
+            .then(filters => {
+                this.filters = filters as IFilterComp[];
+                this.refreshGui('columnMenu');
+
+                this.afterFiltersReadyFuncs.forEach(f => f());
+                this.afterFiltersReadyFuncs.length = 0;
+            });
     }
 
     private refreshGui(container: ContainerType): void {
@@ -251,7 +259,6 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
         const setFilterModel = (filter: IFilterComp, filterModel: any) => {
             return new AgPromise<void>(resolve => {
                 const promise = filter.setModel(filterModel);
-
                 promise ? promise.then(() => resolve()) : resolve();
             });
         };
@@ -259,12 +266,17 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
         let promises: AgPromise<void>[] = [];
 
         if (model == null) {
-            promises = _.map(this.filters!, filter => setFilterModel(filter, null))!;
+            promises = _.map(this.filters!, (filter: IFilterComp, index: number) => {
+                const res = setFilterModel(filter, null);
+                this.updateActiveList(index);
+                return res;
+            })!;
         } else {
             _.forEach(this.filters!, (filter, index) => {
                 const filterModel = model.filterModels!.length > index ? model.filterModels![index] : null;
-
-                promises.push(setFilterModel(filter, filterModel));
+                const res = setFilterModel(filter, filterModel);
+                promises.push(res);
+                this.updateActiveList(index);
             });
         }
 
@@ -277,7 +289,7 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
 
     public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
         if (params) {
-            this.refreshGui(params.container);
+            this.refreshGui(params.container!);
         }
 
         const { filters } = this.params;
@@ -331,7 +343,9 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
         const filterParams: IFilterParams = {
             ...this.filterManager.createFilterParams(this.column, this.column.getColDef()),
             filterModifiedCallback,
-            filterChangedCallback: () => this.filterChanged(index),
+            filterChangedCallback: additionalEventAttributes => {
+                this.executeWhenAllFiltersReady(() => this.filterChanged(index, additionalEventAttributes));
+            },
             doesRowPassOtherFilter: (node: RowNode) =>
                 doesRowPassOtherFilter(node) && this.doesFilterPass({ node, data: node.data }, filterInstance),
         };
@@ -345,7 +359,15 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
         return filterPromise;
     }
 
-    private filterChanged(index: number): void {
+    private executeWhenAllFiltersReady(action: () => void): void {
+        if (this.filters && this.filters.length > 0) {
+            action();
+        } else {
+            this.afterFiltersReadyFuncs.push(action);
+        }
+    }
+
+    private updateActiveList(index: number): void {
         const changedFilter = this.filters![index];
 
         _.removeFromArray(this.activeFilterIndices, index);
@@ -353,8 +375,13 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
         if (changedFilter.isFilterActive()) {
             this.activeFilterIndices.push(index);
         }
+    }
 
-        this.filterChangedCallback!();
+    private filterChanged(index: number, additionalEventAttributes: any): void {
+        this.updateActiveList(index);
+
+        this.filterChangedCallback!(additionalEventAttributes);
+        const changedFilter = this.filters![index];
 
         _.forEach(this.filters!, filter => {
             if (filter === changedFilter) { return; }

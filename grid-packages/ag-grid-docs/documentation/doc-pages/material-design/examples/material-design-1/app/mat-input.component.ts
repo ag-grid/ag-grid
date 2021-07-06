@@ -82,8 +82,8 @@ export class MatInputComponent implements ICellEditorAngularComp {
 
             this.focusOnInputNextTick(inputToFocusOn);
         } else if (key == 13) {
-            // enter
-            // perform some validation on enter - in this example we assume all inputs are mandatory
+            // Enter
+            // perform some validation on Enter - in this example we assume all inputs are mandatory
             // in a proper application you'd probably want to inform the user that an input is blank
             this.inputs.forEach(input => {
                 if (!input.element.nativeElement.value) {

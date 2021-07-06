@@ -1,7 +1,7 @@
 import { Autowired, Bean } from "./context/context";
 import { BeanStub } from "./context/beanStub";
 import { Constants } from "./constants/constants";
-import { ColumnController } from "./columnController/columnController";
+import { ColumnModel } from "./columns/columnModel";
 import { IRowModel } from "./interfaces/iRowModel";
 import { CellPosition } from "./entities/cellPosition";
 import { RowNode } from "./entities/rowNode";
@@ -16,7 +16,7 @@ import { PaginationProxy } from "./pagination/paginationProxy";
 @Bean('cellNavigationService')
 export class CellNavigationService extends BeanStub {
 
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
@@ -96,7 +96,7 @@ export class CellNavigationService extends BeanStub {
     private getCellToLeft(lastCell: CellPosition | null): CellPosition | null {
         if (!lastCell) { return null; }
 
-        const colToLeft = this.columnController.getDisplayedColBefore(lastCell.column);
+        const colToLeft = this.columnModel.getDisplayedColBefore(lastCell.column);
         if (!colToLeft) { return null; }
 
         return {
@@ -109,7 +109,7 @@ export class CellNavigationService extends BeanStub {
     private getCellToRight(lastCell: CellPosition | null): CellPosition | null {
         if (!lastCell) { return null; }
 
-        const colToRight = this.columnController.getDisplayedColAfter(lastCell.column);
+        const colToRight = this.columnModel.getDisplayedColAfter(lastCell.column);
         // if already on right, do nothing
         if (!colToRight) { return null; }
 
@@ -255,13 +255,13 @@ export class CellNavigationService extends BeanStub {
     }
 
     public getNextTabbedCellForwards(gridCell: CellPosition): CellPosition | null {
-        const displayedColumns = this.columnController.getAllDisplayedColumns();
+        const displayedColumns = this.columnModel.getAllDisplayedColumns();
 
         let newRowIndex: number | null = gridCell.rowIndex;
         let newFloating: string | null | undefined = gridCell.rowPinned;
 
         // move along to the next cell
-        let newColumn = this.columnController.getDisplayedColAfter(gridCell.column);
+        let newColumn = this.columnModel.getDisplayedColAfter(gridCell.column);
 
         // check if end of the row, and if so, go forward a row
         if (!newColumn) {
@@ -285,13 +285,13 @@ export class CellNavigationService extends BeanStub {
 
     public getNextTabbedCellBackwards(gridCell: CellPosition): CellPosition | null {
 
-        const displayedColumns = this.columnController.getAllDisplayedColumns();
+        const displayedColumns = this.columnModel.getAllDisplayedColumns();
 
         let newRowIndex: number | null = gridCell.rowIndex;
         let newFloating: string | null | undefined = gridCell.rowPinned;
 
         // move along to the next cell
-        let newColumn = this.columnController.getDisplayedColBefore(gridCell.column);
+        let newColumn = this.columnModel.getDisplayedColBefore(gridCell.column);
 
         // check if end of the row, and if so, go forward a row
         if (!newColumn) {

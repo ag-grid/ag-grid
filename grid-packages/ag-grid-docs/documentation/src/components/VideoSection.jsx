@@ -2,7 +2,10 @@ import React from 'react';
 import classnames from 'classnames';
 import styles from './VideoSection.module.scss';
 
-const VideoSection = ({ src, title, header, children }) => (
+/**
+ * This embeds a YouTube video into the page.
+ */
+const VideoSection = ({ id, title, header, children }) => (
     <div className={styles['video-section']}>
         <p className={classnames({ [styles['video-section--header']]: header })}>
             {children}
@@ -10,7 +13,7 @@ const VideoSection = ({ src, title, header, children }) => (
         <iframe
             className={styles['video-section__frame']}
             title={title}
-            src={src}
+            src={`https://www.youtube.com/embed/${id}`}
             frameBorder="0"
             modestbranding="1"
             allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"

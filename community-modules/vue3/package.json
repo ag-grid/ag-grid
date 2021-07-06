@@ -1,7 +1,7 @@
 {
   "name": "@ag-grid-community/vue3",
   "description": "AG Grid Vue 3 Component",
-  "version": "25.1.0",
+  "version": "25.3.0",
   "author": "Sean Landsman <sean@thelandsmans.com>",
   "license": "MIT",
   "main": "main.js",
@@ -22,14 +22,14 @@
     "vuejs"
   ],
   "scripts": {
-    "bundle": "vue-cli-service build --target lib src/AgGridVue.ts",
-    "lib": "tsc  -p tsconfig-lib.json",
+    "bundle": "npx vue-cli-service build --target lib src/AgGridVue.ts",
+    "lib": "npx tsc -p tsconfig-lib.json",
     "build": "npm run lib && npm run bundle && rm ./dist/demo.html && npm run hash",
-    "lint": "vue-cli-service lint",
+    "lint": "npx vue-cli-service lint",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
   "devDependencies": {
-    "@ag-grid-community/core": "~25.1.0",
+    "@ag-grid-community/core": "~25.3.0",
     "@types/node": "12.12.22",
     "@vue/cli-plugin-typescript": "^3.11.0",
     "@vue/cli-plugin-unit-jest": "^3.11.0",
@@ -44,7 +44,7 @@
     "vue-template-compiler": "^2.6.12"
   },
   "peerDependencies": {
-    "@ag-grid-community/core": "~25.1.0",
+    "@ag-grid-community/core": "~25.3.0",
     "vue": "^3.0.0",
     "vue-class-component": ">= ^8.0.0-beta.3"
   },

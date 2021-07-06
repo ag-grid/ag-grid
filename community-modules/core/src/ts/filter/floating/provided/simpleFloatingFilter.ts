@@ -52,7 +52,7 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
 
             // For custom filter options we display the Name of the filter instead
             // of displaying the `from` value, as it wouldn't be relevant
-            if (customOption) {
+            if (customOption && customOption.hideFilterInput) {
                 this.gridOptionsWrapper.getLocaleTextFunc()(customOption.displayKey, customOption.displayName);
                 return customOption.displayName;
             }

@@ -17,7 +17,7 @@ import {
     RowNode,
     RowNodeBlockLoader,
     RowRenderer,
-    SelectionController,
+    SelectionService,
     SortController,
     IInfiniteRowModel
 } from "@ag-grid-community/core";
@@ -28,7 +28,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
 
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('sortController') private readonly sortController: SortController;
-    @Autowired('selectionController') private readonly selectionController: SelectionController;
+    @Autowired('selectionService') private readonly selectionService: SelectionService;
     @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('columnApi') private readonly columnApi: ColumnApi;
     @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
@@ -62,6 +62,15 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         this.addEventListeners();
 
         this.addDestroyFunc(() => this.destroyCache());
+
+        this.verifyProps();
+    }
+
+    private verifyProps(): void {
+        if (this.gridOptionsWrapper.getDefaultGroupSortComparator() != null) {
+            const message = `AG Grid: defaultGroupSortComparator cannot be used with Infinite Row Model. If using Infinite Row Model, then sorting is done on the server side, nothing to do with the client.`;
+            _.doOnce(() => console.warn(message), 'IRM.DefaultGroupSortComparator');
+        }
     }
 
     public start(): void {
@@ -151,7 +160,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         const userGeneratingIds = _.exists(this.gridOptionsWrapper.getRowNodeIdFunc());
 
         if (!userGeneratingIds) {
-            this.selectionController.reset();
+            this.selectionService.reset();
         }
 
         this.resetCache();
@@ -169,7 +178,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
             // maybe they should be true?
             newPage: false,
             newData: false,
-            keepRenderedRows: false,
+            keepRenderedRows: true,
             animate: false
         };
     }

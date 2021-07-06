@@ -3,7 +3,7 @@ $navKey = "pipeline";
 
 ini_set('memory_limit', '1024M');
 
-include_once '../includes/html-helpers.php';
+require_once '../includes/html-helpers.php';
 gtm_data_layer('pipeline');
 include '../jira_reports/jira_utilities.php';
 ?>
@@ -11,7 +11,7 @@ include '../jira_reports/jira_utilities.php';
 <html lang="en">
 <head lang="en">
     <?php
-    meta_and_links("AG Grid: Pipeline of Upcoming Features and Roadmap", "AG Grid javascript grid pipeline changelog release notes", "AG Grid is a feature-rich data grid supporting major JavaScript Frameworks. Our Pipeline lists all known bugs, upcoming features and our Roadmap for major future releases. Version 23 is out now.", false);
+    meta_and_links("AG Grid: Pipeline of Upcoming Features and Roadmap", "AG Grid javascript grid pipeline changelog release notes", "AG Grid is a feature-rich data grid supporting major JavaScript Frameworks. Our Pipeline lists all known bugs, upcoming features and our Roadmap for major future releases. Version 25.1 is out now.", "ag-grid-pipeline/", false);
     ?>
     <link rel="stylesheet" href="../dist/homepage.css">
     <link rel="stylesheet" href="../dist/aui/css/aui.css" media="all">
@@ -86,7 +86,7 @@ include '../jira_reports/jira_utilities.php';
         <div class="info-page">
             <div class="row">
                 <section>
-                    <h1>Next Release Target: TBD - 25.0.0 just released</h1>
+                    <h1>Next Release Target: TBD - 25.3.0 just released</h1>
 
                     <div class="note">
                         <p>

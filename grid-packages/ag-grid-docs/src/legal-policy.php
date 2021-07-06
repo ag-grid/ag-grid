@@ -1,13 +1,13 @@
 <?php
 $navKey = "about";
-include_once 'includes/html-helpers.php';
+require_once 'includes/html-helpers.php';
 gtm_data_layer('about');
 ?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
 <?php
-meta_and_links("Our Mission, Our Principles and Our Team at AG Grid", "About AG Grid", "AG Grid is a feature-rich datagrid available in Community or Enterprise versions. This is the story of AG Grid and explains our mission, where we came from and who we are.", true);
+meta_and_links("Our Mission, Our Principles and Our Team at AG Grid", "About AG Grid", "AG Grid is a feature-rich datagrid available in Community or Enterprise versions. This is the story of AG Grid and explains our mission, where we came from and who we are.", "legal-policy.php", true);
 ?>
     <link rel="stylesheet" href="dist/homepage.css">
     <title>Legal Policy</title>

@@ -1,32 +1,29 @@
-import Vue from "vue";
-
-export default Vue.extend({
+export default {
     template: `
+      <div>
+      <form>
         <div>
-            <form>
-                <div>
-                    <p>
-                        <label>
-                            Calls:<br>
-                            <input type="text" :value="callsCount">
-                        </label>
-                    </p>
-                    <p>
-                        <label>
-                            Last Updated:<br>
-                            {{now}}
-                        </label>
-                    </p>
-                </div>
-            </form>
+          <p>
+            <label>
+              Calls:<br>
+              <input type="text" :value="callsCount">
+            </label>
+          </p>
+          <p>
+            <label>
+              Last Updated:<br>
+              {{ now }}
+            </label>
+          </p>
         </div>
-    `,data: function () {
+      </form>
+      </div>
+    `,
+    data: function () {
         return {
             callsCount: 0,
             now: ''
         };
-    },
-    beforeMount() {
     },
     mounted() {
         this.callsCount = this.params.data.calls;
@@ -37,11 +34,7 @@ export default Vue.extend({
         refresh(params) {
             // check and see if we need to get the grid to tear this
             // component down and update it again
-            if (params.data.calls!=this._data.callsCount) {
-                return false;
-            } else {
-                return true;
-            }
+            return params.data.calls === this._data.callsCount;
         }
     }
-});
+};

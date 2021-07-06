@@ -1,7 +1,6 @@
 import { Autowired, PostConstruct } from "../context/context";
 import { BeanStub } from "../context/beanStub";
-import { ColumnApi } from "../columnController/columnApi";
-import { Component } from "./component";
+import { ColumnApi } from "../columns/columnApi";
 import { GridApi } from "../gridApi";
 import { ITooltipComp, ITooltipParams } from "../rendering/tooltipComponent";
 import { PopupService } from "./popupService";
@@ -9,8 +8,9 @@ import { UserComponentFactory } from "../components/framework/userComponentFacto
 import { addCssClass, containsClass } from "../utils/dom";
 import { exists } from "../utils/generic";
 
-export interface TooltipParentComp extends Component {
+export interface TooltipParentComp {
     getTooltipParams(): ITooltipParams;
+    getGui(): HTMLElement;
 }
 
 enum TooltipStates { NOTHING, WAITING_TO_SHOW, SHOWING }

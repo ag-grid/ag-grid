@@ -1,16 +1,16 @@
-var toolTipValueGetter = function(params) { return { value: params.value }; };
+const toolTipValueGetter = params => ({value: params.value});
 
-var columnDefs = [
-    { headerName: "Athlete Col 1", field: "athlete", width: 150, tooltipField: 'athlete' },
-    { headerName: "Athlete Col 2", field: "athlete", width: 150, tooltipComponent: 'customTooltip', tooltipValueGetter: toolTipValueGetter },
-    { field: "sport", width: 110 },
-    { field: "gold", width: 100 },
-    { field: "silver", width: 100 },
-    { field: "bronze", width: 100 },
-    { field: "total", width: 100 }
+const columnDefs = [
+    {headerName: "Athlete Col 1", field: "athlete", width: 150, tooltipField: 'athlete'},
+    {headerName: "Athlete Col 2", field: "athlete", width: 150, tooltipComponent: 'customTooltip', tooltipValueGetter: toolTipValueGetter},
+    {field: "sport", width: 110},
+    {field: "gold", width: 100},
+    {field: "silver", width: 100},
+    {field: "bronze", width: 100},
+    {field: "total", width: 100}
 ];
 
-var gridOptions = {
+const gridOptions = {
     defaultColDef: {
         editable: true,
         sortable: true,
@@ -40,12 +40,12 @@ function onFirstDataRendered(params) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
-    var gridDiv = document.querySelector('#myGrid');
+document.addEventListener('DOMContentLoaded', () => {
+    const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
     agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
+        .then(data => {
             gridOptions.api.setRowData(data);
         });
 });

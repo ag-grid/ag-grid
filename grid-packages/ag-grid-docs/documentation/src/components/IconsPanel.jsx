@@ -7,8 +7,8 @@ const icons = [
     'aggregation', 'arrows', 'asc', 'cancel', 'chart',
     'checkbox-checked', 'checkbox-indeterminate',
     'checkbox-unchecked', 'color-picker',
-    'columns', 'contracted', 'copy', 'cross',
-    'desc', 'expanded', 'eye-slash', 'eye', 'filter', 'first',
+    'columns', 'contracted', 'copy', 'cross', 'csv', 'desc',
+    'excel', 'expanded', 'eye-slash', 'eye', 'filter', 'first',
     'grip', 'group', 'last', 'left', 'linked',
     'loading', 'maximize', 'menu', 'minimize', 'next',
     'none', 'not-allowed', 'paste', 'pin', 'pivot',
@@ -66,6 +66,9 @@ const BottomBar = ({ theme }) => (
     <div className={styles['icons-panel__download']}><a href={withPrefix(`/theme-icons/${theme}/${theme}-icons.zip`)}>Download All</a></div>
 );
 
+/**
+ * This is a viewer for the available theme icons, and will also let the user download the icons.
+ */
 const IconsPanel = () => {
     const [activeTheme, setActiveTheme] = useState('alpine');
 
@@ -77,6 +80,5 @@ const IconsPanel = () => {
         </div>
     );
 };
-
 
 export default IconsPanel;

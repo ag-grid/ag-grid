@@ -11,38 +11,37 @@ The grid's group cell renderer takes many parameters to configure it. Here is an
 <snippet>
 const gridOptions = {
     columnDefs: [
-        // column definition configured to show group values with the cell renderer set to 'group' 
+        // column definition configured to show group values with the cell renderer set to 'group'
         {
             showRowGroup: true,
             cellRenderer:'agGroupCellRenderer',
             // provide extra params to the cellRenderer
             cellRendererParams: {
                 // turn off the row count
-                suppressCount: true, 
+                suppressCount: true,
                 // turn off double click for expand
                 suppressDoubleClickExpand: true,
                 // enable checkbox selection
-                checkbox: true, 
+                checkbox: true,
                 // provide an inner renderer
-                innerRenderer: myInnerRenderer, 
+                innerRenderer: myInnerRenderer,
                 // provide a footer value getter
-                footerValueGetter: myFooterValueGetter 
+                footerValueGetter: myFooterValueGetter
             }
-        }  
+        }
     ]
 }
 </snippet>
 
 The set of parameters for the group cell renderer are:
 
-- **suppressCount:** One of [true, false], if true, count is not displayed beside the name.
-- **checkbox:** One of [true,false], if true, a selection checkbox is included.
-- **suppressPadding:** Set to true to node including any padding (indentation) in the child rows.
-- **suppressDoubleClickExpand:** Set to true to suppress expand on double click.
-- **suppressEnterExpand:** Set to true to to suppress expand on Enter key.
+- **suppressCount:** One of `[true, false]`, if `true`, count is not displayed beside the name.
+- **checkbox:** One of `[true, false]`, if `true`, a selection checkbox is included.
+- **suppressPadding:** Set to `true` to not including any padding (indentation) in the child rows.
+- **suppressDoubleClickExpand:** Set to `true` to suppress expand on double click.
+- **suppressEnterExpand:** Set to `true` to suppress expand on <kbd>Enter</kbd> key.
 - **innerRenderer:** The renderer to use for inside the cell (after grouping functions are added).
 - **footerValueGetter:** The value getter for the footer text. Can be a function or expression.
-
 
 ### Example Group cellRenderer
 
@@ -61,7 +60,7 @@ The example is built up as follows:
 - The column **Group Renderer B** builds on before, but adds `field=city` so that the city is displayed in the leave nodes in the group column.
 
 - The column **Group Renderer C** builds on before, but adds the following `cellRendererParams`:
-    
+
     - `suppressCount=true`: Suppresses the row count.
     - `suppressDoubleClickExpand=true`: Suppress double click for expanding.
     - `checkbox=true`: Adds a selection checkbox.

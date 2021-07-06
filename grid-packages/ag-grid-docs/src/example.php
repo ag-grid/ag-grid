@@ -1,14 +1,13 @@
 <?php
 $navKey = "demo";
-require "example-runner/example-runners.php";
-include_once 'includes/html-helpers.php';
+require_once 'includes/html-helpers.php';
 ?>
 <!DOCTYPE html>
 <html lang="en" class="stretch-html">
 <head>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*; style-src 'self' 'unsafe-inline' blob: https://*; img-src 'self' data: https://*; font-src 'self' data: https://*">
 <?php
-meta_and_links("AG Grid: Demo of high performance datagrid", "react angular angularjs data grid example", "AG Grid is a feature-rich datagrid available in Community or Enterprise versions. This is our fully interactive demo showcasing all of our features and our performance with large datasets.", false);
+meta_and_links("AG Grid: Demo of high performance datagrid", "react angular angularjs data grid example", "AG Grid is a feature-rich datagrid available in Community or Enterprise versions. This is our fully interactive demo showcasing all of our features and our performance with large datasets.", "example.php", false);
 ?>
 <link rel="stylesheet" href="./dist/homepage.css" />
 </head>

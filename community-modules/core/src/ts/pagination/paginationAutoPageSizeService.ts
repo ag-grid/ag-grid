@@ -1,19 +1,25 @@
 import { BeanStub } from "../context/beanStub";
 import { Events } from "../events";
-import { Bean } from "../context/context";
-import { GridPanel } from "../gridPanel/gridPanel";
+import { Autowired, Bean, PostConstruct } from "../context/context";
+import { ControllersService } from "../controllersService";
+import { RowContainerCtrl } from "../gridBodyComp/rowContainer/rowContainerCtrl";
 
 @Bean('paginationAutoPageSizeService')
 export class PaginationAutoPageSizeService extends BeanStub {
 
-    private gridPanel: GridPanel;
+    @Autowired('controllersService') private controllersService: ControllersService;
 
-    public registerGridComp(gridPanel: GridPanel): void {
-        this.gridPanel = gridPanel;
+    private centerRowContainerCon: RowContainerCtrl;
 
-        this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.onBodyHeightChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
-        this.checkPageSize();
+    @PostConstruct
+    private postConstruct(): void {
+        this.controllersService.whenReady(p => {
+            this.centerRowContainerCon = p.centerRowContainerCon;
+
+            this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.onBodyHeightChanged.bind(this));
+            this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
+            this.checkPageSize();
+        });
     }
 
     private notActive(): boolean {
@@ -34,7 +40,7 @@ export class PaginationAutoPageSizeService extends BeanStub {
         }
 
         const rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
-        const bodyHeight = this.gridPanel.getBodyHeight();
+        const bodyHeight = this.centerRowContainerCon.getViewportSizeFeature().getBodyHeight();
 
         if (bodyHeight > 0) {
             const newPageSize = Math.floor(bodyHeight / rowHeight);

@@ -6,7 +6,7 @@ Users can select rows, ranges or use a simple text selection from inside the gri
 
 ## Row Selection
 
-[Row Selection](../row-selection/) selects rows, i.e. data entries from the provided data set.
+[Row Selection](/row-selection/) selects rows, i.e. data entries from the provided data set.
 
 <image-caption src="selection-overview/resources/rowSelection.png" alt="Row Selection" width="35rem" centered="true">
 </image-caption>
@@ -14,7 +14,7 @@ Users can select rows, ranges or use a simple text selection from inside the gri
 
 ## Range Selection
 
-[Range Selection](../range-selection/) selects ranges of cells, i.e. a rectangular block of cells.
+[Range Selection](/range-selection/) selects ranges of cells, i.e. a rectangular block of cells.
 
 <image-caption src="selection-overview/resources/rangeSelection.png" alt="Range Selection" width="35rem" centered="true">
 </image-caption>

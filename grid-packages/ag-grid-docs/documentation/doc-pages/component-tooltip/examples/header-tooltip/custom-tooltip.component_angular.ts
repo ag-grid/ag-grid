@@ -21,8 +21,8 @@ import { ITooltipAngularComp } from "@ag-grid-community/angular";
         `
             :host {
                 position: absolute;
-                width: 150px;
-                height: 70px;
+                width: 165px;
+                height: 80px;
                 border: 1px solid cornflowerblue;
                 overflow: hidden;
                 pointer-events: none;

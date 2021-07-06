@@ -3,7 +3,7 @@ import { ExcelStyle, ExcelXMLTemplate } from '@ag-grid-community/core';
 
 const numberFormat: ExcelXMLTemplate = {
     getTemplate(styleProperties: ExcelStyle): XmlElement {
-        const {format} = styleProperties.numberFormat;
+        const { format } = styleProperties.numberFormat!;
         return {
             name: "NumberFormat",
             properties: {

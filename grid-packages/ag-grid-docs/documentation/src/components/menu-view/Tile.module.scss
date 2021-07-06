@@ -4,10 +4,11 @@
     height: 22rem;
     width: 15rem;
     min-width: 15rem;
-    border: 1px solid transparentize($secondary, 0.7);
+    border: 1px solid $ag-light-grey;
     border-radius: 4px;
     text-align: left;
     cursor: default;
+    margin: 0.7rem !important;
 
     &:focus {
         outline: none;
@@ -27,7 +28,7 @@
         width: 1rem;
         height: 1rem;
         background-size: contain;
-        vertical-align: middle;
+        vertical-align: -3px;
     }
 
     &__icon {
@@ -54,6 +55,7 @@
         composes: d-flex from global;
         flex-wrap: wrap;
         overflow: hidden;
+        font-size: 1.05rem;
 
         a:hover {
             text-decoration: none;
@@ -67,7 +69,7 @@
 
         &__inline {
             padding-left: 2px;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             white-space: nowrap;
         }
     }

@@ -3,7 +3,7 @@ import {
     DragSourceType,
     Component,
     Autowired,
-    ColumnController,
+    ColumnModel,
     Events,
     TouchListener,
     DragAndDropService,
@@ -29,7 +29,7 @@ export class DropZoneColumnComp extends Component {
 
     public static EVENT_COLUMN_REMOVE = 'columnRemove';
 
-    private static TEMPLATE =
+    private static TEMPLATE = /* html */
         `<span>
           <span ref="eDragHandle" class="ag-drag-handle ag-column-drop-cell-drag-handle"></span>
           <span ref="eText" class="ag-column-drop-cell-text"></span>
@@ -37,7 +37,7 @@ export class DropZoneColumnComp extends Component {
         </span>`;
 
     @Autowired('dragAndDropService') dragAndDropService: DragAndDropService;
-    @Autowired('columnController') columnController: ColumnController;
+    @Autowired('columnModel') columnModel: ColumnModel;
     @Autowired('popupService') popupService: PopupService;
     @Optional('aggFuncService') aggFuncService: IAggFuncService;
     @Autowired('columnApi') private columnApi: ColumnApi;
@@ -66,7 +66,7 @@ export class DropZoneColumnComp extends Component {
         this.eDragHandle.appendChild(_.createIconNoSpan('columnDrag', this.gridOptionsWrapper)!);
         this.eButton.appendChild(_.createIconNoSpan('cancel', this.gridOptionsWrapper)!);
 
-        this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'columnDrop');
+        this.displayName = this.columnModel.getDisplayNameForColumn(this.column, 'columnDrop');
         this.setupComponents();
         if (!this.ghost && !this.gridOptionsWrapper.isFunctionsReadOnly()) {
             this.addDragSource();
@@ -76,7 +76,6 @@ export class DropZoneColumnComp extends Component {
     }
 
     private setupTooltip(): void {
-
         const refresh = () => {
             const newTooltipText = this.column.getColDef().headerTooltip;
             this.setTooltip(newTooltipText);
@@ -226,7 +225,7 @@ export class DropZoneColumnComp extends Component {
                 };
                 this.eventService.dispatchEvent(event);
             } else {
-                this.columnController.setColumnAggFunc(this.column, value, "toolPanelDragAndDrop");
+                this.columnModel.setColumnAggFunc(this.column, value, "toolPanelDragAndDrop");
             }
         };
 

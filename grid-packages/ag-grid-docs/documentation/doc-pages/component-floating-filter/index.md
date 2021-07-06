@@ -2,55 +2,47 @@
 title: "Floating Filter Component"
 ---
 
-Floating Filter components allow you to add your own floating filter types to AG Grid. Use this:
+Floating Filter components allow you to add your own floating filter types to AG Grid. Use them:
 
-- When the provided floating filter for a provided filter does not meet your requirements and you want to replace with one of your own
+- When the provided floating filter for a provided filter does not meet your requirements and you want to replace it with one of your own
 - When you have a custom filter and want to provide a floating filter for your custom filter
 
-This page focusses on writing your own floating filter components. To see general information about floating filters in AG Grid see [floating filters](../floating-filters/).
+This page focuses on writing your own floating filter components. To see general information about floating filters in AG Grid see [floating filters](/floating-filters/).
+ 
+## Simple Floating Filter 
+ 
+md-include:simple-floating-filter-javascript.md
+md-include:simple-floating-filter-angular.md
+md-include:simple-floating-filter-react.md
+md-include:simple-floating-filter-vue.md
 
-## Floating Filter Lifecycle
+## Example: Custom Floating Filter
 
-Floating filters do not contain filter state themselves, but show the state of the actual underlying filter. Floating filters are just another view for the main filter. For this reason, the floating filters lifecycle is bound to the visibility of the column; if you hide a column (either set not visible, or horizontally scroll the column out of view) then the floating filter UI component is destroyed. If the column comes back into view, it is created again. This is different to column filters, where the column filter will exist as long as the column exists, regardless of the column's visibility.
+In the following example you can see how the Gold, Silver, Bronze and Total columns have a custom floating filter `NumberFloatingFilter`. This filter substitutes the standard floating filter for a input box that the user can change to adjust how many medals of each column to filter by based on a greater than filter.
 
-For details on how the floating filter interacts with its associated column filter, see the methods `getModelAsString()` and `onFloatingFilterChanged(change)` in the [filter component interface](../component-filter/).
+Since this example is using standard filters, the object that needs to be passed to the method `onParentFilterChanged()` needs to provide two properties:
 
-To see examples of the different ways to implement floating filters please refer to the examples below.
+- **apply**: If `true` the filter is changed AND applied, otherwise if it is `false`, the filter is only changed. However, this is ignored unless `buttons` contains `'apply'` (i.e. it is ignored unless the Apply button is being used).
+- **model**: The model object that represents the new filter state.
 
-## Floating Filter Interface (**IFloatingFilterComp**)
+If the user removes the content of the input box, the filter is removed.
 
-```ts
-interface IFloatingFilterComp {
-    // Mandatory methods
+Note that in this example:
 
-    // The init(params) method is called on the floating filter once.
-    // See below for details on the parameters.
-    init(params: IFilterFloatingParams): void;
+1. The columns with the floating filter are using the standard Number filter as the base filter
 
-    // Gets called every time the parent filter changes. Your floating
-    // filter would typically refresh its UI to reflect the new filter
-    // state. The provided parentModel is what the parent filter returns
-    // from its getModel() method. The event is the FilterChangedEvent
-    // that the grid fires.
-    onParentModelChanged(parentModel: any, event: FilterChangedEvent): void;
+1. Since the parent filter is the Number filter, the floating filter methods `onFloatingFilterChanged(parentModel)`, and `currentParentModel()` take and receive model objects that correspond to [the model for the Number filter](/filter-provided-simple/#simple-filter-models)
 
-    // Returns the HTML element for this floating filter.
-    getGui(): HTMLElement;
+1. Since these floating filters are providing a subset of the functionality of their parent filter, which can filter for other conditions which are not `'greaterThan'`, the user is prevented from seeing the parent filter by adding `suppressFilterButton: true` in the `floatingFilterComponentParams` and `suppressMenu: true` in the `colDef`
 
-    // Optional methods
+1. `floatingFilterParams` for all the medal columns have an additional param that is used to customise the font colour of the floating filter input text box.
 
-    // Gets called when the floating filter is destroyed. Like column headers,
-    // the floating filter lifespan is only when the column is visible,
-    // so they are destroyed if the column is made not visible or when a user
-    // scrolls the column out of view with horizontal scrolling.
-    destroy?(): void;
-}
-```
+<grid-example title='Custom Floating Filter' name='custom-floating-filter' type='generated'></grid-example>
 
-## IFloatingFilterParams
-
-The method `init(params)` takes a `params` object with the items listed below. If the user provides params via the `colDef.floatingFilterComponentParams` attribute, these will be additionally added to the `params` object, overriding items of the same name if a name clash exists.
-
+md-include:component-interface-javascript.md
+md-include:component-interface-angular.md
+md-include:component-interface-react.md
+md-include:component-interface-vue.md
 
 ```ts
 interface IFloatingFilterParams {
@@ -93,6 +85,15 @@ interface IFloatingFilterParams {
 }
 ```
 
+## Floating Filter Lifecycle
+
+Floating filters do not contain filter state themselves, but show the state of the actual underlying filter. Floating filters are just another view for the main filter. For this reason, the floating filters lifecycle is bound to the visibility of the column; if you hide a column (either set not visible, or horizontally scroll the column out of view) then the floating filter UI component is destroyed. If the column comes back into view, it is created again. This is different to column filters, where the column filter will exist as long as the column exists, regardless of the column's visibility.
+
+For details on how the floating filter interacts with its associated column filter, see the methods `getModelAsString()` and `onFloatingFilterChanged(change)` in the [filter component interface](/component-filter/).
+
+To see examples of the different ways to implement floating filters please refer to the examples below.
+
+
 ## Floating Filter Methods on Provided Filters
 
 When the user interacts with a floating filter, the floating filter must set the state of the main parent filter in order for filter changes to take effect. This is done by the floating filter getting a reference to the parent filter instance and calling a method on it.
@@ -106,29 +107,6 @@ The simple provided filters (Text, Number, Date) provide methods that the corres
 - **Set Filter:** The floating set filter is not editable, so no method is exposed on the parent filter for the floating filter to call.
 
 You could also call `setModel()` on the filters as an alternative. For example, you could build your own floating filter for the Set Filter that allows picking all European or Asian countries, or you could provide your own Number floating filter that allows selecting ranges (the provided Number floating filter does not allow editing ranges).
-
-## Example: Custom Floating Filter
-
-In the following example you can see how the Gold, Silver, Bronze and Total columns have a custom floating filter `NumberFloatingFilter`. This filter substitutes the standard floating filter for a input box that the user can change to adjust how many medals of each column to filter by based on a greater than filter.
-
-Since this example is using standard filters, the object that needs to be passed to the method `onParentFilterChanged()` needs to provide two properties:
-
-- **apply**: If `true` the filter is changed AND applied, otherwise if it is `false`, the filter is only changed. However, this is ignored unless `buttons` contains `'apply'` (i.e. it is ignored unless the Apply button is being used).
-- **model**: The model object that represents the new filter state.
-
-If the user removes the content of the input box, the filter is removed.
-
-Note that in this example:
-
-1. The columns with the floating filter are using the standard Number filter as the base filter
-
-1. Since the parent filter is the Number filter, the floating filter methods `onFloatingFilterChanged(parentModel)`, and `currentParentModel()` take and receive model objects that correspond to [the model for the Number filter](../filter-provided-simple/#simple-filter-models)
-
-1. Since these floating filters are providing a subset of the functionality of their parent filter, which can filter for other conditions which are not `'greaterThan'`, the user is prevented from seeing the parent filter by adding `suppressFilterButton: true` in the `floatingFilterComponentParams` and `suppressMenu: true` in the `colDef`
-
-1. `floatingFilterParams` for all the medal columns have an additional param that is used to customise the font colour of the floating filter input text box.
-
-<grid-example title='Custom Floating Filter' name='custom-floating-filter' type='generated'></grid-example>
 
 ### Example: Custom Filter And Custom Floating Filter
 
@@ -153,6 +131,30 @@ This example uses the previous custom filter but implementing the `getModelAsStr
 
 <grid-example title='Custom Filter Only' name='custom-filter' type='generated'></grid-example>
 
+[[only-angular]]
+| ## Sliding Floating Filters
+|
+| The below example shows how to create a custom floating filter re-using the out-of-the-box Number filter with Angular.
+|
+| <grid-example title='Angular Floating Filter Component' name='floating-filter-component' type='generated' options='{ "exampleHeight": 370, "extras": ["bootstrap"] }'></grid-example>
+
+[[only-react]]
+| ## Sliding Floating Filters
+|
+| The below example shows how to create a custom floating filter re-using the out-of-the-box Number filter with React.
+|
+| <grid-example title='React Floating Filter Component' name='floating-filter-component' type='generated' options='{ "exampleHeight": 370, "onlyShow": "react", "extras": ["bootstrap"] }'></grid-example>
+|
+| Note that in this example we make use of `useImperativeHandle` for lifecycle methods - please
+| see [here](/react-hooks/) for more information.
+
+[[only-vue]]
+| ## Sliding  Floating Filters
+|
+| The below example shows how to create a custom floating filter re-using the out-of-the-box Number filter with Vue.
+|
+| <grid-example title='Vue Floating Filter Component' name='floating-filter-component' type='generated' options='{ "exampleHeight": 370, "extras": ["bootstrap"] }'></grid-example>
+
 ## Complex example with jQuery
 
 The following example illustrates a complex scenario. All the columns have floating filters. The first 6 columns (Athlete to Sport) have the standard provided floating filters. The last 4 (Gold to Total) have custom filters and custom floating filters that use jQuery sliders.
@@ -165,38 +167,3 @@ Note that:
 
 <grid-example title='Custom Complex Filter and Floating Filter' name='custom-complex-filter-and-floating-filter' type='vanilla' options='{ "extras": ["jquery", "jqueryui"] }'></grid-example>
 
-[[only-angular]]
-| ## Floating Filters
-|
-| It is possible to provide an Angular floating filter for AG Grid to use if you are are using the Angular version of
-| AG Grid. See [registering framework components](../components/#registering-framework-components) for how to
-| register framework components.
-|
-| The below example shows how to create a custom floating filter re-using the out-of-the-box Number filter with Angular.
-|
-| <grid-example title='Angular Floating Filter Component' name='floating-filter-component' type='generated' options='{ "exampleHeight": 370, "extras": ["bootstrap"] }'></grid-example>
-
-[[only-react]]
-| ## Floating Filters
-|
-| It is possible to provide a React floating filter for AG Grid to use if you are are using the React version of AG Grid.
-| See [registering framework components](../components/#registering-framework-components) for how to register
-| framework components.
-|
-| The below example shows how to create a custom floating filter re-using the out-of-the-box Number filter with React.
-|
-| <grid-example title='React Floating Filter Component' name='floating-filter-component' type='generated' options='{ "exampleHeight": 370, "onlyShow": "react", "extras": ["bootstrap"] }'></grid-example>
-|
-| Note that in this example we make use of `useImperativeHandle` for lifecycle methods - please
-| see [here](../react-hooks/) for more information.
-
-[[only-vue]]
-| ## Vue Floating Filters
-|
-| It is possible to provide a Vue floating filter for AG Grid to use if you are are using the Vue version of
-| AG Grid. See [registering framework components](../components/#registering-framework-components) for how
-| to register framework components.
-|
-| The below example shows how to create a custom floating filter re-using the out-of-the-box Number filter with Vue.
-|
-| <grid-example title='Vue Floating Filter Component' name='floating-filter-component' type='generated' options='{ "exampleHeight": 370, "extras": ["bootstrap"] }'></grid-example>

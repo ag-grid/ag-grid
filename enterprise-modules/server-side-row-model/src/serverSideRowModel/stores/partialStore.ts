@@ -2,7 +2,6 @@ import {
     _,
     Autowired,
     BeanStub,
-    ColumnController,
     Events,
     IServerSideStore,
     LoadSuccessParams,
@@ -24,7 +23,7 @@ import {
     ServerSideTransactionResultStatus,
     StoreRefreshAfterParams,
     StoreUpdatedEvent,
-    FocusController
+    FocusService
 } from "@ag-grid-community/core";
 import { SSRMParams } from "../serverSideRowModel";
 import { StoreUtils } from "./storeUtils";
@@ -45,8 +44,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
     @Autowired('rowRenderer') protected rowRenderer: RowRenderer;
     @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
     @Autowired('ssrmCacheUtils') private storeUtils: StoreUtils;
-    @Autowired('columnController') private columnController: ColumnController;
-    @Autowired("focusController") private focusController: FocusController;
+    @Autowired("focusService") private focusService: FocusService;
 
     private readonly ssrmParams: SSRMParams;
     private readonly storeParams: ServerSideStoreParams;
@@ -57,8 +55,6 @@ export class PartialStore extends BeanStub implements IServerSideStore {
     private defaultRowHeight: number;
 
     private logger: Logger;
-
-    private blockCount = 0;
 
     private rowCount: number;
     private lastRowIndexKnown = false;
@@ -187,7 +183,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
     }
 
     private isBlockFocused(block: PartialStoreBlock): boolean {
-        const focusedCell = this.focusController.getFocusCellToUseAfterRefresh();
+        const focusedCell = this.focusService.getFocusCellToUseAfterRefresh();
         if (!focusedCell) { return false; }
         if (focusedCell.rowPinned != null) { return false; }
 
@@ -230,6 +226,10 @@ export class PartialStore extends BeanStub implements IServerSideStore {
         this.getBlocksInOrder().forEach(block => block.forEachNodeDeep(callback, sequence));
     }
 
+    public forEachNodeDeepAfterFilterAndSort(callback: (rowNode: RowNode, index: number) => void, sequence = new NumberSequence()): void {
+        this.getBlocksInOrder().forEach(block => block.forEachNodeAfterFilterAndSort(callback, sequence));
+    }
+
     public getBlocksInOrder(): PartialStoreBlock[] {
         // get all page id's as NUMBERS (not strings, as we need to sort as numbers) and in descending order
         const blockComparator = (a: PartialStoreBlock, b: PartialStoreBlock) => a.getId() - b.getId();
@@ -241,7 +241,6 @@ export class PartialStore extends BeanStub implements IServerSideStore {
     private destroyBlock(block: PartialStoreBlock): void {
         delete this.blocks[block.getId()];
         this.destroyBean(block);
-        this.blockCount--;
         this.rowNodeBlockLoader.removeBlock(block);
     }
 
@@ -268,8 +267,9 @@ export class PartialStore extends BeanStub implements IServerSideStore {
         }
     }
 
-    public refreshStore(showLoading: boolean): void {
-        if (showLoading) {
+    public refreshStore(purge: boolean): void {
+        const noBlocksToRefresh = this.getRowCount() == 0;
+        if (noBlocksToRefresh || purge) {
             this.resetStore();
         } else {
             this.refreshBlocks();
@@ -654,7 +654,6 @@ export class PartialStore extends BeanStub implements IServerSideStore {
         block.setDisplayIndexes(new NumberSequence(displayIndex), nextRowTop);
 
         this.blocks[block.getId()] = block;
-        this.blockCount++;
         this.purgeBlocksIfNeeded(block);
 
         this.rowNodeBlockLoader.addBlock(block);

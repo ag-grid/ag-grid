@@ -1,6 +1,5 @@
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
-import { ColumnController } from '../columnController/columnController';
-import { GridPanel } from '../gridPanel/gridPanel';
+import { ColumnModel } from '../columns/columnModel';
 import { Autowired } from '../context/context';
 import { HeaderContainer } from './headerContainer';
 import { Events } from '../events';
@@ -13,13 +12,16 @@ import { addOrRemoveCssClass, setDisplayed } from '../utils/dom';
 import { ManagedFocusComponent } from '../widgets/managedFocusComponent';
 import { HeaderNavigationService, HeaderNavigationDirection } from './header/headerNavigationService';
 import { exists } from '../utils/generic';
-import { KeyName } from '../constants/keyName';
+import { PinnedWidthService } from "../gridBodyComp/pinnedWidthService";
+import { CenterWidthFeature } from "../gridBodyComp/centerWidthFeature";
+import { ControllersService } from "../controllersService";
+import { KeyCode } from '../constants/keyCode';
 
 export type HeaderContainerPosition = 'left' | 'right' | 'center';
 
 export class HeaderRootComp extends ManagedFocusComponent {
     private static TEMPLATE = /* html */
-        `<div class="ag-header" role="presentation">
+        `<div class="ag-header" role="presentation" unselectable="on">
             <div class="ag-pinned-left-header" ref="ePinnedLeftHeader" role="presentation"></div>
             <div class="ag-header-viewport" ref="eHeaderViewport" role="presentation">
                 <div class="ag-header-container" ref="eHeaderContainer" role="rowgroup"></div>
@@ -32,12 +34,13 @@ export class HeaderRootComp extends ManagedFocusComponent {
     @RefSelector('eHeaderContainer') private eHeaderContainer: HTMLElement;
     @RefSelector('eHeaderViewport') private eHeaderViewport: HTMLElement;
 
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
     @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
+    @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
+    @Autowired('controllersService') private controllersService: ControllersService;
 
-    private gridPanel: GridPanel;
     private printLayout: boolean;
     private headerContainers: Map<HeaderContainerPosition, HeaderContainer> = new Map();
 
@@ -80,17 +83,33 @@ export class HeaderRootComp extends ManagedFocusComponent {
         // for setting ag-pivot-on / ag-pivot-off CSS classes
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
 
+        this.addManagedListener(this.eventService, Events.EVENT_LEFT_PINNED_WIDTH_CHANGED, this.onPinnedLeftWidthChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED, this.onPinnedRightWidthChanged.bind(this));
+
         this.onPivotModeChanged();
         this.addPreventHeaderScroll();
 
-        if (this.columnController.isReady()) {
+        this.createManagedBean(new CenterWidthFeature(width => this.eHeaderContainer.style.width = `${width}px`));
+
+        if (this.columnModel.isReady()) {
             this.refreshHeader();
         }
+
+        this.setupHeaderHeight();
+        this.controllersService.registerHeaderRootComp(this);
     }
 
-    public registerGridComp(gridPanel: GridPanel): void {
-        this.gridPanel = gridPanel;
-        this.headerContainers.forEach(c => c.setupDragAndDrop(gridPanel));
+    private setupHeaderHeight(): void {
+        const listener = this.setHeaderHeight.bind(this);
+        listener();
+
+        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_HEADER_HEIGHT, listener);
+        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, listener);
+        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_GROUP_HEADER_HEIGHT, listener);
+        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_GROUP_HEADER_HEIGHT, listener);
+        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_FLOATING_FILTERS_HEIGHT, listener);
+
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, listener);
     }
 
     private registerHeaderContainer(headerContainer: HeaderContainer, type: HeaderContainerPosition): void {
@@ -104,7 +123,7 @@ export class HeaderRootComp extends ManagedFocusComponent {
             : HeaderNavigationDirection.RIGHT;
 
         if (this.headerNavigationService.navigateHorizontally(direction, true, e) ||
-            this.focusController.focusNextGridCoreContainer(e.shiftKey)
+            this.focusService.focusNextGridCoreContainer(e.shiftKey)
         ) {
             e.preventDefault();
         }
@@ -113,18 +132,18 @@ export class HeaderRootComp extends ManagedFocusComponent {
     protected handleKeyDown(e: KeyboardEvent): void {
         let direction: HeaderNavigationDirection | null = null;
 
-        switch (e.key) {
-            case KeyName.LEFT:
+        switch (e.keyCode) {
+            case KeyCode.LEFT:
                 direction = HeaderNavigationDirection.LEFT;
-            case KeyName.RIGHT:
+            case KeyCode.RIGHT:
                 if (!exists(direction)) {
                     direction = HeaderNavigationDirection.RIGHT;
                 }
                 this.headerNavigationService.navigateHorizontally(direction, false, e);
                 break;
-            case KeyName.UP:
+            case KeyCode.UP:
                 direction = HeaderNavigationDirection.UP;
-            case KeyName.DOWN:
+            case KeyCode.DOWN:
                 if (!exists(direction)) {
                     direction = HeaderNavigationDirection.DOWN;
                 }
@@ -144,7 +163,7 @@ export class HeaderRootComp extends ManagedFocusComponent {
         if (!relatedTarget && eGui.contains(document.activeElement)) { return; }
 
         if (!eGui.contains(relatedTarget as HTMLElement)) {
-            this.focusController.clearFocusedHeader();
+            this.focusService.clearFocusedHeader();
         }
     }
 
@@ -173,16 +192,46 @@ export class HeaderRootComp extends ManagedFocusComponent {
     }
 
     private onPivotModeChanged(): void {
-        const pivotMode = this.columnController.isPivotMode();
+        const pivotMode = this.columnModel.isPivotMode();
 
         addOrRemoveCssClass(this.getGui(), 'ag-pivot-on', pivotMode);
         addOrRemoveCssClass(this.getGui(), 'ag-pivot-off', !pivotMode);
     }
 
-    public setHeight(height: number): void {
+    private setHeaderHeight(): void {
+        const {columnModel, gridOptionsWrapper} = this;
+
+        let numberOfFloating = 0;
+        let headerRowCount = columnModel.getHeaderRowCount();
+        let totalHeaderHeight: number;
+        let groupHeight: number | null | undefined;
+        let headerHeight: number | null | undefined;
+
+        if (columnModel.isPivotMode()) {
+            groupHeight = gridOptionsWrapper.getPivotGroupHeaderHeight();
+            headerHeight = gridOptionsWrapper.getPivotHeaderHeight();
+        } else {
+            const hasFloatingFilters = columnModel.hasFloatingFilters();
+
+            if (hasFloatingFilters) {
+                headerRowCount++;
+                numberOfFloating = 1;
+            }
+
+            groupHeight = gridOptionsWrapper.getGroupHeaderHeight();
+            headerHeight = gridOptionsWrapper.getHeaderHeight();
+        }
+
+        const numberOfNonGroups = 1 + numberOfFloating;
+        const numberOfGroups = headerRowCount - numberOfNonGroups;
+
+        totalHeaderHeight = numberOfFloating * gridOptionsWrapper.getFloatingFiltersHeight()!;
+        totalHeaderHeight += numberOfGroups * groupHeight!;
+        totalHeaderHeight += headerHeight!;
+
         // one extra pixel is needed here to account for the
         // height of the border
-        const px = `${height + 1}px`;
+        const px = `${totalHeaderHeight + 1}px`;
         this.getGui().style.height = px;
         this.getGui().style.minHeight = px;
     }
@@ -197,7 +246,8 @@ export class HeaderRootComp extends ManagedFocusComponent {
             // on the header, giving the impression that the header scrolled as expected.
             const scrollLeft = this.eHeaderViewport.scrollLeft;
             if (scrollLeft !== 0) {
-                this.gridPanel.scrollHorizontally(scrollLeft);
+                const gridBodyCon = this.controllersService.getGridBodyController();
+                gridBodyCon.getScrollFeature().scrollHorizontally(scrollLeft);
                 this.eHeaderViewport.scrollLeft = 0;
             }
         });
@@ -207,15 +257,13 @@ export class HeaderRootComp extends ManagedFocusComponent {
         return this.headerContainers;
     }
 
-    public setHeaderContainerWidth(width: number) {
-        this.eHeaderContainer.style.width = `${width}px`;
+    private onPinnedLeftWidthChanged(): void {
+        const displayed = this.pinnedWidthService.getPinnedLeftWidth() > 0;
+        setDisplayed(this.ePinnedLeftHeader, displayed);
     }
 
-    public setLeftVisible(visible: boolean): void {
-        setDisplayed(this.ePinnedLeftHeader, visible);
-    }
-
-    public setRightVisible(visible: boolean): void {
-        setDisplayed(this.ePinnedRightHeader, visible);
+    private onPinnedRightWidthChanged(): void {
+        const displayed = this.pinnedWidthService.getPinnedRightWidth() > 0;
+        setDisplayed(this.ePinnedRightHeader, displayed);
     }
 }

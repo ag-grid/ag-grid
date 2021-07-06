@@ -1,19 +1,17 @@
 import { BandScale } from "../../scale/bandScale";
 import { ChartAxis } from "../chartAxis";
-
-export class CategoryAxis extends ChartAxis {
+export class CategoryAxis extends ChartAxis<BandScale<string>> {
     static className = 'CategoryAxis';
     static type = 'category';
 
     constructor() {
+        super();
+
         const scale = new BandScale<string>();
         scale.paddingInner = 0.2;
         scale.paddingOuter = 0.3;
-
-        super(scale);
+        this.scale = scale;
     }
-
-    readonly scale: BandScale<string>;
 
     set paddingInner(value: number) {
         this.scale.paddingInner = value;
@@ -27,5 +25,14 @@ export class CategoryAxis extends ChartAxis {
     }
     get paddingOuter(): number {
         return this.scale.paddingOuter;
+    }
+
+    set domain(values: string[]) {
+        // Prevent duplicate categories.
+        this.scale.domain = values
+            .filter((s, i, arr) => arr.indexOf(s) === i)
+    }
+    get domain(): string[] {
+        return this.scale.domain.slice();
     }
 }

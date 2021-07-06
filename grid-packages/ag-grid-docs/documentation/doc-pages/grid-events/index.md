@@ -35,8 +35,8 @@ interface CellValueChangedEvent {
     │     <span class="event-hierarchy__attribute">type</span>: string, // the event type, eg 'sortChanged' or 'columnResized'
     │   }</span>
     └── AgGridEvent
-        │     <span class="event-hierarchy__attribute">api</span>: GridAPI, // see [Grid API](../grid-api/)
-        │     <span class="event-hierarchy__attribute">columnApi</span>: ColumnAPI // see [Column API](../column-api/)
+        │     <span class="event-hierarchy__attribute">api</span>: GridAPI, // the Grid API
+        │     <span class="event-hierarchy__attribute">columnApi</span>: ColumnAPI // the Column API
         │   }</span>
         ├── GridReadyEvent <span class="event-hierarchy__property">{}</span>
         ├── SelectionChangedEvent <span class="event-hierarchy__property">{}</span>
@@ -64,6 +64,7 @@ interface CellValueChangedEvent {
         │       <span class="event-hierarchy__attribute">rowIndex</span>: number, // the row index of the focused cell
         │       <span class="event-hierarchy__attribute">column</span>: Column, // the column of the focused cell
         │       <span class="event-hierarchy__attribute">rowPinned</span>: string, // either 'top', 'bottom' or undefined/null (if not pinned)
+        │       <span class="event-hierarchy__attribute">isFullWidthCell</span>: boolean, // whether the cell is a full width cell or regular cell.
         │       <span class="event-hierarchy__attribute">forceBrowserFocus</span>: boolean // whether browser focus is also set (false when editing)
         │     }</span>
         ├── ViewportChangedEvent <span class="event-hierarchy__property">{
@@ -156,7 +157,7 @@ interface CellValueChangedEvent {
             │     <span class="event-hierarchy__attribute">data</span>: any, // the user provided data for the row in question
             │     <span class="event-hierarchy__attribute">rowIndex</span>: number, // the visible row index for the row in question
             │     <span class="event-hierarchy__attribute">rowPinned</span>: string, // either 'top', 'bottom' or undefined / null (if not pinned)
-            │     <span class="event-hierarchy__attribute">context</span>: any, // bag of attributes, provided by user, see [Context](../context/)
+            │     <span class="event-hierarchy__attribute">context</span>: any, // bag of attributes, provided by user, see [Context](/context/)
             │     <span class="event-hierarchy__attribute">event?</span>: Event // if event was due to browser event (eg click), this is browser event
             │   }</span>
             ├── RowSelectedEvent <span class="event-hierarchy__property">{}</span>
@@ -169,6 +170,8 @@ interface CellValueChangedEvent {
             }</span>
             ├── RowValueChangedEvent <span class="event-hierarchy__property">{}</span>
             ├── VirtualRowRemovedEvent <span class="event-hierarchy__property">{}</span>
+            ├── FullWidthCellKeyDownEvent <span class="event-hierarchy__property">{}</span>
+            ├── FullWidthCellKeyPressEvent <span class="event-hierarchy__property">{}</span>
             └── CellEvent <span class="event-hierarchy__property">{
                 │   <span class="event-hierarchy__attribute">column</span>: Column, // the column for the cell in question
                 │   <span class="event-hierarchy__attribute">colDef</span>: ColDef, // the column definition for the cell in question
@@ -181,8 +184,8 @@ interface CellValueChangedEvent {
                 ├── CellMouseOutEvent <span class="event-hierarchy__property">{}</span>
                 ├── CellContextMenuEvent <span class="event-hierarchy__property">{}</span>
                 ├── CellEditingStartedEvent <span class="event-hierarchy__property">{}</span>
-                ├── CellKeyDown <span class="event-hierarchy__property">{}</span>
-                ├── CellKeyPress <span class="event-hierarchy__property">{}</span>
+                ├── CellKeyDownEvent <span class="event-hierarchy__property">{}</span>
+                ├── CellKeyPressEvent <span class="event-hierarchy__property">{}</span>
                 ├── CellEditingStoppedEvent <span class="event-hierarchy__property">{
                         <span class="event-hierarchy__attribute">oldValue</span>: any, // the old value before editing
                         <span class="event-hierarchy__attribute">newValue</span>: any // the new value after editing

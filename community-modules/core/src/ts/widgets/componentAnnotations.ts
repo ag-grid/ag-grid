@@ -1,14 +1,14 @@
 import { getFunctionName } from '../utils/function';
 
 export function QuerySelector(selector?: string): Function {
-    return querySelectorFunc.bind(this, selector);
+    return querySelectorFunc.bind(this, selector, undefined);
 }
 
 export function RefSelector(ref: string): Function {
-    return querySelectorFunc.bind(this, `[ref=${ref}]`);
+    return querySelectorFunc.bind(this, `[ref=${ref}]`, ref);
 }
 
-function querySelectorFunc(selector: string, classPrototype: any, methodOrAttributeName: string, index: number) {
+function querySelectorFunc(selector: string, refSelector: string, classPrototype: any, methodOrAttributeName: string, index: number) {
     if (selector === null) {
         console.error('AG Grid: QuerySelector selector should not be null');
         return;
@@ -21,7 +21,8 @@ function querySelectorFunc(selector: string, classPrototype: any, methodOrAttrib
 
     addToObjectProps(classPrototype, 'querySelectors', {
         attributeName: methodOrAttributeName,
-        querySelector: selector
+        querySelector: selector,
+        refSelector: refSelector
     });
 }
 

@@ -13,10 +13,10 @@
 || Full Width Cell Renderer      | Grid Option               | fullWidthCellRenderer    | 
 || Group Row Cell Renderer       | Grid Option               | groupRowRenderer         | 
 || Group Row Inner Cell Renderer | Grid Option               | groupRowInnerRenderer    | 
-|| Loading Cell Renderer         | Grid Option               | loadingCellRenderer      | 
-|| Loading Overlay               | Grid Option               | loadingOverlayRenderer   | 
-|| No Rows Overlay               | Grid Option               | noRowsOverlayRenderer    | 
-|| Date Component                | Grid Option               | dateComponent            | 
+|| Loading Cell Renderer         | Grid Option               | loadingCellRenderer      |
+|| Loading Overlay               | Grid Option               | loadingOverlayComponent  | 
+|| No Rows Overlay               | Grid Option               | noRowsOverlayComponent   |
+|| Date Component                | Grid Option               | agDateInput              | 
 || Status Bar Component          | Grid Option -> Status Bar | statusPanel              | 
 || Cell Renderer                 | Column Definition         | cellRenderer             | 
 || Pinned Row Cell Renderer      | Column Definition         | pinnedRowCellRenderer    | 

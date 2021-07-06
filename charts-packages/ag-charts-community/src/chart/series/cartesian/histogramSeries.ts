@@ -15,9 +15,9 @@ import { CartesianSeries } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import { TooltipRendererResult, toTooltipHtml } from "../../chart";
 import { numericExtent, finiteExtent } from "../../../util/array";
-import { toFixed } from "../../../util/number";
 import { reactive, TypedEvent } from "../../../util/observable";
 import ticks, { tickStep } from "../../../util/ticks";
+import { sanitizeHtml } from "../../../util/sanitize";
 
 enum HistogramSeriesNodeTag {
     Bin,
@@ -320,10 +320,6 @@ export class HistogramSeries extends CartesianSeries {
             return [];
         }
 
-        if (bins && binCount) {
-            console.warn('bins and bitCount are mutually exclusive properties.');
-        }
-
         if (bins) {
             return bins;
         }
@@ -591,7 +587,7 @@ export class HistogramSeries extends CartesianSeries {
     }
 
     getTooltipHtml(nodeDatum: HistogramNodeDatum): string {
-        const { xKey, yKey } = this;
+        const { xKey, yKey, xAxis, yAxis } = this;
 
         if (!xKey) {
             return '';
@@ -601,9 +597,9 @@ export class HistogramSeries extends CartesianSeries {
         const { renderer: tooltipRenderer = this.tooltipRenderer } = tooltip;
         const bin: HistogramBin = nodeDatum.seriesDatum;
         const { aggregatedValue, frequency, domain: [rangeMin, rangeMax] } = bin;
-        const title = `${xName || xKey}: ${toFixed(rangeMin)} - ${toFixed(rangeMax)}`;
+        const title = `${sanitizeHtml(xName || xKey)}: ${xAxis.formatDatum(rangeMin)} - ${xAxis.formatDatum(rangeMax)}`;
         let content = yKey ?
-            `<b>${yName || yKey} (${aggregation})</b>: ${toFixed(aggregatedValue)}<br>` :
+            `<b>${sanitizeHtml(yName || yKey)} (${aggregation})</b>: ${yAxis.formatDatum(aggregatedValue)}<br>` :
             '';
 
         content += `<b>Frequency</b>: ${frequency}`;

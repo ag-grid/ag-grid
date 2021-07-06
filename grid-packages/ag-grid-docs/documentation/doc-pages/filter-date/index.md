@@ -2,7 +2,7 @@
 title: "Date Filter"
 ---
 
-Date filters allow you to filter date data. The [Provided Filters](../filter-provided/) and [Simple Filters](../filter-provided-simple/) pages explain the parts of the date filter that are the same as the other provided filters. This page builds on that and explains some details that are specific to the date filter.
+Date filters allow you to filter date data. The [Provided Filters](/filter-provided/) and [Simple Filters](/filter-provided-simple/) pages explain the parts of the date filter that are the same as the other provided filters. This page builds on that and explains some details that are specific to the date filter.
 
 ## Date Filter Parameters
 
@@ -17,7 +17,7 @@ In addition, the following parameters are also available:
 ## Date Selection Component
 
 
-By default the grid will use the browser-provided date picker for Chrome and Firefox (as we think it's nice), but for all other browsers it will provide a simple text field. To override this and provide a custom date picker, see [Date Component](../component-date/).
+By default the grid will use the browser-provided date picker for Chrome and Firefox (as we think it's nice), but for all other browsers it will provide a simple text field. To override this and provide a custom date picker, see [Date Component](/component-date/).
 
 ## Date Filter Comparator
 
@@ -87,6 +87,6 @@ The example below shows the date filter in action, using some of the configurati
 - The **Date** column is using a Date Filter.
 - A custom `comparator` is provided to parse the data and allow date comparisons to be made.
 - The native date picker is forced to be used in every browser.
-- The minimum valid year is set to `2000`, so dates entered into the filter with a year less than 2000 will not be recognised.
+- The minimum valid year is set to `2000`, so dates entered into the filter with a year less than 2000 will not be recognised. This avoids the filter getting applied as the user is typing a year - for example suppose the user is typing the year "2008", the filter doesn't execute for values "2", "20" or "200" (as the text "2008" is partially typed).
 
 <grid-example title='Date Picker' name='date-filter' type='generated' options='{ "exampleHeight": 520 }'></grid-example>

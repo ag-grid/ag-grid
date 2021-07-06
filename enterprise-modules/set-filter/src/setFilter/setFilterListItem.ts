@@ -78,12 +78,8 @@ export class SetFilterListItem extends Component {
         }
 
         if (this.params.showTooltips) {
-            const tooltipText = _.escapeString(formattedValue != null ? formattedValue : value);
-            if (tooltipText == null) {
-                this.setTooltip(undefined);
-            } else {
-                this.setTooltip(tooltipText);
-            }
+            const tooltipValue = formattedValue != null ? formattedValue : value;
+            this.setTooltip(tooltipValue);
         }
 
         const params: ISetFilterCellRendererParams = {

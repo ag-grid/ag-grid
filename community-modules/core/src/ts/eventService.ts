@@ -46,11 +46,15 @@ export class EventService implements IEventEmitter {
         }
     }
 
-    private getListeners(eventType: string, async: boolean): Set<Function> {
+    private getListeners(eventType: string, async: boolean, autoCreateListenerCollection: boolean): Set<Function> | undefined {
         const listenerMap = async ? this.allAsyncListeners : this.allSyncListeners;
         let listeners = listenerMap.get(eventType);
 
-        if (!listeners) {
+        // Note: 'autoCreateListenerCollection' should only be 'true' if a listener is about to be added. For instance
+        // getListeners() is also called during event dispatch even though no listeners are added. This measure protects
+        // against 'memory bloat' as empty collections will prevent the RowNode's event service from being removed after
+        // the RowComp is destroyed, see noRegisteredListenersExist() below.
+        if (!listeners && autoCreateListenerCollection) {
             listeners = new Set<Function>();
             listenerMap.set(eventType, listeners);
         }
@@ -58,12 +62,25 @@ export class EventService implements IEventEmitter {
         return listeners;
     }
 
+    public noRegisteredListenersExist(): boolean {
+        return this.allSyncListeners.size === 0 && this.allAsyncListeners.size === 0 &&
+            this.globalSyncListeners.size === 0 && this.globalAsyncListeners.size === 0;
+    }
+
     public addEventListener(eventType: string, listener: Function, async = false): void {
-        this.getListeners(eventType, async).add(listener);
+        this.getListeners(eventType, async, true)!.add(listener);
     }
 
     public removeEventListener(eventType: string, listener: Function, async = false): void {
-        this.getListeners(eventType, async).delete(listener);
+        const listeners = this.getListeners(eventType, async, false);
+        if (!listeners) { return; }
+
+        listeners.delete(listener);
+
+        if (listeners.size === 0) {
+            const listenerMap = async ? this.allAsyncListeners : this.allSyncListeners;
+            listenerMap.delete(eventType);
+        }
     }
 
     public addGlobalListener(listener: Function, async = false): void {
@@ -97,7 +114,10 @@ export class EventService implements IEventEmitter {
             }
         });
 
-        processEventListeners(this.getListeners(eventType, async));
+        const listeners = this.getListeners(eventType, async, false);
+        if (listeners) {
+            processEventListeners(listeners);
+        }
 
         const globalListeners = async ? this.globalAsyncListeners : this.globalSyncListeners;
 

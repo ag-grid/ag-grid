@@ -1,11 +1,11 @@
 import { EventService } from "../eventService";
 import { AgEvent, Events, RowEvent, RowSelectedEvent, SelectionChangedEvent } from "../events";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { SelectionController } from "../selectionController";
+import { SelectionService } from "../selectionService";
 import { Column } from "./column";
 import { ValueService } from "../valueService/valueService";
-import { ColumnController } from "../columnController/columnController";
-import { ColumnApi } from "../columnController/columnApi";
+import { ColumnModel } from "../columns/columnModel";
+import { ColumnApi } from "../columns/columnApi";
 import { Autowired, Context } from "../context/context";
 import { IRowModel } from "../interfaces/iRowModel";
 import { Constants } from "../constants/constants";
@@ -16,6 +16,7 @@ import { exists, missing, missingOrEmpty } from "../utils/generic";
 import { assign, getAllKeysInObjects } from "../utils/object";
 import { IServerSideStore } from "../interfaces/IServerSideStore";
 import { RowRenderer } from "../rendering/rowRenderer";
+import { startsWith } from "../utils/string";
 
 export interface SetSelectedParams {
     // true or false, whatever you want to set selection to
@@ -45,6 +46,8 @@ export interface CellChangedEvent extends RowNodeEvent {
     newValue: any;
     oldValue: any;
 }
+
+export enum RowHighlightPosition {Above, Below}
 
 export class RowNode implements IEventEmitter {
 
@@ -78,8 +81,8 @@ export class RowNode implements IEventEmitter {
     @Autowired('eventService') private mainEventService: EventService;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('selectionController') private selectionController: SelectionController;
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('selectionService') private selectionService: SelectionService;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('context') private context: Context;
@@ -92,7 +95,7 @@ export class RowNode implements IEventEmitter {
     public id: string | undefined;
 
     /** The group data */
-    public groupData: any;
+    public groupData: { [key: string]: string | null; } | null;
 
     /** The aggregated data */
     public aggData: any;
@@ -162,7 +165,10 @@ export class RowNode implements IEventEmitter {
     public rowGroupColumn: Column | null;
 
     /** Groups only - The key for the group eg Ireland, UK, USA */
-    public key: any;
+    public key: string | null = null;
+
+    /** Groups only - The raw key value for the group eg 101 rather than "101" contained in key */
+    public rawKeyValue: any | null = null;
 
     /** Used by server side row model, true if this row node is a stub */
     public stub: boolean;
@@ -243,10 +249,10 @@ export class RowNode implements IEventEmitter {
     /** True when nodes with the same id are being removed and added as part of the same batch transaction */
     public alreadyRendered = false;
 
-    public highlighted: 'above' | 'below' | null = null;
+    public highlighted: RowHighlightPosition | null = null;
 
     private selected: boolean | undefined = false;
-    private eventService: EventService;
+    private eventService: EventService | null;
 
     public setData(data: any): void {
         this.setDataCommon(data, false);
@@ -335,7 +341,7 @@ export class RowNode implements IEventEmitter {
         this.data = data;
         this.updateDataOnDetailNode();
         this.setId(id);
-        this.selectionController.syncInRowNode(this, oldNode);
+        this.selectionService.syncInRowNode(this, oldNode);
         this.checkRowSelectable();
 
         const event: DataChangedEvent = this.createDataChangedEvent(data, oldData, false);
@@ -345,9 +351,7 @@ export class RowNode implements IEventEmitter {
 
     private checkRowSelectable() {
         const isRowSelectableFunc = this.gridOptionsWrapper.getIsRowSelectableFunc();
-        const shouldInvokeIsRowSelectable = isRowSelectableFunc && exists(this);
-
-        this.setRowSelectable(shouldInvokeIsRowSelectable ? isRowSelectableFunc!(this) : true);
+        this.setRowSelectable(isRowSelectableFunc ? isRowSelectableFunc!(this) : true);
     }
 
     public setRowSelectable(newVal: boolean) {
@@ -370,7 +374,7 @@ export class RowNode implements IEventEmitter {
                 this.id = getRowNodeId(this.data);
                 // make sure id provided doesn't start with 'row-group-' as this is reserved. also check that
                 // it has 'startsWith' in case the user provided a number.
-                if (this.id && this.id.startsWith && this.id.startsWith(RowNode.ID_PREFIX_ROW_GROUP)) {
+                if (this.id && typeof this.id === 'string' && startsWith(this.id, RowNode.ID_PREFIX_ROW_GROUP)) {
                     console.error(`AG Grid: Row ID's cannot start with ${RowNode.ID_PREFIX_ROW_GROUP}, this is a reserved prefix for AG Grid's row grouping feature.`);
                 }
             } else {
@@ -420,6 +424,8 @@ export class RowNode implements IEventEmitter {
     }
 
     public setRowTop(rowTop: number | null): void {
+        this.oldRowTop = this.rowTop;
+
         if (this.rowTop === rowTop) { return; }
 
         this.rowTop = rowTop;
@@ -432,7 +438,7 @@ export class RowNode implements IEventEmitter {
     }
 
     public clearRowTopAndRowIndex(): void {
-        this.oldRowTop = this.rowTop;
+        this.oldRowTop = null;
         this.setRowTop(null);
         this.setRowIndex(null);
     }
@@ -457,7 +463,7 @@ export class RowNode implements IEventEmitter {
         }
     }
 
-    public setHighlighted(highlighted: 'above' | 'below' | null): void {
+    public setHighlighted(highlighted: RowHighlightPosition | null): void {
         if (highlighted === this.highlighted) { return; }
 
         this.highlighted = highlighted;
@@ -503,6 +509,8 @@ export class RowNode implements IEventEmitter {
     }
 
     public setRowIndex(rowIndex: number | null): void {
+        if (this.rowIndex === rowIndex) { return; }
+
         this.rowIndex = rowIndex;
 
         if (this.eventService) {
@@ -567,7 +575,7 @@ export class RowNode implements IEventEmitter {
     // this method is for the client to call, so the cell listens for the change
     // event, and also flashes the cell when the change occurs.
     public setDataValue(colKey: string | Column, newValue: any): void {
-        const column = this.columnController.getPrimaryColumn(colKey)!;
+        const column = this.columnModel.getPrimaryColumn(colKey)!;
         const oldValue = this.valueService.getValue(column, this);
 
         this.valueService.setValue(this, column, newValue);
@@ -575,7 +583,7 @@ export class RowNode implements IEventEmitter {
     }
 
     public setGroupValue(colKey: string | Column, newValue: any): void {
-        const column = this.columnController.getGridColumn(colKey)!;
+        const column = this.columnModel.getGridColumn(colKey)!;
 
         if (missing(this.groupData)) { this.groupData = {}; }
 
@@ -599,7 +607,7 @@ export class RowNode implements IEventEmitter {
         // if no event service, nobody has registered for events, so no need fire event
         if (this.eventService) {
             colIds.forEach(colId => {
-                const column = this.columnController.getGridColumn(colId)!;
+                const column = this.columnModel.getGridColumn(colId)!;
                 const value = this.aggData ? this.aggData[colId] : undefined;
                 const oldValue = oldAggData ? oldAggData[colId] : undefined;
                 this.dispatchCellChangedEvent(column, value, oldValue);
@@ -752,12 +760,12 @@ export class RowNode implements IEventEmitter {
             return this.sibling.setSelectedParams(params);
         }
 
-        if (rangeSelect && this.selectionController.getLastSelectedNode()) {
-            const newRowClicked = this.selectionController.getLastSelectedNode() !== this;
+        if (rangeSelect && this.selectionService.getLastSelectedNode()) {
+            const newRowClicked = this.selectionService.getLastSelectedNode() !== this;
             const allowMultiSelect = this.gridOptionsWrapper.isRowSelectionMulti();
             if (newRowClicked && allowMultiSelect) {
                 const nodesChanged = this.doRowRangeSelection(params.newValue);
-                this.selectionController.setLastSelectedNode(this);
+                this.selectionService.setLastSelectedNode(this);
                 return nodesChanged;
             }
         }
@@ -785,12 +793,12 @@ export class RowNode implements IEventEmitter {
         if (!suppressFinishActions) {
             const clearOtherNodes = newValue && (clearSelection || !this.gridOptionsWrapper.isRowSelectionMulti());
             if (clearOtherNodes) {
-                updatedCount += this.selectionController.clearOtherNodes(this);
+                updatedCount += this.selectionService.clearOtherNodes(this);
             }
 
             // only if we selected something, then update groups and fire events
             if (updatedCount > 0) {
-                this.selectionController.updateGroupsFromChildrenSelections();
+                this.selectionService.updateGroupsFromChildrenSelections();
 
                 // this is the very end of the 'action node', so we are finished all the updates,
                 // include any parent / child changes that this method caused
@@ -804,7 +812,7 @@ export class RowNode implements IEventEmitter {
 
             // so if user next does shift-select, we know where to start the selection from
             if (newValue) {
-                this.selectionController.setLastSelectedNode(this);
+                this.selectionService.setLastSelectedNode(this);
             }
         }
 
@@ -816,7 +824,7 @@ export class RowNode implements IEventEmitter {
     // holding down 'shift'.
     private doRowRangeSelection(value: boolean = true): number {
         const groupsSelectChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
-        const lastSelectedNode = this.selectionController.getLastSelectedNode();
+        const lastSelectedNode = this.selectionService.getLastSelectedNode();
         const nodesToSelect = this.rowModel.getNodesInRangeForSelection(this, lastSelectedNode);
 
         let updatedCount = 0;
@@ -830,7 +838,7 @@ export class RowNode implements IEventEmitter {
             }
         });
 
-        this.selectionController.updateGroupsFromChildrenSelections();
+        this.selectionService.updateGroupsFromChildrenSelections();
 
         const event: SelectionChangedEvent = {
             type: Events.EVENT_SELECTION_CHANGED,
@@ -905,7 +913,12 @@ export class RowNode implements IEventEmitter {
     }
 
     public removeEventListener(eventType: string, listener: Function): void {
+        if (!this.eventService) { return; }
+
         this.eventService.removeEventListener(eventType, listener);
+        if (this.eventService.noRegisteredListenersExist()) {
+            this.eventService = null;
+        }
     }
 
     public onMouseEnter(): void {

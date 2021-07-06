@@ -5,7 +5,7 @@ const sheetsFactory: ExcelOOXMLTemplate = {
     getTemplate(names: string[]) {
         return {
             name: "sheets",
-            children: names.map(sheetFactory.getTemplate)
+            children: names.map((sheet, idx) => sheetFactory.getTemplate(sheet, idx))
         };
     }
 };

@@ -1,4 +1,4 @@
-import Vue from 'vue';
+import {nextTick} from 'vue';
 
 const KEY_BACKSPACE = 8;
 const KEY_DELETE = 46;
@@ -6,7 +6,7 @@ const KEY_F2 = 113;
 const KEY_ENTER = 13;
 const KEY_TAB = 9;
 
-export default Vue.extend({
+export default {
     template: `<input :ref="'input'" @keydown="onKeyDown($event)" v-model="value"/>`,
     data() {
         return {
@@ -102,7 +102,7 @@ export default Vue.extend({
     },
     mounted() {
 
-        Vue.nextTick(() => {
+        nextTick(() => {
             // need to check if the input reference is still valid - if the edit was cancelled before it started there
             // wont be an editor component anymore
             if (this.$refs.input) {
@@ -126,4 +126,4 @@ export default Vue.extend({
             }
         });
     },
-});
+};

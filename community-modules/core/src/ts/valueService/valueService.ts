@@ -1,5 +1,5 @@
 import { ExpressionService } from "./expressionService";
-import { ColumnController } from "../columnController/columnController";
+import { ColumnModel } from "../columns/columnModel";
 import { NewValueParams, ValueGetterParams } from "../entities/colDef";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { RowNode } from "../entities/rowNode";
@@ -15,7 +15,7 @@ import { doOnce } from "../utils/function";
 export class ValueService extends BeanStub {
 
     @Autowired('expressionService') private expressionService: ExpressionService;
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('valueCache') private valueCache: ValueCache;
 
     private cellExpressions: boolean;
@@ -29,9 +29,10 @@ export class ValueService extends BeanStub {
     }
 
     public getValue(column: Column,
-        rowNode?: RowNode | null,
-        forFilter = false,
-        ignoreAggData = false): any {
+                    rowNode?: RowNode | null,
+                    forFilter = false,
+                    ignoreAggData = false,
+                    useRawKeyValue = false): any {
 
         // hack - the grid is getting refreshed before this bean gets initialised, race condition.
         // really should have a way so they get initialised in the right order???
@@ -64,7 +65,7 @@ export class ValueService extends BeanStub {
         } else if (this.gridOptionsWrapper.isTreeData() && (field && data)) {
             result = getValueUsingField(data, field, column.isFieldContainsDots());
         } else if (groupDataExists) {
-            result = rowNode.groupData[colId];
+            result = useRawKeyValue ? rowNode.rawKeyValue : rowNode.groupData![colId];
         } else if (aggDataExists) {
             result = rowNode.aggData[colId];
         } else if (colDef.valueGetter) {
@@ -91,10 +92,14 @@ export class ValueService extends BeanStub {
 
     private getOpenedGroup(rowNode: RowNode, column: Column): any {
 
-        if (!this.gridOptionsWrapper.isShowOpenedGroup()) { return; }
+        if (!this.gridOptionsWrapper.isShowOpenedGroup()) {
+            return;
+        }
 
         const colDef = column.getColDef();
-        if (!colDef.showRowGroup) { return; }
+        if (!colDef.showRowGroup) {
+            return;
+        }
 
         const showRowGroup = column.getColDef().showRowGroup;
 
@@ -111,7 +116,7 @@ export class ValueService extends BeanStub {
     }
 
     public setValue(rowNode: RowNode, colKey: string | Column, newValue: any, eventSource?: string): void {
-        const column = this.columnController.getPrimaryColumn(colKey);
+        const column = this.columnModel.getPrimaryColumn(colKey);
 
         if (!rowNode || !column) {
             return;
@@ -123,7 +128,7 @@ export class ValueService extends BeanStub {
         }
 
         // for backwards compatibility we are also retrieving the newValueHandler as well as the valueSetter
-        const { field, newValueHandler, valueSetter } = column.getColDef();
+        const {field, newValueHandler, valueSetter} = column.getColDef();
 
         // need either a field or a newValueHandler for this to work
         if (missing(field) && missing(newValueHandler) && missing(valueSetter)) {
@@ -275,7 +280,7 @@ export class ValueService extends BeanStub {
     }
 
     private getValueCallback(node: RowNode, field: string | Column): any {
-        const otherColumn = this.columnController.getPrimaryColumn(field);
+        const otherColumn = this.columnModel.getPrimaryColumn(field);
 
         if (otherColumn) {
             return this.getValue(otherColumn, node);
@@ -285,15 +290,18 @@ export class ValueService extends BeanStub {
     }
 
     // used by row grouping and pivot, to get key for a row. col can be a pivot col or a row grouping col
-    public getKeyForNode(col: Column, rowNode: RowNode): any {
+    public getKeyForNode(col: Column, rowNode: RowNode): { key: any, rawKeyValue: any } {
         const value = this.getValue(col, rowNode);
         const keyCreator = col.getColDef().keyCreator;
 
-        let result = keyCreator ? keyCreator({ value: value }) : value;
+        let result = keyCreator ? keyCreator({value: value}) : value;
 
         // if already a string, or missing, just return it
         if (typeof result === 'string' || result == null) {
-            return result;
+            return {
+                key: result,
+                rawKeyValue: value
+            }
         }
 
         result = String(result);
@@ -304,6 +312,9 @@ export class ValueService extends BeanStub {
             }, 'getKeyForNode - warn about [object,object]');
         }
 
-        return result;
+        return {
+            key: result,
+            rawKeyValue: value
+        };
     }
 }

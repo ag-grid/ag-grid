@@ -5,6 +5,7 @@ import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ValueService } from "../valueService/valueService";
 import { _ } from "../utils";
 import { Constants } from "../constants/constants";
+import { ColumnModel } from "../columns/columnModel";
 
 export interface SortOption {
     sort: string;
@@ -23,6 +24,7 @@ export class RowNodeSorter {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('valueService') private valueService: ValueService;
+    @Autowired('columnModel') private columnModel: ColumnModel;
 
     public doFullSort(rowNodes: RowNode[], sortOptions: SortOption[]): RowNode[] {
 
@@ -41,13 +43,13 @@ export class RowNodeSorter {
         // Iterate columns, return the first that doesn't match
         for (let i = 0, len = sortOptions.length; i < len; i++) {
             const sortOption = sortOptions[i];
-            // let compared = compare(nodeA, nodeB, sortOption.column, sortOption.inverter === -1);
-
             const isInverted = sortOption.sort === Constants.SORT_DESC;
+
             const valueA: any = this.getValue(nodeA, sortOption.column);
             const valueB: any = this.getValue(nodeB, sortOption.column);
+
             let comparatorResult: number;
-            const providedComparator = sortOption.column.getColDef().comparator;
+            const providedComparator = this.getComparator(sortOption, nodeA);
             if (providedComparator) {
                 //if comparator provided, use it
                 comparatorResult = providedComparator(valueA, valueB, nodeA, nodeB, isInverted);
@@ -56,7 +58,11 @@ export class RowNodeSorter {
                 comparatorResult = _.defaultComparator(valueA, valueB, this.gridOptionsWrapper.isAccentedSort());
             }
 
-            if (comparatorResult !== 0) {
+            // user provided comparators can return 'NaN' if they don't correctly handle 'undefined' values, this
+            // typically occurs when the comparator is used on a group row
+            const validResult = !isNaN(comparatorResult);
+
+            if (validResult && comparatorResult !== 0) {
                 return sortOption.sort === Constants.SORT_ASC ? comparatorResult : comparatorResult * -1;
             }
         }
@@ -64,8 +70,38 @@ export class RowNodeSorter {
         return sortedNodeA.currentPos - sortedNodeB.currentPos;
     }
 
-    private getValue(nodeA: RowNode, column: Column): string {
-        return this.valueService.getValue(column, nodeA);
+    private getComparator(sortOption: SortOption, rowNode: RowNode):
+        ((valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode, isInverted: boolean) => number) | undefined {
+
+        const column = sortOption.column;
+
+        // comparator on col get preference over everything else
+        const comparatorOnCol = column.getColDef().comparator;
+        if (comparatorOnCol != null) {
+            return comparatorOnCol;
+        }
+
+        // if no comparator on col, see if we are showing a group, and if we are, get comparator from row group col
+        if (rowNode.rowGroupColumn) {
+            return rowNode.rowGroupColumn.getColDef().comparator;
+        }
+
+        if (column.getColDef().showRowGroup) {
+            // if a 'field' is supplied on the autoGroupColumnDef we need to use the associated column comparator
+            const groupLeafField = !rowNode.group && column.getColDef().field;
+            if (groupLeafField) {
+                const primaryColumn = this.columnModel.getPrimaryColumn(column.getColDef().field!);
+                const groupLeafComparator = primaryColumn!.getColDef().comparator;
+                if (groupLeafComparator) {
+                    return groupLeafComparator;
+                }
+            }
+        }
     }
 
+    private getValue(nodeA: RowNode, column: Column): string {
+        // supplying `useRawKeyValue = true` to ensure the comparator receives the raw / underlying value rather than
+        // the group key value which is converted to a string, when row grouping.
+        return this.valueService.getValue(column, nodeA, false, false, true);
+    }
 }

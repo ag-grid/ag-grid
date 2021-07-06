@@ -1,6 +1,6 @@
 import { Autowired, Bean, Context, Optional, PostConstruct } from "../context/context";
-import { ColumnApi } from "../columnController/columnApi";
-import { ColumnController } from "../columnController/columnController";
+import { ColumnApi } from "../columns/columnApi";
+import { ColumnModel } from "../columns/columnModel";
 import { HeaderNavigationService } from "../headerRendering/header/headerNavigationService";
 import { GridApi } from "../gridApi";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
@@ -10,31 +10,33 @@ import { TemplateService } from "../templateService";
 import { ValueService } from "../valueService/valueService";
 import { EventService } from "../eventService";
 import { ColumnAnimationService } from "./columnAnimationService";
-import { IRangeController, ISelectionHandleFactory } from "../interfaces/iRangeController";
-import { FocusController } from "../focusController";
+import { IRangeService, ISelectionHandleFactory } from "../interfaces/IRangeService";
+import { FocusService } from "../focusService";
 import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
 import { PopupService } from "../widgets/popupService";
 import { ValueFormatterService } from "./valueFormatterService";
 import { StylingService } from "../styling/stylingService";
 import { ColumnHoverService } from "./columnHoverService";
-import { GridPanel } from "../gridPanel/gridPanel";
+import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
 import { PaginationProxy } from "../pagination/paginationProxy";
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { UserComponentFactory } from "../components/framework/userComponentFactory";
 import { DragAndDropService } from "../dragAndDrop/dragAndDropService";
 import { SortController } from "../sortController";
 import { FilterManager } from "../filter/filterManager";
-import { MaxDivHeightScaler } from "./maxDivHeightScaler";
+import { RowContainerHeightService } from "./rowContainerHeightService";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 import { DetailRowCompCache } from "./row/detailRowCompCache";
 import { CellPositionUtils } from "../entities/cellPosition";
 import { RowPositionUtils } from "../entities/rowPosition";
-import { SelectionController } from "../selectionController";
+import { SelectionService } from "../selectionService";
 import { RowCssClassCalculator } from "./row/rowCssClassCalculator";
 import { IRowModel } from "../interfaces/iRowModel";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 import { IServerSideRowModel } from "../interfaces/iServerSideRowModel";
 import { ResizeObserverService } from "../misc/resizeObserverService";
+import { ControllersService } from "../controllersService";
+import { NavigationService } from "../gridBodyComp/navigationService";
 
 /** Using the IoC has a slight performance consideration, which is no problem most of the
  * time, unless we are trashing objects - which is the case when scrolling and rowComp
@@ -56,11 +58,12 @@ export class Beans {
     @Autowired('templateService') public templateService: TemplateService;
     @Autowired('valueService') public valueService: ValueService;
     @Autowired('eventService') public eventService: EventService;
-    @Autowired('columnController') public columnController: ColumnController;
+    @Autowired('columnModel') public columnModel: ColumnModel;
     @Autowired('headerNavigationService') public headerNavigationService: HeaderNavigationService;
+    @Autowired('navigationService') public navigationService: NavigationService;
     @Autowired('columnAnimationService') public columnAnimationService: ColumnAnimationService;
-    @Optional('rangeController') public rangeController: IRangeController;
-    @Autowired('focusController') public focusController: FocusController;
+    @Optional('rangeService') public rangeService: IRangeService;
+    @Autowired('focusService') public focusService: FocusService;
     @Optional('contextMenuFactory') public contextMenuFactory: IContextMenuFactory;
     @Autowired('popupService') public popupService: PopupService;
     @Autowired('valueFormatterService') public valueFormatterService: ValueFormatterService;
@@ -71,24 +74,25 @@ export class Beans {
     @Autowired('dragAndDropService') public dragAndDropService: DragAndDropService;
     @Autowired('sortController') public sortController: SortController;
     @Autowired('filterManager') public filterManager: FilterManager;
-    @Autowired('maxDivHeightScaler') public maxDivHeightScaler: MaxDivHeightScaler;
+    @Autowired('rowContainerHeightService') public rowContainerHeightService: RowContainerHeightService;
     @Autowired('frameworkOverrides') public frameworkOverrides: IFrameworkOverrides;
     @Autowired('detailRowCompCache') public detailRowCompCache: DetailRowCompCache;
     @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
     @Autowired('rowPositionUtils') public rowPositionUtils: RowPositionUtils;
-    @Autowired('selectionController') public selectionController: SelectionController;
+    @Autowired('selectionService') public selectionService: SelectionService;
     @Optional('selectionHandleFactory') public selectionHandleFactory: ISelectionHandleFactory;
     @Autowired('rowCssClassCalculator') public rowCssClassCalculator: RowCssClassCalculator;
     @Autowired('rowModel') public rowModel: IRowModel;
+    @Autowired('controllersService') public controllersService: ControllersService;
 
     public doingMasterDetail: boolean;
-    public gridPanel: GridPanel;
+    public gridBodyComp: GridBodyComp;
 
     public clientSideRowModel: IClientSideRowModel;
     public serverSideRowModel: IServerSideRowModel;
 
-    public registerGridComp(gridPanel: GridPanel): void {
-        this.gridPanel = gridPanel;
+    public registerGridComp(gridBodyComp: GridBodyComp): void {
+        this.gridBodyComp = gridBodyComp;
     }
 
     @PostConstruct

@@ -1,42 +1,42 @@
 'use strict';
 
-import React, { useState } from 'react';
-import { render } from 'react-dom';
-import { AgGridColumn, AgGridReact } from '@ag-grid-community/react';
+import React, {useState} from 'react';
+import {render} from 'react-dom';
+import {AgGridColumn, AgGridReact} from '@ag-grid-community/react';
 
-import { AllCommunityModules } from "@ag-grid-community/all-modules";
+import {AllCommunityModules} from "@ag-grid-community/all-modules";
 import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
 import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
 
-const medalsLast = [
-    { field: 'athlete' },
-    { field: 'age' },
-    { field: 'country' },
-    { field: 'sport' },
-    { field: 'year' },
-    { field: 'date' },
-    { field: 'gold' },
-    { field: 'silver' },
-    { field: 'bronze' },
-    { field: 'total' }
+const colsA = [
+    {field: 'athlete'},
+    {field: 'age'},
+    {field: 'country'},
+    {field: 'sport'},
+    {field: 'year'},
+    {field: 'date'},
+    {field: 'gold'},
+    {field: 'silver'},
+    {field: 'bronze'},
+    {field: 'total'}
 ];
 
-const medalsFirst = [
-    { field: 'gold' },
-    { field: 'silver' },
-    { field: 'bronze' },
-    { field: 'total' },
-    { field: 'athlete' },
-    { field: 'age' },
-    { field: 'sport' },
-    { field: 'country' },
-    { field: 'year' },
-    { field: 'date' }
+const colsB = [
+    {field: 'athlete', headerName: 'ATHLETE'},
+    {field: 'age', headerName: 'AGE'},
+    {field: 'country', headerName: 'COUNTRY'},
+    {field: 'sport', headerName: 'SPORT'},
+    {field: 'year', headerName: 'YEAR'},
+    {field: 'date', headerName: 'DATE'},
+    {field: 'gold', headerName: 'GOLD'},
+    {field: 'silver', headerName: 'SILVER'},
+    {field: 'bronze', headerName: 'BRONZE'},
+    {field: 'total', headerName: 'TOTAL'}
 ];
 
 const GridExample = () => {
     const [rowData, setRowData] = useState([]);
-    const [columns, setColumns] = useState(medalsFirst);
+    const [columns, setColumns] = useState(colsA);
 
     const onGridReady = (params) => {
         const httpRequest = new XMLHttpRequest();
@@ -49,20 +49,25 @@ const GridExample = () => {
         };
     };
 
-    const onBtMedalsFirst = () => {
-        setColumns(medalsFirst);
+    const onBtNormal = () => {
+        setColumns(colsA);
     };
 
-    const onBtMedalsLast = () => {
-        setColumns(medalsLast);
+    const onBtUppercase = () => {
+        setColumns(colsB);
+    };
+
+    const onBtClear = () => {
+        setColumns([]);
     };
 
     return (
-        <div style={{ width: '100%', height: '100%' }}>
+        <div style={{width: '100%', height: '100%'}}>
             <div className="test-container">
                 <div className="test-header">
-                    <button onClick={onBtMedalsFirst}>Medals First</button>
-                    <button onClick={onBtMedalsLast}>Medals Last</button>
+                    <button onClick={onBtNormal}>Normal</button>
+                    <button onClick={onBtUppercase}>Uppercase</button>
+                    <button onClick={onBtClear}>Clear</button>
                     <div
                         style={{
                             height: '100%',
@@ -78,8 +83,8 @@ const GridExample = () => {
                                 sortable: true,
                                 resizable: true
                             }}
-                            applyColumnDefOrder={true}>
-                            {columns.map(column => (<AgGridColumn {...column} key={column.field} />))}
+                            maintainColumnOrder={true}>
+                            {columns.map(column => (<AgGridColumn {...column} key={column.field}/>))}
                         </AgGridReact>
                     </div>
                 </div>
@@ -89,6 +94,6 @@ const GridExample = () => {
 };
 
 render(
-    <GridExample />,
+    <GridExample/>,
     document.querySelector('#root')
 );

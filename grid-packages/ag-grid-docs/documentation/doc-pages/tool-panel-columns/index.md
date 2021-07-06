@@ -22,7 +22,7 @@ Things to try:
     - Drag 'Country' to 'Row Groups'.
     - Drag 'Year' to 'Column Labels'.
     - Drag 'Gold' to 'Values'.
-    
+
     You will now have a pivot grid showing total gold medals for each country (rows showing countries) by year (columns showing years).
 
 <grid-example title='Tool Panel Simple' name='simple' type='generated' options='{ "enterprise": true, "exampleHeight": 630, "modules": ["clientside", "rowgrouping", "menu", "setfilter", "columnpanel"] }'></grid-example>
@@ -43,7 +43,7 @@ Selecting columns means different things depending on whether the grid is in piv
 
 The column tool panel is split into different sections as follows:
 
-- **Pivot Mode Section**: Check the 'Pivot Mode' checkbox to turn the grid into [Pivot Mode](../pivoting/). Uncheck to take the grid out of pivot mode.
+- **Pivot Mode Section**: Check the 'Pivot Mode' checkbox to turn the grid into [Pivot Mode](/pivoting/). Uncheck to take the grid out of pivot mode.
 - **Expand / Collapse All**: Toggle to expand or collapse all column groups.
 - **Columns Section**: Display all columns, grouped by column groups, that are available to be displayed in the grid. By default the order of the columns is kept in sync with the order they are shown in the grid, but this behaviour can be disabled.
 - **Select / Un-select All**: Toggle to select or un-select all columns in the columns section.
@@ -53,9 +53,9 @@ The column tool panel is split into different sections as follows:
     1. Values (Pivot) Section
     1. Column Labels Section
     1. Onto the grid (`gridOptions.allowDragFromColumnsToolPanel=true`)
-- **Row Groups Section**: Columns here will form the grid's [Row Grouping](../grouping/).
-- **Values Section**: Columns here will form the grid's [Aggregations](../aggregation/). The grid calls this function 'Aggregations', however for the UI we follow the Excel naming convention and call it 'Values'.
-- **Column Labels (Pivot) Section**: Columns here will form the grid's [Pivot](../pivoting/). The grid calls this function 'Pivot', however for the UI we follow the Excel naming convention and call it 'Column Labels'.
+- **Row Groups Section**: Columns here will form the grid's [Row Grouping](/grouping/).
+- **Values Section**: Columns here will form the grid's [Aggregations](/aggregation/). The grid calls this function 'Aggregations', however for the UI we follow the Excel naming convention and call it 'Values'.
+- **Column Labels (Pivot) Section**: Columns here will form the grid's [Pivot](/pivoting/). The grid calls this function 'Pivot', however for the UI we follow the Excel naming convention and call it 'Column Labels'.
 
 <image-caption src="tool-panel-columns/resources/screenshot.png" alt="AG Grid Tool Panel Section" width="50rem" centered="true"></image-caption>
 
@@ -107,12 +107,12 @@ You can add a CSS class to the columns in the tool panel by specifying `toolPane
 |    columnDefs: [
 |        // set as string
 |        { field: 'gold', toolPanelClass: 'tp-gold' },
-|    
+|
 |        // set as array of strings
 |        { field: 'silver', toolPanelClass: ['tp-silver'] },
-|    
+|
 |        // set as function returning string or array of strings
-|        {              
+|        {
 |            field: 'bronze',
 |            toolPanelClass: params => {
 |                return 'tp-bronze';
@@ -193,7 +193,7 @@ interface IColumnToolPanel {
 }
 ```
 
-Notice that the same [Column Definitions](../column-definitions/) that are supplied in the grid options are also passed to `setColumnLayout(colDefs)`.
+Notice that the same [Column Definitions](/column-definitions/) that are supplied in the grid options are also passed to `setColumnLayout(colDefs)`.
 
 The code snippets below show how to set custom column layouts using the Columns Tool Panel instance:
 
@@ -209,7 +209,7 @@ const gridOptions = {
 </snippet>
 
 <snippet>
-|// lookup Columns Tool Panel instance by id, in this case using the default columns instance id 
+|// lookup Columns Tool Panel instance by id, in this case using the default columns instance id
 |const columnsToolPanel = gridOptions.api.getToolPanelInstance('columns');
 |
 |// set custom Columns Tool Panel layout
@@ -241,5 +241,5 @@ The example below shows two custom layouts for the Columns Tool Panel. Note the 
 
 ## Next Up
 
-Now that we covered the Columns Tool Panel, continue to the next section to learn about the [Filters Tool Panel](../tool-panel-filters/).
+Now that we covered the Columns Tool Panel, continue to the next section to learn about the [Filters Tool Panel](/tool-panel-filters/).
 

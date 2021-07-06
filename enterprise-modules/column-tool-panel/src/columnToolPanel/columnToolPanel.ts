@@ -22,7 +22,6 @@ export interface ToolPanelColumnCompParams extends IToolPanelParams {
     suppressValues: boolean;
     suppressPivots: boolean;
     suppressPivotMode: boolean;
-    suppressSideButtons: boolean;
     suppressColumnFilter: boolean;
     suppressColumnSelectAll: boolean;
     suppressColumnExpandAll: boolean;
@@ -62,7 +61,6 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
     public init(params: ToolPanelColumnCompParams): void {
         const defaultParams: ToolPanelColumnCompParams = {
-            suppressSideButtons: false,
             suppressColumnSelectAll: false,
             suppressColumnFilter: false,
             suppressColumnExpandAll: false,
@@ -112,7 +110,10 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             }
 
             this.setLastVisible();
-            const pivotModeListener = this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.setLastVisible.bind(this));
+            const pivotModeListener = this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, () => {
+                this.resetChildrenHeight();
+                this.setLastVisible();
+            });
             this.childDestroyFuncs.push(() => pivotModeListener!());
         }
 
@@ -143,7 +144,6 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             this.rowGroupDropZonePanel = this.createManagedBean(new RowGroupDropZonePanel(false));
             this.appendChild(this.rowGroupDropZonePanel);
         }
-
         this.setLastVisible();
     }
 
@@ -156,7 +156,6 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             this.valuesDropZonePanel = this.createManagedBean(new ValuesDropZonePanel(false));
             this.appendChild(this.valuesDropZonePanel);
         }
-
         this.setLastVisible();
     }
 
@@ -170,8 +169,20 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             this.appendChild(this.pivotDropZonePanel);
             this.pivotDropZonePanel.setDisplayed(visible);
         }
-
         this.setLastVisible();
+    }
+
+    private setResizers(): void {
+        [
+            this.primaryColsPanel,
+            this.rowGroupDropZonePanel,
+            this.valuesDropZonePanel,
+            this.pivotDropZonePanel
+        ].forEach(panel => {
+            if (!panel) { return; }
+            const eGui = panel.getGui();
+            panel.toggleResizable(!_.containsClass(eGui, 'ag-last-column-drop') && !_.containsClass(eGui, 'ag-hidden'));
+        });
     }
 
     private setLastVisible(): void {
@@ -186,6 +197,19 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
         if (lastVisible) {
             _.addCssClass(lastVisible, 'ag-last-column-drop');
+        }
+
+        this.setResizers();
+    }
+
+    private resetChildrenHeight(): void {
+        const eGui = this.getGui();
+        const children = eGui.children;
+
+        for (let i = 0; i < children.length; i++) {
+            const child = children[i] as HTMLElement;
+            child.style.removeProperty('height');
+            child.style.removeProperty('flex');
         }
     }
 

@@ -1,0 +1,33 @@
+<div class="container">
+    <div class="columns">
+        <div class="option">
+            <label for="fontSize">
+                <input type="checkbox" id="fontSize">
+                Font Size =
+            </label>
+            <input type="text" id="fontSizeValue" value="14" style="width: 40px;">
+        </div>
+        <div class="option">
+            <label for="rowHeight">
+                <input type="checkbox" id="rowHeight">
+                Row Height =
+            </label>
+            <input type="text" id="rowHeightValue" value="30" style="width: 40px;">
+        </div>
+        <div class="option">
+            <label for="headerRowHeight">
+                <input type="checkbox" id="headerRowHeight">
+                Header Row Height =
+            </label>
+            <input type="text" id="headerRowHeightValue" value="30" style="width: 40px;">
+        </div>
+    </div>
+    <div>
+        <label>
+            <button onclick="onBtExport()" style="margin-bottom: 5px; font-weight: bold;">Export to Excel</button>
+        </label>
+    </div>
+    <div class="grid-wrapper">
+        <div id="myGrid" class="ag-theme-alpine"></div>
+    </div>
+</div>

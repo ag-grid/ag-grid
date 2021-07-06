@@ -6,7 +6,11 @@
         "declaration": true,
         "sourceMap": true,
         "target": "es5",
-        "lib": [ "es5", "es6", "dom" ],
+        "lib": [
+            "es5",
+            "es6",
+            "dom"
+        ],
         "noImplicitAny": false
     },
     "include": [
@@ -15,7 +19,7 @@
         "./_dev/ag-grid-enterprise/src/**/*.ts",
         "./_dev/@ag-grid-community/angular/src/**/*.ts",
         "./_dev/@ag-grid-community/react/src/**/*.ts",
-        "./src/example-runner/**/*.ts"
+        "./src/example-generation/**/*.ts"
     ],
     "exclude": [
         "node_modules"

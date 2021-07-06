@@ -1,7 +1,7 @@
 import {_, ComponentType, IComponent, WrapableInterface} from 'ag-grid-community';
-import {AgGridReact} from "./agGridReact";
 import {ReactPortal} from "react";
 import {assignProperties} from "./utils";
+import {AgGridReactLegacy} from "./agGridReactLegacy";
 
 abstract class BaseReactComponent implements IComponent<any>, WrapableInterface {
     abstract getGui(): HTMLElement;
@@ -25,12 +25,12 @@ export abstract class ReactComponent extends BaseReactComponent {
     protected eParentElement!: HTMLElement;
     protected componentInstance: any;
     protected reactComponent: any;
-    protected parentComponent: AgGridReact;
+    protected parentComponent: AgGridReactLegacy;
     protected portal: ReactPortal | null = null;
     protected statelessComponent: boolean;
     protected componentType: ComponentType;
 
-    constructor(reactComponent: any, parentComponent: AgGridReact, componentType: ComponentType) {
+    constructor(reactComponent: any, parentComponent: AgGridReactLegacy, componentType: ComponentType) {
         super();
 
         this.reactComponent = reactComponent;

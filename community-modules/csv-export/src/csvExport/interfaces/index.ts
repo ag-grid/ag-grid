@@ -1,6 +1,6 @@
 import {
     Column,
-    ColumnController,
+    ColumnModel,
     GridOptionsWrapper,
     ProcessCellForExportParams,
     ProcessGroupHeaderForExportParams,
@@ -9,11 +9,9 @@ import {
     RowNode,
     ValueService
 } from "@ag-grid-community/core";
-import { Downloader } from "../downloader";
 import { GridSerializer } from "../gridSerializer";
 
 export interface BaseCreatorBeans {
-    downloader: Downloader;
     gridSerializer: GridSerializer;
     gridOptionsWrapper: GridOptionsWrapper;
 }
@@ -27,7 +25,7 @@ export interface RowSpanningAccumulator {
 }
 
 export interface GridSerializingParams {
-    columnController: ColumnController;
+    columnModel: ColumnModel;
     valueService: ValueService;
     gridOptionsWrapper: GridOptionsWrapper;
     processCellCallback?: (params: ProcessCellForExportParams) => string;
@@ -43,7 +41,6 @@ export interface CsvSerializingParams extends GridSerializingParams {
 
 export interface GridSerializingSession<T> {
     prepare(columnsToExport: Column[]): void;
-
     onNewHeaderGroupingRow(): RowSpanningAccumulator;
     onNewHeaderRow(): RowAccumulator;
     onNewBodyRow(): RowAccumulator;

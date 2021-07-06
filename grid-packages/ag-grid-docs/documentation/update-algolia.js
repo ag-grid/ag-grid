@@ -1,17 +1,32 @@
+/**
+ * This script is used to update our Algolia instance. It loads the HTML from the statically-rendered website, processes
+ * it into records, and pushes these records to Algolia. It should be run whenever the website is deployed.
+ */
+
 require('dotenv').config();
 
 const fs = require('fs-extra');
-const jsdom = require('jsdom');
+const {JSDOM} = require('jsdom');
 const algoliasearch = require('algoliasearch');
+const commander = require("commander");
+
 const menu = require('./doc-pages/licensing/menu.json');
 const supportedFrameworks = require('./src/utils/supported-frameworks');
+const convertToFrameworkUrl = require('./src/utils/convert-to-framework-url');
 
-const debug = true;
-const clearIndices = true;
-const indexNamePrefix = 'ag-grid-dev';
+const options = commander
+    .option('-d, --debug <debug>', 'if debug = true, the script writes the records it would upload into JSON files for inspection', true)
+    .option("-i, --indexNamePrefix <prefix>", 'if indexNamePrefix = "ag-grid-dev" we\'ll update development indices, and for "ag-grid" production', 'ag-grid-dev')
+    .parse(process.argv)
+    .opts();
 
-const { JSDOM } = jsdom;
 
+const clearIndices = true; // to ensure a clean index, you should clear existing records before inserting new ones
+const debug = options.debug === true;
+const indexNamePrefix = options.indexNamePrefix;
+
+console.log("Updating Algolia Indices");
+console.log(`debug: ${debug}, indexNamePrefix: ${indexNamePrefix}`);
 console.log(`Updating Algolia using App ID ${process.env.GATSBY_ALGOLIA_APP_ID} and admin key ${process.env.ALGOLIA_ADMIN_KEY}`);
 
 const algoliaClient = algoliasearch(process.env.GATSBY_ALGOLIA_APP_ID, process.env.ALGOLIA_ADMIN_KEY);
@@ -33,7 +48,7 @@ const cleanContents = contents => {
 
 const createRecords = async (url, framework, breadcrumb, rank) => {
     const records = [];
-    const path = url.replace('../', `/${framework}/`);
+    const path = convertToFrameworkUrl(url, framework);
     const filePath = `public${path}index.html`;
 
     if (!fs.existsSync(filePath)) {
@@ -58,7 +73,9 @@ const createRecords = async (url, framework, breadcrumb, rank) => {
 
         const cleanText = cleanContents(text);
 
-        if (cleanText === '') { return; }
+        if (cleanText === '') {
+            return;
+        }
 
         const hashPath = `${path}${key ? `#${key}` : ''}`;
 
@@ -79,6 +96,10 @@ const createRecords = async (url, framework, breadcrumb, rank) => {
         positionInPage++;
     };
 
+    /**
+     * We split the page into sections based on H2 and H3 tags, which keeps the record size manageable and returns
+     * more accurate results for users, as they will be taken to specific parts of a page.
+     */
     const parseContent = startingElement => {
         for (let currentTag = startingElement; currentTag != null; currentTag = currentTag.nextElementSibling) {
             try {
@@ -137,14 +158,16 @@ const createRecords = async (url, framework, breadcrumb, rank) => {
 };
 
 const processIndexForFramework = async framework => {
-    let rank = 10000;
+    let rank = 10000; // using this rank ensures that pages that are earlier in the menu will rank higher in results
     const records = [];
     const indexName = `${indexNamePrefix}_${framework}`;
 
     console.log(`Generating records for ${indexName}...`);
 
     const iterateItems = async (items, prefix) => {
-        if (!items) { return; }
+        if (!items) {
+            return;
+        }
 
         const breadcrumbPrefix = prefix ? `${prefix} > ` : '';
 
@@ -176,15 +199,15 @@ const processIndexForFramework = async framework => {
         const index = algoliaClient.initIndex(indexName);
 
         index.setSettings({
-            searchableAttributes: ['title', 'heading', 'subHeading', 'text'],
-            disableExactOnAttributes: ['text'],
-            attributesToSnippet: ['text:40'],
-            distinct: 1,
-            attributeForDistinct: 'breadcrumb',
-            customRanking: ['desc(rank)', 'asc(positionInPage)'],
-            camelCaseAttributes: ['heading', 'subHeading', 'text'],
-            hitsPerPage: 10,
-            snippetEllipsisText: '…',
+            searchableAttributes: ['title', 'heading', 'subHeading', 'text'], // attributes used for searching
+            disableExactOnAttributes: ['text'], // don't allow "exact matches" in the text
+            attributesToSnippet: ['text:40'], // configure snippet length shown in results
+            distinct: 1, // only allow each page to appear in the results once
+            attributeForDistinct: 'breadcrumb', // configure what is used to decide if a page is the same
+            customRanking: ['desc(rank)', 'asc(positionInPage)'], // custom tweaks to the ranking
+            camelCaseAttributes: ['heading', 'subHeading', 'text'], // split camelCased text so it can match regular text
+            hitsPerPage: 10, // how many results should be returned per page
+            snippetEllipsisText: '…', // the character used when truncating content for snippets
         });
 
         try {

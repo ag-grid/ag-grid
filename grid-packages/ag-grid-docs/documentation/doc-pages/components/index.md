@@ -6,17 +6,17 @@ You can create your own custom components to customise the behaviour of the grid
 
 The full list of component types you can provide in AG Grid are as follows:
 
-- [Cell Renderer](../component-cell-renderer/): To customises the contents of a cell.
-- [Cell Editor](../component-cell-editor/): To customises editing of a cell.
-- [Date Component](../component-date/): To customise the date selection component in the date filter.
-- [Filter Component](../component-filter/): For custom column filter that appears inside the column menu.
-- [Floating Filter](../component-floating-filter/): For custom column filter that appears inside the column menu.
-- [Header Component](../component-header/): To customise the header of a column and column groups.
-- [Loading Cell Renderer](../component-loading-cell-renderer/): To customise the loading cell row when using Server Side row model.
-- [Overlay Component](../component-overlay/): To customise loading and no rows overlay components.
-- [Status Bar Component](../component-status-bar/): For custom status bar components.
-- [Tool Panel Component](../component-tool-panel/): For custom tool panel components.
-- [Tooltip Component](../component-tooltip/): For custom cell tooltip components.
+- [Cell Renderer](/component-cell-renderer/): To customises the contents of a cell.
+- [Cell Editor](/component-cell-editor/): To customises editing of a cell.
+- [Date Component](/component-date/): To customise the date selection component in the date filter.
+- [Filter Component](/component-filter/): For custom column filter that appears inside the column menu.
+- [Floating Filter](/component-floating-filter/): For custom column filter that appears inside the column menu.
+- [Header Component](/component-header/): To customise the header of a column and column groups.
+- [Loading Cell Renderer](/component-loading-cell-renderer/): To customise the loading cell row when using Server Side row model.
+- [Overlay Component](/component-overlay/): To customise loading and no rows overlay components.
+- [Status Bar Component](/component-status-bar/): For custom status bar components.
+- [Tool Panel Component](/component-tool-panel/): For custom tool panel components.
+- [Tooltip Component](/component-tooltip/): For custom cell tooltip components.
 
 The remainder of this page gives information that is common across all the component types.
 
@@ -25,7 +25,7 @@ md-include:declare-angular.md
 
 md-include:register-javascript.md
 md-include:register-angular.md
-md-include:register-react.md
+md-include:register-react.md 
 md-include:register-vue.md
 
 [[only-angular]]
@@ -39,10 +39,16 @@ md-include:component-usage-angular.md
 md-include:component-usage-react.md
 md-include:component-usage-vue.md
 
+[[only-vue]]
+md-include:vue3-plugins.md
+ 
+[[only-vue]]
+md-include:vue3-class-components.md
+ 
 md-include:js-fw-angular.md
 md-include:js-fw-react.md
 md-include:js-fw-vue.md
-
+ 
 ## Grid Provided Components
 
 The grid comes with pre-registered components that can be used. Each component provided by the grid starts with the namespaces 'ag' to minimise naming conflicts with user provided components. The full list of grid provided components are in the table below.
@@ -184,6 +190,13 @@ It is also possible to override components. Where the grid uses a default value,
 - **agLoadingCellRenderer**: To change the default loading cell renderer for Enterprise Row Model.
 - **agLoadingOverlay**: To change the default 'loading' overlay.
 - **agNoRowsOverlay**: To change the default loading 'no rows' overlay.
-- **agTextCellEditor**: To change the default text cell editor.
+- **agTextCellEditor**: To change the default text cell editor. 
 - **agDetailCellRenderer**: To change the default detail panel for master / detail grids.
-
+ 
+[[only-vue]]
+|[[note]]
+||Overridable grid components are the only components you need to additionally specify with `frameworkComponents` in order to tie their usage to the 
+||actual component. All other registration types specify their usage in column definitions or on the `AgGridVue` component itself.
+||
+||For an example of this please refer to the [Date Component](../component-date/#registering-date-components) documentation.
+ 

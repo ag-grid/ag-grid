@@ -14,7 +14,8 @@ import { MarkersPanel } from "./markersPanel";
 import { ChartTranslator } from "../../../chartTranslator";
 import { ShadowPanel } from "./shadowPanel";
 import { AreaChartProxy } from "../../../chartProxies/cartesian/areaChartProxy";
-import { initFillOpacitySlider, initLineOpacitySlider } from "../widgetInitialiser";
+import { initFillOpacitySlider, initFontPanelParams, initLineOpacitySlider } from "../widgetInitialiser";
+import { FontPanel, FontPanelParams } from "../fontPanel";
 
 export class AreaSeriesPanel extends Component {
 
@@ -60,6 +61,7 @@ export class AreaSeriesPanel extends Component {
         this.initSeriesLineDash();
         this.initOpacity();
         this.initMarkersPanel();
+        this.initLabelPanel();
         this.initShadowPanel();
     }
 
@@ -101,6 +103,13 @@ export class AreaSeriesPanel extends Component {
     private initOpacity() {
         initLineOpacitySlider(this.seriesLineOpacitySlider, this.chartTranslator, this.getChartProxy());
         initFillOpacitySlider(this.seriesFillOpacitySlider, this.chartTranslator, this.getChartProxy());
+    }
+
+    private initLabelPanel() {
+        const params: FontPanelParams = initFontPanelParams(this.chartTranslator, this.getChartProxy());
+        const labelPanelComp = this.createBean(new FontPanel(params));
+        this.activePanels.push(labelPanelComp);
+        this.seriesGroup.addItem(labelPanelComp);
     }
 
     private initMarkersPanel() {

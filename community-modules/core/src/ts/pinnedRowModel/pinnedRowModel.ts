@@ -2,7 +2,7 @@ import { RowNode } from "../entities/rowNode";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { Events, PinnedRowDataChangedEvent } from "../events";
 import { Constants } from "../constants/constants";
-import { ColumnApi } from "../columnController/columnApi";
+import { ColumnApi } from "../columns/columnApi";
 import { GridApi } from "../gridApi";
 import { BeanStub } from "../context/beanStub";
 import { missingOrEmpty } from "../utils/generic";

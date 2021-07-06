@@ -2,7 +2,7 @@ import {
     _,
     Autowired,
     Bean,
-    ColumnController,
+    ColumnModel,
     RowNode,
     RowNodeTransaction,
     SortController,
@@ -18,7 +18,7 @@ export class SortStage extends BeanStub {
 
     @Autowired('sortService') private sortService: SortService;
     @Autowired('sortController') private sortController: SortController;
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
 
     public execute(params: StageExecuteParams): void {
         const sortOptions: SortOption[] = this.sortController.getSortOptions();
@@ -35,7 +35,7 @@ export class SortStage extends BeanStub {
         // we only need dirty nodes if doing delta sort
         const dirtyLeafNodes = deltaSort ? this.calculateDirtyNodes(params.rowNodeTransactions) : null;
 
-        const valueColumns = this.columnController.getValueColumns();
+        const valueColumns = this.columnModel.getValueColumns();
         const noAggregations = _.missingOrEmpty(valueColumns);
 
         this.sortService.sort(sortOptions, sortActive, deltaSort, dirtyLeafNodes, params.changedPath, noAggregations);

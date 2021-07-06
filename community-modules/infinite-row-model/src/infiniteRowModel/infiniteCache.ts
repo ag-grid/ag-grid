@@ -2,9 +2,7 @@ import {
     Autowired,
     BeanStub,
     StoreUpdatedEvent,
-    ColumnApi,
     Events,
-    GridApi,
     IDatasource,
     Logger,
     LoggerFactory,
@@ -15,7 +13,7 @@ import {
     RowNodeBlockLoader,
     RowRenderer,
     _,
-    FocusController
+    FocusService
 } from "@ag-grid-community/core";
 import { InfiniteBlock } from "./infiniteBlock";
 
@@ -41,10 +39,8 @@ export class InfiniteCache extends BeanStub {
     // scrolled over are not needed to be loaded.
     private static MAX_EMPTY_BLOCKS_TO_KEEP = 2;
 
-    @Autowired('columnApi') private readonly columnApi: ColumnApi;
-    @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('rowRenderer') protected rowRenderer: RowRenderer;
-    @Autowired("focusController") private focusController: FocusController;
+    @Autowired("focusService") private focusService: FocusService;
 
     private readonly params: InfiniteCacheParams;
 
@@ -101,6 +97,12 @@ export class InfiniteCache extends BeanStub {
     // state - eg if a node had children, but after the refresh it had data
     // for a different row, then the children would be with the wrong row node.
     public refreshCache(): void {
+        const nothingToRefresh = this.blockCount == 0;
+        if (nothingToRefresh) {
+            this.purgeCache();
+            return;
+        }
+
         this.getBlocksInOrder().forEach(block => block.setStateWaitingToLoad());
         this.params.rowNodeBlockLoader!.checkBlockToLoad();
     }
@@ -128,10 +130,11 @@ export class InfiniteCache extends BeanStub {
 
         this.logger.log(`onPageLoaded: page = ${block.getId()}, lastRow = ${lastRow}`);
 
-        const rowCountHasChanged = this.checkRowCount(block, lastRow);
-        if (rowCountHasChanged || this.params.dynamicRowHeight) {
-            this.onCacheUpdated();
-        }
+        this.checkRowCount(block, lastRow);
+        // we fire cacheUpdated even if the row count has not changed, as some items need updating even
+        // if no new rows to render. for example the pagination panel has '?' as the total rows when loading
+        // is underway, which would need to get updated when loading finishes.
+        this.onCacheUpdated();
     }
 
     private purgeBlocksIfNeeded(blockToExclude: InfiniteBlock): void {
@@ -171,7 +174,7 @@ export class InfiniteCache extends BeanStub {
     }
 
     private isBlockFocused(block: InfiniteBlock): boolean {
-        const focusedCell = this.focusController.getFocusCellToUseAfterRefresh();
+        const focusedCell = this.focusService.getFocusCellToUseAfterRefresh();
         if (!focusedCell) { return false; }
         if (focusedCell.rowPinned != null) { return false; }
 
@@ -198,8 +201,7 @@ export class InfiniteCache extends BeanStub {
         // if the purged page is in loading state
     }
 
-    private checkRowCount(block: InfiniteBlock, lastRow?: number): boolean {
-        const rowCountBefore = this.rowCount;
+    private checkRowCount(block: InfiniteBlock, lastRow?: number): void {
         // if client provided a last row, we always use it, as it could change between server calls
         // if user deleted data and then called refresh on the grid.
         if (typeof lastRow === 'number' && lastRow >= 0) {
@@ -214,9 +216,6 @@ export class InfiniteCache extends BeanStub {
                 this.rowCount = lastRowIndexPlusOverflow;
             }
         }
-
-        const rowCountHasChanged = rowCountBefore != this.rowCount;
-        return rowCountHasChanged;
     }
 
     public setRowCount(rowCount: number, lastRowIndexKnown?: boolean): void {

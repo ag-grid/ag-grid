@@ -53,21 +53,21 @@ const gridOptions = {
 
 [[note]]
 |
-| We have found the standard HTML Select doesn't have an API that's rich enough to play 
-| properly with the grid. When a cell is double clicked to start editing, it is desired that 
-| the Select is a) shown and b) opened ready for selection. There is no API to open a browsers 
-| Select. For this reason to edit there are two interactions needed 1) double click to start 
+| We have found the standard HTML Select doesn't have an API that's rich enough to play
+| properly with the grid. When a cell is double clicked to start editing, it is desired that
+| the Select is a) shown and b) opened ready for selection. There is no API to open a browsers
+| Select. For this reason to edit there are two interactions needed 1) double click to start
 | editing and 2) single click to open the Select.
-| <br/ >
+| <br />
 | We also observed different results while using keyboard navigation to control editing, e.g.
-| while using Enter to start editing. Some browsers would open the Select, others would not.
+| while using <kbd>Enter</kbd> to start editing. Some browsers would open the Select, others would not.
 | This is down to the browser implementation and given there is no API for opening the
 | Select, there is nothing the grid can do.
 | <br />
-| If you are unhappy with the additional click required, we advise you don't depend on the 
-| browsers standard Select (ie avoid `agSelectCellEditor` and 
-| `agPopupSelectCellEditor`) and instead use `agRichSelectCellEditor` or 
-| create your own using a [Cell Editor Component](../component-cell-editor/).
+| If you are unhappy with the additional click required, we advise you don't depend on the
+| browsers standard Select (ie avoid `agSelectCellEditor` and
+| `agPopupSelectCellEditor`) and instead use `agRichSelectCellEditor` or
+| create your own using a [Cell Editor Component](/component-cell-editor/).
 
 ### agRichSelectCellEditor
 
@@ -89,7 +89,7 @@ The `agRichSelectCellEditor` takes the following parameters:
 
 - `formatValue`: A callback function that allows you to change the displayed value for simple data.
 
-- `cellRenderer`: The cell renderer to use to render each value. Cell renderers are useful for rendering rich HTML values, or when processing complex data. See [Cell Rendering Components](../component-cell-renderer/)
+- `cellRenderer`: The cell renderer to use to render each value. Cell renderers are useful for rendering rich HTML values, or when processing complex data. See [Cell Rendering Components](/component-cell-renderer/)
     for creating custom cell renderers.
 
 - `searchDebounceDelay (Default: 300)`: The value in `ms` for the fuzzy search debounce delay.

@@ -425,6 +425,7 @@ export abstract class Chart extends Observable {
 
         const { legend } = this;
         legend.addEventListener('layoutChange', this.onLayoutChange, this);
+        legend.item.label.addPropertyListener('formatter', this.updateLegend, this);
         legend.addPropertyListener('position', this.onLegendPositionChange, this);
 
         this.tooltip = new ChartTooltip(this);
@@ -787,6 +788,15 @@ export abstract class Chart extends Observable {
 
         this.series.filter(s => s.showInLegend).forEach(series => series.listSeriesItems(legendData));
 
+        const { formatter } = this.legend.item.label;
+        if (formatter) {
+            legendData.forEach(datum => datum.label.text = formatter({
+                id: datum.id,
+                itemId: datum.itemId,
+                value: datum.label.text
+            }));
+        }
+
         this.legend.data = legendData;
     }
 
@@ -920,7 +930,7 @@ export abstract class Chart extends Observable {
         series: Series,
         node: Node
     } | undefined {
-        if (!this.seriesRect || !this.seriesRect.containsPoint(x, y)) {
+        if (!(this.seriesRect && this.seriesRect.containsPoint(x, y))) {
             return undefined;
         }
 
@@ -928,7 +938,10 @@ export abstract class Chart extends Observable {
         let node: Node | undefined = undefined;
         for (let i = allSeries.length - 1; i >= 0; i--) {
             const series = allSeries[i];
-            node = series.group.pickNode(x, y);
+            if (!series.visible) {
+                continue;
+            }
+            node = series.pickGroup.pickNode(x, y);
             if (node) {
                 return {
                     series,
@@ -1130,7 +1143,7 @@ export abstract class Chart extends Observable {
             event
         };
 
-        this.highlightDatum(datum);
+        this.highlightDatum(datum, node);
 
         const html = datum.series.tooltip.enabled && datum.series.getTooltipHtml(datum);
 
@@ -1141,13 +1154,20 @@ export abstract class Chart extends Observable {
 
     highlightedDatum?: SeriesNodeDatum;
 
-    highlightDatum(datum: SeriesNodeDatum): void {
+    highlightDatum(datum: SeriesNodeDatum, node?: Shape): void {
+        const { style } = this.scene.canvas.element;
         this.highlightedDatum = datum;
-        this.series.forEach(s => s.onHighlightChange());
+        this.series.forEach(s => {
+            if (node) {
+                style.cursor = s.cursor;
+            }
+            s.onHighlightChange();
+        });
     }
 
     dehighlightDatum(): void {
         if (this.highlightedDatum) {
+            this.scene.canvas.element.style.cursor = 'default';
             this.highlightedDatum = undefined;
             this.series.forEach(s => s.onHighlightChange());
         }

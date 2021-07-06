@@ -6,6 +6,7 @@ import { addCssClass, containsClass } from '../utils/dom';
 import { getAriaPosInSet, setAriaSetSize, setAriaPosInSet, setAriaSelected, setAriaChecked } from '../utils/aria';
 import { KeyCode } from '../constants/keyCode';
 import { ResizeObserverService } from "../misc/resizeObserverService";
+import { waitUntil } from '../utils/function';
 
 export interface VirtualListModel {
     getRowCount(): number;
@@ -80,7 +81,7 @@ export class VirtualList extends ManagedFocusComponent {
             e.preventDefault();
         } else {
             // focus on the first or last focusable element to ensure that any other handlers start from there
-            this.focusController.focusInto(this.getGui(), !e.shiftKey);
+            this.focusService.focusInto(this.getGui(), !e.shiftKey);
         }
     }
 
@@ -179,16 +180,17 @@ export class VirtualList extends ManagedFocusComponent {
         if (this.model == null || this.isDestroyed) { return; }
 
         const rowCount = this.model.getRowCount();
-
         this.eContainer.style.height = `${rowCount * this.rowHeight}px`;
 
         // ensure height is applied before attempting to redraw rows
-        setTimeout(() => {
-            if (this.isDestroyed) { return; }
+        waitUntil(() => this.eContainer.clientHeight >= rowCount * this.rowHeight,
+            () => {
+                if (this.isDestroyed) { return; }
 
-            this.clearVirtualRows();
-            this.drawVirtualRows();
-        }, 0);
+                this.clearVirtualRows();
+                this.drawVirtualRows();
+            }
+        );
     }
 
     private clearVirtualRows() {

@@ -1,6 +1,6 @@
 <?php
         $navKey = "about";
-        include_once 'includes/html-helpers.php';
+        require_once 'includes/html-helpers.php';
         gtm_data_layer('about');
         ?>
 <!DOCTYPE html>
@@ -8,7 +8,7 @@
 
 <head lang="en">
     <?php
-            meta_and_links("Our Mission, Our Principles and Our Team at AG Grid", "About AG Grid", "AG Grid is a feature-rich datagrid available in Community or Enterprise versions. This is the story of AG Grid and explains our mission, where we came from and who we are.", true);
+            meta_and_links("Our Mission, Our Principles and Our Team at AG Grid", "About AG Grid", "AG Grid is a feature-rich datagrid available in Community or Enterprise versions. This is the story of AG Grid and explains our mission, where we came from and who we are.", "about.php", true);
             ?>
     <link rel="stylesheet" href="dist/homepage.css">
     <script src="dist/homepage.js"></script>
@@ -25,7 +25,10 @@
     <div class="about-page">
         <div class="row">
             <section>
-                <h1>Our Mission</h1>
+                <h1>About AG Grid</h1>
+            </section>
+            <section>
+                <h2>Our Mission</h2>
                 <article>
                     <p class="lead">
                         At AG Grid, our mission is simple: <strong>Build the best datagrid in the world</strong>.
@@ -62,7 +65,7 @@
                 </article>
             </section>
             <section>
-                <h1> Our Principles</h1>
+                <h2>Our Principles</h2>
                 <article>
                     <p>We believe that a datagrid should be agnostic to the framework that developers choose. This
                         allows flexibility and future-proofs your development. This is also where the 'ag' in <strong>AG Grid</strong>
@@ -75,7 +78,7 @@
                 </article>
             </section>
             <section>
-                <h1 id="core-development-team">The Dev Team</h1>
+                <h2 id="core-development-team">The Dev Team</h2>
                 <article class="inline-container team">
                     <div class="row">
                         <div class="col-md-4">
@@ -117,10 +120,10 @@
                         </div>
                         <div class="col-md-4">
                             <div>
-                                <img src='images/team/adrian.jpg' alt="Adrian Lowdon, Lead Developer"/>
+                                <img src='images/team/alan.jpg' alt="Alan Richardson, Digital Marketing"/>
                             </div>
-                            <h3>Adrian Lowdon</h3>
-                            <h4>Lead Developer, Grid Core</h4>
+                            <h3>Alan Richardson</h3>
+                            <h4>Digital Marketing</h4>
                         </div>
                     </div>
                     <div class="row">
@@ -140,16 +143,16 @@
                         </div>
                         <div class="col-md-4">
                             <div>
-                                <img src='images/team/davis2.jpg' alt=" Davis Jaunbruns, Developer"/>
+                                <img src='images/team/marats.jpeg' alt="Marats Stelihs, Developer"/>
                             </div>
-                            <h3>Davis Jaunbruns</h3>
+                            <h3>Marats Stelihs</h3>
                             <h4>Developer</h4>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-4">
                             <div>
-                                <img src='images/team/ahmed2.jpg' alt=" Ahmed Gadir, Developer"/>
+                                <img src='images/team/ahmed.jpeg' alt=" Ahmed Gadir, Developer"/>
                             </div>
                             <h3>Ahmed Gadir</h3>
                             <h4>Developer</h4>
@@ -184,18 +187,11 @@
                             <h3>Kiril Matev</h3>
                             <h4>Developer</h4>
                         </div>
-                        <div class="col-md-4">
-                            <div>
-                                <img src='images/team/max.jpg' alt="Max Koretskyi, Developer Advocate"/>
-                            </div>
-                            <h3>Max Koretskyi</h3>
-                            <h4>Developer Advocate</h4>
-                        </div>
                     </div>
                 </article>
             </section>
             <section>
-                <h1 id="operations_team">The Operations Team</h1>
+                <h2 id="operations_team">The Operations Team</h2>
                 <article class="inline-container team">
                     <div class="row">
                         <div class="col-md-4">
@@ -230,10 +226,10 @@
                         </div>
                         <div class="col-md-4">
                             <div>
-                                <img src='images/team/ashley2.jpg' alt="Ashley Lam, Business Development Manager"/>
+                                <img src='images/team/nathan.jpeg' alt="Nathan Gauge-Klein, General Council"/>
                             </div>
-                            <h3>Ashley Lam</h3>
-                            <h4>Business Development Manager</h4>
+                            <h3>Nathan Gauge-Klein</h3>
+                            <h4>General Council</h4>
                         </div>
                         <div class="col-md-4">
                             <div>
@@ -260,7 +256,7 @@
                         </div>
                         <div class="col-md-4">
                             <div>
-                                <img src='images/team/victoria.jpg'
+                                <img src='images/team/victoria.jpeg'
                                      alt="Victoria Tennant, Business Development Manager"/>
                             </div>
                             <h3>Victoria Tennant</h3>
@@ -290,21 +286,37 @@
                             <h4>Customer Experience Manager</h4>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div>
+                                <img src='images/team/seweety.jpeg' alt="Seweety Kumar, Customer Experience Manager"/>
+                            </div>
+                            <h3>Seweety Kumar</h3>
+                            <h4>Customer Experience Manager</h4>
+                        </div>
+                        <div class="col-md-4">
+                            <div>
+                                <img src='images/team/shannon.jpeg' alt="Shannan Monrose, Customer Experience Manager"/>
+                            </div>
+                            <h3>Shannan Monrose</h3>
+                            <h4>Customer Experience Manager</h4>
+                        </div>
+                    </div>
 
                 </article>
             </section>
 
             <section>
-                <h1 id="contact"> Contact Us </h1>
+                <h2 id="contact">Contact Us</h2>
                 <article class="inline-container row">
                     <div class="col-md-6">
                         <h3>Our Address</h3>
                         <address>
                             <strong>AG Grid Ltd.</strong><br/>
-                            Bank Chambers,<br/>
+                            Bank Chambers<br/>
                             6 Borough High Street<br/>
-                            London,<br/>
-                            SE1 9QQ,<br/>
+                            London<br/>
+                            SE1 9QQ<br/>
                             United Kingdom
                         </address>
                         <p>Email Enquiries: <a href="mailto:info@ag-grid.com">info@ag-grid.com</a></p>
@@ -313,7 +325,7 @@
                         <h3>Want to work with us?</h3>
                         <p> We are always looking for Javascript Developers with Enterprise Applications
                             experience. </p>
-                        <p>Check the <a href="./ag-grid-jobs-board/">jobs board</a>.</p>
+                        <p>Check the <a href="/ag-grid-jobs-board/">jobs board</a>.</p>
                     </div>
                 </article>
             </section>

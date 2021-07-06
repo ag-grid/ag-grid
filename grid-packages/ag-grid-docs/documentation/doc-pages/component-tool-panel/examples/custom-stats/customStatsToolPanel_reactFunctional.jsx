@@ -9,7 +9,7 @@ export default props => {
     const [numBronze, setNumBronze] = useState(0);
 
     const updateTotals = () => {
-        var numGold = 0, numSilver = 0, numBronze = 0;
+        let numGold = 0, numSilver = 0, numBronze = 0;
 
         props.api.forEachNode(function (rowNode) {
             const data = rowNode.data;

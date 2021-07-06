@@ -1,14 +1,14 @@
 import { AgCheckbox } from "../../widgets/agCheckbox";
 import { BeanStub } from "../../context/beanStub";
 import { PostConstruct, Autowired } from "../../context/context";
-import { ColumnApi } from "../../columnController/columnApi";
+import { ColumnApi } from "../../columns/columnApi";
 import { GridApi } from "../../gridApi";
 import { Events } from "../../events";
 import { IRowModel } from "../../interfaces/iRowModel";
 import { Constants } from "../../constants/constants";
 import { Column } from "../../entities/column";
 import { RowNode } from "../../entities/rowNode";
-import { SelectionController } from "../../selectionController";
+import { SelectionService } from "../../selectionService";
 import { getAriaDescribedBy, setAriaDescribedBy } from "../../utils/aria";
 import { isVisible } from "../../utils/dom";
 
@@ -17,7 +17,7 @@ export class SelectAllFeature extends BeanStub {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('selectionController') private selectionController: SelectionController;
+    @Autowired('selectionService') private selectionService: SelectionService;
 
     private cbSelectAllVisible = false;
     private processingEventFromCheckbox = false;
@@ -182,9 +182,9 @@ export class SelectAllFeature extends BeanStub {
         const value = this.cbSelectAll.getValue();
 
         if (value) {
-            this.selectionController.selectAllRowNodes(this.filteredOnly);
+            this.selectionService.selectAllRowNodes(this.filteredOnly);
         } else {
-            this.selectionController.deselectAllRowNodes(this.filteredOnly);
+            this.selectionService.deselectAllRowNodes(this.filteredOnly);
         }
     }
 

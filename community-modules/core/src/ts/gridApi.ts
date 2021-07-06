@@ -1,10 +1,10 @@
 import { RowRenderer } from "./rendering/rowRenderer";
 import { FilterManager } from "./filter/filterManager";
-import { ColumnController, ColumnState } from "./columnController/columnController";
-import { ColumnApi } from "./columnController/columnApi";
-import { SelectionController } from "./selectionController";
+import { ColumnModel, ColumnState } from "./columns/columnModel";
+import { ColumnApi } from "./columns/columnApi";
+import { SelectionService } from "./selectionService";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
-import { GridPanel } from "./gridPanel/gridPanel";
+import { GridBodyComp } from "./gridBodyComp/gridBodyComp";
 import { ValueService } from "./valueService/valueService";
 import { EventService } from "./eventService";
 import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
@@ -12,19 +12,23 @@ import { RowNode } from "./entities/rowNode";
 import { Constants } from "./constants/constants";
 import { Column } from "./entities/column";
 import { Autowired, Bean, Context, Optional, PostConstruct, PreDestroy } from "./context/context";
-import { GridCore } from "./gridCore";
 import { IRowModel } from "./interfaces/iRowModel";
 import { SortController } from "./sortController";
-import { FocusController } from "./focusController";
-import { CellRange, CellRangeParams, IRangeController } from "./interfaces/iRangeController";
+import { FocusService } from "./focusService";
+import { CellRange, CellRangeParams, IRangeService } from "./interfaces/IRangeService";
 import { CellPosition } from "./entities/cellPosition";
 import { IClipboardService } from "./interfaces/iClipboardService";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
 import { IMenuFactory } from "./interfaces/iMenuFactory";
 import { IAggFuncService } from "./interfaces/iAggFuncService";
 import { IFilterComp } from "./interfaces/iFilter";
-import { CsvExportParams } from "./interfaces/exportParams";
-import { ExcelExportParams, IExcelCreator } from "./interfaces/iExcelCreator";
+import { CsvExportParams, ProcessCellForExportParams } from "./interfaces/exportParams";
+import {
+    ExcelExportMultipleSheetParams,
+    ExcelExportParams,
+    ExcelFactoryMode,
+    IExcelCreator
+} from "./interfaces/iExcelCreator";
 import { IDatasource } from "./interfaces/iDatasource";
 import { IServerSideDatasource } from "./interfaces/iServerSideDatasource";
 import { PaginationProxy } from "./pagination/paginationProxy";
@@ -32,18 +36,44 @@ import { ValueCache } from "./valueService/valueCache";
 import { AlignedGridsService } from "./alignedGridsService";
 import { AgEvent, ColumnEventType } from "./events";
 import { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
-import { ICellRendererComp } from "./rendering/cellRenderers/iCellRenderer";
-import { ICellEditorComp } from "./interfaces/iCellEditor";
+import { ICellRenderer } from "./rendering/cellRenderers/iCellRenderer";
+import { ICellEditor } from "./interfaces/iCellEditor";
 import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
 import { HeaderRootComp } from "./headerRendering/headerRootComp";
 import { AnimationFrameService } from "./misc/animationFrameService";
-import { IServerSideRowModel, IServerSideTransactionManager, RefreshStoreParams } from "./interfaces/iServerSideRowModel";
+import {
+    IServerSideRowModel,
+    IServerSideTransactionManager,
+    RefreshStoreParams
+} from "./interfaces/iServerSideRowModel";
 import { IStatusBarService } from "./interfaces/iStatusBarService";
 import { IStatusPanelComp } from "./interfaces/iStatusPanel";
-import { SideBarDef } from "./entities/sideBar";
-import { IChartService, ChartModel } from "./interfaces/IChartService";
+import { SideBarDef, SideBarDefParser } from "./entities/sideBar";
+import { ChartModel, IChartService } from "./interfaces/IChartService";
 import { ModuleNames } from "./modules/moduleNames";
-import { ChartRef, ProcessChartOptionsParams } from "./entities/gridOptions";
+import {
+    ChartRef,
+    GetChartToolbarItems,
+    GetContextMenuItems,
+    GetMainMenuItems,
+    GetRowNodeIdFunc,
+    GetServerSideGroupKey,
+    GetServerSideStoreParamsParams,
+    IsApplyServerSideTransaction,
+    IsRowMaster,
+    IsRowSelectable,
+    IsServerSideGroup,
+    IsServerSideGroupOpenByDefaultParams,
+    NavigateToNextCellParams,
+    NavigateToNextHeaderParams,
+    PaginationNumberFormatterParams,
+    PostProcessPopupParams,
+    ProcessChartOptionsParams,
+    ProcessRowParams,
+    ServerSideStoreParams,
+    TabToNextCellParams,
+    TabToNextHeaderParams
+} from "./entities/gridOptions";
 import { ChartOptions, ChartType } from "./interfaces/iChartOptions";
 import { IToolPanel } from "./interfaces/iToolPanel";
 import { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
@@ -55,7 +85,7 @@ import { IInfiniteRowModel } from "./interfaces/iInfiniteRowModel";
 import { ICsvCreator } from "./interfaces/iCsvCreator";
 import { ModuleRegistry } from "./modules/moduleRegistry";
 import { UndoRedoService } from "./undoRedo/undoRedoService";
-import { RowDropZoneParams, RowDropZoneEvents } from "./gridPanel/rowDragFeature";
+import { RowDropZoneEvents, RowDropZoneParams } from "./gridBodyComp/rowDragFeature";
 import { iterateObject, removeAllReferences } from "./utils/object";
 import { exists, missing } from "./utils/generic";
 import { camelCaseToHumanText } from "./utils/string";
@@ -64,6 +94,14 @@ import { AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
 import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 import { ServerSideTransaction, ServerSideTransactionResult } from "./interfaces/serverSideTransaction";
 import { ServerSideStoreState } from "./interfaces/IServerSideStore";
+import { HeadlessService } from "./headless/headlessService";
+import { GridCtrl } from "./gridComp/gridCtrl";
+import { ISideBar } from "./interfaces/iSideBar";
+import { ControllersService } from "./controllersService";
+import { GridBodyCtrl } from "./gridBodyComp/gridBodyCtrl";
+import { OverlayWrapperComponent } from "./rendering/overlays/overlayWrapperComponent";
+import { HeaderPosition } from "./headerRendering/header/headerPosition";
+import { NavigationService } from "./gridBodyComp/navigationService";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -143,9 +181,10 @@ export class GridApi {
     @Optional('csvCreator') private csvCreator: ICsvCreator;
     @Optional('excelCreator') private excelCreator: IExcelCreator;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
+    @Autowired('navigationService') private navigationService: NavigationService;
     @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('selectionController') private selectionController: SelectionController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('selectionService') private selectionService: SelectionService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('alignedGridsService') private alignedGridsService: AlignedGridsService;
@@ -155,9 +194,9 @@ export class GridApi {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
-    @Autowired('focusController') private focusController: FocusController;
+    @Autowired('focusService') private focusService: FocusService;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Optional('rangeController') private rangeController: IRangeController;
+    @Optional('rangeService') private rangeService: IRangeService;
     @Optional('clipboardService') private clipboardService: IClipboardService;
     @Optional('aggFuncService') private aggFuncService: IAggFuncService;
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
@@ -167,11 +206,16 @@ export class GridApi {
     @Optional('statusBarService') private statusBarService: IStatusBarService;
     @Optional('chartService') private chartService: IChartService;
     @Optional('undoRedoService') private undoRedoService: UndoRedoService;
+    @Optional('headlessService') private headlessService: HeadlessService;
     @Optional('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
     @Optional('ssrmTransactionManager') private serverSideTransactionManager: IServerSideTransactionManager;
+    @Optional('controllersService') private controllersService: ControllersService;
 
-    private gridPanel: GridPanel;
-    private gridCore: GridCore;
+    private overlayWrapperComp: OverlayWrapperComponent;
+    private gridBodyComp: GridBodyComp;
+    private gridBodyCon: GridBodyCtrl;
+    private gridCompController: GridCtrl;
+    private sideBarComp: ISideBar;
 
     private headerRootComp: HeaderRootComp;
     private clientSideRowModel: IClientSideRowModel;
@@ -183,15 +227,24 @@ export class GridApi {
 
     private destroyCalled = false;
 
-    public registerGridComp(gridPanel: GridPanel): void {
-        this.gridPanel = gridPanel;
+    public registerGridComp(gridBodyComp: GridBodyComp): void {
+        this.gridBodyComp = gridBodyComp;
     }
-    public registerGridCore(gridCore: GridCore): void {
-        this.gridCore = gridCore;
+
+    public registerOverlayWrapperComp(overlayWrapperComp: OverlayWrapperComponent): void {
+        this.overlayWrapperComp = overlayWrapperComp;
+    }
+
+    public registerGridCompController(gridCompController: GridCtrl): void {
+        this.gridCompController = gridCompController;
     }
 
     public registerHeaderRootComp(headerRootComp: HeaderRootComp): void {
         this.headerRootComp = headerRootComp;
+    }
+
+    public registerSideBarComp(sideBarComp: ISideBar): void {
+        this.sideBarComp = sideBarComp;
     }
 
     @PostConstruct
@@ -207,6 +260,10 @@ export class GridApi {
                 this.serverSideRowModel = this.rowModel as IServerSideRowModel;
                 break;
         }
+
+        this.controllersService.whenReady(() => {
+            this.gridBodyCon = this.controllersService.getGridBodyController();
+        });
     }
 
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
@@ -251,13 +308,43 @@ export class GridApi {
 
     public getDataAsExcel(params?: ExcelExportParams): string | Blob | undefined {
         if (ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.getDataAsExcel')) {
+            const exportMode: 'xml' | 'xlsx' = (params && params.exportMode) || 'xlsx';
+            if (this.excelCreator.getFactoryMode(exportMode) === ExcelFactoryMode.MULTI_SHEET) {
+                console.warn('AG Grid: The Excel Exporter is currently on Multi Sheet mode. End that operation by calling `api.getMultipleSheetAsExcel()` or `api.exportMultipleSheetsAsExcel()`');
+                return;
+            }
             return this.excelCreator.getDataAsExcel(params);
         }
     }
 
     public exportDataAsExcel(params?: ExcelExportParams): void {
         if (ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.exportDataAsExcel')) {
+            const exportMode: 'xml' | 'xlsx' = (params && params.exportMode) || 'xlsx';
+            if (this.excelCreator.getFactoryMode(exportMode) === ExcelFactoryMode.MULTI_SHEET) {
+                console.warn('AG Grid: The Excel Exporter is currently on Multi Sheet mode. End that operation by calling `api.getMultipleSheetAsExcel()` or `api.exportMultipleSheetsAsExcel()`');
+                return;
+            }
             this.excelCreator.exportDataAsExcel(params);
+        }
+    }
+
+    public getSheetDataForExcel(params?: ExcelExportParams): string | undefined {
+        if (ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.getSheetDataForExcel')) {
+            const exportMode: 'xml' | 'xlsx' = (params && params.exportMode) || 'xlsx';
+            this.excelCreator.setFactoryMode(ExcelFactoryMode.MULTI_SHEET, exportMode);
+            return this.excelCreator.getSheetDataForExcel(params);
+        }
+    }
+
+    public getMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): Blob | undefined {
+        if (ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.getMultipleSheetsAsExcel')) {
+            return this.excelCreator.getMultipleSheetsAsExcel(params);
+        }
+    }
+
+    public exportMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): void {
+        if (ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.exportMultipleSheetsAsExcel')) {
+            return this.excelCreator.exportMultipleSheetsAsExcel(params);
         }
     }
 
@@ -269,7 +356,7 @@ export class GridApi {
 
     public setGridAriaProperty(property: string, value: string | null): void {
         if (!property) { return; }
-        const eGrid = this.gridPanel.getGui();
+        const eGrid = this.gridBodyComp.getGui();
         const ariaProperty = `aria-${property}`;
 
         if (value === null) {
@@ -323,7 +410,7 @@ export class GridApi {
                     this.rowRenderer.refreshFullWidthRows(nodeTransaction.update);
                 }
             } else {
-                this.selectionController.reset();
+                this.selectionService.reset();
                 this.clientSideRowModel.setRowData(rowData);
             }
         } else {
@@ -392,7 +479,7 @@ export class GridApi {
     }
 
     public setColumnDefs(colDefs: (ColDef | ColGroupDef)[], source: ColumnEventType = "api") {
-        this.columnController.setColumnDefs(colDefs, source);
+        this.columnModel.setColumnDefs(colDefs, source);
     }
 
     public setAutoGroupColumnDef(colDef: ColDef, source: ColumnEventType = "api") {
@@ -404,11 +491,11 @@ export class GridApi {
     }
 
     public getVerticalPixelRange(): { top: number, bottom: number; } {
-        return this.gridPanel.getVScrollPosition();
+        return this.gridBodyCon.getScrollFeature().getVScrollPosition();
     }
 
     public getHorizontalPixelRange(): { left: number, right: number; } {
-        return this.gridPanel.getHScrollPosition();
+        return this.gridBodyCon.getScrollFeature().getHScrollPosition();
     }
 
     public setAlwaysShowHorizontalScroll(show: boolean) {
@@ -420,7 +507,8 @@ export class GridApi {
     }
 
     public refreshToolPanel(): void {
-        this.gridCore.refreshSideBar();
+        if (!this.sideBarComp) { return; }
+        this.sideBarComp.refresh();
     }
 
     public refreshCells(params: RefreshCellsParams = {}): void {
@@ -437,55 +525,8 @@ export class GridApi {
     }
 
     public redrawRows(params: RedrawRowsParams = {}): void {
-        if (params && params.rowNodes) {
-            this.rowRenderer.redrawRows(params.rowNodes);
-        } else {
-            this.rowRenderer.redrawAfterModelUpdate();
-        }
-    }
-
-    public timeFullRedraw(count = 1) {
-        let iterationCount = 0;
-        let totalProcessing = 0;
-        let totalReflow = 0;
-
-        const that = this;
-
-        doOneIteration();
-
-        function doOneIteration(): void {
-            const start = (new Date()).getTime();
-            that.rowRenderer.redrawAfterModelUpdate();
-            const endProcessing = (new Date()).getTime();
-            window.setTimeout(() => {
-                const endReflow = (new Date()).getTime();
-                const durationProcessing = endProcessing - start;
-                const durationReflow = endReflow - endProcessing;
-                // tslint:disable-next-line
-                console.log('duration:  processing = ' + durationProcessing + 'ms, reflow = ' + durationReflow + 'ms');
-
-                iterationCount++;
-                totalProcessing += durationProcessing;
-                totalReflow += durationReflow;
-
-                if (iterationCount < count) {
-                    // wait for 1s between tests
-                    window.setTimeout(doOneIteration, 1000);
-                } else {
-                    finish();
-                }
-
-            }, 0);
-        }
-
-        function finish(): void {
-            // tslint:disable-next-line
-            console.log('tests complete. iteration count = ' + iterationCount);
-            // tslint:disable-next-line
-            console.log('average processing = ' + (totalProcessing / iterationCount) + 'ms');
-            // tslint:disable-next-line
-            console.log('average reflow = ' + (totalReflow / iterationCount) + 'ms');
-        }
+        const rowNodes = params ? params.rowNodes : undefined;
+        this.rowRenderer.redrawRows(rowNodes);
     }
 
     /** @deprecated */
@@ -525,7 +566,6 @@ export class GridApi {
 
     public refreshHeader() {
         this.headerRootComp.refreshHeader();
-        this.gridPanel.setHeaderAndFloatingHeights();
     }
 
     public isAnyFilterPresent(): boolean {
@@ -638,7 +678,11 @@ export class GridApi {
     }
 
     public getToolPanelInstance(id: string): IToolPanel | undefined {
-        return this.gridCore.getToolPanelInstance(id);
+        if (!this.sideBarComp) {
+            console.warn('AG Grid: toolPanel is only available in AG Grid Enterprise');
+            return;
+        }
+        return this.sideBarComp.getToolPanelInstance(id);
     }
 
     public addVirtualRowListener(eventName: string, rowIndex: number, callback: Function) {
@@ -665,7 +709,7 @@ export class GridApi {
         if (suppressEvents) {
             console.warn('AG Grid: suppressEvents is no longer supported, stop listening for the event if you no longer want it');
         }
-        this.selectionController.selectIndex(index, tryMulti);
+        this.selectionService.selectIndex(index, tryMulti);
     }
 
     public deselectIndex(index: number, suppressEvents: boolean = false) {
@@ -673,7 +717,7 @@ export class GridApi {
         if (suppressEvents) {
             console.warn('AG Grid: suppressEvents is no longer supported, stop listening for the event if you no longer want it');
         }
-        this.selectionController.deselectIndex(index);
+        this.selectionService.deselectIndex(index);
     }
 
     public selectNode(node: RowNode, tryMulti: boolean = false, suppressEvents: boolean = false) {
@@ -693,19 +737,19 @@ export class GridApi {
     }
 
     public selectAll() {
-        this.selectionController.selectAllRowNodes();
+        this.selectionService.selectAllRowNodes();
     }
 
     public deselectAll() {
-        this.selectionController.deselectAllRowNodes();
+        this.selectionService.deselectAllRowNodes();
     }
 
     public selectAllFiltered() {
-        this.selectionController.selectAllRowNodes(true);
+        this.selectionService.selectAllRowNodes(true);
     }
 
     public deselectAllFiltered() {
-        this.selectionController.deselectAllRowNodes(true);
+        this.selectionService.deselectAllRowNodes(true);
     }
 
     public recomputeAggregates(): void {
@@ -715,19 +759,19 @@ export class GridApi {
     }
 
     public sizeColumnsToFit() {
-        this.gridPanel.sizeColumnsToFit();
+        this.gridBodyCon.sizeColumnsToFit();
     }
 
     public showLoadingOverlay(): void {
-        this.gridPanel.showLoadingOverlay();
+        this.overlayWrapperComp.showLoadingOverlay();
     }
 
     public showNoRowsOverlay(): void {
-        this.gridPanel.showNoRowsOverlay();
+        this.overlayWrapperComp.showNoRowsOverlay();
     }
 
     public hideOverlay(): void {
-        this.gridPanel.hideOverlay();
+        this.overlayWrapperComp.hideOverlay();
     }
 
     public isNodeSelected(node: any) {
@@ -741,15 +785,15 @@ export class GridApi {
     }
 
     public getSelectedNodes(): RowNode[] {
-        return this.selectionController.getSelectedNodes();
+        return this.selectionService.getSelectedNodes();
     }
 
     public getSelectedRows(): any[] {
-        return this.selectionController.getSelectedRows();
+        return this.selectionService.getSelectedRows();
     }
 
     public getBestCostNodeSelection() {
-        return this.selectionController.getBestCostNodeSelection();
+        return this.selectionService.getBestCostNodeSelection();
     }
 
     public getRenderedNodes() {
@@ -761,17 +805,17 @@ export class GridApi {
     }
 
     public ensureColumnVisible(key: string | Column) {
-        this.gridPanel.ensureColumnVisible(key);
+        this.gridBodyCon.getScrollFeature().ensureColumnVisible(key);
     }
 
     // Valid values for position are bottom, middle and top
     public ensureIndexVisible(index: any, position?: string | null) {
-        this.gridPanel.ensureIndexVisible(index, position);
+        this.gridBodyCon.getScrollFeature().ensureIndexVisible(index, position);
     }
 
     // Valid values for position are bottom, middle and top
-    public ensureNodeVisible(comparator: any, position?: string | null) {
-        this.gridCore.ensureNodeVisible(comparator, position);
+    public ensureNodeVisible(comparator: any, position: string | null = null) {
+        this.gridBodyCon.getScrollFeature().ensureNodeVisible(comparator, position);
     }
 
     public forEachLeafNode(callback: (rowNode: RowNode) => void) {
@@ -799,7 +843,7 @@ export class GridApi {
     }
 
     public getFilterInstance(key: string | Column, callback?: (filter: IFilterComp) => void): IFilterComp | null | undefined {
-        const column = this.columnController.getPrimaryColumn(key);
+        const column = this.columnModel.getPrimaryColumn(key);
 
         if (column) {
             const filterPromise = this.filterManager.getFilterComponent(column, 'NO_UI');
@@ -823,7 +867,7 @@ export class GridApi {
     }
 
     public destroyFilter(key: string | Column) {
-        const column = this.columnController.getPrimaryColumn(key);
+        const column = this.columnModel.getPrimaryColumn(key);
         if (column) {
             return this.filterManager.destroyFilter(column, "filterDestroyed");
         }
@@ -836,14 +880,14 @@ export class GridApi {
     }
 
     public getColumnDef(key: string | Column) {
-        const column = this.columnController.getPrimaryColumn(key);
+        const column = this.columnModel.getPrimaryColumn(key);
         if (column) {
             return column.getColDef();
         }
         return null;
     }
 
-    public getColumnDefs(): (ColDef | ColGroupDef)[] { return this.columnController.getColumnDefs(); }
+    public getColumnDefs(): (ColDef | ColGroupDef)[] { return this.columnModel.getColumnDefs(); }
 
     public onFilterChanged() {
         this.filterManager.onFilterChanged();
@@ -865,12 +909,12 @@ export class GridApi {
                 });
             });
         }
-        this.columnController.applyColumnState({ state: columnState, defaultState: { sort: null } });
+        this.columnModel.applyColumnState({ state: columnState, defaultState: { sort: null } });
     }
 
     public getSortModel() {
         console.warn('AG Grid: as of version 24.0.0, getSortModel() is deprecated, sort information is now part of Column State. Please use columnApi.getColumnState() instead.');
-        const columnState = this.columnController.getColumnState();
+        const columnState = this.columnModel.getColumnState();
         const filteredStates = columnState.filter(item => item.sort != null);
 
         const indexes: { [colId: string]: number; } = {};
@@ -898,15 +942,15 @@ export class GridApi {
     }
 
     public getFocusedCell(): CellPosition | null {
-        return this.focusController.getFocusedCell();
+        return this.focusService.getFocusedCell();
     }
 
     public clearFocusedCell(): void {
-        return this.focusController.clearFocusedCell();
+        return this.focusService.clearFocusedCell();
     }
 
     public setFocusedCell(rowIndex: number, colKey: string | Column, floating?: string) {
-        this.focusController.setFocusedCell(rowIndex, colKey, floating, true);
+        this.focusService.setFocusedCell(rowIndex, colKey, floating, true);
     }
 
     public setSuppressRowDrag(value: boolean): void {
@@ -922,7 +966,7 @@ export class GridApi {
     }
 
     public addRowDropZone(params: RowDropZoneParams): void {
-        this.gridPanel.getRowDragFeature().addRowDropZone(params);
+        this.gridBodyCon.getRowDragFeature().addRowDropZone(params);
     }
 
     public removeRowDropZone(params: RowDropZoneParams): void {
@@ -934,12 +978,11 @@ export class GridApi {
     }
 
     public getRowDropZoneParams(events: RowDropZoneEvents): RowDropZoneParams {
-        return this.gridPanel.getRowDragFeature().getRowDropZone(events);
+        return this.gridBodyCon.getRowDragFeature().getRowDropZone(events);
     }
 
     public setHeaderHeight(headerHeight?: number) {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_HEADER_HEIGHT, headerHeight);
-        this.doLayout();
     }
 
     public setDomLayout(domLayout: string) {
@@ -947,7 +990,7 @@ export class GridApi {
     }
 
     public setEnableCellTextSelection(selectable: boolean) {
-        this.gridPanel.setCellTextSelection(selectable);
+        this.gridBodyCon.setCellTextSelection(selectable);
     }
 
     public setFillHandleDirection(direction: 'x' | 'y' | 'xy') {
@@ -956,54 +999,212 @@ export class GridApi {
 
     public setGroupHeaderHeight(headerHeight: number) {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GROUP_HEADER_HEIGHT, headerHeight);
-        this.doLayout();
     }
 
     public setFloatingFiltersHeight(headerHeight: number) {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_FLOATING_FILTERS_HEIGHT, headerHeight);
-        this.doLayout();
     }
 
     public setPivotGroupHeaderHeight(headerHeight: number) {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PIVOT_GROUP_HEADER_HEIGHT, headerHeight);
-        this.doLayout();
+    }
+
+    public setIsExternalFilterPresent(isExternalFilterPresentFunc: () => boolean) :  void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_IS_EXTERNAL_FILTER_PRESENT, isExternalFilterPresentFunc);
+    }
+
+    public setDoesExternalFilterPass(doesExternalFilterPassFunc: (node: RowNode) => boolean) :  void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_DOES_EXTERNAL_FILTER_PASS, doesExternalFilterPassFunc);
+    }
+
+    public setNavigateToNextCell(navigateToNextCellFunc: (params: NavigateToNextCellParams) => CellPosition) :  void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_NAVIGATE_TO_NEXT_CELL, navigateToNextCellFunc);
+    }
+
+    public setTabToNextCell(tabToNextCellFunc: (params: TabToNextCellParams) => CellPosition) :  void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_TAB_TO_NEXT_CELL, tabToNextCellFunc);
+    }
+
+    public setTabToNextHeader(tabToNextHeaderFunc: (params: TabToNextHeaderParams) => HeaderPosition) :  void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_TAB_TO_NEXT_HEADER, tabToNextHeaderFunc);
+    }
+
+    public setNavigateToNextHeader(navigateToNextHeaderFunc: (params: NavigateToNextHeaderParams) => HeaderPosition) :  void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_NAVIGATE_TO_NEXT_HEADER, navigateToNextHeaderFunc);
+    }
+
+    public setGroupRowAggNodes(groupRowAggNodesFunc: (nodes: RowNode[]) => any) :  void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GROUP_ROW_AGG_NODES, groupRowAggNodesFunc);
+    }
+
+    public setGetBusinessKeyForNode(getBusinessKeyForNodeFunc: (nodes: RowNode) => string) :  void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GET_BUSINESS_KEY_FOR_NODE, getBusinessKeyForNodeFunc);
+    }
+
+    public setGetChildCount(getChildCountFunc: (dataItem: any) => number) :  void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GET_CHILD_COUNT, getChildCountFunc);
+    }
+
+    public setProcessRowPostCreate(processRowPostCreateFunc: (params: ProcessRowParams) => void) :  void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PROCESS_ROW_POST_CREATE, processRowPostCreateFunc);
+    }
+
+    public setGetRowNodeId(getRowNodeIdFunc: GetRowNodeIdFunc) :  void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GET_ROW_NODE_ID, getRowNodeIdFunc);
+    }
+
+    public setGetRowClass(rowClassFunc: (params: any) => string | string[]) :  void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GET_ROW_CLASS, rowClassFunc);
+    }
+
+    public setIsFullWidthCell(isFullWidthCellFunc: (rowNode: RowNode) => boolean) :  void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_IS_FULL_WIDTH_CELL, isFullWidthCellFunc);
+    }
+
+    public setIsRowSelectable(isRowSelectableFunc: IsRowSelectable) :  void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_IS_ROW_SELECTABLE, isRowSelectableFunc);
+    }
+
+    public setIsRowMaster(isRowMasterFunc: IsRowMaster) :  void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_IS_ROW_MASTER, isRowMasterFunc);
+    }
+
+    public setPostSort(postSortFunc: (nodes: RowNode[]) => void) :  void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_POST_SORT, postSortFunc);
+    }
+
+    public setGetDocument(getDocumentFunc: () => Document) :  void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GET_DOCUMENT, getDocumentFunc);
+    }
+
+    public setGetContextMenuItems(getContextMenuItemsFunc: GetContextMenuItems) :  void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GET_CONTEXT_MENU_ITEMS, getContextMenuItemsFunc);
+    }
+
+    public setGetMainMenuItems(getMainMenuItemsFunc: GetMainMenuItems) :  void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GET_MAIN_MENU_ITEMS, getMainMenuItemsFunc);
+    }
+
+    public setProcessCellForClipboard(processCellForClipboardFunc: (params: ProcessCellForExportParams) => any) :  void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PROCESS_CELL_FOR_CLIPBOARD, processCellForClipboardFunc);
+    }
+
+    public setSendToClipboard(sendToClipboardFunc: (params: any) => void) :  void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_SEND_TO_CLIPBOARD, sendToClipboardFunc);
+    }
+
+    public setProcessCellFromClipboard(processCellFromClipboardFunc: (params: ProcessCellForExportParams) => any) :  void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PROCESS_CELL_FROM_CLIPBOARD, processCellFromClipboardFunc);
+    }
+
+    public setProcessSecondaryColDef(processSecondaryColDefFunc: (colDef: ColDef) => void) :  void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PROCESS_TO_SECONDARY_COLDEF, processSecondaryColDefFunc);
+    }
+
+    public setProcessSecondaryColGroupDef(processSecondaryColGroupDefFunc: (colDef: ColDef) => void) :  void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PROCESS_SECONDARY_COL_GROUP_DEF, processSecondaryColGroupDefFunc);
+    }
+
+    public setPostProcessPopup(postProcessPopupFunc: (params: PostProcessPopupParams) => void) :  void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_POST_PROCESS_POPUP, postProcessPopupFunc);
+    }
+
+    public setDefaultGroupSortComparator(defaultGroupSortComparatorFunc: (nodeA: RowNode, nodeB: RowNode) => number) :  void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_DEFAULT_GROUP_SORT_COMPARATOR, defaultGroupSortComparatorFunc);
+    }
+
+    public setProcessChartOptions(processChartOptionsFunc: (params: ProcessChartOptionsParams) => ChartOptions<any>) :  void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PROCESS_CHART_OPTIONS, processChartOptionsFunc);
+    }
+
+    public setGetChartToolbarItems(getChartToolbarItemsFunc: GetChartToolbarItems) :  void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GET_CHART_TOOLBAR_ITEMS, getChartToolbarItemsFunc);
+    }
+
+    public setPaginationNumberFormatter(paginationNumberFormatterFunc: (params: PaginationNumberFormatterParams) => string) :  void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PAGINATION_NUMBER_FORMATTER, paginationNumberFormatterFunc);
+    }
+
+    public setGetServerSideStoreParams(getServerSideStoreParamsFunc: (params: GetServerSideStoreParamsParams) => ServerSideStoreParams) :  void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GET_SERVER_SIDE_STORE_PARAMS, getServerSideStoreParamsFunc);
+    }
+
+    public setIsServerSideGroupOpenByDefault(isServerSideGroupOpenByDefaultFunc: (params: IsServerSideGroupOpenByDefaultParams) => boolean) :  void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_IS_SERVER_SIDE_GROUPS_OPEN_BY_DEFAULT, isServerSideGroupOpenByDefaultFunc);
+    }
+
+    public setIsApplyServerSideTransaction(isApplyServerSideTransactionFunc: IsApplyServerSideTransaction) :  void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_IS_APPLY_SERVER_SIDE_TRANSACTION, isApplyServerSideTransactionFunc);
+    }
+
+    public setIsServerSideGroup(isServerSideGroupFunc: IsServerSideGroup) :  void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_IS_SERVER_SIDE_GROUP, isServerSideGroupFunc);
+    }
+
+    public setGetServerSideGroupKey(getServerSideGroupKeyFunc: GetServerSideGroupKey) :  void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GET_SERVER_SIDE_GROUP_KEY, getServerSideGroupKeyFunc);
+    }
+
+    public setGetRowStyle(rowStyleFunc: (params: any) => {}) :  void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GET_ROW_STYLE, rowStyleFunc);
+    }
+
+    public setGetRowHeight(rowHeightFunc: (params: any) => number) :  void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GET_ROW_HEIGHT, rowHeightFunc);
     }
 
     public setPivotHeaderHeight(headerHeight: number) {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, headerHeight);
-        this.doLayout();
     }
 
     public isSideBarVisible() {
-        return this.gridCore.isSideBarVisible();
+        return this.sideBarComp ? this.sideBarComp.isDisplayed() : false;
     }
 
     public setSideBarVisible(show: boolean) {
-        this.gridCore.setSideBarVisible(show);
+        if (!this.sideBarComp) {
+            if (show) {
+                console.warn('AG Grid: sideBar is not loaded');
+            }
+            return;
+        }
+        this.sideBarComp.setDisplayed(show);
     }
 
     public setSideBarPosition(position: 'left' | 'right') {
-        this.gridCore.setSideBarPosition(position);
+        if (!this.sideBarComp) {
+            console.warn('AG Grid: sideBar is not loaded');
+            return;
+        }
+        this.sideBarComp.setSideBarPosition(position);
     }
 
     public openToolPanel(key: string) {
-        this.gridCore.openToolPanel(key);
+        if (!this.sideBarComp) {
+            console.warn('AG Grid: toolPanel is only available in AG Grid Enterprise');
+            return;
+        }
+        this.sideBarComp.openToolPanel(key);
     }
 
     public closeToolPanel() {
-        this.gridCore.closeToolPanel();
+        if (!this.sideBarComp) {
+            console.warn('AG Grid: toolPanel is only available in AG Grid Enterprise');
+            return;
+        }
+        this.sideBarComp.close();
     }
 
     public getOpenedToolPanel(): string | null {
-        return this.gridCore.getOpenedToolPanel();
+        return this.sideBarComp ? this.sideBarComp.openedItem() : null;
     }
 
     public getSideBar(): SideBarDef {
-        return this.gridCore.getSideBar();
+        return this.gridOptionsWrapper.getSideBar();
     }
 
     public setSideBar(def: SideBarDef): void {
-        return this.gridCore.setSideBar(def);
+        this.gridOptionsWrapper.setProperty('sideBar', SideBarDefParser.parse(def));
     }
 
     public setSuppressClipboardPaste(value: boolean): void {
@@ -1011,11 +1212,12 @@ export class GridApi {
     }
 
     public isToolPanelShowing() {
-        return this.gridCore.isToolPanelShowing();
+        return this.sideBarComp.isToolPanelShowing();
     }
 
     public doLayout() {
-        this.gridPanel.checkViewportAndScrolls();
+        const message = `AG Grid - since version 25.1, doLayout was taken out, as it's not needed. The grid responds to grid size changes automatically`;
+        doOnce(() => console.warn(message), 'doLayoutDeprecated');
     }
 
     public resetRowHeights() {
@@ -1041,9 +1243,9 @@ export class GridApi {
     }
 
     public getValue(colKey: string | Column, rowNode: RowNode): any {
-        let column = this.columnController.getPrimaryColumn(colKey);
+        let column = this.columnModel.getPrimaryColumn(colKey);
         if (missing(column)) {
-            column = this.columnController.getGridColumn(colKey);
+            column = this.columnModel.getGridColumn(colKey);
         }
         if (missing(column)) {
             return null;
@@ -1082,7 +1284,8 @@ export class GridApi {
         this.destroyCalled = true;
 
         // destroy the UI first (as they use the services)
-        this.context.destroyBean(this.gridCore);
+        this.gridCompController.destroyGridUi();
+
         // destroy the services
         this.context.destroy();
     }
@@ -1118,8 +1321,8 @@ export class GridApi {
     }
 
     public getCellRanges(): CellRange[] | null {
-        if (this.rangeController) {
-            return this.rangeController.getCellRanges();
+        if (this.rangeService) {
+            return this.rangeService.getCellRanges();
         }
 
         console.warn('AG Grid: cell range selection is only available in AG Grid Enterprise');
@@ -1135,13 +1338,13 @@ export class GridApi {
     }
 
     public addCellRange(params: CellRangeParams): void {
-        if (!this.rangeController) { console.warn('AG Grid: cell range selection is only available in AG Grid Enterprise'); }
-        this.rangeController.addCellRange(params);
+        if (!this.rangeService) { console.warn('AG Grid: cell range selection is only available in AG Grid Enterprise'); }
+        this.rangeService.addCellRange(params);
     }
 
     public clearRangeSelection(): void {
-        if (!this.rangeController) { console.warn('AG Grid: cell range selection is only available in AG Grid Enterprise'); }
-        this.rangeController.removeAllCellRanges();
+        if (!this.rangeService) { console.warn('AG Grid: cell range selection is only available in AG Grid Enterprise'); }
+        this.rangeService.removeAllCellRanges();
     }
 
     public undoCellEditing(): void {
@@ -1212,16 +1415,16 @@ export class GridApi {
 
     public showColumnMenuAfterButtonClick(colKey: string | Column, buttonElement: HTMLElement): void {
         // use grid column so works with pivot mode
-        const column = this.columnController.getGridColumn(colKey);
-        this.menuFactory.showMenuAfterButtonClick(column, buttonElement);
+        const column = this.columnModel.getGridColumn(colKey);
+        this.menuFactory.showMenuAfterButtonClick(column, buttonElement, 'columnMenu');
     }
 
     public showColumnMenuAfterMouseClick(colKey: string | Column, mouseEvent: MouseEvent | Touch): void {
         // use grid column so works with pivot mode
-        let column = this.columnController.getGridColumn(colKey);
+        let column = this.columnModel.getGridColumn(colKey);
 
         if (!column) {
-            column = this.columnController.getPrimaryColumn(colKey);
+            column = this.columnModel.getPrimaryColumn(colKey);
         }
 
         if (!column) {
@@ -1246,18 +1449,18 @@ export class GridApi {
     }
 
     public tabToNextCell(): boolean {
-        return this.rowRenderer.tabToNextCell(false);
+        return this.navigationService.tabToNextCell(false);
     }
 
     public tabToPreviousCell(): boolean {
-        return this.rowRenderer.tabToNextCell(true);
+        return this.navigationService.tabToNextCell(true);
     }
 
-    public getCellRendererInstances(params: GetCellRendererInstancesParams = {}): ICellRendererComp[] {
+    public getCellRendererInstances(params: GetCellRendererInstancesParams = {}): ICellRenderer[] {
         return this.rowRenderer.getCellRendererInstances(params);
     }
 
-    public getCellEditorInstances(params: GetCellEditorInstancesParams = {}): ICellEditorComp[] {
+    public getCellEditorInstances(params: GetCellEditorInstancesParams = {}): ICellEditor[] {
         return this.rowRenderer.getCellEditorInstances(params);
     }
 
@@ -1270,21 +1473,24 @@ export class GridApi {
     }
 
     public startEditingCell(params: StartEditingCellParams): void {
-        const column = this.columnController.getGridColumn(params.colKey);
+        const column = this.columnModel.getGridColumn(params.colKey);
         if (!column) {
             console.warn(`AG Grid: no column found for ${params.colKey}`);
             return;
         }
         const cellPosition: CellPosition = {
             rowIndex: params.rowIndex,
-            rowPinned: params.rowPinned,
+            rowPinned: params.rowPinned || null,
             column: column
         };
-        const notPinned = missing(params.rowPinned);
+        const notPinned = params.rowPinned == null;
         if (notPinned) {
-            this.gridPanel.ensureIndexVisible(params.rowIndex);
+            this.gridBodyCon.getScrollFeature().ensureIndexVisible(params.rowIndex);
         }
-        this.rowRenderer.startEditingCell(cellPosition, params.keyPress, params.charPress);
+
+        const cell = this.navigationService.getCellByPosition(cellPosition);
+        if (!cell) { return; }
+        cell.startRowOrCellEdit(params.keyPress, params.charPress);
     }
 
     public addAggFunc(key: string, aggFunc: IAggFunc): void {
@@ -1535,7 +1741,7 @@ export class GridApi {
     }
 
     public checkGridSize(): void {
-        this.gridPanel.setHeaderAndFloatingHeights();
+        console.warn(`in AG Grid v25.2.0, checkGridSize() was removed, as it was legacy and didn't do anything uesful.`);
     }
 
     public getFirstRenderedRow(): number {

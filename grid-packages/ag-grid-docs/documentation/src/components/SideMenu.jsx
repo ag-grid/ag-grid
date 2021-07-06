@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import styles from './SideMenu.module.scss';
 
+/**
+ * This renders the right-hand menu that allows the user to navigate between different headings on a page.
+ * It will initially load with the headings from the Markdown, but then re-calculate headings after loading to ensure
+ * that it picks up e.g. headings from API documentation.
+ */
 const SideMenu = ({ headings = [], pageName, pageTitle, hideMenu }) => {
     const [allHeadings, setAllHeadings] = useState(headings);
 
@@ -41,7 +46,7 @@ const SideMenu = ({ headings = [], pageName, pageTitle, hideMenu }) => {
         }
     }, [hideMenu]);
 
-    return (
+    return allHeadings.length > 0 &&
         <div className={styles['side-nav']}>
             <ul className={styles['side-nav__list']}>
                 <li className={styles[`side-nav__item--level-1`]}>
@@ -51,8 +56,7 @@ const SideMenu = ({ headings = [], pageName, pageTitle, hideMenu }) => {
                     <a className={styles['side-nav__link']} href={`#${heading.id}`}>{heading.value}</a>
                 </li>)}
             </ul>
-        </div>
-    );
+        </div>;
 };
 
 export default SideMenu;

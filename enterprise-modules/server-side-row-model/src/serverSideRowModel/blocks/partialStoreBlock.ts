@@ -3,9 +3,7 @@ import {
     LoadSuccessParams,
     Autowired,
     Column,
-    ColumnApi,
-    ColumnController,
-    GridApi,
+    ColumnModel,
     Logger,
     LoggerFactory,
     NumberSequence,
@@ -15,8 +13,6 @@ import {
     RowBounds,
     RowNode,
     RowNodeBlock,
-    RowRenderer,
-    ValueService,
     ServerSideStoreParams,
     RowNodeBlockLoader
 } from "@ag-grid-community/core";
@@ -28,11 +24,7 @@ import { NodeManager } from "../nodeManager";
 
 export class PartialStoreBlock extends RowNodeBlock {
 
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('ssrmCacheUtils') private cacheUtils: StoreUtils;
     @Autowired('ssrmBlockUtils') private blockUtils: BlockUtils;
     @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
@@ -51,9 +43,7 @@ export class PartialStoreBlock extends RowNodeBlock {
     private readonly parentStore: PartialStore;
     private readonly parentRowNode: RowNode;
 
-    private defaultRowHeight: number;
     private usingTreeData: boolean;
-    private usingMasterDetail: boolean;
 
     private lastAccessed: number;
 
@@ -93,13 +83,11 @@ export class PartialStoreBlock extends RowNodeBlock {
     @PostConstruct
     protected postConstruct(): void {
         this.usingTreeData = this.gridOptionsWrapper.isTreeData();
-        this.usingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
-        this.defaultRowHeight  = this.gridOptionsWrapper.getRowHeightAsNumber();
 
         if (!this.usingTreeData && this.groupLevel) {
             const groupColVo = this.ssrmParams.rowGroupCols[this.level];
             this.groupField = groupColVo.field!;
-            this.rowGroupColumn = this.columnController.getRowGroupColumns()[this.level];
+            this.rowGroupColumn = this.columnModel.getRowGroupColumns()[this.level];
         }
 
         this.nodeIdPrefix = this.blockUtils.createNodeIdPrefix(this.parentRowNode);
@@ -139,7 +127,7 @@ export class PartialStoreBlock extends RowNodeBlock {
     }
 
     private prefixId(id: number): string {
-        if (this.nodeIdPrefix) {
+        if (this.nodeIdPrefix != null) {
             return this.nodeIdPrefix + '-' + id;
         } else {
             return id.toString();
@@ -166,7 +154,7 @@ export class PartialStoreBlock extends RowNodeBlock {
     // this method is repeated, see forEachRowNode, why?
     private forEachNode(callback: (rowNode: RowNode, index: number) => void,
                         sequence: NumberSequence = new NumberSequence(),
-                        includeChildren: boolean): void {
+                        includeChildren: boolean, filterAndSort: boolean): void {
         this.rowNodes.forEach(rowNode => {
             callback(rowNode, sequence.next());
 
@@ -174,17 +162,25 @@ export class PartialStoreBlock extends RowNodeBlock {
             // row model doesn't have groups
             if (includeChildren && rowNode.childStore) {
                 const childStore = rowNode.childStore;
-                childStore.forEachNodeDeep(callback, sequence);
+                if (filterAndSort) {
+                    childStore.forEachNodeDeepAfterFilterAndSort(callback, sequence);
+                } else {
+                    childStore.forEachNodeDeep(callback, sequence);
+                }
             }
         });
     }
 
     public forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence?: NumberSequence): void {
-        this.forEachNode(callback, sequence, true);
+        this.forEachNode(callback, sequence, true, false);
+    }
+
+    public forEachNodeAfterFilterAndSort(callback: (rowNode: RowNode, index: number) => void, sequence?: NumberSequence): void {
+        this.forEachNode(callback, sequence, true, true);
     }
 
     public forEachNodeShallow(callback: (rowNode: RowNode) => void, sequence?: NumberSequence): void {
-        this.forEachNode(callback, sequence, false);
+        this.forEachNode(callback, sequence, false, false);
     }
 
     public getLastAccessed(): number {
@@ -244,6 +240,7 @@ export class PartialStoreBlock extends RowNodeBlock {
                 this.parentStore.removeDuplicateNode(newId!);
                 this.nodeManager.addRowNode(rowNode);
                 this.allNodesMap[rowNode.id!] = rowNode;
+                this.blockUtils.checkOpenByDefault(rowNode);
             }
             this.rowNodes.push(rowNode);
 

@@ -20,20 +20,20 @@ const gridOptions = {
     columnDefs: [
         { field: 'country', rowGroup: true },
         // pivot enabled
-        { field: 'year', pivot: true }, 
+        { field: 'year', pivot: true },
         { field: 'total' },
     ],
 }
 </snippet>
 
-For more configuration details see the section on [Pivoting](../pivoting/).
+For more configuration details see the section on [Pivoting](/pivoting/).
 
 
 ## Pivoting on the Server
 
 The actual pivoting is performed on the server when using the Server-Side Row Model.
 When the grid needs more rows it makes a request via `getRows(params)` on the
-[Server-Side Datasource](../server-side-model-datasource/#datasource-interface) with metadata
+[Server-Side Datasource](/server-side-model-datasource/#datasource-interface) with metadata
 containing row grouping details.
 
 The properties relevant to pivoting in the request are shown below:
@@ -62,7 +62,7 @@ these to the grid in order for the grid to display the correct columns for the a
 For example, if you pivot on `Year`, you need to add columns to the grid for each year contained in the
 data, e.g. `2000, 2002, 2004 etc...`
 
-Secondary columns are defined identically to primary columns: you provide a list of [Column Definitions](../column-definitions/) passing a list of columns and / or column groups using the following column API method:
+Secondary columns are defined identically to primary columns: you provide a list of [Column Definitions](/column-definitions/) passing a list of columns and / or column groups using the following column API method:
 
 <snippet>
 gridOptions.columnApi.setSecondaryColumns(pivotColDefs);
@@ -89,6 +89,16 @@ The example below demonstrates server-side Pivoting. Note the following:
 - Open the browser's dev console to view the request supplied to the datasource.
 
 <grid-example title='Simple Pivot' name='simple-pivot' type='generated' options='{ "enterprise": true, "exampleHeight": 605, "extras": ["alasql"], "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
+
+## Full vs Partial Store
+
+The Pivoting mechanics are almost identical with the [Full Store](/server-side-model-row-stores/)
+and [Partial Store](/server-side-model-row-stores/). The difference is that when
+using the Partial Store, data will be requested in blocks and could be requested to have sorting and / or
+filtering applied.
+
+All the examples presented in this section use the Partial Store as it covers all the semantics found when
+using both store types.
 
 ## Example: Pivot Column Groups
 
@@ -127,5 +137,5 @@ The example demonstrates the following:
 
 ## Next Up
 
-Continue to the next section to learn about [Pagination](../server-side-model-pagination/).
+Continue to the next section to learn about [Pagination](/server-side-model-pagination/).
 

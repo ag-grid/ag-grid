@@ -79,6 +79,7 @@ export class TreemapSeries extends HierarchySeries {
 
     readonly title: TreemapSeriesLabel = (() => {
         const label = new TreemapSeriesLabel();
+        label.color = 'white';
         label.fontWeight = 'bold';
         label.fontSize = 12;
         label.fontFamily = 'Verdana, sans-serif';
@@ -88,6 +89,7 @@ export class TreemapSeries extends HierarchySeries {
 
     readonly subtitle: TreemapSeriesLabel = (() => {
         const label = new TreemapSeriesLabel();
+        label.color = 'white';
         label.fontSize = 9;
         label.fontFamily = 'Verdana, sans-serif';
         label.padding = 13;
@@ -97,18 +99,21 @@ export class TreemapSeries extends HierarchySeries {
     readonly labels = {
         large: (() => {
             const label = new Label();
+            label.color = 'white';
             label.fontWeight = 'bold';
             label.fontSize = 18;
             return label;
         })(),
         medium: (() => {
             const label = new Label();
+            label.color = 'white';
             label.fontWeight = 'bold';
             label.fontSize = 14;
             return label;
         })(),
         small: (() => {
             const label = new Label();
+            label.color = 'white';
             label.fontWeight = 'bold';
             label.fontSize = 10;
             return label;
@@ -315,7 +320,7 @@ export class TreemapSeries extends HierarchySeries {
 
             let label;
             if (isLeaf) {
-                if (innerNodeWidth > 40 && innerNodeWidth > 40) {
+                if (innerNodeWidth > 40 && innerNodeHeight > 40) {
                     label = labels.large;
                 } else if (innerNodeWidth > 20 && innerNodeHeight > 20) {
                     label = labels.medium;
@@ -345,7 +350,7 @@ export class TreemapSeries extends HierarchySeries {
 
             labelMap.set(index, text);
 
-            text.fill = highlighted ? 'black' : 'white';
+            text.fill = highlighted ? 'black' : label.color;
             text.fillShadow = hasLabel && !highlighted ? shadow : undefined;
             text.visible = hasTitle || hasLabel;
 
@@ -359,6 +364,7 @@ export class TreemapSeries extends HierarchySeries {
         });
 
         this.groupSelection.selectByTag<Text>(TextNodeTag.Value).each((text, datum, index) => {
+            const isLeaf = !datum.children;
             const innerNodeWidth = datum.x1 - datum.x0 - nodePadding * 2;
             const highlighted = datum === highlightedDatum;
             const value = datum.colorValue;
@@ -377,7 +383,7 @@ export class TreemapSeries extends HierarchySeries {
             const textBBox = text.computeBBox();
             const nameNode = labelMap.get(index);
             const hasLabel = !!nameNode && nameNode.visible;
-            const isVisible = !!colorKey && hasLabel && !!textBBox && textBBox.width < innerNodeWidth;
+            const isVisible = isLeaf && !!colorKey && hasLabel && !!textBBox && textBBox.width < innerNodeWidth;
 
             text.fill = highlighted ? 'black' : label.color;
             text.fillShadow = highlighted ? undefined : shadow;

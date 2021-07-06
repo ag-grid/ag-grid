@@ -6,9 +6,8 @@ import {
     BeanStub,
     Column,
     ColumnApi,
-    ColumnController,
+    ColumnModel,
     Constants,
-    Events,
     FilterManager,
     FilterWrapper,
     GridApi,
@@ -23,15 +22,15 @@ import {
     AgPromise,
     TabbedItem,
     TabbedLayout,
-    FocusController,
+    FocusService,
     IAfterGuiAttachedParams,
-    GridPanel
+    GridBodyComp,
+    ContainerType
 } from '@ag-grid-community/core';
 import { MenuList } from './menuList';
 import { MenuItemComponent } from './menuItemComponent';
 import { MenuItemMapper } from './menuItemMapper';
 import { PrimaryColsPanel } from '@ag-grid-enterprise/column-tool-panel';
-import { AfterGuiAttachedParams } from '@ag-grid-community/core/dist/cjs/widgets/popupService';
 
 export interface TabSelectedEvent extends AgEvent {
     key: string;
@@ -41,15 +40,15 @@ export interface TabSelectedEvent extends AgEvent {
 export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
 
     @Autowired('popupService') private popupService: PopupService;
-    @Autowired('focusController') private focusController: FocusController;
+    @Autowired('focusService') private focusService: FocusService;
 
     private lastSelectedTab: string;
     private activeMenu: EnterpriseMenu | null;
 
-    private gridPanel: GridPanel;
+    private gridBodyComp: GridBodyComp;
 
-    public registerGridComp(gridPanel: GridPanel): void {
-        this.gridPanel = gridPanel;
+    public registerGridComp(gridBodyComp: GridBodyComp): void {
+        this.gridBodyComp = gridBodyComp;
     }
 
     public hideActiveMenu(): void {
@@ -70,10 +69,10 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             if (defaultTab) {
                 menu.showTab(defaultTab);
             }
-        }, defaultTab, undefined, mouseEvent.target as HTMLElement);
+        }, 'columnMenu', defaultTab, undefined, mouseEvent.target as HTMLElement);
     }
 
-    public showMenuAfterButtonClick(column: Column, eventSource: HTMLElement, defaultTab?: string, restrictToTabs?: string[]): void {
+    public showMenuAfterButtonClick(column: Column, eventSource: HTMLElement, containerType: ContainerType, defaultTab?: string, restrictToTabs?: string[]): void {
         let multiplier = -1;
         let alignSide: 'left' | 'right' = 'left';
 
@@ -83,17 +82,13 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         }
 
         this.showMenu(column, (menu: EnterpriseMenu) => {
-            const minDims = menu.getMinDimensions();
-            const { width: minWidth, height: minHeight } = minDims;
             const ePopup = menu.getGui();
 
             this.popupService.positionPopupUnderComponent({
-                type: 'columnMenu',
+                type: containerType,
                 column,
                 eventSource,
                 ePopup,
-                minWidth,
-                minHeight,
                 alignSide,
                 nudgeX: 9 * multiplier,
                 nudgeY: -23,
@@ -103,12 +98,13 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             if (defaultTab) {
                 menu.showTab(defaultTab);
             }
-        }, defaultTab, restrictToTabs, eventSource);
+        }, containerType, defaultTab, restrictToTabs, eventSource);
     }
 
     public showMenu(
         column: Column,
         positionCallback: (menu: EnterpriseMenu) => void,
+        containerType: ContainerType,
         defaultTab?: string,
         restrictToTabs?: string[],
         eventSource?: HTMLElement
@@ -116,7 +112,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         const menu = this.createBean(new EnterpriseMenu(column, this.lastSelectedTab, restrictToTabs));
         const eMenuGui = menu.getGui();
 
-        const anchorToElement = eventSource || this.gridPanel.getGui();
+        const anchorToElement = eventSource || this.gridBodyComp.getGui();
 
         const closedFuncs: ((e?: Event) => void)[] = [];
 
@@ -127,7 +123,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             const isKeyboardEvent = e instanceof KeyboardEvent;
 
             if (isKeyboardEvent && eventSource && _.isVisible(eventSource)) {
-                const focusableEl = this.focusController.findTabbableParent(eventSource);
+                const focusableEl = this.focusService.findTabbableParent(eventSource);
 
                 if (focusableEl) { focusableEl.focus(); }
             }
@@ -142,7 +138,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             closedCallback: (e?: Event) => { // menu closed callback
                 closedFuncs.forEach(f => f(e));
             },
-            afterGuiAttached: params => menu.afterGuiAttached(params),
+            afterGuiAttached: params => menu.afterGuiAttached(_.assign({}, {container: containerType }, params)),
             positionCallback: () => positionCallback(menu),
             anchorToElement
         });
@@ -197,13 +193,13 @@ export class EnterpriseMenu extends BeanStub {
     public static TABS_DEFAULT = [EnterpriseMenu.TAB_GENERAL, EnterpriseMenu.TAB_FILTER, EnterpriseMenu.TAB_COLUMNS];
     public static MENU_ITEM_SEPARATOR = 'separator';
 
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('menuItemMapper') private menuItemMapper: MenuItemMapper;
     @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('focusController') private focusController: FocusController;
+    @Autowired('focusService') private focusService: FocusService;
 
     private tabbedLayout: TabbedLayout;
     private hidePopupFunc: Function;
@@ -221,8 +217,6 @@ export class EnterpriseMenu extends BeanStub {
     private includeChecks: { [p: string]: () => boolean; } = {};
     private restrictTo?: string[];
 
-    private timeOfLastColumnChange = Date.now();
-
     constructor(column: Column, initialSelection: string, restrictTo?: string[]) {
         super();
         this.column = column;
@@ -235,10 +229,6 @@ export class EnterpriseMenu extends BeanStub {
         this.includeChecks[EnterpriseMenu.TAB_FILTER] = () => column.isFilterAllowed();
         this.includeChecks[EnterpriseMenu.TAB_COLUMNS] = () => true;
         this.restrictTo = restrictTo;
-    }
-
-    public getMinDimensions(): { width: number, height: number; } {
-        return this.tabbedLayout.getMinDimensions();
     }
 
     @PostConstruct
@@ -257,8 +247,6 @@ export class EnterpriseMenu extends BeanStub {
         if (this.mainMenuList) {
             this.mainMenuList.setParentComponent(this.tabbedLayout);
         }
-
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
     }
 
     private getTabsToCreate() {
@@ -369,14 +357,14 @@ export class EnterpriseMenu extends BeanStub {
 
         const allowPinning = !this.column.getColDef().lockPinned;
 
-        const rowGroupCount = this.columnController.getRowGroupColumns().length;
+        const rowGroupCount = this.columnModel.getRowGroupColumns().length;
         const doingGrouping = rowGroupCount > 0;
 
-        const groupedByThisColumn = this.columnController.getRowGroupColumns().indexOf(this.column) >= 0;
+        const groupedByThisColumn = this.columnModel.getRowGroupColumns().indexOf(this.column) >= 0;
         const allowValue = this.column.isAllowValue();
         const allowRowGroup = this.column.isAllowRowGroup();
         const isPrimary = this.column.isPrimary();
-        const pivotModeOn = this.columnController.isPivotMode();
+        const pivotModeOn = this.columnModel.isPivotMode();
 
         const isInMemoryRowModel = this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
 
@@ -452,11 +440,11 @@ export class EnterpriseMenu extends BeanStub {
 
         // this method only gets called when the menu was closed by selection an option
         // in this case we highlight the cell that was previously highlighted
-        const focusedCell = this.focusController.getFocusedCell();
+        const focusedCell = this.focusService.getFocusedCell();
 
         if (focusedCell) {
             const { rowIndex, rowPinned, column } = focusedCell;
-            this.focusController.setFocusedCell(rowIndex, column, rowPinned, true);
+            this.focusService.setFocusedCell(rowIndex, column, rowPinned, true);
         }
     }
 
@@ -506,7 +494,6 @@ export class EnterpriseMenu extends BeanStub {
             suppressColumnExpandAll: !!columnsMenuParams.suppressColumnExpandAll,
             suppressColumnFilter: !!columnsMenuParams.suppressColumnFilter,
             suppressColumnSelectAll: !!columnsMenuParams.suppressColumnSelectAll,
-            suppressSideButtons: false,
             suppressSyncLayoutWithGrid: !!columnsMenuParams.suppressSyncLayoutWithGrid,
             api: this.gridApi,
             columnApi: this.columnApi
@@ -525,19 +512,18 @@ export class EnterpriseMenu extends BeanStub {
         return this.tabItemColumns;
     }
 
-    public afterGuiAttached(params: AfterGuiAttachedParams): void {
-        const { hidePopup } = params;
+    public afterGuiAttached(params: IAfterGuiAttachedParams): void {
+        const { container, hidePopup } = params;
 
-        this.tabbedLayout.setAfterAttachedParams({ container: 'columnMenu', hidePopup });
-        this.hidePopupFunc = hidePopup;
-        this.addDestroyFunc(hidePopup);
+        this.tabbedLayout.setAfterAttachedParams({ container, hidePopup });
+
+        if (hidePopup) {
+            this.hidePopupFunc = hidePopup;
+            this.addDestroyFunc(hidePopup);
+        }
     }
 
     public getGui(): HTMLElement {
         return this.tabbedLayout.getGui();
-    }
-
-    private onDisplayedColumnsChanged() {
-        this.timeOfLastColumnChange = Date.now();
     }
 }

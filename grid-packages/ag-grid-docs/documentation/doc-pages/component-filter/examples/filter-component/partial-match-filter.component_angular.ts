@@ -9,8 +9,8 @@ import { IFilterAngularComp } from '@ag-grid-community/angular';
             Partial Match Filter: <input #input (ngModelChange)="onChange($event)" [ngModel]="text" class="form-control">
         </div>
     `, styles: [
-        `
-            .container {
+       `
+           .container {
                 border: 2px solid #22ff22;
                 border-radius: 5px;
                 background-color: #bbffbb;

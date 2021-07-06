@@ -1,8 +1,8 @@
 import { Component } from "../../widgets/component";
 import { IComponent } from "../../interfaces/iComponent";
 import { ColumnGroup } from "../../entities/columnGroup";
-import { ColumnApi } from "../../columnController/columnApi";
-import { ColumnController } from "../../columnController/columnController";
+import { ColumnApi } from "../../columns/columnApi";
+import { ColumnModel } from "../../columns/columnModel";
 import { Autowired } from "../../context/context";
 import { TouchListener } from "../../widgets/touchListener";
 import { RefSelector } from "../../widgets/componentAnnotations";
@@ -13,6 +13,7 @@ import { isStopPropagationForAgGrid, stopPropagationForAgGrid } from "../../util
 import { setDisplayed } from "../../utils/dom";
 import { createIconNoSpan } from "../../utils/icon";
 import { exists } from "../../utils/generic";
+import { doOnce } from "../../utils/function";
 
 export interface IHeaderGroupParams {
     columnGroup: ColumnGroup;
@@ -29,7 +30,7 @@ export interface IHeaderGroupComp extends IHeaderGroup, IComponent<IHeaderGroupP
 
 export class HeaderGroupComp extends Component implements IHeaderGroupComp {
 
-    @Autowired("columnController") private columnController: ColumnController;
+    @Autowired("columnModel") private columnModel: ColumnModel;
 
     static TEMPLATE = /* html */
         `<div class="ag-header-group-cell-label" ref="agContainer" role="presentation">
@@ -56,9 +57,20 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
     public init(params: IHeaderGroupParams): void {
         this.params = params;
 
+        this.checkWarnings();
+
         this.setupLabel();
         this.addGroupExpandIcon();
         this.setupExpandIcons();
+    }
+
+    private checkWarnings(): void {
+        const paramsAny = this.params as any;
+
+        if (paramsAny.template) {
+            const message = `A template was provided for Header Group Comp - templates are only supported for Header Comps (not groups)`;
+            doOnce(() => console.warn(message), 'HeaderGroupComp.templateNotSupported');
+        }
     }
 
     private setupExpandIcons(): void {
@@ -71,7 +83,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
             }
 
             const newExpandedValue = !this.params.columnGroup.isExpanded();
-            this.columnController.setColumnGroupOpened(this.params.columnGroup.getOriginalColumnGroup(), newExpandedValue, "uiColumnExpanded");
+            this.columnModel.setColumnGroupOpened(this.params.columnGroup.getOriginalColumnGroup(), newExpandedValue, "uiColumnExpanded");
         };
 
         this.addTouchAndClickListeners(this.eCloseIcon, expandAction);

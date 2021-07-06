@@ -25,6 +25,10 @@ var gridOptions = {
     treeData: true,
     columnDefs: columnDefs,
     animateRows: true,
+    isServerSideGroupOpenByDefault: function(params) {
+        // open first two levels by default
+        return params.rowNode.level < 2;
+    },
     isServerSideGroup: function(dataItem) {
         // indicate if node is a group
         return dataItem.group;
@@ -32,17 +36,6 @@ var gridOptions = {
     getServerSideGroupKey: function(dataItem) {
         // specify which group key to use
         return dataItem.employeeId;
-    },
-
-    onGridReady: function(params) {
-        // initialise with the first group arbitrarily expanded
-        setTimeout(function() {
-            params.api.getDisplayedRowAtIndex(0).setExpanded(true);
-        }, 1500);
-        setTimeout(function() {
-            // expands second node
-            params.api.getDisplayedRowAtIndex(1).setExpanded(true);
-        }, 2000);
     }
 };
 

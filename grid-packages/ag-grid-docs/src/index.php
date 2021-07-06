@@ -1,6 +1,5 @@
 <?php
-require "example-runner/example-runners.php";
-require "includes/html-helpers.php";
+require_once "includes/html-helpers.php";
 define('HOMEPAGE', true);
 gtm_data_layer('home');
 // variable necessary in navbar.php
@@ -12,7 +11,7 @@ $version = 'latest';
     <?php
     $title = 'AG Grid: High-Performance React Grid, Angular Grid, JavaScript Grid';
     $description = 'AG Grid is a feature rich datagrid designed for the major JavaScript Frameworks. Version 25 is out now. Easily integrate into your application to deliver filtering, grouping, aggregation, pivoting and much more with the performance that your users expect. Our Community version is free and open source, or take a 2 month trial of AG Grid Enterprise.';
-    meta_and_links($title, $keywords, $description, false);
+    meta_and_links($title, $keywords, $description, "", false);
     ?>
     <!-- Google Tag Manager -->
     <script>(function (w, d, s, l, i) {
@@ -67,9 +66,9 @@ $version = 'latest';
             <div class="framework-boxes">
                 <div class="framework-box">
                     <div class="box-shadow">
-                        <a href="/documentation/javascript/" style="text-decoration: none;">
+                        <a href="/javascript-grid/" style="text-decoration: none;">
                             <div class="box-contents">
-                                <img src="./_assets/fw-logos/javascript.svg">
+                                <img src="./_assets/fw-logos/javascript.svg" alt="JavaScript">
                                 <div>
                                     <h3>JavaScript</h3>
                                 </div>
@@ -79,9 +78,9 @@ $version = 'latest';
                 </div>
                 <div class="framework-box">
                     <div class="box-shadow">
-                        <a href="/documentation/angular/" style="text-decoration: none;">
+                        <a href="/angular-grid/" style="text-decoration: none;">
                             <div class="box-contents">
-                                <img src="./_assets/fw-logos/angular.svg">
+                                <img src="./_assets/fw-logos/angular.svg" alt="Angular">
                                 <div>
                                     <h3>Angular</h3>
                                 </div>
@@ -91,9 +90,9 @@ $version = 'latest';
                 </div>
                 <div class="framework-box">
                     <div class="box-shadow">
-                        <a href="/documentation/react/" style="text-decoration: none;">
+                        <a href="/react-grid/" style="text-decoration: none;">
                             <div class="box-contents">
-                                <img src="./_assets/fw-logos/react.svg">
+                                <img src="./_assets/fw-logos/react.svg" alt="React">
                                 <div>
                                     <h3>React</h3>
                                 </div>
@@ -103,9 +102,9 @@ $version = 'latest';
                 </div>
                 <div class="framework-box">
                     <div class="box-shadow">
-                        <a href="/documentation/vue/" style="text-decoration: none;">
+                        <a href="/vue-grid/" style="text-decoration: none;">
                             <div class="box-contents">
-                                <img src="./_assets/fw-logos/vue.svg">
+                                <img src="./_assets/fw-logos/vue.svg" alt="Vue">
                                 <div>
                                     <h3>Vue</h3>
                                 </div>
@@ -188,7 +187,7 @@ $version = 'latest';
                     <img src="_assets/fw-logos/webpack.svg" alt="Webpack"/>
                     <div class="media-body">
                         <h3>Webpack</h3>
-                        <p><a href="/ag-grid-partners-with-webpack/">Read about our Partnership with webpack.</a></p>
+                        <p><a href="https://medium.com/webpack/ag-grid-partners-with-webpack-24f8cf9d890b">Read about our Partnership with webpack.</a></p>
                     </div>
                 </div>
 
@@ -196,9 +195,17 @@ $version = 'latest';
                     <img src="_assets/fw-logos/plunker.svg" alt="Plunker"/>
                     <div class="media-body">
                         <h3>Plunker</h3>
-                        <p><a href="/ag-grid-proud-to-support-plunker/">Read about our Backing of Plunker.</a></p>
+                        <p><a href="https://medium.com/ag-grid/plunker-is-now-backed-by-ag-grid-601c17440fca">Read about our Backing of Plunker.</a></p>
                     </div>
                 </div>
+            </div>
+        </section>
+    </div>
+
+    <div>
+        <section>
+            <div style="margin: 20px; font-family: 'Roboto', sans-serif; font-size: 1.2rem; font-weight: 300; text-align: center;">
+                ng-Conf Attendees - Our Secret Word is "Feck"
             </div>
         </section>
     </div>

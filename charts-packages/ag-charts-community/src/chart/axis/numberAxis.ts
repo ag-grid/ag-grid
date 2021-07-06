@@ -1,4 +1,6 @@
+import ContinuousScale from "../../scale/continuousScale";
 import { LinearScale } from "../../scale/linearScale";
+import { numericExtent } from "../../util/array";
 import { ChartAxis } from "../chartAxis";
 
 export class NumberAxis extends ChartAxis {
@@ -6,8 +8,9 @@ export class NumberAxis extends ChartAxis {
     static type = 'number';
 
     constructor() {
-        super(new LinearScale());
-        (this.scale as LinearScale).clamp = true;
+        super();
+
+        this.scale = new LinearScale();
     }
 
     protected _nice: boolean = true;
@@ -15,7 +18,7 @@ export class NumberAxis extends ChartAxis {
         if (this._nice !== value) {
             this._nice = value;
             if (value && this.scale.nice) {
-                this.scale.nice(10);
+                this.scale.nice(this.tick.count);
             }
         }
     }
@@ -23,15 +26,19 @@ export class NumberAxis extends ChartAxis {
         return this._nice;
     }
 
-    set domain(value: number[]) {
-        const { min, max } = this;
-        value = [
-            isNaN(min) ? value[0] : min,
-            isNaN(max) ? value[1] : max
+    set domain(domain: number[]) {
+        if (domain.length > 2) {
+            domain = numericExtent(domain) || [0, 1];
+        }
+        const { scale, min, max } = this;
+        domain = [
+            isNaN(min) ? domain[0] : min,
+            isNaN(max) ? domain[1] : max
         ];
-        this.scale.domain = value;
+        scale.domain = domain;
+        (scale as ContinuousScale).clamp = true;
         if (this.nice && this.scale.nice) {
-            this.scale.nice(10);
+            this.scale.nice(this.tick.count);
         }
     }
     get domain(): number[] {
@@ -62,5 +69,9 @@ export class NumberAxis extends ChartAxis {
     }
     get max(): number {
         return this._max;
+    }
+
+    formatDatum(datum: number): string {
+        return datum.toFixed(2);
     }
 }

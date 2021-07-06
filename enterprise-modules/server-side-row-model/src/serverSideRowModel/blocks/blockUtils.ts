@@ -6,7 +6,7 @@ import {
     Bean,
     BeanStub,
     Column,
-    ColumnController,
+    ColumnModel,
     PostConstruct,
     RowNode,
     ValueService,
@@ -18,7 +18,7 @@ import { NodeManager } from "../nodeManager";
 export class BlockUtils extends BeanStub {
 
     @Autowired('valueService') private valueService: ValueService;
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
 
     private rowHeight: number;
@@ -139,7 +139,7 @@ export class BlockUtils extends BeanStub {
     }
 
     private setGroupDataIntoRowNode(rowNode: RowNode): void {
-        const groupDisplayCols: Column[] = this.columnController.getGroupDisplayColumns();
+        const groupDisplayCols: Column[] = this.columnModel.getGroupDisplayColumns();
 
         const usingTreeData = this.gridOptionsWrapper.isTreeData();
 
@@ -150,8 +150,9 @@ export class BlockUtils extends BeanStub {
             if (usingTreeData) {
                 rowNode.groupData[col.getColId()] = rowNode.key;
             } else if (col.isRowGroupDisplayed(rowNode.rowGroupColumn!.getId())) {
-                const groupValue = this.valueService.getValue(rowNode.rowGroupColumn!, rowNode);
-                rowNode.groupData[col.getColId()] = groupValue;
+                const { key, rawKeyValue } = this.valueService.getKeyForNode(rowNode.rowGroupColumn!, rowNode);
+                rowNode.groupData[col.getColId()] = key;
+                rowNode.rawKeyValue = rawKeyValue;
             }
         });
     }
@@ -298,16 +299,15 @@ export class BlockUtils extends BeanStub {
 
         // pull keys from all parent nodes, but do not include the root node
         while (rowNode && rowNode.level >= 0) {
-            parts.push(rowNode.key);
+            parts.push(rowNode.key!);
             rowNode = rowNode.parent;
         }
 
         if (parts.length > 0) {
             return parts.reverse().join('-');
-        } else {
-            // no prefix, so node id's are left as they are
-            return undefined;
         }
+        // no prefix, so node id's are left as they are
+        return undefined;
     }
 
     public checkOpenByDefault(rowNode: RowNode): void {

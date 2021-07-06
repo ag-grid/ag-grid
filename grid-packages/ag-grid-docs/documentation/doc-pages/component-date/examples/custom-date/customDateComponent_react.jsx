@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 
 export default class CustomDateComponent extends Component {
     constructor(props) {
@@ -13,7 +13,7 @@ export default class CustomDateComponent extends Component {
         //Inlining styles to make simpler the component
         return (
             <div className="ag-input-wrapper custom-date-filter" role="presentation" ref="flatpickr">
-                <input type="text" ref="eInput" data-input style={{ width: "100%" }} />
+                <input type="text" ref="eInput" data-input style={{width: "100%"}}/>
                 <a class='input-button' title='clear' data-clear>
                     <i class='fa fa-times'></i>
                 </a>
@@ -45,7 +45,7 @@ export default class CustomDateComponent extends Component {
 
     setDate(date) {
         //ag-grid will call us here when it needs this component to update the date that it holds.
-        this.setState({ date });
+        this.setState({date});
         this.picker.setDate(date);
     }
 
@@ -68,7 +68,7 @@ export default class CustomDateComponent extends Component {
     updateAndNotifyAgGrid(date) {
         //Callback after the state is set. This is where we tell ag-grid that the date has changed so
         //it will proceed with the filtering and we can then expect AG Grid to call us back to getDate
-        this.setState({ date }, this.props.onDateChanged);
+        this.setState({date}, this.props.onDateChanged);
     }
 
     //*********************************************************************************
@@ -76,7 +76,7 @@ export default class CustomDateComponent extends Component {
     //*********************************************************************************
 
     onDateChanged = (selectedDates) => {
-        this.setState({ date: selectedDates[0] });
+        this.setState({date: selectedDates[0]});
         this.updateAndNotifyAgGrid(selectedDates[0]);
     };
 }

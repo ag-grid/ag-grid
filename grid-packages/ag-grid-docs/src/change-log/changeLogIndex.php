@@ -3,8 +3,31 @@ $pageTitle = "AG Grid: Change Log for Releases";
 $pageDescription = "AG Grid is a feature-rich datagrid available in Community or Enterprise versions. This page lists all the Changes completed in recent releases.";
 $pageKeywords = "AG Grid Change Log";
 $pageGroup = "misc";
-include('../includes/mediaHeader.php');
+require_once dirname(__FILE__) . '/../includes/html-helpers.php';
 ?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<?php
+meta_and_links($pageTitle, $pageKeywords, $pageDescription, "change-log/changeLogIndex.php", false);
+?>
+
+<link rel="stylesheet" href="../dist/homepage.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+
+<body ng-app="documentation">
+
+<header id="nav" class="compact">
+<?php
+    $version = 'latest';
+    include dirname(__FILE__) . '/../includes/navbar.php'; ?>
+</header>
+<div class="page-content">
+    <div class="media-page">
+        <div class="row">
+            <section class="blog-section">
 
 <div id="content">
 
@@ -2789,7 +2812,9 @@ params = {
     <p>
         <b>31 March</b> - DailyJS covers launch of Angular Grid.
     </p>
+    </div>
+    </section>
+    </div>
+    </div>
 
-</div>
-
-<?php include '../documentation-main/documentation_footer.php'; ?>
+<?php require_once dirname(__FILE__) . '/../includes/footer.php'; ?>

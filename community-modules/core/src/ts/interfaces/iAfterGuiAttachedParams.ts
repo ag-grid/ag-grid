@@ -1,7 +1,7 @@
-export type ContainerType = 'columnMenu' | 'contextMenu' | 'toolPanel';
+export type ContainerType = 'columnMenu' | 'contextMenu' | 'toolPanel' | 'floatingFilter';
 
 export interface IAfterGuiAttachedParams {
-    container: ContainerType;
+    container?: ContainerType;
     hidePopup?: () => void;
     suppressFocus?: boolean;
 }

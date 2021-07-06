@@ -78,6 +78,9 @@ const extrasMap = {
     }
 };
 
+/**
+ * These are the extra scripts or styles that an example can import.
+ */
 const Extras = ({ options }) => {
     const { extras } = options;
 

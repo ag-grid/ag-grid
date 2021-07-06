@@ -33,40 +33,8 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
         this.recreateChart();
     }
 
-    protected getDefaultOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<ScatterSeriesOptions> {
-        const options = super.getDefaultOptionsFromTheme(theme);
-
-        const seriesDefaults = theme.getConfig<AgScatterSeriesOptions>('scatter.series.scatter');
-        options.seriesDefaults = {
-            tooltip: {
-                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
-                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
-            },
-            fill: {
-                colors: theme.palette.fills,
-                opacity: seriesDefaults.fillOpacity,
-            },
-            stroke: {
-                colors: theme.palette.strokes,
-                opacity: seriesDefaults.strokeOpacity,
-                width: seriesDefaults.strokeWidth
-            },
-            marker: {
-                enabled: seriesDefaults.marker!.enabled,
-                shape: seriesDefaults.marker!.shape,
-                size: seriesDefaults.marker!.size,
-                strokeWidth: seriesDefaults.marker!.strokeWidth
-            },
-            highlightStyle: seriesDefaults.highlightStyle as HighlightOptions,
-            listeners: seriesDefaults.listeners,
-            paired: true
-        } as ScatterSeriesOptions;
-
-        return options;
-    }
-
-    protected createChart(options?: CartesianChartOptions<ScatterSeriesOptions>): CartesianChart {
-        options = options || this.chartOptions;
+    protected createChart(): CartesianChart {
+        const options = this.iChartOptions;
         const agChartOptions = options as AgCartesianChartOptions;
         agChartOptions.autoSize = true;
         agChartOptions.axes = [{
@@ -99,7 +67,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
             });
         }
 
-        const { seriesDefaults } = this.chartOptions as any;
+        const { seriesDefaults } = this.iChartOptions as any;
         const seriesDefinitions = this.getSeriesDefinitions(fields, seriesDefaults.paired);
 
         let dataDomain: number[] | undefined;
@@ -233,8 +201,40 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
         });
     }
 
+    protected extractIChartOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<ScatterSeriesOptions> {
+        const options = super.extractIChartOptionsFromTheme(theme);
+
+        const seriesDefaults = theme.getConfig<AgScatterSeriesOptions>('scatter.series.scatter');
+        options.seriesDefaults = {
+            tooltip: {
+                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
+            },
+            fill: {
+                colors: (seriesDefaults.fill && [seriesDefaults.fill]) || theme.palette.fills,
+                opacity: seriesDefaults.fillOpacity,
+            },
+            stroke: {
+                colors: (seriesDefaults.stroke && [seriesDefaults.stroke]) || theme.palette.strokes,
+                opacity: seriesDefaults.strokeOpacity,
+                width: seriesDefaults.strokeWidth
+            },
+            marker: {
+                enabled: seriesDefaults.marker!.enabled,
+                shape: seriesDefaults.marker!.shape,
+                size: seriesDefaults.marker!.size,
+                strokeWidth: seriesDefaults.marker!.strokeWidth
+            },
+            highlightStyle: seriesDefaults.highlightStyle as HighlightOptions,
+            listeners: seriesDefaults.listeners,
+            paired: true
+        } as ScatterSeriesOptions;
+
+        return options;
+    }
+
     public getTooltipsEnabled(): boolean {
-        return this.chartOptions.seriesDefaults.tooltip != null && !!this.chartOptions.seriesDefaults.tooltip.enabled;
+        return this.iChartOptions.seriesDefaults.tooltip != null && !!this.iChartOptions.seriesDefaults.tooltip.enabled;
     }
 
     public getMarkersEnabled = (): boolean => true; // markers are always enabled on scatter charts

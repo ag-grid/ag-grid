@@ -1,17 +1,15 @@
 
-![alt text](./github-banner.png "Logo Title Text 1")
+![alt text](./github-banner.png "AG Grid")
 
-[![CDNJS](https://img.shields.io/cdnjs/v/ag-grid.svg)](https://cdnjs.com/libraries/ag-grid)
-[![npm](https://img.shields.io/npm/dm/ag-grid.svg)](https://www.npmjs.com/package/ag-grid)
-[![npm](https://img.shields.io/npm/dt/ag-grid.svg)](https://www.npmjs.com/package/ag-grid)
+[![CDNJS](https://img.shields.io/cdnjs/v/ag-grid)](https://cdnjs.com/libraries/ag-grid) [![npm](https://img.shields.io/npm/dm/ag-grid-react)](https://www.npmjs.com/package/ag-grid-react) [![Bundle Phobia](https://badgen.net/bundlephobia/minzip/ag-grid-react)](https://bundlephobia.com/result?p=ag-grid-react) [![Github Stars](https://img.shields.io/github/stars/ag-grid/ag-grid?style=social)](https://github.com/ag-grid/ag-grid) [![Twitter](https://img.shields.io/twitter/follow/ag_grid?style=social)](https://twitter.com/ag_grid)
 
-ag-Grid React Component
+AG Grid React Component
 ------
 
-ag-Grid is a fully-featured and highly customizable JavaScript data grid.
+AG Grid is a fully-featured and highly customizable JavaScript data grid.
 It delivers [outstanding performance](https://www.ag-grid.com/example.php?utm_source=ag-grid-react-readme&utm_medium=repository&utm_campaign=github#/performance/1), has no 3rd party dependencies and integrates smoothly with React as React Component. Here's how our grid looks like with multiple filters and grouping enabled:
 
-![alt text](./github-grid-demo.jpg "Logo Title Text 1")
+![alt text](./github-grid-demo.jpg "AG Grid")
 
 
 Features
@@ -24,7 +22,7 @@ Besides the standard set of features you'd expect from any grid:
 * Sorting
 * Row Selection
 
-Here are some of the features that make ag-Grid stand out:
+Here are some of the features that make AG Grid stand out:
 
 * Grouping / Aggregation*
 * Custom Filtering
@@ -123,7 +121,7 @@ Look for similar problems on [StackOverflow](https://stackoverflow.com/questions
 
 Contributing
 ------------
-ag-Grid is developed by a team of co-located developers in London. If you want to join the team check out our [jobs listing](https://www.ag-grid.com/ag-grid-jobs-board?utm_source=ag-grid-react-readme&utm_medium=repository&utm_campaign=github) or send your application to info@ag-grid.com.
+AG Grid is developed by a team of co-located developers in London. If you want to join the team check out our [jobs listing](https://www.ag-grid.com/ag-grid-jobs-board?utm_source=ag-grid-react-readme&utm_medium=repository&utm_campaign=github) or send your application to info@ag-grid.com.
 
 License
 ------------------

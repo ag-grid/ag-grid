@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
+import { ITooltipParams } from "@ag-grid-community/core";
 import { ITooltipAngularComp } from "@ag-grid-community/angular";
 
 @Component({
     selector: 'tooltip-component',
     template: `
         <div class="custom-tooltip">
-            <div [ngClass]="'panel panel-' + data.type">
+            <div [ngClass]="'panel panel-' + type">
             <div class="panel-heading">
                 <h3 class="panel-title">{{data.country}}</h3>
             </div>
@@ -40,13 +41,14 @@ import { ITooltipAngularComp } from "@ag-grid-community/angular";
 })
 export class CustomTooltip implements ITooltipAngularComp {
 
-    private params: any;
-    private data: any;
+    private params: {type: string} & ITooltipParams;
+    private data: any[];
+    private type: string;
 
-    agInit(params): void {
+    agInit(params: {type: string} & ITooltipParams): void {
         this.params = params;
 
         this.data = params.api.getDisplayedRowAtIndex(params.rowIndex).data;
-        this.data.type = this.params.type || 'primary';
+        this.type = this.params.type || 'primary';
     }
 }

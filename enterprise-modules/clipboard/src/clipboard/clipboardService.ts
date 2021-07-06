@@ -11,14 +11,14 @@ import {
     IClientSideRowModel,
     Column,
     ColumnApi,
-    ColumnController,
+    ColumnModel,
     Constants,
     CsvExportParams,
     Events,
     FlashCellsEvent,
-    FocusController,
+    FocusService,
     GridApi,
-    GridCore,
+    GridCtrl,
     IClipboardService,
     IRowModel,
     Logger,
@@ -33,10 +33,10 @@ import {
     RowPositionUtils,
     RowRenderer,
     RowValueChangedEvent,
-    SelectionController,
+    SelectionService,
     ValueService,
     ICsvCreator,
-    IRangeController,
+    IRangeService,
     Optional
 } from "@ag-grid-community/core";
 
@@ -53,14 +53,14 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
     @Autowired('csvCreator') private csvCreator: ICsvCreator;
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
-    @Autowired('selectionController') private selectionController: SelectionController;
-    @Optional('rangeController') private rangeController: IRangeController;
+    @Autowired('selectionService') private selectionService: SelectionService;
+    @Optional('rangeService') private rangeService: IRangeService;
     @Autowired('rowModel') private rowModel: IRowModel;
 
     @Autowired('valueService') private valueService: ValueService;
-    @Autowired('focusController') private focusController: FocusController;
+    @Autowired('focusService') private focusService: FocusService;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
@@ -69,10 +69,12 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
     private clientSideRowModel: IClientSideRowModel;
     private logger: Logger;
-    private gridCore: GridCore;
+    private gridCtrl: GridCtrl;
 
-    public registerGridCore(gridCore: GridCore): void {
-        this.gridCore = gridCore;
+    private navigatorApiFailed = false;
+
+    public registerGridCompController(gridCtrl: GridCtrl): void {
+        this.gridCtrl = gridCtrl;
     }
 
     @PostConstruct
@@ -92,7 +94,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         // Some browsers (Firefox) do not allow Web Applications to read from
         // the clipboard so verify if not only the ClipboardAPI is available,
         // but also if the `readText` method is public.
-        if (allowNavigator && navigator.clipboard && navigator.clipboard.readText) {
+        if (allowNavigator && !this.navigatorApiFailed && navigator.clipboard && navigator.clipboard.readText) {
             navigator.clipboard.readText()
                 .then(this.processClipboardData.bind(this))
                 .catch((e) => {
@@ -105,13 +107,14 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                             'Either fix why Clipboard API is blocked, OR stop this message from appearing by setting grid ' +
                             'property suppressClipboardApi=true (which will default the grid to using the workaround rather than the API');
                     }, 'clipboardApiError');
+                    this.navigatorApiFailed = true;
                     this.pasteFromClipboardLegacy();
                 });
         } else {
             this.pasteFromClipboardLegacy();
         }
     }
- 
+
     private pasteFromClipboardLegacy(): void {
         // Method 2 - if modern API fails, the old school hack
         this.executeOnTempElement(
@@ -146,7 +149,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             focusedCell: CellPosition,
             changedPath: ChangedPath | undefined) => {
 
-            const rangeActive = this.rangeController && this.rangeController.isMoreThanOneCell();
+            const rangeActive = this.rangeService && this.rangeService.isMoreThanOneCell();
             const pasteIntoRange = rangeActive && !this.hasOnlyOneValueToPaste(parsedData!);
 
             if (pasteIntoRange) {
@@ -186,7 +189,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
         const cellsToFlash = {} as any;
         const updatedRowNodes: RowNode[] = [];
-        const focusedCell = this.focusController.getFocusedCell();
+        const focusedCell = this.focusService.getFocusedCell();
 
         pasteOperationFunc(cellsToFlash, updatedRowNodes, focusedCell, changedPath);
 
@@ -202,7 +205,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         // so need to put it back. otherwise paste operation loosed focus on cell and keyboard
         // navigation stops.
         if (focusedCell) {
-            this.focusController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.rowPinned, true);
+            this.focusService.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.rowPinned, true);
         }
 
         this.eventService.dispatchEvent({
@@ -280,7 +283,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         if (!focusedCell) { return; }
 
         const currentRow: RowPosition = { rowIndex: focusedCell.rowIndex, rowPinned: focusedCell.rowPinned };
-        const columnsToPasteInto = this.columnController.getDisplayedColumnsStartingAt(focusedCell.column);
+        const columnsToPasteInto = this.columnModel.getDisplayedColumnsStartingAt(focusedCell.column);
 
         if (this.isPasteSingleValueIntoRange(parsedData)) {
             this.pasteSingleValueIntoRange(parsedData, updatedRowNodes, cellsToFlash, changedPath);
@@ -299,8 +302,8 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     // if range is active, and only one cell, then we paste this cell into all cells in the active range.
     private isPasteSingleValueIntoRange(parsedData: string[][]): boolean {
         return this.hasOnlyOneValueToPaste(parsedData)
-            && this.rangeController != null
-            && !this.rangeController.isEmpty();
+            && this.rangeService != null
+            && !this.rangeService.isEmpty();
     }
 
     private pasteSingleValueIntoRange(parsedData: string[][], updatedRowNodes: RowNode[], cellsToFlash: any, changedPath: ChangedPath | undefined) {
@@ -309,7 +312,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         const rowCallback: RowCallback = (currentRow: RowPosition, rowNode: RowNode, columns: Column[]) => {
             updatedRowNodes.push(rowNode);
             columns.forEach(column =>
-                this.updateCellValue(rowNode, column, value, currentRow, cellsToFlash, Constants.EXPORT_TYPE_CLIPBOARD, changedPath));
+                this.updateCellValue(rowNode, column, value, cellsToFlash, Constants.EXPORT_TYPE_CLIPBOARD, changedPath));
         };
 
         this.iterateActiveRanges(false, rowCallback);
@@ -320,7 +323,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     }
 
     public copyRangeDown(): void {
-        if (!this.rangeController || this.rangeController.isEmpty()) {
+        if (!this.rangeService || this.rangeService.isEmpty()) {
             return;
         }
 
@@ -413,41 +416,54 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         columnsToPasteInto: Column[],
         cellsToFlash: any,
         type: string,
-        changedPath: ChangedPath | undefined) {
+        changedPath: ChangedPath | undefined): void {
 
         let rowPointer = currentRow;
 
-        clipboardGridData.forEach(clipboardRowData => {
-            // if we have come to end of rows in grid, then skip
-            if (!rowPointer) { return; }
+        // if doing CSRM and NOT tree data, then it means groups are aggregates, which are read only,
+        // so we should skip them when doing paste operations.
+        const skipGroupRows = this.clientSideRowModel != null && !this.gridOptionsWrapper.isTreeData();
 
-            const rowNode = this.rowPositionUtils.getRowNode(rowPointer);
-
-            if (rowNode) {
-                updatedRowNodes.push(rowNode);
-
-                clipboardRowData.forEach((value, index) =>
-                    this.updateCellValue(rowNode, columnsToPasteInto[index], value, rowPointer, cellsToFlash, type, changedPath));
-
+        const getNextGoodRowNode = () => {
+            while (true) {
+                if (!rowPointer) { return null; }
+                const res = this.rowPositionUtils.getRowNode(rowPointer);
                 // move to next row down for next set of values
                 rowPointer = this.cellNavigationService.getRowBelow({ rowPinned: rowPointer.rowPinned, rowIndex: rowPointer.rowIndex });
-            }
-        });
 
-        return rowPointer;
+                // if no more rows, return null
+                if (res == null) { return null; }
+
+                // skip details rows and footer rows, never paste into them as they don't hold data
+                const skipRow = res.detail || res.footer || (skipGroupRows && res.group);
+
+                // skipping row means we go into the next iteration of the while loop
+                if (!skipRow) { return res; }
+            }
+        };
+
+        clipboardGridData.forEach(clipboardRowData => {
+            const rowNode = getNextGoodRowNode();
+
+            // if we have come to end of rows in grid, then skip
+            if (!rowNode) { return; }
+
+            clipboardRowData.forEach((value, index) =>
+                this.updateCellValue(rowNode, columnsToPasteInto[index], value, cellsToFlash, type, changedPath));
+
+            updatedRowNodes.push(rowNode);
+        });
     }
 
     private updateCellValue(
         rowNode: RowNode | null,
         column: Column,
         value: string,
-        currentRow: RowPosition | null,
         cellsToFlash: any,
         type: string,
         changedPath: ChangedPath | undefined) {
         if (
             !rowNode ||
-            !currentRow ||
             !column ||
             !column.isCellEditable(rowNode) ||
             column.isSuppressPaste(rowNode)
@@ -456,7 +472,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         const processedValue = this.processCell(rowNode, column, value, type, this.gridOptionsWrapper.getProcessCellFromClipboardFunc());
         this.valueService.setValue(rowNode, column, processedValue, Constants.SOURCE_PASTE);
 
-        const cellId = this.cellPositionUtils.createIdFromValues(currentRow.rowIndex, column, currentRow.rowPinned);
+        const cellId = this.cellPositionUtils.createIdFromValues(rowNode.rowIndex!, column, rowNode.rowPinned);
         cellsToFlash[cellId] = true;
 
         if (changedPath) {
@@ -472,16 +488,16 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             includeHeaders = this.gridOptionsWrapper.isCopyHeadersToClipboard();
         }
 
-        const selectedRowsToCopy = !this.selectionController.isEmpty()
+        const selectedRowsToCopy = !this.selectionService.isEmpty()
             && !this.gridOptionsWrapper.isSuppressCopyRowsToClipboard();
 
         // default is copy range if exists, otherwise rows
-        if (this.rangeController && this.rangeController.isMoreThanOneCell()) {
+        if (this.rangeService && this.rangeService.isMoreThanOneCell()) {
             this.copySelectedRangeToClipboard(includeHeaders);
         } else if (selectedRowsToCopy) {
             // otherwise copy selected rows if they exist
             this.copySelectedRowsToClipboard(includeHeaders);
-        } else if (this.focusController.isAnyCellFocused()) {
+        } else if (this.focusService.isAnyCellFocused()) {
             // if there is a focused cell, copy this
             this.copyFocusedCellToClipboard(includeHeaders);
         } else {
@@ -495,9 +511,9 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     }
 
     private iterateActiveRanges(onlyFirst: boolean, rowCallback: RowCallback, columnCallback?: ColumnCallback): void {
-        if (!this.rangeController || this.rangeController.isEmpty()) { return; }
+        if (!this.rangeService || this.rangeService.isEmpty()) { return; }
 
-        const cellRanges = this.rangeController.getCellRanges();
+        const cellRanges = this.rangeService.getCellRanges();
 
         if (onlyFirst) {
             this.iterateActiveRange(cellRanges[0], rowCallback, columnCallback, true);
@@ -507,10 +523,10 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     }
 
     private iterateActiveRange(range: CellRange, rowCallback: RowCallback, columnCallback?: ColumnCallback, isLastRange?: boolean): void {
-        if (!this.rangeController) { return; }
+        if (!this.rangeService) { return; }
 
-        let currentRow: RowPosition | null = this.rangeController.getRangeStartRow(range);
-        const lastRow = this.rangeController.getRangeEndRow(range);
+        let currentRow: RowPosition | null = this.rangeService.getRangeStartRow(range);
+        const lastRow = this.rangeService.getRangeEndRow(range);
 
         if (columnCallback && range.columns) {
             columnCallback(range.columns);
@@ -532,7 +548,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     }
 
     public copySelectedRangeToClipboard(includeHeaders = false): void {
-        if (!this.rangeController || this.rangeController.isEmpty()) { return; }
+        if (!this.rangeService || this.rangeService.isEmpty()) { return; }
 
         const deliminator = this.gridOptionsWrapper.getClipboardDeliminator();
 
@@ -545,7 +561,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
             const processHeaderForClipboardFunc = this.gridOptionsWrapper.getProcessHeaderForClipboardFunc();
             const columnNames = columns.map(column => {
-                const name = this.columnController.getDisplayNameForColumn(column, 'clipboard', true);
+                const name = this.columnModel.getDisplayNameForColumn(column, 'clipboard', true);
                 return this.processHeader(column, name, processHeaderForClipboardFunc) || '';
             });
 
@@ -583,7 +599,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     }
 
     private copyFocusedCellToClipboard(includeHeaders = false): void {
-        const focusedCell = this.focusController.getFocusedCell();
+        const focusedCell = this.focusService.getFocusedCell();
 
         if (focusedCell == null) { return; }
 
@@ -602,7 +618,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         let data: string;
 
         if (includeHeaders) {
-            const headerValue = this.columnController.getDisplayNameForColumn(column, 'clipboard', true);
+            const headerValue = this.columnModel.getDisplayNameForColumn(column, 'clipboard', true);
             data = this.processHeader(column, headerValue, this.gridOptionsWrapper.getProcessHeaderForClipboardFunc()) + '\r\n' + processedValue;
         } else {
             data = processedValue;
@@ -666,8 +682,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     public copySelectedRowsToClipboard(includeHeaders = false, columnKeys?: (string | Column)[]): void {
         const params: CsvExportParams = {
             columnKeys: columnKeys,
-            skipHeader: !includeHeaders,
-            skipFooters: true,
+            skipColumnHeaders: !includeHeaders,
             suppressQuotes: true,
             columnSeparator: this.gridOptionsWrapper.getClipboardDeliminator(),
             onlySelected: true,
@@ -751,7 +766,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         eTempInput.style.position = 'absolute';
         eTempInput.style.opacity = '0';
 
-        const guiRoot = this.gridCore.getRootGui();
+        const guiRoot = this.gridCtrl.getGui();
 
         guiRoot.appendChild(eTempInput);
 
@@ -773,13 +788,13 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     }
 
     private getRangeSize(): number {
-        const ranges = this.rangeController.getCellRanges();
+        const ranges = this.rangeService.getCellRanges();
         let startRangeIndex = 0;
         let endRangeIndex = 0;
 
         if (ranges.length > 0) {
-            startRangeIndex = this.rangeController.getRangeStartRow(ranges[0]).rowIndex;
-            endRangeIndex = this.rangeController.getRangeEndRow(ranges[0]).rowIndex;
+            startRangeIndex = this.rangeService.getRangeStartRow(ranges[0]).rowIndex;
+            endRangeIndex = this.rangeService.getRangeEndRow(ranges[0]).rowIndex;
         }
 
         return startRangeIndex - endRangeIndex + 1;

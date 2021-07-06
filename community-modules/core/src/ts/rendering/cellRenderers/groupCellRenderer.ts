@@ -4,9 +4,7 @@ import { Autowired } from "../../context/context";
 import { Component } from "../../widgets/component";
 import { ICellRendererComp, ICellRendererFunc, ICellRendererParams } from "./iCellRenderer";
 import { RowNode } from "../../entities/rowNode";
-import { ValueFormatterService } from "../valueFormatterService";
 import { CheckboxSelectionComponent } from "../checkboxSelectionComponent";
-import { ColumnController } from "../../columnController/columnController";
 import { Column } from "../../entities/column";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { ColDef } from "../../entities/colDef";
@@ -26,6 +24,10 @@ import { missing } from "../../utils/generic";
 import { isStopPropagationForAgGrid, stopPropagationForAgGrid, isElementInEventPath } from "../../utils/event";
 import { setAriaExpanded, removeAriaExpanded } from "../../utils/aria";
 import { KeyCode } from '../../constants/keyCode';
+import { ValueFormatterService } from "../valueFormatterService";
+import { ColumnModel } from "../../columns/columnModel";
+import { RowRenderer } from "../rowRenderer";
+import { RowDragComp } from "../row/rowDragComp";
 
 export interface GroupCellRendererParams extends ICellRendererParams {
     // only when in fullWidth, this gives whether the comp is pinned or not.
@@ -40,6 +42,7 @@ export interface GroupCellRendererParams extends ICellRendererParams {
     footerValueGetter: any;
     suppressCount: boolean;
     checkbox: any;
+    rowDrag?: boolean;
 
     innerRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
     innerRendererFramework?: any;
@@ -62,9 +65,10 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
             <span class="ag-group-child-count" ref="eChildCount"></span>
         </span>`;
 
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('expressionService') private expressionService: ExpressionService;
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
-    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
     @RefSelector('eExpanded') private eExpanded: HTMLElement;
@@ -94,12 +98,34 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         super(GroupCellRenderer.TEMPLATE);
     }
 
+    private isTopLevelFooter(): boolean {
+        if (!this.gridOptionsWrapper.isGroupIncludeTotalFooter()) { return false; }
+
+        if (this.params.value != null || this.params.node.level != -1) { return false; }
+
+        // at this point, we know it's the root node and there is no value present, so it's a footer cell.
+        // the only thing to work out is if we are displaying groups  across multiple
+        // columns (groupMultiAutoColumn=true), we only want 'total' to appear in the first column.
+
+        const colDef = this.params.colDef;
+        const doingFullWidth = colDef == null;
+        if (doingFullWidth) { return true; }
+
+        if (colDef!.showRowGroup === true) { return true; }
+
+        const rowGroupCols = this.columnModel.getRowGroupColumns();
+        // this is a sanity check, rowGroupCols should always be present
+        if (!rowGroupCols || rowGroupCols.length === 0) { return true; }
+
+        const firstRowGroupCol = rowGroupCols[0];
+
+        return firstRowGroupCol.getId() === colDef!.showRowGroup;
+    }
+
     public init(params: GroupCellRendererParams): void {
         this.params = params;
 
-        if (this.gridOptionsWrapper.isGroupIncludeTotalFooter()) {
-            this.assignBlankValueToGroupFooterCell(params);
-        }
+        const topLevelFooter = this.isTopLevelFooter();
 
         const embeddedRowMismatch = this.isEmbeddedRowMismatch();
         // This allows for empty strings to appear as groups since
@@ -120,22 +146,16 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
             }
         }
 
-        this.cellIsBlank = embeddedRowMismatch || nullValue || skipCell;
+        this.cellIsBlank = topLevelFooter ? false : (embeddedRowMismatch || nullValue || skipCell);
 
         if (this.cellIsBlank) { return; }
 
         this.setupDragOpenParents();
+        this.addFullWidthRowDraggerIfNeeded();
         this.addExpandAndContract();
         this.addCheckboxIfNeeded();
         this.addValueElement();
         this.setupIndent();
-    }
-
-    private assignBlankValueToGroupFooterCell(params: GroupCellRendererParams) {
-        // this is not ideal, but it was the only way we could get footer working for the root node
-        if (!params.value && params.node.level == -1) {
-            params.value = '';
-        }
     }
 
     // if we are doing embedded full width rows, we only show the renderer when
@@ -149,13 +169,13 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         const bodyCell = !pinnedLeftCell && !pinnedRightCell;
 
         if (this.gridOptionsWrapper.isEnableRtl()) {
-            if (this.columnController.isPinningLeft()) {
+            if (this.columnModel.isPinningLeft()) {
                 return !pinnedRightCell;
             }
             return !bodyCell;
         }
 
-        if (this.columnController.isPinningLeft()) {
+        if (this.columnModel.isPinningLeft()) {
             return !pinnedLeftCell;
         }
 
@@ -169,7 +189,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         const rowNode: RowNode = params.node;
         // if we are only showing one group column, we don't want to be indenting based on level
         const fullWithRow = !!params.colDef;
-        const manyDimensionThisColumn = !fullWithRow || params.colDef.showRowGroup === true;
+        const manyDimensionThisColumn = !fullWithRow || params.colDef!.showRowGroup === true;
         const paddingCount = manyDimensionThisColumn ? rowNode.uiLevel : 0;
         const userProvidedPaddingPixelsTheDeprecatedWay = params.padding >= 0;
 
@@ -235,7 +255,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
                 console.warn('AG Grid: footerValueGetter should be either a function or a string (expression)');
             }
         } else {
-            footerValue = 'Total ' + this.params.value;
+            footerValue = 'Total ' + (this.params.value != null ? this.params.value : '');
         }
 
         this.eValue.innerHTML = footerValue!;
@@ -245,7 +265,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         const params = this.params;
         const rowGroupColumn = this.displayedGroup.rowGroupColumn;
         // we try and use the cellRenderer of the column used for the grouping if we can
-        const columnToUse: Column = rowGroupColumn ? rowGroupColumn : params.column;
+        const columnToUse: Column = rowGroupColumn ? rowGroupColumn : params.column!;
         const groupName = this.params.value;
         const valueFormatted = columnToUse ?
             this.valueFormatterService.formatValue(columnToUse, params.node, params.scope, groupName) : null;
@@ -257,7 +277,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         rendererPromise = params.fullWidth
             ? this.useFullWidth(params)
             : this.useInnerRenderer(
-                this.params.colDef.cellRendererParams,
+                this.params.colDef!.cellRendererParams,
                 columnToUse.getColDef(),
                 params
             );
@@ -290,8 +310,8 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         let cellRendererPromise: AgPromise<ICellRendererComp> | null = null;
 
         // we check if cell renderer provided for the group cell renderer, eg colDef.cellRendererParams.innerRenderer
-        const groupInnerRendererClass: ComponentClassDef<any, any, any> = this.userComponentFactory
-            .lookupComponentClassDef(groupCellRendererParams, "innerRenderer")!;
+        const groupInnerRendererClass: ComponentClassDef = this.userComponentFactory
+            .lookupComponent(groupCellRendererParams, "innerRenderer")!;
 
         if (groupInnerRendererClass && groupInnerRendererClass.component != null
             && groupInnerRendererClass.source != ComponentSource.DEFAULT) {
@@ -299,8 +319,8 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
             cellRendererPromise = this.userComponentFactory.newInnerCellRenderer(groupCellRendererParams, params);
         } else {
             // otherwise see if we can use the cellRenderer of the column we are grouping by
-            const groupColumnRendererClass: ComponentClassDef<any, any, any> = this.userComponentFactory
-                .lookupComponentClassDef(groupedColumnDef, "cellRenderer")!;
+            const groupColumnRendererClass: ComponentClassDef = this.userComponentFactory
+                .lookupComponent(groupedColumnDef, "cellRenderer")!;
 
             if (
                 groupColumnRendererClass &&
@@ -347,6 +367,15 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         }
 
         return cellRendererPromise;
+    }
+
+    private addFullWidthRowDraggerIfNeeded(): void {
+        if (!this.params.fullWidth || !this.params.rowDrag) { return; }
+
+        const rowDragComp = new RowDragComp(() => this.params.value, this.params.node);
+        this.createManagedBean(rowDragComp, this.context);
+
+        this.getGui().insertAdjacentElement('afterbegin', rowDragComp.getGui());
     }
 
     private addChildCount(): void {
@@ -454,28 +483,43 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         this.onExpandOrContract();
     }
 
+    private isDraggedFromParent(): boolean {
+        const rowNode: RowNode = this.params.node;
+        const column = this.params.column as Column;
+
+        if (!this.gridOptionsWrapper.isGroupHideOpenParents()) { return false; }
+
+        if (this.gridOptionsWrapper.isTreeData()) {
+            const msg = `AG Grid: The property hideOpenParents dose not work with Tree Data. This is because Tree Data has values at the group level, it doesn't make sense to hide them (as opposed to Row Grouping, which only has Aggregated Values at the group level).`;
+            doOnce(() => console.warn(msg), 'groupCellRenderer.hideOpenParentsWithTreeData');
+            return false;
+        }
+
+        // hideOpenParents means rowNode.groupData can have data for the group this column is displaying, even though
+        // this rowNode isn't grouping by the column we are displaying
+
+        // if no groupData at all, we are not showing a parent value
+        if (!rowNode.groupData) { return false; }
+
+        // this is the normal case, in that we are showing a group for which this column is configured. note that
+        // this means the Row Group is closed (if it was open, we would not be displaying it)
+        const thisColumnShowingGroupForThisNode = rowNode.rowGroupColumn
+            && column.isRowGroupDisplayed(rowNode.rowGroupColumn.getId());
+        // if showing group as normal, we didn't take group info from parent
+        if (thisColumnShowingGroupForThisNode) { return false; }
+
+        // see if we are showing a Group Value for the Displayed Group. if we are showing a group value, and this Row Node
+        // is not grouping by this Displayed Group, we must of gotten the value from a parent node
+        const valPresent = rowNode.groupData[column.getId()] != null;
+
+        return valPresent;
+    }
+
     private setupDragOpenParents(): void {
         const column = this.params.column;
         const rowNode: RowNode = this.params.node;
 
-        if (!this.gridOptionsWrapper.isGroupHideOpenParents()) {
-            this.draggedFromHideOpenParents = false;
-        } else if (!rowNode.hasChildren()) {
-            // if we are here, and we are not a group, then we must of been dragged down,
-            // as otherwise the cell would be blank, and if cell is blank, this method is never called.
-            this.draggedFromHideOpenParents = true;
-        } else {
-            const rowGroupColumn = rowNode.rowGroupColumn;
-            if (rowGroupColumn) {
-                // if the displayGroup column for this col matches the rowGroupColumn we grouped by for this node,
-                // then nothing was dragged down
-                this.draggedFromHideOpenParents = !column.isRowGroupDisplayed(rowGroupColumn.getId());
-            } else {
-                // the only way we can end up here (no column, but a group) is if we are at the root node,
-                // which only happens when 'groupIncludeTotalFooter' is true. here, we are never dragging
-                this.draggedFromHideOpenParents = false;
-            }
-        }
+        this.draggedFromHideOpenParents = this.isDraggedFromParent();
 
         if (this.draggedFromHideOpenParents) {
             let pointer = rowNode.parent;
@@ -484,7 +528,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
                 if (missing(pointer)) {
                     break;
                 }
-                if (pointer.rowGroupColumn && column.isRowGroupDisplayed(pointer.rowGroupColumn.getId())) {
+                if (pointer.rowGroupColumn && column!.isRowGroupDisplayed(pointer.rowGroupColumn.getId())) {
                     this.displayedGroup = pointer;
                     break;
                 }
@@ -551,7 +595,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         if (this.draggedFromHideOpenParents) { return true; }
 
         const rowNode = this.displayedGroup;
-        const reducedLeafNode = this.columnController.isPivotMode() && rowNode.leafGroup;
+        const reducedLeafNode = this.columnModel.isPivotMode() && rowNode.leafGroup;
         const expandableGroup = rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode;
 
         if (!expandableGroup) { return false; }
@@ -569,7 +613,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     }
 
     private showExpandAndContractIcons(): void {
-        const { eContracted, eExpanded, params, displayedGroup, columnController } = this;
+        const { eContracted, eExpanded, params, displayedGroup, columnModel } = this;
         const { eGridCell, node } = params;
 
         const isExpandable = this.isExpandable();
@@ -588,7 +632,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         }
 
         // compensation padding for leaf nodes, so there is blank space instead of the expand icon
-        const pivotMode = columnController.isPivotMode();
+        const pivotMode = columnModel.isPivotMode();
         const pivotModeAndLeafGroup = pivotMode && displayedGroup.leafGroup;
         const addExpandableCss = isExpandable && !pivotModeAndLeafGroup;
         const isTotalFooterNode = node.footer && node.level === -1;

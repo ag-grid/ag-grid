@@ -63,7 +63,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
                 return index >= 0 && index === (value.length - filterText.length);
             default:
                 // should never happen
-                console.warn('invalid filter type ' + filter);
+                console.warn('AG Grid: Unexpected type of filter "' + filter + '", it looks like the filter was configured with incorrect Filter Options');
                 return false;
         }
     };

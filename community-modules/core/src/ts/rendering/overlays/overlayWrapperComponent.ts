@@ -6,10 +6,15 @@ import { ILoadingOverlayComp } from './loadingOverlayComponent';
 import { INoRowsOverlayComp } from './noRowsOverlayComponent';
 import { AgPromise } from '../../utils';
 import { addOrRemoveCssClass, clearElement } from '../../utils/dom';
+import { LayoutCssClasses, LayoutFeature, LayoutView, UpdateLayoutClassesParams } from "../../styling/layoutFeature";
+import { PaginationProxy } from "../../pagination/paginationProxy";
+import { Events } from "../../eventKeys";
+import { GridApi } from "../../gridApi";
+import { ColumnModel } from "../../columns/columnModel";
 
 enum LoadingType { Loading, NoRows }
 
-export class OverlayWrapperComponent extends Component {
+export class OverlayWrapperComponent extends Component implements LayoutView {
 
     // wrapping in outer div, and wrapper, is needed to center the loading icon
     // The idea for centering came from here: http://www.vanseodesign.com/css/vertical-centering/
@@ -21,6 +26,9 @@ export class OverlayWrapperComponent extends Component {
         </div>`;
 
     @Autowired('userComponentFactory') userComponentFactory: UserComponentFactory;
+    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
+    @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('columnModel') private columnModel: ColumnModel;
 
     @RefSelector('eOverlayWrapper') eOverlayWrapper: HTMLElement;
 
@@ -32,10 +40,26 @@ export class OverlayWrapperComponent extends Component {
         super(OverlayWrapperComponent.TEMPLATE);
     }
 
+    public updateLayoutClasses(cssClass: string, params: UpdateLayoutClassesParams): void {
+        addOrRemoveCssClass(this.eOverlayWrapper, LayoutCssClasses.AUTO_HEIGHT, params.autoHeight);
+        addOrRemoveCssClass(this.eOverlayWrapper, LayoutCssClasses.NORMAL, params.normal);
+        addOrRemoveCssClass(this.eOverlayWrapper, LayoutCssClasses.PRINT, params.print);
+    }
+
     @PostConstruct
     private postConstruct(): void {
-        this.gridOptionsWrapper.addLayoutElement(this.eOverlayWrapper);
+        this.createManagedBean(new LayoutFeature(this));
         this.setDisplayed(false);
+
+        this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, this.onRowDataChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
+
+        if (this.gridOptionsWrapper.isRowModelDefault() && !this.gridOptionsWrapper.getRowData()) {
+            this.showLoadingOverlay();
+        }
+
+        this.gridApi.registerOverlayWrapperComp(this);
     }
 
     private setWrapperTypeClass(loadingType: LoadingType): void {
@@ -44,16 +68,20 @@ export class OverlayWrapperComponent extends Component {
     }
 
     public showLoadingOverlay(): void {
+        if (this.gridOptionsWrapper.isSuppressLoadingOverlay()) { return; }
+
         const workItem = this.userComponentFactory.newLoadingOverlayComponent({
-            api: this.gridOptionsWrapper.getApi()
+            api: this.gridOptionsWrapper.getApi()!
         });
 
         this.showOverlay(workItem, LoadingType.Loading);
     }
 
     public showNoRowsOverlay(): void {
+        if (this.gridOptionsWrapper.isSuppressNoRowsOverlay()) { return; }
+
         const workItem = this.userComponentFactory.newNoRowsOverlayComponent({
-            api: this.gridOptionsWrapper.getApi()
+            api: this.gridOptionsWrapper.getApi()!
         });
 
         this.showOverlay(workItem, LoadingType.NoRows);
@@ -110,4 +138,29 @@ export class OverlayWrapperComponent extends Component {
         this.destroyActiveOverlay();
         super.destroy();
     }
+
+    private showOrHideOverlay(): void {
+        const isEmpty = this.paginationProxy.isEmpty();
+        const isSuppressNoRowsOverlay = this.gridOptionsWrapper.isSuppressNoRowsOverlay();
+        if (isEmpty && !isSuppressNoRowsOverlay) {
+            this.showNoRowsOverlay();
+        } else {
+            this.hideOverlay();
+        }
+    }
+
+    private onRowDataChanged(): void {
+        this.showOrHideOverlay();
+    }
+
+    private onNewColumnsLoaded(): void {
+        // hide overlay if columns and rows exist, this can happen if columns are loaded after data.
+        // this problem exists before of the race condition between the services (column controller in this case)
+        // and the view (grid panel). if the model beans were all initialised first, and then the view beans second,
+        // this race condition would not happen.
+        if (this.columnModel.isReady() && !this.paginationProxy.isEmpty()) {
+            this.hideOverlay();
+        }
+    }
+
 }

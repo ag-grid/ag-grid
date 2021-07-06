@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-community",
-  "version": "25.0.0",
+  "version": "25.3.0",
   "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
   "main": "./main.js",
   "typings": "./main.d.ts",
@@ -14,7 +14,7 @@
     "initMarketing": "git checkout marketing && npm run updateCoreDependencies && npm run buildCore",
     "initMaster": "npm run initSubModules && sh ./scripts/switchToBranch.sh master",
     "initIntelliJ": "cp .idea/workspace.xml.default .idea/workspace.xml",
-    "init": "npm run initLatest && npm run updateAndRebuild && cd grid-packages/ag-grid-docs && npx gulp generate-examples",
+    "init": "npm run initLatest && npm run updateAndRebuild",
     "updateSubModules": "sh ./scripts/updateSubModules.sh",
     "clean": "npx lerna run clean && npx lerna clean --yes",
     "bootstrap": "npx lerna bootstrap --no-ci",
@@ -45,13 +45,16 @@
     "buildVue": "npx lerna run build --scope '{@ag-grid-community/core,ag-grid-vue}'",
     "buildReact": "npx lerna run build --scope '{@ag-grid-community/core,ag-grid-react}'",
     "docs": "cd grid-packages/ag-grid-docs && npm start",
+    "docs-react-fire": "cd grid-packages/ag-grid-docs && npm run start-react-fire",
     "docs-core-only": "cd grid-packages/ag-grid-docs && npm run serve-core-only",
     "docs-clean": "cd grid-packages/ag-grid-docs/documentation && npm run clean",
     "docsWithFormatting": "cd grid-packages/ag-grid-docs && npm run serve-with-formatting",
     "updateAndRebuild": "npm i && npm run bootstrap && npm run build",
     "cleanAndRebuild": "npm run clean && npm run updateAndRebuild",
+    "ciBuildNoTest": "cd grid-packages/ag-grid-docs && node -e 'require(\"./lernaOperations.js\").rebuildPackagesBasedOnChangeStateNoTest()'",
     "ciBuildAndTest": "cd grid-packages/ag-grid-docs && node -e 'require(\"./lernaOperations.js\").rebuildPackagesBasedOnChangeState()'",
-    "ciUpdateRebuildAndTest": "npm i && npm run bootstrap && npm run ciBuildAndTest"
+    "ciUpdateRebuildAndTest": "npm i && npm run bootstrap && npm run ciBuildAndTest",
+    "ciUpdateRebuild": "npm i && npm run bootstrap && npm run ciBuildNoTest"
   },
   "devDependencies": {
     "archiver": "^3.0.0",

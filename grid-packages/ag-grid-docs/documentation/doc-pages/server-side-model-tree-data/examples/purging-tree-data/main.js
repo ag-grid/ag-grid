@@ -21,25 +21,19 @@ var gridOptions = {
     rowSelection: 'multiple',
     animateRows: true,
     cacheBlockSize: 10,
-    isServerSideGroup: function(dataItem) {
+    isServerSideGroupOpenByDefault: function (params) {
+        var isKathrynPowers = params.rowNode.level == 0 && params.data.employeeName == 'Kathryn Powers';
+        var isMabelWard = params.rowNode.level == 1 && params.data.employeeName == 'Mabel Ward';
+        return isKathrynPowers || isMabelWard;
+    },
+    isServerSideGroup: function (dataItem) {
         // indicate if node is a group
         return dataItem.group;
     },
-    getServerSideGroupKey: function(dataItem) {
+    getServerSideGroupKey: function (dataItem) {
         // specify which group key to use
         return dataItem.employeeName;
     },
-    onGridReady: function(params) {
-        // initialise with the first 2 groups arbitrarily expanded
-        setTimeout(function() {
-            // expands first node
-            params.api.getDisplayedRowAtIndex(0).setExpanded(true);
-        }, 1000);
-        setTimeout(function() {
-            // expands second node
-            params.api.getDisplayedRowAtIndex(1).setExpanded(true);
-        }, 2000);
-    }
 };
 
 function refreshCache(route) {

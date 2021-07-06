@@ -5,8 +5,12 @@ import VanillaTemplate from './VanillaTemplate';
 import AngularTemplate from './AngularTemplate';
 import ReactTemplate from './ReactTemplate';
 import VueTemplate from './VueTemplate';
+import Vue3Template from './Vue3Template';
 import { getEntryFile } from './helpers';
 
+/**
+ * This generates the HTML to execute an example.
+ */
 export const getIndexHtml = (exampleInfo, isExecuting = false) => {
     const { sourcePath, options, library } = exampleInfo;
     let { boilerplatePath, appLocation, framework } = exampleInfo;
@@ -64,7 +68,8 @@ export const getIndexHtml = (exampleInfo, isExecuting = false) => {
             const frameworkTemplates = {
                 angular: AngularTemplate,
                 react: ReactTemplate,
-                vue: VueTemplate
+                vue: VueTemplate,
+                vue3: Vue3Template
             };
 
             const FrameworkTemplate = frameworkTemplates[framework];

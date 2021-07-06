@@ -55,7 +55,7 @@ export const isEventSupported = (() => {
     return eventChecker;
 })();
 
-export function getComponentForEvent<T>(gridOptionsWrapper: GridOptionsWrapper, event: Event, type: string): T | null {
+export function getCtrlForEvent<T>(gridOptionsWrapper: GridOptionsWrapper, event: Event, type: string): T | null {
     let sourceElement = getTarget(event);
 
     while (sourceElement) {

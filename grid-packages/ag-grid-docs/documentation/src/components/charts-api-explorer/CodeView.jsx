@@ -3,6 +3,9 @@ import { formatJson } from './utils.jsx';
 import Code from '../Code.jsx';
 import styles from './CodeView.module.scss';
 
+/**
+ * This renders the code inside the Standalone Charts API Explorer.
+ */
 export const CodeView = ({ framework, options }) => {
     const codeMap = {
         javascript: VanillaCode,

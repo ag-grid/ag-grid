@@ -2,7 +2,7 @@ import {
     _,
     Autowired,
     Column,
-    ColumnController,
+    ColumnModel,
     Events,
     FilterManager,
     IServerSideStore,
@@ -15,7 +15,6 @@ import {
     RowNodeBlock,
     RowNodeBlockLoader,
     RowNodeSorter,
-    RowRenderer,
     SelectionChangedEvent,
     ServerSideStoreParams,
     ServerSideStoreState,
@@ -37,8 +36,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
     @Autowired('ssrmCacheUtils') private storeUtils: StoreUtils;
     @Autowired('ssrmBlockUtils') private blockUtils: BlockUtils;
-    @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
+    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
     @Autowired('rowNodeSorter') private rowNodeSorter: RowNodeSorter;
     @Autowired('sortController') private sortController: SortController;
@@ -50,13 +48,11 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     private readonly groupLevel: boolean | undefined;
     private readonly leafGroup: boolean;
     private readonly ssrmParams: SSRMParams;
-    private readonly storeParams: ServerSideStoreParams;
     private readonly parentRowNode: RowNode;
 
     private nodeIdSequence: NumberSequence = new NumberSequence();
 
     private usingTreeData: boolean;
-    private usingMasterDetail: boolean;
 
     private allRowNodes: RowNode[];
     private nodesAfterFilter: RowNode[];
@@ -81,7 +77,6 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         // finite block represents a cache with just one block, thus 0 is the id, it's the first block
         super(0);
         this.ssrmParams = ssrmParams;
-        this.storeParams = storeParams;
         this.parentRowNode = parentRowNode;
         this.level = parentRowNode.level + 1;
         this.groupLevel = ssrmParams.rowGroupCols ? this.level < ssrmParams.rowGroupCols.length : undefined;
@@ -91,13 +86,12 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     @PostConstruct
     private postConstruct(): void {
         this.usingTreeData = this.gridOptionsWrapper.isTreeData();
-        this.usingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
         this.nodeIdPrefix = this.blockUtils.createNodeIdPrefix(this.parentRowNode);
 
         if (!this.usingTreeData && this.groupLevel) {
             const groupColVo = this.ssrmParams.rowGroupCols[this.level];
             this.groupField = groupColVo.field!;
-            this.rowGroupColumn = this.columnController.getRowGroupColumns()[this.level];
+            this.rowGroupColumn = this.columnModel.getRowGroupColumns()[this.level];
         }
 
         this.initialiseRowNodes();
@@ -280,7 +274,10 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         const sortOptions = this.sortController.getSortOptions();
         const noSortApplied = !sortOptions || sortOptions.length == 0;
 
-        if (noSortApplied) {
+        // if we reset after sort, it means the sorting is done on the server
+        const sortDoneOnServer = this.gridOptionsWrapper.isServerSideSortingAlwaysResets();
+
+        if (noSortApplied || sortDoneOnServer) {
             this.nodesAfterSort = this.nodesAfterFilter;
             return;
         }
@@ -290,9 +287,16 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
     private filterRowNodes(): void {
 
-        // filtering for InFullStore only words at lowest level details.
+        // if we reset after filter, it means the filtering is done on the server
+        const filterDoneOnServer = this.gridOptionsWrapper.isServerSideFilteringAlwaysResets();
+
+        // filtering for InFullStore only works at lowest level details.
         // reason is the logic for group filtering was to difficult to work out how it should work at time of writing.
-        if (this.groupLevel) {
+        const groupLevel = this.groupLevel;
+
+        const skipFilter = filterDoneOnServer || groupLevel;
+
+        if (skipFilter) {
             this.nodesAfterFilter = this.allRowNodes;
             return;
         }
@@ -352,7 +356,21 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         });
     }
 
+    public forEachNodeDeepAfterFilterAndSort(callback: (rowNode: RowNode, index: number) => void, sequence = new NumberSequence()): void {
+        this.nodesAfterSort.forEach(rowNode => {
+            callback(rowNode, sequence.next());
+            const childCache = rowNode.childStore;
+            if (childCache) {
+                childCache.forEachNodeDeepAfterFilterAndSort(callback, sequence);
+            }
+        });
+    }
+
     public getRowUsingDisplayIndex(displayRowIndex: number): RowNode | null {
+        // this can happen if asking for a row that doesn't exist in the model,
+        // eg if a cell range is selected, and the user filters so rows no longer exists
+        if (!this.isDisplayIndexInStore(displayRowIndex)) { return null; }
+
         const res = this.blockUtils.binarySearchForDisplayIndex(displayRowIndex, this.nodesAfterSort);
         return res;
     }
@@ -376,7 +394,8 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         // if pixel before block, return first row
         const pixelBeforeThisStore = pixel <= this.topPx;
         if (pixelBeforeThisStore) {
-            return this.nodesAfterSort[0].rowIndex!;
+            const firstNode = this.nodesAfterSort[0];
+            return firstNode.rowIndex!;
         }
         // if pixel after store, return last row, however the last
         // row could be a child store
@@ -385,7 +404,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
             const lastRowNode = this.nodesAfterSort[this.nodesAfterSort.length - 1];
             const lastRowNodeBottomPx = lastRowNode.rowTop! + lastRowNode.rowHeight!;
 
-            if (pixel >= lastRowNodeBottomPx && lastRowNode.expanded && lastRowNode.childStore) {
+            if (pixel >= lastRowNodeBottomPx && lastRowNode.expanded && lastRowNode.childStore && lastRowNode.childStore.getRowCount() > 0) {
                 return lastRowNode.childStore.getRowIndexAtPixel(pixel);
             }
 
@@ -554,6 +573,8 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
             delete this.allNodesMap[rowNode.id!];
 
             rowNodeTransaction.remove!.push(rowNode);
+
+            this.nodeManager.removeNode(rowNode);
         });
 
         this.allRowNodes = this.allRowNodes.filter(rowNode => !rowIdsRemoved[rowNode.id!]);

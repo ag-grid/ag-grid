@@ -120,10 +120,9 @@ const gridOptions = {
 
 If you refresh a row, or a cell is updated due to editing, the `rowStyle`, `rowClass` and `rowClassRules` are all applied again. This has the following effect:
 
-- **rowStyle**: All new styles are applied. If a new style is the
-    same as an old style, the new style overwrites the old style.
+- **rowStyle**: All new styles are applied. If a new style is the same as an old style, the new style overwrites the old style.
 - **rowClass**: All new classes are applied. Old classes are not removed so be aware that classes will accumulate. If you want to remove old classes, then use rowClassRules.
-- **rowClassRules**: Rules that return true will have the class applied the second time. Rules tha return false will have the class removed second time.
+- **rowClassRules**: Rules that return true will have the class applied the second time. Rules that return false will have the class removed second time.
 
 ## Example Row Class Rules
 
@@ -133,7 +132,7 @@ The example below demonstrates `rowClassRules`:
 - `rowClassRules` are used to apply the class `sick-days-warning` when the number of sick days > 5 and <= 7, and the class `sick-days-breach` is applied when the number of sick days >= 8.
 
 - The grid re-evaluates the rowClassRules when the data is changed. The example
-shows changing the data in the three different ways: `rowNode.setDataValue`, `rowNode.setData` and `api.applyTransaction`. See [Updating Data](../data-update/) for details on these update functions.
+shows changing the data in the three different ways: `rowNode.setDataValue`, `rowNode.setData` and `api.applyTransaction`. See [Updating Data](/data-update/) for details on these update functions.
 
 <grid-example title='Row Class Rules' name='row-class-rules' type='generated'></grid-example>
 

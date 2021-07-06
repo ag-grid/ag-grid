@@ -24,6 +24,23 @@ series: [{
 
 The chart expects the data (`chart.data` property) to be an array of objects, where each object is a table row or a database record and each key is a column. To plot anything on a plane, we need at least two coordinates: `x` and `y`. The `xKey` and `yKey` line series configs tell the series which keys should be used to fetch the values of these coordinates from each object in the `data` array.
 
+Showing labels on top of data points is also an option with the `label` config. Labels can be enabled independently of series markers.
+For example, to show bold labels on top of each data point (and in this case a marker) we would use the following config:
+
+```js
+series: [{
+    ...
+    label: {
+        enabled: true,
+        fontWeight: 'bold'
+    }
+}]
+```
+
+The above config is used in the example below. Feel free to open it in Pluker and experiment with other [label options](#reference-line.label).
+
+<chart-example title='Line Series With Labels' name='basic-line-labels' type='generated'></chart-example>
+
 ## Multiple Series
 
 If we have more than two fields inside each object in the `data` array, we can create a multi-series line chart. For example, if a datum looks like this:
@@ -98,7 +115,7 @@ We'll get a result like this:
 
 <chart-example title='Line and Marker Colours' name='line-marker-colors' type='generated'></chart-example>
 
-There are many other customisations you can make to the markers; see the [markers section](../charts-markers/) for more information.
+There are many other customisations you can make to the markers; see the [markers section](/charts-markers/) for more information.
 
 ## Missing Data
 
@@ -110,7 +127,7 @@ If the `yKey` value of a data point is positive or negative `Infinity`, `null`, 
 
 ## Continuous Data
 
-By default, the bottom axis is a `'category'` axis, but this can be changed if you have continuous data that you would like to plot. See the [axes section](../charts-axes/) for more information on configuring axes.
+By default, the bottom axis is a `'category'` axis, but this can be changed if you have continuous data that you would like to plot. See the [axes section](/charts-axes/) for more information on configuring axes.
 
 <chart-example title='Continuous Data: Spiral Curve' name='two-number-axes' type='generated' options='{ "exampleHeight": 600 }'></chart-example>
 
@@ -171,4 +188,4 @@ This example uses the `'time'` axis which is configured to show a tick every 5 s
 
 ## Next Up
 
-Continue to the next section to learn about [bar and column series](../charts-bar-series/).
+Continue to the next section to learn about [bar and column series](/charts-bar-series/).

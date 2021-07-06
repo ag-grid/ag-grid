@@ -1,7 +1,7 @@
 import { IRowModel } from './iRowModel';
 import { RowNodeTransaction } from './rowNodeTransaction';
 import { RowDataTransaction } from './rowDataTransaction';
-import { RowNode } from '../entities/rowNode';
+import { RowHighlightPosition, RowNode } from '../entities/rowNode';
 import { ChangedPath } from '../utils/changedPath';
 
 export enum ClientSideRowModelSteps {
@@ -33,7 +33,7 @@ export interface IClientSideRowModel extends IRowModel {
     forEachPivotNode(callback: (node: RowNode, index: number) => void): void;
     ensureRowsAtPixel(rowNode: RowNode[], pixel: number, increment: number): boolean;
     highlightRowAtPixel(rowNode: RowNode | null, pixel?: number): void;
-    getHighlightPosition(pixel: number, rowNode?: RowNode): 'above' | 'below';
+    getHighlightPosition(pixel: number, rowNode?: RowNode): RowHighlightPosition;
     getLastHighlightedRowNode(): RowNode | null;
 }
 

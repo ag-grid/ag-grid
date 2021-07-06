@@ -9,10 +9,20 @@ function checkFileExists {
     fi
 }
 
-checkFileExists ~/.ssh/ag_ssh
+SSH_LOCATION=$HOME/$SSH_FILE
+
+if [ -z "$SSH_LOCATION" ]
+then
+      echo "\$SSH_LOCATION is not set"
+      exit;
+fi
+
+checkFileExists $SSH_LOCATION
 
 TIMESTAMP=`date +%Y%m%d`
+ARCHIVE_FILENAME="agGridCom_$TIMESTAMP.zip"
 
-ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com "zip -r --exclude=*archive* agGridCom_$TIMESTAMP.zip public_html"
+# archive the current public_html if the archive doesn't already exist (to take account of multiple deployments on the same day)
+ssh -i $SSH_LOCATION ceolter@ag-grid.com "if [ -f "$ARCHIVE_FILENAME" ]; then echo \"$ARCHIVE_FILENAME exists - skipping archive\"; else zip -r --exclude=*archive* $ARCHIVE_FILENAME public_html; fi"
 
 

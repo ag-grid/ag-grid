@@ -1,4 +1,4 @@
-import Vue from 'vue';
+import {nextTick} from 'vue';
 
 const KEY_BACKSPACE = 8;
 const KEY_DELETE = 46;
@@ -6,7 +6,7 @@ const KEY_F2 = 113;
 const KEY_ENTER = 13;
 const KEY_TAB = 9;
 
-export default Vue.extend({
+export default {
     template: `<input :ref="'input'" @keydown="onKeyDown($event)" v-model="value"/>`,
     data() {
         return {
@@ -126,4 +126,4 @@ export default Vue.extend({
             }
         });
     },
-});
+};
