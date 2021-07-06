@@ -240,7 +240,7 @@ export class PivotColDefService extends BeanStub {
         if (group.children.length > 1) {
 
             const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-            const headerName = localeTextFunc('pivotColumnGroupTotal', 'Total');
+            const headerName = localeTextFunc('pivotColumnGroupTotals', 'Total');
 
             //create total colDef using an arbitrary value column as a template
             const totalColDef = this.createColDef(valueColumn, headerName, groupDef.pivotKeys, columnIdSequence);
