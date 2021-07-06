@@ -39,10 +39,16 @@ md-include:component-usage-angular.md
 md-include:component-usage-react.md
 md-include:component-usage-vue.md
 
+[[only-vue]]
+md-include:vue3-plugins.md
+ 
+[[only-vue]]
+md-include:vue3-class-components.md
+ 
 md-include:js-fw-angular.md
 md-include:js-fw-react.md
 md-include:js-fw-vue.md
-
+ 
 ## Grid Provided Components
 
 The grid comes with pre-registered components that can be used. Each component provided by the grid starts with the namespaces 'ag' to minimise naming conflicts with user provided components. The full list of grid provided components are in the table below.
