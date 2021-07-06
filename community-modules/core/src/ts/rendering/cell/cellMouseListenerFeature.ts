@@ -129,7 +129,7 @@ export class CellMouseListenerFeature extends Beans {
             return;
         }
 
-        if (!shiftKey || (rangeService && !rangeService.getCellRanges().length)) {
+        if (!shiftKey || !rangeService || !rangeService.getCellRanges().length) {
             // We only need to pass true to focusCell when the browser is IE/Edge and we are trying
             // to focus the cell itself. This should never be true if the mousedown was triggered
             // due to a click on a cell editor for example.
