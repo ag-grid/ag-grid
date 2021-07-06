@@ -26,6 +26,11 @@ export const getAgGridProperties = (): [Properties, Properties, { prop: string, 
                 return []
             }
         },
+        plugins: {
+            default() {
+                return []
+            }
+        },
         modules: {
             default() {
                 return []
