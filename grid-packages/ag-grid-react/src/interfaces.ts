@@ -29,7 +29,7 @@ export interface SharedProps extends GridOptions {
     modules?: Module[];
     containerStyle?: any;
     className?: string;
-    setGridApi: (gridApi: GridApi, columnApi: ColumnApi)=>void;
+    setGridApi?: (gridApi: GridApi, columnApi: ColumnApi) => void;
 }
 
 export interface AgReactUiProps extends SharedProps {
