@@ -368,7 +368,7 @@ export { IHeaderParams, IHeader } from "./headerRendering/header/headerComp";
 export { IHeaderGroupParams, IHeaderGroup } from "./headerRendering/headerGroup/headerGroupComp";
 export { ColumnApi } from "./columns/columnApi";
 export { IRichCellEditorParams } from "./interfaces/iRichCellEditorParams";
-export { WrapableInterface, BaseComponentWrapper, FrameworkComponentWrapper } from "./components/framework/frameworkComponentWrapper";
+export { WrappableInterface, BaseComponentWrapper, FrameworkComponentWrapper } from "./components/framework/frameworkComponentWrapper";
 export { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 export { Environment } from "./environment";
 export { ITooltipComp, ITooltipParams } from "./rendering/tooltipComponent";

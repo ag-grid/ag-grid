@@ -4,18 +4,6 @@ export enum ChangeDetectionStrategyType {
     NoCheck = 'NoCheck'
 }
 
-export class ChangeDetectionService {
-    private strategyMap: { [key in ChangeDetectionStrategyType]: ChangeDetectionStrategy } = {
-        [ChangeDetectionStrategyType.DeepValueCheck]: new DeepValueStrategy(),
-        [ChangeDetectionStrategyType.IdentityCheck]: new SimpleFunctionalStrategy((a, b) => a === b),
-        [ChangeDetectionStrategyType.NoCheck]: new SimpleFunctionalStrategy((a, b) => false)
-    };
-
-    public getStrategy(changeDetectionStrategy: ChangeDetectionStrategyType): ChangeDetectionStrategy {
-        return this.strategyMap[changeDetectionStrategy];
-    }
-}
-
 export interface ChangeDetectionStrategy {
     areEqual(a: any, b: any): boolean;
 }
@@ -151,5 +139,17 @@ class DeepValueStrategy implements ChangeDetectionStrategy {
             if (newA) delete a.areEquivPropertyTracking;
             if (newB) delete b.areEquivPropertyTracking;
         }
+    }
+}
+
+export class ChangeDetectionService {
+    private strategyMap: { [key in ChangeDetectionStrategyType]: ChangeDetectionStrategy } = {
+        [ChangeDetectionStrategyType.DeepValueCheck]: new DeepValueStrategy(),
+        [ChangeDetectionStrategyType.IdentityCheck]: new SimpleFunctionalStrategy((a, b) => a === b),
+        [ChangeDetectionStrategyType.NoCheck]: new SimpleFunctionalStrategy((a, b) => false)
+    };
+
+    public getStrategy(changeDetectionStrategy: ChangeDetectionStrategyType): ChangeDetectionStrategy {
+        return this.strategyMap[changeDetectionStrategy];
     }
 }

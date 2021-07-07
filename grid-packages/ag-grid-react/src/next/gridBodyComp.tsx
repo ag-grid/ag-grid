@@ -14,7 +14,7 @@ import { RowContainerComp } from "./rowContainerComp";
 
 export function GridBodyComp(params: {context: Context}) {
 
-    const {context} = params;
+    const { context } = params;
 
     const [rowAnimationClass, setRowAnimationClass] = useState<string>('');
     const [ariaColCount, setAriaColCount] = useState<number>(0);
@@ -39,7 +39,7 @@ export function GridBodyComp(params: {context: Context}) {
 
     useEffect(()=> {
         const beansToDestroy: any[] = [];
-        const destroyFuncs: (()=>void)[] = [];
+        const destroyFuncs: (() => void)[] = [];
 
         const agStackComponentsRegistry: AgStackComponentsRegistry = context.getBean('agStackComponentsRegistry');
         const newComp = (tag: string) => {
@@ -98,9 +98,9 @@ export function GridBodyComp(params: {context: Context}) {
         beansToDestroy.push(ctrl);
         ctrl.setComp(compProxy, eRoot.current!, eBodyViewport.current!, eTop.current!, eBottom.current!);
 
-        return ()=> {
-            beansToDestroy.forEach( b => context.destroyBean(b) );
-            destroyFuncs.forEach( f => f() );
+        return () => {
+            beansToDestroy.forEach(b => context.destroyBean(b));
+            destroyFuncs.forEach(f => f());
         };
 
     }, []);
@@ -125,17 +125,15 @@ export function GridBodyComp(params: {context: Context}) {
     };
 
     return (
-        <div ref={eRoot} className={rootClasses} role="grid" unselectable="on" aria-colcount={ariaColCount} aria-rowcount={ariaRowCount}>
-            <div className={topClasses} ref={eTop} role="presentation" unselectable="on" style={topStyle}>
+        <div ref={ eRoot } className={ rootClasses } role="grid" unselectable="on" aria-colcount={ ariaColCount } aria-rowcount={ ariaRowCount }>
+            <div className={ topClasses } ref={ eTop } role="presentation" unselectable="on" style={ topStyle }></div>
+            <div className={ bodyViewportClasses } ref={ eBodyViewport } role="presentation">
+                <RowContainerComp context={ context } name={ RowContainerName.LEFT }/>
+                <RowContainerComp context={ context } name={ RowContainerName.CENTER }/>
+                <RowContainerComp context={ context } name={ RowContainerName.RIGHT }/>
+                <RowContainerComp context={ context } name={ RowContainerName.FULL_WIDTH }/>
             </div>
-            <div className={bodyViewportClasses} ref={eBodyViewport} role="presentation">
-                <RowContainerComp context={context} name={RowContainerName.LEFT}/>
-                <RowContainerComp context={context} name={RowContainerName.CENTER}/>
-                <RowContainerComp context={context} name={RowContainerName.RIGHT}/>
-                <RowContainerComp context={context} name={RowContainerName.FULL_WIDTH}/>
-            </div>
-            <div className={bottomClasses} ref={eBottom} role="presentation" unselectable="on" style={bottomStyle}>
-            </div>
+            <div className={ bottomClasses } ref={ eBottom } role="presentation" unselectable="on" style={ bottomStyle }></div>
         </div>
     );
 }

@@ -14,7 +14,7 @@ export interface FrameworkComponentWrapper {
     ): A;
 }
 
-export interface WrapableInterface {
+export interface WrappableInterface {
     hasMethod(name: string): boolean;
 
     callMethod(name: string, args: IArguments): void;
@@ -22,7 +22,7 @@ export interface WrapableInterface {
     addMethod(name: string, callback: Function): void;
 }
 
-export abstract class BaseComponentWrapper<F extends WrapableInterface> implements FrameworkComponentWrapper {
+export abstract class BaseComponentWrapper<F extends WrappableInterface> implements FrameworkComponentWrapper {
     wrap<A extends IComponent<any>>(OriginalConstructor: { new(): any },
                                     mandatoryMethodList: string[],
                                     optionalMethodList: string[] = [],

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Context, IRowComp, RowCtrl, _, Column, RowNode, CellCtrl } from "@ag-grid-community/core";
+import { Context, IRowComp, RowCtrl, _, CellCtrl } from "@ag-grid-community/core";
 import { CssClasses } from "./utils";
 import { CellComp } from "./cellComp";
 
@@ -16,32 +16,36 @@ function maintainOrderOnColumns(prev: CellCtrls, next: CellCtrl[], domOrder: boo
     if (domOrder) {
         const res: CellCtrls = {list: next, instanceIdMap: {}};
         next.forEach(c => res.instanceIdMap[c.getInstanceId()] = c);
-        return res;
-    } else {
-        // if dom order not important, we don't want to change the order
-        // of the elements in the dom, as this would break transition styles
-        const oldCellCtrls: CellCtrl[] = [];
-        const newCellCtrls: CellCtrl[] = [];
-        const newInstanceIdMap: CellCtrlMap = {};
-        next.forEach(c => {
-            if (prev.instanceIdMap[c.getInstanceId()]!=null) {
-                oldCellCtrls.push(c);
-            } else {
-                newCellCtrls.push(c);
-            }
-            newInstanceIdMap[c.getInstanceId()] = c;
-        });
-        const res: CellCtrls = {
-            list: [...oldCellCtrls, ...newCellCtrls],
-            instanceIdMap: newInstanceIdMap
-        };
+
         return res;
     }
+
+    // if dom order not important, we don't want to change the order
+    // of the elements in the dom, as this would break transition styles
+    const oldCellCtrls: CellCtrl[] = [];
+    const newCellCtrls: CellCtrl[] = [];
+    const newInstanceIdMap: CellCtrlMap = {};
+
+    next.forEach(c => {
+        if (prev.instanceIdMap[c.getInstanceId()] != null) {
+            oldCellCtrls.push(c);
+        } else {
+            newCellCtrls.push(c);
+        }
+        newInstanceIdMap[c.getInstanceId()] = c;
+    });
+
+    const res: CellCtrls = {
+        list: [...oldCellCtrls, ...newCellCtrls],
+        instanceIdMap: newInstanceIdMap
+    };
+
+    return res;
 }
 
 export function RowComp(params: {context: Context, rowCtrl: RowCtrl, pinned: string | null}) {
 
-    const {context, rowCtrl, pinned} = params;
+    const { context, rowCtrl, pinned } = params;
 
     const [height, setHeight] = useState<string>();
     const [top, setTop] = useState<string | undefined>(rowCtrl.getInitialRowTop());
@@ -83,8 +87,8 @@ export function RowComp(params: {context: Context, rowCtrl: RowCtrl, pinned: str
             setRole: value => setRole(value),
             // if we don't maintain the order, then cols will be ripped out and into the dom
             // when cols reordered, which would stop the CSS transitions from working
-            setCellCtrls: next => setCellCtrls( prev => maintainOrderOnColumns(prev, next, domOrder) ),
-            destroy: ()=> true,
+            setCellCtrls: next => setCellCtrls(prev => maintainOrderOnColumns(prev, next, domOrder) ),
+            destroy: () => true,
             destroyCells: cellComps => true,
             getFullWidthRowComp: ()=> null,
         };
@@ -108,14 +112,14 @@ export function RowComp(params: {context: Context, rowCtrl: RowCtrl, pinned: str
     const className = cssClasses.toString();
 
     return (
-        <div ref={eGui} role={role} className={className} style={rowStyles} row-index={rowIndex}
-             aria-rowindex={ariaRowIndex} aria-expanded={ariaExpanded} aria-label={ariaLabel}
-             aria-selected={ariaSelected} row-id={rowId} row-business-key={rowBusinessKey} tabIndex={tabIndex}>
+        <div ref={ eGui } role={ role } className={ className } style={ rowStyles } row-index={ rowIndex }
+             aria-rowindex={ ariaRowIndex } aria-expanded={ ariaExpanded } aria-label={ ariaLabel }
+             aria-selected={ ariaSelected } row-id={ rowId } row-business-key={ rowBusinessKey } tabIndex={ tabIndex }>
             {
-                cellCtrls && cellCtrls.list.map( cellCtrl =>
-                    <CellComp context={context} cellCtrl={cellCtrl}
-                              editingRow={rowCtrl.isEditing()} printLayout={rowCtrl.isPrintLayout()}
-                              key={cellCtrl.getInstanceId()}/>
+                cellCtrls && cellCtrls.list.map(cellCtrl =>
+                    <CellComp context={ context } cellCtrl={ cellCtrl }
+                              editingRow={ rowCtrl.isEditing() } printLayout={ rowCtrl.isPrintLayout() }
+                              key={ cellCtrl.getInstanceId() }/>
                 )
             }
         </div>

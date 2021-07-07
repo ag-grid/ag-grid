@@ -16,7 +16,7 @@ export function RowContainerComp(params: {context: Context, name: RowContainerNa
     const [domOrder, setDomOrder] = useState<boolean>(false);
     const [containerWidth, setContainerWidth] = useState<string>('');
 
-    const {context, name} = params;
+    const { context, name } = params;
 
     const cssClasses = useMemo( ()=> RowContainerCtrl.getRowContainerCssClasses(name), []);
     const pinned = useMemo( ()=> RowContainerCtrl.getPinned(name), []);
@@ -72,10 +72,14 @@ export function RowContainerComp(params: {context: Context, name: RowContainerNa
     };
 
     const buildContainer = () => (
-        <div className={ containerClasses } ref={ eContainer } role="rowgroup" style={containerStyle}
-             unselectable="on">
+        <div
+            className={ containerClasses }
+            ref={ eContainer }
+            role="rowgroup" 
+            style={ containerStyle }
+            unselectable="on">
             {
-                rowCtrls.map( rowCtrl => <RowComp context={context} rowCtrl={rowCtrl} pinned={pinned} key={rowCtrl.getInstanceId()}></RowComp> )
+                rowCtrls.map(rowCtrl => <RowComp context={ context } rowCtrl={ rowCtrl } pinned={ pinned } key={ rowCtrl.getInstanceId() }></RowComp>)
             }
         </div>
     );
@@ -89,14 +93,14 @@ export function RowContainerComp(params: {context: Context, name: RowContainerNa
             {
                 template1 &&
                 <div className={ wrapperClasses } ref={ eWrapper } role="presentation" unselectable="on">
-                    <div className={ viewportClasses } ref= { eViewport } role="presentation" style={viewportStyle}>
+                    <div className={ viewportClasses } ref= { eViewport } role="presentation" style={ viewportStyle }>
                         { buildContainer() }
                     </div>
                 </div>
             }
             {
                 template2 &&
-                <div className={ viewportClasses } ref= { eViewport } role="presentation" style={viewportStyle}>
+                <div className={ viewportClasses } ref= { eViewport } role="presentation" style={ viewportStyle }>
                     { buildContainer() }
                 </div>
             }

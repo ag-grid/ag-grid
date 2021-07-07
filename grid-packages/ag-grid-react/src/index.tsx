@@ -1,14 +1,11 @@
 import React, {useState} from "react";
 import ReactDOM from "react-dom";
 import {ClientSideRowModelModule} from "@ag-grid-community/client-side-row-model"
-import {AgGridReact} from "./agGridReact"
 import {AgGridColumn} from "./agGridColumn"
 
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
-import { GridComp } from "./next/gridComp";
 import { AgGridReactFire } from "./next/agGridReactFire";
-import row from "../../../enterprise-modules/excel-export/typings/excelExport/files/xml/row";
 
 const App = () => {
     const [gridApi, setGridApi] = useState(null);

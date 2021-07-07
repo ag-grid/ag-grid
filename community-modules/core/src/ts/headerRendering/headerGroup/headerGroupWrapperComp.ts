@@ -27,7 +27,6 @@ import { removeFromArray } from "../../utils/array";
 import { removeFromParent, addCssClass, removeCssClass, addOrRemoveCssClass } from "../../utils/dom";
 import { KeyCode } from '../../constants/keyCode';
 import { ITooltipParams } from "../../rendering/tooltipComponent";
-import { escapeString } from "../../utils/string";
 
 export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
 

@@ -6,7 +6,7 @@ import generateNewKey from './keyGenerator';
 import { renderToStaticMarkup } from 'react-dom/server';
 
 export class LegacyReactComponent extends ReactComponent {
-    static SLOW_RENDERERING_THRESHOLD = 3;
+    static SLOW_RENDERING_THRESHOLD = 3;
 
     private staticMarkup: HTMLElement | null | string = null;
     private staticRenderTime: number = 0;
@@ -61,7 +61,7 @@ export class LegacyReactComponent extends ReactComponent {
     protected fallbackMethod(name: string, params: any): void { /* no op */ }
 
     private isSlowRenderer() {
-        return this.staticRenderTime >= LegacyReactComponent.SLOW_RENDERERING_THRESHOLD;
+        return this.staticRenderTime >= LegacyReactComponent.SLOW_RENDERING_THRESHOLD;
     }
 
     public isNullValue(): boolean {

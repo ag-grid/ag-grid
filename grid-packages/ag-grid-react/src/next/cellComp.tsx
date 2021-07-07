@@ -1,20 +1,23 @@
-import React, { MutableRefObject, useEffect, useMemo, useRef, useState, useCallback } from "react";
+import React, { MutableRefObject, useEffect, useRef, useState, useCallback } from "react";
 import {
     Context,
     Component,
-    _,
     ICellComp,
     CellCtrl,
-    UserCompDetails, CheckboxSelectionComponent
+    UserCompDetails,
+    _,
 } from "ag-grid-community";
 import { CssClasses } from "./utils";
-import cell from "../../../../enterprise-modules/excel-export/typings/excelExport/files/xml/cell";
 
-enum CellState {ShowValue, EditValue}
 
-export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
-                                printLayout: boolean, editingRow: boolean}) {
+enum CellState { ShowValue, EditValue }
 
+export function CellComp(props: {
+    cellCtrl: CellCtrl,
+    context: Context,
+    printLayout: boolean, 
+    editingRow: boolean
+}) {
     const { cellCtrl, printLayout, editingRow, context } = props;
 
     const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses());
@@ -30,12 +33,12 @@ export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
     const [valueToDisplay, setValueToDisplay] = useState<any>();
     const [editorCompDetails, setEditorCompDetails] = useState<UserCompDetails>();
     const [tabIndex, setTabIndex] = useState<number>();
-    const [ariaSelected, setAriaSelected] = useState<boolean|undefined>();
+    const [ariaSelected, setAriaSelected] = useState<boolean | undefined>();
     const [ariaColIndex, setAriaColIndex] = useState<number>();
     const [zIndex, setZIndex] = useState<string>();
     const [role, setRole] = useState<string>();
     const [colId, setColId] = useState<string>();
-    const [title, setTitle] = useState<string|undefined>();
+    const [title, setTitle] = useState<string | undefined>();
     const [includeSelection, setIncludeSelection] = useState<boolean>(false);
     const [includeRowDrag, setIncludeRowDrag] = useState<boolean>(false);
     const [includeDndSource, setIncludeDndSource] = useState<boolean>(false);
@@ -74,11 +77,11 @@ export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
             addComp(cellCtrl.createRowDragComp());
         }
 
-        return ()=> {
-            beansToDestroy.forEach( b => context.destroyBean(b) );
+        return () => {
+            context.destroyBeans(beansToDestroy);
         };
 
-    }, [toolsSpan, includeSelection, includeRowDrag, includeDndSource]);
+    }, [toolsSpan, includeSelection, includeRowDrag, includeDndSource, cellCtrl, context]);
 
     // attaching the ref to state makes sure we render again when state is set. this is
     // how we make sure the tools are added, as it's not possible to have an effect depend
@@ -163,10 +166,12 @@ export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
 }
 
 function jsxShowValue(
-            rendererCompDetails: UserCompDetails | undefined, cellRendererRef: MutableRefObject<any>, valueToDisplay: any,
+            rendererCompDetails: UserCompDetails | undefined,
+            cellRendererRef: MutableRefObject<any>,
+            valueToDisplay: any,
             showTools: boolean,
-            toolsCallback: (ref:any)=>void
-            ) {
+            toolsCallback: (ref:any) => void
+) {
     const noCellRenderer = !rendererCompDetails;
     const reactCellRenderer = rendererCompDetails && rendererCompDetails.componentFromFramework;
     const jsCellRenderer = rendererCompDetails && !rendererCompDetails.componentFromFramework;
@@ -180,11 +185,13 @@ function jsxShowValue(
     ///////// Need to fix unselectable=on, should be set by the ctrl
     return (
         <>
-            { showTools && <div className="ag-cell-wrapper" role="presentation" ref={toolsCallback}>
-                                <span role="presentation" className={"ag-cell-value"} unselectable="on">
-                                    {bodyJsxFunc()}
-                                </span>
-                            </div> }
+            { showTools && 
+                <div className="ag-cell-wrapper" role="presentation" ref={toolsCallback}>
+                    <span role="presentation" className={"ag-cell-value"} unselectable="on">
+                        { bodyJsxFunc() }
+                    </span>
+                </div> 
+            }
             { !showTools && bodyJsxFunc() }
         </>
     );
@@ -220,11 +227,12 @@ function jsxShowValueJsCellRenderer() {
 
 function jsxEditValueReactCellRenderer(editorCompDetails: UserCompDetails, cellEditorRef: MutableRefObject<any>) {
     const CellEditorClass = editorCompDetails.componentClass;
+
     return (
         <CellEditorClass {...editorCompDetails.params} ref={cellEditorRef}></CellEditorClass>
     );
 }
 
 function jsxEditValueJsCellRenderer() {
-    return (<>Please write yoru Cell Editor as a React Component</>);
+    return (<>Please write your Cell Editor as a React Component</>);
 }

@@ -11,8 +11,7 @@ import {
     Grid,
     GridApi,
     GridOptions,
-    Module,
-    WrapableInterface
+    WrappableInterface
 } from "@ag-grid-community/core";
 import {AgGridColumn} from "./agGridColumn";
 import {ChangeDetectionService, ChangeDetectionStrategyType} from "./changeDetectionService";
@@ -93,7 +92,7 @@ export class AgGridReactLegacy extends Component<AgGridReactProps, {}> {
         this.api = this.gridOptions.api!;
         this.columnApi = this.gridOptions.columnApi!;
 
-        this.props.setGridApi(this.api, this.columnApi);
+        this.props.setGridApi!(this.api, this.columnApi);
     }
 
     waitForInstance(reactComponent: ReactComponent, resolve: (value: any) => void, startTime = Date.now()): void {
@@ -338,7 +337,7 @@ function addProperties(listOfProps: string[], propType: any) {
     });
 }
 
-class ReactFrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterface> implements FrameworkComponentWrapper {
+class ReactFrameworkComponentWrapper extends BaseComponentWrapper<WrappableInterface> implements FrameworkComponentWrapper {
     private readonly agGridReact!: AgGridReactLegacy;
 
     constructor(agGridReact: AgGridReactLegacy) {
@@ -346,7 +345,7 @@ class ReactFrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterf
         this.agGridReact = agGridReact;
     }
 
-    createWrapper(UserReactComponent: { new(): any; }, componentType: ComponentType): WrapableInterface {
+    createWrapper(UserReactComponent: { new(): any; }, componentType: ComponentType): WrappableInterface {
         return this.agGridReact.isLegacyComponentRendering() ?
             new LegacyReactComponent(UserReactComponent, this.agGridReact, componentType) :
             new NewReactComponent(UserReactComponent, this.agGridReact, componentType);
