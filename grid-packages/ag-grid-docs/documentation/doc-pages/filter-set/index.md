@@ -25,9 +25,9 @@ The Set Filter is the default filter used in AG Grid Enterprise, but it can also
 const gridOptions = {
     columnDefs: [
         // Set Filter is used by default in Enterprise version
-        { field: 'country', filter: true },
+        { field: 'athlete', filter: true },
         // explicitly configure column to use the Set Filter
-        { field: 'year', filter: 'agSetColumnFilter' },
+        { field: 'country', filter: 'agSetColumnFilter' },
     ],
 }
 </snippet>
