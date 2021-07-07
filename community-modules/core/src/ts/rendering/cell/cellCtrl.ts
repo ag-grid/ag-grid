@@ -27,6 +27,10 @@ import { ICellRenderer, ICellRendererParams } from "../cellRenderers/iCellRender
 import { ICellEditor, ICellEditorParams } from "../../interfaces/iCellEditor";
 import { KeyCode } from "../../constants/keyCode";
 import { UserCompDetails } from "../../components/framework/userComponentFactory";
+import { CheckboxSelectionComponent } from "../checkboxSelectionComponent";
+import { DndSourceComp } from "../dndSourceComp";
+import { doOnce } from "../../utils/function";
+import { RowDragComp } from "../row/rowDragComp";
 
 const CSS_CELL = 'ag-cell';
 const CSS_AUTO_HEIGHT = 'ag-cell-auto-height';
@@ -68,9 +72,6 @@ export interface ICellComp {
 
     showValue(valueToDisplay: any, compDetails: UserCompDetails | undefined, forceNewCellRendererInstance: boolean): void;
     editValue(compClassAndParams: UserCompDetails): void;
-
-    // hacks
-    addRowDragging(customElement?: HTMLElement, dragStartPixels?: number): void;
 }
 
 let instanceIdSequence = 0;
@@ -115,6 +116,9 @@ export class CellCtrl extends BeanStub {
     private includeRowDrag: boolean;
 
     private suppressRefreshCell = false;
+
+    // this comp used only for custom row drag handle (ie when user calls params.registerRowDragger)
+    private customRowDragComp: RowDragComp;
 
     constructor(column: Column, rowNode: RowNode, beans: Beans, rowCtrl: RowCtrl | null) {
         super();
@@ -407,7 +411,7 @@ export class CellCtrl extends BeanStub {
             eGridCell: this.getGui(),
             eParentOfValue: this.cellComp.getParentOfValue(),
 
-            registerRowDragger: (rowDraggerElement, dragStartPixels) => this.cellComp.addRowDragging(rowDraggerElement, dragStartPixels),
+            registerRowDragger: (rowDraggerElement, dragStartPixels) => this.registerRowDragger(rowDraggerElement, dragStartPixels),
 
             // this function is not documented anywhere, so we could drop it
             // it was in the olden days to allow user to register for when rendered
@@ -920,5 +924,62 @@ export class CellCtrl extends BeanStub {
 
     public destroy(): void {
         if (this.cellRangeFeature) { this.cellRangeFeature.destroy(); }
+    }
+
+    public createSelectionCheckbox(): CheckboxSelectionComponent {
+        const cbSelectionComponent = new CheckboxSelectionComponent();
+        this.beans.context.createBean(cbSelectionComponent);
+
+        cbSelectionComponent.init({ rowNode: this.rowNode, column: this.column });
+
+        // put the checkbox in before the value
+        return cbSelectionComponent;
+    }
+
+    public createDndSource(): DndSourceComp {
+        const dndSourceComp = new DndSourceComp(this.rowNode, this.column, this.beans, this.eGui);
+        this.beans.context.createBean(dndSourceComp);
+        return dndSourceComp;
+    }
+
+    public registerRowDragger(customElement: HTMLElement, dragStartPixels?: number): void {
+        // if previously existed, then we are only updating
+        if (this.customRowDragComp) {
+            this.customRowDragComp.setDragElement(customElement, dragStartPixels);
+            return;
+        }
+
+        const newComp = this.createRowDragComp(customElement, dragStartPixels);
+        if (newComp) {
+            this.customRowDragComp = newComp;
+            this.addDestroyFunc( ()=> this.beans.context.destroyBean(newComp) );
+        }
+    }
+
+    public createRowDragComp(customElement?: HTMLElement, dragStartPixels?: number): RowDragComp | undefined {
+        const pagination = this.beans.gridOptionsWrapper.isPagination();
+        const rowDragManaged = this.beans.gridOptionsWrapper.isRowDragManaged();
+        const clientSideRowModelActive = this.beans.gridOptionsWrapper.isRowModelDefault();
+
+        if (rowDragManaged) {
+            // row dragging only available in default row model
+            if (!clientSideRowModelActive) {
+                doOnce(() => console.warn('AG Grid: managed row dragging is only allowed in the Client Side Row Model'),
+                    'CellComp.addRowDragging');
+
+                return;
+            }
+
+            if (pagination) {
+                doOnce(() => console.warn('AG Grid: managed row dragging is not possible when doing pagination'),
+                    'CellComp.addRowDragging');
+
+                return;
+            }
+        }
+
+        // otherwise (normal case) we are creating a RowDraggingComp for the first time
+        const res = new RowDragComp(() => this.value, this.rowNode, this.column, customElement, dragStartPixels);
+        this.beans.context.createBean(res);
     }
 }

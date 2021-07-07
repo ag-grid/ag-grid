@@ -18,7 +18,6 @@ import { isBrowserIE } from "../../utils/browser";
 import { doOnce } from "../../utils/function";
 import { CellCtrl, ICellComp } from "./cellCtrl";
 import { UserCompDetails } from "../../components/framework/userComponentFactory";
-import { CellTools } from "./cellTools";
 
 export const CSS_CELL_VALUE = 'ag-cell-value';
 
@@ -123,10 +122,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
             getCellEditor: () => this.cellEditor ? this.cellEditor : null,
             getCellRenderer: () => this.cellRenderer ? this.cellRenderer : null,
-            getParentOfValue: () => this.eCellValue ? this.eCellValue : null,
-
-            // hacks
-            addRowDragging: (customElement?: HTMLElement, dragStartPixels?: number) => this.addRowDragging(customElement, dragStartPixels)
+            getParentOfValue: () => this.eCellValue ? this.eCellValue : null
         };
 
         this.cellCtrl = cellCtrl;
@@ -244,20 +240,24 @@ export class CellComp extends Component implements TooltipParentComp {
         const id = this.eCellValue.id = `cell-${this.getCompId()}`;
         const describedByIds: string[] = [];
 
-        const cellTools = new CellTools();
-
         if (this.includeRowDrag) {
-            this.addRowDragging();
+            this.rowDraggingComp = this.cellCtrl.createRowDragComp();
+            if (this.rowDraggingComp) {
+                // put the checkbox in before the value
+                this.eCellWrapper!.insertBefore(this.rowDraggingComp.getGui(), this.eCellValue);
+            }
         }
 
         if (this.includeDndSource) {
-            this.addDndSource();
+            this.dndSourceComp = this.cellCtrl.createDndSource();
+            // put the checkbox in before the value
+            this.eCellWrapper!.insertBefore(this.dndSourceComp.getGui(), this.eCellValue);
         }
 
         if (this.includeSelection) {
-            const selectionComp = cellTools.createSelectionCheckbox(this.rowNode, this.column, this.beans);
-            this.eCellWrapper!.insertBefore(selectionComp.getGui(), this.eCellValue);
-            describedByIds.push(selectionComp.getCheckboxId());
+            this.checkboxSelectionComp = this.cellCtrl.createSelectionCheckbox();
+            this.eCellWrapper!.insertBefore(this.checkboxSelectionComp.getGui(), this.eCellValue);
+            describedByIds.push(this.checkboxSelectionComp.getCheckboxId());
         }
 
         describedByIds.push(id);
@@ -549,50 +549,6 @@ export class CellComp extends Component implements TooltipParentComp {
         this.removeControlsWrapper();
 
         super.destroy();
-    }
-
-    private addRowDragging(customElement?: HTMLElement, dragStartPixels?: number): void {
-        const pagination = this.beans.gridOptionsWrapper.isPagination();
-        const rowDragManaged = this.beans.gridOptionsWrapper.isRowDragManaged();
-        const clientSideRowModelActive = this.beans.gridOptionsWrapper.isRowModelDefault();
-
-        if (rowDragManaged) {
-            // row dragging only available in default row model
-            if (!clientSideRowModelActive) {
-                doOnce(() => console.warn('AG Grid: managed row dragging is only allowed in the Client Side Row Model'),
-                    'CellComp.addRowDragging');
-
-                return;
-            }
-
-            if (pagination) {
-                doOnce(() => console.warn('AG Grid: managed row dragging is not possible when doing pagination'),
-                    'CellComp.addRowDragging');
-
-                return;
-            }
-        }
-        if (!this.rowDraggingComp) {
-            this.rowDraggingComp = new RowDragComp(() => this.cellCtrl.getValue(), this.rowNode, this.column, customElement, dragStartPixels);
-            this.beans.context.createBean(this.rowDraggingComp);
-        } else if (customElement) {
-            // if the rowDraggingComp is already present, means we should only set the drag element
-            this.rowDraggingComp.setDragElement(customElement, dragStartPixels);
-        }
-
-        // If there is a custom element, the Cell Renderer is responsible for displaying it.
-        if (!customElement) {
-            // put the checkbox in before the value
-            this.eCellWrapper!.insertBefore(this.rowDraggingComp.getGui(), this.eCellValue);
-        }
-    }
-
-    private addDndSource(): void {
-        const dndSourceComp = new DndSourceComp(this.rowNode, this.column, this.beans, this.getGui());
-        this.beans.context.createBean(dndSourceComp);
-
-        // put the checkbox in before the value
-        this.eCellWrapper!.insertBefore(dndSourceComp.getGui(), this.eCellValue);
     }
 
     private clearCellElement(): void {

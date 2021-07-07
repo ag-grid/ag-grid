@@ -1,20 +1,21 @@
 import React, { MutableRefObject, useEffect, useMemo, useRef, useState, useCallback } from "react";
 import {
     Context,
+    Component,
     _,
     ICellComp,
     CellCtrl,
-    CellTools,
     UserCompDetails, CheckboxSelectionComponent
 } from "ag-grid-community";
 import { CssClasses } from "./utils";
+import cell from "../../../../enterprise-modules/excel-export/typings/excelExport/files/xml/cell";
 
 enum CellState {ShowValue, EditValue}
 
 export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
                                 printLayout: boolean, editingRow: boolean}) {
 
-    const { cellCtrl, printLayout, editingRow } = props;
+    const { cellCtrl, printLayout, editingRow, context } = props;
 
     const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses());
     const [userStyles, setUserStyles] = useState<any>();
@@ -35,7 +36,10 @@ export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
     const [role, setRole] = useState<string>();
     const [colId, setColId] = useState<string>();
     const [title, setTitle] = useState<string|undefined>();
-    const [includeSelection, setIncludeSelection] = useState<boolean>();
+    const [includeSelection, setIncludeSelection] = useState<boolean>(false);
+    const [includeRowDrag, setIncludeRowDrag] = useState<boolean>(false);
+    const [includeDndSource, setIncludeDndSource] = useState<boolean>(false);
+    const [forceWrapper, setForceWrapper] = useState<boolean>(false);
 
     const eGui = useRef<HTMLDivElement>(null);
     const cellRendererRef = useRef<any>(null);
@@ -43,19 +47,38 @@ export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
 
     const [toolsSpan, setToolsSpan] = useState<HTMLElement>();
 
+    // this gets called every time there is a change to what tool widgets
+    // we show.
     useEffect( ()=> {
         if (!toolsSpan) { return; }
 
-        const comp = new CellTools().createSelectionCheckbox(
-            cellCtrl.getRowNode(), cellCtrl.getColumn(), cellCtrl.getBeans());
+        const beansToDestroy: any[] = [];
 
-        toolsSpan.insertAdjacentElement('afterbegin', comp.getGui());
+        const addComp = (comp: Component | undefined) => {
+            if (comp) {
+                toolsSpan.insertAdjacentElement('afterbegin', comp.getGui());
+                beansToDestroy.push(comp);
+            }
+            return comp;
+        }
+
+        if (includeSelection) {
+            addComp(cellCtrl.createSelectionCheckbox());
+        }
+
+        if (includeDndSource) {
+            addComp(cellCtrl.createDndSource());
+        }
+
+        if (includeRowDrag) {
+            addComp(cellCtrl.createRowDragComp());
+        }
 
         return ()=> {
-            props.context.destroyBean(comp);
+            beansToDestroy.forEach( b => context.destroyBean(b) );
         };
 
-    }, [toolsSpan, includeSelection]);
+    }, [toolsSpan, includeSelection, includeRowDrag, includeDndSource]);
 
     // attaching the ref to state makes sure we render again when state is set. this is
     // how we make sure the tools are added, as it's not possible to have an effect depend
@@ -93,16 +116,13 @@ export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
                 setCellState(CellState.EditValue);
             },
             setIncludeSelection: include => setIncludeSelection(include),
-            setIncludeRowDrag: include => false, // this.includeRowDrag = include,
-            setIncludeDndSource: include => false, // this.includeDndSource = include,
-            setForceWrapper: force => false, // this.forceWrapper = force,
+            setIncludeRowDrag: include => setIncludeRowDrag(include),
+            setIncludeDndSource: include => setIncludeDndSource(include),
+            setForceWrapper: force => setForceWrapper(force),
 
             getCellEditor: () => cellEditorRef.current,
             getCellRenderer: () => cellRendererRef.current,
             getParentOfValue: () => eGui.current, // this.eCellValue ? this.eCellValue : null,
-
-            // hacks
-            addRowDragging: (customElement?: HTMLElement, dragStartPixels?: number) => false, // this.addRowDragging(customElement, dragStartPixels)
         };
 
         cellCtrl.setComp(compProxy, false, null, eGui.current!, printLayout, editingRow);
@@ -128,7 +148,7 @@ export function CellComp(props: {cellCtrl: CellCtrl, context: Context,
     const showValue = cellState === CellState.ShowValue;
     const editValue = cellState === CellState.EditValue;
 
-    const showTools = !!includeSelection;
+    const showTools = includeSelection || includeDndSource || includeRowDrag || forceWrapper;
 
     return (
         <div ref={ eGui } className={ className } style={ cellStyles } tabIndex={tabIndex}

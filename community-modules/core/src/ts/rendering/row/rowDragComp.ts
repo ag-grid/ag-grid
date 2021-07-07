@@ -14,18 +14,30 @@ export interface IRowDragItem extends DragItem {
 }
 
 export class RowDragComp extends Component {
-    public isCustomGui: boolean = false;
+
     private dragSource: DragSource | null = null;
 
-    constructor(
-        private readonly cellValueFn: () => string,
-        private readonly rowNode: RowNode,
-        private readonly column?: Column,
-        private readonly customGui?: HTMLElement,
-        private readonly dragStartPixels?: number
-    ) { super(); }
+    private readonly cellValueFn: () => string;
+    private readonly rowNode: RowNode;
+    private readonly column: Column | undefined;
+    private readonly customGui: HTMLElement | undefined;
+    private readonly dragStartPixels: number | undefined;
 
     @Autowired('beans') private beans: Beans;
+
+    constructor(cellValueFn: () => string, rowNode: RowNode, column?: Column,
+                customGui?: HTMLElement, dragStartPixels?: number) {
+        super();
+        this.cellValueFn = cellValueFn;
+        this.rowNode = rowNode;
+        this.column = column;
+        this.customGui = customGui;
+        this.dragStartPixels = dragStartPixels;
+    }
+
+    public isCustomGui(): boolean {
+        return this.customGui != null;
+    }
 
     @PostConstruct
     private postConstruct(): void {
@@ -35,7 +47,6 @@ export class RowDragComp extends Component {
             eGui.appendChild(createIconNoSpan('rowDrag', this.beans.gridOptionsWrapper, null)!);
             this.addDragSource();
         } else {
-            this.isCustomGui = true;
             this.setDragElement(this.customGui, this.dragStartPixels);
         }
 
@@ -135,7 +146,7 @@ class VisibilityStrategy extends BeanStub {
             let isShownSometimes: boolean = false;
 
             if (this.column) {
-                shown = this.column.isRowDrag(this.rowNode) || this.parent.isCustomGui;
+                shown = this.column.isRowDrag(this.rowNode) || this.parent.isCustomGui();
                 isShownSometimes = isFunction(this.column.getColDef().rowDrag);
             }
 
