@@ -4,7 +4,8 @@ import {
     CartesianChartOptions,
     ChartType,
     HighlightOptions,
-    ScatterSeriesOptions
+    ScatterSeriesOptions,
+    ScatterSeriesLabelOptions
 } from "@ag-grid-community/core";
 import {
     AgCartesianChartOptions,
@@ -157,14 +158,14 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
                 series.sizeKey = sizeFieldDefinition.colId;
                 series.sizeName = sizeFieldDefinition.displayName;
             } else {
-                series.sizeKey = series.sizeName = undefined;
+                series.sizeKey = undefined;
             }
 
             if (labelFieldDefinition) {
                 series.labelKey = labelFieldDefinition.id;
                 series.labelName = labelFieldDefinition.name;
             } else {
-                series.labelKey = series.labelName = undefined;
+                series.labelKey = series.yKey;
             }
 
             const isFilteredOutYKey =  yFieldDefinition.colId.indexOf('-filtered-out') > -1;
@@ -219,6 +220,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
                 opacity: seriesDefaults.strokeOpacity,
                 width: seriesDefaults.strokeWidth
             },
+            label: seriesDefaults.label as ScatterSeriesLabelOptions,
             marker: {
                 enabled: seriesDefaults.marker!.enabled,
                 shape: seriesDefaults.marker!.shape,

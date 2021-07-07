@@ -14,6 +14,7 @@ import { Observable, reactive, PropertyChangeEvent, SourceEvent } from "../util/
 import { ChartAxis, ChartAxisDirection } from "./chartAxis";
 import { CartesianSeries } from "./series/cartesian/cartesianSeries";
 import { createId } from "../util/id";
+import { PlacedLabel, placeLabels } from "../util/labelPlacement";
 
 const defaultTooltipCss = `
 .ag-chart-tooltip {
@@ -777,10 +778,31 @@ export abstract class Chart extends Observable {
             this.assignSeriesToAxes();
         }
 
-        this.series.filter(s => s.visible).forEach(series => series.processData());
+        this.series.forEach(s => s.processData());
+
         this.updateLegend();
 
         this.layoutPending = true;
+    }
+
+    private nodeData: Map<Series, readonly SeriesNodeDatum[]> = new Map();
+    generateNodeData(): void {
+        this.nodeData.clear();
+        this.series.forEach(s => {
+            const data = s.visible ? s.generateNodeData() : [];
+            this.nodeData.set(s, data);
+        });
+    }
+
+    placeLabels(): Map<Series, PlacedLabel[]> {
+        const series: Series[] = [];
+        const data: (readonly SeriesNodeDatum[])[] = [];
+        this.nodeData.forEach((d, s) => {
+            series.push(s);
+            data.push(s.getNodeData());
+        });
+        const labels = placeLabels(data as any[], this.seriesRect);
+        return new Map(labels.map((l, i) => [series[i], l]));
     }
 
     private updateLegend() {

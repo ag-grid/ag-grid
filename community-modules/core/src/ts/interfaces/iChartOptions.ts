@@ -285,8 +285,12 @@ export interface MarkerOptions {
 export interface LineTooltipRendererParams extends CartesianTooltipRendererParams {
 }
 
+export interface ScatterSeriesLabelOptions extends SeriesLabelOptions {
+}
+
 export interface ScatterSeriesOptions extends SeriesOptions {
     marker: ScatterMarkerOptions;
+    label: ScatterSeriesLabelOptions;
     tooltip: TooltipOptions<ScatterTooltipRendererParams>;
     paired: boolean;
 }

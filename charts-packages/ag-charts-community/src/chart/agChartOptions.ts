@@ -504,9 +504,13 @@ export interface AgScatterSeriesTooltip extends AgSeriesTooltip {
     renderer?: (params: AgScatterSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
 }
 
+interface AgScatterSeriesLabelOptions extends AgChartLabelOptions {
+}
+
 export interface AgScatterSeriesOptions extends AgBaseSeriesOptions {
     type?: 'scatter';
     marker?: AgCartesianSeriesMarker;
+    label?: AgScatterSeriesLabelOptions;
     xKey?: string;
     yKey?: string;
     xName?: string;

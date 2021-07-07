@@ -73,7 +73,7 @@ export class LineSeries extends CartesianSeries {
 
     // We use groups for this selection even though each group only contains a marker ATM
     // because in the future we might want to add label support as well.
-    private nodeSelection: Selection<Group, Group, LineNodeDatum, any> = Selection.select(this.group).selectAll<Group>();
+    private nodeSelection: Selection<Group, Group, LineNodeDatum, any> = Selection.select(this.pickGroup).selectAll<Group>();
     private nodeData: LineNodeDatum[] = [];
 
     readonly marker = new CartesianSeriesMarker();
@@ -101,7 +101,8 @@ export class LineSeries extends CartesianSeries {
         lineNode.fill = undefined;
         lineNode.lineJoin = 'round';
         lineNode.pointerEvents = PointerEvents.None;
-        this.group.append(lineNode);
+        // Make line render before markers in the pick group.
+        this.group.insertBefore(lineNode, this.pickGroup);
 
         this.addEventListener('update', this.update);
 
@@ -416,7 +417,7 @@ export class LineSeries extends CartesianSeries {
             });
     }
 
-    getNodeData(): LineNodeDatum[] {
+    getNodeData(): readonly LineNodeDatum[] {
         return this.nodeData;
     }
 

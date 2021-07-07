@@ -119,15 +119,19 @@ export abstract class Series extends Observable {
 
     abstract getDomain(direction: ChartAxisDirection): any[];
 
+    // Fetch required values from the `chart.data` or `series.data` objects and process them.
     abstract processData(): boolean;
+
+    // Using processed data, generate data that backs visible nodes.
+    generateNodeData(): SeriesNodeDatum[] { return [] };
+
+    // Returns persisted node data associated with the rendered portion of the series' data.
+    getNodeData(): readonly SeriesNodeDatum[] { return []; }
+
+    // Produce data joins and update selection's nodes using node data.
     abstract update(): void;
 
     abstract getTooltipHtml(seriesDatum: any): string;
-
-    // Returns node data associated with the rendered portion of the series' data.
-    getNodeData(): SeriesNodeDatum[] {
-        return [];
-    }
 
     fireNodeClickEvent(event: MouseEvent, datum: SeriesNodeDatum): void {}
 

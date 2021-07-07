@@ -151,7 +151,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
             throw new Error(`${node} already belongs to another parent: ${node.parent}.`);
         }
         if (node.scene) {
-            throw new Error(`${node} already belongs a scene: ${node.scene}.`);
+            throw new Error(`${node} already belongs to a scene: ${node.scene}.`);
         }
         if (this.childSet[node.id]) {
             // Cast to `any` to avoid `Property 'name' does not exist on type 'Function'`.

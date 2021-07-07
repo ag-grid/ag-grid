@@ -512,6 +512,13 @@ const mappings: any = {
                             formatter: undefined
                         }
                     }
+                },
+                label: {
+                    meta: {
+                        defaults: {
+                            ...labelDefaults
+                        }
+                    }
                 }
             },
             [AreaSeries.type]: {

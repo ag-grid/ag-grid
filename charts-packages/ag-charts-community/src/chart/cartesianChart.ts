@@ -138,6 +138,8 @@ export class CartesianChart extends Chart {
             }
         });
 
+        this.generateNodeData();
+
         this.seriesRect = shrinkRect;
         this.series.forEach(series => {
             series.group.translationX = Math.floor(shrinkRect.x);

@@ -122,7 +122,7 @@ export class HistogramSeries extends CartesianSeries {
     // created after the column nodes, this only guarantees that labels will always be on top of columns
     // on the first run. If on the next run more columns are added, they might clip the labels
     // rendered during the previous run.
-    private rectGroup = this.group.appendChild(new Group());
+    private rectGroup = this.pickGroup.appendChild(new Group());
     private textGroup = this.group.appendChild(new Group());
 
     private rectSelection: Selection<Rect, Group, any, any> = Selection.select(this.rectGroup).selectAll<Rect>();
@@ -440,7 +440,7 @@ export class HistogramSeries extends CartesianSeries {
         this.updateTextNodes();
     }
 
-    private generateNodeData(): HistogramNodeDatum[] {
+    generateNodeData(): HistogramNodeDatum[] {
         if (!this.seriesItemEnabled) {
             return [];
         }

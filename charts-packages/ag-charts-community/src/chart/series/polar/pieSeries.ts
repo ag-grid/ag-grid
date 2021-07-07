@@ -104,7 +104,7 @@ export class PieSeries extends PolarSeries {
     static type = 'pie';
 
     private radiusScale: LinearScale = new LinearScale();
-    private groupSelection: Selection<Group, Group, PieNodeDatum, any> = Selection.select(this.group).selectAll<Group>();
+    private groupSelection: Selection<Group, Group, PieNodeDatum, any> = Selection.select(this.pickGroup).selectAll<Group>();
 
     /**
      * The processed data that gets visualized.

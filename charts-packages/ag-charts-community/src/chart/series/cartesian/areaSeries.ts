@@ -90,9 +90,9 @@ export class AreaSeries extends CartesianSeries {
     tooltipRenderer?: (params: AreaTooltipRendererParams) => string | TooltipRendererResult;
     tooltip: AreaSeriesTooltip = new AreaSeriesTooltip();
 
-    private areaGroup = this.group.appendChild(new Group);
-    private strokeGroup = this.group.appendChild(new Group);
-    private markerGroup = this.group.appendChild(new Group);
+    private areaGroup = this.group.insertBefore(new Group, this.pickGroup);
+    private strokeGroup = this.group.insertBefore(new Group, this.pickGroup);
+    private markerGroup = this.pickGroup.appendChild(new Group);
     private labelGroup = this.group.appendChild(new Group);
 
     private areaSelection: Selection<Path, Group, AreaSelectionDatum, any> = Selection.select(this.areaGroup).selectAll<Path>();
@@ -643,7 +643,7 @@ export class AreaSeries extends CartesianSeries {
         });
     }
 
-    getNodeData(): MarkerSelectionDatum[] {
+    getNodeData(): readonly MarkerSelectionDatum[] {
         return this.markerSelectionData;
     }
 

@@ -15,7 +15,7 @@ import { Label } from "../../label";
 import { Text } from "../../../scene/shape/text";
 import { HdpiCanvas } from "../../../canvas/hdpiCanvas";
 import { Marker } from "../../marker/marker";
-import { MeasuredLabel, PlacedLabel, placeLabels } from "./labelPlacement";
+import { MeasuredLabel, PlacedLabel, placeLabels } from "../../../util/labelPlacement";
 
 interface ScatterNodeDatum extends SeriesNodeDatum {
     readonly point: {
@@ -229,7 +229,7 @@ export class ScatterSeries extends CartesianSeries {
         }
     }
 
-    getNodeData(): ScatterNodeDatum[] {
+    getNodeData(): readonly ScatterNodeDatum[] {
         return this.nodeData;
     }
 
@@ -245,9 +245,9 @@ export class ScatterSeries extends CartesianSeries {
         });
     }
 
-    private generateNodeData(): void {
+    generateNodeData(): ScatterNodeDatum[] {
         if (!this.data) {
-            return;
+            return [];
         }
 
         const { xAxis, yAxis } = this;
@@ -259,7 +259,6 @@ export class ScatterSeries extends CartesianSeries {
         const yOffset = (yScale.bandwidth || 0) / 2;
         const { data, xData, yData, sizeData, sizeScale, marker } = this;
         const nodeData: ScatterNodeDatum[] = [];
-        const labelData: any[] = [];
 
         sizeScale.range = [marker.size, marker.maxSize];
 
@@ -286,10 +285,9 @@ export class ScatterSeries extends CartesianSeries {
                 size: sizeData.length ? sizeScale.convert(sizeData[i]) : marker.size,
                 label: this.labelData[i]
             });
-            labelData.push(this.labelData[i]);
         }
 
-        this.nodeData = nodeData;
+        return this.nodeData = nodeData;
     }
 
     update(): void {
@@ -311,14 +309,15 @@ export class ScatterSeries extends CartesianSeries {
     }
 
     private updateLabelSelection(nodeData: ScatterNodeDatum[]): void {
-        const seriesRect = this.chart && this.chart.getSeriesRect();
-        const boundsRect = {
-            x: 0,
-            y: 0,
-            width: seriesRect && seriesRect.width || Infinity,
-            height: seriesRect && seriesRect.height || Infinity
-        };
-        const placedLabels = this.label.enabled ? placeLabels(nodeData, boundsRect) : [];
+        // const seriesRect = this.chart && this.chart.getSeriesRect();
+        // const boundsRect = {
+        //     x: 0,
+        //     y: 0,
+        //     width: seriesRect && seriesRect.width || Infinity,
+        //     height: seriesRect && seriesRect.height || Infinity
+        // };
+        // const placedLabels = this.label.enabled ? placeLabels([nodeData], boundsRect)[0] : [];
+        const placedLabels: PlacedLabel[] = this.chart && this.chart.placeLabels().get(this) || [];
         const updateLabels = this.labelSelection.setData(placedLabels);
         updateLabels.exit.remove();
         const enterLabels = updateLabels.enter.append(Text);
