@@ -29,7 +29,7 @@ export function RowContainerComp(params: {context: Context, name: RowContainerNa
     const viewportClasses = classesList(cssClasses.viewport);
     const containerClasses = classesList(cssClasses.container);
 
-    useEffect(()=> {
+    useEffect(() => {
         const beansToDestroy: any[] = [];
 
         const compProxy: IRowContainerComp = {
@@ -56,9 +56,8 @@ export function RowContainerComp(params: {context: Context, name: RowContainerNa
         beansToDestroy.push(ctrl);
         ctrl.setComp(compProxy, eContainer.current!, eViewport.current!, eWrapper.current!);
 
-        return ()=> {
-            beansToDestroy.forEach( b => context.destroyBean(b) );
-            // destroyFuncs.forEach( f => f() );
+        return () => {
+            context.destroyBeans(beansToDestroy);
         };
 
     }, [context, domOrder, name]);

@@ -1,9 +1,7 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom";
-
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model"
 import { AgGridColumn } from "./agGridColumn"
-
 import { AgGridReactFire } from "./next/agGridReactFire";
 
 import 'ag-grid-community/dist/styles/ag-grid.css';

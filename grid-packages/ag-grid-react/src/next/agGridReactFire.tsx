@@ -1,10 +1,10 @@
 import * as React from "react";
-import {Component} from "react";
-import {_, ColumnApi, ComponentUtil, Context, GridApi, GridCoreCreator, GridOptions} from "ag-grid-community";
-import {AgGridColumn} from "../agGridColumn";
-import {ChangeDetectionService, ChangeDetectionStrategyType} from "../changeDetectionService";
-import {GridComp} from "./gridComp";
-import {AgReactUiProps} from "../interfaces";
+import { Component } from "react";
+import { _, ColumnApi, ComponentUtil, Context, GridApi, GridCoreCreator, GridOptions } from "ag-grid-community";
+import { AgGridColumn } from "../agGridColumn";
+import { ChangeDetectionService, ChangeDetectionStrategyType } from "../changeDetectionService";
+import { GridComp } from "./gridComp";
+import { AgReactUiProps } from "../interfaces";
 
 export class AgGridReactFire extends Component<AgReactUiProps, { context: Context | undefined }> {
 
@@ -194,7 +194,8 @@ export class AgGridReactFire extends Component<AgReactUiProps, { context: Contex
         if (propKey === 'rowData') {
             if (this.props.rowDataChangeDetectionStrategy) {
                 return this.props.rowDataChangeDetectionStrategy;
-            } else if (this.isImmutableDataActive()) {
+            }
+            if (this.isImmutableDataActive()) {
                 return ChangeDetectionStrategyType.IdentityCheck;
             }
         }

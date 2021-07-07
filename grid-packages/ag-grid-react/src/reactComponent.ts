@@ -126,7 +126,9 @@ export abstract class ReactComponent extends BaseReactComponent {
 
         if (!!method) {
             return method.apply(frameworkComponentInstance, args);
-        } else if (this.fallbackMethodAvailable(name)) {
+        }
+
+        if (this.fallbackMethodAvailable(name)) {
             return this.fallbackMethod(name, !!args && args[0] ? args[0] : {});
         }
     }

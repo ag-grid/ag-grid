@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Component, ReactPortal} from "react";
+import { Component, ReactPortal } from "react";
 import * as PropTypes from "prop-types";
 import {
     _,
@@ -13,11 +13,11 @@ import {
     GridOptions,
     WrappableInterface
 } from "ag-grid-community";
-import {AgGridColumn} from "./agGridColumn";
-import {ChangeDetectionService, ChangeDetectionStrategyType} from "./changeDetectionService";
-import {ReactComponent} from "./reactComponent";
-import {LegacyReactComponent} from "./legacyReactComponent";
-import {NewReactComponent} from "./newReactComponent";
+import { AgGridColumn } from "./agGridColumn";
+import { ChangeDetectionService, ChangeDetectionStrategyType } from "./changeDetectionService";
+import { ReactComponent } from "./reactComponent";
+import { LegacyReactComponent } from "./legacyReactComponent";
+import { NewReactComponent } from "./newReactComponent";
 import { AgGridReactProps } from "./interfaces";
 
 export class AgGridReactLegacy extends Component<AgGridReactProps, {}> {

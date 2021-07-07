@@ -37,7 +37,7 @@ export function GridBodyComp(params: {context: Context}) {
     // should be shared
     const insertFirstPosition = (parent: HTMLElement, child: HTMLElement) => parent.insertBefore(child, parent.firstChild);
 
-    useEffect(()=> {
+    useEffect(() => {
         const beansToDestroy: any[] = [];
         const destroyFuncs: (() => void)[] = [];
 
@@ -101,7 +101,7 @@ export function GridBodyComp(params: {context: Context}) {
         ctrl.setComp(compProxy, eRoot.current!, eBodyViewport.current!, eTop.current!, eBottom.current!);
 
         return () => {
-            beansToDestroy.forEach(b => context.destroyBean(b));
+            context.destroyBeans(beansToDestroy);
             destroyFuncs.forEach(f => f());
         };
 

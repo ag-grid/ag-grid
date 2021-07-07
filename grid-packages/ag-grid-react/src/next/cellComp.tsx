@@ -52,7 +52,7 @@ export function CellComp(props: {
 
     // this gets called every time there is a change to what tool widgets
     // we show.
-    useEffect( ()=> {
+    useEffect(() => {
         if (!toolsSpan || !cellCtrl || !context) { return; }
 
         const beansToDestroy: any[] = [];

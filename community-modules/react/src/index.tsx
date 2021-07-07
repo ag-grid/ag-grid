@@ -1,11 +1,12 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom";
-import {ClientSideRowModelModule} from "@ag-grid-community/client-side-row-model"
-import {AgGridColumn} from "./agGridColumn"
+import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model"
+import { AgGridColumn } from "./agGridColumn"
+import { AgGridReactFire } from "./next/agGridReactFire";
 
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
-import { AgGridReactFire } from "./next/agGridReactFire";
+
 
 const App = () => {
     const [gridApi, setGridApi] = useState(null);

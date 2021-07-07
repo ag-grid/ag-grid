@@ -1,7 +1,7 @@
-import {_, ComponentType, IComponent, WrappableInterface} from '@ag-grid-community/core';
-import {ReactPortal} from "react";
-import {assignProperties} from "./utils";
-import {AgGridReactLegacy} from "./agGridReactLegacy";
+import { _, ComponentType, IComponent, WrappableInterface } from '@ag-grid-community/core';
+import { ReactPortal } from "react";
+import { assignProperties } from "./utils";
+import { AgGridReactLegacy } from "./agGridReactLegacy";
 
 abstract class BaseReactComponent implements IComponent<any>, WrappableInterface {
     abstract getGui(): HTMLElement;
@@ -126,7 +126,9 @@ export abstract class ReactComponent extends BaseReactComponent {
 
         if (!!method) {
             return method.apply(frameworkComponentInstance, args);
-        } else if (this.fallbackMethodAvailable(name)) {
+        }
+
+        if (this.fallbackMethodAvailable(name)) {
             return this.fallbackMethod(name, !!args && args[0] ? args[0] : {});
         }
     }

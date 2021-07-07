@@ -66,7 +66,7 @@ export function RowComp(params: {context: Context, rowCtrl: RowCtrl, pinned: str
 
     const eGui = useRef<HTMLDivElement>(null);
 
-    useEffect(()=> {
+    useEffect(() => {
         // const beansToDestroy: any[] = [];
         if (!rowCtrl) { return; }
 

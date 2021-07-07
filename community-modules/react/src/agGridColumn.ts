@@ -47,6 +47,7 @@ addProperties(AgGrid.ColDefUtil.FUNCTION_PROPERTIES, PropTypes.func);
 
 function addProperties(listOfProps: string[], propType: any) {
     listOfProps.forEach((propKey: string) => {
+        // @ts-ignore
         AgGridColumn[propKey] = propType;
     });
 }
