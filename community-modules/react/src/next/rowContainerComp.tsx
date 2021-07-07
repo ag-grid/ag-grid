@@ -18,8 +18,8 @@ export function RowContainerComp(params: {context: Context, name: RowContainerNa
 
     const { context, name } = params;
 
-    const cssClasses = useMemo( ()=> RowContainerCtrl.getRowContainerCssClasses(name), []);
-    const pinned = useMemo( ()=> RowContainerCtrl.getPinned(name), []);
+    const cssClasses = useMemo(()=> RowContainerCtrl.getRowContainerCssClasses(name), [name]);
+    const pinned = useMemo(()=> RowContainerCtrl.getPinned(name), [name]);
 
     const eWrapper = useRef<HTMLDivElement>(null);
     const eViewport = useRef<HTMLDivElement>(null);
@@ -61,7 +61,7 @@ export function RowContainerComp(params: {context: Context, name: RowContainerNa
             // destroyFuncs.forEach( f => f() );
         };
 
-    }, []);
+    }, [context, domOrder, name]);
 
     const viewportStyle = {
         height: viewportHeight

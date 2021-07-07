@@ -53,7 +53,7 @@ export function CellComp(props: {
     // this gets called every time there is a change to what tool widgets
     // we show.
     useEffect( ()=> {
-        if (!toolsSpan) { return; }
+        if (!toolsSpan || !cellCtrl || !context) { return; }
 
         const beansToDestroy: any[] = [];
 
@@ -78,10 +78,10 @@ export function CellComp(props: {
         }
 
         return () => {
-            beansToDestroy.forEach( b => context.destroyBean(b) );
+            context.destroyBeans(beansToDestroy);
         };
 
-    }, [toolsSpan, includeSelection, includeRowDrag, includeDndSource, cellCtrl, context]);
+    }, [cellCtrl, context, includeDndSource, includeRowDrag, includeSelection, toolsSpan]);
 
     // attaching the ref to state makes sure we render again when state is set. this is
     // how we make sure the tools are added, as it's not possible to have an effect depend
@@ -90,6 +90,8 @@ export function CellComp(props: {
 
     useEffect(() => {
         // const beansToDestroy: any[] = [];
+
+        if (!cellCtrl) { return; }
 
         const compProxy: ICellComp = {
             addOrRemoveCssClass: (name, on) => setCssClasses(prev => prev.setClass(name, on)),
@@ -134,7 +136,7 @@ export function CellComp(props: {
         //     beansToDestroy.forEach(b => context.destroyBean(b));
         // };
 
-    }, []);
+    }, [cellCtrl, editingRow, printLayout]);
 
     const className = cssClasses.toString();
 

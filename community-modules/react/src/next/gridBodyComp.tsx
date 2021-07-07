@@ -41,6 +41,8 @@ export function GridBodyComp(params: {context: Context}) {
         const beansToDestroy: any[] = [];
         const destroyFuncs: (() => void)[] = [];
 
+        if (!context) { return; }
+
         const agStackComponentsRegistry: AgStackComponentsRegistry = context.getBean('agStackComponentsRegistry');
         const newComp = (tag: string) => {
             const CompClass = agStackComponentsRegistry.getComponentClass(tag);
@@ -103,7 +105,7 @@ export function GridBodyComp(params: {context: Context}) {
             destroyFuncs.forEach(f => f());
         };
 
-    }, []);
+    }, [context]);
 
     const rootClasses = classesList('ag-root','ag-unselectable', movingCss, layoutClass);
     const topClasses = classesList('ag-floating-top', cellSelectableCss);

@@ -25,6 +25,8 @@ export function GridComp(props: { context: Context }) {
         const { context } = props;
         const beansToDestroy: any[] = [];
 
+        if (!props || !props.context) { return; }
+
         const ctrl = context.createBean(new GridCtrl());
 
         beansToDestroy.push(ctrl);
@@ -56,10 +58,10 @@ export function GridComp(props: { context: Context }) {
             beansToDestroy.push(headerDropZonesComp);
         }
 
-        return ()=> {
-            beansToDestroy.forEach(b => context.destroyBean(b));
+        return () => {
+            context.destroyBeans(beansToDestroy);
         };
-    }, []);
+    }, [props]);
 
     const rootWrapperClasses = classesList('ag-root-wrapper', rtlClass, keyboardFocusClass, layoutClass);
     const rootWrapperBodyClasses = classesList('ag-root-wrapper-body', layoutClass);

@@ -68,6 +68,7 @@ export function RowComp(params: {context: Context, rowCtrl: RowCtrl, pinned: str
 
     useEffect(()=> {
         // const beansToDestroy: any[] = [];
+        if (!rowCtrl) { return; }
 
         const compProxy: IRowComp = {
             setDomOrder: domOrder => setDomOrder(domOrder),
@@ -99,7 +100,7 @@ export function RowComp(params: {context: Context, rowCtrl: RowCtrl, pinned: str
         //     beansToDestroy.forEach( b => context.destroyBean(b) );
         // };
 
-    }, []);
+    }, [domOrder, pinned, rowCtrl]);
 
     const rowStyles = {
         height,
