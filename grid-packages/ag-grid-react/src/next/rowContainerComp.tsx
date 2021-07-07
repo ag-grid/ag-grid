@@ -18,8 +18,8 @@ export function RowContainerComp(params: {context: Context, name: RowContainerNa
 
     const { context, name } = params;
 
-    const cssClasses = useMemo(()=> RowContainerCtrl.getRowContainerCssClasses(name), [name]);
-    const pinned = useMemo(()=> RowContainerCtrl.getPinned(name), [name]);
+    const cssClasses = useMemo(() => RowContainerCtrl.getRowContainerCssClasses(name), [name]);
+    const pinned = useMemo(() => RowContainerCtrl.getPinned(name), [name]);
 
     const eWrapper = useRef<HTMLDivElement>(null);
     const eViewport = useRef<HTMLDivElement>(null);
@@ -38,14 +38,13 @@ export function RowContainerComp(params: {context: Context, name: RowContainerNa
                 setRowCtrls( prev => {
                     if (domOrder) {
                         return rowCtrls;
-                    } else {
-                        // if dom order not important, we don't want to change the order
-                        // of the elements in the dom, as this would break transition styles
-                        const oldRows = prev.filter( r => rowCtrls.indexOf(r) >= 0);
-                        const newRows = rowCtrls.filter( r => oldRows.indexOf(r) < 0);
-                        const next = [...oldRows, ...newRows];
-                        return next;
                     }
+                    // if dom order not important, we don't want to change the order
+                    // of the elements in the dom, as this would break transition styles
+                    const oldRows = prev.filter( r => rowCtrls.indexOf(r) >= 0);
+                    const newRows = rowCtrls.filter( r => oldRows.indexOf(r) < 0);
+                    const next = [...oldRows, ...newRows];
+                    return next;
                 });
             },
             setDomOrder: domOrder => setDomOrder(domOrder),
