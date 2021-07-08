@@ -1,13 +1,13 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from 'react';
 import {
     Context,
     FocusService,
     GridCtrl,
     IGridComp,
     AgStackComponentsRegistry
-} from "ag-grid-community";
-import { GridBodyComp } from "./gridBodyComp";
-import { classesList } from "./utils";
+} from 'ag-grid-community';
+import { GridBodyComp } from './gridBodyComp';
+import { classesList } from './utils';
 
 export function GridComp(props: { context: Context }) {
 
@@ -73,7 +73,7 @@ export function GridComp(props: { context: Context }) {
     };
 
     return (
-        <div ref={ eRootWrapper } className={rootWrapperClasses} style={ topStyle }>
+        <div ref={ eRootWrapper } className={ rootWrapperClasses } style={ topStyle }>
             { props.context &&
             <div className={ rootWrapperBodyClasses } ref={ eGridBodyParent }>
                 <GridBodyComp context={ props.context }/>

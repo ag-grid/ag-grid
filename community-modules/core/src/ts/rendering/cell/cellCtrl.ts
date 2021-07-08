@@ -154,9 +154,14 @@ export class CellCtrl extends BeanStub {
         }
     }
 
-    public setComp(comp: ICellComp, autoHeightCell: boolean,
-                   scope: any, eGui: HTMLElement, printLayout: boolean,
-                   startEditing: boolean): void {
+    public setComp(
+        comp: ICellComp,
+        autoHeightCell: boolean,
+        scope: any,
+        eGui: HTMLElement,
+        printLayout: boolean,
+        startEditing: boolean
+    ): void {
         this.cellComp = comp;
         this.autoHeightCell = autoHeightCell;
         this.gow = this.beans.gridOptionsWrapper;
@@ -193,6 +198,7 @@ export class CellCtrl extends BeanStub {
         this.cellTooltipFeature.setComp(comp);
         this.cellMouseListenerFeature.setComp(comp);
         this.cellKeyboardListenerFeature.setComp(comp, this.eGui);
+
         if (this.cellRangeFeature) { this.cellRangeFeature.setComp(comp); }
 
         if (startEditing && this.isCellEditable()) {
@@ -234,12 +240,12 @@ export class CellCtrl extends BeanStub {
         const rowNodePinned = this.rowNode.rowPinned != null;
         const isFunc = typeof value === 'function';
         const res = rowNodePinned ? false : isFunc || value === true;
+
         return res;
     }
 
     public refreshShouldDestroy(): boolean {
         const colDef = this.column.getColDef();
-
         const selectionChanged = this.includeSelection != this.isIncludeControl(colDef.checkboxSelection);
         const rowDragChanged = this.includeRowDrag != this.isIncludeControl(colDef.rowDrag);
         const dndSourceChanged = this.includeDndSource != this.isIncludeControl(colDef.dndSource);
@@ -263,6 +269,7 @@ export class CellCtrl extends BeanStub {
 
     private setEditing(editing: boolean): void {
         if (this.editing === editing) { return; }
+
         this.editing = editing;
         this.setInlineEditingClass();
     }
@@ -280,10 +287,13 @@ export class CellCtrl extends BeanStub {
         const noValueResult = { newValueExists: false };
 
         if (cancel) { return noValueResult; }
+
         const cellEditor =  this.cellComp.getCellEditor();
+
         if (!cellEditor) { return noValueResult; }
 
         const userWantsToCancel = cellEditor.isCancelAfterEnd && cellEditor.isCancelAfterEnd();
+
         if (userWantsToCancel) { return noValueResult; }
 
         const newValue = cellEditor.getValue();
@@ -310,7 +320,6 @@ export class CellCtrl extends BeanStub {
         if (!this.editing) { return; }
 
         const {newValue, newValueExists} = this.takeValueFromCellEditor(cancel);
-
         const oldValue = this.getValueFromValueService();
 
         if (newValueExists) {
@@ -320,7 +329,6 @@ export class CellCtrl extends BeanStub {
         this.setEditing(false);
         this.updateAndFormatValue();
         this.refreshCell({ forceRefresh: true, suppressFlash: true });
-
         this.dispatchEditingStoppedEvent(oldValue, newValue);
     }
 
@@ -443,7 +451,9 @@ export class CellCtrl extends BeanStub {
 
     public setFocusOutOnEditor(): void {
         if (!this.editing) { return; }
+
         const cellEditor = this.cellComp.getCellEditor();
+
         if (cellEditor && cellEditor.focusOut) {
             cellEditor.focusOut();
         }
@@ -451,6 +461,7 @@ export class CellCtrl extends BeanStub {
 
     public setFocusInOnEditor(): void {
         if (!this.editing) { return; }
+
         const cellEditor = this.cellComp.getCellEditor();
 
         if (cellEditor && cellEditor.focusIn) {
@@ -466,6 +477,7 @@ export class CellCtrl extends BeanStub {
 
     public onCellChanged(event: CellChangedEvent): void {
         const eventImpactsThisCell = event.column === this.column;
+
         if (eventImpactsThisCell) {
             this.refreshCell({});
         }
@@ -665,8 +677,8 @@ export class CellCtrl extends BeanStub {
 
     private addDomData(): void {
         const element = this.getGui();
-        this.beans.gridOptionsWrapper.setDomData(element, CellCtrl.DOM_DATA_KEY_CELL_CTRL, this);
 
+        this.beans.gridOptionsWrapper.setDomData(element, CellCtrl.DOM_DATA_KEY_CELL_CTRL, this);
         this.addDestroyFunc(() => this.beans.gridOptionsWrapper.setDomData(element, CellCtrl.DOM_DATA_KEY_CELL_CTRL, null));
     }
 
@@ -888,24 +900,28 @@ export class CellCtrl extends BeanStub {
 
     public onColumnHover(): void {
         if (!this.cellComp) { return; }
+
         const isHovered = this.beans.columnHoverService.isHovered(this.column);
         this.cellComp.addOrRemoveCssClass(CSS_COLUMN_HOVER, isHovered);
     }
 
     public onNewColumnsLoaded(): void {
         if (!this.cellComp) { return; }
+
         this.postProcessWrapText();
         this.cellCustomStyleFeature.applyCellClassRules();
     }
 
     private postProcessWrapText(): void {
         const value = this.column.getColDef().wrapText == true;
+
         this.cellComp.addOrRemoveCssClass(CSS_CELL_WRAP_TEXT, value);
     }
 
     public dispatchCellContextMenuEvent(event: Event | null) {
         const colDef = this.column.getColDef();
         const cellContextMenuEvent: CellContextMenuEvent = this.createEvent(event, Events.EVENT_CELL_CONTEXT_MENU);
+
         this.beans.eventService.dispatchEvent(cellContextMenuEvent);
 
         if (colDef.onCellContextMenu) {
@@ -928,8 +944,8 @@ export class CellCtrl extends BeanStub {
 
     public createSelectionCheckbox(): CheckboxSelectionComponent {
         const cbSelectionComponent = new CheckboxSelectionComponent();
-        this.beans.context.createBean(cbSelectionComponent);
 
+        this.beans.context.createBean(cbSelectionComponent);
         cbSelectionComponent.init({ rowNode: this.rowNode, column: this.column });
 
         // put the checkbox in before the value
@@ -939,6 +955,7 @@ export class CellCtrl extends BeanStub {
     public createDndSource(): DndSourceComp {
         const dndSourceComp = new DndSourceComp(this.rowNode, this.column, this.beans, this.eGui);
         this.beans.context.createBean(dndSourceComp);
+
         return dndSourceComp;
     }
 
@@ -950,9 +967,10 @@ export class CellCtrl extends BeanStub {
         }
 
         const newComp = this.createRowDragComp(customElement, dragStartPixels);
+
         if (newComp) {
             this.customRowDragComp = newComp;
-            this.addDestroyFunc( ()=> this.beans.context.destroyBean(newComp) );
+            this.addDestroyFunc(() => this.beans.context.destroyBean(newComp));
         }
     }
 

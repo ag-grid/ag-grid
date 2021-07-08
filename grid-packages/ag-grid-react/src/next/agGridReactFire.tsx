@@ -1,10 +1,9 @@
-import * as React from "react";
-import { Component } from "react";
-import { _, ColumnApi, ComponentUtil, Context, GridApi, GridCoreCreator, GridOptions } from "ag-grid-community";
-import { AgGridColumn } from "../agGridColumn";
-import { ChangeDetectionService, ChangeDetectionStrategyType } from "../changeDetectionService";
-import { GridComp } from "./gridComp";
-import { AgReactUiProps } from "../interfaces";
+import React, { Component } from 'react';
+import { _, ColumnApi, ComponentUtil, Context, GridApi, GridCoreCreator, GridOptions } from 'ag-grid-community';
+import { AgGridColumn } from '../agGridColumn';
+import { ChangeDetectionService, ChangeDetectionStrategyType } from '../changeDetectionService';
+import { GridComp } from './gridComp';
+import { AgReactUiProps } from '../interfaces';
 
 export class AgGridReactFire extends Component<AgReactUiProps, { context: Context | undefined }> {
 
@@ -26,8 +25,8 @@ export class AgGridReactFire extends Component<AgReactUiProps, { context: Contex
 
     public render() {
         return (
-            <div style={this.createStyleForDiv()} className={this.props.className} ref={this.eGui}>
-                {this.state.context && <GridComp context={this.state.context}/>}
+            <div style={ this.createStyleForDiv() } className={ this.props.className } ref={ this.eGui }>
+                { this.state.context && <GridComp context={ this.state.context }/> }
             </div>
         );
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from 'react';
 import {
     AgStackComponentsRegistry,
     Context,
@@ -6,9 +6,9 @@ import {
     IGridBodyComp,
     ResizeObserverService,
     RowContainerName
-} from "ag-grid-community";
-import { classesList } from "./utils";
-import { RowContainerComp } from "./rowContainerComp";
+} from 'ag-grid-community';
+import { classesList } from './utils';
+import { RowContainerComp } from './rowContainerComp';
 
 interface SectionStyle {
     height: number,
@@ -111,14 +111,14 @@ export function GridBodyComp(params: {context: Context}) {
         height: topHeight,
         minHeight: topHeight,
         display: topDisplay,
-        "overflow-y": topAndBottomOverflowY
+        'overflow-y': topAndBottomOverflowY
     };
 
     const bottomStyle: SectionStyle = {
         height: bottomHeight,
         minHeight: bottomHeight,
         display: bottomDisplay,
-        "overflow-y": topAndBottomOverflowY
+        'overflow-y': topAndBottomOverflowY
     };
 
     const createRowContainer = (container: RowContainerName) => <RowContainerComp context={ context } name={ container }/>;
@@ -129,7 +129,7 @@ export function GridBodyComp(params: {context: Context}) {
         style,
         unselectable
     }: SectionProperties & { children: RowContainerName[] } ) => (
-        <div ref={ section } className={ className } role='presentation' style={ style } { ...(unselectable ? { unselectable: 'on'} : {}) }>
+        <div ref={ section } className={ className } role="presentation" style={ style } { ...(unselectable ? { unselectable: 'on'} : {}) }>
             { children.map(createRowContainer) }
         </div>
     );

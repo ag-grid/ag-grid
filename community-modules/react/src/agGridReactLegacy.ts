@@ -1,6 +1,5 @@
-import * as React from "react";
-import { Component, ReactPortal } from "react";
-import * as PropTypes from "prop-types";
+import React, { Component, ReactPortal } from 'react';
+import PropTypes from 'prop-types';
 import {
     _,
     BaseComponentWrapper,
@@ -12,13 +11,13 @@ import {
     GridApi,
     GridOptions,
     WrappableInterface
-} from "@ag-grid-community/core";
-import { AgGridColumn } from "./agGridColumn";
-import { ChangeDetectionService, ChangeDetectionStrategyType } from "./changeDetectionService";
-import { ReactComponent } from "./reactComponent";
-import { LegacyReactComponent } from "./legacyReactComponent";
-import { NewReactComponent } from "./newReactComponent";
-import { AgGridReactProps } from "./interfaces";
+} from '@ag-grid-community/core';
+import { AgGridColumn } from './agGridColumn';
+import { ChangeDetectionService, ChangeDetectionStrategyType } from './changeDetectionService';
+import { ReactComponent } from './reactComponent';
+import { LegacyReactComponent } from './legacyReactComponent';
+import { NewReactComponent } from './newReactComponent';
+import { AgGridReactProps } from './interfaces';
 
 export class AgGridReactLegacy extends Component<AgGridReactProps, {}> {
     private static MAX_COMPONENT_CREATION_TIME_IN_MS: number = 1000; // a second should be more than enough to instantiate a component

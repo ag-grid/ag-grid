@@ -1,4 +1,4 @@
-import React, { MutableRefObject, useEffect, useRef, useState, useCallback } from "react";
+import React, { MutableRefObject, useEffect, useRef, useState, useCallback } from 'react';
 import {
     Context,
     Component,
@@ -6,8 +6,8 @@ import {
     CellCtrl,
     UserCompDetails,
     _,
-} from "@ag-grid-community/core";
-import { CssClasses } from "./utils";
+} from '@ag-grid-community/core';
+import { CssClasses } from './utils';
 
 
 enum CellState { ShowValue, EditValue }
@@ -86,11 +86,9 @@ export function CellComp(props: {
     // attaching the ref to state makes sure we render again when state is set. this is
     // how we make sure the tools are added, as it's not possible to have an effect depend
     // on a reference, as reference is not state, it doesn't create another render cycle.
-    const toolsCallback = useCallback( ref => setToolsSpan(ref), []);
+    const toolsCallback = useCallback(ref => setToolsSpan(ref), []);
 
     useEffect(() => {
-        // const beansToDestroy: any[] = [];
-
         if (!cellCtrl) { return; }
 
         const compProxy: ICellComp = {
@@ -132,10 +130,6 @@ export function CellComp(props: {
 
         cellCtrl.setComp(compProxy, false, null, eGui.current!, printLayout, editingRow);
 
-        // return () => {
-        //     beansToDestroy.forEach(b => context.destroyBean(b));
-        // };
-
     }, [cellCtrl, editingRow, printLayout]);
 
     const className = cssClasses.toString();
@@ -145,7 +139,7 @@ export function CellComp(props: {
         width,
         height,
         transition,
-        "z-index": zIndex
+        'z-index': zIndex
     };
 
     _.assign(cellStyles, userStyles);
@@ -156,9 +150,9 @@ export function CellComp(props: {
     const showTools = includeSelection || includeDndSource || includeRowDrag || forceWrapper;
 
     return (
-        <div ref={ eGui } className={ className } style={ cellStyles } tabIndex={tabIndex}
-             aria-selected={ariaSelected} aria-colindex={ariaColIndex} role={role}
-             col-id={colId} title={title}>
+        <div ref={ eGui } className={ className } style={ cellStyles } tabIndex={ tabIndex }
+             aria-selected={ ariaSelected } aria-colindex={ ariaColIndex } role={ role }
+             col-id={ colId } title={ title }>
 
             { showValue && jsxShowValue(rendererCompDetails, cellRendererRef, valueToDisplay, showTools, toolsCallback) }
             { editValue && jsxEditValue(editorCompDetails, cellEditorRef) }
@@ -168,28 +162,30 @@ export function CellComp(props: {
 }
 
 function jsxShowValue(
-            rendererCompDetails: UserCompDetails | undefined,
-            cellRendererRef: MutableRefObject<any>,
-            valueToDisplay: any,
-            showTools: boolean,
-            toolsCallback: (ref:any) => void
+    rendererCompDetails: UserCompDetails | undefined,
+    cellRendererRef: MutableRefObject<any>,
+    valueToDisplay: any,
+    showTools: boolean,
+    toolsCallback: (ref:any) => void
 ) {
     const noCellRenderer = !rendererCompDetails;
     const reactCellRenderer = rendererCompDetails && rendererCompDetails.componentFromFramework;
     const jsCellRenderer = rendererCompDetails && !rendererCompDetails.componentFromFramework;
 
-    const bodyJsxFunc = ()=> (<>
+    const bodyJsxFunc = () => (
+        <>
             { noCellRenderer && jsxShowValueNoCellRenderer(valueToDisplay) }
             { reactCellRenderer && jsxShowValueReactCellRenderer(rendererCompDetails!, cellRendererRef) }
             { jsCellRenderer && jsxShowValueJsCellRenderer() }
-        </>);
+        </>
+    );
 
     ///////// Need to fix unselectable=on, should be set by the ctrl
     return (
         <>
             { showTools && 
-                <div className="ag-cell-wrapper" role="presentation" ref={toolsCallback}>
-                    <span role="presentation" className={"ag-cell-value"} unselectable="on">
+                <div className="ag-cell-wrapper" role="presentation" ref={ toolsCallback }>
+                    <span role="presentation" className={ 'ag-cell-value' } unselectable="on">
                         { bodyJsxFunc() }
                     </span>
                 </div> 
@@ -202,6 +198,7 @@ function jsxShowValue(
 function jsxEditValue(editorCompDetails: UserCompDetails | undefined, cellEditorRef: MutableRefObject<any>) {
     const reactCellRenderer = editorCompDetails && editorCompDetails.componentFromFramework;
     const jsCellRenderer = editorCompDetails && !editorCompDetails.componentFromFramework;
+
     return (
         <>
             { reactCellRenderer && jsxEditValueReactCellRenderer(editorCompDetails!, cellEditorRef) }
@@ -212,14 +209,15 @@ function jsxEditValue(editorCompDetails: UserCompDetails | undefined, cellEditor
 
 function jsxShowValueNoCellRenderer(valueToDisplay: any) {
     return (
-        <>{valueToDisplay}</>
+        <>{ valueToDisplay }</>
     );
 }
 
 function jsxShowValueReactCellRenderer(rendererCompDetails: UserCompDetails, cellRendererRef: MutableRefObject<any>) {
     const CellRendererClass = rendererCompDetails.componentClass;
+
     return (
-        <CellRendererClass {...rendererCompDetails.params} ref={cellRendererRef}></CellRendererClass>
+        <CellRendererClass { ...rendererCompDetails.params } ref={ cellRendererRef }></CellRendererClass>
     );
 }
 
@@ -231,7 +229,7 @@ function jsxEditValueReactCellRenderer(editorCompDetails: UserCompDetails, cellE
     const CellEditorClass = editorCompDetails.componentClass;
 
     return (
-        <CellEditorClass {...editorCompDetails.params} ref={cellEditorRef}></CellEditorClass>
+        <CellEditorClass { ...editorCompDetails.params } ref={ cellEditorRef }></CellEditorClass>
     );
 }
 

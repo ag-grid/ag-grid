@@ -1,5 +1,5 @@
-import { ColumnApi, GridApi, GridOptions, Module } from "ag-grid-community";
-import { ChangeDetectionStrategyType } from "./changeDetectionService";
+import { ColumnApi, GridApi, GridOptions, Module } from 'ag-grid-community';
+import { ChangeDetectionStrategyType } from './changeDetectionService';
 import {
     ICellEditor,
     ICellEditorParams,

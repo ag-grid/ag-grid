@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Context, IRowComp, RowCtrl, _, CellCtrl } from "ag-grid-community";
-import { CssClasses } from "./utils";
-import { CellComp } from "./cellComp";
+import React, { useEffect, useRef, useState } from 'react';
+import { Context, IRowComp, RowCtrl, _, CellCtrl } from 'ag-grid-community';
+import { CssClasses } from './utils';
+import { CellComp } from './cellComp';
 
 interface CellCtrlMap {
     [instanceId: number]:CellCtrl
@@ -67,7 +67,6 @@ export function RowComp(params: {context: Context, rowCtrl: RowCtrl, pinned: str
     const eGui = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        // const beansToDestroy: any[] = [];
         if (!rowCtrl) { return; }
 
         const compProxy: IRowComp = {
@@ -95,11 +94,6 @@ export function RowComp(params: {context: Context, rowCtrl: RowCtrl, pinned: str
         };
 
         rowCtrl.setComp(compProxy, eGui.current!, pinned);
-
-        // return ()=> {
-        //     beansToDestroy.forEach( b => context.destroyBean(b) );
-        // };
-
     }, [domOrder, pinned, rowCtrl]);
 
     const rowStyles = {

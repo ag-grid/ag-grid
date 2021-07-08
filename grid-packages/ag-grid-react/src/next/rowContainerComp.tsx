@@ -1,13 +1,13 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
     Context,
     IRowContainerComp,
     RowContainerCtrl,
     RowContainerName,
     RowCtrl
-} from "ag-grid-community";
-import { classesList } from "./utils";
-import { RowComp } from "./rowComp";
+} from 'ag-grid-community';
+import { classesList } from './utils';
+import { RowComp } from './rowComp';
 
 export function RowContainerComp(params: {context: Context, name: RowContainerName}) {
 
@@ -41,8 +41,8 @@ export function RowContainerComp(params: {context: Context, name: RowContainerNa
                     }
                     // if dom order not important, we don't want to change the order
                     // of the elements in the dom, as this would break transition styles
-                    const oldRows = prev.filter( r => rowCtrls.indexOf(r) >= 0);
-                    const newRows = rowCtrls.filter( r => oldRows.indexOf(r) < 0);
+                    const oldRows = prev.filter(r => rowCtrls.indexOf(r) >= 0);
+                    const newRows = rowCtrls.filter(r => oldRows.indexOf(r) < 0);
                     const next = [...oldRows, ...newRows];
                     return next;
                 });

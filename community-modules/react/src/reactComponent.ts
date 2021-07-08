@@ -1,7 +1,7 @@
+import { ReactPortal } from 'react';
 import { _, ComponentType, IComponent, WrappableInterface } from '@ag-grid-community/core';
-import { ReactPortal } from "react";
-import { assignProperties } from "./utils";
-import { AgGridReactLegacy } from "./agGridReactLegacy";
+import { assignProperties } from './utils';
+import { AgGridReactLegacy } from './agGridReactLegacy';
 
 abstract class BaseReactComponent implements IComponent<any>, WrappableInterface {
     abstract getGui(): HTMLElement;

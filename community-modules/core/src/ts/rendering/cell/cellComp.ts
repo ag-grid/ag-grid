@@ -15,7 +15,6 @@ import { escapeString } from "../../utils/string";
 import { missing } from "../../utils/generic";
 import { addStylesToElement, clearElement } from "../../utils/dom";
 import { isBrowserIE } from "../../utils/browser";
-import { doOnce } from "../../utils/function";
 import { CellCtrl, ICellComp } from "./cellCtrl";
 import { UserCompDetails } from "../../components/framework/userComponentFactory";
 
@@ -231,8 +230,8 @@ export class CellComp extends Component implements TooltipParentComp {
         const eGui = this.getGui();
         eGui.innerHTML = /* html */
             `<div ref="eCellWrapper" class="ag-cell-wrapper" role="presentation">
-                    <span ref="eCellValue" role="presentation" class="${CSS_CELL_VALUE}"${unselectable}></span>
-                </div>`;
+                <span ref="eCellValue" role="presentation" class="${CSS_CELL_VALUE}"${unselectable}></span>
+            </div>`;
 
         this.eCellValue = this.getRefElement('eCellValue');
         this.eCellWrapper = this.getRefElement('eCellWrapper');

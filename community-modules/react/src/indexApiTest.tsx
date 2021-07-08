@@ -1,21 +1,22 @@
-import React, { useEffect, useRef, useState } from "react";
-import ReactDOM from "react-dom";
-import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model"
-import { AgGridReact } from "./agGridReact"
-import { AgGridColumn } from "./agGridColumn"
+import React, { useEffect, useRef, useState } from 'react';
+import ReactDOM from 'react-dom';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { AgGridReact } from './agGridReact';
+import { AgGridColumn } from './agGridColumn';
+import { useGridApis } from "./useGridApi";
 
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
-import {useGridApis} from "./useGridApi";
+
 
 const App = () => {
     const gridRef = useRef<AgGridReact>(null);
     const [gridApi, columnApi] = useGridApis(gridRef);
 
     const [rowData] = useState([
-        {make: "Toyota", model: "Celica", price: 35000},
-        {make: "Ford", model: "Mondeo", price: 32000},
-        {make: "Porsche", model: "Boxter", price: 72000}
+        { make: 'Toyota', model: 'Celica', price: 35000 },
+        { make: 'Ford', model: 'Mondeo', price: 32000 },
+        { make: 'Porsche', model: 'Boxter', price: 72000 }
     ]);
 
     useEffect(() => {
@@ -39,5 +40,5 @@ const App = () => {
 
 ReactDOM.render(
     <App/>,
-    document.getElementById("root")
+    document.getElementById('root')
 );
