@@ -913,28 +913,34 @@
             "matrixExcludeChildren": true,
             "items": [
               {
-                "title": "Single Group Column",
-                "url": "/grouping-single-group-column/",
-                "enterprise": true,
-                "showInCollapsed": false
-              },
-              {
-                "title": "Multiple Group Columns",
-                "url": "/grouping-multiple-group-columns/",
-                "enterprise": true,
-                "showInCollapsed": false
-              },
-              {
-                "title": "Full Width Groups",
-                "url": "/grouping-full-width-groups/",
-                "enterprise": true,
-                "showInCollapsed": false
-              },
-              {
-                "title": "Group Customisation",
-                "url": "/grouping-customisation/",
-                "enterprise": true,
-                "showInCollapsed": false
+                "title": "Display Types",
+                "url": "/grouping-display-types/",
+                "items": [
+                  {
+                    "title": "Single Group Column",
+                    "url": "/grouping-single-group-column/",
+                    "enterprise": true,
+                    "showInCollapsed": false
+                  },
+                  {
+                    "title": "Multiple Group Columns",
+                    "url": "/grouping-multiple-group-columns/",
+                    "enterprise": true,
+                    "showInCollapsed": false
+                  },
+                  {
+                    "title": "Group Rows",
+                    "url": "/grouping-group-rows/",
+                    "enterprise": true,
+                    "showInCollapsed": false
+                  },
+                  {
+                    "title": "Custom",
+                    "url": "/grouping-custom/",
+                    "enterprise": true,
+                    "showInCollapsed": false
+                  }
+                ]
               },
               {
                 "title": "Sorting",
@@ -955,14 +961,14 @@
                 "showInCollapsed": false
               },
               {
-                "title": "Provided Groups",
-                "url": "/grouping-provided-groups/",
+                "title": "Other",
+                "url": "/grouping-other/",
                 "enterprise": true,
                 "showInCollapsed": false
               },
               {
-                "title": "Other",
-                "url": "/grouping-other/",
+                "title": "Group Customisation",
+                "url": "/grouping-customisation/",
                 "enterprise": true,
                 "showInCollapsed": false
               }

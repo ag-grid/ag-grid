@@ -4,7 +4,7 @@ enterprise: true
 ---
 This section shows how full rows can be used for showing details about the group instead of group columns.
 
-<image-caption src="grouping-full-width-groups/resources/full-width-groups.png" alt="Full Width Group" centered="true"></image-caption>
+<image-caption src="grouping-group-rows/resources/full-width-groups.png" alt="Full Width Group" centered="true"></image-caption>
 
 ## Enabling Full Width Row Groups
 
