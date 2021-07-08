@@ -997,7 +997,9 @@ export class CellCtrl extends BeanStub {
         }
 
         // otherwise (normal case) we are creating a RowDraggingComp for the first time
-        const res = new RowDragComp(() => this.value, this.rowNode, this.column, customElement, dragStartPixels);
-        this.beans.context.createBean(res);
+        const rowDragComp = new RowDragComp(() => this.value, this.rowNode, this.column, customElement, dragStartPixels);
+        this.beans.context.createBean(rowDragComp);
+
+        return rowDragComp;
     }
 }
