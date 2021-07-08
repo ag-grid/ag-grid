@@ -29,7 +29,7 @@ release*.zip
 archive*.zip
 
 # latest only
-#dist
+dist
 
 charts-packages/**/dist
 community-modules/**/dist
