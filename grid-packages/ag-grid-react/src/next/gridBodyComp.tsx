@@ -1,16 +1,29 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
     AgStackComponentsRegistry,
-    Component,
     Context,
     GridBodyCtrl,
     IGridBodyComp,
     ResizeObserverService,
-    RowContainerComp as AgStackRowContainerComp,
     RowContainerName
 } from "ag-grid-community";
 import { classesList } from "./utils";
 import { RowContainerComp } from "./rowContainerComp";
+
+interface SectionStyle {
+    height: number,
+    minHeight: number,
+    display: string,
+    'overflow-y': string
+};
+
+interface SectionProperties {
+    section: React.RefObject<HTMLDivElement>, 
+    className: string, 
+    style?: SectionStyle,
+    unselectable?: boolean
+}
+
 
 export function GridBodyComp(params: {context: Context}) {
 
@@ -56,24 +69,6 @@ export function GridBodyComp(params: {context: Context}) {
         eRoot.current!.appendChild(newComp('AG-FAKE-HORIZONTAL-SCROLL').getGui())
         eRoot.current!.appendChild(newComp('AG-OVERLAY-WRAPPER').getGui())
 
-        const addRowContainer = (parent: HTMLElement, name: RowContainerName) => {
-            Component.elementGettingCreated = { getAttribute: ()=> name };
-
-            const comp = context.createBean(new AgStackRowContainerComp());
-            beansToDestroy.push(comp);
-            parent.appendChild(comp.getGui());
-        };
-
-        addRowContainer(eTop.current!, RowContainerName.TOP_LEFT);
-        addRowContainer(eTop.current!, RowContainerName.TOP_CENTER);
-        addRowContainer(eTop.current!, RowContainerName.TOP_RIGHT);
-        addRowContainer(eTop.current!, RowContainerName.TOP_FULL_WITH);
-
-        addRowContainer(eBottom.current!, RowContainerName.BOTTOM_LEFT);
-        addRowContainer(eBottom.current!, RowContainerName.BOTTOM_CENTER);
-        addRowContainer(eBottom.current!, RowContainerName.BOTTOM_RIGHT);
-        addRowContainer(eBottom.current!, RowContainerName.BOTTOM_FULL_WITH);
-
         const resizeObserverService = context.getBean('resizeObserverService') as ResizeObserverService;
 
         const compProxy: IGridBodyComp = {
@@ -112,30 +107,53 @@ export function GridBodyComp(params: {context: Context}) {
     const bodyViewportClasses = classesList('ag-body-viewport', rowAnimationClass, layoutClass, forceVerticalScrollClass, cellSelectableCss);
     const bottomClasses = classesList('ag-floating-bottom', cellSelectableCss);
 
-    const topStyle = {
+    const topStyle: SectionStyle = {
         height: topHeight,
         minHeight: topHeight,
         display: topDisplay,
         "overflow-y": topAndBottomOverflowY
     };
 
-    const bottomStyle = {
+    const bottomStyle: SectionStyle = {
         height: bottomHeight,
         minHeight: bottomHeight,
         display: bottomDisplay,
         "overflow-y": topAndBottomOverflowY
     };
 
+    const createRowContainer = (container: RowContainerName) => <RowContainerComp context={ context } name={ container }/>;
+    const createSection = ({
+        section, 
+        children,
+        className, 
+        style,
+        unselectable
+    }: SectionProperties & { children: RowContainerName[] } ) => (
+        <div ref={ section } className={ className } role='presentation' style={ style } { ...(unselectable ? { unselectable: 'on'} : {}) }>
+            { children.map(createRowContainer) }
+        </div>
+    );
+
     return (
         <div ref={ eRoot } className={ rootClasses } role="grid" unselectable="on" aria-colcount={ ariaColCount } aria-rowcount={ ariaRowCount }>
-            <div className={ topClasses } ref={ eTop } role="presentation" unselectable="on" style={ topStyle }></div>
-            <div className={ bodyViewportClasses } ref={ eBodyViewport } role="presentation">
-                <RowContainerComp context={ context } name={ RowContainerName.LEFT }/>
-                <RowContainerComp context={ context } name={ RowContainerName.CENTER }/>
-                <RowContainerComp context={ context } name={ RowContainerName.RIGHT }/>
-                <RowContainerComp context={ context } name={ RowContainerName.FULL_WIDTH }/>
-            </div>
-            <div className={ bottomClasses } ref={ eBottom } role="presentation" unselectable="on" style={ bottomStyle }></div>
+            { createSection({ section: eTop, className: topClasses, style: topStyle, unselectable: true, children: [
+                RowContainerName.TOP_LEFT,
+                RowContainerName.TOP_CENTER,
+                RowContainerName.TOP_RIGHT,
+                RowContainerName.TOP_FULL_WITH,
+            ]}) }
+            { createSection({ section: eBodyViewport, className: bodyViewportClasses, children: [
+                RowContainerName.LEFT,
+                RowContainerName.CENTER,
+                RowContainerName.RIGHT,
+                RowContainerName.FULL_WIDTH,
+            ]}) }
+            { createSection({ section: eBottom, className: bottomClasses, style: bottomStyle, unselectable: true, children: [
+                RowContainerName.BOTTOM_LEFT,
+                RowContainerName.BOTTOM_CENTER,
+                RowContainerName.BOTTOM_RIGHT,
+                RowContainerName.BOTTOM_FULL_WITH,
+            ]}) }
         </div>
     );
 }
