@@ -24,6 +24,7 @@ export interface PopupEventParams {
 interface AgPopup {
     element: HTMLElement;
     hideFunc: () => void;
+    stopAnchoringPromise: AgPromise<Function>;
 }
 
 interface Rect {
@@ -63,6 +64,7 @@ export interface AddPopupParams {
 
 export interface AddPopupResult {
     hideFunc: () => void;
+    stopAnchoringPromise: AgPromise<Function>;
 }
 
 @Bean('popupService')
@@ -400,7 +402,7 @@ export class PopupService extends BeanStub {
         })
     }
 
-    public addPopup(params: AddPopupParams): AddPopupResult | undefined {
+    public addPopup(params: AddPopupParams): AddPopupResult {
         const {
             modal,
             eChild,
@@ -415,16 +417,18 @@ export class PopupService extends BeanStub {
 
         const eDocument = this.gridOptionsWrapper.getDocument();
 
+        let destroyPositionTracker: AgPromise<() => void> = new AgPromise(resolve => resolve(() => {}));
+
         if (!eDocument) {
             console.warn('ag-grid: could not find the document, document is empty');
-            return;
+            return {hideFunc: () => {}, stopAnchoringPromise: destroyPositionTracker};
         }
 
         const pos = findIndex(this.popupList, popup => popup.element === eChild);
 
         if (pos !== -1) {
             const popup = this.popupList[pos];
-            return {hideFunc: popup.hideFunc};
+            return {hideFunc: popup.hideFunc, stopAnchoringPromise: popup.stopAnchoringPromise};
         }
 
         const ePopupParent = this.getPopupParent();
@@ -482,8 +486,6 @@ export class PopupService extends BeanStub {
 
         const hidePopupOnMouseEvent = (event: MouseEvent) => hidePopup({mouseEvent: event});
         const hidePopupOnTouchEvent = (event: TouchEvent) => hidePopup({touchEvent: event});
-
-        let destroyPositionTracker: AgPromise<() => void> = new AgPromise(resolve => resolve(() => {}));
 
         const hidePopup = (popupParams: PopupEventParams = {}) => {
             const {mouseEvent, touchEvent, keyboardEvent} = popupParams;
@@ -557,11 +559,13 @@ export class PopupService extends BeanStub {
 
         this.popupList.push({
             element: eChild,
-            hideFunc: hidePopup
+            hideFunc: hidePopup,
+            stopAnchoringPromise: destroyPositionTracker
         });
 
         return {
-            hideFunc: hidePopup
+            hideFunc: hidePopup,
+            stopAnchoringPromise: destroyPositionTracker
         };
     }
 

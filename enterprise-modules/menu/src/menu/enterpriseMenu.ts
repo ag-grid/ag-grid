@@ -147,16 +147,18 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             // if user starts showing / hiding columns, or otherwise move the underlying column
             // for this menu, we want to stop tracking the menu with the column position. otherwise
             // the menu would move as the user is using the columns tab inside the menu.
-            const stopAnchoringFunc = addPopupRes.stopAnchoringFunc;
+            const stopAnchoringPromise = addPopupRes.stopAnchoringPromise;
 
-            if (stopAnchoringFunc) {
-                column.addEventListener(Column.EVENT_LEFT_CHANGED, stopAnchoringFunc);
-                column.addEventListener(Column.EVENT_VISIBLE_CHANGED, stopAnchoringFunc);
+            if (stopAnchoringPromise) {
+                stopAnchoringPromise.then((stopAnchoringFunc: Function) => {
+                    column.addEventListener(Column.EVENT_LEFT_CHANGED, stopAnchoringFunc);
+                    column.addEventListener(Column.EVENT_VISIBLE_CHANGED, stopAnchoringFunc);
 
-                closedFuncs.push(() => {
-                    column.removeEventListener(Column.EVENT_LEFT_CHANGED, stopAnchoringFunc);
-                    column.removeEventListener(Column.EVENT_VISIBLE_CHANGED, stopAnchoringFunc);
-                });
+                    closedFuncs.push(() => {
+                        column.removeEventListener(Column.EVENT_LEFT_CHANGED, stopAnchoringFunc);
+                        column.removeEventListener(Column.EVENT_VISIBLE_CHANGED, stopAnchoringFunc);
+                    });
+                })
             }
         }
 
