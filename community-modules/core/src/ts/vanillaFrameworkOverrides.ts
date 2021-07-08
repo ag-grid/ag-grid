@@ -1,5 +1,6 @@
 import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 import { includes } from "./utils/array";
+import {AgPromise} from "./utils";
 
 const OUTSIDE_ANGULAR_EVENTS = ['mouseover', 'mouseout', 'mouseenter', 'mouseleave'];
 
@@ -9,6 +10,11 @@ export class VanillaFrameworkOverrides implements IFrameworkOverrides {
     // for Vanilla JS, we use simple timeout
     public setTimeout(action: any, timeout?: any): void {
         window.setTimeout(action, timeout);
+    }
+    public setInterval(action: any, timeout?: any): AgPromise<number> {
+        return new AgPromise(resolve => {
+            resolve(window.setTimeout(action, timeout));
+        })
     }
 
     public isOutsideAngular = (eventType:string) => includes(OUTSIDE_ANGULAR_EVENTS, eventType);

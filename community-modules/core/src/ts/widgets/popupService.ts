@@ -1,24 +1,18 @@
-import { Autowired, Bean } from "../context/context";
-import { PostProcessPopupParams } from "../entities/gridOptions";
-import { RowNode } from "../entities/rowNode";
-import { Column } from "../entities/column";
-import { Environment } from "../environment";
-import { Events } from '../events';
-import { BeanStub } from "../context/beanStub";
-import {
-    addCssClass,
-    addOrRemoveCssClass,
-    containsClass,
-    getAbsoluteHeight,
-    getAbsoluteWidth,
-    removeCssClass
-} from '../utils/dom';
-import { findIndex, forEach, last } from '../utils/array';
-import { isElementInEventPath } from '../utils/event';
-import { KeyCode } from '../constants/keyCode';
-import { FocusService } from "../focusService";
-import { GridCtrl } from "../gridComp/gridCtrl";
-import { IAfterGuiAttachedParams } from "../interfaces/iAfterGuiAttachedParams";
+import {Autowired, Bean} from "../context/context";
+import {PostProcessPopupParams} from "../entities/gridOptions";
+import {RowNode} from "../entities/rowNode";
+import {Column} from "../entities/column";
+import {Environment} from "../environment";
+import {Events} from '../events';
+import {BeanStub} from "../context/beanStub";
+import {addCssClass, addOrRemoveCssClass, containsClass, getAbsoluteHeight, getAbsoluteWidth, removeCssClass} from '../utils/dom';
+import {findIndex, forEach, last} from '../utils/array';
+import {isElementInEventPath} from '../utils/event';
+import {KeyCode} from '../constants/keyCode';
+import {FocusService} from "../focusService";
+import {GridCtrl} from "../gridComp/gridCtrl";
+import {IAfterGuiAttachedParams} from "../interfaces/iAfterGuiAttachedParams";
+import {AgPromise} from "../utils";
 
 export interface PopupEventParams {
     originalMouseEvent?: MouseEvent | Touch | null;
@@ -30,7 +24,6 @@ export interface PopupEventParams {
 interface AgPopup {
     element: HTMLElement;
     hideFunc: () => void;
-    stopAnchoringFunc?: () => void;
 }
 
 interface Rect {
@@ -70,7 +63,6 @@ export interface AddPopupParams {
 
 export interface AddPopupResult {
     hideFunc: () => void;
-    stopAnchoringFunc?: () => void;
 }
 
 @Bean('popupService')
@@ -99,7 +91,9 @@ export class PopupService extends BeanStub {
     public getPopupParent(): HTMLElement {
         const ePopupParent = this.gridOptionsWrapper.getPopupParent();
 
-        if (ePopupParent) { return ePopupParent; }
+        if (ePopupParent) {
+            return ePopupParent;
+        }
 
         return this.gridCompController.getGui();
     }
@@ -160,8 +154,8 @@ export class PopupService extends BeanStub {
         ePopup: HTMLElement,
     }): void {
 
-        const { x, y } = this.calculatePointerAlign(params.mouseEvent);
-        const { ePopup, nudgeX, nudgeY } = params;
+        const {x, y} = this.calculatePointerAlign(params.mouseEvent);
+        const {ePopup, nudgeX, nudgeY} = params;
 
         this.positionPopup({
             ePopup: ePopup,
@@ -272,11 +266,15 @@ export class PopupService extends BeanStub {
         y: number,
         keepWithinBounds?: boolean;
     }): void {
-        const { ePopup, keepWithinBounds, nudgeX, nudgeY } = params;
-        let { x, y } = params;
+        const {ePopup, keepWithinBounds, nudgeX, nudgeY} = params;
+        let {x, y} = params;
 
-        if (nudgeX) { x += nudgeX; }
-        if (nudgeY) { y += nudgeY; }
+        if (nudgeX) {
+            x += nudgeX;
+        }
+        if (nudgeY) {
+            y += nudgeY;
+        }
 
         // if popup is overflowing to the bottom, move it up
         if (keepWithinBounds) {
@@ -348,7 +346,7 @@ export class PopupService extends BeanStub {
         ePopup: HTMLElement,
         element: HTMLElement,
         hidePopup: () => void;
-    }): () => void {
+    }): AgPromise<() => void> {
         const eParent = this.getPopupParent();
         const parentRect = eParent.getBoundingClientRect();
 
@@ -365,40 +363,41 @@ export class PopupService extends BeanStub {
         const leftPx = params.ePopup.style.left;
         const left = parseInt(leftPx!.substring(0, leftPx!.length - 1), 10);
 
-        let intervalId: number | undefined = window.setInterval(() => {
-            const pRect = eParent.getBoundingClientRect();
-            const sRect = params.element.getBoundingClientRect();
+        return new AgPromise<() => void>(resolve => {
+            this.getFrameworkOverrides().setInterval(() => {
+                const pRect = eParent.getBoundingClientRect();
+                const sRect = params.element.getBoundingClientRect();
 
-            const elementNotInDom = sRect.top == 0 && sRect.left == 0 && sRect.height == 0 && sRect.width == 0;
-            if (elementNotInDom) {
-                params.hidePopup();
-                return;
-            }
+                const elementNotInDom = sRect.top == 0 && sRect.left == 0 && sRect.height == 0 && sRect.width == 0;
+                if (elementNotInDom) {
+                    params.hidePopup();
+                    return;
+                }
 
-            const currentDiffTop = pRect.top - sRect.top;
-            if (currentDiffTop != lastDiffTop) {
-                const newTop = top + initialDiffTop - currentDiffTop;
-                params.ePopup.style.top = `${newTop}px`;
-            }
-            lastDiffTop = currentDiffTop;
+                const currentDiffTop = pRect.top - sRect.top;
+                if (currentDiffTop != lastDiffTop) {
+                    const newTop = top + initialDiffTop - currentDiffTop;
+                    params.ePopup.style.top = `${newTop}px`;
+                }
+                lastDiffTop = currentDiffTop;
 
-            const currentDiffLeft = pRect.left - sRect.left;
-            if (currentDiffLeft != lastDiffLeft) {
-                const newLeft = left + initialDiffLeft - currentDiffLeft;
-                params.ePopup.style.left = `${newLeft}px`;
-            }
-            lastDiffLeft = currentDiffLeft;
+                const currentDiffLeft = pRect.left - sRect.left;
+                if (currentDiffLeft != lastDiffLeft) {
+                    const newLeft = left + initialDiffLeft - currentDiffLeft;
+                    params.ePopup.style.left = `${newLeft}px`;
+                }
+                lastDiffLeft = currentDiffLeft;
 
-        }, 200);
-
-        const res = () => {
-            if (intervalId != null) {
-                window.clearInterval(intervalId);
-            }
-            intervalId = undefined;
-        };
-
-        return res;
+            }, 200)
+                .then(intervalId => {
+                    const result = () => {
+                        if (intervalId != null) {
+                            window.clearInterval(intervalId);
+                        }
+                    };
+                    resolve(result);
+                });
+        })
     }
 
     public addPopup(params: AddPopupParams): AddPopupResult | undefined {
@@ -425,7 +424,7 @@ export class PopupService extends BeanStub {
 
         if (pos !== -1) {
             const popup = this.popupList[pos];
-            return { hideFunc: popup.hideFunc, stopAnchoringFunc: popup.stopAnchoringFunc };
+            return {hideFunc: popup.hideFunc};
         }
 
         const ePopupParent = this.getPopupParent();
@@ -444,7 +443,7 @@ export class PopupService extends BeanStub {
         // add env CSS class to child, in case user provided a popup parent, which means
         // theme class may be missing
         const eWrapper = document.createElement('div');
-        const { theme } = this.environment.getTheme();
+        const {theme} = this.environment.getTheme();
 
         if (theme) {
             addCssClass(eWrapper, theme);
@@ -470,28 +469,30 @@ export class PopupService extends BeanStub {
         let popupHidden = false;
 
         const hidePopupOnKeyboardEvent = (event: KeyboardEvent) => {
-            if (!eWrapper.contains(document.activeElement)) { return; }
+            if (!eWrapper.contains(document.activeElement)) {
+                return;
+            }
 
             const key = event.which || event.keyCode;
 
             if (key === KeyCode.ESCAPE) {
-                hidePopup({ keyboardEvent: event });
+                hidePopup({keyboardEvent: event});
             }
         };
 
-        const hidePopupOnMouseEvent = (event: MouseEvent) => hidePopup({ mouseEvent: event });
-        const hidePopupOnTouchEvent = (event: TouchEvent) => hidePopup({ touchEvent: event });
+        const hidePopupOnMouseEvent = (event: MouseEvent) => hidePopup({mouseEvent: event});
+        const hidePopupOnTouchEvent = (event: TouchEvent) => hidePopup({touchEvent: event});
 
-        let destroyPositionTracker: (() => void) | undefined;
+        let destroyPositionTracker: AgPromise<() => void> = new AgPromise(resolve => resolve(() => {}));
 
         const hidePopup = (popupParams: PopupEventParams = {}) => {
-            const { mouseEvent, touchEvent, keyboardEvent } = popupParams;
+            const {mouseEvent, touchEvent, keyboardEvent} = popupParams;
             if (
                 // we don't hide popup if the event was on the child, or any
                 // children of this child
-                this.isEventFromCurrentPopup({ mouseEvent, touchEvent }, eChild) ||
+                this.isEventFromCurrentPopup({mouseEvent, touchEvent}, eChild) ||
                 // if the event to close is actually the open event, then ignore it
-                this.isEventSameChainAsOriginalEvent({ originalMouseEvent: click, mouseEvent, touchEvent }) ||
+                this.isEventSameChainAsOriginalEvent({originalMouseEvent: click, mouseEvent, touchEvent}) ||
                 // this method should only be called once. the client can have different
                 // paths, each one wanting to close, so this method may be called multiple times.
                 popupHidden
@@ -517,12 +518,12 @@ export class PopupService extends BeanStub {
             this.popupList = this.popupList.filter(popup => popup.element !== eChild);
 
             if (destroyPositionTracker) {
-                destroyPositionTracker();
+                destroyPositionTracker.then(destroyFunc => destroyFunc && destroyFunc());
             }
         };
 
         if (afterGuiAttached) {
-            afterGuiAttached({ hidePopup });
+            afterGuiAttached({hidePopup});
         }
 
         // if we add these listeners now, then the current mouse
@@ -556,18 +557,16 @@ export class PopupService extends BeanStub {
 
         this.popupList.push({
             element: eChild,
-            hideFunc: hidePopup,
-            stopAnchoringFunc: destroyPositionTracker
+            hideFunc: hidePopup
         });
 
         return {
-            hideFunc: hidePopup,
-            stopAnchoringFunc: destroyPositionTracker
+            hideFunc: hidePopup
         };
     }
 
     private isEventFromCurrentPopup(params: PopupEventParams, target: HTMLElement): boolean {
-        const { mouseEvent, touchEvent } = params;
+        const {mouseEvent, touchEvent} = params;
 
         const event = mouseEvent ? mouseEvent : touchEvent;
 
@@ -596,10 +595,14 @@ export class PopupService extends BeanStub {
     }
 
     public isElementWithinCustomPopup(el: HTMLElement): boolean {
-        if (!this.popupList.length) { return false; }
+        if (!this.popupList.length) {
+            return false;
+        }
 
         while (el && el !== document.body) {
-            if (el.classList.contains('ag-custom-component-popup') || el.parentElement === null) { return true; }
+            if (el.classList.contains('ag-custom-component-popup') || el.parentElement === null) {
+                return true;
+            }
             el = el.parentElement;
         }
 
@@ -609,7 +612,7 @@ export class PopupService extends BeanStub {
     // in some browsers, the context menu event can be fired before the click event, which means
     // the context menu event could open the popup, but then the click event closes it straight away.
     private isEventSameChainAsOriginalEvent(params: PopupEventParams): boolean {
-        const { originalMouseEvent, mouseEvent, touchEvent } = params;
+        const {originalMouseEvent, mouseEvent, touchEvent} = params;
         // we check the coordinates of the event, to see if it's the same event. there is a 1 / 1000 chance that
         // the event is a different event, however that is an edge case that is not very relevant (the user clicking
         // twice on the same location isn't a normal path).
@@ -652,7 +655,9 @@ export class PopupService extends BeanStub {
     public setAlwaysOnTop(ePopup: HTMLElement, alwaysOnTop?: boolean): void {
         const eWrapper = this.getWrapper(ePopup);
 
-        if (!eWrapper) { return; }
+        if (!eWrapper) {
+            return;
+        }
 
         addOrRemoveCssClass(eWrapper, 'ag-always-on-top', !!alwaysOnTop);
 
@@ -669,7 +674,9 @@ export class PopupService extends BeanStub {
         const onTopLength = alwaysOnTopList.length;
         const eWrapper = this.getWrapper(ePopup);
 
-        if (!eWrapper || popupLen <= 1 || !parent.contains(ePopup)) { return; }
+        if (!eWrapper || popupLen <= 1 || !parent.contains(ePopup)) {
+            return;
+        }
 
         const pos = popupList.indexOf(eWrapper);
 

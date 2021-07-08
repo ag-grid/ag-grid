@@ -1,5 +1,5 @@
 import {Injectable, NgZone} from "@angular/core";
-import {VanillaFrameworkOverrides} from "ag-grid-community";
+import {AgPromise, VanillaFrameworkOverrides} from "ag-grid-community";
 
 @Injectable()
 export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
@@ -26,6 +26,24 @@ export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
                 action();
             }, timeout);
         }
+    }
+
+    public setInterval(action: any, interval?: any): AgPromise<number> {
+        return new AgPromise<number>(resolve => {
+            if (this._ngZone) {
+                this._ngZone.runOutsideAngular(() => {
+                    resolve(window.setInterval(() => {
+                            action();
+                        }, interval)
+                    );
+                });
+            } else {
+                resolve(window.setInterval(() => {
+                        action();
+                    }, interval)
+                );
+            }
+        });
     }
 
     addEventListener(element: HTMLElement, eventType: string, listener: EventListener | EventListenerObject, useCapture?: boolean): void {
