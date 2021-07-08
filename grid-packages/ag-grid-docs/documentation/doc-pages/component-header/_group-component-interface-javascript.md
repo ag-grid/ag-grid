@@ -6,7 +6,7 @@
 |```ts
 |interface IHeaderGroupComp {
 |    // optional method, gets called once with params
-|    init?(params: IHeaderGroupCompParams): void;
+|    init?(params: IHeaderGroupParams): void;
 |
 |    // can be called more than once, you should return the HTML element
 |    getGui(): HTMLElement;
