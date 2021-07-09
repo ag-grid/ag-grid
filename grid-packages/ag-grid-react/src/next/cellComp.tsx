@@ -1,4 +1,4 @@
-import React, { MutableRefObject, useEffect, useRef, useState, useCallback } from 'react';
+import React, { MutableRefObject, useEffect, useRef, useState, useCallback, RefObject } from 'react';
 import {
     Context,
     Component,
@@ -6,6 +6,7 @@ import {
     CellCtrl,
     UserCompDetails,
     _,
+    UserComponentFactory,
 } from 'ag-grid-community';
 import { CssClasses } from './utils';
 
@@ -46,12 +47,18 @@ export function CellComp(props: {
 
     const eGui = useRef<HTMLDivElement>(null);
     const cellRendererRef = useRef<any>(null);
+    const jsCellRendererRef = useRef<any>(null);
     const cellEditorRef = useRef<any>(null);
 
     const [toolsSpan, setToolsSpan] = useState<HTMLElement>();
+    const [toolsValueSpan, setToolsValueSpan] = useState<HTMLElement>();
 
-    // this gets called every time there is a change to what tool widgets
-    // we show.
+    const showValue = cellState === CellState.ShowValue;
+    const editValue = cellState === CellState.EditValue;
+
+    const showTools = showValue && (includeSelection || includeDndSource || includeRowDrag || forceWrapper);
+
+    // tool widgets effect
     useEffect(() => {
         if (!toolsSpan || !cellCtrl || !context) { return; }
 
@@ -86,7 +93,40 @@ export function CellComp(props: {
     // attaching the ref to state makes sure we render again when state is set. this is
     // how we make sure the tools are added, as it's not possible to have an effect depend
     // on a reference, as reference is not state, it doesn't create another render cycle.
-    const toolsCallback = useCallback(ref => setToolsSpan(ref), []);
+    const toolsRefCallback = useCallback(ref => setToolsSpan(ref), []);
+    const toolsValueRefCallback = useCallback(ref => setToolsValueSpan(ref), []);
+
+    // show vanilla JS cell renderer
+    useEffect( ()=> {
+
+        if (!showValue) { return; } // do nothing if editing
+
+        if (!rendererCompDetails || rendererCompDetails.componentFromFramework) { return; } // do nothing if not using js cell renderer
+
+        if (showTools && toolsValueSpan==null) { return; } // ui for tools not yet set up
+
+        const compFactory = context.getBean('userComponentFactory') as UserComponentFactory;
+        const promise = compFactory.createCellRenderer(rendererCompDetails);
+        if (!promise) { return; }
+
+        const comp = promise.resolveNow(null, x => x); // js comps are never async
+        if (!comp) { return; }
+
+        const compGui = comp.getGui();
+        const parent = showTools ? toolsValueSpan! : eGui.current!;
+        parent.appendChild(compGui);
+
+        jsCellRendererRef.current = comp;
+
+        return () => {
+            if (compGui.parentElement) {
+                compGui.parentElement.removeChild(compGui);
+            }
+            context.destroyBean(comp);
+            jsCellRendererRef.current = undefined;
+        };
+
+    }, [cellState, toolsValueSpan]);
 
     useEffect(() => {
         if (!cellCtrl) { return; }
@@ -125,7 +165,7 @@ export function CellComp(props: {
 
             getCellEditor: () => cellEditorRef.current,
             getCellRenderer: () => cellRendererRef.current,
-            getParentOfValue: () => eGui.current, // this.eCellValue ? this.eCellValue : null,
+            getParentOfValue: () => toolsValueSpan ? toolsValueSpan : eGui.current
         };
 
         cellCtrl.setComp(compProxy, false, null, eGui.current!, printLayout, editingRow);
@@ -144,17 +184,12 @@ export function CellComp(props: {
 
     _.assign(cellStyles, userStyles);
 
-    const showValue = cellState === CellState.ShowValue;
-    const editValue = cellState === CellState.EditValue;
-
-    const showTools = includeSelection || includeDndSource || includeRowDrag || forceWrapper;
-
     return (
         <div ref={ eGui } className={ className } style={ cellStyles } tabIndex={ tabIndex }
              aria-selected={ ariaSelected } aria-colindex={ ariaColIndex } role={ role }
              col-id={ colId } title={ title }>
 
-            { showValue && jsxShowValue(rendererCompDetails, cellRendererRef, valueToDisplay, showTools, toolsCallback) }
+            { showValue && jsxShowValue(rendererCompDetails, cellRendererRef, valueToDisplay, showTools, toolsRefCallback, toolsValueRefCallback) }
             { editValue && jsxEditValue(editorCompDetails, cellEditorRef) }
 
         </div>
@@ -166,7 +201,8 @@ function jsxShowValue(
     cellRendererRef: MutableRefObject<any>,
     valueToDisplay: any,
     showTools: boolean,
-    toolsCallback: (ref:any) => void
+    toolsRefCallback: (ref:any) => void,
+    toolsValueRefCallback: (ref:any) => void
 ) {
     const noCellRenderer = !rendererCompDetails;
     const reactCellRenderer = rendererCompDetails && rendererCompDetails.componentFromFramework;
@@ -176,7 +212,7 @@ function jsxShowValue(
         <>
             { noCellRenderer && jsxShowValueNoCellRenderer(valueToDisplay) }
             { reactCellRenderer && jsxShowValueReactCellRenderer(rendererCompDetails!, cellRendererRef) }
-            { jsCellRenderer && jsxShowValueJsCellRenderer() }
+            {/* { jsCellRenderer && jsxShowValueJsCellRenderer() } */}
         </>
     );
 
@@ -184,8 +220,8 @@ function jsxShowValue(
     return (
         <>
             { showTools && 
-                <div className="ag-cell-wrapper" role="presentation" ref={ toolsCallback }>
-                    <span role="presentation" className={ 'ag-cell-value' } unselectable="on">
+                <div className="ag-cell-wrapper" role="presentation" ref={ toolsRefCallback }>
+                    <span role="presentation" className={ 'ag-cell-value' } unselectable="on" ref={ toolsValueRefCallback }>
                         { bodyJsxFunc() }
                     </span>
                 </div> 

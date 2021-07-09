@@ -120,7 +120,7 @@ export function RowComp(params: {context: Context, rowCtrl: RowCtrl, pinned: str
                         key={ cellCtrl.getInstanceId() }/>
         ));
 
-    const showFullWidthJsx = () => {
+    const showFullWidthFrameworkJsx = () => {
         const FullWidthComp = fullWidthCompDetails!.componentClass;
         return (<FullWidthComp  { ...fullWidthCompDetails!.params } ref={ fullWidthCompRef } />);
     };
@@ -133,7 +133,7 @@ export function RowComp(params: {context: Context, rowCtrl: RowCtrl, pinned: str
                 showCells && showCellsJsx()
             }
             {
-                showFullWidthFramework && showFullWidthJsx() 
+                showFullWidthFramework && showFullWidthFrameworkJsx() 
             }
         </div>
     );
