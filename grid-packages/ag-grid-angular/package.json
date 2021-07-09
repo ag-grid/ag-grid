@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "./node_modules/.bin/ng",
     "start": "./node_modules/.bin/ng serve",
-    "build": "npm run update-properties && ./node_modules/.bin/ng build --prod && npm run verify-properties && npm run hash",
+    "build": "npx gulp copy-from-module-source && npm run update-properties && ./node_modules/.bin/ng build --prod && npm run verify-properties && npm run hash",
     "build-cjs": "npm run build",
     "test": "./node_modules/.bin/ng test --watch false --browsers ChromeHeadless",
     "lint": "./node_modules/.bin/ng lint",
