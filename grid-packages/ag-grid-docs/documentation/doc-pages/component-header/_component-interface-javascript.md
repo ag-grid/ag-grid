@@ -6,13 +6,13 @@
 |```ts
 |interface IHeaderComp {
 |    // optional method, gets called once with params
-|    init?(params: IHeaderCompParams): void;
+|    init?(params: IHeaderParams): void;
 |    
 |    // can get called more than once, you should return the HTML element
 |    getGui(): HTMLElement;
 |    
 |    // gets called when a new Column Definition has been set for this header
-|    refresh(params: IHeaderCompParams): HTMLElement;
+|    refresh(params: IHeaderParams): HTMLElement;
 |    
 |    // optional method, gets called once, when component is destroyed
 |    destroy?(): void;
