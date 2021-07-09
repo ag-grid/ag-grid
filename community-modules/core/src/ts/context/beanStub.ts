@@ -46,7 +46,9 @@ export class BeanStub implements IEventEmitter {
         return this.frameworkOverrides;
     }
 
-    public getContext = (): Context => this.context;
+    public getContext(): Context {
+        return this.context;
+    }
 
     @PreDestroy
     protected destroy(): void {

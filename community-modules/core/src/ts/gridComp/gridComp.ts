@@ -90,7 +90,7 @@ export class GridComp extends ManagedFocusComponent {
         const watermark = this.ctrl.showWatermark() ? '<ag-watermark></ag-watermark>' : '';
 
         const template = /* html */
-            `<div ref="eRootWrapper" class="ag-root-wrapper">
+            `<div class="ag-root-wrapper">
                 ${dropZones}
                 <div class="ag-root-wrapper-body" ref="rootWrapperBody">
                     <ag-grid-body ref="gridBody"></ag-grid-body>
