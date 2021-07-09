@@ -44,7 +44,7 @@ export {
     Qualifier,
     PreDestroy
 } from "./context/context";
-export { QuerySelector, GuiListener, RefSelector, GridListener } from "./widgets/componentAnnotations";
+export { QuerySelector, RefSelector } from "./widgets/componentAnnotations";
 
 // excel
 export {

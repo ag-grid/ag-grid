@@ -26,41 +26,6 @@ function querySelectorFunc(selector: string, refSelector: string, classPrototype
     });
 }
 
-// think we should take this out, put property bindings on the
-export function GridListener(eventName: string): Function {
-    return gridListenerFunc.bind(this, eventName);
-}
-
-function gridListenerFunc(eventName: string, target: Object, methodName: string) {
-    if (eventName == null) {
-        console.error('AG Grid: GridListener eventName is missing');
-        return;
-    }
-
-    addToObjectProps(target, 'gridListenerMethods', {
-        methodName: methodName,
-        eventName: eventName
-    });
-}
-
-// think we should take this out, put property bindings on the
-export function GuiListener(ref: string, eventName: string): Function {
-    return guiListenerFunc.bind(this, ref, eventName);
-}
-
-function guiListenerFunc(ref: string, eventName: string, target: Object, methodName: string) {
-    if (eventName == null) {
-        console.error('AG Grid: GuiListener eventName is missing');
-        return;
-    }
-
-    addToObjectProps(target, 'guiListenerMethods', {
-        methodName: methodName,
-        eventName: eventName,
-        ref: ref
-    });
-}
-
 // // think we should take this out, put property bindings on the
 // export function Method(eventName?: string): Function {
 //     return methodFunc.bind(this, eventName);

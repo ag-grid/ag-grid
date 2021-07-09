@@ -31,7 +31,6 @@ export class Component extends BeanStub {
 
     public static EVENT_DISPLAYED_CHANGED = 'displayedChanged';
     private eGui: HTMLElement;
-    private annotatedGuiListeners: any[] = [];
 
     @Autowired('agStackComponentsRegistry') protected readonly agStackComponentsRegistry: AgStackComponentsRegistry;
 
@@ -215,7 +214,6 @@ export class Component extends BeanStub {
     public setTemplateFromElement(element: HTMLElement, paramsMap?: { [key: string]: any; }): void {
         this.eGui = element;
         (this.eGui as any).__agComponent = this;
-        this.addAnnotatedGuiEventListeners();
         this.wireQuerySelectors();
 
         // context will not be available when user sets template in constructor
@@ -259,74 +257,6 @@ export class Component extends BeanStub {
             }
 
         });
-    }
-
-    private addAnnotatedGuiEventListeners(): void {
-        this.removeAnnotatedGuiEventListeners();
-
-        if (!this.eGui) {
-            return;
-        }
-
-        const listenerMethods = this.getAgComponentMetaData('guiListenerMethods');
-
-        if (!listenerMethods) { return; }
-
-        if (!this.annotatedGuiListeners) {
-            this.annotatedGuiListeners = [];
-        }
-
-        listenerMethods.forEach(meta => {
-            const element = this.getRefElement(meta.ref);
-            if (!element) { return; }
-            const listener = (this as any)[meta.methodName].bind(this);
-            element.addEventListener(meta.eventName, listener);
-            this.annotatedGuiListeners.push({ eventName: meta.eventName, listener, element });
-        });
-    }
-
-    @PostConstruct
-    private addAnnotatedGridEventListeners(): void {
-        const listenerMetas = this.getAgComponentMetaData('gridListenerMethods');
-
-        if (!listenerMetas) { return; }
-
-        listenerMetas.forEach(meta => {
-
-            const listener = (this as any)[meta.methodName].bind(this);
-            this.addManagedListener(this.eventService, meta.eventName, listener);
-        });
-    }
-
-    private getAgComponentMetaData(key: string): any[] {
-        let res: any[] = [];
-
-        let thisProto: any = Object.getPrototypeOf(this);
-
-        while (thisProto != null) {
-            const metaData = thisProto.__agComponentMetaData;
-            const currentProtoName = getFunctionName(thisProto.constructor);
-
-            if (metaData && metaData[currentProtoName] && metaData[currentProtoName][key]) {
-                res = res.concat(metaData[currentProtoName][key]);
-            }
-
-            thisProto = Object.getPrototypeOf(thisProto);
-        }
-
-        return res;
-    }
-
-    private removeAnnotatedGuiEventListeners(): void {
-        if (!this.annotatedGuiListeners) {
-            return;
-        }
-
-        forEach(this.annotatedGuiListeners, e => {
-            e.element.removeEventListener(e.eventName, e.listener);
-        });
-
-        this.annotatedGuiListeners = [];
     }
 
     public getGui(): HTMLElement {
@@ -403,7 +333,6 @@ export class Component extends BeanStub {
     }
 
     protected destroy(): void {
-        this.removeAnnotatedGuiEventListeners();
         if (this.tooltipFeature) {
             this.tooltipFeature = this.destroyBean(this.tooltipFeature);
         }
