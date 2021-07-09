@@ -116,6 +116,14 @@ export class UserComponentFactory extends BeanStub {
             cellRendererName);
     }
 
+    public getFullWidthCellRendererDetails(params: ICellRendererParams, cellRendererType: string, cellRendererName: string): UserCompDetails | undefined {
+        return this.getCompDetails(this.gridOptions, cellRendererType, cellRendererName, params);
+    }
+
+    public createFullWidthCellRenderer(userCompDetails: UserCompDetails, cellRendererType: string): AgPromise<ICellRendererComp> | null {
+        return this.createAndInitComponent(userCompDetails, { propertyName: cellRendererType, isCellRenderer: () => true })
+    }
+
     // CELL RENDERER
     public newCellRenderer(
         def: ColDef | IRichCellEditorParams,
@@ -127,8 +135,8 @@ export class UserComponentFactory extends BeanStub {
         return this.getCompDetails(def, CellRendererComponent.propertyName, null, params);
     }
 
-    public createCellRenderer(compClassAndParams: UserCompDetails): AgPromise<ICellRendererComp> | null {
-        return this.createAndInitComponent(compClassAndParams, CellRendererComponent)
+    public createCellRenderer(userCompDetails: UserCompDetails): AgPromise<ICellRendererComp> | null {
+        return this.createAndInitComponent(userCompDetails, CellRendererComponent)
     }
 
     // CELL EDITOR

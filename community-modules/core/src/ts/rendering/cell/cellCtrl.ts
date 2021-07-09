@@ -48,7 +48,7 @@ export interface ICellComp {
     setUserStyles(styles: any): void;
     setAriaSelected(selected: boolean | undefined): void;
     getFocusableElement(): HTMLElement;
-
+    
     setLeft(left: string): void;
     setWidth(width: string): void;
     setAriaColIndex(index: number): void;
@@ -71,7 +71,7 @@ export interface ICellComp {
     getParentOfValue(): HTMLElement | null;
 
     showValue(valueToDisplay: any, compDetails: UserCompDetails | undefined, forceNewCellRendererInstance: boolean): void;
-    editValue(compClassAndParams: UserCompDetails): void;
+    editValue(compDetails: UserCompDetails): void;
 }
 
 let instanceIdSequence = 0;

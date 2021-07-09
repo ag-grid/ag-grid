@@ -287,6 +287,26 @@ var defaultExportParams = {
     }
 }
 
+class AAA {
+    init(p) {
+        this.eGui = document.createElement('div');
+        this.eGui.innerText = p.value + 'AAA';
+    }
+    getGui() {
+        return this.eGui;
+    }
+    refresh(p) {
+        this.eGui.innerText = p.value + 'AAA Refreshed';
+    }
+    destroy() {
+        console.log('destroy');
+    }
+}
+
+function BBB (p) {
+    return p.value + ' (bbb)';
+}
+
 var gridOptions = {
     statusBar: {
         statusPanels: [
@@ -296,6 +316,7 @@ var gridOptions = {
         ]
     },
     components: {
+        aaa: AAA,
         personFilter: PersonFilter,
         personFloatingFilterComponent: PersonFloatingFilterComponent,
         countryCellRenderer: countryCellRenderer,
@@ -822,6 +843,7 @@ var desktopDefaultCols = [
             {
                 headerName: "Language", field: "language", width: 150, editable: true,
                 cellEditor: 'agSelectCellEditor',
+                cellRenderer: 'aaa',
                 cellClass: 'vAlign',
                 enableRowGroup: true,
                 enablePivot: true,
@@ -1239,6 +1261,8 @@ function createData() {
             window.setTimeout(function() {
                 gridOptions.api.setColumnDefs(colDefs);
                 gridOptions.api.setRowData(data);
+                // gridOptions.api.setColumnDefs(colDefs.slice(0,1));
+                // gridOptions.api.setRowData(data.slice(0,2));
                 eMessage.style.display = 'none';
                 eMessageText.innerHTML = '';
             }, 0);

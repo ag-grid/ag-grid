@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Context, IRowComp, RowCtrl, _, CellCtrl } from 'ag-grid-community';
+import { Context, IRowComp, RowCtrl, _, CellCtrl, UserCompDetails } from 'ag-grid-community';
 import { CssClasses } from './utils';
 import { CellComp } from './cellComp';
 
@@ -62,9 +62,11 @@ export function RowComp(params: {context: Context, rowCtrl: RowCtrl, pinned: str
     const [ariaSelected, setAriaSelected] = useState<boolean>();
     const [userStyles, setUserStyles] = useState<any>();
     const [cellCtrls, setCellCtrls] = useState<CellCtrls>({ list: [], instanceIdMap: {} });
+    const [fullWidthCompDetails, setFullWidthCompDetails] = useState<UserCompDetails>();
     const [domOrder, setDomOrder] = useState<boolean>(false);
 
     const eGui = useRef<HTMLDivElement>(null);
+    const fullWidthCompRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         if (!rowCtrl) { return; }
@@ -88,6 +90,7 @@ export function RowComp(params: {context: Context, rowCtrl: RowCtrl, pinned: str
             // if we don't maintain the order, then cols will be ripped out and into the dom
             // when cols reordered, which would stop the CSS transitions from working
             setCellCtrls: next => setCellCtrls(prev => maintainOrderOnColumns(prev, next, domOrder) ),
+            showFullWidth: compDetails => setFullWidthCompDetails(compDetails),
             destroy: () => true,
             destroyCells: cellComps => true,
             getFullWidthRowComp: ()=> null,
@@ -95,7 +98,7 @@ export function RowComp(params: {context: Context, rowCtrl: RowCtrl, pinned: str
 
         rowCtrl.setComp(compProxy, eGui.current!, pinned);
     }, [domOrder, pinned, rowCtrl]);
-
+    
     const rowStyles = {
         height,
         top,
@@ -106,16 +109,31 @@ export function RowComp(params: {context: Context, rowCtrl: RowCtrl, pinned: str
 
     const className = cssClasses.toString();
 
+    const showFullWidthFramework = fullWidthCompDetails && fullWidthCompDetails.componentFromFramework;
+    const showCells = cellCtrls!=null;
+    const showFullWidthJs = fullWidthCompDetails && !fullWidthCompDetails.componentFromFramework;
+
+    const showCellsJsx = () => cellCtrls.list.map(cellCtrl =>
+        (
+            <CellComp context={ context } cellCtrl={ cellCtrl }
+                        editingRow={ rowCtrl.isEditing() } printLayout={ rowCtrl.isPrintLayout() }
+                        key={ cellCtrl.getInstanceId() }/>
+        ));
+
+    const showFullWidthJsx = () => {
+        const FullWidthComp = fullWidthCompDetails!.componentClass;
+        return (<FullWidthComp  { ...fullWidthCompDetails!.params } ref={ fullWidthCompRef } />);
+    };
+
     return (
         <div ref={ eGui } role={ role } className={ className } style={ rowStyles } row-index={ rowIndex }
              aria-rowindex={ ariaRowIndex } aria-expanded={ ariaExpanded } aria-label={ ariaLabel }
              aria-selected={ ariaSelected } row-id={ rowId } row-business-key={ rowBusinessKey } tabIndex={ tabIndex }>
             {
-                cellCtrls && cellCtrls.list.map(cellCtrl =>
-                    <CellComp context={ context } cellCtrl={ cellCtrl }
-                              editingRow={ rowCtrl.isEditing() } printLayout={ rowCtrl.isPrintLayout() }
-                              key={ cellCtrl.getInstanceId() }/>
-                )
+                showCells && showCellsJsx()
+            }
+            {
+                showFullWidthFramework && showFullWidthJsx() 
             }
         </div>
     );

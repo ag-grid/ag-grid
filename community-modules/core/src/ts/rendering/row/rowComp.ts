@@ -11,6 +11,7 @@ import { ModuleRegistry } from "../../modules/moduleRegistry";
 import { ModuleNames } from "../../modules/moduleNames";
 import { setAriaExpanded, setAriaRowIndex, setAriaSelected } from "../../utils/aria";
 import { CellCtrl } from "../cell/cellCtrl";
+import { UserCompDetails } from "../../components/framework/userComponentFactory";
 
 export class RowComp extends Component {
 
@@ -43,6 +44,7 @@ export class RowComp extends Component {
         const compProxy: IRowComp = {
             setDomOrder: domOrder => this.domOrder = domOrder,
             setCellCtrls: cellCtrls => this.setCellCtrls(cellCtrls),
+            showFullWidth: compDetails => this.showFullWidth(compDetails),
             getFullWidthRowComp: () => this.getFullWidthRowComp(),
             addOrRemoveCssClass: (name, on) => this.addOrRemoveCssClass(name, on),
             setAriaExpanded: on => setAriaExpanded(eGui, on),
@@ -69,10 +71,6 @@ export class RowComp extends Component {
         };
 
         ctrl.setComp(compProxy, this.getGui(), pinned);
-
-        if (ctrl.isFullWidth()) {
-            this.createFullWidthRowCell();
-        }
     }
 
     private getInitialStyle(): string {
@@ -81,9 +79,7 @@ export class RowComp extends Component {
         return transform ? `transform: ${transform}` : `top: ${top}`;
     }
 
-    private createFullWidthRowCell(): void {
-        const params = this.rowCtrl.createFullWidthParams(this.getGui(), this.pinned);
-
+    private showFullWidth(compDetails: UserCompDetails): void {
         const callback = (cellRenderer: ICellRendererComp) => {
             if (this.isAlive()) {
                 const eGui = cellRenderer.getGui();
@@ -97,31 +93,17 @@ export class RowComp extends Component {
             }
         };
 
-        // if doing master detail, it's possible we have a cached row comp from last time detail was displayed
+        // see if we can satisfy from the cache first
         const cachedDetailComp = this.beans.detailRowCompCache.get(this.rowNode, this.pinned);
         if (cachedDetailComp) {
             callback(cachedDetailComp);
-        } else {
-            const cellRendererType = FullWidthKeys.get(this.rowCtrl.getRowType())!;
-            const cellRendererName = FullWidthRenderers.get(this.rowCtrl.getRowType())!;
-
-            const res = this.beans.userComponentFactory.newFullWidthCellRenderer(
-                params,
-                cellRendererType,
-                cellRendererName
-            );
-
-            if (res) {
-                res.then(callback);
-            } else {
-                const masterDetailModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.MasterDetailModule);
-                if (cellRendererName === 'agDetailCellRenderer' && !masterDetailModuleLoaded) {
-                    console.warn(`AG Grid: cell renderer agDetailCellRenderer (for master detail) not found. Did you forget to include the master detail module?`);
-                } else {
-                    console.error(`AG Grid: fullWidthCellRenderer ${cellRendererName} not found`);
-                }
-            }
+            return;
         }
+
+        // if not in cache, create new one
+        const res = this.beans.userComponentFactory.createFullWidthCellRenderer(compDetails, this.rowCtrl.getFullWidthCellRendererType());
+        if (!res) { return; }
+        res.then(callback);    
     }
 
     public setCellCtrls(cellCtrls: CellCtrl[]): void {
