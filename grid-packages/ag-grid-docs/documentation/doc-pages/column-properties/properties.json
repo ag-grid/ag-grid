@@ -38,10 +38,9 @@
             "description": "A comma separated string or array of strings containing `ColumnType` keys which can be used as a template for a column. This helps to reduce duplication of properties when you have a lot of common column properties."
         },
         "width": {
-            "description": "Initial width in pixels for the cell.",
-            "default": 200
+            "description": "Initial width in pixels for the cell."
         },
-        "defaultWidth": {
+        "initialWidth": {
             "description": "Same as 'width', except only applied when creating a new column. Not applied when updating column definitions."
         },
         "minWidth": {
