@@ -124,10 +124,10 @@ export class EventService implements IEventEmitter {
         globalListeners.forEach(listener => {
             if (async) {
                 this.dispatchAsync(
-                    () => this.frameworkOverrides.dispatchEvent(eventType, () => listener(eventType, event))
+                    () => this.frameworkOverrides.dispatchEvent(eventType, () => listener(eventType, event), true)
                 );
             } else {
-                this.frameworkOverrides.dispatchEvent(eventType, () => listener(eventType, event));
+                this.frameworkOverrides.dispatchEvent(eventType, () => listener(eventType, event), true);
             }
         });
     }

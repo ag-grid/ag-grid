@@ -27,7 +27,7 @@ export class VanillaFrameworkOverrides implements IFrameworkOverrides {
     }
 
     // for Vanilla JS, we just execute the listener
-    dispatchEvent(eventType: string, listener: () => {}): void {
+    dispatchEvent(eventType: string, listener: () => {}, global = false): void {
         listener();
     }
 }

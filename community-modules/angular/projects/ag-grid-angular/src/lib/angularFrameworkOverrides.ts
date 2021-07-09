@@ -57,14 +57,14 @@ export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
         }
     }
 
-    dispatchEvent(eventType: string, listener: () => {}): void {
+    dispatchEvent(eventType: string, listener: () => {}, global = false): void {
         if (this.isOutsideAngular(eventType)) {
             if (this._ngZone) {
                 this._ngZone.runOutsideAngular(listener);
             } else {
                 listener();
             }
-        } else if (this.isEmitterUsed(eventType)) {
+        } else if (this.isEmitterUsed(eventType) || global) {
             // only trigger off events (and potentially change detection) if actually used
             if (!NgZone.isInAngularZone() && this._ngZone) {
                 this._ngZone.run(listener);
