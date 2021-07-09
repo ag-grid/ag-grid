@@ -7,6 +7,9 @@ require('dotenv').config();
 
 const isDevelopment = require('./src/utils/is-development');
 
+const agGridVersion = require('../../../community-modules/core/package.json').version;
+const agChartsVersion = require('../../../charts-packages/ag-charts-community/package.json').version;
+
 // We use graceful-fs to stop issues with running out of file handles, particularly on Windows
 const fs = require('fs');
 const gracefulFs = require('graceful-fs');
@@ -57,6 +60,15 @@ const plugins = [
     resolve: 'gatsby-transformer-remark',
     options: {
       plugins: [
+        {
+          resolve: 'gatsby-remark-token-replace',
+          options: {
+            replacements: {
+              '@AG_GRID_VERSION@': agGridVersion,
+              '@AG_CHARTS_VERSION@': agChartsVersion
+            }
+          }
+        },
         {
           // This handles images from Markdown files
           resolve: 'gatsby-remark-images',
@@ -125,7 +137,8 @@ const plugins = [
           }
         }
       ]
-    }
+    },
+    remarkPlugins: ['remark-preprocessor']
   },
   {
     // This allows us to use SCSS

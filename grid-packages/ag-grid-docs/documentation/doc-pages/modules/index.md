@@ -60,10 +60,10 @@ The following artifacts are "`modules`" and are designed to work to together:
 
 You **cannot** mix `packages` and `modules` - in other words you cannot have a mix of the following types of dependencies:
 
-```js
+```js 
 "dependencies": {
-    "ag-grid-community": "~25.3.0" <- a package dependency
-    "@ag-grid-enterprise/all-modules": "~25.3.0"  <- a module dependency
+    "ag-grid-community": "~@AG_GRID_VERSION@" <- a package dependency
+    "@ag-grid-enterprise/all-modules": "~@AG_GRID_VERSION@"  <- a module dependency
     //...other dependencies...
 }
 ```
@@ -86,11 +86,11 @@ A real-world example might be that we wish to use the `Client Side Row Model` (t
 
 ```js
 "dependencies": {
-    "@ag-grid-community/client-side-row-model": "~25.3.0",
-    "@ag-grid-community/csv-export": "~25.3.0",
-    "@ag-grid-enterprise/excel-export": "~25.3.0",
-    "@ag-grid-enterprise/master-detail": "~25.3.0",
-    "@ag-grid-community/react": "~25.3.0",
+    "@ag-grid-community/client-side-row-model": "~@AG_GRID_VERSION@",
+    "@ag-grid-community/csv-export": "~@AG_GRID_VERSION@",
+    "@ag-grid-enterprise/excel-export": "~@AG_GRID_VERSION@",
+    "@ag-grid-enterprise/master-detail": "~@AG_GRID_VERSION@",
+    "@ag-grid-community/react": "~@AG_GRID_VERSION@",
     //...other dependencies...
 }
 ```
@@ -129,11 +129,11 @@ Using the same real-world example above let us assume that we wish to use the `C
 
 ```js
 "dependencies": {
-    "@ag-grid-community/client-side-row-model": "~25.3.0",
-    "@ag-grid-community/csv-export": "~25.3.0",
-    "@ag-grid-enterprise/excel-export": "~25.3.0",
-    "@ag-grid-enterprise/master-detail": "~25.3.0",
-    "@ag-grid-community/react": "~25.3.0",
+    "@ag-grid-community/client-side-row-model": "~@AG_GRID_VERSION@",
+    "@ag-grid-community/csv-export": "~@AG_GRID_VERSION@",
+    "@ag-grid-enterprise/excel-export": "~@AG_GRID_VERSION@",
+    "@ag-grid-enterprise/master-detail": "~@AG_GRID_VERSION@",
+    "@ag-grid-community/react": "~@AG_GRID_VERSION@",
     //...other dependencies...
 }
 ```
@@ -223,11 +223,11 @@ Let us assume we have the following modules specified:
 
 ```js
 "dependencies": {
-    "@ag-grid-community/client-side-row-model": "~25.3.0",
-    "@ag-grid-community/csv-export": "~25.3.0",
-    "@ag-grid-enterprise/excel-export": "~25.3.0",
-    "@ag-grid-enterprise/master-detail": "~25.3.0",
-    "@ag-grid-community/react": "~25.3.0",
+    "@ag-grid-community/client-side-row-model": "~@AG_GRID_VERSION@",
+    "@ag-grid-community/csv-export": "~@AG_GRID_VERSION@",
+    "@ag-grid-enterprise/excel-export": "~@AG_GRID_VERSION@",
+    "@ag-grid-enterprise/master-detail": "~@AG_GRID_VERSION@",
+    "@ag-grid-community/react": "~@AG_GRID_VERSION@",
     //...other dependencies...
 }
 ```
