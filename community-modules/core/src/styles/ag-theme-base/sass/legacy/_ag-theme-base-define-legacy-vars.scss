@@ -147,9 +147,9 @@ $ag-group-component-border-color: lighten($ag-border-color, 5%) !default;
 // DO NOT EDIT (see note above)
 $ag-group-component-title-background-color: darken($ag-group-component-background-color, 5%) !default;
 // DO NOT EDIT (see note above)
-$ag-range-selection-chart-background-color: adjust-hue($ag-range-selection-background-color, 25%) !default;
+$ag-range-selection-chart-background-color: adjust-hue($ag-range-selection-background-color, 25deg) !default;
 // DO NOT EDIT (see note above)
-$ag-range-selection-chart-category-background-color: adjust-hue($ag-range-selection-background-color, -80%) !default;
+$ag-range-selection-chart-category-background-color: adjust-hue($ag-range-selection-background-color, -80deg) !default;
 // DO NOT EDIT (see note above)
 $ag-full-width-tabs: false !default;
 // DO NOT EDIT (see note above)
