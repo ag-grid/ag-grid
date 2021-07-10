@@ -267,7 +267,7 @@ md-include:group-component-interface-react.md
 md-include:group-component-interface-vue.md
 
 ```ts
-interface IHeaderGroupParams
+interface IHeaderGroupParams {
     // the column group the header is for
     columnGroup: ColumnGroup;
 
