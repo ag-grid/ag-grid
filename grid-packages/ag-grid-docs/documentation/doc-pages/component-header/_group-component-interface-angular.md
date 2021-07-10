@@ -6,7 +6,7 @@
 |interface IHeaderAngularComp {
 |    // The agInit(params) method is called on group header component once.
 |    // See below for details on the parameters.
-|    agInit(params: IHeaderGroupCompParams): void;
+|    agInit(params: IHeaderGroupParams): void;
 |}
 |```
 |
