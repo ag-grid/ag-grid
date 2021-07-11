@@ -10,7 +10,7 @@ import { ScrollVisibleService } from "./scrollVisibleService";
 import { getTarget } from "../utils/event";
 import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
 import { GridBodyScrollFeature } from "./gridBodyScrollFeature";
-import { getInnerWidth, isVerticalScrollShowing } from "../utils/dom";
+import { getInnerWidth, isVerticalScrollShowing, addCssClass, removeCssClass } from "../utils/dom";
 import { HeaderNavigationService } from "../headerRendering/header/headerNavigationService";
 import { PaginationProxy } from "../pagination/paginationProxy";
 import { RowDragFeature } from "./rowDragFeature";
@@ -96,6 +96,7 @@ export class GridBodyCtrl extends BeanStub {
         this.controllersService.registerGridBodyController(this);
 
         this.addEventListeners();
+        this.addFocusListeners([eTop, eBodyViewport, eBottom]);
         this.onGridColumnsChanged();
         this.addBodyViewportListener();
         this.setFloatingHeights();
@@ -107,6 +108,20 @@ export class GridBodyCtrl extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.setFloatingHeights.bind(this));
+    }
+
+    private addFocusListeners(elements: HTMLElement[]): void {
+        elements.forEach(element => {
+            this.addManagedListener(element, 'focusin', () => {
+                addCssClass(element, 'ag-has-focus');
+            });
+
+            this.addManagedListener(element, 'focusout', (e: FocusEvent) => {
+                if (!element.contains(e.relatedTarget as HTMLElement)) {
+                    removeCssClass(element, 'ag-has-focus');
+                }
+            });
+        });
     }
 
     // used by ColumnAnimationService

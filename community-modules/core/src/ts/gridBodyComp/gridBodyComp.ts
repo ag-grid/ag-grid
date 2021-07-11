@@ -128,18 +128,6 @@ export class GridBodyComp extends Component {
         if (this.rangeService || this.gridOptionsWrapper.isRowSelectionMulti()) {
             setAriaMultiSelectable(this.getGui(), true);
         }
-
-        [this.eTop, this.eBodyViewport, this.eBottom].forEach(element => {
-            this.addManagedListener(element, 'focusin', () => {
-                addCssClass(element, 'ag-has-focus');
-            });
-
-            this.addManagedListener(element, 'focusout', (e: FocusEvent) => {
-                if (!element.contains(e.relatedTarget as HTMLElement)) {
-                    removeCssClass(element, 'ag-has-focus');
-                }
-            });
-        });
     }
 
     private setRowAnimationCssOnBodyViewport(cssClass: string, animateRows: boolean): void {
