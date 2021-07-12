@@ -1,18 +1,18 @@
-import {Autowired, Bean} from "../context/context";
-import {PostProcessPopupParams} from "../entities/gridOptions";
-import {RowNode} from "../entities/rowNode";
-import {Column} from "../entities/column";
-import {Environment} from "../environment";
-import {Events} from '../events';
-import {BeanStub} from "../context/beanStub";
-import {addCssClass, addOrRemoveCssClass, containsClass, getAbsoluteHeight, getAbsoluteWidth, removeCssClass} from '../utils/dom';
-import {findIndex, forEach, last} from '../utils/array';
-import {isElementInEventPath} from '../utils/event';
-import {KeyCode} from '../constants/keyCode';
-import {FocusService} from "../focusService";
-import {GridCtrl} from "../gridComp/gridCtrl";
-import {IAfterGuiAttachedParams} from "../interfaces/iAfterGuiAttachedParams";
-import {AgPromise} from "../utils";
+import { Autowired, Bean } from "../context/context";
+import { PostProcessPopupParams } from "../entities/gridOptions";
+import { RowNode } from "../entities/rowNode";
+import { Column } from "../entities/column";
+import { Environment } from "../environment";
+import { Events } from '../events';
+import { BeanStub } from "../context/beanStub";
+import { addCssClass, addOrRemoveCssClass, containsClass, getAbsoluteHeight, getAbsoluteWidth, removeCssClass } from '../utils/dom';
+import { findIndex, forEach, last } from '../utils/array';
+import { isElementInEventPath } from '../utils/event';
+import { KeyCode } from '../constants/keyCode';
+import { FocusService } from "../focusService";
+import { GridCtrl } from "../gridComp/gridCtrl";
+import { IAfterGuiAttachedParams } from "../interfaces/iAfterGuiAttachedParams";
+import { AgPromise } from "../utils";
 
 export interface PopupEventParams {
     originalMouseEvent?: MouseEvent | Touch | null;
@@ -93,9 +93,7 @@ export class PopupService extends BeanStub {
     public getPopupParent(): HTMLElement {
         const ePopupParent = this.gridOptionsWrapper.getPopupParent();
 
-        if (ePopupParent) {
-            return ePopupParent;
-        }
+        if (ePopupParent) { return ePopupParent; }
 
         return this.gridCompController.getGui();
     }
@@ -155,9 +153,8 @@ export class PopupService extends BeanStub {
         nudgeY?: number,
         ePopup: HTMLElement,
     }): void {
-
-        const {x, y} = this.calculatePointerAlign(params.mouseEvent);
-        const {ePopup, nudgeX, nudgeY} = params;
+        const { ePopup, nudgeX, nudgeY } = params;
+        const { x, y } = this.calculatePointerAlign(params.mouseEvent);
 
         this.positionPopup({
             ePopup: ePopup,
@@ -268,8 +265,8 @@ export class PopupService extends BeanStub {
         y: number,
         keepWithinBounds?: boolean;
     }): void {
-        const {ePopup, keepWithinBounds, nudgeX, nudgeY} = params;
-        let {x, y} = params;
+        const { ePopup, keepWithinBounds, nudgeX, nudgeY } = params;
+        let { x, y } = params;
 
         if (nudgeX) {
             x += nudgeX;
@@ -297,13 +294,16 @@ export class PopupService extends BeanStub {
         // returns the rect outside the borders, but the 0,0 coordinate for absolute
         // positioning is inside the border, leading the popup to be off by the width
         // of the border
-        let popupParent = this.getPopupParent();
         const eDocument = this.gridOptionsWrapper.getDocument();
+        let popupParent = this.getPopupParent();
+
         if (popupParent === eDocument.body) {
             popupParent = eDocument.documentElement;
         }
+
         const style = getComputedStyle(popupParent);
         const bounds = popupParent.getBoundingClientRect();
+
         return {
             top: bounds.top + parseFloat(style.borderTopWidth!) || 0,
             left: bounds.left + parseFloat(style.borderLeftWidth!) || 0,
@@ -390,15 +390,14 @@ export class PopupService extends BeanStub {
                 }
                 lastDiffLeft = currentDiffLeft;
 
-            }, 200)
-                .then(intervalId => {
-                    const result = () => {
-                        if (intervalId != null) {
-                            window.clearInterval(intervalId);
-                        }
-                    };
-                    resolve(result);
-                });
+            }, 200).then(intervalId => {
+                const result = () => {
+                    if (intervalId != null) {
+                        window.clearInterval(intervalId);
+                    }
+                };
+                resolve(result);
+            });
         })
     }
 
@@ -570,26 +569,20 @@ export class PopupService extends BeanStub {
     }
 
     private isEventFromCurrentPopup(params: PopupEventParams, target: HTMLElement): boolean {
-        const {mouseEvent, touchEvent} = params;
+        const { mouseEvent, touchEvent } = params;
 
         const event = mouseEvent ? mouseEvent : touchEvent;
 
-        if (!event) {
-            return false;
-        }
+        if (!event) { return false; }
 
         const indexOfThisChild = findIndex(this.popupList, popup => popup.element === target);
 
-        if (indexOfThisChild === -1) {
-            return false;
-        }
+        if (indexOfThisChild === -1) { return false; }
 
         for (let i = indexOfThisChild; i < this.popupList.length; i++) {
             const popup = this.popupList[i];
 
-            if (isElementInEventPath(popup.element, event)) {
-                return true;
-            }
+            if (isElementInEventPath(popup.element, event)) { return true; }
         }
 
         // if the user did not write their own Custom Element to be rendered as popup
@@ -599,9 +592,7 @@ export class PopupService extends BeanStub {
     }
 
     public isElementWithinCustomPopup(el: HTMLElement): boolean {
-        if (!this.popupList.length) {
-            return false;
-        }
+        if (!this.popupList.length) { return false; }
 
         while (el && el !== document.body) {
             if (el.classList.contains('ag-custom-component-popup') || el.parentElement === null) {
@@ -616,7 +607,7 @@ export class PopupService extends BeanStub {
     // in some browsers, the context menu event can be fired before the click event, which means
     // the context menu event could open the popup, but then the click event closes it straight away.
     private isEventSameChainAsOriginalEvent(params: PopupEventParams): boolean {
-        const {originalMouseEvent, mouseEvent, touchEvent} = params;
+        const { originalMouseEvent, mouseEvent, touchEvent } = params;
         // we check the coordinates of the event, to see if it's the same event. there is a 1 / 1000 chance that
         // the event is a different event, however that is an edge case that is not very relevant (the user clicking
         // twice on the same location isn't a normal path).
