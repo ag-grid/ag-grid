@@ -1,11 +1,9 @@
 ---
-title: "Row Grouping - Provided Groups"
+title: "Row Grouping - Custom Tree"
 enterprise: true
 ---
 
 ## Creating Your Own Group Display Columns
-
-<video-link src="https://www.youtube.com/watch?v=gzqjP_kF4NI&t=1136s" time="18:56"></video-link>
 
 In all the previous examples the grid is in charge of generating the column's that display the groups, these columns are called auto group columns.
 

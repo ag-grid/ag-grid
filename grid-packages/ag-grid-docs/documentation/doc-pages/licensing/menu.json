@@ -913,30 +913,30 @@
             "matrixExcludeChildren": true,
             "items": [
               {
-                "title": "Display Types",
-                "url": "/grouping-display-types/",
+                "title": "Tree Display Types",
+                "url": "/grouping-tree-display-types/",
                 "items": [
                   {
-                    "title": "Single Group Column",
-                    "url": "/grouping-single-group-column/",
+                    "title": "Single Column Tree",
+                    "url": "/grouping-single-column-tree/",
                     "enterprise": true,
                     "showInCollapsed": false
                   },
                   {
-                    "title": "Multiple Group Columns",
-                    "url": "/grouping-multiple-group-columns/",
+                    "title": "Multiple Columns Tree",
+                    "url": "/grouping-multiple-columns-tree/",
                     "enterprise": true,
                     "showInCollapsed": false
                   },
                   {
-                    "title": "Group Rows",
-                    "url": "/grouping-group-rows/",
+                    "title": "Row Tree",
+                    "url": "/grouping-row-tree/",
                     "enterprise": true,
                     "showInCollapsed": false
                   },
                   {
-                    "title": "Custom Groups",
-                    "url": "/grouping-custom/",
+                    "title": "Custom Tree",
+                    "url": "/grouping-custom-tree/",
                     "enterprise": true,
                     "showInCollapsed": false
                   }
