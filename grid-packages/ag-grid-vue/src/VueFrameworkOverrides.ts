@@ -17,6 +17,6 @@ export class VueFrameworkOverrides extends VanillaFrameworkOverrides {
      * Note: This is only really used/necessary with cellRendererSelectors
      */
     public frameworkComponent(name: string): any {
-        return VueComponentFactory.searchForComponentInstance(this.parent, name, 10, true) !== null ? name : null;
+        return !!VueComponentFactory.searchForComponentInstance(this.parent, name, 10, true) ? name : null;
     }
 }
