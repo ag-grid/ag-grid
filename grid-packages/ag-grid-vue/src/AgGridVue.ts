@@ -3,6 +3,7 @@ import {Bean, ComponentUtil, Grid, GridOptions, Module} from 'ag-grid-community'
 import {VueFrameworkComponentWrapper} from './VueFrameworkComponentWrapper';
 import {getAgGridProperties, Properties} from './Utils';
 import {AgGridColumn} from './AgGridColumn';
+import {VueFrameworkOverrides} from './VueFrameworkOverrides';
 
 const [props, watch, model] = getAgGridProperties();
 
@@ -101,6 +102,7 @@ export class AgGridVue extends Vue {
 
         const gridParams = {
             globalEventListener: this.globalEventListener.bind(this),
+            frameworkOverrides: new VueFrameworkOverrides(this),
             providedBeanInstances: {
                 frameworkComponentWrapper,
             },

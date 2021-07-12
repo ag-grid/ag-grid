@@ -1,12 +1,12 @@
 ---
-title: "Row Grouping - Single Group Column"
+title: "Row Grouping - Single Column"
 enterprise: true
 ---
-This section explains how to use a single group column that contains a row grouping hierarchy.
+This section explains how to use display a single column tree that contains a row grouping hierarchy.
 
-<image-caption src="grouping-single-group-column/resources/single-group-column.png" alt="Single Group Column" centered="true"></image-caption>
+<image-caption src="grouping-single-column-tree/resources/single-column-tree.png" alt="Single Column" centered="true"></image-caption>
 
-## Enabling Single Group Column
+## Enabling Single Column Tree
 
 When there is at least one active row group, a single group column containing a row grouping hierarchy will be added to
 the left-hand side of the grid. To group rows by a particular column, enable the `rowGroup` column property as shown below:
@@ -36,7 +36,7 @@ The example below demonstrates the default row grouping behaviour. Note the foll
 
 - The number of grouped rows is shown in parentheses at each row group level.
 
-<grid-example title='Single Group Column' name='single-group-column' type='generated' options='{ "enterprise": true, "exampleHeight": 540, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+<grid-example title='Single Column Tree' name='single-column-tree' type='generated' options='{ "enterprise": true, "exampleHeight": 540, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
 ## Row Group Order
 

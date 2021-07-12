@@ -1,4 +1,3 @@
-// import {Prop} from 'vue-property-decorator';
 import {h} from 'vue'
 import {Options, Vue} from 'vue-class-component';
 import {Bean, ComponentUtil, Grid, GridOptions, Module} from '@ag-grid-community/core';
@@ -6,6 +5,7 @@ import {VueFrameworkComponentWrapper} from './VueFrameworkComponentWrapper';
 import {getAgGridProperties, kebabNameToAttrEventName, kebabProperty, Properties} from './Utils';
 import {AgGridColumn} from './AgGridColumn';
 import {markRaw, toRaw} from '@vue/reactivity';
+import {VueFrameworkOverrides} from './VueFrameworkOverrides';
 
 const [props, watch, model] = getAgGridProperties();
 
@@ -94,6 +94,7 @@ export class AgGridVue extends Vue {
 
         const gridParams = {
             globalEventListener: this.globalEventListener.bind(this),
+            frameworkOverrides: new VueFrameworkOverrides(this),
             providedBeanInstances: {
                 frameworkComponentWrapper,
             },

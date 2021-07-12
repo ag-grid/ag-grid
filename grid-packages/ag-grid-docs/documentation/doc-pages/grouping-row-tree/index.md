@@ -1,12 +1,12 @@
 ---
-title: "Row Grouping - Group Rows"
+title: "Row Grouping - Row Tree"
 enterprise: true
 ---
-This section shows how full rows can be used for showing details about the group instead of group columns.
+This section shows how row groups can be displayed in a row tree.
 
-<image-caption src="grouping-group-rows/resources/group-rows.png" alt="Full Width Group" centered="true"></image-caption>
+<image-caption src="grouping-row-tree/resources/row-tree.png" alt="Rows" centered="true"></image-caption>
 
-## Enabling Full Width Row Groups
+## Enabling Row Tree
 
 It is also possible to create one column for each individual group by enabling `groupMultiAutoColumn` grid option as
 shown below:
@@ -30,7 +30,7 @@ const gridOptions = {
 
 The following example shows the first example in this page, the Auto Column Group example, using full width rows. Note that all that is necessary to achieve this it to add `groupUseEntireRow:true` to your gridOptions
 
-<grid-example title='Full Width Group Rows' name='full-width-group-rows' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+<grid-example title='Row Tree' name='row-tree' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
 ## Configuring Full Width Group Rows
 

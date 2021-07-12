@@ -72,7 +72,7 @@ export class VueComponentFactory {
         return {mountedComponent, componentInstance};
     }
 
-    private static searchForComponentInstance(parent: AgGridVue, component: any, maxDepth = 10) {
+    public static searchForComponentInstance(parent: AgGridVue, component: any, maxDepth = 10, suppressError = false) {
         let componentInstance: any = null;
 
         let currentParent: Vue<any> = parent.$parent;
@@ -85,7 +85,7 @@ export class VueComponentFactory {
             currentParent = currentParent.$parent;
         }
 
-        if (!componentInstance) {
+        if (!componentInstance && !suppressError) {
             console.error(`Could not find component with name of ${component}. Is it in Vue.components?`);
             return null;
         }

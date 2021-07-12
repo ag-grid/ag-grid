@@ -4,7 +4,7 @@ import {Component} from 'vue/types/options';
 
 export class VueComponentFactory {
 
-    public static getComponentType(parent: AgGridVue, component: VueConstructor) {
+    public static getComponentType(parent: AgGridVue, component: VueConstructor | string) {
         if (typeof component === 'string') {
             const componentInstance: VueConstructor =
                 this.searchForComponentInstance(parent, component) as VueConstructor;
@@ -38,7 +38,7 @@ export class VueComponentFactory {
         return component;
     }
 
-    private static searchForComponentInstance(parent: AgGridVue, component: VueConstructor, maxDepth = 10) {
+    public static searchForComponentInstance(parent: AgGridVue, component: VueConstructor | string, maxDepth = 10, suppressError = false) {
         let componentInstance: Component | AsyncComponent | null = null;
 
         let currentParent: Vue = parent.$parent;
@@ -51,7 +51,7 @@ export class VueComponentFactory {
             currentParent = currentParent.$parent;
         }
 
-        if (!componentInstance) {
+        if (!componentInstance && !suppressError) {
             console.error(`Could not find component with name of ${component}. Is it in Vue.components?`);
             return null;
         }
