@@ -22,7 +22,7 @@ Separate group columns are used for each row group.
 
 As illustrated above, the `country` and `year` row groups are displayed under separate group columns.
 
-See the [Multiple Columns](../grouping-multiple-columns/) section for more details.
+See the [Multiple Columns Tree](../grouping-multiple-columns-tree/) section for more details.
 
 ## Row Tree
 
