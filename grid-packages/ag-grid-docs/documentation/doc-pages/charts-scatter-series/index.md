@@ -44,6 +44,40 @@ The example below uses both `'circle'` and `'square'` markers to represent the a
 
 <chart-example title='Bubble Chart' name='bubble-chart' type='generated'></chart-example>
 
+## Bubble Chart with Labels
+
+Scatter series can be configured to use labels. Unlike with other series types where a label is placed
+for every data point, scatter series label placement is constrained so that:
+
+- labels don't everlap any markers
+- labels don't overlap other labels
+
+If these constraints are not satisfied, a label is not placed.
+
+Satisfying these constraints is computationally intensive and the complexity rises exponentially with increasing number of data points. Given that label placement might have to happen in real time,
+for example, when resizing a chart window, it is advised not to enable scatter series labels for
+data sets with more than a few hundred points.
+
+To enable scatter series labels we have to both set the `label.enabled` config of a series to `true`
+and to specify which key should be used to fetch the label values.
+
+```
+labelKey: 'name',
+label: {
+    enabled: true
+}
+```
+
+The example below has the above config applied to both series. The label placement algorithm is aware
+of all the scatter series in a chart, so labels don't overlap markers and other labels within a single
+series nor between different series.
+
+Try openening this example in a larger window to see that more labels are placed as the chart gets bigger.
+You can also try changing the size of the markers and the font size of the labels to see how that effects
+label placement.
+
+<chart-example title='Bubble Chart with Labels' name='bubble-chart-labels' type='generated'></chart-example>
+
 ## API Reference
 
 <api-documentation source='charts-api/api.json' section='scatter' config='{ "showSnippets": true }'></api-documentation>
