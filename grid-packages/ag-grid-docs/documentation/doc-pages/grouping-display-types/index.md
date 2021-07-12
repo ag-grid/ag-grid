@@ -3,14 +3,43 @@ title: "Row Grouping - Display Types"
 enterprise: true
 ---
 
-This section introduced the different row grouping display types.
+This section compares the different ways row groups can be displayed in the grid.
 
-<image-caption src="grouping-display-types/resources/row-grouping-methods.png" alt="Row Grouping Methods" centered="true"></image-caption>
+## Single Group Column 
 
-<span style="color:red; margin-left:300px">*Placeholder Image - pending some artistic flare!*</span>
+Row groups are displayed under a single group column. 
 
-To learn more about each of these row grouping methods, follow the links below:
+<img src="../grouping-display-types/resources/single-column.png" alt="Range Handle" />
 
-- **[Single Group Columns](../grouping-single-group-column/)**: A single group column containing a row grouping hierarchy.
-- **[Multiple Group Columns](../grouping-multiple-group-columns/)**: Separate group columns for each row group.
-- **[Full Width Groups](../grouping-full-width-groups/)**: Full rows showing details about the group instead of group columns.
+As illustrated above, there is a single group column containing the `country` and `year` row groups in a single group hierarchy. 
+
+See the [Single Group Column](../grouping-single-group-column/) section for more details.
+
+## Multiple Group Columns
+Separate group columns are used for each row group.
+
+<img src="../grouping-display-types/resources/multiple-columns.png" alt="Range Handle" /> 
+
+As illustrated above, the `country` and `year` row groups are displayed under separate group columns.
+
+See the [Multiple Group Columns](../grouping-single-group-column/) section for more details.
+
+## Group Rows
+
+Row groups are displayed using group rows instead of columns.
+
+<img src="../grouping-display-types/resources/group-rows.png" alt="Range Handle" /> 
+
+As illustrated above, the `country` and `year` row groups are displayed using group rows.
+
+See the [Group Rows](../grouping-full-width-group/) section for more details.
+
+## Custom Groups
+
+In some rare cases it may be desirable to supply your own custom groups rather than using the provided display types above. 
+
+See the [Custom Groups](../grouping-custom/) section for more details.
+
+## Next Up
+
+Continue to the next section to learn about: [Single Group Column](../grouping-single-group-column/).

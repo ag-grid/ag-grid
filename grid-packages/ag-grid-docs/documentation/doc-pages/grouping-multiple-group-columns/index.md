@@ -1,5 +1,5 @@
 ---
-title: "Multiple Row Group Columns"
+title: "Row Grouping - Multiple Group Columns"
 enterprise: true
 ---
 This section explains how to use separate group columns for each row group.
@@ -19,7 +19,8 @@ const gridOptions = {
         { field: 'sport' },
         { field: 'total' }
     ],
-    groupMultiAutoColumn: true,
+    // display each row grouping in a separate column
+    treeDisplayType: 'multipleColumn',
 }
 </snippet>
 

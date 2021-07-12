@@ -935,12 +935,18 @@
                     "showInCollapsed": false
                   },
                   {
-                    "title": "Custom",
+                    "title": "Custom Groups",
                     "url": "/grouping-custom/",
                     "enterprise": true,
                     "showInCollapsed": false
                   }
                 ]
+              },
+              {
+                "title": "Row Group Panel",
+                "url": "/grouping-group-panel/",
+                "enterprise": true,
+                "showInCollapsed": false
               },
               {
                 "title": "Sorting",

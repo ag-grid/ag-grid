@@ -1,10 +1,10 @@
 ---
-title: "Full Width Row Groups"
+title: "Row Grouping - Group Rows"
 enterprise: true
 ---
 This section shows how full rows can be used for showing details about the group instead of group columns.
 
-<image-caption src="grouping-group-rows/resources/full-width-groups.png" alt="Full Width Group" centered="true"></image-caption>
+<image-caption src="grouping-group-rows/resources/group-rows.png" alt="Full Width Group" centered="true"></image-caption>
 
 ## Enabling Full Width Row Groups
 
@@ -22,10 +22,10 @@ const gridOptions = {
         { field: 'silver' },
         { field: 'bronze' },
     ],
-    groupUseEntireRow: true,
+    // display each row grouping in group rows
+    treeDisplayType: 'row', 
 }
 </snippet>
-
 
 
 The following example shows the first example in this page, the Auto Column Group example, using full width rows. Note that all that is necessary to achieve this it to add `groupUseEntireRow:true` to your gridOptions

@@ -1,5 +1,5 @@
 ---
-title: "Single Row Group Column"
+title: "Row Grouping - Single Group Column"
 enterprise: true
 ---
 This section explains how to use a single group column that contains a row grouping hierarchy.
@@ -11,7 +11,7 @@ This section explains how to use a single group column that contains a row group
 When there is at least one active row group, a single group column containing a row grouping hierarchy will be added to
 the left-hand side of the grid. To group rows by a particular column, enable the `rowGroup` column property as shown below:
 
-<snippet>
+<snippet spaceBetweenProperties="true">
 const gridOptions = {
     columnDefs: [
         { field: 'country', rowGroup: true },
@@ -19,6 +19,8 @@ const gridOptions = {
         { field: 'sport' },
         { field: 'total' }
     ],
+    // display each row grouping in a single group column
+    treeDisplayType: 'singleColumn',
 }
 </snippet>
 
