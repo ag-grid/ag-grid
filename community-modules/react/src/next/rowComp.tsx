@@ -3,19 +3,15 @@ import { Context, IRowComp, RowCtrl, _, CellCtrl, UserCompDetails } from '@ag-gr
 import { CssClasses } from './utils';
 import { CellComp } from './cellComp';
 
-interface CellCtrlMap {
-    [instanceId: number]:CellCtrl
-}
-
 interface CellCtrls {
     list: CellCtrl[],
-    instanceIdMap: CellCtrlMap
+    instanceIdMap: Map<number, CellCtrl>
 }
 
-function maintainOrderOnColumns(prev: CellCtrls, next: CellCtrl[], domOrder: boolean): CellCtrls {
+const maintainOrderOnColumns = (prev: CellCtrls, next: CellCtrl[], domOrder: boolean): CellCtrls => {
     if (domOrder) {
-        const res: CellCtrls = {list: next, instanceIdMap: {}};
-        next.forEach(c => res.instanceIdMap[c.getInstanceId()] = c);
+        const res: CellCtrls = { list: next, instanceIdMap: new Map() };
+        next.forEach(c => res.instanceIdMap.set(c.getInstanceId(), c));
 
         return res;
     }
@@ -24,15 +20,25 @@ function maintainOrderOnColumns(prev: CellCtrls, next: CellCtrl[], domOrder: boo
     // of the elements in the dom, as this would break transition styles
     const oldCellCtrls: CellCtrl[] = [];
     const newCellCtrls: CellCtrl[] = [];
-    const newInstanceIdMap: CellCtrlMap = {};
+    const newInstanceIdMap: Map<number, CellCtrl> = new Map();
+    const tempMap: Map<number, CellCtrl> = new Map();
+
+    next.forEach(c => tempMap.set(c.getInstanceId(), c));
+
+    prev.list.forEach(c => {
+        const instanceId = c.getInstanceId();
+        if (tempMap.has(instanceId)) {
+            oldCellCtrls.push(c);
+            newInstanceIdMap.set(instanceId, c);
+        }
+    });
 
     next.forEach(c => {
-        if (prev.instanceIdMap[c.getInstanceId()] != null) {
-            oldCellCtrls.push(c);
-        } else {
+        const instanceId = c.getInstanceId();
+        if (!prev.instanceIdMap.has(instanceId)) {
             newCellCtrls.push(c);
+            newInstanceIdMap.set(instanceId, c);
         }
-        newInstanceIdMap[c.getInstanceId()] = c;
     });
 
     const res: CellCtrls = {
@@ -61,7 +67,7 @@ export function RowComp(params: {context: Context, rowCtrl: RowCtrl, pinned: str
     const [ariaLabel, setAriaLabel] = useState<string>();
     const [ariaSelected, setAriaSelected] = useState<boolean>();
     const [userStyles, setUserStyles] = useState<any>();
-    const [cellCtrls, setCellCtrls] = useState<CellCtrls>({ list: [], instanceIdMap: {} });
+    const [cellCtrls, setCellCtrls] = useState<CellCtrls>({ list: [], instanceIdMap: new Map() });
     const [fullWidthCompDetails, setFullWidthCompDetails] = useState<UserCompDetails>();
     const [domOrder, setDomOrder] = useState<boolean>(false);
 
@@ -89,7 +95,7 @@ export function RowComp(params: {context: Context, rowCtrl: RowCtrl, pinned: str
             setRole: value => setRole(value),
             // if we don't maintain the order, then cols will be ripped out and into the dom
             // when cols reordered, which would stop the CSS transitions from working
-            setCellCtrls: next => setCellCtrls(prev => maintainOrderOnColumns(prev, next, domOrder) ),
+            setCellCtrls: next => setCellCtrls(prev => maintainOrderOnColumns(prev, next, domOrder)),
             showFullWidth: compDetails => setFullWidthCompDetails(compDetails),
             destroy: () => true,
             destroyCells: cellComps => true,
@@ -110,8 +116,7 @@ export function RowComp(params: {context: Context, rowCtrl: RowCtrl, pinned: str
     const className = cssClasses.toString();
 
     const showFullWidthFramework = fullWidthCompDetails && fullWidthCompDetails.componentFromFramework;
-    const showCells = cellCtrls!=null;
-    const showFullWidthJs = fullWidthCompDetails && !fullWidthCompDetails.componentFromFramework;
+    const showCells = cellCtrls != null;
 
     const showCellsJsx = () => cellCtrls.list.map(cellCtrl =>
         (

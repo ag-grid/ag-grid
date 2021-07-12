@@ -4,11 +4,9 @@ import { ICellRendererComp } from "../cellRenderers/iCellRenderer";
 import { Beans } from "../beans";
 import { RowNode } from "../../entities/rowNode";
 import { addStylesToElement, setDomChildOrder } from "../../utils/dom";
-import { FullWidthKeys, FullWidthRenderers, IRowComp, RowCtrl, RowType } from "./rowCtrl";
+import { IRowComp, RowCtrl, RowType } from "./rowCtrl";
 import { CellComp } from "../cell/cellComp";
 import { assign, getAllValuesInObject, iterateObject } from "../../utils/object";
-import { ModuleRegistry } from "../../modules/moduleRegistry";
-import { ModuleNames } from "../../modules/moduleNames";
 import { setAriaExpanded, setAriaRowIndex, setAriaSelected } from "../../utils/aria";
 import { CellCtrl } from "../cell/cellCtrl";
 import { UserCompDetails } from "../../components/framework/userComponentFactory";
@@ -102,8 +100,10 @@ export class RowComp extends Component {
 
         // if not in cache, create new one
         const res = this.beans.userComponentFactory.createFullWidthCellRenderer(compDetails, this.rowCtrl.getFullWidthCellRendererType());
+
         if (!res) { return; }
-        res.then(callback);    
+
+        res.then(callback);
     }
 
     public setCellCtrls(cellCtrls: CellCtrl[]): void {

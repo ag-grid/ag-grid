@@ -420,14 +420,14 @@ export class PopupService extends BeanStub {
 
         if (!eDocument) {
             console.warn('ag-grid: could not find the document, document is empty');
-            return {hideFunc: () => {}, stopAnchoringPromise: destroyPositionTracker};
+            return { hideFunc: () => {}, stopAnchoringPromise: destroyPositionTracker };
         }
 
         const pos = findIndex(this.popupList, popup => popup.element === eChild);
 
         if (pos !== -1) {
             const popup = this.popupList[pos];
-            return {hideFunc: popup.hideFunc, stopAnchoringPromise: popup.stopAnchoringPromise};
+            return { hideFunc: popup.hideFunc, stopAnchoringPromise: popup.stopAnchoringPromise };
         }
 
         const ePopupParent = this.getPopupParent();
@@ -446,7 +446,7 @@ export class PopupService extends BeanStub {
         // add env CSS class to child, in case user provided a popup parent, which means
         // theme class may be missing
         const eWrapper = document.createElement('div');
-        const {theme} = this.environment.getTheme();
+        const { theme } = this.environment.getTheme();
 
         if (theme) {
             addCssClass(eWrapper, theme);
@@ -479,21 +479,21 @@ export class PopupService extends BeanStub {
             const key = event.which || event.keyCode;
 
             if (key === KeyCode.ESCAPE) {
-                hidePopup({keyboardEvent: event});
+                hidePopup({ keyboardEvent: event });
             }
         };
 
-        const hidePopupOnMouseEvent = (event: MouseEvent) => hidePopup({mouseEvent: event});
-        const hidePopupOnTouchEvent = (event: TouchEvent) => hidePopup({touchEvent: event});
+        const hidePopupOnMouseEvent = (event: MouseEvent) => hidePopup({ mouseEvent: event });
+        const hidePopupOnTouchEvent = (event: TouchEvent) => hidePopup({ touchEvent: event });
 
         const hidePopup = (popupParams: PopupEventParams = {}) => {
-            const {mouseEvent, touchEvent, keyboardEvent} = popupParams;
+            const { mouseEvent, touchEvent, keyboardEvent } = popupParams;
             if (
                 // we don't hide popup if the event was on the child, or any
                 // children of this child
-                this.isEventFromCurrentPopup({mouseEvent, touchEvent}, eChild) ||
+                this.isEventFromCurrentPopup({ mouseEvent, touchEvent }, eChild) ||
                 // if the event to close is actually the open event, then ignore it
-                this.isEventSameChainAsOriginalEvent({originalMouseEvent: click, mouseEvent, touchEvent}) ||
+                this.isEventSameChainAsOriginalEvent({ originalMouseEvent: click, mouseEvent, touchEvent }) ||
                 // this method should only be called once. the client can have different
                 // paths, each one wanting to close, so this method may be called multiple times.
                 popupHidden
@@ -524,7 +524,7 @@ export class PopupService extends BeanStub {
         };
 
         if (afterGuiAttached) {
-            afterGuiAttached({hidePopup});
+            afterGuiAttached({ hidePopup });
         }
 
         // if we add these listeners now, then the current mouse
