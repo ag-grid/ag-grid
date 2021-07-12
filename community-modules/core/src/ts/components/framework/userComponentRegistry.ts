@@ -208,7 +208,7 @@ export class UserComponentRegistry extends BeanStub {
      */
     public retrieve(rawName: string): any {
         const name = this.translateIfDeprecated(rawName);
-        const frameworkComponent = this.frameworkComponents[name];
+        const frameworkComponent = this.frameworkComponents[name] || this.getFrameworkOverrides().frameworkComponent(name);
 
         if (frameworkComponent) {
             return {

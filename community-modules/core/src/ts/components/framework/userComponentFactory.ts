@@ -60,6 +60,7 @@ export enum ComponentSource {
 
 export interface ComponentSelectorResult {
     component?: string;
+    frameworkComponent?: string;
     params?: any;
 }
 
@@ -409,10 +410,10 @@ export class UserComponentFactory extends BeanStub {
 
         if (componentSelectorFunc) {
             const selectorResult = componentSelectorFunc ? componentSelectorFunc(params) : null;
-            if (selectorResult == null || selectorResult.component == null) {
+            if (selectorResult == null || !(selectorResult.component !== null || selectorResult.frameworkComponent !== null)) {
                 console.warn(`AG Grid - ${componentSelectorFuncKey} must return something. If you don't want a particular row to use a Cell Renderer, then return a simple Cell Renderer that just displays the value.`, params);
             } else {
-                componentNameToUse = selectorResult.component;
+                componentNameToUse = selectorResult.component || selectorResult.frameworkComponent;
                 paramsFromSelector = selectorResult.params;
             }
         }

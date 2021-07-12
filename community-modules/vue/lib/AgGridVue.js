@@ -22,6 +22,7 @@ import { Bean, ComponentUtil, Grid } from '@ag-grid-community/core';
 import { VueFrameworkComponentWrapper } from './VueFrameworkComponentWrapper';
 import { getAgGridProperties } from './Utils';
 import { AgGridColumn } from './AgGridColumn';
+import { VueFrameworkOverrides } from './VueFrameworkOverrides';
 var _a = getAgGridProperties(), props = _a[0], watch = _a[1], model = _a[2];
 var AgGridVue = /** @class */ (function (_super) {
     __extends(AgGridVue, _super);
@@ -89,6 +90,7 @@ var AgGridVue = /** @class */ (function (_super) {
         }
         var gridParams = {
             globalEventListener: this.globalEventListener.bind(this),
+            frameworkOverrides: new VueFrameworkOverrides(this),
             providedBeanInstances: {
                 frameworkComponentWrapper: frameworkComponentWrapper,
             },

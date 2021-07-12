@@ -30,4 +30,8 @@ export class VanillaFrameworkOverrides implements IFrameworkOverrides {
     dispatchEvent(eventType: string, listener: () => {}, global = false): void {
         listener();
     }
+
+    frameworkComponent(name: string): any {
+        return null;
+    }
 }
