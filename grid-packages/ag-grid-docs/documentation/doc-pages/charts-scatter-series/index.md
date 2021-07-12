@@ -54,12 +54,10 @@ for every data point, scatter series label placement is constrained so that:
 
 If these constraints are not satisfied, a label is not placed.
 
-Satisfying these constraints is computationally intensive and the complexity rises exponentially with increasing number of data points. Given that label placement might have to happen in real time,
-for example, when resizing a chart window, it is advised not to enable scatter series labels for
-data sets with more than a few hundred points.
+[[note]]
+| Satisfying these constraints is computationally intensive and the complexity rises exponentially with increasing number of data points. Given that label placement might have to happen in real time, for example, when resizing a chart window, it is advised not to enable scatter series labels for data sets with more than a few hundred points.
 
-To enable scatter series labels we have to both set the `label.enabled` config of a series to `true`
-and to specify which key should be used to fetch the label values.
+To enable scatter series labels we have to both set the `label.enabled` config of a series to `true` and to specify which key should be used to fetch the label values.
 
 ```
 labelKey: 'name',

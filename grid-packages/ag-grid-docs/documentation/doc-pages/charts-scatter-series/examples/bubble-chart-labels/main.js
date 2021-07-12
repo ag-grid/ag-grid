@@ -81,4 +81,14 @@ var options = {
     ]
 };
 
-agCharts.AgChart.create(options);
+var chart = agCharts.AgChart.create(options);
+
+function updateFontSize(event) {
+    var value = +event.target.value;
+
+    options.series[0].label.fontSize = value;
+    options.series[1].label.fontSize = value;
+    agCharts.AgChart.update(chart, options);
+
+    document.getElementById('fontSizeSliderValue').innerHTML = String(value);
+}
