@@ -72,7 +72,10 @@ export class VueComponentFactory {
         return {mountedComponent, componentInstance};
     }
 
-    public static searchForComponentInstance(parent: AgGridVue, component: any, maxDepth = 10, suppressError = false) {
+    public static searchForComponentInstance(parent: AgGridVue,
+                                             component: any,
+                                             maxDepth = 10,
+                                             suppressError = false) {
         let componentInstance: any = null;
 
         let currentParent: Vue<any> = parent.$parent;
