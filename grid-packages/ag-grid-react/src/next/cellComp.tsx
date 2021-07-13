@@ -6,7 +6,6 @@ import {
     CellCtrl,
     UserCompDetails,
     _,
-    UserComponentFactory,
     ICellRendererComp,
 } from 'ag-grid-community';
 import { CssClasses } from './utils';
@@ -48,7 +47,7 @@ export function CellComp(props: {
 
     const eGui = useRef<HTMLDivElement>(null);
     const cellRendererRef = useRef<any>(null);
-    const jsCellRendererRef = useRef<ICellRendererComp|undefined>(null) as MutableRefObject<ICellRendererComp|undefined>;
+    const jsCellRendererRef = useRef<ICellRendererComp>();
     const cellEditorRef = useRef<any>(null);
 
     const [toolsSpan, setToolsSpan] = useState<HTMLElement>();
