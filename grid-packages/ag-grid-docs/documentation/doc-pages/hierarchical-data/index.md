@@ -1,5 +1,5 @@
 ---
-title: "Tree Data"
+title: "Hierarchical Data"
 enterprise: true
 ---
 
