@@ -25,7 +25,7 @@ interface SectionProperties {
 }
 
 
-export function GridBodyComp(params: {context: Context}) {
+export const GridBodyComp = (params: { context: Context }) => {
 
     const { context } = params;
 

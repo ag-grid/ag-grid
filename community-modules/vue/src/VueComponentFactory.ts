@@ -38,7 +38,10 @@ export class VueComponentFactory {
         return component;
     }
 
-    public static searchForComponentInstance(parent: AgGridVue, component: VueConstructor | string, maxDepth = 10, suppressError = false) {
+    public static searchForComponentInstance(parent: AgGridVue,
+                                             component: VueConstructor | string,
+                                             maxDepth = 10,
+                                             suppressError = false) {
         let componentInstance: Component | AsyncComponent | null = null;
 
         let currentParent: Vue = parent.$parent;
