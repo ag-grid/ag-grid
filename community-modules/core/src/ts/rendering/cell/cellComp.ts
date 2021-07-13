@@ -117,9 +117,9 @@ export class CellComp extends Component implements TooltipParentComp {
             setIncludeDndSource: include => this.includeDndSource = include,
             setForceWrapper: force => this.forceWrapper = force,
 
-            getCellEditor: () => this.cellEditor ? this.cellEditor : null,
-            getCellRenderer: () => this.cellRenderer ? this.cellRenderer : null,
-            getParentOfValue: () => this.eCellValue ? this.eCellValue : null
+            getCellEditor: () => this.cellEditor || null,
+            getCellRenderer: () => this.cellRenderer || null,
+            getParentOfValue: () => this.eCellValue || null
         };
 
         this.cellCtrl = cellCtrl;
@@ -218,7 +218,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         eGui.innerHTML = /* html */
             `<div ref="eCellWrapper" class="ag-cell-wrapper" role="presentation">
-                <span ref="eCellValue" role="presentation"></span>
+                <span ref="eCellValue" class="ag-cell-value" role="presentation"></span>
             </div>`;
 
         this.eCellValue = this.getRefElement('eCellValue');
