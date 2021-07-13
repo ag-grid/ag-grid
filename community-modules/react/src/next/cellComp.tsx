@@ -5,21 +5,95 @@ import {
     ICellComp,
     CellCtrl,
     UserCompDetails,
-    _,
-    UserComponentFactory,
     ICellRendererComp,
+    _,
 } from '@ag-grid-community/core';
 import { CssClasses } from './utils';
 import { useJsCellRenderer } from './cellComp/useJsCellRenderer';
 
 export enum CellCompState { ShowValue, EditValue }
 
-export function CellComp(props: {
+const jsxShowValue = (
+    rendererCompDetails: UserCompDetails | undefined,
+    cellRendererRef: MutableRefObject<any>,
+    valueToDisplay: any,
+    showTools: boolean,
+    toolsRefCallback: (ref:any) => void,
+    toolsValueRefCallback: (ref:any) => void
+) => {
+    const noCellRenderer = !rendererCompDetails;
+    const reactCellRenderer = rendererCompDetails && rendererCompDetails.componentFromFramework;
+    // const jsCellRenderer = rendererCompDetails && !rendererCompDetails.componentFromFramework;
+
+    const bodyJsxFunc = () => (
+        <>
+            { noCellRenderer && jsxShowValueNoCellRenderer(valueToDisplay) }
+            { reactCellRenderer && jsxShowValueReactCellRenderer(rendererCompDetails!, cellRendererRef) }
+            {/* { jsCellRenderer && jsxShowValueJsCellRenderer() } */}
+        </>
+    );
+
+    return (
+        <>
+            { showTools && 
+                <div className="ag-cell-wrapper" role="presentation" ref={ toolsRefCallback }>
+                    <span role="presentation" ref={ toolsValueRefCallback }>
+                        { bodyJsxFunc() }
+                    </span>
+                </div> 
+            }
+            { !showTools && bodyJsxFunc() }
+        </>
+    );
+}
+
+const jsxEditValue = (editorCompDetails: UserCompDetails | undefined, cellEditorRef: MutableRefObject<any>) => {
+    const reactCellRenderer = editorCompDetails && editorCompDetails.componentFromFramework;
+    const jsCellRenderer = editorCompDetails && !editorCompDetails.componentFromFramework;
+
+    return (
+        <>
+            { reactCellRenderer && jsxEditValueReactCellRenderer(editorCompDetails!, cellEditorRef) }
+            { jsCellRenderer && jsxEditValueJsCellRenderer() }
+        </>
+    )
+}
+
+const jsxShowValueNoCellRenderer = (valueToDisplay: any) => (
+    <>{ valueToDisplay }</>
+);
+
+
+const jsxShowValueReactCellRenderer = (rendererCompDetails: UserCompDetails, cellRendererRef: MutableRefObject<any>) => {
+    const CellRendererClass = rendererCompDetails.componentClass;
+
+    return (
+        <CellRendererClass { ...rendererCompDetails.params } ref={ cellRendererRef }></CellRendererClass>
+    );
+}
+
+// const jsxShowValueJsCellRenderer = () => (
+//     <>Please write your Cell Renderer as a React Component</>
+// );
+
+const jsxEditValueReactCellRenderer = (editorCompDetails: UserCompDetails, cellEditorRef: MutableRefObject<any>) => {
+    const CellEditorClass = editorCompDetails.componentClass;
+
+    return (
+        <CellEditorClass { ...editorCompDetails.params } ref={ cellEditorRef }></CellEditorClass>
+    );
+}
+
+const jsxEditValueJsCellRenderer = () => (
+    <>Please write your Cell Editor as a React Component</>
+);
+
+export const CellComp = (props: {
     cellCtrl: CellCtrl,
     context: Context,
     printLayout: boolean, 
     editingRow: boolean
-}) {
+}) => {
     const { cellCtrl, printLayout, editingRow, context } = props;
 
     const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses());
@@ -141,7 +215,7 @@ export function CellComp(props: {
 
         cellCtrl.setComp(compProxy, false, null, eGui.current!, printLayout, editingRow);
 
-    }, [cellCtrl, editingRow, printLayout]);
+    }, [cellCtrl, editingRow, printLayout, toolsValueSpan]);
 
     const className = cssClasses.toString();
 
@@ -165,81 +239,4 @@ export function CellComp(props: {
 
         </div>
     );
-}
-
-function jsxShowValue(
-    rendererCompDetails: UserCompDetails | undefined,
-    cellRendererRef: MutableRefObject<any>,
-    valueToDisplay: any,
-    showTools: boolean,
-    toolsRefCallback: (ref:any) => void,
-    toolsValueRefCallback: (ref:any) => void
-) {
-    const noCellRenderer = !rendererCompDetails;
-    const reactCellRenderer = rendererCompDetails && rendererCompDetails.componentFromFramework;
-    const jsCellRenderer = rendererCompDetails && !rendererCompDetails.componentFromFramework;
-
-    const bodyJsxFunc = () => (
-        <>
-            { noCellRenderer && jsxShowValueNoCellRenderer(valueToDisplay) }
-            { reactCellRenderer && jsxShowValueReactCellRenderer(rendererCompDetails!, cellRendererRef) }
-            {/* { jsCellRenderer && jsxShowValueJsCellRenderer() } */}
-        </>
-    );
-
-    ///////// Need to fix unselectable=on, should be set by the ctrl
-    return (
-        <>
-            { showTools && 
-                <div className="ag-cell-wrapper" role="presentation" ref={ toolsRefCallback }>
-                    <span role="presentation" className={ 'ag-cell-value' } unselectable="on" ref={ toolsValueRefCallback }>
-                        { bodyJsxFunc() }
-                    </span>
-                </div> 
-            }
-            { !showTools && bodyJsxFunc() }
-        </>
-    );
-}
-
-function jsxEditValue(editorCompDetails: UserCompDetails | undefined, cellEditorRef: MutableRefObject<any>) {
-    const reactCellRenderer = editorCompDetails && editorCompDetails.componentFromFramework;
-    const jsCellRenderer = editorCompDetails && !editorCompDetails.componentFromFramework;
-
-    return (
-        <>
-            { reactCellRenderer && jsxEditValueReactCellRenderer(editorCompDetails!, cellEditorRef) }
-            { jsCellRenderer && jsxEditValueJsCellRenderer() }
-        </>
-    )
-}
-
-function jsxShowValueNoCellRenderer(valueToDisplay: any) {
-    return (
-        <>{ valueToDisplay }</>
-    );
-}
-
-function jsxShowValueReactCellRenderer(rendererCompDetails: UserCompDetails, cellRendererRef: MutableRefObject<any>) {
-    const CellRendererClass = rendererCompDetails.componentClass;
-
-    return (
-        <CellRendererClass { ...rendererCompDetails.params } ref={ cellRendererRef }></CellRendererClass>
-    );
-}
-
-function jsxShowValueJsCellRenderer() {
-    return (<>Please write your Cell Renderer as a React Component</>);
-}
-
-function jsxEditValueReactCellRenderer(editorCompDetails: UserCompDetails, cellEditorRef: MutableRefObject<any>) {
-    const CellEditorClass = editorCompDetails.componentClass;
-
-    return (
-        <CellEditorClass { ...editorCompDetails.params } ref={ cellEditorRef }></CellEditorClass>
-    );
-}
-
-function jsxEditValueJsCellRenderer() {
-    return (<>Please write your Cell Editor as a React Component</>);
 }

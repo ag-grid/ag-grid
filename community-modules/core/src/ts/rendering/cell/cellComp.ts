@@ -18,8 +18,6 @@ import { isBrowserIE } from "../../utils/browser";
 import { CellCtrl, ICellComp } from "./cellCtrl";
 import { UserCompDetails } from "../../components/framework/userComponentFactory";
 
-export const CSS_CELL_VALUE = 'ag-cell-value';
-
 enum DisplayState { ShowValue, EditValue }
 
 export class CellComp extends Component implements TooltipParentComp {
@@ -189,14 +187,6 @@ export class CellComp extends Component implements TooltipParentComp {
         this.checkboxSelectionComp = this.beans.context.destroyBean(this.checkboxSelectionComp);
         this.dndSourceComp = this.beans.context.destroyBean(this.dndSourceComp);
         this.rowDraggingComp = this.beans.context.destroyBean(this.rowDraggingComp);
-
-        this.updateCssCellValue();
-    }
-
-    private updateCssCellValue(): void {
-        // when using the wrapper, this CSS class appears inside the wrapper instead
-        const includeAtTop = this.eCellWrapper == null;
-        this.addOrRemoveCssClass(CSS_CELL_VALUE, includeAtTop);
     }
 
     // returns true if wrapper was changed
@@ -223,14 +213,10 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private addControlsWrapper(): void {
-        const unselectable = !this.beans.gridOptionsWrapper.isEnableCellTextSelection() ? ' unselectable="on"' : '';
-
-        this.updateCssCellValue();
-
         const eGui = this.getGui();
         eGui.innerHTML = /* html */
             `<div ref="eCellWrapper" class="ag-cell-wrapper" role="presentation">
-                <span ref="eCellValue" role="presentation" class="${CSS_CELL_VALUE}"${unselectable}></span>
+                <span ref="eCellValue" role="presentation"></span>
             </div>`;
 
         this.eCellValue = this.getRefElement('eCellValue');
