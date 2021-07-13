@@ -29,10 +29,26 @@ meta_and_links("AG Grid: Cookies Policy", "About AG Grid", "This page outlines o
         <h4>Effective Date: May 17, 2018</h4>
         <div class="list-group">
           <a href="#" class="list-group-item list-group-item-action active">Cookies Guide</a>
+          <a href="#manage-your-cookie-consent" class="list-group-item list-group-item-action">Manage Cookie Consent</a>
           <a href="#intro-privacy" class="list-group-item list-group-item-action">What is a Cookie?</a>
           <a href="#cookies-how-we-use" class="list-group-item list-group-item-action">How Do We Use Cookies?</a>
+          <a href="#third-party-cookies" class="list-group-item list-group-item-action">Third-party Cookies</a>
         </div>
+
+        <div>
+
+        </div>
+
         <ol>
+          <li>
+                      <!-- OneTrust CookiePro Details -->
+            <h3 id="manage-your-cookie-consent">Manage Cookie Consent</h2>
+            <hr>
+            <p>You can manage your optin and optout cookie consent settings by clicking the button below.</p>
+            <button id="ot-sdk-btn" class="ot-sdk-show-settings">Cookie Settings</button>
+            <p>Details of the cookies we use are listed in the table below.</p>
+            <div id="ot-sdk-cookie-policy"></div>
+          </li>
           <li>
             <h3 id="intro-privacy">What is a Cookie?</h3>
             <hr>
@@ -88,7 +104,40 @@ meta_and_links("AG Grid: Cookies Policy", "About AG Grid", "This page outlines o
                 use. They may also be used to provide services you have requested such as viewing a video or commenting on a blog.
                 The information these cookies collect is usually anonymised.
               </li>
-            </ul>
+              <li>
+                <strong>Targetting cookies:</strong> These cookies may be set through our site by our advertising partners. 
+                They may be used by those companies to build a profile of your interests and show you relevant adverts on 
+                other sites. They do not store directly personal information, but are based on uniquely identifying your 
+                browser and internet device. If you do not allow these cookies, you will experience less targeted advertising.
+              </li>
+            </ul>            
+          </li>
+          <li>
+            <h3 id="third-party-cookies">Third-party Cookies</h3>
+            <hr>
+            <p>Some of our pages display content from external sites, e.g. YouTube, StackBlitz. The embedding of
+              content from these sites may create third-party cookies over which we have no control.</p>
+
+            <p>To view this third-party content, you may have to accept their terms and conditions. 
+              This includes their cookie policies, over which we have no control.</p>
+
+            <p>If you do not view this content, no third-party cookies are installed on your device.</p>
+
+            <p>Third-party providers on AG Grid website and blogs include: 
+              <a href="https://stackblitz.com/privacy-policy" target="_blank" rel="noopener">StackBlitz</a>, 
+              <a href="https://www.youtube.com/t/terms" target="_blank" rel="noopener">YouTube</a>, 
+              <a href="https://www.atlassian.com/legal/cookies" target="_blank" rel="noopener">Atlassian</a>, 
+              <a href="https://codesandbox.io/legal/privacy" target="_blank" rel="noopener">Code Sandbox</a>, 
+              <a href="https://policies.google.com/terms?hl=en&gl=be" target="_blank" rel="noopener">Google</a>, 
+              <a href="https://www.linkedin.com/legal/user-agreement" target="_blank" rel="noopener">LinkedIn</a>, 
+              <a href="https://www.facebook.com/legal/terms" target="_blank" rel="noopener">Facebook</a>, 
+              <a href="https://docs.github.com/en/github/site-policy/github-privacy-statement" target="_blank" rel="noopener">Github</a>.
+              
+              
+            
+
+            <p>These third-party services are outside of the control of AG Grid. Third Parties may, at any time,
+              change their terms of service, purpose and use of cookies, etc.</p>
           </li>
         </ol>
       </div>
