@@ -498,6 +498,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.groupHideOpenParents);
     }
 
+    public getAutoGroupColumnDef(): ColDef | undefined {
+        return this.gridOptions.treeColumnDef;
+    }
+
     public isGroupMultiAutoColumn() {
         if (this.gridOptions.treeDisplayType) {
             return this.matchesTreeDisplayType(TreeDisplayType.MULTIPLE_COLUMNS, this.gridOptions.treeDisplayType);
@@ -508,11 +512,15 @@ export class GridOptionsWrapper {
 
     public isGroupUseEntireRow(pivotMode: boolean): boolean {
         // we never allow groupUseEntireRow if in pivot mode, otherwise we won't see the pivot values.
-        return pivotMode ? false : this.matchesTreeDisplayType(TreeDisplayType.ROW, this.gridOptions.treeDisplayType);
+        if (pivotMode) { return false; }
+
+        return this.gridOptions.treeDisplayType ?
+            this.matchesTreeDisplayType(TreeDisplayType.ROW, this.gridOptions.treeDisplayType) : false;
     }
 
     public isGroupSuppressAutoColumn() {
-        return this.matchesTreeDisplayType(TreeDisplayType.CUSTOM, this.gridOptions.treeDisplayType);
+        return this.gridOptions.treeDisplayType ?
+            this.matchesTreeDisplayType(TreeDisplayType.CUSTOM, this.gridOptions.treeDisplayType) : false;
     }
 
     public isGroupRemoveSingleChildren() {
@@ -861,10 +869,6 @@ export class GridOptionsWrapper {
 
     public isEnableRtl() {
         return isTrue(this.gridOptions.enableRtl);
-    }
-
-    public getAutoGroupColumnDef(): ColDef | undefined {
-        return this.gridOptions.autoGroupColumnDef;
     }
 
     public getRowGroupPanelShow() {
@@ -1669,6 +1673,11 @@ export class GridOptionsWrapper {
         if (options.groupSuppressAutoColumn) {
             console.warn("AG Grid: since v26.0, the grid property `groupSuppressAutoColumn` has been replaced by `treeDisplayType = 'custom'`");
             options.treeDisplayType = 'custom';
+        }
+
+        if (options.autoGroupColumnDef) {
+            console.warn("AG Grid: since v26.0, the grid property `autoGroupColumnDef` has been replaced by `treeColumnDef`");
+            options.treeColumnDef = options.autoGroupColumnDef;
         }
     }
 

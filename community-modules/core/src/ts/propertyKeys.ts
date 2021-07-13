@@ -16,7 +16,7 @@ export class PropertyKeys {
         'defaultColGroupDef', 'defaultColDef', 'defaultExportParams', 'defaultCsvExportParams', 'defaultExcelExportParams', 'columnTypes',
         'rowClassRules', 'detailGridOptions', 'detailCellRendererParams', 'loadingCellRendererParams', 'loadingOverlayComponentParams',
         'noRowsOverlayComponentParams', 'popupParent', 'colResizeDefault', 'reduxStore', 'statusBar', 'sideBar', 'chartThemeOverrides',
-        'customChartThemes'
+        'customChartThemes', 'treeColumnDef'
     ];
 
     public static ARRAY_PROPERTIES = [

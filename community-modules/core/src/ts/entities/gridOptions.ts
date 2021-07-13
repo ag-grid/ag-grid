@@ -303,11 +303,14 @@ export interface GridOptions {
     groupRemoveLowestSingleChildren?: boolean;
     groupHideOpenParents?: boolean;
     groupSuppressBlankHeader?: boolean;
-    autoGroupColumnDef?: ColDef;
     enableOldSetFilterModel?: boolean;
     enableCharts?: boolean;
 
+    treeColumnDef?: ColDef;
     treeDisplayType?: TreeDisplayType;
+
+    /** @deprecated - Use treeColumnDef instead */
+    autoGroupColumnDef?: ColDef;
 
     /** @deprecated - Use treeDisplayType = 'multipleColumns' instead */
     groupMultiAutoColumn?: boolean;

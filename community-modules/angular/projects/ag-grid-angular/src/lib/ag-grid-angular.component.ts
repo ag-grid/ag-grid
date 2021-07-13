@@ -201,6 +201,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public sideBar: any = undefined;
     @Input() public chartThemeOverrides: any = undefined;
     @Input() public customChartThemes: any = undefined;
+    @Input() public treeColumnDef: any = undefined;
     @Input() public sortingOrder: any = undefined;
     @Input() public rowClass: any = undefined;
     @Input() public rowSelection: any = undefined;
