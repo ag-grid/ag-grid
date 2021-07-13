@@ -295,20 +295,26 @@ export interface GridOptions {
     defaultExcelExportParams?: ExcelExportParams;
 
     pivotSuppressAutoColumn?: boolean;
-    groupSuppressAutoColumn?: boolean;
     groupSelectsChildren?: boolean;
     groupSelectsFiltered?: boolean;
     groupIncludeFooter?: boolean;
     groupIncludeTotalFooter?: boolean;
-    groupUseEntireRow?: boolean;
     groupRemoveSingleChildren?: boolean;
     groupRemoveLowestSingleChildren?: boolean;
     groupHideOpenParents?: boolean;
-    groupMultiAutoColumn?: boolean;
     groupSuppressBlankHeader?: boolean;
     autoGroupColumnDef?: ColDef;
     enableOldSetFilterModel?: boolean;
     enableCharts?: boolean;
+
+    treeDisplayType?: TreeDisplayType;
+
+    /** @deprecated - Use treeDisplayType = 'multipleColumns' instead */
+    groupMultiAutoColumn?: boolean;
+    /** @deprecated - Use treeDisplayType = 'row' instead */
+    groupUseEntireRow?: boolean;
+    /** @deprecated - Use treeDisplayType = 'custom' instead */
+    groupSuppressAutoColumn?: boolean;
 
     // changeable, but no immediate impact
     context?: any;
@@ -605,6 +611,13 @@ export interface GridOptions {
     // apis, set by the grid on init
     api?: GridApi | null; // change to typed
     columnApi?: ColumnApi | null; // change to typed
+}
+
+export enum TreeDisplayType {
+    SINGLE_COLUMN = 'singleColumn',
+    MULTIPLE_COLUMNS = 'multipleColumns', // Row Group only!!!
+    ROW = 'row',
+    CUSTOM = 'custom',
 }
 
 export interface FillOperationParams {

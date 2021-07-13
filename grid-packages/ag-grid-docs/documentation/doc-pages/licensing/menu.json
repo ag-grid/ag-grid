@@ -981,6 +981,18 @@
             ]
           },
           {
+            "title": "Aggregation",
+            "url": "/aggregation/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Hierarchical Data",
+            "url": "/tree-data/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
             "title": "Master Detail",
             "url": "/master-detail/",
             "enterprise": true,
@@ -1030,18 +1042,6 @@
                 "showInCollapsed": false
               }
             ]
-          },
-          {
-            "title": "Tree Data",
-            "url": "/tree-data/",
-            "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
-            "title": "Aggregation",
-            "url": "/aggregation/",
-            "enterprise": true,
-            "showInCollapsed": true
           },
           {
             "title": "Pivoting",

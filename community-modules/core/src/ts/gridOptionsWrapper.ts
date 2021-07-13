@@ -21,7 +21,8 @@ import {
     ProcessDataFromClipboardParams,
     ServerSideStoreParams,
     TabToNextCellParams,
-    TabToNextHeaderParams
+    TabToNextHeaderParams,
+    TreeDisplayType
 } from './entities/gridOptions';
 import { EventService } from './eventService';
 import { Constants } from './constants/constants';
@@ -46,7 +47,7 @@ import { SideBarDef, SideBarDefParser } from './entities/sideBar';
 import { ModuleNames } from './modules/moduleNames';
 import { ChartOptions } from './interfaces/iChartOptions';
 import { AgChartTheme, AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
-import { iterateObject } from './utils/object';
+import { iterateObject, getAllValuesInObject } from './utils/object';
 import { ModuleRegistry } from './modules/moduleRegistry';
 import { isNumeric } from './utils/number';
 import { exists, missing, values } from './utils/generic';
@@ -497,9 +498,21 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.groupHideOpenParents);
     }
 
-    // if we are doing hideOpenParents, then we always have groupMultiAutoColumn, otherwise hideOpenParents would not work
     public isGroupMultiAutoColumn() {
-        return isTrue(this.gridOptions.groupMultiAutoColumn) || isTrue(this.gridOptions.groupHideOpenParents);
+        if (this.gridOptions.treeDisplayType) {
+            return this.matchesTreeDisplayType(TreeDisplayType.MULTIPLE_COLUMNS, this.gridOptions.treeDisplayType);
+        }
+        // if we are doing hideOpenParents we also show multiple columns, otherwise hideOpenParents would not work
+        return isTrue(this.gridOptions.groupHideOpenParents);
+    }
+
+    public isGroupUseEntireRow(pivotMode: boolean): boolean {
+        // we never allow groupUseEntireRow if in pivot mode, otherwise we won't see the pivot values.
+        return pivotMode ? false : this.matchesTreeDisplayType(TreeDisplayType.ROW, this.gridOptions.treeDisplayType);
+    }
+
+    public isGroupSuppressAutoColumn() {
+        return this.matchesTreeDisplayType(TreeDisplayType.CUSTOM, this.gridOptions.treeDisplayType);
     }
 
     public isGroupRemoveSingleChildren() {
@@ -536,10 +549,6 @@ export class GridOptionsWrapper {
 
     public isMultiSortKeyCtrl() {
         return this.gridOptions.multiSortKey === 'ctrl';
-    }
-
-    public isGroupSuppressAutoColumn() {
-        return isTrue(this.gridOptions.groupSuppressAutoColumn);
     }
 
     public isPivotSuppressAutoColumn() {
@@ -848,12 +857,6 @@ export class GridOptionsWrapper {
 
     public getRowData(): any[] | undefined {
         return this.gridOptions.rowData;
-    }
-
-    // this property is different - we never allow groupUseEntireRow if in pivot mode,
-    // as otherwise we don't see the pivot values.
-    public isGroupUseEntireRow(pivotMode: boolean): boolean {
-        return pivotMode ? false : isTrue(this.gridOptions.groupUseEntireRow);
     }
 
     public isEnableRtl() {
@@ -1652,6 +1655,21 @@ export class GridOptionsWrapper {
         if (options.applyColumnDefOrder) {
             console.warn('AG Grid: since v26.0, the grid property `applyColumnDefOrder` is no longer needed, as this is the default behaviour. To turn this behaviour off, set maintainColumnOrder=true');
         }
+
+        if (options.groupMultiAutoColumn) {
+            console.warn("AG Grid: since v26.0, the grid property `groupMultiAutoColumn` has been replaced by `treeDisplayType = 'multipleColumns'`");
+            options.treeDisplayType = 'multipleColumns';
+        }
+
+        if (options.groupUseEntireRow) {
+            console.warn("AG Grid: since v26.0, the grid property `groupUseEntireRow` has been replaced by `treeDisplayType = 'row'`");
+            options.treeDisplayType = 'row';
+        }
+
+        if (options.groupSuppressAutoColumn) {
+            console.warn("AG Grid: since v26.0, the grid property `groupSuppressAutoColumn` has been replaced by `treeDisplayType = 'custom'`");
+            options.treeDisplayType = 'custom';
+        }
     }
 
     private checkForViolations() {
@@ -1804,5 +1822,16 @@ export class GridOptionsWrapper {
 
     private getDefaultRowHeight(): number {
         return this.getFromTheme(DEFAULT_ROW_HEIGHT, 'rowHeight');
+    }
+
+    private matchesTreeDisplayType(toMatch: TreeDisplayType, supplied?: string): boolean {
+        const treeDisplayTypeValues = getAllValuesInObject(TreeDisplayType);
+        if (treeDisplayTypeValues.indexOf(supplied) < 0) {
+            doOnce(() =>
+                    console.warn(`AG Grid: '${supplied}' is not a valid treeDisplayType value - possible values are: '${treeDisplayTypeValues.join("', '")}'`),
+                'warn about tree display type values');
+            return false;
+        }
+        return supplied === toMatch;
     }
 }
