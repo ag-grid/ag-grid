@@ -33,6 +33,7 @@ import { doOnce } from "../../utils/function";
 import { RowDragComp } from "../row/rowDragComp";
 
 const CSS_CELL = 'ag-cell';
+const CSS_CELL_VALUE = 'ag-cell-value';
 const CSS_AUTO_HEIGHT = 'ag-cell-auto-height';
 const CSS_CELL_FOCUS = 'ag-cell-focus';
 const CSS_CELL_FIRST_RIGHT_PINNED = 'ag-cell-first-right-pinned';
@@ -319,7 +320,7 @@ export class CellCtrl extends BeanStub {
     public stopEditing(cancel = false): void {
         if (!this.editing) { return; }
 
-        const {newValue, newValueExists} = this.takeValueFromCellEditor(cancel);
+        const { newValue, newValueExists } = this.takeValueFromCellEditor(cancel);
         const oldValue = this.getValueFromValueService();
 
         if (newValueExists) {

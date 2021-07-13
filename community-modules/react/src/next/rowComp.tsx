@@ -50,7 +50,7 @@ const maintainOrderOnColumns = (prev: CellCtrls, next: CellCtrl[], domOrder: boo
     return res;
 }
 
-export function RowComp(params: {context: Context, rowCtrl: RowCtrl, pinned: string | null}) {
+export const RowComp = (params: {context: Context, rowCtrl: RowCtrl, pinned: string | null}) => {
 
     const { context, rowCtrl, pinned } = params;
 

@@ -304,7 +304,7 @@ title: "Get Started with AG Grid"
 |   <head>
 |   </head>
 |   <body>
-|     <h1>Hello from ag-grid!</h1>
+|     <h1>Hello from AG Grid!</h1>
 |   </body>
 | </html>
 | ```
@@ -326,7 +326,7 @@ title: "Get Started with AG Grid"
 |     <link rel="stylesheet" href="https://unpkg.com/ag-grid-community/dist/styles/ag-theme-alpine.css">
 |   </head>
 |   <body>
-|     <h1>Hello from ag-grid!</h1>
+|     <h1>Hello from AG Grid!</h1>
 |   </body>
 | </html>
 | ```
@@ -346,7 +346,7 @@ title: "Get Started with AG Grid"
 |   <link rel="stylesheet" href="https://unpkg.com/ag-grid-community/dist/styles/ag-theme-alpine.css">
 | </head>
 | <body>
-|   <h1>Hello from ag-grid!</h1>
+|   <h1>Hello from AG Grid!</h1>
 |
 |   <div id="myGrid" class="ag-theme-alpine" style="height: 600px; width:500px;"></div>
 |
@@ -453,7 +453,7 @@ title: "Get Started with AG Grid"
 |   <link rel="stylesheet" href="https://unpkg.com/ag-grid-community/dist/styles/ag-theme-alpine.css">
 | </head>
 | <body>
-|   <h1>Hello from ag-grid!</h1>
+|   <h1>Hello from AG Grid!</h1>
 |
 |   <div id="myGrid" style="height: 600px;width:500px;" class="ag-theme-alpine"></div>
 |
@@ -626,7 +626,7 @@ title: "Get Started with AG Grid"
 |   <link rel="stylesheet" href="https://unpkg.com/ag-grid-community/dist/styles/ag-theme-alpine.css">
 | </head>
 | <body>
-|   <h1>Hello from ag-grid!</h1>
+|   <h1>Hello from AG Grid!</h1>
 |   <button onclick="getSelectedRows()">Get Selected Rows</button>
 |   <div id="myGrid" style="height: 600px;width:500px;" class="ag-theme-alpine"></div>
 |

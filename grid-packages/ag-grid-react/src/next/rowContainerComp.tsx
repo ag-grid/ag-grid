@@ -9,7 +9,7 @@ import {
 import { classesList } from './utils';
 import { RowComp } from './rowComp';
 
-export function RowContainerComp(params: {context: Context, name: RowContainerName}) {
+export const RowContainerComp = (params: {context: Context, name: RowContainerName}) => {
 
     const [viewportHeight, setViewportHeight] = useState<string>('');
     const [rowCtrls, setRowCtrls] = useState<RowCtrl[]>([]);

@@ -9,7 +9,7 @@ import {
 import { GridBodyComp } from './gridBodyComp';
 import { classesList } from './utils';
 
-export function GridComp(props: { context: Context }) {
+export const GridComp = (props: { context: Context }) => {
 
     const [rtlClass, setRtlClass] = useState<string>('');
     const [keyboardFocusClass, setKeyboardFocusClass] = useState<string>('');
