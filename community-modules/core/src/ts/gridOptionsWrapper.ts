@@ -504,7 +504,7 @@ export class GridOptionsWrapper {
 
     public isGroupMultiAutoColumn() {
         if (this.gridOptions.treeDisplayType) {
-            return this.matchesTreeDisplayType(TreeDisplayType.MULTIPLE_COLUMNS, this.gridOptions.treeDisplayType);
+            return this.matchesTreeDisplayType(TreeDisplayType.MULTI_COLUMN, this.gridOptions.treeDisplayType);
         }
         // if we are doing hideOpenParents we also show multiple columns, otherwise hideOpenParents would not work
         return isTrue(this.gridOptions.groupHideOpenParents);

@@ -15,14 +15,14 @@ As illustrated above, there is a single group column containing the `country` an
 
 See the [Single Column Tree](../grouping-single-column-tree/) section for more details.
 
-## Multiple Columns Tree
+## Multi-Column Tree
 Separate group columns are used for each row group.
 
-<image-caption src="grouping-tree-display-types/resources/multiple-columns-tree.png" alt="Multiple Columns Tree" constrained="true" centered="true"></image-caption>
+<image-caption src="grouping-tree-display-types/resources/multi-column-tree.png" alt="Multi-Column Tree" constrained="true" centered="true"></image-caption>
 
 As illustrated above, the `country` and `year` row groups are displayed under separate group columns.
 
-See the [Multiple Columns Tree](../grouping-multiple-columns-tree/) section for more details.
+See the [Multi-Column Tree](../grouping-multi-column-tree/) section for more details.
 
 ## Row Tree
 

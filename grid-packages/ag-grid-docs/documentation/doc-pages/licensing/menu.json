@@ -923,8 +923,8 @@
                     "showInCollapsed": false
                   },
                   {
-                    "title": "Multiple Columns Tree",
-                    "url": "/grouping-multiple-columns-tree/",
+                    "title": "Multi-Column Tree",
+                    "url": "/grouping-multi-column-tree/",
                     "enterprise": true,
                     "showInCollapsed": false
                   },
