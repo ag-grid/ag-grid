@@ -15,7 +15,7 @@ var gridOptions = {
         filter: true,
         sortable: true,
     },
-    autoGroupColumnDef: {
+    treeColumnDef: {
         headerName: 'Athlete',
         field: 'athlete',
         minWidth: 250

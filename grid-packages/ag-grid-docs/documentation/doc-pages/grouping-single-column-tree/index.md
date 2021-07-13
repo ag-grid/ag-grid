@@ -19,7 +19,7 @@ const gridOptions = {
         { field: 'sport' },
         { field: 'total' }
     ],
-    // display each row grouping in a single group column
+    // optional - 'singleColumn' is the default tree display type
     treeDisplayType: 'singleColumn',
 }
 </snippet>

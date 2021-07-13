@@ -32,9 +32,7 @@ var gridOptions = {
         sortable: true,
         resizable: true,
     },
-    // we are defining the group columns, so tell the grid we don't
-    // want it to auto-generate group columns for us
-    groupSuppressAutoColumn: true,
+    treeDisplayType: 'custom',
     enableRangeSelection: true,
     animateRows: true
 };

@@ -16,12 +16,11 @@ var gridOptions = {
         sortable: true,
         resizable: true,
     },
-    autoGroupColumnDef: {
+    treeColumnDef: {
         minWidth: 200,
         filterValueGetter: function(params) {
             var colGettingGrouped = params.colDef.showRowGroup;
-            var valueForOtherCol = params.api.getValue(colGettingGrouped, params.node);
-            return valueForOtherCol;
+            return params.api.getValue(colGettingGrouped, params.node);
         }
     },
     enableRangeSelection: true,

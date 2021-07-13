@@ -37,8 +37,8 @@ var gridOptions = {
         sortable: true,
         resizable: true,
     },
+    treeDisplayType: 'custom',
     enableRangeSelection: true,
-    groupSuppressAutoColumn: true,
     animateRows: true,
 };
 

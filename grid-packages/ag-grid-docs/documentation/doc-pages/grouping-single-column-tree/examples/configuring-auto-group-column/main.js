@@ -17,7 +17,7 @@ var gridOptions = {
         sortable: true,
         resizable: true,
     },
-    autoGroupColumnDef: {
+    treeColumnDef: {
         headerName: ' CUSTOM! ',
         minWidth: 200,
         cellRendererParams: {

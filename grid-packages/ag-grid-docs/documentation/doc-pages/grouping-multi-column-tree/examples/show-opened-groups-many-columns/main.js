@@ -16,12 +16,12 @@ var gridOptions = {
         minWidth: 150,
         resizable: true,
     },
-    autoGroupColumnDef: {
+    treeColumnDef: {
         minWidth: 300
     },
-    animateRows: true,
+    treeDisplayType: 'multiColumn',
     showOpenedGroup: true,
-    groupMultiAutoColumn: true
+    animateRows: true,
 };
 
 // setup the grid after the page has finished loading

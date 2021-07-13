@@ -20,10 +20,10 @@ var gridOptions = {
         sortable: true,
         resizable: true,
     },
-    autoGroupColumnDef: {
+    treeColumnDef: {
         minWidth: 200,
     },
-    groupUseEntireRow: true,
+    treeDisplayType: 'row',
     animateRows: true,
 };
 

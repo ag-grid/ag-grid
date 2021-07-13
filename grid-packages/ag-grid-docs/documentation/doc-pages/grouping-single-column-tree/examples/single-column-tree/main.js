@@ -12,9 +12,10 @@ var gridOptions = {
         sortable: true,
         resizable: true,
     },
-    autoGroupColumnDef: {
+    treeColumnDef: {
         minWidth: 200,
     },
+    treeDisplayType: 'singleColumn', // optional - 'singleColumn' is the default tree display type
     animateRows: true,
 };
 
