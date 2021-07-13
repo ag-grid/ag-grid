@@ -31,6 +31,7 @@ import { CheckboxSelectionComponent } from "../checkboxSelectionComponent";
 import { DndSourceComp } from "../dndSourceComp";
 import { doOnce } from "../../utils/function";
 import { RowDragComp } from "../row/rowDragComp";
+import { addCssClass } from "../../utils/dom";
 
 const CSS_CELL = 'ag-cell';
 const CSS_CELL_VALUE = 'ag-cell-value';
@@ -896,6 +897,17 @@ export class CellCtrl extends BeanStub {
         const wrapText = this.column.getColDef().wrapText == true;
         if (wrapText) {
             this.cellComp.addOrRemoveCssClass(CSS_CELL_WRAP_TEXT, true);
+        }
+    }
+    
+    public updateCssCellValue(): void {
+        const parentOfValue = this.cellComp.getParentOfValue();
+        const usingWrapper = !!parentOfValue && parentOfValue !== this.getGui();
+
+        this.cellComp.addOrRemoveCssClass(CSS_CELL_VALUE, !usingWrapper);
+
+        if (usingWrapper) {
+            addCssClass(parentOfValue!, CSS_CELL_VALUE)
         }
     }
 
