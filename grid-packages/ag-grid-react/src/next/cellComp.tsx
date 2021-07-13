@@ -48,7 +48,7 @@ export function CellComp(props: {
 
     const eGui = useRef<HTMLDivElement>(null);
     const cellRendererRef = useRef<any>(null);
-    const jsCellRendererRef = useRef<ICellRendererComp|undefined>(null);
+    const jsCellRendererRef = useRef<ICellRendererComp|undefined>(null) as MutableRefObject<ICellRendererComp|undefined>;
     const cellEditorRef = useRef<any>(null);
 
     const [toolsSpan, setToolsSpan] = useState<HTMLElement>();
