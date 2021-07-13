@@ -898,6 +898,13 @@ export class CellCtrl extends BeanStub {
             this.cellComp.addOrRemoveCssClass(CSS_CELL_WRAP_TEXT, true);
         }
     }
+    
+    public updateCssCellValue(): void {
+        const parentOfValue = this.cellComp.getParentOfValue();
+        const usingWrapper = !!parentOfValue && parentOfValue !== this.getGui();
+
+        this.cellComp.addOrRemoveCssClass(CSS_CELL_VALUE, !usingWrapper);
+    }
 
     public onColumnHover(): void {
         if (!this.cellComp) { return; }
