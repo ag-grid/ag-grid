@@ -798,8 +798,10 @@ export abstract class Chart extends Observable {
         const series: Series[] = [];
         const data: (readonly SeriesNodeDatum[])[] = [];
         this.nodeData.forEach((d, s) => {
-            series.push(s);
-            data.push(s.getNodeData());
+            if (s.label.enabled) {
+                series.push(s);
+                data.push(s.getNodeData());
+            }
         });
         const labels = placeLabels(data as any[], this.seriesRect);
         return new Map(labels.map((l, i) => [series[i], l]));

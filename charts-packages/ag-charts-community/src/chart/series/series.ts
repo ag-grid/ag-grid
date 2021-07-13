@@ -4,6 +4,7 @@ import { Observable, reactive } from "../../util/observable";
 import { ChartAxis, ChartAxisDirection } from "../chartAxis";
 import { Chart } from "../chart";
 import { createId } from "../../util/id";
+import { Label } from "../label";
 
 /**
  * Processed series datum used in node selections,
@@ -79,6 +80,8 @@ export abstract class Series extends Observable {
 
     directions: ChartAxisDirection[] = [ChartAxisDirection.X, ChartAxisDirection.Y];
     directionKeys: { [key in ChartAxisDirection]?: string[] };
+
+    readonly label = new Label();
 
     /**
      * @deprecated Use {@link tooltip.enabled} instead.
