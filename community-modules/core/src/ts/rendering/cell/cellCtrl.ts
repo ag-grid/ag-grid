@@ -320,7 +320,7 @@ export class CellCtrl extends BeanStub {
     public stopEditing(cancel = false): void {
         if (!this.editing) { return; }
 
-        const {newValue, newValueExists} = this.takeValueFromCellEditor(cancel);
+        const { newValue, newValueExists } = this.takeValueFromCellEditor(cancel);
         const oldValue = this.getValueFromValueService();
 
         if (newValueExists) {

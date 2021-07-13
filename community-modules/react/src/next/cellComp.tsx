@@ -37,7 +37,7 @@ const jsxShowValue = (
         <>
             { showTools && 
                 <div className="ag-cell-wrapper" role="presentation" ref={ toolsRefCallback }>
-                    <span role="presentation" ref={ toolsValueRefCallback }>
+                    <span role="presentation" className='ag-cell-value' ref={ toolsValueRefCallback }>
                         { bodyJsxFunc() }
                     </span>
                 </div> 

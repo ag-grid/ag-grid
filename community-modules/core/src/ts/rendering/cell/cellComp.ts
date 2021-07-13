@@ -187,7 +187,16 @@ export class CellComp extends Component implements TooltipParentComp {
         this.checkboxSelectionComp = this.beans.context.destroyBean(this.checkboxSelectionComp);
         this.dndSourceComp = this.beans.context.destroyBean(this.dndSourceComp);
         this.rowDraggingComp = this.beans.context.destroyBean(this.rowDraggingComp);
+
+        this.updateCssCellValue();
     }
+
+    private updateCssCellValue(): void {
+        // when using the wrapper, this CSS class appears inside the wrapper instead
+        const includeAtTop = this.eCellWrapper == null;
+        this.addOrRemoveCssClass('ag-cell-value', includeAtTop);
+    }
+
 
     // returns true if wrapper was changed
     private setupControlsWrapper(): boolean {
@@ -213,10 +222,11 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private addControlsWrapper(): void {
+        this.updateCssCellValue();
         const eGui = this.getGui();
         eGui.innerHTML = /* html */
             `<div ref="eCellWrapper" class="ag-cell-wrapper" role="presentation">
-                <span ref="eCellValue" role="presentation"></span>
+                <span ref="eCellValue" class="ag-cell-value" role="presentation"></span>
             </div>`;
 
         this.eCellValue = this.getRefElement('eCellValue');
