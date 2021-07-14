@@ -797,12 +797,12 @@ export class RowRenderer extends BeanStub {
         }
 
         // add in new rows
-        const rowComps: RowCtrl[] = [];
+        const rowCtrls: RowCtrl[] = [];
 
         indexesToDraw.forEach(rowIndex => {
-            const rowComp = this.createOrUpdateRowCon(rowIndex, rowsToRecycle, animate, afterScroll);
-            if (exists(rowComp)) {
-                rowComps.push(rowComp);
+            const rowCtrl = this.createOrUpdateRowCtrl(rowIndex, rowsToRecycle, animate, afterScroll);
+            if (exists(rowCtrl)) {
+                rowCtrls.push(rowCtrl);
             }
         });
 
@@ -901,7 +901,7 @@ export class RowRenderer extends BeanStub {
         this.redrawAfterScroll();
     }
 
-    private createOrUpdateRowCon(
+    private createOrUpdateRowCtrl(
         rowIndex: number,
         rowsToRecycle: { [key: string]: RowCtrl | null; } | null | undefined,
         animate: boolean,
