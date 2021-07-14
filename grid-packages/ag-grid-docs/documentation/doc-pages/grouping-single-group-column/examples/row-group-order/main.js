@@ -14,7 +14,7 @@ var gridOptions = {
         sortable: true,
         resizable: true,
     },
-    treeColumnDef: {
+    autoGroupColumnDef: {
         minWidth: 250,
     },
     animateRows: true,

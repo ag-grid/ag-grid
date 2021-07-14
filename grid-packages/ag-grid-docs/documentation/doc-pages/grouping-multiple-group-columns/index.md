@@ -20,7 +20,7 @@ const gridOptions = {
         { field: 'total' }
     ],
     // display each row grouping in a separate column
-    treeDisplayType: 'multiColumn',
+    groupDisplayType: 'multipleColumns',
 }
 </snippet>
 

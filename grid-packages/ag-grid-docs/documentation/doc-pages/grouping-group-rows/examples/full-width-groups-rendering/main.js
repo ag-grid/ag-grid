@@ -25,7 +25,7 @@ var gridOptions = {
             aggFunc: 'sum'
         }
     },
-    treeDisplayType: 'row',
+    groupDisplayType: 'groupRows',
     components: {
         groupRowInnerRenderer: GroupRowInnerRenderer
     },

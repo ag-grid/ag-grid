@@ -22,7 +22,7 @@ import {
     ServerSideStoreParams,
     TabToNextCellParams,
     TabToNextHeaderParams,
-    TreeDisplayType
+    RowGroupingDisplayType
 } from './entities/gridOptions';
 import { EventService } from './eventService';
 import { Constants } from './constants/constants';
@@ -499,12 +499,12 @@ export class GridOptionsWrapper {
     }
 
     public getAutoGroupColumnDef(): ColDef | undefined {
-        return this.gridOptions.treeColumnDef;
+        return this.gridOptions.autoGroupColumnDef;
     }
 
     public isGroupMultiAutoColumn() {
-        if (this.gridOptions.treeDisplayType) {
-            return this.matchesTreeDisplayType(TreeDisplayType.MULTI_COLUMN, this.gridOptions.treeDisplayType);
+        if (this.gridOptions.groupDisplayType) {
+            return this.matchesTreeDisplayType(RowGroupingDisplayType.MULTIPLE_COLUMNS, this.gridOptions.groupDisplayType);
         }
         // if we are doing hideOpenParents we also show multiple columns, otherwise hideOpenParents would not work
         return isTrue(this.gridOptions.groupHideOpenParents);
@@ -514,13 +514,13 @@ export class GridOptionsWrapper {
         // we never allow groupUseEntireRow if in pivot mode, otherwise we won't see the pivot values.
         if (pivotMode) { return false; }
 
-        return this.gridOptions.treeDisplayType ?
-            this.matchesTreeDisplayType(TreeDisplayType.ROW, this.gridOptions.treeDisplayType) : false;
+        return this.gridOptions.groupDisplayType ?
+            this.matchesTreeDisplayType(RowGroupingDisplayType.GROUP_ROWS, this.gridOptions.groupDisplayType) : false;
     }
 
     public isGroupSuppressAutoColumn() {
-        return this.gridOptions.treeDisplayType ?
-            this.matchesTreeDisplayType(TreeDisplayType.CUSTOM, this.gridOptions.treeDisplayType) : false;
+        return this.gridOptions.groupDisplayType ?
+            this.matchesTreeDisplayType(RowGroupingDisplayType.CUSTOM, this.gridOptions.groupDisplayType) : false;
     }
 
     public isGroupRemoveSingleChildren() {
@@ -1662,22 +1662,17 @@ export class GridOptionsWrapper {
 
         if (options.groupMultiAutoColumn) {
             console.warn("AG Grid: since v26.0, the grid property `groupMultiAutoColumn` has been replaced by `treeDisplayType = 'multipleColumns'`");
-            options.treeDisplayType = 'multiColumn';
+            options.groupDisplayType = RowGroupingDisplayType.MULTIPLE_COLUMNS;
         }
 
         if (options.groupUseEntireRow) {
             console.warn("AG Grid: since v26.0, the grid property `groupUseEntireRow` has been replaced by `treeDisplayType = 'row'`");
-            options.treeDisplayType = 'row';
+            options.groupDisplayType = RowGroupingDisplayType.GROUP_ROWS;
         }
 
         if (options.groupSuppressAutoColumn) {
             console.warn("AG Grid: since v26.0, the grid property `groupSuppressAutoColumn` has been replaced by `treeDisplayType = 'custom'`");
-            options.treeDisplayType = 'custom';
-        }
-
-        if (options.autoGroupColumnDef) {
-            console.warn("AG Grid: since v26.0, the grid property `autoGroupColumnDef` has been replaced by `treeColumnDef`");
-            options.treeColumnDef = options.autoGroupColumnDef;
+            options.groupDisplayType = RowGroupingDisplayType.CUSTOM;
         }
     }
 
@@ -1833,12 +1828,12 @@ export class GridOptionsWrapper {
         return this.getFromTheme(DEFAULT_ROW_HEIGHT, 'rowHeight');
     }
 
-    private matchesTreeDisplayType(toMatch: TreeDisplayType, supplied?: string): boolean {
-        const treeDisplayTypeValues = getAllValuesInObject(TreeDisplayType);
-        if (treeDisplayTypeValues.indexOf(supplied) < 0) {
+    private matchesTreeDisplayType(toMatch: RowGroupingDisplayType, supplied?: string): boolean {
+        const groupDisplayTypeValues = getAllValuesInObject(RowGroupingDisplayType);
+        if (groupDisplayTypeValues.indexOf(supplied) < 0) {
             doOnce(() =>
-                    console.warn(`AG Grid: '${supplied}' is not a valid treeDisplayType value - possible values are: '${treeDisplayTypeValues.join("', '")}'`),
-                'warn about tree display type values');
+                    console.warn(`AG Grid: '${supplied}' is not a valid groupDisplayType value - possible values are: '${groupDisplayTypeValues.join("', '")}'`),
+                'warn about group display type values');
             return false;
         }
         return supplied === toMatch;

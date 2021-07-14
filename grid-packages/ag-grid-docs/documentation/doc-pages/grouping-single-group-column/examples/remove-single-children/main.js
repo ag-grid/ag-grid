@@ -25,7 +25,7 @@ var gridOptions = {
         minWidth: 150,
         resizable: true,
     },
-    treeColumnDef: {
+    autoGroupColumnDef: {
         headerName: 'Group',
         field: 'athlete',
         minWidth: 220,

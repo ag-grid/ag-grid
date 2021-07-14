@@ -18,7 +18,7 @@ var gridOptions = {
         sortable: true,
         resizable: true,
     },
-    treeDisplayType: 'custom',
+    groupDisplayType: 'custom',
     groupHideOpenParents: true,
     enableRangeSelection: true,
     animateRows: true

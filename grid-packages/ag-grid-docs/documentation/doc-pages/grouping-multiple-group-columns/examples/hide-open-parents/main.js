@@ -16,7 +16,7 @@ var gridOptions = {
         sortable: true,
         resizable: true,
     },
-    treeColumnDef: {
+    autoGroupColumnDef: {
         minWidth: 200,
         filterValueGetter: function(params) {
             var colGettingGrouped = params.colDef.showRowGroup;

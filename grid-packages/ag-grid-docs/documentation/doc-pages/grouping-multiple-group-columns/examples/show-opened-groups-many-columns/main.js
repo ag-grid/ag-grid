@@ -16,10 +16,10 @@ var gridOptions = {
         minWidth: 150,
         resizable: true,
     },
-    treeColumnDef: {
+    autoGroupColumnDef: {
         minWidth: 300
     },
-    treeDisplayType: 'multiColumn',
+    groupDisplayType: 'multipleColumns',
     showOpenedGroup: true,
     animateRows: true,
 };
