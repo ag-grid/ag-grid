@@ -1128,7 +1128,7 @@
                 "arguments": {}
             }
         },
-        "paginationGoToLastPage": {
+        "paginationGoToLastPage()": {
             "description": "Navigates to the last page.",
             "type": {
                 "arguments": {}
