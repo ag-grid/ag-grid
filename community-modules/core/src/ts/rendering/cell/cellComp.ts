@@ -561,13 +561,8 @@ export class CellComp extends Component implements TooltipParentComp {
             this.scope.data = { ...this.rowNode.data };
 
             const eGui = this.getGui();
-
-            // only compile the node if it hasn't already been done
-            // this prevents "orphaned" node leaks
-            if (!eGui.classList.contains('ng-scope') || eGui.childElementCount === 0) {
-                const compiledElement = this.beans.$compile(eGui)(this.scope);
-                this.addDestroyFunc(() => compiledElement.remove());
-            }
+            const compiledElement = this.beans.$compile(eGui)(this.scope);
+            this.addDestroyFunc(() => compiledElement.remove());
         }
     }
 }
