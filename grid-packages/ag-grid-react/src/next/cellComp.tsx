@@ -81,6 +81,13 @@ const jsxShowValue = (
     );
 }
 
+export interface RenderDetails {
+    edit: boolean;
+    compDetails: UserCompDetails | undefined;
+    value?: any;
+    force?: boolean;
+}
+
 export const CellComp = (props: {
     cellCtrl: CellCtrl,
     context: Context,
@@ -92,16 +99,11 @@ export const CellComp = (props: {
     const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses());
     const [userStyles, setUserStyles] = useState<any>();
     const [unselectable, setUnselectable] = useState<'on' | undefined>('on');
-
-    const [cellState, setCellState] = useState<CellCompState>();
-
+    const [renderDetails, setRenderDetails] = useState<RenderDetails>();
     const [left, setLeft] = useState<string | undefined>();
     const [width, setWidth] = useState<string | undefined>();
     const [height, setHeight] = useState<string | undefined>();
     const [transition, setTransition] = useState<string | undefined>();
-    const [rendererCompDetails, setRendererCompDetails] = useState<UserCompDetails>();
-    const [valueToDisplay, setValueToDisplay] = useState<any>();
-    const [editorCompDetails, setEditorCompDetails] = useState<UserCompDetails>();
     const [tabIndex, setTabIndex] = useState<number>();
     const [ariaSelected, setAriaSelected] = useState<boolean | undefined>();
     const [ariaColIndex, setAriaColIndex] = useState<number>();
@@ -123,17 +125,18 @@ export const CellComp = (props: {
     const [toolsSpan, setToolsSpan] = useState<HTMLElement>();
     const [toolsValueSpan, setToolsValueSpan] = useState<HTMLElement>();
 
-    const showValue = cellState === CellCompState.ShowValue;
-    const editValue = cellState === CellCompState.EditValue;
-
+    const showValue = renderDetails!=null && !renderDetails.edit;
+    const editValue = renderDetails!=null && renderDetails.edit;
+    
     const showTools = showValue && (includeSelection || includeDndSource || includeRowDrag || forceWrapper);
 
-    useJsCellRenderer(cellState, rendererCompDetails, showTools, toolsValueSpan, context, jsCellRendererRef, eGui);
+    useJsCellRenderer(renderDetails, showTools, toolsValueSpan, context, jsCellRendererRef, eGui);
 
-    useEffect(() => {
+    useEffect( ()=> {
+        const editorCompDetails = (renderDetails && renderDetails.edit) ? renderDetails.compDetails : undefined;
         return createJSComp(editorCompDetails, context, eGui.current!, 
             compFactory => compFactory.createCellEditor(editorCompDetails!), cellEditorRef);
-    }, [context, editorCompDetails]);
+    }, [renderDetails]);
 
     // tool widgets effect
     useEffect(() => {
@@ -197,15 +200,18 @@ export const CellComp = (props: {
             setUnselectable: value => setUnselectable(value || undefined),
             setTransition: transition => setTransition(transition),
             showValue: (valueToDisplay, compDetails, force) => {
-                setRendererCompDetails(compDetails);
-                setValueToDisplay(valueToDisplay);
-                setEditorCompDetails(undefined);
-                setCellState(CellCompState.ShowValue);
+                setRenderDetails({
+                    compDetails: compDetails,
+                    edit: false,
+                    value: valueToDisplay,
+                    force: force
+                });
             },
-            editValue: compClassAndParams => {
-                setEditorCompDetails(compClassAndParams)
-                setRendererCompDetails(undefined);
-                setCellState(CellCompState.EditValue);
+            editValue: compDetails => {
+                setRenderDetails({
+                    compDetails: compDetails,
+                    edit: true
+                });
             },
             setIncludeSelection: include => setIncludeSelection(include),
             setIncludeRowDrag: include => setIncludeRowDrag(include),
@@ -239,8 +245,8 @@ export const CellComp = (props: {
              aria-selected={ ariaSelected } aria-colindex={ ariaColIndex } role={ role }
              col-id={ colId } title={ title } unselectable={ unselectable } aria-describedby={ ariaDescribedBy }>
 
-            { showValue && jsxShowValue(cellCtrl.getInstanceId(), rendererCompDetails, cellRendererRef, valueToDisplay, showTools, unselectable, toolsRefCallback, toolsValueRefCallback) }
-            { editValue && jsxEditValue(editorCompDetails, cellEditorRef) }
+            { showValue && jsxShowValue(cellCtrl.getInstanceId(), renderDetails!.compDetails, cellRendererRef, renderDetails!.value, showTools, unselectable, toolsRefCallback, toolsValueRefCallback) }
+            { editValue && jsxEditValue(renderDetails!.compDetails, cellEditorRef) }
 
         </div>
     );

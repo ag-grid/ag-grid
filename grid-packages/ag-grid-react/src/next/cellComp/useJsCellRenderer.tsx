@@ -6,9 +6,9 @@ import {
     UserComponentFactory,
     ICellRendererComp,
 } from 'ag-grid-community';
-import { CellCompState } from '../cellComp';
+import { CellCompState, RenderDetails } from '../cellComp';
 
-export function useJsCellRenderer(cellState: CellCompState | undefined, rendererCompDetails: UserCompDetails | undefined, 
+export function useJsCellRenderer(renderDetails: RenderDetails | undefined, 
     showTools: boolean, toolsValueSpan: HTMLElement | undefined, context: Context, 
     jsCellRendererRef: MutableRefObject<ICellRendererComp|undefined>, eGui: MutableRefObject<any>) {
 
@@ -29,8 +29,8 @@ export function useJsCellRenderer(cellState: CellCompState | undefined, renderer
         // create or refresh JS cell renderer
         useEffect( ()=> {
             
-            const showValue = cellState == CellCompState.ShowValue;
-            const jsCompDetails = rendererCompDetails && !rendererCompDetails.componentFromFramework;
+            const showValue = renderDetails && !renderDetails.edit;
+            const jsCompDetails = renderDetails && renderDetails.compDetails && !renderDetails.compDetails.componentFromFramework;
             const waitingForToolsSetup = showTools && toolsValueSpan == null;
 
             const showComp = showValue && jsCompDetails && !waitingForToolsSetup;
@@ -41,10 +41,13 @@ export function useJsCellRenderer(cellState: CellCompState | undefined, renderer
                 return;
             }
 
+            const rendererCompDetails = renderDetails!.compDetails;
+
             if (jsCellRendererRef.current) {
                 // attempt refresh if refresh method exists
                 const comp = jsCellRendererRef.current;
-                const refreshResult = comp.refresh ? comp.refresh(rendererCompDetails!.params) : false;
+                const attemptRefresh = comp.refresh != null && renderDetails!.force == false;
+                const refreshResult = attemptRefresh ? comp.refresh(rendererCompDetails!.params) : false;
                 const refreshWorked = refreshResult === true || refreshResult === undefined;
 
                 // if refresh worked, nothing else to do
@@ -67,7 +70,7 @@ export function useJsCellRenderer(cellState: CellCompState | undefined, renderer
 
             jsCellRendererRef.current = comp;
 
-        }, [cellState, showTools, toolsValueSpan, rendererCompDetails]);
+        }, [renderDetails, showTools, toolsValueSpan]);
 
         // this effect makes sure destroyCellRenderer gets called when the
         // component is destroyed. as the other effect only updates when there
