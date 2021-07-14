@@ -16,6 +16,7 @@ export const GridComp = (props: { context: Context }) => {
     const [layoutClass, setLayoutClass] = useState<string>('');
     const [cursor, setCursor] = useState<string | null>(null);
     const [userSelect, setUserSelect] = useState<string | null>(null);
+    const [initialised, setInitialised] = useState<boolean>(false);
 
     const eRootWrapper = useRef<HTMLDivElement>(null);
     const eGridBodyParent = useRef<HTMLDivElement>(null);
@@ -58,6 +59,8 @@ export const GridComp = (props: { context: Context }) => {
             beansToDestroy.push(headerDropZonesComp);
         }
 
+        setInitialised(true);
+
         return () => {
             context.destroyBeans(beansToDestroy);
         };
@@ -76,7 +79,13 @@ export const GridComp = (props: { context: Context }) => {
         <div ref={ eRootWrapper } className={ rootWrapperClasses } style={ topStyle }>
             { props.context &&
             <div className={ rootWrapperBodyClasses } ref={ eGridBodyParent }>
-                <GridBodyComp context={ props.context }/>
+                { // we wait for initialised before rending the children, so GridComp has created and registered with it's
+                  // GridCtrl before we create the child GridBodyComp. Otherwise the GridBodyComp would initialise first,
+                  // before we have set the the Layout CSS classes, causing the GridBodyComp to render rows to a grid that
+                  // doesn't have it's height specified, which would result if all the rows getting rendered (and if many rows,
+                  // hangs the UI)
+                    initialised && <GridBodyComp context={ props.context }/> 
+                }
             </div>
             }
         </div>

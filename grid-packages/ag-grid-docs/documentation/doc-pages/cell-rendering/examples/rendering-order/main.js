@@ -37,8 +37,7 @@ function showOrderCellRenderer() {
     var eGui = document.createElement("div");
     eGui.innerHTML = ++count;
     var start = new Date();
-    console.log('doing a loop');
-    // while (new Date() - start < 1) {}
+    while (new Date() - start < 5) {}
     return eGui;
 }
 
