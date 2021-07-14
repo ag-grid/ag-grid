@@ -201,6 +201,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public sideBar : any = undefined;
     @Input() public chartThemeOverrides : any = undefined;
     @Input() public customChartThemes : any = undefined;
+    @Input() public treeColumnDef : any = undefined;
     @Input() public sortingOrder : any = undefined;
     @Input() public rowClass : any = undefined;
     @Input() public rowSelection : any = undefined;
@@ -218,6 +219,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public pivotPanelShow : any = undefined;
     @Input() public fillHandleDirection : any = undefined;
     @Input() public serverSideStoreType : any = undefined;
+    @Input() public treeDisplayType : any = undefined;
     @Input() public rowHeight : any = undefined;
     @Input() public detailRowHeight : any = undefined;
     @Input() public rowBuffer : any = undefined;
