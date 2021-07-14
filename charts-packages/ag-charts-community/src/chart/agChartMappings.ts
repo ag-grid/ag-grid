@@ -331,6 +331,7 @@ const axisMappings: any = {
     tick: {
         meta: {
             constructor: AxisTick,
+            setAsIs: ['count'],
             defaults: {
                 width: 1,
                 size: 6,

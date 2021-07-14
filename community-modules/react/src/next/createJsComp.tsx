@@ -1,10 +1,15 @@
 import { Context, UserCompDetails, UserComponentFactory, IComponent, AgPromise } from '@ag-grid-community/core';
+import { MutableRefObject } from 'react';
 
-export function useJsComp(compDetails: UserCompDetails | undefined, context: Context, eParent: HTMLElement, 
-    callCompFactory: (compFactory: UserComponentFactory)=>AgPromise<IComponent<any>> | null) {
+export const createJSComp = (
+    compDetails: UserCompDetails | undefined, 
+    context: Context, eParent: HTMLElement, 
+    callCompFactory: (compFactory: UserComponentFactory) => AgPromise<IComponent<any>> | null,
+    ref?: MutableRefObject<IComponent<any> | undefined>
+)  => {
 
-    const showFullWidthJs = compDetails && !compDetails.componentFromFramework;
-    if (!showFullWidthJs) { return; }
+    const doNothing = !compDetails || compDetails.componentFromFramework;
+    if (doNothing) { return; }
 
     const compFactory = context.getBean('userComponentFactory') as UserComponentFactory;
     const promise = callCompFactory(compFactory);
@@ -16,6 +21,10 @@ export function useJsComp(compDetails: UserCompDetails | undefined, context: Con
     const compGui = comp.getGui();
     eParent.appendChild(compGui);
 
+    if (ref) {
+        ref.current = comp;
+    }
+
     return () => {
         const compGui = comp.getGui();
 
@@ -24,5 +33,9 @@ export function useJsComp(compDetails: UserCompDetails | undefined, context: Con
         }
 
         context.destroyBean(comp);
+
+        if (ref) {
+            ref.current = undefined;
+        }
     };
 }

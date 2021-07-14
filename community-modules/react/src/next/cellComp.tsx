@@ -10,18 +10,17 @@ import {
 } from '@ag-grid-community/core';
 import { CssClasses } from './utils';
 import { useJsCellRenderer } from './cellComp/useJsCellRenderer';
+import { createJSComp } from './createJsComp';
 
 export enum CellCompState { ShowValue, EditValue }
 
 
 const jsxEditValue = (editorCompDetails: UserCompDetails | undefined, cellEditorRef: MutableRefObject<any>) => {
     const reactCellRenderer = editorCompDetails && editorCompDetails.componentFromFramework;
-    const jsCellRenderer = editorCompDetails && !editorCompDetails.componentFromFramework;
 
     return (
         <>
             { reactCellRenderer && jsxEditValueReactCellRenderer(editorCompDetails!, cellEditorRef) }
-            { jsCellRenderer && jsxEditValueJsCellRenderer() }
         </>
     )
 }
@@ -39,10 +38,6 @@ const jsxShowValueReactCellRenderer = (rendererCompDetails: UserCompDetails, cel
     );
 }
 
-// const jsxShowValueJsCellRenderer = () => (
-//     <>Please write your Cell Renderer as a React Component</>
-// );
-
 const jsxEditValueReactCellRenderer = (editorCompDetails: UserCompDetails, cellEditorRef: MutableRefObject<any>) => {
     const CellEditorClass = editorCompDetails.componentClass;
 
@@ -50,10 +45,6 @@ const jsxEditValueReactCellRenderer = (editorCompDetails: UserCompDetails, cellE
         <CellEditorClass { ...editorCompDetails.params } ref={ cellEditorRef }></CellEditorClass>
     );
 }
-
-const jsxEditValueJsCellRenderer = () => (
-    <>Please write your Cell Editor as a React Component</>
-);
 
 const jsxShowValue = (
     parentId: number,
@@ -73,7 +64,6 @@ const jsxShowValue = (
         <>
             { noCellRenderer && jsxShowValueNoCellRenderer(valueToDisplay) }
             { reactCellRenderer && jsxShowValueReactCellRenderer(rendererCompDetails!, cellRendererRef) }
-            {/* { jsCellRenderer && jsxShowValueJsCellRenderer() } */}
         </>
     );
 
@@ -140,6 +130,11 @@ export const CellComp = (props: {
 
     useJsCellRenderer(cellState, rendererCompDetails, showTools, toolsValueSpan, context, jsCellRendererRef, eGui);
 
+    useEffect(() => {
+        return createJSComp(editorCompDetails, context, eGui.current!, 
+            compFactory => compFactory.createCellEditor(editorCompDetails!), cellEditorRef);
+    }, [context, editorCompDetails]);
+
     // tool widgets effect
     useEffect(() => {
         if (!cellCtrl || !context) { return; }
@@ -189,7 +184,7 @@ export const CellComp = (props: {
             addOrRemoveCssClass: (name, on) => setCssClasses(prev => prev.setClass(name, on)),
             setUserStyles: styles => setUserStyles(styles),
             setAriaSelected: value => setAriaSelected(value),
-            getFocusableElement: () => null as any as HTMLElement, //  this.getFocusableElement(),
+            getFocusableElement: () => eGui.current!,
             setLeft: left => setLeft(left),
             setWidth: width => setWidth(width),
             setAriaColIndex: index => setAriaColIndex(index),

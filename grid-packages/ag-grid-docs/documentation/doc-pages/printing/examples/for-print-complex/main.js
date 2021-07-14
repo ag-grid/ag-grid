@@ -40,8 +40,8 @@ const gridOptions = {
     onFirstDataRendered: onFirstDataRendered
 };
 
-function onFirstDataRendered() {
-    gridOptions.api.expandAll();
+function onFirstDataRendered(params) {
+    params.api.expandAll();
 }
 
 function onBtPrint() {
