@@ -184,7 +184,7 @@ export const CellComp = (props: {
             addOrRemoveCssClass: (name, on) => setCssClasses(prev => prev.setClass(name, on)),
             setUserStyles: styles => setUserStyles(styles),
             setAriaSelected: value => setAriaSelected(value),
-            getFocusableElement: () => null as any as HTMLElement, //  this.getFocusableElement(),
+            getFocusableElement: () => eGui.current!,
             setLeft: left => setLeft(left),
             setWidth: width => setWidth(width),
             setAriaColIndex: index => setAriaColIndex(index),
