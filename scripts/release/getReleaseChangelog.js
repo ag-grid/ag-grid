@@ -1,5 +1,3 @@
-const fs = require('fs')
-
 if (process.argv.length < 3) {
     console.log("Usage: node scripts/release/getReleaseChangelog.js [Grid Release Version]");
     console.log("For example: scripts/release/getReleaseChangelog.js 25.3.0");
