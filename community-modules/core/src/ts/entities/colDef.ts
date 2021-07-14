@@ -7,7 +7,6 @@ import { ColumnApi } from "../columns/columnApi";
 import { IHeaderGroupComp } from "../headerRendering/headerGroup/headerGroupComp";
 import { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent } from "../events";
 import { ITooltipComp, ITooltipParams } from "../rendering/tooltipComponent";
-import { ComponentSelectorResult } from "../components/framework/userComponentFactory";
 import { IRowDragItem } from "../rendering/row/rowDragComp";
 import { IFilterDef } from '../interfaces/iFilter';
 import { ColumnGroup } from "./columnGroup";
@@ -176,13 +175,13 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     cellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
     cellRendererFramework?: any;
     cellRendererParams?: any;
-    cellRendererSelector?: (params: ICellRendererParams) => ComponentSelectorResult;
+    cellRendererSelector?: CellRendererSelectorFunc;
 
     /** Cell editor */
     cellEditor?: { new(): ICellEditorComp; } | string;
     cellEditorFramework?: any;
     cellEditorParams?: any;
-    cellEditorSelector?: (params: ICellEditorParams) => ComponentSelectorResult;
+    cellEditorSelector?: CellEditorSelectorFunc;
 
     /** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. */
     pinnedRowCellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
@@ -491,4 +490,28 @@ export interface SuppressHeaderKeyboardEventParams {
 export interface CellClassParams extends RowClassParams {
     colDef: ColDef;
     value: any;
+}
+
+export interface SelectorFunc {
+    (params: ICellRendererParams | ICellEditorParams): CellRendererSelectorResult | CellEditorSelectorResult
+}
+
+export interface CellRendererSelectorFunc extends SelectorFunc {
+    (params: ICellRendererParams): CellRendererSelectorResult
+}
+
+export interface CellEditorSelectorFunc extends SelectorFunc {
+    (params: ICellEditorParams): CellEditorSelectorResult
+}
+
+export interface CellRendererSelectorResult {
+    component?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
+    frameworkComponent?: any;
+    params?: any;
+}
+
+export interface CellEditorSelectorResult {
+    component?: { new(): ICellEditorComp; } | string;
+    frameworkComponent?: any;
+    params?: any;
 }

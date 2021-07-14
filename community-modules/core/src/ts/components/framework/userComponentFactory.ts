@@ -1,7 +1,7 @@
 import { Autowired, Bean, Optional } from "../../context/context";
 import { GridOptions } from "../../entities/gridOptions";
 import { FrameworkComponentWrapper } from "./frameworkComponentWrapper";
-import { ColDef, ColGroupDef } from "../../entities/colDef";
+import { ColDef, ColGroupDef, SelectorFunc } from "../../entities/colDef";
 import {
     RegisteredComponentSource,
     UserComponentRegistry
@@ -56,12 +56,6 @@ export type DefinitionObject =
 
 export enum ComponentSource {
     DEFAULT, REGISTERED_BY_NAME, HARDCODED
-}
-
-export interface ComponentSelectorResult {
-    component?: string;
-    frameworkComponent?: string;
-    params?: any;
 }
 
 /**
@@ -291,150 +285,68 @@ export class UserComponentFactory extends BeanStub {
         return internalComponent;
     }
 
-    /**
-     * This method returns the underlying representation of the component to be created. ie for Javascript the
-     * underlying function where we should be calling new into. In case of the frameworks, the framework class
-     * object that represents the component to be created.
-     *
-     * This method is handy for different reasons, for example if you want to check if a component has a particular
-     * method implemented without having to create the component, just by inspecting the source component
-     *
-     * It takes
-     *  @param definitionObject: This is the context for which this component needs to be created, it can be gridOptions
-     *      (global) or columnDef mostly.
-     *  @param propertyName: The name of the property used in ag-grid as a convention to refer to the component, it can be:
-     *      'floatingFilter', 'cellRenderer', is used to find if the user is specifying a custom component
-     *  @param params: Params to be passed to the dynamic component function in case it needs to be
-     *      invoked
-     *  @param defaultComponentName: The name of the component to load if there is no component specified
-     */
     public lookupComponent(
-        definitionObject: DefinitionObject,
+        defObject: DefinitionObject,
         propertyName: string,
         params: any = null,
         defaultComponentName?: string | null
     ): ComponentClassDef | null {
-        /**
-         * There are five things that can happen when resolving a component.
-         *  a) HardcodedFwComponent: That holder[propertyName]Framework has associated a Framework native component
-         *  b) HardcodedJsComponent: That holder[propertyName] has associate a JS component
-         *  c) hardcodedJsFunction: That holder[propertyName] has associate a JS function
-         *  d) hardcodedNameComponent: That holder[propertyName] has associate a string that represents a component to load
-         *  e) That none of the three previous are specified, then we need to use the DefaultRegisteredComponent
-         */
-        let hardcodedNameComponent: string | null = null;
-        let HardcodedJsComponent: any = null;
-        let hardcodedJsFunction: any = null;
-        let HardcodedFwComponent: any = null;
-        let componentSelectorFunc: ((params: any) => ComponentSelectorResult) | null = null;
 
-        const componentSelectorFuncKey = propertyName + "Selector";
+        if (!defObject) { return null; }
+        let defObjectAny = defObject as any;
 
-        if (definitionObject != null) {
-            const componentPropertyValue = (definitionObject as any)[propertyName];
-            // for filters only, we allow 'true' for the component, which means default filter to be used
-            const usingDefaultComponent = componentPropertyValue === true;
-            if (componentPropertyValue != null && !usingDefaultComponent) {
-                if (typeof componentPropertyValue === 'string') {
-                    hardcodedNameComponent = componentPropertyValue;
-                } else if (typeof componentPropertyValue === 'boolean') {
-                    // never happens, as we test for usingDefaultComponent above,
-                    // however it's needed for the next block to compile
-                } else if (this.agComponentUtils.doesImplementIComponent(componentPropertyValue)) {
-                    HardcodedJsComponent = componentPropertyValue;
-                } else {
-                    hardcodedJsFunction = componentPropertyValue;
-                }
-            }
-            HardcodedFwComponent = (definitionObject as any)[propertyName + "Framework"];
-            componentSelectorFunc = (definitionObject as any)[componentSelectorFuncKey];
-        }
-
-        /**
-         * Since we allow many types of flavors for specifying the components, let's make sure this is not an illegal
-         * combination
-         */
-
-        if (
-            (HardcodedJsComponent && HardcodedFwComponent) ||
-            (hardcodedNameComponent && HardcodedFwComponent) ||
-            (hardcodedJsFunction && HardcodedFwComponent)
-        ) {
-            throw Error("ag-grid: you are trying to specify: " + propertyName + " twice as a component.");
-        }
-
-        if (componentSelectorFunc && (hardcodedNameComponent || HardcodedJsComponent || hardcodedJsFunction || HardcodedFwComponent)) {
-            throw Error("ag-grid: you can't specify both, the selector and the component of ag-grid for : " + propertyName);
-        }
-
-        /**
-         * At this stage we are guaranteed to either have,
-         * DEPRECATED
-         * - A unique HardcodedFwComponent
-         * - A unique HardcodedJsComponent
-         * - A unique hardcodedJsFunction
-         * BY NAME- FAVOURED APPROACH
-         * - A unique hardcodedNameComponent
-         * - None of the previous, hence we revert to: RegisteredComponent
-         */
-        if (HardcodedFwComponent) {
-            // console.warn(`ag-grid: Since version 12.1.0 specifying a component directly is deprecated, you should register the component by name`);
-            // console.warn(`${HardcodedFwComponent}`);
-            return {
-                componentFromFramework: true,
-                component: HardcodedFwComponent,
-                source: ComponentSource.HARDCODED,
-                paramsFromSelector: null
-            };
-        }
-
-        if (HardcodedJsComponent) {
-            // console.warn(`ag-grid: Since version 12.1.0 specifying a component directly is deprecated, you should register the component by name`);
-            // console.warn(`${HardcodedJsComponent}`);
-            return {
-                componentFromFramework: false,
-                component: HardcodedJsComponent,
-                source: ComponentSource.HARDCODED,
-                paramsFromSelector: null
-            };
-        }
-
-        if (hardcodedJsFunction) {
-            // console.warn(`ag-grid: Since version 12.1.0 specifying a function directly is deprecated, you should register the component by name`);
-            // console.warn(`${hardcodedJsFunction}`);
-            return this.agComponentUtils.adaptFunction(propertyName, hardcodedJsFunction, false, ComponentSource.HARDCODED);
-        }
-
-        let componentNameToUse: string | null | undefined;
+        let compName: string | null = null;
+        let jsCompClass: any = null;
+        let jsCompFunc: any = null;
         let paramsFromSelector: any;
 
-        if (componentSelectorFunc) {
-            const selectorResult = componentSelectorFunc ? componentSelectorFunc(params) : null;
-            if (selectorResult == null || !(selectorResult.component !== null || selectorResult.frameworkComponent !== null)) {
-                console.warn(`AG Grid - ${componentSelectorFuncKey} must return something. If you don't want a particular row to use a Cell Renderer, then return a simple Cell Renderer that just displays the value.`, params);
+        const selectorFunc: SelectorFunc = defObjectAny[propertyName + 'Selector'];
+        const selectorRes = selectorFunc ? selectorFunc(params) : null;
+        const compOption = selectorRes ? selectorRes.component : defObjectAny[propertyName];
+        const frameworkCompOption = selectorRes ? selectorRes.frameworkComponent : defObjectAny[propertyName + 'framework'];
+
+        // for filters only, we allow 'true' for the component, which means default filter to be used
+        const usingDefaultComponent = compOption === true;
+        if (compOption != null && !usingDefaultComponent) {
+            if (typeof compOption === 'string') {
+                compName = compOption;
+            } else if (typeof compOption === 'boolean') {
+                // never happens, as we test for usingDefaultComponent above,
+                // however it's needed for the next block to compile
+            } else if (this.agComponentUtils.doesImplementIComponent(compOption)) {
+                jsCompClass = compOption;
             } else {
-                componentNameToUse = selectorResult.component || selectorResult.frameworkComponent;
-                paramsFromSelector = selectorResult.params;
+                jsCompFunc = compOption;
             }
         }
 
-        if (componentNameToUse == null) {
-            componentNameToUse = hardcodedNameComponent;
+        if (frameworkCompOption) {
+            return {
+                componentFromFramework: true,
+                component: frameworkCompOption,
+                source: ComponentSource.HARDCODED,
+                paramsFromSelector: null
+            };
         }
 
-        if (componentNameToUse == null) {
-            componentNameToUse = defaultComponentName;
+        if (jsCompClass) {
+            return {
+                componentFromFramework: false,
+                component: jsCompClass,
+                source: ComponentSource.HARDCODED,
+                paramsFromSelector: null
+            };
         }
 
-        if (!componentNameToUse) {
-            return null;
+        if (jsCompFunc) {
+            return this.agComponentUtils.adaptFunction(propertyName, jsCompFunc, false, ComponentSource.HARDCODED);
         }
 
-        const registeredCompClassDef = this.lookupFromRegisteredComponents(propertyName, componentNameToUse);
+        const compNameToLookup = compName || defaultComponentName;
+        if (!compNameToLookup) { return null; }
 
-        if (!registeredCompClassDef) {
-            return null;
-        }
+        const registeredCompClassDef = this.lookupFromRegisteredComponents(propertyName, compNameToLookup);
+        if (!registeredCompClassDef) { return null; }
 
         return {
             componentFromFramework: registeredCompClassDef.componentFromFramework,
@@ -555,11 +467,7 @@ export class UserComponentFactory extends BeanStub {
 
     private initComponent(component: any, params: any): AgPromise<void> | void {
         this.context.createBean(component);
-
-        if (component.init == null) {
-            return;
-        }
-
+        if (component.init == null) { return; }
         return component.init(params);
     }
 }
