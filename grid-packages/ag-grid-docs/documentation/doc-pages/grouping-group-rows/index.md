@@ -4,7 +4,7 @@ enterprise: true
 ---
 This section shows how row groups can be displayed using group rows.
 
-<image-caption src="grouping-group-rows/resources/row-tree.png" alt="Rows" centered="true"></image-caption>
+<image-caption src="grouping-group-rows/resources/group-rows.png" alt="Group Rows" centered="true"></image-caption>
 
 ## Enabling Group Rows
 
@@ -23,7 +23,7 @@ const gridOptions = {
         { field: 'bronze' },
     ],
     // display each row grouping in group rows
-    treeDisplayType: 'row', 
+    groupDisplayType: 'groupRows', 
 }
 </snippet>
 

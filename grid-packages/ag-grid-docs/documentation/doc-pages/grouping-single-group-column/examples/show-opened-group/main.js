@@ -16,7 +16,7 @@ var gridOptions = {
         minWidth: 150,
         resizable: true,
     },
-    treeColumnDef: {
+    autoGroupColumnDef: {
         headerName: 'Country',
         minWidth: 300,
     },

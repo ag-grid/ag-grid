@@ -303,14 +303,11 @@ export interface GridOptions {
     groupRemoveLowestSingleChildren?: boolean;
     groupHideOpenParents?: boolean;
     groupSuppressBlankHeader?: boolean;
+    autoGroupColumnDef?: ColDef;
     enableOldSetFilterModel?: boolean;
     enableCharts?: boolean;
 
-    treeColumnDef?: ColDef;
-    treeDisplayType?: TreeDisplayType;
-
-    /** @deprecated - Use treeColumnDef instead */
-    autoGroupColumnDef?: ColDef;
+    groupDisplayType?: RowGroupingDisplayType;
 
     /** @deprecated - Use treeDisplayType = 'multipleColumns' instead */
     groupMultiAutoColumn?: boolean;
@@ -616,10 +613,10 @@ export interface GridOptions {
     columnApi?: ColumnApi | null; // change to typed
 }
 
-export enum TreeDisplayType {
+export enum RowGroupingDisplayType {
     SINGLE_COLUMN = 'singleColumn',
-    MULTI_COLUMN = 'multiColumn', // Row Grouping only!
-    ROW = 'row',
+    MULTIPLE_COLUMNS = 'multipleColumns',
+    GROUP_ROWS = 'groupRows',
     CUSTOM = 'custom',
 }
 
