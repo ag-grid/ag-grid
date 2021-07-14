@@ -8,8 +8,7 @@ This section shows how row groups can be displayed using group rows.
 
 ## Enabling Group Rows
 
-It is also possible to create one column for each individual group by enabling `groupMultiAutoColumn` grid option as
-shown below:
+It is also possible to use group rows, instead of group columns, by setting `groupDisplayType = 'groupRows'` as shown below:
  
 This can be preferred if you have a lot of information you want to say about the group.
 
@@ -26,7 +25,6 @@ const gridOptions = {
     groupDisplayType: 'groupRows', 
 }
 </snippet>
-
 
 The following example shows the first example in this page, the Auto Column Group example, using full width rows. Note that all that is necessary to achieve this it to add `groupUseEntireRow:true` to your gridOptions
 

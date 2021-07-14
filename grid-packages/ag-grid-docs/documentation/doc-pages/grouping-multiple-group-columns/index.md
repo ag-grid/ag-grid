@@ -8,8 +8,7 @@ This section explains how to present row groups using multiple group columns.
 
 ## Enabling Multiple Group Columns
 
-It is also possible to create one column for each individual group by enabling `groupMultiAutoColumn` grid option as
-shown below:
+It is also possible to have a group column per row group by setting `groupDisplayType = 'multipleColumns'` as shown below:
 
 <snippet spaceBetweenProperties="true" inlineReactProperties="true">
 const gridOptions = {
@@ -29,7 +28,7 @@ declared, and a group column displayed for each column that we are grouping by.
 
 This is demonstrated in the following example, note the following:
 
-- Separate group columns are displayed for `country` and `year` as the grid option `groupMultiAutoColumn` is enabled.
+- Separate group columns are displayed for `country` and `year` as `groupDisplayType = 'multipleColumns'`.
 
 - The `country` and `year` columns used for grouping are hidden, by enabling the `hide` column property, as they are redundant.
 

@@ -9,7 +9,6 @@ import { PolarTooltipRendererParams, SeriesNodeDatum, HighlightStyle, SeriesTool
 import { Label } from "../../label";
 import { PointerEvents } from "../../../scene/node";
 import { normalizeAngle180, toRadians } from "../../../util/angle";
-import { Color } from "../../../util/color";
 import { toFixed } from "../../../util/number";
 import { LegendDatum } from "../../legend";
 import { Caption } from "../../../caption";

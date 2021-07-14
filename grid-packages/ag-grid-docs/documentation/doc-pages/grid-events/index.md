@@ -10,7 +10,7 @@ The name of the callback is constructed by prefixing the event name with `on`. F
 | TypeScript users can take advantage of the events' interfaces. You can construct the interface name by suffixing the event name with `Event`. For example, the `cellClicked` event uses the interface `CellClickedEvent`.
 
 [[note]]
-| See the [Event Properties and Hierarchy](#properties-and-hierarchy) section below to find out what properties each event has.
+| See the [Event Properties and Hierarchy](#event-properties-and-hierarchy) section below to find out what properties each event has.
 
 <api-documentation source='events.json'></api-documentation>
 
