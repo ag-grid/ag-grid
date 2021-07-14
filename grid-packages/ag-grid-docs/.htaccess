@@ -165,7 +165,7 @@ AddType text/javascript ts jsx
     Redirect 301 /angular-grid-status-bar/ /angular-grid/status-bar/
     Redirect 301 /angular-grid-styling/ /angular-grid/themes/
     Redirect 301 /angular-grid-tool-panel-old/ /angular-grid/tool-panel/
-    Redirect 301 /angular-grid-tree/ /angular-grid/tree-data/
+    Redirect 301 /angular-grid-tree/ /angular-grid/hierarchical-data/
     Redirect 301 /angular-grid/tree-data/ /angular-grid/hierarchical-data/
     Redirect 301 /angular-grid-value-getters/ /angular-grid/value-getters/
     Redirect 301 /angular-grid-virtual-paging/ /angular-grid/dom-virtualisation/
@@ -421,7 +421,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/angular/tool-panel-filters/ /angular-grid/tool-panel-filters/
     Redirect 301 /documentation/angular/tool-panel/ /angular-grid/tool-panel/
     Redirect 301 /documentation/angular/touch/ /angular-grid/touch/
-    Redirect 301 /documentation/angular/tree-data/ /angular-grid/tree-data/
+    Redirect 301 /documentation/angular/tree-data/ /angular-grid/hierarchical-data/
     Redirect 301 /angular-grid/tree-data/ /angular-grid/hierarchical-data/
     Redirect 301 /documentation/angular/undo-redo-edits/ /angular-grid/undo-redo-edits/
     Redirect 301 /documentation/angular/value-formatters/ /angular-grid/value-formatters/
@@ -674,7 +674,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/javascript/tool-panel-filters/ /javascript-grid/tool-panel-filters/
     Redirect 301 /documentation/javascript/tool-panel/ /javascript-grid/tool-panel/
     Redirect 301 /documentation/javascript/touch/ /javascript-grid/touch/
-    Redirect 301 /documentation/javascript/tree-data/ /javascript-grid/tree-data/
+    Redirect 301 /documentation/javascript/tree-data/ /javascript-grid/hierarchical-data/
     Redirect 301 /javascript-grid/tree-data/ /javascript-grid/hierarchical-data/
     Redirect 301 /documentation/javascript/undo-redo-edits/ /javascript-grid/undo-redo-edits/
     Redirect 301 /documentation/javascript/value-formatters/ /javascript-grid/value-formatters/
@@ -922,7 +922,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/react/tool-panel-filters/ /react-grid/tool-panel-filters/
     Redirect 301 /documentation/react/tool-panel/ /react-grid/tool-panel/
     Redirect 301 /documentation/react/touch/ /react-grid/touch/
-    Redirect 301 /documentation/react/tree-data/ /react-grid/tree-data/
+    Redirect 301 /documentation/react/tree-data/ /react-grid/hierarchical-data/
     Redirect 301 /react-grid/tree-data/ /react-grid/hierarchical-data/
     Redirect 301 /documentation/react/undo-redo-edits/ /react-grid/undo-redo-edits/
     Redirect 301 /documentation/react/value-formatters/ /react-grid/value-formatters/
@@ -1167,7 +1167,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/vue/tool-panel-filters/ /vue-grid/tool-panel-filters/
     Redirect 301 /documentation/vue/tool-panel/ /vue-grid/tool-panel/
     Redirect 301 /documentation/vue/touch/ /vue-grid/touch/
-    Redirect 301 /documentation/vue/tree-data/ /vue-grid/tree-data/
+    Redirect 301 /documentation/vue/tree-data/ /vue-grid/hierarchical-data/
     Redirect 301 /vue-grid/tree-data/ /vue-grid/hierarchical-data/
     Redirect 301 /documentation/vue/undo-redo-edits/ /vue-grid/undo-redo-edits/
     Redirect 301 /documentation/vue/value-formatters/ /vue-grid/value-formatters/
@@ -1411,7 +1411,7 @@ AddType text/javascript ts jsx
     Redirect 301 /javascript-grid-tool-panel/ /javascript-grid/tool-panel/
     Redirect 301 /javascript-grid-tooltip-component/ /javascript-grid/component-tooltip/
     Redirect 301 /javascript-grid-touch/ /javascript-grid/touch/
-    Redirect 301 /javascript-grid-tree-data/ /javascript-grid/tree-data/
+    Redirect 301 /javascript-grid-tree-data/ /javascript-grid/hierarchical-data/
     Redirect 301 /javascript-grid/tree-data/ /javascript-grid/hierarchical-data/
     Redirect 301 /javascript-grid-undo-redo-edits/ /javascript-grid/undo-redo-edits/
     Redirect 301 /javascript-grid-value-cache/ /javascript-grid/value-getters/
