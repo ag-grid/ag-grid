@@ -59,7 +59,7 @@ export interface ICellComp {
     setRole(role: string): void;
     setColId(colId: string): void;
     setTitle(title: string | undefined): void;
-    setUnselectable(value: string | null): void;
+    setUnselectable(value: 'on' | null): void;
     setTransition(value: string | undefined): void;
 
     setIncludeSelection(include: boolean): void;

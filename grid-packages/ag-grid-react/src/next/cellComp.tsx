@@ -1,4 +1,4 @@
-import React, { MutableRefObject, useEffect, useRef, useState, useCallback, RefObject } from 'react';
+import React, { MutableRefObject, useEffect, useRef, useState, useCallback } from 'react';
 import {
     Context,
     Component,
@@ -60,6 +60,7 @@ const jsxShowValue = (
     cellRendererRef: MutableRefObject<any>,
     valueToDisplay: any,
     showTools: boolean,
+    unselectable: 'on' | undefined,
     toolsRefCallback: (ref:any) => void,
     toolsValueRefCallback: (ref:any) => void
 ) => {
@@ -79,7 +80,7 @@ const jsxShowValue = (
         <>
             { showTools ?
                 <div className="ag-cell-wrapper" role="presentation" ref={ toolsRefCallback }>
-                    <span role="presentation" className="ag-cell-value" ref={ toolsValueRefCallback }>
+                    <span role="presentation" className="ag-cell-value" unselectable={ unselectable } ref={ toolsValueRefCallback }>
                         { bodyJsxFunc() }
                     </span>
                 </div> :
@@ -99,6 +100,7 @@ export const CellComp = (props: {
 
     const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses());
     const [userStyles, setUserStyles] = useState<any>();
+    const [unselectable, setUnselectable] = useState<'on' | undefined>('on');
 
     const [cellState, setCellState] = useState<CellCompState>();
 
@@ -191,7 +193,7 @@ export const CellComp = (props: {
             setRole: role => setRole(role),
             setColId: colId => setColId(colId),
             setTitle: title => setTitle(title),
-            setUnselectable: value => false, //  setAttribute('unselectable', value, this.eCellValue),
+            setUnselectable: value => setUnselectable(value || undefined),
             setTransition: transition => setTransition(transition),
             showValue: (valueToDisplay, compDetails, force) => {
                 setRendererCompDetails(compDetails);
@@ -234,9 +236,9 @@ export const CellComp = (props: {
     return (
         <div ref={ eGui } className={ className } style={ cellStyles } tabIndex={ tabIndex }
              aria-selected={ ariaSelected } aria-colindex={ ariaColIndex } role={ role }
-             col-id={ colId } title={ title }>
+             col-id={ colId } title={ title } unselectable={ unselectable }>
 
-            { showValue && jsxShowValue(rendererCompDetails, cellRendererRef, valueToDisplay, showTools, toolsRefCallback, toolsValueRefCallback) }
+            { showValue && jsxShowValue(rendererCompDetails, cellRendererRef, valueToDisplay, showTools, unselectable, toolsRefCallback, toolsValueRefCallback) }
             { editValue && jsxEditValue(editorCompDetails, cellEditorRef) }
 
         </div>
