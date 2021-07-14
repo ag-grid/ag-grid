@@ -56,6 +56,7 @@ const jsxEditValueJsCellRenderer = () => (
 );
 
 const jsxShowValue = (
+    parentId: number,
     rendererCompDetails: UserCompDetails | undefined,
     cellRendererRef: MutableRefObject<any>,
     valueToDisplay: any,
@@ -80,7 +81,7 @@ const jsxShowValue = (
         <>
             { showTools ?
                 <div className="ag-cell-wrapper" role="presentation" ref={ toolsRefCallback }>
-                    <span role="presentation" className="ag-cell-value" unselectable={ unselectable } ref={ toolsValueRefCallback }>
+                    <span role="presentation" id={`cell-${parentId}`} className="ag-cell-value" unselectable={ unselectable } ref={ toolsValueRefCallback }>
                         { bodyJsxFunc() }
                     </span>
                 </div> :
@@ -114,6 +115,7 @@ export const CellComp = (props: {
     const [tabIndex, setTabIndex] = useState<number>();
     const [ariaSelected, setAriaSelected] = useState<boolean | undefined>();
     const [ariaColIndex, setAriaColIndex] = useState<number>();
+    const [ariaDescribedBy, setAriaDescribedBy] = useState<string | undefined>();
     const [zIndex, setZIndex] = useState<string>();
     const [role, setRole] = useState<string>();
     const [colId, setColId] = useState<string>();
@@ -140,7 +142,11 @@ export const CellComp = (props: {
 
     // tool widgets effect
     useEffect(() => {
-        if (!toolsSpan || !cellCtrl || !context) { return; }
+        if (!cellCtrl || !context) { return; }
+
+        setAriaDescribedBy(!!toolsSpan ? `cell-${cellCtrl.getInstanceId()}` : undefined);
+
+        if (!toolsSpan) { return; }
 
         const beansToDestroy: any[] = [];
 
@@ -236,9 +242,9 @@ export const CellComp = (props: {
     return (
         <div ref={ eGui } className={ className } style={ cellStyles } tabIndex={ tabIndex }
              aria-selected={ ariaSelected } aria-colindex={ ariaColIndex } role={ role }
-             col-id={ colId } title={ title } unselectable={ unselectable }>
+             col-id={ colId } title={ title } unselectable={ unselectable } aria-describedby={ ariaDescribedBy }>
 
-            { showValue && jsxShowValue(rendererCompDetails, cellRendererRef, valueToDisplay, showTools, unselectable, toolsRefCallback, toolsValueRefCallback) }
+            { showValue && jsxShowValue(cellCtrl.getInstanceId(), rendererCompDetails, cellRendererRef, valueToDisplay, showTools, unselectable, toolsRefCallback, toolsValueRefCallback) }
             { editValue && jsxEditValue(editorCompDetails, cellEditorRef) }
 
         </div>
