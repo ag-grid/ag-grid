@@ -4,7 +4,7 @@ enterprise: true
 ---
 This section explains how to use display a single column tree that contains a row grouping hierarchy.
 
-<image-caption src="grouping-single-column-tree/resources/single-column-tree.png" alt="Single Column" centered="true"></image-caption>
+<image-caption src="grouping-single-group-column/resources/single-column-tree.png" alt="Single Column" centered="true"></image-caption>
 
 ## Enabling Single Column Tree
 

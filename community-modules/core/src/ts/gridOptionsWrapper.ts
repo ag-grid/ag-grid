@@ -1662,7 +1662,7 @@ export class GridOptionsWrapper {
 
         if (options.groupMultiAutoColumn) {
             console.warn("AG Grid: since v26.0, the grid property `groupMultiAutoColumn` has been replaced by `treeDisplayType = 'multipleColumns'`");
-            options.treeDisplayType = 'multipleColumns';
+            options.treeDisplayType = 'multiColumn';
         }
 
         if (options.groupUseEntireRow) {

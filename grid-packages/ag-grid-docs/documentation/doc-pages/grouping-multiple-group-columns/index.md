@@ -1,12 +1,12 @@
 ---
-title: "Row Grouping - Multi-Column Tree"
+title: "Row Grouping - Multiple Group Columns"
 enterprise: true
 ---
-This section explains how to present row groups in a multi-column tree.
+This section explains how to present row groups using multiple group columns.
 
-<image-caption src="grouping-multi-column-tree/resources/multi-column-tree.png" alt="Multi-Column Tree" centered="true"></image-caption>
+<image-caption src="grouping-multiple-group-columns/resources/multiple-group-columns.png" alt="Multiple Group Columns" centered="true"></image-caption>
 
-## Enabling Multiple Columns Tree
+## Enabling Multiple Group Columns
 
 It is also possible to create one column for each individual group by enabling `groupMultiAutoColumn` grid option as
 shown below:
@@ -33,7 +33,7 @@ This is demonstrated in the following example, note the following:
 
 - The `country` and `year` columns used for grouping are hidden, by enabling the `hide` column property, as they are redundant.
 
-<grid-example title='Multi-Column Tree' name='multi-column-tree' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+<grid-example title='Multiple Group Columns' name='multiple-group-columns' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
 ## Showing Open Groups
 

@@ -1,5 +1,5 @@
 ---
-title: "Row Grouping - Custom Tree"
+title: "Row Grouping - Custom Group Columns"
 enterprise: true
 ---
 

@@ -618,7 +618,7 @@ export interface GridOptions {
 
 export enum TreeDisplayType {
     SINGLE_COLUMN = 'singleColumn',
-    MULTI_COLUMN = 'multiColumn',
+    MULTI_COLUMN = 'multiColumn', // Row Grouping only!
     ROW = 'row',
     CUSTOM = 'custom',
 }
