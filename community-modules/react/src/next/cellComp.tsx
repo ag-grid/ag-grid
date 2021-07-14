@@ -131,7 +131,8 @@ export const CellComp = (props: {
     useJsCellRenderer(cellState, rendererCompDetails, showTools, toolsValueSpan, context, jsCellRendererRef, eGui);
 
     useEffect( ()=> {
-        useJsComp(editorCompDetails, context, eGui.current!, compFactory => compFactory.createCellEditor(editorCompDetails!), cellEditorRef);
+        return useJsComp(editorCompDetails, context, eGui.current!, 
+            compFactory => compFactory.createCellEditor(editorCompDetails!), cellEditorRef);
     }, [editorCompDetails]);
 
     // tool widgets effect
