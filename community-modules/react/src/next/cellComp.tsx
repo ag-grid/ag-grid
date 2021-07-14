@@ -10,18 +10,17 @@ import {
 } from '@ag-grid-community/core';
 import { CssClasses } from './utils';
 import { useJsCellRenderer } from './cellComp/useJsCellRenderer';
+import { useJsComp } from './useJsComp';
 
 export enum CellCompState { ShowValue, EditValue }
 
 
 const jsxEditValue = (editorCompDetails: UserCompDetails | undefined, cellEditorRef: MutableRefObject<any>) => {
     const reactCellRenderer = editorCompDetails && editorCompDetails.componentFromFramework;
-    const jsCellRenderer = editorCompDetails && !editorCompDetails.componentFromFramework;
 
     return (
         <>
             { reactCellRenderer && jsxEditValueReactCellRenderer(editorCompDetails!, cellEditorRef) }
-            { jsCellRenderer && jsxEditValueJsCellRenderer() }
         </>
     )
 }
@@ -39,10 +38,6 @@ const jsxShowValueReactCellRenderer = (rendererCompDetails: UserCompDetails, cel
     );
 }
 
-// const jsxShowValueJsCellRenderer = () => (
-//     <>Please write your Cell Renderer as a React Component</>
-// );
-
 const jsxEditValueReactCellRenderer = (editorCompDetails: UserCompDetails, cellEditorRef: MutableRefObject<any>) => {
     const CellEditorClass = editorCompDetails.componentClass;
 
@@ -50,10 +45,6 @@ const jsxEditValueReactCellRenderer = (editorCompDetails: UserCompDetails, cellE
         <CellEditorClass { ...editorCompDetails.params } ref={ cellEditorRef }></CellEditorClass>
     );
 }
-
-const jsxEditValueJsCellRenderer = () => (
-    <>Please write your Cell Editor as a React Component</>
-);
 
 const jsxShowValue = (
     parentId: number,
@@ -73,7 +64,6 @@ const jsxShowValue = (
         <>
             { noCellRenderer && jsxShowValueNoCellRenderer(valueToDisplay) }
             { reactCellRenderer && jsxShowValueReactCellRenderer(rendererCompDetails!, cellRendererRef) }
-            {/* { jsCellRenderer && jsxShowValueJsCellRenderer() } */}
         </>
     );
 
@@ -139,6 +129,10 @@ export const CellComp = (props: {
     const showTools = showValue && (includeSelection || includeDndSource || includeRowDrag || forceWrapper);
 
     useJsCellRenderer(cellState, rendererCompDetails, showTools, toolsValueSpan, context, jsCellRendererRef, eGui);
+
+    useEffect( ()=> {
+        useJsComp(editorCompDetails, context, eGui.current!, compFactory => compFactory.createCellEditor(editorCompDetails!), cellEditorRef);
+    }, [editorCompDetails]);
 
     // tool widgets effect
     useEffect(() => {

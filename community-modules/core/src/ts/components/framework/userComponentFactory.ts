@@ -303,7 +303,7 @@ export class UserComponentFactory extends BeanStub {
         const selectorFunc: SelectorFunc = defObjectAny[propertyName + 'Selector'];
         const selectorRes = selectorFunc ? selectorFunc(params) : null;
         const compOption = selectorRes ? selectorRes.component : defObjectAny[propertyName];
-        const frameworkCompOption = selectorRes ? selectorRes.frameworkComponent : defObjectAny[propertyName + 'framework'];
+        const frameworkCompOption = selectorRes ? selectorRes.frameworkComponent : defObjectAny[propertyName + 'Framework'];
 
         // for filters only, we allow 'true' for the component, which means default filter to be used
         const usingDefaultComponent = compOption === true;
