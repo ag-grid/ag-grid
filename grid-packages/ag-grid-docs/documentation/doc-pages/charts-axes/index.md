@@ -136,7 +136,7 @@ The `width`, `size` and `color` of chart axis ticks can be configured as explain
 With number and time axes you can additionally set the `count` property:
 
 - In number axes the `count` means the desired number of ticks for the axis to use. Note that this value only serves as a hint and doesn't guarantee that this number of ticks is going to be used.
-- In time axes the `count` property can be set to a time interval, for example `agCharts.time.month`, to make an axis show a tick every month.
+- In time axes the `count` property can be set to a time interval, for example `agCharts.time.month`, to make an axis show a tick every month, or to an interval derived from one of the predefined intervals, such as `agCharts.time.month.every(3)`.
 
 The example below demonstrates how the `count` property of the number axis can be used to reduce or increase the amount of ticks.
 
@@ -281,6 +281,12 @@ If no padding modifier is specified, the default is `0` for all directives excep
 The `label` config of the bottom axis in the example below uses the `'%b&nbsp;%Y'` specifier string for the `format` property to format dates as the abbreviated name of the month followed by the full year.
 
 Notice that the `label.format` property only affects label formatting but not segmentation. The fact that axis labels were configured to show the name of the month and the year doesn't mean that the axis will show a tick every month. To ensure that it does, we also set the `tick.count` config to use the `agCharts.time.month` interval.
+
+Please see the documentation for the `count` property of the axis tick in the [API reference](#reference-axis.tick) to learn about all the available intervals.
+
+The example below also allows you to switch to a derived interval `agCharts.time.month.every(2)` produced
+from the default `agCharts.time.month` interval by using its `every` method. Switching to this interval
+will make the time axis place ticks every other month.
 
 <chart-example title='Time Axis Label Format' name='time-axis-label-format' type='generated'></chart-example>
 
