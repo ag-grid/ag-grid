@@ -10,7 +10,7 @@ import {
 } from '@ag-grid-community/core';
 import { CssClasses } from './utils';
 import { useJsCellRenderer } from './cellComp/useJsCellRenderer';
-import { useJsComp } from './useJsComp';
+import { createJSComp } from './createJsComp';
 
 export enum CellCompState { ShowValue, EditValue }
 
@@ -130,10 +130,10 @@ export const CellComp = (props: {
 
     useJsCellRenderer(cellState, rendererCompDetails, showTools, toolsValueSpan, context, jsCellRendererRef, eGui);
 
-    useEffect( ()=> {
-        return useJsComp(editorCompDetails, context, eGui.current!, 
+    useEffect(() => {
+        return createJSComp(editorCompDetails, context, eGui.current!, 
             compFactory => compFactory.createCellEditor(editorCompDetails!), cellEditorRef);
-    }, [editorCompDetails]);
+    }, [context, editorCompDetails]);
 
     // tool widgets effect
     useEffect(() => {

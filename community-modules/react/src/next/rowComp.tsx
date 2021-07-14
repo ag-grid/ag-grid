@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Context, IRowComp, RowCtrl, _, CellCtrl, UserCompDetails, UserComponentFactory, IComponent, AgPromise } from '@ag-grid-community/core';
+import { Context, IRowComp, RowCtrl, _, CellCtrl, UserCompDetails } from '@ag-grid-community/core';
 import { CssClasses } from './utils';
 import { CellComp } from './cellComp';
-import { useJsComp } from './useJsComp';
+import { createJSComp } from './createJsComp';
 
 interface CellCtrls {
     list: CellCtrl[],
@@ -106,10 +106,10 @@ export const RowComp = (params: {context: Context, rowCtrl: RowCtrl, pinned: str
         rowCtrl.setComp(compProxy, eGui.current!, pinned);
     }, [domOrder, pinned, rowCtrl]);
     
-    useEffect( ()=> {
-        return useJsComp(fullWidthCompDetails, context, eGui.current!, 
+    useEffect(() => {
+        return createJSComp(fullWidthCompDetails, context, eGui.current!, 
             compFactory => compFactory.createFullWidthCellRenderer(fullWidthCompDetails!, rowCtrl.getFullWidthCellRendererType()));
-    }, [fullWidthCompDetails]);
+    }, [context, fullWidthCompDetails, rowCtrl]);
 
     const rowStyles = {
         height,

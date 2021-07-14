@@ -1,9 +1,12 @@
-import { Context, UserCompDetails, UserComponentFactory, IComponent, AgPromise } from '@ag-grid-community/core';
+import { Context, UserCompDetails, UserComponentFactory, IComponent, AgPromise } from 'ag-grid-community';
 import { MutableRefObject } from 'react';
 
-export function useJsComp(compDetails: UserCompDetails | undefined, context: Context, eParent: HTMLElement, 
-    callCompFactory: (compFactory: UserComponentFactory)=>AgPromise<IComponent<any>> | null,
-    ref?: MutableRefObject<IComponent<any> | undefined>) {
+export const createJSComp = (
+    compDetails: UserCompDetails | undefined, 
+    context: Context, eParent: HTMLElement, 
+    callCompFactory: (compFactory: UserComponentFactory) => AgPromise<IComponent<any>> | null,
+    ref?: MutableRefObject<IComponent<any> | undefined>
+)  => {
 
     const doNothing = !compDetails || compDetails.componentFromFramework;
     if (doNothing) { return; }
