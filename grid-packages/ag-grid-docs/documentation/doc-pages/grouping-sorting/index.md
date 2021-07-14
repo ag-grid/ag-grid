@@ -10,8 +10,6 @@ enterprise: true
 
 ## Default Group Order
 
-<video-link src="https://www.youtube.com/watch?v=gzqjP_kF4NI&t=614s" time="10:14"></video-link>
-
 The grid does not attempt to order the groups. The groups are presented on a 'first come, first served' basis. For example if grouping by country, and the first row is for country 'Ireland', then the first displayed group will be 'Ireland'.
 
 For most scenarios, this will not be a problem as the user can sort the grouping column. However this will be a problem in one of the following cases:
