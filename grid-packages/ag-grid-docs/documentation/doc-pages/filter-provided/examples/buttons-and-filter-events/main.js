@@ -45,6 +45,9 @@ var gridOptions = {
         minWidth: 150,
         filter: true,
     },
+    onFilterOpened: function (e) {
+        console.log('onFilterOpened', e);
+    },
     onFilterChanged: function(e) {
         console.log('onFilterChanged', e);
         console.log('gridApi.getFilterModel() =>', e.api.getFilterModel());
