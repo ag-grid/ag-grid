@@ -503,6 +503,7 @@ export class AgGridAngular implements AfterViewInit {
     @Output() public dragStarted: EventEmitter<any> = new EventEmitter<any>();
     @Output() public dragStopped: EventEmitter<any> = new EventEmitter<any>();
     @Output() public checkboxChanged: EventEmitter<any> = new EventEmitter<any>();
+    @Output() public popupListChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rowEditingStarted: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rowEditingStopped: EventEmitter<any> = new EventEmitter<any>();
     @Output() public cellEditingStarted: EventEmitter<any> = new EventEmitter<any>();
