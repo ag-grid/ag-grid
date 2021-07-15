@@ -687,7 +687,7 @@ var gridOptions = {
         {
             id: 'bad-score',
             alignment: {
-                horizontal: 'Center',
+                horizontal: 'Center'
                 vertical: 'Center'
             },
             interior: {
@@ -1463,8 +1463,8 @@ WinningsFilter.prototype.init = function(params) {
         '<div><label><input type="radio" name="filter"' + uniqueId + ' id="cbNoFilter" style="margin-right: 5px;">No filter</input></label></div>' +
         '<div style="margin: 5px 0;"><label><input type="radio" name="filter"' + uniqueId + ' id="cbPositive" style="margin-right: 5px;">Positive</input></label></div>' +
         '<div style="margin: 5px 0;"><label><input type="radio" name="filter"' + uniqueId + ' id="cbNegative" style="margin-right: 5px;">Negative</input></label></div>' +
-        '<div style="margin: 5px 0;"><label><input type="radio" name="filter"' + uniqueId + ' id="cbGreater50" style="margin-right: 5px;">&gt; &pound;50,000</label></div>' +
-        '<div style="margin: 5px 0;"><label><input type="radio" name="filter"' + uniqueId + ' id="cbGreater90" style="margin-right: 5px;">&gt; &pound;90,000</label></div>' +
+        '<div style="margin: 5px 0;"><label><input type="radio" name="filter"' + uniqueId + ' id="cbGreater50" style="margin-right: 5px;">&gt; &dollar;50,000</label></div>' +
+        '<div style="margin: 5px 0;"><label><input type="radio" name="filter"' + uniqueId + ' id="cbGreater90" style="margin-right: 5px;">&gt; &dollar;90,000</label></div>' +
         '</div>';
     this.cbNoFilter = this.eGui.querySelector('#cbNoFilter');
     this.cbPositive = this.eGui.querySelector('#cbPositive');
