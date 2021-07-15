@@ -247,8 +247,7 @@ In the following example there is an input box provided to test tabbing into the
 - When the first header is out of view due to horizontal scroll, tabbing into the grid will cause the grid to scroll to focus the first header.
 - Shift-Tabbing out third input (below the grid) will have the default focus behaviour, which is to focus the last element of the grid. This element will vary depending on how many features have been enabled (eg. Row Pagination, Tool Panels, etc...).
 
-<grid-example title='Tabbing into the Grid' name='tabbing-into-grid' type='vanilla'></grid-example>
-
+<grid-example title='Tabbing into the Grid' name='tabbing-into-grid' type='mixed'></grid-example>
 ## Keyboard Events
 
 It is possible to add custom behaviour to any key event that you want using the grid events `cellKeyPress` (gets called when a DOM `keyPress` event fires on a cell) and `cellKeyDown` (gets called when a DOM `keyDown` event fires on a cell).

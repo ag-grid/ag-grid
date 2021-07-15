@@ -21,36 +21,38 @@ var gridOptions = {
         flex: 1,
         minWidth: 100,
         filter: true,
-        resizable: true,
-    }
+        resizable: true
+    },
+    onFirstDataRendered: onFirstDataRendered
 };
 
-// obtain reference to input element
-var myInput = document.getElementById("my-input");
+function onFirstDataRendered(params) {
+    // obtain reference to input element
+    var myInput = document.getElementById("my-input");
 
-// intercept key strokes within input element
-myInput.addEventListener("keydown", function(event) {
-    // code for Tab key
-    var tabKeyCode = 9;
+    // intercept key strokes within input element
+    myInput.addEventListener("keydown", function(event) {
+        // code for Tab key
+        var tabKeyCode = 9;
 
-    // ignore non Tab key strokes
-    if (event.keyCode !== tabKeyCode) return;
+        // ignore non Tab key strokes
+        if (event.keyCode !== tabKeyCode) return;
 
-    // prevents tabbing into the url section
-    event.preventDefault();
+        // prevents tabbing into the url section
+        event.preventDefault();
 
-    // scrolls to the first row
-    gridOptions.api.ensureIndexVisible(0);
+        // scrolls to the first row
+        params.api.ensureIndexVisible(0);
 
-    // scrolls to the first column
-    var firstCol = gridOptions.columnApi.getAllDisplayedColumns()[0];
-    gridOptions.api.ensureColumnVisible(firstCol);
+        // scrolls to the first column
+        var firstCol = params.columnApi.getAllDisplayedColumns()[0];
+        params.api.ensureColumnVisible(firstCol);
 
-    // sets focus into the first grid cell
-    gridOptions.api.setFocusedCell(0, firstCol);
+        // sets focus into the first grid cell
+        params.api.setFocusedCell(0, firstCol);
 
-}, true);
-
+    }, true);
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
