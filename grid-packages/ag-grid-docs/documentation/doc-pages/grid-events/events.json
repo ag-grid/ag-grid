@@ -84,6 +84,9 @@
         "sortChanged": {
             "description": "Sort has changed. The grid also listens for this and updates the model."
         },
+        "filterOpened": {
+            "description": "Filter has been opened."
+        },
         "filterChanged": {
             "description": "Filter has been modified and applied."
         },
