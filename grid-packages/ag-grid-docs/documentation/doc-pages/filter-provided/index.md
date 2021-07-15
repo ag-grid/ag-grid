@@ -57,6 +57,7 @@ The example below demonstrates using the different buttons. It also demonstrates
 - The **Country** column has a filter with Apply and Clear buttons.
 - The **Year** column has a filter with Apply and Cancel buttons.
 - The **Age** and **Year** columns have `closeOnApply` set to `true`, so the filter popup will be closed immediately when the filter is applied, reset or cancelled.
+- `onFilterOpened` is called when the filter is opened.
 - `onFilterModified` is called when the filter changes regardless of whether the Apply button is present.
 - `onFilterChanged` is called only after a new filter is applied.
 - Looking at the console, it can be noted when a filter is changed, the result of `getModel()` and `getModelFromUi()` are different. The first reflects the active filter, while the second reflects what is in the UI (and not yet applied).

@@ -84,6 +84,9 @@
         "sortChanged": {
             "description": "Sort has changed. The grid also listens for this and updates the model."
         },
+        "filterOpened": {
+            "description": "Filter has been opened."
+        },
         "filterChanged": {
             "description": "Filter has been modified and applied."
         },
@@ -173,7 +176,7 @@
         },
         "firstDataRendered": {
             "description": "Fired the first time data is rendered into the grid.",
-            "type": "FirstDataRendereredEvent"
+            "type": "FirstDataRenderedEvent"
         },
         "rowGroupOpened": {
             "description": "A row group was opened or closed.",
@@ -226,10 +229,6 @@
         "componentStateChanged": {
             "description": "Only used by React, Angular and VueJS AG Grid components (not used if doing plain JavaScript or Angular 1.x). If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change.",
             "type": "ComponentStateChangedEvent"
-        },
-        "animationQueueEmpty": {
-            "description": "The grid draws rows and cells using animation frames. This event gets fired when the animation frame queue is empty. Normally used in conjunction with <code>api.isAnimationFrameQueueEmpty()</code> so user can check if animation frame is pending, and if so then can be notified when no animation frames are pending. Useful if your application needs to know when drawing of the grid is no longer pending, e.g. for sending to a printer.",
-            "type": "AnimationQueueEmptyEvent"
         },
         "asyncTransactionsFlushed": {
             "description": "Async transactions have been applied. Contains a list of all transaction results.",

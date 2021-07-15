@@ -52,6 +52,7 @@ import {
     ExpandCollapseAllEvent,
     FillEndEvent,
     FillStartEvent,
+    FilterOpenedEvent,
     FilterChangedEvent,
     FilterModifiedEvent,
     FirstDataRenderedEvent,
@@ -548,6 +549,8 @@ export interface GridOptions {
     onRowSelected?(event: RowSelectedEvent): void;
 
     onSelectionChanged?(event: SelectionChangedEvent): void;
+
+    onFilterOpened?(event: FilterOpenedEvent): void;
 
     onFilterChanged?(event: FilterChangedEvent): void;
 

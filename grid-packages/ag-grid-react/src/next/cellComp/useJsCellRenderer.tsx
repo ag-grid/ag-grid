@@ -1,17 +1,18 @@
-import React, { MutableRefObject, useEffect, useRef, useState, useCallback, RefObject, useMemo } from 'react';
+import { MutableRefObject, useEffect,useCallback } from 'react';
 import {
     Context,
-    UserCompDetails,
-    _,
     UserComponentFactory,
     ICellRendererComp,
 } from 'ag-grid-community';
-import { CellCompState, RenderDetails } from '../cellComp';
+import { RenderDetails } from '../cellComp';
 
-export function useJsCellRenderer(renderDetails: RenderDetails | undefined, 
-    showTools: boolean, toolsValueSpan: HTMLElement | undefined, context: Context, 
-    jsCellRendererRef: MutableRefObject<ICellRendererComp|undefined>, eGui: MutableRefObject<any>) {
-
+export const useJsCellRenderer = (
+    renderDetails: RenderDetails | undefined,
+    showTools: boolean,
+    toolsValueSpan: HTMLElement | undefined,
+    context: Context,
+    jsCellRendererRef: MutableRefObject<ICellRendererComp|undefined>,
+    eGui: MutableRefObject<any>) => {
         const destroyCellRenderer = useCallback( ()=> {
             const comp = jsCellRendererRef.current;
             if (!comp) { return; }
@@ -24,15 +25,13 @@ export function useJsCellRenderer(renderDetails: RenderDetails | undefined,
 
             context.destroyBean(comp);
             jsCellRendererRef.current = undefined;
-        }, []);
+        }, [context, jsCellRendererRef]);
 
         // create or refresh JS cell renderer
-        useEffect( ()=> {
-            
+        useEffect(() => {
             const showValue = renderDetails && !renderDetails.edit;
             const jsCompDetails = renderDetails && renderDetails.compDetails && !renderDetails.compDetails.componentFromFramework;
             const waitingForToolsSetup = showTools && toolsValueSpan == null;
-
             const showComp = showValue && jsCompDetails && !waitingForToolsSetup;
 
             // if not showing comp, destroy any existing one and return
@@ -70,12 +69,12 @@ export function useJsCellRenderer(renderDetails: RenderDetails | undefined,
 
             jsCellRendererRef.current = comp;
 
-        }, [renderDetails, showTools, toolsValueSpan]);
+        }, [context, destroyCellRenderer, eGui, jsCellRendererRef, renderDetails, showTools, toolsValueSpan]);
 
         // this effect makes sure destroyCellRenderer gets called when the
         // component is destroyed. as the other effect only updates when there
         // is a change in state
-        useEffect( ()=> {
+        useEffect(() => {
             return destroyCellRenderer;
-        }, []);
+        }, [destroyCellRenderer]);
 }

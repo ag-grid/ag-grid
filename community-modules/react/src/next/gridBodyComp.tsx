@@ -121,7 +121,7 @@ export const GridBodyComp = (params: { context: Context }) => {
         'overflow-y': topAndBottomOverflowY
     };
 
-    const createRowContainer = (container: RowContainerName) => <RowContainerComp context={ context } name={ container }/>;
+    const createRowContainer = (container: RowContainerName) => <RowContainerComp context={ context } name={ container } key={`${container}-container`} />;
     const createSection = ({
         section, 
         children,

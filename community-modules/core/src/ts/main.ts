@@ -310,6 +310,10 @@ export {
     ValueGetterParams,
     NewValueParams,
     CellClassParams,
+    CellEditorSelectorFunc,
+    CellEditorSelectorResult,
+    CellRendererSelectorFunc,
+    CellRendererSelectorResult,
     GetQuickFilterTextParams,
     ColumnFunctionCallbackParams,
     CheckboxSelectionCallbackParams,
@@ -317,7 +321,7 @@ export {
     DndSourceCallbackParams,
     EditableCallbackParams,
     SuppressPasteCallbackParams,
-    SuppressNavigableCallbackParams,
+    SuppressNavigableCallbackParams,    
     // deprecated params
     IsColumnFunc,
     IsColumnFuncParams

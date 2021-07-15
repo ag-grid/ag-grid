@@ -132,11 +132,11 @@ export const CellComp = (props: {
 
     useJsCellRenderer(renderDetails, showTools, toolsValueSpan, context, jsCellRendererRef, eGui);
 
-    useEffect( ()=> {
+    useEffect(() => {
         const editorCompDetails = (renderDetails && renderDetails.edit) ? renderDetails.compDetails : undefined;
         return createJSComp(editorCompDetails, context, eGui.current!, 
             compFactory => compFactory.createCellEditor(editorCompDetails!), cellEditorRef);
-    }, [renderDetails]);
+    }, [context, renderDetails]);
 
     // tool widgets effect
     useEffect(() => {
