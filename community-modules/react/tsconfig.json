@@ -24,7 +24,8 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "noEmit": true,
-    "jsx": "react"
+    "jsx": "react",
+    "strictNullChecks": true
   },
   "exclude": [
     "node_modules",
