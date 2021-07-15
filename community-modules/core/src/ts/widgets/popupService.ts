@@ -21,10 +21,12 @@ export interface PopupEventParams {
     keyboardEvent?: KeyboardEvent;
 }
 
-interface AgPopup {
+export interface AgPopup {
     element: HTMLElement;
+    wrapper: HTMLElement;
     hideFunc: () => void;
     stopAnchoringPromise: AgPromise<Function>;
+    instanceId: number;
 }
 
 interface Rect {
@@ -35,6 +37,8 @@ interface Rect {
 }
 
 enum DIRECTION { vertical, horizontal }
+
+let instanceIdSeq = 0;
 
 export interface AddPopupParams {
     // if true then listens to background checking for clicks, so that when the background is clicked,
@@ -289,6 +293,10 @@ export class PopupService extends BeanStub {
         return this.popupList.map((popup) => popup.element);
     }
 
+    public getPopupList(): AgPopup[] {
+        return this.popupList;
+    }
+
     private getParentRect(): Rect {
         // subtract the popup parent borders, because popupParent.getBoundingClientRect
         // returns the rect outside the borders, but the 0,0 coordinate for absolute
@@ -430,11 +438,11 @@ export class PopupService extends BeanStub {
             return { hideFunc: popup.hideFunc, stopAnchoringPromise: popup.stopAnchoringPromise };
         }
 
-        const ePopupParent = this.getPopupParent();
+        // const ePopupParent = this.getPopupParent();
 
         // for angular specifically, but shouldn't cause an issue with js or other fw's
         // https://github.com/angular/angular/issues/8563
-        ePopupParent.appendChild(eChild);
+        // ePopupParent.appendChild(eChild);
 
         if (eChild.style.top == null) {
             eChild.style.top = '0px';
@@ -461,7 +469,7 @@ export class PopupService extends BeanStub {
         }
 
         eWrapper.appendChild(eChild);
-        ePopupParent.appendChild(eWrapper);
+        // ePopupParent.appendChild(eWrapper);
 
         if (alwaysOnTop) {
             this.setAlwaysOnTop(eWrapper, true);
@@ -503,7 +511,7 @@ export class PopupService extends BeanStub {
 
             popupHidden = true;
 
-            ePopupParent.removeChild(eWrapper);
+            // ePopupParent.removeChild(eWrapper);
 
             eDocument.removeEventListener('keydown', hidePopupOnKeyboardEvent);
             eDocument.removeEventListener('mousedown', hidePopupOnMouseEvent);
@@ -521,6 +529,8 @@ export class PopupService extends BeanStub {
             if (destroyPositionTracker) {
                 destroyPositionTracker.then(destroyFunc => destroyFunc && destroyFunc());
             }
+
+            this.eventService.dispatchEvent({type: Events.EVENT_POPUP_LIST_CHANGED});
         };
 
         if (afterGuiAttached) {
@@ -558,9 +568,13 @@ export class PopupService extends BeanStub {
 
         this.popupList.push({
             element: eChild,
+            wrapper: eWrapper,
             hideFunc: hidePopup,
-            stopAnchoringPromise: destroyPositionTracker
+            stopAnchoringPromise: destroyPositionTracker,
+            instanceId: instanceIdSeq++
         });
+
+        this.eventService.dispatchEvent({type: Events.EVENT_POPUP_LIST_CHANGED});
 
         return {
             hideFunc: hidePopup,

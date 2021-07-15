@@ -137,6 +137,8 @@ export class Events {
 
     public static EVENT_CHECKBOX_CHANGED = 'checkboxChanged';
 
+    public static EVENT_POPUP_LIST_CHANGED = 'popupListChanged';
+
     public static EVENT_ROW_EDITING_STARTED = 'rowEditingStarted';
     public static EVENT_ROW_EDITING_STOPPED = 'rowEditingStopped';
 

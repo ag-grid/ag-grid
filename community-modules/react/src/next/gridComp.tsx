@@ -8,6 +8,7 @@ import {
 } from '@ag-grid-community/core';
 import { GridBodyComp } from './gridBodyComp';
 import { classesList } from './utils';
+import { PopupParent } from './popupParent';
 
 export const GridComp = (props: { context: Context }) => {
 
@@ -88,6 +89,7 @@ export const GridComp = (props: { context: Context }) => {
                 }
             </div>
             }
+            {/* <PopupParent context={ props.context }></PopupParent> */}
         </div>
     );
 }
