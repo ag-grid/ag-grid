@@ -75,7 +75,7 @@ interface CellValueChangedEvent {
         │       <span class="event-hierarchy__attribute">firstRow</span>: number, // the index of the first rendered row
         │       <span class="event-hierarchy__attribute">lastRow</span>: number // the index of the last rendered row
         │     }</span>
-        ├── FirstDataRendereredEvent <span class="event-hierarchy__property">{
+        ├── FirstDataRenderedEvent <span class="event-hierarchy__property">{
         │       <span class="event-hierarchy__attribute">firstRow</span>: number, // the index of the first rendered row
         │       <span class="event-hierarchy__attribute">lastRow</span>: number // the index of the last rendered row
         │     }</span>

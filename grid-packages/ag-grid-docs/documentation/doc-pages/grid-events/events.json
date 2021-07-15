@@ -176,7 +176,7 @@
         },
         "firstDataRendered": {
             "description": "Fired the first time data is rendered into the grid.",
-            "type": "FirstDataRendereredEvent"
+            "type": "FirstDataRenderedEvent"
         },
         "rowGroupOpened": {
             "description": "A row group was opened or closed.",
