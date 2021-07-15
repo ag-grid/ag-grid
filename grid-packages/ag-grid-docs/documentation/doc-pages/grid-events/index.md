@@ -51,7 +51,6 @@ interface CellValueChangedEvent {
         ├── ColumnEverythingChangedEvent <span class="event-hierarchy__property">{}</span>
         ├── DisplayedColumnsChangedEvent <span class="event-hierarchy__property">{}</span>
         ├── ToolPanelVisibleChangedEvent <span class="event-hierarchy__property">{}</span>
-        ├── AnimationQueueEmptyEvent <span class="event-hierarchy__property">{}</span>
         ├── FilterOpenedEvent <span class="event-hierarchy__property">{
         │       <span class="event-hierarchy__attribute">column</span>: Column | OriginalColumnGroup, // the column / original column group of the filter
         │       <span class="event-hierarchy__attribute">source</span>: FilterRequestSource, // source of the open request
