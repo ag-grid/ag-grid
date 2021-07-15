@@ -52,11 +52,16 @@ interface CellValueChangedEvent {
         ├── DisplayedColumnsChangedEvent <span class="event-hierarchy__property">{}</span>
         ├── ToolPanelVisibleChangedEvent <span class="event-hierarchy__property">{}</span>
         ├── AnimationQueueEmptyEvent <span class="event-hierarchy__property">{}</span>
-        ├── FilterChangedEvent <span class="event-hierarchy__property">{</span>
+        ├── FilterOpenedEvent <span class="event-hierarchy__property">{
+        │       <span class="event-hierarchy__attribute">column</span>: Column | OriginalColumnGroup, // the column / original column group of the filter
+        │       <span class="event-hierarchy__attribute">source</span>: FilterRequestSource, // source of the open request
+        │       <span class="event-hierarchy__attribute">eGui</span>: HTMLElement // parent element of the filter
+        │     }</span>
+        ├── FilterChangedEvent <span class="event-hierarchy__property">{
         │       <span class="event-hierarchy__attribute">afterFloatingFilter</span>: Column, // if filter was changed via floating filter
         │       <span class="event-hierarchy__attribute">afterDataChange</span>: number, // if filter was changed as a result of data changing
         │     }</span>
-        ├── FilterModifiedEvent <span class="event-hierarchy__property">{</span>
+        ├── FilterModifiedEvent <span class="event-hierarchy__property">{
         │       <span class="event-hierarchy__attribute">column</span>: Column, // the column for the event
         │       <span class="event-hierarchy__attribute">filterInstance</span>: number, // the filter instance
         │     }</span>
