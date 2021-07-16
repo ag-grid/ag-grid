@@ -438,11 +438,7 @@ export class PopupService extends BeanStub {
             return { hideFunc: popup.hideFunc, stopAnchoringPromise: popup.stopAnchoringPromise };
         }
 
-        // const ePopupParent = this.getPopupParent();
-
-        // for angular specifically, but shouldn't cause an issue with js or other fw's
-        // https://github.com/angular/angular/issues/8563
-        // ePopupParent.appendChild(eChild);
+        const ePopupParent = this.getPopupParent();
 
         if (eChild.style.top == null) {
             eChild.style.top = '0px';
@@ -469,7 +465,7 @@ export class PopupService extends BeanStub {
         }
 
         eWrapper.appendChild(eChild);
-        // ePopupParent.appendChild(eWrapper);
+        ePopupParent.appendChild(eWrapper);
 
         if (alwaysOnTop) {
             this.setAlwaysOnTop(eWrapper, true);
@@ -511,7 +507,7 @@ export class PopupService extends BeanStub {
 
             popupHidden = true;
 
-            // ePopupParent.removeChild(eWrapper);
+            ePopupParent.removeChild(eWrapper);
 
             eDocument.removeEventListener('keydown', hidePopupOnKeyboardEvent);
             eDocument.removeEventListener('mousedown', hidePopupOnMouseEvent);
