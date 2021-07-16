@@ -19,6 +19,7 @@ export const createJSComp = (
     if (!comp) { return; }
 
     const compGui = comp.getGui();
+
     eParent.appendChild(compGui);
 
     if (ref) {

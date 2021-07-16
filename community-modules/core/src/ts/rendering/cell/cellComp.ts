@@ -274,19 +274,14 @@ export class CellComp extends Component implements TooltipParentComp {
         }
     }
 
-    private wrapPopupEditor(params: ICellEditorParams, cellEditor: ICellEditorComp): ICellEditorComp {
-        const cellEditorComp = cellEditor!;
-        const isPopup = cellEditorComp.isPopup && cellEditorComp.isPopup();
-
-        if (!isPopup) { return cellEditorComp; }
-
+    private wrapPopupEditor(params: ICellEditorParams, editorComp: ICellEditorComp): ICellEditorComp {
         if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
             console.warn('AG Grid: popup cellEditor does not work with fullRowEdit - you cannot use them both ' +
                 '- either turn off fullRowEdit, or stop using popup editors.');
         }
 
         // if a popup, then we wrap in a popup editor and return the popup
-        const popupEditorWrapper = this.beans.context.createBean(new PopupEditorWrapper(cellEditorComp));
+        const popupEditorWrapper = this.beans.context.createBean(new PopupEditorWrapper(editorComp));
         popupEditorWrapper.init(params);
 
         return popupEditorWrapper;
@@ -502,25 +497,13 @@ export class CellComp extends Component implements TooltipParentComp {
             modal: useModelPopup,
             eChild: ePopupGui,
             closeOnEsc: true,
-            closedCallback: () => { this.onPopupEditorClosed(); },
+            closedCallback: () => { this.cellCtrl.onPopupEditorClosed(); },
             anchorToElement: this.getGui(),
             positionCallback
         });
         if (addPopupRes) {
             this.hideEditorPopup = addPopupRes.hideFunc;
         }
-    }
-
-    private onPopupEditorClosed(): void {
-        // we only call stopEditing if we are editing, as
-        // it's possible the popup called 'stop editing'
-        // before this, eg if 'enter key' was pressed on
-        // the editor.
-
-        if (!this.cellCtrl.isEditing()) { return; }
-        // note: this only happens when use clicks outside of the grid. if use clicks on another
-        // cell, then the editing will have already stopped on this cell
-        this.cellCtrl.stopRowOrCellEdit();
     }
 
     public detach(): void {

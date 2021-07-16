@@ -284,6 +284,18 @@ export class CellCtrl extends BeanStub {
         }
     }
 
+    public onPopupEditorClosed(): void {
+        // we only call stopEditing if we are editing, as
+        // it's possible the popup called 'stop editing'
+        // before this, eg if 'enter key' was pressed on
+        // the editor.
+
+        if (!this.isEditing()) { return; }
+        // note: this only happens when use clicks outside of the grid. if use clicks on another
+        // cell, then the editing will have already stopped on this cell
+        this.stopRowOrCellEdit();
+    }
+
     private takeValueFromCellEditor(cancel: boolean): { newValue?: any, newValueExists: boolean } {
         const noValueResult = { newValueExists: false };
 

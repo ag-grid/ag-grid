@@ -810,12 +810,12 @@ export class RowRenderer extends BeanStub {
             const useAnimationFrame = afterScroll && !this.gridOptionsWrapper.isSuppressAnimationFrame() && !this.printLayout;
             if (useAnimationFrame) {
                 this.beans.taskQueue.addDestroyTask(() => {
-                    this.destroyRowCons(rowsToRecycle, animate);
+                    this.destroyRowCtrls(rowsToRecycle, animate);
                     this.updateAllRowCons();
                     this.dispatchDisplayedRowsChanged();
                 });
             } else {
-                this.destroyRowCons(rowsToRecycle, animate);
+                this.destroyRowCtrls(rowsToRecycle, animate);
             }
         }
 
@@ -947,21 +947,21 @@ export class RowRenderer extends BeanStub {
         return rowCon;
     }
 
-    private destroyRowCons(rowConsMap: { [key: string]: RowCtrl; } | null | undefined, animate: boolean): void {
+    private destroyRowCtrls(rowConsMap: { [key: string]: RowCtrl; } | null | undefined, animate: boolean): void {
         const executeInAWhileFuncs: (() => void)[] = [];
-        iterateObject(rowConsMap, (nodeId: string, rowCon: RowCtrl) => {
+        iterateObject(rowConsMap, (nodeId: string, rowCtrl: RowCtrl) => {
             // if row was used, then it's null
-            if (!rowCon) { return; }
+            if (!rowCtrl) { return; }
 
-            rowCon.destroyFirstPass();
+            rowCtrl.destroyFirstPass();
             if (animate) {
-                this.zombieRowCtrls[rowCon.getInstanceId()] = rowCon;
+                this.zombieRowCtrls[rowCtrl.getInstanceId()] = rowCtrl;
                 executeInAWhileFuncs.push(() => {
-                    rowCon.destroySecondPass();
-                    delete this.zombieRowCtrls[rowCon.getInstanceId()];
+                    rowCtrl.destroySecondPass();
+                    delete this.zombieRowCtrls[rowCtrl.getInstanceId()];
                 });
             } else {
-                rowCon.destroySecondPass();
+                rowCtrl.destroySecondPass();
             }
         });
         if (animate) {

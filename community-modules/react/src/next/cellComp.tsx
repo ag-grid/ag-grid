@@ -6,11 +6,16 @@ import {
     CellCtrl,
     UserCompDetails,
     ICellRendererComp,
-    _
+    _,
+    UserComponentFactory,
+    IComponent,
+    AgPromise,
+    ICellEditor,
+    PopupService,
+    GridOptionsWrapper
 } from '@ag-grid-community/core';
 import { CssClasses } from './utils';
 import { useJsCellRenderer } from './cellComp/useJsCellRenderer';
-import { createJSComp } from './createJsComp';
 
 export enum CellCompState { ShowValue, EditValue }
 
@@ -58,7 +63,6 @@ const jsxShowValue = (
 ) => {
     const noCellRenderer = !rendererCompDetails;
     const reactCellRenderer = rendererCompDetails && rendererCompDetails.componentFromFramework;
-    // const jsCellRenderer = rendererCompDetails && !rendererCompDetails.componentFromFramework;
 
     const bodyJsxFunc = () => (
         <>
@@ -81,6 +85,86 @@ const jsxShowValue = (
     );
 }
 
+const createJSCellEditor = (
+    compDetails: UserCompDetails | undefined, 
+    context: Context, 
+    eGui: HTMLElement, 
+    cellCtrl: CellCtrl,
+    ref?: MutableRefObject<ICellEditor | undefined>
+)  => {
+
+    const doNothing = !compDetails || compDetails.componentFromFramework;
+    if (doNothing) { return; }
+
+    const compFactory = context.getBean('userComponentFactory') as UserComponentFactory;
+    const promise = compFactory.createCellEditor(compDetails!);
+    if (!promise) { return; }
+
+    const cellEditor = promise.resolveNow(null, x => x); // js comps are never async
+    if (!cellEditor) { return; }
+
+    const compGui = cellEditor.getGui();
+
+    let hideEditorPopup: ()=>void;
+
+    const inPopup = cellEditor.isPopup && cellEditor.isPopup();
+
+    if (inPopup) {
+        const popupService = context.getBean('popupService') as PopupService;
+        const gridOptionsWrapper = context.getBean('gridOptionsWrapper') as GridOptionsWrapper;
+        const useModelPopup = gridOptionsWrapper.isStopEditingWhenCellsLoseFocus();
+
+        const position = cellEditor.getPopupPosition ? cellEditor.getPopupPosition() : 'over';
+
+        const params = {
+            column: cellCtrl.getColumn(),
+            rowNode: cellCtrl.getRowNode(),
+            type: 'popupCellEditor',
+            eventSource: eGui,
+            ePopup: compGui,
+            keepWithinBounds: true
+        };
+
+        const positionCallback = position === 'under' ?
+            popupService.positionPopupUnderComponent.bind(popupService, params)
+            : popupService.positionPopupOverComponent.bind(popupService, params);
+
+        const addPopupRes = popupService.addPopup({
+            modal: useModelPopup,
+            eChild: compGui,
+            closeOnEsc: true,
+            closedCallback: () => { cellCtrl.onPopupEditorClosed(); },
+            anchorToElement: eGui,
+            positionCallback
+        });
+        if (addPopupRes) {
+            hideEditorPopup = addPopupRes.hideFunc;
+        }
+    } else {
+        eGui.appendChild(compGui);
+    }
+
+    if (ref) {
+        ref.current = cellEditor;
+    }
+
+    return () => {
+        if (inPopup) {
+            hideEditorPopup();
+        } else {
+            const compGui = cellEditor.getGui();
+            if (compGui && compGui.parentElement) {
+                compGui.parentElement.removeChild(compGui);
+            }
+        }
+
+        context.destroyBean(cellEditor);
+
+        if (ref) {
+            ref.current = undefined;
+        }
+    };
+}
 export interface RenderDetails {
     edit: boolean;
     compDetails: UserCompDetails | undefined;
@@ -134,8 +218,7 @@ export const CellComp = (props: {
 
     useEffect(() => {
         const editorCompDetails = (renderDetails && renderDetails.edit) ? renderDetails.compDetails : undefined;
-        return createJSComp(editorCompDetails, context, eGui.current!, 
-            compFactory => compFactory.createCellEditor(editorCompDetails!), cellEditorRef);
+        return createJSCellEditor(editorCompDetails, context, eGui.current!, cellCtrl, cellEditorRef);
     }, [context, renderDetails]);
 
     // tool widgets effect

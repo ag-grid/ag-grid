@@ -319,7 +319,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         }
 
         if (!ModuleRegistry.isRegistered(ModuleNames.RichSelectModule)) {
-            if (this.colDef.cellEditor === 'agRichSelect' || this.colDef.cellEditor === 'agRichSelectCellEditor') {
+            if (this.colDef.cellEditor === 'agRichSelect') {
                 if (ModuleRegistry.isPackageBased()) {
                     warnOnce(`AG Grid: ${this.colDef.cellEditor} can only be used with ag-grid-enterprise`, 'ColumnRichSelectMissing');
                 } else {
@@ -329,7 +329,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         }
 
         if (!ModuleRegistry.isRegistered(ModuleNames.DateTimeCellEditorModule)) {
-            if (this.colDef.cellEditor === 'agRichSelect' || this.colDef.cellEditor === 'agDateTimeCellEditor') {
+            if (this.colDef.cellEditor === 'agDateTimeCellEditor') {
                 if (ModuleRegistry.isPackageBased()) {
                     warnOnce(`AG Grid: ${this.colDef.cellEditor} can only be used with ag-grid-enterprise`, 'ColumnDateTimeMissing');
                 } else {
