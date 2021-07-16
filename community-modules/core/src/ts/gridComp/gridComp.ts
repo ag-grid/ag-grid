@@ -4,15 +4,15 @@ import { Autowired } from "../context/context";
 import { Component } from "../widgets/component";
 import { ISideBar } from "../interfaces/iSideBar";
 import { RefSelector } from "../widgets/componentAnnotations";
-import { ManagedFocusComponent } from "../widgets/managedFocusComponent";
 import { ColumnModel } from "../columns/columnModel";
 import { addCssClass, addOrRemoveCssClass, isVisible } from "../utils/dom";
 import { last } from "../utils/array";
 import { FocusService } from "../focusService";
 import { GridCtrl, IGridComp } from "./gridCtrl";
 import { LayoutCssClasses, UpdateLayoutClassesParams } from "../styling/layoutFeature";
+import { ManagedFocusContainer } from "../widgets/managedFocusContainer";
 
-export class GridComp extends ManagedFocusComponent {
+export class GridComp extends ManagedFocusContainer {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
@@ -26,7 +26,7 @@ export class GridComp extends ManagedFocusComponent {
     private ctrl: GridCtrl;
 
     constructor(eGridDiv: HTMLElement) {
-        super(undefined, true);
+        super(undefined);
         this.eGridDiv = eGridDiv;
     }
 

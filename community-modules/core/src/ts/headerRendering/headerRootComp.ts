@@ -1,6 +1,6 @@
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { ColumnModel } from '../columns/columnModel';
-import { Autowired } from '../context/context';
+import { Autowired, PostConstruct } from '../context/context';
 import { HeaderContainer } from './headerContainer';
 import { Events } from '../events';
 import { Component } from '../widgets/component';
@@ -9,17 +9,18 @@ import { GridApi } from '../gridApi';
 import { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
 import { Constants } from '../constants/constants';
 import { addOrRemoveCssClass, setDisplayed } from '../utils/dom';
-import { ManagedFocusComponent } from '../widgets/managedFocusComponent';
+import { ManagedFocusFeature } from '../widgets/managedFocusFeature';
 import { HeaderNavigationService, HeaderNavigationDirection } from './header/headerNavigationService';
 import { exists } from '../utils/generic';
 import { PinnedWidthService } from "../gridBodyComp/pinnedWidthService";
 import { CenterWidthFeature } from "../gridBodyComp/centerWidthFeature";
 import { ControllersService } from "../controllersService";
 import { KeyCode } from '../constants/keyCode';
+import { FocusService } from '../focusService';
 
 export type HeaderContainerPosition = 'left' | 'right' | 'center';
 
-export class HeaderRootComp extends ManagedFocusComponent {
+export class HeaderRootComp extends Component {
     private static TEMPLATE = /* html */
         `<div class="ag-header" role="presentation" unselectable="on">
             <div class="ag-pinned-left-header" ref="ePinnedLeftHeader" role="presentation"></div>
@@ -37,6 +38,7 @@ export class HeaderRootComp extends ManagedFocusComponent {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
+    @Autowired('focusService') private focusService: FocusService;
     @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
     @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
     @Autowired('controllersService') private controllersService: ControllersService;
@@ -48,8 +50,16 @@ export class HeaderRootComp extends ManagedFocusComponent {
         super(HeaderRootComp.TEMPLATE);
     }
 
-    protected postConstruct(): void {
-        super.postConstruct();
+    @PostConstruct
+    private postConstruct(): void {
+        this.createManagedBean(new ManagedFocusFeature(
+            this.getFocusableElement(),
+            undefined,
+            this.onTabKeyDown.bind(this),
+            this.handleKeyDown.bind(this),
+            undefined,
+            this.onFocusOut.bind(this)
+        ));
 
         this.printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
 

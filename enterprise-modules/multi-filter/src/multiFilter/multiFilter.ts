@@ -14,7 +14,7 @@ import {
     RowNode,
     AgGroupComponent,
     ContainerType,
-    ManagedFocusComponent,
+    ManagedFocusContainer,
     _
 } from '@ag-grid-community/core';
 import { MenuItemComponent, MenuItemActivatedEvent } from '@ag-grid-enterprise/menu';
@@ -33,7 +33,7 @@ export interface IMultiFilterModel {
     filterModels: any[] | null;
 }
 
-export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
+export class MultiFilter extends ManagedFocusContainer implements IFilterComp {
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
 
@@ -50,7 +50,7 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
     private afterFiltersReadyFuncs: (() => void) [] = [];
 
     constructor() {
-        super(/* html */`<div class="ag-multi-filter ag-menu-list-compact"></div>`, true);
+        super(/* html */`<div class="ag-multi-filter ag-menu-list-compact"></div>`);
     }
 
     public static getFilterDefs(params: IMultiFilterParams): IMultiFilterDef[] {
@@ -95,7 +95,7 @@ export class MultiFilter extends ManagedFocusComponent implements IFilterComp {
     private refreshGui(container: ContainerType): void {
         if (container === this.lastOpenedInContainer) { return; }
 
-        this.clearGui();
+        this.clearFocusableElement();
         this.destroyChildren();
 
         _.forEach(this.filters!, (filter, index) => {

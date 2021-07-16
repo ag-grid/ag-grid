@@ -1,4 +1,4 @@
-import { Autowired } from '../../context/context';
+import { Autowired, PostConstruct } from '../../context/context';
 import { IMenuFactory } from '../../interfaces/iMenuFactory';
 import { Column } from '../../entities/column';
 import { SetLeftFeature } from '../../rendering/features/setLeftFeature';
@@ -22,6 +22,7 @@ import { Beans } from '../../rendering/beans';
 import { HeaderRowComp } from '../../headerRendering/headerRowComp';
 import { FloatingFilterMapper } from './floatingFilterMapper';
 import { KeyCode } from '../../constants/keyCode';
+import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
 
 export class FloatingFilterWrapper extends AbstractHeaderWrapper {
     private static TEMPLATE = /* html */
@@ -56,14 +57,21 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
         this.pinned = pinned;
     }
 
-    protected postConstruct(): void {
-        super.postConstruct();
-
+    @PostConstruct
+    private postConstruct(): void {
         this.setupFloatingFilter();
         this.setupWidth();
         this.setupLeftPositioning();
         this.setupColumnHover();
+
         this.createManagedBean(new HoverFeature([this.column], this.getGui()));
+        this.createManagedBean(new ManagedFocusFeature(
+            this.getFocusableElement(),
+            this.shouldStopEventPropagation.bind(this),
+            this.onTabKeyDown.bind(this),
+            this.handleKeyDown.bind(this),
+            this.onFocusIn.bind(this)
+        ));
 
         this.addManagedListener(this.eButtonShowMainFilter, 'click', this.showParentFilter.bind(this));
     }
@@ -115,7 +123,7 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
         }
     }
 
-    protected onFocusIn(e: FocusEvent) {
+    protected onFocusIn(e: FocusEvent): void {
         const eGui = this.getGui();
 
         if (!eGui.contains(e.relatedTarget as HTMLElement)) {

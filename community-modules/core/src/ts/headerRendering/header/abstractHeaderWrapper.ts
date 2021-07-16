@@ -1,9 +1,13 @@
 import { ColumnGroup } from "../../entities/columnGroup";
 import { Column } from "../../entities/column";
-import { ManagedFocusComponent } from "../../widgets/managedFocusComponent";
 import { isUserSuppressingHeaderKeyboardEvent } from "../../utils/keyboard";
+import { Component } from "../../widgets/component";
+import { Autowired } from "../../context/context";
+import { FocusService } from "../../focusService";
 
-export abstract class AbstractHeaderWrapper extends ManagedFocusComponent {
+export abstract class AbstractHeaderWrapper extends Component {
+
+    @Autowired('focusService') protected focusService: FocusService;
 
     protected abstract readonly column: Column | ColumnGroup;
     protected abstract readonly pinned: string | null;

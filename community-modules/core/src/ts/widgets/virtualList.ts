@@ -1,12 +1,12 @@
 import { Component } from './component';
 import { Autowired } from '../context/context';
 import { RefSelector } from './componentAnnotations';
-import { ManagedFocusComponent } from './managedFocusComponent';
 import { addCssClass, containsClass } from '../utils/dom';
 import { getAriaPosInSet, setAriaSetSize, setAriaPosInSet, setAriaSelected, setAriaChecked } from '../utils/aria';
 import { KeyCode } from '../constants/keyCode';
 import { ResizeObserverService } from "../misc/resizeObserverService";
 import { waitUntil } from '../utils/function';
+import { ManagedFocusContainer } from './managedFocusContainer';
 
 export interface VirtualListModel {
     getRowCount(): number;
@@ -14,7 +14,7 @@ export interface VirtualListModel {
     isRowSelected?(index: number): boolean | undefined;
 }
 
-export class VirtualList extends ManagedFocusComponent {
+export class VirtualList extends ManagedFocusContainer {
     private model: VirtualListModel;
     private renderedRows = new Map<number, { rowComponent: Component, eDiv: HTMLDivElement; }>();
     private componentCreator: (value: any, listItemElement: HTMLElement) => Component;
@@ -26,7 +26,7 @@ export class VirtualList extends ManagedFocusComponent {
     @RefSelector('eContainer') private readonly eContainer: HTMLElement;
 
     constructor(private readonly cssIdentifier = 'default', private readonly ariaRole = 'listbox') {
-        super(VirtualList.getTemplate(cssIdentifier), true);
+        super(VirtualList.getTemplate(cssIdentifier));
     }
 
     protected postConstruct(): void {

@@ -4,14 +4,14 @@ import {
     ToolPanelColumnCompParams,
     RefSelector,
     IPrimaryColsPanel,
-    ManagedFocusComponent,
+    ManagedFocusContainer,
     ColumnEventType,
     PositionableFeature,
 } from "@ag-grid-community/core";
 import { PrimaryColsListPanel } from "./primaryColsListPanel";
 import { PrimaryColsHeaderPanel } from "./primaryColsHeaderPanel";
 
-export class PrimaryColsPanel extends ManagedFocusComponent implements IPrimaryColsPanel {
+export class PrimaryColsPanel extends ManagedFocusContainer implements IPrimaryColsPanel {
 
     private static TEMPLATE = /* html */
         `<div class="ag-column-select">
@@ -28,7 +28,7 @@ export class PrimaryColsPanel extends ManagedFocusComponent implements IPrimaryC
     private positionableFeature: PositionableFeature;
 
     constructor() {
-        super(PrimaryColsPanel.TEMPLATE, true);
+        super(PrimaryColsPanel.TEMPLATE);
     }
 
     // we allow dragging in the toolPanel, but not when this component appears in the column menu

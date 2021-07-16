@@ -1,5 +1,5 @@
 import { AgCheckbox } from "../../widgets/agCheckbox";
-import { Autowired, PreDestroy } from "../../context/context";
+import { Autowired, PreDestroy, PostConstruct } from "../../context/context";
 import { Beans } from "../../rendering/beans";
 import { Column } from "../../entities/column";
 import { DragAndDropService, DragItem, DragSource, DragSourceType } from "../../dragAndDrop/dragAndDropService";
@@ -27,6 +27,7 @@ import { setAriaSort, getAriaSortState, removeAriaSort } from "../../utils/aria"
 import { addCssClass, addOrRemoveCssClass, removeCssClass, setDisplayed } from "../../utils/dom";
 import { KeyCode } from '../../constants/keyCode';
 import { ITooltipParams } from "../../rendering/tooltipComponent";
+import { ManagedFocusFeature } from "../../widgets/managedFocusFeature";
 
 export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
@@ -78,13 +79,11 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         this.pinned = pinned;
     }
 
-    protected postConstruct(): void {
-        super.postConstruct();
-
+    @PostConstruct
+    private postConstruct(): void {
         this.colDefVersion = this.columnModel.getColDefVersion();
 
         this.updateState();
-
         this.setupWidth();
         this.setupMovingCss();
         this.setupTooltip();
@@ -93,6 +92,15 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         this.setupSortableClass();
         this.addColumnHoverListener();
         this.addActiveHeaderMouseListeners();
+
+        this.createManagedBean(new ManagedFocusFeature(
+            this.getFocusableElement(),
+            this.shouldStopEventPropagation.bind(this),
+            this.onTabKeyDown.bind(this),
+            this.handleKeyDown.bind(this),
+            this.onFocusIn.bind(this),
+            this.onFocusOut.bind(this)
+        ));
 
         this.createManagedBean(new HoverFeature([this.column], this.getGui()));
 

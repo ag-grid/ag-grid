@@ -1,9 +1,9 @@
-import { ManagedFocusComponent, IComponent, KeyCode } from '@ag-grid-community/core';
+import { ManagedFocusContainer, IComponent, KeyCode } from '@ag-grid-community/core';
 import { MenuItemComponent } from './menuItemComponent';
 
-export class MenuPanel extends ManagedFocusComponent {
+export class MenuPanel extends ManagedFocusContainer {
     constructor(private readonly wrappedComponent: IComponent<any>) {
-        super(undefined, true);
+        super();
 
         this.setTemplateFromElement(wrappedComponent.getGui());
     }

@@ -1,5 +1,5 @@
 import { IDoesFilterPassParams, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
-import { Autowired } from '../../context/context';
+import { Autowired, PostConstruct } from '../../context/context';
 import { IRowModel } from '../../interfaces/iRowModel';
 import { Constants } from '../../constants/constants';
 import { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
@@ -8,8 +8,9 @@ import { debounce } from '../../utils/function';
 import { AgPromise } from '../../utils/promise';
 import { PopupEventParams } from '../../widgets/popupService';
 import { IFilterLocaleText, IFilterTitleLocaleText, DEFAULT_FILTER_LOCALE_TEXT } from '../filterLocaleText';
-import { ManagedFocusComponent } from '../../widgets/managedFocusComponent';
+import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
 import { convertToSet } from '../../utils/set';
+import { Component } from '../../widgets/component';
 
 type FilterButtonType = 'apply' | 'clear' | 'reset' | 'cancel';
 
@@ -28,7 +29,7 @@ export interface IProvidedFilterParams extends IFilterParams {
  * All the filters that come with AG Grid extend this class. User filters do not
  * extend this class.
  */
-export abstract class ProvidedFilter<T> extends ManagedFocusComponent implements IFilterComp {
+export abstract class ProvidedFilter<T> extends Component implements IFilterComp {
     private newRowsActionKeep: boolean;
 
     // each level in the hierarchy will save params with the appropriate type for that level.
@@ -67,6 +68,12 @@ export abstract class ProvidedFilter<T> extends ManagedFocusComponent implements
     /** Used to get the filter type for filter models. */
     protected abstract getFilterType(): string;
 
+    @PostConstruct
+    protected postConstruct(): void {
+        this.resetTemplate(); // do this first to create the DOM
+        this.createManagedBean(new ManagedFocusFeature(this.getFocusableElement()));
+    }
+
     public abstract getModelFromUi(): T | null;
 
     public getFilterTitle(): string {
@@ -84,11 +91,6 @@ export abstract class ProvidedFilter<T> extends ManagedFocusComponent implements
     public isFilterActive(): boolean {
         // filter is active if we have a valid applied model
         return !!this.appliedModel;
-    }
-
-    protected postConstruct(): void {
-        this.resetTemplate(); // do this first to create the DOM
-        super.postConstruct();
     }
 
     protected resetTemplate(paramsMap?: any) {

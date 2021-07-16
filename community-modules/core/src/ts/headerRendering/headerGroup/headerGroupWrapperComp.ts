@@ -5,7 +5,7 @@ import { ColumnApi } from "../../columns/columnApi";
 import { Constants } from "../../constants/constants";
 import { ColumnModel, ColumnResizeSet } from "../../columns/columnModel";
 import { HorizontalResizeService } from "../horizontalResizeService";
-import { Autowired } from "../../context/context";
+import { Autowired, PostConstruct } from "../../context/context";
 import { CssClassApplier } from "../cssClassApplier";
 import {
     DragAndDropService,
@@ -27,6 +27,7 @@ import { removeFromArray } from "../../utils/array";
 import { removeFromParent, addCssClass, removeCssClass, addOrRemoveCssClass } from "../../utils/dom";
 import { KeyCode } from '../../constants/keyCode';
 import { ITooltipParams } from "../../rendering/tooltipComponent";
+import { ManagedFocusFeature } from "../../widgets/managedFocusFeature";
 
 export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
 
@@ -66,9 +67,8 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
         this.pinned = pinned;
     }
 
-    protected postConstruct(): void {
-        super.postConstruct();
-
+    @PostConstruct
+    private postConstruct(): void {
         CssClassApplier.addHeaderClassesFromColDef(this.getComponentHolder(), this.getGui(), this.gridOptionsWrapper, null, this.column);
 
         const displayName = this.columnModel.getDisplayNameForColumnGroup(this.column, 'header');
@@ -85,6 +85,13 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
 
         this.createManagedBean(new HoverFeature(this.column.getOriginalColumnGroup().getLeafColumns(), this.getGui()));
         this.createManagedBean(new SetLeftFeature(this.column, this.getGui(), this.beans));
+        this.createManagedBean(new ManagedFocusFeature(
+            this.getFocusableElement(),
+            this.shouldStopEventPropagation.bind(this),
+            this.onTabKeyDown.bind(this),
+            this.handleKeyDown.bind(this),
+            this.onFocusIn.bind(this)
+        ));
     }
 
     protected onFocusIn(e: FocusEvent) {

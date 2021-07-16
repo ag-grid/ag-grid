@@ -12,7 +12,8 @@ import {
     setDisplayed,
     addCssClass,
     removeCssClass,
-    addOrRemoveCssClass
+    addOrRemoveCssClass,
+    clearElement
 } from '../utils/dom';
 import { forEach } from '../utils/array';
 import { getFunctionName } from '../utils/function';
@@ -265,6 +266,10 @@ export class Component extends BeanStub {
 
     public getFocusableElement(): HTMLElement {
         return this.eGui;
+    }
+
+    protected clearFocusableElement(): void {
+        clearElement(this.getFocusableElement());
     }
 
     public setParentComponent(component: Component) {

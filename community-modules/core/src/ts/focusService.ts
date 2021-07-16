@@ -15,7 +15,7 @@ import { IRangeService } from "./interfaces/IRangeService";
 import { RowRenderer } from "./rendering/rowRenderer";
 import { HeaderNavigationService } from "./headerRendering/header/headerNavigationService";
 import { ColumnGroup } from "./entities/columnGroup";
-import { ManagedFocusComponent } from "./widgets/managedFocusComponent";
+import { ManagedFocusFeature } from "./widgets/managedFocusFeature";
 import { getTabIndex } from './utils/browser';
 import { findIndex, last } from './utils/array';
 import { makeNull } from './utils/generic';
@@ -388,7 +388,7 @@ export class FocusService extends BeanStub {
     }
 
     public isFocusUnderManagedComponent(rootNode: HTMLElement): boolean {
-        const managedContainers = rootNode.querySelectorAll(`.${ManagedFocusComponent.FOCUS_MANAGED_CLASS}`);
+        const managedContainers = rootNode.querySelectorAll(`.${ManagedFocusFeature.FOCUS_MANAGED_CLASS}`);
 
         if (!managedContainers.length) { return false; }
 

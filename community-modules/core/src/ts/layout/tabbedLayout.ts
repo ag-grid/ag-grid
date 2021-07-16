@@ -1,14 +1,19 @@
 import { AgPromise } from '../utils';
 import { RefSelector } from '../widgets/componentAnnotations';
-import { ManagedFocusComponent } from '../widgets/managedFocusComponent';
+import { ManagedFocusFeature } from '../widgets/managedFocusFeature';
 import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 import { addCssClass, clearElement, removeCssClass } from '../utils/dom';
 import { setAriaLabel } from '../utils/aria';
 import { find } from '../utils/generic';
 import { callIfPresent } from '../utils/function';
 import { KeyCode } from '../constants/keyCode';
+import { Component } from '../widgets/component';
+import { PostConstruct, Autowired } from '../context/context';
+import { FocusService } from '../focusService';
 
-export class TabbedLayout extends ManagedFocusComponent {
+export class TabbedLayout extends Component {
+
+    @Autowired('focusService') private focusService: FocusService;
 
     @RefSelector('eHeader') private readonly eHeader: HTMLElement;
     @RefSelector('eBody') private readonly eBody: HTMLElement;
@@ -25,6 +30,16 @@ export class TabbedLayout extends ManagedFocusComponent {
         if (params.items) {
             params.items.forEach(item => this.addItem(item));
         }
+    }
+
+    @PostConstruct
+    private postConstruct() {
+        this.createManagedBean(new ManagedFocusFeature(
+            this.getFocusableElement(),
+            undefined,
+            this.onTabKeyDown.bind(this),
+            this.handleKeyDown.bind(this)
+        ));
     }
 
     private static getTemplate(cssClass?: string) {

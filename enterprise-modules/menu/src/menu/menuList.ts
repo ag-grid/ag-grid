@@ -1,23 +1,23 @@
 import {
-    ManagedFocusComponent,
+    ManagedFocusContainer,
     MenuItemDef,
     _,
     KeyCode,
 } from "@ag-grid-community/core";
 import { MenuItemComponent, MenuItemSelectedEvent, MenuItemActivatedEvent } from "./menuItemComponent";
 
-export class MenuList extends ManagedFocusComponent {
+export class MenuList extends ManagedFocusContainer {
 
     private menuItems: MenuItemComponent[] = [];
     private activeMenuItem: MenuItemComponent | null;
 
     constructor(private readonly level = 1) {
-        super(/* html */`<div class="ag-menu-list" role="tree"></div>`, true);
+        super(/* html */`<div class="ag-menu-list" role="tree"></div>`);
     }
 
     protected onTabKeyDown(e: KeyboardEvent) {
         const parent = this.getParentComponent();
-        const isManaged = parent && parent instanceof ManagedFocusComponent;
+        const isManaged = parent && parent instanceof ManagedFocusContainer;
 
         if (!isManaged) {
             e.preventDefault();
