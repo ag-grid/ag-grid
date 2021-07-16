@@ -1,6 +1,7 @@
 const replace = require('replace-in-file');
 const typescriptSimple = require('typescript-simple');
 const fs = require('fs');
+const ts = require('typescript');
 
 // satisfy ag-grid HTMLElement dependencies
 HTMLElement = typeof HTMLElement === 'undefined' ? function () {
@@ -21,9 +22,48 @@ function getGridPropertiesAndEventsJs() {
 
     const skippableProperties = ['gridOptions'];
 
+    let parsedSyntaxTreeResults;
+    let typeLookup = { undefined: undefined };
+    try {
+        const filename = "../../community-modules/core/src/ts/entities/gridOptions.ts";
+        const src = fs.readFileSync(filename, 'utf8');
+        parsedSyntaxTreeResults = ts.createSourceFile('gridOps.ts', src, ts.ScriptTarget.Latest, true);
+
+
+        function print(node, inGridOptions) {
+            const kind = ts.SyntaxKind[node.kind];
+            let internalGridOps = inGridOptions;
+            if (inGridOptions || kind == 'InterfaceDeclaration' && node && node.name && node.name.escapedText == 'GridOptions') {
+                if (kind == 'PropertySignature') {
+                    const name = node && node.name && node.name.escapedText;
+                    const typeName = node && node.type && node.type.getFullText();
+                    typeLookup[name] = typeName;
+                } else if (kind == 'MethodSignature') {
+                    const name = node && node.name && node.name.escapedText;
+
+                    const typeName = node && node.type && node.type.getFullText();
+                    typeLookup[name] = typeName;
+
+                    if (name.startsWith('on')) {
+                        const typeName = node.parameters[0].type.typeName.escapedText;
+                        typeLookup[name] = typeName;
+                    }
+                };
+                internalGridOps = true;
+            }
+            ts.forEachChild(node, n => print(n, internalGridOps));
+        }
+
+        print(parsedSyntaxTreeResults, false);
+
+    } catch (error) {
+        const errorMsg = 'To troubleshoot paste snippet here: \'https://esprima.org/demo/parse.html\'';
+        return `${error}\n\n${errorMsg}\n\n${this.snippet}`;
+    }
+
     ComponentUtil.ALL_PROPERTIES.forEach((property) => {
         if (skippableProperties.indexOf(property) === -1) {
-            result += `    @Input() public ${property} : any = undefined;\n`;
+            result += `    @Input() public ${property} : ${typeLookup[property]} | undefined = undefined;\n`;
         }
     });
 
@@ -31,7 +71,8 @@ function getGridPropertiesAndEventsJs() {
     result += '\n';
 
     ComponentUtil.EVENTS.forEach((event) => {
-        result += `    @Output() public ${event}: EventEmitter<any> = new EventEmitter<any>();\n`;
+        const onEvent = ComponentUtil.getCallbackForEvent(event);
+        result += `    @Output() public ${event}: EventEmitter<${typeLookup[onEvent]}> = new EventEmitter<${typeLookup[onEvent]}>();\n`;
     });
 
     return result;
