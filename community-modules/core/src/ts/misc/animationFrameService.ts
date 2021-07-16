@@ -1,7 +1,5 @@
 
 import { Autowired, Bean, PostConstruct } from "../context/context";
-import { AnimationQueueEmptyEvent } from "../events";
-import { Events } from "../eventKeys";
 import { BeanStub } from "../context/beanStub";
 import { ControllersService } from "../controllersService";
 
@@ -148,12 +146,6 @@ export class AnimationFrameService extends BeanStub {
 
     private stopTicking(): void {
         this.ticking = false;
-        const event: AnimationQueueEmptyEvent = {
-            type: Events.EVENT_ANIMATION_QUEUE_EMPTY,
-            columnApi: this.gridOptionsWrapper.getColumnApi()!,
-            api: this.gridOptionsWrapper.getApi()!
-        };
-        this.eventService.dispatchEvent(event);
     }
 
     public flushAllFrames(): void {

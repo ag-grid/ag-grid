@@ -33,7 +33,7 @@ const gridOptions = {
 }
 </snippet>
 
-The set of parameters for the group cell renderer are:
+The set of parameters for the group cell renderer are defined on `GroupCellRendererParams` and include:
 
 - **suppressCount:** One of `[true, false]`, if `true`, count is not displayed beside the name.
 - **checkbox:** One of `[true, false]`, if `true`, a selection checkbox is included.

@@ -47,8 +47,6 @@ export interface ToolPanelVisibleChangedEvent extends AgGridEvent {
     source: string | undefined;
 }
 
-export interface AnimationQueueEmptyEvent extends AgGridEvent { }
-
 export interface ColumnPivotModeChangedEvent extends AgGridEvent { }
 
 export interface VirtualColumnsChangedEvent extends AgGridEvent { }
