@@ -687,7 +687,7 @@ var gridOptions = {
         {
             id: 'bad-score',
             alignment: {
-                horizontal: 'Center'
+                horizontal: 'Center',
                 vertical: 'Center'
             },
             interior: {
