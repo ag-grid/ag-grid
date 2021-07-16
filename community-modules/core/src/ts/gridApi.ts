@@ -646,6 +646,10 @@ export class GridApi {
         return this.animationFrameService.isQueueEmpty();
     }
 
+    public flushAllAnimationFrames(): void {
+        this.animationFrameService.flushAllFrames();
+    }
+
     public getRowNode(id: string): RowNode | null {
         return this.rowModel.getRowNode(id);
     }

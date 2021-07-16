@@ -509,7 +509,6 @@ export class AgGridAngular implements AfterViewInit {
     @Output() public cellEditingStarted: EventEmitter<any> = new EventEmitter<any>();
     @Output() public cellEditingStopped: EventEmitter<any> = new EventEmitter<any>();
     @Output() public bodyScroll: EventEmitter<any> = new EventEmitter<any>();
-    @Output() public animationQueueEmpty: EventEmitter<any> = new EventEmitter<any>();
     @Output() public heightScaleChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public paginationChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public componentStateChanged: EventEmitter<any> = new EventEmitter<any>();
