@@ -80,7 +80,8 @@ import {
     ToolPanelVisibleChangedEvent,
     ViewportChangedEvent,
     VirtualColumnsChangedEvent,
-    VirtualRowRemovedEvent
+    VirtualRowRemovedEvent,
+    GridSizeChangedEvent
 } from "../events";
 import { IComponent } from "../interfaces/iComponent";
 import { ILoadingOverlayComp } from "../rendering/overlays/loadingOverlayComponent";
@@ -608,8 +609,7 @@ export interface GridOptions {
 
     onAsyncTransactionsFlushed?(event: AsyncTransactionsFlushed): void;
 
-    /** @deprecated */
-    onGridSizeChanged?(event: any): void;
+    onGridSizeChanged?(event: GridSizeChangedEvent): void;
 
     // apis, set by the grid on init
     api?: GridApi | null; // change to typed
