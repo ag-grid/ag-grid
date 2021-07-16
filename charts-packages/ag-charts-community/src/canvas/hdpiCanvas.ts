@@ -141,6 +141,9 @@ export class HdpiCanvas {
     }
 
     resize(width: number, height: number) {
+        if (!(width > 0 && height > 0)) {
+            return;
+        }
         const { element, context, pixelRatio } = this;
         element.width = Math.round(width * pixelRatio);
         element.height = Math.round(height * pixelRatio);
