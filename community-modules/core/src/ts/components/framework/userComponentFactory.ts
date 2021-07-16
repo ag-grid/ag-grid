@@ -2,10 +2,7 @@ import { Autowired, Bean, Optional } from "../../context/context";
 import { GridOptions } from "../../entities/gridOptions";
 import { FrameworkComponentWrapper } from "./frameworkComponentWrapper";
 import { ColDef, ColGroupDef, SelectorFunc } from "../../entities/colDef";
-import {
-    RegisteredComponentSource,
-    UserComponentRegistry
-} from "./userComponentRegistry";
+import { UserComponentRegistry } from "./userComponentRegistry";
 import { AgComponentUtils } from "./agComponentUtils";
 import { ComponentMetadata, ComponentMetadataProvider } from "./componentMetadataProvider";
 import { ISetFilterParams } from "../../interfaces/iSetFilterParams";
@@ -54,10 +51,6 @@ export type DefinitionObject =
     | ToolPanelDef
     | StatusPanelDef;
 
-export enum ComponentSource {
-    DEFAULT, REGISTERED_BY_NAME, HARDCODED
-}
-
 /**
  * B the business interface (ie IHeader)
  * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
@@ -65,7 +58,6 @@ export enum ComponentSource {
 export interface ComponentClassDef {
     component: any; // not typing, as can be component from any framework
     componentFromFramework: boolean; // true if component came from framework eg React or Angular
-    source: ComponentSource; // [Default, Registered by Name, Hard Coded]
     paramsFromSelector: any; // Params the selector function provided, if any
 }
 
@@ -285,115 +277,71 @@ export class UserComponentFactory extends BeanStub {
         return internalComponent;
     }
 
-    public lookupComponent(
-        defObject: DefinitionObject,
-        propertyName: string,
-        params: any = null,
-        defaultComponentName?: string | null
-    ): ComponentClassDef | null {
+    public lookupComponent(defObject: DefinitionObject, propertyName: string,
+                            params: any = null, defaultComponentName?: string | null): ComponentClassDef | null {
 
-        if (!defObject) { return null; }
-        let defObjectAny = defObject as any;
-
-        let compName: string | null = null;
-        let jsCompClass: any = null;
-        let jsCompFunc: any = null;
         let paramsFromSelector: any;
+        let comp: any;
+        let frameworkComp: any;
 
-        const selectorFunc: SelectorFunc = defObjectAny[propertyName + 'Selector'];
-        const selectorRes = selectorFunc ? selectorFunc(params) : null;
-        const compOption = selectorRes ? selectorRes.component : defObjectAny[propertyName];
-        const frameworkCompOption = selectorRes ? selectorRes.frameworkComponent : defObjectAny[propertyName + 'Framework'];
+        // pull from defObject if available
+        if (defObject) {
+            let defObjectAny = defObject as any;
 
-        // for filters only, we allow 'true' for the component, which means default filter to be used
-        const usingDefaultComponent = compOption === true;
-        if (compOption != null && !usingDefaultComponent) {
-            if (typeof compOption === 'string') {
-                compName = compOption;
-            } else if (typeof compOption === 'boolean') {
-                // never happens, as we test for usingDefaultComponent above,
-                // however it's needed for the next block to compile
-            } else if (this.agComponentUtils.doesImplementIComponent(compOption)) {
-                jsCompClass = compOption;
+            // if selector, use this
+            const selectorFunc: SelectorFunc = defObjectAny[propertyName + 'Selector'];
+            const selectorRes = selectorFunc ? selectorFunc(params) : null;
+            if (selectorRes) {
+                comp = selectorRes.component;
+                frameworkComp = selectorRes.frameworkComponent;
+                paramsFromSelector = selectorRes.params;
             } else {
-                jsCompFunc = compOption;
+                // if no selector, or result of selector is empty, take from defObject
+                comp = defObjectAny[propertyName];
+                frameworkComp = defObjectAny[propertyName + 'Framework'];
+            }
+
+            // for filters only, we allow 'true' for the component, which means default filter to be used
+            if (comp === true) {
+                comp = undefined;
             }
         }
 
-        if (frameworkCompOption) {
-            return {
-                componentFromFramework: true,
-                component: frameworkCompOption,
-                source: ComponentSource.HARDCODED,
-                paramsFromSelector: null
-            };
-        }
-
-        if (jsCompClass) {
-            return {
-                componentFromFramework: false,
-                component: jsCompClass,
-                source: ComponentSource.HARDCODED,
-                paramsFromSelector: null
-            };
-        }
-
-        if (jsCompFunc) {
-            return this.agComponentUtils.adaptFunction(propertyName, jsCompFunc, false, ComponentSource.HARDCODED);
-        }
-
-        const compNameToLookup = compName || defaultComponentName;
-        if (!compNameToLookup) { return null; }
-
-        const registeredCompClassDef = this.lookupFromRegisteredComponents(propertyName, compNameToLookup);
-        if (!registeredCompClassDef) { return null; }
-
-        return {
-            componentFromFramework: registeredCompClassDef.componentFromFramework,
-            component: registeredCompClassDef.component,
-            source: registeredCompClassDef.source,
-            paramsFromSelector: paramsFromSelector
+        const lookupFromRegistry = (key: string) => {
+            const item = this.userComponentRegistry.retrieve(key);
+            if (item) {
+                comp = !item.componentFromFramework ? item.component : undefined;
+                frameworkComp = item.componentFromFramework ? item.component : undefined;
+            } else {
+                comp = undefined;
+                frameworkComp = undefined;
+            }
         };
-    }
 
-    private lookupFromRegisteredComponents(
-        propertyName: string,
-        componentNameOpt?: string
-    ): any {
-        const componentName: string = componentNameOpt != null ? componentNameOpt : propertyName;
-        const registeredComponent: any = this.userComponentRegistry.retrieve(componentName);
+        // if compOption is a string, means we need to look the item up
+        if (typeof comp === 'string') {
+            lookupFromRegistry(comp);
+        }
 
-        if (registeredComponent == null) {
+        // if lookup brought nothing back, and we have a default, lookup the default
+        if (comp == null && frameworkComp == null && defaultComponentName != null) {
+            lookupFromRegistry(defaultComponentName);
+        }
+
+        // if we have a comp option, and it's a function, replace it with an object equivalent adaptor
+        if (comp && !this.agComponentUtils.doesImplementIComponent(comp)) {
+            comp = this.agComponentUtils.adaptFunction(propertyName, comp);
+        }
+
+        if (!comp && !frameworkComp) {
             return null;
         }
 
-        //If it is a FW it has to be registered as a component
-        if (registeredComponent.componentFromFramework) {
-            return {
-                component: registeredComponent.component,
-                componentFromFramework: true,
-                source: ComponentSource.REGISTERED_BY_NAME,
-                paramsFromSelector: null
-            };
-        }
-
-        //If it is JS it may be a function or a component
-        if (this.agComponentUtils.doesImplementIComponent(registeredComponent.component)) {
-            return {
-                component: registeredComponent.component,
-                componentFromFramework: false,
-                source: (registeredComponent.source == RegisteredComponentSource.REGISTERED) ? ComponentSource.REGISTERED_BY_NAME : ComponentSource.DEFAULT,
-                paramsFromSelector: null
-            };
-        }
-
-        // This is a function
-        return this.agComponentUtils.adaptFunction(
-            propertyName,
-            registeredComponent.component,
-            registeredComponent.componentFromFramework,
-            (registeredComponent.source == RegisteredComponentSource.REGISTERED) ? ComponentSource.REGISTERED_BY_NAME : ComponentSource.DEFAULT
-        );
+        return {
+            componentFromFramework: comp == null,
+            component: comp ? comp : frameworkComp,
+            paramsFromSelector: paramsFromSelector
+        };
     }
 
     /**

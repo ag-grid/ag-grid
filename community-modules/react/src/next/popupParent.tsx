@@ -26,8 +26,7 @@ export const PopupParent = (props: {context: Context}) => {
 
     return (
         <div>
-            popup list
-            { popupList.map( popup => <span>POPUP</span>)}
+            {/* { popupList.map( popup => <span>POPUP</span>)} */}
         </div>
     );
 };

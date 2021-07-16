@@ -26,10 +26,6 @@ import { BeanStub } from "../../context/beanStub";
 import { iterateObject } from '../../utils/object';
 import { doOnce } from "../../utils/function";
 
-export enum RegisteredComponentSource {
-    DEFAULT, REGISTERED
-}
-
 /**
  * B the business interface (ie IHeader)
  * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
@@ -37,7 +33,6 @@ export enum RegisteredComponentSource {
 export interface RegisteredComponent {
     component: any;
     componentFromFramework: boolean;
-    source: RegisteredComponentSource;
 }
 
 export interface DeprecatedComponentName {
@@ -202,19 +197,14 @@ export class UserComponentRegistry extends BeanStub {
         this.frameworkComponents[name] = component;
     }
 
-    /**
-     * B the business interface (ie IHeader)
-     * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
-     */
-    public retrieve(rawName: string): any {
+    public retrieve(rawName: string): {componentFromFramework: boolean, component: any} | null {
         const name = this.translateIfDeprecated(rawName);
         const frameworkComponent = this.frameworkComponents[name] || this.getFrameworkOverrides().frameworkComponent(name);
 
         if (frameworkComponent) {
             return {
                 componentFromFramework: true,
-                component: frameworkComponent,
-                source: RegisteredComponentSource.REGISTERED
+                component: frameworkComponent
             };
         }
 
@@ -223,8 +213,7 @@ export class UserComponentRegistry extends BeanStub {
         if (jsComponent) {
             return {
                 componentFromFramework: false,
-                component: jsComponent,
-                source: RegisteredComponentSource.REGISTERED
+                component: jsComponent
             };
         }
 
@@ -233,8 +222,7 @@ export class UserComponentRegistry extends BeanStub {
         if (defaultComponent) {
             return {
                 componentFromFramework: false,
-                component: defaultComponent,
-                source: RegisteredComponentSource.DEFAULT
+                component: defaultComponent
             };
         }
 

@@ -89,7 +89,7 @@ export const GridComp = (props: { context: Context }) => {
                 }
             </div>
             }
-            {/* <PopupParent context={ props.context }></PopupParent> */}
+            { <PopupParent context={ props.context }></PopupParent> }
         </div>
     );
 }

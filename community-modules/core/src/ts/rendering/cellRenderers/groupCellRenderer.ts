@@ -10,7 +10,6 @@ import { RefSelector } from "../../widgets/componentAnnotations";
 import { ColDef } from "../../entities/colDef";
 import {
     ComponentClassDef,
-    ComponentSource,
     UserComponentFactory
 } from "../../components/framework/userComponentFactory";
 import { AgPromise } from "../../utils";
@@ -313,8 +312,12 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         const groupInnerRendererClass: ComponentClassDef = this.userComponentFactory
             .lookupComponent(groupCellRendererParams, "innerRenderer")!;
 
+        // avoid using GroupCellRenderer again, otherwise stack overflow, as we insert same renderer again and again.
+        // this covers off chance user is grouping by a column that is also configured with GroupCellRenderer
+        const notGroupRowRenderer = (details: any) => !details || details.component != this.constructor;
+
         if (groupInnerRendererClass && groupInnerRendererClass.component != null
-            && groupInnerRendererClass.source != ComponentSource.DEFAULT) {
+            && notGroupRowRenderer(groupInnerRendererClass)) {
             // use the renderer defined in cellRendererParams.innerRenderer
             cellRendererPromise = this.userComponentFactory.newInnerCellRenderer(groupCellRendererParams, params);
         } else {
@@ -323,14 +326,12 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
                 .lookupComponent(groupedColumnDef, "cellRenderer")!;
 
             if (
-                groupColumnRendererClass &&
-                groupColumnRendererClass.source != ComponentSource.DEFAULT
+                groupColumnRendererClass && notGroupRowRenderer(groupColumnRendererClass)
             ) {
                 // Only if the original column is using a specific renderer, it it is a using a DEFAULT one ignore it
                 cellRendererPromise = this.userComponentFactory.newCellRenderer(groupedColumnDef, params);
             } else if (
-                groupColumnRendererClass &&
-                groupColumnRendererClass.source == ComponentSource.DEFAULT &&
+                groupColumnRendererClass && notGroupRowRenderer(groupColumnRendererClass) &&
                 (get(groupedColumnDef, 'cellRendererParams.innerRenderer', null))
             ) {
                 // EDGE CASE - THIS COMES FROM A COLUMN WHICH HAS BEEN GROUPED DYNAMICALLY, THAT HAS AS RENDERER 'group'
