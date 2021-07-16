@@ -165,7 +165,7 @@ export { TextCellEditor } from "./rendering/cellEditors/textCellEditor";
 export { ICellRenderer, ICellRendererFunc, ICellRendererComp, ICellRendererParams, ISetFilterCellRendererParams } from "./rendering/cellRenderers/iCellRenderer";
 export { AnimateShowChangeCellRenderer } from "./rendering/cellRenderers/animateShowChangeCellRenderer";
 export { AnimateSlideCellRenderer } from "./rendering/cellRenderers/animateSlideCellRenderer";
-export { GroupCellRenderer } from "./rendering/cellRenderers/groupCellRenderer";
+export { GroupCellRenderer, GroupCellRendererParams } from "./rendering/cellRenderers/groupCellRenderer";
 
 // status bar components
 export { StatusPanelDef, IStatusPanel, IStatusPanelComp, IStatusPanelParams } from "./interfaces/iStatusPanel";
