@@ -7,6 +7,7 @@ import { KeyCode } from '../constants/keyCode';
 import { ResizeObserverService } from "../misc/resizeObserverService";
 import { waitUntil } from '../utils/function';
 import { ManagedFocusContainer } from './managedFocusContainer';
+import { FocusService } from '../focusService';
 
 export interface VirtualListModel {
     getRowCount(): number;
@@ -23,6 +24,7 @@ export class VirtualList extends ManagedFocusContainer {
     private isDestroyed = false;
 
     @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
+    @Autowired('focusService') private readonly focusService: FocusService;
     @RefSelector('eContainer') private readonly eContainer: HTMLElement;
 
     constructor(private readonly cssIdentifier = 'default', private readonly ariaRole = 'listbox') {

@@ -1,32 +1,36 @@
-import { PostConstruct, Autowired } from "../context/context";
+import { PostConstruct } from "../context/context";
 import { Component } from "./component";
-import { FocusService } from "../focusService";
 import { isNodeOrElement, clearElement } from "../utils/dom";
-import { ManagedFocusFeature } from "./managedFocusFeature";
+import { ManagedFocusContainerCtrl, IManagedFocusContainer } from "./managedFocusContainerCtrl";
 
 export class ManagedFocusContainer extends Component {
-
-    @Autowired('focusService') protected focusService: FocusService;
 
     private topTabGuard: HTMLElement;
     private bottomTabGuard: HTMLElement;
     private skipTabGuardFocus: boolean = false;
+    private managedFocusContainerCtrl: ManagedFocusContainerCtrl;
 
     @PostConstruct
     protected postConstruct() {
         this.topTabGuard = this.createTabGuard('top');
         this.bottomTabGuard = this.createTabGuard('bottom');
+
+        const compProxy: IManagedFocusContainer = {
+            getFocusableElement: () => this.getFocusableElement(),
+            tabGuardsAreActive: () => this.tabGuardsAreActive(),
+            shouldStopEventPropagation: () => this.shouldStopEventPropagation(),
+            onTabKeyDown: (e: KeyboardEvent) => this.onTabKeyDown(e),
+            handleKeyDown: (e: KeyboardEvent) => this.handleKeyDown(e),
+            onFocusIn: (e: FocusEvent) => this.onFocusIn(e),
+            onFocusOut: (e: FocusEvent) => this.onFocusOut(e)
+        }
+
+        this.managedFocusContainerCtrl = this.createManagedBean(new ManagedFocusContainerCtrl());
+        this.managedFocusContainerCtrl.setComp(compProxy);
+
         this.addTabGuards();
         this.activateTabGuards();
         this.forEachTabGuard(guard => this.addManagedListener(guard, 'focus', this.onFocus.bind(this)));
-        this.createManagedBean(new ManagedFocusFeature(
-            this.getFocusableElement(),
-            this.shouldStopEventPropagation.bind(this),
-            this.onTabKeyDown.bind(this),
-            this.handleKeyDown.bind(this),
-            this.onFocusIn.bind(this),
-            this.onFocusOut.bind(this)
-        ));
     }
 
     private onFocus(e: FocusEvent): void {
@@ -38,30 +42,18 @@ export class ManagedFocusContainer extends Component {
         this.focusInnerElement(e.target === this.bottomTabGuard);
     }
 
+    protected focusInnerElement(fromBottom?: boolean) {
+        return this.managedFocusContainerCtrl.focusInnerElement(fromBottom);
+    }
+
     protected shouldStopEventPropagation(): boolean {
         return false;
     }
 
-    protected handleKeyDown(e: KeyboardEvent): void {
+    protected handleKeyDown(e: KeyboardEvent): void { }
 
-    }
-
-    protected focusInnerElement(fromBottom = false): void {
-        const focusable = this.focusService.findFocusableElements(this.getFocusableElement());
-    
-        if (this.tabGuardsAreActive()) {
-            // remove tab guards from this component from list of focusable elements
-            focusable.splice(0, 1);
-            focusable.splice(focusable.length - 1, 1);
-        }
-    
-        if (!focusable.length) { return; }
-    
-        focusable[fromBottom ? focusable.length - 1 : 0].focus();
-    }
-    
     private activateTabGuards(): void {
-        this.forEachTabGuard(guard => guard.setAttribute('tabIndex', this.gridOptionsWrapper.getGridTabIndex()));
+        this.forEachTabGuard(guard => guard.setAttribute('tabIndex', this.managedFocusContainerCtrl.getGridTabIndex()));
     }
     
     private deactivateTabGuards(): void {
@@ -103,7 +95,7 @@ export class ManagedFocusContainer extends Component {
             this.deactivateTabGuards();
         }
 
-        const nextRoot = this.focusService.findNextFocusableElement(this.getFocusableElement(), false, e.shiftKey);
+        const nextRoot = this.managedFocusContainerCtrl.getNextFocusableElement(e.shiftKey);
 
         if (tabGuardsAreActive) {
             // ensure the tab guards are only re-instated once the event has finished processing, to avoid the browser

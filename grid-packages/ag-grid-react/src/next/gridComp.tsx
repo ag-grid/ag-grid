@@ -9,6 +9,7 @@ import {
 import { GridBodyComp } from './gridBodyComp';
 import { classesList } from './utils';
 import { PopupParent } from './popupParent';
+import { ManagedFocusContainer } from './managedFocusContainer';
 
 export const GridComp = (props: { context: Context }) => {
 
@@ -68,7 +69,7 @@ export const GridComp = (props: { context: Context }) => {
     }, [props]);
 
     const rootWrapperClasses = classesList('ag-root-wrapper', rtlClass, keyboardFocusClass, layoutClass);
-    const rootWrapperBodyClasses = classesList('ag-root-wrapper-body', layoutClass);
+    const rootWrapperBodyClasses = classesList('ag-root-wrapper-body', 'ag-focus-managed', layoutClass);
 
     const topStyle = {
         "user-select": userSelect != null ? userSelect : '',
@@ -78,18 +79,20 @@ export const GridComp = (props: { context: Context }) => {
 
     return (
         <div ref={ eRootWrapper } className={ rootWrapperClasses } style={ topStyle }>
-            { props.context &&
-            <div className={ rootWrapperBodyClasses } ref={ eGridBodyParent }>
-                { // we wait for initialised before rending the children, so GridComp has created and registered with it's
-                  // GridCtrl before we create the child GridBodyComp. Otherwise the GridBodyComp would initialise first,
-                  // before we have set the the Layout CSS classes, causing the GridBodyComp to render rows to a grid that
-                  // doesn't have it's height specified, which would result if all the rows getting rendered (and if many rows,
-                  // hangs the UI)
-                    initialised && <GridBodyComp context={ props.context }/> 
+                { props.context &&
+                <div className={ rootWrapperBodyClasses } ref={ eGridBodyParent }>
+                    <ManagedFocusContainer context={ props.context } focusableElementRef= { eGridBodyParent }>
+                    { // we wait for initialised before rending the children, so GridComp has created and registered with it's
+                    // GridCtrl before we create the child GridBodyComp. Otherwise the GridBodyComp would initialise first,
+                    // before we have set the the Layout CSS classes, causing the GridBodyComp to render rows to a grid that
+                    // doesn't have it's height specified, which would result if all the rows getting rendered (and if many rows,
+                    // hangs the UI)
+                        initialised && <GridBodyComp context={ props.context }/> 
+                    }
+                    </ManagedFocusContainer>
+                </div>
                 }
-            </div>
-            }
-            { <PopupParent context={ props.context }></PopupParent> }
+                { <PopupParent context={ props.context }></PopupParent> }
         </div>
     );
 }

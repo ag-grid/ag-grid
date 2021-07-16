@@ -12,7 +12,7 @@ import { Logger, LoggerFactory } from "../logger";
 import { ResizeObserverService } from "../misc/resizeObserverService";
 import { GridSizeChangedEvent } from "../events";
 import { ColumnApi } from "../columns/columnApi";
-import { findIndex } from "../utils/array";
+import { findIndex, last } from "../utils/array";
 import { Column } from "../entities/column";
 import { ColumnGroup } from "../entities/columnGroup";
 import { ColumnModel } from "../columns/columnModel";
@@ -31,16 +31,16 @@ export interface IGridComp extends LayoutView {
 
 export class GridCtrl extends BeanStub {
 
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('popupService') private popupService: PopupService;
+    @Autowired('columnApi') private readonly columnApi: ColumnApi;
+    @Autowired('gridApi') private readonly gridApi: GridApi;
+    @Autowired('popupService') private readonly popupService: PopupService;
     @Autowired('focusService') protected readonly focusService: FocusService;
-    @Optional('clipboardService') private clipboardService: IClipboardService;
-    @Autowired('loggerFactory') loggerFactory: LoggerFactory;
-    @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('controllersService') private controllersService: ControllersService;
-    @Autowired('mouseEventService') private mouseEventService: MouseEventService;
+    @Optional('clipboardService') private readonly clipboardService: IClipboardService;
+    @Autowired('loggerFactory') private readonly loggerFactory: LoggerFactory;
+    @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
+    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('controllersService') private readonly controllersService: ControllersService;
+    @Autowired('mouseEventService') private readonly mouseEventService: MouseEventService;
 
     private view: IGridComp;
     private eGridHostDiv: HTMLElement;
@@ -157,6 +157,21 @@ export class GridCtrl extends BeanStub {
         }
 
         return this.focusService.focusInto(focusableContainers[nextIdx]);
+    }
+
+    public focusInnerElement(fromBottom?: boolean) {
+        const focusableContainers = this.view.getFocusableContainers();
+
+        if (fromBottom) {
+            if (focusableContainers.length > 1) {
+                return this.focusService.focusInto(last(focusableContainers));
+            }
+
+            const lastColumn = last(this.columnModel.getAllDisplayedColumns());
+            if (this.focusService.focusGridView(lastColumn, true)) { return true; }
+        }
+
+        return this.focusGridHeader();
     }
 
     public focusGridHeader(): boolean {

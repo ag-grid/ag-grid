@@ -1,12 +1,16 @@
 import {
     ManagedFocusContainer,
     MenuItemDef,
-    _,
     KeyCode,
+    Autowired,
+    FocusService,
+    _
 } from "@ag-grid-community/core";
 import { MenuItemComponent, MenuItemSelectedEvent, MenuItemActivatedEvent } from "./menuItemComponent";
 
 export class MenuList extends ManagedFocusContainer {
+
+    @Autowired('focusService') private readonly focusService: FocusService;
 
     private menuItems: MenuItemComponent[] = [];
     private activeMenuItem: MenuItemComponent | null;

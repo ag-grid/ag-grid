@@ -4,9 +4,7 @@ import { Autowired } from "../context/context";
 import { Component } from "../widgets/component";
 import { ISideBar } from "../interfaces/iSideBar";
 import { RefSelector } from "../widgets/componentAnnotations";
-import { ColumnModel } from "../columns/columnModel";
 import { addCssClass, addOrRemoveCssClass, isVisible } from "../utils/dom";
-import { last } from "../utils/array";
 import { FocusService } from "../focusService";
 import { GridCtrl, IGridComp } from "./gridCtrl";
 import { LayoutCssClasses, UpdateLayoutClassesParams } from "../styling/layoutFeature";
@@ -14,12 +12,11 @@ import { ManagedFocusContainer } from "../widgets/managedFocusContainer";
 
 export class GridComp extends ManagedFocusContainer {
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
+    @Autowired('loggerFactory') private readonly loggerFactory: LoggerFactory;
 
-    @RefSelector('gridBody') private gridBodyComp: GridBodyComp;
-    @RefSelector('sideBar') private sideBarComp: ISideBar & Component;
-    @RefSelector('rootWrapperBody') private eRootWrapperBody: HTMLElement;
+    @RefSelector('gridBody') private readonly gridBodyComp: GridBodyComp;
+    @RefSelector('sideBar') private readonly sideBarComp: ISideBar & Component;
+    @RefSelector('rootWrapperBody') private readonly eRootWrapperBody: HTMLElement;
 
     private logger: Logger;
     private eGridDiv: HTMLElement;
@@ -123,18 +120,7 @@ export class GridComp extends ManagedFocusContainer {
     }
 
     protected focusInnerElement(fromBottom?: boolean): boolean {
-        const focusableContainers = this.getFocusableContainers();
-
-        if (fromBottom) {
-            if (focusableContainers.length > 1) {
-                return this.focusService.focusInto(last(focusableContainers));
-            }
-
-            const lastColumn = last(this.columnModel.getAllDisplayedColumns());
-            if (this.focusService.focusGridView(lastColumn, true)) { return true; }
-        }
-
-        return this.ctrl.focusGridHeader();
+        return this.ctrl.focusInnerElement(fromBottom);
     }
 
     protected onTabKeyDown(): void { }

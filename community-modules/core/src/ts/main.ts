@@ -238,6 +238,7 @@ export { AgPanel } from "./widgets/agPanel";
 export { Component, VisibleChangedEvent } from "./widgets/component";
 export { ManagedFocusFeature } from "./widgets/managedFocusFeature";
 export { ManagedFocusContainer } from "./widgets/managedFocusContainer";
+export { ManagedFocusContainerCtrl, IManagedFocusContainer } from "./widgets/managedFocusContainerCtrl";
 export { PopupComponent } from "./widgets/popupComponent";
 export { PopupService, AgPopup } from "./widgets/popupService";
 export { TouchListener, TapEvent, LongTapEvent } from "./widgets/touchListener";
