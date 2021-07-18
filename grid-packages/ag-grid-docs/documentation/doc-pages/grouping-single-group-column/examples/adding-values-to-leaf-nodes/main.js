@@ -22,7 +22,8 @@ var gridOptions = {
         field: 'athlete',
         minWidth: 250,
     },
-    enableRangeSelection: true,
+    // optional as 'singleColumn' is the default group display type
+    groupDisplayType: 'singleColumn',
     animateRows: true,
 };
 

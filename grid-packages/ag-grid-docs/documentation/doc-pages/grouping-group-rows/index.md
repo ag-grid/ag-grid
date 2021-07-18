@@ -2,20 +2,20 @@
 title: "Row Grouping - Group Rows"
 enterprise: true
 ---
-This section shows how row groups can be displayed using group rows.
+
+This section covers the Group Rows display type, where group rows are automatically added by the grid containing the 
+row groups instead of group columns. This can be preferred if you have a lot of information you want to say about the group.
 
 <image-caption src="grouping-group-rows/resources/group-rows.png" alt="Group Rows" centered="true"></image-caption>
 
 ## Enabling Group Rows
 
-It is also possible to use group rows, instead of group columns, by setting `groupDisplayType = 'groupRows'` as shown below:
- 
-This can be preferred if you have a lot of information you want to say about the group.
+To display each row group using group rows set `groupDisplayType = 'groupRows'` as shown below:
 
 <snippet spaceBetweenProperties="true" inlineReactProperties="true">
 const gridOptions = {
     columnDefs: [
-        { field: 'country', rowGroup: true, hide: true }, 
+        { field: 'country', rowGroup: true }, 
         { field: 'sport' },
         { field: 'gold' },
         { field: 'silver' },

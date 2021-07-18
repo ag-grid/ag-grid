@@ -2,14 +2,15 @@
 title: "Row Grouping - Single Group Column"
 enterprise: true
 ---
-This section explains how to use display a single column tree that contains a row grouping hierarchy.
+
+This section covers the Single Group Column display type, where a single group column is automatically added by the grid
+containing all row groups under a single row group hierarchy.
 
 <image-caption src="grouping-single-group-column/resources/single-group-column.png" alt="Single Group Column" centered="true"></image-caption>
 
 ## Enabling Single Group Column
 
-When there is at least one active row group, a single group column containing a row grouping hierarchy will be added to
-the left-hand side of the grid. To group rows by a particular column, enable the `rowGroup` column property as shown below:
+A single column is the default group display type, but it can be set explicitly using `groupDisplayType = 'singleColumn'` as shown below:
 
 <snippet spaceBetweenProperties="true">
 const gridOptions = {
@@ -37,6 +38,40 @@ The example below demonstrates the default row grouping behaviour. Note the foll
 - The number of grouped rows is shown in parentheses at each row group level.
 
 <grid-example title='Single Group Column' name='single-group-column' type='generated' options='{ "enterprise": true, "exampleHeight": 540, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+
+## Group Column Configuration  
+
+The Single Group Column display type adds a single Auto Group Column to the grid. To change the default configuration
+of this group column, use the `autoGroupColumnDef` grid option as shown below:
+
+<snippet>
+const gridOptions = {
+    autoGroupColumnDef: {
+        headerName: 'My Group',
+        minWidth: 220,
+        cellRendererParams: {
+            suppressCount: true,
+            checkbox: true,
+        }
+    },
+}
+</snippet>
+
+Note how in the snippet above that the `autoGroupColumnDef` can be used to override any [Column Property](/column-definitions/). 
+
+The Auto Group Column uses the [Group Cell Renderer](/group-cell-renderer/) to render group cells, and are configured via the `cellRendererParams` property.
+
+The following example demonstrates some of the available `autoGroupColumnDef` configurations. Note that:
+
+- The group column name is changed by setting `headerName = 'My Group'`.
+
+- The min width of the group column is changed via `minWidth = 220`.  
+
+- The count of each row group is removed by setting `cellRendererParams.suppressCount = true`.
+
+- Checkboxes are displayed beside each row group by setting `cellRendererParams.checkbox = true`.
+
+<grid-example title='Single Group Column Configuration' name='single-group-column-configuration' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
 ## Row Group Order
 

@@ -2,14 +2,9 @@ var gridOptions = {
     columnDefs: [
         { field: 'country', rowGroup: true, hide: true },
         { field: 'year', rowGroup: true, hide: true },
-        { field: 'sport', minWidth: 200 },
-        { field: 'athlete', minWidth: 200 },
-        { field: 'gold' },
-        { field: 'silver' },
-        { field: 'bronze' },
-        { field: 'total' },
-        { field: 'age' },
-        { field: 'date', minWidth: 140 },
+        { field: 'athlete' },
+        { field: 'sport' },
+        { field: 'total' }
     ],
     defaultColDef: {
         flex: 1,
@@ -18,26 +13,17 @@ var gridOptions = {
         resizable: true,
     },
     autoGroupColumnDef: {
-        headerName: ' CUSTOM! ',
-        minWidth: 200,
+        headerName: 'My Group',
+        minWidth: 220,
         cellRendererParams: {
             suppressCount: true,
             checkbox: true
-        },
-        comparator: function(valueA, valueB) {
-            if (valueA == null || valueB == null) return valueA - valueB;
-            if (!valueA.substring || !valueB.substring) return valueA - valueB;
-            if (valueA.length < 1 || valueB.length < 1) return valueA - valueB;
-            return strcmp(valueA.substring(1, valueA.length), valueB.substring(1, valueB.length));
         }
     },
-    enableRangeSelection: true,
+    // optional as 'singleColumn' is the default group display type
+    groupDisplayType: 'singleColumn',
     animateRows: true,
 };
-
-function strcmp(a, b) {
-    return (a < b ? -1 : (a > b ? 1 : 0));
-}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {

@@ -33,6 +33,9 @@ var gridOptions = {
     },
     rowData: rowData,
 
+    // optional as 'singleColumn' is the default group display type
+    groupDisplayType: 'singleColumn',
+
     // set this to true to remove single children
     groupRemoveSingleChildren: false,
 

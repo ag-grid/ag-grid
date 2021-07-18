@@ -7,7 +7,7 @@ This section covers Row Grouping with links to sub sections that cover the vario
 
 <image-caption src="grouping/resources/row-grouping.gif" alt="Row Grouping" ></image-caption>
 
-## Enabling Row Grouping
+## Enabling Default Row Grouping
 
 When there is at least one active row group, a single group column containing a row grouping hierarchy will be added to
 the left-hand side of the grid. To group rows by a particular column, enable the `rowGroup` column property as shown below:

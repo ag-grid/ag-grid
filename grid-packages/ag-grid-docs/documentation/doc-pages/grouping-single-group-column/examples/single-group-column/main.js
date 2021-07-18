@@ -15,7 +15,8 @@ var gridOptions = {
     autoGroupColumnDef: {
         minWidth: 200,
     },
-    groupDisplayType: 'singleColumn', // optional as 'singleColumn' is the default group display type
+    // optional as 'singleColumn' is the default group display type
+    groupDisplayType: 'singleColumn',
     animateRows: true,
 };
 

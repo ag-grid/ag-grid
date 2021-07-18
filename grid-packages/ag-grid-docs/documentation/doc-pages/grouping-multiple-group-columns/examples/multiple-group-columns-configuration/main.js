@@ -1,12 +1,10 @@
 var gridOptions = {
     columnDefs: [
-        { field: 'country', rowGroupIndex: 1, hide: true },
-        { field: 'year', rowGroupIndex: 0, hide: true },
-        { field: 'sport', },
+        { field: 'country', rowGroup: true, hide: true },
+        { field: 'year', rowGroup: true, hide: true },
         { field: 'athlete' },
-        { field: 'gold' },
-        { field: 'silver' },
-        { field: 'bronze' },
+        { field: 'sport' },
+        { field: 'total' }
     ],
     defaultColDef: {
         flex: 1,
@@ -15,10 +13,14 @@ var gridOptions = {
         resizable: true,
     },
     autoGroupColumnDef: {
-        minWidth: 250,
+        headerValueGetter: params => `${params.colDef.headerName} Group Column`,
+        minWidth: 220,
+        cellRendererParams: {
+            suppressCount: true,
+            checkbox: true,
+        }
     },
-    // optional as 'singleColumn' is the default group display type
-    groupDisplayType: 'singleColumn',
+    groupDisplayType: 'multipleColumns',
     animateRows: true,
 };
 
