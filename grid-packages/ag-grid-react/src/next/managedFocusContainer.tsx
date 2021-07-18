@@ -8,8 +8,9 @@ import {
 export const ManagedFocusContainer: FC<{ 
     children: React.ReactNode,
     context: Context
-    focusableElementRef: React.RefObject<HTMLDivElement>
-}> = ({ children, context, focusableElementRef }) => {
+    focusableElementRef: React.RefObject<HTMLDivElement>,
+    focusInnerElement: (fromBottom?: boolean) => void
+}> = ({ children, context, focusableElementRef, focusInnerElement }) => {
     const topTabGuardRef = useRef<HTMLDivElement>(null);
     const bottomTabGuardRef = useRef<HTMLDivElement>(null);
     const [activeTabGuards, setActiveTabGuards] = useState(true);
@@ -64,7 +65,7 @@ export const ManagedFocusContainer: FC<{
                 setSkipTabGuards(false);
                 return;
             }
-            ctrl.focusInnerElement(e.target === bottomTabGuard);
+            focusInnerElement(e.target === bottomTabGuard);
         }
 
         topTabGuard.addEventListener('focus', onFocus)
@@ -76,7 +77,7 @@ export const ManagedFocusContainer: FC<{
             bottomTabGuard.removeEventListener('focus', onFocus)
         };
 
-    }, [activeTabGuards, context, focusableElementRef, skipTabGuards])
+    }, [activeTabGuards, context, focusableElementRef, skipTabGuards, focusInnerElement])
 
     const createTabGuard = (side: 'top' | 'bottom') => (
         <div 

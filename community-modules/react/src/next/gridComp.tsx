@@ -8,7 +8,6 @@ import {
 } from '@ag-grid-community/core';
 import { GridBodyComp } from './gridBodyComp';
 import { classesList } from './utils';
-import { PopupParent } from './popupParent';
 import { ManagedFocusContainer } from './managedFocusContainer';
 
 export const GridComp = (props: { context: Context }) => {
@@ -22,6 +21,7 @@ export const GridComp = (props: { context: Context }) => {
 
     const eRootWrapper = useRef<HTMLDivElement>(null);
     const eGridBodyParent = useRef<HTMLDivElement>(null);
+    const focusInnerElement = useRef<((fromBottom?: boolean) => void)>(() => undefined);
 
     // initialise the UI
     useEffect(() => {
@@ -31,6 +31,7 @@ export const GridComp = (props: { context: Context }) => {
         if (!props || !props.context) { return; }
 
         const ctrl = context.createBean(new GridCtrl());
+        focusInnerElement.current = ctrl.focusInnerElement.bind(ctrl);
 
         beansToDestroy.push(ctrl);
 
@@ -81,7 +82,7 @@ export const GridComp = (props: { context: Context }) => {
         <div ref={ eRootWrapper } className={ rootWrapperClasses } style={ topStyle }>
                 { props.context &&
                 <div className={ rootWrapperBodyClasses } ref={ eGridBodyParent }>
-                    <ManagedFocusContainer context={ props.context } focusableElementRef= { eGridBodyParent }>
+                    <ManagedFocusContainer context={ props.context } focusableElementRef= { eGridBodyParent } focusInnerElement={ (fromBottom?: boolean) => focusInnerElement.current(fromBottom) }>
                     { // we wait for initialised before rending the children, so GridComp has created and registered with it's
                     // GridCtrl before we create the child GridBodyComp. Otherwise the GridBodyComp would initialise first,
                     // before we have set the the Layout CSS classes, causing the GridBodyComp to render rows to a grid that
