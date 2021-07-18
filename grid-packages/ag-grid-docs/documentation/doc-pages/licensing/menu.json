@@ -987,8 +987,8 @@
             "showInCollapsed": true
           },
           {
-            "title": "Hierarchical Data",
-            "url": "/hierarchical-data/",
+            "title": "Tree Data",
+            "url": "/tree-data/",
             "enterprise": true,
             "showInCollapsed": true
           },
