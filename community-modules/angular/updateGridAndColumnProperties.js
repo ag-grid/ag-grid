@@ -2,6 +2,7 @@ const replace = require('replace-in-file');
 const typescriptSimple = require('typescript-simple');
 const fs = require('fs');
 const { EOL } = require('os');
+const ts = require('typescript');
 
 // satisfy ag-grid HTMLElement dependencies
 HTMLElement = typeof HTMLElement === 'undefined' ? function() {
@@ -22,17 +23,72 @@ function getGridPropertiesAndEventsJs() {
 
     const skippableProperties = ['gridOptions'];
 
+    let parsedSyntaxTreeResults;
+    let typeLookup = {};
+    let eventTypeLookup = {};
+    const filename = "../../community-modules/core/src/ts/entities/gridOptions.ts";
+    const src = fs.readFileSync(filename, 'utf8');
+    parsedSyntaxTreeResults = ts.createSourceFile('gridOps.ts', src, ts.ScriptTarget.Latest, true);
+
+    const publicEventLookup = {};
+    ComponentUtil.PUBLIC_EVENTS.forEach(e => publicEventLookup[ComponentUtil.getCallbackForEvent(e)] = true);
+
+
+    function extractTypesFromGridOptions(node, inGridOptions) {
+        const kind = ts.SyntaxKind[node.kind];
+        let internalGridOps = inGridOptions;
+        if (inGridOptions || kind == 'InterfaceDeclaration' && node && node.name && node.name.escapedText == 'GridOptions') {
+            const name = node && node.name && node.name.escapedText;
+            if (kind == 'PropertySignature') {
+                const typeName = node && node.type && node.type.getFullText();
+                typeLookup[name] = typeName;
+            } else if (kind == 'MethodSignature') {
+                const returnType = node && node.type && node.type.getFullText();
+
+                const getParamType = (typeNode) => {
+                    switch (ts.SyntaxKind[typeNode.kind]) {
+                        case 'ArrayType':
+                            return typeNode.elementType.typeName.escapedText + '[]';
+                        case 'AnyKeyword':
+                            return 'any';
+                        default:
+                            return typeNode.typeName.escapedText;
+                    }
+                }
+
+                if (node.parameters && node.parameters.length > 0) {
+                    const methodParams = node.parameters.map(p => `${p.name.escapedText}: ${getParamType(p.type)}`);
+                    typeLookup[name] = `(${methodParams.join(', ')}) => ${returnType}`;
+                } else {
+                    typeLookup[name] = `() => ${returnType}`
+                }
+
+                if (publicEventLookup[name]) {
+                    const typeName = node.parameters[0].type.typeName.escapedText;
+                    eventTypeLookup[name] = typeName;
+                }
+            };
+            internalGridOps = true;
+        }
+        ts.forEachChild(node, n => extractTypesFromGridOptions(n, internalGridOps));
+    }
+
+    extractTypesFromGridOptions(parsedSyntaxTreeResults, false);
+
+
     ComponentUtil.ALL_PROPERTIES.forEach((property) => {
         if (skippableProperties.indexOf(property) === -1) {
-            result += `    @Input() public ${property}: any = undefined;${EOL}`;
+            const typeName = typeLookup[property] || 'any'
+            result += `    @Input() public ${property}: ${typeName.trim()} | undefined = undefined;${EOL}`;
         }
     });
 
     // for readability
     result += EOL;
 
-    ComponentUtil.EVENTS.forEach((event) => {
-        result += `    @Output() public ${event}: EventEmitter<any> = new EventEmitter<any>();${EOL}`;
+    ComponentUtil.PUBLIC_EVENTS.forEach((event) => {
+        const onEvent = ComponentUtil.getCallbackForEvent(event);
+        result += `    @Output() public ${event}: EventEmitter<${eventTypeLookup[onEvent]}> = new EventEmitter<${eventTypeLookup[onEvent]}>();${EOL}`;
     });
 
     return result;

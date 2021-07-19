@@ -23,18 +23,17 @@ function getGridPropertiesAndEventsJs() {
     const skippableProperties = ['gridOptions'];
 
     let parsedSyntaxTreeResults;
-    let typeLookup = { undefined: undefined };
-    let eventTypeLookup = { undefined: undefined };
-    try {
-        const filename = "../../community-modules/core/src/ts/entities/gridOptions.ts";
-        const src = fs.readFileSync(filename, 'utf8');
-        parsedSyntaxTreeResults = ts.createSourceFile('gridOps.ts', src, ts.ScriptTarget.Latest, true);
+    let typeLookup = {};
+    let eventTypeLookup = {};
+    const filename = "../../community-modules/core/src/ts/entities/gridOptions.ts";
+    const src = fs.readFileSync(filename, 'utf8');
+    parsedSyntaxTreeResults = ts.createSourceFile('gridOps.ts', src, ts.ScriptTarget.Latest, true);
 
-        const publicEventLookup = {};
-        ComponentUtil.PUBLIC_EVENTS.forEach(e => publicEventLookup[ComponentUtil.getCallbackForEvent(e)] = true);
+    const publicEventLookup = {};
+    ComponentUtil.PUBLIC_EVENTS.forEach(e => publicEventLookup[ComponentUtil.getCallbackForEvent(e)] = true);
 
 
-        function print(node, inGridOptions) {
+    function extractTypesFromGridOptions(node, inGridOptions) {
             const kind = ts.SyntaxKind[node.kind];
             let internalGridOps = inGridOptions;
             if (inGridOptions || kind == 'InterfaceDeclaration' && node && node.name && node.name.escapedText == 'GridOptions') {
@@ -70,19 +69,17 @@ function getGridPropertiesAndEventsJs() {
                 };
                 internalGridOps = true;
             }
-            ts.forEachChild(node, n => print(n, internalGridOps));
+        ts.forEachChild(node, n => extractTypesFromGridOptions(n, internalGridOps));
         }
 
-        print(parsedSyntaxTreeResults, false);
+    extractTypesFromGridOptions(parsedSyntaxTreeResults, false);
 
-    } catch (error) {
-        const errorMsg = 'To troubleshoot paste snippet here: \'https://esprima.org/demo/parse.html\'';
-        return `${error}\n\n${errorMsg}\n\n${this.snippet}`;
-    }
+
 
     ComponentUtil.ALL_PROPERTIES.forEach((property) => {
         if (skippableProperties.indexOf(property) === -1) {
-            result += `    @Input() public ${property}: ${typeLookup[property].trim()} | undefined = undefined;\n`;
+            const typeName = typeLookup[property] || 'any'
+            result += `    @Input() public ${property}: ${typeName.trim()} | undefined = undefined;\n`;
         }
     });
 
