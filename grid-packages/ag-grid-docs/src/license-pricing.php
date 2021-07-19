@@ -86,19 +86,6 @@ gtm_data_layer('community-enterprise');
             <section class="packages">
                 <div>
                     <div>
-                        <img src="./images/coronavirus.png" style="max-width: 50px;" alt="Coronavirus Update" />
-                    </div>
-                    <div>
-                        <h3>Coronavirus Update</h3>
-                        <p>
-                            AG Grid is open for business. We have activated our
-                            contingency plan which is to allow all staff to work from home.
-                            Please continue to get in touch with your interest.
-                        </p>
-                    </div>
-                </div>
-                <div>
-                    <div>
                         <img src="./images/pricing/Community.svg" style="max-width: 50px;" alt="MIT" />
                     </div>
                     <div>
