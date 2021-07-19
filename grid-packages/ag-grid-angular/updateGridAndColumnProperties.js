@@ -24,10 +24,14 @@ function getGridPropertiesAndEventsJs() {
 
     let parsedSyntaxTreeResults;
     let typeLookup = { undefined: undefined };
+    let eventTypeLookup = { undefined: undefined };
     try {
         const filename = "../../community-modules/core/src/ts/entities/gridOptions.ts";
         const src = fs.readFileSync(filename, 'utf8');
         parsedSyntaxTreeResults = ts.createSourceFile('gridOps.ts', src, ts.ScriptTarget.Latest, true);
+
+        const publicEventLookup = {};
+        ComponentUtil.PUBLIC_EVENTS.forEach(e => publicEventLookup[ComponentUtil.getCallbackForEvent(e)] = true);
 
 
         function print(node, inGridOptions) {
@@ -39,12 +43,29 @@ function getGridPropertiesAndEventsJs() {
                     const typeName = node && node.type && node.type.getFullText();
                     typeLookup[name] = typeName;
                 } else if (kind == 'MethodSignature') {
-                    const typeName = node && node.type && node.type.getFullText();
-                    typeLookup[name] = typeName;
+                    const returnType = node && node.type && node.type.getFullText();
 
-                    if (name.startsWith('on')) {
+                    const getParamType = (typeNode) => {
+                        switch (ts.SyntaxKind[typeNode.kind]) {
+                            case 'ArrayType':
+                                return typeNode.elementType.typeName.escapedText + '[]';
+                            case 'AnyKeyword':
+                                return 'any';
+                            default:
+                                return typeNode.typeName.escapedText;
+                        }
+                    }
+
+                    if (node.parameters && node.parameters.length > 0) {
+                        const methodParams = node.parameters.map(p => `${p.name.escapedText}: ${getParamType(p.type)}`);
+                        typeLookup[name] = `(${methodParams.join(', ')}) => ${returnType}`;
+                    } else {
+                        typeLookup[name] = `() => ${returnType}`
+                    }
+
+                    if (publicEventLookup[name]) {
                         const typeName = node.parameters[0].type.typeName.escapedText;
-                        typeLookup[name] = typeName;
+                        eventTypeLookup[name] = typeName;
                     }
                 };
                 internalGridOps = true;
@@ -61,16 +82,16 @@ function getGridPropertiesAndEventsJs() {
 
     ComponentUtil.ALL_PROPERTIES.forEach((property) => {
         if (skippableProperties.indexOf(property) === -1) {
-            result += `    @Input() public ${property} : ${typeLookup[property]} | undefined = undefined;\n`;
+            result += `    @Input() public ${property}: ${typeLookup[property].trim()} | undefined = undefined;\n`;
         }
     });
 
     // for readability
     result += '\n';
 
-    ComponentUtil.EVENTS.filter(e => !ComponentUtil.INTERNAL_EVENTS.includes(e)).forEach((event) => {
+    ComponentUtil.PUBLIC_EVENTS.forEach((event) => {
         const onEvent = ComponentUtil.getCallbackForEvent(event);
-        result += `    @Output() public ${event}: EventEmitter<${typeLookup[onEvent]}> = new EventEmitter<${typeLookup[onEvent]}>();\n`;
+        result += `    @Output() public ${event}: EventEmitter<${eventTypeLookup[onEvent]}> = new EventEmitter<${eventTypeLookup[onEvent]}>();\n`;
     });
 
     return result;
