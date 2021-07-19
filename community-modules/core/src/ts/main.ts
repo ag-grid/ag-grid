@@ -362,7 +362,8 @@ export {
     GetServerSideGroupKey,
     IsServerSideGroup,
     GetChartToolbarItems,
-    FillOperationParams 
+    FillOperationParams,
+    RowGroupingDisplayType
 } from "./entities/gridOptions";
 
 export * from "./propertyKeys";
