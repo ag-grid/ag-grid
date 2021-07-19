@@ -52,7 +52,7 @@ function rectContainsRect(r1x: number, r1y: number, r1w: number, r1h: number, r2
  * @param bounds Bounds to fit the labels into. If a label can't be fully contained, it doesn't fit.
  * @returns Placed labels for the given series (in the given order).
  */
-export function placeLabels(data: (readonly PointLabelDatum[])[], bounds?: Bounds, padding = 5): PlacedLabel[][] {
+export function placeLabels(data: readonly (readonly PointLabelDatum[])[], bounds?: Bounds, padding = 5): PlacedLabel[][] {
     const result: PlacedLabel[][] = [];
 
     data = data.map(d => d.slice().sort((a, b) => b.size - a.size));

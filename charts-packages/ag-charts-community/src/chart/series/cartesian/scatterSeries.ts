@@ -313,14 +313,6 @@ export class ScatterSeries extends CartesianSeries {
     }
 
     private updateLabelSelection(nodeData: ScatterNodeDatum[]): void {
-        // const seriesRect = this.chart && this.chart.getSeriesRect();
-        // const boundsRect = {
-        //     x: 0,
-        //     y: 0,
-        //     width: seriesRect && seriesRect.width || Infinity,
-        //     height: seriesRect && seriesRect.height || Infinity
-        // };
-        // const placedLabels = this.label.enabled ? placeLabels([nodeData], boundsRect)[0] : [];
         const placedLabels: PlacedLabel[] = this.chart && this.chart.placeLabels().get(this) || [];
         const updateLabels = this.labelSelection.setData(placedLabels);
         updateLabels.exit.remove();
