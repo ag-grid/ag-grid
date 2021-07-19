@@ -15,8 +15,9 @@ To display each row group under a separate group column set `groupDisplayType = 
 <snippet spaceBetweenProperties="true" inlineReactProperties="true">
 const gridOptions = {
     columnDefs: [
-        { field: 'country', rowGroup: true },
-        { field: 'year', rowGroup: true },
+        { field: 'country', rowGroup: true, hide: true },
+        { field: 'year', rowGroup: true, hide: true },
+        { field: 'athlete' },
         { field: 'sport' },
         { field: 'total' }
     ],
@@ -30,11 +31,13 @@ declared, and a group column displayed for each column that we are grouping by.
 
 This is demonstrated in the following example, note the following:
 
+- There are two active row groups as the supplied `country` and `year` column definitions have `rowGroup=true` declared.
+
 - Separate group columns are displayed for `country` and `year` as `groupDisplayType = 'multipleColumns'`.
 
-- The `country` and `year` columns used for grouping are hidden, by enabling the `hide` column property, as they are redundant.
+- The `country` and `year` columns are not shown in the grid as `hide=true` is set on their column definitions.
 
-<grid-example title='Multiple Group Columns' name='multiple-group-columns' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+<grid-example title='Enabling Multiple Group Columns' name='enabling-multiple-group-columns' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
 ## Group Column Configuration
 
@@ -118,3 +121,7 @@ The example below demonstrates hiding open parents using auto group columns. To 
 Filter is achieved for each column by providing a `filterValueGetter` for the `autoGroupColumnDef`. The filterValueGetter returns the value of the grouped column - eg for Country, it will filter on Country.
 
 <grid-example title='Hide Open Parents' name='hide-open-parents' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "setfilter"] }'></grid-example>
+
+## Next Up
+
+Continue to the next section to learn about the [Group Rows](../grouping-group-rows/) display type.

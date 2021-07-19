@@ -1,7 +1,7 @@
 var gridOptions = {
     columnDefs: [
-        { field: 'country', rowGroup: true },
-        { field: 'year', rowGroup: true },
+        { field: 'country', rowGroup: true, hide: true },
+        { field: 'year', rowGroup: true, hide: true },
         { field: 'athlete' },
         { field: 'sport' },
         { field: 'total' }
@@ -15,8 +15,7 @@ var gridOptions = {
     autoGroupColumnDef: {
         minWidth: 200,
     },
-    // optional as 'singleColumn' is the default group display type
-    groupDisplayType: 'singleColumn',
+    groupDisplayType: 'multipleColumns',
     animateRows: true,
 };
 

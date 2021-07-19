@@ -15,38 +15,51 @@ To display each row group using group rows set `groupDisplayType = 'groupRows'` 
 <snippet spaceBetweenProperties="true" inlineReactProperties="true">
 const gridOptions = {
     columnDefs: [
-        { field: 'country', rowGroup: true }, 
+        { field: 'country', rowGroup: true },
+        { field: 'year', rowGroup: true },
         { field: 'sport' },
-        { field: 'gold' },
-        { field: 'silver' },
-        { field: 'bronze' },
+        { field: 'total' }
     ],
     // display each row grouping in group rows
     groupDisplayType: 'groupRows', 
 }
 </snippet>
 
-The following example shows the first example in this page, the Auto Column Group example, using full width rows. Note that all that is necessary to achieve this it to add `groupUseEntireRow:true` to your gridOptions
+In the snippet above, rows will be grouped by `country` and `year` as both column definitions have `rowGroup=true` declared.
+These row groups will be displayed using Group Rows as `groupDisplayType = 'groupRows'`.
 
-<grid-example title='Group Rows' name='group-rows' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+The example below demonstrates the Group Rows display type. Note the following:
 
-## Configuring Full Width Group Rows
+- There are two active row groups as the supplied `country` and `year` column definitions have `rowGroup=true` declared.
 
-When using Full Width Group Rows, it is possible to change the rendering of the group row. This done by either replacing the Cell Renderer with your own [Custom Cell Renderer](/component-cell-renderer/), or configuring the provided [Group Cell Renderer](/group-cell-renderer/).
+- Instead of group columns, the row groups are displayed using full width group rows as `groupDisplayType = 'groupRows'`.
 
-If using Full Width Group Rows and no `groupRowRenderer` properties are provided, then the default [Group Cell Renderer](/group-cell-renderer/) is used with it's default values.
+- The `country` and `year` columns are not shown in the grid as `hide=true` is set on their column definitions.
+
+- Styling has been added to the group rows to highlight the different group levels.
+
+<grid-example title='Enabling Group Rows' name='enabling-group-rows' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+
+## Group Row Configuration
+
+When using Group Rows, it is possible to change the rendering of the group row. This done by either replacing the 
+Cell Renderer with your own [Custom Cell Renderer](/component-cell-renderer/), or configuring the provided 
+[Group Cell Renderer](/group-cell-renderer/).
+
+If using Group Rows and no `groupRowRenderer` properties are provided, then the default 
+[Group Cell Renderer](/group-cell-renderer/) is used with it's default values.
 
 <snippet>
 const gridOptions = {
     // groups by row - the grid defaults to using the default group cell renderer for the row with default settings.
-    groupUseEntireRow: true,
+    groupDisplayType: 'groupRows', 
 }
 </snippet>
 
 <snippet>
 const gridOptions = {
     // identical to above - uses 'agGroupCellRenderer' which is the default, so doesn't change anything.
-    groupUseEntireRow: true,
+    groupDisplayType: 'groupRows',
     groupRowRenderer: 'agGroupCellRenderer',
 }
 </snippet>
@@ -56,12 +69,13 @@ const gridOptions = {
 
 To provide your own Cell Renderer, use the grid properties `groupRowRenderer`, `groupRowRendererFramework` and `groupRowRendererParams`.
 
-Using your own Cell Renderer hands over rendering of the full row to your custom Cell Renderer. However that also means the customer Cell Renderer will also need to provide expand / collapse functionality.
+Using your own Cell Renderer hands over rendering of the group row to your custom Cell Renderer. However, that also means
+the customer Cell Renderer will also need to provide expand / collapse functionality.
 
 <snippet>
 const gridOptions = {
-    // configures Full Width rows with a customer Cell Renderer
-    groupUseEntireRow: true,
+    // configures Group Rows with a customer Cell Renderer
+    groupDisplayType: 'groupRows', 
     groupRowRenderer: 'myCellRenderer',
     groupRowRendererParams: {
         someProp: 'someValue',
@@ -71,13 +85,13 @@ const gridOptions = {
 
 ### Configuring Group Cell Renderer
 
-Configure the default Group Cell Renderer using `groupRowRendererParams`. Full details on what to configure are provided in the page
-[Group Cell Renderer](/group-cell-renderer/).
+Configure the default Group Cell Renderer using `groupRowRendererParams`. Full details on what to configure are provided
+in the page [Group Cell Renderer](/group-cell-renderer/).
 
 <snippet>
 const gridOptions = {
-    // use Full Width group rows and configure the Group Cell Renderer
-    groupUseEntireRow: true,
+    // use Group Rows and configure the Group Cell Renderer
+    groupDisplayType: 'groupRows', 
     groupRowRendererParams: {
         // puts a checkbox onto each group row
         checkbox: true,
@@ -87,7 +101,9 @@ const gridOptions = {
 }
 </snippet>
 
-Below shows an example of aggregating with full width rows for groups. It also provides an `innerRenderer` to configure what gets displaying inside the row groups, however it keeps the Default Group Cell Renderer for it's expand / collapse functionality. The following can be noted:
+Below shows an example of aggregation with Group Rows. It also provides an `innerRenderer` to configure what gets 
+displaying inside the row groups, however it keeps the Default Group Cell Renderer for it's expand / collapse 
+functionality. Note the following:
 
 - Each group spans the width of the grid.
 - Each group uses a custom Cell Renderer. The cell renderer shows the aggregation data for each medal type.
@@ -100,3 +116,7 @@ Below shows an example of aggregating with full width rows for groups. It also p
 _* This is true for Vanilla Javascript and React. Angular uses data binding and thus the aggregation data updates automatically without needing to listen to events._
 
 <grid-example title='Full Width Groups Rendering' name='full-width-groups-rendering' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"], "extras": ["fontawesome"] }'></grid-example>
+
+## Next Up
+
+Continue to the next section to learn about the [Custom Group Columns](../grouping-custom-group-columns/) display type.

@@ -15,8 +15,9 @@ A single column is the default group display type, but it can be set explicitly 
 <snippet spaceBetweenProperties="true">
 const gridOptions = {
     columnDefs: [
-        { field: 'country', rowGroup: true },
-        { field: 'year', rowGroup: true },
+        { field: 'country', rowGroup: true, hide: true },
+        { field: 'year', rowGroup: true, hide: true },
+        { field: 'athlete' },
         { field: 'sport' },
         { field: 'total' }
     ],
@@ -33,11 +34,9 @@ The example below demonstrates the default row grouping behaviour. Note the foll
 
 - A group column is added to the left-hand side of the grid as there are active row groups.
 
-- The `country` and `year` columns are still shown in the grid (to hide set `hide=true` on their column definitions).
+- The `country` and `year` columns are not shown in the grid as `hide=true` is set on their column definitions.
 
-- The number of grouped rows is shown in parentheses at each row group level.
-
-<grid-example title='Single Group Column' name='single-group-column' type='generated' options='{ "enterprise": true, "exampleHeight": 540, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+<grid-example title='Enabling Single Group Column' name='enabling-single-group-column' type='generated' options='{ "enterprise": true, "exampleHeight": 540, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
 ## Group Column Configuration  
 
@@ -150,3 +149,7 @@ The example below shows this feature. Note the following:
 | Technically it doesn't make sense to mix these. They don't work together as the logic for removing single
 | children clashes with the logic for hiding open parents. Both want to remove parents at different times
 | and for different reasons.
+
+## Next Up
+
+Continue to the next section to learn about the [Multiple Group Columns](../grouping-multiple-group-columns/) display type.

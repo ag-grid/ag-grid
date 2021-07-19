@@ -5,6 +5,12 @@ enterprise: true
 
 This section compares the different ways row groups can be displayed in the grid.
 
+The Display Types introduced below are only concerned with how the Row Grouping results are presented in the grid. When using Row 
+Grouping, the grid will perform the _GROUP BY_ operations to the 'flat' data provided. 
+
+[[note]]
+| If the data supplied to the grid does not need to be grouped, consider using [Tree Data](../tree-data/) instead.
+
 ## Single Group Column 
 
 Row groups are displayed under a single group column. 
@@ -31,7 +37,7 @@ Row groups are displayed in group rows rather than group columns.
 
 <image-caption src="grouping-display-types/resources/group-rows.png" alt="Group Rows" constrained="true" centered="true"></image-caption>
 
-As illustrated above, the `country` and `year` row groups are displayed using group rows.
+As illustrated above, the `country` and `year` row groups are displayed using Group Rows.
 
 See the [Group Rows](../grouping-group-rows/) section for more details.
 
@@ -43,4 +49,4 @@ See the [Custom Group Columns](../grouping-custom-group-columns/) section for mo
 
 ## Next Up
 
-Continue to the next section to learn about: [Single Group Column](../grouping-single-group-column/).
+Continue to the next section to learn about the [Single Group Column](../grouping-single-group-column/) display type.
