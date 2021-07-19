@@ -137,7 +137,11 @@ import {
     ColumnRowGroupChangeRequestEvent,
     ColumnPivotChangeRequestEvent,
     ColumnValueChangeRequestEvent,
-    ColumnAggFuncChangeRequestEvent
+    ColumnAggFuncChangeRequestEvent,
+    ProcessRowParams,
+    ProcessCellForExportParams,
+    ProcessHeaderForExportParams,
+    ProcessChartOptionsParams
 } from "@ag-grid-community/core";
 
 import {AngularFrameworkOverrides} from "./angularFrameworkOverrides";
