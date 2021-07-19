@@ -15,7 +15,7 @@ import { Label } from "../../label";
 import { Text } from "../../../scene/shape/text";
 import { HdpiCanvas } from "../../../canvas/hdpiCanvas";
 import { Marker } from "../../marker/marker";
-import { MeasuredLabel, PlacedLabel, placeLabels } from "../../../util/labelPlacement";
+import { MeasuredLabel, PlacedLabel, placeLabels, PointLabelDatum } from "../../../util/labelPlacement";
 
 interface ScatterNodeDatum extends SeriesNodeDatum {
     readonly point: {
@@ -230,6 +230,10 @@ export class ScatterSeries extends CartesianSeries {
     }
 
     getNodeData(): readonly ScatterNodeDatum[] {
+        return this.nodeData;
+    }
+
+    getLabelData(): readonly PointLabelDatum[] {
         return this.nodeData;
     }
 
