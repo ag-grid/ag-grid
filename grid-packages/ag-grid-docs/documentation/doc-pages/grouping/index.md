@@ -40,7 +40,9 @@ The example below demonstrates the default row grouping behaviour. Note the foll
 ## Row Grouping Customisations
 
 The previous example demonstrated the [Default Row Grouping](../grouping/#example-default-row-grouping) behavior, 
-however extensive Row Grouping customisation is also possible. See the following sections for more details: 
+however extensive Row Grouping customisations are also possible. 
+
+See the following sections for more details: 
 
 - **[Display Types](../grouping-display-types/)** - compares the different ways row groups can be displayed in the grid.
     - ***[Single Group Column](../grouping-single-group-column/)*** - a single group column is automatically added by the grid for all row groups.
@@ -58,3 +60,7 @@ however extensive Row Grouping customisation is also possible. See the following
 Row Grouping can be configured using the following grid properties:
 
 <api-documentation source='grid-properties/properties.json' section="rowGrouping"></api-documentation>
+
+## Next Up
+
+Continue to the next section to learn about the different Row Grouping [Display Types](../grouping-display-types/).
