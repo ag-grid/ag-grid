@@ -5,10 +5,14 @@ import { PropertyKeys } from '../propertyKeys';
 import { ColumnApi } from '../columns/columnApi';
 import { iterateObject } from '../utils/object';
 import { values } from '../utils/generic';
+import { includes } from '../utils/array';
 
 export class ComponentUtil {
     // all the events are populated in here AFTER this class (at the bottom of the file).
     public static EVENTS: string[] = [];
+
+    // events that are available for use by users of AG Grid and so should be documented
+    public static PUBLIC_EVENTS: string[] = [];
 
     // events that are internal to AG Grid and should not be exposed to users via documentation or generated framework components
     public static INTERNAL_EVENTS: string[] = [];
@@ -234,4 +238,6 @@ ComponentUtil.INTERNAL_EVENTS = [
     Events.EVENT_KEYBOARD_FOCUS,
     Events.EVENT_MOUSE_FOCUS,
     Events.EVENT_STORE_UPDATED
-]
+];
+
+ComponentUtil.PUBLIC_EVENTS = ComponentUtil.EVENTS.filter(e => !includes(ComponentUtil.INTERNAL_EVENTS, e));

@@ -29,7 +29,7 @@ ComponentUtil.ALL_PROPERTIES.forEach((property) => {
 });
 
 const missingEvents = [];
-ComponentUtil.EVENTS.forEach((event) => {
+ComponentUtil.PUBLIC_EVENTS.forEach((event) => {
     if (!agGridAngularObject.hasOwnProperty(event)) {
         missingEvents.push(`Grid event ${event} does not exist on AgGridAngular`)
     }
