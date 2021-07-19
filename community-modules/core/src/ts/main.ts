@@ -357,7 +357,12 @@ export {
     RowClassParams,
     ServerSideStoreType,
     ServerSideStoreParams,
-    GetServerSideStoreParamsParams
+    GetServerSideStoreParamsParams,
+    PaginationNumberFormatterParams,
+    GetServerSideGroupKey,
+    IsServerSideGroup,
+    GetChartToolbarItems,
+    FillOperationParams 
 } from "./entities/gridOptions";
 
 export * from "./propertyKeys";
