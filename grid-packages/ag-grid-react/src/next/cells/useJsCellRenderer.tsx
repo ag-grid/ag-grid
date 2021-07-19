@@ -3,8 +3,8 @@ import {
     Context,
     UserComponentFactory,
     ICellRendererComp,
-} from '@ag-grid-community/core';
-import { RenderDetails } from '../cellComp';
+} from 'ag-grid-community';
+import { RenderDetails } from './cellComp';
 
 export const useJsCellRenderer = (
     renderDetails: RenderDetails | undefined,

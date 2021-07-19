@@ -13,9 +13,9 @@ import {
     ICellEditor,
     PopupService,
     GridOptionsWrapper
-} from '@ag-grid-community/core';
-import { CssClasses } from './utils';
-import { useJsCellRenderer } from './cellComp/useJsCellRenderer';
+} from 'ag-grid-community';
+import { CssClasses } from '../utils';
+import { useJsCellRenderer } from './useJsCellRenderer';
 
 export enum CellCompState { ShowValue, EditValue }
 

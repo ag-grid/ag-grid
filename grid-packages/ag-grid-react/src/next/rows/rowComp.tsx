@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Context, IRowComp, RowCtrl, _, CellCtrl, UserCompDetails } from '@ag-grid-community/core';
-import { CssClasses } from './utils';
-import { CellComp } from './cellComp';
-import { createJSComp } from './createJsComp';
+import { Context, IRowComp, RowCtrl, _, CellCtrl, UserCompDetails } from 'ag-grid-community';
+import { CssClasses } from '../utils';
+import { CellComp } from '../cells/cellComp';
+import { createJSComp } from '../createJsComp';
 
 interface CellCtrls {
     list: CellCtrl[],

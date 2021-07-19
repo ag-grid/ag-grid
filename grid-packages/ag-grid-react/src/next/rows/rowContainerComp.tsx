@@ -5,8 +5,8 @@ import {
     RowContainerCtrl,
     RowContainerName,
     RowCtrl
-} from '@ag-grid-community/core';
-import { classesList } from './utils';
+} from 'ag-grid-community';
+import { classesList } from '../utils';
 import { RowComp } from './rowComp';
 
 export const RowContainerComp = (params: {context: Context, name: RowContainerName}) => {
