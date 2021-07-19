@@ -332,12 +332,12 @@
         "meta": {
             "displayName": "Row Grouping"
         },
-        "groupUseEntireRow": {
-            "default": false,
-            "description": "Used when grouping. If `true`, a group row will span all columns across the entire width of the table. If `false`, the cells will be rendered as normal and you will have the opportunity to include a grouping column (normally the first on the left) to show the group.",
+        "groupDisplayType": {
+            "type": "string",
+            "description": "Specifies how the results of row grouping should be displayed. The options are: <ul><li>`'singleColumn'`: single group column automatically added by the grid.</li><li>`'multipleColumns'`: a group column per row group is added automatically.</li><li>`'groupRows'`: groups rows are automatically added instead of group columns.</li><li>`'custom'`: informs the grid that group columns will be provided.</li></ul>",
             "more": {
-                "name": "Full Width Group Rows",
-                "url": "/grouping/#full-width-group-rows"
+                "name": "Row Grouping - Display Types",
+                "url": "/grouping-display-types/"
             }
         },
         "groupDefaultExpanded": {
@@ -354,22 +354,6 @@
             "more": {
                 "name": "Configuring the Auto Group Column",
                 "url": "/grouping/#auto-column-group"
-            }
-        },
-        "groupSuppressAutoColumn": {
-            "default": false,
-            "description": "If `true`, the grid will not swap in the grouping column when grouping is enabled. Use this if you want complete control over the group column displayed and do not want the grid to generate a column for you, i.e. if you already have a column in your column definitions that is responsible for displaying the groups.",
-            "more": {
-                "name": "Configuring the Auto Group Column",
-                "url": "/grouping/#auto-column-group"
-            }
-        },
-        "groupMultiAutoColumn": {
-            "default": false,
-            "description": "If using auto column, set to `true` to have each group in its own separate column, e.g. if grouping by Country then Year, two auto columns will be created, one for Country and one for Year.",
-            "more": {
-                "name": "Multi Auto Column Group",
-                "url": "/grouping/#multi-auto-column-group"
             }
         },
         "groupSelectsChildren": {

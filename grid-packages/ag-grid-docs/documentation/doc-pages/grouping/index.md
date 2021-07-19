@@ -45,7 +45,7 @@ however extensive Row Grouping customisation is also possible. See the following
 - **[Display Types](../grouping-display-types/)** - compares the different ways row groups can be displayed in the grid.
     - ***[Single Group Column](../grouping-single-group-column/)*** - a single group column is automatically added by the grid for all row groups.
     - ***[Multiple Group Columns](../grouping-multiple-group-columns/)*** - group columns are automatically added by the grid for each row group.
-    - ***[Group Rows](../grouping-group-rows/)*** - where group rows are automatically added by the grid containing the row groups instead of group columns.
+    - ***[Group Rows](../grouping-group-rows/)*** - group rows are automatically added by the grid containing the row groups instead of group columns.
     - ***[Custom Group Columns](../grouping-custom-group-columns/)*** - take charge of displaying the row groups without using the built-in display types.
 - **[Sorting](../grouping-sorting/)**
 - **[Filtering](../grouping-filtering/)**
