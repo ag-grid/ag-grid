@@ -10,6 +10,9 @@ export class ComponentUtil {
     // all the events are populated in here AFTER this class (at the bottom of the file).
     public static EVENTS: string[] = [];
 
+    // events that are internal to AG Grid and should not be exposed to users via documentation or generated framework components
+    public static INTERNAL_EVENTS: string[] = [];
+
     // function below fills this with onXXX methods, based on the above events
     private static EVENT_CALLBACKS: string[];
 
@@ -211,3 +214,24 @@ export class ComponentUtil {
 }
 
 ComponentUtil.EVENTS = values<any>(Events);
+
+ComponentUtil.INTERNAL_EVENTS = [
+    Events.EVENT_SCROLLBAR_WIDTH_CHANGED,
+    Events.EVENT_CHECKBOX_CHANGED,
+    Events.EVENT_POPUP_LIST_CHANGED,
+    Events.EVENT_HEIGHT_SCALE_CHANGED,
+    Events.EVENT_BODY_HEIGHT_CHANGED,
+    Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED,
+    Events.EVENT_SCROLL_VISIBILITY_CHANGED,
+    Events.EVENT_COLUMN_HOVER_CHANGED,
+    Events.EVENT_FLASH_CELLS,
+    Events.EVENT_PAGINATION_PIXEL_OFFSET_CHANGED,
+    Events.EVENT_DISPLAYED_ROWS_CHANGED,
+    Events.EVENT_LEFT_PINNED_WIDTH_CHANGED,
+    Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED,
+    Events.EVENT_ROW_CONTAINER_HEIGHT_CHANGED,
+    Events.EVENT_POPUP_TO_FRONT,
+    Events.EVENT_KEYBOARD_FOCUS,
+    Events.EVENT_MOUSE_FOCUS,
+    Events.EVENT_STORE_UPDATED
+]

@@ -34,13 +34,11 @@ function getGridPropertiesAndEventsJs() {
             const kind = ts.SyntaxKind[node.kind];
             let internalGridOps = inGridOptions;
             if (inGridOptions || kind == 'InterfaceDeclaration' && node && node.name && node.name.escapedText == 'GridOptions') {
+                const name = node && node.name && node.name.escapedText;
                 if (kind == 'PropertySignature') {
-                    const name = node && node.name && node.name.escapedText;
                     const typeName = node && node.type && node.type.getFullText();
                     typeLookup[name] = typeName;
                 } else if (kind == 'MethodSignature') {
-                    const name = node && node.name && node.name.escapedText;
-
                     const typeName = node && node.type && node.type.getFullText();
                     typeLookup[name] = typeName;
 
@@ -70,7 +68,7 @@ function getGridPropertiesAndEventsJs() {
     // for readability
     result += '\n';
 
-    ComponentUtil.EVENTS.forEach((event) => {
+    ComponentUtil.EVENTS.filter(e => !ComponentUtil.INTERNAL_EVENTS.includes(e)).forEach((event) => {
         const onEvent = ComponentUtil.getCallbackForEvent(event);
         result += `    @Output() public ${event}: EventEmitter<${typeLookup[onEvent]}> = new EventEmitter<${typeLookup[onEvent]}>();\n`;
     });
