@@ -92,6 +92,7 @@ export class AgGridColumn {
     @Input() public pinned: any;
     @Input() public initialPinned: any;
     @Input() public chartDataType: any;
+    @Input() public cellEditorPopupPosition: any;
     @Input() public sortedAt: any;
     @Input() public sortIndex: any;
     @Input() public initialSortIndex: any;
@@ -169,6 +170,7 @@ export class AgGridColumn {
     @Input() public resizable: any;
     @Input() public singleClickEdit: any;
     @Input() public floatingFilter: any;
+    @Input() public cellEditorPopup: any;
     // @END@
 
 }

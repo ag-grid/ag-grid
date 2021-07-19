@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Context, IRowComp, RowCtrl, _, CellCtrl, UserCompDetails } from 'ag-grid-community';
 import { CssClasses } from '../utils';
 import { CellComp } from '../cells/cellComp';
-import { createJSComp } from '../createJsComp';
+import { showJsComp } from '../jsComp';
 
 interface CellCtrls {
     list: CellCtrl[],
@@ -107,7 +107,7 @@ export const RowComp = (params: {context: Context, rowCtrl: RowCtrl, pinned: str
     }, [domOrder, pinned, rowCtrl]);
     
     useEffect(() => {
-        return createJSComp(fullWidthCompDetails, context, eGui.current!, 
+        return showJsComp(fullWidthCompDetails, context, eGui.current!, 
             compFactory => compFactory.createFullWidthCellRenderer(fullWidthCompDetails!, rowCtrl.getFullWidthCellRendererType()));
     }, [context, fullWidthCompDetails, rowCtrl]);
 
