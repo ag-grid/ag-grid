@@ -803,8 +803,10 @@ export abstract class Chart extends Observable {
                 data.push(s.getNodeData());
             }
         });
-        const { width, height } = this.seriesRect;
-        const labels = placeLabels(data as any[], { x: 0, y: 0, width, height });
+        const { seriesRect } = this;
+        const labels: PlacedLabel[][] = seriesRect
+            ? placeLabels(data as any[], { x: 0, y: 0, width: seriesRect.width, height: seriesRect.height })
+            : [];
         return new Map(labels.map((l, i) => [series[i], l]));
     }
 
@@ -944,7 +946,7 @@ export abstract class Chart extends Observable {
         chartElement.removeEventListener('click', this._onClick);
     }
 
-    // Should be available after first layout.
+    // Should be available after the first layout.
     protected seriesRect?: BBox;
     getSeriesRect(): Readonly<BBox | undefined> {
         return this.seriesRect;
