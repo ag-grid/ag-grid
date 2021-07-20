@@ -16,6 +16,24 @@ HTMLButtonElement = typeof HTMLButtonElement === 'undefined' ? function() {
 MouseEvent = typeof MouseEvent === 'undefined' ? function() {
 } : MouseEvent;
 
+
+function findGridOptionsNode(node) {
+    const kind = ts.SyntaxKind[node.kind];
+
+    if (kind == 'InterfaceDeclaration' && node && node.name && node.name.escapedText == 'GridOptions') {
+        return node;
+    }
+    let gridOptionsNode = undefined;
+    ts.forEachChild(node, n => {
+        if (!gridOptionsNode) {
+            gridOptionsNode = findGridOptionsNode(n);
+        }
+    });
+
+    return gridOptionsNode;
+}
+
+
 function getGridPropertiesAndEventsJs() {
     const { ComponentUtil } = require("@ag-grid-community/core");
 
@@ -30,50 +48,50 @@ function getGridPropertiesAndEventsJs() {
     const src = fs.readFileSync(filename, 'utf8');
     parsedSyntaxTreeResults = ts.createSourceFile('gridOps.ts', src, ts.ScriptTarget.Latest, true);
 
+    const gridOptionsNode = findGridOptionsNode(parsedSyntaxTreeResults);
+
+    if (!gridOptionsNode) {
+        throw "Unable to locate GridOptions interface in AST."
+    }
+
     const publicEventLookup = {};
     ComponentUtil.PUBLIC_EVENTS.forEach(e => publicEventLookup[ComponentUtil.getCallbackForEvent(e)] = true);
 
 
-    function extractTypesFromGridOptions(node, inGridOptions) {
+    function extractTypesFromGridOptions(node) {
         const kind = ts.SyntaxKind[node.kind];
-        let internalGridOps = inGridOptions;
-        if (inGridOptions || kind == 'InterfaceDeclaration' && node && node.name && node.name.escapedText == 'GridOptions') {
-            const name = node && node.name && node.name.escapedText;
-            if (kind == 'PropertySignature') {
-                const typeName = node && node.type && node.type.getFullText();
-                typeLookup[name] = typeName;
-            } else if (kind == 'MethodSignature') {
-                const returnType = node && node.type && node.type.getFullText();
-
-                const getParamType = (typeNode) => {
-                    switch (ts.SyntaxKind[typeNode.kind]) {
-                        case 'ArrayType':
-                            return typeNode.elementType.typeName.escapedText + '[]';
-                        case 'AnyKeyword':
-                            return 'any';
-                        default:
-                            return typeNode.typeName.escapedText;
-                    }
+        const name = node && node.name && node.name.escapedText;
+        const returnType = node && node.type && node.type.getFullText();
+        if (kind == 'PropertySignature') {
+            typeLookup[name] = returnType;
+        } else if (kind == 'MethodSignature') {
+            const getParamType = (typeNode) => {
+                switch (ts.SyntaxKind[typeNode.kind]) {
+                    case 'ArrayType':
+                        return typeNode.elementType.typeName.escapedText + '[]';
+                    case 'AnyKeyword':
+                        return 'any';
+                    default:
+                        return typeNode.typeName.escapedText;
                 }
+            }
 
-                if (node.parameters && node.parameters.length > 0) {
-                    const methodParams = node.parameters.map(p => `${p.name.escapedText}: ${getParamType(p.type)}`);
-                    typeLookup[name] = `(${methodParams.join(', ')}) => ${returnType}`;
-                } else {
-                    typeLookup[name] = `() => ${returnType}`
-                }
+            if (node.parameters && node.parameters.length > 0) {
+                const methodParams = node.parameters.map(p => `${p.name.escapedText}: ${getParamType(p.type)}`);
+                typeLookup[name] = `(${methodParams.join(', ')}) => ${returnType}`;
+            } else {
+                typeLookup[name] = `() => ${returnType}`
+            }
 
-                if (publicEventLookup[name]) {
-                    const typeName = node.parameters[0].type.typeName.escapedText;
-                    eventTypeLookup[name] = typeName;
-                }
-            };
-            internalGridOps = true;
-        }
-        ts.forEachChild(node, n => extractTypesFromGridOptions(n, internalGridOps));
+            if (publicEventLookup[name]) {
+                const typeName = node.parameters[0].type.typeName.escapedText;
+                eventTypeLookup[name] = typeName;
+            }
+        };
+        ts.forEachChild(node, n => extractTypesFromGridOptions(n));
     }
 
-    extractTypesFromGridOptions(parsedSyntaxTreeResults, false);
+    extractTypesFromGridOptions(parsedSyntaxTreeResults);
 
 
     ComponentUtil.ALL_PROPERTIES.forEach((property) => {
