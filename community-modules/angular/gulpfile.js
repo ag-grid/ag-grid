@@ -30,26 +30,13 @@ const mainPostCompileRename = () => {
         .pipe(gulp.dest("./"))
 };
 
-const updateProperties = (callback) => {
-    gridToNg.updatePropertiesSrc(callback);
-};
-
 const compileSource = (callback) => {
     return ngc('./tsconfig-src.json', callback);
 };
 
-const watch = () => {
-    gulp.watch([
-            './node_modules/ag-grid-community/src/ts/propertyKeys.ts',
-            './node_modules/ag-grid-community/ts/components/colDefUtil.ts'
-        ],
-        series('update-properties'));
-};
 
 gulp.task('compile-main', compileMain);
 gulp.task('clean-post-build-artifacts', cleanPostBuildArtifacts);
 gulp.task('main-post-compile-rename', mainPostCompileRename);
-gulp.task('update-properties', updateProperties);
 gulp.task('compile-source', compileSource);
-gulp.task('watch', series('update-properties', 'compile-source', watch));
 gulp.task('default', series('update-properties', 'compile-main', 'compile-source', 'main-post-compile-rename', 'clean-post-build-artifacts'));
