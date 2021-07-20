@@ -100,8 +100,6 @@ export class RowNodeSorter {
     }
 
     private getValue(nodeA: RowNode, column: Column): string {
-        // supplying `useRawKeyValue = true` to ensure the comparator receives the raw / underlying value rather than
-        // the group key value which is converted to a string, when row grouping.
-        return this.valueService.getValue(column, nodeA, false, false, true);
+        return this.valueService.getValue(column, nodeA, false, false);
     }
 }

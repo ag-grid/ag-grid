@@ -95,7 +95,7 @@ export class RowNode implements IEventEmitter {
     public id: string | undefined;
 
     /** The group data */
-    public groupData: { [key: string]: string | null; } | null;
+    public groupData: { [key: string]: any | null; } | null;
 
     /** The aggregated data */
     public aggData: any;
@@ -166,9 +166,6 @@ export class RowNode implements IEventEmitter {
 
     /** Groups only - The key for the group eg Ireland, UK, USA */
     public key: string | null = null;
-
-    /** Groups only - The raw key value for the group eg 101 rather than "101" contained in key */
-    public rawKeyValue: any | null = null;
 
     /** Used by server side row model, true if this row node is a stub */
     public stub: boolean;
