@@ -68,11 +68,14 @@ export const PopupEditorComp = (props: {
 
     return (
         <>
-        { popupEditorWrapper && props.wrappedContent && createPortal(props.wrappedContent, popupEditorWrapper.getGui()) }
-        { popupEditorWrapper && props.wrappedComp && createPortal(
-                        <props.wrappedComp eParentElement={popupEditorWrapper.getGui()} {...props.wrappedCompProps}/>, 
-                        popupEditorWrapper.getGui()) 
-        }
+            { popupEditorWrapper && props.wrappedContent 
+                                 && createPortal(props.wrappedContent, popupEditorWrapper.getGui()) }
+                                 
+            { popupEditorWrapper && props.wrappedComp 
+                                 && createPortal(
+                            <props.wrappedComp eParentElement={popupEditorWrapper.getGui()} {...props.wrappedCompProps}/>, 
+                            popupEditorWrapper.getGui()) 
+            }
         </>
     );
 };

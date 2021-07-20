@@ -16,12 +16,15 @@ import { showJsCellRenderer } from './showJsRenderer'
 import { EditDetails } from './cellComp';
 import { createJsComp } from '../jsComp';
 
-export const JsEditorComp = (props: {cellEditorRef: MutableRefObject<any>, 
-    context: Context, compDetails: UserCompDetails, eParentElement: HTMLElement}) => {
+
+
+export const JsEditorComp = (props: {setCellEditorRef: (cellEditor: ICellEditor | undefined)=>void, 
+    cellCtrl: CellCtrl, compDetails: UserCompDetails, eParentElement: HTMLElement}) => {
 
     useEffect( ()=> {
 
-        const {context, compDetails, eParentElement, cellEditorRef} = props;
+        const {cellCtrl, compDetails, eParentElement, setCellEditorRef} = props;
+        const {context} = cellCtrl.getBeans();
 
         const cellEditor = createJsComp(context, factory => factory.createCellEditor(compDetails) ) as ICellEditorComp;
         if (!cellEditor) { return; }
@@ -32,11 +35,11 @@ export const JsEditorComp = (props: {cellEditorRef: MutableRefObject<any>,
             eParentElement.appendChild(cellEditor.getGui());
         }
 
-        cellEditorRef.current = cellEditor;
+        setCellEditorRef(cellEditor);
 
         return () => {
             context.destroyBean(cellEditor);
-            cellEditorRef.current = undefined;
+            setCellEditorRef(undefined);
             if (compGui && compGui.parentElement) {
                 compGui.parentElement.removeChild(compGui);
             }
