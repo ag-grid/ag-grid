@@ -6,34 +6,39 @@ import {
     CellCtrl,
     UserCompDetails,
     ICellRendererComp,
-    _,
-    UserComponentFactory,
-    IComponent,
-    AgPromise,
-    ICellEditor,
-    PopupService,
-    GridOptionsWrapper
+    _
 } from 'ag-grid-community';
 import { CssClasses } from '../utils';
-import { useJsCellRenderer } from './useJsCellRenderer';
+import { showJsCellRenderer as showJsRenderer } from './showJsRenderer';
+import { JsEditorComp } from './jsEditorComp';
+import { PopupEditorComp } from './popupEditorComp';
 
 export enum CellCompState { ShowValue, EditValue }
 
+const jsxEditValue = (editDetails: EditDetails, cellEditorRef: MutableRefObject<any>, context: Context, eGui: HTMLElement, 
+    cellCtrl: CellCtrl ) => {
 
-const jsxEditValue = (editorCompDetails: UserCompDetails | undefined, cellEditorRef: MutableRefObject<any>) => {
-    const reactCellRenderer = editorCompDetails && editorCompDetails.componentFromFramework;
+    const compDetails = editDetails.compDetails;
+
+    const reactInlineEditor = compDetails.componentFromFramework && !editDetails.popup;
+    const reactPopupEditor = compDetails.componentFromFramework && editDetails.popup;
+    const jsInlineEditor = !compDetails.componentFromFramework && !editDetails.popup;
+    const jsPopupEditor = !compDetails.componentFromFramework && editDetails.popup;
+
+    const CellEditorClass = compDetails.componentClass;
 
     return (
         <>
-            { reactCellRenderer && jsxEditValueReactCellRenderer(editorCompDetails!, cellEditorRef) }
+            { reactInlineEditor && jsxEditValueReactCellRenderer(compDetails, cellEditorRef) }
+            { reactPopupEditor && <PopupEditorComp editDetails={editDetails} cellCtrl={cellCtrl} eParentCell={eGui}
+                            wrappedContent={ <CellEditorClass { ...editDetails.compDetails.params } ref={ cellEditorRef }/> }/> }
+            { jsInlineEditor && <JsEditorComp cellEditorRef={cellEditorRef} eParentElement={eGui} 
+                            compDetails={compDetails} context={context} /> }
+            { jsPopupEditor && <PopupEditorComp editDetails={editDetails} cellCtrl={cellCtrl} eParentCell={eGui}
+                            wrappedComp={ JsEditorComp } wrappedCompProps={{context, compDetails, cellEditorRef}}/> }
         </>
     )
 }
-
-const jsxShowValueNoCellRenderer = (valueToDisplay: any) => (
-    <>{ valueToDisplay }</>
-);
-
 
 const jsxShowValueReactCellRenderer = (rendererCompDetails: UserCompDetails, cellRendererRef: MutableRefObject<any>) => {
     const CellRendererClass = rendererCompDetails.componentClass;
@@ -52,22 +57,23 @@ const jsxEditValueReactCellRenderer = (editorCompDetails: UserCompDetails, cellE
 }
 
 const jsxShowValue = (
+    showDetails: ShowDetails,
     parentId: number,
-    rendererCompDetails: UserCompDetails | undefined,
     cellRendererRef: MutableRefObject<any>,
-    valueToDisplay: any,
     showTools: boolean,
     unselectable: 'on' | undefined,
     toolsRefCallback: (ref:any) => void,
     toolsValueRefCallback: (ref:any) => void
 ) => {
-    const noCellRenderer = !rendererCompDetails;
-    const reactCellRenderer = rendererCompDetails && rendererCompDetails.componentFromFramework;
+    const {compDetails, value} = showDetails;
+
+    const noCellRenderer = !compDetails;
+    const reactCellRenderer = compDetails && compDetails.componentFromFramework;
 
     const bodyJsxFunc = () => (
         <>
-            { noCellRenderer && jsxShowValueNoCellRenderer(valueToDisplay) }
-            { reactCellRenderer && jsxShowValueReactCellRenderer(rendererCompDetails!, cellRendererRef) }
+            { noCellRenderer && <>{ value }</> }
+            { reactCellRenderer && jsxShowValueReactCellRenderer(compDetails!, cellRendererRef) }
         </>
     );
 
@@ -85,91 +91,15 @@ const jsxShowValue = (
     );
 }
 
-const createJSCellEditor = (
-    compDetails: UserCompDetails | undefined, 
-    context: Context, 
-    eGui: HTMLElement, 
-    cellCtrl: CellCtrl,
-    ref?: MutableRefObject<ICellEditor | undefined>
-)  => {
-
-    const doNothing = !compDetails || compDetails.componentFromFramework;
-    if (doNothing) { return; }
-
-    const compFactory = context.getBean('userComponentFactory') as UserComponentFactory;
-    const promise = compFactory.createCellEditor(compDetails!);
-    if (!promise) { return; }
-
-    const cellEditor = promise.resolveNow(null, x => x); // js comps are never async
-    if (!cellEditor) { return; }
-
-    const compGui = cellEditor.getGui();
-
-    let hideEditorPopup: ()=>void;
-
-    const inPopup = cellEditor.isPopup && cellEditor.isPopup();
-
-    if (inPopup) {
-        const popupService = context.getBean('popupService') as PopupService;
-        const gridOptionsWrapper = context.getBean('gridOptionsWrapper') as GridOptionsWrapper;
-        const useModelPopup = gridOptionsWrapper.isStopEditingWhenCellsLoseFocus();
-
-        const position = cellEditor.getPopupPosition ? cellEditor.getPopupPosition() : 'over';
-
-        const params = {
-            column: cellCtrl.getColumn(),
-            rowNode: cellCtrl.getRowNode(),
-            type: 'popupCellEditor',
-            eventSource: eGui,
-            ePopup: compGui,
-            keepWithinBounds: true
-        };
-
-        const positionCallback = position === 'under' ?
-            popupService.positionPopupUnderComponent.bind(popupService, params)
-            : popupService.positionPopupOverComponent.bind(popupService, params);
-
-        const addPopupRes = popupService.addPopup({
-            modal: useModelPopup,
-            eChild: compGui,
-            closeOnEsc: true,
-            closedCallback: () => { cellCtrl.onPopupEditorClosed(); },
-            anchorToElement: eGui,
-            positionCallback
-        });
-        if (addPopupRes) {
-            hideEditorPopup = addPopupRes.hideFunc;
-        }
-    } else {
-        eGui.appendChild(compGui);
-    }
-
-    if (ref) {
-        ref.current = cellEditor;
-    }
-
-    return () => {
-        if (inPopup) {
-            hideEditorPopup();
-        } else {
-            const compGui = cellEditor.getGui();
-            if (compGui && compGui.parentElement) {
-                compGui.parentElement.removeChild(compGui);
-            }
-        }
-
-        context.destroyBean(cellEditor);
-
-        if (ref) {
-            ref.current = undefined;
-        }
-    };
-}
-export interface RenderDetails {
-    edit: boolean;
+export interface ShowDetails {
     compDetails: UserCompDetails | undefined;
     value?: any;
     force?: boolean;
+}
+export interface EditDetails {
+    compDetails: UserCompDetails;
+    popup?: boolean;
+    popupPosition?: string;
 }
 
 export const CellComp = (props: {
@@ -180,10 +110,12 @@ export const CellComp = (props: {
 }) => {
     const { cellCtrl, printLayout, editingRow, context } = props;
 
+    const [showDetails, setShowDetails ] = useState<ShowDetails>();
+    const [editDetails, setEditDetails ] = useState<EditDetails>();
+
     const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses());
     const [userStyles, setUserStyles] = useState<any>();
     const [unselectable, setUnselectable] = useState<'on' | undefined>('on');
-    const [renderDetails, setRenderDetails] = useState<RenderDetails>();
     const [left, setLeft] = useState<string | undefined>();
     const [width, setWidth] = useState<string | undefined>();
     const [height, setHeight] = useState<string | undefined>();
@@ -208,18 +140,10 @@ export const CellComp = (props: {
 
     const [toolsSpan, setToolsSpan] = useState<HTMLElement>();
     const [toolsValueSpan, setToolsValueSpan] = useState<HTMLElement>();
-
-    const showValue = renderDetails!=null && !renderDetails.edit;
-    const editValue = renderDetails!=null && renderDetails.edit;
     
-    const showTools = showValue && (includeSelection || includeDndSource || includeRowDrag || forceWrapper);
+    const showTools = showDetails!=null && (includeSelection || includeDndSource || includeRowDrag || forceWrapper);
 
-    useJsCellRenderer(renderDetails, showTools, toolsValueSpan, context, jsCellRendererRef, eGui);
-
-    useEffect(() => {
-        const editorCompDetails = (renderDetails && renderDetails.edit) ? renderDetails.compDetails : undefined;
-        return createJSCellEditor(editorCompDetails, context, eGui.current!, cellCtrl, cellEditorRef);
-    }, [context, renderDetails]);
+    showJsRenderer(showDetails, showTools, toolsValueSpan, context, jsCellRendererRef, eGui);
 
     // tool widgets effect
     useEffect(() => {
@@ -282,19 +206,23 @@ export const CellComp = (props: {
             setTitle: title => setTitle(title),
             setUnselectable: value => setUnselectable(value || undefined),
             setTransition: transition => setTransition(transition),
-            showValue: (valueToDisplay, compDetails, force) => {
-                setRenderDetails({
-                    compDetails: compDetails,
-                    edit: false,
-                    value: valueToDisplay,
-                    force: force
+            showValue: (value, compDetails, force) => {
+                setShowDetails({
+                    compDetails,
+                    value,
+                    force
                 });
+                setEditDetails(undefined);
             },
-            editValue: compDetails => {
-                setRenderDetails({
-                    compDetails: compDetails,
-                    edit: true
+            editValue: (compDetails, popup, popupPosition) => {
+                setEditDetails({
+                    compDetails,
+                    popup,
+                    popupPosition
                 });
+                if (!popup) {
+                    setShowDetails(undefined);
+                }
             },
             setIncludeSelection: include => setIncludeSelection(include),
             setIncludeRowDrag: include => setIncludeRowDrag(include),
@@ -328,8 +256,8 @@ export const CellComp = (props: {
              aria-selected={ ariaSelected } aria-colindex={ ariaColIndex } role={ role }
              col-id={ colId } title={ title } unselectable={ unselectable } aria-describedby={ ariaDescribedBy }>
 
-            { showValue && jsxShowValue(cellCtrl.getInstanceId(), renderDetails!.compDetails, cellRendererRef, renderDetails!.value, showTools, unselectable, toolsRefCallback, toolsValueRefCallback) }
-            { editValue && jsxEditValue(renderDetails!.compDetails, cellEditorRef) }
+            { showDetails!=null && jsxShowValue(showDetails, cellCtrl.getInstanceId(), cellRendererRef, showTools, unselectable, toolsRefCallback, toolsValueRefCallback) }
+            { editDetails!=null && jsxEditValue(editDetails, cellEditorRef, context, eGui.current!, cellCtrl) }
 
         </div>
     );

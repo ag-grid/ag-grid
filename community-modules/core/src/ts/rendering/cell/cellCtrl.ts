@@ -72,7 +72,7 @@ export interface ICellComp {
     getParentOfValue(): HTMLElement | null;
 
     showValue(valueToDisplay: any, compDetails: UserCompDetails | undefined, forceNewCellRendererInstance: boolean): void;
-    editValue(compDetails: UserCompDetails): void;
+    editValue(compDetails: UserCompDetails, popup: boolean | undefined, position: string | undefined): void;
 }
 
 let instanceIdSequence = 0;
@@ -261,8 +261,10 @@ export class CellCtrl extends BeanStub {
         this.setEditing(true);
 
         const editorParams = this.createCellEditorParams(keyPress, charPress, cellStartedEdit);
-        const compAndParams = this.beans.userComponentFactory.getCellEditorDetails(this.colDef, editorParams);
-        this.cellComp.editValue(compAndParams!);
+        const compDetails = this.beans.userComponentFactory.getCellEditorDetails(this.colDef, editorParams);
+        const popup = this.colDef.cellEditorPopup;
+        const position = this.colDef.cellEditorPopupPosition;
+        this.cellComp.editValue(compDetails!, popup, position);
 
         const event: CellEditingStartedEvent = this.createEvent(null, Events.EVENT_CELL_EDITING_STARTED);
         this.beans.eventService.dispatchEvent(event);
@@ -629,8 +631,13 @@ export class CellCtrl extends BeanStub {
         return this.column.isCellEditable(this.rowNode);
     }
 
-    public formatValue(): void {
-        this.valueFormatted = this.beans.valueFormatterService.formatValue(this.column, this.rowNode, this.scope, this.value);
+    private formatValue(value: any): any {
+        const res = this.callValueFormatter(value);
+        return res != null ? res : value;
+    }
+
+    private callValueFormatter(value: any): any {
+        return this.beans.valueFormatterService.formatValue(this.column, this.rowNode, this.scope, value);
     }
 
     public updateAndFormatValue(force = false): boolean {
@@ -638,7 +645,7 @@ export class CellCtrl extends BeanStub {
         const oldValueFormatted = this.valueFormatted;
 
         this.value = this.getValueFromValueService();
-        this.formatValue();
+        this.valueFormatted = this.callValueFormatter(this.value);
 
         const valuesDifferent = force ? true :
             !this.valuesAreEqual(oldValue, this.value) || this.valueFormatted != oldValueFormatted;

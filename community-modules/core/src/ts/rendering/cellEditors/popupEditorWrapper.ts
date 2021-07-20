@@ -1,95 +1,31 @@
 import { PopupComponent } from "../../widgets/popupComponent";
 import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
 import { isUserSuppressingKeyboardEvent } from "../../utils/keyboard";
+import { PostConstruct } from "../../context/context";
 
-export class PopupEditorWrapper extends PopupComponent implements ICellEditorComp {
-
-    private cellEditor: ICellEditorComp;
-    private params: any;
-    private getGuiCalledOnChild = false;
+export class PopupEditorWrapper extends PopupComponent {
 
     public static DOM_KEY_POPUP_EDITOR_WRAPPER = 'popupEditorWrapper';
 
-    constructor(cellEditor: ICellEditorComp) {
+    constructor(params: ICellEditorParams) {
         super(`<div class="ag-popup-editor" tabindex="-1"/>`);
-        this.cellEditor = cellEditor;
+
+        this.addKeyDownListener(params);
     }
 
-    private onKeyDown(event: KeyboardEvent): void {
-        if (!isUserSuppressingKeyboardEvent(this.gridOptionsWrapper, event, this.params.node, this.params.column, true)) {
-            this.params.onKeyDown(event);
-        }
-    }
-
-    public getGui(): HTMLElement {
-
-        // we call getGui() on child here (rather than in the constructor)
-        // as we should wait for 'init' to be called on child first.
-        if (!this.getGuiCalledOnChild) {
-            this.appendChild(this.cellEditor.getGui());
-            this.getGuiCalledOnChild = true;
-        }
-
-        return super.getGui();
-    }
-
-    public init(params: ICellEditorParams): void {
-        this.params = params;
+    @PostConstruct
+    private postConstruct(): void {
         this.gridOptionsWrapper.setDomData(this.getGui(), PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER, true);
-
-        this.addDestroyFunc(() => this.destroyBean(this.cellEditor));
-
-        this.addManagedListener(
-            // this needs to be 'super' and not 'this' as if we call 'this',
-            // it ends up called 'getGui()' on the child before 'init' was called,
-            // which is not good
-            super.getGui(),
-            'keydown',
-            this.onKeyDown.bind(this)
-        );
-
     }
 
-    public afterGuiAttached(): void {
-        if (this.cellEditor.afterGuiAttached) {
-            this.cellEditor.afterGuiAttached();
-        }
-    }
+    private addKeyDownListener(params: ICellEditorParams): void {
 
-    public getValue(): any {
-        return this.cellEditor.getValue();
-    }
+        const listener = (event: KeyboardEvent) => {
+            if (!isUserSuppressingKeyboardEvent(this.gridOptionsWrapper, event, params.node, params.column, true)) {
+                params.onKeyDown(event);
+            }
+        };
 
-    public isCancelBeforeStart(): boolean {
-        if (this.cellEditor.isCancelBeforeStart) {
-            return this.cellEditor.isCancelBeforeStart();
-        }
-        return false;
+        this.addManagedListener(this.getGui(), 'keydown', listener);
     }
-
-    public isCancelAfterEnd(): boolean {
-        if (this.cellEditor.isCancelAfterEnd) {
-            return this.cellEditor.isCancelAfterEnd();
-        }
-        return false;
-    }
-
-    public getPopupPosition(): string | undefined {
-        if (this.cellEditor.getPopupPosition) {
-            return this.cellEditor.getPopupPosition();
-        }
-    }
-
-    public focusIn(): void {
-        if (this.cellEditor.focusIn) {
-            this.cellEditor.focusIn();
-        }
-    }
-
-    public focusOut(): void {
-        if (this.cellEditor.focusOut) {
-            this.cellEditor.focusOut();
-        }
-    }
-
 }
