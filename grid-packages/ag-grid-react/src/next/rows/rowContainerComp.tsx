@@ -1,11 +1,5 @@
+import { Context, IRowContainerComp, RowContainerCtrl, RowContainerName, RowCtrl } from 'ag-grid-community';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import {
-    Context,
-    IRowContainerComp,
-    RowContainerCtrl,
-    RowContainerName,
-    RowCtrl
-} from 'ag-grid-community';
 import { classesList } from '../utils';
 import { RowComp } from './rowComp';
 

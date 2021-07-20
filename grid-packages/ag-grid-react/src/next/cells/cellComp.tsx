@@ -1,19 +1,9 @@
-import React, { MutableRefObject, useEffect, useRef, useState, useCallback } from 'react';
-import {
-    Context,
-    Component,
-    ICellComp,
-    CellCtrl,
-    UserCompDetails,
-    ICellRendererComp,
-    _,
-    ICellEditor,
-    ICellRenderer
-} from 'ag-grid-community';
+import { CellCtrl, Component, Context, ICellComp, ICellEditor, ICellRendererComp, UserCompDetails, _ } from 'ag-grid-community';
+import React, { MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
 import { CssClasses } from '../utils';
-import { showJsCellRenderer as showJsRenderer } from './showJsRenderer';
 import { JsEditorComp } from './jsEditorComp';
 import { PopupEditorComp } from './popupEditorComp';
+import { showJsCellRenderer as showJsRenderer } from './showJsRenderer';
 
 export enum CellCompState { ShowValue, EditValue }
 

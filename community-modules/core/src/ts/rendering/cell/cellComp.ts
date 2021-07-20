@@ -130,7 +130,6 @@ export class CellComp extends Component implements TooltipParentComp {
         this.setCellState(DisplayState.ShowValue);
         const usingAngular1Template = this.isUsingAngular1Template();
 
-        // this will go to cellCtrl in time
         if (this.hideEditorPopup) {
             this.hideEditorPopup();
             this.hideEditorPopup = null;

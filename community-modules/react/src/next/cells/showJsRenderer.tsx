@@ -1,9 +1,5 @@
-import React, { MutableRefObject, useEffect,useCallback } from 'react';
-import {
-    Context,
-    UserComponentFactory,
-    ICellRendererComp,
-} from '@ag-grid-community/core';
+import { Context, ICellRendererComp, UserComponentFactory } from '@ag-grid-community/core';
+import React, { MutableRefObject, useCallback, useEffect } from 'react';
 import { ShowDetails } from './cellComp';
 
 export const JsRendererComp = (props: {}) => {

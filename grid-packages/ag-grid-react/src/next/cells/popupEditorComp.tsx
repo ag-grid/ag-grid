@@ -1,14 +1,7 @@
-import React, { MutableRefObject, useEffect, useRef, useState, useCallback } from 'react';
-import {
-    Context,
-    CellCtrl,
-    _,
-    PopupEditorWrapper,
-    PopupService,
-    GridOptionsWrapper,
-} from 'ag-grid-community';
-import { EditDetails } from './cellComp';
+import { CellCtrl, PopupEditorWrapper } from 'ag-grid-community';
+import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { EditDetails } from './cellComp';
 
 export const PopupEditorComp = (props: {
             editDetails: EditDetails, 
