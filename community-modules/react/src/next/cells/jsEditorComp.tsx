@@ -21,6 +21,8 @@ export const JsEditorComp = (props: {setCellEditorRef: (cellEditor: ICellEditor 
 
         setCellEditorRef(cellEditor);
 
+        cellEditor.afterGuiAttached && cellEditor.afterGuiAttached();
+
         return () => {
             context.destroyBean(cellEditor);
             setCellEditorRef(undefined);
