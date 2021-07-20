@@ -10,9 +10,8 @@ import {
 } from 'ag-grid-community';
 import { CssClasses } from '../utils';
 import { showJsCellRenderer as showJsRenderer } from './showJsRenderer';
-import { showInlineJsEditor } from './showInlineJsEditor';
-import { showPopupJsEditor } from './showPopupJsEditor';
-import { ShowInPopup } from './showInPopup';
+import { JsEditorComp } from './jsEditorComp';
+import { PopupEditorComp } from './popupEditorComp';
 
 export enum CellCompState { ShowValue, EditValue }
 
@@ -23,23 +22,23 @@ const jsxEditValue = (editDetails: EditDetails, cellEditorRef: MutableRefObject<
 
     const reactInlineEditor = compDetails.componentFromFramework && !editDetails.popup;
     const reactPopupEditor = compDetails.componentFromFramework && editDetails.popup;
+    const jsInlineEditor = !compDetails.componentFromFramework && !editDetails.popup;
+    const jsPopupEditor = !compDetails.componentFromFramework && editDetails.popup;
 
     const CellEditorClass = compDetails.componentClass;
 
     return (
         <>
             { reactInlineEditor && jsxEditValueReactCellRenderer(compDetails, cellEditorRef) }
-            { reactPopupEditor && <ShowInPopup context={context} editDetails={editDetails} cellCtrl={cellCtrl} 
-                            eParentCell={eGui}
-                            wrappedContent={ <CellEditorClass { ...editDetails.compDetails.params } ref={ cellEditorRef }/> }></ShowInPopup> }
+            { reactPopupEditor && <PopupEditorComp editDetails={editDetails} cellCtrl={cellCtrl} eParentCell={eGui}
+                            wrappedContent={ <CellEditorClass { ...editDetails.compDetails.params } ref={ cellEditorRef }/> }/> }
+            { jsInlineEditor && <JsEditorComp cellEditorRef={cellEditorRef} eParentElement={eGui} 
+                            compDetails={compDetails} context={context} /> }
+            { jsPopupEditor && <PopupEditorComp editDetails={editDetails} cellCtrl={cellCtrl} eParentCell={eGui}
+                            wrappedComp={ JsEditorComp } wrappedCompProps={{context, compDetails, cellEditorRef}}/> }
         </>
     )
 }
-
-const jsxShowValueNoCellRenderer = (valueToDisplay: any) => (
-    <>{ valueToDisplay }</>
-);
-
 
 const jsxShowValueReactCellRenderer = (rendererCompDetails: UserCompDetails, cellRendererRef: MutableRefObject<any>) => {
     const CellRendererClass = rendererCompDetails.componentClass;
@@ -73,7 +72,7 @@ const jsxShowValue = (
 
     const bodyJsxFunc = () => (
         <>
-            { noCellRenderer && jsxShowValueNoCellRenderer(value) }
+            { noCellRenderer && <>{ value }</> }
             { reactCellRenderer && jsxShowValueReactCellRenderer(compDetails!, cellRendererRef) }
         </>
     );
@@ -145,10 +144,6 @@ export const CellComp = (props: {
     const showTools = showDetails!=null && (includeSelection || includeDndSource || includeRowDrag || forceWrapper);
 
     showJsRenderer(showDetails, showTools, toolsValueSpan, context, jsCellRendererRef, eGui);
-
-    showInlineJsEditor(editDetails, context, eGui.current!, cellCtrl, cellEditorRef);
-
-    showPopupJsEditor(editDetails, context, eGui.current!, cellCtrl, cellEditorRef);
 
     // tool widgets effect
     useEffect(() => {

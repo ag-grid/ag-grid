@@ -6,11 +6,11 @@ import {
     PopupEditorWrapper,
     PopupService,
     GridOptionsWrapper,
-} from 'ag-grid-community';
+} from '@ag-grid-community/core';
 import { EditDetails } from './cellComp';
 import { createPortal } from 'react-dom';
 
-export const ShowInPopup = (props: {
+export const PopupEditorComp = (props: {
             editDetails: EditDetails, 
             cellCtrl: CellCtrl, 
             eParentCell: HTMLElement,

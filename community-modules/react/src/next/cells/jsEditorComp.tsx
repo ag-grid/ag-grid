@@ -10,13 +10,13 @@ import {
     GridOptionsWrapper,
     PopupEditorWrapper,
     ICellEditorComp
-} from 'ag-grid-community';
+} from '@ag-grid-community/core';
 import { CssClasses } from '../utils';
 import { showJsCellRenderer } from './showJsRenderer'
 import { EditDetails } from './cellComp';
 import { createJsComp } from '../jsComp';
 
-export const JsEditorWrapper = (props: {cellEditorRef: MutableRefObject<any>, 
+export const JsEditorComp = (props: {cellEditorRef: MutableRefObject<any>, 
     context: Context, compDetails: UserCompDetails, eParentElement: HTMLElement}) => {
 
     useEffect( ()=> {
@@ -26,13 +26,20 @@ export const JsEditorWrapper = (props: {cellEditorRef: MutableRefObject<any>,
         const cellEditor = createJsComp(context, factory => factory.createCellEditor(compDetails) ) as ICellEditorComp;
         if (!cellEditor) { return; }
 
-        eParentElement.appendChild(cellEditor.getGui());
+        const compGui = cellEditor.getGui();
+
+        if (compGui) {
+            eParentElement.appendChild(cellEditor.getGui());
+        }
 
         cellEditorRef.current = cellEditor;
 
         return () => {
             context.destroyBean(cellEditor);
             cellEditorRef.current = undefined;
+            if (compGui && compGui.parentElement) {
+                compGui.parentElement.removeChild(compGui);
+            }
         };
     }, []);
 

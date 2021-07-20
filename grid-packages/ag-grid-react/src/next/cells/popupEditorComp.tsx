@@ -6,26 +6,26 @@ import {
     PopupEditorWrapper,
     PopupService,
     GridOptionsWrapper,
-} from '@ag-grid-community/core';
+} from 'ag-grid-community';
 import { EditDetails } from './cellComp';
 import { createPortal } from 'react-dom';
 
-export const ShowInPopup = (props: {
-            context: Context, 
+export const PopupEditorComp = (props: {
             editDetails: EditDetails, 
             cellCtrl: CellCtrl, 
             eParentCell: HTMLElement,
-            wrappedContent: any
+            wrappedContent?: any,
+            wrappedComp?: any,
+            wrappedCompProps?: any
         }) => {
-
-    const {context, editDetails, cellCtrl, eParentCell: eGui, wrappedContent} = props;
-    const {compDetails} = editDetails;
 
     const [popupEditorWrapper, setPopupEditorWrapper] = useState<PopupEditorWrapper>();
 
     useEffect( () => {
-        const popupService = context.getBean('popupService') as PopupService;
-        const gridOptionsWrapper = context.getBean('gridOptionsWrapper') as GridOptionsWrapper;
+        const {editDetails, cellCtrl, eParentCell} = props;
+        const {compDetails} = editDetails;
+        const {context, popupService, gridOptionsWrapper} = cellCtrl.getBeans();
+
         const useModelPopup = gridOptionsWrapper.isStopEditingWhenCellsLoseFocus();
         
         const wrapper = new PopupEditorWrapper(compDetails.params);
@@ -35,7 +35,7 @@ export const ShowInPopup = (props: {
             column: cellCtrl.getColumn(),
             rowNode: cellCtrl.getRowNode(),
             type: 'popupCellEditor',
-            eventSource: eGui,
+            eventSource: eParentCell,
             ePopup: ePopupGui,
             keepWithinBounds: true
         };
@@ -49,7 +49,7 @@ export const ShowInPopup = (props: {
             eChild: ePopupGui,
             closeOnEsc: true,
             closedCallback: () => { cellCtrl.onPopupEditorClosed(); },
-            anchorToElement: eGui,
+            anchorToElement: eParentCell,
             positionCallback
         });
     
@@ -68,7 +68,11 @@ export const ShowInPopup = (props: {
 
     return (
         <>
-        { popupEditorWrapper && createPortal(wrappedContent, popupEditorWrapper.getGui()) }
+        { popupEditorWrapper && props.wrappedContent && createPortal(props.wrappedContent, popupEditorWrapper.getGui()) }
+        { popupEditorWrapper && props.wrappedComp && createPortal(
+                        <props.wrappedComp eParentElement={popupEditorWrapper.getGui()} {...props.wrappedCompProps}/>, 
+                        popupEditorWrapper.getGui()) 
+        }
         </>
     );
 };
