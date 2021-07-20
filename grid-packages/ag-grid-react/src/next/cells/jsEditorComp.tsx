@@ -16,8 +16,6 @@ import { showJsCellRenderer } from './showJsRenderer'
 import { EditDetails } from './cellComp';
 import { createJsComp } from '../jsComp';
 
-
-
 export const JsEditorComp = (props: {setCellEditorRef: (cellEditor: ICellEditor | undefined)=>void, 
     cellCtrl: CellCtrl, compDetails: UserCompDetails, eParentElement: HTMLElement}) => {
 
