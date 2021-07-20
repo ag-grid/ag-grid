@@ -150,9 +150,8 @@ export class BlockUtils extends BeanStub {
             if (usingTreeData) {
                 rowNode.groupData[col.getColId()] = rowNode.key;
             } else if (col.isRowGroupDisplayed(rowNode.rowGroupColumn!.getId())) {
-                const { key, rawKeyValue } = this.valueService.getKeyForNode(rowNode.rowGroupColumn!, rowNode);
-                rowNode.groupData[col.getColId()] = key;
-                rowNode.rawKeyValue = rawKeyValue;
+                const groupValue = this.valueService.getValue(rowNode.rowGroupColumn!, rowNode);
+                rowNode.groupData[col.getColId()] = groupValue;
             }
         });
     }
