@@ -309,14 +309,12 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public defaultExcelExportParams: ExcelExportParams | undefined = undefined;
     @Input() public columnTypes: { [key: string]: ColDef; } | undefined = undefined;
     @Input() public rowClassRules: { [cssClassName: string]: (((params: any) => boolean) | string); } | undefined = undefined;
-    @Input() public detailGridOptions: any | undefined = undefined;
     @Input() public detailCellRendererParams: any | undefined = undefined;
     @Input() public loadingCellRendererParams: any | undefined = undefined;
     @Input() public loadingOverlayComponentParams: any | undefined = undefined;
     @Input() public noRowsOverlayComponentParams: any | undefined = undefined;
     @Input() public popupParent: HTMLElement | undefined = undefined;
     @Input() public colResizeDefault: string | undefined = undefined;
-    @Input() public reduxStore: any | undefined = undefined;
     @Input() public statusBar: {
         statusPanels: StatusPanelDef[];
     } | undefined = undefined;
@@ -375,8 +373,8 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public localeTextFunc: (key: string, defaultValue: string) => string | undefined = undefined;
     @Input() public groupRowInnerRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined = undefined;
     @Input() public groupRowInnerRendererFramework: any | undefined = undefined;
-    @Input() public dateComponent: any | undefined = undefined;
-    @Input() public dateComponentFramework: any | undefined = undefined;
+    @Input() public dateComponent: any = undefined;
+    @Input() public dateComponentFramework: any = undefined;
     @Input() public groupRowRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined = undefined;
     @Input() public groupRowRendererFramework: any | undefined = undefined;
     @Input() public isExternalFilterPresent: () =>  boolean | undefined = undefined;
@@ -384,8 +382,6 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public doesExternalFilterPass: (node: RowNode) =>  boolean | undefined = undefined;
     @Input() public getRowClass: (params: any) => (string | string[]) | undefined = undefined;
     @Input() public getRowStyle: Function | undefined = undefined;
-    @Input() public getRowClassRules: any | undefined = undefined;
-    @Input() public traverseNode: any | undefined = undefined;
     @Input() public getContextMenuItems: GetContextMenuItems | undefined = undefined;
     @Input() public getMainMenuItems: GetMainMenuItems | undefined = undefined;
     @Input() public processRowPostCreate: (params: ProcessRowParams) =>  void | undefined = undefined;
@@ -403,7 +399,6 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public tabToNextHeader: (params: TabToNextHeaderParams) => HeaderPosition | undefined = undefined;
     @Input() public navigateToNextCell: (params: NavigateToNextCellParams) => CellPosition | undefined = undefined;
     @Input() public tabToNextCell: (params: TabToNextCellParams) => CellPosition | undefined = undefined;
-    @Input() public getDetailRowData: any | undefined = undefined;
     @Input() public processCellFromClipboard: (params: ProcessCellForExportParams) =>  any | undefined = undefined;
     @Input() public getDocument: () => Document | undefined = undefined;
     @Input() public postProcessPopup: (params: PostProcessPopupParams) => void | undefined = undefined;
@@ -535,7 +530,6 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public suppressClipboardPaste: boolean | undefined = undefined;
     @Input() public suppressLastEmptyLineOnPaste: boolean | undefined = undefined;
     @Input() public serverSideSortingAlwaysResets: boolean | undefined = undefined;
-    @Input() public reactNext: any | undefined = undefined;
     @Input() public suppressSetColumnStateEvents: boolean | undefined = undefined;
     @Input() public suppressColumnStateEvents: boolean | undefined = undefined;
     @Input() public enableCharts: boolean | undefined = undefined;

@@ -96,8 +96,9 @@ function getGridPropertiesAndEventsJs() {
 
     ComponentUtil.ALL_PROPERTIES.forEach((property) => {
         if (skippableProperties.indexOf(property) === -1) {
-            const typeName = typeLookup[property] || 'any'
-            result += `    @Input() public ${property}: ${typeName.trim()} | undefined = undefined;${EOL}`;
+            const typeName = typeLookup[property];
+            const inputType = typeName ? `${typeName.trim()} | undefined` : 'any'
+            result += `    @Input() public ${property}: ${inputType} = undefined;${EOL}`;
         }
     });
 
