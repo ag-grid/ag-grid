@@ -1,10 +1,15 @@
-import { MutableRefObject, useEffect,useCallback } from 'react';
+import React, { MutableRefObject, useEffect,useCallback } from 'react';
 import {
     Context,
     UserComponentFactory,
     ICellRendererComp,
 } from '@ag-grid-community/core';
 import { ShowDetails } from './cellComp';
+
+export const JsRendererComp = (props: {}) => {
+
+    return (<></>);
+};
 
 export const showJsCellRenderer = (
     showDetails: ShowDetails | undefined,
@@ -13,7 +18,7 @@ export const showJsCellRenderer = (
     context: Context,
     jsCellRendererRef: MutableRefObject<ICellRendererComp|undefined>,
     eGui: MutableRefObject<any>) => {
-        
+
         const destroyCellRenderer = useCallback( ()=> {
             const comp = jsCellRendererRef.current;
             if (!comp) { return; }
