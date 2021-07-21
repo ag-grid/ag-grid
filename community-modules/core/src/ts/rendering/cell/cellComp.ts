@@ -135,7 +135,7 @@ export class CellComp extends Component implements TooltipParentComp {
         if (isInlineEditing) { return; }
 
         // this means firstRender will be true for one pass only, as it's initialised to undefined
-        this.firstRender = this.firstRender != null;
+        this.firstRender = this.firstRender == null;
 
         const usingAngular1Template = this.isUsingAngular1Template();
 
