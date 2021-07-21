@@ -66,8 +66,8 @@ export const GridBodyComp = (params: { context: Context }) => {
 
         insertFirstPosition(eRoot.current!, newComp('AG-HEADER-ROOT').getGui());
 
-        eRoot.current!.appendChild(newComp('AG-FAKE-HORIZONTAL-SCROLL').getGui())
-        eRoot.current!.appendChild(newComp('AG-OVERLAY-WRAPPER').getGui())
+        eRoot.current!.appendChild(newComp('AG-FAKE-HORIZONTAL-SCROLL').getGui());
+        eRoot.current!.appendChild(newComp('AG-OVERLAY-WRAPPER').getGui());
 
         const resizeObserverService = context.getBean('resizeObserverService') as ResizeObserverService;
 

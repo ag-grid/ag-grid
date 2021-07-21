@@ -5,7 +5,7 @@ import {
     IManagedFocusContainer
 } from '@ag-grid-community/core';
 
-export const ManagedFocusContainer: FC<{ 
+export const ManagedFocusContainer: FC<{
     children: React.ReactNode,
     context: Context
     focusableElementRef: React.RefObject<HTMLDivElement>,

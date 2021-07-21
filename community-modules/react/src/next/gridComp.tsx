@@ -18,22 +18,31 @@ export const GridComp = (props: { context: Context }) => {
     const [cursor, setCursor] = useState<string | null>(null);
     const [userSelect, setUserSelect] = useState<string | null>(null);
     const [initialised, setInitialised] = useState<boolean>(false);
-
+    
+    const ctrlRef = useRef<GridCtrl | null>(null);
     const eRootWrapper = useRef<HTMLDivElement>(null);
     const eGridBodyParent = useRef<HTMLDivElement>(null);
     const focusInnerElement = useRef<((fromBottom?: boolean) => void)>(() => undefined);
 
+    // create shared controller.
+    useEffect(() => {
+        if (ctrlRef.current) { return; }
+        
+        ctrlRef.current = props.context.createBean(new GridCtrl());
+
+        return () => {
+            props.context.destroyBean([ctrlRef.current]);
+            ctrlRef.current = null;
+        }
+    }, [props.context]);
+
     // initialise the UI
     useEffect(() => {
-        const { context } = props;
-        const beansToDestroy: any[] = [];
+        const currentController = ctrlRef.current;
 
-        if (!props || !props.context) { return; }
+        if (!props.context || !currentController) { return; }
 
-        const ctrl = context.createBean(new GridCtrl());
-        focusInnerElement.current = ctrl.focusInnerElement.bind(ctrl);
-
-        beansToDestroy.push(ctrl);
+        focusInnerElement.current = currentController.focusInnerElement.bind(currentController);
 
         const compProxy: IGridComp = {
             destroyGridUi:
@@ -43,31 +52,100 @@ export const GridComp = (props: { context: Context }) => {
                 (addOrRemove: boolean) => setKeyboardFocusClass(addOrRemove ? FocusService.AG_KEYBOARD_FOCUS : ''),
             forceFocusOutOfContainer: () => {}, //this.forceFocusOutOfContainer.bind(this),
             updateLayoutClasses: setLayoutClass,
-            getFocusableContainers: () => [], //this.getFocusableContainers.bind(this)
+            getFocusableContainers: () => {
+                const els: HTMLElement[] = [];
+
+                const gridBodyCompEl = eRootWrapper.current!.querySelector('.ag-root');
+                const sideBarEl = eRootWrapper.current!.querySelector('.ag-side-bar')
+
+                if (gridBodyCompEl) {
+                    els.push(gridBodyCompEl as HTMLElement);
+                }
+
+                if (sideBarEl) {
+                    els.push(sideBarEl as HTMLElement);
+                }
+
+                return els;
+            },
             setCursor,
             setUserSelect
         };
 
-        ctrl.setComp(compProxy, eRootWrapper.current!, eRootWrapper.current!);
+        currentController.setComp(compProxy, eRootWrapper.current!, eRootWrapper.current!);
 
-        // should be shared
-        const insertFirstPosition = (parent: HTMLElement, child: HTMLElement) => parent.insertBefore(child, parent.firstChild);
+        setInitialised(true);
+    }, [props.context]);
 
+    // initialise the extra components
+    useEffect(() => {
+        const ctrl = ctrlRef.current;
+        const beansToDestroy: any[] = [];
+
+        if (!props.context || !ctrl || !eRootWrapper.current || !eGridBodyParent.current) { return; }
+
+        const context = props.context;
         const agStackComponentsRegistry: AgStackComponentsRegistry = context.getBean('agStackComponentsRegistry');
         const HeaderDropZonesClass = agStackComponentsRegistry.getComponentClass('AG-GRID-HEADER-DROP-ZONES');
+        const SideBarClass = agStackComponentsRegistry.getComponentClass('AG-SIDE-BAR');
+        const StatusBarClass = agStackComponentsRegistry.getComponentClass('AG-STATUS-BAR');
+        const WatermarkClass = agStackComponentsRegistry.getComponentClass('AG-WATERMARK');
+        const PaginationClass = agStackComponentsRegistry.getComponentClass('AG-PAGINATION');
+        const additionalEls: HTMLDivElement[] = [];
 
         if (ctrl.showDropZones() && HeaderDropZonesClass) {
             const headerDropZonesComp = context.createBean(new HeaderDropZonesClass());
-            insertFirstPosition(eRootWrapper.current!, headerDropZonesComp.getGui());
+            const eGui = headerDropZonesComp.getGui();
+            eRootWrapper.current.insertAdjacentElement('afterbegin', eGui);
+            additionalEls.push(eGui);
             beansToDestroy.push(headerDropZonesComp);
         }
 
-        setInitialised(true);
+        if (ctrl.showSideBar() && SideBarClass) {
+            const sideBarComp = context.createBean(new SideBarClass());
+            const eGui = sideBarComp.getGui();
+            const bottomTabGuard = eGridBodyParent.current.querySelector('.ag-tab-guard-bottom');
+            if (bottomTabGuard) {
+                bottomTabGuard.insertAdjacentElement('beforebegin', eGui);
+                additionalEls.push(eGui);
+            }
+            
+            beansToDestroy.push(sideBarComp);
+        }
+
+        if (ctrl.showStatusBar() && StatusBarClass) {
+            const statusBarComp = context.createBean(new StatusBarClass());
+            const eGui = statusBarComp.getGui();
+            eRootWrapper.current.insertAdjacentElement('beforeend', eGui);
+            additionalEls.push(eGui);
+            beansToDestroy.push(statusBarComp);
+        }
+
+        if (PaginationClass) {
+            const paginationComp = context.createBean(new PaginationClass());
+            const eGui = paginationComp.getGui();
+            eRootWrapper.current.insertAdjacentElement('beforeend', eGui);
+            additionalEls.push(eGui);
+            beansToDestroy.push(paginationComp);
+        }
+
+        if (ctrl.showWatermark() && WatermarkClass) {
+            const watermarkComp = context.createBean(new WatermarkClass());
+            const eGui = watermarkComp.getGui();
+            eRootWrapper.current.insertAdjacentElement('beforeend', eGui);
+            additionalEls.push(eGui);
+            beansToDestroy.push(watermarkComp);
+        }
 
         return () => {
-            context.destroyBeans(beansToDestroy);
-        };
-    }, [props]);
+            context.destroyBean(beansToDestroy);
+            additionalEls.forEach(el => {
+                if (el.parentElement) {
+                    el.parentElement.removeChild(el);
+                }
+            });
+        }
+    }, [props])
 
     const rootWrapperClasses = classesList('ag-root-wrapper', rtlClass, keyboardFocusClass, layoutClass);
     const rootWrapperBodyClasses = classesList('ag-root-wrapper-body', 'ag-focus-managed', layoutClass);
@@ -88,12 +166,12 @@ export const GridComp = (props: { context: Context }) => {
                     // before we have set the the Layout CSS classes, causing the GridBodyComp to render rows to a grid that
                     // doesn't have it's height specified, which would result if all the rows getting rendered (and if many rows,
                     // hangs the UI)
-                        initialised && <GridBodyComp context={ props.context }/> 
+                        initialised && <GridBodyComp context={ props.context }/>
+
                     }
                     </ManagedFocusContainer>
                 </div>
                 }
-                { /* <PopupParent context={ props.context }></PopupParent> */ }
         </div>
     );
 }
