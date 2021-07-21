@@ -1,6 +1,6 @@
 import { Context, ICellRendererComp, UserComponentFactory } from '@ag-grid-community/core';
 import React, { MutableRefObject, useCallback, useEffect } from 'react';
-import { ShowDetails } from './cellComp';
+import { RenderDetails } from './cellComp';
 
 export const JsRendererComp = (props: {}) => {
 
@@ -8,7 +8,7 @@ export const JsRendererComp = (props: {}) => {
 };
 
 export const showJsCellRenderer = (
-    showDetails: ShowDetails | undefined,
+    showDetails: RenderDetails | undefined,
     showTools: boolean,
     toolsValueSpan: HTMLElement | undefined,
     context: Context,

@@ -71,8 +71,8 @@ export interface ICellComp {
     getCellRenderer(): ICellRenderer | null;
     getParentOfValue(): HTMLElement | null;
 
-    showValue(valueToDisplay: any, compDetails: UserCompDetails | undefined, forceNewCellRendererInstance: boolean): void;
-    editValue(compDetails: UserCompDetails, popup: boolean | undefined, position: string | undefined): void;
+    setRenderDetails(compDetails: UserCompDetails | undefined, valueToDisplay: any, forceNewCellRendererInstance: boolean): void;
+    setEditDetails(compDetails?: UserCompDetails, popup?: boolean, position?: string): void;
 }
 
 let instanceIdSequence = 0;
@@ -218,8 +218,8 @@ export class CellCtrl extends BeanStub {
         this.setEditing(false);
         const valueToDisplay = this.valueFormatted != null ? this.valueFormatted : this.value;
         const params = this.createCellRendererParams();
-        const cellRendererDetails = this.beans.userComponentFactory.getCellRendererDetails(this.colDef, params);
-        this.cellComp.showValue(valueToDisplay, cellRendererDetails, forceNewCellRendererInstance);
+        const compDetails = this.beans.userComponentFactory.getCellRendererDetails(this.colDef, params);
+        this.cellComp.setRenderDetails(compDetails, valueToDisplay, forceNewCellRendererInstance);
         this.refreshHandle();
     }
 
@@ -266,7 +266,7 @@ export class CellCtrl extends BeanStub {
 
         this.setEditing(true, popup);
 
-        this.cellComp.editValue(compDetails!, popup, position);
+        this.cellComp.setEditDetails(compDetails!, popup, position);
 
         const event: CellEditingStartedEvent = this.createEvent(null, Events.EVENT_CELL_EDITING_STARTED);
         this.beans.eventService.dispatchEvent(event);
@@ -278,6 +278,10 @@ export class CellCtrl extends BeanStub {
         this.editing = editing;
         this.editingInPopup = inPopup;
         this.setInlineEditingClass();
+
+        if (!editing) {
+            this.cellComp.setEditDetails();
+        }
     }
 
     // pass in 'true' to cancel the editing.
