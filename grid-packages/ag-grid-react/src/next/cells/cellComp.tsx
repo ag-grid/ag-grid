@@ -259,9 +259,10 @@ export const CellComp = (props: {
         };
 
         cellCtrl.setComp(compProxy, false, null, eGui.current!, printLayout, editingRow);
-        cellCtrl.updateCssCellValue();
 
     }, [cellCtrl, editingRow, printLayout, toolsValueSpan]);
+
+    cssClasses.setClass('ag-cell-value', showTools);
 
     const className = cssClasses.toString();
 

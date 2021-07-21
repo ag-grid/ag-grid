@@ -33,7 +33,6 @@ import { doOnce } from "../../utils/function";
 import { RowDragComp } from "../row/rowDragComp";
 
 const CSS_CELL = 'ag-cell';
-const CSS_CELL_VALUE = 'ag-cell-value';
 const CSS_AUTO_HEIGHT = 'ag-cell-auto-height';
 const CSS_CELL_FOCUS = 'ag-cell-focus';
 const CSS_CELL_FIRST_RIGHT_PINNED = 'ag-cell-first-right-pinned';
@@ -920,13 +919,6 @@ export class CellCtrl extends BeanStub {
         }
     }
     
-    public updateCssCellValue(): void {
-        const parentOfValue = this.cellComp.getParentOfValue();
-        const usingWrapper = !!parentOfValue && parentOfValue !== this.getGui();
-
-        this.cellComp.addOrRemoveCssClass(CSS_CELL_VALUE, !usingWrapper);
-    }
-
     public onColumnHover(): void {
         if (!this.cellComp) { return; }
 
