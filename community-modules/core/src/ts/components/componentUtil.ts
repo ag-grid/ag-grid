@@ -15,7 +15,7 @@ export class ComponentUtil {
     public static PUBLIC_EVENTS: string[] = [];
 
     // events that are internal to AG Grid and should not be exposed to users via documentation or generated framework components
-    public static INTERNAL_EVENTS: string[] = [];
+    public static EXCLUDED_INTERNAL_EVENTS: string[] = [];
 
     // function below fills this with onXXX methods, based on the above events
     private static EVENT_CALLBACKS: string[];
@@ -219,7 +219,8 @@ export class ComponentUtil {
 
 ComponentUtil.EVENTS = values<any>(Events);
 
-ComponentUtil.INTERNAL_EVENTS = [
+/** Exclude the following internal events from code generation to prevent exposing these events via framework components */
+ComponentUtil.EXCLUDED_INTERNAL_EVENTS = [
     Events.EVENT_SCROLLBAR_WIDTH_CHANGED,
     Events.EVENT_CHECKBOX_CHANGED,
     Events.EVENT_POPUP_LIST_CHANGED,
@@ -240,4 +241,5 @@ ComponentUtil.INTERNAL_EVENTS = [
     Events.EVENT_STORE_UPDATED
 ];
 
-ComponentUtil.PUBLIC_EVENTS = ComponentUtil.EVENTS.filter(e => !includes(ComponentUtil.INTERNAL_EVENTS, e));
+/** EVENTS that should be exposed via code generation for the framework components.  */
+ComponentUtil.PUBLIC_EVENTS = ComponentUtil.EVENTS.filter(e => !includes(ComponentUtil.EXCLUDED_INTERNAL_EVENTS, e));
