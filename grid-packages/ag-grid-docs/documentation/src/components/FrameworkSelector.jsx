@@ -18,8 +18,14 @@ export default function FrameworkSelector({ frameworks, path, currentFramework }
             .map(framework => {
                 const isSelected = framework === currentFramework;
                 const frameworkCapitalised = framework.charAt(0).toUpperCase() + framework.slice(1);
-                const alt = `${frameworkCapitalised} Grid`;
-                return <a href={path.replace(`/${currentFramework}-`, `/${framework}-`)} key={framework} className={classnames(styles['framework-selector__option'], { [styles['framework-selector__option--selected']]: isSelected })}>
+                const alt = `${frameworkCapitalised}${framework === 'react' ? ' Data' : ''} Grid`;
+
+                // everything but react will be <fw>-grid - react will be react-data-grid
+                const href = path.replace(`/${currentFramework}-`, `/${framework}-`)
+                    .replace('-data-grid', `${framework === 'react' ? '-data-grid' : '-grid'}`)
+                    .replace('/react-grid', `${framework === 'react' ? '/react-data-grid' : ''}`);
+
+                return <a href={href} key={framework} className={classnames(styles['framework-selector__option'], { [styles['framework-selector__option--selected']]: isSelected })}>
                     <img src={fwLogos[framework]} alt={alt} className={styles['framework-selector__icon']} />
                 </a>;
             })}

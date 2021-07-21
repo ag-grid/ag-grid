@@ -1,7 +1,7 @@
-var columnDefs = [
-    { headerName: 'Editable A', field: 'a', editable: true, valueParser: numberValueParser },
-    { headerName: 'Editable B', field: 'b', editable: true, valueParser: numberValueParser },
-    { headerName: 'Editable C', field: 'c', editable: true, valueParser: numberValueParser },
+const columnDefs = [
+    {headerName: 'Editable A', field: 'a', editable: true, valueParser: numberValueParser},
+    {headerName: 'Editable B', field: 'b', editable: true, valueParser: numberValueParser},
+    {headerName: 'Editable C', field: 'c', editable: true, valueParser: numberValueParser},
     {
         headerName: 'API D',
         field: 'd',
@@ -30,7 +30,7 @@ var columnDefs = [
     }
 ];
 
-var gridOptions = {
+const gridOptions = {
     columnDefs: columnDefs,
     defaultColDef: {
         flex: 1,
@@ -45,9 +45,9 @@ var gridOptions = {
 };
 
 function createRowData() {
-    var rowData = [];
+    const rowData = [];
 
-    for (var i = 0; i < 20; i++) {
+    for (let i = 0; i < 20; i++) {
         rowData.push({
             a: Math.floor(( (i + 323) * 25435) % 10000),
             b: Math.floor(( (i + 323) * 23221) % 10000),
@@ -71,10 +71,10 @@ function formatNumber(number) {
 }
 
 function onUpdateSomeValues() {
-    var rowCount = gridOptions.api.getDisplayedRowCount();
-    for (var i = 0; i < 10; i++) {
-        var row = Math.floor(Math.random() * rowCount);
-        var rowNode = gridOptions.api.getDisplayedRowAtIndex(row);
+    const rowCount = gridOptions.api.getDisplayedRowCount();
+    for (let i = 0; i < 10; i++) {
+        const row = Math.floor(Math.random() * rowCount);
+        const rowNode = gridOptions.api.getDisplayedRowAtIndex(row);
         rowNode.setDataValue('d', Math.floor(Math.random() * 10000));
         rowNode.setDataValue('e', Math.floor(Math.random() * 10000));
     }
@@ -82,7 +82,7 @@ function onUpdateSomeValues() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector('#myGrid');
+    const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
     setTimeout(function() {
         gridOptions.api.sizeColumnsToFit();

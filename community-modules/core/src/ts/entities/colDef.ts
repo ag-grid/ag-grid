@@ -13,7 +13,7 @@ import { ColumnGroup } from "./columnGroup";
 import { RowClassParams } from "./gridOptions";
 
 /***********************************************************************
- * Don't forget to update PropertyKeys if changing this class. PLEASE! *
+ * Don't forget to update ColDefUtil if changing this class. PLEASE! *
  ***********************************************************************/
 
 /** AbstractColDef can be a group or a column definition */
@@ -81,7 +81,7 @@ export interface IAggFuncParams {
 }
 
 /***********************************************************************
- * Don't forget to update PropertyKeys if changing this class. PLEASE! *
+ * Don't forget to update ColDefUtil if changing this class. PLEASE! *
  ***********************************************************************/
 export interface ColDef extends AbstractColDef, IFilterDef {
 

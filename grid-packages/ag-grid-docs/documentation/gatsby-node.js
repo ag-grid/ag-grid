@@ -209,9 +209,9 @@ const createHomePages = createPage => {
 
     supportedFrameworks.forEach(framework => {
         createPage({
-            path: `/${framework}-grid/`,
+            path: `/${framework}${framework === 'react' ? '-data' : ''}-grid/`,
             component: homePage,
-            context: { frameworks: supportedFrameworks, framework, pageName: `${framework}-grid` }
+            context: { frameworks: supportedFrameworks, framework, pageName: `${framework}-data-grid` }
         });
     });
 

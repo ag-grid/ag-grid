@@ -1,7 +1,7 @@
 const replace = require('replace-in-file');
-const typescriptSimple = require('typescript-simple');
 const fs = require('fs');
 const { EOL } = require('os');
+const ts = require('typescript');
 
 // satisfy ag-grid HTMLElement dependencies
 HTMLElement = typeof HTMLElement === 'undefined' ? function() {
@@ -15,27 +15,110 @@ HTMLButtonElement = typeof HTMLButtonElement === 'undefined' ? function() {
 MouseEvent = typeof MouseEvent === 'undefined' ? function() {
 } : MouseEvent;
 
-function getGridPropertiesAndEventsJs() {
-    const { ComponentUtil } = require("@ag-grid-community/core");
 
+function findInterfaceNode(interfaceName, sourceFile) {
+    let parsedSyntaxTreeResults;
+    const src = fs.readFileSync(sourceFile, 'utf8');
+    parsedSyntaxTreeResults = ts.createSourceFile('tempFile.ts', src, ts.ScriptTarget.Latest, true);
+
+    const interfaceNode = findInterfaceInNodeTree(parsedSyntaxTreeResults, interfaceName);
+
+    if (!interfaceNode) {
+        throw `Unable to locate interface '${interfaceName}' in AST parsed from: ${sourceFile}.`
+    }
+
+    return interfaceNode;
+}
+
+
+function findInterfaceInNodeTree(node, interfaceName) {
+    const kind = ts.SyntaxKind[node.kind];
+
+    if (kind == 'InterfaceDeclaration' && node && node.name && node.name.escapedText == interfaceName) {
+        return node;
+    }
+    let interfaceNode = undefined;
+    ts.forEachChild(node, n => {
+        if (!interfaceNode) {
+            interfaceNode = findInterfaceInNodeTree(n, interfaceName);
+        }
+    });
+
+    return interfaceNode;
+}
+
+function extractTypesFromNode(node, typeLookup, eventTypeLookup, publicEventLookup) {
+    const kind = ts.SyntaxKind[node.kind];
+    const name = node && node.name && node.name.escapedText;
+    const returnType = node && node.type && node.type.getFullText();
+    if (kind == 'PropertySignature') {
+        typeLookup[name] = returnType;
+    } else if (kind == 'MethodSignature') {
+        const getParamType = (typeNode) => {
+            switch (ts.SyntaxKind[typeNode.kind]) {
+                case 'ArrayType':
+                    return typeNode.elementType.typeName.escapedText + '[]';
+                case 'AnyKeyword':
+                    return 'any';
+                default:
+                    return typeNode.typeName.escapedText;
+            }
+        }
+
+        if (node.parameters && node.parameters.length > 0) {
+            const methodParams = node.parameters.map(p => `${p.name.escapedText}: ${getParamType(p.type)}`);
+            typeLookup[name] = `(${methodParams.join(', ')}) => ${returnType}`;
+        } else {
+            typeLookup[name] = `() => ${returnType}`
+        }
+
+        if (publicEventLookup[name]) {
+            const typeName = node.parameters[0].type.typeName.escapedText;
+            eventTypeLookup[name] = typeName;
+        }
+    };
+    ts.forEachChild(node, n => extractTypesFromNode(n, typeLookup, eventTypeLookup, publicEventLookup));
+}
+
+
+function generateAngularInputOutputs(compUtils, typeLookup, eventTypeLookup) {
     let result = '';
-
     const skippableProperties = ['gridOptions'];
 
-    ComponentUtil.ALL_PROPERTIES.forEach((property) => {
+    compUtils.ALL_PROPERTIES.forEach((property) => {
         if (skippableProperties.indexOf(property) === -1) {
-            result += `    @Input() public ${property}: any = undefined;${EOL}`;
+            const typeName = typeLookup[property];
+            const inputType = typeName ? `${typeName.trim()} | undefined` : 'any'
+            result += `    @Input() public ${property}: ${inputType} = undefined;${EOL}`;
         }
     });
 
     // for readability
     result += EOL;
 
-    ComponentUtil.EVENTS.forEach((event) => {
-        result += `    @Output() public ${event}: EventEmitter<any> = new EventEmitter<any>();${EOL}`;
+    compUtils.PUBLIC_EVENTS.forEach((event) => {
+        const onEvent = compUtils.getCallbackForEvent(event);
+        result += `    @Output() public ${event}: EventEmitter<${eventTypeLookup[onEvent]}> = new EventEmitter<${eventTypeLookup[onEvent]}>();${EOL}`;
     });
 
     return result;
+}
+
+function getGridPropertiesAndEventsJs() {
+    const { ComponentUtil } = require("@ag-grid-community/core");
+
+    const filename = "../../community-modules/core/src/ts/entities/gridOptions.ts";
+    const gridOptionsNode = findInterfaceNode('GridOptions', filename);
+
+    // Apply @Output formatting to public events that are present in this lookup
+    const publicEventLookup = {};
+    ComponentUtil.PUBLIC_EVENTS.forEach(e => publicEventLookup[ComponentUtil.getCallbackForEvent(e)] = true);
+
+    let typeLookup = {};
+    let eventTypeLookup = {};
+    extractTypesFromNode(gridOptionsNode, typeLookup, eventTypeLookup, publicEventLookup);
+
+    return generateAngularInputOutputs(ComponentUtil, typeLookup, eventTypeLookup);
 }
 
 function getGridColumnPropertiesJs() {
@@ -50,6 +133,17 @@ function getGridColumnPropertiesJs() {
         'templateUrl'
     ];
 
+    const filename = "../../community-modules/core/src/ts/entities/colDef.ts";
+    const abstractColDefNode = findInterfaceNode('AbstractColDef', filename);
+    const colGroupDefNode = findInterfaceNode('ColGroupDef', filename);
+    const colDefNode = findInterfaceNode('ColDef', filename);
+
+
+    let typeLookup = {};
+    extractTypesFromNode(abstractColDefNode, typeLookup, {}, {});
+    extractTypesFromNode(colGroupDefNode, typeLookup, {}, {});
+    extractTypesFromNode(colDefNode, typeLookup, {}, {});
+
     let result = '';
 
     function unique(value, index, self) {
@@ -58,73 +152,9 @@ function getGridColumnPropertiesJs() {
 
     ColDefUtil.ALL_PROPERTIES.filter(unique).forEach((property) => {
         if (skippableProperties.indexOf(property) === -1) {
-            result += `    @Input() public ${property}: any;${EOL}`;
-        }
-    });
-
-    return result;
-}
-
-function getJavascript(filename) {
-    const src = fs.readFileSync(filename, 'utf8');
-    return typescriptSimple(src, { module: 'commonjs' });
-}
-
-function getGridPropertiesAndEventsTs() {
-    const eventsSrc = getJavascript('../../community-modules/core/src/ts/eventKeys.ts');
-    const propertyKeysSrc = getJavascript('../../community-modules/core/src/ts/propertyKeys.ts');
-
-    eval(eventsSrc);
-    eval(propertyKeysSrc);
-
-    const events = [];
-    const keys = Object.keys(exports.Events);
-    for (const key of keys) {
-        events.push(exports.Events[key]);
-    }
-
-    let result = '';
-
-    const skippableProperties = ['gridOptions'];
-
-    exports.PropertyKeys.ALL_PROPERTIES.forEach((property) => {
-        if (skippableProperties.indexOf(property) === -1) {
-            result += `    @Input() public ${property}: any = undefined;${EOL}`;
-        }
-    });
-
-    // for readability
-    result += EOL;
-
-    events.forEach((event) => {
-        result += `    @Output() public ${event}: EventEmitter<any> = new EventEmitter<any>();${EOL}`;
-    });
-
-    return result;
-}
-
-function getGridColumnPropertiesTs() {
-    const js = getJavascript('../../community-modules/core/src/ts/components/colDefUtil.ts');
-    eval(js);
-
-    // colDef properties that dont make sense in an angular context (or are private)
-    const skippableProperties = ['template',
-        'templateUrl',
-        'pivotKeys',
-        'pivotValueColumn',
-        'pivotTotalColumnIds',
-        'templateUrl'
-    ];
-
-    let result = '';
-
-    function unique(value, index, self) {
-        return self.indexOf(value) === index;
-    }
-
-    exports.ColDefUtil.ALL_PROPERTIES.filter(unique).forEach((property) => {
-        if (skippableProperties.indexOf(property) === -1) {
-            result += `    @Input() public ${property}: any;${EOL}`;
+            const typeName = typeLookup[property];
+            const inputType = typeName ? `${typeName.trim()} | undefined` : 'any'
+            result += `    @Input() public ${property}: ${inputType} = undefined;${EOL}`;
         }
     });
 
@@ -181,15 +211,5 @@ module.exports = {
         if (cb) {
             Promise.all([gridPromise, colPromise]).then(() => cb());
         }
-    },
-    updatePropertiesSrc: (cb) => {
-        const gridPromise = new Promise(resolve => updateGridProperties(resolve, getGridPropertiesAndEventsTs));
-        const colPromise = new Promise(resolve => updateColProperties(resolve, getGridColumnPropertiesTs));
-
-        if (cb) {
-            Promise.all([gridPromise, colPromise]).then(() => cb());
-        }
     }
 };
-
-// module.exports.updatePropertiesSrc = updatePropertiesSrc;
