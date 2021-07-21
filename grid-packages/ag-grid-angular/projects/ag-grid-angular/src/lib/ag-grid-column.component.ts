@@ -92,6 +92,7 @@ export class AgGridColumn {
     @Input() public pinned: boolean | string | null | undefined = undefined;
     @Input() public initialPinned: boolean | string | undefined = undefined;
     @Input() public chartDataType: 'category' | 'series' | 'time' | 'excluded' | undefined = undefined;
+    @Input() public cellEditorPopupPosition: string | undefined = undefined;
     @Input() public sortedAt: number | undefined = undefined;
     @Input() public sortIndex: number | null | undefined = undefined;
     @Input() public initialSortIndex: number | undefined = undefined;
@@ -169,7 +170,7 @@ export class AgGridColumn {
     @Input() public resizable: boolean | undefined = undefined;
     @Input() public singleClickEdit: boolean | undefined = undefined;
     @Input() public floatingFilter: boolean | undefined = undefined;
-    @Input() public cellEditorPopup: any;
+    @Input() public cellEditorPopup: boolean | undefined = undefined;
     // @END@
 
 }
