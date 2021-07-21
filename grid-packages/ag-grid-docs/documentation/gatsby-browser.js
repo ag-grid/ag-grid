@@ -22,10 +22,10 @@ export const onRouteUpdate = ({ location }) => {
     if (['/', '/documentation/'].includes(getRelativePath(location.pathname))) {
         const selectedFramework = LocalStorage.get(frameworkStorageKey) || 'javascript';
 
-        navigate(`/${selectedFramework}-grid/`, { replace: true });
+        navigate(`/${selectedFramework}${selectedFramework === 'react' ? '-data' : ''}-grid/`, { replace: true });
     } else if (LocalStorage.exists()) {
         const firstPart = getRelativePath(location.pathname).split('/').filter(p => p !== '')[0];
-        const framework = firstPart && firstPart.replace(/-grid|-charts/, '');
+        const framework = firstPart && firstPart.replace(/-data-grid|-grid|-charts/, '');
 
         if (framework && supportedFrameworks.indexOf(framework) >= 0) {
             LocalStorage.set(frameworkStorageKey, framework);
