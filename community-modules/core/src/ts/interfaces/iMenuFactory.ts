@@ -7,5 +7,4 @@ export interface IMenuFactory {
     showMenuAfterMouseEvent(column: Column, mouseEvent: MouseEvent | Touch, defaultTab?: string, restrictToTabs?: string[]): void;
     isMenuEnabled(column: Column): boolean;
     hideActiveMenu(): void;
-    registerGridComp(gridBodyComp: GridBodyComp): void;
 }

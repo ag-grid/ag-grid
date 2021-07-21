@@ -54,7 +54,6 @@ export class GridCtrl extends BeanStub {
 
         // register with services that need grid core
         [
-            this.gridApi,
             this.popupService,
             this.focusService,
             this.controllersService

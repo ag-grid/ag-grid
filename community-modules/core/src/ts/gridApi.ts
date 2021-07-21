@@ -212,9 +212,8 @@ export class GridApi {
     @Optional('controllersService') private controllersService: ControllersService;
 
     private overlayWrapperComp: OverlayWrapperComponent;
-    private gridBodyComp: GridBodyComp;
+
     private gridBodyCon: GridBodyCtrl;
-    private gridCompController: GridCtrl;
     private sideBarComp: ISideBar;
 
     private headerRootComp: HeaderRootComp;
@@ -227,16 +226,8 @@ export class GridApi {
 
     private destroyCalled = false;
 
-    public registerGridComp(gridBodyComp: GridBodyComp): void {
-        this.gridBodyComp = gridBodyComp;
-    }
-
     public registerOverlayWrapperComp(overlayWrapperComp: OverlayWrapperComponent): void {
         this.overlayWrapperComp = overlayWrapperComp;
-    }
-
-    public registerGridCompController(gridCompController: GridCtrl): void {
-        this.gridCompController = gridCompController;
     }
 
     public registerHeaderRootComp(headerRootComp: HeaderRootComp): void {
@@ -356,7 +347,7 @@ export class GridApi {
 
     public setGridAriaProperty(property: string, value: string | null): void {
         if (!property) { return; }
-        const eGrid = this.gridBodyComp.getGui();
+        const eGrid = this.controllersService.getGridBodyController().getGui();
         const ariaProperty = `aria-${property}`;
 
         if (value === null) {
@@ -1288,7 +1279,7 @@ export class GridApi {
         this.destroyCalled = true;
 
         // destroy the UI first (as they use the services)
-        this.gridCompController.destroyGridUi();
+        this.controllersService.getGridCompController().destroyGridUi();
 
         // destroy the services
         this.context.destroy();

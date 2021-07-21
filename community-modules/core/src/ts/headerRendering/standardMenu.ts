@@ -9,6 +9,7 @@ import { addCssClass, isVisible } from '../utils/dom';
 import { KeyCode } from '../constants/keyCode';
 import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
 import { ContainerType } from '../interfaces/iAfterGuiAttachedParams';
+import { ControllersService } from '../controllersService';
 
 @Bean('menuFactory')
 export class StandardMenuFactory extends BeanStub implements IMenuFactory {
@@ -16,15 +17,10 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('focusService') private focusService: FocusService;
+    @Autowired('controllersService') private controllersService: ControllersService;
 
     private hidePopup: () => void;
     private tabListener: () => null;
-
-    private gridBodyComp: GridBodyComp;
-
-    public registerGridComp(gridBodyComp: GridBodyComp): void {
-        this.gridBodyComp = gridBodyComp;
-    }
 
     public hideActiveMenu(): void {
         if (this.hidePopup) {
@@ -68,7 +64,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
 
         let hidePopup: (() => void);
 
-        const anchorToElement = eventSource || this.gridBodyComp.getGui();
+        const anchorToElement = eventSource || this.controllersService.getGridBodyController().getGui();
         const closedCallback = (e: MouseEvent | TouchEvent | KeyboardEvent) => {
             column.setMenuVisible(false, 'contextMenu');
             const isKeyboardEvent = e instanceof KeyboardEvent;
