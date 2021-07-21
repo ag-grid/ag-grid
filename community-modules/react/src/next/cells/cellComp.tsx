@@ -4,7 +4,6 @@ import { CssClasses } from '../utils';
 import { JsEditorComp } from './jsEditorComp';
 import { PopupEditorComp } from './popupEditorComp';
 import { showJsCellRenderer as showJsRenderer } from './showJsRenderer';
-import { unstable_renderSubtreeIntoContainer } from 'react-dom';
 
 export enum CellCompState { ShowValue, EditValue }
 
