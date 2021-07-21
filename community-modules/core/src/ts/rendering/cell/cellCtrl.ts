@@ -214,7 +214,6 @@ export class CellCtrl extends BeanStub {
     }
 
     private showValue(forceNewCellRendererInstance = false): void {
-        this.setEditing(false);
         const valueToDisplay = this.valueFormatted != null ? this.valueFormatted : this.value;
         const params = this.createCellRendererParams();
         const compDetails = this.beans.userComponentFactory.getCellRendererDetails(this.colDef, params);
@@ -385,6 +384,13 @@ export class CellCtrl extends BeanStub {
         if (this.rowCtrl) {
             this.rowCtrl.setInlineEditingCss(this.editing);
         }
+    }
+
+    // this is needed as the JS CellComp still allows isPopup() on the CellEditor class, so
+    // it's possible the editor is in a popup even though it's not configured via the colDef as so
+    public hackSayEditingInPopup(): void {
+        this.editingInPopup = true;
+        this.setInlineEditingClass();
     }
 
     private createCellEditorParams(keyPress: number | null, charPress: string | null, cellStartedEdit: boolean): ICellEditorParams {
@@ -790,6 +796,7 @@ export class CellCtrl extends BeanStub {
     }
 
     public refreshHandle(): void {
+        if (this.editing) { return; }
         if (this.cellRangeFeature) {
             this.cellRangeFeature.refreshHandle();
         }

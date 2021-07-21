@@ -475,6 +475,8 @@ export class CellComp extends Component implements TooltipParentComp {
                 '- either turn off fullRowEdit, or stop using popup editors.');
         }
 
+        this.cellCtrl.hackSayEditingInPopup();
+
         const cellEditor = this.cellEditor!;
 
         // if a popup, then we wrap in a popup editor and return the popup
