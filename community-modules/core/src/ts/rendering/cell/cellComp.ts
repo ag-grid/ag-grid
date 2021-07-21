@@ -40,8 +40,8 @@ export class CellComp extends Component implements TooltipParentComp {
     private dndSourceComp: DndSourceComp | undefined;
     private rowDraggingComp: RowDragComp | undefined;
 
-    private cellEditorInPopup: boolean;
     private hideEditorPopup: Function | null;
+    private cellEditorPopupWrapper: PopupEditorWrapper | undefined;
 
     // instance of the cellRenderer class
     private cellRenderer: ICellRendererComp | null | undefined;
@@ -130,7 +130,6 @@ export class CellComp extends Component implements TooltipParentComp {
         this.setCellState(DisplayState.ShowValue);
         const usingAngular1Template = this.isUsingAngular1Template();
 
-        // this will go to cellCtrl in time
         if (this.hideEditorPopup) {
             this.hideEditorPopup();
             this.hideEditorPopup = null;
@@ -274,19 +273,6 @@ export class CellComp extends Component implements TooltipParentComp {
         }
     }
 
-    private wrapPopupEditor(params: ICellEditorParams, editorComp: ICellEditorComp): ICellEditorComp {
-        if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
-            console.warn('AG Grid: popup cellEditor does not work with fullRowEdit - you cannot use them both ' +
-                '- either turn off fullRowEdit, or stop using popup editors.');
-        }
-
-        // if a popup, then we wrap in a popup editor and return the popup
-        const popupEditorWrapper = this.beans.context.createBean(new PopupEditorWrapper(editorComp));
-        popupEditorWrapper.init(params);
-
-        return popupEditorWrapper;
-    }
-
     private insertValueWithoutCellRenderer(valueToDisplay: any): void {
         const escapedValue = valueToDisplay != null ? escapeString(valueToDisplay) : null;
         if (escapedValue != null) {
@@ -314,8 +300,10 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private destroyEditorAndRenderer(): void {
-        this.cellRenderer = this.beans.context.destroyBean(this.cellRenderer);
-        this.cellEditor = this.beans.context.destroyBean(this.cellEditor);
+        const {context} = this.beans;
+        this.cellRenderer = context.destroyBean(this.cellRenderer);
+        this.cellEditor = context.destroyBean(this.cellEditor);
+        this.cellEditorPopupWrapper = context.destroyBean(this.cellEditorPopupWrapper);
         // increase version, so if any async comps return, they will be destroyed
         this.latestCompRequestVersion++;
     }
@@ -439,13 +427,12 @@ export class CellComp extends Component implements TooltipParentComp {
             return;
         }
 
-        this.cellEditorInPopup = cellEditor.isPopup !== undefined && cellEditor.isPopup();
+        this.cellEditor = cellEditor;
 
-        if (this.cellEditorInPopup) {
-            this.cellEditor = this.wrapPopupEditor(params, cellEditor);
-            this.addPopupCellEditor();
+        const cellEditorInPopup = cellEditor.isPopup !== undefined && cellEditor.isPopup();
+        if (cellEditorInPopup) {
+            this.addPopupCellEditor(params);
         } else {
-            this.cellEditor = cellEditor;
             this.addInCellEditor();
         }
 
@@ -469,18 +456,26 @@ export class CellComp extends Component implements TooltipParentComp {
         eGui.appendChild(this.cellEditor!.getGui());
     }
 
-    private addPopupCellEditor(): void {
-        const ePopupGui = this.cellEditor && this.cellEditor.getGui();
+    private addPopupCellEditor(params: ICellEditorParams): void {
+        if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
+            console.warn('AG Grid: popup cellEditor does not work with fullRowEdit - you cannot use them both ' +
+                '- either turn off fullRowEdit, or stop using popup editors.');
+        }
 
-        if (!ePopupGui) { return; }
+        const cellEditor = this.cellEditor!;
+
+        // if a popup, then we wrap in a popup editor and return the popup
+        this.cellEditorPopupWrapper = this.beans.context.createBean(new PopupEditorWrapper(params));
+        const ePopupGui = this.cellEditorPopupWrapper.getGui();
+        ePopupGui.appendChild(cellEditor.getGui());
 
         const popupService = this.beans.popupService;
 
         const useModelPopup = this.beans.gridOptionsWrapper.isStopEditingWhenCellsLoseFocus();
 
-        const position = this.cellEditor && this.cellEditor.getPopupPosition ? this.cellEditor.getPopupPosition() : 'over';
+        const position = cellEditor.getPopupPosition ? cellEditor.getPopupPosition() : 'over';
 
-        const params = {
+        const positionParams = {
             column: this.column,
             rowNode: this.rowNode,
             type: 'popupCellEditor',
@@ -490,8 +485,8 @@ export class CellComp extends Component implements TooltipParentComp {
         };
 
         const positionCallback = position === 'under' ?
-            popupService.positionPopupUnderComponent.bind(popupService, params)
-            : popupService.positionPopupOverComponent.bind(popupService, params);
+            popupService.positionPopupUnderComponent.bind(popupService, positionParams)
+            : popupService.positionPopupOverComponent.bind(popupService, positionParams);
 
         const addPopupRes = popupService.addPopup({
             modal: useModelPopup,

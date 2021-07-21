@@ -15,7 +15,7 @@ import { Label } from "../../label";
 import { Text } from "../../../scene/shape/text";
 import { HdpiCanvas } from "../../../canvas/hdpiCanvas";
 import { Marker } from "../../marker/marker";
-import { MeasuredLabel, PlacedLabel, placeLabels } from "../../../util/labelPlacement";
+import { MeasuredLabel, PlacedLabel, placeLabels, PointLabelDatum } from "../../../util/labelPlacement";
 
 interface ScatterNodeDatum extends SeriesNodeDatum {
     readonly point: {
@@ -233,6 +233,10 @@ export class ScatterSeries extends CartesianSeries {
         return this.nodeData;
     }
 
+    getLabelData(): readonly PointLabelDatum[] {
+        return this.nodeData;
+    }
+
     fireNodeClickEvent(event: MouseEvent, datum: ScatterNodeDatum): void {
         this.fireEvent<ScatterSeriesNodeClickEvent>({
             type: 'nodeClick',
@@ -309,14 +313,6 @@ export class ScatterSeries extends CartesianSeries {
     }
 
     private updateLabelSelection(nodeData: ScatterNodeDatum[]): void {
-        // const seriesRect = this.chart && this.chart.getSeriesRect();
-        // const boundsRect = {
-        //     x: 0,
-        //     y: 0,
-        //     width: seriesRect && seriesRect.width || Infinity,
-        //     height: seriesRect && seriesRect.height || Infinity
-        // };
-        // const placedLabels = this.label.enabled ? placeLabels([nodeData], boundsRect)[0] : [];
         const placedLabels: PlacedLabel[] = this.chart && this.chart.placeLabels().get(this) || [];
         const updateLabels = this.labelSelection.setData(placedLabels);
         updateLabels.exit.remove();

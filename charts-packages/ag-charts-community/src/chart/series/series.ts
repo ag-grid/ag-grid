@@ -5,6 +5,7 @@ import { ChartAxis, ChartAxisDirection } from "../chartAxis";
 import { Chart } from "../chart";
 import { createId } from "../../util/id";
 import { Label } from "../label";
+import { PointLabelDatum } from "../../util/labelPlacement";
 
 /**
  * Processed series datum used in node selections,
@@ -130,6 +131,8 @@ export abstract class Series extends Observable {
 
     // Returns persisted node data associated with the rendered portion of the series' data.
     getNodeData(): readonly SeriesNodeDatum[] { return []; }
+
+    getLabelData(): readonly PointLabelDatum[] { return []; }
 
     // Produce data joins and update selection's nodes using node data.
     abstract update(): void;

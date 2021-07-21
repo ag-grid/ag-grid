@@ -8,7 +8,7 @@ import {
     RowContainerName
 } from '@ag-grid-community/core';
 import { classesList } from './utils';
-import { RowContainerComp } from './rowContainerComp';
+import { RowContainerComp } from './rows/rowContainerComp';
 
 interface SectionStyle {
     height: number,

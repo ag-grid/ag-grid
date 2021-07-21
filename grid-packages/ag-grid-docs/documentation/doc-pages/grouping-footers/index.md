@@ -3,7 +3,7 @@ title: "Row Grouping - Group Footers"
 enterprise: true
 ---
 
-## Group Footers
+This sections shows how to add group footers showing totals for each group level.
 
 If you want to include a footer with each group, set the property `groupIncludeFooter` to true. The footer is displayed as the last line of the group when the group is expanded - it is not displayed when the group is collapsed.
 

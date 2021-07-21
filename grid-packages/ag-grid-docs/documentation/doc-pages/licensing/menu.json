@@ -949,6 +949,12 @@
                 "showInCollapsed": false
               },
               {
+                "title": "Group Footers",
+                "url": "/grouping-footers/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
                 "title": "Sorting",
                 "url": "/grouping-sorting/",
                 "enterprise": true,
@@ -961,20 +967,8 @@
                 "showInCollapsed": false
               },
               {
-                "title": "Group Footers",
-                "url": "/grouping-footers/",
-                "enterprise": true,
-                "showInCollapsed": false
-              },
-              {
                 "title": "Other",
                 "url": "/grouping-other/",
-                "enterprise": true,
-                "showInCollapsed": false
-              },
-              {
-                "title": "Group Customisation",
-                "url": "/grouping-customisation/",
                 "enterprise": true,
                 "showInCollapsed": false
               }
@@ -987,8 +981,8 @@
             "showInCollapsed": true
           },
           {
-            "title": "Hierarchical Data",
-            "url": "/hierarchical-data/",
+            "title": "Tree Data",
+            "url": "/tree-data/",
             "enterprise": true,
             "showInCollapsed": true
           },

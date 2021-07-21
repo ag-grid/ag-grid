@@ -48,10 +48,6 @@ export class GridCtrl extends BeanStub {
 
     private logger: Logger;
 
-    constructor() {
-        super();
-    }
-
     @PostConstruct
     protected postConstruct(): void {
         this.logger = this.loggerFactory.create('GridCompController');

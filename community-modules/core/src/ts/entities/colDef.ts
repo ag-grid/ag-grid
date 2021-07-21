@@ -182,6 +182,8 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     cellEditorFramework?: any;
     cellEditorParams?: any;
     cellEditorSelector?: CellEditorSelectorFunc;
+    cellEditorPopup?: boolean;
+    cellEditorPopupPosition?: string;
 
     /** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. */
     pinnedRowCellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;

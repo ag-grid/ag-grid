@@ -2,23 +2,26 @@
 title: "Row Grouping - Multiple Group Columns"
 enterprise: true
 ---
-This section explains how to present row groups using multiple group columns.
+
+This section covers the Multiple Group Columns display type, where a group column is automatically added by the grid for 
+each row group.
 
 <image-caption src="grouping-multiple-group-columns/resources/multiple-group-columns.png" alt="Multiple Group Columns" centered="true"></image-caption>
 
 ## Enabling Multiple Group Columns
 
-It is also possible to have a group column per row group by setting `groupDisplayType = 'multipleColumns'` as shown below:
+To display each row group under a separate group column set `groupDisplayType = 'multipleColumns'` as shown below:
 
 <snippet spaceBetweenProperties="true" inlineReactProperties="true">
 const gridOptions = {
     columnDefs: [
         { field: 'country', rowGroup: true, hide: true },
         { field: 'year', rowGroup: true, hide: true },
+        { field: 'athlete' },
         { field: 'sport' },
         { field: 'total' }
     ],
-    // display each row grouping in a separate column
+    // display each row grouping in a separate group column
     groupDisplayType: 'multipleColumns',
 }
 </snippet>
@@ -28,11 +31,73 @@ declared, and a group column displayed for each column that we are grouping by.
 
 This is demonstrated in the following example, note the following:
 
+- There are two active row groups as the supplied `country` and `year` column definitions have `rowGroup=true` declared.
+
 - Separate group columns are displayed for `country` and `year` as `groupDisplayType = 'multipleColumns'`.
 
-- The `country` and `year` columns used for grouping are hidden, by enabling the `hide` column property, as they are redundant.
+- The `country` and `year` columns are not shown in the grid as `hide=true` is set on their column definitions.
 
-<grid-example title='Multiple Group Columns' name='multiple-group-columns' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+<grid-example title='Enabling Multiple Group Columns' name='enabling-multiple-group-columns' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+
+## Group Column Configuration
+
+The Multiple Group Columns display type adds an Auto Group Column for each row group to the grid. To change the default
+configurations of these group columns, use the `autoGroupColumnDef` grid option as shown below:
+
+<snippet>
+const gridOptions = {
+    autoGroupColumnDef: {
+        headerValueGetter: params => `${params.colDef.headerName} Group Column`,
+        minWidth: 220,
+        cellRendererParams: {
+            suppressCount: true,
+            checkbox: true,
+        }
+    },
+}
+</snippet>
+
+Note how in the snippet above that the `autoGroupColumnDef` can be used to override any [Column Property](/column-definitions/).
+
+The Auto Group Columns use the [Group Cell Renderer](/group-cell-renderer/) to render group cells, and are configured via the `cellRendererParams` property.
+
+The following example demonstrates some of the available `autoGroupColumnDef` configurations. Note that:
+
+- The group column names are changed using the `headerValueGetter` to add 'Group Column' after each column name.
+
+- The min width of the group column is changed via `minWidth = 220`.
+
+- The count of each row group is removed by setting `cellRendererParams.suppressCount = true`.
+
+- Checkboxes are displayed beside each row group by setting `cellRendererParams.checkbox = true`.
+
+<grid-example title='Multiple Group Columns Configuration' name='multiple-group-columns-configuration' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+
+## Row Group Order
+
+By default, the grid will order the groups based on the order of the supplied column definitions. To explicitly set the
+grouping order, use `rowGroupIndex` instead of `rowGroup` as shown below:
+
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        // index = 1, gets grouped second
+        { field: "country", rowGroupIndex: 1 },
+        // index = 0, gets grouped first
+        { field: "year", rowGroupIndex: 0 },
+    ]
+}
+</snippet>
+
+In the snippet above, `year` has a lower `rowGroupIndex` than `country` which means it will be grouped first. The
+`rowGroupIndex` values can be any sortable number, and they do not need to start at zero (or one). Gaps in the sequence
+is also permitted.
+
+The following example shows how the `rowGroupIndex` can be used to ensure rows are grouped by 'year' first and then
+`country` even though the `country` column definition is supplied to the grid first.
+
+<grid-example title='Row Group Order' name='row-group-order' type='generated' options='{ "enterprise": true, "exampleHeight": 500, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+
 
 ## Showing Open Groups
 
@@ -56,3 +121,7 @@ The example below demonstrates hiding open parents using auto group columns. To 
 Filter is achieved for each column by providing a `filterValueGetter` for the `autoGroupColumnDef`. The filterValueGetter returns the value of the grouped column - eg for Country, it will filter on Country.
 
 <grid-example title='Hide Open Parents' name='hide-open-parents' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "setfilter"] }'></grid-example>
+
+## Next Up
+
+Continue to the next section to learn about the [Group Rows](../grouping-group-rows/) display type.

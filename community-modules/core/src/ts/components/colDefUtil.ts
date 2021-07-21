@@ -26,7 +26,8 @@ export class ColDefUtil {
         'cellEditor',
         'pinned',
         'initialPinned',
-        'chartDataType'
+        'chartDataType',
+        'cellEditorPopupPosition'
     ];
 
     public static OBJECT_PROPERTIES = [
@@ -117,6 +118,7 @@ export class ColDefUtil {
         'resizable',
         'singleClickEdit',
         'floatingFilter',
+        'cellEditorPopup'
     ];
 
     public static FUNCTION_PROPERTIES = [

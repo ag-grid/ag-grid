@@ -20,8 +20,10 @@ var gridOptions = {
         headerName: 'Country',
         minWidth: 300,
     },
+    // optional as 'singleColumn' is the default group display type
+    groupDisplayType: 'singleColumn',
+    showOpenedGroup: true,
     animateRows: true,
-    showOpenedGroup: true
 };
 
 // setup the grid after the page has finished loading

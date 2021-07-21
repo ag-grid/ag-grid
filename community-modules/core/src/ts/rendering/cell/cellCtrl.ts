@@ -72,7 +72,7 @@ export interface ICellComp {
     getParentOfValue(): HTMLElement | null;
 
     showValue(valueToDisplay: any, compDetails: UserCompDetails | undefined, forceNewCellRendererInstance: boolean): void;
-    editValue(compDetails: UserCompDetails): void;
+    editValue(compDetails: UserCompDetails, popup: boolean | undefined, position: string | undefined): void;
 }
 
 let instanceIdSequence = 0;
@@ -111,6 +111,7 @@ export class CellCtrl extends BeanStub {
     private cellPosition: CellPosition;
 
     private editing: boolean;
+    private editingInPopup: boolean;
 
     private includeSelection: boolean;
     private includeDndSource: boolean;
@@ -258,20 +259,24 @@ export class CellCtrl extends BeanStub {
     public startEditing(keyPress: number | null = null, charPress: string | null = null, cellStartedEdit = false): void {
         if (!this.isCellEditable() || this.editing) { return; }
 
-        this.setEditing(true);
-
         const editorParams = this.createCellEditorParams(keyPress, charPress, cellStartedEdit);
-        const compAndParams = this.beans.userComponentFactory.getCellEditorDetails(this.colDef, editorParams);
-        this.cellComp.editValue(compAndParams!);
+        const compDetails = this.beans.userComponentFactory.getCellEditorDetails(this.colDef, editorParams);
+        const popup = !!this.colDef.cellEditorPopup;
+        const position = this.colDef.cellEditorPopupPosition;
+
+        this.setEditing(true, popup);
+
+        this.cellComp.editValue(compDetails!, popup, position);
 
         const event: CellEditingStartedEvent = this.createEvent(null, Events.EVENT_CELL_EDITING_STARTED);
         this.beans.eventService.dispatchEvent(event);
     }
 
-    private setEditing(editing: boolean): void {
+    private setEditing(editing: boolean, inPopup = false): void {
         if (this.editing === editing) { return; }
 
         this.editing = editing;
+        this.editingInPopup = inPopup;
         this.setInlineEditingClass();
     }
 
@@ -367,13 +372,8 @@ export class CellCtrl extends BeanStub {
         // note: one of {ag-cell-inline-editing, ag-cell-not-inline-editing} is always present, they toggle.
         //       however {ag-cell-popup-editing} shows when popup, so you have both {ag-cell-popup-editing}
         //       and {ag-cell-not-inline-editing} showing at the same time.
-
-        ///////// FIX FIX FIX FIX for popup
-
-        // const editingInline = this.editing && !this.cellEditorInPopup;
-        // const popupEditorShowing = this.editing && this.cellEditorInPopup;
-        const editingInline = this.editing;
-        const popupEditorShowing = false;
+        const editingInline = this.editing && !this.editingInPopup;
+        const popupEditorShowing = this.editing && this.editingInPopup;
 
         this.cellComp.addOrRemoveCssClass(CSS_CELL_INLINE_EDITING, editingInline);
         this.cellComp.addOrRemoveCssClass(CSS_CELL_NOT_INLINE_EDITING, !editingInline);
@@ -629,8 +629,13 @@ export class CellCtrl extends BeanStub {
         return this.column.isCellEditable(this.rowNode);
     }
 
-    public formatValue(): void {
-        this.valueFormatted = this.beans.valueFormatterService.formatValue(this.column, this.rowNode, this.scope, this.value);
+    private formatValue(value: any): any {
+        const res = this.callValueFormatter(value);
+        return res != null ? res : value;
+    }
+
+    private callValueFormatter(value: any): any {
+        return this.beans.valueFormatterService.formatValue(this.column, this.rowNode, this.scope, value);
     }
 
     public updateAndFormatValue(force = false): boolean {
@@ -638,7 +643,7 @@ export class CellCtrl extends BeanStub {
         const oldValueFormatted = this.valueFormatted;
 
         this.value = this.getValueFromValueService();
-        this.formatValue();
+        this.valueFormatted = this.callValueFormatter(this.value);
 
         const valuesDifferent = force ? true :
             !this.valuesAreEqual(oldValue, this.value) || this.valueFormatted != oldValueFormatted;

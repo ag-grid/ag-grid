@@ -12,9 +12,8 @@ import { SizeMonitor } from "../util/sizeMonitor";
 import { Caption } from "../caption";
 import { Observable, reactive, PropertyChangeEvent, SourceEvent } from "../util/observable";
 import { ChartAxis, ChartAxisDirection } from "./chartAxis";
-import { CartesianSeries } from "./series/cartesian/cartesianSeries";
 import { createId } from "../util/id";
-import { PlacedLabel, placeLabels } from "../util/labelPlacement";
+import { PlacedLabel, placeLabels, PointLabelDatum } from "../util/labelPlacement";
 
 const defaultTooltipCss = `
 .ag-chart-tooltip {
@@ -665,17 +664,6 @@ export abstract class Chart extends Observable {
                     }
                 }
             });
-
-            if (series instanceof CartesianSeries) {
-                if (!series.xAxis) {
-                    console.warn(`Could not find a matching xAxis for the ${series.id} series.`);
-                    return;
-                }
-                if (!series.yAxis) {
-                    console.warn(`Could not find a matching yAxis for the ${series.id} series.`);
-                    return;
-                }
-            }
         });
 
         this.axesChanged = false;
@@ -796,14 +784,17 @@ export abstract class Chart extends Observable {
 
     placeLabels(): Map<Series, PlacedLabel[]> {
         const series: Series[] = [];
-        const data: (readonly SeriesNodeDatum[])[] = [];
+        const data: (readonly PointLabelDatum[])[] = [];
         this.nodeData.forEach((d, s) => {
-            if (s.label.enabled) {
+            if (s.visible && s.label.enabled) {
                 series.push(s);
-                data.push(s.getNodeData());
+                data.push(s.getLabelData());
             }
         });
-        const labels = placeLabels(data as any[], this.seriesRect);
+        const { seriesRect } = this;
+        const labels: PlacedLabel[][] = seriesRect
+            ? placeLabels(data, { x: 0, y: 0, width: seriesRect.width, height: seriesRect.height })
+            : [];
         return new Map(labels.map((l, i) => [series[i], l]));
     }
 
@@ -943,7 +934,7 @@ export abstract class Chart extends Observable {
         chartElement.removeEventListener('click', this._onClick);
     }
 
-    // Should be available after first layout.
+    // Should be available after the first layout.
     protected seriesRect?: BBox;
     getSeriesRect(): Readonly<BBox | undefined> {
         return this.seriesRect;

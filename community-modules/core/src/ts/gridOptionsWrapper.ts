@@ -504,7 +504,7 @@ export class GridOptionsWrapper {
 
     public isGroupMultiAutoColumn() {
         if (this.gridOptions.groupDisplayType) {
-            return this.matchesTreeDisplayType(RowGroupingDisplayType.MULTIPLE_COLUMNS, this.gridOptions.groupDisplayType);
+            return this.matchesGroupDisplayType(RowGroupingDisplayType.MULTIPLE_COLUMNS, this.gridOptions.groupDisplayType);
         }
         // if we are doing hideOpenParents we also show multiple columns, otherwise hideOpenParents would not work
         return isTrue(this.gridOptions.groupHideOpenParents);
@@ -515,12 +515,12 @@ export class GridOptionsWrapper {
         if (pivotMode) { return false; }
 
         return this.gridOptions.groupDisplayType ?
-            this.matchesTreeDisplayType(RowGroupingDisplayType.GROUP_ROWS, this.gridOptions.groupDisplayType) : false;
+            this.matchesGroupDisplayType(RowGroupingDisplayType.GROUP_ROWS, this.gridOptions.groupDisplayType) : false;
     }
 
     public isGroupSuppressAutoColumn() {
         return this.gridOptions.groupDisplayType ?
-            this.matchesTreeDisplayType(RowGroupingDisplayType.CUSTOM, this.gridOptions.groupDisplayType) : false;
+            this.matchesGroupDisplayType(RowGroupingDisplayType.CUSTOM, this.gridOptions.groupDisplayType) : false;
     }
 
     public isGroupRemoveSingleChildren() {
@@ -1661,17 +1661,17 @@ export class GridOptionsWrapper {
         }
 
         if (options.groupMultiAutoColumn) {
-            console.warn("AG Grid: since v26.0, the grid property `groupMultiAutoColumn` has been replaced by `treeDisplayType = 'multipleColumns'`");
+            console.warn("AG Grid: since v26.0, the grid property `groupMultiAutoColumn` has been replaced by `groupDisplayType = 'multipleColumns'`");
             options.groupDisplayType = RowGroupingDisplayType.MULTIPLE_COLUMNS;
         }
 
         if (options.groupUseEntireRow) {
-            console.warn("AG Grid: since v26.0, the grid property `groupUseEntireRow` has been replaced by `treeDisplayType = 'row'`");
+            console.warn("AG Grid: since v26.0, the grid property `groupUseEntireRow` has been replaced by `groupDisplayType = 'row'`");
             options.groupDisplayType = RowGroupingDisplayType.GROUP_ROWS;
         }
 
         if (options.groupSuppressAutoColumn) {
-            console.warn("AG Grid: since v26.0, the grid property `groupSuppressAutoColumn` has been replaced by `treeDisplayType = 'custom'`");
+            console.warn("AG Grid: since v26.0, the grid property `groupSuppressAutoColumn` has been replaced by `groupDisplayType = 'custom'`");
             options.groupDisplayType = RowGroupingDisplayType.CUSTOM;
         }
     }
@@ -1828,7 +1828,7 @@ export class GridOptionsWrapper {
         return this.getFromTheme(DEFAULT_ROW_HEIGHT, 'rowHeight');
     }
 
-    private matchesTreeDisplayType(toMatch: RowGroupingDisplayType, supplied?: string): boolean {
+    private matchesGroupDisplayType(toMatch: RowGroupingDisplayType, supplied?: string): boolean {
         const groupDisplayTypeValues = getAllValuesInObject(RowGroupingDisplayType);
         if (groupDisplayTypeValues.indexOf(supplied) < 0) {
             doOnce(() =>

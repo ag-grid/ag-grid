@@ -21,7 +21,6 @@ import { BatchRemover } from "./batchRemover";
 
 interface GroupInfo {
     key: string; // e.g. 'Ireland'
-    rawKeyValue?: any;
     field: string | null; // e.g. 'country'
     rowGroupColumn: Column | null;
 }
@@ -402,7 +401,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
                     key: rowNode.key!,
                     rowGroupColumn: rowNode.rowGroupColumn
                 };
-                this.setGroupInfo(rowNode, groupInfo);
+                this.setGroupData(rowNode, groupInfo);
                 recurse(rowNode.childrenAfterGroup);
             });
         };
@@ -554,7 +553,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         groupNode.field = groupInfo.field;
         groupNode.rowGroupColumn = groupInfo.rowGroupColumn;
 
-        this.setGroupInfo(groupNode, groupInfo);
+        this.setGroupData(groupNode, groupInfo);
 
         // we put 'row-group-' before the group id, so it doesn't clash with standard row id's. we also use 't-' and 'b-'
         // for top pinned and bottom pinned rows.
@@ -583,7 +582,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         return groupNode;
     }
 
-    private setGroupInfo(groupNode: RowNode, groupInfo: GroupInfo): void {
+    private setGroupData(groupNode: RowNode, groupInfo: GroupInfo): void {
         groupNode.groupData = {};
         const groupDisplayCols: Column[] = this.columnModel.getGroupDisplayColumns();
         groupDisplayCols.forEach(col => {
@@ -592,7 +591,6 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             const displayGroupForCol = this.usingTreeData || (groupNode.rowGroupColumn ? col.isRowGroupDisplayed(groupNode.rowGroupColumn.getId()) : false);
             if (displayGroupForCol) {
                 groupNode.groupData![col.getColId()] = groupInfo.key;
-                groupNode.rawKeyValue = groupInfo.rawKeyValue;
             }
         });
     }
@@ -661,7 +659,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     private getGroupInfoFromGroupColumns(rowNode: RowNode, details: GroupingDetails) {
         const res: GroupInfo[] = [];
         details.groupedCols.forEach(groupCol => {
-            let {key, rawKeyValue} = this.valueService.getKeyForNode(groupCol, rowNode);
+            let key: string = this.valueService.getKeyForNode(groupCol, rowNode);
             let keyExists = key !== null && key !== undefined;
 
             // unbalanced tree and pivot mode don't work together - not because of the grid, it doesn't make
@@ -674,10 +672,9 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
             if (keyExists) {
                 const item = {
-                    key,
-                    rawKeyValue,
+                    key: key,
                     field: groupCol.getColDef().field,
-                    rowGroupColumn: groupCol,
+                    rowGroupColumn: groupCol
                 } as GroupInfo;
                 res.push(item);
             }

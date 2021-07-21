@@ -169,6 +169,7 @@ export class AgGridColumn {
     @Input() public resizable: boolean | undefined = undefined;
     @Input() public singleClickEdit: boolean | undefined = undefined;
     @Input() public floatingFilter: boolean | undefined = undefined;
+    @Input() public cellEditorPopup: any;
     // @END@
 
 }
