@@ -285,10 +285,11 @@ export abstract class Shape extends Node {
         }
 
         const pixelRatio = this.scene.canvas.pixelRatio || 1;
+        const { globalAlpha } = ctx;
 
         if (this.fill) {
             ctx.fillStyle = this.fill;
-            ctx.globalAlpha = this.opacity * this.fillOpacity;
+            ctx.globalAlpha = globalAlpha * this.opacity * this.fillOpacity;
 
             // The canvas context scaling (depends on the device's pixel ratio)
             // has no effect on shadows, so we have to account for the pixel ratio
@@ -307,7 +308,7 @@ export abstract class Shape extends Node {
 
         if (this.stroke && this.strokeWidth) {
             ctx.strokeStyle = this.stroke;
-            ctx.globalAlpha = this.opacity * this.strokeOpacity;
+            ctx.globalAlpha = globalAlpha * this.opacity * this.strokeOpacity;
 
             ctx.lineWidth = this.strokeWidth;
             if (this.lineDash) {
