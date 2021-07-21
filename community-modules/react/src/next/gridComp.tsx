@@ -28,10 +28,10 @@ export const GridComp = (props: { context: Context }) => {
     useEffect(() => {
         if (ctrlRef.current) { return; }
         
-        ctrlRef.current = props.context.createBean(new GridCtrl());
+        const currentController = ctrlRef.current = props.context.createBean(new GridCtrl());
 
         return () => {
-            props.context.destroyBean([ctrlRef.current]);
+            props.context.destroyBean(currentController);
             ctrlRef.current = null;
         }
     }, [props.context]);
@@ -109,7 +109,7 @@ export const GridComp = (props: { context: Context }) => {
                 bottomTabGuard.insertAdjacentElement('beforebegin', eGui);
                 additionalEls.push(eGui);
             }
-            
+
             beansToDestroy.push(sideBarComp);
         }
 
@@ -138,7 +138,7 @@ export const GridComp = (props: { context: Context }) => {
         }
 
         return () => {
-            context.destroyBean(beansToDestroy);
+            context.destroyBeans(beansToDestroy);
             additionalEls.forEach(el => {
                 if (el.parentElement) {
                     el.parentElement.removeChild(el);
