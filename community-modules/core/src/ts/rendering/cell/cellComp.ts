@@ -118,7 +118,8 @@ export class CellComp extends Component implements TooltipParentComp {
 
             setRenderDetails: (compDetails, valueToDisplay, force) =>
                 this.setRenderDetails(compDetails, valueToDisplay, force),
-            setEditDetails: compDetails => this.setEditDetails(compDetails),
+            setEditDetails: (compDetails, popup, position) => 
+                this.setEditDetails(compDetails, popup, position),
 
             getCellEditor: () => this.cellEditor || null,
             getCellRenderer: () => this.cellRenderer || null,
@@ -162,9 +163,9 @@ export class CellComp extends Component implements TooltipParentComp {
         this.updateAngular1ScopeAndCompile();
     }
 
-    private setEditDetails(compDetails: UserCompDetails | undefined): void {
+    private setEditDetails(compDetails: UserCompDetails | undefined, popup?: boolean, position?: string): void {
         if (compDetails) {
-            this.createCellEditorInstance(compDetails);
+            this.createCellEditorInstance(compDetails, popup, position);
         } else {
             this.destroyEditor();
         }
@@ -246,14 +247,14 @@ export class CellComp extends Component implements TooltipParentComp {
         setAriaDescribedBy(this.getGui(), describedByIds.join(' '));
     }
 
-    private createCellEditorInstance(compDetails: UserCompDetails): void {
+    private createCellEditorInstance(compDetails: UserCompDetails, popup?: boolean, position?: string): void {
         const versionCopy = this.editorVersion;
 
         const cellEditorPromise = this.beans.userComponentFactory.createCellEditor(compDetails);
         if (!cellEditorPromise) { return; } // if empty, userComponentFactory already did a console message
 
         const { params } = compDetails;
-        cellEditorPromise.then(c => this.afterCellEditorCreated(versionCopy, c!, params));
+        cellEditorPromise.then(c => this.afterCellEditorCreated(versionCopy, c!, params, popup, position));
 
         // if we don't do this, and editor component is async, then there will be a period
         // when the component isn't present and keyboard navigation won't work - so example
@@ -412,7 +413,7 @@ export class CellComp extends Component implements TooltipParentComp {
         }
     }
 
-    private afterCellEditorCreated(requestVersion: number, cellEditor: ICellEditorComp, params: ICellEditorParams): void {
+    private afterCellEditorCreated(requestVersion: number, cellEditor: ICellEditorComp, params: ICellEditorParams, popup?: boolean, position?: string): void {
 
         // if editingCell=false, means user cancelled the editor before component was ready.
         // if versionMismatch, then user cancelled the edit, then started the edit again, and this
@@ -440,9 +441,12 @@ export class CellComp extends Component implements TooltipParentComp {
         this.cellEditor = cellEditor;
         this.cellEditorGui = cellEditor.getGui();
 
-        const cellEditorInPopup = cellEditor.isPopup !== undefined && cellEditor.isPopup();
+        const cellEditorInPopup = popup || (cellEditor.isPopup !== undefined && cellEditor.isPopup());
         if (cellEditorInPopup) {
-            this.addPopupCellEditor(params);
+            if (!popup) {
+                this.cellCtrl.hackSayEditingInPopup();
+            }
+            this.addPopupCellEditor(params, position);
         } else {
             this.addInCellEditor();
         }
@@ -469,13 +473,11 @@ export class CellComp extends Component implements TooltipParentComp {
         }
     }
 
-    private addPopupCellEditor(params: ICellEditorParams): void {
+    private addPopupCellEditor(params: ICellEditorParams, position?: string): void {
         if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
             console.warn('AG Grid: popup cellEditor does not work with fullRowEdit - you cannot use them both ' +
                 '- either turn off fullRowEdit, or stop using popup editors.');
         }
-
-        this.cellCtrl.hackSayEditingInPopup();
 
         const cellEditor = this.cellEditor!;
 
@@ -490,7 +492,8 @@ export class CellComp extends Component implements TooltipParentComp {
 
         const useModelPopup = this.beans.gridOptionsWrapper.isStopEditingWhenCellsLoseFocus();
 
-        const position = cellEditor.getPopupPosition ? cellEditor.getPopupPosition() : 'over';
+        // see if position provided by colDef, if not then check old way of method on cellComp
+        const positionToUse = position != null ? position : cellEditor.getPopupPosition ? cellEditor.getPopupPosition() : 'over';
 
         const positionParams = {
             column: this.column,

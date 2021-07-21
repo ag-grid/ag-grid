@@ -389,6 +389,7 @@ export class CellCtrl extends BeanStub {
     // this is needed as the JS CellComp still allows isPopup() on the CellEditor class, so
     // it's possible the editor is in a popup even though it's not configured via the colDef as so
     public hackSayEditingInPopup(): void {
+        if (this.editingInPopup) { return; }
         this.editingInPopup = true;
         this.setInlineEditingClass();
     }
