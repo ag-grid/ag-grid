@@ -115,10 +115,10 @@ export class BarSeries extends CartesianSeries {
     // on the first run. If on the next run more bars are added, they might clip the labels
     // rendered during the previous run.
     private rectGroup = this.pickGroup.appendChild(new Group);
-    private textGroup = this.group.appendChild(new Group);
+    private labelGroup = this.group.appendChild(new Group);
 
     private rectSelection: Selection<Rect, Group, BarNodeDatum, any> = Selection.select(this.rectGroup).selectAll<Rect>();
-    private textSelection: Selection<Text, Group, BarNodeDatum, any> = Selection.select(this.textGroup).selectAll<Text>();
+    private labelSelection: Selection<Text, Group, BarNodeDatum, any> = Selection.select(this.labelGroup).selectAll<Text>();
 
     private xData: string[] = [];
     private yData: number[][][] = [];
@@ -489,6 +489,21 @@ export class BarSeries extends CartesianSeries {
         return this.flipXY ? this.xAxis : this.yAxis;
     }
 
+    protected highlightedItemId?: any;
+    undim(itemId?: any) {
+        this.highlightedItemId = itemId;
+
+        this.updateRectNodes();
+        this.updateLabelNodes();
+    }
+
+    dim() {
+        this.highlightedItemId = undefined;
+
+        this.updateRectNodes();
+        this.updateLabelNodes();
+    }
+
     generateNodeData(): BarNodeDatum[] {
         if (!this.data) {
             return [];
@@ -598,6 +613,7 @@ export class BarSeries extends CartesianSeries {
                     nodeData.push({
                         index: groupIndex,
                         series: this,
+                        itemId: yKey,
                         seriesDatum,
                         yValue,
                         yKey,
@@ -649,8 +665,8 @@ export class BarSeries extends CartesianSeries {
         this.updateRectSelection(nodeData);
         this.updateRectNodes();
 
-        this.updateTextSelection(nodeData);
-        this.updateTextNodes();
+        this.updateLabelSelection(nodeData);
+        this.updateLabelNodes();
     }
 
     private updateRectSelection(selectionData: BarNodeDatum[]): void {
@@ -674,7 +690,9 @@ export class BarSeries extends CartesianSeries {
             shadow,
             formatter,
             xKey,
-            flipXY
+            flipXY,
+            highlightedItemId,
+            dimmedOpacity
         } = this;
         const { highlightedDatum } = this.chart;
 
@@ -704,6 +722,7 @@ export class BarSeries extends CartesianSeries {
             rect.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : datum.strokeWidth;
             rect.fillOpacity = fillOpacity;
             rect.strokeOpacity = strokeOpacity;
+            rect.opacity = !highlightedItemId || highlightedItemId === datum.itemId ? 1 : dimmedOpacity;
             rect.lineDash = this.lineDash;
             rect.lineDashOffset = this.lineDashOffset;
             rect.fillShadow = shadow;
@@ -712,23 +731,24 @@ export class BarSeries extends CartesianSeries {
         });
     }
 
-    private updateTextSelection(selectionData: BarNodeDatum[]): void {
-        const updateTexts = this.textSelection.setData(selectionData);
+    private updateLabelSelection(selectionData: BarNodeDatum[]): void {
+        const updateLabels = this.labelSelection.setData(selectionData);
 
-        updateTexts.exit.remove();
+        updateLabels.exit.remove();
 
-        const enterTexts = updateTexts.enter.append(Text).each(text => {
+        const enterLabels = updateLabels.enter.append(Text).each(text => {
             text.tag = BarSeriesNodeTag.Label;
             text.pointerEvents = PointerEvents.None;
         });
 
-        this.textSelection = updateTexts.merge(enterTexts);
+        this.labelSelection = updateLabels.merge(enterLabels);
     }
 
-    private updateTextNodes(): void {
+    private updateLabelNodes(): void {
+        const { highlightedItemId, dimmedOpacity } = this;
         const labelEnabled = this.label.enabled;
 
-        this.textSelection.each((text, datum) => {
+        this.labelSelection.each((text, datum) => {
             const label = datum.label;
 
             if (label && labelEnabled) {
@@ -742,6 +762,7 @@ export class BarSeries extends CartesianSeries {
                 text.x = label.x;
                 text.y = label.y;
                 text.fill = label.fill;
+                text.opacity = !highlightedItemId || highlightedItemId === datum.itemId ? 1 : dimmedOpacity;
                 text.visible = true;
             } else {
                 text.visible = false;

@@ -8,6 +8,18 @@ export class Group extends Node {
 
     protected isContainerNode: boolean = true;
 
+    protected _opacity: number = 1;
+    set opacity(value: number) {
+        value = Math.min(1, Math.max(0, value));
+        if (this._opacity !== value) {
+            this._opacity = value;
+            this.dirty = true;
+        }
+    }
+    get opacity(): number {
+        return this._opacity;
+    }
+
     // We consider a group to be boundless, thus any point belongs to it.
     containsPoint(x: number, y: number): boolean {
         return true;
@@ -82,13 +94,15 @@ export class Group extends Node {
         const children = this.children;
         const n = children.length;
 
+        ctx.globalAlpha *= this.opacity;
+
         for (let i = 0; i < n; i++) {
-            ctx.save();
             const child = children[i];
             if (child.visible) {
+                ctx.save();
                 child.render(ctx);
+                ctx.restore();
             }
-            ctx.restore();
         }
 
         // debug

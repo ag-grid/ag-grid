@@ -18,6 +18,7 @@ export interface SeriesNodeDatum {
     //           to set the properties of the node, such as start/end angles
     // `seriesDatum` - raw series datum, an element from the `series.data` array
     readonly series: Series;
+    readonly itemId?: any;
     readonly seriesDatum: any;
     readonly point?: { // in local (series) coordinates
         readonly x: number;
@@ -97,6 +98,16 @@ export abstract class Series extends Observable {
     cursor = 'default';
 
     setColors(fills: string[], strokes: string[]) { }
+
+    protected dimmedOpacity = 0.2;
+
+    dim() {
+        this.group.opacity = this.dimmedOpacity;
+    }
+
+    undim(itemId?: any) {
+        this.group.opacity = 1;
+    }
 
     // Returns the actual keys used (to fetch the values from `data` items) for the given direction.
     getKeys(direction: ChartAxisDirection): string[] {
