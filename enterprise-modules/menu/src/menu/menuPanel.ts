@@ -1,21 +1,29 @@
-import { ManagedFocusContainer, IComponent, KeyCode } from '@ag-grid-community/core';
+import { TabGuardComp, IComponent, KeyCode, PostConstruct } from '@ag-grid-community/core';
 import { MenuItemComponent } from './menuItemComponent';
 
-export class MenuPanel extends ManagedFocusContainer {
+export class MenuPanel extends TabGuardComp {
     constructor(private readonly wrappedComponent: IComponent<any>) {
         super();
 
         this.setTemplateFromElement(wrappedComponent.getGui());
     }
+    
+    @PostConstruct
+    private postConstruct() {
+        this.initialiseTabGuard({
+            onTabKeyDown: e => this.onTabKeyDown(e),
+            handleKeyDown: e => this.handleKeyDown(e)
+        });
+    }
 
-    handleKeyDown(e: KeyboardEvent): void {
+    private handleKeyDown(e: KeyboardEvent): void {
         if (e.keyCode === KeyCode.ESCAPE) {
             this.closePanel();
         }
     }
 
-    onTabKeyDown(e: KeyboardEvent): void {
-        super.onTabKeyDown(e);
+    private onTabKeyDown(e: KeyboardEvent): void {
+        this.tabGuardFeature.onTabKeyDown(e);
 
         if (e.defaultPrevented) { return; }
 

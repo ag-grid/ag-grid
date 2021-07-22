@@ -95,11 +95,13 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
         this.createManagedBean(new ManagedFocusFeature(
             this.getFocusableElement(),
-            this.shouldStopEventPropagation.bind(this),
-            this.onTabKeyDown.bind(this),
-            this.handleKeyDown.bind(this),
-            this.onFocusIn.bind(this),
-            this.onFocusOut.bind(this)
+            {
+                shouldStopEventPropagation: this.shouldStopEventPropagation.bind(this),
+                onTabKeyDown: this.onTabKeyDown.bind(this),
+                handleKeyDown: this.handleKeyDown.bind(this),
+                onFocusIn: this.onFocusIn.bind(this),
+                onFocusOut: this.onFocusOut.bind(this)
+            }
         ));
 
         this.createManagedBean(new HoverFeature([this.column], this.getGui()));

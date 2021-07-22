@@ -1,6 +1,6 @@
 import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
 import { Logger, LoggerFactory } from "../logger";
-import { Autowired } from "../context/context";
+import { Autowired, PostConstruct } from "../context/context";
 import { Component } from "../widgets/component";
 import { ISideBar } from "../interfaces/iSideBar";
 import { RefSelector } from "../widgets/componentAnnotations";
@@ -8,9 +8,9 @@ import { addCssClass, addOrRemoveCssClass, isVisible } from "../utils/dom";
 import { FocusService } from "../focusService";
 import { GridCtrl, IGridComp } from "./gridCtrl";
 import { LayoutCssClasses, UpdateLayoutClassesParams } from "../styling/layoutFeature";
-import { ManagedFocusContainer } from "../widgets/managedFocusContainer";
+import { TabGuardComp } from "../widgets/tabGuardComp";
 
-export class GridComp extends ManagedFocusContainer {
+export class GridComp extends TabGuardComp {
 
     @Autowired('loggerFactory') private readonly loggerFactory: LoggerFactory;
 
@@ -27,7 +27,8 @@ export class GridComp extends ManagedFocusContainer {
         this.eGridDiv = eGridDiv;
     }
 
-    protected postConstruct(): void {
+    @PostConstruct
+    private postConstruct(): void {
         this.logger = this.loggerFactory.create('GridComp');
 
         const compProxy: IGridComp = {
@@ -58,7 +59,12 @@ export class GridComp extends ManagedFocusContainer {
 
         this.insertGridIntoDom();
 
-        super.postConstruct();
+        this.initialiseTabGuard({
+            eFocusableElement: this.eRootWrapperBody,
+            // we want to override the default behaviour to do nothing for onTabKeyDown
+            onTabKeyDown: () => undefined,
+            focusInnerElement: fromBottom => this.ctrl.focusInnerElement(fromBottom)
+        });
     }
 
     private insertGridIntoDom(): void {
@@ -101,10 +107,6 @@ export class GridComp extends ManagedFocusContainer {
         return template;
     }
 
-    public getFocusableElement(): HTMLElement {
-        return this.eRootWrapperBody;
-    }
-
     protected getFocusableContainers(): HTMLElement[] {
         const focusableContainers = [
             this.gridBodyComp.getGui()
@@ -119,9 +121,4 @@ export class GridComp extends ManagedFocusContainer {
         return focusableContainers.filter(el => isVisible(el));
     }
 
-    protected focusInnerElement(fromBottom?: boolean): boolean {
-        return this.ctrl.focusInnerElement(fromBottom);
-    }
-
-    protected onTabKeyDown(): void { }
 }

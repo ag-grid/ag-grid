@@ -6,6 +6,14 @@ import { isStopPropagationForAgGrid, stopPropagationForAgGrid } from '../utils/e
 import { BeanStub } from '../context/beanStub';
 
 
+export interface ManagedFocusCallbacks {
+    shouldStopEventPropagation?: (e: KeyboardEvent) => boolean;
+    onTabKeyDown?: (e: KeyboardEvent) => void;
+    handleKeyDown?: (e: KeyboardEvent) => void;
+    onFocusIn?: (e: FocusEvent) => void;
+    onFocusOut?: (e: FocusEvent) => void;
+}
+
 export class ManagedFocusFeature extends BeanStub {
 
     public static FOCUS_MANAGED_CLASS = 'ag-focus-managed';
@@ -13,37 +21,38 @@ export class ManagedFocusFeature extends BeanStub {
     @Autowired('focusService') protected readonly focusService: FocusService;
 
     constructor(
-        private readonly focusableElement: HTMLElement,
-        private readonly shouldStopEventPropagation: (e: KeyboardEvent) => boolean = () => false,
-        private readonly onTabKeyDown: (e: KeyboardEvent) => void = (e: KeyboardEvent) => {
-            if (e.defaultPrevented) { return; }
-
-            const nextRoot = this.focusService.findNextFocusableElement(this.focusableElement, false, e.shiftKey);
-    
-            if (!nextRoot) { return; }
-    
-            nextRoot.focus();
-            e.preventDefault();
-        },
-        private readonly handleKeyDown?: (e: KeyboardEvent) => void,
-        private readonly onFocusIn?: (e: FocusEvent) => void,
-        private readonly onFocusOut?: (e: FocusEvent) => void
+        private readonly eFocusableElement: HTMLElement,
+        private callbacks: ManagedFocusCallbacks = {}
     ) {
         super();
+        this.callbacks = {
+            shouldStopEventPropagation: ()=> false,
+            onTabKeyDown: (e: KeyboardEvent) => {
+                if (e.defaultPrevented) { return; }
+    
+                const nextRoot = this.focusService.findNextFocusableElement(this.eFocusableElement, false, e.shiftKey);
+        
+                if (!nextRoot) { return; }
+        
+                nextRoot.focus();
+                e.preventDefault();
+            },
+            ...callbacks
+        };
     }
 
     @PostConstruct
     protected postConstruct(): void {
-        addCssClass(this.focusableElement, ManagedFocusFeature.FOCUS_MANAGED_CLASS);
+        addCssClass(this.eFocusableElement, ManagedFocusFeature.FOCUS_MANAGED_CLASS);
 
-        this.addKeyDownListeners(this.focusableElement);
+        this.addKeyDownListeners(this.eFocusableElement);
 
-        if (this.onFocusIn) {
-            this.addManagedListener(this.focusableElement, 'focusin', this.onFocusIn);
+        if (this.callbacks.onFocusIn) {
+            this.addManagedListener(this.eFocusableElement, 'focusin', this.callbacks.onFocusIn);
         }
 
-        if (this.onFocusOut) {
-            this.addManagedListener(this.focusableElement, 'focusout', this.onFocusOut);
+        if (this.callbacks.onFocusOut) {
+            this.addManagedListener(this.eFocusableElement, 'focusout', this.callbacks.onFocusOut);
         }
     }
 
@@ -51,15 +60,15 @@ export class ManagedFocusFeature extends BeanStub {
         this.addManagedListener(eGui, 'keydown', (e: KeyboardEvent) => {
             if (e.defaultPrevented || isStopPropagationForAgGrid(e)) { return; }
 
-            if (this.shouldStopEventPropagation(e)) {
+            if (this.callbacks.shouldStopEventPropagation!(e)) {
                 stopPropagationForAgGrid(e);
                 return;
             }
 
             if (e.keyCode === KeyCode.TAB) {
-                this.onTabKeyDown(e);
-            } else if (this.handleKeyDown) {
-                this.handleKeyDown(e);
+                this.callbacks.onTabKeyDown!(e);
+            } else if (this.callbacks.handleKeyDown) {
+                this.callbacks.handleKeyDown(e);
             }
         });
     }

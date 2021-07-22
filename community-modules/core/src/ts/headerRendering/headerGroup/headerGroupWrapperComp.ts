@@ -87,10 +87,12 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
         this.createManagedBean(new SetLeftFeature(this.column, this.getGui(), this.beans));
         this.createManagedBean(new ManagedFocusFeature(
             this.getFocusableElement(),
-            this.shouldStopEventPropagation.bind(this),
-            this.onTabKeyDown.bind(this),
-            this.handleKeyDown.bind(this),
-            this.onFocusIn.bind(this)
+            {
+                shouldStopEventPropagation: this.shouldStopEventPropagation.bind(this),
+                onTabKeyDown: this.onTabKeyDown.bind(this),
+                handleKeyDown: this.handleKeyDown.bind(this),
+                onFocusIn: this.onFocusIn.bind(this)
+            }
         ));
     }
 
