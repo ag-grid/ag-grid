@@ -26,7 +26,10 @@ var chart = null;
 
 function onChartCreated(event) {
     console.log('Created chart with ID ' + event.chartId);
-    chart = event.chartModel.chart;
+    
+    const chartRef = gridOptions.api.getChartRef(event.chartId);
+    chart = chartRef.chart;
+    
     this.updateTitle ? this.updateTitle() : updateTitle();
 }
 

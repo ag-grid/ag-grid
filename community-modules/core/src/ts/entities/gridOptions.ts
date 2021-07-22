@@ -805,6 +805,7 @@ export interface ProcessDataFromClipboardParams {
 }
 
 export interface ChartRef {
+    chartId: string;
     chart: any;
     chartElement: HTMLElement;
     destroyChart: () => void;

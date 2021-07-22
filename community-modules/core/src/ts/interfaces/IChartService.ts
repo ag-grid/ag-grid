@@ -20,12 +20,12 @@ export interface ChartModel {
     suppressChartRanges?: boolean;
     aggFunc?: string | IAggFunc;
     unlinkChart?: boolean;
-    chart: any;
     getChartImageDataURL: (params: GetChartImageDataUrlParams) => string;
 }
 
 export interface IChartService {
     getChartModels(): ChartModel[];
+    getChartRef(chartId: string): ChartRef | undefined;
     createRangeChart(params: CreateRangeChartParams): ChartRef | undefined;
     createCrossFilterChart(params: CreateCrossFilterChartParams): ChartRef | undefined;
     createChartFromCurrentRange(chartType: ChartType): ChartRef | undefined;
