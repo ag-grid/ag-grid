@@ -83,7 +83,7 @@ interface RowClassParams {
     node: RowNode;
     // The index of the row about to be rendered
     rowIndex: number;
-    // If compiling to Angular, is the row's child scope, otherwise null.
+    // If compiling to AngularJs, is the row's child scope, otherwise null.
     $scope: any;
     // A reference to the AG Grid API.
     api: GridApi;
