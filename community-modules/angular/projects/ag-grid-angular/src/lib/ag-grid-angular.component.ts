@@ -141,7 +141,8 @@ import {
     ProcessRowParams,
     ProcessCellForExportParams,
     ProcessHeaderForExportParams,
-    ProcessChartOptionsParams
+    ProcessChartOptionsParams,
+    RowClassParams
 } from "@ag-grid-community/core";
 
 import {AngularFrameworkOverrides} from "./angularFrameworkOverrides";
@@ -291,11 +292,11 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public chartThemes: string[] | undefined = undefined;
     @Input() public components: { [p: string]: any; } | undefined = undefined;
     @Input() public frameworkComponents: { [p: string]: { new(): any; }; } | any | undefined = undefined;
-    @Input() public rowStyle: any | undefined = undefined;
+    @Input() public rowStyle: { [cssClassName: string]: string } | undefined = undefined;
     @Input() public context: any | undefined = undefined;
     @Input() public autoGroupColumnDef: ColDef | undefined = undefined;
-    @Input() public localeText: any | undefined = undefined;
-    @Input() public icons: any | undefined = undefined;
+    @Input() public localeText: { [key: string]: string } | undefined = undefined;
+    @Input() public icons: { [key: string]: Function | string; } | undefined = undefined;
     @Input() public datasource: IDatasource | undefined = undefined;
     @Input() public serverSideDatasource: IServerSideDatasource | undefined = undefined;
     @Input() public viewportDatasource: IViewportDatasource | undefined = undefined;
@@ -308,7 +309,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public defaultCsvExportParams: CsvExportParams | undefined = undefined;
     @Input() public defaultExcelExportParams: ExcelExportParams | undefined = undefined;
     @Input() public columnTypes: { [key: string]: ColDef; } | undefined = undefined;
-    @Input() public rowClassRules: { [cssClassName: string]: (((params: any) => boolean) | string); } | undefined = undefined;
+    @Input() public rowClassRules: { [cssClassName: string]: (((params: RowClassParams) => boolean) | string); } | undefined = undefined;
     @Input() public detailCellRendererParams: any | undefined = undefined;
     @Input() public loadingCellRendererParams: any | undefined = undefined;
     @Input() public loadingOverlayComponentParams: any | undefined = undefined;
@@ -380,7 +381,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public isExternalFilterPresent: () =>  boolean | undefined = undefined;
     @Input() public getRowHeight: Function | undefined = undefined;
     @Input() public doesExternalFilterPass: (node: RowNode) =>  boolean | undefined = undefined;
-    @Input() public getRowClass: (params: any) => (string | string[]) | undefined = undefined;
+    @Input() public getRowClass: (params: RowClassParams) => (string | string[]) | undefined = undefined;
     @Input() public getRowStyle: Function | undefined = undefined;
     @Input() public getContextMenuItems: GetContextMenuItems | undefined = undefined;
     @Input() public getMainMenuItems: GetMainMenuItems | undefined = undefined;
@@ -394,7 +395,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public processSecondaryColDef: (colDef: ColDef) =>  void | undefined = undefined;
     @Input() public processSecondaryColGroupDef: (colGroupDef: ColGroupDef) =>  void | undefined = undefined;
     @Input() public getBusinessKeyForNode: (node: RowNode) =>  string | undefined = undefined;
-    @Input() public sendToClipboard: (params: any) => void | undefined = undefined;
+    @Input() public sendToClipboard: (params: { data: string }) => void | undefined = undefined;
     @Input() public navigateToNextHeader: (params: NavigateToNextHeaderParams) => HeaderPosition | undefined = undefined;
     @Input() public tabToNextHeader: (params: TabToNextHeaderParams) => HeaderPosition | undefined = undefined;
     @Input() public navigateToNextCell: (params: NavigateToNextCellParams) => CellPosition | undefined = undefined;

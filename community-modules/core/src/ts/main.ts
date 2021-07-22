@@ -324,6 +324,7 @@ export {
     EditableCallbackParams,
     SuppressPasteCallbackParams,
     SuppressNavigableCallbackParams,
+    HeaderCheckboxSelectionCallbackParams,
     ColumnsMenuParams,
     // deprecated params
     IsColumnFunc,

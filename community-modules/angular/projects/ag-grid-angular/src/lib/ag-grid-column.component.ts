@@ -1,4 +1,4 @@
-import { CellClassParams, CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditorSelectorFunc, CellRendererSelectorFunc, CheckboxSelectionCallbackParams, ColDef, ColGroupDef, ColSpanParams, ColumnsMenuParams, DndSourceCallbackParams, EditableCallbackParams, GetQuickFilterTextParams, IAggFunc, ICellEditorComp, ICellRendererComp, ICellRendererFunc, IHeaderGroupComp, IRowDragItem, ITooltipComp, ITooltipParams, RowDragCallbackParams, RowNode, RowSpanParams, SuppressHeaderKeyboardEventParams, SuppressKeyboardEventParams, SuppressNavigableCallbackParams, SuppressPasteCallbackParams, ValueFormatterParams, ValueGetterParams, ValueParserParams, ValueSetterParams } from "@ag-grid-community/core";
+import { CellClassParams, CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditorSelectorFunc, CellRendererSelectorFunc, CheckboxSelectionCallbackParams, ColDef, ColGroupDef, ColSpanParams, ColumnsMenuParams, DndSourceCallbackParams, EditableCallbackParams, GetQuickFilterTextParams, IAggFunc, ICellEditorComp, ICellRendererComp, ICellRendererFunc, IHeaderGroupComp, IRowDragItem, ITooltipComp, ITooltipParams, RowDragCallbackParams, RowNode, RowSpanParams, SuppressHeaderKeyboardEventParams, SuppressKeyboardEventParams, SuppressNavigableCallbackParams, SuppressPasteCallbackParams, ValueFormatterParams, ValueGetterParams, ValueParserParams, ValueSetterParams, NewValueParams, HeaderCheckboxSelectionCallbackParams } from "@ag-grid-community/core";
 import { Component, ContentChildren, Input, QueryList } from "@angular/core";
 
 @Component({
@@ -46,11 +46,11 @@ export class AgGridColumn {
     @Input() public allowedAggFuncs: string[] | undefined = undefined;
     @Input() public menuTabs: string[] | undefined = undefined;
     @Input() public cellClassRules: { [cssClassName: string]: (Function | string); } | undefined = undefined;
-    @Input() public icons: { [key: string]: string; } | undefined = undefined;
+    @Input() public icons: { [key: string]: Function | string; } | undefined = undefined;
     @Input() public headerGroupComponent: string | { new(): IHeaderGroupComp; } | undefined = undefined;
     @Input() public headerGroupComponentFramework: any | undefined = undefined;
     @Input() public headerGroupComponentParams: any | undefined = undefined;
-    @Input() public cellStyle: {} | ((params: any) => {}) | undefined = undefined;
+    @Input() public cellStyle: {} | ((params: CellClassParams) => {}) | undefined = undefined;
     @Input() public cellRendererParams: any | undefined = undefined;
     @Input() public cellEditorFramework: any | undefined = undefined;
     @Input() public cellEditorParams: any | undefined = undefined;
@@ -124,7 +124,7 @@ export class AgGridColumn {
     @Input() public colSpan: (params: ColSpanParams) => number | undefined = undefined;
     @Input() public rowSpan: (params: RowSpanParams) => number | undefined = undefined;
     @Input() public getQuickFilterText: (params: GetQuickFilterTextParams) => string | undefined = undefined;
-    @Input() public newValueHandler: (params: any) => boolean | undefined = undefined;
+    @Input() public newValueHandler: (params: NewValueParams) => boolean | undefined = undefined;
     @Input() public onCellValueChanged: Function | undefined = undefined;
     @Input() public onCellClicked: (event: CellClickedEvent) => void | undefined = undefined;
     @Input() public onCellDoubleClicked: (event: CellDoubleClickedEvent) => void | undefined = undefined;
@@ -145,7 +145,7 @@ export class AgGridColumn {
     @Input() public pivot: boolean | undefined = undefined;
     @Input() public initialPivot: boolean | undefined = undefined;
     @Input() public checkboxSelection: boolean | ((params: CheckboxSelectionCallbackParams) => boolean) | undefined = undefined;
-    @Input() public headerCheckboxSelection: boolean | ((params: any) => boolean) | undefined = undefined;
+    @Input() public headerCheckboxSelection: boolean | ((params: HeaderCheckboxSelectionCallbackParams) => boolean) | undefined = undefined;
     @Input() public headerCheckboxSelectionFilteredOnly: boolean | undefined = undefined;
     @Input() public suppressMenu: boolean | undefined = undefined;
     @Input() public suppressMovable: boolean | undefined = undefined;
