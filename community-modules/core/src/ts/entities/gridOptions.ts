@@ -162,7 +162,7 @@ export interface GridOptions {
     stopEditingWhenCellsLoseFocus?: boolean;
 
     debug?: boolean;
-    icons?: any; // should be typed
+    icons?: { [key: string]: Function | string; };
     angularCompileRows?: boolean;
     angularCompileFilters?: boolean;
 
@@ -285,7 +285,7 @@ export interface GridOptions {
     };
 
     // just set once
-    localeText?: any;
+    localeText?: { [key: string]: string };
     localeTextFunc?: (key: string, defaultValue: string) => string;
     suppressAnimationFrame?: boolean;
     defaultColGroupDef?: ColGroupDef;
@@ -311,16 +311,16 @@ export interface GridOptions {
 
     groupDisplayType?: RowGroupingDisplayType;
 
-    /** @deprecated - Use treeDisplayType = 'multipleColumns' instead */
+    /** @deprecated - Use groupDisplayType = 'multipleColumns' instead */
     groupMultiAutoColumn?: boolean;
-    /** @deprecated - Use treeDisplayType = 'row' instead */
+    /** @deprecated - Use groupDisplayType = 'groupRows' instead */
     groupUseEntireRow?: boolean;
-    /** @deprecated - Use treeDisplayType = 'custom' instead */
+    /** @deprecated - Use groupDisplayType = 'custom' instead */
     groupSuppressAutoColumn?: boolean;
 
     // changeable, but no immediate impact
     context?: any;
-    rowStyle?: any;
+    rowStyle?: { [cssClassName: string]: string };
     rowClass?: string | string[];
     groupDefaultExpanded?: number;
     alignedGrids?: GridOptions[];
@@ -389,10 +389,10 @@ export interface GridOptions {
     doesExternalFilterPass?(node: RowNode): boolean;
 
     getRowStyle?: Function;
-    getRowClass?: (params: any) => (string | string[]);
-    rowClassRules?: { [cssClassName: string]: (((params: any) => boolean) | string); };
+    getRowClass?: (params: RowClassParams) => (string | string[]);
+    rowClassRules?: { [cssClassName: string]: (((params: RowClassParams) => boolean) | string); };
     getRowHeight?: Function;
-    sendToClipboard?: (params: any) => void;
+    sendToClipboard?: (params: { data: string }) => void;
     processDataFromClipboard?: (params: ProcessDataFromClipboardParams) => string[][] | null;
 
     navigateToNextHeader?: (params: NavigateToNextHeaderParams) => HeaderPosition;
@@ -428,6 +428,8 @@ export interface GridOptions {
 
     getDataPath?: GetDataPath;
     treeData?: boolean;
+    treeDataDisplayType?: TreeDataDisplayType;
+
     isServerSideGroup?: IsServerSideGroup;
     isApplyServerSideTransaction?: IsApplyServerSideTransaction;
     getServerSideGroupKey?: GetServerSideGroupKey;
@@ -620,6 +622,11 @@ export enum RowGroupingDisplayType {
     SINGLE_COLUMN = 'singleColumn',
     MULTIPLE_COLUMNS = 'multipleColumns',
     GROUP_ROWS = 'groupRows',
+    CUSTOM = 'custom',
+}
+
+export enum TreeDataDisplayType {
+    AUTO = 'auto',
     CUSTOM = 'custom',
 }
 

@@ -22,7 +22,8 @@ import {
     ServerSideStoreParams,
     TabToNextCellParams,
     TabToNextHeaderParams,
-    RowGroupingDisplayType
+    RowGroupingDisplayType,
+    TreeDataDisplayType
 } from './entities/gridOptions';
 import { EventService } from './eventService';
 import { Constants } from './constants/constants';
@@ -519,8 +520,13 @@ export class GridOptionsWrapper {
     }
 
     public isGroupSuppressAutoColumn() {
-        return this.gridOptions.groupDisplayType ?
+        const isCustomRowGroups = this.gridOptions.groupDisplayType ?
             this.matchesGroupDisplayType(RowGroupingDisplayType.CUSTOM, this.gridOptions.groupDisplayType) : false;
+
+        if (isCustomRowGroups) { return true; }
+
+        return this.gridOptions.treeDataDisplayType ?
+            this.matchesTreeDataDisplayType(TreeDataDisplayType.CUSTOM, this.gridOptions.treeDataDisplayType) : false;
     }
 
     public isGroupRemoveSingleChildren() {
@@ -1666,7 +1672,7 @@ export class GridOptionsWrapper {
         }
 
         if (options.groupUseEntireRow) {
-            console.warn("AG Grid: since v26.0, the grid property `groupUseEntireRow` has been replaced by `groupDisplayType = 'row'`");
+            console.warn("AG Grid: since v26.0, the grid property `groupUseEntireRow` has been replaced by `groupDisplayType = 'groupRows'`");
             options.groupDisplayType = RowGroupingDisplayType.GROUP_ROWS;
         }
 
@@ -1831,9 +1837,16 @@ export class GridOptionsWrapper {
     private matchesGroupDisplayType(toMatch: RowGroupingDisplayType, supplied?: string): boolean {
         const groupDisplayTypeValues = getAllValuesInObject(RowGroupingDisplayType);
         if (groupDisplayTypeValues.indexOf(supplied) < 0) {
-            doOnce(() =>
-                    console.warn(`AG Grid: '${supplied}' is not a valid groupDisplayType value - possible values are: '${groupDisplayTypeValues.join("', '")}'`),
-                'warn about group display type values');
+            console.warn(`AG Grid: '${supplied}' is not a valid groupDisplayType value - possible values are: '${groupDisplayTypeValues.join("', '")}'`);
+            return false;
+        }
+        return supplied === toMatch;
+    }
+
+    private matchesTreeDataDisplayType(toMatch: TreeDataDisplayType, supplied?: string): boolean {
+        const treeDataDisplayTypeValues = getAllValuesInObject(TreeDataDisplayType);
+        if (treeDataDisplayTypeValues.indexOf(supplied) < 0) {
+            console.warn(`AG Grid: '${supplied}' is not a valid treeDataDisplayType value - possible values are: '${treeDataDisplayTypeValues.join("', '")}'`);
             return false;
         }
         return supplied === toMatch;

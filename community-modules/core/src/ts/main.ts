@@ -324,6 +324,7 @@ export {
     EditableCallbackParams,
     SuppressPasteCallbackParams,
     SuppressNavigableCallbackParams,
+    HeaderCheckboxSelectionCallbackParams,
     ColumnsMenuParams,
     // deprecated params
     IsColumnFunc,
@@ -364,7 +365,8 @@ export {
     IsServerSideGroup,
     GetChartToolbarItems,
     FillOperationParams,
-    RowGroupingDisplayType
+    RowGroupingDisplayType,
+    TreeDataDisplayType
 } from "./entities/gridOptions";
 
 export * from "./propertyKeys";

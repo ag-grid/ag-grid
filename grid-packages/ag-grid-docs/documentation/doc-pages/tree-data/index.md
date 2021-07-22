@@ -57,7 +57,6 @@ getDataPath: data => {
 
 There are two ways to configure the Group Column:
 
-
 - **Auto Column Group** -  this is automatically selected by the grid when in Tree Data mode, however you can override the defaults.
 
 - **Custom Column Group** - you can provide your own custom column group definition which gives allows more control over how the Group Column is displayed.
