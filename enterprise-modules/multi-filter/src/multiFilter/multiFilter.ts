@@ -14,8 +14,9 @@ import {
     RowNode,
     AgGroupComponent,
     ContainerType,
-    ManagedFocusContainer,
-    _
+    TabGuardComp,
+    _,
+    PostConstruct
 } from '@ag-grid-community/core';
 import { MenuItemComponent, MenuItemActivatedEvent } from '@ag-grid-enterprise/menu';
 
@@ -33,7 +34,7 @@ export interface IMultiFilterModel {
     filterModels: any[] | null;
 }
 
-export class MultiFilter extends ManagedFocusContainer implements IFilterComp {
+export class MultiFilter extends TabGuardComp implements IFilterComp {
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
 
@@ -51,6 +52,13 @@ export class MultiFilter extends ManagedFocusContainer implements IFilterComp {
 
     constructor() {
         super(/* html */`<div class="ag-multi-filter ag-menu-list-compact"></div>`);
+    }
+
+    @PostConstruct
+    private postConstruct() {
+        this.initialiseTabGuard({
+            onFocusIn: e => this.onFocusIn(e)
+        });
     }
 
     public static getFilterDefs(params: IMultiFilterParams): IMultiFilterDef[] {
@@ -95,7 +103,7 @@ export class MultiFilter extends ManagedFocusContainer implements IFilterComp {
     private refreshGui(container: ContainerType): void {
         if (container === this.lastOpenedInContainer) { return; }
 
-        this.clearFocusableElement();
+        this.removeAllChildrenExceptTabGuards();
         this.destroyChildren();
 
         _.forEach(this.filters!, (filter, index) => {
@@ -299,7 +307,7 @@ export class MultiFilter extends ManagedFocusContainer implements IFilterComp {
 
         if (suppressFocus) {
             // reset focus to the top of the container, and blur
-            this.forceFocusOutOfContainer(true);
+            this.forceFocusOutOfContainer();
         }
     }
 

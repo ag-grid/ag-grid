@@ -1,14 +1,15 @@
 import {
-    ManagedFocusContainer,
+    TabGuardComp,
     MenuItemDef,
     KeyCode,
     Autowired,
     FocusService,
-    _
+    _,
+    PostConstruct
 } from "@ag-grid-community/core";
 import { MenuItemComponent, MenuItemSelectedEvent, MenuItemActivatedEvent } from "./menuItemComponent";
 
-export class MenuList extends ManagedFocusContainer {
+export class MenuList extends TabGuardComp {
 
     @Autowired('focusService') private readonly focusService: FocusService;
 
@@ -19,9 +20,17 @@ export class MenuList extends ManagedFocusContainer {
         super(/* html */`<div class="ag-menu-list" role="tree"></div>`);
     }
 
+    @PostConstruct
+    private postConstruct() {
+        this.initialiseTabGuard({
+            onTabKeyDown: e => this.onTabKeyDown(e),
+            handleKeyDown: e => this.handleKeyDown(e)
+        });
+    }
+
     protected onTabKeyDown(e: KeyboardEvent) {
         const parent = this.getParentComponent();
-        const isManaged = parent && parent instanceof ManagedFocusContainer;
+        const isManaged = parent && parent instanceof TabGuardComp;
 
         if (!isManaged) {
             e.preventDefault();

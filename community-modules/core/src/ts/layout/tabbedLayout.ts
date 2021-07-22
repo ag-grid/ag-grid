@@ -36,9 +36,10 @@ export class TabbedLayout extends Component {
     private postConstruct() {
         this.createManagedBean(new ManagedFocusFeature(
             this.getFocusableElement(),
-            undefined,
-            this.onTabKeyDown.bind(this),
-            this.handleKeyDown.bind(this)
+            {
+                onTabKeyDown: this.onTabKeyDown.bind(this),
+                handleKeyDown: this.handleKeyDown.bind(this)
+            }
         ));
     }
 

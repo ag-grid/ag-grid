@@ -1,12 +1,12 @@
 import { Component } from './component';
-import { Autowired } from '../context/context';
+import { Autowired, PostConstruct } from '../context/context';
 import { RefSelector } from './componentAnnotations';
 import { addCssClass, containsClass } from '../utils/dom';
 import { getAriaPosInSet, setAriaSetSize, setAriaPosInSet, setAriaSelected, setAriaChecked } from '../utils/aria';
 import { KeyCode } from '../constants/keyCode';
 import { ResizeObserverService } from "../misc/resizeObserverService";
 import { waitUntil } from '../utils/function';
-import { ManagedFocusContainer } from './managedFocusContainer';
+import { TabGuardComp } from './tabGuardComp';
 import { FocusService } from '../focusService';
 
 export interface VirtualListModel {
@@ -15,7 +15,7 @@ export interface VirtualListModel {
     isRowSelected?(index: number): boolean | undefined;
 }
 
-export class VirtualList extends ManagedFocusContainer {
+export class VirtualList extends TabGuardComp {
     private model: VirtualListModel;
     private renderedRows = new Map<number, { rowComponent: Component, eDiv: HTMLDivElement; }>();
     private componentCreator: (value: any, listItemElement: HTMLElement) => Component;
@@ -31,12 +31,19 @@ export class VirtualList extends ManagedFocusContainer {
         super(VirtualList.getTemplate(cssIdentifier));
     }
 
-    protected postConstruct(): void {
+    @PostConstruct
+    private postConstruct(): void {
         this.addScrollListener();
         this.rowHeight = this.getItemHeight();
         this.addResizeObserver();
 
-        super.postConstruct();
+        this.initialiseTabGuard({
+            onFocusIn: (e: FocusEvent) => this.onFocusIn(e),
+            onFocusOut: (e: FocusEvent) => this.onFocusOut(e),
+            focusInnerElement: (fromBottom: boolean) => this.focusInnerElement(fromBottom),
+            onTabKeyDown: e => this.onTabKeyDown(e),
+            handleKeyDown: e => this.handleKeyDown(e)
+        })
     }
 
     private addResizeObserver(): void {
@@ -50,7 +57,6 @@ export class VirtualList extends ManagedFocusContainer {
     }
 
     protected onFocusIn(e: FocusEvent): void {
-        super.onFocusIn(e);
         const target = e.target as HTMLElement;
 
         if (containsClass(target, 'ag-virtual-list-item')) {
@@ -59,8 +65,6 @@ export class VirtualList extends ManagedFocusContainer {
     }
 
     protected onFocusOut(e: FocusEvent) {
-        super.onFocusOut(e);
-
         if (!this.getFocusableElement().contains(e.relatedTarget as HTMLElement)) {
             this.lastFocusedRowIndex = null;
         }

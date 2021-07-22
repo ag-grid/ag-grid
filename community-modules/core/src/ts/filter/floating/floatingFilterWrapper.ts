@@ -67,10 +67,12 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
         this.createManagedBean(new HoverFeature([this.column], this.getGui()));
         this.createManagedBean(new ManagedFocusFeature(
             this.getFocusableElement(),
-            this.shouldStopEventPropagation.bind(this),
-            this.onTabKeyDown.bind(this),
-            this.handleKeyDown.bind(this),
-            this.onFocusIn.bind(this)
+            {
+                shouldStopEventPropagation: this.shouldStopEventPropagation.bind(this),
+                onTabKeyDown: this.onTabKeyDown.bind(this),
+                handleKeyDown: this.handleKeyDown.bind(this),
+                onFocusIn: this.onFocusIn.bind(this)
+            }
         ));
 
         this.addManagedListener(this.eButtonShowMainFilter, 'click', this.showParentFilter.bind(this));

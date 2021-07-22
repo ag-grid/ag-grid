@@ -1,89 +1,49 @@
 import React, { FC, useRef, useEffect, useState } from 'react';
 import {
-    Context,
-    ManagedFocusContainerCtrl,
-    IManagedFocusContainer
+    Context, TabGuardFeature, ITabGuard, GridCtrl
 } from '@ag-grid-community/core';
 
 export const ManagedFocusContainer: FC<{
     children: React.ReactNode,
     context: Context
-    focusableElementRef: React.RefObject<HTMLDivElement>,
-    focusInnerElement: (fromBottom?: boolean) => void
-}> = ({ children, context, focusableElementRef, focusInnerElement }) => {
+    eFocusableElement: HTMLDivElement,
+    onTabKeyDown: (e: KeyboardEvent) => void,
+    gridCtrl: GridCtrl
+}> = ({ children, context, eFocusableElement, onTabKeyDown, gridCtrl }) => {
+
     const topTabGuardRef = useRef<HTMLDivElement>(null);
     const bottomTabGuardRef = useRef<HTMLDivElement>(null);
-    const [activeTabGuards, setActiveTabGuards] = useState(true);
-    const [skipTabGuards, setSkipTabGuards] = useState(false);
-
+    const [tabIndex, setTabIndex] = useState<number>();
 
     useEffect(() => {
-        if (!context || !topTabGuardRef.current || !bottomTabGuardRef.current || !focusableElementRef.current) { return; }
-        const beansToDestroy: any[] = [];
-        const focusableElement = focusableElementRef.current;
-        const topTabGuard = topTabGuardRef.current;
-        const bottomTabGuard = bottomTabGuardRef.current;
+        const eTopGuard = topTabGuardRef.current!;
+        const eBottomGuard = bottomTabGuardRef.current!;
 
-        const ctrl = context.createBean(new ManagedFocusContainerCtrl())
-
-        const compProxy: IManagedFocusContainer = {
-            getFocusableElement: () => focusableElement,
-            tabGuardsAreActive: () => activeTabGuards,
-            shouldStopEventPropagation: () => false,
-            onTabKeyDown: (e: KeyboardEvent) => {
-                if (e.defaultPrevented) { return; }
-                const tabGuardsWereActive = activeTabGuards;
-
-                if (tabGuardsWereActive) {
-                    setActiveTabGuards(false);
-                }
-
-                const nextRoot = ctrl.getNextFocusableElement(e.shiftKey);
-
-                if (tabGuardsWereActive) {
-                    setTimeout(() => setActiveTabGuards(true), 0);
-                }
-
-                if (!nextRoot) { return; }
-
-                nextRoot.focus();
-                e.preventDefault();
-            },
-            handleKeyDown: () => {},
-            onFocusIn: () => setActiveTabGuards(false),
-            onFocusOut: (e: FocusEvent) => {
-                if (!focusableElement.contains(e.relatedTarget as HTMLElement)) {
-                    setActiveTabGuards(true);
-                }
-            }
+        const compProxy: ITabGuard = {
+            setTabIndex: value => value == null ? setTabIndex(undefined) : setTabIndex(parseInt(value, 10))
         }
 
-        ctrl.setComp(compProxy);
-
-        const onFocus = (e: FocusEvent) => {
-            if (skipTabGuards) {
-                setSkipTabGuards(false);
-                return;
-            }
-            focusInnerElement(e.target === bottomTabGuard);
-        }
-
-        topTabGuard.addEventListener('focus', onFocus)
-        bottomTabGuard.addEventListener('focus', onFocus)
+        const ctrl = context.createBean(new TabGuardFeature({
+            comp: compProxy,
+            eTopGuard: eTopGuard,
+            eBottomGuard: eBottomGuard,
+            eFocusableElement: eFocusableElement,
+            
+            onTabKeyDown: onTabKeyDown,
+            focusInnerElement: fromBottom => gridCtrl.focusInnerElement(fromBottom)
+        }));
 
         return () => {
-            context.destroyBeans(beansToDestroy);
-            topTabGuard.removeEventListener('focus', onFocus)
-            bottomTabGuard.removeEventListener('focus', onFocus)
+            context.destroyBean(ctrl);
         };
 
-    }, [activeTabGuards, context, focusableElementRef, skipTabGuards, focusInnerElement])
+    }, [context, eFocusableElement])
 
     const createTabGuard = (side: 'top' | 'bottom') => (
         <div 
             className={`ag-tab-guard ag-tab-guard-${side}`}
             role="presentation"
-            { ...(activeTabGuards ? { tabIndex: 0 } : {}) }
+            tabIndex={tabIndex}
             ref={ side === 'top' ? topTabGuardRef : bottomTabGuardRef }
         ></div>
     )

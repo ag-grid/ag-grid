@@ -236,9 +236,9 @@ export { AgGroupComponent, AgGroupComponentParams } from "./widgets/agGroupCompo
 export { AgDialog } from "./widgets/agDialog";
 export { AgPanel } from "./widgets/agPanel";
 export { Component, VisibleChangedEvent } from "./widgets/component";
-export { ManagedFocusFeature } from "./widgets/managedFocusFeature";
-export { ManagedFocusContainer } from "./widgets/managedFocusContainer";
-export { ManagedFocusContainerCtrl, IManagedFocusContainer } from "./widgets/managedFocusContainerCtrl";
+export { ManagedFocusFeature, ManagedFocusCallbacks } from "./widgets/managedFocusFeature";
+export { TabGuardComp } from "./widgets/tabGuardComp";
+export { TabGuardFeature, ITabGuard } from "./widgets/tabGuardFeature";
 export { PopupComponent } from "./widgets/popupComponent";
 export { PopupService, AgPopup } from "./widgets/popupService";
 export { TouchListener, TapEvent, LongTapEvent } from "./widgets/touchListener";

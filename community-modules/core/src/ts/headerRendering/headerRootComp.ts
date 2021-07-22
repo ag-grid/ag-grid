@@ -54,11 +54,11 @@ export class HeaderRootComp extends Component {
     private postConstruct(): void {
         this.createManagedBean(new ManagedFocusFeature(
             this.getFocusableElement(),
-            undefined,
-            this.onTabKeyDown.bind(this),
-            this.handleKeyDown.bind(this),
-            undefined,
-            this.onFocusOut.bind(this)
+            {
+                onTabKeyDown: this.onTabKeyDown.bind(this),
+                handleKeyDown: this.handleKeyDown.bind(this),
+                onFocusOut: this.onFocusOut.bind(this)
+            }
         ));
 
         this.printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
