@@ -54,6 +54,18 @@ export class ChartService extends BeanStub implements IChartService {
         return models;
     }
 
+    public getChartRef(chartId: string): ChartRef | undefined {
+        let chartRef;
+        
+        this.activeCharts.forEach(cr => {
+            if (cr.chartId === chartId) {
+                chartRef = cr;
+            }
+        })
+
+        return chartRef;
+    }
+
     public createChartFromCurrentRange(chartType: ChartType = ChartType.GroupedColumn): ChartRef | undefined {
         const selectedRange: CellRange = this.getSelectedRange();
         return this.createChart(selectedRange, chartType);
@@ -232,7 +244,8 @@ export class ChartService extends BeanStub implements IChartService {
                 }
             },
             chartElement: chartComp.getGui(),
-            chart: chartComp.getUnderlyingChart()
+            chart: chartComp.getUnderlyingChart(),
+            chartId: chartComp.getChartModel().chartId
         };
 
         this.activeCharts.add(chartRef);

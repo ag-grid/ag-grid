@@ -1365,6 +1365,13 @@ export class GridApi {
         }
     }
 
+    public getChartRef(chartId: string) : ChartRef | undefined {
+        if (ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.getChartRef') && 
+            ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.getChartRef')) {
+                return this.chartService.getChartRef(chartId);
+            }
+    }
+
     public createRangeChart(params: CreateRangeChartParams): ChartRef | undefined {
         if (ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.createRangeChart') &&
             ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createRangeChart')) {

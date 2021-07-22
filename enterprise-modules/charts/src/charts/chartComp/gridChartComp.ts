@@ -366,6 +366,7 @@ export class GridChartComp extends Component {
     }
 
     public getChartModel(): ChartModel {
+        console.log("mana")
         return this.chartController.getChartModel();
     }
 
@@ -471,11 +472,9 @@ export class GridChartComp extends Component {
     }
 
     private raiseChartCreatedEvent(): void {
-        const chartModel = this.chartController.getChartModel();
         const event: ChartCreated = Object.freeze({
             type: Events.EVENT_CHART_CREATED,
-            chartId: chartModel.chartId,
-            chartModel,
+            chartId: this.model.getChartId(),
             api: this.gridApi,
             columnApi: this.columnApi,
         });

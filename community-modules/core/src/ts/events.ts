@@ -176,7 +176,6 @@ export interface RangeSelectionChangedEvent extends AgGridEvent {
 
 export interface ChartCreated extends AgGridEvent {
     chartId: string;
-    chartModel: ChartModel;
 }
 
 export interface ChartRangeSelectionChanged extends AgGridEvent {
