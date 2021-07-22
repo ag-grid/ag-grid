@@ -311,11 +311,11 @@ export interface GridOptions {
 
     groupDisplayType?: RowGroupingDisplayType;
 
-    /** @deprecated - Use treeDisplayType = 'multipleColumns' instead */
+    /** @deprecated - Use groupDisplayType = 'multipleColumns' instead */
     groupMultiAutoColumn?: boolean;
-    /** @deprecated - Use treeDisplayType = 'row' instead */
+    /** @deprecated - Use groupDisplayType = 'groupRows' instead */
     groupUseEntireRow?: boolean;
-    /** @deprecated - Use treeDisplayType = 'custom' instead */
+    /** @deprecated - Use groupDisplayType = 'custom' instead */
     groupSuppressAutoColumn?: boolean;
 
     // changeable, but no immediate impact
@@ -428,6 +428,8 @@ export interface GridOptions {
 
     getDataPath?: GetDataPath;
     treeData?: boolean;
+    treeDataDisplayType?: TreeDataDisplayType;
+
     isServerSideGroup?: IsServerSideGroup;
     isApplyServerSideTransaction?: IsApplyServerSideTransaction;
     getServerSideGroupKey?: GetServerSideGroupKey;
@@ -620,6 +622,11 @@ export enum RowGroupingDisplayType {
     SINGLE_COLUMN = 'singleColumn',
     MULTIPLE_COLUMNS = 'multipleColumns',
     GROUP_ROWS = 'groupRows',
+    CUSTOM = 'custom',
+}
+
+export enum TreeDataDisplayType {
+    AUTO = 'auto',
     CUSTOM = 'custom',
 }
 

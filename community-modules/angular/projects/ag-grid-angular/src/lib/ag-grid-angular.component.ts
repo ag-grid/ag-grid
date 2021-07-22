@@ -142,7 +142,8 @@ import {
     ProcessCellForExportParams,
     ProcessHeaderForExportParams,
     ProcessChartOptionsParams,
-    RowClassParams
+    RowClassParams,
+    TreeDataDisplayType
 } from "@ag-grid-community/core";
 
 import {AngularFrameworkOverrides} from "./angularFrameworkOverrides";
@@ -340,6 +341,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public fillHandleDirection: string | undefined = undefined;
     @Input() public serverSideStoreType: ServerSideStoreType | undefined = undefined;
     @Input() public groupDisplayType: RowGroupingDisplayType | undefined = undefined;
+    @Input() public treeDataDisplayType: TreeDataDisplayType | undefined = undefined;
     @Input() public rowHeight: number | undefined = undefined;
     @Input() public detailRowHeight: number | undefined = undefined;
     @Input() public rowBuffer: number | undefined = undefined;
