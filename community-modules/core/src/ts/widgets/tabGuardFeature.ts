@@ -83,41 +83,13 @@ export class TabGuardFeature extends BeanStub {
 
         this.activateTabGuards();
 
-        [this.eTopGuard, this.eBottomGuard].forEach( guard => this.addManagedListener(guard, 'focus', this.onFocus.bind(this)))
+        [this.eTopGuard, this.eBottomGuard].forEach(guard => this.addManagedListener(guard, 'focus', this.onFocus.bind(this)));
     }
 
     private handleKeyDown(e: KeyboardEvent): void {
         if (this.providedHandleKeyDown) {
             this.providedHandleKeyDown(e);
         }
-    }
-
-    public onTabKeyDown(e: KeyboardEvent): void {
-        if (this.providedOnTabKeyDown) {
-            this.providedOnTabKeyDown(e);
-            return;
-        }
-
-        if (e.defaultPrevented) { return; }
-
-        const tabGuardsAreActive = this.tabGuardsAreActive();
-
-        if (tabGuardsAreActive) {
-            this.deactivateTabGuards();
-        }
-
-        const nextRoot = this.getNextFocusableElement(e.shiftKey);
-
-        if (tabGuardsAreActive) {
-            // ensure the tab guards are only re-instated once the event has finished processing, to avoid the browser
-            // tabbing to the tab guard from inside the component
-            setTimeout(() => this.activateTabGuards(), 0);
-        }
-
-        if (!nextRoot) { return; }
-
-        nextRoot.focus();
-        e.preventDefault();
     }
 
     private tabGuardsAreActive(): boolean {
@@ -129,28 +101,6 @@ export class TabGuardFeature extends BeanStub {
             return this.providedShouldStopEventPropagation();
         }
         return false;
-    }
-
-    public getGridTabIndex(): string {
-        return this.gridOptionsWrapper.getGridTabIndex();
-    }
-
-    public focusInnerElement(fromBottom = false): void {
-        const focusable = this.focusService.findFocusableElements(this.eFocusableElement);
-    
-        if (this.tabGuardsAreActive()) {
-            // remove tab guards from this component from list of focusable elements
-            focusable.splice(0, 1);
-            focusable.splice(focusable.length - 1, 1);
-        }
-
-        if (!focusable.length) { return; }
-
-        focusable[fromBottom ? focusable.length - 1 : 0].focus();
-    }
-
-    public getNextFocusableElement(backwards?: boolean): HTMLElement | null {
-        return this.focusService.findNextFocusableElement(this.eFocusableElement, false, backwards);
     }
 
     private activateTabGuards(): void {
@@ -189,6 +139,56 @@ export class TabGuardFeature extends BeanStub {
         if (!this.eFocusableElement.contains(e.relatedTarget as HTMLElement)) {
             this.activateTabGuards();
         }
+    }
+
+    public onTabKeyDown(e: KeyboardEvent): void {
+        if (this.providedOnTabKeyDown) {
+            this.providedOnTabKeyDown(e);
+            return;
+        }
+
+        if (e.defaultPrevented) { return; }
+
+        const tabGuardsAreActive = this.tabGuardsAreActive();
+
+        if (tabGuardsAreActive) {
+            this.deactivateTabGuards();
+        }
+
+        const nextRoot = this.getNextFocusableElement(e.shiftKey);
+
+        if (tabGuardsAreActive) {
+            // ensure the tab guards are only re-instated once the event has finished processing, to avoid the browser
+            // tabbing to the tab guard from inside the component
+            setTimeout(() => this.activateTabGuards(), 0);
+        }
+
+        if (!nextRoot) { return; }
+
+        nextRoot.focus();
+        e.preventDefault();
+    }
+
+    public getGridTabIndex(): string {
+        return this.gridOptionsWrapper.getGridTabIndex();
+    }
+
+    public focusInnerElement(fromBottom = false): void {
+        const focusable = this.focusService.findFocusableElements(this.eFocusableElement);
+    
+        if (this.tabGuardsAreActive()) {
+            // remove tab guards from this component from list of focusable elements
+            focusable.splice(0, 1);
+            focusable.splice(focusable.length - 1, 1);
+        }
+
+        if (!focusable.length) { return; }
+
+        focusable[fromBottom ? focusable.length - 1 : 0].focus();
+    }
+
+    public getNextFocusableElement(backwards?: boolean): HTMLElement | null {
+        return this.focusService.findNextFocusableElement(this.eFocusableElement, false, backwards);
     }
 
     public forceFocusOutOfContainer(): void {

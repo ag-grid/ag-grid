@@ -15,11 +15,13 @@ import {
     Context,
     FocusService,
     ProvidedFilterModel,
+    TabGuardFeature,
 } from '@ag-grid-community/core';
 import { mock } from '../test-utils/mock';
 
 let eGui: jest.Mocked<HTMLElement>;
 let filterManager: jest.Mocked<FilterManager>;
+let tabGuardFeature: jest.Mocked<TabGuardFeature>
 let userComponentFactory: jest.Mocked<UserComponentFactory>;
 let focusService: jest.Mocked<FocusService>;
 
@@ -62,6 +64,7 @@ function createFilter(filterParams: any = {}): MultiFilter {
     (multiFilter as any).userComponentFactory = userComponentFactory;
     (multiFilter as any).focusService = focusService;
     (multiFilter as any).context = context;
+    (multiFilter as any).tabGuardFeature = tabGuardFeature;
 
     multiFilter.init(params);
 
@@ -71,6 +74,7 @@ function createFilter(filterParams: any = {}): MultiFilter {
 beforeEach(() => {
     eGui = mock<HTMLElement>('appendChild', 'insertAdjacentElement');
     filterManager = mock<FilterManager>('createFilterParams');
+    tabGuardFeature = mock<TabGuardFeature>('forceFocusOutOfContainer');
     userComponentFactory = mock<UserComponentFactory>('newFilterComponent');
     focusService = mock<FocusService>('findFocusableElements');
     context = mock<Context>('createBean', 'destroyBean');

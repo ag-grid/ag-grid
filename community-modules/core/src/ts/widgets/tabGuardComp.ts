@@ -1,5 +1,5 @@
 import { Component } from "./component";
-import { isNodeOrElement } from "../utils/dom";
+import { isNodeOrElement, clearElement } from "../utils/dom";
 import { TabGuardFeature, ITabGuard } from "./tabGuardFeature";
 
 export class TabGuardComp extends Component {
@@ -27,11 +27,11 @@ export class TabGuardComp extends Component {
 
         const compProxy: ITabGuard = {
             setTabIndex: tabIndex => {
-                tabGuards.forEach( tabGuard => tabIndex!=null ? tabGuard.setAttribute('tabIndex', tabIndex) : tabGuard.removeAttribute('tabIndex'));
+                tabGuards.forEach(tabGuard => tabIndex != null ? tabGuard.setAttribute('tabIndex', tabIndex) : tabGuard.removeAttribute('tabIndex'));
             }
         }
 
-        this.addTabGuards();
+        this.addTabGuards(this.eTopGuard, this.eBottomGuard);
 
         this.tabGuardFeature = this.createManagedBean(new TabGuardFeature({
             comp: compProxy,
@@ -46,6 +46,28 @@ export class TabGuardComp extends Component {
             onTabKeyDown: params.onTabKeyDown,
             shouldStopEventPropagation: params.shouldStopEventPropagation
         }));
+    }
+
+    private createTabGuard(side: 'top' | 'bottom'): HTMLElement {
+        const tabGuard = document.createElement('div');
+
+        tabGuard.classList.add('ag-tab-guard');
+        tabGuard.classList.add(`ag-tab-guard-${side}`);
+        tabGuard.setAttribute('role', 'presentation');
+
+        return tabGuard;
+    }
+
+    private addTabGuards(topTabGuard: HTMLElement, bottomTabGuard: HTMLElement): void {
+        const focusEl = this.getFocusableElement();
+        focusEl.insertAdjacentElement('afterbegin', topTabGuard);
+        focusEl.insertAdjacentElement('beforeend', bottomTabGuard);
+    }
+
+    protected removeAllChildrenExceptTabGuards(): void {
+        const tabGuards: [HTMLElement, HTMLElement] = [this.eTopGuard, this.eBottomGuard];
+        clearElement(this.getFocusableElement());
+        this.addTabGuards(...tabGuards);
     }
 
     public forceFocusOutOfContainer(): void {
@@ -64,34 +86,5 @@ export class TabGuardComp extends Component {
         } else {
             super.appendChild(newChild, container);
         }
-    }
-
-    private createTabGuard(side: 'top' | 'bottom'): HTMLElement {
-        const tabGuard = document.createElement('div');
-
-        tabGuard.classList.add('ag-tab-guard');
-        tabGuard.classList.add(`ag-tab-guard-${side}`);
-        tabGuard.setAttribute('role', 'presentation');
-
-        return tabGuard;
-    }
-
-    private addTabGuards(): void {
-        this.eFocusableElement.insertAdjacentElement('afterbegin', this.eTopGuard);
-        this.eFocusableElement.insertAdjacentElement('beforeend', this.eBottomGuard);
-    }
-
-    protected removeAllChildrenExceptTabGuards(): void {
-        const eGui = this.getGui();
-
-        const allChildrenToRemove: any[] = [];
-        for (var i = 0; i<eGui.children.length; i++) {
-            const child = eGui.children[i];
-            if (child!=this.eTopGuard && child!=this.eBottomGuard) {
-                allChildrenToRemove.push(child);
-            }
-        }
-
-        allChildrenToRemove.forEach(child => eGui.removeChild(child));
     }
 }
