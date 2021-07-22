@@ -7,7 +7,7 @@ export interface ITabGuard {
     setTabIndex(tabIndex?: string): void;
 }
 
-export class TabGuardFeature extends BeanStub {
+export class TabGuardCtrl extends BeanStub {
 
     @Autowired('focusService') private readonly focusService: FocusService;
 

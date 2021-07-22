@@ -1,19 +1,32 @@
-import React, { FC, useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, forwardRef, useImperativeHandle, RefForwardingComponent } from 'react';
 import {
     Context, TabGuardCtrl, ITabGuard, GridCtrl
 } from 'ag-grid-community';
 
-export const ManagedFocusContainer: FC<{
+export interface TabGuardCompCallback {
+    forceFocusOutOfContainer(): void;
+}
+
+interface TabGuardProps {
     children: React.ReactNode,
     context: Context
     eFocusableElement: HTMLDivElement,
     onTabKeyDown: (e: KeyboardEvent) => void,
-    gridCtrl: GridCtrl
-}> = ({ children, context, eFocusableElement, onTabKeyDown, gridCtrl }) => {
+    gridCtrl: GridCtrl,
+}
 
+const TabGuardCompRef: RefForwardingComponent<TabGuardCompCallback, TabGuardProps> = (props, forwardRef) => {
+    const { children, context, eFocusableElement, onTabKeyDown, gridCtrl } = props;
     const topTabGuardRef = useRef<HTMLDivElement>(null);
     const bottomTabGuardRef = useRef<HTMLDivElement>(null);
+    const tabGuardCtrlRef = useRef<TabGuardCtrl>();
     const [tabIndex, setTabIndex] = useState<number>();
+
+    useImperativeHandle(forwardRef, () => ({
+        forceFocusOutOfContainer() {
+            tabGuardCtrlRef.current!.forceFocusOutOfContainer();
+        }
+    }));
 
     useEffect(() => {
         const eTopGuard = topTabGuardRef.current!;
@@ -23,7 +36,7 @@ export const ManagedFocusContainer: FC<{
             setTabIndex: value => value == null ? setTabIndex(undefined) : setTabIndex(parseInt(value, 10))
         }
 
-        const ctrl = context.createBean(new TabGuardCtrl({
+        const ctrl = tabGuardCtrlRef.current = context.createBean(new TabGuardCtrl({
             comp: compProxy,
             eTopGuard: eTopGuard,
             eBottomGuard: eBottomGuard,
@@ -37,13 +50,13 @@ export const ManagedFocusContainer: FC<{
             context.destroyBean(ctrl);
         };
 
-    }, [context, eFocusableElement])
+    }, [context, eFocusableElement, gridCtrl, onTabKeyDown]);
 
     const createTabGuard = (side: 'top' | 'bottom') => (
         <div 
-            className={`ag-tab-guard ag-tab-guard-${side}`}
+            className={ `ag-tab-guard ag-tab-guard-${side}` }
             role="presentation"
-            tabIndex={tabIndex}
+            tabIndex={ tabIndex }
             ref={ side === 'top' ? topTabGuardRef : bottomTabGuardRef }
         ></div>
     )
@@ -54,4 +67,6 @@ export const ManagedFocusContainer: FC<{
             {createTabGuard('bottom')}
         </>
     )
-}
+};
+
+export const TabGuardComp = forwardRef(TabGuardCompRef);

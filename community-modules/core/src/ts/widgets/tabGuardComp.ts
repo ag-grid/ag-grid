@@ -1,6 +1,6 @@
 import { Component } from "./component";
 import { isNodeOrElement, clearElement } from "../utils/dom";
-import { TabGuardFeature, ITabGuard } from "./tabGuardFeature";
+import { TabGuardCtrl, ITabGuard } from "./tabGuardCtrl";
 
 export class TabGuardComp extends Component {
 
@@ -8,10 +8,9 @@ export class TabGuardComp extends Component {
     private eBottomGuard: HTMLElement;
     private eFocusableElement: HTMLElement;
 
-    protected tabGuardFeature: TabGuardFeature;
+    protected tabGuardCtrl: TabGuardCtrl;
 
     protected initialiseTabGuard(params: {
-        eFocusableElement?: HTMLElement,
         focusInnerElement?: (fromBottom: boolean) => void;
         shouldStopEventPropagation?: () => boolean;
         onFocusIn?: (e: FocusEvent) => void;
@@ -21,7 +20,7 @@ export class TabGuardComp extends Component {
     }) {
         this.eTopGuard = this.createTabGuard('top');
         this.eBottomGuard = this.createTabGuard('bottom');
-        this.eFocusableElement = params.eFocusableElement || this.getGui();
+        this.eFocusableElement = this.getFocusableElement();
 
         const tabGuards = [this.eTopGuard, this.eBottomGuard];
 
@@ -33,7 +32,7 @@ export class TabGuardComp extends Component {
 
         this.addTabGuards(this.eTopGuard, this.eBottomGuard);
 
-        this.tabGuardFeature = this.createManagedBean(new TabGuardFeature({
+        this.tabGuardCtrl = this.createManagedBean(new TabGuardCtrl({
             comp: compProxy,
             eTopGuard: this.eTopGuard,
             eBottomGuard: this.eBottomGuard,
@@ -59,9 +58,8 @@ export class TabGuardComp extends Component {
     }
 
     private addTabGuards(topTabGuard: HTMLElement, bottomTabGuard: HTMLElement): void {
-        const focusEl = this.getFocusableElement();
-        focusEl.insertAdjacentElement('afterbegin', topTabGuard);
-        focusEl.insertAdjacentElement('beforeend', bottomTabGuard);
+        this.eFocusableElement.insertAdjacentElement('afterbegin', topTabGuard);
+        this.eFocusableElement.insertAdjacentElement('beforeend', bottomTabGuard);
     }
 
     protected removeAllChildrenExceptTabGuards(): void {
@@ -71,7 +69,7 @@ export class TabGuardComp extends Component {
     }
 
     public forceFocusOutOfContainer(): void {
-        this.tabGuardFeature.forceFocusOutOfContainer();
+        this.tabGuardCtrl.forceFocusOutOfContainer();
     }
 
     public appendChild(newChild: HTMLElement | Component, container?: HTMLElement): void {

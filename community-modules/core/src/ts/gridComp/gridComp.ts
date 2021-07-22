@@ -60,7 +60,6 @@ export class GridComp extends TabGuardComp {
         this.insertGridIntoDom();
 
         this.initialiseTabGuard({
-            eFocusableElement: this.eRootWrapperBody,
             // we want to override the default behaviour to do nothing for onTabKeyDown
             onTabKeyDown: () => undefined,
             focusInnerElement: fromBottom => this.ctrl.focusInnerElement(fromBottom)
@@ -105,6 +104,10 @@ export class GridComp extends TabGuardComp {
             </div>`;
 
         return template;
+    }
+
+    public getFocusableElement(): HTMLElement {
+        return this.eRootWrapperBody;
     }
 
     protected getFocusableContainers(): HTMLElement[] {

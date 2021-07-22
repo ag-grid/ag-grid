@@ -238,7 +238,7 @@ export { AgPanel } from "./widgets/agPanel";
 export { Component, VisibleChangedEvent } from "./widgets/component";
 export { ManagedFocusFeature, ManagedFocusCallbacks } from "./widgets/managedFocusFeature";
 export { TabGuardComp } from "./widgets/tabGuardComp";
-export { TabGuardFeature, ITabGuard } from "./widgets/tabGuardFeature";
+export { TabGuardCtrl, ITabGuard } from "./widgets/tabGuardCtrl";
 export { PopupComponent } from "./widgets/popupComponent";
 export { PopupService, AgPopup } from "./widgets/popupService";
 export { TouchListener, TapEvent, LongTapEvent } from "./widgets/touchListener";

@@ -4,11 +4,11 @@ import {
     FocusService,
     GridCtrl,
     IGridComp,
-    AgStackComponentsRegistry
+    AgStackComponentsRegistry,
 } from 'ag-grid-community';
 import { GridBodyComp } from './gridBodyComp';
 import { classesList } from './utils';
-import { ManagedFocusContainer } from './managedFocusContainer';
+import { TabGuardComp, TabGuardCompCallback } from './tabGuardComp';
 
 export const GridComp = (props: { context: Context }) => {
 
@@ -20,12 +20,12 @@ export const GridComp = (props: { context: Context }) => {
     const [initialised, setInitialised] = useState<boolean>(false);
     
     const gridCtrlRef = useRef<GridCtrl | null>(null);
+    const tabGuardComp = useRef<TabGuardCompCallback>(null);
     const eRootWrapperRef = useRef<HTMLDivElement>(null);
     const eGridBodyParentRef = useRef<HTMLDivElement>(null);
     const focusInnerElementRef = useRef<((fromBottom?: boolean) => void)>(() => undefined);
 
-    const onTabKeyDown1 = useCallback( ()=> undefined, []);
-    const onTabKeyDown2 = useMemo( ()=> undefined, []);
+    const onTabKeyDown = useCallback(() => undefined, []);
 
     // create shared controller.
     useEffect(() => {
@@ -53,7 +53,9 @@ export const GridComp = (props: { context: Context }) => {
             setRtlClass: setRtlClass,
             addOrRemoveKeyboardFocusClass:
                 (addOrRemove: boolean) => setKeyboardFocusClass(addOrRemove ? FocusService.AG_KEYBOARD_FOCUS : ''),
-            forceFocusOutOfContainer: () => {}, //this.forceFocusOutOfContainer.bind(this),
+            forceFocusOutOfContainer: () => {
+                tabGuardComp.current!.forceFocusOutOfContainer();
+            },
             updateLayoutClasses: setLayoutClass,
             getFocusableContainers: () => {
                 const els: HTMLElement[] = [];
@@ -153,20 +155,24 @@ export const GridComp = (props: { context: Context }) => {
     const rootWrapperClasses = classesList('ag-root-wrapper', rtlClass, keyboardFocusClass, layoutClass);
     const rootWrapperBodyClasses = classesList('ag-root-wrapper-body', 'ag-focus-managed', layoutClass);
 
-    const topStyle = useMemo( ()=> ({
+    const topStyle = useMemo(() => ({
         "user-select": userSelect != null ? userSelect : '',
         '-webkit-user-select': userSelect != null ? userSelect : '',
         cursor: cursor != null ? cursor : ''
-    }), [userSelect, cursor])
+    }), [userSelect, cursor]);
 
     const eGridBodyParent = eGridBodyParentRef.current;
 
     return (
         <div ref={ eRootWrapperRef } className={ rootWrapperClasses } style={ topStyle }>
             <div className={ rootWrapperBodyClasses } ref={ eGridBodyParentRef }>
-                { initialised && eGridBodyParent && 
-                    <ManagedFocusContainer context={ props.context } eFocusableElement= { eGridBodyParent } 
-                                onTabKeyDown={ onTabKeyDown1 } gridCtrl={gridCtrlRef.current!}>
+                { initialised && eGridBodyParent &&
+                    <TabGuardComp
+                        ref={ tabGuardComp }
+                        context={ props.context }
+                        eFocusableElement= { eGridBodyParent }
+                        onTabKeyDown={ onTabKeyDown }
+                        gridCtrl={ gridCtrlRef.current! }>
                     { // we wait for initialised before rending the children, so GridComp has created and registered with it's
                     // GridCtrl before we create the child GridBodyComp. Otherwise the GridBodyComp would initialise first,
                     // before we have set the the Layout CSS classes, causing the GridBodyComp to render rows to a grid that
@@ -174,7 +180,7 @@ export const GridComp = (props: { context: Context }) => {
                     // hangs the UI)
                         <GridBodyComp context={ props.context }/>
                     }
-                    </ManagedFocusContainer>
+                    </TabGuardComp>
                 }
             </div>
         </div>

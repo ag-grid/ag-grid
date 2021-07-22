@@ -23,7 +23,7 @@ export class MenuPanel extends TabGuardComp {
     }
 
     private onTabKeyDown(e: KeyboardEvent): void {
-        this.tabGuardFeature.onTabKeyDown(e);
+        this.tabGuardCtrl.onTabKeyDown(e);
 
         if (e.defaultPrevented) { return; }
 
