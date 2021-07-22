@@ -14,6 +14,11 @@
           "options": {
             "tsConfig": "projects/ag-charts-angular/tsconfig.lib.json",
             "project": "projects/ag-charts-angular/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ag-charts-angular/tsconfig.lib.prod.json"
+            }
           }
         },
         "test": {
