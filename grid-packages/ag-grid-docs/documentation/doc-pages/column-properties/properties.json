@@ -409,6 +409,10 @@
                 "name": "Customising the Columns Menu Tab",
                 "url": "/column-menu/#customising-the-columns-menu-tab"
             }
+        },
+        "icons": {
+            "type": "object",
+            "description": "[Icons](/custom-icons/) to use inside the column instead of the grid's default icons."
         }
     },
     "columnGroupsOnly": {

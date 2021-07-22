@@ -61,6 +61,7 @@ export class StatusBar extends Component {
             };
 
             const promise = this.userComponentFactory.newStatusPanelComponent(componentConfig, params)!;
+            if (!promise) { return; }
 
             componentDetails.push({
                 // default to the component name if no key supplied

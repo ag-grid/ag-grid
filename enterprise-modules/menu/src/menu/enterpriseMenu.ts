@@ -25,7 +25,8 @@ import {
     FocusService,
     IAfterGuiAttachedParams,
     GridBodyComp,
-    ContainerType
+    ContainerType,
+    ControllersService
 } from '@ag-grid-community/core';
 import { MenuList } from './menuList';
 import { MenuItemComponent } from './menuItemComponent';
@@ -41,15 +42,10 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
 
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('focusService') private focusService: FocusService;
+    @Autowired('controllersService') private controllersService: ControllersService;
 
     private lastSelectedTab: string;
     private activeMenu: EnterpriseMenu | null;
-
-    private gridBodyComp: GridBodyComp;
-
-    public registerGridComp(gridBodyComp: GridBodyComp): void {
-        this.gridBodyComp = gridBodyComp;
-    }
 
     public hideActiveMenu(): void {
         this.destroyBean(this.activeMenu);
@@ -112,7 +108,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         const menu = this.createBean(new EnterpriseMenu(column, this.lastSelectedTab, restrictToTabs));
         const eMenuGui = menu.getGui();
 
-        const anchorToElement = eventSource || this.gridBodyComp.getGui();
+        const anchorToElement = eventSource || this.controllersService.getGridBodyController().getGui();
 
         const closedFuncs: ((e?: Event) => void)[] = [];
 

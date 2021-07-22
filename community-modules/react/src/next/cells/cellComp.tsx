@@ -54,7 +54,7 @@ const jsxEditValue = (
 }
 
 const jsxShowValue = (
-    showDetails: ShowDetails,
+    showDetails: RenderDetails,
     parentId: number,
     cellRendererRef: MutableRefObject<any>,
     showTools: boolean,
@@ -90,7 +90,7 @@ const jsxShowValue = (
     );
 }
 
-export interface ShowDetails {
+export interface RenderDetails {
     compDetails: UserCompDetails | undefined;
     value?: any;
     force?: boolean;
@@ -109,7 +109,7 @@ export const CellComp = (props: {
 }) => {
     const { cellCtrl, printLayout, editingRow, context } = props;
 
-    const [showDetails, setShowDetails ] = useState<ShowDetails>();
+    const [renderDetails, setRenderDetails ] = useState<RenderDetails>();
     const [editDetails, setEditDetails ] = useState<EditDetails>();
 
     const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses());
@@ -140,7 +140,7 @@ export const CellComp = (props: {
     const [toolsSpan, setToolsSpan] = useState<HTMLElement>();
     const [toolsValueSpan, setToolsValueSpan] = useState<HTMLElement>();
     
-    const showTools = showDetails!=null && (includeSelection || includeDndSource || includeRowDrag || forceWrapper);
+    const showTools = renderDetails!=null && (includeSelection || includeDndSource || includeRowDrag || forceWrapper);
 
     const setCellEditorRef = useCallback( (popup: boolean, cellEditor: ICellEditor | undefined) => {
         cellEditorRef.current = cellEditor;
@@ -159,7 +159,7 @@ export const CellComp = (props: {
         []
     );
 
-    showJsRenderer(showDetails, showTools, toolsValueSpan, context, jsCellRendererRef, eGui);
+    showJsRenderer(renderDetails, showTools, toolsValueSpan, context, jsCellRendererRef, eGui);
 
     // tool widgets effect
     useEffect(() => {
@@ -222,38 +222,46 @@ export const CellComp = (props: {
             setTitle: title => setTitle(title),
             setUnselectable: value => setUnselectable(value || undefined),
             setTransition: transition => setTransition(transition),
-            showValue: (value, compDetails, force) => {
-                setShowDetails({
-                    compDetails,
-                    value,
-                    force
-                });
-                setEditDetails(undefined);
-            },
-            editValue: (compDetails, popup, popupPosition) => {
-                setEditDetails({
-                    compDetails,
-                    popup,
-                    popupPosition
-                });
-                if (!popup) {
-                    setShowDetails(undefined);
-                }
-            },
             setIncludeSelection: include => setIncludeSelection(include),
             setIncludeRowDrag: include => setIncludeRowDrag(include),
             setIncludeDndSource: include => setIncludeDndSource(include),
             setForceWrapper: force => setForceWrapper(force),
-
+            
             getCellEditor: () => cellEditorRef.current || null,
             getCellRenderer: () => cellRendererRef.current,
-            getParentOfValue: () => toolsValueSpan ? toolsValueSpan : eGui.current
+            getParentOfValue: () => toolsValueSpan ? toolsValueSpan : eGui.current,
+
+            setRenderDetails: (compDetails, value, force) => {
+                setRenderDetails({
+                    value,
+                    compDetails,
+                    force
+                });
+            },
+            
+            setEditDetails: (compDetails, popup, popupPosition) => {
+                if (compDetails) {
+                    // start editing
+                    setEditDetails({
+                        compDetails: compDetails!,
+                        popup,
+                        popupPosition
+                    });
+                    if (!popup) {
+                        setRenderDetails(undefined);
+                    }
+                } else {
+                    // stop editing
+                    setEditDetails(undefined);
+                }
+            }
         };
 
         cellCtrl.setComp(compProxy, false, null, eGui.current!, printLayout, editingRow);
-        cellCtrl.updateCssCellValue();
 
     }, [cellCtrl, editingRow, printLayout, toolsValueSpan]);
+
+    cssClasses.setClass('ag-cell-value', showTools);
 
     const className = cssClasses.toString();
 
@@ -272,7 +280,7 @@ export const CellComp = (props: {
              aria-selected={ ariaSelected } aria-colindex={ ariaColIndex } role={ role }
              col-id={ colId } title={ title } unselectable={ unselectable } aria-describedby={ ariaDescribedBy }>
 
-            { showDetails!=null && jsxShowValue(showDetails, cellCtrl.getInstanceId(), cellRendererRef, showTools, unselectable, toolsRefCallback, toolsValueRefCallback) }
+            { renderDetails!=null && jsxShowValue(renderDetails, cellCtrl.getInstanceId(), cellRendererRef, showTools, unselectable, toolsRefCallback, toolsValueRefCallback) }
             { editDetails!=null && jsxEditValue(editDetails, setInlineCellEditorRef, setPopupCellEditorRef, eGui.current!, cellCtrl) }
 
         </div>

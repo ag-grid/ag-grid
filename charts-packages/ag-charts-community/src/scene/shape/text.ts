@@ -254,10 +254,11 @@ export class Text extends Shape {
         ctx.textBaseline = this.textBaseline;
 
         const pixelRatio = this.scene.canvas.pixelRatio || 1;
+        const { globalAlpha } = ctx;
 
         if (fill) {
             ctx.fillStyle = fill;
-            ctx.globalAlpha = this.opacity * this.fillOpacity;
+            ctx.globalAlpha = globalAlpha * this.opacity * this.fillOpacity;
 
             const { fillShadow, text, x, y } = this;
 
@@ -274,7 +275,7 @@ export class Text extends Shape {
         if (stroke && strokeWidth) {
             ctx.strokeStyle = stroke;
             ctx.lineWidth = strokeWidth;
-            ctx.globalAlpha = this.opacity * this.strokeOpacity;
+            ctx.globalAlpha = globalAlpha * this.opacity * this.strokeOpacity;
 
             const { lineDash, lineDashOffset, lineCap, lineJoin, strokeShadow, text, x, y } = this;
 

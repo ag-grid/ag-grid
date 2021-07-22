@@ -918,6 +918,12 @@ export abstract class Chart extends Observable {
         legendGroup.translationY = Math.floor(translationY + legendGroup.translationY);
     }
 
+    private _onMouseDown = this.onMouseDown.bind(this);
+    private _onMouseMove = this.onMouseMove.bind(this);
+    private _onMouseUp = this.onMouseUp.bind(this);
+    private _onMouseOut = this.onMouseOut.bind(this);
+    private _onClick = this.onClick.bind(this);
+
     protected setupDomListeners(chartElement: HTMLCanvasElement) {
         chartElement.addEventListener('mousedown', this._onMouseDown);
         chartElement.addEventListener('mousemove', this._onMouseMove);
@@ -1012,12 +1018,6 @@ export abstract class Chart extends Observable {
             return closestDatum;
         }
     }
-
-    private _onMouseDown = this.onMouseDown.bind(this);
-    private _onMouseUp = this.onMouseUp.bind(this);
-    private _onMouseMove = this.onMouseMove.bind(this);
-    private _onMouseOut = this.onMouseOut.bind(this);
-    private _onClick = this.onClick.bind(this);
 
     protected onMouseMove(event: MouseEvent) {
         if (this.tooltip.enabled) {
@@ -1176,6 +1176,11 @@ export abstract class Chart extends Observable {
             if (node) {
                 style.cursor = s.cursor;
             }
+            if (s === datum.series) {
+                s.undim(datum.itemId);
+            } else {
+                s.dim();
+            }
             s.onHighlightChange();
         });
     }
@@ -1184,7 +1189,10 @@ export abstract class Chart extends Observable {
         if (this.highlightedDatum) {
             this.scene.canvas.element.style.cursor = 'default';
             this.highlightedDatum = undefined;
-            this.series.forEach(s => s.onHighlightChange());
+            this.series.forEach(s => {
+                s.onHighlightChange();
+                s.undim();
+            });
         }
     }
 }

@@ -323,7 +323,9 @@ export {
     DndSourceCallbackParams,
     EditableCallbackParams,
     SuppressPasteCallbackParams,
-    SuppressNavigableCallbackParams,    
+    SuppressNavigableCallbackParams,
+    HeaderCheckboxSelectionCallbackParams,
+    ColumnsMenuParams,
     // deprecated params
     IsColumnFunc,
     IsColumnFuncParams
@@ -357,7 +359,14 @@ export {
     RowClassParams,
     ServerSideStoreType,
     ServerSideStoreParams,
-    GetServerSideStoreParamsParams
+    GetServerSideStoreParamsParams,
+    PaginationNumberFormatterParams,
+    GetServerSideGroupKey,
+    IsServerSideGroup,
+    GetChartToolbarItems,
+    FillOperationParams,
+    RowGroupingDisplayType,
+    TreeDataDisplayType
 } from "./entities/gridOptions";
 
 export * from "./propertyKeys";
@@ -371,7 +380,7 @@ export { IAfterGuiAttachedParams, ContainerType } from "./interfaces/iAfterGuiAt
 export { IComponent } from "./interfaces/iComponent";
 export { IEventEmitter } from "./interfaces/iEventEmitter";
 export { IHeaderParams, IHeader } from "./headerRendering/header/headerComp";
-export { IHeaderGroupParams, IHeaderGroup } from "./headerRendering/headerGroup/headerGroupComp";
+export { IHeaderGroupParams, IHeaderGroup, IHeaderGroupComp } from "./headerRendering/headerGroup/headerGroupComp";
 export { ColumnApi } from "./columns/columnApi";
 export { IRichCellEditorParams } from "./interfaces/iRichCellEditorParams";
 export { WrappableInterface, BaseComponentWrapper, FrameworkComponentWrapper } from "./components/framework/frameworkComponentWrapper";

@@ -116,15 +116,6 @@ export class GridBodyComp extends Component {
             this.addAngularApplyCheck();
         }
 
-        this.gridApi.registerGridComp(this);
-        this.beans.registerGridComp(this);
-        if (this.contextMenuFactory) {
-            this.contextMenuFactory.registerGridComp(this);
-        }
-        if (this.menuFactory) {
-            this.menuFactory.registerGridComp(this);
-        }
-
         if (this.rangeService || this.gridOptionsWrapper.isRowSelectionMulti()) {
             setAriaMultiSelectable(this.getGui(), true);
         }

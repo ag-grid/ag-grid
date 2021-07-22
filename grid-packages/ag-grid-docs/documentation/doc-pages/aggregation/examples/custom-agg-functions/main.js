@@ -29,7 +29,6 @@ var gridOptions = {
         field: "athlete",
         minWidth: 250
     },
-    groupUseEntireRow: false,
     enableRangeSelection: true,
     suppressAggFuncInHeader: true,
     aggFuncs: {

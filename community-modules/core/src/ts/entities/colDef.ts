@@ -13,7 +13,7 @@ import { ColumnGroup } from "./columnGroup";
 import { RowClassParams } from "./gridOptions";
 
 /***********************************************************************
- * Don't forget to update PropertyKeys if changing this class. PLEASE! *
+ * Don't forget to update ColDefUtil if changing this class. PLEASE! *
  ***********************************************************************/
 
 /** AbstractColDef can be a group or a column definition */
@@ -81,7 +81,7 @@ export interface IAggFuncParams {
 }
 
 /***********************************************************************
- * Don't forget to update PropertyKeys if changing this class. PLEASE! *
+ * Don't forget to update ColDefUtil if changing this class. PLEASE! *
  ***********************************************************************/
 export interface ColDef extends AbstractColDef, IFilterDef {
 
@@ -169,7 +169,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     cellClass?: string | string[] | ((cellClassParams: CellClassParams) => string | string[]);
 
     /** An object of css values. Or a function returning an object of css values. */
-    cellStyle?: {} | ((params: any) => {});
+    cellStyle?: {} | ((params: CellClassParams) => {});
 
     /** A function for rendering a cell. */
     cellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
@@ -238,7 +238,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     checkboxSelection?: boolean | ((params: CheckboxSelectionCallbackParams) => boolean);
 
     /** If true, a 'select all' checkbox will be put into the header */
-    headerCheckboxSelection?: boolean | ((params: any) => boolean);
+    headerCheckboxSelection?: boolean | ((params: HeaderCheckboxSelectionCallbackParams) => boolean);
 
     /** If true, the header checkbox selection will work on filtered items*/
     headerCheckboxSelectionFilteredOnly?: boolean;
@@ -324,7 +324,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
      * Return true if the update was successful, or false if not.
      * If false, then skips the UI refresh and no events are emitted.
      * Return false if the values are the same (ie no update). */
-    newValueHandler?: (params: any) => boolean;
+    newValueHandler?: (params: NewValueParams) => boolean;
 
     /** If true, this cell will be in editing mode after first click. */
     singleClickEdit?: boolean;
@@ -356,7 +356,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     onCellContextMenu?: (event: CellContextMenuEvent) => void;
 
     /** Icons for this column. Leave blank to use default. */
-    icons?: { [key: string]: string; };
+    icons?: { [key: string]: Function | string; };
 
     /** If true, grid will flash cell after cell is refreshed */
     enableCellChangeFlash?: boolean;
@@ -402,6 +402,12 @@ export interface DndSourceCallbackParams extends ColumnFunctionCallbackParams {}
 export interface EditableCallbackParams extends ColumnFunctionCallbackParams {}
 export interface SuppressPasteCallbackParams extends ColumnFunctionCallbackParams {}
 export interface SuppressNavigableCallbackParams extends ColumnFunctionCallbackParams {}
+export interface HeaderCheckboxSelectionCallbackParams {
+    column: Column;
+    colDef: ColDef;
+    api: GridApi | null | undefined;
+    columnApi: ColumnApi | null | undefined;
+}
 
 /**
  * @deprecated

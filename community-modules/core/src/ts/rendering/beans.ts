@@ -86,14 +86,9 @@ export class Beans {
     @Autowired('controllersService') public controllersService: ControllersService;
 
     public doingMasterDetail: boolean;
-    public gridBodyComp: GridBodyComp;
 
     public clientSideRowModel: IClientSideRowModel;
     public serverSideRowModel: IServerSideRowModel;
-
-    public registerGridComp(gridBodyComp: GridBodyComp): void {
-        this.gridBodyComp = gridBodyComp;
-    }
 
     @PostConstruct
     private postConstruct(): void {

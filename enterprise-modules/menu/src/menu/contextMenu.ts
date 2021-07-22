@@ -22,7 +22,8 @@ import {
     Optional,
     PopupService,
     PostConstruct,
-    RowNode
+    RowNode,
+    ControllersService
 } from "@ag-grid-community/core";
 import { MenuItemComponent } from "./menuItemComponent";
 import { MenuList } from "./menuList";
@@ -36,14 +37,10 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
 
     @Autowired('popupService') private popupService: PopupService;
     @Optional('rangeService') private rangeService: IRangeService;
+    @Autowired('controllersService') private controllersService: ControllersService;
     @Autowired('columnModel') private columnModel: ColumnModel;
 
     private activeMenu: ContextMenu | null;
-    private gridBodyComp: GridBodyComp;
-
-    public registerGridComp(gridBodyComp: GridBodyComp): void {
-        this.gridBodyComp = gridBodyComp;
-    }
 
     public hideActiveMenu(): void {
         this.destroyBean(this.activeMenu);
@@ -141,7 +138,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
 
     public showMenu(node: RowNode, column: Column, value: any, mouseEvent: MouseEvent | Touch, anchorToElement: HTMLElement): boolean {
         const menuItems = this.getMenuItems(node, column, value);
-        const eGridBodyGui = this.gridBodyComp.getGui();
+        const eGridBodyGui = this.controllersService.getGridBodyController().getGui();
 
         if (menuItems === undefined || _.missingOrEmpty(menuItems)) { return false; }
 

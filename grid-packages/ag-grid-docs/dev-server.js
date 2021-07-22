@@ -740,6 +740,9 @@ module.exports = async (skipFrameworks, skipExampleFormatting, done) => {
                 console.log(`Port ${EXPRESS_PORT} is already in use - please ensure previous instances of docs has shutdown/completed.`);
                 console.log(`If you run using npm run docs-xxx and kill it the gulp process will continue until it's finished.`);
                 console.log(`Wait a few seconds for a message that will let you know you can retry.`);
+                console.log(`Alternatively you can try kill all node & gulp processes (ensure you're happy with what will be killed!:`);
+                console.log(`ps -ef | grep 'node' | grep -v grep | awk '{print $2}' | xargs -r kill -9`);
+                console.log(`ps -ef | grep 'gulp' | grep -v grep | awk '{print $2}' | xargs -r kill -9`);
                 done();
                 return;
             }

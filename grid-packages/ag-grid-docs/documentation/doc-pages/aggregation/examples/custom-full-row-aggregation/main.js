@@ -15,13 +15,12 @@ var gridOptions = {
         filter: true,
         sortable: true,
     },
-    treeColumnDef: {
+    autoGroupColumnDef: {
         headerName: 'Athlete',
         field: 'athlete',
         minWidth: 250
     },
     sideBar: true,
-    groupUseEntireRow: false,
     enableRangeSelection: true,
     groupRowAggNodes: groupRowAggNodes,
 };

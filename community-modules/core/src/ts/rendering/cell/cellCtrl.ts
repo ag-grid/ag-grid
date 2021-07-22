@@ -33,7 +33,6 @@ import { doOnce } from "../../utils/function";
 import { RowDragComp } from "../row/rowDragComp";
 
 const CSS_CELL = 'ag-cell';
-const CSS_CELL_VALUE = 'ag-cell-value';
 const CSS_AUTO_HEIGHT = 'ag-cell-auto-height';
 const CSS_CELL_FOCUS = 'ag-cell-focus';
 const CSS_CELL_FIRST_RIGHT_PINNED = 'ag-cell-first-right-pinned';
@@ -71,8 +70,8 @@ export interface ICellComp {
     getCellRenderer(): ICellRenderer | null;
     getParentOfValue(): HTMLElement | null;
 
-    showValue(valueToDisplay: any, compDetails: UserCompDetails | undefined, forceNewCellRendererInstance: boolean): void;
-    editValue(compDetails: UserCompDetails, popup: boolean | undefined, position: string | undefined): void;
+    setRenderDetails(compDetails: UserCompDetails | undefined, valueToDisplay: any, forceNewCellRendererInstance: boolean): void;
+    setEditDetails(compDetails?: UserCompDetails, popup?: boolean, position?: string): void;
 }
 
 let instanceIdSequence = 0;
@@ -215,11 +214,10 @@ export class CellCtrl extends BeanStub {
     }
 
     private showValue(forceNewCellRendererInstance = false): void {
-        this.setEditing(false);
         const valueToDisplay = this.valueFormatted != null ? this.valueFormatted : this.value;
         const params = this.createCellRendererParams();
-        const cellRendererDetails = this.beans.userComponentFactory.getCellRendererDetails(this.colDef, params);
-        this.cellComp.showValue(valueToDisplay, cellRendererDetails, forceNewCellRendererInstance);
+        const compDetails = this.beans.userComponentFactory.getCellRendererDetails(this.colDef, params);
+        this.cellComp.setRenderDetails(compDetails, valueToDisplay, forceNewCellRendererInstance);
         this.refreshHandle();
     }
 
@@ -266,7 +264,7 @@ export class CellCtrl extends BeanStub {
 
         this.setEditing(true, popup);
 
-        this.cellComp.editValue(compDetails!, popup, position);
+        this.cellComp.setEditDetails(compDetails!, popup, position);
 
         const event: CellEditingStartedEvent = this.createEvent(null, Events.EVENT_CELL_EDITING_STARTED);
         this.beans.eventService.dispatchEvent(event);
@@ -278,6 +276,10 @@ export class CellCtrl extends BeanStub {
         this.editing = editing;
         this.editingInPopup = inPopup;
         this.setInlineEditingClass();
+
+        if (!editing) {
+            this.cellComp.setEditDetails();
+        }
     }
 
     // pass in 'true' to cancel the editing.
@@ -382,6 +384,14 @@ export class CellCtrl extends BeanStub {
         if (this.rowCtrl) {
             this.rowCtrl.setInlineEditingCss(this.editing);
         }
+    }
+
+    // this is needed as the JS CellComp still allows isPopup() on the CellEditor class, so
+    // it's possible the editor is in a popup even though it's not configured via the colDef as so
+    public hackSayEditingInPopup(): void {
+        if (this.editingInPopup) { return; }
+        this.editingInPopup = true;
+        this.setInlineEditingClass();
     }
 
     private createCellEditorParams(keyPress: number | null, charPress: string | null, cellStartedEdit: boolean): ICellEditorParams {
@@ -787,6 +797,7 @@ export class CellCtrl extends BeanStub {
     }
 
     public refreshHandle(): void {
+        if (this.editing) { return; }
         if (this.cellRangeFeature) {
             this.cellRangeFeature.refreshHandle();
         }
@@ -916,13 +927,6 @@ export class CellCtrl extends BeanStub {
         }
     }
     
-    public updateCssCellValue(): void {
-        const parentOfValue = this.cellComp.getParentOfValue();
-        const usingWrapper = !!parentOfValue && parentOfValue !== this.getGui();
-
-        this.cellComp.addOrRemoveCssClass(CSS_CELL_VALUE, !usingWrapper);
-    }
-
     public onColumnHover(): void {
         if (!this.cellComp) { return; }
 

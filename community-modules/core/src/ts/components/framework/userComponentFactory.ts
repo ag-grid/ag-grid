@@ -232,6 +232,7 @@ export class UserComponentFactory extends BeanStub {
 
         // Create the component instance
         const instance = this.createComponentInstance(componentType, defaultComponentName, componentClass, componentFromFramework);
+        if (!instance) { return null; }
 
         this.addReactHacks(params);
 
@@ -399,6 +400,11 @@ export class UserComponentFactory extends BeanStub {
         const jsComponent = !componentFromFramework;
         if (jsComponent) {
             return new component!();
+        }
+
+        if (!this.frameworkComponentWrapper) {
+            console.warn(`AG Grid - Because you are using our new React UI (property reactUi=true), it is not possible to use a React Component for ${componentType.propertyName}. This is work in progress and we plan to support this soon. In the meantime, please either set reactUi=false, or replace this component with one written in JavaScript.`);
+            return null;
         }
 
         // Using framework component
