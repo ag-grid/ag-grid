@@ -11,8 +11,13 @@ import useReactCommentEffect from './reactComment';
 import TabGuardComp, { TabGuardCompCallback } from './tabGuardComp';
 import GridBodyComp  from './gridBodyComp';
 
-const GridComp = (props: { context: Context }) => {
+interface GridCompProps {
+    context: Context;
+}
 
+const GridComp = ({ context: _context }: GridCompProps) => {
+
+    const context = useMemo(() => _context, [_context]);
     const [rtlClass, setRtlClass] = useState<string>('');
     const [keyboardFocusClass, setKeyboardFocusClass] = useState<string>('');
     const [layoutClass, setLayoutClass] = useState<string>('');
@@ -23,7 +28,7 @@ const GridComp = (props: { context: Context }) => {
 
     const gridCtrlRef = useRef<GridCtrl | null>(null);
     const eRootWrapperRef = useRef<HTMLDivElement>(null);
-    const tabGuardRef = useRef<any>();
+    const tabGuardRef = useRef<TabGuardCompCallback>();
     const eGridBodyParentRef = useRef<HTMLDivElement>(null);
     const focusInnerElementRef = useRef<((fromBottom?: boolean) => void)>(() => undefined);
 
@@ -33,20 +38,16 @@ const GridComp = (props: { context: Context }) => {
 
     // create shared controller.
     useEffect(() => {
-        console.log('controller');
-
-        const currentController = gridCtrlRef.current = props.context.createBean(new GridCtrl());
+        const currentController = gridCtrlRef.current = context.createBean(new GridCtrl());
 
         return () => {
-            props.context.destroyBean(currentController);
+            context.destroyBean(currentController);
             gridCtrlRef.current = null;
         }
-    }, []);
+    }, [context]);
 
     // initialise the UI
     useEffect(() => {
-        console.log('ui');
-
         const gridCtrl = gridCtrlRef.current!;
 
         focusInnerElementRef.current = gridCtrl.focusInnerElement.bind(gridCtrl);
@@ -90,12 +91,9 @@ const GridComp = (props: { context: Context }) => {
     useEffect(() => {
         if (!tabGuardReady) { return; }
 
-        console.log('extra comps');
-
         const gridCtrl = gridCtrlRef.current!;
         const beansToDestroy: any[] = [];
 
-        const context = props.context;
         const agStackComponentsRegistry: AgStackComponentsRegistry = context.getBean('agStackComponentsRegistry');
         const HeaderDropZonesClass = agStackComponentsRegistry.getComponentClass('AG-GRID-HEADER-DROP-ZONES');
         const SideBarClass = agStackComponentsRegistry.getComponentClass('AG-SIDE-BAR');
@@ -158,7 +156,7 @@ const GridComp = (props: { context: Context }) => {
                 }
             });
         }
-    }, [tabGuardReady])
+    }, [context, tabGuardReady])
 
     const rootWrapperClasses = classesList('ag-root-wrapper', rtlClass, keyboardFocusClass, layoutClass);
     const rootWrapperBodyClasses = classesList('ag-root-wrapper-body', 'ag-focus-managed', layoutClass);
@@ -171,13 +169,10 @@ const GridComp = (props: { context: Context }) => {
 
     const eGridBodyParent = eGridBodyParentRef.current;
 
-    const setTabGuardCompRef = useCallback( ref => {
-        console.log('x');
+    const setTabGuardCompRef = useCallback((ref: TabGuardCompCallback) => {
         tabGuardRef.current = ref;
         setTabGuardReady(true);
     }, []);
-
-    console.log('render');
 
     return (
         <div ref={ eRootWrapperRef } className={ rootWrapperClasses } style={ topStyle }>
@@ -185,7 +180,7 @@ const GridComp = (props: { context: Context }) => {
                 { initialised && eGridBodyParent &&
                     <TabGuardComp
                         ref={ setTabGuardCompRef }
-                        context={ props.context }
+                        context={ context }
                         eFocusableElement= { eGridBodyParent }
                         onTabKeyDown={ onTabKeyDown }
                         gridCtrl={ gridCtrlRef.current! }>
@@ -194,7 +189,7 @@ const GridComp = (props: { context: Context }) => {
                     // before we have set the the Layout CSS classes, causing the GridBodyComp to render rows to a grid that
                     // doesn't have it's height specified, which would result if all the rows getting rendered (and if many rows,
                     // hangs the UI)
-                         <GridBodyComp context={ props.context }/>
+                         <GridBodyComp context={ context }/>
                     }
                     </TabGuardComp>
                 }
