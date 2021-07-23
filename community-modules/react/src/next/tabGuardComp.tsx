@@ -30,6 +30,7 @@ const TabGuardCompRef: RefForwardingComponent<TabGuardCompCallback, TabGuardProp
     }));
 
     useEffect(() => {
+        console.log('init tabGuard');
         const eTopGuard = topTabGuardRef.current!;
         const eBottomGuard = bottomTabGuardRef.current!;
 

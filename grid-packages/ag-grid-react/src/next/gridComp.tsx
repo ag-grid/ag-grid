@@ -4,7 +4,7 @@ import {
     FocusService,
     GridCtrl,
     IGridComp,
-    AgStackComponentsRegistry,
+    AgStackComponentsRegistry
 } from 'ag-grid-community';
 import { classesList } from './utils';
 import useReactCommentEffect from './reactComment';
@@ -19,10 +19,11 @@ const GridComp = (props: { context: Context }) => {
     const [cursor, setCursor] = useState<string | null>(null);
     const [userSelect, setUserSelect] = useState<string | null>(null);
     const [initialised, setInitialised] = useState<boolean>(false);
-    
+    const [tabGuardReady, setTabGuardReady] = useState<any>();
+
     const gridCtrlRef = useRef<GridCtrl | null>(null);
-    const tabGuardComp = useRef<TabGuardCompCallback>(null);
     const eRootWrapperRef = useRef<HTMLDivElement>(null);
+    const tabGuardRef = useRef<any>();
     const eGridBodyParentRef = useRef<HTMLDivElement>(null);
     const focusInnerElementRef = useRef<((fromBottom?: boolean) => void)>(() => undefined);
 
@@ -32,8 +33,8 @@ const GridComp = (props: { context: Context }) => {
 
     // create shared controller.
     useEffect(() => {
-        if (gridCtrlRef.current) { return; }
-        
+        console.log('controller');
+
         const currentController = gridCtrlRef.current = props.context.createBean(new GridCtrl());
 
         return () => {
@@ -44,11 +45,11 @@ const GridComp = (props: { context: Context }) => {
 
     // initialise the UI
     useEffect(() => {
-        const currentController = gridCtrlRef.current;
+        console.log('ui');
 
-        if (!props.context || !currentController) { return; }
+        const gridCtrl = gridCtrlRef.current!;
 
-        focusInnerElementRef.current = currentController.focusInnerElement.bind(currentController);
+        focusInnerElementRef.current = gridCtrl.focusInnerElement.bind(gridCtrl);
 
         const compProxy: IGridComp = {
             destroyGridUi:
@@ -57,7 +58,7 @@ const GridComp = (props: { context: Context }) => {
             addOrRemoveKeyboardFocusClass:
                 (addOrRemove: boolean) => setKeyboardFocusClass(addOrRemove ? FocusService.AG_KEYBOARD_FOCUS : ''),
             forceFocusOutOfContainer: () => {
-                tabGuardComp.current!.forceFocusOutOfContainer();
+                tabGuardRef.current!.forceFocusOutOfContainer();
             },
             updateLayoutClasses: setLayoutClass,
             getFocusableContainers: () => {
@@ -80,17 +81,19 @@ const GridComp = (props: { context: Context }) => {
             setUserSelect
         };
 
-        currentController.setComp(compProxy, eRootWrapperRef.current!, eRootWrapperRef.current!);
+        gridCtrl.setComp(compProxy, eRootWrapperRef.current!, eRootWrapperRef.current!);
 
         setInitialised(true);
     }, []);
 
     // initialise the extra components
     useEffect(() => {
-        const ctrl = gridCtrlRef.current;
-        const beansToDestroy: any[] = [];
+        if (!tabGuardReady) { return; }
 
-        if (!props.context || !ctrl || !eRootWrapperRef.current || !eGridBodyParentRef.current) { return; }
+        console.log('extra comps');
+
+        const gridCtrl = gridCtrlRef.current!;
+        const beansToDestroy: any[] = [];
 
         const context = props.context;
         const agStackComponentsRegistry: AgStackComponentsRegistry = context.getBean('agStackComponentsRegistry');
@@ -100,19 +103,21 @@ const GridComp = (props: { context: Context }) => {
         const WatermarkClass = agStackComponentsRegistry.getComponentClass('AG-WATERMARK');
         const PaginationClass = agStackComponentsRegistry.getComponentClass('AG-PAGINATION');
         const additionalEls: HTMLDivElement[] = [];
+        const eRootWrapper = eRootWrapperRef.current!;
+        const eGridBodyParent = eGridBodyParentRef.current!;
 
-        if (ctrl.showDropZones() && HeaderDropZonesClass) {
+        if (gridCtrl.showDropZones() && HeaderDropZonesClass) {
             const headerDropZonesComp = context.createBean(new HeaderDropZonesClass());
             const eGui = headerDropZonesComp.getGui();
-            eRootWrapperRef.current.insertAdjacentElement('afterbegin', eGui);
+            eRootWrapper.insertAdjacentElement('afterbegin', eGui);
             additionalEls.push(eGui);
             beansToDestroy.push(headerDropZonesComp);
         }
 
-        if (ctrl.showSideBar() && SideBarClass) {
+        if (gridCtrl.showSideBar() && SideBarClass) {
             const sideBarComp = context.createBean(new SideBarClass());
             const eGui = sideBarComp.getGui();
-            const bottomTabGuard = eGridBodyParentRef.current.querySelector('.ag-tab-guard-bottom');
+            const bottomTabGuard = eGridBodyParent.querySelector('.ag-tab-guard-bottom');
             if (bottomTabGuard) {
                 bottomTabGuard.insertAdjacentElement('beforebegin', eGui);
                 additionalEls.push(eGui);
@@ -121,10 +126,10 @@ const GridComp = (props: { context: Context }) => {
             beansToDestroy.push(sideBarComp);
         }
 
-        if (ctrl.showStatusBar() && StatusBarClass) {
+        if (gridCtrl.showStatusBar() && StatusBarClass) {
             const statusBarComp = context.createBean(new StatusBarClass());
             const eGui = statusBarComp.getGui();
-            eRootWrapperRef.current.insertAdjacentElement('beforeend', eGui);
+            eRootWrapper.insertAdjacentElement('beforeend', eGui);
             additionalEls.push(eGui);
             beansToDestroy.push(statusBarComp);
         }
@@ -132,15 +137,15 @@ const GridComp = (props: { context: Context }) => {
         if (PaginationClass) {
             const paginationComp = context.createBean(new PaginationClass());
             const eGui = paginationComp.getGui();
-            eRootWrapperRef.current.insertAdjacentElement('beforeend', eGui);
+            eRootWrapper.insertAdjacentElement('beforeend', eGui);
             additionalEls.push(eGui);
             beansToDestroy.push(paginationComp);
         }
 
-        if (ctrl.showWatermark() && WatermarkClass) {
+        if (gridCtrl.showWatermark() && WatermarkClass) {
             const watermarkComp = context.createBean(new WatermarkClass());
             const eGui = watermarkComp.getGui();
-            eRootWrapperRef.current.insertAdjacentElement('beforeend', eGui);
+            eRootWrapper.insertAdjacentElement('beforeend', eGui);
             additionalEls.push(eGui);
             beansToDestroy.push(watermarkComp);
         }
@@ -153,7 +158,7 @@ const GridComp = (props: { context: Context }) => {
                 }
             });
         }
-    }, [])
+    }, [tabGuardReady])
 
     const rootWrapperClasses = classesList('ag-root-wrapper', rtlClass, keyboardFocusClass, layoutClass);
     const rootWrapperBodyClasses = classesList('ag-root-wrapper-body', 'ag-focus-managed', layoutClass);
@@ -166,12 +171,20 @@ const GridComp = (props: { context: Context }) => {
 
     const eGridBodyParent = eGridBodyParentRef.current;
 
+    const setTabGuardCompRef = useCallback( ref => {
+        console.log('x');
+        tabGuardRef.current = ref;
+        setTabGuardReady(true);
+    }, []);
+
+    console.log('render');
+
     return (
         <div ref={ eRootWrapperRef } className={ rootWrapperClasses } style={ topStyle }>
             <div className={ rootWrapperBodyClasses } ref={ eGridBodyParentRef }>
                 { initialised && eGridBodyParent &&
                     <TabGuardComp
-                        ref={ tabGuardComp }
+                        ref={ setTabGuardCompRef }
                         context={ props.context }
                         eFocusableElement= { eGridBodyParent }
                         onTabKeyDown={ onTabKeyDown }
@@ -181,7 +194,7 @@ const GridComp = (props: { context: Context }) => {
                     // before we have set the the Layout CSS classes, causing the GridBodyComp to render rows to a grid that
                     // doesn't have it's height specified, which would result if all the rows getting rendered (and if many rows,
                     // hangs the UI)
-                        <GridBodyComp context={ props.context }/>
+                         <GridBodyComp context={ props.context }/>
                     }
                     </TabGuardComp>
                 }
