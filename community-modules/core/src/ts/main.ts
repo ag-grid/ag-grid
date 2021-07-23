@@ -326,6 +326,8 @@ export {
     SuppressNavigableCallbackParams,
     HeaderCheckboxSelectionCallbackParams,
     ColumnsMenuParams,
+    HeaderClassParams,
+    ToolPanelClassParams,
     // deprecated params
     IsColumnFunc,
     IsColumnFuncParams
