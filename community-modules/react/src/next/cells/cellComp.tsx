@@ -90,8 +90,8 @@ const jsxShowValue = (
     const bodyJsxFunc = () => (
         <>
             { noCellRenderer && <>{ value }</> }
-            { reactCellRenderer && reactCellRendererStateless && <CellRendererClass { ...compDetails!.params } ref={ cellRendererRef }/> }
-            { reactCellRenderer && !reactCellRendererStateless && <CellRendererClass { ...compDetails!.params }/> }
+            { reactCellRenderer && !reactCellRendererStateless && <CellRendererClass { ...compDetails!.params } ref={ cellRendererRef }/> }
+            { reactCellRenderer && reactCellRendererStateless && <CellRendererClass { ...compDetails!.params }/> }
         </>
     );
 
