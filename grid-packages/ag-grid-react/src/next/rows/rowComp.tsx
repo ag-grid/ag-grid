@@ -75,9 +75,7 @@ const RowComp = (params: {context: Context, rowCtrl: RowCtrl, pinned: string | n
     const eGui = useRef<HTMLDivElement>(null);
     const fullWidthCompRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-        if (!rowCtrl) { return; }
-
+    useEffect(() => {        
         const compProxy: IRowComp = {
             setDomOrder: domOrder => setDomOrder(domOrder),
             setHeight: value => setHeight(value),
@@ -102,14 +100,13 @@ const RowComp = (params: {context: Context, rowCtrl: RowCtrl, pinned: string | n
             destroyCells: cellComps => true,
             getFullWidthRowComp: ()=> null,
         };
-
         rowCtrl.setComp(compProxy, eGui.current!, pinned);
-    }, [domOrder, pinned, rowCtrl]);
+    }, []);
     
     useEffect(() => {
         return showJsComp(fullWidthCompDetails, context, eGui.current!, 
             compFactory => compFactory.createFullWidthCellRenderer(fullWidthCompDetails!, rowCtrl.getFullWidthCellRendererType()));
-    }, [context, fullWidthCompDetails, rowCtrl]);
+    }, []);
 
     const rowStyles = {
         height,

@@ -109,7 +109,7 @@ const GridBodyComp = (params: { context: Context }) => {
             destroyFuncs.forEach(f => f());
         };
 
-    }, [context]);
+    }, []);
 
     const rootClasses = classesList('ag-root','ag-unselectable', movingCss, layoutClass);
     const topClasses = classesList('ag-floating-top', cellSelectableCss);

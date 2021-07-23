@@ -51,7 +51,7 @@ const TabGuardCompRef: RefForwardingComponent<TabGuardCompCallback, TabGuardProp
             context.destroyBean(ctrl);
         };
 
-    }, [context, eFocusableElement, gridCtrl, onTabKeyDown]);
+    }, []);
 
     const createTabGuard = (side: 'top' | 'bottom') => (
         <div 

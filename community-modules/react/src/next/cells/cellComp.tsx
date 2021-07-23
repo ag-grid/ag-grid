@@ -217,7 +217,7 @@ const CellComp = (props: {
             context.destroyBeans(beansToDestroy);
         };
 
-    }, [cellCtrl, context, includeDndSource, includeRowDrag, includeSelection, toolsSpan]);
+    }, [includeDndSource, includeRowDrag, includeSelection, toolsSpan]);
 
     // attaching the ref to state makes sure we render again when state is set. this is
     // how we make sure the tools are added, as it's not possible to have an effect depend
@@ -281,7 +281,7 @@ const CellComp = (props: {
 
         cellCtrl.setComp(compProxy, false, null, eGui.current!, printLayout, editingRow);
 
-    }, [cellCtrl, editingRow, printLayout, toolsValueSpan]);
+    }, []);
 
     let className = cssClasses.toString();
 

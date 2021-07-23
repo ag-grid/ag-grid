@@ -40,7 +40,7 @@ const GridComp = (props: { context: Context }) => {
             props.context.destroyBean(currentController);
             gridCtrlRef.current = null;
         }
-    }, [props.context]);
+    }, []);
 
     // initialise the UI
     useEffect(() => {
@@ -83,7 +83,7 @@ const GridComp = (props: { context: Context }) => {
         currentController.setComp(compProxy, eRootWrapperRef.current!, eRootWrapperRef.current!);
 
         setInitialised(true);
-    }, [props.context]);
+    }, []);
 
     // initialise the extra components
     useEffect(() => {
@@ -153,7 +153,7 @@ const GridComp = (props: { context: Context }) => {
                 }
             });
         }
-    }, [props])
+    }, [])
 
     const rootWrapperClasses = classesList('ag-root-wrapper', rtlClass, keyboardFocusClass, layoutClass);
     const rootWrapperBodyClasses = classesList('ag-root-wrapper-body', 'ag-focus-managed', layoutClass);

@@ -27,7 +27,7 @@ const useJsCellRenderer = (
 
             context.destroyBean(comp);
             jsCellRendererRef.current = undefined;
-        }, [context, jsCellRendererRef]);
+        }, []);
 
         // create or refresh JS cell renderer
         useEffect(() => {
@@ -71,14 +71,14 @@ const useJsCellRenderer = (
 
             jsCellRendererRef.current = comp;
 
-        }, [context, destroyCellRenderer, eGui, jsCellRendererRef, showDetails, showTools, toolsValueSpan]);
+        }, [showDetails, showTools, toolsValueSpan]);
 
         // this effect makes sure destroyCellRenderer gets called when the
         // component is destroyed. as the other effect only updates when there
         // is a change in state
         useEffect(() => {
             return destroyCellRenderer;
-        }, [destroyCellRenderer]);
+        }, []);
 }
 
 export default useJsCellRenderer;

@@ -62,7 +62,7 @@ const RowContainerComp = (params: {context: Context, name: RowContainerName}) =>
             context.destroyBeans(beansToDestroy);
         };
 
-    }, [context, domOrder, name]);
+    }, []);
 
     const viewportStyle = {
         height: viewportHeight
