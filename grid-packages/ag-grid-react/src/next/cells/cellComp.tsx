@@ -298,12 +298,12 @@ const CellComp = (props: {
         className += ' ag-cell-value';
     }
 
-    const cellStyles = {
+    const cellStyles: React.CSSProperties = {
         left,
         width,
         height,
         transition,
-        'z-index': zIndex
+        zIndex: (zIndex as any)
     };
 
     _.assign(cellStyles, userStyles);
@@ -313,10 +313,12 @@ const CellComp = (props: {
              aria-selected={ ariaSelected } aria-colindex={ ariaColIndex } role={ role }
              col-id={ colId } title={ title } unselectable={ unselectable } aria-describedby={ ariaDescribedBy }>
 
-            { renderDetails!=null && jsxShowValue(renderDetails, cellCtrl.getInstanceId(), cellRendererRef, 
+
+            { renderDetails != null && jsxShowValue(renderDetails, cellCtrl.getInstanceId(), cellRendererRef, 
                                                 showTools, unselectable, reactCellRendererStateless,
                                                 toolsRefCallback, toolsValueRefCallback) }
-            { editDetails!=null && jsxEditValue(editDetails, setInlineCellEditorRef, setPopupCellEditorRef, eGui.current!, cellCtrl) }
+            { editDetails != null && jsxEditValue(editDetails, setInlineCellEditorRef, setPopupCellEditorRef, eGui.current!, cellCtrl) }
+
 
         </div>
     );

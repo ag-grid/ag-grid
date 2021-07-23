@@ -160,9 +160,9 @@ const GridComp = ({ context }: GridCompProps) => {
     const rootWrapperClasses = classesList('ag-root-wrapper', rtlClass, keyboardFocusClass, layoutClass);
     const rootWrapperBodyClasses = classesList('ag-root-wrapper-body', 'ag-focus-managed', layoutClass);
 
-    const topStyle = useMemo(() => ({
-        "user-select": userSelect != null ? userSelect : '',
-        '-webkit-user-select': userSelect != null ? userSelect : '',
+    const topStyle: React.CSSProperties = useMemo(() => ({
+        userSelect: userSelect != null ? (userSelect as any) : '',
+        WebkitUserSelect: userSelect != null ? (userSelect as any) : '',
         cursor: cursor != null ? cursor : ''
     }), [userSelect, cursor]);
 

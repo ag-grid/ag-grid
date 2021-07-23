@@ -11,17 +11,10 @@ import { classesList } from './utils';
 import RowContainerComp  from './rows/rowContainerComp';
 import useReactCommentEffect from './reactComment';
 
-interface SectionStyle {
-    height: number,
-    minHeight: number,
-    display: string,
-    'overflow-y': string
-};
-
 interface SectionProperties {
     section: React.RefObject<HTMLDivElement>, 
     className: string, 
-    style?: SectionStyle,
+    style?: React.CSSProperties,
     unselectable?: boolean
 }
 
@@ -116,18 +109,18 @@ const GridBodyComp = (params: { context: Context }) => {
     const bodyViewportClasses = classesList('ag-body-viewport', rowAnimationClass, layoutClass, forceVerticalScrollClass, cellSelectableCss);
     const bottomClasses = classesList('ag-floating-bottom', cellSelectableCss);
 
-    const topStyle: SectionStyle = {
+    const topStyle: React.CSSProperties = {
         height: topHeight,
         minHeight: topHeight,
         display: topDisplay,
-        'overflow-y': topAndBottomOverflowY
+        overflowY: (topAndBottomOverflowY as any)
     };
 
-    const bottomStyle: SectionStyle = {
+    const bottomStyle: React.CSSProperties = {
         height: bottomHeight,
         minHeight: bottomHeight,
         display: bottomDisplay,
-        'overflow-y': topAndBottomOverflowY
+        overflowY: (topAndBottomOverflowY as any)
     };
 
     const createRowContainer = (container: RowContainerName) => <RowContainerComp context={ context } name={ container } key={`${container}-container`} />;
