@@ -8,7 +8,6 @@ import { FilterRequestSource } from './filter/filterManager';
 import { ChartOptions, ChartType } from './interfaces/iChartOptions';
 import { IFilterComp } from './interfaces/iFilter';
 import { CellRange, CellRangeParams } from './interfaces/IRangeService';
-import { ChartModel } from './interfaces/IChartService';
 import { ServerSideTransactionResult } from "./interfaces/serverSideTransaction";
 import { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
 export { Events } from './eventKeys';

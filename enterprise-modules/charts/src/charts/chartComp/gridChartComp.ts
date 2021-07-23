@@ -192,12 +192,12 @@ export class GridChartComp extends Component {
 
         const crossFilterCallback = (event: any, reset: boolean) => {
             const ctx = this.params.crossFilteringContext;
-            ctx.lastSelectedChartId = reset ? '' : this.model.getChartId();
+            ctx.lastSelectedChartId = reset ? '' : this.getChartId();
             this.crossFilter.filter(event, reset);
         }
 
         const chartProxyParams: ChartProxyParams = {
-            chartId: this.model.getChartId(),
+            chartId: this.getChartId(),
             chartType,
             chartThemeName: this.model.getChartThemeName(),
             processChartOptions: processChartOptionsFunc!,
@@ -366,8 +366,15 @@ export class GridChartComp extends Component {
     }
 
     public getChartModel(): ChartModel {
-        console.log("mana")
         return this.chartController.getChartModel();
+    }
+
+    public getChartId(): string {
+        return this.model.getChartId();
+    }
+
+    public getChartImageDataURL(fileFormat?: string): string {
+        return this.chartProxy.getChartImageDataURL(fileFormat);
     }
 
     public updateChart(): void {
@@ -393,7 +400,7 @@ export class GridChartComp extends Component {
                 chartDataType: this.getChartDataType(selectedDimension.colId)
             },
             fields,
-            chartId: this.model.getChartId(),
+            chartId: this.getChartId(),
             getCrossFilteringContext: () => this.params.crossFilteringContext,
         };
 
@@ -474,7 +481,7 @@ export class GridChartComp extends Component {
     private raiseChartCreatedEvent(): void {
         const event: ChartCreated = Object.freeze({
             type: Events.EVENT_CHART_CREATED,
-            chartId: this.model.getChartId(),
+            chartId: this.getChartId(),
             api: this.gridApi,
             columnApi: this.columnApi,
         });
@@ -485,7 +492,7 @@ export class GridChartComp extends Component {
     private raiseChartDestroyedEvent(): void {
         const event: ChartDestroyed = Object.freeze({
             type: Events.EVENT_CHART_DESTROYED,
-            chartId: this.model.getChartId(),
+            chartId: this.getChartId(),
             api: this.gridApi,
             columnApi: this.columnApi,
         });

@@ -21,7 +21,8 @@ import {
     PreDestroy,
     ProcessChartOptionsParams,
     SeriesOptions,
-    CellRangeParams
+    CellRangeParams,
+    GetChartImageDataUrlParams
 } from "@ag-grid-community/core";
 import { GridChartComp, GridChartParams } from "./chartComp/gridChartComp";
 
@@ -64,6 +65,16 @@ export class ChartService extends BeanStub implements IChartService {
         })
 
         return chartRef;
+    }
+
+    public getChartImageDataURL(params: GetChartImageDataUrlParams): string | undefined {
+        let url: any;
+        this.activeChartComps.forEach(c => {
+            if (c.getChartId() === params.chartId) {
+                url = c.getChartImageDataURL(params.fileFormat);
+            }
+        })
+        return url;
     }
 
     public createChartFromCurrentRange(chartType: ChartType = ChartType.GroupedColumn): ChartRef | undefined {

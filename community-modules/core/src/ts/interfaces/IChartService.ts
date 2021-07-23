@@ -5,7 +5,8 @@ import { CellRangeParams } from "./IRangeService";
 import { IAggFunc } from "../entities/colDef";
 
 export interface GetChartImageDataUrlParams {
-    type?: string;
+    fileFormat?: string;
+    chartId?: string;
 }
 
 export type ChartModelType = 'range' | 'pivot';
@@ -20,7 +21,6 @@ export interface ChartModel {
     suppressChartRanges?: boolean;
     aggFunc?: string | IAggFunc;
     unlinkChart?: boolean;
-    getChartImageDataURL: (params: GetChartImageDataUrlParams) => string;
 }
 
 export interface IChartService {
@@ -31,4 +31,5 @@ export interface IChartService {
     createChartFromCurrentRange(chartType: ChartType): ChartRef | undefined;
     createPivotChart(params: CreatePivotChartParams): ChartRef | undefined;
     restoreChart(model: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined;
+    getChartImageDataURL(params: GetChartImageDataUrlParams): string | undefined;
 }
