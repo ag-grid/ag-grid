@@ -525,8 +525,6 @@ export class PopupService extends BeanStub {
             if (destroyPositionTracker) {
                 destroyPositionTracker.then(destroyFunc => destroyFunc && destroyFunc());
             }
-
-            this.eventService.dispatchEvent({type: Events.EVENT_POPUP_LIST_CHANGED});
         };
 
         if (afterGuiAttached) {
@@ -569,8 +567,6 @@ export class PopupService extends BeanStub {
             stopAnchoringPromise: destroyPositionTracker,
             instanceId: instanceIdSeq++
         });
-
-        this.eventService.dispatchEvent({type: Events.EVENT_POPUP_LIST_CHANGED});
 
         return {
             hideFunc: hidePopup,

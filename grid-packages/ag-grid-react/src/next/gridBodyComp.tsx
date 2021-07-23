@@ -8,6 +8,7 @@ import {
     RowContainerName
 } from 'ag-grid-community';
 import { classesList } from './utils';
+import { reactCommentEffect, } from './reactComment';
 import RowContainerComp from './rows/rowContainerComp';
 
 interface SectionStyle {
@@ -46,6 +47,11 @@ const GridBodyComp = (params: { context: Context }) => {
     const eBodyViewport = useRef<HTMLDivElement>(null);
     const eBottom = useRef<HTMLDivElement>(null);
 
+    reactCommentEffect(' AG Grid Body ', eRoot);
+    reactCommentEffect(' AG Pinned Top ', eTop);
+    reactCommentEffect(' AG Middle ', eBodyViewport);
+    reactCommentEffect(' AG Pinned Bottom ', eBottom);
+
     // should be shared
     const insertFirstPosition = (parent: HTMLElement, child: HTMLElement) => parent.insertBefore(child, parent.firstChild);
 
@@ -64,8 +70,12 @@ const GridBodyComp = (params: { context: Context }) => {
         };
 
         insertFirstPosition(eRoot.current!, newComp('AG-HEADER-ROOT').getGui());
+        insertFirstPosition(eRoot.current!, document.createComment(' AG Header ') as any as HTMLElement);
 
+        eRoot.current!.appendChild(document.createComment(' AG Fake Horizontal Scroll '));
         eRoot.current!.appendChild(newComp('AG-FAKE-HORIZONTAL-SCROLL').getGui());
+
+        eRoot.current!.appendChild(document.createComment(' AG Overlay Wrapper '));
         eRoot.current!.appendChild(newComp('AG-OVERLAY-WRAPPER').getGui());
 
         const resizeObserverService = context.getBean('resizeObserverService') as ResizeObserverService;

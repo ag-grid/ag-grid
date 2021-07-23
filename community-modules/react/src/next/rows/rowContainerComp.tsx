@@ -1,6 +1,7 @@
 import { Context, IRowContainerComp, RowContainerCtrl, RowContainerName, RowCtrl } from '@ag-grid-community/core';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { classesList } from '../utils';
+import { reactCommentEffect } from '../reactComment';
 import RowComp from './rowComp';
 
 const RowContainerComp = (params: {context: Context, name: RowContainerName}) => {
@@ -22,6 +23,13 @@ const RowContainerComp = (params: {context: Context, name: RowContainerName}) =>
     const wrapperClasses = classesList(cssClasses.wrapper);
     const viewportClasses = classesList(cssClasses.viewport);
     const containerClasses = classesList(cssClasses.container);
+
+    const template1 = name === RowContainerName.CENTER;
+    const template2 = name === RowContainerName.TOP_CENTER || name === RowContainerName.BOTTOM_CENTER;
+    const template3 = !template1 && !template2;
+
+    const topLevelRef = template1 ? eWrapper : template2 ? eViewport : eContainer;
+    reactCommentEffect(' AG Row Container ' + name + ' ', topLevelRef);
 
     useEffect(() => {
         const beansToDestroy: any[] = [];
@@ -75,10 +83,6 @@ const RowContainerComp = (params: {context: Context, name: RowContainerName}) =>
             }
         </div>
     );
-
-    const template1 = name === RowContainerName.CENTER;
-    const template2 = name === RowContainerName.TOP_CENTER || name === RowContainerName.BOTTOM_CENTER;
-    const template3 = !template1 && !template2;
 
     return (
         <>
