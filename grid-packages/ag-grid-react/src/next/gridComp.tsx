@@ -7,9 +7,9 @@ import {
     AgStackComponentsRegistry,
 } from 'ag-grid-community';
 import { classesList } from './utils';
+import { reactCommentEffect } from './reactComment';
 import TabGuardComp, { TabGuardCompCallback } from './tabGuardComp';
 import GridBodyComp  from './gridBodyComp';
-import { reactCommentEffect } from './reactComment';
 
 const GridComp = (props: { context: Context }) => {
 

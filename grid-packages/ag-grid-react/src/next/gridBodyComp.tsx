@@ -8,8 +8,8 @@ import {
     RowContainerName
 } from 'ag-grid-community';
 import { classesList } from './utils';
-import { reactCommentEffect, } from './reactComment';
-import RowContainerComp from './rows/rowContainerComp';
+import RowContainerComp  from './rows/rowContainerComp';
+import { reactCommentEffect } from './reactComment';
 
 interface SectionStyle {
     height: number,
