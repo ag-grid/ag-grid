@@ -33,8 +33,6 @@ const GridComp = (props: { context: Context }) => {
 
     // create shared controller.
     useEffect(() => {
-        console.log('controller');
-
         const currentController = gridCtrlRef.current = props.context.createBean(new GridCtrl());
 
         return () => {
@@ -45,8 +43,6 @@ const GridComp = (props: { context: Context }) => {
 
     // initialise the UI
     useEffect(() => {
-        console.log('ui');
-
         const gridCtrl = gridCtrlRef.current!;
 
         focusInnerElementRef.current = gridCtrl.focusInnerElement.bind(gridCtrl);
@@ -89,8 +85,6 @@ const GridComp = (props: { context: Context }) => {
     // initialise the extra components
     useEffect(() => {
         if (!tabGuardReady) { return; }
-
-        console.log('extra comps');
 
         const gridCtrl = gridCtrlRef.current!;
         const beansToDestroy: any[] = [];
@@ -172,12 +166,9 @@ const GridComp = (props: { context: Context }) => {
     const eGridBodyParent = eGridBodyParentRef.current;
 
     const setTabGuardCompRef = useCallback( ref => {
-        console.log('x');
         tabGuardRef.current = ref;
         setTabGuardReady(true);
     }, []);
-
-    console.log('render');
 
     return (
         <div ref={ eRootWrapperRef } className={ rootWrapperClasses } style={ topStyle }>
