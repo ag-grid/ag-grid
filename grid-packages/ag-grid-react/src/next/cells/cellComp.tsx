@@ -289,7 +289,6 @@ const CellComp = (props: {
         const res = renderDetails && renderDetails.compDetails 
                     && renderDetails.compDetails.componentFromFramework 
                     && isComponentStateless(renderDetails.compDetails.componentClass);
-        console.log(cellCtrl.getColumn().getId() + ' hasRef = ' + !!res);
         return !!res;
     }, [renderDetails]);
 
