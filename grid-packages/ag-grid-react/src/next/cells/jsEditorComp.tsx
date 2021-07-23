@@ -2,10 +2,10 @@ import { CellCtrl, ICellEditor, ICellEditorComp, UserCompDetails } from 'ag-grid
 import React, { useEffect } from 'react';
 import { createJsComp } from '../jsComp';
 
-export const JsEditorComp = (props: {setCellEditorRef: (cellEditor: ICellEditor | undefined)=>void, 
+const JsEditorComp = (props: {setCellEditorRef: (cellEditor: ICellEditor | undefined)=>void, 
     cellCtrl: CellCtrl, compDetails: UserCompDetails, eParentElement: HTMLElement}) => {
 
-    useEffect( ()=> {
+    useEffect(() => {
 
         const {cellCtrl, compDetails, eParentElement, setCellEditorRef} = props;
         const {context} = cellCtrl.getBeans();
@@ -36,3 +36,5 @@ export const JsEditorComp = (props: {setCellEditorRef: (cellEditor: ICellEditor 
         <></>
     );
 };
+
+export default JsEditorComp;

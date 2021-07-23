@@ -21,7 +21,7 @@ const App = () => {
     const onGridReady = (params:any) => {
         setGridApi(params.api);
         setGridColumnApi(params.columnApi);
-        setTimeout( ()=> setRowData([...rowData, ...rowData]), 2000);
+        setTimeout(() => setRowData([...rowData, ...rowData]), 2000);
     }
 
     return (

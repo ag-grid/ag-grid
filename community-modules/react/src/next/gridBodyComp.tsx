@@ -8,8 +8,8 @@ import {
     RowContainerName
 } from '@ag-grid-community/core';
 import { classesList } from './utils';
-import { RowContainerComp } from './rows/rowContainerComp';
-import { reactCommentEffect, reactComment } from './reactComment';
+import RowContainerComp  from './rows/rowContainerComp';
+import { reactCommentEffect } from './reactComment';
 
 interface SectionStyle {
     height: number,
@@ -25,8 +25,7 @@ interface SectionProperties {
     unselectable?: boolean
 }
 
-
-export const GridBodyComp = (params: { context: Context }) => {
+const GridBodyComp = (params: { context: Context }) => {
 
     const { context } = params;
 
@@ -166,4 +165,6 @@ export const GridBodyComp = (params: { context: Context }) => {
             ]}) }
         </div>
     );
-}
+};
+
+export default GridBodyComp;

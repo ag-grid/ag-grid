@@ -19,4 +19,5 @@ export class CssClasses {
         const res = Object.keys(this.classesMap).filter( key => this.classesMap[key] ).join(' ');
         return res;
     }
+
 }

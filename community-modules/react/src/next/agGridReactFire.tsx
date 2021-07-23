@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { _, ColumnApi, ComponentUtil, Context, GridApi, GridCoreCreator, GridOptions } from '@ag-grid-community/core';
 import { AgGridColumn } from '../agGridColumn';
 import { ChangeDetectionService, ChangeDetectionStrategyType } from '../changeDetectionService';
-import { GridComp } from './gridComp';
 import { AgReactUiProps } from '../interfaces';
+import GridComp from './gridComp';
 
 export class AgGridReactFire extends Component<AgReactUiProps, { context: Context | undefined }> {
 

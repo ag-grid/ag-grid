@@ -6,12 +6,12 @@ import {
     IGridComp,
     AgStackComponentsRegistry,
 } from '@ag-grid-community/core';
-import { GridBodyComp } from './gridBodyComp';
 import { classesList } from './utils';
-import { TabGuardComp, TabGuardCompCallback } from './tabGuardComp';
 import { reactCommentEffect } from './reactComment';
+import TabGuardComp, { TabGuardCompCallback } from './tabGuardComp';
+import GridBodyComp  from './gridBodyComp';
 
-export const GridComp = (props: { context: Context }) => {
+const GridComp = (props: { context: Context }) => {
 
     const [rtlClass, setRtlClass] = useState<string>('');
     const [keyboardFocusClass, setKeyboardFocusClass] = useState<string>('');
@@ -188,4 +188,6 @@ export const GridComp = (props: { context: Context }) => {
             </div>
         </div>
     );
-}
+};
+
+export default GridComp;

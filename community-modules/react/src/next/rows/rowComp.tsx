@@ -1,6 +1,6 @@
 import { CellCtrl, Context, IRowComp, RowCtrl, UserCompDetails, _ } from '@ag-grid-community/core';
 import React, { useEffect, useRef, useState } from 'react';
-import { CellComp } from '../cells/cellComp';
+import CellComp from '../cells/cellComp';
 import { showJsComp } from '../jsComp';
 import { CssClasses } from '../utils';
 
@@ -50,7 +50,7 @@ const maintainOrderOnColumns = (prev: CellCtrls, next: CellCtrl[], domOrder: boo
     return res;
 }
 
-export const RowComp = (params: {context: Context, rowCtrl: RowCtrl, pinned: string | null}) => {
+const RowComp = (params: {context: Context, rowCtrl: RowCtrl, pinned: string | null}) => {
 
     const { context, rowCtrl, pinned } = params;
 
@@ -148,4 +148,6 @@ export const RowComp = (params: {context: Context, rowCtrl: RowCtrl, pinned: str
             }
         </div>
     );
-}
+};
+
+export default RowComp;
