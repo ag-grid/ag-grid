@@ -261,9 +261,11 @@ export const CellComp = (props: {
 
     }, [cellCtrl, editingRow, printLayout, toolsValueSpan]);
 
-    cssClasses.setClass('ag-cell-value', showTools);
+    let className = cssClasses.toString();
 
-    const className = cssClasses.toString();
+    if (!showTools) {
+        className += ' ag-cell-value';
+    }
 
     const cellStyles = {
         left,
