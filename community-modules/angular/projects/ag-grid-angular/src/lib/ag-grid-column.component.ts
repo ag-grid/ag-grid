@@ -1,4 +1,4 @@
-import { CellClassParams, CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditorSelectorFunc, CellRendererSelectorFunc, CheckboxSelectionCallbackParams, ColDef, ColGroupDef, ColSpanParams, ColumnsMenuParams, DndSourceCallbackParams, EditableCallbackParams, GetQuickFilterTextParams, IAggFunc, ICellEditorComp, ICellRendererComp, ICellRendererFunc, IHeaderGroupComp, IRowDragItem, ITooltipComp, ITooltipParams, RowDragCallbackParams, RowNode, RowSpanParams, SuppressHeaderKeyboardEventParams, SuppressKeyboardEventParams, SuppressNavigableCallbackParams, SuppressPasteCallbackParams, ValueFormatterParams, ValueGetterParams, ValueParserParams, ValueSetterParams, NewValueParams, HeaderCheckboxSelectionCallbackParams } from "@ag-grid-community/core";
+import { CellClassParams, CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditorSelectorFunc, CellRendererSelectorFunc, CheckboxSelectionCallbackParams, ColDef, ColGroupDef, ColSpanParams, ColumnsMenuParams, DndSourceCallbackParams, EditableCallbackParams, GetQuickFilterTextParams, IAggFunc, ICellEditorComp, ICellRendererComp, ICellRendererFunc, IHeaderGroupComp, IRowDragItem, ITooltipComp, ITooltipParams, RowDragCallbackParams, RowNode, RowSpanParams, SuppressHeaderKeyboardEventParams, SuppressKeyboardEventParams, SuppressNavigableCallbackParams, SuppressPasteCallbackParams, ValueFormatterParams, ValueGetterParams, ValueParserParams, ValueSetterParams, NewValueParams, HeaderCheckboxSelectionCallbackParams, HeaderClassParams, ToolPanelClassParams } from "@ag-grid-community/core";
 import { Component, ContentChildren, Input, QueryList } from "@angular/core";
 
 @Component({
@@ -71,8 +71,8 @@ export class AgGridColumn {
     @Input() public columnsMenuParams: ColumnsMenuParams | undefined = undefined;
     @Input() public headerName: string | undefined = undefined;
     @Input() public columnGroupShow: string | undefined = undefined;
-    @Input() public headerClass: string | string[] | ((params: any) => string | string[]) | undefined = undefined;
-    @Input() public toolPanelClass: string | string[] | ((params: any) => string | string[]) | undefined = undefined;
+    @Input() public headerClass: string | string[] | ((params: HeaderClassParams) => string | string[]) | undefined = undefined;
+    @Input() public toolPanelClass: string | string[] | ((params: ToolPanelClassParams) => string | string[]) | undefined = undefined;
     @Input() public headerValueGetter: string | Function | undefined = undefined;
     @Input() public groupId: string | undefined = undefined;
     @Input() public colId: string | undefined = undefined;

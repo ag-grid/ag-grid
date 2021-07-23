@@ -11,6 +11,7 @@ import { IRowDragItem } from "../rendering/row/rowDragComp";
 import { IFilterDef } from '../interfaces/iFilter';
 import { ColumnGroup } from "./columnGroup";
 import { RowClassParams } from "./gridOptions";
+import { OriginalColumnGroup } from "./originalColumnGroup";
 
 /***********************************************************************
  * Don't forget to update ColDefUtil if changing this class. PLEASE! *
@@ -23,9 +24,9 @@ export interface AbstractColDef {
     /** Whether to show the column when the group is open / closed. */
     columnGroupShow?: string;
     /** CSS class for the header */
-    headerClass?: string | string[] | ((params: any) => string | string[]);
-    /** CSS class for the header */
-    toolPanelClass?: string | string[] | ((params: any) => string | string[]);
+    headerClass?: string | string[] | ((params: HeaderClassParams) => string | string[]);
+    /** CSS class for the toolPanel */
+    toolPanelClass?: string | string[] | ((params: ToolPanelClassParams) => string | string[]);
     /** Expression or function to get the cells value. */
     headerValueGetter?: string | Function;
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
@@ -79,6 +80,15 @@ export interface IAggFuncParams {
     columnApi: ColumnApi;
     context: any;
 }
+
+export interface HeaderClassParams {
+    api?: GridApi
+    colDef: AbstractColDef,
+    column?: Column | null,
+    columnGroup?: ColumnGroup | OriginalColumnGroup | null,
+    context?: any,
+}
+export interface ToolPanelClassParams extends HeaderClassParams { };
 
 /***********************************************************************
  * Don't forget to update ColDefUtil if changing this class. PLEASE! *

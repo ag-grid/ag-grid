@@ -1,4 +1,4 @@
-import { AbstractColDef } from "../entities/colDef";
+import { AbstractColDef, HeaderClassParams, ToolPanelClassParams } from "../entities/colDef";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ColumnGroup } from "../entities/columnGroup";
 import { Column } from "../entities/column";
@@ -18,7 +18,7 @@ export class CssClassApplier {
         this.addColumnClassesFromCollDef(abstractColDef.toolPanelClass, abstractColDef, eHeaderCell, gridOptionsWrapper, column, columnGroup);
     }
 
-    public static addColumnClassesFromCollDef(classesOrFunc: string | string[] | ((params: any) => string | string[]) | null | undefined,
+    public static addColumnClassesFromCollDef(classesOrFunc: string | string[] | ((params: HeaderClassParams | ToolPanelClassParams) => string | string[]) | null | undefined,
                                               abstractColDef: AbstractColDef,
                                               eHeaderCell: HTMLElement,
                                               gridOptionsWrapper: GridOptionsWrapper,
@@ -29,7 +29,7 @@ export class CssClassApplier {
         }
         let classToUse: string | string[];
         if (typeof classesOrFunc === 'function') {
-            const params = {
+            const params: HeaderClassParams = {
                 // bad naming, as colDef here can be a group or a column,
                 // however most people won't appreciate the difference,
                 // so keeping it as colDef to avoid confusion.
@@ -37,9 +37,9 @@ export class CssClassApplier {
                 column: column,
                 columnGroup: columnGroup,
                 context: gridOptionsWrapper.getContext(),
-                api: gridOptionsWrapper.getApi()
+                api: gridOptionsWrapper.getApi()!
             };
-            const headerClassFunc = classesOrFunc as (params: any) => string | string[];
+            const headerClassFunc = classesOrFunc;
             classToUse = headerClassFunc(params);
         } else {
             classToUse = classesOrFunc;
