@@ -9,7 +9,6 @@ import { Column } from "../../entities/column";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { ColDef } from "../../entities/colDef";
 import {
-    ComponentClassDef,
     UserComponentFactory
 } from "../../components/framework/userComponentFactory";
 import { AgPromise } from "../../utils";
@@ -309,20 +308,20 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         let cellRendererPromise: AgPromise<ICellRendererComp> | null = null;
 
         // we check if cell renderer provided for the group cell renderer, eg colDef.cellRendererParams.innerRenderer
-        const groupInnerRendererClass: ComponentClassDef = this.userComponentFactory
+        const groupInnerRendererClass = this.userComponentFactory
             .lookupComponent(groupCellRendererParams, "innerRenderer")!;
 
         // avoid using GroupCellRenderer again, otherwise stack overflow, as we insert same renderer again and again.
         // this covers off chance user is grouping by a column that is also configured with GroupCellRenderer
         const notGroupRowRenderer = (details: any) => !details || details.component != this.constructor;
 
-        if (groupInnerRendererClass && groupInnerRendererClass.component != null
+        if (groupInnerRendererClass && groupInnerRendererClass.componentClass != null
             && notGroupRowRenderer(groupInnerRendererClass)) {
             // use the renderer defined in cellRendererParams.innerRenderer
             cellRendererPromise = this.userComponentFactory.newInnerCellRenderer(groupCellRendererParams, params);
         } else {
             // otherwise see if we can use the cellRenderer of the column we are grouping by
-            const groupColumnRendererClass: ComponentClassDef = this.userComponentFactory
+            const groupColumnRendererClass = this.userComponentFactory
                 .lookupComponent(groupedColumnDef, "cellRenderer")!;
 
             if (
