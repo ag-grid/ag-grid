@@ -87,8 +87,8 @@ export class CellTooltipFeature extends BeanStub {
 
         if (valueGetter) {
             return valueGetter({
-                api: this.beans.gridOptionsWrapper.getApi(),
-                columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
+                api: this.beans.gridOptionsWrapper.getApi()!,
+                columnApi: this.beans.gridOptionsWrapper.getColumnApi()!,
                 context: this.beans.gridOptionsWrapper.getContext(),
                 ...this.getTooltipParams(),
                 value: this.cellCtrl.getValue()
