@@ -357,6 +357,7 @@ export {
     ProcessChartOptionsParams,
     ProcessChartParams,
     RowClassParams,
+    RowHeightParams,
     ServerSideStoreType,
     ServerSideStoreParams,
     GetServerSideStoreParamsParams,

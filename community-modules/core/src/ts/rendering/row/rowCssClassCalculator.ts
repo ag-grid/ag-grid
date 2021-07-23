@@ -109,7 +109,7 @@ export class RowCssClassCalculator {
     public processClassesFromGridOptions(rowNode: RowNode, scope: any): string[] {
         const res: string[] = [];
 
-        const process = (rowCls: string | string[]) => {
+        const process = (rowCls: string | string[] | undefined) => {
             if (typeof rowCls === 'string') {
                 res.push(rowCls);
             } else if (Array.isArray(rowCls)) {
