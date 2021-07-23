@@ -9,7 +9,7 @@ import {
 } from 'ag-grid-community';
 import { classesList } from './utils';
 import RowContainerComp  from './rows/rowContainerComp';
-import { reactCommentEffect } from './reactComment';
+import useReactCommentEffect from './reactComment';
 
 interface SectionStyle {
     height: number,
@@ -47,10 +47,10 @@ const GridBodyComp = (params: { context: Context }) => {
     const eBodyViewport = useRef<HTMLDivElement>(null);
     const eBottom = useRef<HTMLDivElement>(null);
 
-    reactCommentEffect(' AG Grid Body ', eRoot);
-    reactCommentEffect(' AG Pinned Top ', eTop);
-    reactCommentEffect(' AG Middle ', eBodyViewport);
-    reactCommentEffect(' AG Pinned Bottom ', eBottom);
+    useReactCommentEffect(' AG Grid Body ', eRoot);
+    useReactCommentEffect(' AG Pinned Top ', eTop);
+    useReactCommentEffect(' AG Middle ', eBodyViewport);
+    useReactCommentEffect(' AG Pinned Bottom ', eBottom);
 
     // should be shared
     const insertFirstPosition = (parent: HTMLElement, child: HTMLElement) => parent.insertBefore(child, parent.firstChild);
