@@ -150,7 +150,7 @@ export class UserComponentFactory extends BeanStub {
     }
 
     public newTooltipComponent(params: ITooltipParams): AgPromise<ITooltipComp> | null {
-        return this.lookupAndCreateComponent(params.colDef, params, TooltipComponent, 'agTooltipComponent');
+        return this.lookupAndCreateComponent(params.colDef!, params, TooltipComponent, 'agTooltipComponent');
     }
 
     public newFilterComponent(def: IFilterDef, params: IFilterParams, defaultFilter: string): AgPromise<IFilterComp> | null {

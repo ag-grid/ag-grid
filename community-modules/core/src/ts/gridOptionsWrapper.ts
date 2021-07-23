@@ -23,7 +23,8 @@ import {
     TabToNextCellParams,
     TabToNextHeaderParams,
     RowGroupingDisplayType,
-    TreeDataDisplayType
+    TreeDataDisplayType,
+    RowHeightParams
 } from './entities/gridOptions';
 import { EventService } from './eventService';
 import { Constants } from './constants/constants';
@@ -1156,7 +1157,7 @@ export class GridOptionsWrapper {
         return this.gridOptions.defaultColDef;
     }
 
-    public getDefaultColGroupDef(): ColGroupDef | undefined {
+    public getDefaultColGroupDef(): Partial<ColGroupDef> | undefined {
         return this.gridOptions.defaultColGroupDef;
     }
 
@@ -1759,10 +1760,10 @@ export class GridOptionsWrapper {
             if (allowEstimate) {
                 return { height: this.getDefaultRowHeight(), estimated: true };
             }
-            const params = {
+            const params: RowHeightParams = {
                 node: rowNode,
                 data: rowNode.data,
-                api: this.gridOptions.api,
+                api: this.gridOptions.api!,
                 context: this.gridOptions.context
             };
             const height = this.gridOptions.getRowHeight(params);
@@ -1814,7 +1815,7 @@ export class GridOptionsWrapper {
         return this.environment.chartMenuPanelWidth();
     }
 
-    private isNumeric(value: any) {
+    private isNumeric(value: any): value is number {
         return !isNaN(value) && typeof value === 'number' && isFinite(value);
     }
 

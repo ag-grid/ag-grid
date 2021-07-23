@@ -143,6 +143,7 @@ import {
     ProcessHeaderForExportParams,
     ProcessChartOptionsParams,
     RowClassParams,
+    RowHeightParams,
     TreeDataDisplayType
 } from "@ag-grid-community/core";
 
@@ -293,7 +294,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public chartThemes: string[] | undefined = undefined;
     @Input() public components: { [p: string]: any; } | undefined = undefined;
     @Input() public frameworkComponents: { [p: string]: { new(): any; }; } | any | undefined = undefined;
-    @Input() public rowStyle: { [cssClassName: string]: string } | undefined = undefined;
+    @Input() public rowStyle: { [cssProperty: string]: string } | undefined = undefined;
     @Input() public context: any | undefined = undefined;
     @Input() public autoGroupColumnDef: ColDef | undefined = undefined;
     @Input() public localeText: { [key: string]: string } | undefined = undefined;
@@ -304,7 +305,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public groupRowRendererParams: any | undefined = undefined;
     @Input() public aggFuncs: { [key: string]: IAggFunc; } | undefined = undefined;
     @Input() public fullWidthCellRendererParams: any | undefined = undefined;
-    @Input() public defaultColGroupDef: ColGroupDef | undefined = undefined;
+    @Input() public defaultColGroupDef: Partial<ColGroupDef> | undefined = undefined;
     @Input() public defaultColDef: ColDef | undefined = undefined;
     @Input() public defaultExportParams: CsvExportParams | ExcelExportParams | undefined = undefined;
     @Input() public defaultCsvExportParams: CsvExportParams | undefined = undefined;
@@ -381,10 +382,10 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public groupRowRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined = undefined;
     @Input() public groupRowRendererFramework: any | undefined = undefined;
     @Input() public isExternalFilterPresent: () =>  boolean | undefined = undefined;
-    @Input() public getRowHeight: Function | undefined = undefined;
+    @Input() public getRowHeight: (params: RowHeightParams) => number | undefined | undefined = undefined;
     @Input() public doesExternalFilterPass: (node: RowNode) =>  boolean | undefined = undefined;
-    @Input() public getRowClass: (params: RowClassParams) => (string | string[]) | undefined = undefined;
-    @Input() public getRowStyle: Function | undefined = undefined;
+    @Input() public getRowClass: (params: RowClassParams) => (string | string[] | undefined) | undefined = undefined;
+    @Input() public getRowStyle: (params: RowClassParams) => { [cssProperty: string]: string } | undefined = undefined;
     @Input() public getContextMenuItems: GetContextMenuItems | undefined = undefined;
     @Input() public getMainMenuItems: GetMainMenuItems | undefined = undefined;
     @Input() public processRowPostCreate: (params: ProcessRowParams) =>  void | undefined = undefined;

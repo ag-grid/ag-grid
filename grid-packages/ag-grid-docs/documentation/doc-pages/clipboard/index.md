@@ -177,7 +177,7 @@ The interface and parameters for processing the whole paste operation is as foll
 
 ```ts
 // for processing data from the clipboard
-processDataFromClipboard(params: ProcessDataFromClipboardParams) => string[][];
+processDataFromClipboard(params: ProcessDataFromClipboardParams) => string[][] | null;
 
 // params for processDataFromClipboard
 interface ProcessDataFromClipboardParams {

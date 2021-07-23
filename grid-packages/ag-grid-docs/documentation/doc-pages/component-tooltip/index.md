@@ -38,14 +38,14 @@ interface ITooltipParams {
 
     /* Column Params (N/A within some components like the Menu Item) */
 
-    colDef?: any; // the grid colDef
-    column?: any; // the column bound to this tooltip
+    colDef?: ColDef | ColGroupDef; // the grid colDef
+    column?: Column | ColumnGroup; // the column bound to this tooltip
 
     /* Row and Cell Params (N/A with headerTooltips) */
 
     valueFormatted?: any; // the formatted value to be rendered by the tooltip
     rowIndex?: number; // the index of the row containing the cell rendering the tooltip
-    node?: any; // the row node
+    node?: RowNode; // the row node
     data?: any; // the row node data
 }
 ```

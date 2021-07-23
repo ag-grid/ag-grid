@@ -288,7 +288,7 @@ export interface GridOptions {
     localeText?: { [key: string]: string };
     localeTextFunc?: (key: string, defaultValue: string) => string;
     suppressAnimationFrame?: boolean;
-    defaultColGroupDef?: ColGroupDef;
+    defaultColGroupDef?: Partial<ColGroupDef>;
     defaultColDef?: ColDef;
 
     /** @deprecated Use defaultCsvExportParams or defaultExcelExportParams */
@@ -320,7 +320,7 @@ export interface GridOptions {
 
     // changeable, but no immediate impact
     context?: any;
-    rowStyle?: { [cssClassName: string]: string };
+    rowStyle?: { [cssProperty: string]: string };
     rowClass?: string | string[];
     groupDefaultExpanded?: number;
     alignedGrids?: GridOptions[];
@@ -388,10 +388,10 @@ export interface GridOptions {
     isExternalFilterPresent?(): boolean;
     doesExternalFilterPass?(node: RowNode): boolean;
 
-    getRowStyle?: Function;
-    getRowClass?: (params: RowClassParams) => (string | string[]);
+    getRowStyle?: (params: RowClassParams) => { [cssProperty: string]: string };
+    getRowClass?: (params: RowClassParams) => (string | string[] | undefined);
     rowClassRules?: { [cssClassName: string]: (((params: RowClassParams) => boolean) | string); };
-    getRowHeight?: Function;
+    getRowHeight?: (params: RowHeightParams) => number | undefined;
     sendToClipboard?: (params: { data: string }) => void;
     processDataFromClipboard?: (params: ProcessDataFromClipboardParams) => string[][] | null;
 
@@ -681,6 +681,13 @@ export interface RowClassParams {
     $scope: any;
     api: GridApi;
     columnApi: ColumnApi;
+    context: any;
+}
+
+export interface RowHeightParams {
+    data: any;
+    node: RowNode;
+    api: GridApi;
     context: any;
 }
 
