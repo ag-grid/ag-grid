@@ -26,3 +26,12 @@ export class CssClasses {
     }
 
 }
+
+export function isComponentStateless(Component: any) {
+
+    const hasSymbol = ()=> typeof Symbol === 'function' && Symbol.for;
+    const getMemoType = ()=> hasSymbol() ? Symbol.for('react.memo') : 0xead3;
+
+    return (typeof Component === 'function' && !(Component.prototype && Component.prototype.isReactComponent))
+        || (typeof Component === 'object' && Component.$$typeof === getMemoType());
+}

@@ -1,6 +1,6 @@
 import { CellCtrl, Component, Context, ICellComp, ICellEditor, ICellRendererComp, UserCompDetails, _ } from 'ag-grid-community';
-import React, { MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
-import { CssClasses } from '../utils';
+import React, { MutableRefObject, useCallback, useEffect, useRef, useState, useMemo } from 'react';
+import { CssClasses, isComponentStateless } from '../utils';
 import JsEditorComp from './jsEditorComp';
 import PopupEditorComp from './popupEditorComp';
 import useJsCellRenderer from './showJsRenderer';
@@ -76,6 +76,7 @@ const jsxShowValue = (
     cellRendererRef: MutableRefObject<any>,
     showTools: boolean,
     unSelectable: 'on' | undefined,
+    reactCellRendererStateless: boolean,
     toolsRefCallback: (ref:any) => void,
     toolsValueRefCallback: (ref:any) => void
 ) => {
@@ -89,7 +90,8 @@ const jsxShowValue = (
     const bodyJsxFunc = () => (
         <>
             { noCellRenderer && <>{ value }</> }
-            { reactCellRenderer && <CellRendererClass { ...compDetails!.params } ref={ cellRendererRef }></CellRendererClass> }
+            { reactCellRenderer && reactCellRendererStateless && <CellRendererClass { ...compDetails!.params } ref={ cellRendererRef }/> }
+            { reactCellRenderer && !reactCellRendererStateless && <CellRendererClass { ...compDetails!.params }/> }
         </>
     );
 
@@ -250,7 +252,7 @@ const CellComp = (props: {
             setForceWrapper: force => setForceWrapper(force),
             
             getCellEditor: () => cellEditorRef.current || null,
-            getCellRenderer: () => cellRendererRef.current,
+            getCellRenderer: () => cellRendererRef.current ? cellRendererRef.current : jsCellRendererRef.current,
             getParentOfValue: () => toolsValueSpan ? toolsValueSpan : eGui.current,
 
             setRenderDetails: (compDetails, value, force) => {
@@ -283,6 +285,14 @@ const CellComp = (props: {
 
     }, []);
 
+    const reactCellRendererStateless = useMemo( ()=> {
+        const res = renderDetails && renderDetails.compDetails 
+                    && renderDetails.compDetails.componentFromFramework 
+                    && isComponentStateless(renderDetails.compDetails.componentClass);
+        console.log(cellCtrl.getColumn().getId() + ' hasRef = ' + !!res);
+        return !!res;
+    }, [renderDetails]);
+
     let className = cssClasses.toString();
 
     if (!showTools) {
@@ -304,7 +314,9 @@ const CellComp = (props: {
              aria-selected={ ariaSelected } aria-colindex={ ariaColIndex } role={ role }
              col-id={ colId } title={ title } unselectable={ unselectable } aria-describedby={ ariaDescribedBy }>
 
-            { renderDetails!=null && jsxShowValue(renderDetails, cellCtrl.getInstanceId(), cellRendererRef, showTools, unselectable, toolsRefCallback, toolsValueRefCallback) }
+            { renderDetails!=null && jsxShowValue(renderDetails, cellCtrl.getInstanceId(), cellRendererRef, 
+                                                showTools, unselectable, reactCellRendererStateless,
+                                                toolsRefCallback, toolsValueRefCallback) }
             { editDetails!=null && jsxEditValue(editDetails, setInlineCellEditorRef, setPopupCellEditorRef, eGui.current!, cellCtrl) }
 
         </div>
