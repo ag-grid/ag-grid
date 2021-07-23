@@ -72,7 +72,9 @@ import {
     ProcessRowParams,
     ServerSideStoreParams,
     TabToNextCellParams,
-    TabToNextHeaderParams
+    TabToNextHeaderParams,
+    RowClassParams,
+    RowHeightParams
 } from "./entities/gridOptions";
 import { ChartOptions, ChartType } from "./interfaces/iChartOptions";
 import { IToolPanel } from "./interfaces/iToolPanel";
@@ -1048,7 +1050,7 @@ export class GridApi {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GET_ROW_NODE_ID, getRowNodeIdFunc);
     }
 
-    public setGetRowClass(rowClassFunc: (params: any) => string | string[]) :  void {
+    public setGetRowClass(rowClassFunc: (params: RowClassParams) => string | string[]): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GET_ROW_CLASS, rowClassFunc);
     }
 
@@ -1084,7 +1086,7 @@ export class GridApi {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PROCESS_CELL_FOR_CLIPBOARD, processCellForClipboardFunc);
     }
 
-    public setSendToClipboard(sendToClipboardFunc: (params: any) => void) :  void {
+    public setSendToClipboard(sendToClipboardFunc: (params: { data: string }) => void): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_SEND_TO_CLIPBOARD, sendToClipboardFunc);
     }
 
@@ -1140,11 +1142,11 @@ export class GridApi {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GET_SERVER_SIDE_GROUP_KEY, getServerSideGroupKeyFunc);
     }
 
-    public setGetRowStyle(rowStyleFunc: (params: any) => {}) :  void {
+    public setGetRowStyle(rowStyleFunc: (params: RowClassParams) => {}): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GET_ROW_STYLE, rowStyleFunc);
     }
 
-    public setGetRowHeight(rowHeightFunc: (params: any) => number) :  void {
+    public setGetRowHeight(rowHeightFunc: (params: RowHeightParams) => number): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GET_ROW_HEIGHT, rowHeightFunc);
     }
 
