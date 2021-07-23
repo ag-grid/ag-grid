@@ -64,8 +64,7 @@ export class HdpiCanvas {
     }
 
     /**
-     * @param options.fileName The `.png` extension is going to be added automatically.
-     * @param [options.background] Defaults to `white`.
+     * @param fileName The name of the file upon save. The `.png` extension is going to be added automatically.
      */
     download(fileName?: string) {
         fileName = ((fileName || '').trim() || 'image') + '.png';
