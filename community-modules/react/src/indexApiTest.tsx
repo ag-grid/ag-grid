@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { AgGridReact } from './agGridReact';
 import { AgGridColumn } from './agGridColumn';
-import { useGridApis } from "./useGridApi";
+import useGridApis from "./useGridApi";
 
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';

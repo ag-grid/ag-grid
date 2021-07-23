@@ -2,8 +2,8 @@ import { createElement, ReactPortal } from 'react';
 import { createPortal } from 'react-dom';
 import { AgPromise } from '@ag-grid-community/core';
 import { ReactComponent } from './reactComponent';
-import generateNewKey from './keyGenerator';
 import { renderToStaticMarkup } from 'react-dom/server';
+import generateNewKey from './keyGenerator';
 
 export class LegacyReactComponent extends ReactComponent {
     static SLOW_RENDERING_THRESHOLD = 3;

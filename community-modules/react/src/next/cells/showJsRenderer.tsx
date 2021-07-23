@@ -7,7 +7,7 @@ export const JsRendererComp = (props: {}) => {
     return (<></>);
 };
 
-export const showJsCellRenderer = (
+const useJsCellRenderer = (
     showDetails: RenderDetails | undefined,
     showTools: boolean,
     toolsValueSpan: HTMLElement | undefined,
@@ -15,7 +15,7 @@ export const showJsCellRenderer = (
     jsCellRendererRef: MutableRefObject<ICellRendererComp|undefined>,
     eGui: MutableRefObject<any>) => {
 
-        const destroyCellRenderer = useCallback( ()=> {
+        const destroyCellRenderer = useCallback(() => {
             const comp = jsCellRendererRef.current;
             if (!comp) { return; }
 
@@ -80,3 +80,5 @@ export const showJsCellRenderer = (
             return destroyCellRenderer;
         }, [destroyCellRenderer]);
 }
+
+export default useJsCellRenderer;

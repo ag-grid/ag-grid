@@ -1,9 +1,9 @@
 import { Context, IRowContainerComp, RowContainerCtrl, RowContainerName, RowCtrl } from '@ag-grid-community/core';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { classesList } from '../utils';
-import { RowComp } from './rowComp';
+import RowComp from './rowComp';
 
-export const RowContainerComp = (params: {context: Context, name: RowContainerName}) => {
+const RowContainerComp = (params: {context: Context, name: RowContainerName}) => {
 
     const [viewportHeight, setViewportHeight] = useState<string>('');
     const [rowCtrls, setRowCtrls] = useState<RowCtrl[]>([]);
@@ -101,4 +101,6 @@ export const RowContainerComp = (params: {context: Context, name: RowContainerNa
             }
         </>
     );
-}
+};
+
+export default RowContainerComp;

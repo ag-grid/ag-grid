@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState, forwardRef, useImperativeHandle, RefForwardingComponent } from 'react';
+
 import {
     Context, TabGuardCtrl, ITabGuard, GridCtrl
 } from '@ag-grid-community/core';
@@ -69,4 +70,6 @@ const TabGuardCompRef: RefForwardingComponent<TabGuardCompCallback, TabGuardProp
     )
 };
 
-export const TabGuardComp = forwardRef(TabGuardCompRef);
+const TabGuardComp = forwardRef(TabGuardCompRef);
+
+export default TabGuardComp;

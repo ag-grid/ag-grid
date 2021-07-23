@@ -1,11 +1,28 @@
 import { CellCtrl, Component, Context, ICellComp, ICellEditor, ICellRendererComp, UserCompDetails, _ } from '@ag-grid-community/core';
 import React, { MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
 import { CssClasses } from '../utils';
-import { JsEditorComp } from './jsEditorComp';
-import { PopupEditorComp } from './popupEditorComp';
-import { showJsCellRenderer as showJsRenderer } from './showJsRenderer';
+import JsEditorComp from './jsEditorComp';
+import PopupEditorComp from './popupEditorComp';
+import useJsCellRenderer from './showJsRenderer';
 
 export enum CellCompState { ShowValue, EditValue }
+
+const checkCellEditorDeprecations = (popup: boolean, cellEditor: ICellEditor, cellCtrl: CellCtrl) => {
+
+    const col = cellCtrl.getColumn();
+
+    // cellEditor is written to be a popup editor, however colDef.cellEditorPopup is not set
+    if (!popup && cellEditor.isPopup && cellEditor.isPopup()) {
+        const msg = `AG Grid: Found an issue in column ${col.getColId()}. If using ReactUI, specify an editor is a popup using colDef.cellEditorPopup=true`;
+        _.doOnce(() => console.warn(msg), 'jsEditorComp-isPopup-' + cellCtrl.getColumn().getColId());
+    }
+
+    // cellEditor is a popup and is trying to position itself the deprecated way
+    if (popup && cellEditor.getPopupPosition && cellEditor.getPopupPosition()!=null) {
+        const msg = `AG Grid: AG Grid: Found an issue in column ${col.getColId()}. If using ReactUI, specify an editor popup position using colDef.cellEditorPopupPosition=[value]`;
+        _.doOnce(() => console.warn(msg), 'jsEditorComp-getPopupPosition-' + cellCtrl.getColumn().getColId());
+    }
+}
 
 const jsxEditValue = (
         editDetails: EditDetails, 
@@ -101,7 +118,7 @@ export interface EditDetails {
     popupPosition?: string;
 }
 
-export const CellComp = (props: {
+const CellComp = (props: {
     cellCtrl: CellCtrl,
     context: Context,
     printLayout: boolean, 
@@ -159,7 +176,7 @@ export const CellComp = (props: {
         []
     );
 
-    showJsRenderer(renderDetails, showTools, toolsValueSpan, context, jsCellRendererRef, eGui);
+    useJsCellRenderer(renderDetails, showTools, toolsValueSpan, context, jsCellRendererRef, eGui);
 
     // tool widgets effect
     useEffect(() => {
@@ -289,20 +306,4 @@ export const CellComp = (props: {
     );
 }
 
-function checkCellEditorDeprecations(popup: boolean, cellEditor: ICellEditor, cellCtrl: CellCtrl) {
-
-    const col = cellCtrl.getColumn();
-    const colDef = col.getColDef();
-
-    // cellEditor is written to be a popup editor, however colDef.cellEditorPopup is not set
-    if (!popup && cellEditor.isPopup && cellEditor.isPopup()) {
-        const msg = `AG Grid: Found an issue in column ${col.getColId()}. If using ReactUI, specify an editor is a popup using colDef.cellEditorPopup=true`;
-        _.doOnce( ()=> console.warn(msg), 'jsEditorComp-isPopup-' + cellCtrl.getColumn().getColId());
-    }
-
-    // cellEditor is a popup and is trying to position itself the deprecated way
-    if (popup && cellEditor.getPopupPosition && cellEditor.getPopupPosition()!=null) {
-        const msg = `AG Grid: AG Grid: Found an issue in column ${col.getColId()}. If using ReactUI, specify an editor popup position using colDef.cellEditorPopupPosition=[value]`;
-        _.doOnce( ()=> console.warn(msg), 'jsEditorComp-getPopupPosition-' + cellCtrl.getColumn().getColId());
-    }
-}
+export default CellComp;

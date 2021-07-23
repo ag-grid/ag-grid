@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { EditDetails } from './cellComp';
 
-export const PopupEditorComp = (props: {
+const PopupEditorComp = (props: {
             editDetails: EditDetails, 
             cellCtrl: CellCtrl, 
             eParentCell: HTMLElement,
@@ -54,7 +54,7 @@ export const PopupEditorComp = (props: {
             if (hideEditorPopup!=null) {
                 hideEditorPopup();
             }
-            context.destroyBean(wrapper);    
+            context.destroyBean(wrapper);
         };
 
     }, []);
@@ -72,3 +72,5 @@ export const PopupEditorComp = (props: {
         </>
     );
 };
+
+export default PopupEditorComp;

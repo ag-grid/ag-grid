@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Context, AgPopup, PopupService, Events, EventService } from "ag-grid-community";
 
-export const PopupParent = (props: {context: Context}) => {
+const PopupParent = (props: {context: Context}) => {
 
     const { context } = props;
-
     const [popupList, setPopupList] = useState<AgPopup[]>([]);
 
     useEffect( () => {
@@ -30,3 +29,5 @@ export const PopupParent = (props: {context: Context}) => {
         </>
     );
 };
+
+export default PopupParent;
