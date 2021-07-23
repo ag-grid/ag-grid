@@ -5,8 +5,8 @@ import { CellRangeParams } from "./IRangeService";
 import { IAggFunc } from "../entities/colDef";
 
 export interface GetChartImageDataUrlParams {
+    chartId: string;
     fileFormat?: string;
-    chartId?: string;
 }
 
 export type ChartModelType = 'range' | 'pivot';
