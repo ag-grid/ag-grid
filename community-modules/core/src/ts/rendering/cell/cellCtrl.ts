@@ -80,7 +80,7 @@ export class CellCtrl extends BeanStub {
 
     public static DOM_DATA_KEY_CELL_CTRL = 'cellCtrl';
 
-    private instanceId = instanceIdSequence++;
+    private instanceId: string;
 
     private eGui: HTMLElement;
     private cellComp: ICellComp;
@@ -128,6 +128,9 @@ export class CellCtrl extends BeanStub {
         this.rowNode = rowNode;
         this.beans = beans;
         this.rowCtrl = rowCtrl;
+
+        // unique id to this instance, including the column ID to help with debugging in React as it's used in 'key'
+        this.instanceId = column.getId() + '-' + instanceIdSequence++;
 
         this.createCellPosition();
         this.addFeatures();
@@ -209,7 +212,7 @@ export class CellCtrl extends BeanStub {
         }
     }
 
-    public getInstanceId(): number {
+    public getInstanceId(): string {
         return this.instanceId;
     }
 

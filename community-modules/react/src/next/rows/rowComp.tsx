@@ -6,7 +6,7 @@ import { CssClasses } from '../utils';
 
 interface CellCtrls {
     list: CellCtrl[],
-    instanceIdMap: Map<number, CellCtrl>
+    instanceIdMap: Map<string, CellCtrl>
 }
 
 const maintainOrderOnColumns = (prev: CellCtrls, next: CellCtrl[], domOrder: boolean): CellCtrls => {
@@ -21,8 +21,8 @@ const maintainOrderOnColumns = (prev: CellCtrls, next: CellCtrl[], domOrder: boo
     // of the elements in the dom, as this would break transition styles
     const oldCellCtrls: CellCtrl[] = [];
     const newCellCtrls: CellCtrl[] = [];
-    const newInstanceIdMap: Map<number, CellCtrl> = new Map();
-    const tempMap: Map<number, CellCtrl> = new Map();
+    const newInstanceIdMap: Map<string, CellCtrl> = new Map();
+    const tempMap: Map<string, CellCtrl> = new Map();
 
     next.forEach(c => tempMap.set(c.getInstanceId(), c));
 

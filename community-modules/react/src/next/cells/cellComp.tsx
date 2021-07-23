@@ -72,7 +72,7 @@ const jsxEditValue = (
 
 const jsxShowValue = (
     showDetails: RenderDetails,
-    parentId: number,
+    parentId: string,
     cellRendererRef: MutableRefObject<any>,
     showTools: boolean,
     unSelectable: 'on' | undefined,

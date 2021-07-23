@@ -102,7 +102,7 @@ export class RowCtrl extends BeanStub {
 
     public static DOM_DATA_KEY_RENDERED_ROW = 'renderedRow';
 
-    private instanceId = instanceIdSequence++;
+    private instanceId: string;
 
     private readonly rowNode: RowNode;
 
@@ -172,6 +172,8 @@ export class RowCtrl extends BeanStub {
         this.useAnimationFrameForCreate = useAnimationFrameForCreate;
         this.printLayout = printLayout;
 
+        this.instanceId = rowNode.id + '-' + instanceIdSequence++;
+
         this.setAnimateFlags(animateIn);
 
         this.rowFocused = this.beans.focusService.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned);
@@ -189,7 +191,7 @@ export class RowCtrl extends BeanStub {
         return this.beans;
     }
 
-    public getInstanceId(): number {
+    public getInstanceId(): string {
         return this.instanceId;
     }
 
