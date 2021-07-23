@@ -51,16 +51,6 @@ export type DefinitionObject =
     | ToolPanelDef
     | StatusPanelDef;
 
-/**
- * B the business interface (ie IHeader)
- * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
- */
-export interface ComponentClassDef {
-    component: any; // not typing, as can be component from any framework
-    componentFromFramework: boolean; // true if component came from framework eg React or Angular
-    paramsFromSelector: any; // Params the selector function provided, if any
-}
-
 export interface UserCompDetails {
     componentClass: any;
     componentFromFramework: boolean;
@@ -177,7 +167,7 @@ export class UserComponentFactory extends BeanStub {
 
     private getCompDetails(defObject: DefinitionObject, propName: string, defaultName: string | null | undefined, params: any, mandatory = false): UserCompDetails | undefined {
         const compClassDef = this.lookupComponent(defObject, propName, params, defaultName);
-        if (!compClassDef || !compClassDef.component) {
+        if (!compClassDef || !compClassDef.componentClass) {
             if (mandatory) {
                 this.logComponentMissing(defObject, propName);
             }
@@ -185,13 +175,9 @@ export class UserComponentFactory extends BeanStub {
         }
 
         const paramsMerged = this.mergeParamsWithApplicationProvidedParams(
-            defObject, propName, params, compClassDef.paramsFromSelector);
+            defObject, propName, params, compClassDef.params);
 
-        return {
-            componentClass: compClassDef.component,
-            componentFromFramework: compClassDef.componentFromFramework,
-            params: paramsMerged
-        };
+        return {...compClassDef, params: paramsMerged};
     }
 
     /**
@@ -279,7 +265,7 @@ export class UserComponentFactory extends BeanStub {
     }
 
     public lookupComponent(defObject: DefinitionObject, propertyName: string,
-                            params: any = null, defaultComponentName?: string | null): ComponentClassDef | null {
+                            params: any = null, defaultComponentName?: string | null): UserCompDetails | null {
 
         let paramsFromSelector: any;
         let comp: any;
@@ -340,8 +326,8 @@ export class UserComponentFactory extends BeanStub {
 
         return {
             componentFromFramework: comp == null,
-            component: comp ? comp : frameworkComp,
-            paramsFromSelector: paramsFromSelector
+            componentClass: comp ? comp : frameworkComp,
+            params: paramsFromSelector
         };
     }
 
