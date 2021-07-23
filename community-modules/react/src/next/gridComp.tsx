@@ -15,9 +15,8 @@ interface GridCompProps {
     context: Context;
 }
 
-const GridComp = ({ context: _context }: GridCompProps) => {
+const GridComp = ({ context }: GridCompProps) => {
 
-    const context = useMemo(() => _context, [_context]);
     const [rtlClass, setRtlClass] = useState<string>('');
     const [keyboardFocusClass, setKeyboardFocusClass] = useState<string>('');
     const [layoutClass, setLayoutClass] = useState<string>('');
@@ -44,7 +43,7 @@ const GridComp = ({ context: _context }: GridCompProps) => {
             context.destroyBean(currentController);
             gridCtrlRef.current = null;
         }
-    }, [context]);
+    }, []);
 
     // initialise the UI
     useEffect(() => {
@@ -156,7 +155,7 @@ const GridComp = ({ context: _context }: GridCompProps) => {
                 }
             });
         }
-    }, [context, tabGuardReady])
+    }, [tabGuardReady])
 
     const rootWrapperClasses = classesList('ag-root-wrapper', rtlClass, keyboardFocusClass, layoutClass);
     const rootWrapperBodyClasses = classesList('ag-root-wrapper-body', 'ag-focus-managed', layoutClass);
