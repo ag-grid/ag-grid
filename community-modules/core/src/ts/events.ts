@@ -141,7 +141,6 @@ export interface RowDragMoveEvent extends RowDragEvent { }
 
 export interface RowDragLeaveEvent extends RowDragEvent { }
 
-export interface PopupListChangedEvent extends AgGridEvent { }
 export interface PasteStartEvent extends AgGridEvent {
     source: string;
 }

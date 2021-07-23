@@ -9,6 +9,7 @@ import {
 import { GridBodyComp } from './gridBodyComp';
 import { classesList } from './utils';
 import { TabGuardComp, TabGuardCompCallback } from './tabGuardComp';
+import { reactCommentEffect } from './reactComment';
 
 export const GridComp = (props: { context: Context }) => {
 
@@ -26,6 +27,8 @@ export const GridComp = (props: { context: Context }) => {
     const focusInnerElementRef = useRef<((fromBottom?: boolean) => void)>(() => undefined);
 
     const onTabKeyDown = useCallback(() => undefined, []);
+
+    reactCommentEffect(' AG Grid ', eRootWrapperRef);
 
     // create shared controller.
     useEffect(() => {
