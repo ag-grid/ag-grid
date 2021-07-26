@@ -228,7 +228,8 @@ const columnSeriesDefaults: any = {
     lineDashOffset: 0,
     shadow: undefined,
     highlightStyle: {
-        fill: 'yellow'
+        fill: 'yellow',
+        dimOpacity: 1
     }
 };
 
@@ -449,7 +450,8 @@ const mappings: any = {
                         lineDash: undefined,
                         lineDashOffset: 0,
                         highlightStyle: {
-                            fill: 'yellow'
+                            fill: 'yellow',
+                            dimOpacity: 1
                         }
                     }
                 },
@@ -495,7 +497,8 @@ const mappings: any = {
                         fillOpacity: 1,
                         strokeOpacity: 1,
                         highlightStyle: {
-                            fill: 'yellow'
+                            fill: 'yellow',
+                            dimOpacity: 1
                         }
                     }
                 },
@@ -540,7 +543,8 @@ const mappings: any = {
                         lineDashOffset: 0,
                         shadow: undefined,
                         highlightStyle: {
-                            fill: 'yellow'
+                            fill: 'yellow',
+                            dimOpacity: 1
                         }
                     }
                 },
@@ -590,7 +594,8 @@ const mappings: any = {
                         bins: undefined,
                         aggregation: 'sum',
                         highlightStyle: {
-                            fill: 'yellow'
+                            fill: 'yellow',
+                            dimOpacity: 1
                         }
                     }
                 },
@@ -701,7 +706,11 @@ const mappings: any = {
                         strokeWidth: 1,
                         lineDash: undefined,
                         lineDashOffset: 0,
-                        shadow: undefined
+                        shadow: undefined,
+                        highlightStyle: {
+                            fill: 'yellow',
+                            dimOpacity: 1
+                        }
                     }
                 },
                 ...tooltipMapping,

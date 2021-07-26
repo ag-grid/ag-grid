@@ -48,7 +48,7 @@ export interface PieTooltipRendererParams extends PolarTooltipRendererParams {
     readonly labelName?: string;
 }
 
-interface PieHighlightStyle extends HighlightStyle {
+class PieHighlightStyle extends HighlightStyle {
     centerOffset?: number;
 }
 
@@ -149,10 +149,6 @@ export class PieSeries extends PolarSeries {
     readonly label = new PieSeriesLabel();
     readonly callout = new PieSeriesCallout();
 
-    /**
-     * @deprecated Use {@link tooltip.renderer} instead.
-     */
-    tooltipRenderer?: (params: PieTooltipRendererParams) => string | TooltipRendererResult;
     tooltip: PieSeriesTooltip = new PieSeriesTooltip();
 
     constructor() {
@@ -243,7 +239,7 @@ export class PieSeries extends PolarSeries {
 
     @reactive('layoutChange') shadow?: DropShadow;
 
-    highlightStyle: PieHighlightStyle = { fill: 'yellow' };
+    readonly highlightStyle = new PieHighlightStyle();
 
     onHighlightChange() {
         this.updateNodes();
@@ -539,7 +535,7 @@ export class PieSeries extends PolarSeries {
             labelName,
         } = this;
 
-        const { renderer: tooltipRenderer = this.tooltipRenderer } = tooltip;
+        const { renderer: tooltipRenderer } = tooltip;
         const color = fills[nodeDatum.index % fills.length];
         const datum = nodeDatum.seriesDatum;
         const label = labelKey ? `${datum[labelKey]}: ` : '';

@@ -88,10 +88,6 @@ export class LineSeries extends CartesianSeries {
     @reactive('update') strokeWidth: number = 2;
     @reactive('update') strokeOpacity: number = 1;
 
-    /**
-     * @deprecated Use {@link tooltip.renderer} instead.
-     */
-    tooltipRenderer?: (params: LineTooltipRendererParams) => string | TooltipRendererResult;
     tooltip: LineSeriesTooltip = new LineSeriesTooltip();
 
     constructor() {
@@ -204,8 +200,6 @@ export class LineSeries extends CartesianSeries {
         }
         return this.yDomain;
     }
-
-    highlightStyle: HighlightStyle = { fill: 'yellow' };
 
     onHighlightChange() {
         this.updateNodes();
@@ -441,7 +435,7 @@ export class LineSeries extends CartesianSeries {
 
         const { xName, yName, stroke: color, tooltip } = this;
         const {
-            renderer: tooltipRenderer = this.tooltipRenderer,
+            renderer: tooltipRenderer,
             format: tooltipFormat
         } = tooltip;
         const datum = nodeDatum.seriesDatum;

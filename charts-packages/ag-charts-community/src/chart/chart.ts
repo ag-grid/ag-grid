@@ -225,8 +225,8 @@ export class ChartTooltip extends Observable {
             }
         }
 
-        el.style.left = `${left}px`;
-        el.style.top = `${top}px`;
+        el.style.left = `${Math.round(left)}px`;
+        el.style.top = `${Math.round(top)}px`;
 
         if (this.delay > 0 && !instantly) {
             this.toggle(false);
@@ -378,22 +378,6 @@ export abstract class Chart extends Observable {
     }
 
     readonly tooltip: ChartTooltip;
-
-    private _tooltipClass: string = Chart.defaultTooltipClass;
-    /**
-     * @deprecated Please use {@link tooltip.class} instead.
-     */
-    set tooltipClass(value: string) {
-        this.tooltip.class = value;
-    }
-    get tooltipClass(): string {
-        return this.tooltip.class;
-    }
-
-    /**
-     * @deprecated Please use {@link tooltip.tracking} instead.
-     */
-    tooltipTracking = true;
 
     download(fileName?: string) {
         this.scene.download(fileName);

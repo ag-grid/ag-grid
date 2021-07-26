@@ -132,10 +132,6 @@ export class BarSeries extends CartesianSeries {
      */
     private readonly seriesItemEnabled = new Map<string, boolean>();
 
-    /**
-     * @deprecated Use {@link tooltip.renderer} instead.
-     */
-    tooltipRenderer?: (params: BarTooltipRendererParams) => string | TooltipRendererResult;
     tooltip: BarSeriesTooltip = new BarSeriesTooltip();
 
     @reactive('dataChange') flipXY = false;
@@ -215,7 +211,6 @@ export class BarSeries extends CartesianSeries {
             this.scheduleData();
         }
     }
-
     get xKey(): string {
         return this._xKey;
     }
@@ -227,7 +222,6 @@ export class BarSeries extends CartesianSeries {
             this.update();
         }
     }
-
     get xName(): string {
         return this._xName;
     }
@@ -287,7 +281,6 @@ export class BarSeries extends CartesianSeries {
             this.scheduleData();
         }
     }
-
     get yKeys(): string[][] {
         return this._yKeys;
     }
@@ -321,7 +314,6 @@ export class BarSeries extends CartesianSeries {
         this._yNames = values;
         this.scheduleData();
     }
-
     get yNames(): { [key in string]: string } {
         return this._yNames;
     }
@@ -345,7 +337,6 @@ export class BarSeries extends CartesianSeries {
             this.scheduleData();
         }
     }
-
     get normalizedTo(): number | undefined {
         return this._normalizedTo;
     }
@@ -357,7 +348,6 @@ export class BarSeries extends CartesianSeries {
             this.update();
         }
     }
-
     get strokeWidth(): number {
         return this._strokeWidth;
     }
@@ -369,12 +359,9 @@ export class BarSeries extends CartesianSeries {
             this.update();
         }
     }
-
     get shadow(): DropShadow | undefined {
         return this._shadow;
     }
-
-    highlightStyle: HighlightStyle = { fill: 'yellow' };
 
     onHighlightChange() {
         this.updateRectNodes();
@@ -686,13 +673,12 @@ export class BarSeries extends CartesianSeries {
 
         const {
             fillOpacity, strokeOpacity,
-            highlightStyle: { fill, stroke },
+            highlightStyle: { fill, stroke, dimOpacity },
             shadow,
             formatter,
             xKey,
             flipXY,
-            highlightedItemId,
-            dimmedOpacity
+            highlightedItemId
         } = this;
         const { highlightedDatum } = this.chart;
 
@@ -722,7 +708,7 @@ export class BarSeries extends CartesianSeries {
             rect.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : datum.strokeWidth;
             rect.fillOpacity = fillOpacity;
             rect.strokeOpacity = strokeOpacity;
-            rect.opacity = !highlightedItemId || highlightedItemId === datum.itemId ? 1 : dimmedOpacity;
+            rect.opacity = !highlightedItemId || highlightedItemId === datum.itemId ? 1 : dimOpacity;
             rect.lineDash = this.lineDash;
             rect.lineDashOffset = this.lineDashOffset;
             rect.fillShadow = shadow;
@@ -745,7 +731,8 @@ export class BarSeries extends CartesianSeries {
     }
 
     private updateLabelNodes(): void {
-        const { highlightedItemId, dimmedOpacity } = this;
+        const { highlightedItemId } = this;
+        const { dimOpacity } = this.highlightStyle;
         const labelEnabled = this.label.enabled;
 
         this.labelSelection.each((text, datum) => {
@@ -762,7 +749,7 @@ export class BarSeries extends CartesianSeries {
                 text.x = label.x;
                 text.y = label.y;
                 text.fill = label.fill;
-                text.opacity = !highlightedItemId || highlightedItemId === datum.itemId ? 1 : dimmedOpacity;
+                text.opacity = !highlightedItemId || highlightedItemId === datum.itemId ? 1 : dimOpacity;
                 text.visible = true;
             } else {
                 text.visible = false;
@@ -795,7 +782,7 @@ export class BarSeries extends CartesianSeries {
         }
 
         const { xName, yNames, fills, tooltip } = this;
-        const { renderer: tooltipRenderer = this.tooltipRenderer } = tooltip; // TODO: remove deprecated tooltipRenderer
+        const { renderer: tooltipRenderer } = tooltip;
         const datum = nodeDatum.seriesDatum;
         const yName = yNames[yKey];
         const color = fills[fillIndex % fills.length];

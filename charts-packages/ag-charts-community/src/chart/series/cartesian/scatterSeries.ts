@@ -125,12 +125,9 @@ export class ScatterSeries extends CartesianSeries {
             this.scheduleLayout();
         }
     }
-
     get strokeOpacity(): number {
         return this._strokeOpacity;
     }
-
-    highlightStyle: HighlightStyle = { fill: 'yellow' };
 
     onHighlightChange() {
         this.updateMarkerNodes();
@@ -147,10 +144,6 @@ export class ScatterSeries extends CartesianSeries {
     sizeName?: string = 'Size';
     labelName?: string = 'Label';
 
-    /**
-     * @deprecated Use {@link tooltip.renderer} instead.
-     */
-    tooltipRenderer?: (params: ScatterTooltipRendererParams) => string | TooltipRendererResult;
     readonly tooltip: ScatterSeriesTooltip = new ScatterSeriesTooltip();
 
     constructor() {
@@ -407,7 +400,7 @@ export class ScatterSeries extends CartesianSeries {
             labelName
         } = this;
 
-        const { renderer: tooltipRenderer = this.tooltipRenderer } = tooltip;
+        const { renderer: tooltipRenderer } = tooltip;
         const color = this.marker.fill || this.fill || 'gray';
         const title = this.title || yName;
         const datum = nodeDatum.seriesDatum;
@@ -460,7 +453,7 @@ export class ScatterSeries extends CartesianSeries {
             title, visible, marker, fill, stroke, fillOpacity, strokeOpacity
         } = this;
 
-        if (data && data.length && xKey && yKey) {
+    if (data && data.length && xKey && yKey) {
             legendData.push({
                 id,
                 itemId: undefined,

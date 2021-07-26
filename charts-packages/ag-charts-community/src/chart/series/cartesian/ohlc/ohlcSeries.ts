@@ -237,13 +237,6 @@ export class OHLCSeries extends CartesianSeries {
         }
     }
 
-    highlightStyle: {
-        fill?: string,
-        stroke?: string
-    } = {
-            fill: 'yellow'
-        };
-
     protected highlightedDatum?: GroupSelectionDatum;
 
     update(): void {
