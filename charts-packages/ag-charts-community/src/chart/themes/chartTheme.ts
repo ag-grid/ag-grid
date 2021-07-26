@@ -97,7 +97,11 @@ export class ChartTheme {
             },
             visible: true,
             showInLegend: true,
-            cursor: 'default'
+            cursor: 'default',
+            highlightStyle: {
+                fill: 'yellow',
+                dimOpacity: 1
+            }
         };
     }
 
@@ -117,9 +121,6 @@ export class ChartTheme {
             lineDash: undefined,
             lineDashOffset: 0,
             tooltipRenderer: undefined,
-            highlightStyle: {
-                fill: 'yellow'
-            },
             label: {
                 enabled: false,
                 fontStyle: undefined,
@@ -269,9 +270,6 @@ export class ChartTheme {
                 lineDash: undefined,
                 lineDashOffset: 0,
                 tooltipRenderer: undefined,
-                highlightStyle: {
-                    fill: 'yellow'
-                },
                 marker: {
                     ...ChartTheme.getCartesianSeriesMarkerDefaults()
                 },
@@ -300,9 +298,6 @@ export class ChartTheme {
                 fillOpacity: 1,
                 strokeOpacity: 1,
                 tooltipRenderer: undefined,
-                highlightStyle: {
-                    fill: 'yellow'
-                },
                 marker: {
                     ...ChartTheme.getCartesianSeriesMarkerDefaults()
                 },
@@ -336,9 +331,6 @@ export class ChartTheme {
                     blur: 5
                 },
                 tooltipRenderer: undefined,
-                highlightStyle: {
-                    fill: 'yellow'
-                },
                 marker: {
                     ...ChartTheme.getCartesianSeriesMarkerDefaults(),
                     enabled: false
@@ -370,9 +362,6 @@ export class ChartTheme {
                 bins: undefined,
                 aggregation: 'sum',
                 tooltipRenderer: undefined,
-                highlightStyle: {
-                    fill: 'yellow'
-                },
                 label: {
                     enabled: false,
                     fontStyle: undefined,
@@ -462,9 +451,6 @@ export class ChartTheme {
                     rotation: 0,
                     outerRadiusOffset: 0,
                     innerRadiusOffset: 0,
-                    highlightStyle: {
-                        fill: 'yellow'
-                    },
                     shadow: {
                         enabled: false,
                         color: 'rgba(0, 0, 0, 0.5)',
