@@ -3027,7 +3027,7 @@ export class ColumnModel extends BeanStub {
                     }
                     searchForColDefs(colGroupDef.children);
                 } else {
-                    const colDef = abstractColDef as ColGroupDef;
+                    const colDef = abstractColDef as ColDef;
                     if (columnCallback) {
                         columnCallback(colDef);
                     }
