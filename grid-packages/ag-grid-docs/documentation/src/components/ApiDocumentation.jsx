@@ -21,6 +21,7 @@ const types = {
     ColumnApi: '/column-api/',
     CreatePivotChartParams: '/integrated-charts-api/#pivot-charts',
     CreateRangeChartParams: '/integrated-charts-api/#range-charts',
+    GetChartImageDataUrlParams: '/integrated-charts-api/#downloading-chart-image',
     CsvExportParams: '/csv-export/#csvexportparams',
     Document: 'https://developer.mozilla.org/en-US/docs/Web/API/Document',
     ExcelAlignment: '/excel-export-api/#excelalignment',

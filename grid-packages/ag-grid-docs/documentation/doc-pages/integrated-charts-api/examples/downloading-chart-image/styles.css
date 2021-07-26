@@ -1,0 +1,19 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#myGrid {
+    flex: 1;
+    height: auto !important;
+}
+
+.my-chart {
+    flex: 1;
+    border: 1px solid lightgrey;
+}
+
+#buttons {
+    padding-bottom: 10px;
+}

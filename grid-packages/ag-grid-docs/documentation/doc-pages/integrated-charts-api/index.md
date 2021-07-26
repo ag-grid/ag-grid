@@ -87,16 +87,8 @@ interface ChartModel {
     suppressChartRanges?: boolean;
     aggFunc?: string | IAggFunc;
     unlinkChart?: boolean;
-    chart: any;
-    getChartImageDataURL: (params: GetChartImageDataUrlParams) => string;
-}
-
-interface GetChartImageDataUrlParams {
-    type?: string;
 }
 ```
-
-Note from the snippet above it is also possible to retrieve a base64 encoded image rendered from the chart in the model using `getChartImageDataURL`.
 
 These models can then be supplied to the following grid api method to restore the charts:
 
@@ -110,18 +102,36 @@ Note that an optional `chartContainer` can be specified when restoring a chart.
 
 The example below demonstrates how you can save and then later restore a chart. You can make changes to the chart type, theme, data and formatting options and note how the restored chart looks the same as the chart that was saved.
 
-It also shows how you can retrieve images rendered from the chart in multiple formats.
-
 
 - Create a range chart from the grid, which will be shown in a container below the grid.
 - Change the chart type, theme, data and/or formatting in order to see the changes restored later.
 - Click "Save chart" to persist a model of the visible chart into a local variable. An alert will be shown to confirm that this has happened.
 - Click "Clear chart" to destroy the existing chart.
 - Click "Restore chart" to restore the previously saved chart.
+
+
+<grid-example title='Saving and Restoring Charts' name='saving-and-restoring-charts' type='generated' options='{ " exampleHeight": 800, "enterprise": true }'></grid-example>
+
+
+## Downloading Chart Image
+
+It is possible to retrieve a base64 encoded image rendered from the chart using the `getChartImageDataURL()` API. This API returns a string containing the requested data URL which is ideal for saving to a database and downloading the chart image.
+
+``` ts
+function getChartImageDataURL(params: GetChartImageDataUrlParams): string | undefined;
+```
+
+<api-documentation source='resources/chart-api.json' section='GetChartImageDataUrlParams' config='{ "showSnippets": true }'></api-documentation>
+
+The example below demonstrates how you can retrieve images rendered from the chart in multiple formats.
+
+- Create a range chart from the grid, which will be shown in a container below the grid.
+- Click "Download chart PNG" to download a PNG format image.
+- Click "Download chart JPG" to download a JPG format image.
 - Click "Open PNG" to open a PNG format image of the chart in a new window.
 - Click "Open JPG" to open a JPG format image of the chart in a new window.
 
-<grid-example title='Saving and Restoring Charts' name='saving-and-restoring-charts' type='generated' options='{ " exampleHeight": 800, "enterprise": true }'></grid-example>
+<grid-example title='Downloading Chart Image' name='downloading-chart-image' type='generated' options='{ " exampleHeight": 800, "enterprise": true }'></grid-example>
 
 ## Next Up
 

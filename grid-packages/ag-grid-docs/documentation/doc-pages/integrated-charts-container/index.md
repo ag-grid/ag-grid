@@ -16,6 +16,8 @@ To provide an alternative container for popup windows use the grid callback `cre
 function createChartContainer(chartRef: ChartRef): void;
 
 interface ChartRef {
+    chartId: string;
+    chart: any;
     chartElement: HTMLElement;
     destroyChart: () => void;
 }
@@ -23,6 +25,8 @@ interface ChartRef {
 
 The callback is called each time the user elects to create a chart via the grid UI. The callback is provided with a `ChartRef` containing the following:
 
+- `chartId`: The id of the created chart.
+- `chart`: The chart instance that is produced by AG Charts which can be used to interact with the chart directly.
 - `chartElement`: The chart DOM element, which the application is responsible for placing into the DOM.
 - `destroyChart`: The application is responsible for calling this when the chart is no longer needed.
 
