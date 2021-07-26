@@ -65,7 +65,18 @@ export class VueComponentFactory {
         // with vue 3 we need to provide a container to mount into (not necessary in vue 2), so create a wrapper div here
         const container = document.createElement('div');
         const mountedComponent = createApp(extendedComponentDefinition);
-        (parent as any).plugins.forEach((plugin: any) => mountedComponent.use(plugin));
+        // modify by yuanjinyong 2021-07-26 begin
+        // (parent as any).plugins.forEach((plugin: any) => mountedComponent.use(plugin));
+        // use the same appContext with ag-grid-vue component, then we can use this.$http, this.$store and globally registered components
+        mountedComponent._context.config = parent.$.appContext.config
+        mountedComponent._context.mixins = parent.$.appContext.mixins
+        mountedComponent._context.components = parent.$.appContext.components
+        mountedComponent._context.directives = parent.$.appContext.directives
+        mountedComponent._context.provides = parent.$.appContext.provides
+        mountedComponent._context.optionsCache = parent.$.appContext.optionsCache
+        mountedComponent._context.propsCache = parent.$.appContext.propsCache
+        mountedComponent._context.emitsCache = parent.$.appContext.emitsCache
+        // modify by yuanjinyong 2021-07-26 end
         mountedComponent.mount(container);
 
         // note that the component creation is synchronous so that componentInstance is set by this point
@@ -76,22 +87,39 @@ export class VueComponentFactory {
                                              component: any,
                                              maxDepth = 10,
                                              suppressError = false) {
-        let componentInstance: any = null;
+        // modify by yuanjinyong 2021-07-26 begin
+        // let componentInstance: any = null;
+        // 
+        // let currentParent: Vue<any> = parent.$parent;
+        // let depth = 0;
+        // while (!componentInstance &&
+        // currentParent &&
+        // currentParent.$options &&
+        // (++depth < maxDepth)) {
+        //     componentInstance = (currentParent as any).$options.components![component as any];
+        //     currentParent = currentParent.$parent;
+        // }
+        // 
+        // if (!componentInstance && !suppressError) {
+        //     console.error(`Could not find component with name of ${component}. Is it in Vue.components?`);
+        //     return null;
+        // }
+        // return componentInstance;
 
-        let currentParent: Vue<any> = parent.$parent;
-        let depth = 0;
-        while (!componentInstance &&
-        currentParent &&
-        currentParent.$options &&
-        (++depth < maxDepth)) {
-            componentInstance = (currentParent as any).$options.components![component as any];
-            currentParent = currentParent.$parent;
+        // first search in locally registered components of ag-grid-vue
+        let components = parent.$parent?.$options.components;
+        if (components && components[component]) {
+            return components[component];
         }
 
-        if (!componentInstance && !suppressError) {
-            console.error(`Could not find component with name of ${component}. Is it in Vue.components?`);
-            return null;
+        // then search in globally registered components of app
+        components = parent.$.appContext.components
+        if (components && components[component]) {
+            return components[component];
         }
-        return componentInstance;
+
+        console.error("Could not find component with name of " + component + ". Is it in locally registered components or globally registered components?");
+        return null;
+        // modify by yuanjinyong 2021-07-26 end
     }
 }
