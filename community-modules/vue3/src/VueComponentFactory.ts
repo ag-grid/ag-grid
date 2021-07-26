@@ -66,7 +66,6 @@ export class VueComponentFactory {
         const container = document.createElement('div');
         const mountedComponent = createApp(extendedComponentDefinition);
         // modify by yuanjinyong 2021-07-26 begin
-        // (parent as any).plugins.forEach((plugin: any) => mountedComponent.use(plugin));
         // use the same appContext with ag-grid-vue component, then we can use this.$http, this.$store and globally registered components
         mountedComponent._context.config = parent.$.appContext.config
         mountedComponent._context.mixins = parent.$.appContext.mixins
@@ -88,24 +87,6 @@ export class VueComponentFactory {
                                              maxDepth = 10,
                                              suppressError = false) {
         // modify by yuanjinyong 2021-07-26 begin
-        // let componentInstance: any = null;
-        // 
-        // let currentParent: Vue<any> = parent.$parent;
-        // let depth = 0;
-        // while (!componentInstance &&
-        // currentParent &&
-        // currentParent.$options &&
-        // (++depth < maxDepth)) {
-        //     componentInstance = (currentParent as any).$options.components![component as any];
-        //     currentParent = currentParent.$parent;
-        // }
-        // 
-        // if (!componentInstance && !suppressError) {
-        //     console.error(`Could not find component with name of ${component}. Is it in Vue.components?`);
-        //     return null;
-        // }
-        // return componentInstance;
-
         // first search in locally registered components of ag-grid-vue
         let components = parent.$parent?.$options.components;
         if (components && components[component]) {
@@ -118,7 +99,9 @@ export class VueComponentFactory {
             return components[component];
         }
 
-        console.error("Could not find component with name of " + component + ". Is it in locally registered components or globally registered components?");
+        if (!suppressError) {
+            console.error("Could not find component with name of " + component + ". Is it in locally registered components or globally registered components?");
+        }
         return null;
         // modify by yuanjinyong 2021-07-26 end
     }
