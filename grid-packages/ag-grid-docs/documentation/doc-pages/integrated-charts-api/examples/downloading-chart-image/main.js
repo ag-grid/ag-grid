@@ -41,10 +41,9 @@ function downloadChartImage(fileFormat) {
         a.href = imageDataURL;
         a.download = "image";
         a.style.display = 'none';
-        // Uncomment for Firefox, required for the `click` to work.
-        // document.body.appendChild(a);
+        document.body.appendChild(a);
         a.click();
-        // document.body.removeChild(a);
+        document.body.removeChild(a);
     }
 }
 

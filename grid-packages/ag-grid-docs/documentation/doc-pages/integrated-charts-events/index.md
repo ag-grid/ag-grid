@@ -115,7 +115,7 @@ Charts in the grid are produced by the [AG Charts](/charts-overview/) library, w
 directly into the grid for your convenience. In some advanced use cases, you may wish to access the chart
 instance that is produced by AG Charts, in order to interact with the chart directly.
 
-The chart instance can be found inside the `chartRef`, which can be obtained using the `getChartRef()` API.
+The chart instance can be obtained from the `chartRef` using the `getChartRef()` API.
 
 ```ts
 function getChartRef(chartId: string): ChartRef | undefined;
@@ -128,7 +128,7 @@ function onChartCreated(event) {
     const chart = chartRef.chart;
 }
 ```
-Note in the snippet above, the chartId is obtained from the [`ChartCreated`](#chartcreated) event which is supplied to the onChartCreated callback. The chartId is provided in all chart events.
+Note in the snippet above, the `chartId` is obtained from the [`ChartCreated`](#chartcreated) event which is supplied to the `onChartCreated` callback. The `chartId` is provided in all chart events.
 
 The example below shows how the chart instance can be used, creating a subtitle and updating
 it dynamically as you change the range selection.

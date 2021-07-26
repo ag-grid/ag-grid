@@ -1259,7 +1259,7 @@
             }
         },
         "getChartRef()": {
-            "description": "Returns the chartRef given a chartId.",
+            "description": "Returns the `ChartRef` using the supplied `chartId`.",
             "type": {
                 "arguments": {
                     "chartId": "string"
@@ -1279,7 +1279,7 @@
             }
         },
         "restoreChart()": {
-            "description": "The ChartModel can be supplied to this API to restore the chart.",
+            "description": "Restores a chart using the `ChartModel` that was previously obtained from `getChartModels()`.",
             "type": {
                 "arguments": {
                     "model": "ChartModel",
@@ -1293,7 +1293,7 @@
             }
         },      
         "getChartImageDataURL()":  {
-            "description": "Returns a string containing the requested data URL containing a representation of the chart image.",
+            "description": "Returns a string containing the requested data URL which contains a representation of the chart image.",
             "type": {
                 "arguments": {
                     "params": "GetChartImageDataUrlParams"
