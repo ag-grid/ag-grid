@@ -46,6 +46,7 @@ export class CellMouseListenerFeature extends Beans {
                 this.onCellClicked(mouseEvent);
                 break;
             case 'mousedown':
+            case 'touchstart':
                 this.onMouseDown(mouseEvent);
                 break;
             case 'dblclick':

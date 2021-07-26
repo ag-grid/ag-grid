@@ -1,5 +1,5 @@
 import { BeanStub } from "../../context/beanStub";
-import { getCtrlForEvent, getTarget, isStopPropagationForAgGrid } from "../../utils/event";
+import { getCtrlForEvent, getTarget, isStopPropagationForAgGrid, isEventSupported } from "../../utils/event";
 import { Autowired, Optional, PostConstruct } from "../../context/context";
 import { MouseEventService } from "./../mouseEventService";
 import { RowCtrl } from "../../rendering/row/rowCtrl";
@@ -66,7 +66,8 @@ export class RowContainerEventsFeature extends BeanStub {
     }
 
     private addMouseListeners(): void {
-        const eventNames = ['dblclick', 'contextmenu', 'mouseover', 'mouseout', 'click', 'mousedown'];
+        const mouseDownEvent = isEventSupported('touchstart') ? 'touchstart' : 'mousedown';
+        const eventNames = ['dblclick', 'contextmenu', 'mouseover', 'mouseout', 'click', mouseDownEvent];
 
         eventNames.forEach(eventName => {
             const listener = this.processMouseEvent.bind(this, eventName);

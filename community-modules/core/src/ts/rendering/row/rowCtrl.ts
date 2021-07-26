@@ -751,7 +751,10 @@ export class RowCtrl extends BeanStub {
         switch (eventName) {
             case 'dblclick': this.onRowDblClick(mouseEvent); break;
             case 'click': this.onRowClick(mouseEvent); break;
-            case 'mousedown': this.onRowMouseDown(mouseEvent); break;
+            case 'touchstart':
+            case 'mousedown': 
+                this.onRowMouseDown(mouseEvent); 
+                break;
         }
     }
 
