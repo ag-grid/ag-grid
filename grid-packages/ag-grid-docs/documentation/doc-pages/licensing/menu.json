@@ -965,10 +965,21 @@
                 "url": "/grouping-filtering/",
                 "enterprise": true,
                 "showInCollapsed": false
+              },{
+                "title": "Opening Groups",
+                "url": "/grouping-opening-groups/",
+                "enterprise": true,
+                "showInCollapsed": false
               },
               {
-                "title": "Other",
-                "url": "/grouping-other/",
+                "title": "Complex Objects",
+                "url": "/grouping-complex-objects/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Unbalanced Groups",
+                "url": "/grouping-unbalanced-groups/",
                 "enterprise": true,
                 "showInCollapsed": false
               }
