@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, forwardRef, useImperativeHandle, RefForwardingComponent } from 'react';
+import React, { useRef, useEffect, useState, forwardRef, useImperativeHandle, RefForwardingComponent, memo } from 'react';
 
 import {
     Context, TabGuardCtrl, ITabGuard, GridCtrl
@@ -72,4 +72,4 @@ const TabGuardCompRef: RefForwardingComponent<TabGuardCompCallback, TabGuardProp
 
 const TabGuardComp = forwardRef(TabGuardCompRef);
 
-export default TabGuardComp;
+export default memo(TabGuardComp);
