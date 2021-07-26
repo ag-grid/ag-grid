@@ -1,13 +1,20 @@
 ---
-title: "Row Grouping - Other"
+title: "Row Grouping - Complex Objects"
 enterprise: true
 ---
 
-## Grouping Complex Objects with Keys
+This section covers how to group rows when the row data contains complex objects
 
-If your rowData has complex objects that you want to group by, then the default grouping will convert each object to `"[object object]"` which will be useless to you. Instead you need to get the grid to convert each object into a meaningful string to act as the key for the group. You could add a 'toString' method to the objects - but this may not be possible if you are working with JSON data. To get around this, use `colDef.keyCreator`, which gets passed a value and should return the string key for that value.
+## Creating group keys from complex objects
 
-The example below shows grouping on the county, with country an object within each row.
+When grouping by columns that contain complex objects in the supplied row data, the values will be converted to 
+`"[object object]"` by default. This will not produce the desired grouping results. 
+
+One way to get around this is to add a `toString()` method to the complex objects, however this may not be possible if
+you are working with JSON data.
+
+A more flexible solution is to use the `colDef.keyCreator()` callback function to return a meaningful key for the 
+supplied object, as shown in the following code snippets:
 
 ```js
 // row item has complex object for country
@@ -32,5 +39,10 @@ const gridOptions = {
     ]
 }
 </snippet>
+
+Note in the snippet above that the `colDef.keyCreator()` returns the country name to be used as the group key from 
+`country` complex object supplied in the row data.
+
+The example below shows grouping on the `county` column that contains complex object values:
 
 <grid-example title='Grouping Complex Objects with Keys' name='grouping-complex-objects' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
