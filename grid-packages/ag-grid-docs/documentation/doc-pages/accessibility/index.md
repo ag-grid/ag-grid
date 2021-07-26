@@ -22,7 +22,7 @@ As meeting WCAG 2.0 level AA guidelines also meets the ADA and Section 508 stand
 
 For users that are visually impaired due to colour deficiencies, care should be taken when using colours to provide information.
 
-Using our demo page as an example, the chrome plugin [Colorblinding](https://chrome.google.com/webstore/detail/colorblinding/dgbgleaofjainknadoffbjkclicbbgaa?hl=en) shows how cells with colour indicators might appear to someone with total colour blindness (Monochromacy).
+Using our demo page as an example, the chrome plugin [Colorblindly](https://chrome.google.com/webstore/detail/colorblindly/floniaahmccleoclneebhhmnjgdfijgg/related?hl=en) shows how cells with colour indicators might appear to someone with total colour blindness (Monochromacy / Achromatopsia).
 
 <image-caption src="accessibility/resources/accessibility-colour-contrast.png" alt="High Contrast Theme" maxwidth="50rem" constrained="true"></image-caption>
 
