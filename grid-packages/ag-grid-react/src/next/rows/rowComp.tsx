@@ -1,5 +1,5 @@
 import { CellCtrl, Context, IRowComp, RowCtrl, UserCompDetails, _ } from 'ag-grid-community';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo, memo } from 'react';
 import CellComp from '../cells/cellComp';
 import { showJsComp } from '../jsComp';
 import { CssClasses } from '../utils';
@@ -108,15 +108,17 @@ const RowComp = (params: {context: Context, rowCtrl: RowCtrl, pinned: string | n
             compFactory => compFactory.createFullWidthCellRenderer(fullWidthCompDetails!, rowCtrl.getFullWidthCellRendererType()));
     }, []);
 
-    const rowStyles = {
-        height,
-        top,
-        transform
-    };
+    const rowStyles = useMemo( ()=> {
+        const res = {
+            height,
+            top,
+            transform
+        };
+        _.assign(rowStyles, userStyles);
+        return res;
+    }, [height, top, transform, userStyles]);
 
-    _.assign(rowStyles, userStyles);
-
-    const className = cssClasses.toString();
+    const className = useMemo( ()=> cssClasses.toString(), [cssClasses]);
 
     const showFullWidthFramework = fullWidthCompDetails && fullWidthCompDetails.componentFromFramework;
     const showCells = cellCtrls != null;
@@ -147,4 +149,4 @@ const RowComp = (params: {context: Context, rowCtrl: RowCtrl, pinned: string | n
     );
 };
 
-export default RowComp;
+export default memo(RowComp);

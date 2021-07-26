@@ -13,17 +13,18 @@ const RowContainerComp = (params: {context: Context, name: RowContainerName}) =>
 
     const { context, name } = params;
 
-    const cssClasses = useMemo(() => RowContainerCtrl.getRowContainerCssClasses(name), [name]);
     const pinned = useMemo(() => RowContainerCtrl.getPinned(name), [name]);
 
     const eWrapper = useRef<HTMLDivElement>(null);
     const eViewport = useRef<HTMLDivElement>(null);
     const eContainer = useRef<HTMLDivElement>(null);
 
-    const wrapperClasses = classesList(cssClasses.wrapper);
-    const viewportClasses = classesList(cssClasses.viewport);
-    const containerClasses = classesList(cssClasses.container);
+    const cssClasses = useMemo(() => RowContainerCtrl.getRowContainerCssClasses(name), [name]);
+    const wrapperClasses = useMemo( ()=> classesList(cssClasses.wrapper), []);
+    const viewportClasses = useMemo( ()=> classesList(cssClasses.viewport), []);
+    const containerClasses = useMemo( ()=> classesList(cssClasses.container), []);
 
+    // no need to useMemo for boolean types
     const template1 = name === RowContainerName.CENTER;
     const template2 = name === RowContainerName.TOP_CENTER || name === RowContainerName.BOTTOM_CENTER;
     const template3 = !template1 && !template2;
@@ -64,13 +65,13 @@ const RowContainerComp = (params: {context: Context, name: RowContainerName}) =>
 
     }, []);
 
-    const viewportStyle = {
+    const viewportStyle = useMemo( ()=> ({
         height: viewportHeight
-    };
+    }), [viewportHeight]);
 
-    const containerStyle = {
+    const containerStyle = useMemo( ()=> ({
         width: containerWidth
-    };
+    }), [containerWidth]);
 
     const buildContainer = () => (
         <div

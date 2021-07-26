@@ -1,5 +1,5 @@
 import { CellCtrl, Component, Context, ICellComp, ICellEditor, ICellRendererComp, UserCompDetails, _ } from 'ag-grid-community';
-import React, { MutableRefObject, useCallback, useEffect, useRef, useState, useMemo } from 'react';
+import React, { MutableRefObject, useCallback, useEffect, useRef, useState, useMemo, memo } from 'react';
 import { CssClasses, isComponentStateless } from '../utils';
 import JsEditorComp from './jsEditorComp';
 import PopupEditorComp from './popupEditorComp';
@@ -292,36 +292,40 @@ const CellComp = (props: {
         return !!res;
     }, [renderDetails]);
 
-    let className = cssClasses.toString();
+    const className = useMemo( ()=> {
+        let res = cssClasses.toString();
+        if (!showTools) {
+            res += ' ag-cell-value';
+        }
+        return res;
+    }, [cssClasses, showTools]);
 
-    if (!showTools) {
-        className += ' ag-cell-value';
-    }
+    const cellStyles = useMemo( ()=> {
+        const res: React.CSSProperties = {
+            left,
+            width,
+            height,
+            transition,
+            zIndex: (zIndex as any)
+        };
+        _.assign(res, userStyles);
+        return res;
+    }, [left, width, height, transition, zIndex, userStyles]);
 
-    const cellStyles: React.CSSProperties = {
-        left,
-        width,
-        height,
-        transition,
-        zIndex: (zIndex as any)
-    };
-
-    _.assign(cellStyles, userStyles);
+    const cellInstanceId = useMemo( ()=> cellCtrl.getInstanceId(), []);
 
     return (
         <div ref={ eGui } className={ className } style={ cellStyles } tabIndex={ tabIndex }
              aria-selected={ ariaSelected } aria-colindex={ ariaColIndex } role={ role }
              col-id={ colId } title={ title } unselectable={ unselectable } aria-describedby={ ariaDescribedBy }>
 
-
             { renderDetails != null && jsxShowValue(renderDetails, cellCtrl.getInstanceId(), cellRendererRef, 
                                                 showTools, unselectable, reactCellRendererStateless,
                                                 toolsRefCallback, toolsValueRefCallback) }
             { editDetails != null && jsxEditValue(editDetails, setInlineCellEditorRef, setPopupCellEditorRef, eGui.current!, cellCtrl) }
 
-
         </div>
     );
 }
 
-export default CellComp;
+export default memo(CellComp);

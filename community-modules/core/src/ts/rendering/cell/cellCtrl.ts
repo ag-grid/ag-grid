@@ -146,7 +146,7 @@ export class CellCtrl extends BeanStub {
         this.cellTooltipFeature = new CellTooltipFeature(this, this.beans);
         this.addDestroyFunc(() => this.cellTooltipFeature.destroy());
 
-        this.cellMouseListenerFeature = new CellMouseListenerFeature(this, this.beans, this.column, this.rowNode, this.scope);
+        this.cellMouseListenerFeature = new CellMouseListenerFeature(this, this.beans, this.column);
         this.addDestroyFunc(() => this.cellMouseListenerFeature.destroy());
 
         this.cellKeyboardListenerFeature = new CellKeyboardListenerFeature(this, this.beans, this.column, this.rowNode, this.scope, this.rowCtrl);
@@ -200,7 +200,6 @@ export class CellCtrl extends BeanStub {
         this.cellPositionFeature.setComp(comp);
         this.cellCustomStyleFeature.setComp(comp, scope);
         this.cellTooltipFeature.setComp(comp);
-        this.cellMouseListenerFeature.setComp(comp);
         this.cellKeyboardListenerFeature.setComp(comp, this.eGui);
 
         if (this.cellRangeFeature) { this.cellRangeFeature.setComp(comp); }

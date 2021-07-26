@@ -1,41 +1,24 @@
-import { Beans } from "../beans";
-import {
-    CellClickedEvent,
-    CellDoubleClickedEvent,
-    CellMouseOutEvent,
-    CellMouseOverEvent,
-    Events
-} from "../../events";
-import { isBrowserEdge, isBrowserIE, isIOSUserAgent } from "../../utils/browser";
-import { isEventSupported, isStopPropagationForAgGrid } from "../../utils/event";
 import { Column } from "../../entities/column";
-import { RowNode } from "../../entities/rowNode";
-import { CellCtrl, ICellComp } from "./cellCtrl";
+import { CellClickedEvent, CellDoubleClickedEvent, CellMouseOutEvent, CellMouseOverEvent, Events } from "../../events";
+import { isBrowserEdge, isBrowserIE, isIOSUserAgent } from "../../utils/browser";
 import { isElementChildOfClass, isFocusableFormField } from "../../utils/dom";
+import { isEventSupported, isStopPropagationForAgGrid } from "../../utils/event";
+import { Beans } from "../beans";
+import { CellCtrl } from "./cellCtrl";
 
 export class CellMouseListenerFeature extends Beans {
 
     private readonly cellCtrl: CellCtrl;
     private readonly beans: Beans;
     private readonly column: Column;
-    private readonly rowNode: RowNode;
-    private readonly scope: any;
-
-    private cellComp: ICellComp;
 
     private lastIPadMouseClickEvent: number;
 
-    constructor(ctrl: CellCtrl, beans: Beans, column: Column, rowNode: RowNode, scope: any) {
+    constructor(ctrl: CellCtrl, beans: Beans, column: Column) {
         super();
         this.cellCtrl = ctrl;
         this.beans = beans;
         this.column = column;
-        this.rowNode = rowNode;
-        this.scope = scope;
-    }
-
-    public setComp(comp: ICellComp): void {
-        this.cellComp = comp;
     }
 
     public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
@@ -179,15 +162,25 @@ export class CellMouseListenerFeature extends Beans {
     }
 
     private onMouseOut(mouseEvent: MouseEvent): void {
+        if (this.mouseStayingInsideCell(mouseEvent)) { return; }
         const cellMouseOutEvent: CellMouseOutEvent = this.cellCtrl.createEvent(mouseEvent, Events.EVENT_CELL_MOUSE_OUT);
         this.beans.eventService.dispatchEvent(cellMouseOutEvent);
         this.beans.columnHoverService.clearMouseOver();
     }
 
     private onMouseOver(mouseEvent: MouseEvent): void {
+        if (this.mouseStayingInsideCell(mouseEvent)) { return; }
         const cellMouseOverEvent: CellMouseOverEvent = this.cellCtrl.createEvent(mouseEvent, Events.EVENT_CELL_MOUSE_OVER);
         this.beans.eventService.dispatchEvent(cellMouseOverEvent);
         this.beans.columnHoverService.setMouseOver([this.column]);
+    }
+
+    private mouseStayingInsideCell(e: MouseEvent): boolean {
+        if (!e.target || !e.relatedTarget) { return false; }
+        const eGui = this.cellCtrl.getGui();
+        const cellContainsTarget = eGui.contains(e.target as Node);
+        const cellContainsRelatedTarget = eGui.contains(e.relatedTarget as Node);
+        return cellContainsTarget && cellContainsRelatedTarget;
     }
 
     public destroy(): void {
