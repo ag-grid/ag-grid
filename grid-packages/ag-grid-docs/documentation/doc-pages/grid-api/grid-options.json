@@ -1,0 +1,2412 @@
+{
+    "suppressBrowserResizeObserver": {
+        "description": "*****************************************************************************************************\nIf you change the properties on this interface, you must also update PropertyKeys to be consistent. *\n*****************************************************************************************************",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "rowDragManaged": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "suppressRowDrag": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "suppressMoveWhenRowDragging": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "enableMultiRowDragging": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "ensureDomOrder": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "suppressAggFilteredOnly": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "showOpenedGroup": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "deltaRowDataMode": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "deltaColumnMode": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "applyColumnDefOrder": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "maintainColumnOrder": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "immutableData": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "immutableColumns": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "scrollbarWidth": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "number"
+        }
+    },
+    "suppressRowClickSelection": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "suppressRowHoverHighlight": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "suppressCellSelection": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "suppressClearOnFillReduction": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "suppressMaintainUnsortedOrder": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "sortingOrder": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "(string | null)[]"
+        }
+    },
+    "suppressMultiSort": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "multiSortKey": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "string"
+        }
+    },
+    "accentedSort": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "deltaSort": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "suppressHorizontalScroll": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "alwaysShowHorizontalScroll": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "alwaysShowVerticalScroll": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "debounceVerticalScrollbar": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "unSortIcon": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "rowBuffer": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "number"
+        }
+    },
+    "tooltipShowDelay": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "number"
+        }
+    },
+    "tooltipMouseTrack": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "enableRtl": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "enableBrowserTooltips": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "colResizeDefault": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "string"
+        }
+    },
+    "enableCellExpressions": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "enableCellTextSelection": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "enableGroupEdit": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "enterMovesDownAfterEdit": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "enterMovesDown": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "suppressMiddleClickScrolls": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "preventDefaultOnContextMenu": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "suppressPreventDefaultOnMouseWheel": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "suppressScrollOnNewData": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "suppressMenuHide": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "singleClickEdit": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "suppressClickEdit": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "tabIndex": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "number"
+        }
+    },
+    "suppressKeyboardEvent": {
+        "description": "Allows user to suppress certain keyboard events",
+        "type": {
+            "parameters": {
+                "meta": {
+                    "name": "SuppressKeyboardEventParams"
+                },
+                "params": "SuppressKeyboardEventParams"
+            },
+            "returnType": "boolean"
+        }
+    },
+    "stopEditingWhenGridLosesFocus": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "stopEditingWhenCellsLoseFocus": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "debug": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "icons": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "{ [key: string]: Function | string; }"
+        }
+    },
+    "angularCompileRows": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "angularCompileFilters": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "suppressLoadingOverlay": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "suppressNoRowsOverlay": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "suppressAutoSize": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "autoSizePadding": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "number"
+        }
+    },
+    "skipHeaderOnAutoSize": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "animateRows": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "suppressColumnMoveAnimation": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "suppressMovableColumns": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "suppressDragLeaveHidesColumns": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "suppressMakeColumnVisibleAfterUnGroup": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "suppressParentsInRowNodes": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "suppressFieldDotNotation": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "suppressCopyRowsToClipboard": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "copyHeadersToClipboard": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "clipboardDeliminator": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "string"
+        }
+    },
+    "suppressClipboardPaste": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "suppressClipboardApi": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "suppressLastEmptyLineOnPaste": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "suppressAggFuncInHeader": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "suppressAggAtRootLevel": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "suppressFocusAfterRefresh": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "rowModelType": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "string"
+        }
+    },
+    "pivotMode": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "pivotColumnGroupTotals": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "string"
+        }
+    },
+    "pivotRowTotals": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "string"
+        }
+    },
+    "suppressExpandablePivotGroups": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "suppressEnterpriseResetOnNewColumns": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "enableRangeSelection": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "enableRangeHandle": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "enableFillHandle": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "fillHandleDirection": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "string"
+        }
+    },
+    "suppressMultiRangeSelection": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "rowGroupPanelShow": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "string"
+        }
+    },
+    "pivotPanelShow": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "string"
+        }
+    },
+    "suppressContextMenu": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "allowContextMenuWithControlKey": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "rememberGroupStateWhenNewData": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "suppressModelUpdateAfterUpdateTransaction": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "viewportRowModelPageSize": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "number"
+        }
+    },
+    "viewportRowModelBufferSize": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "number"
+        }
+    },
+    "enableCellChangeFlash": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "cellFlashDelay": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "number"
+        }
+    },
+    "cellFadeDelay": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "number"
+        }
+    },
+    "allowShowChangeAfterFilter": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "quickFilterText": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "string"
+        }
+    },
+    "cacheQuickFilter": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "aggFuncs": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "{ [key: string]: IAggFunc; }"
+        }
+    },
+    "suppressColumnVirtualisation": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "functionsReadOnly": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "functionsPassive": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "maxConcurrentDatasourceRequests": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "number"
+        }
+    },
+    "maxBlocksInCache": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "number"
+        }
+    },
+    "purgeClosedRowNodes": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "domLayout": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "string"
+        }
+    },
+    "suppressChangeDetection": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "aggregateOnlyChangedColumns": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "valueCache": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "valueCacheNeverExpires": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "batchUpdateWaitMillis": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "number"
+        }
+    },
+    "asyncTransactionWaitMillis": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "number"
+        }
+    },
+    "suppressRowTransform": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "suppressSetColumnStateEvents": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "suppressColumnStateEvents": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "allowDragFromColumnsToolPanel": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "suppressMaxRenderedRowRestriction": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "excludeChildrenWhenTreeDataFiltering": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "undoRedoCellEditing": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "undoRedoCellEditingLimit": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "number"
+        }
+    },
+    "cacheOverflowSize": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "number"
+        }
+    },
+    "infiniteInitialRowCount": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "number"
+        }
+    },
+    "paginationPageSize": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "number"
+        }
+    },
+    "cacheBlockSize": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "number"
+        }
+    },
+    "blockLoadDebounceMillis": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "number"
+        }
+    },
+    "paginationAutoPageSize": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "suppressPaginationPanel": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "pagination": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "paginateChildRows": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "editType": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "string"
+        }
+    },
+    "suppressTouch": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "suppressAsyncEvents": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "embedFullWidthRows": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "deprecatedEmbedFullWidthRows": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "excelStyles": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "ExcelStyle[]"
+        }
+    },
+    "floatingFilter": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "suppressExcelExport": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "suppressCsvExport": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "colWidth": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "number"
+        }
+    },
+    "minColWidth": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "number"
+        }
+    },
+    "maxColWidth": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "number"
+        }
+    },
+    "suppressPropertyNamesCheck": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "serverSideSortingAlwaysResets": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "serverSideFilteringAlwaysResets": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "serverSideStoreType": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "ServerSideStoreType"
+        }
+    },
+    "getServerSideStoreParams": {
+        "description": " ",
+        "type": {
+            "parameters": {
+                "meta": {
+                    "name": "GetServerSideStoreParamsParams"
+                },
+                "params": "GetServerSideStoreParamsParams"
+            },
+            "returnType": "ServerSideStoreParams"
+        }
+    },
+    "isServerSideGroupOpenByDefault": {
+        "description": " ",
+        "type": {
+            "parameters": {
+                "meta": {
+                    "name": "IsServerSideGroupOpenByDefaultParams"
+                },
+                "params": "IsServerSideGroupOpenByDefaultParams"
+            },
+            "returnType": "boolean"
+        }
+    },
+    "isGroupOpenByDefault": {
+        "description": " ",
+        "type": {
+            "parameters": {
+                "meta": {
+                    "name": "IsGroupOpenByDefaultParams"
+                },
+                "params": "IsGroupOpenByDefaultParams"
+            },
+            "returnType": "boolean"
+        }
+    },
+    "statusBar": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "{\n        statusPanels: StatusPanelDef[];\n    }"
+        }
+    },
+    "statusPanels": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "StatusPanelDef[]"
+        }
+    },
+    "localeText": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "{ [key: string]: string }"
+        }
+    },
+    "localeTextFunc": {
+        "description": " ",
+        "type": {
+            "parameters": {
+                "meta": {
+                    "name": "string"
+                },
+                "key": "string",
+                "defaultValue": "string"
+            },
+            "returnType": "string"
+        }
+    },
+    "suppressAnimationFrame": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "defaultColGroupDef": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "Partial<ColGroupDef>"
+        }
+    },
+    "defaultColDef": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "ColDef"
+        }
+    },
+    "defaultExportParams": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "CsvExportParams | ExcelExportParams"
+        }
+    },
+    "defaultCsvExportParams": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "CsvExportParams"
+        }
+    },
+    "defaultExcelExportParams": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "ExcelExportParams"
+        }
+    },
+    "pivotSuppressAutoColumn": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "groupSelectsChildren": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "groupSelectsFiltered": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "groupIncludeFooter": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "groupIncludeTotalFooter": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "groupRemoveSingleChildren": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "groupRemoveLowestSingleChildren": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "groupHideOpenParents": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "groupSuppressBlankHeader": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "autoGroupColumnDef": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "ColDef"
+        }
+    },
+    "enableOldSetFilterModel": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "enableCharts": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "groupDisplayType": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "RowGroupingDisplayType"
+        }
+    },
+    "groupMultiAutoColumn": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "groupUseEntireRow": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "groupSuppressAutoColumn": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "context": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "any"
+        }
+    },
+    "rowStyle": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "{ [cssProperty: string]: string }"
+        }
+    },
+    "rowClass": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "string | string[]"
+        }
+    },
+    "groupDefaultExpanded": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "number"
+        }
+    },
+    "alignedGrids": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "GridOptions[]"
+        }
+    },
+    "rowSelection": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "string"
+        }
+    },
+    "suppressRowDeselection": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "rowDeselection": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "rowMultiSelectWithClick": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "isRowSelectable": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "IsRowSelectable"
+        }
+    },
+    "overlayLoadingTemplate": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "string"
+        }
+    },
+    "overlayNoRowsTemplate": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "string"
+        }
+    },
+    "rowHeight": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "number"
+        }
+    },
+    "detailRowHeight": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "number"
+        }
+    },
+    "popupParent": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "HTMLElement"
+        }
+    },
+    "masterDetail": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "keepDetailRows": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "keepDetailRowsCount": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "number"
+        }
+    },
+    "isRowMaster": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "IsRowMaster"
+        }
+    },
+    "detailCellRenderer": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string"
+        }
+    },
+    "detailCellRendererFramework": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "any"
+        }
+    },
+    "detailCellRendererParams": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "any"
+        }
+    },
+    "detailRowAutoHeight": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "rowData": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "any[]"
+        }
+    },
+    "pinnedTopRowData": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "any[]"
+        }
+    },
+    "pinnedBottomRowData": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "any[]"
+        }
+    },
+    "sideBar": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "SideBarDef | string | boolean | null"
+        }
+    },
+    "columnDefs": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "(ColDef | ColGroupDef)[]"
+        }
+    },
+    "columnTypes": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "{ [key: string]: ColDef; }"
+        }
+    },
+    "datasource": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "IDatasource"
+        }
+    },
+    "viewportDatasource": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "IViewportDatasource"
+        }
+    },
+    "serverSideDatasource": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "IServerSideDatasource"
+        }
+    },
+    "headerHeight": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "number"
+        }
+    },
+    "pivotHeaderHeight": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "number"
+        }
+    },
+    "groupHeaderHeight": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "number"
+        }
+    },
+    "pivotGroupHeaderHeight": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "number"
+        }
+    },
+    "floatingFiltersHeight": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "number"
+        }
+    },
+    "paginationNumberFormatter": {
+        "description": "****************************************************************************************************\nIf you change the callbacks on this interface, you must also update PropertyKeys to be consistent. *\n****************************************************************************************************",
+        "type": {
+            "parameters": {
+                "meta": {
+                    "name": "PaginationNumberFormatterParams"
+                },
+                "params": "PaginationNumberFormatterParams"
+            },
+            "returnType": "string"
+        }
+    },
+    "postProcessPopup": {
+        "description": " ",
+        "type": {
+            "parameters": {
+                "meta": {
+                    "name": "PostProcessPopupParams"
+                },
+                "params": "PostProcessPopupParams"
+            },
+            "returnType": "void"
+        }
+    },
+    "frameworkComponents": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "{ [p: string]: { new(): any; }; } | any"
+        }
+    },
+    "components": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "{ [p: string]: any; }"
+        }
+    },
+    "groupRowRenderer": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string"
+        }
+    },
+    "groupRowRendererFramework": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "any"
+        }
+    },
+    "groupRowRendererParams": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "any"
+        }
+    },
+    "groupRowInnerRenderer": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string"
+        }
+    },
+    "groupRowInnerRendererFramework": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "any"
+        }
+    },
+    "createChartContainer": {
+        "description": " ",
+        "type": {
+            "parameters": {
+                "meta": {
+                    "name": "ChartRef"
+                },
+                "params": "ChartRef"
+            },
+            "returnType": "void"
+        }
+    },
+    "fillOperation": {
+        "description": " ",
+        "type": {
+            "parameters": {
+                "meta": {
+                    "name": "FillOperationParams"
+                },
+                "params": "FillOperationParams"
+            },
+            "returnType": "any"
+        }
+    },
+    "isExternalFilterPresent": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "doesExternalFilterPass": {
+        "description": " ",
+        "type": {
+            "parameters": {
+                "meta": {
+                    "name": "RowNode"
+                },
+                "node": "RowNode"
+            },
+            "returnType": "boolean"
+        }
+    },
+    "getRowStyle": {
+        "description": " ",
+        "type": {
+            "parameters": {
+                "meta": {
+                    "name": "RowClassParams"
+                },
+                "params": "RowClassParams"
+            },
+            "returnType": "{ [cssProperty: string] : string }"
+        }
+    },
+    "getRowClass": {
+        "description": " ",
+        "type": {
+            "parameters": {
+                "meta": {
+                    "name": "RowClassParams"
+                },
+                "params": "RowClassParams"
+            },
+            "returnType": "(string | string[] | undefined)"
+        }
+    },
+    "rowClassRules": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "{ [cssClassName: string]: (((params: RowClassParams) => boolean) | string); }"
+        }
+    },
+    "getRowHeight": {
+        "description": " ",
+        "type": {
+            "parameters": {
+                "meta": {
+                    "name": "RowHeightParams"
+                },
+                "params": "RowHeightParams"
+            },
+            "returnType": "number | undefined"
+        }
+    },
+    "sendToClipboard": {
+        "description": " ",
+        "type": {
+            "parameters": {
+                "meta": {
+                    "name": "PropertySignature"
+                },
+                "params": "PropertySignature"
+            },
+            "returnType": "void"
+        }
+    },
+    "data": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "string"
+        }
+    },
+    "processDataFromClipboard": {
+        "description": " ",
+        "type": {
+            "parameters": {
+                "meta": {
+                    "name": "ProcessDataFromClipboardParams"
+                },
+                "params": "ProcessDataFromClipboardParams"
+            },
+            "returnType": "string[][] | null"
+        }
+    },
+    "navigateToNextHeader": {
+        "description": " ",
+        "type": {
+            "parameters": {
+                "meta": {
+                    "name": "NavigateToNextHeaderParams"
+                },
+                "params": "NavigateToNextHeaderParams"
+            },
+            "returnType": "HeaderPosition"
+        }
+    },
+    "tabToNextHeader": {
+        "description": " ",
+        "type": {
+            "parameters": {
+                "meta": {
+                    "name": "TabToNextHeaderParams"
+                },
+                "params": "TabToNextHeaderParams"
+            },
+            "returnType": "HeaderPosition"
+        }
+    },
+    "navigateToNextCell": {
+        "description": " ",
+        "type": {
+            "parameters": {
+                "meta": {
+                    "name": "NavigateToNextCellParams"
+                },
+                "params": "NavigateToNextCellParams"
+            },
+            "returnType": "CellPosition"
+        }
+    },
+    "tabToNextCell": {
+        "description": " ",
+        "type": {
+            "parameters": {
+                "meta": {
+                    "name": "TabToNextCellParams"
+                },
+                "params": "TabToNextCellParams"
+            },
+            "returnType": "CellPosition"
+        }
+    },
+    "getDocument": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "() => Document"
+        }
+    },
+    "defaultGroupSortComparator": {
+        "description": " ",
+        "type": {
+            "parameters": {
+                "meta": {
+                    "name": "RowNode"
+                },
+                "nodeA": "RowNode",
+                "nodeB": "RowNode"
+            },
+            "returnType": "number"
+        }
+    },
+    "loadingCellRenderer": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "{ new(): ICellRenderer; } | string"
+        }
+    },
+    "loadingCellRendererFramework": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "any"
+        }
+    },
+    "loadingCellRendererParams": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "any"
+        }
+    },
+    "loadingOverlayComponent": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "{ new(): ILoadingOverlayComp; } | string"
+        }
+    },
+    "loadingOverlayComponentFramework": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "any"
+        }
+    },
+    "loadingOverlayComponentParams": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "any"
+        }
+    },
+    "noRowsOverlayComponent": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "{ new(): INoRowsOverlayComp; } | string"
+        }
+    },
+    "noRowsOverlayComponentFramework": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "any"
+        }
+    },
+    "noRowsOverlayComponentParams": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "any"
+        }
+    },
+    "fullWidthCellRenderer": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string"
+        }
+    },
+    "fullWidthCellRendererFramework": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "any"
+        }
+    },
+    "fullWidthCellRendererParams": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "any"
+        }
+    },
+    "isFullWidthCell": {
+        "description": " ",
+        "type": {
+            "parameters": {
+                "meta": {
+                    "name": "RowNode"
+                },
+                "rowNode": "RowNode"
+            },
+            "returnType": "boolean"
+        }
+    },
+    "groupRowAggNodes": {
+        "description": " ",
+        "type": {
+            "parameters": {
+                "meta": {
+                    "name": "RowNode[]"
+                },
+                "nodes": "RowNode[]"
+            },
+            "returnType": "any"
+        }
+    },
+    "getBusinessKeyForNode": {
+        "description": " ",
+        "type": {
+            "parameters": {
+                "meta": {
+                    "name": "RowNode"
+                },
+                "node": "RowNode"
+            },
+            "returnType": "string"
+        }
+    },
+    "getDataPath": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "GetDataPath"
+        }
+    },
+    "treeData": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "boolean"
+        }
+    },
+    "treeDataDisplayType": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "TreeDataDisplayType"
+        }
+    },
+    "isServerSideGroup": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "IsServerSideGroup"
+        }
+    },
+    "isApplyServerSideTransaction": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "IsApplyServerSideTransaction"
+        }
+    },
+    "getServerSideGroupKey": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "GetServerSideGroupKey"
+        }
+    },
+    "getContextMenuItems": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "GetContextMenuItems"
+        }
+    },
+    "getMainMenuItems": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "GetMainMenuItems"
+        }
+    },
+    "getChartToolbarItems": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "GetChartToolbarItems"
+        }
+    },
+    "getRowNodeId": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "GetRowNodeIdFunc"
+        }
+    },
+    "getChildCount": {
+        "description": " ",
+        "type": {
+            "parameters": {
+                "meta": {
+                    "name": "any"
+                },
+                "dataItem": "any"
+            },
+            "returnType": "number"
+        }
+    },
+    "processRowPostCreate": {
+        "description": " ",
+        "type": {
+            "parameters": {
+                "meta": {
+                    "name": "ProcessRowParams"
+                },
+                "params": "ProcessRowParams"
+            },
+            "returnType": "void"
+        }
+    },
+    "processCellForClipboard": {
+        "description": " ",
+        "type": {
+            "parameters": {
+                "meta": {
+                    "name": "ProcessCellForExportParams"
+                },
+                "params": "ProcessCellForExportParams"
+            },
+            "returnType": "any"
+        }
+    },
+    "processHeaderForClipboard": {
+        "description": " ",
+        "type": {
+            "parameters": {
+                "meta": {
+                    "name": "ProcessHeaderForExportParams"
+                },
+                "params": "ProcessHeaderForExportParams"
+            },
+            "returnType": "any"
+        }
+    },
+    "processCellFromClipboard": {
+        "description": " ",
+        "type": {
+            "parameters": {
+                "meta": {
+                    "name": "ProcessCellForExportParams"
+                },
+                "params": "ProcessCellForExportParams"
+            },
+            "returnType": "any"
+        }
+    },
+    "processSecondaryColDef": {
+        "description": " ",
+        "type": {
+            "parameters": {
+                "meta": {
+                    "name": "ColDef"
+                },
+                "colDef": "ColDef"
+            },
+            "returnType": "void"
+        }
+    },
+    "processSecondaryColGroupDef": {
+        "description": " ",
+        "type": {
+            "parameters": {
+                "meta": {
+                    "name": "ColGroupDef"
+                },
+                "colGroupDef": "ColGroupDef"
+            },
+            "returnType": "void"
+        }
+    },
+    "postSort": {
+        "description": " ",
+        "type": {
+            "parameters": {
+                "meta": {
+                    "name": "RowNode[]"
+                },
+                "nodes": "RowNode[]"
+            },
+            "returnType": "void"
+        }
+    },
+    "chartThemes": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "string[]"
+        }
+    },
+    "customChartThemes": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "{ [name: string]: AgChartTheme }"
+        }
+    },
+    "chartThemeOverrides": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "AgChartThemeOverrides"
+        }
+    },
+    "processChartOptions": {
+        "description": " ",
+        "type": {
+            "parameters": {
+                "meta": {
+                    "name": "ProcessChartOptionsParams"
+                },
+                "params": "ProcessChartOptionsParams"
+            },
+            "returnType": "ChartOptions<any>"
+        }
+    },
+    "onColumnEverythingChanged": {
+        "description": "********************************************************************************************************\nIf you change the events on this interface, you do *not* need to update PropertyKeys to be consistent, *\nas event callbacks are automatically generated.                                                        *\n********************************************************************************************************",
+        "type": "ColumnEverythingChangedEvent"
+    },
+    "onToolPanelVisibleChanged": {
+        "description": " ",
+        "type": "ToolPanelVisibleChangedEvent"
+    },
+    "onNewColumnsLoaded": {
+        "description": " ",
+        "type": "NewColumnsLoadedEvent"
+    },
+    "onColumnPivotModeChanged": {
+        "description": " ",
+        "type": "ColumnPivotModeChangedEvent"
+    },
+    "onColumnRowGroupChanged": {
+        "description": " ",
+        "type": "ColumnRowGroupChangedEvent"
+    },
+    "onColumnPivotChanged": {
+        "description": " ",
+        "type": "ColumnPivotChangedEvent"
+    },
+    "onGridColumnsChanged": {
+        "description": " ",
+        "type": "GridColumnsChangedEvent"
+    },
+    "onColumnValueChanged": {
+        "description": " ",
+        "type": "ColumnValueChangedEvent"
+    },
+    "onColumnMoved": {
+        "description": " ",
+        "type": "ColumnMovedEvent"
+    },
+    "onColumnVisible": {
+        "description": " ",
+        "type": "ColumnVisibleEvent"
+    },
+    "onColumnPinned": {
+        "description": " ",
+        "type": "ColumnPinnedEvent"
+    },
+    "onColumnGroupOpened": {
+        "description": " ",
+        "type": "ColumnGroupOpenedEvent"
+    },
+    "onColumnResized": {
+        "description": " ",
+        "type": "ColumnResizedEvent"
+    },
+    "onDisplayedColumnsChanged": {
+        "description": " ",
+        "type": "DisplayedColumnsChangedEvent"
+    },
+    "onVirtualColumnsChanged": {
+        "description": " ",
+        "type": "VirtualColumnsChangedEvent"
+    },
+    "onRowGroupOpened": {
+        "description": " ",
+        "type": "RowGroupOpenedEvent"
+    },
+    "onRowDataChanged": {
+        "description": " ",
+        "type": "RowDataChangedEvent"
+    },
+    "onRowDataUpdated": {
+        "description": " ",
+        "type": "RowDataUpdatedEvent"
+    },
+    "onPinnedRowDataChanged": {
+        "description": " ",
+        "type": "PinnedRowDataChangedEvent"
+    },
+    "onRangeSelectionChanged": {
+        "description": " ",
+        "type": "RangeSelectionChangedEvent"
+    },
+    "onColumnRowGroupChangeRequest": {
+        "description": " ",
+        "type": "ColumnRowGroupChangeRequestEvent"
+    },
+    "onColumnPivotChangeRequest": {
+        "description": " ",
+        "type": "ColumnPivotChangeRequestEvent"
+    },
+    "onColumnValueChangeRequest": {
+        "description": " ",
+        "type": "ColumnValueChangeRequestEvent"
+    },
+    "onColumnAggFuncChangeRequest": {
+        "description": " ",
+        "type": "ColumnAggFuncChangeRequestEvent"
+    },
+    "onModelUpdated": {
+        "description": " ",
+        "type": "ModelUpdatedEvent"
+    },
+    "onCellKeyDown": {
+        "description": " ",
+        "type": "CellKeyDownEvent"
+    },
+    "onCellKeyPress": {
+        "description": " ",
+        "type": "CellKeyPressEvent"
+    },
+    "onCellClicked": {
+        "description": " ",
+        "type": "CellClickedEvent"
+    },
+    "onCellMouseDown": {
+        "description": " ",
+        "type": "CellMouseDownEvent"
+    },
+    "onCellDoubleClicked": {
+        "description": " ",
+        "type": "CellDoubleClickedEvent"
+    },
+    "onCellContextMenu": {
+        "description": " ",
+        "type": "CellContextMenuEvent"
+    },
+    "onCellValueChanged": {
+        "description": " ",
+        "type": "CellValueChangedEvent"
+    },
+    "onCellMouseOver": {
+        "description": " ",
+        "type": "CellMouseOverEvent"
+    },
+    "onCellMouseOut": {
+        "description": " ",
+        "type": "CellMouseOutEvent"
+    },
+    "onRowValueChanged": {
+        "description": " ",
+        "type": "RowValueChangedEvent"
+    },
+    "onRowEditingStarted": {
+        "description": " ",
+        "type": "RowEditingStartedEvent"
+    },
+    "onRowEditingStopped": {
+        "description": " ",
+        "type": "RowEditingStoppedEvent"
+    },
+    "onCellEditingStarted": {
+        "description": " ",
+        "type": "CellEditingStartedEvent"
+    },
+    "onCellEditingStopped": {
+        "description": " ",
+        "type": "CellEditingStoppedEvent"
+    },
+    "onCellFocused": {
+        "description": " ",
+        "type": "CellFocusedEvent"
+    },
+    "onRowSelected": {
+        "description": " ",
+        "type": "RowSelectedEvent"
+    },
+    "onSelectionChanged": {
+        "description": " ",
+        "type": "SelectionChangedEvent"
+    },
+    "onFilterOpened": {
+        "description": " ",
+        "type": "FilterOpenedEvent"
+    },
+    "onFilterChanged": {
+        "description": " ",
+        "type": "FilterChangedEvent"
+    },
+    "onFilterModified": {
+        "description": " ",
+        "type": "FilterModifiedEvent"
+    },
+    "onSortChanged": {
+        "description": " ",
+        "type": "SortChangedEvent"
+    },
+    "onVirtualRowRemoved": {
+        "description": " ",
+        "type": "VirtualRowRemovedEvent"
+    },
+    "onRowClicked": {
+        "description": " ",
+        "type": "RowClickedEvent"
+    },
+    "onRowDoubleClicked": {
+        "description": " ",
+        "type": "RowDoubleClickedEvent"
+    },
+    "onGridReady": {
+        "description": " ",
+        "type": "GridReadyEvent"
+    },
+    "onViewportChanged": {
+        "description": " ",
+        "type": "ViewportChangedEvent"
+    },
+    "onDragStarted": {
+        "description": " ",
+        "type": "DragStartedEvent"
+    },
+    "onDragStopped": {
+        "description": " ",
+        "type": "DragStoppedEvent"
+    },
+    "onPaginationChanged": {
+        "description": " ",
+        "type": "PaginationChangedEvent"
+    },
+    "onRowDragEnter": {
+        "description": " ",
+        "type": "RowDragEvent"
+    },
+    "onRowDragMove": {
+        "description": " ",
+        "type": "RowDragEvent"
+    },
+    "onRowDragLeave": {
+        "description": " ",
+        "type": "RowDragEvent"
+    },
+    "onRowDragEnd": {
+        "description": " ",
+        "type": "RowDragEvent"
+    },
+    "onPasteStart": {
+        "description": " ",
+        "type": "PasteStartEvent"
+    },
+    "onPasteEnd": {
+        "description": " ",
+        "type": "PasteEndEvent"
+    },
+    "onFillStart": {
+        "description": " ",
+        "type": "FillStartEvent"
+    },
+    "onFillEnd": {
+        "description": " ",
+        "type": "FillEndEvent"
+    },
+    "onBodyScroll": {
+        "description": " ",
+        "type": "BodyScrollEvent"
+    },
+    "onFirstDataRendered": {
+        "description": " ",
+        "type": "FirstDataRenderedEvent"
+    },
+    "onExpandOrCollapseAll": {
+        "description": " ",
+        "type": "ExpandCollapseAllEvent"
+    },
+    "onChartCreated": {
+        "description": " ",
+        "type": "ChartCreated"
+    },
+    "onChartRangeSelectionChanged": {
+        "description": " ",
+        "type": "ChartRangeSelectionChanged"
+    },
+    "onChartOptionsChanged": {
+        "description": " ",
+        "type": "ChartOptionsChanged"
+    },
+    "onChartDestroyed": {
+        "description": " ",
+        "type": "ChartDestroyed"
+    },
+    "onComponentStateChanged": {
+        "description": " ",
+        "type": "ComponentStateChangedEvent"
+    },
+    "onAsyncTransactionsFlushed": {
+        "description": " ",
+        "type": "AsyncTransactionsFlushed"
+    },
+    "onGridSizeChanged": {
+        "description": " ",
+        "type": "GridSizeChangedEvent"
+    },
+    "api": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "GridApi | null"
+        }
+    },
+    "columnApi": {
+        "description": " ",
+        "type": {
+            "parameters": {},
+            "returnType": "ColumnApi | null"
+        }
+    }
+}

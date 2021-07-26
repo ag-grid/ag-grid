@@ -79,13 +79,18 @@ export const ApiDocumentation = ({ pageName, framework, source, sources, section
         names = JSON.parse(names);
     }
 
+    const gridOptions = getJsonFromFile(nodes, pageName, 'grid-api/grid-options.json');
+    const interfaces = getJsonFromFile(nodes, pageName, 'grid-api/interfaces.json');
+
+    const lookups = { gridOptions, interfaces };
+
     const propertiesFromFiles = sources.map(s => getJsonFromFile(nodes, pageName, s));
 
     if (section == null) {
         const properties = mergeObjects(propertiesFromFiles);
 
         return Object.entries(properties)
-            .map(([key, value]) => <Section key={key} framework={framework} title={key} properties={value} config={config} />);
+            .map(([key, value]) => <Section key={key} framework={framework} title={key} properties={value} config={{ ...config, lookups }} />);
     }
 
     const keys = section.split('.');
@@ -96,7 +101,7 @@ export const ApiDocumentation = ({ pageName, framework, source, sources, section
         framework={framework}
         title={keys[keys.length - 1]}
         properties={properties}
-        config={{ ...config, isSubset: true }}
+        config={{ ...config, lookups, isSubset: true }}
         names={names} />;
 };
 
@@ -145,7 +150,7 @@ const Section = ({ framework, title, properties, config = {}, breadcrumbs = {}, 
             return;
         }
 
-        rows.push(<Property key={name} framework={framework} id={id} name={name} definition={definition} />);
+        rows.push(<Property key={name} framework={framework} id={id} name={name} definition={definition} config={config} />);
 
         if (typeof definition !== 'string' && !definition.description) {
             // store object property to process later
@@ -184,7 +189,7 @@ const getTypeUrl = (type, framework) => {
     return convertUrl(types[type], framework);
 };
 
-const Property = ({ framework, id, name, definition }) => {
+const Property = ({ framework, id, name, definition, config }) => {
     const [isExpanded, setExpanded] = useState(false);
 
     let description = '';
@@ -215,7 +220,28 @@ const Property = ({ framework, id, name, definition }) => {
         name += `&nbsp;<span class="${styles['reference__required']}" title="Required">&ast;</span>`;
     }
 
-    const type = definition.type || inferType(definition.default);
+    let gridParams = { ...config.lookups.gridOptions[name] };
+    if (gridParams && gridParams.type) {
+        // If params are classes we want to swap them over to arguments
+        const params = gridParams.type.parameters;
+        if (params) {
+            const paramTypes = Object.entries(params).filter(([key, v]) => key !== 'meta');
+            const nativeTypes = ['boolean', 'string', 'number'];
+            const isClassOrNative = paramTypes.some(([key, pt]) => {
+                const rawType = pt ? pt.replace('[]', '') : pt;
+                return nativeTypes.includes(rawType) || types[rawType];
+            });
+            if (paramTypes.length === 0 || isClassOrNative) {
+                const typeArgs = { ...params };
+                delete typeArgs.meta;
+                gridParams.type.arguments = typeArgs;
+                delete gridParams.type.parameters;
+            }
+        }
+    }
+
+    const complexType = definition.type || (gridParams && gridParams.type)
+    const type = complexType || inferType(definition.default);
     const isFunction = !isObject && type != null && typeof type === 'object';
     const typeUrl = isObject ? `#reference-${id}.${name}` : getTypeUrl(type, framework);
 
@@ -243,9 +269,9 @@ const Property = ({ framework, id, name, definition }) => {
             {definition.default != null && <div>Default: <code>{formatJson(definition.default)}</code></div>}
             {definition.options != null &&
                 <div>Options: {definition.options.map((o, i) => <React.Fragment key={o}>{i > 0 ? ', ' : ''}<code>{formatJson(o)}</code></React.Fragment>)}</div>}
-            {typeof definition.type === 'object' &&
+            {typeof complexType === 'object' &&
                 <div className={isExpanded ? '' : 'd-none'}>
-                    <FunctionCodeSample framework={framework} name={name} type={definition.type} />
+                <FunctionCodeSample framework={framework} name={name} type={type} config={config} />
                 </div>}
         </td>
         {definition.relevantTo && <td style={{ whiteSpace: 'nowrap' }}>{definition.relevantTo.join(', ')}</td>}
@@ -340,7 +366,7 @@ const ObjectCodeSample = ({ framework, id, breadcrumbs, properties }) => {
 
 const getInterfaceName = name => `${name.substr(0, 1).toUpperCase()}${name.substr(1)}`;
 
-const FunctionCodeSample = ({ framework, name, type }) => {
+const FunctionCodeSample = ({ framework, name, type, config }) => {
     const functionName = name.replace(/\([^)]*\)/g, '');
     const args = type.parameters ?
         {
@@ -392,20 +418,22 @@ const FunctionCodeSample = ({ framework, name, type }) => {
         .forEach(key => {
             const { meta, ...type } = args[key];
 
-            lines.push('', ...getInterfaceLines(framework, getArgumentTypeName(key, { meta }), type));
+            lines.push('', ...getInterfaceLines(framework, getArgumentTypeName(key, { meta }), type, config));
         });
 
     if (returnTypeIsObject) {
-        lines.push('', ...getInterfaceLines(framework, returnTypeName, returnType));
+        lines.push('', ...getInterfaceLines(framework, returnTypeName, returnType, config));
     }
 
     return <Code code={lines.join('\n')} className={styles['reference__code-sample']} keepMarkup={true} />;
 };
 
-const getInterfaceLines = (framework, name, definition) => {
+const getInterfaceLines = (framework, name, definition, config) => {
     const lines = [`interface ${name} {`];
 
-    Object.entries(definition).forEach(([property, type]) => {
+    // If we have the actual interface use that definition
+    const interfaceProps = config.lookups.interfaces[name];
+    Object.entries(interfaceProps || definition).forEach(([property, type]) => {
         lines.push(`  ${property}: ${getLinkedType(type, framework)};`);
     });
 

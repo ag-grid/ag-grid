@@ -13,7 +13,8 @@
     "validate-es5": "npx eslint documentation/doc-pages",
     "test": "npx jest && cd documentation && npm run test",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash",
-    "testtt": "node dev-server.js"
+    "testtt": "node dev-server.js",
+    "update-properties": "node -e \"require('./updateGridAndColumnProperties.js').updatePropertiesBuilt()\""
   },
   "repository": {
     "type": "git",
@@ -58,6 +59,7 @@
     "webpack-merge": "4.1.4"
   },
   "devDependencies": {
+    "@ag-grid-community/core": "~25.3.0",
     "@ag-grid-community/angular": "~25.3.0",
     "@ag-grid-community/react": "~25.3.0",
     "@ag-grid-community/vue": "~25.3.0",
@@ -140,6 +142,7 @@
     "webpack-hot-middleware": "2.23.1",
     "webpack-stream": "5.1.1",
     "zone.js": "0.8.29",
-    "json5": "2.2.0"
+    "json5": "2.2.0",
+    "replace-in-file": "^4.1.0"
   }
 }
