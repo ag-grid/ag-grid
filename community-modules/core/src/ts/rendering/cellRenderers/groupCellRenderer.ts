@@ -9,7 +9,7 @@ import { Column } from "../../entities/column";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { ColDef } from "../../entities/colDef";
 import {
-    UserComponentFactory
+    UserComponentFactory, UserCompDetails
 } from "../../components/framework/userComponentFactory";
 import { AgPromise } from "../../utils";
 import { doOnce } from "../../utils/function";
@@ -313,7 +313,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
 
         // avoid using GroupCellRenderer again, otherwise stack overflow, as we insert same renderer again and again.
         // this covers off chance user is grouping by a column that is also configured with GroupCellRenderer
-        const notGroupRowRenderer = (details: any) => !details || details.component != this.constructor;
+        const notGroupRowRenderer = (details: UserCompDetails) => !details || details.componentClass != this.constructor;
 
         if (groupInnerRendererClass && groupInnerRendererClass.componentClass != null
             && notGroupRowRenderer(groupInnerRendererClass)) {
