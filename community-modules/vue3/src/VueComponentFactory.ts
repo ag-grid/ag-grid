@@ -87,7 +87,7 @@ export class VueComponentFactory {
                                              maxDepth = 10,
                                              suppressError = false) {
         // modify by yuanjinyong 2021-07-26 begin
-        // first search in locally registered components of ag-grid-vue
+        // first search in locally registered components of ag-grid-vue's parent
         let components = parent.$parent?.$options.components;
         if (components && components[component]) {
             return components[component];
