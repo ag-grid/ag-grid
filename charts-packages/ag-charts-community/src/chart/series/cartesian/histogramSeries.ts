@@ -298,8 +298,6 @@ export class HistogramSeries extends CartesianSeries {
         return this._shadow;
     }
 
-    highlightStyle: HighlightStyle = { fill: 'yellow' };
-
     onHighlightChange() {
         this.updateRectNodes();
     }

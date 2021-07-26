@@ -125,12 +125,9 @@ export class ScatterSeries extends CartesianSeries {
             this.scheduleLayout();
         }
     }
-
     get strokeOpacity(): number {
         return this._strokeOpacity;
     }
-
-    highlightStyle: HighlightStyle = { fill: 'yellow' };
 
     onHighlightChange() {
         this.updateMarkerNodes();
@@ -460,7 +457,7 @@ export class ScatterSeries extends CartesianSeries {
             title, visible, marker, fill, stroke, fillOpacity, strokeOpacity
         } = this;
 
-        if (data && data.length && xKey && yKey) {
+    if (data && data.length && xKey && yKey) {
             legendData.push({
                 id,
                 itemId: undefined,

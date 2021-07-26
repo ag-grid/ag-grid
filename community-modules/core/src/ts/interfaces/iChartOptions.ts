@@ -192,6 +192,7 @@ export interface GridStyle {
 export interface HighlightOptions {
     fill: string;
     stroke?: string;
+    dimOpacity?: number;
 }
 
 export interface FillOptions {

@@ -48,7 +48,7 @@ export interface PieTooltipRendererParams extends PolarTooltipRendererParams {
     readonly labelName?: string;
 }
 
-interface PieHighlightStyle extends HighlightStyle {
+class PieHighlightStyle extends HighlightStyle {
     centerOffset?: number;
 }
 
@@ -243,7 +243,7 @@ export class PieSeries extends PolarSeries {
 
     @reactive('layoutChange') shadow?: DropShadow;
 
-    highlightStyle: PieHighlightStyle = { fill: 'yellow' };
+    readonly highlightStyle = new PieHighlightStyle();
 
     onHighlightChange() {
         this.updateNodes();

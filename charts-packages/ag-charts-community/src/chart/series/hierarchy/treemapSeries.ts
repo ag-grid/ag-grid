@@ -165,8 +165,6 @@ export class TreemapSeries extends HierarchySeries {
         return this._shadow;
     }
 
-    highlightStyle: HighlightStyle = { fill: 'yellow' };
-
     readonly tooltip = new TreemapSeriesTooltip();
 
     onHighlightChange() {

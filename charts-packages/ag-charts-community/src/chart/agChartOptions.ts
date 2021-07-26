@@ -358,6 +358,11 @@ interface AgBaseSeriesOptions {
     showInLegend?: boolean;
     cursor?: string;
     listeners?: { [key in string]: Function };
+    highlightStyle?: {
+        fill?: string;
+        stroke?: string;
+        dimOpacity?: number;
+    }
 }
 
 export interface AgTooltipRendererResult {
@@ -452,10 +457,6 @@ export interface AgLineSeriesOptions extends AgBaseSeriesOptions {
     strokeOpacity?: number;
     lineDash?: number[];
     lineDashOffset?: number;
-    highlightStyle?: {
-        fill?: string;
-        stroke?: string;
-    };
     label?: AgLineSeriesLabelOptions;
     tooltip?: AgLineSeriesTooltip;
     /**
@@ -493,10 +494,6 @@ export interface AgOHLCSeriesOptions extends AgBaseSeriesOptions {
     lowKey?: string;
     closeKey?: string;
     labelKey?: string;
-    highlightStyle?: {
-        fill?: string;
-        stroke?: string;
-    };
     tooltip?: AgOHLCSeriesTooltip;
 }
 
@@ -521,10 +518,6 @@ export interface AgScatterSeriesOptions extends AgBaseSeriesOptions {
     strokeWidth?: number;
     fillOpacity?: number;
     strokeOpacity?: number;
-    highlightStyle?: {
-        fill?: string;
-        stroke?: string;
-    };
     tooltip?: AgScatterSeriesTooltip;
     /**
     * @deprecated Use `tooltip.renderer` instead.
@@ -556,10 +549,6 @@ export interface AgAreaSeriesOptions extends AgBaseSeriesOptions {
     lineDash?: number[];
     lineDashOffset?: number;
     shadow?: AgDropShadowOptions;
-    highlightStyle?: {
-        fill?: string;
-        stroke?: string;
-    };
     label?: AgAreaSeriesLabelOptions;
     tooltip?: AgAreaSeriesTooltip;
     /**
@@ -609,10 +598,6 @@ export interface AgBarSeriesOptions extends AgBaseSeriesOptions {
     lineDash?: number[];
     lineDashOffset?: number;
     shadow?: AgDropShadowOptions;
-    highlightStyle?: {
-        fill?: string;
-        stroke?: string;
-    };
     label?: AgBarSeriesLabelOptions;
     tooltip?: AgBarSeriesTooltip;
     /**
@@ -648,10 +633,6 @@ export interface AgHistogramSeriesOptions extends AgBaseSeriesOptions {
     binCount?: number;
     aggregation?: 'count' | 'sum' | 'mean';
     shadow?: AgDropShadowOptions;
-    highlightStyle?: {
-        fill?: string;
-        stroke?: string;
-    };
     label?: AgHistogramSeriesLabelOptions;
     tooltip?: AgHistogramSeriesTooltip;
     /**
@@ -711,10 +692,6 @@ export interface AgPieSeriesOptions extends AgBaseSeriesOptions {
     outerRadiusOffset?: number;
     innerRadiusOffset?: number;
     shadow?: AgDropShadowOptions;
-    highlightStyle?: {
-        fill?: string;
-        stroke?: string;
-    };
     tooltip?: AgPieSeriesTooltip;
     /**
     * @deprecated Use `tooltip.renderer` instead.

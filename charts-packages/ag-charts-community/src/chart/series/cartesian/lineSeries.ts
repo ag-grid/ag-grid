@@ -205,8 +205,6 @@ export class LineSeries extends CartesianSeries {
         return this.yDomain;
     }
 
-    highlightStyle: HighlightStyle = { fill: 'yellow' };
-
     onHighlightChange() {
         this.updateNodes();
     }
