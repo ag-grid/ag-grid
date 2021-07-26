@@ -132,10 +132,6 @@ export class BarSeries extends CartesianSeries {
      */
     private readonly seriesItemEnabled = new Map<string, boolean>();
 
-    /**
-     * @deprecated Use {@link tooltip.renderer} instead.
-     */
-    tooltipRenderer?: (params: BarTooltipRendererParams) => string | TooltipRendererResult;
     tooltip: BarSeriesTooltip = new BarSeriesTooltip();
 
     @reactive('dataChange') flipXY = false;
@@ -786,7 +782,7 @@ export class BarSeries extends CartesianSeries {
         }
 
         const { xName, yNames, fills, tooltip } = this;
-        const { renderer: tooltipRenderer = this.tooltipRenderer } = tooltip; // TODO: remove deprecated tooltipRenderer
+        const { renderer: tooltipRenderer } = tooltip;
         const datum = nodeDatum.seriesDatum;
         const yName = yNames[yKey];
         const color = fills[fillIndex % fills.length];

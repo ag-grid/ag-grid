@@ -93,10 +93,6 @@ export abstract class Series extends Observable {
 
     readonly label = new Label();
 
-    /**
-     * @deprecated Use {@link tooltip.enabled} instead.
-     */
-    tooltipEnabled: boolean = true;
     tooltip: SeriesTooltip;
 
     @reactive('dataChange') data?: any[] = undefined;

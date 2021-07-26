@@ -136,10 +136,6 @@ export class HistogramSeries extends CartesianSeries {
 
     private seriesItemEnabled = true;
 
-    /**
-     * @deprecated Use {@link tooltip.renderer} instead.
-     */
-    tooltipRenderer?: (params: HistogramTooltipRendererParams) => string | TooltipRendererResult;
     tooltip: HistogramSeriesTooltip = new HistogramSeriesTooltip();
 
     @reactive('dataChange') fill: string | undefined = undefined;
@@ -592,7 +588,7 @@ export class HistogramSeries extends CartesianSeries {
         }
 
         const { xName, yName, fill: color, tooltip, aggregation } = this;
-        const { renderer: tooltipRenderer = this.tooltipRenderer } = tooltip;
+        const { renderer: tooltipRenderer } = tooltip;
         const bin: HistogramBin = nodeDatum.seriesDatum;
         const { aggregatedValue, frequency, domain: [rangeMin, rangeMax] } = bin;
         const title = `${sanitizeHtml(xName || xKey)}: ${xAxis.formatDatum(rangeMin)} - ${xAxis.formatDatum(rangeMax)}`;

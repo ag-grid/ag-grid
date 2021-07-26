@@ -85,10 +85,6 @@ export class AreaSeries extends CartesianSeries {
     static className = 'AreaSeries';
     static type = 'area';
 
-    /**
-     * @deprecated Use {@link tooltip.renderer} instead.
-     */
-    tooltipRenderer?: (params: AreaTooltipRendererParams) => string | TooltipRendererResult;
     tooltip: AreaSeriesTooltip = new AreaSeriesTooltip();
 
     private areaGroup = this.group.insertBefore(new Group, this.pickGroup);
@@ -712,7 +708,7 @@ export class AreaSeries extends CartesianSeries {
         const { xName, yKeys, yNames, yData, fills, tooltip } = this;
         const yGroup = yData[nodeDatum.index];
         const {
-            renderer: tooltipRenderer = this.tooltipRenderer,
+            renderer: tooltipRenderer,
             format: tooltipFormat
         } = tooltip;
         const datum = nodeDatum.seriesDatum;

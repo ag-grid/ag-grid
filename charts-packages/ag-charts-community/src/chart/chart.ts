@@ -379,22 +379,6 @@ export abstract class Chart extends Observable {
 
     readonly tooltip: ChartTooltip;
 
-    private _tooltipClass: string = Chart.defaultTooltipClass;
-    /**
-     * @deprecated Please use {@link tooltip.class} instead.
-     */
-    set tooltipClass(value: string) {
-        this.tooltip.class = value;
-    }
-    get tooltipClass(): string {
-        return this.tooltip.class;
-    }
-
-    /**
-     * @deprecated Please use {@link tooltip.tracking} instead.
-     */
-    tooltipTracking = true;
-
     download(fileName?: string) {
         this.scene.download(fileName);
     }
