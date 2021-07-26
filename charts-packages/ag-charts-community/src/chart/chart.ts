@@ -225,8 +225,8 @@ export class ChartTooltip extends Observable {
             }
         }
 
-        el.style.left = `${left}px`;
-        el.style.top = `${top}px`;
+        el.style.left = `${Math.round(left)}px`;
+        el.style.top = `${Math.round(top)}px`;
 
         if (this.delay > 0 && !instantly) {
             this.toggle(false);
