@@ -49,7 +49,7 @@ import {
 import { IStatusBarService } from "./interfaces/iStatusBarService";
 import { IStatusPanelComp } from "./interfaces/iStatusPanel";
 import { SideBarDef, SideBarDefParser } from "./entities/sideBar";
-import { ChartModel, IChartService } from "./interfaces/IChartService";
+import { ChartModel, GetChartImageDataUrlParams, IChartService } from "./interfaces/IChartService";
 import { ModuleNames } from "./modules/moduleNames";
 import {
     ChartRef,
@@ -1371,6 +1371,13 @@ export class GridApi {
         if (ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.getChartRef') && 
             ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.getChartRef')) {
                 return this.chartService.getChartRef(chartId);
+            }
+    }
+
+    public getChartImageDataURL(params: GetChartImageDataUrlParams): string | undefined {
+        if (ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.getChartImageDataURL') &&
+            ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.getChartImageDataURL')) {
+                return this.chartService.getChartImageDataURL(params);
             }
     }
 

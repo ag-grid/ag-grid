@@ -1219,19 +1219,13 @@
         "meta": {
             "displayName": "Charts"
         },
-        "getChartModels()": {
-            "description": "Returns a list of models with information about the charts that are currently rendered from the grid.",
-            "type": {
-                "arguments": {},
-                "returnType": "ChartModel[]"
-            }
-        },
         "createRangeChart()": {
             "description": "Used to programmatically create charts from a range.",
             "type": {
                 "arguments": {
                     "params": "CreateRangeChartParams"
-                }
+                },
+                "returnType": "ChartRef | undefined"
             },
             "more": {
                 "name": "Range Chart API",
@@ -1243,7 +1237,8 @@
             "type": {
                 "arguments": {
                     "params": "CreatePivotChartParams"
-                }
+                },
+                "returnType": "ChartRef | undefined"
             },
             "more": {
                 "name": "Pivot Chart API",
@@ -1255,11 +1250,59 @@
             "type": {
                 "arguments": {
                     "params": "CreateCrossFilterChartParams"
-                }
+                },
+                "returnType": "ChartRef | undefined"
             },
             "more": {
                 "name": "Cross-filter API",
                 "url": "/integrated-charts-cross-filtering/#cross-filter-api"
+            }
+        },
+        "getChartRef()": {
+            "description": "Returns the `ChartRef` using the supplied `chartId`.",
+            "type": {
+                "arguments": {
+                    "chartId": "string"
+                },
+                "returnType": "ChartRef | undefined"
+            }
+        },
+        "getChartModels()": {
+            "description": "Returns a list of models with information about the charts that are currently rendered from the grid.",
+            "type": {
+                "arguments": {},
+                "returnType": "ChartModel[]"
+            },
+            "more": {
+                "name": "Saving and Restoring Charts",
+                "url": "/integrated-charts-api/#saving-and-restoring-charts"
+            }
+        },
+        "restoreChart()": {
+            "description": "Restores a chart using the `ChartModel` that was previously obtained from `getChartModels()`.",
+            "type": {
+                "arguments": {
+                    "model": "ChartModel",
+                    "chartContainer?": "HTMLElement"
+                },
+                "returnType": "ChartRef | undefined"
+            },
+            "more": {
+                "name": "Saving and Restoring Charts",
+                "url": "/integrated-charts-api/#saving-and-restoring-charts"
+            }
+        },      
+        "getChartImageDataURL()":  {
+            "description": "Returns a string containing the requested data URL which contains a representation of the chart image.",
+            "type": {
+                "arguments": {
+                    "params": "GetChartImageDataUrlParams"
+                },
+                "returnType": "string | undefined"
+            },
+            "more": {
+                "name": "Downloading Chart Image",
+                "url": "/integrated-charts-api/#downloading-chart-image"
             }
         }
     },

@@ -115,5 +115,23 @@
                 "url": "/integrated-charts-customisation/#overriding-existing-themes"
             }
         }
+    },
+    "GetChartImageDataUrlParams": {
+        "meta": {
+            "displayName": "createRangeChartParams"
+        },
+        "chartId": {
+            "type": "string",
+            "required": true,
+            "description": "The id of the created chart."
+        },
+        "fileFormat": {
+            "type": "string",
+            "options": [
+                "image/png",
+                "image/jpg"
+            ],
+            "description": "A string indicating the image format. The default format type is image/png."
+        }
     }
 }

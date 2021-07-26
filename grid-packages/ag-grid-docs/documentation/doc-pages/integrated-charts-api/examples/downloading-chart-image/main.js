@@ -17,42 +17,47 @@ var gridOptions = {
     enableRangeSelection: true,
     popupParent: document.body,
     enableCharts: true,
-    createChartContainer: createChartContainer,
+    onChartCreated: onChartCreated,
 };
 
-var chartModel;
-var currentChartRef;
-
-function saveChart() {
-    var chartModels = gridOptions.api.getChartModels();
-    if (chartModels.length > 0) {
-        chartModel = chartModels[0];
-    }
-    alert("Chart saved!");
+var chartId;
+function onChartCreated(event) {
+    chartId = event.chartId;
 }
 
-function clearChart() {
-    if (currentChartRef) {
-        currentChartRef.destroyChart();
-        currentChartRef = null;
+function getChartImageDataURL(fileFormat) {
+    if (chartId) {
+        const params = { fileFormat, chartId };
+        const imageDataURL = gridOptions.api.getChartImageDataURL(params);
+        return imageDataURL;
+    };
+}
+
+function downloadChartImage(fileFormat) {
+    const imageDataURL = getChartImageDataURL(fileFormat);
+    
+    if (imageDataURL) {
+        const a = document.createElement('a');
+        a.href = imageDataURL;
+        a.download = "image";
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
     }
 }
 
-function restoreChart() {
-    if (!chartModel) return;
-    currentChartRef = gridOptions.api.restoreChart(chartModel);
-}
+function openChartImage(fileFormat) {
+  const imageDataURL = getChartImageDataURL(fileFormat);
 
-function createChartContainer(chartRef) {
-    // destroy existing chart
-    if (currentChartRef) {
-        currentChartRef.destroyChart();
-    }
+  if (imageDataURL) {
+    const image = new Image();
+    image.src = imageDataURL;
 
-    var eChart = chartRef.chartElement;
-    var eParent = document.querySelector('#myChart');
-    eParent.appendChild(eChart);
-    currentChartRef = chartRef;
+    const w = window.open('');
+    w.document.write(image.outerHTML);
+    w.document.close();
+  }
 }
 
 function createRowData() {
