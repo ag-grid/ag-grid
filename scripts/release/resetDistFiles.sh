@@ -26,7 +26,6 @@ git reset enterprise-modules/charts/dist
 git reset enterprise-modules/clipboard/dist
 git reset enterprise-modules/column-tool-panel/dist
 git reset enterprise-modules/core/dist
-git reset enterprise-modules/date-time-cell-editor/dist
 git reset enterprise-modules/excel-export/dist
 git reset enterprise-modules/filter-tool-panel/dist
 git reset enterprise-modules/master-detail/dist
