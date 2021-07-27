@@ -3,7 +3,7 @@ title: "Row Grouping - Complex Objects"
 enterprise: true
 ---
 
-This section covers how to group rows when the row data contains complex objects
+This section covers how to group rows when the row data contains complex objects.
 
 ## Creating group keys from complex objects
 
@@ -46,3 +46,7 @@ Note in the snippet above that the `colDef.keyCreator()` returns the country nam
 The example below shows grouping on the `county` column that contains complex object values:
 
 <grid-example title='Grouping Complex Objects with Keys' name='grouping-complex-objects' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+
+## Next Up
+
+Continue to the next section to learn about [Unbalanced Groups](../grouping-unbalanced-groups/).

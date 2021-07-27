@@ -5,6 +5,8 @@ enterprise: true
 
 This sections shows how to add group footers showing totals for each group level.
 
+## Enabling Group Footers
+
 If you want to include a footer with each group, set the property `groupIncludeFooter` to true. The footer is displayed as the last line of the group when the group is expanded - it is not displayed when the group is collapsed.
 
 The footer by default will display the word 'Total' followed by the group key. If this is not what you want, then use
@@ -53,3 +55,7 @@ The example below uses [aggregation](/aggregation/) which is explained in the ne
 | - Footer rows are not parted of the iterated set when the api method `api.forEachNode()` is called.
 | - Footer nodes are not exported to CSV or Excel.
 | - If a Footer cell is copied to the clipboard, the word "Total" will not be included. Eg where the group for "Sales" would say "Total Sales", only "Sales" will go to the clipboard. This is because the word "Total" is not actually part of the data, it's something the grid rendering puts in.
+
+## Next Up
+
+Continue to the next section to learn about [Sorting / Filtering](../grouping-sorting-filtering/) Row Groups.

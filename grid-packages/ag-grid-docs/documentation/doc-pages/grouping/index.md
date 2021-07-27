@@ -40,20 +40,19 @@ The example below demonstrates the default row grouping behaviour. Note the foll
 ## Row Grouping Customisations
 
 The previous example demonstrated the [Default Row Grouping](../grouping/#example-default-row-grouping) behavior, 
-however extensive Row Grouping customisations are also possible. 
-
-See the following sections for more details: 
+however extensive Row Grouping customisations are also possible as summarised below:
 
 - **[Display Types](../grouping-display-types/)** - compares the different ways row groups can be displayed in the grid.
     - ***[Single Group Column](../grouping-single-group-column/)*** - a single group column is automatically added by the grid for all row groups.
     - ***[Multiple Group Columns](../grouping-multiple-group-columns/)*** - group columns are automatically added by the grid for each row group.
     - ***[Group Rows](../grouping-group-rows/)*** - group rows are automatically added by the grid containing the row groups instead of group columns.
-    - ***[Custom Group Columns](../grouping-custom-group-columns/)*** - take charge of displaying the row groups without using the built-in display types.
-- **[Sorting](../grouping-sorting/)**
-- **[Filtering](../grouping-filtering/)**
-- **[Group Customisation](../grouping-customisation/)**
-- **[Group Footers](../grouping-footers/)**
-- **[Provided Groups](../grouping-provided-groups/)**
+    - ***[Custom Group Columns](../grouping-custom-group-columns/)*** - customise how row groups are displayed without using the built-in display types.
+- **[Row Group Panel](../grouping-group-panel/)** - add a panel above the grid to allow users control which columns the rows are grouped by.
+- **[Group Footers](../grouping-footers/)** - add group footers showing totals for each group level.
+- **[Sorting / Filtering](../grouping-sorting-filtering/)** - customise the sorting and filtering row groups.
+- **[Opening Groups](../grouping-opening-groups/)** - control how row groups are expanded and collapsed.
+- **[Complex Objects](../grouping-complex-objects/)** - group rows using row data contains complex objects.
+- **[Unbalanced Groups](../grouping-unbalanced-groups/)** - group rows when there are `null` or `undefined` group values.
 
 ## API Reference
 

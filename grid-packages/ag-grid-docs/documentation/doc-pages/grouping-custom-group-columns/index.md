@@ -97,3 +97,7 @@ Adding leaf nodes data can also be achieved even if you provide your own group c
 | Remember these examples are achieving the same that you can achieve with
 | the auto groups columns, but their configuration is not as straight forward. We are keeping this for edge cases
 | and for backwards compatibility for when we only supported this style of configuration.
+
+## Next Up
+
+Continue to the next section to learn about the [Row Group Panel](../grouping-group-panel/).

@@ -17,6 +17,8 @@ var gridOptions = {
     autoGroupColumnDef: {
         minWidth: 200,
     },
+    // all 'country' row groups will be open by default
+    groupDefaultExpanded: 1,
     animateRows: true,
 };
 
