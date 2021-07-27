@@ -11,7 +11,7 @@ import { BeanStub } from "../context/beanStub";
 import { exists, missing } from "../utils/generic";
 import { last } from "../utils/array";
 import { KeyCode } from '../constants/keyCode';
-import { ControllersService } from "../controllersService";
+import { CtrlsService } from "../ctrlsService";
 import { GridBodyCtrl } from "./gridBodyCtrl";
 import { CellCtrl } from "../rendering/cell/cellCtrl";
 import { RowCtrl } from "../rendering/row/rowCtrl";
@@ -45,7 +45,7 @@ export class NavigationService extends BeanStub {
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Optional('rangeService') private rangeService: IRangeService;
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('controllersService') public controllersService: ControllersService;
+    @Autowired('ctrlsService') public ctrlsService: CtrlsService;
     @Autowired('rowRenderer') public rowRenderer: RowRenderer;
     @Autowired('headerNavigationService') public headerNavigationService: HeaderNavigationService;
     @Autowired("rowPositionUtils") private rowPositionUtils: RowPositionUtils;
@@ -58,8 +58,8 @@ export class NavigationService extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.controllersService.whenReady(p => {
-            this.gridBodyCon = p.gridBodyCon;
+        this.ctrlsService.whenReady(p => {
+            this.gridBodyCon = p.gridBodyCtrl;
         });
     }
 
@@ -166,12 +166,12 @@ export class NavigationService extends BeanStub {
     private onPageDown(gridCell: CellPosition): void {
         if (this.isTimeSinceLastPageEventToRecent()) { return; }
 
-        const gridBodyCon = this.controllersService.getGridBodyController();
+        const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         const scrollPosition = gridBodyCon.getScrollFeature().getVScrollPosition();
         const scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
         let pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
 
-        if (this.controllersService.getCenterRowContainerCon().isHorizontalScrollShowing()) {
+        if (this.ctrlsService.getCenterRowContainerCtrl().isHorizontalScrollShowing()) {
             pixelsInOnePage -= scrollbarWidth;
         }
 
@@ -204,12 +204,12 @@ export class NavigationService extends BeanStub {
     private onPageUp(gridCell: CellPosition): void {
         if (this.isTimeSinceLastPageEventToRecent()) { return; }
 
-        const gridBodyCon = this.controllersService.getGridBodyController();
+        const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         const scrollPosition = gridBodyCon.getScrollFeature().getVScrollPosition();
         const scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
         let pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
 
-        if (this.controllersService.getCenterRowContainerCon().isHorizontalScrollShowing()) {
+        if (this.ctrlsService.getCenterRowContainerCtrl().isHorizontalScrollShowing()) {
             pixelsInOnePage -= scrollbarWidth;
         }
 

@@ -5,7 +5,7 @@ import { ScrollVisibleService } from "./scrollVisibleService";
 import { Events } from "../eventKeys";
 import { ColumnModel } from "../columns/columnModel";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { ControllersService } from "../controllersService";
+import { CtrlsService } from "../ctrlsService";
 
 export interface IFakeHScrollComp {
     setHeight(height: number): void;
@@ -22,7 +22,7 @@ export class FakeHScrollCtrl extends BeanStub {
 
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('controllersService') public controllersService: ControllersService;
+    @Autowired('ctrlsService') public ctrlsService: CtrlsService;
 
     private view: IFakeHScrollComp;
 
@@ -49,7 +49,7 @@ export class FakeHScrollCtrl extends BeanStub {
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, spacerWidthsListener);
         this.setFakeHScrollSpacerWidths();
 
-        this.controllersService.registerFakeHScrollCon(this);
+        this.ctrlsService.registerFakeHScrollCtrl(this);
     }
 
     @PostConstruct

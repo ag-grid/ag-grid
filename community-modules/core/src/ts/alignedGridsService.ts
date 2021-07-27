@@ -14,13 +14,13 @@ import { Autowired } from "./context/context";
 import { PostConstruct } from "./context/context";
 import { OriginalColumnGroup } from "./entities/originalColumnGroup";
 import { BeanStub } from "./context/beanStub";
-import { ControllersService } from "./controllersService";
+import { CtrlsService } from "./ctrlsService";
 
 @Bean('alignedGridsService')
 export class AlignedGridsService extends BeanStub {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('controllersService') private controllersService: ControllersService;
+    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
     private logger: Logger;
 
@@ -86,7 +86,7 @@ export class AlignedGridsService extends BeanStub {
 
     private onScrollEvent(event: BodyScrollEvent): void {
         this.onEvent(() => {
-            const gridBodyCon = this.controllersService.getGridBodyController();
+            const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
             gridBodyCon.getScrollFeature().setHorizontalScrollPosition(event.left);
         });
     }
@@ -222,7 +222,7 @@ export class AlignedGridsService extends BeanStub {
                 });
                 break;
         }
-        const gridBodyCon = this.controllersService.getGridBodyController();
+        const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         const isVerticalScrollShowing = gridBodyCon.isVerticalScrollShowing();
         const alignedGrids = this.gridOptionsWrapper.getAlignedGrids();
 

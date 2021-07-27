@@ -23,6 +23,7 @@ import { Constants } from "./constants/constants";
 import { GridCtrl } from "./gridComp/gridCtrl";
 import { NavigationService } from "./gridBodyComp/navigationService";
 import { CellCtrl } from "./rendering/cell/cellCtrl";
+import { CtrlsService } from "./ctrlsService";
 
 @Bean('focusService')
 export class FocusService extends BeanStub {
@@ -35,10 +36,11 @@ export class FocusService extends BeanStub {
     @Autowired('rowPositionUtils') private readonly rowPositionUtils: RowPositionUtils;
     @Optional('rangeService') private readonly rangeService: IRangeService;
     @Autowired('navigationService') public navigationService: NavigationService;
+    @Autowired('ctrlsService') public ctrlsService: CtrlsService;
 
     public static AG_KEYBOARD_FOCUS: string = 'ag-keyboard-focus';
 
-    private gridCompController: GridCtrl;
+    private gridCtrl: GridCtrl;
     private focusedCellPosition: CellPosition | null;
     private focusedHeaderPosition: HeaderPosition | null;
 
@@ -131,14 +133,13 @@ export class FocusService extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnEverythingChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, clearFocusedCellListener);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, clearFocusedCellListener);
-    }
 
-    public registerGridCompController(gridCompController: GridCtrl): void {
-        this.gridCompController = gridCompController;
-
-        const doc = this.gridOptionsWrapper.getDocument();
-        FocusService.addKeyboardModeEvents(doc, gridCompController);
-        this.addDestroyFunc(() => this.unregisterGridCompController(gridCompController));
+        this.ctrlsService.whenReady( p => {
+            this.gridCtrl = p.gridCtrl;
+            const doc = this.gridOptionsWrapper.getDocument();
+            FocusService.addKeyboardModeEvents(doc, this.gridCtrl);
+            this.addDestroyFunc(() => this.unregisterGridCompController(this.gridCtrl));
+        });
     }
 
     public unregisterGridCompController(gridCompController: GridCtrl): void {
@@ -471,12 +472,12 @@ export class FocusService extends BeanStub {
     }
 
     public focusNextGridCoreContainer(backwards: boolean): boolean {
-        if (this.gridCompController.focusNextInnerContainer(backwards)) {
+        if (this.gridCtrl.focusNextInnerContainer(backwards)) {
             return true;
         }
 
         if (!backwards) {
-            this.gridCompController.forceFocusOutOfContainer();
+            this.gridCtrl.forceFocusOutOfContainer();
         }
 
         return false;

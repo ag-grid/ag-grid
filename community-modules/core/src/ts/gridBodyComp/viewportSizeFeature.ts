@@ -6,7 +6,7 @@ import { GridBodyCtrl } from "./gridBodyCtrl";
 import { BodyHeightChangedEvent, Events } from "../events";
 import { ColumnApi } from "../columns/columnApi";
 import { GridApi } from "../gridApi";
-import { ControllersService } from "../controllersService";
+import { CtrlsService } from "../ctrlsService";
 import { RowContainerCtrl } from "./rowContainer/rowContainerCtrl";
 import { getInnerHeight } from "../utils/dom";
 
@@ -15,7 +15,7 @@ import { getInnerHeight } from "../utils/dom";
 // vertical scrolling.
 export class ViewportSizeFeature extends BeanStub {
 
-    @Autowired('controllersService') private controllersService: ControllersService;
+    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Autowired('columnApi') private columnApi: ColumnApi;
@@ -34,8 +34,8 @@ export class ViewportSizeFeature extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.controllersService.whenReady(() => {
-            this.gridBodyCon = this.controllersService.getGridBodyController();
+        this.ctrlsService.whenReady(() => {
+            this.gridBodyCon = this.ctrlsService.getGridBodyCtrl();
             this.listenForResize();
         });
         this.addManagedListener(this.eventService, Events.EVENT_SCROLLBAR_WIDTH_CHANGED, this.onScrollbarWidthChanged.bind(this));

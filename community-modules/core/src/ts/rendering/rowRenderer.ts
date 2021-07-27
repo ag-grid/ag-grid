@@ -31,7 +31,7 @@ import { exists, missing } from "../utils/generic";
 import { getAllValuesInObject, iterateObject } from "../utils/object";
 import { createArrayOfNumbers } from "../utils/number";
 import { executeInAWhile } from "../utils/function";
-import { ControllersService } from "../controllersService";
+import { CtrlsService } from "../ctrlsService";
 import { GridBodyCtrl } from "../gridBodyComp/gridBodyCtrl";
 import { CellCtrl } from "./cell/cellCtrl";
 
@@ -52,7 +52,7 @@ export class RowRenderer extends BeanStub {
     @Autowired("gridApi") private gridApi: GridApi;
     @Autowired("beans") private beans: Beans;
     @Autowired("rowContainerHeightService") private rowContainerHeightService: RowContainerHeightService;
-    @Optional("controllersService") private controllersService: ControllersService;
+    @Optional("ctrlsService") private ctrlsService: CtrlsService;
 
     private gridBodyCtrl: GridBodyCtrl;
 
@@ -90,8 +90,8 @@ export class RowRenderer extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.controllersService.whenReady(() => {
-            this.gridBodyCtrl = this.controllersService.getGridBodyController();
+        this.ctrlsService.whenReady(() => {
+            this.gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
             this.initialise();
         });
     }
@@ -997,7 +997,7 @@ export class RowRenderer extends BeanStub {
             newLast = this.paginationProxy.getPageLastRow();
         } else {
             const bufferPixels = this.gridOptionsWrapper.getRowBufferInPixels();
-            const gridBodyCon = this.controllersService.getGridBodyController();
+            const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
 
             let rowHeightsChanged = false;
             let firstPixel: number;

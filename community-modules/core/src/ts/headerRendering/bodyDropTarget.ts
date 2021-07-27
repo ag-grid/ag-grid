@@ -5,7 +5,7 @@ import { BodyDropPivotTarget } from "./bodyDropPivotTarget";
 import { ColumnModel } from "../columns/columnModel";
 import { Constants } from "../constants/constants";
 import { BeanStub } from "../context/beanStub";
-import { ControllersService } from "../controllersService";
+import { CtrlsService } from "../ctrlsService";
 
 export interface DropListener {
     getIconName(): string | null;
@@ -19,7 +19,7 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
 
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('controllersService') private controllersService: ControllersService;
+    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
     private pinned: string | null;
     // public because it's part of the DropTarget interface
@@ -39,27 +39,27 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
 
     @PostConstruct
     private postConstruct(): void {
-        this.controllersService.whenReady(p => {
+        this.ctrlsService.whenReady(p => {
             switch (this.pinned) {
                 case Constants.PINNED_LEFT:
                     this.eSecondaryContainers = [
-                        [p.gridBodyCon.getBodyViewportElement(), p.leftRowContainerCon.getContainerElement()],
-                        [p.bottomLeftRowContainerCon.getContainerElement()],
-                        [p.topLeftRowContainerCon.getContainerElement()]
+                        [p.gridBodyCtrl.getBodyViewportElement(), p.leftRowContainerCtrl.getContainerElement()],
+                        [p.bottomLeftRowContainerCtrl.getContainerElement()],
+                        [p.topLeftRowContainerCtrl.getContainerElement()]
                     ];
                     break;
                 case Constants.PINNED_RIGHT:
                     this.eSecondaryContainers = [
-                        [p.gridBodyCon.getBodyViewportElement(), p.rightRowContainerCon.getContainerElement()],
-                        [p.bottomRightRowContainerCon.getContainerElement()],
-                        [p.topRightRowContainerCon.getContainerElement()]
+                        [p.gridBodyCtrl.getBodyViewportElement(), p.rightRowContainerCtrl.getContainerElement()],
+                        [p.bottomRightRowContainerCtrl.getContainerElement()],
+                        [p.topRightRowContainerCtrl.getContainerElement()]
                     ];
                     break;
                 default:
                     this.eSecondaryContainers = [
-                        [p.gridBodyCon.getBodyViewportElement(), p.centerRowContainerCon.getViewportElement()],
-                        [p.bottomCenterRowContainerCon.getViewportElement()],
-                        [p.topCenterRowContainerCon.getViewportElement()]
+                        [p.gridBodyCtrl.getBodyViewportElement(), p.centerRowContainerCtrl.getViewportElement()],
+                        [p.bottomCenterRowContainerCtrl.getViewportElement()],
+                        [p.topCenterRowContainerCtrl.getViewportElement()]
                     ];
                     break;
             }

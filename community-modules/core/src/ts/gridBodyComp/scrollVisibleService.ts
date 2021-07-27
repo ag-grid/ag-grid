@@ -3,7 +3,7 @@ import { BeanStub } from "../context/beanStub";
 import { Events, ScrollVisibilityChangedEvent } from "../events";
 import { ColumnApi } from "../columns/columnApi";
 import { GridApi } from "../gridApi";
-import { ControllersService } from "../controllersService";
+import { CtrlsService } from "../ctrlsService";
 
 export interface SetScrollsVisibleParams {
     horizontalScrollShowing: boolean;
@@ -15,7 +15,7 @@ export class ScrollVisibleService extends BeanStub {
 
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('controllersService') public controllersService: ControllersService;
+    @Autowired('ctrlsService') public ctrlsService: CtrlsService;
 
     private horizontalScrollShowing: boolean;
     private verticalScrollShowing: boolean;
@@ -47,7 +47,7 @@ export class ScrollVisibleService extends BeanStub {
     }
 
     private updateImpl(): void {
-        const centerRowCtrl = this.controllersService.getCenterRowContainerCon();
+        const centerRowCtrl = this.ctrlsService.getCenterRowContainerCtrl();
 
         const params: SetScrollsVisibleParams = {
             horizontalScrollShowing: centerRowCtrl.isHorizontalScrollShowing(),

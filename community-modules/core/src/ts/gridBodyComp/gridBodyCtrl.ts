@@ -4,7 +4,7 @@ import { LayoutFeature, LayoutView } from "../styling/layoutFeature";
 import { Constants } from "../constants/constants";
 import { Events } from "../eventKeys";
 import { RowContainerHeightService } from "../rendering/rowContainerHeightService";
-import { ControllersService } from "../controllersService";
+import { CtrlsService } from "../ctrlsService";
 import { ColumnModel } from "../columns/columnModel";
 import { ScrollVisibleService } from "./scrollVisibleService";
 import { getTarget } from "../utils/event";
@@ -48,7 +48,7 @@ export interface IGridBodyComp extends LayoutView {
 export class GridBodyCtrl extends BeanStub {
 
     @Autowired('rowContainerHeightService') private rowContainerHeightService: RowContainerHeightService;
-    @Autowired('controllersService') private controllersService: ControllersService;
+    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
@@ -96,7 +96,7 @@ export class GridBodyCtrl extends BeanStub {
 
         this.setupRowAnimationCssClass();
 
-        this.controllersService.registerGridBodyController(this);
+        this.ctrlsService.registerGridBodyCtrl(this);
 
         this.addEventListeners();
         this.addFocusListeners([eTop, eBodyViewport, eBottom]);
@@ -258,7 +258,7 @@ export class GridBodyCtrl extends BeanStub {
         // the context menu if no rows or columns are displayed, or user simply clicks outside of a cell
         const listener = (mouseEvent: MouseEvent) => {
             const target = getTarget(mouseEvent);
-            if (target === this.eBodyViewport || target === this.controllersService.getCenterRowContainerCon().getViewportElement()) {
+            if (target === this.eBodyViewport || target === this.ctrlsService.getCenterRowContainerCtrl().getViewportElement()) {
                 // show it
                 if (this.contextMenuFactory) {
                     this.contextMenuFactory.onContextMenu(mouseEvent, null, null, null, null, this.eGridBody);

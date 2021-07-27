@@ -9,7 +9,7 @@ import { Logger, LoggerFactory } from "../logger";
 import { ColumnEventType } from "../events";
 import { missing, exists } from "../utils/generic";
 import { sortNumerically, last, includes } from "../utils/array";
-import { ControllersService } from "../controllersService";
+import { CtrlsService } from "../ctrlsService";
 import { GridBodyCtrl } from "../gridBodyComp/gridBodyCtrl";
 
 export class MoveColumnFeature implements DropListener {
@@ -18,7 +18,7 @@ export class MoveColumnFeature implements DropListener {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('controllersService') public controllersService: ControllersService;
+    @Autowired('ctrlsService') public ctrlsService: CtrlsService;
 
     private gridBodyCon: GridBodyCtrl;
 
@@ -49,8 +49,8 @@ export class MoveColumnFeature implements DropListener {
     @PostConstruct
     public init(): void {
         this.logger = this.loggerFactory.create('MoveColumnController');
-        this.controllersService.whenReady(() => {
-            this.gridBodyCon = this.controllersService.getGridBodyController();
+        this.ctrlsService.whenReady(() => {
+            this.gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         });
     }
 
@@ -120,7 +120,7 @@ export class MoveColumnFeature implements DropListener {
 
         // adjust for scroll only if centre container (the pinned containers don't scroll)
         if (this.centerContainer) {
-            x += this.controllersService.getCenterRowContainerCon().getCenterViewportScrollLeft();
+            x += this.ctrlsService.getCenterRowContainerCtrl().getCenterViewportScrollLeft();
         }
 
         return x;
@@ -130,8 +130,8 @@ export class MoveColumnFeature implements DropListener {
         if (this.centerContainer) {
             // scroll if the mouse has gone outside the grid (or just outside the scrollable part if pinning)
             // putting in 50 buffer, so even if user gets to edge of grid, a scroll will happen
-            const firstVisiblePixel = this.controllersService.getCenterRowContainerCon().getCenterViewportScrollLeft();
-            const lastVisiblePixel = firstVisiblePixel + this.controllersService.getCenterRowContainerCon().getCenterWidth();
+            const firstVisiblePixel = this.ctrlsService.getCenterRowContainerCtrl().getCenterViewportScrollLeft();
+            const lastVisiblePixel = firstVisiblePixel + this.ctrlsService.getCenterRowContainerCtrl().getCenterWidth();
 
             if (this.gridOptionsWrapper.isEnableRtl()) {
                 this.needToMoveRight = xAdjustedForScroll < (firstVisiblePixel + 50);

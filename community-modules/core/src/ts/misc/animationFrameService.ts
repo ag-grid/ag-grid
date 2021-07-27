@@ -1,7 +1,7 @@
 
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { BeanStub } from "../context/beanStub";
-import { ControllersService } from "../controllersService";
+import { CtrlsService } from "../ctrlsService";
 
 interface TaskItem {
     task: () => void;
@@ -16,7 +16,7 @@ interface TaskList {
 @Bean('animationFrameService')
 export class AnimationFrameService extends BeanStub {
 
-    @Autowired('controllersService') private controllersService: ControllersService;
+    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
     // p1 and p2 are create tasks are to do with row and cell creation.
     // for them we want to execute according to row order, so we use
@@ -109,7 +109,7 @@ export class AnimationFrameService extends BeanStub {
         // 16ms is 60 fps
         const noMaxMillis = millis <= 0;
 
-        const gridBodyCon = this.controllersService.getGridBodyController();
+        const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
 
         while (noMaxMillis || duration < millis) {
             const gridBodyDidSomething = gridBodyCon.getScrollFeature().executeAnimationFrameScroll();

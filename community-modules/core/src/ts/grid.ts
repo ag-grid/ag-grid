@@ -89,7 +89,7 @@ import { ColumnDefFactory } from "./columns/columnDefFactory";
 import { RowCssClassCalculator } from "./rendering/row/rowCssClassCalculator";
 import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 import { RowNodeSorter } from "./rowNodes/rowNodeSorter";
-import { ControllersService } from "./controllersService";
+import { CtrlsService } from "./ctrlsService";
 import { FakeHScrollComp } from "./gridBodyComp/fakeHScrollComp";
 import { PinnedWidthService } from "./gridBodyComp/pinnedWidthService";
 import { RowContainerComp } from "./gridBodyComp/rowContainer/rowContainerComp";
@@ -172,8 +172,8 @@ export class GridCoreCreator {
         uiCallback(context);
 
         // we wait until the UI has finished initialising before setting in columns and rows
-        const controllersService: ControllersService = context.getBean('controllersService');
-        controllersService.whenReady(() => {
+        const ctrlsService: CtrlsService = context.getBean('ctrlsService');
+        ctrlsService.whenReady(() => {
             this.setColumnsAndData(context);
             this.dispatchGridReadyEvent(context, gridOptions);
             const isEnterprise = ModuleRegistry.isRegistered(ModuleNames.EnterpriseCoreModule);
@@ -308,7 +308,7 @@ export class GridCoreCreator {
             StylingService, ScrollVisibleService, SortController, ColumnHoverService, ColumnAnimationService,
             SelectableService, AutoGroupColService, ChangeDetectionService, AnimationFrameService,
             DetailRowCompCache, UndoRedoService, AgStackComponentsRegistry, ColumnDefFactory,
-            RowCssClassCalculator, RowNodeBlockLoader, RowNodeSorter, ControllersService,
+            RowCssClassCalculator, RowNodeBlockLoader, RowNodeSorter, CtrlsService,
             PinnedWidthService
         ];
 

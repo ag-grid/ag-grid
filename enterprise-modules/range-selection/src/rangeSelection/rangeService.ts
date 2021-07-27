@@ -25,8 +25,8 @@ import {
     PinnedRowModel,
     BeanStub,
     GridBodyCtrl,
-    ControllersService,
-    _
+    _,
+    CtrlsService
 } from "@ag-grid-community/core";
 
 @Bean('rangeService')
@@ -42,9 +42,8 @@ export class RangeService extends BeanStub implements IRangeService {
     @Autowired("pinnedRowModel") private pinnedRowModel: PinnedRowModel;
     @Autowired('rowPositionUtils') public rowPositionUtils: RowPositionUtils;
     @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
-    @Autowired('controllersService') public controllersService: ControllersService;
+    @Autowired('ctrlsService') public ctrlsService: CtrlsService;
 
-    private logger: Logger;
     private cellRanges: CellRange[] = [];
     private lastMouseEvent: MouseEvent | null;
     private bodyScrollListener = this.onBodyScroll.bind(this);
@@ -62,8 +61,6 @@ export class RangeService extends BeanStub implements IRangeService {
 
     @PostConstruct
     private init(): void {
-        this.logger = this.loggerFactory.create('rangeService');
-
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.removeAllCellRanges.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.removeAllCellRanges.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.removeAllCellRanges.bind(this));
@@ -73,8 +70,8 @@ export class RangeService extends BeanStub implements IRangeService {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, this.refreshLastRangeStart.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.onColumnVisibleChange.bind(this));
 
-        this.controllersService.whenReady(() => {
-            const gridBodyCon = this.controllersService.getGridBodyController();
+        this.ctrlsService.whenReady(() => {
+            const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
             this.autoScrollService = new AutoScrollService(gridBodyCon, this.gridOptionsWrapper);
         });
     }
@@ -567,7 +564,7 @@ export class RangeService extends BeanStub implements IRangeService {
             this.cellRanges.push(this.draggingRange);
         }
 
-        this.controllersService.getGridBodyController().addScrollEventListener(this.bodyScrollListener);
+        this.ctrlsService.getGridBodyCtrl().addScrollEventListener(this.bodyScrollListener);
 
         this.dispatchChangedEvent(true, false, this.draggingRange.id);
     }
@@ -622,7 +619,7 @@ export class RangeService extends BeanStub implements IRangeService {
 
         this.autoScrollService.ensureCleared();
 
-        this.controllersService.getGridBodyController().removeScrollEventListener(this.bodyScrollListener);
+        this.ctrlsService.getGridBodyCtrl().removeScrollEventListener(this.bodyScrollListener);
         this.lastMouseEvent = null;
         this.dragging = false;
         this.draggingRange = undefined;
