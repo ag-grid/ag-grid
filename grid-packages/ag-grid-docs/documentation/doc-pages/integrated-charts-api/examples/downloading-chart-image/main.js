@@ -1,9 +1,9 @@
 var gridOptions = {
     columnDefs: [
-        { field: "country", chartDataType: 'category' },
-        { field: "sugar", chartDataType: 'series' },
-        { field: "fat", chartDataType: 'series' },
-        { field: "weight", chartDataType: 'series' },
+        {field: "country", chartDataType: 'category'},
+        {field: "sugar", chartDataType: 'series'},
+        {field: "fat", chartDataType: 'series'},
+        {field: "weight", chartDataType: 'series'},
     ],
     defaultColDef: {
         editable: true,
@@ -21,21 +21,19 @@ var gridOptions = {
 };
 
 var chartId;
+
 function onChartCreated(event) {
     chartId = event.chartId;
 }
 
-function getChartImageDataURL(fileFormat) {
-    if (chartId) {
-        const params = { fileFormat, chartId };
-        const imageDataURL = gridOptions.api.getChartImageDataURL(params);
-        return imageDataURL;
-    };
-}
-
 function downloadChartImage(fileFormat) {
-    const imageDataURL = getChartImageDataURL(fileFormat);
-    
+    if (!chartId) {
+        return;
+    }
+
+    const params = {fileFormat, chartId};
+    const imageDataURL = gridOptions.api.getChartImageDataURL(params);
+
     if (imageDataURL) {
         const a = document.createElement('a');
         a.href = imageDataURL;
@@ -48,16 +46,21 @@ function downloadChartImage(fileFormat) {
 }
 
 function openChartImage(fileFormat) {
-  const imageDataURL = getChartImageDataURL(fileFormat);
+    if (!chartId) {
+        return;
+    }
 
-  if (imageDataURL) {
-    const image = new Image();
-    image.src = imageDataURL;
+    const params = {fileFormat, chartId};
+    const imageDataURL = gridOptions.api.getChartImageDataURL(params);
 
-    const w = window.open('');
-    w.document.write(image.outerHTML);
-    w.document.close();
-  }
+    if (imageDataURL) {
+        const image = new Image();
+        image.src = imageDataURL;
+
+        const w = window.open('');
+        w.document.write(image.outerHTML);
+        w.document.close();
+    }
 }
 
 function createRowData() {
@@ -65,7 +68,7 @@ function createRowData() {
         "Norway", "Italy", "Greece", "Iceland", "Portugal", "Malta", "Brazil", "Argentina",
         "Colombia", "Peru", "Venezuela", "Uruguay", "Belgium"];
 
-    return countries.map(function(country) {
+    return countries.map(function (country) {
         return {
             country: country,
             sugar: Math.floor(Math.floor(Math.random() * 50)),
@@ -76,7 +79,7 @@ function createRowData() {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 });
