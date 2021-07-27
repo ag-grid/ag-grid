@@ -5,6 +5,36 @@ enterprise: true
 
 This section covers different ways to control how row groups are expanded and collapsed.
 
+## Opening Group Levels by Default
+
+To open all groups down to a given group level use the `groupDefaultExpanded` grid option as shown below: 
+
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        { field: 'country', rowGroup: true },
+        { field: 'year', rowGroup: true },
+        { field: 'sport' },
+        { field: 'total' }
+    ],
+    // all 'country' row groups will be open by default
+    groupDefaultExpanded: 1
+}
+</snippet>
+
+In the snippet above, all `country` row groups will be expanded by default as `groupDefaultExpanded = 1`.
+
+By default `groupDefaultExpanded = 0` which means no groups are expanded by default. To expand all row groups
+set `groupDefaultExpanded = -1`.
+
+The example below demonstrates the `groupDefaultExpanded` behaviour. Note the following:
+
+- There are two active row groups as the supplied `country` and `year` column definitions have `rowGroup=true` declared.
+
+- All `country` row groups are expanded by default as `groupDefaultExpanded = 1`.
+
+<grid-example title='Group Default Expanded' name='group-default-expanded' type='generated' options='{ "enterprise": true, "exampleHeight": 540, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+
 ## Open Groups by Default
 
 To have groups open by default, implement the grid callback `isGroupOpenByDefault`. This callback is invoked
