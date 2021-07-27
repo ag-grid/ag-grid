@@ -558,8 +558,6 @@ export class CellCtrl extends BeanStub {
         // we can't readily determine if the data in an angularjs template has changed, so here we just update
         // and recompile (if applicable)
 
-        // this.updateAngular1ScopeAndCompile();
-
         this.refreshToolTip();
 
         // we do cellClassRules even if the value has not changed, so that users who have rules that
