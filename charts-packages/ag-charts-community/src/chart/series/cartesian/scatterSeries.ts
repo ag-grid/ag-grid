@@ -1,6 +1,6 @@
 import { Selection } from "../../../scene/selection";
 import { Group } from "../../../scene/group";
-import { SeriesNodeDatum, CartesianTooltipRendererParams, HighlightStyle, SeriesTooltip } from "../series";
+import { SeriesNodeDatum, CartesianTooltipRendererParams, SeriesTooltip } from "../series";
 import { finiteExtent } from "../../../util/array";
 import { LegendDatum } from "../../legend";
 import { LinearScale } from "../../../scale/linearScale";

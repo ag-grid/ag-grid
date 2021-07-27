@@ -2,7 +2,7 @@ import { Selection } from "../../../scene/selection";
 import { HdpiCanvas } from "../../../canvas/hdpiCanvas";
 import { reactive } from "../../../util/observable";
 import { Label } from "../../label";
-import { HighlightStyle, SeriesNodeDatum, SeriesTooltip, TooltipRendererParams } from "../series";
+import { SeriesNodeDatum, SeriesTooltip, TooltipRendererParams } from "../series";
 import { HierarchySeries } from "./hierarchySeries";
 import { TooltipRendererResult, toTooltipHtml } from "../../chart";
 import { Group } from "../../../scene/group";

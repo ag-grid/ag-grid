@@ -340,6 +340,7 @@ export class PieSeries extends PolarSeries {
             groupSelectionData.push({
                 series: this,
                 seriesDatum: data[datumIndex],
+                itemId: datumIndex,
                 index: datumIndex,
                 radius,
                 startAngle,
@@ -360,6 +361,21 @@ export class PieSeries extends PolarSeries {
         }, 0);
 
         return true;
+    }
+
+    protected highlightedItemId?: any;
+    undim(itemId?: any) {
+        super.undim(itemId);
+
+        this.highlightedItemId = itemId;
+        this.updateNodes();
+    }
+
+    dim() {
+        super.dim();
+
+        this.highlightedItemId = undefined;
+        this.updateNodes();
     }
 
     update(): void {
@@ -425,7 +441,7 @@ export class PieSeries extends PolarSeries {
 
         this.groupSelection.selectByTag<Sector>(PieNodeTag.Sector).each((sector, datum, index) => {
             const radius = radiusScale.convert(datum.radius);
-            const highlighted = datum === highlightedDatum;
+            const highlighted = datum === highlightedDatum || datum.itemId === this.highlightedItemId;
             const sectorFill = highlighted && fill !== undefined ? fill : fills[index % fills.length];
             const sectorStroke = highlighted && stroke !== undefined ? stroke : strokes[index % strokes.length];
             let format: PieSeriesFormat | undefined = undefined;

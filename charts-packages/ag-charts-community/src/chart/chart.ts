@@ -840,6 +840,8 @@ export abstract class Chart extends Observable {
         this.captionAutoPadding = Math.floor(paddingTop);
     }
 
+    protected legendBBox: BBox = new BBox(0, 0, 0, 0);
+
     protected positionLegend() {
         if (!this.legend.enabled || !this.legend.data.length) {
             return;
@@ -900,6 +902,8 @@ export abstract class Chart extends Observable {
         // Round off for pixel grid alignment to work properly.
         legendGroup.translationX = Math.floor(translationX + legendGroup.translationX);
         legendGroup.translationY = Math.floor(translationY + legendGroup.translationY);
+
+        this.legendBBox = legendGroup.computeBBox();
     }
 
     private _onMouseDown = this.onMouseDown.bind(this);
@@ -1003,7 +1007,9 @@ export abstract class Chart extends Observable {
         }
     }
 
-    protected onMouseMove(event: MouseEvent) {
+    protected onMouseMove(event: MouseEvent): void {
+        this.handleLegendMouseMove(event);
+
         if (this.tooltip.enabled) {
             if (this.tooltip.delay > 0) {
                 this.tooltip.toggle(false);
@@ -1129,6 +1135,32 @@ export abstract class Chart extends Observable {
         }
 
         return false;
+    }
+
+    private pointerInsideLegend = false;
+    private handleLegendMouseMove(event: MouseEvent) {
+        const { offsetX, offsetY } = event;
+        const datum = this.legend.getDatumForPoint(offsetX, offsetY);
+
+        const pointerInsideLegend = this.legendBBox.containsPoint(offsetX, offsetY);
+        if (pointerInsideLegend) {
+            if (!this.pointerInsideLegend) {
+                this.pointerInsideLegend = true;
+            }
+        } else if (this.pointerInsideLegend) {
+            this.pointerInsideLegend = false;
+            this.series.forEach(s => s.undim());
+            return;
+        }
+
+        if (datum) {
+            const { id, itemId } = datum;
+            const series = find(this.series, series => series.id === id);
+
+            if (series) {
+                this.series.forEach(s => s === series ? s.undim(itemId) : s.dim());
+            }
+        }
     }
 
     private onSeriesDatumPick(meta: TooltipMeta, datum: SeriesNodeDatum, node?: Shape, event?: MouseEvent) {
