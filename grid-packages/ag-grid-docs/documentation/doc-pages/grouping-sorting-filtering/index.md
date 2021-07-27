@@ -3,12 +3,11 @@ title: "Row Grouping - Sorting / Filtering"
 enterprise: true
 ---
 
-This section provides details on sorting and filtering row groups.
+This section provides details on how to customise the sorting and filtering row groups.
 
 ## Custom Sorting
 
 <grid-example title='Custom Group Sort' name='custom-group-sort' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "setfilter"] }'></grid-example>
-
 
 ## Default Group Order
 

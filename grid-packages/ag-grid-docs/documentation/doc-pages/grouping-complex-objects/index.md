@@ -3,7 +3,7 @@ title: "Row Grouping - Complex Objects"
 enterprise: true
 ---
 
-This section covers how to group rows when the row data contains complex objects
+This section covers how to group rows when the row data contains complex objects.
 
 ## Creating group keys from complex objects
 
