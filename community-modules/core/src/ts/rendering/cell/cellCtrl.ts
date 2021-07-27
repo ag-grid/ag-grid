@@ -397,7 +397,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private createCellEditorParams(keyPress: number | null, charPress: string | null, cellStartedEdit: boolean): ICellEditorParams {
-        return {
+        const res: any = {
             value: this.getValueFromValueService(),
             keyPress: keyPress,
             charPress: charPress,
@@ -410,13 +410,16 @@ export class CellCtrl extends BeanStub {
             cellStartedEdit: cellStartedEdit,
             columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
             context: this.beans.gridOptionsWrapper.getContext(),
-            $scope: this.scope,
             onKeyDown: this.onKeyDown.bind(this),
             stopEditing: this.stopEditingAndFocus.bind(this),
             eGridCell: this.getGui(),
             parseValue: this.parseValue.bind(this),
             formatValue: this.formatValue.bind(this)
         };
+        if (this.scope) {
+            res.$scope = this.scope;
+        }
+        return res as ICellEditorParams;
     }
 
     private createCellRendererParams(): ICellRendererParams {
@@ -425,17 +428,16 @@ export class CellCtrl extends BeanStub {
             this.rowCtrl!.addEventListener(eventType, listener);
         } : null;
 
-        return {
+        const res: any = {
             value: this.value,
             valueFormatted: this.valueFormatted,
             getValue: this.getValueFromValueService.bind(this),
-            setValue: value => this.beans.valueService.setValue(this.rowNode, this.column, value),
+            setValue: (value:any) => this.beans.valueService.setValue(this.rowNode, this.column, value),
             formatValue: this.formatValue.bind(this),
             data: this.rowNode.data,
             node: this.rowNode,
             colDef: this.column.getColDef(),
             column: this.column,
-            $scope: this.scope,
             rowIndex: this.getCellPosition().rowIndex,
             api: this.beans.gridOptionsWrapper.getApi(),
             columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
@@ -444,7 +446,7 @@ export class CellCtrl extends BeanStub {
             eGridCell: this.getGui(),
             eParentOfValue: this.cellComp.getParentOfValue(),
 
-            registerRowDragger: (rowDraggerElement, dragStartPixels) => this.registerRowDragger(rowDraggerElement, dragStartPixels),
+            registerRowDragger: (rowDraggerElement: HTMLElement, dragStartPixels: number) => this.registerRowDragger(rowDraggerElement, dragStartPixels),
 
             // this function is not documented anywhere, so we could drop it
             // it was in the olden days to allow user to register for when rendered
@@ -452,7 +454,13 @@ export class CellCtrl extends BeanStub {
             // can provide components for cells, the destroy method gets call when this
             // happens so no longer need to fire event.
             addRowCompListener: addRowCompListener
-        } as ICellRendererParams;
+        };
+        
+        if (this.scope) {
+            res.$scope = this.scope;
+        }
+
+        return res as ICellRendererParams;
     }
 
     private parseValue(newValue: any): any {
