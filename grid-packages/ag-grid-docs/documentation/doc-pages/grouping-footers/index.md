@@ -5,6 +5,8 @@ enterprise: true
 
 This sections shows how to add group footers showing totals for each group level.
 
+## Enabling Group Footers
+
 If you want to include a footer with each group, set the property `groupIncludeFooter` to true. The footer is displayed as the last line of the group when the group is expanded - it is not displayed when the group is collapsed.
 
 The footer by default will display the word 'Total' followed by the group key. If this is not what you want, then use

@@ -352,8 +352,8 @@
             "type": "ColDef",
             "description": "Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column in the grid. If not grouping, this column is not included.",
             "more": {
-                "name": "Configuring the Auto Group Column",
-                "url": "/grouping/#auto-column-group"
+                "name": "Group Column Configuration",
+                "url": "/grouping-single-group-column/#group-column-configuration"
             }
         },
         "groupSelectsChildren": {
@@ -368,16 +368,16 @@
             "default": false,
             "description": "If grouping, this controls whether to show a group footer when the group is expanded. If `true`, then by default, the footer will contain aggregate data (if any) when shown and the header will be blank. When closed, the header will contain the aggregate data regardless of this setting (as the footer is hidden anyway). This is handy for 'total' rows, that are displayed below the data when the group is open, and alongside the group when it is closed.",
             "more": {
-                "name": "Grouping Footers",
-                "url": "/grouping/#grouping-footers"
+                "name": "Enabling Group Footers",
+                "url": "/grouping-footers/#enabling-group-footers"
             }
         },
         "groupIncludeTotalFooter": {
             "default": false,
             "description": "Set to `true` to show a 'grand total' group footer across all groups.",
             "more": {
-                "name": "Grouping Footers",
-                "url": "/grouping/#grouping-footers"
+                "name": "Enabling Group Footers",
+                "url": "/grouping-footers/#enabling-group-footers"
             }
         },
         "groupSuppressBlankHeader": {
@@ -397,7 +397,7 @@
             "description": "Shows the open group in the group column for non-group rows.",
             "more": {
                 "name": "Showing Open Groups",
-                "url": "/grouping/#showing-open-groups"
+                "url": "/grouping-single-group-column/#showing-open-groups"
             }
         },
         "groupRemoveSingleChildren": {
@@ -405,7 +405,7 @@
             "description": "Set to `true` to collapse groups that only have one child.",
             "more": {
                 "name": "Remove Single Children",
-                "url": "/grouping/#removing-single-children"
+                "url": "/grouping-single-group-column/#removing-single-children"
             }
         },
         "groupRemoveLowestSingleChildren": {
@@ -413,15 +413,15 @@
             "description": "Set to `true` to collapse lowest level groups that only have one child.",
             "more": {
                 "name": "Remove Single Children",
-                "url": "/grouping/#removing-single-children"
+                "url": "/grouping-single-group-column/#removing-single-children"
             }
         },
         "groupHideOpenParents": {
             "default": false,
             "description": "Set to `true` to hide parents that are open. When used with multiple columns for showing groups, it can give a more pleasing user experience.",
             "more": {
-                "name": "Group Hide Open Parents",
-                "url": "/grouping/#hide-open-parents"
+                "name": "Hide Open Parents",
+                "url": "/grouping-multiple-group-columns/#hide-open-parents"
             }
         },
         "rowGroupPanelShow": {
@@ -433,13 +433,25 @@
             ],
             "description": "When to show the 'row group panel' (where you drag rows to group) at the top.",
             "more": {
-                "name": "Column Tool Panel Example",
-                "url": "/tool-panel-columns/#column-tool-panel-example"
+                "name": "Enabling Row Group Panel",
+                "url": "/grouping-group-panel/#enabling-row-group-panel"
             }
         },
-        "suppressMakeVisibleAfterUnGroup": {
+        "suppressDragLeaveHidesColumns": {
             "default": false,
-            "description": "By default, when a column is un-grouped it is made visible. e.g. on [main demo](../../example.php): 1) group by country by dragging (action of moving column out of grid means column is made `visible=false`); then 2) un-group by clicking 'x' on the country column in the column drop zone; the column is then made `visible=true`. This property stops the column becoming visible again when un-grouping."
+            "description": "By default, dragging a column out of the grid, i.e. to the [Row Group Panel](/grouping-group-panel/), it will be hidden in the grid. This property prevents the column becoming hidden in the grid.",
+            "more": {
+                "name": "Keeping Columns Visible",
+                "url": "/grouping-group-panel/#keeping-columns-visible"
+            }
+        },
+        "suppressMakeColumnVisibleAfterUnGroup": {
+            "default": false,
+            "description": "By default, when a column is un-grouped, i.e. using the [Row Group Panel](/grouping-group-panel/), it is made visible in the grid. This property stops the column becoming visible again when un-grouping.",
+            "more": {
+                "name": "Keeping Columns Visible",
+                "url": "/grouping-group-panel/#keeping-columns-visible"
+            }
         }
     },
     "rowPivoting": {
