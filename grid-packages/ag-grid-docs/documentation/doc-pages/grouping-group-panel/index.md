@@ -26,7 +26,7 @@ const gridOptions = {
 In the snippet above, the Row Group Panel is configured so that is `'always'` displayed. To only display the Row Group
 Panel when there are active row groups use: `'onlyWhenGrouping'`.
 
-Note that `enableRowGroup = true` is only declared on the `country`, `year` and `sport` columns, which means only
+Note that `enableRowGroup=true` is only declared on the `country`, `year` and `sport` columns, which means only
 these columns can be dragged to the Row Group Panel.
 
 This is demonstrated in the following example, note the following:
@@ -41,12 +41,14 @@ This is demonstrated in the following example, note the following:
 
 ## Keeping Columns Visible
 
-By default, dragging a column out of the grid will make it hidden and un-grouping a column will make it visible again. This default behaviour can be changed with the following properties:
+By default, dragging a column out of the grid will make it hidden and un-grouping a column will make it visible again. 
+This default behaviour can be changed with the following properties:
 
-- `suppressDragLeaveHidesColumns`: When dragging a column out of the grid, eg when dragging a column from the grid to the group drop zone, the column will remain visible.
-- `suppressMakeColumnVisibleAfterUnGroup`: When un-grouping, eg when clicking the 'x' on a column in the drop zone, the column will not be made visible.
+- `suppressDragLeaveHidesColumns`: When dragging a column out of the grid, e.g. when dragging a column from the grid to the group drop zone, the column will remain visible.
+- `suppressMakeColumnVisibleAfterUnGroup`: When un-grouping, e.g. when clicking the 'x' on a column in the drop zone, the column will not be made visible.
 
-The default behaviour is more natural for most scenarios as it stops data appearing twice. E.g. if country is displayed in group column, there is no need to display country again in the country column.
+The default behaviour is more natural for most scenarios as it stops data appearing twice, e.g. if country is displayed
+in group column, there is no need to display country again in the country column.
 
 The example below demonstrates these two properties. Note the following:
 

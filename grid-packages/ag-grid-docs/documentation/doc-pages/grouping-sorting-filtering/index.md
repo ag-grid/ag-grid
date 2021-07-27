@@ -1,7 +1,9 @@
 ---
-title: "Row Grouping - Sorting"
+title: "Row Grouping - Sorting / Filtering"
 enterprise: true
 ---
+
+This section provides details on sorting and filtering row groups.
 
 ## Custom Sorting
 
@@ -27,3 +29,9 @@ The example below shows providing a default group order. From the example the fo
 - Groups are sorted alphabetically.
 
 <grid-example title='Default Group Order' name='default-group-order' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+
+## Filtering on Group Columns
+
+Filter on group columns is more complex than filtering on normal columns as the data inside the column can be a mix of data from different columns. For example if grouping by Country and Year, should the filter be for Year or for Country?
+
+For auto generated group columns, the filter will work if you specify one of `field`, `valueGetter` or `filterValueGetter`.
