@@ -308,8 +308,8 @@ interface SuppressKeyboardEventParams {
     column: Column; // column
     colDef: ColDef; // column definition
     context: any; // context object
-    api: GridApi | null | undefined; // grid API
-    columnApi: ColumnApi | null | undefined; // column API
+    api: GridApi; // grid API
+    columnApi: ColumnApi; // column API
 }
 ```
 
