@@ -58,3 +58,7 @@ The example below demonstrates these two properties. Note the following:
 - While dragging the column header over the drop zone, before it is dropped, the column appears translucent to indicate that the grouping has not yet been applied.
 
 <grid-example title='Keep Columns Visible' name='keep-columns-visible' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+
+## Next Up
+
+Continue to the next section to learn how to add [Group Footers](../grouping-footers/).
