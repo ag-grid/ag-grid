@@ -85,7 +85,7 @@ export interface DropTarget {
     getContainer(): HTMLElement;
     /** If any secondary containers. For example when moving columns in AG Grid, we listen for drops
      * in the header as well as the body (main rows and pinned rows) of the grid. */
-    getSecondaryContainers?(): HTMLElement[];
+    getSecondaryContainers?(): (HTMLElement|HTMLElement[])[];
     /** Icon to show when drag is over */
     getIconName?(): string | null;
 
@@ -312,8 +312,8 @@ export class DragAndDropService extends BeanStub {
         this.setGhostIcon(null);
     }
 
-    private getAllContainersFromDropTarget(dropTarget: DropTarget): HTMLElement[] {
-        let containers = [dropTarget.getContainer()];
+    private getAllContainersFromDropTarget(dropTarget: DropTarget): (HTMLElement|HTMLElement[])[] {
+        let containers: (HTMLElement|HTMLElement[])[] = [dropTarget.getContainer()];
         const secondaryContainers = dropTarget.getSecondaryContainers ? dropTarget.getSecondaryContainers() : null;
 
         if (secondaryContainers) {
@@ -327,9 +327,9 @@ export class DragAndDropService extends BeanStub {
     private isMouseOnDropTarget(mouseEvent: MouseEvent, dropTarget: DropTarget): boolean {
         let mouseOverTarget = false;
 
-        this.getAllContainersFromDropTarget(dropTarget)
-            .filter(eContainer => eContainer) // secondary can be missing
-            .forEach(eContainer => {
+        this.getAllContainersFromDropTarget(dropTarget).forEach(arrayOrElement => {
+            const array = Array.isArray(arrayOrElement) ? arrayOrElement as HTMLElement[] : [arrayOrElement as HTMLElement];
+            const matchCount = array.filter( eContainer => {
                 const rect = eContainer.getBoundingClientRect();
 
                 // if element is not visible, then width and height are zero
@@ -338,10 +338,12 @@ export class DragAndDropService extends BeanStub {
                 const horizontalFit = mouseEvent.clientX >= rect.left && mouseEvent.clientX < rect.right;
                 const verticalFit = mouseEvent.clientY >= rect.top && mouseEvent.clientY < rect.bottom;
 
-                if (horizontalFit && verticalFit) {
-                    mouseOverTarget = true;
-                }
-            });
+                return horizontalFit && verticalFit;
+            } ).length;
+            if (matchCount == array.length) {
+                mouseOverTarget = true;
+            }
+        });
 
         return mouseOverTarget && dropTarget.isInterestedIn(this.dragSource.type);
     }
