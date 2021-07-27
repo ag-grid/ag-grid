@@ -226,7 +226,7 @@ const Property = ({ framework, id, name, definition, config }) => {
         const params = gridParams.type.parameters;
         if (params) {
             const paramTypes = Object.entries(params).filter(([key, v]) => key !== 'meta');
-            const nativeTypes = ['boolean', 'string', 'number'];
+            const nativeTypes = ['boolean', 'string', 'number', 'any'];
             const isClassOrNative = paramTypes.some(([key, pt]) => {
                 const rawType = pt ? pt.replace('[]', '') : pt;
                 return nativeTypes.includes(rawType) || types[rawType];
@@ -379,6 +379,7 @@ const FunctionCodeSample = ({ framework, name, type, config }) => {
 
     const { returnType } = type;
     const returnTypeIsObject = returnType != null && typeof returnType === 'object';
+    const returnTypeIsInterface = !!config.lookups.interfaces[returnType];
     const argumentDefinitions = [];
     let shouldUseNewline = false;
 
@@ -423,6 +424,8 @@ const FunctionCodeSample = ({ framework, name, type, config }) => {
 
     if (returnTypeIsObject) {
         lines.push('', ...getInterfaceLines(framework, returnTypeName, returnType, config));
+    } else if (returnTypeIsInterface) {
+        lines.push('', ...getInterfaceLines(framework, returnType, returnType, config));
     }
 
     return <Code code={lines.join('\n')} className={styles['reference__code-sample']} keepMarkup={true} />;

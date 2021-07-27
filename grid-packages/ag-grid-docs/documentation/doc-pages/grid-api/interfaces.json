@@ -152,7 +152,7 @@
         "getServerSideStoreParams": "(params: GetServerSideStoreParamsParams) => ServerSideStoreParams",
         "isServerSideGroupOpenByDefault": "(params: IsServerSideGroupOpenByDefaultParams) => boolean",
         "isGroupOpenByDefault": "(params: IsGroupOpenByDefaultParams) => boolean",
-        "statusBar": "PropertySignature",
+        "statusBar": "{ statusPanels : StatusPanelDef[] }",
         "localeText": "{ [key: string] : string }",
         "localeTextFunc": "(key: string, defaultValue: string) => string",
         "suppressAnimationFrame": "boolean",
@@ -225,13 +225,13 @@
         "groupRowInnerRendererFramework": "any",
         "createChartContainer": "(params: ChartRef) => void",
         "fillOperation": "(params: FillOperationParams) => any",
-        "isExternalFilterPresent": "(): boolean",
-        "doesExternalFilterPass": "(node: RowNode): boolean",
+        "isExternalFilterPresent": "boolean",
+        "doesExternalFilterPass": "boolean",
         "getRowStyle": "(params: RowClassParams) => { [cssProperty: string] : string }",
-        "getRowClass": "(params: RowClassParams) => (string | string[] | undefined)",
+        "getRowClass": "(params: RowClassParams) => string | string[] | undefined",
         "rowClassRules": "{ [cssClassName: string] : (((params: RowClassParams) => boolean) | string) }",
-        "getRowHeight": "(params: RowHeightParams) => number | undefined",
-        "sendToClipboard": "(params: PropertySignature) => void",
+        "getRowHeight": "(params: RowHeightParams) => number | undefined | null",
+        "sendToClipboard": "(params: SendToClipboardParams) => void",
         "processDataFromClipboard": "(params: ProcessDataFromClipboardParams) => string[][] | null",
         "navigateToNextHeader": "(params: NavigateToNextHeaderParams) => HeaderPosition",
         "tabToNextHeader": "(params: TabToNextHeaderParams) => HeaderPosition",
@@ -251,9 +251,9 @@
         "fullWidthCellRenderer": "ConstructSignature | ICellRendererFunc | string",
         "fullWidthCellRendererFramework": "any",
         "fullWidthCellRendererParams": "any",
-        "isFullWidthCell": "(rowNode: RowNode): boolean",
-        "groupRowAggNodes": "(nodes: RowNode[]): any",
-        "getBusinessKeyForNode": "(node: RowNode): string",
+        "isFullWidthCell": "boolean",
+        "groupRowAggNodes": "any",
+        "getBusinessKeyForNode": "string",
         "getDataPath": "GetDataPath",
         "treeData": "boolean",
         "treeDataDisplayType": "TreeDataDisplayType",
@@ -264,90 +264,90 @@
         "getMainMenuItems": "GetMainMenuItems",
         "getChartToolbarItems": "GetChartToolbarItems",
         "getRowNodeId": "GetRowNodeIdFunc",
-        "getChildCount": "(dataItem: any): number",
-        "processRowPostCreate": "(params: ProcessRowParams): void",
-        "processCellForClipboard": "(params: ProcessCellForExportParams): any",
-        "processHeaderForClipboard": "(params: ProcessHeaderForExportParams): any",
-        "processCellFromClipboard": "(params: ProcessCellForExportParams): any",
-        "processSecondaryColDef": "(colDef: ColDef): void",
-        "processSecondaryColGroupDef": "(colGroupDef: ColGroupDef): void",
-        "postSort": "(nodes: RowNode[]): void",
+        "getChildCount": "number",
+        "processRowPostCreate": "void",
+        "processCellForClipboard": "any",
+        "processHeaderForClipboard": "any",
+        "processCellFromClipboard": "any",
+        "processSecondaryColDef": "void",
+        "processSecondaryColGroupDef": "void",
+        "postSort": "void",
         "chartThemes": "string[]",
         "customChartThemes": "{ [name: string] : AgChartTheme }",
         "chartThemeOverrides": "AgChartThemeOverrides",
-        "processChartOptions": "(params: ProcessChartOptionsParams): ChartOptions<any>",
-        "onColumnEverythingChanged": "(event: ColumnEverythingChangedEvent): void",
-        "onToolPanelVisibleChanged": "(event: ToolPanelVisibleChangedEvent): void",
-        "onNewColumnsLoaded": "(event: NewColumnsLoadedEvent): void",
-        "onColumnPivotModeChanged": "(event: ColumnPivotModeChangedEvent): void",
-        "onColumnRowGroupChanged": "(event: ColumnRowGroupChangedEvent): void",
-        "onColumnPivotChanged": "(event: ColumnPivotChangedEvent): void",
-        "onGridColumnsChanged": "(event: GridColumnsChangedEvent): void",
-        "onColumnValueChanged": "(event: ColumnValueChangedEvent): void",
-        "onColumnMoved": "(event: ColumnMovedEvent): void",
-        "onColumnVisible": "(event: ColumnVisibleEvent): void",
-        "onColumnPinned": "(event: ColumnPinnedEvent): void",
-        "onColumnGroupOpened": "(event: ColumnGroupOpenedEvent): void",
-        "onColumnResized": "(event: ColumnResizedEvent): void",
-        "onDisplayedColumnsChanged": "(event: DisplayedColumnsChangedEvent): void",
-        "onVirtualColumnsChanged": "(event: VirtualColumnsChangedEvent): void",
-        "onRowGroupOpened": "(event: RowGroupOpenedEvent): void",
-        "onRowDataChanged": "(event: RowDataChangedEvent): void",
-        "onRowDataUpdated": "(event: RowDataUpdatedEvent): void",
-        "onPinnedRowDataChanged": "(event: PinnedRowDataChangedEvent): void",
-        "onRangeSelectionChanged": "(event: RangeSelectionChangedEvent): void",
-        "onColumnRowGroupChangeRequest": "(event: ColumnRowGroupChangeRequestEvent): void",
-        "onColumnPivotChangeRequest": "(event: ColumnPivotChangeRequestEvent): void",
-        "onColumnValueChangeRequest": "(event: ColumnValueChangeRequestEvent): void",
-        "onColumnAggFuncChangeRequest": "(event: ColumnAggFuncChangeRequestEvent): void",
-        "onModelUpdated": "(event: ModelUpdatedEvent): void",
-        "onCellKeyDown": "(event: CellKeyDownEvent): void",
-        "onCellKeyPress": "(event: CellKeyPressEvent): void",
-        "onCellClicked": "(event: CellClickedEvent): void",
-        "onCellMouseDown": "(event: CellMouseDownEvent): void",
-        "onCellDoubleClicked": "(event: CellDoubleClickedEvent): void",
-        "onCellContextMenu": "(event: CellContextMenuEvent): void",
-        "onCellValueChanged": "(event: CellValueChangedEvent): void",
-        "onCellMouseOver": "(event: CellMouseOverEvent): void",
-        "onCellMouseOut": "(event: CellMouseOutEvent): void",
-        "onRowValueChanged": "(event: RowValueChangedEvent): void",
-        "onRowEditingStarted": "(event: RowEditingStartedEvent): void",
-        "onRowEditingStopped": "(event: RowEditingStoppedEvent): void",
-        "onCellEditingStarted": "(event: CellEditingStartedEvent): void",
-        "onCellEditingStopped": "(event: CellEditingStoppedEvent): void",
-        "onCellFocused": "(event: CellFocusedEvent): void",
-        "onRowSelected": "(event: RowSelectedEvent): void",
-        "onSelectionChanged": "(event: SelectionChangedEvent): void",
-        "onFilterOpened": "(event: FilterOpenedEvent): void",
-        "onFilterChanged": "(event: FilterChangedEvent): void",
-        "onFilterModified": "(event: FilterModifiedEvent): void",
-        "onSortChanged": "(event: SortChangedEvent): void",
-        "onVirtualRowRemoved": "(event: VirtualRowRemovedEvent): void",
-        "onRowClicked": "(event: RowClickedEvent): void",
-        "onRowDoubleClicked": "(event: RowDoubleClickedEvent): void",
-        "onGridReady": "(event: GridReadyEvent): void",
-        "onViewportChanged": "(event: ViewportChangedEvent): void",
-        "onDragStarted": "(event: DragStartedEvent): void",
-        "onDragStopped": "(event: DragStoppedEvent): void",
-        "onPaginationChanged": "(event: PaginationChangedEvent): void",
-        "onRowDragEnter": "(event: RowDragEvent): void",
-        "onRowDragMove": "(event: RowDragEvent): void",
-        "onRowDragLeave": "(event: RowDragEvent): void",
-        "onRowDragEnd": "(event: RowDragEvent): void",
-        "onPasteStart": "(event: PasteStartEvent): void",
-        "onPasteEnd": "(event: PasteEndEvent): void",
-        "onFillStart": "(event: FillStartEvent): void",
-        "onFillEnd": "(event: FillEndEvent): void",
-        "onBodyScroll": "(event: BodyScrollEvent): void",
-        "onFirstDataRendered": "(event: FirstDataRenderedEvent): void",
-        "onExpandOrCollapseAll": "(event: ExpandCollapseAllEvent): void",
-        "onChartCreated": "(event: ChartCreated): void",
-        "onChartRangeSelectionChanged": "(event: ChartRangeSelectionChanged): void",
-        "onChartOptionsChanged": "(event: ChartOptionsChanged): void",
-        "onChartDestroyed": "(event: ChartDestroyed): void",
-        "onComponentStateChanged": "(event: ComponentStateChangedEvent): void",
-        "onAsyncTransactionsFlushed": "(event: AsyncTransactionsFlushed): void",
-        "onGridSizeChanged": "(event: GridSizeChangedEvent): void",
+        "processChartOptions": "ChartOptions<any>",
+        "onColumnEverythingChanged": "void",
+        "onToolPanelVisibleChanged": "void",
+        "onNewColumnsLoaded": "void",
+        "onColumnPivotModeChanged": "void",
+        "onColumnRowGroupChanged": "void",
+        "onColumnPivotChanged": "void",
+        "onGridColumnsChanged": "void",
+        "onColumnValueChanged": "void",
+        "onColumnMoved": "void",
+        "onColumnVisible": "void",
+        "onColumnPinned": "void",
+        "onColumnGroupOpened": "void",
+        "onColumnResized": "void",
+        "onDisplayedColumnsChanged": "void",
+        "onVirtualColumnsChanged": "void",
+        "onRowGroupOpened": "void",
+        "onRowDataChanged": "void",
+        "onRowDataUpdated": "void",
+        "onPinnedRowDataChanged": "void",
+        "onRangeSelectionChanged": "void",
+        "onColumnRowGroupChangeRequest": "void",
+        "onColumnPivotChangeRequest": "void",
+        "onColumnValueChangeRequest": "void",
+        "onColumnAggFuncChangeRequest": "void",
+        "onModelUpdated": "void",
+        "onCellKeyDown": "void",
+        "onCellKeyPress": "void",
+        "onCellClicked": "void",
+        "onCellMouseDown": "void",
+        "onCellDoubleClicked": "void",
+        "onCellContextMenu": "void",
+        "onCellValueChanged": "void",
+        "onCellMouseOver": "void",
+        "onCellMouseOut": "void",
+        "onRowValueChanged": "void",
+        "onRowEditingStarted": "void",
+        "onRowEditingStopped": "void",
+        "onCellEditingStarted": "void",
+        "onCellEditingStopped": "void",
+        "onCellFocused": "void",
+        "onRowSelected": "void",
+        "onSelectionChanged": "void",
+        "onFilterOpened": "void",
+        "onFilterChanged": "void",
+        "onFilterModified": "void",
+        "onSortChanged": "void",
+        "onVirtualRowRemoved": "void",
+        "onRowClicked": "void",
+        "onRowDoubleClicked": "void",
+        "onGridReady": "void",
+        "onViewportChanged": "void",
+        "onDragStarted": "void",
+        "onDragStopped": "void",
+        "onPaginationChanged": "void",
+        "onRowDragEnter": "void",
+        "onRowDragMove": "void",
+        "onRowDragLeave": "void",
+        "onRowDragEnd": "void",
+        "onPasteStart": "void",
+        "onPasteEnd": "void",
+        "onFillStart": "void",
+        "onFillEnd": "void",
+        "onBodyScroll": "void",
+        "onFirstDataRendered": "void",
+        "onExpandOrCollapseAll": "void",
+        "onChartCreated": "void",
+        "onChartRangeSelectionChanged": "void",
+        "onChartOptionsChanged": "void",
+        "onChartDestroyed": "void",
+        "onComponentStateChanged": "void",
+        "onAsyncTransactionsFlushed": "void",
+        "onGridSizeChanged": "void",
         "api": "GridApi | null",
         "columnApi": "ColumnApi | null"
     },
@@ -365,13 +365,25 @@
         "rowNode": "RowNode"
     },
     "GetDataPath": {
-        "(data: any)": "(data: any): string[]"
+        "data": "any",
+        "meta": {
+            "returnType": "string[]",
+            "isCallSignature": true
+        }
     },
     "IsServerSideGroup": {
-        "(dataItem: any)": "(dataItem: any): boolean"
+        "dataItem": "any",
+        "meta": {
+            "returnType": "boolean",
+            "isCallSignature": true
+        }
     },
     "IsApplyServerSideTransaction": {
-        "(params: IsApplyServerSideTransactionParams)": "(params: IsApplyServerSideTransactionParams): boolean"
+        "params": "IsApplyServerSideTransactionParams",
+        "meta": {
+            "returnType": "boolean",
+            "isCallSignature": true
+        }
     },
     "IsApplyServerSideTransactionParams": {
         "transaction": "ServerSideTransaction",
@@ -379,13 +391,25 @@
         "storeInfo": "any"
     },
     "GetServerSideGroupKey": {
-        "(dataItem: any)": "(dataItem: any): string"
+        "dataItem": "any",
+        "meta": {
+            "returnType": "string",
+            "isCallSignature": true
+        }
     },
     "IsRowMaster": {
-        "(dataItem: any)": "(dataItem: any): boolean"
+        "dataItem": "any",
+        "meta": {
+            "returnType": "boolean",
+            "isCallSignature": true
+        }
     },
     "IsRowSelectable": {
-        "(node: RowNode)": "(node: RowNode): boolean"
+        "node": "RowNode",
+        "meta": {
+            "returnType": "boolean",
+            "isCallSignature": true
+        }
     },
     "RowClassParams": {
         "data": "any",
@@ -402,6 +426,9 @@
         "api": "GridApi",
         "context": "any"
     },
+    "SendToClipboardParams": {
+        "data": "string"
+    },
     "ProcessChartOptionsParams": {
         "type": "ChartType",
         "options": "ChartOptions<any>"
@@ -416,20 +443,28 @@
         "column": "Column",
         "node": "RowNode",
         "value": "any",
-        "api": "GridApi | null | undefined",
-        "columnApi": "ColumnApi | null | undefined",
+        "api": "GridApi",
+        "columnApi": "ColumnApi",
         "context": "any"
     },
     "GetContextMenuItems": {
-        "(params: GetContextMenuItemsParams)": "(params: GetContextMenuItemsParams): (string | MenuItemDef)[]"
+        "params": "GetContextMenuItemsParams",
+        "meta": {
+            "returnType": "(string | MenuItemDef)[]",
+            "isCallSignature": true
+        }
     },
     "GetChartToolbarItemsParams": {
         "defaultItems": "ChartMenuOptions[]",
-        "api": "GridApi | null",
-        "columnApi": "ColumnApi | null"
+        "api": "GridApi",
+        "columnApi": "ColumnApi"
     },
     "GetChartToolbarItems": {
-        "(params: GetChartToolbarItemsParams)": "(params: GetChartToolbarItemsParams): ChartMenuOptions[]"
+        "params": "GetChartToolbarItemsParams",
+        "meta": {
+            "returnType": "ChartMenuOptions[]",
+            "isCallSignature": true
+        }
     },
     "MenuItemDef": {
         "name": "string",
@@ -444,16 +479,24 @@
     },
     "GetMainMenuItemsParams": {
         "column": "Column",
-        "api": "GridApi | null | undefined",
-        "columnApi": "ColumnApi | null | undefined",
+        "api": "GridApi",
+        "columnApi": "ColumnApi",
         "context": "any",
         "defaultItems": "string[]"
     },
     "GetMainMenuItems": {
-        "(params: GetMainMenuItemsParams)": "(params: GetMainMenuItemsParams): (string | MenuItemDef)[]"
+        "params": "GetMainMenuItemsParams",
+        "meta": {
+            "returnType": "(string | MenuItemDef)[]",
+            "isCallSignature": true
+        }
     },
     "GetRowNodeIdFunc": {
-        "(data: any)": "(data: any): string"
+        "data": "any",
+        "meta": {
+            "returnType": "string",
+            "isCallSignature": true
+        }
     },
     "ProcessRowParams": {
         "eRow": "HTMLElement",
@@ -533,5 +576,76 @@
         "level": "number",
         "field": "string",
         "key": "string"
+    },
+    "BaseExportParams": {
+        "allColumns": "boolean",
+        "columnKeys": "(string | Column)[]",
+        "fileName": "string",
+        "onlySelected": "boolean",
+        "onlySelectedAllPages": "boolean",
+        "skipColumnGroupHeaders": "boolean",
+        "skipColumnHeaders": "boolean",
+        "skipRowGroups": "boolean",
+        "skipPinnedTop": "boolean",
+        "skipPinnedBottom": "boolean",
+        "shouldRowBeSkipped": "boolean",
+        "processCellCallback": "string",
+        "processHeaderCallback": "string",
+        "processGroupHeaderCallback": "string",
+        "processRowGroupCallback": "string",
+        "columnGroups": "boolean",
+        "skipGroups": "boolean",
+        "skipHeader": "boolean"
+    },
+    "ExportParams": {
+        "prependContent": "T",
+        "appendContent": "T",
+        "customHeader": "T",
+        "customFooter": "T",
+        "getCustomContentBelowRow": "(params: ProcessRowGroupForExportParams) => T | undefined"
+    },
+    "CsvCell": {
+        "data": "CsvCellData",
+        "mergeAcross": "number"
+    },
+    "CsvCellData": {
+        "value": "string | null"
+    },
+    "CsvExportParams": {
+        "columnSeparator": "string",
+        "suppressQuotes": "boolean"
+    },
+    "ShouldRowBeSkippedParams": {
+        "node": "RowNode",
+        "api": "GridApi",
+        "context": "any"
+    },
+    "ProcessCellForExportParams": {
+        "value": "any",
+        "accumulatedRowIndex": "number",
+        "node": "RowNode | null",
+        "column": "Column",
+        "api": "GridApi",
+        "columnApi": "ColumnApi",
+        "context": "any",
+        "type": "string"
+    },
+    "ProcessHeaderForExportParams": {
+        "column": "Column",
+        "api": "GridApi",
+        "columnApi": "ColumnApi",
+        "context": "any"
+    },
+    "ProcessGroupHeaderForExportParams": {
+        "columnGroup": "ColumnGroup",
+        "api": "GridApi",
+        "columnApi": "ColumnApi",
+        "context": "any"
+    },
+    "ProcessRowGroupForExportParams": {
+        "node": "RowNode",
+        "api": "GridApi",
+        "columnApi": "ColumnApi",
+        "context": "any"
     }
 }
