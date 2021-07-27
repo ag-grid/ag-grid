@@ -613,9 +613,9 @@ export interface GridOptions {
 
     onGridSizeChanged?(event: GridSizeChangedEvent): void;
 
-    // apis, set by the grid on init
-    api?: GridApi | null; // change to typed
-    columnApi?: ColumnApi | null; // change to typed
+    // apis, set by the grid on init, set to null on destroy
+    api?: GridApi | null;
+    columnApi?: ColumnApi | null;
 }
 
 export enum RowGroupingDisplayType {
@@ -707,8 +707,8 @@ export interface GetContextMenuItemsParams {
     column: Column;
     node: RowNode;
     value: any;
-    api: GridApi | null | undefined;
-    columnApi: ColumnApi | null | undefined;
+    api: GridApi;
+    columnApi: ColumnApi;
     context: any;
 }
 
@@ -718,8 +718,8 @@ export interface GetContextMenuItems {
 
 export interface GetChartToolbarItemsParams {
     defaultItems?: ChartMenuOptions[];
-    api?: GridApi | null;
-    columnApi?: ColumnApi | null;
+    api: GridApi;
+    columnApi: ColumnApi;
 }
 
 export interface GetChartToolbarItems {
@@ -740,8 +740,8 @@ export interface MenuItemDef {
 
 export interface GetMainMenuItemsParams {
     column: Column;
-    api: GridApi | null | undefined;
-    columnApi: ColumnApi | null | undefined;
+    api: GridApi;
+    columnApi: ColumnApi;
     context: any;
     defaultItems: string[];
 }

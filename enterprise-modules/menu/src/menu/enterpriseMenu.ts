@@ -334,8 +334,8 @@ export class EnterpriseMenu extends BeanStub {
         if (userFunc) {
             result = userFunc({
                 column: this.column,
-                api: this.gridOptionsWrapper.getApi(),
-                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                api: this.gridOptionsWrapper.getApi()!,
+                columnApi: this.gridOptionsWrapper.getColumnApi()!,
                 context: this.gridOptionsWrapper.getContext(),
                 defaultItems: defaultMenuOptions
             });

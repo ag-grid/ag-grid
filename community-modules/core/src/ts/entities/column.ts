@@ -380,8 +380,8 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
             column: this,
             colDef: this.colDef,
             context: this.gridOptionsWrapper.getContext(),
-            api: this.gridOptionsWrapper.getApi(),
-            columnApi: this.gridOptionsWrapper.getColumnApi()
+            api: this.gridOptionsWrapper.getApi()!,
+            columnApi: this.gridOptionsWrapper.getColumnApi()!
         };
     }
 
@@ -648,8 +648,8 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
             data: rowNode.data,
             colDef: this.colDef,
             column: this,
-            api: this.gridOptionsWrapper.getApi(),
-            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            api: this.gridOptionsWrapper.getApi()!,
+            columnApi: this.gridOptionsWrapper.getColumnApi()!,
             context: this.gridOptionsWrapper.getContext()
         };
         return params;

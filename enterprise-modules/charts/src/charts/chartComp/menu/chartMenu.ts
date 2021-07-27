@@ -70,8 +70,8 @@ export class ChartMenu extends Component {
 
         if (toolbarItemsFunc) {
             const params: GetChartToolbarItemsParams = {
-                api: this.gridOptionsWrapper.getApi(),
-                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                api: this.gridOptionsWrapper.getApi()!,
+                columnApi: this.gridOptionsWrapper.getColumnApi()!,
                 defaultItems: tabOptions
             };
 

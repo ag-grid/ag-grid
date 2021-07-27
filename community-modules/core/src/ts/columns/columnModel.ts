@@ -2507,7 +2507,7 @@ export class ColumnModel extends BeanStub {
                 columnGroup: columnGroup,
                 originalColumnGroup: originalColumnGroup,
                 location: location,
-                api: this.gridOptionsWrapper.getApi(),
+                api: this.gridOptionsWrapper.getApi()!,
                 context: this.gridOptionsWrapper.getContext()
             };
 
@@ -2538,7 +2538,7 @@ export class ColumnModel extends BeanStub {
                 let params = {
                     columnGroup: columnGroup,
                     colDef: colGroupDef,
-                    api: this.gridOptionsWrapper.getApi(),
+                    api: this.gridOptionsWrapper.getApi()!,
                     context: this.gridOptionsWrapper.getContext()
                 };
 

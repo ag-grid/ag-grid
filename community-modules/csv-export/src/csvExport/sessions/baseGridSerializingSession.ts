@@ -82,8 +82,8 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         if (callback) {
             return callback({
                 column: column,
-                api: this.gridOptionsWrapper.getApi(),
-                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                api: this.gridOptionsWrapper.getApi()!,
+                columnApi: this.gridOptionsWrapper.getColumnApi()!,
                 context: this.gridOptionsWrapper.getContext()
             });
         }
@@ -95,8 +95,8 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         if (this.processRowGroupCallback) {
             return this.processRowGroupCallback({
                 node: node,
-                api: this.gridOptionsWrapper.getApi(),
-                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                api: this.gridOptionsWrapper.getApi()!,
+                columnApi: this.gridOptionsWrapper.getColumnApi()!,
                 context: this.gridOptionsWrapper.getContext(),
             });
         }
@@ -118,8 +118,8 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
                 column: column,
                 node: rowNode,
                 value: value,
-                api: this.gridOptionsWrapper.getApi(),
-                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                api: this.gridOptionsWrapper.getApi()!,
+                columnApi: this.gridOptionsWrapper.getColumnApi()!,
                 context: this.gridOptionsWrapper.getContext(),
                 type: type
             });

@@ -406,9 +406,9 @@ export class CellCtrl extends BeanStub {
             rowIndex: this.getCellPosition().rowIndex,
             node: this.rowNode,
             data: this.rowNode.data,
-            api: this.beans.gridOptionsWrapper.getApi(),
+            api: this.beans.gridOptionsWrapper.getApi()!,
             cellStartedEdit: cellStartedEdit,
-            columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
+            columnApi: this.beans.gridOptionsWrapper.getColumnApi()!,
             context: this.beans.gridOptionsWrapper.getContext(),
             $scope: this.scope,
             onKeyDown: this.onKeyDown.bind(this),
@@ -464,8 +464,8 @@ export class CellCtrl extends BeanStub {
             newValue: newValue,
             colDef: colDef,
             column: this.column,
-            api: this.beans.gridOptionsWrapper.getApi(),
-            columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
+            api: this.beans.gridOptionsWrapper.getApi()!,
+            columnApi: this.beans.gridOptionsWrapper.getColumnApi()!,
             context: this.beans.gridOptionsWrapper.getContext()
         };
 

@@ -76,29 +76,29 @@ export interface ProcessCellForExportParams {
     accumulatedRowIndex?: number;
     node?: RowNode | null;
     column: Column;
-    api: GridApi | null | undefined;
-    columnApi: ColumnApi | null | undefined;
+    api: GridApi;
+    columnApi: ColumnApi;
     context: any;
     type: string; // clipboard, dragCopy (ctrl+D), export
 }
 
 export interface ProcessHeaderForExportParams {
     column: Column;
-    api: GridApi | null | undefined;
-    columnApi: ColumnApi | null | undefined;
+    api: GridApi;
+    columnApi: ColumnApi;
     context: any;
 }
 
 export interface ProcessGroupHeaderForExportParams {
     columnGroup: ColumnGroup;
-    api: GridApi | null | undefined;
-    columnApi: ColumnApi | null | undefined;
+    api: GridApi;
+    columnApi: ColumnApi;
     context: any;
 }
 
 export interface ProcessRowGroupForExportParams {
     node: RowNode;
-    api: GridApi | null | undefined;
-    columnApi: ColumnApi | null | undefined;
+    api: GridApi;
+    columnApi: ColumnApi;
     context: any;
 }
