@@ -65,17 +65,18 @@ export class PropertyKeys {
 
     /** You do not need to include event callbacks in this list, as they are generated automatically. */
     public static FUNCTION_PROPERTIES = [
-        'localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework', 'dateComponent', 'dateComponentFramework', 'groupRowRenderer',
-        'groupRowRendererFramework', 'isExternalFilterPresent', 'getRowHeight', 'doesExternalFilterPass', 'getRowClass', 'getRowStyle',
-        'getContextMenuItems', 'getMainMenuItems', 'processRowPostCreate', 'processCellForClipboard',
-        'groupRowAggNodes', 'getRowNodeId', 'isFullWidthCell', 'fullWidthCellRenderer', 'fullWidthCellRendererFramework', 'processSecondaryColDef',
-        'processSecondaryColGroupDef', 'getBusinessKeyForNode', 'sendToClipboard', 'navigateToNextHeader', 'tabToNextHeader', 'navigateToNextCell',
-        'tabToNextCell', 'processCellFromClipboard', 'getDocument', 'postProcessPopup', 'getChildCount', 'getDataPath',
-        'loadingCellRenderer', 'loadingCellRendererFramework', 'loadingOverlayComponent', 'loadingOverlayComponentFramework', 'noRowsOverlayComponent',
-        'noRowsOverlayComponentFramework', 'detailCellRenderer', 'detailCellRendererFramework', 'defaultGroupSortComparator', 'isRowMaster',
-        'isRowSelectable', 'postSort', 'processHeaderForClipboard', 'paginationNumberFormatter', 'processDataFromClipboard', 'getServerSideGroupKey',
-        'isServerSideGroup', 'suppressKeyboardEvent', 'createChartContainer', 'processChartOptions', 'getChartToolbarItems', 'fillOperation',
-        'isApplyServerSideTransaction', 'getServerSideStoreParams', 'isServerSideGroupOpenByDefault', 'isGroupOpenByDefault'
+        'localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework', 'dateComponent', 'dateComponentFramework',
+        'groupRowRenderer', 'groupRowRendererFramework', 'isExternalFilterPresent', 'getRowHeight', 'doesExternalFilterPass',
+        'getRowClass', 'getRowStyle', 'getContextMenuItems', 'getMainMenuItems', 'processRowPostCreate', 'processCellForClipboard',
+        'groupRowAggNodes', 'getRowNodeId', 'isFullWidthCell', 'fullWidthCellRenderer', 'fullWidthCellRendererFramework',
+        'processSecondaryColDef', 'processSecondaryColGroupDef', 'getBusinessKeyForNode', 'sendToClipboard', 'navigateToNextHeader',
+        'tabToNextHeader', 'navigateToNextCell', 'tabToNextCell', 'processCellFromClipboard', 'getDocument', 'postProcessPopup',
+        'getChildCount', 'getDataPath', 'loadingCellRenderer', 'loadingCellRendererFramework', 'loadingOverlayComponent',
+        'loadingOverlayComponentFramework', 'noRowsOverlayComponent', 'noRowsOverlayComponentFramework', 'detailCellRenderer',
+        'detailCellRendererFramework', 'isRowMaster', 'isRowSelectable', 'postSort', 'processHeaderForClipboard', 'paginationNumberFormatter',
+        'processDataFromClipboard', 'getServerSideGroupKey', 'isServerSideGroup', 'suppressKeyboardEvent', 'createChartContainer',
+        'processChartOptions', 'getChartToolbarItems', 'fillOperation', 'isApplyServerSideTransaction', 'getServerSideStoreParams',
+        'isServerSideGroupOpenByDefault', 'isGroupOpenByDefault', 'defaultGroupSortComparator', 'defaultGroupOrderComparator',
     ];
 
     public static ALL_PROPERTIES = [

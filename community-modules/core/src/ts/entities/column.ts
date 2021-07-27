@@ -328,16 +328,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
             }
         }
 
-        if (!ModuleRegistry.isRegistered(ModuleNames.DateTimeCellEditorModule)) {
-            if (this.colDef.cellEditor === 'agDateTimeCellEditor') {
-                if (ModuleRegistry.isPackageBased()) {
-                    warnOnce(`AG Grid: ${this.colDef.cellEditor} can only be used with ag-grid-enterprise`, 'ColumnDateTimeMissing');
-                } else {
-                    warnOnce(`AG Grid: ${this.colDef.cellEditor} can only be used with AG Grid Enterprise Module ${ModuleNames.DateTimeCellEditorModule}`, 'ColumnDateTimeMissing');
-                }
-            }
-        }
-
         if (this.gridOptionsWrapper.isTreeData()) {
             const itemsNotAllowedWithTreeData = ['rowGroup', 'rowGroupIndex', 'pivot', 'pivotIndex'];
             itemsNotAllowedWithTreeData.forEach(item => {

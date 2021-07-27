@@ -416,7 +416,6 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public noRowsOverlayComponentFramework: any | undefined = undefined;
     @Input() public detailCellRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined = undefined;
     @Input() public detailCellRendererFramework: any | undefined = undefined;
-    @Input() public defaultGroupSortComparator: (nodeA: RowNode, nodeB: RowNode) => number | undefined = undefined;
     @Input() public isRowMaster: IsRowMaster | undefined = undefined;
     @Input() public isRowSelectable: IsRowSelectable | undefined = undefined;
     @Input() public postSort: (nodes: RowNode[]) =>  void | undefined = undefined;
@@ -434,6 +433,8 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public getServerSideStoreParams: (params: GetServerSideStoreParamsParams) => ServerSideStoreParams | undefined = undefined;
     @Input() public isServerSideGroupOpenByDefault: (params: IsServerSideGroupOpenByDefaultParams) => boolean | undefined = undefined;
     @Input() public isGroupOpenByDefault: (params: IsGroupOpenByDefaultParams) => boolean | undefined = undefined;
+    @Input() public defaultGroupSortComparator: (nodeA: RowNode, nodeB: RowNode) => number | undefined = undefined;
+    @Input() public defaultGroupOrderComparator: (nodeA: RowNode, nodeB: RowNode) => number | undefined = undefined;
     @Input() public suppressMakeColumnVisibleAfterUnGroup: boolean | undefined = undefined;
     @Input() public suppressRowClickSelection: boolean | undefined = undefined;
     @Input() public suppressCellSelection: boolean | undefined = undefined;

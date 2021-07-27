@@ -66,6 +66,17 @@ export class VueComponentFactory {
         const container = document.createElement('div');
         const mountedComponent = createApp(extendedComponentDefinition);
         (parent as any).plugins.forEach((plugin: any) => mountedComponent.use(plugin));
+
+        const parentAsAny = parent as any;
+        const mountedComponentAsAny = mountedComponent as any;
+        mountedComponentAsAny._context.config = parentAsAny.$.appContext.config
+        mountedComponentAsAny._context.mixins = parentAsAny.$.appContext.mixins
+        mountedComponentAsAny._context.components = parentAsAny.$.appContext.components
+        mountedComponentAsAny._context.directives = parentAsAny.$.appContext.directives
+        mountedComponentAsAny._context.provides = parentAsAny.$.appContext.provides
+        mountedComponentAsAny._context.optionsCache = parentAsAny.$.appContext.optionsCache
+        mountedComponentAsAny._context.propsCache = parentAsAny.$.appContext.propsCache
+        mountedComponentAsAny._context.emitsCache = parentAsAny.$.appContext.emitsCache
         mountedComponent.mount(container);
 
         // note that the component creation is synchronous so that componentInstance is set by this point
@@ -84,8 +95,16 @@ export class VueComponentFactory {
         currentParent &&
         currentParent.$options &&
         (++depth < maxDepth)) {
-            componentInstance = (currentParent as any).$options.components![component as any];
+            const currentParentAsAny = currentParent as any;
+            componentInstance = currentParentAsAny.$options && currentParentAsAny.$options.components ? currentParentAsAny.$options.components[component as any] : null;
             currentParent = currentParent.$parent;
+        }
+
+        if (!componentInstance) {
+            const components = parent.$.appContext.components
+            if (components && components[component]) {
+                componentInstance = components[component];
+            }
         }
 
         if (!componentInstance && !suppressError) {

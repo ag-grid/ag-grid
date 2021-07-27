@@ -1102,8 +1102,8 @@ export class GridApi {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_POST_PROCESS_POPUP, postProcessPopupFunc);
     }
 
-    public setDefaultGroupSortComparator(defaultGroupSortComparatorFunc: (nodeA: RowNode, nodeB: RowNode) => number) :  void {
-        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_DEFAULT_GROUP_SORT_COMPARATOR, defaultGroupSortComparatorFunc);
+    public setDefaultGroupOrderComparator(defaultGroupOrderComparatorFunc: (nodeA: RowNode, nodeB: RowNode) => number) :  void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_DEFAULT_GROUP_ORDER_COMPARATOR, defaultGroupOrderComparatorFunc);
     }
 
     public setProcessChartOptions(processChartOptionsFunc: (params: ProcessChartOptionsParams) => ChartOptions<any>) :  void {

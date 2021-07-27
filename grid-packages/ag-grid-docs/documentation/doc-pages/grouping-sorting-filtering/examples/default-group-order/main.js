@@ -15,22 +15,18 @@ var gridOptions = {
         flex: 1,
         minWidth: 100,
         resizable: true,
+        sortable: true,
     },
     autoGroupColumnDef: {
         minWidth: 200,
     },
-    groupUseEntireRow: true,
-    enableRangeSelection: true,
+    groupDisplayType: 'groupRows',
+    defaultGroupOrderComparator: function(nodeA, nodeB) {
+        const a = nodeA.key && nodeA.key;
+        const b = nodeB.key && nodeB.key;
+        return (a < b) ? -1 : (a > b) ? 1 : 0;
+    },
     animateRows: true,
-    defaultGroupSortComparator: function(nodeA, nodeB) {
-        if (nodeA.key < nodeB.key) {
-            return -1;
-        } else if (nodeA.key > nodeB.key) {
-            return 1;
-        } else {
-            return 0;
-        }
-    }
 };
 
 // setup the grid after the page has finished loading

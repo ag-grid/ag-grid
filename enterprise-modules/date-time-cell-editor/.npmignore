@@ -1,7 +1,0 @@
-node_modules
-src
-.npmignore
-gulpfile.js
-tsconfig.json
-tsconfig.es6.json
-tsconfig.json

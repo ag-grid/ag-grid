@@ -159,7 +159,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         // we don't do group sorting for tree data
         if (this.usingTreeData) { return; }
 
-        const comparator = this.gridOptionsWrapper.getDefaultGroupSortComparator();
+        const comparator = this.gridOptionsWrapper.getDefaultGroupOrderComparator();
         if (_.exists(comparator)) { recursiveSort(rootNode); }
 
         function recursiveSort(rowNode: RowNode): void {

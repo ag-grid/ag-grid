@@ -151,7 +151,7 @@ export class GridOptionsWrapper {
     public static PROP_POST_SORT = 'postSort';
     public static PROP_GET_DOCUMENT = 'getDocument';
     public static PROP_POST_PROCESS_POPUP = 'postProcessPopup';
-    public static PROP_DEFAULT_GROUP_SORT_COMPARATOR = 'defaultGroupSortComparator';
+    public static PROP_DEFAULT_GROUP_ORDER_COMPARATOR = 'defaultGroupOrderComparator';
     public static PROP_PAGINATION_NUMBER_FORMATTER = 'paginationNumberFormatter';
 
     public static PROP_GET_CONTEXT_MENU_ITEMS = 'getContextMenuItems';
@@ -761,8 +761,8 @@ export class GridOptionsWrapper {
         return this.gridOptions.isApplyServerSideTransaction;
     }
 
-    public getDefaultGroupSortComparator() {
-        return this.gridOptions.defaultGroupSortComparator;
+    public getDefaultGroupOrderComparator() {
+        return this.gridOptions.defaultGroupOrderComparator;
     }
 
     public getIsFullWidthCellFunc(): ((rowNode: RowNode) => boolean) | undefined {
@@ -1680,6 +1680,11 @@ export class GridOptionsWrapper {
         if (options.groupSuppressAutoColumn) {
             console.warn("AG Grid: since v26.0, the grid property `groupSuppressAutoColumn` has been replaced by `groupDisplayType = 'custom'`");
             options.groupDisplayType = RowGroupingDisplayType.CUSTOM;
+        }
+
+        if (options.defaultGroupSortComparator) {
+            console.warn("AG Grid: since v26.0, the grid property `defaultGroupSortComparator` has been replaced by `defaultGroupOrderComparator`");
+            options.defaultGroupOrderComparator = options.defaultGroupSortComparator;
         }
     }
 
