@@ -360,6 +360,7 @@ export {
     ProcessChartParams,
     RowClassParams,
     RowHeightParams,
+    SendToClipboardParams,
     ServerSideStoreType,
     ServerSideStoreParams,
     GetServerSideStoreParamsParams,

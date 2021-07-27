@@ -144,6 +144,7 @@ import {
     ProcessChartOptionsParams,
     RowClassParams,
     RowHeightParams,
+    SendToClipboardParams,
     TreeDataDisplayType
 } from "ag-grid-community";
 
@@ -318,9 +319,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public noRowsOverlayComponentParams: any | undefined = undefined;
     @Input() public popupParent: HTMLElement | undefined = undefined;
     @Input() public colResizeDefault: string | undefined = undefined;
-    @Input() public statusBar: {
-        statusPanels: StatusPanelDef[];
-    } | undefined = undefined;
+    @Input() public statusBar: { statusPanels: StatusPanelDef[]; } | undefined = undefined;
     @Input() public sideBar: SideBarDef | string | boolean | null | undefined = undefined;
     @Input() public chartThemeOverrides: AgChartThemeOverrides | undefined = undefined;
     @Input() public customChartThemes: { [name: string]: AgChartTheme } | undefined = undefined;
@@ -384,7 +383,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public isExternalFilterPresent: () =>  boolean | undefined = undefined;
     @Input() public getRowHeight: (params: RowHeightParams) => number | undefined | null | undefined = undefined;
     @Input() public doesExternalFilterPass: (node: RowNode) =>  boolean | undefined = undefined;
-    @Input() public getRowClass: (params: RowClassParams) => (string | string[] | undefined) | undefined = undefined;
+    @Input() public getRowClass: (params: RowClassParams) => string | string[] | undefined | undefined = undefined;
     @Input() public getRowStyle: (params: RowClassParams) => { [cssProperty: string]: string } | undefined = undefined;
     @Input() public getContextMenuItems: GetContextMenuItems | undefined = undefined;
     @Input() public getMainMenuItems: GetMainMenuItems | undefined = undefined;
@@ -398,7 +397,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public processSecondaryColDef: (colDef: ColDef) =>  void | undefined = undefined;
     @Input() public processSecondaryColGroupDef: (colGroupDef: ColGroupDef) =>  void | undefined = undefined;
     @Input() public getBusinessKeyForNode: (node: RowNode) =>  string | undefined = undefined;
-    @Input() public sendToClipboard: (params: { data: string }) => void | undefined = undefined;
+    @Input() public sendToClipboard: (params: SendToClipboardParams) => void | undefined = undefined;
     @Input() public navigateToNextHeader: (params: NavigateToNextHeaderParams) => HeaderPosition | undefined = undefined;
     @Input() public tabToNextHeader: (params: TabToNextHeaderParams) => HeaderPosition | undefined = undefined;
     @Input() public navigateToNextCell: (params: NavigateToNextCellParams) => CellPosition | undefined = undefined;

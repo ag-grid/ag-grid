@@ -280,9 +280,7 @@ export interface GridOptions {
     isServerSideGroupOpenByDefault?: (params: IsServerSideGroupOpenByDefaultParams) => boolean;
     isGroupOpenByDefault?: (params: IsGroupOpenByDefaultParams) => boolean;
 
-    statusBar?: {
-        statusPanels: StatusPanelDef[];
-    };
+    statusBar?: { statusPanels: StatusPanelDef[]; };
 
     // just set once
     localeText?: { [key: string]: string };
@@ -389,10 +387,10 @@ export interface GridOptions {
     doesExternalFilterPass?(node: RowNode): boolean;
 
     getRowStyle?: (params: RowClassParams) => { [cssProperty: string]: string };
-    getRowClass?: (params: RowClassParams) => (string | string[] | undefined);
+    getRowClass?: (params: RowClassParams) => string | string[] | undefined;
     rowClassRules?: { [cssClassName: string]: (((params: RowClassParams) => boolean) | string); };
     getRowHeight?: (params: RowHeightParams) => number | undefined | null;
-    sendToClipboard?: (params: { data: string }) => void;
+    sendToClipboard?: (params: SendToClipboardParams) => void;
     processDataFromClipboard?: (params: ProcessDataFromClipboardParams) => string[][] | null;
 
     navigateToNextHeader?: (params: NavigateToNextHeaderParams) => HeaderPosition;
@@ -689,6 +687,10 @@ export interface RowHeightParams {
     node: RowNode;
     api: GridApi;
     context: any;
+}
+
+export interface SendToClipboardParams {
+    data: string;
 }
 
 export interface ProcessChartOptionsParams {
