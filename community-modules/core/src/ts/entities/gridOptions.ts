@@ -391,7 +391,7 @@ export interface GridOptions {
     getRowStyle?: (params: RowClassParams) => { [cssProperty: string]: string };
     getRowClass?: (params: RowClassParams) => (string | string[] | undefined);
     rowClassRules?: { [cssClassName: string]: (((params: RowClassParams) => boolean) | string); };
-    getRowHeight?: (params: RowHeightParams) => number | undefined;
+    getRowHeight?: (params: RowHeightParams) => number | undefined | null;
     sendToClipboard?: (params: { data: string }) => void;
     processDataFromClipboard?: (params: ProcessDataFromClipboardParams) => string[][] | null;
 

@@ -382,7 +382,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public groupRowRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined = undefined;
     @Input() public groupRowRendererFramework: any | undefined = undefined;
     @Input() public isExternalFilterPresent: () =>  boolean | undefined = undefined;
-    @Input() public getRowHeight: (params: RowHeightParams) => number | undefined | undefined = undefined;
+    @Input() public getRowHeight: (params: RowHeightParams) => number | undefined | null | undefined = undefined;
     @Input() public doesExternalFilterPass: (node: RowNode) =>  boolean | undefined = undefined;
     @Input() public getRowClass: (params: RowClassParams) => (string | string[] | undefined) | undefined = undefined;
     @Input() public getRowStyle: (params: RowClassParams) => { [cssProperty: string]: string } | undefined = undefined;
