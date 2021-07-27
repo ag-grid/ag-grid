@@ -2,10 +2,46 @@
 title: "Row Grouping - Row Group Panel"
 enterprise: true
 ---
+This section covers the Row Group Panel which allows users control which columns the rows are grouped by.   
+
+## Enabling Row Group Panel
+
+To display each row group under a separate group column set `rowGroupPanelShow` as shown below:
+
+<snippet spaceBetweenProperties="true">
+const gridOptions = { 
+    columnDefs: [
+        { field: 'country', enableRowGroup: true },
+        { field: 'year', enableRowGroup: true }, 
+        { field: 'sport', enableRowGroup: true },
+        { field: 'gold' },
+        { field: 'silver' },
+        { field: 'bronze' },
+    ],
+    // possible options: 'never', 'always', 'onlyWhenGrouping'
+    rowGroupPanelShow: 'always',
+}
+</snippet>
+
+In the snippet above, the Row Group Panel is configured so that is `'always'` displayed. To only display the Row Group
+Panel when there are active row groups use: `'onlyWhenGrouping'`.
+
+Note that `enableRowGroup = true` is only declared on the `country`, `year` and `sport` columns, which means only
+these columns can be dragged to the Row Group Panel.
+
+This is demonstrated in the following example, note the following:
+
+- There are two active row groups as the supplied `country` and `year` column definitions have `rowGroup=true` declared.
+
+- The Row Group Panel is always shown as `rowGroupPanelShow = 'always'`.
+
+- Only the `country`, `year` and `sport` columns can be dragged to the Row Group Panel as they have `enableRowGroup` enabled.
+
+<grid-example title='Enabling Row Group Panel' name='row-group-panel' type='generated' options='{ "enterprise": true, "exampleHeight": 540, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
 ## Keeping Columns Visible
 
-By default dragging a column out of the grid will make it hidden and un-grouping a column will make it visible again. This default behaviour can be changed with the following properties:
+By default, dragging a column out of the grid will make it hidden and un-grouping a column will make it visible again. This default behaviour can be changed with the following properties:
 
 - `suppressDragLeaveHidesColumns`: When dragging a column out of the grid, eg when dragging a column from the grid to the group drop zone, the column will remain visible.
 - `suppressMakeColumnVisibleAfterUnGroup`: When un-grouping, eg when clicking the 'x' on a column in the drop zone, the column will not be made visible.
