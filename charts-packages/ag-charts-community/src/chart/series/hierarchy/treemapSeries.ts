@@ -59,7 +59,7 @@ export class TreemapSeries extends HierarchySeries {
     static className = 'TreemapSeries';
     static type = 'treemap';
 
-    private groupSelection: Selection<Group, Group, TreemapNodeDatum, any> = Selection.select(this.group).selectAll<Group>();
+    private groupSelection: Selection<Group, Group, TreemapNodeDatum, any> = Selection.select(this.pickGroup).selectAll<Group>();
 
     private labelMap = new Map<number, Text>();
     private layout = new Treemap();

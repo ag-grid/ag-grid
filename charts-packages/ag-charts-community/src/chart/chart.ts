@@ -1139,6 +1139,10 @@ export abstract class Chart extends Observable {
 
     private pointerInsideLegend = false;
     private handleLegendMouseMove(event: MouseEvent) {
+        if (!this.legend.enabled) {
+            return;
+        }
+
         const { offsetX, offsetY } = event;
         const datum = this.legend.getDatumForPoint(offsetX, offsetY);
 
