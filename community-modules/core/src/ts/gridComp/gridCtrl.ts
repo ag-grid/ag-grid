@@ -1,6 +1,5 @@
 import { Autowired, Optional, PostConstruct } from "../context/context";
 import { GridApi } from "../gridApi";
-import { PopupService } from "../widgets/popupService";
 import { FocusService } from "../focusService";
 import { BeanStub } from "../context/beanStub";
 import { ModuleRegistry } from "../modules/moduleRegistry";
@@ -16,7 +15,7 @@ import { findIndex, last } from "../utils/array";
 import { Column } from "../entities/column";
 import { ColumnGroup } from "../entities/columnGroup";
 import { ColumnModel } from "../columns/columnModel";
-import { ControllersService } from "../controllersService";
+import { CtrlsService } from "../ctrlsService";
 import { MouseEventService } from "../gridBodyComp/mouseEventService";
 
 export interface IGridComp extends LayoutView {
@@ -33,13 +32,12 @@ export class GridCtrl extends BeanStub {
 
     @Autowired('columnApi') private readonly columnApi: ColumnApi;
     @Autowired('gridApi') private readonly gridApi: GridApi;
-    @Autowired('popupService') private readonly popupService: PopupService;
     @Autowired('focusService') protected readonly focusService: FocusService;
     @Optional('clipboardService') private readonly clipboardService: IClipboardService;
     @Autowired('loggerFactory') private readonly loggerFactory: LoggerFactory;
     @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('controllersService') private readonly controllersService: ControllersService;
+    @Autowired('ctrlsService') private readonly ctrlsService: CtrlsService;
     @Autowired('mouseEventService') private readonly mouseEventService: MouseEventService;
 
     private view: IGridComp;
@@ -52,16 +50,7 @@ export class GridCtrl extends BeanStub {
     protected postConstruct(): void {
         this.logger = this.loggerFactory.create('GridCompController');
 
-        // register with services that need grid core
-        [
-            this.popupService,
-            this.focusService,
-            this.controllersService
-        ].forEach(service => service.registerGridCompController(this));
-
-        if (ModuleRegistry.isRegistered(ModuleNames.ClipboardModule)) {
-            this.clipboardService.registerGridCompController(this);
-        }
+        this.ctrlsService.registerGridCtrl(this);
     }
 
     public setComp(view: IGridComp, eGridDiv: HTMLElement, eGui: HTMLElement): void {

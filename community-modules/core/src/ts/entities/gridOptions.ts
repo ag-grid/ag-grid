@@ -402,7 +402,10 @@ export interface GridOptions {
     tabToNextCell?: (params: TabToNextCellParams) => CellPosition;
 
     getDocument?: () => Document;
+
+    /** @deprecated - Use defaultGroupOrderComparator instead */
     defaultGroupSortComparator?: (nodeA: RowNode, nodeB: RowNode) => number;
+    defaultGroupOrderComparator?: (nodeA: RowNode, nodeB: RowNode) => number;
 
     loadingCellRenderer?: { new(): ICellRenderer; } | string;
     loadingCellRendererFramework?: any;

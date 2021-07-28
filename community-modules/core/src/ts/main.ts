@@ -16,10 +16,6 @@ export { ColumnUtils } from "./columns/columnUtils";
 export { DisplayedGroupCreator } from "./columns/displayedGroupCreator";
 export { GroupInstanceIdCreator } from "./columns/groupInstanceIdCreator";
 
-// headless
-export { HeadlessService, RowContainerSt, HeaderRowSt, CellSt, ColumnSt, RowSt } from "./headless/headlessService";
-export { TestHeadless } from "./headless/testHeadless";
-
 // components
 export { ComponentUtil } from "./components/componentUtil";
 export { AgStackComponentsRegistry } from "./components/agStackComponentsRegistry";
@@ -275,7 +271,7 @@ export { GridOptionsWrapper } from "./gridOptionsWrapper";
 export { EventService } from "./eventService";
 export { SelectableService } from "./rowNodes/selectableService";
 export { RowNodeSorter, SortedRowNode, SortOption } from "./rowNodes/rowNodeSorter";
-export { ControllersService } from "./controllersService";
+export { CtrlsService } from "./ctrlsService";
 export { GridComp } from "./gridComp/gridComp";
 export { GridCtrl, IGridComp } from "./gridComp/gridCtrl";
 export { Logger, LoggerFactory } from "./logger";

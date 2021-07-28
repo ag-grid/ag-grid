@@ -2,7 +2,7 @@ import { BeanStub } from "../context/beanStub";
 import { Autowired, Bean, PostConstruct, Qualifier } from "../context/context";
 import { Events } from "../eventKeys";
 import { getMaxDivHeight } from "../utils/browser";
-import { ControllersService } from "../controllersService";
+import { CtrlsService } from "../ctrlsService";
 import { Logger, LoggerFactory } from "../logger";
 
 /**
@@ -13,7 +13,7 @@ import { Logger, LoggerFactory } from "../logger";
 @Bean('rowContainerHeightService')
 export class RowContainerHeightService extends BeanStub {
 
-    @Autowired('controllersService') private controllersService: ControllersService;
+    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
     private maxDivHeight: number;
 
@@ -61,7 +61,7 @@ export class RowContainerHeightService extends BeanStub {
     public updateOffset(): void {
         if (!this.stretching) { return; }
 
-        const gridBodyCon = this.controllersService.getGridBodyController();
+        const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         const newScrollY = gridBodyCon.getScrollFeature().getVScrollPosition().top;
         const newBodyHeight = this.getUiBodyHeight();
 
@@ -130,7 +130,7 @@ export class RowContainerHeightService extends BeanStub {
     }
 
     private getUiBodyHeight(): number {
-        const gridBodyCon = this.controllersService.getGridBodyController();
+        const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         const pos = gridBodyCon.getScrollFeature().getVScrollPosition();
         return pos.bottom - pos.top;
     }

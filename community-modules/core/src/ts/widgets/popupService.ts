@@ -1,4 +1,4 @@
-import { Autowired, Bean } from "../context/context";
+import { Autowired, Bean, PostConstruct } from "../context/context";
 import { PostProcessPopupParams } from "../entities/gridOptions";
 import { RowNode } from "../entities/rowNode";
 import { Column } from "../entities/column";
@@ -13,6 +13,7 @@ import { FocusService } from "../focusService";
 import { GridCtrl } from "../gridComp/gridCtrl";
 import { IAfterGuiAttachedParams } from "../interfaces/iAfterGuiAttachedParams";
 import { AgPromise } from "../utils";
+import { CtrlsService } from "../ctrlsService";
 
 export interface PopupEventParams {
     originalMouseEvent?: MouseEvent | Touch | null;
@@ -78,19 +79,22 @@ export class PopupService extends BeanStub {
     // maybe popups in the future should be parent to the body??
     @Autowired('environment') private environment: Environment;
     @Autowired('focusService') private focusService: FocusService;
+    @Autowired('ctrlsService') public ctrlsService: CtrlsService;
 
-    private gridCompController: GridCtrl;
+    private gridCtrl: GridCtrl;
+
     private popupList: AgPopup[] = [];
 
-    public registerGridCompController(gridCompController: GridCtrl): void {
-        this.gridCompController = gridCompController;
-
-        this.addManagedListener(this.gridCompController, Events.EVENT_KEYBOARD_FOCUS, () => {
-            forEach(this.popupList, popup => addCssClass(popup.element, FocusService.AG_KEYBOARD_FOCUS));
-        });
-
-        this.addManagedListener(this.gridCompController, Events.EVENT_MOUSE_FOCUS, () => {
-            forEach(this.popupList, popup => removeCssClass(popup.element, FocusService.AG_KEYBOARD_FOCUS));
+    @PostConstruct
+    private postConstruct(): void {
+        this.ctrlsService.whenReady( p => {
+            this.gridCtrl = p.gridCtrl;
+            this.addManagedListener(this.gridCtrl, Events.EVENT_KEYBOARD_FOCUS, () => {
+                forEach(this.popupList, popup => addCssClass(popup.element, FocusService.AG_KEYBOARD_FOCUS));
+            });
+            this.addManagedListener(this.gridCtrl, Events.EVENT_MOUSE_FOCUS, () => {
+                forEach(this.popupList, popup => removeCssClass(popup.element, FocusService.AG_KEYBOARD_FOCUS));
+            });
         });
     }
 
@@ -99,7 +103,7 @@ export class PopupService extends BeanStub {
 
         if (ePopupParent) { return ePopupParent; }
 
-        return this.gridCompController.getGui();
+        return this.gridCtrl.getGui();
     }
 
     public positionPopupForMenu(params: { eventSource: HTMLElement, ePopup: HTMLElement; }): void {

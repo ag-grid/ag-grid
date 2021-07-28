@@ -1,20 +1,20 @@
 import { BeanStub } from "../context/beanStub";
 import { Events } from "../events";
 import { Autowired, Bean, PostConstruct } from "../context/context";
-import { ControllersService } from "../controllersService";
+import { CtrlsService } from "../ctrlsService";
 import { RowContainerCtrl } from "../gridBodyComp/rowContainer/rowContainerCtrl";
 
 @Bean('paginationAutoPageSizeService')
 export class PaginationAutoPageSizeService extends BeanStub {
 
-    @Autowired('controllersService') private controllersService: ControllersService;
+    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
     private centerRowContainerCon: RowContainerCtrl;
 
     @PostConstruct
     private postConstruct(): void {
-        this.controllersService.whenReady(p => {
-            this.centerRowContainerCon = p.centerRowContainerCon;
+        this.ctrlsService.whenReady(p => {
+            this.centerRowContainerCon = p.centerRowContainerCtrl;
 
             this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.onBodyHeightChanged.bind(this));
             this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));

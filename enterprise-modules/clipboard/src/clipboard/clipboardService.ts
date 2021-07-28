@@ -37,7 +37,8 @@ import {
     ValueService,
     ICsvCreator,
     IRangeService,
-    Optional
+    Optional,
+    CtrlsService
 } from "@ag-grid-community/core";
 
 interface RowCallback {
@@ -56,6 +57,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     @Autowired('selectionService') private selectionService: SelectionService;
     @Optional('rangeService') private rangeService: IRangeService;
     @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('ctrlsService') public ctrlsService: CtrlsService;
 
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('focusService') private focusService: FocusService;
@@ -73,10 +75,6 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
     private navigatorApiFailed = false;
 
-    public registerGridCompController(gridCtrl: GridCtrl): void {
-        this.gridCtrl = gridCtrl;
-    }
-
     @PostConstruct
     private init(): void {
         this.logger = this.loggerFactory.create('ClipboardService');
@@ -84,6 +82,11 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         if (this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
+
+        this.ctrlsService.whenReady( p => {
+            this.gridCtrl = p.gridCtrl;
+        });
+
     }
 
     public pasteFromClipboard(): void {

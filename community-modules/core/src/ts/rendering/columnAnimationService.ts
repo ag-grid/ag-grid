@@ -1,14 +1,14 @@
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { BeanStub } from "../context/beanStub";
 import { GridBodyCtrl } from "../gridBodyComp/gridBodyCtrl";
-import { ControllersService } from "../controllersService";
+import { CtrlsService } from "../ctrlsService";
 
 @Bean('columnAnimationService')
 export class ColumnAnimationService extends BeanStub {
 
-    @Autowired('controllersService') private controllersService: ControllersService;
+    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
-    private gridBodyCon: GridBodyCtrl;
+    private gridBodyCtrl: GridBodyCtrl;
 
     private executeNextFuncs: Function[] = [];
     private executeLaterFuncs: Function[] = [];
@@ -19,7 +19,7 @@ export class ColumnAnimationService extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.controllersService.whenReady(p => this.gridBodyCon = p.gridBodyCon);
+        this.ctrlsService.whenReady(p => this.gridBodyCtrl = p.gridBodyCtrl);
     }
 
     public isActive(): boolean {
@@ -68,12 +68,12 @@ export class ColumnAnimationService extends BeanStub {
         // by the time the 'wait' func executes
         this.animationThreadCount++;
         const animationThreadCountCopy = this.animationThreadCount;
-        this.gridBodyCon.setColumnMovingCss(true);
+        this.gridBodyCtrl.setColumnMovingCss(true);
 
         this.executeLaterFuncs.push(() => {
             // only remove the class if this thread was the last one to update it
             if (this.animationThreadCount === animationThreadCountCopy) {
-                this.gridBodyCon.setColumnMovingCss(false);
+                this.gridBodyCtrl.setColumnMovingCss(false);
             }
         });
     }

@@ -35,7 +35,7 @@ import { IRowModel } from "../interfaces/iRowModel";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 import { IServerSideRowModel } from "../interfaces/iServerSideRowModel";
 import { ResizeObserverService } from "../misc/resizeObserverService";
-import { ControllersService } from "../controllersService";
+import { CtrlsService } from "../ctrlsService";
 import { NavigationService } from "../gridBodyComp/navigationService";
 
 /** Using the IoC has a slight performance consideration, which is no problem most of the
@@ -83,7 +83,7 @@ export class Beans {
     @Optional('selectionHandleFactory') public selectionHandleFactory: ISelectionHandleFactory;
     @Autowired('rowCssClassCalculator') public rowCssClassCalculator: RowCssClassCalculator;
     @Autowired('rowModel') public rowModel: IRowModel;
-    @Autowired('controllersService') public controllersService: ControllersService;
+    @Autowired('ctrlsService') public ctrlsService: CtrlsService;
 
     public doingMasterDetail: boolean;
 

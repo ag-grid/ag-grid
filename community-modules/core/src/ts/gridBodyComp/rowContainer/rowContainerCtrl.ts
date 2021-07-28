@@ -4,7 +4,7 @@ import { ScrollVisibleService } from "../../gridBodyComp/scrollVisibleService";
 import { Events } from "../../eventKeys";
 import { RowContainerEventsFeature } from "./rowContainerEventsFeature";
 import { DragService } from "../../dragAndDrop/dragService";
-import { ControllersService } from "../../controllersService";
+import { CtrlsService } from "../../ctrlsService";
 import { getInnerWidth, getScrollLeft, isHorizontalScrollShowing, isVisible, setScrollLeft } from "../../utils/dom";
 import { ColumnModel } from "../../columns/columnModel";
 import { ResizeObserverService } from "../../misc/resizeObserverService";
@@ -98,7 +98,7 @@ export class RowContainerCtrl extends BeanStub {
 
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Autowired('dragService') private dragService: DragService;
-    @Autowired('controllersService') private controllersService: ControllersService;
+    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
@@ -132,21 +132,21 @@ export class RowContainerCtrl extends BeanStub {
         this.forContainers([RowContainerName.CENTER],
             () => this.viewportSizeFeature = this.createManagedBean(new ViewportSizeFeature(this)));
 
-        this.registerWithControllersService();
+        this.registerWithCtrlsService();
 
     }
 
-    private registerWithControllersService(): void {
+    private registerWithCtrlsService(): void {
         switch (this.name) {
-            case RowContainerName.CENTER: this.controllersService.registerCenterRowContainerCon(this); break;
-            case RowContainerName.LEFT: this.controllersService.registerLeftRowContainerCon(this); break;
-            case RowContainerName.RIGHT: this.controllersService.registerRightRowContainerCon(this); break;
-            case RowContainerName.TOP_CENTER: this.controllersService.registerTopCenterRowContainerCon(this); break;
-            case RowContainerName.TOP_LEFT: this.controllersService.registerTopLeftRowContainerCon(this); break;
-            case RowContainerName.TOP_RIGHT: this.controllersService.registerTopRightRowContainerCon(this); break;
-            case RowContainerName.BOTTOM_CENTER: this.controllersService.registerBottomCenterRowContainerCon(this); break;
-            case RowContainerName.BOTTOM_LEFT: this.controllersService.registerBottomLeftRowContainerCon(this); break;
-            case RowContainerName.BOTTOM_RIGHT: this.controllersService.registerBottomRightRowContainerCon(this); break;
+            case RowContainerName.CENTER: this.ctrlsService.registerCenterRowContainerCtrl(this); break;
+            case RowContainerName.LEFT: this.ctrlsService.registerLeftRowContainerCtrl(this); break;
+            case RowContainerName.RIGHT: this.ctrlsService.registerRightRowContainerCtrl(this); break;
+            case RowContainerName.TOP_CENTER: this.ctrlsService.registerTopCenterRowContainerCtrl(this); break;
+            case RowContainerName.TOP_LEFT: this.ctrlsService.registerTopLeftRowContainerCon(this); break;
+            case RowContainerName.TOP_RIGHT: this.ctrlsService.registerTopRightRowContainerCtrl(this); break;
+            case RowContainerName.BOTTOM_CENTER: this.ctrlsService.registerBottomCenterRowContainerCtrl(this); break;
+            case RowContainerName.BOTTOM_LEFT: this.ctrlsService.registerBottomLeftRowContainerCtrl(this); break;
+            case RowContainerName.BOTTOM_RIGHT: this.ctrlsService.registerBottomRightRowContainerCtrl(this); break;
         }
     }
 

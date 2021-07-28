@@ -579,7 +579,7 @@ export class CellComp extends Component implements TooltipParentComp {
             this.angularCompiledElement = this.beans.$compile(this.eCellValue.children)(this.scope);
 
             // because this.scope is set, we are guaranteed GridBodyComp is vanilla JS, ie it's GridBodyComp.ts from AG Stack and and not react
-            this.beans.controllersService.getGridBodyController().requestAngularApply();
+            this.beans.ctrlsService.getGridBodyCtrl().requestAngularApply();
         }
     }
 }
