@@ -106,7 +106,7 @@ const RowComp = (params: {context: Context, rowCtrl: RowCtrl, pinned: string | n
     useEffect(() => {
         return showJsComp(fullWidthCompDetails, context, eGui.current!, 
             compFactory => compFactory.createFullWidthCellRenderer(fullWidthCompDetails!, rowCtrl.getFullWidthCellRendererType()));
-    }, []);
+    }, [fullWidthCompDetails]);
 
     const rowStyles = useMemo( ()=> {
         const res = {
