@@ -220,28 +220,21 @@ const Property = ({ framework, id, name, definition, config }) => {
         name += `&nbsp;<span class="${styles['reference__required']}" title="Required">&ast;</span>`;
     }
 
-    let gridParams = { ...config.lookups.gridOptions[name] };
-    if (gridParams && gridParams.type) {
-        // If params are classes we want to swap them over to arguments
-        const params = gridParams.type.parameters;
-        if (params) {
-            const paramTypes = Object.entries(params).filter(([key, v]) => key !== 'meta');
-            const nativeTypes = ['boolean', 'string', 'number', 'any'];
-            const isClassOrNative = paramTypes.some(([key, pt]) => {
-                const rawType = pt ? pt.replace('[]', '') : pt;
-                return nativeTypes.includes(rawType) || types[rawType];
-            });
-            if (paramTypes.length === 0 || isClassOrNative) {
-                const typeArgs = { ...params };
-                delete typeArgs.meta;
-                gridParams.type.arguments = typeArgs;
-                delete gridParams.type.parameters;
-            }
+    // Use the type definition is manually specified in config
+    let type = definition.type;
+    let isComplexType = !!type;
+    if (!type) {
+        // No type specified in the config file so look it up from GridOptions
+        let gridParams = { ...config.lookups.gridOptions[name] };
+        if (gridParams && gridParams.type) {
+            type = gridParams.type;
+            isComplexType = true;
+        } else {
+            // As a last resort try and infer the type
+            type = inferType(definition.default);
         }
     }
 
-    const complexType = definition.type || (gridParams && gridParams.type)
-    const type = complexType || inferType(definition.default);
     const isFunction = !isObject && type != null && typeof type === 'object';
     const typeUrl = isObject ? `#reference-${id}.${name}` : getTypeUrl(type, framework);
 
@@ -269,7 +262,7 @@ const Property = ({ framework, id, name, definition, config }) => {
             {definition.default != null && <div>Default: <code>{formatJson(definition.default)}</code></div>}
             {definition.options != null &&
                 <div>Options: {definition.options.map((o, i) => <React.Fragment key={o}>{i > 0 ? ', ' : ''}<code>{formatJson(o)}</code></React.Fragment>)}</div>}
-            {typeof complexType === 'object' &&
+            {typeof isComplexType &&
                 <div className={isExpanded ? '' : 'd-none'}>
                 <FunctionCodeSample framework={framework} name={name} type={type} config={config} />
                 </div>}
