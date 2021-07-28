@@ -590,13 +590,18 @@ export class PieSeries extends PolarSeries {
         if (data && data.length && labelKey) {
             const { fills, strokes, id } = this;
 
+            const titleText = this.title && this.title.text;
             data.forEach((datum, index) => {
+                let labelParts = [];
+                titleText && labelParts.push(titleText);
+                labelParts.push(String(datum[labelKey]));
+
                 legendData.push({
                     id,
                     itemId: index,
                     enabled: this.seriesItemEnabled[index],
                     label: {
-                        text: String(datum[labelKey])
+                        text: labelParts.join(' - ')
                     },
                     marker: {
                         fill: fills[index % fills.length],

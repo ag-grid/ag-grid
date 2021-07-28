@@ -1153,6 +1153,7 @@ export abstract class Chart extends Observable {
             }
         } else if (this.pointerInsideLegend) {
             this.pointerInsideLegend = false;
+            // Undim all series only if the pointer was inside legend is now leaving it.
             this.series.forEach(s => s.undim());
             return;
         }
