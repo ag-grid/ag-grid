@@ -190,7 +190,7 @@ const getTypeUrl = (type, framework) => {
 };
 
 const Property = ({ framework, id, name, definition, config }) => {
-    const [isExpanded, setExpanded] = useState(false);
+    const [isExpanded, setExpanded] = useState(true);
 
     let description = '';
     let isObject = false;
@@ -414,13 +414,23 @@ const FunctionCodeSample = ({ framework, name, type, config }) => {
         `${functionPrefix} ${returnTypeIsObject ? returnTypeName : (getLinkedType(returnType || 'void', framework))};`,
     ];
 
-    Object.keys(args)
-        .filter(key => !Array.isArray(args[key]) && typeof args[key] === 'object')
-        .forEach(key => {
-            const { meta, ...type } = args[key];
+    if (type.parameters) {
 
-            lines.push('', ...getInterfaceLines(framework, getArgumentTypeName(key, { meta }), type, config));
-        });
+        Object.keys(args)
+            .filter(key => !Array.isArray(args[key]) && typeof args[key] === 'object')
+            .forEach(key => {
+                const { meta, ...type } = args[key];
+
+                lines.push('', ...getInterfaceLines(framework, getArgumentTypeName(key, { meta }), type, config));
+            });
+    } else if (type.arguments) {
+
+        Object.entries(args)
+            .forEach(([key, type]) => {
+                lines.push('', ...getInterfaceLines(framework, type, type, config));
+            });
+    }
+
 
     if (returnTypeIsObject) {
         lines.push('', ...getInterfaceLines(framework, returnTypeName, returnType, config));
@@ -432,10 +442,18 @@ const FunctionCodeSample = ({ framework, name, type, config }) => {
 };
 
 const getInterfaceLines = (framework, name, definition, config) => {
-    const lines = [`interface ${name} {`];
 
     // If we have the actual interface use that definition
-    const interfaceProps = config.lookups.interfaces[name];
+    const interfaceProps = config.lookups.interfaces[definition];
+    if (interfaceProps) {
+        name = definition;
+    } else if (typeof (definition) === 'string') {
+        return [];
+    }
+
+
+    const lines = [`interface ${name} {`];
+
     Object.entries(interfaceProps || definition).forEach(([property, type]) => {
         lines.push(`  ${property}: ${getLinkedType(type, framework)};`);
     });

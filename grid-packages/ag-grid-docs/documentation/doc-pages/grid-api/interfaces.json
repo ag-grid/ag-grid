@@ -647,5 +647,9 @@
         "api": "GridApi",
         "columnApi": "ColumnApi",
         "context": "any"
+    },
+    "HeaderPosition": {
+        "headerRowIndex": "number",
+        "column": "Column | ColumnGroup"
     }
 }

@@ -118,19 +118,18 @@ function extractTypesFromNode(node, iLookups, publicEventLookup) {
             delete params.meta;
             result[name] = {
                 description: getTsDoc(node),
-                type: { parameters: params, returnType: interface.meta.returnType }
+                type: { arguments: params, returnType: interface.meta.returnType }
             };
-        } else if (node.type && node.type.parameters) { //&& node.type.parameters.length > 0
-            const params = { meta: { name } };
+        } else if (node.type && node.type.parameters) {
+            const params = {};
             node.type.parameters.forEach(p => {
                 const paramType = getParamType(p.type)
                 params[p.name.escapedText] = paramType;
-                params.meta.name = paramType;
             });
             returnType = getParamType(node.type.type);
             result[name] = {
                 description: getTsDoc(node),
-                type: { parameters: params, returnType }
+                type: { arguments: params, returnType }
             };
         } else {
             result[name] = { description: getTsDoc(node), type: { returnType } };
@@ -138,19 +137,18 @@ function extractTypesFromNode(node, iLookups, publicEventLookup) {
     } else if (kind == 'MethodSignature') {
 
         if (node.parameters && node.parameters.length > 0) {
-            const params = { meta: { name } };
+            const params = {};
             node.parameters.forEach(p => {
                 const paramType = getParamType(p.type)
                 params[p.name.escapedText] = paramType;
-                params.meta.name = paramType;
             });
 
             result[name] = {
                 description: getTsDoc(node),
-                type: { parameters: params, returnType }
+                type: { arguments: params, returnType }
             };
         } else {
-            result[name] = { description: getTsDoc(node), type: { parameters: {}, returnType } };
+            result[name] = { description: getTsDoc(node), type: { arguments: {}, returnType } };
         }
     };
     ts.forEachChild(node, n => {
@@ -167,7 +165,9 @@ function getGridPropertiesAndEventsJs() {
     const gridOpsFile = "../../community-modules/core/src/ts/entities/gridOptions.ts";
     const gridOptionsNode = findInterfaceNode('GridOptions', parseFile(gridOpsFile));
 
-    const interfaceFiles = [gridOpsFile, "../../community-modules/core/src/ts/interfaces/exportParams.ts"]
+    const interfaceFiles = [gridOpsFile,
+        "../../community-modules/core/src/ts/interfaces/exportParams.ts",
+        "../../community-modules/core/src/ts/headerRendering/header/headerPosition.ts"]
     let iLookups = {};
     interfaceFiles.forEach(file => {
         const parsedFile = parseFile(file);
