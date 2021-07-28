@@ -4,7 +4,7 @@ import { LayoutFeature, LayoutView } from "../styling/layoutFeature";
 import { Constants } from "../constants/constants";
 import { Events } from "../eventKeys";
 import { RowContainerHeightService } from "../rendering/rowContainerHeightService";
-import { ControllersService } from "../controllersService";
+import { CtrlsService } from "../ctrlsService";
 import { ColumnModel } from "../columns/columnModel";
 import { ScrollVisibleService } from "./scrollVisibleService";
 import { getTarget } from "../utils/event";
@@ -48,7 +48,7 @@ export interface IGridBodyComp extends LayoutView {
 export class GridBodyCtrl extends BeanStub {
 
     @Autowired('rowContainerHeightService') private rowContainerHeightService: RowContainerHeightService;
-    @Autowired('controllersService') private controllersService: ControllersService;
+    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
@@ -59,6 +59,7 @@ export class GridBodyCtrl extends BeanStub {
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('popupService') public popupService: PopupService;
     @Autowired('mouseEventService') public mouseEventService: MouseEventService;
+    @Autowired('$scope') private $scope: any;
 
     private comp: IGridBodyComp;
     private eGridBody: HTMLElement;
@@ -68,6 +69,8 @@ export class GridBodyCtrl extends BeanStub {
 
     private bodyScrollFeature: GridBodyScrollFeature;
     private rowDragFeature: RowDragFeature;
+
+    private angularApplyTriggered = false;
 
     public getScrollFeature(): GridBodyScrollFeature {
         return this.bodyScrollFeature;
@@ -93,7 +96,7 @@ export class GridBodyCtrl extends BeanStub {
 
         this.setupRowAnimationCssClass();
 
-        this.controllersService.registerGridBodyController(this);
+        this.ctrlsService.registerGridBodyCtrl(this);
 
         this.addEventListeners();
         this.addFocusListeners([eTop, eBodyViewport, eBottom]);
@@ -102,6 +105,14 @@ export class GridBodyCtrl extends BeanStub {
         this.setFloatingHeights();
         this.disableBrowserDragging();
         this.addStopEditingWhenGridLosesFocus();
+
+        if (this.$scope) {
+            this.addAngularApplyCheck();
+        }
+    }
+
+    public getComp(): IGridBodyComp {
+        return this.comp;
     }
 
     private addEventListeners(): void {
@@ -247,7 +258,7 @@ export class GridBodyCtrl extends BeanStub {
         // the context menu if no rows or columns are displayed, or user simply clicks outside of a cell
         const listener = (mouseEvent: MouseEvent) => {
             const target = getTarget(mouseEvent);
-            if (target === this.eBodyViewport || target === this.controllersService.getCenterRowContainerCon().getViewportElement()) {
+            if (target === this.eBodyViewport || target === this.ctrlsService.getCenterRowContainerCtrl().getViewportElement()) {
                 // show it
                 if (this.contextMenuFactory) {
                     this.contextMenuFactory.onContextMenu(mouseEvent, null, null, null, null, this.eGridBody);
@@ -354,4 +365,21 @@ export class GridBodyCtrl extends BeanStub {
         this.eBodyViewport.removeEventListener('scroll', listener);
     }
 
+    public requestAngularApply(): void {
+        if (this.angularApplyTriggered) { return; }
+
+        this.angularApplyTriggered = true;
+
+        window.setTimeout(() => {
+            this.angularApplyTriggered = false;
+            this.$scope.$apply();
+        }, 0);
+    }
+
+    private addAngularApplyCheck(): void {
+        // these are the events we need to do an apply after - these are the ones that can end up
+        // with columns added or removed
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, ()=> this.requestAngularApply() );
+        this.addManagedListener(this.eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, ()=> this.requestAngularApply() );
+    }
 }

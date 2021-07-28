@@ -14,7 +14,7 @@ import { HeaderNavigationService, HeaderNavigationDirection } from './header/hea
 import { exists } from '../utils/generic';
 import { PinnedWidthService } from "../gridBodyComp/pinnedWidthService";
 import { CenterWidthFeature } from "../gridBodyComp/centerWidthFeature";
-import { ControllersService } from "../controllersService";
+import { CtrlsService } from "../ctrlsService";
 import { KeyCode } from '../constants/keyCode';
 import { FocusService } from '../focusService';
 
@@ -41,7 +41,7 @@ export class HeaderRootComp extends Component {
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
     @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
-    @Autowired('controllersService') private controllersService: ControllersService;
+    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
     private printLayout: boolean;
     private headerContainers: Map<HeaderContainerPosition, HeaderContainer> = new Map();
@@ -106,7 +106,7 @@ export class HeaderRootComp extends Component {
         }
 
         this.setupHeaderHeight();
-        this.controllersService.registerHeaderRootComp(this);
+        this.ctrlsService.registerHeaderRootComp(this);
     }
 
     private setupHeaderHeight(): void {
@@ -256,7 +256,7 @@ export class HeaderRootComp extends Component {
             // on the header, giving the impression that the header scrolled as expected.
             const scrollLeft = this.eHeaderViewport.scrollLeft;
             if (scrollLeft !== 0) {
-                const gridBodyCon = this.controllersService.getGridBodyController();
+                const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
                 gridBodyCon.getScrollFeature().scrollHorizontally(scrollLeft);
                 this.eHeaderViewport.scrollLeft = 0;
             }

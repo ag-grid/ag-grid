@@ -87,7 +87,7 @@ const GettingStartedPane = ({ framework, data }) => {
 };
 
 const GettingStarted = ({ framework, data }) => {
-    const title = `${framework === 'javascript' ? 'JavaScript' : framework} Grid: Getting Started`;
+    const title = `${framework === 'javascript' ? 'JavaScript' : framework === 'react' ? `${framework} Data` : framework} Grid: Getting Started`;
     const leftPaneItems = data.filter(panelItemsFilter('left', framework));
     const rightPaneItems = data.filter(panelItemsFilter('right', framework));
 

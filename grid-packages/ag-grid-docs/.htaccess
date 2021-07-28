@@ -1517,16 +1517,6 @@ AddType text/javascript ts jsx
     Redirect 301 /react-grid/grid-size/ /react-data-grid/grid-size/
     Redirect 301 /react-grid/group-cell-renderer/ /react-data-grid/group-cell-renderer/
     Redirect 301 /react-grid/grouping/ /react-data-grid/grouping/
-    Redirect 301 /react-grid/grouping-custom-group-columns/ /react-data-grid/grouping-custom-group-columns/
-    Redirect 301 /react-grid/grouping-display-types/ /react-data-grid/grouping-display-types/
-    Redirect 301 /react-grid/grouping-filtering/ /react-data-grid/grouping-filtering/
-    Redirect 301 /react-grid/grouping-footers/ /react-data-grid/grouping-footers/
-    Redirect 301 /react-grid/grouping-group-panel/ /react-data-grid/grouping-group-panel/
-    Redirect 301 /react-grid/grouping-group-rows/ /react-data-grid/grouping-group-rows/
-    Redirect 301 /react-grid/grouping-multiple-group-columns/ /react-data-grid/grouping-multiple-group-columns/
-    Redirect 301 /react-grid/grouping-other/ /react-data-grid/grouping-other/
-    Redirect 301 /react-grid/grouping-single-group-column/ /react-data-grid/grouping-single-group-column/
-    Redirect 301 /react-grid/grouping-sorting/ /react-data-grid/grouping-sorting/
     Redirect 301 /react-grid/immutable-data/ /react-data-grid/immutable-data/
     Redirect 301 /react-grid/index.html /react-data-grid/index.html
     Redirect 301 /react-grid/infinite-scrolling/ /react-data-grid/infinite-scrolling/

@@ -6,22 +6,22 @@ import { Component } from "../widgets/component";
 import { HeaderRootComp } from "../headerRendering/headerRootComp";
 import { BeanStub } from "../context/beanStub";
 import { containsClass, addCssClass } from "../utils/dom";
-import { ControllersService } from "../controllersService";
+import { CtrlsService } from "../ctrlsService";
 import { RowContainerCtrl } from "../gridBodyComp/rowContainer/rowContainerCtrl";
 
 @Bean('autoWidthCalculator')
 export class AutoWidthCalculator extends BeanStub {
 
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('controllersService') private controllersService: ControllersService;
+    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
     private centerRowContainerCon: RowContainerCtrl;
     private headerRootComp: HeaderRootComp;
 
     @PostConstruct
     private postConstruct(): void {
-        this.controllersService.whenReady(p => {
-            this.centerRowContainerCon = p.centerRowContainerCon;
+        this.ctrlsService.whenReady(p => {
+            this.centerRowContainerCon = p.centerRowContainerCtrl;
         });
     }
 

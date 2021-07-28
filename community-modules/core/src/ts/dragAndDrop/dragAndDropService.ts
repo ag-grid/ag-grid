@@ -85,7 +85,7 @@ export interface DropTarget {
     getContainer(): HTMLElement;
     /** If any secondary containers. For example when moving columns in AG Grid, we listen for drops
      * in the header as well as the body (main rows and pinned rows) of the grid. */
-    getSecondaryContainers?(): HTMLElement[];
+    getSecondaryContainers?(): HTMLElement[][];
     /** Icon to show when drag is over */
     getIconName?(): string | null;
 
@@ -137,7 +137,7 @@ export class DragAndDropService extends BeanStub {
     public static ICON_NOT_ALLOWED = 'notAllowed';
     public static ICON_HIDE = 'hide';
 
-    public static GHOST_TEMPLATE =
+    public static GHOST_TEMPLATE = /* html */
         `<div class="ag-dnd-ghost ag-unselectable">
             <span class="ag-dnd-ghost-icon ag-shake-left-to-right"></span>
             <div class="ag-dnd-ghost-label"></div>
@@ -312,36 +312,39 @@ export class DragAndDropService extends BeanStub {
         this.setGhostIcon(null);
     }
 
-    private getAllContainersFromDropTarget(dropTarget: DropTarget): HTMLElement[] {
-        let containers = [dropTarget.getContainer()];
+    private getAllContainersFromDropTarget(dropTarget: DropTarget): HTMLElement[][] {
         const secondaryContainers = dropTarget.getSecondaryContainers ? dropTarget.getSecondaryContainers() : null;
+        const containers: HTMLElement[][] = [[dropTarget.getContainer()]];
 
-        if (secondaryContainers) {
-            containers = containers.concat(secondaryContainers);
+        return secondaryContainers ? containers.concat(secondaryContainers) : containers;
+    }
+
+    private allContainersIntersect(mouseEvent: MouseEvent, containers: HTMLElement[]) {
+        for (const container of containers) {
+            const rect = container.getBoundingClientRect();
+
+            // if element is not visible, then width and height are zero
+            if (rect.width === 0 || rect.height === 0) { return false }
+
+            const horizontalFit = mouseEvent.clientX >= rect.left && mouseEvent.clientX < rect.right;
+            const verticalFit = mouseEvent.clientY >= rect.top && mouseEvent.clientY < rect.bottom;
+
+            if (!horizontalFit || !verticalFit) { return false; }
         }
-
-        return containers;
+        return true;
     }
 
     // checks if the mouse is on the drop target. it checks eContainer and eSecondaryContainers
     private isMouseOnDropTarget(mouseEvent: MouseEvent, dropTarget: DropTarget): boolean {
+        const allContainersFromDropTarget = this.getAllContainersFromDropTarget(dropTarget);
         let mouseOverTarget = false;
 
-        this.getAllContainersFromDropTarget(dropTarget)
-            .filter(eContainer => eContainer) // secondary can be missing
-            .forEach(eContainer => {
-                const rect = eContainer.getBoundingClientRect();
-
-                // if element is not visible, then width and height are zero
-                if (rect.width === 0 || rect.height === 0) { return; }
-
-                const horizontalFit = mouseEvent.clientX >= rect.left && mouseEvent.clientX < rect.right;
-                const verticalFit = mouseEvent.clientY >= rect.top && mouseEvent.clientY < rect.bottom;
-
-                if (horizontalFit && verticalFit) {
-                    mouseOverTarget = true;
-                }
-            });
+        for (const currentContainers of allContainersFromDropTarget) {
+            if (this.allContainersIntersect(mouseEvent, currentContainers)) {
+                mouseOverTarget = true;
+                break;
+            }
+        }
 
         return mouseOverTarget && dropTarget.isInterestedIn(this.dragSource.type);
     }

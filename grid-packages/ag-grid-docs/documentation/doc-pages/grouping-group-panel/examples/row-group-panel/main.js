@@ -1,9 +1,8 @@
 var gridOptions = {
     columnDefs: [
-        { field: 'country', rowGroup: true, hide: true },
-        { field: 'year', rowGroup: true, hide: true },
-        { field: 'athlete' },
-        { field: 'sport' },
+        { field: 'country', rowGroup: true, enableRowGroup: true, hide: true },
+        { field: 'year', rowGroup: true, enableRowGroup: true, hide: true },
+        { field: 'sport', enableRowGroup: true },
         { field: 'gold' },
         { field: 'silver' },
         { field: 'bronze' },
@@ -18,6 +17,7 @@ var gridOptions = {
         minWidth: 200,
     },
     animateRows: true,
+    rowGroupPanelShow: 'always'
 };
 
 // setup the grid after the page has finished loading

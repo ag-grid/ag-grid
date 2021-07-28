@@ -1,7 +1,7 @@
 import { Autowired, PostConstruct } from "../context/context";
 import { BeanStub } from "../context/beanStub";
 import { getInnerHeight, getScrollLeft, isRtlNegativeScroll, setScrollLeft } from "../utils/dom";
-import { ControllersService } from "../controllersService";
+import { CtrlsService } from "../ctrlsService";
 import { Events } from "../eventKeys";
 import { debounce } from "../utils/function";
 import { BodyScrollEvent } from "../events";
@@ -21,7 +21,7 @@ type ScrollDirection = 'horizontal' | 'vertical';
 
 export class GridBodyScrollFeature extends BeanStub {
 
-    @Autowired('controllersService') public controllersService: ControllersService;
+    @Autowired('ctrlsService') public ctrlsService: CtrlsService;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
@@ -56,15 +56,15 @@ export class GridBodyScrollFeature extends BeanStub {
         this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onDisplayedColumnsWidthChanged.bind(this));
 
-        this.controllersService.whenReady(p => {
-            this.centerRowContainerCon = p.centerRowContainerCon;
+        this.ctrlsService.whenReady(p => {
+            this.centerRowContainerCon = p.centerRowContainerCtrl;
             this.onDisplayedColumnsWidthChanged();
             this.addScrollListener();
         });
     }
 
     private addScrollListener() {
-        const fakeHScroll = this.controllersService.getFakeHScrollCon();
+        const fakeHScroll = this.ctrlsService.getFakeHScrollCtrl();
 
         this.addManagedListener(this.centerRowContainerCon.getViewportElement(), 'scroll', this.onCenterViewportScroll.bind(this));
         this.addManagedListener(fakeHScroll.getViewport(), 'scroll', this.onFakeHorizontalScroll.bind(this));
@@ -93,10 +93,10 @@ export class GridBodyScrollFeature extends BeanStub {
         }
 
         const offset = this.enableRtl ? scrollLeft : -scrollLeft;
-        const topCenterContainer = this.controllersService.getTopCenterRowContainerCon();
-        const bottomCenterContainer = this.controllersService.getBottomCenterRowContainerCon();
-        const headerRootComp = this.controllersService.getHeaderRootComp();
-        const fakeHScroll = this.controllersService.getFakeHScrollCon();
+        const topCenterContainer = this.ctrlsService.getTopCenterRowContainerCtrl();
+        const bottomCenterContainer = this.ctrlsService.getBottomCenterRowContainerCtrl();
+        const headerRootComp = this.ctrlsService.getHeaderRootComp();
+        const fakeHScroll = this.ctrlsService.getFakeHScrollCtrl();
 
         headerRootComp.setHorizontalScroll(offset);
         bottomCenterContainer.setContainerTranslateX(offset);
@@ -118,7 +118,7 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     private onFakeHorizontalScroll(): void {
-        const fakeHScrollViewport = this.controllersService.getFakeHScrollCon().getViewport();
+        const fakeHScrollViewport = this.ctrlsService.getFakeHScrollCtrl().getViewport();
         if (!this.isControllingScroll(fakeHScrollViewport)) { return; }
         this.onBodyHorizontalScroll(fakeHScrollViewport);
     }

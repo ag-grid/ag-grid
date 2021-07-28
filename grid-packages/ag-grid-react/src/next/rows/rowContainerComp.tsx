@@ -1,5 +1,5 @@
 import { Context, IRowContainerComp, RowContainerCtrl, RowContainerName, RowCtrl } from 'ag-grid-community';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState, memo } from 'react';
 import { classesList } from '../utils';
 import useReactCommentEffect from '../reactComment';
 import RowComp from './rowComp';
@@ -109,4 +109,4 @@ const RowContainerComp = (params: {context: Context, name: RowContainerName}) =>
     );
 };
 
-export default RowContainerComp;
+export default memo(RowContainerComp);

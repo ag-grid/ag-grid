@@ -1,5 +1,5 @@
 import { CellCtrl, PopupEditorWrapper } from '@ag-grid-community/core';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, memo } from 'react';
 import { createPortal } from 'react-dom';
 import { EditDetails } from './cellComp';
 
@@ -73,4 +73,4 @@ const PopupEditorComp = (props: {
     );
 };
 
-export default PopupEditorComp;
+export default memo(PopupEditorComp);

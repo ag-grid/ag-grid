@@ -88,6 +88,8 @@ When we add captions, such as title and subtitle, the layout figures out the amo
 
 When the chart's size changes, the amount of user-specified padding doesn't change, so the auto padding amount typically doesn't change either, meaning it's only the series area that grows or shrinks on size changes.
 
+By default, the chart will resize automatically to fill the container element. If either the `width` or `height` configs are set, auto-sizing will be disabled unless the `autoSize` config is explicitly set to `true`. Make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container.
+
 ## Next Up
 
 Continue to the next section to learn about the [legend and its layout](/charts-legend/).

@@ -7,13 +7,13 @@ import { DraggingEvent } from "../dragAndDrop/dragAndDropService";
 import { BeanStub } from "../context/beanStub";
 import { getCtrlForEvent } from "../utils/event";
 import { exists } from "../utils/generic";
-import { ControllersService } from "../controllersService";
+import { CtrlsService } from "../ctrlsService";
 import { CellCtrl } from "../rendering/cell/cellCtrl";
 
 @Bean('mouseEventService')
 export class MouseEventService extends BeanStub {
 
-    @Autowired('controllersService') private controllersService: ControllersService;
+    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
     private static gridInstanceSequence = new NumberSequence();
     private static GRID_DOM_KEY = '__ag_grid_instance';
@@ -72,7 +72,7 @@ export class MouseEventService extends BeanStub {
         }
 
         if (gridPanelHasScrolls) {
-            const gridBodyCon = this.controllersService.getGridBodyController();
+            const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
             const vRange = gridBodyCon.getScrollFeature().getVScrollPosition();
             const hRange = gridBodyCon.getScrollFeature().getHScrollPosition();
             x += hRange.left;

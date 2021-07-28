@@ -8,7 +8,7 @@ import { Column } from "../../entities/column";
 import { IContextMenuFactory } from "../../interfaces/iContextMenuFactory";
 import { isIOSUserAgent } from "../../utils/browser";
 import { LongTapEvent, TouchListener } from "../../widgets/touchListener";
-import { ControllersService } from "../../controllersService";
+import { CtrlsService } from "../../ctrlsService";
 import { isUserSuppressingKeyboardEvent } from "../../utils/keyboard";
 import { CellKeyDownEvent, CellKeyPressEvent, Events, FullWidthCellKeyDownEvent, FullWidthCellKeyPressEvent } from "../../events";
 import { NavigationService } from "./../navigationService";
@@ -32,7 +32,7 @@ export class RowContainerEventsFeature extends BeanStub {
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
     @Autowired('valueService') private valueService: ValueService;
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
-    @Autowired('controllersService') private controllersService: ControllersService;
+    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('navigationService') private navigationService: NavigationService;
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('undoRedoService') private undoRedoService: UndoRedoService;
@@ -141,7 +141,7 @@ export class RowContainerEventsFeature extends BeanStub {
         }
 
         // if user clicked on a cell, anchor to that cell, otherwise anchor to the grid panel
-        const gridBodyCon = this.controllersService.getGridBodyController();
+        const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         const anchorToElement = cellCtrl ? cellCtrl.getGui() : gridBodyCon.getGridBodyElement();
 
         if (this.contextMenuFactory) {

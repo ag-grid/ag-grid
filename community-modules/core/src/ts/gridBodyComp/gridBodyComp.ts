@@ -49,14 +49,9 @@ const GRID_BODY_TEMPLATE = /* html */
 
 export class GridBodyComp extends Component {
 
-    @Autowired('beans') private beans: Beans;
-    @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('$scope') private $scope: any;
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
 
     @Optional('rangeService') private rangeService: IRangeService;
-    @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
-    @Optional('menuFactory') private menuFactory: IMenuFactory;
 
     @RefSelector('eBodyViewport') private eBodyViewport: HTMLElement;
     @RefSelector('eTop') private eTop: HTMLElement;
@@ -112,10 +107,6 @@ export class GridBodyComp extends Component {
         this.ctrl = this.createManagedBean(new GridBodyCtrl());
         this.ctrl.setComp(compProxy, this.getGui(), this.eBodyViewport, this.eTop, this.eBottom);
 
-        if (this.$scope) {
-            this.addAngularApplyCheck();
-        }
-
         if (this.rangeService || this.gridOptionsWrapper.isRowSelectionMulti()) {
             setAriaMultiSelectable(this.getGui(), true);
         }
@@ -124,26 +115,6 @@ export class GridBodyComp extends Component {
     private setRowAnimationCssOnBodyViewport(cssClass: string, animateRows: boolean): void {
         addOrRemoveCssClass(this.eBodyViewport, RowAnimationCssClasses.ANIMATION_ON, animateRows);
         addOrRemoveCssClass(this.eBodyViewport, RowAnimationCssClasses.ANIMATION_OFF, !animateRows);
-    }
-
-    private addAngularApplyCheck(): void {
-        // this makes sure if we queue up requests, we only execute oe
-        let applyTriggered = false;
-
-        const listener = () => {
-            // only need to do one apply at a time
-            if (applyTriggered) { return; }
-            applyTriggered = true; // mark 'need apply' to true
-            window.setTimeout(() => {
-                applyTriggered = false;
-                this.$scope.$apply();
-            }, 0);
-        };
-
-        // these are the events we need to do an apply after - these are the ones that can end up
-        // with columns added or removed
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, listener);
-        this.addManagedListener(this.eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, listener);
     }
 
     public getFloatingTopBottom(): HTMLElement[] {

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useRef, useState, useCallback, useMemo, memo } from 'react';
 import {
     Context,
     FocusService,
@@ -157,8 +157,8 @@ const GridComp = ({ context }: GridCompProps) => {
         }
     }, [tabGuardReady])
 
-    const rootWrapperClasses = classesList('ag-root-wrapper', rtlClass, keyboardFocusClass, layoutClass);
-    const rootWrapperBodyClasses = classesList('ag-root-wrapper-body', 'ag-focus-managed', layoutClass);
+    const rootWrapperClasses = useMemo( ()=> classesList('ag-root-wrapper', rtlClass, keyboardFocusClass, layoutClass), [rtlClass, keyboardFocusClass, layoutClass]);
+    const rootWrapperBodyClasses = useMemo( () => classesList('ag-root-wrapper-body', 'ag-focus-managed', layoutClass), [layoutClass]);
 
     const topStyle: React.CSSProperties = useMemo(() => ({
         userSelect: userSelect != null ? (userSelect as any) : '',
@@ -197,4 +197,4 @@ const GridComp = ({ context }: GridCompProps) => {
     );
 };
 
-export default GridComp;
+export default memo(GridComp);

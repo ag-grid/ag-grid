@@ -4,7 +4,6 @@ import { ColumnModel, ColumnState } from "./columns/columnModel";
 import { ColumnApi } from "./columns/columnApi";
 import { SelectionService } from "./selectionService";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
-import { GridBodyComp } from "./gridBodyComp/gridBodyComp";
 import { ValueService } from "./valueService/valueService";
 import { EventService } from "./eventService";
 import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
@@ -96,10 +95,8 @@ import { AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
 import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 import { ServerSideTransaction, ServerSideTransactionResult } from "./interfaces/serverSideTransaction";
 import { ServerSideStoreState } from "./interfaces/IServerSideStore";
-import { HeadlessService } from "./headless/headlessService";
-import { GridCtrl } from "./gridComp/gridCtrl";
 import { ISideBar } from "./interfaces/iSideBar";
-import { ControllersService } from "./controllersService";
+import { CtrlsService } from "./ctrlsService";
 import { GridBodyCtrl } from "./gridBodyComp/gridBodyCtrl";
 import { OverlayWrapperComponent } from "./rendering/overlays/overlayWrapperComponent";
 import { HeaderPosition } from "./headerRendering/header/headerPosition";
@@ -208,10 +205,9 @@ export class GridApi {
     @Optional('statusBarService') private statusBarService: IStatusBarService;
     @Optional('chartService') private chartService: IChartService;
     @Optional('undoRedoService') private undoRedoService: UndoRedoService;
-    @Optional('headlessService') private headlessService: HeadlessService;
     @Optional('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
     @Optional('ssrmTransactionManager') private serverSideTransactionManager: IServerSideTransactionManager;
-    @Optional('controllersService') private controllersService: ControllersService;
+    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
     private overlayWrapperComp: OverlayWrapperComponent;
 
@@ -254,8 +250,8 @@ export class GridApi {
                 break;
         }
 
-        this.controllersService.whenReady(() => {
-            this.gridBodyCon = this.controllersService.getGridBodyController();
+        this.ctrlsService.whenReady(() => {
+            this.gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         });
     }
 
@@ -349,7 +345,7 @@ export class GridApi {
 
     public setGridAriaProperty(property: string, value: string | null): void {
         if (!property) { return; }
-        const eGrid = this.controllersService.getGridBodyController().getGui();
+        const eGrid = this.ctrlsService.getGridBodyCtrl().getGui();
         const ariaProperty = `aria-${property}`;
 
         if (value === null) {
@@ -1106,8 +1102,8 @@ export class GridApi {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_POST_PROCESS_POPUP, postProcessPopupFunc);
     }
 
-    public setDefaultGroupSortComparator(defaultGroupSortComparatorFunc: (nodeA: RowNode, nodeB: RowNode) => number) :  void {
-        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_DEFAULT_GROUP_SORT_COMPARATOR, defaultGroupSortComparatorFunc);
+    public setDefaultGroupOrderComparator(defaultGroupOrderComparatorFunc: (nodeA: RowNode, nodeB: RowNode) => number) :  void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_DEFAULT_GROUP_ORDER_COMPARATOR, defaultGroupOrderComparatorFunc);
     }
 
     public setProcessChartOptions(processChartOptionsFunc: (params: ProcessChartOptionsParams) => ChartOptions<any>) :  void {
@@ -1281,7 +1277,7 @@ export class GridApi {
         this.destroyCalled = true;
 
         // destroy the UI first (as they use the services)
-        this.controllersService.getGridCompController().destroyGridUi();
+        this.ctrlsService.getGridCtrl().destroyGridUi();
 
         // destroy the services
         this.context.destroy();

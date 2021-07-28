@@ -18,6 +18,7 @@ import { isBrowserIE } from "../../utils/browser";
 import { CellCtrl, ICellComp } from "./cellCtrl";
 import { UserCompDetails } from "../../components/framework/userComponentFactory";
 import { _ } from "../../utils";
+import { GridBodyComp } from "../../gridBodyComp/gridBodyComp";
 
 export class CellComp extends Component implements TooltipParentComp {
 
@@ -57,6 +58,9 @@ export class CellComp extends Component implements TooltipParentComp {
     private cellCtrl: CellCtrl;
 
     private firstRender: boolean;
+
+    // for angular 1 only
+    private angularCompiledElement: any;
 
     // every time we go into edit mode, or back again, this gets incremented.
     // it's the components way of dealing with the async nature of framework components,
@@ -159,8 +163,6 @@ export class CellComp extends Component implements TooltipParentComp {
                 this.insertValueWithoutCellRenderer(valueToDisplay);
             }
         }
-
-        this.updateAngular1ScopeAndCompile();
     }
 
     private setEditDetails(compDetails: UserCompDetails | undefined, popup?: boolean, position?: string): void {
@@ -277,17 +279,23 @@ export class CellComp extends Component implements TooltipParentComp {
     private insertValueUsingAngular1Template(): void {
         const { template, templateUrl } = this.column.getColDef();
 
+        let templateToInsert: string | undefined = undefined;
+
         if (template != null) {
-            this.eCellValue.innerHTML = template;
+            templateToInsert = template;
         } else if (templateUrl != null) {
             // first time this happens it will return nothing, as the template will still be loading async,
             // however once loaded it will refresh the cell and second time around it will be returned sync
             // as in cache.
-            const templateFromUrl = this.beans.templateService.getTemplate(templateUrl,
+            templateToInsert = this.beans.templateService.getTemplate(templateUrl,
                 () => this.cellCtrl.refreshCell({forceRefresh: true}));
-            this.eCellValue.innerHTML = templateFromUrl || '';
         } else {
             // should never happen, as we only enter this method when template or templateUrl exist
+        }
+
+        if (templateToInsert!=null) {
+            this.eCellValue.innerHTML = templateToInsert;
+            this.updateAngular1ScopeAndCompile();
         }
     }
 
@@ -410,6 +418,7 @@ export class CellComp extends Component implements TooltipParentComp {
         if (this.cellRendererGui != null) {
             clearElement(this.eCellValue);
             this.eCellValue.appendChild(this.cellRendererGui);
+            this.updateAngular1ScopeAndCompile();
         }
     }
 
@@ -537,6 +546,11 @@ export class CellComp extends Component implements TooltipParentComp {
         this.destroyEditorAndRenderer();
         this.removeControlsWrapper();
 
+        if (this.angularCompiledElement) {
+            this.angularCompiledElement.remove();
+            this.angularCompiledElement = undefined;
+        }
+
         super.destroy();
     }
 
@@ -558,9 +572,14 @@ export class CellComp extends Component implements TooltipParentComp {
         if (this.beans.gridOptionsWrapper.isAngularCompileRows() && this.scope) {
             this.scope.data = { ...this.rowNode.data };
 
-            const eGui = this.getGui();
-            const compiledElement = this.beans.$compile(eGui)(this.scope);
-            this.addDestroyFunc(() => compiledElement.remove());
+            if (this.angularCompiledElement) {
+                this.angularCompiledElement.remove();
+            }
+
+            this.angularCompiledElement = this.beans.$compile(this.eCellValue.children)(this.scope);
+
+            // because this.scope is set, we are guaranteed GridBodyComp is vanilla JS, ie it's GridBodyComp.ts from AG Stack and and not react
+            this.beans.ctrlsService.getGridBodyCtrl().requestAngularApply();
         }
     }
 }

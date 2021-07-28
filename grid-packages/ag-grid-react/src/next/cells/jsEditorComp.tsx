@@ -1,5 +1,5 @@
 import { CellCtrl, ICellEditor, ICellEditorComp, UserCompDetails } from 'ag-grid-community';
-import React, { useEffect } from 'react';
+import React, { useEffect, memo } from 'react';
 import { createJsComp } from '../jsComp';
 
 const JsEditorComp = (props: {setCellEditorRef: (cellEditor: ICellEditor | undefined)=>void, 
@@ -37,4 +37,4 @@ const JsEditorComp = (props: {setCellEditorRef: (cellEditor: ICellEditor | undef
     );
 };
 
-export default JsEditorComp;
+export default memo(JsEditorComp);

@@ -1,7 +1,7 @@
 import { Autowired, Bean } from "../context/context";
 import { DragListenerParams, DragService } from "../dragAndDrop/dragService";
 import { BeanStub } from "../context/beanStub";
-import { ControllersService } from "../controllersService";
+import { CtrlsService } from "../ctrlsService";
 
 export interface HorizontalResizeParams {
     eResizeBar: HTMLElement;
@@ -15,8 +15,7 @@ export interface HorizontalResizeParams {
 export class HorizontalResizeService extends BeanStub {
 
     @Autowired('dragService') private dragService: DragService;
-    @Autowired('eGridDiv') private eGridDiv: HTMLElement;
-    @Autowired('controllersService') private controllersService: ControllersService;
+    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
     private dragStartX: number;
     private resizeAmount: number;
@@ -50,7 +49,7 @@ export class HorizontalResizeService extends BeanStub {
 
     private setResizeIcons(): void {
 
-        const ctrl = this.controllersService.getGridCompController();
+        const ctrl = this.ctrlsService.getGridCtrl();
         // change the body cursor, so when drag moves out of the drag bar, the cursor is still 'resize' (or 'move'
         ctrl.setResizeCursor(true);
         // we don't want text selection outside the grid (otherwise it looks weird as text highlights when we move)
@@ -71,7 +70,7 @@ export class HorizontalResizeService extends BeanStub {
     }
 
     private resetIcons(): void {
-        const ctrl = this.controllersService.getGridCompController();
+        const ctrl = this.ctrlsService.getGridCtrl();
         ctrl.setResizeCursor(false);
         ctrl.disableUserSelect(false);
 

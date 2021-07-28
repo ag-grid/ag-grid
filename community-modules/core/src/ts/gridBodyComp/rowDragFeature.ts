@@ -23,7 +23,7 @@ import { BeanStub } from "../context/beanStub";
 import { exists, missingOrEmpty } from "../utils/generic";
 import { doOnce } from "../utils/function";
 import { PaginationProxy } from "../pagination/paginationProxy";
-import { ControllersService } from "../controllersService";
+import { CtrlsService } from "../ctrlsService";
 
 export interface RowDropZoneEvents {
     onDragEnter?: (params: RowDragEnterEvent) => void;
@@ -49,7 +49,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     @Autowired('selectionService') private selectionService: SelectionService;
     @Optional('rangeService') private rangeService: IRangeService;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
-    @Autowired('controllersService') private controllersService: ControllersService;
+    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
     private clientSideRowModel: IClientSideRowModel;
     private eContainer: HTMLElement;
@@ -160,7 +160,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     private isDropZoneWithinThisGrid(draggingEvent: DraggingEvent): boolean {
-        const gridBodyCon = this.controllersService.getGridBodyController();
+        const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         const gridGui = gridBodyCon.getGui();
         const { dropZoneTarget } = draggingEvent;
 
@@ -274,7 +274,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
     private checkCenterForScrolling(pixel: number): void {
         // scroll if the mouse is within 50px of the grid edge
-        const gridBodyCon = this.controllersService.getGridBodyController();
+        const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         const pixelRange = gridBodyCon.getScrollFeature().getVScrollPosition();
 
         // console.log(`pixelRange = (${pixelRange.top}, ${pixelRange.bottom})`);
@@ -321,7 +321,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
         let pixelsMoved: number | null = null;
 
-        const gridBodyCon = this.controllersService.getGridBodyController();
+        const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         if (this.needToMoveDown) {
             pixelsMoved = gridBodyCon.scrollVertically(pixelsToMove);
         } else if (this.needToMoveUp) {

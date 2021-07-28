@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo, memo } from 'react';
 import {
     AgStackComponentsRegistry,
     Context,
@@ -12,10 +12,10 @@ import RowContainerComp  from './rows/rowContainerComp';
 import useReactCommentEffect from './reactComment';
 
 interface SectionProperties {
-    section: React.RefObject<HTMLDivElement>, 
-    className: string, 
-    style?: React.CSSProperties,
-    unselectable?: boolean
+    section: React.RefObject<HTMLDivElement>;
+    className: string;
+    style?: React.CSSProperties;
+    unselectable?: 'on';
 }
 
 const GridBodyComp = (params: { context: Context }) => {
@@ -45,8 +45,6 @@ const GridBodyComp = (params: { context: Context }) => {
     useReactCommentEffect(' AG Middle ', eBodyViewport);
     useReactCommentEffect(' AG Pinned Bottom ', eBottom);
 
-    // should be shared
-    const insertFirstPosition = (parent: HTMLElement, child: HTMLElement) => parent.insertBefore(child, parent.firstChild);
 
     useEffect(() => {
         const beansToDestroy: any[] = [];
@@ -61,6 +59,9 @@ const GridBodyComp = (params: { context: Context }) => {
             beansToDestroy.push(comp);
             return comp;
         };
+
+        // should be shared
+        const insertFirstPosition = (parent: HTMLElement, child: HTMLElement) => parent.insertBefore(child, parent.firstChild);
 
         insertFirstPosition(eRoot.current!, newComp('AG-HEADER-ROOT').getGui());
         insertFirstPosition(eRoot.current!, document.createComment(' AG Header ') as any as HTMLElement);
@@ -104,24 +105,36 @@ const GridBodyComp = (params: { context: Context }) => {
 
     }, []);
 
-    const rootClasses = classesList('ag-root','ag-unselectable', movingCss, layoutClass);
-    const topClasses = classesList('ag-floating-top', cellSelectableCss);
-    const bodyViewportClasses = classesList('ag-body-viewport', rowAnimationClass, layoutClass, forceVerticalScrollClass, cellSelectableCss);
-    const bottomClasses = classesList('ag-floating-bottom', cellSelectableCss);
+    const rootClasses = useMemo( ()=> 
+        classesList('ag-root','ag-unselectable', movingCss, layoutClass), 
+        [movingCss, layoutClass]
+    );
+    const bodyViewportClasses = useMemo( ()=> 
+        classesList('ag-body-viewport', rowAnimationClass, layoutClass, forceVerticalScrollClass, cellSelectableCss), 
+        [rowAnimationClass, layoutClass, forceVerticalScrollClass, cellSelectableCss]
+    );
+    const topClasses = useMemo( ()=> 
+        classesList('ag-floating-top', cellSelectableCss), 
+        [cellSelectableCss]
+    );
+    const bottomClasses = useMemo( ()=> 
+        classesList('ag-floating-bottom', cellSelectableCss), 
+        [cellSelectableCss]
+    );
 
-    const topStyle: React.CSSProperties = {
+    const topStyle: React.CSSProperties = useMemo( () => ({
         height: topHeight,
         minHeight: topHeight,
         display: topDisplay,
         overflowY: (topAndBottomOverflowY as any)
-    };
+    }), [topHeight, topDisplay, topAndBottomOverflowY]);
 
-    const bottomStyle: React.CSSProperties = {
+    const bottomStyle: React.CSSProperties = useMemo( ()=> ({
         height: bottomHeight,
         minHeight: bottomHeight,
         display: bottomDisplay,
         overflowY: (topAndBottomOverflowY as any)
-    };
+    }), [bottomHeight, bottomDisplay, topAndBottomOverflowY]);
 
     const createRowContainer = (container: RowContainerName) => <RowContainerComp context={ context } name={ container } key={`${container}-container`} />;
     const createSection = ({
@@ -131,14 +144,14 @@ const GridBodyComp = (params: { context: Context }) => {
         style,
         unselectable
     }: SectionProperties & { children: RowContainerName[] } ) => (
-        <div ref={ section } className={ className } role="presentation" style={ style } { ...(unselectable ? { unselectable: 'on'} : {}) }>
+        <div ref={ section } className={ className } role="presentation" style={ style } unselectable={unselectable}>
             { children.map(createRowContainer) }
         </div>
     );
 
     return (
         <div ref={ eRoot } className={ rootClasses } role="grid" unselectable="on" aria-colcount={ ariaColCount } aria-rowcount={ ariaRowCount }>
-            { createSection({ section: eTop, className: topClasses, style: topStyle, unselectable: true, children: [
+            { createSection({ section: eTop, className: topClasses, style: topStyle, unselectable: 'on', children: [
                 RowContainerName.TOP_LEFT,
                 RowContainerName.TOP_CENTER,
                 RowContainerName.TOP_RIGHT,
@@ -150,7 +163,7 @@ const GridBodyComp = (params: { context: Context }) => {
                 RowContainerName.RIGHT,
                 RowContainerName.FULL_WIDTH,
             ]}) }
-            { createSection({ section: eBottom, className: bottomClasses, style: bottomStyle, unselectable: true, children: [
+            { createSection({ section: eBottom, className: bottomClasses, style: bottomStyle, unselectable: 'on', children: [
                 RowContainerName.BOTTOM_LEFT,
                 RowContainerName.BOTTOM_CENTER,
                 RowContainerName.BOTTOM_RIGHT,
@@ -160,4 +173,4 @@ const GridBodyComp = (params: { context: Context }) => {
     );
 };
 
-export default GridBodyComp;
+export default memo(GridBodyComp);

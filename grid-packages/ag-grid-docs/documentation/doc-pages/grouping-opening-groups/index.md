@@ -1,19 +1,39 @@
 ---
-title: "Row Grouping - Other"
+title: "Row Grouping - Opening Groups"
 enterprise: true
 ---
 
-## Expanding Rows via API
+This section covers different ways to control how row groups are expanded and collapsed.
 
-To expand or contract a group via the API, you first must get a reference to the rowNode and then call `rowNode.setExpanded(boolean)`. This will result in the grid getting updated and displaying the correct rows. For example, to expand a group with the name 'Zimbabwe' would be done as follows:
+## Opening Group Levels by Default
+
+To open all groups down to a given group level use the `groupDefaultExpanded` grid option as shown below: 
 
 <snippet>
-gridOptions.api.forEachNode(node => {
-    if (node.key === 'Zimbabwe') {
-        node.setExpanded(true);
-    }
-});
+const gridOptions = {
+    columnDefs: [
+        { field: 'country', rowGroup: true },
+        { field: 'year', rowGroup: true },
+        { field: 'sport' },
+        { field: 'total' }
+    ],
+    // all 'country' row groups will be open by default
+    groupDefaultExpanded: 1
+}
 </snippet>
+
+In the snippet above, all `country` row groups will be expanded by default as `groupDefaultExpanded = 1`.
+
+By default `groupDefaultExpanded = 0` which means no groups are expanded by default. To expand all row groups
+set `groupDefaultExpanded = -1`.
+
+The example below demonstrates the `groupDefaultExpanded` behaviour. Note the following:
+
+- There are two active row groups as the supplied `country` and `year` column definitions have `rowGroup=true` declared.
+
+- All `country` row groups are expanded by default as `groupDefaultExpanded = 1`.
+
+<grid-example title='Group Default Expanded' name='group-default-expanded' type='generated' options='{ "enterprise": true, "exampleHeight": 540, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
 ## Open Groups by Default
 
@@ -46,3 +66,19 @@ In the example below, the country 'United States' and year '2004' are expanded b
 countries, not just 'United States'.
 
 <grid-example title='Open by Default' name='open-by-default' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+
+## Expanding Row Groups via API
+
+To expand or contract a group via the API, you first must get a reference to the rowNode and then call `rowNode.setExpanded(boolean)`. This will result in the grid getting updated and displaying the correct rows. For example, to expand a group with the name 'Zimbabwe' would be done as follows:
+
+<snippet>
+gridOptions.api.forEachNode(node => {
+    if (node.key === 'Zimbabwe') {
+        node.setExpanded(true);
+    }
+});
+</snippet>
+
+## Next Up
+
+Continue to the next section to learn about grouping with [Complex Objects](../grouping-complex-objects/).

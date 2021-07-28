@@ -5,8 +5,7 @@ import { BodyDropPivotTarget } from "./bodyDropPivotTarget";
 import { ColumnModel } from "../columns/columnModel";
 import { Constants } from "../constants/constants";
 import { BeanStub } from "../context/beanStub";
-import { ControllersService } from "../controllersService";
-import { RowContainerCtrl } from "../gridBodyComp/rowContainer/rowContainerCtrl";
+import { CtrlsService } from "../ctrlsService";
 
 export interface DropListener {
     getIconName(): string | null;
@@ -20,13 +19,13 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
 
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('controllersService') private controllersService: ControllersService;
+    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
     private pinned: string | null;
     // public because it's part of the DropTarget interface
     private eContainer: HTMLElement;
     // public because it's part of the DropTarget interface
-    private eSecondaryContainers: HTMLElement[];
+    private eSecondaryContainers: HTMLElement[][];
     private currentDropListener: DropListener;
 
     private moveColumnFeature: MoveColumnFeature;
@@ -40,20 +39,30 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
 
     @PostConstruct
     private postConstruct(): void {
-        this.controllersService.whenReady(p => {
-            let containers: RowContainerCtrl[];
+        this.ctrlsService.whenReady(p => {
             switch (this.pinned) {
                 case Constants.PINNED_LEFT:
-                    containers = [p.leftRowContainerCon, p.bottomLeftRowContainerCon, p.topLeftRowContainerCon];
+                    this.eSecondaryContainers = [
+                        [p.gridBodyCtrl.getBodyViewportElement(), p.leftRowContainerCtrl.getContainerElement()],
+                        [p.bottomLeftRowContainerCtrl.getContainerElement()],
+                        [p.topLeftRowContainerCtrl.getContainerElement()]
+                    ];
                     break;
                 case Constants.PINNED_RIGHT:
-                    containers = [p.rightRowContainerCon, p.bottomRightRowContainerCon, p.topRightRowContainerCon];
+                    this.eSecondaryContainers = [
+                        [p.gridBodyCtrl.getBodyViewportElement(), p.rightRowContainerCtrl.getContainerElement()],
+                        [p.bottomRightRowContainerCtrl.getContainerElement()],
+                        [p.topRightRowContainerCtrl.getContainerElement()]
+                    ];
                     break;
                 default:
-                    containers = [p.centerRowContainerCon, p.bottomCenterRowContainerCon, p.topCenterRowContainerCon];
+                    this.eSecondaryContainers = [
+                        [p.gridBodyCtrl.getBodyViewportElement(), p.centerRowContainerCtrl.getViewportElement()],
+                        [p.bottomCenterRowContainerCtrl.getViewportElement()],
+                        [p.topCenterRowContainerCtrl.getViewportElement()]
+                    ];
                     break;
             }
-            this.eSecondaryContainers = containers.map(c => c.getContainerElement());
         });
     }
 
@@ -62,7 +71,7 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
             (type === DragSourceType.ToolPanel && this.gridOptionsWrapper.isAllowDragFromColumnsToolPanel());
     }
 
-    public getSecondaryContainers(): HTMLElement[] {
+    public getSecondaryContainers(): HTMLElement[][] {
         return this.eSecondaryContainers;
     }
 

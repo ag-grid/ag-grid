@@ -9,7 +9,7 @@ import { HeaderRowType } from "../headerRowComp";
 import { AnimationFrameService } from "../../misc/animationFrameService";
 import { HeaderRootComp, HeaderContainerPosition } from "../headerRootComp";
 import { last } from "../../utils/array";
-import { ControllersService } from "../../controllersService";
+import { CtrlsService } from "../../ctrlsService";
 import { GridBodyCtrl } from "../../gridBodyComp/gridBodyCtrl";
 
 export enum HeaderNavigationDirection {
@@ -25,15 +25,15 @@ export class HeaderNavigationService extends BeanStub {
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('headerPositionUtils') private headerPositionUtils: HeaderPositionUtils;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
-    @Autowired('controllersService') private controllersService: ControllersService;
+    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
     private gridBodyCon: GridBodyCtrl;
     private headerRoot: HeaderRootComp;
 
     @PostConstruct
     private postConstruct(): void {
-        this.controllersService.whenReady(p => {
-            this.gridBodyCon = p.gridBodyCon;
+        this.ctrlsService.whenReady(p => {
+            this.gridBodyCon = p.gridBodyCtrl;
         });
     }
 

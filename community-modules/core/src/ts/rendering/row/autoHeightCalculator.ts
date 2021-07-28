@@ -7,7 +7,7 @@ import { BeanStub } from "../../context/beanStub";
 import { addCssClass } from "../../utils/dom";
 import { RowCssClassCalculator, RowCssClassCalculatorParams } from "./rowCssClassCalculator";
 import { AngularRowUtils } from "./angularRowUtils";
-import { ControllersService } from "../../controllersService";
+import { CtrlsService } from "../../ctrlsService";
 import { RowContainerCtrl } from "../../gridBodyComp/rowContainer/rowContainerCtrl";
 import { CellCtrl } from "../cell/cellCtrl";
 
@@ -19,14 +19,14 @@ export class AutoHeightCalculator extends BeanStub {
     @Autowired("columnModel") private columnModel: ColumnModel;
     @Autowired("rowCssClassCalculator") private rowCssClassCalculator: RowCssClassCalculator;
     @Autowired('$compile') public $compile: any;
-    @Autowired('controllersService') public controllersService: ControllersService;
+    @Autowired('ctrlsService') public ctrlsService: CtrlsService;
 
     private centerRowContainerCon: RowContainerCtrl;
 
     @PostConstruct
     private postConstruct(): void {
-        this.controllersService.whenReady(p => {
-            this.centerRowContainerCon = p.centerRowContainerCon;
+        this.ctrlsService.whenReady(p => {
+            this.centerRowContainerCon = p.centerRowContainerCtrl;
         });
     }
 
