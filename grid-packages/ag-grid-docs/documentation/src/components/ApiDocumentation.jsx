@@ -368,11 +368,11 @@ const FunctionCodeSample = ({ framework, name, type, config }) => {
                 ...type.parameters
             }
         } :
-        type.arguments;
+        type.arguments || {};
 
     const { returnType } = type;
     const returnTypeIsObject = returnType != null && typeof returnType === 'object';
-    const returnTypeIsInterface = !!config.lookups.interfaces[returnType];
+    const returnTypeInterface = config.lookups.interfaces[returnType]    
     const argumentDefinitions = [];
     let shouldUseNewline = false;
 
@@ -399,9 +399,20 @@ const FunctionCodeSample = ({ framework, name, type, config }) => {
         argumentDefinitions.join('');
 
     const returnTypeName = getInterfaceName(functionName).replace(/^get/, '');
+
+    // Required to handle call signature interfaces so we do not have extra () =>
+    //   prop = () => GetRowNodeIdFunc
+    // and instead have
+    //   prop = GetRowNodeIdFunc
+    //
+    //  export interface GetRowNodeIdFunc {
+    //    (data: any): string;
+    //  }
+    const isCallSignatureInterface = returnTypeInterface && Object.keys(returnTypeInterface).some(k => k.startsWith('('));
+
     const functionPrefix = name.includes('(') ?
         `function ${functionName}(${functionArguments}):` :
-        `${functionName} = (${functionArguments}) =>`;
+        `${functionName} =${isCallSignatureInterface ? '' : ` (${functionArguments}) =>`}`;
 
     const lines = [
         `${functionPrefix} ${returnTypeIsObject ? returnTypeName : (getLinkedType(returnType || 'void', framework))};`,
@@ -427,7 +438,7 @@ const FunctionCodeSample = ({ framework, name, type, config }) => {
 
     if (returnTypeIsObject) {
         lines.push('', ...getInterfaceLines(framework, returnTypeName, returnType, config));
-    } else if (returnTypeIsInterface) {
+    } else if (!!returnTypeInterface) {
         lines.push('', ...getInterfaceLines(framework, returnType, returnType, config));
     }
 
@@ -438,16 +449,26 @@ const getInterfaceLines = (framework, name, definition, config) => {
 
     // If we have the actual interface use that definition
     const interfaceProps = config.lookups.interfaces[definition];
-    if (interfaceProps) {
+    const isNativeOrLinkedType = types[definition];
+    if (interfaceProps && !isNativeOrLinkedType) {
         name = definition;
     } else if (typeof (definition) === 'string') {
         return [];
     }
 
-
     const lines = [`interface ${name} {`];
 
-    Object.entries(interfaceProps || definition).forEach(([property, type]) => {
+    const properties = Object.entries(interfaceProps || definition);
+    properties.sort(([p1,], [p2,]) => {
+        if (p1 === '$scope') {
+            return 1;
+        }
+        if (p2 === '$scope') {
+            return -1;
+        }
+        return p1 < p2 ? -1 : 1;
+    });
+    properties.forEach(([property, type]) => {
         lines.push(`  ${property}: ${getLinkedType(type, framework)};`);
     });
 
