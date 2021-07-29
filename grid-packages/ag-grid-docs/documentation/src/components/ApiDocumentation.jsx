@@ -233,7 +233,7 @@ const Property = ({ framework, id, name, definition, config }) => {
         name += `&nbsp;<span class="${styles['reference__required']}" title="Required">&ast;</span>`;
     }
 
-    // Use the type definition is manually specified in config
+    // Use the type definition if manually specified in config
     let type = definition.type;
     let isComplexType = !!type;
     if (!type) {
@@ -462,8 +462,6 @@ const FunctionCodeSample = ({ framework, name, type, config }) => {
 };
 
 const getInterfaceLines = (framework, name, definition, config) => {
-
-
     let interfacesToWrite = []
     if (typeof (definition) === 'string') {
         const typeRegex = /\w+/g;
@@ -473,9 +471,11 @@ const getInterfaceLines = (framework, name, definition, config) => {
             const type = regMatch[0];
             // If we have the actual interface use that definition
             const interfaceType = config.lookups.interfaces[type];
-            const members = Object.entries((interfaceType && interfaceType.type) || {});
+            const numMembers = Object.entries((interfaceType && interfaceType.type) || {}).length;
             const isLinkedType = types[type];
-            if (interfaceType && (!isLinkedType || members.length < 5)) {
+
+            // Show interface if we have found one but not if it is a linked type with many properties.
+            if (interfaceType && (!isLinkedType || numMembers < 5)) {
                 name = definition;
                 return { name: type, interfaceType };
             }
@@ -492,22 +492,24 @@ const getInterfaceLines = (framework, name, definition, config) => {
     interfacesToWrite.forEach(({ name, interfaceType }) => {
 
         if (interfaceType.meta && interfaceType.meta.isTypeAlias) {
+
+            // We have a type alias to show the options for
             const shouldMultiLine = interfaceType.type.length > 20;
             const multiLine = shouldMultiLine ?
                 `\n      ${interfaceType.type.split('|').join('\n    |')}\n` :
                 interfaceType.type;
             allLines.push(`type ${name} = ${multiLine}`);
+
         } else {
+
+            // We have an interface
             const lines = [`interface ${name} {`];
 
             const properties = Object.entries(interfaceType.type);
             properties.sort(([p1,], [p2,]) => {
-                if (p1 === '$scope') {
-                    return 1;
-                }
-                if (p2 === '$scope') {
-                    return -1;
-                }
+                // Sort alphabetically but with $scope at the end
+                if (p1 === '$scope') return 1;
+                if (p2 === '$scope') return -1;                
                 return p1 < p2 ? -1 : 1;
             });
             properties.forEach(([property, type]) => {

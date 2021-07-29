@@ -2884,7 +2884,15 @@
     "meta": {},
     "type": { "width": "number", "size": "number", "color": "string" }
   },
-  "AxisLabelFormatter": { "meta": {}, "type": {} },
+  "AxisLabelFormatterParams": {
+    "meta": {},
+    "type": {
+      "value": "any",
+      "index": "number",
+      "fractionDigits?": "number",
+      "formatter?": "(x: any) => string"
+    }
+  },
   "AxisLabelOptions": {
     "meta": {},
     "type": {
@@ -4494,16 +4502,6 @@
     }
   },
   "LoadingType": { "meta": { "isEnum": true }, "type": ["Loading", "NoRows"] },
-  "CacheItem": {
-    "meta": {},
-    "type": {
-      "rowNode": "RowNode",
-      "lastAccessedTime": "number",
-      "center?": "ICellRendererComp",
-      "left?": "ICellRendererComp",
-      "right?": "ICellRendererComp"
-    }
-  },
   "RowCssClassCalculatorParams": {
     "meta": {},
     "type": {
@@ -4535,6 +4533,7 @@
   "IRowComp": {
     "meta": {},
     "type": {
+      "setDisplay(value: string)": "void",
       "setDomOrder(domOrder: boolean)": "void",
       "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
       "setCellCtrls(cellCtrls: CellCtrl[])": "void",
