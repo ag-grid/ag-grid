@@ -56,8 +56,21 @@ const types = {
     MouseEvent: 'https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent',
     RowNode: '/row-object/',
     ServerSideTransaction: '/server-side-model-transactions/#transaction-api',
+    ServerSideStoreType: 'https://ag-grid.com/javascript-grid/grid-properties/#reference-serverSideRowModel',
     Touch: 'https://developer.mozilla.org/en-US/docs/Web/API/Touch',
 };
+
+function escapeGenericCode(lines) {
+
+    // When you have generic parameters such as ChartOptions<any>
+    // the <any> gets removed as the code formatter thinks its a invalid tag.
+
+    // By adding a <span/> the generic type is preserved in the doc output
+
+    const typeRegex = /<(?!a[\s]|[/])/g;
+    const escapedLines = lines.join('\n').replace(typeRegex, '<<span/>');
+    return escapedLines;
+}
 
 /**
  * This generates tabulated API documentation based on information in JSON files. This way it is possible to show
@@ -190,7 +203,7 @@ const getTypeUrl = (type, framework) => {
 };
 
 const Property = ({ framework, id, name, definition, config }) => {
-    const [isExpanded, setExpanded] = useState(true);
+    const [isExpanded, setExpanded] = useState(false);
 
     let description = '';
     let isObject = false;
@@ -255,7 +268,7 @@ const Property = ({ framework, id, name, definition, config }) => {
             </div>
         </td>
         <td>
-            <div
+            <div onClick={() => setExpanded(!isExpanded)} role="presentation"
                 className={classnames(styles['reference__description'], { [styles['reference__description--expanded']]: isExpanded })}
                 dangerouslySetInnerHTML={{ __html: description }}></div>
             {isObject && <div>See <a href={`#reference-${id}.${name}`}>{name}</a> for more details.</div>}
@@ -354,27 +367,38 @@ const ObjectCodeSample = ({ framework, id, breadcrumbs, properties }) => {
         lines.push(`${getIndent(indentationLevel-- - 1)}}`);
     }
 
-    return <Code code={lines.join('\n')} keepMarkup={true} />;
+    const escapedLines = escapeGenericCode(lines);
+    return <Code code={escapedLines} keepMarkup={true} />;
 };
 
 const getInterfaceName = name => `${name.substr(0, 1).toUpperCase()}${name.substr(1)}`;
 
 const FunctionCodeSample = ({ framework, name, type, config }) => {
     const functionName = name.replace(/\([^)]*\)/g, '');
-    const args = type.parameters ?
-        {
+
+    let { returnType } = type;
+    const returnTypeIsObject = returnType != null && typeof returnType === 'object';
+    const returnTypeInterface = config.lookups.interfaces[returnType];
+    const isCallSignatureInterface = returnTypeInterface && returnTypeInterface.meta.isCallSignature;
+
+    let args = {};
+    if (type.parameters) {
+        args = {
             params: {
                 meta: { name: `${getInterfaceName(functionName)}Params` },
                 ...type.parameters
             }
-        } :
-        type.arguments || {};
+        }
+    } else if (type.arguments) {
+        args = type.arguments;
+    } else if (isCallSignatureInterface) {
+        // Required to handle call signature interfaces so we can flatten out the interface to make it clearer        
+        args = returnTypeInterface.type.arguments;
+        returnType = returnTypeInterface.type.returnType;
+    }
 
-    const { returnType } = type;
-    const returnTypeIsObject = returnType != null && typeof returnType === 'object';
-    const returnTypeInterface = config.lookups.interfaces[returnType]    
-    const argumentDefinitions = [];
     let shouldUseNewline = false;
+    const argumentDefinitions = [];
 
     const getArgumentTypeName = (key, type) => {
         if (!Array.isArray(type) && typeof type === 'object') {
@@ -400,19 +424,10 @@ const FunctionCodeSample = ({ framework, name, type, config }) => {
 
     const returnTypeName = getInterfaceName(functionName).replace(/^get/, '');
 
-    // Required to handle call signature interfaces so we do not have extra () =>
-    //   prop = () => GetRowNodeIdFunc
-    // and instead have
-    //   prop = GetRowNodeIdFunc
-    //
-    //  export interface GetRowNodeIdFunc {
-    //    (data: any): string;
-    //  }
-    const isCallSignatureInterface = returnTypeInterface && Object.keys(returnTypeInterface).some(k => k.startsWith('('));
 
     const functionPrefix = name.includes('(') ?
         `function ${functionName}(${functionArguments}):` :
-        `${functionName} =${isCallSignatureInterface ? '' : ` (${functionArguments}) =>`}`;
+        `${functionName} = (${functionArguments}) =>`;
 
     const lines = [
         `${functionPrefix} ${returnTypeIsObject ? returnTypeName : (getLinkedType(returnType || 'void', framework))};`,
@@ -427,7 +442,7 @@ const FunctionCodeSample = ({ framework, name, type, config }) => {
 
                 lines.push('', ...getInterfaceLines(framework, getArgumentTypeName(key, { meta }), type, config));
             });
-    } else if (type.arguments) {
+    } else if (args) {
 
         Object.entries(args)
             .forEach(([key, type]) => {
@@ -442,48 +457,80 @@ const FunctionCodeSample = ({ framework, name, type, config }) => {
         lines.push('', ...getInterfaceLines(framework, returnType, returnType, config));
     }
 
-    return <Code code={lines.join('\n')} className={styles['reference__code-sample']} keepMarkup={true} />;
+    const escapedLines = escapeGenericCode(lines);
+    return <Code code={escapedLines} className={styles['reference__code-sample']} keepMarkup={true} />;
 };
 
 const getInterfaceLines = (framework, name, definition, config) => {
 
-    // If we have the actual interface use that definition
-    const interfaceProps = config.lookups.interfaces[definition];
-    const isNativeOrLinkedType = types[definition];
-    if (interfaceProps && !isNativeOrLinkedType) {
-        name = definition;
-    } else if (typeof (definition) === 'string') {
-        return [];
+
+    let interfacesToWrite = []
+    if (typeof (definition) === 'string') {
+        const typeRegex = /\w+/g;
+        const definitionTypes = [...definition.matchAll(typeRegex)];
+
+        interfacesToWrite = definitionTypes.map(regMatch => {
+            const type = regMatch[0];
+            // If we have the actual interface use that definition
+            const interfaceType = config.lookups.interfaces[type];
+            const members = Object.entries((interfaceType && interfaceType.type) || {});
+            const isLinkedType = types[type];
+            if (interfaceType && (!isLinkedType || members.length < 5)) {
+                name = definition;
+                return { name: type, interfaceType };
+            }
+            return undefined;
+        }).filter(dt => !!dt);
+    } else {
+        interfacesToWrite.push({
+            name, interfaceType: { type: definition, meta: {} }
+        })
     }
 
-    const lines = [`interface ${name} {`];
+    let allLines = [];
 
-    const properties = Object.entries(interfaceProps || definition);
-    properties.sort(([p1,], [p2,]) => {
-        if (p1 === '$scope') {
-            return 1;
+    interfacesToWrite.forEach(({ name, interfaceType }) => {
+
+        if (interfaceType.meta && interfaceType.meta.isTypeAlias) {
+            const shouldMultiLine = interfaceType.type.length > 20;
+            const multiLine = shouldMultiLine ?
+                `\n      ${interfaceType.type.split('|').join('\n    |')}\n` :
+                interfaceType.type;
+            allLines.push(`type ${name} = ${multiLine}`);
+        } else {
+            const lines = [`interface ${name} {`];
+
+            const properties = Object.entries(interfaceType.type);
+            properties.sort(([p1,], [p2,]) => {
+                if (p1 === '$scope') {
+                    return 1;
+                }
+                if (p2 === '$scope') {
+                    return -1;
+                }
+                return p1 < p2 ? -1 : 1;
+            });
+            properties.forEach(([property, type]) => {
+                lines.push(`  ${property}: ${getLinkedType(type, framework)};`);
+            });
+
+            lines.push('}');
+
+            allLines.push(...lines)
         }
-        if (p2 === '$scope') {
-            return -1;
-        }
-        return p1 < p2 ? -1 : 1;
-    });
-    properties.forEach(([property, type]) => {
-        lines.push(`  ${property}: ${getLinkedType(type, framework)};`);
-    });
+    })
 
-    lines.push('}');
-
-    return lines;
+    return allLines;
 };
 
 const getLinkedType = (type, framework) => {
     if (!Array.isArray(type)) {
-        type = [type];
+        type = type.split('|').map(t => t ? t.trim() : t);
     }
 
     const formattedTypes = type.map(t => {
-        const url = getTypeUrl(t, framework);
+        const typeName = t ? t.replace('(', '').replace(')', '').trim() : t;
+        const url = getTypeUrl(typeName, framework);
 
         return url ? `<a href="${url}" target="${url.startsWith('http') ? '_blank' : '_self'}" rel="noreferrer">${t}</a>` : t;
     });

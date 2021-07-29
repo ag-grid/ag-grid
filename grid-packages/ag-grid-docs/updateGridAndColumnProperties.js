@@ -44,7 +44,7 @@ function findInterfaceInNodeTree(node, interfaceName) {
 function findAllInterfacesInNodesTree(node) {
     const kind = ts.SyntaxKind[node.kind];
     let interfaces = [];
-    if (kind == 'InterfaceDeclaration') {
+    if (kind == 'InterfaceDeclaration' || kind == 'EnumDeclaration' || kind == 'TypeAliasDeclaration') {
         interfaces.push(node);
     }
     ts.forEachChild(node, n => {
@@ -108,7 +108,20 @@ function getParamType(node, paramNameOnly = false) {
         case 'MappedType':
             return `{${getParamType(node.typeParameter)}${node.questionToken ? '?' : ''}${paramNameOnly ? '' : `: ${getParamType(node.type)}`}}`
         case 'TypeParameter':
-            return `[${getParamType(node.name)} in ${getParamType(node.constraint)}]`
+            {
+                if (node.constraint) {
+                    if (ts.SyntaxKind[node.parent.kind] == 'MappedType') {
+                        return `[${getParamType(node.name)} in ${getParamType(node.constraint)}]`;
+                    } else {
+                        return `${getParamType(node.name)} extends ${getParamType(node.constraint)}`;
+                    }
+                }
+                return `${getParamType(node.name)}`;
+            }
+        case 'EnumMember':
+            return `${getParamType(node.name)}${node.initializer ? `= '${getParamType(node.initializer)}'` : ''}`;
+        case 'StringLiteral':
+            return `${node.text}`
         default:
             if (node.typeName) {
                 return node.typeName.escapedText
@@ -215,7 +228,7 @@ function extractInterfaces(parsedSyntaxTreeResults, extension) {
     const iLookup = {};
     interfaces.forEach(node => {
         const name = node && node.name && node.name.escapedText;
-        let members = {};
+        const kind = ts.SyntaxKind[node.kind];
 
         if (node.heritageClauses && node.heritageClauses) {
             node.heritageClauses.forEach(h => {
@@ -225,14 +238,56 @@ function extractInterfaces(parsedSyntaxTreeResults, extension) {
             });
         }
 
-        if (node.members && node.members.length > 0) {
-            node.members.map(p => {
-                const name = getParamType(p, true);
-                const type = getParamType(p.type);
-                members[name] = type;
-            });
+        if (kind == 'EnumDeclaration') {
+            iLookup[name] = { meta: { isEnum: true }, type: node.members.map(n => getParamType(n)) }
+        } else if (kind == 'TypeAliasDeclaration' && node.type && node.type.types && !node.typeParameters) {
+            iLookup[name] = { meta: { isTypeAlias: true }, type: getParamType(node.type) }
+        } else {
+
+            let isCallSignature = false;
+            let members = {};
+            let callSignatureMembers = {};
+
+            if (node.members && node.members.length > 0) {
+                node.members.map(p => {
+                    isCallSignature = isCallSignature || p.kind == 161; //'CallSignature';
+                    if (isCallSignature) {
+
+                        const arguments = {};
+
+                        (p.parameters || []).forEach(callArg => {
+                            arguments[getParamType(callArg.name)] = getParamType(callArg.type);
+                        })
+
+                        callSignatureMembers = {
+                            arguments,
+                            returnType: getParamType(p.type)
+                        }
+                    } else {
+                        const name = getParamType(p, true);
+                        const type = getParamType(p.type);
+                        members[name] = type;
+                    }
+                });
+
+                if (isCallSignature && node.members.length > 1) {
+                    throw new Error('Have a callSignature interface with more than one member! We were not expecting this to be possible!');
+                }
+            }
+            if (isCallSignature) {
+                iLookup[name] = {
+                    meta: { isCallSignature },
+                    type: callSignatureMembers
+                }
+            } else {
+                iLookup[name] = { meta: {}, type: members }
+            }
+
+            if (node.typeParameters) {
+                const orig = iLookup[name];
+                iLookup[name] = { ...orig, meta: { ...orig.meta, typeParams: node.typeParameters.map(tp => getParamType(tp)) } }
+            }
         }
-        iLookup[name] = members;
     });
     return iLookup;
 }
