@@ -5,7 +5,7 @@ import { Group } from "../../../scene/group";
 import {
     SeriesNodeDatum,
     CartesianTooltipRendererParams as LineTooltipRendererParams,
-    HighlightStyle, SeriesTooltip
+    SeriesTooltip
 } from "../series";
 import { numericExtent } from "../../../util/array";
 import { PointerEvents } from "../../../scene/node";

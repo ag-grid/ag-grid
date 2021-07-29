@@ -71,12 +71,14 @@ const RowComp = (params: {context: Context, rowCtrl: RowCtrl, pinned: string | n
     const [cellCtrls, setCellCtrls] = useState<CellCtrls>({ list: [], instanceIdMap: new Map() });
     const [fullWidthCompDetails, setFullWidthCompDetails] = useState<UserCompDetails>();
     const [domOrder, setDomOrder] = useState<boolean>(false);
+    const [display, setDisplay] = useState<string>();
 
     const eGui = useRef<HTMLDivElement>(null);
     const fullWidthCompRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {        
         const compProxy: IRowComp = {
+            setDisplay: value => setDisplay(value),
             setDomOrder: domOrder => setDomOrder(domOrder),
             setHeight: value => setHeight(value),
             setTop: value => setTop(value),
@@ -102,7 +104,7 @@ const RowComp = (params: {context: Context, rowCtrl: RowCtrl, pinned: string | n
         };
         rowCtrl.setComp(compProxy, eGui.current!, pinned);
     }, []);
-    
+
     useEffect(() => {
         return showJsComp(fullWidthCompDetails, context, eGui.current!, 
             compFactory => compFactory.createFullWidthCellRenderer(fullWidthCompDetails!, rowCtrl.getFullWidthCellRendererType()));
@@ -112,11 +114,12 @@ const RowComp = (params: {context: Context, rowCtrl: RowCtrl, pinned: string | n
         const res = {
             height,
             top,
-            transform
+            transform,
+            display
         };
         _.assign(rowStyles, userStyles);
         return res;
-    }, [height, top, transform, userStyles]);
+    }, [height, top, transform, userStyles, display]);
 
     const className = useMemo( ()=> cssClasses.toString(), [cssClasses]);
 

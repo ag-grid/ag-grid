@@ -2,7 +2,7 @@ import { Selection } from "../../../scene/selection";
 import { HdpiCanvas } from "../../../canvas/hdpiCanvas";
 import { reactive } from "../../../util/observable";
 import { Label } from "../../label";
-import { HighlightStyle, SeriesNodeDatum, SeriesTooltip, TooltipRendererParams } from "../series";
+import { SeriesNodeDatum, SeriesTooltip, TooltipRendererParams } from "../series";
 import { HierarchySeries } from "./hierarchySeries";
 import { TooltipRendererResult, toTooltipHtml } from "../../chart";
 import { Group } from "../../../scene/group";
@@ -59,7 +59,7 @@ export class TreemapSeries extends HierarchySeries {
     static className = 'TreemapSeries';
     static type = 'treemap';
 
-    private groupSelection: Selection<Group, Group, TreemapNodeDatum, any> = Selection.select(this.group).selectAll<Group>();
+    private groupSelection: Selection<Group, Group, TreemapNodeDatum, any> = Selection.select(this.pickGroup).selectAll<Group>();
 
     private labelMap = new Map<number, Text>();
     private layout = new Treemap();

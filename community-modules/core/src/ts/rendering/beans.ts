@@ -26,7 +26,6 @@ import { SortController } from "../sortController";
 import { FilterManager } from "../filter/filterManager";
 import { RowContainerHeightService } from "./rowContainerHeightService";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
-import { DetailRowCompCache } from "./row/detailRowCompCache";
 import { CellPositionUtils } from "../entities/cellPosition";
 import { RowPositionUtils } from "../entities/rowPosition";
 import { SelectionService } from "../selectionService";
@@ -76,7 +75,6 @@ export class Beans {
     @Autowired('filterManager') public filterManager: FilterManager;
     @Autowired('rowContainerHeightService') public rowContainerHeightService: RowContainerHeightService;
     @Autowired('frameworkOverrides') public frameworkOverrides: IFrameworkOverrides;
-    @Autowired('detailRowCompCache') public detailRowCompCache: DetailRowCompCache;
     @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
     @Autowired('rowPositionUtils') public rowPositionUtils: RowPositionUtils;
     @Autowired('selectionService') public selectionService: SelectionService;

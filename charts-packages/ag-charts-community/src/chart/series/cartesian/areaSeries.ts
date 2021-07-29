@@ -4,7 +4,6 @@ import { DropShadow } from "../../../scene/dropShadow";
 import {
     SeriesNodeDatum,
     CartesianTooltipRendererParams as AreaTooltipRendererParams,
-    HighlightStyle,
     SeriesTooltip
 } from "../series";
 import { PointerEvents } from "../../../scene/node";

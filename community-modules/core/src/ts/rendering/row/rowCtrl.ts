@@ -65,6 +65,7 @@ export const FullWidthKeys: Map<RowType, string> = convertToMap([
 let instanceIdSequence = 0;
 
 export interface IRowComp {
+    setDisplay(value?: string): void;
     setDomOrder(domOrder: boolean): void;
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     setCellCtrls(cellCtrls: CellCtrl[]): void;
@@ -216,6 +217,16 @@ export class RowCtrl extends BeanStub {
         }
     }
 
+    public isCacheable(): boolean {
+        return this.rowType === RowType.FullWidthDetail 
+                && this.beans.gridOptionsWrapper.isKeepDetailRows();
+    }
+
+    public setCached(cached: boolean): void {
+        const displayValue = cached ? 'none' : undefined;
+        this.allRowGuis.forEach( rg => rg.rowComp.setDisplay(displayValue) );
+    }
+
     private initialiseRowComps(): void {
         const gow = this.beans.gridOptionsWrapper;
 
@@ -321,36 +332,7 @@ export class RowCtrl extends BeanStub {
                     console.error(`AG Grid: fullWidthCellRenderer ${cellRendererName} not found`);
                 }
             }
-
-            // const res = this.beans.userComponentFactory.newFullWidthCellRenderer(
-            //     params,
-            //     cellRendererType,
-            //     cellRendererName
-            // );
-
-
         });
-
-
-        // const callback = (cellRenderer: ICellRendererComp) => {
-        //     if (this.isAlive()) {
-        //         const eGui = cellRenderer.getGui();
-        //         this.getGui().appendChild(eGui);
-        //         if (this.rowCtrl.getRowType() === RowType.FullWidthDetail) {
-        //             this.rowCtrl.setupDetailRowAutoHeight(eGui);
-        //         }
-        //         this.setFullWidthRowComp(cellRenderer);
-        //     } else {
-        //         this.beans.context.destroyBean(cellRenderer);
-        //     }
-        // };
-
-        // // if doing master detail, it's possible we have a cached row comp from last time detail was displayed
-        // const cachedDetailComp = this.beans.detailRowCompCache.get(this.rowNode, this.pinned);
-        // if (cachedDetailComp) {
-        //     callback(cachedDetailComp);
-        // } else {
-        // }
     }
 
     public getScope(): any {

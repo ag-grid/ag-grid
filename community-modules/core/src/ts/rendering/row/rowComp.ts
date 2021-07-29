@@ -40,6 +40,7 @@ export class RowComp extends Component {
         const style = eGui.style;
 
         const compProxy: IRowComp = {
+            setDisplay: value => style.display = value==null ? null : 'none',
             setDomOrder: domOrder => this.domOrder = domOrder,
             setCellCtrls: cellCtrls => this.setCellCtrls(cellCtrls),
             showFullWidth: compDetails => this.showFullWidth(compDetails),
@@ -90,13 +91,6 @@ export class RowComp extends Component {
                 this.beans.context.destroyBean(cellRenderer);
             }
         };
-
-        // see if we can satisfy from the cache first
-        const cachedDetailComp = this.beans.detailRowCompCache.get(this.rowNode, this.pinned);
-        if (cachedDetailComp) {
-            callback(cachedDetailComp);
-            return;
-        }
 
         // if not in cache, create new one
         const res = this.beans.userComponentFactory.createFullWidthCellRenderer(compDetails, this.rowCtrl.getFullWidthCellRendererType());
@@ -197,8 +191,7 @@ export class RowComp extends Component {
 
         this.fullWidthRowComponent = fullWidthRowComponent;
         this.addDestroyFunc(() => {
-            this.beans.detailRowCompCache.addOrDestroy(this.rowNode, this.pinned, fullWidthRowComponent);
-            this.fullWidthRowComponent = null;
+            this.fullWidthRowComponent = this.beans.context.destroyBean(this.fullWidthRowComponent);
         });
     }
 
