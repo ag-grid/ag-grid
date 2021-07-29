@@ -100,6 +100,7 @@
     "gulp-inline-source": "4.0.0",
     "gulp-postcss": "8.0.0",
     "gulp-replace": "1.0.0",
+    "gulp-prettier": "3.0.0",
     "html-loader": "0.5.5",
     "html-webpack-plugin": "3.2.0",
     "jest": "^25.4.0",

@@ -1,655 +1,5030 @@
 {
-    "GridOptions": {
-        "suppressBrowserResizeObserver": "boolean",
-        "rowDragManaged": "boolean",
-        "suppressRowDrag": "boolean",
-        "suppressMoveWhenRowDragging": "boolean",
-        "enableMultiRowDragging": "boolean",
-        "ensureDomOrder": "boolean",
-        "suppressAggFilteredOnly": "boolean",
-        "showOpenedGroup": "boolean",
-        "deltaRowDataMode": "boolean",
-        "deltaColumnMode": "boolean",
-        "applyColumnDefOrder": "boolean",
-        "maintainColumnOrder": "boolean",
-        "immutableData": "boolean",
-        "immutableColumns": "boolean",
-        "scrollbarWidth": "number",
-        "suppressRowClickSelection": "boolean",
-        "suppressRowHoverHighlight": "boolean",
-        "suppressCellSelection": "boolean",
-        "suppressClearOnFillReduction": "boolean",
-        "suppressMaintainUnsortedOrder": "boolean",
-        "sortingOrder": "(string | null)[]",
-        "suppressMultiSort": "boolean",
-        "multiSortKey": "string",
-        "accentedSort": "boolean",
-        "deltaSort": "boolean",
-        "suppressHorizontalScroll": "boolean",
-        "alwaysShowHorizontalScroll": "boolean",
-        "alwaysShowVerticalScroll": "boolean",
-        "debounceVerticalScrollbar": "boolean",
-        "unSortIcon": "boolean",
-        "rowBuffer": "number",
-        "tooltipShowDelay": "number",
-        "tooltipMouseTrack": "boolean",
-        "enableRtl": "boolean",
-        "enableBrowserTooltips": "boolean",
-        "colResizeDefault": "string",
-        "enableCellExpressions": "boolean",
-        "enableCellTextSelection": "boolean",
-        "enableGroupEdit": "boolean",
-        "enterMovesDownAfterEdit": "boolean",
-        "enterMovesDown": "boolean",
-        "suppressMiddleClickScrolls": "boolean",
-        "preventDefaultOnContextMenu": "boolean",
-        "suppressPreventDefaultOnMouseWheel": "boolean",
-        "suppressScrollOnNewData": "boolean",
-        "suppressMenuHide": "boolean",
-        "singleClickEdit": "boolean",
-        "suppressClickEdit": "boolean",
-        "tabIndex": "number",
-        "suppressKeyboardEvent": "(params: SuppressKeyboardEventParams) => boolean",
-        "stopEditingWhenGridLosesFocus": "boolean",
-        "stopEditingWhenCellsLoseFocus": "boolean",
-        "debug": "boolean",
-        "icons": "{ [key: string] : Function | string }",
-        "angularCompileRows": "boolean",
-        "angularCompileFilters": "boolean",
-        "suppressLoadingOverlay": "boolean",
-        "suppressNoRowsOverlay": "boolean",
-        "suppressAutoSize": "boolean",
-        "autoSizePadding": "number",
-        "skipHeaderOnAutoSize": "boolean",
-        "animateRows": "boolean",
-        "suppressColumnMoveAnimation": "boolean",
-        "suppressMovableColumns": "boolean",
-        "suppressDragLeaveHidesColumns": "boolean",
-        "suppressMakeColumnVisibleAfterUnGroup": "boolean",
-        "suppressParentsInRowNodes": "boolean",
-        "suppressFieldDotNotation": "boolean",
-        "suppressCopyRowsToClipboard": "boolean",
-        "copyHeadersToClipboard": "boolean",
-        "clipboardDeliminator": "string",
-        "suppressClipboardPaste": "boolean",
-        "suppressClipboardApi": "boolean",
-        "suppressLastEmptyLineOnPaste": "boolean",
-        "suppressAggFuncInHeader": "boolean",
-        "suppressAggAtRootLevel": "boolean",
-        "suppressFocusAfterRefresh": "boolean",
-        "rowModelType": "string",
-        "pivotMode": "boolean",
-        "pivotColumnGroupTotals": "string",
-        "pivotRowTotals": "string",
-        "suppressExpandablePivotGroups": "boolean",
-        "suppressEnterpriseResetOnNewColumns": "boolean",
-        "enableRangeSelection": "boolean",
-        "enableRangeHandle": "boolean",
-        "enableFillHandle": "boolean",
-        "fillHandleDirection": "string",
-        "suppressMultiRangeSelection": "boolean",
-        "rowGroupPanelShow": "string",
-        "pivotPanelShow": "string",
-        "suppressContextMenu": "boolean",
-        "allowContextMenuWithControlKey": "boolean",
-        "rememberGroupStateWhenNewData": "boolean",
-        "suppressModelUpdateAfterUpdateTransaction": "boolean",
-        "viewportRowModelPageSize": "number",
-        "viewportRowModelBufferSize": "number",
-        "enableCellChangeFlash": "boolean",
-        "cellFlashDelay": "number",
-        "cellFadeDelay": "number",
-        "allowShowChangeAfterFilter": "boolean",
-        "quickFilterText": "string",
-        "cacheQuickFilter": "boolean",
-        "aggFuncs": "{ [key: string] : IAggFunc }",
-        "suppressColumnVirtualisation": "boolean",
-        "functionsReadOnly": "boolean",
-        "functionsPassive": "boolean",
-        "maxConcurrentDatasourceRequests": "number",
-        "maxBlocksInCache": "number",
-        "purgeClosedRowNodes": "boolean",
-        "domLayout": "string",
-        "suppressChangeDetection": "boolean",
-        "aggregateOnlyChangedColumns": "boolean",
-        "valueCache": "boolean",
-        "valueCacheNeverExpires": "boolean",
-        "batchUpdateWaitMillis": "number",
-        "asyncTransactionWaitMillis": "number",
-        "suppressRowTransform": "boolean",
-        "suppressSetColumnStateEvents": "boolean",
-        "suppressColumnStateEvents": "boolean",
-        "allowDragFromColumnsToolPanel": "boolean",
-        "suppressMaxRenderedRowRestriction": "boolean",
-        "excludeChildrenWhenTreeDataFiltering": "boolean",
-        "undoRedoCellEditing": "boolean",
-        "undoRedoCellEditingLimit": "number",
-        "cacheOverflowSize": "number",
-        "infiniteInitialRowCount": "number",
-        "paginationPageSize": "number",
-        "cacheBlockSize": "number",
-        "blockLoadDebounceMillis": "number",
-        "paginationAutoPageSize": "boolean",
-        "suppressPaginationPanel": "boolean",
-        "pagination": "boolean",
-        "paginateChildRows": "boolean",
-        "editType": "string",
-        "suppressTouch": "boolean",
-        "suppressAsyncEvents": "boolean",
-        "embedFullWidthRows": "boolean",
-        "deprecatedEmbedFullWidthRows": "boolean",
-        "excelStyles": "ExcelStyle[]",
-        "floatingFilter": "boolean",
-        "suppressExcelExport": "boolean",
-        "suppressCsvExport": "boolean",
-        "colWidth": "number",
-        "minColWidth": "number",
-        "maxColWidth": "number",
-        "suppressPropertyNamesCheck": "boolean",
-        "serverSideSortingAlwaysResets": "boolean",
-        "serverSideFilteringAlwaysResets": "boolean",
-        "serverSideStoreType": "ServerSideStoreType",
-        "getServerSideStoreParams": "(params: GetServerSideStoreParamsParams) => ServerSideStoreParams",
-        "isServerSideGroupOpenByDefault": "(params: IsServerSideGroupOpenByDefaultParams) => boolean",
-        "isGroupOpenByDefault": "(params: IsGroupOpenByDefaultParams) => boolean",
-        "statusBar": "{ statusPanels : StatusPanelDef[] }",
-        "localeText": "{ [key: string] : string }",
-        "localeTextFunc": "(key: string, defaultValue: string) => string",
-        "suppressAnimationFrame": "boolean",
-        "defaultColGroupDef": "Partial<ColGroupDef>",
-        "defaultColDef": "ColDef",
-        "defaultExportParams": "CsvExportParams | ExcelExportParams",
-        "defaultCsvExportParams": "CsvExportParams",
-        "defaultExcelExportParams": "ExcelExportParams",
-        "pivotSuppressAutoColumn": "boolean",
-        "groupSelectsChildren": "boolean",
-        "groupSelectsFiltered": "boolean",
-        "groupIncludeFooter": "boolean",
-        "groupIncludeTotalFooter": "boolean",
-        "groupRemoveSingleChildren": "boolean",
-        "groupRemoveLowestSingleChildren": "boolean",
-        "groupHideOpenParents": "boolean",
-        "groupSuppressBlankHeader": "boolean",
-        "autoGroupColumnDef": "ColDef",
-        "enableOldSetFilterModel": "boolean",
-        "enableCharts": "boolean",
-        "groupDisplayType": "RowGroupingDisplayType",
-        "groupMultiAutoColumn": "boolean",
-        "groupUseEntireRow": "boolean",
-        "groupSuppressAutoColumn": "boolean",
-        "context": "any",
-        "rowStyle": "{ [cssProperty: string] : string }",
-        "rowClass": "string | string[]",
-        "groupDefaultExpanded": "number",
-        "alignedGrids": "GridOptions[]",
-        "rowSelection": "string",
-        "suppressRowDeselection": "boolean",
-        "rowDeselection": "boolean",
-        "rowMultiSelectWithClick": "boolean",
-        "isRowSelectable": "IsRowSelectable",
-        "overlayLoadingTemplate": "string",
-        "overlayNoRowsTemplate": "string",
-        "rowHeight": "number",
-        "detailRowHeight": "number",
-        "popupParent": "HTMLElement",
-        "masterDetail": "boolean",
-        "keepDetailRows": "boolean",
-        "keepDetailRowsCount": "number",
-        "isRowMaster": "IsRowMaster",
-        "detailCellRenderer": "ConstructSignature | ICellRendererFunc | string",
-        "detailCellRendererFramework": "any",
-        "detailCellRendererParams": "any",
-        "detailRowAutoHeight": "boolean",
-        "rowData": "any[]",
-        "pinnedTopRowData": "any[]",
-        "pinnedBottomRowData": "any[]",
-        "sideBar": "SideBarDef | string | boolean | null",
-        "columnDefs": "(ColDef | ColGroupDef)[]",
-        "columnTypes": "{ [key: string] : ColDef }",
-        "datasource": "IDatasource",
-        "viewportDatasource": "IViewportDatasource",
-        "serverSideDatasource": "IServerSideDatasource",
-        "headerHeight": "number",
-        "pivotHeaderHeight": "number",
-        "groupHeaderHeight": "number",
-        "pivotGroupHeaderHeight": "number",
-        "floatingFiltersHeight": "number",
-        "paginationNumberFormatter": "(params: PaginationNumberFormatterParams) => string",
-        "postProcessPopup": "(params: PostProcessPopupParams) => void",
-        "frameworkComponents": "{ [p: string] : ConstructSignature } | any",
-        "components": "{ [p: string] : any }",
-        "groupRowRenderer": "ConstructSignature | ICellRendererFunc | string",
-        "groupRowRendererFramework": "any",
-        "groupRowRendererParams": "any",
-        "groupRowInnerRenderer": "ConstructSignature | ICellRendererFunc | string",
-        "groupRowInnerRendererFramework": "any",
-        "createChartContainer": "(params: ChartRef) => void",
-        "fillOperation": "(params: FillOperationParams) => any",
-        "isExternalFilterPresent": "boolean",
-        "doesExternalFilterPass": "boolean",
-        "getRowStyle": "(params: RowClassParams) => { [cssProperty: string] : string }",
-        "getRowClass": "(params: RowClassParams) => string | string[] | undefined",
-        "rowClassRules": "{ [cssClassName: string] : (((params: RowClassParams) => boolean) | string) }",
-        "getRowHeight": "(params: RowHeightParams) => number | undefined | null",
-        "sendToClipboard": "(params: SendToClipboardParams) => void",
-        "processDataFromClipboard": "(params: ProcessDataFromClipboardParams) => string[][] | null",
-        "navigateToNextHeader": "(params: NavigateToNextHeaderParams) => HeaderPosition",
-        "tabToNextHeader": "(params: TabToNextHeaderParams) => HeaderPosition",
-        "navigateToNextCell": "(params: NavigateToNextCellParams) => CellPosition",
-        "tabToNextCell": "(params: TabToNextCellParams) => CellPosition",
-        "getDocument": "() => Document",
-        "defaultGroupSortComparator": "(nodeA: RowNode, nodeB: RowNode) => number",
-        "loadingCellRenderer": "ConstructSignature | string",
-        "loadingCellRendererFramework": "any",
-        "loadingCellRendererParams": "any",
-        "loadingOverlayComponent": "ConstructSignature | string",
-        "loadingOverlayComponentFramework": "any",
-        "loadingOverlayComponentParams": "any",
-        "noRowsOverlayComponent": "ConstructSignature | string",
-        "noRowsOverlayComponentFramework": "any",
-        "noRowsOverlayComponentParams": "any",
-        "fullWidthCellRenderer": "ConstructSignature | ICellRendererFunc | string",
-        "fullWidthCellRendererFramework": "any",
-        "fullWidthCellRendererParams": "any",
-        "isFullWidthCell": "boolean",
-        "groupRowAggNodes": "any",
-        "getBusinessKeyForNode": "string",
-        "getDataPath": "GetDataPath",
-        "treeData": "boolean",
-        "treeDataDisplayType": "TreeDataDisplayType",
-        "isServerSideGroup": "IsServerSideGroup",
-        "isApplyServerSideTransaction": "IsApplyServerSideTransaction",
-        "getServerSideGroupKey": "GetServerSideGroupKey",
-        "getContextMenuItems": "GetContextMenuItems",
-        "getMainMenuItems": "GetMainMenuItems",
-        "getChartToolbarItems": "GetChartToolbarItems",
-        "getRowNodeId": "GetRowNodeIdFunc",
-        "getChildCount": "number",
-        "processRowPostCreate": "void",
-        "processCellForClipboard": "any",
-        "processHeaderForClipboard": "any",
-        "processCellFromClipboard": "any",
-        "processSecondaryColDef": "void",
-        "processSecondaryColGroupDef": "void",
-        "postSort": "void",
-        "chartThemes": "string[]",
-        "customChartThemes": "{ [name: string] : AgChartTheme }",
-        "chartThemeOverrides": "AgChartThemeOverrides",
-        "processChartOptions": "ChartOptions<any>",
-        "onColumnEverythingChanged": "void",
-        "onToolPanelVisibleChanged": "void",
-        "onNewColumnsLoaded": "void",
-        "onColumnPivotModeChanged": "void",
-        "onColumnRowGroupChanged": "void",
-        "onColumnPivotChanged": "void",
-        "onGridColumnsChanged": "void",
-        "onColumnValueChanged": "void",
-        "onColumnMoved": "void",
-        "onColumnVisible": "void",
-        "onColumnPinned": "void",
-        "onColumnGroupOpened": "void",
-        "onColumnResized": "void",
-        "onDisplayedColumnsChanged": "void",
-        "onVirtualColumnsChanged": "void",
-        "onRowGroupOpened": "void",
-        "onRowDataChanged": "void",
-        "onRowDataUpdated": "void",
-        "onPinnedRowDataChanged": "void",
-        "onRangeSelectionChanged": "void",
-        "onColumnRowGroupChangeRequest": "void",
-        "onColumnPivotChangeRequest": "void",
-        "onColumnValueChangeRequest": "void",
-        "onColumnAggFuncChangeRequest": "void",
-        "onModelUpdated": "void",
-        "onCellKeyDown": "void",
-        "onCellKeyPress": "void",
-        "onCellClicked": "void",
-        "onCellMouseDown": "void",
-        "onCellDoubleClicked": "void",
-        "onCellContextMenu": "void",
-        "onCellValueChanged": "void",
-        "onCellMouseOver": "void",
-        "onCellMouseOut": "void",
-        "onRowValueChanged": "void",
-        "onRowEditingStarted": "void",
-        "onRowEditingStopped": "void",
-        "onCellEditingStarted": "void",
-        "onCellEditingStopped": "void",
-        "onCellFocused": "void",
-        "onRowSelected": "void",
-        "onSelectionChanged": "void",
-        "onFilterOpened": "void",
-        "onFilterChanged": "void",
-        "onFilterModified": "void",
-        "onSortChanged": "void",
-        "onVirtualRowRemoved": "void",
-        "onRowClicked": "void",
-        "onRowDoubleClicked": "void",
-        "onGridReady": "void",
-        "onViewportChanged": "void",
-        "onDragStarted": "void",
-        "onDragStopped": "void",
-        "onPaginationChanged": "void",
-        "onRowDragEnter": "void",
-        "onRowDragMove": "void",
-        "onRowDragLeave": "void",
-        "onRowDragEnd": "void",
-        "onPasteStart": "void",
-        "onPasteEnd": "void",
-        "onFillStart": "void",
-        "onFillEnd": "void",
-        "onBodyScroll": "void",
-        "onFirstDataRendered": "void",
-        "onExpandOrCollapseAll": "void",
-        "onChartCreated": "void",
-        "onChartRangeSelectionChanged": "void",
-        "onChartOptionsChanged": "void",
-        "onChartDestroyed": "void",
-        "onComponentStateChanged": "void",
-        "onAsyncTransactionsFlushed": "void",
-        "onGridSizeChanged": "void",
-        "api": "GridApi | null",
-        "columnApi": "ColumnApi | null"
-    },
-    "FillOperationParams": {
-        "event": "MouseEvent",
-        "values": "any[]",
-        "initialValues": "any[]",
-        "currentIndex": "number",
-        "currentCellValue": "any",
-        "api": "GridApi",
-        "columnApi": "ColumnApi",
-        "context": "any",
-        "direction": "string",
-        "column": "Column",
-        "rowNode": "RowNode"
-    },
-    "GetDataPath": {
-        "data": "any",
-        "meta": {
-            "returnType": "string[]",
-            "isCallSignature": true
-        }
-    },
-    "IsServerSideGroup": {
-        "dataItem": "any",
-        "meta": {
-            "returnType": "boolean",
-            "isCallSignature": true
-        }
-    },
-    "IsApplyServerSideTransaction": {
-        "params": "IsApplyServerSideTransactionParams",
-        "meta": {
-            "returnType": "boolean",
-            "isCallSignature": true
-        }
-    },
-    "IsApplyServerSideTransactionParams": {
-        "transaction": "ServerSideTransaction",
-        "parentNode": "RowNode",
-        "storeInfo": "any"
-    },
-    "GetServerSideGroupKey": {
-        "dataItem": "any",
-        "meta": {
-            "returnType": "string",
-            "isCallSignature": true
-        }
-    },
-    "IsRowMaster": {
-        "dataItem": "any",
-        "meta": {
-            "returnType": "boolean",
-            "isCallSignature": true
-        }
-    },
-    "IsRowSelectable": {
-        "node": "RowNode",
-        "meta": {
-            "returnType": "boolean",
-            "isCallSignature": true
-        }
-    },
-    "RowClassParams": {
-        "data": "any",
-        "node": "RowNode",
-        "rowIndex": "number",
-        "$scope": "any",
-        "api": "GridApi",
-        "columnApi": "ColumnApi",
-        "context": "any"
-    },
-    "RowHeightParams": {
-        "data": "any",
-        "node": "RowNode",
-        "api": "GridApi",
-        "context": "any"
-    },
-    "SendToClipboardParams": {
-        "data": "string"
-    },
-    "ProcessChartOptionsParams": {
-        "type": "ChartType",
-        "options": "ChartOptions<any>"
-    },
-    "ProcessChartParams": {
-        "type": "ChartType",
-        "options": "AgChartOptions",
-        "chart": "any"
-    },
-    "GetContextMenuItemsParams": {
-        "defaultItems": "string[] | undefined",
-        "column": "Column",
-        "node": "RowNode",
-        "value": "any",
-        "api": "GridApi",
-        "columnApi": "ColumnApi",
-        "context": "any"
-    },
-    "GetContextMenuItems": {
-        "params": "GetContextMenuItemsParams",
-        "meta": {
-            "returnType": "(string | MenuItemDef)[]",
-            "isCallSignature": true
-        }
-    },
-    "GetChartToolbarItemsParams": {
-        "defaultItems": "ChartMenuOptions[]",
-        "api": "GridApi",
-        "columnApi": "ColumnApi"
-    },
-    "GetChartToolbarItems": {
-        "params": "GetChartToolbarItemsParams",
-        "meta": {
-            "returnType": "ChartMenuOptions[]",
-            "isCallSignature": true
-        }
-    },
-    "MenuItemDef": {
-        "name": "string",
-        "disabled": "boolean",
-        "shortcut": "string",
-        "action": "() => void",
-        "checked": "boolean",
-        "icon": "HTMLElement | string",
-        "subMenu": "(MenuItemDef | string)[] | IComponent<any>",
-        "cssClasses": "string[]",
-        "tooltip": "string"
-    },
-    "GetMainMenuItemsParams": {
-        "column": "Column",
-        "api": "GridApi",
-        "columnApi": "ColumnApi",
-        "context": "any",
-        "defaultItems": "string[]"
-    },
-    "GetMainMenuItems": {
-        "params": "GetMainMenuItemsParams",
-        "meta": {
-            "returnType": "(string | MenuItemDef)[]",
-            "isCallSignature": true
-        }
-    },
-    "GetRowNodeIdFunc": {
-        "data": "any",
-        "meta": {
-            "returnType": "string",
-            "isCallSignature": true
-        }
-    },
-    "ProcessRowParams": {
-        "eRow": "HTMLElement",
-        "ePinnedLeftRow": "HTMLElement",
-        "ePinnedRightRow": "HTMLElement",
-        "rowIndex": "number",
-        "node": "RowNode",
-        "api": "GridApi",
-        "columnApi": "ColumnApi",
-        "addRenderedRowListener": "(eventType: string, listener: Function) => void",
-        "context": "any"
-    },
-    "NavigateToNextHeaderParams": {
-        "key": "string",
-        "previousHeaderPosition": "HeaderPosition | null",
-        "nextHeaderPosition": "HeaderPosition | null",
-        "event": "KeyboardEvent",
-        "headerRowCount": "number"
-    },
-    "TabToNextHeaderParams": {
-        "backwards": "boolean",
-        "previousHeaderPosition": "HeaderPosition | null",
-        "nextHeaderPosition": "HeaderPosition | null",
-        "headerRowCount": "number"
-    },
-    "NavigateToNextCellParams": {
-        "key": "number",
-        "previousCellPosition": "CellPosition",
-        "nextCellPosition": "CellPosition | null",
-        "event": "KeyboardEvent | null"
-    },
-    "TabToNextCellParams": {
-        "backwards": "boolean",
-        "editing": "boolean",
-        "previousCellPosition": "CellPosition",
-        "nextCellPosition": "CellPosition"
-    },
-    "PostProcessPopupParams": {
-        "column": "Column | null",
-        "rowNode": "RowNode",
-        "ePopup": "HTMLElement",
-        "type": "string",
-        "eventSource": "HTMLElement | null",
-        "mouseEvent": "MouseEvent | Touch | null"
-    },
-    "PaginationNumberFormatterParams": {
-        "value": "number"
-    },
-    "ProcessDataFromClipboardParams": {
-        "data": "string[][]"
-    },
-    "ChartRef": {
-        "chartId": "string",
-        "chart": "any",
-        "chartElement": "HTMLElement",
-        "destroyChart": "() => void"
-    },
-    "ServerSideStoreParams": {
-        "storeType": "ServerSideStoreType",
-        "maxBlocksInCache": "number",
-        "cacheBlockSize": "number"
-    },
-    "GetServerSideStoreParamsParams": {
-        "level": "number",
-        "parentRowNode": "RowNode",
-        "rowGroupColumns": "Column[]",
-        "pivotColumns": "Column[]",
-        "pivotMode": "boolean"
-    },
-    "IsServerSideGroupOpenByDefaultParams": {
-        "data": "any",
-        "rowNode": "RowNode"
-    },
-    "IsGroupOpenByDefaultParams": {
-        "rowNode": "RowNode",
-        "rowGroupColumn": "Column",
-        "level": "number",
-        "field": "string",
-        "key": "string"
-    },
-    "BaseExportParams": {
-        "allColumns": "boolean",
-        "columnKeys": "(string | Column)[]",
-        "fileName": "string",
-        "onlySelected": "boolean",
-        "onlySelectedAllPages": "boolean",
-        "skipColumnGroupHeaders": "boolean",
-        "skipColumnHeaders": "boolean",
-        "skipRowGroups": "boolean",
-        "skipPinnedTop": "boolean",
-        "skipPinnedBottom": "boolean",
-        "shouldRowBeSkipped": "boolean",
-        "processCellCallback": "string",
-        "processHeaderCallback": "string",
-        "processGroupHeaderCallback": "string",
-        "processRowGroupCallback": "string",
-        "columnGroups": "boolean",
-        "skipGroups": "boolean",
-        "skipHeader": "boolean"
-    },
-    "ExportParams": {
-        "prependContent": "T",
-        "appendContent": "T",
-        "customHeader": "T",
-        "customFooter": "T",
-        "getCustomContentBelowRow": "(params: ProcessRowGroupForExportParams) => T | undefined"
-    },
-    "CsvCell": {
-        "data": "CsvCellData",
-        "mergeAcross": "number"
-    },
-    "CsvCellData": {
-        "value": "string | null"
-    },
-    "CsvExportParams": {
-        "columnSeparator": "string",
-        "suppressQuotes": "boolean"
-    },
-    "ShouldRowBeSkippedParams": {
-        "node": "RowNode",
-        "api": "GridApi",
-        "context": "any"
-    },
-    "ProcessCellForExportParams": {
-        "value": "any",
-        "accumulatedRowIndex": "number",
-        "node": "RowNode | null",
-        "column": "Column",
-        "api": "GridApi",
-        "columnApi": "ColumnApi",
-        "context": "any",
-        "type": "string"
-    },
-    "ProcessHeaderForExportParams": {
-        "column": "Column",
-        "api": "GridApi",
-        "columnApi": "ColumnApi",
-        "context": "any"
-    },
-    "ProcessGroupHeaderForExportParams": {
-        "columnGroup": "ColumnGroup",
-        "api": "GridApi",
-        "columnApi": "ColumnApi",
-        "context": "any"
-    },
-    "ProcessRowGroupForExportParams": {
-        "node": "RowNode",
-        "api": "GridApi",
-        "columnApi": "ColumnApi",
-        "context": "any"
-    },
-    "HeaderPosition": {
-        "headerRowIndex": "number",
-        "column": "Column | ColumnGroup"
-    }
+"ApplyColumnStateParams": {
+    "state?": "ColumnState[]",
+    "applyOrder?": "boolean",
+    "defaultState?": "ColumnState"
+},
+"ColumnResizeSet": {
+    "columns": "Column[]",
+    "ratios": "number[]",
+    "width": "number"
+},
+"ColumnState": {
+    "colId?": "string",
+    "hide?": "boolean | null",
+    "aggFunc?": "string | IAggFunc | null",
+    "width?": "number",
+    "pivot?": "boolean | null",
+    "pivotIndex?": "number | null",
+    "pinned?": "boolean | string | 'left' | 'right' | null",
+    "rowGroup?": "boolean | null",
+    "rowGroupIndex?": "number | null",
+    "flex?": "number | null",
+    "sort?": "string | null",
+    "sortIndex?": "number | null"
+},
+"ComponentMetadata": {
+    "mandatoryMethodList": "string[]",
+    "optionalMethodList": "string[]",
+    "functionAdapter?": "(callback: any) => { new(): IComponent<any> }"
+},
+"ComponentType": {
+    "propertyName": "string",
+    "isCellRenderer()": "boolean"
+},
+"FrameworkComponentWrapper": {
+    "wrap(frameworkComponent: { new(): any } | null, methodList: string[], optionalMethodList: string[], componentType: ComponentType, componentName: string | null)": "A"
+},
+"WrappableInterface": {
+    "hasMethod(name: string)": "boolean",
+    "callMethod(name: string, args: IArguments)": "void",
+    "addMethod(name: string, callback: Function)": "void"
+},
+"UserCompDetails": {
+    "componentClass": "any",
+    "componentFromFramework": "boolean",
+    "params": "any"
+},
+"RegisteredComponent": {
+    "component": "any",
+    "componentFromFramework": "boolean"
+},
+"DeprecatedComponentName": {
+    "propertyHolder": "string",
+    "newComponentName": "string"
+},
+"ContextParams": {
+    "providedBeanInstances": "any",
+    "beanClasses": "any[]",
+    "debug": "boolean"
+},
+"ComponentMeta": {
+    "componentClass": "new() => Object",
+    "componentName": "string"
+},
+"BeanWrapper": {
+    "bean": "any",
+    "beanInstance": "any",
+    "beanName": "any"
+},
+"ReadyParams": {
+    "gridCtrl": "GridCtrl",
+    "gridBodyCtrl": "GridBodyCtrl",
+    "centerRowContainerCtrl": "RowContainerCtrl",
+    "leftRowContainerCtrl": "RowContainerCtrl",
+    "rightRowContainerCtrl": "RowContainerCtrl",
+    "bottomCenterRowContainerCtrl": "RowContainerCtrl",
+    "bottomLeftRowContainerCtrl": "RowContainerCtrl",
+    "bottomRightRowContainerCtrl": "RowContainerCtrl",
+    "topCenterRowContainerCtrl": "RowContainerCtrl",
+    "topLeftRowContainerCtrl": "RowContainerCtrl",
+    "topRightRowContainerCtrl": "RowContainerCtrl",
+    "fakeHScrollCtrl": "FakeHScrollCtrl",
+    "headerRootComp": "HeaderRootComp"
+},
+"DragItem": {
+    "rowNode?": "RowNode",
+    "rowNodes?": "RowNode[]",
+    "columns?": "Column[]",
+    "visibleState?": "[key: string]: boolean"
+},
+"DragSource": {
+    "type": "DragSourceType",
+    "eElement": "HTMLElement",
+    "getDragItem": "() => DragItem",
+    "dragItemName": "string | (() => string) | null",
+    "defaultIconName?": "string",
+    "dragSourceDropTarget?": "DropTarget",
+    "dragSourceDomDataKey?": "string",
+    "dragStartPixels?": "number",
+    "onDragStarted?": "() => void",
+    "onDragStopped?": "() => void"
+},
+"DropTarget": {
+    "getContainer()": "HTMLElement",
+    "getSecondaryContainers?()": "HTMLElement[][]",
+    "getIconName?()": "string | null",
+    "isInterestedIn(type: DragSourceType)": "boolean",
+    "onDragEnter?(params: DraggingEvent)": "void",
+    "onDragLeave?(params: DraggingEvent)": "void",
+    "onDragging?(params: DraggingEvent)": "void",
+    "onDragStop?(params: DraggingEvent)": "void",
+    "external?": "boolean"
+},
+"DraggingEvent": {
+    "event": "MouseEvent",
+    "x": "number",
+    "y": "number",
+    "vDirection": "VerticalDirection | null",
+    "hDirection": "HorizontalDirection | null",
+    "dragSource": "DragSource",
+    "dragItem": "DragItem",
+    "fromNudge": "boolean",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "dropZoneTarget": "HTMLElement"
+},
+"DragSourceAndListener": {
+    "dragSource": "DragListenerParams",
+    "mouseDownListener": "(mouseEvent: MouseEvent) => void",
+    "touchEnabled": "boolean",
+    "touchStartListener": "((touchEvent: TouchEvent) => void) | null"
+},
+"DragListenerParams": {
+    "dragStartPixels?": "number",
+    "eElement": "HTMLElement",
+    "skipMouseEvent?": "(mouseEvent: MouseEvent) => boolean",
+    "onDragStart": "(mouseEvent: MouseEvent | Touch) => void",
+    "onDragStop": "(mouseEvent: MouseEvent | Touch) => void",
+    "onDragging": "(mouseEvent: MouseEvent | Touch) => void"
+},
+"CellPosition": {
+    "column": "Column",
+    "rowIndex": "number",
+    "rowPinned": "string | null"
+},
+"AbstractColDef": {
+    "headerName?": "string",
+    "columnGroupShow?": "string",
+    "headerClass?": "string | string[] | ((params: HeaderClassParams) => string | string[])",
+    "toolPanelClass?": "string | string[] | ((params: ToolPanelClassParams) => string | string[])",
+    "headerValueGetter?": "string | Function",
+    "pivotKeys?": "string[]",
+    "suppressColumnsToolPanel?": "boolean",
+    "suppressFiltersToolPanel?": "boolean",
+    "headerTooltip?": "string",
+    "tooltipComponent?": "{ new(): ITooltipComp } | string",
+    "tooltipComponentFramework?": "any",
+    "tooltipComponentParams?": "any",
+    "suppressHeaderKeyboardEvent?": "(params: SuppressHeaderKeyboardEventParams) => boolean"
+},
+"ColGroupDef": {
+    "children": "(ColDef | ColGroupDef)[]",
+    "groupId?": "string",
+    "openByDefault?": "boolean",
+    "marryChildren?": "boolean",
+    "headerGroupComponent?": "string | { new(): IHeaderGroupComp }",
+    "headerGroupComponentFramework?": "any",
+    "headerGroupComponentParams?": "any",
+    "headerName?": "string",
+    "columnGroupShow?": "string",
+    "headerClass?": "string | string[] | ((params: HeaderClassParams) => string | string[])",
+    "toolPanelClass?": "string | string[] | ((params: ToolPanelClassParams) => string | string[])",
+    "headerValueGetter?": "string | Function",
+    "pivotKeys?": "string[]",
+    "suppressColumnsToolPanel?": "boolean",
+    "suppressFiltersToolPanel?": "boolean",
+    "headerTooltip?": "string",
+    "tooltipComponent?": "{ new(): ITooltipComp } | string",
+    "tooltipComponentFramework?": "any",
+    "tooltipComponentParams?": "any",
+    "suppressHeaderKeyboardEvent?": "(params: SuppressHeaderKeyboardEventParams) => boolean"
+},
+"IAggFunc": {
+    "(params: IAggFuncParams)": "any"
+},
+"IAggFuncParams": {
+    "values": "any[]",
+    "column": "Column",
+    "colDef": "ColDef",
+    "rowNode": "RowNode",
+    "data": "any",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "context": "any"
+},
+"HeaderClassParams": {
+    "api": "GridApi",
+    "colDef": "AbstractColDef",
+    "column?": "Column | null",
+    "columnGroup?": "ColumnGroup | OriginalColumnGroup | null",
+    "context?": "any"
+},
+"ToolPanelClassParams": {
+    "api": "GridApi",
+    "colDef": "AbstractColDef",
+    "column?": "Column | null",
+    "columnGroup?": "ColumnGroup | OriginalColumnGroup | null",
+    "context?": "any"
+},
+"ColDef": {
+    "colId?": "string",
+    "sort?": "string | null",
+    "initialSort?": "string",
+    "sortIndex?": "number | null",
+    "initialSortIndex?": "number",
+    "sortedAt?": "number",
+    "sortingOrder?": "(string | null)[]",
+    "field?": "string",
+    "type?": "string | string[]",
+    "hide?": "boolean",
+    "initialHide?": "boolean",
+    "pinned?": "boolean | string | null",
+    "initialPinned?": "boolean | string",
+    "tooltipField?": "string",
+    "tooltipValueGetter?": "(params: ITooltipParams) => string",
+    "valueGetter?": "((params: ValueGetterParams) => any) | string",
+    "filterValueGetter?": "((params: ValueGetterParams) => any) | string",
+    "valueSetter?": "((params: ValueSetterParams) => boolean) | string",
+    "keyCreator?": "(value: any) => string",
+    "width?": "number",
+    "initialWidth?": "number",
+    "minWidth?": "number",
+    "maxWidth?": "number",
+    "flex?": "number",
+    "initialFlex?": "number",
+    "autoHeight?": "boolean",
+    "wrapText?": "boolean",
+    "cellClass?": "string | string[] | ((cellClassParams: CellClassParams) => string | string[])",
+    "cellStyle?": " | ((params: CellClassParams) => )",
+    "cellRenderer?": "{ new(): ICellRendererComp } | ICellRendererFunc | string",
+    "cellRendererFramework?": "any",
+    "cellRendererParams?": "any",
+    "cellRendererSelector?": "CellRendererSelectorFunc",
+    "cellEditor?": "{ new(): ICellEditorComp } | string",
+    "cellEditorFramework?": "any",
+    "cellEditorParams?": "any",
+    "cellEditorSelector?": "CellEditorSelectorFunc",
+    "cellEditorPopup?": "boolean",
+    "cellEditorPopupPosition?": "string",
+    "pinnedRowCellRenderer?": "{ new(): ICellRendererComp } | ICellRendererFunc | string",
+    "pinnedRowCellRendererFramework?": "any",
+    "pinnedRowCellRendererParams?": "any",
+    "valueFormatter?": "((params: ValueFormatterParams) => string) | string",
+    "pinnedRowValueFormatter?": "((params: ValueFormatterParams) => string) | string",
+    "valueParser?": "((params: ValueParserParams) => any) | string",
+    "aggFunc?": "string | IAggFunc | null",
+    "initialAggFunc?": "string | IAggFunc",
+    "allowedAggFuncs?": "string[]",
+    "rowGroupIndex?": "number | null",
+    "rowGroup?": "boolean",
+    "initialRowGroupIndex?": "number",
+    "initialRowGroup?": "boolean",
+    "showRowGroup?": "string | boolean",
+    "pivotIndex?": "number | null",
+    "pivot?": "boolean",
+    "initialPivotIndex?": "number",
+    "initialPivot?": "boolean",
+    "comparator?": "(valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode, isInverted: boolean) => number",
+    "equals?": "(valueA: any, valueB: any) => boolean",
+    "pivotComparator?": "(valueA: string, valueB: string) => number",
+    "checkboxSelection?": "boolean | ((params: CheckboxSelectionCallbackParams) => boolean)",
+    "headerCheckboxSelection?": "boolean | ((params: HeaderCheckboxSelectionCallbackParams) => boolean)",
+    "headerCheckboxSelectionFilteredOnly?": "boolean",
+    "rowDrag?": "boolean | ((params: RowDragCallbackParams) => boolean)",
+    "rowDragText?": "((params: IRowDragItem, dragItemCount: number) => string)",
+    "dndSource?": "boolean | ((params: DndSourceCallbackParams) => boolean)",
+    "dndSourceOnRowDrag?": "((params: rowNode dragEvent) => void)",
+    "suppressMenu?": "boolean",
+    "menuTabs?": "string[]",
+    "sortable?": "boolean",
+    "suppressMovable?": "boolean",
+    "suppressCellFlash?": "boolean",
+    "lockPosition?": "boolean",
+    "lockVisible?": "boolean",
+    "lockPinned?": "boolean",
+    "unSortIcon?": "boolean",
+    "suppressSizeToFit?": "boolean",
+    "resizable?": "boolean",
+    "suppressAutoSize?": "boolean",
+    "suppressKeyboardEvent?": "(params: SuppressKeyboardEventParams) => boolean",
+    "enableRowGroup?": "boolean",
+    "enablePivot?": "boolean",
+    "enableValue?": "boolean",
+    "editable?": "boolean | ((params: EditableCallbackParams) => boolean)",
+    "colSpan?": "(params: ColSpanParams) => number",
+    "rowSpan?": "(params: RowSpanParams) => number",
+    "suppressPaste?": "boolean | ((params: SuppressPasteCallbackParams) => boolean)",
+    "suppressNavigable?": "boolean | ((params: SuppressNavigableCallbackParams) => boolean)",
+    "getQuickFilterText?": "(params: GetQuickFilterTextParams) => string",
+    "newValueHandler?": "(params: NewValueParams) => boolean",
+    "singleClickEdit?": "boolean",
+    "template?": "string",
+    "templateUrl?": "string",
+    "cellClassRules?": "[cssClassName: string]: (Function | string)",
+    "onCellValueChanged?": "Function",
+    "onCellClicked?": "(event: CellClickedEvent) => void",
+    "onCellDoubleClicked?": "(event: CellDoubleClickedEvent) => void",
+    "onCellContextMenu?": "(event: CellContextMenuEvent) => void",
+    "icons?": "[key: string]: Function | string",
+    "enableCellChangeFlash?": "boolean",
+    "pivotValueColumn?": "Column | null",
+    "pivotTotalColumnIds?": "string[]",
+    "headerComponent?": "string | { new(): any }",
+    "headerComponentFramework?": "any",
+    "headerComponentParams?": "any",
+    "floatingFilter?": "boolean",
+    "refData?": "[key: string]: string",
+    "chartDataType?": "'category' | 'series' | 'time' | 'excluded'",
+    "columnsMenuParams?": "ColumnsMenuParams",
+    "headerName?": "string",
+    "columnGroupShow?": "string",
+    "headerClass?": "string | string[] | ((params: HeaderClassParams) => string | string[])",
+    "toolPanelClass?": "string | string[] | ((params: ToolPanelClassParams) => string | string[])",
+    "headerValueGetter?": "string | Function",
+    "pivotKeys?": "string[]",
+    "suppressColumnsToolPanel?": "boolean",
+    "suppressFiltersToolPanel?": "boolean",
+    "headerTooltip?": "string",
+    "tooltipComponent?": "{ new(): ITooltipComp } | string",
+    "tooltipComponentFramework?": "any",
+    "tooltipComponentParams?": "any",
+    "suppressHeaderKeyboardEvent?": "(params: SuppressHeaderKeyboardEventParams) => boolean",
+    "filter?": "IFilterType",
+    "filterFramework?": "any",
+    "filterParams?": "any",
+    "floatingFilterComponent?": "string | { new(): IFloatingFilterComp }",
+    "floatingFilterComponentParams?": "any",
+    "floatingFilterComponentFramework?": "any"
+},
+"ColumnFunctionCallbackParams": {
+    "node": "RowNode",
+    "data": "any",
+    "column": "Column",
+    "colDef": "ColDef",
+    "context": "any",
+    "api": "GridApi",
+    "columnApi": "ColumnApi"
+},
+"CheckboxSelectionCallbackParams": {
+    "node": "RowNode",
+    "data": "any",
+    "column": "Column",
+    "colDef": "ColDef",
+    "context": "any",
+    "api": "GridApi",
+    "columnApi": "ColumnApi"
+},
+"RowDragCallbackParams": {
+    "node": "RowNode",
+    "data": "any",
+    "column": "Column",
+    "colDef": "ColDef",
+    "context": "any",
+    "api": "GridApi",
+    "columnApi": "ColumnApi"
+},
+"DndSourceCallbackParams": {
+    "node": "RowNode",
+    "data": "any",
+    "column": "Column",
+    "colDef": "ColDef",
+    "context": "any",
+    "api": "GridApi",
+    "columnApi": "ColumnApi"
+},
+"EditableCallbackParams": {
+    "node": "RowNode",
+    "data": "any",
+    "column": "Column",
+    "colDef": "ColDef",
+    "context": "any",
+    "api": "GridApi",
+    "columnApi": "ColumnApi"
+},
+"SuppressPasteCallbackParams": {
+    "node": "RowNode",
+    "data": "any",
+    "column": "Column",
+    "colDef": "ColDef",
+    "context": "any",
+    "api": "GridApi",
+    "columnApi": "ColumnApi"
+},
+"SuppressNavigableCallbackParams": {
+    "node": "RowNode",
+    "data": "any",
+    "column": "Column",
+    "colDef": "ColDef",
+    "context": "any",
+    "api": "GridApi",
+    "columnApi": "ColumnApi"
+},
+"HeaderCheckboxSelectionCallbackParams": {
+    "column": "Column",
+    "colDef": "ColDef",
+    "api": "GridApi",
+    "columnApi": "ColumnApi"
+},
+"IsColumnFunc": {
+    "(params: IsColumnFuncParams)": "boolean"
+},
+"IsColumnFuncParams": {
+    "node": "RowNode",
+    "data": "any",
+    "column": "Column",
+    "colDef": "ColDef",
+    "context": "any",
+    "api": "GridApi",
+    "columnApi": "ColumnApi"
+},
+"GetQuickFilterTextParams": {
+    "value": "any",
+    "node": "RowNode",
+    "data": "any",
+    "column": "Column",
+    "colDef": "ColDef",
+    "context": "any"
+},
+"ColumnsMenuParams": {
+    "suppressSyncLayoutWithGrid?": "boolean",
+    "suppressColumnFilter?": "boolean",
+    "suppressColumnSelectAll?": "boolean",
+    "suppressColumnExpandAll?": "boolean",
+    "contractColumnSelection?": "boolean"
+},
+"BaseColDefParams": {
+    "node": "RowNode | null",
+    "data": "any",
+    "colDef": "ColDef",
+    "column": "Column",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "context": "any"
+},
+"BaseWithValueColDefParams": {
+    "value": "any",
+    "node": "RowNode | null",
+    "data": "any",
+    "colDef": "ColDef",
+    "column": "Column",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "context": "any"
+},
+"ValueGetterParams": {
+    "getValue": "(field: string) => any",
+    "node": "RowNode | null",
+    "data": "any",
+    "colDef": "ColDef",
+    "column": "Column",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "context": "any"
+},
+"NewValueParams": {
+    "oldValue": "any",
+    "newValue": "any",
+    "node": "RowNode | null",
+    "data": "any",
+    "colDef": "ColDef",
+    "column": "Column",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "context": "any"
+},
+"ValueSetterParams": {
+    "oldValue": "any",
+    "newValue": "any",
+    "node": "RowNode | null",
+    "data": "any",
+    "colDef": "ColDef",
+    "column": "Column",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "context": "any"
+},
+"ValueParserParams": {
+    "oldValue": "any",
+    "newValue": "any",
+    "node": "RowNode | null",
+    "data": "any",
+    "colDef": "ColDef",
+    "column": "Column",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "context": "any"
+},
+"ValueFormatterParams": {
+    "value": "any",
+    "node": "RowNode | null",
+    "data": "any",
+    "colDef": "ColDef",
+    "column": "Column",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "context": "any"
+},
+"ColSpanParams": {
+    "node": "RowNode | null",
+    "data": "any",
+    "colDef": "ColDef",
+    "column": "Column",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "context": "any"
+},
+"RowSpanParams": {
+    "node": "RowNode | null",
+    "data": "any",
+    "colDef": "ColDef",
+    "column": "Column",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "context": "any"
+},
+"SuppressKeyboardEventParams": {
+    "event": "KeyboardEvent",
+    "editing": "boolean",
+    "node": "RowNode",
+    "data": "any",
+    "column": "Column",
+    "colDef": "ColDef",
+    "context": "any",
+    "api": "GridApi",
+    "columnApi": "ColumnApi"
+},
+"SuppressHeaderKeyboardEventParams": {
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "column": "Column | ColumnGroup",
+    "colDef": "ColDef | ColGroupDef | null",
+    "context": "any",
+    "headerRowIndex": "number",
+    "event": "KeyboardEvent"
+},
+"CellClassParams": {
+    "colDef": "ColDef",
+    "value": "any",
+    "data": "any",
+    "node": "RowNode",
+    "rowIndex": "number",
+    "$scope": "any",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "context": "any"
+},
+"SelectorFunc": {
+    "(params: ICellRendererParams | ICellEditorParams)": "CellRendererSelectorResult | CellEditorSelectorResult"
+},
+"CellRendererSelectorFunc": {
+    "(params: ICellRendererParams)": "CellRendererSelectorResult",
+    "(params: ICellRendererParams | ICellEditorParams)": "CellRendererSelectorResult | CellEditorSelectorResult"
+},
+"CellEditorSelectorFunc": {
+    "(params: ICellEditorParams)": "CellEditorSelectorResult",
+    "(params: ICellRendererParams | ICellEditorParams)": "CellRendererSelectorResult | CellEditorSelectorResult"
+},
+"CellRendererSelectorResult": {
+    "component?": "{ new(): ICellRendererComp } | ICellRendererFunc | string",
+    "frameworkComponent?": "any",
+    "params?": "any"
+},
+"CellEditorSelectorResult": {
+    "component?": "{ new(): ICellEditorComp } | string",
+    "frameworkComponent?": "any",
+    "params?": "any"
+},
+"ColumnGroupChild": {
+    "getUniqueId()": "string",
+    "getActualWidth()": "number",
+    "getMinWidth()": "number | null | undefined",
+    "getLeft()": "number | null",
+    "getOldLeft()": "number | null",
+    "getDefinition()": "AbstractColDef | null",
+    "getColumnGroupShow()": "string | undefined",
+    "getParent()": "ColumnGroupChild",
+    "isResizable()": "boolean",
+    "setParent(parent: ColumnGroup | null)": "void",
+    "isEmptyGroup()": "boolean",
+    "isMoving()": "boolean",
+    "getPinned()": "string | null | undefined",
+    "addEventListener(eventType: string, listener: EventListener, async: boolean, options: AddEventListenerOptions)": "void",
+    "removeEventListener(eventType: string, listener: EventListener, async: boolean, options: AddEventListenerOptions)": "void"
+},
+"GridOptions": {
+    "suppressBrowserResizeObserver?": "boolean",
+    "rowDragManaged?": "boolean",
+    "suppressRowDrag?": "boolean",
+    "suppressMoveWhenRowDragging?": "boolean",
+    "enableMultiRowDragging?": "boolean",
+    "ensureDomOrder?": "boolean",
+    "suppressAggFilteredOnly?": "boolean",
+    "showOpenedGroup?": "boolean",
+    "deltaRowDataMode?": "boolean",
+    "deltaColumnMode?": "boolean",
+    "applyColumnDefOrder?": "boolean",
+    "maintainColumnOrder?": "boolean",
+    "immutableData?": "boolean",
+    "immutableColumns?": "boolean",
+    "scrollbarWidth?": "number",
+    "suppressRowClickSelection?": "boolean",
+    "suppressRowHoverHighlight?": "boolean",
+    "suppressCellSelection?": "boolean",
+    "suppressClearOnFillReduction?": "boolean",
+    "suppressMaintainUnsortedOrder?": "boolean",
+    "sortingOrder?": "(string | null)[]",
+    "suppressMultiSort?": "boolean",
+    "multiSortKey?": "string",
+    "accentedSort?": "boolean",
+    "deltaSort?": "boolean",
+    "suppressHorizontalScroll?": "boolean",
+    "alwaysShowHorizontalScroll?": "boolean",
+    "alwaysShowVerticalScroll?": "boolean",
+    "debounceVerticalScrollbar?": "boolean",
+    "unSortIcon?": "boolean",
+    "rowBuffer?": "number",
+    "tooltipShowDelay?": "number",
+    "tooltipMouseTrack?": "boolean",
+    "enableRtl?": "boolean",
+    "enableBrowserTooltips?": "boolean",
+    "colResizeDefault?": "string",
+    "enableCellExpressions?": "boolean",
+    "enableCellTextSelection?": "boolean",
+    "enableGroupEdit?": "boolean",
+    "enterMovesDownAfterEdit?": "boolean",
+    "enterMovesDown?": "boolean",
+    "suppressMiddleClickScrolls?": "boolean",
+    "preventDefaultOnContextMenu?": "boolean",
+    "suppressPreventDefaultOnMouseWheel?": "boolean",
+    "suppressScrollOnNewData?": "boolean",
+    "suppressMenuHide?": "boolean",
+    "singleClickEdit?": "boolean",
+    "suppressClickEdit?": "boolean",
+    "tabIndex?": "number",
+    "suppressKeyboardEvent?": "(params: SuppressKeyboardEventParams) => boolean",
+    "stopEditingWhenGridLosesFocus?": "boolean",
+    "stopEditingWhenCellsLoseFocus?": "boolean",
+    "debug?": "boolean",
+    "icons?": "[key: string]: Function | string",
+    "angularCompileRows?": "boolean",
+    "angularCompileFilters?": "boolean",
+    "suppressLoadingOverlay?": "boolean",
+    "suppressNoRowsOverlay?": "boolean",
+    "suppressAutoSize?": "boolean",
+    "autoSizePadding?": "number",
+    "skipHeaderOnAutoSize?": "boolean",
+    "animateRows?": "boolean",
+    "suppressColumnMoveAnimation?": "boolean",
+    "suppressMovableColumns?": "boolean",
+    "suppressDragLeaveHidesColumns?": "boolean",
+    "suppressMakeColumnVisibleAfterUnGroup?": "boolean",
+    "suppressParentsInRowNodes?": "boolean",
+    "suppressFieldDotNotation?": "boolean",
+    "suppressCopyRowsToClipboard?": "boolean",
+    "copyHeadersToClipboard?": "boolean",
+    "clipboardDeliminator?": "string",
+    "suppressClipboardPaste?": "boolean",
+    "suppressClipboardApi?": "boolean",
+    "suppressLastEmptyLineOnPaste?": "boolean",
+    "suppressAggFuncInHeader?": "boolean",
+    "suppressAggAtRootLevel?": "boolean",
+    "suppressFocusAfterRefresh?": "boolean",
+    "rowModelType?": "string",
+    "pivotMode?": "boolean",
+    "pivotColumnGroupTotals?": "string",
+    "pivotRowTotals?": "string",
+    "suppressExpandablePivotGroups?": "boolean",
+    "suppressEnterpriseResetOnNewColumns?": "boolean",
+    "enableRangeSelection?": "boolean",
+    "enableRangeHandle?": "boolean",
+    "enableFillHandle?": "boolean",
+    "fillHandleDirection?": "string",
+    "suppressMultiRangeSelection?": "boolean",
+    "rowGroupPanelShow?": "string",
+    "pivotPanelShow?": "string",
+    "suppressContextMenu?": "boolean",
+    "allowContextMenuWithControlKey?": "boolean",
+    "rememberGroupStateWhenNewData?": "boolean",
+    "suppressModelUpdateAfterUpdateTransaction?": "boolean",
+    "viewportRowModelPageSize?": "number",
+    "viewportRowModelBufferSize?": "number",
+    "enableCellChangeFlash?": "boolean",
+    "cellFlashDelay?": "number",
+    "cellFadeDelay?": "number",
+    "allowShowChangeAfterFilter?": "boolean",
+    "quickFilterText?": "string",
+    "cacheQuickFilter?": "boolean",
+    "aggFuncs?": "[key: string]: IAggFunc",
+    "suppressColumnVirtualisation?": "boolean",
+    "functionsReadOnly?": "boolean",
+    "functionsPassive?": "boolean",
+    "maxConcurrentDatasourceRequests?": "number",
+    "maxBlocksInCache?": "number",
+    "purgeClosedRowNodes?": "boolean",
+    "domLayout?": "string",
+    "suppressChangeDetection?": "boolean",
+    "aggregateOnlyChangedColumns?": "boolean",
+    "valueCache?": "boolean",
+    "valueCacheNeverExpires?": "boolean",
+    "batchUpdateWaitMillis?": "number",
+    "asyncTransactionWaitMillis?": "number",
+    "suppressRowTransform?": "boolean",
+    "suppressSetColumnStateEvents?": "boolean",
+    "suppressColumnStateEvents?": "boolean",
+    "allowDragFromColumnsToolPanel?": "boolean",
+    "suppressMaxRenderedRowRestriction?": "boolean",
+    "excludeChildrenWhenTreeDataFiltering?": "boolean",
+    "undoRedoCellEditing?": "boolean",
+    "undoRedoCellEditingLimit?": "number",
+    "cacheOverflowSize?": "number",
+    "infiniteInitialRowCount?": "number",
+    "paginationPageSize?": "number",
+    "cacheBlockSize?": "number",
+    "blockLoadDebounceMillis?": "number",
+    "paginationAutoPageSize?": "boolean",
+    "suppressPaginationPanel?": "boolean",
+    "pagination?": "boolean",
+    "paginateChildRows?": "boolean",
+    "editType?": "string",
+    "suppressTouch?": "boolean",
+    "suppressAsyncEvents?": "boolean",
+    "embedFullWidthRows?": "boolean",
+    "deprecatedEmbedFullWidthRows?": "boolean",
+    "excelStyles?": "ExcelStyle[]",
+    "floatingFilter?": "boolean",
+    "suppressExcelExport?": "boolean",
+    "suppressCsvExport?": "boolean",
+    "colWidth?": "number",
+    "minColWidth?": "number",
+    "maxColWidth?": "number",
+    "suppressPropertyNamesCheck?": "boolean",
+    "serverSideSortingAlwaysResets?": "boolean",
+    "serverSideFilteringAlwaysResets?": "boolean",
+    "serverSideStoreType?": "ServerSideStoreType",
+    "getServerSideStoreParams?": "(params: GetServerSideStoreParamsParams) => ServerSideStoreParams",
+    "isServerSideGroupOpenByDefault?": "(params: IsServerSideGroupOpenByDefaultParams) => boolean",
+    "isGroupOpenByDefault?": "(params: IsGroupOpenByDefaultParams) => boolean",
+    "statusBar?": "statusPanels",
+    "localeText?": "[key: string]: string",
+    "localeTextFunc?": "(key: string, defaultValue: string) => string",
+    "suppressAnimationFrame?": "boolean",
+    "defaultColGroupDef?": "Partial<ColGroupDef>",
+    "defaultColDef?": "ColDef",
+    "defaultExportParams?": "CsvExportParams | ExcelExportParams",
+    "defaultCsvExportParams?": "CsvExportParams",
+    "defaultExcelExportParams?": "ExcelExportParams",
+    "pivotSuppressAutoColumn?": "boolean",
+    "groupSelectsChildren?": "boolean",
+    "groupSelectsFiltered?": "boolean",
+    "groupIncludeFooter?": "boolean",
+    "groupIncludeTotalFooter?": "boolean",
+    "groupRemoveSingleChildren?": "boolean",
+    "groupRemoveLowestSingleChildren?": "boolean",
+    "groupHideOpenParents?": "boolean",
+    "groupSuppressBlankHeader?": "boolean",
+    "autoGroupColumnDef?": "ColDef",
+    "enableOldSetFilterModel?": "boolean",
+    "enableCharts?": "boolean",
+    "groupDisplayType?": "RowGroupingDisplayType",
+    "groupMultiAutoColumn?": "boolean",
+    "groupUseEntireRow?": "boolean",
+    "groupSuppressAutoColumn?": "boolean",
+    "context?": "any",
+    "rowStyle?": "[cssProperty: string]: string",
+    "rowClass?": "string | string[]",
+    "groupDefaultExpanded?": "number",
+    "alignedGrids?": "GridOptions[]",
+    "rowSelection?": "string",
+    "suppressRowDeselection?": "boolean",
+    "rowDeselection?": "boolean",
+    "rowMultiSelectWithClick?": "boolean",
+    "isRowSelectable?": "IsRowSelectable",
+    "overlayLoadingTemplate?": "string",
+    "overlayNoRowsTemplate?": "string",
+    "rowHeight?": "number",
+    "detailRowHeight?": "number",
+    "popupParent?": "HTMLElement",
+    "masterDetail?": "boolean",
+    "keepDetailRows?": "boolean",
+    "keepDetailRowsCount?": "number",
+    "isRowMaster?": "IsRowMaster",
+    "detailCellRenderer?": "{ new(): ICellRendererComp } | ICellRendererFunc | string",
+    "detailCellRendererFramework?": "any",
+    "detailCellRendererParams?": "any",
+    "detailRowAutoHeight?": "boolean",
+    "rowData?": "any[]",
+    "pinnedTopRowData?": "any[]",
+    "pinnedBottomRowData?": "any[]",
+    "sideBar?": "SideBarDef | string | boolean | null",
+    "columnDefs?": "(ColDef | ColGroupDef)[]",
+    "columnTypes?": "[key: string]: ColDef",
+    "datasource?": "IDatasource",
+    "viewportDatasource?": "IViewportDatasource",
+    "serverSideDatasource?": "IServerSideDatasource",
+    "headerHeight?": "number",
+    "pivotHeaderHeight?": "number",
+    "groupHeaderHeight?": "number",
+    "pivotGroupHeaderHeight?": "number",
+    "floatingFiltersHeight?": "number",
+    "paginationNumberFormatter?": "(params: PaginationNumberFormatterParams) => string",
+    "postProcessPopup?": "(params: PostProcessPopupParams) => void",
+    "frameworkComponents?": "[p: string]: { new(): any } | any",
+    "components?": "[p: string]: any",
+    "groupRowRenderer?": "{ new(): ICellRendererComp } | ICellRendererFunc | string",
+    "groupRowRendererFramework?": "any",
+    "groupRowRendererParams?": "any",
+    "groupRowInnerRenderer?": "{ new(): ICellRendererComp } | ICellRendererFunc | string",
+    "groupRowInnerRendererFramework?": "any",
+    "createChartContainer?": "(params: ChartRef) => void",
+    "fillOperation?": "(params: FillOperationParams) => any",
+    "isExternalFilterPresent?()": "boolean",
+    "doesExternalFilterPass?(node: RowNode)": "boolean",
+    "getRowStyle?": "(params: RowClassParams) => [cssProperty: string]: string",
+    "getRowClass?": "(params: RowClassParams) => string | string[] | undefined",
+    "rowClassRules?": "[cssClassName: string]: (((params: RowClassParams) => boolean) | string)",
+    "getRowHeight?": "(params: RowHeightParams) => number | undefined | null",
+    "sendToClipboard?": "(params: SendToClipboardParams) => void",
+    "processDataFromClipboard?": "(params: ProcessDataFromClipboardParams) => string[][] | null",
+    "navigateToNextHeader?": "(params: NavigateToNextHeaderParams) => HeaderPosition",
+    "tabToNextHeader?": "(params: TabToNextHeaderParams) => HeaderPosition",
+    "navigateToNextCell?": "(params: NavigateToNextCellParams) => CellPosition",
+    "tabToNextCell?": "(params: TabToNextCellParams) => CellPosition",
+    "getDocument?": "() => Document",
+    "defaultGroupSortComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
+    "defaultGroupOrderComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
+    "loadingCellRenderer?": "{ new(): ICellRenderer } | string",
+    "loadingCellRendererFramework?": "any",
+    "loadingCellRendererParams?": "any",
+    "loadingOverlayComponent?": "{ new(): ILoadingOverlayComp } | string",
+    "loadingOverlayComponentFramework?": "any",
+    "loadingOverlayComponentParams?": "any",
+    "noRowsOverlayComponent?": "{ new(): INoRowsOverlayComp } | string",
+    "noRowsOverlayComponentFramework?": "any",
+    "noRowsOverlayComponentParams?": "any",
+    "fullWidthCellRenderer?": "{ new(): ICellRendererComp } | ICellRendererFunc | string",
+    "fullWidthCellRendererFramework?": "any",
+    "fullWidthCellRendererParams?": "any",
+    "isFullWidthCell?(rowNode: RowNode)": "boolean",
+    "groupRowAggNodes?(nodes: RowNode[])": "any",
+    "getBusinessKeyForNode?(node: RowNode)": "string",
+    "getDataPath?": "GetDataPath",
+    "treeData?": "boolean",
+    "treeDataDisplayType?": "TreeDataDisplayType",
+    "isServerSideGroup?": "IsServerSideGroup",
+    "isApplyServerSideTransaction?": "IsApplyServerSideTransaction",
+    "getServerSideGroupKey?": "GetServerSideGroupKey",
+    "getContextMenuItems?": "GetContextMenuItems",
+    "getMainMenuItems?": "GetMainMenuItems",
+    "getChartToolbarItems?": "GetChartToolbarItems",
+    "getRowNodeId?": "GetRowNodeIdFunc",
+    "getChildCount?(dataItem: any)": "number",
+    "processRowPostCreate?(params: ProcessRowParams)": "void",
+    "processCellForClipboard?(params: ProcessCellForExportParams)": "any",
+    "processHeaderForClipboard?(params: ProcessHeaderForExportParams)": "any",
+    "processCellFromClipboard?(params: ProcessCellForExportParams)": "any",
+    "processSecondaryColDef?(colDef: ColDef)": "void",
+    "processSecondaryColGroupDef?(colGroupDef: ColGroupDef)": "void",
+    "postSort?(nodes: RowNode[])": "void",
+    "chartThemes?": "string[]",
+    "customChartThemes?": "[name: string]: AgChartTheme",
+    "chartThemeOverrides?": "AgChartThemeOverrides",
+    "processChartOptions?(params: ProcessChartOptionsParams)": "ChartOptions<any>",
+    "onColumnEverythingChanged?(event: ColumnEverythingChangedEvent)": "void",
+    "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent)": "void",
+    "onNewColumnsLoaded?(event: NewColumnsLoadedEvent)": "void",
+    "onColumnPivotModeChanged?(event: ColumnPivotModeChangedEvent)": "void",
+    "onColumnRowGroupChanged?(event: ColumnRowGroupChangedEvent)": "void",
+    "onColumnPivotChanged?(event: ColumnPivotChangedEvent)": "void",
+    "onGridColumnsChanged?(event: GridColumnsChangedEvent)": "void",
+    "onColumnValueChanged?(event: ColumnValueChangedEvent)": "void",
+    "onColumnMoved?(event: ColumnMovedEvent)": "void",
+    "onColumnVisible?(event: ColumnVisibleEvent)": "void",
+    "onColumnPinned?(event: ColumnPinnedEvent)": "void",
+    "onColumnGroupOpened?(event: ColumnGroupOpenedEvent)": "void",
+    "onColumnResized?(event: ColumnResizedEvent)": "void",
+    "onDisplayedColumnsChanged?(event: DisplayedColumnsChangedEvent)": "void",
+    "onVirtualColumnsChanged?(event: VirtualColumnsChangedEvent)": "void",
+    "onRowGroupOpened?(event: RowGroupOpenedEvent)": "void",
+    "onRowDataChanged?(event: RowDataChangedEvent)": "void",
+    "onRowDataUpdated?(event: RowDataUpdatedEvent)": "void",
+    "onPinnedRowDataChanged?(event: PinnedRowDataChangedEvent)": "void",
+    "onRangeSelectionChanged?(event: RangeSelectionChangedEvent)": "void",
+    "onColumnRowGroupChangeRequest?(event: ColumnRowGroupChangeRequestEvent)": "void",
+    "onColumnPivotChangeRequest?(event: ColumnPivotChangeRequestEvent)": "void",
+    "onColumnValueChangeRequest?(event: ColumnValueChangeRequestEvent)": "void",
+    "onColumnAggFuncChangeRequest?(event: ColumnAggFuncChangeRequestEvent)": "void",
+    "onModelUpdated?(event: ModelUpdatedEvent)": "void",
+    "onCellKeyDown?(event: CellKeyDownEvent)": "void",
+    "onCellKeyPress?(event: CellKeyPressEvent)": "void",
+    "onCellClicked?(event: CellClickedEvent)": "void",
+    "onCellMouseDown?(event: CellMouseDownEvent)": "void",
+    "onCellDoubleClicked?(event: CellDoubleClickedEvent)": "void",
+    "onCellContextMenu?(event: CellContextMenuEvent)": "void",
+    "onCellValueChanged?(event: CellValueChangedEvent)": "void",
+    "onCellMouseOver?(event: CellMouseOverEvent)": "void",
+    "onCellMouseOut?(event: CellMouseOutEvent)": "void",
+    "onRowValueChanged?(event: RowValueChangedEvent)": "void",
+    "onRowEditingStarted?(event: RowEditingStartedEvent)": "void",
+    "onRowEditingStopped?(event: RowEditingStoppedEvent)": "void",
+    "onCellEditingStarted?(event: CellEditingStartedEvent)": "void",
+    "onCellEditingStopped?(event: CellEditingStoppedEvent)": "void",
+    "onCellFocused?(event: CellFocusedEvent)": "void",
+    "onRowSelected?(event: RowSelectedEvent)": "void",
+    "onSelectionChanged?(event: SelectionChangedEvent)": "void",
+    "onFilterOpened?(event: FilterOpenedEvent)": "void",
+    "onFilterChanged?(event: FilterChangedEvent)": "void",
+    "onFilterModified?(event: FilterModifiedEvent)": "void",
+    "onSortChanged?(event: SortChangedEvent)": "void",
+    "onVirtualRowRemoved?(event: VirtualRowRemovedEvent)": "void",
+    "onRowClicked?(event: RowClickedEvent)": "void",
+    "onRowDoubleClicked?(event: RowDoubleClickedEvent)": "void",
+    "onGridReady?(event: GridReadyEvent)": "void",
+    "onViewportChanged?(event: ViewportChangedEvent)": "void",
+    "onDragStarted?(event: DragStartedEvent)": "void",
+    "onDragStopped?(event: DragStoppedEvent)": "void",
+    "onPaginationChanged?(event: PaginationChangedEvent)": "void",
+    "onRowDragEnter?(event: RowDragEvent)": "void",
+    "onRowDragMove?(event: RowDragEvent)": "void",
+    "onRowDragLeave?(event: RowDragEvent)": "void",
+    "onRowDragEnd?(event: RowDragEvent)": "void",
+    "onPasteStart?(event: PasteStartEvent)": "void",
+    "onPasteEnd?(event: PasteEndEvent)": "void",
+    "onFillStart?(event: FillStartEvent)": "void",
+    "onFillEnd?(event: FillEndEvent)": "void",
+    "onBodyScroll?(event: BodyScrollEvent)": "void",
+    "onFirstDataRendered?(event: FirstDataRenderedEvent)": "void",
+    "onExpandOrCollapseAll?(event: ExpandCollapseAllEvent)": "void",
+    "onChartCreated?(event: ChartCreated)": "void",
+    "onChartRangeSelectionChanged?(event: ChartRangeSelectionChanged)": "void",
+    "onChartOptionsChanged?(event: ChartOptionsChanged)": "void",
+    "onChartDestroyed?(event: ChartDestroyed)": "void",
+    "onComponentStateChanged?(event: ComponentStateChangedEvent)": "void",
+    "onAsyncTransactionsFlushed?(event: AsyncTransactionsFlushed)": "void",
+    "onGridSizeChanged?(event: GridSizeChangedEvent)": "void",
+    "api?": "GridApi | null",
+    "columnApi?": "ColumnApi | null"
+},
+"FillOperationParams": {
+    "event": "MouseEvent",
+    "values": "any[]",
+    "initialValues": "any[]",
+    "currentIndex": "number",
+    "currentCellValue": "any",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "context": "any",
+    "direction": "string",
+    "column?": "Column",
+    "rowNode?": "RowNode"
+},
+"GetDataPath": {
+    "(data: any)": "string[]"
+},
+"IsServerSideGroup": {
+    "(dataItem: any)": "boolean"
+},
+"IsApplyServerSideTransaction": {
+    "(params: IsApplyServerSideTransactionParams)": "boolean"
+},
+"IsApplyServerSideTransactionParams": {
+    "transaction": "ServerSideTransaction",
+    "parentNode": "RowNode",
+    "storeInfo": "any"
+},
+"GetServerSideGroupKey": {
+    "(dataItem: any)": "string"
+},
+"IsRowMaster": {
+    "(dataItem: any)": "boolean"
+},
+"IsRowSelectable": {
+    "(node: RowNode)": "boolean"
+},
+"RowClassParams": {
+    "data": "any",
+    "node": "RowNode",
+    "rowIndex": "number",
+    "$scope": "any",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "context": "any"
+},
+"RowHeightParams": {
+    "data": "any",
+    "node": "RowNode",
+    "api": "GridApi",
+    "context": "any"
+},
+"SendToClipboardParams": {
+    "data": "string"
+},
+"ProcessChartOptionsParams": {
+    "type": "ChartType",
+    "options": "ChartOptions<any>"
+},
+"ProcessChartParams": {
+    "type": "ChartType",
+    "options": "AgChartOptions",
+    "chart": "any"
+},
+"GetContextMenuItemsParams": {
+    "defaultItems": "string[] | undefined",
+    "column": "Column",
+    "node": "RowNode",
+    "value": "any",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "context": "any"
+},
+"GetContextMenuItems": {
+    "(params: GetContextMenuItemsParams)": "(string | MenuItemDef)[]"
+},
+"GetChartToolbarItemsParams": {
+    "defaultItems?": "ChartMenuOptions[]",
+    "api": "GridApi",
+    "columnApi": "ColumnApi"
+},
+"GetChartToolbarItems": {
+    "(params: GetChartToolbarItemsParams)": "ChartMenuOptions[]"
+},
+"MenuItemDef": {
+    "name": "string",
+    "disabled?": "boolean",
+    "shortcut?": "string",
+    "action?": "() => void",
+    "checked?": "boolean",
+    "icon?": "HTMLElement | string",
+    "subMenu?": "(MenuItemDef | string)[] | IComponent<any>",
+    "cssClasses?": "string[]",
+    "tooltip?": "string"
+},
+"GetMainMenuItemsParams": {
+    "column": "Column",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "context": "any",
+    "defaultItems": "string[]"
+},
+"GetMainMenuItems": {
+    "(params: GetMainMenuItemsParams)": "(string | MenuItemDef)[]"
+},
+"GetRowNodeIdFunc": {
+    "(data: any)": "string"
+},
+"ProcessRowParams": {
+    "eRow": "HTMLElement",
+    "ePinnedLeftRow": "HTMLElement",
+    "ePinnedRightRow": "HTMLElement",
+    "rowIndex": "number",
+    "node": "RowNode",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "addRenderedRowListener": "(eventType: string, listener: Function) => void",
+    "context": "any"
+},
+"NavigateToNextHeaderParams": {
+    "key": "string",
+    "previousHeaderPosition": "HeaderPosition | null",
+    "nextHeaderPosition": "HeaderPosition | null",
+    "event": "KeyboardEvent",
+    "headerRowCount": "number"
+},
+"TabToNextHeaderParams": {
+    "backwards": "boolean",
+    "previousHeaderPosition": "HeaderPosition | null",
+    "nextHeaderPosition": "HeaderPosition | null",
+    "headerRowCount": "number"
+},
+"NavigateToNextCellParams": {
+    "key": "number",
+    "previousCellPosition": "CellPosition",
+    "nextCellPosition": "CellPosition | null",
+    "event": "KeyboardEvent | null"
+},
+"TabToNextCellParams": {
+    "backwards": "boolean",
+    "editing": "boolean",
+    "previousCellPosition": "CellPosition",
+    "nextCellPosition": "CellPosition"
+},
+"PostProcessPopupParams": {
+    "column?": "Column | null",
+    "rowNode?": "RowNode",
+    "ePopup": "HTMLElement",
+    "type": "string",
+    "eventSource?": "HTMLElement | null",
+    "mouseEvent?": "MouseEvent | Touch | null"
+},
+"PaginationNumberFormatterParams": {
+    "value": "number"
+},
+"ProcessDataFromClipboardParams": {
+    "data": "string[][]"
+},
+"ChartRef": {
+    "chartId": "string",
+    "chart": "any",
+    "chartElement": "HTMLElement",
+    "destroyChart": "() => void"
+},
+"ServerSideStoreParams": {
+    "storeType?": "ServerSideStoreType",
+    "maxBlocksInCache?": "number",
+    "cacheBlockSize?": "number"
+},
+"GetServerSideStoreParamsParams": {
+    "level": "number",
+    "parentRowNode?": "RowNode",
+    "rowGroupColumns": "Column[]",
+    "pivotColumns": "Column[]",
+    "pivotMode": "boolean"
+},
+"IsServerSideGroupOpenByDefaultParams": {
+    "data": "any",
+    "rowNode": "RowNode"
+},
+"IsGroupOpenByDefaultParams": {
+    "rowNode": "RowNode",
+    "rowGroupColumn": "Column",
+    "level": "number",
+    "field": "string",
+    "key": "string"
+},
+"OriginalColumnGroupChild": {
+    "isVisible()": "boolean",
+    "getColumnGroupShow()": "string | undefined",
+    "getId()": "string",
+    "setOriginalParent(originalParent: OriginalColumnGroup | null)": "void"
+},
+"SetSelectedParams": {
+    "newValue": "boolean",
+    "clearSelection?": "boolean",
+    "suppressFinishActions?": "boolean",
+    "rangeSelect?": "boolean",
+    "groupSelectsFiltered?": "boolean"
+},
+"RowNodeEvent": {
+    "node": "RowNode",
+    "type": "string"
+},
+"DataChangedEvent": {
+    "oldData": "any",
+    "newData": "any",
+    "update": "boolean",
+    "node": "RowNode",
+    "type": "string"
+},
+"CellChangedEvent": {
+    "column": "Column",
+    "newValue": "any",
+    "oldValue": "any",
+    "node": "RowNode",
+    "type": "string"
+},
+"RowPosition": {
+    "rowIndex": "number",
+    "rowPinned": "string | null"
+},
+"ToolPanelDef": {
+    "id": "string",
+    "labelDefault": "string",
+    "labelKey": "string",
+    "minWidth?": "number",
+    "maxWidth?": "number",
+    "width?": "number",
+    "iconKey": "string",
+    "toolPanel?": "{ new(): IToolPanelComp } | string",
+    "toolPanelFramework?": "any",
+    "toolPanelParams?": "any"
+},
+"SideBarDef": {
+    "toolPanels?": "(ToolPanelDef | string)[]",
+    "defaultToolPanel?": "string",
+    "hiddenByDefault?": "boolean",
+    "position?": "'left' | 'right'"
+},
+"HardCodedSize": {
+    "[key: string]": "{[key in SASS_PROPERTIES]?: number}"
+},
+"ModelUpdatedEvent": {
+    "animate": "boolean | undefined",
+    "keepRenderedRows": "boolean | undefined",
+    "newData": "boolean | undefined",
+    "newPage": "boolean",
+    "api": "GridApi",
+    "columnApi": "ColumnApi"
+},
+"PaginationChangedEvent": {
+    "animate?": "boolean",
+    "keepRenderedRows?": "boolean",
+    "newData?": "boolean",
+    "newPage": "boolean",
+    "api": "GridApi",
+    "columnApi": "ColumnApi"
+},
+"AgEvent": {
+    "type": "string"
+},
+"AgGridEvent": {
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"ToolPanelVisibleChangedEvent": {
+    "source": "string | undefined",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"ColumnPivotModeChangedEvent": {
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"VirtualColumnsChangedEvent": {
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"ColumnEverythingChangedEvent": {
+    "source": "string",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"NewColumnsLoadedEvent": {
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"GridColumnsChangedEvent": {
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"DisplayedColumnsChangedEvent": {
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"RowDataChangedEvent": {
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"RowDataUpdatedEvent": {
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"PinnedRowDataChangedEvent": {
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"SelectionChangedEvent": {
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"FilterChangedEvent": {
+    "afterDataChange?": "boolean",
+    "afterFloatingFilter?": "boolean",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"FilterModifiedEvent": {
+    "filterInstance": "IFilterComp",
+    "column": "Column",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"FilterOpenedEvent": {
+    "column": "Column | OriginalColumnGroup",
+    "source": "FilterRequestSource",
+    "eGui": "HTMLElement",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"SortChangedEvent": {
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"GridReadyEvent": {
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"DisplayedColumnsWidthChangedEvent": {
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"ColumnHoverChangedEvent": {
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"BodyHeightChangedEvent": {
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"ComponentStateChangedEvent": {
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"DragEvent": {
+    "type": "string",
+    "target": "HTMLElement",
+    "api": "GridApi",
+    "columnApi": "ColumnApi"
+},
+"DragStartedEvent": {
+    "type": "string",
+    "target": "HTMLElement",
+    "api": "GridApi",
+    "columnApi": "ColumnApi"
+},
+"DragStoppedEvent": {
+    "type": "string",
+    "target": "HTMLElement",
+    "api": "GridApi",
+    "columnApi": "ColumnApi"
+},
+"CheckboxChangedEvent": {
+    "id": "string",
+    "name": "string",
+    "selected?": "boolean",
+    "previousValue": "boolean | undefined",
+    "type": "string"
+},
+"GridSizeChangedEvent": {
+    "clientWidth": "number",
+    "clientHeight": "number",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"RowDragEvent": {
+    "node": "RowNode",
+    "nodes": "RowNode[]",
+    "y": "number",
+    "vDirection": "string",
+    "event": "MouseEvent",
+    "overIndex": "number",
+    "overNode": "RowNode",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"RowDragEnterEvent": {
+    "node": "RowNode",
+    "nodes": "RowNode[]",
+    "y": "number",
+    "vDirection": "string",
+    "event": "MouseEvent",
+    "overIndex": "number",
+    "overNode": "RowNode",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"RowDragEndEvent": {
+    "node": "RowNode",
+    "nodes": "RowNode[]",
+    "y": "number",
+    "vDirection": "string",
+    "event": "MouseEvent",
+    "overIndex": "number",
+    "overNode": "RowNode",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"RowDragMoveEvent": {
+    "node": "RowNode",
+    "nodes": "RowNode[]",
+    "y": "number",
+    "vDirection": "string",
+    "event": "MouseEvent",
+    "overIndex": "number",
+    "overNode": "RowNode",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"RowDragLeaveEvent": {
+    "node": "RowNode",
+    "nodes": "RowNode[]",
+    "y": "number",
+    "vDirection": "string",
+    "event": "MouseEvent",
+    "overIndex": "number",
+    "overNode": "RowNode",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"PasteStartEvent": {
+    "source": "string",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"PasteEndEvent": {
+    "source": "string",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"FillStartEvent": {
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"FillEndEvent": {
+    "initialRange": "CellRange",
+    "finalRange": "CellRange",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"ViewportChangedEvent": {
+    "firstRow": "number",
+    "lastRow": "number",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"FirstDataRenderedEvent": {
+    "firstRow": "number",
+    "lastRow": "number",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"RangeSelectionChangedEvent": {
+    "id?": "string",
+    "finished": "boolean",
+    "started": "boolean",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"ChartCreated": {
+    "chartId": "string",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"ChartRangeSelectionChanged": {
+    "id": "string",
+    "chartId": "string",
+    "cellRange": "CellRangeParams",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"ChartOptionsChanged": {
+    "chartId": "string",
+    "chartType": "ChartType",
+    "chartThemeName": "string",
+    "chartOptions": "ChartOptions<any>",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"ChartDestroyed": {
+    "chartId": "string",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"ColumnGroupOpenedEvent": {
+    "columnGroup": "OriginalColumnGroup",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"ItemsAddedEvent": {
+    "items": "RowNode[]",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"BodyScrollEvent": {
+    "direction": "ScrollDirection",
+    "left": "number",
+    "top": "number",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"FlashCellsEvent": {
+    "cells": "any",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"PaginationPixelOffsetChangedEvent": {
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"CellFocusedEvent": {
+    "rowIndex": "number | null",
+    "column": "Column | null",
+    "rowPinned": "string | null",
+    "isFullWidthCell": "boolean",
+    "forceBrowserFocus?": "boolean",
+    "floating": "string | null",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"ExpandCollapseAllEvent": {
+    "source": "string",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"ColumnEvent": {
+    "column": "Column | null",
+    "columns": "Column[] | null",
+    "source": "ColumnEventType",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"ColumnResizedEvent": {
+    "finished": "boolean",
+    "flexColumns": "Column[] | null",
+    "column": "Column | null",
+    "columns": "Column[] | null",
+    "source": "ColumnEventType",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"ColumnPivotChangedEvent": {
+    "column": "Column | null",
+    "columns": "Column[] | null",
+    "source": "ColumnEventType",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"ColumnRowGroupChangedEvent": {
+    "column": "Column | null",
+    "columns": "Column[] | null",
+    "source": "ColumnEventType",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"ColumnValueChangedEvent": {
+    "column": "Column | null",
+    "columns": "Column[] | null",
+    "source": "ColumnEventType",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"ColumnMovedEvent": {
+    "toIndex?": "number",
+    "column": "Column | null",
+    "columns": "Column[] | null",
+    "source": "ColumnEventType",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"ColumnVisibleEvent": {
+    "visible?": "boolean",
+    "column": "Column | null",
+    "columns": "Column[] | null",
+    "source": "ColumnEventType",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"ColumnPinnedEvent": {
+    "pinned": "string | null",
+    "column": "Column | null",
+    "columns": "Column[] | null",
+    "source": "ColumnEventType",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"RowEvent": {
+    "node": "RowNode",
+    "data": "any",
+    "rowIndex": "number | null",
+    "rowPinned": "string",
+    "context": "any",
+    "event?": "Event | null",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"RowGroupOpenedEvent": {
+    "expanded": "boolean",
+    "node": "RowNode",
+    "data": "any",
+    "rowIndex": "number | null",
+    "rowPinned": "string",
+    "context": "any",
+    "event?": "Event | null",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"RowValueChangedEvent": {
+    "node": "RowNode",
+    "data": "any",
+    "rowIndex": "number | null",
+    "rowPinned": "string",
+    "context": "any",
+    "event?": "Event | null",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"RowSelectedEvent": {
+    "node": "RowNode",
+    "data": "any",
+    "rowIndex": "number | null",
+    "rowPinned": "string",
+    "context": "any",
+    "event?": "Event | null",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"VirtualRowRemovedEvent": {
+    "node": "RowNode",
+    "data": "any",
+    "rowIndex": "number | null",
+    "rowPinned": "string",
+    "context": "any",
+    "event?": "Event | null",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"RowClickedEvent": {
+    "node": "RowNode",
+    "data": "any",
+    "rowIndex": "number | null",
+    "rowPinned": "string",
+    "context": "any",
+    "event?": "Event | null",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"RowDoubleClickedEvent": {
+    "node": "RowNode",
+    "data": "any",
+    "rowIndex": "number | null",
+    "rowPinned": "string",
+    "context": "any",
+    "event?": "Event | null",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"RowEditingStartedEvent": {
+    "node": "RowNode",
+    "data": "any",
+    "rowIndex": "number | null",
+    "rowPinned": "string",
+    "context": "any",
+    "event?": "Event | null",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"RowEditingStoppedEvent": {
+    "node": "RowNode",
+    "data": "any",
+    "rowIndex": "number | null",
+    "rowPinned": "string",
+    "context": "any",
+    "event?": "Event | null",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"FullWidthCellKeyDownEvent": {
+    "node": "RowNode",
+    "data": "any",
+    "rowIndex": "number | null",
+    "rowPinned": "string",
+    "context": "any",
+    "event?": "Event | null",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"FullWidthCellKeyPressEvent": {
+    "node": "RowNode",
+    "data": "any",
+    "rowIndex": "number | null",
+    "rowPinned": "string",
+    "context": "any",
+    "event?": "Event | null",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"CellEvent": {
+    "column": "Column",
+    "colDef": "ColDef",
+    "value": "any",
+    "node": "RowNode",
+    "data": "any",
+    "rowIndex": "number | null",
+    "rowPinned": "string",
+    "context": "any",
+    "event?": "Event | null",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"CellKeyDownEvent": {
+    "column": "Column",
+    "colDef": "ColDef",
+    "value": "any",
+    "node": "RowNode",
+    "data": "any",
+    "rowIndex": "number | null",
+    "rowPinned": "string",
+    "context": "any",
+    "event?": "Event | null",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"CellKeyPressEvent": {
+    "column": "Column",
+    "colDef": "ColDef",
+    "value": "any",
+    "node": "RowNode",
+    "data": "any",
+    "rowIndex": "number | null",
+    "rowPinned": "string",
+    "context": "any",
+    "event?": "Event | null",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"CellClickedEvent": {
+    "column": "Column",
+    "colDef": "ColDef",
+    "value": "any",
+    "node": "RowNode",
+    "data": "any",
+    "rowIndex": "number | null",
+    "rowPinned": "string",
+    "context": "any",
+    "event?": "Event | null",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"CellMouseDownEvent": {
+    "column": "Column",
+    "colDef": "ColDef",
+    "value": "any",
+    "node": "RowNode",
+    "data": "any",
+    "rowIndex": "number | null",
+    "rowPinned": "string",
+    "context": "any",
+    "event?": "Event | null",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"CellDoubleClickedEvent": {
+    "column": "Column",
+    "colDef": "ColDef",
+    "value": "any",
+    "node": "RowNode",
+    "data": "any",
+    "rowIndex": "number | null",
+    "rowPinned": "string",
+    "context": "any",
+    "event?": "Event | null",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"CellMouseOverEvent": {
+    "column": "Column",
+    "colDef": "ColDef",
+    "value": "any",
+    "node": "RowNode",
+    "data": "any",
+    "rowIndex": "number | null",
+    "rowPinned": "string",
+    "context": "any",
+    "event?": "Event | null",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"CellMouseOutEvent": {
+    "column": "Column",
+    "colDef": "ColDef",
+    "value": "any",
+    "node": "RowNode",
+    "data": "any",
+    "rowIndex": "number | null",
+    "rowPinned": "string",
+    "context": "any",
+    "event?": "Event | null",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"CellContextMenuEvent": {
+    "column": "Column",
+    "colDef": "ColDef",
+    "value": "any",
+    "node": "RowNode",
+    "data": "any",
+    "rowIndex": "number | null",
+    "rowPinned": "string",
+    "context": "any",
+    "event?": "Event | null",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"CellEditingStartedEvent": {
+    "column": "Column",
+    "colDef": "ColDef",
+    "value": "any",
+    "node": "RowNode",
+    "data": "any",
+    "rowIndex": "number | null",
+    "rowPinned": "string",
+    "context": "any",
+    "event?": "Event | null",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"CellEditingStoppedEvent": {
+    "oldValue": "any",
+    "newValue": "any",
+    "column": "Column",
+    "colDef": "ColDef",
+    "value": "any",
+    "node": "RowNode",
+    "data": "any",
+    "rowIndex": "number | null",
+    "rowPinned": "string",
+    "context": "any",
+    "event?": "Event | null",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"CellValueChangedEvent": {
+    "oldValue": "any",
+    "newValue": "any",
+    "source": "string | undefined",
+    "column": "Column",
+    "colDef": "ColDef",
+    "value": "any",
+    "node": "RowNode",
+    "data": "any",
+    "rowIndex": "number | null",
+    "rowPinned": "string",
+    "context": "any",
+    "event?": "Event | null",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"AsyncTransactionsFlushed": {
+    "results": "(RowNodeTransaction | ServerSideTransactionResult)[]",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"ColumnRequestEvent": {
+    "columns": "Column[]",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"ColumnRowGroupChangeRequestEvent": {
+    "columns": "Column[]",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"ColumnPivotChangeRequestEvent": {
+    "columns": "Column[]",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"ColumnValueChangeRequestEvent": {
+    "columns": "Column[]",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"ColumnAggFuncChangeRequestEvent": {
+    "aggFunc": "any",
+    "columns": "Column[]",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"ScrollVisibilityChangedEvent": {
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "type": "string"
+},
+"StoreUpdatedEvent": {
+    "type": "string"
+},
+"LeftPinnedWidthChangedEvent": {
+    "type": "string"
+},
+"RightPinnedWidthChangedEvent": {
+    "type": "string"
+},
+"RowContainerHeightChanged": {
+    "type": "string"
+},
+"DisplayedRowsChangedEvent": {
+    "type": "string"
+},
+"IFilterLocaleText": {
+    "applyFilter": "string",
+    "clearFilter": "string",
+    "resetFilter": "string",
+    "cancelFilter": "string",
+    "filterOoo": "string",
+    "empty": "string",
+    "equals": "string",
+    "notEqual": "string",
+    "lessThan": "string",
+    "greaterThan": "string",
+    "inRange": "string",
+    "inRangeStart": "string",
+    "inRangeEnd": "string",
+    "lessThanOrEqual": "string",
+    "greaterThanOrEqual": "string",
+    "contains": "string",
+    "notContains": "string",
+    "startsWith": "string",
+    "endsWith": "string",
+    "andCondition": "string",
+    "orCondition": "string",
+    "dateFormatOoo": "string"
+},
+"IFilterTitleLocaleText": {
+    "textFilter": "string",
+    "numberFilter": "string",
+    "dateFilter": "string",
+    "setFilter": "string"
+},
+"FilterWrapper": {
+    "compiledElement": "any",
+    "column": "Column",
+    "filterPromise": "AgPromise<IFilterComp> | null",
+    "scope": "any",
+    "guiPromise": "AgPromise<HTMLElement | null>"
+},
+"IFloatingFilterParams": {
+    "column": "Column",
+    "filterParams": "IFilterParams",
+    "currentParentModel": "() => any",
+    "parentFilterInstance": "(callback: (filterInstance: IFilterComp) => void) => void",
+    "showParentFilter": "() => void",
+    "suppressFilterButton": "boolean",
+    "api": "GridApi",
+    "onFloatingFilterChanged": "(change: any) => boolean"
+},
+"IFloatingFilter": {
+    "onParentModelChanged(parentModel: any, filterChangedEvent: FilterChangedEvent | null)": "void"
+},
+"IFloatingFilterComp": {
+    "onParentModelChanged(parentModel: any, filterChangedEvent: FilterChangedEvent | null)": "void",
+    "getGui()": "HTMLElement",
+    "destroy?()": "void",
+    "afterGuiAttached?(params: IAfterGuiAttachedParams)": "void",
+    "init?(params: T)": "AgPromise<void> | void"
+},
+"BaseFloatingFilterChange": {
+    "model": "ProvidedFilterModel",
+    "apply": "boolean"
+},
+"DateFilterModel": {
+    "dateFrom": "string | null",
+    "dateTo": "string | null",
+    "type?": "string | null"
+},
+"IDateFilterParams": {
+    "comparator?": "IDateComparatorFunc",
+    "browserDatePicker?": "boolean",
+    "minValidYear?": "number",
+    "inRangeInclusive?": "boolean",
+    "includeBlanksInEquals?": "boolean",
+    "includeBlanksInLessThan?": "boolean",
+    "includeBlanksInGreaterThan?": "boolean",
+    "includeBlanksInRange?": "boolean",
+    "nullComparator?": "NullComparator"
+},
+"IDateComparatorFunc": {
+    "(filterLocalDateAtMidnight: Date, cellValue: any)": "number"
+},
+"NumberFilterModel": {
+    "filter?": "number | null",
+    "filterTo?": "number | null",
+    "type?": "string | null"
+},
+"INumberFilterParams": {
+    "allowedCharPattern?": "string",
+    "numberParser?": "(text: string | null) => number",
+    "inRangeInclusive?": "boolean",
+    "includeBlanksInEquals?": "boolean",
+    "includeBlanksInLessThan?": "boolean",
+    "includeBlanksInGreaterThan?": "boolean",
+    "includeBlanksInRange?": "boolean",
+    "nullComparator?": "NullComparator"
+},
+"IProvidedFilterParams": {
+    "clearButton?": "boolean",
+    "resetButton?": "boolean",
+    "applyButton?": "boolean",
+    "buttons?": "FilterButtonType[]",
+    "closeOnApply?": "boolean",
+    "newRowsAction?": "string",
+    "debounceMs?": "number",
+    "api": "GridApi",
+    "column": "Column",
+    "colDef": "ColDef",
+    "rowModel": "IRowModel",
+    "filterChangedCallback": "(additionalEventAttributes: any) => void",
+    "filterModifiedCallback": "() => void",
+    "valueGetter": "(rowNode: RowNode) => any",
+    "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
+    "context": "any"
+},
+"NullComparator": {
+    "equals?": "boolean",
+    "lessThan?": "boolean",
+    "greaterThan?": "boolean"
+},
+"IScalarFilterParams": {
+    "inRangeInclusive?": "boolean",
+    "includeBlanksInEquals?": "boolean",
+    "includeBlanksInLessThan?": "boolean",
+    "includeBlanksInGreaterThan?": "boolean",
+    "includeBlanksInRange?": "boolean",
+    "nullComparator?": "NullComparator",
+    "filterOptions?": "(IFilterOptionDef | string)[]",
+    "defaultOption?": "string",
+    "defaultJoinOperator?": "JoinOperator",
+    "suppressAndOrCondition?": "boolean",
+    "alwaysShowBothConditions?": "boolean"
+},
+"Comparator": {
+    "(left: T, right: T)": "number"
+},
+"ISimpleFilterParams": {
+    "filterOptions?": "(IFilterOptionDef | string)[]",
+    "defaultOption?": "string",
+    "defaultJoinOperator?": "JoinOperator",
+    "suppressAndOrCondition?": "boolean",
+    "alwaysShowBothConditions?": "boolean",
+    "clearButton?": "boolean",
+    "resetButton?": "boolean",
+    "applyButton?": "boolean",
+    "buttons?": "FilterButtonType[]",
+    "closeOnApply?": "boolean",
+    "newRowsAction?": "string",
+    "debounceMs?": "number",
+    "api": "GridApi",
+    "column": "Column",
+    "colDef": "ColDef",
+    "rowModel": "IRowModel",
+    "filterChangedCallback": "(additionalEventAttributes: any) => void",
+    "filterModifiedCallback": "() => void",
+    "valueGetter": "(rowNode: RowNode) => any",
+    "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
+    "context": "any"
+},
+"ISimpleFilterModel": {
+    "type?": "string | null",
+    "filterType?": "string"
+},
+"ICombinedSimpleModel": {
+    "operator": "JoinOperator",
+    "condition1": "M",
+    "condition2": "M",
+    "filterType?": "string"
+},
+"TextFilterModel": {
+    "filter?": "string | null",
+    "type?": "string | null",
+    "filterType?": "string"
+},
+"TextComparator": {
+    "(filter: string | null | undefined, gridValue: any, filterText: string | null)": "boolean"
+},
+"TextFormatter": {
+    "(from: string | null)": "string | null"
+},
+"ITextFilterParams": {
+    "textCustomComparator?": "TextComparator",
+    "caseSensitive?": "boolean",
+    "textFormatter?": "(from: string) => string",
+    "trimInput?": "boolean",
+    "filterOptions?": "(IFilterOptionDef | string)[]",
+    "defaultOption?": "string",
+    "defaultJoinOperator?": "JoinOperator",
+    "suppressAndOrCondition?": "boolean",
+    "alwaysShowBothConditions?": "boolean",
+    "clearButton?": "boolean",
+    "resetButton?": "boolean",
+    "applyButton?": "boolean",
+    "buttons?": "FilterButtonType[]",
+    "closeOnApply?": "boolean",
+    "newRowsAction?": "string",
+    "debounceMs?": "number",
+    "api": "GridApi",
+    "column": "Column",
+    "colDef": "ColDef",
+    "rowModel": "IRowModel",
+    "filterChangedCallback": "(additionalEventAttributes: any) => void",
+    "filterModifiedCallback": "() => void",
+    "valueGetter": "(rowNode: RowNode) => any",
+    "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
+    "context": "any"
+},
+"GridParams": {
+    "globalEventListener?": "Function",
+    "$scope?": "any",
+    "$compile?": "any",
+    "frameworkOverrides?": "IFrameworkOverrides",
+    "providedBeanInstances?": "[key: string]: any",
+    "modules?": "Module[]"
+},
+"StartEditingCellParams": {
+    "rowIndex": "number",
+    "colKey": "string | Column",
+    "rowPinned?": "string",
+    "keyPress?": "number",
+    "charPress?": "string"
+},
+"GetCellsParams": {
+    "rowNodes?": "RowNode[]",
+    "columns?": "(string | Column)[]"
+},
+"RefreshCellsParams": {
+    "force?": "boolean",
+    "suppressFlash?": "boolean",
+    "rowNodes?": "RowNode[]",
+    "columns?": "(string | Column)[]"
+},
+"FlashCellsParams": {
+    "flashDelay?": "number",
+    "fadeDelay?": "number",
+    "rowNodes?": "RowNode[]",
+    "columns?": "(string | Column)[]"
+},
+"GetCellRendererInstancesParams": {
+    "rowNodes?": "RowNode[]",
+    "columns?": "(string | Column)[]"
+},
+"GetCellEditorInstancesParams": {
+    "rowNodes?": "RowNode[]",
+    "columns?": "(string | Column)[]"
+},
+"RedrawRowsParams": {
+    "rowNodes?": "RowNode[]"
+},
+"CreateRangeChartParams": {
+    "cellRange": "CellRangeParams",
+    "chartType": "ChartType",
+    "chartThemeName?": "string",
+    "chartContainer?": "HTMLElement",
+    "suppressChartRanges?": "boolean",
+    "aggFunc?": "string | IAggFunc",
+    "chartThemeOverrides?": "AgChartThemeOverrides",
+    "unlinkChart?": "boolean",
+    "processChartOptions?": "(params: ProcessChartOptionsParams) => ChartOptions<any>"
+},
+"CreatePivotChartParams": {
+    "chartType": "ChartType",
+    "chartThemeName?": "string",
+    "chartContainer?": "HTMLElement",
+    "chartThemeOverrides?": "AgChartThemeOverrides",
+    "unlinkChart?": "boolean",
+    "processChartOptions?": "(params: ProcessChartOptionsParams) => ChartOptions<any>"
+},
+"CreateCrossFilterChartParams": {
+    "cellRange": "CellRangeParams",
+    "chartType": "ChartType",
+    "chartThemeName?": "string",
+    "chartContainer?": "HTMLElement",
+    "suppressChartRanges?": "boolean",
+    "aggFunc?": "string | IAggFunc",
+    "chartThemeOverrides?": "AgChartThemeOverrides",
+    "unlinkChart?": "boolean"
+},
+"DetailGridInfo": {
+    "api?": "GridApi",
+    "columnApi?": "ColumnApi",
+    "id": "string"
+},
+"IFakeHScrollComp": {
+    "setHeight(height: number)": "void",
+    "setViewportHeight(height: number)": "void",
+    "setContainerHeight(height: number)": "void",
+    "setRightSpacerFixedWidth(width: number)": "void",
+    "setLeftSpacerFixedWidth(width: number)": "void",
+    "setInvisibleStyles(isInvisible: boolean)": "void",
+    "includeLeftSpacerScrollerCss(cssClass: string, include: boolean)": "void",
+    "includeRightSpacerScrollerCss(cssClass: string, include: boolean)": "void"
+},
+"IGridBodyComp": {
+    "setColumnMovingCss(cssClass: string | null, on: boolean)": "void",
+    "setCellSelectableCss(cssClass: string | null, on: boolean)": "void",
+    "setTopHeight(height: number)": "void",
+    "setTopDisplay(display: string)": "void",
+    "setBottomHeight(height: number)": "void",
+    "setBottomDisplay(display: string)": "void",
+    "setColumnCount(count: number)": "void",
+    "setRowCount(count: number)": "void",
+    "setRowAnimationCssOnBodyViewport(cssClass: string, animate: boolean)": "void",
+    "setAlwaysVerticalScrollClass(cssClass: string | null, on: boolean)": "void",
+    "setPinnedTopBottomOverflowY(overflow: string)": "void",
+    "registerBodyViewportResizeListener(listener: (() => void))": "void",
+    "updateLayoutClasses(layoutClass: string, params: UpdateLayoutClassesParams)": "void"
+},
+"NavigateParams": {
+    "scrollIndex": "number",
+    "scrollType": "'top' | 'bottom' | null",
+    "scrollColumn": "Column | null",
+    "focusIndex": "number",
+    "focusColumn": "Column"
+},
+"RenderParams": {
+    "rows": "RowNode"
+},
+"RenderRowsFeature": {
+    "render(rows: RowNode[])": "void"
+},
+"IRowContainerComp": {
+    "setViewportHeight(height: string)": "void",
+    "setRowCtrls(rowCtrls: RowCtrl[])": "void",
+    "setDomOrder(domOrder: boolean)": "void",
+    "setContainerWidth(width: string)": "void"
+},
+"RowDropZoneEvents": {
+    "onDragEnter?": "(params: RowDragEnterEvent) => void",
+    "onDragLeave?": "(params: RowDragLeaveEvent) => void",
+    "onDragging?": "(params: RowDragMoveEvent) => void",
+    "onDragStop?": "(params: RowDragEndEvent) => void"
+},
+"RowDropZoneParams": {
+    "getContainer": "() => HTMLElement",
+    "onDragEnter?": "(params: RowDragEnterEvent) => void",
+    "onDragLeave?": "(params: RowDragLeaveEvent) => void",
+    "onDragging?": "(params: RowDragMoveEvent) => void",
+    "onDragStop?": "(params: RowDragEndEvent) => void"
+},
+"SetScrollsVisibleParams": {
+    "horizontalScrollShowing": "boolean",
+    "verticalScrollShowing": "boolean"
+},
+"IGridComp": {
+    "setRtlClass(cssClass: string)": "void",
+    "destroyGridUi()": "void",
+    "forceFocusOutOfContainer(up: boolean)": "void",
+    "addOrRemoveKeyboardFocusClass(value: boolean)": "void",
+    "getFocusableContainers()": "HTMLElement[]",
+    "setCursor(value: string | null)": "void",
+    "setUserSelect(value: string | null)": "void",
+    "updateLayoutClasses(layoutClass: string, params: UpdateLayoutClassesParams)": "void"
+},
+"PropertyChangedEvent": {
+    "currentValue": "any",
+    "previousValue": "any",
+    "type": "string"
+},
+"DropListener": {
+    "getIconName()": "string | null",
+    "onDragEnter(params: DraggingEvent)": "void",
+    "onDragLeave(params: DraggingEvent)": "void",
+    "onDragging(params: DraggingEvent)": "void",
+    "onDragStop(params: DraggingEvent)": "void"
+},
+"IHeaderParams": {
+    "column": "Column",
+    "displayName": "string",
+    "enableSorting": "boolean",
+    "enableMenu": "boolean",
+    "showColumnMenu": "(source: HTMLElement) => void",
+    "progressSort": "(multiSort: boolean) => void",
+    "setSort": "(sort: string, multiSort: boolean) => void",
+    "columnApi": "ColumnApi",
+    "eGridHeader": "HTMLElement",
+    "api": "GridApi",
+    "context": "any",
+    "template": "string"
+},
+"IHeader": {
+    "refresh(params: IHeaderParams)": "boolean"
+},
+"IHeaderComp": {
+    "refresh(params: IHeaderParams)": "boolean",
+    "getGui()": "HTMLElement",
+    "destroy?()": "void",
+    "afterGuiAttached?(params: IAfterGuiAttachedParams)": "void",
+    "init?(params: T)": "AgPromise<void> | void"
+},
+"HeaderPosition": {
+    "headerRowIndex": "number",
+    "column": "Column | ColumnGroup"
+},
+"SelectionCount": {
+    "selected": "number",
+    "notSelected": "number"
+},
+"IHeaderGroupParams": {
+    "columnGroup": "ColumnGroup",
+    "displayName": "string",
+    "setExpanded": "(expanded: boolean) => void",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "context": "any"
+},
+"IHeaderGroup": {},
+"IHeaderGroupComp": {
+    "getGui()": "HTMLElement",
+    "destroy?()": "void",
+    "afterGuiAttached?(params: IAfterGuiAttachedParams)": "void",
+    "init?(params: T)": "AgPromise<void> | void"
+},
+"HorizontalResizeParams": {
+    "eResizeBar": "HTMLElement",
+    "dragStartPixels?": "number",
+    "onResizeStart": "(shiftKey: boolean) => void",
+    "onResizing": "(delta: number) => void",
+    "onResizeEnd": "(delta: number) => void"
+},
+"ILogger": {
+    "log(message: string)": "void"
+},
+"BaseExportParams": {
+    "allColumns?": "boolean",
+    "columnKeys?": "(string | Column)[]",
+    "fileName?": "string",
+    "onlySelected?": "boolean",
+    "onlySelectedAllPages?": "boolean",
+    "skipColumnGroupHeaders?": "boolean",
+    "skipColumnHeaders?": "boolean",
+    "skipRowGroups?": "boolean",
+    "skipPinnedTop?": "boolean",
+    "skipPinnedBottom?": "boolean",
+    "shouldRowBeSkipped?(params: ShouldRowBeSkippedParams)": "boolean",
+    "processCellCallback?(params: ProcessCellForExportParams)": "string",
+    "processHeaderCallback?(params: ProcessHeaderForExportParams)": "string",
+    "processGroupHeaderCallback?(params: ProcessGroupHeaderForExportParams)": "string",
+    "processRowGroupCallback?(params: ProcessRowGroupForExportParams)": "string",
+    "columnGroups?": "boolean",
+    "skipGroups?": "boolean",
+    "skipHeader?": "boolean"
+},
+"ExportParams": {
+    "prependContent?": "T",
+    "appendContent?": "T",
+    "customHeader?": "T",
+    "customFooter?": "T",
+    "getCustomContentBelowRow?": "(params: ProcessRowGroupForExportParams) => T | undefined",
+    "allColumns?": "boolean",
+    "columnKeys?": "(string | Column)[]",
+    "fileName?": "string",
+    "onlySelected?": "boolean",
+    "onlySelectedAllPages?": "boolean",
+    "skipColumnGroupHeaders?": "boolean",
+    "skipColumnHeaders?": "boolean",
+    "skipRowGroups?": "boolean",
+    "skipPinnedTop?": "boolean",
+    "skipPinnedBottom?": "boolean",
+    "shouldRowBeSkipped?(params: ShouldRowBeSkippedParams)": "boolean",
+    "processCellCallback?(params: ProcessCellForExportParams)": "string",
+    "processHeaderCallback?(params: ProcessHeaderForExportParams)": "string",
+    "processGroupHeaderCallback?(params: ProcessGroupHeaderForExportParams)": "string",
+    "processRowGroupCallback?(params: ProcessRowGroupForExportParams)": "string",
+    "columnGroups?": "boolean",
+    "skipGroups?": "boolean",
+    "skipHeader?": "boolean"
+},
+"CsvCell": {
+    "data": "CsvCellData",
+    "mergeAcross?": "number"
+},
+"CsvCellData": {
+    "value": "string | null"
+},
+"CsvExportParams": {
+    "columnSeparator?": "string",
+    "suppressQuotes?": "boolean",
+    "prependContent?": "T",
+    "appendContent?": "T",
+    "customHeader?": "T",
+    "customFooter?": "T",
+    "getCustomContentBelowRow?": "(params: ProcessRowGroupForExportParams) => T | undefined",
+    "allColumns?": "boolean",
+    "columnKeys?": "(string | Column)[]",
+    "fileName?": "string",
+    "onlySelected?": "boolean",
+    "onlySelectedAllPages?": "boolean",
+    "skipColumnGroupHeaders?": "boolean",
+    "skipColumnHeaders?": "boolean",
+    "skipRowGroups?": "boolean",
+    "skipPinnedTop?": "boolean",
+    "skipPinnedBottom?": "boolean",
+    "shouldRowBeSkipped?(params: ShouldRowBeSkippedParams)": "boolean",
+    "processCellCallback?(params: ProcessCellForExportParams)": "string",
+    "processHeaderCallback?(params: ProcessHeaderForExportParams)": "string",
+    "processGroupHeaderCallback?(params: ProcessGroupHeaderForExportParams)": "string",
+    "processRowGroupCallback?(params: ProcessRowGroupForExportParams)": "string",
+    "columnGroups?": "boolean",
+    "skipGroups?": "boolean",
+    "skipHeader?": "boolean"
+},
+"ShouldRowBeSkippedParams": {
+    "node": "RowNode",
+    "api": "GridApi",
+    "context": "any"
+},
+"ProcessCellForExportParams": {
+    "value": "any",
+    "accumulatedRowIndex?": "number",
+    "node?": "RowNode | null",
+    "column": "Column",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "context": "any",
+    "type": "string"
+},
+"ProcessHeaderForExportParams": {
+    "column": "Column",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "context": "any"
+},
+"ProcessGroupHeaderForExportParams": {
+    "columnGroup": "ColumnGroup",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "context": "any"
+},
+"ProcessRowGroupForExportParams": {
+    "node": "RowNode",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "context": "any"
+},
+"IAfterGuiAttachedParams": {
+    "container?": "ContainerType",
+    "hidePopup?": "() => void",
+    "suppressFocus?": "boolean"
+},
+"AgChartThemePalette": {
+    "fills": "string[]",
+    "strokes": "string[]"
+},
+"AgChartThemeOptions": {
+    "palette?": "AgChartThemePalette",
+    "overrides?": "AgChartThemeOverrides"
+},
+"AgChartTheme": {
+    "baseTheme?": "AgChartThemeName",
+    "palette?": "AgChartThemePalette",
+    "overrides?": "AgChartThemeOverrides"
+},
+"AgChartThemeOverrides": {
+    "cartesian?": "AgCartesianChartOptions<AgCartesianAxesTheme, AgCartesianSeriesTheme>",
+    "column?": "AgCartesianChartOptions<AgCartesianAxesTheme, AgBarSeriesOptions>",
+    "bar?": "AgCartesianChartOptions<AgCartesianAxesTheme, AgBarSeriesOptions>",
+    "line?": "AgCartesianChartOptions<AgCartesianAxesTheme, AgLineSeriesOptions>",
+    "area?": "AgCartesianChartOptions<AgCartesianAxesTheme, AgAreaSeriesOptions>",
+    "scatter?": "AgCartesianChartOptions<AgCartesianAxesTheme, AgScatterSeriesOptions>",
+    "histogram?": "AgCartesianChartOptions<AgCartesianAxesTheme, AgHistogramSeriesOptions>",
+    "polar?": "AgPolarChartOptions<AgPolarAxesTheme, AgPolarSeriesTheme>",
+    "pie?": "AgPolarChartOptions<AgPolarAxesTheme, AgPieSeriesOptions>",
+    "common?": "any"
+},
+"AgCartesianAxesTheme": {
+    "number?": "Omit<AgNumberAxisOptions, 'type'>",
+    "category?": "Omit<AgCategoryAxisOptions, 'type'>",
+    "groupedCategory?": "Omit<AgGroupedCategoryAxisOptions, 'type'>",
+    "time?": "Omit<AgTimeAxisOptions, 'type'>"
+},
+"AgCartesianSeriesTheme": {
+    "line?": "AgLineSeriesOptions",
+    "scatter?": "AgScatterSeriesOptions",
+    "area?": "AgAreaSeriesOptions",
+    "bar?": "AgBarSeriesOptions",
+    "histogram?": "AgHistogramSeriesOptions"
+},
+"AgPolarAxesTheme": {},
+"AgPolarSeriesTheme": {
+    "pie?": "AgPieSeriesOptions"
+},
+"AgChartPaddingOptions": {
+    "top?": "number",
+    "right?": "number",
+    "bottom?": "number",
+    "left?": "number"
+},
+"AgChartLabelOptions": {
+    "enabled?": "boolean",
+    "fontStyle?": "FontStyle",
+    "fontWeight?": "FontWeight",
+    "fontSize?": "number",
+    "fontFamily?": "string",
+    "color?": "string"
+},
+"AgDropShadowOptions": {
+    "enabled?": "boolean",
+    "color?": "string",
+    "xOffset?": "number",
+    "yOffset?": "number",
+    "blue?": "number"
+},
+"AgChartCaptionOptions": {
+    "enabled?": "boolean",
+    "padding?": "AgChartPaddingOptions",
+    "text?": "string",
+    "fontStyle?": "FontStyle",
+    "fontWeight?": "FontWeight",
+    "fontSize?": "number",
+    "fontFamily?": "string",
+    "color?": "string"
+},
+"AgNavigatorMaskOptions": {
+    "fill?": "string",
+    "stroke?": "string",
+    "strokeWidth?": "number",
+    "fillOpacity?": "number"
+},
+"AgNavigatorHandleOptions": {
+    "fill?": "string",
+    "stroke?": "string",
+    "strokeWidth?": "number",
+    "width?": "number",
+    "height?": "number",
+    "gripLineGap?": "number",
+    "gripLineLength?": "number"
+},
+"AgNavigatorOptions": {
+    "enabled?": "boolean",
+    "height?": "number",
+    "margin?": "number",
+    "min?": "number",
+    "max?": "number",
+    "mask?": "AgNavigatorMaskOptions",
+    "minHandle?": "AgNavigatorHandleOptions",
+    "maxHandle?": "AgNavigatorHandleOptions"
+},
+"AgChartLegendMarkerOptions": {
+    "size?": "number",
+    "shape?": "string | (new() => any)",
+    "padding?": "number",
+    "strokeWidth?": "number"
+},
+"AgChartLegendLabelOptions": {
+    "color?": "string",
+    "fontStyle?": "FontStyle",
+    "fontWeight?": "FontWeight",
+    "fontSize?": "number",
+    "fontFamily?": "string"
+},
+"AgChartLegendItemOptions": {
+    "marker?": "AgChartLegendMarkerOptions",
+    "label?": "AgChartLegendLabelOptions",
+    "paddingX?": "number",
+    "paddingY?": "number"
+},
+"AgChartLegendOptions": {
+    "enabled?": "boolean",
+    "position?": "AgChartLegendPosition",
+    "spacing?": "number",
+    "item?": "AgChartLegendItemOptions",
+    "layoutHorizontalSpacing?": "number",
+    "layoutVerticalSpacing?": "number",
+    "itemSpacing?": "number",
+    "markerShape?": "string | (new() => any)",
+    "markerSize?": "number",
+    "strokeWidth?": "number",
+    "color?": "string",
+    "fontStyle?": "FontStyle",
+    "fontWeight?": "FontWeight",
+    "fontSize?": "number",
+    "fontFamily?": "string"
+},
+"AgBaseChartOptions": {
+    "container?": "HTMLElement",
+    "data?": "any[]",
+    "width?": "number",
+    "height?": "number",
+    "autoSize?": "boolean",
+    "padding?": "AgChartPaddingOptions",
+    "background?": "visible? fill?",
+    "title?": "AgChartCaptionOptions",
+    "subtitle?": "AgChartCaptionOptions",
+    "tooltipClass?": "string",
+    "tooltipTracking?": "boolean",
+    "navigator?": "AgNavigatorOptions",
+    "legend?": "AgChartLegendOptions",
+    "listeners?": "{[key in string]: Function}",
+    "theme?": "string | AgChartTheme"
+},
+"AgBaseAxisOptions": {
+    "keys?": "string[]"
+},
+"AgAxisLineOptions": {
+    "width?": "number",
+    "color?": "string"
+},
+"AgAxisTickOptions": {
+    "width?": "number",
+    "size?": "number",
+    "color?": "string",
+    "count?": "any"
+},
+"AgAxisLabelFormatterParams": {
+    "value": "any",
+    "index": "number",
+    "fractionDigits?": "number",
+    "formatter?": "(x: any) => string"
+},
+"AgAxisLabelOptions": {
+    "fontStyle?": "FontStyle",
+    "fontWeight?": "FontWeight",
+    "fontSize?": "number",
+    "fontFamily?": "string",
+    "padding?": "number",
+    "color?": "string",
+    "rotation?": "number",
+    "format?": "string",
+    "formatter?": "(params: AgAxisLabelFormatterParams) => string"
+},
+"AgAxisGridStyle": {
+    "stroke?": "string",
+    "lineDash?": "number[]"
+},
+"AgBaseCartesianAxisOptions": {
+    "position?": "AgCartesianAxisPosition",
+    "title?": "AgChartCaptionOptions",
+    "line?": "AgAxisLineOptions",
+    "tick?": "AgAxisTickOptions",
+    "label?": "AgAxisLabelOptions",
+    "gridStyle?": "AgAxisGridStyle[]",
+    "keys?": "string[]"
+},
+"AgNumberAxisOptions": {
+    "type": "'number'",
+    "nice?": "boolean",
+    "min?": "number",
+    "max?": "number",
+    "position?": "AgCartesianAxisPosition",
+    "title?": "AgChartCaptionOptions",
+    "line?": "AgAxisLineOptions",
+    "tick?": "AgAxisTickOptions",
+    "label?": "AgAxisLabelOptions",
+    "gridStyle?": "AgAxisGridStyle[]",
+    "keys?": "string[]"
+},
+"AgCategoryAxisOptions": {
+    "type": "'category'",
+    "paddingInner?": "number",
+    "paddingOuter?": "number",
+    "position?": "AgCartesianAxisPosition",
+    "title?": "AgChartCaptionOptions",
+    "line?": "AgAxisLineOptions",
+    "tick?": "AgAxisTickOptions",
+    "label?": "AgAxisLabelOptions",
+    "gridStyle?": "AgAxisGridStyle[]",
+    "keys?": "string[]"
+},
+"AgGroupedCategoryAxisOptions": {
+    "type": "'groupedCategory'",
+    "position?": "AgCartesianAxisPosition",
+    "title?": "AgChartCaptionOptions",
+    "line?": "AgAxisLineOptions",
+    "tick?": "AgAxisTickOptions",
+    "label?": "AgAxisLabelOptions",
+    "gridStyle?": "AgAxisGridStyle[]",
+    "keys?": "string[]"
+},
+"AgTimeAxisOptions": {
+    "type": "'time'",
+    "nice?": "boolean",
+    "position?": "AgCartesianAxisPosition",
+    "title?": "AgChartCaptionOptions",
+    "line?": "AgAxisLineOptions",
+    "tick?": "AgAxisTickOptions",
+    "label?": "AgAxisLabelOptions",
+    "gridStyle?": "AgAxisGridStyle[]",
+    "keys?": "string[]"
+},
+"AgBaseSeriesOptions": {
+    "tooltipEnabled?": "boolean",
+    "data?": "any[]",
+    "visible?": "boolean",
+    "showInLegend?": "boolean",
+    "listeners?": "{[key in string]: Function}"
+},
+"AgTooltipRendererResult": {
+    "title?": "string",
+    "content?": "string"
+},
+"AgSeriesTooltipRendererParams": {
+    "datum": "any",
+    "title?": "string",
+    "color?": "string"
+},
+"AgCartesianSeriesTooltipRendererParams": {
+    "xKey": "string",
+    "xValue?": "any",
+    "xName?": "string",
+    "yKey": "string",
+    "yValue?": "any",
+    "yName?": "string",
+    "datum": "any",
+    "title?": "string",
+    "color?": "string"
+},
+"AgPolarSeriesTooltipRendererParams": {
+    "angleKey": "string",
+    "angleValue?": "any",
+    "angleName?": "string",
+    "radiusKey?": "string",
+    "radiusValue?": "any",
+    "radiusName?": "string",
+    "datum": "any",
+    "title?": "string",
+    "color?": "string"
+},
+"AgScatterSeriesTooltipRendererParams": {
+    "sizeKey?": "string",
+    "sizeName?": "string",
+    "labelKey?": "string",
+    "labelName?": "string",
+    "xKey": "string",
+    "xValue?": "any",
+    "xName?": "string",
+    "yKey": "string",
+    "yValue?": "any",
+    "yName?": "string",
+    "datum": "any",
+    "title?": "string",
+    "color?": "string"
+},
+"AgSeriesMarker": {
+    "enabled?": "boolean",
+    "shape?": "string",
+    "size?": "number",
+    "maxSize?": "number",
+    "fill?": "string",
+    "stroke?": "string",
+    "strokeWidth?": "number"
+},
+"AgCartesianSeriesMarkerFormatterParams": {
+    "xKey": "string",
+    "yKey": "string"
+},
+"AgCartesianSeriesMarkerFormat": {
+    "fill?": "string",
+    "stroke?": "string",
+    "strokeWidth?": "number",
+    "size?": "number"
+},
+"AgCartesianSeriesMarker": {
+    "formatter?": "(params: AgCartesianSeriesMarkerFormatterParams) => AgCartesianSeriesMarkerFormat",
+    "enabled?": "boolean",
+    "shape?": "string",
+    "size?": "number",
+    "maxSize?": "number",
+    "fill?": "string",
+    "stroke?": "string",
+    "strokeWidth?": "number"
+},
+"AgSeriesTooltip": {
+    "enabled?": "boolean"
+},
+"AgLineSeriesTooltip": {
+    "renderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
+    "enabled?": "boolean"
+},
+"AgLineSeriesLabelOptions": {
+    "formatter?": "(params: value) => string",
+    "enabled?": "boolean",
+    "fontStyle?": "FontStyle",
+    "fontWeight?": "FontWeight",
+    "fontSize?": "number",
+    "fontFamily?": "string",
+    "color?": "string"
+},
+"AgLineSeriesOptions": {
+    "type?": "'line'",
+    "marker?": "AgCartesianSeriesMarker",
+    "label?": "AgLineSeriesLabelOptions",
+    "xKey?": "string",
+    "yKey?": "string",
+    "xName?": "string",
+    "yName?": "string",
+    "title?": "string",
+    "stroke?": "string",
+    "strokeWidth?": "number",
+    "strokeOpacity?": "number",
+    "lineDash?": "number[]",
+    "lineDashOffset?": "number",
+    "highlightStyle?": "fill? stroke?",
+    "tooltip?": "AgLineSeriesTooltip",
+    "tooltipRenderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
+    "tooltipEnabled?": "boolean",
+    "data?": "any[]",
+    "visible?": "boolean",
+    "showInLegend?": "boolean",
+    "listeners?": "{[key in string]: Function}"
+},
+"AgScatterSeriesTooltip": {
+    "renderer?": "(params: AgScatterSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
+    "enabled?": "boolean"
+},
+"AgScatterSeriesLabelOptions": {
+    "enabled?": "boolean",
+    "fontStyle?": "FontStyle",
+    "fontWeight?": "FontWeight",
+    "fontSize?": "number",
+    "fontFamily?": "string",
+    "color?": "string"
+},
+"AgScatterSeriesOptions": {
+    "type?": "'scatter'",
+    "marker?": "AgCartesianSeriesMarker",
+    "label?": "AgScatterSeriesLabelOptions",
+    "xKey?": "string",
+    "yKey?": "string",
+    "xName?": "string",
+    "yName?": "string",
+    "title?": "string",
+    "fill?": "string",
+    "stroke?": "string",
+    "strokeWidth?": "number",
+    "fillOpacity?": "number",
+    "strokeOpacity?": "number",
+    "highlightStyle?": "fill? stroke?",
+    "tooltip?": "AgScatterSeriesTooltip",
+    "tooltipRenderer?": "(params: AgScatterSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
+    "tooltipEnabled?": "boolean",
+    "data?": "any[]",
+    "visible?": "boolean",
+    "showInLegend?": "boolean",
+    "listeners?": "{[key in string]: Function}"
+},
+"AgAreaSeriesTooltip": {
+    "renderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
+    "format?": "string",
+    "enabled?": "boolean"
+},
+"AgAreaSeriesLabelOptions": {
+    "formatter?": "(params: value) => string",
+    "enabled?": "boolean",
+    "fontStyle?": "FontStyle",
+    "fontWeight?": "FontWeight",
+    "fontSize?": "number",
+    "fontFamily?": "string",
+    "color?": "string"
+},
+"AgAreaSeriesOptions": {
+    "type?": "'area'",
+    "marker?": "AgCartesianSeriesMarker",
+    "label?": "AgAreaSeriesLabelOptions",
+    "xKey?": "string",
+    "yKeys?": "string[]",
+    "xName?": "string",
+    "yNames?": "string[]",
+    "fills?": "string[]",
+    "strokes?": "string[]",
+    "strokeWidth?": "number",
+    "fillOpacity?": "number",
+    "strokeOpacity?": "number",
+    "lineDash?": "number[]",
+    "lineDashOffset?": "number",
+    "shadow?": "AgDropShadowOptions",
+    "highlightStyle?": "fill? stroke?",
+    "tooltip?": "AgAreaSeriesTooltip",
+    "tooltipRenderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
+    "tooltipEnabled?": "boolean",
+    "data?": "any[]",
+    "visible?": "boolean",
+    "showInLegend?": "boolean",
+    "listeners?": "{[key in string]: Function}"
+},
+"AgBarSeriesLabelOptions": {
+    "formatter?": "(params: value) => string",
+    "enabled?": "boolean",
+    "fontStyle?": "FontStyle",
+    "fontWeight?": "FontWeight",
+    "fontSize?": "number",
+    "fontFamily?": "string",
+    "color?": "string"
+},
+"AgBarSeriesFormatterParams": {
+    "datum": "any",
+    "fill?": "string",
+    "stroke?": "string",
+    "strokeWidth": "number",
+    "highlighted": "boolean",
+    "xKey": "string",
+    "yKey": "string"
+},
+"AgBarSeriesFormat": {
+    "fill?": "string",
+    "stroke?": "string",
+    "strokeWidth?": "number"
+},
+"AgBarSeriesTooltip": {
+    "renderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
+    "enabled?": "boolean"
+},
+"AgBarSeriesOptions": {
+    "type?": "'bar' | 'column'",
+    "grouped?": "boolean",
+    "normalizedTo?": "number",
+    "xKey?": "string",
+    "yKeys?": "string[] | string[][]",
+    "xName?": "string",
+    "yNames?": "string[] | {[key in string]: string}",
+    "fills?": "string[]",
+    "strokes?": "string[]",
+    "strokeWidth?": "number",
+    "fillOpacity?": "number",
+    "strokeOpacity?": "number",
+    "lineDash?": "number[]",
+    "lineDashOffset?": "number",
+    "shadow?": "AgDropShadowOptions",
+    "highlightStyle?": "fill? stroke?",
+    "label?": "AgBarSeriesLabelOptions",
+    "tooltip?": "AgBarSeriesTooltip",
+    "tooltipRenderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
+    "formatter?": "(params: AgBarSeriesFormatterParams) => AgBarSeriesFormat",
+    "tooltipEnabled?": "boolean",
+    "data?": "any[]",
+    "visible?": "boolean",
+    "showInLegend?": "boolean",
+    "listeners?": "{[key in string]: Function}"
+},
+"AgHistogramSeriesLabelOptions": {
+    "formatter?": "(params: value) => string",
+    "enabled?": "boolean",
+    "fontStyle?": "FontStyle",
+    "fontWeight?": "FontWeight",
+    "fontSize?": "number",
+    "fontFamily?": "string",
+    "color?": "string"
+},
+"AgHistogramSeriesTooltip": {
+    "renderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
+    "enabled?": "boolean"
+},
+"AgHistogramSeriesOptions": {
+    "type?": "'histogram'",
+    "fill?": "string",
+    "stroke?": "string",
+    "fillOpacity?": "number",
+    "strokeOpacity?": "number",
+    "strokeWidth?": "number",
+    "lineDash?": "number[]",
+    "lineDashOffset?": "number",
+    "xKey?": "string",
+    "xName?": "string",
+    "yKey?": "string",
+    "yName?": "string",
+    "areaPlot?": "boolean",
+    "bins?": "[number, number][]",
+    "binCount?": "number",
+    "aggregation?": "'count' | 'sum' | 'mean'",
+    "shadow?": "AgDropShadowOptions",
+    "highlightStyle?": "fill? stroke?",
+    "label?": "AgHistogramSeriesLabelOptions",
+    "tooltip?": "AgHistogramSeriesTooltip",
+    "tooltipRenderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
+    "tooltipEnabled?": "boolean",
+    "data?": "any[]",
+    "visible?": "boolean",
+    "showInLegend?": "boolean",
+    "listeners?": "{[key in string]: Function}"
+},
+"AgPieSeriesLabelOptions": {
+    "offset?": "number",
+    "minAngle?": "number",
+    "enabled?": "boolean",
+    "fontStyle?": "FontStyle",
+    "fontWeight?": "FontWeight",
+    "fontSize?": "number",
+    "fontFamily?": "string",
+    "color?": "string"
+},
+"AgPieSeriesFormatterParams": {
+    "datum": "any",
+    "fill?": "string",
+    "stroke?": "string",
+    "strokeWidth": "number",
+    "highlighted": "boolean",
+    "angleKey": "string",
+    "radiusKey?": "string"
+},
+"AgPieSeriesFormat": {
+    "fill?": "string",
+    "stroke?": "string",
+    "strokeWidth?": "number"
+},
+"AgPieSeriesTooltip": {
+    "renderer?": "(params: AgPieSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
+    "enabled?": "boolean"
+},
+"AgPieSeriesOptions": {
+    "type?": "'pie'",
+    "title?": "AgChartCaptionOptions",
+    "label?": "AgPieSeriesLabelOptions",
+    "callout?": "colors? length? strokeWidth?",
+    "angleKey?": "string",
+    "angleName?": "string",
+    "radiusKey?": "string",
+    "radiusName?": "string",
+    "labelKey?": "string",
+    "labelName?": "string",
+    "fills?": "string[]",
+    "strokes?": "string[]",
+    "fillOpacity?": "number",
+    "strokeOpacity?": "number",
+    "strokeWidth?": "number",
+    "lineDash?": "number[]",
+    "lineDashOffset?": "number",
+    "rotation?": "number",
+    "outerRadiusOffset?": "number",
+    "innerRadiusOffset?": "number",
+    "shadow?": "AgDropShadowOptions",
+    "highlightStyle?": "fill? stroke?",
+    "tooltip?": "AgPieSeriesTooltip",
+    "tooltipRenderer?": "(params: AgPieSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
+    "formatter?": "(params: AgPieSeriesFormatterParams) => AgPieSeriesFormat",
+    "tooltipEnabled?": "boolean",
+    "data?": "any[]",
+    "visible?": "boolean",
+    "showInLegend?": "boolean",
+    "listeners?": "{[key in string]: Function}"
+},
+"AgPieSeriesTooltipRendererParams": {
+    "labelKey?": "string",
+    "labelName?": "string",
+    "angleKey": "string",
+    "angleValue?": "any",
+    "angleName?": "string",
+    "radiusKey?": "string",
+    "radiusValue?": "any",
+    "radiusName?": "string",
+    "datum": "any",
+    "title?": "string",
+    "color?": "string"
+},
+"AgCartesianChartOptions": {
+    "type?": "'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter'",
+    "axes?": "TAxisOptions",
+    "series?": "TSeriesOptions",
+    "container?": "HTMLElement",
+    "data?": "any[]",
+    "width?": "number",
+    "height?": "number",
+    "autoSize?": "boolean",
+    "padding?": "AgChartPaddingOptions",
+    "background?": "visible? fill?",
+    "title?": "AgChartCaptionOptions",
+    "subtitle?": "AgChartCaptionOptions",
+    "tooltipClass?": "string",
+    "tooltipTracking?": "boolean",
+    "navigator?": "AgNavigatorOptions",
+    "legend?": "AgChartLegendOptions",
+    "listeners?": "{[key in string]: Function}",
+    "theme?": "string | AgChartTheme"
+},
+"AgPolarChartOptions": {
+    "type?": "'polar' | 'pie'",
+    "axes?": "TAxisOptions",
+    "series?": "TSeriesOptions",
+    "container?": "HTMLElement",
+    "data?": "any[]",
+    "width?": "number",
+    "height?": "number",
+    "autoSize?": "boolean",
+    "padding?": "AgChartPaddingOptions",
+    "background?": "visible? fill?",
+    "title?": "AgChartCaptionOptions",
+    "subtitle?": "AgChartCaptionOptions",
+    "tooltipClass?": "string",
+    "tooltipTracking?": "boolean",
+    "navigator?": "AgNavigatorOptions",
+    "legend?": "AgChartLegendOptions",
+    "listeners?": "{[key in string]: Function}",
+    "theme?": "string | AgChartTheme"
+},
+"IAggFuncService": {
+    "addAggFuncs(aggFuncs: [key: string]: IAggFunc)": "void",
+    "addAggFunc(key: string, aggFunc: IAggFunc)": "void",
+    "clear()": "void",
+    "getDefaultAggFunc(column: Column)": "string | null",
+    "getFuncNames(column: Column)": "string[]"
+},
+"IAggregationStage": {
+    "aggregateValues(values: any[], aggFuncOrString: string | IAggFunc)": "any"
+},
+"ICellEditor": {
+    "getValue()": "any",
+    "isPopup?()": "boolean",
+    "getPopupPosition?()": "string | undefined",
+    "isCancelBeforeStart?()": "boolean",
+    "isCancelAfterEnd?()": "boolean",
+    "focusIn?()": "void",
+    "focusOut?()": "void",
+    "getFrameworkComponentInstance?()": "any"
+},
+"ICellEditorParams": {
+    "value": "any",
+    "keyPress": "number | null",
+    "charPress": "string | null",
+    "column": "Column",
+    "colDef": "ColDef",
+    "node": "RowNode",
+    "data": "any",
+    "rowIndex": "number",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "cellStartedEdit": "boolean",
+    "context": "any",
+    "$scope": "any",
+    "onKeyDown": "(event: KeyboardEvent) => void",
+    "stopEditing": "(suppressNavigateAfterEdit: boolean) => void",
+    "eGridCell": "HTMLElement",
+    "parseValue": "(value: any) => any",
+    "formatValue": "(value: any) => any"
+},
+"ICellEditorComp": {
+    "getValue()": "any",
+    "isPopup?()": "boolean",
+    "getPopupPosition?()": "string | undefined",
+    "isCancelBeforeStart?()": "boolean",
+    "isCancelAfterEnd?()": "boolean",
+    "focusIn?()": "void",
+    "focusOut?()": "void",
+    "getFrameworkComponentInstance?()": "any"
+},
+"SeriesOptions": {
+    "fill": "FillOptions",
+    "stroke": "StrokeOptions",
+    "highlightStyle": "HighlightOptions",
+    "listeners?": "{[key in string]: Function}"
+},
+"ChartTooltip": {
+    "enabled?": "boolean",
+    "class?": "string",
+    "tracking?": "boolean",
+    "delay?": "number"
+},
+"ChartOptions": {
+    "document?": "Document",
+    "seriesDefaults": "T",
+    "width?": "number",
+    "height?": "number",
+    "padding": "PaddingOptions",
+    "background": "BackgroundOptions",
+    "title": "CaptionOptions",
+    "subtitle": "CaptionOptions",
+    "navigator": "NavigatorOptions",
+    "legend": "LegendOptions",
+    "tooltip?": "ChartTooltip",
+    "listeners?": "{[key in string]: Function}"
+},
+"PaddingOptions": {
+    "top": "number",
+    "right": "number",
+    "bottom": "number",
+    "left": "number"
+},
+"BackgroundOptions": {
+    "fill": "string",
+    "visible": "boolean"
+},
+"FontOptions": {
+    "fontStyle": "FontStyle",
+    "fontWeight": "FontWeight",
+    "fontSize": "number",
+    "fontFamily": "string",
+    "color": "string"
+},
+"CaptionOptions": {
+    "enabled": "boolean",
+    "text?": "string",
+    "fontStyle": "FontStyle",
+    "fontWeight": "FontWeight",
+    "fontSize": "number",
+    "fontFamily": "string",
+    "color": "string"
+},
+"LegendOptions": {
+    "enabled": "boolean",
+    "position": "LegendPosition",
+    "spacing": "number",
+    "item": "LegendItemOptions"
+},
+"LegendItemOptions": {
+    "label": "LegendLabelOptions",
+    "marker": "LegendMarkerOptions",
+    "paddingX": "number",
+    "paddingY": "number"
+},
+"LegendLabelOptions": {
+    "fontStyle": "FontStyle",
+    "fontWeight": "FontWeight",
+    "fontSize": "number",
+    "fontFamily": "string",
+    "color": "string"
+},
+"NavigatorOptions": {
+    "enabled": "boolean",
+    "height": "number",
+    "min": "number",
+    "max": "number",
+    "mask": "NavigatorMaskOptions",
+    "minHandle": "NavigatorHandleOptions",
+    "maxHandle": "NavigatorHandleOptions"
+},
+"NavigatorMaskOptions": {
+    "fill": "string",
+    "stroke": "string",
+    "strokeWidth": "number",
+    "fillOpacity": "number"
+},
+"NavigatorHandleOptions": {
+    "fill": "string",
+    "stroke": "string",
+    "strokeWidth": "number",
+    "width": "number",
+    "height": "number",
+    "gripLineGap": "number",
+    "gripLineLength": "number"
+},
+"LegendMarkerOptions": {
+    "shape": "MarkerShape",
+    "size": "number",
+    "padding": "number",
+    "strokeWidth": "number"
+},
+"CartesianChartOptions": {
+    "xAxis": "AxisOptions",
+    "yAxis": "AxisOptions",
+    "navigator": "NavigatorOptions",
+    "document?": "Document",
+    "seriesDefaults": "T",
+    "width?": "number",
+    "height?": "number",
+    "padding": "PaddingOptions",
+    "background": "BackgroundOptions",
+    "title": "CaptionOptions",
+    "subtitle": "CaptionOptions",
+    "legend": "LegendOptions",
+    "tooltip?": "ChartTooltip",
+    "listeners?": "{[key in string]: Function}"
+},
+"PolarChartOptions": {
+    "document?": "Document",
+    "seriesDefaults": "T",
+    "width?": "number",
+    "height?": "number",
+    "padding": "PaddingOptions",
+    "background": "BackgroundOptions",
+    "title": "CaptionOptions",
+    "subtitle": "CaptionOptions",
+    "navigator": "NavigatorOptions",
+    "legend": "LegendOptions",
+    "tooltip?": "ChartTooltip",
+    "listeners?": "{[key in string]: Function}"
+},
+"AxisOptions": {
+    "type?": "AxisType",
+    "title": "CaptionOptions",
+    "line": "AxisLineOptions",
+    "tick": "AxisTickOptions",
+    "label": "AxisLabelOptions",
+    "gridStyle": "GridStyle[]"
+},
+"AxisLineOptions": {
+    "width": "number",
+    "color": "string"
+},
+"AxisTickOptions": {
+    "width": "number",
+    "size": "number",
+    "color": "string"
+},
+"AxisLabelOptions": {
+    "padding": "number",
+    "rotation": "number",
+    "format?": "string",
+    "formatter?": "AxisLabelFormatter",
+    "fontStyle": "FontStyle",
+    "fontWeight": "FontWeight",
+    "fontSize": "number",
+    "fontFamily": "string",
+    "color": "string"
+},
+"GridStyle": {
+    "stroke": "string",
+    "lineDash?": "number[]"
+},
+"HighlightOptions": {
+    "fill": "string",
+    "stroke?": "string",
+    "dimOpacity?": "number"
+},
+"FillOptions": {
+    "colors": "string[]",
+    "opacity": "number"
+},
+"StrokeOptions": {
+    "colors": "string[]",
+    "opacity": "number",
+    "width": "number"
+},
+"DropShadowOptions": {
+    "enabled": "boolean",
+    "color": "string",
+    "xOffset": "number",
+    "yOffset": "number",
+    "blur": "number"
+},
+"SeriesLabelOptions": {
+    "enabled": "boolean",
+    "fontStyle": "FontStyle",
+    "fontWeight": "FontWeight",
+    "fontSize": "number",
+    "fontFamily": "string",
+    "color": "string"
+},
+"TooltipRendererResult": {
+    "content": "string",
+    "title?": "string"
+},
+"TooltipOptions": {
+    "enabled": "boolean",
+    "renderer?": "(params: TParams) => string | TooltipRendererResult"
+},
+"TooltipRendererParams": {
+    "datum": "any",
+    "title?": "string",
+    "color": "string"
+},
+"CartesianTooltipRendererParams": {
+    "xKey": "string",
+    "xValue": "any",
+    "xName": "string",
+    "yKey": "string",
+    "yValue": "any",
+    "yName": "string",
+    "datum": "any",
+    "title?": "string",
+    "color": "string"
+},
+"BarSeriesOptions": {
+    "shadow": "DropShadowOptions",
+    "label": "BarSeriesLabelOptions",
+    "tooltip": "TooltipOptions<BarTooltipRendererParams>",
+    "lineDash": "number[]",
+    "lineDashOffset": "number",
+    "fill": "FillOptions",
+    "stroke": "StrokeOptions",
+    "highlightStyle": "HighlightOptions",
+    "listeners?": "{[key in string]: Function}"
+},
+"HistogramSeriesOptions": {
+    "binCount?": "number",
+    "shadow": "DropShadowOptions",
+    "label": "BarSeriesLabelOptions",
+    "tooltip": "TooltipOptions<BarTooltipRendererParams>",
+    "lineDash": "number[]",
+    "lineDashOffset": "number",
+    "fill": "FillOptions",
+    "stroke": "StrokeOptions",
+    "highlightStyle": "HighlightOptions",
+    "listeners?": "{[key in string]: Function}"
+},
+"BarSeriesLabelOptions": {
+    "formatter?": "(params: value) => string",
+    "enabled": "boolean",
+    "fontStyle": "FontStyle",
+    "fontWeight": "FontWeight",
+    "fontSize": "number",
+    "fontFamily": "string",
+    "color": "string"
+},
+"BarTooltipRendererParams": {
+    "xKey": "string",
+    "xValue": "any",
+    "xName": "string",
+    "yKey": "string",
+    "yValue": "any",
+    "yName": "string",
+    "datum": "any",
+    "title?": "string",
+    "color": "string"
+},
+"LineSeriesOptions": {
+    "marker": "MarkerOptions",
+    "label": "LineSeriesLabelOptions",
+    "tooltip": "TooltipOptions<LineTooltipRendererParams>",
+    "lineDash": "number[]",
+    "lineDashOffset": "number",
+    "fill": "FillOptions",
+    "stroke": "StrokeOptions",
+    "highlightStyle": "HighlightOptions",
+    "listeners?": "{[key in string]: Function}"
+},
+"LineSeriesLabelOptions": {
+    "formatter?": "(params: value) => string",
+    "enabled": "boolean",
+    "fontStyle": "FontStyle",
+    "fontWeight": "FontWeight",
+    "fontSize": "number",
+    "fontFamily": "string",
+    "color": "string"
+},
+"MarkerOptions": {
+    "enabled": "boolean",
+    "shape": "MarkerShape",
+    "size": "number",
+    "strokeWidth": "number",
+    "formatter?": "Function"
+},
+"LineTooltipRendererParams": {
+    "xKey": "string",
+    "xValue": "any",
+    "xName": "string",
+    "yKey": "string",
+    "yValue": "any",
+    "yName": "string",
+    "datum": "any",
+    "title?": "string",
+    "color": "string"
+},
+"ScatterSeriesLabelOptions": {
+    "enabled": "boolean",
+    "fontStyle": "FontStyle",
+    "fontWeight": "FontWeight",
+    "fontSize": "number",
+    "fontFamily": "string",
+    "color": "string"
+},
+"ScatterSeriesOptions": {
+    "marker": "ScatterMarkerOptions",
+    "label": "ScatterSeriesLabelOptions",
+    "tooltip": "TooltipOptions<ScatterTooltipRendererParams>",
+    "paired": "boolean",
+    "fill": "FillOptions",
+    "stroke": "StrokeOptions",
+    "highlightStyle": "HighlightOptions",
+    "listeners?": "{[key in string]: Function}"
+},
+"ScatterMarkerOptions": {
+    "maxSize?": "number",
+    "enabled": "boolean",
+    "shape": "MarkerShape",
+    "size": "number",
+    "strokeWidth": "number",
+    "formatter?": "Function"
+},
+"ScatterTooltipRendererParams": {
+    "sizeKey?": "string",
+    "sizeName?": "string",
+    "labelKey?": "string",
+    "labelName?": "string",
+    "xKey": "string",
+    "xValue": "any",
+    "xName": "string",
+    "yKey": "string",
+    "yValue": "any",
+    "yName": "string",
+    "datum": "any",
+    "title?": "string",
+    "color": "string"
+},
+"AreaSeriesLabelOptions": {
+    "formatter?": "(params: value) => string",
+    "enabled": "boolean",
+    "fontStyle": "FontStyle",
+    "fontWeight": "FontWeight",
+    "fontSize": "number",
+    "fontFamily": "string",
+    "color": "string"
+},
+"AreaSeriesOptions": {
+    "marker": "MarkerOptions",
+    "label": "AreaSeriesLabelOptions",
+    "shadow": "DropShadowOptions",
+    "tooltip": "TooltipOptions<AreaTooltipRendererParams>",
+    "lineDash": "number[]",
+    "lineDashOffset": "number",
+    "fill": "FillOptions",
+    "stroke": "StrokeOptions",
+    "highlightStyle": "HighlightOptions",
+    "listeners?": "{[key in string]: Function}"
+},
+"AreaTooltipRendererParams": {
+    "xKey": "string",
+    "xValue": "any",
+    "xName": "string",
+    "yKey": "string",
+    "yValue": "any",
+    "yName": "string",
+    "datum": "any",
+    "title?": "string",
+    "color": "string"
+},
+"PieSeriesOptions": {
+    "title": "CaptionOptions",
+    "label": "PieSeriesLabelOptions",
+    "callout": "PieSeriesCalloutOptions",
+    "shadow": "DropShadowOptions",
+    "tooltip": "TooltipOptions<PieTooltipRendererParams>",
+    "lineDash": "number[]",
+    "lineDashOffset": "number",
+    "fill": "FillOptions",
+    "stroke": "StrokeOptions",
+    "highlightStyle": "HighlightOptions",
+    "listeners?": "{[key in string]: Function}"
+},
+"PieSeriesLabelOptions": {
+    "minAngle": "number",
+    "offset": "number",
+    "enabled": "boolean",
+    "fontStyle": "FontStyle",
+    "fontWeight": "FontWeight",
+    "fontSize": "number",
+    "fontFamily": "string",
+    "color": "string"
+},
+"PieSeriesCalloutOptions": {
+    "length": "number",
+    "strokeWidth": "number",
+    "colors": "string[]"
+},
+"PieTooltipRendererParams": {
+    "angleKey": "string",
+    "angleValue": "any",
+    "angleName?": "string",
+    "labelKey?": "string",
+    "labelName?": "string",
+    "datum": "any",
+    "title?": "string",
+    "color": "string"
+},
+"GetChartImageDataUrlParams": {
+    "chartId": "string",
+    "fileFormat?": "string"
+},
+"ChartModel": {
+    "modelType": "ChartModelType",
+    "chartId": "string",
+    "chartType": "ChartType",
+    "cellRange": "CellRangeParams",
+    "chartThemeName?": "string",
+    "chartOptions": "ChartOptions<any>",
+    "suppressChartRanges?": "boolean",
+    "aggFunc?": "string | IAggFunc",
+    "unlinkChart?": "boolean"
+},
+"IChartService": {
+    "getChartModels()": "ChartModel[]",
+    "getChartRef(chartId: string)": "ChartRef | undefined",
+    "createRangeChart(params: CreateRangeChartParams)": "ChartRef | undefined",
+    "createCrossFilterChart(params: CreateCrossFilterChartParams)": "ChartRef | undefined",
+    "createChartFromCurrentRange(chartType: ChartType)": "ChartRef | undefined",
+    "createPivotChart(params: CreatePivotChartParams)": "ChartRef | undefined",
+    "restoreChart(model: ChartModel, chartContainer: HTMLElement)": "ChartRef | undefined",
+    "getChartImageDataURL(params: GetChartImageDataUrlParams)": "string | undefined"
+},
+"IClientSideRowModel": {
+    "updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder: [id: string]: number | null)": "RowNodeTransaction | null",
+    "setRowData(rowData: any[])": "void",
+    "refreshModel(params: RefreshModelParams)": "void",
+    "expandOrCollapseAll(expand: boolean)": "void",
+    "forEachLeafNode(callback: (node: RowNode, index: number) => void)": "void",
+    "forEachNode(callback: (node: RowNode, index: number) => void)": "void",
+    "forEachNodeAfterFilter(callback: (node: RowNode, index: number) => void)": "void",
+    "forEachNodeAfterFilterAndSort(callback: (node: RowNode, index: number) => void)": "void",
+    "resetRowHeights()": "void",
+    "onRowHeightChanged()": "void",
+    "batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback: (res: RowNodeTransaction) => void)": "void",
+    "flushAsyncTransactions()": "void",
+    "getRootNode()": "RowNode",
+    "doAggregate(changedPath: ChangedPath)": "void",
+    "getTopLevelNodes()": "RowNode[] | null",
+    "forEachPivotNode(callback: (node: RowNode, index: number) => void)": "void",
+    "ensureRowsAtPixel(rowNode: RowNode[], pixel: number, increment: number)": "boolean",
+    "highlightRowAtPixel(rowNode: RowNode | null, pixel: number)": "void",
+    "getHighlightPosition(pixel: number, rowNode: RowNode)": "RowHighlightPosition",
+    "getLastHighlightedRowNode()": "RowNode | null",
+    "getRow(index: number)": "RowNode | null",
+    "getRowNode(id: string)": "RowNode | null",
+    "getRowCount()": "number",
+    "getTopLevelRowCount()": "number",
+    "getTopLevelRowDisplayedIndex(topLevelIndex: number)": "number",
+    "getRowIndexAtPixel(pixel: number)": "number",
+    "isRowPresent(rowNode: RowNode)": "boolean",
+    "getRowBounds(index: number)": "RowBounds | null",
+    "isEmpty()": "boolean",
+    "isRowsToRender()": "boolean",
+    "getNodesInRangeForSelection(first: RowNode, last: RowNode | null)": "RowNode[]",
+    "forEachNode(callback: (rowNode: RowNode, index: number) => void)": "void",
+    "getType()": "string",
+    "isLastRowIndexKnown()": "boolean",
+    "ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number)": "boolean",
+    "start()": "void"
+},
+"RefreshModelParams": {
+    "step": "ClientSideRowModelSteps",
+    "groupState?": "any",
+    "keepRenderedRows?": "boolean",
+    "animate?": "boolean",
+    "keepEditingRows?": "boolean",
+    "rowNodeTransactions?": "RowNodeTransaction[]",
+    "rowNodeOrder?": "[id: string]: number",
+    "newData?": "boolean",
+    "afterColumnsChanged?": "boolean"
+},
+"IClipboardService": {
+    "pasteFromClipboard()": "void",
+    "copyToClipboard(includeHeader: boolean)": "void",
+    "copySelectedRowsToClipboard(includeHeader: boolean, columnKeys: (string | Column)[])": "void",
+    "copySelectedRangeToClipboard(includeHeader: boolean)": "void",
+    "copyRangeDown()": "void"
+},
+"IColumnToolPanel": {
+    "expandColumnGroups(groupIds: string[])": "void",
+    "collapseColumnGroups(groupIds: string[])": "void",
+    "setColumnLayout(colDefs: (ColDef | ColGroupDef)[])": "void",
+    "syncLayoutWithGrid()": "void",
+    "setPivotModeSectionVisible(visible: boolean)": "void",
+    "setRowGroupsSectionVisible(visible: boolean)": "void",
+    "setValuesSectionVisible(visible: boolean)": "void",
+    "setPivotSectionVisible(visible: boolean)": "void"
+},
+"ColumnVO": {
+    "id": "string",
+    "displayName": "string",
+    "field?": "string",
+    "aggFunc?": "string"
+},
+"IComponent": {
+    "getGui()": "HTMLElement",
+    "destroy?()": "void",
+    "afterGuiAttached?(params: IAfterGuiAttachedParams)": "void",
+    "init?(params: T)": "AgPromise<void> | void"
+},
+"IContextMenuFactory": {
+    "onContextMenu(mouseEvent: MouseEvent | null, touchEvent: TouchEvent | null, rowNode: RowNode | null, column: Column | null, value: any, anchorToElement: HTMLElement)": "void",
+    "hideActiveMenu()": "void"
+},
+"ICsvCreator": {
+    "getDataAsCsv(params: CsvExportParams)": "string",
+    "exportDataAsCsv(params: CsvExportParams)": "string"
+},
+"IDatasource": {
+    "rowCount?": "number",
+    "getRows(params: IGetRowsParams)": "void",
+    "destroy?()": "void"
+},
+"IGetRowsParams": {
+    "startRow": "number",
+    "endRow": "number",
+    "successCallback(rowsThisBlock: any[], lastRow: number)": "void",
+    "failCallback()": "void",
+    "sortModel": "any",
+    "filterModel": "any",
+    "context": "any"
+},
+"IEventEmitter": {
+    "addEventListener(eventType: string, listener: EventListener, async: boolean, options: AddEventListenerOptions)": "void",
+    "removeEventListener(eventType: string, listener: EventListener, async: boolean, options: AddEventListenerOptions)": "void"
+},
+"ExcelStyle": {
+    "id": "string",
+    "alignment?": "ExcelAlignment",
+    "borders?": "ExcelBorders",
+    "dataType?": "ExcelDataType",
+    "font?": "ExcelFont",
+    "interior?": "ExcelInterior",
+    "numberFormat?": "ExcelNumberFormat",
+    "protection?": "ExcelProtection",
+    "name?": "string"
+},
+"ExcelAlignment": {
+    "horizontal?": "'Automatic' | 'Left' | 'Center' | 'Right' | 'Fill' | 'Justify' | 'CenterAcrossSelection' | 'Distributed' | 'JustifyDistributed'",
+    "indent?": "number",
+    "readingOrder?": "'RightToLeft' | 'LeftToRight' | 'Context'",
+    "rotate?": "number",
+    "shrinkToFit?": "boolean",
+    "vertical?": "'Automatic' | 'Top' | 'Bottom' | 'Center' | 'Justify' | 'Distributed' | 'JustifyDistributed'",
+    "wrapText?": "boolean",
+    "verticalText?": "boolean"
+},
+"ExcelBorders": {
+    "borderBottom?": "ExcelBorder",
+    "borderLeft?": "ExcelBorder",
+    "borderRight?": "ExcelBorder",
+    "borderTop?": "ExcelBorder"
+},
+"ExcelBorder": {
+    "color?": "string",
+    "lineStyle?": "'None' | 'Continuous' | 'Dash' | 'Dot' | 'DashDot' | 'DashDotDot' | 'SlantDashDot' | 'Double'",
+    "weight?": "'0' | '1' | '2' | '3'"
+},
+"ExcelFont": {
+    "bold?": "boolean",
+    "color?": "string",
+    "family?": "string",
+    "fontName?": "string",
+    "italic?": "boolean",
+    "outline?": "boolean",
+    "shadow?": "boolean",
+    "size?": "number",
+    "strikeThrough?": "boolean",
+    "underline?": "'Single' | 'Double'",
+    "verticalAlign?": "'Superscript' | 'Subscript'",
+    "charSet?": "number"
+},
+"ExcelInterior": {
+    "color": "string",
+    "pattern": "'None' | 'Solid' | 'Gray75' | 'Gray50' | 'Gray25' | 'Gray125' | 'Gray0625' | 'HorzStripe' | 'VertStripe' | 'ReverseDiagStripe' | 'DiagStripe' | 'DiagCross' | 'ThickDiagCross' | 'ThinHorzStripe' | 'ThinVertStripe' | 'ThinReverseDiagStripe' | 'ThinDiagStripe' | 'ThinHorzCross' | 'ThinDiagCross'",
+    "patternColor": "string"
+},
+"ExcelNumberFormat": {
+    "format": "string"
+},
+"ExcelProtection": {
+    "protected": "boolean",
+    "hideFormula": "boolean"
+},
+"ExcelWorksheet": {
+    "name": "string",
+    "table": "ExcelTable"
+},
+"ExcelTable": {
+    "columns": "ExcelColumn[]",
+    "rows": "ExcelRow[]"
+},
+"ExcelColumn": {
+    "min?": "number",
+    "max?": "number",
+    "width?": "number",
+    "s?": "number",
+    "hidden?": "boolean",
+    "bestFit?": "boolean"
+},
+"ExcelRow": {
+    "index?": "number",
+    "collapsed?": "boolean",
+    "hidden?": "boolean",
+    "height?": "number",
+    "outlineLevel?": "number",
+    "s?": "number",
+    "cells": "ExcelCell[]"
+},
+"ExcelCell": {
+    "ref?": "string",
+    "styleId?": "string",
+    "data": "ExcelData",
+    "mergeAcross?": "number"
+},
+"ExcelImage": {
+    "id": "string",
+    "base64": "string",
+    "imageType": "'jpg' | 'png' | 'gif'",
+    "altText?": "string",
+    "fitCell?": "boolean",
+    "transparency?": "number",
+    "rotation?": "number",
+    "recolor?": "'Grayscale' | 'Sepia' | 'Washout'",
+    "width?": "number",
+    "height?": "number",
+    "position?": "row? rowSpan? column? colSpan? offsetX? offsetY?"
+},
+"ExcelData": {
+    "type": "ExcelDataType | ExcelOOXMLDataType",
+    "value": "string | null"
+},
+"ExcelRelationship": {
+    "Id": "string",
+    "Type": "string",
+    "Target": "string"
+},
+"ExcelContentType": {
+    "name": "'Default' | 'Override'",
+    "ContentType": "string",
+    "Extension?": "string",
+    "PartName?": "string"
+},
+"ExcelXMLTemplate": {
+    "getTemplate(styleProperties: ExcelStyle | ExcelWorksheet | ExcelColumn | ExcelRow | ExcelCell)": "XmlElement"
+},
+"ExcelOOXMLTemplate": {
+    "getTemplate(config: any, idx: number, currentSheet: number)": "XmlElement",
+    "convertType?(type: string)": "string"
+},
+"ColumnWidthCallbackParams": {
+    "column": "Column | null",
+    "index": "number"
+},
+"RowHeightCallbackParams": {
+    "rowIndex": "number"
+},
+"ExcelExportParams": {
+    "author?": "string",
+    "autoConvertFormulas?": "boolean",
+    "columnWidth?": "number | ((params: ColumnWidthCallbackParams) => number)",
+    "exportMode?": "'xlsx' | 'xml'",
+    "fontSize?": "number",
+    "headerRowHeight?": "number | ((params: RowHeightCallbackParams) => number)",
+    "rowHeight?": "number | ((params: RowHeightCallbackParams) => number)",
+    "sheetName?": "string",
+    "margins?": "ExcelSheetMargin",
+    "pageSetup?": "ExcelSheetPageSetup",
+    "headerFooterConfig?": "ExcelHeaderFooterConfig",
+    "suppressTextAsCDATA?": "boolean",
+    "addImageToCell?": "(rowIndex: number, column: Column, value: string) => image value? | undefined",
+    "prependContent?": "T",
+    "appendContent?": "T",
+    "customHeader?": "T",
+    "customFooter?": "T",
+    "getCustomContentBelowRow?": "(params: ProcessRowGroupForExportParams) => T | undefined",
+    "allColumns?": "boolean",
+    "columnKeys?": "(string | Column)[]",
+    "fileName?": "string",
+    "onlySelected?": "boolean",
+    "onlySelectedAllPages?": "boolean",
+    "skipColumnGroupHeaders?": "boolean",
+    "skipColumnHeaders?": "boolean",
+    "skipRowGroups?": "boolean",
+    "skipPinnedTop?": "boolean",
+    "skipPinnedBottom?": "boolean",
+    "shouldRowBeSkipped?(params: ShouldRowBeSkippedParams)": "boolean",
+    "processCellCallback?(params: ProcessCellForExportParams)": "string",
+    "processHeaderCallback?(params: ProcessHeaderForExportParams)": "string",
+    "processGroupHeaderCallback?(params: ProcessGroupHeaderForExportParams)": "string",
+    "processRowGroupCallback?(params: ProcessRowGroupForExportParams)": "string",
+    "columnGroups?": "boolean",
+    "skipGroups?": "boolean",
+    "skipHeader?": "boolean"
+},
+"ExcelExportMultipleSheetParams": {
+    "author?": "string",
+    "data": "string[]",
+    "fileName?": "string",
+    "fontSize?": "number"
+},
+"ExcelHeaderFooterConfig": {
+    "all?": "ExcelHeaderFooter",
+    "first?": "ExcelHeaderFooter",
+    "even?": "ExcelHeaderFooter"
+},
+"ExcelHeaderFooter": {
+    "header?": "ExcelHeaderFooterContent[]",
+    "footer?": "ExcelHeaderFooterContent[]"
+},
+"ExcelHeaderFooterContent": {
+    "value": "string",
+    "position?": "'Left' | 'Center' | 'Right'",
+    "font?": "ExcelFont"
+},
+"IExcelCreator": {
+    "exportDataAsExcel(params: ExcelExportParams)": "void",
+    "getDataAsExcel(params: ExcelExportParams)": "Blob | string | undefined",
+    "getSheetDataForExcel(params: ExcelExportParams)": "string",
+    "getMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams)": "Blob | undefined",
+    "exportMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams)": "void",
+    "setFactoryMode(factoryMode: ExcelFactoryMode, exportMode: 'xml' | 'xlsx')": "void",
+    "getFactoryMode(exportMode: 'xml' | 'xlsx')": "ExcelFactoryMode"
+},
+"ExcelSheetMargin": {
+    "top?": "number",
+    "right?": "number",
+    "bottom?": "number",
+    "left?": "number",
+    "header?": "number",
+    "footer?": "number"
+},
+"ExcelSheetPageSetup": {
+    "orientation?": "'Portrait' | 'Landscape'",
+    "pageSize?": "'Letter' | 'Letter Small' | 'Tabloid' | 'Ledger' | 'Legal' | 'Statement' | 'Executive' | 'A3' | 'A4' | 'A4 Small' | 'A5' | 'A6' | 'B4' | 'B5' | 'Folio' | 'Envelope' | 'Envelope DL' | 'Envelope C5' | 'Envelope B5' | 'Envelope C3' | 'Envelope C4' | 'Envelope C6' | 'Envelope Monarch' | 'Japanese Postcard' | 'Japanese Double Postcard'"
+},
+"IFilterDef": {
+    "filter?": "IFilterType",
+    "filterFramework?": "any",
+    "filterParams?": "any",
+    "floatingFilterComponent?": "string | { new(): IFloatingFilterComp }",
+    "floatingFilterComponentParams?": "any",
+    "floatingFilterComponentFramework?": "any"
+},
+"IFilter": {
+    "isFilterActive()": "boolean",
+    "doesFilterPass(params: IDoesFilterPassParams)": "boolean",
+    "getModel()": "any",
+    "setModel(model: any)": "void | AgPromise<void>",
+    "onNewRowsLoaded?()": "void",
+    "onAnyFilterChanged?()": "void",
+    "getFrameworkComponentInstance?()": "any",
+    "getModelAsString?(model: any)": "string"
+},
+"ProvidedFilterModel": {
+    "filterType?": "string"
+},
+"IFilterComp": {
+    "isFilterActive()": "boolean",
+    "doesFilterPass(params: IDoesFilterPassParams)": "boolean",
+    "getModel()": "any",
+    "setModel(model: any)": "void | AgPromise<void>",
+    "onNewRowsLoaded?()": "void",
+    "onAnyFilterChanged?()": "void",
+    "getFrameworkComponentInstance?()": "any",
+    "getModelAsString?(model: any)": "string",
+    "getGui()": "HTMLElement",
+    "destroy?()": "void",
+    "afterGuiAttached?(params: IAfterGuiAttachedParams)": "void",
+    "init?(params: T)": "AgPromise<void> | void"
+},
+"IDoesFilterPassParams": {
+    "node": "RowNode",
+    "data": "any"
+},
+"IFilterOptionDef": {
+    "displayKey": "string",
+    "displayName": "string",
+    "test": "(filterValue: any, cellValue: any) => boolean",
+    "hideFilterInput?": "boolean"
+},
+"IFilterParams": {
+    "api": "GridApi",
+    "column": "Column",
+    "colDef": "ColDef",
+    "rowModel": "IRowModel",
+    "filterChangedCallback": "(additionalEventAttributes: any) => void",
+    "filterModifiedCallback": "() => void",
+    "valueGetter": "(rowNode: RowNode) => any",
+    "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
+    "context": "any"
+},
+"Filter": {
+    "isFilterActive()": "boolean",
+    "doesFilterPass(params: IDoesFilterPassParams)": "boolean",
+    "getModel()": "any",
+    "setModel(model: any)": "void | AgPromise<void>",
+    "onNewRowsLoaded?()": "void",
+    "onAnyFilterChanged?()": "void",
+    "getFrameworkComponentInstance?()": "any",
+    "getModelAsString?(model: any)": "string"
+},
+"IFiltersToolPanel": {
+    "setFilterLayout(colDefs: ColDef[])": "void",
+    "expandFilterGroups(groupIds: string[])": "void",
+    "collapseFilterGroups(groupIds: string[])": "void",
+    "expandFilters(colIds: string[])": "void",
+    "collapseFilters(colIds: string[])": "void",
+    "syncLayoutWithGrid()": "void"
+},
+"IFrameworkOverrides": {
+    "setTimeout(action: any, timeout: any)": "void",
+    "setInterval(action: any, interval: any)": "AgPromise<number>",
+    "addEventListener(element: HTMLElement, type: string, listener: EventListenerOrEventListenerObject, options: boolean | AddEventListenerOptions)": "void",
+    "dispatchEvent(eventType: string, listener: () => , global: boolean)": "void",
+    "frameworkComponent(name: string)": "any"
+},
+"IImmutableService": {
+    "createTransactionForRowData(data: any[])": "([RowDataTransaction, [id: string]: number | null]) | undefined"
+},
+"IInfiniteRowModel": {
+    "setDatasource(datasource: IDatasource | undefined)": "void",
+    "refreshCache()": "void",
+    "purgeCache()": "void",
+    "setRowCount(rowCount: number, maxRowFound: boolean)": "void",
+    "getRow(index: number)": "RowNode | null",
+    "getRowNode(id: string)": "RowNode | null",
+    "getRowCount()": "number",
+    "getTopLevelRowCount()": "number",
+    "getTopLevelRowDisplayedIndex(topLevelIndex: number)": "number",
+    "getRowIndexAtPixel(pixel: number)": "number",
+    "isRowPresent(rowNode: RowNode)": "boolean",
+    "getRowBounds(index: number)": "RowBounds | null",
+    "isEmpty()": "boolean",
+    "isRowsToRender()": "boolean",
+    "getNodesInRangeForSelection(first: RowNode, last: RowNode | null)": "RowNode[]",
+    "forEachNode(callback: (rowNode: RowNode, index: number) => void)": "void",
+    "getType()": "string",
+    "isLastRowIndexKnown()": "boolean",
+    "ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number)": "boolean",
+    "start()": "void"
+},
+"IMenu": {},
+"IMenuFactory": {
+    "showMenuAfterButtonClick(column: Column | null, eventSource: HTMLElement, containerType: ContainerType, defaultTab: string, restrictToTabs: string[])": "void",
+    "showMenuAfterMouseEvent(column: Column, mouseEvent: MouseEvent | Touch, defaultTab: string, restrictToTabs: string[])": "void",
+    "isMenuEnabled(column: Column)": "boolean",
+    "hideActiveMenu()": "void"
+},
+"Module": {
+    "moduleName": "string",
+    "beans?": "any[]",
+    "agStackComponents?": "ComponentMeta[]",
+    "userComponents?": "componentName componentClass[]",
+    "rowModels?": "[name: string]: { new(): IRowModel }",
+    "dependantModules?": "Module[]"
+},
+"IPopupComponent": {
+    "isPopup?()": "boolean",
+    "focusIn?()": "void",
+    "focusOut?()": "void",
+    "getGui()": "HTMLElement",
+    "destroy?()": "void",
+    "afterGuiAttached?(params: IAfterGuiAttachedParams)": "void",
+    "init?(params: T)": "AgPromise<void> | void"
+},
+"IRangeService": {
+    "isEmpty()": "boolean",
+    "removeAllCellRanges()": "void",
+    "getCellRangeCount(cell: CellPosition)": "number",
+    "isCellInAnyRange(cell: CellPosition)": "boolean",
+    "isCellInSpecificRange(cell: CellPosition, range: CellRange)": "boolean",
+    "isBottomRightCell(cellRange: CellRange, cell: CellPosition)": "boolean",
+    "isContiguousRange(cellRange: CellRange)": "boolean",
+    "isMoreThanOneCell()": "boolean",
+    "onDragStart(mouseEvent: MouseEvent)": "void",
+    "onDragStop()": "void",
+    "onDragging(mouseEvent: MouseEvent)": "void",
+    "getCellRanges()": "CellRange[]",
+    "setRangeToCell(cell: CellPosition, appendRange: boolean)": "void",
+    "setCellRange(params: CellRangeParams)": "void",
+    "addCellRange(params: CellRangeParams)": "void",
+    "extendLatestRangeInDirection(key: number)": "CellPosition | undefined",
+    "extendLatestRangeToCell(cell: CellPosition)": "void",
+    "updateRangeEnd(cellRange: CellRange, cellPosition: CellPosition, silent: boolean)": "void",
+    "getRangeStartRow(cellRange: CellRange)": "RowPosition",
+    "getRangeEndRow(cellRange: CellRange)": "RowPosition",
+    "createCellRangeFromCellRangeParams(params: CellRangeParams)": "CellRange | undefined",
+    "setCellRanges(cellRanges: CellRange[])": "void"
+},
+"ISelectionHandle": {
+    "getGui()": "HTMLElement",
+    "getType()": "SelectionHandleType",
+    "refresh(cellCtrl: CellCtrl)": "void"
+},
+"ISelectionHandleFactory": {
+    "createSelectionHandle(type: SelectionHandleType)": "ISelectionHandle"
+},
+"CellRange": {
+    "id?": "string",
+    "type?": "CellRangeType",
+    "startRow?": "RowPosition",
+    "endRow?": "RowPosition",
+    "columns": "Column[]",
+    "startColumn": "Column"
+},
+"CellRangeParams": {
+    "rowStartIndex": "number | null",
+    "rowStartPinned?": "string | null",
+    "rowEndIndex": "number | null",
+    "rowEndPinned?": "string | null",
+    "columnStart?": "string | Column",
+    "columnEnd?": "string | Column",
+    "columns?": "(string | Column)[]"
+},
+"RangeSelection": {
+    "start": "CellPosition",
+    "end": "CellPosition",
+    "columns": "Column[] | null"
+},
+"AddRangeSelectionParams": {
+    "rowStart": "number",
+    "floatingStart": "string",
+    "rowEnd": "number",
+    "floatingEnd": "string",
+    "columnStart": "string | Column",
+    "columnEnd": "string | Column"
+},
+"IRichCellEditorParams": {
+    "values": "CellValue[]",
+    "cellHeight": "number",
+    "cellRenderer": "{ new(): ICellRendererComp } | ICellRendererFunc | string",
+    "searchDebounceDelay?": "number",
+    "value": "any",
+    "keyPress": "number | null",
+    "charPress": "string | null",
+    "column": "Column",
+    "colDef": "ColDef",
+    "node": "RowNode",
+    "data": "any",
+    "rowIndex": "number",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "cellStartedEdit": "boolean",
+    "context": "any",
+    "$scope": "any",
+    "onKeyDown": "(event: KeyboardEvent) => void",
+    "stopEditing": "(suppressNavigateAfterEdit: boolean) => void",
+    "eGridCell": "HTMLElement",
+    "parseValue": "(value: any) => any",
+    "formatValue": "(value: any) => any"
+},
+"RowBounds": {
+    "rowTop": "number",
+    "rowHeight": "number",
+    "rowIndex?": "number"
+},
+"IRowModel": {
+    "getRow(index: number)": "RowNode | null",
+    "getRowNode(id: string)": "RowNode | null",
+    "getRowCount()": "number",
+    "getTopLevelRowCount()": "number",
+    "getTopLevelRowDisplayedIndex(topLevelIndex: number)": "number",
+    "getRowIndexAtPixel(pixel: number)": "number",
+    "isRowPresent(rowNode: RowNode)": "boolean",
+    "getRowBounds(index: number)": "RowBounds | null",
+    "isEmpty()": "boolean",
+    "isRowsToRender()": "boolean",
+    "getNodesInRangeForSelection(first: RowNode, last: RowNode | null)": "RowNode[]",
+    "forEachNode(callback: (rowNode: RowNode, index: number) => void)": "void",
+    "getType()": "string",
+    "isLastRowIndexKnown()": "boolean",
+    "ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number)": "boolean",
+    "start()": "void"
+},
+"IRowNodeBlock": {
+    "getDisplayIndexStart()": "number",
+    "getDisplayIndexEnd()": "number",
+    "getLastAccessed()": "number",
+    "getState()": "string",
+    "isAnyNodeOpen(rowCount: number)": "boolean",
+    "getBlockNumber()": "number",
+    "forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence, rowCount: number)": "void",
+    "forEachNodeShallow(callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence, rowCount: number)": "void",
+    "load()": "void",
+    "addEventListener(eventType: string, listener: EventListener, async: boolean, options: AddEventListenerOptions)": "void",
+    "removeEventListener(eventType: string, listener: EventListener, async: boolean, options: AddEventListenerOptions)": "void"
+},
+"StageExecuteParams": {
+    "rowNode": "RowNode",
+    "rowNodeTransaction?": "RowNodeTransaction | null",
+    "rowNodeTransactions?": "RowNodeTransaction[] | null",
+    "rowNodeOrder?": "[id: string]: number",
+    "changedPath?": "ChangedPath",
+    "afterColumnsChanged?": "boolean"
+},
+"IRowNodeStage": {
+    "execute(params: StageExecuteParams)": "any"
+},
+"IServerSideGetRowsRequest": {
+    "startRow": "number",
+    "endRow": "number",
+    "rowGroupCols": "ColumnVO[]",
+    "valueCols": "ColumnVO[]",
+    "pivotCols": "ColumnVO[]",
+    "pivotMode": "boolean",
+    "groupKeys": "string[]",
+    "filterModel": "any",
+    "sortModel": "any"
+},
+"IServerSideGetRowsParams": {
+    "request": "IServerSideGetRowsRequest",
+    "parentNode": "RowNode",
+    "successCallback(rowsThisPage: any[], lastRow: number)": "void",
+    "success(params: LoadSuccessParams)": "void",
+    "failCallback()": "void",
+    "fail()": "void",
+    "api": "GridApi",
+    "columnApi": "ColumnApi"
+},
+"IServerSideDatasource": {
+    "getRows(params: IServerSideGetRowsParams)": "void",
+    "destroy?()": "void"
+},
+"IServerSideRowModel": {
+    "refreshStore(params: RefreshStoreParams)": "void",
+    "onRowHeightChanged()": "void",
+    "getStoreState()": "ServerSideStoreState[]",
+    "retryLoads()": "void",
+    "expandAll(value: boolean)": "void",
+    "setDatasource(datasource: IServerSideDatasource)": "void",
+    "forEachNodeAfterFilterAndSort(callback: (node: RowNode, index: number) => void)": "void",
+    "getRow(index: number)": "RowNode | null",
+    "getRowNode(id: string)": "RowNode | null",
+    "getRowCount()": "number",
+    "getTopLevelRowCount()": "number",
+    "getTopLevelRowDisplayedIndex(topLevelIndex: number)": "number",
+    "getRowIndexAtPixel(pixel: number)": "number",
+    "isRowPresent(rowNode: RowNode)": "boolean",
+    "getRowBounds(index: number)": "RowBounds | null",
+    "isEmpty()": "boolean",
+    "isRowsToRender()": "boolean",
+    "getNodesInRangeForSelection(first: RowNode, last: RowNode | null)": "RowNode[]",
+    "forEachNode(callback: (rowNode: RowNode, index: number) => void)": "void",
+    "getType()": "string",
+    "isLastRowIndexKnown()": "boolean",
+    "ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number)": "boolean",
+    "start()": "void"
+},
+"IServerSideTransactionManager": {
+    "applyTransaction(transaction: ServerSideTransaction)": "ServerSideTransactionResult | undefined",
+    "applyTransactionAsync(transaction: ServerSideTransaction, callback: (res: ServerSideTransactionResult) => void)": "void",
+    "flushAsyncTransactions()": "void"
+},
+"RefreshStoreParams": {
+    "route?": "string[]",
+    "purge?": "boolean"
+},
+"IServerSideStore": {
+    "clearDisplayIndexes()": "void",
+    "getDisplayIndexEnd()": "number | undefined",
+    "isDisplayIndexInStore(displayIndex: number)": "boolean",
+    "setDisplayIndexes(displayIndexSeq: NumberSequence, nextRowTop: value)": "void",
+    "forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence)": "void",
+    "forEachNodeDeepAfterFilterAndSort(callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence)": "void",
+    "retryLoads()": "void",
+    "getRowUsingDisplayIndex(displayRowIndex: number, dontCreateBlock: boolean)": "RowNode | null",
+    "getRowBounds(index: number)": "RowBounds | null",
+    "isPixelInRange(pixel: number)": "boolean",
+    "getRowIndexAtPixel(pixel: number)": "number | null",
+    "getChildStore(keys: string[])": "IServerSideStore | null",
+    "refreshAfterSort(params: StoreRefreshAfterParams)": "void",
+    "refreshAfterFilter(params: StoreRefreshAfterParams)": "void",
+    "applyTransaction(transaction: ServerSideTransaction)": "ServerSideTransactionResult",
+    "refreshStore(purge: boolean)": "void",
+    "getRowCount()": "number",
+    "getTopLevelRowDisplayedIndex(topLevelIndex: number)": "number",
+    "isLastRowIndexKnown()": "boolean",
+    "getRowNodesInRange(firstInRange: RowNode, lastInRange: RowNode)": "RowNode[]",
+    "addStoreStates(result: ServerSideStoreState[])": "void"
+},
+"StoreRefreshAfterParams": {
+    "valueColChanged": "boolean",
+    "secondaryColChanged": "boolean",
+    "alwaysReset": "boolean",
+    "changedColumns": "string[]"
+},
+"ServerSideStoreState": {
+    "type": "ServerSideStoreType",
+    "route": "string[]",
+    "rowCount": "number",
+    "lastRowIndexKnown?": "boolean",
+    "info?": "any",
+    "maxBlocksInCache?": "number",
+    "cacheBlockSize?": "number"
+},
+"SetFilterValuesFuncParams": {
+    "success": "(values: string[]) => void",
+    "colDef": "ColDef"
+},
+"ISetFilterParams": {
+    "suppressRemoveEntries?": "boolean",
+    "values?": "SetFilterValues",
+    "refreshValuesOnOpen?": "boolean",
+    "cellHeight?": "number",
+    "suppressSorting?": "boolean",
+    "cellRenderer?": "{ new(): ICellRendererComp } | ICellRendererFunc | string",
+    "suppressMiniFilter?": "boolean",
+    "applyMiniFilterWhileTyping?": "boolean",
+    "suppressSelectAll?": "boolean",
+    "defaultToNothingSelected?": "boolean",
+    "suppressSyncValuesAfterDataChange?": "boolean",
+    "comparator?": "(a: any, b: any) => number",
+    "textFormatter?": "(from: string) => string",
+    "valueFormatter?": "(params: ValueFormatterParams) => string",
+    "selectAllOnMiniFilter?": "boolean",
+    "syncValuesLikeExcel?": "boolean",
+    "showTooltips?": "boolean",
+    "excelMode?": "'mac' | 'windows'",
+    "clearButton?": "boolean",
+    "resetButton?": "boolean",
+    "applyButton?": "boolean",
+    "buttons?": "FilterButtonType[]",
+    "closeOnApply?": "boolean",
+    "newRowsAction?": "string",
+    "debounceMs?": "number",
+    "api": "GridApi",
+    "column": "Column",
+    "colDef": "ColDef",
+    "rowModel": "IRowModel",
+    "filterChangedCallback": "(additionalEventAttributes: any) => void",
+    "filterModifiedCallback": "() => void",
+    "valueGetter": "(rowNode: RowNode) => any",
+    "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
+    "context": "any"
+},
+"ISideBar": {
+    "refresh()": "void",
+    "setDisplayed(show: boolean)": "void",
+    "setSideBarPosition(position: 'left' | 'right')": "void",
+    "isToolPanelShowing()": "boolean",
+    "openToolPanel(key: string)": "void",
+    "getToolPanelInstance(key: string)": "IToolPanel | undefined",
+    "close()": "void",
+    "openedItem()": "string | null",
+    "isDisplayed()": "boolean"
+},
+"IStatusBarService": {
+    "registerStatusPanel(key: string, component: IStatusPanelComp)": "void",
+    "getStatusPanel(key: string)": "IStatusPanelComp"
+},
+"StatusPanelDef": {
+    "statusPanel?": "{ new(): IStatusPanelComp } | string",
+    "statusPanelFramework?": "any",
+    "align?": "string",
+    "key?": "string",
+    "statusPanelParams?": "any"
+},
+"IStatusPanelParams": {
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "context": "any"
+},
+"IStatusPanel": {},
+"IStatusPanelComp": {
+    "getGui()": "HTMLElement",
+    "destroy?()": "void",
+    "afterGuiAttached?(params: IAfterGuiAttachedParams)": "void",
+    "init?(params: T)": "AgPromise<void> | void"
+},
+"IToolPanelParams": {
+    "api": "GridApi",
+    "columnApi": "ColumnApi"
+},
+"IToolPanel": {
+    "refresh()": "void"
+},
+"IToolPanelComp": {
+    "refresh()": "void",
+    "getGui()": "HTMLElement",
+    "destroy?()": "void",
+    "afterGuiAttached?(params: IAfterGuiAttachedParams)": "void",
+    "init?(params: T)": "AgPromise<void> | void"
+},
+"ToolPanelColumnCompParams": {
+    "suppressRowGroups": "boolean",
+    "suppressValues": "boolean",
+    "suppressPivots": "boolean",
+    "suppressPivotMode": "boolean",
+    "suppressColumnFilter": "boolean",
+    "suppressColumnSelectAll": "boolean",
+    "suppressColumnExpandAll": "boolean",
+    "contractColumnSelection": "boolean",
+    "suppressSyncLayoutWithGrid": "boolean",
+    "api": "GridApi",
+    "columnApi": "ColumnApi"
+},
+"IPrimaryColsPanel": {
+    "getGui()": "HTMLElement",
+    "init(allowDragging: boolean, params: ToolPanelColumnCompParams, eventType: ColumnEventType)": "void",
+    "onExpandAll()": "void",
+    "onCollapseAll()": "void",
+    "expandGroups(groupIds: string[])": "void",
+    "collapseGroups(groupIds: string[])": "void",
+    "setColumnLayout(colDefs: (ColDef | ColGroupDef)[])": "void",
+    "syncLayoutWithGrid()": "void"
+},
+"IViewportDatasource": {
+    "init(params: IViewportDatasourceParams)": "void",
+    "setViewportRange(firstRow: number, lastRow: number)": "void",
+    "destroy?()": "void"
+},
+"IViewportDatasourceParams": {
+    "setRowCount": "(count: number, keepRenderedRows: boolean) => void",
+    "setRowData": "(rowData: [key: number]: any) => void",
+    "getRow": "(rowIndex: number) => RowNode"
+},
+"XmlElement": {
+    "name": "string",
+    "properties?": "XmlAttributes",
+    "children?": "XmlElement[]",
+    "textNode?": "string | null"
+},
+"HeaderElement": {
+    "[key: string]": "string | undefined",
+    "version?": "string",
+    "standalone?": "string",
+    "encoding?": "string"
+},
+"XmlAttributes": {
+    "prefixedAttributes?": "PrefixedXmlAttributes[]",
+    "rawMap?": "any"
+},
+"PrefixedXmlAttributes": {
+    "prefix": "string",
+    "map": "any"
+},
+"RowDataTransaction": {
+    "addIndex?": "number | null",
+    "add?": "any[] | null",
+    "remove?": "any[] | null",
+    "update?": "any[] | null"
+},
+"RowNodeTransaction": {
+    "add": "RowNode[]",
+    "remove": "RowNode[]",
+    "update": "RowNode[]"
+},
+"ServerSideTransaction": {
+    "route?": "string[]",
+    "addIndex?": "number",
+    "add?": "any[]",
+    "remove?": "any[]",
+    "update?": "any[]"
+},
+"ServerSideTransactionResult": {
+    "status": "ServerSideTransactionResultStatus",
+    "add?": "RowNode[]",
+    "remove?": "RowNode[]",
+    "update?": "RowNode[]"
+},
+"TabbedLayoutParams": {
+    "items": "TabbedItem[]",
+    "cssClass?": "string",
+    "onItemClicked?": "Function",
+    "onActiveItemClicked?": "Function"
+},
+"TabbedItem": {
+    "title": "Element",
+    "titleLabel": "string",
+    "bodyPromise": "AgPromise<HTMLElement>",
+    "name": "string",
+    "afterAttachedCallback?": "(params: IAfterGuiAttachedParams) => void"
+},
+"TabbedItemWrapper": {
+    "tabbedItem": "TabbedItem",
+    "eHeaderButton": "HTMLElement"
+},
+"TaskItem": {
+    "task": "() => void",
+    "index": "number",
+    "createOrder": "number"
+},
+"TaskList": {
+    "list": "TaskItem[]",
+    "sorted": "boolean"
+},
+"SimpleHttpRequestParams": {
+    "url": "string"
+},
+"ICellComp": {
+    "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
+    "setUserStyles(styles: any)": "void",
+    "setAriaSelected(selected: boolean | undefined)": "void",
+    "getFocusableElement()": "HTMLElement",
+    "setLeft(left: string)": "void",
+    "setWidth(width: string)": "void",
+    "setAriaColIndex(index: number)": "void",
+    "setHeight(height: string)": "void",
+    "setZIndex(zIndex: string)": "void",
+    "setTabIndex(tabIndex: number)": "void",
+    "setRole(role: string)": "void",
+    "setColId(colId: string)": "void",
+    "setTitle(title: string | undefined)": "void",
+    "setUnselectable(value: 'on' | null)": "void",
+    "setTransition(value: string | undefined)": "void",
+    "setIncludeSelection(include: boolean)": "void",
+    "setIncludeRowDrag(include: boolean)": "void",
+    "setIncludeDndSource(include: boolean)": "void",
+    "setForceWrapper(force: boolean)": "void",
+    "getCellEditor()": "ICellEditor | null",
+    "getCellRenderer()": "ICellRenderer | null",
+    "getParentOfValue()": "HTMLElement | null",
+    "setRenderDetails(compDetails: UserCompDetails | undefined, valueToDisplay: any, forceNewCellRendererInstance: boolean)": "void",
+    "setEditDetails(compDetails: UserCompDetails, popup: boolean, position: string)": "void"
+},
+"ILargeTextEditorParams": {
+    "maxLength": "number",
+    "rows": "number",
+    "cols": "number",
+    "value": "any",
+    "keyPress": "number | null",
+    "charPress": "string | null",
+    "column": "Column",
+    "colDef": "ColDef",
+    "node": "RowNode",
+    "data": "any",
+    "rowIndex": "number",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "cellStartedEdit": "boolean",
+    "context": "any",
+    "$scope": "any",
+    "onKeyDown": "(event: KeyboardEvent) => void",
+    "stopEditing": "(suppressNavigateAfterEdit: boolean) => void",
+    "eGridCell": "HTMLElement",
+    "parseValue": "(value: any) => any",
+    "formatValue": "(value: any) => any"
+},
+"ISelectCellEditorParams": {
+    "values": "any[]",
+    "value": "any",
+    "keyPress": "number | null",
+    "charPress": "string | null",
+    "column": "Column",
+    "colDef": "ColDef",
+    "node": "RowNode",
+    "data": "any",
+    "rowIndex": "number",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "cellStartedEdit": "boolean",
+    "context": "any",
+    "$scope": "any",
+    "onKeyDown": "(event: KeyboardEvent) => void",
+    "stopEditing": "(suppressNavigateAfterEdit: boolean) => void",
+    "eGridCell": "HTMLElement",
+    "parseValue": "(value: any) => any",
+    "formatValue": "(value: any) => any"
+},
+"ITextCellEditorParams": {
+    "useFormatter": "boolean",
+    "value": "any",
+    "keyPress": "number | null",
+    "charPress": "string | null",
+    "column": "Column",
+    "colDef": "ColDef",
+    "node": "RowNode",
+    "data": "any",
+    "rowIndex": "number",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "cellStartedEdit": "boolean",
+    "context": "any",
+    "$scope": "any",
+    "onKeyDown": "(event: KeyboardEvent) => void",
+    "stopEditing": "(suppressNavigateAfterEdit: boolean) => void",
+    "eGridCell": "HTMLElement",
+    "parseValue": "(value: any) => any",
+    "formatValue": "(value: any) => any"
+},
+"GroupCellRendererParams": {
+    "pinned": "string",
+    "fullWidth": "boolean",
+    "suppressPadding": "boolean",
+    "suppressDoubleClickExpand": "boolean",
+    "suppressEnterExpand": "boolean",
+    "footerValueGetter": "any",
+    "suppressCount": "boolean",
+    "checkbox": "any",
+    "rowDrag?": "boolean",
+    "innerRenderer?": "{ new(): ICellRendererComp } | ICellRendererFunc | string",
+    "innerRendererFramework?": "any",
+    "innerRendererParams?": "any",
+    "scope": "any",
+    "padding": "number",
+    "fullWidth?": "boolean",
+    "pinned?": "string | null",
+    "value": "any",
+    "valueFormatted": "any",
+    "data": "any",
+    "node": "RowNode",
+    "colDef?": "ColDef",
+    "column?": "Column",
+    "$scope": "any",
+    "rowIndex": "number",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "context": "any",
+    "eGridCell": "HTMLElement",
+    "eParentOfValue": "HTMLElement",
+    "getValue?": "() => any",
+    "setValue?": "(value: any) => void",
+    "formatValue?": "(value: any) => any",
+    "refreshCell?": "() => void",
+    "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels: number, value: string) => void"
+},
+"ICellRendererParams": {
+    "fullWidth?": "boolean",
+    "pinned?": "string | null",
+    "value": "any",
+    "valueFormatted": "any",
+    "data": "any",
+    "node": "RowNode",
+    "colDef?": "ColDef",
+    "column?": "Column",
+    "$scope": "any",
+    "rowIndex": "number",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "context": "any",
+    "eGridCell": "HTMLElement",
+    "eParentOfValue": "HTMLElement",
+    "getValue?": "() => any",
+    "setValue?": "(value: any) => void",
+    "formatValue?": "(value: any) => any",
+    "refreshCell?": "() => void",
+    "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels: number, value: string) => void"
+},
+"ISetFilterCellRendererParams": {
+    "value": "any",
+    "valueFormatted": "any",
+    "api": "GridApi",
+    "context": "any"
+},
+"ICellRenderer": {
+    "refresh(params: ICellRendererParams)": "boolean"
+},
+"ICellRendererComp": {
+    "refresh(params: ICellRendererParams)": "boolean",
+    "getGui()": "HTMLElement",
+    "destroy?()": "void",
+    "afterGuiAttached?(params: IAfterGuiAttachedParams)": "void",
+    "init?(params: T)": "AgPromise<void> | void"
+},
+"ICellRendererFunc": {
+    "(params: any)": "HTMLElement | string"
+},
+"ILoadingCellRendererParams": {
+    "fullWidth?": "boolean",
+    "pinned?": "string | null",
+    "value": "any",
+    "valueFormatted": "any",
+    "data": "any",
+    "node": "RowNode",
+    "colDef?": "ColDef",
+    "column?": "Column",
+    "$scope": "any",
+    "rowIndex": "number",
+    "api": "GridApi",
+    "columnApi": "ColumnApi",
+    "context": "any",
+    "eGridCell": "HTMLElement",
+    "eParentOfValue": "HTMLElement",
+    "getValue?": "() => any",
+    "setValue?": "(value: any) => void",
+    "formatValue?": "(value: any) => any",
+    "refreshCell?": "() => void",
+    "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels: number, value: string) => void"
+},
+"ILoadingCellRenderer": {
+    "refresh(params: ICellRendererParams)": "boolean"
+},
+"IDate": {
+    "getDate()": "Date | null",
+    "setDate(date: Date | null)": "void",
+    "setInputPlaceholder?(placeholder: string)": "void",
+    "setInputAriaLabel?(placeholder: string)": "void"
+},
+"IDateParams": {
+    "onDateChanged": "() => void",
+    "filterParams": "IDateFilterParams"
+},
+"IDateComp": {
+    "getGui()": "HTMLElement",
+    "destroy?()": "void",
+    "afterGuiAttached?(params: IAfterGuiAttachedParams)": "void",
+    "init?(params: T)": "AgPromise<void> | void",
+    "getDate()": "Date | null",
+    "setDate(date: Date | null)": "void",
+    "setInputPlaceholder?(placeholder: string)": "void",
+    "setInputAriaLabel?(placeholder: string)": "void"
+},
+"PositionableOptions": {
+    "popup?": "boolean",
+    "minWidth?": "number | null",
+    "width?": "number | string | null",
+    "minHeight?": "number | null",
+    "height?": "number | string | null",
+    "centered?": "boolean | null",
+    "calculateTopBuffer?": "() => number",
+    "forcePopupParentAsOffsetParent?": "boolean",
+    "x?": "number | null",
+    "y?": "number | null"
+},
+"MappedResizer": {
+    "element": "HTMLElement",
+    "dragSource?": "DragListenerParams"
+},
+"ILoadingOverlayParams": {
+    "api": "GridApi"
+},
+"ILoadingOverlayComp": {
+    "getGui()": "HTMLElement",
+    "destroy?()": "void",
+    "afterGuiAttached?(params: IAfterGuiAttachedParams)": "void",
+    "init?(params: T)": "AgPromise<void> | void"
+},
+"INoRowsOverlayParams": {
+    "api": "GridApi"
+},
+"INoRowsOverlayComp": {
+    "getGui()": "HTMLElement",
+    "destroy?()": "void",
+    "afterGuiAttached?(params: IAfterGuiAttachedParams)": "void",
+    "init?(params: T)": "AgPromise<void> | void"
+},
+"CacheItem": {
+    "rowNode": "RowNode",
+    "lastAccessedTime": "number",
+    "center?": "ICellRendererComp",
+    "left?": "ICellRendererComp",
+    "right?": "ICellRendererComp"
+},
+"RowCssClassCalculatorParams": {
+    "rowNode": "RowNode",
+    "rowIsEven": "boolean",
+    "rowLevel": "number",
+    "fullWidthRow?": "boolean",
+    "firstRowOnPage": "boolean",
+    "lastRowOnPage": "boolean",
+    "printLayout": "boolean",
+    "expandable": "boolean",
+    "pinned?": "string | null",
+    "extraCssClass?": "string",
+    "rowFocused?": "boolean",
+    "fadeRowIn?": "boolean",
+    "scope?": "any"
+},
+"IRowComp": {
+    "setDomOrder(domOrder: boolean)": "void",
+    "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
+    "setCellCtrls(cellCtrls: CellCtrl[])": "void",
+    "showFullWidth(compDetails: UserCompDetails)": "void",
+    "getFullWidthRowComp()": "ICellRendererComp | null | undefined",
+    "setAriaExpanded(on: boolean)": "void",
+    "destroyCells(cellComps: CellComp[])": "void",
+    "setAriaSelected(selected: boolean | undefined)": "void",
+    "setHeight(height: string)": "void",
+    "destroy()": "void",
+    "setTop(top: string)": "void",
+    "setTransform(transform: string)": "void",
+    "setRowIndex(rowIndex: string)": "void",
+    "setAriaRowIndex(rowIndex: number)": "void",
+    "setRowId(rowId: string)": "void",
+    "setRowBusinessKey(businessKey: string)": "void",
+    "setTabIndex(tabIndex: number)": "void",
+    "setAriaLabel(label: string | undefined)": "void",
+    "setUserStyles(styles: any)": "void",
+    "setRole(role: string)": "void"
+},
+"RowGui": {
+    "rowComp": "IRowComp",
+    "element": "HTMLElement",
+    "pinned": "string | null"
+},
+"CellCtrlListAndMap": {
+    "list": "CellCtrl[]",
+    "map": "[key: string]: CellCtrl"
+},
+"IRowDragItem": {
+    "defaultTextValue": "string",
+    "rowNode?": "RowNode",
+    "rowNodes?": "RowNode[]",
+    "columns?": "Column[]",
+    "visibleState?": "[key: string]: boolean"
+},
+"RowCtrlMap": {
+    "[key: string]": "RowCtrl"
+},
+"RefreshViewParams": {
+    "recycleRows?": "boolean",
+    "animate?": "boolean",
+    "suppressKeepFocus?": "boolean",
+    "onlyBody?": "boolean",
+    "newData?": "boolean",
+    "newPage?": "boolean"
+},
+"ITooltipParams": {
+    "location": "string",
+    "api?": "GridApi",
+    "columnApi?": "ColumnApi",
+    "context?": "any",
+    "colDef?": "ColDef | ColGroupDef | null",
+    "column?": "Column | ColumnGroup",
+    "value?": "any",
+    "valueFormatted?": "any",
+    "rowIndex?": "number",
+    "node?": "RowNode",
+    "data?": "any"
+},
+"ITooltipComp": {
+    "getGui()": "HTMLElement",
+    "destroy?()": "void",
+    "afterGuiAttached?(params: IAfterGuiAttachedParams)": "void",
+    "init?(params: T)": "AgPromise<void> | void"
+},
+"LoadCompleteEvent": {
+    "success": "boolean",
+    "block": "RowNodeBlock",
+    "type": "string"
+},
+"LoadSuccessParams": {
+    "rowData": "any[]",
+    "rowCount?": "number",
+    "storeInfo?": "any"
+},
+"SortOption": {
+    "sort": "string",
+    "column": "Column"
+},
+"SortedRowNode": {
+    "currentPos": "number",
+    "rowNode": "RowNode"
+},
+"SortModelItem": {
+    "colId": "string",
+    "sort": "string"
+},
+"LayoutView": {
+    "updateLayoutClasses(layoutClass: string, params: UpdateLayoutClassesParams)": "void"
+},
+"UpdateLayoutClassesParams": {
+    "autoHeight": "boolean",
+    "normal": "boolean",
+    "print": "boolean"
+},
+"CellValueChange": {
+    "rowPinned": "string | null",
+    "rowIndex": "number",
+    "columnId": "string",
+    "oldValue": "any",
+    "newValue": "any"
+},
+"LastFocusedCell": {
+    "rowPinned?": "string | null",
+    "rowIndex": "number",
+    "columnId": "string"
+},
+"PathItem": {
+    "rowNode": "RowNode",
+    "children": "PathItem[] | null"
+},
+"IInputField": {
+    "value?": "any",
+    "width?": "number",
+    "label?": "HTMLElement | string",
+    "labelWidth?": "number | 'flex'",
+    "labelSeparator?": "string",
+    "labelAlignment?": "LabelAlignment"
+},
+"IAgLabel": {
+    "label?": "HTMLElement | string",
+    "labelWidth?": "number | 'flex'",
+    "labelSeparator?": "string",
+    "labelAlignment?": "LabelAlignment"
+},
+"ChangeEvent": {
+    "selected": "boolean",
+    "type": "string"
+},
+"ColorPickerConfig": {
+    "color": "string",
+    "label?": "HTMLElement | string",
+    "labelWidth?": "number | 'flex'",
+    "labelSeparator?": "string",
+    "labelAlignment?": "LabelAlignment"
+},
+"DialogOptions": {
+    "eWrapper?": "HTMLElement",
+    "modal?": "boolean",
+    "movable?": "boolean",
+    "alwaysOnTop?": "boolean",
+    "maximizable?": "boolean",
+    "component?": "Component",
+    "hideTitleBar?": "boolean | null",
+    "closable?": "boolean | null",
+    "resizable?": "boolean | ResizableStructure",
+    "title?": "string | null",
+    "cssIdentifier?": "string | null"
+},
+"AgGroupComponentParams": {
+    "title?": "string",
+    "enabled?": "boolean",
+    "suppressEnabledCheckbox?": "boolean",
+    "suppressOpenCloseIcons?": "boolean",
+    "cssIdentifier?": "string",
+    "items?": "GroupItem[]",
+    "alignItems?": "Align",
+    "direction?": "Direction"
+},
+"IInputRange": {
+    "min?": "number",
+    "max?": "number",
+    "step?": "number",
+    "value?": "any",
+    "width?": "number",
+    "label?": "HTMLElement | string",
+    "labelWidth?": "number | 'flex'",
+    "labelSeparator?": "string",
+    "labelAlignment?": "LabelAlignment"
+},
+"ITextInputField": {
+    "allowedCharPattern?": "string",
+    "value?": "any",
+    "width?": "number",
+    "label?": "HTMLElement | string",
+    "labelWidth?": "number | 'flex'",
+    "labelSeparator?": "string",
+    "labelAlignment?": "LabelAlignment"
+},
+"ListOption": {
+    "value": "string",
+    "text?": "string"
+},
+"PanelOptions": {
+    "component?": "Component",
+    "hideTitleBar?": "boolean | null",
+    "closable?": "boolean | null",
+    "resizable?": "boolean | ResizableStructure",
+    "title?": "string | null",
+    "cssIdentifier?": "string | null",
+    "popup?": "boolean",
+    "minWidth?": "number | null",
+    "width?": "number | string | null",
+    "minHeight?": "number | null",
+    "height?": "number | string | null",
+    "centered?": "boolean | null",
+    "calculateTopBuffer?": "() => number",
+    "forcePopupParentAsOffsetParent?": "boolean",
+    "x?": "number | null",
+    "y?": "number | null"
+},
+"VisibleChangedEvent": {
+    "visible": "boolean",
+    "type": "string"
+},
+"ManagedFocusCallbacks": {
+    "shouldStopEventPropagation?": "(e: KeyboardEvent) => boolean",
+    "onTabKeyDown?": "(e: KeyboardEvent) => void",
+    "handleKeyDown?": "(e: KeyboardEvent) => void",
+    "onFocusIn?": "(e: FocusEvent) => void",
+    "onFocusOut?": "(e: FocusEvent) => void"
+},
+"PopupEventParams": {
+    "originalMouseEvent?": "MouseEvent | Touch | null",
+    "mouseEvent?": "MouseEvent",
+    "touchEvent?": "TouchEvent",
+    "keyboardEvent?": "KeyboardEvent"
+},
+"AgPopup": {
+    "element": "HTMLElement",
+    "wrapper": "HTMLElement",
+    "hideFunc": "() => void",
+    "stopAnchoringPromise": "AgPromise<Function>",
+    "instanceId": "number"
+},
+"Rect": {
+    "top": "number",
+    "left": "number",
+    "right": "number",
+    "bottom": "number"
+},
+"AddPopupParams": {
+    "modal?": "boolean",
+    "eChild": "any",
+    "closeOnEsc?": "boolean",
+    "closedCallback?": "(e: MouseEvent | TouchEvent | KeyboardEvent) => void",
+    "click?": "MouseEvent | Touch | null",
+    "alwaysOnTop?": "boolean",
+    "afterGuiAttached?": "(params: IAfterGuiAttachedParams) => void",
+    "positionCallback?": "() => void",
+    "anchorToElement?": "HTMLElement"
+},
+"AddPopupResult": {
+    "hideFunc": "() => void",
+    "stopAnchoringPromise": "AgPromise<Function>"
+},
+"ITabGuard": {
+    "setTabIndex(tabIndex: string)": "void"
+},
+"TooltipParentComp": {
+    "getTooltipParams()": "ITooltipParams",
+    "getGui()": "HTMLElement"
+},
+"TapEvent": {
+    "touchStart": "Touch",
+    "type": "string"
+},
+"LongTapEvent": {
+    "touchStart": "Touch",
+    "touchEvent": "TouchEvent",
+    "type": "string"
+},
+"VirtualListModel": {
+    "getRowCount()": "number",
+    "getRow(index: number)": "any",
+    "isRowSelected?(index: number)": "boolean | undefined"
+}
 }
