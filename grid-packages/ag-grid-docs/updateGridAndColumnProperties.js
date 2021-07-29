@@ -1,5 +1,8 @@
 const fs = require('fs');
 const ts = require('typescript');
+const glob = require('glob');
+const gulp = require('gulp');
+const prettier = require('gulp-prettier');
 
 // satisfy ag-grid HTMLElement dependencies
 HTMLElement = typeof HTMLElement === 'undefined' ? function () {
@@ -15,17 +18,11 @@ MouseEvent = typeof MouseEvent === 'undefined' ? function () {
 
 
 function findInterfaceNode(interfaceName, parsedSyntaxTreeResults) {
-
     const interfaceNode = findInterfaceInNodeTree(parsedSyntaxTreeResults, interfaceName);
     if (!interfaceNode) {
         throw `Unable to locate interface '${interfaceName}' in AST parsed from: ${sourceFile}.`
     }
     return interfaceNode;
-}
-
-function parseFile(sourceFile) {
-    const src = fs.readFileSync(sourceFile, 'utf8');
-    return ts.createSourceFile('tempFile.ts', src, ts.ScriptTarget.Latest, true);
 }
 
 function findInterfaceInNodeTree(node, interfaceName) {
@@ -44,14 +41,14 @@ function findInterfaceInNodeTree(node, interfaceName) {
     return interfaceNode;
 }
 
-function findAllInterfaceInNodesTree(node) {
+function findAllInterfacesInNodesTree(node) {
     const kind = ts.SyntaxKind[node.kind];
     let interfaces = [];
     if (kind == 'InterfaceDeclaration') {
         interfaces.push(node);
     }
     ts.forEachChild(node, n => {
-        const nodeInterfaces = findAllInterfaceInNodesTree(n);
+        const nodeInterfaces = findAllInterfacesInNodesTree(n);
         if (nodeInterfaces.length > 0) {
             interfaces = [...interfaces, ...nodeInterfaces];
         }
@@ -60,180 +57,199 @@ function findAllInterfaceInNodesTree(node) {
     return interfaces;
 }
 
-function getParamType(typeNode) {
-    const kind = ts.SyntaxKind[typeNode.kind];
+/*
+ * Convert AST node to string representation used to record type in a JSON file
+ * @param {*} node 
+ * @param {*} paramNameOnly - At the top level we only want the parameter name to be returned. But there are some interfaces
+ * that are recursively defined, i.e HardCodedSize and so we need to return the param and type for the inner case.
+ */
+function getParamType(node, paramNameOnly = false) {
+    const kind = ts.SyntaxKind[node.kind];
     switch (kind) {
         case 'ArrayType':
-            return getParamType(typeNode.elementType) + '[]';
+            return getParamType(node.elementType) + '[]';
         case 'UnionType':
-            return typeNode.types.map(t => getParamType(t)).join(' | ');
+            return node.types.map(t => getParamType(t)).join(' | ');
         case 'ParenthesizedType':
-            return `(${getParamType(typeNode.type)})`;
+            return `(${getParamType(node.type)})`;
         case 'TypeLiteral':
-            return typeNode.members.map(t => getParamType(t)).join(' ');
+            return node.members.map(t => getParamType(t)).join(' ');
         case 'TypeReference':
             {
                 let typeParams = undefined;
-                if (typeNode.typeArguments) {
-                    typeParams = `<${typeNode.typeArguments.map(t => getParamType(t)).join(', ')}>`;
+                if (node.typeArguments) {
+                    typeParams = `<${node.typeArguments.map(t => getParamType(t)).join(', ')}>`;
                 }
-                return `${getParamType(typeNode.typeName)}${typeParams || ''}`;
+                return `${getParamType(node.typeName)}${typeParams || ''}`;
             }
         case 'IndexSignature':
-            return `{ [${typeNode.parameters.map(t => getParamType(t)).join(' ')}] : ${getParamType(typeNode.type)} }`;
+            return `[${node.parameters.map(t => getParamType(t)).join(' ')}]${paramNameOnly ? '' : `: ${getParamType(node.type)}`}`;  
         case 'Parameter':
-            return `${getParamType(typeNode.name)}: ${getParamType(typeNode.type)}`;
+            return `${getParamType(node.name)}: ${getParamType(node.type)}`;
         case 'PropertySignature':
-            return `{ ${getParamType(typeNode.name)} : ${getParamType(typeNode.type)} }`;
+            return `${getParamType(node.name)}${node.questionToken ? '?' : ''}`; //: ${getParamType(typeNode.type)}
         case 'FunctionType':
         case 'CallSignature':
-            return `(${typeNode.parameters.map(t => getParamType(t)).join(', ')}) => ${getParamType(typeNode.type)}`;
+            return `(${node.parameters.map(t => getParamType(t)).join(', ')})${paramNameOnly ? '' : ` => ${getParamType(node.type)}`}`;
         case 'Identifier':
-            return typeNode.escapedText;
+            return node.escapedText;
+        case 'ExpressionWithTypeArguments':
+            return getParamType(node.expression);
+        case 'LiteralType':
+            return `'${node.literal.text}'`;
+        case 'ConstructSignature':
+            return `{ new(${node.parameters.map(t => getParamType(t)).join(', ')}): ${getParamType(node.type)} }`
+        case 'ConstructorType':
+            return `new(${node.parameters.map(t => getParamType(t)).join(', ')}) => ${getParamType(node.type)}`
+        case 'TupleType':
+            return `[${node.elementTypes.map(t => getParamType(t)).join(', ')}]`;
+        case 'MethodSignature':
+            return `${getParamType(node.name)}${node.questionToken ? '?' : ''}(${node.parameters.map(t => getParamType(t)).join(', ')})`
+        case 'MappedType':
+            return `{${getParamType(node.typeParameter)}${node.questionToken ? '?' : ''}${paramNameOnly ? '' : `: ${getParamType(node.type)}`}}`
+        case 'TypeParameter':
+            return `[${getParamType(node.name)} in ${getParamType(node.constraint)}]`
         default:
-            if (typeNode.typeName) {
-                return typeNode.typeName.escapedText
+            if (node.typeName) {
+                return node.typeName.escapedText
             }
             if (kind.endsWith('Keyword')) {
                 return kind.replace('Keyword', '').toLowerCase();
             };
-            return kind;
+
+            throw new Error(`We encountered a SyntaxKind of ${kind} that we do not know how to parse. Please add support to the switch statement.`)
     }
 }
 
 
-function extractTypesFromNode(node, iLookups, publicEventLookup) {
-    let result = {};
+function getTsDoc(node) {
+    return node.jsDoc && node.jsDoc.length > 0 && node.jsDoc[node.jsDoc.length - 1].comment || ' ';
+};
+
+function getArgTypes(parameters) {
+    const args = {};
+    (parameters || []).forEach(p => {
+        args[p.name.escapedText] = getParamType(p.type);
+    });
+    return args;
+}
+
+function extractTypesFromNode(node) {
+    let nodeMembers = {};
     const kind = ts.SyntaxKind[node.kind];
     const name = node && node.name && node.name.escapedText;
     let returnType = node && node.type && node.type.getFullText().trim();
-    const getTsDoc = (node) => {
-        return node.jsDoc && node.jsDoc.length > 0 && node.jsDoc[node.jsDoc.length - 1].comment || ' ';
-    };
+
     if (kind == 'PropertySignature') {
 
-        const interface = iLookups[returnType];
-        if (interface && interface.meta && interface.meta.isCallSignature) {
-            const params = { ...interface };
-            delete params.meta;
-            result[name] = {
-                description: getTsDoc(node),
-                type: { arguments: params, returnType: interface.meta.returnType }
-            };
-        } else if (node.type && node.type.parameters) {
-            const params = {};
-            node.type.parameters.forEach(p => {
-                const paramType = getParamType(p.type)
-                params[p.name.escapedText] = paramType;
-            });
+        if (node.type && node.type.parameters) {
+            // sendToClipboard?: (params: SendToClipboardParams) => void;
+            const methodArgs = getArgTypes(node.type.parameters);
             returnType = getParamType(node.type.type);
-            result[name] = {
+            nodeMembers[name] = {
                 description: getTsDoc(node),
-                type: { arguments: params, returnType }
+                type: { arguments: methodArgs, returnType }
             };
         } else {
-            result[name] = { description: getTsDoc(node), type: { returnType } };
+            // i.e colWidth?: number; 
+            nodeMembers[name] = { description: getTsDoc(node), type: { returnType } };
         }
     } else if (kind == 'MethodSignature') {
-
-        if (node.parameters && node.parameters.length > 0) {
-            const params = {};
-            node.parameters.forEach(p => {
-                const paramType = getParamType(p.type)
-                params[p.name.escapedText] = paramType;
-            });
-
-            result[name] = {
-                description: getTsDoc(node),
-                type: { arguments: params, returnType }
-            };
-        } else {
-            result[name] = { description: getTsDoc(node), type: { arguments: {}, returnType } };
-        }
-    };
-    ts.forEachChild(node, n => {
-        result = { ...result, ...extractTypesFromNode(n, iLookups, publicEventLookup) }
-    });
-
-    return result;
+        // i.e isExternalFilterPresent?(): boolean;
+        // i.e doesExternalFilterPass?(node: RowNode): boolean;        
+        const methodArgs = getArgTypes(node.parameters);
+        nodeMembers[name] = {
+            description: getTsDoc(node),
+            type: { arguments: methodArgs, returnType }
+        };
+    }
+    return nodeMembers;
 }
 
+function parseFile(sourceFile) {
+    const src = fs.readFileSync(sourceFile, 'utf8');
+    return ts.createSourceFile('tempFile.ts', src, ts.ScriptTarget.Latest, true);
+}
 
-function getGridPropertiesAndEventsJs() {
+function getInterfaces() {
+    const interfaceFiles = glob.sync('../../community-modules/core/src/ts/**/*.ts');
 
-    const { ComponentUtil } = require("@ag-grid-community/core");
+    let interfaces = {};
+    let extensions = {};
+    interfaceFiles.forEach(file => {
+        const parsedFile = parseFile(file);
+        interfaces = { ...interfaces, ...extractInterfaces(parsedFile, extensions) };
+    });
+
+    // Now that we have recorded all the interfaces we can apply the extension properties.
+    // For example CellPosition extends RowPosition and we want the json to add the RowPosition properties to the CellPosition
+    Object.entries(extensions).forEach(([i, exts]) => {
+        const extendedInterface = exts.map(e => interfaces[e]).reduce((acc, c) => ({ ...acc, ...c }), interfaces[i]);
+        interfaces[i] = extendedInterface;
+    })
+    return interfaces;
+}
+
+function getGridOptions() {
     const gridOpsFile = "../../community-modules/core/src/ts/entities/gridOptions.ts";
     const gridOptionsNode = findInterfaceNode('GridOptions', parseFile(gridOpsFile));
 
-    const interfaceFiles = [gridOpsFile,
-        "../../community-modules/core/src/ts/interfaces/exportParams.ts",
-        "../../community-modules/core/src/ts/headerRendering/header/headerPosition.ts"]
-    let iLookups = {};
-    interfaceFiles.forEach(file => {
-        const parsedFile = parseFile(file);
-        iLookups = { ...iLookups, ...extractInterfaces(parsedFile) };
+    let gridOpsMembers = {};
+    ts.forEachChild(gridOptionsNode, n => {
+        gridOpsMembers = { ...gridOpsMembers, ...extractTypesFromNode(n) }
     });
-    fs.writeFileSync('./documentation/doc-pages/grid-api/interfaces.json', JSON.stringify(iLookups));
 
-
-    // Apply @Output formatting to public events that are present in this lookup
-    const publicEventLookup = {};
-    ComponentUtil.PUBLIC_EVENTS.forEach(e => publicEventLookup[ComponentUtil.getCallbackForEvent(e)] = true);
-
-    return extractTypesFromNode(gridOptionsNode, iLookups, publicEventLookup);
+    return gridOpsMembers;
 }
 
+function writeFormattedFile(dir, filename, data) {
+    const fullPath = dir + filename;
+    fs.writeFileSync(fullPath, JSON.stringify(data));
+    gulp.src(fullPath)
+        .pipe(prettier({}))
+        .pipe(gulp.dest(dir))
+}
 
-const updateGridProperties = (resolve, getGridPropertiesAndEvents) => {
-    const gridPropertiesAndEvents = getGridPropertiesAndEvents();
-    fs.writeFileSync('./documentation/doc-pages/grid-api/grid-options.json',
-        JSON.stringify(gridPropertiesAndEvents));
+function extractInterfaces(parsedSyntaxTreeResults, extension) {
+    const interfaces = findAllInterfacesInNodesTree(parsedSyntaxTreeResults);
+    const iLookup = {};
+    interfaces.forEach(node => {
+        const name = node && node.name && node.name.escapedText;
+        let members = {};
 
+        if (node.heritageClauses && node.heritageClauses) {
+            node.heritageClauses.forEach(h => {
+                if (h.types && h.types.length > 0) {
+                    extension[name] = h.types.map(h => getParamType(h));
+                }
+            });
+        }
+
+        if (node.members && node.members.length > 0) {
+            node.members.map(p => {
+                const name = getParamType(p, true);
+                const type = getParamType(p.type);
+                members[name] = type;
+            });
+        }
+        iLookup[name] = members;
+    });
+    return iLookup;
+}
+
+const generateMetaFiles = (resolve, getGridOptions) => {
+    writeFormattedFile('./documentation/doc-pages/grid-api/', 'grid-options.json', getGridOptions());
+    writeFormattedFile('./documentation/doc-pages/grid-api/', 'interfaces.json', getInterfaces());
 };
 
 
 module.exports = {
     updatePropertiesBuilt: (cb) => {
-        const gridPromise = new Promise(resolve => updateGridProperties(resolve, getGridPropertiesAndEventsJs));
+        const gridPromise = new Promise(resolve => generateMetaFiles(resolve, getGridOptions));
 
         if (cb) {
             Promise.all([gridPromise]).then(() => cb());
         }
     }
 };
-function extractInterfaces(parsedSyntaxTreeResults) {
-    const interfaces = findAllInterfaceInNodesTree(parsedSyntaxTreeResults);
-    const iLookup = {};
-    interfaces.forEach(node => {
-        const name = node && node.name && node.name.escapedText;
-        let pp = {};
-        let isCallSignature = false;
-        if (node.members && node.members.length > 0) {            
-            node.members.map(p => {
-                isCallSignature = p.kind == 161;
-
-                if (isCallSignature) {
-                    p.parameters.forEach(p => pp[getParamType(p.name)] = getParamType(p.type))
-                    pp.meta = { returnType: getParamType(p.type), isCallSignature };
-                } else {
-
-                    const name = p.name
-                        ? getParamType(p.name)
-                        : p.parameters
-                            ? `(${p.parameters.map(t => getParamType(t)).join(', ')})`
-                            : getParamType(p);
-
-                    // const type = p.parameters && !p.name
-                    //     ? `(${p.parameters.map(t => getParamType(t)).join(', ')}): ${getParamType(p.type)}`
-                    //     : getParamType(p.type)
-                    const type = getParamType(p.type)
-                    pp[name] = type;
-                }
-
-            });
-        }
-        iLookup[name] = pp;
-    });
-    return iLookup;
-}
 
