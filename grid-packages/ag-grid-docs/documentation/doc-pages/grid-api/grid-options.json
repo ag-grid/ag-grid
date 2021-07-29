@@ -1194,7 +1194,7 @@
 "detailCellRenderer": {
     "description": " ",
     "type": {
-        "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string"
+    "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string"
     }
 },
 "detailCellRendererFramework": {
@@ -1332,7 +1332,7 @@
 "groupRowRenderer": {
     "description": " ",
     "type": {
-        "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string"
+    "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string"
     }
 },
 "groupRowRendererFramework": {
@@ -1350,7 +1350,7 @@
 "groupRowInnerRenderer": {
     "description": " ",
     "type": {
-        "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string"
+    "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string"
     }
 },
 "groupRowInnerRendererFramework": {
@@ -1564,7 +1564,7 @@
 "fullWidthCellRenderer": {
     "description": " ",
     "type": {
-        "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string"
+    "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string"
     }
 },
 "fullWidthCellRendererFramework": {
@@ -1730,7 +1730,7 @@
 }
 },
 "postSort": {
-"description": " ",
+    "description": " ",
     "type": {
         "arguments": {
             "nodes": "RowNode[]"
@@ -2411,7 +2411,7 @@
         "event": "GridSizeChangedEvent"
     },
     "returnType": "void"
-}
+    }
 },
 "api": {
     "description": " ",

@@ -1,15 +1,15 @@
 {
-"ApplyColumnStateParams": {
+  "ApplyColumnStateParams": {
     "state?": "ColumnState[]",
     "applyOrder?": "boolean",
     "defaultState?": "ColumnState"
-},
-"ColumnResizeSet": {
+  },
+  "ColumnResizeSet": {
     "columns": "Column[]",
     "ratios": "number[]",
     "width": "number"
-},
-"ColumnState": {
+  },
+  "ColumnState": {
     "colId?": "string",
     "hide?": "boolean | null",
     "aggFunc?": "string | IAggFunc | null",
@@ -22,52 +22,45 @@
     "flex?": "number | null",
     "sort?": "string | null",
     "sortIndex?": "number | null"
-},
-"ComponentMetadata": {
+  },
+  "ComponentMetadata": {
     "mandatoryMethodList": "string[]",
     "optionalMethodList": "string[]",
     "functionAdapter?": "(callback: any) => { new(): IComponent<any> }"
-},
-"ComponentType": {
-    "propertyName": "string",
-    "isCellRenderer()": "boolean"
-},
-"FrameworkComponentWrapper": {
+  },
+  "ComponentType": { "propertyName": "string", "isCellRenderer()": "boolean" },
+  "FrameworkComponentWrapper": {
     "wrap(frameworkComponent: { new(): any } | null, methodList: string[], optionalMethodList: string[], componentType: ComponentType, componentName: string | null)": "A"
-},
-"WrappableInterface": {
+  },
+  "WrappableInterface": {
     "hasMethod(name: string)": "boolean",
     "callMethod(name: string, args: IArguments)": "void",
     "addMethod(name: string, callback: Function)": "void"
-},
-"UserCompDetails": {
+  },
+  "UserCompDetails": {
     "componentClass": "any",
     "componentFromFramework": "boolean",
     "params": "any"
-},
-"RegisteredComponent": {
+  },
+  "RegisteredComponent": {
     "component": "any",
     "componentFromFramework": "boolean"
-},
-"DeprecatedComponentName": {
+  },
+  "DeprecatedComponentName": {
     "propertyHolder": "string",
     "newComponentName": "string"
-},
-"ContextParams": {
+  },
+  "ContextParams": {
     "providedBeanInstances": "any",
     "beanClasses": "any[]",
     "debug": "boolean"
-},
-"ComponentMeta": {
+  },
+  "ComponentMeta": {
     "componentClass": "new() => Object",
     "componentName": "string"
-},
-"BeanWrapper": {
-    "bean": "any",
-    "beanInstance": "any",
-    "beanName": "any"
-},
-"ReadyParams": {
+  },
+  "BeanWrapper": { "bean": "any", "beanInstance": "any", "beanName": "any" },
+  "ReadyParams": {
     "gridCtrl": "GridCtrl",
     "gridBodyCtrl": "GridBodyCtrl",
     "centerRowContainerCtrl": "RowContainerCtrl",
@@ -81,14 +74,14 @@
     "topRightRowContainerCtrl": "RowContainerCtrl",
     "fakeHScrollCtrl": "FakeHScrollCtrl",
     "headerRootComp": "HeaderRootComp"
-},
-"DragItem": {
+  },
+  "DragItem": {
     "rowNode?": "RowNode",
     "rowNodes?": "RowNode[]",
     "columns?": "Column[]",
     "visibleState?": "[key: string]: boolean"
-},
-"DragSource": {
+  },
+  "DragSource": {
     "type": "DragSourceType",
     "eElement": "HTMLElement",
     "getDragItem": "() => DragItem",
@@ -99,8 +92,8 @@
     "dragStartPixels?": "number",
     "onDragStarted?": "() => void",
     "onDragStopped?": "() => void"
-},
-"DropTarget": {
+  },
+  "DropTarget": {
     "getContainer()": "HTMLElement",
     "getSecondaryContainers?()": "HTMLElement[][]",
     "getIconName?()": "string | null",
@@ -110,8 +103,8 @@
     "onDragging?(params: DraggingEvent)": "void",
     "onDragStop?(params: DraggingEvent)": "void",
     "external?": "boolean"
-},
-"DraggingEvent": {
+  },
+  "DraggingEvent": {
     "event": "MouseEvent",
     "x": "number",
     "y": "number",
@@ -123,27 +116,27 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "dropZoneTarget": "HTMLElement"
-},
-"DragSourceAndListener": {
+  },
+  "DragSourceAndListener": {
     "dragSource": "DragListenerParams",
     "mouseDownListener": "(mouseEvent: MouseEvent) => void",
     "touchEnabled": "boolean",
     "touchStartListener": "((touchEvent: TouchEvent) => void) | null"
-},
-"DragListenerParams": {
+  },
+  "DragListenerParams": {
     "dragStartPixels?": "number",
     "eElement": "HTMLElement",
     "skipMouseEvent?": "(mouseEvent: MouseEvent) => boolean",
     "onDragStart": "(mouseEvent: MouseEvent | Touch) => void",
     "onDragStop": "(mouseEvent: MouseEvent | Touch) => void",
     "onDragging": "(mouseEvent: MouseEvent | Touch) => void"
-},
-"CellPosition": {
+  },
+  "CellPosition": {
     "column": "Column",
     "rowIndex": "number",
     "rowPinned": "string | null"
-},
-"AbstractColDef": {
+  },
+  "AbstractColDef": {
     "headerName?": "string",
     "columnGroupShow?": "string",
     "headerClass?": "string | string[] | ((params: HeaderClassParams) => string | string[])",
@@ -157,8 +150,8 @@
     "tooltipComponentFramework?": "any",
     "tooltipComponentParams?": "any",
     "suppressHeaderKeyboardEvent?": "(params: SuppressHeaderKeyboardEventParams) => boolean"
-},
-"ColGroupDef": {
+  },
+  "ColGroupDef": {
     "children": "(ColDef | ColGroupDef)[]",
     "groupId?": "string",
     "openByDefault?": "boolean",
@@ -179,11 +172,9 @@
     "tooltipComponentFramework?": "any",
     "tooltipComponentParams?": "any",
     "suppressHeaderKeyboardEvent?": "(params: SuppressHeaderKeyboardEventParams) => boolean"
-},
-"IAggFunc": {
-    "(params: IAggFuncParams)": "any"
-},
-"IAggFuncParams": {
+  },
+  "IAggFunc": { "(params: IAggFuncParams)": "any" },
+  "IAggFuncParams": {
     "values": "any[]",
     "column": "Column",
     "colDef": "ColDef",
@@ -192,22 +183,22 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "context": "any"
-},
-"HeaderClassParams": {
+  },
+  "HeaderClassParams": {
     "api": "GridApi",
     "colDef": "AbstractColDef",
     "column?": "Column | null",
     "columnGroup?": "ColumnGroup | OriginalColumnGroup | null",
     "context?": "any"
-},
-"ToolPanelClassParams": {
+  },
+  "ToolPanelClassParams": {
     "api": "GridApi",
     "colDef": "AbstractColDef",
     "column?": "Column | null",
     "columnGroup?": "ColumnGroup | OriginalColumnGroup | null",
     "context?": "any"
-},
-"ColDef": {
+  },
+  "ColDef": {
     "colId?": "string",
     "sort?": "string | null",
     "initialSort?": "string",
@@ -336,8 +327,8 @@
     "floatingFilterComponent?": "string | { new(): IFloatingFilterComp }",
     "floatingFilterComponentParams?": "any",
     "floatingFilterComponentFramework?": "any"
-},
-"ColumnFunctionCallbackParams": {
+  },
+  "ColumnFunctionCallbackParams": {
     "node": "RowNode",
     "data": "any",
     "column": "Column",
@@ -345,8 +336,8 @@
     "context": "any",
     "api": "GridApi",
     "columnApi": "ColumnApi"
-},
-"CheckboxSelectionCallbackParams": {
+  },
+  "CheckboxSelectionCallbackParams": {
     "node": "RowNode",
     "data": "any",
     "column": "Column",
@@ -354,8 +345,8 @@
     "context": "any",
     "api": "GridApi",
     "columnApi": "ColumnApi"
-},
-"RowDragCallbackParams": {
+  },
+  "RowDragCallbackParams": {
     "node": "RowNode",
     "data": "any",
     "column": "Column",
@@ -363,8 +354,8 @@
     "context": "any",
     "api": "GridApi",
     "columnApi": "ColumnApi"
-},
-"DndSourceCallbackParams": {
+  },
+  "DndSourceCallbackParams": {
     "node": "RowNode",
     "data": "any",
     "column": "Column",
@@ -372,8 +363,8 @@
     "context": "any",
     "api": "GridApi",
     "columnApi": "ColumnApi"
-},
-"EditableCallbackParams": {
+  },
+  "EditableCallbackParams": {
     "node": "RowNode",
     "data": "any",
     "column": "Column",
@@ -381,8 +372,8 @@
     "context": "any",
     "api": "GridApi",
     "columnApi": "ColumnApi"
-},
-"SuppressPasteCallbackParams": {
+  },
+  "SuppressPasteCallbackParams": {
     "node": "RowNode",
     "data": "any",
     "column": "Column",
@@ -390,8 +381,8 @@
     "context": "any",
     "api": "GridApi",
     "columnApi": "ColumnApi"
-},
-"SuppressNavigableCallbackParams": {
+  },
+  "SuppressNavigableCallbackParams": {
     "node": "RowNode",
     "data": "any",
     "column": "Column",
@@ -399,17 +390,15 @@
     "context": "any",
     "api": "GridApi",
     "columnApi": "ColumnApi"
-},
-"HeaderCheckboxSelectionCallbackParams": {
+  },
+  "HeaderCheckboxSelectionCallbackParams": {
     "column": "Column",
     "colDef": "ColDef",
     "api": "GridApi",
     "columnApi": "ColumnApi"
-},
-"IsColumnFunc": {
-    "(params: IsColumnFuncParams)": "boolean"
-},
-"IsColumnFuncParams": {
+  },
+  "IsColumnFunc": { "(params: IsColumnFuncParams)": "boolean" },
+  "IsColumnFuncParams": {
     "node": "RowNode",
     "data": "any",
     "column": "Column",
@@ -417,23 +406,23 @@
     "context": "any",
     "api": "GridApi",
     "columnApi": "ColumnApi"
-},
-"GetQuickFilterTextParams": {
+  },
+  "GetQuickFilterTextParams": {
     "value": "any",
     "node": "RowNode",
     "data": "any",
     "column": "Column",
     "colDef": "ColDef",
     "context": "any"
-},
-"ColumnsMenuParams": {
+  },
+  "ColumnsMenuParams": {
     "suppressSyncLayoutWithGrid?": "boolean",
     "suppressColumnFilter?": "boolean",
     "suppressColumnSelectAll?": "boolean",
     "suppressColumnExpandAll?": "boolean",
     "contractColumnSelection?": "boolean"
-},
-"BaseColDefParams": {
+  },
+  "BaseColDefParams": {
     "node": "RowNode | null",
     "data": "any",
     "colDef": "ColDef",
@@ -441,8 +430,8 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "context": "any"
-},
-"BaseWithValueColDefParams": {
+  },
+  "BaseWithValueColDefParams": {
     "value": "any",
     "node": "RowNode | null",
     "data": "any",
@@ -451,8 +440,8 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "context": "any"
-},
-"ValueGetterParams": {
+  },
+  "ValueGetterParams": {
     "getValue": "(field: string) => any",
     "node": "RowNode | null",
     "data": "any",
@@ -461,8 +450,8 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "context": "any"
-},
-"NewValueParams": {
+  },
+  "NewValueParams": {
     "oldValue": "any",
     "newValue": "any",
     "node": "RowNode | null",
@@ -472,8 +461,8 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "context": "any"
-},
-"ValueSetterParams": {
+  },
+  "ValueSetterParams": {
     "oldValue": "any",
     "newValue": "any",
     "node": "RowNode | null",
@@ -483,8 +472,8 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "context": "any"
-},
-"ValueParserParams": {
+  },
+  "ValueParserParams": {
     "oldValue": "any",
     "newValue": "any",
     "node": "RowNode | null",
@@ -494,8 +483,8 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "context": "any"
-},
-"ValueFormatterParams": {
+  },
+  "ValueFormatterParams": {
     "value": "any",
     "node": "RowNode | null",
     "data": "any",
@@ -504,8 +493,8 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "context": "any"
-},
-"ColSpanParams": {
+  },
+  "ColSpanParams": {
     "node": "RowNode | null",
     "data": "any",
     "colDef": "ColDef",
@@ -513,8 +502,8 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "context": "any"
-},
-"RowSpanParams": {
+  },
+  "RowSpanParams": {
     "node": "RowNode | null",
     "data": "any",
     "colDef": "ColDef",
@@ -522,8 +511,8 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "context": "any"
-},
-"SuppressKeyboardEventParams": {
+  },
+  "SuppressKeyboardEventParams": {
     "event": "KeyboardEvent",
     "editing": "boolean",
     "node": "RowNode",
@@ -533,8 +522,8 @@
     "context": "any",
     "api": "GridApi",
     "columnApi": "ColumnApi"
-},
-"SuppressHeaderKeyboardEventParams": {
+  },
+  "SuppressHeaderKeyboardEventParams": {
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "column": "Column | ColumnGroup",
@@ -542,8 +531,8 @@
     "context": "any",
     "headerRowIndex": "number",
     "event": "KeyboardEvent"
-},
-"CellClassParams": {
+  },
+  "CellClassParams": {
     "colDef": "ColDef",
     "value": "any",
     "data": "any",
@@ -553,29 +542,29 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "context": "any"
-},
-"SelectorFunc": {
+  },
+  "SelectorFunc": {
     "(params: ICellRendererParams | ICellEditorParams)": "CellRendererSelectorResult | CellEditorSelectorResult"
-},
-"CellRendererSelectorFunc": {
+  },
+  "CellRendererSelectorFunc": {
     "(params: ICellRendererParams)": "CellRendererSelectorResult",
     "(params: ICellRendererParams | ICellEditorParams)": "CellRendererSelectorResult | CellEditorSelectorResult"
-},
-"CellEditorSelectorFunc": {
+  },
+  "CellEditorSelectorFunc": {
     "(params: ICellEditorParams)": "CellEditorSelectorResult",
     "(params: ICellRendererParams | ICellEditorParams)": "CellRendererSelectorResult | CellEditorSelectorResult"
-},
-"CellRendererSelectorResult": {
+  },
+  "CellRendererSelectorResult": {
     "component?": "{ new(): ICellRendererComp } | ICellRendererFunc | string",
     "frameworkComponent?": "any",
     "params?": "any"
-},
-"CellEditorSelectorResult": {
+  },
+  "CellEditorSelectorResult": {
     "component?": "{ new(): ICellEditorComp } | string",
     "frameworkComponent?": "any",
     "params?": "any"
-},
-"ColumnGroupChild": {
+  },
+  "ColumnGroupChild": {
     "getUniqueId()": "string",
     "getActualWidth()": "number",
     "getMinWidth()": "number | null | undefined",
@@ -591,8 +580,8 @@
     "getPinned()": "string | null | undefined",
     "addEventListener(eventType: string, listener: EventListener, async: boolean, options: AddEventListenerOptions)": "void",
     "removeEventListener(eventType: string, listener: EventListener, async: boolean, options: AddEventListenerOptions)": "void"
-},
-"GridOptions": {
+  },
+  "GridOptions": {
     "suppressBrowserResizeObserver?": "boolean",
     "rowDragManaged?": "boolean",
     "suppressRowDrag?": "boolean",
@@ -944,8 +933,8 @@
     "onGridSizeChanged?(event: GridSizeChangedEvent)": "void",
     "api?": "GridApi | null",
     "columnApi?": "ColumnApi | null"
-},
-"FillOperationParams": {
+  },
+  "FillOperationParams": {
     "event": "MouseEvent",
     "values": "any[]",
     "initialValues": "any[]",
@@ -957,31 +946,21 @@
     "direction": "string",
     "column?": "Column",
     "rowNode?": "RowNode"
-},
-"GetDataPath": {
-    "(data: any)": "string[]"
-},
-"IsServerSideGroup": {
-    "(dataItem: any)": "boolean"
-},
-"IsApplyServerSideTransaction": {
+  },
+  "GetDataPath": { "(data: any)": "string[]" },
+  "IsServerSideGroup": { "(dataItem: any)": "boolean" },
+  "IsApplyServerSideTransaction": {
     "(params: IsApplyServerSideTransactionParams)": "boolean"
-},
-"IsApplyServerSideTransactionParams": {
+  },
+  "IsApplyServerSideTransactionParams": {
     "transaction": "ServerSideTransaction",
     "parentNode": "RowNode",
     "storeInfo": "any"
-},
-"GetServerSideGroupKey": {
-    "(dataItem: any)": "string"
-},
-"IsRowMaster": {
-    "(dataItem: any)": "boolean"
-},
-"IsRowSelectable": {
-    "(node: RowNode)": "boolean"
-},
-"RowClassParams": {
+  },
+  "GetServerSideGroupKey": { "(dataItem: any)": "string" },
+  "IsRowMaster": { "(dataItem: any)": "boolean" },
+  "IsRowSelectable": { "(node: RowNode)": "boolean" },
+  "RowClassParams": {
     "data": "any",
     "node": "RowNode",
     "rowIndex": "number",
@@ -989,26 +968,24 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "context": "any"
-},
-"RowHeightParams": {
+  },
+  "RowHeightParams": {
     "data": "any",
     "node": "RowNode",
     "api": "GridApi",
     "context": "any"
-},
-"SendToClipboardParams": {
-    "data": "string"
-},
-"ProcessChartOptionsParams": {
+  },
+  "SendToClipboardParams": { "data": "string" },
+  "ProcessChartOptionsParams": {
     "type": "ChartType",
     "options": "ChartOptions<any>"
-},
-"ProcessChartParams": {
+  },
+  "ProcessChartParams": {
     "type": "ChartType",
     "options": "AgChartOptions",
     "chart": "any"
-},
-"GetContextMenuItemsParams": {
+  },
+  "GetContextMenuItemsParams": {
     "defaultItems": "string[] | undefined",
     "column": "Column",
     "node": "RowNode",
@@ -1016,19 +993,19 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "context": "any"
-},
-"GetContextMenuItems": {
+  },
+  "GetContextMenuItems": {
     "(params: GetContextMenuItemsParams)": "(string | MenuItemDef)[]"
-},
-"GetChartToolbarItemsParams": {
+  },
+  "GetChartToolbarItemsParams": {
     "defaultItems?": "ChartMenuOptions[]",
     "api": "GridApi",
     "columnApi": "ColumnApi"
-},
-"GetChartToolbarItems": {
+  },
+  "GetChartToolbarItems": {
     "(params: GetChartToolbarItemsParams)": "ChartMenuOptions[]"
-},
-"MenuItemDef": {
+  },
+  "MenuItemDef": {
     "name": "string",
     "disabled?": "boolean",
     "shortcut?": "string",
@@ -1038,21 +1015,19 @@
     "subMenu?": "(MenuItemDef | string)[] | IComponent<any>",
     "cssClasses?": "string[]",
     "tooltip?": "string"
-},
-"GetMainMenuItemsParams": {
+  },
+  "GetMainMenuItemsParams": {
     "column": "Column",
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "context": "any",
     "defaultItems": "string[]"
-},
-"GetMainMenuItems": {
+  },
+  "GetMainMenuItems": {
     "(params: GetMainMenuItemsParams)": "(string | MenuItemDef)[]"
-},
-"GetRowNodeIdFunc": {
-    "(data: any)": "string"
-},
-"ProcessRowParams": {
+  },
+  "GetRowNodeIdFunc": { "(data: any)": "string" },
+  "ProcessRowParams": {
     "eRow": "HTMLElement",
     "ePinnedLeftRow": "HTMLElement",
     "ePinnedRightRow": "HTMLElement",
@@ -1062,111 +1037,101 @@
     "columnApi": "ColumnApi",
     "addRenderedRowListener": "(eventType: string, listener: Function) => void",
     "context": "any"
-},
-"NavigateToNextHeaderParams": {
+  },
+  "NavigateToNextHeaderParams": {
     "key": "string",
     "previousHeaderPosition": "HeaderPosition | null",
     "nextHeaderPosition": "HeaderPosition | null",
     "event": "KeyboardEvent",
     "headerRowCount": "number"
-},
-"TabToNextHeaderParams": {
+  },
+  "TabToNextHeaderParams": {
     "backwards": "boolean",
     "previousHeaderPosition": "HeaderPosition | null",
     "nextHeaderPosition": "HeaderPosition | null",
     "headerRowCount": "number"
-},
-"NavigateToNextCellParams": {
+  },
+  "NavigateToNextCellParams": {
     "key": "number",
     "previousCellPosition": "CellPosition",
     "nextCellPosition": "CellPosition | null",
     "event": "KeyboardEvent | null"
-},
-"TabToNextCellParams": {
+  },
+  "TabToNextCellParams": {
     "backwards": "boolean",
     "editing": "boolean",
     "previousCellPosition": "CellPosition",
     "nextCellPosition": "CellPosition"
-},
-"PostProcessPopupParams": {
+  },
+  "PostProcessPopupParams": {
     "column?": "Column | null",
     "rowNode?": "RowNode",
     "ePopup": "HTMLElement",
     "type": "string",
     "eventSource?": "HTMLElement | null",
     "mouseEvent?": "MouseEvent | Touch | null"
-},
-"PaginationNumberFormatterParams": {
-    "value": "number"
-},
-"ProcessDataFromClipboardParams": {
-    "data": "string[][]"
-},
-"ChartRef": {
+  },
+  "PaginationNumberFormatterParams": { "value": "number" },
+  "ProcessDataFromClipboardParams": { "data": "string[][]" },
+  "ChartRef": {
     "chartId": "string",
     "chart": "any",
     "chartElement": "HTMLElement",
     "destroyChart": "() => void"
-},
-"ServerSideStoreParams": {
+  },
+  "ServerSideStoreParams": {
     "storeType?": "ServerSideStoreType",
     "maxBlocksInCache?": "number",
     "cacheBlockSize?": "number"
-},
-"GetServerSideStoreParamsParams": {
+  },
+  "GetServerSideStoreParamsParams": {
     "level": "number",
     "parentRowNode?": "RowNode",
     "rowGroupColumns": "Column[]",
     "pivotColumns": "Column[]",
     "pivotMode": "boolean"
-},
-"IsServerSideGroupOpenByDefaultParams": {
+  },
+  "IsServerSideGroupOpenByDefaultParams": {
     "data": "any",
     "rowNode": "RowNode"
-},
-"IsGroupOpenByDefaultParams": {
+  },
+  "IsGroupOpenByDefaultParams": {
     "rowNode": "RowNode",
     "rowGroupColumn": "Column",
     "level": "number",
     "field": "string",
     "key": "string"
-},
-"OriginalColumnGroupChild": {
+  },
+  "OriginalColumnGroupChild": {
     "isVisible()": "boolean",
     "getColumnGroupShow()": "string | undefined",
     "getId()": "string",
     "setOriginalParent(originalParent: OriginalColumnGroup | null)": "void"
-},
-"SetSelectedParams": {
+  },
+  "SetSelectedParams": {
     "newValue": "boolean",
     "clearSelection?": "boolean",
     "suppressFinishActions?": "boolean",
     "rangeSelect?": "boolean",
     "groupSelectsFiltered?": "boolean"
-},
-"RowNodeEvent": {
-    "node": "RowNode",
-    "type": "string"
-},
-"DataChangedEvent": {
+  },
+  "RowNodeEvent": { "node": "RowNode", "type": "string" },
+  "DataChangedEvent": {
     "oldData": "any",
     "newData": "any",
     "update": "boolean",
     "node": "RowNode",
     "type": "string"
-},
-"CellChangedEvent": {
+  },
+  "CellChangedEvent": {
     "column": "Column",
     "newValue": "any",
     "oldValue": "any",
     "node": "RowNode",
     "type": "string"
-},
-"RowPosition": {
-    "rowIndex": "number",
-    "rowPinned": "string | null"
-},
-"ToolPanelDef": {
+  },
+  "RowPosition": { "rowIndex": "number", "rowPinned": "string | null" },
+  "ToolPanelDef": {
     "id": "string",
     "labelDefault": "string",
     "labelKey": "string",
@@ -1177,182 +1142,178 @@
     "toolPanel?": "{ new(): IToolPanelComp } | string",
     "toolPanelFramework?": "any",
     "toolPanelParams?": "any"
-},
-"SideBarDef": {
+  },
+  "SideBarDef": {
     "toolPanels?": "(ToolPanelDef | string)[]",
     "defaultToolPanel?": "string",
     "hiddenByDefault?": "boolean",
     "position?": "'left' | 'right'"
-},
-"HardCodedSize": {
-    "[key: string]": "{[key in SASS_PROPERTIES]?: number}"
-},
-"ModelUpdatedEvent": {
+  },
+  "HardCodedSize": { "[key: string]": "{[key in SASS_PROPERTIES]?: number}" },
+  "ModelUpdatedEvent": {
     "animate": "boolean | undefined",
     "keepRenderedRows": "boolean | undefined",
     "newData": "boolean | undefined",
     "newPage": "boolean",
     "api": "GridApi",
     "columnApi": "ColumnApi"
-},
-"PaginationChangedEvent": {
+  },
+  "PaginationChangedEvent": {
     "animate?": "boolean",
     "keepRenderedRows?": "boolean",
     "newData?": "boolean",
     "newPage": "boolean",
     "api": "GridApi",
     "columnApi": "ColumnApi"
-},
-"AgEvent": {
-    "type": "string"
-},
-"AgGridEvent": {
+  },
+  "AgEvent": { "type": "string" },
+  "AgGridEvent": {
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"ToolPanelVisibleChangedEvent": {
+  },
+  "ToolPanelVisibleChangedEvent": {
     "source": "string | undefined",
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"ColumnPivotModeChangedEvent": {
+  },
+  "ColumnPivotModeChangedEvent": {
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"VirtualColumnsChangedEvent": {
+  },
+  "VirtualColumnsChangedEvent": {
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"ColumnEverythingChangedEvent": {
+  },
+  "ColumnEverythingChangedEvent": {
     "source": "string",
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"NewColumnsLoadedEvent": {
+  },
+  "NewColumnsLoadedEvent": {
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"GridColumnsChangedEvent": {
+  },
+  "GridColumnsChangedEvent": {
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"DisplayedColumnsChangedEvent": {
+  },
+  "DisplayedColumnsChangedEvent": {
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"RowDataChangedEvent": {
+  },
+  "RowDataChangedEvent": {
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"RowDataUpdatedEvent": {
+  },
+  "RowDataUpdatedEvent": {
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"PinnedRowDataChangedEvent": {
+  },
+  "PinnedRowDataChangedEvent": {
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"SelectionChangedEvent": {
+  },
+  "SelectionChangedEvent": {
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"FilterChangedEvent": {
+  },
+  "FilterChangedEvent": {
     "afterDataChange?": "boolean",
     "afterFloatingFilter?": "boolean",
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"FilterModifiedEvent": {
+  },
+  "FilterModifiedEvent": {
     "filterInstance": "IFilterComp",
     "column": "Column",
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"FilterOpenedEvent": {
+  },
+  "FilterOpenedEvent": {
     "column": "Column | OriginalColumnGroup",
     "source": "FilterRequestSource",
     "eGui": "HTMLElement",
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"SortChangedEvent": {
+  },
+  "SortChangedEvent": {
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"GridReadyEvent": {
+  },
+  "GridReadyEvent": {
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"DisplayedColumnsWidthChangedEvent": {
+  },
+  "DisplayedColumnsWidthChangedEvent": {
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"ColumnHoverChangedEvent": {
+  },
+  "ColumnHoverChangedEvent": {
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"BodyHeightChangedEvent": {
+  },
+  "BodyHeightChangedEvent": {
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"ComponentStateChangedEvent": {
+  },
+  "ComponentStateChangedEvent": {
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"DragEvent": {
+  },
+  "DragEvent": {
     "type": "string",
     "target": "HTMLElement",
     "api": "GridApi",
     "columnApi": "ColumnApi"
-},
-"DragStartedEvent": {
+  },
+  "DragStartedEvent": {
     "type": "string",
     "target": "HTMLElement",
     "api": "GridApi",
     "columnApi": "ColumnApi"
-},
-"DragStoppedEvent": {
+  },
+  "DragStoppedEvent": {
     "type": "string",
     "target": "HTMLElement",
     "api": "GridApi",
     "columnApi": "ColumnApi"
-},
-"CheckboxChangedEvent": {
+  },
+  "CheckboxChangedEvent": {
     "id": "string",
     "name": "string",
     "selected?": "boolean",
     "previousValue": "boolean | undefined",
     "type": "string"
-},
-"GridSizeChangedEvent": {
+  },
+  "GridSizeChangedEvent": {
     "clientWidth": "number",
     "clientHeight": "number",
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"RowDragEvent": {
+  },
+  "RowDragEvent": {
     "node": "RowNode",
     "nodes": "RowNode[]",
     "y": "number",
@@ -1363,8 +1324,8 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"RowDragEnterEvent": {
+  },
+  "RowDragEnterEvent": {
     "node": "RowNode",
     "nodes": "RowNode[]",
     "y": "number",
@@ -1375,8 +1336,8 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"RowDragEndEvent": {
+  },
+  "RowDragEndEvent": {
     "node": "RowNode",
     "nodes": "RowNode[]",
     "y": "number",
@@ -1387,8 +1348,8 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"RowDragMoveEvent": {
+  },
+  "RowDragMoveEvent": {
     "node": "RowNode",
     "nodes": "RowNode[]",
     "y": "number",
@@ -1399,8 +1360,8 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"RowDragLeaveEvent": {
+  },
+  "RowDragLeaveEvent": {
     "node": "RowNode",
     "nodes": "RowNode[]",
     "y": "number",
@@ -1411,68 +1372,68 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"PasteStartEvent": {
+  },
+  "PasteStartEvent": {
     "source": "string",
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"PasteEndEvent": {
+  },
+  "PasteEndEvent": {
     "source": "string",
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"FillStartEvent": {
+  },
+  "FillStartEvent": {
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"FillEndEvent": {
+  },
+  "FillEndEvent": {
     "initialRange": "CellRange",
     "finalRange": "CellRange",
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"ViewportChangedEvent": {
+  },
+  "ViewportChangedEvent": {
     "firstRow": "number",
     "lastRow": "number",
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"FirstDataRenderedEvent": {
+  },
+  "FirstDataRenderedEvent": {
     "firstRow": "number",
     "lastRow": "number",
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"RangeSelectionChangedEvent": {
+  },
+  "RangeSelectionChangedEvent": {
     "id?": "string",
     "finished": "boolean",
     "started": "boolean",
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"ChartCreated": {
+  },
+  "ChartCreated": {
     "chartId": "string",
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"ChartRangeSelectionChanged": {
+  },
+  "ChartRangeSelectionChanged": {
     "id": "string",
     "chartId": "string",
     "cellRange": "CellRangeParams",
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"ChartOptionsChanged": {
+  },
+  "ChartOptionsChanged": {
     "chartId": "string",
     "chartType": "ChartType",
     "chartThemeName": "string",
@@ -1480,45 +1441,45 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"ChartDestroyed": {
+  },
+  "ChartDestroyed": {
     "chartId": "string",
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"ColumnGroupOpenedEvent": {
+  },
+  "ColumnGroupOpenedEvent": {
     "columnGroup": "OriginalColumnGroup",
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"ItemsAddedEvent": {
+  },
+  "ItemsAddedEvent": {
     "items": "RowNode[]",
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"BodyScrollEvent": {
+  },
+  "BodyScrollEvent": {
     "direction": "ScrollDirection",
     "left": "number",
     "top": "number",
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"FlashCellsEvent": {
+  },
+  "FlashCellsEvent": {
     "cells": "any",
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"PaginationPixelOffsetChangedEvent": {
+  },
+  "PaginationPixelOffsetChangedEvent": {
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"CellFocusedEvent": {
+  },
+  "CellFocusedEvent": {
     "rowIndex": "number | null",
     "column": "Column | null",
     "rowPinned": "string | null",
@@ -1528,22 +1489,22 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"ExpandCollapseAllEvent": {
+  },
+  "ExpandCollapseAllEvent": {
     "source": "string",
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"ColumnEvent": {
+  },
+  "ColumnEvent": {
     "column": "Column | null",
     "columns": "Column[] | null",
     "source": "ColumnEventType",
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"ColumnResizedEvent": {
+  },
+  "ColumnResizedEvent": {
     "finished": "boolean",
     "flexColumns": "Column[] | null",
     "column": "Column | null",
@@ -1552,32 +1513,32 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"ColumnPivotChangedEvent": {
+  },
+  "ColumnPivotChangedEvent": {
     "column": "Column | null",
     "columns": "Column[] | null",
     "source": "ColumnEventType",
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"ColumnRowGroupChangedEvent": {
+  },
+  "ColumnRowGroupChangedEvent": {
     "column": "Column | null",
     "columns": "Column[] | null",
     "source": "ColumnEventType",
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"ColumnValueChangedEvent": {
+  },
+  "ColumnValueChangedEvent": {
     "column": "Column | null",
     "columns": "Column[] | null",
     "source": "ColumnEventType",
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"ColumnMovedEvent": {
+  },
+  "ColumnMovedEvent": {
     "toIndex?": "number",
     "column": "Column | null",
     "columns": "Column[] | null",
@@ -1585,8 +1546,8 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"ColumnVisibleEvent": {
+  },
+  "ColumnVisibleEvent": {
     "visible?": "boolean",
     "column": "Column | null",
     "columns": "Column[] | null",
@@ -1594,8 +1555,8 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"ColumnPinnedEvent": {
+  },
+  "ColumnPinnedEvent": {
     "pinned": "string | null",
     "column": "Column | null",
     "columns": "Column[] | null",
@@ -1603,8 +1564,8 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"RowEvent": {
+  },
+  "RowEvent": {
     "node": "RowNode",
     "data": "any",
     "rowIndex": "number | null",
@@ -1614,8 +1575,8 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"RowGroupOpenedEvent": {
+  },
+  "RowGroupOpenedEvent": {
     "expanded": "boolean",
     "node": "RowNode",
     "data": "any",
@@ -1626,8 +1587,8 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"RowValueChangedEvent": {
+  },
+  "RowValueChangedEvent": {
     "node": "RowNode",
     "data": "any",
     "rowIndex": "number | null",
@@ -1637,8 +1598,8 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"RowSelectedEvent": {
+  },
+  "RowSelectedEvent": {
     "node": "RowNode",
     "data": "any",
     "rowIndex": "number | null",
@@ -1648,8 +1609,8 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"VirtualRowRemovedEvent": {
+  },
+  "VirtualRowRemovedEvent": {
     "node": "RowNode",
     "data": "any",
     "rowIndex": "number | null",
@@ -1659,8 +1620,8 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"RowClickedEvent": {
+  },
+  "RowClickedEvent": {
     "node": "RowNode",
     "data": "any",
     "rowIndex": "number | null",
@@ -1670,8 +1631,8 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"RowDoubleClickedEvent": {
+  },
+  "RowDoubleClickedEvent": {
     "node": "RowNode",
     "data": "any",
     "rowIndex": "number | null",
@@ -1681,8 +1642,8 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"RowEditingStartedEvent": {
+  },
+  "RowEditingStartedEvent": {
     "node": "RowNode",
     "data": "any",
     "rowIndex": "number | null",
@@ -1692,8 +1653,8 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"RowEditingStoppedEvent": {
+  },
+  "RowEditingStoppedEvent": {
     "node": "RowNode",
     "data": "any",
     "rowIndex": "number | null",
@@ -1703,8 +1664,8 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"FullWidthCellKeyDownEvent": {
+  },
+  "FullWidthCellKeyDownEvent": {
     "node": "RowNode",
     "data": "any",
     "rowIndex": "number | null",
@@ -1714,8 +1675,8 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"FullWidthCellKeyPressEvent": {
+  },
+  "FullWidthCellKeyPressEvent": {
     "node": "RowNode",
     "data": "any",
     "rowIndex": "number | null",
@@ -1725,8 +1686,8 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"CellEvent": {
+  },
+  "CellEvent": {
     "column": "Column",
     "colDef": "ColDef",
     "value": "any",
@@ -1739,8 +1700,8 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"CellKeyDownEvent": {
+  },
+  "CellKeyDownEvent": {
     "column": "Column",
     "colDef": "ColDef",
     "value": "any",
@@ -1753,8 +1714,8 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"CellKeyPressEvent": {
+  },
+  "CellKeyPressEvent": {
     "column": "Column",
     "colDef": "ColDef",
     "value": "any",
@@ -1767,8 +1728,8 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"CellClickedEvent": {
+  },
+  "CellClickedEvent": {
     "column": "Column",
     "colDef": "ColDef",
     "value": "any",
@@ -1781,8 +1742,8 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"CellMouseDownEvent": {
+  },
+  "CellMouseDownEvent": {
     "column": "Column",
     "colDef": "ColDef",
     "value": "any",
@@ -1795,8 +1756,8 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"CellDoubleClickedEvent": {
+  },
+  "CellDoubleClickedEvent": {
     "column": "Column",
     "colDef": "ColDef",
     "value": "any",
@@ -1809,8 +1770,8 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"CellMouseOverEvent": {
+  },
+  "CellMouseOverEvent": {
     "column": "Column",
     "colDef": "ColDef",
     "value": "any",
@@ -1823,8 +1784,8 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"CellMouseOutEvent": {
+  },
+  "CellMouseOutEvent": {
     "column": "Column",
     "colDef": "ColDef",
     "value": "any",
@@ -1837,8 +1798,8 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"CellContextMenuEvent": {
+  },
+  "CellContextMenuEvent": {
     "column": "Column",
     "colDef": "ColDef",
     "value": "any",
@@ -1851,8 +1812,8 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"CellEditingStartedEvent": {
+  },
+  "CellEditingStartedEvent": {
     "column": "Column",
     "colDef": "ColDef",
     "value": "any",
@@ -1865,8 +1826,8 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"CellEditingStoppedEvent": {
+  },
+  "CellEditingStoppedEvent": {
     "oldValue": "any",
     "newValue": "any",
     "column": "Column",
@@ -1881,8 +1842,8 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"CellValueChangedEvent": {
+  },
+  "CellValueChangedEvent": {
     "oldValue": "any",
     "newValue": "any",
     "source": "string | undefined",
@@ -1898,65 +1859,55 @@
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"AsyncTransactionsFlushed": {
+  },
+  "AsyncTransactionsFlushed": {
     "results": "(RowNodeTransaction | ServerSideTransactionResult)[]",
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"ColumnRequestEvent": {
+  },
+  "ColumnRequestEvent": {
     "columns": "Column[]",
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"ColumnRowGroupChangeRequestEvent": {
+  },
+  "ColumnRowGroupChangeRequestEvent": {
     "columns": "Column[]",
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"ColumnPivotChangeRequestEvent": {
+  },
+  "ColumnPivotChangeRequestEvent": {
     "columns": "Column[]",
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"ColumnValueChangeRequestEvent": {
+  },
+  "ColumnValueChangeRequestEvent": {
     "columns": "Column[]",
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"ColumnAggFuncChangeRequestEvent": {
+  },
+  "ColumnAggFuncChangeRequestEvent": {
     "aggFunc": "any",
     "columns": "Column[]",
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"ScrollVisibilityChangedEvent": {
+  },
+  "ScrollVisibilityChangedEvent": {
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "type": "string"
-},
-"StoreUpdatedEvent": {
-    "type": "string"
-},
-"LeftPinnedWidthChangedEvent": {
-    "type": "string"
-},
-"RightPinnedWidthChangedEvent": {
-    "type": "string"
-},
-"RowContainerHeightChanged": {
-    "type": "string"
-},
-"DisplayedRowsChangedEvent": {
-    "type": "string"
-},
-"IFilterLocaleText": {
+  },
+  "StoreUpdatedEvent": { "type": "string" },
+  "LeftPinnedWidthChangedEvent": { "type": "string" },
+  "RightPinnedWidthChangedEvent": { "type": "string" },
+  "RowContainerHeightChanged": { "type": "string" },
+  "DisplayedRowsChangedEvent": { "type": "string" },
+  "IFilterLocaleText": {
     "applyFilter": "string",
     "clearFilter": "string",
     "resetFilter": "string",
@@ -1979,21 +1930,21 @@
     "andCondition": "string",
     "orCondition": "string",
     "dateFormatOoo": "string"
-},
-"IFilterTitleLocaleText": {
+  },
+  "IFilterTitleLocaleText": {
     "textFilter": "string",
     "numberFilter": "string",
     "dateFilter": "string",
     "setFilter": "string"
-},
-"FilterWrapper": {
+  },
+  "FilterWrapper": {
     "compiledElement": "any",
     "column": "Column",
     "filterPromise": "AgPromise<IFilterComp> | null",
     "scope": "any",
     "guiPromise": "AgPromise<HTMLElement | null>"
-},
-"IFloatingFilterParams": {
+  },
+  "IFloatingFilterParams": {
     "column": "Column",
     "filterParams": "IFilterParams",
     "currentParentModel": "() => any",
@@ -2002,27 +1953,27 @@
     "suppressFilterButton": "boolean",
     "api": "GridApi",
     "onFloatingFilterChanged": "(change: any) => boolean"
-},
-"IFloatingFilter": {
+  },
+  "IFloatingFilter": {
     "onParentModelChanged(parentModel: any, filterChangedEvent: FilterChangedEvent | null)": "void"
-},
-"IFloatingFilterComp": {
+  },
+  "IFloatingFilterComp": {
     "onParentModelChanged(parentModel: any, filterChangedEvent: FilterChangedEvent | null)": "void",
     "getGui()": "HTMLElement",
     "destroy?()": "void",
     "afterGuiAttached?(params: IAfterGuiAttachedParams)": "void",
     "init?(params: T)": "AgPromise<void> | void"
-},
-"BaseFloatingFilterChange": {
+  },
+  "BaseFloatingFilterChange": {
     "model": "ProvidedFilterModel",
     "apply": "boolean"
-},
-"DateFilterModel": {
+  },
+  "DateFilterModel": {
     "dateFrom": "string | null",
     "dateTo": "string | null",
     "type?": "string | null"
-},
-"IDateFilterParams": {
+  },
+  "IDateFilterParams": {
     "comparator?": "IDateComparatorFunc",
     "browserDatePicker?": "boolean",
     "minValidYear?": "number",
@@ -2032,16 +1983,16 @@
     "includeBlanksInGreaterThan?": "boolean",
     "includeBlanksInRange?": "boolean",
     "nullComparator?": "NullComparator"
-},
-"IDateComparatorFunc": {
+  },
+  "IDateComparatorFunc": {
     "(filterLocalDateAtMidnight: Date, cellValue: any)": "number"
-},
-"NumberFilterModel": {
+  },
+  "NumberFilterModel": {
     "filter?": "number | null",
     "filterTo?": "number | null",
     "type?": "string | null"
-},
-"INumberFilterParams": {
+  },
+  "INumberFilterParams": {
     "allowedCharPattern?": "string",
     "numberParser?": "(text: string | null) => number",
     "inRangeInclusive?": "boolean",
@@ -2050,8 +2001,8 @@
     "includeBlanksInGreaterThan?": "boolean",
     "includeBlanksInRange?": "boolean",
     "nullComparator?": "NullComparator"
-},
-"IProvidedFilterParams": {
+  },
+  "IProvidedFilterParams": {
     "clearButton?": "boolean",
     "resetButton?": "boolean",
     "applyButton?": "boolean",
@@ -2068,13 +2019,13 @@
     "valueGetter": "(rowNode: RowNode) => any",
     "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
     "context": "any"
-},
-"NullComparator": {
+  },
+  "NullComparator": {
     "equals?": "boolean",
     "lessThan?": "boolean",
     "greaterThan?": "boolean"
-},
-"IScalarFilterParams": {
+  },
+  "IScalarFilterParams": {
     "inRangeInclusive?": "boolean",
     "includeBlanksInEquals?": "boolean",
     "includeBlanksInLessThan?": "boolean",
@@ -2086,11 +2037,9 @@
     "defaultJoinOperator?": "JoinOperator",
     "suppressAndOrCondition?": "boolean",
     "alwaysShowBothConditions?": "boolean"
-},
-"Comparator": {
-    "(left: T, right: T)": "number"
-},
-"ISimpleFilterParams": {
+  },
+  "Comparator": { "(left: T, right: T)": "number" },
+  "ISimpleFilterParams": {
     "filterOptions?": "(IFilterOptionDef | string)[]",
     "defaultOption?": "string",
     "defaultJoinOperator?": "JoinOperator",
@@ -2112,29 +2061,24 @@
     "valueGetter": "(rowNode: RowNode) => any",
     "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
     "context": "any"
-},
-"ISimpleFilterModel": {
-    "type?": "string | null",
-    "filterType?": "string"
-},
-"ICombinedSimpleModel": {
+  },
+  "ISimpleFilterModel": { "type?": "string | null", "filterType?": "string" },
+  "ICombinedSimpleModel": {
     "operator": "JoinOperator",
     "condition1": "M",
     "condition2": "M",
     "filterType?": "string"
-},
-"TextFilterModel": {
+  },
+  "TextFilterModel": {
     "filter?": "string | null",
     "type?": "string | null",
     "filterType?": "string"
-},
-"TextComparator": {
+  },
+  "TextComparator": {
     "(filter: string | null | undefined, gridValue: any, filterText: string | null)": "boolean"
-},
-"TextFormatter": {
-    "(from: string | null)": "string | null"
-},
-"ITextFilterParams": {
+  },
+  "TextFormatter": { "(from: string | null)": "string | null" },
+  "ITextFilterParams": {
     "textCustomComparator?": "TextComparator",
     "caseSensitive?": "boolean",
     "textFormatter?": "(from: string) => string",
@@ -2160,50 +2104,48 @@
     "valueGetter": "(rowNode: RowNode) => any",
     "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
     "context": "any"
-},
-"GridParams": {
+  },
+  "GridParams": {
     "globalEventListener?": "Function",
     "$scope?": "any",
     "$compile?": "any",
     "frameworkOverrides?": "IFrameworkOverrides",
     "providedBeanInstances?": "[key: string]: any",
     "modules?": "Module[]"
-},
-"StartEditingCellParams": {
+  },
+  "StartEditingCellParams": {
     "rowIndex": "number",
     "colKey": "string | Column",
     "rowPinned?": "string",
     "keyPress?": "number",
     "charPress?": "string"
-},
-"GetCellsParams": {
+  },
+  "GetCellsParams": {
     "rowNodes?": "RowNode[]",
     "columns?": "(string | Column)[]"
-},
-"RefreshCellsParams": {
+  },
+  "RefreshCellsParams": {
     "force?": "boolean",
     "suppressFlash?": "boolean",
     "rowNodes?": "RowNode[]",
     "columns?": "(string | Column)[]"
-},
-"FlashCellsParams": {
+  },
+  "FlashCellsParams": {
     "flashDelay?": "number",
     "fadeDelay?": "number",
     "rowNodes?": "RowNode[]",
     "columns?": "(string | Column)[]"
-},
-"GetCellRendererInstancesParams": {
+  },
+  "GetCellRendererInstancesParams": {
     "rowNodes?": "RowNode[]",
     "columns?": "(string | Column)[]"
-},
-"GetCellEditorInstancesParams": {
+  },
+  "GetCellEditorInstancesParams": {
     "rowNodes?": "RowNode[]",
     "columns?": "(string | Column)[]"
-},
-"RedrawRowsParams": {
-    "rowNodes?": "RowNode[]"
-},
-"CreateRangeChartParams": {
+  },
+  "RedrawRowsParams": { "rowNodes?": "RowNode[]" },
+  "CreateRangeChartParams": {
     "cellRange": "CellRangeParams",
     "chartType": "ChartType",
     "chartThemeName?": "string",
@@ -2213,16 +2155,16 @@
     "chartThemeOverrides?": "AgChartThemeOverrides",
     "unlinkChart?": "boolean",
     "processChartOptions?": "(params: ProcessChartOptionsParams) => ChartOptions<any>"
-},
-"CreatePivotChartParams": {
+  },
+  "CreatePivotChartParams": {
     "chartType": "ChartType",
     "chartThemeName?": "string",
     "chartContainer?": "HTMLElement",
     "chartThemeOverrides?": "AgChartThemeOverrides",
     "unlinkChart?": "boolean",
     "processChartOptions?": "(params: ProcessChartOptionsParams) => ChartOptions<any>"
-},
-"CreateCrossFilterChartParams": {
+  },
+  "CreateCrossFilterChartParams": {
     "cellRange": "CellRangeParams",
     "chartType": "ChartType",
     "chartThemeName?": "string",
@@ -2231,13 +2173,13 @@
     "aggFunc?": "string | IAggFunc",
     "chartThemeOverrides?": "AgChartThemeOverrides",
     "unlinkChart?": "boolean"
-},
-"DetailGridInfo": {
+  },
+  "DetailGridInfo": {
     "api?": "GridApi",
     "columnApi?": "ColumnApi",
     "id": "string"
-},
-"IFakeHScrollComp": {
+  },
+  "IFakeHScrollComp": {
     "setHeight(height: number)": "void",
     "setViewportHeight(height: number)": "void",
     "setContainerHeight(height: number)": "void",
@@ -2246,8 +2188,8 @@
     "setInvisibleStyles(isInvisible: boolean)": "void",
     "includeLeftSpacerScrollerCss(cssClass: string, include: boolean)": "void",
     "includeRightSpacerScrollerCss(cssClass: string, include: boolean)": "void"
-},
-"IGridBodyComp": {
+  },
+  "IGridBodyComp": {
     "setColumnMovingCss(cssClass: string | null, on: boolean)": "void",
     "setCellSelectableCss(cssClass: string | null, on: boolean)": "void",
     "setTopHeight(height: number)": "void",
@@ -2261,44 +2203,40 @@
     "setPinnedTopBottomOverflowY(overflow: string)": "void",
     "registerBodyViewportResizeListener(listener: (() => void))": "void",
     "updateLayoutClasses(layoutClass: string, params: UpdateLayoutClassesParams)": "void"
-},
-"NavigateParams": {
+  },
+  "NavigateParams": {
     "scrollIndex": "number",
     "scrollType": "'top' | 'bottom' | null",
     "scrollColumn": "Column | null",
     "focusIndex": "number",
     "focusColumn": "Column"
-},
-"RenderParams": {
-    "rows": "RowNode"
-},
-"RenderRowsFeature": {
-    "render(rows: RowNode[])": "void"
-},
-"IRowContainerComp": {
+  },
+  "RenderParams": { "rows": "RowNode" },
+  "RenderRowsFeature": { "render(rows: RowNode[])": "void" },
+  "IRowContainerComp": {
     "setViewportHeight(height: string)": "void",
     "setRowCtrls(rowCtrls: RowCtrl[])": "void",
     "setDomOrder(domOrder: boolean)": "void",
     "setContainerWidth(width: string)": "void"
-},
-"RowDropZoneEvents": {
+  },
+  "RowDropZoneEvents": {
     "onDragEnter?": "(params: RowDragEnterEvent) => void",
     "onDragLeave?": "(params: RowDragLeaveEvent) => void",
     "onDragging?": "(params: RowDragMoveEvent) => void",
     "onDragStop?": "(params: RowDragEndEvent) => void"
-},
-"RowDropZoneParams": {
+  },
+  "RowDropZoneParams": {
     "getContainer": "() => HTMLElement",
     "onDragEnter?": "(params: RowDragEnterEvent) => void",
     "onDragLeave?": "(params: RowDragLeaveEvent) => void",
     "onDragging?": "(params: RowDragMoveEvent) => void",
     "onDragStop?": "(params: RowDragEndEvent) => void"
-},
-"SetScrollsVisibleParams": {
+  },
+  "SetScrollsVisibleParams": {
     "horizontalScrollShowing": "boolean",
     "verticalScrollShowing": "boolean"
-},
-"IGridComp": {
+  },
+  "IGridComp": {
     "setRtlClass(cssClass: string)": "void",
     "destroyGridUi()": "void",
     "forceFocusOutOfContainer(up: boolean)": "void",
@@ -2307,20 +2245,20 @@
     "setCursor(value: string | null)": "void",
     "setUserSelect(value: string | null)": "void",
     "updateLayoutClasses(layoutClass: string, params: UpdateLayoutClassesParams)": "void"
-},
-"PropertyChangedEvent": {
+  },
+  "PropertyChangedEvent": {
     "currentValue": "any",
     "previousValue": "any",
     "type": "string"
-},
-"DropListener": {
+  },
+  "DropListener": {
     "getIconName()": "string | null",
     "onDragEnter(params: DraggingEvent)": "void",
     "onDragLeave(params: DraggingEvent)": "void",
     "onDragging(params: DraggingEvent)": "void",
     "onDragStop(params: DraggingEvent)": "void"
-},
-"IHeaderParams": {
+  },
+  "IHeaderParams": {
     "column": "Column",
     "displayName": "string",
     "enableSorting": "boolean",
@@ -2333,51 +2271,44 @@
     "api": "GridApi",
     "context": "any",
     "template": "string"
-},
-"IHeader": {
-    "refresh(params: IHeaderParams)": "boolean"
-},
-"IHeaderComp": {
+  },
+  "IHeader": { "refresh(params: IHeaderParams)": "boolean" },
+  "IHeaderComp": {
     "refresh(params: IHeaderParams)": "boolean",
     "getGui()": "HTMLElement",
     "destroy?()": "void",
     "afterGuiAttached?(params: IAfterGuiAttachedParams)": "void",
     "init?(params: T)": "AgPromise<void> | void"
-},
-"HeaderPosition": {
+  },
+  "HeaderPosition": {
     "headerRowIndex": "number",
     "column": "Column | ColumnGroup"
-},
-"SelectionCount": {
-    "selected": "number",
-    "notSelected": "number"
-},
-"IHeaderGroupParams": {
+  },
+  "SelectionCount": { "selected": "number", "notSelected": "number" },
+  "IHeaderGroupParams": {
     "columnGroup": "ColumnGroup",
     "displayName": "string",
     "setExpanded": "(expanded: boolean) => void",
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "context": "any"
-},
-"IHeaderGroup": {},
-"IHeaderGroupComp": {
+  },
+  "IHeaderGroup": {},
+  "IHeaderGroupComp": {
     "getGui()": "HTMLElement",
     "destroy?()": "void",
     "afterGuiAttached?(params: IAfterGuiAttachedParams)": "void",
     "init?(params: T)": "AgPromise<void> | void"
-},
-"HorizontalResizeParams": {
+  },
+  "HorizontalResizeParams": {
     "eResizeBar": "HTMLElement",
     "dragStartPixels?": "number",
     "onResizeStart": "(shiftKey: boolean) => void",
     "onResizing": "(delta: number) => void",
     "onResizeEnd": "(delta: number) => void"
-},
-"ILogger": {
-    "log(message: string)": "void"
-},
-"BaseExportParams": {
+  },
+  "ILogger": { "log(message: string)": "void" },
+  "BaseExportParams": {
     "allColumns?": "boolean",
     "columnKeys?": "(string | Column)[]",
     "fileName?": "string",
@@ -2396,8 +2327,8 @@
     "columnGroups?": "boolean",
     "skipGroups?": "boolean",
     "skipHeader?": "boolean"
-},
-"ExportParams": {
+  },
+  "ExportParams": {
     "prependContent?": "T",
     "appendContent?": "T",
     "customHeader?": "T",
@@ -2421,15 +2352,10 @@
     "columnGroups?": "boolean",
     "skipGroups?": "boolean",
     "skipHeader?": "boolean"
-},
-"CsvCell": {
-    "data": "CsvCellData",
-    "mergeAcross?": "number"
-},
-"CsvCellData": {
-    "value": "string | null"
-},
-"CsvExportParams": {
+  },
+  "CsvCell": { "data": "CsvCellData", "mergeAcross?": "number" },
+  "CsvCellData": { "value": "string | null" },
+  "CsvExportParams": {
     "columnSeparator?": "string",
     "suppressQuotes?": "boolean",
     "prependContent?": "T",
@@ -2455,13 +2381,13 @@
     "columnGroups?": "boolean",
     "skipGroups?": "boolean",
     "skipHeader?": "boolean"
-},
-"ShouldRowBeSkippedParams": {
+  },
+  "ShouldRowBeSkippedParams": {
     "node": "RowNode",
     "api": "GridApi",
     "context": "any"
-},
-"ProcessCellForExportParams": {
+  },
+  "ProcessCellForExportParams": {
     "value": "any",
     "accumulatedRowIndex?": "number",
     "node?": "RowNode | null",
@@ -2470,44 +2396,41 @@
     "columnApi": "ColumnApi",
     "context": "any",
     "type": "string"
-},
-"ProcessHeaderForExportParams": {
+  },
+  "ProcessHeaderForExportParams": {
     "column": "Column",
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "context": "any"
-},
-"ProcessGroupHeaderForExportParams": {
+  },
+  "ProcessGroupHeaderForExportParams": {
     "columnGroup": "ColumnGroup",
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "context": "any"
-},
-"ProcessRowGroupForExportParams": {
+  },
+  "ProcessRowGroupForExportParams": {
     "node": "RowNode",
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "context": "any"
-},
-"IAfterGuiAttachedParams": {
+  },
+  "IAfterGuiAttachedParams": {
     "container?": "ContainerType",
     "hidePopup?": "() => void",
     "suppressFocus?": "boolean"
-},
-"AgChartThemePalette": {
-    "fills": "string[]",
-    "strokes": "string[]"
-},
-"AgChartThemeOptions": {
+  },
+  "AgChartThemePalette": { "fills": "string[]", "strokes": "string[]" },
+  "AgChartThemeOptions": {
     "palette?": "AgChartThemePalette",
     "overrides?": "AgChartThemeOverrides"
-},
-"AgChartTheme": {
+  },
+  "AgChartTheme": {
     "baseTheme?": "AgChartThemeName",
     "palette?": "AgChartThemePalette",
     "overrides?": "AgChartThemeOverrides"
-},
-"AgChartThemeOverrides": {
+  },
+  "AgChartThemeOverrides": {
     "cartesian?": "AgCartesianChartOptions<AgCartesianAxesTheme, AgCartesianSeriesTheme>",
     "column?": "AgCartesianChartOptions<AgCartesianAxesTheme, AgBarSeriesOptions>",
     "bar?": "AgCartesianChartOptions<AgCartesianAxesTheme, AgBarSeriesOptions>",
@@ -2518,46 +2441,44 @@
     "polar?": "AgPolarChartOptions<AgPolarAxesTheme, AgPolarSeriesTheme>",
     "pie?": "AgPolarChartOptions<AgPolarAxesTheme, AgPieSeriesOptions>",
     "common?": "any"
-},
-"AgCartesianAxesTheme": {
+  },
+  "AgCartesianAxesTheme": {
     "number?": "Omit<AgNumberAxisOptions, 'type'>",
     "category?": "Omit<AgCategoryAxisOptions, 'type'>",
     "groupedCategory?": "Omit<AgGroupedCategoryAxisOptions, 'type'>",
     "time?": "Omit<AgTimeAxisOptions, 'type'>"
-},
-"AgCartesianSeriesTheme": {
+  },
+  "AgCartesianSeriesTheme": {
     "line?": "AgLineSeriesOptions",
     "scatter?": "AgScatterSeriesOptions",
     "area?": "AgAreaSeriesOptions",
     "bar?": "AgBarSeriesOptions",
     "histogram?": "AgHistogramSeriesOptions"
-},
-"AgPolarAxesTheme": {},
-"AgPolarSeriesTheme": {
-    "pie?": "AgPieSeriesOptions"
-},
-"AgChartPaddingOptions": {
+  },
+  "AgPolarAxesTheme": {},
+  "AgPolarSeriesTheme": { "pie?": "AgPieSeriesOptions" },
+  "AgChartPaddingOptions": {
     "top?": "number",
     "right?": "number",
     "bottom?": "number",
     "left?": "number"
-},
-"AgChartLabelOptions": {
+  },
+  "AgChartLabelOptions": {
     "enabled?": "boolean",
     "fontStyle?": "FontStyle",
     "fontWeight?": "FontWeight",
     "fontSize?": "number",
     "fontFamily?": "string",
     "color?": "string"
-},
-"AgDropShadowOptions": {
+  },
+  "AgDropShadowOptions": {
     "enabled?": "boolean",
     "color?": "string",
     "xOffset?": "number",
     "yOffset?": "number",
     "blue?": "number"
-},
-"AgChartCaptionOptions": {
+  },
+  "AgChartCaptionOptions": {
     "enabled?": "boolean",
     "padding?": "AgChartPaddingOptions",
     "text?": "string",
@@ -2566,14 +2487,14 @@
     "fontSize?": "number",
     "fontFamily?": "string",
     "color?": "string"
-},
-"AgNavigatorMaskOptions": {
+  },
+  "AgNavigatorMaskOptions": {
     "fill?": "string",
     "stroke?": "string",
     "strokeWidth?": "number",
     "fillOpacity?": "number"
-},
-"AgNavigatorHandleOptions": {
+  },
+  "AgNavigatorHandleOptions": {
     "fill?": "string",
     "stroke?": "string",
     "strokeWidth?": "number",
@@ -2581,8 +2502,8 @@
     "height?": "number",
     "gripLineGap?": "number",
     "gripLineLength?": "number"
-},
-"AgNavigatorOptions": {
+  },
+  "AgNavigatorOptions": {
     "enabled?": "boolean",
     "height?": "number",
     "margin?": "number",
@@ -2591,27 +2512,27 @@
     "mask?": "AgNavigatorMaskOptions",
     "minHandle?": "AgNavigatorHandleOptions",
     "maxHandle?": "AgNavigatorHandleOptions"
-},
-"AgChartLegendMarkerOptions": {
+  },
+  "AgChartLegendMarkerOptions": {
     "size?": "number",
     "shape?": "string | (new() => any)",
     "padding?": "number",
     "strokeWidth?": "number"
-},
-"AgChartLegendLabelOptions": {
+  },
+  "AgChartLegendLabelOptions": {
     "color?": "string",
     "fontStyle?": "FontStyle",
     "fontWeight?": "FontWeight",
     "fontSize?": "number",
     "fontFamily?": "string"
-},
-"AgChartLegendItemOptions": {
+  },
+  "AgChartLegendItemOptions": {
     "marker?": "AgChartLegendMarkerOptions",
     "label?": "AgChartLegendLabelOptions",
     "paddingX?": "number",
     "paddingY?": "number"
-},
-"AgChartLegendOptions": {
+  },
+  "AgChartLegendOptions": {
     "enabled?": "boolean",
     "position?": "AgChartLegendPosition",
     "spacing?": "number",
@@ -2627,8 +2548,8 @@
     "fontWeight?": "FontWeight",
     "fontSize?": "number",
     "fontFamily?": "string"
-},
-"AgBaseChartOptions": {
+  },
+  "AgBaseChartOptions": {
     "container?": "HTMLElement",
     "data?": "any[]",
     "width?": "number",
@@ -2644,27 +2565,22 @@
     "legend?": "AgChartLegendOptions",
     "listeners?": "{[key in string]: Function}",
     "theme?": "string | AgChartTheme"
-},
-"AgBaseAxisOptions": {
-    "keys?": "string[]"
-},
-"AgAxisLineOptions": {
-    "width?": "number",
-    "color?": "string"
-},
-"AgAxisTickOptions": {
+  },
+  "AgBaseAxisOptions": { "keys?": "string[]" },
+  "AgAxisLineOptions": { "width?": "number", "color?": "string" },
+  "AgAxisTickOptions": {
     "width?": "number",
     "size?": "number",
     "color?": "string",
     "count?": "any"
-},
-"AgAxisLabelFormatterParams": {
+  },
+  "AgAxisLabelFormatterParams": {
     "value": "any",
     "index": "number",
     "fractionDigits?": "number",
     "formatter?": "(x: any) => string"
-},
-"AgAxisLabelOptions": {
+  },
+  "AgAxisLabelOptions": {
     "fontStyle?": "FontStyle",
     "fontWeight?": "FontWeight",
     "fontSize?": "number",
@@ -2674,12 +2590,9 @@
     "rotation?": "number",
     "format?": "string",
     "formatter?": "(params: AgAxisLabelFormatterParams) => string"
-},
-"AgAxisGridStyle": {
-    "stroke?": "string",
-    "lineDash?": "number[]"
-},
-"AgBaseCartesianAxisOptions": {
+  },
+  "AgAxisGridStyle": { "stroke?": "string", "lineDash?": "number[]" },
+  "AgBaseCartesianAxisOptions": {
     "position?": "AgCartesianAxisPosition",
     "title?": "AgChartCaptionOptions",
     "line?": "AgAxisLineOptions",
@@ -2687,8 +2600,8 @@
     "label?": "AgAxisLabelOptions",
     "gridStyle?": "AgAxisGridStyle[]",
     "keys?": "string[]"
-},
-"AgNumberAxisOptions": {
+  },
+  "AgNumberAxisOptions": {
     "type": "'number'",
     "nice?": "boolean",
     "min?": "number",
@@ -2700,8 +2613,8 @@
     "label?": "AgAxisLabelOptions",
     "gridStyle?": "AgAxisGridStyle[]",
     "keys?": "string[]"
-},
-"AgCategoryAxisOptions": {
+  },
+  "AgCategoryAxisOptions": {
     "type": "'category'",
     "paddingInner?": "number",
     "paddingOuter?": "number",
@@ -2712,8 +2625,8 @@
     "label?": "AgAxisLabelOptions",
     "gridStyle?": "AgAxisGridStyle[]",
     "keys?": "string[]"
-},
-"AgGroupedCategoryAxisOptions": {
+  },
+  "AgGroupedCategoryAxisOptions": {
     "type": "'groupedCategory'",
     "position?": "AgCartesianAxisPosition",
     "title?": "AgChartCaptionOptions",
@@ -2722,8 +2635,8 @@
     "label?": "AgAxisLabelOptions",
     "gridStyle?": "AgAxisGridStyle[]",
     "keys?": "string[]"
-},
-"AgTimeAxisOptions": {
+  },
+  "AgTimeAxisOptions": {
     "type": "'time'",
     "nice?": "boolean",
     "position?": "AgCartesianAxisPosition",
@@ -2733,24 +2646,21 @@
     "label?": "AgAxisLabelOptions",
     "gridStyle?": "AgAxisGridStyle[]",
     "keys?": "string[]"
-},
-"AgBaseSeriesOptions": {
+  },
+  "AgBaseSeriesOptions": {
     "tooltipEnabled?": "boolean",
     "data?": "any[]",
     "visible?": "boolean",
     "showInLegend?": "boolean",
     "listeners?": "{[key in string]: Function}"
-},
-"AgTooltipRendererResult": {
-    "title?": "string",
-    "content?": "string"
-},
-"AgSeriesTooltipRendererParams": {
+  },
+  "AgTooltipRendererResult": { "title?": "string", "content?": "string" },
+  "AgSeriesTooltipRendererParams": {
     "datum": "any",
     "title?": "string",
     "color?": "string"
-},
-"AgCartesianSeriesTooltipRendererParams": {
+  },
+  "AgCartesianSeriesTooltipRendererParams": {
     "xKey": "string",
     "xValue?": "any",
     "xName?": "string",
@@ -2760,8 +2670,8 @@
     "datum": "any",
     "title?": "string",
     "color?": "string"
-},
-"AgPolarSeriesTooltipRendererParams": {
+  },
+  "AgPolarSeriesTooltipRendererParams": {
     "angleKey": "string",
     "angleValue?": "any",
     "angleName?": "string",
@@ -2771,8 +2681,8 @@
     "datum": "any",
     "title?": "string",
     "color?": "string"
-},
-"AgScatterSeriesTooltipRendererParams": {
+  },
+  "AgScatterSeriesTooltipRendererParams": {
     "sizeKey?": "string",
     "sizeName?": "string",
     "labelKey?": "string",
@@ -2786,8 +2696,8 @@
     "datum": "any",
     "title?": "string",
     "color?": "string"
-},
-"AgSeriesMarker": {
+  },
+  "AgSeriesMarker": {
     "enabled?": "boolean",
     "shape?": "string",
     "size?": "number",
@@ -2795,18 +2705,18 @@
     "fill?": "string",
     "stroke?": "string",
     "strokeWidth?": "number"
-},
-"AgCartesianSeriesMarkerFormatterParams": {
+  },
+  "AgCartesianSeriesMarkerFormatterParams": {
     "xKey": "string",
     "yKey": "string"
-},
-"AgCartesianSeriesMarkerFormat": {
+  },
+  "AgCartesianSeriesMarkerFormat": {
     "fill?": "string",
     "stroke?": "string",
     "strokeWidth?": "number",
     "size?": "number"
-},
-"AgCartesianSeriesMarker": {
+  },
+  "AgCartesianSeriesMarker": {
     "formatter?": "(params: AgCartesianSeriesMarkerFormatterParams) => AgCartesianSeriesMarkerFormat",
     "enabled?": "boolean",
     "shape?": "string",
@@ -2815,15 +2725,13 @@
     "fill?": "string",
     "stroke?": "string",
     "strokeWidth?": "number"
-},
-"AgSeriesTooltip": {
-    "enabled?": "boolean"
-},
-"AgLineSeriesTooltip": {
+  },
+  "AgSeriesTooltip": { "enabled?": "boolean" },
+  "AgLineSeriesTooltip": {
     "renderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
     "enabled?": "boolean"
-},
-"AgLineSeriesLabelOptions": {
+  },
+  "AgLineSeriesLabelOptions": {
     "formatter?": "(params: value) => string",
     "enabled?": "boolean",
     "fontStyle?": "FontStyle",
@@ -2831,8 +2739,8 @@
     "fontSize?": "number",
     "fontFamily?": "string",
     "color?": "string"
-},
-"AgLineSeriesOptions": {
+  },
+  "AgLineSeriesOptions": {
     "type?": "'line'",
     "marker?": "AgCartesianSeriesMarker",
     "label?": "AgLineSeriesLabelOptions",
@@ -2854,20 +2762,20 @@
     "visible?": "boolean",
     "showInLegend?": "boolean",
     "listeners?": "{[key in string]: Function}"
-},
-"AgScatterSeriesTooltip": {
+  },
+  "AgScatterSeriesTooltip": {
     "renderer?": "(params: AgScatterSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
     "enabled?": "boolean"
-},
-"AgScatterSeriesLabelOptions": {
+  },
+  "AgScatterSeriesLabelOptions": {
     "enabled?": "boolean",
     "fontStyle?": "FontStyle",
     "fontWeight?": "FontWeight",
     "fontSize?": "number",
     "fontFamily?": "string",
     "color?": "string"
-},
-"AgScatterSeriesOptions": {
+  },
+  "AgScatterSeriesOptions": {
     "type?": "'scatter'",
     "marker?": "AgCartesianSeriesMarker",
     "label?": "AgScatterSeriesLabelOptions",
@@ -2889,13 +2797,13 @@
     "visible?": "boolean",
     "showInLegend?": "boolean",
     "listeners?": "{[key in string]: Function}"
-},
-"AgAreaSeriesTooltip": {
+  },
+  "AgAreaSeriesTooltip": {
     "renderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
     "format?": "string",
     "enabled?": "boolean"
-},
-"AgAreaSeriesLabelOptions": {
+  },
+  "AgAreaSeriesLabelOptions": {
     "formatter?": "(params: value) => string",
     "enabled?": "boolean",
     "fontStyle?": "FontStyle",
@@ -2903,8 +2811,8 @@
     "fontSize?": "number",
     "fontFamily?": "string",
     "color?": "string"
-},
-"AgAreaSeriesOptions": {
+  },
+  "AgAreaSeriesOptions": {
     "type?": "'area'",
     "marker?": "AgCartesianSeriesMarker",
     "label?": "AgAreaSeriesLabelOptions",
@@ -2928,8 +2836,8 @@
     "visible?": "boolean",
     "showInLegend?": "boolean",
     "listeners?": "{[key in string]: Function}"
-},
-"AgBarSeriesLabelOptions": {
+  },
+  "AgBarSeriesLabelOptions": {
     "formatter?": "(params: value) => string",
     "enabled?": "boolean",
     "fontStyle?": "FontStyle",
@@ -2937,8 +2845,8 @@
     "fontSize?": "number",
     "fontFamily?": "string",
     "color?": "string"
-},
-"AgBarSeriesFormatterParams": {
+  },
+  "AgBarSeriesFormatterParams": {
     "datum": "any",
     "fill?": "string",
     "stroke?": "string",
@@ -2946,17 +2854,17 @@
     "highlighted": "boolean",
     "xKey": "string",
     "yKey": "string"
-},
-"AgBarSeriesFormat": {
+  },
+  "AgBarSeriesFormat": {
     "fill?": "string",
     "stroke?": "string",
     "strokeWidth?": "number"
-},
-"AgBarSeriesTooltip": {
+  },
+  "AgBarSeriesTooltip": {
     "renderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
     "enabled?": "boolean"
-},
-"AgBarSeriesOptions": {
+  },
+  "AgBarSeriesOptions": {
     "type?": "'bar' | 'column'",
     "grouped?": "boolean",
     "normalizedTo?": "number",
@@ -2982,8 +2890,8 @@
     "visible?": "boolean",
     "showInLegend?": "boolean",
     "listeners?": "{[key in string]: Function}"
-},
-"AgHistogramSeriesLabelOptions": {
+  },
+  "AgHistogramSeriesLabelOptions": {
     "formatter?": "(params: value) => string",
     "enabled?": "boolean",
     "fontStyle?": "FontStyle",
@@ -2991,12 +2899,12 @@
     "fontSize?": "number",
     "fontFamily?": "string",
     "color?": "string"
-},
-"AgHistogramSeriesTooltip": {
+  },
+  "AgHistogramSeriesTooltip": {
     "renderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
     "enabled?": "boolean"
-},
-"AgHistogramSeriesOptions": {
+  },
+  "AgHistogramSeriesOptions": {
     "type?": "'histogram'",
     "fill?": "string",
     "stroke?": "string",
@@ -3023,8 +2931,8 @@
     "visible?": "boolean",
     "showInLegend?": "boolean",
     "listeners?": "{[key in string]: Function}"
-},
-"AgPieSeriesLabelOptions": {
+  },
+  "AgPieSeriesLabelOptions": {
     "offset?": "number",
     "minAngle?": "number",
     "enabled?": "boolean",
@@ -3033,8 +2941,8 @@
     "fontSize?": "number",
     "fontFamily?": "string",
     "color?": "string"
-},
-"AgPieSeriesFormatterParams": {
+  },
+  "AgPieSeriesFormatterParams": {
     "datum": "any",
     "fill?": "string",
     "stroke?": "string",
@@ -3042,17 +2950,17 @@
     "highlighted": "boolean",
     "angleKey": "string",
     "radiusKey?": "string"
-},
-"AgPieSeriesFormat": {
+  },
+  "AgPieSeriesFormat": {
     "fill?": "string",
     "stroke?": "string",
     "strokeWidth?": "number"
-},
-"AgPieSeriesTooltip": {
+  },
+  "AgPieSeriesTooltip": {
     "renderer?": "(params: AgPieSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
     "enabled?": "boolean"
-},
-"AgPieSeriesOptions": {
+  },
+  "AgPieSeriesOptions": {
     "type?": "'pie'",
     "title?": "AgChartCaptionOptions",
     "label?": "AgPieSeriesLabelOptions",
@@ -3083,8 +2991,8 @@
     "visible?": "boolean",
     "showInLegend?": "boolean",
     "listeners?": "{[key in string]: Function}"
-},
-"AgPieSeriesTooltipRendererParams": {
+  },
+  "AgPieSeriesTooltipRendererParams": {
     "labelKey?": "string",
     "labelName?": "string",
     "angleKey": "string",
@@ -3096,8 +3004,8 @@
     "datum": "any",
     "title?": "string",
     "color?": "string"
-},
-"AgCartesianChartOptions": {
+  },
+  "AgCartesianChartOptions": {
     "type?": "'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter'",
     "axes?": "TAxisOptions",
     "series?": "TSeriesOptions",
@@ -3116,8 +3024,8 @@
     "legend?": "AgChartLegendOptions",
     "listeners?": "{[key in string]: Function}",
     "theme?": "string | AgChartTheme"
-},
-"AgPolarChartOptions": {
+  },
+  "AgPolarChartOptions": {
     "type?": "'polar' | 'pie'",
     "axes?": "TAxisOptions",
     "series?": "TSeriesOptions",
@@ -3136,18 +3044,18 @@
     "legend?": "AgChartLegendOptions",
     "listeners?": "{[key in string]: Function}",
     "theme?": "string | AgChartTheme"
-},
-"IAggFuncService": {
+  },
+  "IAggFuncService": {
     "addAggFuncs(aggFuncs: [key: string]: IAggFunc)": "void",
     "addAggFunc(key: string, aggFunc: IAggFunc)": "void",
     "clear()": "void",
     "getDefaultAggFunc(column: Column)": "string | null",
     "getFuncNames(column: Column)": "string[]"
-},
-"IAggregationStage": {
+  },
+  "IAggregationStage": {
     "aggregateValues(values: any[], aggFuncOrString: string | IAggFunc)": "any"
-},
-"ICellEditor": {
+  },
+  "ICellEditor": {
     "getValue()": "any",
     "isPopup?()": "boolean",
     "getPopupPosition?()": "string | undefined",
@@ -3156,8 +3064,8 @@
     "focusIn?()": "void",
     "focusOut?()": "void",
     "getFrameworkComponentInstance?()": "any"
-},
-"ICellEditorParams": {
+  },
+  "ICellEditorParams": {
     "value": "any",
     "keyPress": "number | null",
     "charPress": "string | null",
@@ -3176,8 +3084,8 @@
     "eGridCell": "HTMLElement",
     "parseValue": "(value: any) => any",
     "formatValue": "(value: any) => any"
-},
-"ICellEditorComp": {
+  },
+  "ICellEditorComp": {
     "getValue()": "any",
     "isPopup?()": "boolean",
     "getPopupPosition?()": "string | undefined",
@@ -3186,20 +3094,20 @@
     "focusIn?()": "void",
     "focusOut?()": "void",
     "getFrameworkComponentInstance?()": "any"
-},
-"SeriesOptions": {
+  },
+  "SeriesOptions": {
     "fill": "FillOptions",
     "stroke": "StrokeOptions",
     "highlightStyle": "HighlightOptions",
     "listeners?": "{[key in string]: Function}"
-},
-"ChartTooltip": {
+  },
+  "ChartTooltip": {
     "enabled?": "boolean",
     "class?": "string",
     "tracking?": "boolean",
     "delay?": "number"
-},
-"ChartOptions": {
+  },
+  "ChartOptions": {
     "document?": "Document",
     "seriesDefaults": "T",
     "width?": "number",
@@ -3212,25 +3120,22 @@
     "legend": "LegendOptions",
     "tooltip?": "ChartTooltip",
     "listeners?": "{[key in string]: Function}"
-},
-"PaddingOptions": {
+  },
+  "PaddingOptions": {
     "top": "number",
     "right": "number",
     "bottom": "number",
     "left": "number"
-},
-"BackgroundOptions": {
-    "fill": "string",
-    "visible": "boolean"
-},
-"FontOptions": {
+  },
+  "BackgroundOptions": { "fill": "string", "visible": "boolean" },
+  "FontOptions": {
     "fontStyle": "FontStyle",
     "fontWeight": "FontWeight",
     "fontSize": "number",
     "fontFamily": "string",
     "color": "string"
-},
-"CaptionOptions": {
+  },
+  "CaptionOptions": {
     "enabled": "boolean",
     "text?": "string",
     "fontStyle": "FontStyle",
@@ -3238,27 +3143,27 @@
     "fontSize": "number",
     "fontFamily": "string",
     "color": "string"
-},
-"LegendOptions": {
+  },
+  "LegendOptions": {
     "enabled": "boolean",
     "position": "LegendPosition",
     "spacing": "number",
     "item": "LegendItemOptions"
-},
-"LegendItemOptions": {
+  },
+  "LegendItemOptions": {
     "label": "LegendLabelOptions",
     "marker": "LegendMarkerOptions",
     "paddingX": "number",
     "paddingY": "number"
-},
-"LegendLabelOptions": {
+  },
+  "LegendLabelOptions": {
     "fontStyle": "FontStyle",
     "fontWeight": "FontWeight",
     "fontSize": "number",
     "fontFamily": "string",
     "color": "string"
-},
-"NavigatorOptions": {
+  },
+  "NavigatorOptions": {
     "enabled": "boolean",
     "height": "number",
     "min": "number",
@@ -3266,14 +3171,14 @@
     "mask": "NavigatorMaskOptions",
     "minHandle": "NavigatorHandleOptions",
     "maxHandle": "NavigatorHandleOptions"
-},
-"NavigatorMaskOptions": {
+  },
+  "NavigatorMaskOptions": {
     "fill": "string",
     "stroke": "string",
     "strokeWidth": "number",
     "fillOpacity": "number"
-},
-"NavigatorHandleOptions": {
+  },
+  "NavigatorHandleOptions": {
     "fill": "string",
     "stroke": "string",
     "strokeWidth": "number",
@@ -3281,14 +3186,14 @@
     "height": "number",
     "gripLineGap": "number",
     "gripLineLength": "number"
-},
-"LegendMarkerOptions": {
+  },
+  "LegendMarkerOptions": {
     "shape": "MarkerShape",
     "size": "number",
     "padding": "number",
     "strokeWidth": "number"
-},
-"CartesianChartOptions": {
+  },
+  "CartesianChartOptions": {
     "xAxis": "AxisOptions",
     "yAxis": "AxisOptions",
     "navigator": "NavigatorOptions",
@@ -3303,8 +3208,8 @@
     "legend": "LegendOptions",
     "tooltip?": "ChartTooltip",
     "listeners?": "{[key in string]: Function}"
-},
-"PolarChartOptions": {
+  },
+  "PolarChartOptions": {
     "document?": "Document",
     "seriesDefaults": "T",
     "width?": "number",
@@ -3317,25 +3222,18 @@
     "legend": "LegendOptions",
     "tooltip?": "ChartTooltip",
     "listeners?": "{[key in string]: Function}"
-},
-"AxisOptions": {
+  },
+  "AxisOptions": {
     "type?": "AxisType",
     "title": "CaptionOptions",
     "line": "AxisLineOptions",
     "tick": "AxisTickOptions",
     "label": "AxisLabelOptions",
     "gridStyle": "GridStyle[]"
-},
-"AxisLineOptions": {
-    "width": "number",
-    "color": "string"
-},
-"AxisTickOptions": {
-    "width": "number",
-    "size": "number",
-    "color": "string"
-},
-"AxisLabelOptions": {
+  },
+  "AxisLineOptions": { "width": "number", "color": "string" },
+  "AxisTickOptions": { "width": "number", "size": "number", "color": "string" },
+  "AxisLabelOptions": {
     "padding": "number",
     "rotation": "number",
     "format?": "string",
@@ -3345,54 +3243,45 @@
     "fontSize": "number",
     "fontFamily": "string",
     "color": "string"
-},
-"GridStyle": {
-    "stroke": "string",
-    "lineDash?": "number[]"
-},
-"HighlightOptions": {
+  },
+  "GridStyle": { "stroke": "string", "lineDash?": "number[]" },
+  "HighlightOptions": {
     "fill": "string",
     "stroke?": "string",
     "dimOpacity?": "number"
-},
-"FillOptions": {
-    "colors": "string[]",
-    "opacity": "number"
-},
-"StrokeOptions": {
+  },
+  "FillOptions": { "colors": "string[]", "opacity": "number" },
+  "StrokeOptions": {
     "colors": "string[]",
     "opacity": "number",
     "width": "number"
-},
-"DropShadowOptions": {
+  },
+  "DropShadowOptions": {
     "enabled": "boolean",
     "color": "string",
     "xOffset": "number",
     "yOffset": "number",
     "blur": "number"
-},
-"SeriesLabelOptions": {
+  },
+  "SeriesLabelOptions": {
     "enabled": "boolean",
     "fontStyle": "FontStyle",
     "fontWeight": "FontWeight",
     "fontSize": "number",
     "fontFamily": "string",
     "color": "string"
-},
-"TooltipRendererResult": {
-    "content": "string",
-    "title?": "string"
-},
-"TooltipOptions": {
+  },
+  "TooltipRendererResult": { "content": "string", "title?": "string" },
+  "TooltipOptions": {
     "enabled": "boolean",
     "renderer?": "(params: TParams) => string | TooltipRendererResult"
-},
-"TooltipRendererParams": {
+  },
+  "TooltipRendererParams": {
     "datum": "any",
     "title?": "string",
     "color": "string"
-},
-"CartesianTooltipRendererParams": {
+  },
+  "CartesianTooltipRendererParams": {
     "xKey": "string",
     "xValue": "any",
     "xName": "string",
@@ -3402,8 +3291,8 @@
     "datum": "any",
     "title?": "string",
     "color": "string"
-},
-"BarSeriesOptions": {
+  },
+  "BarSeriesOptions": {
     "shadow": "DropShadowOptions",
     "label": "BarSeriesLabelOptions",
     "tooltip": "TooltipOptions<BarTooltipRendererParams>",
@@ -3413,8 +3302,8 @@
     "stroke": "StrokeOptions",
     "highlightStyle": "HighlightOptions",
     "listeners?": "{[key in string]: Function}"
-},
-"HistogramSeriesOptions": {
+  },
+  "HistogramSeriesOptions": {
     "binCount?": "number",
     "shadow": "DropShadowOptions",
     "label": "BarSeriesLabelOptions",
@@ -3425,8 +3314,8 @@
     "stroke": "StrokeOptions",
     "highlightStyle": "HighlightOptions",
     "listeners?": "{[key in string]: Function}"
-},
-"BarSeriesLabelOptions": {
+  },
+  "BarSeriesLabelOptions": {
     "formatter?": "(params: value) => string",
     "enabled": "boolean",
     "fontStyle": "FontStyle",
@@ -3434,8 +3323,8 @@
     "fontSize": "number",
     "fontFamily": "string",
     "color": "string"
-},
-"BarTooltipRendererParams": {
+  },
+  "BarTooltipRendererParams": {
     "xKey": "string",
     "xValue": "any",
     "xName": "string",
@@ -3445,8 +3334,8 @@
     "datum": "any",
     "title?": "string",
     "color": "string"
-},
-"LineSeriesOptions": {
+  },
+  "LineSeriesOptions": {
     "marker": "MarkerOptions",
     "label": "LineSeriesLabelOptions",
     "tooltip": "TooltipOptions<LineTooltipRendererParams>",
@@ -3456,8 +3345,8 @@
     "stroke": "StrokeOptions",
     "highlightStyle": "HighlightOptions",
     "listeners?": "{[key in string]: Function}"
-},
-"LineSeriesLabelOptions": {
+  },
+  "LineSeriesLabelOptions": {
     "formatter?": "(params: value) => string",
     "enabled": "boolean",
     "fontStyle": "FontStyle",
@@ -3465,15 +3354,15 @@
     "fontSize": "number",
     "fontFamily": "string",
     "color": "string"
-},
-"MarkerOptions": {
+  },
+  "MarkerOptions": {
     "enabled": "boolean",
     "shape": "MarkerShape",
     "size": "number",
     "strokeWidth": "number",
     "formatter?": "Function"
-},
-"LineTooltipRendererParams": {
+  },
+  "LineTooltipRendererParams": {
     "xKey": "string",
     "xValue": "any",
     "xName": "string",
@@ -3483,16 +3372,16 @@
     "datum": "any",
     "title?": "string",
     "color": "string"
-},
-"ScatterSeriesLabelOptions": {
+  },
+  "ScatterSeriesLabelOptions": {
     "enabled": "boolean",
     "fontStyle": "FontStyle",
     "fontWeight": "FontWeight",
     "fontSize": "number",
     "fontFamily": "string",
     "color": "string"
-},
-"ScatterSeriesOptions": {
+  },
+  "ScatterSeriesOptions": {
     "marker": "ScatterMarkerOptions",
     "label": "ScatterSeriesLabelOptions",
     "tooltip": "TooltipOptions<ScatterTooltipRendererParams>",
@@ -3501,16 +3390,16 @@
     "stroke": "StrokeOptions",
     "highlightStyle": "HighlightOptions",
     "listeners?": "{[key in string]: Function}"
-},
-"ScatterMarkerOptions": {
+  },
+  "ScatterMarkerOptions": {
     "maxSize?": "number",
     "enabled": "boolean",
     "shape": "MarkerShape",
     "size": "number",
     "strokeWidth": "number",
     "formatter?": "Function"
-},
-"ScatterTooltipRendererParams": {
+  },
+  "ScatterTooltipRendererParams": {
     "sizeKey?": "string",
     "sizeName?": "string",
     "labelKey?": "string",
@@ -3524,8 +3413,8 @@
     "datum": "any",
     "title?": "string",
     "color": "string"
-},
-"AreaSeriesLabelOptions": {
+  },
+  "AreaSeriesLabelOptions": {
     "formatter?": "(params: value) => string",
     "enabled": "boolean",
     "fontStyle": "FontStyle",
@@ -3533,8 +3422,8 @@
     "fontSize": "number",
     "fontFamily": "string",
     "color": "string"
-},
-"AreaSeriesOptions": {
+  },
+  "AreaSeriesOptions": {
     "marker": "MarkerOptions",
     "label": "AreaSeriesLabelOptions",
     "shadow": "DropShadowOptions",
@@ -3545,8 +3434,8 @@
     "stroke": "StrokeOptions",
     "highlightStyle": "HighlightOptions",
     "listeners?": "{[key in string]: Function}"
-},
-"AreaTooltipRendererParams": {
+  },
+  "AreaTooltipRendererParams": {
     "xKey": "string",
     "xValue": "any",
     "xName": "string",
@@ -3556,8 +3445,8 @@
     "datum": "any",
     "title?": "string",
     "color": "string"
-},
-"PieSeriesOptions": {
+  },
+  "PieSeriesOptions": {
     "title": "CaptionOptions",
     "label": "PieSeriesLabelOptions",
     "callout": "PieSeriesCalloutOptions",
@@ -3569,8 +3458,8 @@
     "stroke": "StrokeOptions",
     "highlightStyle": "HighlightOptions",
     "listeners?": "{[key in string]: Function}"
-},
-"PieSeriesLabelOptions": {
+  },
+  "PieSeriesLabelOptions": {
     "minAngle": "number",
     "offset": "number",
     "enabled": "boolean",
@@ -3579,13 +3468,13 @@
     "fontSize": "number",
     "fontFamily": "string",
     "color": "string"
-},
-"PieSeriesCalloutOptions": {
+  },
+  "PieSeriesCalloutOptions": {
     "length": "number",
     "strokeWidth": "number",
     "colors": "string[]"
-},
-"PieTooltipRendererParams": {
+  },
+  "PieTooltipRendererParams": {
     "angleKey": "string",
     "angleValue": "any",
     "angleName?": "string",
@@ -3594,12 +3483,12 @@
     "datum": "any",
     "title?": "string",
     "color": "string"
-},
-"GetChartImageDataUrlParams": {
+  },
+  "GetChartImageDataUrlParams": {
     "chartId": "string",
     "fileFormat?": "string"
-},
-"ChartModel": {
+  },
+  "ChartModel": {
     "modelType": "ChartModelType",
     "chartId": "string",
     "chartType": "ChartType",
@@ -3609,8 +3498,8 @@
     "suppressChartRanges?": "boolean",
     "aggFunc?": "string | IAggFunc",
     "unlinkChart?": "boolean"
-},
-"IChartService": {
+  },
+  "IChartService": {
     "getChartModels()": "ChartModel[]",
     "getChartRef(chartId: string)": "ChartRef | undefined",
     "createRangeChart(params: CreateRangeChartParams)": "ChartRef | undefined",
@@ -3619,8 +3508,8 @@
     "createPivotChart(params: CreatePivotChartParams)": "ChartRef | undefined",
     "restoreChart(model: ChartModel, chartContainer: HTMLElement)": "ChartRef | undefined",
     "getChartImageDataURL(params: GetChartImageDataUrlParams)": "string | undefined"
-},
-"IClientSideRowModel": {
+  },
+  "IClientSideRowModel": {
     "updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder: [id: string]: number | null)": "RowNodeTransaction | null",
     "setRowData(rowData: any[])": "void",
     "refreshModel(params: RefreshModelParams)": "void",
@@ -3657,8 +3546,8 @@
     "isLastRowIndexKnown()": "boolean",
     "ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number)": "boolean",
     "start()": "void"
-},
-"RefreshModelParams": {
+  },
+  "RefreshModelParams": {
     "step": "ClientSideRowModelSteps",
     "groupState?": "any",
     "keepRenderedRows?": "boolean",
@@ -3668,15 +3557,15 @@
     "rowNodeOrder?": "[id: string]: number",
     "newData?": "boolean",
     "afterColumnsChanged?": "boolean"
-},
-"IClipboardService": {
+  },
+  "IClipboardService": {
     "pasteFromClipboard()": "void",
     "copyToClipboard(includeHeader: boolean)": "void",
     "copySelectedRowsToClipboard(includeHeader: boolean, columnKeys: (string | Column)[])": "void",
     "copySelectedRangeToClipboard(includeHeader: boolean)": "void",
     "copyRangeDown()": "void"
-},
-"IColumnToolPanel": {
+  },
+  "IColumnToolPanel": {
     "expandColumnGroups(groupIds: string[])": "void",
     "collapseColumnGroups(groupIds: string[])": "void",
     "setColumnLayout(colDefs: (ColDef | ColGroupDef)[])": "void",
@@ -3685,33 +3574,33 @@
     "setRowGroupsSectionVisible(visible: boolean)": "void",
     "setValuesSectionVisible(visible: boolean)": "void",
     "setPivotSectionVisible(visible: boolean)": "void"
-},
-"ColumnVO": {
+  },
+  "ColumnVO": {
     "id": "string",
     "displayName": "string",
     "field?": "string",
     "aggFunc?": "string"
-},
-"IComponent": {
+  },
+  "IComponent": {
     "getGui()": "HTMLElement",
     "destroy?()": "void",
     "afterGuiAttached?(params: IAfterGuiAttachedParams)": "void",
     "init?(params: T)": "AgPromise<void> | void"
-},
-"IContextMenuFactory": {
+  },
+  "IContextMenuFactory": {
     "onContextMenu(mouseEvent: MouseEvent | null, touchEvent: TouchEvent | null, rowNode: RowNode | null, column: Column | null, value: any, anchorToElement: HTMLElement)": "void",
     "hideActiveMenu()": "void"
-},
-"ICsvCreator": {
+  },
+  "ICsvCreator": {
     "getDataAsCsv(params: CsvExportParams)": "string",
     "exportDataAsCsv(params: CsvExportParams)": "string"
-},
-"IDatasource": {
+  },
+  "IDatasource": {
     "rowCount?": "number",
     "getRows(params: IGetRowsParams)": "void",
     "destroy?()": "void"
-},
-"IGetRowsParams": {
+  },
+  "IGetRowsParams": {
     "startRow": "number",
     "endRow": "number",
     "successCallback(rowsThisBlock: any[], lastRow: number)": "void",
@@ -3719,12 +3608,12 @@
     "sortModel": "any",
     "filterModel": "any",
     "context": "any"
-},
-"IEventEmitter": {
+  },
+  "IEventEmitter": {
     "addEventListener(eventType: string, listener: EventListener, async: boolean, options: AddEventListenerOptions)": "void",
     "removeEventListener(eventType: string, listener: EventListener, async: boolean, options: AddEventListenerOptions)": "void"
-},
-"ExcelStyle": {
+  },
+  "ExcelStyle": {
     "id": "string",
     "alignment?": "ExcelAlignment",
     "borders?": "ExcelBorders",
@@ -3734,8 +3623,8 @@
     "numberFormat?": "ExcelNumberFormat",
     "protection?": "ExcelProtection",
     "name?": "string"
-},
-"ExcelAlignment": {
+  },
+  "ExcelAlignment": {
     "horizontal?": "'Automatic' | 'Left' | 'Center' | 'Right' | 'Fill' | 'Justify' | 'CenterAcrossSelection' | 'Distributed' | 'JustifyDistributed'",
     "indent?": "number",
     "readingOrder?": "'RightToLeft' | 'LeftToRight' | 'Context'",
@@ -3744,19 +3633,19 @@
     "vertical?": "'Automatic' | 'Top' | 'Bottom' | 'Center' | 'Justify' | 'Distributed' | 'JustifyDistributed'",
     "wrapText?": "boolean",
     "verticalText?": "boolean"
-},
-"ExcelBorders": {
+  },
+  "ExcelBorders": {
     "borderBottom?": "ExcelBorder",
     "borderLeft?": "ExcelBorder",
     "borderRight?": "ExcelBorder",
     "borderTop?": "ExcelBorder"
-},
-"ExcelBorder": {
+  },
+  "ExcelBorder": {
     "color?": "string",
     "lineStyle?": "'None' | 'Continuous' | 'Dash' | 'Dot' | 'DashDot' | 'DashDotDot' | 'SlantDashDot' | 'Double'",
     "weight?": "'0' | '1' | '2' | '3'"
-},
-"ExcelFont": {
+  },
+  "ExcelFont": {
     "bold?": "boolean",
     "color?": "string",
     "family?": "string",
@@ -3769,36 +3658,25 @@
     "underline?": "'Single' | 'Double'",
     "verticalAlign?": "'Superscript' | 'Subscript'",
     "charSet?": "number"
-},
-"ExcelInterior": {
+  },
+  "ExcelInterior": {
     "color": "string",
     "pattern": "'None' | 'Solid' | 'Gray75' | 'Gray50' | 'Gray25' | 'Gray125' | 'Gray0625' | 'HorzStripe' | 'VertStripe' | 'ReverseDiagStripe' | 'DiagStripe' | 'DiagCross' | 'ThickDiagCross' | 'ThinHorzStripe' | 'ThinVertStripe' | 'ThinReverseDiagStripe' | 'ThinDiagStripe' | 'ThinHorzCross' | 'ThinDiagCross'",
     "patternColor": "string"
-},
-"ExcelNumberFormat": {
-    "format": "string"
-},
-"ExcelProtection": {
-    "protected": "boolean",
-    "hideFormula": "boolean"
-},
-"ExcelWorksheet": {
-    "name": "string",
-    "table": "ExcelTable"
-},
-"ExcelTable": {
-    "columns": "ExcelColumn[]",
-    "rows": "ExcelRow[]"
-},
-"ExcelColumn": {
+  },
+  "ExcelNumberFormat": { "format": "string" },
+  "ExcelProtection": { "protected": "boolean", "hideFormula": "boolean" },
+  "ExcelWorksheet": { "name": "string", "table": "ExcelTable" },
+  "ExcelTable": { "columns": "ExcelColumn[]", "rows": "ExcelRow[]" },
+  "ExcelColumn": {
     "min?": "number",
     "max?": "number",
     "width?": "number",
     "s?": "number",
     "hidden?": "boolean",
     "bestFit?": "boolean"
-},
-"ExcelRow": {
+  },
+  "ExcelRow": {
     "index?": "number",
     "collapsed?": "boolean",
     "hidden?": "boolean",
@@ -3806,14 +3684,14 @@
     "outlineLevel?": "number",
     "s?": "number",
     "cells": "ExcelCell[]"
-},
-"ExcelCell": {
+  },
+  "ExcelCell": {
     "ref?": "string",
     "styleId?": "string",
     "data": "ExcelData",
     "mergeAcross?": "number"
-},
-"ExcelImage": {
+  },
+  "ExcelImage": {
     "id": "string",
     "base64": "string",
     "imageType": "'jpg' | 'png' | 'gif'",
@@ -3825,37 +3703,28 @@
     "width?": "number",
     "height?": "number",
     "position?": "row? rowSpan? column? colSpan? offsetX? offsetY?"
-},
-"ExcelData": {
+  },
+  "ExcelData": {
     "type": "ExcelDataType | ExcelOOXMLDataType",
     "value": "string | null"
-},
-"ExcelRelationship": {
-    "Id": "string",
-    "Type": "string",
-    "Target": "string"
-},
-"ExcelContentType": {
+  },
+  "ExcelRelationship": { "Id": "string", "Type": "string", "Target": "string" },
+  "ExcelContentType": {
     "name": "'Default' | 'Override'",
     "ContentType": "string",
     "Extension?": "string",
     "PartName?": "string"
-},
-"ExcelXMLTemplate": {
+  },
+  "ExcelXMLTemplate": {
     "getTemplate(styleProperties: ExcelStyle | ExcelWorksheet | ExcelColumn | ExcelRow | ExcelCell)": "XmlElement"
-},
-"ExcelOOXMLTemplate": {
+  },
+  "ExcelOOXMLTemplate": {
     "getTemplate(config: any, idx: number, currentSheet: number)": "XmlElement",
     "convertType?(type: string)": "string"
-},
-"ColumnWidthCallbackParams": {
-    "column": "Column | null",
-    "index": "number"
-},
-"RowHeightCallbackParams": {
-    "rowIndex": "number"
-},
-"ExcelExportParams": {
+  },
+  "ColumnWidthCallbackParams": { "column": "Column | null", "index": "number" },
+  "RowHeightCallbackParams": { "rowIndex": "number" },
+  "ExcelExportParams": {
     "author?": "string",
     "autoConvertFormulas?": "boolean",
     "columnWidth?": "number | ((params: ColumnWidthCallbackParams) => number)",
@@ -3892,28 +3761,28 @@
     "columnGroups?": "boolean",
     "skipGroups?": "boolean",
     "skipHeader?": "boolean"
-},
-"ExcelExportMultipleSheetParams": {
+  },
+  "ExcelExportMultipleSheetParams": {
     "author?": "string",
     "data": "string[]",
     "fileName?": "string",
     "fontSize?": "number"
-},
-"ExcelHeaderFooterConfig": {
+  },
+  "ExcelHeaderFooterConfig": {
     "all?": "ExcelHeaderFooter",
     "first?": "ExcelHeaderFooter",
     "even?": "ExcelHeaderFooter"
-},
-"ExcelHeaderFooter": {
+  },
+  "ExcelHeaderFooter": {
     "header?": "ExcelHeaderFooterContent[]",
     "footer?": "ExcelHeaderFooterContent[]"
-},
-"ExcelHeaderFooterContent": {
+  },
+  "ExcelHeaderFooterContent": {
     "value": "string",
     "position?": "'Left' | 'Center' | 'Right'",
     "font?": "ExcelFont"
-},
-"IExcelCreator": {
+  },
+  "IExcelCreator": {
     "exportDataAsExcel(params: ExcelExportParams)": "void",
     "getDataAsExcel(params: ExcelExportParams)": "Blob | string | undefined",
     "getSheetDataForExcel(params: ExcelExportParams)": "string",
@@ -3921,28 +3790,28 @@
     "exportMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams)": "void",
     "setFactoryMode(factoryMode: ExcelFactoryMode, exportMode: 'xml' | 'xlsx')": "void",
     "getFactoryMode(exportMode: 'xml' | 'xlsx')": "ExcelFactoryMode"
-},
-"ExcelSheetMargin": {
+  },
+  "ExcelSheetMargin": {
     "top?": "number",
     "right?": "number",
     "bottom?": "number",
     "left?": "number",
     "header?": "number",
     "footer?": "number"
-},
-"ExcelSheetPageSetup": {
+  },
+  "ExcelSheetPageSetup": {
     "orientation?": "'Portrait' | 'Landscape'",
     "pageSize?": "'Letter' | 'Letter Small' | 'Tabloid' | 'Ledger' | 'Legal' | 'Statement' | 'Executive' | 'A3' | 'A4' | 'A4 Small' | 'A5' | 'A6' | 'B4' | 'B5' | 'Folio' | 'Envelope' | 'Envelope DL' | 'Envelope C5' | 'Envelope B5' | 'Envelope C3' | 'Envelope C4' | 'Envelope C6' | 'Envelope Monarch' | 'Japanese Postcard' | 'Japanese Double Postcard'"
-},
-"IFilterDef": {
+  },
+  "IFilterDef": {
     "filter?": "IFilterType",
     "filterFramework?": "any",
     "filterParams?": "any",
     "floatingFilterComponent?": "string | { new(): IFloatingFilterComp }",
     "floatingFilterComponentParams?": "any",
     "floatingFilterComponentFramework?": "any"
-},
-"IFilter": {
+  },
+  "IFilter": {
     "isFilterActive()": "boolean",
     "doesFilterPass(params: IDoesFilterPassParams)": "boolean",
     "getModel()": "any",
@@ -3951,11 +3820,9 @@
     "onAnyFilterChanged?()": "void",
     "getFrameworkComponentInstance?()": "any",
     "getModelAsString?(model: any)": "string"
-},
-"ProvidedFilterModel": {
-    "filterType?": "string"
-},
-"IFilterComp": {
+  },
+  "ProvidedFilterModel": { "filterType?": "string" },
+  "IFilterComp": {
     "isFilterActive()": "boolean",
     "doesFilterPass(params: IDoesFilterPassParams)": "boolean",
     "getModel()": "any",
@@ -3968,18 +3835,15 @@
     "destroy?()": "void",
     "afterGuiAttached?(params: IAfterGuiAttachedParams)": "void",
     "init?(params: T)": "AgPromise<void> | void"
-},
-"IDoesFilterPassParams": {
-    "node": "RowNode",
-    "data": "any"
-},
-"IFilterOptionDef": {
+  },
+  "IDoesFilterPassParams": { "node": "RowNode", "data": "any" },
+  "IFilterOptionDef": {
     "displayKey": "string",
     "displayName": "string",
     "test": "(filterValue: any, cellValue: any) => boolean",
     "hideFilterInput?": "boolean"
-},
-"IFilterParams": {
+  },
+  "IFilterParams": {
     "api": "GridApi",
     "column": "Column",
     "colDef": "ColDef",
@@ -3989,8 +3853,8 @@
     "valueGetter": "(rowNode: RowNode) => any",
     "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
     "context": "any"
-},
-"Filter": {
+  },
+  "Filter": {
     "isFilterActive()": "boolean",
     "doesFilterPass(params: IDoesFilterPassParams)": "boolean",
     "getModel()": "any",
@@ -3999,26 +3863,26 @@
     "onAnyFilterChanged?()": "void",
     "getFrameworkComponentInstance?()": "any",
     "getModelAsString?(model: any)": "string"
-},
-"IFiltersToolPanel": {
+  },
+  "IFiltersToolPanel": {
     "setFilterLayout(colDefs: ColDef[])": "void",
     "expandFilterGroups(groupIds: string[])": "void",
     "collapseFilterGroups(groupIds: string[])": "void",
     "expandFilters(colIds: string[])": "void",
     "collapseFilters(colIds: string[])": "void",
     "syncLayoutWithGrid()": "void"
-},
-"IFrameworkOverrides": {
+  },
+  "IFrameworkOverrides": {
     "setTimeout(action: any, timeout: any)": "void",
     "setInterval(action: any, interval: any)": "AgPromise<number>",
     "addEventListener(element: HTMLElement, type: string, listener: EventListenerOrEventListenerObject, options: boolean | AddEventListenerOptions)": "void",
     "dispatchEvent(eventType: string, listener: () => , global: boolean)": "void",
     "frameworkComponent(name: string)": "any"
-},
-"IImmutableService": {
+  },
+  "IImmutableService": {
     "createTransactionForRowData(data: any[])": "([RowDataTransaction, [id: string]: number | null]) | undefined"
-},
-"IInfiniteRowModel": {
+  },
+  "IInfiniteRowModel": {
     "setDatasource(datasource: IDatasource | undefined)": "void",
     "refreshCache()": "void",
     "purgeCache()": "void",
@@ -4039,23 +3903,23 @@
     "isLastRowIndexKnown()": "boolean",
     "ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number)": "boolean",
     "start()": "void"
-},
-"IMenu": {},
-"IMenuFactory": {
+  },
+  "IMenu": {},
+  "IMenuFactory": {
     "showMenuAfterButtonClick(column: Column | null, eventSource: HTMLElement, containerType: ContainerType, defaultTab: string, restrictToTabs: string[])": "void",
     "showMenuAfterMouseEvent(column: Column, mouseEvent: MouseEvent | Touch, defaultTab: string, restrictToTabs: string[])": "void",
     "isMenuEnabled(column: Column)": "boolean",
     "hideActiveMenu()": "void"
-},
-"Module": {
+  },
+  "Module": {
     "moduleName": "string",
     "beans?": "any[]",
     "agStackComponents?": "ComponentMeta[]",
     "userComponents?": "componentName componentClass[]",
     "rowModels?": "[name: string]: { new(): IRowModel }",
     "dependantModules?": "Module[]"
-},
-"IPopupComponent": {
+  },
+  "IPopupComponent": {
     "isPopup?()": "boolean",
     "focusIn?()": "void",
     "focusOut?()": "void",
@@ -4063,8 +3927,8 @@
     "destroy?()": "void",
     "afterGuiAttached?(params: IAfterGuiAttachedParams)": "void",
     "init?(params: T)": "AgPromise<void> | void"
-},
-"IRangeService": {
+  },
+  "IRangeService": {
     "isEmpty()": "boolean",
     "removeAllCellRanges()": "void",
     "getCellRangeCount(cell: CellPosition)": "number",
@@ -4087,24 +3951,24 @@
     "getRangeEndRow(cellRange: CellRange)": "RowPosition",
     "createCellRangeFromCellRangeParams(params: CellRangeParams)": "CellRange | undefined",
     "setCellRanges(cellRanges: CellRange[])": "void"
-},
-"ISelectionHandle": {
+  },
+  "ISelectionHandle": {
     "getGui()": "HTMLElement",
     "getType()": "SelectionHandleType",
     "refresh(cellCtrl: CellCtrl)": "void"
-},
-"ISelectionHandleFactory": {
+  },
+  "ISelectionHandleFactory": {
     "createSelectionHandle(type: SelectionHandleType)": "ISelectionHandle"
-},
-"CellRange": {
+  },
+  "CellRange": {
     "id?": "string",
     "type?": "CellRangeType",
     "startRow?": "RowPosition",
     "endRow?": "RowPosition",
     "columns": "Column[]",
     "startColumn": "Column"
-},
-"CellRangeParams": {
+  },
+  "CellRangeParams": {
     "rowStartIndex": "number | null",
     "rowStartPinned?": "string | null",
     "rowEndIndex": "number | null",
@@ -4112,21 +3976,21 @@
     "columnStart?": "string | Column",
     "columnEnd?": "string | Column",
     "columns?": "(string | Column)[]"
-},
-"RangeSelection": {
+  },
+  "RangeSelection": {
     "start": "CellPosition",
     "end": "CellPosition",
     "columns": "Column[] | null"
-},
-"AddRangeSelectionParams": {
+  },
+  "AddRangeSelectionParams": {
     "rowStart": "number",
     "floatingStart": "string",
     "rowEnd": "number",
     "floatingEnd": "string",
     "columnStart": "string | Column",
     "columnEnd": "string | Column"
-},
-"IRichCellEditorParams": {
+  },
+  "IRichCellEditorParams": {
     "values": "CellValue[]",
     "cellHeight": "number",
     "cellRenderer": "{ new(): ICellRendererComp } | ICellRendererFunc | string",
@@ -4149,13 +4013,13 @@
     "eGridCell": "HTMLElement",
     "parseValue": "(value: any) => any",
     "formatValue": "(value: any) => any"
-},
-"RowBounds": {
+  },
+  "RowBounds": {
     "rowTop": "number",
     "rowHeight": "number",
     "rowIndex?": "number"
-},
-"IRowModel": {
+  },
+  "IRowModel": {
     "getRow(index: number)": "RowNode | null",
     "getRowNode(id: string)": "RowNode | null",
     "getRowCount()": "number",
@@ -4172,8 +4036,8 @@
     "isLastRowIndexKnown()": "boolean",
     "ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number)": "boolean",
     "start()": "void"
-},
-"IRowNodeBlock": {
+  },
+  "IRowNodeBlock": {
     "getDisplayIndexStart()": "number",
     "getDisplayIndexEnd()": "number",
     "getLastAccessed()": "number",
@@ -4185,19 +4049,17 @@
     "load()": "void",
     "addEventListener(eventType: string, listener: EventListener, async: boolean, options: AddEventListenerOptions)": "void",
     "removeEventListener(eventType: string, listener: EventListener, async: boolean, options: AddEventListenerOptions)": "void"
-},
-"StageExecuteParams": {
+  },
+  "StageExecuteParams": {
     "rowNode": "RowNode",
     "rowNodeTransaction?": "RowNodeTransaction | null",
     "rowNodeTransactions?": "RowNodeTransaction[] | null",
     "rowNodeOrder?": "[id: string]: number",
     "changedPath?": "ChangedPath",
     "afterColumnsChanged?": "boolean"
-},
-"IRowNodeStage": {
-    "execute(params: StageExecuteParams)": "any"
-},
-"IServerSideGetRowsRequest": {
+  },
+  "IRowNodeStage": { "execute(params: StageExecuteParams)": "any" },
+  "IServerSideGetRowsRequest": {
     "startRow": "number",
     "endRow": "number",
     "rowGroupCols": "ColumnVO[]",
@@ -4207,8 +4069,8 @@
     "groupKeys": "string[]",
     "filterModel": "any",
     "sortModel": "any"
-},
-"IServerSideGetRowsParams": {
+  },
+  "IServerSideGetRowsParams": {
     "request": "IServerSideGetRowsRequest",
     "parentNode": "RowNode",
     "successCallback(rowsThisPage: any[], lastRow: number)": "void",
@@ -4217,12 +4079,12 @@
     "fail()": "void",
     "api": "GridApi",
     "columnApi": "ColumnApi"
-},
-"IServerSideDatasource": {
+  },
+  "IServerSideDatasource": {
     "getRows(params: IServerSideGetRowsParams)": "void",
     "destroy?()": "void"
-},
-"IServerSideRowModel": {
+  },
+  "IServerSideRowModel": {
     "refreshStore(params: RefreshStoreParams)": "void",
     "onRowHeightChanged()": "void",
     "getStoreState()": "ServerSideStoreState[]",
@@ -4246,17 +4108,14 @@
     "isLastRowIndexKnown()": "boolean",
     "ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number)": "boolean",
     "start()": "void"
-},
-"IServerSideTransactionManager": {
+  },
+  "IServerSideTransactionManager": {
     "applyTransaction(transaction: ServerSideTransaction)": "ServerSideTransactionResult | undefined",
     "applyTransactionAsync(transaction: ServerSideTransaction, callback: (res: ServerSideTransactionResult) => void)": "void",
     "flushAsyncTransactions()": "void"
-},
-"RefreshStoreParams": {
-    "route?": "string[]",
-    "purge?": "boolean"
-},
-"IServerSideStore": {
+  },
+  "RefreshStoreParams": { "route?": "string[]", "purge?": "boolean" },
+  "IServerSideStore": {
     "clearDisplayIndexes()": "void",
     "getDisplayIndexEnd()": "number | undefined",
     "isDisplayIndexInStore(displayIndex: number)": "boolean",
@@ -4278,14 +4137,14 @@
     "isLastRowIndexKnown()": "boolean",
     "getRowNodesInRange(firstInRange: RowNode, lastInRange: RowNode)": "RowNode[]",
     "addStoreStates(result: ServerSideStoreState[])": "void"
-},
-"StoreRefreshAfterParams": {
+  },
+  "StoreRefreshAfterParams": {
     "valueColChanged": "boolean",
     "secondaryColChanged": "boolean",
     "alwaysReset": "boolean",
     "changedColumns": "string[]"
-},
-"ServerSideStoreState": {
+  },
+  "ServerSideStoreState": {
     "type": "ServerSideStoreType",
     "route": "string[]",
     "rowCount": "number",
@@ -4293,12 +4152,12 @@
     "info?": "any",
     "maxBlocksInCache?": "number",
     "cacheBlockSize?": "number"
-},
-"SetFilterValuesFuncParams": {
+  },
+  "SetFilterValuesFuncParams": {
     "success": "(values: string[]) => void",
     "colDef": "ColDef"
-},
-"ISetFilterParams": {
+  },
+  "ISetFilterParams": {
     "suppressRemoveEntries?": "boolean",
     "values?": "SetFilterValues",
     "refreshValuesOnOpen?": "boolean",
@@ -4333,8 +4192,8 @@
     "valueGetter": "(rowNode: RowNode) => any",
     "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
     "context": "any"
-},
-"ISideBar": {
+  },
+  "ISideBar": {
     "refresh()": "void",
     "setDisplayed(show: boolean)": "void",
     "setSideBarPosition(position: 'left' | 'right')": "void",
@@ -4344,45 +4203,40 @@
     "close()": "void",
     "openedItem()": "string | null",
     "isDisplayed()": "boolean"
-},
-"IStatusBarService": {
+  },
+  "IStatusBarService": {
     "registerStatusPanel(key: string, component: IStatusPanelComp)": "void",
     "getStatusPanel(key: string)": "IStatusPanelComp"
-},
-"StatusPanelDef": {
+  },
+  "StatusPanelDef": {
     "statusPanel?": "{ new(): IStatusPanelComp } | string",
     "statusPanelFramework?": "any",
     "align?": "string",
     "key?": "string",
     "statusPanelParams?": "any"
-},
-"IStatusPanelParams": {
+  },
+  "IStatusPanelParams": {
     "api": "GridApi",
     "columnApi": "ColumnApi",
     "context": "any"
-},
-"IStatusPanel": {},
-"IStatusPanelComp": {
+  },
+  "IStatusPanel": {},
+  "IStatusPanelComp": {
     "getGui()": "HTMLElement",
     "destroy?()": "void",
     "afterGuiAttached?(params: IAfterGuiAttachedParams)": "void",
     "init?(params: T)": "AgPromise<void> | void"
-},
-"IToolPanelParams": {
-    "api": "GridApi",
-    "columnApi": "ColumnApi"
-},
-"IToolPanel": {
-    "refresh()": "void"
-},
-"IToolPanelComp": {
+  },
+  "IToolPanelParams": { "api": "GridApi", "columnApi": "ColumnApi" },
+  "IToolPanel": { "refresh()": "void" },
+  "IToolPanelComp": {
     "refresh()": "void",
     "getGui()": "HTMLElement",
     "destroy?()": "void",
     "afterGuiAttached?(params: IAfterGuiAttachedParams)": "void",
     "init?(params: T)": "AgPromise<void> | void"
-},
-"ToolPanelColumnCompParams": {
+  },
+  "ToolPanelColumnCompParams": {
     "suppressRowGroups": "boolean",
     "suppressValues": "boolean",
     "suppressPivots": "boolean",
@@ -4394,8 +4248,8 @@
     "suppressSyncLayoutWithGrid": "boolean",
     "api": "GridApi",
     "columnApi": "ColumnApi"
-},
-"IPrimaryColsPanel": {
+  },
+  "IPrimaryColsPanel": {
     "getGui()": "HTMLElement",
     "init(allowDragging: boolean, params: ToolPanelColumnCompParams, eventType: ColumnEventType)": "void",
     "onExpandAll()": "void",
@@ -4404,91 +4258,83 @@
     "collapseGroups(groupIds: string[])": "void",
     "setColumnLayout(colDefs: (ColDef | ColGroupDef)[])": "void",
     "syncLayoutWithGrid()": "void"
-},
-"IViewportDatasource": {
+  },
+  "IViewportDatasource": {
     "init(params: IViewportDatasourceParams)": "void",
     "setViewportRange(firstRow: number, lastRow: number)": "void",
     "destroy?()": "void"
-},
-"IViewportDatasourceParams": {
+  },
+  "IViewportDatasourceParams": {
     "setRowCount": "(count: number, keepRenderedRows: boolean) => void",
     "setRowData": "(rowData: [key: number]: any) => void",
     "getRow": "(rowIndex: number) => RowNode"
-},
-"XmlElement": {
+  },
+  "XmlElement": {
     "name": "string",
     "properties?": "XmlAttributes",
     "children?": "XmlElement[]",
     "textNode?": "string | null"
-},
-"HeaderElement": {
+  },
+  "HeaderElement": {
     "[key: string]": "string | undefined",
     "version?": "string",
     "standalone?": "string",
     "encoding?": "string"
-},
-"XmlAttributes": {
+  },
+  "XmlAttributes": {
     "prefixedAttributes?": "PrefixedXmlAttributes[]",
     "rawMap?": "any"
-},
-"PrefixedXmlAttributes": {
-    "prefix": "string",
-    "map": "any"
-},
-"RowDataTransaction": {
+  },
+  "PrefixedXmlAttributes": { "prefix": "string", "map": "any" },
+  "RowDataTransaction": {
     "addIndex?": "number | null",
     "add?": "any[] | null",
     "remove?": "any[] | null",
     "update?": "any[] | null"
-},
-"RowNodeTransaction": {
+  },
+  "RowNodeTransaction": {
     "add": "RowNode[]",
     "remove": "RowNode[]",
     "update": "RowNode[]"
-},
-"ServerSideTransaction": {
+  },
+  "ServerSideTransaction": {
     "route?": "string[]",
     "addIndex?": "number",
     "add?": "any[]",
     "remove?": "any[]",
     "update?": "any[]"
-},
-"ServerSideTransactionResult": {
+  },
+  "ServerSideTransactionResult": {
     "status": "ServerSideTransactionResultStatus",
     "add?": "RowNode[]",
     "remove?": "RowNode[]",
     "update?": "RowNode[]"
-},
-"TabbedLayoutParams": {
+  },
+  "TabbedLayoutParams": {
     "items": "TabbedItem[]",
     "cssClass?": "string",
     "onItemClicked?": "Function",
     "onActiveItemClicked?": "Function"
-},
-"TabbedItem": {
+  },
+  "TabbedItem": {
     "title": "Element",
     "titleLabel": "string",
     "bodyPromise": "AgPromise<HTMLElement>",
     "name": "string",
     "afterAttachedCallback?": "(params: IAfterGuiAttachedParams) => void"
-},
-"TabbedItemWrapper": {
+  },
+  "TabbedItemWrapper": {
     "tabbedItem": "TabbedItem",
     "eHeaderButton": "HTMLElement"
-},
-"TaskItem": {
+  },
+  "TaskItem": {
     "task": "() => void",
     "index": "number",
     "createOrder": "number"
-},
-"TaskList": {
-    "list": "TaskItem[]",
-    "sorted": "boolean"
-},
-"SimpleHttpRequestParams": {
-    "url": "string"
-},
-"ICellComp": {
+  },
+  "TaskList": { "list": "TaskItem[]", "sorted": "boolean" },
+  "SimpleHttpRequestParams": { "url": "string" },
+  "ICellComp": {
     "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
     "setUserStyles(styles: any)": "void",
     "setAriaSelected(selected: boolean | undefined)": "void",
@@ -4513,8 +4359,8 @@
     "getParentOfValue()": "HTMLElement | null",
     "setRenderDetails(compDetails: UserCompDetails | undefined, valueToDisplay: any, forceNewCellRendererInstance: boolean)": "void",
     "setEditDetails(compDetails: UserCompDetails, popup: boolean, position: string)": "void"
-},
-"ILargeTextEditorParams": {
+  },
+  "ILargeTextEditorParams": {
     "maxLength": "number",
     "rows": "number",
     "cols": "number",
@@ -4536,8 +4382,8 @@
     "eGridCell": "HTMLElement",
     "parseValue": "(value: any) => any",
     "formatValue": "(value: any) => any"
-},
-"ISelectCellEditorParams": {
+  },
+  "ISelectCellEditorParams": {
     "values": "any[]",
     "value": "any",
     "keyPress": "number | null",
@@ -4557,8 +4403,8 @@
     "eGridCell": "HTMLElement",
     "parseValue": "(value: any) => any",
     "formatValue": "(value: any) => any"
-},
-"ITextCellEditorParams": {
+  },
+  "ITextCellEditorParams": {
     "useFormatter": "boolean",
     "value": "any",
     "keyPress": "number | null",
@@ -4578,8 +4424,8 @@
     "eGridCell": "HTMLElement",
     "parseValue": "(value: any) => any",
     "formatValue": "(value: any) => any"
-},
-"GroupCellRendererParams": {
+  },
+  "GroupCellRendererParams": {
     "pinned": "string",
     "fullWidth": "boolean",
     "suppressPadding": "boolean",
@@ -4614,8 +4460,8 @@
     "formatValue?": "(value: any) => any",
     "refreshCell?": "() => void",
     "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels: number, value: string) => void"
-},
-"ICellRendererParams": {
+  },
+  "ICellRendererParams": {
     "fullWidth?": "boolean",
     "pinned?": "string | null",
     "value": "any",
@@ -4636,27 +4482,23 @@
     "formatValue?": "(value: any) => any",
     "refreshCell?": "() => void",
     "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels: number, value: string) => void"
-},
-"ISetFilterCellRendererParams": {
+  },
+  "ISetFilterCellRendererParams": {
     "value": "any",
     "valueFormatted": "any",
     "api": "GridApi",
     "context": "any"
-},
-"ICellRenderer": {
-    "refresh(params: ICellRendererParams)": "boolean"
-},
-"ICellRendererComp": {
+  },
+  "ICellRenderer": { "refresh(params: ICellRendererParams)": "boolean" },
+  "ICellRendererComp": {
     "refresh(params: ICellRendererParams)": "boolean",
     "getGui()": "HTMLElement",
     "destroy?()": "void",
     "afterGuiAttached?(params: IAfterGuiAttachedParams)": "void",
     "init?(params: T)": "AgPromise<void> | void"
-},
-"ICellRendererFunc": {
-    "(params: any)": "HTMLElement | string"
-},
-"ILoadingCellRendererParams": {
+  },
+  "ICellRendererFunc": { "(params: any)": "HTMLElement | string" },
+  "ILoadingCellRendererParams": {
     "fullWidth?": "boolean",
     "pinned?": "string | null",
     "value": "any",
@@ -4677,21 +4519,19 @@
     "formatValue?": "(value: any) => any",
     "refreshCell?": "() => void",
     "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels: number, value: string) => void"
-},
-"ILoadingCellRenderer": {
-    "refresh(params: ICellRendererParams)": "boolean"
-},
-"IDate": {
+  },
+  "ILoadingCellRenderer": { "refresh(params: ICellRendererParams)": "boolean" },
+  "IDate": {
     "getDate()": "Date | null",
     "setDate(date: Date | null)": "void",
     "setInputPlaceholder?(placeholder: string)": "void",
     "setInputAriaLabel?(placeholder: string)": "void"
-},
-"IDateParams": {
+  },
+  "IDateParams": {
     "onDateChanged": "() => void",
     "filterParams": "IDateFilterParams"
-},
-"IDateComp": {
+  },
+  "IDateComp": {
     "getGui()": "HTMLElement",
     "destroy?()": "void",
     "afterGuiAttached?(params: IAfterGuiAttachedParams)": "void",
@@ -4700,8 +4540,8 @@
     "setDate(date: Date | null)": "void",
     "setInputPlaceholder?(placeholder: string)": "void",
     "setInputAriaLabel?(placeholder: string)": "void"
-},
-"PositionableOptions": {
+  },
+  "PositionableOptions": {
     "popup?": "boolean",
     "minWidth?": "number | null",
     "width?": "number | string | null",
@@ -4712,37 +4552,33 @@
     "forcePopupParentAsOffsetParent?": "boolean",
     "x?": "number | null",
     "y?": "number | null"
-},
-"MappedResizer": {
+  },
+  "MappedResizer": {
     "element": "HTMLElement",
     "dragSource?": "DragListenerParams"
-},
-"ILoadingOverlayParams": {
-    "api": "GridApi"
-},
-"ILoadingOverlayComp": {
+  },
+  "ILoadingOverlayParams": { "api": "GridApi" },
+  "ILoadingOverlayComp": {
     "getGui()": "HTMLElement",
     "destroy?()": "void",
     "afterGuiAttached?(params: IAfterGuiAttachedParams)": "void",
     "init?(params: T)": "AgPromise<void> | void"
-},
-"INoRowsOverlayParams": {
-    "api": "GridApi"
-},
-"INoRowsOverlayComp": {
+  },
+  "INoRowsOverlayParams": { "api": "GridApi" },
+  "INoRowsOverlayComp": {
     "getGui()": "HTMLElement",
     "destroy?()": "void",
     "afterGuiAttached?(params: IAfterGuiAttachedParams)": "void",
     "init?(params: T)": "AgPromise<void> | void"
-},
-"CacheItem": {
+  },
+  "CacheItem": {
     "rowNode": "RowNode",
     "lastAccessedTime": "number",
     "center?": "ICellRendererComp",
     "left?": "ICellRendererComp",
     "right?": "ICellRendererComp"
-},
-"RowCssClassCalculatorParams": {
+  },
+  "RowCssClassCalculatorParams": {
     "rowNode": "RowNode",
     "rowIsEven": "boolean",
     "rowLevel": "number",
@@ -4756,8 +4592,8 @@
     "rowFocused?": "boolean",
     "fadeRowIn?": "boolean",
     "scope?": "any"
-},
-"IRowComp": {
+  },
+  "IRowComp": {
     "setDomOrder(domOrder: boolean)": "void",
     "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
     "setCellCtrls(cellCtrls: CellCtrl[])": "void",
@@ -4778,35 +4614,33 @@
     "setAriaLabel(label: string | undefined)": "void",
     "setUserStyles(styles: any)": "void",
     "setRole(role: string)": "void"
-},
-"RowGui": {
+  },
+  "RowGui": {
     "rowComp": "IRowComp",
     "element": "HTMLElement",
     "pinned": "string | null"
-},
-"CellCtrlListAndMap": {
+  },
+  "CellCtrlListAndMap": {
     "list": "CellCtrl[]",
     "map": "[key: string]: CellCtrl"
-},
-"IRowDragItem": {
+  },
+  "IRowDragItem": {
     "defaultTextValue": "string",
     "rowNode?": "RowNode",
     "rowNodes?": "RowNode[]",
     "columns?": "Column[]",
     "visibleState?": "[key: string]: boolean"
-},
-"RowCtrlMap": {
-    "[key: string]": "RowCtrl"
-},
-"RefreshViewParams": {
+  },
+  "RowCtrlMap": { "[key: string]": "RowCtrl" },
+  "RefreshViewParams": {
     "recycleRows?": "boolean",
     "animate?": "boolean",
     "suppressKeepFocus?": "boolean",
     "onlyBody?": "boolean",
     "newData?": "boolean",
     "newPage?": "boolean"
-},
-"ITooltipParams": {
+  },
+  "ITooltipParams": {
     "location": "string",
     "api?": "GridApi",
     "columnApi?": "ColumnApi",
@@ -4818,85 +4652,70 @@
     "rowIndex?": "number",
     "node?": "RowNode",
     "data?": "any"
-},
-"ITooltipComp": {
+  },
+  "ITooltipComp": {
     "getGui()": "HTMLElement",
     "destroy?()": "void",
     "afterGuiAttached?(params: IAfterGuiAttachedParams)": "void",
     "init?(params: T)": "AgPromise<void> | void"
-},
-"LoadCompleteEvent": {
+  },
+  "LoadCompleteEvent": {
     "success": "boolean",
     "block": "RowNodeBlock",
     "type": "string"
-},
-"LoadSuccessParams": {
+  },
+  "LoadSuccessParams": {
     "rowData": "any[]",
     "rowCount?": "number",
     "storeInfo?": "any"
-},
-"SortOption": {
-    "sort": "string",
-    "column": "Column"
-},
-"SortedRowNode": {
-    "currentPos": "number",
-    "rowNode": "RowNode"
-},
-"SortModelItem": {
-    "colId": "string",
-    "sort": "string"
-},
-"LayoutView": {
+  },
+  "SortOption": { "sort": "string", "column": "Column" },
+  "SortedRowNode": { "currentPos": "number", "rowNode": "RowNode" },
+  "SortModelItem": { "colId": "string", "sort": "string" },
+  "LayoutView": {
     "updateLayoutClasses(layoutClass: string, params: UpdateLayoutClassesParams)": "void"
-},
-"UpdateLayoutClassesParams": {
+  },
+  "UpdateLayoutClassesParams": {
     "autoHeight": "boolean",
     "normal": "boolean",
     "print": "boolean"
-},
-"CellValueChange": {
+  },
+  "CellValueChange": {
     "rowPinned": "string | null",
     "rowIndex": "number",
     "columnId": "string",
     "oldValue": "any",
     "newValue": "any"
-},
-"LastFocusedCell": {
+  },
+  "LastFocusedCell": {
     "rowPinned?": "string | null",
     "rowIndex": "number",
     "columnId": "string"
-},
-"PathItem": {
-    "rowNode": "RowNode",
-    "children": "PathItem[] | null"
-},
-"IInputField": {
+  },
+  "PathItem": { "rowNode": "RowNode", "children": "PathItem[] | null" },
+  "IInputField": {
     "value?": "any",
     "width?": "number",
     "label?": "HTMLElement | string",
     "labelWidth?": "number | 'flex'",
     "labelSeparator?": "string",
     "labelAlignment?": "LabelAlignment"
-},
-"IAgLabel": {
+  },
+  "IAgLabel": {
     "label?": "HTMLElement | string",
     "labelWidth?": "number | 'flex'",
     "labelSeparator?": "string",
     "labelAlignment?": "LabelAlignment"
-},
-"ChangeEvent": {
-    "selected": "boolean",
-    "type": "string"
-},
-"ColorPickerConfig": {
+  },
+  "ChangeEvent": { "selected": "boolean", "type": "string" },
+  "ColorPickerConfig": {
     "color": "string",
     "label?": "HTMLElement | string",
     "labelWidth?": "number | 'flex'",
     "labelSeparator?": "string",
     "labelAlignment?": "LabelAlignment"
-},
-"DialogOptions": {
+  },
+  "DialogOptions": {
     "eWrapper?": "HTMLElement",
     "modal?": "boolean",
     "movable?": "boolean",
@@ -4908,8 +4727,8 @@
     "resizable?": "boolean | ResizableStructure",
     "title?": "string | null",
     "cssIdentifier?": "string | null"
-},
-"AgGroupComponentParams": {
+  },
+  "AgGroupComponentParams": {
     "title?": "string",
     "enabled?": "boolean",
     "suppressEnabledCheckbox?": "boolean",
@@ -4918,8 +4737,8 @@
     "items?": "GroupItem[]",
     "alignItems?": "Align",
     "direction?": "Direction"
-},
-"IInputRange": {
+  },
+  "IInputRange": {
     "min?": "number",
     "max?": "number",
     "step?": "number",
@@ -4929,8 +4748,8 @@
     "labelWidth?": "number | 'flex'",
     "labelSeparator?": "string",
     "labelAlignment?": "LabelAlignment"
-},
-"ITextInputField": {
+  },
+  "ITextInputField": {
     "allowedCharPattern?": "string",
     "value?": "any",
     "width?": "number",
@@ -4938,12 +4757,9 @@
     "labelWidth?": "number | 'flex'",
     "labelSeparator?": "string",
     "labelAlignment?": "LabelAlignment"
-},
-"ListOption": {
-    "value": "string",
-    "text?": "string"
-},
-"PanelOptions": {
+  },
+  "ListOption": { "value": "string", "text?": "string" },
+  "PanelOptions": {
     "component?": "Component",
     "hideTitleBar?": "boolean | null",
     "closable?": "boolean | null",
@@ -4960,38 +4776,35 @@
     "forcePopupParentAsOffsetParent?": "boolean",
     "x?": "number | null",
     "y?": "number | null"
-},
-"VisibleChangedEvent": {
-    "visible": "boolean",
-    "type": "string"
-},
-"ManagedFocusCallbacks": {
+  },
+  "VisibleChangedEvent": { "visible": "boolean", "type": "string" },
+  "ManagedFocusCallbacks": {
     "shouldStopEventPropagation?": "(e: KeyboardEvent) => boolean",
     "onTabKeyDown?": "(e: KeyboardEvent) => void",
     "handleKeyDown?": "(e: KeyboardEvent) => void",
     "onFocusIn?": "(e: FocusEvent) => void",
     "onFocusOut?": "(e: FocusEvent) => void"
-},
-"PopupEventParams": {
+  },
+  "PopupEventParams": {
     "originalMouseEvent?": "MouseEvent | Touch | null",
     "mouseEvent?": "MouseEvent",
     "touchEvent?": "TouchEvent",
     "keyboardEvent?": "KeyboardEvent"
-},
-"AgPopup": {
+  },
+  "AgPopup": {
     "element": "HTMLElement",
     "wrapper": "HTMLElement",
     "hideFunc": "() => void",
     "stopAnchoringPromise": "AgPromise<Function>",
     "instanceId": "number"
-},
-"Rect": {
+  },
+  "Rect": {
     "top": "number",
     "left": "number",
     "right": "number",
     "bottom": "number"
-},
-"AddPopupParams": {
+  },
+  "AddPopupParams": {
     "modal?": "boolean",
     "eChild": "any",
     "closeOnEsc?": "boolean",
@@ -5001,30 +4814,25 @@
     "afterGuiAttached?": "(params: IAfterGuiAttachedParams) => void",
     "positionCallback?": "() => void",
     "anchorToElement?": "HTMLElement"
-},
-"AddPopupResult": {
+  },
+  "AddPopupResult": {
     "hideFunc": "() => void",
     "stopAnchoringPromise": "AgPromise<Function>"
-},
-"ITabGuard": {
-    "setTabIndex(tabIndex: string)": "void"
-},
-"TooltipParentComp": {
+  },
+  "ITabGuard": { "setTabIndex(tabIndex: string)": "void" },
+  "TooltipParentComp": {
     "getTooltipParams()": "ITooltipParams",
     "getGui()": "HTMLElement"
-},
-"TapEvent": {
-    "touchStart": "Touch",
-    "type": "string"
-},
-"LongTapEvent": {
+  },
+  "TapEvent": { "touchStart": "Touch", "type": "string" },
+  "LongTapEvent": {
     "touchStart": "Touch",
     "touchEvent": "TouchEvent",
     "type": "string"
-},
-"VirtualListModel": {
+  },
+  "VirtualListModel": {
     "getRowCount()": "number",
     "getRow(index: number)": "any",
     "isRowSelected?(index: number)": "boolean | undefined"
-}
+  }
 }
