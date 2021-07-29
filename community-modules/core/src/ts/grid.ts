@@ -73,7 +73,6 @@ import { AgInputRange } from "./widgets/agInputRange";
 import { AgSelect } from "./widgets/agSelect";
 import { AgAngleSelect } from "./widgets/agAngleSelect";
 import { AgToggleButton } from "./widgets/agToggleButton";
-import { DetailRowCompCache } from "./rendering/row/detailRowCompCache";
 import { RowPositionUtils } from "./entities/rowPosition";
 import { CellPositionUtils } from "./entities/cellPosition";
 import { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
@@ -307,7 +306,7 @@ export class GridCoreCreator {
             FocusService, MouseEventService, Environment, CellNavigationService, ValueFormatterService,
             StylingService, ScrollVisibleService, SortController, ColumnHoverService, ColumnAnimationService,
             SelectableService, AutoGroupColService, ChangeDetectionService, AnimationFrameService,
-            DetailRowCompCache, UndoRedoService, AgStackComponentsRegistry, ColumnDefFactory,
+            UndoRedoService, AgStackComponentsRegistry, ColumnDefFactory,
             RowCssClassCalculator, RowNodeBlockLoader, RowNodeSorter, CtrlsService,
             PinnedWidthService
         ];

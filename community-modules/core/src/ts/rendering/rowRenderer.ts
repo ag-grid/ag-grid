@@ -34,6 +34,7 @@ import { executeInAWhile } from "../utils/function";
 import { CtrlsService } from "../ctrlsService";
 import { GridBodyCtrl } from "../gridBodyComp/gridBodyCtrl";
 import { CellCtrl } from "./cell/cellCtrl";
+import { removeFromArray } from "../utils/array";
 
 export interface RowCtrlMap {
     [key: string]: RowCtrl;
@@ -65,6 +66,7 @@ export class RowRenderer extends BeanStub {
     // are rendered for which rows in the dom.
     private rowCtrlsByRowIndex: RowCtrlMap = {};
     private zombieRowCtrls: RowCtrlMap = {};
+    private cachedRowCtrls: RowCtrlCache;
     private allRowCtrls: RowCtrl[] = [];
 
     private topRowCtrls: RowCtrl[] = [];
@@ -79,14 +81,8 @@ export class RowRenderer extends BeanStub {
     // then it will be trying to draw rows in the middle of a refresh.
     private refreshInProgress = false;
 
-    private logger: Logger;
-
     private printLayout: boolean;
     private embedFullWidthRows: boolean;
-
-    public agWire(@Qualifier("loggerFactory") loggerFactory: LoggerFactory) {
-        this.logger = loggerFactory.create("RowRenderer");
-    }
 
     @PostConstruct
     private postConstruct(): void {
@@ -107,18 +103,28 @@ export class RowRenderer extends BeanStub {
 
         this.registerCellEventListeners();
 
+        this.initialiseCache();
         this.printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
         this.embedFullWidthRows = this.printLayout || this.gridOptionsWrapper.isEmbedFullWidthRows();
 
         this.redrawAfterModelUpdate();
     }
 
+    private initialiseCache(): void {
+        if (this.gridOptionsWrapper.isKeepDetailRows()) {
+            const countProp = this.gridOptionsWrapper.getKeepDetailRowsCount();
+            const count = countProp != null ? countProp : 3;
+            this.cachedRowCtrls = new RowCtrlCache(count);
+        }
+    }
+
     public getRowCtrls(): RowCtrl[] {
         return this.allRowCtrls;
     }
 
-    private updateAllRowCons(): void {
-        this.allRowCtrls = [...getAllValuesInObject(this.rowCtrlsByRowIndex), ...getAllValuesInObject(this.zombieRowCtrls)];
+    private updateAllRowCtrls(): void {
+        const cachedEntries = this.cachedRowCtrls ? this.cachedRowCtrls.getEntries() : [];
+        this.allRowCtrls = [...getAllValuesInObject(this.rowCtrlsByRowIndex), ...getAllValuesInObject(this.zombieRowCtrls), ...cachedEntries];
     }
 
     // in a clean design, each cell would register for each of these events. however when scrolling, all the cells
@@ -255,7 +261,7 @@ export class RowRenderer extends BeanStub {
         this.firstRenderedRow = 0;
         this.lastRenderedRow = -1;
         const rowIndexesToRemove = Object.keys(this.rowCtrlsByRowIndex);
-        this.removeRowComps(rowIndexesToRemove);
+        this.removeRowCtrls(rowIndexesToRemove);
     }
 
     private onPageLoaded(event: ModelUpdatedEvent): void {
@@ -360,7 +366,7 @@ export class RowRenderer extends BeanStub {
         if (partialRefresh) {
             const indexesToRemove = this.getRenderedIndexesForRowNodes(rowNodes!);
             // remove the rows
-            this.removeRowComps(indexesToRemove);
+            this.removeRowCtrls(indexesToRemove);
         }
 
         // add draw them again
@@ -689,7 +695,7 @@ export class RowRenderer extends BeanStub {
 
     private removeAllRowComps(): void {
         const rowIndexesToRemove = Object.keys(this.rowCtrlsByRowIndex);
-        this.removeRowComps(rowIndexesToRemove);
+        this.removeRowCtrls(rowIndexesToRemove);
     }
 
     private recycleRows(): RowCtrlMap {
@@ -701,7 +707,7 @@ export class RowRenderer extends BeanStub {
                 stubNodeIndexes.push(index);
             }
         });
-        this.removeRowComps(stubNodeIndexes);
+        this.removeRowCtrls(stubNodeIndexes);
 
         // then clear out rowCompsByIndex, but before that take a copy, but index by id, not rowIndex
         const nodesByIdMap: RowCtrlMap = {};
@@ -715,14 +721,14 @@ export class RowRenderer extends BeanStub {
     }
 
     // takes array of row indexes
-    private removeRowComps(rowsToRemove: any[]) {
+    private removeRowCtrls(rowsToRemove: any[]) {
         // if no fromIndex then set to -1, which will refresh everything
         // let realFromIndex = -1;
         rowsToRemove.forEach(indexToRemove => {
-            const rowComp = this.rowCtrlsByRowIndex[indexToRemove];
-            if (rowComp) {
-                rowComp.destroyFirstPass();
-                rowComp.destroySecondPass();
+            const rowCtrl = this.rowCtrlsByRowIndex[indexToRemove];
+            if (rowCtrl) {
+                rowCtrl.destroyFirstPass();
+                rowCtrl.destroySecondPass();
             }
             delete this.rowCtrlsByRowIndex[indexToRemove];
         });
@@ -747,7 +753,7 @@ export class RowRenderer extends BeanStub {
         const existingIndexes = Object.keys(this.rowCtrlsByRowIndex);
         const indexesNotToDraw: string[] = existingIndexes.filter(index => !indexesToDrawMap[index]);
 
-        this.removeRowComps(indexesNotToDraw);
+        this.removeRowCtrls(indexesNotToDraw);
     }
 
     private calculateIndexesToDraw(rowsToRecycle?: { [key: string]: RowCtrl; } | null): number[] {
@@ -811,7 +817,7 @@ export class RowRenderer extends BeanStub {
             if (useAnimationFrame) {
                 this.beans.taskQueue.addDestroyTask(() => {
                     this.destroyRowCtrls(rowsToRecycle, animate);
-                    this.updateAllRowCons();
+                    this.updateAllRowCtrls();
                     this.dispatchDisplayedRowsChanged();
                 });
             } else {
@@ -819,7 +825,7 @@ export class RowRenderer extends BeanStub {
             }
         }
 
-        this.updateAllRowCons();
+        this.updateAllRowCtrls();
         this.checkAngularCompile();
         this.gridBodyCtrl.updateRowCount();
     }
@@ -860,7 +866,7 @@ export class RowRenderer extends BeanStub {
         });
 
         this.refreshFloatingRowComps();
-        this.removeRowComps(rowsToRemove);
+        this.removeRowCtrls(rowsToRemove);
         this.redrawAfterScroll();
     }
 
@@ -897,7 +903,7 @@ export class RowRenderer extends BeanStub {
             }
         });
 
-        this.removeRowComps(rowsToRemove);
+        this.removeRowCtrls(rowsToRemove);
         this.redrawAfterScroll();
     }
 
@@ -947,11 +953,16 @@ export class RowRenderer extends BeanStub {
         return rowCon;
     }
 
-    private destroyRowCtrls(rowConsMap: { [key: string]: RowCtrl; } | null | undefined, animate: boolean): void {
+    private destroyRowCtrls(rowCtrlsMap: RowCtrlMap | null | undefined, animate: boolean): void {
         const executeInAWhileFuncs: (() => void)[] = [];
-        iterateObject(rowConsMap, (nodeId: string, rowCtrl: RowCtrl) => {
+        iterateObject(rowCtrlsMap, (nodeId: string, rowCtrl: RowCtrl) => {
             // if row was used, then it's null
             if (!rowCtrl) { return; }
+
+            if (this.cachedRowCtrls && rowCtrl.isCacheable()) {
+                this.cachedRowCtrls.addRow(rowCtrl);
+                return;
+            }
 
             rowCtrl.destroyFirstPass();
             if (animate) {
@@ -968,7 +979,7 @@ export class RowRenderer extends BeanStub {
             // this ensures we fire displayedRowsChanged AFTER all the 'executeInAWhileFuncs' get
             // executed, as we added it to the end of the list.
             executeInAWhileFuncs.push(() => {
-                this.updateAllRowCons();
+                this.updateAllRowCtrls();
                 this.dispatchDisplayedRowsChanged();
             });
             executeInAWhile(executeInAWhileFuncs);
@@ -1142,14 +1153,18 @@ export class RowRenderer extends BeanStub {
     }
 
     private createRowCon(rowNode: RowNode, animate: boolean, afterScroll: boolean): RowCtrl {
-        const suppressAnimationFrame = this.gridOptionsWrapper.isSuppressAnimationFrame();
 
+        const rowCtrlFromCache = this.cachedRowCtrls ? this.cachedRowCtrls.getRow(rowNode) : null;
+        if (rowCtrlFromCache) { return rowCtrlFromCache; }
+        
         // we don't use animations frames for printing, so the user can put the grid into print mode
         // and immediately print - otherwise the user would have to wait for the rows to draw in the background
         // (via the animation frames) which is awkward to do from code.
-
+        
         // we only do the animation frames after scrolling, as this is where we want the smooth user experience.
         // having animation frames for other times makes the grid look 'jumpy'.
+
+        const suppressAnimationFrame = this.gridOptionsWrapper.isSuppressAnimationFrame();
         const useAnimationFrameForCreate = afterScroll && !suppressAnimationFrame && !this.printLayout;
 
         const res = new RowCtrl(
@@ -1211,6 +1226,77 @@ export class RowRenderer extends BeanStub {
         const blockInsideViewport = !blockBeforeViewport && !blockAfterViewport;
 
         return blockInsideViewport;
+    }
+}
+
+class RowCtrlCache {
+
+    // map for fast access
+    private entriesMap: RowCtrlMap = {};
+
+    // list for keeping order
+    private entriesList: RowCtrl[] = [];
+
+    private readonly maxCount: number;
+
+    constructor(maxCount: number) {
+        this.maxCount = maxCount;
+    }
+
+    private toString(): string {
+        return this.entriesList.map(item => item.getRowNode().data.name).join(', ');
+    }
+
+    public addRow(rowCtrl: RowCtrl): void {
+
+        const before = this.toString();
+
+        this.entriesMap[rowCtrl.getRowNode().id!] = rowCtrl;
+        this.entriesList.push(rowCtrl);
+        rowCtrl.setCached(true);
+
+        if (this.entriesList.length>this.maxCount) {
+            const rowCtrlToDestroy = this.entriesList[0];
+            rowCtrlToDestroy.destroyFirstPass();
+            rowCtrlToDestroy.destroySecondPass();
+            this.removeFromCache(rowCtrlToDestroy);
+        }
+
+        console.log(`adding ${rowCtrl.getRowNode().data.name}, before = ${before}, after = ${this.toString()}`);
+    }
+
+    public getRow(rowNode: RowNode): RowCtrl | null {
+        if (rowNode==null || rowNode.id==null) { return null;}
+
+        const before = this.toString();
+
+        const res = this.entriesMap[rowNode.id];
+
+        if (!res) { 
+            console.log(`getting ${rowNode.data.name}, before = ${before}, after = ${this.toString()}`);
+            return null; 
+        }
+
+        this.removeFromCache(res);
+        res.setCached(false);
+
+        // this can happen if user reloads data, and a new RowNode is reusing
+        // the same ID as the old one
+        const rowNodeMismatch = res.getRowNode() != rowNode;
+
+        console.log(`getting ${rowNode.data.name}, before = ${before}, after = ${this.toString()}`);
+
+        return rowNodeMismatch ? null : res;
+    }
+
+    private removeFromCache(rowCtrl: RowCtrl): void {
+        const rowNodeId = rowCtrl.getRowNode().id!;
+        delete this.entriesMap[rowNodeId];
+        removeFromArray(this.entriesList, rowCtrl);
+    }
+
+    public getEntries(): RowCtrl[] {
+        return this.entriesList;
     }
 }
 
