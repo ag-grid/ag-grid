@@ -4,7 +4,6 @@ import { Rect } from "../../../scene/shape/rect";
 import { Text, FontStyle, FontWeight } from "../../../scene/shape/text";
 import { DropShadow } from "../../../scene/dropShadow";
 import {
-    HighlightStyle,
     SeriesNodeDatum,
     CartesianTooltipRendererParams as HistogramTooltipRendererParams, SeriesTooltip
 } from "../series";

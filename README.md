@@ -16,7 +16,7 @@ Here's how our grid looks with multiple filters and grouping enabled:
 
 ![alt text](./github-grid-demo.jpg "AG Grid Demo")
 
-## Features
+## Features 
 
 In addition to the standard set of features you'd expect from any grid:
 

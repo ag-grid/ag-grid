@@ -1680,6 +1680,10 @@
                 "url": "/charts-legend/"
               },
               {
+                "title": "Series",
+                "url": "/charts-series/"
+              },
+              {
                 "title": "Themes",
                 "url": "/charts-themes/"
               },

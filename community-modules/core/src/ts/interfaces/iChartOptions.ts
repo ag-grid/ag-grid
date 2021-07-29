@@ -168,18 +168,18 @@ export interface AxisTickOptions {
     color: string;
 }
 
-type AxisLabelFormatter = (params: {
-    value: any,
-    index: number,
-    fractionDigits?: number,
-    formatter?: (x: any) => string
-}) => string;
+export interface AxisLabelFormatterParams {
+    value: any;
+    index: number;
+    fractionDigits?: number;
+    formatter?: (x: any) => string;
+}
 
 export interface AxisLabelOptions extends FontOptions {
     padding: number;
     rotation: number;
     format?: string;
-    formatter?: AxisLabelFormatter;
+    formatter?: (params: AxisLabelFormatterParams) => string;
 }
 
 export interface GridStyle {

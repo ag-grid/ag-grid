@@ -5,7 +5,6 @@ import { Text, FontStyle, FontWeight } from "../../../scene/shape/text";
 import { BandScale } from "../../../scale/bandScale";
 import { DropShadow } from "../../../scene/dropShadow";
 import {
-    HighlightStyle,
     SeriesNodeDatum,
     CartesianTooltipRendererParams, SeriesTooltip
 } from "../series";
