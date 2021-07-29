@@ -65,6 +65,7 @@ export class VueComponentFactory {
         // with vue 3 we need to provide a container to mount into (not necessary in vue 2), so create a wrapper div here
         const container = document.createElement('div');
         const mountedComponent = createApp(extendedComponentDefinition);
+        VueComponentFactory.addContext(mountedComponent, parent as any);
         (parent as any).plugins.forEach((plugin: any) => mountedComponent.use(plugin));
         mountedComponent.mount(container);
 
@@ -84,8 +85,17 @@ export class VueComponentFactory {
         currentParent &&
         currentParent.$options &&
         (++depth < maxDepth)) {
-            componentInstance = (currentParent as any).$options.components![component as any];
+            const currentParentAsThis = currentParent as any;
+            componentInstance = currentParentAsThis.$options && currentParentAsThis.$options.components ? currentParentAsThis.$options.components![component as any] : null;
             currentParent = currentParent.$parent;
+        }
+
+        // then search in globally registered components of app
+        if (!componentInstance) {
+            const components = parent.$.appContext.components
+            if (components && components[component]) {
+                componentInstance = components[component];
+            }
         }
 
         if (!componentInstance && !suppressError) {
@@ -93,5 +103,22 @@ export class VueComponentFactory {
             return null;
         }
         return componentInstance;
+    }
+
+    private static addContext(component: any, parent: any) {
+        if (component._context && parent.$ && parent.$.appContext) {
+            const contextProperties = [
+                'config',
+                'mixins',
+                'components ',
+                'directives ',
+                'provides',
+                'optionsCache',
+                'propsCache',
+                'emitsCache',
+            ];
+
+            contextProperties.forEach(property => component._context[property] = parent.$.appContext[property]);
+        }
     }
 }

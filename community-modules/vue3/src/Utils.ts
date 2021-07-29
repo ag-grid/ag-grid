@@ -49,16 +49,22 @@ export const getAgGridProperties = (): [Properties, Properties, { prop: string, 
     }, props);
 
     const watch: Properties = {
-        rowDataModel(currentValue: any, previousValue: any) {
-            this.processChanges('rowData', currentValue, previousValue);
-        },
+        rowDataModel: {
+            handler(currentValue: any, previousValue: any) {
+                this.processChanges('rowData', currentValue, previousValue);
+            },
+            deep: true
+        }
     };
 
     ComponentUtil.ALL_PROPERTIES.forEach((propertyName) => {
         props[propertyName] = {};
 
-        watch[propertyName] = function (currentValue: any, previousValue: any) {
-            this.processChanges(propertyName, currentValue, previousValue);
+        watch[propertyName] = {
+            handler(currentValue: any, previousValue: any) {
+                this.processChanges(propertyName, currentValue, previousValue);
+            },
+            deep: true
         };
     });
 
