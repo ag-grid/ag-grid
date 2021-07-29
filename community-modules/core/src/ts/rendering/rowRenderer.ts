@@ -123,8 +123,13 @@ export class RowRenderer extends BeanStub {
     }
 
     private updateAllRowCtrls(): void {
-        const cachedEntries = this.cachedRowCtrls ? this.cachedRowCtrls.getEntries() : [];
-        this.allRowCtrls = [...getAllValuesInObject(this.rowCtrlsByRowIndex), ...getAllValuesInObject(this.zombieRowCtrls), ...cachedEntries];
+        const liveList = getAllValuesInObject(this.rowCtrlsByRowIndex);
+        if (this.beans.gridOptionsWrapper.isEnsureDomOrder()) {
+            liveList.sort( (a,b) => a.getRowNode().rowIndex - b.getRowNode.rowIndex );
+        }
+        const zombieList = getAllValuesInObject(this.zombieRowCtrls);
+        const cachedList = this.cachedRowCtrls ? this.cachedRowCtrls.getEntries() : [];
+        this.allRowCtrls = [...liveList, ...zombieList, ...cachedList];
     }
 
     // in a clean design, each cell would register for each of these events. however when scrolling, all the cells
@@ -1248,9 +1253,6 @@ class RowCtrlCache {
     }
 
     public addRow(rowCtrl: RowCtrl): void {
-
-        const before = this.toString();
-
         this.entriesMap[rowCtrl.getRowNode().id!] = rowCtrl;
         this.entriesList.push(rowCtrl);
         rowCtrl.setCached(true);
@@ -1261,21 +1263,14 @@ class RowCtrlCache {
             rowCtrlToDestroy.destroySecondPass();
             this.removeFromCache(rowCtrlToDestroy);
         }
-
-        console.log(`adding ${rowCtrl.getRowNode().data.name}, before = ${before}, after = ${this.toString()}`);
     }
 
     public getRow(rowNode: RowNode): RowCtrl | null {
         if (rowNode==null || rowNode.id==null) { return null;}
 
-        const before = this.toString();
-
         const res = this.entriesMap[rowNode.id];
 
-        if (!res) { 
-            console.log(`getting ${rowNode.data.name}, before = ${before}, after = ${this.toString()}`);
-            return null; 
-        }
+        if (!res) { return null; }
 
         this.removeFromCache(res);
         res.setCached(false);
@@ -1283,8 +1278,6 @@ class RowCtrlCache {
         // this can happen if user reloads data, and a new RowNode is reusing
         // the same ID as the old one
         const rowNodeMismatch = res.getRowNode() != rowNode;
-
-        console.log(`getting ${rowNode.data.name}, before = ${before}, after = ${this.toString()}`);
 
         return rowNodeMismatch ? null : res;
     }

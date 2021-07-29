@@ -322,7 +322,7 @@ var gridOptions = {
     popupParent: document.querySelector('#example-wrapper'),
     // enableBrowserTooltips: true,
     // tooltipShowDelay: 200,
-    // ensureDomOrder: true,
+    ensureDomOrder: true,
     // enableCellTextSelection: true,
     // postProcessPopup: function(params) {
     //     console.log(params);
