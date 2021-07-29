@@ -49,7 +49,7 @@ export const getAgGridProperties = (): [Properties, Properties, { prop: string, 
     }, props);
 
     const watch: Properties = {
-        rowDataModel:{
+        rowDataModel: {
             handler(currentValue: any, previousValue: any) {
                 this.processChanges('rowData', currentValue, previousValue);
             },
