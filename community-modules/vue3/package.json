@@ -39,7 +39,7 @@
     "typescript": "^3.6.0",
     "vue": "3.0.0",
     "core-js": "^3.6.5",
-    "vue-class-component": "^8.0.0-beta.3",
+    "vue-class-component": "^8.0.0-rc.1",
     "@vue/composition-api": "^1.0.0-beta.14",
     "vue-template-compiler": "^2.6.12"
   },
