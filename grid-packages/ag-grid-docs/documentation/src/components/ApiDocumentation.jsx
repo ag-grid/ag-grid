@@ -587,7 +587,10 @@ function appendInterface(name, interfaceType, framework, allLines) {
             return -1;
         return p1 < p2 ? -1 : 1;
     });
-    properties.forEach(([property, type]) => {
+    properties
+        // Only show AngularJS $scope property for Angular or Javascript frameworks
+        .filter(([p,]) => p !== '$scope' || (framework === 'angular' || framework === 'javascript'))
+        .forEach(([property, type]) => {
         lines.push(`  ${property}: ${getLinkedType(type, framework)};`);
     });
     lines.push('}');
