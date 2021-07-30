@@ -13,7 +13,6 @@ import { IDateComp, IDateParams } from "../../rendering/dateComponent";
 import { IHeaderComp, IHeaderParams } from "../../headerRendering/header/headerComp";
 import { IHeaderGroupComp, IHeaderGroupParams } from "../../headerRendering/headerGroup/headerGroupComp";
 import { ICellRendererComp, ICellRendererParams, ISetFilterCellRendererParams } from "../../rendering/cellRenderers/iCellRenderer";
-import { GroupCellRendererParams } from "../../rendering/cellRenderers/groupCellRenderer";
 import { ILoadingOverlayComp, ILoadingOverlayParams } from "../../rendering/overlays/loadingOverlayComponent";
 import { INoRowsOverlayComp, INoRowsOverlayParams } from "../../rendering/overlays/noRowsOverlayComponent";
 import { ITooltipComp, ITooltipParams } from "../../rendering/tooltipComponent";
@@ -40,6 +39,7 @@ import {
 } from "./componentTypes";
 import { BeanStub } from "../../context/beanStub";
 import { cloneObject, mergeDeep } from '../../utils/object';
+import { GroupCellRendererParams } from "../../rendering/cellRenderers/groupCellRendererCtrl";
 
 export type DefinitionObject =
     GridOptions
@@ -78,9 +78,6 @@ export class UserComponentFactory extends BeanStub {
             params.columnGroup.getColGroupDef()!, params, HeaderGroupComponent, 'agColumnGroupHeader');
     }
 
-    public newFullWidthGroupRowInnerCellRenderer(params: ICellRendererParams): AgPromise<ICellRendererComp> | null {
-        return this.lookupAndCreateComponent(this.gridOptions.groupRowRendererParams, params, InnerRendererComponent, null, true);
-    }
 
     // this one is unusual, as it can be LoadingCellRenderer, DetailCellRenderer, FullWidthCellRenderer or GroupRowRenderer.
     // so we have to pass the type in.
@@ -108,6 +105,24 @@ export class UserComponentFactory extends BeanStub {
         return this.lookupAndCreateComponent(def, params, CellRendererComponent, null, true);
     }
 
+    public getInnerRendererDetails(def: GroupCellRendererParams, params: ICellRendererParams): UserCompDetails | undefined {
+        return this.getCompDetails(def, InnerRendererComponent.propertyName, null, params);
+    }
+
+    public getFullWidthGroupRowInnerCellRenderer(def: any, params: ICellRendererParams): UserCompDetails | undefined {
+        return this.getCompDetails(def, InnerRendererComponent.propertyName, null, params);
+    }
+
+    // delete this one
+    public newFullWidthGroupRowInnerCellRenderer(params: ICellRendererParams): AgPromise<ICellRendererComp> | null {
+        return this.lookupAndCreateComponent(this.gridOptions.groupRowRendererParams, params, InnerRendererComponent, null, true);
+    }
+
+    // delete this one
+    public newInnerCellRenderer(def: GroupCellRendererParams, params: ICellRendererParams): AgPromise<ICellRendererComp> | null {
+        return this.lookupAndCreateComponent(def, params, InnerRendererComponent, null);
+    }
+
     public getCellRendererDetails(def: ColDef | IRichCellEditorParams, params: ICellRendererParams): UserCompDetails | undefined {
         return this.getCompDetails(def, CellRendererComponent.propertyName, null, params);
     }
@@ -127,9 +142,6 @@ export class UserComponentFactory extends BeanStub {
         return this.createAndInitComponent(compClassAndParams, CellEditorComponent)
     }
 
-    public newInnerCellRenderer(def: GroupCellRendererParams, params: ICellRendererParams): AgPromise<ICellRendererComp> | null {
-        return this.lookupAndCreateComponent(def, params, InnerRendererComponent, null);
-    }
 
     public newLoadingOverlayComponent(params: ILoadingOverlayParams): AgPromise<ILoadingOverlayComp> | null {
         return this.lookupAndCreateComponent(this.gridOptions, params, LoadingOverlayComponent, 'agLoadingOverlay');
@@ -166,8 +178,8 @@ export class UserComponentFactory extends BeanStub {
     }
 
     private getCompDetails(defObject: DefinitionObject, propName: string, defaultName: string | null | undefined, params: any, mandatory = false): UserCompDetails | undefined {
-        const compClassDef = this.lookupComponent(defObject, propName, params, defaultName);
-        if (!compClassDef || !compClassDef.componentClass) {
+        const compDetails = this.lookupComponent(defObject, propName, params, defaultName);
+        if (!compDetails || !compDetails.componentClass) {
             if (mandatory) {
                 this.logComponentMissing(defObject, propName);
             }
@@ -175,9 +187,9 @@ export class UserComponentFactory extends BeanStub {
         }
 
         const paramsMerged = this.mergeParamsWithApplicationProvidedParams(
-            defObject, propName, params, compClassDef.params);
+            defObject, propName, params, compDetails.params);
 
-        return {...compClassDef, params: paramsMerged};
+        return {...compDetails, params: paramsMerged};
     }
 
     /**

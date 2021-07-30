@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { _, ColumnApi, ComponentUtil, Context, GridApi, GridCoreCreator, GridOptions } from 'ag-grid-community';
+import { _, ColumnApi, ComponentUtil, Context, GridApi, GridCoreCreator, GridOptions, GridParams } from 'ag-grid-community';
 import { AgGridColumn } from '../agGridColumn';
 import { ChangeDetectionService, ChangeDetectionStrategyType } from '../changeDetectionService';
 import { AgReactUiProps } from '../interfaces';
+import { ReactFrameworkOverrides } from './reactFrameworkOverrides';
 import GridComp from './gridComp';
 
 export class AgGridReactFire extends Component<AgReactUiProps, { context: Context | undefined }> {
@@ -29,7 +30,6 @@ export class AgGridReactFire extends Component<AgReactUiProps, { context: Contex
                 { this.state.context && <GridComp context={ this.state.context }/> }
             </div>
         );
-
     }
 
     private createStyleForDiv() {
@@ -42,12 +42,13 @@ export class AgGridReactFire extends Component<AgReactUiProps, { context: Contex
     public componentDidMount() {
 
         const modules = this.props.modules || [];
-        const gridParams = {
+        const gridParams: GridParams = {
             // providedBeanInstances: {
             //     agGridReact: this,
             //     frameworkComponentWrapper: new ReactFrameworkComponentWrapper(this)
             // },
-            modules
+            modules,
+            frameworkOverrides: new ReactFrameworkOverrides()
         };
 
         this.gridOptions = {...this.props.gridOptions};

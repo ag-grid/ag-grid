@@ -15,6 +15,13 @@ interface GridCompProps {
     context: Context;
 }
 
+export interface AgGridReactContextValues {
+    context?: Context
+}
+
+export const AgContext = React.createContext<AgGridReactContextValues>({});
+
+
 const GridComp = ({ context }: GridCompProps) => {
 
     const [rtlClass, setRtlClass] = useState<string>('');
@@ -177,20 +184,22 @@ const GridComp = ({ context }: GridCompProps) => {
         <div ref={ eRootWrapperRef } className={ rootWrapperClasses } style={ topStyle }>
             <div className={ rootWrapperBodyClasses } ref={ eGridBodyParentRef }>
                 { initialised && eGridBodyParent &&
-                    <TabGuardComp
-                        ref={ setTabGuardCompRef }
-                        context={ context }
-                        eFocusableElement= { eGridBodyParent }
-                        onTabKeyDown={ onTabKeyDown }
-                        gridCtrl={ gridCtrlRef.current! }>
-                    { // we wait for initialised before rending the children, so GridComp has created and registered with it's
-                    // GridCtrl before we create the child GridBodyComp. Otherwise the GridBodyComp would initialise first,
-                    // before we have set the the Layout CSS classes, causing the GridBodyComp to render rows to a grid that
-                    // doesn't have it's height specified, which would result if all the rows getting rendered (and if many rows,
-                    // hangs the UI)
-                         <GridBodyComp context={ context }/>
-                    }
-                    </TabGuardComp>
+                    <AgContext.Provider value={{context: context}}>
+                        <TabGuardComp
+                            ref={ setTabGuardCompRef }
+                            context={ context }
+                            eFocusableElement= { eGridBodyParent }
+                            onTabKeyDown={ onTabKeyDown }
+                            gridCtrl={ gridCtrlRef.current! }>
+                        { // we wait for initialised before rending the children, so GridComp has created and registered with it's
+                        // GridCtrl before we create the child GridBodyComp. Otherwise the GridBodyComp would initialise first,
+                        // before we have set the the Layout CSS classes, causing the GridBodyComp to render rows to a grid that
+                        // doesn't have it's height specified, which would result if all the rows getting rendered (and if many rows,
+                        // hangs the UI)
+                            <GridBodyComp/>
+                        }
+                        </TabGuardComp>
+                    </AgContext.Provider>
                 }
             </div>
         </div>

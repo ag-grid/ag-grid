@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useMemo, memo } from 'react';
+import React, { useEffect, useRef, useState, useMemo, memo, useContext } from 'react';
 import {
     AgStackComponentsRegistry,
     Context,
@@ -10,6 +10,7 @@ import {
 import { classesList } from './utils';
 import RowContainerComp  from './rows/rowContainerComp';
 import useReactCommentEffect from './reactComment';
+import { AgContext } from './gridComp';
 
 interface SectionProperties {
     section: React.RefObject<HTMLDivElement>;
@@ -18,9 +19,9 @@ interface SectionProperties {
     unselectable?: 'on';
 }
 
-const GridBodyComp = (params: { context: Context }) => {
+const GridBodyComp = () => {
 
-    const { context } = params;
+    const context = useContext(AgContext).context!;
 
     const [rowAnimationClass, setRowAnimationClass] = useState<string>('');
     const [ariaColCount, setAriaColCount] = useState<number>(0);

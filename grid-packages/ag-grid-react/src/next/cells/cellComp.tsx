@@ -140,6 +140,7 @@ const CellComp = (props: {
     const [transition, setTransition] = useState<string | undefined>();
     const [tabIndex, setTabIndex] = useState<number>();
     const [ariaSelected, setAriaSelected] = useState<boolean | undefined>();
+    const [ariaExpanded, setAriaExpanded] = useState<boolean | undefined>();
     const [ariaColIndex, setAriaColIndex] = useState<number>();
     const [ariaDescribedBy, setAriaDescribedBy] = useState<string | undefined>();
     const [zIndex, setZIndex] = useState<string>();
@@ -234,6 +235,7 @@ const CellComp = (props: {
             addOrRemoveCssClass: (name, on) => setCssClasses(prev => prev.setClass(name, on)),
             setUserStyles: styles => setUserStyles(styles),
             setAriaSelected: value => setAriaSelected(value),
+            setAriaExpanded: value => setAriaExpanded(value),
             getFocusableElement: () => eGui.current!,
             setLeft: left => setLeft(left),
             setWidth: width => setWidth(width),
@@ -317,7 +319,8 @@ const CellComp = (props: {
     return (
         <div ref={ eGui } className={ className } style={ cellStyles } tabIndex={ tabIndex }
              aria-selected={ ariaSelected } aria-colindex={ ariaColIndex } role={ role }
-             col-id={ colId } title={ title } unselectable={ unselectable } aria-describedby={ ariaDescribedBy }>
+             aria-expanded={ ariaExpanded } col-id={ colId } title={ title } 
+             unselectable={ unselectable } aria-describedby={ ariaDescribedBy }>
 
             { renderDetails != null && jsxShowValue(renderDetails, cellInstanceId, cellRendererRef, 
                                                 showTools, unselectable, reactCellRendererStateless,

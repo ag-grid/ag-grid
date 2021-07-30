@@ -10,7 +10,7 @@ import { RowDragComp } from "./../row/rowDragComp";
 import { PopupEditorWrapper } from "./../cellEditors/popupEditorWrapper";
 import { DndSourceComp } from "./../dndSourceComp";
 import { TooltipParentComp } from "../../widgets/tooltipFeature";
-import { setAriaColIndex, setAriaDescribedBy, setAriaSelected } from "../../utils/aria";
+import { setAriaColIndex, setAriaDescribedBy, setAriaSelected, setAriaExpanded } from "../../utils/aria";
 import { escapeString } from "../../utils/string";
 import { missing } from "../../utils/generic";
 import { addStylesToElement, clearElement, removeFromParent } from "../../utils/dom";
@@ -102,6 +102,7 @@ export class CellComp extends Component implements TooltipParentComp {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setUserStyles: styles => addStylesToElement(eGui, styles),
             setAriaSelected: selected => setAriaSelected(eGui, selected),
+            setAriaExpanded: selected => setAriaExpanded(eGui, selected),
             getFocusableElement: () => this.getFocusableElement(),
             setLeft: left => style.left = left,
             setWidth: width => style.width = width,

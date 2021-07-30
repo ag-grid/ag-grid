@@ -47,6 +47,7 @@ export interface ICellComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     setUserStyles(styles: any): void;
     setAriaSelected(selected: boolean | undefined): void;
+    setAriaExpanded(expanded: boolean): void;
     getFocusableElement(): HTMLElement;
     
     setLeft(left: string): void;
@@ -187,6 +188,7 @@ export class CellCtrl extends BeanStub {
         this.onLastLeftPinnedChanged();
         this.onColumnHover();
         this.setupControlComps();
+        this.setupAriaExpanded();
 
         const colIdSanitised = escapeString(this.column.getId());
         const ariaColIndex = this.beans.columnModel.getAriaColumnIndex(this.column);
@@ -244,6 +246,29 @@ export class CellCtrl extends BeanStub {
         const res = rowNodePinned ? false : isFunc || value === true;
 
         return res;
+    }
+
+    private setupAriaExpanded(): void {
+
+        const colDef = this.column.getColDef();
+
+        if (!this.rowNode.isExpandable()) { return; }
+
+        const showRowGroup = colDef.showRowGroup;
+        const rowGroupColumn = this.rowNode.rowGroupColumn;
+
+        const showingAllGroups = showRowGroup === true;
+        const showingThisGroup = rowGroupColumn && rowGroupColumn.getColId() === showRowGroup;
+
+        const colMatches = showingAllGroups || showingThisGroup;
+        if (!colMatches) { return; }
+
+        const listener = ()=> {
+            this.cellComp.setAriaExpanded(this.rowNode.expanded);
+        };
+
+        this.addManagedListener(this.rowNode, RowNode.EVENT_EXPANDED_CHANGED, listener);
+        listener();
     }
 
     public refreshShouldDestroy(): boolean {
