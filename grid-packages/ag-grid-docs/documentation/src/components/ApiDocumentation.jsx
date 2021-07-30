@@ -424,8 +424,6 @@ const FunctionCodeSample = ({ framework, name, type, config }) => {
         argumentDefinitions.join('');
 
     const returnTypeName = getInterfaceName(functionName).replace(/^get/, '');
-
-
     const functionPrefix = name.includes('(') ?
         `function ${functionName}(${functionArguments}):` :
         `${functionName} = (${functionArguments}) =>`;
@@ -465,6 +463,7 @@ const FunctionCodeSample = ({ framework, name, type, config }) => {
 const getInterfaceLines = (framework, name, definition, config) => {
     let interfacesToWrite = []
     if (typeof (definition) === 'string') {
+        // Extract all the words to enable support for Union types
         const typeRegex = /\w+/g;
         const definitionTypes = [...definition.matchAll(typeRegex)];
 
@@ -528,14 +527,31 @@ const getInterfaceLines = (framework, name, definition, config) => {
 
 const getLinkedType = (type, framework) => {
     if (!Array.isArray(type)) {
-        type = type.split('|').map(t => t ? t.trim() : t);
+        type = [type];
     }
 
+    // Extract all the words to enable support for Union types
+    const typeRegex = /\w+/g;
     const formattedTypes = type.map(t => {
-        const typeName = t ? t.replace('(', '').replace(')', '').trim() : t;
-        const url = getTypeUrl(typeName, framework);
+        const definitionTypes = [...t.matchAll(typeRegex)];
 
-        return url ? `<a href="${url}" target="${url.startsWith('http') ? '_blank' : '_self'}" rel="noreferrer">${t}</a>` : t;
+        const typesToLink = definitionTypes.map(regMatch => {
+            const typeName = regMatch[0];
+            const url = getTypeUrl(typeName, framework);
+
+
+            return url ? {
+                toReplace: typeName,
+                link: `<a href="${url}" target="${url.startsWith('http') ? '_blank' : '_self'}" rel="noreferrer">${typeName}</a>`
+            } : undefined;
+        }).filter(dt => !!dt);
+
+        let formatted = t;
+        typesToLink.forEach(toLink => {
+            formatted = formatted.replaceAll(toLink.toReplace, toLink.link);
+        })
+
+        return formatted;
     });
 
     return formattedTypes.join(' | ');

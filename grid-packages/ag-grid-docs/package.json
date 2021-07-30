@@ -143,7 +143,6 @@
     "webpack-hot-middleware": "2.23.1",
     "webpack-stream": "5.1.1",
     "zone.js": "0.8.29",
-    "json5": "2.2.0",
-    "replace-in-file": "^4.1.0"
+    "json5": "2.2.0"
   }
 }
