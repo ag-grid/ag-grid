@@ -36,6 +36,7 @@ import { IServerSideRowModel } from "../interfaces/iServerSideRowModel";
 import { ResizeObserverService } from "../misc/resizeObserverService";
 import { CtrlsService } from "../ctrlsService";
 import { NavigationService } from "../gridBodyComp/navigationService";
+import { AgStackComponentsRegistry } from "../components/agStackComponentsRegistry";
 
 /** Using the IoC has a slight performance consideration, which is no problem most of the
  * time, unless we are trashing objects - which is the case when scrolling and rowComp
@@ -82,6 +83,7 @@ export class Beans {
     @Autowired('rowCssClassCalculator') public rowCssClassCalculator: RowCssClassCalculator;
     @Autowired('rowModel') public rowModel: IRowModel;
     @Autowired('ctrlsService') public ctrlsService: CtrlsService;
+    @Autowired('agStackComponentsRegistry') public agStackComponentsRegistry: AgStackComponentsRegistry;
 
     public doingMasterDetail: boolean;
 

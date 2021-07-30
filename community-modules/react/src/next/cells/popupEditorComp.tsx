@@ -1,7 +1,8 @@
 import { CellCtrl, PopupEditorWrapper } from '@ag-grid-community/core';
-import React, { useEffect, useState, memo } from 'react';
+import React, { useEffect, useState, memo, useContext } from 'react';
 import { createPortal } from 'react-dom';
 import { EditDetails } from './cellComp';
+import { BeansContext } from '../gridComp';
 
 const PopupEditorComp = (props: {
             editDetails: EditDetails, 
@@ -14,10 +15,11 @@ const PopupEditorComp = (props: {
 
     const [popupEditorWrapper, setPopupEditorWrapper] = useState<PopupEditorWrapper>();
 
+    const {context, popupService, gridOptionsWrapper} = useContext(BeansContext);
+
     useEffect( () => {
         const {editDetails, cellCtrl, eParentCell} = props;
         const {compDetails} = editDetails;
-        const {context, popupService, gridOptionsWrapper} = cellCtrl.getBeans();
 
         const useModelPopup = gridOptionsWrapper.isStopEditingWhenCellsLoseFocus();
         

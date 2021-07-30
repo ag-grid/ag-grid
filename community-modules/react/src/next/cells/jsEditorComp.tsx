@@ -1,14 +1,16 @@
 import { CellCtrl, ICellEditor, ICellEditorComp, UserCompDetails } from '@ag-grid-community/core';
-import React, { useEffect, memo } from 'react';
+import React, { useEffect, memo, useContext } from 'react';
 import { createJsComp } from '../jsComp';
+import { BeansContext } from '../gridComp';
 
 const JsEditorComp = (props: {setCellEditorRef: (cellEditor: ICellEditor | undefined)=>void, 
     cellCtrl: CellCtrl, compDetails: UserCompDetails, eParentElement: HTMLElement}) => {
 
+    const {context} = useContext(BeansContext);
+
     useEffect(() => {
 
         const {cellCtrl, compDetails, eParentElement, setCellEditorRef} = props;
-        const {context} = cellCtrl.getBeans();
 
         const cellEditor = createJsComp(context, factory => factory.createCellEditor(compDetails) ) as ICellEditorComp;
         if (!cellEditor) { return; }

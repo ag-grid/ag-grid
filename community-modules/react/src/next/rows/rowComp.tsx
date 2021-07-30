@@ -1,8 +1,9 @@
 import { CellCtrl, Context, IRowComp, RowCtrl, UserCompDetails, _ } from '@ag-grid-community/core';
-import React, { useEffect, useRef, useState, useMemo, memo } from 'react';
+import React, { useEffect, useRef, useState, useMemo, memo, useContext } from 'react';
 import CellComp from '../cells/cellComp';
 import { showJsComp } from '../jsComp';
 import { CssClasses } from '../utils';
+import { BeansContext } from '../gridComp';
 
 interface CellCtrls {
     list: CellCtrl[],
@@ -50,9 +51,11 @@ const maintainOrderOnColumns = (prev: CellCtrls, next: CellCtrl[], domOrder: boo
     return res;
 }
 
-const RowComp = (params: {context: Context, rowCtrl: RowCtrl, pinned: string | null}) => {
+const RowComp = (params: {rowCtrl: RowCtrl, pinned: string | null}) => {
 
-    const { context, rowCtrl, pinned } = params;
+    const {context} = useContext(BeansContext);
+
+    const { rowCtrl, pinned } = params;
 
     const [height, setHeight] = useState<string>();
     const [top, setTop] = useState<string | undefined>(rowCtrl.getInitialRowTop());
@@ -128,7 +131,7 @@ const RowComp = (params: {context: Context, rowCtrl: RowCtrl, pinned: string | n
     
     const showCellsJsx = () => cellCtrls.list.map(cellCtrl =>
         (
-            <CellComp context={ context } cellCtrl={ cellCtrl }
+            <CellComp cellCtrl={ cellCtrl }
                         editingRow={ rowCtrl.isEditing() } printLayout={ rowCtrl.isPrintLayout() }
                         key={ cellCtrl.getInstanceId() }/>
         ));

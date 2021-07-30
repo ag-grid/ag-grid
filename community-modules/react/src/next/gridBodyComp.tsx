@@ -10,7 +10,7 @@ import {
 import { classesList } from './utils';
 import RowContainerComp  from './rows/rowContainerComp';
 import useReactCommentEffect from './reactComment';
-import { AgContext } from './gridComp';
+import { BeansContext } from './gridComp';
 
 interface SectionProperties {
     section: React.RefObject<HTMLDivElement>;
@@ -21,7 +21,7 @@ interface SectionProperties {
 
 const GridBodyComp = () => {
 
-    const context = useContext(AgContext).context!;
+    const {context, agStackComponentsRegistry, resizeObserverService} = useContext(BeansContext);
 
     const [rowAnimationClass, setRowAnimationClass] = useState<string>('');
     const [ariaColCount, setAriaColCount] = useState<number>(0);
@@ -46,14 +46,12 @@ const GridBodyComp = () => {
     useReactCommentEffect(' AG Middle ', eBodyViewport);
     useReactCommentEffect(' AG Pinned Bottom ', eBottom);
 
-
     useEffect(() => {
         const beansToDestroy: any[] = [];
         const destroyFuncs: (() => void)[] = [];
 
         if (!context) { return; }
 
-        const agStackComponentsRegistry: AgStackComponentsRegistry = context.getBean('agStackComponentsRegistry');
         const newComp = (tag: string) => {
             const CompClass = agStackComponentsRegistry.getComponentClass(tag);
             const comp = context.createBean(new CompClass());
@@ -72,8 +70,6 @@ const GridBodyComp = () => {
 
         eRoot.current!.appendChild(document.createComment(' AG Overlay Wrapper '));
         eRoot.current!.appendChild(newComp('AG-OVERLAY-WRAPPER').getGui());
-
-        const resizeObserverService = context.getBean('resizeObserverService') as ResizeObserverService;
 
         const compProxy: IGridBodyComp = {
             setRowAnimationCssOnBodyViewport: setRowAnimationClass,
@@ -137,7 +133,7 @@ const GridBodyComp = () => {
         overflowY: (topAndBottomOverflowY as any)
     }), [bottomHeight, bottomDisplay, topAndBottomOverflowY]);
 
-    const createRowContainer = (container: RowContainerName) => <RowContainerComp context={ context } name={ container } key={`${container}-container`} />;
+    const createRowContainer = (container: RowContainerName) => <RowContainerComp name={ container } key={`${container}-container`} />;
     const createSection = ({
         section, 
         children,

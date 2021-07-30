@@ -1,19 +1,16 @@
-import { Context, ICellRendererComp, UserComponentFactory } from '@ag-grid-community/core';
-import React, { MutableRefObject, useCallback, useEffect } from 'react';
+import { ICellRendererComp } from '@ag-grid-community/core';
+import { MutableRefObject, useCallback, useContext, useEffect } from 'react';
+import { BeansContext } from '../gridComp';
 import { RenderDetails } from './cellComp';
-
-export const JsRendererComp = (props: {}) => {
-
-    return (<></>);
-};
 
 const useJsCellRenderer = (
     showDetails: RenderDetails | undefined,
     showTools: boolean,
     toolsValueSpan: HTMLElement | undefined,
-    context: Context,
     jsCellRendererRef: MutableRefObject<ICellRendererComp|undefined>,
     eGui: MutableRefObject<any>) => {
+
+        const {context, userComponentFactory} = useContext(BeansContext);
 
         const destroyCellRenderer = useCallback(() => {
             const comp = jsCellRendererRef.current;
@@ -58,8 +55,7 @@ const useJsCellRenderer = (
                 destroyCellRenderer();
             }
 
-            const compFactory = context.getBean('userComponentFactory') as UserComponentFactory;
-            const promise = compFactory.createCellRenderer(compDetails!);
+            const promise = userComponentFactory.createCellRenderer(compDetails!);
             if (!promise) { return; }
 
             const comp = promise.resolveNow(null, x => x); // js comps are never async

@@ -10,17 +10,13 @@ import { classesList } from './utils';
 import useReactCommentEffect from './reactComment';
 import TabGuardComp, { TabGuardCompCallback } from './tabGuardComp';
 import GridBodyComp  from './gridBodyComp';
+import { Beans } from 'ag-grid-community/dist/cjs/rendering/beans';
 
 interface GridCompProps {
     context: Context;
 }
 
-export interface AgGridReactContextValues {
-    context?: Context
-}
-
-export const AgContext = React.createContext<AgGridReactContextValues>({});
-
+export const BeansContext = React.createContext<Beans>({} as Beans);
 
 const GridComp = ({ context }: GridCompProps) => {
 
@@ -39,6 +35,8 @@ const GridComp = ({ context }: GridCompProps) => {
     const focusInnerElementRef = useRef<((fromBottom?: boolean) => void)>(() => undefined);
 
     const onTabKeyDown = useCallback(() => undefined, []);
+
+    const beans = useMemo( ()=> context.getBean('beans') as Beans, []);
 
     useReactCommentEffect(' AG Grid ', eRootWrapperRef);
 
@@ -100,7 +98,8 @@ const GridComp = ({ context }: GridCompProps) => {
         const gridCtrl = gridCtrlRef.current!;
         const beansToDestroy: any[] = [];
 
-        const agStackComponentsRegistry: AgStackComponentsRegistry = context.getBean('agStackComponentsRegistry');
+        const {agStackComponentsRegistry} = beans;
+
         const HeaderDropZonesClass = agStackComponentsRegistry.getComponentClass('AG-GRID-HEADER-DROP-ZONES');
         const SideBarClass = agStackComponentsRegistry.getComponentClass('AG-SIDE-BAR');
         const StatusBarClass = agStackComponentsRegistry.getComponentClass('AG-STATUS-BAR');
@@ -184,10 +183,9 @@ const GridComp = ({ context }: GridCompProps) => {
         <div ref={ eRootWrapperRef } className={ rootWrapperClasses } style={ topStyle }>
             <div className={ rootWrapperBodyClasses } ref={ eGridBodyParentRef }>
                 { initialised && eGridBodyParent &&
-                    <AgContext.Provider value={{context: context}}>
+                    <BeansContext.Provider value={beans}>
                         <TabGuardComp
                             ref={ setTabGuardCompRef }
-                            context={ context }
                             eFocusableElement= { eGridBodyParent }
                             onTabKeyDown={ onTabKeyDown }
                             gridCtrl={ gridCtrlRef.current! }>
@@ -199,7 +197,7 @@ const GridComp = ({ context }: GridCompProps) => {
                             <GridBodyComp/>
                         }
                         </TabGuardComp>
-                    </AgContext.Provider>
+                    </BeansContext.Provider>
                 }
             </div>
         </div>

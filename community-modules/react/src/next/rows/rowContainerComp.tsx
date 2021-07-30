@@ -1,17 +1,20 @@
 import { Context, IRowContainerComp, RowContainerCtrl, RowContainerName, RowCtrl } from '@ag-grid-community/core';
-import React, { useEffect, useMemo, useRef, useState, memo } from 'react';
+import React, { useEffect, useMemo, useRef, useState, memo, useContext } from 'react';
 import { classesList } from '../utils';
 import useReactCommentEffect from '../reactComment';
 import RowComp from './rowComp';
+import { BeansContext } from '../gridComp';
 
-const RowContainerComp = (params: {context: Context, name: RowContainerName}) => {
+const RowContainerComp = (params: {name: RowContainerName}) => {
+
+    const {context} = useContext(BeansContext);
 
     const [viewportHeight, setViewportHeight] = useState<string>('');
     const [rowCtrls, setRowCtrls] = useState<RowCtrl[]>([]);
     const [domOrder, setDomOrder] = useState<boolean>(false);
     const [containerWidth, setContainerWidth] = useState<string>('');
 
-    const { context, name } = params;
+    const { name } = params;
 
     const pinned = useMemo(() => RowContainerCtrl.getPinned(name), [name]);
 
@@ -81,7 +84,7 @@ const RowContainerComp = (params: {context: Context, name: RowContainerName}) =>
             style={ containerStyle }
             unselectable="on">
             {
-                rowCtrls.map(rowCtrl => <RowComp context={ context } rowCtrl={ rowCtrl } pinned={ pinned } key={ rowCtrl.getInstanceId() }></RowComp>)
+                rowCtrls.map(rowCtrl => <RowComp rowCtrl={ rowCtrl } pinned={ pinned } key={ rowCtrl.getInstanceId() }></RowComp>)
             }
         </div>
     );

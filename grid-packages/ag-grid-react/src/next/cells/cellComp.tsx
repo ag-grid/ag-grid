@@ -1,9 +1,10 @@
 import { CellCtrl, Component, Context, ICellComp, ICellEditor, ICellRendererComp, UserCompDetails, _ } from 'ag-grid-community';
-import React, { MutableRefObject, useCallback, useEffect, useRef, useState, useMemo, memo } from 'react';
+import React, { MutableRefObject, useCallback, useEffect, useRef, useState, useMemo, memo, useContext } from 'react';
 import { CssClasses, isComponentStateless } from '../utils';
 import JsEditorComp from './jsEditorComp';
 import PopupEditorComp from './popupEditorComp';
 import useJsCellRenderer from './showJsRenderer';
+import { BeansContext } from '../gridComp';
 
 export enum CellCompState { ShowValue, EditValue }
 
@@ -122,11 +123,13 @@ export interface EditDetails {
 
 const CellComp = (props: {
     cellCtrl: CellCtrl,
-    context: Context,
     printLayout: boolean, 
     editingRow: boolean
 }) => {
-    const { cellCtrl, printLayout, editingRow, context } = props;
+
+    const {context} = useContext(BeansContext);
+
+    const { cellCtrl, printLayout, editingRow } = props;
 
     const [renderDetails, setRenderDetails ] = useState<RenderDetails>();
     const [editDetails, setEditDetails ] = useState<EditDetails>();
@@ -184,7 +187,7 @@ const CellComp = (props: {
         []
     );
 
-    useJsCellRenderer(renderDetails, showTools, toolsValueSpan, context, jsCellRendererRef, eGui);
+    useJsCellRenderer(renderDetails, showTools, toolsValueSpan, jsCellRendererRef, eGui);
 
     // tool widgets effect
     useEffect(() => {
