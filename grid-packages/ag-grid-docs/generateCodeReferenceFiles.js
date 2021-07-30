@@ -197,7 +197,28 @@ function getInterfaces() {
     // Now that we have recorded all the interfaces we can apply the extension properties.
     // For example CellPosition extends RowPosition and we want the json to add the RowPosition properties to the CellPosition
     Object.entries(extensions).forEach(([i, exts]) => {
-        const extendedInterface = exts.map(e => interfaces[e]).reduce((acc, c) => ({ ...acc, ...c }), interfaces[i]);
+
+        const getAncestors = (child) => {
+            let ancestors = [];
+            const parents = extensions[child];
+            if (parents) {
+                ancestors = [...ancestors, ...parents];
+                parents.forEach(p => {
+                    ancestors = [...ancestors, ...getAncestors(p)]
+                })
+            }
+            return ancestors;
+        }
+
+        const allAncestors = getAncestors(i);
+        let extendedInterface = interfaces[i];
+        allAncestors.forEach(a => {
+            const aI = interfaces[a];
+            if (aI.type) {
+                extendedInterface.type = { ...aI.type, ...extendedInterface.type }
+            }
+        })
+
         interfaces[i] = extendedInterface;
     })
     return interfaces;
