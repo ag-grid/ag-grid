@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { useJsonFileNodes } from './use-json-file-nodes';
 import anchorIcon from 'images/anchor';
 import Code from './Code';
-import { inferType, convertUrl, convertMarkdown } from 'components/documentation-helpers';
+import { inferType, convertUrl, convertMarkdown, escapeGenericCode } from 'components/documentation-helpers';
 import styles from './ApiDocumentation.module.scss';
 
 /**
@@ -56,8 +56,10 @@ const types = {
     MouseEvent: 'https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent',
     RowNode: '/row-object/',
     ServerSideTransaction: '/server-side-model-transactions/#transaction-api',
+    ServerSideStoreType: 'https://ag-grid.com/javascript-grid/grid-properties/#reference-serverSideRowModel',
     Touch: 'https://developer.mozilla.org/en-US/docs/Web/API/Touch',
 };
+
 
 /**
  * This generates tabulated API documentation based on information in JSON files. This way it is possible to show
@@ -79,13 +81,17 @@ export const ApiDocumentation = ({ pageName, framework, source, sources, section
         names = JSON.parse(names);
     }
 
+    const gridOptions = getJsonFromFile(nodes, pageName, 'grid-api/grid-options.json');
+    const interfaces = getJsonFromFile(nodes, pageName, 'grid-api/interfaces.json');
+    const lookups = { gridOptions, interfaces };
+
     const propertiesFromFiles = sources.map(s => getJsonFromFile(nodes, pageName, s));
 
     if (section == null) {
         const properties = mergeObjects(propertiesFromFiles);
 
         return Object.entries(properties)
-            .map(([key, value]) => <Section key={key} framework={framework} title={key} properties={value} config={config} />);
+            .map(([key, value]) => <Section key={key} framework={framework} title={key} properties={value} config={{ ...config, lookups }} />);
     }
 
     const keys = section.split('.');
@@ -96,7 +102,7 @@ export const ApiDocumentation = ({ pageName, framework, source, sources, section
         framework={framework}
         title={keys[keys.length - 1]}
         properties={properties}
-        config={{ ...config, isSubset: true }}
+        config={{ ...config, lookups, isSubset: true }}
         names={names} />;
 };
 
@@ -145,7 +151,7 @@ const Section = ({ framework, title, properties, config = {}, breadcrumbs = {}, 
             return;
         }
 
-        rows.push(<Property key={name} framework={framework} id={id} name={name} definition={definition} />);
+        rows.push(<Property key={name} framework={framework} id={id} name={name} definition={definition} config={config} />);
 
         if (typeof definition !== 'string' && !definition.description) {
             // store object property to process later
@@ -184,7 +190,7 @@ const getTypeUrl = (type, framework) => {
     return convertUrl(types[type], framework);
 };
 
-const Property = ({ framework, id, name, definition }) => {
+const Property = ({ framework, id, name, definition, config }) => {
     const [isExpanded, setExpanded] = useState(false);
 
     let description = '';
@@ -215,13 +221,29 @@ const Property = ({ framework, id, name, definition }) => {
         name += `&nbsp;<span class="${styles['reference__required']}" title="Required">&ast;</span>`;
     }
 
-    const type = definition.type || inferType(definition.default);
-    const isFunction = !isObject && type != null && typeof type === 'object';
+    // Use the type definition if manually specified in config
+    let type = definition.type;
+    let showAdditionalDetails = typeof (type) == 'object';
+    if (!type) {
+        // No type specified in the config file so look it up from GridOptions
+        let gridParams = { ...config.lookups.gridOptions[name] };
+        if (gridParams && gridParams.type) {
+            type = gridParams.type;
+            const isInterface = config.lookups.interfaces[type.returnType];
+            showAdditionalDetails = type.arguments || isInterface;
+        } else {
+            // As a last resort try and infer the type
+            type = inferType(definition.default);
+        }
+    }
+
+    let propertyType = getPropertyType(type, config);
+
     const typeUrl = isObject ? `#reference-${id}.${name}` : getTypeUrl(type, framework);
 
     return <tr>
         <td className={styles['reference__expander-cell']} onClick={() => setExpanded(!isExpanded)} role="presentation">
-            {isFunction && <div className={styles['reference__expander']}>
+            {showAdditionalDetails && <div className={styles['reference__expander']}>
                 <svg className={classnames({ 'fa-rotate-90': isExpanded })}><use href="#menu-item" /></svg>
             </div>}
         </td>
@@ -232,20 +254,20 @@ const Property = ({ framework, id, name, definition }) => {
                     <a className={styles['reference__type']} href={typeUrl} target={typeUrl.startsWith('http') ? '_blank' : '_self'} rel="noreferrer">
                         {isObject ? getInterfaceName(name) : type}
                     </a> :
-                    <span className={styles['reference__type']}>{isFunction ? 'Function' : type}</span>}
+                    <span className={styles['reference__type']}>{propertyType}</span>}
             </div>
         </td>
         <td>
-            <div
+            <div onClick={() => setExpanded(!isExpanded)} role="presentation"
                 className={classnames(styles['reference__description'], { [styles['reference__description--expanded']]: isExpanded })}
                 dangerouslySetInnerHTML={{ __html: description }}></div>
             {isObject && <div>See <a href={`#reference-${id}.${name}`}>{name}</a> for more details.</div>}
             {definition.default != null && <div>Default: <code>{formatJson(definition.default)}</code></div>}
             {definition.options != null &&
                 <div>Options: {definition.options.map((o, i) => <React.Fragment key={o}>{i > 0 ? ', ' : ''}<code>{formatJson(o)}</code></React.Fragment>)}</div>}
-            {typeof definition.type === 'object' &&
+            {showAdditionalDetails &&
                 <div className={isExpanded ? '' : 'd-none'}>
-                    <FunctionCodeSample framework={framework} name={name} type={definition.type} />
+                <FunctionCodeSample framework={framework} name={name} type={type} config={config} />
                 </div>}
         </td>
         {definition.relevantTo && <td style={{ whiteSpace: 'nowrap' }}>{definition.relevantTo.join(', ')}</td>}
@@ -335,26 +357,39 @@ const ObjectCodeSample = ({ framework, id, breadcrumbs, properties }) => {
         lines.push(`${getIndent(indentationLevel-- - 1)}}`);
     }
 
-    return <Code code={lines.join('\n')} keepMarkup={true} />;
+    const escapedLines = escapeGenericCode(lines);
+    return <Code code={escapedLines} keepMarkup={true} />;
 };
 
 const getInterfaceName = name => `${name.substr(0, 1).toUpperCase()}${name.substr(1)}`;
 
-const FunctionCodeSample = ({ framework, name, type }) => {
+const FunctionCodeSample = ({ framework, name, type, config }) => {
     const functionName = name.replace(/\([^)]*\)/g, '');
-    const args = type.parameters ?
-        {
+
+    type = type || {};
+    let { returnType } = type;
+    const returnTypeIsObject = returnType != null && typeof returnType === 'object';
+    const returnTypeInterface = config.lookups.interfaces[returnType];
+    const isCallSignatureInterface = returnTypeInterface && returnTypeInterface.meta.isCallSignature;
+
+    let args = {};
+    if (type.parameters) {
+        args = {
             params: {
                 meta: { name: `${getInterfaceName(functionName)}Params` },
                 ...type.parameters
             }
-        } :
-        type.arguments;
+        }
+    } else if (type.arguments) {
+        args = type.arguments;
+    } else if (isCallSignatureInterface) {
+        // Required to handle call signature interfaces so we can flatten out the interface to make it clearer        
+        args = returnTypeInterface.type.arguments;
+        returnType = returnTypeInterface.type.returnType;
+    }
 
-    const { returnType } = type;
-    const returnTypeIsObject = returnType != null && typeof returnType === 'object';
-    const argumentDefinitions = [];
     let shouldUseNewline = false;
+    const argumentDefinitions = [];
 
     const getArgumentTypeName = (key, type) => {
         if (!Array.isArray(type) && typeof type === 'object') {
@@ -383,35 +418,79 @@ const FunctionCodeSample = ({ framework, name, type }) => {
         `function ${functionName}(${functionArguments}):` :
         `${functionName} = (${functionArguments}) =>`;
 
-    const lines = [
+    const lines = type.parameters || type.arguments || isCallSignatureInterface ? [
         `${functionPrefix} ${returnTypeIsObject ? returnTypeName : (getLinkedType(returnType || 'void', framework))};`,
-    ];
+    ] : [];
 
-    Object.keys(args)
-        .filter(key => !Array.isArray(args[key]) && typeof args[key] === 'object')
-        .forEach(key => {
-            const { meta, ...type } = args[key];
+    let addNewLine = lines.length > 0 ? [''] : [];
+    if (type.parameters) {
 
-            lines.push('', ...getInterfaceLines(framework, getArgumentTypeName(key, { meta }), type));
-        });
+        Object.keys(args)
+            .filter(key => !Array.isArray(args[key]) && typeof args[key] === 'object')
+            .forEach(key => {
+                const { meta, ...type } = args[key];
+                lines.push(...addNewLine, ...getInterfaceLines(framework, getArgumentTypeName(key, { meta }), type, config));
+            });
+    } else if (args) {
 
-    if (returnTypeIsObject) {
-        lines.push('', ...getInterfaceLines(framework, returnTypeName, returnType));
+        Object.entries(args)
+            .forEach(([key, type]) => {
+                lines.push(...addNewLine, ...getInterfaceLines(framework, getArgumentTypeName(key, type), type, config));
+            });
     }
 
-    return <Code code={lines.join('\n')} className={styles['reference__code-sample']} keepMarkup={true} />;
+    addNewLine = lines.length > 0 ? [''] : [];
+    if (returnTypeIsObject) {
+        lines.push(...addNewLine, ...getInterfaceLines(framework, returnTypeName, returnType, config));
+    } else if (!!returnTypeInterface) {
+        lines.push(...addNewLine, ...getInterfaceLines(framework, returnType, returnType, config));
+    }
+
+    const escapedLines = escapeGenericCode(lines);
+    return <Code code={escapedLines} className={styles['reference__code-sample']} keepMarkup={true} />;
 };
 
-const getInterfaceLines = (framework, name, definition) => {
-    const lines = [`interface ${name} {`];
+const getInterfaceLines = (framework, name, definition, config) => {
+    let interfacesToWrite = []
+    if (typeof (definition) === 'string') {
+        // Extract all the words to enable support for Union types
+        const typeRegex = /\w+/g;
+        const definitionTypes = [...definition.matchAll(typeRegex)];
 
-    Object.entries(definition).forEach(([property, type]) => {
-        lines.push(`  ${property}: ${getLinkedType(type, framework)};`);
-    });
+        interfacesToWrite = definitionTypes.map(regMatch => {
+            const type = regMatch[0];
+            // If we have the actual interface use that definition
+            const interfaceType = config.lookups.interfaces[type];
+            const numMembers = Object.entries((interfaceType && interfaceType.type) || {}).length;
 
-    lines.push('}');
+            // Show interface if we have found one.            
+            // Do not show an interface if it has lots of properties. Should be a linked type instead.
+            return interfaceType && numMembers < 12 ? { name: type, interfaceType } : undefined;
+        }).filter(dt => !!dt);
+    } else if (
+        (typeof (definition) == 'object' && !Array.isArray(definition)) ||
+        (typeof (name) == 'string' && Array.isArray(definition))) {
+        interfacesToWrite.push({
+            name, interfaceType: { type: definition, meta: {} }
+        })
+    } 
 
-    return lines;
+    let allLines = [];
+    interfacesToWrite.forEach(({ name, interfaceType }) => {        
+        if (interfaceType.meta.isTypeAlias) {
+            appendTypeAlias(name, interfaceType, allLines);
+        } 
+        else if (interfaceType.meta.isEnum) {
+            appendEnum(name, interfaceType, allLines);
+        }
+        else if (interfaceType.meta.isCallSignature) {
+            appendCallSignature(name, interfaceType, framework, allLines);
+        }
+        else {
+            appendInterface(name, interfaceType, framework, allLines);
+        }
+    })
+    return allLines;
 };
 
 const getLinkedType = (type, framework) => {
@@ -419,10 +498,29 @@ const getLinkedType = (type, framework) => {
         type = [type];
     }
 
-    const formattedTypes = type.map(t => {
-        const url = getTypeUrl(t, framework);
+    // Extract all the words to enable support for Union types
+    const typeRegex = /\w+/g;
+    const formattedTypes = type
+        .filter(t => typeof (t) === 'string')
+        .map(t => {
+        const definitionTypes = [...t.matchAll(typeRegex)];
 
-        return url ? `<a href="${url}" target="${url.startsWith('http') ? '_blank' : '_self'}" rel="noreferrer">${t}</a>` : t;
+        const typesToLink = definitionTypes.map(regMatch => {
+            const typeName = regMatch[0];
+            const url = getTypeUrl(typeName, framework);
+
+            return url ? {
+                toReplace: typeName,
+                link: `<a href="${url}" target="${url.startsWith('http') ? '_blank' : '_self'}" rel="noreferrer">${typeName}</a>`
+            } : undefined;
+        }).filter(dt => !!dt);
+
+        let formatted = t;
+        typesToLink.forEach(toLink => {
+            formatted = formatted.replaceAll(toLink.toReplace, toLink.link);
+        })
+
+        return formatted;
     });
 
     return formattedTypes.join(' | ');
@@ -445,3 +543,86 @@ const mergeObjects = objects => {
 const formatJson = value => JSON.stringify(value, undefined, 2)
     .replace(/\[(.*?)\]/sg, (_, match) => `[${match.trim().replace(/,\s+/sg, ', ')}]`) // remove carriage returns from arrays
     .replace(/"/g, "'"); // use single quotes
+
+function getPropertyType(type, config) {
+    let propertyType = '';
+    if (type) {
+        if (typeof (type) == 'string') {
+            propertyType = type;
+        }
+        else if (typeof (type) == 'object') {
+            if (type.arguments || type.parameters) {
+                propertyType = 'Function';
+            }
+            else if (type.returnType) {
+                if (typeof (type.returnType) == 'object') {
+                    propertyType = 'object';
+                }
+                else if (typeof (type.returnType) == 'string') {
+                    const inter = config.lookups.interfaces[type.returnType];
+                    if (inter && inter.meta && inter.meta.isCallSignature) {
+                        propertyType = 'Function';
+                    }
+                    else {
+                        propertyType = type.returnType;
+                    }
+                }
+            }
+            else {
+                propertyType = 'void';
+            }
+        }
+    }
+    return propertyType;
+}
+
+function appendInterface(name, interfaceType, framework, allLines) {
+    const lines = [`interface ${name} {`];
+    const properties = Object.entries(interfaceType.type);
+    properties.sort(([p1,], [p2,]) => {
+        // Sort alphabetically but with $scope at the end
+        if (p1 === '$scope')
+            return 1;
+        if (p2 === '$scope')
+            return -1;
+        return p1 < p2 ? -1 : 1;
+    });
+    properties
+        // Only show AngularJS $scope property for Angular or Javascript frameworks
+        .filter(([p,]) => p !== '$scope' || (framework === 'angular' || framework === 'javascript'))
+        .forEach(([property, type]) => {
+        lines.push(`  ${property}: ${getLinkedType(type, framework)};`);
+    });
+    lines.push('}');
+    allLines.push(...lines);
+}
+
+function appendCallSignature(name, interfaceType, framework, allLines) {
+    const lines = [`interface ${name} {`];
+    const args = Object.entries(interfaceType.type.arguments);
+    const argTypes = args.map(([property, type]) => {
+        return `${property}: ${getLinkedType(type, framework)}`;
+    });
+    lines.push(`    (${argTypes.join(', ')}) : ${interfaceType.type.returnType}`);
+    lines.push('}');
+    allLines.push(...lines);
+}
+
+function appendEnum(name, interfaceType, allLines) {
+    const lines = [`enum ${name} {`];
+    const properties = interfaceType.type;
+    properties.forEach((property) => {
+        lines.push(`  ${property}`);
+    });
+    lines.push('}');
+    allLines.push(...lines);
+}
+
+function appendTypeAlias(name, interfaceType, allLines) {
+    const shouldMultiLine = interfaceType.type.length > 20;
+    const multiLine = shouldMultiLine ?
+        `\n      ${interfaceType.type.split('|').join('\n    |')}\n` :
+        interfaceType.type;
+    allLines.push(`type ${name} = ${multiLine}`);
+}
+

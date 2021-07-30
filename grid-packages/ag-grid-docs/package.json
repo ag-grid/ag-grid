@@ -13,7 +13,8 @@
     "validate-es5": "npx eslint documentation/doc-pages",
     "test": "npx jest && cd documentation && npm run test",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash",
-    "testtt": "node dev-server.js"
+    "dev-server": "node dev-server.js",
+    "generate-doc-files": "node -e \"require('./generateCodeReferenceFiles.js').generateCodeReferenceFiles()\""
   },
   "repository": {
     "type": "git",
@@ -58,6 +59,7 @@
     "webpack-merge": "4.1.4"
   },
   "devDependencies": {
+    "@ag-grid-community/core": "~25.3.0",
     "@ag-grid-community/angular": "~25.3.0",
     "@ag-grid-community/react": "~25.3.0",
     "@ag-grid-community/vue": "~25.3.0",
@@ -98,6 +100,7 @@
     "gulp-inline-source": "4.0.0",
     "gulp-postcss": "8.0.0",
     "gulp-replace": "1.0.0",
+    "gulp-prettier": "3.0.0",
     "html-loader": "0.5.5",
     "html-webpack-plugin": "3.2.0",
     "jest": "^25.4.0",

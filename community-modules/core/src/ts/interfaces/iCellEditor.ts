@@ -73,9 +73,9 @@ export interface ICellEditorParams {
     // editing row index
     rowIndex: number;
     // grid API
-    api: GridApi | null | undefined;
+    api: GridApi;
     // column API
-    columnApi: ColumnApi | null | undefined;
+    columnApi: ColumnApi;
     // If doing full row edit, this is true if the cell is the one that started the edit
     // (eg it is the cell the use double clicked on, or pressed a key on etc).
     cellStartedEdit: boolean;

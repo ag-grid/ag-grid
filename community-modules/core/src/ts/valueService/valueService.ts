@@ -139,8 +139,8 @@ export class ValueService extends BeanStub {
             newValue: newValue,
             colDef: column.getColDef(),
             column: column,
-            api: this.gridOptionsWrapper.getApi(),
-            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            api: this.gridOptionsWrapper.getApi()!,
+            columnApi: this.gridOptionsWrapper.getColumnApi()!,
             context: this.gridOptionsWrapper.getContext()
         };
 
@@ -235,8 +235,8 @@ export class ValueService extends BeanStub {
             node: rowNode,
             column: column,
             colDef: column.getColDef(),
-            api: this.gridOptionsWrapper.getApi(),
-            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            api: this.gridOptionsWrapper.getApi()!,
+            columnApi: this.gridOptionsWrapper.getColumnApi()!,
             context: this.gridOptionsWrapper.getContext(),
             getValue: this.getValueCallback.bind(this, rowNode)
         };
@@ -260,8 +260,8 @@ export class ValueService extends BeanStub {
             node: rowNode,
             column: column,
             colDef: column.getColDef(),
-            api: this.gridOptionsWrapper.getApi(),
-            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            api: this.gridOptionsWrapper.getApi()!,
+            columnApi: this.gridOptionsWrapper.getColumnApi()!,
             context: this.gridOptionsWrapper.getContext(),
             getValue: this.getValueCallback.bind(this, rowNode)
         };

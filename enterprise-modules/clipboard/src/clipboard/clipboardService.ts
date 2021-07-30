@@ -655,8 +655,8 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                 column,
                 node: rowNode,
                 value,
-                api: this.gridOptionsWrapper.getApi(),
-                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                api: this.gridOptionsWrapper.getApi()!,
+                columnApi: this.gridOptionsWrapper.getColumnApi()!,
                 context: this.gridOptionsWrapper.getContext(),
                 type,
             };
@@ -671,8 +671,8 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         if (func) {
             const params: ProcessHeaderForExportParams = {
                 column,
-                api: this.gridOptionsWrapper.getApi(),
-                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                api: this.gridOptionsWrapper.getApi()!,
+                columnApi: this.gridOptionsWrapper.getColumnApi()!,
                 context: this.gridOptionsWrapper.getContext()
             };
 
