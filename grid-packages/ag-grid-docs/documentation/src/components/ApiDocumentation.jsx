@@ -236,25 +236,53 @@ const Property = ({ framework, id, name, definition, config }) => {
 
     // Use the type definition if manually specified in config
     let type = definition.type;
-    let isComplexType = !!type;
+    let isComplexType = typeof (type) == 'object';
     if (!type) {
         // No type specified in the config file so look it up from GridOptions
         let gridParams = { ...config.lookups.gridOptions[name] };
         if (gridParams && gridParams.type) {
             type = gridParams.type;
-            isComplexType = true;
+            const isInterface = config.lookups.interfaces[type.returnType];
+            isComplexType = type.arguments || isInterface;
         } else {
             // As a last resort try and infer the type
             type = inferType(definition.default);
         }
     }
 
-    const isFunction = !isObject && type != null && typeof type === 'object';
+    let propertyType = ''
+    if (type) {
+
+        if (typeof (type) == 'string') {
+            propertyType = type
+        } else if (typeof (type) == 'object') {
+
+            if (type.arguments || type.parameters) {
+                propertyType = 'Function';
+            } else if (type.returnType) {
+                if (typeof (type.returnType) == 'object') {
+                    propertyType = 'object'
+                } else if (typeof (type.returnType) == 'string') {
+
+                    const inter = config.lookups.interfaces[type.returnType];
+                    if (inter && inter.meta && inter.meta.isCallSignature) {
+                        propertyType = 'Function';
+                    } else {
+                        propertyType = type.returnType;
+                    }
+                }
+            } else {
+                propertyType = 'void'
+            }
+
+        }
+    }
+
     const typeUrl = isObject ? `#reference-${id}.${name}` : getTypeUrl(type, framework);
 
     return <tr>
         <td className={styles['reference__expander-cell']} onClick={() => setExpanded(!isExpanded)} role="presentation">
-            {isFunction && <div className={styles['reference__expander']}>
+            {isComplexType && <div className={styles['reference__expander']}>
                 <svg className={classnames({ 'fa-rotate-90': isExpanded })}><use href="#menu-item" /></svg>
             </div>}
         </td>
@@ -265,7 +293,7 @@ const Property = ({ framework, id, name, definition, config }) => {
                     <a className={styles['reference__type']} href={typeUrl} target={typeUrl.startsWith('http') ? '_blank' : '_self'} rel="noreferrer">
                         {isObject ? getInterfaceName(name) : type}
                     </a> :
-                    <span className={styles['reference__type']}>{isFunction ? 'Function' : type}</span>}
+                    <span className={styles['reference__type']}>{propertyType}</span>}
             </div>
         </td>
         <td>
@@ -276,7 +304,7 @@ const Property = ({ framework, id, name, definition, config }) => {
             {definition.default != null && <div>Default: <code>{formatJson(definition.default)}</code></div>}
             {definition.options != null &&
                 <div>Options: {definition.options.map((o, i) => <React.Fragment key={o}>{i > 0 ? ', ' : ''}<code>{formatJson(o)}</code></React.Fragment>)}</div>}
-            {typeof isComplexType &&
+            {isComplexType &&
                 <div className={isExpanded ? '' : 'd-none'}>
                 <FunctionCodeSample framework={framework} name={name} type={type} config={config} />
                 </div>}
@@ -377,6 +405,7 @@ const getInterfaceName = name => `${name.substr(0, 1).toUpperCase()}${name.subst
 const FunctionCodeSample = ({ framework, name, type, config }) => {
     const functionName = name.replace(/\([^)]*\)/g, '');
 
+    type = type || {};
     let { returnType } = type;
     const returnTypeIsObject = returnType != null && typeof returnType === 'object';
     const returnTypeInterface = config.lookups.interfaces[returnType];
@@ -428,32 +457,32 @@ const FunctionCodeSample = ({ framework, name, type, config }) => {
         `function ${functionName}(${functionArguments}):` :
         `${functionName} = (${functionArguments}) =>`;
 
-    const lines = [
+    const lines = type.parameters || type.arguments || isCallSignatureInterface ? [
         `${functionPrefix} ${returnTypeIsObject ? returnTypeName : (getLinkedType(returnType || 'void', framework))};`,
-    ];
+    ] : [];
 
+    let addNewLine = lines.length > 0 ? [''] : [];
     if (type.parameters) {
 
         Object.keys(args)
             .filter(key => !Array.isArray(args[key]) && typeof args[key] === 'object')
             .forEach(key => {
                 const { meta, ...type } = args[key];
-
-                lines.push('', ...getInterfaceLines(framework, getArgumentTypeName(key, { meta }), type, config));
+                lines.push(...addNewLine, ...getInterfaceLines(framework, getArgumentTypeName(key, { meta }), type, config));
             });
     } else if (args) {
 
         Object.entries(args)
             .forEach(([key, type]) => {
-                lines.push('', ...getInterfaceLines(framework, type, type, config));
+                lines.push(...addNewLine, ...getInterfaceLines(framework, getArgumentTypeName(key, type), type, config));
             });
     }
 
-
+    addNewLine = lines.length > 0 ? [''] : [];
     if (returnTypeIsObject) {
-        lines.push('', ...getInterfaceLines(framework, returnTypeName, returnType, config));
+        lines.push(...addNewLine, ...getInterfaceLines(framework, returnTypeName, returnType, config));
     } else if (!!returnTypeInterface) {
-        lines.push('', ...getInterfaceLines(framework, returnType, returnType, config));
+        lines.push(...addNewLine, ...getInterfaceLines(framework, returnType, returnType, config));
     }
 
     const escapedLines = escapeGenericCode(lines);
@@ -475,13 +504,17 @@ const getInterfaceLines = (framework, name, definition, config) => {
             const isLinkedType = types[type];
 
             // Show interface if we have found one but not if it is a linked type with many properties.
-            if (interfaceType && (!isLinkedType || numMembers < 5)) {
+            if (interfaceType && (!isLinkedType || numMembers < 5) && numMembers < 12) {
                 name = definition;
                 return { name: type, interfaceType };
             }
             return undefined;
         }).filter(dt => !!dt);
-    } else {
+    } else if (typeof (definition) == 'object' && !Array.isArray(definition)) {
+        interfacesToWrite.push({
+            name, interfaceType: { type: definition, meta: {} }
+        })
+    } else if (typeof (name) == 'string' && Array.isArray(definition)) {
         interfacesToWrite.push({
             name, interfaceType: { type: definition, meta: {} }
         })
@@ -500,7 +533,35 @@ const getInterfaceLines = (framework, name, definition, config) => {
                 interfaceType.type;
             allLines.push(`type ${name} = ${multiLine}`);
 
-        } else {
+        } else if (interfaceType.meta && interfaceType.meta.isEnum) {
+            // We have an enum
+            const lines = [`enum ${name} {`];
+
+            const properties = interfaceType.type;
+            properties.forEach((property) => {
+                lines.push(`  ${property}`);
+            });
+
+            lines.push('}');
+
+            allLines.push(...lines)
+        }
+        else if (interfaceType.meta && interfaceType.meta.isCallSignature) {
+
+            // We have an interface
+            const lines = [`interface ${name} {`];
+
+            const args = Object.entries(interfaceType.type.arguments);
+            const argTypes = args.map(([property, type]) => {
+                return `${property}: ${getLinkedType(type, framework)}`;
+            });
+
+            lines.push(`    (${argTypes.join(', ')}) : ${interfaceType.type.returnType}`);
+            lines.push('}');
+
+            allLines.push(...lines)
+        }
+        else {
 
             // We have an interface
             const lines = [`interface ${name} {`];
@@ -532,13 +593,14 @@ const getLinkedType = (type, framework) => {
 
     // Extract all the words to enable support for Union types
     const typeRegex = /\w+/g;
-    const formattedTypes = type.map(t => {
+    const formattedTypes = type
+        .filter(t => typeof (t) === 'string')
+        .map(t => {
         const definitionTypes = [...t.matchAll(typeRegex)];
 
         const typesToLink = definitionTypes.map(regMatch => {
             const typeName = regMatch[0];
             const url = getTypeUrl(typeName, framework);
-
 
             return url ? {
                 toReplace: typeName,

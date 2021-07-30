@@ -598,10 +598,6 @@
         "serverSideStoreType": {
             "description": "Whether to use Full Store or Partial Store for storing rows.",
             "default": "full",
-            "options": [
-                "full",
-                "partial"
-            ],
             "more": {
                 "name": "Row Stores",
                 "url": "/server-side-model-row-stores/"
