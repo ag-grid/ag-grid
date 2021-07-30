@@ -83,7 +83,7 @@ function getParamType(node, paramNameOnly = false) {
                 return `${getParamType(node.typeName)}${typeParams || ''}`;
             }
         case 'IndexSignature':
-            return `[${node.parameters.map(t => getParamType(t)).join(' ')}]${paramNameOnly ? '' : `: ${getParamType(node.type)}`}`;  
+            return `[${node.parameters.map(t => getParamType(t)).join(' ')}]${paramNameOnly ? '' : `: ${getParamType(node.type)}`}`;
         case 'Parameter':
             return `${getParamType(node.name)}: ${getParamType(node.type)}`;
         case 'PropertySignature':
@@ -299,7 +299,7 @@ const generateMetaFiles = (resolve, getGridOptions) => {
 
 
 module.exports = {
-    updatePropertiesBuilt: (cb) => {
+    generateCodeReferenceFiles: (cb) => {
         const gridPromise = new Promise(resolve => generateMetaFiles(resolve, getGridOptions));
 
         if (cb) {

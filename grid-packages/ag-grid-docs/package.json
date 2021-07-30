@@ -13,8 +13,8 @@
     "validate-es5": "npx eslint documentation/doc-pages",
     "test": "npx jest && cd documentation && npm run test",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash",
-    "testtt": "node dev-server.js",
-    "update-properties": "node -e \"require('./updateGridAndColumnProperties.js').updatePropertiesBuilt()\""
+    "dev-server": "node dev-server.js",
+    "generate-doc-files": "node -e \"require('./generateCodeReferenceFiles.js').generateCodeReferenceFiles()\""
   },
   "repository": {
     "type": "git",

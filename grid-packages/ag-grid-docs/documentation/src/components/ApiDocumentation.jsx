@@ -67,6 +67,7 @@ function escapeGenericCode(lines) {
 
     // By adding a <span/> the generic type is preserved in the doc output
 
+    // Regex to match all '<' but not valid links such as '<a ' and closing tags '</'
     const typeRegex = /<(?!a[\s]|[/])/g;
     const escapedLines = lines.join('\n').replace(typeRegex, '<<span/>');
     return escapedLines;
