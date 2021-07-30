@@ -275,8 +275,8 @@ export class GridSerializer extends BeanStub {
             if (processGroupHeaderCallback) {
                 name = processGroupHeaderCallback({
                     columnGroup: columnGroup,
-                    api: this.gridOptionsWrapper.getApi(),
-                    columnApi: this.gridOptionsWrapper.getColumnApi(),
+                    api: this.gridOptionsWrapper.getApi()!,
+                    columnApi: this.gridOptionsWrapper.getColumnApi()!,
                     context: this.gridOptionsWrapper.getContext()
                 });
             } else {

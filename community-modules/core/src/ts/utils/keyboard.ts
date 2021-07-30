@@ -54,12 +54,12 @@ export function isUserSuppressingKeyboardEvent(
         event: keyboardEvent,
         editing,
         column,
-        api: gridOptionsWrapper.getApi(),
+        api: gridOptionsWrapper.getApi()!,
         node: rowNode,
         data: rowNode.data,
         colDef: column.getColDef(),
         context: gridOptionsWrapper.getContext(),
-        columnApi: gridOptionsWrapper.getColumnApi()
+        columnApi: gridOptionsWrapper.getColumnApi()!
     };
 
     // colDef get first preference on suppressing events
@@ -90,8 +90,8 @@ export function isUserSuppressingHeaderKeyboardEvent(
     if (!exists(colDefFunc)) { return false; }
 
     const params: SuppressHeaderKeyboardEventParams = {
-        api: gridOptionsWrapper.getApi(),
-        columnApi: gridOptionsWrapper.getColumnApi(),
+        api: gridOptionsWrapper.getApi()!,
+        columnApi: gridOptionsWrapper.getColumnApi()!,
         context: gridOptionsWrapper.getContext(),
         colDef: colDef,
         column,

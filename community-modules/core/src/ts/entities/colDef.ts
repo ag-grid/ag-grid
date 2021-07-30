@@ -82,7 +82,7 @@ export interface IAggFuncParams {
 }
 
 export interface HeaderClassParams {
-    api?: GridApi
+    api: GridApi
     colDef: AbstractColDef,
     column?: Column | null,
     columnGroup?: ColumnGroup | OriginalColumnGroup | null,
@@ -402,8 +402,8 @@ export interface ColumnFunctionCallbackParams {
     column: Column;
     colDef: ColDef;
     context: any;
-    api: GridApi | null | undefined;
-    columnApi: ColumnApi | null | undefined;
+    api: GridApi;
+    columnApi: ColumnApi;
 }
 
 export interface CheckboxSelectionCallbackParams extends ColumnFunctionCallbackParams {}
@@ -415,8 +415,8 @@ export interface SuppressNavigableCallbackParams extends ColumnFunctionCallbackP
 export interface HeaderCheckboxSelectionCallbackParams {
     column: Column;
     colDef: ColDef;
-    api: GridApi | null | undefined;
-    columnApi: ColumnApi | null | undefined;
+    api: GridApi;
+    columnApi: ColumnApi;
 }
 
 /**
@@ -455,8 +455,8 @@ export interface BaseColDefParams {
     data: any;
     colDef: ColDef;
     column: Column;
-    api: GridApi | null | undefined;
-    columnApi: ColumnApi | null | undefined;
+    api: GridApi;
+    columnApi: ColumnApi;
     context: any;
 }
 
@@ -496,8 +496,8 @@ export interface SuppressKeyboardEventParams extends ColumnFunctionCallbackParam
 }
 
 export interface SuppressHeaderKeyboardEventParams {
-    api: GridApi | null | undefined;
-    columnApi: ColumnApi | null | undefined;
+    api: GridApi;
+    columnApi: ColumnApi;
     column: Column | ColumnGroup;
     colDef: ColDef | ColGroupDef | null;
     context: any;

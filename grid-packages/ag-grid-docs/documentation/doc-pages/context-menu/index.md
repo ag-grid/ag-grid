@@ -28,7 +28,7 @@ GetContextMenuItemsParams {
     api: GridApi, // the grid API
     columnApi: ColumnAPI, // the column API
     context: any, // the grid context
-    defaultItems: string[] // names of the items that would be provided by default
+    defaultItems: string[] | undefined // names of the items that would be provided by default
 }
 ```
 

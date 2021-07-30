@@ -88,8 +88,8 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
                 column: column,
                 value: value,
                 defaultItems: defaultMenuOptions.length ? defaultMenuOptions : undefined,
-                api: this.gridOptionsWrapper.getApi(),
-                columnApi: this.gridOptionsWrapper.getColumnApi(),
+                api: this.gridOptionsWrapper.getApi()!,
+                columnApi: this.gridOptionsWrapper.getColumnApi()!,
                 context: this.gridOptionsWrapper.getContext()
             };
 
