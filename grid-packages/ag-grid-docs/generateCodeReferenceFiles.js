@@ -119,7 +119,7 @@ function getParamType(node, paramNameOnly = false) {
                 return `${getParamType(node.name)}`;
             }
         case 'EnumMember':
-            return `${getParamType(node.name)}${node.initializer ? `= '${getParamType(node.initializer)}'` : ''}`;
+            return `${getParamType(node.name)}${node.initializer ? ` = '${getParamType(node.initializer)}'` : ''}`;
         case 'StringLiteral':
             return `${node.text}`
         default:
