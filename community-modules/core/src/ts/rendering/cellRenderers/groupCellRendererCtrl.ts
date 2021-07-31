@@ -261,13 +261,13 @@ export class GroupCellRendererCtrl extends BeanStub {
                     valueFormatted: valueFormatted
                 };
 
-        const innerCompDetails = params.fullWidth ?
+        const innerCompDetails = paramsAdjusted.fullWidth ?
                     this.userComponentFactory.getFullWidthGroupRowInnerCellRenderer(
                                     this.gridOptions.groupRowRendererParams, paramsAdjusted) :
                     this.getInnerCompDetails(this.params.colDef!.cellRendererParams,
                                     columnToUse.getColDef(), paramsAdjusted);
 
-        const valueWhenNoRenderer = params.valueFormatted != null ? params.valueFormatted : params.value;
+        const valueWhenNoRenderer = paramsAdjusted.valueFormatted != null ? paramsAdjusted.valueFormatted : paramsAdjusted.value;
         this.comp.setInnerRenderer(innerCompDetails, valueWhenNoRenderer);
     }
 
