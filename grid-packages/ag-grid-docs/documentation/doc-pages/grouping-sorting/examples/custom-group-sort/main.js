@@ -32,7 +32,7 @@ var gridOptions = {
         sort: 'asc',
         minWidth: 300,
     },
-    rowData: salesData,
+    rowData: getData(),
     groupDefaultExpanded: 1,
 };
 
