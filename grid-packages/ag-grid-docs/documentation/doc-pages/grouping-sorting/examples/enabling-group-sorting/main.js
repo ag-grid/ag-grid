@@ -1,9 +1,9 @@
 var gridOptions = {
     columnDefs: [
-        { field: 'country', rowGroupIndex: 1, hide: true },
-        { field: 'year', rowGroupIndex: 0, hide: true },
-        { field: 'sport', },
+        { field: 'country', rowGroup: true, hide: true },
+        { field: 'year', rowGroup: true, hide: true },
         { field: 'athlete' },
+        { field: 'sport' },
         { field: 'gold' },
         { field: 'silver' },
         { field: 'bronze' },
@@ -15,7 +15,7 @@ var gridOptions = {
         resizable: true,
     },
     autoGroupColumnDef: {
-        minWidth: 250,
+        minWidth: 200,
     },
     groupDisplayType: 'multipleColumns',
     animateRows: true,
