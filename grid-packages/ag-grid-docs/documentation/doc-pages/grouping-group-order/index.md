@@ -5,10 +5,10 @@ enterprise: true
 
 This section provides details on how to control the 'Group By' order and the default ordering of groups.
 
-## 'Group By' Order
+## Row 'Group By' Order
 
 By default, the grid will group rows based on the order of the supplied column definitions. To explicitly define the
-'Group By' order, use `rowGroupIndex` with / without `rowGroup = true` as shown below:
+row 'Group By' order, use `rowGroupIndex` with / without `rowGroup = true` as shown below:
 
 <snippet>
 const gridOptions = {
