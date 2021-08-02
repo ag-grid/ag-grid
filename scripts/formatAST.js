@@ -1,14 +1,15 @@
-let _TS_;
-getTsVersion = () => _TS_;
+const ts = require('typescript');
 
 /*
  * Convert AST node to string representation used to record type in a JSON file
  * @param {*} node 
  * @param {*} paramNameOnly - At the top level we only want the parameter name to be returned. But there are some interfaces
  * that are recursively defined, i.e HardCodedSize and so we need to return the param and type for the inner case.
+ *
+ * ******* Written for Typescript Version 3.6.5 ********
  */
 function formatNode(node, paramNameOnly = false) {
-    const kind = getTsVersion().SyntaxKind[node.kind];
+    const kind = ts.SyntaxKind[node.kind];
     switch (kind) {
         case 'ArrayType':
         case 'RestType':
@@ -88,8 +89,15 @@ module.exports = {
      * 
      * *kind* enum numbers can changes between versions
      */
-    getFormatterForTS: (ts) => {
-        _TS_ = ts;
+    getFormatterForTS: (ts1) => {
+        if (ts.version !== ts1.version) {
+            throw new Error(`Mismatched Typescript versions when using formatAST.js! Caller is using ${ts1.version} to parse the code while formatAST.js is using ${ts.version} to format it!`)
+        }
+
+        if (ts.version !== '3.6.5') {
+            throw new Error(`formatAST.js is written for Typescript version 3.6.5! Caller is using ${ts1.version} to parse the code and formatAST.js is using ${ts.version} to format it! You must validate the outputs for the new version before updating this version.`)
+        }
+
         return formatNode;
     }
 };
