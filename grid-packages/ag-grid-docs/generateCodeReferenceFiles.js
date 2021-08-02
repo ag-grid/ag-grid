@@ -4,6 +4,9 @@ const glob = require('glob');
 const gulp = require('gulp');
 const prettier = require('gulp-prettier');
 const { ComponentUtil } = require("@ag-grid-community/core");
+const { getFormatterForTS } = require('./../../scripts/formatAST');
+
+const formatNode = getFormatterForTS(ts);
 
 // satisfy ag-grid HTMLElement dependencies
 HTMLElement = typeof HTMLElement === 'undefined' ? function () {
@@ -60,84 +63,6 @@ function findAllInterfacesInNodesTree(node) {
     return interfaces;
 }
 
-/*
- * Convert AST node to string representation used to record type in a JSON file
- * @param {*} node 
- * @param {*} paramNameOnly - At the top level we only want the parameter name to be returned. But there are some interfaces
- * that are recursively defined, i.e HardCodedSize and so we need to return the param and type for the inner case.
- */
-function getParamType(node, paramNameOnly = false) {
-    const kind = ts.SyntaxKind[node.kind];
-    switch (kind) {
-        case 'ArrayType':
-            return getParamType(node.elementType) + '[]';
-        case 'UnionType':
-            return node.types.map(t => getParamType(t)).join(' | ');
-        case 'ParenthesizedType':
-            return `(${getParamType(node.type)})`;
-        case 'TypeLiteral':
-            return node.members.map(t => getParamType(t)).join(' ');
-        case 'TypeReference':
-            {
-                let typeParams = undefined;
-                if (node.typeArguments) {
-                    typeParams = `<${node.typeArguments.map(t => getParamType(t)).join(', ')}>`;
-                }
-                return `${getParamType(node.typeName)}${typeParams || ''}`;
-            }
-        case 'IndexSignature':
-            return `[${node.parameters.map(t => getParamType(t)).join(' ')}]${paramNameOnly ? '' : `: ${getParamType(node.type)}`}`;
-        case 'Parameter':
-            return `${getParamType(node.name)}: ${getParamType(node.type)}`;
-        case 'PropertySignature':
-            return `${getParamType(node.name)}${node.questionToken ? '?' : ''}`; //: ${getParamType(typeNode.type)}
-        case 'FunctionType':
-        case 'CallSignature':
-            return `(${node.parameters.map(t => getParamType(t)).join(', ')})${paramNameOnly ? '' : ` => ${getParamType(node.type)}`}`;
-        case 'Identifier':
-            return node.escapedText;
-        case 'ExpressionWithTypeArguments':
-            return getParamType(node.expression);
-        case 'LiteralType':
-            return `'${node.literal.text}'`;
-        case 'ConstructSignature':
-            return `{ new(${node.parameters.map(t => getParamType(t)).join(', ')}): ${getParamType(node.type)} }`
-        case 'ConstructorType':
-            return `new(${node.parameters.map(t => getParamType(t)).join(', ')}) => ${getParamType(node.type)}`
-        case 'TupleType':
-            return `[${node.elementTypes.map(t => getParamType(t)).join(', ')}]`;
-        case 'MethodSignature':
-            return `${getParamType(node.name)}${node.questionToken ? '?' : ''}(${node.parameters.map(t => getParamType(t)).join(', ')})`
-        case 'MappedType':
-            return `{${getParamType(node.typeParameter)}${node.questionToken ? '?' : ''}${paramNameOnly ? '' : `: ${getParamType(node.type)}`}}`
-        case 'TypeParameter':
-            {
-                if (node.constraint) {
-                    if (ts.SyntaxKind[node.parent.kind] == 'MappedType') {
-                        return `[${getParamType(node.name)} in ${getParamType(node.constraint)}]`;
-                    } else {
-                        return `${getParamType(node.name)} extends ${getParamType(node.constraint)}`;
-                    }
-                }
-                return `${getParamType(node.name)}`;
-            }
-        case 'EnumMember':
-            return `${getParamType(node.name)}${node.initializer ? ` = '${getParamType(node.initializer)}'` : ''}`;
-        case 'StringLiteral':
-            return `${node.text}`
-        default:
-            if (node.typeName) {
-                return node.typeName.escapedText
-            }
-            if (kind.endsWith('Keyword')) {
-                return kind.replace('Keyword', '').toLowerCase();
-            };
-
-            throw new Error(`We encountered a SyntaxKind of ${kind} that we do not know how to parse. Please add support to the switch statement.`)
-    }
-}
-
-
 function getTsDoc(node) {
     return node.jsDoc && node.jsDoc.length > 0 && node.jsDoc[node.jsDoc.length - 1].comment || ' ';
 };
@@ -145,7 +70,7 @@ function getTsDoc(node) {
 function getArgTypes(parameters) {
     const args = {};
     (parameters || []).forEach(p => {
-        args[p.name.escapedText] = getParamType(p.type);
+        args[p.name.escapedText] = formatNode(p.type);
     });
     return args;
 }
@@ -165,7 +90,7 @@ function extractTypesFromNode(node) {
         if (node.type && node.type.parameters) {
             // sendToClipboard?: (params: SendToClipboardParams) => void;
             const methodArgs = getArgTypes(node.type.parameters);
-            returnType = getParamType(node.type.type);
+            returnType = formatNode(node.type.type);
             nodeMembers[name] = {
                 description: getTsDoc(node),
                 type: { arguments: methodArgs, returnType }
@@ -272,15 +197,15 @@ function extractInterfaces(parsedSyntaxTreeResults, extension) {
         if (node.heritageClauses && node.heritageClauses) {
             node.heritageClauses.forEach(h => {
                 if (h.types && h.types.length > 0) {
-                    extension[name] = h.types.map(h => getParamType(h));
+                    extension[name] = h.types.map(h => formatNode(h));
                 }
             });
         }
 
         if (kind == 'EnumDeclaration') {
-            iLookup[name] = { meta: { isEnum: true }, type: node.members.map(n => getParamType(n)) }
+            iLookup[name] = { meta: { isEnum: true }, type: node.members.map(n => formatNode(n)) }
         } else if (kind == 'TypeAliasDeclaration' && node.type && node.type.types && !node.typeParameters) {
-            iLookup[name] = { meta: { isTypeAlias: true }, type: getParamType(node.type) }
+            iLookup[name] = { meta: { isTypeAlias: true }, type: formatNode(node.type) }
         } else {
 
             let isCallSignature = false;
@@ -289,22 +214,22 @@ function extractInterfaces(parsedSyntaxTreeResults, extension) {
 
             if (node.members && node.members.length > 0) {
                 node.members.map(p => {
-                    isCallSignature = isCallSignature || p.kind == 161; //'CallSignature';
+                    isCallSignature = isCallSignature || ts.SyntaxKind[p.kind] == 'CallSignature';
                     if (isCallSignature) {
 
                         const arguments = {};
 
                         (p.parameters || []).forEach(callArg => {
-                            arguments[getParamType(callArg.name)] = getParamType(callArg.type);
+                            arguments[formatNode(callArg.name)] = formatNode(callArg.type);
                         })
 
                         callSignatureMembers = {
                             arguments,
-                            returnType: getParamType(p.type)
+                            returnType: formatNode(p.type)
                         }
                     } else {
-                        const name = getParamType(p, true);
-                        const type = getParamType(p.type);
+                        const name = formatNode(p, true);
+                        const type = formatNode(p.type);
                         members[name] = type;
                     }
                 });
@@ -333,7 +258,7 @@ function extractInterfaces(parsedSyntaxTreeResults, extension) {
 
             if (node.typeParameters) {
                 const orig = iLookup[name];
-                iLookup[name] = { ...orig, meta: { ...orig.meta, typeParams: node.typeParameters.map(tp => getParamType(tp)) } }
+                iLookup[name] = { ...orig, meta: { ...orig.meta, typeParams: node.typeParameters.map(tp => formatNode(tp)) } }
             }
         }
     });
