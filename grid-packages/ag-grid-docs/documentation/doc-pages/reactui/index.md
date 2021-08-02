@@ -40,7 +40,9 @@ You may say _"Doesn't it look identical to before?"_, and you would be right, it
 
 ## Can I Try?
 
-Yes. Set the `reactUi` property in your AG Grid application using the latest AG Grid version and check it out.
+Yes.
+
+Set the `reactUi` property in your AG Grid application using the latest AG Grid version and check it out.
 
 ## Does React UI Use Portals?
 
@@ -55,13 +57,13 @@ The image below shows the DOM structure of a grid cell the old way compare to th
 
 ## Can I React Profile AG Grid?
 
-Oh yes you can!
+Yes.
 
 As the grid is now written in React, we welcome trashing it using React profiling tools for how well it plays alongside your application with regards component refresh and wasted render cycles.
 
+See below viewing the React Component hierarchy using React Developer Tools. The grid is now part of the overall React component hierarchy.
+
 <image-caption src="reactui/resources/react-dev-tools.png" alt="React Developer Tools" centered="true"></image-caption>
-
-
 
 ## Community vs Enterprise
 
@@ -92,19 +94,13 @@ The requirements and interface into AG Grid does not change.
 
 ## Can JS Components Still Be Provided
 
-Yes you can.
+Yes.
 
 As before, you can provide components to customise the grid using React or Vanilla JavaScript. For example you can configure a Cell Renderer on a column using both `colDef.cellRenderer` for Vanilla JavaScript or `colDef.cellRendererFramework` for a React version.
 
 The difference is behind the scenes in AG Grid. Without React UI, the grid used to create a React Portal to include the React Cell Renderer. With React ui, the React Cell Renderer is referenced directly.
 
 The Vanilla JavaScript components are now the ones that are not native and need to be wrapped! However don't worry about that, that's all taken care of behind the scenes.
-
-## What Does Not Work?
-
-When `reactUi=true`, the mechanism of using React inside the old AG Grid rendering engine is turned off. This means React components provided to areas of the grid not yet using React UI will not work. For example if you have a custom Header Component written in React, it will currently not work when `reactUi=true`.
-
-This is temporary while we implement React UI across all of AG Grid. Once complete, there will be no part using the old rendering engine and this issue will be no longer relevant.
 
 ## What Does the Spike Cover
 
@@ -122,6 +118,12 @@ The following areas are yet to be completed:
 1. Custom Tooltip.
 
 All of these areas use the old rendering engine alongside the new React UI. This means the grid still fully works, you just won't be able to customise these parts of AG Grid using React when `reactUi=true`.
+
+## Does Anything Break?
+
+When `reactUi=true`, the mechanism of using React inside the old AG Grid rendering engine is turned off. This means React components provided to areas of the grid not yet using React UI will not work. For example if you have a custom Header Component written in React, it will currently not work when `reactUi=true`.
+
+This is temporary while we implement React UI across all of AG Grid. Once complete, there will be no part using the old rendering engine and this issue will be no longer relevant.
 
 ## What's Next
 
