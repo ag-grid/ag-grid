@@ -28,28 +28,33 @@ class GridExample extends Component {
             modules: [ClientSideRowModelModule, RangeSelectionModule, RowGroupingModule, RichSelectModule],
             columnDefs: [
                 {
-                    field: 'athlete'
+                    field: 'athlete',
+                    enableRowGroup: true
                 },
                 {
                     field: 'age',
+                    enableRowGroup: true,
                     cellRendererFramework: MyRenderer,
                 },
                 {
                     field: 'country',
+                    enableRowGroup: true
                 },
                 {
                     field: 'year',
+                    enableRowGroup: true
                 },
                 {
                     field: 'date',
                 },
                 {
                     field: 'sport',
+                    enableRowGroup: true,
                 },
-                { field: 'gold' },
-                { field: 'silver' },
-                { field: 'bronze' },
-                { field: 'total' },
+                { field: 'gold', aggFunc: 'sum' },
+                { field: 'silver', aggFunc: 'sum' },
+                { field: 'bronze', aggFunc: 'sum' },
+                { field: 'total', aggFunc: 'sum' },
             ],
             defaultColDef: {
                 resizable: true,
