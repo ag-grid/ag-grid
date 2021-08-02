@@ -9,7 +9,8 @@
     "generate-chart-gallery": "node generate-chart-gallery.js",
     "generate-chart-gallery-force": "node generate-chart-gallery.js --force-thumbnails",
     "customise": "node customise.js",
-    "build": "npm run clean && npm run customise && npm run generate-examples",
+    "generate-doc-files": "node generate-code-reference-files.js",
+    "build": "npm run clean && npm run customise && npm run generate-doc-files && npm run generate-examples",
     "package": "npm run build && npm run publish",
     "publish": "npx gatsby build --prefix-paths",
     "develop": "npx gatsby develop -H 0.0.0.0",
@@ -72,7 +73,7 @@
     "react-visibility-sensor": "5.1.1",
     "rehype-react": "6.2.0",
     "sass": "1.32.8",
-    "typescript": "4.2.3",
+    "typescript": "3.6.5",
     "unist-util-visit": "2.0.3",
     "use-query-params": "1.2.0"
   },

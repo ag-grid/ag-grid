@@ -4,7 +4,7 @@ const glob = require('glob');
 const gulp = require('gulp');
 const prettier = require('gulp-prettier');
 const { ComponentUtil } = require("@ag-grid-community/core");
-const { getFormatterForTS } = require('./../../scripts/formatAST');
+const { getFormatterForTS } = require('../../../scripts/formatAST');
 
 const formatNode = getFormatterForTS(ts);
 
@@ -128,7 +128,7 @@ function parseFile(sourceFile) {
 }
 
 function getInterfaces() {
-    const interfaceFiles = glob.sync('../../community-modules/core/src/ts/**/*.ts');
+    const interfaceFiles = glob.sync('../../../community-modules/core/src/ts/**/*.ts');
 
     let interfaces = {};
     let extensions = {};
@@ -168,7 +168,7 @@ function getInterfaces() {
 }
 
 function getGridOptions() {
-    const gridOpsFile = "../../community-modules/core/src/ts/entities/gridOptions.ts";
+    const gridOpsFile = "../../../community-modules/core/src/ts/entities/gridOptions.ts";
     const gridOptionsNode = findInterfaceNode('GridOptions', parseFile(gridOpsFile));
 
     let gridOpsMembers = {};
@@ -265,19 +265,31 @@ function extractInterfaces(parsedSyntaxTreeResults, extension) {
     return iLookup;
 }
 
-const generateMetaFiles = (resolve, getGridOptions) => {
-    writeFormattedFile('./documentation/doc-pages/grid-api/', 'grid-options.json', getGridOptions());
-    writeFormattedFile('./documentation/doc-pages/grid-api/', 'interfaces.json', getInterfaces());
+const generateMetaFiles = (resolve) => {
+    writeFormattedFile('./doc-pages/grid-api/', 'grid-options.json', getGridOptions());
+    writeFormattedFile('./doc-pages/grid-api/', 'interfaces.json', getInterfaces());
+    resolve()
 };
 
+const generateCodeReferenceFiles = () => {
+    return new Promise(resolve => generateMetaFiles(resolve));
+}
 
-module.exports = {
-    generateCodeReferenceFiles: (cb) => {
-        const gridPromise = new Promise(resolve => generateMetaFiles(resolve, getGridOptions));
+console.log(`--------------------------------------------------------------------------------`);
+console.log(`Generate docs reference files...`);
+console.log('Using Typescript version: ', ts.version)
 
-        if (cb) {
-            Promise.all([gridPromise]).then(() => cb());
-        }
-    }
-};
+const success = [
+    generateCodeReferenceFiles(),
+].every(x => x);
+
+if (success) {
+    console.log(`Finished!`);
+} else {
+    console.error('Failed.');
+    process.exitCode = 1;
+}
+
+console.log(`--------------------------------------------------------------------------------`);
+
 
