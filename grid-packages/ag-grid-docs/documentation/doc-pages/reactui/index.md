@@ -36,6 +36,12 @@ Notice in the example:
 1. The Age Column has a React Cell Renderer.
 2. Grid functions such as sort, filter, range select and row grouping work as normal.
 
+You may say _"Doesn't it look identical to before?"_, and you would be right, it is identical to before from an application users point of view. That's the point - it is supposed to work exactly as before. The difference is this time it is all done in React.
+
+## Can I Try?
+
+Yes. Set the `reactUi` property in your AG Grid application using the latest AG Grid version and check it out.
+
 ## Does React UI Use Portals?
 
 No, React UI does not use React Portals.
