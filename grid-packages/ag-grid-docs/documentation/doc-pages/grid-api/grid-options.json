@@ -1052,478 +1052,1118 @@
     }
   },
   "onColumnEverythingChanged": {
-    "description": "********************************************************************************************************\nIf you change the events on this interface, you do *not* need to update PropertyKeys to be consistent, *\nas event callbacks are automatically generated.                                                        *\n********************************************************************************************************",
+    "description": " ",
     "type": {
       "arguments": { "event": "ColumnEverythingChangedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onColumnEverythingChanged" }
+  },
+  "columnEverythingChanged": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "ColumnEverythingChangedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onColumnEverythingChanged" }
   },
   "onToolPanelVisibleChanged": {
     "description": " ",
     "type": {
       "arguments": { "event": "ToolPanelVisibleChangedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onToolPanelVisibleChanged" }
+  },
+  "toolPanelVisibleChanged": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "ToolPanelVisibleChangedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onToolPanelVisibleChanged" }
   },
   "onNewColumnsLoaded": {
     "description": " ",
     "type": {
       "arguments": { "event": "NewColumnsLoadedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onNewColumnsLoaded" }
+  },
+  "newColumnsLoaded": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "NewColumnsLoadedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onNewColumnsLoaded" }
   },
   "onColumnPivotModeChanged": {
     "description": " ",
     "type": {
       "arguments": { "event": "ColumnPivotModeChangedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onColumnPivotModeChanged" }
+  },
+  "columnPivotModeChanged": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "ColumnPivotModeChangedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onColumnPivotModeChanged" }
   },
   "onColumnRowGroupChanged": {
     "description": " ",
     "type": {
       "arguments": { "event": "ColumnRowGroupChangedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onColumnRowGroupChanged" }
+  },
+  "columnRowGroupChanged": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "ColumnRowGroupChangedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onColumnRowGroupChanged" }
   },
   "onColumnPivotChanged": {
     "description": " ",
     "type": {
       "arguments": { "event": "ColumnPivotChangedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onColumnPivotChanged" }
+  },
+  "columnPivotChanged": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "ColumnPivotChangedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onColumnPivotChanged" }
   },
   "onGridColumnsChanged": {
     "description": " ",
     "type": {
       "arguments": { "event": "GridColumnsChangedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onGridColumnsChanged" }
+  },
+  "gridColumnsChanged": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "GridColumnsChangedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onGridColumnsChanged" }
   },
   "onColumnValueChanged": {
     "description": " ",
     "type": {
       "arguments": { "event": "ColumnValueChangedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onColumnValueChanged" }
+  },
+  "columnValueChanged": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "ColumnValueChangedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onColumnValueChanged" }
   },
   "onColumnMoved": {
     "description": " ",
     "type": {
       "arguments": { "event": "ColumnMovedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onColumnMoved" }
+  },
+  "columnMoved": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "ColumnMovedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onColumnMoved" }
   },
   "onColumnVisible": {
     "description": " ",
     "type": {
       "arguments": { "event": "ColumnVisibleEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onColumnVisible" }
+  },
+  "columnVisible": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "ColumnVisibleEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onColumnVisible" }
   },
   "onColumnPinned": {
     "description": " ",
     "type": {
       "arguments": { "event": "ColumnPinnedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onColumnPinned" }
+  },
+  "columnPinned": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "ColumnPinnedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onColumnPinned" }
   },
   "onColumnGroupOpened": {
     "description": " ",
     "type": {
       "arguments": { "event": "ColumnGroupOpenedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onColumnGroupOpened" }
+  },
+  "columnGroupOpened": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "ColumnGroupOpenedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onColumnGroupOpened" }
   },
   "onColumnResized": {
     "description": " ",
     "type": {
       "arguments": { "event": "ColumnResizedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onColumnResized" }
+  },
+  "columnResized": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "ColumnResizedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onColumnResized" }
   },
   "onDisplayedColumnsChanged": {
     "description": " ",
     "type": {
       "arguments": { "event": "DisplayedColumnsChangedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onDisplayedColumnsChanged" }
+  },
+  "displayedColumnsChanged": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "DisplayedColumnsChangedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onDisplayedColumnsChanged" }
   },
   "onVirtualColumnsChanged": {
     "description": " ",
     "type": {
       "arguments": { "event": "VirtualColumnsChangedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onVirtualColumnsChanged" }
+  },
+  "virtualColumnsChanged": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "VirtualColumnsChangedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onVirtualColumnsChanged" }
   },
   "onRowGroupOpened": {
     "description": " ",
     "type": {
       "arguments": { "event": "RowGroupOpenedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onRowGroupOpened" }
+  },
+  "rowGroupOpened": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "RowGroupOpenedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onRowGroupOpened" }
   },
   "onRowDataChanged": {
     "description": " ",
     "type": {
       "arguments": { "event": "RowDataChangedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onRowDataChanged" }
+  },
+  "rowDataChanged": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "RowDataChangedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onRowDataChanged" }
   },
   "onRowDataUpdated": {
     "description": " ",
     "type": {
       "arguments": { "event": "RowDataUpdatedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onRowDataUpdated" }
+  },
+  "rowDataUpdated": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "RowDataUpdatedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onRowDataUpdated" }
   },
   "onPinnedRowDataChanged": {
     "description": " ",
     "type": {
       "arguments": { "event": "PinnedRowDataChangedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onPinnedRowDataChanged" }
+  },
+  "pinnedRowDataChanged": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "PinnedRowDataChangedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onPinnedRowDataChanged" }
   },
   "onRangeSelectionChanged": {
     "description": " ",
     "type": {
       "arguments": { "event": "RangeSelectionChangedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onRangeSelectionChanged" }
+  },
+  "rangeSelectionChanged": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "RangeSelectionChangedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onRangeSelectionChanged" }
   },
   "onColumnRowGroupChangeRequest": {
     "description": " ",
     "type": {
       "arguments": { "event": "ColumnRowGroupChangeRequestEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onColumnRowGroupChangeRequest" }
+  },
+  "columnRowGroupChangeRequest": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "ColumnRowGroupChangeRequestEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onColumnRowGroupChangeRequest" }
   },
   "onColumnPivotChangeRequest": {
     "description": " ",
     "type": {
       "arguments": { "event": "ColumnPivotChangeRequestEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onColumnPivotChangeRequest" }
+  },
+  "columnPivotChangeRequest": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "ColumnPivotChangeRequestEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onColumnPivotChangeRequest" }
   },
   "onColumnValueChangeRequest": {
     "description": " ",
     "type": {
       "arguments": { "event": "ColumnValueChangeRequestEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onColumnValueChangeRequest" }
+  },
+  "columnValueChangeRequest": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "ColumnValueChangeRequestEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onColumnValueChangeRequest" }
   },
   "onColumnAggFuncChangeRequest": {
     "description": " ",
     "type": {
       "arguments": { "event": "ColumnAggFuncChangeRequestEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onColumnAggFuncChangeRequest" }
+  },
+  "columnAggFuncChangeRequest": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "ColumnAggFuncChangeRequestEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onColumnAggFuncChangeRequest" }
   },
   "onModelUpdated": {
     "description": " ",
     "type": {
       "arguments": { "event": "ModelUpdatedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onModelUpdated" }
+  },
+  "modelUpdated": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "ModelUpdatedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onModelUpdated" }
   },
   "onCellKeyDown": {
     "description": " ",
     "type": {
-      "arguments": { "event": "CellKeyDownEvent" },
+      "arguments": { "event": "CellKeyDownEvent | FullWidthCellKeyDownEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onCellKeyDown" }
+  },
+  "cellKeyDown": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "CellKeyDownEvent | FullWidthCellKeyDownEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onCellKeyDown" }
   },
   "onCellKeyPress": {
     "description": " ",
     "type": {
-      "arguments": { "event": "CellKeyPressEvent" },
+      "arguments": {
+        "event": "CellKeyPressEvent | FullWidthCellKeyPressEvent"
+      },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onCellKeyPress" }
+  },
+  "cellKeyPress": {
+    "description": " ",
+    "type": {
+      "arguments": {
+        "event": "CellKeyPressEvent | FullWidthCellKeyPressEvent"
+      },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onCellKeyPress" }
   },
   "onCellClicked": {
     "description": " ",
     "type": {
       "arguments": { "event": "CellClickedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onCellClicked" }
+  },
+  "cellClicked": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "CellClickedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onCellClicked" }
   },
   "onCellMouseDown": {
     "description": " ",
     "type": {
       "arguments": { "event": "CellMouseDownEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onCellMouseDown" }
+  },
+  "cellMouseDown": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "CellMouseDownEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onCellMouseDown" }
   },
   "onCellDoubleClicked": {
     "description": " ",
     "type": {
       "arguments": { "event": "CellDoubleClickedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onCellDoubleClicked" }
+  },
+  "cellDoubleClicked": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "CellDoubleClickedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onCellDoubleClicked" }
   },
   "onCellContextMenu": {
     "description": " ",
     "type": {
       "arguments": { "event": "CellContextMenuEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onCellContextMenu" }
+  },
+  "cellContextMenu": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "CellContextMenuEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onCellContextMenu" }
   },
   "onCellValueChanged": {
     "description": " ",
     "type": {
       "arguments": { "event": "CellValueChangedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onCellValueChanged" }
+  },
+  "cellValueChanged": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "CellValueChangedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onCellValueChanged" }
   },
   "onCellMouseOver": {
     "description": " ",
     "type": {
       "arguments": { "event": "CellMouseOverEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onCellMouseOver" }
+  },
+  "cellMouseOver": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "CellMouseOverEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onCellMouseOver" }
   },
   "onCellMouseOut": {
     "description": " ",
     "type": {
       "arguments": { "event": "CellMouseOutEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onCellMouseOut" }
+  },
+  "cellMouseOut": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "CellMouseOutEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onCellMouseOut" }
   },
   "onRowValueChanged": {
     "description": " ",
     "type": {
       "arguments": { "event": "RowValueChangedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onRowValueChanged" }
+  },
+  "rowValueChanged": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "RowValueChangedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onRowValueChanged" }
   },
   "onRowEditingStarted": {
     "description": " ",
     "type": {
       "arguments": { "event": "RowEditingStartedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onRowEditingStarted" }
+  },
+  "rowEditingStarted": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "RowEditingStartedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onRowEditingStarted" }
   },
   "onRowEditingStopped": {
     "description": " ",
     "type": {
       "arguments": { "event": "RowEditingStoppedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onRowEditingStopped" }
+  },
+  "rowEditingStopped": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "RowEditingStoppedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onRowEditingStopped" }
   },
   "onCellEditingStarted": {
     "description": " ",
     "type": {
       "arguments": { "event": "CellEditingStartedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onCellEditingStarted" }
+  },
+  "cellEditingStarted": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "CellEditingStartedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onCellEditingStarted" }
   },
   "onCellEditingStopped": {
     "description": " ",
     "type": {
       "arguments": { "event": "CellEditingStoppedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onCellEditingStopped" }
+  },
+  "cellEditingStopped": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "CellEditingStoppedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onCellEditingStopped" }
   },
   "onCellFocused": {
     "description": " ",
     "type": {
       "arguments": { "event": "CellFocusedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onCellFocused" }
+  },
+  "cellFocused": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "CellFocusedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onCellFocused" }
   },
   "onRowSelected": {
     "description": " ",
     "type": {
       "arguments": { "event": "RowSelectedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onRowSelected" }
+  },
+  "rowSelected": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "RowSelectedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onRowSelected" }
   },
   "onSelectionChanged": {
     "description": " ",
     "type": {
       "arguments": { "event": "SelectionChangedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onSelectionChanged" }
+  },
+  "selectionChanged": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "SelectionChangedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onSelectionChanged" }
   },
   "onFilterOpened": {
     "description": " ",
     "type": {
       "arguments": { "event": "FilterOpenedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onFilterOpened" }
+  },
+  "filterOpened": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "FilterOpenedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onFilterOpened" }
   },
   "onFilterChanged": {
     "description": " ",
     "type": {
       "arguments": { "event": "FilterChangedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onFilterChanged" }
+  },
+  "filterChanged": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "FilterChangedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onFilterChanged" }
   },
   "onFilterModified": {
     "description": " ",
     "type": {
       "arguments": { "event": "FilterModifiedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onFilterModified" }
+  },
+  "filterModified": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "FilterModifiedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onFilterModified" }
   },
   "onSortChanged": {
     "description": " ",
     "type": {
       "arguments": { "event": "SortChangedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onSortChanged" }
+  },
+  "sortChanged": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "SortChangedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onSortChanged" }
   },
   "onVirtualRowRemoved": {
     "description": " ",
     "type": {
       "arguments": { "event": "VirtualRowRemovedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onVirtualRowRemoved" }
+  },
+  "virtualRowRemoved": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "VirtualRowRemovedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onVirtualRowRemoved" }
   },
   "onRowClicked": {
     "description": " ",
     "type": {
       "arguments": { "event": "RowClickedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onRowClicked" }
+  },
+  "rowClicked": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "RowClickedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onRowClicked" }
   },
   "onRowDoubleClicked": {
     "description": " ",
     "type": {
       "arguments": { "event": "RowDoubleClickedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onRowDoubleClicked" }
+  },
+  "rowDoubleClicked": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "RowDoubleClickedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onRowDoubleClicked" }
   },
   "onGridReady": {
     "description": " ",
-    "type": { "arguments": { "event": "GridReadyEvent" }, "returnType": "void" }
+    "type": {
+      "arguments": { "event": "GridReadyEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onGridReady" }
+  },
+  "gridReady": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "GridReadyEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onGridReady" }
   },
   "onViewportChanged": {
     "description": " ",
     "type": {
       "arguments": { "event": "ViewportChangedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onViewportChanged" }
+  },
+  "viewportChanged": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "ViewportChangedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onViewportChanged" }
   },
   "onDragStarted": {
     "description": " ",
     "type": {
       "arguments": { "event": "DragStartedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onDragStarted" }
+  },
+  "dragStarted": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "DragStartedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onDragStarted" }
   },
   "onDragStopped": {
     "description": " ",
     "type": {
       "arguments": { "event": "DragStoppedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onDragStopped" }
+  },
+  "dragStopped": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "DragStoppedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onDragStopped" }
   },
   "onPaginationChanged": {
     "description": " ",
     "type": {
       "arguments": { "event": "PaginationChangedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onPaginationChanged" }
+  },
+  "paginationChanged": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "PaginationChangedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onPaginationChanged" }
   },
   "onRowDragEnter": {
     "description": " ",
-    "type": { "arguments": { "event": "RowDragEvent" }, "returnType": "void" }
+    "type": { "arguments": { "event": "RowDragEvent" }, "returnType": "void" },
+    "meta": { "isEvent": true, "name": "onRowDragEnter" }
+  },
+  "rowDragEnter": {
+    "description": " ",
+    "type": { "arguments": { "event": "RowDragEvent" }, "returnType": "void" },
+    "meta": { "isEvent": true, "name": "onRowDragEnter" }
   },
   "onRowDragMove": {
     "description": " ",
-    "type": { "arguments": { "event": "RowDragEvent" }, "returnType": "void" }
+    "type": { "arguments": { "event": "RowDragEvent" }, "returnType": "void" },
+    "meta": { "isEvent": true, "name": "onRowDragMove" }
+  },
+  "rowDragMove": {
+    "description": " ",
+    "type": { "arguments": { "event": "RowDragEvent" }, "returnType": "void" },
+    "meta": { "isEvent": true, "name": "onRowDragMove" }
   },
   "onRowDragLeave": {
     "description": " ",
-    "type": { "arguments": { "event": "RowDragEvent" }, "returnType": "void" }
+    "type": { "arguments": { "event": "RowDragEvent" }, "returnType": "void" },
+    "meta": { "isEvent": true, "name": "onRowDragLeave" }
+  },
+  "rowDragLeave": {
+    "description": " ",
+    "type": { "arguments": { "event": "RowDragEvent" }, "returnType": "void" },
+    "meta": { "isEvent": true, "name": "onRowDragLeave" }
   },
   "onRowDragEnd": {
     "description": " ",
-    "type": { "arguments": { "event": "RowDragEvent" }, "returnType": "void" }
+    "type": { "arguments": { "event": "RowDragEvent" }, "returnType": "void" },
+    "meta": { "isEvent": true, "name": "onRowDragEnd" }
+  },
+  "rowDragEnd": {
+    "description": " ",
+    "type": { "arguments": { "event": "RowDragEvent" }, "returnType": "void" },
+    "meta": { "isEvent": true, "name": "onRowDragEnd" }
   },
   "onPasteStart": {
     "description": " ",
     "type": {
       "arguments": { "event": "PasteStartEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onPasteStart" }
+  },
+  "pasteStart": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "PasteStartEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onPasteStart" }
   },
   "onPasteEnd": {
     "description": " ",
-    "type": { "arguments": { "event": "PasteEndEvent" }, "returnType": "void" }
+    "type": { "arguments": { "event": "PasteEndEvent" }, "returnType": "void" },
+    "meta": { "isEvent": true, "name": "onPasteEnd" }
+  },
+  "pasteEnd": {
+    "description": " ",
+    "type": { "arguments": { "event": "PasteEndEvent" }, "returnType": "void" },
+    "meta": { "isEvent": true, "name": "onPasteEnd" }
   },
   "onFillStart": {
     "description": " ",
-    "type": { "arguments": { "event": "FillStartEvent" }, "returnType": "void" }
+    "type": {
+      "arguments": { "event": "FillStartEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onFillStart" }
+  },
+  "fillStart": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "FillStartEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onFillStart" }
   },
   "onFillEnd": {
     "description": " ",
-    "type": { "arguments": { "event": "FillEndEvent" }, "returnType": "void" }
+    "type": { "arguments": { "event": "FillEndEvent" }, "returnType": "void" },
+    "meta": { "isEvent": true, "name": "onFillEnd" }
+  },
+  "fillEnd": {
+    "description": " ",
+    "type": { "arguments": { "event": "FillEndEvent" }, "returnType": "void" },
+    "meta": { "isEvent": true, "name": "onFillEnd" }
   },
   "onBodyScroll": {
     "description": " ",
     "type": {
       "arguments": { "event": "BodyScrollEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onBodyScroll" }
+  },
+  "bodyScroll": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "BodyScrollEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onBodyScroll" }
   },
   "onFirstDataRendered": {
     "description": " ",
     "type": {
       "arguments": { "event": "FirstDataRenderedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onFirstDataRendered" }
+  },
+  "firstDataRendered": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "FirstDataRenderedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onFirstDataRendered" }
   },
   "onExpandOrCollapseAll": {
     "description": " ",
     "type": {
       "arguments": { "event": "ExpandCollapseAllEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onExpandOrCollapseAll" }
+  },
+  "expandOrCollapseAll": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "ExpandCollapseAllEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onExpandOrCollapseAll" }
   },
   "onChartCreated": {
     "description": " ",
-    "type": { "arguments": { "event": "ChartCreated" }, "returnType": "void" }
+    "type": { "arguments": { "event": "ChartCreated" }, "returnType": "void" },
+    "meta": { "isEvent": true, "name": "onChartCreated" }
+  },
+  "chartCreated": {
+    "description": " ",
+    "type": { "arguments": { "event": "ChartCreated" }, "returnType": "void" },
+    "meta": { "isEvent": true, "name": "onChartCreated" }
   },
   "onChartRangeSelectionChanged": {
     "description": " ",
     "type": {
       "arguments": { "event": "ChartRangeSelectionChanged" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onChartRangeSelectionChanged" }
+  },
+  "chartRangeSelectionChanged": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "ChartRangeSelectionChanged" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onChartRangeSelectionChanged" }
   },
   "onChartOptionsChanged": {
     "description": " ",
     "type": {
       "arguments": { "event": "ChartOptionsChanged" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onChartOptionsChanged" }
+  },
+  "chartOptionsChanged": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "ChartOptionsChanged" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onChartOptionsChanged" }
   },
   "onChartDestroyed": {
     "description": " ",
-    "type": { "arguments": { "event": "ChartDestroyed" }, "returnType": "void" }
+    "type": {
+      "arguments": { "event": "ChartDestroyed" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onChartDestroyed" }
+  },
+  "chartDestroyed": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "ChartDestroyed" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onChartDestroyed" }
   },
   "onComponentStateChanged": {
     "description": " ",
     "type": {
       "arguments": { "event": "ComponentStateChangedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onComponentStateChanged" }
+  },
+  "componentStateChanged": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "ComponentStateChangedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onComponentStateChanged" }
   },
   "onAsyncTransactionsFlushed": {
     "description": " ",
     "type": {
       "arguments": { "event": "AsyncTransactionsFlushed" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onAsyncTransactionsFlushed" }
+  },
+  "asyncTransactionsFlushed": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "AsyncTransactionsFlushed" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onAsyncTransactionsFlushed" }
   },
   "onGridSizeChanged": {
     "description": " ",
     "type": {
       "arguments": { "event": "GridSizeChangedEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onGridSizeChanged" }
+  },
+  "gridSizeChanged": {
+    "description": " ",
+    "type": {
+      "arguments": { "event": "GridSizeChangedEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onGridSizeChanged" }
   },
   "api": { "description": " ", "type": { "returnType": "GridApi | null" } },
   "columnApi": {

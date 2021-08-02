@@ -471,7 +471,7 @@ export interface GridOptions {
      * as event callbacks are automatically generated.                                                        *
      **********************************************************************************************************/
 
-    // events
+/**  */
     onColumnEverythingChanged?(event: ColumnEverythingChangedEvent): void;
 
     onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent): void;
