@@ -1,12 +1,12 @@
 import { GroupCellRendererCtrl, GroupCellRendererParams, IGroupCellRenderer, UserCompDetails } from "ag-grid-community";
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { AgContext } from "../gridComp";
+import { BeansContext } from "../gridComp";
 import { showJsComp } from "../jsComp";
 import { CssClasses } from "../utils";
 
 export const GroupCellRenderer = (props: GroupCellRendererParams) => {
 
-    const context = useContext(AgContext).context!;
+    const context = useContext(BeansContext).context!;
 
     const eGui = useRef<HTMLElement>(null);
     const eValueRef = useRef<HTMLElement>(null);

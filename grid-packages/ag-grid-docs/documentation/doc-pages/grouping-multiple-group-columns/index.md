@@ -73,32 +73,6 @@ The following example demonstrates some of the available `autoGroupColumnDef` co
 
 <grid-example title='Multiple Group Columns Configuration' name='multiple-group-columns-configuration' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
-## Row Group Order
-
-By default, the grid will order the groups based on the order of the supplied column definitions. To explicitly set the
-grouping order, use `rowGroupIndex` instead of `rowGroup` as shown below:
-
-<snippet>
-const gridOptions = {
-    columnDefs: [
-        // index = 1, gets grouped second
-        { field: "country", rowGroupIndex: 1 },
-        // index = 0, gets grouped first
-        { field: "year", rowGroupIndex: 0 },
-    ]
-}
-</snippet>
-
-In the snippet above, `year` has a lower `rowGroupIndex` than `country` which means it will be grouped first. The
-`rowGroupIndex` values can be any sortable number, and they do not need to start at zero (or one). Gaps in the sequence
-is also permitted.
-
-The following example shows how the `rowGroupIndex` can be used to ensure rows are grouped by 'year' first and then
-`country` even though the `country` column definition is supplied to the grid first.
-
-<grid-example title='Row Group Order' name='row-group-order' type='generated' options='{ "enterprise": true, "exampleHeight": 500, "modules": ["clientside", "rowgrouping"] }'></grid-example>
-
-
 ## Showing Open Groups
 
 Setting the grid property `showOpenedGroup=true` will show the name of the opened group inside the group column.

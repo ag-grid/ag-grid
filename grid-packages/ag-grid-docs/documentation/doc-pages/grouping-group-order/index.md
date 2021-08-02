@@ -1,9 +1,33 @@
 ---
-title: "Row Grouping - Sorting / Filtering"
+title: "Row Grouping - Group Order"
 enterprise: true
 ---
 
-This section provides details on how to customise the sorting and filtering of Row Groups.
+This section provides details on how to control the 'Group By' order and the default ordering of groups.
+
+## Row 'Group By' Order
+
+By default, the grid will group rows based on the order of the supplied column definitions. To explicitly define the
+row 'Group By' order, use `rowGroupIndex` with / without `rowGroup = true` as shown below:
+
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        // index = 1, gets grouped second
+        { field: "country", rowGroupIndex: 1 },
+        // index = 0, gets grouped first
+        { field: "year", rowGroupIndex: 0 },
+    ]
+}
+</snippet>
+
+In the snippet above, `year` has a lower `rowGroupIndex` than `country` which means it will be grouped first. The
+`rowGroupIndex` values can be any number that is either positive or zero and gaps are permitted. 
+
+The following example shows how the `rowGroupIndex` can be used to ensure rows are grouped by 'year' first and then
+`country` even though the `country` column definition is supplied to the grid first.
+
+<grid-example title='Row Group Order' name='row-group-order' type='generated' options='{ "enterprise": true, "exampleHeight": 500, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
 ## Default Group Order
 
@@ -30,17 +54,6 @@ The example below shows providing a default group order. From the example the fo
 
 <grid-example title='Default Group Order' name='default-group-order' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
-## Custom Sorting
-
-<grid-example title='Custom Group Sort' name='custom-group-sort' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "setfilter"] }'></grid-example>
-
-
-## Filtering on Group Columns
-
-Filter on group columns is more complex than filtering on normal columns as the data inside the column can be a mix of data from different columns. For example if grouping by Country and Year, should the filter be for Year or for Country?
-
-For auto generated group columns, the filter will work if you specify one of `field`, `valueGetter` or `filterValueGetter`.
-
 ## Next Up
 
-Continue to the next section to learn about [Opening Groups](../grouping-opening-groups/).
+Continue to the next section to learn about [Row Group Sorting](../grouping-sorting/).

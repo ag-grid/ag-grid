@@ -1,8 +1,9 @@
-import React, { useRef, useEffect, useState, forwardRef, useImperativeHandle, RefForwardingComponent, memo } from 'react';
+import React, { useRef, useEffect, useState, forwardRef, useImperativeHandle, RefForwardingComponent, memo, useContext } from 'react';
 
 import {
     Context, TabGuardCtrl, ITabGuard, GridCtrl
 } from 'ag-grid-community';
+import { BeansContext } from './gridComp';
 
 export interface TabGuardCompCallback {
     forceFocusOutOfContainer(): void;
@@ -10,14 +11,16 @@ export interface TabGuardCompCallback {
 
 interface TabGuardProps {
     children: React.ReactNode,
-    context: Context
     eFocusableElement: HTMLDivElement,
     onTabKeyDown: (e: KeyboardEvent) => void,
     gridCtrl: GridCtrl,
 }
 
 const TabGuardCompRef: RefForwardingComponent<TabGuardCompCallback, TabGuardProps> = (props, forwardRef) => {
-    const { children, context, eFocusableElement, onTabKeyDown, gridCtrl } = props;
+
+    const { children, eFocusableElement, onTabKeyDown, gridCtrl } = props;
+    const { context } = useContext(BeansContext);
+
     const topTabGuardRef = useRef<HTMLDivElement>(null);
     const bottomTabGuardRef = useRef<HTMLDivElement>(null);
     const tabGuardCtrlRef = useRef<TabGuardCtrl>();
