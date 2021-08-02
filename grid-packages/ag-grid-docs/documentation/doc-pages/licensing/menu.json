@@ -62,6 +62,15 @@
             "pane": "right"
           },
           {
+            "title": "React UI",
+            "icon": "reactui",
+            "url": "/reactui/",
+            "frameworks": [
+              "react"
+            ],
+            "pane": "right"
+          },
+          {
             "title": "Vue 3 Tutorial",
             "icon": "vue",
             "url": "/vue3/",

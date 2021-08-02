@@ -3,6 +3,7 @@ import agGridSvg from './ag-grid.svg';
 import agGridInvertedSvg from './ag-grid-inverted.svg';
 import angularJsSvg from './angularjs.svg';
 import stackblitzSvg from './stackblitz.svg';
+import reactuiSvg from './reactui.svg';
 import thinksterSvg from './thinkster.svg';
 import youtubeSvg from './youtube.svg';
 
@@ -15,6 +16,7 @@ const logos = {
     angularjs: angularJsSvg,
     plunker: plunkerSvg,
     stackblitz: stackblitzSvg,
+    reactui: reactuiSvg,
     thinkster: thinksterSvg,
     youtube: youtubeSvg
 };

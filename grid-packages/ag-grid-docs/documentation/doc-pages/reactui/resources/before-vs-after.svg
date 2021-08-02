@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 25.2.3, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 661.6 312.3" style="enable-background:new 0 0 661.6 312.3;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#AAFFB3;}
+	.st1{fill:#C9F2FF;}
+	.st2{font-family:'MyriadPro-Regular';}
+	.st3{font-size:12px;}
+	.st4{fill:#FFFFFF;stroke:#000000;stroke-miterlimit:10;}
+	.st5{font-size:9.2402px;}
+</style>
+<g>
+	<rect x="0.6" y="32.2" class="st0" width="298.4" height="88.6"/>
+	<path d="M298.4,32.8v87.4H1.1V32.8H298.4 M299.5,31.6H0v89.8h299.5V31.6L299.5,31.6z"/>
+</g>
+<g>
+	<rect x="15.5" y="147.8" class="st1" width="266" height="164"/>
+	<path d="M281,148.3v163H16v-163L281,148.3 M282,147.3H15v165h267V147.3L282,147.3z"/>
+</g>
+<g>
+	<rect x="15.5" y="68.1" class="st1" width="266" height="81.7"/>
+	<path d="M281,68.6v80.6H16V68.6H281 M282,67.5H15v82.8h267V67.5L282,67.5z"/>
+</g>
+<text transform="matrix(1 0 0 1 27.5347 170.0796)" class="st2 st3">AG Grid Services</text>
+<text transform="matrix(1 0 0 1 26.4998 88.7056)" class="st2 st3">AG Grid Rendering Engine</text>
+<text transform="matrix(1 0 0 1 86.5001 52.8633)" class="st2 st3">AG Grid React Wrapper</text>
+<text transform="matrix(1 0 0 1 387 120.2656)" class="st2 st3">C9F2FF</text>
+<text transform="matrix(1 0 0 1 387 120.2656)" class="st2 st3">C9F2FF</text>
+<text transform="matrix(1 0 0 1 105.7511 10.0439)" class="st2 st3">AG Grid Before</text>
+<g>
+	<rect x="45.5" y="191.8" class="st4" width="60" height="28"/>
+	<text transform="matrix(1 0 0 1 55.5811 208.2656)" class="st2 st3">Filtering</text>
+</g>
+<g>
+	<rect x="26.5" y="231.8" class="st4" width="60" height="28"/>
+	<text transform="matrix(1 0 0 1 36.5811 248.2656)" class="st2 st3">Pivoting</text>
+</g>
+<g>
+	<rect x="127.5" y="185.8" class="st4" width="60" height="28"/>
+	<text transform="matrix(1 0 0 1 137.5811 202.2656)" class="st2 st3">Sorting</text>
+</g>
+<g>
+	<rect x="108.5" y="228.8" class="st4" width="79" height="28"/>
+	<text transform="matrix(1 0 0 1 118.5811 245.2656)" class="st2 st3">Row Models</text>
+</g>
+<g>
+	<rect x="202.5" y="199.8" class="st4" width="60" height="28"/>
+	<text transform="matrix(1 0 0 1 209.5811 216.2656)" class="st2 st3">Selection</text>
+</g>
+<g>
+	<rect x="206.5" y="242.8" class="st4" width="67" height="56"/>
+	<text transform="matrix(1 0 0 1 213.5811 259.2656)" class="st2 st3">Lots of</text>
+	<text transform="matrix(1 0 0 1 213.5811 273.6656)" class="st2 st3">other</text>
+	<text transform="matrix(1 0 0 1 213.5811 288.0656)" class="st2 st3">Services...</text>
+</g>
+<g>
+	<rect x="47.5" y="268.8" class="st4" width="60" height="28"/>
+	<text transform="matrix(1 0 0 1 57.5811 285.2656)" class="st2 st3">Export</text>
+</g>
+<g>
+	<rect x="127.5" y="265.8" class="st4" width="68" height="28"/>
+	<text transform="matrix(1 0 0 1 137.5811 282.2656)" class="st2 st3">Clipboard</text>
+</g>
+<g>
+	<rect x="27.8" y="102.8" class="st4" width="72.4" height="32.5"/>
+	<text transform="matrix(1 0 0 1 36.511 117.2443)" class="st2 st3">GridComp</text>
+	<text transform="matrix(1 0 0 1 33.3962 130.2987)" class="st2 st5">(JS Component)</text>
+</g>
+<g>
+	<rect x="112.3" y="104" class="st4" width="72.4" height="32.5"/>
+	<text transform="matrix(1 0 0 1 122.9839 118.464)" class="st2 st3">RowComp</text>
+	<text transform="matrix(1 0 0 1 117.8691 131.5185)" class="st2 st5">(JS Component)</text>
+</g>
+<g>
+	<rect x="196.3" y="103.4" class="st4" width="72.4" height="32.5"/>
+	<text transform="matrix(1 0 0 1 208.9839 117.8546)" class="st2 st3">CellComp</text>
+	<text transform="matrix(1 0 0 1 201.8691 130.9091)" class="st2 st5">(JS Component)</text>
+</g>
+<g>
+	<rect x="376.5" y="147.8" class="st1" width="283.4" height="164"/>
+	<path d="M659.4,148.3v163H377.1v-163L659.4,148.3 M660.5,147.3H376v165h284.5V147.3L660.5,147.3z"/>
+</g>
+<g>
+	<rect x="376.5" y="76.8" class="st0" width="284.5" height="73"/>
+	<path d="M660.5,77.3v72H377.1v-72H660.5 M661.6,76.3H376v74h285.6V76.3L661.6,76.3z"/>
+</g>
+<text transform="matrix(1 0 0 1 388.5347 170.0796)" class="st2 st3">AG Grid Services</text>
+<text transform="matrix(1 0 0 1 440.4244 94.7164)" class="st2 st3">AG Grid React UI Rendering Engine</text>
+<text transform="matrix(1 0 0 1 492.8882 56.8871)" class="st2 st3">AG Grid React UI</text>
+<g>
+	<rect x="406.5" y="191.8" class="st4" width="60" height="28"/>
+	<text transform="matrix(1 0 0 1 416.5811 208.2656)" class="st2 st3">Filtering</text>
+</g>
+<g>
+	<rect x="387.5" y="231.8" class="st4" width="60" height="28"/>
+	<text transform="matrix(1 0 0 1 397.5811 248.2656)" class="st2 st3">Pivoting</text>
+</g>
+<g>
+	<rect x="488.5" y="185.8" class="st4" width="60" height="28"/>
+	<text transform="matrix(1 0 0 1 498.5811 202.2656)" class="st2 st3">Sorting</text>
+</g>
+<g>
+	<rect x="469.5" y="228.8" class="st4" width="79" height="28"/>
+	<text transform="matrix(1 0 0 1 479.5811 245.2656)" class="st2 st3">Row Models</text>
+</g>
+<g>
+	<rect x="563.5" y="199.8" class="st4" width="60" height="28"/>
+	<text transform="matrix(1 0 0 1 570.5811 216.2656)" class="st2 st3">Selection</text>
+</g>
+<g>
+	<rect x="567.5" y="242.8" class="st4" width="67" height="56"/>
+	<text transform="matrix(1 0 0 1 574.5811 259.2656)" class="st2 st3">Lots of</text>
+	<text transform="matrix(1 0 0 1 574.5811 273.6656)" class="st2 st3">other</text>
+	<text transform="matrix(1 0 0 1 574.5811 288.0656)" class="st2 st3">Services...</text>
+</g>
+<g>
+	<rect x="408.5" y="268.8" class="st4" width="60" height="28"/>
+	<text transform="matrix(1 0 0 1 418.5811 285.2656)" class="st2 st3">Export</text>
+</g>
+<g>
+	<rect x="488.5" y="265.8" class="st4" width="68" height="28"/>
+	<text transform="matrix(1 0 0 1 498.5811 282.2656)" class="st2 st3">Clipboard</text>
+</g>
+<g>
+	<rect x="571.3" y="110.3" class="st4" width="84.7" height="32.5"/>
+	<text transform="matrix(1 0 0 1 591.4785 124.7312)" class="st2 st3">CellComp</text>
+	<text transform="matrix(1 0 0 1 576.8624 137.7857)" class="st2 st5">(React Component)</text>
+</g>
+<g>
+	<rect x="475.9" y="110.3" class="st4" width="84.7" height="32.5"/>
+	<text transform="matrix(1 0 0 1 496.0873 124.7312)" class="st2 st3">RowComp</text>
+	<text transform="matrix(1 0 0 1 481.4713 137.7857)" class="st2 st5">(React Component)</text>
+</g>
+<g>
+	<rect x="380.5" y="110.3" class="st4" width="84.7" height="32.5"/>
+	<text transform="matrix(1 0 0 1 400.6861 124.7312)" class="st2 st3">GridComp</text>
+	<text transform="matrix(1 0 0 1 386.07 137.7857)" class="st2 st5">(React Component)</text>
+</g>
+</svg>
