@@ -517,7 +517,7 @@ const getLinkedType = (type, framework) => {
 
         let formatted = t;
         typesToLink.forEach(toLink => {
-            formatted = formatted.replaceAll(toLink.toReplace, toLink.link);
+            formatted = formatted.split(toLink.toReplace).join(toLink.link);
         })
 
         return formatted;
