@@ -3,6 +3,7 @@ const ts = require('typescript');
 const glob = require('glob');
 const gulp = require('gulp');
 const prettier = require('gulp-prettier');
+const { ComponentUtil } = require("@ag-grid-community/core");
 
 // satisfy ag-grid HTMLElement dependencies
 HTMLElement = typeof HTMLElement === 'undefined' ? function () {
@@ -16,6 +17,8 @@ HTMLButtonElement = typeof HTMLButtonElement === 'undefined' ? function () {
 MouseEvent = typeof MouseEvent === 'undefined' ? function () {
 } : MouseEvent;
 
+
+const EVENT_LOOKUP = new Set(ComponentUtil.getEventCallbacks());
 
 function findInterfaceNode(interfaceName, parsedSyntaxTreeResults) {
     const interfaceNode = findInterfaceInNodeTree(parsedSyntaxTreeResults, interfaceName);
@@ -147,10 +150,14 @@ function getArgTypes(parameters) {
     return args;
 }
 
+function toCamelCase(value) {
+    return value[0].toLowerCase() + value.substr(1);
+}
+
 function extractTypesFromNode(node) {
     let nodeMembers = {};
     const kind = ts.SyntaxKind[node.kind];
-    const name = node && node.name && node.name.escapedText;
+    let name = node && node.name && node.name.escapedText;
     let returnType = node && node.type && node.type.getFullText().trim();
 
     if (kind == 'PropertySignature') {
@@ -171,10 +178,21 @@ function extractTypesFromNode(node) {
         // i.e isExternalFilterPresent?(): boolean;
         // i.e doesExternalFilterPass?(node: RowNode): boolean;        
         const methodArgs = getArgTypes(node.parameters);
+
         nodeMembers[name] = {
             description: getTsDoc(node),
             type: { arguments: methodArgs, returnType }
         };
+
+        if (EVENT_LOOKUP.has(name)) {
+            // Duplicate events without their prefix
+            let shortName = name.substr(2);
+            shortName = toCamelCase(shortName);
+
+            nodeMembers[shortName] = { ...nodeMembers[name], meta: { isEvent: true, name } };
+            nodeMembers[name] = { ...nodeMembers[name], meta: { isEvent: true, name } };
+        }
+
     }
     return nodeMembers;
 }
@@ -301,7 +319,16 @@ function extractInterfaces(parsedSyntaxTreeResults, extension) {
                     type: callSignatureMembers
                 }
             } else {
-                iLookup[name] = { meta: {}, type: members }
+                let meta = {};
+                /* if (name.endsWith('Event')) {
+                    let eventName = name;
+                    eventName = eventName.substr(0, name.length - 5);
+                    eventName = 'on' + eventName;
+                    if (EVENT_LOOKUP.has(eventName)) {
+                        meta = { isEvent: true };
+                    }
+                } */
+                iLookup[name] = { meta, type: members }
             }
 
             if (node.typeParameters) {
