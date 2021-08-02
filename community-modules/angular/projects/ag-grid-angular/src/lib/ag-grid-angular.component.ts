@@ -145,7 +145,9 @@ import {
     RowClassParams,
     RowHeightParams,
     SendToClipboardParams,
-    TreeDataDisplayType
+    TreeDataDisplayType,
+    FullWidthCellKeyDownEvent,
+    FullWidthCellKeyPressEvent
 } from "@ag-grid-community/core";
 
 import {AngularFrameworkOverrides} from "./angularFrameworkOverrides";
@@ -604,8 +606,8 @@ export class AgGridAngular implements AfterViewInit {
     @Output() public cellFocused: EventEmitter<CellFocusedEvent> = new EventEmitter<CellFocusedEvent>();
     @Output() public rowSelected: EventEmitter<RowSelectedEvent> = new EventEmitter<RowSelectedEvent>();
     @Output() public selectionChanged: EventEmitter<SelectionChangedEvent> = new EventEmitter<SelectionChangedEvent>();
-    @Output() public cellKeyDown: EventEmitter<CellKeyDownEvent> = new EventEmitter<CellKeyDownEvent>();
-    @Output() public cellKeyPress: EventEmitter<CellKeyPressEvent> = new EventEmitter<CellKeyPressEvent>();
+    @Output() public cellKeyDown: EventEmitter<CellKeyDownEvent | FullWidthCellKeyDownEvent> = new EventEmitter<CellKeyDownEvent | FullWidthCellKeyDownEvent>();
+    @Output() public cellKeyPress: EventEmitter<CellKeyPressEvent | FullWidthCellKeyPressEvent> = new EventEmitter<CellKeyPressEvent | FullWidthCellKeyPressEvent>();
     @Output() public cellMouseOver: EventEmitter<CellMouseOverEvent> = new EventEmitter<CellMouseOverEvent>();
     @Output() public cellMouseOut: EventEmitter<CellMouseOutEvent> = new EventEmitter<CellMouseOutEvent>();
     @Output() public filterChanged: EventEmitter<FilterChangedEvent> = new EventEmitter<FilterChangedEvent>();

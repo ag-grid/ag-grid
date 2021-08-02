@@ -81,7 +81,9 @@ import {
     ViewportChangedEvent,
     VirtualColumnsChangedEvent,
     VirtualRowRemovedEvent,
-    GridSizeChangedEvent
+    GridSizeChangedEvent,
+    FullWidthCellKeyPressEvent,
+    FullWidthCellKeyDownEvent
 } from "../events";
 import { IComponent } from "../interfaces/iComponent";
 import { ILoadingOverlayComp } from "../rendering/overlays/loadingOverlayComponent";
@@ -520,9 +522,9 @@ export interface GridOptions {
 
     onModelUpdated?(event: ModelUpdatedEvent): void;
 
-    onCellKeyDown?(event: CellKeyDownEvent): void;
+    onCellKeyDown?(event: CellKeyDownEvent | FullWidthCellKeyDownEvent): void;
 
-    onCellKeyPress?(event: CellKeyPressEvent): void;
+    onCellKeyPress?(event: CellKeyPressEvent | FullWidthCellKeyPressEvent): void;
 
     onCellClicked?(event: CellClickedEvent): void;
 
