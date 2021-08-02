@@ -605,8 +605,13 @@ function appendInterface(name, interfaceType, framework, allLines) {
         // Only show AngularJS $scope property for Angular or Javascript frameworks
         .filter(([p,]) => p !== '$scope' || (framework === 'angular' || framework === 'javascript'))
         .forEach(([property, type]) => {
-            if (interfaceType.docs && interfaceType.docs[property]) {
-                lines.push(`  // ${interfaceType.docs[property]}`);
+            const docs = interfaceType.docs && interfaceType.docs[property];
+            if (docs) {
+                const split = docs.match(/.{1,60}/g);
+                split.forEach(s => {
+
+                    lines.push(`  // ${s}`);
+                })
             }
         lines.push(`  ${property}: ${getLinkedType(type, framework)};`);
     });
