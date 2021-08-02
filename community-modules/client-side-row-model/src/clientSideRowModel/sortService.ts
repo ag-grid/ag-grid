@@ -62,7 +62,7 @@ export class SortService extends BeanStub {
             changedPath.forEachChangedNodeDepthFirst(callback);
         }
 
-        this.updateGroupDataForHiddenOpenParents(changedPath);
+        this.updateGroupDataForHideOpenParents(changedPath);
     }
 
     private mapNodeToSortedNode(rowNode: RowNode, pos: number): SortedRowNode {
@@ -175,9 +175,15 @@ export class SortService extends BeanStub {
         }
     }
 
-    private updateGroupDataForHiddenOpenParents(changedPath?: ChangedPath) {
+    private updateGroupDataForHideOpenParents(changedPath?: ChangedPath) {
         if (!this.gridOptionsWrapper.isGroupHideOpenParents()) {
             return;
+        }
+
+        if (this.gridOptionsWrapper.isTreeData()) {
+            const msg = `AG Grid: The property hideOpenParents dose not work with Tree Data. This is because Tree Data has values at the group level, it doesn't make sense to hide them (as opposed to Row Grouping, which only has Aggregated Values at the group level).`;
+            _.doOnce(() => console.warn(msg), 'sortService.hideOpenParentsWithTreeData');
+            return false;
         }
 
         // recurse breadth first over group nodes after sort to 'pull down' group data to child groups
