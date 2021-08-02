@@ -58,4 +58,4 @@ The example below uses [aggregation](/aggregation/) which is explained in the ne
 
 ## Next Up
 
-Continue to the next section to learn about [Sorting / Filtering](../grouping-sorting-filtering/) Row Groups.
+Continue to the next section to learn about [Opening Groups](../grouping-opening-groups/).

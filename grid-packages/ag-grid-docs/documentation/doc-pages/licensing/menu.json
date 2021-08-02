@@ -949,14 +949,26 @@
                 "showInCollapsed": false
               },
               {
-                "title": "Group Footers",
-                "url": "/grouping-footers/",
+                "title": "Group Order",
+                "url": "/grouping-group-order/",
                 "enterprise": true,
                 "showInCollapsed": false
               },
               {
-                "title": "Sorting / Filtering",
-                "url": "/grouping-sorting-filtering/",
+                "title": "Sorting Groups",
+                "url": "/grouping-sorting/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Filtering Groups",
+                "url": "/grouping-filtering/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Group Footers",
+                "url": "/grouping-footers/",
                 "enterprise": true,
                 "showInCollapsed": false
               },
