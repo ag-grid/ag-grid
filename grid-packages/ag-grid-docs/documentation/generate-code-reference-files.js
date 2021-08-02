@@ -64,7 +64,7 @@ function findAllInterfacesInNodesTree(node) {
 }
 
 function getTsDoc(node) {
-    return node.jsDoc && node.jsDoc.length > 0 && node.jsDoc[node.jsDoc.length - 1].comment || ' ';
+    return node.jsDoc && node.jsDoc.length > 0 && node.jsDoc[node.jsDoc.length - 1].comment;
 };
 
 function getArgTypes(parameters) {
@@ -160,6 +160,9 @@ function getInterfaces() {
             if (aI.type) {
                 extendedInterface.type = { ...aI.type, ...extendedInterface.type }
             }
+            if (aI.docs) {
+                extendedInterface.docs = { ...aI.docs, ...extendedInterface.docs }
+            }
         })
 
         interfaces[i] = extendedInterface;
@@ -210,6 +213,7 @@ function extractInterfaces(parsedSyntaxTreeResults, extension) {
 
             let isCallSignature = false;
             let members = {};
+            let docs = {};
             let callSignatureMembers = {};
 
             if (node.members && node.members.length > 0) {
@@ -225,13 +229,18 @@ function extractInterfaces(parsedSyntaxTreeResults, extension) {
 
                         callSignatureMembers = {
                             arguments,
-                            returnType: formatNode(p.type)
+                            returnType: formatNode(p.type),
                         }
                     } else {
                         const name = formatNode(p, true);
                         const type = formatNode(p.type);
                         members[name] = type;
+                        const doc = getTsDoc(p);
+                        if (doc) {
+                            docs[name] = getTsDoc(p);
+                        }
                     }
+
                 });
 
                 if (isCallSignature && node.members.length > 1) {
@@ -245,15 +254,7 @@ function extractInterfaces(parsedSyntaxTreeResults, extension) {
                 }
             } else {
                 let meta = {};
-                /* if (name.endsWith('Event')) {
-                    let eventName = name;
-                    eventName = eventName.substr(0, name.length - 5);
-                    eventName = 'on' + eventName;
-                    if (EVENT_LOOKUP.has(eventName)) {
-                        meta = { isEvent: true };
-                    }
-                } */
-                iLookup[name] = { meta, type: members }
+                iLookup[name] = { meta, type: members, docs: Object.entries(docs).length > 0 ? docs : undefined }
             }
 
             if (node.typeParameters) {
