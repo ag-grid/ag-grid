@@ -1,7 +1,7 @@
 import { CellRange } from "../interfaces/IRangeService";
 
 export interface CellValueChange {
-    rowPinned: string | null;
+    rowPinned?: string | null;
     rowIndex: number;
     columnId: string;
     oldValue: any;
