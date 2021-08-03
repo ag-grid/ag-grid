@@ -1,4 +1,11 @@
 const ts = require('typescript');
+// export interface PrinterOptions {
+//     removeComments?: boolean;
+//     newLine?: NewLineKind;
+//     omitTrailingSemicolon?: boolean;
+//     noEmitHelpers?: boolean;
+// }
+const printer = ts.createPrinter({ removeComments: true, omitTrailingSemicolon: true });
 
 /*
  * Convert AST node to string representation used to record type in a JSON file
@@ -8,77 +15,34 @@ const ts = require('typescript');
  *
  * ******* Written for Typescript Version 3.6.5 ********
  */
-function formatNode(node, paramNameOnly = false) {
+function formatNode(node, file, paramNameOnly = false) {
+
     const kind = ts.SyntaxKind[node.kind];
     switch (kind) {
-        case 'ArrayType':
-        case 'RestType':
-            return formatNode(node.elementType) + '[]';
-        case 'InferType':
-            return node.types.map(t => formatNode(t)).join(' | ');
-        case 'UnionType':
-            return node.types.map(t => formatNode(t)).join(' | ');
-        case 'ParenthesizedType':
-            return `(${formatNode(node.type)})`;
-        case 'TypeLiteral':
-            return node.members.map(t => formatNode(t)).join(' ');
-        case 'TypeReference':
-            {
-                let typeParams = undefined;
-                if (node.typeArguments) {
-                    typeParams = `<${node.typeArguments.map(t => formatNode(t)).join(', ')}>`;
-                }
-                return `${formatNode(node.typeName)}${typeParams || ''}`;
-            }
         case 'IndexSignature':
-            return `[${node.parameters.map(t => formatNode(t)).join(' ')}]${paramNameOnly ? '' : `: ${formatNode(node.type)}`}`;
-        case 'Parameter':
-            return `${formatNode(node.name)}: ${formatNode(node.type)}`;
+            return `[${node.parameters.map(t => formatNode(t, file)).join(' ')}]${paramNameOnly ? '' : `: ${formatNode(node.type, file)}`}`;
         case 'PropertySignature':
-            return `${formatNode(node.name)}${node.questionToken ? '?' : ''}`; //: ${getParamType(typeNode.type)}
-        case 'FunctionType':
-        case 'CallSignature':
-            return `(${node.parameters.map(t => formatNode(t)).join(', ')})${paramNameOnly ? '' : ` => ${formatNode(node.type)}`}`;
-        case 'Identifier':
-            return node.escapedText;
-        case 'ExpressionWithTypeArguments':
-            return formatNode(node.expression);
-        case 'LiteralType':
-            return `'${node.literal.text}'`;
-        case 'ConstructSignature':
-            return `{ new(${node.parameters.map(t => formatNode(t)).join(', ')}): ${formatNode(node.type)} }`
-        case 'ConstructorType':
-            return `new(${node.parameters.map(t => formatNode(t)).join(', ')}) => ${formatNode(node.type)}`
-        case 'TupleType':
-            return `[${node.elementTypes.map(t => formatNode(t)).join(', ')}]`;
+            return `${formatNode(node.name, file)}${node.questionToken ? '?' : ''}`;
         case 'MethodSignature':
-            return `${formatNode(node.name)}${node.questionToken ? '?' : ''}(${node.parameters.map(t => formatNode(t)).join(', ')})`
+            return `${formatNode(node.name, file)}${node.questionToken ? '?' : ''}(${node.parameters.map(t => formatNode(t, file)).join(', ')})`
         case 'MappedType':
-            return `{${formatNode(node.typeParameter)}${node.questionToken ? '?' : ''}${paramNameOnly ? '' : `: ${formatNode(node.type)}`}}`
+            return `{${formatNode(node.typeParameter, file)}${node.questionToken ? '?' : ''}${paramNameOnly ? '' : `: ${formatNode(node.type, file)}`}}`
         case 'TypeParameter':
             {
                 if (node.constraint) {
                     if (ts.SyntaxKind[node.parent.kind] == 'MappedType') {
-                        return `[${formatNode(node.name)} in ${formatNode(node.constraint)}]`;
+                        return `[${printer.printNode(ts.EmitHint.MappedTypeParameter, node, file)}]`;
                     } else {
-                        return `${formatNode(node.name)} extends ${formatNode(node.constraint)}`;
+                        return printer.printNode(ts.EmitHint.Unspecified, node, file);
                     }
                 }
-                return `${formatNode(node.name)}`;
+                return formatNode(node.name,file);
             }
-        case 'EnumMember':
-            return `${formatNode(node.name)}${node.initializer ? ` = '${formatNode(node.initializer)}'` : ''}`;
-        case 'StringLiteral':
-            return `${node.text}`
         default:
-            if (node.typeName) {
-                return node.typeName.escapedText
+            if (!file) {
+                console.error('file is null')
             }
-            if (kind.endsWith('Keyword')) {
-                return kind.replace('Keyword', '').toLowerCase();
-            };
-
-            throw new Error(`We encountered a SyntaxKind of ${kind} that we do not know how to parse. Please add support to the switch statement.`)
+            return printer.printNode(ts.EmitHint.Unspecified, node, file);
     }
 }
 
