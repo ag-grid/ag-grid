@@ -343,7 +343,7 @@ export interface RowEvent extends AgGridEvent {
     rowPinned?: string | null;
     /** Bag of attributes, provided by user */
     context: any;
-    /** If event was due to browser event (eg click), this is browser event */
+    /** If event was due to browser event (eg click), this is the browser event */
     event?: Event | null;
 }
 

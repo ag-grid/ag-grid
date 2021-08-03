@@ -253,10 +253,10 @@ const Property = ({ framework, id, name, definition, config }) => {
             <code dangerouslySetInnerHTML={{ __html: name }} className={styles['reference__name']}></code>
             <div>
                 {typeUrl ?
-                    <a className={styles['reference__type']} href={typeUrl} target={typeUrl.startsWith('http') ? '_blank' : '_self'} rel="noreferrer">
+                    <a className={styles['reference__property-type']} href={typeUrl} target={typeUrl.startsWith('http') ? '_blank' : '_self'} rel="noreferrer">
                         {isObject ? getInterfaceName(name) : type}
                     </a> :
-                    <span className={styles['reference__type']}>{propertyType}</span>}
+                    <span className={styles['reference__property-type']}>{propertyType}</span>}
             </div>
         </td>
         <td>
@@ -606,17 +606,39 @@ function appendInterface(name, interfaceType, framework, allLines) {
         .filter(([p,]) => p !== '$scope' || (framework === 'angular' || framework === 'javascript'))
         .forEach(([property, type]) => {
             const docs = interfaceType.docs && interfaceType.docs[property];
-            if (docs) {
-                const split = docs.match(/.{1,60}/g);
-                split.forEach(s => {
-
-                    lines.push(`  // ${s}`);
-                })
-            }
+            addDocLines(docs, lines);
         lines.push(`  ${property}: ${getLinkedType(type, framework)};`);
     });
     lines.push('}');
     allLines.push(...lines);
+}
+
+function addDocLines(docs, lines) {
+    if (!docs || docs.length === 0) {
+        return;
+    }
+    // Split on new lines and spaces to nicely break doc strings
+    const split = docs.replace(/\n/g, ' ').split(/\s/);
+    let docLines = [];
+    let currLine = [];
+    let length = 0;
+    split.forEach(s => {
+        length += s.length;
+        if (length > 50) {
+            docLines.push(currLine.join(' '));
+            currLine = [s];
+            length = s.length;
+        }
+        else {
+            currLine.push(s);
+        }
+    });
+    if (currLine.length > 0) {
+        docLines.push(currLine.join(' '));
+    }
+    docLines.forEach(s => {
+        lines.push(`  // ${s}`);
+    });
 }
 
 function appendCallSignature(name, interfaceType, framework, allLines) {

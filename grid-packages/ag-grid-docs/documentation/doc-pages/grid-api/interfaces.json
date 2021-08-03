@@ -2397,7 +2397,7 @@
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
       "context": "Bag of attributes, provided by user",
-      "event?": "If event was due to browser event (eg click), this is browser event"
+      "event?": "If event was due to browser event (eg click), this is the browser event"
     }
   },
   "RowGroupOpenedEvent": {
@@ -2420,7 +2420,7 @@
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
       "context": "Bag of attributes, provided by user",
-      "event?": "If event was due to browser event (eg click), this is browser event",
+      "event?": "If event was due to browser event (eg click), this is the browser event",
       "expanded": "True if the group is expanded."
     }
   },
@@ -2443,7 +2443,7 @@
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
       "context": "Bag of attributes, provided by user",
-      "event?": "If event was due to browser event (eg click), this is browser event"
+      "event?": "If event was due to browser event (eg click), this is the browser event"
     }
   },
   "RowSelectedEvent": {
@@ -2465,7 +2465,7 @@
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
       "context": "Bag of attributes, provided by user",
-      "event?": "If event was due to browser event (eg click), this is browser event"
+      "event?": "If event was due to browser event (eg click), this is the browser event"
     }
   },
   "VirtualRowRemovedEvent": {
@@ -2487,7 +2487,7 @@
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
       "context": "Bag of attributes, provided by user",
-      "event?": "If event was due to browser event (eg click), this is browser event"
+      "event?": "If event was due to browser event (eg click), this is the browser event"
     }
   },
   "RowClickedEvent": {
@@ -2509,7 +2509,7 @@
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
       "context": "Bag of attributes, provided by user",
-      "event?": "If event was due to browser event (eg click), this is browser event"
+      "event?": "If event was due to browser event (eg click), this is the browser event"
     }
   },
   "RowDoubleClickedEvent": {
@@ -2531,7 +2531,7 @@
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
       "context": "Bag of attributes, provided by user",
-      "event?": "If event was due to browser event (eg click), this is browser event"
+      "event?": "If event was due to browser event (eg click), this is the browser event"
     }
   },
   "RowEditingStartedEvent": {
@@ -2553,7 +2553,7 @@
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
       "context": "Bag of attributes, provided by user",
-      "event?": "If event was due to browser event (eg click), this is browser event"
+      "event?": "If event was due to browser event (eg click), this is the browser event"
     }
   },
   "RowEditingStoppedEvent": {
@@ -2575,7 +2575,7 @@
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
       "context": "Bag of attributes, provided by user",
-      "event?": "If event was due to browser event (eg click), this is browser event"
+      "event?": "If event was due to browser event (eg click), this is the browser event"
     }
   },
   "FullWidthCellKeyDownEvent": {
@@ -2597,7 +2597,7 @@
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
       "context": "Bag of attributes, provided by user",
-      "event?": "If event was due to browser event (eg click), this is browser event"
+      "event?": "If event was due to browser event (eg click), this is the browser event"
     }
   },
   "FullWidthCellKeyPressEvent": {
@@ -2619,7 +2619,7 @@
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
       "context": "Bag of attributes, provided by user",
-      "event?": "If event was due to browser event (eg click), this is browser event"
+      "event?": "If event was due to browser event (eg click), this is the browser event"
     }
   },
   "CellEvent": {
@@ -2644,7 +2644,7 @@
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
       "context": "Bag of attributes, provided by user",
-      "event?": "If event was due to browser event (eg click), this is browser event",
+      "event?": "If event was due to browser event (eg click), this is the browser event",
       "value": "The value for the cell"
     }
   },
@@ -2670,7 +2670,7 @@
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
       "context": "Bag of attributes, provided by user",
-      "event?": "If event was due to browser event (eg click), this is browser event",
+      "event?": "If event was due to browser event (eg click), this is the browser event",
       "value": "The value for the cell"
     }
   },
@@ -2696,7 +2696,7 @@
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
       "context": "Bag of attributes, provided by user",
-      "event?": "If event was due to browser event (eg click), this is browser event",
+      "event?": "If event was due to browser event (eg click), this is the browser event",
       "value": "The value for the cell"
     }
   },
@@ -2722,7 +2722,7 @@
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
       "context": "Bag of attributes, provided by user",
-      "event?": "If event was due to browser event (eg click), this is browser event",
+      "event?": "If event was due to browser event (eg click), this is the browser event",
       "value": "The value for the cell"
     }
   },
@@ -2748,7 +2748,7 @@
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
       "context": "Bag of attributes, provided by user",
-      "event?": "If event was due to browser event (eg click), this is browser event",
+      "event?": "If event was due to browser event (eg click), this is the browser event",
       "value": "The value for the cell"
     }
   },
@@ -2774,7 +2774,7 @@
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
       "context": "Bag of attributes, provided by user",
-      "event?": "If event was due to browser event (eg click), this is browser event",
+      "event?": "If event was due to browser event (eg click), this is the browser event",
       "value": "The value for the cell"
     }
   },
@@ -2800,7 +2800,7 @@
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
       "context": "Bag of attributes, provided by user",
-      "event?": "If event was due to browser event (eg click), this is browser event",
+      "event?": "If event was due to browser event (eg click), this is the browser event",
       "value": "The value for the cell"
     }
   },
@@ -2826,7 +2826,7 @@
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
       "context": "Bag of attributes, provided by user",
-      "event?": "If event was due to browser event (eg click), this is browser event",
+      "event?": "If event was due to browser event (eg click), this is the browser event",
       "value": "The value for the cell"
     }
   },
@@ -2852,7 +2852,7 @@
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
       "context": "Bag of attributes, provided by user",
-      "event?": "If event was due to browser event (eg click), this is browser event",
+      "event?": "If event was due to browser event (eg click), this is the browser event",
       "value": "The value for the cell"
     }
   },
@@ -2878,7 +2878,7 @@
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
       "context": "Bag of attributes, provided by user",
-      "event?": "If event was due to browser event (eg click), this is browser event",
+      "event?": "If event was due to browser event (eg click), this is the browser event",
       "value": "The value for the cell"
     }
   },
@@ -2906,7 +2906,7 @@
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
       "context": "Bag of attributes, provided by user",
-      "event?": "If event was due to browser event (eg click), this is browser event",
+      "event?": "If event was due to browser event (eg click), this is the browser event",
       "value": "The value for the cell",
       "oldValue": "The old value before editing",
       "newValue": "The new value after editing"
@@ -2937,7 +2937,7 @@
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
       "context": "Bag of attributes, provided by user",
-      "event?": "If event was due to browser event (eg click), this is browser event",
+      "event?": "If event was due to browser event (eg click), this is the browser event",
       "value": "The value for the cell"
     }
   },
