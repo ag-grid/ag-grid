@@ -24,7 +24,7 @@ our in house rendering engine. AG Grid React UI will have the entire AG Grid UI 
 
 <image-caption src="reactui/resources/before-vs-after.svg" alt="AG Grid React UI Explained" centered="true"></image-caption>
 
-## Show Me...
+## Show Me
 
 A spike of our React UI is included in the latest AG Grid release. To enable it, set the grid property `reactUi=true`. Below is an example of the new React UI.
 
@@ -103,9 +103,19 @@ See below viewing the React Component hierarchy using React Developer Tools. The
 
 <image-caption src="reactui/resources/react-dev-tools.png" alt="React Developer Tools" centered="true"></image-caption>
 
-## Show Me React Profiling
+## Show Me No Wasted Renders
 
-.... todo ... example showing cell refresh and no wasted render cycles.
+Below demonstrates no wasted React Render Cycles.
+
+Each Column is configured to use a Cell Renderer that prints into the Cell the number of times the Cell has had it's render method called. Note that the number stays at '1' even while the Cells are moved around using Row Sorting (click a Header) or Column Reordering (drag a Header).
+
+When the contents of a Cell changes, by pressing the button Increase Some Medals, then only the cells that have had their values changed have the render method called.
+
+To properly achieve this, note that the Cell Renderer is memoized using `React.memo(RenderCounterCellRenderer)`.
+
+To observe what happens when the Cell Renderer is not memoized, toggle using the button Toggle Memo. When the Cell Renderer is not memoized, then any small change to the DOM cell (eg changing the background color) results in the Cell Renderer getting recalled, even though there is no change to the value to get rendered.
+
+<grid-example title='React UI Render Cycles' name='wasted-render' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>
 
 ## Show Me Advanced Features Working
 

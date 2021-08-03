@@ -88,7 +88,6 @@ export class CellCtrl extends BeanStub {
     private beans: Beans;
     private gow: GridOptionsWrapper;
     private column: Column;
-    private colDef: ColDef;
     private rowNode: RowNode;
     private rowCtrl: RowCtrl | null;
 
@@ -125,7 +124,6 @@ export class CellCtrl extends BeanStub {
     constructor(column: Column, rowNode: RowNode, beans: Beans, rowCtrl: RowCtrl | null) {
         super();
         this.column = column;
-        this.colDef = column.getColDef();
         this.rowNode = rowNode;
         this.beans = beans;
         this.rowCtrl = rowCtrl;
@@ -220,7 +218,7 @@ export class CellCtrl extends BeanStub {
     private showValue(forceNewCellRendererInstance = false): void {
         const valueToDisplay = this.valueFormatted != null ? this.valueFormatted : this.value;
         const params = this.createCellRendererParams();
-        const compDetails = this.beans.userComponentFactory.getCellRendererDetails(this.colDef, params);
+        const compDetails = this.beans.userComponentFactory.getCellRendererDetails(this.column.getColDef(), params);
         this.cellComp.setRenderDetails(compDetails, valueToDisplay, forceNewCellRendererInstance);
         this.refreshHandle();
     }
@@ -285,9 +283,10 @@ export class CellCtrl extends BeanStub {
         if (!this.isCellEditable() || this.editing) { return; }
 
         const editorParams = this.createCellEditorParams(keyPress, charPress, cellStartedEdit);
-        const compDetails = this.beans.userComponentFactory.getCellEditorDetails(this.colDef, editorParams);
-        const popup = !!this.colDef.cellEditorPopup;
-        const position = this.colDef.cellEditorPopupPosition;
+        const colDef = this.column.getColDef();
+        const compDetails = this.beans.userComponentFactory.getCellEditorDetails(colDef, editorParams);
+        const popup = !!colDef.cellEditorPopup;
+        const position = colDef.cellEditorPopupPosition;
 
         this.setEditing(true, popup);
 

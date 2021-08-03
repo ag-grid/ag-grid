@@ -1,0 +1,36 @@
+.parent-div {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.buttons-div {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.grid-div {
+  flex-grow: 1;
+}
+
+.app-memo-on .render-count {
+  font-weight: bold;
+  color: darkgreen;
+}
+
+.app-memo-off .render-count {
+  font-weight: bold;
+  color: darkred;
+}
+
+.memo-on {
+  padding-left: 20px;
+  font-weight: bold;
+  color: darkgreen;
+}
+
+.memo-off {
+  padding-left: 20px;
+  font-weight: bold;
+  color: darkred;
+}
