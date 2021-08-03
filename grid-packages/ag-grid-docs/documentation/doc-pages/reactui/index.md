@@ -7,8 +7,7 @@ Do you know what the one thing most React developers wish was different with AG 
 
 We have been working very had to make this wish come true and are delighted to announce the next generation of AG Grid React will have it's UI written purely in React. We are codenaming this effort *React UI*.
 
-Let me tell you what *React UI* is...
-
+Let me explain...
 
 ## What is React UI
 
@@ -30,9 +29,9 @@ A spike of our React UI is included in the latest AG Grid release. To enable it,
 
 With `reactUi=true`, the grid renders cells using React, and all parent components of the cells are also written in React, all the way back to the client application. This means all the UI from your application down to the cells, including any provided React Cell Renderers, is all now 100% React.
 
-Note in the example the Age Column has a React Cell Renderer. If you inspect the DOM on this cell, you will note there is no wrapping DIV element inside the Cell to host the React Cell Renderer. The provided React Component is placed directly inside the AG Grid React Cell.
+In the example the Age Column has a React Cell Renderer. If you inspect the DOM on this cell, you will note the Cell Renderer is placed directly inside the cell (before an extra 'react-wrapper' div was placed, a side effect of using a React component inside a non-React parent - this is not not needed).
 
-Also note grid functions such as sorting all work as normal.
+The example also demonstrates other grid features, such as row sorting by clicking the headers with the rows moving smoothly to the new locations. The React UI is built on top of the existing AG Grid services, thus all features carry across.
 
 You may say _"Doesn't it look identical to before?"_, and you would be right, it is identical to before from an application users point of view. That's the point - it is supposed to work exactly as before. The difference is this time it is all rendered in React.
 
@@ -73,11 +72,11 @@ Yes.
 
 As before, you can provide components to customise the grid using React or Vanilla JavaScript. For example you can configure a Cell Renderer on a column using both `colDef.cellRenderer` for Vanilla JavaScript or `colDef.cellRendererFramework` for a React version.
 
-The difference is behind the scenes in AG Grid. Without React UI, the grid used to create a React Portal to include the React Cell Renderer. With React ui, the React Cell Renderer is referenced directly.
+The difference is behind the scenes in AG Grid. Before React UI, the grid used to create a React Portal to include the React Cell Renderer. Now with React UI, the React Cell Renderer is inserted directly.
 
 The Vanilla JavaScript components are now the ones that are not native and need to be wrapped! However don't worry about that, that's all taken care of behind the scenes.
 
-It was important for AG Grid to keep backwards compatibility and still allow native JavaScript custom components as some users of AG Grid prefer providing reusable components in plain JavaScript. This commonly done by large organisation, e.g. banks, who have 100's of projects using AG Grid mixed with React, Angular and Vue, and want to provide common components that work regardless of the framework used.
+It was important for AG Grid to keep backwards compatibility and still allow native JavaScript custom components as some users of AG Grid prefer providing reusable components in plain JavaScript. This is often done by large organisation, e.g. banks, who have 100's of projects using AG Grid mixed with React, Angular and Vue, and want to provide common components that work regardless of the framework used.
 
 ## Show Me An Example Using Cell Editors
 
@@ -119,7 +118,7 @@ To observe what happens when the Cell Renderer is not memoized, toggle using the
 
 ## Show Me Advanced Features Working
 
-Remember we said all features of AG Grid will work with React UI? Well lets see some. Here is an example with Range Selection, Checkbox Click Selection and Row Grouping.
+Remember we said all features of AG Grid will work with React UI? Here is an example with Range Selection, Checkbox Click Selection and Row Grouping.
 
 Notice that the Cell Renderer for Sport is using inside the Grouping Column.
 
@@ -128,10 +127,10 @@ Notice that the Cell Renderer for Sport is using inside the Grouping Column.
 
 ## Any Small Print?
 
-There are some good breaking changes, to do with stuff we could shake off, now that we are no longer wrapping React. These good breaking changes are as follows:
+There are some good breaking changes, to do with stuff we could shake off, now that we are no longer wrapping React. These good breaking changes are listed below. They are all niche areas of the grid - if you don't recognise what they are talking about, then you are probably not using them and can just ignore. The list is:
 
 1. When providing components (Cell Renderer etc), it was possible to provide CSS Classes to the hosting DOM element with the callback `getReactContainerClasses()`. This method is no longer needed as there is no longer a hosting DOM element. The hosting DOM element was baggage.
-1. Before to get a reference to an active React Cell Renderer the following code would be called: `gridApi().getCellRenderer().getCellRendererInstance()`. Now you only need to call `gridApi().getCellRenderer()`. The reason why you no longer need to call `getCellRendererInstance()` is that there is no longer a wrapper wrapping the React Cell Renderer. This method used to be on the wrapper which then returned back the wrapped React Cell Renderer (or a reference to the imperative handle if using React Hooks). The same is true for `getCellEditor()`, in that `getCellRendererInstance()` is no longer needed here either.
+1. Before to get a reference to an active React Cell Renderer the following code would be called: `gridApi.getCellRenderer().getFrameworkComponentInstance()`. Now you only need to call `gridApi.getCellRenderer()`. The reason why you no longer need to call `getFrameworkComponentInstance` is that there is no longer a wrapper wrapping the React Cell Renderer. This method used to be on the wrapper which then returned back the wrapped React Cell Renderer (or a reference to the imperative handle if using React Hooks). The same is true for `getCellEditor()`, in that `getFrameworkComponentInstance` is no longer needed here either.
 1. Before when providing a Popup Cell Editor, the Cell Editor could implement the methods `isPopup()` and `popupPosition()` to have the Cell Editor in a popup and to optionally state it's position. In the React paradigm, it's required to know where a component is to be placed before it is created (which is not a constraint with our internal AG Grid rendering engine, where components can be created first and placed into the DOM second). To solve this, the Column Definition now has properties `cellEditorPopup()` and `cellEditorPopupPosition()` which should be used.
 
 ## Community vs Enterprise
@@ -188,8 +187,5 @@ We have spent six months getting this far. We feel most of the hard work has bee
 
 ## Can I use React Next In Production Now?
 
-Yes you can.
-
-The drawback is you cannot use React Components in the sections we have not yet completed React UI for.
-
+Yes you can. Let us know if you fine any issues :)
 
