@@ -17,11 +17,23 @@ var gridOptions = {
     enableRangeSelection: true,
     popupParent: document.body,
     enableCharts: true,
+    onFirstDataRendered: onFirstDataRendered,
     onChartCreated: onChartCreated,
 };
 
-var chartId;
+function onFirstDataRendered(params) {
+    const createRangeChartParams = {
+      cellRange: {
+        columns: ['country', 'sugar', 'fat', 'weight'],
+      },
+      chartType: 'groupedColumn',
+      chartContainer: document.querySelector('#myChart'),
+    };
+  
+    params.api.createRangeChart(createRangeChartParams);
+}
 
+var chartId;
 function onChartCreated(event) {
     chartId = event.chartId;
 }
