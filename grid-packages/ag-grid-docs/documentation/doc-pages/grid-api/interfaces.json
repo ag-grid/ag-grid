@@ -1277,7 +1277,7 @@
       "columnApi?": "ColumnApi | null"
     },
     "docs": {
-      "suppressBrowserResizeObserver?": "*****************************************************************************************************\nIf you change the properties on this interface, you must also update PropertyKeys to be consistent. *\n*****************************************************************************************************",
+      "suppressBrowserResizeObserver?": "Set once in init, can never change",
       "suppressKeyboardEvent?": "Allows user to suppress certain keyboard events",
       "paginationNumberFormatter?": "****************************************************************************************************\nIf you change the callbacks on this interface, you must also update PropertyKeys to be consistent. *\n****************************************************************************************************"
     }
@@ -1582,7 +1582,7 @@
   "RowNodeEvent": {
     "meta": {},
     "type": { "type": "string", "node": "RowNode" },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "DataChangedEvent": {
     "meta": {},
@@ -1593,7 +1593,7 @@
       "newData": "any",
       "update": "boolean"
     },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "CellChangedEvent": {
     "meta": {},
@@ -1604,7 +1604,7 @@
       "newValue": "any",
       "oldValue": "any"
     },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "RowHighlightPosition": {
     "meta": { "isEnum": true },
@@ -1658,7 +1658,7 @@
       "newPage": "boolean"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "animate": "If true, the grid will try and animate the rows to the new positions",
       "keepRenderedRows": "If true, the grid has new data loaded, eg user called setRowData(), otherwise\nit's the same data but sorted or filtered, in which case this is true, and rows\ncan animate around (eg rowNode id 24 is the same row node as last time).",
       "newData": "If true, then this update was a result of setRowData() getting called. This\ngets the grid to scroll to the top again.",
@@ -1677,7 +1677,7 @@
       "newPage": "boolean"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "animate?": "True if rows were animated to new position",
       "keepRenderedRows?": "True if rows were kept (otherwise complete redraw)",
       "newData?": "True if data was new (i.e user set new data)",
@@ -1687,12 +1687,12 @@
   "AgEvent": {
     "meta": {},
     "type": { "type": "string" },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "AgGridEvent": {
     "meta": {},
     "type": { "type": "string", "api": "GridApi", "columnApi": "ColumnApi" },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "ToolPanelVisibleChangedEvent": {
     "meta": {},
@@ -1702,17 +1702,17 @@
       "columnApi": "ColumnApi",
       "source": "string | undefined"
     },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "ColumnPivotModeChangedEvent": {
     "meta": {},
     "type": { "type": "string", "api": "GridApi", "columnApi": "ColumnApi" },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "VirtualColumnsChangedEvent": {
     "meta": {},
     "type": { "type": "string", "api": "GridApi", "columnApi": "ColumnApi" },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "ColumnEverythingChangedEvent": {
     "meta": {},
@@ -1722,42 +1722,42 @@
       "columnApi": "ColumnApi",
       "source": "string"
     },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "NewColumnsLoadedEvent": {
     "meta": {},
     "type": { "type": "string", "api": "GridApi", "columnApi": "ColumnApi" },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "GridColumnsChangedEvent": {
     "meta": {},
     "type": { "type": "string", "api": "GridApi", "columnApi": "ColumnApi" },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "DisplayedColumnsChangedEvent": {
     "meta": {},
     "type": { "type": "string", "api": "GridApi", "columnApi": "ColumnApi" },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "RowDataChangedEvent": {
     "meta": {},
     "type": { "type": "string", "api": "GridApi", "columnApi": "ColumnApi" },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "RowDataUpdatedEvent": {
     "meta": {},
     "type": { "type": "string", "api": "GridApi", "columnApi": "ColumnApi" },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "PinnedRowDataChangedEvent": {
     "meta": {},
     "type": { "type": "string", "api": "GridApi", "columnApi": "ColumnApi" },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "SelectionChangedEvent": {
     "meta": {},
     "type": { "type": "string", "api": "GridApi", "columnApi": "ColumnApi" },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "FilterChangedEvent": {
     "meta": {},
@@ -1769,7 +1769,7 @@
       "afterFloatingFilter?": "boolean"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "afterDataChange?": "True if the filter was changed as a result of data changing",
       "afterFloatingFilter?": "True if filter was changed via floating filter"
     }
@@ -1783,7 +1783,7 @@
       "filterInstance": "IFilterComp",
       "column": "Column"
     },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "FilterOpenedEvent": {
     "meta": {},
@@ -1796,7 +1796,7 @@
       "eGui": "HTMLElement"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "column": "Column / OriginalColumnGroup that contains the filter",
       "source": "Source of the open request",
       "eGui": "Parent element of the filter"
@@ -1805,32 +1805,32 @@
   "SortChangedEvent": {
     "meta": {},
     "type": { "type": "string", "api": "GridApi", "columnApi": "ColumnApi" },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "GridReadyEvent": {
     "meta": {},
     "type": { "type": "string", "api": "GridApi", "columnApi": "ColumnApi" },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "DisplayedColumnsWidthChangedEvent": {
     "meta": {},
     "type": { "type": "string", "api": "GridApi", "columnApi": "ColumnApi" },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "ColumnHoverChangedEvent": {
     "meta": {},
     "type": { "type": "string", "api": "GridApi", "columnApi": "ColumnApi" },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "BodyHeightChangedEvent": {
     "meta": {},
     "type": { "type": "string", "api": "GridApi", "columnApi": "ColumnApi" },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "ComponentStateChangedEvent": {
     "meta": {},
     "type": { "type": "string", "api": "GridApi", "columnApi": "ColumnApi" },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "DragEvent": {
     "meta": {},
@@ -1880,7 +1880,7 @@
       "selected?": "boolean",
       "previousValue": "boolean | undefined"
     },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "GridSizeChangedEvent": {
     "meta": {},
@@ -1892,7 +1892,7 @@
       "clientHeight": "number"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "clientWidth": "The grid's DIV's clientWidth",
       "clientHeight": "The grid's DIV's clientHeight"
     }
@@ -1912,7 +1912,7 @@
       "overNode": "RowNode"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "node": "The row node getting dragged. Also the node that started the drag when multi-row dragging.",
       "nodes": "The list of nodes being dragged.",
       "y": "The vertical pixel location the mouse is over.",
@@ -1937,7 +1937,7 @@
       "overNode": "RowNode"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "node": "The row node getting dragged. Also the node that started the drag when multi-row dragging.",
       "nodes": "The list of nodes being dragged.",
       "y": "The vertical pixel location the mouse is over.",
@@ -1962,7 +1962,7 @@
       "overNode": "RowNode"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "node": "The row node getting dragged. Also the node that started the drag when multi-row dragging.",
       "nodes": "The list of nodes being dragged.",
       "y": "The vertical pixel location the mouse is over.",
@@ -1987,7 +1987,7 @@
       "overNode": "RowNode"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "node": "The row node getting dragged. Also the node that started the drag when multi-row dragging.",
       "nodes": "The list of nodes being dragged.",
       "y": "The vertical pixel location the mouse is over.",
@@ -2012,7 +2012,7 @@
       "overNode": "RowNode"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "node": "The row node getting dragged. Also the node that started the drag when multi-row dragging.",
       "nodes": "The list of nodes being dragged.",
       "y": "The vertical pixel location the mouse is over.",
@@ -2030,7 +2030,7 @@
       "columnApi": "ColumnApi",
       "source": "string"
     },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "PasteEndEvent": {
     "meta": {},
@@ -2040,12 +2040,12 @@
       "columnApi": "ColumnApi",
       "source": "string"
     },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "FillStartEvent": {
     "meta": {},
     "type": { "type": "string", "api": "GridApi", "columnApi": "ColumnApi" },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "FillEndEvent": {
     "meta": {},
@@ -2056,7 +2056,7 @@
       "initialRange": "CellRange",
       "finalRange": "CellRange"
     },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "ViewportChangedEvent": {
     "meta": {},
@@ -2068,7 +2068,7 @@
       "lastRow": "number"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "firstRow": "Index of the first rendered row",
       "lastRow": "Index of the last rendered row"
     }
@@ -2083,7 +2083,7 @@
       "lastRow": "number"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "firstRow": "Index of the first rendered row",
       "lastRow": "Index of the last rendered row"
     }
@@ -2098,7 +2098,7 @@
       "finished": "boolean",
       "started": "boolean"
     },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "ChartCreated": {
     "meta": {},
@@ -2108,7 +2108,7 @@
       "columnApi": "ColumnApi",
       "chartId": "string"
     },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "ChartRangeSelectionChanged": {
     "meta": {},
@@ -2120,7 +2120,7 @@
       "chartId": "string",
       "cellRange": "CellRangeParams"
     },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "ChartOptionsChanged": {
     "meta": {},
@@ -2133,7 +2133,7 @@
       "chartThemeName": "string",
       "chartOptions": "ChartOptions<any>"
     },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "ChartDestroyed": {
     "meta": {},
@@ -2143,7 +2143,7 @@
       "columnApi": "ColumnApi",
       "chartId": "string"
     },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "ColumnGroupOpenedEvent": {
     "meta": {},
@@ -2153,7 +2153,7 @@
       "columnApi": "ColumnApi",
       "columnGroup": "OriginalColumnGroup"
     },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "ItemsAddedEvent": {
     "meta": {},
@@ -2163,7 +2163,7 @@
       "columnApi": "ColumnApi",
       "items": "RowNode[]"
     },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "ScrollDirection": {
     "meta": { "isTypeAlias": true },
@@ -2179,7 +2179,7 @@
       "left": "number",
       "top": "number"
     },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "FlashCellsEvent": {
     "meta": {},
@@ -2189,12 +2189,12 @@
       "columnApi": "ColumnApi",
       "cells": "any"
     },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "PaginationPixelOffsetChangedEvent": {
     "meta": {},
     "type": { "type": "string", "api": "GridApi", "columnApi": "ColumnApi" },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "CellFocusedEvent": {
     "meta": {},
@@ -2210,7 +2210,7 @@
       "floating": "string | null"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "rowIndex": "Row index of the focused cell",
       "column": "Column of the focused cell",
       "rowPinned?": "either 'top', 'bottom' or null / undefined (if not pinned)",
@@ -2226,7 +2226,7 @@
       "columnApi": "ColumnApi",
       "source": "string"
     },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "ColumnEventType": {
     "meta": { "isTypeAlias": true },
@@ -2243,7 +2243,7 @@
       "source": "ColumnEventType"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "column": "The impacted column, only set if action was on one column",
       "columns": "List of all impacted columns",
       "source": "String describing where the event is coming from"
@@ -2262,7 +2262,7 @@
       "flexColumns": "Column[] | null"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "column": "The impacted column, only set if action was on one column",
       "columns": "List of all impacted columns",
       "source": "String describing where the event is coming from",
@@ -2281,7 +2281,7 @@
       "source": "ColumnEventType"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "column": "The impacted column, only set if action was on one column",
       "columns": "List of all impacted columns",
       "source": "String describing where the event is coming from"
@@ -2298,7 +2298,7 @@
       "source": "ColumnEventType"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "column": "The impacted column, only set if action was on one column",
       "columns": "List of all impacted columns",
       "source": "String describing where the event is coming from"
@@ -2315,7 +2315,7 @@
       "source": "ColumnEventType"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "column": "The impacted column, only set if action was on one column",
       "columns": "List of all impacted columns",
       "source": "String describing where the event is coming from"
@@ -2333,7 +2333,7 @@
       "toIndex?": "number"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "column": "The impacted column, only set if action was on one column",
       "columns": "List of all impacted columns",
       "source": "String describing where the event is coming from",
@@ -2352,7 +2352,7 @@
       "visible?": "boolean"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "column": "The impacted column, only set if action was on one column",
       "columns": "List of all impacted columns",
       "source": "String describing where the event is coming from",
@@ -2371,7 +2371,7 @@
       "pinned": "string | null"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "column": "The impacted column, only set if action was on one column",
       "columns": "List of all impacted columns",
       "source": "String describing where the event is coming from",
@@ -2392,7 +2392,7 @@
       "event?": "Event | null"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "data": "The user provided data for the row",
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
@@ -2415,7 +2415,7 @@
       "expanded": "boolean"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "data": "The user provided data for the row",
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
@@ -2438,7 +2438,7 @@
       "event?": "Event | null"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "data": "The user provided data for the row",
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
@@ -2460,7 +2460,7 @@
       "event?": "Event | null"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "data": "The user provided data for the row",
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
@@ -2482,7 +2482,7 @@
       "event?": "Event | null"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "data": "The user provided data for the row",
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
@@ -2504,7 +2504,7 @@
       "event?": "Event | null"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "data": "The user provided data for the row",
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
@@ -2526,7 +2526,7 @@
       "event?": "Event | null"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "data": "The user provided data for the row",
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
@@ -2548,7 +2548,7 @@
       "event?": "Event | null"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "data": "The user provided data for the row",
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
@@ -2570,7 +2570,7 @@
       "event?": "Event | null"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "data": "The user provided data for the row",
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
@@ -2592,7 +2592,7 @@
       "event?": "Event | null"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "data": "The user provided data for the row",
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
@@ -2614,7 +2614,7 @@
       "event?": "Event | null"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "data": "The user provided data for the row",
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
@@ -2639,7 +2639,7 @@
       "value": "any"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "data": "The user provided data for the row",
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
@@ -2665,7 +2665,7 @@
       "value": "any"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "data": "The user provided data for the row",
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
@@ -2691,7 +2691,7 @@
       "value": "any"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "data": "The user provided data for the row",
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
@@ -2717,7 +2717,7 @@
       "value": "any"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "data": "The user provided data for the row",
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
@@ -2743,7 +2743,7 @@
       "value": "any"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "data": "The user provided data for the row",
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
@@ -2769,7 +2769,7 @@
       "value": "any"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "data": "The user provided data for the row",
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
@@ -2795,7 +2795,7 @@
       "value": "any"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "data": "The user provided data for the row",
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
@@ -2821,7 +2821,7 @@
       "value": "any"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "data": "The user provided data for the row",
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
@@ -2847,7 +2847,7 @@
       "value": "any"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "data": "The user provided data for the row",
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
@@ -2873,7 +2873,7 @@
       "value": "any"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "data": "The user provided data for the row",
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
@@ -2901,7 +2901,7 @@
       "newValue": "any"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "data": "The user provided data for the row",
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
@@ -2932,7 +2932,7 @@
       "source": "string | undefined"
     },
     "docs": {
-      "type": "Type identifier for the event",
+      "type": "Event identifier",
       "data": "The user provided data for the row",
       "rowIndex": "The visible row index for the row",
       "rowPinned?": "Either 'top', 'bottom' or null / undefined (if not set)",
@@ -2949,7 +2949,7 @@
       "columnApi": "ColumnApi",
       "results": "(RowNodeTransaction | ServerSideTransactionResult)[]"
     },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "ColumnRequestEvent": {
     "meta": {},
@@ -2959,7 +2959,7 @@
       "columnApi": "ColumnApi",
       "columns": "Column[]"
     },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "ColumnRowGroupChangeRequestEvent": {
     "meta": {},
@@ -2969,7 +2969,7 @@
       "columnApi": "ColumnApi",
       "columns": "Column[]"
     },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "ColumnPivotChangeRequestEvent": {
     "meta": {},
@@ -2979,7 +2979,7 @@
       "columnApi": "ColumnApi",
       "columns": "Column[]"
     },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "ColumnValueChangeRequestEvent": {
     "meta": {},
@@ -2989,7 +2989,7 @@
       "columnApi": "ColumnApi",
       "columns": "Column[]"
     },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "ColumnAggFuncChangeRequestEvent": {
     "meta": {},
@@ -3000,37 +3000,37 @@
       "columns": "Column[]",
       "aggFunc": "any"
     },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "ScrollVisibilityChangedEvent": {
     "meta": {},
     "type": { "type": "string", "api": "GridApi", "columnApi": "ColumnApi" },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "StoreUpdatedEvent": {
     "meta": {},
     "type": { "type": "string" },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "LeftPinnedWidthChangedEvent": {
     "meta": {},
     "type": { "type": "string" },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "RightPinnedWidthChangedEvent": {
     "meta": {},
     "type": { "type": "string" },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "RowContainerHeightChanged": {
     "meta": {},
     "type": { "type": "string" },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "DisplayedRowsChangedEvent": {
     "meta": {},
     "type": { "type": "string" },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "IFilterLocaleText": {
     "meta": {},
@@ -3599,7 +3599,7 @@
   "PropertyChangedEvent": {
     "meta": {},
     "type": { "type": "string", "currentValue": "any", "previousValue": "any" },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "DropListener": {
     "meta": {},
@@ -7235,7 +7235,7 @@
   "LoadCompleteEvent": {
     "meta": {},
     "type": { "type": "string", "success": "boolean", "block": "RowNodeBlock" },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "LoadSuccessParams": {
     "meta": {},
@@ -7341,7 +7341,7 @@
   "ChangeEvent": {
     "meta": {},
     "type": { "type": "string", "selected": "boolean" },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "ColorPickerConfig": {
     "meta": {},
@@ -7464,7 +7464,7 @@
   "VisibleChangedEvent": {
     "meta": {},
     "type": { "type": "string", "visible": "boolean" },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "ManagedFocusCallbacks": {
     "meta": {},
@@ -7547,7 +7547,7 @@
   "TapEvent": {
     "meta": {},
     "type": { "type": "string", "touchStart": "Touch" },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "LongTapEvent": {
     "meta": {},
@@ -7556,7 +7556,7 @@
       "touchStart": "Touch",
       "touchEvent": "TouchEvent"
     },
-    "docs": { "type": "Type identifier for the event" }
+    "docs": { "type": "Event identifier" }
   },
   "VirtualListModel": {
     "meta": {},
