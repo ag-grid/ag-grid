@@ -1,6 +1,6 @@
 'use strict';
 
-import React, { useMemo, useEffect, useState } from 'react';
+import React, { Component, dangerouslySetInnerHTML, useMemo, useEffect, useState } from 'react';
 import { render } from 'react-dom';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
@@ -13,10 +13,16 @@ import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
 // this is a hook, but we work also with classes
 function MyRenderer(params) {
     return (
-          <span className="my-renderer">
-            <img src="https://d1yk6z6emsz7qy.cloudfront.net/static/images/loading.gif" className="my-spinner"/>
-              {params.value}
-          </span>
+        <span className="my-renderer">
+          { params.value!=null &&
+              <React.Fragment>
+                  <img src="https://d1yk6z6emsz7qy.cloudfront.net/static/images/loading.gif" className="my-spinner"/>
+                  <span class="my-renderer-value">
+                      {params.value}
+                  </span>
+              </React.Fragment>
+          }
+        </span>
     );
 }
 
@@ -27,16 +33,13 @@ function GridExample() {
 
     // never changes, so we can use useMemo
     const columnDefs = useMemo( ()=> [
-        { field: 'athlete' },
-        { field: 'age', cellRendererFramework: MyRenderer },
-        { field: 'country' },
-        { field: 'year' },
-        { field: 'date' },
-        { field: 'sport' },
-        { field: 'gold' },
-        { field: 'silver' },
-        { field: 'bronze' },
-        { field: 'total' }
+        { field: 'sport', enableRowGroup: true, hide: true , rowGroup: true, cellRendererFramework: MyRenderer },
+        { field: 'country', enableRowGroup: true, rowGroup: true, hide: true  },
+        { field: 'athlete', enableRowGroup: true, hide: true },
+        { field: 'gold', aggFunc: 'sum' },
+        { field: 'silver', aggFunc: 'sum' },
+        { field: 'bronze', aggFunc: 'sum' },
+        { field: 'total', aggFunc: 'sum' }
     ], []);
 
     // never changes, so we can use useMemo
@@ -45,6 +48,16 @@ function GridExample() {
         sortable: true
     }), []);
 
+    // never changes, so we can use useMemo
+    const autoGroupColumnDef = useMemo( ()=> ({
+        cellRendererParams: {
+            suppressCount: true,
+            checkbox: true
+        },
+        field: 'athlete',
+        width: 300
+    }), []);
+    
     // changes, needs to be state
     const [rowData, setRowData] = useState();
 
@@ -67,10 +80,12 @@ function GridExample() {
             modules={modules}
             columnDefs={columnDefs}
             defaultColDef={defaultColDef}
+            autoGroupColumnDef={autoGroupColumnDef}
             rowGroupPanelShow="always"
             enableRangeSelection="true"
             rowData={rowData}
             rowSelection="multiple"
+            groupSelectsChildren="true"
             suppressRowClickSelection="true"
         />
     );
