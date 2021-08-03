@@ -63,9 +63,6 @@ interface CreatePivotChartParams {
 
 The pivot chart params share the same behaviour as the [Range Chart Params](/integrated-charts-api/#reference-params) above.
 
-
-### Example: Pivot Chart
-
 This is an example showing the pivot chart API in action, using a specified chart container.
 
 <grid-example title='Pivot Chart' name='pivot-chart-api' type='generated' options='{ "enterprise": true, "exampleHeight": 900 }'></grid-example>
@@ -98,10 +95,7 @@ function restoreChart(model: ChartModel, chartContainer?: HTMLElement): ChartRef
 
 Note that an optional `chartContainer` can be specified when restoring a chart.
 
-### Example: Saving and Restoring Charts
-
 The example below demonstrates how you can save and then later restore a chart. You can make changes to the chart type, theme, data and formatting options and note how the restored chart looks the same as the chart that was saved.
-
 
 - Create a range chart from the grid, which will be shown in a container below the grid.
 - Change the chart type, theme, data and/or formatting in order to see the changes restored later.
@@ -109,9 +103,7 @@ The example below demonstrates how you can save and then later restore a chart. 
 - Click "Clear chart" to destroy the existing chart.
 - Click "Restore chart" to restore the previously saved chart.
 
-
 <grid-example title='Saving and Restoring Charts' name='saving-and-restoring-charts' type='generated' options='{ " exampleHeight": 800, "enterprise": true }'></grid-example>
-
 
 ## Downloading Chart Image
 
