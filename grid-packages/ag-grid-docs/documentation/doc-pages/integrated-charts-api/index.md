@@ -125,7 +125,6 @@ function getChartImageDataURL(params: GetChartImageDataUrlParams): string | unde
 
 The example below demonstrates how you can retrieve images rendered from the chart in multiple formats.
 
-- Create a range chart from the grid, which will be shown in a container below the grid.
 - Click "Download chart PNG" to download a PNG format image.
 - Click "Download chart JPG" to download a JPG format image.
 - Click "Open PNG" to open a PNG format image of the chart in a new window.

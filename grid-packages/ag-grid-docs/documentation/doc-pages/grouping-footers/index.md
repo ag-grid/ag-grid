@@ -36,7 +36,8 @@ const gridOptions = {
 }
 </snippet>
 
-When showing the groups in one column, the aggregation data is displayed in the group header when collapsed and only in the footer when expanded (ie it moves from the header to the footer). To have different rendering, provide a custom `groupInnerCellRenderer`, where the renderer can check if it's a header or footer.
+When showing the groups in one column, the aggregation data is displayed in the group header when collapsed and only in
+the footer when expanded (ie it moves from the header to the footer). 
 
 It is also possible to include a 'grand' total footer for all groups using the property `groupIncludeTotalFooter`. This property can be used along side `groupIncludeFooter` to produce totals at all group levels or used independently.
 
