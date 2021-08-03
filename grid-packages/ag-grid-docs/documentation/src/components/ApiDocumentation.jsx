@@ -591,15 +591,16 @@ function getPropertyType(type, config) {
 }
 
 function appendInterface(name, interfaceType, framework, allLines) {
+
     const lines = [`interface ${name} {`];
     const properties = Object.entries(interfaceType.type);
     properties.sort(([p1,], [p2,]) => {
-        // Sort alphabetically but with $scope at the end
+        // Push $scope to the end while maintaining original order
         if (p1 === '$scope')
             return 1;
         if (p2 === '$scope')
             return -1;
-        return p1 < p2 ? -1 : 1;
+        return 0;
     });
     properties
         // Only show AngularJS $scope property for Angular or Javascript frameworks

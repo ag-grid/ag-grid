@@ -38,7 +38,7 @@ export interface PaginationChangedEvent extends AgGridEvent {
 }
 
 export interface AgEvent {
-    /** Type identifier for the event */
+    /** Event identifier */
     type: string;
 }
 
