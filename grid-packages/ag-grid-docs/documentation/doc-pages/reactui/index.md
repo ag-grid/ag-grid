@@ -46,7 +46,7 @@ Set the `reactUi` property in your AG Grid application using the latest AG Grid 
 
 ## Does React UI Use Portals?
 
-No, React UI does not use React Portals.
+No.
 
 Previous to React UI, when the rendering engine was written in Plain JavaScript, React Portals were used to host instances of provided Cell Renderer's and Cell Editors. This caused issues such as additional `div`'s appear in the DOM to host the portal, and also sometimes flickering or delayed rendering was visible.
 
@@ -64,6 +64,14 @@ As the grid is now written in React, we welcome trashing it using React profilin
 See below viewing the React Component hierarchy using React Developer Tools. The grid is now part of the overall React component hierarchy.
 
 <image-caption src="reactui/resources/react-dev-tools.png" alt="React Developer Tools" centered="true"></image-caption>
+
+## Any Small Print?
+
+There are some good breaking changes, to do with stuff we could shake off, now that we are no longer wrapping React. These good breaking changes are as follows:
+
+1. When providing components (Cell Renderer etc), it was possible to provide CSS Classes to the hosting DOM element with the callback `getReactContainerClasses()`. This method is no longer needed as there is no longer a hosting DOM element. The hosting DOM element was baggage.
+1. Before to get a reference to an active React Cell Renderer the following code would be called: `gridApi().getCellRenderer().getCellRendererInstance()`. Now you only need to call `gridApi().getCellRenderer()`. The reason why you no longer need to call `getCellRendererInstance()` is that there is no longer a wrapper wrapping the React Cell Renderer. This method used to be on the wrapper which then returned back the wrapped React Cell Renderer (or a reference to the imperative handle if using React Hooks). The same is true for `getCellEditor()`, in that `getCellRendererInstance()` is no longer needed here either.
+1. Before when providing a Popup Cell Editor, the Cell Editor could implement the methods `isPopup()` and `popupPosition()` to have the Cell Editor in a popup and to optionally state it's position. In the React paradigm, it's required to know where a component is to be placed before it is created (which is not a constraint with our internal AG Grid rendering engine, where components can be created first and placed into the DOM second). To solve this, the Column Definition now has properties `cellEditorPopup()` and `cellEditorPopupPosition()` which should be used.
 
 ## Community vs Enterprise
 
