@@ -1,6 +1,6 @@
 {
   "suppressBrowserResizeObserver": {
-    "description": "*****************************************************************************************************\nIf you change the properties on this interface, you must also update PropertyKeys to be consistent. *\n*****************************************************************************************************",
+    "description": "Set once in init, can never change",
     "type": { "returnType": "boolean" }
   },
   "rowDragManaged": { "type": { "returnType": "boolean" } },
@@ -310,7 +310,7 @@
   "getRowStyle": {
     "type": {
       "arguments": { "params": "RowClassParams" },
-      "returnType": "[cssProperty: string]: string"
+      "returnType": "{\n    [cssProperty: string]: string;\n}"
     }
   },
   "getRowClass": {
