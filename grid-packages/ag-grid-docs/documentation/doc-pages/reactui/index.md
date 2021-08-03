@@ -37,16 +37,16 @@ You may say _"Doesn't it look identical to before?"_, and you would be right, it
 
 <grid-example title='React UI' name='react-ui' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>
 
-## Can I Try?
+## Can I Try In My App?
 
 Yes.
 
 Set the `reactUi` property in your AG Grid application using the latest AG Grid version and check it out.
 
 
-## Hooks or Classes?
+## Does It Work With Hooks Or Classes?
 
-Both.
+It works with both.
 
 AG Grid React UI works with client applications written using React Hooks or React Classes.
 
