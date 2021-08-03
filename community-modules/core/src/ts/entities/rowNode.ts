@@ -653,7 +653,7 @@ export class RowNode implements IEventEmitter {
     }
 
     public isExpandable(): boolean {
-        return this.hasChildren() || this.master ? true : false;
+        return (this.hasChildren() && !this.footer) || this.master ? true : false;
     }
 
     public isSelected(): boolean | undefined {

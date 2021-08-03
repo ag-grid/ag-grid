@@ -79,7 +79,7 @@ The Vanilla JavaScript components are now the ones that are not native and need 
 
 It was important for AG Grid to keep backwards compatibility and still allow native JavaScript custom components as some users of AG Grid prefer providing reusable components in plain JavaScript. This commonly done by large organisation, e.g. banks, who have 100's of projects using AG Grid mixed with React, Angular and Vue, and want to provide common components that work regardless of the framework used.
 
-## Show Me Another Example - Editors
+## Show Me An Example Using Cell Editors
 
 When React UI is enabled, the grid will work natively with provided React Cell Editors, as well as keeping backwards compatibility and support JavaScript Cell Editors.
 
@@ -165,7 +165,7 @@ When `reactUi=true`, the mechanism of using React inside the old AG Grid renderi
 
 This is temporary while we implement React UI across all of AG Grid. Once complete, there will be no part using the old rendering engine and this issue will be no longer relevant.
 
-## What's Next
+## What's Next for React UI
 
 We are now charging ahead at completing the React UI work. That means going through the list in the previous section and converting everything to React UI.
 
