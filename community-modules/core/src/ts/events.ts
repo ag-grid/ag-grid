@@ -27,13 +27,18 @@ export interface ModelUpdatedEvent extends AgGridEvent {
 }
 
 export interface PaginationChangedEvent extends AgGridEvent {
+    /** True if rows were animated to new position */
     animate?: boolean;
+    /** True if rows were kept (otherwise complete redraw) */
     keepRenderedRows?: boolean;
+    /** True if data was new (i.e user set new data) */
     newData?: boolean;
+    /** True if user went to a new page */
     newPage: boolean;
 }
 
 export interface AgEvent {
+    /** Type identifier for the event */
     type: string;
 }
 
@@ -69,18 +74,23 @@ export interface PinnedRowDataChangedEvent extends AgGridEvent { }
 export interface SelectionChangedEvent extends AgGridEvent { }
 
 export interface FilterChangedEvent extends AgGridEvent {
+    /** True if the filter was changed as a result of data changing */
     afterDataChange?: boolean;
+    /** True if filter was changed via floating filter */
     afterFloatingFilter?: boolean;
 }
 
 export interface FilterModifiedEvent extends AgGridEvent {
-    filterInstance: IFilterComp;
+    filterInstance: IFilterComp;    
     column: Column;
 }
 
 export interface FilterOpenedEvent extends AgGridEvent {
+    /** Column / OriginalColumnGroup that contains the filter */
     column: Column | OriginalColumnGroup;
+    /** Source of the open request */
     source: FilterRequestSource;
+    /** Parent element of the filter */
     eGui: HTMLElement;
 }
 
@@ -99,7 +109,9 @@ export interface BodyHeightChangedEvent extends AgGridEvent { } // not documente
 export interface ComponentStateChangedEvent extends AgGridEvent { }
 
 export interface DragEvent extends AgGridEvent {
+    /** One of {'cell','row','headerCell','toolPanel'} */
     type: string;
+    /** The DOM element that started the event. */
     target: HTMLElement;
 }
 
@@ -118,17 +130,26 @@ export interface CheckboxChangedEvent extends AgEvent {
 }
 
 export interface GridSizeChangedEvent extends AgGridEvent {
+    /** The grid's DIV's clientWidth */    
     clientWidth: number;
+    /** The grid's DIV's clientHeight */
     clientHeight: number;
 }
 
 export interface RowDragEvent extends AgGridEvent {
+    /** The row node getting dragged. Also the node that started the drag when multi-row dragging. */
     node: RowNode;
+    /** The list of nodes being dragged. */
     nodes: RowNode[];
+    /** The vertical pixel location the mouse is over. */
     y: number;
+    /** Direction of the drag, either 'up', 'down' or null. */
     vDirection: string;
+    /** The underlying mouse move event associated with the drag. */
     event: MouseEvent;
+    /** The row index the mouse is dragging over. */
     overIndex: number;
+    /** The row node the mouse is dragging over. */
     overNode: RowNode;
 }
 
@@ -157,12 +178,16 @@ export interface FillEndEvent extends AgGridEvent {
 }
 
 export interface ViewportChangedEvent extends AgGridEvent {
+    /** Index of the first rendered row */
     firstRow: number;
+    /** Index of the last rendered row */
     lastRow: number;
 }
 
 export interface FirstDataRenderedEvent extends AgGridEvent {
+    /** Index of the first rendered row */
     firstRow: number;
+    /** Index of the last rendered row */
     lastRow: number;
 }
 
@@ -220,10 +245,15 @@ export interface PaginationPixelOffsetChangedEvent extends AgGridEvent {
 // this does not extent CellEvent as the focus service doesn't keep a reference to
 // the rowNode.
 export interface CellFocusedEvent extends AgGridEvent {
+    /** Row index of the focused cell */
     rowIndex: number | null;
+    /** Column of the focused cell */
     column: Column | null;
-    rowPinned: string | null;
+    /** either 'top', 'bottom' or null / undefined (if not pinned) */
+    rowPinned?: string | null;
+    /** Whether the cell a full width cell or a regular cell */
     isFullWidthCell: boolean;
+    /** Whether browser focus is also set (false when editing) */
     forceBrowserFocus?: boolean;
     // floating is for backwards compatibility, this is the same as rowPinned.
     // this is because the focus service doesn't keep references to rowNodes
@@ -263,13 +293,18 @@ export type ColumnEventType =
     "pivotChart";
 
 export interface ColumnEvent extends AgGridEvent {
+    /** The impacted column, only set if action was on one column */
     column: Column | null;
+    /** List of all impacted columns */
     columns: Column[] | null;
+    /** String describing where the event is coming from */
     source: ColumnEventType;
 }
 
 export interface ColumnResizedEvent extends ColumnEvent {
+    /** Set to true for last event in a sequence of move events */
     finished: boolean;
+    /** Any columns resized due to flex */
     flexColumns: Column[] | null;
 }
 
@@ -280,14 +315,17 @@ export interface ColumnRowGroupChangedEvent extends ColumnEvent { }
 export interface ColumnValueChangedEvent extends ColumnEvent { }
 
 export interface ColumnMovedEvent extends ColumnEvent {
+    /** The position the column was moved to */
     toIndex?: number;
 }
 
 export interface ColumnVisibleEvent extends ColumnEvent {
+    /** True if column was set to visible, false if set to hide */
     visible?: boolean;
 }
 
 export interface ColumnPinnedEvent extends ColumnEvent {
+    /** Either 'left', 'right', or null (it not pinned) */
     pinned: string | null;
 }
 
@@ -297,14 +335,20 @@ export interface ColumnPinnedEvent extends ColumnEvent {
 /**------------*/
 export interface RowEvent extends AgGridEvent {
     node: RowNode;
+    /** The user provided data for the row */
     data: any;
+    /** The visible row index for the row */
     rowIndex: number | null;
-    rowPinned: string;
+    /** Either 'top', 'bottom' or null / undefined (if not set) */
+    rowPinned?: string | null;
+    /** Bag of attributes, provided by user */
     context: any;
+    /** If event was due to browser event (eg click), this is browser event */
     event?: Event | null;
 }
 
 export interface RowGroupOpenedEvent extends RowEvent {
+    /** True if the group is expanded. */
     expanded: boolean;
 }
 
@@ -333,6 +377,7 @@ export interface FullWidthCellKeyPressEvent extends RowEvent { }
 export interface CellEvent extends RowEvent {
     column: Column;
     colDef: ColDef;
+    /** The value for the cell */
     value: any;
 }
 
@@ -355,11 +400,13 @@ export interface CellContextMenuEvent extends CellEvent { }
 export interface CellEditingStartedEvent extends CellEvent { }
 
 export interface CellEditingStoppedEvent extends CellEvent {
+    /** The old value before editing */
     oldValue: any;
+    /** The new value after editing */
     newValue: any;
 }
 
-export interface CellValueChangedEvent extends CellEvent {
+export interface CellValueChangedEvent extends CellEvent {    
     oldValue: any;
     newValue: any;
     source: string | undefined;
