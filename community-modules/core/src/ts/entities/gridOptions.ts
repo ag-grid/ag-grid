@@ -101,7 +101,7 @@ export interface GridOptions {
      * If you change the properties on this interface, you must also update PropertyKeys to be consistent. *
      *******************************************************************************************************/
 
-    // set once in init, can never change
+    /** Set once in init, can never change*/
     suppressBrowserResizeObserver?: boolean;
     rowDragManaged?: boolean;
     suppressRowDrag?: boolean;

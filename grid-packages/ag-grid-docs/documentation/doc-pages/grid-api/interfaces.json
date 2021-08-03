@@ -1644,9 +1644,7 @@
   },
   "HardCodedSize": {
     "meta": {},
-    "type": {
-      "[key: string]: {\n    [key in SASS_PROPERTIES]?: number;\n}": "{[key in SASS_PROPERTIES]?: number}"
-    }
+    "type": { "[key: string]": "{[key in SASS_PROPERTIES]?: number}" }
   },
   "ModelUpdatedEvent": {
     "meta": {},
@@ -6626,7 +6624,7 @@
   "HeaderElement": {
     "meta": {},
     "type": {
-      "[key: string]: string | undefined": "string | undefined",
+      "[key: string]": "string | undefined",
       "version?": "string",
       "standalone?": "string",
       "encoding?": "string"
@@ -7194,7 +7192,7 @@
       "visibleState?": "When dragging columns, this contains the visible state of the columns"
     }
   },
-  "RowCtrlMap": { "meta": {}, "type": { "[key: string]: RowCtrl": "RowCtrl" } },
+  "RowCtrlMap": { "meta": {}, "type": { "[key: string]": "RowCtrl" } },
   "RefreshViewParams": {
     "meta": {},
     "type": {

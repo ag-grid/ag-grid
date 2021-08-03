@@ -385,6 +385,7 @@ export interface CellKeyDownEvent extends CellEvent { }
 
 export interface CellKeyPressEvent extends CellEvent { }
 
+/** Cell is clicked */
 export interface CellClickedEvent extends CellEvent { }
 
 export interface CellMouseDownEvent extends CellEvent { }
