@@ -30,19 +30,30 @@ A spike of our React UI is included in the latest AG Grid release. To enable it,
 
 With `reactUi=true`, the grid renders cells using React, and all parent components of the cells are also written in React, all the way back to the client application. This means all the UI from your application down to the cells, including any provided React Cell Renderers, is all now 100% React.
 
+Note in the example the Age Column has a React Cell Renderer. If you inspect the DOM on this cell, you will note there is no wrapping DIV element inside the Cell to host the React Cell Renderer. The provided React Component is placed directly inside the AG Grid React Cell.
+
+Also note grid functions such as sorting all work as normal.
+
+You may say _"Doesn't it look identical to before?"_, and you would be right, it is identical to before from an application users point of view. That's the point - it is supposed to work exactly as before. The difference is this time it is all rendered in React.
+
 <grid-example title='React UI' name='react-ui' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>
-
-Notice in the example:
-1. The Age Column has a React Cell Renderer.
-2. Grid functions such as sort, filter, range select and row grouping work as normal.
-
-You may say _"Doesn't it look identical to before?"_, and you would be right, it is identical to before from an application users point of view. That's the point - it is supposed to work exactly as before. The difference is this time it is all done in React.
 
 ## Can I Try?
 
 Yes.
 
 Set the `reactUi` property in your AG Grid application using the latest AG Grid version and check it out.
+
+
+## Hooks or Classes?
+
+Both.
+
+AG Grid React UI works with client applications written using React Hooks or React Classes.
+
+AG Grid React UI can also take custom components as Hooks or Classes.
+
+The requirements and interface into AG Grid does not change.
 
 ## Does React UI Use Portals?
 
@@ -55,6 +66,33 @@ The image below shows the DOM structure of a grid cell the old way compare to th
 
 <image-caption src="reactui/resources/no-portals.png" alt="React UI - No Portals" centered="true"></image-caption>
 
+
+## Can JS Components Still Be Provided
+
+Yes.
+
+As before, you can provide components to customise the grid using React or Vanilla JavaScript. For example you can configure a Cell Renderer on a column using both `colDef.cellRenderer` for Vanilla JavaScript or `colDef.cellRendererFramework` for a React version.
+
+The difference is behind the scenes in AG Grid. Without React UI, the grid used to create a React Portal to include the React Cell Renderer. With React ui, the React Cell Renderer is referenced directly.
+
+The Vanilla JavaScript components are now the ones that are not native and need to be wrapped! However don't worry about that, that's all taken care of behind the scenes.
+
+It was important for AG Grid to keep backwards compatibility and still allow native JavaScript custom components as some users of AG Grid prefer providing reusable components in plain JavaScript. This commonly done by large organisation, e.g. banks, who have 100's of projects using AG Grid mixed with React, Angular and Vue, and want to provide common components that work regardless of the framework used.
+
+## Show Me Another Example - Editors
+
+When React UI is enabled, the grid will work natively with provided React Cell Editors, as well as keeping backwards compatibility and support JavaScript Cell Editors.
+
+Below is an example showing different types of Cell Editors. Note the following:
+
+* Column *JS Inline* uses the default Cell Editor, which happens to be written in JavaScript and is not a popup.
+* Column *JS Popup* uses the default Rich Select Cell Editor, which happens to be written in JavaScript and is a popup (`cellEditorPopup=true`).
+* Column *React Inline* is a provided React Cell Renderer and is inline.
+* Column *React Popup* is the same provided React Cell Renderer as the previous column, but it's configured to be in a popup (`cellEditorPopup=true`) and to appear below the cell (`cellEditorPopupPosition=true`).
+* Note if you inspect the DOM for *React Inline* editor, the editor is placed directly inside the cell without any wrapping DIV element.
+
+<grid-example title='React UI Editors' name='editors' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>
+
 ## Can I React Profile AG Grid?
 
 Yes.
@@ -64,6 +102,19 @@ As the grid is now written in React, we welcome trashing it using React profilin
 See below viewing the React Component hierarchy using React Developer Tools. The grid is now part of the overall React component hierarchy.
 
 <image-caption src="reactui/resources/react-dev-tools.png" alt="React Developer Tools" centered="true"></image-caption>
+
+## Show Me React Profiling
+
+.... todo ... example showing cell refresh and no wasted render cycles.
+
+## Show Me Advanced Features Working
+
+Remember we said all features of AG Grid will work with React UI? Well lets see some. Here is an example with Range Selection, Checkbox Click Selection and Row Grouping.
+
+Notice that the Cell Renderer for Sport is using inside the Grouping Column.
+
+<grid-example title='React UI Advanced Features' name='advanced-features' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>
+
 
 ## Any Small Print?
 
@@ -90,25 +141,6 @@ This is in line with React thinking, in that React is used for rendering only, a
 
 This also means the AG Grid React UI not only supports all features of the current AG Grid React, but also the interface into AG Grid React has not changed. All features are configured in the same way. All that will be needed in your application to test React UI is set the switch `reactUi=true`.
 
-## Hooks or Classes?
-
-Both.
-
-AG Grid React UI works with client applications written using React Hooks or React Classes.
-
-AG Grid React UI can also take custom components as Hooks or Classes.
-
-The requirements and interface into AG Grid does not change.
-
-## Can JS Components Still Be Provided
-
-Yes.
-
-As before, you can provide components to customise the grid using React or Vanilla JavaScript. For example you can configure a Cell Renderer on a column using both `colDef.cellRenderer` for Vanilla JavaScript or `colDef.cellRendererFramework` for a React version.
-
-The difference is behind the scenes in AG Grid. Without React UI, the grid used to create a React Portal to include the React Cell Renderer. With React ui, the React Cell Renderer is referenced directly.
-
-The Vanilla JavaScript components are now the ones that are not native and need to be wrapped! However don't worry about that, that's all taken care of behind the scenes.
 
 ## What Does the Spike Cover
 
@@ -149,3 +181,5 @@ We have spent six months getting this far. We feel most of the hard work has bee
 Yes you can.
 
 The drawback is you cannot use React Components in the sections we have not yet completed React UI for.
+
+

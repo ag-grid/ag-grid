@@ -1,0 +1,11 @@
+.ag-popup-editor
+.my-react-editor {
+  width: 200px;
+  height: 35px;
+}
+
+.ag-cell-inline-editing
+.my-react-editor {
+  width: 100%;
+  height: 100%;
+}
