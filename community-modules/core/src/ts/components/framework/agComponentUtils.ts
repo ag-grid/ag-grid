@@ -33,6 +33,9 @@ export class AgComponentUtils extends BeanStub {
                 if (type === 'string' || type === 'number' || type === 'boolean') {
                     return loadTemplate('<span>' + callbackResult + '</span>');
                 }
+                if (callbackResult==null) {
+                    return loadTemplate('<span></span>');
+                }
                 return callbackResult as HTMLElement;
             }
 
