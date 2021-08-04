@@ -25,7 +25,7 @@ function GridExample() {
     // never changes, so we can use useMemo
     const modules = useMemo( ()=> [ClientSideRowModelModule, RangeSelectionModule, RowGroupingModule, RichSelectModule], []);
 
-    const gridApi = useRef();
+    const gridRef = useRef();
 
     const [memoOn, setMemoOn] = useState(true);
     const [columnDefs, setColumnDefs] = useState();
@@ -60,10 +60,11 @@ function GridExample() {
     }, []);
 
     const onClickIncreaseMedals = useCallback( () => {
-        gridApi.current.forEachNode( rowNode => {
+        const gridApi = gridRef.current.api;
+        gridApi.forEachNode( rowNode => {
             ['gold','silver'].forEach( colId => {
                 if (Math.random()<.8) { return; }
-                const currentVal = gridApi.current.getValue(colId, rowNode);
+                const currentVal = gridApi.getValue(colId, rowNode);
                 rowNode.setDataValue(colId, currentVal + 1);
             });
         });
@@ -71,10 +72,6 @@ function GridExample() {
 
     const onClickToggleMemo = useCallback( () => {
         setMemoOn( prev => !prev );
-    });
-
-    const onGridReady = useCallback( e => {
-        gridApi.current = e.api;
     });
 
     const memoCssClass = memoOn ? 'app-memo-on' : 'app-memo-off'
@@ -93,6 +90,9 @@ function GridExample() {
                     // turn on AG Grid React UI
                     reactUi="true"
 
+                    // used to access grid API
+                    ref={gridRef}
+
                     // all other properties as normal...
                     className="ag-theme-alpine"
                     animateRows="true"
@@ -102,7 +102,6 @@ function GridExample() {
                     rowData={rowData}
                     enableRangeSelection={true}
                     enableCellChangeFlash={true}
-                    onGridReady={onGridReady}
                 />
             </div>
         </div>
