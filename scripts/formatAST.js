@@ -1,4 +1,29 @@
 const ts = require('typescript');
+
+function findNode(interfaceName, parsedSyntaxTreeResults, kindToMatch = 'InterfaceDeclaration') {
+    const interfaceNode = findInNodeTree(parsedSyntaxTreeResults, interfaceName, kindToMatch);
+    if (!interfaceNode) {
+        throw `Unable to locate ${kindToMatch} ${interfaceName} in AST parsed.`
+    }
+    return interfaceNode;
+}
+
+function findInNodeTree(node, interfaceName, kindToMatch = 'InterfaceDeclaration') {
+    const kind = ts.SyntaxKind[node.kind];
+
+    if (kind == kindToMatch && node && node.name && node.name.escapedText == interfaceName) {
+        return node;
+    }
+    let interfaceNode = undefined;
+    ts.forEachChild(node, n => {
+        if (!interfaceNode) {
+            interfaceNode = findInNodeTree(n, interfaceName, kindToMatch);
+        }
+    });
+
+    return interfaceNode;
+}
+
 // export interface PrinterOptions {
 //     removeComments?: boolean;
 //     newLine?: NewLineKind;
@@ -6,6 +31,13 @@ const ts = require('typescript');
 //     noEmitHelpers?: boolean;
 // }
 const printer = ts.createPrinter({ removeComments: true, omitTrailingSemicolon: true });
+
+function getJsDoc(node) {
+    if (node.jsDoc) {
+        const result = node.jsDoc.map(j => printer.printNode(ts.EmitHint.Unspecified, j)).join('\n');
+        return result;
+    }
+};
 
 /*
  * Convert AST node to string representation used to record type in a JSON file
@@ -65,5 +97,10 @@ module.exports = {
         }
 
         return formatNode;
-    }
+    },
+
+    findNode: findNode,
+    findInNodeTree: findInNodeTree,
+    getJsDoc: getJsDoc
+
 };

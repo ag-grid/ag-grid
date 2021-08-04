@@ -3,55 +3,11 @@ const fs = require('fs');
 const { EOL } = require('os');
 const ts = require('typescript');
 const { ComponentUtil } = require("@ag-grid-community/core");
-const { getFormatterForTS } = require('./../../scripts/formatAST');
+const { getFormatterForTS, findNode } = require('./../../scripts/formatAST');
 
 const formatNode = getFormatterForTS(ts);
 
-// satisfy ag-grid HTMLElement dependencies
-HTMLElement = typeof HTMLElement === 'undefined' ? function() {
-} : HTMLElement;
-HTMLSelectElement = typeof HTMLSelectElement === 'undefined' ? function() {
-} : HTMLSelectElement;
-HTMLInputElement = typeof HTMLInputElement === 'undefined' ? function() {
-} : HTMLInputElement;
-HTMLButtonElement = typeof HTMLButtonElement === 'undefined' ? function() {
-} : HTMLButtonElement;
-MouseEvent = typeof MouseEvent === 'undefined' ? function() {
-} : MouseEvent;
-
-
-function findInterfaceNode(interfaceName, sourceFile) {
-    let parsedSyntaxTreeResults;
-    const src = fs.readFileSync(sourceFile, 'utf8');
-    parsedSyntaxTreeResults = ts.createSourceFile('tempFile.ts', src, ts.ScriptTarget.Latest, true);
-
-    const interfaceNode = findInterfaceInNodeTree(parsedSyntaxTreeResults, interfaceName);
-
-    if (!interfaceNode) {
-        throw `Unable to locate interface '${interfaceName}' in AST parsed from: ${sourceFile}.`
-    }
-
-    return interfaceNode;
-}
-
-
-function findInterfaceInNodeTree(node, interfaceName) {
-    const kind = ts.SyntaxKind[node.kind];
-
-    if (kind == 'InterfaceDeclaration' && node && node.name && node.name.escapedText == interfaceName) {
-        return node;
-    }
-    let interfaceNode = undefined;
-    ts.forEachChild(node, n => {
-        if (!interfaceNode) {
-            interfaceNode = findInterfaceInNodeTree(n, interfaceName);
-        }
-    });
-
-    return interfaceNode;
-}
-
-function extractTypesFromNode(node, typeLookup, eventTypeLookup, publicEventLookup) {
+function extractTypesFromNode(srcFile, node, typeLookup, eventTypeLookup, publicEventLookup) {
     const kind = ts.SyntaxKind[node.kind];
     const name = node && node.name && node.name.escapedText;
     const returnType = node && node.type && node.type.getFullText();
@@ -59,7 +15,7 @@ function extractTypesFromNode(node, typeLookup, eventTypeLookup, publicEventLook
         typeLookup[name] = returnType;
     } else if (kind == 'MethodSignature') {
         if (node.parameters && node.parameters.length > 0) {
-            const methodParams = node.parameters.map(p => `${p.name.escapedText}: ${formatNode(p.type)}`);
+            const methodParams = node.parameters.map(p => `${p.name.escapedText}: ${formatNode(p.type, srcFile)}`);
             typeLookup[name] = `(${methodParams.join(', ')}) => ${returnType}`;
         } else {
             typeLookup[name] = `() => ${returnType}`
@@ -70,11 +26,11 @@ function extractTypesFromNode(node, typeLookup, eventTypeLookup, publicEventLook
             if (node.parameters.length > 1) {
                 throw new Error("Events with more than one parameter will cause issues to the frameworks!");
             }
-            const typeName = formatNode(node.parameters[0].type);
+            const typeName = formatNode(node.parameters[0].type, srcFile);
             eventTypeLookup[name] = typeName;
         }
     };
-    ts.forEachChild(node, n => extractTypesFromNode(n, typeLookup, eventTypeLookup, publicEventLookup));
+    ts.forEachChild(node, n => extractTypesFromNode(srcFile, n, typeLookup, eventTypeLookup, publicEventLookup));
 }
 
 
@@ -101,9 +57,15 @@ function generateAngularInputOutputs(compUtils, typeLookup, eventTypeLookup) {
     return result;
 }
 
+function parseFile(sourceFile) {
+    const src = fs.readFileSync(sourceFile, 'utf8');
+    return ts.createSourceFile('tempFile.ts', src, ts.ScriptTarget.Latest, true);
+}
+
 function getGridPropertiesAndEventsJs() {
-    const filename = "../../community-modules/core/src/ts/entities/gridOptions.ts";
-    const gridOptionsNode = findInterfaceNode('GridOptions', filename);
+    const gridOpsFile = "../../community-modules/core/src/ts/entities/gridOptions.ts";
+    const srcFile = parseFile(gridOpsFile);
+    const gridOptionsNode = findNode('GridOptions', srcFile);
 
     // Apply @Output formatting to public events that are present in this lookup
     const publicEventLookup = {};
@@ -111,7 +73,7 @@ function getGridPropertiesAndEventsJs() {
 
     let typeLookup = {};
     let eventTypeLookup = {};
-    extractTypesFromNode(gridOptionsNode, typeLookup, eventTypeLookup, publicEventLookup);
+    extractTypesFromNode(srcFile, gridOptionsNode, typeLookup, eventTypeLookup, publicEventLookup);
 
     return generateAngularInputOutputs(ComponentUtil, typeLookup, eventTypeLookup);
 }
@@ -129,15 +91,16 @@ function getGridColumnPropertiesJs() {
     ];
 
     const filename = "../../community-modules/core/src/ts/entities/colDef.ts";
-    const abstractColDefNode = findInterfaceNode('AbstractColDef', filename);
-    const colGroupDefNode = findInterfaceNode('ColGroupDef', filename);
-    const colDefNode = findInterfaceNode('ColDef', filename);
+    const srcFile = parseFile(filename);
+    const abstractColDefNode = findNode('AbstractColDef', srcFile);
+    const colGroupDefNode = findNode('ColGroupDef', srcFile);
+    const colDefNode = findNode('ColDef', srcFile);
 
 
     let typeLookup = {};
-    extractTypesFromNode(abstractColDefNode, typeLookup, {}, {});
-    extractTypesFromNode(colGroupDefNode, typeLookup, {}, {});
-    extractTypesFromNode(colDefNode, typeLookup, {}, {});
+    extractTypesFromNode(srcFile, abstractColDefNode, typeLookup, {}, {});
+    extractTypesFromNode(srcFile, colGroupDefNode, typeLookup, {}, {});
+    extractTypesFromNode(srcFile, colDefNode, typeLookup, {}, {});
 
     let result = '';
 
@@ -156,7 +119,7 @@ function getGridColumnPropertiesJs() {
     return result;
 }
 
-const updateGridProperties = (resolve, getGridPropertiesAndEvents) => {
+const updateGridProperties = (getGridPropertiesAndEvents) => {
     // extract the grid properties & events and add them to our angular grid component
     const gridPropertiesAndEvents = getGridPropertiesAndEvents();
     const optionsForGrid = {
@@ -169,15 +132,10 @@ const updateGridProperties = (resolve, getGridPropertiesAndEvents) => {
         .then(filesChecked => {
             const changes = filesChecked.filter(change => change.hasChanged);
             console.log(`Grid Properties: ${changes.length === 0 ? 'No Modified files' : 'Modified files: ' + changes.map(change => change.file).join(', ')}`);
-            resolve();
-        })
-        .catch(error => {
-            console.error('Error occurred:', error);
-            resolve();
         });
 };
 
-const updateColProperties = (resolve, getGridColumnProperties) => {
+const updateColProperties = (getGridColumnProperties) => {
     // extract the grid column properties our angular grid column component
     const gridColumnProperties = getGridColumnProperties();
     const optionsForGridColumn = {
@@ -190,21 +148,18 @@ const updateColProperties = (resolve, getGridColumnProperties) => {
         .then(filesChecked => {
             const changes = filesChecked.filter(change => change.hasChanged);
             console.log(`Column Properties: ${changes.length === 0 ? 'No Modified files' : 'Modified files: ' + changes.map(change => change.file).join(', ')}`);
-            resolve();
-        })
-        .catch(error => {
-            console.error('Error occurred:', error);
-            resolve();
         });
 };
 
-module.exports = {
-    updatePropertiesBuilt: (cb) => {
-        const gridPromise = new Promise(resolve => updateGridProperties(resolve, getGridPropertiesAndEventsJs));
-        const colPromise = new Promise(resolve => updateColProperties(resolve, getGridColumnPropertiesJs));
+updatePropertiesBuilt = () => {
+    updateGridProperties(getGridPropertiesAndEventsJs);
+    updateColProperties(getGridColumnPropertiesJs);
+}
 
-        if (cb) {
-            Promise.all([gridPromise, colPromise]).then(() => cb());
-        }
-    }
-};
+console.log(`--------------------------------------------------------------------------------`);
+console.log(`Generate Angular Component Input / Outputs...`);
+console.log('Using Typescript version: ', ts.version)
+
+updatePropertiesBuilt()
+
+console.log(`--------------------------------------------------------------------------------`);

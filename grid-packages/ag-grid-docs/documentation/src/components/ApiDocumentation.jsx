@@ -618,8 +618,8 @@ function addDocLines(docs, lines) {
     if (!docs || docs.length === 0) {
         return;
     }
-    docs.replace('/**\n *', '/**').split(/\n/g).forEach(s => {
-        lines.push(`  ${s}`);
+    docs.replace('/**\n *', '//').split(/\n/g).forEach(s => {
+        lines.push(`  ${s.replace('*/', '').replace(' *', '//')}`);
     });
 }
 
