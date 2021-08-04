@@ -147,7 +147,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             }
 
             if (atLeastOneChange) {
-                this.setRowTops();
+                this.setRowTopAndRowIndex();
             }
 
         } while (atLeastOneChange);
@@ -155,7 +155,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         return res;
     }
 
-    private setRowTops(): void {
+    private setRowTopAndRowIndex(): void {
         let nextRowTop = 0;
         for (let i = 0; i < this.rowsToDisplay.length; i++) {
 
@@ -175,7 +175,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         }
     }
 
-    private resetRowTops(changedPath: ChangedPath): void {
+    private clearRowTopAndRowIndex(changedPath: ChangedPath): void {
 
         const displayedRowsMapped: RowNodeMap = {};
         this.rowsToDisplay.forEach(rowNode => {
@@ -443,35 +443,25 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
         switch (params.step) {
             case ClientSideRowModelSteps.EVERYTHING:
-                // start = new Date().getTime();
                 this.doRowGrouping(params.groupState, params.rowNodeTransactions, params.rowNodeOrder,
                     changedPath, !!params.afterColumnsChanged);
-            // console.log('rowGrouping = ' + (new Date().getTime() - start));
             case ClientSideRowModelSteps.FILTER:
-                // start = new Date().getTime();
                 this.doFilter(changedPath);
-            // console.log('filter = ' + (new Date().getTime() - start));
             case ClientSideRowModelSteps.PIVOT:
                 this.doPivot(changedPath);
             case ClientSideRowModelSteps.AGGREGATE: // depends on agg fields
-                // start = new Date().getTime();
                 this.doAggregate(changedPath);
-            // console.log('aggregation = ' + (new Date().getTime() - start));
             case ClientSideRowModelSteps.SORT:
-                // start = new Date().getTime();
                 this.doSort(params.rowNodeTransactions, changedPath);
-            // console.log('sort = ' + (new Date().getTime() - start));
             case ClientSideRowModelSteps.MAP:
-                // start = new Date().getTime();
                 this.doRowsToDisplay();
-            // console.log('rowsToDisplay = ' + (new Date().getTime() - start));
         }
 
         // set all row tops to null, then set row tops on all visible rows. if we don't
         // do this, then the algorithm below only sets row tops, old row tops from old rows
         // will still lie around
-        this.setRowTops();
-        this.resetRowTops(changedPath);
+        this.setRowTopAndRowIndex();
+        this.clearRowTopAndRowIndex(changedPath);
 
         const event: ModelUpdatedEvent = {
             type: Events.EVENT_MODEL_UPDATED,
