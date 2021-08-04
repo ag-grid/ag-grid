@@ -16,7 +16,12 @@ const printer = ts.createPrinter({ removeComments: true, omitTrailingSemicolon: 
  * ******* Written for Typescript Version 3.6.5 ********
  */
 function formatNode(node, file, paramNameOnly = false) {
-
+    if(!node){
+        return undefined;
+    }
+    if (!file) {
+        throw new Error('FormatNode called with a null file!')
+    }
     const kind = ts.SyntaxKind[node.kind];
     switch (kind) {
         case 'IndexSignature':
@@ -39,9 +44,6 @@ function formatNode(node, file, paramNameOnly = false) {
                 return formatNode(node.name,file);
             }
         default:
-            if (!file) {
-                console.error('file is null')
-            }
             return printer.printNode(ts.EmitHint.Unspecified, node, file);
     }
 }

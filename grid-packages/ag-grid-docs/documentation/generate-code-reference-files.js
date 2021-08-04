@@ -62,15 +62,21 @@ function findAllInterfacesInNodesTree(node) {
 
     return interfaces;
 }
+// if (node.jsDoc) {
+//     const printer = ts.createPrinter();
+//     const result = node.jsDoc.map(j => printer.printNode(ts.EmitHint.Unspecified, j)).join('\n');
+//     return result;
+// }
 
-function getTsDoc(node) {
+
+function getJsDoc(node) {
     return node.jsDoc && node.jsDoc.length > 0 && node.jsDoc[node.jsDoc.length - 1].comment;
 };
 
-function getArgTypes(parameters) {
+function getArgTypes(parameters, file) {
     const args = {};
     (parameters || []).forEach(p => {
-        args[p.name.escapedText] = formatNode(p.type);
+        args[p.name.escapedText] = formatNode(p.type, file);
     });
     return args;
 }
@@ -79,7 +85,7 @@ function toCamelCase(value) {
     return value[0].toLowerCase() + value.substr(1);
 }
 
-function extractTypesFromNode(node) {
+function extractTypesFromNode(node, srcFile) {
     let nodeMembers = {};
     const kind = ts.SyntaxKind[node.kind];
     let name = node && node.name && node.name.escapedText;
@@ -89,23 +95,23 @@ function extractTypesFromNode(node) {
 
         if (node.type && node.type.parameters) {
             // sendToClipboard?: (params: SendToClipboardParams) => void;
-            const methodArgs = getArgTypes(node.type.parameters);
-            returnType = formatNode(node.type.type);
+            const methodArgs = getArgTypes(node.type.parameters, srcFile);
+            returnType = formatNode(node.type.type, srcFile);
             nodeMembers[name] = {
-                description: getTsDoc(node),
+                description: getJsDoc(node),
                 type: { arguments: methodArgs, returnType }
             };
         } else {
             // i.e colWidth?: number; 
-            nodeMembers[name] = { description: getTsDoc(node), type: { returnType } };
+            nodeMembers[name] = { description: getJsDoc(node), type: { returnType } };
         }
     } else if (kind == 'MethodSignature') {
         // i.e isExternalFilterPresent?(): boolean;
         // i.e doesExternalFilterPass?(node: RowNode): boolean;        
-        const methodArgs = getArgTypes(node.parameters);
+        const methodArgs = getArgTypes(node.parameters, srcFile);
 
         nodeMembers[name] = {
-            description: getTsDoc(node),
+            description: getJsDoc(node),
             type: { arguments: methodArgs, returnType }
         };
 
@@ -143,7 +149,8 @@ function getInterfaces() {
 
         const getAncestors = (child) => {
             let ancestors = [];
-            const parents = extensions[child];
+            const extended = typeof (child) === 'string' ? child : child.extends;
+            const parents = extensions[extended];
             if (parents) {
                 ancestors = [...ancestors, ...parents];
                 parents.forEach(p => {
@@ -153,15 +160,49 @@ function getInterfaces() {
             return ancestors;
         }
 
+        const mergeAncestorProps = (parent, child, getProps) => {
+
+            const props = { ...getProps(child) };
+            let mergedProps = props;
+            // If the parent has a generic params lets apply the child's specific types
+            if (parent.params && parent.params.length > 0) {
+
+                if (child.meta.typeParams) {
+                    child.meta.typeParams.forEach((t, i) => {
+                        Object.entries(props).forEach(([k, v]) => {
+                            delete mergedProps[k];
+                            // Replace the generic params. Regex to make sure you are not just replacing 
+                            // random letters in variable names.
+                            var rep = `(?<!\\w)${t}(?!\\w)`;
+                            var re = new RegExp(rep, "g");
+                            var newKey = k.replace(re, parent.params[i]);
+                            var newValue = v.replace(re, parent.params[i])
+                            mergedProps[newKey] = newValue;
+                        })
+                    })
+                } else {
+                    throw new Error(`Parent interface ${parent.extends} takes generic params: [${parent.params.join()}] but child does not have typeParams.`)
+                }
+            }
+
+            return mergedProps
+        }
+
+
         const allAncestors = getAncestors(i);
         let extendedInterface = interfaces[i];
         allAncestors.forEach(a => {
-            const aI = interfaces[a];
-            if (aI.type) {
-                extendedInterface.type = { ...aI.type, ...extendedInterface.type }
+            const extended = a.extends;
+            let aI = interfaces[extended];
+            if (!aI) {
+                //Check for type params                
+                throw new Error('Missing interface', a)
             }
-            if (aI.docs) {
-                extendedInterface.docs = { ...aI.docs, ...extendedInterface.docs }
+            if (aI && aI.type) {
+                extendedInterface.type = { ...mergeAncestorProps(a, aI, a => a.type), ...extendedInterface.type }
+            }
+            if (aI && aI.docs) {
+                extendedInterface.docs = { ...mergeAncestorProps(a, aI, a => a.docs), ...extendedInterface.docs }
             }
         })
 
@@ -172,11 +213,12 @@ function getInterfaces() {
 
 function getGridOptions() {
     const gridOpsFile = "../../../community-modules/core/src/ts/entities/gridOptions.ts";
-    const gridOptionsNode = findInterfaceNode('GridOptions', parseFile(gridOpsFile));
+    const srcFile = parseFile(gridOpsFile);
+    const gridOptionsNode = findInterfaceNode('GridOptions', srcFile);
 
     let gridOpsMembers = {};
     ts.forEachChild(gridOptionsNode, n => {
-        gridOpsMembers = { ...gridOpsMembers, ...extractTypesFromNode(n) }
+        gridOpsMembers = { ...gridOpsMembers, ...extractTypesFromNode(n, srcFile) }
     });
 
     return gridOpsMembers;
@@ -190,8 +232,8 @@ function writeFormattedFile(dir, filename, data) {
         .pipe(gulp.dest(dir))
 }
 
-function extractInterfaces(parsedSyntaxTreeResults, extension) {
-    const interfaces = findAllInterfacesInNodesTree(parsedSyntaxTreeResults);
+function extractInterfaces(srcFile, extension) {
+    const interfaces = findAllInterfacesInNodesTree(srcFile);
     const iLookup = {};
     interfaces.forEach(node => {
         const name = node && node.name && node.name.escapedText;
@@ -200,15 +242,15 @@ function extractInterfaces(parsedSyntaxTreeResults, extension) {
         if (node.heritageClauses && node.heritageClauses) {
             node.heritageClauses.forEach(h => {
                 if (h.types && h.types.length > 0) {
-                    extension[name] = h.types.map(h => formatNode(h));
+                    extension[name] = h.types.map(h => ({ extends: formatNode(h.expression, srcFile), params: h.typeArguments ? h.typeArguments.map(t => formatNode(t, srcFile)) : undefined }));
                 }
             });
         }
 
         if (kind == 'EnumDeclaration') {
-            iLookup[name] = { meta: { isEnum: true }, type: node.members.map(n => formatNode(n)) }
+            iLookup[name] = { meta: { isEnum: true }, type: node.members.map(n => formatNode(n, srcFile)) }
         } else if (kind == 'TypeAliasDeclaration' && node.type && node.type.types && !node.typeParameters) {
-            iLookup[name] = { meta: { isTypeAlias: true }, type: formatNode(node.type) }
+            iLookup[name] = { meta: { isTypeAlias: true }, type: formatNode(node.type, srcFile) }
         } else {
 
             let isCallSignature = false;
@@ -224,20 +266,20 @@ function extractInterfaces(parsedSyntaxTreeResults, extension) {
                         const arguments = {};
 
                         (p.parameters || []).forEach(callArg => {
-                            arguments[formatNode(callArg.name)] = formatNode(callArg.type);
+                            arguments[formatNode(callArg.name, srcFile)] = formatNode(callArg.type, srcFile);
                         })
 
                         callSignatureMembers = {
                             arguments,
-                            returnType: formatNode(p.type),
+                            returnType: formatNode(p.type, srcFile),
                         }
                     } else {
-                        const name = formatNode(p, true);
-                        const type = formatNode(p.type);
-                        members[name] = type;
-                        const doc = getTsDoc(p);
+                        const propName = formatNode(p, srcFile, true);
+                        const propType = formatNode(p.type, srcFile);
+                        members[propName] = propType;
+                        const doc = getJsDoc(p);
                         if (doc) {
-                            docs[name] = getTsDoc(p);
+                            docs[propName] = getJsDoc(p);
                         }
                     }
 
@@ -259,7 +301,13 @@ function extractInterfaces(parsedSyntaxTreeResults, extension) {
 
             if (node.typeParameters) {
                 const orig = iLookup[name];
-                iLookup[name] = { ...orig, meta: { ...orig.meta, typeParams: node.typeParameters.map(tp => formatNode(tp)) } }
+                iLookup[name] = { ...orig, meta: { ...orig.meta, typeParams: node.typeParameters.map(tp => formatNode(tp, srcFile)) } }
+            }
+
+            const doc = getJsDoc(node);
+            if (doc) {
+                const orig = iLookup[name];
+                iLookup[name] = { ...orig, meta: { ...orig.meta, doc } }
             }
         }
     });
