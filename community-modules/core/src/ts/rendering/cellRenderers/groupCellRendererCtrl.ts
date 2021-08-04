@@ -239,12 +239,15 @@ export class GroupCellRendererCtrl extends BeanStub {
 
     private addGroupValue(): void {
         const params = this.params;
-        const rowGroupColumn = this.displayedGroup.rowGroupColumn;
+        const relatedColumn = this.displayedGroup.rowGroupColumn;
+
         // we try and use the cellRenderer of the column used for the grouping if we can
-        const columnToUse: Column = rowGroupColumn ? rowGroupColumn : params.column!;
-        const groupName = this.params.value;
-        const valueFormatted = columnToUse ?
-            this.valueFormatterService.formatValue(columnToUse, params.node, params.scope, groupName) : null;
+        const columnForFormatting: Column = relatedColumn ? relatedColumn : params.column!;
+        let valueFormatted: string | null = null;
+        if (columnForFormatting) {
+            const groupName = this.params.value;
+            valueFormatted = this.valueFormatterService.formatValue(columnForFormatting, params.node, params.scope, groupName);
+        }
 
         // we don't update the original params, as they could of come through React,
         // as react has RowGroupCellRenderer, which means the params could be props which
@@ -254,18 +257,46 @@ export class GroupCellRendererCtrl extends BeanStub {
                     valueFormatted: valueFormatted
                 };
 
-        const innerCompDetails = paramsAdjusted.fullWidth ?
-                    this.userComponentFactory.getFullWidthGroupRowInnerCellRenderer(
-                                    this.gridOptions.groupRowRendererParams, paramsAdjusted) :
-                    this.getInnerCompDetails(columnToUse.getColDef(), paramsAdjusted);
+        const relatedColDef = relatedColumn ? relatedColumn.getColDef() : undefined;
 
+        const innerCompDetails = this.getInnerCompDetails(paramsAdjusted, relatedColDef);
+        
         const valueWhenNoRenderer = paramsAdjusted.valueFormatted != null ? paramsAdjusted.valueFormatted : paramsAdjusted.value;
         this.comp.setInnerRenderer(innerCompDetails, valueWhenNoRenderer);
     }
 
-    private getInnerCompDetails(relatedColDef: ColDef, // the column this group row is for, eg 'Country'
-                                params: GroupCellRendererParams
-                            ): UserCompDetails | undefined {
+    private addFooterValue(): void {
+        const footerValueGetter = this.params.footerValueGetter;
+        let footerValue = '';
+
+        if (footerValueGetter) {
+            // params is same as we were given, except we set the value as the item to display
+            const paramsClone: any = cloneObject(this.params);
+            paramsClone.value = this.params.value;
+
+            if (typeof footerValueGetter === 'function') {
+                footerValue = footerValueGetter(paramsClone);
+            } else if (typeof footerValueGetter === 'string') {
+                footerValue = this.expressionService.evaluate(footerValueGetter, paramsClone);
+            } else {
+                console.warn('AG Grid: footerValueGetter should be either a function or a string (expression)');
+            }
+        } else {
+            footerValue = 'Total ' + (this.params.value != null ? this.params.value : '');
+        }
+
+        const innerCompDetails = this.getInnerCompDetails(this.params);
+
+        this.comp.setInnerRenderer(innerCompDetails, footerValue);
+    }
+
+    private getInnerCompDetails(params: GroupCellRendererParams, relatedColDef?: ColDef): UserCompDetails | undefined {
+
+        // for full width rows, we don't do any of the below
+        if (params.fullWidth) {
+            return this.userComponentFactory.getFullWidthGroupRowInnerCellRenderer(
+                this.gridOptions.groupRowRendererParams, params);
+        }
 
         // when grouping, the normal case is we use the cell renderer of the grouped column. eg if grouping by country
         // and then rating, we will use the country cell renderer for each country group row and likewise the rating
@@ -293,6 +324,10 @@ export class GroupCellRendererCtrl extends BeanStub {
             return innerCompDetails;
         }
 
+        if (!relatedColDef) {
+            return;
+        }
+
         // otherwise see if we can use the cellRenderer of the column we are grouping by
         const relatedCompDetails = this.userComponentFactory
             .getCellRendererDetails(relatedColDef, params);
@@ -305,8 +340,8 @@ export class GroupCellRendererCtrl extends BeanStub {
         if (isGroupRowRenderer(relatedCompDetails) &&
             relatedColDef.cellRendererParams && 
             relatedColDef.cellRendererParams.innerRenderer) {
-            // EDGE CASE - THIS COMES FROM A COLUMN WHICH HAS BEEN GROUPED DYNAMICALLY, THAT HAS AS RENDERER 'group'
-            // AND HAS A INNER CELL RENDERER
+            // edge case - this comes from a column which has been grouped dynamically, that has a renderer 'group'
+            // and has an inner cell renderer
             const res = this.userComponentFactory.getInnerRendererDetails(relatedColDef.cellRendererParams, params);
             return res;
         }
@@ -497,29 +532,6 @@ export class GroupCellRendererCtrl extends BeanStub {
 
         this.indentClass = 'ag-row-group-indent-' + paddingCount;
         this.comp.addOrRemoveCssClass(this.indentClass, true);
-    }
-
-    private addFooterValue(): void {
-        const footerValueGetter = this.params.footerValueGetter;
-        let footerValue = '';
-
-        if (footerValueGetter) {
-            // params is same as we were given, except we set the value as the item to display
-            const paramsClone: any = cloneObject(this.params);
-            paramsClone.value = this.params.value;
-
-            if (typeof footerValueGetter === 'function') {
-                footerValue = footerValueGetter(paramsClone);
-            } else if (typeof footerValueGetter === 'string') {
-                footerValue = this.expressionService.evaluate(footerValueGetter, paramsClone);
-            } else {
-                console.warn('AG Grid: footerValueGetter should be either a function or a string (expression)');
-            }
-        } else {
-            footerValue = 'Total ' + (this.params.value != null ? this.params.value : '');
-        }
-
-        this.comp.setInnerRenderer(undefined, footerValue);
     }
 
     private addFullWidthRowDraggerIfNeeded(): void {
