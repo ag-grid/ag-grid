@@ -243,13 +243,13 @@ const Property = ({ framework, id, name, definition, config }) => {
 
     const typeUrl = isObject ? `#reference-${id}.${name}` : getTypeUrl(type, framework);
 
-    return <tr>
+    return <tr> 
         <td className={styles['reference__expander-cell']} onClick={() => setExpanded(!isExpanded)} role="presentation">
             {showAdditionalDetails && <div className={styles['reference__expander']}>
                 <svg className={classnames({ 'fa-rotate-90': isExpanded })}><use href="#menu-item" /></svg>
             </div>}
         </td>
-        <td onClick={() => setExpanded(!isExpanded)} role="presentation">
+        <td onClick={() => setExpanded(!isExpanded)} role="presentation"> 
             <code dangerouslySetInnerHTML={{ __html: name }} className={styles['reference__name']}></code>
             <div>
                 {typeUrl ?
@@ -618,27 +618,8 @@ function addDocLines(docs, lines) {
     if (!docs || docs.length === 0) {
         return;
     }
-    // Split on new lines and spaces to nicely break doc strings
-    const split = docs.replace(/\n/g, ' ').split(/\s/);
-    let docLines = [];
-    let currLine = [];
-    let length = 0;
-    split.forEach(s => {
-        length += s.length;
-        if (length > 50) {
-            docLines.push(currLine.join(' '));
-            currLine = [s];
-            length = s.length;
-        }
-        else {
-            currLine.push(s);
-        }
-    });
-    if (currLine.length > 0) {
-        docLines.push(currLine.join(' '));
-    }
-    docLines.forEach(s => {
-        lines.push(`  // ${s}`);
+    docs.replace('/**\n *', '/**').split(/\n/g).forEach(s => {
+        lines.push(`  ${s}`);
     });
 }
 
