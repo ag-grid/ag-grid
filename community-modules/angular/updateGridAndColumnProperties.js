@@ -2,6 +2,10 @@ const replace = require('replace-in-file');
 const fs = require('fs');
 const { EOL } = require('os');
 const ts = require('typescript');
+const { ComponentUtil } = require("@ag-grid-community/core");
+const { getFormatterForTS } = require('./../../scripts/formatAST');
+
+const formatNode = getFormatterForTS(ts);
 
 // satisfy ag-grid HTMLElement dependencies
 HTMLElement = typeof HTMLElement === 'undefined' ? function() {
@@ -54,26 +58,19 @@ function extractTypesFromNode(node, typeLookup, eventTypeLookup, publicEventLook
     if (kind == 'PropertySignature') {
         typeLookup[name] = returnType;
     } else if (kind == 'MethodSignature') {
-        const getParamType = (typeNode) => {
-            switch (ts.SyntaxKind[typeNode.kind]) {
-                case 'ArrayType':
-                    return typeNode.elementType.typeName.escapedText + '[]';
-                case 'AnyKeyword':
-                    return 'any';
-                default:
-                    return typeNode.typeName.escapedText;
-            }
-        }
-
         if (node.parameters && node.parameters.length > 0) {
-            const methodParams = node.parameters.map(p => `${p.name.escapedText}: ${getParamType(p.type)}`);
+            const methodParams = node.parameters.map(p => `${p.name.escapedText}: ${formatNode(p.type)}`);
             typeLookup[name] = `(${methodParams.join(', ')}) => ${returnType}`;
         } else {
             typeLookup[name] = `() => ${returnType}`
         }
 
         if (publicEventLookup[name]) {
-            const typeName = node.parameters[0].type.typeName.escapedText;
+            // Events are assumed to have a single parameter
+            if (node.parameters.length > 1) {
+                throw new Error("Events with more than one parameter will cause issues to the frameworks!");
+            }
+            const typeName = formatNode(node.parameters[0].type);
             eventTypeLookup[name] = typeName;
         }
     };
@@ -105,8 +102,6 @@ function generateAngularInputOutputs(compUtils, typeLookup, eventTypeLookup) {
 }
 
 function getGridPropertiesAndEventsJs() {
-    const { ComponentUtil } = require("@ag-grid-community/core");
-
     const filename = "../../community-modules/core/src/ts/entities/gridOptions.ts";
     const gridOptionsNode = findInterfaceNode('GridOptions', filename);
 

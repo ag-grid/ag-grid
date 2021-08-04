@@ -81,7 +81,9 @@ import {
     ViewportChangedEvent,
     VirtualColumnsChangedEvent,
     VirtualRowRemovedEvent,
-    GridSizeChangedEvent
+    GridSizeChangedEvent,
+    FullWidthCellKeyPressEvent,
+    FullWidthCellKeyDownEvent
 } from "../events";
 import { IComponent } from "../interfaces/iComponent";
 import { ILoadingOverlayComp } from "../rendering/overlays/loadingOverlayComponent";
@@ -99,7 +101,7 @@ export interface GridOptions {
      * If you change the properties on this interface, you must also update PropertyKeys to be consistent. *
      *******************************************************************************************************/
 
-    // set once in init, can never change
+    /** Set once in init, can never change*/
     suppressBrowserResizeObserver?: boolean;
     rowDragManaged?: boolean;
     suppressRowDrag?: boolean;
@@ -469,7 +471,7 @@ export interface GridOptions {
      * as event callbacks are automatically generated.                                                        *
      **********************************************************************************************************/
 
-    // events
+/**  */
     onColumnEverythingChanged?(event: ColumnEverythingChangedEvent): void;
 
     onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent): void;
@@ -520,9 +522,9 @@ export interface GridOptions {
 
     onModelUpdated?(event: ModelUpdatedEvent): void;
 
-    onCellKeyDown?(event: CellKeyDownEvent): void;
+    onCellKeyDown?(event: CellKeyDownEvent | FullWidthCellKeyDownEvent): void;
 
-    onCellKeyPress?(event: CellKeyPressEvent): void;
+    onCellKeyPress?(event: CellKeyPressEvent | FullWidthCellKeyPressEvent): void;
 
     onCellClicked?(event: CellClickedEvent): void;
 
