@@ -72,6 +72,14 @@ pre[class*="language-"] > code {
     color: #7d8b99;
 }
 
+.token.comment,
+.token.block-comment
+{
+    font-size: 0.85rem;
+    opacity: 0.85;
+    color: #7d8b99;
+}
+
 .token.punctuation {
     color: #5f6364;
 }

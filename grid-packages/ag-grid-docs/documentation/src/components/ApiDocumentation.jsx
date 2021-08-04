@@ -151,7 +151,9 @@ const Section = ({ framework, title, properties, config = {}, breadcrumbs = {}, 
             return;
         }
 
-        rows.push(<Property key={name} framework={framework} id={id} name={name} definition={definition} config={config} />);
+        const gridOptionProperty = config.lookups.gridOptions[name];
+
+        rows.push(<Property key={name} framework={framework} id={id} name={name} definition={definition} config={{ ...config, gridOpProp: gridOptionProperty }} />);
 
         if (typeof definition !== 'string' && !definition.description) {
             // store object property to process later
@@ -225,8 +227,8 @@ const Property = ({ framework, id, name, definition, config }) => {
     let type = definition.type;
     let showAdditionalDetails = typeof (type) == 'object';
     if (!type) {
-        // No type specified in the config file so look it up from GridOptions
-        let gridParams = { ...config.lookups.gridOptions[name] };
+        // No type specified in the doc config file so check the GridOptions property
+        let gridParams = config.gridOpProp;
         if (gridParams && gridParams.type) {
             type = gridParams.type;
             const isInterface = config.lookups.interfaces[type.returnType];
@@ -241,20 +243,20 @@ const Property = ({ framework, id, name, definition, config }) => {
 
     const typeUrl = isObject ? `#reference-${id}.${name}` : getTypeUrl(type, framework);
 
-    return <tr>
+    return <tr> 
         <td className={styles['reference__expander-cell']} onClick={() => setExpanded(!isExpanded)} role="presentation">
             {showAdditionalDetails && <div className={styles['reference__expander']}>
                 <svg className={classnames({ 'fa-rotate-90': isExpanded })}><use href="#menu-item" /></svg>
             </div>}
         </td>
-        <td onClick={() => setExpanded(!isExpanded)} role="presentation">
+        <td onClick={() => setExpanded(!isExpanded)} role="presentation"> 
             <code dangerouslySetInnerHTML={{ __html: name }} className={styles['reference__name']}></code>
             <div>
                 {typeUrl ?
-                    <a className={styles['reference__type']} href={typeUrl} target={typeUrl.startsWith('http') ? '_blank' : '_self'} rel="noreferrer">
+                    <a className={styles['reference__property-type']} href={typeUrl} target={typeUrl.startsWith('http') ? '_blank' : '_self'} rel="noreferrer">
                         {isObject ? getInterfaceName(name) : type}
                     </a> :
-                    <span className={styles['reference__type']}>{propertyType}</span>}
+                    <span className={styles['reference__property-type']}>{propertyType}</span>}
             </div>
         </td>
         <td>
@@ -363,14 +365,20 @@ const ObjectCodeSample = ({ framework, id, breadcrumbs, properties }) => {
 
 const getInterfaceName = name => `${name.substr(0, 1).toUpperCase()}${name.substr(1)}`;
 
+const isGridOptionEvent = (gridProp) => (gridProp && gridProp.meta && gridProp.meta.isEvent)
+
 const FunctionCodeSample = ({ framework, name, type, config }) => {
-    const functionName = name.replace(/\([^)]*\)/g, '');
 
     type = type || {};
     let { returnType } = type;
     const returnTypeIsObject = returnType != null && typeof returnType === 'object';
-    const returnTypeInterface = config.lookups.interfaces[returnType];
+    const returnTypeInterface = config.lookups.interfaces[returnType];    
     const isCallSignatureInterface = returnTypeInterface && returnTypeInterface.meta.isCallSignature;
+
+    let functionName = name.replace(/\([^)]*\)/g, '');
+    if (isGridOptionEvent(config.gridOpProp)) {
+        functionName = 'on' + getInterfaceName(functionName);
+    }
 
     let args = {};
     if (type.parameters) {
@@ -465,7 +473,8 @@ const getInterfaceLines = (framework, name, definition, config) => {
 
             // Show interface if we have found one.            
             // Do not show an interface if it has lots of properties. Should be a linked type instead.
-            return interfaceType && numMembers < 12 ? { name: type, interfaceType } : undefined;
+            // Always show event interfaces
+            return interfaceType && (numMembers < 12 || isGridOptionEvent(config.gridOpProp)) ? { name: type, interfaceType } : undefined;
         }).filter(dt => !!dt);
     } else if (
         (typeof (definition) == 'object' && !Array.isArray(definition)) ||
@@ -552,7 +561,12 @@ function getPropertyType(type, config) {
         }
         else if (typeof (type) == 'object') {
             if (type.arguments || type.parameters) {
-                propertyType = 'Function';
+                if (isGridOptionEvent(config.gridOpProp)) {
+                    // If an event show the event type instead of Function
+                    propertyType = Object.values(type.arguments)[0];
+                } else {
+                    propertyType = 'Function';
+                }
             }
             else if (type.returnType) {
                 if (typeof (type.returnType) == 'object') {
@@ -577,24 +591,36 @@ function getPropertyType(type, config) {
 }
 
 function appendInterface(name, interfaceType, framework, allLines) {
+
     const lines = [`interface ${name} {`];
     const properties = Object.entries(interfaceType.type);
     properties.sort(([p1,], [p2,]) => {
-        // Sort alphabetically but with $scope at the end
+        // Push $scope to the end while maintaining original order
         if (p1 === '$scope')
             return 1;
         if (p2 === '$scope')
             return -1;
-        return p1 < p2 ? -1 : 1;
+        return 0;
     });
     properties
         // Only show AngularJS $scope property for Angular or Javascript frameworks
         .filter(([p,]) => p !== '$scope' || (framework === 'angular' || framework === 'javascript'))
         .forEach(([property, type]) => {
+            const docs = interfaceType.docs && interfaceType.docs[property];
+            addDocLines(docs, lines);
         lines.push(`  ${property}: ${getLinkedType(type, framework)};`);
     });
     lines.push('}');
     allLines.push(...lines);
+}
+
+function addDocLines(docs, lines) {
+    if (!docs || docs.length === 0) {
+        return;
+    }
+    docs.replace('/**\n *', '/**').split(/\n/g).forEach(s => {
+        lines.push(`  ${s}`);
+    });
 }
 
 function appendCallSignature(name, interfaceType, framework, allLines) {
