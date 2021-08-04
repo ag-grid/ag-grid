@@ -436,7 +436,7 @@ export class GridBodyScrollFeature extends BeanStub {
         if (!column) { return; }
 
         if (column.isPinned()) {
-            console.warn('calling ensureIndexVisible on a ' + column.getPinned() + ' pinned column doesn\'t make sense for column ' + column.getColId());
+            console.warn('calling ensureColumnVisible on a ' + column.getPinned() + ' pinned column doesn\'t make sense for column ' + column.getColId());
             return;
         }
 

@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useRef, useState, memo, useContext } from 'r
 import { classesList } from '../utils';
 import useReactCommentEffect from '../reactComment';
 import RowComp from './rowComp';
-import { BeansContext } from '../gridComp';
+import { BeansContext } from '../beansContext';
 
 const RowContainerComp = (params: {name: RowContainerName}) => {
 

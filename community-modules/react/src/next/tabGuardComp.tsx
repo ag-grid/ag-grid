@@ -3,7 +3,7 @@ import React, { useRef, useEffect, useState, forwardRef, useImperativeHandle, Re
 import {
     Context, TabGuardCtrl, ITabGuard, GridCtrl
 } from '@ag-grid-community/core';
-import { BeansContext } from './gridComp';
+import { BeansContext } from './beansContext';
 
 export interface TabGuardCompCallback {
     forceFocusOutOfContainer(): void;

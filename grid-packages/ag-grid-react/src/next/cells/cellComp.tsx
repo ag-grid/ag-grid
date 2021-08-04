@@ -4,7 +4,7 @@ import { CssClasses, isComponentStateless } from '../utils';
 import JsEditorComp from './jsEditorComp';
 import PopupEditorComp from './popupEditorComp';
 import useJsCellRenderer from './showJsRenderer';
-import { BeansContext } from '../gridComp';
+import { BeansContext } from '../beansContext';
 
 export enum CellCompState { ShowValue, EditValue }
 

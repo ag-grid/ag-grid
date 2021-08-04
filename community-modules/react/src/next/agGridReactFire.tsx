@@ -8,8 +8,6 @@ import GridComp from './gridComp';
 
 export class AgGridReactFire extends Component<AgReactUiProps, { context: Context | undefined }> {
 
-    private readonly SYNCHRONOUS_CHANGE_PROPERTIES = ['context']
-
     public api!: GridApi;
     public columnApi!: ColumnApi;
 
@@ -88,8 +86,7 @@ export class AgGridReactFire extends Component<AgReactUiProps, { context: Contex
         this.extractGridPropertyChanges(prevProps, nextProps, changes);
         this.extractDeclarativeColDefChanges(nextProps, changes);
 
-        this.processSynchronousChanges(changes);
-        this.processAsynchronousChanges(changes);
+        this.processChanges(changes);
     }
 
     private extractDeclarativeColDefChanges(nextProps: any, changes: any) {
@@ -161,32 +158,9 @@ export class AgGridReactFire extends Component<AgReactUiProps, { context: Contex
         });
     }
 
-    private processSynchronousChanges(changes: any): {} {
-        const asyncChanges = {...changes};
-        if (Object.keys(asyncChanges).length > 0) {
-            const synchronousChanges: { [key: string]: any } = {};
-            this.SYNCHRONOUS_CHANGE_PROPERTIES.forEach((synchronousChangeProperty: string) => {
-                if (asyncChanges[synchronousChangeProperty]) {
-                    synchronousChanges[synchronousChangeProperty] = asyncChanges[synchronousChangeProperty];
-                    delete asyncChanges.context;
-                }
-            })
-
-            if (Object.keys(synchronousChanges).length > 0 && !!this.api) {
-                ComponentUtil.processOnChange(synchronousChanges, this.gridOptions, this.api, this.columnApi)
-            }
-        }
-        return asyncChanges;
-    }
-
-    private processAsynchronousChanges(changes: {}) {
-        if (Object.keys(changes).length > 0) {
-            window.setTimeout(() => {
-                // destroyed?
-                if (this.api) {
-                    ComponentUtil.processOnChange(changes, this.gridOptions, this.api, this.columnApi)
-                }
-            });
+    private processChanges(changes: {}) {
+        if (this.api) {
+            ComponentUtil.processOnChange(changes, this.gridOptions, this.api, this.columnApi)
         }
     }
 

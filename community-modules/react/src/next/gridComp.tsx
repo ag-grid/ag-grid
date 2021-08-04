@@ -10,13 +10,12 @@ import { classesList } from './utils';
 import useReactCommentEffect from './reactComment';
 import TabGuardComp, { TabGuardCompCallback } from './tabGuardComp';
 import GridBodyComp  from './gridBodyComp';
-import { Beans } from '@ag-grid-community/core/dist/cjs/rendering/beans';
+import { Beans } from '@ag-grid-community/core';
+import { BeansContext } from './beansContext';
 
 interface GridCompProps {
     context: Context;
 }
-
-export const BeansContext = React.createContext<Beans>({} as Beans);
 
 const GridComp = ({ context }: GridCompProps) => {
 

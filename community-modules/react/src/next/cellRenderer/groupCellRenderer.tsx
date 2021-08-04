@@ -1,6 +1,6 @@
 import { GroupCellRendererCtrl, GroupCellRendererParams, IGroupCellRenderer, UserCompDetails } from "@ag-grid-community/core";
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { BeansContext } from "../gridComp";
+import { BeansContext } from "../beansContext";
 import { showJsComp } from "../jsComp";
 import { CssClasses } from "../utils";
 

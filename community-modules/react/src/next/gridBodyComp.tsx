@@ -10,7 +10,7 @@ import {
 import { classesList } from './utils';
 import RowContainerComp  from './rows/rowContainerComp';
 import useReactCommentEffect from './reactComment';
-import { BeansContext } from './gridComp';
+import { BeansContext } from './beansContext';
 
 interface SectionProperties {
     section: React.RefObject<HTMLDivElement>;

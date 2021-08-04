@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState, useMemo, memo, useContext } from 'r
 import CellComp from '../cells/cellComp';
 import { showJsComp } from '../jsComp';
 import { CssClasses } from '../utils';
-import { BeansContext } from '../gridComp';
+import { BeansContext } from '../beansContext';
 
 interface CellCtrls {
     list: CellCtrl[],

@@ -4,44 +4,20 @@ const glob = require('glob');
 const gulp = require('gulp');
 const prettier = require('gulp-prettier');
 const { ComponentUtil } = require("@ag-grid-community/core");
-const { getFormatterForTS } = require('../../../scripts/formatAST');
+const { getFormatterForTS, findNode, getJsDoc } = require('../../../scripts/formatAST');
 
 const formatNode = getFormatterForTS(ts);
 
 const EVENT_LOOKUP = new Set(ComponentUtil.getEventCallbacks());
 
-function findInterfaceNode(interfaceName, parsedSyntaxTreeResults) {
-    const interfaceNode = findInterfaceInNodeTree(parsedSyntaxTreeResults, interfaceName);
-    if (!interfaceNode) {
-        throw `Unable to locate interface '${interfaceName}' in AST parsed from: ${sourceFile}.`
-    }
-    return interfaceNode;
-}
-
-function findInterfaceInNodeTree(node, interfaceName) {
-    const kind = ts.SyntaxKind[node.kind];
-
-    if (kind == 'InterfaceDeclaration' && node && node.name && node.name.escapedText == interfaceName) {
-        return node;
-    }
-    let interfaceNode = undefined;
-    ts.forEachChild(node, n => {
-        if (!interfaceNode) {
-            interfaceNode = findInterfaceInNodeTree(n, interfaceName);
-        }
-    });
-
-    return interfaceNode;
-}
-
-function findAllInterfacesInNodesTree(node) {
+function findAllInNodesTree(node) {
     const kind = ts.SyntaxKind[node.kind];
     let interfaces = [];
     if (kind == 'InterfaceDeclaration' || kind == 'EnumDeclaration' || kind == 'TypeAliasDeclaration') {
         interfaces.push(node);
     }
     ts.forEachChild(node, n => {
-        const nodeInterfaces = findAllInterfacesInNodesTree(n);
+        const nodeInterfaces = findAllInNodesTree(n);
         if (nodeInterfaces.length > 0) {
             interfaces = [...interfaces, ...nodeInterfaces];
         }
@@ -50,18 +26,11 @@ function findAllInterfacesInNodesTree(node) {
     return interfaces;
 }
 
-function getJsDoc(node) {
-    if (node.jsDoc) {
-        const printer = ts.createPrinter();
-        const result = node.jsDoc.map(j => printer.printNode(ts.EmitHint.Unspecified, j)).join('\n');
-        return result;
-    }
-};
-
 function getArgTypes(parameters, file) {
     const args = {};
-    (parameters || []).forEach(p => {
-        args[p.name.escapedText] = formatNode(p.type, file);
+    (parameters || []).forEach(p => {        
+        const initValue = formatNode(p.initializer, file);
+        args[p.name.escapedText] = `${formatNode(p.type, file)}${initValue ? ` = ${initValue}` : ''}`;
     });
     return args;
 }
@@ -109,6 +78,26 @@ function extractTypesFromNode(node, srcFile) {
             nodeMembers[name] = { ...nodeMembers[name], meta: { isEvent: true, name } };
         }
 
+    }
+    return nodeMembers;
+}
+
+
+function extractMethodsFromNode(node, srcFile) {
+    let nodeMembers = {};
+    const kind = ts.SyntaxKind[node.kind];
+    let name = node && node.name && node.name.escapedText;
+    let returnType = node && node.type && node.type.getFullText().trim();
+
+    if (kind == 'MethodDeclaration') {
+        // i.e isExternalFilterPresent?(): boolean;
+        // i.e doesExternalFilterPass?(node: RowNode): boolean;        
+        const methodArgs = getArgTypes(node.parameters, srcFile);
+
+        nodeMembers[name] = {
+            description: getJsDoc(node),
+            type: { arguments: methodArgs, returnType }
+        };
     }
     return nodeMembers;
 }
@@ -199,7 +188,7 @@ function getInterfaces() {
 function getGridOptions() {
     const gridOpsFile = "../../../community-modules/core/src/ts/entities/gridOptions.ts";
     const srcFile = parseFile(gridOpsFile);
-    const gridOptionsNode = findInterfaceNode('GridOptions', srcFile);
+    const gridOptionsNode = findNode('GridOptions', srcFile);
 
     let gridOpsMembers = {};
     ts.forEachChild(gridOptionsNode, n => {
@@ -207,6 +196,19 @@ function getGridOptions() {
     });
 
     return gridOpsMembers;
+}
+
+function getGridApi() {
+    const gridApiFile = "../../../community-modules/core/src/ts/gridApi.ts";
+    const srcFile = parseFile(gridApiFile);
+    const gridApiNode = findNode('GridApi', srcFile, 'ClassDeclaration');
+
+    let gridApiMembers = {};
+    ts.forEachChild(gridApiNode, n => {
+        gridApiMembers = { ...gridApiMembers, ...extractMethodsFromNode(n, srcFile) }
+    });
+
+    return gridApiMembers;
 }
 
 function writeFormattedFile(dir, filename, data) {
@@ -218,7 +220,7 @@ function writeFormattedFile(dir, filename, data) {
 }
 
 function extractInterfaces(srcFile, extension) {
-    const interfaces = findAllInterfacesInNodesTree(srcFile);
+    const interfaces = findAllInNodesTree(srcFile);
     const iLookup = {};
     interfaces.forEach(node => {
         const name = node && node.name && node.name.escapedText;
@@ -248,11 +250,7 @@ function extractInterfaces(srcFile, extension) {
                     isCallSignature = isCallSignature || ts.SyntaxKind[p.kind] == 'CallSignature';
                     if (isCallSignature) {
 
-                        const arguments = {};
-
-                        (p.parameters || []).forEach(callArg => {
-                            arguments[formatNode(callArg.name, srcFile)] = formatNode(callArg.type, srcFile);
-                        })
+                        const arguments = getArgTypes(p.parameters, srcFile);                     
 
                         callSignatureMembers = {
                             arguments,
@@ -299,30 +297,17 @@ function extractInterfaces(srcFile, extension) {
     return iLookup;
 }
 
-const generateMetaFiles = (resolve) => {
+const generateMetaFiles = () => {
     writeFormattedFile('./doc-pages/grid-api/', 'grid-options.json', getGridOptions());
     writeFormattedFile('./doc-pages/grid-api/', 'interfaces.json', getInterfaces());
-    resolve()
+    writeFormattedFile('./doc-pages/grid-api/', 'grid-api.json', getGridApi());
 };
-
-const generateCodeReferenceFiles = () => {
-    return new Promise(resolve => generateMetaFiles(resolve));
-}
 
 console.log(`--------------------------------------------------------------------------------`);
 console.log(`Generate docs reference files...`);
 console.log('Using Typescript version: ', ts.version)
 
-const success = [
-    generateCodeReferenceFiles(),
-].every(x => x);
-
-if (success) {
-    console.log(`Finished!`);
-} else {
-    console.error('Failed.');
-    process.exitCode = 1;
-}
+generateMetaFiles()
 
 console.log(`--------------------------------------------------------------------------------`);
 

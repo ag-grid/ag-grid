@@ -1,0 +1,1129 @@
+{
+  "registerOverlayWrapperComp": {
+    "type": {
+      "arguments": { "overlayWrapperComp": "OverlayWrapperComponent" },
+      "returnType": "void"
+    }
+  },
+  "registerHeaderRootComp": {
+    "type": {
+      "arguments": { "headerRootComp": "HeaderRootComp" },
+      "returnType": "void"
+    }
+  },
+  "registerSideBarComp": {
+    "type": { "arguments": { "sideBarComp": "ISideBar" }, "returnType": "void" }
+  },
+  "init": { "type": { "arguments": {}, "returnType": "void" } },
+  "___getAlignedGridService": {
+    "description": "/**\n * Used internally by grid. Not intended to be used by the client. Interface may change between releases. */",
+    "type": { "arguments": {}, "returnType": "AlignedGridsService" }
+  },
+  "addDetailGridInfo": {
+    "type": {
+      "arguments": { "id": "string", "gridInfo": "DetailGridInfo" },
+      "returnType": "void"
+    }
+  },
+  "removeDetailGridInfo": {
+    "type": { "arguments": { "id": "string" }, "returnType": "void" }
+  },
+  "getDetailGridInfo": {
+    "type": {
+      "arguments": { "id": "string" },
+      "returnType": "DetailGridInfo | undefined"
+    }
+  },
+  "forEachDetailGridInfo": {
+    "type": {
+      "arguments": {
+        "callback": "(gridInfo: DetailGridInfo, index: number) => void"
+      }
+    }
+  },
+  "getDataAsCsv": {
+    "type": {
+      "arguments": { "params": "CsvExportParams" },
+      "returnType": "string | undefined"
+    }
+  },
+  "exportDataAsCsv": {
+    "type": {
+      "arguments": { "params": "CsvExportParams" },
+      "returnType": "void"
+    }
+  },
+  "getDataAsExcel": {
+    "type": {
+      "arguments": { "params": "ExcelExportParams" },
+      "returnType": "string | Blob | undefined"
+    }
+  },
+  "exportDataAsExcel": {
+    "type": {
+      "arguments": { "params": "ExcelExportParams" },
+      "returnType": "void"
+    }
+  },
+  "getSheetDataForExcel": {
+    "type": {
+      "arguments": { "params": "ExcelExportParams" },
+      "returnType": "string | undefined"
+    }
+  },
+  "getMultipleSheetsAsExcel": {
+    "type": {
+      "arguments": { "params": "ExcelExportMultipleSheetParams" },
+      "returnType": "Blob | undefined"
+    }
+  },
+  "exportMultipleSheetsAsExcel": {
+    "type": {
+      "arguments": { "params": "ExcelExportMultipleSheetParams" },
+      "returnType": "void"
+    }
+  },
+  "setEnterpriseDatasource": {
+    "description": "/**\n * @deprecated\n */",
+    "type": { "arguments": { "datasource": "IServerSideDatasource" } }
+  },
+  "setGridAriaProperty": {
+    "type": {
+      "arguments": { "property": "string", "value": "string | null" },
+      "returnType": "void"
+    }
+  },
+  "setServerSideDatasource": {
+    "type": { "arguments": { "datasource": "IServerSideDatasource" } }
+  },
+  "setDatasource": { "type": { "arguments": { "datasource": "IDatasource" } } },
+  "setViewportDatasource": {
+    "type": { "arguments": { "viewportDatasource": "IViewportDatasource" } }
+  },
+  "setRowData": { "type": { "arguments": { "rowData": "any[]" } } },
+  "setFloatingTopRowData": {
+    "description": "/**\n * @deprecated\n */",
+    "type": { "arguments": { "rows": "any[]" }, "returnType": "void" }
+  },
+  "setFloatingBottomRowData": {
+    "description": "/**\n * @deprecated\n */",
+    "type": { "arguments": { "rows": "any[]" }, "returnType": "void" }
+  },
+  "getFloatingTopRowCount": {
+    "description": "/**\n * @deprecated\n */",
+    "type": { "arguments": {}, "returnType": "number" }
+  },
+  "getFloatingBottomRowCount": {
+    "description": "/**\n * @deprecated\n */",
+    "type": { "arguments": {}, "returnType": "number" }
+  },
+  "getFloatingTopRow": {
+    "description": "/**\n * @deprecated\n */",
+    "type": { "arguments": { "index": "number" }, "returnType": "RowNode" }
+  },
+  "getFloatingBottomRow": {
+    "description": "/**\n * @deprecated\n */",
+    "type": { "arguments": { "index": "number" }, "returnType": "RowNode" }
+  },
+  "setPinnedTopRowData": {
+    "type": { "arguments": { "rows": "any[]" }, "returnType": "void" }
+  },
+  "setPinnedBottomRowData": {
+    "type": { "arguments": { "rows": "any[]" }, "returnType": "void" }
+  },
+  "getPinnedTopRowCount": {
+    "type": { "arguments": {}, "returnType": "number" }
+  },
+  "getPinnedBottomRowCount": {
+    "type": { "arguments": {}, "returnType": "number" }
+  },
+  "getPinnedTopRow": {
+    "type": { "arguments": { "index": "number" }, "returnType": "RowNode" }
+  },
+  "getPinnedBottomRow": {
+    "type": { "arguments": { "index": "number" }, "returnType": "RowNode" }
+  },
+  "setColumnDefs": {
+    "type": {
+      "arguments": {
+        "colDefs": "(ColDef | ColGroupDef)[]",
+        "source": "ColumnEventType = \"api\""
+      }
+    }
+  },
+  "setAutoGroupColumnDef": {
+    "type": {
+      "arguments": { "colDef": "ColDef", "source": "ColumnEventType = \"api\"" }
+    }
+  },
+  "expireValueCache": { "type": { "arguments": {}, "returnType": "void" } },
+  "getVerticalPixelRange": {
+    "type": {
+      "arguments": {},
+      "returnType": "{ top: number, bottom: number; }"
+    }
+  },
+  "getHorizontalPixelRange": {
+    "type": {
+      "arguments": {},
+      "returnType": "{ left: number, right: number; }"
+    }
+  },
+  "setAlwaysShowHorizontalScroll": {
+    "type": { "arguments": { "show": "boolean" } }
+  },
+  "setAlwaysShowVerticalScroll": {
+    "type": { "arguments": { "show": "boolean" } }
+  },
+  "refreshToolPanel": { "type": { "arguments": {}, "returnType": "void" } },
+  "refreshCells": {
+    "type": {
+      "arguments": { "params": "RefreshCellsParams = {}" },
+      "returnType": "void"
+    }
+  },
+  "flashCells": {
+    "type": {
+      "arguments": { "params": "FlashCellsParams = {}" },
+      "returnType": "void"
+    }
+  },
+  "redrawRows": {
+    "type": {
+      "arguments": { "params": "RedrawRowsParams = {}" },
+      "returnType": "void"
+    }
+  },
+  "refreshView": {
+    "description": "/**\n * @deprecated\n */",
+    "type": { "arguments": {} }
+  },
+  "refreshRows": {
+    "description": "/**\n * @deprecated\n */",
+    "type": { "arguments": { "rowNodes": "RowNode[]" }, "returnType": "void" }
+  },
+  "rowDataChanged": {
+    "description": "/**\n * @deprecated\n */",
+    "type": { "arguments": { "rows": "any" } }
+  },
+  "softRefreshView": {
+    "description": "/**\n * @deprecated\n */",
+    "type": { "arguments": {} }
+  },
+  "refreshGroupRows": {
+    "description": "/**\n * @deprecated\n */",
+    "type": { "arguments": {} }
+  },
+  "setFunctionsReadOnly": {
+    "type": { "arguments": { "readOnly": "boolean" } }
+  },
+  "refreshHeader": { "type": { "arguments": {} } },
+  "isAnyFilterPresent": {
+    "type": { "arguments": {}, "returnType": "boolean" }
+  },
+  "isAdvancedFilterPresent": {
+    "description": "/**\n * @deprecated\n */",
+    "type": { "arguments": {}, "returnType": "boolean" }
+  },
+  "isColumnFilterPresent": {
+    "type": { "arguments": {}, "returnType": "boolean" }
+  },
+  "isQuickFilterPresent": {
+    "type": { "arguments": {}, "returnType": "boolean" }
+  },
+  "getModel": { "type": { "arguments": {}, "returnType": "IRowModel" } },
+  "setRowNodeExpanded": {
+    "type": {
+      "arguments": { "rowNode": "RowNode", "expanded": "boolean" },
+      "returnType": "void"
+    }
+  },
+  "onGroupExpandedOrCollapsed": {
+    "type": { "arguments": { "deprecated_refreshFromIndex": "any" } }
+  },
+  "refreshInMemoryRowModel": {
+    "type": { "arguments": { "step": "string" }, "returnType": "any" }
+  },
+  "refreshClientSideRowModel": {
+    "type": { "arguments": { "step": "string" }, "returnType": "any" }
+  },
+  "isAnimationFrameQueueEmpty": {
+    "type": { "arguments": {}, "returnType": "boolean" }
+  },
+  "flushAllAnimationFrames": {
+    "type": { "arguments": {}, "returnType": "void" }
+  },
+  "getRowNode": {
+    "type": { "arguments": { "id": "string" }, "returnType": "RowNode | null" }
+  },
+  "getSizesForCurrentTheme": { "type": { "arguments": {} } },
+  "expandAll": { "type": { "arguments": {} } },
+  "collapseAll": { "type": { "arguments": {} } },
+  "getToolPanelInstance": {
+    "type": {
+      "arguments": { "id": "string" },
+      "returnType": "IToolPanel | undefined"
+    }
+  },
+  "addVirtualRowListener": {
+    "type": {
+      "arguments": {
+        "eventName": "string",
+        "rowIndex": "number",
+        "callback": "Function"
+      }
+    }
+  },
+  "addRenderedRowListener": {
+    "type": {
+      "arguments": {
+        "eventName": "string",
+        "rowIndex": "number",
+        "callback": "Function"
+      }
+    }
+  },
+  "setQuickFilter": {
+    "type": { "arguments": { "newFilter": "any" }, "returnType": "void" }
+  },
+  "selectIndex": {
+    "type": {
+      "arguments": {
+        "index": "any",
+        "tryMulti": "any",
+        "suppressEvents": "any"
+      }
+    }
+  },
+  "deselectIndex": {
+    "type": {
+      "arguments": { "index": "number", "suppressEvents": "boolean = false" }
+    }
+  },
+  "selectNode": {
+    "type": {
+      "arguments": {
+        "node": "RowNode",
+        "tryMulti": "boolean = false",
+        "suppressEvents": "boolean = false"
+      }
+    }
+  },
+  "deselectNode": {
+    "type": {
+      "arguments": { "node": "RowNode", "suppressEvents": "boolean = false" }
+    }
+  },
+  "selectAll": { "type": { "arguments": {} } },
+  "deselectAll": { "type": { "arguments": {} } },
+  "selectAllFiltered": { "type": { "arguments": {} } },
+  "deselectAllFiltered": { "type": { "arguments": {} } },
+  "recomputeAggregates": { "type": { "arguments": {}, "returnType": "void" } },
+  "sizeColumnsToFit": { "type": { "arguments": {} } },
+  "showLoadingOverlay": { "type": { "arguments": {}, "returnType": "void" } },
+  "showNoRowsOverlay": { "type": { "arguments": {}, "returnType": "void" } },
+  "hideOverlay": { "type": { "arguments": {}, "returnType": "void" } },
+  "isNodeSelected": { "type": { "arguments": { "node": "any" } } },
+  "getSelectedNodesById": {
+    "type": {
+      "arguments": {},
+      "returnType": "{ [nodeId: number]: RowNode; } | null"
+    }
+  },
+  "getSelectedNodes": {
+    "type": { "arguments": {}, "returnType": "RowNode[]" }
+  },
+  "getSelectedRows": { "type": { "arguments": {}, "returnType": "any[]" } },
+  "getBestCostNodeSelection": { "type": { "arguments": {} } },
+  "getRenderedNodes": { "type": { "arguments": {} } },
+  "ensureColIndexVisible": { "type": { "arguments": { "index": "any" } } },
+  "ensureColumnVisible": {
+    "type": { "arguments": { "key": "string | Column" } }
+  },
+  "ensureIndexVisible": {
+    "type": { "arguments": { "index": "any", "position": "string | null" } }
+  },
+  "ensureNodeVisible": {
+    "type": {
+      "arguments": { "comparator": "any", "position": "string | null = null" }
+    }
+  },
+  "forEachLeafNode": {
+    "type": { "arguments": { "callback": "(rowNode: RowNode) => void" } }
+  },
+  "forEachNode": {
+    "type": {
+      "arguments": { "callback": "(rowNode: RowNode, index: number) => void" }
+    }
+  },
+  "forEachNodeAfterFilter": {
+    "type": {
+      "arguments": { "callback": "(rowNode: RowNode, index: number) => void" }
+    }
+  },
+  "forEachNodeAfterFilterAndSort": {
+    "type": {
+      "arguments": { "callback": "(rowNode: RowNode, index: number) => void" }
+    }
+  },
+  "getFilterApiForColDef": {
+    "type": { "arguments": { "colDef": "any" }, "returnType": "any" }
+  },
+  "getFilterInstance": {
+    "type": {
+      "arguments": {
+        "key": "string | Column",
+        "callback": "(filter: IFilterComp) => void"
+      },
+      "returnType": "IFilterComp | null | undefined"
+    }
+  },
+  "getFilterApi": { "type": { "arguments": { "key": "string | Column" } } },
+  "destroyFilter": { "type": { "arguments": { "key": "string | Column" } } },
+  "getStatusPanel": {
+    "type": {
+      "arguments": { "key": "string" },
+      "returnType": "IStatusPanelComp | undefined"
+    }
+  },
+  "getColumnDef": { "type": { "arguments": { "key": "string | Column" } } },
+  "getColumnDefs": {
+    "type": { "arguments": {}, "returnType": "(ColDef | ColGroupDef)[]" }
+  },
+  "onFilterChanged": { "type": { "arguments": {} } },
+  "onSortChanged": { "type": { "arguments": {} } },
+  "setSortModel": {
+    "type": {
+      "arguments": { "sortModel": "any", "source": "ColumnEventType = \"api\"" }
+    }
+  },
+  "getSortModel": { "type": { "arguments": {} } },
+  "setFilterModel": { "type": { "arguments": { "model": "any" } } },
+  "getFilterModel": { "type": { "arguments": {} } },
+  "getFocusedCell": {
+    "type": { "arguments": {}, "returnType": "CellPosition | null" }
+  },
+  "clearFocusedCell": { "type": { "arguments": {}, "returnType": "void" } },
+  "setFocusedCell": {
+    "type": {
+      "arguments": {
+        "rowIndex": "number",
+        "colKey": "string | Column",
+        "floating": "string"
+      }
+    }
+  },
+  "setSuppressRowDrag": {
+    "type": { "arguments": { "value": "boolean" }, "returnType": "void" }
+  },
+  "setSuppressMoveWhenRowDragging": {
+    "type": { "arguments": { "value": "boolean" }, "returnType": "void" }
+  },
+  "setSuppressRowClickSelection": {
+    "type": { "arguments": { "value": "boolean" }, "returnType": "void" }
+  },
+  "addRowDropZone": {
+    "type": {
+      "arguments": { "params": "RowDropZoneParams" },
+      "returnType": "void"
+    }
+  },
+  "removeRowDropZone": {
+    "type": {
+      "arguments": { "params": "RowDropZoneParams" },
+      "returnType": "void"
+    }
+  },
+  "getRowDropZoneParams": {
+    "type": {
+      "arguments": { "events": "RowDropZoneEvents" },
+      "returnType": "RowDropZoneParams"
+    }
+  },
+  "setHeaderHeight": { "type": { "arguments": { "headerHeight": "number" } } },
+  "setDomLayout": { "type": { "arguments": { "domLayout": "string" } } },
+  "setEnableCellTextSelection": {
+    "type": { "arguments": { "selectable": "boolean" } }
+  },
+  "setFillHandleDirection": {
+    "type": { "arguments": { "direction": "'x' | 'y' | 'xy'" } }
+  },
+  "setGroupHeaderHeight": {
+    "type": { "arguments": { "headerHeight": "number" } }
+  },
+  "setFloatingFiltersHeight": {
+    "type": { "arguments": { "headerHeight": "number" } }
+  },
+  "setPivotGroupHeaderHeight": {
+    "type": { "arguments": { "headerHeight": "number" } }
+  },
+  "setIsExternalFilterPresent": {
+    "type": {
+      "arguments": { "isExternalFilterPresentFunc": "() => boolean" },
+      "returnType": "void"
+    }
+  },
+  "setDoesExternalFilterPass": {
+    "type": {
+      "arguments": {
+        "doesExternalFilterPassFunc": "(node: RowNode) => boolean"
+      },
+      "returnType": "void"
+    }
+  },
+  "setNavigateToNextCell": {
+    "type": {
+      "arguments": {
+        "navigateToNextCellFunc": "(params: NavigateToNextCellParams) => CellPosition"
+      },
+      "returnType": "void"
+    }
+  },
+  "setTabToNextCell": {
+    "type": {
+      "arguments": {
+        "tabToNextCellFunc": "(params: TabToNextCellParams) => CellPosition"
+      },
+      "returnType": "void"
+    }
+  },
+  "setTabToNextHeader": {
+    "type": {
+      "arguments": {
+        "tabToNextHeaderFunc": "(params: TabToNextHeaderParams) => HeaderPosition"
+      },
+      "returnType": "void"
+    }
+  },
+  "setNavigateToNextHeader": {
+    "type": {
+      "arguments": {
+        "navigateToNextHeaderFunc": "(params: NavigateToNextHeaderParams) => HeaderPosition"
+      },
+      "returnType": "void"
+    }
+  },
+  "setGroupRowAggNodes": {
+    "type": {
+      "arguments": { "groupRowAggNodesFunc": "(nodes: RowNode[]) => any" },
+      "returnType": "void"
+    }
+  },
+  "setGetBusinessKeyForNode": {
+    "type": {
+      "arguments": {
+        "getBusinessKeyForNodeFunc": "(nodes: RowNode) => string"
+      },
+      "returnType": "void"
+    }
+  },
+  "setGetChildCount": {
+    "type": {
+      "arguments": { "getChildCountFunc": "(dataItem: any) => number" },
+      "returnType": "void"
+    }
+  },
+  "setProcessRowPostCreate": {
+    "type": {
+      "arguments": {
+        "processRowPostCreateFunc": "(params: ProcessRowParams) => void"
+      },
+      "returnType": "void"
+    }
+  },
+  "setGetRowNodeId": {
+    "type": {
+      "arguments": { "getRowNodeIdFunc": "GetRowNodeIdFunc" },
+      "returnType": "void"
+    }
+  },
+  "setGetRowClass": {
+    "type": {
+      "arguments": {
+        "rowClassFunc": "(params: RowClassParams) => string | string[]"
+      },
+      "returnType": "void"
+    }
+  },
+  "setIsFullWidthCell": {
+    "type": {
+      "arguments": { "isFullWidthCellFunc": "(rowNode: RowNode) => boolean" },
+      "returnType": "void"
+    }
+  },
+  "setIsRowSelectable": {
+    "type": {
+      "arguments": { "isRowSelectableFunc": "IsRowSelectable" },
+      "returnType": "void"
+    }
+  },
+  "setIsRowMaster": {
+    "type": {
+      "arguments": { "isRowMasterFunc": "IsRowMaster" },
+      "returnType": "void"
+    }
+  },
+  "setPostSort": {
+    "type": {
+      "arguments": { "postSortFunc": "(nodes: RowNode[]) => void" },
+      "returnType": "void"
+    }
+  },
+  "setGetDocument": {
+    "type": {
+      "arguments": { "getDocumentFunc": "() => Document" },
+      "returnType": "void"
+    }
+  },
+  "setGetContextMenuItems": {
+    "type": {
+      "arguments": { "getContextMenuItemsFunc": "GetContextMenuItems" },
+      "returnType": "void"
+    }
+  },
+  "setGetMainMenuItems": {
+    "type": {
+      "arguments": { "getMainMenuItemsFunc": "GetMainMenuItems" },
+      "returnType": "void"
+    }
+  },
+  "setProcessCellForClipboard": {
+    "type": {
+      "arguments": {
+        "processCellForClipboardFunc": "(params: ProcessCellForExportParams) => any"
+      },
+      "returnType": "void"
+    }
+  },
+  "setSendToClipboard": {
+    "type": {
+      "arguments": {
+        "sendToClipboardFunc": "(params: {\n    data: string;\n}) => void"
+      },
+      "returnType": "void"
+    }
+  },
+  "setProcessCellFromClipboard": {
+    "type": {
+      "arguments": {
+        "processCellFromClipboardFunc": "(params: ProcessCellForExportParams) => any"
+      },
+      "returnType": "void"
+    }
+  },
+  "setProcessSecondaryColDef": {
+    "type": {
+      "arguments": { "processSecondaryColDefFunc": "(colDef: ColDef) => void" },
+      "returnType": "void"
+    }
+  },
+  "setProcessSecondaryColGroupDef": {
+    "type": {
+      "arguments": {
+        "processSecondaryColGroupDefFunc": "(colDef: ColDef) => void"
+      },
+      "returnType": "void"
+    }
+  },
+  "setPostProcessPopup": {
+    "type": {
+      "arguments": {
+        "postProcessPopupFunc": "(params: PostProcessPopupParams) => void"
+      },
+      "returnType": "void"
+    }
+  },
+  "setDefaultGroupOrderComparator": {
+    "type": {
+      "arguments": {
+        "defaultGroupOrderComparatorFunc": "(nodeA: RowNode, nodeB: RowNode) => number"
+      },
+      "returnType": "void"
+    }
+  },
+  "setProcessChartOptions": {
+    "type": {
+      "arguments": {
+        "processChartOptionsFunc": "(params: ProcessChartOptionsParams) => ChartOptions<any>"
+      },
+      "returnType": "void"
+    }
+  },
+  "setGetChartToolbarItems": {
+    "type": {
+      "arguments": { "getChartToolbarItemsFunc": "GetChartToolbarItems" },
+      "returnType": "void"
+    }
+  },
+  "setPaginationNumberFormatter": {
+    "type": {
+      "arguments": {
+        "paginationNumberFormatterFunc": "(params: PaginationNumberFormatterParams) => string"
+      },
+      "returnType": "void"
+    }
+  },
+  "setGetServerSideStoreParams": {
+    "type": {
+      "arguments": {
+        "getServerSideStoreParamsFunc": "(params: GetServerSideStoreParamsParams) => ServerSideStoreParams"
+      },
+      "returnType": "void"
+    }
+  },
+  "setIsServerSideGroupOpenByDefault": {
+    "type": {
+      "arguments": {
+        "isServerSideGroupOpenByDefaultFunc": "(params: IsServerSideGroupOpenByDefaultParams) => boolean"
+      },
+      "returnType": "void"
+    }
+  },
+  "setIsApplyServerSideTransaction": {
+    "type": {
+      "arguments": {
+        "isApplyServerSideTransactionFunc": "IsApplyServerSideTransaction"
+      },
+      "returnType": "void"
+    }
+  },
+  "setIsServerSideGroup": {
+    "type": {
+      "arguments": { "isServerSideGroupFunc": "IsServerSideGroup" },
+      "returnType": "void"
+    }
+  },
+  "setGetServerSideGroupKey": {
+    "type": {
+      "arguments": { "getServerSideGroupKeyFunc": "GetServerSideGroupKey" },
+      "returnType": "void"
+    }
+  },
+  "setGetRowStyle": {
+    "type": {
+      "arguments": { "rowStyleFunc": "(params: RowClassParams) => {}" },
+      "returnType": "void"
+    }
+  },
+  "setGetRowHeight": {
+    "type": {
+      "arguments": { "rowHeightFunc": "(params: RowHeightParams) => number" },
+      "returnType": "void"
+    }
+  },
+  "setPivotHeaderHeight": {
+    "type": { "arguments": { "headerHeight": "number" } }
+  },
+  "isSideBarVisible": { "type": { "arguments": {} } },
+  "setSideBarVisible": { "type": { "arguments": { "show": "boolean" } } },
+  "setSideBarPosition": {
+    "type": { "arguments": { "position": "'left' | 'right'" } }
+  },
+  "openToolPanel": { "type": { "arguments": { "key": "string" } } },
+  "closeToolPanel": { "type": { "arguments": {} } },
+  "getOpenedToolPanel": {
+    "type": { "arguments": {}, "returnType": "string | null" }
+  },
+  "getSideBar": { "type": { "arguments": {}, "returnType": "SideBarDef" } },
+  "setSideBar": {
+    "type": { "arguments": { "def": "SideBarDef" }, "returnType": "void" }
+  },
+  "setSuppressClipboardPaste": {
+    "type": { "arguments": { "value": "boolean" }, "returnType": "void" }
+  },
+  "isToolPanelShowing": { "type": { "arguments": {} } },
+  "doLayout": { "type": { "arguments": {} } },
+  "resetRowHeights": { "type": { "arguments": {} } },
+  "setGroupRemoveSingleChildren": {
+    "type": { "arguments": { "value": "boolean" } }
+  },
+  "setGroupRemoveLowestSingleChildren": {
+    "type": { "arguments": { "value": "boolean" } }
+  },
+  "onRowHeightChanged": { "type": { "arguments": {} } },
+  "getValue": {
+    "type": {
+      "arguments": { "colKey": "string | Column", "rowNode": "RowNode" },
+      "returnType": "any"
+    }
+  },
+  "addEventListener": {
+    "type": {
+      "arguments": { "eventType": "string", "listener": "Function" },
+      "returnType": "void"
+    }
+  },
+  "addGlobalListener": {
+    "type": { "arguments": { "listener": "Function" }, "returnType": "void" }
+  },
+  "removeEventListener": {
+    "type": {
+      "arguments": { "eventType": "string", "listener": "Function" },
+      "returnType": "void"
+    }
+  },
+  "removeGlobalListener": {
+    "type": { "arguments": { "listener": "Function" }, "returnType": "void" }
+  },
+  "dispatchEvent": {
+    "type": { "arguments": { "event": "AgEvent" }, "returnType": "void" }
+  },
+  "destroy": { "type": { "arguments": {}, "returnType": "void" } },
+  "cleanDownReferencesToAvoidMemoryLeakInCaseApplicationIsKeepingReferenceToDestroyedGrid": {
+    "type": { "arguments": {}, "returnType": "void" }
+  },
+  "warnIfDestroyed": {
+    "type": { "arguments": { "methodName": "string" }, "returnType": "boolean" }
+  },
+  "resetQuickFilter": { "type": { "arguments": {}, "returnType": "void" } },
+  "getRangeSelections": { "type": { "arguments": {}, "returnType": "any" } },
+  "getCellRanges": {
+    "type": { "arguments": {}, "returnType": "CellRange[] | null" }
+  },
+  "camelCaseToHumanReadable": {
+    "type": {
+      "arguments": { "camelCase": "string" },
+      "returnType": "string | null"
+    }
+  },
+  "addRangeSelection": {
+    "type": {
+      "arguments": { "deprecatedNoLongerUsed": "any" },
+      "returnType": "void"
+    }
+  },
+  "addCellRange": {
+    "type": {
+      "arguments": { "params": "CellRangeParams" },
+      "returnType": "void"
+    }
+  },
+  "clearRangeSelection": { "type": { "arguments": {}, "returnType": "void" } },
+  "undoCellEditing": { "type": { "arguments": {}, "returnType": "void" } },
+  "redoCellEditing": { "type": { "arguments": {}, "returnType": "void" } },
+  "getCurrentUndoSize": { "type": { "arguments": {}, "returnType": "number" } },
+  "getCurrentRedoSize": { "type": { "arguments": {}, "returnType": "number" } },
+  "getChartModels": {
+    "type": { "arguments": {}, "returnType": "ChartModel[] | undefined" }
+  },
+  "getChartRef": {
+    "type": {
+      "arguments": { "chartId": "string" },
+      "returnType": "ChartRef | undefined"
+    }
+  },
+  "getChartImageDataURL": {
+    "type": {
+      "arguments": { "params": "GetChartImageDataUrlParams" },
+      "returnType": "string | undefined"
+    }
+  },
+  "createRangeChart": {
+    "type": {
+      "arguments": { "params": "CreateRangeChartParams" },
+      "returnType": "ChartRef | undefined"
+    }
+  },
+  "createCrossFilterChart": {
+    "type": {
+      "arguments": { "params": "CreateRangeChartParams" },
+      "returnType": "ChartRef | undefined"
+    }
+  },
+  "restoreChart": {
+    "type": {
+      "arguments": {
+        "chartModel": "ChartModel",
+        "chartContainer": "HTMLElement"
+      },
+      "returnType": "ChartRef | undefined"
+    }
+  },
+  "createPivotChart": {
+    "type": {
+      "arguments": { "params": "CreatePivotChartParams" },
+      "returnType": "ChartRef | undefined"
+    }
+  },
+  "copySelectedRowsToClipboard": {
+    "type": {
+      "arguments": {
+        "includeHeader": "boolean",
+        "columnKeys": "(string | Column)[]"
+      },
+      "returnType": "void"
+    }
+  },
+  "copySelectedRangeToClipboard": {
+    "type": {
+      "arguments": { "includeHeader": "boolean" },
+      "returnType": "void"
+    }
+  },
+  "copySelectedRangeDown": {
+    "type": { "arguments": {}, "returnType": "void" }
+  },
+  "showColumnMenuAfterButtonClick": {
+    "type": {
+      "arguments": {
+        "colKey": "string | Column",
+        "buttonElement": "HTMLElement"
+      },
+      "returnType": "void"
+    }
+  },
+  "showColumnMenuAfterMouseClick": {
+    "type": {
+      "arguments": {
+        "colKey": "string | Column",
+        "mouseEvent": "MouseEvent | Touch"
+      },
+      "returnType": "void"
+    }
+  },
+  "hidePopupMenu": { "type": { "arguments": {}, "returnType": "void" } },
+  "setPopupParent": {
+    "type": {
+      "arguments": { "ePopupParent": "HTMLElement" },
+      "returnType": "void"
+    }
+  },
+  "tabToNextCell": { "type": { "arguments": {}, "returnType": "boolean" } },
+  "tabToPreviousCell": { "type": { "arguments": {}, "returnType": "boolean" } },
+  "getCellRendererInstances": {
+    "type": {
+      "arguments": { "params": "GetCellRendererInstancesParams = {}" },
+      "returnType": "ICellRenderer[]"
+    }
+  },
+  "getCellEditorInstances": {
+    "type": {
+      "arguments": { "params": "GetCellEditorInstancesParams = {}" },
+      "returnType": "ICellEditor[]"
+    }
+  },
+  "getEditingCells": {
+    "type": { "arguments": {}, "returnType": "CellPosition[]" }
+  },
+  "stopEditing": {
+    "type": {
+      "arguments": { "cancel": "boolean = false" },
+      "returnType": "void"
+    }
+  },
+  "startEditingCell": {
+    "type": {
+      "arguments": { "params": "StartEditingCellParams" },
+      "returnType": "void"
+    }
+  },
+  "addAggFunc": {
+    "type": {
+      "arguments": { "key": "string", "aggFunc": "IAggFunc" },
+      "returnType": "void"
+    }
+  },
+  "addAggFuncs": {
+    "type": {
+      "arguments": { "aggFuncs": "{\n    [key: string]: IAggFunc;\n}" },
+      "returnType": "void"
+    }
+  },
+  "clearAggFuncs": { "type": { "arguments": {}, "returnType": "void" } },
+  "applyServerSideTransaction": {
+    "type": {
+      "arguments": { "transaction": "ServerSideTransaction" },
+      "returnType": "ServerSideTransactionResult | undefined"
+    }
+  },
+  "applyServerSideTransactionAsync": {
+    "type": {
+      "arguments": {
+        "transaction": "ServerSideTransaction",
+        "callback": "(res: ServerSideTransactionResult) => void"
+      },
+      "returnType": "void"
+    }
+  },
+  "retryServerSideLoads": { "type": { "arguments": {}, "returnType": "void" } },
+  "flushServerSideAsyncTransactions": {
+    "type": { "arguments": {}, "returnType": "void" }
+  },
+  "applyTransaction": {
+    "type": {
+      "arguments": { "rowDataTransaction": "RowDataTransaction" },
+      "returnType": "RowNodeTransaction | null | undefined"
+    }
+  },
+  "updateRowData": {
+    "description": "/**\n * @deprecated\n */",
+    "type": {
+      "arguments": { "rowDataTransaction": "RowDataTransaction" },
+      "returnType": "RowNodeTransaction | null | undefined"
+    }
+  },
+  "applyTransactionAsync": {
+    "type": {
+      "arguments": {
+        "rowDataTransaction": "RowDataTransaction",
+        "callback": "(res: RowNodeTransaction) => void"
+      },
+      "returnType": "void"
+    }
+  },
+  "flushAsyncTransactions": {
+    "type": { "arguments": {}, "returnType": "void" }
+  },
+  "batchUpdateRowData": {
+    "description": "/**\n * @deprecated\n */",
+    "type": {
+      "arguments": {
+        "rowDataTransaction": "RowDataTransaction",
+        "callback": "(res: RowNodeTransaction) => void"
+      },
+      "returnType": "void"
+    }
+  },
+  "insertItemsAtIndex": {
+    "type": {
+      "arguments": {
+        "index": "number",
+        "items": "any[]",
+        "skipRefresh": "undefined = false"
+      },
+      "returnType": "void"
+    }
+  },
+  "removeItems": {
+    "type": {
+      "arguments": {
+        "rowNodes": "RowNode[]",
+        "skipRefresh": "undefined = false"
+      },
+      "returnType": "void"
+    }
+  },
+  "addItems": {
+    "type": {
+      "arguments": { "items": "any[]", "skipRefresh": "undefined = false" },
+      "returnType": "void"
+    }
+  },
+  "refreshVirtualPageCache": {
+    "type": { "arguments": {}, "returnType": "void" }
+  },
+  "refreshInfinitePageCache": {
+    "type": { "arguments": {}, "returnType": "void" }
+  },
+  "refreshInfiniteCache": { "type": { "arguments": {}, "returnType": "void" } },
+  "purgeVirtualPageCache": {
+    "type": { "arguments": {}, "returnType": "void" }
+  },
+  "purgeInfinitePageCache": {
+    "type": { "arguments": {}, "returnType": "void" }
+  },
+  "purgeInfiniteCache": { "type": { "arguments": {}, "returnType": "void" } },
+  "purgeEnterpriseCache": {
+    "description": "/**\n * @deprecated\n */",
+    "type": { "arguments": { "route": "string[]" }, "returnType": "void" }
+  },
+  "purgeServerSideCache": {
+    "description": "/**\n * @deprecated\n */",
+    "type": { "arguments": { "route": "string[] = []" }, "returnType": "void" }
+  },
+  "refreshServerSideStore": {
+    "type": {
+      "arguments": { "params": "RefreshStoreParams" },
+      "returnType": "void"
+    }
+  },
+  "getServerSideStoreState": {
+    "type": { "arguments": {}, "returnType": "ServerSideStoreState[]" }
+  },
+  "getVirtualRowCount": {
+    "type": { "arguments": {}, "returnType": "number | null | undefined" }
+  },
+  "getInfiniteRowCount": {
+    "type": { "arguments": {}, "returnType": "number | undefined" }
+  },
+  "isMaxRowFound": {
+    "type": { "arguments": {}, "returnType": "boolean | undefined" }
+  },
+  "isLastRowIndexKnown": {
+    "type": { "arguments": {}, "returnType": "boolean | undefined" }
+  },
+  "setVirtualRowCount": {
+    "type": {
+      "arguments": { "rowCount": "number", "maxRowFound": "boolean" },
+      "returnType": "void"
+    }
+  },
+  "setInfiniteRowCount": {
+    "type": {
+      "arguments": { "rowCount": "number", "maxRowFound": "boolean" },
+      "returnType": "void"
+    }
+  },
+  "setRowCount": {
+    "type": {
+      "arguments": { "rowCount": "number", "maxRowFound": "boolean" },
+      "returnType": "void"
+    }
+  },
+  "getVirtualPageState": { "type": { "arguments": {}, "returnType": "any" } },
+  "getInfinitePageState": { "type": { "arguments": {}, "returnType": "any" } },
+  "getCacheBlockState": { "type": { "arguments": {}, "returnType": "any" } },
+  "checkGridSize": { "type": { "arguments": {}, "returnType": "void" } },
+  "getFirstRenderedRow": {
+    "type": { "arguments": {}, "returnType": "number" }
+  },
+  "getFirstDisplayedRow": {
+    "type": { "arguments": {}, "returnType": "number" }
+  },
+  "getLastRenderedRow": { "type": { "arguments": {}, "returnType": "number" } },
+  "getLastDisplayedRow": {
+    "type": { "arguments": {}, "returnType": "number" }
+  },
+  "getDisplayedRowAtIndex": {
+    "type": {
+      "arguments": { "index": "number" },
+      "returnType": "RowNode | null"
+    }
+  },
+  "getDisplayedRowCount": {
+    "type": { "arguments": {}, "returnType": "number" }
+  },
+  "paginationIsLastPageFound": {
+    "type": { "arguments": {}, "returnType": "boolean" }
+  },
+  "paginationGetPageSize": {
+    "type": { "arguments": {}, "returnType": "number" }
+  },
+  "paginationSetPageSize": {
+    "type": { "arguments": { "size": "number" }, "returnType": "void" }
+  },
+  "paginationGetCurrentPage": {
+    "type": { "arguments": {}, "returnType": "number" }
+  },
+  "paginationGetTotalPages": {
+    "type": { "arguments": {}, "returnType": "number" }
+  },
+  "paginationGetRowCount": {
+    "type": { "arguments": {}, "returnType": "number" }
+  },
+  "paginationGoToNextPage": {
+    "type": { "arguments": {}, "returnType": "void" }
+  },
+  "paginationGoToPreviousPage": {
+    "type": { "arguments": {}, "returnType": "void" }
+  },
+  "paginationGoToFirstPage": {
+    "type": { "arguments": {}, "returnType": "void" }
+  },
+  "paginationGoToLastPage": {
+    "type": { "arguments": {}, "returnType": "void" }
+  },
+  "paginationGoToPage": {
+    "type": { "arguments": { "page": "number" }, "returnType": "void" }
+  }
+}
