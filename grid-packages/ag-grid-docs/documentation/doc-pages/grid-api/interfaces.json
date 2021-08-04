@@ -234,7 +234,7 @@
     "meta": {},
     "type": {
       "rowIndex": "number",
-      "rowPinned?": "string | null",
+      "rowPinned": "string | null",
       "column": "Column"
     }
   },
@@ -1650,7 +1650,7 @@
   },
   "RowPosition": {
     "meta": {},
-    "type": { "rowIndex": "number", "rowPinned?": "string | null" }
+    "type": { "rowIndex": "number", "rowPinned": "string | null" }
   },
   "ToolPanelDef": {
     "meta": {},
@@ -1951,7 +1951,7 @@
     },
     "docs": {
       "type": "/**\n * Event identifier */",
-      "node": "/**\n * The row node getting dragged. Also the node that started the drag when multi-row dragging. Also the node that started the drag when multi-row dragging. */",
+      "node": "/**\n * The row node getting dragged. Also the node that started the drag when multi-row dragging. */",
       "nodes": "/**\n * The list of nodes being dragged. */",
       "y": "/**\n * The vertical pixel location the mouse is over. */",
       "vDirection": "/**\n * Direction of the drag, either 'up', 'down' or null. */",
@@ -1976,7 +1976,7 @@
     },
     "docs": {
       "type": "/**\n * Event identifier */",
-      "node": "/**\n * The row node getting dragged. Also the node that started the drag when multi-row dragging. Also the node that started the drag when multi-row dragging. */",
+      "node": "/**\n * The row node getting dragged. Also the node that started the drag when multi-row dragging. */",
       "nodes": "/**\n * The list of nodes being dragged. */",
       "y": "/**\n * The vertical pixel location the mouse is over. */",
       "vDirection": "/**\n * Direction of the drag, either 'up', 'down' or null. */",
@@ -2001,7 +2001,7 @@
     },
     "docs": {
       "type": "/**\n * Event identifier */",
-      "node": "/**\n * The row node getting dragged. Also the node that started the drag when multi-row dragging. Also the node that started the drag when multi-row dragging. */",
+      "node": "/**\n * The row node getting dragged. Also the node that started the drag when multi-row dragging. */",
       "nodes": "/**\n * The list of nodes being dragged. */",
       "y": "/**\n * The vertical pixel location the mouse is over. */",
       "vDirection": "/**\n * Direction of the drag, either 'up', 'down' or null. */",
@@ -2026,7 +2026,7 @@
     },
     "docs": {
       "type": "/**\n * Event identifier */",
-      "node": "/**\n * The row node getting dragged. Also the node that started the drag when multi-row dragging. Also the node that started the drag when multi-row dragging. */",
+      "node": "/**\n * The row node getting dragged. Also the node that started the drag when multi-row dragging. */",
       "nodes": "/**\n * The list of nodes being dragged. */",
       "y": "/**\n * The vertical pixel location the mouse is over. */",
       "vDirection": "/**\n * Direction of the drag, either 'up', 'down' or null. */",
@@ -2051,7 +2051,7 @@
     },
     "docs": {
       "type": "/**\n * Event identifier */",
-      "node": "/**\n * The row node getting dragged. Also the node that started the drag when multi-row dragging. Also the node that started the drag when multi-row dragging. */",
+      "node": "/**\n * The row node getting dragged. Also the node that started the drag when multi-row dragging. */",
       "nodes": "/**\n * The list of nodes being dragged. */",
       "y": "/**\n * The vertical pixel location the mouse is over. */",
       "vDirection": "/**\n * Direction of the drag, either 'up', 'down' or null. */",
@@ -2427,7 +2427,7 @@
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
-      "rowPinned?": "string | null",
+      "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null"
     },
@@ -2435,7 +2435,7 @@
       "type": "/**\n * Event identifier */",
       "data": "/**\n * The user provided data for the row */",
       "rowIndex": "/**\n * The visible row index for the row */",
-      "rowPinned?": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
+      "rowPinned": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/**\n * Bag of attributes, provided by user */",
       "event?": "/**\n * If event was due to browser event (eg click), this is the browser event */"
     }
@@ -2449,7 +2449,7 @@
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
-      "rowPinned?": "string | null",
+      "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
       "expanded": "boolean"
@@ -2458,7 +2458,7 @@
       "type": "/**\n * Event identifier */",
       "data": "/**\n * The user provided data for the row */",
       "rowIndex": "/**\n * The visible row index for the row */",
-      "rowPinned?": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
+      "rowPinned": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/**\n * Bag of attributes, provided by user */",
       "event?": "/**\n * If event was due to browser event (eg click), this is the browser event */",
       "expanded": "/**\n * True if the group is expanded. */"
@@ -2473,7 +2473,7 @@
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
-      "rowPinned?": "string | null",
+      "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null"
     },
@@ -2481,7 +2481,7 @@
       "type": "/**\n * Event identifier */",
       "data": "/**\n * The user provided data for the row */",
       "rowIndex": "/**\n * The visible row index for the row */",
-      "rowPinned?": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
+      "rowPinned": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/**\n * Bag of attributes, provided by user */",
       "event?": "/**\n * If event was due to browser event (eg click), this is the browser event */"
     }
@@ -2495,7 +2495,7 @@
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
-      "rowPinned?": "string | null",
+      "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null"
     },
@@ -2503,7 +2503,7 @@
       "type": "/**\n * Event identifier */",
       "data": "/**\n * The user provided data for the row */",
       "rowIndex": "/**\n * The visible row index for the row */",
-      "rowPinned?": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
+      "rowPinned": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/**\n * Bag of attributes, provided by user */",
       "event?": "/**\n * If event was due to browser event (eg click), this is the browser event */"
     }
@@ -2517,7 +2517,7 @@
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
-      "rowPinned?": "string | null",
+      "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null"
     },
@@ -2525,7 +2525,7 @@
       "type": "/**\n * Event identifier */",
       "data": "/**\n * The user provided data for the row */",
       "rowIndex": "/**\n * The visible row index for the row */",
-      "rowPinned?": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
+      "rowPinned": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/**\n * Bag of attributes, provided by user */",
       "event?": "/**\n * If event was due to browser event (eg click), this is the browser event */"
     }
@@ -2539,7 +2539,7 @@
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
-      "rowPinned?": "string | null",
+      "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null"
     },
@@ -2547,7 +2547,7 @@
       "type": "/**\n * Event identifier */",
       "data": "/**\n * The user provided data for the row */",
       "rowIndex": "/**\n * The visible row index for the row */",
-      "rowPinned?": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
+      "rowPinned": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/**\n * Bag of attributes, provided by user */",
       "event?": "/**\n * If event was due to browser event (eg click), this is the browser event */"
     }
@@ -2561,7 +2561,7 @@
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
-      "rowPinned?": "string | null",
+      "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null"
     },
@@ -2569,7 +2569,7 @@
       "type": "/**\n * Event identifier */",
       "data": "/**\n * The user provided data for the row */",
       "rowIndex": "/**\n * The visible row index for the row */",
-      "rowPinned?": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
+      "rowPinned": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/**\n * Bag of attributes, provided by user */",
       "event?": "/**\n * If event was due to browser event (eg click), this is the browser event */"
     }
@@ -2583,7 +2583,7 @@
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
-      "rowPinned?": "string | null",
+      "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null"
     },
@@ -2591,7 +2591,7 @@
       "type": "/**\n * Event identifier */",
       "data": "/**\n * The user provided data for the row */",
       "rowIndex": "/**\n * The visible row index for the row */",
-      "rowPinned?": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
+      "rowPinned": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/**\n * Bag of attributes, provided by user */",
       "event?": "/**\n * If event was due to browser event (eg click), this is the browser event */"
     }
@@ -2605,7 +2605,7 @@
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
-      "rowPinned?": "string | null",
+      "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null"
     },
@@ -2613,7 +2613,7 @@
       "type": "/**\n * Event identifier */",
       "data": "/**\n * The user provided data for the row */",
       "rowIndex": "/**\n * The visible row index for the row */",
-      "rowPinned?": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
+      "rowPinned": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/**\n * Bag of attributes, provided by user */",
       "event?": "/**\n * If event was due to browser event (eg click), this is the browser event */"
     }
@@ -2627,7 +2627,7 @@
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
-      "rowPinned?": "string | null",
+      "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null"
     },
@@ -2635,7 +2635,7 @@
       "type": "/**\n * Event identifier */",
       "data": "/**\n * The user provided data for the row */",
       "rowIndex": "/**\n * The visible row index for the row */",
-      "rowPinned?": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
+      "rowPinned": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/**\n * Bag of attributes, provided by user */",
       "event?": "/**\n * If event was due to browser event (eg click), this is the browser event */"
     }
@@ -2649,7 +2649,7 @@
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
-      "rowPinned?": "string | null",
+      "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null"
     },
@@ -2657,7 +2657,7 @@
       "type": "/**\n * Event identifier */",
       "data": "/**\n * The user provided data for the row */",
       "rowIndex": "/**\n * The visible row index for the row */",
-      "rowPinned?": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
+      "rowPinned": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/**\n * Bag of attributes, provided by user */",
       "event?": "/**\n * If event was due to browser event (eg click), this is the browser event */"
     }
@@ -2673,7 +2673,7 @@
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
-      "rowPinned?": "string | null",
+      "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
       "column": "Column",
@@ -2684,7 +2684,7 @@
       "type": "/**\n * Event identifier */",
       "data": "/**\n * The user provided data for the row */",
       "rowIndex": "/**\n * The visible row index for the row */",
-      "rowPinned?": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
+      "rowPinned": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/**\n * Bag of attributes, provided by user */",
       "event?": "/**\n * If event was due to browser event (eg click), this is the browser event */",
       "value": "/**\n * The value for the cell */"
@@ -2699,7 +2699,7 @@
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
-      "rowPinned?": "string | null",
+      "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
       "column": "Column",
@@ -2710,7 +2710,7 @@
       "type": "/**\n * Event identifier */",
       "data": "/**\n * The user provided data for the row */",
       "rowIndex": "/**\n * The visible row index for the row */",
-      "rowPinned?": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
+      "rowPinned": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/**\n * Bag of attributes, provided by user */",
       "event?": "/**\n * If event was due to browser event (eg click), this is the browser event */",
       "value": "/**\n * The value for the cell */"
@@ -2725,7 +2725,7 @@
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
-      "rowPinned?": "string | null",
+      "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
       "column": "Column",
@@ -2736,7 +2736,7 @@
       "type": "/**\n * Event identifier */",
       "data": "/**\n * The user provided data for the row */",
       "rowIndex": "/**\n * The visible row index for the row */",
-      "rowPinned?": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
+      "rowPinned": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/**\n * Bag of attributes, provided by user */",
       "event?": "/**\n * If event was due to browser event (eg click), this is the browser event */",
       "value": "/**\n * The value for the cell */"
@@ -2751,7 +2751,7 @@
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
-      "rowPinned?": "string | null",
+      "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
       "column": "Column",
@@ -2762,7 +2762,7 @@
       "type": "/**\n * Event identifier */",
       "data": "/**\n * The user provided data for the row */",
       "rowIndex": "/**\n * The visible row index for the row */",
-      "rowPinned?": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
+      "rowPinned": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/**\n * Bag of attributes, provided by user */",
       "event?": "/**\n * If event was due to browser event (eg click), this is the browser event */",
       "value": "/**\n * The value for the cell */"
@@ -2777,7 +2777,7 @@
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
-      "rowPinned?": "string | null",
+      "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
       "column": "Column",
@@ -2788,7 +2788,7 @@
       "type": "/**\n * Event identifier */",
       "data": "/**\n * The user provided data for the row */",
       "rowIndex": "/**\n * The visible row index for the row */",
-      "rowPinned?": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
+      "rowPinned": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/**\n * Bag of attributes, provided by user */",
       "event?": "/**\n * If event was due to browser event (eg click), this is the browser event */",
       "value": "/**\n * The value for the cell */"
@@ -2803,7 +2803,7 @@
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
-      "rowPinned?": "string | null",
+      "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
       "column": "Column",
@@ -2814,7 +2814,7 @@
       "type": "/**\n * Event identifier */",
       "data": "/**\n * The user provided data for the row */",
       "rowIndex": "/**\n * The visible row index for the row */",
-      "rowPinned?": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
+      "rowPinned": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/**\n * Bag of attributes, provided by user */",
       "event?": "/**\n * If event was due to browser event (eg click), this is the browser event */",
       "value": "/**\n * The value for the cell */"
@@ -2829,7 +2829,7 @@
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
-      "rowPinned?": "string | null",
+      "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
       "column": "Column",
@@ -2840,7 +2840,7 @@
       "type": "/**\n * Event identifier */",
       "data": "/**\n * The user provided data for the row */",
       "rowIndex": "/**\n * The visible row index for the row */",
-      "rowPinned?": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
+      "rowPinned": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/**\n * Bag of attributes, provided by user */",
       "event?": "/**\n * If event was due to browser event (eg click), this is the browser event */",
       "value": "/**\n * The value for the cell */"
@@ -2855,7 +2855,7 @@
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
-      "rowPinned?": "string | null",
+      "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
       "column": "Column",
@@ -2866,7 +2866,7 @@
       "type": "/**\n * Event identifier */",
       "data": "/**\n * The user provided data for the row */",
       "rowIndex": "/**\n * The visible row index for the row */",
-      "rowPinned?": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
+      "rowPinned": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/**\n * Bag of attributes, provided by user */",
       "event?": "/**\n * If event was due to browser event (eg click), this is the browser event */",
       "value": "/**\n * The value for the cell */"
@@ -2881,7 +2881,7 @@
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
-      "rowPinned?": "string | null",
+      "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
       "column": "Column",
@@ -2892,7 +2892,7 @@
       "type": "/**\n * Event identifier */",
       "data": "/**\n * The user provided data for the row */",
       "rowIndex": "/**\n * The visible row index for the row */",
-      "rowPinned?": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
+      "rowPinned": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/**\n * Bag of attributes, provided by user */",
       "event?": "/**\n * If event was due to browser event (eg click), this is the browser event */",
       "value": "/**\n * The value for the cell */"
@@ -2907,7 +2907,7 @@
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
-      "rowPinned?": "string | null",
+      "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
       "column": "Column",
@@ -2918,7 +2918,7 @@
       "type": "/**\n * Event identifier */",
       "data": "/**\n * The user provided data for the row */",
       "rowIndex": "/**\n * The visible row index for the row */",
-      "rowPinned?": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
+      "rowPinned": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/**\n * Bag of attributes, provided by user */",
       "event?": "/**\n * If event was due to browser event (eg click), this is the browser event */",
       "value": "/**\n * The value for the cell */"
@@ -2933,7 +2933,7 @@
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
-      "rowPinned?": "string | null",
+      "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
       "column": "Column",
@@ -2946,7 +2946,7 @@
       "type": "/**\n * Event identifier */",
       "data": "/**\n * The user provided data for the row */",
       "rowIndex": "/**\n * The visible row index for the row */",
-      "rowPinned?": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
+      "rowPinned": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/**\n * Bag of attributes, provided by user */",
       "event?": "/**\n * If event was due to browser event (eg click), this is the browser event */",
       "value": "/**\n * The value for the cell */",
@@ -2963,7 +2963,7 @@
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
-      "rowPinned?": "string | null",
+      "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
       "column": "Column",
@@ -2977,7 +2977,7 @@
       "type": "/**\n * Event identifier */",
       "data": "/**\n * The user provided data for the row */",
       "rowIndex": "/**\n * The visible row index for the row */",
-      "rowPinned?": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
+      "rowPinned": "/**\n * Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/**\n * Bag of attributes, provided by user */",
       "event?": "/**\n * If event was due to browser event (eg click), this is the browser event */",
       "value": "/**\n * The value for the cell */"
@@ -7441,7 +7441,7 @@
   "CellValueChange": {
     "meta": {},
     "type": {
-      "rowPinned?": "string | null",
+      "rowPinned": "string | null",
       "rowIndex": "number",
       "columnId": "string",
       "oldValue": "any",

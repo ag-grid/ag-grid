@@ -9,7 +9,7 @@ import { PaginationProxy } from "../pagination/paginationProxy";
 
 export interface RowPosition {
     rowIndex: number;
-    rowPinned?: string | null;
+    rowPinned: string | null;
 }
 
 @Bean('rowPositionUtils')

@@ -340,7 +340,7 @@ export interface RowEvent extends AgGridEvent {
     /** The visible row index for the row */
     rowIndex: number | null;
     /** Either 'top', 'bottom' or null / undefined (if not set) */
-    rowPinned?: string | null;
+    rowPinned: string | null;
     /** Bag of attributes, provided by user */
     context: any;
     /** If event was due to browser event (eg click), this is the browser event */

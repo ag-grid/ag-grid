@@ -150,7 +150,7 @@ export class RowNode implements IEventEmitter {
     public rowIndex: number | null = null;
 
     /** Either 'top' or 'bottom' if row pinned, otherwise undefined or null */
-    public rowPinned: string | null;
+    public rowPinned: string;
 
     /** If using quick filter, stores a string representation of the row for searching against */
     public quickFilterAggregateText: string | null;
