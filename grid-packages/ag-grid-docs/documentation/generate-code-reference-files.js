@@ -298,9 +298,9 @@ function extractInterfaces(srcFile, extension) {
 }
 
 const generateMetaFiles = () => {
-    writeFormattedFile('./doc-pages/grid-api/', 'grid-options.json', getGridOptions());
-    writeFormattedFile('./doc-pages/grid-api/', 'interfaces.json', getInterfaces());
-    writeFormattedFile('./doc-pages/grid-api/', 'grid-api.json', getGridApi());
+    writeFormattedFile('./doc-pages/grid-api/', 'grid-options.AUTO.json', getGridOptions());
+    writeFormattedFile('./doc-pages/grid-api/', 'interfaces.AUTO.json', getInterfaces());
+    writeFormattedFile('./doc-pages/grid-api/', 'grid-api.AUTO.json', getGridApi());
 };
 
 console.log(`--------------------------------------------------------------------------------`);
