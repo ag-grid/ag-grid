@@ -51,9 +51,8 @@ export class UndoRedoStack {
 
     public push(item: UndoRedoAction): void {
         const shouldAddActions = item.cellValueChanges && item.cellValueChanges.length > 0;
-        if (!shouldAddActions) {
-            return;
-        }
+
+        if (!shouldAddActions) { return; }
 
         if (this.actionStack.length === this.maxStackSize) {
             this.actionStack.shift();
