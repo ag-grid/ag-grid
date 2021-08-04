@@ -8,19 +8,6 @@ const { getFormatterForTS } = require('../../../scripts/formatAST');
 
 const formatNode = getFormatterForTS(ts);
 
-// satisfy ag-grid HTMLElement dependencies
-HTMLElement = typeof HTMLElement === 'undefined' ? function () {
-} : HTMLElement;
-HTMLSelectElement = typeof HTMLSelectElement === 'undefined' ? function () {
-} : HTMLSelectElement;
-HTMLInputElement = typeof HTMLInputElement === 'undefined' ? function () {
-} : HTMLInputElement;
-HTMLButtonElement = typeof HTMLButtonElement === 'undefined' ? function () {
-} : HTMLButtonElement;
-MouseEvent = typeof MouseEvent === 'undefined' ? function () {
-} : MouseEvent;
-
-
 const EVENT_LOOKUP = new Set(ComponentUtil.getEventCallbacks());
 
 function findInterfaceNode(interfaceName, parsedSyntaxTreeResults) {
@@ -62,15 +49,13 @@ function findAllInterfacesInNodesTree(node) {
 
     return interfaces;
 }
-// if (node.jsDoc) {
-//     const printer = ts.createPrinter();
-//     const result = node.jsDoc.map(j => printer.printNode(ts.EmitHint.Unspecified, j)).join('\n');
-//     return result;
-// }
-
 
 function getJsDoc(node) {
-    return node.jsDoc && node.jsDoc.length > 0 && node.jsDoc[node.jsDoc.length - 1].comment;
+    if (node.jsDoc) {
+        const printer = ts.createPrinter();
+        const result = node.jsDoc.map(j => printer.printNode(ts.EmitHint.Unspecified, j)).join('\n');
+        return result;
+    }
 };
 
 function getArgTypes(parameters, file) {
