@@ -181,6 +181,7 @@ export class CellCtrl extends BeanStub {
         this.onCellFocused();
 
         this.applyStaticCssClasses();
+        this.setWrapText();
 
         this.onFirstRightPinnedChanged();
         this.onLastLeftPinnedChanged();
@@ -952,11 +953,6 @@ export class CellCtrl extends BeanStub {
         if (!this.autoHeightCell) {
             this.cellComp.addOrRemoveCssClass(CSS_AUTO_HEIGHT, true);
         }
-
-        const wrapText = this.column.getColDef().wrapText == true;
-        if (wrapText) {
-            this.cellComp.addOrRemoveCssClass(CSS_CELL_WRAP_TEXT, true);
-        }
     }
     
     public onColumnHover(): void {
@@ -969,11 +965,14 @@ export class CellCtrl extends BeanStub {
     public onNewColumnsLoaded(): void {
         if (!this.cellComp) { return; }
 
-        this.postProcessWrapText();
-        this.cellCustomStyleFeature.applyCellClassRules();
+        this.setWrapText();
+
+        if (!this.editing) {
+            this.refreshCell({forceRefresh: true});
+        }
     }
 
-    private postProcessWrapText(): void {
+    private setWrapText(): void {
         const value = this.column.getColDef().wrapText == true;
 
         this.cellComp.addOrRemoveCssClass(CSS_CELL_WRAP_TEXT, value);

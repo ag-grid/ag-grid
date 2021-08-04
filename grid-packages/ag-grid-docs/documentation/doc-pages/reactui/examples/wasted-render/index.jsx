@@ -40,7 +40,7 @@ function GridExample() {
             { field: 'silver', cellRendererFramework: cellRendererToUse }
         ];
         setColumnDefs(colDefs);
-        setTimeout( ()=> gridApi.current.refreshCells({force: true}), 100);
+        // setTimeout( ()=> gridApi.current.refreshCells({force: true}), 100);
     }, [memoOn]);
 
     // never changes, so we can use useMemo
