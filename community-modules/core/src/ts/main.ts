@@ -158,6 +158,7 @@ export { SelectCellEditor } from "./rendering/cellEditors/selectCellEditor";
 export { TextCellEditor } from "./rendering/cellEditors/textCellEditor";
 
 // rendering / cellRenderers
+export { Beans } from "./rendering/beans";
 export { ICellRenderer, ICellRendererFunc, ICellRendererComp, ICellRendererParams, ISetFilterCellRendererParams } from "./rendering/cellRenderers/iCellRenderer";
 export { AnimateShowChangeCellRenderer } from "./rendering/cellRenderers/animateShowChangeCellRenderer";
 export { AnimateSlideCellRenderer } from "./rendering/cellRenderers/animateSlideCellRenderer";
