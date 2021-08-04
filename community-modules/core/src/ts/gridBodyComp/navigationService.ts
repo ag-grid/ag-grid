@@ -142,7 +142,7 @@ export class NavigationService extends BeanStub {
     private navigateTo(navigateParams: NavigateParams): void {
         const { scrollIndex, scrollType, scrollColumn, focusIndex, focusColumn } = navigateParams;
 
-        if (exists(scrollColumn)) {
+        if (exists(scrollColumn) && !scrollColumn.isPinned()) {
             this.gridBodyCon.getScrollFeature().ensureColumnVisible(scrollColumn);
         }
 
