@@ -15,7 +15,7 @@ export enum ChartType {
     Area = 'area',
     StackedArea = 'stackedArea',
     NormalizedArea = 'normalizedArea',
-    Histogram = "histogram"
+    Histogram = 'histogram'
 }
 
 export type ChartMenuOptions = 'chartSettings' | 'chartData' | 'chartFormat' | 'chartLink' | 'chartUnlink' | 'chartDownload';
