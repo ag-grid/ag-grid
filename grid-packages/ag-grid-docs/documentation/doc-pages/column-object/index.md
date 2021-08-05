@@ -4,7 +4,7 @@ title: "Column Object"
 
 A `Column` object represents a column in the grid. The `Column` will contain a reference to the column definition your application provided as well as other column runtime information. The column contains methods and emits events.
 
-<api-documentation source='reference.json'></api-documentation>
+<api-documentation source='reference.json' config='{"codeSrc": "ColumnObject"}'></api-documentation>
 
 All events fired by the column are synchronous (events are normally asynchronous). The grid is also listening for these events internally. This means that when you receive an event, the grid may still have some work to do (e.g. if sort has changed, the grid UI may still have to do the sorting). It is best that you do not call any grid API functions while receiving events from the column (as the grid is still processing), but instead put your logic into a timeout and call the grid in another VM tick.
 

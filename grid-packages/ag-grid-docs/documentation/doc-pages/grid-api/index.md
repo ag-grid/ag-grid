@@ -2,6 +2,6 @@
 title: "Grid API"
 ---
 
-All of these grid methods are available through the `GridApi` interface.
+All of these grid methods are available through the `api` property of `GridOptions`.
 
-<api-documentation source='api.json'></api-documentation>
+<api-documentation source='api.json' config='{"isApi": true, "codeSrc": "GridApi"}'></api-documentation>
