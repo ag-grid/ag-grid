@@ -81,8 +81,8 @@ export const ApiDocumentation = ({ pageName, framework, source, sources, section
         names = JSON.parse(names);
     }
 
-    const gridOptions = getJsonFromFile(nodes, pageName, 'grid-api/grid-options.json');
-    const interfaces = getJsonFromFile(nodes, pageName, 'grid-api/interfaces.json');
+    const gridOptions = getJsonFromFile(nodes, pageName, 'grid-api/grid-options.AUTO.json');
+    const interfaces = getJsonFromFile(nodes, pageName, 'grid-api/interfaces.AUTO.json');
     const lookups = { gridOptions, interfaces };
 
     const propertiesFromFiles = sources.map(s => getJsonFromFile(nodes, pageName, s));
@@ -618,8 +618,8 @@ function addDocLines(docs, lines) {
     if (!docs || docs.length === 0) {
         return;
     }
-    docs.replace('/**\n *', '/**').split(/\n/g).forEach(s => {
-        lines.push(`  ${s}`);
+    docs.replace('/**\n *', '//').split(/\n/g).forEach(s => {
+        lines.push(`  ${s.replace('*/', '').replace(' *', '//')}`);
     });
 }
 

@@ -34,7 +34,3 @@
   font-weight: bold;
   color: darkred;
 }
-
-.ag-row .ag-column-hover {
-  background-color: rgba(33, 150, 243, 0.1) !important;
-}

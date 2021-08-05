@@ -167,6 +167,8 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     private doHorizontalScroll(scrollLeft: number): void {
+        if (this.scrollLeft === scrollLeft) { return; }
+
         this.scrollLeft = scrollLeft;
 
         const event: BodyScrollEvent = {
