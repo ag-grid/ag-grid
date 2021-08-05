@@ -263,7 +263,7 @@ export class CellCtrl extends BeanStub {
         if (!colMatches) { return; }
 
         const listener = ()=> {
-            this.cellComp.setAriaExpanded(this.rowNode.expanded);
+            this.cellComp.setAriaExpanded(!!this.rowNode.expanded);
         };
 
         this.addManagedListener(this.rowNode, RowNode.EVENT_EXPANDED_CHANGED, listener);
