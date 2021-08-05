@@ -92,6 +92,7 @@ import { CtrlsService } from "./ctrlsService";
 import { FakeHScrollComp } from "./gridBodyComp/fakeHScrollComp";
 import { PinnedWidthService } from "./gridBodyComp/pinnedWidthService";
 import { RowContainerComp } from "./gridBodyComp/rowContainer/rowContainerComp";
+import { RowNodeEventThrottle } from "./entities/rowNodeEventThrottle";
 
 export interface GridParams {
     // used by Web Components
@@ -308,7 +309,7 @@ export class GridCoreCreator {
             SelectableService, AutoGroupColService, ChangeDetectionService, AnimationFrameService,
             UndoRedoService, AgStackComponentsRegistry, ColumnDefFactory,
             RowCssClassCalculator, RowNodeBlockLoader, RowNodeSorter, CtrlsService,
-            PinnedWidthService
+            PinnedWidthService, RowNodeEventThrottle
         ];
 
         const moduleBeans = this.extractModuleEntity(registeredModules, (module) => module.beans ? module.beans : []);

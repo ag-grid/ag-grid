@@ -72,7 +72,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     private rowDataTransactionBatch: BatchTransactionItem[] | null;
     private lastHighlightedRow: RowNode | null;
     private applyAsyncTransactionsTimeout: number | undefined;
-    private onRowGroupOpenedPending = false;
 
     @PostConstruct
     public init(): void {
@@ -90,7 +89,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, refreshEverythingFunc);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.refreshModel.bind(this, { step: ClientSideRowModelSteps.PIVOT }));
-        this.addManagedListener(this.eventService, Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, refreshEverythingFunc);
@@ -340,28 +338,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         return null;
     }
 
-    private onRowGroupOpened(): void {
-
-        // because the user can call rowNode.setExpanded() many times in on VM turn,
-        // we debounce the call using animationFrameService. we use animationFrameService
-        // rather than _.debounce() so this will get done if anyone flushes the animationFrameService
-        // (eg user calls api.ensureRowVisible(), which in turn flushes ).
-
-        if (this.onRowGroupOpenedPending) { return; }
-
-        this.onRowGroupOpenedPending = true;
-
-        const action = () => {
-            this.onRowGroupOpenedPending = false;
-            const animate = this.gridOptionsWrapper.isAnimateRows();
-            this.refreshModel({ step: ClientSideRowModelSteps.MAP, keepRenderedRows: true, animate: animate });
-        };
-
-        if (this.gridOptionsWrapper.isSuppressAnimationFrame()) {
-            action();
-        } else {
-            this.animationFrameService.addDestroyTask(action);
-        }
+    public onRowGroupOpened(): void {
+        const animate = this.gridOptionsWrapper.isAnimateRows();
+        this.refreshModel({ step: ClientSideRowModelSteps.MAP, keepRenderedRows: true, animate: animate });
     }
 
     private onFilterChanged(event: FilterChangedEvent): void {

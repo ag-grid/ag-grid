@@ -17,6 +17,7 @@ import { assign, getAllKeysInObjects } from "../utils/object";
 import { IServerSideStore } from "../interfaces/IServerSideStore";
 import { RowRenderer } from "../rendering/rowRenderer";
 import { startsWith } from "../utils/string";
+import { RowNodeEventThrottle } from "./rowNodeEventThrottle";
 
 export interface SetSelectedParams {
     // true or false, whatever you want to set selection to
@@ -89,6 +90,7 @@ export class RowNode implements IEventEmitter {
     @Autowired('valueCache') private valueCache: ValueCache;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('rowNodeEventThrottle') private rowNodeEventThrottle: RowNodeEventThrottle;
 
     /** Unique ID for the node. Either provided by the grid, or user can set to match the primary
      * key in the database (or whatever data source is used). */
@@ -538,7 +540,7 @@ export class RowNode implements IEventEmitter {
             expanded
         });
 
-        this.mainEventService.dispatchEvent(event);
+        this.rowNodeEventThrottle.dispatchExpanded(event);
 
         // when using footers we need to refresh the group row, as the aggregation
         // values jump between group and footer

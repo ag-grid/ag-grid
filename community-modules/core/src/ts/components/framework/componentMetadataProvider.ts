@@ -26,7 +26,8 @@ export class ComponentMetadataProvider extends BeanStub {
             },
             detailCellRenderer: {
                 mandatoryMethodList: [],
-                optionalMethodList: ['refresh']
+                optionalMethodList: ['refresh'],
+                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
             },
             headerComponent: {
                 mandatoryMethodList: [],

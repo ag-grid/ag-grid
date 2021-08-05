@@ -14,7 +14,6 @@ export class EventService implements IEventEmitter {
     private globalSyncListeners = new Set<Function>();
     private globalAsyncListeners = new Set<Function>();
 
-    private logger: Logger;
     private frameworkOverrides: IFrameworkOverrides;
 
     private asyncFunctionsQueue: Function[] = [];
@@ -37,7 +36,6 @@ export class EventService implements IEventEmitter {
         @Qualifier('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper,
         @Qualifier('frameworkOverrides') frameworkOverrides: IFrameworkOverrides,
         @Qualifier('globalEventListener') globalEventListener: Function | null = null) {
-        this.logger = loggerFactory.create('EventService');
         this.frameworkOverrides = frameworkOverrides;
 
         if (globalEventListener) {
