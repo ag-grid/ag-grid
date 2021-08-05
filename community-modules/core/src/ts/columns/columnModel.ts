@@ -1728,23 +1728,22 @@ export class ColumnModel extends BeanStub {
     public getColumnState(): ColumnState[] {
         if (missing(this.primaryColumns) || !this.isAlive()) { return []; }
 
-        const primaryColumnState: ColumnState[]
-            = this.primaryColumns.map(this.createStateItemFromColumn.bind(this));
-
-        const groupAutoColumnState: ColumnState[]
-            = this.groupAutoColumns
-                // if groupAutoCols, then include them
-                ? this.groupAutoColumns.map(this.createStateItemFromColumn.bind(this))
-                // otherwise no
-                : [];
-
-        const columnStateList = groupAutoColumnState.concat(primaryColumnState);
+        const colsForState = this.getPrimaryAndSecondaryAndAutoColumns();
+        const res: ColumnState[] = colsForState.map(this.createStateItemFromColumn.bind(this));
 
         if (!this.pivotMode) {
-            this.orderColumnStateList(columnStateList);
+            this.orderColumnStateList(res);
         }
 
-        return columnStateList;
+        return res;
+    }
+
+    private getPrimaryAndAutoGroupCols(): Column[] {
+        if (!this.groupAutoColumns) {
+            return this.primaryColumns;
+        } else {
+            return [...this.primaryColumns, ...this.groupAutoColumns];
+        }
     }
 
     private orderColumnStateList(columnStateList: any[]): void {
@@ -2036,6 +2035,8 @@ export class ColumnModel extends BeanStub {
         return () => {
             if (this.gridOptionsWrapper.isSuppressColumnStateEvents()) { return; }
 
+            const colsForState = this.getPrimaryAndAutoGroupCols();
+
             // raises generic ColumnEvents where all columns are returned rather than what has changed
             const raiseWhenListsDifferent = (eventType: string, colsBefore: Column[], colsAfter: Column[], idMapper: (column: Column) => string) => {
                 const beforeList = colsBefore.map(idMapper);
@@ -2061,7 +2062,7 @@ export class ColumnModel extends BeanStub {
             const getChangedColumns = (changedPredicate: (cs: ColumnState, c: Column) => boolean): Column[] => {
                 const changedColumns: Column[] = [];
 
-                this.gridColumns.forEach(column => {
+                colsForState.forEach(column => {
                     const colStateBefore = columnStateBeforeMap[column.getColId()];
                     if (colStateBefore && changedPredicate(colStateBefore, column)) {
                         changedColumns.push(column);
