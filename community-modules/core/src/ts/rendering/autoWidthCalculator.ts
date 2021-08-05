@@ -8,12 +8,14 @@ import { BeanStub } from "../context/beanStub";
 import { containsClass, addCssClass } from "../utils/dom";
 import { CtrlsService } from "../ctrlsService";
 import { RowContainerCtrl } from "../gridBodyComp/rowContainer/rowContainerCtrl";
+import { RowCssClassCalculator } from "./row/rowCssClassCalculator";
 
 @Bean('autoWidthCalculator')
 export class AutoWidthCalculator extends BeanStub {
 
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+    @Autowired('rowCssClassCalculator') public rowCssClassCalculator: RowCssClassCalculator;
 
     private centerRowContainerCon: RowContainerCtrl;
     private headerRootComp: HeaderRootComp;
@@ -114,6 +116,25 @@ export class AutoWidthCalculator extends BeanStub {
             addCssClass(eCloneParent, 'ag-row');
         }
 
+        // find parent using classes (headers have ag-header-cell, rows have ag-row), and copy classes from it.
+        // if we didn't do this, things like ag-row-level-2 would be missing if present, which sets indents
+        // onto group items.
+        let pointer = eCell.parentElement;
+        while (pointer) {
+            if (pointer.classList.contains('ag-header-row') || pointer.classList.contains('ag-row')) {
+                pointer.classList.forEach( item => {
+                    // we skit ag-row-position-absolute, as this has structural CSS applied that stops the
+                    // element from fitting into it's parent, and we need the element to stretch the parent
+                    // as we are measuring the parents width
+                    if (item != 'ag-row-position-absolute') {
+                        addCssClass(eCloneParent, item);
+                    }
+                });
+                break;
+            }
+            pointer = pointer.parentElement;
+        }
+
         // table-row, so that each cell is on a row. i also tried display='block', but this
         // didn't work in IE
         eCloneParent.style.display = 'table-row';
@@ -124,5 +145,4 @@ export class AutoWidthCalculator extends BeanStub {
         eCloneParent.appendChild(eCellClone);
         eDummyContainer.appendChild(eCloneParent);
     }
-
 }
