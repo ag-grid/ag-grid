@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import styles from './ApiDocumentation.module.scss';
 import Code from './Code';
 import { useJsonFileNodes } from './use-json-file-nodes';
-import { DocEntryMap, SectionProps, PropertyCall, ObjectCode, InterfaceEntry, IEvent, ICallSignature, FunctionCode, PropertyType, Config } from './ApiDocumentation.types';
+import { ApiProps, DocEntryMap, SectionProps, PropertyCall, ObjectCode, InterfaceEntry, IEvent, ICallSignature, FunctionCode, PropertyType, Config } from './ApiDocumentation.types';
 
 
 /**
@@ -13,7 +13,7 @@ import { DocEntryMap, SectionProps, PropertyCall, ObjectCode, InterfaceEntry, IE
  * information about different parts of an API in multiple places across the website while pulling the information
  * from one source of truth, so we only have to update one file when the documentation needs to change.
  */
-export const ApiDocumentation = ({ pageName, framework, source, sources, section, names = "", config = { codeSrc: undefined } }) => {
+export const ApiDocumentation: React.FC<ApiProps> = ({ pageName, framework, source, sources, section, names = "", config = { codeSrc: undefined } }) : any => {
     const nodes = useJsonFileNodes();
 
     if (source) {
@@ -65,7 +65,7 @@ export const ApiDocumentation = ({ pageName, framework, source, sources, section
 };
 
 
-const Section: React.FC<SectionProps> = ({ framework, title, properties, config = {}, breadcrumbs = {}, names = [] }) => {
+const Section: React.FC<SectionProps> = ({ framework, title, properties, config = {}, breadcrumbs = {}, names = [] }) : any => {
     const { meta } = properties;
     const displayName = (meta && meta.displayName) || title;
 
