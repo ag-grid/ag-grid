@@ -18,6 +18,11 @@ var options = {
         xKey: 'type',
         yKeys: ['ownerOccupied', 'privateRented', 'localAuthority', 'housingAssociation'],
         yNames: ['Owner occupied', 'Private rented', 'Local authority', 'Housing association'],
+        highlightStyle: {
+            series: {
+                dimOpacity: 0.3
+            }
+        }
     }],
     axes: [
         {

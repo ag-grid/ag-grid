@@ -38,7 +38,9 @@ var options = {
         highlightStyle: {
             fill: 'cyan',    // series item fill
             stroke: 'blue',  // series item stroke
-            dimOpacity: 0.2  // whole series opacity when dimmed (other series is hovered)
+            series: {
+                dimOpacity: 0.2  // whole series opacity when dimmed (other series is hovered)
+            }
         }
     }]
 };

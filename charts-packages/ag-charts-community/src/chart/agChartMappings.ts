@@ -229,7 +229,9 @@ const columnSeriesDefaults: any = {
     shadow: undefined,
     highlightStyle: {
         fill: 'yellow',
-        dimOpacity: 1
+        series: {
+            dimOpacity: 1
+        }
     }
 };
 
@@ -451,7 +453,9 @@ const mappings: any = {
                         lineDashOffset: 0,
                         highlightStyle: {
                             fill: 'yellow',
-                            dimOpacity: 1
+                            series: {
+                                dimOpacity: 1
+                            }
                         }
                     }
                 },
@@ -498,7 +502,9 @@ const mappings: any = {
                         strokeOpacity: 1,
                         highlightStyle: {
                             fill: 'yellow',
-                            dimOpacity: 1
+                            series: {
+                                dimOpacity: 1
+                            }
                         }
                     }
                 },
@@ -544,7 +550,9 @@ const mappings: any = {
                         shadow: undefined,
                         highlightStyle: {
                             fill: 'yellow',
-                            dimOpacity: 1
+                            series: {
+                                dimOpacity: 1
+                            }
                         }
                     }
                 },
@@ -595,7 +603,9 @@ const mappings: any = {
                         aggregation: 'sum',
                         highlightStyle: {
                             fill: 'yellow',
-                            dimOpacity: 1
+                            series: {
+                                dimOpacity: 1
+                            }
                         }
                     }
                 },
@@ -709,7 +719,9 @@ const mappings: any = {
                         shadow: undefined,
                         highlightStyle: {
                             fill: 'yellow',
-                            dimOpacity: 1
+                            series: {
+                                dimOpacity: 1
+                            }
                         }
                     }
                 },

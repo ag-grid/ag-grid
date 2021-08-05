@@ -190,7 +190,11 @@ export interface GridStyle {
 export interface HighlightOptions {
     fill: string;
     stroke?: string;
-    dimOpacity?: number;
+    strokeWidth?: number;
+    series?: {
+        dimOpacity?: number;
+        strokeWidth?: number;
+    }
 }
 
 export interface FillOptions {

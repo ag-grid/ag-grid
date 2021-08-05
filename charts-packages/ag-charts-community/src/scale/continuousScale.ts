@@ -168,7 +168,7 @@ export default abstract class ContinuousScale implements Scale<any, any> {
             if (!this.output) {
                 this.output = this.piecewise!(this.domain.map(this.transform), this.range, this.interpolate);
             }
-            return this.output(this.transform(this._clamp(x)));
+        return this.output(this.transform(this._clamp(x)));
         }
     }
 

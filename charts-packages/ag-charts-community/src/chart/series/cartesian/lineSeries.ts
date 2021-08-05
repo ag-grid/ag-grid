@@ -205,6 +205,21 @@ export class LineSeries extends CartesianSeries {
         this.updateNodes();
     }
 
+    highlight() {
+        super.highlight();
+
+        const { strokeWidth } = this.highlightStyle.series;
+        this.lineNode.strokeWidth = strokeWidth !== undefined ? strokeWidth : this.strokeWidth;
+    }
+
+    dehighlight() {
+        this.lineNode.strokeWidth = this.strokeWidth;
+    }
+
+    resetHighlight() {
+        this.lineNode.strokeWidth = this.strokeWidth;
+    }
+
     update(): void {
         this.group.visible = this.visible;
 

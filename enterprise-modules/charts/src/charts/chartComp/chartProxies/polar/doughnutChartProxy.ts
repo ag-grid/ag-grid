@@ -146,7 +146,6 @@ export class DoughnutChartProxy extends PolarChartProxy {
             type: 'pie',
             angleKey: this.crossFiltering ? updateParams.angleField.colId + '-total' : updateParams.angleField.colId,
             radiusKey: this.crossFiltering ? updateParams.field.colId : undefined,
-            showInLegend: updateParams.index === 0, // show legend items for the first series only
             title: {
                 ...updateParams.seriesDefaults.title,
                 text: updateParams.seriesDefaults.title.text || updateParams.field.displayName!,

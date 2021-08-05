@@ -52,17 +52,27 @@ export interface PolarTooltipRendererParams extends TooltipRendererParams {
     readonly radiusName?: string;
 }
 
-export class HighlightStyle {
-    fill?: string = 'yellow';
-    stroke?: string;
+export class SeriesHighlightStyle {
+    private static defaultDimOpacity = 0.3;
+
+    strokeWidth?: number;
 
     protected _dimOpacity = 1;
     set dimOpacity(value: number) {
-        this._dimOpacity = value >= 0 && value <= 1 ? value : 0.2;
+        const { defaultDimOpacity } = SeriesHighlightStyle;
+        this._dimOpacity = value >= 0 && value <= 1 ? value : defaultDimOpacity;
     }
     get dimOpacity(): number {
         return this._dimOpacity;
     }
+}
+
+export class HighlightStyle {
+    fill?: string = 'yellow';
+    stroke?: string;
+    strokeWidth?: number;
+
+    readonly series = new SeriesHighlightStyle();
 }
 
 export class SeriesTooltip extends Observable {
@@ -103,8 +113,14 @@ export abstract class Series extends Observable {
 
     setColors(fills: string[], strokes: string[]) { }
 
+    highlight(itemId?: any) {
+        this.undim(itemId);
+    }
+
+    dehighlight() {}
+
     dim() {
-        this.group.opacity = this.highlightStyle.dimOpacity;
+        this.group.opacity = this.highlightStyle.series.dimOpacity;
     }
 
     undim(itemId?: any) {

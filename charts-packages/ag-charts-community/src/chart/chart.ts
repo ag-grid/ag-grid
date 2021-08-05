@@ -1154,7 +1154,10 @@ export abstract class Chart extends Observable {
         } else if (this.pointerInsideLegend) {
             this.pointerInsideLegend = false;
             // Undim all series only if the pointer was inside legend is now leaving it.
-            this.series.forEach(s => s.undim());
+            this.series.forEach(s => {
+                s.undim();
+                s.dehighlight();
+            });
             return;
         }
 
@@ -1163,7 +1166,7 @@ export abstract class Chart extends Observable {
             const series = find(this.series, series => series.id === id);
 
             if (series) {
-                this.series.forEach(s => s === series ? s.undim(itemId) : s.dim());
+                this.series.forEach(s => s === series ? s.highlight(itemId) : s.dim());
             }
         }
     }
@@ -1198,7 +1201,7 @@ export abstract class Chart extends Observable {
                 style.cursor = s.cursor;
             }
             if (s === datum.series) {
-                s.undim(datum.itemId);
+                s.highlight(datum.itemId);
             } else {
                 s.dim();
             }
@@ -1213,6 +1216,7 @@ export abstract class Chart extends Observable {
             this.series.forEach(s => {
                 s.onHighlightChange();
                 s.undim();
+                s.dehighlight();
             });
         }
     }
