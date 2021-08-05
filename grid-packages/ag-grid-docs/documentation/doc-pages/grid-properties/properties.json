@@ -21,7 +21,6 @@
         },
         "colResizeDefault": {
             "description": "Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down <kbd>Shift</kbd> while resizing).",
-            "type": "string",
             "options": [
                 "shift"
             ]
@@ -122,7 +121,6 @@
         },
         "multiSortKey": {
             "description": "Set to `'ctrl'` to have multi sorting work using the <kbd>Ctrl</kbd> (or <kbd>Command ⌘</kbd> for Mac) key.",
-            "type": "string",
             "options": [
                 "ctrl"
             ],
@@ -153,7 +151,6 @@
             "displayName": "Selection"
         },
         "rowSelection": {
-            "type": "string",
             "options": [
                 "single",
                 "multiple"
@@ -245,7 +242,6 @@
         },
         "editType": {
             "description": "Set to `'fullRow'` to enable [Full Row Editing](/cell-editing/#full-row-editing). Otherwise leave blank to edit one cell at a time.",
-            "type": "string",
             "options": [
                 "fullRow"
             ]
@@ -296,7 +292,6 @@
             }
         },
         "groupHeaderHeight": {
-            "type": "number",
             "description": "The height in pixels for the rows containing header column groups. If not specified, it uses `headerHeight`.",
             "more": {
                 "name": "Header Height",
@@ -312,7 +307,6 @@
             }
         },
         "pivotHeaderHeight": {
-            "type": "number",
             "description": "The height in pixels for the row containing the columns when in pivot mode. If not specified, it uses `headerHeight`.",
             "more": {
                 "name": "Header Height",
@@ -320,7 +314,6 @@
             }
         },
         "pivotGroupHeaderHeight": {
-            "type": "number",
             "description": "The height in pixels for the row containing header column groups when in pivot mode. If not specified, it uses `groupHeaderHeight`.",
             "more": {
                 "name": "Header Height",
@@ -333,7 +326,6 @@
             "displayName": "Row Grouping"
         },
         "groupDisplayType": {
-            "type": "string",
             "description": "Specifies how the results of row grouping should be displayed. The options are: <ul><li>`'singleColumn'`: single group column automatically added by the grid.</li><li>`'multipleColumns'`: a group column per row group is added automatically.</li><li>`'groupRows'`: groups rows are automatically added instead of group columns.</li><li>`'custom'`: informs the grid that group columns will be provided.</li></ul>",
             "more": {
                 "name": "Row Grouping - Display Types",
@@ -349,7 +341,6 @@
             }
         },
         "autoGroupColumnDef": {
-            "type": "ColDef",
             "description": "Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column in the grid. If not grouping, this column is not included.",
             "more": {
                 "name": "Group Column Configuration",
@@ -500,7 +491,6 @@
             }
         },
         "aggFuncs": {
-            "type": "object",
             "description": "A map of 'function name' to 'function' for custom aggregation functions.",
             "more": {
                 "name": "Custom Aggregation Functions",
@@ -516,7 +506,6 @@
             }
         },
         "pivotColumnGroupTotals": {
-            "type": "string",
             "options": [
                 "before",
                 "after"
@@ -528,7 +517,6 @@
             }
         },
         "pivotRowTotals": {
-            "type": "string",
             "options": [
                 "before",
                 "after"
@@ -567,7 +555,6 @@
             "description": "Sets the [Row Model](/row-models/) type."
         },
         "rowData": {
-            "type": "object[]",
             "description": "([Client-Side Row Model](/client-side-model/) only) Set the data to be displayed as rows in the grid."
         },
         "immutableData": {
@@ -583,11 +570,9 @@
             }
         },
         "pinnedTopRowData": {
-            "type": "object[]",
             "description": "Data to be displayed as [Pinned Top Rows](/row-pinning/) in the grid."
         },
         "pinnedBottomRowData": {
-            "type": "object[]",
             "description": "Data to be displayed as [Pinned Bottom Rows](/row-pinning/) in the grid."
         }
     },
@@ -608,7 +593,6 @@
             "description": "(Partial Store only) How many rows for each block in the store, i.e. how many rows returned from the server at a time."
         },
         "maxBlocksInCache": {
-            "type": "number",
             "description": "(Partial Store only) How many blocks to keep in the store. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value."
         },
         "maxConcurrentDatasourceRequests": {
@@ -616,7 +600,6 @@
             "description": "How many requests to hit the server with concurrently. If the max is reached, requests are queued."
         },
         "blockLoadDebounceMillis": {
-            "type": "number",
             "description": "How many milliseconds to wait before loading a block. Useful when scrolling over many rows, spanning many Partial Store blocks, as it prevents blocks loading until scrolling has settled."
         },
         "purgeClosedRowNodes": {
@@ -637,15 +620,12 @@
             "displayName": "Row Model: Viewport"
         },
         "viewportRowModelPageSize": {
-            "type": "number",
             "description": "When using [Viewport Row Model](/viewport/), sets the page size for the viewport."
         },
         "viewportRowModelBufferSize": {
-            "type": "number",
             "description": "When using [Viewport Row Model](/viewport/), sets the buffer size for the viewport."
         },
         "viewportDatasource": {
-            "type": "IViewportDatasource",
             "description": "To use the [Viewport Row Model](/viewport/) you need to provide the grid with a `viewportDatasource`."
         }
     },
@@ -746,7 +726,6 @@
             }
         },
         "groupRowRendererParams": {
-            "type": "object",
             "description": "Customise the parameters provided to the group row renderer component."
         },
         "groupRowInnerRenderer<br />groupRowInnerRendererFramework": {
@@ -760,7 +739,6 @@
             "description": "Sets the [Cell Renderer](/component-cell-renderer/) to use for [Full Width Rows](/full-width-rows/)."
         },
         "fullWidthCellRendererParams": {
-            "type": "object",
             "description": "Customise the parameters provided to the full width cell renderer component."
         }
     },
@@ -777,7 +755,6 @@
             }
         },
         "detailCellRendererParams": {
-            "type": "object",
             "description": "Specifies the params to be used by the default detail [Cell Renderer](/component-cell-renderer/).",
             "more": {
                 "name": "Detail Grids",
@@ -793,7 +770,6 @@
             "description": "Sets the number of details rows to keep."
         },
         "detailRowHeight": {
-            "type": "number",
             "description": "Set fixed height in pixels for each detail row."
         }
     },
@@ -802,7 +778,6 @@
             "displayName": "Rendering and Styling"
         },
         "icons": {
-            "type": "object",
             "description": "[Icons](/custom-icons/) to use inside the grid instead of the grid's default icons."
         },
         "rowHeight": {
@@ -814,7 +789,6 @@
             "description": "Set to `true` to enable [Row Animation](/row-animation/)."
         },
         "rowStyle": {
-            "type": "object",
             "description": "The style to give a particular row.",
             "more": {
                 "name": "Row Style",
@@ -822,7 +796,6 @@
             }
         },
         "rowClass": {
-            "type": "string",
             "description": "The class to give a particular row.",
             "more": {
                 "name": "Row Class",
@@ -830,11 +803,9 @@
             }
         },
         "rowClassRules": {
-            "type": "object",
             "description": "Rules which can be applied to include certain CSS classes. See [Row Class Rules](/row-styles/#row-class-rules)."
         },
         "scrollbarWidth": {
-            "type": "number",
             "description": "Tell the grid how wide in pixels the scrollbar is, which is used in grid width calculations. Set only if using non-standard browser-provided scrollbars, so the grid can use the non-standard size in its calculations."
         },
         "suppressRowHoverHighlight": {
@@ -855,7 +826,6 @@
             "description": "Set to `true` to also include headers when copying to clipboard using <kbd>Ctrl</kbd>+<kbd>C</kbd> [clipboard](/clipboard/)."
         },
         "clipboardDeliminator": {
-            "type": "string",
             "description": "Specify the deliminator to use when copying to [clipboard](/clipboard/)."
         },
         "suppressFocusAfterRefresh": {
@@ -876,7 +846,6 @@
             "displayName": "Localisation"
         },
         "localeText": {
-            "type": "object",
             "description": "A map of key->value pairs for localising text within the grid.",
             "more": {
                 "name": "Localisation",
@@ -884,13 +853,6 @@
             }
         },
         "localeTextFunc": {
-            "type": {
-                "arguments": {
-                    "key": "string",
-                    "defaultValue": "string"
-                },
-                "returnType": "string"
-            },
             "description": "A callback for localising text within the grid.",
             "more": {
                 "name": "Localisation",
@@ -911,11 +873,9 @@
             "description": "Disables the 'no rows' [overlay](/overlays/)."
         },
         "overlayLoadingTemplate": {
-            "type": "string",
             "description": "Provide a template for 'loading' [overlay](/overlays/)."
         },
         "overlayNoRowsTemplate": {
-            "type": "string",
             "description": "Provide a template for 'no rows' [overlay](/overlays/)."
         },
         "loadingOverlayComponent<br />loadingOverlayComponentFramework ": {
@@ -999,7 +959,6 @@
         },
         "tabIndex": {
             "default": 0,
-            "type": "number",
             "description": "Change this value to set the tabIndex order of the Grid within your application."
         },
         "valueCache": {
@@ -1128,7 +1087,6 @@
             "type": "ExcelStyle[]"
         },
         "asyncTransactionWaitMillis": {
-            "type": "number",
             "description": "How many milliseconds to wait before executing a [batch of async transactions](/data-update-high-frequency/)."
         },
         "suppressPropertyNamesCheck": {
