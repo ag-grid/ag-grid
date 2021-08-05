@@ -19,6 +19,7 @@ import { equal } from "../../../util/equal";
 import { reactive, TypedEvent } from "../../../util/observable";
 import Scale from "../../../scale/scale";
 import { sanitizeHtml } from "../../../util/sanitize";
+import { Shape } from "../../../scene/shape/shape";
 
 export interface BarSeriesNodeClickEvent extends TypedEvent {
     readonly type: 'nodeClick';
@@ -475,19 +476,19 @@ export class BarSeries extends CartesianSeries {
         return this.flipXY ? this.xAxis : this.yAxis;
     }
 
-    protected highlightedItemId?: any;
     undim(itemId?: any) {
-        this.highlightedItemId = itemId;
-
-        this.updateRectNodes();
-        this.updateLabelNodes();
+        this.updateDim(itemId);
     }
 
     dim() {
-        this.highlightedItemId = undefined;
+        this.updateDim();
+    }
 
-        this.updateRectNodes();
-        this.updateLabelNodes();
+    private updateDim(itemId?: any) {
+        const { dimOpacity } = this.highlightStyle.series;
+        const fn = (node: Shape, datum: { itemId?: any }) => node.opacity = !itemId || itemId === datum.itemId ? 1 : dimOpacity;
+        this.rectSelection.each(fn);
+        this.labelSelection.each(fn);
     }
 
     generateNodeData(): BarNodeDatum[] {
@@ -672,12 +673,11 @@ export class BarSeries extends CartesianSeries {
 
         const {
             fillOpacity, strokeOpacity,
-            highlightStyle: { fill, stroke, series: { dimOpacity } },
+            highlightStyle: { fill, stroke },
             shadow,
             formatter,
             xKey,
-            flipXY,
-            highlightedItemId
+            flipXY
         } = this;
         const { highlightedDatum } = this.chart;
 
@@ -707,7 +707,6 @@ export class BarSeries extends CartesianSeries {
             rect.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : datum.strokeWidth;
             rect.fillOpacity = fillOpacity;
             rect.strokeOpacity = strokeOpacity;
-            rect.opacity = !highlightedItemId || highlightedItemId === datum.itemId ? 1 : dimOpacity;
             rect.lineDash = this.lineDash;
             rect.lineDashOffset = this.lineDashOffset;
             rect.fillShadow = shadow;
@@ -730,8 +729,6 @@ export class BarSeries extends CartesianSeries {
     }
 
     private updateLabelNodes(): void {
-        const { highlightedItemId } = this;
-        const { dimOpacity } = this.highlightStyle.series;
         const labelEnabled = this.label.enabled;
 
         this.labelSelection.each((text, datum) => {
@@ -748,7 +745,6 @@ export class BarSeries extends CartesianSeries {
                 text.x = label.x;
                 text.y = label.y;
                 text.fill = label.fill;
-                text.opacity = !highlightedItemId || highlightedItemId === datum.itemId ? 1 : dimOpacity;
                 text.visible = true;
             } else {
                 text.visible = false;
