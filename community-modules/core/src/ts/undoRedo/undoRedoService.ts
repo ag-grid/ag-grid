@@ -68,10 +68,10 @@ export class UndoRedoService extends BeanStub {
 
     private onCellValueChanged = (event: CellValueChangedEvent): void => {
         const eventCell: CellPosition = { column: event.column, rowIndex: event.rowIndex!, rowPinned: event.rowPinned };
-        const sameCell = this.activeCellEdit !== null && this.cellPositionUtils.equals(this.activeCellEdit, eventCell);
-        const sameRow = this.activeRowEdit !== null && this.rowPositionUtils.sameRow(this.activeRowEdit, eventCell);
+        const isCellEditing = this.activeCellEdit !== null && this.cellPositionUtils.equals(this.activeCellEdit, eventCell);
+        const isRowEditing = this.activeRowEdit !== null && this.rowPositionUtils.sameRow(this.activeRowEdit, eventCell);
 
-        const shouldCaptureAction = sameCell || sameRow || this.isPasting || this.isFilling;
+        const shouldCaptureAction = isCellEditing || isRowEditing || this.isPasting || this.isFilling;
 
         if (!shouldCaptureAction) { return; }
 
