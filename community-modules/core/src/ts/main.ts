@@ -356,6 +356,7 @@ export {
     ChartRef,
     ProcessChartOptionsParams,
     ProcessChartParams,
+    RowClassRules,
     RowClassParams,
     RowHeightParams,
     SendToClipboardParams,

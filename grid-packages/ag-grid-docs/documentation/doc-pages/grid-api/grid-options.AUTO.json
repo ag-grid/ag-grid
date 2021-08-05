@@ -1,6 +1,6 @@
 {
   "suppressBrowserResizeObserver": {
-    "description": "/**\n * *****************************************************************************************************\n * If you change the properties on this interface, you must also update PropertyKeys to be consistent. *\n * ***************************************************************************************************** */\n/**\n * Set once in init, can never change */",
+    "description": "/**\n * Set once in init, can never change */",
     "type": { "returnType": "boolean" }
   },
   "rowDragManaged": { "type": { "returnType": "boolean" } },
@@ -306,7 +306,6 @@
   "pivotGroupHeaderHeight": { "type": { "returnType": "number" } },
   "floatingFiltersHeight": { "type": { "returnType": "number" } },
   "paginationNumberFormatter": {
-    "description": "/**\n * ****************************************************************************************************\n * If you change the callbacks on this interface, you must also update PropertyKeys to be consistent. *\n * **************************************************************************************************** */",
     "type": {
       "arguments": { "params": "PaginationNumberFormatterParams" },
       "returnType": "string"
@@ -366,11 +365,7 @@
       "returnType": "string | string[] | undefined"
     }
   },
-  "rowClassRules": {
-    "type": {
-      "returnType": "{ [cssClassName: string]: (((params: RowClassParams) => boolean) | string); }"
-    }
-  },
+  "rowClassRules": { "type": { "returnType": "RowClassRules" } },
   "getRowHeight": {
     "type": {
       "arguments": { "params": "RowHeightParams" },
@@ -524,7 +519,6 @@
     }
   },
   "onColumnEverythingChanged": {
-    "description": "/**\n * ********************************************************************************************************\n * If you change the events on this interface, you do *not* need to update PropertyKeys to be consistent, *\n * as event callbacks are automatically generated.                                                        *\n * ******************************************************************************************************** */\n/** */",
     "type": {
       "arguments": { "event": "ColumnEverythingChangedEvent" },
       "returnType": "void"
@@ -532,7 +526,6 @@
     "meta": { "isEvent": true, "name": "onColumnEverythingChanged" }
   },
   "columnEverythingChanged": {
-    "description": "/**\n * ********************************************************************************************************\n * If you change the events on this interface, you do *not* need to update PropertyKeys to be consistent, *\n * as event callbacks are automatically generated.                                                        *\n * ******************************************************************************************************** */\n/** */",
     "type": {
       "arguments": { "event": "ColumnEverythingChangedEvent" },
       "returnType": "void"

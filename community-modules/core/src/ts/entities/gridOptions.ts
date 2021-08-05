@@ -97,9 +97,9 @@ import { HeaderPosition } from "../headerRendering/header/headerPosition";
 import { ExcelExportParams, ExcelStyle } from "../interfaces/iExcelCreator";
 
 export interface GridOptions {
-    /*******************************************************************************************************
-     * If you change the properties on this interface, you must also update PropertyKeys to be consistent. *
-     *******************************************************************************************************/
+    // ******************************************************************************************************
+    // If you change the properties on this interface, you must also update PropertyKeys to be consistent. *
+    // ******************************************************************************************************
 
     /** Set once in init, can never change*/
     suppressBrowserResizeObserver?: boolean;
@@ -366,11 +366,10 @@ export interface GridOptions {
     pivotGroupHeaderHeight?: number;
     floatingFiltersHeight?: number;
 
-    /******************************************************************************************************
-     * If you change the callbacks on this interface, you must also update PropertyKeys to be consistent. *
-     ******************************************************************************************************/
+    // *****************************************************************************************************
+    // If you change the callbacks on this interface, you must also update PropertyKeys to be consistent. *
+    // *****************************************************************************************************
 
-    // callbacks
     paginationNumberFormatter?: (params: PaginationNumberFormatterParams) => string;
     postProcessPopup?: (params: PostProcessPopupParams) => void;
     frameworkComponents?: { [p: string]: { new(): any; }; } | any;
@@ -390,7 +389,7 @@ export interface GridOptions {
 
     getRowStyle?: (params: RowClassParams) => { [cssProperty: string]: string };
     getRowClass?: (params: RowClassParams) => string | string[] | undefined;
-    rowClassRules?: { [cssClassName: string]: (((params: RowClassParams) => boolean) | string); };
+    rowClassRules?: RowClassRules;
     getRowHeight?: (params: RowHeightParams) => number | undefined | null;
     sendToClipboard?: (params: SendToClipboardParams) => void;
     processDataFromClipboard?: (params: ProcessDataFromClipboardParams) => string[][] | null;
@@ -466,12 +465,11 @@ export interface GridOptions {
     /** @deprecated */
     processChartOptions?(params: ProcessChartOptionsParams): ChartOptions<any>;
 
-    /**********************************************************************************************************
-     * If you change the events on this interface, you do *not* need to update PropertyKeys to be consistent, *
-     * as event callbacks are automatically generated.                                                        *
-     **********************************************************************************************************/
+    // **********************************************************************************************************
+    // * If you change the events on this interface, you do *not* need to update PropertyKeys to be consistent, *
+    // * as event callbacks are automatically generated.                                                        *
+    // **********************************************************************************************************
 
-/**  */
     onColumnEverythingChanged?(event: ColumnEverythingChangedEvent): void;
 
     onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent): void;
@@ -675,6 +673,10 @@ export interface IsRowMaster {
 
 export interface IsRowSelectable {
     (node: RowNode): boolean;
+}
+
+export interface RowClassRules {
+    [cssClassName: string]: (((params: RowClassParams) => boolean) | string);
 }
 
 export interface RowClassParams {

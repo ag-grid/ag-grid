@@ -34,7 +34,10 @@ const printer = ts.createPrinter({ removeComments: true, omitTrailingSemicolon: 
 
 function getJsDoc(node) {
     if (node.jsDoc) {
-        const result = node.jsDoc.map(j => printer.printNode(ts.EmitHint.Unspecified, j)).join('\n');
+        const result = node.jsDoc.map(j => {
+            const doc = printer.printNode(ts.EmitHint.Unspecified, j);
+            return doc.replace('/**\n *', '/**');
+        }).join('\n');
         return result;
     }
 };

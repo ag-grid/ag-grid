@@ -142,6 +142,7 @@ import {
     ProcessCellForExportParams,
     ProcessHeaderForExportParams,
     ProcessChartOptionsParams,
+    RowClassRules,
     RowClassParams,
     RowHeightParams,
     SendToClipboardParams,
@@ -310,11 +311,13 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public fullWidthCellRendererParams: any | undefined = undefined;
     @Input() public defaultColGroupDef: Partial<ColGroupDef> | undefined = undefined;
     @Input() public defaultColDef: ColDef | undefined = undefined;
+    /** @deprecated Use defaultCsvExportParams or defaultExcelExportParams
+     */
     @Input() public defaultExportParams: CsvExportParams | ExcelExportParams | undefined = undefined;
     @Input() public defaultCsvExportParams: CsvExportParams | undefined = undefined;
     @Input() public defaultExcelExportParams: ExcelExportParams | undefined = undefined;
     @Input() public columnTypes: { [key: string]: ColDef; } | undefined = undefined;
-    @Input() public rowClassRules: { [cssClassName: string]: (((params: RowClassParams) => boolean) | string); } | undefined = undefined;
+    @Input() public rowClassRules: RowClassRules | undefined = undefined;
     @Input() public detailCellRendererParams: any | undefined = undefined;
     @Input() public loadingCellRendererParams: any | undefined = undefined;
     @Input() public loadingOverlayComponentParams: any | undefined = undefined;
@@ -376,7 +379,11 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public cellFadeDelay: number | undefined = undefined;
     @Input() public tabIndex: number | undefined = undefined;
     @Input() public localeTextFunc: (key: string, defaultValue: string) => string | undefined = undefined;
+    /** @deprecated - this is now groupRowRendererParams.innerRenderer
+     */
     @Input() public groupRowInnerRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined = undefined;
+    /** @deprecated - this is now groupRowRendererParams.innerRendererFramework
+     */
     @Input() public groupRowInnerRendererFramework: any | undefined = undefined;
     @Input() public dateComponent: any = undefined;
     @Input() public dateComponentFramework: any = undefined;
@@ -425,8 +432,11 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public processDataFromClipboard: (params: ProcessDataFromClipboardParams) => string[][] | null | undefined = undefined;
     @Input() public getServerSideGroupKey: GetServerSideGroupKey | undefined = undefined;
     @Input() public isServerSideGroup: IsServerSideGroup | undefined = undefined;
+    /** Allows user to suppress certain keyboard events     */
     @Input() public suppressKeyboardEvent: (params: SuppressKeyboardEventParams) => boolean | undefined = undefined;
     @Input() public createChartContainer: (params: ChartRef) => void | undefined = undefined;
+    /** @deprecated
+     */
     @Input() public processChartOptions: (params: ProcessChartOptionsParams) =>  ChartOptions<any> | undefined = undefined;
     @Input() public getChartToolbarItems: GetChartToolbarItems | undefined = undefined;
     @Input() public fillOperation: (params: FillOperationParams) => any | undefined = undefined;
@@ -434,6 +444,8 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public getServerSideStoreParams: (params: GetServerSideStoreParamsParams) => ServerSideStoreParams | undefined = undefined;
     @Input() public isServerSideGroupOpenByDefault: (params: IsServerSideGroupOpenByDefaultParams) => boolean | undefined = undefined;
     @Input() public isGroupOpenByDefault: (params: IsGroupOpenByDefaultParams) => boolean | undefined = undefined;
+    /** @deprecated - Use defaultGroupOrderComparator instead
+     */
     @Input() public defaultGroupSortComparator: (nodeA: RowNode, nodeB: RowNode) => number | undefined = undefined;
     @Input() public defaultGroupOrderComparator: (nodeA: RowNode, nodeB: RowNode) => number | undefined = undefined;
     @Input() public suppressMakeColumnVisibleAfterUnGroup: boolean | undefined = undefined;
@@ -447,10 +459,14 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public enableCellExpressions: boolean | undefined = undefined;
     @Input() public angularCompileRows: boolean | undefined = undefined;
     @Input() public angularCompileFilters: boolean | undefined = undefined;
+    /** @deprecated - Use groupDisplayType = 'custom' instead
+     */
     @Input() public groupSuppressAutoColumn: boolean | undefined = undefined;
     @Input() public groupSelectsChildren: boolean | undefined = undefined;
     @Input() public groupIncludeFooter: boolean | undefined = undefined;
     @Input() public groupIncludeTotalFooter: boolean | undefined = undefined;
+    /** @deprecated - Use groupDisplayType = 'groupRows' instead
+     */
     @Input() public groupUseEntireRow: boolean | undefined = undefined;
     @Input() public groupSuppressBlankHeader: boolean | undefined = undefined;
     @Input() public suppressMenuHide: boolean | undefined = undefined;
@@ -475,6 +491,8 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public suppressAsyncEvents: boolean | undefined = undefined;
     @Input() public allowContextMenuWithControlKey: boolean | undefined = undefined;
     @Input() public suppressContextMenu: boolean | undefined = undefined;
+    /** @deprecated - no longer needed, transaction updates keep group state
+     */
     @Input() public rememberGroupStateWhenNewData: boolean | undefined = undefined;
     @Input() public enableCellChangeFlash: boolean | undefined = undefined;
     @Input() public suppressDragLeaveHidesColumns: boolean | undefined = undefined;
@@ -501,17 +519,27 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public enableMultiRowDragging: boolean | undefined = undefined;
     @Input() public enableGroupEdit: boolean | undefined = undefined;
     @Input() public embedFullWidthRows: boolean | undefined = undefined;
+    /** @deprecated
+     */
     @Input() public deprecatedEmbedFullWidthRows: boolean | undefined = undefined;
     @Input() public suppressPaginationPanel: boolean | undefined = undefined;
+    /** @deprecated Use floatingFilter on the colDef instead
+     */
     @Input() public floatingFilter: boolean | undefined = undefined;
     @Input() public groupHideOpenParents: boolean | undefined = undefined;
+    /** @deprecated - Use groupDisplayType = 'multipleColumns' instead
+     */
     @Input() public groupMultiAutoColumn: boolean | undefined = undefined;
     @Input() public pagination: boolean | undefined = undefined;
+    /** @deprecated Use stopEditingWhenCellsLoseFocus instead
+     */
     @Input() public stopEditingWhenGridLosesFocus: boolean | undefined = undefined;
     @Input() public paginationAutoPageSize: boolean | undefined = undefined;
     @Input() public suppressScrollOnNewData: boolean | undefined = undefined;
     @Input() public purgeClosedRowNodes: boolean | undefined = undefined;
     @Input() public cacheQuickFilter: boolean | undefined = undefined;
+    /** @deprecated
+     */
     @Input() public deltaRowDataMode: boolean | undefined = undefined;
     @Input() public ensureDomOrder: boolean | undefined = undefined;
     @Input() public accentedSort: boolean | undefined = undefined;
@@ -536,12 +564,19 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public suppressClipboardPaste: boolean | undefined = undefined;
     @Input() public suppressLastEmptyLineOnPaste: boolean | undefined = undefined;
     @Input() public serverSideSortingAlwaysResets: boolean | undefined = undefined;
+    /** @deprecated
+     */
     @Input() public suppressSetColumnStateEvents: boolean | undefined = undefined;
+    /** @deprecated
+     */
     @Input() public suppressColumnStateEvents: boolean | undefined = undefined;
     @Input() public enableCharts: boolean | undefined = undefined;
+    /** @deprecated
+     */
     @Input() public deltaColumnMode: boolean | undefined = undefined;
     @Input() public suppressMaintainUnsortedOrder: boolean | undefined = undefined;
     @Input() public enableCellTextSelection: boolean | undefined = undefined;
+    /** Set once in init, can never change     */
     @Input() public suppressBrowserResizeObserver: boolean | undefined = undefined;
     @Input() public suppressMaxRenderedRowRestriction: boolean | undefined = undefined;
     @Input() public excludeChildrenWhenTreeDataFiltering: boolean | undefined = undefined;
@@ -552,9 +587,13 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public undoRedoCellEditing: boolean | undefined = undefined;
     @Input() public allowDragFromColumnsToolPanel: boolean | undefined = undefined;
     @Input() public immutableData: boolean | undefined = undefined;
+    /** @deprecated
+     */
     @Input() public immutableColumns: boolean | undefined = undefined;
     @Input() public pivotSuppressAutoColumn: boolean | undefined = undefined;
     @Input() public suppressExpandablePivotGroups: boolean | undefined = undefined;
+    /** @deprecated
+     */
     @Input() public applyColumnDefOrder: boolean | undefined = undefined;
     @Input() public debounceVerticalScrollbar: boolean | undefined = undefined;
     @Input() public detailRowAutoHeight: boolean | undefined = undefined;

@@ -1171,7 +1171,7 @@
       "doesExternalFilterPass?(node: RowNode)": "boolean",
       "getRowStyle?": "(params: RowClassParams) => {\n    [cssProperty: string]: string;\n}",
       "getRowClass?": "(params: RowClassParams) => string | string[] | undefined",
-      "rowClassRules?": "{\n    [cssClassName: string]: (((params: RowClassParams) => boolean) | string);\n}",
+      "rowClassRules?": "RowClassRules",
       "getRowHeight?": "(params: RowHeightParams) => number | undefined | null",
       "sendToClipboard?": "(params: SendToClipboardParams) => void",
       "processDataFromClipboard?": "(params: ProcessDataFromClipboardParams) => string[][] | null",
@@ -1295,7 +1295,7 @@
       "columnApi?": "ColumnApi | null"
     },
     "docs": {
-      "suppressBrowserResizeObserver?": "/**\n * *****************************************************************************************************\n * If you change the properties on this interface, you must also update PropertyKeys to be consistent. *\n * ***************************************************************************************************** */\n/**\n * Set once in init, can never change */",
+      "suppressBrowserResizeObserver?": "/**\n * Set once in init, can never change */",
       "deltaRowDataMode?": "/**\n * @deprecated\n */",
       "deltaColumnMode?": "/**\n * @deprecated\n */",
       "applyColumnDefOrder?": "/**\n * @deprecated\n */",
@@ -1312,12 +1312,10 @@
       "groupUseEntireRow?": "/**\n * @deprecated - Use groupDisplayType = 'groupRows' instead\n */",
       "groupSuppressAutoColumn?": "/**\n * @deprecated - Use groupDisplayType = 'custom' instead\n */",
       "rowDeselection?": "/**\n * @deprecated - rowDeselection is now true by default and should be suppressed by using suppressRowDeselection\n */",
-      "paginationNumberFormatter?": "/**\n * ****************************************************************************************************\n * If you change the callbacks on this interface, you must also update PropertyKeys to be consistent. *\n * **************************************************************************************************** */",
       "groupRowInnerRenderer?": "/**\n * @deprecated - this is now groupRowRendererParams.innerRenderer\n */",
       "groupRowInnerRendererFramework?": "/**\n * @deprecated - this is now groupRowRendererParams.innerRendererFramework\n */",
       "defaultGroupSortComparator?": "/**\n * @deprecated - Use defaultGroupOrderComparator instead\n */",
-      "processChartOptions?(params: ProcessChartOptionsParams)": "/**\n * @deprecated\n */",
-      "onColumnEverythingChanged?(event: ColumnEverythingChangedEvent)": "/**\n * ********************************************************************************************************\n * If you change the events on this interface, you do *not* need to update PropertyKeys to be consistent, *\n * as event callbacks are automatically generated.                                                        *\n * ******************************************************************************************************** */\n/** */"
+      "processChartOptions?(params: ProcessChartOptionsParams)": "/**\n * @deprecated\n */"
     }
   },
   "RowGroupingDisplayType": {
@@ -1383,6 +1381,12 @@
   "IsRowSelectable": {
     "meta": { "isCallSignature": true },
     "type": { "arguments": { "node": "RowNode" }, "returnType": "boolean" }
+  },
+  "RowClassRules": {
+    "meta": {},
+    "type": {
+      "[cssClassName: string]": "(((params: RowClassParams) => boolean) | string)"
+    }
   },
   "RowClassParams": {
     "meta": {},
