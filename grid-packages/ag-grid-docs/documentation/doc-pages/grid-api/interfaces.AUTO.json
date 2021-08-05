@@ -4325,7 +4325,8 @@
       "data?": "any[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
-      "listeners?": "{[key in string]: Function}"
+      "listeners?": "{[key in string]: Function}",
+      "highlightStyle?": "{\n    fill?: string;\n    stroke?: string;\n    strokeWidth?: number;\n    series?: {\n        dimOpacity?: number;\n        strokeWidth?: number;\n    };\n}"
     }
   },
   "AgTooltipRendererResult": {
@@ -4448,6 +4449,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
+      "highlightStyle?": "{\n    fill?: string;\n    stroke?: string;\n    strokeWidth?: number;\n    series?: {\n        dimOpacity?: number;\n        strokeWidth?: number;\n    };\n}",
       "type?": "'line'",
       "marker?": "AgCartesianSeriesMarker",
       "label?": "AgLineSeriesLabelOptions",
@@ -4461,7 +4463,6 @@
       "strokeOpacity?": "number",
       "lineDash?": "number[]",
       "lineDashOffset?": "number",
-      "highlightStyle?": "{\n    fill?: string;\n    stroke?: string;\n}",
       "tooltip?": "AgLineSeriesTooltip",
       "tooltipRenderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult"
     }
@@ -4492,6 +4493,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
+      "highlightStyle?": "{\n    fill?: string;\n    stroke?: string;\n    strokeWidth?: number;\n    series?: {\n        dimOpacity?: number;\n        strokeWidth?: number;\n    };\n}",
       "type?": "'scatter'",
       "marker?": "AgCartesianSeriesMarker",
       "label?": "AgScatterSeriesLabelOptions",
@@ -4505,7 +4507,6 @@
       "strokeWidth?": "number",
       "fillOpacity?": "number",
       "strokeOpacity?": "number",
-      "highlightStyle?": "{\n    fill?: string;\n    stroke?: string;\n}",
       "tooltip?": "AgScatterSeriesTooltip",
       "tooltipRenderer?": "(params: AgScatterSeriesTooltipRendererParams) => string | AgTooltipRendererResult"
     }
@@ -4538,6 +4539,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
+      "highlightStyle?": "{\n    fill?: string;\n    stroke?: string;\n    strokeWidth?: number;\n    series?: {\n        dimOpacity?: number;\n        strokeWidth?: number;\n    };\n}",
       "type?": "'area'",
       "marker?": "AgCartesianSeriesMarker",
       "label?": "AgAreaSeriesLabelOptions",
@@ -4553,7 +4555,6 @@
       "lineDash?": "number[]",
       "lineDashOffset?": "number",
       "shadow?": "AgDropShadowOptions",
-      "highlightStyle?": "{\n    fill?: string;\n    stroke?: string;\n}",
       "tooltip?": "AgAreaSeriesTooltip",
       "tooltipRenderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult"
     }
@@ -4601,6 +4602,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
+      "highlightStyle?": "{\n    fill?: string;\n    stroke?: string;\n    strokeWidth?: number;\n    series?: {\n        dimOpacity?: number;\n        strokeWidth?: number;\n    };\n}",
       "type?": "'bar' | 'column'",
       "grouped?": "boolean",
       "normalizedTo?": "number",
@@ -4616,7 +4618,6 @@
       "lineDash?": "number[]",
       "lineDashOffset?": "number",
       "shadow?": "AgDropShadowOptions",
-      "highlightStyle?": "{\n    fill?: string;\n    stroke?: string;\n}",
       "label?": "AgBarSeriesLabelOptions",
       "tooltip?": "AgBarSeriesTooltip",
       "tooltipRenderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
@@ -4650,6 +4651,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
+      "highlightStyle?": "{\n    fill?: string;\n    stroke?: string;\n    strokeWidth?: number;\n    series?: {\n        dimOpacity?: number;\n        strokeWidth?: number;\n    };\n}",
       "type?": "'histogram'",
       "fill?": "string",
       "stroke?": "string",
@@ -4667,7 +4669,6 @@
       "binCount?": "number",
       "aggregation?": "'count' | 'sum' | 'mean'",
       "shadow?": "AgDropShadowOptions",
-      "highlightStyle?": "{\n    fill?: string;\n    stroke?: string;\n}",
       "label?": "AgHistogramSeriesLabelOptions",
       "tooltip?": "AgHistogramSeriesTooltip",
       "tooltipRenderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult"
@@ -4717,6 +4718,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
+      "highlightStyle?": "{\n    fill?: string;\n    stroke?: string;\n    strokeWidth?: number;\n    series?: {\n        dimOpacity?: number;\n        strokeWidth?: number;\n    };\n}",
       "type?": "'pie'",
       "title?": "AgChartCaptionOptions",
       "label?": "AgPieSeriesLabelOptions",
@@ -4738,7 +4740,6 @@
       "outerRadiusOffset?": "number",
       "innerRadiusOffset?": "number",
       "shadow?": "AgDropShadowOptions",
-      "highlightStyle?": "{\n    fill?: string;\n    stroke?: string;\n}",
       "tooltip?": "AgPieSeriesTooltip",
       "tooltipRenderer?": "(params: AgPieSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
       "formatter?": "(params: AgPieSeriesFormatterParams) => AgPieSeriesFormat"
@@ -5175,7 +5176,12 @@
   },
   "HighlightOptions": {
     "meta": {},
-    "type": { "fill": "string", "stroke?": "string", "dimOpacity?": "number" }
+    "type": {
+      "fill": "string",
+      "stroke?": "string",
+      "strokeWidth?": "number",
+      "series?": "{\n    dimOpacity?: number;\n    strokeWidth?: number;\n}"
+    }
   },
   "FillOptions": {
     "meta": {},

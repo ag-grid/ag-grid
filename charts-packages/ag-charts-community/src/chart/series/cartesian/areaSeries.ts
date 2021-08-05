@@ -22,6 +22,7 @@ import { Text } from "../../../scene/shape/text";
 import { Label } from "../../label";
 import { sanitizeHtml } from "../../../util/sanitize";
 import { FontStyle, FontWeight } from "../../../scene/shape/text";
+import { Shape } from "../../../scene/shape/shape";
 
 interface AreaSelectionDatum {
     readonly itemId: string;
@@ -333,20 +334,37 @@ export class AreaSeries extends CartesianSeries {
         }
     }
 
-    protected highlightedItemId?: any;
+    highlight(itemId?: any) {
+        super.highlight(itemId);
+
+        const { strokeWidth } = this.highlightStyle.series;
+        this.strokeSelection.each((node, datum) => node.strokeWidth = itemId === datum.itemId && strokeWidth !== undefined ? strokeWidth : this.strokeWidth);
+    }
+
+    dehighlight() {
+        this.strokeSelection.each((node, datum) => node.strokeWidth = this.strokeWidth);
+    }
+
     undim(itemId?: any) {
         if (this.yKeys.length > 1) {
-            this.highlightedItemId = itemId;
-            this.updateSelectionNodes();
+            this.updateDim(itemId);
         } else {
             super.undim();
         }
     }
 
+    private updateDim(itemId?: any) {
+        const { dimOpacity } = this.highlightStyle.series;
+        const fn = (node: Shape, datum: { itemId?: any }) => node.opacity = !itemId || itemId === datum.itemId ? 1 : dimOpacity;
+        this.fillSelection.each(fn);
+        this.strokeSelection.each(fn);
+        this.markerSelection.each(fn);
+        this.labelSelection.each(fn);
+    }
+
     dim() {
         if (this.yKeys.length > 1) {
-            this.highlightedItemId = undefined;
-            this.updateSelectionNodes();
+            this.updateDim();
         } else {
             super.dim();
         }
@@ -493,11 +511,7 @@ export class AreaSeries extends CartesianSeries {
     }
 
     private updateFillNodes() {
-        const {
-            fills, fillOpacity, strokes, strokeOpacity, strokeWidth, shadow,
-            seriesItemEnabled, highlightedItemId
-        } = this;
-        const { dimOpacity } = this.highlightStyle;
+        const { fills, fillOpacity, strokes, strokeOpacity, strokeWidth, shadow, seriesItemEnabled } = this;
 
         this.fillSelection.each((shape, datum, index) => {
             const path = shape.path;
@@ -511,7 +525,6 @@ export class AreaSeries extends CartesianSeries {
             shape.lineDashOffset = this.lineDashOffset;
             shape.fillShadow = shadow;
             shape.visible = !!seriesItemEnabled.get(datum.itemId);
-            shape.opacity = !highlightedItemId || highlightedItemId === datum.itemId ? 1 : dimOpacity;
 
             path.clear();
 
@@ -549,11 +562,7 @@ export class AreaSeries extends CartesianSeries {
             return;
         }
 
-        const {
-            data, strokes, strokeWidth, strokeOpacity,
-            seriesItemEnabled, highlightedItemId
-        } = this;
-        const { dimOpacity } = this.highlightStyle;
+        const { data, strokes, strokeWidth, strokeOpacity, seriesItemEnabled } = this;
 
         this.strokeSelection.each((shape, datum, index) => {
             const path = shape.path;
@@ -564,7 +573,6 @@ export class AreaSeries extends CartesianSeries {
             shape.strokeOpacity = strokeOpacity;
             shape.lineDash = this.lineDash;
             shape.lineDashOffset = this.lineDashOffset;
-            shape.opacity = !highlightedItemId || highlightedItemId === datum.itemId ? 1 : dimOpacity;
 
             path.clear();
 
@@ -585,8 +593,8 @@ export class AreaSeries extends CartesianSeries {
     }
 
     private updateMarkerSelection(markerSelectionData: MarkerSelectionDatum[]): void {
-        const data = this.marker.shape ? markerSelectionData : [];
         const MarkerShape = getMarker(this.marker.shape);
+        const data = this.marker.enabled && MarkerShape ? markerSelectionData : [];
         const updateMarkers = this.markerSelection.setData(data);
         updateMarkers.exit.remove();
         const enterMarkers = updateMarkers.enter.append(MarkerShape);
@@ -602,9 +610,9 @@ export class AreaSeries extends CartesianSeries {
         const markerFormatter = marker.formatter;
         const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : this.strokeWidth;
         const markerSize = marker.size;
-        const { xKey, seriesItemEnabled, highlightedItemId } = this;
+        const { xKey, seriesItemEnabled } = this;
         const { highlightedDatum } = this.chart;
-        const { fill: highlightFill, stroke: highlightStroke, dimOpacity } = this.highlightStyle;
+        const { fill: highlightFill, stroke: highlightStroke } = this.highlightStyle;
 
         this.markerSelection.each((node, datum) => {
             const highlighted = datum === highlightedDatum;
@@ -637,7 +645,6 @@ export class AreaSeries extends CartesianSeries {
             node.translationX = datum.point.x;
             node.translationY = datum.point.y;
             node.visible = marker.enabled && node.size > 0 && !!seriesItemEnabled.get(datum.yKey);
-            node.opacity = !highlightedItemId || highlightedItemId === datum.itemId ? 1 : dimOpacity;
         });
     }
 
@@ -656,8 +663,6 @@ export class AreaSeries extends CartesianSeries {
         }
 
         const labelEnabled = this.label.enabled;
-        const { highlightedItemId } = this;
-        const { dimOpacity } = this.highlightStyle;
 
         this.labelSelection.each((text, datum) => {
             const { point, label } = datum;
@@ -674,7 +679,6 @@ export class AreaSeries extends CartesianSeries {
                 text.y = point.y - 10;
                 text.fill = label.fill;
                 text.visible = true;
-                text.opacity = !highlightedItemId || highlightedItemId === datum.itemId ? 1 : dimOpacity;
             } else {
                 text.visible = false;
             }

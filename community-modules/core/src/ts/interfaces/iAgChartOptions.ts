@@ -309,6 +309,15 @@ interface AgBaseSeriesOptions {
     visible?: boolean;
     showInLegend?: boolean;
     listeners?: { [key in string]: Function };
+    highlightStyle?: {
+        fill?: string;
+        stroke?: string;
+        strokeWidth?: number;
+        series?: {
+            dimOpacity?: number;
+            strokeWidth?: number;
+        }
+    }
 }
 
 export interface AgTooltipRendererResult {
@@ -402,10 +411,6 @@ export interface AgLineSeriesOptions extends AgBaseSeriesOptions {
     strokeOpacity?: number;
     lineDash?: number[];
     lineDashOffset?: number;
-    highlightStyle?: {
-        fill?: string;
-        stroke?: string;
-    };
     tooltip?: AgLineSeriesTooltip;
     tooltipRenderer?: (params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
 }
@@ -431,10 +436,6 @@ export interface AgScatterSeriesOptions extends AgBaseSeriesOptions {
     strokeWidth?: number;
     fillOpacity?: number;
     strokeOpacity?: number;
-    highlightStyle?: {
-        fill?: string;
-        stroke?: string;
-    };
     tooltip?: AgScatterSeriesTooltip;
     tooltipRenderer?: (params: AgScatterSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
 }
@@ -464,10 +465,6 @@ export interface AgAreaSeriesOptions extends AgBaseSeriesOptions {
     lineDash?: number[];
     lineDashOffset?: number;
     shadow?: AgDropShadowOptions;
-    highlightStyle?: {
-        fill?: string;
-        stroke?: string;
-    };
     tooltip?: AgAreaSeriesTooltip;
     tooltipRenderer?: (params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
 }
@@ -512,10 +509,6 @@ export interface AgBarSeriesOptions extends AgBaseSeriesOptions {
     lineDash?: number[];
     lineDashOffset?: number;
     shadow?: AgDropShadowOptions;
-    highlightStyle?: {
-        fill?: string;
-        stroke?: string;
-    };
     label?: AgBarSeriesLabelOptions;
     tooltip?: AgBarSeriesTooltip;
     tooltipRenderer?: (params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
@@ -548,10 +541,6 @@ export interface AgHistogramSeriesOptions extends AgBaseSeriesOptions {
     binCount?: number;
     aggregation?: 'count' | 'sum' | 'mean';
     shadow?: AgDropShadowOptions;
-    highlightStyle?: {
-        fill?: string;
-        stroke?: string;
-    };
     label?: AgHistogramSeriesLabelOptions;
     tooltip?: AgHistogramSeriesTooltip;
     tooltipRenderer?: (params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
@@ -608,10 +597,6 @@ export interface AgPieSeriesOptions extends AgBaseSeriesOptions {
     outerRadiusOffset?: number;
     innerRadiusOffset?: number;
     shadow?: AgDropShadowOptions;
-    highlightStyle?: {
-        fill?: string;
-        stroke?: string;
-    };
     tooltip?: AgPieSeriesTooltip;
     tooltipRenderer?: (params: AgPieSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
     formatter?: (params: AgPieSeriesFormatterParams) => AgPieSeriesFormat;

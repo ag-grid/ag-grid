@@ -22,14 +22,6 @@ const data = [
     },
 ];
 
-const highlightStyle = {
-    fill: 'cyan',
-    stroke: 'blue',
-    series: {
-        dimOpacity: 0.2
-    }
-};
-
 const options = {
     data: data,
     container: document.body,
@@ -38,6 +30,24 @@ const options = {
     },
     subtitle: {
         text: 'per quarter'
+    },
+    theme: {
+        baseTheme: 'ag-default-dark',
+        overrides: {
+            polar: {
+                series: {
+                    pie: {
+                        highlightStyle: {
+                            fill: 'cyan',
+                            stroke: 'blue',
+                            series: {
+                                dimOpacity: 0.2
+                            }
+                        }
+                    }
+                }
+            }
+        }
     },
     series: [{
         type: 'pie',
@@ -51,8 +61,7 @@ const options = {
         labelKey: 'beverage',
         showInLegend: true,
         outerRadiusOffset: 0,
-        innerRadiusOffset: -20,
-        highlightStyle
+        innerRadiusOffset: -20
     }, {
         type: 'pie',
         title: {
@@ -64,8 +73,7 @@ const options = {
         angleKey: 'Q2',
         labelKey: 'beverage',
         outerRadiusOffset: -40,
-        innerRadiusOffset: -60,
-        highlightStyle
+        innerRadiusOffset: -60
     }, {
         type: 'pie',
         title: {
@@ -77,8 +85,7 @@ const options = {
         angleKey: 'Q3',
         labelKey: 'beverage',
         outerRadiusOffset: -80,
-        innerRadiusOffset: -100,
-        highlightStyle
+        innerRadiusOffset: -100
     }, {
         type: 'pie',
         title: {
@@ -90,8 +97,7 @@ const options = {
         angleKey: 'Q4',
         labelKey: 'beverage',
         outerRadiusOffset: -120,
-        innerRadiusOffset: -140,
-        highlightStyle
+        innerRadiusOffset: -140
     }]
 };
 

@@ -672,7 +672,7 @@ export class BarSeries extends CartesianSeries {
 
         const {
             fillOpacity, strokeOpacity,
-            highlightStyle: { fill, stroke, dimOpacity },
+            highlightStyle: { fill, stroke, series: { dimOpacity } },
             shadow,
             formatter,
             xKey,
@@ -731,7 +731,7 @@ export class BarSeries extends CartesianSeries {
 
     private updateLabelNodes(): void {
         const { highlightedItemId } = this;
-        const { dimOpacity } = this.highlightStyle;
+        const { dimOpacity } = this.highlightStyle.series;
         const labelEnabled = this.label.enabled;
 
         this.labelSelection.each((text, datum) => {

@@ -31,6 +31,12 @@ var options = {
             'Imported',
         ],
         normalizedTo: 100,
+        highlightStyle: {
+            series: {
+                strokeWidth: 4,
+                dimOpacity: 0.3
+            }
+        }
     }],
     axes: [
         {

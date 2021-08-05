@@ -100,7 +100,9 @@ export class ChartTheme {
             cursor: 'default',
             highlightStyle: {
                 fill: 'yellow',
-                dimOpacity: 1
+                series: {
+                    dimOpacity: 1
+                }
             }
         };
     }
