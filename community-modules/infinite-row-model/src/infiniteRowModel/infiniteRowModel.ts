@@ -239,7 +239,9 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     }
 
     public getRow(rowIndex: number): RowNode | null {
-        return this.infiniteCache ? this.infiniteCache.getRow(rowIndex) : null;
+        if (!this.infiniteCache) { return null; }
+        if (rowIndex >= this.infiniteCache.getRowCount()) { return null; }
+        return this.infiniteCache.getRow(rowIndex);
     }
 
     public getRowNode(id: string): RowNode | null {
