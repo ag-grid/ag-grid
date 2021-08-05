@@ -41,7 +41,7 @@ You may say _"Doesn't it look identical to before?"_, and you would be right, it
 
 Yes.
 
-Set the `reactUi` property in your AG Grid application using the latest AG Grid version and check it out.
+Set the `reactUi=true` property in your AG Grid application using the latest AG Grid version and check it out.
 
 
 ## Does It Work With Hooks Or Classes?
@@ -187,5 +187,5 @@ We have spent six months getting this far. We feel most of the hard work has bee
 
 ## Can I use React Next In Production Now?
 
-Yes you can. Let us know if you fine any issues :)
+Yes you can. Let us know if you find any issues :)
 
