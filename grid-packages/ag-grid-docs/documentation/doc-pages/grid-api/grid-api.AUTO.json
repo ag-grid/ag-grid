@@ -334,8 +334,12 @@
     "type": { "arguments": {}, "returnType": "RowNode[]" }
   },
   "getSelectedRows": { "type": { "arguments": {}, "returnType": "any[]" } },
-  "getBestCostNodeSelection": { "type": { "arguments": {} } },
-  "getRenderedNodes": { "type": { "arguments": {} } },
+  "getBestCostNodeSelection": {
+    "type": { "arguments": {}, "returnType": "RowNode[] | undefined" }
+  },
+  "getRenderedNodes": {
+    "type": { "arguments": {}, "returnType": "RowNode[]" }
+  },
   "ensureColIndexVisible": { "type": { "arguments": { "index": "any" } } },
   "ensureColumnVisible": {
     "type": { "arguments": { "key": "string | Column" } }

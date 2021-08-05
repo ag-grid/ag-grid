@@ -785,11 +785,11 @@ export class GridApi {
         return this.selectionService.getSelectedRows();
     }
 
-    public getBestCostNodeSelection() {
+    public getBestCostNodeSelection(): RowNode[] | undefined {
         return this.selectionService.getBestCostNodeSelection();
     }
 
-    public getRenderedNodes() {
+    public getRenderedNodes(): RowNode[] {
         return this.rowRenderer.getRenderedNodes();
     }
 

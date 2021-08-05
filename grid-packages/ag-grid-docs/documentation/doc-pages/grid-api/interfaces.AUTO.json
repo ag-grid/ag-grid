@@ -5556,6 +5556,7 @@
       "isLastRowIndexKnown()": "boolean",
       "ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number)": "boolean",
       "start()": "void",
+      "onRowGroupOpened()": "void",
       "updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder?: {\n    [id: string]: number;\n} | null)": "RowNodeTransaction | null",
       "setRowData(rowData: any[])": "void",
       "refreshModel(params: RefreshModelParams)": "void",
@@ -6047,7 +6048,7 @@
       "doesFilterPass(params: IDoesFilterPassParams)": "/**\n * The grid will ask each active filter, in turn, whether each row in the grid passes. If any\n * filter fails, then the row will be excluded from the final set. The method is provided a\n * params object with attributes node (the rodNode the grid creates that wraps the data) and data\n * (the data object that you provided to the grid for that row). */",
       "getModel()": "/**\n * Gets the filter state for storing */",
       "setModel(model: any)": "/**\n * Restores the filter state. */",
-      "onNewRowsLoaded?()": "/**\n * Gets called when new rows are inserted into the grid. If the filter needs to change it's state\n * after rows are loaded, it can do it here. */",
+      "onNewRowsLoaded?()": "/**\n * Gets called when new rows are inserted into the grid. If the filter needs to change its\n * |     state after rows are loaded, it can do it here. For example the set filters uses this\n * |     to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * |     Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
       "onAnyFilterChanged?()": "/**\n * Called whenever any filter is changed. */",
       "getFrameworkComponentInstance?()": "/**\n * If using React or Angular 2, returns the underlying component instance, so you can call methods\n * on it if you want. */",
       "getModelAsString?(model: any)": "/**\n * Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */"
@@ -6079,7 +6080,7 @@
       "doesFilterPass(params: IDoesFilterPassParams)": "/**\n * The grid will ask each active filter, in turn, whether each row in the grid passes. If any\n * filter fails, then the row will be excluded from the final set. The method is provided a\n * params object with attributes node (the rodNode the grid creates that wraps the data) and data\n * (the data object that you provided to the grid for that row). */",
       "getModel()": "/**\n * Gets the filter state for storing */",
       "setModel(model: any)": "/**\n * Restores the filter state. */",
-      "onNewRowsLoaded?()": "/**\n * Gets called when new rows are inserted into the grid. If the filter needs to change it's state\n * after rows are loaded, it can do it here. */",
+      "onNewRowsLoaded?()": "/**\n * Gets called when new rows are inserted into the grid. If the filter needs to change its\n * |     state after rows are loaded, it can do it here. For example the set filters uses this\n * |     to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * |     Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
       "onAnyFilterChanged?()": "/**\n * Called whenever any filter is changed. */",
       "getFrameworkComponentInstance?()": "/**\n * If using React or Angular 2, returns the underlying component instance, so you can call methods\n * on it if you want. */",
       "getModelAsString?(model: any)": "/**\n * Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */"
@@ -6129,7 +6130,7 @@
       "doesFilterPass(params: IDoesFilterPassParams)": "/**\n * The grid will ask each active filter, in turn, whether each row in the grid passes. If any\n * filter fails, then the row will be excluded from the final set. The method is provided a\n * params object with attributes node (the rodNode the grid creates that wraps the data) and data\n * (the data object that you provided to the grid for that row). */",
       "getModel()": "/**\n * Gets the filter state for storing */",
       "setModel(model: any)": "/**\n * Restores the filter state. */",
-      "onNewRowsLoaded?()": "/**\n * Gets called when new rows are inserted into the grid. If the filter needs to change it's state\n * after rows are loaded, it can do it here. */",
+      "onNewRowsLoaded?()": "/**\n * Gets called when new rows are inserted into the grid. If the filter needs to change its\n * |     state after rows are loaded, it can do it here. For example the set filters uses this\n * |     to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * |     Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
       "onAnyFilterChanged?()": "/**\n * Called whenever any filter is changed. */",
       "getFrameworkComponentInstance?()": "/**\n * If using React or Angular 2, returns the underlying component instance, so you can call methods\n * on it if you want. */",
       "getModelAsString?(model: any)": "/**\n * Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */"

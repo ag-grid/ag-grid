@@ -89,9 +89,7 @@ function extractMethodsFromNode(node, srcFile) {
     let name = node && node.name && node.name.escapedText;
     let returnType = node && node.type && node.type.getFullText().trim();
 
-    if (kind == 'MethodDeclaration') {
-        // i.e isExternalFilterPresent?(): boolean;
-        // i.e doesExternalFilterPass?(node: RowNode): boolean;        
+    if (kind == 'MethodDeclaration') {   
         const methodArgs = getArgTypes(node.parameters, srcFile);
 
         nodeMembers[name] = {
