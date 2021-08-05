@@ -33,10 +33,12 @@ export class SortService extends BeanStub {
         deltaSort: boolean,
         dirtyLeafNodes: { [nodeId: string]: boolean } | null,
         changedPath: ChangedPath | undefined,
-        noAggregations: boolean
+        noAggregations: boolean,
+        sortContainsGroupColumns: boolean,
     ): void {
-        const callback = (rowNode: RowNode) => {
+        const groupMaintainOrder = this.gridOptionsWrapper.isGroupMaintainOrder();
 
+        const callback = (rowNode: RowNode) => {
             // we clear out the 'pull down open parents' first, as the values mix up the sorting
             this.pullDownGroupDataForHideOpenParents(rowNode.childrenAfterFilter, true);
 
@@ -44,11 +46,19 @@ export class SortService extends BeanStub {
             // so to ensure the array keeps its order, add an additional sorting condition manually, in this case we
             // are going to inspect the original array position. This is what sortedRowNodes is for.
             if (sortActive) {
-                rowNode.childrenAfterSort = deltaSort ?
-                    this.doDeltaSort(rowNode, sortOptions, dirtyLeafNodes, changedPath, noAggregations)
-                    : this.rowNodeSorter.doFullSort(rowNode.childrenAfterFilter!, sortOptions);
+
+                // when 'groupMaintainOrder' is enabled we skip sorting groups unless we are sorting on group columns
+                let skipSortingGroups = groupMaintainOrder && !rowNode.leafGroup && !sortContainsGroupColumns;
+                if (skipSortingGroups) {
+                    rowNode.childrenAfterSort = rowNode.childrenAfterSort!.slice(0);
+                } else {
+                    rowNode.childrenAfterSort = deltaSort ?
+                        this.doDeltaSort(rowNode, sortOptions, dirtyLeafNodes, changedPath, noAggregations)
+                        : this.rowNodeSorter.doFullSort(rowNode.childrenAfterFilter!, sortOptions);
+                }
             } else {
-                rowNode.childrenAfterSort = rowNode.childrenAfterFilter!.slice(0);
+                rowNode.childrenAfterSort = groupMaintainOrder && rowNode.childrenAfterSort ?
+                    rowNode.childrenAfterSort!.slice(0) : rowNode.childrenAfterFilter!.slice(0);
             }
 
             this.updateChildIndexes(rowNode);

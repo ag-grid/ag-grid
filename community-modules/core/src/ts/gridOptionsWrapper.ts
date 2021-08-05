@@ -500,6 +500,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.groupHideOpenParents);
     }
 
+    public isGroupMaintainOrder() {
+        return isTrue(this.gridOptions.groupMaintainOrder);
+    }
+
     public getAutoGroupColumnDef(): ColDef | undefined {
         return this.gridOptions.autoGroupColumnDef;
     }

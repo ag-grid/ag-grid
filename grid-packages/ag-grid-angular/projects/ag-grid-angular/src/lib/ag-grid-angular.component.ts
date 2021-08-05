@@ -604,6 +604,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public suppressModelUpdateAfterUpdateTransaction: boolean | undefined = undefined;
     @Input() public stopEditingWhenCellsLoseFocus: boolean | undefined = undefined;
     @Input() public maintainColumnOrder: boolean | undefined = undefined;
+    @Input() public groupMaintainOrder: boolean | undefined = undefined;
 
     @Output() public columnEverythingChanged: EventEmitter<ColumnEverythingChangedEvent> = new EventEmitter<ColumnEverythingChangedEvent>();
     @Output() public newColumnsLoaded: EventEmitter<NewColumnsLoadedEvent> = new EventEmitter<NewColumnsLoadedEvent>();

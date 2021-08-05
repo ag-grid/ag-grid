@@ -297,6 +297,9 @@ export interface GridOptions {
     defaultExcelExportParams?: ExcelExportParams;
 
     pivotSuppressAutoColumn?: boolean;
+
+    autoGroupColumnDef?: ColDef;
+
     groupSelectsChildren?: boolean;
     groupSelectsFiltered?: boolean;
     groupIncludeFooter?: boolean;
@@ -305,9 +308,7 @@ export interface GridOptions {
     groupRemoveLowestSingleChildren?: boolean;
     groupHideOpenParents?: boolean;
     groupSuppressBlankHeader?: boolean;
-    autoGroupColumnDef?: ColDef;
-    enableOldSetFilterModel?: boolean;
-    enableCharts?: boolean;
+    groupMaintainOrder?: boolean;
 
     groupDisplayType?: RowGroupingDisplayType;
 
@@ -317,6 +318,9 @@ export interface GridOptions {
     groupUseEntireRow?: boolean;
     /** @deprecated - Use groupDisplayType = 'custom' instead */
     groupSuppressAutoColumn?: boolean;
+
+    enableOldSetFilterModel?: boolean;
+    enableCharts?: boolean;
 
     // changeable, but no immediate impact
     context?: any;
