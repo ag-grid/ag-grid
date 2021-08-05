@@ -3,14 +3,15 @@ const fs = require('fs');
 const { EOL } = require('os');
 const ts = require('typescript');
 const { ComponentUtil } = require("@ag-grid-community/core");
-const { getFormatterForTS, findNode } = require('./../../scripts/formatAST');
+const { getFormatterForTS, findNode, getJsDoc } = require('./../../scripts/formatAST');
 
 const formatNode = getFormatterForTS(ts);
 
-function extractTypesFromNode(srcFile, node, typeLookup, eventTypeLookup, publicEventLookup) {
+function extractTypesFromNode(srcFile, node, { typeLookup, eventTypeLookup, publicEventLookup, docLookup }) {
     const kind = ts.SyntaxKind[node.kind];
     const name = node && node.name && node.name.escapedText;
     const returnType = node && node.type && node.type.getFullText();
+    docLookup[name] = getJsDoc(node);
     if (kind == 'PropertySignature') {
         typeLookup[name] = returnType;
     } else if (kind == 'MethodSignature') {
@@ -30,11 +31,11 @@ function extractTypesFromNode(srcFile, node, typeLookup, eventTypeLookup, public
             eventTypeLookup[name] = typeName;
         }
     };
-    ts.forEachChild(node, n => extractTypesFromNode(srcFile, n, typeLookup, eventTypeLookup, publicEventLookup));
+    ts.forEachChild(node, n => extractTypesFromNode(srcFile, n, { typeLookup, eventTypeLookup, publicEventLookup, docLookup }));
 }
 
 
-function generateAngularInputOutputs(compUtils, typeLookup, eventTypeLookup) {
+function generateAngularInputOutputs(compUtils, { typeLookup, eventTypeLookup, docLookup }) {
     let result = '';
     const skippableProperties = ['gridOptions'];
 
@@ -42,6 +43,7 @@ function generateAngularInputOutputs(compUtils, typeLookup, eventTypeLookup) {
         if (skippableProperties.indexOf(property) === -1) {
             const typeName = typeLookup[property];
             const inputType = typeName ? `${typeName.trim()} | undefined` : 'any'
+            result = addDocLine(docLookup, property, result);
             result += `    @Input() public ${property}: ${inputType} = undefined;${EOL}`;
         }
     });
@@ -54,6 +56,15 @@ function generateAngularInputOutputs(compUtils, typeLookup, eventTypeLookup) {
         result += `    @Output() public ${event}: EventEmitter<${eventTypeLookup[onEvent]}> = new EventEmitter<${eventTypeLookup[onEvent]}>();${EOL}`;
     });
 
+    return result;
+}
+
+function addDocLine(docLookup, property, result) {
+    const doc = docLookup[property];
+    if (doc) {
+        // Get comments to line up properly
+        result += `    ${doc.replace(/\s\*/g, `     *`)}${EOL}`;
+    }
     return result;
 }
 
@@ -71,11 +82,15 @@ function getGridPropertiesAndEventsJs() {
     const publicEventLookup = {};
     ComponentUtil.PUBLIC_EVENTS.forEach(e => publicEventLookup[ComponentUtil.getCallbackForEvent(e)] = true);
 
-    let typeLookup = {};
-    let eventTypeLookup = {};
-    extractTypesFromNode(srcFile, gridOptionsNode, typeLookup, eventTypeLookup, publicEventLookup);
+    let context = {
+        typeLookup: {},
+        eventTypeLookup: {},
+        docLookup: {},
+        publicEventLookup
+    }
+    extractTypesFromNode(srcFile, gridOptionsNode, context);
 
-    return generateAngularInputOutputs(ComponentUtil, typeLookup, eventTypeLookup);
+    return generateAngularInputOutputs(ComponentUtil, context);
 }
 
 function getGridColumnPropertiesJs() {
@@ -97,10 +112,16 @@ function getGridColumnPropertiesJs() {
     const colDefNode = findNode('ColDef', srcFile);
 
 
-    let typeLookup = {};
-    extractTypesFromNode(srcFile, abstractColDefNode, typeLookup, {}, {});
-    extractTypesFromNode(srcFile, colGroupDefNode, typeLookup, {}, {});
-    extractTypesFromNode(srcFile, colDefNode, typeLookup, {}, {});
+    let context = {
+        typeLookup: {},
+        eventTypeLookup: {},
+        docLookup: {},
+        publicEventLookup: {}
+    }
+
+    extractTypesFromNode(srcFile, abstractColDefNode, context);
+    extractTypesFromNode(srcFile, colGroupDefNode, context);
+    extractTypesFromNode(srcFile, colDefNode, context);
 
     let result = '';
 
@@ -110,8 +131,9 @@ function getGridColumnPropertiesJs() {
 
     ColDefUtil.ALL_PROPERTIES.filter(unique).forEach((property) => {
         if (skippableProperties.indexOf(property) === -1) {
-            const typeName = typeLookup[property];
+            const typeName = context.typeLookup[property];
             const inputType = typeName ? `${typeName.trim()} | undefined` : 'any'
+            result = addDocLine(context.docLookup, property, result);
             result += `    @Input() public ${property}: ${inputType} = undefined;${EOL}`;
         }
     });

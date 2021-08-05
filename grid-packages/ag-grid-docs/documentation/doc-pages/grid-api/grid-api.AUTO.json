@@ -16,7 +16,7 @@
   },
   "init": { "type": { "arguments": {}, "returnType": "void" } },
   "___getAlignedGridService": {
-    "description": "/**\n * Used internally by grid. Not intended to be used by the client. Interface may change between releases. */",
+    "description": "/** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */",
     "type": { "arguments": {}, "returnType": "AlignedGridsService" }
   },
   "addDetailGridInfo": {
@@ -84,7 +84,7 @@
     }
   },
   "setEnterpriseDatasource": {
-    "description": "/**\n * @deprecated\n */",
+    "description": "/** @deprecated\n */",
     "type": { "arguments": { "datasource": "IServerSideDatasource" } }
   },
   "setGridAriaProperty": {
@@ -102,27 +102,27 @@
   },
   "setRowData": { "type": { "arguments": { "rowData": "any[]" } } },
   "setFloatingTopRowData": {
-    "description": "/**\n * @deprecated\n */",
+    "description": "/** @deprecated\n */",
     "type": { "arguments": { "rows": "any[]" }, "returnType": "void" }
   },
   "setFloatingBottomRowData": {
-    "description": "/**\n * @deprecated\n */",
+    "description": "/** @deprecated\n */",
     "type": { "arguments": { "rows": "any[]" }, "returnType": "void" }
   },
   "getFloatingTopRowCount": {
-    "description": "/**\n * @deprecated\n */",
+    "description": "/** @deprecated\n */",
     "type": { "arguments": {}, "returnType": "number" }
   },
   "getFloatingBottomRowCount": {
-    "description": "/**\n * @deprecated\n */",
+    "description": "/** @deprecated\n */",
     "type": { "arguments": {}, "returnType": "number" }
   },
   "getFloatingTopRow": {
-    "description": "/**\n * @deprecated\n */",
+    "description": "/** @deprecated\n */",
     "type": { "arguments": { "index": "number" }, "returnType": "RowNode" }
   },
   "getFloatingBottomRow": {
-    "description": "/**\n * @deprecated\n */",
+    "description": "/** @deprecated\n */",
     "type": { "arguments": { "index": "number" }, "returnType": "RowNode" }
   },
   "setPinnedTopRowData": {
@@ -195,23 +195,23 @@
     }
   },
   "refreshView": {
-    "description": "/**\n * @deprecated\n */",
+    "description": "/** @deprecated\n */",
     "type": { "arguments": {} }
   },
   "refreshRows": {
-    "description": "/**\n * @deprecated\n */",
+    "description": "/** @deprecated\n */",
     "type": { "arguments": { "rowNodes": "RowNode[]" }, "returnType": "void" }
   },
   "rowDataChanged": {
-    "description": "/**\n * @deprecated\n */",
+    "description": "/** @deprecated\n */",
     "type": { "arguments": { "rows": "any" } }
   },
   "softRefreshView": {
-    "description": "/**\n * @deprecated\n */",
+    "description": "/** @deprecated\n */",
     "type": { "arguments": {} }
   },
   "refreshGroupRows": {
-    "description": "/**\n * @deprecated\n */",
+    "description": "/** @deprecated\n */",
     "type": { "arguments": {} }
   },
   "setFunctionsReadOnly": {
@@ -222,7 +222,7 @@
     "type": { "arguments": {}, "returnType": "boolean" }
   },
   "isAdvancedFilterPresent": {
-    "description": "/**\n * @deprecated\n */",
+    "description": "/** @deprecated\n */",
     "type": { "arguments": {}, "returnType": "boolean" }
   },
   "isColumnFilterPresent": {
@@ -334,8 +334,12 @@
     "type": { "arguments": {}, "returnType": "RowNode[]" }
   },
   "getSelectedRows": { "type": { "arguments": {}, "returnType": "any[]" } },
-  "getBestCostNodeSelection": { "type": { "arguments": {} } },
-  "getRenderedNodes": { "type": { "arguments": {} } },
+  "getBestCostNodeSelection": {
+    "type": { "arguments": {}, "returnType": "RowNode[] | undefined" }
+  },
+  "getRenderedNodes": {
+    "type": { "arguments": {}, "returnType": "RowNode[]" }
+  },
   "ensureColIndexVisible": { "type": { "arguments": { "index": "any" } } },
   "ensureColumnVisible": {
     "type": { "arguments": { "key": "string | Column" } }
@@ -956,7 +960,7 @@
     }
   },
   "updateRowData": {
-    "description": "/**\n * @deprecated\n */",
+    "description": "/** @deprecated\n */",
     "type": {
       "arguments": { "rowDataTransaction": "RowDataTransaction" },
       "returnType": "RowNodeTransaction | null | undefined"
@@ -975,7 +979,7 @@
     "type": { "arguments": {}, "returnType": "void" }
   },
   "batchUpdateRowData": {
-    "description": "/**\n * @deprecated\n */",
+    "description": "/** @deprecated\n */",
     "type": {
       "arguments": {
         "rowDataTransaction": "RowDataTransaction",
@@ -1024,11 +1028,11 @@
   },
   "purgeInfiniteCache": { "type": { "arguments": {}, "returnType": "void" } },
   "purgeEnterpriseCache": {
-    "description": "/**\n * @deprecated\n */",
+    "description": "/** @deprecated\n */",
     "type": { "arguments": { "route": "string[]" }, "returnType": "void" }
   },
   "purgeServerSideCache": {
-    "description": "/**\n * @deprecated\n */",
+    "description": "/** @deprecated\n */",
     "type": { "arguments": { "route": "string[] = []" }, "returnType": "void" }
   },
   "refreshServerSideStore": {

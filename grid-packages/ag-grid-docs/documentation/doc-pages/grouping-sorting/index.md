@@ -94,6 +94,36 @@ The following example demonstrates custom group sorting. Note the following:
 | It is also possible to define a comparator that will be used across all group levels using; `autoGroupColumnDef.comparator`.
 | This 'shared group comparator' will take precedence over any comparators defined on the underlying columns.
 
+## Maintain Group Order
+
+When sorting on non-group columns it may be desirable to maintain the existing group order. This behaviour can be
+enabled through the `groupMaintainOrder` grid option as shown below:
+
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        { field: 'assignee', rowGroup: true, hide: true },
+        { field: 'priority', rowGroup: true, hide: true },        
+        { field: 'task' },      
+    ],
+    groupDisplayType: 'multipleColumns',
+    // preserves current group order when sorting on non-group columns
+    groupMaintainOrder: true,
+}
+</snippet>
+
+Note that [Group Order](../grouping-group-order/) is not the same as sorting. Maintaining group order will not preserve
+active group sorts, just the current order of the groups. However, when sorting on group columns the group order will
+be changed based on the sort.
+
+The following example demonstrates how `groupMaintainOrder` works. Note the following:
+
+- `groupMaintainOrder = true` is defined on the grid options supplied to the grid. 
+- Clicking on the 'Task' column header only sorts the tasks without reordering the groups.
+- Sorting on the 'Assignee' or 'Priority' group column headers will reorder the groups.
+
+<grid-example title='Maintain Group Order' name='maintain-group-order' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "setfilter"] }'></grid-example>
+
 ## Next Up
 
 Continue to the next section to learn about [Row Group Filtering](../grouping-filtering/).

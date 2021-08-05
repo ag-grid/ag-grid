@@ -160,6 +160,9 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
 
         if (!defaultTab) {
             menu.showTabBasedOnPreviousSelection();
+            // The call to `showTabBasedOnPreviousSelection` could change the size
+            // of the popup element, therefore repositioning is required.
+            positionCallback(menu);
         }
 
         menu.addEventListener(EnterpriseMenu.EVENT_TAB_SELECTED, (event: any) => {

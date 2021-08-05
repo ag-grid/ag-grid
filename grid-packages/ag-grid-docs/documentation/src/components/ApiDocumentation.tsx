@@ -1,64 +1,11 @@
-import React, { useState } from 'react';
 import classnames from 'classnames';
-import { useJsonFileNodes } from './use-json-file-nodes';
+import { appendCallSignature, appendEnum, appendInterface, appendTypeAlias, convertMarkdown, convertUrl, escapeGenericCode, inferType, getTypeUrl, getLinkedType } from 'components/documentation-helpers';
 import anchorIcon from 'images/anchor';
-import Code from './Code';
-import { inferType, convertUrl, convertMarkdown, escapeGenericCode } from 'components/documentation-helpers';
+import React, { useState } from 'react';
 import styles from './ApiDocumentation.module.scss';
-
-/**
- * These are used to create links from types to relevant documentation.
- */
-const types = {
-    Blob: 'https://developer.mozilla.org/en-US/docs/Web/API/Blob',
-    CellPosition: '/keyboard-navigation/#cellposition',
-    CellRange: '/range-selection/#range-selection-api',
-    ChartModel: '/integrated-charts-api/#saving-and-restoring-charts',
-    ChartType: '/integrated-charts-events/#chartoptionschanged',
-    ColDef: '/column-properties/',
-    ColGroupDef: '/column-properties/',
-    Column: '/column-object/',
-    ColumnApi: '/column-api/',
-    CreatePivotChartParams: '/integrated-charts-api/#pivot-charts',
-    CreateRangeChartParams: '/integrated-charts-api/#range-charts',
-    GetChartImageDataUrlParams: '/integrated-charts-api/#downloading-chart-image',
-    CsvExportParams: '/csv-export/#csvexportparams',
-    Document: 'https://developer.mozilla.org/en-US/docs/Web/API/Document',
-    ExcelAlignment: '/excel-export-api/#excelalignment',
-    ExcelBorder: '/excel-export-api/#excelborder',
-    ExcelBorders: '/excel-export-api/#excelborders',
-    ExcelCell: '/excel-export-api/#excelcell',
-    ExcelData: '/excel-export-api/#exceldata',
-    ExcelDataType: '/excel-export-api/#exceldatatype',
-    ExcelExportParams: '/excel-export-api/#excelexportparams',
-    ExcelExportMultipleSheetParams: '/excel-export-api/#excelexportmultiplesheetparams',
-    ExcelFont: '/excel-export-api/#excelfont',
-    ExcelHeaderFooter: '/excel-export-api/#excelheaderfooter',
-    ExcelHeaderFooterConfig: '/excel-export-api/#excelheaderfooterconfig',
-    ExcelHeaderFooterContent: '/excel-export-api/#excelheaderfootercontent',
-    ExcelImage: '/excel-export-api/#excelimage',
-    ExcelInterior: '/excel-export-api/#excelinterior',
-    ExcelNumberFormat: '/excel-export-api/#excelnumberformat',
-    ExcelProtection: '/excel-export-api/#excelprotection',
-    ExcelStyle: '/excel-export-api/#excelstyle',
-    ExcelSheetConfig: '/excel-export-api/#excelsheetconfig',
-    ExcelSheetPageSetup: '/excel-export-api/#excelsheetpagesetup',
-    ExcelSheetMargin: '/excel-export-api/#excelsheetmargin',
-    GridApi: '/grid-api/',
-    HeaderPosition: '/keyboard-navigation/#headerposition',
-    HTMLElement: 'https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement',
-    IAggFunc: '/aggregation/#custom-aggregation-functions',
-    IDatasource: '/infinite-scrolling/#datasource-interface',
-    IFilterDef: '/filter-multi/#ifilterdef',
-    IServerSideDatasource: '/server-side-model-datasource/#datasource-interface',
-    IViewportDatasource: '/viewport/#interface-iviewportdatasource',
-    KeyboardEvent: 'https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent',
-    MouseEvent: 'https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent',
-    RowNode: '/row-object/',
-    ServerSideTransaction: '/server-side-model-transactions/#transaction-api',
-    ServerSideStoreType: 'https://ag-grid.com/javascript-grid/grid-properties/#reference-serverSideRowModel',
-    Touch: 'https://developer.mozilla.org/en-US/docs/Web/API/Touch',
-};
+import Code from './Code';
+import { useJsonFileNodes } from './use-json-file-nodes';
+import { ApiProps, DocEntryMap, SectionProps, PropertyCall, ObjectCode, InterfaceEntry, IEvent, ICallSignature, FunctionCode, PropertyType, Config } from './ApiDocumentation.types';
 
 
 /**
@@ -66,7 +13,7 @@ const types = {
  * information about different parts of an API in multiple places across the website while pulling the information
  * from one source of truth, so we only have to update one file when the documentation needs to change.
  */
-export const ApiDocumentation = ({ pageName, framework, source, sources, section, names = [], config = {} }) => {
+export const ApiDocumentation: React.FC<ApiProps> = ({ pageName, framework, source, sources, section, names = "", config = { codeSrc: undefined } }) : any => {
     const nodes = useJsonFileNodes();
 
     if (source) {
@@ -76,19 +23,30 @@ export const ApiDocumentation = ({ pageName, framework, source, sources, section
     if (!sources || sources.length < 1) {
         return null;
     }
-
+    let namesArr = [];
     if (names && names.length) {
-        names = JSON.parse(names);
+        namesArr = JSON.parse(names);
     }
 
-    const gridOptions = getJsonFromFile(nodes, pageName, 'grid-api/grid-options.AUTO.json');
-    const interfaces = getJsonFromFile(nodes, pageName, 'grid-api/interfaces.AUTO.json');
-    const lookups = { gridOptions, interfaces };
+    let codeLookup = {};
+    let lookups = { codeLookup, interfaces: {} };
+    if (config.codeSrc) {
+        switch (config.codeSrc) {
+            case 'GridOptions':
+                codeLookup = getJsonFromFile(nodes, undefined, 'grid-api/grid-options.AUTO.json');
+                break;
+            case 'GridApi':
+                codeLookup = getJsonFromFile(nodes, undefined, 'grid-api/grid-api.AUTO.json');
+                break;
+        }
+        const interfaces = getJsonFromFile(nodes, undefined, 'grid-api/interfaces.AUTO.json');
+        lookups = { codeLookup, interfaces };
+    }
 
     const propertiesFromFiles = sources.map(s => getJsonFromFile(nodes, pageName, s));
 
     if (section == null) {
-        const properties = mergeObjects(propertiesFromFiles);
+        const properties: DocEntryMap = mergeObjects(propertiesFromFiles);
 
         return Object.entries(properties)
             .map(([key, value]) => <Section key={key} framework={framework} title={key} properties={value} config={{ ...config, lookups }} />);
@@ -103,10 +61,11 @@ export const ApiDocumentation = ({ pageName, framework, source, sources, section
         title={keys[keys.length - 1]}
         properties={properties}
         config={{ ...config, lookups, isSubset: true }}
-        names={names} />;
+        names={namesArr} />;
 };
 
-const Section = ({ framework, title, properties, config = {}, breadcrumbs = {}, names = [] }) => {
+
+const Section: React.FC<SectionProps> = ({ framework, title, properties, config = {}, breadcrumbs = {}, names = [] }) : any => {
     const { meta } = properties;
     const displayName = (meta && meta.displayName) || title;
 
@@ -141,7 +100,7 @@ const Section = ({ framework, title, properties, config = {}, breadcrumbs = {}, 
     if (Object.keys(properties).filter(p => p !== 'meta').length < 1) { return null; }
 
     const rows = [];
-    const objectProperties = {};
+    const objectProperties: DocEntryMap = {};
 
     Object.entries(properties).forEach(([name, definition]) => {
         const { relevantTo } = definition;
@@ -151,7 +110,7 @@ const Section = ({ framework, title, properties, config = {}, breadcrumbs = {}, 
             return;
         }
 
-        const gridOptionProperty = config.lookups.gridOptions[name];
+        const gridOptionProperty = config.lookups.codeLookup[name];
 
         rows.push(<Property key={name} framework={framework} id={id} name={name} definition={definition} config={{ ...config, gridOpProp: gridOptionProperty }} />);
 
@@ -179,20 +138,7 @@ const Section = ({ framework, title, properties, config = {}, breadcrumbs = {}, 
     </>;
 };
 
-const getTypeUrl = (type, framework) => {
-    if (typeof type === 'string') {
-        if (type.includes('|')) {
-            // can't handle multiple types
-            return null;
-        } else if (type.endsWith('[]')) {
-            type = type.replace(/\[\]/g, '');
-        }
-    }
-
-    return convertUrl(types[type], framework);
-};
-
-const Property = ({ framework, id, name, definition, config }) => {
+const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, config }) => {
     const [isExpanded, setExpanded] = useState(false);
 
     let description = '';
@@ -207,9 +153,6 @@ const Property = ({ framework, id, name, definition, config }) => {
         if (more != null && more.url) {
             description += ` See <a href="${convertUrl(more.url, framework)}">${more.name}</a>.`;
         }
-    } else if (typeof definition === 'string') {
-        // process simple property string
-        description = definition;
     } else {
         // this must be the parent of a child object
         if (definition.meta != null && definition.meta.description != null) {
@@ -224,15 +167,15 @@ const Property = ({ framework, id, name, definition, config }) => {
     }
 
     // Use the type definition if manually specified in config
-    let type = definition.type;
+    let type: any = definition.type;
     let showAdditionalDetails = typeof (type) == 'object';
     if (!type) {
         // No type specified in the doc config file so check the GridOptions property
         let gridParams = config.gridOpProp;
         if (gridParams && gridParams.type) {
             type = gridParams.type;
-            const isInterface = config.lookups.interfaces[type.returnType];
-            showAdditionalDetails = type.arguments || isInterface;
+            const isInterface = extractInterfaces(gridParams.type, config).length > 0;// config.lookups.interfaces[type.returnType];
+            showAdditionalDetails = isCallSig(gridParams) || type.arguments || !!isInterface;
         } else {
             // As a last resort try and infer the type
             type = inferType(definition.default);
@@ -243,13 +186,13 @@ const Property = ({ framework, id, name, definition, config }) => {
 
     const typeUrl = isObject ? `#reference-${id}.${name}` : getTypeUrl(type, framework);
 
-    return <tr> 
+    return <tr>
         <td className={styles['reference__expander-cell']} onClick={() => setExpanded(!isExpanded)} role="presentation">
             {showAdditionalDetails && <div className={styles['reference__expander']}>
                 <svg className={classnames({ 'fa-rotate-90': isExpanded })}><use href="#menu-item" /></svg>
             </div>}
         </td>
-        <td onClick={() => setExpanded(!isExpanded)} role="presentation"> 
+        <td onClick={() => setExpanded(!isExpanded)} role="presentation">
             <code dangerouslySetInnerHTML={{ __html: name }} className={styles['reference__name']}></code>
             <div>
                 {typeUrl ?
@@ -269,7 +212,7 @@ const Property = ({ framework, id, name, definition, config }) => {
                 <div>Options: {definition.options.map((o, i) => <React.Fragment key={o}>{i > 0 ? ', ' : ''}<code>{formatJson(o)}</code></React.Fragment>)}</div>}
             {showAdditionalDetails &&
                 <div className={isExpanded ? '' : 'd-none'}>
-                <FunctionCodeSample framework={framework} name={name} type={type} config={config} />
+                    <FunctionCodeSample framework={framework} name={name} type={type} config={config} />
                 </div>}
         </td>
         {definition.relevantTo && <td style={{ whiteSpace: 'nowrap' }}>{definition.relevantTo.join(', ')}</td>}
@@ -300,7 +243,7 @@ const Breadcrumbs = ({ breadcrumbs }) => {
     return <div className={styles['breadcrumbs']}>{links}</div>;
 };
 
-const ObjectCodeSample = ({ framework, id, breadcrumbs, properties }) => {
+const ObjectCodeSample: React.FC<ObjectCode> = ({ framework, id, breadcrumbs, properties }) => {
     const lines = [];
     let indentationLevel = 0;
 
@@ -365,15 +308,26 @@ const ObjectCodeSample = ({ framework, id, breadcrumbs, properties }) => {
 
 const getInterfaceName = name => `${name.substr(0, 1).toUpperCase()}${name.substr(1)}`;
 
-const isGridOptionEvent = (gridProp) => (gridProp && gridProp.meta && gridProp.meta.isEvent)
+function isGridOptionEvent(gridProp: InterfaceEntry): gridProp is IEvent {
+    return (gridProp && gridProp.meta && gridProp.meta.isEvent)
+}
+function isCallSig(gridProp: InterfaceEntry): gridProp is ICallSignature {
+    return (gridProp && gridProp.meta && gridProp.meta.isCallSignature)
+}
 
-const FunctionCodeSample = ({ framework, name, type, config }) => {
+
+const FunctionCodeSample: React.FC<FunctionCode> = ({ framework, name, type, config }) => {
+
+    if (typeof (type) == 'string') {
+        console.log('type is a string!', type);
+    }
 
     type = type || {};
-    let { returnType } = type;
-    const returnTypeIsObject = returnType != null && typeof returnType === 'object';
-    const returnTypeInterface = config.lookups.interfaces[returnType];    
-    const isCallSignatureInterface = returnTypeInterface && returnTypeInterface.meta.isCallSignature;
+    let returnType = typeof (type) == 'string' ? undefined : type.returnType;
+    const returnTypeIsObject = !!returnType && typeof returnType === 'object';
+    const returnTypeInterface = config.lookups.interfaces[returnType];
+    const isCallSignatureInterface = isCallSig(returnTypeInterface);
+    const returnTypeHasInterface = returnTypeInterface || extractInterfaces(returnType, config).length > 0;
 
     let functionName = name.replace(/\([^)]*\)/g, '');
     if (isGridOptionEvent(config.gridOpProp)) {
@@ -381,19 +335,21 @@ const FunctionCodeSample = ({ framework, name, type, config }) => {
     }
 
     let args = {};
-    if (type.parameters) {
-        args = {
-            params: {
-                meta: { name: `${getInterfaceName(functionName)}Params` },
-                ...type.parameters
+    if (typeof (type) !== 'string') {
+        if (type.parameters) {
+            args = {
+                params: {
+                    meta: { name: `${getInterfaceName(functionName)}Params` },
+                    ...type.parameters
+                }
             }
+        } else if (type.arguments) {
+            args = type.arguments;
+        } else if (isCallSig(returnTypeInterface)) {
+            // Required to handle call signature interfaces so we can flatten out the interface to make it clearer        
+            args = returnTypeInterface.type.arguments;
+            returnType = returnTypeInterface.type.returnType;
         }
-    } else if (type.arguments) {
-        args = type.arguments;
-    } else if (isCallSignatureInterface) {
-        // Required to handle call signature interfaces so we can flatten out the interface to make it clearer        
-        args = returnTypeInterface.type.arguments;
-        returnType = returnTypeInterface.type.returnType;
     }
 
     let shouldUseNewline = false;
@@ -412,7 +368,7 @@ const FunctionCodeSample = ({ framework, name, type, config }) => {
 
         argumentDefinitions.push(`${key}: ${getLinkedType(typeName, framework)}`);
 
-        if (argumentDefinitions.length > 1 || typeName.length > 20) {
+        if (argumentDefinitions.length > 1 || (key + typeName).length > 20) {
             shouldUseNewline = true;
         }
     });
@@ -422,11 +378,11 @@ const FunctionCodeSample = ({ framework, name, type, config }) => {
         argumentDefinitions.join('');
 
     const returnTypeName = getInterfaceName(functionName).replace(/^get/, '');
-    const functionPrefix = name.includes('(') ?
+    const functionPrefix = name.includes('(') || config.isApi ?
         `function ${functionName}(${functionArguments}):` :
         `${functionName} = (${functionArguments}) =>`;
 
-    const lines = type.parameters || type.arguments || isCallSignatureInterface ? [
+    const lines = typeof (type) != 'string' && (type.parameters || type.arguments || isCallSignatureInterface) ? [
         `${functionPrefix} ${returnTypeIsObject ? returnTypeName : (getLinkedType(returnType || 'void', framework))};`,
     ] : [];
 
@@ -443,15 +399,24 @@ const FunctionCodeSample = ({ framework, name, type, config }) => {
 
         Object.entries(args)
             .forEach(([key, type]) => {
-                lines.push(...addNewLine, ...getInterfaceLines(framework, getArgumentTypeName(key, type), type, config));
+                const result = getInterfaceLines(framework, getArgumentTypeName(key, type), type, config);
+                if (result.length > 0) {
+                    lines.push(...addNewLine, ...result);
+                }
             });
     }
 
     addNewLine = lines.length > 0 ? [''] : [];
     if (returnTypeIsObject) {
-        lines.push(...addNewLine, ...getInterfaceLines(framework, returnTypeName, returnType, config));
-    } else if (!!returnTypeInterface) {
-        lines.push(...addNewLine, ...getInterfaceLines(framework, returnType, returnType, config));
+        const result = getInterfaceLines(framework, returnTypeName, returnType, config);
+        if (result.length > 0) {
+            lines.push(...addNewLine, ...result);
+        }
+    } else if (returnTypeHasInterface) {
+        const result = getInterfaceLines(framework, returnType, returnType, config);
+        if (result) {
+            lines.push(...addNewLine, ...result);
+        }
     }
 
     const escapedLines = escapeGenericCode(lines);
@@ -462,33 +427,20 @@ const getInterfaceLines = (framework, name, definition, config) => {
     let interfacesToWrite = []
     if (typeof (definition) === 'string') {
         // Extract all the words to enable support for Union types
-        const typeRegex = /\w+/g;
-        const definitionTypes = [...definition.matchAll(typeRegex)];
-
-        interfacesToWrite = definitionTypes.map(regMatch => {
-            const type = regMatch[0];
-            // If we have the actual interface use that definition
-            const interfaceType = config.lookups.interfaces[type];
-            const numMembers = Object.entries((interfaceType && interfaceType.type) || {}).length;
-
-            // Show interface if we have found one.            
-            // Do not show an interface if it has lots of properties. Should be a linked type instead.
-            // Always show event interfaces
-            return interfaceType && (numMembers < 12 || isGridOptionEvent(config.gridOpProp)) ? { name: type, interfaceType } : undefined;
-        }).filter(dt => !!dt);
+        interfacesToWrite = extractInterfaces(definition, config);
     } else if (
         (typeof (definition) == 'object' && !Array.isArray(definition)) ||
         (typeof (name) == 'string' && Array.isArray(definition))) {
         interfacesToWrite.push({
             name, interfaceType: { type: definition, meta: {} }
         })
-    } 
+    }
 
     let allLines = [];
-    interfacesToWrite.forEach(({ name, interfaceType }) => {        
+    interfacesToWrite.forEach(({ name, interfaceType }) => {
         if (interfaceType.meta.isTypeAlias) {
             appendTypeAlias(name, interfaceType, allLines);
-        } 
+        }
         else if (interfaceType.meta.isEnum) {
             appendEnum(name, interfaceType, allLines);
         }
@@ -502,38 +454,7 @@ const getInterfaceLines = (framework, name, definition, config) => {
     return allLines;
 };
 
-const getLinkedType = (type, framework) => {
-    if (!Array.isArray(type)) {
-        type = [type];
-    }
 
-    // Extract all the words to enable support for Union types
-    const typeRegex = /\w+/g;
-    const formattedTypes = type
-        .filter(t => typeof (t) === 'string')
-        .map(t => {
-        const definitionTypes = [...t.matchAll(typeRegex)];
-
-        const typesToLink = definitionTypes.map(regMatch => {
-            const typeName = regMatch[0];
-            const url = getTypeUrl(typeName, framework);
-
-            return url ? {
-                toReplace: typeName,
-                link: `<a href="${url}" target="${url.startsWith('http') ? '_blank' : '_self'}" rel="noreferrer">${typeName}</a>`
-            } : undefined;
-        }).filter(dt => !!dt);
-
-        let formatted = t;
-        typesToLink.forEach(toLink => {
-            formatted = formatted.split(toLink.toReplace).join(toLink.link);
-        })
-
-        return formatted;
-    });
-
-    return formattedTypes.join(' | ');
-};
 
 const getJsonFromFile = (nodes, pageName, source) => {
     const json = nodes.filter(n => n.relativePath === source || n.relativePath === `${pageName}/${source}`)[0];
@@ -553,7 +474,44 @@ const formatJson = value => JSON.stringify(value, undefined, 2)
     .replace(/\[(.*?)\]/sg, (_, match) => `[${match.trim().replace(/,\s+/sg, ', ')}]`) // remove carriage returns from arrays
     .replace(/"/g, "'"); // use single quotes
 
-function getPropertyType(type, config) {
+function extractInterfaces(definitionOrArray, config) {
+    if (!definitionOrArray) return [];
+
+    if (Array.isArray(definitionOrArray)) {
+        let allDefs = [];
+
+        definitionOrArray.forEach(def => {
+            allDefs = [...allDefs, ...extractInterfaces(def, config)]
+        })
+        return allDefs;
+    }
+    const definition = definitionOrArray;
+
+    if (typeof (definition) == 'string') {
+        const typeRegex = /\w+/g;
+        const definitionTypes = [...definition.matchAll(typeRegex)];
+        const interfacesToWrite = definitionTypes.map(regMatch => {
+            const type = regMatch[0];
+            // If we have the actual interface use that definition
+            const interfaceType = config.lookups.interfaces[type];
+            const numMembers = Object.entries((interfaceType && interfaceType.type) || {}).length;
+            // Show interface if we have found one.            
+            // Do not show an interface if it has lots of properties. Should be a linked type instead.
+            // Always show event interfaces
+            return interfaceType && (numMembers < 12 || isGridOptionEvent(config.gridOpProp)) ? { name: type, interfaceType } : undefined;
+        }).filter(dt => !!dt);
+        return interfacesToWrite;
+    }
+
+    let allDefs = [];
+    Object.entries(definition).forEach(([k, v]) => {
+        allDefs = [...allDefs, ...extractInterfaces(v, config)]
+    })
+    return allDefs;
+
+}
+
+function getPropertyType(type: string | PropertyType, config: Config) {
     let propertyType = '';
     if (type) {
         if (typeof (type) == 'string') {
@@ -588,67 +546,5 @@ function getPropertyType(type, config) {
         }
     }
     return propertyType;
-}
-
-function appendInterface(name, interfaceType, framework, allLines) {
-
-    const lines = [`interface ${name} {`];
-    const properties = Object.entries(interfaceType.type);
-    properties.sort(([p1,], [p2,]) => {
-        // Push $scope to the end while maintaining original order
-        if (p1 === '$scope')
-            return 1;
-        if (p2 === '$scope')
-            return -1;
-        return 0;
-    });
-    properties
-        // Only show AngularJS $scope property for Angular or Javascript frameworks
-        .filter(([p,]) => p !== '$scope' || (framework === 'angular' || framework === 'javascript'))
-        .forEach(([property, type]) => {
-            const docs = interfaceType.docs && interfaceType.docs[property];
-            addDocLines(docs, lines);
-        lines.push(`  ${property}: ${getLinkedType(type, framework)};`);
-    });
-    lines.push('}');
-    allLines.push(...lines);
-}
-
-function addDocLines(docs, lines) {
-    if (!docs || docs.length === 0) {
-        return;
-    }
-    docs.replace('/**\n *', '//').split(/\n/g).forEach(s => {
-        lines.push(`  ${s.replace('*/', '').replace(' *', '//')}`);
-    });
-}
-
-function appendCallSignature(name, interfaceType, framework, allLines) {
-    const lines = [`interface ${name} {`];
-    const args = Object.entries(interfaceType.type.arguments);
-    const argTypes = args.map(([property, type]) => {
-        return `${property}: ${getLinkedType(type, framework)}`;
-    });
-    lines.push(`    (${argTypes.join(', ')}) : ${interfaceType.type.returnType}`);
-    lines.push('}');
-    allLines.push(...lines);
-}
-
-function appendEnum(name, interfaceType, allLines) {
-    const lines = [`enum ${name} {`];
-    const properties = interfaceType.type;
-    properties.forEach((property) => {
-        lines.push(`  ${property}`);
-    });
-    lines.push('}');
-    allLines.push(...lines);
-}
-
-function appendTypeAlias(name, interfaceType, allLines) {
-    const shouldMultiLine = interfaceType.type.length > 20;
-    const multiLine = shouldMultiLine ?
-        `\n      ${interfaceType.type.split('|').join('\n    |')}\n` :
-        interfaceType.type;
-    allLines.push(`type ${name} = ${multiLine}`);
 }
 

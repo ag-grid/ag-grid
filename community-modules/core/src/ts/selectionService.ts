@@ -203,7 +203,7 @@ export class SelectionService extends BeanStub {
     // then the group appears in the result, but not the children.
     // Designed for use with 'children' as the group selection type,
     // where groups don't actually appear in the selection normally.
-    public getBestCostNodeSelection() {
+    public getBestCostNodeSelection(): RowNode[] | undefined {
         if (this.rowModel.getType() !== Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
             console.warn('getBestCostNodeSelection is only available when using normal row model');
             return;
@@ -218,10 +218,10 @@ export class SelectionService extends BeanStub {
             return;
         }
 
-        const result: any = [];
+        const result: RowNode[] = [];
 
         // recursive function, to find the selected nodes
-        function traverse(nodes: any) {
+        function traverse(nodes: RowNode[]) {
             for (let i = 0, l = nodes.length; i < l; i++) {
                 const node = nodes[i];
                 if (node.isSelected()) {
@@ -229,8 +229,9 @@ export class SelectionService extends BeanStub {
                 } else {
                     // if not selected, then if it's a group, and the group
                     // has children, continue to search for selections
-                    if (node.group && node.children) {
-                        traverse(node.children);
+                    const maybeGroup = node as any;
+                    if (maybeGroup.group && maybeGroup.children) {
+                        traverse(maybeGroup.children);
                     }
                 }
             }

@@ -35,10 +35,10 @@ export class SortStage extends BeanStub {
         // we only need dirty nodes if doing delta sort
         const dirtyLeafNodes = deltaSort ? this.calculateDirtyNodes(params.rowNodeTransactions) : null;
 
-        const valueColumns = this.columnModel.getValueColumns();
-        const noAggregations = _.missingOrEmpty(valueColumns);
+        const noAggregations = _.missingOrEmpty(this.columnModel.getValueColumns());
+        const sortContainsGroupColumns = _.some(sortOptions, opt => !!opt.column.getColDef().showRowGroup);
 
-        this.sortService.sort(sortOptions, sortActive, deltaSort, dirtyLeafNodes, params.changedPath, noAggregations);
+        this.sortService.sort(sortOptions, sortActive, deltaSort, dirtyLeafNodes, params.changedPath, noAggregations, sortContainsGroupColumns);
     }
 
     private calculateDirtyNodes(rowNodeTransactions?: RowNodeTransaction[] | null): { [nodeId: string]: boolean } {
