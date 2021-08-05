@@ -107,16 +107,18 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             if (mouseEvent && (mouseEvent.ctrlKey || mouseEvent.metaKey)) { return; }
         }
 
+        // need to do this regardless of context menu showing or not, so doing
+        // before the isSuppressContextMenu() check
+        if (mouseEvent) {
+            this.preventDefaultOnContextMenu(mouseEvent);
+        }
+
         if (this.gridOptionsWrapper.isSuppressContextMenu()) { return; }
 
         const eventOrTouch: (MouseEvent | Touch) = mouseEvent ? mouseEvent : touchEvent!.touches[0];
         if (this.showMenu(rowNode!, column!, value, eventOrTouch, anchorToElement)) {
             const event = mouseEvent ? mouseEvent : touchEvent;
             event!.preventDefault();
-        }
-
-        if (mouseEvent) {
-            this.preventDefaultOnContextMenu(mouseEvent);
         }
     }
 

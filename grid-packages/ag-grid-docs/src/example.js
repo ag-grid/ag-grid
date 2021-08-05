@@ -399,6 +399,7 @@ var gridOptions = {
     suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
     // suppressColumnVirtualisation: true,
     // suppressContextMenu: true,
+    // preventDefaultOnContextMenu: true,
     // suppressFieldDotNotation: true,
     autoGroupColumnDef: groupColumn,
     // suppressActionCtrlC: true,
