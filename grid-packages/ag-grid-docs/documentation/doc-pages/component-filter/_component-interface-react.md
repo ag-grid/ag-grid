@@ -25,10 +25,11 @@
 |
 |    // Optional methods
 |
-|     // Gets called when new rows are inserted into the grid. If the filter needs to change its
+|    // Gets called when new rows are inserted into the grid. If the filter needs to change its
 |    // state after rows are loaded, it can do it here. For example the set filters uses this
 |    // to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for
-|    // Country filter).
+|    // Country filter). To get the list of available values from within this method from the
+     // Client Side Row Model, use gridApi.forEachLeafNode(callback)
 |    onNewRowsLoaded?(): void;
 |
 |    // Gets called when the column is destroyed. If your custom filter needs to do

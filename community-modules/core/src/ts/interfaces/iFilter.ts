@@ -24,20 +24,29 @@ export interface IFilterDef {
 }
 
 export interface IFilter {
+
     /** This is used to let the grid know if the filter is active or not */
     isFilterActive(): boolean;
+
     // mandatory methods
     /** The grid will ask each active filter, in turn, whether each row in the grid passes. If any
      filter fails, then the row will be excluded from the final set. The method is provided a
      params object with attributes node (the rodNode the grid creates that wraps the data) and data
      (the data object that you provided to the grid for that row). */
     doesFilterPass(params: IDoesFilterPassParams): boolean;
+
     /** Gets the filter state for storing */
     getModel(): any;
+
     /** Restores the filter state. */
     setModel(model: any): void | AgPromise<void>;
-    /** Gets called when new rows are inserted into the grid. If the filter needs to change it's state
-     after rows are loaded, it can do it here. */
+
+    /** Gets called when new rows are inserted into the grid. If the filter needs to change its
+|     state after rows are loaded, it can do it here. For example the set filters uses this
+|     to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for
+|     Country filter). To get the list of available values from within this method from the
+      Client Side Row Model, use gridApi.forEachLeafNode(callback).
+    */
     onNewRowsLoaded?(): void;
 
     /** Called whenever any filter is changed. */
@@ -46,6 +55,7 @@ export interface IFilter {
     /** If using React or Angular 2, returns the underlying component instance, so you can call methods
      * on it if you want. */
     getFrameworkComponentInstance?(): any;
+
     /**
      * Optional method used by AG Grid when rendering floating filters and there isn't a floating filter
      * associated for this filter, this will happen if you create a custom filter and NOT a custom floating
