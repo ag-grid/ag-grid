@@ -21,7 +21,15 @@ export function findLineByLeastSquares(values: number[]) {
 
     for (let i = 0; i < values.length; i++) {
         const value = values[i];
+        const splitExponent = value.toString().split('e-');
+
+        if (splitExponent.length > 1) {
+            maxDecimals = Math.max(maxDecimals, parseInt(splitExponent[1], 10));
+            continue;
+        }
+
         if (Math.floor(value) === value) { continue; }
+
         maxDecimals = Math.max(maxDecimals, value.toString().split('.')[1].length);
     }
 
