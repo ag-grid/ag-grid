@@ -10,7 +10,7 @@ import { IFloatingFilterComp } from '../filter/floating/floatingFilter';
 type IFilterType = string | { new(): IFilterComp; } | boolean;
 
 export interface IFilterDef {
-    /** One of the built in filter names: [set, number, text], or a filter function */
+    /** One of the built in filter names: [set, number, text, date], or a filter function */
     filter?: IFilterType;
     filterFramework?: any;
 
@@ -42,10 +42,10 @@ export interface IFilter {
     setModel(model: any): void | AgPromise<void>;
 
     /** Gets called when new rows are inserted into the grid. If the filter needs to change its
-|     state after rows are loaded, it can do it here. For example the set filters uses this
-|     to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for
-|     Country filter). To get the list of available values from within this method from the
-      Client Side Row Model, use gridApi.forEachLeafNode(callback).
+     state after rows are loaded, it can do it here. For example the set filters uses this
+     to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for
+     Country filter). To get the list of available values from within this method from the
+    Client Side Row Model, use gridApi.forEachLeafNode(callback).
     */
     onNewRowsLoaded?(): void;
 

@@ -33,7 +33,7 @@
 |    // state after rows are loaded, it can do it here. For example the set filters uses this
 |    // to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for
 |    // Country filter). To get the list of available values from within this method from the
-     // Client Side Row Model, use gridApi.forEachLeafNode(callback)
+|    // Client Side Row Model, use gridApi.forEachLeafNode(callback)
 |    onNewRowsLoaded?(): void;
 |
 |    // Gets called when the column is destroyed. If your custom filter needs to do
@@ -58,6 +58,6 @@
 |When a Vue component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell & 
 |row values available to you via `this.params` - the interface for what is provided is documented below.  
 |
-|If the user provides params via the `colDef.floatingFilterParams` attribute, these
+|If the user provides params via the `colDef.floatingFilterComponentParams` attribute, these
 |will be additionally added to the params object, overriding items of the same name if a name clash exists.
 |
