@@ -130,7 +130,7 @@ export function addDocLines(docs, lines) {
     if (!docs || docs.length === 0) {
         return;
     }
-    docs.replace('/**\n *', '//').replace('\n */', '').split(/\n/g).forEach(s => {
+    docs.replace('/**', '//').replace('\n */', '').split(/\n/g).forEach(s => {
         lines.push(`  ${s.replace('*/', '').replace(' *', '//')}`);
     });
 }
