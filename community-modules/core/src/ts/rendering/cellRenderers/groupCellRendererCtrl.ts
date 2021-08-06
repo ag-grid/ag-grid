@@ -518,7 +518,8 @@ export class GroupCellRendererCtrl extends BeanStub {
         const rowNode: RowNode = params.node;
         // if we are only showing one group column, we don't want to be indenting based on level
         const fullWithRow = !!params.colDef;
-        const manyDimensionThisColumn = !fullWithRow || params.colDef!.showRowGroup === true;
+        const treeData = this.gridOptionsWrapper.isTreeData();
+        const manyDimensionThisColumn = !fullWithRow || treeData || params.colDef!.showRowGroup === true;
         const paddingCount = manyDimensionThisColumn ? rowNode.uiLevel : 0;
         const userProvidedPaddingPixelsTheDeprecatedWay = params.padding >= 0;
 
