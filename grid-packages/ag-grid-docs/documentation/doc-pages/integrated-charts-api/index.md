@@ -118,9 +118,9 @@ function getChartImageDataURL(params: GetChartImageDataUrlParams): string | unde
 The example below demonstrates how you can retrieve images rendered from the chart in multiple formats.
 
 - Click "Download chart PNG" to download a PNG format image.
-- Click "Download chart JPEG" to download a JPG format image.
+- Click "Download chart JPEG" to download a JPEG format image.
 - Click "Open PNG" to open a PNG format image of the chart in a new window.
-- Click "Open JPEG" to open a JPG format image of the chart in a new window.
+- Click "Open JPEG" to open a JPEG format image of the chart in a new window.
 
 <grid-example title='Downloading Chart Image' name='downloading-chart-image' type='generated' options='{ " exampleHeight": 800, "enterprise": true }'></grid-example>
 
