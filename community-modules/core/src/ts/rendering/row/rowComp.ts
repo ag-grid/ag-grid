@@ -13,24 +13,20 @@ import { UserCompDetails } from "../../components/framework/userComponentFactory
 
 export class RowComp extends Component {
 
-    private container: RowContainerComp;
-    private fullWidthRowComponent: ICellRendererComp | null | undefined;
+    private fullWidthCellRenderer: ICellRendererComp | null | undefined;
 
     private beans: Beans;
     private pinned: string | null;
 
-    private rowNode: RowNode;
     private rowCtrl: RowCtrl;
 
     private domOrder: boolean;
     private cellComps: { [key: string]: CellComp | null; } = {};
 
-    constructor(ctrl: RowCtrl, container: RowContainerComp, beans: Beans, pinned: string | null) {
+    constructor(ctrl: RowCtrl, beans: Beans, pinned: string | null) {
         super();
 
-        this.container = container;
         this.beans = beans;
-        this.rowNode = ctrl.getRowNode();
         this.pinned = pinned;
         this.rowCtrl = ctrl;
 
@@ -44,10 +40,9 @@ export class RowComp extends Component {
             setDomOrder: domOrder => this.domOrder = domOrder,
             setCellCtrls: cellCtrls => this.setCellCtrls(cellCtrls),
             showFullWidth: compDetails => this.showFullWidth(compDetails),
-            getFullWidthRowComp: () => this.getFullWidthRowComp(),
+            getFullWidthCellRenderer: () => this.getFullWidthCellRenderer(),
             addOrRemoveCssClass: (name, on) => this.addOrRemoveCssClass(name, on),
             setAriaExpanded: on => setAriaExpanded(eGui, on),
-            destroyCells: cellComps => this.destroyCells(cellComps),
             setUserStyles: styles => addStylesToElement(eGui, styles),
             setAriaSelected: value => setAriaSelected(eGui, value),
             setAriaLabel: value => {
@@ -58,7 +53,6 @@ export class RowComp extends Component {
                 }
             },
             setHeight: height => style.height = height,
-            destroy: () => this.destroy(),
             setTop: top => style.top = top,
             setTransform: transform => style.transform = transform,
             setRowIndex: rowIndex => eGui.setAttribute('row-index', rowIndex),
@@ -100,7 +94,7 @@ export class RowComp extends Component {
         res.then(callback);
     }
 
-    public setCellCtrls(cellCtrls: CellCtrl[]): void {
+    private setCellCtrls(cellCtrls: CellCtrl[]): void {
         const cellsToRemove = assign({}, this.cellComps);
 
         cellCtrls.forEach(cellCtrl => {
@@ -122,7 +116,7 @@ export class RowComp extends Component {
     }
 
     private ensureDomOrder(cellCtrls: CellCtrl[]): void {
-        if (!this.beans.gridOptionsWrapper.isEnsureDomOrder()) { return; }
+        if (!this.domOrder) { return; }
 
         const elementsInOrder: HTMLElement[] = [];
         cellCtrls.forEach(cellCtrl => {
@@ -166,10 +160,6 @@ export class RowComp extends Component {
         this.getGui().appendChild(cellComp.getGui());
     }
 
-    public getCellComp(id: string): CellComp | null {
-        return this.cellComps[id];
-    }
-
     public destroy(): void {
         super.destroy();
         this.destroyAllCells();
@@ -180,26 +170,22 @@ export class RowComp extends Component {
         this.destroyCells(cellsToDestroy as CellComp[]);
     }
 
-    public getContainer(): RowContainerComp {
-        return this.container;
-    }
-
-    public setFullWidthRowComp(fullWidthRowComponent: ICellRendererComp): void {
-        if (this.fullWidthRowComponent) {
+    private setFullWidthRowComp(fullWidthRowComponent: ICellRendererComp): void {
+        if (this.fullWidthCellRenderer) {
             console.error('AG Grid - should not be setting fullWidthRowComponent twice');
         }
 
-        this.fullWidthRowComponent = fullWidthRowComponent;
+        this.fullWidthCellRenderer = fullWidthRowComponent;
         this.addDestroyFunc(() => {
-            this.fullWidthRowComponent = this.beans.context.destroyBean(this.fullWidthRowComponent);
+            this.fullWidthCellRenderer = this.beans.context.destroyBean(this.fullWidthCellRenderer);
         });
     }
 
-    public getFullWidthRowComp(): ICellRendererComp | null | undefined {
-        return this.fullWidthRowComponent;
+    private getFullWidthCellRenderer(): ICellRendererComp | null | undefined {
+        return this.fullWidthCellRenderer;
     }
 
-    public destroyCells(cellComps: CellComp[]): void {
+    private destroyCells(cellComps: CellComp[]): void {
         cellComps.forEach(cellComp => {
 
             // could be old reference, ie removed cell
@@ -212,13 +198,6 @@ export class RowComp extends Component {
             cellComp.detach();
             cellComp.destroy();
             this.cellComps[instanceId] = null;
-        });
-    }
-
-    public forEachCellComp(callback: (renderedCell: CellComp) => void): void {
-        iterateObject(this.cellComps, (key: any, cellComp: CellComp) => {
-            if (!cellComp) { return; }
-            callback(cellComp);
         });
     }
 }

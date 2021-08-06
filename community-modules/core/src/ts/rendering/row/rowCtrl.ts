@@ -70,12 +70,10 @@ export interface IRowComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     setCellCtrls(cellCtrls: CellCtrl[]): void;
     showFullWidth(compDetails: UserCompDetails): void;
-    getFullWidthRowComp(): ICellRendererComp | null | undefined;
+    getFullWidthCellRenderer(): ICellRendererComp | null | undefined;
     setAriaExpanded(on: boolean): void;
-    destroyCells(cellComps: CellComp[]): void;
     setAriaSelected(selected: boolean | undefined): void;
     setHeight(height: string): void;
-    destroy(): void;
     setTop(top: string): void;
     setTransform(transform: string): void;
     setRowIndex(rowIndex: string): void;
@@ -511,15 +509,15 @@ export class RowCtrl extends BeanStub {
         const tryRefresh = (gui: RowGui, pinned: string | null): boolean => {
             if (!gui) { return true; } // no refresh needed
 
-            const cellComp = gui.rowComp.getFullWidthRowComp();
+            const cellRenderer = gui.rowComp.getFullWidthCellRenderer();
 
-            if (!cellComp) { return true; } // no refresh needed
+            if (!cellRenderer) { return true; } // no refresh needed
 
             // no refresh method present, so can't refresh, hard refresh needed
-            if (!cellComp.refresh) { return false; }
+            if (!cellRenderer.refresh) { return false; }
 
             const params = this.createFullWidthParams(gui.element, pinned);
-            const refreshSucceeded = cellComp.refresh(params);
+            const refreshSucceeded = cellRenderer.refresh(params);
 
             return refreshSucceeded;
         };
@@ -1216,7 +1214,6 @@ export class RowCtrl extends BeanStub {
     }
 
     public destroySecondPass(): void {
-        this.allRowGuis.forEach(gui => gui.rowComp.destroy());
         this.allRowGuis.length = 0;
 
         const destroyCellCtrls = (ctrls: CellCtrlListAndMap): CellCtrlListAndMap => {

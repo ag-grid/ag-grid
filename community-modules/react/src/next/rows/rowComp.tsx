@@ -101,9 +101,7 @@ const RowComp = (params: {rowCtrl: RowCtrl, pinned: string | null}) => {
             // when cols reordered, which would stop the CSS transitions from working
             setCellCtrls: next => setCellCtrls(prev => maintainOrderOnColumns(prev, next, domOrder)),
             showFullWidth: compDetails => setFullWidthCompDetails(compDetails),
-            destroy: () => true,
-            destroyCells: cellComps => true,
-            getFullWidthRowComp: ()=> null,
+            getFullWidthCellRenderer: ()=> null,
         };
         rowCtrl.setComp(compProxy, eGui.current!, pinned);
     }, []);

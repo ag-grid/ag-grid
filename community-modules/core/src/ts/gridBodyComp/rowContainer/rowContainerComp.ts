@@ -1,6 +1,6 @@
 import { Component } from "../../widgets/component";
 import { RefSelector } from "../../widgets/componentAnnotations";
-import { Autowired, PostConstruct } from "../../context/context";
+import { Autowired, PostConstruct, PreDestroy } from "../../context/context";
 import { IRowContainerComp, RowContainerCtrl, RowContainerName } from "./rowContainerCtrl";
 import { ensureDomOrder, insertWithDomOrder } from "../../utils/dom";
 import { RowComp } from "../../rendering/row/rowComp";
@@ -75,6 +75,12 @@ export class RowContainerComp extends Component {
         ctrl.setComp(compProxy, this.eContainer, this.eViewport, this.eWrapper);
     }
 
+    @PreDestroy
+    private preDestroy(): void {
+        // destroys all row comps
+        this.setRowCtrls([]);
+    }
+
     private setRowCtrls(rowCtrls: RowCtrl[]): void {
         const oldRows = {...this.rowComps};
         this.rowComps = {};
@@ -96,7 +102,10 @@ export class RowContainerComp extends Component {
         };
 
         rowCtrls.forEach(processRow);
-        getAllValuesInObject(oldRows).forEach(rc => this.eContainer.removeChild(rc.getGui()));
+        getAllValuesInObject(oldRows).forEach(oldRowComp => {
+            this.eContainer.removeChild(oldRowComp.getGui());
+            oldRowComp.destroy();
+        });
     }
 
     public appendRow(element: HTMLElement) {
@@ -117,7 +126,7 @@ export class RowContainerComp extends Component {
 
     private newRowComp(rowCtrl: RowCtrl): RowComp {
         const pinned = RowContainerCtrl.getPinned(this.name);
-        const res = new RowComp(rowCtrl, this, this.beans, pinned);
+        const res = new RowComp(rowCtrl, this.beans, pinned);
         return res;
     }
 
