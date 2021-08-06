@@ -3,59 +3,103 @@ title: "Row Grouping - Group Footers"
 enterprise: true
 ---
 
-This sections shows how to add group footers showing totals for each group level.
+This sections shows how to add group footers to show group level totals.
 
 ## Enabling Group Footers
 
-If you want to include a footer with each group, set the property `groupIncludeFooter` to true. The footer is displayed as the last line of the group when the group is expanded - it is not displayed when the group is collapsed.
-
-The footer by default will display the word 'Total' followed by the group key. If this is not what you want, then use
-the `footerValueGetter` option. The following shows two ways for achieving the same, one using a function, one
-using an expression.
+If you want to include a footer with each group, set the property `groupIncludeFooter` to true. It is also possible to 
+include a 'grand' total footer for all groups using the property `groupIncludeTotalFooter`.
 
 <snippet>
 const gridOptions = {
-    columnDefs: [
-        // Option 1: use a function to return a footer value
-        {
-            cellRenderer: 'agGroupCellRenderer',
-            cellRendererParams: {
-                footerValueGetter: params =>  {
-                    return 'Total (' + params.value + ')';
-                },
-            }
-        },
-        // Option 2: use an expression to return a footer value - gives same result
-        {
-            cellRenderer: 'agGroupCellRenderer',
-            cellRendererParams: {
-                footerValueGetter: '"Total (" + x + ")"'
-            }
-        }
-    ]
+    // adds subtotals
+    groupIncludeFooter: true,
+    // includes grand total
+    groupIncludeTotalFooter: true,
 }
 </snippet>
 
-When showing the groups in one column, the aggregation data is displayed in the group header when collapsed and only in
-the footer when expanded (ie it moves from the header to the footer). 
+Note that these properties can be used together to produce totals across all group levels.
 
-It is also possible to include a 'grand' total footer for all groups using the property `groupIncludeTotalFooter`. This property can be used along side `groupIncludeFooter` to produce totals at all group levels or used independently.
+The following example demonstrates these properties. Note the following:
 
-The example below uses [aggregation](/aggregation/) which is explained in the next section but included here as footer rows only make sense when used with aggregation. In this example notice:
+- Expanding groups reveals subtotal footers as `groupIncludeFooter = true`.
+- A grand total footer is shown as the `groupIncludeTotalFooter = true`.
+- The medal totals are [aggregated](/aggregation/) via the `aggFunc: true` column property.
 
-- `gridOptions.groupIncludeFooter = true` -  includes group totals within each group level.
-- `gridOptions.groupIncludeTotalFooter = true` -  includes a 'grand' total across all groups.
+<grid-example title='Enabling Group Footers' name='enabling-group-footers' type='generated' options='{ "enterprise": true, "exampleHeight": 503, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
-<grid-example title='Group Footers' name='grouping-footers' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+## Customising Footer Values
+
+By default, the footer will display the word 'Total' followed by the group key. However, this can be changed using the
+`footerValueGetter` supplied to the [Group Cell Renderer](/group-cell-renderer/) params as shown below: 
+
+<snippet>
+const gridOptions = {
+    autoGroupColumnDef: { 
+        cellRendererParams: {
+            footerValueGetter: params =>  {
+                const isRootLevel = params.node.level === -1;
+                if (isRootLevel) {
+                    return 'Grand Total';
+                }
+                return `Sub Total (${params.value})`;
+            },
+        }
+    },
+}
+</snippet>
+
+Note in the snippet above that the `footerValueGetter` contains special handling to display Subtotals and Grand Totals
+differently. This is demonstrated in the example below.
+
+<grid-example title='Customising Footer Values' name='customising-footer-values' type='generated' options='{ "enterprise": true, "exampleHeight": 503, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+
+## Customising Footer Cells
+
+In most cases [Customising Footer Values](../grouping-footers/#customising-footer-values) is sufficient, however it is
+also possible to customise the footer cell using the `innerCellRenderer` supplied to the 
+[Group Cell Renderer](/group-cell-renderer/) params as shown below:
+
+<snippet>
+const gridOptions = {
+    autoGroupColumnDef: { 
+        cellRendererParams: {
+            innerRenderer: params => {
+                if (params.node.footer) {
+                    const isRootLevel = params.node.level === -1;
+                    if (isRootLevel) {
+                        // Grand Total Cells
+                        return `&lt;span style="color:navy; font-weight:bold"&gt;Grand Total&lt;/span&gt;`;
+                    }
+                    // Subtotal Cells
+                    return `&lt;span style="color:navy"&gt;Sub Total ${params.value}&lt;/span&gt;`;
+                }
+                // Non-Footer Group Cells
+                return params.value;
+            }
+        }
+    },
+}
+</snippet>
+
+Note in the snippet above that the `innerRenderer` contains special handling to display Grand Total, Subtotal and
+non-footer cells differently. This is demonstrated in the example below.
+
+<grid-example title='Customising Footer Cells' name='customising-footer-cells' type='generated' options='{ "enterprise": true, "exampleHeight": 503, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
 [[note]]
-| Group footers are a UI concept only in the grid. It is the grids way of showing aggregated data (which belongs
-| to the group) appearing after the group's children. Because the footer is a UI concept only, the following
-| should be noted: <br/>
-| - It is not possible to select footer nodes. Footer rows appear selected when the group is selected.
-| - Footer rows are not parted of the iterated set when the api method `api.forEachNode()` is called.
-| - Footer nodes are not exported to CSV or Excel.
-| - If a Footer cell is copied to the clipboard, the word "Total" will not be included. Eg where the group for "Sales" would say "Total Sales", only "Sales" will go to the clipboard. This is because the word "Total" is not actually part of the data, it's something the grid rendering puts in.
+| It is also possible to customise footer cells using: `cellRendererParams.innerRendererSelector`.
+
+## Group Footer Limitations
+
+Group footers are a UI concept only in the grid. It is the grids way of showing aggregated data (which belongs to the 
+group) appearing after the group's children. Because the footer is a UI concept only, the following should be noted:
+
+ - It is not possible to select footer nodes. Footer rows appear selected when the group is selected.
+ - Footer rows are not parted of the iterated set when the api method `api.forEachNode()` is called.
+ - Footer nodes are not exported to CSV or Excel.
+ - If a Footer cell is copied to the clipboard, the word "Total" will not be included. Eg where the group for "Sales" would say "Total Sales", only "Sales" will go to the clipboard. This is because the word "Total" is not actually part of the data, it's something the grid rendering puts in.
 
 ## Next Up
 

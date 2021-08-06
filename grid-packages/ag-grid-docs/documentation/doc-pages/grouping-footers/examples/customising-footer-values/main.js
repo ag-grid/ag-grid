@@ -5,10 +5,6 @@ var gridOptions = {
         { field: 'gold', aggFunc: 'sum' },
         { field: 'silver', aggFunc: 'sum' },
         { field: 'bronze', aggFunc: 'sum' },
-        { field: 'total', aggFunc: 'sum' },
-        { field: 'age' },
-        { field: 'date' },
-        { field: 'sport', minWidth: 200 },
     ],
     defaultColDef: {
         flex: 1,
@@ -17,23 +13,25 @@ var gridOptions = {
         resizable: true,
     },
     autoGroupColumnDef: {
-        headerName: 'Athlete',
-        field: 'athlete',
         minWidth: 300,
+        cellRendererParams: {
+            footerValueGetter: params =>  {
+                const isRootLevel = params.node.level === -1;
+                if (isRootLevel) {
+                    return 'Grand Total';
+                }
+                return `Sub Total (${params.value})`;
+            },
+        }
     },
     groupIncludeFooter: true,
     groupIncludeTotalFooter: true,
-    enableRangeSelection: true,
     animateRows: true,
+    rowData: getData()
 };
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
-
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
 });
