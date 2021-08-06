@@ -1782,32 +1782,35 @@ export class ColumnModel extends BeanStub {
         }
 
         colsToProcess.forEach(column => {
+
+            const getValueOrNull = (a: any, b: any) => a != null ? a : b != null ? b : null;
+
             const colDef = column.getColDef();
-            const sort = colDef.sort != null ? colDef.sort : null;
-            const sortIndex = colDef.sortIndex;
-            const hide = colDef.hide ? true : false;
-            const pinned = colDef.pinned ? colDef.pinned : null;
+            const sort = getValueOrNull(colDef.sort, colDef.initialSort);
+            const sortIndex = getValueOrNull(colDef.sortIndex, colDef.initialSortIndex);
+            const hide = getValueOrNull(colDef.hide, colDef.initialHide);
+            const pinned = getValueOrNull(colDef.pinned, colDef.initialPinned);
 
-            const width = colDef.width;
-            const flex = colDef.flex != null ? colDef.flex : null;
+            const width = getValueOrNull(colDef.width, colDef.initialWidth);
+            const flex = getValueOrNull(colDef.flex, colDef.initialFlex);
 
-            let rowGroupIndex: number | null | undefined = colDef.rowGroupIndex;
-            let rowGroup: boolean | null | undefined = colDef.rowGroup;
+            let rowGroupIndex: number | null | undefined = getValueOrNull(colDef.rowGroupIndex, colDef.initialRowGroupIndex);
+            let rowGroup: boolean | null | undefined = getValueOrNull(colDef.rowGroup, colDef.initialRowGroup);
 
             if (rowGroupIndex == null && (rowGroup == null || rowGroup == false)) {
                 rowGroupIndex = null;
                 rowGroup = null;
             }
 
-            let pivotIndex: number | null | undefined = colDef.pivotIndex;
-            let pivot: boolean | null | undefined = colDef.pivot;
+            let pivotIndex: number | null | undefined = getValueOrNull(colDef.pivotIndex, colDef.initialPivotIndex);
+            let pivot: boolean | null | undefined = getValueOrNull(colDef.pivot, colDef.initialPivot);
 
             if (pivotIndex == null && (pivot == null || pivot == false)) {
                 pivotIndex = null;
                 pivot = null;
             }
 
-            const aggFunc = colDef.aggFunc != null ? colDef.aggFunc : null;
+            const aggFunc = getValueOrNull(colDef.aggFunc, colDef.initialAggFunc);
 
             const stateItem = {
                 colId: column.getColId(),
