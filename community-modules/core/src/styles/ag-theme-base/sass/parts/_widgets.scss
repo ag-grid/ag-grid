@@ -440,7 +440,6 @@
     }
 
     // Column select
-
     @for $i from 1 to 10 {
         .ag-column-select-indent-#{$i} {
             @include ag-theme-rtl((padding-left: $i * ag-param(column-select-indent-size)));
