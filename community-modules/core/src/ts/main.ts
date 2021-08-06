@@ -100,7 +100,7 @@ export { RowNode, RowHighlightPosition } from "./entities/rowNode";
 export { SideBarDef, ToolPanelDef } from "./entities/sideBar";
 
 // filter
-export { IFilterDef, IFilterParams, IFilterOptionDef, IDoesFilterPassParams, ProvidedFilterModel, IFilter, IFilterComp } from "./interfaces/iFilter";
+export { IFilterDef, IFilterParams, IFilterOptionDef, IDoesFilterPassParams, ProvidedFilterModel, IFilter, IFilterComp, IFilterType, IFloatingFilterType } from "./interfaces/iFilter";
 export { ISetFilterParams, SetFilterValues, SetFilterValuesFunc, SetFilterValuesFuncParams } from "./interfaces/iSetFilterParams";
 export { FilterManager, FilterWrapper, FilterRequestSource } from "./filter/filterManager";
 
@@ -325,7 +325,9 @@ export {
     HeaderCheckboxSelectionCallbackParams,
     ColumnsMenuParams,
     HeaderClassParams,
+    HeaderClass,
     ToolPanelClassParams,
+    ToolPanelClass,
     // deprecated params
     IsColumnFunc,
     IsColumnFuncParams

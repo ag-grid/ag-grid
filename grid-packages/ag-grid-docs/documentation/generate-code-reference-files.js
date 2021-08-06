@@ -243,18 +243,7 @@ function extractInterfaces(srcFile, extension) {
     return iLookup;
 }
 
-function getGridOptions() {
-    const gridOpsFile = "../../../community-modules/core/src/ts/entities/gridOptions.ts";
-    const srcFile = parseFile(gridOpsFile);
-    const gridOptionsNode = findNode('GridOptions', srcFile);
 
-    let gridOpsMembers = {};
-    ts.forEachChild(gridOptionsNode, n => {
-        gridOpsMembers = { ...gridOpsMembers, ...extractTypesFromNode(n, srcFile) }
-    });
-
-    return gridOpsMembers;
-}
 
 function getClassProperties(filePath, className) {
     const srcFile = parseFile(filePath);
@@ -299,6 +288,43 @@ function writeFormattedFile(dir, filename, data) {
         .pipe(gulp.dest(dir))
 }
 
+function getGridOptions() {
+    const gridOpsFile = "../../../community-modules/core/src/ts/entities/gridOptions.ts";
+    const srcFile = parseFile(gridOpsFile);
+    const gridOptionsNode = findNode('GridOptions', srcFile);
+
+    let gridOpsMembers = {};
+    ts.forEachChild(gridOptionsNode, n => {
+        gridOpsMembers = { ...gridOpsMembers, ...extractTypesFromNode(n, srcFile) }
+    });
+
+    return gridOpsMembers;
+}
+
+function getColumnOptions() {
+    const file = "../../../community-modules/core/src/ts/entities/colDef.ts";
+    const srcFile = parseFile(file);
+    const abstractColDefNode = findNode('AbstractColDef', srcFile);
+    const colGroupDefNode = findNode('ColGroupDef', srcFile);
+    const colDefNode = findNode('ColDef', srcFile);
+    const filterFile = "../../../community-modules/core/src/ts/interfaces/iFilter.ts";
+    const srcFilterFile = parseFile(filterFile);
+    const filterNode = findNode('IFilterDef', srcFilterFile);
+
+    let members = {};
+    const addToMembers = (node, src) => {
+        ts.forEachChild(node, n => {
+            members = { ...members, ...extractTypesFromNode(n, src) }
+        });
+    }
+    addToMembers(abstractColDefNode, srcFile);
+    addToMembers(colGroupDefNode, srcFile);
+    addToMembers(colDefNode, srcFile);
+    addToMembers(filterNode, srcFilterFile);
+
+    return members;
+}
+
 function getGridApi() {
     const gridApiFile = "../../../community-modules/core/src/ts/gridApi.ts";
     return getClassProperties(gridApiFile, 'GridApi');
@@ -314,6 +340,7 @@ const generateMetaFiles = () => {
     writeFormattedFile('./doc-pages/grid-api/', 'interfaces.AUTO.json', getInterfaces());
     writeFormattedFile('./doc-pages/grid-api/', 'grid-api.AUTO.json', getGridApi());
     writeFormattedFile('./doc-pages/row-object/', 'row-node.AUTO.json', getRowNode());
+    writeFormattedFile('./doc-pages/column-properties/', 'column-options.AUTO.json', getColumnOptions());
 };
 
 console.log(`--------------------------------------------------------------------------------`);

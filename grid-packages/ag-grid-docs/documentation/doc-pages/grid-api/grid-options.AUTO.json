@@ -357,7 +357,7 @@
   "getRowStyle": {
     "type": {
       "arguments": { "params": "RowClassParams" },
-      "returnType": "{\n    [cssProperty: string]: string;\n}"
+      "returnType": "{ [cssProperty: string]: string; }"
     }
   },
   "getRowClass": {

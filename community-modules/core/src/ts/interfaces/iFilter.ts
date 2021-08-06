@@ -7,7 +7,8 @@ import { GridApi } from '../gridApi';
 import { AgPromise } from '../utils';
 import { IFloatingFilterComp } from '../filter/floating/floatingFilter';
 
-type IFilterType = string | { new(): IFilterComp; } | boolean;
+export type IFilterType = string | { new(): IFilterComp; } | boolean;
+export type IFloatingFilterType = string | { new(): IFloatingFilterComp; };
 
 export interface IFilterDef {
     /** One of the built in filter names: [set, number, text, date], or a filter function */
@@ -18,7 +19,7 @@ export interface IFilterDef {
     filterParams?: any;
 
     /** The custom component to be used for rendering the floating filter. If none is specified the default AG Grid is used. **/
-    floatingFilterComponent?: string | { new(): IFloatingFilterComp; };
+    floatingFilterComponent?: IFloatingFilterType;
     floatingFilterComponentParams?: any;
     floatingFilterComponentFramework?: any;
 }

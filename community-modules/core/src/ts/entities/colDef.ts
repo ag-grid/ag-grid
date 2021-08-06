@@ -24,9 +24,9 @@ export interface AbstractColDef {
     /** Whether to show the column when the group is open / closed. */
     columnGroupShow?: string;
     /** CSS class for the header */
-    headerClass?: string | string[] | ((params: HeaderClassParams) => string | string[]);
+    headerClass?: HeaderClass;
     /** CSS class for the toolPanel */
-    toolPanelClass?: string | string[] | ((params: ToolPanelClassParams) => string | string[]);
+    toolPanelClass?: ToolPanelClass;
     /** Expression or function to get the cells value. */
     headerValueGetter?: string | Function;
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
@@ -88,7 +88,9 @@ export interface HeaderClassParams {
     columnGroup?: ColumnGroup | OriginalColumnGroup | null,
     context?: any,
 }
+export type HeaderClass = string | string[] | ((params: HeaderClassParams) => string | string[]);
 export interface ToolPanelClassParams extends HeaderClassParams { };
+export type ToolPanelClass = string | string[] | ((params: ToolPanelClassParams) => string | string[]);
 
 /***********************************************************************
  * Don't forget to update ColDefUtil if changing this class. PLEASE! *
