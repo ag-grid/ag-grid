@@ -44,6 +44,9 @@ export const ApiDocumentation: React.FC<ApiProps> = ({ pageName, framework, sour
             case 'ColumnOptions':
                 codeLookup = getJsonFromFile(nodes, undefined, 'column-properties/column-options.AUTO.json');
                 break;
+            case 'ColumnApi':
+                codeLookup = getJsonFromFile(nodes, undefined, 'column-api/column-api.AUTO.json');
+                break;
         }
         const interfaces = getJsonFromFile(nodes, undefined, 'grid-api/interfaces.AUTO.json');
         lookups = { codeLookup, interfaces };
