@@ -48,7 +48,6 @@ function setValueFormatters() {
         };
     });
     gridOptions.api.setColumnDefs(columnDefs);
-    gridOptions.api.refreshCells({ force: true });
 }
 
 function removeValueFormatters() {
@@ -57,7 +56,6 @@ function removeValueFormatters() {
         colDef.valueFormatter = undefined;
     });
     gridOptions.api.setColumnDefs(columnDefs);
-    gridOptions.api.refreshCells({ force: true });
 }
 
 // setup the grid after the page has finished loading

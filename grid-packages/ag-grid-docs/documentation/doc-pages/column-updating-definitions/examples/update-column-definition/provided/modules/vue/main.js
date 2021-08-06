@@ -77,7 +77,6 @@ const VueExample = {
                 };
             });
             this.gridApi.setColumnDefs(columnDefs);
-            this.gridApi.refreshCells({force: true});
         },
         removeValueFormatters() {
             const columnDefs = this.getColumnDefs();
@@ -85,7 +84,6 @@ const VueExample = {
                 colDef.valueFormatter = undefined;
             });
             this.gridApi.setColumnDefs(columnDefs);
-            this.gridApi.refreshCells({force: true});
         },
         getColumnDefs() {
             return [

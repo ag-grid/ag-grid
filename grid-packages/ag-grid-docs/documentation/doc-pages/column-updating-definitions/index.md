@@ -39,9 +39,6 @@ The example below demonstrates updating column definitions to change how columns
 Columns.
 - 'Set Value Formatter' and 'Remove Value Formatter' sets and then subsequently removes the `valueFormatter` attribute
 on all Columns.
-- Headers refresh whenever new columns are set. However cells do not refresh, thus a call to
-`api.refreshCells({ force: true })` is required. The refresh is forced so cells will be refreshed even though the
-underlying value for that cell hasn't changed.
 - Note that any resizing, sorting etc of the Columns is kept intact between updates to the Column Definitions.
 
 <grid-example title='Updating Column Definition' name='update-column-definition' type='mixed' options='{ "modules": true }'></grid-example>

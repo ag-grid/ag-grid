@@ -25,15 +25,6 @@ const GridExample = () => {
         {field: 'total'}
     ]);
 
-    const [forceRefresh, setForceRefresh] = useState(false);
-
-    useEffect(() => {
-        if (forceRefresh) {
-            setTimeout(() => gridApi.refreshCells({force: true}))
-            setForceRefresh(false);
-        }
-    }, [forceRefresh]);
-
     const onGridReady = (params) => {
         setGridApi(params.api);
         setGridColumnApi(params.columnApi);
@@ -71,7 +62,6 @@ const GridExample = () => {
         });
 
         setColumns(newColumns);
-        setForceRefresh(true);
     };
 
     const removeValueFormatters = () => {
@@ -81,7 +71,6 @@ const GridExample = () => {
         });
 
         setColumns(newColumns);
-        setForceRefresh(true);
     };
 
     return (
