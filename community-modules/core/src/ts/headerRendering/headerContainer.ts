@@ -6,9 +6,10 @@ import { BodyDropTarget } from './bodyDropTarget';
 import { ScrollVisibleService } from '../gridBodyComp/scrollVisibleService';
 import { Component } from '../widgets/component';
 import { Constants } from '../constants/constants';
-import { setFixedWidth } from '../utils/dom';
+import { setFixedWidth, ensureDomOrder } from '../utils/dom';
 import { BeanStub } from "../context/beanStub";
 import { NumberSequence } from "../utils";
+import { TouchListener } from '../widgets/touchListener';
 
 export class HeaderContainer extends BeanStub {
 
@@ -215,8 +216,19 @@ export class HeaderContainer extends BeanStub {
         refreshColumns();
         refreshFilters();
 
-        // this re-adds the this.columnsRowComp, which is fine, it just means the DOM will rearrange then,
-        // taking it out of the last position and re-inserting relative to the other rows.
-        this.getRowComps().forEach(rowComp => this.eContainer.appendChild(rowComp.getGui()));
+        // add in all the eGui's. if the gui is already in, don't re-add it. however we do check for order
+        // so that if use adds a row of column headers, they get added in right location (before the columns)
+        const eGuis = this.getRowComps().map(c => c.getGui());
+        let prevGui: HTMLElement;
+        eGuis.forEach( eGui => {
+            const notAlreadyIn = eGui.parentElement!=this.eContainer;
+            if (notAlreadyIn) {
+                this.eContainer.appendChild(eGui);
+            }
+            if (prevGui) {
+                ensureDomOrder(this.eContainer, eGui, prevGui);
+            }
+            prevGui = eGui;
+        });
     }
 }
