@@ -5,7 +5,7 @@ frameworks: ["react"]
 
 Do you know what the one thing most React developers wish was different with AG Grid? Above anything else, React developers wish AG Grid was written in React!!
 
-We have been working very had to make this wish come true and are delighted to announce the next generation of AG Grid React will have it's UI written purely in React. We are codenaming this effort *React UI*.
+We have been working very had in our labs, in a top secret location in London close to where James Bond lives, to make this wish come true. We are delighted to announce the next generation of AG Grid React will have it's UI written purely in React. We are codenaming this effort **React UI**.
 
 Let me explain...
 
@@ -21,11 +21,13 @@ The disadvantage of this was sometimes it didn't feel very "Reacty", as AG Grid 
 React UI is an evolution of how AG Grid uses the React framework. AG Grid React UI will not be a React wrapper around
 our in house rendering engine. AG Grid React UI will have the entire AG Grid UI ported to React.
 
+The latest AG Grid release (v26.0) has a large portion of the grid written in React, ready for you to get stuck into and tell us what you think.
+
 <image-caption src="reactui/resources/before-vs-after.svg" alt="AG Grid React UI Explained" centered="true"></image-caption>
 
 ## Show Me
 
-A spike of our React UI is included in the latest AG Grid release. To enable it, set the grid property `reactUi=true`. Below is an example of the new React UI.
+To enable React UI in the latest AG Grid release, set the grid property `reactUi=true`. Below is an example of the new React UI.
 
 With `reactUi=true`, the grid renders cells using React, and all parent components of the cells are also written in React, all the way back to the client application. This means all the UI from your application down to the cells, including any provided React Cell Renderers, is all now 100% React.
 
@@ -185,7 +187,10 @@ Once all parts of AG Grid are fully working with React UI we will make React UI 
 
 We have spent six months getting this far. We feel most of the hard work has been done. We estimate a fully working version of AG Grid supporting React Rendering in Q4 of this year, in time for Christmas.
 
-## Can I use React Next In Production Now?
+## Can I use React UI In Production Now?
 
-Yes you can. Let us know if you find any issues :)
+Hell No!! Are you crazy?
 
+It's from our labs and only covers half of the grid so far, you would be crazy to consider this for production!
+
+However we know that at least five of you, if not hundreds or thousands more of you, are crazy mother duckers, and love the bleeding edge. To those brave knights who wish to ride AG Grid React UI in production, we send you our love and respect, and look forward to you helping us get our React UI perfect :)

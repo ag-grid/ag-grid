@@ -49,6 +49,8 @@ export class ScrollVisibleService extends BeanStub {
     private updateImpl(): void {
         const centerRowCtrl = this.ctrlsService.getCenterRowContainerCtrl();
 
+        if (!centerRowCtrl) { return; }
+
         const params: SetScrollsVisibleParams = {
             horizontalScrollShowing: centerRowCtrl.isHorizontalScrollShowing(),
             verticalScrollShowing: this.isVerticalScrollShowing()
