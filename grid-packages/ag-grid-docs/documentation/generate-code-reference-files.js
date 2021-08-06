@@ -82,24 +82,6 @@ function extractTypesFromNode(node, srcFile) {
     return nodeMembers;
 }
 
-
-function extractMethodsFromNode(node, srcFile) {
-    let nodeMembers = {};
-    const kind = ts.SyntaxKind[node.kind];
-    let name = node && node.name && node.name.escapedText;
-    let returnType = node && node.type && node.type.getFullText().trim();
-
-    if (kind == 'MethodDeclaration') {   
-        const methodArgs = getArgTypes(node.parameters, srcFile);
-
-        nodeMembers[name] = {
-            description: getJsDoc(node),
-            type: { arguments: methodArgs, returnType }
-        };
-    }
-    return nodeMembers;
-}
-
 function parseFile(sourceFile) {
     const src = fs.readFileSync(sourceFile, 'utf8');
     return ts.createSourceFile('tempFile.ts', src, ts.ScriptTarget.Latest, true);
@@ -183,40 +165,6 @@ function getInterfaces() {
     return interfaces;
 }
 
-function getGridOptions() {
-    const gridOpsFile = "../../../community-modules/core/src/ts/entities/gridOptions.ts";
-    const srcFile = parseFile(gridOpsFile);
-    const gridOptionsNode = findNode('GridOptions', srcFile);
-
-    let gridOpsMembers = {};
-    ts.forEachChild(gridOptionsNode, n => {
-        gridOpsMembers = { ...gridOpsMembers, ...extractTypesFromNode(n, srcFile) }
-    });
-
-    return gridOpsMembers;
-}
-
-function getGridApi() {
-    const gridApiFile = "../../../community-modules/core/src/ts/gridApi.ts";
-    const srcFile = parseFile(gridApiFile);
-    const gridApiNode = findNode('GridApi', srcFile, 'ClassDeclaration');
-
-    let gridApiMembers = {};
-    ts.forEachChild(gridApiNode, n => {
-        gridApiMembers = { ...gridApiMembers, ...extractMethodsFromNode(n, srcFile) }
-    });
-
-    return gridApiMembers;
-}
-
-function writeFormattedFile(dir, filename, data) {
-    const fullPath = dir + filename;
-    fs.writeFileSync(fullPath, JSON.stringify(data));
-    gulp.src(fullPath)
-        .pipe(prettier({}))
-        .pipe(gulp.dest(dir))
-}
-
 function extractInterfaces(srcFile, extension) {
     const interfaces = findAllInNodesTree(srcFile);
     const iLookup = {};
@@ -295,10 +243,77 @@ function extractInterfaces(srcFile, extension) {
     return iLookup;
 }
 
+function getGridOptions() {
+    const gridOpsFile = "../../../community-modules/core/src/ts/entities/gridOptions.ts";
+    const srcFile = parseFile(gridOpsFile);
+    const gridOptionsNode = findNode('GridOptions', srcFile);
+
+    let gridOpsMembers = {};
+    ts.forEachChild(gridOptionsNode, n => {
+        gridOpsMembers = { ...gridOpsMembers, ...extractTypesFromNode(n, srcFile) }
+    });
+
+    return gridOpsMembers;
+}
+
+function getClassProperties(filePath, className) {
+    const srcFile = parseFile(filePath);
+    const classNode = findNode(className, srcFile, 'ClassDeclaration');
+
+    let members = {};
+    ts.forEachChild(classNode, n => {
+        members = { ...members, ...extractMethodsAndPropsFromNode(n, srcFile) }
+    });
+
+    return members;
+}
+
+function extractMethodsAndPropsFromNode(node, srcFile) {
+    let nodeMembers = {};
+    const kind = ts.SyntaxKind[node.kind];
+    let name = node && node.name && node.name.escapedText;
+    let returnType = node && node.type && node.type.getFullText().trim();
+
+    if (kind == 'MethodDeclaration') {
+        const methodArgs = getArgTypes(node.parameters, srcFile);
+
+        nodeMembers[name] = {
+            description: getJsDoc(node),
+            type: { arguments: methodArgs, returnType }
+        };
+    } else if (kind == 'PropertyDeclaration') {
+
+        nodeMembers[name] = {
+            description: getJsDoc(node),
+            type: { returnType: returnType }
+        }
+    }
+    return nodeMembers;
+}
+
+function writeFormattedFile(dir, filename, data) {
+    const fullPath = dir + filename;
+    fs.writeFileSync(fullPath, JSON.stringify(data));
+    gulp.src(fullPath)
+        .pipe(prettier({}))
+        .pipe(gulp.dest(dir))
+}
+
+function getGridApi() {
+    const gridApiFile = "../../../community-modules/core/src/ts/gridApi.ts";
+    return getClassProperties(gridApiFile, 'GridApi');
+}
+
+function getRowNode() {
+    const file = "../../../community-modules/core/src/ts/entities/rowNode.ts";
+    return getClassProperties(file, 'RowNode');
+}
+
 const generateMetaFiles = () => {
     writeFormattedFile('./doc-pages/grid-api/', 'grid-options.AUTO.json', getGridOptions());
     writeFormattedFile('./doc-pages/grid-api/', 'interfaces.AUTO.json', getInterfaces());
     writeFormattedFile('./doc-pages/grid-api/', 'grid-api.AUTO.json', getGridApi());
+    writeFormattedFile('./doc-pages/row-object/', 'row-node.AUTO.json', getRowNode());
 };
 
 console.log(`--------------------------------------------------------------------------------`);

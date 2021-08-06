@@ -1,4 +1,51 @@
 {
+  "immutableService": { "type": { "returnType": "IImmutableService" } },
+  "csvCreator": { "type": { "returnType": "ICsvCreator" } },
+  "excelCreator": { "type": { "returnType": "IExcelCreator" } },
+  "rowRenderer": { "type": { "returnType": "RowRenderer" } },
+  "navigationService": { "type": { "returnType": "NavigationService" } },
+  "filterManager": { "type": { "returnType": "FilterManager" } },
+  "columnModel": { "type": { "returnType": "ColumnModel" } },
+  "selectionService": { "type": { "returnType": "SelectionService" } },
+  "gridOptionsWrapper": { "type": { "returnType": "GridOptionsWrapper" } },
+  "valueService": { "type": { "returnType": "ValueService" } },
+  "alignedGridsService": { "type": { "returnType": "AlignedGridsService" } },
+  "eventService": { "type": { "returnType": "EventService" } },
+  "pinnedRowModel": { "type": { "returnType": "PinnedRowModel" } },
+  "context": { "type": { "returnType": "Context" } },
+  "rowModel": { "type": { "returnType": "IRowModel" } },
+  "sortController": { "type": { "returnType": "SortController" } },
+  "paginationProxy": { "type": { "returnType": "PaginationProxy" } },
+  "focusService": { "type": { "returnType": "FocusService" } },
+  "dragAndDropService": { "type": { "returnType": "DragAndDropService" } },
+  "rangeService": { "type": { "returnType": "IRangeService" } },
+  "clipboardService": { "type": { "returnType": "IClipboardService" } },
+  "aggFuncService": { "type": { "returnType": "IAggFuncService" } },
+  "menuFactory": { "type": { "returnType": "IMenuFactory" } },
+  "contextMenuFactory": { "type": { "returnType": "IContextMenuFactory" } },
+  "valueCache": { "type": { "returnType": "ValueCache" } },
+  "animationFrameService": {
+    "type": { "returnType": "AnimationFrameService" }
+  },
+  "statusBarService": { "type": { "returnType": "IStatusBarService" } },
+  "chartService": { "type": { "returnType": "IChartService" } },
+  "undoRedoService": { "type": { "returnType": "UndoRedoService" } },
+  "rowNodeBlockLoader": { "type": { "returnType": "RowNodeBlockLoader" } },
+  "serverSideTransactionManager": {
+    "type": { "returnType": "IServerSideTransactionManager" }
+  },
+  "ctrlsService": { "type": { "returnType": "CtrlsService" } },
+  "overlayWrapperComp": { "type": { "returnType": "OverlayWrapperComponent" } },
+  "gridBodyCon": { "type": { "returnType": "GridBodyCtrl" } },
+  "sideBarComp": { "type": { "returnType": "ISideBar" } },
+  "headerRootComp": { "type": { "returnType": "HeaderRootComp" } },
+  "clientSideRowModel": { "type": { "returnType": "IClientSideRowModel" } },
+  "infiniteRowModel": { "type": { "returnType": "IInfiniteRowModel" } },
+  "serverSideRowModel": { "type": { "returnType": "IServerSideRowModel" } },
+  "detailGridInfoMap": {
+    "type": { "returnType": "{ [id: string]: DetailGridInfo | undefined; }" }
+  },
+  "destroyCalled": { "type": {} },
   "registerOverlayWrapperComp": {
     "type": {
       "arguments": { "overlayWrapperComp": "OverlayWrapperComponent" },

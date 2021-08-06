@@ -1,0 +1,439 @@
+{
+  "ID_PREFIX_ROW_GROUP": { "type": {} },
+  "ID_PREFIX_TOP_PINNED": { "type": {} },
+  "ID_PREFIX_BOTTOM_PINNED": { "type": {} },
+  "OBJECT_ID_SEQUENCE": { "type": {} },
+  "EVENT_ROW_SELECTED": { "type": {} },
+  "EVENT_DATA_CHANGED": { "type": {} },
+  "EVENT_CELL_CHANGED": { "type": {} },
+  "EVENT_ALL_CHILDREN_COUNT_CHANGED": { "type": {} },
+  "EVENT_MASTER_CHANGED": { "type": {} },
+  "EVENT_MOUSE_ENTER": { "type": {} },
+  "EVENT_MOUSE_LEAVE": { "type": {} },
+  "EVENT_HEIGHT_CHANGED": { "type": {} },
+  "EVENT_TOP_CHANGED": { "type": {} },
+  "EVENT_DISPLAYED_CHANGED": { "type": {} },
+  "EVENT_FIRST_CHILD_CHANGED": { "type": {} },
+  "EVENT_LAST_CHILD_CHANGED": { "type": {} },
+  "EVENT_CHILD_INDEX_CHANGED": { "type": {} },
+  "EVENT_ROW_INDEX_CHANGED": { "type": {} },
+  "EVENT_EXPANDED_CHANGED": { "type": {} },
+  "EVENT_HAS_CHILDREN_CHANGED": { "type": {} },
+  "EVENT_SELECTABLE_CHANGED": { "type": {} },
+  "EVENT_UI_LEVEL_CHANGED": { "type": {} },
+  "EVENT_HIGHLIGHT_CHANGED": { "type": {} },
+  "EVENT_DRAGGING_CHANGED": { "type": {} },
+  "mainEventService": { "type": { "returnType": "EventService" } },
+  "rowRenderer": { "type": { "returnType": "RowRenderer" } },
+  "gridOptionsWrapper": { "type": { "returnType": "GridOptionsWrapper" } },
+  "selectionService": { "type": { "returnType": "SelectionService" } },
+  "columnModel": { "type": { "returnType": "ColumnModel" } },
+  "valueService": { "type": { "returnType": "ValueService" } },
+  "rowModel": { "type": { "returnType": "IRowModel" } },
+  "context": { "type": { "returnType": "Context" } },
+  "valueCache": { "type": { "returnType": "ValueCache" } },
+  "columnApi": { "type": { "returnType": "ColumnApi" } },
+  "gridApi": { "type": { "returnType": "GridApi" } },
+  "rowNodeEventThrottle": { "type": { "returnType": "RowNodeEventThrottle" } },
+  "id": {
+    "description": "/** Unique ID for the node. Either provided by the grid, or user can set to match the primary\n * key in the database (or whatever data source is used). */",
+    "type": { "returnType": "string | undefined" }
+  },
+  "groupData": {
+    "description": "/** The group data */",
+    "type": { "returnType": "{ [key: string]: any | null; } | null" }
+  },
+  "aggData": {
+    "description": "/** The aggregated data */",
+    "type": { "returnType": "any" }
+  },
+  "data": {
+    "description": "/** The user provided data */",
+    "type": { "returnType": "any" }
+  },
+  "parent": {
+    "description": "/** The parent node to this node, or empty if top level */",
+    "type": { "returnType": "RowNode | null" }
+  },
+  "level": {
+    "description": "/** How many levels this node is from the top */",
+    "type": { "returnType": "number" }
+  },
+  "uiLevel": {
+    "description": "/** How many levels this node is from the top in the UI (different to the level when removing parents) */",
+    "type": { "returnType": "number" }
+  },
+  "rowGroupIndex": {
+    "description": "/** If doing in memory grouping, this is the index of the group column this cell is for.\n * This will always be the same as the level, unless we are collapsing groups ie groupRemoveSingleChildren = true */",
+    "type": { "returnType": "number | null" }
+  },
+  "group": {
+    "description": "/** True if this node is a group node (ie has children) */",
+    "type": { "returnType": "boolean | undefined" }
+  },
+  "dragging": {
+    "description": "/** True if this row is getting dragged */",
+    "type": { "returnType": "boolean" }
+  },
+  "master": {
+    "description": "/** True if this row is a master row, part of master / detail (ie row can be expanded to show detail) */",
+    "type": { "returnType": "boolean" }
+  },
+  "detail": {
+    "description": "/** True if this row is a detail row, part of master / detail (ie child row of an expanded master row) */",
+    "type": { "returnType": "boolean" }
+  },
+  "detailNode": {
+    "description": "/** If this row is a master row that was expanded, this points to the associated detail row. */",
+    "type": { "returnType": "RowNode" }
+  },
+  "detailGridInfo": {
+    "description": "/** If master detail, this contains details about the detail grid */",
+    "type": { "returnType": "DetailGridInfo | null" }
+  },
+  "leafGroup": {
+    "description": "/** True if this node is a group and the group is the bottom level in the tree */",
+    "type": { "returnType": "boolean" }
+  },
+  "firstChild": {
+    "description": "/** True if this is the first child in this group */",
+    "type": { "returnType": "boolean" }
+  },
+  "lastChild": {
+    "description": "/** True if this is the last child in this group */",
+    "type": { "returnType": "boolean" }
+  },
+  "childIndex": {
+    "description": "/** The index of this node in the group */",
+    "type": { "returnType": "number" }
+  },
+  "rowIndex": {
+    "description": "/** The index of this node in the grid, only valid if node is displayed in the grid, otherwise it should be ignored as old index may be present */",
+    "type": { "returnType": "number | null" }
+  },
+  "rowPinned": {
+    "description": "/** Either 'top' or 'bottom' if row pinned, otherwise undefined or null */",
+    "type": { "returnType": "string" }
+  },
+  "quickFilterAggregateText": {
+    "description": "/** If using quick filter, stores a string representation of the row for searching against */",
+    "type": { "returnType": "string | null" }
+  },
+  "footer": {
+    "description": "/** Groups only - True if row is a footer. Footers  have group = true and footer = true */",
+    "type": { "returnType": "boolean" }
+  },
+  "field": {
+    "description": "/** Groups only - The field we are grouping on eg Country */",
+    "type": { "returnType": "string | null" }
+  },
+  "rowGroupColumn": {
+    "description": "/** Groups only - the row group column for this group */",
+    "type": { "returnType": "Column | null" }
+  },
+  "key": {
+    "description": "/** Groups only - The key for the group eg Ireland, UK, USA */",
+    "type": { "returnType": "string | null" }
+  },
+  "stub": {
+    "description": "/** Used by server side row model, true if this row node is a stub */",
+    "type": { "returnType": "boolean" }
+  },
+  "failedLoad": {
+    "description": "/** Used by server side row model, true if this row node failed a load */",
+    "type": { "returnType": "boolean" }
+  },
+  "allLeafChildren": {
+    "description": "/** All user provided nodes */",
+    "type": { "returnType": "RowNode[]" }
+  },
+  "childrenAfterGroup": {
+    "description": "/** Groups only - Children of this group */",
+    "type": { "returnType": "RowNode[] | null" }
+  },
+  "childrenAfterFilter": {
+    "description": "/** Groups only - Filtered children of this group */",
+    "type": { "returnType": "RowNode[] | null" }
+  },
+  "childrenAfterSort": {
+    "description": "/** Groups only - Sorted children of this group */",
+    "type": { "returnType": "RowNode[] | null" }
+  },
+  "allChildrenCount": {
+    "description": "/** Groups only - Number of children and grand children */",
+    "type": { "returnType": "number | null" }
+  },
+  "childrenMapped": {
+    "description": "/** Children mapped by the pivot columns */",
+    "type": { "returnType": "{ [key: string]: any; } | null" }
+  },
+  "childStore": {
+    "description": "/** Server Side Row Model Only - the children are in an infinite cache */",
+    "type": { "returnType": "IServerSideStore | null" }
+  },
+  "expanded": {
+    "description": "/** Groups only - True if group is expanded, otherwise false */",
+    "type": { "returnType": "boolean" }
+  },
+  "sibling": {
+    "description": "/** Groups only - If doing footers, reference to the footer node for this group */",
+    "type": { "returnType": "RowNode" }
+  },
+  "rowHeight": {
+    "description": "/** The height, in pixels, of this row */",
+    "type": { "returnType": "number | null | undefined" }
+  },
+  "rowHeightEstimated": {
+    "description": "/** Dynamic row heights are done on demand, only when row is visible. However for row virtualisation\n * we need a row height to do the 'what rows are in viewport' maths. So we assign a row height to each\n * row based on defaults and rowHeightEstimated=true, then when the row is needed for drawing we do\n * the row height calculation and set rowHeightEstimated=false. */",
+    "type": { "returnType": "boolean" }
+  },
+  "displayed": {
+    "description": "/** True if the RowNode is not filtered, or in a collapsed group. */",
+    "type": { "returnType": "boolean" }
+  },
+  "rowTop": {
+    "description": "/** The top pixel for this row */",
+    "type": { "returnType": "number | null" }
+  },
+  "oldRowTop": {
+    "description": "/** The top pixel for this row last time, makes sense if data set was ordered or filtered,\n * it is used so new rows can animate in from their old position. */",
+    "type": { "returnType": "number | null" }
+  },
+  "daemon": {
+    "description": "/** True if this node is a daemon. This means row is not part of the model. Can happen when then\n * the row is selected and then the user sets a different ID onto the node. The nodes is then\n * representing a different entity, so the selection controller, if the node is selected, takes\n * a copy where daemon=true. */",
+    "type": { "returnType": "boolean" }
+  },
+  "selectable": {
+    "description": "/** True by default - can be overridden via gridOptions.isRowSelectable(rowNode) */",
+    "type": {}
+  },
+  "___cacheData": {
+    "description": "/** Used by the value service, stores values for a particular change detection turn. */",
+    "type": { "returnType": "{ [colId: string]: any; }" }
+  },
+  "___cacheVersion": { "type": { "returnType": "number" } },
+  "___objectId": {
+    "description": "/** Used by sorting service - to give deterministic sort to groups. Previously we\n * just id for this, however id is a string and had slower sorting compared to numbers. */",
+    "type": { "returnType": "number" }
+  },
+  "___hasChildren": {
+    "description": "/** We cache the result of hasChildren() so that we can be aware of when it has changed, and hence\n * fire the event. Really we should just have hasChildren as an attribute and do away with hasChildren()\n * method, however that would be a breaking change. */",
+    "type": { "returnType": "boolean" }
+  },
+  "alreadyRendered": {
+    "description": "/** True when nodes with the same id are being removed and added as part of the same batch transaction */",
+    "type": {}
+  },
+  "highlighted": { "type": { "returnType": "RowHighlightPosition | null" } },
+  "selected": { "type": { "returnType": "boolean | undefined" } },
+  "eventService": { "type": { "returnType": "EventService | null" } },
+  "setData": {
+    "type": { "arguments": { "data": "any" }, "returnType": "void" }
+  },
+  "updateData": {
+    "type": { "arguments": { "data": "any" }, "returnType": "void" }
+  },
+  "setDataCommon": {
+    "type": {
+      "arguments": { "data": "any", "update": "boolean" },
+      "returnType": "void"
+    }
+  },
+  "updateDataOnDetailNode": {
+    "type": { "arguments": {}, "returnType": "void" }
+  },
+  "createDataChangedEvent": {
+    "type": {
+      "arguments": { "newData": "any", "oldData": "any", "update": "boolean" },
+      "returnType": "DataChangedEvent"
+    }
+  },
+  "createLocalRowEvent": {
+    "type": { "arguments": { "type": "string" }, "returnType": "RowNodeEvent" }
+  },
+  "getRowIndexString": { "type": { "arguments": {}, "returnType": "string" } },
+  "createDaemonNode": { "type": { "arguments": {}, "returnType": "RowNode" } },
+  "setDataAndId": {
+    "type": {
+      "arguments": { "data": "any", "id": "string | undefined" },
+      "returnType": "void"
+    }
+  },
+  "checkRowSelectable": { "type": { "arguments": {} } },
+  "setRowSelectable": { "type": { "arguments": { "newVal": "boolean" } } },
+  "setId": {
+    "type": { "arguments": { "id": "string" }, "returnType": "void" }
+  },
+  "isPixelInRange": {
+    "type": { "arguments": { "pixel": "number" }, "returnType": "boolean" }
+  },
+  "setFirstChild": {
+    "type": { "arguments": { "firstChild": "boolean" }, "returnType": "void" }
+  },
+  "setLastChild": {
+    "type": { "arguments": { "lastChild": "boolean" }, "returnType": "void" }
+  },
+  "setChildIndex": {
+    "type": { "arguments": { "childIndex": "number" }, "returnType": "void" }
+  },
+  "setRowTop": {
+    "type": { "arguments": { "rowTop": "number | null" }, "returnType": "void" }
+  },
+  "clearRowTopAndRowIndex": {
+    "type": { "arguments": {}, "returnType": "void" }
+  },
+  "setDisplayed": {
+    "type": { "arguments": { "displayed": "boolean" }, "returnType": "void" }
+  },
+  "setDragging": {
+    "type": { "arguments": { "dragging": "boolean" }, "returnType": "void" }
+  },
+  "setHighlighted": {
+    "type": {
+      "arguments": { "highlighted": "RowHighlightPosition | null" },
+      "returnType": "void"
+    }
+  },
+  "setAllChildrenCount": {
+    "type": {
+      "arguments": { "allChildrenCount": "number | null" },
+      "returnType": "void"
+    }
+  },
+  "setMaster": {
+    "type": { "arguments": { "master": "boolean" }, "returnType": "void" }
+  },
+  "setRowHeight": {
+    "type": {
+      "arguments": {
+        "rowHeight": "number | undefined | null",
+        "estimated": "undefined = false"
+      },
+      "returnType": "void"
+    }
+  },
+  "setRowIndex": {
+    "type": {
+      "arguments": { "rowIndex": "number | null" },
+      "returnType": "void"
+    }
+  },
+  "setUiLevel": {
+    "type": { "arguments": { "uiLevel": "number" }, "returnType": "void" }
+  },
+  "setExpanded": {
+    "type": { "arguments": { "expanded": "boolean" }, "returnType": "void" }
+  },
+  "createGlobalRowEvent": {
+    "type": { "arguments": { "type": "string" }, "returnType": "RowEvent" }
+  },
+  "dispatchLocalEvent": {
+    "type": { "arguments": { "event": "AgEvent" }, "returnType": "void" }
+  },
+  "setDataValue": {
+    "type": {
+      "arguments": { "colKey": "string | Column", "newValue": "any" },
+      "returnType": "void"
+    }
+  },
+  "setGroupValue": {
+    "type": {
+      "arguments": { "colKey": "string | Column", "newValue": "any" },
+      "returnType": "void"
+    }
+  },
+  "setAggData": {
+    "type": { "arguments": { "newAggData": "any" }, "returnType": "void" }
+  },
+  "updateHasChildren": { "type": { "arguments": {}, "returnType": "void" } },
+  "hasChildren": { "type": { "arguments": {}, "returnType": "boolean" } },
+  "isEmptyRowGroupNode": {
+    "type": { "arguments": {}, "returnType": "boolean | undefined" }
+  },
+  "dispatchCellChangedEvent": {
+    "type": {
+      "arguments": { "column": "Column", "newValue": "any", "oldValue": "any" },
+      "returnType": "void"
+    }
+  },
+  "resetQuickFilterAggregateText": {
+    "type": { "arguments": {}, "returnType": "void" }
+  },
+  "isExpandable": { "type": { "arguments": {}, "returnType": "boolean" } },
+  "isSelected": {
+    "type": { "arguments": {}, "returnType": "boolean | undefined" }
+  },
+  "depthFirstSearch": {
+    "type": {
+      "arguments": { "callback": "(rowNode: RowNode) => void" },
+      "returnType": "void"
+    }
+  },
+  "calculateSelectedFromChildren": {
+    "type": { "arguments": {}, "returnType": "void" }
+  },
+  "setSelectedInitialValue": {
+    "type": { "arguments": { "selected": "boolean" }, "returnType": "void" }
+  },
+  "setSelected": {
+    "type": {
+      "arguments": {
+        "newValue": "boolean",
+        "clearSelection": "boolean = false",
+        "suppressFinishActions": "boolean = false"
+      }
+    }
+  },
+  "isRowPinned": { "type": { "arguments": {}, "returnType": "boolean" } },
+  "setSelectedParams": {
+    "type": {
+      "arguments": { "params": "SetSelectedParams" },
+      "returnType": "number"
+    }
+  },
+  "doRowRangeSelection": {
+    "type": {
+      "arguments": { "value": "boolean = true" },
+      "returnType": "number"
+    }
+  },
+  "isParentOfNode": {
+    "type": {
+      "arguments": { "potentialParent": "RowNode" },
+      "returnType": "boolean"
+    }
+  },
+  "selectThisNode": {
+    "type": { "arguments": { "newValue": "boolean" }, "returnType": "boolean" }
+  },
+  "selectChildNodes": {
+    "type": {
+      "arguments": { "newValue": "boolean", "groupSelectsFiltered": "boolean" },
+      "returnType": "number"
+    }
+  },
+  "addEventListener": {
+    "type": {
+      "arguments": { "eventType": "string", "listener": "Function" },
+      "returnType": "void"
+    }
+  },
+  "removeEventListener": {
+    "type": {
+      "arguments": { "eventType": "string", "listener": "Function" },
+      "returnType": "void"
+    }
+  },
+  "onMouseEnter": { "type": { "arguments": {}, "returnType": "void" } },
+  "onMouseLeave": { "type": { "arguments": {}, "returnType": "void" } },
+  "getFirstChildOfFirstChild": {
+    "type": {
+      "arguments": { "rowGroupColumn": "Column | null" },
+      "returnType": "RowNode | null"
+    }
+  },
+  "isFullWidthCell": { "type": { "arguments": {}, "returnType": "boolean" } },
+  "getRoute": {
+    "type": { "arguments": {}, "returnType": "string[] | undefined" }
+  }
+}
