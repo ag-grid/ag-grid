@@ -5,7 +5,7 @@ export const showJsComp = (
     compDetails: UserCompDetails | undefined, 
     context: Context, eParent: HTMLElement, 
     callCompFactory: (compFactory: UserComponentFactory) => AgPromise<IComponent<any>> | null,
-    ref?: MutableRefObject<IComponent<any> | undefined>
+    ref?: MutableRefObject<any>
 )  => {
 
     const doNothing = !compDetails || compDetails.componentFromFramework;

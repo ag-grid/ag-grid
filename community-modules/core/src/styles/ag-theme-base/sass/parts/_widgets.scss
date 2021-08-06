@@ -433,14 +433,13 @@
         @include ag-border(primary);
         border-radius: ag-param(card-radius);
         transition: opacity 1s;
-
+        white-space: normal;
         &.ag-tooltip-hiding {
             opacity: 0;
         }
     }
 
     // Column select
-
     @for $i from 1 to 10 {
         .ag-column-select-indent-#{$i} {
             @include ag-theme-rtl((padding-left: $i * ag-param(column-select-indent-size)));

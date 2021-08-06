@@ -1,8 +1,8 @@
-import { CellCtrl, Context, IRowComp, RowCtrl, UserCompDetails, _ } from '@ag-grid-community/core';
+import { CellCtrl, Context, IRowComp, RowCtrl, UserCompDetails, _, ICellRenderer } from '@ag-grid-community/core';
 import React, { useEffect, useRef, useState, useMemo, memo, useContext } from 'react';
 import CellComp from '../cells/cellComp';
 import { showJsComp } from '../jsComp';
-import { CssClasses } from '../utils';
+import { CssClasses, isComponentStateless } from '../utils';
 import { BeansContext } from '../beansContext';
 
 interface CellCtrls {
@@ -77,7 +77,7 @@ const RowComp = (params: {rowCtrl: RowCtrl, pinned: string | null}) => {
     const [display, setDisplay] = useState<string>();
 
     const eGui = useRef<HTMLDivElement>(null);
-    const fullWidthCompRef = useRef<HTMLDivElement>(null);
+    const fullWidthCompRef = useRef<ICellRenderer>();
 
     useEffect(() => {        
         const compProxy: IRowComp = {
@@ -101,16 +101,15 @@ const RowComp = (params: {rowCtrl: RowCtrl, pinned: string | null}) => {
             // when cols reordered, which would stop the CSS transitions from working
             setCellCtrls: next => setCellCtrls(prev => maintainOrderOnColumns(prev, next, domOrder)),
             showFullWidth: compDetails => setFullWidthCompDetails(compDetails),
-            destroy: () => true,
-            destroyCells: cellComps => true,
-            getFullWidthRowComp: ()=> null,
+            getFullWidthCellRenderer: ()=> fullWidthCompRef.current,
         };
         rowCtrl.setComp(compProxy, eGui.current!, pinned);
     }, []);
 
     useEffect(() => {
         return showJsComp(fullWidthCompDetails, context, eGui.current!, 
-            compFactory => compFactory.createFullWidthCellRenderer(fullWidthCompDetails!, rowCtrl.getFullWidthCellRendererType()));
+            compFactory => compFactory.createFullWidthCellRenderer(fullWidthCompDetails!, rowCtrl.getFullWidthCellRendererType()),
+            fullWidthCompRef);
     }, [fullWidthCompDetails]);
 
     const rowStyles = useMemo( ()=> {
@@ -129,6 +128,13 @@ const RowComp = (params: {rowCtrl: RowCtrl, pinned: string | null}) => {
     const showFullWidthFramework = fullWidthCompDetails && fullWidthCompDetails.componentFromFramework;
     const showCells = cellCtrls != null;
     
+    const reactFullWidthCellRendererStateless = useMemo( ()=> {
+        const res = fullWidthCompDetails 
+                    && fullWidthCompDetails.componentFromFramework 
+                    && isComponentStateless(fullWidthCompDetails.componentClass);
+        return !!res;
+    }, [fullWidthCompDetails]);
+
     const showCellsJsx = () => cellCtrls.list.map(cellCtrl =>
         (
             <CellComp cellCtrl={ cellCtrl }
@@ -138,7 +144,18 @@ const RowComp = (params: {rowCtrl: RowCtrl, pinned: string | null}) => {
 
     const showFullWidthFrameworkJsx = () => {
         const FullWidthComp = fullWidthCompDetails!.componentClass;
-        return (<FullWidthComp  { ...fullWidthCompDetails!.params } ref={ fullWidthCompRef } />);
+        return (
+            <>
+                {
+                    reactFullWidthCellRendererStateless 
+                    && <FullWidthComp  { ...fullWidthCompDetails!.params } />
+                }
+                {
+                    !reactFullWidthCellRendererStateless 
+                    && <FullWidthComp  { ...fullWidthCompDetails!.params } ref={ fullWidthCompRef } />
+                }
+            </>
+        );
     };
 
     return (

@@ -105,6 +105,14 @@ The example below demonstrates the autoHeight feature. Notice the following:
 
 <grid-example title='Auto Height' name='auto-height' type='generated' options='{ "enterprise": true, "exampleHeight": 660, "noStyle": 1, "modules": ["clientside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
+When using Auto Height, there is a minimum of 150px set to the grid rows section. This is to avoid an empty grid which would look weird. To remove this minimum height, add the following CSS:
+
+```
+.ag-center-cols-clipper {
+    min-height: unset !important;
+}
+```
+
 ## DOM Layout
 
 There are three DOM Layout values the grid can have 'normal', 'autoHeight' and 'print'. They are used as follows:

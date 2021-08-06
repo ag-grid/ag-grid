@@ -1,45 +1,29 @@
-import { Beans } from "../beans";
-import { CellComp } from "../cell/cellComp";
-import { DataChangedEvent, RowHighlightPosition, RowNode } from "../../entities/rowNode";
-import { Column } from "../../entities/column";
-import {
-    CellFocusedEvent,
-    Events,
-    RowClickedEvent,
-    RowDoubleClickedEvent,
-    RowEditingStartedEvent,
-    RowEditingStoppedEvent,
-    RowEvent,
-    RowValueChangedEvent,
-    VirtualRowRemovedEvent
-} from "../../events";
-
-import { ProcessRowParams, RowClassParams } from "../../entities/gridOptions";
-import { IFrameworkOverrides } from "../../interfaces/iFrameworkOverrides";
-import { Constants } from "../../constants/constants";
-import {
-    addCssClass,
-    addOrRemoveCssClass,
-    isElementChildOfClass,
-    removeCssClass
-} from "../../utils/dom";
-import { exists, find } from "../../utils/generic";
-import { isStopPropagationForAgGrid } from "../../utils/event";
-import { assign } from "../../utils/object";
-import { AngularRowUtils } from "./angularRowUtils";
-import { CellPosition } from "../../entities/cellPosition";
-import { RowPosition } from "../../entities/rowPosition";
-import { executeNextVMTurn } from "../../utils/function";
-import { RowCssClassCalculatorParams } from "./rowCssClassCalculator";
-import { BeanStub } from "../../context/beanStub";
-import { convertToMap } from "../../utils/map";
-import { RowDragComp } from "./rowDragComp";
-import { ICellRendererComp, ICellRendererParams } from "../cellRenderers/iCellRenderer";
-import { escapeString } from "../../utils/string";
-import { CellCtrl } from "../cell/cellCtrl";
 import { UserCompDetails } from "../../components/framework/userComponentFactory";
-import { ModuleRegistry } from "../../modules/moduleRegistry";
+import { Constants } from "../../constants/constants";
+import { BeanStub } from "../../context/beanStub";
+import { CellPosition } from "../../entities/cellPosition";
+import { Column } from "../../entities/column";
+import { ProcessRowParams, RowClassParams } from "../../entities/gridOptions";
+import { DataChangedEvent, RowHighlightPosition, RowNode } from "../../entities/rowNode";
+import { RowPosition } from "../../entities/rowPosition";
+import { CellFocusedEvent, Events, RowClickedEvent, RowDoubleClickedEvent, RowEditingStartedEvent, RowEditingStoppedEvent, RowEvent, RowValueChangedEvent, VirtualRowRemovedEvent } from "../../events";
+import { IFrameworkOverrides } from "../../interfaces/iFrameworkOverrides";
 import { ModuleNames } from "../../modules/moduleNames";
+import { ModuleRegistry } from "../../modules/moduleRegistry";
+import { addCssClass, addOrRemoveCssClass, isElementChildOfClass, removeCssClass } from "../../utils/dom";
+import { isStopPropagationForAgGrid } from "../../utils/event";
+import { executeNextVMTurn } from "../../utils/function";
+import { exists, find } from "../../utils/generic";
+import { convertToMap } from "../../utils/map";
+import { assign } from "../../utils/object";
+import { escapeString } from "../../utils/string";
+import { Beans } from "../beans";
+import { CellCtrl } from "../cell/cellCtrl";
+import { ICellRenderer, ICellRendererParams } from "../cellRenderers/iCellRenderer";
+import { AngularRowUtils } from "./angularRowUtils";
+import { RowCssClassCalculatorParams } from "./rowCssClassCalculator";
+import { RowDragComp } from "./rowDragComp";
+
 
 export enum RowType {
     Normal = 'Normal',
@@ -70,12 +54,10 @@ export interface IRowComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     setCellCtrls(cellCtrls: CellCtrl[]): void;
     showFullWidth(compDetails: UserCompDetails): void;
-    getFullWidthRowComp(): ICellRendererComp | null | undefined;
+    getFullWidthCellRenderer(): ICellRenderer | null | undefined;
     setAriaExpanded(on: boolean): void;
-    destroyCells(cellComps: CellComp[]): void;
     setAriaSelected(selected: boolean | undefined): void;
     setHeight(height: string): void;
-    destroy(): void;
     setTop(top: string): void;
     setTransform(transform: string): void;
     setRowIndex(rowIndex: string): void;
@@ -511,15 +493,19 @@ export class RowCtrl extends BeanStub {
         const tryRefresh = (gui: RowGui, pinned: string | null): boolean => {
             if (!gui) { return true; } // no refresh needed
 
-            const cellComp = gui.rowComp.getFullWidthRowComp();
+            const cellRenderer = gui.rowComp.getFullWidthCellRenderer();
 
-            if (!cellComp) { return true; } // no refresh needed
+            // no cell renderer, either means comp not yet ready, or comp ready but now reference
+            // to it (happens in react when comp is stateless). if comp not ready, we don't need to
+            // refresh, however we don't know which one, so we refresh to cover the case where it's
+            // react comp without reference so need to force a refresh
+            if (!cellRenderer) { return false; } 
 
             // no refresh method present, so can't refresh, hard refresh needed
-            if (!cellComp.refresh) { return false; }
+            if (!cellRenderer.refresh) { return false; }
 
             const params = this.createFullWidthParams(gui.element, pinned);
-            const refreshSucceeded = cellComp.refresh(params);
+            const refreshSucceeded = cellRenderer.refresh(params);
 
             return refreshSucceeded;
         };
@@ -1216,7 +1202,6 @@ export class RowCtrl extends BeanStub {
     }
 
     public destroySecondPass(): void {
-        this.allRowGuis.forEach(gui => gui.rowComp.destroy());
         this.allRowGuis.length = 0;
 
         const destroyCellCtrls = (ctrls: CellCtrlListAndMap): CellCtrlListAndMap => {
