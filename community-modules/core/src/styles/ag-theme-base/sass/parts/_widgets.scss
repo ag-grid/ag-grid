@@ -433,7 +433,7 @@
         @include ag-border(primary);
         border-radius: ag-param(card-radius);
         transition: opacity 1s;
-
+        white-space: normal;
         &.ag-tooltip-hiding {
             opacity: 0;
         }
