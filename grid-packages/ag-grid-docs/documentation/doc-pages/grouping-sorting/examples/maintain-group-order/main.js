@@ -17,7 +17,7 @@ var gridOptions = {
     groupMaintainOrder: true,
     groupDefaultExpanded: -1,
     animateRows: true,
-    rowData: getData()
+    rowData: getData(),
 };
 
 // setup the grid after the page has finished loading

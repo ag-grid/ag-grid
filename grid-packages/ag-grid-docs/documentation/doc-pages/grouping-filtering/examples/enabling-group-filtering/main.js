@@ -9,21 +9,21 @@ var gridOptions = {
     defaultColDef: {
         flex: 1,
         minWidth: 150,
-        sortable: true,
+        filter: true,
+        floatingFilter: true,
         resizable: true,
     },
     autoGroupColumnDef: {
-        minWidth: 300,
+        // supplies 'country' values to the filter
+        filterValueGetter: params => params.data.country,
     },
-    groupIncludeFooter: true,
-    groupIncludeTotalFooter: true,
+    groupDisplayType: 'singleColumn',
     animateRows: true,
+    rowData: getData(),
 };
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
-
-    gridOptions.api.setRowData(getData());
 });
