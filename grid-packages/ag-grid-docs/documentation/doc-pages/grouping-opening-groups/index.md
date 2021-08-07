@@ -67,17 +67,32 @@ countries, not just 'United States'.
 
 <grid-example title='Open by Default' name='open-by-default' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
-## Expanding Row Groups via API
+## Expand / Collapse Groups via API  
 
-To expand or contract a group via the API, you first must get a reference to the rowNode and then call `rowNode.setExpanded(boolean)`. This will result in the grid getting updated and displaying the correct rows. For example, to expand a group with the name 'Zimbabwe' would be done as follows:
+It is possible to expand and collapse all group rows using the `expandAll()` and `collapseAll()` grid API's as shown below: 
+
+<snippet>
+|// Expand all group rows
+|gridOptions.api.expandAll();
+|
+|// Collapse all group rows
+|gridOptions.api.collapseAll();
+</snippet>
+
+When more custom behaviour is required, obtain a reference to the rowNode and then call `rowNode.setExpanded(boolean)`. 
+For example, to expand a group with the name 'United States' would be done as follows:
 
 <snippet>
 gridOptions.api.forEachNode(node => {
-    if (node.key === 'Zimbabwe') {
+    if (node.key === 'United States') {
         node.setExpanded(true);
     }
 });
 </snippet>
+
+The following example demonstrates different ways to expand / collapse row groups via the grid API.
+
+<grid-example title='Expand / Collapse Groups via API' name='expand-collapse-api' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
 ## Next Up
 

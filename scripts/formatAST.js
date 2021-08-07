@@ -79,7 +79,7 @@ function formatNode(node, file, paramNameOnly = false) {
                 return formatNode(node.name,file);
             }
         default:
-            return printer.printNode(ts.EmitHint.Unspecified, node, file);
+            return printer.printNode(ts.EmitHint.Unspecified, node, file).replace(/(\n\s*)/g, ' ');
     }
 }
 

@@ -778,7 +778,11 @@
             "displayName": "Rendering and Styling"
         },
         "icons": {
-            "description": "[Icons](/custom-icons/) to use inside the grid instead of the grid's default icons."
+            "description": "[Icons](/custom-icons/) to use inside the grid instead of the grid's default icons.",
+            "more": {
+                "name": "Custom Icons",
+                "url": "/custom-icons/#set-the-icons-through-gridoptions-javascript"
+            }
         },
         "rowHeight": {
             "default": 25,

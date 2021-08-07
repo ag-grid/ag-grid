@@ -25,6 +25,8 @@ const gridOptions = {
                 checkbox: true,
                 // provide an inner renderer
                 innerRenderer: myInnerRenderer,
+                // provide an inner renderer selector
+                innerRendererSelector: myInnerRendererSelector,
                 // provide a footer value getter
                 footerValueGetter: myFooterValueGetter
             }
@@ -41,6 +43,8 @@ The set of parameters for the group cell renderer are defined on `GroupCellRende
 - **suppressDoubleClickExpand:** Set to `true` to suppress expand on double click.
 - **suppressEnterExpand:** Set to `true` to suppress expand on <kbd>Enter</kbd> key.
 - **innerRenderer:** The renderer to use for inside the cell (after grouping functions are added).
+- **innerRendererSelector:** The renderer to use for inside the cell (after grouping functions are added). The 
+`innerRendererSelector` allows different cell renderers to be selected across rows.      
 - **footerValueGetter:** The value getter for the footer text. Can be a function or expression.
 
 ### Example Group cellRenderer

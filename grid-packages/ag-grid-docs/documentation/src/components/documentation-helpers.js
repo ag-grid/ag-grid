@@ -158,8 +158,31 @@ export function appendEnum(name, interfaceType, allLines) {
 
 export function appendTypeAlias(name, interfaceType, allLines) {
     const shouldMultiLine = interfaceType.type.length > 20;
+
+    const split = interfaceType.type.split('|');
+    const smartSplit = [];
+
+    // Don't split union types that are in the same bracket pair
+    // "type": "string | string[] | ((params: HeaderClassParams) => string | string[])"
+    // Should become this note we have not split the union return type onto two lines
+    //   string 
+    // | string[] 
+    // | ((params: HeaderClassParams) => string | string[])
+    while (split.length > 0) {
+        const next = split.pop();
+        var countOpen = (next.match(/\(/g) || []).length;
+        var countClosed = (next.match(/\)/g) || []).length;
+
+        if (countOpen === countClosed) {
+            smartSplit.push(next);
+        } else {
+            const n = split.pop()
+            split.push(n + '|' + next);
+        }
+    }
+
     const multiLine = shouldMultiLine ?
-        `\n      ${interfaceType.type.split('|').join('\n    |')}\n` :
+        `\n      ${smartSplit.reverse().join('\n    |')}\n` :
         interfaceType.type;
     allLines.push(`type ${name} = ${multiLine}`);
 }

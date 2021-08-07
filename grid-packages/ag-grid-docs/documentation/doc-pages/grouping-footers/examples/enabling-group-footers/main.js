@@ -1,27 +1,29 @@
 var gridOptions = {
     columnDefs: [
-        { field: 'assignee', rowGroup: true, hide: true },
-        { field: 'priority', rowGroup: true, hide: true },
-        { field: 'task' },
+        { field: 'country', rowGroup: true, hide: true },
+        { field: 'year', rowGroup: true, hide: true },
+        { field: 'gold', aggFunc: 'sum' },
+        { field: 'silver', aggFunc: 'sum' },
+        { field: 'bronze', aggFunc: 'sum' },
     ],
     defaultColDef: {
         flex: 1,
-        minWidth: 100,
+        minWidth: 150,
         sortable: true,
         resizable: true,
     },
     autoGroupColumnDef: {
-        minWidth: 200,
+        minWidth: 300,
     },
-    groupDisplayType: 'multipleColumns',
-    groupMaintainOrder: true,
-    groupDefaultExpanded: -1,
+    groupIncludeFooter: true,
+    groupIncludeTotalFooter: true,
     animateRows: true,
-    rowData: getData(),
 };
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
+
+    gridOptions.api.setRowData(getData());
 });

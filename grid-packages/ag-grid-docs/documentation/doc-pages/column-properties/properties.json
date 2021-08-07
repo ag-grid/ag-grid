@@ -59,21 +59,55 @@
         "initialFlex": {
             "description": "Same as 'flex', except only applied when creating a new column. Not applied when updating column definitions."
         },
-        "filter<br />filterFramework": {
-            "description": "Filter component to use for this column. Set to `true` to use the default filter."
+        "filter": {
+            "description": "Filter component to use for this column. <br/>Set to `true` to use the default filter. <br/>Set to the name of a [provided filter](/filtering/#provided-filters) or set to a `IFilterComp`",
+            "more": {
+                "name": "Configuring Filters",
+                "url": "/filtering/#configuring-filters-on-columns"
+            }
+        },
+        "filterFramework": {
+            "description": "Provided a custom framework filter to use for this column.",
+            "more": {
+                "name": "Custom Filter",
+                "url": "/component-filter"
+            }
         },
         "filterParams": {
-            "description": "Custom params to be passed to filter component."
+            "description": "Custom params to be passed to the filter component specified in `filter` or `filterFramework`.",
+            "more": {
+                "name": "Filter Parameters",
+                "url": "/filtering/#filter-parameters"
+            }
         },
         "floatingFilter": {
             "default": false,
-            "description": "Whether to show a floating filter for this column."
+            "description": "Whether to show a floating filter for this column.",
+            "more": {
+                "name": "Floating Filter",
+                "url": "/floating-filters"
+            }
         },
-        "floatingFilterComponent<br/>floatingFilterComponentFramework": {
-            "description": "Floating filter component to use for this column."
+        "floatingFilterComponent": {
+            "description": "Floating filter component to use for this column.",
+            "more": {
+                "name": "Floating Filter Component",
+                "url": "/component-floating-filter/"
+            }
+        },
+        "floatingFilterComponentFramework": {
+            "description": "Floating filter framework component to use for this column.",
+            "more": {
+                "name": "Floating Filter Component",
+                "url": "/component-floating-filter/"
+            }
         },
         "floatingFilterComponentParams": {
-            "description": "Custom params to be passed to `floatingFilterComponent` or `floatingFilterComponentFramework`."
+            "description": "Custom params to be passed to `floatingFilterComponent` or `floatingFilterComponentFramework`.",
+            "more": {
+                "name": "Floating Filter Parameters",
+                "url": "/component-floating-filter/#custom-filter-parameters"
+            }
         },
         "hide": {
             "default": false,
@@ -87,10 +121,14 @@
                 "left",
                 "right"
             ],
-            "description": "Pin a column to one side."
+            "description": "Pin a column to one side. A value of `true` is converted to `'left'`"
         },
         "initialPinned": {
             "description": "Same as 'pinned', except only applied when creating a new column. Not applied when updating column definitions."
+        },
+        "lockPinned": {
+            "default": false,
+            "description": "Set to `true` to block pinning column via the UI (API will still work)."
         },
         "lockPosition": {
             "default": false,
@@ -99,10 +137,6 @@
         "lockVisible": {
             "default": false,
             "description": "Set to `true` to block making column visible / hidden via the UI (API will still work)."
-        },
-        "lockPinned": {
-            "default": false,
-            "description": "Set to `true` to block pinning column via the UI (API will still work)."
         },
         "sortable": {
             "default": false,
@@ -117,7 +151,7 @@
             "description": "Set to sort this column."
         },
         "initialSort": {
-            "description": "Same as 'sort', except only applied when creating a new column. Not applied when updating column definitions."
+            "description": "Same as `sort`, except only applied when creating a new column. Not applied when updating column definitions."
         },
         "sortIndex": {
             "description": "If doing multi-sort by default, the order which column sorts are applied."
@@ -144,21 +178,6 @@
             "description": "The field of the tooltip to apply to the cell."
         },
         "tooltipValueGetter": {
-            "type": {
-                "parameters": {
-                    "api": "GridApi",
-                    "columnApi": "ColumnApi",
-                    "colDef": "ColDef",
-                    "column": "Column",
-                    "context": "Context",
-                    "value?": "any",
-                    "valueFormatted?": "any",
-                    "rowIndex?": "number",
-                    "node?": "RowNode",
-                    "data?": "any"
-                },
-                "returnType": "string"
-            },
             "description": "Callback that should return the string used for a tooltip."
         },
         "checkboxSelection": {
@@ -170,14 +189,6 @@
             "description": "`boolean` or `Function`. Set to `true` (or return `true` from function) to allow row dragging."
         },
         "rowDragText": {
-            "type": {
-                "parameters": {
-                    "rowNode": "RowNode",
-                    "columns": "Column[]",
-                    "defaultTextValue": "string"
-                },
-                "returnType": "string"
-            },
             "description": "A callback that should return a string to be displayed by the `rowDragComp` while dragging a row. If this callback is not set, the current cell value will be used."
         },
         "dndSource": {
@@ -212,7 +223,7 @@
             "default": false,
             "description": "Set to `true` if this column is editable, otherwise `false`. Can also be a function to have different rows editable."
         },
-        "onCellValueChanged(params)": {
+        "onCellValueChanged": {
             "description": "Callback for after the value of a cell has changed, either due to editing or the application calling `api.setValue()`."
         },
         "cellRenderer<br />cellRendererFramework": {
@@ -242,28 +253,28 @@
         "headerComponentParams": {
             "description": "Params to be passed to header component."
         },
-        "valueGetter(params)": {
+        "valueGetter": {
             "description": "Function or expression. Gets the value from your data for display."
         },
-        "headerValueGetter(params)": {
+        "headerValueGetter": {
             "description": "Function or expression. Gets the value for display in the header."
         },
-        "filterValueGetter(params)": {
+        "filterValueGetter": {
             "description": "Function or expression. Gets the value for filtering purposes."
         },
-        "valueFormatter(params)": {
+        "valueFormatter": {
             "description": "Function or expression. Formats the value for display."
         },
-        "pinnedRowValueFormatter(params)": {
+        "pinnedRowValueFormatter": {
             "description": "Function or expression. Formatter to use for a pinned row. If missing, the normal `valueFormatter` will be used."
         },
-        "valueSetter(params)": {
+        "valueSetter": {
             "description": "Function or expression. Sets the value into your data for saving. Return `true` if the data changed."
         },
-        "valueParser(params)": {
+        "valueParser": {
             "description": "Function or expression. Parses the value for saving."
         },
-        "keyCreator(params)": {
+        "keyCreator": {
             "description": "Function to return a string key for a value. This string is used for grouping, set filtering, and searching within cell editor dropdowns. When filtering and searching the string is exposed to the user, so make sure to return a human-readable value."
         },
         "getQuickFilterText": {
@@ -309,10 +320,10 @@
         "initialPivotIndex": {
             "description": "Same as 'pivotIndex', except only applied when creating a new column. Not applied when updating column definitions."
         },
-        "comparator(valueA, valueB, nodeA, nodeB, isInverted)": {
+        "comparator": {
             "description": "Comparator function for custom sorting."
         },
-        "pivotComparator(valueA, valueB)": {
+        "pivotComparator": {
             "description": "Comparator to use when ordering the pivot columns, when this column is used to pivot on. The values will always be strings, as the pivot service uses strings as keys for the pivot groups."
         },
         "unSortIcon": {
@@ -358,7 +369,7 @@
             "default": false,
             "description": "Set to `true` to prevent this column from flashing on changes. Only applicable if cell flashing is turned on for the grid."
         },
-        "suppressHeaderKeyboardEvent(params)": {
+        "suppressHeaderKeyboardEvent": {
             "default": false,
             "description": "Suppress the grid taking action for the relevant keyboard event when a header is focused.",
             "more": {
@@ -366,7 +377,7 @@
                 "url": "/keyboard-navigation/#suppressheaderkeyboardevent"
             }
         },
-        "suppressKeyboardEvent(params)": {
+        "suppressKeyboardEvent": {
             "default": false,
             "description": "Suppress the grid taking action for the relevant keyboard event when a cell is focused.",
             "more": {
@@ -374,13 +385,13 @@
                 "url": "/keyboard-navigation/#suppresskeyboardevent"
             }
         },
-        "onCellClicked(params)": {
+        "onCellClicked": {
             "description": "Callback called when a cell is clicked."
         },
-        "onCellDoubleClicked(params)": {
+        "onCellDoubleClicked": {
             "description": "Callback called when a cell is double clicked."
         },
-        "onCellContextMenu(params)": {
+        "onCellContextMenu": {
             "description": "Callback called when a cell is right clicked."
         },
         "autoHeight": {
@@ -396,11 +407,6 @@
             "description": "Set to `true` to have cells under this column enter edit mode after single click."
         },
         "chartDataType": {
-            "options": [
-                "category",
-                "series",
-                "excluded"
-            ],
             "description": "Defines the chart data type that should be used for a column."
         },
         "columnsMenuParams": {
@@ -411,8 +417,11 @@
             }
         },
         "icons": {
-            "type": "object",
-            "description": "[Icons](/custom-icons/) to use inside the column instead of the grid's default icons."
+            "description": "[Icons](/custom-icons/) to use inside the column instead of the grid's default icons.",
+            "more": {
+                "name": "Custom Icons",
+                "url": "/custom-icons/#set-the-icons-through-gridoptions-javascript"
+            }
         }
     },
     "columnGroupsOnly": {

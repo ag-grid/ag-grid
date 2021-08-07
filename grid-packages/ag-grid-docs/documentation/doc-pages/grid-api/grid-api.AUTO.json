@@ -649,7 +649,7 @@
   "setSendToClipboard": {
     "type": {
       "arguments": {
-        "sendToClipboardFunc": "(params: {\n    data: string;\n}) => void"
+        "sendToClipboardFunc": "(params: { data: string; }) => void"
       },
       "returnType": "void"
     }
@@ -976,7 +976,7 @@
   },
   "addAggFuncs": {
     "type": {
-      "arguments": { "aggFuncs": "{\n    [key: string]: IAggFunc;\n}" },
+      "arguments": { "aggFuncs": "{ [key: string]: IAggFunc; }" },
       "returnType": "void"
     }
   },

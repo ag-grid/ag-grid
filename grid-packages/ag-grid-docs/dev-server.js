@@ -403,7 +403,7 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
         '        /* END OF GRID COMMUNITY MODULES PATHS DEV - DO NOT DELETE */',
         gridCommunityModules,
         [],
-        module => `        "${module.publishedName}": \`\${localPrefix}/@ag-grid-community/all-modules/dist/ag-grid-community.cjs.js\`,`,
+        module => `        "${module.publishedName}": \`\${localPrefix}/${module.cjsFilename}\`,`,
         () => { });
 
     updatedUtilFileContents = updateBetweenStrings(updatedUtilFileContents,
@@ -411,8 +411,8 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
         '        /* END OF GRID ENTERPRISE MODULES PATHS DEV - DO NOT DELETE */',
         gridCommunityModules,
         gridEnterpriseModules,
-        module => `        "${module.publishedName}": \`\${localPrefix}/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js\`,`,
-        module => `        "${module.publishedName}": \`\${localPrefix}/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js\`,`);
+        module => `        "${module.publishedName}": \`\${localPrefix}/${module.cjsFilename}\`,`,
+        module => `        "${module.publishedName}": \`\${localPrefix}/${module.cjsFilename}\`,`,);
 
     updatedUtilFileContents = updateBetweenStrings(updatedUtilFileContents,
         '        /* START OF GRID CSS DEV - DO NOT DELETE */',
@@ -430,7 +430,7 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
         '        /* END OF GRID COMMUNITY MODULES PATHS PROD - DO NOT DELETE */',
         gridCommunityModules,
         [],
-        module => `        "${module.publishedName}": \`https://unpkg.com/@ag-grid-community/all-modules@\${agGridVersion}/dist/ag-grid-community.cjs.js\`,`,
+        module => `        "${module.publishedName}": \`https://unpkg.com/${module.cjsFilename}\`,`,
         () => { });
 
     updatedUtilFileContents = updateBetweenStrings(updatedUtilFileContents,
@@ -438,8 +438,8 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
         '        /* END OF GRID ENTERPRISE MODULES PATHS PROD - DO NOT DELETE */',
         gridCommunityModules,
         gridEnterpriseModules,
-        module => `        "${module.publishedName}": \`https://unpkg.com/@ag-grid-enterprise/all-modules@\${agGridVersion}/dist/ag-grid-enterprise.cjs.js\`,`,
-        module => `        "${module.publishedName}": \`https://unpkg.com/@ag-grid-enterprise/all-modules@\${agGridVersion}/dist/ag-grid-enterprise.cjs.js\`,`);
+        module => `        "${module.publishedName}": \`https://unpkg.com/${module.cjsFilename}\`,`,
+        module => `        "${module.publishedName}": \`https://unpkg.com/${module.cjsFilename}\`,`,);
 
     updatedUtilFileContents = updateBetweenStrings(updatedUtilFileContents,
         '        /* START OF GRID CSS PROD - DO NOT DELETE */',

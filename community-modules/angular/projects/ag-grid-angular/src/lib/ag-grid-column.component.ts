@@ -1,4 +1,4 @@
-import { CellClassParams, CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditorSelectorFunc, CellRendererSelectorFunc, CheckboxSelectionCallbackParams, ColDef, ColGroupDef, ColSpanParams, ColumnsMenuParams, DndSourceCallbackParams, EditableCallbackParams, GetQuickFilterTextParams, IAggFunc, ICellEditorComp, ICellRendererComp, ICellRendererFunc, IHeaderGroupComp, IRowDragItem, ITooltipComp, ITooltipParams, RowDragCallbackParams, RowNode, RowSpanParams, SuppressHeaderKeyboardEventParams, SuppressKeyboardEventParams, SuppressNavigableCallbackParams, SuppressPasteCallbackParams, ValueFormatterParams, ValueGetterParams, ValueParserParams, ValueSetterParams, NewValueParams, HeaderCheckboxSelectionCallbackParams, HeaderClassParams, ToolPanelClassParams } from "@ag-grid-community/core";
+import { CellClassParams, CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditorSelectorFunc, CellRendererSelectorFunc, CheckboxSelectionCallbackParams, ColDef, ColGroupDef, ColSpanParams, ColumnsMenuParams, DndSourceCallbackParams, EditableCallbackParams, GetQuickFilterTextParams, IAggFunc, ICellEditorComp, ICellRendererComp, ICellRendererFunc, IHeaderGroupComp, IRowDragItem, ITooltipComp, ITooltipParams, RowDragCallbackParams, RowNode, RowSpanParams, SuppressHeaderKeyboardEventParams, SuppressKeyboardEventParams, SuppressNavigableCallbackParams, SuppressPasteCallbackParams, ValueFormatterParams, ValueGetterParams, ValueParserParams, ValueSetterParams, NewValueParams, HeaderCheckboxSelectionCallbackParams, HeaderClassParams, ToolPanelClassParams, HeaderClass, ToolPanelClass } from "@ag-grid-community/core";
 import { Component, ContentChildren, Input, QueryList } from "@angular/core";
 
 @Component({
@@ -94,9 +94,9 @@ export class AgGridColumn {
     /** Whether to show the column when the group is open / closed.     */
     @Input() public columnGroupShow: string | undefined = undefined;
     /** CSS class for the header     */
-    @Input() public headerClass: string | string[] | ((params: HeaderClassParams) => string | string[]) | undefined = undefined;
+    @Input() public headerClass: HeaderClass | undefined = undefined;
     /** CSS class for the toolPanel     */
-    @Input() public toolPanelClass: string | string[] | ((params: ToolPanelClassParams) => string | string[]) | undefined = undefined;
+    @Input() public toolPanelClass: ToolPanelClass | undefined = undefined;
     /** Expression or function to get the cells value.     */
     @Input() public headerValueGetter: string | Function | undefined = undefined;
     /** Group ID     */

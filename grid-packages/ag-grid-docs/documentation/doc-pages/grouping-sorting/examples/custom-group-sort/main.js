@@ -32,8 +32,8 @@ var gridOptions = {
         sort: 'asc',
         minWidth: 300,
     },
-    rowData: getData(),
     groupDefaultExpanded: 1,
+    rowData: getData(),
 };
 
 // setup the grid after the page has finished loading

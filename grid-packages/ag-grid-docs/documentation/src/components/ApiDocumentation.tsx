@@ -6,7 +6,7 @@ import styles from './ApiDocumentation.module.scss';
 import Code from './Code';
 import { useJsonFileNodes } from './use-json-file-nodes';
 import { ApiProps, DocEntryMap, SectionProps, PropertyCall, ObjectCode, InterfaceEntry, IEvent, ICallSignature, FunctionCode, PropertyType, Config } from './ApiDocumentation.types';
-
+import { TYPE_LINKS } from './type-links';
 
 /**
  * This generates tabulated API documentation based on information in JSON files. This way it is possible to show
@@ -40,6 +40,12 @@ export const ApiDocumentation: React.FC<ApiProps> = ({ pageName, framework, sour
                 break;
             case 'RowNode':
                 codeLookup = getJsonFromFile(nodes, undefined, 'row-object/row-node.AUTO.json');
+                break;
+            case 'ColumnOptions':
+                codeLookup = getJsonFromFile(nodes, undefined, 'column-properties/column-options.AUTO.json');
+                break;
+            case 'ColumnApi':
+                codeLookup = getJsonFromFile(nodes, undefined, 'column-api/column-api.AUTO.json');
                 break;
         }
         const interfaces = getJsonFromFile(nodes, undefined, 'grid-api/interfaces.AUTO.json');
@@ -497,11 +503,15 @@ function extractInterfaces(definitionOrArray, config) {
             const type = regMatch[0];
             // If we have the actual interface use that definition
             const interfaceType = config.lookups.interfaces[type];
-            const numMembers = Object.entries((interfaceType && interfaceType.type) || {}).length;
+            if (!interfaceType) {
+                return undefined;
+            }
+            const isLinkedType = !!TYPE_LINKS[type];
+            const numMembers = typeof (interfaceType.type) == 'string' ? 1 : Object.entries((interfaceType.type) || {}).length;
             // Show interface if we have found one.            
-            // Do not show an interface if it has lots of properties. Should be a linked type instead.
+            // Do not show an interface if it has lots of properties and is a linked type.
             // Always show event interfaces
-            return interfaceType && (numMembers < 12 || isGridOptionEvent(config.gridOpProp)) ? { name: type, interfaceType } : undefined;
+            return (!isLinkedType || (isLinkedType && numMembers < 12) || isGridOptionEvent(config.gridOpProp)) ? { name: type, interfaceType } : undefined;
         }).filter(dt => !!dt);
         return interfacesToWrite;
     }

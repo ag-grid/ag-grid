@@ -12,7 +12,7 @@ export class ColumnApi {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
 
-    public sizeColumnsToFit(gridWidth: any): void {
+    public sizeColumnsToFit(gridWidth: number): void {
         // AG-3403 validate that gridWidth is provided because this method has the same name as
         // a method on the grid API that takes no arguments, and it's easy to confuse the two
         if (typeof gridWidth === "undefined") {

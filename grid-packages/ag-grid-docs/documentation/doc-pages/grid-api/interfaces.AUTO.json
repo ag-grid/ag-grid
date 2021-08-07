@@ -33,7 +33,7 @@
     "type": {
       "mandatoryMethodList": "string[]",
       "optionalMethodList": "string[]",
-      "functionAdapter?": "(callback: any) => {\n    new (): IComponent<any>;\n}"
+      "functionAdapter?": "(callback: any) => { new (): IComponent<any>; }"
     }
   },
   "ComponentType": {
@@ -45,7 +45,7 @@
       "doc": "/** B the business interface (ie IHeader)\n * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid */"
     },
     "type": {
-      "wrap(frameworkComponent: {\n    new (): any;\n} | null, methodList: string[], optionalMethodList: string[], componentType: ComponentType, componentName?: string | null)": "A"
+      "wrap(frameworkComponent: { new (): any; } | null, methodList: string[], optionalMethodList: string[], componentType: ComponentType, componentName?: string | null)": "A"
     }
   },
   "WrappableInterface": {
@@ -118,7 +118,7 @@
       "rowNode?": "RowNode",
       "rowNodes?": "RowNode[]",
       "columns?": "Column[]",
-      "visibleState?": "{\n    [key: string]: boolean;\n}"
+      "visibleState?": "{ [key: string]: boolean; }"
     },
     "docs": {
       "rowNode?": "/** When dragging a row, this contains the row node being dragged\n * When dragging multiple rows, this contains the row that started the drag. */",
@@ -245,14 +245,14 @@
     "type": {
       "headerName?": "string",
       "columnGroupShow?": "string",
-      "headerClass?": "string | string[] | ((params: HeaderClassParams) => string | string[])",
-      "toolPanelClass?": "string | string[] | ((params: ToolPanelClassParams) => string | string[])",
+      "headerClass?": "HeaderClass",
+      "toolPanelClass?": "ToolPanelClass",
       "headerValueGetter?": "string | Function",
       "pivotKeys?": "string[]",
       "suppressColumnsToolPanel?": "boolean",
       "suppressFiltersToolPanel?": "boolean",
       "headerTooltip?": "string",
-      "tooltipComponent?": "{\n    new (): ITooltipComp;\n} | string",
+      "tooltipComponent?": "{ new (): ITooltipComp; } | string",
       "tooltipComponentFramework?": "any",
       "tooltipComponentParams?": "any",
       "suppressHeaderKeyboardEvent?": "(params: SuppressHeaderKeyboardEventParams) => boolean"
@@ -275,14 +275,14 @@
     "type": {
       "headerName?": "string",
       "columnGroupShow?": "string",
-      "headerClass?": "string | string[] | ((params: HeaderClassParams) => string | string[])",
-      "toolPanelClass?": "string | string[] | ((params: ToolPanelClassParams) => string | string[])",
+      "headerClass?": "HeaderClass",
+      "toolPanelClass?": "ToolPanelClass",
       "headerValueGetter?": "string | Function",
       "pivotKeys?": "string[]",
       "suppressColumnsToolPanel?": "boolean",
       "suppressFiltersToolPanel?": "boolean",
       "headerTooltip?": "string",
-      "tooltipComponent?": "{\n    new (): ITooltipComp;\n} | string",
+      "tooltipComponent?": "{ new (): ITooltipComp; } | string",
       "tooltipComponentFramework?": "any",
       "tooltipComponentParams?": "any",
       "suppressHeaderKeyboardEvent?": "(params: SuppressHeaderKeyboardEventParams) => boolean",
@@ -290,7 +290,7 @@
       "groupId?": "string",
       "openByDefault?": "boolean",
       "marryChildren?": "boolean",
-      "headerGroupComponent?": "string | {\n    new (): IHeaderGroupComp;\n}",
+      "headerGroupComponent?": "string | { new (): IHeaderGroupComp; }",
       "headerGroupComponentFramework?": "any",
       "headerGroupComponentParams?": "any"
     },
@@ -341,6 +341,10 @@
       "context?": "any"
     }
   },
+  "HeaderClass": {
+    "meta": { "isTypeAlias": true },
+    "type": "string | string[] | ((params: HeaderClassParams) => string | string[])"
+  },
   "ToolPanelClassParams": {
     "meta": {},
     "type": {
@@ -351,6 +355,10 @@
       "context?": "any"
     }
   },
+  "ToolPanelClass": {
+    "meta": { "isTypeAlias": true },
+    "type": "string | string[] | ((params: ToolPanelClassParams) => string | string[])"
+  },
   "ColDef": {
     "meta": {
       "doc": "/** *********************************************************************\n * Don't forget to update ColDefUtil if changing this class. PLEASE! *\n * ********************************************************************* */"
@@ -359,19 +367,19 @@
       "filter?": "IFilterType",
       "filterFramework?": "any",
       "filterParams?": "any",
-      "floatingFilterComponent?": "string | {\n    new (): IFloatingFilterComp;\n}",
+      "floatingFilterComponent?": "IFloatingFilterType",
       "floatingFilterComponentParams?": "any",
       "floatingFilterComponentFramework?": "any",
       "headerName?": "string",
       "columnGroupShow?": "string",
-      "headerClass?": "string | string[] | ((params: HeaderClassParams) => string | string[])",
-      "toolPanelClass?": "string | string[] | ((params: ToolPanelClassParams) => string | string[])",
+      "headerClass?": "HeaderClass",
+      "toolPanelClass?": "ToolPanelClass",
       "headerValueGetter?": "string | Function",
       "pivotKeys?": "string[]",
       "suppressColumnsToolPanel?": "boolean",
       "suppressFiltersToolPanel?": "boolean",
       "headerTooltip?": "string",
-      "tooltipComponent?": "{\n    new (): ITooltipComp;\n} | string",
+      "tooltipComponent?": "{ new (): ITooltipComp; } | string",
       "tooltipComponentFramework?": "any",
       "tooltipComponentParams?": "any",
       "suppressHeaderKeyboardEvent?": "(params: SuppressHeaderKeyboardEventParams) => boolean",
@@ -404,17 +412,17 @@
       "wrapText?": "boolean",
       "cellClass?": "string | string[] | ((cellClassParams: CellClassParams) => string | string[])",
       "cellStyle?": "{} | ((params: CellClassParams) => {})",
-      "cellRenderer?": "{\n    new (): ICellRendererComp;\n} | ICellRendererFunc | string",
+      "cellRenderer?": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
       "cellRendererFramework?": "any",
       "cellRendererParams?": "any",
       "cellRendererSelector?": "CellRendererSelectorFunc",
-      "cellEditor?": "{\n    new (): ICellEditorComp;\n} | string",
+      "cellEditor?": "{ new (): ICellEditorComp; } | string",
       "cellEditorFramework?": "any",
       "cellEditorParams?": "any",
       "cellEditorSelector?": "CellEditorSelectorFunc",
       "cellEditorPopup?": "boolean",
       "cellEditorPopupPosition?": "string",
-      "pinnedRowCellRenderer?": "{\n    new (): ICellRendererComp;\n} | ICellRendererFunc | string",
+      "pinnedRowCellRenderer?": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
       "pinnedRowCellRendererFramework?": "any",
       "pinnedRowCellRendererParams?": "any",
       "valueFormatter?": "((params: ValueFormatterParams) => string) | string",
@@ -441,7 +449,7 @@
       "rowDrag?": "boolean | ((params: RowDragCallbackParams) => boolean)",
       "rowDragText?": "((params: IRowDragItem, dragItemCount: number) => string)",
       "dndSource?": "boolean | ((params: DndSourceCallbackParams) => boolean)",
-      "dndSourceOnRowDrag?": "((params: {\n    rowNode: RowNode;\n    dragEvent: DragEvent;\n}) => void)",
+      "dndSourceOnRowDrag?": "((params: { rowNode: RowNode; dragEvent: DragEvent; }) => void)",
       "suppressMenu?": "boolean",
       "menuTabs?": "string[]",
       "sortable?": "boolean",
@@ -468,25 +476,25 @@
       "singleClickEdit?": "boolean",
       "template?": "string",
       "templateUrl?": "string",
-      "cellClassRules?": "{\n    [cssClassName: string]: (Function | string);\n}",
+      "cellClassRules?": "{ [cssClassName: string]: (Function | string); }",
       "onCellValueChanged?": "Function",
       "onCellClicked?": "(event: CellClickedEvent) => void",
       "onCellDoubleClicked?": "(event: CellDoubleClickedEvent) => void",
       "onCellContextMenu?": "(event: CellContextMenuEvent) => void",
-      "icons?": "{\n    [key: string]: Function | string;\n}",
+      "icons?": "{ [key: string]: Function | string; }",
       "enableCellChangeFlash?": "boolean",
       "pivotValueColumn?": "Column | null",
       "pivotTotalColumnIds?": "string[]",
-      "headerComponent?": "string | {\n    new (): any;\n}",
+      "headerComponent?": "string | { new (): any; }",
       "headerComponentFramework?": "any",
       "headerComponentParams?": "any",
       "floatingFilter?": "boolean",
-      "refData?": "{\n    [key: string]: string;\n}",
+      "refData?": "{ [key: string]: string; }",
       "chartDataType?": "'category' | 'series' | 'time' | 'excluded'",
       "columnsMenuParams?": "ColumnsMenuParams"
     },
     "docs": {
-      "filter?": "/** One of the built in filter names: [set, number, text], or a filter function */",
+      "filter?": "/** One of the built in filter names: [set, number, text, date], or a filter function */",
       "filterParams?": "/** The filter params are specific to each filter! */",
       "floatingFilterComponent?": "/** The custom component to be used for rendering the floating filter. If none is specified the default AG Grid is used. * */",
       "headerName?": "/** The name to render in the column header */",
@@ -906,7 +914,7 @@
   "CellRendererSelectorResult": {
     "meta": {},
     "type": {
-      "component?": "{\n    new (): ICellRendererComp;\n} | ICellRendererFunc | string",
+      "component?": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
       "frameworkComponent?": "any",
       "params?": "any"
     }
@@ -914,7 +922,7 @@
   "CellEditorSelectorResult": {
     "meta": {},
     "type": {
-      "component?": "{\n    new (): ICellEditorComp;\n} | string",
+      "component?": "{ new (): ICellEditorComp; } | string",
       "frameworkComponent?": "any",
       "params?": "any"
     }
@@ -995,7 +1003,7 @@
       "stopEditingWhenGridLosesFocus?": "boolean",
       "stopEditingWhenCellsLoseFocus?": "boolean",
       "debug?": "boolean",
-      "icons?": "{\n    [key: string]: Function | string;\n}",
+      "icons?": "{ [key: string]: Function | string; }",
       "angularCompileRows?": "boolean",
       "angularCompileFilters?": "boolean",
       "suppressLoadingOverlay?": "boolean",
@@ -1044,7 +1052,7 @@
       "allowShowChangeAfterFilter?": "boolean",
       "quickFilterText?": "string",
       "cacheQuickFilter?": "boolean",
-      "aggFuncs?": "{\n    [key: string]: IAggFunc;\n}",
+      "aggFuncs?": "{ [key: string]: IAggFunc; }",
       "suppressColumnVirtualisation?": "boolean",
       "functionsReadOnly?": "boolean",
       "functionsPassive?": "boolean",
@@ -1094,8 +1102,8 @@
       "getServerSideStoreParams?": "(params: GetServerSideStoreParamsParams) => ServerSideStoreParams",
       "isServerSideGroupOpenByDefault?": "(params: IsServerSideGroupOpenByDefaultParams) => boolean",
       "isGroupOpenByDefault?": "(params: IsGroupOpenByDefaultParams) => boolean",
-      "statusBar?": "{\n    statusPanels: StatusPanelDef[];\n}",
-      "localeText?": "{\n    [key: string]: string;\n}",
+      "statusBar?": "{ statusPanels: StatusPanelDef[]; }",
+      "localeText?": "{ [key: string]: string; }",
       "localeTextFunc?": "(key: string, defaultValue: string) => string",
       "suppressAnimationFrame?": "boolean",
       "defaultColGroupDef?": "Partial<ColGroupDef>",
@@ -1121,7 +1129,7 @@
       "enableOldSetFilterModel?": "boolean",
       "enableCharts?": "boolean",
       "context?": "any",
-      "rowStyle?": "{\n    [cssProperty: string]: string;\n}",
+      "rowStyle?": "{ [cssProperty: string]: string; }",
       "rowClass?": "string | string[]",
       "groupDefaultExpanded?": "number",
       "alignedGrids?": "GridOptions[]",
@@ -1139,7 +1147,7 @@
       "keepDetailRows?": "boolean",
       "keepDetailRowsCount?": "number",
       "isRowMaster?": "IsRowMaster",
-      "detailCellRenderer?": "{\n    new (): ICellRendererComp;\n} | ICellRendererFunc | string",
+      "detailCellRenderer?": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
       "detailCellRendererFramework?": "any",
       "detailCellRendererParams?": "any",
       "detailRowAutoHeight?": "boolean",
@@ -1148,7 +1156,7 @@
       "pinnedBottomRowData?": "any[]",
       "sideBar?": "SideBarDef | string | boolean | null",
       "columnDefs?": "(ColDef | ColGroupDef)[]",
-      "columnTypes?": "{\n    [key: string]: ColDef;\n}",
+      "columnTypes?": "{ [key: string]: ColDef; }",
       "datasource?": "IDatasource",
       "viewportDatasource?": "IViewportDatasource",
       "serverSideDatasource?": "IServerSideDatasource",
@@ -1159,18 +1167,18 @@
       "floatingFiltersHeight?": "number",
       "paginationNumberFormatter?": "(params: PaginationNumberFormatterParams) => string",
       "postProcessPopup?": "(params: PostProcessPopupParams) => void",
-      "frameworkComponents?": "{\n    [p: string]: {\n        new (): any;\n    };\n} | any",
-      "components?": "{\n    [p: string]: any;\n}",
-      "groupRowRenderer?": "{\n    new (): ICellRendererComp;\n} | ICellRendererFunc | string",
+      "frameworkComponents?": "{ [p: string]: { new (): any; }; } | any",
+      "components?": "{ [p: string]: any; }",
+      "groupRowRenderer?": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
       "groupRowRendererFramework?": "any",
       "groupRowRendererParams?": "any",
-      "groupRowInnerRenderer?": "{\n    new (): ICellRendererComp;\n} | ICellRendererFunc | string",
+      "groupRowInnerRenderer?": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
       "groupRowInnerRendererFramework?": "any",
       "createChartContainer?": "(params: ChartRef) => void",
       "fillOperation?": "(params: FillOperationParams) => any",
       "isExternalFilterPresent?()": "boolean",
       "doesExternalFilterPass?(node: RowNode)": "boolean",
-      "getRowStyle?": "(params: RowClassParams) => {\n    [cssProperty: string]: string;\n}",
+      "getRowStyle?": "(params: RowClassParams) => { [cssProperty: string]: string; }",
       "getRowClass?": "(params: RowClassParams) => string | string[] | undefined",
       "rowClassRules?": "RowClassRules",
       "getRowHeight?": "(params: RowHeightParams) => number | undefined | null",
@@ -1183,16 +1191,16 @@
       "getDocument?": "() => Document",
       "defaultGroupSortComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
       "defaultGroupOrderComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
-      "loadingCellRenderer?": "{\n    new (): ICellRenderer;\n} | string",
+      "loadingCellRenderer?": "{ new (): ICellRenderer; } | string",
       "loadingCellRendererFramework?": "any",
       "loadingCellRendererParams?": "any",
-      "loadingOverlayComponent?": "{\n    new (): ILoadingOverlayComp;\n} | string",
+      "loadingOverlayComponent?": "{ new (): ILoadingOverlayComp; } | string",
       "loadingOverlayComponentFramework?": "any",
       "loadingOverlayComponentParams?": "any",
-      "noRowsOverlayComponent?": "{\n    new (): INoRowsOverlayComp;\n} | string",
+      "noRowsOverlayComponent?": "{ new (): INoRowsOverlayComp; } | string",
       "noRowsOverlayComponentFramework?": "any",
       "noRowsOverlayComponentParams?": "any",
-      "fullWidthCellRenderer?": "{\n    new (): ICellRendererComp;\n} | ICellRendererFunc | string",
+      "fullWidthCellRenderer?": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
       "fullWidthCellRendererFramework?": "any",
       "fullWidthCellRendererParams?": "any",
       "isFullWidthCell?(rowNode: RowNode)": "boolean",
@@ -1217,7 +1225,7 @@
       "processSecondaryColGroupDef?(colGroupDef: ColGroupDef)": "void",
       "postSort?(nodes: RowNode[])": "void",
       "chartThemes?": "string[]",
-      "customChartThemes?": "{\n    [name: string]: AgChartTheme;\n}",
+      "customChartThemes?": "{ [name: string]: AgChartTheme; }",
       "chartThemeOverrides?": "AgChartThemeOverrides",
       "processChartOptions?(params: ProcessChartOptionsParams)": "ChartOptions<any>",
       "onColumnEverythingChanged?(event: ColumnEverythingChangedEvent)": "void",
@@ -1667,7 +1675,7 @@
       "maxWidth?": "number",
       "width?": "number",
       "iconKey": "string",
-      "toolPanel?": "{\n    new (): IToolPanelComp;\n} | string",
+      "toolPanel?": "{ new (): IToolPanelComp; } | string",
       "toolPanelFramework?": "any",
       "toolPanelParams?": "any"
     }
@@ -3480,7 +3488,7 @@
       "$scope?": "any",
       "$compile?": "any",
       "frameworkOverrides?": "IFrameworkOverrides",
-      "providedBeanInstances?": "{\n    [key: string]: any;\n}",
+      "providedBeanInstances?": "{ [key: string]: any; }",
       "modules?": "Module[]"
     }
   },
@@ -4192,7 +4200,7 @@
       "height?": "number",
       "autoSize?": "boolean",
       "padding?": "AgChartPaddingOptions",
-      "background?": "{\n    visible?: boolean;\n    fill?: string;\n}",
+      "background?": "{ visible?: boolean; fill?: string; }",
       "title?": "AgChartCaptionOptions",
       "subtitle?": "AgChartCaptionOptions",
       "tooltipClass?": "string",
@@ -4331,7 +4339,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{\n    fill?: string;\n    stroke?: string;\n    strokeWidth?: number;\n    series?: {\n        dimOpacity?: number;\n        strokeWidth?: number;\n    };\n}"
+      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { dimOpacity?: number; strokeWidth?: number; }; }"
     }
   },
   "AgTooltipRendererResult": {
@@ -4443,7 +4451,7 @@
       "fontSize?": "number",
       "fontFamily?": "string",
       "color?": "string",
-      "formatter?": "(params: {\n    value: any;\n}) => string"
+      "formatter?": "(params: { value: any; }) => string"
     }
   },
   "AgLineSeriesOptions": {
@@ -4454,7 +4462,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{\n    fill?: string;\n    stroke?: string;\n    strokeWidth?: number;\n    series?: {\n        dimOpacity?: number;\n        strokeWidth?: number;\n    };\n}",
+      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { dimOpacity?: number; strokeWidth?: number; }; }",
       "type?": "'line'",
       "marker?": "AgCartesianSeriesMarker",
       "label?": "AgLineSeriesLabelOptions",
@@ -4498,7 +4506,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{\n    fill?: string;\n    stroke?: string;\n    strokeWidth?: number;\n    series?: {\n        dimOpacity?: number;\n        strokeWidth?: number;\n    };\n}",
+      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { dimOpacity?: number; strokeWidth?: number; }; }",
       "type?": "'scatter'",
       "marker?": "AgCartesianSeriesMarker",
       "label?": "AgScatterSeriesLabelOptions",
@@ -4533,7 +4541,7 @@
       "fontSize?": "number",
       "fontFamily?": "string",
       "color?": "string",
-      "formatter?": "(params: {\n    value: any;\n}) => string"
+      "formatter?": "(params: { value: any; }) => string"
     }
   },
   "AgAreaSeriesOptions": {
@@ -4544,7 +4552,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{\n    fill?: string;\n    stroke?: string;\n    strokeWidth?: number;\n    series?: {\n        dimOpacity?: number;\n        strokeWidth?: number;\n    };\n}",
+      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { dimOpacity?: number; strokeWidth?: number; }; }",
       "type?": "'area'",
       "marker?": "AgCartesianSeriesMarker",
       "label?": "AgAreaSeriesLabelOptions",
@@ -4573,7 +4581,7 @@
       "fontSize?": "number",
       "fontFamily?": "string",
       "color?": "string",
-      "formatter?": "(params: {\n    value: number;\n}) => string"
+      "formatter?": "(params: { value: number; }) => string"
     }
   },
   "AgBarSeriesFormatterParams": {
@@ -4607,14 +4615,14 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{\n    fill?: string;\n    stroke?: string;\n    strokeWidth?: number;\n    series?: {\n        dimOpacity?: number;\n        strokeWidth?: number;\n    };\n}",
+      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { dimOpacity?: number; strokeWidth?: number; }; }",
       "type?": "'bar' | 'column'",
       "grouped?": "boolean",
       "normalizedTo?": "number",
       "xKey?": "string",
       "yKeys?": "string[] | string[][]",
       "xName?": "string",
-      "yNames?": "string[] | {\n    [key in string]: string;\n}",
+      "yNames?": "string[] | { [key in string]: string; }",
       "fills?": "string[]",
       "strokes?": "string[]",
       "strokeWidth?": "number",
@@ -4638,7 +4646,7 @@
       "fontSize?": "number",
       "fontFamily?": "string",
       "color?": "string",
-      "formatter?": "(params: {\n    value: number;\n}) => string"
+      "formatter?": "(params: { value: number; }) => string"
     }
   },
   "AgHistogramSeriesTooltip": {
@@ -4656,7 +4664,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{\n    fill?: string;\n    stroke?: string;\n    strokeWidth?: number;\n    series?: {\n        dimOpacity?: number;\n        strokeWidth?: number;\n    };\n}",
+      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { dimOpacity?: number; strokeWidth?: number; }; }",
       "type?": "'histogram'",
       "fill?": "string",
       "stroke?": "string",
@@ -4723,11 +4731,11 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{\n    fill?: string;\n    stroke?: string;\n    strokeWidth?: number;\n    series?: {\n        dimOpacity?: number;\n        strokeWidth?: number;\n    };\n}",
+      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { dimOpacity?: number; strokeWidth?: number; }; }",
       "type?": "'pie'",
       "title?": "AgChartCaptionOptions",
       "label?": "AgPieSeriesLabelOptions",
-      "callout?": "{\n    colors?: string[];\n    length?: number;\n    strokeWidth?: number;\n}",
+      "callout?": "{ colors?: string[]; length?: number; strokeWidth?: number; }",
       "angleKey?": "string",
       "angleName?": "string",
       "radiusKey?": "string",
@@ -4780,7 +4788,7 @@
       "height?": "number",
       "autoSize?": "boolean",
       "padding?": "AgChartPaddingOptions",
-      "background?": "{\n    visible?: boolean;\n    fill?: string;\n}",
+      "background?": "{ visible?: boolean; fill?: string; }",
       "title?": "AgChartCaptionOptions",
       "subtitle?": "AgChartCaptionOptions",
       "tooltipClass?": "string",
@@ -4803,7 +4811,7 @@
       "height?": "number",
       "autoSize?": "boolean",
       "padding?": "AgChartPaddingOptions",
-      "background?": "{\n    visible?: boolean;\n    fill?: string;\n}",
+      "background?": "{ visible?: boolean; fill?: string; }",
       "title?": "AgChartCaptionOptions",
       "subtitle?": "AgChartCaptionOptions",
       "tooltipClass?": "string",
@@ -4824,7 +4832,7 @@
   "IAggFuncService": {
     "meta": {},
     "type": {
-      "addAggFuncs(aggFuncs: {\n    [key: string]: IAggFunc;\n})": "void",
+      "addAggFuncs(aggFuncs: { [key: string]: IAggFunc; })": "void",
       "addAggFunc(key: string, aggFunc: IAggFunc)": "void",
       "clear()": "void",
       "getDefaultAggFunc(column: Column)": "string | null",
@@ -5185,7 +5193,7 @@
       "fill": "string",
       "stroke?": "string",
       "strokeWidth?": "number",
-      "series?": "{\n    dimOpacity?: number;\n    strokeWidth?: number;\n}"
+      "series?": "{ dimOpacity?: number; strokeWidth?: number; }"
     }
   },
   "FillOptions": {
@@ -5284,7 +5292,7 @@
       "fontFamily": "string",
       "color": "string",
       "enabled": "boolean",
-      "formatter?": "(params: {\n    value: number;\n}) => string"
+      "formatter?": "(params: { value: number; }) => string"
     }
   },
   "BarTooltipRendererParams": {
@@ -5324,7 +5332,7 @@
       "fontFamily": "string",
       "color": "string",
       "enabled": "boolean",
-      "formatter?": "(params: {\n    value: any;\n}) => string"
+      "formatter?": "(params: { value: any; }) => string"
     }
   },
   "MarkerOptions": {
@@ -5413,7 +5421,7 @@
       "fontFamily": "string",
       "color": "string",
       "enabled": "boolean",
-      "formatter?": "(params: {\n    value: any;\n}) => string"
+      "formatter?": "(params: { value: any; }) => string"
     }
   },
   "AreaSeriesOptions": {
@@ -5562,7 +5570,7 @@
       "ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number)": "boolean",
       "start()": "void",
       "onRowGroupOpened()": "void",
-      "updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder?: {\n    [id: string]: number;\n} | null)": "RowNodeTransaction | null",
+      "updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder?: { [id: string]: number; } | null)": "RowNodeTransaction | null",
       "setRowData(rowData: any[])": "void",
       "refreshModel(params: RefreshModelParams)": "void",
       "expandOrCollapseAll(expand: boolean)": "void",
@@ -5609,7 +5617,7 @@
       "animate?": "boolean",
       "keepEditingRows?": "boolean",
       "rowNodeTransactions?": "RowNodeTransaction[]",
-      "rowNodeOrder?": "{\n    [id: string]: number;\n}",
+      "rowNodeOrder?": "{ [id: string]: number; }",
       "newData?": "boolean",
       "afterColumnsChanged?": "boolean"
     }
@@ -5850,7 +5858,7 @@
       "recolor?": "'Grayscale' | 'Sepia' | 'Washout'",
       "width?": "number",
       "height?": "number",
-      "position?": "{\n    row?: number;\n    rowSpan?: number;\n    column?: number;\n    colSpan?: number;\n    offsetX?: number;\n    offsetY?: number;\n}"
+      "position?": "{ row?: number; rowSpan?: number; column?: number; colSpan?: number; offsetX?: number; offsetY?: number; }"
     }
   },
   "ExcelDataType": {
@@ -5941,7 +5949,7 @@
       "pageSetup?": "ExcelSheetPageSetup",
       "headerFooterConfig?": "ExcelHeaderFooterConfig",
       "suppressTextAsCDATA?": "boolean",
-      "addImageToCell?": "(rowIndex: number, column: Column, value: string) => {\n    image: ExcelImage;\n    value?: string;\n} | undefined"
+      "addImageToCell?": "(rowIndex: number, column: Column, value: string) => { image: ExcelImage; value?: string; } | undefined"
     },
     "docs": {
       "columnGroups?": "/** @deprecated\n */",
@@ -6018,7 +6026,11 @@
   },
   "IFilterType": {
     "meta": { "isTypeAlias": true },
-    "type": "string | {\n    new (): IFilterComp;\n} | boolean"
+    "type": "string | { new (): IFilterComp; } | boolean"
+  },
+  "IFloatingFilterType": {
+    "meta": { "isTypeAlias": true },
+    "type": "string | { new (): IFloatingFilterComp; }"
   },
   "IFilterDef": {
     "meta": {},
@@ -6026,12 +6038,12 @@
       "filter?": "IFilterType",
       "filterFramework?": "any",
       "filterParams?": "any",
-      "floatingFilterComponent?": "string | {\n    new (): IFloatingFilterComp;\n}",
+      "floatingFilterComponent?": "IFloatingFilterType",
       "floatingFilterComponentParams?": "any",
       "floatingFilterComponentFramework?": "any"
     },
     "docs": {
-      "filter?": "/** One of the built in filter names: [set, number, text], or a filter function */",
+      "filter?": "/** One of the built in filter names: [set, number, text, date], or a filter function */",
       "filterParams?": "/** The filter params are specific to each filter! */",
       "floatingFilterComponent?": "/** The custom component to be used for rendering the floating filter. If none is specified the default AG Grid is used. * */"
     }
@@ -6053,7 +6065,7 @@
       "doesFilterPass(params: IDoesFilterPassParams)": "/** The grid will ask each active filter, in turn, whether each row in the grid passes. If any\n * filter fails, then the row will be excluded from the final set. The method is provided a\n * params object with attributes node (the rodNode the grid creates that wraps the data) and data\n * (the data object that you provided to the grid for that row). */",
       "getModel()": "/** Gets the filter state for storing */",
       "setModel(model: any)": "/** Restores the filter state. */",
-      "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * |     state after rows are loaded, it can do it here. For example the set filters uses this\n * |     to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * |     Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
+      "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
       "onAnyFilterChanged?()": "/** Called whenever any filter is changed. */",
       "getFrameworkComponentInstance?()": "/** If using React or Angular 2, returns the underlying component instance, so you can call methods\n * on it if you want. */",
       "getModelAsString?(model: any)": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */"
@@ -6085,7 +6097,7 @@
       "doesFilterPass(params: IDoesFilterPassParams)": "/** The grid will ask each active filter, in turn, whether each row in the grid passes. If any\n * filter fails, then the row will be excluded from the final set. The method is provided a\n * params object with attributes node (the rodNode the grid creates that wraps the data) and data\n * (the data object that you provided to the grid for that row). */",
       "getModel()": "/** Gets the filter state for storing */",
       "setModel(model: any)": "/** Restores the filter state. */",
-      "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * |     state after rows are loaded, it can do it here. For example the set filters uses this\n * |     to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * |     Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
+      "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
       "onAnyFilterChanged?()": "/** Called whenever any filter is changed. */",
       "getFrameworkComponentInstance?()": "/** If using React or Angular 2, returns the underlying component instance, so you can call methods\n * on it if you want. */",
       "getModelAsString?(model: any)": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */"
@@ -6135,7 +6147,7 @@
       "doesFilterPass(params: IDoesFilterPassParams)": "/** The grid will ask each active filter, in turn, whether each row in the grid passes. If any\n * filter fails, then the row will be excluded from the final set. The method is provided a\n * params object with attributes node (the rodNode the grid creates that wraps the data) and data\n * (the data object that you provided to the grid for that row). */",
       "getModel()": "/** Gets the filter state for storing */",
       "setModel(model: any)": "/** Restores the filter state. */",
-      "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * |     state after rows are loaded, it can do it here. For example the set filters uses this\n * |     to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * |     Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
+      "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
       "onAnyFilterChanged?()": "/** Called whenever any filter is changed. */",
       "getFrameworkComponentInstance?()": "/** If using React or Angular 2, returns the underlying component instance, so you can call methods\n * on it if you want. */",
       "getModelAsString?(model: any)": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */"
@@ -6169,7 +6181,7 @@
   "IImmutableService": {
     "meta": {},
     "type": {
-      "createTransactionForRowData(data: any[])": "([RowDataTransaction, {\n    [id: string]: number;\n} | null]) | undefined"
+      "createTransactionForRowData(data: any[])": "([RowDataTransaction, { [id: string]: number; } | null]) | undefined"
     }
   },
   "IInfiniteRowModel": {
@@ -6229,8 +6241,8 @@
       "moduleName": "string",
       "beans?": "any[]",
       "agStackComponents?": "ComponentMeta[]",
-      "userComponents?": "{\n    componentName: string;\n    componentClass: any;\n}[]",
-      "rowModels?": "{\n    [name: string]: {\n        new (): IRowModel;\n    };\n}",
+      "userComponents?": "{ componentName: string; componentClass: any; }[]",
+      "rowModels?": "{ [name: string]: { new (): IRowModel; }; }",
       "dependantModules?": "Module[]"
     }
   },
@@ -6373,7 +6385,7 @@
       "formatValue": "(value: any) => any",
       "values": "CellValue[]",
       "cellHeight": "number",
-      "cellRenderer": "{\n    new (): ICellRendererComp;\n} | ICellRendererFunc | string",
+      "cellRenderer": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
       "searchDebounceDelay?": "number"
     }
   },
@@ -6440,7 +6452,7 @@
       "rowNode": "RowNode",
       "rowNodeTransaction?": "RowNodeTransaction | null",
       "rowNodeTransactions?": "RowNodeTransaction[] | null",
-      "rowNodeOrder?": "{\n    [id: string]: number;\n}",
+      "rowNodeOrder?": "{ [id: string]: number; }",
       "changedPath?": "ChangedPath",
       "afterColumnsChanged?": "boolean"
     }
@@ -6545,7 +6557,7 @@
       "clearDisplayIndexes()": "void",
       "getDisplayIndexEnd()": "number | undefined",
       "isDisplayIndexInStore(displayIndex: number)": "boolean",
-      "setDisplayIndexes(displayIndexSeq: NumberSequence, nextRowTop: {\n    value: number;\n})": "void",
+      "setDisplayIndexes(displayIndexSeq: NumberSequence, nextRowTop: { value: number; })": "void",
       "forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence?: NumberSequence)": "void",
       "forEachNodeDeepAfterFilterAndSort(callback: (rowNode: RowNode, index: number) => void, sequence?: NumberSequence)": "void",
       "retryLoads()": "void",
@@ -6619,7 +6631,7 @@
       "refreshValuesOnOpen?": "boolean",
       "cellHeight?": "number",
       "suppressSorting?": "boolean",
-      "cellRenderer?": "{\n    new (): ICellRendererComp;\n} | ICellRendererFunc | string",
+      "cellRenderer?": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
       "suppressMiniFilter?": "boolean",
       "applyMiniFilterWhileTyping?": "boolean",
       "suppressSelectAll?": "boolean",
@@ -6668,7 +6680,7 @@
   "StatusPanelDef": {
     "meta": {},
     "type": {
-      "statusPanel?": "{\n    new (): IStatusPanelComp;\n} | string",
+      "statusPanel?": "{ new (): IStatusPanelComp; } | string",
       "statusPanelFramework?": "any",
       "align?": "string",
       "key?": "string",
@@ -6762,7 +6774,7 @@
     "meta": {},
     "type": {
       "setRowCount": "(count: number, keepRenderedRows: boolean) => void",
-      "setRowData": "(rowData: {\n    [key: number]: any;\n}) => void",
+      "setRowData": "(rowData: { [key: number]: any; }) => void",
       "getRow": "(rowIndex: number) => RowNode"
     },
     "docs": {
@@ -7057,7 +7069,7 @@
       "suppressCount": "boolean",
       "checkbox": "any",
       "rowDrag?": "boolean",
-      "innerRenderer?": "{\n    new (): ICellRendererComp;\n} | ICellRendererFunc | string",
+      "innerRenderer?": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
       "innerRendererFramework?": "any",
       "innerRendererParams?": "any",
       "scope": "any",
@@ -7337,10 +7349,7 @@
   },
   "CellCtrlListAndMap": {
     "meta": {},
-    "type": {
-      "list": "CellCtrl[]",
-      "map": "{\n    [key: string]: CellCtrl;\n}"
-    }
+    "type": { "list": "CellCtrl[]", "map": "{ [key: string]: CellCtrl; }" }
   },
   "IRowDragItem": {
     "meta": {},
@@ -7348,7 +7357,7 @@
       "rowNode?": "RowNode",
       "rowNodes?": "RowNode[]",
       "columns?": "Column[]",
-      "visibleState?": "{\n    [key: string]: boolean;\n}",
+      "visibleState?": "{ [key: string]: boolean; }",
       "defaultTextValue": "string"
     },
     "docs": {

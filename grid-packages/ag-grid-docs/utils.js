@@ -26,8 +26,10 @@ const getAllModules = () => {
 
             const sourceDir = fullPath.substr(0, fullPath.lastIndexOf("/"));
             const rootDir = sourceDir.substr(0, sourceDir.lastIndexOf("/"));
-
             const publishedName = require(`${rootDir}/package.json`).name;
+
+            const cjsRelativePath = glob.sync(`${rootDir}/dist/*.cjs.js`)[0];
+            const cjsFilename = `${publishedName}/${cjsRelativePath.substr(cjsRelativePath.lastIndexOf("dist"), cjsRelativePath.length)}`;
 
             return {
                 publishedName,
@@ -37,7 +39,8 @@ const getAllModules = () => {
                 moduleName,
                 sourceDir,
                 rootDir,
-                moduleDirName
+                moduleDirName,
+                cjsFilename
             };
         });
 

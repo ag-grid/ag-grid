@@ -1,0 +1,393 @@
+{
+  "columnModel": { "type": { "returnType": "ColumnModel" } },
+  "sizeColumnsToFit": {
+    "type": { "arguments": { "gridWidth": "number" }, "returnType": "void" }
+  },
+  "setColumnGroupOpened": {
+    "type": {
+      "arguments": {
+        "group": "OriginalColumnGroup | string",
+        "newValue": "boolean"
+      },
+      "returnType": "void"
+    }
+  },
+  "getColumnGroup": {
+    "type": {
+      "arguments": { "name": "string", "instanceId": "number" },
+      "returnType": "ColumnGroup | null"
+    }
+  },
+  "getOriginalColumnGroup": {
+    "type": {
+      "arguments": { "name": "string" },
+      "returnType": "OriginalColumnGroup | null"
+    }
+  },
+  "getDisplayNameForColumn": {
+    "type": {
+      "arguments": { "column": "Column", "location": "string | null" },
+      "returnType": "string"
+    }
+  },
+  "getDisplayNameForColumnGroup": {
+    "type": {
+      "arguments": { "columnGroup": "ColumnGroup", "location": "string" },
+      "returnType": "string"
+    }
+  },
+  "getColumn": {
+    "type": { "arguments": { "key": "any" }, "returnType": "Column | null" }
+  },
+  "applyColumnState": {
+    "type": {
+      "arguments": { "params": "ApplyColumnStateParams" },
+      "returnType": "boolean"
+    }
+  },
+  "getColumnState": {
+    "type": { "arguments": {}, "returnType": "ColumnState[]" }
+  },
+  "resetColumnState": { "type": { "arguments": {}, "returnType": "void" } },
+  "getColumnGroupState": {
+    "type": {
+      "arguments": {},
+      "returnType": "{groupId: string, open: boolean}[]"
+    }
+  },
+  "setColumnGroupState": {
+    "type": {
+      "arguments": { "stateItems": "({ groupId: string; open: boolean; })[]" },
+      "returnType": "void"
+    }
+  },
+  "resetColumnGroupState": {
+    "type": { "arguments": {}, "returnType": "void" }
+  },
+  "isPinning": { "type": { "arguments": {}, "returnType": "boolean" } },
+  "isPinningLeft": { "type": { "arguments": {}, "returnType": "boolean" } },
+  "isPinningRight": { "type": { "arguments": {}, "returnType": "boolean" } },
+  "getDisplayedColAfter": {
+    "type": { "arguments": { "col": "Column" }, "returnType": "Column | null" }
+  },
+  "getDisplayedColBefore": {
+    "type": { "arguments": { "col": "Column" }, "returnType": "Column | null" }
+  },
+  "setColumnVisible": {
+    "type": {
+      "arguments": { "key": "string | Column", "visible": "boolean" },
+      "returnType": "void"
+    }
+  },
+  "setColumnsVisible": {
+    "type": {
+      "arguments": { "keys": "(string | Column)[]", "visible": "boolean" },
+      "returnType": "void"
+    }
+  },
+  "setColumnPinned": {
+    "type": {
+      "arguments": { "key": "string | Column", "pinned": "string" },
+      "returnType": "void"
+    }
+  },
+  "setColumnsPinned": {
+    "type": {
+      "arguments": { "keys": "(string | Column)[]", "pinned": "string" },
+      "returnType": "void"
+    }
+  },
+  "getAllColumns": {
+    "type": { "arguments": {}, "returnType": "Column[] | null" }
+  },
+  "getAllGridColumns": {
+    "type": { "arguments": {}, "returnType": "Column[]" }
+  },
+  "getDisplayedLeftColumns": {
+    "type": { "arguments": {}, "returnType": "Column[]" }
+  },
+  "getDisplayedCenterColumns": {
+    "type": { "arguments": {}, "returnType": "Column[]" }
+  },
+  "getDisplayedRightColumns": {
+    "type": { "arguments": {}, "returnType": "Column[]" }
+  },
+  "getAllDisplayedColumns": {
+    "type": { "arguments": {}, "returnType": "Column[]" }
+  },
+  "getAllDisplayedVirtualColumns": {
+    "type": { "arguments": {}, "returnType": "Column[]" }
+  },
+  "moveColumn": {
+    "type": {
+      "arguments": { "key": "string | Column", "toIndex": "number" },
+      "returnType": "void"
+    }
+  },
+  "moveColumnByIndex": {
+    "type": {
+      "arguments": { "fromIndex": "number", "toIndex": "number" },
+      "returnType": "void"
+    }
+  },
+  "moveColumns": {
+    "type": {
+      "arguments": {
+        "columnsToMoveKeys": "(string | Column)[]",
+        "toIndex": "number"
+      }
+    }
+  },
+  "moveRowGroupColumn": {
+    "type": {
+      "arguments": { "fromIndex": "number", "toIndex": "number" },
+      "returnType": "void"
+    }
+  },
+  "setColumnAggFunc": {
+    "type": {
+      "arguments": { "key": "string | Column", "aggFunc": "string" },
+      "returnType": "void"
+    }
+  },
+  "setColumnWidth": {
+    "type": {
+      "arguments": {
+        "key": "string | Column",
+        "newWidth": "number",
+        "finished": "boolean = true"
+      },
+      "returnType": "void"
+    }
+  },
+  "setColumnWidths": {
+    "type": {
+      "arguments": {
+        "columnWidths": "{ key: string | Column; newWidth: number; }[]",
+        "finished": "boolean = true"
+      },
+      "returnType": "void"
+    }
+  },
+  "setPivotMode": {
+    "type": { "arguments": { "pivotMode": "boolean" }, "returnType": "void" }
+  },
+  "isPivotMode": { "type": { "arguments": {}, "returnType": "boolean" } },
+  "getSecondaryPivotColumn": {
+    "type": {
+      "arguments": {
+        "pivotKeys": "string[]",
+        "valueColKey": "string | Column"
+      },
+      "returnType": "Column | null"
+    }
+  },
+  "setValueColumns": {
+    "type": {
+      "arguments": { "colKeys": "(string | Column)[]" },
+      "returnType": "void"
+    }
+  },
+  "getValueColumns": { "type": { "arguments": {}, "returnType": "Column[]" } },
+  "removeValueColumn": {
+    "type": {
+      "arguments": { "colKey": "(string | Column)" },
+      "returnType": "void"
+    }
+  },
+  "removeValueColumns": {
+    "type": {
+      "arguments": { "colKeys": "(string | Column)[]" },
+      "returnType": "void"
+    }
+  },
+  "addValueColumn": {
+    "type": {
+      "arguments": { "colKey": "(string | Column)" },
+      "returnType": "void"
+    }
+  },
+  "addValueColumns": {
+    "type": {
+      "arguments": { "colKeys": "(string | Column)[]" },
+      "returnType": "void"
+    }
+  },
+  "setRowGroupColumns": {
+    "type": {
+      "arguments": { "colKeys": "(string | Column)[]" },
+      "returnType": "void"
+    }
+  },
+  "removeRowGroupColumn": {
+    "type": {
+      "arguments": { "colKey": "string | Column" },
+      "returnType": "void"
+    }
+  },
+  "removeRowGroupColumns": {
+    "type": {
+      "arguments": { "colKeys": "(string | Column)[]" },
+      "returnType": "void"
+    }
+  },
+  "addRowGroupColumn": {
+    "type": {
+      "arguments": { "colKey": "string | Column" },
+      "returnType": "void"
+    }
+  },
+  "addRowGroupColumns": {
+    "type": {
+      "arguments": { "colKeys": "(string | Column)[]" },
+      "returnType": "void"
+    }
+  },
+  "getRowGroupColumns": {
+    "type": { "arguments": {}, "returnType": "Column[]" }
+  },
+  "setPivotColumns": {
+    "type": {
+      "arguments": { "colKeys": "(string | Column)[]" },
+      "returnType": "void"
+    }
+  },
+  "removePivotColumn": {
+    "type": {
+      "arguments": { "colKey": "string | Column" },
+      "returnType": "void"
+    }
+  },
+  "removePivotColumns": {
+    "type": {
+      "arguments": { "colKeys": "(string | Column)[]" },
+      "returnType": "void"
+    }
+  },
+  "addPivotColumn": {
+    "type": {
+      "arguments": { "colKey": "string | Column" },
+      "returnType": "void"
+    }
+  },
+  "addPivotColumns": {
+    "type": {
+      "arguments": { "colKeys": "(string | Column)[]" },
+      "returnType": "void"
+    }
+  },
+  "getPivotColumns": { "type": { "arguments": {}, "returnType": "Column[]" } },
+  "getLeftDisplayedColumnGroups": {
+    "type": { "arguments": {}, "returnType": "ColumnGroupChild[]" }
+  },
+  "getCenterDisplayedColumnGroups": {
+    "type": { "arguments": {}, "returnType": "ColumnGroupChild[]" }
+  },
+  "getRightDisplayedColumnGroups": {
+    "type": { "arguments": {}, "returnType": "ColumnGroupChild[]" }
+  },
+  "getAllDisplayedColumnGroups": {
+    "type": { "arguments": {}, "returnType": "ColumnGroupChild[] | null" }
+  },
+  "autoSizeColumn": {
+    "type": {
+      "arguments": { "key": "string | Column", "skipHeader": "boolean" },
+      "returnType": "void"
+    }
+  },
+  "autoSizeColumns": {
+    "type": {
+      "arguments": { "keys": "(string | Column)[]", "skipHeader": "boolean" },
+      "returnType": "void"
+    }
+  },
+  "autoSizeAllColumns": {
+    "type": { "arguments": { "skipHeader": "boolean" }, "returnType": "void" }
+  },
+  "setSecondaryColumns": {
+    "type": {
+      "arguments": { "colDefs": "(ColDef | ColGroupDef)[]" },
+      "returnType": "void"
+    }
+  },
+  "getSecondaryColumns": {
+    "type": { "arguments": {}, "returnType": "Column[] | null" }
+  },
+  "getPrimaryColumns": {
+    "type": { "arguments": {}, "returnType": "Column[] | null" }
+  },
+  "cleanDownReferencesToAvoidMemoryLeakInCaseApplicationIsKeepingReferenceToDestroyedGrid": {
+    "type": { "arguments": {}, "returnType": "void" }
+  },
+  "columnGroupOpened": {
+    "type": {
+      "arguments": {
+        "group": "OriginalColumnGroup | string",
+        "newValue": "boolean"
+      },
+      "returnType": "void"
+    }
+  },
+  "hideColumns": {
+    "type": {
+      "arguments": { "colIds": "any", "hide": "any" },
+      "returnType": "void"
+    }
+  },
+  "hideColumn": {
+    "type": {
+      "arguments": { "colId": "any", "hide": "any" },
+      "returnType": "void"
+    }
+  },
+  "setState": {
+    "type": {
+      "arguments": { "columnState": "ColumnState[]" },
+      "returnType": "boolean"
+    }
+  },
+  "getState": { "type": { "arguments": {}, "returnType": "ColumnState[]" } },
+  "resetState": { "type": { "arguments": {}, "returnType": "void" } },
+  "getAggregationColumns": {
+    "type": { "arguments": {}, "returnType": "Column[]" }
+  },
+  "removeAggregationColumn": {
+    "type": {
+      "arguments": { "colKey": "(string | Column)" },
+      "returnType": "void"
+    }
+  },
+  "removeAggregationColumns": {
+    "type": {
+      "arguments": { "colKeys": "(string | Column)[]" },
+      "returnType": "void"
+    }
+  },
+  "addAggregationColumn": {
+    "type": {
+      "arguments": { "colKey": "(string | Column)" },
+      "returnType": "void"
+    }
+  },
+  "addAggregationColumns": {
+    "type": {
+      "arguments": { "colKeys": "(string | Column)[]" },
+      "returnType": "void"
+    }
+  },
+  "setColumnAggFunction": {
+    "type": {
+      "arguments": { "column": "Column", "aggFunc": "string" },
+      "returnType": "void"
+    }
+  },
+  "getDisplayNameForCol": {
+    "type": { "arguments": { "column": "any" }, "returnType": "string" }
+  },
+  "setColumnState": {
+    "type": {
+      "arguments": { "columnState": "ColumnState[]" },
+      "returnType": "boolean"
+    }
+  }
+}
