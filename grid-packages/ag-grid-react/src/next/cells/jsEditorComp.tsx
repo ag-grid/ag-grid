@@ -3,14 +3,15 @@ import React, { useEffect, memo, useContext } from 'react';
 import { createJsComp } from '../jsComp';
 import { BeansContext } from '../beansContext';
 
+/*
 const JsEditorComp = (props: {setCellEditorRef: (cellEditor: ICellEditor | undefined)=>void, 
-    cellCtrl: CellCtrl, compDetails: UserCompDetails, eParentElement: HTMLElement}) => {
+    compDetails: UserCompDetails, eParentElement: HTMLElement}) => {
 
     const {context} = useContext(BeansContext);
 
     useEffect(() => {
 
-        const {cellCtrl, compDetails, eParentElement, setCellEditorRef} = props;
+        const {compDetails, eParentElement, setCellEditorRef} = props;
 
         const cellEditor = createJsComp(context, factory => factory.createCellEditor(compDetails) ) as ICellEditorComp;
         if (!cellEditor) { return; }
@@ -40,3 +41,4 @@ const JsEditorComp = (props: {setCellEditorRef: (cellEditor: ICellEditor | undef
 };
 
 export default memo(JsEditorComp);
+*/

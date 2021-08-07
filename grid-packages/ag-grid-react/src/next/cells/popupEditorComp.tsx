@@ -9,8 +9,7 @@ const PopupEditorComp = (props: {
             cellCtrl: CellCtrl, 
             eParentCell: HTMLElement,
             wrappedContent?: any,
-            wrappedComp?: any,
-            wrappedCompProps?: any
+            jsChildComp?: any
         }) => {
 
     const [popupEditorWrapper, setPopupEditorWrapper] = useState<PopupEditorWrapper>();
@@ -25,6 +24,13 @@ const PopupEditorComp = (props: {
         
         const wrapper = new PopupEditorWrapper(compDetails.params);
         const ePopupGui = wrapper.getGui();
+
+        if (props.jsChildComp) {
+            const eChildGui = props.jsChildComp.getGui();
+            if (eChildGui) {
+                ePopupGui.appendChild(eChildGui);
+            }
+        }
 
         const positionParams = {
             column: cellCtrl.getColumn(),
@@ -52,6 +58,8 @@ const PopupEditorComp = (props: {
 
         setPopupEditorWrapper(wrapper);
 
+        props.jsChildComp && props.jsChildComp.afterGuiAttached && props.jsChildComp.afterGuiAttached();
+
         return ()=> {
             if (hideEditorPopup!=null) {
                 hideEditorPopup();
@@ -65,12 +73,6 @@ const PopupEditorComp = (props: {
         <>
             { popupEditorWrapper && props.wrappedContent 
                                  && createPortal(props.wrappedContent, popupEditorWrapper.getGui()) }
-                                 
-            { popupEditorWrapper && props.wrappedComp 
-                                 && createPortal(
-                            <props.wrappedComp eParentElement={popupEditorWrapper.getGui()} {...props.wrappedCompProps}/>, 
-                            popupEditorWrapper.getGui()) 
-            }
         </>
     );
 };
