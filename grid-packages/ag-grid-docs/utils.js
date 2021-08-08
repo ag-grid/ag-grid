@@ -28,12 +28,15 @@ const getAllModules = () => {
             const rootDir = sourceDir.substr(0, sourceDir.lastIndexOf("/"));
             const publishedName = require(`${rootDir}/package.json`).name;
 
+            const enterprise = publishedName.includes("enterprise");
+            const allModules = publishedName.includes("all-modules");
+
             const realCjsFile = glob.sync(`${rootDir}/dist/*.cjs.js`)[0];
             const realCjsRelativePath = realCjsFile ? realCjsFile.substr(realCjsFile.lastIndexOf("dist"), realCjsFile.length) : null;
             const derivedCjsRelativePath = `dist/${publishedName.substr(publishedName.lastIndexOf("/") + 1, publishedName.length)}.cjs.js`;
 
             const cjsRelativePath = realCjsRelativePath ? realCjsRelativePath : derivedCjsRelativePath;
-            const cjsFilename = `${publishedName}/${cjsRelativePath}`;
+            const cjsFilename = `${publishedName}/${allModules ? enterprise ? "ag-grid-enterprise.cjs.js" : "ag-grid-community.cjs.js" : cjsRelativePath}`;
 
             return {
                 publishedName,
