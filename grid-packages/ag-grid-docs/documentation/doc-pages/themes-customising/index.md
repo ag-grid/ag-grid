@@ -211,6 +211,9 @@ modal-overlay-background-color: ag-derived(background-color, $opacity: 0.66),
 // Background color when hovering over rows in the grid and in dropdown menus, or null for no rollover effect (note - if you want a rollover on one but not the other, set to null and use CSS to achieve the rollover)
 row-hover-color: null,
 
+// Background color when hovering over columns
+column-hover-color: null,
+
 // Color to draw around selected cell ranges
 range-selection-border-color: ag-derived(foreground-color),
 

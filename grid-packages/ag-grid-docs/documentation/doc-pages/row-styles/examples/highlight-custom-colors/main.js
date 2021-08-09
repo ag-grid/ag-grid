@@ -4,24 +4,33 @@ var gridOptions = {
             headerName: 'Participant',
             children: [
                 { field: "athlete" },
-                { field: "age" }
+                { field: "age", maxWidth: 90 }
             ]
         },
         {
             headerName: 'Details',
             children: [
                 { field: "country" },
-                { field: "year" },
+                { field: "year", maxWidth: 90 },
                 { field: "date" },
                 { field: "sport" }
+            ]
+        },
+        {
+            headerName: 'Medals',
+            children: [
+                { field: "gold" },
+                { field: "silver" },
+                { field: "bronze" },
+                { field: "total" }
             ]
         }
     ],
     defaultColDef: {
         flex: 1,
+        minWidth: 150,
         resizable: true
     },
-    columnHoverHighlight: true
 };
 
 // setup the grid after the page has finished loading

@@ -957,6 +957,7 @@ export class CellCtrl extends BeanStub {
     
     public onColumnHover(): void {
         if (!this.cellComp) { return; }
+        if (!this.beans.gridOptionsWrapper.isColumnHoverHighlight()) { return; }
 
         const isHovered = this.beans.columnHoverService.isHovered(this.column);
         this.cellComp.addOrRemoveCssClass(CSS_COLUMN_HOVER, isHovered);

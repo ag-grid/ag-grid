@@ -492,6 +492,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressRowHoverHighlight);
     }
 
+    public isColumnHoverHighlight() {
+        return isTrue(this.gridOptions.columnHoverHighlight);
+    }
+
     public isGroupSelectsFiltered() {
         return isTrue(this.gridOptions.groupSelectsFiltered);
     }

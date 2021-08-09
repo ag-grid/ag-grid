@@ -31,6 +31,7 @@
   "scrollbarWidth": { "type": { "returnType": "number" } },
   "suppressRowClickSelection": { "type": { "returnType": "boolean" } },
   "suppressRowHoverHighlight": { "type": { "returnType": "boolean" } },
+  "columnHoverHighlight": { "type": { "returnType": "boolean" } },
   "suppressCellSelection": { "type": { "returnType": "boolean" } },
   "suppressClearOnFillReduction": { "type": { "returnType": "boolean" } },
   "suppressMaintainUnsortedOrder": { "type": { "returnType": "boolean" } },

@@ -120,6 +120,12 @@
         }
     }
 
+    .ag-column-hover {
+        @if ag-param-is-set(column-hover-color) {
+            @include ag-color-property(background-color, column-hover-color);
+        }
+    }
+
     .ag-right-aligned-cell {
         @include ag-theme-rtl(( text-align: right ));
     }

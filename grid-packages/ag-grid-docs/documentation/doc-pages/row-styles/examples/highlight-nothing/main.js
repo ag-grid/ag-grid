@@ -15,13 +15,22 @@ var gridOptions = {
                 { field: "date" },
                 { field: "sport" }
             ]
+        },
+        {
+            headerName: 'Medals',
+            children: [
+                { field: "gold" },
+                { field: "silver" },
+                { field: "bronze" },
+                { field: "total" }
+            ]
         }
     ],
     defaultColDef: {
         flex: 1,
         resizable: true
     },
-    columnHoverHighlight: true
+    suppressRowHoverHighlight: true
 };
 
 // setup the grid after the page has finished loading

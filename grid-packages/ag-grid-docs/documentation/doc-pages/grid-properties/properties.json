@@ -815,6 +815,10 @@
         "suppressRowHoverHighlight": {
             "default": false,
             "description": "Set to `true` to not highlight rows by adding the `ag-row-hover` CSS class."
+        },
+        "columnHoverHighlight": {
+            "default": false,
+            "description": "Set to `true` to highlight columns by adding the `ag-column-hover` CSS class."
         }
     },
     "clipboard": {

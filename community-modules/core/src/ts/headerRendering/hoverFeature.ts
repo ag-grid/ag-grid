@@ -2,6 +2,7 @@ import { Column } from "../entities/column";
 import { BeanStub } from "../context/beanStub";
 import { Autowired, PostConstruct } from "../context/context";
 import { ColumnHoverService } from "../rendering/columnHoverService";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
 
 export class HoverFeature extends BeanStub {
 
@@ -19,7 +20,9 @@ export class HoverFeature extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.addMouseHoverListeners();
+        if (this.gridOptionsWrapper.isColumnHoverHighlight()) {
+            this.addMouseHoverListeners();
+        }
     }
 
     private addMouseHoverListeners(): void {

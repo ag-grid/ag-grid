@@ -20,6 +20,7 @@ $ag-theme-balham-dark-default-params: (
     border-color: #424242,
     odd-row-background-color: ag-derived(background-color, $darken: 3),
     row-hover-color: ag-derived(background-color, $lighten: 7),
+    column-hover-color: ag-derived(background-color, $lighten: 7),
     selected-row-background-color: ag-derived(balham-active-color, $darken: 25),
 
     input-border-color: #f0f0f0,

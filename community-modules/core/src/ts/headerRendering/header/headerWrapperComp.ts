@@ -291,6 +291,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     }
 
     private onColumnHover(): void {
+        if (!this.gridOptionsWrapper.isColumnHoverHighlight()) { return; }
         const isHovered = this.columnHoverService.isHovered(this.column);
         addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
     }

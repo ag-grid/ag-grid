@@ -181,6 +181,7 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
     }
 
     private onColumnHover(): void {
+        if (!this.gridOptionsWrapper.isColumnHoverHighlight()) { return; }
         addOrRemoveCssClass(this.getGui(), 'ag-column-hover', this.columnHoverService.isHovered(this.column));
     }
 

@@ -138,14 +138,34 @@ shows changing the data in the three different ways: `rowNode.setDataValue`, `ro
 
 ## Highlighting Rows and Columns
 
-The classes `ag-row-hover` and `ag-column-hover` are added to cells as the mouse is hovered over a cell's row or column.
+The grid can highlight both Rows and Columns as the mouse hovers over them. 
 
-The example below demonstrates the following:
+Highlighting Rows is on by default. To turn it off, set the grid property `suppressRowHoverHighlight=true`.
 
-- CSS class `ag-row-hover` has background colour added to it, so when you hover over a cell, the row will be highlighted.
+Highlighting Columns is off by default. To turn it on, set the grid property `columnHoverHighlight=true`.
 
-- CSS class `ag-column-hover` has background colour added to it, so when you hover over a cell or a header, the column will be highlighted.
+<snippet>
+const gridOptions = {
+    // turns OFF row hover, it's on by default
+    suppressRowHoverHighlight: true,
+    // turns ON column hover, it's off by default
+    columnHoverHighlight: true
+}
+</snippet>
 
-- If you hover over a header group, all columns in the group will be highlighted.
+In this example Rows and Columns are highlighted.
+
+Note if you hover over a header group, all columns in the group will be highlighted.
 
 <grid-example title='Highlight Rows And Columns' name='highlight-rows-and-columns' type='generated'></grid-example>
+
+In this example both Rows and Columns are not highlighted by setting.
+
+<grid-example title='No Highlighting Rows And Columns' name='highlight-nothing' type='generated'></grid-example>
+
+Rows highlight by default as this is a common requirement. Column highlighting is less common and as such needs to be opted it.
+
+Row Highlighting works by the grid adding the CSS class `ag-row-hover` to the row's getting hovered. The grid cannot depend on using CSS `:hover` selector as this will not highlight the entire row if Columns are pinned.
+
+Column Highlighting works by the grid adding the CSS class `ag-column-hover`
+to all Cells to be highlighted.

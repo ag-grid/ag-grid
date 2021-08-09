@@ -123,6 +123,7 @@ export interface GridOptions {
     scrollbarWidth?: number;
     suppressRowClickSelection?: boolean;
     suppressRowHoverHighlight?: boolean;
+    columnHoverHighlight?: boolean;
     suppressCellSelection?: boolean;
     suppressClearOnFillReduction?: boolean;
     suppressMaintainUnsortedOrder?: boolean;
