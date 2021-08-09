@@ -128,15 +128,15 @@
   },
   "valueGetter": {
     "description": "/** Expression or function to get the cells value. */",
-    "type": { "returnType": "ValueGetterFunc | string" }
+    "type": { "returnType": "string | ValueGetterFunc" }
   },
   "filterValueGetter": {
     "description": "/** Expression or function to get the cells value for filtering. */",
-    "type": { "returnType": "ValueGetterFunc | string" }
+    "type": { "returnType": "string | ValueGetterFunc" }
   },
   "valueSetter": {
     "description": "/** If not using a field, then this puts the value into the cell */",
-    "type": { "returnType": "ValueSetterFunc | string" }
+    "type": { "returnType": "string | ValueSetterFunc" }
   },
   "keyCreator": {
     "description": "/** Function to return the key for a value - use this if the value is an object (not a primitive type) and you\n * want to a) group by this field or b) use set filter on this field. */",
@@ -177,7 +177,9 @@
   },
   "cellStyle": {
     "description": "/** An object of css values. Or a function returning an object of css values. */",
-    "type": { "returnType": "{} | ((params: CellClassParams) => {})" }
+    "type": {
+      "returnType": "{ [cssProperty: string]: string } | CellStyleFunc"
+    }
   },
   "cellRenderer": {
     "description": "/** A function for rendering a cell. */",
@@ -192,7 +194,7 @@
   },
   "cellEditor": {
     "description": "/** Cell editor */",
-    "type": { "returnType": "{ new(): ICellEditorComp; } | string" }
+    "type": { "returnType": "string | { new(): ICellEditorComp; }" }
   },
   "cellEditorFramework": { "type": { "returnType": "any" } },
   "cellEditorParams": { "type": { "returnType": "any" } },
@@ -215,15 +217,15 @@
   },
   "valueFormatter": {
     "description": "/** A function to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */",
-    "type": { "returnType": "ValueFormatterFunc | string" }
+    "type": { "returnType": "string | ValueFormatterFunc" }
   },
   "pinnedRowValueFormatter": {
     "description": "/** @deprecated Use valueFormatter for pinned rows, and check params.node.rowPinned.\n */",
-    "type": { "returnType": "ValueFormatterFunc | string" }
+    "type": { "returnType": "string | ValueFormatterFunc" }
   },
   "valueParser": {
     "description": "/** Gets called after editing, converts the value in the cell. */",
-    "type": { "returnType": "ValueParserFunc | string" }
+    "type": { "returnType": "string | ValueParserFunc" }
   },
   "aggFunc": {
     "description": "/** Name of function to use for aggregation. One of [sum,min,max,first,last] or a function. */",

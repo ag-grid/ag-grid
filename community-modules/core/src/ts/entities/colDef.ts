@@ -141,13 +141,13 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     tooltipValueGetter?: (params: ITooltipParams) => string;
 
     /** Expression or function to get the cells value. */
-    valueGetter?: ValueGetterFunc | string;
+    valueGetter?: string | ValueGetterFunc;
 
     /** Expression or function to get the cells value for filtering. */
-    filterValueGetter?: ValueGetterFunc | string;
+    filterValueGetter?: string | ValueGetterFunc;
 
     /** If not using a field, then this puts the value into the cell */
-    valueSetter?: ValueSetterFunc | string;
+    valueSetter?: string | ValueSetterFunc;
 
     /** Function to return the key for a value - use this if the value is an object (not a primitive type) and you
      * want to a) group by this field or b) use set filter on this field. */
@@ -181,7 +181,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     cellClass?: string | string[] | CellClassFunc;
 
     /** An object of css values. Or a function returning an object of css values. */
-    cellStyle?: {} | ((params: CellClassParams) => {});
+    cellStyle?: { [cssProperty: string]: string } | CellStyleFunc;
 
     /** A function for rendering a cell. */
     cellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
@@ -190,7 +190,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     cellRendererSelector?: CellRendererSelectorFunc;
 
     /** Cell editor */
-    cellEditor?: { new(): ICellEditorComp; } | string;
+    cellEditor?: string | { new(): ICellEditorComp; };
     cellEditorFramework?: any;
     cellEditorParams?: any;
     cellEditorSelector?: CellEditorSelectorFunc;
@@ -205,12 +205,12 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     pinnedRowCellRendererParams?: any;
 
     /** A function to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
-    valueFormatter?: ValueFormatterFunc | string;
+    valueFormatter?: string | ValueFormatterFunc;
     /** @deprecated Use valueFormatter for pinned rows, and check params.node.rowPinned. */
-    pinnedRowValueFormatter?: ValueFormatterFunc | string;
+    pinnedRowValueFormatter?: string | ValueFormatterFunc;
 
     /** Gets called after editing, converts the value in the cell. */
-    valueParser?: ValueParserFunc | string;
+    valueParser?: string | ValueParserFunc;
 
     /** Name of function to use for aggregation. One of [sum,min,max,first,last] or a function. */
     aggFunc?: string | IAggFunc | null;
@@ -545,6 +545,9 @@ export interface CellClassParams extends RowClassParams {
 }
 export interface CellClassFunc {
     (cellClassParams: CellClassParams): string | string[]
+}
+export interface CellStyleFunc {
+    (cellClassParams: CellClassParams): {}
 }
 
 export interface CellClassRules {

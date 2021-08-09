@@ -398,9 +398,9 @@
       "initialPinned?": "boolean | string",
       "tooltipField?": "string",
       "tooltipValueGetter?": "(params: ITooltipParams) => string",
-      "valueGetter?": "ValueGetterFunc | string",
-      "filterValueGetter?": "ValueGetterFunc | string",
-      "valueSetter?": "ValueSetterFunc | string",
+      "valueGetter?": "string | ValueGetterFunc",
+      "filterValueGetter?": "string | ValueGetterFunc",
+      "valueSetter?": "string | ValueSetterFunc",
       "keyCreator?": "(value: any) => string",
       "width?": "number",
       "initialWidth?": "number",
@@ -411,12 +411,12 @@
       "autoHeight?": "boolean",
       "wrapText?": "boolean",
       "cellClass?": "string | string[] | CellClassFunc",
-      "cellStyle?": "{} | ((params: CellClassParams) => {})",
+      "cellStyle?": "{ [cssProperty: string]: string; } | CellStyleFunc",
       "cellRenderer?": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
       "cellRendererFramework?": "any",
       "cellRendererParams?": "any",
       "cellRendererSelector?": "CellRendererSelectorFunc",
-      "cellEditor?": "{ new (): ICellEditorComp; } | string",
+      "cellEditor?": "string | { new (): ICellEditorComp; }",
       "cellEditorFramework?": "any",
       "cellEditorParams?": "any",
       "cellEditorSelector?": "CellEditorSelectorFunc",
@@ -425,9 +425,9 @@
       "pinnedRowCellRenderer?": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
       "pinnedRowCellRendererFramework?": "any",
       "pinnedRowCellRendererParams?": "any",
-      "valueFormatter?": "ValueFormatterFunc | string",
-      "pinnedRowValueFormatter?": "ValueFormatterFunc | string",
-      "valueParser?": "ValueParserFunc | string",
+      "valueFormatter?": "string | ValueFormatterFunc",
+      "pinnedRowValueFormatter?": "string | ValueFormatterFunc",
+      "valueParser?": "string | ValueParserFunc",
       "aggFunc?": "string | IAggFunc | null",
       "initialAggFunc?": "string | IAggFunc",
       "allowedAggFuncs?": "string[]",
@@ -972,6 +972,13 @@
     "type": {
       "arguments": { "cellClassParams": "CellClassParams" },
       "returnType": "string | string[]"
+    }
+  },
+  "CellStyleFunc": {
+    "meta": { "isCallSignature": true },
+    "type": {
+      "arguments": { "cellClassParams": "CellClassParams" },
+      "returnType": "{}"
     }
   },
   "CellClassRules": {

@@ -1,4 +1,4 @@
-import { CellClassFunc, CellClassParams, CellClassRules, CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditorSelectorFunc, CellRendererSelectorFunc, CheckboxSelectionCallback, ColDef, ColGroupDef, ColSpanParams, ColumnsMenuParams, DndSourceCallback, EditableCallback, GetQuickFilterTextParams, HeaderCheckboxSelectionCallback, HeaderClass, IAggFunc, ICellEditorComp, ICellRendererComp, ICellRendererFunc, IHeaderGroupComp, IRowDragItem, ITooltipComp, ITooltipParams, NewValueParams, RowDragCallback, RowNode, RowSpanParams, SuppressHeaderKeyboardEventParams, SuppressKeyboardEventParams, SuppressNavigableCallback, SuppressPasteCallback, ToolPanelClass, ValueFormatterFunc, ValueGetterFunc, ValueParserFunc, ValueSetterFunc } from "@ag-grid-community/core";
+import { CellClassFunc, CellClassRules, CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditorSelectorFunc, CellRendererSelectorFunc, CellStyleFunc, CheckboxSelectionCallback, ColDef, ColGroupDef, ColSpanParams, ColumnsMenuParams, DndSourceCallback, EditableCallback, GetQuickFilterTextParams, HeaderCheckboxSelectionCallback, HeaderClass, IAggFunc, ICellEditorComp, ICellRendererComp, ICellRendererFunc, IHeaderGroupComp, IRowDragItem, ITooltipComp, ITooltipParams, NewValueParams, RowDragCallback, RowNode, RowSpanParams, SuppressHeaderKeyboardEventParams, SuppressKeyboardEventParams, SuppressNavigableCallback, SuppressPasteCallback, ToolPanelClass, ValueFormatterFunc, ValueGetterFunc, ValueParserFunc, ValueSetterFunc } from "@ag-grid-community/core";
 import { Component, ContentChildren, Input, QueryList } from "@angular/core";
 
 @Component({
@@ -62,7 +62,7 @@ export class AgGridColumn {
     /** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used*     */
     @Input() public headerGroupComponentParams: any | undefined = undefined;
     /** An object of css values. Or a function returning an object of css values.     */
-    @Input() public cellStyle: {} | ((params: CellClassParams) => {}) | undefined = undefined;
+    @Input() public cellStyle: { [cssProperty: string]: string } | CellStyleFunc | undefined = undefined;
     @Input() public cellRendererParams: any | undefined = undefined;
     @Input() public cellEditorFramework: any | undefined = undefined;
     @Input() public cellEditorParams: any | undefined = undefined;
@@ -128,7 +128,7 @@ export class AgGridColumn {
     /** A function for rendering a cell.     */
     @Input() public cellRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined = undefined;
     /** Cell editor     */
-    @Input() public cellEditor: { new(): ICellEditorComp; } | string | undefined = undefined;
+    @Input() public cellEditor: string | { new(): ICellEditorComp; } | undefined = undefined;
     /** Whether this column is pinned or not.     */
     @Input() public pinned: boolean | string | null | undefined = undefined;
     @Input() public initialPinned: boolean | string | undefined = undefined;
@@ -162,11 +162,11 @@ export class AgGridColumn {
     /** For native drag and drop, set to true to allow custom onRowDrag processing     */
     @Input() public dndSourceOnRowDrag: (params: { rowNode: RowNode, dragEvent: DragEvent; }) => void | undefined = undefined;
     /** Expression or function to get the cells value.     */
-    @Input() public valueGetter: ValueGetterFunc | string | undefined = undefined;
+    @Input() public valueGetter: string | ValueGetterFunc | undefined = undefined;
     /** If not using a field, then this puts the value into the cell     */
-    @Input() public valueSetter: ValueSetterFunc | string | undefined = undefined;
+    @Input() public valueSetter: string | ValueSetterFunc | undefined = undefined;
     /** Expression or function to get the cells value for filtering.     */
-    @Input() public filterValueGetter: ValueGetterFunc | string | undefined = undefined;
+    @Input() public filterValueGetter: string | ValueGetterFunc | undefined = undefined;
     /** Function to return the key for a value - use this if the value is an object (not a primitive type) and you
      * want to a) group by this field or b) use set filter on this field.     */
     @Input() public keyCreator: (value: any) => string | undefined = undefined;
@@ -175,12 +175,12 @@ export class AgGridColumn {
      */
     @Input() public pinnedRowCellRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined = undefined;
     /** A function to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering.     */
-    @Input() public valueFormatter: ValueFormatterFunc | string | undefined = undefined;
+    @Input() public valueFormatter: string | ValueFormatterFunc | undefined = undefined;
     /** @deprecated Use valueFormatter for pinned rows, and check params.node.rowPinned.
      */
-    @Input() public pinnedRowValueFormatter: ValueFormatterFunc | string | undefined = undefined;
+    @Input() public pinnedRowValueFormatter: string | ValueFormatterFunc | undefined = undefined;
     /** Gets called after editing, converts the value in the cell.     */
-    @Input() public valueParser: ValueParserFunc | string | undefined = undefined;
+    @Input() public valueParser: string | ValueParserFunc | undefined = undefined;
     /** Comparator function for custom sorting.     */
     @Input() public comparator: (valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode, isInverted: boolean) => number | undefined = undefined;
     /** Comparator for values, used by renderer to know if values have changed. Cells who's values have not changed don't get refreshed.     */

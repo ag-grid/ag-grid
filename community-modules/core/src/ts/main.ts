@@ -315,6 +315,7 @@ export {
     NewValueParams,
     CellClassParams,
     CellClassFunc,
+    CellStyleFunc,
     CellClassRules,
     CellEditorSelectorFunc,
     CellEditorSelectorResult,
