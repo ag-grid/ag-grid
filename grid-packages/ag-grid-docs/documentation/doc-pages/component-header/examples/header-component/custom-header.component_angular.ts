@@ -3,7 +3,7 @@ import {IHeaderAngularComp} from '@ag-grid-community/angular'
 import {IHeaderParams} from '@ag-grid-community/core'
 
 @Component({
-    selector: 'app-loading-overlay',
+    selector: 'app-custom-header',
     template: `
       <div>
       <div *ngIf="params.enableMenu" #menuButton class="customHeaderMenuButton" (click)="onMenuClicked($event)"><i class="fa {{params.menuIcon}}"></i>
