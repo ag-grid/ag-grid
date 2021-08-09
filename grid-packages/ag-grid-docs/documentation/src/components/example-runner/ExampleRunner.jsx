@@ -109,7 +109,8 @@ const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, l
             <a id={linkId} href={`#${linkId}`} className={`anchor ${styles['example-runner__title']}`}>
                 {anchorIcon}&nbsp;Example: {title}
             </a>
-            {library === 'grid' && exampleInfo.framework === 'react' &&
+            {/* perversely we don't show the hook/class when the type is react as the example provided will be displayed "as is" */}
+            {library === 'grid' && exampleInfo.framework === 'react' && exampleInfo.type !== 'react' &&
                 <ReactStyleSelector
                     useFunctionalReact={useFunctionalReact}
                     onChange={event => set({ useFunctionalReact: JSON.parse(event.target.value) })} />
