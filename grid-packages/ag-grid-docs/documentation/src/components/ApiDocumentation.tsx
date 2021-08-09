@@ -47,6 +47,9 @@ export const ApiDocumentation: React.FC<ApiProps> = ({ pageName, framework, sour
             case 'ColumnApi':
                 codeLookup = getJsonFromFile(nodes, undefined, 'column-api/column-api.AUTO.json');
                 break;
+            case 'Column':
+                codeLookup = getJsonFromFile(nodes, undefined, 'column-object/column.AUTO.json');
+                break;
         }
         const interfaces = getJsonFromFile(nodes, undefined, 'grid-api/interfaces.AUTO.json');
         lookups = { codeLookup, interfaces };
@@ -532,7 +535,7 @@ function getPropertyType(type: string | PropertyType, config: Config) {
         }
         else if (typeof (type) == 'object') {
             if (type.arguments || type.parameters) {
-                if (isGridOptionEvent(config.gridOpProp)) {
+                if (isGridOptionEvent(config.gridOpProp) || config.isEvent) {
                     // If an event show the event type instead of Function
                     propertyType = Object.values(type.arguments)[0];
                 } else {

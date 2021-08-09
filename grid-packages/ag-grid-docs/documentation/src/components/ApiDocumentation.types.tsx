@@ -112,6 +112,7 @@ export interface ICallSignature {
 export interface Config {
     isSubset?: boolean;
     isApi?: boolean;
+    isEvent?: boolean;
     showSnippets?: boolean;
     lookups?: {
         codeLookup: {
