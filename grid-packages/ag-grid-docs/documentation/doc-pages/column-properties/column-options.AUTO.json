@@ -456,7 +456,7 @@
   },
   "onCellValueChanged": {
     "description": "/** Callbacks for editing.See editing section for further details. */",
-    "type": { "returnType": "Function" }
+    "type": { "arguments": { "event": "NewValueParams" }, "returnType": "void" }
   },
   "onCellClicked": {
     "description": "/** Function callback, gets called when a cell is clicked. */",

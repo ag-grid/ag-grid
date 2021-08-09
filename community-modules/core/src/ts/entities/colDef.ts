@@ -356,7 +356,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     cellClassRules?: { [cssClassName: string]: (Function | string); };
 
     /** Callbacks for editing.See editing section for further details. */
-    onCellValueChanged?: Function;
+    onCellValueChanged?: (event: NewValueParams) => void;
 
     /** Function callback, gets called when a cell is clicked. */
     onCellClicked?: (event: CellClickedEvent) => void;
