@@ -762,32 +762,31 @@ module.exports = async (skipFrameworks, skipExampleFormatting, done) => {
 
             const app = express();
 
-            // // necessary for plunkers
-            // app.use(function(req, res, next) {
-            //     res.setHeader('Access-Control-Allow-Origin', '*');
-            //     return next();
-            // });
-            //
-            // updateWebpackConfigWithBundles(gridCommunityModules, gridEnterpriseModules);
-            //
-            // console.log("Performing Initial Build");
-            // await performInitialBuild();
-            //
-            // console.log("Watch Core Modules & CSS");
-            // await watchCoreModulesAndCss(skipFrameworks);
-            //
-            // if (!skipFrameworks) {
-            //     console.log("Watch Framework Modules");
-            //     watchFrameworkModules();
-            // }
-            //
-            // addWebpackMiddleware(app);
-            // symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommunityModules);
+            // necessary for plunkers
+            app.use(function(req, res, next) {
+                res.setHeader('Access-Control-Allow-Origin', '*');
+                return next();
+            });
+
+            updateWebpackConfigWithBundles(gridCommunityModules, gridEnterpriseModules);
+
+            console.log("Performing Initial Build");
+            await performInitialBuild();
+
+            console.log("Watch Core Modules & CSS");
+            await watchCoreModulesAndCss(skipFrameworks);
+
+            if (!skipFrameworks) {
+                console.log("Watch Framework Modules");
+                watchFrameworkModules();
+            }
+
+            addWebpackMiddleware(app);
+            symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommunityModules);
 
             updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartCommunityModules);
             updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartCommunityModules);
 
-            process.exit(0)
             serveModuleAndPackages(app, gridCommunityModules, gridEnterpriseModules, chartCommunityModules);
 
             // regenerate examples and then watch them
