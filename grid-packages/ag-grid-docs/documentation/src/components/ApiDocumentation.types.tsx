@@ -6,6 +6,7 @@ interface MetaTag {
         name: string;
     };
     type?: string;
+    isEvent?: boolean;
 }
 export type DocEntryMap = {
     meta?: MetaTag;
