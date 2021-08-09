@@ -190,15 +190,12 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
         time: TimeAxis
     };
 
-    protected getAxisClass(axisType: string) {
-        return this.axisTypeToClassMap[axisType];
-    }
-
     protected updateAxes(baseAxisType: AxisType = 'category', isHorizontalChart = false): void {
         const baseAxis = isHorizontalChart ? this.getYAxis() : this.getXAxis();
 
         if (!baseAxis) { return; }
 
+        // when grouping we only recreate the chart if the axis is not a 'groupedCategory' axis, otherwise return
         if (this.chartProxyParams.grouping) {
             if (!(baseAxis instanceof GroupedCategoryAxis)) {
                 this.recreateChart();
@@ -206,33 +203,13 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
             return;
         }
 
-        const axisClass = this.axisTypeToClassMap[baseAxisType];
-
-        if (baseAxis instanceof axisClass) { return; }
-
-        let options = this.iChartOptions;
-
-        if (isHorizontalChart && !options.yAxis.type) {
-            options = {
-                ...options,
-                yAxis: {
-                    type: baseAxisType,
-                    ...options.yAxis
-                }
-            };
-        } else if (!isHorizontalChart && !options.xAxis.type) {
-            options = {
-                ...options,
-                xAxis: {
-                    type: baseAxisType,
-                    ...options.xAxis
-                }
-            };
+        // only update the axis type when the axis has changed and recreate the chart (e.g. when switching from a
+        // 'category' axis to a 'time' axis)
+        const axisTypeChanged = !(baseAxis instanceof this.axisTypeToClassMap[baseAxisType]);
+        if (axisTypeChanged) {
+            (isHorizontalChart ? this.iChartOptions.yAxis : this.iChartOptions.xAxis).type = baseAxisType;
+            this.recreateChart();
         }
-
-        this.iChartOptions = options;
-
-        this.recreateChart();
     }
 
     protected isTimeAxis(params: UpdateChartParams): boolean {
