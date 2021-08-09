@@ -5,7 +5,7 @@ enterprise: true
 
 This section covers Row Grouping with links to sub sections that cover the various ways row grouping can be configured and customised.
 
-<image-caption src="grouping/resources/row-grouping.gif" alt="Row Grouping" ></image-caption>
+<image-caption src="grouping/resources/row-grouping.gif" maxWidth="90%" constrained="true" centered="true" alt="Row Grouping" ></image-caption>
 
 ## Enabling Default Row Grouping
 
