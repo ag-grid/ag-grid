@@ -1,4 +1,4 @@
-import { CellClassParams, CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditorSelectorFunc, CellRendererSelectorFunc, CheckboxSelectionCallbackParams, ColDef, ColGroupDef, ColSpanParams, ColumnsMenuParams, DndSourceCallbackParams, EditableCallbackParams, GetQuickFilterTextParams, IAggFunc, ICellEditorComp, ICellRendererComp, ICellRendererFunc, IHeaderGroupComp, IRowDragItem, ITooltipComp, ITooltipParams, RowDragCallbackParams, RowNode, RowSpanParams, SuppressHeaderKeyboardEventParams, SuppressKeyboardEventParams, SuppressNavigableCallbackParams, SuppressPasteCallbackParams, ValueFormatterParams, ValueGetterParams, ValueParserParams, ValueSetterParams, NewValueParams, HeaderCheckboxSelectionCallbackParams, HeaderClassParams, ToolPanelClassParams, HeaderClass, ToolPanelClass } from "@ag-grid-community/core";
+import { CellClassFunc, CellClassRules, CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditorSelectorFunc, CellRendererSelectorFunc, CellStyleFunc, CheckboxSelectionCallback, ColDef, ColGroupDef, ColSpanParams, ColumnsMenuParams, DndSourceCallback, EditableCallback, GetQuickFilterTextParams, HeaderCheckboxSelectionCallback, HeaderClass, IAggFunc, ICellEditorComp, ICellRendererComp, ICellRendererFunc, IHeaderGroupComp, IRowDragItem, ITooltipComp, ITooltipParams, NewValueParams, RowDragCallback, RowNode, RowSpanParams, SuppressHeaderKeyboardEventParams, SuppressKeyboardEventParams, SuppressNavigableCallback, SuppressPasteCallback, ToolPanelClass, ValueFormatterFunc, ValueGetterFunc, ValueParserFunc, ValueSetterFunc } from "@ag-grid-community/core";
 import { Component, ContentChildren, Input, QueryList } from "@angular/core";
 
 @Component({
@@ -52,7 +52,7 @@ export class AgGridColumn {
      * filterMenuTab, generalMenuTab, columnsMenuTab     *     */
     @Input() public menuTabs: string[] | undefined = undefined;
     /** Rules for applying css classes     */
-    @Input() public cellClassRules: { [cssClassName: string]: (Function | string); } | undefined = undefined;
+    @Input() public cellClassRules: CellClassRules | undefined = undefined;
     /** Icons for this column. Leave blank to use default.     */
     @Input() public icons: { [key: string]: Function | string; } | undefined = undefined;
     /** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used*     */
@@ -62,7 +62,7 @@ export class AgGridColumn {
     /** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used*     */
     @Input() public headerGroupComponentParams: any | undefined = undefined;
     /** An object of css values. Or a function returning an object of css values.     */
-    @Input() public cellStyle: {} | ((params: CellClassParams) => {}) | undefined = undefined;
+    @Input() public cellStyle: { [cssProperty: string]: string } | CellStyleFunc | undefined = undefined;
     @Input() public cellRendererParams: any | undefined = undefined;
     @Input() public cellEditorFramework: any | undefined = undefined;
     @Input() public cellEditorParams: any | undefined = undefined;
@@ -118,7 +118,7 @@ export class AgGridColumn {
     /** Tooltip for the column header     */
     @Input() public headerTooltip: string | undefined = undefined;
     /** Class to use for the cell. Can be string, array of strings, or function.     */
-    @Input() public cellClass: string | string[] | ((cellClassParams: CellClassParams) => string | string[]) | undefined = undefined;
+    @Input() public cellClass: string | string[] | CellClassFunc | undefined = undefined;
     /** Set to true to have the grid place the values for the group into the cell, or put the name of a grouped column to just show that group.     */
     @Input() public showRowGroup: string | boolean | undefined = undefined;
     @Input() public filter: any = undefined;
@@ -128,7 +128,7 @@ export class AgGridColumn {
     /** A function for rendering a cell.     */
     @Input() public cellRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined = undefined;
     /** Cell editor     */
-    @Input() public cellEditor: { new(): ICellEditorComp; } | string | undefined = undefined;
+    @Input() public cellEditor: string | { new(): ICellEditorComp; } | undefined = undefined;
     /** Whether this column is pinned or not.     */
     @Input() public pinned: boolean | string | null | undefined = undefined;
     @Input() public initialPinned: boolean | string | undefined = undefined;
@@ -160,13 +160,13 @@ export class AgGridColumn {
     @Input() public pivotIndex: number | null | undefined = undefined;
     @Input() public initialPivotIndex: number | undefined = undefined;
     /** For native drag and drop, set to true to allow custom onRowDrag processing     */
-    @Input() public dndSourceOnRowDrag: ((params: { rowNode: RowNode, dragEvent: DragEvent; }) => void) | undefined = undefined;
+    @Input() public dndSourceOnRowDrag: (params: { rowNode: RowNode, dragEvent: DragEvent; }) => void | undefined = undefined;
     /** Expression or function to get the cells value.     */
-    @Input() public valueGetter: ((params: ValueGetterParams) => any) | string | undefined = undefined;
+    @Input() public valueGetter: string | ValueGetterFunc | undefined = undefined;
     /** If not using a field, then this puts the value into the cell     */
-    @Input() public valueSetter: ((params: ValueSetterParams) => boolean) | string | undefined = undefined;
+    @Input() public valueSetter: string | ValueSetterFunc | undefined = undefined;
     /** Expression or function to get the cells value for filtering.     */
-    @Input() public filterValueGetter: ((params: ValueGetterParams) => any) | string | undefined = undefined;
+    @Input() public filterValueGetter: string | ValueGetterFunc | undefined = undefined;
     /** Function to return the key for a value - use this if the value is an object (not a primitive type) and you
      * want to a) group by this field or b) use set filter on this field.     */
     @Input() public keyCreator: (value: any) => string | undefined = undefined;
@@ -175,12 +175,12 @@ export class AgGridColumn {
      */
     @Input() public pinnedRowCellRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined = undefined;
     /** A function to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering.     */
-    @Input() public valueFormatter: ((params: ValueFormatterParams) => string) | string | undefined = undefined;
+    @Input() public valueFormatter: string | ValueFormatterFunc | undefined = undefined;
     /** @deprecated Use valueFormatter for pinned rows, and check params.node.rowPinned.
      */
-    @Input() public pinnedRowValueFormatter: ((params: ValueFormatterParams) => string) | string | undefined = undefined;
+    @Input() public pinnedRowValueFormatter: string | ValueFormatterFunc | undefined = undefined;
     /** Gets called after editing, converts the value in the cell.     */
-    @Input() public valueParser: ((params: ValueParserParams) => any) | string | undefined = undefined;
+    @Input() public valueParser: string | ValueParserFunc | undefined = undefined;
     /** Comparator function for custom sorting.     */
     @Input() public comparator: (valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode, isInverted: boolean) => number | undefined = undefined;
     /** Comparator for values, used by renderer to know if values have changed. Cells who's values have not changed don't get refreshed.     */
@@ -209,7 +209,7 @@ export class AgGridColumn {
     /** Function callback, gets called when a cell is right clicked.     */
     @Input() public onCellContextMenu: (event: CellContextMenuEvent) => void | undefined = undefined;
     /** To configure the text to be displayed in the floating div while dragging a row when rowDrag is true     */
-    @Input() public rowDragText: ((params: IRowDragItem, dragItemCount: number) => string) | undefined = undefined;
+    @Input() public rowDragText: (params: IRowDragItem, dragItemCount: number) => string | undefined = undefined;
     /** The function used to calculate the tooltip of the object, tooltipField takes precedence     */
     @Input() public tooltipValueGetter: (params: ITooltipParams) => string | undefined = undefined;
     @Input() public cellRendererSelector: CellRendererSelectorFunc | undefined = undefined;
@@ -233,9 +233,9 @@ export class AgGridColumn {
     @Input() public pivot: boolean | undefined = undefined;
     @Input() public initialPivot: boolean | undefined = undefined;
     /** Set to true to render a selection checkbox in the column.     */
-    @Input() public checkboxSelection: boolean | ((params: CheckboxSelectionCallbackParams) => boolean) | undefined = undefined;
+    @Input() public checkboxSelection: boolean | CheckboxSelectionCallback | undefined = undefined;
     /** If true, a 'select all' checkbox will be put into the header     */
-    @Input() public headerCheckboxSelection: boolean | ((params: HeaderCheckboxSelectionCallbackParams) => boolean) | undefined = undefined;
+    @Input() public headerCheckboxSelection: boolean | HeaderCheckboxSelectionCallback | undefined = undefined;
     /** If true, the header checkbox selection will work on filtered items     */
     @Input() public headerCheckboxSelectionFilteredOnly: boolean | undefined = undefined;
     /** Set to true if no menu should be shown for this column header.     */
@@ -261,17 +261,17 @@ export class AgGridColumn {
     /** If true, GUI will allow adding this columns as a value     */
     @Input() public enableValue: boolean | undefined = undefined;
     /** Set to true if this col is editable, otherwise false. Can also be a function to have different rows editable.     */
-    @Input() public editable: boolean | ((params: EditableCallbackParams) => boolean) | undefined = undefined;
+    @Input() public editable: boolean | EditableCallback | undefined = undefined;
     /** Set to true if this col should not be allowed take new values from the clipboard .     */
-    @Input() public suppressPaste: boolean | ((params: SuppressPasteCallbackParams) => boolean) | undefined = undefined;
+    @Input() public suppressPaste: boolean | SuppressPasteCallback | undefined = undefined;
     /** Set to true if this col should not be navigable with the tab key. Can also be a function to have different rows editable.     */
-    @Input() public suppressNavigable: boolean | ((params: SuppressNavigableCallbackParams) => boolean) | undefined = undefined;
+    @Input() public suppressNavigable: boolean | SuppressNavigableCallback | undefined = undefined;
     /** If true, grid will flash cell after cell is refreshed     */
     @Input() public enableCellChangeFlash: boolean | undefined = undefined;
     /** For grid row dragging, set to true to enable row dragging within the grid     */
-    @Input() public rowDrag: boolean | ((params: RowDragCallbackParams) => boolean) | undefined = undefined;
+    @Input() public rowDrag: boolean | RowDragCallback | undefined = undefined;
     /** For native drag and drop, set to true to enable drag source     */
-    @Input() public dndSource: boolean | ((params: DndSourceCallbackParams) => boolean) | undefined = undefined;
+    @Input() public dndSource: boolean | DndSourceCallback | undefined = undefined;
     /** True if this column should stretch rows height to fit contents     */
     @Input() public autoHeight: boolean | undefined = undefined;
     /** True if this column should wrap cell contents - typically used with autoHeight     */

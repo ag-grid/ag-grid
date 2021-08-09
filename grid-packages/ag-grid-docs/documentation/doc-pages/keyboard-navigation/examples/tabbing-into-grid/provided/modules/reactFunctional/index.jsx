@@ -61,7 +61,6 @@ const GridExample = () => {
                 </div>
                 <div id="myGrid" style={{ height: '100%', width: '100%'}} className="ag-theme-alpine">
                     <AgGridReact
-                        reactUi={ true }
                         modules={ AllCommunityModules }
                         rowData={ rowData }
                         defaultColDef={{

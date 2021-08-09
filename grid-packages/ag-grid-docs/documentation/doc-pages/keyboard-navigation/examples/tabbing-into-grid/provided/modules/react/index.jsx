@@ -90,7 +90,6 @@ class GridExample extends Component {
                     </div>
                     <div id="myGrid" style={{ height: '100%', width: '100%'}} className="ag-theme-alpine">
                         <AgGridReact
-                            reactUi={true}
                             modules={this.state.modules}
                             columnDefs={this.state.columnDefs}
                             rowData={this.state.rowData}

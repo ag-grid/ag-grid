@@ -182,6 +182,9 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
         name += `&nbsp;<span class="${styles['reference__required']}" title="Required">&ast;</span>`;
     }
 
+    // isDeprecated
+    //text-decoration: line-through;
+
     // Use the type definition if manually specified in config
     let type: any = definition.type;    
     let showAdditionalDetails = typeof (type) == 'object';
@@ -341,9 +344,10 @@ const FunctionCodeSample: React.FC<FunctionCode> = ({ framework, name, type, con
     type = type || {};
     let returnType = typeof (type) == 'string' ? undefined : type.returnType;
     const returnTypeIsObject = !!returnType && typeof returnType === 'object';
-    const returnTypeInterface = config.lookups.interfaces[returnType];
-    const isCallSignatureInterface = isCallSig(returnTypeInterface);
-    const returnTypeHasInterface = returnTypeInterface || extractInterfaces(returnType, config).length > 0;
+    const extracted = extractInterfaces(returnType, config);
+    const returnTypeInterface = extracted.length > 0 ? extracted[0].interfaceType : undefined;  // config.lookups.interfaces[returnType];
+    const isCallSignatureInterface = extracted.some(i => isCallSig(i.interfaceType));
+    const returnTypeHasInterface = extracted.length > 0;
 
     let functionName = name.replace(/\([^)]*\)/g, '');
     if (isGridOptionEvent(config.gridOpProp)) {
@@ -507,7 +511,8 @@ function extractInterfaces(definitionOrArray, config) {
     if (typeof (definition) == 'string') {
         const typeRegex = /\w+/g;
         const definitionTypes = [...definition.matchAll(typeRegex)];
-        const interfacesToWrite = definitionTypes.map(regMatch => {
+        let interfacesToWrite = []
+        definitionTypes.forEach(regMatch => {
             const type = regMatch[0];
             // If we have the actual interface use that definition
             const interfaceType = config.lookups.interfaces[type];
@@ -519,8 +524,18 @@ function extractInterfaces(definitionOrArray, config) {
             // Show interface if we have found one.            
             // Do not show an interface if it has lots of properties and is a linked type.
             // Always show event interfaces
-            return (!isLinkedType || (isLinkedType && numMembers < 12) || isGridOptionEvent(config.gridOpProp)) ? { name: type, interfaceType } : undefined;
-        }).filter(dt => !!dt);
+            if (!isLinkedType || (isLinkedType && numMembers < 12) || isGridOptionEvent(config.gridOpProp)) {
+                interfacesToWrite.push({ name: type, interfaceType })
+            }
+
+            if (interfaceType.meta.isCallSignature) {
+                const args = interfaceType.type && interfaceType.type.arguments;
+                if (args) {
+                    const argInterfaces = Object.values(args)
+                    interfacesToWrite = [...interfacesToWrite, ...extractInterfaces(argInterfaces, config)];
+                }
+            }
+        });
         return interfacesToWrite;
     }
 
