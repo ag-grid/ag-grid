@@ -123,6 +123,20 @@
                 "name": "Suppress Keyboard Events",
                 "url": "/keyboard-navigation/#suppressheaderkeyboardevent"
             }
+        },
+        "headerCheckboxSelection": {
+            "description": "If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header.",
+            "more": {
+                "name": "Header Checkbox Selection",
+                "url": "/row-selection/#header-checkbox-selection"
+            }
+        },
+        "headerCheckboxSelectionFilteredOnly": {
+            "description": "If true, the header checkbox selection will only select filtered items.",
+            "more": {
+                "name": "Select Everything or Just Filtered",
+                "url": "row-selection/#select-everything-or-just-filtered"
+            }
         }
     },
     "display": {
