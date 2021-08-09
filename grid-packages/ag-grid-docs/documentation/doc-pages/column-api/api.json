@@ -204,13 +204,28 @@
             "description": "See [Pivoting](/pivoting/)"
         },
         "isPivotMode": {
-            "description": "Methods to get the pivot mode."
+            "description": "Get the pivot mode."
         },
         "setPivotMode": {
-            "description": "Methods to set the pivot mode."
+            "description": "Set the pivot mode."
         },
-        "getPivotColumns<br />setPivotColumns<br />removePivotColumn<br />removePivotColumns<br />addPivotColumn<br />addPivotColumns": {
-            "description": "Methods for management of column pivots."
+        "getPivotColumns": {
+            "description": "Get the pivot columns."
+        },
+        "setPivotColumns": {
+            "description": "Set the pivot columns."
+        },
+        "addPivotColumn": {
+            "description": "Add a pivot column."
+        },
+        "addPivotColumns": {
+            "description": "Same as `addPivotColumn` but provide a list of columns."
+        },
+        "removePivotColumn": {
+            "description": "Remove a pivot column."
+        },
+        "removePivotColumns": {
+            "description": "Same as `removePivotColumn` but provide a list of columns."
         },
         "getSecondaryPivotColumn": {
             "description": "Returns the pivot column for the given `pivotKeys` and `valueColId`. Useful to then call operations on the pivot column."

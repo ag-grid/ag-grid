@@ -33,7 +33,7 @@ var renderer = function(params) {
     return params.value;
 }
 ```
-<api-documentation source='resources/events.json' config='{ "isApi": true, "codeSrc": "RowNode"}'></api-documentation>
+<api-documentation source='resources/events.json' config='{ "codeSrc": "RowNode"}'></api-documentation>
 
 ## Row Node IDs
 
