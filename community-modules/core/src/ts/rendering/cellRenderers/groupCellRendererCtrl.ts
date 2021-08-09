@@ -180,7 +180,7 @@ export class GroupCellRendererCtrl extends BeanStub {
         const column = this.params.column;
         const rowNode: RowNode = this.params.node;
 
-        this.showingValueForOpenedParent = this.isShowingValueForOtherGroup();
+        this.showingValueForOpenedParent = this.isShowingValueFromHiddenParent();
 
         if (this.showingValueForOpenedParent) {
             let pointer = rowNode.parent;
@@ -200,7 +200,7 @@ export class GroupCellRendererCtrl extends BeanStub {
         }
     }
 
-    private isShowingValueForOtherGroup(): boolean {
+    private isShowingValueFromHiddenParent(): boolean {
         // note - this code depends on sortService.updateGroupDataForHiddenOpenParents, where group data
         // is updated to reflect the dragged down parents
         const rowNode: RowNode = this.params.node;
@@ -216,10 +216,13 @@ export class GroupCellRendererCtrl extends BeanStub {
 
         // this is the normal case, in that we are showing a group for which this column is configured. note that
         // this means the Row Group is closed (if it was open, we would not be displaying it)
-        const thisColumnShowingGroupForThisNode = rowNode.rowGroupColumn
-            && column.isRowGroupDisplayed(rowNode.rowGroupColumn.getId());
-        // if showing group as normal, we didn't take group info from parent
-        if (thisColumnShowingGroupForThisNode) { return false; }
+        const showingGroupNode = rowNode.rowGroupColumn!=null;
+        if (showingGroupNode) {
+            const keyOfGroupingColumn = rowNode.rowGroupColumn!.getId();
+            const configuredToShowThisGroupLevel = column.isRowGroupDisplayed(keyOfGroupingColumn);
+            // if showing group as normal, we didn't take group info from parent
+            if (configuredToShowThisGroupLevel) { return false; }
+        }
 
         // see if we are showing a Group Value for the Displayed Group. if we are showing a group value, and this Row Node
         // is not grouping by this Displayed Group, we must of gotten the value from a parent node
