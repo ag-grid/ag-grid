@@ -113,15 +113,21 @@ export class CellMouseListenerFeature extends Beans {
             return;
         }
 
-        if (!shiftKey || !rangeService || !rangeService.getCellRanges().length) {
+        const ranges = rangeService && rangeService.getCellRanges().length!=0;
+
+        if (!shiftKey || !ranges) {
             // We only need to pass true to focusCell when the browser is IE/Edge and we are trying
             // to focus the cell itself. This should never be true if the mousedown was triggered
             // due to a click on a cell editor for example.
             const forceBrowserFocus = (isBrowserIE() || isBrowserEdge()) && !this.cellCtrl.isEditing() && !isFocusableFormField(target);
 
             this.cellCtrl.focusCell(forceBrowserFocus);
-        } else if (rangeService) {
-            // if a range is being changed, we need to make sure the focused cell does not change.
+        }
+
+        // if shift clicking, and a range exists, we keep the focus on the cell that started the
+        // range as the user then changes the range selection.
+        if (shiftKey && ranges) {
+            // this stops the cell from getting focused
             mouseEvent.preventDefault();
         }
 
