@@ -80,6 +80,10 @@ export const ApiDocumentation: React.FC<ApiProps> = ({ pageName, framework, sour
 const Section: React.FC<SectionProps> = ({ framework, title, properties, config = {}, breadcrumbs = {}, names = [] }) : any => {
     const { meta } = properties;
     const displayName = (meta && meta.displayName) || title;
+    if (meta && meta.isEvent) {
+        // Support event display for a section
+        config = { ...config, isEvent: true }
+    }
 
     breadcrumbs[title] = displayName;
 
@@ -179,7 +183,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
     }
 
     // Use the type definition if manually specified in config
-    let type: any = definition.type;
+    let type: any = definition.type;    
     let showAdditionalDetails = typeof (type) == 'object';
     if (!type) {
         // No type specified in the doc config file so check the GridOptions property
@@ -214,7 +218,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
                     <span className={styles['reference__property-type']}>{propertyType}</span>}
             </div>
         </td>
-        <td>
+        <td>            
             <div onClick={() => setExpanded(!isExpanded)} role="presentation"
                 className={classnames(styles['reference__description'], { [styles['reference__description--expanded']]: isExpanded })}
                 dangerouslySetInnerHTML={{ __html: description }}></div>
@@ -394,9 +398,10 @@ const FunctionCodeSample: React.FC<FunctionCode> = ({ framework, name, type, con
         `function ${functionName}(${functionArguments}):` :
         `${functionName} = (${functionArguments}) =>`;
 
-    const lines = typeof (type) != 'string' && (type.parameters || type.arguments || isCallSignatureInterface) ? [
-        `${functionPrefix} ${returnTypeIsObject ? returnTypeName : (getLinkedType(returnType || 'void', framework))};`,
-    ] : [];
+    let lines = [];
+    if (typeof (type) != 'string' && (type.parameters || type.arguments || isCallSignatureInterface)) {
+        lines.push(`${functionPrefix} ${returnTypeIsObject ? returnTypeName : (getLinkedType(returnType || 'void', framework))};`);
+    }
 
     let addNewLine = lines.length > 0 ? [''] : [];
     if (type.parameters) {
