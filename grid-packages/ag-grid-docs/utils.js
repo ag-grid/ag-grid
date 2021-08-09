@@ -36,7 +36,7 @@ const getAllModules = () => {
             const derivedCjsRelativePath = `dist/${publishedName.substr(publishedName.lastIndexOf("/") + 1, publishedName.length)}.cjs.js`;
 
             const cjsRelativePath = realCjsRelativePath ? realCjsRelativePath : derivedCjsRelativePath;
-            const cjsFilename = `${publishedName}/${allModules ? enterprise ? "ag-grid-enterprise.cjs.js" : "ag-grid-community.cjs.js" : cjsRelativePath}`;
+            const cjsFilename = `${publishedName}/${allModules ? enterprise ? "dist/ag-grid-enterprise.cjs.js" : "dist/ag-grid-community.cjs.js" : cjsRelativePath}`;
 
             return {
                 publishedName,
