@@ -114,7 +114,7 @@ When the contents of a Cell changes, by pressing the button Increase Some Medals
 
 To properly achieve this, note that the Cell Renderer is memoized using `React.memo(RenderCounterCellRenderer)`.
 
-To observe what happens when the Cell Renderer is not memoized, toggle using the button Toggle Memo. When the Cell Renderer is not memoized, then any small change to the DOM cell (eg changing the background color) results in the Cell Renderer getting recalled, even though there is no change to the value to get rendered.
+To observe what happens when the Cell Renderer is not memoized, toggle using the button Toggle Memo. When the Cell Renderer is not memoized, then any time the Cell renders, the Cell Renderer will be rendered needlessly. For example clicking on a Cell, or doing a Range Selection over a range of Cells, will impact the Cell's background color and / or borders.
 
 <grid-example title='React UI Render Cycles' name='wasted-render' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>
 

@@ -79,7 +79,6 @@ function GridExample() {
     return (
         <div className={['parent-div', memoCssClass].join(' ')}>
             <div className="buttons-div">
-                <button onClick={onClickIncreaseMedals}>Increase Some Medals</button>
                 <button onClick={onClickToggleMemo}>Toggle Memo</button>
                 { memoOn && <span className="memo-on">Memo is ON</span> }
                 { !memoOn && <span className="memo-off">Memo is OFF</span> }
@@ -101,7 +100,6 @@ function GridExample() {
                     defaultColDef={defaultColDef}
                     rowData={rowData}
                     enableRangeSelection={true}
-                    enableCellChangeFlash={true}
                 />
             </div>
         </div>
