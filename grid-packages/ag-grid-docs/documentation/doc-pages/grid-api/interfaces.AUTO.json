@@ -398,9 +398,9 @@
       "initialPinned?": "boolean | string",
       "tooltipField?": "string",
       "tooltipValueGetter?": "(params: ITooltipParams) => string",
-      "valueGetter?": "((params: ValueGetterParams) => any) | string",
-      "filterValueGetter?": "((params: ValueGetterParams) => any) | string",
-      "valueSetter?": "((params: ValueSetterParams) => boolean) | string",
+      "valueGetter?": "ValueGetterFunc | string",
+      "filterValueGetter?": "ValueGetterFunc | string",
+      "valueSetter?": "ValueSetterFunc | string",
       "keyCreator?": "(value: any) => string",
       "width?": "number",
       "initialWidth?": "number",
@@ -410,7 +410,7 @@
       "initialFlex?": "number",
       "autoHeight?": "boolean",
       "wrapText?": "boolean",
-      "cellClass?": "string | string[] | ((cellClassParams: CellClassParams) => string | string[])",
+      "cellClass?": "string | string[] | CellClassFunc",
       "cellStyle?": "{} | ((params: CellClassParams) => {})",
       "cellRenderer?": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
       "cellRendererFramework?": "any",
@@ -425,9 +425,9 @@
       "pinnedRowCellRenderer?": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
       "pinnedRowCellRendererFramework?": "any",
       "pinnedRowCellRendererParams?": "any",
-      "valueFormatter?": "((params: ValueFormatterParams) => string) | string",
-      "pinnedRowValueFormatter?": "((params: ValueFormatterParams) => string) | string",
-      "valueParser?": "((params: ValueParserParams) => any) | string",
+      "valueFormatter?": "ValueFormatterFunc | string",
+      "pinnedRowValueFormatter?": "ValueFormatterFunc | string",
+      "valueParser?": "ValueParserFunc | string",
       "aggFunc?": "string | IAggFunc | null",
       "initialAggFunc?": "string | IAggFunc",
       "allowedAggFuncs?": "string[]",
@@ -443,13 +443,13 @@
       "comparator?": "(valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode, isInverted: boolean) => number",
       "equals?": "(valueA: any, valueB: any) => boolean",
       "pivotComparator?": "(valueA: string, valueB: string) => number",
-      "checkboxSelection?": "boolean | ((params: CheckboxSelectionCallbackParams) => boolean)",
-      "headerCheckboxSelection?": "boolean | ((params: HeaderCheckboxSelectionCallbackParams) => boolean)",
+      "checkboxSelection?": "boolean | CheckboxSelectionCallback",
+      "headerCheckboxSelection?": "boolean | HeaderCheckboxSelectionCallback",
       "headerCheckboxSelectionFilteredOnly?": "boolean",
-      "rowDrag?": "boolean | ((params: RowDragCallbackParams) => boolean)",
-      "rowDragText?": "((params: IRowDragItem, dragItemCount: number) => string)",
-      "dndSource?": "boolean | ((params: DndSourceCallbackParams) => boolean)",
-      "dndSourceOnRowDrag?": "((params: { rowNode: RowNode; dragEvent: DragEvent; }) => void)",
+      "rowDrag?": "boolean | RowDragCallback",
+      "rowDragText?": "(params: IRowDragItem, dragItemCount: number) => string",
+      "dndSource?": "boolean | DndSourceCallback",
+      "dndSourceOnRowDrag?": "(params: { rowNode: RowNode; dragEvent: DragEvent; }) => void",
       "suppressMenu?": "boolean",
       "menuTabs?": "string[]",
       "sortable?": "boolean",
@@ -466,17 +466,17 @@
       "enableRowGroup?": "boolean",
       "enablePivot?": "boolean",
       "enableValue?": "boolean",
-      "editable?": "boolean | ((params: EditableCallbackParams) => boolean)",
+      "editable?": "boolean | EditableCallback",
       "colSpan?": "(params: ColSpanParams) => number",
       "rowSpan?": "(params: RowSpanParams) => number",
-      "suppressPaste?": "boolean | ((params: SuppressPasteCallbackParams) => boolean)",
-      "suppressNavigable?": "boolean | ((params: SuppressNavigableCallbackParams) => boolean)",
+      "suppressPaste?": "boolean | SuppressPasteCallback",
+      "suppressNavigable?": "boolean | SuppressNavigableCallback",
       "getQuickFilterText?": "(params: GetQuickFilterTextParams) => string",
       "newValueHandler?": "(params: NewValueParams) => boolean",
       "singleClickEdit?": "boolean",
       "template?": "string",
       "templateUrl?": "string",
-      "cellClassRules?": "{ [cssClassName: string]: (Function | string); }",
+      "cellClassRules?": "CellClassRules",
       "onCellValueChanged?": "(event: NewValueParams) => void",
       "onCellClicked?": "(event: CellClickedEvent) => void",
       "onCellDoubleClicked?": "(event: CellDoubleClickedEvent) => void",
@@ -619,6 +619,13 @@
       "columnApi": "ColumnApi"
     }
   },
+  "CheckboxSelectionCallback": {
+    "meta": { "isCallSignature": true },
+    "type": {
+      "arguments": { "params": "CheckboxSelectionCallbackParams" },
+      "returnType": "boolean"
+    }
+  },
   "RowDragCallbackParams": {
     "meta": {},
     "type": {
@@ -629,6 +636,13 @@
       "context": "any",
       "api": "GridApi",
       "columnApi": "ColumnApi"
+    }
+  },
+  "RowDragCallback": {
+    "meta": { "isCallSignature": true },
+    "type": {
+      "arguments": { "params": "RowDragCallbackParams" },
+      "returnType": "boolean"
     }
   },
   "DndSourceCallbackParams": {
@@ -643,6 +657,13 @@
       "columnApi": "ColumnApi"
     }
   },
+  "DndSourceCallback": {
+    "meta": { "isCallSignature": true },
+    "type": {
+      "arguments": { "params": "DndSourceCallbackParams" },
+      "returnType": "boolean"
+    }
+  },
   "EditableCallbackParams": {
     "meta": {},
     "type": {
@@ -653,6 +674,13 @@
       "context": "any",
       "api": "GridApi",
       "columnApi": "ColumnApi"
+    }
+  },
+  "EditableCallback": {
+    "meta": { "isCallSignature": true },
+    "type": {
+      "arguments": { "params": "EditableCallbackParams" },
+      "returnType": "boolean"
     }
   },
   "SuppressPasteCallbackParams": {
@@ -667,6 +695,13 @@
       "columnApi": "ColumnApi"
     }
   },
+  "SuppressPasteCallback": {
+    "meta": { "isCallSignature": true },
+    "type": {
+      "arguments": { "params": "SuppressPasteCallbackParams" },
+      "returnType": "boolean"
+    }
+  },
   "SuppressNavigableCallbackParams": {
     "meta": {},
     "type": {
@@ -679,6 +714,13 @@
       "columnApi": "ColumnApi"
     }
   },
+  "SuppressNavigableCallback": {
+    "meta": { "isCallSignature": true },
+    "type": {
+      "arguments": { "params": "SuppressNavigableCallbackParams" },
+      "returnType": "boolean"
+    }
+  },
   "HeaderCheckboxSelectionCallbackParams": {
     "meta": {},
     "type": {
@@ -686,6 +728,13 @@
       "colDef": "ColDef",
       "api": "GridApi",
       "columnApi": "ColumnApi"
+    }
+  },
+  "HeaderCheckboxSelectionCallback": {
+    "meta": { "isCallSignature": true },
+    "type": {
+      "arguments": { "params": "HeaderCheckboxSelectionCallbackParams" },
+      "returnType": "boolean"
     }
   },
   "IsColumnFunc": {
@@ -771,6 +820,13 @@
       "getValue": "(field: string) => any"
     }
   },
+  "ValueGetterFunc": {
+    "meta": { "isCallSignature": true },
+    "type": {
+      "arguments": { "params": "ValueGetterParams" },
+      "returnType": "any"
+    }
+  },
   "NewValueParams": {
     "meta": {},
     "type": {
@@ -799,6 +855,13 @@
       "newValue": "any"
     }
   },
+  "ValueSetterFunc": {
+    "meta": { "isCallSignature": true },
+    "type": {
+      "arguments": { "params": "ValueSetterParams" },
+      "returnType": "boolean"
+    }
+  },
   "ValueParserParams": {
     "meta": {},
     "type": {
@@ -813,6 +876,13 @@
       "newValue": "any"
     }
   },
+  "ValueParserFunc": {
+    "meta": { "isCallSignature": true },
+    "type": {
+      "arguments": { "params": "ValueParserParams" },
+      "returnType": "any"
+    }
+  },
   "ValueFormatterParams": {
     "meta": {},
     "type": {
@@ -824,6 +894,13 @@
       "columnApi": "ColumnApi",
       "context": "any",
       "value": "any"
+    }
+  },
+  "ValueFormatterFunc": {
+    "meta": { "isCallSignature": true },
+    "type": {
+      "arguments": { "params": "ValueFormatterParams" },
+      "returnType": "string"
     }
   },
   "ColSpanParams": {
@@ -888,6 +965,19 @@
       "context": "any",
       "colDef": "ColDef",
       "value": "any"
+    }
+  },
+  "CellClassFunc": {
+    "meta": { "isCallSignature": true },
+    "type": {
+      "arguments": { "cellClassParams": "CellClassParams" },
+      "returnType": "string | string[]"
+    }
+  },
+  "CellClassRules": {
+    "meta": {},
+    "type": {
+      "[cssClassName: string]": "(((params: CellClassParams) => boolean) | string)"
     }
   },
   "SelectorFunc": {

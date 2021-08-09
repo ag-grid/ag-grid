@@ -141,13 +141,13 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     tooltipValueGetter?: (params: ITooltipParams) => string;
 
     /** Expression or function to get the cells value. */
-    valueGetter?: ((params: ValueGetterParams) => any) | string;
+    valueGetter?: ValueGetterFunc | string;
 
     /** Expression or function to get the cells value for filtering. */
-    filterValueGetter?: ((params: ValueGetterParams) => any) | string;
+    filterValueGetter?: ValueGetterFunc | string;
 
     /** If not using a field, then this puts the value into the cell */
-    valueSetter?: ((params: ValueSetterParams) => boolean) | string;
+    valueSetter?: ValueSetterFunc | string;
 
     /** Function to return the key for a value - use this if the value is an object (not a primitive type) and you
      * want to a) group by this field or b) use set filter on this field. */
@@ -178,7 +178,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     wrapText?: boolean;
 
     /** Class to use for the cell. Can be string, array of strings, or function. */
-    cellClass?: string | string[] | ((cellClassParams: CellClassParams) => string | string[]);
+    cellClass?: string | string[] | CellClassFunc;
 
     /** An object of css values. Or a function returning an object of css values. */
     cellStyle?: {} | ((params: CellClassParams) => {});
@@ -205,12 +205,12 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     pinnedRowCellRendererParams?: any;
 
     /** A function to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
-    valueFormatter?: ((params: ValueFormatterParams) => string) | string;
+    valueFormatter?: ValueFormatterFunc | string;
     /** @deprecated Use valueFormatter for pinned rows, and check params.node.rowPinned. */
-    pinnedRowValueFormatter?: ((params: ValueFormatterParams) => string) | string;
+    pinnedRowValueFormatter?: ValueFormatterFunc | string;
 
     /** Gets called after editing, converts the value in the cell. */
-    valueParser?: ((params: ValueParserParams) => any) | string;
+    valueParser?: ValueParserFunc | string;
 
     /** Name of function to use for aggregation. One of [sum,min,max,first,last] or a function. */
     aggFunc?: string | IAggFunc | null;
@@ -247,25 +247,25 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     pivotComparator?: (valueA: string, valueB: string) => number;
 
     /** Set to true to render a selection checkbox in the column. */
-    checkboxSelection?: boolean | ((params: CheckboxSelectionCallbackParams) => boolean);
+    checkboxSelection?: boolean | CheckboxSelectionCallback;
 
     /** If true, a 'select all' checkbox will be put into the header */
-    headerCheckboxSelection?: boolean | ((params: HeaderCheckboxSelectionCallbackParams) => boolean);
+    headerCheckboxSelection?: boolean | HeaderCheckboxSelectionCallback;
 
     /** If true, the header checkbox selection will work on filtered items*/
     headerCheckboxSelectionFilteredOnly?: boolean;
 
     /** For grid row dragging, set to true to enable row dragging within the grid */
-    rowDrag?: boolean | ((params: RowDragCallbackParams) => boolean);
+    rowDrag?: boolean | RowDragCallback;
 
     /** To configure the text to be displayed in the floating div while dragging a row when rowDrag is true */
-    rowDragText?: ((params: IRowDragItem, dragItemCount: number) => string);
+    rowDragText?: (params: IRowDragItem, dragItemCount: number) => string;
 
     /** For native drag and drop, set to true to enable drag source */
-    dndSource?: boolean | ((params: DndSourceCallbackParams) => boolean);
+    dndSource?: boolean | DndSourceCallback;
 
     /** For native drag and drop, set to true to allow custom onRowDrag processing */
-    dndSourceOnRowDrag?: ((params: { rowNode: RowNode, dragEvent: DragEvent; }) => void);
+    dndSourceOnRowDrag?: (params: { rowNode: RowNode, dragEvent: DragEvent; }) => void;
 
     /** Set to true if no menu should be shown for this column header. */
     suppressMenu?: boolean;
@@ -317,17 +317,17 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     enableValue?: boolean;
 
     /** Set to true if this col is editable, otherwise false. Can also be a function to have different rows editable. */
-    editable?: boolean | ((params: EditableCallbackParams) => boolean);
+    editable?: boolean | EditableCallback;
 
     colSpan?: (params: ColSpanParams) => number;
 
     rowSpan?: (params: RowSpanParams) => number;
 
     /** Set to true if this col should not be allowed take new values from the clipboard . */
-    suppressPaste?: boolean | ((params: SuppressPasteCallbackParams) => boolean);
+    suppressPaste?: boolean | SuppressPasteCallback;
 
     /** Set to true if this col should not be navigable with the tab key. Can also be a function to have different rows editable. */
-    suppressNavigable?: boolean | ((params: SuppressNavigableCallbackParams) => boolean);
+    suppressNavigable?: boolean | SuppressNavigableCallback;
 
     /** To create the quick filter text for this column, if toString is not good enough on the value. */
     getQuickFilterText?: (params: GetQuickFilterTextParams) => string;
@@ -353,7 +353,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     templateUrl?: string;
 
     /** Rules for applying css classes */
-    cellClassRules?: { [cssClassName: string]: (Function | string); };
+    cellClassRules?: CellClassRules;
 
     /** Callbacks for editing.See editing section for further details. */
     onCellValueChanged?: (event: NewValueParams) => void;
@@ -409,16 +409,37 @@ export interface ColumnFunctionCallbackParams {
 }
 
 export interface CheckboxSelectionCallbackParams extends ColumnFunctionCallbackParams {}
+export interface CheckboxSelectionCallback {
+    (params: CheckboxSelectionCallbackParams): boolean
+}
 export interface RowDragCallbackParams extends ColumnFunctionCallbackParams {}
+export interface RowDragCallback {
+    (params: RowDragCallbackParams): boolean
+}
 export interface DndSourceCallbackParams extends ColumnFunctionCallbackParams {}
+export interface DndSourceCallback {
+    (params: DndSourceCallbackParams): boolean
+}
 export interface EditableCallbackParams extends ColumnFunctionCallbackParams {}
+export interface EditableCallback {
+    (params: EditableCallbackParams): boolean
+}
 export interface SuppressPasteCallbackParams extends ColumnFunctionCallbackParams {}
+export interface SuppressPasteCallback {
+    (params: SuppressPasteCallbackParams): boolean
+}
 export interface SuppressNavigableCallbackParams extends ColumnFunctionCallbackParams {}
+export interface SuppressNavigableCallback {
+    (params: SuppressNavigableCallbackParams): boolean
+}
 export interface HeaderCheckboxSelectionCallbackParams {
     column: Column;
     colDef: ColDef;
     api: GridApi;
     columnApi: ColumnApi;
+}
+export interface HeaderCheckboxSelectionCallback {
+    (params: HeaderCheckboxSelectionCallbackParams): boolean
 }
 
 /**
@@ -469,7 +490,9 @@ export interface BaseWithValueColDefParams extends BaseColDefParams {
 export interface ValueGetterParams extends BaseColDefParams {
     getValue: (field: string) => any;
 }
-
+export interface ValueGetterFunc {
+    (params: ValueGetterParams): any
+}
 export interface NewValueParams extends BaseColDefParams {
     oldValue: any;
     newValue: any;
@@ -477,11 +500,20 @@ export interface NewValueParams extends BaseColDefParams {
 
 export interface ValueSetterParams extends NewValueParams {
 }
-
+export interface ValueSetterFunc {
+    (params: ValueSetterParams): boolean
+}
 export interface ValueParserParams extends NewValueParams {
+}
+export interface ValueParserFunc {
+    (params: ValueParserParams): any
 }
 
 export interface ValueFormatterParams extends BaseWithValueColDefParams {
+}
+
+export interface ValueFormatterFunc {
+    (params: ValueFormatterParams): string
 }
 
 export interface ColSpanParams extends BaseColDefParams {
@@ -510,6 +542,13 @@ export interface SuppressHeaderKeyboardEventParams {
 export interface CellClassParams extends RowClassParams {
     colDef: ColDef;
     value: any;
+}
+export interface CellClassFunc {
+    (cellClassParams: CellClassParams): string | string[]
+}
+
+export interface CellClassRules {
+    [cssClassName: string]: (((params: CellClassParams) => boolean) | string);
 }
 
 export interface SelectorFunc {
