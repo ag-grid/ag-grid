@@ -54,7 +54,7 @@ const MyEditor = memo(forwardRef((props, ref) => {
     const columnDefs = useMemo( ()=> [
         {
             headerName: 'JS Inline',
-            field: 'athlete',
+            field: 'country',
             editable: true
         },
         {
@@ -69,12 +69,12 @@ const MyEditor = memo(forwardRef((props, ref) => {
         },
         {
             headerName: 'React Inline',
-            field: 'age',
+            field: 'gold',
             editable: true,
             cellEditorFramework: MyEditor
         },
         {
-            field: 'age',
+            field: 'silver',
             headerName: 'React Popup',
             cellEditorFramework: MyEditor,
             cellEditorPopup: true,

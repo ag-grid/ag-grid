@@ -67,7 +67,6 @@ function GridExample() {
             modules={modules}
             columnDefs={columnDefs}
             defaultColDef={defaultColDef}
-            rowGroupPanelShow="always"
             enableRangeSelection="true"
             rowData={rowData}
             rowSelection="multiple"
