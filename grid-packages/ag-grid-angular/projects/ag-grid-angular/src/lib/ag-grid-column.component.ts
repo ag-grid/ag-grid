@@ -201,7 +201,7 @@ export class AgGridColumn {
      * Return false if the values are the same (ie no update).     */
     @Input() public newValueHandler: (params: NewValueParams) => boolean | undefined = undefined;
     /** Callbacks for editing.See editing section for further details.     */
-    @Input() public onCellValueChanged: Function | undefined = undefined;
+    @Input() public onCellValueChanged: (event: NewValueParams) => void | undefined = undefined;
     /** Function callback, gets called when a cell is clicked.     */
     @Input() public onCellClicked: (event: CellClickedEvent) => void | undefined = undefined;
     /** Function callback, gets called when a cell is double clicked.     */

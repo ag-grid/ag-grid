@@ -477,7 +477,7 @@
       "template?": "string",
       "templateUrl?": "string",
       "cellClassRules?": "{ [cssClassName: string]: (Function | string); }",
-      "onCellValueChanged?": "Function",
+      "onCellValueChanged?": "(event: NewValueParams) => void",
       "onCellClicked?": "(event: CellClickedEvent) => void",
       "onCellDoubleClicked?": "(event: CellDoubleClickedEvent) => void",
       "onCellContextMenu?": "(event: CellContextMenuEvent) => void",

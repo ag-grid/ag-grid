@@ -9,13 +9,13 @@ The Display Types introduced below are only concerned with how the Row Grouping 
 Grouping, the grid will perform the _GROUP BY_ operations to the 'flat' data provided. 
 
 [[note]]
-| If the data supplied to the grid does not need to be grouped, consider using [Tree Data](../tree-data/) instead.
+| If the data supplied to the grid does not need to be grouped by the grid, consider using [Tree Data](../tree-data/) instead.
 
 ## Single Group Column 
 
 Row groups are displayed under a single group column. 
 
-<image-caption src="grouping-display-types/resources/single-group-column.png" alt="Single Group Column" constrained="true" centered="true"></image-caption>
+<image-caption src="grouping-display-types/resources/single-group-column.png" alt="Single Group Column" maxWidth="70%" constrained="true" centered="true"></image-caption>
 
 As illustrated above, there is a single group column containing the `country` and `year` row groups in a single group hierarchy. 
 
@@ -25,7 +25,7 @@ See the [Single Group Column](../grouping-single-group-column/) section for more
 
 Separate group columns are used for each column being grouped by.
 
-<image-caption src="grouping-display-types/resources/multiple-group-columns.png" alt="Multiple Group Columns" constrained="true" centered="true"></image-caption>
+<image-caption src="grouping-display-types/resources/multiple-group-columns.png" alt="Multiple Group Columns" maxWidth="70%" constrained="true" centered="true"></image-caption>
 
 As illustrated above, the `country` and `year` row groups are displayed under separate group columns.
 
@@ -35,7 +35,7 @@ See the [Multiple Group Columns](../grouping-multiple-group-columns/) section fo
 
 Row groups are displayed in group rows rather than group columns.
 
-<image-caption src="grouping-display-types/resources/group-rows.png" alt="Group Rows" constrained="true" centered="true"></image-caption>
+<image-caption src="grouping-display-types/resources/group-rows.png" alt="Group Rows" maxWidth="70%" constrained="true" centered="true"></image-caption>
 
 As illustrated above, the `country` and `year` row groups are displayed using Group Rows.
 

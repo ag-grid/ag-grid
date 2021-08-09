@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 
 @Component({
-    selector: 'app-loading-overlay',
+    selector: 'app-custom-header-group',
     template: `
         <div class="ag-header-group-cell-label">
             <div class="customHeaderLabel">{{this.params.displayName}}</div>

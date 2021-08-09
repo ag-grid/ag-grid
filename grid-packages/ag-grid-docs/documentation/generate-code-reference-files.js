@@ -329,15 +329,17 @@ function getGridApi() {
     const gridApiFile = "../../../community-modules/core/src/ts/gridApi.ts";
     return getClassProperties(gridApiFile, 'GridApi');
 }
-
 function getColumnApi() {
     const colApiFile = "../../../community-modules/core/src/ts/columns/columnApi.ts";
     return getClassProperties(colApiFile, 'ColumnApi');
 }
-
 function getRowNode() {
     const file = "../../../community-modules/core/src/ts/entities/rowNode.ts";
     return getClassProperties(file, 'RowNode');
+}
+function getColumn() {
+    const file = "../../../community-modules/core/src/ts/entities/column.ts";
+    return getClassProperties(file, 'Column');
 }
 
 const generateMetaFiles = () => {
@@ -347,6 +349,7 @@ const generateMetaFiles = () => {
     writeFormattedFile('./doc-pages/row-object/', 'row-node.AUTO.json', getRowNode());
     writeFormattedFile('./doc-pages/column-properties/', 'column-options.AUTO.json', getColumnOptions());
     writeFormattedFile('./doc-pages/column-api/', 'column-api.AUTO.json', getColumnApi());
+    writeFormattedFile('./doc-pages/column-object/', 'column.AUTO.json', getColumn());
 };
 
 console.log(`--------------------------------------------------------------------------------`);

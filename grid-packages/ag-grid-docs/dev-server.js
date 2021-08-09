@@ -383,12 +383,12 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
     const utilityFilename = 'documentation/src/components/example-runner/SystemJs.jsx';
     const utilFileContents = fs.readFileSync(utilityFilename, 'UTF-8');
 
-    const cssFiles = glob.sync(`../../community-modules/all-modules/dist/styles/*.css`)
+    const cssFiles = glob.sync(`../../community-modules/core/dist/styles/*.css`)
         .filter(css => !css.includes(".min."))
         .filter(css => !css.includes("Font"))
         .filter(css => !css.includes("mixin"))
         .filter(css => !css.includes("base-rename-legacy-vars"))
-        .map(css => css.replace('../../community-modules/all-modules/dist/styles/', ''));
+        .map(css => css.replace('../../community-modules/core/dist/styles/', ''));
 
     let updatedUtilFileContents = updateBetweenStrings(utilFileContents,
         '            /* START OF GRID MODULES DEV - DO NOT DELETE */',
@@ -786,6 +786,7 @@ module.exports = async (skipFrameworks, skipExampleFormatting, done) => {
 
             updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartCommunityModules);
             updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartCommunityModules);
+
             serveModuleAndPackages(app, gridCommunityModules, gridEnterpriseModules, chartCommunityModules);
 
             // regenerate examples and then watch them
