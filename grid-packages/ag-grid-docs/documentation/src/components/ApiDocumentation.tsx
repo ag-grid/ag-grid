@@ -193,6 +193,12 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
         let gridParams = config.gridOpProp;
         if (gridParams && gridParams.type) {
             type = gridParams.type;
+
+            if (gridParams.description && gridParams.description.includes('@deprecated')) {
+                console.warn(`Docs include a property: ${name} that has been marked as deprecated.`);
+                console.warn(gridParams.description);
+            }
+
             const isInterface = extractInterfaces(gridParams.type, config).length > 0;// config.lookups.interfaces[type.returnType];
             showAdditionalDetails = isCallSig(gridParams) || type.arguments || !!isInterface;
         } else {

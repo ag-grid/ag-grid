@@ -215,15 +215,6 @@
         "lockPinned": {
             "default": false,
             "description": "Set to `true` to block pinning column via the UI (API will still work)."
-        },
-        "pinnedRowValueFormatter": {
-            "description": "Function or [expression](/cell-expressions/#column-definition-expressions). Formatter to use for a pinned row. If missing, the normal `valueFormatter` will be used."
-        },
-        "pinnedRowCellRenderer<br />pinnedRowCellRendererFramework": {
-            "description": "`cellRenderer` to use for pinned rows in this column. Pinned cells will use `pinnedCellRenderer` if available, or `cellRenderer` if not."
-        },
-        "pinnedRowCellRendererParams": {
-            "description": "Params to be passed to pinned row cell renderer component."
         }
     },
     "styling": {
