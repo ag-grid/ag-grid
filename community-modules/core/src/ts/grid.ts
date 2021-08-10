@@ -56,7 +56,6 @@ import { AnimationFrameService } from "./misc/animationFrameService";
 import { NavigationService } from "./gridBodyComp/navigationService";
 import { RowContainerHeightService } from "./rendering/rowContainerHeightService";
 import { SelectableService } from "./rowNodes/selectableService";
-import { AutoHeightCalculator } from "./rendering/row/autoHeightCalculator";
 import { PaginationComp } from "./pagination/paginationComp";
 import { ResizeObserverService } from "./misc/resizeObserverService";
 import { OverlayWrapperComponent } from "./rendering/overlays/overlayWrapperComponent";
@@ -298,7 +297,7 @@ export class GridCoreCreator {
             rowModelClass, Beans, RowPositionUtils, CellPositionUtils, HeaderPositionUtils,
             PaginationAutoPageSizeService, GridApi, UserComponentRegistry, AgComponentUtils,
             ComponentMetadataProvider, ResizeObserverService, UserComponentFactory,
-            RowContainerHeightService, AutoHeightCalculator, HorizontalResizeService,
+            RowContainerHeightService, HorizontalResizeService,
             PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsWrapper,
             PopupService, SelectionService, FilterManager, ColumnModel, HeaderNavigationService,
             PaginationProxy, RowRenderer, ExpressionService, ColumnFactory, TemplateService,

@@ -3,15 +3,17 @@ import { BeanStub } from "../context/beanStub";
 import { debounce } from "../utils/function";
 import { offsetHeight, offsetWidth } from "../utils/dom";
 
+const DEBOUNCE_DELAY = 50;
 @Bean('resizeObserverService')
 export class ResizeObserverService extends BeanStub {
 
-    public observeResize(element: HTMLElement, callback: () => void, debounceDelay: number = 50): () => void {
-        // put in variable, so available to usePolyfill() function below
-        const frameworkFactory = this.getFrameworkOverrides();
+    private polyfillFunctions: (()=>void)[] = [];
+    private polyfillScheduled: boolean;
+
+    public observeResize(element: HTMLElement, callback: () => void): () => void {
         // this gets fired too often and might cause some relayout issues
         // so we add a debounce to the callback here to avoid the flashing effect.
-        const debouncedCallback = debounce(callback, debounceDelay);
+        const debouncedCallback = debounce(callback, DEBOUNCE_DELAY);
         const useBrowserResizeObserver = () => {
             const resizeObserver = new (window as any).ResizeObserver(debouncedCallback);
             resizeObserver.observe(element);
@@ -40,7 +42,7 @@ export class ResizeObserverService extends BeanStub {
                         callback();
                     }
 
-                    frameworkFactory.setTimeout(periodicallyCheckWidthAndHeight, debounceDelay);
+                    this.doNextPolyfillTurn(periodicallyCheckWidthAndHeight);
                 }
             };
 
@@ -58,6 +60,29 @@ export class ResizeObserverService extends BeanStub {
         } else {
             return usePolyfill();
         }
+    }
+
+    private doNextPolyfillTurn(func: ()=>void): void {
+        this.polyfillFunctions.push(func);
+        this.schedulePolyfill();
+    }
+
+    private schedulePolyfill(): void {
+        if (this.polyfillScheduled) { return; }
+
+        const executeAllFuncs = () => {
+            const funcs = this.polyfillFunctions;
+
+            // make sure set scheduled to false and clear clear array
+            // before executing the funcs, as the funcs could add more funcs
+            this.polyfillScheduled = false;
+            this.polyfillFunctions = [];
+
+            funcs.forEach(f => f());
+        };
+
+        this.polyfillScheduled = true;
+        this.getFrameworkOverrides().setTimeout(executeAllFuncs, DEBOUNCE_DELAY);
     }
 
 }

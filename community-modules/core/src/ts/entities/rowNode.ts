@@ -18,6 +18,8 @@ import { IServerSideStore } from "../interfaces/IServerSideStore";
 import { RowRenderer } from "../rendering/rowRenderer";
 import { startsWith } from "../utils/string";
 import { RowNodeEventThrottle } from "./rowNodeEventThrottle";
+import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
+import { IServerSideRowModel } from "../interfaces/iServerSideRowModel";
 
 export interface SetSelectedParams {
     // true or false, whatever you want to set selection to
@@ -244,6 +246,10 @@ export class RowNode implements IEventEmitter {
      * fire the event. Really we should just have hasChildren as an attribute and do away with hasChildren()
      * method, however that would be a breaking change. */
     private __hasChildren: boolean;
+
+    /** When one or more Columns are using autoHeight, this keeps track of height of each autoHeight Cell,
+     * indexed by the Column ID. */
+    private __autoHeights?: {[id:string]:number|undefined} = {};
 
     /** True when nodes with the same id are being removed and added as part of the same batch transaction */
     public alreadyRendered = false;
@@ -505,6 +511,48 @@ export class RowNode implements IEventEmitter {
         if (this.eventService) {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_HEIGHT_CHANGED));
         }
+    }
+
+    public setRowAutoHeight(cellHeight: number | undefined, column: Column): void {
+
+        if (!this.__autoHeights) {
+            this.__autoHeights = {};
+        }
+        const autoHeights = this.__autoHeights!;
+
+        autoHeights[column.getId()] = cellHeight;
+
+        if (cellHeight!=null) {
+            this.checkAutoHeights();
+        }
+    }
+
+    public checkAutoHeights(): void {
+        let notAllPresent = false;
+        let newRowHeight = 1;
+
+        const autoHeights = this.__autoHeights!;
+        if (autoHeights==null) { return; }
+
+        this.columnModel.getAllDisplayedAutoHeightCols().forEach( col => {
+            const cellHeight = autoHeights[col.getId()];
+            if (cellHeight==null) {
+                notAllPresent = true;
+                return;
+            }
+            if (cellHeight > newRowHeight) {
+                newRowHeight = cellHeight;
+            }
+        });
+
+        if (notAllPresent) { return; }
+
+        if (newRowHeight == this.rowHeight) { return; }
+
+        this.setRowHeight(newRowHeight);
+
+        const rowModelCasted = this.rowModel as (IClientSideRowModel | IServerSideRowModel);
+        rowModelCasted.onRowHeightChanged();
     }
 
     public setRowIndex(rowIndex: number | null): void {

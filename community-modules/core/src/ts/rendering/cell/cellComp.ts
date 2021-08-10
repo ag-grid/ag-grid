@@ -130,9 +130,9 @@ export class CellComp extends Component implements TooltipParentComp {
             getCellRenderer: () => this.cellRenderer || null,
             getParentOfValue: () => this.eCellValue
         };
-
+        
         this.cellCtrl = cellCtrl;
-        cellCtrl.setComp(compProxy, false, this.scope, this.getGui(), printLayout, editingRow);
+        cellCtrl.setComp(compProxy, this.scope, this.getGui(), printLayout, editingRow);
     }
 
     private setRenderDetails(compDetails: UserCompDetails | undefined, valueToDisplay: any, forceNewCellRendererInstance: boolean): void {
@@ -181,6 +181,8 @@ export class CellComp extends Component implements TooltipParentComp {
         this.checkboxSelectionComp = this.beans.context.destroyBean(this.checkboxSelectionComp);
         this.dndSourceComp = this.beans.context.destroyBean(this.dndSourceComp);
         this.rowDraggingComp = this.beans.context.destroyBean(this.rowDraggingComp);
+
+        this.cellCtrl.parentOfValueChanged(undefined);
     }
 
     // returns true if wrapper was changed
@@ -248,6 +250,8 @@ export class CellComp extends Component implements TooltipParentComp {
         describedByIds.push(id);
 
         setAriaDescribedBy(this.getGui(), describedByIds.join(' '));
+
+        this.cellCtrl.parentOfValueChanged(this.eCellValue);
     }
 
     private createCellEditorInstance(compDetails: UserCompDetails, popup?: boolean, position?: string): void {

@@ -184,6 +184,8 @@ const CellComp = (props: {
 
     useJsCellRenderer(renderDetails, showTools, toolsValueSpan, jsCellRendererRef, eGui);
 
+    useEffect( ()=> cellCtrl.parentOfValueChanged(toolsValueSpan), [toolsValueSpan]);
+
     useEffect(() => {
         const doingJsEditor = editDetails && !editDetails.compDetails.componentFromFramework;
         if (!doingJsEditor) { return; }
@@ -312,7 +314,7 @@ const CellComp = (props: {
             }
         };
 
-        cellCtrl.setComp(compProxy, false, null, eGui.current!, printLayout, editingRow);
+        cellCtrl.setComp(compProxy, null, eGui.current!, printLayout, editingRow);
 
     }, []);
 

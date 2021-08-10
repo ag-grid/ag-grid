@@ -23,9 +23,6 @@ export interface RowCssClassCalculatorParams {
     scope?: any;
 }
 
-/**
- * Common logic for RowComp and AutoHeightCalculator
- */
 @Bean('rowCssClassCalculator')
 export class RowCssClassCalculator {
 

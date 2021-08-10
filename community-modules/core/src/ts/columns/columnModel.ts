@@ -159,7 +159,7 @@ export class ColumnModel extends BeanStub {
     private colSpanActive: boolean;
 
     // grid columns that have colDef.autoHeight set
-    private autoRowHeightColumns: Column[];
+    private displayedAutoHeightCols: Column[];
 
     private suppressColumnVirtualisation: boolean;
 
@@ -329,12 +329,8 @@ export class ColumnModel extends BeanStub {
         });
     }
 
-    public isAutoRowHeightActive(): boolean {
-        return this.autoRowHeightColumns && this.autoRowHeightColumns.length > 0;
-    }
-
-    public getAllAutoRowHeightCols(): Column[] {
-        return this.autoRowHeightColumns;
+    public getAllDisplayedAutoHeightCols(): Column[] {
+        return this.displayedAutoHeightCols;
     }
 
     private setViewport(): void {
@@ -724,6 +720,9 @@ export class ColumnModel extends BeanStub {
     }
 
     private isColumnInViewport(col: Column): boolean {
+        // we never filter out autoHeight columns, as we need them in the DOM for calculating Auto Height
+        if (col.getColDef().autoHeight) { return true; }
+
         const columnLeft = col.getLeft() || 0;
         const columnRight = columnLeft + col.getActualWidth();
 
@@ -3069,8 +3068,6 @@ export class ColumnModel extends BeanStub {
 
         this.addAutoGroupToGridColumns();
 
-        this.autoRowHeightColumns = this.gridColumns.filter(col => col.getColDef().autoHeight);
-
         this.gridColumns = this.putFixedColumnsFirst(this.gridColumns);
         this.setupQuickFilterColumns();
         this.clearDisplayedAndViewportColumns();
@@ -3234,6 +3231,7 @@ export class ColumnModel extends BeanStub {
         this.derivedDisplayedColumnsFromDisplayedTree(this.displayedTreeRight, this.displayedColumnsRight);
         this.joinDisplayedColumns();
         this.setLeftValues(source);
+        this.displayedAutoHeightCols = this.displayedColumns.filter(col => col.getColDef().autoHeight);
     }
 
     private joinDisplayedColumns(): void {

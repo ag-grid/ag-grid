@@ -446,10 +446,10 @@ export class RowCtrl extends BeanStub {
             this.centerCellCtrls = this.createCellCtrls(this.centerCellCtrls, centerCols);
 
             const leftCols = columnModel.getDisplayedLeftColumnsForRow(this.rowNode);
-            this.leftCellCtrls = this.createCellCtrls(this.centerCellCtrls, leftCols);
+            this.leftCellCtrls = this.createCellCtrls(this.leftCellCtrls, leftCols);
 
             const rightCols = columnModel.getDisplayedRightColumnsForRow(this.rowNode);
-            this.rightCellCtrls = this.createCellCtrls(this.centerCellCtrls, rightCols);
+            this.rightCellCtrls = this.createCellCtrls(this.rightCellCtrls, rightCols);
         }
 
         this.allRowGuis.forEach(item => {
@@ -633,6 +633,8 @@ export class RowCtrl extends BeanStub {
         // we skip animations for onDisplayedColumnChanged, as otherwise the client could remove columns and
         // then set data, and any old valueGetter's (ie from cols that were removed) would still get called.
         this.updateColumnLists(true);
+
+        this.rowNode.checkAutoHeights();
     }
 
     private onVirtualColumnsChanged(): void {

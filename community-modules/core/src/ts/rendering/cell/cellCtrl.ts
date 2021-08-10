@@ -31,9 +31,11 @@ import { CheckboxSelectionComponent } from "../checkboxSelectionComponent";
 import { DndSourceComp } from "../dndSourceComp";
 import { doOnce } from "../../utils/function";
 import { RowDragComp } from "../row/rowDragComp";
+import { Constants } from "../../constants/constants";
 
 const CSS_CELL = 'ag-cell';
 const CSS_AUTO_HEIGHT = 'ag-cell-auto-height';
+const CSS_NORMAL_HEIGHT = 'ag-cell-normal-height';
 const CSS_CELL_FOCUS = 'ag-cell-focus';
 const CSS_CELL_FIRST_RIGHT_PINNED = 'ag-cell-first-right-pinned';
 const CSS_CELL_LAST_LEFT_PINNED = 'ag-cell-last-left-pinned';
@@ -91,7 +93,6 @@ export class CellCtrl extends BeanStub {
     private rowNode: RowNode;
     private rowCtrl: RowCtrl | null;
 
-    private autoHeightCell: boolean;
     private printLayout: boolean;
 
     private value: any;
@@ -154,19 +155,18 @@ export class CellCtrl extends BeanStub {
         const rangeSelectionEnabled = this.beans.rangeService && this.beans.gridOptionsWrapper.isEnableRangeSelection();
         if (rangeSelectionEnabled) {
             this.cellRangeFeature = new CellRangeFeature(this.beans, this);
+            this.addDestroyFunc(() => this.cellRangeFeature.destroy());
         }
     }
 
     public setComp(
         comp: ICellComp,
-        autoHeightCell: boolean,
         scope: any,
         eGui: HTMLElement,
         printLayout: boolean,
         startEditing: boolean
     ): void {
         this.cellComp = comp;
-        this.autoHeightCell = autoHeightCell;
         this.gow = this.beans.gridOptionsWrapper;
         this.scope = scope;
         this.eGui = eGui;
@@ -210,6 +210,42 @@ export class CellCtrl extends BeanStub {
         } else {
             this.showValue();
         }
+
+        this.addDestroyFunc(()=> {
+            this.destroyAutoHeight && this.destroyAutoHeight();
+        });
+    }
+
+    public parentOfValueChanged(eParentOfValue: HTMLElement | undefined): void {
+        this.setupAutoHeight(eParentOfValue);
+    }
+
+    private destroyAutoHeight: ()=>void;
+
+    private setupAutoHeight(eParentOfValue: HTMLElement | undefined): void {
+        if (!this.column.getColDef().autoHeight) {return;}
+
+        const rowModelType = this.beans.rowModel.getType();
+        const csrm = rowModelType!=Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
+        const ssrm = rowModelType!=Constants.ROW_MODEL_TYPE_SERVER_SIDE;
+        if (!csrm && !ssrm) {
+            const message = 'AG Grid - autoHeight columns only work with Client Side Row Model and Server Side Row Model';
+            doOnce( ()=> console.warn(message), 'setupAutoHeight - wrongRowModel');
+        }
+
+        if (this.destroyAutoHeight) { this.destroyAutoHeight(); }
+
+        if (!eParentOfValue) { return; }
+
+        const destroyResizeObserver = this.beans.resizeObserverService.observeResize(eParentOfValue, ()=> {
+            const newHeight = eParentOfValue.offsetHeight;
+            this.rowNode.setRowAutoHeight(newHeight, this.column);
+        });
+
+        this.destroyAutoHeight = () => {
+            destroyResizeObserver();
+            this.rowNode.setRowAutoHeight(undefined, this.column);
+        };
     }
 
     public getInstanceId(): string {
@@ -231,7 +267,7 @@ export class CellCtrl extends BeanStub {
         this.includeDndSource = this.isIncludeControl(colDef.dndSource);
 
         // text selection requires the value to be wrapped in another element
-        const forceWrapper = this.beans.gridOptionsWrapper.isEnableCellTextSelection();
+        const forceWrapper = this.beans.gridOptionsWrapper.isEnableCellTextSelection() || this.column.getColDef().autoHeight==true;
 
         this.cellComp.setIncludeSelection(this.includeSelection);
         this.cellComp.setIncludeDndSource(this.includeDndSource);
@@ -948,11 +984,12 @@ export class CellCtrl extends BeanStub {
         this.cellComp.addOrRemoveCssClass(CSS_CELL, true);
         this.cellComp.addOrRemoveCssClass(CSS_CELL_NOT_INLINE_EDITING, true);
 
-        // if we are putting the cell into a dummy container, to work out it's height,
-        // then we don't put the height css in, as we want cell to fit height in that case.
-        if (!this.autoHeightCell) {
-            this.cellComp.addOrRemoveCssClass(CSS_AUTO_HEIGHT, true);
-        }
+        // normal cells fill the height of the row. autoHeight cells have no height to let them
+        // fit the height of content.
+        // const autoHeight = this.column.getColDef().autoHeight == true;
+        // this.cellComp.addOrRemoveCssClass(CSS_AUTO_HEIGHT, autoHeight);
+        // this.cellComp.addOrRemoveCssClass(CSS_NORMAL_HEIGHT, !autoHeight);
+        this.cellComp.addOrRemoveCssClass(CSS_NORMAL_HEIGHT, true);
     }
     
     public onColumnHover(): void {
@@ -1000,7 +1037,7 @@ export class CellCtrl extends BeanStub {
     }
 
     public destroy(): void {
-        if (this.cellRangeFeature) { this.cellRangeFeature.destroy(); }
+        super.destroy();
     }
 
     public createSelectionCheckbox(): CheckboxSelectionComponent {

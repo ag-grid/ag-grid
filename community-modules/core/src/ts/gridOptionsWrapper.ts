@@ -44,7 +44,6 @@ import { Environment, SASS_PROPERTIES } from './environment';
 import { PropertyKeys } from './propertyKeys';
 import { ColDefUtil } from './components/colDefUtil';
 import { Events } from './eventKeys';
-import { AutoHeightCalculator } from './rendering/row/autoHeightCalculator';
 import { SideBarDef, SideBarDefParser } from './entities/sideBar';
 import { ModuleNames } from './modules/moduleNames';
 import { ChartOptions } from './interfaces/iChartOptions';
@@ -177,7 +176,6 @@ export class GridOptionsWrapper {
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('eventService') private readonly eventService: EventService;
     @Autowired('environment') private readonly environment: Environment;
-    @Autowired('autoHeightCalculator') private readonly autoHeightCalculator: AutoHeightCalculator;
 
     private propertyEventService: EventService = new EventService();
 
@@ -1799,18 +1797,6 @@ export class GridOptionsWrapper {
 
         const defaultRowHeight = this.getDefaultRowHeight();
         const rowHeight = this.gridOptions.rowHeight && this.isNumeric(this.gridOptions.rowHeight) ? this.gridOptions.rowHeight : defaultRowHeight;
-
-        const minRowHeight = exists(rowHeight) ? Math.min(defaultRowHeight, rowHeight) : defaultRowHeight;
-
-        if (this.columnModel.isAutoRowHeightActive()) {
-            if (allowEstimate) {
-                return { height: rowHeight, estimated: true };
-            }
-            const autoHeight = this.autoHeightCalculator.getPreferredHeightForRow(rowNode);
-            // never return less than the default row height - covers when auto height
-            // cells are blank.
-            return { height: Math.max(autoHeight, minRowHeight), estimated: false };
-        }
 
         return { height: rowHeight, estimated: false };
     }

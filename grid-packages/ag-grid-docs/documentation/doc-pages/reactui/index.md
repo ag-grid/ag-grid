@@ -5,7 +5,7 @@ frameworks: ["react"]
 
 Do you know what the one thing most React developers wish was different with AG Grid? Above anything else, React developers wish AG Grid was written in React!!
 
-We have been working very had in our labs, in a top secret location in London close to where James Bond lives, to make this wish come true. We are delighted to announce the next generation of AG Grid React will have it's UI written purely in React. We are codenaming this effort **React UI**.
+We have been working very hard in our labs, in a top secret location in London close to where James Bond lives, to make this wish come true. We are delighted to announce the next generation of AG Grid React will have it's UI written purely in React. We are codenaming this effort **React UI**.
 
 Let me explain...
 

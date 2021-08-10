@@ -13,8 +13,6 @@ var gridOptions = {
         resizable: true,
     },
     rowHeight: 150,
-    onColumnResized: onColumnResized,
-    onColumnVisible: onColumnVisible,
     onGridReady: function(params) {
         // in this example, the CSS styles are loaded AFTER the grid is created,
         // so we put this in a timeout, so height is calculated after styles are applied.
@@ -45,14 +43,6 @@ var gridOptions = {
         defaultToolPanel: 'columns'
     }
 };
-
-function onColumnResized(params) {
-    params.api.resetRowHeights();
-}
-
-function onColumnVisible(params) {
-    params.api.resetRowHeights();
-}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
