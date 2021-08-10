@@ -1352,7 +1352,12 @@ export class GridOptionsWrapper {
         return this.gridOptions.chartThemes || ['ag-default', 'ag-material', 'ag-pastel', 'ag-vivid', 'ag-solar'];
     }
 
+    public getAllowProcessChartOptions(): boolean | undefined  {
+        return this.gridOptions.allowProcessChartOptions;
+    }
+
     public getProcessChartOptionsFunc(): ((params: ProcessChartOptionsParams) => ChartOptions<any>) | undefined  {
+        console.warn(`AG Grid: since v26.0, 'processChartOptions()' has been removed (deprecated in v24.0), see https://www.ag-grid.com/javascript-grid/integrated-charts-customisation/`);
         return this.gridOptions.processChartOptions;
     }
 

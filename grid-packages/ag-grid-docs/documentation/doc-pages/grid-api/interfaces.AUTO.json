@@ -1326,6 +1326,7 @@
       "customChartThemes?": "{ [name: string]: AgChartTheme; }",
       "chartThemeOverrides?": "AgChartThemeOverrides",
       "processChartOptions?(params: ProcessChartOptionsParams)": "ChartOptions<any>",
+      "allowProcessChartOptions?": "boolean",
       "onColumnEverythingChanged?(event: ColumnEverythingChangedEvent)": "void",
       "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent)": "void",
       "onNewColumnsLoaded?(event: NewColumnsLoadedEvent)": "void",
@@ -1422,7 +1423,8 @@
       "groupRowInnerRenderer?": "/** @deprecated - this is now groupRowRendererParams.innerRenderer\n */",
       "groupRowInnerRendererFramework?": "/** @deprecated - this is now groupRowRendererParams.innerRendererFramework\n */",
       "defaultGroupSortComparator?": "/** @deprecated - Use defaultGroupOrderComparator instead\n */",
-      "processChartOptions?(params: ProcessChartOptionsParams)": "/** @deprecated\n */"
+      "processChartOptions?(params: ProcessChartOptionsParams)": "/** @deprecated\n */",
+      "allowProcessChartOptions?": "/** @deprecated\n */"
     }
   },
   "RowGroupingDisplayType": {
