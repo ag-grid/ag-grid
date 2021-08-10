@@ -1767,7 +1767,7 @@ export class GridOptionsWrapper {
         return this.getDefaultRowHeight();
     }
 
-    public getRowHeightForNode(rowNode: RowNode, allowEstimate = false): { height: number | null | undefined; estimated: boolean; } {
+    public getRowHeightForNode(rowNode: RowNode, allowEstimate = false): { height: number; estimated: boolean; } {
         // check the function first, in case use set both function and
         // number, when using virtual pagination then function can be
         // used for pinned rows and the number for the body rows.
