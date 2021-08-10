@@ -91,7 +91,7 @@ export class CellCtrl extends BeanStub {
     private gow: GridOptionsWrapper;
     private column: Column;
     private rowNode: RowNode;
-    private rowCtrl: RowCtrl | null;
+    private rowCtrl: RowCtrl;
 
     private printLayout: boolean;
 
@@ -122,7 +122,7 @@ export class CellCtrl extends BeanStub {
     // this comp used only for custom row drag handle (ie when user calls params.registerRowDragger)
     private customRowDragComp: RowDragComp;
 
-    constructor(column: Column, rowNode: RowNode, beans: Beans, rowCtrl: RowCtrl | null) {
+    constructor(column: Column, rowNode: RowNode, beans: Beans, rowCtrl: RowCtrl) {
         super();
         this.column = column;
         this.rowNode = rowNode;
@@ -201,7 +201,7 @@ export class CellCtrl extends BeanStub {
         this.cellPositionFeature.setComp(comp);
         this.cellCustomStyleFeature.setComp(comp, scope);
         this.cellTooltipFeature.setComp(comp);
-        this.cellKeyboardListenerFeature.setComp(comp, this.eGui);
+        this.cellKeyboardListenerFeature.setComp(this.eGui);
 
         if (this.cellRangeFeature) { this.cellRangeFeature.setComp(comp); }
 
@@ -348,7 +348,7 @@ export class CellCtrl extends BeanStub {
     // pass in 'true' to cancel the editing.
     public stopRowOrCellEdit(cancel: boolean = false) {
         if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
-            this.rowCtrl!.stopRowEditing(cancel);
+            this.rowCtrl.stopRowEditing(cancel);
         } else {
             this.stopEditing(cancel);
         }
@@ -444,9 +444,7 @@ export class CellCtrl extends BeanStub {
         this.cellComp.addOrRemoveCssClass(CSS_CELL_NOT_INLINE_EDITING, !editingInline);
         this.cellComp.addOrRemoveCssClass(CSS_CELL_POPUP_EDITING, popupEditorShowing);
 
-        if (this.rowCtrl) {
-            this.rowCtrl.setInlineEditingCss(this.editing);
-        }
+        this.rowCtrl.setInlineEditingCss(this.editing);
     }
 
     // this is needed as the JS CellComp still allows isPopup() on the CellEditor class, so
@@ -484,10 +482,10 @@ export class CellCtrl extends BeanStub {
     }
 
     private createCellRendererParams(): ICellRendererParams {
-        const addRowCompListener = this.rowCtrl ? (eventType: string, listener: Function) => {
+        const addRowCompListener = (eventType: string, listener: Function) => {
             console.warn('AG Grid: since AG Grid v26, params.addRowCompListener() is deprecated. If you need this functionality, please contact AG Grid support and advise why so that we can revert with an appropriate workaround, as we dont have any valid use cases for it. This method was originally provided as a work around to know when cells were destroyed in AG Grid before custom Cell Renderers could be provided.');
-            this.rowCtrl!.addEventListener(eventType, listener);
-        } : null;
+            this.rowCtrl.addEventListener(eventType, listener);
+        };
 
         const res: any = {
             value: this.value,
@@ -883,13 +881,13 @@ export class CellCtrl extends BeanStub {
     // called by rowRenderer when user navigates via tab key
     public startRowOrCellEdit(keyPress?: number | null, charPress?: string | null): void {
         if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
-            this.rowCtrl!.startRowEditing(keyPress, charPress, this);
+            this.rowCtrl.startRowEditing(keyPress, charPress, this);
         } else {
             this.startEditing(keyPress, charPress, true);
         }
     }
 
-    public getRowCtrl(): RowCtrl | null {
+    public getRowCtrl(): RowCtrl {
         return this.rowCtrl;
     }
 
