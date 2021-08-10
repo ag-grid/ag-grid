@@ -657,7 +657,8 @@
             "default": false,
             "description": "Set to `true` so that the grid doesn't virtualise the columns. For example, if you have 100 columns, but only 10 visible due to scrolling, all 100 will always be rendered."
         },
-        "<span style='text-decoration: line-through'>suppressRowVirtualisation</span>": {
+        "suppressRowVirtualisation": {
+            "strikeThrough": true,
             "description": "There is no such property as `suppressRowVirtualisation` - if you want to do this, then set the `rowBuffer` property to be very large, e.g. `9999`. **Warning: rendering lots of rows will mean a very large amount of rendering in the DOM which will slow things down.**"
         },
         "suppressMaxRenderedRowRestriction": {

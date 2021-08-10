@@ -1,12 +1,12 @@
 import classnames from 'classnames';
-import { appendCallSignature, appendEnum, appendInterface, appendTypeAlias, convertMarkdown, convertUrl, escapeGenericCode, inferType, getTypeUrl, getLinkedType } from 'components/documentation-helpers';
+import { appendCallSignature, appendEnum, appendInterface, appendTypeAlias, convertMarkdown, convertUrl, escapeGenericCode, getLinkedType, getLongestNameLength, getTypeUrl, inferType } from 'components/documentation-helpers';
 import anchorIcon from 'images/anchor';
 import React, { useState } from 'react';
 import styles from './ApiDocumentation.module.scss';
+import { ApiProps, Config, DocEntryMap, FunctionCode, ICallSignature, IEvent, InterfaceEntry, ObjectCode, PropertyCall, PropertyType, SectionProps } from './ApiDocumentation.types';
 import Code from './Code';
-import { useJsonFileNodes } from './use-json-file-nodes';
-import { ApiProps, DocEntryMap, SectionProps, PropertyCall, ObjectCode, InterfaceEntry, IEvent, ICallSignature, FunctionCode, PropertyType, Config } from './ApiDocumentation.types';
 import { TYPE_LINKS } from './type-links';
+import { useJsonFileNodes } from './use-json-file-nodes';
 
 /**
  * This generates tabulated API documentation based on information in JSON files. This way it is possible to show
@@ -118,6 +118,7 @@ const Section: React.FC<SectionProps> = ({ framework, title, properties, config 
     const rows = [];
     const objectProperties: DocEntryMap = {};
 
+    let longestNameLength = 25;
     Object.entries(properties).forEach(([name, definition]) => {
         const { relevantTo } = definition;
 
@@ -126,6 +127,10 @@ const Section: React.FC<SectionProps> = ({ framework, title, properties, config 
             return;
         }
 
+        const length = getLongestNameLength(name);
+        if (longestNameLength < length) {
+            longestNameLength = length;
+        }
         const gridOptionProperty = config.lookups.codeLookup[name];
 
         rows.push(<Property key={name} framework={framework} id={id} name={name} definition={definition} config={{ ...config, gridOpProp: gridOptionProperty }} />);
@@ -139,6 +144,11 @@ const Section: React.FC<SectionProps> = ({ framework, title, properties, config 
     return <>
         {header}
         <table className={styles['reference']}>
+            <colgroup>
+                <col className={styles['reference__expander-cell']} ></col>
+                <col style={{ width: longestNameLength + 'ch' }}></col>
+                <col></col>
+            </colgroup>
             <tbody>
                 {rows}
             </tbody>
@@ -182,8 +192,9 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
         name += `&nbsp;<span class="${styles['reference__required']}" title="Required">&ast;</span>`;
     }
 
-    // isDeprecated
-    //text-decoration: line-through;
+    if (!!definition.strikeThrough) {
+        name = `<span style='text-decoration: line-through'>${name}</span>`
+    }
 
     // Use the type definition if manually specified in config
     let type: any = definition.type;    

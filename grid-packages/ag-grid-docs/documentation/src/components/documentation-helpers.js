@@ -186,3 +186,9 @@ export function appendTypeAlias(name, interfaceType, allLines) {
         interfaceType.type;
     allLines.push(`type ${name} = ${multiLine}`);
 }
+
+export function getLongestNameLength(nameWithBreaks) {
+    const splitNames = nameWithBreaks.split(/<br(.*)\/>/);
+    splitNames.sort((a, b) => a.length > b.length ? 1 : -1);
+    return splitNames[0].length;
+}
