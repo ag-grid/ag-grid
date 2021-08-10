@@ -326,8 +326,12 @@ export interface AreaSeriesOptions extends SeriesOptions {
 export interface AreaTooltipRendererParams extends CartesianTooltipRendererParams {
 }
 
+export interface PieTitleOptions extends CaptionOptions {
+    showInLegend?: boolean;
+}
+
 export interface PieSeriesOptions extends SeriesOptions {
-    title: CaptionOptions;
+    title: PieTitleOptions;
     label: PieSeriesLabelOptions;
     callout: PieSeriesCalloutOptions;
     shadow: DropShadowOptions;

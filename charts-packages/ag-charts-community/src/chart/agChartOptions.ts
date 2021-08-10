@@ -594,9 +594,13 @@ export interface AgPieSeriesTooltip extends AgSeriesTooltip {
     renderer?: (params: AgPieSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
 }
 
+export interface AgPieTitleOptions extends AgChartCaptionOptions {
+    showInLegend?: boolean;
+}
+
 export interface AgPieSeriesOptions extends AgBaseSeriesOptions {
     type?: 'pie';
-    title?: AgChartCaptionOptions;
+    title?: AgPieTitleOptions;
     label?: AgPieSeriesLabelOptions;
     callout?: {
         colors?: string[];
