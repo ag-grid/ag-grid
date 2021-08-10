@@ -203,14 +203,14 @@ export class BlockUtils extends BeanStub {
         }
     }
 
-    public binarySearchForDisplayIndex(displayRowIndex: number, rowNodes: RowNode[]): RowNode | null {
+    public binarySearchForDisplayIndex(displayRowIndex: number, rowNodes: RowNode[]): RowNode | undefined {
 
         let bottomPointer = 0;
         let topPointer = rowNodes.length - 1;
 
         if (_.missing(topPointer) || _.missing(bottomPointer)) {
             console.warn(`ag-grid: error: topPointer = ${topPointer}, bottomPointer = ${bottomPointer}`);
-            return null;
+            return undefined;
         }
 
         while (true) {
@@ -241,7 +241,7 @@ export class BlockUtils extends BeanStub {
                 topPointer = midPointer - 1;
             } else {
                 console.warn(`AG Grid: error: unable to locate rowIndex = ${displayRowIndex} in cache`);
-                return null;
+                return undefined;
             }
         }
     }

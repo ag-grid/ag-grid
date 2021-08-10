@@ -918,7 +918,7 @@ export class RowRenderer extends BeanStub {
         animate: boolean,
         afterScroll: boolean
     ): RowCtrl | null | undefined {
-        let rowNode: RowNode | null = null;
+        let rowNode: RowNode | undefined;
         let rowCon: RowCtrl | null = this.rowCtrlsByRowIndex[rowIndex];
 
         // if no row comp, see if we can get it from the previous rowComps
@@ -1207,7 +1207,7 @@ export class RowRenderer extends BeanStub {
         return rowComponent;
     }
 
-    public getRowNode(gridRow: RowPosition): RowNode | null {
+    public getRowNode(gridRow: RowPosition): RowNode | undefined {
         switch (gridRow.rowPinned) {
             case Constants.PINNED_TOP:
                 return this.pinnedRowModel.getPinnedTopRowData()[gridRow.rowIndex];

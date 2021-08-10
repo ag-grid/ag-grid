@@ -73,7 +73,7 @@ export class CellNavigationService extends BeanStub {
 
     private isCellGoodToFocusOn(gridCell: CellPosition): boolean {
         const column: Column = gridCell.column;
-        let rowNode: RowNode | null;
+        let rowNode: RowNode | undefined;
 
         switch (gridCell.rowPinned) {
             case Constants.PINNED_TOP:

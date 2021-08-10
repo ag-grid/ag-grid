@@ -756,7 +756,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         return this.nodeManager.getCopyOfNodesMap();
     }
 
-    public getRowNode(id: string): RowNode | null {
+    public getRowNode(id: string): RowNode | undefined {
         // although id is typed a string, this could be called by the user, and they could have passed a number
         const idIsGroup = typeof id == 'string' && id.indexOf(RowNode.ID_PREFIX_ROW_GROUP) == 0;
         if (idIsGroup) {
@@ -764,7 +764,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             // this working for normal rows. so have done quick implementation. if users complain
             // about performance, then GroupStage should store / manage created groups in a map,
             // which is a chunk of work.
-            let res: RowNode | null = null;
+            let res: RowNode | undefined = undefined;
             this.forEachNode(node => {
                 if (node.id === id) {
                     res = node;

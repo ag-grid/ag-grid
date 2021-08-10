@@ -266,7 +266,7 @@ export class UndoRedoService extends BeanStub {
         this.redoStack.clear();
     }
 
-    private getRowNode(gridRow: RowPosition): RowNode | null {
+    private getRowNode(gridRow: RowPosition): RowNode | undefined {
         switch (gridRow.rowPinned) {
             case Constants.PINNED_TOP:
                 return this.pinnedRowModel.getPinnedTopRowData()[gridRow.rowIndex];

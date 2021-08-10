@@ -432,13 +432,13 @@ export class GridApi {
     }
 
     /** @deprecated */
-    public getFloatingTopRow(index: number): RowNode {
+    public getFloatingTopRow(index: number): RowNode | undefined {
         console.warn('AG Grid: since v12, api.getFloatingTopRow() is now api.getPinnedTopRow()');
         return this.getPinnedTopRow(index);
     }
 
     /** @deprecated */
-    public getFloatingBottomRow(index: number): RowNode {
+    public getFloatingBottomRow(index: number): RowNode | undefined {
         console.warn('AG Grid: since v12, api.getFloatingBottomRow() is now api.getPinnedBottomRow()');
         return this.getPinnedBottomRow(index);
     }
@@ -459,11 +459,11 @@ export class GridApi {
         return this.pinnedRowModel.getPinnedBottomRowCount();
     }
 
-    public getPinnedTopRow(index: number): RowNode {
+    public getPinnedTopRow(index: number): RowNode | undefined {
         return this.pinnedRowModel.getPinnedTopRow(index);
     }
 
-    public getPinnedBottomRow(index: number): RowNode {
+    public getPinnedBottomRow(index: number): RowNode | undefined {
         return this.pinnedRowModel.getPinnedBottomRow(index);
     }
 
@@ -639,7 +639,7 @@ export class GridApi {
         this.animationFrameService.flushAllFrames();
     }
 
-    public getRowNode(id: string): RowNode | null {
+    public getRowNode(id: string): RowNode | undefined {
         return this.rowModel.getRowNode(id);
     }
 
@@ -1769,7 +1769,7 @@ export class GridApi {
         return this.rowRenderer.getLastVirtualRenderedRow();
     }
 
-    public getDisplayedRowAtIndex(index: number): RowNode | null {
+    public getDisplayedRowAtIndex(index: number): RowNode | undefined {
         return this.rowModel.getRow(index);
     }
 

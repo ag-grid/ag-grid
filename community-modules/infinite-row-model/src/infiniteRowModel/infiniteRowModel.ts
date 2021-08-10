@@ -238,14 +238,14 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         this.eventService.dispatchEvent(event);
     }
 
-    public getRow(rowIndex: number): RowNode | null {
-        if (!this.infiniteCache) { return null; }
-        if (rowIndex >= this.infiniteCache.getRowCount()) { return null; }
+    public getRow(rowIndex: number): RowNode | undefined {
+        if (!this.infiniteCache) { return undefined; }
+        if (rowIndex >= this.infiniteCache.getRowCount()) { return undefined; }
         return this.infiniteCache.getRow(rowIndex);
     }
 
-    public getRowNode(id: string): RowNode | null {
-        let result: RowNode | null = null;
+    public getRowNode(id: string): RowNode | undefined {
+        let result: RowNode | undefined = undefined;
         this.forEachNode(rowNode => {
             if (rowNode.id === id) {
                 result = rowNode;

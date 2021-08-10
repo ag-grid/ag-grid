@@ -56,7 +56,7 @@ export class RowPositionUtils extends BeanStub {
         return rowIndex === undefined ? null : { rowIndex, rowPinned };
     }
 
-    public getRowNode(gridRow: RowPosition): RowNode | null {
+    public getRowNode(gridRow: RowPosition): RowNode | undefined {
         switch (gridRow.rowPinned) {
             case Constants.PINNED_TOP:
                 return this.pinnedRowModel.getPinnedTopRowData()[gridRow.rowIndex];

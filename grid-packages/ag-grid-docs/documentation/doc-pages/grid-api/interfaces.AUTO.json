@@ -5653,8 +5653,8 @@
   "IClientSideRowModel": {
     "meta": {},
     "type": {
-      "getRow(index: number)": "RowNode | null",
-      "getRowNode(id: string)": "RowNode | null",
+      "getRow(index: number)": "RowNode | undefined",
+      "getRowNode(id: string)": "RowNode | undefined",
       "getRowCount()": "number",
       "getTopLevelRowCount()": "number",
       "getTopLevelRowDisplayedIndex(topLevelIndex: number)": "number",
@@ -6287,8 +6287,8 @@
   "IInfiniteRowModel": {
     "meta": {},
     "type": {
-      "getRow(index: number)": "RowNode | null",
-      "getRowNode(id: string)": "RowNode | null",
+      "getRow(index: number)": "RowNode | undefined",
+      "getRowNode(id: string)": "RowNode | undefined",
       "getRowCount()": "number",
       "getTopLevelRowCount()": "number",
       "getTopLevelRowDisplayedIndex(topLevelIndex: number)": "number",
@@ -6496,8 +6496,8 @@
   "IRowModel": {
     "meta": {},
     "type": {
-      "getRow(index: number)": "RowNode | null",
-      "getRowNode(id: string)": "RowNode | null",
+      "getRow(index: number)": "RowNode | undefined",
+      "getRowNode(id: string)": "RowNode | undefined",
       "getRowCount()": "number",
       "getTopLevelRowCount()": "number",
       "getTopLevelRowDisplayedIndex(topLevelIndex: number)": "number",
@@ -6598,8 +6598,8 @@
   "IServerSideRowModel": {
     "meta": {},
     "type": {
-      "getRow(index: number)": "RowNode | null",
-      "getRowNode(id: string)": "RowNode | null",
+      "getRow(index: number)": "RowNode | undefined",
+      "getRowNode(id: string)": "RowNode | undefined",
       "getRowCount()": "number",
       "getTopLevelRowCount()": "number",
       "getTopLevelRowDisplayedIndex(topLevelIndex: number)": "number",
@@ -6661,7 +6661,7 @@
       "forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence?: NumberSequence)": "void",
       "forEachNodeDeepAfterFilterAndSort(callback: (rowNode: RowNode, index: number) => void, sequence?: NumberSequence)": "void",
       "retryLoads()": "void",
-      "getRowUsingDisplayIndex(displayRowIndex: number, dontCreateBlock?: boolean)": "RowNode | null",
+      "getRowUsingDisplayIndex(displayRowIndex: number, dontCreateBlock?: boolean)": "RowNode | undefined",
       "getRowBounds(index: number)": "RowBounds | null",
       "isPixelInRange(pixel: number)": "boolean",
       "getRowIndexAtPixel(pixel: number)": "number | null",

@@ -12,7 +12,7 @@ export interface IServerSideStore {
     forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence?: NumberSequence): void;
     forEachNodeDeepAfterFilterAndSort(callback: (rowNode: RowNode, index: number) => void, sequence?: NumberSequence): void;
     retryLoads(): void;
-    getRowUsingDisplayIndex(displayRowIndex: number, dontCreateBlock?: boolean): RowNode | null;
+    getRowUsingDisplayIndex(displayRowIndex: number, dontCreateBlock?: boolean): RowNode | undefined;
     getRowBounds(index: number): RowBounds | null;
     isPixelInRange(pixel: number): boolean;
     getRowIndexAtPixel(pixel: number): number | null;

@@ -42,7 +42,7 @@ import {
 } from "@ag-grid-community/core";
 
 interface RowCallback {
-    (gridRow: RowPosition, rowNode: RowNode | null, columns: Column[], rangeIndex: number, isLastRow?: boolean): void;
+    (gridRow: RowPosition, rowNode: RowNode | undefined, columns: Column[], rangeIndex: number, isLastRow?: boolean): void;
 }
 
 interface ColumnCallback {
@@ -645,7 +645,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     }
 
     private processCell<T>(
-        rowNode: RowNode | null,
+        rowNode: RowNode | undefined,
         column: Column,
         value: T,
         type: string,

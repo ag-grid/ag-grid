@@ -9,10 +9,10 @@ export interface RowBounds {
 export interface IRowModel {
 
     /** Returns the rowNode at the given index. */
-    getRow(index: number): RowNode | null;
+    getRow(index: number): RowNode | undefined;
 
     /** Returns the rowNode for given id. */
-    getRowNode(id: string): RowNode | null;
+    getRowNode(id: string): RowNode | undefined;
 
     /** This is legacy, not used by AG Grid, but keeping for backward compatibility */
     getRowCount(): number;

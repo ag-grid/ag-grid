@@ -112,11 +112,11 @@ export class PinnedRowModel extends BeanStub {
         return this.pinnedBottomRows ? this.pinnedBottomRows.length : 0;
     }
 
-    public getPinnedTopRow(index: number): RowNode {
+    public getPinnedTopRow(index: number): RowNode | undefined {
         return this.pinnedTopRows[index];
     }
 
-    public getPinnedBottomRow(index: number): RowNode {
+    public getPinnedBottomRow(index: number): RowNode | undefined {
         return this.pinnedBottomRows[index];
     }
 

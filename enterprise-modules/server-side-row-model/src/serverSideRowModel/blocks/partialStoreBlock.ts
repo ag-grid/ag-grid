@@ -288,7 +288,7 @@ export class PartialStoreBlock extends RowNodeBlock {
         this.logger = loggerFactory.create('ServerSideBlock');
     }
 
-    public getRowUsingDisplayIndex(displayRowIndex: number): RowNode | null {
+    public getRowUsingDisplayIndex(displayRowIndex: number): RowNode | undefined {
         this.touchLastAccessed();
         const res = this.blockUtils.binarySearchForDisplayIndex(displayRowIndex, this.rowNodes);
         return res;

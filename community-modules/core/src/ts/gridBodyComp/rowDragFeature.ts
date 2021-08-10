@@ -428,7 +428,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         const mouseIsPastLastRow = yNormalised > this.paginationProxy.getCurrentPageHeight();
 
         let overIndex = -1;
-        let overNode: RowNode | null = null;
+        let overNode: RowNode | undefined;
 
         if (!mouseIsPastLastRow) {
             overIndex = this.rowModel.getRowIndexAtPixel(yNormalised);
