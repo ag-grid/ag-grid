@@ -81,11 +81,11 @@
         "isGroupOpenByDefault": {
             "description": "([Client-side Row Model](/client-side-model/) only) Allows groups to be open by default."
         },
-        "defaultGroupSortComparator": {
+        "defaultGroupOrderComparator": {
             "description": "Allows default sorting of groups.",
             "more": {
                 "name": "Default Group Order",
-                "url": "/grouping/#default-group-order"
+                "url": "/grouping-group-order/#default-group-order"
             }
         },
         "processSecondaryColDef": {
@@ -186,13 +186,6 @@
     "charts": {
         "meta": {
             "displayName": "Charts"
-        },
-        "processChartOptions": {
-            "description": "Callback to be used to with charts to override default chart options.",
-            "more": {
-                "name": "Overriding Chart Options",
-                "url": "/integrated-charts-customisation/#example-common-chart-overrides"
-            }
         },
         "getChartToolbarItems": {
             "description": "Callback to be used to customise the chart toolbar items.",

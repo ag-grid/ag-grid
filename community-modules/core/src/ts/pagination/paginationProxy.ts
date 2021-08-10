@@ -101,11 +101,11 @@ export class PaginationProxy extends BeanStub {
         return this.pixelOffset;
     }
 
-    public getRow(index: number): RowNode | null {
+    public getRow(index: number): RowNode | undefined {
         return this.rowModel.getRow(index);
     }
 
-    public getRowNode(id: string): RowNode | null {
+    public getRowNode(id: string): RowNode | undefined {
         return this.rowModel.getRowNode(id);
     }
 

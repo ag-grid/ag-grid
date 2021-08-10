@@ -49,6 +49,7 @@ export interface ChartProxyParams {
     parentElement: HTMLElement;
     grouping: boolean;
     document: Document;
+    allowProcessChartOptions: boolean | undefined;
     processChartOptions: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>;
     getChartThemeName: () => string;
     getChartThemes: () => string[];
@@ -156,9 +157,9 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         this.iChartOptions = this.extractIChartOptionsFromTheme(this.chartTheme);
 
         // allow users to override options before they are applied
-        const { processChartOptions } = this.chartProxyParams;
+        const { processChartOptions, allowProcessChartOptions } = this.chartProxyParams;
 
-        if (processChartOptions) {
+        if (processChartOptions && allowProcessChartOptions) {
             const originalOptions = deepMerge({}, this.iChartOptions);
             const params: ProcessChartOptionsParams = { type: this.chartType, options: this.iChartOptions };
             const overriddenOptions = processChartOptions(params) as TOptions;

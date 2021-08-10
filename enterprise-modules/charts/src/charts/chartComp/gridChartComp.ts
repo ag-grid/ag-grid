@@ -184,6 +184,7 @@ export class GridChartComp extends Component {
             this.chartProxy.destroy();
         }
 
+        const allowProcessChartOptions = this.gridOptionsWrapper.getAllowProcessChartOptions();
         const processChartOptionsFunc = this.params.processChartOptions || this.gridOptionsWrapper.getProcessChartOptionsFunc();
         const customChartThemes = this.gridOptionsWrapper.getCustomChartThemes();
 
@@ -200,6 +201,7 @@ export class GridChartComp extends Component {
             chartId: this.getChartId(),
             chartType,
             chartThemeName: this.model.getChartThemeName(),
+            allowProcessChartOptions: allowProcessChartOptions,
             processChartOptions: processChartOptionsFunc!,
             getChartThemeName: this.getChartThemeName.bind(this),
             getChartThemes: this.getChartThemes.bind(this),

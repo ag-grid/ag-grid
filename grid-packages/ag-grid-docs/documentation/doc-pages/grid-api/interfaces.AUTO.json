@@ -1326,6 +1326,7 @@
       "customChartThemes?": "{ [name: string]: AgChartTheme; }",
       "chartThemeOverrides?": "AgChartThemeOverrides",
       "processChartOptions?(params: ProcessChartOptionsParams)": "ChartOptions<any>",
+      "allowProcessChartOptions?": "boolean",
       "onColumnEverythingChanged?(event: ColumnEverythingChangedEvent)": "void",
       "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent)": "void",
       "onNewColumnsLoaded?(event: NewColumnsLoadedEvent)": "void",
@@ -1422,7 +1423,8 @@
       "groupRowInnerRenderer?": "/** @deprecated - this is now groupRowRendererParams.innerRenderer\n */",
       "groupRowInnerRendererFramework?": "/** @deprecated - this is now groupRowRendererParams.innerRendererFramework\n */",
       "defaultGroupSortComparator?": "/** @deprecated - Use defaultGroupOrderComparator instead\n */",
-      "processChartOptions?(params: ProcessChartOptionsParams)": "/** @deprecated\n */"
+      "processChartOptions?(params: ProcessChartOptionsParams)": "/** @deprecated\n */",
+      "allowProcessChartOptions?": "/** @deprecated\n */"
     }
   },
   "RowGroupingDisplayType": {
@@ -4821,6 +4823,20 @@
       "renderer?": "(params: AgPieSeriesTooltipRendererParams) => string | AgTooltipRendererResult"
     }
   },
+  "AgPieTitleOptions": {
+    "meta": {},
+    "type": {
+      "enabled?": "boolean",
+      "padding?": "AgChartPaddingOptions",
+      "text?": "string",
+      "fontStyle?": "FontStyle",
+      "fontWeight?": "FontWeight",
+      "fontSize?": "number",
+      "fontFamily?": "string",
+      "color?": "string",
+      "showInLegend?": "boolean"
+    }
+  },
   "AgPieSeriesOptions": {
     "meta": {},
     "type": {
@@ -4831,7 +4847,7 @@
       "listeners?": "{[key in string]: Function}",
       "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { dimOpacity?: number; strokeWidth?: number; }; }",
       "type?": "'pie'",
-      "title?": "AgChartCaptionOptions",
+      "title?": "AgPieTitleOptions",
       "label?": "AgPieSeriesLabelOptions",
       "callout?": "{ colors?: string[]; length?: number; strokeWidth?: number; }",
       "angleKey?": "string",
@@ -5551,6 +5567,19 @@
       "yName": "string"
     }
   },
+  "PieTitleOptions": {
+    "meta": {},
+    "type": {
+      "fontStyle": "FontStyle",
+      "fontWeight": "FontWeight",
+      "fontSize": "number",
+      "fontFamily": "string",
+      "color": "string",
+      "enabled": "boolean",
+      "text?": "string",
+      "showInLegend?": "boolean"
+    }
+  },
   "PieSeriesOptions": {
     "meta": {},
     "type": {
@@ -5558,7 +5587,7 @@
       "stroke": "StrokeOptions",
       "highlightStyle": "HighlightOptions",
       "listeners?": "{[key in string]: Function}",
-      "title": "CaptionOptions",
+      "title": "PieTitleOptions",
       "label": "PieSeriesLabelOptions",
       "callout": "PieSeriesCalloutOptions",
       "shadow": "DropShadowOptions",
@@ -5651,8 +5680,8 @@
   "IClientSideRowModel": {
     "meta": {},
     "type": {
-      "getRow(index: number)": "RowNode | null",
-      "getRowNode(id: string)": "RowNode | null",
+      "getRow(index: number)": "RowNode | undefined",
+      "getRowNode(id: string)": "RowNode | undefined",
       "getRowCount()": "number",
       "getTopLevelRowCount()": "number",
       "getTopLevelRowDisplayedIndex(topLevelIndex: number)": "number",
@@ -6285,8 +6314,8 @@
   "IInfiniteRowModel": {
     "meta": {},
     "type": {
-      "getRow(index: number)": "RowNode | null",
-      "getRowNode(id: string)": "RowNode | null",
+      "getRow(index: number)": "RowNode | undefined",
+      "getRowNode(id: string)": "RowNode | undefined",
       "getRowCount()": "number",
       "getTopLevelRowCount()": "number",
       "getTopLevelRowDisplayedIndex(topLevelIndex: number)": "number",
@@ -6494,8 +6523,8 @@
   "IRowModel": {
     "meta": {},
     "type": {
-      "getRow(index: number)": "RowNode | null",
-      "getRowNode(id: string)": "RowNode | null",
+      "getRow(index: number)": "RowNode | undefined",
+      "getRowNode(id: string)": "RowNode | undefined",
       "getRowCount()": "number",
       "getTopLevelRowCount()": "number",
       "getTopLevelRowDisplayedIndex(topLevelIndex: number)": "number",
@@ -6596,8 +6625,8 @@
   "IServerSideRowModel": {
     "meta": {},
     "type": {
-      "getRow(index: number)": "RowNode | null",
-      "getRowNode(id: string)": "RowNode | null",
+      "getRow(index: number)": "RowNode | undefined",
+      "getRowNode(id: string)": "RowNode | undefined",
       "getRowCount()": "number",
       "getTopLevelRowCount()": "number",
       "getTopLevelRowDisplayedIndex(topLevelIndex: number)": "number",
@@ -6659,7 +6688,7 @@
       "forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence?: NumberSequence)": "void",
       "forEachNodeDeepAfterFilterAndSort(callback: (rowNode: RowNode, index: number) => void, sequence?: NumberSequence)": "void",
       "retryLoads()": "void",
-      "getRowUsingDisplayIndex(displayRowIndex: number, dontCreateBlock?: boolean)": "RowNode | null",
+      "getRowUsingDisplayIndex(displayRowIndex: number, dontCreateBlock?: boolean)": "RowNode | undefined",
       "getRowBounds(index: number)": "RowBounds | null",
       "isPixelInRange(pixel: number)": "boolean",
       "getRowIndexAtPixel(pixel: number)": "number | null",

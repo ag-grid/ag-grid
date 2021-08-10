@@ -149,6 +149,7 @@ export class DoughnutChartProxy extends PolarChartProxy {
             title: {
                 ...updateParams.seriesDefaults.title,
                 text: updateParams.seriesDefaults.title.text || updateParams.field.displayName!,
+                showInLegend: updateParams.numFields > 1
             },
             fills: updateParams.seriesDefaults.fill.colors,
             fillOpacity: updateParams.seriesDefaults.fill.opacity,
@@ -163,6 +164,10 @@ export class DoughnutChartProxy extends PolarChartProxy {
 
         const calloutColors = seriesOptions.callout && seriesOptions.callout.colors || seriesOptions.strokes || [];
         const pieSeries = existingSeries || AgChart.createComponent(seriesOptions, 'pie.series') as PieSeries;
+
+        if (pieSeries.title) {
+            pieSeries.title.showInLegend = updateParams.numFields > 1;
+        }
 
         if (!existingSeries) {
             if (this.crossFiltering && !pieSeries.tooltip.renderer) {

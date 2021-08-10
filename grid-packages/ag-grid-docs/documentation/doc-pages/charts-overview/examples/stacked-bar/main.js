@@ -20,6 +20,7 @@ var options = {
         yNames: ['Owner occupied', 'Private rented', 'Local authority', 'Housing association'],
         highlightStyle: {
             series: {
+                strokeWidth: 3,
                 dimOpacity: 0.3
             }
         }

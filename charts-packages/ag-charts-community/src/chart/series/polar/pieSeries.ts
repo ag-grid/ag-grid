@@ -97,6 +97,10 @@ export class PieSeriesTooltip extends SeriesTooltip {
     @reactive('change') renderer?: (params: PieTooltipRendererParams) => string | TooltipRendererResult;
 }
 
+export class PieTitle extends Caption {
+    @reactive() showInLegend = false;
+}
+
 export class PieSeries extends PolarSeries {
 
     static className = 'PieSeries';
@@ -122,27 +126,33 @@ export class PieSeries extends PolarSeries {
     // When a user toggles a series item (e.g. from the legend), its boolean state is recorded here.
     public seriesItemEnabled: boolean[] = [];
 
-    private _title?: Caption;
-    set title(value: Caption | undefined) {
+    private _title?: PieTitle;
+    set title(value: PieTitle | undefined) {
         const oldTitle = this._title;
+
+        function updateLegend() {
+            this.fireEvent({ type: 'legendChange' });
+        }
 
         if (oldTitle !== value) {
             if (oldTitle) {
-                oldTitle.removeEventListener('change', this.scheduleLayout);
+                oldTitle.removeEventListener('change', this.update, this);
+                oldTitle.addPropertyListener('showInLegend', updateLegend, this);
                 this.group.removeChild(oldTitle.node);
             }
 
             if (value) {
                 value.node.textBaseline = 'bottom';
-                value.addEventListener('change', this.scheduleLayout);
+                value.addEventListener('change', this.update, this);
+                value.addPropertyListener('showInLegend', updateLegend, this);
                 this.group.appendChild(value.node);
             }
 
             this._title = value;
-            this.scheduleLayout();
+            this.update();
         }
     }
-    get title(): Caption | undefined {
+    get title(): PieTitle | undefined {
         return this._title;
     }
 
@@ -590,7 +600,7 @@ export class PieSeries extends PolarSeries {
         if (data && data.length && labelKey) {
             const { fills, strokes, id } = this;
 
-            const titleText = this.title && this.title.text;
+            const titleText = this.title && this.title.showInLegend && this.title.text;
             data.forEach((datum, index) => {
                 let labelParts = [];
                 titleText && labelParts.push(titleText);

@@ -417,6 +417,7 @@ export class ChartTheme {
                     ...ChartTheme.getSeriesDefaults(),
                     title: {
                         enabled: true,
+                        showInLegend: false,
                         padding: new Padding(0),
                         text: '',
                         fontStyle: undefined,

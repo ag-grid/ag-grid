@@ -476,6 +476,19 @@ export class BarSeries extends CartesianSeries {
         return this.flipXY ? this.xAxis : this.yAxis;
     }
 
+    protected highlightedItemId?: string;
+    highlight(itemId?: string) {
+        super.highlight(itemId);
+
+        this.highlightedItemId = itemId;
+        this.updateRectNodes();
+    }
+
+    dehighlight() {
+        this.highlightedItemId = undefined;
+        this.updateRectNodes();
+    }
+
     undim(itemId?: any) {
         this.updateDim(itemId);
     }
@@ -672,14 +685,11 @@ export class BarSeries extends CartesianSeries {
         }
 
         const {
-            fillOpacity, strokeOpacity,
-            highlightStyle: { fill, stroke },
-            shadow,
-            formatter,
-            xKey,
-            flipXY
+            fillOpacity, strokeOpacity, shadow, formatter, xKey, flipXY,
+            highlightStyle: { fill, stroke, series: { strokeWidth: highlightedStrokeWidth } },
+            chart: { highlightedDatum },
+            highlightedItemId
         } = this;
-        const { highlightedDatum } = this.chart;
 
         this.rectSelection.each((rect, datum) => {
             const highlighted = datum === highlightedDatum;
@@ -687,12 +697,15 @@ export class BarSeries extends CartesianSeries {
             const rectStroke = highlighted && stroke !== undefined ? stroke : datum.stroke;
             let format: BarSeriesFormat | undefined = undefined;
 
+            const strokeWidth = highlightedItemId === datum.itemId && highlightedStrokeWidth !== undefined
+                ? highlightedStrokeWidth
+                : datum.strokeWidth;
             if (formatter) {
                 format = formatter({
                     datum: datum.seriesDatum,
                     fill: rectFill,
                     stroke: rectStroke,
-                    strokeWidth: datum.strokeWidth,
+                    strokeWidth,
                     highlighted,
                     xKey,
                     yKey: datum.yKey
@@ -704,7 +717,7 @@ export class BarSeries extends CartesianSeries {
             rect.height = datum.height;
             rect.fill = format && format.fill || rectFill;
             rect.stroke = format && format.stroke || rectStroke;
-            rect.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : datum.strokeWidth;
+            rect.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : strokeWidth;
             rect.fillOpacity = fillOpacity;
             rect.strokeOpacity = strokeOpacity;
             rect.lineDash = this.lineDash;

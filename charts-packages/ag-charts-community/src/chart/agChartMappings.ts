@@ -10,7 +10,7 @@ import { HistogramSeries } from "./series/cartesian/histogramSeries";
 import { ScatterSeries } from "./series/cartesian/scatterSeries";
 import { AreaSeries } from "./series/cartesian/areaSeries";
 import { PolarChart } from "./polarChart";
-import { PieSeries } from "./series/polar/pieSeries";
+import { PieSeries, PieTitle } from "./series/polar/pieSeries";
 import { AxisLabel, AxisTick } from "../axis";
 import { TimeAxis } from "./axis/timeAxis";
 import { Caption } from "../caption";
@@ -729,9 +729,10 @@ const mappings: any = {
                 highlightStyle: {},
                 title: {
                     meta: {
-                        constructor: Caption,
+                        constructor: PieTitle,
                         defaults: {
                             enabled: true,
+                            showInLegend: false,
                             padding: {
                                 meta: {
                                     constructor: Padding,

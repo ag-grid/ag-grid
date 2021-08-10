@@ -323,7 +323,7 @@ export class SelectionService extends BeanStub {
      * @method
      * @deprecated
      */
-    public selectNode(rowNode: RowNode | null, tryMulti: boolean) {
+    public selectNode(rowNode: RowNode | undefined, tryMulti: boolean) {
         if (rowNode) {
             rowNode.setSelectedParams({ newValue: true, clearSelection: !tryMulti });
         }
@@ -342,7 +342,7 @@ export class SelectionService extends BeanStub {
      * @method
      * @deprecated
      */
-    public deselectNode(rowNode: RowNode | null) {
+    public deselectNode(rowNode: RowNode | undefined) {
         if (rowNode) {
             rowNode.setSelectedParams({ newValue: false, clearSelection: false });
         }

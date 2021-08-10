@@ -65,13 +65,13 @@ export class InfiniteCache extends BeanStub {
     // the rowRenderer will not pass dontCreatePage, meaning when rendering the grid,
     // it will want new pages in the cache as it asks for rows. only when we are inserting /
     // removing rows via the api is dontCreatePage set, where we move rows between the pages.
-    public getRow(rowIndex: number, dontCreatePage = false): RowNode | null {
+    public getRow(rowIndex: number, dontCreatePage = false): RowNode | undefined {
         const blockId = Math.floor(rowIndex / this.params.blockSize!);
         let block = this.blocks[blockId];
 
         if (!block) {
             if (dontCreatePage) {
-                return null;
+                return undefined;
             }
             block = this.createBlock(blockId);
         }

@@ -79,7 +79,7 @@ export class ClientSideNodeManager {
         return _.cloneObject(this.allNodesMap);
     }
 
-    public getRowNode(id: string): RowNode {
+    public getRowNode(id: string): RowNode | undefined {
         return this.allNodesMap[id];
     }
 

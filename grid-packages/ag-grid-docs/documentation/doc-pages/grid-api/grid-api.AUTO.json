@@ -166,11 +166,17 @@
   },
   "getFloatingTopRow": {
     "description": "/** @deprecated\n */",
-    "type": { "arguments": { "index": "number" }, "returnType": "RowNode" }
+    "type": {
+      "arguments": { "index": "number" },
+      "returnType": "RowNode | undefined"
+    }
   },
   "getFloatingBottomRow": {
     "description": "/** @deprecated\n */",
-    "type": { "arguments": { "index": "number" }, "returnType": "RowNode" }
+    "type": {
+      "arguments": { "index": "number" },
+      "returnType": "RowNode | undefined"
+    }
   },
   "setPinnedTopRowData": {
     "type": { "arguments": { "rows": "any[]" }, "returnType": "void" }
@@ -185,10 +191,16 @@
     "type": { "arguments": {}, "returnType": "number" }
   },
   "getPinnedTopRow": {
-    "type": { "arguments": { "index": "number" }, "returnType": "RowNode" }
+    "type": {
+      "arguments": { "index": "number" },
+      "returnType": "RowNode | undefined"
+    }
   },
   "getPinnedBottomRow": {
-    "type": { "arguments": { "index": "number" }, "returnType": "RowNode" }
+    "type": {
+      "arguments": { "index": "number" },
+      "returnType": "RowNode | undefined"
+    }
   },
   "setColumnDefs": {
     "type": {
@@ -301,7 +313,10 @@
     "type": { "arguments": {}, "returnType": "void" }
   },
   "getRowNode": {
-    "type": { "arguments": { "id": "string" }, "returnType": "RowNode | null" }
+    "type": {
+      "arguments": { "id": "string" },
+      "returnType": "RowNode | undefined"
+    }
   },
   "getSizesForCurrentTheme": { "type": { "arguments": {} } },
   "expandAll": { "type": { "arguments": {} } },
@@ -1138,7 +1153,7 @@
   "getDisplayedRowAtIndex": {
     "type": {
       "arguments": { "index": "number" },
-      "returnType": "RowNode | null"
+      "returnType": "RowNode | undefined"
     }
   },
   "getDisplayedRowCount": {

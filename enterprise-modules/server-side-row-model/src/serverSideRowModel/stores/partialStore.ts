@@ -511,11 +511,11 @@ export class PartialStore extends BeanStub implements IServerSideStore {
     }
 
     // gets called in a) init() above and b) by the grid
-    public getRowUsingDisplayIndex(displayRowIndex: number, dontCreateBlock = false): RowNode | null {
+    public getRowUsingDisplayIndex(displayRowIndex: number, dontCreateBlock = false): RowNode | undefined {
 
         // this can happen if asking for a row that doesn't exist in the model,
         // eg if a cell range is selected, and the user filters so rows no longer exists
-        if (!this.isDisplayIndexInStore(displayRowIndex)) { return null; }
+        if (!this.isDisplayIndexInStore(displayRowIndex)) { return undefined; }
 
         const matchBlockFunc = (block: PartialStoreBlock): FindResult => {
             if (block.isDisplayIndexInBlock(displayRowIndex)) {

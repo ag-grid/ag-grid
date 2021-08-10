@@ -470,6 +470,10 @@ export interface GridOptions {
     /** @deprecated */
     processChartOptions?(params: ProcessChartOptionsParams): ChartOptions<any>;
 
+    // Note: processChartOptions() no longer works, however this temporary option has been added as a failsafe
+    /** @deprecated */
+    allowProcessChartOptions?: boolean;
+
     // **********************************************************************************************************
     // * If you change the events on this interface, you do *not* need to update PropertyKeys to be consistent, *
     // * as event callbacks are automatically generated.                                                        *

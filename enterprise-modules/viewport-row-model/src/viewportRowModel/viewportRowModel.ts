@@ -140,8 +140,8 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
         return this.rowNodesByIndex[rowIndex];
     }
 
-    public getRowNode(id: string): RowNode | null {
-        let result: RowNode | null = null;
+    public getRowNode(id: string): RowNode | undefined {
+        let result: RowNode | undefined = undefined;
         this.forEachNode(rowNode => {
             if (rowNode.id === id) {
                 result = rowNode;

@@ -57,7 +57,12 @@ interface CodeEntry {
     type: PropertyType;
 }
 export type InterfaceEntry = IEntry | ICallSignature | ITypeAlias | IEnum | IEvent;
-export interface IEvent {
+
+interface BaseInterface {
+    description?: string;
+}
+
+export interface IEvent extends BaseInterface {
     meta: {
         isTypeAlias?: never;
         isEnum?: never;
@@ -67,7 +72,7 @@ export interface IEvent {
     name: string;
     type?: never;
 }
-interface IEntry {
+interface IEntry extends BaseInterface {
     meta: {
         isTypeAlias?: never;
         isEnum?: never;
@@ -78,7 +83,7 @@ interface IEntry {
         [key in string]: string;
     };
 }
-interface IEnum {
+interface IEnum extends BaseInterface {
     meta: {
         isTypeAlias?: never;
         isEnum: true;
@@ -87,7 +92,7 @@ interface IEnum {
     };
     type: string[];
 }
-interface ITypeAlias {
+interface ITypeAlias extends BaseInterface {
     meta: {
         isTypeAlias: true;
         isEnum?: never;
@@ -96,7 +101,7 @@ interface ITypeAlias {
     };
     type: string;
 }
-export interface ICallSignature {
+export interface ICallSignature extends BaseInterface {
     meta: {
         isTypeAlias?: never;
         isEnum?: never;

@@ -520,6 +520,10 @@
       "returnType": "ChartOptions<any>"
     }
   },
+  "allowProcessChartOptions": {
+    "description": "/** @deprecated\n */",
+    "type": { "returnType": "boolean" }
+  },
   "onColumnEverythingChanged": {
     "type": {
       "arguments": { "event": "ColumnEverythingChangedEvent" },
