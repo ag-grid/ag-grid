@@ -4823,6 +4823,20 @@
       "renderer?": "(params: AgPieSeriesTooltipRendererParams) => string | AgTooltipRendererResult"
     }
   },
+  "AgPieTitleOptions": {
+    "meta": {},
+    "type": {
+      "enabled?": "boolean",
+      "padding?": "AgChartPaddingOptions",
+      "text?": "string",
+      "fontStyle?": "FontStyle",
+      "fontWeight?": "FontWeight",
+      "fontSize?": "number",
+      "fontFamily?": "string",
+      "color?": "string",
+      "showInLegend?": "boolean"
+    }
+  },
   "AgPieSeriesOptions": {
     "meta": {},
     "type": {
@@ -4833,7 +4847,7 @@
       "listeners?": "{[key in string]: Function}",
       "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { dimOpacity?: number; strokeWidth?: number; }; }",
       "type?": "'pie'",
-      "title?": "AgChartCaptionOptions",
+      "title?": "AgPieTitleOptions",
       "label?": "AgPieSeriesLabelOptions",
       "callout?": "{ colors?: string[]; length?: number; strokeWidth?: number; }",
       "angleKey?": "string",
@@ -5553,6 +5567,19 @@
       "yName": "string"
     }
   },
+  "PieTitleOptions": {
+    "meta": {},
+    "type": {
+      "fontStyle": "FontStyle",
+      "fontWeight": "FontWeight",
+      "fontSize": "number",
+      "fontFamily": "string",
+      "color": "string",
+      "enabled": "boolean",
+      "text?": "string",
+      "showInLegend?": "boolean"
+    }
+  },
   "PieSeriesOptions": {
     "meta": {},
     "type": {
@@ -5560,7 +5587,7 @@
       "stroke": "StrokeOptions",
       "highlightStyle": "HighlightOptions",
       "listeners?": "{[key in string]: Function}",
-      "title": "CaptionOptions",
+      "title": "PieTitleOptions",
       "label": "PieSeriesLabelOptions",
       "callout": "PieSeriesCalloutOptions",
       "shadow": "DropShadowOptions",
