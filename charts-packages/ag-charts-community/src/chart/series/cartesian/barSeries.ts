@@ -240,15 +240,20 @@ export class BarSeries extends CartesianSeries {
      */
     protected _yKeys: string[][] = [];
     set yKeys(yKeys: string[][]) {
+        let flatYKeys: string[] | undefined = undefined;
+        // Convert from flat y-keys to grouped y-keys.
+        if (yKeys.length && !Array.isArray(yKeys[0])) {
+            flatYKeys = yKeys as any as string[];
+            if (this.grouped) {
+                yKeys = flatYKeys.map(k => [k]);
+            } else {
+                yKeys = [flatYKeys];
+            }
+        }
+
         if (!equal(this._yKeys, yKeys)) {
-            // Convert from flat y-keys to grouped y-keys.
-            if (yKeys.length && !Array.isArray(yKeys[0])) {
-                const keys = this.flatYKeys = yKeys as any as string[];
-                if (this.grouped) {
-                    yKeys = keys.map(k => [k]);
-                } else {
-                    yKeys = [keys];
-                }
+            if (flatYKeys) {
+                this.flatYKeys = flatYKeys;
             } else {
                 this.flatYKeys = undefined;
             }
