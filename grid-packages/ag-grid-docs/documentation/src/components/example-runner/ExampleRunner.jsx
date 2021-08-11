@@ -61,6 +61,19 @@ const saveIndexHtmlPermutations = (nodes, library, pageName, name, title, type, 
 
             writeIndexHtmlFile(alternativeStylePackagesExampleInfo);
         }
+
+        // 4. For Vue, also copy html file for Vue 3
+        if(framework === 'vue') {
+            const vue3ModulesExampleInfo =
+                getExampleInfo(nodes, library, pageName, name, title, type, options, framework, !useFunctionalReact, true, 'modules');
+
+            writeIndexHtmlFile(vue3ModulesExampleInfo);
+
+            const vue3PackagesExampleInfo =
+                getExampleInfo(nodes, library, pageName, name, title, type, options, framework, !useFunctionalReact, true, 'packages');
+
+            writeIndexHtmlFile(vue3PackagesExampleInfo);
+        }
     } else if (type === 'multi' && framework === 'react') {
         // Also generate the alternative React style
         const functionalExampleInfo = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, !useFunctionalReact, useVue3);
