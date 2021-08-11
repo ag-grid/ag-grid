@@ -155,7 +155,8 @@
       "arguments": {
         "key": "string | Column",
         "newWidth": "number",
-        "finished": "boolean = true"
+        "finished": "boolean = true",
+        "source": "ColumnEventType"
       },
       "returnType": "void"
     }
@@ -164,7 +165,8 @@
     "type": {
       "arguments": {
         "columnWidths": "{ key: string | Column; newWidth: number; }[]",
-        "finished": "boolean = true"
+        "finished": "boolean = true",
+        "source": "ColumnEventType"
       },
       "returnType": "void"
     }
