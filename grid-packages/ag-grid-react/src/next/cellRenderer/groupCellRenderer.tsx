@@ -1,10 +1,10 @@
 import { GroupCellRendererCtrl, GroupCellRendererParams, IGroupCellRenderer, UserCompDetails } from "ag-grid-community";
-import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useRef, useState, memo } from 'react';
 import { BeansContext } from "../beansContext";
 import { showJsComp } from "../jsComp";
 import { CssClasses } from "../utils";
 
-export const GroupCellRenderer = (props: GroupCellRendererParams) => {
+const GroupCellRenderer = (props: GroupCellRendererParams) => {
 
     const context = useContext(BeansContext).context!;
 
@@ -73,3 +73,5 @@ export const GroupCellRenderer = (props: GroupCellRendererParams) => {
         </span>
         );
 };
+
+export default memo(GroupCellRenderer);

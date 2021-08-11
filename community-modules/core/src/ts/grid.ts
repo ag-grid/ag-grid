@@ -88,6 +88,7 @@ import { RowCssClassCalculator } from "./rendering/row/rowCssClassCalculator";
 import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 import { RowNodeSorter } from "./rowNodes/rowNodeSorter";
 import { CtrlsService } from "./ctrlsService";
+import { CtrlsFactory } from "./ctrlsFactory";
 import { FakeHScrollComp } from "./gridBodyComp/fakeHScrollComp";
 import { PinnedWidthService } from "./gridBodyComp/pinnedWidthService";
 import { RowContainerComp } from "./gridBodyComp/rowContainer/rowContainerComp";
@@ -164,27 +165,32 @@ export class GridCoreCreator {
         const logger = new Logger('AG Grid', () => gridOptions.debug);
         const contextLogger = new Logger('Context', () => contextParams.debug);
         const context = new Context(contextParams, contextLogger);
+        const beans = context.getBean('beans') as Beans;
 
-        this.registerModuleUserComponents(context, registeredModules);
-        this.registerStackComponents(context, registeredModules);
+        this.registerModuleUserComponents(beans, registeredModules);
+        this.registerStackComponents(beans, registeredModules);
+        this.registerControllers(beans, registeredModules);
 
         uiCallback(context);
 
         // we wait until the UI has finished initialising before setting in columns and rows
-        const ctrlsService: CtrlsService = context.getBean('ctrlsService');
-        ctrlsService.whenReady(() => {
-            this.setColumnsAndData(context);
-            this.dispatchGridReadyEvent(context, gridOptions);
+        beans.ctrlsService.whenReady(() => {
+            this.setColumnsAndData(beans);
+            this.dispatchGridReadyEvent(beans, gridOptions);
             const isEnterprise = ModuleRegistry.isRegistered(ModuleNames.EnterpriseCoreModule);
             logger.log(`initialised successfully, enterprise = ${isEnterprise}`);
         });
     }
 
-    private registerStackComponents(context: Context, registeredModules: Module[]): void {
+    private registerControllers(beans: Beans, registeredModules: Module[]): void {
+        registeredModules.forEach( module => {
+            module.controllers && module.controllers.forEach( meta => beans.ctrlsFactory.register(meta))
+        });
+    }
+
+    private registerStackComponents(beans: Beans, registeredModules: Module[]): void {
         const agStackComponents = this.createAgStackComponentsList(registeredModules);
-        const agStackComponentsRegistry =
-            context.getBean('agStackComponentsRegistry') as AgStackComponentsRegistry;
-        agStackComponentsRegistry.setupComponents(agStackComponents);
+        beans.agStackComponentsRegistry.setupComponents(agStackComponents);
     }
 
     private getRegisteredModules(params?: GridParams): Module[] {
@@ -221,15 +227,13 @@ export class GridCoreCreator {
         return allModules;
     }
 
-    private registerModuleUserComponents(context: Context, registeredModules: Module[]): void {
-        const userComponentRegistry: UserComponentRegistry = context.getBean('userComponentRegistry');
-
+    private registerModuleUserComponents(beans: Beans, registeredModules: Module[]): void {
         const moduleUserComps: { componentName: string, componentClass: any; }[]
             = this.extractModuleEntity(registeredModules,
                 (module) => module.userComponents ? module.userComponents : []);
 
         moduleUserComps.forEach(compMeta => {
-            userComponentRegistry.registerDefaultComponent(compMeta.componentName, compMeta.componentClass);
+            beans.userComponentRegistry.registerDefaultComponent(compMeta.componentName, compMeta.componentClass);
         });
     }
 
@@ -308,7 +312,7 @@ export class GridCoreCreator {
             SelectableService, AutoGroupColService, ChangeDetectionService, AnimationFrameService,
             UndoRedoService, AgStackComponentsRegistry, ColumnDefFactory,
             RowCssClassCalculator, RowNodeBlockLoader, RowNodeSorter, CtrlsService,
-            PinnedWidthService, RowNodeEventThrottle
+            PinnedWidthService, RowNodeEventThrottle, CtrlsFactory
         ];
 
         const moduleBeans = this.extractModuleEntity(registeredModules, (module) => module.beans ? module.beans : []);
@@ -330,25 +334,19 @@ export class GridCoreCreator {
         return [].concat(...moduleEntities.map(extractor));
     }
 
-    private setColumnsAndData(context: Context): void {
-        const gridOptionsWrapper: GridOptionsWrapper = context.getBean('gridOptionsWrapper');
-        const columnModel: ColumnModel = context.getBean('columnModel');
-        const columnDefs = gridOptionsWrapper.getColumnDefs();
-
-        columnModel.setColumnDefs(columnDefs || [], "gridInitializing");
-
-        const rowModel: IRowModel = context.getBean('rowModel');
-        rowModel.start();
+    private setColumnsAndData(beans: Beans): void {
+        const columnDefs = beans.gridOptionsWrapper.getColumnDefs();
+        beans.columnModel.setColumnDefs(columnDefs || [], "gridInitializing");
+        beans.rowModel.start();
     }
 
-    private dispatchGridReadyEvent(context: Context, gridOptions: GridOptions): void {
-        const eventService: EventService = context.getBean('eventService');
+    private dispatchGridReadyEvent(beans: Beans, gridOptions: GridOptions): void {
         const readyEvent: GridReadyEvent = {
             type: Events.EVENT_GRID_READY,
             api: gridOptions.api!,
             columnApi: gridOptions.columnApi!
         };
-        eventService.dispatchEvent(readyEvent);
+        beans.eventService.dispatchEvent(readyEvent);
     }
 
     private getRowModelClass(rowModelType: string | undefined, registeredModules: Module[]): any {

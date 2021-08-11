@@ -90,6 +90,13 @@
     "meta": {},
     "type": { "componentClass": "new () => Object", "componentName": "string" }
   },
+  "ControllerMeta": {
+    "meta": {},
+    "type": {
+      "controllerClass": "new () => Object",
+      "controllerName": "string"
+    }
+  },
   "BeanWrapper": {
     "meta": {},
     "type": { "bean": "any", "beanInstance": "any", "beanName": "any" }
@@ -6368,6 +6375,7 @@
       "moduleName": "string",
       "beans?": "any[]",
       "agStackComponents?": "ComponentMeta[]",
+      "controllers?": "ControllerMeta[]",
       "userComponents?": "{ componentName: string; componentClass: any; }[]",
       "rowModels?": "{ [name: string]: { new (): IRowModel; }; }",
       "dependantModules?": "Module[]"
@@ -6938,6 +6946,85 @@
   "PrefixedXmlAttributes": {
     "meta": {},
     "type": { "prefix": "string", "map": "any" }
+  },
+  "IDetailCellRenderer": {
+    "meta": {},
+    "type": {
+      "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
+      "addOrRemoveDetailGridCssClass(cssClassName: string, on: boolean)": "void",
+      "setDetailGrid(gridOptions: GridOptions)": "void",
+      "setRowData(rowData: any[])": "void"
+    }
+  },
+  "IDetailCellRendererParams": {
+    "meta": {},
+    "type": {
+      "fullWidth?": "boolean",
+      "pinned?": "string | null",
+      "value": "any",
+      "valueFormatted": "any",
+      "data": "any",
+      "node": "RowNode",
+      "colDef?": "ColDef",
+      "column?": "Column",
+      "$scope": "any",
+      "rowIndex": "number",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any",
+      "eGridCell": "HTMLElement",
+      "eParentOfValue": "HTMLElement",
+      "getValue?": "() => any",
+      "setValue?": "(value: any) => void",
+      "formatValue?": "(value: any) => any",
+      "refreshCell?": "() => void",
+      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string) => void",
+      "detailGridOptions": "GridOptions",
+      "getDetailRowData": "GetDetailRowData",
+      "refreshStrategy": "'rows' | 'everything' | 'nothing'",
+      "agGridReact": "any",
+      "frameworkComponentWrapper": "any",
+      "$compile": "any",
+      "pinned": "string",
+      "template": "string | TemplateFunc",
+      "autoHeight": "boolean",
+      "suppressRefresh": "boolean"
+    },
+    "docs": {
+      "registerRowDragger": "/** registerRowDragger: Function\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n */",
+      "autoHeight": "/** @deprecated\n */",
+      "suppressRefresh": "/** @deprecated\n */"
+    }
+  },
+  "GetDetailRowData": {
+    "meta": { "isCallSignature": true },
+    "type": {
+      "arguments": { "params": "GetDetailRowDataParams" },
+      "returnType": "void"
+    }
+  },
+  "GetDetailRowDataParams": {
+    "meta": {},
+    "type": {
+      "node": "RowNode",
+      "data": "any",
+      "successCallback(rowData: any[])": "void"
+    }
+  },
+  "TemplateFunc": {
+    "meta": { "isCallSignature": true },
+    "type": {
+      "arguments": { "params": "ICellRendererParams" },
+      "returnType": "string"
+    }
+  },
+  "IDetailCellRendererCtrl": {
+    "meta": {},
+    "type": {
+      "init(comp: IDetailCellRenderer, params: IDetailCellRendererParams)": "void",
+      "registerDetailWithMaster(api: GridApi, columnApi: ColumnApi)": "void",
+      "refresh()": "boolean"
+    }
   },
   "RowDataTransaction": {
     "meta": {},

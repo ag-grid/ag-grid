@@ -249,6 +249,9 @@ export {
 } from "./interfaces/IRangeService";
 export { IChartService, ChartModel, GetChartImageDataUrlParams } from "./interfaces/IChartService";
 
+// master detail
+export { IDetailCellRendererParams, GetDetailRowData, GetDetailRowDataParams, IDetailCellRenderer, IDetailCellRendererCtrl } from './interfaces/masterDetail';
+
 // exporter
 export {
     CsvExportParams, CsvCell, CsvCellData, CsvCustomContent, ExportParams, PackageFileParams,
