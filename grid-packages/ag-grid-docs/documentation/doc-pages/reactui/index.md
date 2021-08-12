@@ -3,27 +3,23 @@ title: "React UI"
 frameworks: ["react"]
 ---
 
-Do you know what the one thing most React developers wish was different with AG Grid? Above anything else, React developers wish AG Grid was written in React!!
+Something great is happening, we are porting the UI of AG Grid to be written 100% in React. Up until now AG Grid React wrapped the JavaScript version of AG Grid. The next generation of AG Grid React will have it's UI written purely in React. We are codenaming this effort **React UI**.
 
-We have been working very hard in our labs, in a top secret location in London close to where James Bond lives, to make this wish come true. We are delighted to announce the next generation of AG Grid React will have it's UI written purely in React. We are codenaming this effort **React UI**.
-
-Let me explain...
-
-## What is React UI
-
-Up until now, AG Grid's core was written in Plain JavaScript using our in house rendering engine. All the frameworks,
+Up until now AG Grid's core was written in Plain JavaScript using our in house rendering engine. All the frameworks,
 including React, wrapped the core Plain JavaScript rendering engine.
 
 The advantage of this was one grid for all frameworks, meaning all of our focus went into one excellent grid, rather than focusing on many grids (one for each framework).
 
-The disadvantage of this was sometimes it didn't feel very "Reacty", as AG Grid was not a component written in React.
+The disadvantage of this for the React community was sometimes it didn't feel very "Reacty", as AG Grid was not a component written in React.
 
 React UI is an evolution of how AG Grid uses the React framework. AG Grid React UI will not be a React wrapper around
-our in house rendering engine. AG Grid React UI will have the entire AG Grid UI ported to React.
+our in house rendering engine. AG Grid React UI will have the **AG Grid UI ported to React**.
 
-The latest AG Grid release (v26.0) has a large portion of the grid written in React, ready for you to get stuck into and tell us what you think.
+The latest AG Grid v26.0 has a large portion of the grid UI written in React, ready for you to get stuck into and tell us what you think.
 
-<image-caption src="reactui/resources/before-vs-after.svg" alt="AG Grid React UI Explained" centered="true"></image-caption>
+<div style="margin-top: 30px; margin-bottom: 30px;">
+    <image-caption src="reactui/resources/before-vs-after.svg" alt="AG Grid React UI Explained" centered="true"></image-caption>
+</div>
 
 ## Show Me
 
@@ -31,30 +27,27 @@ To enable React UI in the latest AG Grid release, set the grid property `reactUi
 
 With `reactUi=true`, the grid renders cells using React, and all parent components of the cells are also written in React, all the way back to the client application. This means all the UI from your application down to the cells, including any provided React Cell Renderers, is all now 100% React.
 
-In the example the Age Column has a React Cell Renderer. If you inspect the DOM on this cell, you will note the Cell Renderer is placed directly inside the cell (before an extra 'react-wrapper' div was placed, a side effect of using a React component inside a non-React parent - this is not not needed).
-
-The example also demonstrates other grid features, such as row sorting by clicking the headers with the rows moving smoothly to the new locations. The React UI is built on top of the existing AG Grid services, thus all features carry across.
+The example demonstrates grid features such as row sorting by clicking the headers with the rows moving smoothly to the new locations. The React UI is built on top of the existing AG Grid services, thus all features carry across.
 
 You may say _"Doesn't it look identical to before?"_, and you would be right, it is identical to before from an application users point of view. That's the point - it is supposed to work exactly as before. The difference is this time it is all rendered in React.
 
 <grid-example title='React UI' name='react-ui' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>
+
+## React Profile
+
+You can profile the example above using the React Developer Tools and see the internals of AG Grid written in React.
+
+If you want to profile the example above, open it up in plunker, and then open it in a new tab from inside plunker (otherwise the profiler will profile our website or Plunker, both of which are written in React).
+
+As the grid is now written in React, we welcome trashing it using React profiling tools for how well it plays alongside your application with regards component refresh and wasted render cycles.
+
+<image-caption src="reactui/resources/react-dev-tools.png" alt="React Developer Tools" centered="true"></image-caption>
 
 ## Can I Try In My App?
 
 Yes.
 
 Set the `reactUi=true` property in your AG Grid application using the latest AG Grid version and check it out.
-
-
-## Does It Work With Hooks Or Classes?
-
-It works with both.
-
-AG Grid React UI works with client applications written using React Hooks or React Classes.
-
-AG Grid React UI can also take custom components as Hooks or Classes.
-
-The requirements and interface into AG Grid does not change.
 
 ## Does React UI Use Portals?
 
@@ -94,16 +87,6 @@ Below is an example showing different types of Cell Editors. Note the following:
 
 <grid-example title='React UI Editors' name='editors' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>
 
-## Can I React Profile AG Grid?
-
-Yes.
-
-As the grid is now written in React, we welcome trashing it using React profiling tools for how well it plays alongside your application with regards component refresh and wasted render cycles.
-
-See below viewing the React Component hierarchy using React Developer Tools. The grid is now part of the overall React component hierarchy.
-
-<image-caption src="reactui/resources/react-dev-tools.png" alt="React Developer Tools" centered="true"></image-caption>
-
 ## Show Me No Wasted Renders
 
 Below demonstrates no wasted React Render Cycles.
@@ -127,7 +110,7 @@ Notice that the Cell Renderer for Sport is using inside the Grouping Column.
 <grid-example title='React UI Advanced Features' name='advanced-features' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>
 
 
-## Any Small Print?
+## Good Breaking Changes
 
 There are some good breaking changes, to do with stuff we could shake off, now that we are no longer wrapping React. These good breaking changes are listed below. They are all niche areas of the grid - if you don't recognise what they are talking about, then you are probably not using them and can just ignore. The list is:
 
@@ -135,10 +118,6 @@ There are some good breaking changes, to do with stuff we could shake off, now t
 1. Before to get a reference to an active React Cell Renderer, after calling `gridApi.getCellRendererInstances()` you need to call `getFrameworkComponentInstance()` on the component. You now no longer need to call `getFrameworkComponentInstance()`. This is because there is no longer a JavaScript Cell Renderer wrapping the React Cell Renderer. This method used to be on the wrapper which then returned back the wrapped React Cell Renderer (or a reference to the imperative handle if using React Hooks). The same is true for accessing Cell Editors, in that `getFrameworkComponentInstance()` is no longer needed here either.
 1. Before when providing a Popup Cell Editor, the Cell Editor could implement the methods `isPopup()` and `popupPosition()` to have the Cell Editor in a popup and to optionally state it's position. In the React paradigm, it's required to know where a component is to be placed before it is created (which is not a constraint with our internal AG Grid rendering engine, where components can be created first and placed into the DOM second). To solve this, the Column Definition now has properties `cellEditorPopup` and `cellEditorPopupPosition` which should be used.
 
-## Community vs Enterprise
-
-React UI is covering both AG Grid Community and AG Grid Enterprise. Once complete, both Community and Enterprise
-will be 100% React.
 
 ## What Grid Features are Lost?
 
@@ -153,14 +132,11 @@ This is in line with React thinking, in that React is used for rendering only, a
 This also means the AG Grid React UI not only supports all features of the current AG Grid React, but also the interface into AG Grid React has not changed. All features are configured in the same way. All that will be needed in your application to test React UI is set the switch `reactUi=true`.
 
 
-## What Does the Spike Cover
+## How Much of AG Grid is now React UI?
 
-The spike covers everything needed to allow cells to be customised using React components. That means full support for Cell Renders and Cell Editors.
+The work covers the core grid, rows and cells. This means if you provide Cell Renderers and Cell Editors, they will live inside the same React Context as your application.
 
-## What is not covered
-
-The following areas are yet to be completed:
-1. Master Detail - Detail Grids
+The following areas are yet to be completed. All of these areas use the old rendering engine alongside the new React UI:
 1. Column Headers and Header Groups.
 1. Column Filters and Floating Filters.
 1. Tool Panels.
@@ -168,14 +144,15 @@ The following areas are yet to be completed:
 1. Overlays.
 1. Custom Tooltip.
 
-All of these areas use the old rendering engine alongside the new React UI. This means the grid still fully works, you just won't be able to customise these parts of AG Grid using React when `reactUi=true`.
-
-## Does Anything Break?
 
 When `reactUi=true`, the mechanism of using React inside the old AG Grid rendering engine is turned off. This means React components provided to areas of the grid not yet using React UI will not work. For example if you have a custom Header Component written in React, it will currently not work when `reactUi=true`.
 
 This is temporary while we implement React UI across all of AG Grid. Once complete, there will be no part using the old rendering engine and this issue will be no longer relevant.
 
+## Community vs Enterprise
+
+React UI is covering both AG Grid Community and AG Grid Enterprise. Once complete, both Community and Enterprise
+will be 100% React.
 ## What's Next for React UI
 
 We are now charging ahead at completing the React UI work. That means going through the list in the previous section and converting everything to React UI.
@@ -189,8 +166,4 @@ We have spent six months getting this far. We feel most of the hard work has bee
 
 ## Can I use React UI In Production Now?
 
-Hell No!! Are you crazy?
-
-It's from our labs and only covers half of the grid so far, you would be crazy to consider this for production!
-
-However we know that at least five of you, if not hundreds or thousands more of you, are crazy mother duckers, and love the bleeding edge. To those brave knights who wish to ride AG Grid React UI in production, we send you our love and respect, and look forward to you helping us get our React UI perfect :)
+This is brand new, so there may be some teething problems. However if you are happy with what you see, then yes you can use it in production. It is part of AG Grid and is covered by the same SLA, which means we will endeavour to fix all bugs and help via the same support channels.
