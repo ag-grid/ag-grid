@@ -4,7 +4,7 @@ import supportedFrameworks from './supported-frameworks';
 describe('convertToFrameworkUrl', () => {
     it.each(supportedFrameworks)
         ('returns grid URLs for %s grid pages', framework => {
-            expect(convertToFrameworkUrl('/getting-started/', framework)).toBe(`/${framework === 'react' ? 'react-data' : framework}-grid/getting-started/`);
+            expect(convertToFrameworkUrl('/getting-started/', framework)).toBe(`/${framework}-data-grid/getting-started/`);
         });
 
     it.each(supportedFrameworks)

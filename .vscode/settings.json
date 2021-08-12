@@ -7,6 +7,9 @@
         "**/dist": true
     },
     "typescript.tsdk": "node_modules/typescript/lib",
+    "[typescript]": {
+        "editor.autoClosingBrackets": "always"
+    },
     "cSpell.language": "en-GB",
     "cSpell.words": [
         "autowire",

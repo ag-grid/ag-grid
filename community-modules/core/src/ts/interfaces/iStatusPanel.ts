@@ -16,6 +16,10 @@ export interface IStatusPanelParams {
     context: any;
 }
 
-export interface IStatusPanel { }
+export interface IStatusPanel {
+    /** If using a framework, returns the underlying component instance, so you can call methods
+    * on it if you want. */
+    getFrameworkComponentInstance?(): any;
+}
 
 export interface IStatusPanelComp extends IStatusPanel, IComponent<IStatusPanelParams> { }
