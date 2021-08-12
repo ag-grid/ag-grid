@@ -22,7 +22,7 @@ export const onRouteUpdate = ({ location }) => {
     if (['/', '/documentation/'].includes(getRelativePath(location.pathname))) {
         const selectedFramework = LocalStorage.get(frameworkStorageKey) || 'javascript';
 
-        navigate(`/${selectedFramework}${selectedFramework === 'react' ? '-data' : ''}-grid/`, { replace: true });
+        navigate(`/${selectedFramework}-data-grid/`, { replace: true });
     } else if (LocalStorage.exists()) {
         const firstPart = getRelativePath(location.pathname).split('/').filter(p => p !== '')[0];
         const framework = firstPart && firstPart.replace(/-data-grid|-grid|-charts/, '');
