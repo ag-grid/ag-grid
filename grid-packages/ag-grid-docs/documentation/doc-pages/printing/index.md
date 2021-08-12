@@ -4,8 +4,9 @@ title: "Printing"
 
 This section explains how to use the Print Layout feature of the grid.
 
-A grid using print layout will not use any scrollbars so all rows and columns will get printed. The grid will auto-size width and height to fit all contents. This means if the grid is printed on paper all the cells will get included, as apposed to printing a grid with scrollbars and only cells within the visible area will get printed.
-
+A grid using print layout will not use any scrollbars so all rows and columns will get printed. The grid will auto-size 
+width and height to fit all contents. This means if the grid is printed on paper all the cells will get included, as 
+opposed to printing a grid with scrollbars and only cells within the visible area will get printed.
 
 The example below shows print layout. The following can be noted:
 

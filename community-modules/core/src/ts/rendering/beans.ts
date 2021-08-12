@@ -17,7 +17,6 @@ import { PopupService } from "../widgets/popupService";
 import { ValueFormatterService } from "./valueFormatterService";
 import { StylingService } from "../styling/stylingService";
 import { ColumnHoverService } from "./columnHoverService";
-import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
 import { PaginationProxy } from "../pagination/paginationProxy";
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { UserComponentFactory } from "../components/framework/userComponentFactory";
@@ -37,6 +36,8 @@ import { ResizeObserverService } from "../misc/resizeObserverService";
 import { CtrlsService } from "../ctrlsService";
 import { NavigationService } from "../gridBodyComp/navigationService";
 import { AgStackComponentsRegistry } from "../components/agStackComponentsRegistry";
+import { CtrlsFactory } from "../ctrlsFactory";
+import { UserComponentRegistry } from "../components/framework/userComponentRegistry";
 
 /** Using the IoC has a slight performance consideration, which is no problem most of the
  * time, unless we are trashing objects - which is the case when scrolling and rowComp
@@ -70,6 +71,7 @@ export class Beans {
     @Autowired('stylingService') public stylingService: StylingService;
     @Autowired('columnHoverService') public columnHoverService: ColumnHoverService;
     @Autowired('userComponentFactory') public userComponentFactory: UserComponentFactory;
+    @Autowired('userComponentRegistry') public userComponentRegistry: UserComponentRegistry;
     @Autowired('animationFrameService') public taskQueue: AnimationFrameService;
     @Autowired('dragAndDropService') public dragAndDropService: DragAndDropService;
     @Autowired('sortController') public sortController: SortController;
@@ -83,6 +85,7 @@ export class Beans {
     @Autowired('rowCssClassCalculator') public rowCssClassCalculator: RowCssClassCalculator;
     @Autowired('rowModel') public rowModel: IRowModel;
     @Autowired('ctrlsService') public ctrlsService: CtrlsService;
+    @Autowired('ctrlsFactory') public ctrlsFactory: CtrlsFactory;
     @Autowired('agStackComponentsRegistry') public agStackComponentsRegistry: AgStackComponentsRegistry;
 
     public doingMasterDetail: boolean;

@@ -14,24 +14,20 @@ export class CellKeyboardListenerFeature extends BeanStub {
     private readonly beans: Beans;
     private readonly column: Column;
     private readonly rowNode: RowNode;
-    private readonly rowCtrl: RowCtrl | null;
-    private readonly scope: any;
+    private readonly rowCtrl: RowCtrl;
 
-    private cellComp: ICellComp;
     private eGui: HTMLElement;
 
-    constructor(ctrl: CellCtrl, beans: Beans, column: Column, rowNode: RowNode, scope: any, rowCtrl: RowCtrl | null) {
+    constructor(ctrl: CellCtrl, beans: Beans, column: Column, rowNode: RowNode, scope: any, rowCtrl: RowCtrl) {
         super();
         this.cellCtrl = ctrl;
         this.beans = beans;
         this.column = column;
         this.rowNode = rowNode;
-        this.scope = scope;
         this.rowCtrl = rowCtrl;
     }
 
-    public setComp(comp: ICellComp, eGui: HTMLElement): void {
-        this.cellComp = comp;
+    public setComp(eGui: HTMLElement): void {
         this.eGui = eGui;
     }
 
@@ -98,7 +94,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
     }
 
     private onEnterKeyDown(e: KeyboardEvent): void {
-        if (this.cellCtrl.isEditing() || this.rowCtrl!.isEditing()) {
+        if (this.cellCtrl.isEditing() || this.rowCtrl.isEditing()) {
             this.cellCtrl.stopEditingAndFocus();
         } else {
             if (this.beans.gridOptionsWrapper.isEnterMovesDown()) {

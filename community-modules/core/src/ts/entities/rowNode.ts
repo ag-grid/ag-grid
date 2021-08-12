@@ -529,6 +529,7 @@ export class RowNode implements IEventEmitter {
 
     public checkAutoHeights(): void {
         let notAllPresent = false;
+        let nonePresent = true;
         let newRowHeight = 1;
 
         const autoHeights = this.__autoHeights!;
@@ -540,6 +541,7 @@ export class RowNode implements IEventEmitter {
                 notAllPresent = true;
                 return;
             }
+            nonePresent = false;
             if (cellHeight > newRowHeight) {
                 newRowHeight = cellHeight;
             }
@@ -547,12 +549,20 @@ export class RowNode implements IEventEmitter {
 
         if (notAllPresent) { return; }
 
+        const setTheHeight = (height: number) => {
+            this.setRowHeight(height);
+            const rowModelCasted = this.rowModel as (IClientSideRowModel | IServerSideRowModel);
+            rowModelCasted.onRowHeightChanged();
+        };
+
+        if (nonePresent) { 
+            setTheHeight(this.gridOptionsWrapper.getRowHeightForNode(this).height);
+            return;
+        }
+
         if (newRowHeight == this.rowHeight) { return; }
 
-        this.setRowHeight(newRowHeight);
-
-        const rowModelCasted = this.rowModel as (IClientSideRowModel | IServerSideRowModel);
-        rowModelCasted.onRowHeightChanged();
+        setTheHeight(newRowHeight);
     }
 
     public setRowIndex(rowIndex: number | null): void {

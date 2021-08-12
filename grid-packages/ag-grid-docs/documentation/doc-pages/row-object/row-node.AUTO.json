@@ -220,6 +220,10 @@
     "description": "/** We cache the result of hasChildren() so that we can be aware of when it has changed, and hence\n * fire the event. Really we should just have hasChildren as an attribute and do away with hasChildren()\n * method, however that would be a breaking change. */",
     "type": { "returnType": "boolean" }
   },
+  "___autoHeights": {
+    "description": "/** When one or more Columns are using autoHeight, this keeps track of height of each autoHeight Cell,\n * indexed by the Column ID. */",
+    "type": { "returnType": "{[id:string]:number|undefined}" }
+  },
   "alreadyRendered": {
     "description": "/** True when nodes with the same id are being removed and added as part of the same batch transaction */",
     "type": {}
@@ -312,6 +316,13 @@
       "returnType": "void"
     }
   },
+  "setRowAutoHeight": {
+    "type": {
+      "arguments": { "cellHeight": "number | undefined", "column": "Column" },
+      "returnType": "void"
+    }
+  },
+  "checkAutoHeights": { "type": { "arguments": {}, "returnType": "void" } },
   "setRowIndex": {
     "type": {
       "arguments": { "rowIndex": "number | null" },

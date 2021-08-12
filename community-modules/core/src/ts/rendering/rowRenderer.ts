@@ -563,9 +563,9 @@ export class RowRenderer extends BeanStub {
         this.getCellCtrls(params.rowNodes, params.columns)
             .forEach(cellCtrl => {
                 if (cellCtrl.refreshShouldDestroy()) {
-                    const rowComp = cellCtrl.getRowCtrl();
-                    if (rowComp) {
-                        rowComp.refreshCell(cellCtrl);
+                    const rowCtrl = cellCtrl.getRowCtrl();
+                    if (rowCtrl) {
+                        rowCtrl.refreshCell(cellCtrl);
                     }
                 } else {
                     cellCtrl.refreshCell(refreshCellParams);
@@ -885,10 +885,10 @@ export class RowRenderer extends BeanStub {
             rowNodesToRefresh!.forEach(r => idsToRefresh[r.id!] = true);
         }
 
-        iterateObject(this.rowCtrlsByRowIndex, (id: string, rowComp: RowCtrl) => {
-            if (!rowComp.isFullWidth()) { return; }
+        iterateObject(this.rowCtrlsByRowIndex, (id: string, rowCtrl: RowCtrl) => {
+            if (!rowCtrl.isFullWidth()) { return; }
 
-            const rowNode = rowComp.getRowNode();
+            const rowNode = rowCtrl.getRowNode();
 
             if (selectivelyRefreshing && idsToRefresh) {
                 // we refresh if a) this node is present or b) this parents nodes is present. checking parent
@@ -900,9 +900,9 @@ export class RowRenderer extends BeanStub {
                 if (skipThisNode) { return; }
             }
 
-            const fullWidthRowsRefreshed = rowComp.refreshFullWidth();
+            const fullWidthRowsRefreshed = rowCtrl.refreshFullWidth();
             if (!fullWidthRowsRefreshed) {
-                const rowIndex = rowComp.getRowNode().rowIndex;
+                const rowIndex = rowCtrl.getRowNode().rowIndex;
 
                 rowsToRemove.push(rowIndex!.toString());
             }

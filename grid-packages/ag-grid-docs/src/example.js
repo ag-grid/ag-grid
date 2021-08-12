@@ -825,8 +825,8 @@ var desktopDefaultCols = [
                 headerName: "Language", field: "language", width: 150, editable: true,
                 cellEditor: 'agSelectCellEditor',
                 cellClass: 'vAlign',
-                wrapText: true,
-                autoHeight: true,
+                // wrapText: true,
+                // autoHeight: true,
                 enableRowGroup: true,
                 enablePivot: true,
                 // rowGroupIndex: 0,
@@ -922,8 +922,8 @@ var desktopDefaultCols = [
             {
                 headerName: "Game Name", field: "game.name", width: 180, editable: true, filter: 'agMultiColumnFilter',
                 tooltipField: 'game.name',
-                wrapText: true,
-                autoHeight: true,
+                // wrapText: true,
+                // autoHeight: true,
                 cellClass: function() {
                     return 'alphabet';
                 },
@@ -1244,10 +1244,10 @@ function createData() {
             clearInterval(intervalId);
             window.setTimeout(function() {
                 gridOptions.api.setColumnDefs(colDefs);
-                for (let i = 0; i<data.length; i+=2) {
-                    data[i].game.name = 'accusantium doloremque laudantium, totam rem aperiam eaque ipsa';
-                    data[i].language = 'accusantium doloremque laudantium, totam rem aperiam eaque ipsa';
-                }
+                // for (let i = 0; i<data.length; i+=2) {
+                //     data[i].game.name = 'accusantium doloremque laudantium, totam rem aperiam eaque ipsa';
+                //     data[i].language = 'accusantium doloremque laudantium, totam rem aperiam eaque ipsa';
+                // }
                 gridOptions.api.setRowData(data);
                 eMessage.style.display = 'none';
                 eMessageText.innerHTML = '';

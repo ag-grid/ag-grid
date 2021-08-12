@@ -160,6 +160,7 @@ export class ColumnModel extends BeanStub {
 
     // grid columns that have colDef.autoHeight set
     private displayedAutoHeightCols: Column[];
+    private autoHeightActive: boolean;
 
     private suppressColumnVirtualisation: boolean;
 
@@ -3077,6 +3078,8 @@ export class ColumnModel extends BeanStub {
         this.gridColumnsMap = {};
         this.gridColumns.forEach(col => this.gridColumnsMap[col.getId()] = col);
 
+        this.autoHeightActive = this.gridColumns.filter(col => col.getColDef().autoHeight).length > 0;
+
         const event: GridColumnsChangedEvent = {
             type: Events.EVENT_GRID_COLUMNS_CHANGED,
             api: this.gridApi,
@@ -3232,6 +3235,10 @@ export class ColumnModel extends BeanStub {
         this.joinDisplayedColumns();
         this.setLeftValues(source);
         this.displayedAutoHeightCols = this.displayedColumns.filter(col => col.getColDef().autoHeight);
+    }
+
+    public isAutoRowHeightActive(): boolean {
+        return this.autoHeightActive;
     }
 
     private joinDisplayedColumns(): void {

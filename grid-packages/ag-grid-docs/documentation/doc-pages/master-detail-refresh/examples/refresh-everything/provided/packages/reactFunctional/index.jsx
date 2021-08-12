@@ -1,6 +1,6 @@
 'use strict';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { render } from 'react-dom';
 import { AgGridColumn, AgGridReact } from 'ag-grid-react';
 import 'ag-grid-enterprise';
@@ -11,7 +11,12 @@ const GridExample = () => {
     const [allRowData, setAllRowData] = useState([]);
     const [rowData, setRowData] = useState([]);
 
+    const gridApiRef = useRef();
+
     const onGridReady = params => {
+        console.log(params);
+        gridApiRef.current = params.api;
+
         const httpRequest = new XMLHttpRequest();
         httpRequest.open('GET', 'https://www.ag-grid.com/example-assets/master-detail-data.json');
         httpRequest.send();
@@ -24,10 +29,12 @@ const GridExample = () => {
         };
     };
 
-    const onFirstDataRendered = (params) => {
+    useEffect( ()=> {
+        if (!allRowData || allRowData.length==0) { return; }
+
         setTimeout(function() {
-            params.api.getDisplayedRowAtIndex(0).setExpanded(true);
-        }, 0);
+            gridApiRef.current.getDisplayedRowAtIndex(0).setExpanded(true);
+        }, 1000);
 
         setInterval(function() {
             if (!allRowData) {
@@ -48,9 +55,10 @@ const GridExample = () => {
             data.callRecords = newCallRecords;
             data.calls++;
             const tran = { update: [data] };
-            params.api.applyTransaction(tran);
+            gridApiRef.current.applyTransaction(tran);
         }, 2000);
-    };
+
+    }, [allRowData]);
 
     return (
         <div style={{ width: '100%', height: '100%' }}>
@@ -67,12 +75,6 @@ const GridExample = () => {
                     enableCellChangeFlash={true}
                     detailCellRendererParams={{
                         refreshStrategy: "everything",
-                        template: function(params) {
-                            return `<div class="ag-details-row ag-details-row-fixed-height">
-                                        <div style="padding: 4px; font-weight: bold;">${params.data.name} ${params.data.calls} calls</div>
-                                        <div ref="eDetailGrid" class="ag-details-grid ag-details-grid-fixed-height"/></div>
-                                    </div>`;
-                        },
                         detailGridOptions: {
                             rowSelection: "multiple",
                             enableCellChangeFlash: true,
@@ -109,7 +111,6 @@ const GridExample = () => {
                         }
                     }}
                     onGridReady={onGridReady}
-                    onFirstDataRendered={onFirstDataRendered}
                     rowData={rowData}>
                     <AgGridColumn field="name" cellRenderer="agGroupCellRenderer" />
                     <AgGridColumn field="account" />

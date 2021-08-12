@@ -24,6 +24,11 @@ export interface ComponentMeta {
     componentName: string;
 }
 
+export interface ControllerMeta {
+    controllerClass: new () => Object;
+    controllerName: string;
+}
+
 interface BeanWrapper {
     bean: any;
     beanInstance: any;
