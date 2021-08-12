@@ -74,6 +74,9 @@
                 "name": "Suppress Keyboard Events",
                 "url": "/keyboard-navigation/#suppresskeyboardevent"
             }
+        },
+        "suppressPaste": {
+            "description": "Pasting is on by default as long as cells are editable (non-editable cells cannot be modified, even with a paste operation). Set to `true` turn paste operations off."
         }
     },
     "header": {

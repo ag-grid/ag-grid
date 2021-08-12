@@ -404,13 +404,18 @@ export interface ColDef extends AbstractColDef, IFilterDef {
 }
 
 export interface ColumnFunctionCallbackParams {
+/** Row node for the give row */
     node: RowNode;
+/** Data associated with the node */
     data: any;
+/** Column for this callback */
     column: Column;
+/** ColDef provided for this column */
     colDef: ColDef;
-    context: any;
     api: GridApi;
     columnApi: ColumnApi;
+    /** The context as provided on `gridOptions.context` */
+    context: any;
 }
 
 export interface CheckboxSelectionCallbackParams extends ColumnFunctionCallbackParams {}
@@ -485,6 +490,7 @@ export interface BaseColDefParams {
     column: Column;
     api: GridApi;
     columnApi: ColumnApi;
+/** The context as provided on `gridOptions.context` */
     context: any;
 }
 
@@ -535,17 +541,20 @@ export interface SuppressKeyboardEventParams extends ColumnFunctionCallbackParam
 }
 
 export interface SuppressHeaderKeyboardEventParams {
-    api: GridApi;
-    columnApi: ColumnApi;
     column: Column | ColumnGroup;
     colDef: ColDef | ColGroupDef | null;
-    context: any;
     headerRowIndex: number;
     event: KeyboardEvent;
+    api: GridApi;
+    columnApi: ColumnApi;
+    /** The context as provided on `gridOptions.context` */
+    context: any;
 }
 
 export interface CellClassParams extends RowClassParams {
+/** The colDef associated with the column for this cell */
     colDef: ColDef;
+/** The value to be rendered */
     value: any;
 }
 export interface CellClassFunc {

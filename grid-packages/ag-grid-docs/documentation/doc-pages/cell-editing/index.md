@@ -16,21 +16,7 @@ The simplest way to enable editing is by providing `colDef.editable=true`. By do
 
 It is possible to have only a few cells in a column editable; to do so, instead of `colDef.editable=true`, you can specify a callback that will get called for each cell displayed for that column. If you return `true` the cell will be editable.
 
-```ts
-// function to enable/disable column editable.
-function isEditable(params: EditableCallbackParams) => boolean;
-
-// interface for params
-interface EditableCallbackParams {
-    node: RowNode; // The `RowNode` of the row being rendered.
-    data: any; // Any data associated with the node.
-    column: Column; // The column being rendered (in AG Grid, each `colDef` is wrapped by a `Column`).
-    colDef: ColDef; // The `colDef` being rendered.
-    context: any; // The context as set on the `gridOptions`.
-    api: GridApi; // A reference to the grid API.
-    columnApi: ColumnApi; // A reference to the column API.
-}
-```
+<api-documentation source='column-properties/properties.json' section='editing' names='["editable"]' config='{ "codeSrc": "ColumnOptions"}'></api-documentation>
 
 ## Default Editing
 

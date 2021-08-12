@@ -689,12 +689,17 @@ export interface RowClassRules {
 }
 
 export interface RowClassParams {
+/** The data associated with this row from rowData */
     data: any;
+/** The RowNode associated with this row */
     node: RowNode;
+/** The index of the row */
     rowIndex: number;
+/** If using AngularJs, is the row's child scope, otherwise null */
     $scope: any;
     api: GridApi;
     columnApi: ColumnApi;
+/** Context object if provided to `gridOptions.context` */
     context: any;
 }
 
@@ -833,6 +838,7 @@ export interface PaginationNumberFormatterParams {
 }
 
 export interface ProcessDataFromClipboardParams {
+/** 2D array of all cells from the clipboard */
     data: string[][];
 }
 

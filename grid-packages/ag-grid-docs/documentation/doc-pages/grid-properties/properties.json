@@ -837,10 +837,6 @@
         "clipboardDeliminator": {
             "description": "Specify the deliminator to use when copying to [clipboard](/clipboard/)."
         },
-        "suppressFocusAfterRefresh": {
-            "default": false,
-            "description": "Set to `true` to not set focus back on the grid after a refresh. This can avoid issues where you want to keep the focus on another part of the browser."
-        },
         "suppressLastEmptyLineOnPaste": {
             "default": false,
             "description": "Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard."
@@ -1113,6 +1109,10 @@
         "suppressBrowserResizeObserver": {
             "default": false,
             "description": "The grid will check for `ResizeObserver` and use it if it exists in the browser, otherwise it will use the grid's alternative implementation. Some users reported issues with Chrome's `ResizeObserver`. Use this property to always use the grid's alternative implementation should such problems exist."
+        },
+        "suppressFocusAfterRefresh": {
+            "default": false,
+            "description": "Set to `true` to not set focus back on the grid after a refresh. This can avoid issues where you want to keep the focus on another part of the browser."
         }
     }
 }
