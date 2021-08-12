@@ -10,15 +10,15 @@ import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
 
-// Custom Cell Renderer, no memo(), we will have wasted renders!!
-const RenderCounterCellRenderer = (params) => {
+// Custom Cell Renderer - note we use memo to avoid wasted renders
+const RenderCounterCellRenderer = memo( (params) => {
     const renderCountRef = useRef(1);
     return (
           <span className="my-renderer">
               <span className="render-count">({renderCountRef.current++})</span> {params.value} 
           </span>
     );
-};
+});
 
 function GridExample() {
 

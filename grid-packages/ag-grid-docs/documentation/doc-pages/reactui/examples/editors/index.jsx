@@ -10,7 +10,7 @@ import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import React, { forwardRef, memo, useEffect, useImperativeHandle, useMemo, useRef, useState, useCallback } from 'react';
 import { render } from 'react-dom';
 
-const MyEditor = memo(forwardRef((props, ref) => {
+const MyReactEditor = memo(forwardRef((props, ref) => {
 
     const [value, setValue] = useState(parseInt(props.value));
     const refInput = useRef(null);
@@ -36,7 +36,7 @@ const MyEditor = memo(forwardRef((props, ref) => {
     useEffect( ()=> refInput.current.focus(), []);
 
     return (
-        <input type="number" className="my-react-editor"
+        <input type="number" className="my-editor"
                ref={refInput}
                value={value}
                onChange={onChangeListener}
@@ -44,6 +44,29 @@ const MyEditor = memo(forwardRef((props, ref) => {
         />
     );
  }));
+
+class MyJavaScriptEditor {
+    init(props) {
+        this.gui = document.createElement('input');
+        this.gui.type = 'number';
+        this.gui.className = 'my-editor'
+        this.gui.value = props.value;
+        this.gui.addEventListener('keydown', event => {
+            if (event.keyCode==13) {
+                props.stopEditing();
+            }
+        });
+    }
+    afterGuiAttached() {
+        this.gui.focus();
+    }
+    getGui() {
+        return this.gui;
+    }
+    getValue() {
+        return this.gui.value;
+    }
+}
 
  function GridExample() {
 
@@ -53,30 +76,34 @@ const MyEditor = memo(forwardRef((props, ref) => {
     // never changes, so we can use useMemo
     const columnDefs = useMemo( ()=> [
         {
-            headerName: 'JS Inline',
-            field: 'country',
-            editable: true
+            field: 'country'
         },
         {
-            headerName: 'JS Popup',
             field: 'athlete',
-            editable: true,
-            cellEditor: 'agRichSelect',
-            cellEditorParams: {
-                values: ['Michael Phelps', 'Natalie Coughlin', 'Aleksey Nemov', 'Alicia Coutts', 'Missy Franklin', 'Ryan Lochte', 'Allison Schmitt', 'Ian Thorpe', 'Dara Torres', 'Cindy Klassen', 'Nastia Liukin', 'Marit Bjørgen', 'Sun Yang', 'Kirsty Coventry', 'Libby Lenton-Trickett']
-            },
-            cellEditorPopup: true
         },
         {
-            headerName: 'React Inline',
+            headerName: 'JS Inline',
             field: 'gold',
             editable: true,
-            cellEditorFramework: MyEditor
+            cellEditor: MyJavaScriptEditor
         },
         {
             field: 'silver',
+            headerName: 'JS Popup',
+            cellEditor: MyJavaScriptEditor,
+            cellEditorPopup: true,
+            cellEditorPopupPosition: 'under'
+        },
+        {
+            headerName: 'React Inline',
+            field: 'bronze',
+            editable: true,
+            cellEditorFramework: MyReactEditor
+        },
+        {
+            field: 'total',
             headerName: 'React Popup',
-            cellEditorFramework: MyEditor,
+            cellEditorFramework: MyReactEditor,
             cellEditorPopup: true,
             cellEditorPopupPosition: 'under'
         }
@@ -86,7 +113,8 @@ const MyEditor = memo(forwardRef((props, ref) => {
     const defaultColDef = useMemo( ()=> ({
         resizable: true,
         editable: true,
-        sortable: true
+        sortable: true,
+        flex: 1
     }), []);
 
     // changes, needs to be state
