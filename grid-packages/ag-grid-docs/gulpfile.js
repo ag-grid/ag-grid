@@ -43,6 +43,7 @@ const populateDevFolder = () => {
     const react = createCopyTask('../../community-modules/react/**/*.*', '../../community-modules/react/', '@ag-grid-community/react');
     const angular = createCopyTask('../../community-modules/angular/dist/ag-grid-angular/**/*.*', '../../community-modules/angular/', '@ag-grid-community/angular');
     const vue = createCopyTask('../../community-modules/vue/**/*.*', '../../community-modules/vue/', '@ag-grid-community/vue');
+    const vue3 = createCopyTask('../../community-modules/vue3/**/*.*', '../../community-modules/vue3/', '@ag-grid-community/vue3');
 
     const chartReact = createCopyTask('../../charts-packages/ag-charts-react/**/*.*', '../../charts-packages/ag-charts-react/', 'ag-charts-react');
     const chartAngular = createCopyTask('../../charts-packages/ag-charts-angular/dist/ag-charts-angular/**/*.*', '../../charts-packages/ag-charts-angular/', 'ag-charts-angular');
@@ -53,12 +54,13 @@ const populateDevFolder = () => {
     const packageAngular = createCopyTask('../../grid-packages/ag-grid-angular/dist/ag-grid-angular/**/*.*', '../../grid-packages/ag-grid-angular/', 'ag-grid-angular');
     const packageReact = createCopyTask('../../grid-packages/ag-grid-react/**/*.*', '../../grid-packages/ag-grid-react/', 'ag-grid-react');
     const packageVue = createCopyTask('../../grid-packages/ag-grid-vue/**/*.*', '../../grid-packages/ag-grid-vue/', 'ag-grid-vue');
+    const packageVue3 = createCopyTask('../../grid-packages/ag-grid-vue3/**/*.*', '../../grid-packages/ag-grid-vue3/', 'ag-grid-vue3');
 
     return merge(
         ...moduleCopyTasks,
-        react, angular, vue,
+        react, angular, vue, vue3,
         chartReact, chartAngular, chartVue,
-        packageCommunity, packageEnterprise, packageAngular, packageReact, packageVue
+        packageCommunity, packageEnterprise, packageAngular, packageReact, packageVue, packageVue3
     );
 };
 

@@ -158,25 +158,10 @@ const gridOptions = {
 }
 </snippet>
 
-The interface for the aggregation function is as follows:
+The interface for the aggregation function is `IAggFunc` which receives the params `IAggFuncParams` as follows:
 
-```ts
-// custom agg functions are a function that gets params
-interface IAggFunc {
-    (params: IAggFuncParams): any;
-}
-
-// the params are as follows
-interface IAggFuncParams {
-    values: any[]; // values to aggregate
-    column: Column; // column the aggregation function is working on
-    colDef: ColDef; // colDef of the columns
-    rowNode: RowNode; // the parent RowNode, where the aggregation result will be shown
-    data: any; // data (if any) of the parent Row Node.
-    api: GridApi; // the grid's API
-    columnApi: ColumnApi; // the grid's Column API
-}
-```
+<interface-documentation interfaces='["IAggFunc"]' ></interface-documentation>
+ 
 [[note]]
 | Javascript doesn't always represent decimal numbers correctly (e.g `0.2 + 0.1 = 0.30000000000000004`). For this
 | reason, if your aggregations rely on decimal values, it's better to add logic to enforce the amount of decimal

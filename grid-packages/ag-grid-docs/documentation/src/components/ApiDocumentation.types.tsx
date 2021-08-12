@@ -40,6 +40,7 @@ interface ChildDocEntry {
     };
     description?: string;
     isRequired?: boolean;
+    strikeThrough?: boolean;
     options?: string[];
     default?: string;
     type: PropertyType | string;

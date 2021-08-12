@@ -180,7 +180,7 @@ supplied function will be the latest value.
 By default the AG Grid React component will check props passed in to determine if data has changed 
 and will only re-render based on actual changes.
 
-For `rowData` and `columnDefs` we provide an option for you to override this behaviour by the `rowDataChangeDetectionStrategy` and `columnDefsChangeDetectionStrategy` properties respectively:
+For `rowData` we provide an option for you to override this behaviour by the `rowDataChangeDetectionStrategy` property:
 
 ```jsx
 
@@ -188,7 +188,6 @@ For `rowData` and `columnDefs` we provide an option for you to override this beh
     onGridReady={this.onGridReady}
     rowData={this.state.rowData}
     rowDataChangeDetectionStrategy={ChangeDetectionService.IdentityCheck}
-    columnDefsChangeDetectionStrategy={ChangeDetectionService.NoCheck}
     //...other properties
 ```
 
@@ -209,8 +208,4 @@ For `rowData` the default value for this setting is:
 
 If you're using Redux or larger data sets then a default of `IdentityCheck` is a good idea 
 provided you ensure you make a copy of the new row data and do not mutate the `rowData` passed in.
-
-For `columnDefs` the default value for this setting is `NoCheck` - this allows the grid to 
-determine if a column configuration change is to be applied or not. This is the preferred and 
-most performant choice.
 

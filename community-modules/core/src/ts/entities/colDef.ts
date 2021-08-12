@@ -71,10 +71,15 @@ export interface IAggFunc {
 }
 
 export interface IAggFuncParams {
+    /** Values to aggregate */
     values: any[];
+    /** Column the aggregation function is working on */
     column: Column;
+    /** ColDef of the aggregation column */
     colDef: ColDef;
+    /** The parent RowNode, where the aggregation result will be shown */
     rowNode: RowNode;
+    /** data (if any) of the parent RowNode */
     data: any;
     api: GridApi;
     columnApi: ColumnApi;
