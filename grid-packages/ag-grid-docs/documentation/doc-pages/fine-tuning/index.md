@@ -175,7 +175,7 @@ const GridExample = () => {
 By making use of `useRef` and `useCallback` in our new method `useDynamicCallback` we ensure that all values within the
 supplied function will be the latest value.
 
-## Row Data & Column Def Control
+## Row Data Control
 
 By default the AG Grid React component will check props passed in to determine if data has changed 
 and will only re-render based on actual changes.
