@@ -441,7 +441,16 @@ export class PieSeries extends PolarSeries {
         const {
             fills, strokes, fillOpacity, strokeOpacity,
             radiusScale, callout, shadow,
-            highlightStyle: { fill, stroke, centerOffset, strokeWidth: highlightedStrokeWidth },
+            highlightStyle: {
+                fill,
+                stroke,
+                centerOffset,
+                strokeWidth: highlightedDatumStrokeWidth,
+                series: {
+                    enabled: seriesHighlightingEnabled,
+                    strokeWidth: highlightedSeriesStrokeWidth
+                }
+            },
             angleKey, radiusKey, formatter
         } = this;
         const { highlightedDatum } = this.chart;
@@ -451,8 +460,14 @@ export class PieSeries extends PolarSeries {
 
         this.groupSelection.selectByTag<Sector>(PieNodeTag.Sector).each((sector, datum, index) => {
             const radius = radiusScale.convert(datum.radius);
+            const highlightedDirectly = datum === highlightedDatum;
+            const highlightedViaLegend = this.highlightedItemId !== undefined;
             const highlighted = datum === highlightedDatum || datum.itemId === this.highlightedItemId;
-            const strokeWidth = highlighted && highlightedStrokeWidth || this.strokeWidth;
+            const strokeWidth = highlightedDirectly && highlightedDatumStrokeWidth !== undefined
+                ? highlightedDatumStrokeWidth
+                : highlightedViaLegend && highlightedSeriesStrokeWidth !== undefined
+                    ? highlightedSeriesStrokeWidth
+                    : this.strokeWidth;
             const sectorFill = highlighted && fill !== undefined ? fill : fills[index % fills.length];
             const sectorStroke = highlighted && stroke !== undefined ? stroke : strokes[index % strokes.length];
             let format: PieSeriesFormat | undefined = undefined;
