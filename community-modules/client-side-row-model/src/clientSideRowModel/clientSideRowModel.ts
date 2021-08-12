@@ -931,8 +931,16 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         this.rowsToDisplay = this.flattenStage.execute({ rowNode: this.rootNode }) as RowNode[];
     }
 
+    private onRowHeightChangedDebounced: ()=>void;
+
     public onRowHeightChanged(): void {
-        this.refreshModel({ step: ClientSideRowModelSteps.MAP, keepRenderedRows: true, keepEditingRows: true });
+        if (this.onRowHeightChangedDebounced==null) {
+            this.onRowHeightChangedDebounced = this.animationFrameService.debounce( ()=> {
+                this.refreshModel({ step: ClientSideRowModelSteps.MAP, keepRenderedRows: true, keepEditingRows: true });
+            });
+        }
+
+        this.onRowHeightChangedDebounced();
     }
 
     public resetRowHeights(): void {

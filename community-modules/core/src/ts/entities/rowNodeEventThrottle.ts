@@ -14,7 +14,9 @@ export class RowNodeEventThrottle extends BeanStub {
 
     private clientSideRowModel: IClientSideRowModel;
 
-    private events: RowGroupOpenedEvent[] | undefined;
+    private events: RowGroupOpenedEvent[] = [];
+
+    private dispatchExpandedDebounced: ()=>void;
 
     @PostConstruct
     private postConstruct(): void {
@@ -36,28 +38,16 @@ export class RowNodeEventThrottle extends BeanStub {
     // (eg user calls api.ensureRowVisible(), which in turn flushes ).
     public dispatchExpanded(event: RowGroupOpenedEvent): void {
 
-        const doingThrottle = this.animationFrameService.isOn() && this.clientSideRowModel;
-
-        if (!doingThrottle) {
-            if (this.clientSideRowModel) {
-                this.clientSideRowModel.onRowGroupOpened();
-            }
-            this.eventService.dispatchEvent(event);
-            return; 
-        }
-
-        if (!this.events) {
-            this.events = [];
-            this.animationFrameService.addDestroyTask(this.flushEvents.bind(this));
-        }
-
         this.events.push(event);
-    }
 
-    private flushEvents(): void {
-        this.clientSideRowModel.onRowGroupOpened();
-        if (!this.events) { return; }
-        this.events.forEach( e => this.eventService.dispatchEvent(e) );
-        this.events = undefined;
+        if (this.dispatchExpandedDebounced==null) {
+            this.dispatchExpandedDebounced = this.animationFrameService.debounce( ()=> {
+                this.clientSideRowModel && this.clientSideRowModel.onRowGroupOpened();
+                this.events.forEach( e => this.eventService.dispatchEvent(e) );
+                this.events = [];
+            });
+        }
+
+        this.dispatchExpandedDebounced();
     }
 }
