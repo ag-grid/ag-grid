@@ -23,11 +23,11 @@ The latest AG Grid v26.0 has a large portion of the grid UI written in React, re
 
 ## Show Me
 
-To enable React UI in the latest AG Grid release, set the grid property `reactUi=true`. Below is an example of the new React UI.
+To enable React UI in the latest AG Grid release, set the grid property `reactUi=true`.  You can do this in your own applications from v26 onwards.
 
 With `reactUi=true`, the grid renders cells using React, and all parent components of the cells are also written in React, all the way back to the client application. This means all the UI from your application down to the cells, including any provided React Cell Renderers, is all now 100% React.
 
-The example demonstrates grid features such as row sorting by clicking the headers with the rows moving smoothly to the new locations. The React UI is built on top of the existing AG Grid services, thus all features carry across.
+The example below demonstrates grid features such as row sorting by clicking the headers with the rows moving smoothly to the new locations. The React UI is built on top of the existing AG Grid services, thus all features carry across.
 
 You may say _"Doesn't it look identical to before?"_, and you would be right, it is identical to before from an application users point of view. That's the point - it is supposed to work exactly as before. The difference is this time it is all rendered in React.
 
@@ -43,17 +43,23 @@ As the grid is now written in React, we welcome trashing it using React profilin
 
 <image-caption src="reactui/resources/react-dev-tools.png" alt="React Developer Tools" centered="true"></image-caption>
 
-## Can I Try In My App?
+## Advanced Grid Features
 
-Yes.
+All features of AG Grid work when `reactUi=true`, no exceptions.
 
-Set the `reactUi=true` property in your AG Grid application using the latest AG Grid version and check it out.
+Below is an example with Range Selection, Checkbox Click Selection and Row Grouping.
 
-## Does React UI Use Portals?
+<grid-example title='React UI Advanced Features' name='advanced-features' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>
 
-No.
+Below is an example using Master Detail. All grids below, including details grids, are using React UI.
 
-Previous to React UI, when the rendering engine was written in Plain JavaScript, React Portals were used to host instances of provided Cell Renderer's and Cell Editors. This caused issues such as additional `div`'s appear in the DOM to host the portal, and also sometimes flickering or delayed rendering was visible.
+<grid-example title='React UI Master Detail' name='master-detail' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>
+
+## React UI and Portals?
+
+React UI dose not use portals to host custom components (eg Cell Renderers).
+
+Previous to React UI, when the rendering engine was written in Plain JavaScript, React Portals were used to host instances of provided components i.e. Cell Renderer's and Cell Editors etc. This caused issues such as additional `div`'s appear in the DOM to host the portal, and also sometimes flickering or delayed rendering was visible.
 
 The image below shows the DOM structure of a grid cell the old way compare to the new way. Note the additional hosting
 `div` element is gone when using React UI.
@@ -61,9 +67,7 @@ The image below shows the DOM structure of a grid cell the old way compare to th
 <image-caption src="reactui/resources/no-portals.png" alt="React UI - No Portals" centered="true"></image-caption>
 
 
-## Can JS Components Still Be Provided
-
-Yes.
+## JS Components inside React UI
 
 As before, you can provide components to customise the grid using React or Vanilla JavaScript. For example you can configure a Cell Renderer on a column using both `colDef.cellRenderer` for Vanilla JavaScript or `colDef.cellRendererFramework` for a React version.
 
@@ -73,42 +77,41 @@ The Vanilla JavaScript components are now the ones that are not native and need 
 
 It was important for AG Grid to keep backwards compatibility and still allow native JavaScript custom components as some users of AG Grid prefer providing reusable components in plain JavaScript. This is often done by large organisation, e.g. banks, who have 100's of projects using AG Grid mixed with React, Angular and Vue, and want to provide common components that work regardless of the framework used.
 
-## Show Me An Example Using Cell Editors
+## Using Cell Editors
 
-When React UI is enabled, the grid will work natively with provided React Cell Editors, as well as keeping backwards compatibility and support JavaScript Cell Editors.
+When React UI is enabled, the grid will work natively with provided React Cell Editors.
 
-Below is an example showing different types of Cell Editors. Note the following:
+Below is an example showing different types of Cell Editors and also mixing React and JavaScript for the provided editors. Note the following:
 
-* Column *JS Inline* uses the default Cell Editor, which happens to be written in JavaScript and is not a popup.
-* Column *JS Popup* uses the default Rich Select Cell Editor, which happens to be written in JavaScript and is a popup (`cellEditorPopup=true`).
-* Column *React Inline* is a provided React Cell Renderer and is inline.
-* Column *React Popup* is the same provided React Cell Renderer as the previous column, but it's configured to be in a popup (`cellEditorPopup=true`) and to appear below the cell (`cellEditorPopupPosition=true`).
-* Note if you inspect the DOM for *React Inline* editor, the editor is placed directly inside the cell without any wrapping DIV element.
+* Column *JS Inline* uses JavaScript Cell Editor.
+* Column *JS Popup* uses JavaScript Cell Editor in a popup (`cellEditorPopup=true`).
+* Column *React Inline* is a provided React Cell Renderer.
+* Column *React Popup* s a provided React Cell Renderer in a popup (`cellEditorPopup=true`).
+* Both popup editors are also configured to below the cell (`cellEditorPopupPosition=true`).
 
 <grid-example title='React UI Editors' name='editors' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>
 
-## Show Me No Wasted Renders
+## No Wasted Renders
 
 Below demonstrates no wasted React Render Cycles.
 
-Each Column is configured to use a Cell Renderer that prints into the Cell the number of times the Cell has had it's render method called. Note that the number stays at '1' even while the Cells are moved around using Row Sorting (click a Header) or Column Reordering (drag a Header).
+Each Column is configured to use a Cell Renderer that prints into the Cell the number of times the Cell has had it's render method called. Note that the number stays at '1' even if you do any of the following:
+1. Move columns by dragging the headers. The Cell Renderer does not re-render despite the cell moving.
+1. Create a Cell Range by dragging the mouse over some cells. The Cell Renderers do not re-render despite the cell UI background and border changing.
 
-When the contents of a Cell changes, by pressing the button Increase Some Medals, then only the cells that have had their values changed have the render method called.
+Clicking 'Increase Medals' will re-render the Cell Renderer's as the displayed value is updated.
 
-To properly achieve this, note that the Cell Renderer is memoized using `React.memo(RenderCounterCellRenderer)`.
+Note that we memoise the Cell Renderer using `const RenderCounterCellRenderer = memo( (params) => {`.
 
-To observe what happens when the Cell Renderer is not memoized, toggle using the button Toggle Memo. When the Cell Renderer is not memoized, then any time the Cell renders, the Cell Renderer will be rendered needlessly. For example clicking on a Cell, or doing a Range Selection over a range of Cells, will impact the Cell's background color and / or borders.
+<grid-example title='React UI Render Cycles' name='no-wasted-render' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>
+
+To example below demonstrates how the Cell Renderer gets re-rendered when we do not memoise the Cell Renderer.
+
+Both examples are identical with the exception of above uses memo, below does not use memo.
+
+Note below how moving columns and range selection does get the cell to needlessly re-render.
 
 <grid-example title='React UI Render Cycles' name='wasted-render' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>
-
-## Show Me Advanced Features Working
-
-Remember we said all features of AG Grid will work with React UI? Here is an example with Range Selection, Checkbox Click Selection and Row Grouping.
-
-Notice that the Cell Renderer for Sport is using inside the Grouping Column.
-
-<grid-example title='React UI Advanced Features' name='advanced-features' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>
-
 
 ## Good Breaking Changes
 

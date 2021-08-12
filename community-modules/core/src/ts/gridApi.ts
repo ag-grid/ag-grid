@@ -1277,7 +1277,8 @@ export class GridApi {
         this.destroyCalled = true;
 
         // destroy the UI first (as they use the services)
-        this.ctrlsService.getGridCtrl().destroyGridUi();
+        const gridCtrl = this.ctrlsService.getGridCtrl();
+        gridCtrl && gridCtrl.destroyGridUi();
 
         // destroy the services
         this.context.destroy();
