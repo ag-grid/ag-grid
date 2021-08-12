@@ -12,46 +12,7 @@
   "EVENT_ROW_GROUP_CHANGED": { "type": {} },
   "EVENT_PIVOT_CHANGED": { "type": {} },
   "EVENT_VALUE_CHANGED": { "type": {} },
-  "gridOptionsWrapper": { "type": { "returnType": "GridOptionsWrapper" } },
-  "columnUtils": { "type": { "returnType": "ColumnUtils" } },
-  "columnApi": { "type": { "returnType": "ColumnApi" } },
-  "gridApi": { "type": { "returnType": "GridApi" } },
-  "context": { "type": { "returnType": "Context" } },
-  "colId": { "type": { "returnType": "any" } },
-  "colDef": { "type": { "returnType": "ColDef" } },
-  "instanceId": { "type": {} },
-  "userProvidedColDef": { "type": { "returnType": "ColDef | null" } },
-  "actualWidth": { "type": { "returnType": "any" } },
-  "visible": { "type": { "returnType": "any" } },
-  "pinned": { "type": { "returnType": "'left' | 'right' | null" } },
-  "left": { "type": { "returnType": "number | null" } },
-  "oldLeft": { "type": { "returnType": "number | null" } },
-  "aggFunc": {
-    "type": { "returnType": "string | IAggFunc | null | undefined" }
-  },
-  "sort": { "type": { "returnType": "string | null | undefined" } },
-  "sortIndex": { "type": { "returnType": "number | null | undefined" } },
-  "moving": { "type": {} },
-  "menuVisible": { "type": {} },
-  "lastLeftPinned": { "type": { "returnType": "boolean" } },
-  "firstRightPinned": { "type": { "returnType": "boolean" } },
-  "minWidth": { "type": { "returnType": "number | null | undefined" } },
-  "maxWidth": { "type": { "returnType": "number | null | undefined" } },
-  "filterActive": { "type": {} },
-  "eventService": { "type": { "returnType": "EventService" } },
-  "fieldContainsDots": { "type": { "returnType": "boolean" } },
-  "tooltipFieldContainsDots": { "type": { "returnType": "boolean" } },
-  "rowGroupActive": { "type": {} },
-  "pivotActive": { "type": {} },
-  "aggregationActive": { "type": {} },
-  "flex": { "type": { "returnType": "number | null | undefined" } },
-  "primary": { "type": { "returnType": "boolean" } },
-  "parent": { "type": { "returnType": "ColumnGroup" } },
-  "originalParent": { "type": { "returnType": "OriginalColumnGroup | null" } },
   "getInstanceId": { "type": { "arguments": {}, "returnType": "number" } },
-  "setState": {
-    "type": { "arguments": { "colDef": "ColDef" }, "returnType": "void" }
-  },
   "setColDef": {
     "type": {
       "arguments": {
@@ -77,9 +38,6 @@
   "getOriginalParent": {
     "type": { "arguments": {}, "returnType": "OriginalColumnGroup | null" }
   },
-  "initialise": { "type": { "arguments": {}, "returnType": "void" } },
-  "initDotNotation": { "type": { "arguments": {}, "returnType": "void" } },
-  "initMinAndMaxWidths": { "type": { "arguments": {}, "returnType": "void" } },
   "resetActualWidth": {
     "type": {
       "arguments": { "source": "ColumnEventType = 'api'" },
@@ -99,7 +57,6 @@
   "isTooltipFieldContainsDots": {
     "type": { "arguments": {}, "returnType": "boolean" }
   },
-  "validate": { "type": { "arguments": {}, "returnType": "void" } },
   "addEventListener": {
     "type": {
       "arguments": { "eventType": "string", "listener": "Function" },
@@ -110,12 +67,6 @@
     "type": {
       "arguments": { "eventType": "string", "listener": "Function" },
       "returnType": "void"
-    }
-  },
-  "createColumnFunctionCallbackParams": {
-    "type": {
-      "arguments": { "rowNode": "RowNode" },
-      "returnType": "ColumnFunctionCallbackParams"
     }
   },
   "isSuppressNavigable": {
@@ -137,15 +88,6 @@
     "type": { "arguments": { "rowNode": "RowNode" }, "returnType": "boolean" }
   },
   "isResizable": { "type": { "arguments": {}, "returnType": "boolean" } },
-  "isColumnFunc": {
-    "type": {
-      "arguments": {
-        "rowNode": "RowNode",
-        "value": "boolean | ((params: ColumnFunctionCallbackParams) => boolean) | null"
-      },
-      "returnType": "boolean"
-    }
-  },
   "setMoving": {
     "type": {
       "arguments": {
@@ -153,12 +95,6 @@
         "source": "ColumnEventType = \"api\""
       },
       "returnType": "void"
-    }
-  },
-  "createColumnEvent": {
-    "type": {
-      "arguments": { "type": "string", "source": "ColumnEventType" },
-      "returnType": "ColumnEvent"
     }
   },
   "isMoving": { "type": { "arguments": {}, "returnType": "boolean" } },
@@ -288,12 +224,6 @@
     "type": { "arguments": {}, "returnType": "AbstractColDef" }
   },
   "getActualWidth": { "type": { "arguments": {}, "returnType": "number" } },
-  "createBaseColDefParams": {
-    "type": {
-      "arguments": { "rowNode": "RowNode" },
-      "returnType": "BaseColDefParams"
-    }
-  },
   "getColSpan": {
     "type": { "arguments": { "rowNode": "RowNode" }, "returnType": "number" }
   },

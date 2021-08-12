@@ -257,11 +257,23 @@ function getClassProperties(filePath, className) {
     return members;
 }
 
+function hasPublicModifier(node) {
+    if (node.modifiers) {
+        return node.modifiers.some(m => ts.SyntaxKind[m.kind] == 'PublicKeyword')
+    }
+    return false;
+}
+
 function extractMethodsAndPropsFromNode(node, srcFile) {
     let nodeMembers = {};
     const kind = ts.SyntaxKind[node.kind];
     let name = node && node.name && node.name.escapedText;
     let returnType = node && node.type && node.type.getFullText().trim();
+
+
+    if (!hasPublicModifier(node)) {
+        return nodeMembers;
+    }
 
     if (kind == 'MethodDeclaration') {
         const methodArgs = getArgTypes(node.parameters, srcFile);
