@@ -51,7 +51,9 @@ Below is an example with Range Selection, Checkbox Click Selection and Row Group
 
 <grid-example title='React UI Advanced Features' name='advanced-features' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>
 
-Below is an example using Master Detail. All grids below, including details grids, are using React UI.
+Below is an example using Master Detail.
+
+When the master grid has `reactUi=true` then the detail grids use React UI also. In the example both Master and Detail grids are using React Cell Renderers.
 
 <grid-example title='React UI Master Detail' name='master-detail' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>
 
