@@ -1,11 +1,11 @@
 import classnames from 'classnames';
-import { appendCallSignature, appendEnum, appendInterface, appendTypeAlias, convertMarkdown, convertUrl, escapeGenericCode, getLinkedType, getLongestNameLength, getTypeUrl, inferType } from 'components/documentation-helpers';
+import { convertMarkdown, convertUrl, escapeGenericCode, getLinkedType, getLongestNameLength, getTypeUrl, inferType } from 'components/documentation-helpers';
 import anchorIcon from 'images/anchor';
 import React, { useState } from 'react';
 import styles from './ApiDocumentation.module.scss';
-import { ApiProps, Config, DocEntryMap, FunctionCode, ICallSignature, IEvent, InterfaceEntry, ObjectCode, PropertyCall, PropertyType, SectionProps } from './ApiDocumentation.types';
+import { ApiProps, Config, DocEntryMap, FunctionCode, ICallSignature, IEvent, IntrfaceEntry, ObjectCode, PropertyCall, PropertyType, SectionProps, InterfaceEntry } from './ApiDocumentation.types';
 import Code from './Code';
-import { TYPE_LINKS } from './type-links';
+import { extractInterfaces, writeAllInterfaces } from './documentation-helpers';
 import { useJsonFileNodes } from './use-json-file-nodes';
 
 /**
@@ -13,7 +13,7 @@ import { useJsonFileNodes } from './use-json-file-nodes';
  * information about different parts of an API in multiple places across the website while pulling the information
  * from one source of truth, so we only have to update one file when the documentation needs to change.
  */
-export const ApiDocumentation: React.FC<ApiProps> = ({ pageName, framework, source, sources, section, names = "", config = { codeSrc: undefined } }) : any => {
+export const ApiDocumentation: React.FC<ApiProps> = ({ pageName, framework, source, sources, section, names = "", config = {} }): any => {
     const nodes = useJsonFileNodes();
 
     if (source) {
@@ -51,8 +51,8 @@ export const ApiDocumentation: React.FC<ApiProps> = ({ pageName, framework, sour
                 codeLookup = getJsonFromFile(nodes, undefined, 'column-object/column.AUTO.json');
                 break;
         }
-        const interfaces = getJsonFromFile(nodes, undefined, 'grid-api/interfaces.AUTO.json');
-        lookups = { codeLookup, interfaces };
+        const interfaceLookup = getJsonFromFile(nodes, undefined, 'grid-api/interfaces.AUTO.json');
+        lookups = { codeLookup, interfaces: interfaceLookup };
     }
 
     const propertiesFromFiles = sources.map(s => getJsonFromFile(nodes, pageName, s));
@@ -210,7 +210,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
                 console.warn(gridParams.description);
             }
 
-            const isInterface = extractInterfaces(gridParams.type, config).length > 0;// config.lookups.interfaces[type.returnType];
+            const isInterface = extractInterfaces(gridParams.type, config.lookups.interfaces, () => isGridOptionEvent(config.gridOpProp)).length > 0;
             showAdditionalDetails = isCallSig(gridParams) || type.arguments || !!isInterface;
         } else {
             // As a last resort try and infer the type
@@ -361,8 +361,8 @@ const FunctionCodeSample: React.FC<FunctionCode> = ({ framework, name, type, con
     type = type || {};
     let returnType = typeof (type) == 'string' ? undefined : type.returnType;
     const returnTypeIsObject = !!returnType && typeof returnType === 'object';
-    const extracted = extractInterfaces(returnType, config);
-    const returnTypeInterface = extracted.length > 0 ? extracted[0].interfaceType : undefined;  // config.lookups.interfaces[returnType];
+    const extracted = extractInterfaces(returnType, config.lookups.interfaces, () => isGridOptionEvent(config.gridOpProp));
+    const returnTypeInterface = extracted.length > 0 ? extracted[0].interfaceType : undefined;
     const isCallSignatureInterface = extracted.some(i => isCallSig(i.interfaceType));
     const returnTypeHasInterface = extracted.length > 0;
 
@@ -465,7 +465,7 @@ const getInterfaceLines = (framework, name, definition, config) => {
     let interfacesToWrite = []
     if (typeof (definition) === 'string') {
         // Extract all the words to enable support for Union types
-        interfacesToWrite = extractInterfaces(definition, config);
+        interfacesToWrite = extractInterfaces(definition, config.lookups.interfaces, () => isGridOptionEvent(config.gridOpProp));
     } else if (
         (typeof (definition) == 'object' && !Array.isArray(definition)) ||
         (typeof (name) == 'string' && Array.isArray(definition))) {
@@ -474,25 +474,8 @@ const getInterfaceLines = (framework, name, definition, config) => {
         })
     }
 
-    let allLines = [];
-    interfacesToWrite.forEach(({ name, interfaceType }) => {
-        if (interfaceType.meta.isTypeAlias) {
-            appendTypeAlias(name, interfaceType, allLines);
-        }
-        else if (interfaceType.meta.isEnum) {
-            appendEnum(name, interfaceType, allLines);
-        }
-        else if (interfaceType.meta.isCallSignature) {
-            appendCallSignature(name, interfaceType, framework, allLines);
-        }
-        else {
-            appendInterface(name, interfaceType, framework, allLines);
-        }
-    })
-    return allLines;
+    return writeAllInterfaces(interfacesToWrite, framework);
 };
-
-
 
 const getJsonFromFile = (nodes, pageName, source) => {
     const json = nodes.filter(n => n.relativePath === source || n.relativePath === `${pageName}/${source}`)[0];
@@ -512,57 +495,7 @@ const formatJson = value => JSON.stringify(value, undefined, 2)
     .replace(/\[(.*?)\]/sg, (_, match) => `[${match.trim().replace(/,\s+/sg, ', ')}]`) // remove carriage returns from arrays
     .replace(/"/g, "'"); // use single quotes
 
-function extractInterfaces(definitionOrArray, config) {
-    if (!definitionOrArray) return [];
 
-    if (Array.isArray(definitionOrArray)) {
-        let allDefs = [];
-
-        definitionOrArray.forEach(def => {
-            allDefs = [...allDefs, ...extractInterfaces(def, config)]
-        })
-        return allDefs;
-    }
-    const definition = definitionOrArray;
-
-    if (typeof (definition) == 'string') {
-        const typeRegex = /\w+/g;
-        const definitionTypes = [...definition.matchAll(typeRegex)];
-        let interfacesToWrite = []
-        definitionTypes.forEach(regMatch => {
-            const type = regMatch[0];
-            // If we have the actual interface use that definition
-            const interfaceType = config.lookups.interfaces[type];
-            if (!interfaceType) {
-                return undefined;
-            }
-            const isLinkedType = !!TYPE_LINKS[type];
-            const numMembers = typeof (interfaceType.type) == 'string' ? 1 : Object.entries((interfaceType.type) || {}).length;
-            // Show interface if we have found one.            
-            // Do not show an interface if it has lots of properties and is a linked type.
-            // Always show event interfaces
-            if (!isLinkedType || (isLinkedType && numMembers < 12) || isGridOptionEvent(config.gridOpProp)) {
-                interfacesToWrite.push({ name: type, interfaceType })
-            }
-
-            if (interfaceType.meta.isCallSignature) {
-                const args = interfaceType.type && interfaceType.type.arguments;
-                if (args) {
-                    const argInterfaces = Object.values(args)
-                    interfacesToWrite = [...interfacesToWrite, ...extractInterfaces(argInterfaces, config)];
-                }
-            }
-        });
-        return interfacesToWrite;
-    }
-
-    let allDefs = [];
-    Object.entries(definition).forEach(([k, v]) => {
-        allDefs = [...allDefs, ...extractInterfaces(v, config)]
-    })
-    return allDefs;
-
-}
 
 function getPropertyType(type: string | PropertyType, config: Config) {
     let propertyType = '';

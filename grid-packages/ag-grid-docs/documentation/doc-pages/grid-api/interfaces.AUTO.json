@@ -336,6 +336,13 @@
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any"
+    },
+    "docs": {
+      "values": "/** Values to aggregate */",
+      "column": "/** Column the aggregation function is working on */",
+      "colDef": "/** ColDef of the aggregation column */",
+      "rowNode": "/** The parent RowNode, where the aggregation result will be shown */",
+      "data": "/** data (if any) of the parent RowNode */"
     }
   },
   "HeaderClassParams": {
@@ -6826,20 +6833,28 @@
     "meta": {},
     "type": { "api": "GridApi", "columnApi": "ColumnApi", "context": "any" }
   },
-  "IStatusPanel": { "meta": {}, "type": {} },
+  "IStatusPanel": {
+    "meta": {},
+    "type": { "getFrameworkComponentInstance?()": "any" },
+    "docs": {
+      "getFrameworkComponentInstance?()": "/** If using a framework, returns the underlying component instance, so you can call methods\n * on it if you want. */"
+    }
+  },
   "IStatusPanelComp": {
     "meta": {},
     "type": {
       "getGui()": "HTMLElement",
       "destroy?()": "void",
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void",
-      "init?(params: IStatusPanelParams)": "AgPromise<void> | void"
+      "init?(params: IStatusPanelParams)": "AgPromise<void> | void",
+      "getFrameworkComponentInstance?()": "any"
     },
     "docs": {
       "getGui()": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
       "destroy?()": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "init?(params: IStatusPanelParams)": "/** The init(params) method is called on the component once. See below for details on the parameters. */"
+      "init?(params: IStatusPanelParams)": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
+      "getFrameworkComponentInstance?()": "/** If using a framework, returns the underlying component instance, so you can call methods\n * on it if you want. */"
     }
   },
   "IToolPanelParams": {

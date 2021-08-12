@@ -23,6 +23,7 @@ import { SEO } from 'components/SEO';
 import { getHeaderTitle } from 'utils/page-header';
 import stripHtml from 'utils/strip-html';
 import styles from './doc-page.module.scss';
+import { InterfaceDocumentation } from '../components/InterfaceDocumentation';
 
 /**
  * This template is used for documentation pages, i.e. those generated from Markdown files.
@@ -59,6 +60,11 @@ const DocPageTemplate = ({ data, pageContext: { framework, pageName } }) => {
         framework,
         sources: props.sources != null ? JSON.parse(props.sources) : undefined,
         config: props.config != null ? JSON.parse(props.config) : undefined
+      }),
+      'interface-documentation': props => InterfaceDocumentation({
+        ...props,
+        framework,
+        interfaces: props.interfaces != null ? JSON.parse(props.interfaces) : undefined,
       }),
       'snippet': props => Snippet({ ...props, framework }),
       'feature-overview': props => FeatureOverview({ ...props, framework }),
