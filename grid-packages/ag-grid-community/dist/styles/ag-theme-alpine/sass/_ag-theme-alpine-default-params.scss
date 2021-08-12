@@ -1,0 +1,84 @@
+@import "../../ag-theme-base/sass/ag-theme-base-default-params";
+@import "./ag-theme-alpine-font-vars";
+
+$ag-theme-alpine-default-params: (
+    // COLOURS
+
+    // main colours (overridden by alpine-dark)
+    alpine-active-color: #2196f3,
+
+    background-color: #fff,
+    foreground-color: #181d1f,
+    secondary-border-color: #dde2eb,
+    header-background-color: #f8f8f8,
+    odd-row-background-color: #fcfcfc,
+    border-color: #babfc7,
+    control-panel-background-color: #f8f8f8,
+    subheader-background-color: #fff,
+    
+    checkbox-checked-color: ag-derived(alpine-active-color),
+    checkbox-unchecked-color: #999,
+    checkbox-background-color: ag-derived(background-color),
+    
+    // derived colours (shared by alpine-dark)
+    subheader-toolbar-background-color: ag-derived(subheader-background-color, $opacity: 0.5),
+    selected-row-background-color: ag-derived(alpine-active-color, $opacity: 0.3),
+    row-hover-color: ag-derived(alpine-active-color, $opacity: 0.1),
+    column-hover-color: ag-derived(alpine-active-color, $opacity: 0.1),
+    chip-background-color: ag-derived(foreground-color, $opacity: 0.07),
+    secondary-foreground-color: ag-derived(foreground-color),
+    input-disabled-background-color: ag-derived(background-color, $mix: border-color 20%),
+    disabled-foreground-color: ag-derived(foreground-color, $opacity: 0.5),
+    input-border-color: ag-derived(border-color),
+    header-cell-moving-background-color: ag-derived(background-color),
+    range-selection-border-color: #2196f3,
+
+    // BORDERS
+    borders: true,
+    borders-side-button: false,
+    border-radius: 3px,
+    selected-tab-underline-transition-speed: 0.3s,
+
+    header-column-resize-handle: true,
+    header-column-resize-handle-width: 2px,
+    header-column-resize-handle-height: 30%,
+
+    // SIZING
+    grid-size: 6px,
+    icon-size: 16px,
+    row-height: ag-derived(grid-size, $times: 7),       // if changed, update environment.ts
+    header-height: ag-derived(grid-size, $times: 8),    // if changed, update environment.ts
+    list-item-height: ag-derived(grid-size, $times: 4), // if changed, update environment.ts
+    column-select-indent-size: ag-derived(icon-size),
+    cell-horizontal-padding: ag-derived(grid-size, $times: 3),
+    cell-widget-spacing: ag-derived(grid-size, $times: 2),
+
+    widget-container-vertical-padding: ag-derived(grid-size, $times: 2),
+    widget-container-horizontal-padding: ag-derived(grid-size, $times: 2),
+    widget-horizontal-spacing: ag-derived(grid-size, $times: 2),
+    widget-vertical-spacing: ag-derived(grid-size, $times: 1.5),
+
+    toggle-button-height: 18px,
+    toggle-button-width: 28px,
+
+    input-focus-border-color: ag-derived(alpine-active-color, $opacity: 0.4),
+    input-focus-box-shadow: 0 0 2px 0.1rem ag-derived(input-focus-border-color),
+
+    // FONTS
+    font-family: (-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif),
+    font-size: 13px,
+    icon-font-family: $ag-theme-alpine-icon-font-family,
+    icons-data: $ag-theme-alpine-icons-data,
+    icons-font-codes: $ag-theme-alpine-icons-font-codes,
+
+    // MISC
+    selected-tab-underline-color: ag-derived(alpine-active-color),
+    selected-tab-underline-width: 2px,
+    full-width-tabs: true,
+
+    card-shadow: 0 1px 4px 1px rgba(186, 191, 199, 0.4),
+    popup-shadow: ag-derived(card-shadow),
+    side-bar-panel-width: 250px
+);
+
+$ag-theme-alpine-default-params: map-merge($ag-theme-base-default-params, $ag-theme-alpine-default-params);

@@ -1,0 +1,31 @@
+export interface MeasuredLabel {
+    readonly text: string;
+    readonly width: number;
+    readonly height: number;
+}
+export interface PlacedLabel extends MeasuredLabel {
+    readonly index: number;
+    readonly x: number;
+    readonly y: number;
+}
+export interface PointLabelDatum {
+    readonly point: {
+        readonly x: number;
+        readonly y: number;
+    };
+    readonly size: number;
+    readonly label: MeasuredLabel;
+}
+interface Bounds {
+    readonly x: number;
+    readonly y: number;
+    readonly width: number;
+    readonly height: number;
+}
+/**
+ * @param data Points and labels for one or more series. The order of series determines label placement precedence.
+ * @param bounds Bounds to fit the labels into. If a label can't be fully contained, it doesn't fit.
+ * @returns Placed labels for the given series (in the given order).
+ */
+export declare function placeLabels(data: readonly (readonly PointLabelDatum[])[], bounds?: Bounds, padding?: number): PlacedLabel[][];
+export {};

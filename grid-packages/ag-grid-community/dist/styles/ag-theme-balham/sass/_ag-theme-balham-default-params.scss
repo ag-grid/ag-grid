@@ -1,0 +1,66 @@
+@import "../../ag-theme-base/sass/ag-theme-base-default-params";
+@import "./ag-theme-balham-font-vars";
+
+$ag-theme-balham-default-params: (
+    balham-active-color: #0091ea,
+
+    // main colours (overridden by balham-dark)
+    foreground-color: #000,
+    secondary-foreground-color: ag-derived(foreground-color, $opacity: 0.54),
+    disabled-foreground-color: ag-derived(foreground-color, $opacity: 0.38),
+    background-color: white,
+    header-background-color: #f5f7f7,
+    subheader-background-color: #e2e9eb,
+    control-panel-background-color: #f5f7f7,
+    border-color: #bdc3c7,
+    row-border-color: ag-derived(border-color, $lighten: 10),
+    odd-row-background-color: #fcfdfe,
+    row-hover-color: #ecf0f1,
+    column-hover-color: #ecf0f1,
+    input-border-color: #95a5a6,
+    input-disabled-background-color: #ebebeb,
+    checkbox-border-radius: 3px,
+    checkbox-unchecked-color: #7f8c8d,
+    checkbox-checked-color: ag-derived(balham-active-color),
+    checkbox-background-color: ag-derived(background-color),
+
+    input-focus-border-color: #719ECE,
+    input-focus-box-shadow: 0 0 2px 1px ag-derived(input-focus-border-color),
+
+    // derived colours (shared by balham-dark)
+    subheader-toolbar-background-color: ag-derived(subheader-background-color, $opacity: 0.5),
+    range-selection-background-color: ag-derived(balham-active-color, $opacity: 0.2),
+    range-selection-border-color: ag-derived(balham-active-color),
+    range-selection-highlight-color: ag-derived(balham-active-color),
+
+    selected-row-background-color: ag-derived(balham-active-color, $lighten: 40),
+    chip-background-color: ag-derived(control-panel-background-color, $mix: foreground-color 10%),
+    header-cell-moving-background-color: ag-derived(background-color),
+
+    header-column-separator: true,
+    header-column-separator-color: ag-derived(border-color, $opacity: 0.5),
+    header-column-separator-height: 50%,
+
+    // sizing
+    grid-size: 4px,
+    icon-size: 16px,
+    row-height: ag-derived(grid-size, $times: 7),
+    header-height: ag-derived(grid-size, $times: 8),
+    list-item-height: ag-derived(grid-size, $times: 6),
+    row-group-indent-size: ag-derived(grid-size, $times: 3, $plus: icon-size),
+    cell-horizontal-padding: ag-derived(grid-size, $times: 3),
+    input-height: ag-derived(grid-size, $times: 4),
+
+    // Fonts
+    font-family: (-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif),
+    font-size: 12px,
+    icon-font-family: $ag-theme-balham-icon-font-family,
+    icons-data: $ag-theme-balham-icons-data,
+    icons-font-codes: $ag-theme-balham-icons-font-codes,
+
+    // Misc
+    border-radius: 2px,
+    card-shadow: none,
+);
+
+$ag-theme-balham-default-params: map-merge($ag-theme-base-default-params, $ag-theme-balham-default-params);

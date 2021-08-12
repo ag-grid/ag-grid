@@ -1,0 +1,1 @@
+{"version":3,"file":"sanitize.js","sourceRoot":"","sources":["../../../src/util/sanitize.ts"],"names":[],"mappings":";;AAAA,IAAM,OAAO,GAAG,QAAQ,CAAC,aAAa,CAAC,KAAK,CAAC,CAAC;AAE9C,SAAgB,YAAY,CAAC,IAAa;IACtC,IAAI,CAAC,IAAI,EAAE;QACP,OAAO,EAAE,CAAC;KACb;IACD,OAAO,CAAC,SAAS,GAAG,IAAI,CAAC;IACzB,OAAO,OAAO,CAAC,SAAS,CAAC;AAC7B,CAAC;AAND,oCAMC"}

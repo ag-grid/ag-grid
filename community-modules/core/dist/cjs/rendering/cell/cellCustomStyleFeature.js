@@ -1,0 +1,107 @@
+/**
+ * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v26.0.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+"use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var beanStub_1 = require("../../context/beanStub");
+var CellCustomStyleFeature = /** @class */ (function (_super) {
+    __extends(CellCustomStyleFeature, _super);
+    function CellCustomStyleFeature(ctrl, beans) {
+        var _this = _super.call(this) || this;
+        _this.cellCtrl = ctrl;
+        _this.beans = beans;
+        _this.column = ctrl.getColumn();
+        _this.rowNode = ctrl.getRowNode();
+        return _this;
+    }
+    CellCustomStyleFeature.prototype.setComp = function (comp, scope) {
+        this.cellComp = comp;
+        this.scope = scope;
+        this.applyUserStyles();
+        this.applyCellClassRules();
+        this.applyClassesFromColDef();
+    };
+    CellCustomStyleFeature.prototype.applyCellClassRules = function () {
+        var _this = this;
+        var colDef = this.column.getColDef();
+        var cellClassParams = {
+            value: this.cellCtrl.getValue(),
+            data: this.rowNode.data,
+            node: this.rowNode,
+            colDef: colDef,
+            rowIndex: this.rowNode.rowIndex,
+            api: this.beans.gridOptionsWrapper.getApi(),
+            columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
+            $scope: this.scope,
+            context: this.beans.gridOptionsWrapper.getContext()
+        };
+        this.beans.stylingService.processClassRules(colDef.cellClassRules, cellClassParams, function (className) { return _this.cellComp.addOrRemoveCssClass(className, true); }, function (className) { return _this.cellComp.addOrRemoveCssClass(className, false); });
+    };
+    CellCustomStyleFeature.prototype.applyUserStyles = function () {
+        var colDef = this.column.getColDef();
+        if (!colDef.cellStyle) {
+            return;
+        }
+        var styles;
+        if (typeof colDef.cellStyle === 'function') {
+            var cellStyleParams = {
+                column: this.column,
+                value: this.cellCtrl.getValue(),
+                colDef: colDef,
+                data: this.rowNode.data,
+                node: this.rowNode,
+                rowIndex: this.rowNode.rowIndex,
+                $scope: this.scope,
+                api: this.beans.gridOptionsWrapper.getApi(),
+                columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
+                context: this.beans.gridOptionsWrapper.getContext(),
+            };
+            var cellStyleFunc = colDef.cellStyle;
+            styles = cellStyleFunc(cellStyleParams);
+        }
+        else {
+            styles = colDef.cellStyle;
+        }
+        this.cellComp.setUserStyles(styles);
+    };
+    CellCustomStyleFeature.prototype.applyClassesFromColDef = function () {
+        var _this = this;
+        var colDef = this.column.getColDef();
+        var cellClassParams = {
+            value: this.cellCtrl.getValue(),
+            data: this.rowNode.data,
+            node: this.rowNode,
+            colDef: colDef,
+            rowIndex: this.rowNode.rowIndex,
+            $scope: this.scope,
+            api: this.beans.gridOptionsWrapper.getApi(),
+            columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
+            context: this.beans.gridOptionsWrapper.getContext()
+        };
+        this.beans.stylingService.processStaticCellClasses(colDef, cellClassParams, function (className) { return _this.cellComp.addOrRemoveCssClass(className, true); });
+    };
+    // overriding to make public, as we don't dispose this bean via context
+    CellCustomStyleFeature.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+    };
+    return CellCustomStyleFeature;
+}(beanStub_1.BeanStub));
+exports.CellCustomStyleFeature = CellCustomStyleFeature;
+
+//# sourceMappingURL=cellCustomStyleFeature.js.map

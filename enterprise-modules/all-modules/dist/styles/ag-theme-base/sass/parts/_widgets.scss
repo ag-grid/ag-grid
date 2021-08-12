@@ -1,0 +1,819 @@
+
+@mixin ag-theme-base-part-widgets {
+    .ag-checkbox,
+    .ag-radio-button {
+        .ag-input-wrapper {
+            overflow: visible;
+        }
+    }
+
+    .ag-range-field {
+        .ag-input-wrapper {
+            height: 100%;
+        }
+    }
+
+    .ag-toggle-button {
+        flex: none;
+        width: unset;
+        min-width: unset;
+    }
+
+    .ag-label-align-right .ag-label {
+        @include ag-theme-rtl((margin-left: ag-param(grid-size)));
+    }
+
+    input[class^='ag-'] {
+        margin: 0;
+        @include ag-color-property(background-color, background-color);
+    }
+
+    textarea[class^='ag-'],
+    select[class^='ag-'] {
+        @include ag-color-property(background-color, background-color);
+    }
+
+    input[class^='ag-']:not([type]),
+    input[class^='ag-'][type='text'],
+    input[class^='ag-'][type='number'],
+    input[class^='ag-'][type='tel'],
+    input[class^='ag-'][type='date'],
+    input[class^='ag-'][type='datetime-local'],
+    textarea[class^='ag-'] {
+        @extend %ag-text-input !optional;
+
+        font-size: inherit;
+        line-height: inherit;
+        color: inherit;
+
+        @if ag-param-is-set(input-border-color) {
+            border-width: 1px;
+            border-style: solid;
+            @include ag-color-property(border-color, input-border-color);
+        }
+
+        &:disabled {
+            @include ag-color-property(color, disabled-foreground-color);
+            @include ag-color-property(background-color, input-disabled-background-color);
+            @include ag-color-property(border-color, input-disabled-border-color);
+        }
+
+        &:focus {
+            outline: none;
+            box-shadow: ag-param(input-focus-box-shadow);
+            @include ag-color-property(border-color, input-focus-border-color);
+        }
+    }
+
+    input[class^='ag-'][type='number'] {
+        -moz-appearance: textfield;
+        &::-webkit-outer-spin-button,
+        &::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    }
+
+    input[class^='ag-'][type='range'] {
+        padding: 0;
+    }
+
+    input[class^='ag-'][type='button'], button[class^='ag-'] {
+        &:focus {
+            box-shadow: ag-param(input-focus-box-shadow);
+        }
+    }
+
+    .ag-drag-handle {
+        @include ag-color-property(color, secondary-foreground-color);
+    }
+
+    ////////////////////////////////////////
+    // Lists
+    ////////////////////////////////////////
+    .ag-list-item, .ag-virtual-list-item {
+        height: ag-param(list-item-height);
+    }
+
+    @include ag-keyboard-focus((ag-virtual-list-item), 4px);
+
+    .ag-select-list {
+        @include ag-color-property(background-color, background-color);
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .ag-list-item {
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        &.ag-active-item {
+            @include ag-color-property(background-color, row-hover-color);
+        }
+    }
+
+    .ag-select-list-item {
+        padding-left: 4px;
+        padding-right: 4px;
+        cursor: default;
+        @include ag-selectable(none);
+        span {
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+    }
+
+    .ag-select {
+        .ag-picker-field-wrapper {
+            @include ag-color-property(background-color, background-color);
+            min-height: ag-param(list-item-height);
+            cursor: default;
+        }
+
+        &.ag-disabled .ag-picker-field-wrapper:focus {
+            box-shadow: none;
+        }
+
+        &:not(.ag-cell-editor) {
+            height: ag-param(list-item-height);
+        }
+        .ag-picker-field-display {
+            margin: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .ag-picker-field-icon {
+            display: flex;
+            align-items: center;
+        }
+        &.ag-disabled {
+            opacity: 0.5;
+        }
+    }
+
+    ////////////////////////////////////////
+    // Rich Select
+    ////////////////////////////////////////
+    .ag-rich-select {
+        @include ag-color-property(background-color, control-panel-background-color);
+    }
+
+    .ag-rich-select-list {
+        width: 100%;
+        min-width: 200px;
+        height: ag-param(row-height) * 6.5; // intentional
+    }
+
+    .ag-rich-select-value {
+        padding: 0 ag-param(grid-size) 0 ag-param(cell-horizontal-padding);
+        height: ag-param(row-height);
+
+        @include ag-border(secondary, bottom);
+    }
+
+    .ag-rich-select-virtual-list-item {
+        cursor: default;
+        height: ag-param(list-item-height);
+
+        &:hover {
+            @include ag-color-property(background-color, row-hover-color);
+        }
+    }
+
+    .ag-rich-select-row {
+        padding-left: ag-param(cell-horizontal-padding);
+    }
+
+    .ag-rich-select-row-selected {
+        @include ag-color-property(background-color, selected-row-background-color);
+    }
+
+    ////////////////////////////////////////
+    // Selection checkbox
+    ////////////////////////////////////////
+
+
+    .ag-row-drag,
+    .ag-selection-checkbox,
+    .ag-group-expanded,
+    .ag-group-contracted {
+        @include ag-theme-rtl(( margin-right: ag-param(cell-widget-spacing) ));
+
+        @include ag-color-property(color, secondary-foreground-color);
+    }
+
+    .ag-cell-wrapper > *:not(.ag-cell-value):not(.ag-group-value) {
+        height: ag-param(row-height) - 2px; // - 2px to remove effect of cell borders
+        display: flex;
+        align-items: center;
+        flex: none;
+    }
+
+    .ag-group-expanded,
+    .ag-group-contracted {
+        cursor: pointer;
+    }
+
+    .ag-group-title-bar-icon {
+        cursor: pointer;
+        flex: none;
+        @include ag-color-property(color, secondary-foreground-color);
+    }
+
+    .ag-group-child-count {
+        @include ag-theme-rtl(( margin-left: 2px ));
+    }
+
+    .ag-group-title-bar {
+        @include ag-color-property(background-color, subheader-background-color);
+        padding: ag-param(grid-size);
+    }
+
+    .ag-group-toolbar {
+        padding: ag-param(grid-size);
+    }
+
+    .ag-disabled-group-title-bar, .ag-disabled-group-container {
+        opacity: 0.5
+    }
+
+    .group-item {
+        margin: ag-param(grid-size) * 0.5 0;
+    }
+
+    .ag-label {
+        white-space: nowrap;
+        @include ag-theme-rtl((margin-right: ag-param(grid-size)));
+    }
+
+    .ag-label-align-top .ag-label {
+        margin-bottom: ag-param(grid-size) * 0.5;
+    }
+
+    .ag-slider-field,
+    .ag-angle-select-field {
+        @include ag-theme-rtl((margin-right: ag-param(grid-size) * 2));
+    }
+
+    .ag-angle-select-parent-circle {
+        width: 24px;
+        height: 24px;
+        border-radius: 12px;
+        border: solid 1px;
+        @include ag-color-property(border-color, border-color);
+        @include ag-color-property(background-color, background-color);
+    }
+    .ag-angle-select-child-circle {
+        top: 4px;
+        left: 12px;
+        width: 6px;
+        height: 6px;
+        margin-left: -3px;
+        margin-top: -4px;
+        border-radius: 3px;
+        @include ag-color-property(background-color, secondary-foreground-color);
+    }
+
+    .ag-picker-field-wrapper {
+        border: 1px solid;
+        @include ag-color-property(border-color, border-color);
+        border-radius: 5px;
+        &:focus {
+            box-shadow: ag-param(input-focus-box-shadow);
+        }
+    }
+
+    .ag-picker-field-button {
+        @include ag-color-property(background-color, background-color);
+        @include ag-color-property(color, secondary-foreground-color);
+    }
+
+    .ag-dialog.ag-color-dialog {
+        border-radius: 5px;
+    }
+
+    .ag-color-picker .ag-picker-field-display {
+        height: ag-param(icon-size);
+    }
+
+    .ag-color-panel {
+        padding: ag-param(grid-size);
+    }
+
+    .ag-spectrum-color {
+        background-color: rgb(255, 0, 0);
+        border-radius: 2px;
+    }
+
+    .ag-spectrum-tools {
+        padding: 10px;
+    }
+
+    .ag-spectrum-sat {
+        background-image: linear-gradient(to right, white, rgba(204, 154, 129, 0));
+    }
+
+    .ag-spectrum-val {
+        background-image: linear-gradient(to top, black, rgba(204, 154, 129, 0));
+    }
+
+    .ag-spectrum-dragger {
+        border-radius: 12px;
+        height: 12px;
+        width: 12px;
+        border: 1px solid white;
+        background: black;
+        box-shadow: 0 0 2px 0px rgba(0, 0, 0, 0.24);
+    }
+
+    .ag-spectrum-hue-background {
+        border-radius: 2px;
+    }
+
+    .ag-spectrum-alpha-background {
+        border-radius: 2px;
+    }
+
+    .ag-spectrum-tool {
+        margin-bottom: 10px;
+        height: 11px;
+        border-radius: 2px;
+    }
+
+    .ag-spectrum-slider {
+        margin-top: -12px;
+        width: 13px;
+        height: 13px;
+        border-radius: 13px;
+        background-color: rgb(248, 248, 248);
+        box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.37);
+    }
+
+    .ag-recent-color {
+        margin: 0 3px;
+        &:first-child {
+            margin-left: 0;
+        }
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+
+    ////////////////////////////////////////
+    // Ghost Element (Drag and Drop)
+    ////////////////////////////////////////
+    &.ag-dnd-ghost {
+        @include ag-card();
+        overflow: hidden;
+        text-overflow: ellipsis;
+        @include ag-border(secondary);
+        @include ag-color-property(color, secondary-foreground-color);
+        height: ag-param(header-height) !important;
+        line-height: ag-param(header-height);
+        margin: 0;
+        padding: 0 ag-param(grid-size) * 2;
+        transform: translateY(ag-param(grid-size) * 2);
+    }
+
+    .ag-dnd-ghost-icon {
+        margin-right: ag-param(grid-size);
+        @include ag-color-property(color, foreground-color);
+    }
+
+    ////////////////////////////////////////
+    // Popup
+    ////////////////////////////////////////
+    .ag-popup-child:not(.ag-tooltip-custom) {
+        box-shadow: ag-param(popup-shadow);
+    }
+
+    ////////////////////////////////////////
+    // Dialog
+    ////////////////////////////////////////
+
+    .ag-dragging-range-handle & .ag-dialog,
+    .ag-dragging-fill-handle & .ag-dialog {
+        opacity: 0.7;
+        pointer-events: none;
+    }
+
+    .ag-dialog {
+        border-radius: ag-param(border-radius);
+        @include ag-border(primary);
+    }
+
+    .ag-panel {
+        @include ag-color-property(background-color, background-color);
+    }
+
+    .ag-panel-title-bar {
+        @include ag-color-property(background-color, header-background-color);
+        @include ag-color-property(color, header-foreground-color);
+        height: ag-param(header-height);
+        padding: ag-param(grid-size) ag-param(cell-horizontal-padding);
+        @include ag-border(primary, bottom);
+    }
+
+    .ag-panel-title-bar-button {
+        @include ag-theme-rtl((margin-left: ag-param(grid-size)));
+    }
+
+    ////////////////////////////////////////
+    // Tooltip
+    ////////////////////////////////////////
+    .ag-tooltip {
+        @include ag-color-property(background-color, header-background-color);
+        @include ag-color-property(color, foreground-color);
+        padding: ag-param(grid-size);
+        @include ag-border(primary);
+        border-radius: ag-param(card-radius);
+        transition: opacity 1s;
+        white-space: normal;
+        &.ag-tooltip-hiding {
+            opacity: 0;
+        }
+    }
+
+    // Column select
+    @for $i from 1 to 10 {
+        .ag-column-select-indent-#{$i} {
+            @include ag-theme-rtl((padding-left: $i * ag-param(column-select-indent-size)));
+        }
+    }
+
+    .ag-column-select-header-icon {
+        cursor: pointer;
+    }
+
+    @include ag-keyboard-focus((ag-column-select-header-icon), 0px);
+
+    .ag-column-group-icons,
+    .ag-column-select-header-icon,
+    .ag-column-select-header-checkbox,
+    .ag-column-select-header-filter-wrapper,
+    .ag-column-select-checkbox,
+    .ag-column-select-column-drag-handle,
+    .ag-column-select-column-group-drag-handle,
+    .ag-column-select-column-label {
+        &:not(:last-child) {
+            @include ag-theme-rtl((margin-right: ag-param(widget-horizontal-spacing)))
+        }
+    }
+
+    @include ag-keyboard-focus((
+        ag-column-select-virtual-list-item
+    ), 1px);
+
+    .ag-column-select-column-group,
+    .ag-column-select-column {
+        &:not(:last-child) {
+            margin-bottom: ag-param(widget-vertical-spacing);
+        }
+    }
+
+    .ag-column-select-column-readonly,
+    .ag-column-select-column-group-readonly {
+        @include ag-color-property(color, disabled-foreground-color);
+        pointer-events: none;
+    }
+
+    // note - this applies a margin of the same width as a .ag-column-group-icons element, to indent columns
+    // wihtout icons to the same level as siblings with icons. If changing .ag-column-group-icons, change this too.
+    .ag-column-select-add-group-indent {
+        @include ag-theme-rtl(( margin-left: ag-param(icon-size) + ag-param(grid-size) * 2 ));
+    }
+
+    .ag-column-select-virtual-list-viewport {
+        padding: (ag-param(widget-container-vertical-padding) * 0.5) 0px;
+    }
+
+    .ag-column-select-virtual-list-item {
+        margin: 0 ag-param(widget-container-horizontal-padding);
+    }
+}
+
+// Apply theme styles to input elements. By default, all elements are styled. To disable one or
+// more elements so that you can apply your own styles, pass e.g.
+//     ag-native-inputs((checkbox: false))
+// Names of elements to disable include:
+//     checkbox:         <input type=checkbox>
+//     toggle-button:    <input type=checkbox class=toggle-button>
+//     radio:            <input type=radio>
+//     range:            <input type=range>
+@mixin ag-native-inputs($type-map: ()) {
+    @if not map-has-key($type-map, checkbox) or map-get($type-map, checkbox) {
+        .ag-checkbox-input-wrapper {
+            @include ag-checkbox;
+        }
+    }
+    @if not map-has-key($type-map, toggle-button) or map-get($type-map, toggle-button) {
+        .ag-toggle-button-input-wrapper {
+            @include ag-toggle-button;
+        }
+    }
+    @if not map-has-key($type-map, radio) or map-get($type-map, radio) {
+        .ag-radio-button-input-wrapper {
+            @include ag-radio;
+        }
+    }
+    @if not map-has-key($type-map, range) or map-get($type-map, range) {
+        input[class^='ag-'][type='range'] {
+            @include ag-range;
+        }
+    }
+}
+
+@mixin ag-check-button-base {
+    @include ag-icon();
+
+    width: ag-param(icon-size);
+    height: ag-param(icon-size);
+
+    & input, input {
+        -webkit-appearance: none;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    @include ag-color-property(background-color, checkbox-background-color);
+    border-radius: ag-param(checkbox-border-radius);
+    display: inline-block;
+    vertical-align: middle;
+    flex: none;
+
+    &:focus-within, &:active {
+        outline: none;
+        box-shadow: ag-param(input-focus-box-shadow);
+    }
+
+    &.ag-disabled {
+        opacity: 0.5;
+    }
+}
+
+@mixin ag-checkbox {
+    @include ag-check-button-base();
+
+    // IMPORTANT!
+    // We document these styles at /javascript-grid-icons/ and advise users who want to change
+    // checkbox icons to style: `.ag-checkbox-input-wrapper.ag-checked::after`. Do not change
+    // these styles without also updating the icons examples.
+
+    &::after {
+        content: ag-icon-char(checkbox-unchecked);
+        @include ag-color-property(color, checkbox-unchecked-color);
+        position: absolute;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+    }
+
+    &.ag-checked::after {
+        content: ag-icon-char(checkbox-checked);
+        @include ag-color-property(color, checkbox-checked-color);
+        position: absolute;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+    }
+
+    &.ag-indeterminate::after {
+        content: ag-icon-char(checkbox-indeterminate);
+        @include ag-color-property(color, checkbox-indeterminate-color);
+        position: absolute;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+    }
+}
+
+@mixin ag-radio {
+    @include ag-check-button-base();
+
+    border-radius: ag-param(icon-size);
+
+    &::after {
+        content: ag-icon-char(radio-button-off);
+        @include ag-color-property(color, checkbox-unchecked-color);
+        position: absolute;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+    }
+
+    &.ag-checked::after {
+        content: ag-icon-char(radio-button-on);
+        @include ag-color-property(color, checkbox-checked-color);
+        position: absolute;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+    }
+}
+
+@mixin ag-toggle-button {
+    $border-width: ag-param(toggle-button-border-width);
+    box-sizing: border-box;
+    width: ag-param(toggle-button-width);
+    height: ag-param(toggle-button-height);
+    @include ag-color-property(background-color, toggle-button-off-background-color);
+    border-radius: ag-param(toggle-button-height) * 0.5;
+    position: relative;
+    flex: none;
+    border: $border-width solid;
+    @include ag-color-property(border-color, toggle-button-off-border-color);
+
+    input {
+        opacity: 0;
+        height: 100%;
+        width: 100%;
+    }
+
+    &:focus-within {
+        outline: none;
+        box-shadow: ag-param(input-focus-box-shadow);
+    }
+
+    &.ag-disabled {
+        opacity: 0.5;
+    }
+
+    &.ag-checked {
+        @include ag-color-property(background-color, toggle-button-on-background-color);
+        @include ag-color-property(border-color, toggle-button-on-border-color);
+    }
+
+    &::before {
+        content: ' ';
+        position: absolute;
+        top: -$border-width;
+        left: -$border-width;
+        display: block;
+        box-sizing: border-box;
+        height: ag-param(toggle-button-height);
+        width: ag-param(toggle-button-height);
+        @include ag-color-property(background-color, toggle-button-switch-background-color);
+        border-radius: ag-param(toggle-button-height) * 0.5;
+        transition: left 100ms;
+        border: $border-width solid;
+        @include ag-color-property(border-color, toggle-button-switch-border-color);
+    }
+
+    &.ag-checked::before {
+        left: calc(100% - #{ag-param(toggle-button-height)} );
+        @include ag-color-property(border-color, toggle-button-on-border-color);
+    }
+}
+
+@mixin ag-internal-range-track {
+    @if mixin-exists(ag-range-track) {
+        @include ag-range-track
+    }
+    @else {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 3px;
+        @include ag-color-property(background-color, border-color);
+        border-radius: ag-param(border-radius);
+        border-radius: ag-param(checkbox-border-radius);
+    }
+}
+
+@mixin ag-internal-focus-range-track {
+    @if mixin-exists(ag-focus-range-track) {
+        @include ag-focus-range-track
+    }
+}
+
+@mixin ag-internal-active-range-track {
+    @if mixin-exists(ag-focus-range-track) {
+        @include ag-focus-range-track
+    }
+    @else {
+        @include ag-color-property(background-color, input-focus-border-color);
+    }
+}
+
+@mixin ag-internal-range-thumb {
+    @if mixin-exists(ag-range-thumb) {
+        @include ag-range-thumb
+    }
+    @else {
+        margin: 0;
+        padding: 0;
+        -webkit-appearance: none;
+        width: ag-param(icon-size);
+        height: ag-param(icon-size);
+        @include ag-color-property(background-color, background-color);
+        border: 1px solid;
+        @include ag-color-property(border-color, checkbox-unchecked-color);
+        border-radius: ag-param(icon-size);
+    }
+}
+
+@mixin ag-internal-focus-range-thumb {
+    box-shadow: ag-param(input-focus-box-shadow);
+    @if mixin-exists(ag-focus-range-thumb) {
+        @include ag-focus-range-thumb
+    }
+    @else {
+        @include ag-color-property(border-color, checkbox-checked-color);
+    }
+}
+
+@mixin ag-internal-active-range-thumb {
+    @if mixin-exists(ag-active-range-thumb) {
+        @include ag-active-range-thumb
+    }
+}
+
+@mixin ag-range {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 100%;
+    background: none;
+    overflow: visible;
+
+    &::-webkit-slider-runnable-track {
+        @include ag-internal-range-track;
+    }
+
+    &::-moz-range-track {
+        @include ag-internal-range-track;
+    }
+
+    &::-ms-track {
+        @include ag-internal-range-track;
+        color: transparent;
+        width: calc(100% - 2px);
+    }
+
+    &::-webkit-slider-thumb {
+        @include ag-internal-range-thumb;
+        transform: translateY(ag-param(icon-size) * -0.5 + 1.5px);
+    }
+
+    &::-ms-thumb {
+        @include ag-internal-range-thumb;
+    }
+    &::-moz-ag-range-thumb {
+        @include ag-internal-range-thumb;
+    }
+
+    &:focus {
+        outline: none;
+
+        &::-webkit-slider-runnable-track {
+            @include ag-internal-focus-range-track;
+        }
+        &::-moz-ag-range-track {
+            @include ag-internal-focus-range-track;
+        }
+        &::-ms-track {
+            @include ag-internal-focus-range-track;
+        }
+
+        &::-webkit-slider-thumb {
+            @include ag-internal-focus-range-thumb;
+        }
+        &::-ms-thumb {
+            @include ag-internal-focus-range-thumb;
+        }
+        &::-moz-ag-range-thumb {
+            @include ag-internal-focus-range-thumb;
+        }
+    }
+
+    &:active {
+        &::-webkit-slider-runnable-track {
+            @include ag-internal-active-range-track;
+        }
+        &::-moz-ag-range-track {
+            @include ag-internal-active-range-track;
+        }
+        &::-ms-track {
+            @include ag-internal-active-range-track;
+        }
+
+        &::-webkit-slider-thumb {
+            @include ag-internal-active-range-thumb;
+        }
+        &::-ms-thumb {
+            @include ag-internal-active-range-thumb;
+        }
+        &::-moz-ag-range-thumb {
+            @include ag-internal-active-range-thumb;
+        }
+    }
+
+    &:disabled {
+        opacity: 0.5;
+    }
+}
