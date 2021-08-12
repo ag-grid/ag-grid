@@ -37,9 +37,11 @@ Let's try to replace the default highlight style with our custom one:
 highlightStyle: {
     fill: 'cyan',
     stroke: 'blue',
+    strokeWidth: 4,
     series: {
         enabled: true,
-        dimOpacity: 0.2
+        dimOpacity: 0.2,
+        strokeWidth: 2
     }
 }
 ```
@@ -50,7 +52,9 @@ Note the following:
 - when a series item (column segment) is highlighted, the segments belonging to all
   other stack levels dim, and only segments from the stack level that the highligted
   segment belongs to remain unaffected
-- when a legend item is hovered, each representing a stack level, the rest of the
+- at the same time the segments from the highlighted stack level (subseries) get the `strokeWidth` of `2`,
+  while the currently hovered segment gets a `strokeWidth` of `4`
+- when a legend item (representing a stack level) is hovered, the rest of the
   stack levels in the series dim, but this time with no item highlighted because none
   is being hovered
 

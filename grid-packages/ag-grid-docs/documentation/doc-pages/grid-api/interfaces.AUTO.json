@@ -4563,7 +4563,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { dimOpacity?: number; strokeWidth?: number; }; }"
+      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
     }
   },
   "AgTooltipRendererResult": {
@@ -4686,7 +4686,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { dimOpacity?: number; strokeWidth?: number; }; }",
+      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }",
       "type?": "'line'",
       "marker?": "AgCartesianSeriesMarker",
       "label?": "AgLineSeriesLabelOptions",
@@ -4730,7 +4730,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { dimOpacity?: number; strokeWidth?: number; }; }",
+      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }",
       "type?": "'scatter'",
       "marker?": "AgCartesianSeriesMarker",
       "label?": "AgScatterSeriesLabelOptions",
@@ -4776,7 +4776,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { dimOpacity?: number; strokeWidth?: number; }; }",
+      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }",
       "type?": "'area'",
       "marker?": "AgCartesianSeriesMarker",
       "label?": "AgAreaSeriesLabelOptions",
@@ -4839,7 +4839,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { dimOpacity?: number; strokeWidth?: number; }; }",
+      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }",
       "type?": "'bar' | 'column'",
       "grouped?": "boolean",
       "normalizedTo?": "number",
@@ -4888,7 +4888,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { dimOpacity?: number; strokeWidth?: number; }; }",
+      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }",
       "type?": "'histogram'",
       "fill?": "string",
       "stroke?": "string",
@@ -4969,7 +4969,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { dimOpacity?: number; strokeWidth?: number; }; }",
+      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }",
       "type?": "'pie'",
       "title?": "AgPieTitleOptions",
       "label?": "AgPieSeriesLabelOptions",
@@ -5431,7 +5431,7 @@
       "fill": "string",
       "stroke?": "string",
       "strokeWidth?": "number",
-      "series?": "{ dimOpacity?: number; strokeWidth?: number; }"
+      "series?": "{ enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }"
     }
   },
   "FillOptions": {

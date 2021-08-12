@@ -460,12 +460,12 @@ export class PieSeries extends PolarSeries {
 
         this.groupSelection.selectByTag<Sector>(PieNodeTag.Sector).each((sector, datum, index) => {
             const radius = radiusScale.convert(datum.radius);
-            const highlightedDirectly = datum === highlightedDatum;
-            const highlightedViaLegend = this.highlightedItemId !== undefined;
+            const isDatumHighlighted = datum === highlightedDatum || datum.itemId === this.highlightedItemId;
+            const isSeriesHighlighted = this.highlightedItemId !== undefined;
             const highlighted = datum === highlightedDatum || datum.itemId === this.highlightedItemId;
-            const strokeWidth = highlightedDirectly && highlightedDatumStrokeWidth !== undefined
+            const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
                 ? highlightedDatumStrokeWidth
-                : highlightedViaLegend && highlightedSeriesStrokeWidth !== undefined
+                : isSeriesHighlighted && highlightedSeriesStrokeWidth !== undefined
                     ? highlightedSeriesStrokeWidth
                     : this.strokeWidth;
             const sectorFill = highlighted && fill !== undefined ? fill : fills[index % fills.length];
