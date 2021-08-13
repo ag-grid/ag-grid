@@ -404,7 +404,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
 }
 
 export interface ColumnFunctionCallbackParams {
-/** Row node for the give row */
+/** Row node for the given row */
     node: RowNode;
 /** Data associated with the node */
     data: any;
@@ -490,11 +490,15 @@ export interface ColumnsMenuParams {
     contractColumnSelection?: boolean;
 }
 
-export interface BaseColDefParams {
+export interface BaseColDefParams {    
+/** Row node for the given row */
     node: RowNode | null;
+/** Data associated with the node */
     data: any;
-    colDef: ColDef;
+    /** Column for this callback */
     column: Column;
+/** ColDef provided for this column */
+    colDef: ColDef;
     api: GridApi;
     columnApi: ColumnApi;
 /** The context as provided on `gridOptions.context` */

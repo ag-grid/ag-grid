@@ -220,6 +220,18 @@
             "description": "Set to `true` to block pinning column via the UI (API will still work)."
         }
     },
+    "spanning": {
+        "meta": {
+            "displayName": "Columns:  Spanning",
+            "description": "See [Column](/column-spanning/) / [Row](/row-spanning/) Spanning"
+        },
+        "colSpan": {
+            "description": "By default, each cell will take up the width of one column. You can change this behaviour to allow cells to span multiple columns."
+        },
+        "rowSpan": {
+            "description": "By default, each cell will take up the height of one row. You can change this behaviour to allow cells to span multiple rows."
+        }
+    },
     "styling": {
         "meta": {
             "displayName": "Columns:  Rendering and Styling"

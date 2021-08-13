@@ -621,7 +621,7 @@
       "context": "any"
     },
     "docs": {
-      "node": "/** Row node for the give row */",
+      "node": "/** Row node for the given row */",
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
       "colDef": "/** ColDef provided for this column */",
@@ -640,7 +640,7 @@
       "context": "any"
     },
     "docs": {
-      "node": "/** Row node for the give row */",
+      "node": "/** Row node for the given row */",
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
       "colDef": "/** ColDef provided for this column */",
@@ -666,7 +666,7 @@
       "context": "any"
     },
     "docs": {
-      "node": "/** Row node for the give row */",
+      "node": "/** Row node for the given row */",
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
       "colDef": "/** ColDef provided for this column */",
@@ -692,7 +692,7 @@
       "context": "any"
     },
     "docs": {
-      "node": "/** Row node for the give row */",
+      "node": "/** Row node for the given row */",
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
       "colDef": "/** ColDef provided for this column */",
@@ -718,7 +718,7 @@
       "context": "any"
     },
     "docs": {
-      "node": "/** Row node for the give row */",
+      "node": "/** Row node for the given row */",
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
       "colDef": "/** ColDef provided for this column */",
@@ -744,7 +744,7 @@
       "context": "any"
     },
     "docs": {
-      "node": "/** Row node for the give row */",
+      "node": "/** Row node for the given row */",
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
       "colDef": "/** ColDef provided for this column */",
@@ -770,7 +770,7 @@
       "context": "any"
     },
     "docs": {
-      "node": "/** Row node for the give row */",
+      "node": "/** Row node for the given row */",
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
       "colDef": "/** ColDef provided for this column */",
@@ -824,7 +824,7 @@
       "context": "any"
     },
     "docs": {
-      "node": "/** Row node for the give row */",
+      "node": "/** Row node for the given row */",
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
       "colDef": "/** ColDef provided for this column */",
@@ -864,13 +864,17 @@
     "type": {
       "node": "RowNode | null",
       "data": "any",
-      "colDef": "ColDef",
       "column": "Column",
+      "colDef": "ColDef",
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any"
     },
     "docs": {
+      "node": "/** Row node for the given row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
       "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
@@ -879,14 +883,18 @@
     "type": {
       "node": "RowNode | null",
       "data": "any",
-      "colDef": "ColDef",
       "column": "Column",
+      "colDef": "ColDef",
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any",
       "value": "any"
     },
     "docs": {
+      "node": "/** Row node for the given row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
       "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
@@ -895,14 +903,18 @@
     "type": {
       "node": "RowNode | null",
       "data": "any",
-      "colDef": "ColDef",
       "column": "Column",
+      "colDef": "ColDef",
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any",
       "getValue": "(field: string) => any"
     },
     "docs": {
+      "node": "/** Row node for the given row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
       "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
@@ -918,8 +930,8 @@
     "type": {
       "node": "RowNode | null",
       "data": "any",
-      "colDef": "ColDef",
       "column": "Column",
+      "colDef": "ColDef",
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any",
@@ -927,6 +939,10 @@
       "newValue": "any"
     },
     "docs": {
+      "node": "/** Row node for the given row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
       "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
@@ -935,8 +951,8 @@
     "type": {
       "node": "RowNode | null",
       "data": "any",
-      "colDef": "ColDef",
       "column": "Column",
+      "colDef": "ColDef",
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any",
@@ -944,6 +960,10 @@
       "newValue": "any"
     },
     "docs": {
+      "node": "/** Row node for the given row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
       "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
@@ -959,8 +979,8 @@
     "type": {
       "node": "RowNode | null",
       "data": "any",
-      "colDef": "ColDef",
       "column": "Column",
+      "colDef": "ColDef",
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any",
@@ -968,6 +988,10 @@
       "newValue": "any"
     },
     "docs": {
+      "node": "/** Row node for the given row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
       "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
@@ -983,14 +1007,18 @@
     "type": {
       "node": "RowNode | null",
       "data": "any",
-      "colDef": "ColDef",
       "column": "Column",
+      "colDef": "ColDef",
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any",
       "value": "any"
     },
     "docs": {
+      "node": "/** Row node for the given row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
       "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
@@ -1006,13 +1034,17 @@
     "type": {
       "node": "RowNode | null",
       "data": "any",
-      "colDef": "ColDef",
       "column": "Column",
+      "colDef": "ColDef",
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any"
     },
     "docs": {
+      "node": "/** Row node for the given row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
       "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
@@ -1021,13 +1053,17 @@
     "type": {
       "node": "RowNode | null",
       "data": "any",
-      "colDef": "ColDef",
       "column": "Column",
+      "colDef": "ColDef",
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any"
     },
     "docs": {
+      "node": "/** Row node for the given row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
       "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
@@ -1045,7 +1081,7 @@
       "editing": "boolean"
     },
     "docs": {
-      "node": "/** Row node for the give row */",
+      "node": "/** Row node for the given row */",
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
       "colDef": "/** ColDef provided for this column */",

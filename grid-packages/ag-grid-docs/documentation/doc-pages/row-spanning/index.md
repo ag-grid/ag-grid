@@ -45,21 +45,7 @@ const gridOptions = {
 
 The interface for the `rowSpan` callback is as follows:
 
-
-```ts
-// function you implement on the column definition
-function rowSpan(params: rowSpanParams) => number;
-
-interface RowSpanParams {
-    node: any, // row node in question
-    data: RowNode, // data for the row
-    colDef: ColDef, // the col def for the column
-    column: Column, // the column object in question
-    api: GridApi, // the grid's API
-    columnApi: ColumnApi, // the grid's column API
-    context: any // the provided context
-}
-```
+<api-documentation source='column-properties/properties.json' section='spanning' names='["rowSpan"]' config='{ "codeSrc": "ColumnOptions"}'></api-documentation>
 
 ## Row Spanning Simple Example
 
