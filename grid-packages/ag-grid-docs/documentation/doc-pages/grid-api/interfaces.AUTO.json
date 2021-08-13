@@ -4630,7 +4630,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
+      "highlightStyle?": "{ fill?: string; stroke?: string; }"
     }
   },
   "AgTooltipRendererResult": {
@@ -4753,7 +4753,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }",
+      "highlightStyle?": "{ fill?: string; stroke?: string; }",
       "type?": "'line'",
       "marker?": "AgCartesianSeriesMarker",
       "label?": "AgLineSeriesLabelOptions",
@@ -4797,7 +4797,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }",
+      "highlightStyle?": "{ fill?: string; stroke?: string; }",
       "type?": "'scatter'",
       "marker?": "AgCartesianSeriesMarker",
       "label?": "AgScatterSeriesLabelOptions",
@@ -4843,7 +4843,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }",
+      "highlightStyle?": "{ fill?: string; stroke?: string; }",
       "type?": "'area'",
       "marker?": "AgCartesianSeriesMarker",
       "label?": "AgAreaSeriesLabelOptions",
@@ -4906,7 +4906,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }",
+      "highlightStyle?": "{ fill?: string; stroke?: string; }",
       "type?": "'bar' | 'column'",
       "grouped?": "boolean",
       "normalizedTo?": "number",
@@ -4955,7 +4955,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }",
+      "highlightStyle?": "{ fill?: string; stroke?: string; }",
       "type?": "'histogram'",
       "fill?": "string",
       "stroke?": "string",
@@ -5036,7 +5036,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }",
+      "highlightStyle?": "{ fill?: string; stroke?: string; }",
       "type?": "'pie'",
       "title?": "AgPieTitleOptions",
       "label?": "AgPieSeriesLabelOptions",
@@ -5494,12 +5494,7 @@
   },
   "HighlightOptions": {
     "meta": {},
-    "type": {
-      "fill": "string",
-      "stroke?": "string",
-      "strokeWidth?": "number",
-      "series?": "{ enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }"
-    }
+    "type": { "fill": "string", "stroke?": "string" }
   },
   "FillOptions": {
     "meta": {},
