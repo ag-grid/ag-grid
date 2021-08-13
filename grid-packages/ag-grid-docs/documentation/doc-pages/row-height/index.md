@@ -124,9 +124,7 @@ the intention if using Auto Row Height.
 If multiple columns are marked with `autoHeight=true` then the
 height of the largest column is used.
 
-The height is calculated once when the data is first given to the grid. If the data changes, or the width of a column changes, then you may require the grid to calculate the height again by calling `api.resetRowHeights()`.
-
-The example below shows auto height in action. All columns have `wrapText=true` and `autoHeight=true`, so the height of each row is such that it fits all contents from all columns.
+The example below shows auto height. Column A has Auto Height enabled by setting both `wrapText=true` and `autoHeight=true`. Column B only has `wrapText=true` set so it's contents are clipped if content doesn't fit.
 
 <!-- this example uses a timeout to set data - the runner doesn't currently support this sort of thing -->
 <grid-example title='Auto Row Height' name='auto-row-height' type='generated' options=' { "enterprise": true }'></grid-example>

@@ -1,14 +1,26 @@
 
 var gridOptions = {
     columnDefs: [
-        { headerName: 'Row #', field: 'rowNumber', maxWidth: 80 },
-        { field: 'autoA' },
-        { field: 'autoB' }
+        { 
+            headerName: 'Row #', 
+            field: 'rowNumber',            
+            width: 120
+        },
+        {
+            field: 'autoA',
+            width: 300,
+            wrapText: true,
+            autoHeight: true,
+            headerName: 'A) Auto Height'
+        },
+        {
+            width: 300,
+            field: 'autoB',
+            wrapText: true,
+            headerName: 'B) Normal Height'
+    }
     ],
     defaultColDef: {
-        flex: 1,
-        wrapText: true,
-        autoHeight: true,
         sortable: true,
         resizable: true,
     },

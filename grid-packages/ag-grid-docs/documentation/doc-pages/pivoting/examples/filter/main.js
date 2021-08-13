@@ -1,12 +1,12 @@
-var gridOptions = {
+const gridOptions = {
     columnDefs: [
-        { field: "country", pivot: true, enablePivot: true },
-        { field: "year" },
-        { field: "date" },
-        { field: "sport" },
-        { field: "gold", aggFunc: 'sum' },
-        { field: "silver", aggFunc: 'sum' },
-        { field: "bronze", aggFunc: 'sum' }
+        {field: "country", pivot: true, enablePivot: true},
+        {field: "year"},
+        {field: "date"},
+        {field: "sport"},
+        {field: "gold", aggFunc: 'sum'},
+        {field: "silver", aggFunc: 'sum'},
+        {field: "bronze", aggFunc: 'sum'}
     ],
     defaultColDef: {
         flex: 1,
@@ -86,7 +86,7 @@ function filterUsaAndCanadaEquestrian() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
-    var gridDiv = document.querySelector('#myGrid');
+    const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
     agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })

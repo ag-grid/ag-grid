@@ -57,7 +57,6 @@ export interface GroupCellRendererParams extends ICellRendererParams {
 
 export class GroupCellRendererCtrl extends BeanStub {
 
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('expressionService') private expressionService: ExpressionService;
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
     @Autowired('columnModel') private columnModel: ColumnModel;
@@ -71,7 +70,7 @@ export class GroupCellRendererCtrl extends BeanStub {
 
     // this is normally the rowNode of this row, however when doing hideOpenParents, it will
     // be the parent who's details we are actually showing if the data was pulled down.
-    private displayedGroup: RowNode;
+    private displayedGroupNode: RowNode;
 
     private cellIsBlank: boolean;
 
@@ -120,14 +119,15 @@ export class GroupCellRendererCtrl extends BeanStub {
 
         if (this.cellIsBlank) { return; }
 
-        this.setupDragOpenParents();
+        this.setupShowingValueForOpenedParent();
+        this.findDisplayedGroupNode();
         this.addFullWidthRowDraggerIfNeeded();
         this.addExpandAndContract();
         this.addCheckboxIfNeeded();
         this.addValueElement();
         this.setupIndent();
     }
-
+    
     private isTopLevelFooter(): boolean {
         if (!this.gridOptionsWrapper.isGroupIncludeTotalFooter()) { return false; }
 
@@ -176,18 +176,16 @@ export class GroupCellRendererCtrl extends BeanStub {
         return !bodyCell;
     }
 
-    private setupDragOpenParents(): void {
+    private findDisplayedGroupNode(): void {
         const column = this.params.column;
         const rowNode: RowNode = this.params.node;
-
-        this.showingValueForOpenedParent = this.isShowingValueFromHiddenParent();
 
         if (this.showingValueForOpenedParent) {
             let pointer = rowNode.parent;
 
             while (pointer!=null) {
                 if (pointer.rowGroupColumn && column!.isRowGroupDisplayed(pointer.rowGroupColumn.getId())) {
-                    this.displayedGroup = pointer;
+                    this.displayedGroupNode = pointer;
                     break;
                 }
                 pointer = pointer.parent;
@@ -195,24 +193,30 @@ export class GroupCellRendererCtrl extends BeanStub {
         }
 
         // if we didn't find a displayed group, set it to the row node
-        if (missing(this.displayedGroup)) {
-            this.displayedGroup = rowNode;
+        if (missing(this.displayedGroupNode)) {
+            this.displayedGroupNode = rowNode;
         }
     }
 
-    private isShowingValueFromHiddenParent(): boolean {
+    private setupShowingValueForOpenedParent(): void {
         // note - this code depends on sortService.updateGroupDataForHiddenOpenParents, where group data
         // is updated to reflect the dragged down parents
         const rowNode: RowNode = this.params.node;
         const column = this.params.column as Column;
 
-        if (!this.gridOptionsWrapper.isGroupHideOpenParents()) { return false; }
+        if (!this.gridOptionsWrapper.isGroupHideOpenParents()) { 
+            this.showingValueForOpenedParent = false;
+            return;
+        }
 
         // hideOpenParents means rowNode.groupData can have data for the group this column is displaying, even though
         // this rowNode isn't grouping by the column we are displaying
 
         // if no groupData at all, we are not showing a parent value
-        if (!rowNode.groupData) { return false; }
+        if (!rowNode.groupData) { 
+            this.showingValueForOpenedParent = false;
+            return;
+         }
 
         // this is the normal case, in that we are showing a group for which this column is configured. note that
         // this means the Row Group is closed (if it was open, we would not be displaying it)
@@ -221,18 +225,21 @@ export class GroupCellRendererCtrl extends BeanStub {
             const keyOfGroupingColumn = rowNode.rowGroupColumn!.getId();
             const configuredToShowThisGroupLevel = column.isRowGroupDisplayed(keyOfGroupingColumn);
             // if showing group as normal, we didn't take group info from parent
-            if (configuredToShowThisGroupLevel) { return false; }
+            if (configuredToShowThisGroupLevel) {
+                this.showingValueForOpenedParent = false;
+                return;    
+            }
         }
 
         // see if we are showing a Group Value for the Displayed Group. if we are showing a group value, and this Row Node
         // is not grouping by this Displayed Group, we must of gotten the value from a parent node
         const valPresent = rowNode.groupData[column.getId()] != null;
 
-        return valPresent;
+        this.showingValueForOpenedParent = valPresent;
     }
 
     private addValueElement(): void {
-        if (this.displayedGroup.footer) {
+        if (this.displayedGroupNode.footer) {
             this.addFooterValue();
         } else {
             this.addGroupValue();
@@ -241,16 +248,31 @@ export class GroupCellRendererCtrl extends BeanStub {
     }
 
     private addGroupValue(): void {
-        const params = this.params;
-        const relatedColumn = this.displayedGroup.rowGroupColumn;
 
         // we try and use the cellRenderer of the column used for the grouping if we can
-        const columnForFormatting: Column = relatedColumn ? relatedColumn : params.column!;
-        let valueFormatted: string | null = null;
-        if (columnForFormatting) {
-            const groupName = this.params.value;
-            valueFormatted = this.valueFormatterService.formatValue(columnForFormatting, params.node, params.scope, groupName);
-        }
+        const paramsAdjusted = this.adjustParamsWithDetailsFromRelatedColumn();
+        const innerCompDetails = this.getInnerCompDetails(paramsAdjusted);
+        
+        const {valueFormatted, value} = paramsAdjusted;
+        const valueWhenNoRenderer = valueFormatted != null ? valueFormatted : value;
+
+        this.comp.setInnerRenderer(innerCompDetails, valueWhenNoRenderer);
+    }
+
+    private adjustParamsWithDetailsFromRelatedColumn(): GroupCellRendererParams {
+
+        const relatedColumn = this.displayedGroupNode.rowGroupColumn;
+        const column = this.params.column;
+
+        if (!relatedColumn) { return this.params; }
+
+        // column is missing when doing full width
+        if (!column || !column.isRowGroupDisplayed(relatedColumn.getId())) { return this.params; }
+
+        const params = this.params;
+
+        const {value, scope, node} = this.params;
+        const valueFormatted = this.valueFormatterService.formatValue(relatedColumn, node, scope, value);
 
         // we don't update the original params, as they could of come through React,
         // as react has RowGroupCellRenderer, which means the params could be props which
@@ -260,12 +282,7 @@ export class GroupCellRendererCtrl extends BeanStub {
                     valueFormatted: valueFormatted
                 };
 
-        const relatedColDef = relatedColumn ? relatedColumn.getColDef() : undefined;
-
-        const innerCompDetails = this.getInnerCompDetails(paramsAdjusted, relatedColDef);
-        
-        const valueWhenNoRenderer = paramsAdjusted.valueFormatted != null ? paramsAdjusted.valueFormatted : paramsAdjusted.value;
-        this.comp.setInnerRenderer(innerCompDetails, valueWhenNoRenderer);
+        return paramsAdjusted;
     }
 
     private addFooterValue(): void {
@@ -293,7 +310,7 @@ export class GroupCellRendererCtrl extends BeanStub {
         this.comp.setInnerRenderer(innerCompDetails, footerValue);
     }
 
-    private getInnerCompDetails(params: GroupCellRendererParams, relatedColDef?: ColDef): UserCompDetails | undefined {
+    private getInnerCompDetails(params: GroupCellRendererParams): UserCompDetails | undefined {
 
         // for full width rows, we don't do any of the below
         if (params.fullWidth) {
@@ -327,6 +344,9 @@ export class GroupCellRendererCtrl extends BeanStub {
             return innerCompDetails;
         }
 
+        const relatedColumn = this.displayedGroupNode.rowGroupColumn;
+        const relatedColDef = relatedColumn ? relatedColumn.getColDef() : undefined;
+
         if (!relatedColDef) {
             return;
         }
@@ -355,14 +375,14 @@ export class GroupCellRendererCtrl extends BeanStub {
         // then this could be left out, or set to -1, ie no child count
         if (this.params.suppressCount) { return; }
 
-        this.addManagedListener(this.displayedGroup, RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED, this.updateChildCount.bind(this));
+        this.addManagedListener(this.displayedGroupNode, RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED, this.updateChildCount.bind(this));
 
         // filtering changes the child count, so need to cater for it
         this.updateChildCount();
     }
 
     private updateChildCount(): void {
-        const allChildrenCount = this.displayedGroup.allChildrenCount;
+        const allChildrenCount = this.displayedGroupNode.allChildrenCount;
         const showingGroupForThisNode = this.isShowRowGroupForThisRow();
         const showCount = showingGroupForThisNode && allChildrenCount != null && allChildrenCount >= 0;
         const countString = showCount ? `(${allChildrenCount})` : ``;
@@ -372,7 +392,7 @@ export class GroupCellRendererCtrl extends BeanStub {
     private isShowRowGroupForThisRow(): boolean {
         if (this.gridOptionsWrapper.isTreeData()) { return true; }
 
-        const rowGroupColumn = this.displayedGroup.rowGroupColumn;
+        const rowGroupColumn = this.displayedGroupNode.rowGroupColumn;
 
         if (!rowGroupColumn) { return false; }
 
@@ -416,9 +436,9 @@ export class GroupCellRendererCtrl extends BeanStub {
         // because we don't show the expand / contract when there are no children, we need to check every time
         // the number of children change.
         const expandableChangedListener = this.onRowNodeIsExpandableChanged.bind(this);
-        this.addManagedListener(this.displayedGroup, RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED, expandableChangedListener);
-        this.addManagedListener(this.displayedGroup, RowNode.EVENT_MASTER_CHANGED, expandableChangedListener);
-        this.addManagedListener(this.displayedGroup, RowNode.EVENT_HAS_CHILDREN_CHANGED, expandableChangedListener);
+        this.addManagedListener(this.displayedGroupNode, RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED, expandableChangedListener);
+        this.addManagedListener(this.displayedGroupNode, RowNode.EVENT_MASTER_CHANGED, expandableChangedListener);
+        this.addManagedListener(this.displayedGroupNode, RowNode.EVENT_HAS_CHILDREN_CHANGED, expandableChangedListener);
     }
 
 
@@ -433,7 +453,7 @@ export class GroupCellRendererCtrl extends BeanStub {
 
     public onExpandOrContract(): void {
         // must use the displayedGroup, so if data was dragged down, we expand the parent, not this row
-        const rowNode: RowNode = this.displayedGroup;
+        const rowNode: RowNode = this.displayedGroupNode;
         const nextExpandState = !rowNode.expanded;
         rowNode.setExpanded(nextExpandState);
     }
@@ -441,7 +461,7 @@ export class GroupCellRendererCtrl extends BeanStub {
     private isExpandable(): boolean {
         if (this.showingValueForOpenedParent) { return true; }
 
-        const rowNode = this.displayedGroup;
+        const rowNode = this.displayedGroupNode;
         const reducedLeafNode = this.columnModel.isPivotMode() && rowNode.leafGroup;
         const expandableGroup = rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode;
 
@@ -460,7 +480,7 @@ export class GroupCellRendererCtrl extends BeanStub {
     }
 
     private showExpandAndContractIcons(): void {
-        const { params, displayedGroup, columnModel } = this;
+        const { params, displayedGroupNode: displayedGroup, columnModel } = this;
         const { node } = params;
 
         const isExpandable = this.isExpandable();
@@ -556,7 +576,7 @@ export class GroupCellRendererCtrl extends BeanStub {
     }
 
     private addCheckboxIfNeeded(): void {
-        const rowNode = this.displayedGroup;
+        const rowNode = this.displayedGroupNode;
         const checkboxNeeded = this.isUserWantsSelected() &&
             // footers cannot be selected
             !rowNode.footer &&

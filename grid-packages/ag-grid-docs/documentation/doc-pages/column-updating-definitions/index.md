@@ -163,12 +163,9 @@ arranged order would be lost.
 If the desired behaviour is that Column's order should be maintained, set the grid
 property `maintainColumnOrder=true`.
 
-The example below demonstrates suppressing the Column order when Column Definitions are updated. To test,
-rearrange the Columns and then click one of the first two buttons (which results in setting Column Definitions). Note
-the Column Order is not changed.
+The example below demonstrates suppressing the Column order when Column Definitions are updated. The example has to sets of Columns A and B. The order of the Column Definitions are different, however when switching between the Column sets, the order in the grid is maintained. 
 
-To have the Columns reset to the order in the Column Definitions, clear the Columns (set to an empty array) and
-then set them again.
+If the Columns are cleared out (clicking Clear) then when columns are set again the order will match the Column Definition order.
 
 <grid-example title='Column Definition Order' name='col-def-order' type='mixed' options='{ "modules": true }'></grid-example>
 

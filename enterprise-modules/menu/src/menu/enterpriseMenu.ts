@@ -125,10 +125,6 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             }
         });
 
-        if (!defaultTab) {
-            menu.showTabBasedOnPreviousSelection();
-        }
-
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
         const addPopupRes = this.popupService.addPopup({
@@ -160,6 +156,13 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
                     });
                 })
             }
+        }
+
+        if (!defaultTab) {
+            menu.showTabBasedOnPreviousSelection();
+            // reposition the menu because the method above could load
+            // an element that is bigger than enterpriseMenu header.
+            positionCallback(menu);
         }
 
         menu.addEventListener(EnterpriseMenu.EVENT_TAB_SELECTED, (event: any) => {

@@ -68,6 +68,7 @@ export interface CsvExportParams extends ExportParams<CsvCustomContent> {
 export interface ShouldRowBeSkippedParams {
     node: RowNode;
     api: GridApi;
+/** The context as provided on `gridOptions.context` */
     context: any;
 }
 
@@ -78,6 +79,7 @@ export interface ProcessCellForExportParams {
     column: Column;
     api: GridApi;
     columnApi: ColumnApi;
+/** The context as provided on `gridOptions.context` */
     context: any;
     type: string; // clipboard, dragCopy (ctrl+D), export
 }
@@ -86,6 +88,7 @@ export interface ProcessHeaderForExportParams {
     column: Column;
     api: GridApi;
     columnApi: ColumnApi;
+/** The context as provided on `gridOptions.context` */
     context: any;
 }
 
@@ -93,6 +96,7 @@ export interface ProcessGroupHeaderForExportParams {
     columnGroup: ColumnGroup;
     api: GridApi;
     columnApi: ColumnApi;
+/** The context as provided on `gridOptions.context` */
     context: any;
 }
 
@@ -100,5 +104,6 @@ export interface ProcessRowGroupForExportParams {
     node: RowNode;
     api: GridApi;
     columnApi: ColumnApi;
+/** The context as provided on `gridOptions.context` */
     context: any;
 }

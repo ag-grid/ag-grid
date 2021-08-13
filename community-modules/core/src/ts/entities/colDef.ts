@@ -83,6 +83,7 @@ export interface IAggFuncParams {
     data: any;
     api: GridApi;
     columnApi: ColumnApi;
+    /** The context as provided on `gridOptions.context` */
     context: any;
 }
 
@@ -472,6 +473,7 @@ export interface GetQuickFilterTextParams {
     data: any;
     column: Column;
     colDef: ColDef;
+    /** The context as provided on `gridOptions.context` */
     context: any;
 }
 
@@ -545,9 +547,9 @@ export interface RowSpanParams extends BaseColDefParams {
 }
 
 export interface SuppressKeyboardEventParams extends ColumnFunctionCallbackParams {
-    // the keyboard event the grid received
+/** The keyboard event the grid received */
     event: KeyboardEvent;
-    // whether the cell is editing or not
+/** Whether the cell is editing or not */
     editing: boolean;
 }
 
