@@ -805,31 +805,50 @@ export interface ProcessRowParams {
 }
 
 export interface NavigateToNextHeaderParams {
+/** The key for the arrow key pressed,
+ *  left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */
     key: string;
+/** The header that currently has focus */
     previousHeaderPosition: HeaderPosition | null;
+/** The header the grid would normally pick as the next header for this navigation */
     nextHeaderPosition: HeaderPosition | null;
-    event: KeyboardEvent;
+/** The number of header rows present in the grid */
     headerRowCount: number;
+    event: KeyboardEvent;
 }
 
 export interface TabToNextHeaderParams {
+/** True if the Shift key is also down */
     backwards: boolean;
+/** The header that currently has focus */
     previousHeaderPosition: HeaderPosition | null;
+/** The header the grid would normally pick as the next header for this navigation */
     nextHeaderPosition: HeaderPosition | null;
+/** The number of header rows present in the grid */
     headerRowCount: number;
 }
 
 export interface NavigateToNextCellParams {
+/** The keycode for the arrow key pressed:
+ *  left = 37, up = 38, right = 39, down = 40 */
     key: number;
+/** The cell that currently has focus */
     previousCellPosition: CellPosition;
+/** The cell the grid would normally pick as the next cell for navigation */
     nextCellPosition: CellPosition | null;
+
     event: KeyboardEvent | null;
 }
 
 export interface TabToNextCellParams {
+/** True if the Shift key is also down */
     backwards: boolean;
+/** True if the current cell is editing
+ * (you may want to skip cells that are not editable, as the grid will enter the next cell in editing mode also if tabbing) */
     editing: boolean;
+/** The cell that currently has focus */
     previousCellPosition: CellPosition;
+/** The cell the grid would normally pick as the next cell for navigation */
     nextCellPosition: CellPosition;
 }
 
