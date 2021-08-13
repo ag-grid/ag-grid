@@ -214,6 +214,16 @@ const seriesDefaults: any = {
     listeners: undefined
 };
 
+const highlightStyleDefaults = {
+    highlightStyle: {
+        fill: 'yellow',
+        series: {
+            enabled: false,
+            dimOpacity: 0.3
+        }
+    }
+};
+
 const columnSeriesDefaults: any = {
     fillOpacity: 1,
     strokeOpacity: 1,
@@ -227,12 +237,7 @@ const columnSeriesDefaults: any = {
     lineDash: undefined,
     lineDashOffset: 0,
     shadow: undefined,
-    highlightStyle: {
-        fill: 'yellow',
-        series: {
-            dimOpacity: 1
-        }
-    }
+    ...highlightStyleDefaults
 };
 
 const shadowMapping: any = {
@@ -451,12 +456,7 @@ const mappings: any = {
                         strokeOpacity: 1,
                         lineDash: undefined,
                         lineDashOffset: 0,
-                        highlightStyle: {
-                            fill: 'yellow',
-                            series: {
-                                dimOpacity: 1
-                            }
-                        }
+                        ...highlightStyleDefaults
                     }
                 },
                 ...tooltipMapping,
@@ -500,12 +500,7 @@ const mappings: any = {
                         strokeWidth: 2,
                         fillOpacity: 1,
                         strokeOpacity: 1,
-                        highlightStyle: {
-                            fill: 'yellow',
-                            series: {
-                                dimOpacity: 1
-                            }
-                        }
+                        ...highlightStyleDefaults
                     }
                 },
                 ...tooltipMapping,
@@ -548,12 +543,7 @@ const mappings: any = {
                         lineDash: undefined,
                         lineDashOffset: 0,
                         shadow: undefined,
-                        highlightStyle: {
-                            fill: 'yellow',
-                            series: {
-                                dimOpacity: 1
-                            }
-                        }
+                        ...highlightStyleDefaults
                     }
                 },
                 ...tooltipMapping,
@@ -601,12 +591,7 @@ const mappings: any = {
                         binCount: undefined,
                         bins: undefined,
                         aggregation: 'sum',
-                        highlightStyle: {
-                            fill: 'yellow',
-                            series: {
-                                dimOpacity: 1
-                            }
-                        }
+                        ...highlightStyleDefaults
                     }
                 },
                 ...tooltipMapping,
@@ -717,12 +702,7 @@ const mappings: any = {
                         lineDash: undefined,
                         lineDashOffset: 0,
                         shadow: undefined,
-                        highlightStyle: {
-                            fill: 'yellow',
-                            series: {
-                                dimOpacity: 1
-                            }
-                        }
+                        ...highlightStyleDefaults
                     }
                 },
                 ...tooltipMapping,

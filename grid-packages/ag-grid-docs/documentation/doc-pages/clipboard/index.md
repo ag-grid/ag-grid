@@ -52,21 +52,7 @@ Pasting is on by default as long as cells are editable (non-editable cells canno
 
 The colDef has a property `suppressPaste` where you can specify to not allowing clipboard paste for a particular cell. This can be a boolean or a function (use a function to specify for a particular cell, or boolean for the whole column).
 
-```ts
-// function to enable/disable Suppress Paste
-function suppressPaste(params: SuppressPasteCallbackParams) => boolean;
-
-// interface for params
-interface SuppressPasteCallbackParams {
-    node: RowNode;
-    data: any;
-    column: Column;
-    colDef: ColDef;
-    context: any;
-    api: GridApi;
-    columnApi: ColumnApi;
-}
-```
+<api-documentation source='column-properties/properties.json' section='columns' names='["suppressPaste"]' config='{ "codeSrc": "ColumnOptions"}'></api-documentation>
 
 ## Clipboard Events
 
@@ -115,53 +101,13 @@ The example below shows using `sendToClipboard(params)`, but rather than using t
 
 ## Processing Clipboard Data
 
-It is possible to process clipboard data before pasting it into the grid. This can be done either 1) on individual cells or 2) the whole paste operation. The following callbacks allow this:
-
-
-1. Individual Cells:
-
-
-    - `processCellForClipboard(params):` Allows you to process cells for the clipboard. Handy if you have date objects that you need to have a particular format if importing into Excel.
-    - `processHeaderForClipboard(params):` Allows you to process header values for the clipboard.
-    - `processCellFromClipboard(params):` Allows you to process cells from the clipboard. Handy if you have for example number fields and want to block non-numbers from getting into the grid.
-
-1. Whole Paste Operation
-
-    - `processDataFromClipboard(params):` Allows complete control of the paste operation, including cancelling the operation (so nothing happens) or replacing the data with other data.
+It is possible to process clipboard data before pasting it into the grid. This can be done either on individual cells or the whole paste operation.
 
 ### Processing Individual Cells
 
 The interfaces and parameters for processing individual cells are as follows:
 
-```ts
-// for processing cell during a copy / cut operation
-processCellForClipboard(params: ProcessCellForExportParams): any;
-
-// for processing header cell during a copy / cut operation
-processHeaderForClipboard(params: ProcessHeaderForExportParams): any;
-
-// for processing a cell during a paste operation
-processCellFromClipboard(params: ProcessCellForExportParams): any;
-
-// for processCellForClipboard and processCellFromClipboard
-interface ProcessCellForExportParams {
-    value: any, // the value to paste
-    node: RowNode, // the row node
-    column: Column, // the column
-    api: GridApi, // the grid's API
-    columnApi: ColumnApi, // the grid's column API
-    context: any, // the context object
-    type: string // clipboard, dragCopy (Ctrl+D), export
-}
-
-// for processHeaderForClipboard
-interface ProcessHeaderForExportParams {
-    column: Column, // the column
-    api: GridApi, // the grid API
-    columnApi: ColumnApi, // the column API
-    context: any // the context object
-}
-```
+<api-documentation source='grid-callbacks/callbacks.json' section='clipboard' names='["processCellForClipboard", "processHeaderForClipboard", "processCellFromClipboard"]' config='{"codeSrc": "GridOptions"}' ></api-documentation>
 
 These three callbacks above are demonstrated in the example below. Note the following:
 
@@ -175,15 +121,7 @@ These three callbacks above are demonstrated in the example below. Note the foll
 
 The interface and parameters for processing the whole paste operation is as follows:
 
-```ts
-// for processing data from the clipboard
-processDataFromClipboard(params: ProcessDataFromClipboardParams) => string[][] | null;
-
-// params for processDataFromClipboard
-interface ProcessDataFromClipboardParams {
-    data: string[][]; // 2D array of all cells from the clipboard
-}
-```
+<api-documentation source='grid-callbacks/callbacks.json' section='clipboard' names='["processDataFromClipboard"]' config='{"codeSrc": "GridOptions"}' ></api-documentation>
 
 In summary the `processDataFromClipboard` takes a 2d array of data that was taken from the clipboard and the method returns a 2d array of data to be used. For the method to have no impact, it should return the 2d array it was provided. The method is free to return back anything it wants, as long as it is a 2d array of strings.
 

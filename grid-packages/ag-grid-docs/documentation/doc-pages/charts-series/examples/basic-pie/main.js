@@ -25,8 +25,11 @@ const data = [
 const highlightStyle = {
     fill: 'cyan',
     stroke: 'blue',
+    strokeWidth: 4,
     series: {
-        dimOpacity: 0.2
+        enabled: true,
+        dimOpacity: 0.2,
+        strokeWidth: 2
     }
 };
 
@@ -42,7 +45,8 @@ const options = {
     series: [{
         type: 'pie',
         title: {
-            text: 'Q1'
+            text: 'Q1',
+            showInLegend: true
         },
         label: {
             enabled: false,
@@ -56,7 +60,8 @@ const options = {
     }, {
         type: 'pie',
         title: {
-            text: 'Q2'
+            text: 'Q2',
+            showInLegend: true
         },
         label: {
             enabled: false,
@@ -69,7 +74,8 @@ const options = {
     }, {
         type: 'pie',
         title: {
-            text: 'Q3'
+            text: 'Q3',
+            showInLegend: true
         },
         label: {
             enabled: false,
@@ -82,7 +88,8 @@ const options = {
     }, {
         type: 'pie',
         title: {
-            text: 'Q4'
+            text: 'Q4',
+            showInLegend: true
         },
         label: {
             enabled: false,

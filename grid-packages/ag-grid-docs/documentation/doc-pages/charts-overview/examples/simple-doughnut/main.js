@@ -23,6 +23,7 @@ var options = {
             innerRadiusOffset: -40,
             highlightStyle: {
                 series: {
+                    enabled: true,
                     dimOpacity: 0.3,
                     strokeWidth: 3
                 }
@@ -43,6 +44,7 @@ var options = {
             innerRadiusOffset: -110,
             highlightStyle: {
                 series: {
+                    enabled: true,
                     dimOpacity: 0.3,
                     strokeWidth: 3
                 }
@@ -63,6 +65,7 @@ var options = {
             innerRadiusOffset: -180,
             highlightStyle: {
                 series: {
+                    enabled: true,
                     dimOpacity: 0.3,
                     strokeWidth: 3
                 }

@@ -33,6 +33,7 @@ var options = {
         normalizedTo: 100,
         highlightStyle: {
             series: {
+                enabled: true,
                 strokeWidth: 4,
                 dimOpacity: 0.3
             }

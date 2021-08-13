@@ -616,9 +616,16 @@
       "data": "any",
       "column": "Column",
       "colDef": "ColDef",
-      "context": "any",
       "api": "GridApi",
-      "columnApi": "ColumnApi"
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "node": "/** Row node for the give row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "CheckboxSelectionCallbackParams": {
@@ -628,9 +635,16 @@
       "data": "any",
       "column": "Column",
       "colDef": "ColDef",
-      "context": "any",
       "api": "GridApi",
-      "columnApi": "ColumnApi"
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "node": "/** Row node for the give row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "CheckboxSelectionCallback": {
@@ -647,9 +661,16 @@
       "data": "any",
       "column": "Column",
       "colDef": "ColDef",
-      "context": "any",
       "api": "GridApi",
-      "columnApi": "ColumnApi"
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "node": "/** Row node for the give row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "RowDragCallback": {
@@ -666,9 +687,16 @@
       "data": "any",
       "column": "Column",
       "colDef": "ColDef",
-      "context": "any",
       "api": "GridApi",
-      "columnApi": "ColumnApi"
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "node": "/** Row node for the give row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "DndSourceCallback": {
@@ -685,9 +713,16 @@
       "data": "any",
       "column": "Column",
       "colDef": "ColDef",
-      "context": "any",
       "api": "GridApi",
-      "columnApi": "ColumnApi"
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "node": "/** Row node for the give row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "EditableCallback": {
@@ -704,9 +739,16 @@
       "data": "any",
       "column": "Column",
       "colDef": "ColDef",
-      "context": "any",
       "api": "GridApi",
-      "columnApi": "ColumnApi"
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "node": "/** Row node for the give row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "SuppressPasteCallback": {
@@ -723,9 +765,16 @@
       "data": "any",
       "column": "Column",
       "colDef": "ColDef",
-      "context": "any",
       "api": "GridApi",
-      "columnApi": "ColumnApi"
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "node": "/** Row node for the give row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "SuppressNavigableCallback": {
@@ -770,9 +819,16 @@
       "data": "any",
       "column": "Column",
       "colDef": "ColDef",
-      "context": "any",
       "api": "GridApi",
-      "columnApi": "ColumnApi"
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "node": "/** Row node for the give row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "GetQuickFilterTextParams": {
@@ -806,6 +862,9 @@
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any"
+    },
+    "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "BaseWithValueColDefParams": {
@@ -819,6 +878,9 @@
       "columnApi": "ColumnApi",
       "context": "any",
       "value": "any"
+    },
+    "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "ValueGetterParams": {
@@ -832,6 +894,9 @@
       "columnApi": "ColumnApi",
       "context": "any",
       "getValue": "(field: string) => any"
+    },
+    "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "ValueGetterFunc": {
@@ -853,6 +918,9 @@
       "context": "any",
       "oldValue": "any",
       "newValue": "any"
+    },
+    "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "ValueSetterParams": {
@@ -867,6 +935,9 @@
       "context": "any",
       "oldValue": "any",
       "newValue": "any"
+    },
+    "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "ValueSetterFunc": {
@@ -888,6 +959,9 @@
       "context": "any",
       "oldValue": "any",
       "newValue": "any"
+    },
+    "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "ValueParserFunc": {
@@ -908,6 +982,9 @@
       "columnApi": "ColumnApi",
       "context": "any",
       "value": "any"
+    },
+    "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "ValueFormatterFunc": {
@@ -927,6 +1004,9 @@
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any"
+    },
+    "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "RowSpanParams": {
@@ -939,6 +1019,9 @@
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any"
+    },
+    "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "SuppressKeyboardEventParams": {
@@ -948,23 +1031,33 @@
       "data": "any",
       "column": "Column",
       "colDef": "ColDef",
-      "context": "any",
       "api": "GridApi",
       "columnApi": "ColumnApi",
+      "context": "any",
       "event": "KeyboardEvent",
       "editing": "boolean"
+    },
+    "docs": {
+      "node": "/** Row node for the give row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "SuppressHeaderKeyboardEventParams": {
     "meta": {},
     "type": {
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "column": "Column | ColumnGroup",
       "colDef": "ColDef | ColGroupDef | null",
-      "context": "any",
       "headerRowIndex": "number",
-      "event": "KeyboardEvent"
+      "event": "KeyboardEvent",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "CellClassParams": {
@@ -979,6 +1072,15 @@
       "context": "any",
       "colDef": "ColDef",
       "value": "any"
+    },
+    "docs": {
+      "data": "/** The data associated with this row from rowData */",
+      "node": "/** The RowNode associated with this row */",
+      "rowIndex": "/** The index of the row */",
+      "$scope": "/** If using AngularJs, is the row's child scope, otherwise null */",
+      "context": "/** Context object if provided to `gridOptions.context` */",
+      "colDef": "/** The colDef associated with the column for this cell */",
+      "value": "/** The value to be rendered */"
     }
   },
   "CellClassFunc": {
@@ -1521,6 +1623,13 @@
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any"
+    },
+    "docs": {
+      "data": "/** The data associated with this row from rowData */",
+      "node": "/** The RowNode associated with this row */",
+      "rowIndex": "/** The index of the row */",
+      "$scope": "/** If using AngularJs, is the row's child scope, otherwise null */",
+      "context": "/** Context object if provided to `gridOptions.context` */"
     }
   },
   "RowHeightParams": {
@@ -1678,7 +1787,8 @@
   },
   "ProcessDataFromClipboardParams": {
     "meta": {},
-    "type": { "data": "string[][]" }
+    "type": { "data": "string[][]" },
+    "docs": { "data": "/** 2D array of all cells from the clipboard */" }
   },
   "ChartRef": {
     "meta": {},
@@ -4453,7 +4563,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { dimOpacity?: number; strokeWidth?: number; }; }"
+      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
     }
   },
   "AgTooltipRendererResult": {
@@ -4576,7 +4686,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { dimOpacity?: number; strokeWidth?: number; }; }",
+      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }",
       "type?": "'line'",
       "marker?": "AgCartesianSeriesMarker",
       "label?": "AgLineSeriesLabelOptions",
@@ -4620,7 +4730,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { dimOpacity?: number; strokeWidth?: number; }; }",
+      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }",
       "type?": "'scatter'",
       "marker?": "AgCartesianSeriesMarker",
       "label?": "AgScatterSeriesLabelOptions",
@@ -4666,7 +4776,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { dimOpacity?: number; strokeWidth?: number; }; }",
+      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }",
       "type?": "'area'",
       "marker?": "AgCartesianSeriesMarker",
       "label?": "AgAreaSeriesLabelOptions",
@@ -4729,7 +4839,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { dimOpacity?: number; strokeWidth?: number; }; }",
+      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }",
       "type?": "'bar' | 'column'",
       "grouped?": "boolean",
       "normalizedTo?": "number",
@@ -4778,7 +4888,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { dimOpacity?: number; strokeWidth?: number; }; }",
+      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }",
       "type?": "'histogram'",
       "fill?": "string",
       "stroke?": "string",
@@ -4859,7 +4969,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { dimOpacity?: number; strokeWidth?: number; }; }",
+      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }",
       "type?": "'pie'",
       "title?": "AgPieTitleOptions",
       "label?": "AgPieSeriesLabelOptions",
@@ -5321,7 +5431,7 @@
       "fill": "string",
       "stroke?": "string",
       "strokeWidth?": "number",
-      "series?": "{ dimOpacity?: number; strokeWidth?: number; }"
+      "series?": "{ enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }"
     }
   },
   "FillOptions": {
