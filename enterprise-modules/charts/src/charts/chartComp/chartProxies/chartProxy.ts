@@ -159,7 +159,12 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         // allow users to override options before they are applied
         const { processChartOptions, allowProcessChartOptions } = this.chartProxyParams;
 
-        if (processChartOptions && allowProcessChartOptions) {
+        if (processChartOptions) {
+            if (!allowProcessChartOptions) {
+                console.warn(`AG Grid: since v26.0, 'processChartOptions()' has been removed (deprecated in v24.0), see https://www.ag-grid.com/javascript-grid/integrated-charts-customisation/`);
+                return;
+            }
+
             const originalOptions = deepMerge({}, this.iChartOptions);
             const params: ProcessChartOptionsParams = { type: this.chartType, options: this.iChartOptions };
             const overriddenOptions = processChartOptions(params) as TOptions;

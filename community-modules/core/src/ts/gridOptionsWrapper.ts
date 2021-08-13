@@ -1355,7 +1355,6 @@ export class GridOptionsWrapper {
     }
 
     public getProcessChartOptionsFunc(): ((params: ProcessChartOptionsParams) => ChartOptions<any>) | undefined  {
-        console.warn(`AG Grid: since v26.0, 'processChartOptions()' has been removed (deprecated in v24.0), see https://www.ag-grid.com/javascript-grid/integrated-charts-customisation/`);
         return this.gridOptions.processChartOptions;
     }
 
