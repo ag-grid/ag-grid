@@ -699,7 +699,7 @@ export interface RowClassParams {
     $scope: any;
     api: GridApi;
     columnApi: ColumnApi;
-/** Context object if provided to `gridOptions.context` */
+/** The context as provided on `gridOptions.context` */
     context: any;
 }
 
@@ -707,6 +707,7 @@ export interface RowHeightParams {
     data: any;
     node: RowNode;
     api: GridApi;
+/** The context as provided on `gridOptions.context` */
     context: any;
 }
 
@@ -732,6 +733,7 @@ export interface GetContextMenuItemsParams {
     value: any;
     api: GridApi;
     columnApi: ColumnApi;
+/** The context as provided on `gridOptions.context` */
     context: any;
 }
 
@@ -777,7 +779,7 @@ export interface GetMainMenuItemsParams {
     defaultItems: string[];
     api: GridApi;
     columnApi: ColumnApi;
-/** Context object if provided to `gridOptions.context` */
+/** The context as provided on `gridOptions.context` */
     context: any;
 }
 
@@ -798,6 +800,7 @@ export interface ProcessRowParams {
     api: GridApi;
     columnApi: ColumnApi;
     addRenderedRowListener: (eventType: string, listener: Function) => void;
+/** The context as provided on `gridOptions.context` */
     context: any;
 }
 

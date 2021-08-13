@@ -361,7 +361,8 @@
       "column": "/** Column the aggregation function is working on */",
       "colDef": "/** ColDef of the aggregation column */",
       "rowNode": "/** The parent RowNode, where the aggregation result will be shown */",
-      "data": "/** data (if any) of the parent RowNode */"
+      "data": "/** data (if any) of the parent RowNode */",
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "HeaderClassParams": {
@@ -859,6 +860,9 @@
       "column": "Column",
       "colDef": "ColDef",
       "context": "any"
+    },
+    "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "ColumnsMenuParams": {
@@ -1140,7 +1144,7 @@
       "node": "/** The RowNode associated with this row */",
       "rowIndex": "/** The index of the row */",
       "$scope": "/** If using AngularJs, is the row's child scope, otherwise null */",
-      "context": "/** Context object if provided to `gridOptions.context` */",
+      "context": "/** The context as provided on `gridOptions.context` */",
       "colDef": "/** The colDef associated with the column for this cell */",
       "value": "/** The value to be rendered */"
     }
@@ -1691,7 +1695,7 @@
       "node": "/** The RowNode associated with this row */",
       "rowIndex": "/** The index of the row */",
       "$scope": "/** If using AngularJs, is the row's child scope, otherwise null */",
-      "context": "/** Context object if provided to `gridOptions.context` */"
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "RowHeightParams": {
@@ -1701,6 +1705,9 @@
       "node": "RowNode",
       "api": "GridApi",
       "context": "any"
+    },
+    "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "SendToClipboardParams": { "meta": {}, "type": { "data": "string" } },
@@ -1722,6 +1729,9 @@
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any"
+    },
+    "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "GetContextMenuItems": {
@@ -1783,7 +1793,7 @@
     "docs": {
       "column": "/** The column that was clicked */",
       "defaultItems": "/** List of the items that would be displayed by default */",
-      "context": "/** Context object if provided to `gridOptions.context` */"
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "GetMainMenuItems": {
@@ -1809,6 +1819,9 @@
       "columnApi": "ColumnApi",
       "addRenderedRowListener": "(eventType: string, listener: Function) => void",
       "context": "any"
+    },
+    "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "NavigateToNextHeaderParams": {
@@ -2759,7 +2772,7 @@
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "context": "/** Bag of attributes, provided by user */",
+      "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */"
     }
   },
@@ -2782,7 +2795,7 @@
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "context": "/** Bag of attributes, provided by user */",
+      "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
       "expanded": "/** True if the group is expanded. */"
     }
@@ -2805,7 +2818,7 @@
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "context": "/** Bag of attributes, provided by user */",
+      "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */"
     }
   },
@@ -2827,7 +2840,7 @@
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "context": "/** Bag of attributes, provided by user */",
+      "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */"
     }
   },
@@ -2849,7 +2862,7 @@
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "context": "/** Bag of attributes, provided by user */",
+      "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */"
     }
   },
@@ -2871,7 +2884,7 @@
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "context": "/** Bag of attributes, provided by user */",
+      "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */"
     }
   },
@@ -2893,7 +2906,7 @@
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "context": "/** Bag of attributes, provided by user */",
+      "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */"
     }
   },
@@ -2915,7 +2928,7 @@
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "context": "/** Bag of attributes, provided by user */",
+      "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */"
     }
   },
@@ -2937,7 +2950,7 @@
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "context": "/** Bag of attributes, provided by user */",
+      "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */"
     }
   },
@@ -2959,7 +2972,7 @@
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "context": "/** Bag of attributes, provided by user */",
+      "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */"
     }
   },
@@ -2981,7 +2994,7 @@
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "context": "/** Bag of attributes, provided by user */",
+      "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */"
     }
   },
@@ -3008,7 +3021,7 @@
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "context": "/** Bag of attributes, provided by user */",
+      "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
       "value": "/** The value for the cell */"
     }
@@ -3034,7 +3047,7 @@
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "context": "/** Bag of attributes, provided by user */",
+      "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
       "value": "/** The value for the cell */"
     }
@@ -3060,7 +3073,7 @@
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "context": "/** Bag of attributes, provided by user */",
+      "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
       "value": "/** The value for the cell */"
     }
@@ -3086,7 +3099,7 @@
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "context": "/** Bag of attributes, provided by user */",
+      "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
       "value": "/** The value for the cell */"
     }
@@ -3112,7 +3125,7 @@
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "context": "/** Bag of attributes, provided by user */",
+      "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
       "value": "/** The value for the cell */"
     }
@@ -3138,7 +3151,7 @@
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "context": "/** Bag of attributes, provided by user */",
+      "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
       "value": "/** The value for the cell */"
     }
@@ -3164,7 +3177,7 @@
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "context": "/** Bag of attributes, provided by user */",
+      "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
       "value": "/** The value for the cell */"
     }
@@ -3190,7 +3203,7 @@
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "context": "/** Bag of attributes, provided by user */",
+      "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
       "value": "/** The value for the cell */"
     }
@@ -3216,7 +3229,7 @@
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "context": "/** Bag of attributes, provided by user */",
+      "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
       "value": "/** The value for the cell */"
     }
@@ -3242,7 +3255,7 @@
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "context": "/** Bag of attributes, provided by user */",
+      "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
       "value": "/** The value for the cell */"
     }
@@ -3270,7 +3283,7 @@
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "context": "/** Bag of attributes, provided by user */",
+      "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
       "value": "/** The value for the cell */",
       "oldValue": "/** The old value before editing */",
@@ -3301,7 +3314,7 @@
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "context": "/** Bag of attributes, provided by user */",
+      "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
       "value": "/** The value for the cell */"
     }
@@ -3533,6 +3546,7 @@
       "minValidYear?": "number"
     },
     "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */",
       "clearButton?": "/** @deprecated\n */",
       "resetButton?": "/** @deprecated\n */",
       "applyButton?": "/** @deprecated\n */",
@@ -3590,6 +3604,7 @@
       "numberParser?": "(text: string | null) => number"
     },
     "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */",
       "clearButton?": "/** @deprecated\n */",
       "resetButton?": "/** @deprecated\n */",
       "applyButton?": "/** @deprecated\n */",
@@ -3622,6 +3637,7 @@
       "debounceMs?": "number"
     },
     "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */",
       "clearButton?": "/** @deprecated\n */",
       "resetButton?": "/** @deprecated\n */",
       "applyButton?": "/** @deprecated\n */",
@@ -3668,6 +3684,7 @@
       "nullComparator?": "NullComparator"
     },
     "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */",
       "clearButton?": "/** @deprecated\n */",
       "resetButton?": "/** @deprecated\n */",
       "applyButton?": "/** @deprecated\n */",
@@ -3709,6 +3726,7 @@
       "alwaysShowBothConditions?": "boolean"
     },
     "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */",
       "clearButton?": "/** @deprecated\n */",
       "resetButton?": "/** @deprecated\n */",
       "applyButton?": "/** @deprecated\n */",
@@ -3785,6 +3803,7 @@
       "trimInput?": "boolean"
     },
     "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */",
       "clearButton?": "/** @deprecated\n */",
       "resetButton?": "/** @deprecated\n */",
       "applyButton?": "/** @deprecated\n */",
@@ -4039,6 +4058,9 @@
       "api": "GridApi",
       "context": "any",
       "template": "string"
+    },
+    "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "IHeader": {
@@ -4086,6 +4108,9 @@
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any"
+    },
+    "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "IHeaderGroup": { "meta": {}, "type": {} },
@@ -4235,7 +4260,10 @@
   },
   "ShouldRowBeSkippedParams": {
     "meta": {},
-    "type": { "node": "RowNode", "api": "GridApi", "context": "any" }
+    "type": { "node": "RowNode", "api": "GridApi", "context": "any" },
+    "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */"
+    }
   },
   "ProcessCellForExportParams": {
     "meta": {},
@@ -4248,6 +4276,9 @@
       "columnApi": "ColumnApi",
       "context": "any",
       "type": "string"
+    },
+    "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "ProcessHeaderForExportParams": {
@@ -4257,6 +4288,9 @@
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any"
+    },
+    "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "ProcessGroupHeaderForExportParams": {
@@ -4266,6 +4300,9 @@
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any"
+    },
+    "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "ProcessRowGroupForExportParams": {
@@ -4275,6 +4312,9 @@
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any"
+    },
+    "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "ContainerType": {
@@ -5213,6 +5253,24 @@
       "eGridCell": "HTMLElement",
       "parseValue": "(value: any) => any",
       "formatValue": "(value: any) => any"
+    },
+    "docs": {
+      "value": "/** Current value of the cell */",
+      "keyPress": "/** Key code of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
+      "charPress": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n * shift + letter 'a' only printable characters appear here */",
+      "column": "/** Grid column */",
+      "colDef": "/** Column definition */",
+      "node": "/** Row node for the cell */",
+      "data": "/** Row data */",
+      "rowIndex": "/** Editing row index */",
+      "cellStartedEdit": "/** If doing full row edit, this is true if the cell is the one that started the edit\n * (eg it is the cell the use double clicked on, or pressed a key on etc). */",
+      "context": "/** Context  as set on gridOptions.context */",
+      "$scope": "/** angular 1 scope - null if not using angular 1, this is legacy and not used if not */\n/** using angular 1 */",
+      "onKeyDown": "/** callback to tell grid a key was pressed - useful to pass control key events (tab, */\n/** arrows etc) back to grid - however you do */",
+      "stopEditing": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent */\n/** navigation moving to the next cell if grid property enterMovesDownAfterEdit=true */",
+      "eGridCell": "/** A reference to the DOM element representing the grid cell that your component */\n/** will live inside. Useful if you want to add event listeners or classes at this level. */\n/** This is the DOM element that gets browser focus when selecting cells. */",
+      "parseValue": "/** Utility function to parse a value using the column's colDef.valueParser */",
+      "formatValue": "/** Utility function to format a value using the column's colDef.valueFormatter */"
     }
   },
   "ICellEditorComp": {
@@ -6050,7 +6108,7 @@
       "failCallback()": "/** Callback to call when the request fails. */",
       "sortModel": "/** If doing server side sorting, contains the sort model */",
       "filterModel": "/** If doing server side filtering, contains the filter model */",
-      "context": "/** The grid context object */"
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "IEventEmitter": {
@@ -6460,6 +6518,9 @@
       "valueGetter": "(rowNode: RowNode) => any",
       "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
       "context": "any"
+    },
+    "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "Filter": {
@@ -6720,6 +6781,24 @@
       "cellHeight": "number",
       "cellRenderer": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
       "searchDebounceDelay?": "number"
+    },
+    "docs": {
+      "value": "/** Current value of the cell */",
+      "keyPress": "/** Key code of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
+      "charPress": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n * shift + letter 'a' only printable characters appear here */",
+      "column": "/** Grid column */",
+      "colDef": "/** Column definition */",
+      "node": "/** Row node for the cell */",
+      "data": "/** Row data */",
+      "rowIndex": "/** Editing row index */",
+      "cellStartedEdit": "/** If doing full row edit, this is true if the cell is the one that started the edit\n * (eg it is the cell the use double clicked on, or pressed a key on etc). */",
+      "context": "/** Context  as set on gridOptions.context */",
+      "$scope": "/** angular 1 scope - null if not using angular 1, this is legacy and not used if not */\n/** using angular 1 */",
+      "onKeyDown": "/** callback to tell grid a key was pressed - useful to pass control key events (tab, */\n/** arrows etc) back to grid - however you do */",
+      "stopEditing": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent */\n/** navigation moving to the next cell if grid property enterMovesDownAfterEdit=true */",
+      "eGridCell": "/** A reference to the DOM element representing the grid cell that your component */\n/** will live inside. Useful if you want to add event listeners or classes at this level. */\n/** This is the DOM element that gets browser focus when selecting cells. */",
+      "parseValue": "/** Utility function to parse a value using the column's colDef.valueParser */",
+      "formatValue": "/** Utility function to format a value using the column's colDef.valueFormatter */"
     }
   },
   "RowBounds": {
@@ -6979,6 +7058,7 @@
       "excelMode?": "'mac' | 'windows'"
     },
     "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */",
       "clearButton?": "/** @deprecated\n */",
       "resetButton?": "/** @deprecated\n */",
       "applyButton?": "/** @deprecated\n */",
@@ -7022,7 +7102,10 @@
   },
   "IStatusPanelParams": {
     "meta": {},
-    "type": { "api": "GridApi", "columnApi": "ColumnApi", "context": "any" }
+    "type": { "api": "GridApi", "columnApi": "ColumnApi", "context": "any" },
+    "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */"
+    }
   },
   "IStatusPanel": {
     "meta": {},
@@ -7197,6 +7280,7 @@
       "suppressRefresh": "boolean"
     },
     "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */",
       "registerRowDragger": "/** registerRowDragger: Function\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n */",
       "autoHeight": "/** @deprecated\n */",
       "suppressRefresh": "/** @deprecated\n */"
@@ -7394,6 +7478,24 @@
       "maxLength": "number",
       "rows": "number",
       "cols": "number"
+    },
+    "docs": {
+      "value": "/** Current value of the cell */",
+      "keyPress": "/** Key code of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
+      "charPress": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n * shift + letter 'a' only printable characters appear here */",
+      "column": "/** Grid column */",
+      "colDef": "/** Column definition */",
+      "node": "/** Row node for the cell */",
+      "data": "/** Row data */",
+      "rowIndex": "/** Editing row index */",
+      "cellStartedEdit": "/** If doing full row edit, this is true if the cell is the one that started the edit\n * (eg it is the cell the use double clicked on, or pressed a key on etc). */",
+      "context": "/** Context  as set on gridOptions.context */",
+      "$scope": "/** angular 1 scope - null if not using angular 1, this is legacy and not used if not */\n/** using angular 1 */",
+      "onKeyDown": "/** callback to tell grid a key was pressed - useful to pass control key events (tab, */\n/** arrows etc) back to grid - however you do */",
+      "stopEditing": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent */\n/** navigation moving to the next cell if grid property enterMovesDownAfterEdit=true */",
+      "eGridCell": "/** A reference to the DOM element representing the grid cell that your component */\n/** will live inside. Useful if you want to add event listeners or classes at this level. */\n/** This is the DOM element that gets browser focus when selecting cells. */",
+      "parseValue": "/** Utility function to parse a value using the column's colDef.valueParser */",
+      "formatValue": "/** Utility function to format a value using the column's colDef.valueFormatter */"
     }
   },
   "ISelectCellEditorParams": {
@@ -7418,6 +7520,24 @@
       "parseValue": "(value: any) => any",
       "formatValue": "(value: any) => any",
       "values": "any[]"
+    },
+    "docs": {
+      "value": "/** Current value of the cell */",
+      "keyPress": "/** Key code of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
+      "charPress": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n * shift + letter 'a' only printable characters appear here */",
+      "column": "/** Grid column */",
+      "colDef": "/** Column definition */",
+      "node": "/** Row node for the cell */",
+      "data": "/** Row data */",
+      "rowIndex": "/** Editing row index */",
+      "cellStartedEdit": "/** If doing full row edit, this is true if the cell is the one that started the edit\n * (eg it is the cell the use double clicked on, or pressed a key on etc). */",
+      "context": "/** Context  as set on gridOptions.context */",
+      "$scope": "/** angular 1 scope - null if not using angular 1, this is legacy and not used if not */\n/** using angular 1 */",
+      "onKeyDown": "/** callback to tell grid a key was pressed - useful to pass control key events (tab, */\n/** arrows etc) back to grid - however you do */",
+      "stopEditing": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent */\n/** navigation moving to the next cell if grid property enterMovesDownAfterEdit=true */",
+      "eGridCell": "/** A reference to the DOM element representing the grid cell that your component */\n/** will live inside. Useful if you want to add event listeners or classes at this level. */\n/** This is the DOM element that gets browser focus when selecting cells. */",
+      "parseValue": "/** Utility function to parse a value using the column's colDef.valueParser */",
+      "formatValue": "/** Utility function to format a value using the column's colDef.valueFormatter */"
     }
   },
   "ITextCellEditorParams": {
@@ -7444,6 +7564,24 @@
       "parseValue": "(value: any) => any",
       "formatValue": "(value: any) => any",
       "useFormatter": "boolean"
+    },
+    "docs": {
+      "value": "/** Current value of the cell */",
+      "keyPress": "/** Key code of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
+      "charPress": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n * shift + letter 'a' only printable characters appear here */",
+      "column": "/** Grid column */",
+      "colDef": "/** Column definition */",
+      "node": "/** Row node for the cell */",
+      "data": "/** Row data */",
+      "rowIndex": "/** Editing row index */",
+      "cellStartedEdit": "/** If doing full row edit, this is true if the cell is the one that started the edit\n * (eg it is the cell the use double clicked on, or pressed a key on etc). */",
+      "context": "/** Context  as set on gridOptions.context */",
+      "$scope": "/** angular 1 scope - null if not using angular 1, this is legacy and not used if not */\n/** using angular 1 */",
+      "onKeyDown": "/** callback to tell grid a key was pressed - useful to pass control key events (tab, */\n/** arrows etc) back to grid - however you do */",
+      "stopEditing": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent */\n/** navigation moving to the next cell if grid property enterMovesDownAfterEdit=true */",
+      "eGridCell": "/** A reference to the DOM element representing the grid cell that your component */\n/** will live inside. Useful if you want to add event listeners or classes at this level. */\n/** This is the DOM element that gets browser focus when selecting cells. */",
+      "parseValue": "/** Utility function to parse a value using the column's colDef.valueParser */",
+      "formatValue": "/** Utility function to format a value using the column's colDef.valueFormatter */"
     }
   },
   "IGroupCellRenderer": {
@@ -7496,6 +7634,7 @@
       "padding": "number"
     },
     "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */",
       "registerRowDragger": "/** registerRowDragger: Function\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n */",
       "padding": "/** @deprecated\n */"
     }
@@ -7525,6 +7664,7 @@
       "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string) => void"
     },
     "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */",
       "registerRowDragger": "/** registerRowDragger: Function\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n */"
     }
   },
@@ -7535,6 +7675,9 @@
       "valueFormatted": "any",
       "api": "GridApi",
       "context": "any"
+    },
+    "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "ICellRenderer": {
@@ -7593,6 +7736,7 @@
       "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string) => void"
     },
     "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */",
       "registerRowDragger": "/** registerRowDragger: Function\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n */"
     }
   },

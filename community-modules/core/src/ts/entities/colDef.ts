@@ -83,6 +83,7 @@ export interface IAggFuncParams {
     data: any;
     api: GridApi;
     columnApi: ColumnApi;
+    /** The context as provided on `gridOptions.context` */
     context: any;
 }
 
@@ -472,6 +473,7 @@ export interface GetQuickFilterTextParams {
     data: any;
     column: Column;
     colDef: ColDef;
+    /** The context as provided on `gridOptions.context` */
     context: any;
 }
 
