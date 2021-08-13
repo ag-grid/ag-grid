@@ -629,7 +629,9 @@ export class RowCtrl extends BeanStub {
         // then set data, and any old valueGetter's (ie from cols that were removed) would still get called.
         this.updateColumnLists(true);
 
-        this.rowNode.checkAutoHeights();
+        if (this.beans.columnModel.wasAutoRowHeightEverActive()) {
+            this.rowNode.checkAutoHeights();
+        }
     }
 
     private onVirtualColumnsChanged(): void {

@@ -20,6 +20,7 @@ import { startsWith } from "../utils/string";
 import { RowNodeEventThrottle } from "./rowNodeEventThrottle";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 import { IServerSideRowModel } from "../interfaces/iServerSideRowModel";
+import { debounce } from "../utils/function";
 
 export interface SetSelectedParams {
     // true or false, whatever you want to set selection to
@@ -523,19 +524,25 @@ export class RowNode implements IEventEmitter {
         autoHeights[column.getId()] = cellHeight;
 
         if (cellHeight!=null) {
-            this.checkAutoHeights();
+            if (this.checkAutoHeightsDebounced==null) {
+                this.checkAutoHeightsDebounced = debounce(this.checkAutoHeights.bind(this),1);
+            }
+            this.checkAutoHeightsDebounced();
         }
     }
+
+    private checkAutoHeightsDebounced: ()=> void;
 
     public checkAutoHeights(): void {
         let notAllPresent = false;
         let nonePresent = true;
-        let newRowHeight = 1;
+        let newRowHeight = 0;
 
         const autoHeights = this.__autoHeights!;
         if (autoHeights==null) { return; }
 
-        this.columnModel.getAllDisplayedAutoHeightCols().forEach( col => {
+        const displayedAutoHeightCols = this.columnModel.getAllDisplayedAutoHeightCols();
+        displayedAutoHeightCols.forEach( col => {
             const cellHeight = autoHeights[col.getId()];
             if (cellHeight==null) {
                 notAllPresent = true;
@@ -549,16 +556,20 @@ export class RowNode implements IEventEmitter {
 
         if (notAllPresent) { return; }
 
-        const setTheHeight = (height: number) => {
-            this.setRowHeight(height);
-            const rowModelCasted = this.rowModel as (IClientSideRowModel | IServerSideRowModel);
-            rowModelCasted.onRowHeightChanged();
-        };
-
-        if (nonePresent) { 
-            setTheHeight(this.gridOptionsWrapper.getRowHeightForNode(this).height);
-            return;
+        // we take min of 10, so we don't adjust for empty rows. if <10, we put to default.
+        // this prevents the row starting very small when waiting for async components, 
+        // which would then mean the grid squashes in far to many rows (as small heights
+        // means more rows fit in) which looks crap. so best ignore small values and assume 
+        // we are still waiting for values to render.
+        if (nonePresent || newRowHeight < 10) { 
+            newRowHeight = this.gridOptionsWrapper.getRowHeightForNode(this).height;
         }
+
+        const setTheHeight = (height: number) => {
+            const rowModel = this.rowModel as (IClientSideRowModel | IServerSideRowModel);
+            this.setRowHeight(height);
+            rowModel.onRowHeightChanged && rowModel.onRowHeightChanged();
+        };
 
         if (newRowHeight == this.rowHeight) { return; }
 

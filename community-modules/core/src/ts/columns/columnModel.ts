@@ -49,6 +49,7 @@ import { ColumnDefFactory } from "./columnDefFactory";
 import { IRowModel } from "../interfaces/iRowModel";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 import { convertToMap } from '../utils/map';
+import { doOnce } from '../utils/function';
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -161,6 +162,7 @@ export class ColumnModel extends BeanStub {
     // grid columns that have colDef.autoHeight set
     private displayedAutoHeightCols: Column[];
     private autoHeightActive: boolean;
+    private autoHeightActiveAtLeastOnce = false;
 
     private suppressColumnVirtualisation: boolean;
 
@@ -3078,15 +3080,30 @@ export class ColumnModel extends BeanStub {
         this.gridColumnsMap = {};
         this.gridColumns.forEach(col => this.gridColumnsMap[col.getId()] = col);
 
-        this.autoHeightActive = this.gridColumns.filter(col => col.getColDef().autoHeight).length > 0;
-
+        this.setAutoHeightActive();
+        
         const event: GridColumnsChangedEvent = {
             type: Events.EVENT_GRID_COLUMNS_CHANGED,
             api: this.gridApi,
             columnApi: this.columnApi
         };
-
+        
         this.eventService.dispatchEvent(event);
+    }
+
+    private setAutoHeightActive(): void {
+        this.autoHeightActive = this.gridColumns.filter(col => col.getColDef().autoHeight).length > 0;
+
+        if (this.autoHeightActive) {
+            this.autoHeightActiveAtLeastOnce = true;
+
+            const rowModelType = this.rowModel.getType();
+            const supportedRowModel = rowModelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE || rowModelType === Constants.ROW_MODEL_TYPE_SERVER_SIDE;
+            if (!supportedRowModel) {
+                const message = 'AG Grid - autoHeight columns only work with Client Side Row Model and Server Side Row Model.'
+                doOnce( ()=> console.warn(message), 'autoHeightActive.wrongRowModel');
+            }
+        }
     }
 
     private orderGridColsLikeLastPrimary(): void {
@@ -3239,6 +3256,10 @@ export class ColumnModel extends BeanStub {
 
     public isAutoRowHeightActive(): boolean {
         return this.autoHeightActive;
+    }
+
+    public wasAutoRowHeightEverActive(): boolean {
+        return this.autoHeightActiveAtLeastOnce;
     }
 
     private joinDisplayedColumns(): void {

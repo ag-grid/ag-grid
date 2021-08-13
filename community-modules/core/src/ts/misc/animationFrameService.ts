@@ -184,12 +184,13 @@ export class AnimationFrameService extends BeanStub {
 
     // a debounce utility used for parts of the app involved with rendering.
     // the advantage over normal debounce is the client can call flushAllFrames()
-    // to make sure all rendering is complete.
+    // to make sure all rendering is complete. we don't wait any milliseconds,
+    // as this is intended to batch calls in one VM turn.
     public debounce(func: ()=>void) {
         let pending = false;
         return ()=> {
             if (!this.isOn()) {
-                func();
+                this.getFrameworkOverrides().setTimeout(func, 0);
                 return;
             }
             if (pending) {
