@@ -131,6 +131,7 @@ export interface Config {
         };
     };
     gridOpProp?: InterfaceEntry;
+    codeOnly?: boolean;
     defaultExpand?: boolean
 }
 export type SectionProps = {
