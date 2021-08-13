@@ -17,11 +17,11 @@ var gridOptions = {
     rowData: createRowData(),
     rowDragManaged: true,
     columnDefs: [
-        {cellRenderer: 'dragSourceCellRenderer'},
-        {field: "id"},
-        {field: "color"},
-        {field: "value1"},
-        {field: "value2"}
+        { cellRenderer: 'dragSourceCellRenderer', minWidth: 100 },
+        { field: "id" },
+        { field: "color" },
+        { field: "value1" },
+        { field: "value2" }
     ],
     components: {
         dragSourceCellRenderer: DragSourceRenderer,
