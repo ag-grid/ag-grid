@@ -262,6 +262,11 @@
       "rowIndex": "number",
       "rowPinned": "string | null",
       "column": "Column"
+    },
+    "docs": {
+      "rowIndex": "/** A positive number from 0 to n, where n is the last row the grid is rendering\n * or -1 if you want to navigate to the grid header */",
+      "rowPinned": "/** Either 'top', 'bottom' or undefined/null (for not pinned) */",
+      "column": "/** The grid column */"
     }
   },
   "AbstractColDef": {
@@ -1108,7 +1113,9 @@
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
       "colDef": "/** ColDef provided for this column */",
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "context": "/** The context as provided on `gridOptions.context` */",
+      "event": "/** The keyboard event the grid received */",
+      "editing": "/** Whether the cell is editing or not */"
     }
   },
   "SuppressHeaderKeyboardEventParams": {
@@ -1830,8 +1837,14 @@
       "key": "string",
       "previousHeaderPosition": "HeaderPosition | null",
       "nextHeaderPosition": "HeaderPosition | null",
-      "event": "KeyboardEvent",
-      "headerRowCount": "number"
+      "headerRowCount": "number",
+      "event": "KeyboardEvent"
+    },
+    "docs": {
+      "key": "/** The key for the arrow key pressed,\n * left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */",
+      "previousHeaderPosition": "/** The header that currently has focus */",
+      "nextHeaderPosition": "/** The header the grid would normally pick as the next header for this navigation */",
+      "headerRowCount": "/** The number of header rows present in the grid */"
     }
   },
   "TabToNextHeaderParams": {
@@ -1841,6 +1854,12 @@
       "previousHeaderPosition": "HeaderPosition | null",
       "nextHeaderPosition": "HeaderPosition | null",
       "headerRowCount": "number"
+    },
+    "docs": {
+      "backwards": "/** True if the Shift key is also down */",
+      "previousHeaderPosition": "/** The header that currently has focus */",
+      "nextHeaderPosition": "/** The header the grid would normally pick as the next header for this navigation */",
+      "headerRowCount": "/** The number of header rows present in the grid */"
     }
   },
   "NavigateToNextCellParams": {
@@ -1850,6 +1869,11 @@
       "previousCellPosition": "CellPosition",
       "nextCellPosition": "CellPosition | null",
       "event": "KeyboardEvent | null"
+    },
+    "docs": {
+      "key": "/** The keycode for the arrow key pressed:\n * left = 37, up = 38, right = 39, down = 40 */",
+      "previousCellPosition": "/** The cell that currently has focus */",
+      "nextCellPosition": "/** The cell the grid would normally pick as the next cell for navigation */"
     }
   },
   "TabToNextCellParams": {
@@ -1859,6 +1883,12 @@
       "editing": "boolean",
       "previousCellPosition": "CellPosition",
       "nextCellPosition": "CellPosition"
+    },
+    "docs": {
+      "backwards": "/** True if the Shift key is also down */",
+      "editing": "/** True if the current cell is editing\n * (you may want to skip cells that are not editable, as the grid will enter the next cell in editing mode also if tabbing) */",
+      "previousCellPosition": "/** The cell that currently has focus */",
+      "nextCellPosition": "/** The cell the grid would normally pick as the next cell for navigation */"
     }
   },
   "PostProcessPopupParams": {
@@ -1986,7 +2016,11 @@
   },
   "RowPosition": {
     "meta": {},
-    "type": { "rowIndex": "number", "rowPinned": "string | null" }
+    "type": { "rowIndex": "number", "rowPinned": "string | null" },
+    "docs": {
+      "rowIndex": "/** A positive number from 0 to n, where n is the last row the grid is rendering\n * or -1 if you want to navigate to the grid header */",
+      "rowPinned": "/** Either 'top', 'bottom' or undefined/null (for not pinned) */"
+    }
   },
   "ToolPanelDef": {
     "meta": {},
@@ -4093,7 +4127,11 @@
   },
   "HeaderPosition": {
     "meta": {},
-    "type": { "headerRowIndex": "number", "column": "Column | ColumnGroup" }
+    "type": { "headerRowIndex": "number", "column": "Column | ColumnGroup" },
+    "docs": {
+      "headerRowIndex": "/** A number from 0 to n, where n is the last header row the grid is rendering */",
+      "column": "/** The grid column or column group */"
+    }
   },
   "SelectionCount": {
     "meta": {},
@@ -5265,10 +5303,10 @@
       "rowIndex": "/** Editing row index */",
       "cellStartedEdit": "/** If doing full row edit, this is true if the cell is the one that started the edit\n * (eg it is the cell the use double clicked on, or pressed a key on etc). */",
       "context": "/** Context  as set on gridOptions.context */",
-      "$scope": "/** angular 1 scope - null if not using angular 1, this is legacy and not used if not */\n/** using angular 1 */",
-      "onKeyDown": "/** callback to tell grid a key was pressed - useful to pass control key events (tab, */\n/** arrows etc) back to grid - however you do */",
-      "stopEditing": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent */\n/** navigation moving to the next cell if grid property enterMovesDownAfterEdit=true */",
-      "eGridCell": "/** A reference to the DOM element representing the grid cell that your component */\n/** will live inside. Useful if you want to add event listeners or classes at this level. */\n/** This is the DOM element that gets browser focus when selecting cells. */",
+      "$scope": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
+      "onKeyDown": "/** callback to tell grid a key was pressed - useful to pass control key events (tab,\n * arrows etc) back to grid - however you do */",
+      "stopEditing": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property enterMovesDownAfterEdit=true */",
+      "eGridCell": "/** A reference to the DOM element representing the grid cell that your component\n * will live inside. Useful if you want to add event listeners or classes at this level.\n * This is the DOM element that gets browser focus when selecting cells. */",
       "parseValue": "/** Utility function to parse a value using the column's colDef.valueParser */",
       "formatValue": "/** Utility function to format a value using the column's colDef.valueFormatter */"
     }
@@ -6793,10 +6831,10 @@
       "rowIndex": "/** Editing row index */",
       "cellStartedEdit": "/** If doing full row edit, this is true if the cell is the one that started the edit\n * (eg it is the cell the use double clicked on, or pressed a key on etc). */",
       "context": "/** Context  as set on gridOptions.context */",
-      "$scope": "/** angular 1 scope - null if not using angular 1, this is legacy and not used if not */\n/** using angular 1 */",
-      "onKeyDown": "/** callback to tell grid a key was pressed - useful to pass control key events (tab, */\n/** arrows etc) back to grid - however you do */",
-      "stopEditing": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent */\n/** navigation moving to the next cell if grid property enterMovesDownAfterEdit=true */",
-      "eGridCell": "/** A reference to the DOM element representing the grid cell that your component */\n/** will live inside. Useful if you want to add event listeners or classes at this level. */\n/** This is the DOM element that gets browser focus when selecting cells. */",
+      "$scope": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
+      "onKeyDown": "/** callback to tell grid a key was pressed - useful to pass control key events (tab,\n * arrows etc) back to grid - however you do */",
+      "stopEditing": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property enterMovesDownAfterEdit=true */",
+      "eGridCell": "/** A reference to the DOM element representing the grid cell that your component\n * will live inside. Useful if you want to add event listeners or classes at this level.\n * This is the DOM element that gets browser focus when selecting cells. */",
       "parseValue": "/** Utility function to parse a value using the column's colDef.valueParser */",
       "formatValue": "/** Utility function to format a value using the column's colDef.valueFormatter */"
     }
@@ -7490,10 +7528,10 @@
       "rowIndex": "/** Editing row index */",
       "cellStartedEdit": "/** If doing full row edit, this is true if the cell is the one that started the edit\n * (eg it is the cell the use double clicked on, or pressed a key on etc). */",
       "context": "/** Context  as set on gridOptions.context */",
-      "$scope": "/** angular 1 scope - null if not using angular 1, this is legacy and not used if not */\n/** using angular 1 */",
-      "onKeyDown": "/** callback to tell grid a key was pressed - useful to pass control key events (tab, */\n/** arrows etc) back to grid - however you do */",
-      "stopEditing": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent */\n/** navigation moving to the next cell if grid property enterMovesDownAfterEdit=true */",
-      "eGridCell": "/** A reference to the DOM element representing the grid cell that your component */\n/** will live inside. Useful if you want to add event listeners or classes at this level. */\n/** This is the DOM element that gets browser focus when selecting cells. */",
+      "$scope": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
+      "onKeyDown": "/** callback to tell grid a key was pressed - useful to pass control key events (tab,\n * arrows etc) back to grid - however you do */",
+      "stopEditing": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property enterMovesDownAfterEdit=true */",
+      "eGridCell": "/** A reference to the DOM element representing the grid cell that your component\n * will live inside. Useful if you want to add event listeners or classes at this level.\n * This is the DOM element that gets browser focus when selecting cells. */",
       "parseValue": "/** Utility function to parse a value using the column's colDef.valueParser */",
       "formatValue": "/** Utility function to format a value using the column's colDef.valueFormatter */"
     }
@@ -7532,10 +7570,10 @@
       "rowIndex": "/** Editing row index */",
       "cellStartedEdit": "/** If doing full row edit, this is true if the cell is the one that started the edit\n * (eg it is the cell the use double clicked on, or pressed a key on etc). */",
       "context": "/** Context  as set on gridOptions.context */",
-      "$scope": "/** angular 1 scope - null if not using angular 1, this is legacy and not used if not */\n/** using angular 1 */",
-      "onKeyDown": "/** callback to tell grid a key was pressed - useful to pass control key events (tab, */\n/** arrows etc) back to grid - however you do */",
-      "stopEditing": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent */\n/** navigation moving to the next cell if grid property enterMovesDownAfterEdit=true */",
-      "eGridCell": "/** A reference to the DOM element representing the grid cell that your component */\n/** will live inside. Useful if you want to add event listeners or classes at this level. */\n/** This is the DOM element that gets browser focus when selecting cells. */",
+      "$scope": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
+      "onKeyDown": "/** callback to tell grid a key was pressed - useful to pass control key events (tab,\n * arrows etc) back to grid - however you do */",
+      "stopEditing": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property enterMovesDownAfterEdit=true */",
+      "eGridCell": "/** A reference to the DOM element representing the grid cell that your component\n * will live inside. Useful if you want to add event listeners or classes at this level.\n * This is the DOM element that gets browser focus when selecting cells. */",
       "parseValue": "/** Utility function to parse a value using the column's colDef.valueParser */",
       "formatValue": "/** Utility function to format a value using the column's colDef.valueFormatter */"
     }
@@ -7576,10 +7614,10 @@
       "rowIndex": "/** Editing row index */",
       "cellStartedEdit": "/** If doing full row edit, this is true if the cell is the one that started the edit\n * (eg it is the cell the use double clicked on, or pressed a key on etc). */",
       "context": "/** Context  as set on gridOptions.context */",
-      "$scope": "/** angular 1 scope - null if not using angular 1, this is legacy and not used if not */\n/** using angular 1 */",
-      "onKeyDown": "/** callback to tell grid a key was pressed - useful to pass control key events (tab, */\n/** arrows etc) back to grid - however you do */",
-      "stopEditing": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent */\n/** navigation moving to the next cell if grid property enterMovesDownAfterEdit=true */",
-      "eGridCell": "/** A reference to the DOM element representing the grid cell that your component */\n/** will live inside. Useful if you want to add event listeners or classes at this level. */\n/** This is the DOM element that gets browser focus when selecting cells. */",
+      "$scope": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
+      "onKeyDown": "/** callback to tell grid a key was pressed - useful to pass control key events (tab,\n * arrows etc) back to grid - however you do */",
+      "stopEditing": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property enterMovesDownAfterEdit=true */",
+      "eGridCell": "/** A reference to the DOM element representing the grid cell that your component\n * will live inside. Useful if you want to add event listeners or classes at this level.\n * This is the DOM element that gets browser focus when selecting cells. */",
       "parseValue": "/** Utility function to parse a value using the column's colDef.valueParser */",
       "formatValue": "/** Utility function to format a value using the column's colDef.valueFormatter */"
     }
