@@ -17,14 +17,7 @@ var options = {
         type: 'bar',
         xKey: 'type',
         yKeys: ['ownerOccupied', 'privateRented', 'localAuthority', 'housingAssociation'],
-        yNames: ['Owner occupied', 'Private rented', 'Local authority', 'Housing association'],
-        highlightStyle: {
-            series: {
-                enabled: true,
-                strokeWidth: 3,
-                dimOpacity: 0.3
-            }
-        }
+        yNames: ['Owner occupied', 'Private rented', 'Local authority', 'Housing association']
     }],
     axes: [
         {
