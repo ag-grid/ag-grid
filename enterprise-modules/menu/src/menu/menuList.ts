@@ -30,7 +30,8 @@ export class MenuList extends TabGuardComp {
 
     protected onTabKeyDown(e: KeyboardEvent) {
         const parent = this.getParentComponent();
-        const isManaged = parent && parent instanceof TabGuardComp;
+        const parentGui = parent && parent.getGui();
+        const isManaged = parentGui && _.containsClass(parentGui, 'ag-focus-managed');
 
         if (!isManaged) {
             e.preventDefault();
