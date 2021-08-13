@@ -50,6 +50,7 @@ export interface GridChartParams {
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
     crossFiltering: boolean;
     crossFilteringContext: CrossFilteringContext;
+    restoringChart: boolean;
 }
 
 export class GridChartComp extends Component {
@@ -220,6 +221,7 @@ export class GridChartComp extends Component {
             eventService: this.eventService,
             gridApi: this.gridApi,
             columnApi: this.columnApi,
+            restoringChart: this.params.restoringChart,
         };
 
         // set local state used to detect when chart changes
