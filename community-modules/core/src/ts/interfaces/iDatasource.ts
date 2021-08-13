@@ -32,6 +32,6 @@ export interface IGetRowsParams {
     /** If doing server side filtering, contains the filter model */
     filterModel: any;
 
-    /** The grid context object */
+/** The context as provided on `gridOptions.context` */
     context: any;
 }

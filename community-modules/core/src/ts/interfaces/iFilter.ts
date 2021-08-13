@@ -93,6 +93,7 @@ export interface IFilterParams {
     filterModifiedCallback: () => void;
     valueGetter: (rowNode: RowNode) => any;
     doesRowPassOtherFilter: (rowNode: RowNode) => boolean; // TODO: this method should be "doesRowPassOtherFilters"
+/** The context as provided on `gridOptions.context` */
     context: any;
 }
 

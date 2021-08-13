@@ -305,12 +305,6 @@ interface AgBaseSeriesOptions {
     highlightStyle?: {
         fill?: string;
         stroke?: string;
-        strokeWidth?: number;
-        series?: {
-            enabled?: boolean;
-            dimOpacity?: number;
-            strokeWidth?: number;
-        }
     }
 }
 
