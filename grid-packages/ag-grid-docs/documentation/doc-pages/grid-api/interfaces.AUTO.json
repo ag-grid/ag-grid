@@ -850,6 +850,13 @@
       "suppressColumnSelectAll?": "boolean",
       "suppressColumnExpandAll?": "boolean",
       "contractColumnSelection?": "boolean"
+    },
+    "docs": {
+      "suppressSyncLayoutWithGrid?": "/** To suppress updating the layout of columns\n * as they are rearranged in the grid */",
+      "suppressColumnFilter?": "/** To suppress Column Filter section */",
+      "suppressColumnSelectAll?": "/** To suppress Select / Un-select all widget */",
+      "suppressColumnExpandAll?": "/** To suppress Expand / Collapse all widget */",
+      "contractColumnSelection?": "/** By default, column groups start expanded.\n * Pass true to default to contracted groups */"
     }
   },
   "BaseColDefParams": {
@@ -1696,16 +1703,32 @@
       "subMenu?": "(MenuItemDef | string)[] | IComponent<any>",
       "cssClasses?": "string[]",
       "tooltip?": "string"
+    },
+    "docs": {
+      "name": "/** Name of the menu item */",
+      "disabled?": "/** It the item should be enabled / disabled */",
+      "shortcut?": "/** Shortcut (just display text, saying the shortcut here does nothing) */",
+      "action?": "/** Function that gets executed when item is chosen */",
+      "checked?": "/** Set to true to provide a check beside the option */",
+      "icon?": "/** The icon to display, either a DOM element or HTML string */",
+      "subMenu?": "/** If this item is a sub menu, contains a list of menu item definitions */",
+      "cssClasses?": "/** CSS classes to apply to the menu item */",
+      "tooltip?": "/** Tooltip for the menu item */"
     }
   },
   "GetMainMenuItemsParams": {
     "meta": {},
     "type": {
       "column": "Column",
+      "defaultItems": "string[]",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "context": "any",
-      "defaultItems": "string[]"
+      "context": "any"
+    },
+    "docs": {
+      "column": "/** The column that was clicked */",
+      "defaultItems": "/** List of the items that would be displayed by default */",
+      "context": "/** Context object if provided to `gridOptions.context` */"
     }
   },
   "GetMainMenuItems": {
@@ -1779,6 +1802,14 @@
       "type": "string",
       "eventSource?": "HTMLElement | null",
       "mouseEvent?": "MouseEvent | Touch | null"
+    },
+    "docs": {
+      "column?": "/** If popup is for a column, this gives the Column */",
+      "rowNode?": "/** If popup is for a row, this gives the RowNode */",
+      "ePopup": "/** The popup we are showing */",
+      "type": "/** The different types are:\n * 'contextMenu', 'columnMenu', 'aggFuncSelect', 'popupCellEditor' */",
+      "eventSource?": "/** If the popup is as a result of a button click (eg menu button),\n * this is the component that the user clicked */",
+      "mouseEvent?": "/** If the popup is as a result of a click or touch,\n * this is the event - eg user showing context menu */"
     }
   },
   "PaginationNumberFormatterParams": {
