@@ -50,10 +50,3 @@ The answer is that value formatters are for text formatting and cell renderers a
 The example below shows value formatters in action.
 
 <grid-example title='Value Formatters' name='value-formatters' type='generated'></grid-example>
-
-## Floating Cell Formatter
-
-Use `floatingCellFormatter` instead of `colDef.cellFormatter` to allow different formatting for pinned rows. If you don't specify a `colDef.floatingCellFormatter`, then `cellFormatter` will get used instead if it is present.
-
-[[note]]
-| You can use the same formatter for pinned rows and normal rows and check the row type. You can check if the row is floating by checking `params.node.floating` property.

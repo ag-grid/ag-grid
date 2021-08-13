@@ -138,8 +138,6 @@ The example above shows adding and removing groups. It is also possible to add a
 
 - The example has two groups: **Athlete Details** and **Sports Results**
 - The example has two sets of columns, **Normal Cols** and **Extra Cols**.
-- When you moved from **Normal Cols** to **Extra Cols**, three new columns are added to the list. Two belong to the **Athlete Details** group, the other belongs to no group.
-- When a column is added to the grid that is not in a group, it is always added to the end of the list of columns. In this example the **Distance** column is always added to the end.
-- When a column is added to the grid that is part of a group, it is always added after the last column belonging to that group. In this example columns **Region1** and **Region2** are always added after either **Athlete** or **Country**, whichever appears last in the grid.
+- When you move from **Normal Cols** to **Extra Cols**, three new columns are added to the list. Two belong to the **Athlete Details** group, the other belongs to no group.
 
 <grid-example title='Group Changes 2' name='group-changes-2' type='generated'></grid-example>
