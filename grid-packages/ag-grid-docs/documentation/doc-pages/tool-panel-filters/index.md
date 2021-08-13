@@ -12,7 +12,7 @@ The example below shows the filters tool panel. The following can be noted:
 - Clicking on a column in the filter tool panel will show the filter below the column name. Clicking a second time will hide the filter again.
 - Columns with filters active will have the filter icon appear beside the filter name in the tool panel.
 
-<grid-example title='Filter Tool Panel' name='simple' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Filter Tool Panel' name='simple' type='mixed' options='{ "enterprise": true }'></grid-example> 
 
 ## Suppress Options
 
