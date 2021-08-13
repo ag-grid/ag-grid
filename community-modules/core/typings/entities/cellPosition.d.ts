@@ -2,6 +2,7 @@ import { BeanStub } from "../context/beanStub";
 import { Column } from "./column";
 import { RowPosition } from "./rowPosition";
 export interface CellPosition extends RowPosition {
+    /** The grid column */
     column: Column;
 }
 export declare class CellPositionUtils extends BeanStub {

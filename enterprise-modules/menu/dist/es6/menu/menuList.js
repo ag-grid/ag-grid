@@ -48,7 +48,8 @@ var MenuList = /** @class */ (function (_super) {
     };
     MenuList.prototype.onTabKeyDown = function (e) {
         var parent = this.getParentComponent();
-        var isManaged = parent && parent instanceof TabGuardComp;
+        var parentGui = parent && parent.getGui();
+        var isManaged = parentGui && _.containsClass(parentGui, 'ag-focus-managed');
         if (!isManaged) {
             e.preventDefault();
         }

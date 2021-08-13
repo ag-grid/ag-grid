@@ -17,6 +17,7 @@ export interface IHeaderParams {
     columnApi: ColumnApi;
     eGridHeader: HTMLElement;
     api: GridApi;
+    /** The context as provided on `gridOptions.context` */
     context: any;
     template: string;
 }

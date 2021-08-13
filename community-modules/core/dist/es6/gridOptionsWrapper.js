@@ -950,7 +950,6 @@ var GridOptionsWrapper = /** @class */ (function () {
         return this.gridOptions.allowProcessChartOptions;
     };
     GridOptionsWrapper.prototype.getProcessChartOptionsFunc = function () {
-        console.warn("AG Grid: since v26.0, 'processChartOptions()' has been removed (deprecated in v24.0), see https://www.ag-grid.com/javascript-grid/integrated-charts-customisation/");
         return this.gridOptions.processChartOptions;
     };
     GridOptionsWrapper.prototype.getClipboardDeliminator = function () {

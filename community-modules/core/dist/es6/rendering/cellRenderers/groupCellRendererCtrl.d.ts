@@ -32,7 +32,6 @@ export interface GroupCellRendererParams extends ICellRendererParams {
     padding: number;
 }
 export declare class GroupCellRendererCtrl extends BeanStub {
-    private rowRenderer;
     private expressionService;
     private valueFormatterService;
     private columnModel;
@@ -40,7 +39,7 @@ export declare class GroupCellRendererCtrl extends BeanStub {
     private readonly gridOptions;
     private params;
     private showingValueForOpenedParent;
-    private displayedGroup;
+    private displayedGroupNode;
     private cellIsBlank;
     private eGui;
     private eExpanded;
@@ -52,10 +51,11 @@ export declare class GroupCellRendererCtrl extends BeanStub {
     init(comp: IGroupCellRenderer, eGui: HTMLElement, eCheckbox: HTMLElement, eExpanded: HTMLElement, eContracted: HTMLElement, compClass: any, params: GroupCellRendererParams): void;
     private isTopLevelFooter;
     private isEmbeddedRowMismatch;
-    private setupDragOpenParents;
-    private isShowingValueFromHiddenParent;
+    private findDisplayedGroupNode;
+    private setupShowingValueForOpenedParent;
     private addValueElement;
     private addGroupValue;
+    private adjustParamsWithDetailsFromRelatedColumn;
     private addFooterValue;
     private getInnerCompDetails;
     private addChildCount;

@@ -62,7 +62,11 @@ var ChartProxy = /** @class */ (function () {
         this.iChartOptions = this.extractIChartOptionsFromTheme(this.chartTheme);
         // allow users to override options before they are applied
         var _a = this.chartProxyParams, processChartOptions = _a.processChartOptions, allowProcessChartOptions = _a.allowProcessChartOptions;
-        if (processChartOptions && allowProcessChartOptions) {
+        if (processChartOptions) {
+            if (!allowProcessChartOptions) {
+                console.warn("AG Grid: since v26.0, 'processChartOptions()' has been removed (deprecated in v24.0), see https://www.ag-grid.com/javascript-grid/integrated-charts-customisation/");
+                return;
+            }
             var originalOptions = deepMerge({}, this.iChartOptions);
             var params = { type: this.chartType, options: this.iChartOptions };
             var overriddenOptions = processChartOptions(params);

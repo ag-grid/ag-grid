@@ -16,6 +16,7 @@ export interface StatusPanelDef {
 export interface IStatusPanelParams {
     api: GridApi;
     columnApi: ColumnApi;
+    /** The context as provided on `gridOptions.context` */
     context: any;
 }
 export interface IStatusPanel {

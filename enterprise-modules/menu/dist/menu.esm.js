@@ -417,7 +417,8 @@ var MenuList = /** @class */ (function (_super) {
     };
     MenuList.prototype.onTabKeyDown = function (e) {
         var parent = this.getParentComponent();
-        var isManaged = parent && parent instanceof TabGuardComp;
+        var parentGui = parent && parent.getGui();
+        var isManaged = parentGui && _.containsClass(parentGui, 'ag-focus-managed');
         if (!isManaged) {
             e.preventDefault();
         }
@@ -663,9 +664,6 @@ var EnterpriseMenuFactory = /** @class */ (function (_super) {
                 }
             }
         });
-        if (!defaultTab) {
-            menu.showTabBasedOnPreviousSelection();
-        }
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
         var addPopupRes = this.popupService.addPopup({
@@ -694,6 +692,12 @@ var EnterpriseMenuFactory = /** @class */ (function (_super) {
                     });
                 });
             }
+        }
+        if (!defaultTab) {
+            menu.showTabBasedOnPreviousSelection();
+            // reposition the menu because the method above could load
+            // an element that is bigger than enterpriseMenu header.
+            positionCallback(menu);
         }
         menu.addEventListener(EnterpriseMenu.EVENT_TAB_SELECTED, function (event) {
             _this.lastSelectedTab = event.key;

@@ -17,6 +17,7 @@ export interface ICellRendererParams {
     rowIndex: number;
     api: GridApi;
     columnApi: ColumnApi;
+    /** The context as provided on `gridOptions.context` */
     context: any;
     eGridCell: HTMLElement;
     eParentOfValue: HTMLElement;
@@ -36,6 +37,7 @@ export interface ISetFilterCellRendererParams {
     value: any;
     valueFormatted: any;
     api: GridApi;
+    /** The context as provided on `gridOptions.context` */
     context: any;
 }
 export interface ICellRenderer {

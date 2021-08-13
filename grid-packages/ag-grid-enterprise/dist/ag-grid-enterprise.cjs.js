@@ -33395,7 +33395,11 @@ var ChartProxy = /** @class */ (function () {
         this.iChartOptions = this.extractIChartOptionsFromTheme(this.chartTheme);
         // allow users to override options before they are applied
         var _a = this.chartProxyParams, processChartOptions = _a.processChartOptions, allowProcessChartOptions = _a.allowProcessChartOptions;
-        if (processChartOptions && allowProcessChartOptions) {
+        if (processChartOptions) {
+            if (!allowProcessChartOptions) {
+                console.warn("AG Grid: since v26.0, 'processChartOptions()' has been removed (deprecated in v24.0), see https://www.ag-grid.com/javascript-grid/integrated-charts-customisation/");
+                return;
+            }
             var originalOptions = deepMerge$1({}, this.iChartOptions);
             var params = { type: this.chartType, options: this.iChartOptions };
             var overriddenOptions = processChartOptions(params);
@@ -41267,7 +41271,8 @@ var MenuList = /** @class */ (function (_super) {
     };
     MenuList.prototype.onTabKeyDown = function (e) {
         var parent = this.getParentComponent();
-        var isManaged = parent && parent instanceof agGridCommunity.TabGuardComp;
+        var parentGui = parent && parent.getGui();
+        var isManaged = parentGui && agGridCommunity._.containsClass(parentGui, 'ag-focus-managed');
         if (!isManaged) {
             e.preventDefault();
         }
@@ -41513,9 +41518,6 @@ var EnterpriseMenuFactory = /** @class */ (function (_super) {
                 }
             }
         });
-        if (!defaultTab) {
-            menu.showTabBasedOnPreviousSelection();
-        }
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
         var addPopupRes = this.popupService.addPopup({
@@ -41544,6 +41546,12 @@ var EnterpriseMenuFactory = /** @class */ (function (_super) {
                     });
                 });
             }
+        }
+        if (!defaultTab) {
+            menu.showTabBasedOnPreviousSelection();
+            // reposition the menu because the method above could load
+            // an element that is bigger than enterpriseMenu header.
+            positionCallback(menu);
         }
         menu.addEventListener(EnterpriseMenu.EVENT_TAB_SELECTED, function (event) {
             _this.lastSelectedTab = event.key;

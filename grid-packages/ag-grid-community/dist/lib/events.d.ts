@@ -268,7 +268,7 @@ export interface RowEvent extends AgGridEvent {
     rowIndex: number | null;
     /** Either 'top', 'bottom' or null / undefined (if not set) */
     rowPinned: string | null;
-    /** Bag of attributes, provided by user */
+    /** The context as provided on `gridOptions.context` */
     context: any;
     /** If event was due to browser event (eg click), this is the browser event */
     event?: Event | null;

@@ -12,6 +12,7 @@ export interface IHeaderGroupParams {
     setExpanded: (expanded: boolean) => void;
     api: GridApi;
     columnApi: ColumnApi;
+    /** The context as provided on `gridOptions.context` */
     context: any;
 }
 export interface IHeaderGroup {
