@@ -1,16 +1,34 @@
 var columnDefs = [
     {
         field: 'athlete',
-        pinnedRowCellRenderer: 'customPinnedRowRenderer',
-        pinnedRowCellRendererParams: {
-            style: { 'color': 'blue' }
+        cellRendererSelector: function(params) {
+            if (params.node.rowPinned) {
+                return {
+                    component: 'customPinnedRowRenderer',
+                    params: {
+                        style: { 'color': 'blue' }
+                    }
+                };
+            } else {
+                // rows that are not pinned don't use any cell renderer
+                return undefined;
+            }
         }
     },
     {
         field: 'age',
-        pinnedRowCellRenderer: 'customPinnedRowRenderer',
-        pinnedRowCellRendererParams: {
-            style: { 'font-style': 'italic' }
+        cellRendererSelector: function(params) {
+            if (params.node.rowPinned) {
+                return {
+                    component: 'customPinnedRowRenderer',
+                    params: {
+                        style: { 'font-style': 'italic' }
+                    }
+                };
+            } else {
+                // rows that are not pinned don't use any cell renderer
+                return undefined;
+            }
         }
     },
     { field: 'country' },
