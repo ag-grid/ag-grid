@@ -15,7 +15,6 @@ export default {
     },
     methods: {
         onGridReady(params) {
-            console.log("here");
             this.count = this.params.api.getModel().rowsToDisplay.length;
         }
     }
