@@ -600,22 +600,25 @@ var BarSeries = /** @class */ (function (_super) {
         if (!this.chart) {
             return;
         }
-        var _a = this, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, shadow = _a.shadow, formatter = _a.formatter, xKey = _a.xKey, flipXY = _a.flipXY, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke, highlightedStrokeWidth = _b.series.strokeWidth, highlightedDatum = _a.chart.highlightedDatum, highlightedItemId = _a.highlightedItemId;
+        var _a = this, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, shadow = _a.shadow, formatter = _a.formatter, xKey = _a.xKey, flipXY = _a.flipXY, highlightedDatum = _a.chart.highlightedDatum, highlightedItemId = _a.highlightedItemId, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke, highlightedDatumStrokeWidth = _b.strokeWidth, _c = _b.series, subSeriesHighlightingEnabled = _c.enabled, highlightedSubSeriesStrokeWidth = _c.strokeWidth;
         this.rectSelection.each(function (rect, datum) {
-            var highlighted = datum === highlightedDatum;
-            var rectFill = highlighted && fill !== undefined ? fill : datum.fill;
-            var rectStroke = highlighted && stroke !== undefined ? stroke : datum.stroke;
+            var isDatumHighlighted = datum === highlightedDatum;
+            var isSubSeriesHighlighted = highlightedItemId === datum.itemId;
+            var rectFill = isDatumHighlighted && fill !== undefined ? fill : datum.fill;
+            var rectStroke = isDatumHighlighted && stroke !== undefined ? stroke : datum.stroke;
             var format = undefined;
-            var strokeWidth = highlightedItemId === datum.itemId && highlightedStrokeWidth !== undefined
-                ? highlightedStrokeWidth
-                : datum.strokeWidth;
+            var strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
+                ? highlightedDatumStrokeWidth
+                : subSeriesHighlightingEnabled && isSubSeriesHighlighted && highlightedSubSeriesStrokeWidth !== undefined
+                    ? highlightedSubSeriesStrokeWidth
+                    : datum.strokeWidth;
             if (formatter) {
                 format = formatter({
                     datum: datum.seriesDatum,
                     fill: rectFill,
                     stroke: rectStroke,
                     strokeWidth: strokeWidth,
-                    highlighted: highlighted,
+                    highlighted: isDatumHighlighted,
                     xKey: xKey,
                     yKey: datum.yKey
                 });

@@ -119,6 +119,9 @@ export class CellCtrl extends BeanStub {
 
     private suppressRefreshCell = false;
 
+    private destroyAutoHeight: ()=>void;
+    private autoHeightElement: HTMLElement | undefined;
+
     // this comp used only for custom row drag handle (ie when user calls params.registerRowDragger)
     private customRowDragComp: RowDragComp;
 
@@ -216,31 +219,24 @@ export class CellCtrl extends BeanStub {
         });
     }
 
-    public parentOfValueChanged(eParentOfValue: HTMLElement | undefined): void {
-        this.setupAutoHeight(eParentOfValue);
-    }
-
-    private destroyAutoHeight: ()=>void;
-
-    private setupAutoHeight(eParentOfValue: HTMLElement | undefined): void {
+    public setupAutoHeight(eParentOfValue: HTMLElement | undefined): void {
         if (!this.column.getColDef().autoHeight) {return;}
-
-        const rowModelType = this.beans.rowModel.getType();
-        const csrm = rowModelType!=Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
-        const ssrm = rowModelType!=Constants.ROW_MODEL_TYPE_SERVER_SIDE;
-        if (!csrm && !ssrm) {
-            const message = 'AG Grid - autoHeight columns only work with Client Side Row Model and Server Side Row Model';
-            doOnce( ()=> console.warn(message), 'setupAutoHeight - wrongRowModel');
-        }
+        if (this.autoHeightElement == eParentOfValue) { return; }
 
         if (this.destroyAutoHeight) { this.destroyAutoHeight(); }
+        this.autoHeightElement = eParentOfValue;
 
         if (!eParentOfValue) { return; }
 
-        const destroyResizeObserver = this.beans.resizeObserverService.observeResize(eParentOfValue, ()=> {
+        const listener = ()=> {
             const newHeight = eParentOfValue.offsetHeight;
             this.rowNode.setRowAutoHeight(newHeight, this.column);
-        });
+        };
+
+        // do once to set size in case size doesn't change, common when cell is blank
+        listener();
+
+        const destroyResizeObserver = this.beans.resizeObserverService.observeResize(eParentOfValue, listener);
 
         this.destroyAutoHeight = () => {
             destroyResizeObserver();

@@ -264,11 +264,6 @@ interface AgBaseSeriesOptions {
     highlightStyle?: {
         fill?: string;
         stroke?: string;
-        strokeWidth?: number;
-        series?: {
-            dimOpacity?: number;
-            strokeWidth?: number;
-        };
     };
 }
 export interface AgTooltipRendererResult {

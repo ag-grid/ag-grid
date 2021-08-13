@@ -44,7 +44,6 @@ import { CheckboxSelectionComponent } from "../checkboxSelectionComponent";
 import { DndSourceComp } from "../dndSourceComp";
 import { doOnce } from "../../utils/function";
 import { RowDragComp } from "../row/rowDragComp";
-import { Constants } from "../../constants/constants";
 var CSS_CELL = 'ag-cell';
 var CSS_AUTO_HEIGHT = 'ag-cell-auto-height';
 var CSS_NORMAL_HEIGHT = 'ag-cell-normal-height';
@@ -133,31 +132,28 @@ var CellCtrl = /** @class */ (function (_super) {
             _this.destroyAutoHeight && _this.destroyAutoHeight();
         });
     };
-    CellCtrl.prototype.parentOfValueChanged = function (eParentOfValue) {
-        this.setupAutoHeight(eParentOfValue);
-    };
     CellCtrl.prototype.setupAutoHeight = function (eParentOfValue) {
         var _this = this;
         if (!this.column.getColDef().autoHeight) {
             return;
         }
-        var rowModelType = this.beans.rowModel.getType();
-        var csrm = rowModelType != Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
-        var ssrm = rowModelType != Constants.ROW_MODEL_TYPE_SERVER_SIDE;
-        if (!csrm && !ssrm) {
-            var message_1 = 'AG Grid - autoHeight columns only work with Client Side Row Model and Server Side Row Model';
-            doOnce(function () { return console.warn(message_1); }, 'setupAutoHeight - wrongRowModel');
+        if (this.autoHeightElement == eParentOfValue) {
+            return;
         }
         if (this.destroyAutoHeight) {
             this.destroyAutoHeight();
         }
+        this.autoHeightElement = eParentOfValue;
         if (!eParentOfValue) {
             return;
         }
-        var destroyResizeObserver = this.beans.resizeObserverService.observeResize(eParentOfValue, function () {
+        var listener = function () {
             var newHeight = eParentOfValue.offsetHeight;
             _this.rowNode.setRowAutoHeight(newHeight, _this.column);
-        });
+        };
+        // do once to set size in case size doesn't change, common when cell is blank
+        listener();
+        var destroyResizeObserver = this.beans.resizeObserverService.observeResize(eParentOfValue, listener);
         this.destroyAutoHeight = function () {
             destroyResizeObserver();
             _this.rowNode.setRowAutoHeight(undefined, _this.column);

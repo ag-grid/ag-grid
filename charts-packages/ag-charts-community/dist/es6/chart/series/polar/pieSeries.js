@@ -390,14 +390,20 @@ var PieSeries = /** @class */ (function (_super) {
         if (!this.chart) {
             return;
         }
-        var _a = this, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, radiusScale = _a.radiusScale, callout = _a.callout, shadow = _a.shadow, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke, centerOffset = _b.centerOffset, highlightedStrokeWidth = _b.strokeWidth, angleKey = _a.angleKey, radiusKey = _a.radiusKey, formatter = _a.formatter;
+        var _a = this, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, radiusScale = _a.radiusScale, callout = _a.callout, shadow = _a.shadow, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke, centerOffset = _b.centerOffset, highlightedDatumStrokeWidth = _b.strokeWidth, _c = _b.series, seriesHighlightingEnabled = _c.enabled, highlightedSeriesStrokeWidth = _c.strokeWidth, angleKey = _a.angleKey, radiusKey = _a.radiusKey, formatter = _a.formatter;
         var highlightedDatum = this.chart.highlightedDatum;
         var centerOffsets = [];
         var innerRadius = radiusScale.convert(0);
         this.groupSelection.selectByTag(PieNodeTag.Sector).each(function (sector, datum, index) {
             var radius = radiusScale.convert(datum.radius);
+            var isDatumHighlighted = datum === highlightedDatum || datum.itemId === _this.highlightedItemId;
+            var isSeriesHighlighted = _this.highlightedItemId !== undefined;
             var highlighted = datum === highlightedDatum || datum.itemId === _this.highlightedItemId;
-            var strokeWidth = highlighted && highlightedStrokeWidth || _this.strokeWidth;
+            var strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
+                ? highlightedDatumStrokeWidth
+                : isSeriesHighlighted && highlightedSeriesStrokeWidth !== undefined
+                    ? highlightedSeriesStrokeWidth
+                    : _this.strokeWidth;
             var sectorFill = highlighted && fill !== undefined ? fill : fills[index % fills.length];
             var sectorStroke = highlighted && stroke !== undefined ? stroke : strokes[index % strokes.length];
             var format = undefined;
@@ -450,7 +456,7 @@ var PieSeries = /** @class */ (function (_super) {
             }
         });
         {
-            var _c = this.label, offset_1 = _c.offset, fontStyle_1 = _c.fontStyle, fontWeight_1 = _c.fontWeight, fontSize_1 = _c.fontSize, fontFamily_1 = _c.fontFamily, color_1 = _c.color;
+            var _d = this.label, offset_1 = _d.offset, fontStyle_1 = _d.fontStyle, fontWeight_1 = _d.fontWeight, fontSize_1 = _d.fontSize, fontFamily_1 = _d.fontFamily, color_1 = _d.color;
             this.groupSelection.selectByTag(PieNodeTag.Label).each(function (text, datum, index) {
                 var label = datum.label;
                 if (label) {

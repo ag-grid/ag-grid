@@ -1014,61 +1014,64 @@
             "showInCollapsed": true
           },
           {
-            "title": "Master Detail",
-            "url": "/master-detail/",
-            "enterprise": true,
-            "showInCollapsed": true,
-            "matrixExcludeChildren": true,
-            "items": [
-              {
-                "title": "Detail Grids",
-                "url": "/master-detail-grids/",
-                "enterprise": true,
-                "showInCollapsed": false
-              },
-              {
-                "title": "Detail Height",
-                "url": "/master-detail-height/",
-                "enterprise": true,
-                "showInCollapsed": false
-              },
-              {
-                "title": "Detail Refresh",
-                "url": "/master-detail-refresh/",
-                "enterprise": true,
-                "showInCollapsed": false
-              },
-              {
-                "title": "Master Rows",
-                "url": "/master-detail-master-rows/",
-                "enterprise": true,
-                "showInCollapsed": false
-              },
-              {
-                "title": "Nesting",
-                "url": "/master-detail-nesting/",
-                "enterprise": true,
-                "showInCollapsed": false
-              },
-              {
-                "title": "Custom Detail",
-                "url": "/master-detail-custom-detail/",
-                "enterprise": true,
-                "showInCollapsed": false
-              },
-              {
-                "title": "Other",
-                "url": "/master-detail-other/",
-                "enterprise": true,
-                "showInCollapsed": false
-              }
-            ]
-          },
-          {
             "title": "Pivoting",
             "url": "/pivoting/",
             "enterprise": true,
             "showInCollapsed": true
+          }
+        ]
+      },
+      {
+        "title": "Master Detail",
+        "icon": "icon-misc",
+        "items": [
+          {
+            "title": "Overview",
+            "url": "/master-detail/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Detail Grids",
+            "url": "/master-detail-grids/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Detail Height",
+            "url": "/master-detail-height/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Detail Refresh",
+            "url": "/master-detail-refresh/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Master Rows",
+            "url": "/master-detail-master-rows/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Nesting",
+            "url": "/master-detail-nesting/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Custom Detail",
+            "url": "/master-detail-custom-detail/",
+            "enterprise": true,
+            "showInCollapsed": false
+          },
+          {
+            "title": "Other",
+            "url": "/master-detail-other/",
+            "enterprise": true,
+            "showInCollapsed": false
           }
         ]
       },
@@ -1699,10 +1702,6 @@
               {
                 "title": "Legend",
                 "url": "/charts-legend/"
-              },
-              {
-                "title": "Series",
-                "url": "/charts-series/"
               },
               {
                 "title": "Themes",

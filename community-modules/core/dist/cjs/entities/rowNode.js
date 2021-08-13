@@ -19,6 +19,7 @@ var constants_1 = require("../constants/constants");
 var generic_1 = require("../utils/generic");
 var object_1 = require("../utils/object");
 var string_1 = require("../utils/string");
+var function_1 = require("../utils/function");
 var RowHighlightPosition;
 (function (RowHighlightPosition) {
     RowHighlightPosition[RowHighlightPosition["Above"] = 0] = "Above";
@@ -281,19 +282,23 @@ var RowNode = /** @class */ (function () {
         var autoHeights = this.__autoHeights;
         autoHeights[column.getId()] = cellHeight;
         if (cellHeight != null) {
-            this.checkAutoHeights();
+            if (this.checkAutoHeightsDebounced == null) {
+                this.checkAutoHeightsDebounced = function_1.debounce(this.checkAutoHeights.bind(this), 1);
+            }
+            this.checkAutoHeightsDebounced();
         }
     };
     RowNode.prototype.checkAutoHeights = function () {
         var _this = this;
         var notAllPresent = false;
         var nonePresent = true;
-        var newRowHeight = 1;
+        var newRowHeight = 0;
         var autoHeights = this.__autoHeights;
         if (autoHeights == null) {
             return;
         }
-        this.columnModel.getAllDisplayedAutoHeightCols().forEach(function (col) {
+        var displayedAutoHeightCols = this.columnModel.getAllDisplayedAutoHeightCols();
+        displayedAutoHeightCols.forEach(function (col) {
             var cellHeight = autoHeights[col.getId()];
             if (cellHeight == null) {
                 notAllPresent = true;
@@ -307,15 +312,19 @@ var RowNode = /** @class */ (function () {
         if (notAllPresent) {
             return;
         }
-        var setTheHeight = function (height) {
-            _this.setRowHeight(height);
-            var rowModelCasted = _this.rowModel;
-            rowModelCasted.onRowHeightChanged();
-        };
-        if (nonePresent) {
-            setTheHeight(this.gridOptionsWrapper.getRowHeightForNode(this).height);
-            return;
+        // we take min of 10, so we don't adjust for empty rows. if <10, we put to default.
+        // this prevents the row starting very small when waiting for async components, 
+        // which would then mean the grid squashes in far to many rows (as small heights
+        // means more rows fit in) which looks crap. so best ignore small values and assume 
+        // we are still waiting for values to render.
+        if (nonePresent || newRowHeight < 10) {
+            newRowHeight = this.gridOptionsWrapper.getRowHeightForNode(this).height;
         }
+        var setTheHeight = function (height) {
+            var rowModel = _this.rowModel;
+            _this.setRowHeight(height);
+            rowModel.onRowHeightChanged && rowModel.onRowHeightChanged();
+        };
         if (newRowHeight == this.rowHeight) {
             return;
         }

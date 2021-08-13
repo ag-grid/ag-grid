@@ -132,6 +132,7 @@ var CellComp = /** @class */ (function (_super) {
                 this.insertValueWithoutCellRenderer(valueToDisplay);
             }
         }
+        this.cellCtrl.setupAutoHeight(this.eCellValue);
     };
     CellComp.prototype.setEditDetails = function (compDetails, popup, position) {
         if (compDetails) {
@@ -147,7 +148,6 @@ var CellComp = /** @class */ (function (_super) {
         this.checkboxSelectionComp = this.beans.context.destroyBean(this.checkboxSelectionComp);
         this.dndSourceComp = this.beans.context.destroyBean(this.dndSourceComp);
         this.rowDraggingComp = this.beans.context.destroyBean(this.rowDraggingComp);
-        this.cellCtrl.parentOfValueChanged(undefined);
     };
     // returns true if wrapper was changed
     CellComp.prototype.setupControlsWrapper = function () {
@@ -197,7 +197,6 @@ var CellComp = /** @class */ (function (_super) {
         }
         describedByIds.push(id);
         setAriaDescribedBy(this.getGui(), describedByIds.join(' '));
-        this.cellCtrl.parentOfValueChanged(this.eCellValue);
     };
     CellComp.prototype.createCellEditorInstance = function (compDetails, popup, position) {
         var _this = this;

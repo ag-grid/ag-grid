@@ -2,22 +2,6 @@ var options = {
     container: document.querySelector('#myChart'),
     autoSize: true,
     data: data,
-    theme: {
-        overrides: {
-            cartesian: {
-                series: {
-                    line: {
-                        highlightStyle: {
-                            series: {
-                                dimOpacity: 0.2,
-                                strokeWidth: 4
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    },
     title: {
         text: 'Imported Banana Prices (2019)',
         fontSize: 18,

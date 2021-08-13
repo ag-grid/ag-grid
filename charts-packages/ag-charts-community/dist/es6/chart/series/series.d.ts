@@ -41,6 +41,7 @@ export interface PolarTooltipRendererParams extends TooltipRendererParams {
 }
 export declare class SeriesHighlightStyle {
     private static defaultDimOpacity;
+    enabled: boolean;
     strokeWidth?: number;
     protected _dimOpacity: number;
     dimOpacity: number;

@@ -909,7 +909,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         if (forceRowNodeOrder) {
             rowNodeOrder = this.createRowNodeOrder();
         }
-
+        
         this.refreshModel({
             step: ClientSideRowModelSteps.EVERYTHING,
             rowNodeTransactions: rowNodeTrans,
@@ -918,7 +918,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             animate: true,
             keepEditingRows: true
         });
-
+        
         const event: RowDataUpdatedEvent = {
             type: Events.EVENT_ROW_DATA_UPDATED,
             api: this.gridApi,
@@ -926,21 +926,13 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         };
         this.eventService.dispatchEvent(event);
     }
-
+    
     private doRowsToDisplay() {
         this.rowsToDisplay = this.flattenStage.execute({ rowNode: this.rootNode }) as RowNode[];
     }
 
-    private onRowHeightChangedDebounced: ()=>void;
-
     public onRowHeightChanged(): void {
-        if (this.onRowHeightChangedDebounced==null) {
-            this.onRowHeightChangedDebounced = this.animationFrameService.debounce( ()=> {
-                this.refreshModel({ step: ClientSideRowModelSteps.MAP, keepRenderedRows: true, keepEditingRows: true });
-            });
-        }
-
-        this.onRowHeightChangedDebounced();
+        this.refreshModel({ step: ClientSideRowModelSteps.MAP, keepRenderedRows: true, keepEditingRows: true });
     }
 
     public resetRowHeights(): void {

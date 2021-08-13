@@ -3877,6 +3877,7 @@ var ColumnModel = /** @class */ (function (_super) {
         _this.viewportColumns = [];
         // all columns to be rendered in the centre
         _this.viewportColumnsCenter = [];
+        _this.autoHeightActiveAtLeastOnce = false;
         _this.rowGroupColumns = [];
         _this.valueColumns = [];
         _this.pivotColumns = [];
@@ -6306,13 +6307,25 @@ var ColumnModel = /** @class */ (function (_super) {
         this.colSpanActive = this.checkColSpanActiveInCols(this.gridColumns);
         this.gridColumnsMap = {};
         this.gridColumns.forEach(function (col) { return _this.gridColumnsMap[col.getId()] = col; });
-        this.autoHeightActive = this.gridColumns.filter(function (col) { return col.getColDef().autoHeight; }).length > 0;
+        this.setAutoHeightActive();
         var event = {
             type: Events.EVENT_GRID_COLUMNS_CHANGED,
             api: this.gridApi,
             columnApi: this.columnApi
         };
         this.eventService.dispatchEvent(event);
+    };
+    ColumnModel.prototype.setAutoHeightActive = function () {
+        this.autoHeightActive = this.gridColumns.filter(function (col) { return col.getColDef().autoHeight; }).length > 0;
+        if (this.autoHeightActive) {
+            this.autoHeightActiveAtLeastOnce = true;
+            var rowModelType = this.rowModel.getType();
+            var supportedRowModel = rowModelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE || rowModelType === Constants.ROW_MODEL_TYPE_SERVER_SIDE;
+            if (!supportedRowModel) {
+                var message_1 = 'AG Grid - autoHeight columns only work with Client Side Row Model and Server Side Row Model.';
+                doOnce(function () { return console.warn(message_1); }, 'autoHeightActive.wrongRowModel');
+            }
+        }
     };
     ColumnModel.prototype.orderGridColsLikeLastPrimary = function () {
         if (missing(this.lastPrimaryOrder)) {
@@ -6444,6 +6457,9 @@ var ColumnModel = /** @class */ (function (_super) {
     };
     ColumnModel.prototype.isAutoRowHeightActive = function () {
         return this.autoHeightActive;
+    };
+    ColumnModel.prototype.wasAutoRowHeightEverActive = function () {
+        return this.autoHeightActiveAtLeastOnce;
     };
     ColumnModel.prototype.joinDisplayedColumns = function () {
         if (this.gridOptionsWrapper.isEnableRtl()) {
@@ -13045,19 +13061,23 @@ var RowNode = /** @class */ (function () {
         var autoHeights = this.__autoHeights;
         autoHeights[column.getId()] = cellHeight;
         if (cellHeight != null) {
-            this.checkAutoHeights();
+            if (this.checkAutoHeightsDebounced == null) {
+                this.checkAutoHeightsDebounced = debounce(this.checkAutoHeights.bind(this), 1);
+            }
+            this.checkAutoHeightsDebounced();
         }
     };
     RowNode.prototype.checkAutoHeights = function () {
         var _this = this;
         var notAllPresent = false;
         var nonePresent = true;
-        var newRowHeight = 1;
+        var newRowHeight = 0;
         var autoHeights = this.__autoHeights;
         if (autoHeights == null) {
             return;
         }
-        this.columnModel.getAllDisplayedAutoHeightCols().forEach(function (col) {
+        var displayedAutoHeightCols = this.columnModel.getAllDisplayedAutoHeightCols();
+        displayedAutoHeightCols.forEach(function (col) {
             var cellHeight = autoHeights[col.getId()];
             if (cellHeight == null) {
                 notAllPresent = true;
@@ -13071,15 +13091,19 @@ var RowNode = /** @class */ (function () {
         if (notAllPresent) {
             return;
         }
-        var setTheHeight = function (height) {
-            _this.setRowHeight(height);
-            var rowModelCasted = _this.rowModel;
-            rowModelCasted.onRowHeightChanged();
-        };
-        if (nonePresent) {
-            setTheHeight(this.gridOptionsWrapper.getRowHeightForNode(this).height);
-            return;
+        // we take min of 10, so we don't adjust for empty rows. if <10, we put to default.
+        // this prevents the row starting very small when waiting for async components, 
+        // which would then mean the grid squashes in far to many rows (as small heights
+        // means more rows fit in) which looks crap. so best ignore small values and assume 
+        // we are still waiting for values to render.
+        if (nonePresent || newRowHeight < 10) {
+            newRowHeight = this.gridOptionsWrapper.getRowHeightForNode(this).height;
         }
+        var setTheHeight = function (height) {
+            var rowModel = _this.rowModel;
+            _this.setRowHeight(height);
+            rowModel.onRowHeightChanged && rowModel.onRowHeightChanged();
+        };
         if (newRowHeight == this.rowHeight) {
             return;
         }
@@ -20485,31 +20509,28 @@ var CellCtrl = /** @class */ (function (_super) {
             _this.destroyAutoHeight && _this.destroyAutoHeight();
         });
     };
-    CellCtrl.prototype.parentOfValueChanged = function (eParentOfValue) {
-        this.setupAutoHeight(eParentOfValue);
-    };
     CellCtrl.prototype.setupAutoHeight = function (eParentOfValue) {
         var _this = this;
         if (!this.column.getColDef().autoHeight) {
             return;
         }
-        var rowModelType = this.beans.rowModel.getType();
-        var csrm = rowModelType != Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
-        var ssrm = rowModelType != Constants.ROW_MODEL_TYPE_SERVER_SIDE;
-        if (!csrm && !ssrm) {
-            var message_1 = 'AG Grid - autoHeight columns only work with Client Side Row Model and Server Side Row Model';
-            doOnce(function () { return console.warn(message_1); }, 'setupAutoHeight - wrongRowModel');
+        if (this.autoHeightElement == eParentOfValue) {
+            return;
         }
         if (this.destroyAutoHeight) {
             this.destroyAutoHeight();
         }
+        this.autoHeightElement = eParentOfValue;
         if (!eParentOfValue) {
             return;
         }
-        var destroyResizeObserver = this.beans.resizeObserverService.observeResize(eParentOfValue, function () {
+        var listener = function () {
             var newHeight = eParentOfValue.offsetHeight;
             _this.rowNode.setRowAutoHeight(newHeight, _this.column);
-        });
+        };
+        // do once to set size in case size doesn't change, common when cell is blank
+        listener();
+        var destroyResizeObserver = this.beans.resizeObserverService.observeResize(eParentOfValue, listener);
         this.destroyAutoHeight = function () {
             destroyResizeObserver();
             _this.rowNode.setRowAutoHeight(undefined, _this.column);
@@ -21449,7 +21470,7 @@ var RowCtrl = /** @class */ (function (_super) {
                 _this.addHoverFunctionality(gui.element);
             }
             if (_this.isFullWidth()) {
-                _this.setupFullWidth();
+                _this.setupFullWidth(gui);
             }
         });
         this.executeProcessRowPostCreateFunc();
@@ -21460,26 +21481,23 @@ var RowCtrl = /** @class */ (function (_super) {
     RowCtrl.prototype.getFullWidthCellRendererName = function () {
         return FullWidthRenderers.get(this.rowType);
     };
-    RowCtrl.prototype.setupFullWidth = function () {
-        var _this = this;
-        this.allRowGuis.forEach(function (gui) {
-            var params = _this.createFullWidthParams(gui.element, gui.pinned);
-            var cellRendererType = _this.getFullWidthCellRendererType();
-            var cellRendererName = _this.getFullWidthCellRendererName();
-            var compDetails = _this.beans.userComponentFactory.getFullWidthCellRendererDetails(params, cellRendererType, cellRendererName);
-            if (compDetails) {
-                gui.rowComp.showFullWidth(compDetails);
+    RowCtrl.prototype.setupFullWidth = function (gui) {
+        var params = this.createFullWidthParams(gui.element, gui.pinned);
+        var cellRendererType = this.getFullWidthCellRendererType();
+        var cellRendererName = this.getFullWidthCellRendererName();
+        var compDetails = this.beans.userComponentFactory.getFullWidthCellRendererDetails(params, cellRendererType, cellRendererName);
+        if (compDetails) {
+            gui.rowComp.showFullWidth(compDetails);
+        }
+        else {
+            var masterDetailModuleLoaded = ModuleRegistry.isRegistered(exports.ModuleNames.MasterDetailModule);
+            if (cellRendererName === 'agDetailCellRenderer' && !masterDetailModuleLoaded) {
+                console.warn("AG Grid: cell renderer agDetailCellRenderer (for master detail) not found. Did you forget to include the master detail module?");
             }
             else {
-                var masterDetailModuleLoaded = ModuleRegistry.isRegistered(exports.ModuleNames.MasterDetailModule);
-                if (cellRendererName === 'agDetailCellRenderer' && !masterDetailModuleLoaded) {
-                    console.warn("AG Grid: cell renderer agDetailCellRenderer (for master detail) not found. Did you forget to include the master detail module?");
-                }
-                else {
-                    console.error("AG Grid: fullWidthCellRenderer " + cellRendererName + " not found");
-                }
+                console.error("AG Grid: fullWidthCellRenderer " + cellRendererName + " not found");
             }
-        });
+        }
     };
     RowCtrl.prototype.getScope = function () {
         return this.scope;
@@ -21766,7 +21784,9 @@ var RowCtrl = /** @class */ (function (_super) {
         // we skip animations for onDisplayedColumnChanged, as otherwise the client could remove columns and
         // then set data, and any old valueGetter's (ie from cols that were removed) would still get called.
         this.updateColumnLists(true);
-        this.rowNode.checkAutoHeights();
+        if (this.beans.columnModel.wasAutoRowHeightEverActive()) {
+            this.rowNode.checkAutoHeights();
+        }
     };
     RowCtrl.prototype.onVirtualColumnsChanged = function () {
         this.updateColumnLists();
@@ -25563,7 +25583,7 @@ var FloatingFilterWrapper = /** @class */ (function (_super) {
     FloatingFilterWrapper.prototype.setupFloatingFilter = function () {
         var _this = this;
         var colDef = this.column.getColDef();
-        if (!colDef.filter || !colDef.floatingFilter) {
+        if ((!colDef.filter || !colDef.floatingFilter) && (!colDef.filterFramework || !colDef.floatingFilterComponentFramework)) {
             return;
         }
         this.floatingFilterCompPromise = this.getFloatingFilterInstance();
@@ -37070,13 +37090,14 @@ var AnimationFrameService = /** @class */ (function (_super) {
     };
     // a debounce utility used for parts of the app involved with rendering.
     // the advantage over normal debounce is the client can call flushAllFrames()
-    // to make sure all rendering is complete.
+    // to make sure all rendering is complete. we don't wait any milliseconds,
+    // as this is intended to batch calls in one VM turn.
     AnimationFrameService.prototype.debounce = function (func) {
         var _this = this;
         var pending = false;
         return function () {
             if (!_this.isOn()) {
-                func();
+                _this.getFrameworkOverrides().setTimeout(func, 0);
                 return;
             }
             if (pending) {
@@ -43041,6 +43062,7 @@ var CellComp = /** @class */ (function (_super) {
                 this.insertValueWithoutCellRenderer(valueToDisplay);
             }
         }
+        this.cellCtrl.setupAutoHeight(this.eCellValue);
     };
     CellComp.prototype.setEditDetails = function (compDetails, popup, position) {
         if (compDetails) {
@@ -43056,7 +43078,6 @@ var CellComp = /** @class */ (function (_super) {
         this.checkboxSelectionComp = this.beans.context.destroyBean(this.checkboxSelectionComp);
         this.dndSourceComp = this.beans.context.destroyBean(this.dndSourceComp);
         this.rowDraggingComp = this.beans.context.destroyBean(this.rowDraggingComp);
-        this.cellCtrl.parentOfValueChanged(undefined);
     };
     // returns true if wrapper was changed
     CellComp.prototype.setupControlsWrapper = function () {
@@ -43106,7 +43127,6 @@ var CellComp = /** @class */ (function (_super) {
         }
         describedByIds.push(id);
         setAriaDescribedBy(this.getGui(), describedByIds.join(' '));
-        this.cellCtrl.parentOfValueChanged(this.eCellValue);
     };
     CellComp.prototype.createCellEditorInstance = function (compDetails, popup, position) {
         var _this = this;
@@ -45789,13 +45809,7 @@ var ClientSideRowModel = /** @class */ (function (_super) {
         this.rowsToDisplay = this.flattenStage.execute({ rowNode: this.rootNode });
     };
     ClientSideRowModel.prototype.onRowHeightChanged = function () {
-        var _this = this;
-        if (this.onRowHeightChangedDebounced == null) {
-            this.onRowHeightChangedDebounced = this.animationFrameService.debounce(function () {
-                _this.refreshModel({ step: exports.ClientSideRowModelSteps.MAP, keepRenderedRows: true, keepEditingRows: true });
-            });
-        }
-        this.onRowHeightChangedDebounced();
+        this.refreshModel({ step: exports.ClientSideRowModelSteps.MAP, keepRenderedRows: true, keepEditingRows: true });
     };
     ClientSideRowModel.prototype.resetRowHeights = function () {
         var atLeastOne = false;

@@ -173,7 +173,7 @@ var RowCtrl = /** @class */ (function (_super) {
                 _this.addHoverFunctionality(gui.element);
             }
             if (_this.isFullWidth()) {
-                _this.setupFullWidth();
+                _this.setupFullWidth(gui);
             }
         });
         this.executeProcessRowPostCreateFunc();
@@ -184,26 +184,23 @@ var RowCtrl = /** @class */ (function (_super) {
     RowCtrl.prototype.getFullWidthCellRendererName = function () {
         return FullWidthRenderers.get(this.rowType);
     };
-    RowCtrl.prototype.setupFullWidth = function () {
-        var _this = this;
-        this.allRowGuis.forEach(function (gui) {
-            var params = _this.createFullWidthParams(gui.element, gui.pinned);
-            var cellRendererType = _this.getFullWidthCellRendererType();
-            var cellRendererName = _this.getFullWidthCellRendererName();
-            var compDetails = _this.beans.userComponentFactory.getFullWidthCellRendererDetails(params, cellRendererType, cellRendererName);
-            if (compDetails) {
-                gui.rowComp.showFullWidth(compDetails);
+    RowCtrl.prototype.setupFullWidth = function (gui) {
+        var params = this.createFullWidthParams(gui.element, gui.pinned);
+        var cellRendererType = this.getFullWidthCellRendererType();
+        var cellRendererName = this.getFullWidthCellRendererName();
+        var compDetails = this.beans.userComponentFactory.getFullWidthCellRendererDetails(params, cellRendererType, cellRendererName);
+        if (compDetails) {
+            gui.rowComp.showFullWidth(compDetails);
+        }
+        else {
+            var masterDetailModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.MasterDetailModule);
+            if (cellRendererName === 'agDetailCellRenderer' && !masterDetailModuleLoaded) {
+                console.warn("AG Grid: cell renderer agDetailCellRenderer (for master detail) not found. Did you forget to include the master detail module?");
             }
             else {
-                var masterDetailModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.MasterDetailModule);
-                if (cellRendererName === 'agDetailCellRenderer' && !masterDetailModuleLoaded) {
-                    console.warn("AG Grid: cell renderer agDetailCellRenderer (for master detail) not found. Did you forget to include the master detail module?");
-                }
-                else {
-                    console.error("AG Grid: fullWidthCellRenderer " + cellRendererName + " not found");
-                }
+                console.error("AG Grid: fullWidthCellRenderer " + cellRendererName + " not found");
             }
-        });
+        }
     };
     RowCtrl.prototype.getScope = function () {
         return this.scope;
@@ -490,7 +487,9 @@ var RowCtrl = /** @class */ (function (_super) {
         // we skip animations for onDisplayedColumnChanged, as otherwise the client could remove columns and
         // then set data, and any old valueGetter's (ie from cols that were removed) would still get called.
         this.updateColumnLists(true);
-        this.rowNode.checkAutoHeights();
+        if (this.beans.columnModel.wasAutoRowHeightEverActive()) {
+            this.rowNode.checkAutoHeights();
+        }
     };
     RowCtrl.prototype.onVirtualColumnsChanged = function () {
         this.updateColumnLists();

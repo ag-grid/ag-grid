@@ -121,7 +121,7 @@ var CellComp = function (props) {
     var setPopupCellEditorRef = react_1.useCallback(function (cellRenderer) { return setCellEditorRef(true, cellRenderer); }, []);
     var setInlineCellEditorRef = react_1.useCallback(function (cellRenderer) { return setCellEditorRef(false, cellRenderer); }, []);
     showJsRenderer_1.default(renderDetails, showTools, toolsValueSpan, jsCellRendererRef, eGui);
-    react_1.useEffect(function () { return cellCtrl.parentOfValueChanged(toolsValueSpan); }, [toolsValueSpan]);
+    react_1.useEffect(function () { return cellCtrl.setupAutoHeight(toolsValueSpan); }, [toolsValueSpan]);
     react_1.useEffect(function () {
         var doingJsEditor = editDetails && !editDetails.compDetails.componentFromFramework;
         if (!doingJsEditor) {

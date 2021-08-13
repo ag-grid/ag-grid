@@ -210,6 +210,7 @@ export declare class RowNode implements IEventEmitter {
     setMaster(master: boolean): void;
     setRowHeight(rowHeight: number | undefined | null, estimated?: boolean): void;
     setRowAutoHeight(cellHeight: number | undefined, column: Column): void;
+    private checkAutoHeightsDebounced;
     checkAutoHeights(): void;
     setRowIndex(rowIndex: number | null): void;
     setUiLevel(uiLevel: number): void;

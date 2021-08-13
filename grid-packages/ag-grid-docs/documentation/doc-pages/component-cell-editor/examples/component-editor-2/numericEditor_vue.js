@@ -1,5 +1,3 @@
-import {nextTick} from 'vue';
-
 const KEY_BACKSPACE = 8;
 const KEY_DELETE = 46;
 const KEY_F2 = 113;
@@ -102,7 +100,7 @@ export default {
     },
     mounted() {
 
-        Vue.nextTick(() => {
+        setTimeout(() => {
             // need to check if the input reference is still valid - if the edit was cancelled before it started there
             // wont be an editor component anymore
             if (this.$refs.input) {

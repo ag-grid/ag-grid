@@ -23,20 +23,7 @@ const gridOptions = {
 
 The interface for the colSpan callback is as follows:
 
-```ts
-// function you implement on the column definition
-function colSpan(params: ColSpanParams) => number;
-
-interface ColSpanParams {
-    node: any, // row node in question
-    data: RowNode, // data for the row
-    colDef: ColDef, // the col def for the column
-    column: Column, // the column object in question
-    api: GridApi, // the grid's API
-    columnApi: ColumnApi, // the grid's column API
-    context: any // the provided context
-}
-```
+<api-documentation source='column-properties/properties.json' section='spanning' names='["colSpan"]' config='{ "codeSrc": "ColumnOptions"}'></api-documentation>
 
 ## Column Spanning Simple Example
 

@@ -24,6 +24,7 @@ import { createId } from "../../util/id";
 import { Label } from "../label";
 var SeriesHighlightStyle = /** @class */ (function () {
     function SeriesHighlightStyle() {
+        this.enabled = true;
         this._dimOpacity = 1;
     }
     Object.defineProperty(SeriesHighlightStyle.prototype, "dimOpacity", {
@@ -94,6 +95,9 @@ var Series = /** @class */ (function (_super) {
         configurable: true
     });
     Series.prototype.setColors = function (fills, strokes) { };
+    // Both `highlight`, `dehighlight` and `dim`, `undim` are related to whole series highlighting / dimming,
+    // while `onHighlightChange` is responsible for highlighting of individual series nodes / datums
+    // (see `chart.highlightDatum`, `chart.dehighlightDatum` methods).
     Series.prototype.highlight = function (itemId) {
         this.undim(itemId);
     };

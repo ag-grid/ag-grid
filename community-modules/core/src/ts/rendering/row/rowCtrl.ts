@@ -278,7 +278,7 @@ export class RowCtrl extends BeanStub {
             }
 
             if (this.isFullWidth()) {
-                this.setupFullWidth();
+                this.setupFullWidth(gui);
             }
         });
 
@@ -293,28 +293,23 @@ export class RowCtrl extends BeanStub {
         return FullWidthRenderers.get(this.rowType)!;
     }
 
-    private setupFullWidth(): void {
+    private setupFullWidth(gui: RowGui): void {
 
-        this.allRowGuis.forEach( gui => {
+        const params = this.createFullWidthParams(gui.element, gui.pinned);
+        const cellRendererType = this.getFullWidthCellRendererType();
+        const cellRendererName = this.getFullWidthCellRendererName();
+        const compDetails = this.beans.userComponentFactory.getFullWidthCellRendererDetails(params, cellRendererType, cellRendererName);
 
-            const params = this.createFullWidthParams(gui.element, gui.pinned);
-
-            const cellRendererType = this.getFullWidthCellRendererType();
-            const cellRendererName = this.getFullWidthCellRendererName();
-
-            const compDetails = this.beans.userComponentFactory.getFullWidthCellRendererDetails(params, cellRendererType, cellRendererName);
-
-            if (compDetails) {
-                gui.rowComp.showFullWidth(compDetails);
+        if (compDetails) {
+            gui.rowComp.showFullWidth(compDetails);
+        } else {
+            const masterDetailModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.MasterDetailModule);
+            if (cellRendererName === 'agDetailCellRenderer' && !masterDetailModuleLoaded) {
+                console.warn(`AG Grid: cell renderer agDetailCellRenderer (for master detail) not found. Did you forget to include the master detail module?`);
             } else {
-                const masterDetailModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.MasterDetailModule);
-                if (cellRendererName === 'agDetailCellRenderer' && !masterDetailModuleLoaded) {
-                    console.warn(`AG Grid: cell renderer agDetailCellRenderer (for master detail) not found. Did you forget to include the master detail module?`);
-                } else {
-                    console.error(`AG Grid: fullWidthCellRenderer ${cellRendererName} not found`);
-                }
+                console.error(`AG Grid: fullWidthCellRenderer ${cellRendererName} not found`);
             }
-        });
+        }
     }
 
     public getScope(): any {
@@ -634,7 +629,9 @@ export class RowCtrl extends BeanStub {
         // then set data, and any old valueGetter's (ie from cols that were removed) would still get called.
         this.updateColumnLists(true);
 
-        this.rowNode.checkAutoHeights();
+        if (this.beans.columnModel.wasAutoRowHeightEverActive()) {
+            this.rowNode.checkAutoHeights();
+        }
     }
 
     private onVirtualColumnsChanged(): void {

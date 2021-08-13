@@ -32,16 +32,22 @@ const options = {
         text: 'per quarter'
     },
     theme: {
-        baseTheme: 'ag-default-dark',
+        baseTheme: 'ag-vivid',
         overrides: {
             polar: {
                 series: {
                     pie: {
+                        title: {
+                            showInLegend: true
+                        },
                         highlightStyle: {
                             fill: 'cyan',
                             stroke: 'blue',
+                            strokeWidth: 4,
                             series: {
-                                dimOpacity: 0.2
+                                enabled: true,
+                                dimOpacity: 0.2,
+                                strokeWidth: 2
                             }
                         }
                     }

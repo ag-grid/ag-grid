@@ -11129,16 +11129,18 @@
             else if (this.pointerInsideLegend) {
                 this.pointerInsideLegend = false;
                 // Undim all series only if the pointer was inside legend is now leaving it.
-                this.series.forEach(function (s) {
-                    s.undim();
-                    s.dehighlight();
+                this.series.forEach(function (series) {
+                    if (series.highlightStyle.series.enabled) {
+                        series.undim();
+                        series.dehighlight();
+                    }
                 });
                 return;
             }
             if (datum) {
                 var id_2 = datum.id, itemId_1 = datum.itemId;
                 var series_1 = find(this.series, function (series) { return series.id === id_2; });
-                if (series_1) {
+                if (series_1 && series_1.highlightStyle.series.enabled) {
                     this.series.forEach(function (s) { return s === series_1 ? s.highlight(itemId_1) : s.dim(); });
                 }
             }
@@ -11165,11 +11167,13 @@
                 if (node) {
                     style.cursor = s.cursor;
                 }
-                if (s === datum.series) {
-                    s.highlight(datum.itemId);
-                }
-                else {
-                    s.dim();
+                if (s.highlightStyle.series.enabled) {
+                    if (s === datum.series) {
+                        s.highlight(datum.itemId);
+                    }
+                    else {
+                        s.dim();
+                    }
                 }
                 s.onHighlightChange();
             });
@@ -11180,8 +11184,10 @@
                 this.highlightedDatum = undefined;
                 this.series.forEach(function (s) {
                     s.onHighlightChange();
-                    s.undim();
-                    s.dehighlight();
+                    if (s.highlightStyle.series.enabled) {
+                        s.undim();
+                        s.dehighlight();
+                    }
                 });
             }
         };
@@ -12594,6 +12600,7 @@
     };
     var SeriesHighlightStyle = /** @class */ (function () {
         function SeriesHighlightStyle() {
+            this.enabled = true;
             this._dimOpacity = 1;
         }
         Object.defineProperty(SeriesHighlightStyle.prototype, "dimOpacity", {
@@ -12661,6 +12668,9 @@
             configurable: true
         });
         Series.prototype.setColors = function (fills, strokes) { };
+        // Both `highlight`, `dehighlight` and `dim`, `undim` are related to whole series highlighting / dimming,
+        // while `onHighlightChange` is responsible for highlighting of individual series nodes / datums
+        // (see `chart.highlightDatum`, `chart.dehighlightDatum` methods).
         Series.prototype.highlight = function (itemId) {
             this.undim(itemId);
         };
@@ -14344,22 +14354,25 @@
             if (!this.chart) {
                 return;
             }
-            var _a = this, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, shadow = _a.shadow, formatter = _a.formatter, xKey = _a.xKey, flipXY = _a.flipXY, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke, highlightedStrokeWidth = _b.series.strokeWidth, highlightedDatum = _a.chart.highlightedDatum, highlightedItemId = _a.highlightedItemId;
+            var _a = this, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, shadow = _a.shadow, formatter = _a.formatter, xKey = _a.xKey, flipXY = _a.flipXY, highlightedDatum = _a.chart.highlightedDatum, highlightedItemId = _a.highlightedItemId, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke, highlightedDatumStrokeWidth = _b.strokeWidth, _c = _b.series, subSeriesHighlightingEnabled = _c.enabled, highlightedSubSeriesStrokeWidth = _c.strokeWidth;
             this.rectSelection.each(function (rect, datum) {
-                var highlighted = datum === highlightedDatum;
-                var rectFill = highlighted && fill !== undefined ? fill : datum.fill;
-                var rectStroke = highlighted && stroke !== undefined ? stroke : datum.stroke;
+                var isDatumHighlighted = datum === highlightedDatum;
+                var isSubSeriesHighlighted = highlightedItemId === datum.itemId;
+                var rectFill = isDatumHighlighted && fill !== undefined ? fill : datum.fill;
+                var rectStroke = isDatumHighlighted && stroke !== undefined ? stroke : datum.stroke;
                 var format = undefined;
-                var strokeWidth = highlightedItemId === datum.itemId && highlightedStrokeWidth !== undefined
-                    ? highlightedStrokeWidth
-                    : datum.strokeWidth;
+                var strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
+                    ? highlightedDatumStrokeWidth
+                    : subSeriesHighlightingEnabled && isSubSeriesHighlighted && highlightedSubSeriesStrokeWidth !== undefined
+                        ? highlightedSubSeriesStrokeWidth
+                        : datum.strokeWidth;
                 if (formatter) {
                     format = formatter({
                         datum: datum.seriesDatum,
                         fill: rectFill,
                         stroke: rectStroke,
                         strokeWidth: strokeWidth,
-                        highlighted: highlighted,
+                        highlighted: isDatumHighlighted,
                         xKey: xKey,
                         yKey: datum.yKey
                     });
@@ -17501,14 +17514,20 @@
             if (!this.chart) {
                 return;
             }
-            var _a = this, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, radiusScale = _a.radiusScale, callout = _a.callout, shadow = _a.shadow, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke, centerOffset = _b.centerOffset, highlightedStrokeWidth = _b.strokeWidth, angleKey = _a.angleKey, radiusKey = _a.radiusKey, formatter = _a.formatter;
+            var _a = this, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, radiusScale = _a.radiusScale, callout = _a.callout, shadow = _a.shadow, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke, centerOffset = _b.centerOffset, highlightedDatumStrokeWidth = _b.strokeWidth, _c = _b.series, seriesHighlightingEnabled = _c.enabled, highlightedSeriesStrokeWidth = _c.strokeWidth, angleKey = _a.angleKey, radiusKey = _a.radiusKey, formatter = _a.formatter;
             var highlightedDatum = this.chart.highlightedDatum;
             var centerOffsets = [];
             var innerRadius = radiusScale.convert(0);
             this.groupSelection.selectByTag(PieNodeTag.Sector).each(function (sector, datum, index) {
                 var radius = radiusScale.convert(datum.radius);
+                var isDatumHighlighted = datum === highlightedDatum || datum.itemId === _this.highlightedItemId;
+                var isSeriesHighlighted = _this.highlightedItemId !== undefined;
                 var highlighted = datum === highlightedDatum || datum.itemId === _this.highlightedItemId;
-                var strokeWidth = highlighted && highlightedStrokeWidth || _this.strokeWidth;
+                var strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
+                    ? highlightedDatumStrokeWidth
+                    : isSeriesHighlighted && highlightedSeriesStrokeWidth !== undefined
+                        ? highlightedSeriesStrokeWidth
+                        : _this.strokeWidth;
                 var sectorFill = highlighted && fill !== undefined ? fill : fills[index % fills.length];
                 var sectorStroke = highlighted && stroke !== undefined ? stroke : strokes[index % strokes.length];
                 var format = undefined;
@@ -17561,7 +17580,7 @@
                 }
             });
             {
-                var _c = this.label, offset_1 = _c.offset, fontStyle_1 = _c.fontStyle, fontWeight_1 = _c.fontWeight, fontSize_1 = _c.fontSize, fontFamily_1 = _c.fontFamily, color_1 = _c.color;
+                var _d = this.label, offset_1 = _d.offset, fontStyle_1 = _d.fontStyle, fontWeight_1 = _d.fontWeight, fontSize_1 = _d.fontSize, fontFamily_1 = _d.fontFamily, color_1 = _d.color;
                 this.groupSelection.selectByTag(PieNodeTag.Label).each(function (text, datum, index) {
                     var label = datum.label;
                     if (label) {
@@ -17906,7 +17925,8 @@
                 highlightStyle: {
                     fill: 'yellow',
                     series: {
-                        dimOpacity: 1
+                        enabled: false,
+                        dimOpacity: 0.3
                     }
                 }
             };
@@ -19220,26 +19240,16 @@
         cursor: 'default',
         listeners: undefined
     };
-    var columnSeriesDefaults = {
-        fillOpacity: 1,
-        strokeOpacity: 1,
-        xKey: '',
-        xName: '',
-        yKeys: [],
-        yNames: {},
-        grouped: false,
-        normalizedTo: undefined,
-        strokeWidth: 1,
-        lineDash: undefined,
-        lineDashOffset: 0,
-        shadow: undefined,
+    var highlightStyleDefaults = {
         highlightStyle: {
             fill: 'yellow',
             series: {
-                dimOpacity: 1
+                enabled: false,
+                dimOpacity: 0.3
             }
         }
     };
+    var columnSeriesDefaults = __assign$5({ fillOpacity: 1, strokeOpacity: 1, xKey: '', xName: '', yKeys: [], yNames: {}, grouped: false, normalizedTo: undefined, strokeWidth: 1, lineDash: undefined, lineDashOffset: 0, shadow: undefined }, highlightStyleDefaults);
     var shadowMapping = {
         shadow: {
             meta: {
@@ -19369,12 +19379,7 @@
                 _c[LineSeries.type] = __assign$5(__assign$5({ meta: {
                         constructor: LineSeries,
                         setAsIs: ['lineDash'],
-                        defaults: __assign$5(__assign$5({}, seriesDefaults), { title: undefined, xKey: '', xName: '', yKey: '', yName: '', strokeWidth: 2, strokeOpacity: 1, lineDash: undefined, lineDashOffset: 0, highlightStyle: {
-                                fill: 'yellow',
-                                series: {
-                                    dimOpacity: 1
-                                }
-                            } })
+                        defaults: __assign$5(__assign$5(__assign$5({}, seriesDefaults), { title: undefined, xKey: '', xName: '', yKey: '', yName: '', strokeWidth: 2, strokeOpacity: 1, lineDash: undefined, lineDashOffset: 0 }), highlightStyleDefaults)
                     } }, tooltipMapping), { highlightStyle: {}, label: {
                         meta: {
                             defaults: __assign$5(__assign$5({}, labelDefaults), { formatter: undefined })
@@ -19394,12 +19399,7 @@
                     } }),
                 _c[ScatterSeries.type] = __assign$5(__assign$5({ meta: {
                         constructor: ScatterSeries,
-                        defaults: __assign$5(__assign$5({}, seriesDefaults), { title: undefined, xKey: '', yKey: '', sizeKey: undefined, labelKey: undefined, xName: '', yName: '', sizeName: 'Size', labelName: 'Label', strokeWidth: 2, fillOpacity: 1, strokeOpacity: 1, highlightStyle: {
-                                fill: 'yellow',
-                                series: {
-                                    dimOpacity: 1
-                                }
-                            } })
+                        defaults: __assign$5(__assign$5(__assign$5({}, seriesDefaults), { title: undefined, xKey: '', yKey: '', sizeKey: undefined, labelKey: undefined, xName: '', yName: '', sizeName: 'Size', labelName: 'Label', strokeWidth: 2, fillOpacity: 1, strokeOpacity: 1 }), highlightStyleDefaults)
                     } }, tooltipMapping), { highlightStyle: {}, marker: {
                         meta: {
                             constructor: CartesianSeriesMarker,
@@ -19420,12 +19420,7 @@
                 _c[AreaSeries.type] = __assign$5(__assign$5(__assign$5({ meta: {
                         constructor: AreaSeries,
                         setAsIs: ['lineDash'],
-                        defaults: __assign$5(__assign$5({}, seriesDefaults), { xKey: '', xName: '', yKeys: [], yNames: [], normalizedTo: undefined, fillOpacity: 1, strokeOpacity: 1, strokeWidth: 2, lineDash: undefined, lineDashOffset: 0, shadow: undefined, highlightStyle: {
-                                fill: 'yellow',
-                                series: {
-                                    dimOpacity: 1
-                                }
-                            } })
+                        defaults: __assign$5(__assign$5(__assign$5({}, seriesDefaults), { xKey: '', xName: '', yKeys: [], yNames: [], normalizedTo: undefined, fillOpacity: 1, strokeOpacity: 1, strokeWidth: 2, lineDash: undefined, lineDashOffset: 0, shadow: undefined }), highlightStyleDefaults)
                     } }, tooltipMapping), { highlightStyle: {}, label: {
                         meta: {
                             defaults: __assign$5(__assign$5({}, labelDefaults), { formatter: undefined })
@@ -19446,12 +19441,7 @@
                 _c[HistogramSeries.type] = __assign$5(__assign$5(__assign$5({ meta: {
                         constructor: HistogramSeries,
                         setAsIs: ['lineDash'],
-                        defaults: __assign$5(__assign$5({}, seriesDefaults), { title: undefined, xKey: '', yKey: '', xName: '', yName: '', strokeWidth: 1, fillOpacity: 1, strokeOpacity: 1, lineDash: undefined, lineDashOffset: 0, areaPlot: false, binCount: undefined, bins: undefined, aggregation: 'sum', highlightStyle: {
-                                fill: 'yellow',
-                                series: {
-                                    dimOpacity: 1
-                                }
-                            } })
+                        defaults: __assign$5(__assign$5(__assign$5({}, seriesDefaults), { title: undefined, xKey: '', yKey: '', xName: '', yName: '', strokeWidth: 1, fillOpacity: 1, strokeOpacity: 1, lineDash: undefined, lineDashOffset: 0, areaPlot: false, binCount: undefined, bins: undefined, aggregation: 'sum' }), highlightStyleDefaults)
                     } }, tooltipMapping), { highlightStyle: {}, label: {
                         meta: {
                             defaults: __assign$5(__assign$5({}, labelDefaults), { formatter: undefined })
@@ -19521,12 +19511,7 @@
                 _d[PieSeries.type] = __assign$5(__assign$5(__assign$5({ meta: {
                         constructor: PieSeries,
                         setAsIs: ['lineDash'],
-                        defaults: __assign$5(__assign$5({}, seriesDefaults), { title: undefined, angleKey: '', angleName: '', radiusKey: undefined, radiusName: undefined, labelKey: undefined, labelName: undefined, callout: {}, fillOpacity: 1, strokeOpacity: 1, rotation: 0, outerRadiusOffset: 0, innerRadiusOffset: 0, strokeWidth: 1, lineDash: undefined, lineDashOffset: 0, shadow: undefined, highlightStyle: {
-                                fill: 'yellow',
-                                series: {
-                                    dimOpacity: 1
-                                }
-                            } })
+                        defaults: __assign$5(__assign$5(__assign$5({}, seriesDefaults), { title: undefined, angleKey: '', angleName: '', radiusKey: undefined, radiusName: undefined, labelKey: undefined, labelName: undefined, callout: {}, fillOpacity: 1, strokeOpacity: 1, rotation: 0, outerRadiusOffset: 0, innerRadiusOffset: 0, strokeWidth: 1, lineDash: undefined, lineDashOffset: 0, shadow: undefined }), highlightStyleDefaults)
                     } }, tooltipMapping), { highlightStyle: {}, title: {
                         meta: {
                             constructor: PieTitle,

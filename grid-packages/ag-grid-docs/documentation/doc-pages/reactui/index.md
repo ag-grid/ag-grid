@@ -51,13 +51,15 @@ Below is an example with Range Selection, Checkbox Click Selection and Row Group
 
 <grid-example title='React UI Advanced Features' name='advanced-features' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>
 
-Below is an example using Master Detail. All grids below, including details grids, are using React UI.
+Below is an example using Master Detail.
+
+When the master grid has `reactUi=true` then the detail grids use React UI also. In the example both Master and Detail grids are using React Cell Renderers.
 
 <grid-example title='React UI Master Detail' name='master-detail' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>
 
 ## React UI and Portals?
 
-React UI dose not use portals to host custom components (eg Cell Renderers).
+React UI does not use portals to host custom components (eg Cell Renderers).
 
 Previous to React UI, when the rendering engine was written in Plain JavaScript, React Portals were used to host instances of provided components i.e. Cell Renderer's and Cell Editors etc. This caused issues such as additional `div`'s appear in the DOM to host the portal, and also sometimes flickering or delayed rendering was visible.
 
@@ -156,6 +158,7 @@ This is temporary while we implement React UI across all of AG Grid. Once comple
 
 React UI is covering both AG Grid Community and AG Grid Enterprise. Once complete, both Community and Enterprise
 will be 100% React.
+
 ## What's Next for React UI
 
 We are now charging ahead at completing the React UI work. That means going through the list in the previous section and converting everything to React UI.

@@ -117,6 +117,7 @@ export interface ICallSignature extends BaseInterface {
     };
 }
 export interface Config {
+    codeSrc?: string;
     isSubset?: boolean;
     isApi?: boolean;
     isEvent?: boolean;
@@ -130,6 +131,8 @@ export interface Config {
         };
     };
     gridOpProp?: InterfaceEntry;
+    codeOnly?: boolean;
+    defaultExpand?: boolean
 }
 export type SectionProps = {
     framework: string;
@@ -161,7 +164,5 @@ export interface ApiProps {
     sources?: string[];
     section?: string;
     names?: string;
-    config?: {
-        codeSrc?: string
-    };
+    config?: Config;
 }

@@ -20,13 +20,7 @@ var options = {
             title: {
                 text: '2018/19',
             },
-            innerRadiusOffset: -40,
-            highlightStyle: {
-                series: {
-                    dimOpacity: 0.3,
-                    strokeWidth: 3
-                }
-            }
+            innerRadiusOffset: -40
         },
         {
             type: 'pie',
@@ -40,13 +34,7 @@ var options = {
             },
             showInLegend: false,
             outerRadiusOffset: -70,
-            innerRadiusOffset: -110,
-            highlightStyle: {
-                series: {
-                    dimOpacity: 0.3,
-                    strokeWidth: 3
-                }
-            }
+            innerRadiusOffset: -110
         },
         {
             type: 'pie',
@@ -60,13 +48,7 @@ var options = {
             },
             showInLegend: false,
             outerRadiusOffset: -140,
-            innerRadiusOffset: -180,
-            highlightStyle: {
-                series: {
-                    dimOpacity: 0.3,
-                    strokeWidth: 3
-                }
-            }
+            innerRadiusOffset: -180
         }
     ],
 };

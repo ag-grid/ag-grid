@@ -165,7 +165,7 @@ const Section: React.FC<SectionProps> = ({ framework, title, properties, config 
 };
 
 const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, config }) => {
-    const [isExpanded, setExpanded] = useState(false);
+    const [isExpanded, setExpanded] = useState(config.defaultExpand);
 
     let description = '';
     let isObject = false;
@@ -222,6 +222,16 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
 
     const typeUrl = isObject ? `#reference-${id}.${name}` : getTypeUrl(type, framework);
 
+    const codeSection = <FunctionCodeSample framework={framework} name={name} type={type} config={config} />;
+
+    if (config.codeOnly) {
+        return <tr>
+            <td colSpan={3} style={{ border: 0, padding: 0 }} >
+                {codeSection}
+            </td>
+        </tr>
+    }
+
     return <tr>
         <td className={styles['reference__expander-cell']} onClick={() => setExpanded(!isExpanded)} role="presentation">
             {showAdditionalDetails && <div className={styles['reference__expander']}>
@@ -248,7 +258,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
                 <div>Options: {definition.options.map((o, i) => <React.Fragment key={o}>{i > 0 ? ', ' : ''}<code>{formatJson(o)}</code></React.Fragment>)}</div>}
             {showAdditionalDetails &&
                 <div className={isExpanded ? '' : 'd-none'}>
-                    <FunctionCodeSample framework={framework} name={name} type={type} config={config} />
+                {codeSection}
                 </div>}
         </td>
         {definition.relevantTo && <td style={{ whiteSpace: 'nowrap' }}>{definition.relevantTo.join(', ')}</td>}

@@ -125,11 +125,17 @@
         "processCellForClipboard": {
             "description": "Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel."
         },
+        "processHeaderForClipboard": {
+            "description": "Allows you to process header values for the clipboard."
+        },
         "processCellFromClipboard": {
             "description": "Allows you to process cells from the clipboard. Handy if for example you have number fields, and want to block non-numbers from getting into the grid."
         },
         "sendToClipboard": {
             "description": "Allows you to get the data that would otherwise go to the clipboard. To be used when you want to control the 'copy to clipboard' operation yourself."
+        },
+        "processDataFromClipboard": {
+            "description": "Allows complete control of the paste operation, including cancelling the operation (so nothing happens) or replacing the data with other data."
         }
     },
     "nav": {

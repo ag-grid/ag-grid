@@ -55,6 +55,8 @@ export interface PolarTooltipRendererParams extends TooltipRendererParams {
 export class SeriesHighlightStyle {
     private static defaultDimOpacity = 0.3;
 
+    enabled = true;
+
     strokeWidth?: number;
 
     protected _dimOpacity = 1;
@@ -112,6 +114,10 @@ export abstract class Series extends Observable {
     cursor = 'default';
 
     setColors(fills: string[], strokes: string[]) { }
+
+    // Both `highlight`, `dehighlight` and `dim`, `undim` are related to whole series highlighting / dimming,
+    // while `onHighlightChange` is responsible for highlighting of individual series nodes / datums
+    // (see `chart.highlightDatum`, `chart.dehighlightDatum` methods).
 
     highlight(itemId?: any) {
         this.undim(itemId);

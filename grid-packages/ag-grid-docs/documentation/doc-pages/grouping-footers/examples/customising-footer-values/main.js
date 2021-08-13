@@ -27,12 +27,11 @@ var gridOptions = {
     groupIncludeFooter: true,
     groupIncludeTotalFooter: true,
     animateRows: true,
+    rowData: getData(),
 };
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
-
-    gridOptions.api.setRowData(getData());
 });

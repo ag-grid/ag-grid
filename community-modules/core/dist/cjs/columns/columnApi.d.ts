@@ -103,7 +103,10 @@ export declare class ColumnApi {
     setColumnState(columnState: ColumnState[]): boolean;
 }
 export interface ApplyColumnStateParams {
+    /** The state from `getColumnState` */
     state?: ColumnState[];
+    /** Whether column order should be applied */
     applyOrder?: boolean;
+    /** State to apply to columns where state is missing for those columns */
     defaultState?: ColumnState;
 }

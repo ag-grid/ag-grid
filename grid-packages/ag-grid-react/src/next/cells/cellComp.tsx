@@ -184,7 +184,7 @@ const CellComp = (props: {
 
     useJsCellRenderer(renderDetails, showTools, toolsValueSpan, jsCellRendererRef, eGui);
 
-    useEffect( ()=> cellCtrl.parentOfValueChanged(toolsValueSpan), [toolsValueSpan]);
+    useEffect( ()=> cellCtrl.setupAutoHeight(toolsValueSpan), [toolsValueSpan]);
 
     useEffect(() => {
         const doingJsEditor = editDetails && !editDetails.compDetails.componentFromFramework;

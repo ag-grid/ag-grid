@@ -175,13 +175,14 @@ var AnimationFrameService = /** @class */ (function (_super) {
     };
     // a debounce utility used for parts of the app involved with rendering.
     // the advantage over normal debounce is the client can call flushAllFrames()
-    // to make sure all rendering is complete.
+    // to make sure all rendering is complete. we don't wait any milliseconds,
+    // as this is intended to batch calls in one VM turn.
     AnimationFrameService.prototype.debounce = function (func) {
         var _this = this;
         var pending = false;
         return function () {
             if (!_this.isOn()) {
-                func();
+                _this.getFrameworkOverrides().setTimeout(func, 0);
                 return;
             }
             if (pending) {

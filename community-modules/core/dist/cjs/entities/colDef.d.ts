@@ -325,13 +325,18 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     columnsMenuParams?: ColumnsMenuParams;
 }
 export interface ColumnFunctionCallbackParams {
+    /** Row node for the given row */
     node: RowNode;
+    /** Data associated with the node */
     data: any;
+    /** Column for this callback */
     column: Column;
+    /** ColDef provided for this column */
     colDef: ColDef;
-    context: any;
     api: GridApi;
     columnApi: ColumnApi;
+    /** The context as provided on `gridOptions.context` */
+    context: any;
 }
 export interface CheckboxSelectionCallbackParams extends ColumnFunctionCallbackParams {
 }
@@ -394,19 +399,31 @@ export interface GetQuickFilterTextParams {
     context: any;
 }
 export interface ColumnsMenuParams {
+    /** To suppress updating the layout of columns
+     * as they are rearranged in the grid */
     suppressSyncLayoutWithGrid?: boolean;
+    /** To suppress Column Filter section*/
     suppressColumnFilter?: boolean;
+    /** To suppress Select / Un-select all widget*/
     suppressColumnSelectAll?: boolean;
+    /** To suppress Expand / Collapse all widget*/
     suppressColumnExpandAll?: boolean;
+    /** By default, column groups start expanded.
+     * Pass true to default to contracted groups*/
     contractColumnSelection?: boolean;
 }
 export interface BaseColDefParams {
+    /** Row node for the given row */
     node: RowNode | null;
+    /** Data associated with the node */
     data: any;
-    colDef: ColDef;
+    /** Column for this callback */
     column: Column;
+    /** ColDef provided for this column */
+    colDef: ColDef;
     api: GridApi;
     columnApi: ColumnApi;
+    /** The context as provided on `gridOptions.context` */
     context: any;
 }
 export interface BaseWithValueColDefParams extends BaseColDefParams {
@@ -446,16 +463,19 @@ export interface SuppressKeyboardEventParams extends ColumnFunctionCallbackParam
     editing: boolean;
 }
 export interface SuppressHeaderKeyboardEventParams {
-    api: GridApi;
-    columnApi: ColumnApi;
     column: Column | ColumnGroup;
     colDef: ColDef | ColGroupDef | null;
-    context: any;
     headerRowIndex: number;
     event: KeyboardEvent;
+    api: GridApi;
+    columnApi: ColumnApi;
+    /** The context as provided on `gridOptions.context` */
+    context: any;
 }
 export interface CellClassParams extends RowClassParams {
+    /** The colDef associated with the column for this cell */
     colDef: ColDef;
+    /** The value to be rendered */
     value: any;
 }
 export interface CellClassFunc {

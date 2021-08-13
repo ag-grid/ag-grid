@@ -18,7 +18,6 @@ import { isBrowserIE } from "../../utils/browser";
 import { CellCtrl, ICellComp } from "./cellCtrl";
 import { UserCompDetails } from "../../components/framework/userComponentFactory";
 import { _ } from "../../utils";
-import { GridBodyComp } from "../../gridBodyComp/gridBodyComp";
 
 export class CellComp extends Component implements TooltipParentComp {
 
@@ -164,6 +163,8 @@ export class CellComp extends Component implements TooltipParentComp {
                 this.insertValueWithoutCellRenderer(valueToDisplay);
             }
         }
+
+        this.cellCtrl.setupAutoHeight(this.eCellValue);
     }
 
     private setEditDetails(compDetails: UserCompDetails | undefined, popup?: boolean, position?: string): void {
@@ -181,8 +182,6 @@ export class CellComp extends Component implements TooltipParentComp {
         this.checkboxSelectionComp = this.beans.context.destroyBean(this.checkboxSelectionComp);
         this.dndSourceComp = this.beans.context.destroyBean(this.dndSourceComp);
         this.rowDraggingComp = this.beans.context.destroyBean(this.rowDraggingComp);
-
-        this.cellCtrl.parentOfValueChanged(undefined);
     }
 
     // returns true if wrapper was changed
@@ -250,8 +249,6 @@ export class CellComp extends Component implements TooltipParentComp {
         describedByIds.push(id);
 
         setAriaDescribedBy(this.getGui(), describedByIds.join(' '));
-
-        this.cellCtrl.parentOfValueChanged(this.eCellValue);
     }
 
     private createCellEditorInstance(compDetails: UserCompDetails, popup?: boolean, position?: string): void {

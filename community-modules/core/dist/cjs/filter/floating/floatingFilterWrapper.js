@@ -118,7 +118,7 @@ var FloatingFilterWrapper = /** @class */ (function (_super) {
     FloatingFilterWrapper.prototype.setupFloatingFilter = function () {
         var _this = this;
         var colDef = this.column.getColDef();
-        if (!colDef.filter || !colDef.floatingFilter) {
+        if ((!colDef.filter || !colDef.floatingFilter) && (!colDef.filterFramework || !colDef.floatingFilterComponentFramework)) {
             return;
         }
         this.floatingFilterCompPromise = this.getFloatingFilterInstance();

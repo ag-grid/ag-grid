@@ -86,7 +86,6 @@ export declare class ClientSideRowModel extends BeanStub implements IClientSideR
     private createRowNodeOrder;
     private commonUpdateRowData;
     private doRowsToDisplay;
-    private onRowHeightChangedDebounced;
     onRowHeightChanged(): void;
     resetRowHeights(): void;
 }

@@ -66,13 +66,13 @@ export declare class CellCtrl extends BeanStub {
     private includeDndSource;
     private includeRowDrag;
     private suppressRefreshCell;
+    private destroyAutoHeight;
+    private autoHeightElement;
     private customRowDragComp;
     constructor(column: Column, rowNode: RowNode, beans: Beans, rowCtrl: RowCtrl);
     private addFeatures;
     setComp(comp: ICellComp, scope: any, eGui: HTMLElement, printLayout: boolean, startEditing: boolean): void;
-    parentOfValueChanged(eParentOfValue: HTMLElement | undefined): void;
-    private destroyAutoHeight;
-    private setupAutoHeight;
+    setupAutoHeight(eParentOfValue: HTMLElement | undefined): void;
     getInstanceId(): string;
     private showValue;
     private setupControlComps;

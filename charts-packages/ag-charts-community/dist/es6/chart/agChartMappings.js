@@ -219,26 +219,16 @@ var seriesDefaults = {
     cursor: 'default',
     listeners: undefined
 };
-var columnSeriesDefaults = {
-    fillOpacity: 1,
-    strokeOpacity: 1,
-    xKey: '',
-    xName: '',
-    yKeys: [],
-    yNames: {},
-    grouped: false,
-    normalizedTo: undefined,
-    strokeWidth: 1,
-    lineDash: undefined,
-    lineDashOffset: 0,
-    shadow: undefined,
+var highlightStyleDefaults = {
     highlightStyle: {
         fill: 'yellow',
         series: {
-            dimOpacity: 1
+            enabled: false,
+            dimOpacity: 0.3
         }
     }
 };
+var columnSeriesDefaults = __assign({ fillOpacity: 1, strokeOpacity: 1, xKey: '', xName: '', yKeys: [], yNames: {}, grouped: false, normalizedTo: undefined, strokeWidth: 1, lineDash: undefined, lineDashOffset: 0, shadow: undefined }, highlightStyleDefaults);
 var shadowMapping = {
     shadow: {
         meta: {
@@ -368,12 +358,7 @@ var mappings = (_a = {},
             _c[LineSeries.type] = __assign(__assign({ meta: {
                     constructor: LineSeries,
                     setAsIs: ['lineDash'],
-                    defaults: __assign(__assign({}, seriesDefaults), { title: undefined, xKey: '', xName: '', yKey: '', yName: '', strokeWidth: 2, strokeOpacity: 1, lineDash: undefined, lineDashOffset: 0, highlightStyle: {
-                            fill: 'yellow',
-                            series: {
-                                dimOpacity: 1
-                            }
-                        } })
+                    defaults: __assign(__assign(__assign({}, seriesDefaults), { title: undefined, xKey: '', xName: '', yKey: '', yName: '', strokeWidth: 2, strokeOpacity: 1, lineDash: undefined, lineDashOffset: 0 }), highlightStyleDefaults)
                 } }, tooltipMapping), { highlightStyle: {}, label: {
                     meta: {
                         defaults: __assign(__assign({}, labelDefaults), { formatter: undefined })
@@ -393,12 +378,7 @@ var mappings = (_a = {},
                 } }),
             _c[ScatterSeries.type] = __assign(__assign({ meta: {
                     constructor: ScatterSeries,
-                    defaults: __assign(__assign({}, seriesDefaults), { title: undefined, xKey: '', yKey: '', sizeKey: undefined, labelKey: undefined, xName: '', yName: '', sizeName: 'Size', labelName: 'Label', strokeWidth: 2, fillOpacity: 1, strokeOpacity: 1, highlightStyle: {
-                            fill: 'yellow',
-                            series: {
-                                dimOpacity: 1
-                            }
-                        } })
+                    defaults: __assign(__assign(__assign({}, seriesDefaults), { title: undefined, xKey: '', yKey: '', sizeKey: undefined, labelKey: undefined, xName: '', yName: '', sizeName: 'Size', labelName: 'Label', strokeWidth: 2, fillOpacity: 1, strokeOpacity: 1 }), highlightStyleDefaults)
                 } }, tooltipMapping), { highlightStyle: {}, marker: {
                     meta: {
                         constructor: CartesianSeriesMarker,
@@ -419,12 +399,7 @@ var mappings = (_a = {},
             _c[AreaSeries.type] = __assign(__assign(__assign({ meta: {
                     constructor: AreaSeries,
                     setAsIs: ['lineDash'],
-                    defaults: __assign(__assign({}, seriesDefaults), { xKey: '', xName: '', yKeys: [], yNames: [], normalizedTo: undefined, fillOpacity: 1, strokeOpacity: 1, strokeWidth: 2, lineDash: undefined, lineDashOffset: 0, shadow: undefined, highlightStyle: {
-                            fill: 'yellow',
-                            series: {
-                                dimOpacity: 1
-                            }
-                        } })
+                    defaults: __assign(__assign(__assign({}, seriesDefaults), { xKey: '', xName: '', yKeys: [], yNames: [], normalizedTo: undefined, fillOpacity: 1, strokeOpacity: 1, strokeWidth: 2, lineDash: undefined, lineDashOffset: 0, shadow: undefined }), highlightStyleDefaults)
                 } }, tooltipMapping), { highlightStyle: {}, label: {
                     meta: {
                         defaults: __assign(__assign({}, labelDefaults), { formatter: undefined })
@@ -445,12 +420,7 @@ var mappings = (_a = {},
             _c[HistogramSeries.type] = __assign(__assign(__assign({ meta: {
                     constructor: HistogramSeries,
                     setAsIs: ['lineDash'],
-                    defaults: __assign(__assign({}, seriesDefaults), { title: undefined, xKey: '', yKey: '', xName: '', yName: '', strokeWidth: 1, fillOpacity: 1, strokeOpacity: 1, lineDash: undefined, lineDashOffset: 0, areaPlot: false, binCount: undefined, bins: undefined, aggregation: 'sum', highlightStyle: {
-                            fill: 'yellow',
-                            series: {
-                                dimOpacity: 1
-                            }
-                        } })
+                    defaults: __assign(__assign(__assign({}, seriesDefaults), { title: undefined, xKey: '', yKey: '', xName: '', yName: '', strokeWidth: 1, fillOpacity: 1, strokeOpacity: 1, lineDash: undefined, lineDashOffset: 0, areaPlot: false, binCount: undefined, bins: undefined, aggregation: 'sum' }), highlightStyleDefaults)
                 } }, tooltipMapping), { highlightStyle: {}, label: {
                     meta: {
                         defaults: __assign(__assign({}, labelDefaults), { formatter: undefined })
@@ -520,12 +490,7 @@ var mappings = (_a = {},
             _d[PieSeries.type] = __assign(__assign(__assign({ meta: {
                     constructor: PieSeries,
                     setAsIs: ['lineDash'],
-                    defaults: __assign(__assign({}, seriesDefaults), { title: undefined, angleKey: '', angleName: '', radiusKey: undefined, radiusName: undefined, labelKey: undefined, labelName: undefined, callout: {}, fillOpacity: 1, strokeOpacity: 1, rotation: 0, outerRadiusOffset: 0, innerRadiusOffset: 0, strokeWidth: 1, lineDash: undefined, lineDashOffset: 0, shadow: undefined, highlightStyle: {
-                            fill: 'yellow',
-                            series: {
-                                dimOpacity: 1
-                            }
-                        } })
+                    defaults: __assign(__assign(__assign({}, seriesDefaults), { title: undefined, angleKey: '', angleName: '', radiusKey: undefined, radiusName: undefined, labelKey: undefined, labelName: undefined, callout: {}, fillOpacity: 1, strokeOpacity: 1, rotation: 0, outerRadiusOffset: 0, innerRadiusOffset: 0, strokeWidth: 1, lineDash: undefined, lineDashOffset: 0, shadow: undefined }), highlightStyleDefaults)
                 } }, tooltipMapping), { highlightStyle: {}, title: {
                     meta: {
                         constructor: PieTitle,

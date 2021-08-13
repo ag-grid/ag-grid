@@ -1026,13 +1026,7 @@ var ClientSideRowModel = /** @class */ (function (_super) {
         this.rowsToDisplay = this.flattenStage.execute({ rowNode: this.rootNode });
     };
     ClientSideRowModel.prototype.onRowHeightChanged = function () {
-        var _this = this;
-        if (this.onRowHeightChangedDebounced == null) {
-            this.onRowHeightChangedDebounced = this.animationFrameService.debounce(function () {
-                _this.refreshModel({ step: core.ClientSideRowModelSteps.MAP, keepRenderedRows: true, keepEditingRows: true });
-            });
-        }
-        this.onRowHeightChangedDebounced();
+        this.refreshModel({ step: core.ClientSideRowModelSteps.MAP, keepRenderedRows: true, keepEditingRows: true });
     };
     ClientSideRowModel.prototype.resetRowHeights = function () {
         var atLeastOne = false;

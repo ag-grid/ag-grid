@@ -1,0 +1,10 @@
+.my-spinner {
+  width: 40px;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+
+.my-renderer {
+  margin-left: 20px;
+}

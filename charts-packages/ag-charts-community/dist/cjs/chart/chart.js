@@ -961,16 +961,18 @@ var Chart = /** @class */ (function (_super) {
         else if (this.pointerInsideLegend) {
             this.pointerInsideLegend = false;
             // Undim all series only if the pointer was inside legend is now leaving it.
-            this.series.forEach(function (s) {
-                s.undim();
-                s.dehighlight();
+            this.series.forEach(function (series) {
+                if (series.highlightStyle.series.enabled) {
+                    series.undim();
+                    series.dehighlight();
+                }
             });
             return;
         }
         if (datum) {
             var id_3 = datum.id, itemId_1 = datum.itemId;
             var series_1 = array_1.find(this.series, function (series) { return series.id === id_3; });
-            if (series_1) {
+            if (series_1 && series_1.highlightStyle.series.enabled) {
                 this.series.forEach(function (s) { return s === series_1 ? s.highlight(itemId_1) : s.dim(); });
             }
         }
@@ -997,11 +999,13 @@ var Chart = /** @class */ (function (_super) {
             if (node) {
                 style.cursor = s.cursor;
             }
-            if (s === datum.series) {
-                s.highlight(datum.itemId);
-            }
-            else {
-                s.dim();
+            if (s.highlightStyle.series.enabled) {
+                if (s === datum.series) {
+                    s.highlight(datum.itemId);
+                }
+                else {
+                    s.dim();
+                }
             }
             s.onHighlightChange();
         });
@@ -1012,8 +1016,10 @@ var Chart = /** @class */ (function (_super) {
             this.highlightedDatum = undefined;
             this.series.forEach(function (s) {
                 s.onHighlightChange();
-                s.undim();
-                s.dehighlight();
+                if (s.highlightStyle.series.enabled) {
+                    s.undim();
+                    s.dehighlight();
+                }
             });
         }
     };

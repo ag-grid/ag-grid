@@ -490,12 +490,17 @@ export interface RowClassRules {
     [cssClassName: string]: (((params: RowClassParams) => boolean) | string);
 }
 export interface RowClassParams {
+    /** The data associated with this row from rowData */
     data: any;
+    /** The RowNode associated with this row */
     node: RowNode;
+    /** The index of the row */
     rowIndex: number;
+    /** If using AngularJs, is the row's child scope, otherwise null */
     $scope: any;
     api: GridApi;
     columnApi: ColumnApi;
+    /** Context object if provided to `gridOptions.context` */
     context: any;
 }
 export interface RowHeightParams {
@@ -537,22 +542,34 @@ export interface GetChartToolbarItems {
     (params: GetChartToolbarItemsParams): ChartMenuOptions[];
 }
 export interface MenuItemDef {
+    /** Name of the menu item */
     name: string;
+    /** It the item should be enabled / disabled */
     disabled?: boolean;
+    /** Shortcut (just display text, saying the shortcut here does nothing) */
     shortcut?: string;
+    /** Function that gets executed when item is chosen */
     action?: () => void;
+    /** Set to true to provide a check beside the option */
     checked?: boolean;
+    /** The icon to display, either a DOM element or HTML string */
     icon?: HTMLElement | string;
+    /** If this item is a sub menu, contains a list of menu item definitions */
     subMenu?: (MenuItemDef | string)[] | IComponent<any>;
+    /** CSS classes to apply to the menu item */
     cssClasses?: string[];
+    /** Tooltip for the menu item */
     tooltip?: string;
 }
 export interface GetMainMenuItemsParams {
+    /** The column that was clicked */
     column: Column;
+    /** List of the items that would be displayed by default */
+    defaultItems: string[];
     api: GridApi;
     columnApi: ColumnApi;
+    /** Context object if provided to `gridOptions.context` */
     context: any;
-    defaultItems: string[];
 }
 export interface GetMainMenuItems {
     (params: GetMainMenuItemsParams): (string | MenuItemDef)[];
@@ -597,17 +614,27 @@ export interface TabToNextCellParams {
     nextCellPosition: CellPosition;
 }
 export interface PostProcessPopupParams {
+    /** If popup is for a column, this gives the Column */
     column?: Column | null;
+    /** If popup is for a row, this gives the RowNode */
     rowNode?: RowNode;
+    /** The popup we are showing */
     ePopup: HTMLElement;
+    /** The different types are:
+     *  'contextMenu', 'columnMenu', 'aggFuncSelect', 'popupCellEditor' */
     type: string;
+    /** If the popup is as a result of a button click (eg menu button),
+     *  this is the component that the user clicked */
     eventSource?: HTMLElement | null;
+    /** If the popup is as a result of a click or touch,
+     *  this is the event - eg user showing context menu */
     mouseEvent?: MouseEvent | Touch | null;
 }
 export interface PaginationNumberFormatterParams {
     value: number;
 }
 export interface ProcessDataFromClipboardParams {
+    /** 2D array of all cells from the clipboard */
     data: string[][];
 }
 export interface ChartRef {

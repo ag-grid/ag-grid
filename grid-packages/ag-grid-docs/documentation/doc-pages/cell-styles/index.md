@@ -114,29 +114,8 @@ The following snippet is cellClassRules using functions on a year column:
 
 All cellClass cellStyle and cellClassRules functions take a params object that implements the following interface:
 
+<interface-documentation interfaces='["CellClassParams"]' ></interface-documentation>
 
-```ts
-interface CellClassParams {
-    // The value to be rendered.
-    value: any,
-    // The row (from the rowData array, where value was taken) been rendered.
-    data: any,
-    // The node associated to this row
-    node: RowNode,
-    // The colDef been rendered
-    colDef: ColDef,
-    // The index of the row about to be rendered
-    rowIndex: number,
-    // If compiling to Angular, is the row's child scope, otherwise null.
-    $scope: any,
-    // A reference to the AG Grid API.
-    api: GridApi,
-    // A reference to the AG Grid Column API.
-    columnApi: ColumnApi;
-    // If provided in gridOptions, a context object
-    context: any,
-}
-```
 
 As an alternative, you can also provide shorthands of the functions using an expression.
 The column Age in the example uses expressions. An expression is evaluated by the grid

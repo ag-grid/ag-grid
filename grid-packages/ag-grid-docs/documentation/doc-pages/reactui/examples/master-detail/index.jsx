@@ -11,6 +11,16 @@ import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
 import React, { useRef, useEffect, useMemo, useState, useCallback } from 'react';
 import { render } from 'react-dom';
 
+// this is a hook, but we work also with classes
+function MyRenderer(params) {
+    return (
+          <span className="my-renderer">
+            <img src="https://d1yk6z6emsz7qy.cloudfront.net/static/images/loading.gif" className="my-spinner"/>
+              {params.value}
+          </span>
+    );
+}
+
  function GridExample() {
 
     const [rowData, setRowData] = useState(null);
@@ -28,7 +38,7 @@ import { render } from 'react-dom';
 
     const columnDefs = useMemo( ()=> [
         { field: 'name', cellRenderer: 'agGroupCellRenderer' },
-        { field: 'account' },
+        { field: 'account', cellRendererFramework: MyRenderer },
         { field: 'calls' },
         { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" }
     ], []);
@@ -48,7 +58,10 @@ import { render } from 'react-dom';
                 field: "callId",
                 checkboxSelection: true
             },
-            { field: "direction" },
+            { 
+                field: "direction", 
+                cellRendererFramework: MyRenderer
+            },
             {
                 field: "number",
                 minWidth: 150

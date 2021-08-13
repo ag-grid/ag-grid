@@ -137,7 +137,7 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
     private setupFloatingFilter(): void {
         const colDef = this.column.getColDef();
 
-        if (!colDef.filter || !colDef.floatingFilter) { return; }
+        if ((!colDef.filter || !colDef.floatingFilter) &&  (!colDef.filterFramework || !colDef.floatingFilterComponentFramework)) { return; }
 
         this.floatingFilterCompPromise = this.getFloatingFilterInstance();
 

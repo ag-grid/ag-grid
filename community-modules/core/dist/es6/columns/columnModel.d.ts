@@ -17,18 +17,30 @@ export interface ColumnResizeSet {
     width: number;
 }
 export interface ColumnState {
+    /** ID of the column */
     colId?: string;
+    /** True if the column is hidden */
     hide?: boolean | null;
-    aggFunc?: string | IAggFunc | null;
+    /** Width of the column in pixels */
     width?: number;
-    pivot?: boolean | null;
-    pivotIndex?: number | null;
-    pinned?: boolean | string | 'left' | 'right' | null;
-    rowGroup?: boolean | null;
-    rowGroupIndex?: number | null;
+    /** Column's flex if flex is set */
     flex?: number | null;
+    /** Sort applied to the column */
     sort?: string | null;
+    /** The order of the sort, if sorting by many columns */
     sortIndex?: number | null;
+    /** The aggregation function applied */
+    aggFunc?: string | IAggFunc | null;
+    /** True if pivot active */
+    pivot?: boolean | null;
+    /** The order of the pivot, if pivoting by many columns */
+    pivotIndex?: number | null;
+    /** Set if column is pinned */
+    pinned?: boolean | string | 'left' | 'right' | null;
+    /** True if row group active */
+    rowGroup?: boolean | null;
+    /** The order of the row group, if grouping by many columns */
+    rowGroupIndex?: number | null;
 }
 export declare class ColumnModel extends BeanStub {
     private expressionService;
@@ -77,6 +89,7 @@ export declare class ColumnModel extends BeanStub {
     private colSpanActive;
     private displayedAutoHeightCols;
     private autoHeightActive;
+    private autoHeightActiveAtLeastOnce;
     private suppressColumnVirtualisation;
     private rowGroupColumns;
     private valueColumns;
@@ -264,6 +277,7 @@ export declare class ColumnModel extends BeanStub {
     setSecondaryColumns(colDefs: (ColDef | ColGroupDef)[] | null, source?: ColumnEventType): void;
     private processSecondaryColumnDefinitions;
     private updateGridColumns;
+    private setAutoHeightActive;
     private orderGridColsLikeLastPrimary;
     isPrimaryColumnGroupsPresent(): boolean;
     private setupQuickFilterColumns;
@@ -273,6 +287,7 @@ export declare class ColumnModel extends BeanStub {
     private updateGroupsAndDisplayedColumns;
     private deriveDisplayedColumns;
     isAutoRowHeightActive(): boolean;
+    wasAutoRowHeightEverActive(): boolean;
     private joinDisplayedColumns;
     private setLeftValues;
     private setLeftValuesOfColumns;

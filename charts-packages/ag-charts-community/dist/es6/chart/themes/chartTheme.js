@@ -144,7 +144,8 @@ var ChartTheme = /** @class */ (function () {
             highlightStyle: {
                 fill: 'yellow',
                 series: {
-                    dimOpacity: 1
+                    enabled: false,
+                    dimOpacity: 0.3
                 }
             }
         };

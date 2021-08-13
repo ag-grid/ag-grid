@@ -52,36 +52,9 @@ The example below demonstrates saving and restoring column state. Try the follow
 
 ## Column State Interface
 
-The structure of a Column State is as follows:
+The Column State method interfaces are as follows:
 
-```ts
-// Getting Column State
-function getColumnState(): ColumnState[]
-
-interface ColumnState {
-    colId?: string; // ID of the column
-    width?: number; // width of column in pixels
-    flex?: number; // column's flex if flex is set
-    hide?: boolean; // true if column is hidden
-    sort?: string; // sort applied to the columns
-    sortIndex?: number; // the order of the sort, if sorting by many columns
-    aggFunc?: string | IAggFunc; // the aggregation function applied
-    pivot?: boolean; // true if pivot active
-    pivotIndex?: number; // the order of the pivot, if pivoting by many columns
-    pinned?: string | 'left' | 'right'; // set if column is pinned
-    rowGroup?: boolean; // true if row group active
-    rowGroupIndex?: number | null; // the order of the row group, if row grouping by many columns
-}
-
-// Applying Column State
-function applyColumnState(params: ApplyColumnStateParams): boolean
-
-interface ApplyColumnStateParams {
-    state?: ColumnState[]; // the state from getColumnState
-    applyOrder?: boolean; // whether column order should be applied
-    defaultState?: ColumnState; // state to apply to columns where state is missing for those columns
-}
-```
+<api-documentation source='column-api/api.json' section='state' names='["getColumnState", "applyColumnState"]' config='{ "codeSrc": "ColumnApi"}'></api-documentation>
 
 ## Partial State
 

@@ -30,13 +30,7 @@ var options = {
             'Wind, solar & hydro',
             'Imported',
         ],
-        normalizedTo: 100,
-        highlightStyle: {
-            series: {
-                strokeWidth: 4,
-                dimOpacity: 0.3
-            }
-        }
+        normalizedTo: 100
     }],
     axes: [
         {

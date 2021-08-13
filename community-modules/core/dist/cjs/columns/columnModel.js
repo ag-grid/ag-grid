@@ -47,6 +47,7 @@ var array_1 = require("../utils/array");
 var generic_1 = require("../utils/generic");
 var string_1 = require("../utils/string");
 var map_1 = require("../utils/map");
+var function_1 = require("../utils/function");
 var ColumnModel = /** @class */ (function (_super) {
     __extends(ColumnModel, _super);
     function ColumnModel() {
@@ -69,6 +70,7 @@ var ColumnModel = /** @class */ (function (_super) {
         _this.viewportColumns = [];
         // all columns to be rendered in the centre
         _this.viewportColumnsCenter = [];
+        _this.autoHeightActiveAtLeastOnce = false;
         _this.rowGroupColumns = [];
         _this.valueColumns = [];
         _this.pivotColumns = [];
@@ -2498,13 +2500,25 @@ var ColumnModel = /** @class */ (function (_super) {
         this.colSpanActive = this.checkColSpanActiveInCols(this.gridColumns);
         this.gridColumnsMap = {};
         this.gridColumns.forEach(function (col) { return _this.gridColumnsMap[col.getId()] = col; });
-        this.autoHeightActive = this.gridColumns.filter(function (col) { return col.getColDef().autoHeight; }).length > 0;
+        this.setAutoHeightActive();
         var event = {
             type: events_1.Events.EVENT_GRID_COLUMNS_CHANGED,
             api: this.gridApi,
             columnApi: this.columnApi
         };
         this.eventService.dispatchEvent(event);
+    };
+    ColumnModel.prototype.setAutoHeightActive = function () {
+        this.autoHeightActive = this.gridColumns.filter(function (col) { return col.getColDef().autoHeight; }).length > 0;
+        if (this.autoHeightActive) {
+            this.autoHeightActiveAtLeastOnce = true;
+            var rowModelType = this.rowModel.getType();
+            var supportedRowModel = rowModelType === constants_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE || rowModelType === constants_1.Constants.ROW_MODEL_TYPE_SERVER_SIDE;
+            if (!supportedRowModel) {
+                var message_1 = 'AG Grid - autoHeight columns only work with Client Side Row Model and Server Side Row Model.';
+                function_1.doOnce(function () { return console.warn(message_1); }, 'autoHeightActive.wrongRowModel');
+            }
+        }
     };
     ColumnModel.prototype.orderGridColsLikeLastPrimary = function () {
         if (generic_1.missing(this.lastPrimaryOrder)) {
@@ -2636,6 +2650,9 @@ var ColumnModel = /** @class */ (function (_super) {
     };
     ColumnModel.prototype.isAutoRowHeightActive = function () {
         return this.autoHeightActive;
+    };
+    ColumnModel.prototype.wasAutoRowHeightEverActive = function () {
+        return this.autoHeightActiveAtLeastOnce;
     };
     ColumnModel.prototype.joinDisplayedColumns = function () {
         if (this.gridOptionsWrapper.isEnableRtl()) {

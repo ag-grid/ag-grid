@@ -5,6 +5,11 @@
       "state?": "ColumnState[]",
       "applyOrder?": "boolean",
       "defaultState?": "ColumnState"
+    },
+    "docs": {
+      "state?": "/** The state from `getColumnState` */",
+      "applyOrder?": "/** Whether column order should be applied */",
+      "defaultState?": "/** State to apply to columns where state is missing for those columns */"
     }
   },
   "ColumnResizeSet": {
@@ -16,16 +21,30 @@
     "type": {
       "colId?": "string",
       "hide?": "boolean | null",
-      "aggFunc?": "string | IAggFunc | null",
       "width?": "number",
+      "flex?": "number | null",
+      "sort?": "string | null",
+      "sortIndex?": "number | null",
+      "aggFunc?": "string | IAggFunc | null",
       "pivot?": "boolean | null",
       "pivotIndex?": "number | null",
       "pinned?": "boolean | string | 'left' | 'right' | null",
       "rowGroup?": "boolean | null",
-      "rowGroupIndex?": "number | null",
-      "flex?": "number | null",
-      "sort?": "string | null",
-      "sortIndex?": "number | null"
+      "rowGroupIndex?": "number | null"
+    },
+    "docs": {
+      "colId?": "/** ID of the column */",
+      "hide?": "/** True if the column is hidden */",
+      "width?": "/** Width of the column in pixels */",
+      "flex?": "/** Column's flex if flex is set */",
+      "sort?": "/** Sort applied to the column */",
+      "sortIndex?": "/** The order of the sort, if sorting by many columns */",
+      "aggFunc?": "/** The aggregation function applied */",
+      "pivot?": "/** True if pivot active */",
+      "pivotIndex?": "/** The order of the pivot, if pivoting by many columns */",
+      "pinned?": "/** Set if column is pinned */",
+      "rowGroup?": "/** True if row group active */",
+      "rowGroupIndex?": "/** The order of the row group, if grouping by many columns */"
     }
   },
   "ComponentMetadata": {
@@ -616,9 +635,16 @@
       "data": "any",
       "column": "Column",
       "colDef": "ColDef",
-      "context": "any",
       "api": "GridApi",
-      "columnApi": "ColumnApi"
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "node": "/** Row node for the given row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "CheckboxSelectionCallbackParams": {
@@ -628,9 +654,16 @@
       "data": "any",
       "column": "Column",
       "colDef": "ColDef",
-      "context": "any",
       "api": "GridApi",
-      "columnApi": "ColumnApi"
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "node": "/** Row node for the given row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "CheckboxSelectionCallback": {
@@ -647,9 +680,16 @@
       "data": "any",
       "column": "Column",
       "colDef": "ColDef",
-      "context": "any",
       "api": "GridApi",
-      "columnApi": "ColumnApi"
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "node": "/** Row node for the given row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "RowDragCallback": {
@@ -666,9 +706,16 @@
       "data": "any",
       "column": "Column",
       "colDef": "ColDef",
-      "context": "any",
       "api": "GridApi",
-      "columnApi": "ColumnApi"
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "node": "/** Row node for the given row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "DndSourceCallback": {
@@ -685,9 +732,16 @@
       "data": "any",
       "column": "Column",
       "colDef": "ColDef",
-      "context": "any",
       "api": "GridApi",
-      "columnApi": "ColumnApi"
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "node": "/** Row node for the given row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "EditableCallback": {
@@ -704,9 +758,16 @@
       "data": "any",
       "column": "Column",
       "colDef": "ColDef",
-      "context": "any",
       "api": "GridApi",
-      "columnApi": "ColumnApi"
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "node": "/** Row node for the given row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "SuppressPasteCallback": {
@@ -723,9 +784,16 @@
       "data": "any",
       "column": "Column",
       "colDef": "ColDef",
-      "context": "any",
       "api": "GridApi",
-      "columnApi": "ColumnApi"
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "node": "/** Row node for the given row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "SuppressNavigableCallback": {
@@ -770,9 +838,16 @@
       "data": "any",
       "column": "Column",
       "colDef": "ColDef",
-      "context": "any",
       "api": "GridApi",
-      "columnApi": "ColumnApi"
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "node": "/** Row node for the given row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "GetQuickFilterTextParams": {
@@ -794,6 +869,13 @@
       "suppressColumnSelectAll?": "boolean",
       "suppressColumnExpandAll?": "boolean",
       "contractColumnSelection?": "boolean"
+    },
+    "docs": {
+      "suppressSyncLayoutWithGrid?": "/** To suppress updating the layout of columns\n * as they are rearranged in the grid */",
+      "suppressColumnFilter?": "/** To suppress Column Filter section */",
+      "suppressColumnSelectAll?": "/** To suppress Select / Un-select all widget */",
+      "suppressColumnExpandAll?": "/** To suppress Expand / Collapse all widget */",
+      "contractColumnSelection?": "/** By default, column groups start expanded.\n * Pass true to default to contracted groups */"
     }
   },
   "BaseColDefParams": {
@@ -801,11 +883,18 @@
     "type": {
       "node": "RowNode | null",
       "data": "any",
-      "colDef": "ColDef",
       "column": "Column",
+      "colDef": "ColDef",
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any"
+    },
+    "docs": {
+      "node": "/** Row node for the given row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "BaseWithValueColDefParams": {
@@ -813,12 +902,19 @@
     "type": {
       "node": "RowNode | null",
       "data": "any",
-      "colDef": "ColDef",
       "column": "Column",
+      "colDef": "ColDef",
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any",
       "value": "any"
+    },
+    "docs": {
+      "node": "/** Row node for the given row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "ValueGetterParams": {
@@ -826,12 +922,19 @@
     "type": {
       "node": "RowNode | null",
       "data": "any",
-      "colDef": "ColDef",
       "column": "Column",
+      "colDef": "ColDef",
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any",
       "getValue": "(field: string) => any"
+    },
+    "docs": {
+      "node": "/** Row node for the given row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "ValueGetterFunc": {
@@ -846,13 +949,20 @@
     "type": {
       "node": "RowNode | null",
       "data": "any",
-      "colDef": "ColDef",
       "column": "Column",
+      "colDef": "ColDef",
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any",
       "oldValue": "any",
       "newValue": "any"
+    },
+    "docs": {
+      "node": "/** Row node for the given row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "ValueSetterParams": {
@@ -860,13 +970,20 @@
     "type": {
       "node": "RowNode | null",
       "data": "any",
-      "colDef": "ColDef",
       "column": "Column",
+      "colDef": "ColDef",
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any",
       "oldValue": "any",
       "newValue": "any"
+    },
+    "docs": {
+      "node": "/** Row node for the given row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "ValueSetterFunc": {
@@ -881,13 +998,20 @@
     "type": {
       "node": "RowNode | null",
       "data": "any",
-      "colDef": "ColDef",
       "column": "Column",
+      "colDef": "ColDef",
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any",
       "oldValue": "any",
       "newValue": "any"
+    },
+    "docs": {
+      "node": "/** Row node for the given row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "ValueParserFunc": {
@@ -902,12 +1026,19 @@
     "type": {
       "node": "RowNode | null",
       "data": "any",
-      "colDef": "ColDef",
       "column": "Column",
+      "colDef": "ColDef",
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any",
       "value": "any"
+    },
+    "docs": {
+      "node": "/** Row node for the given row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "ValueFormatterFunc": {
@@ -922,11 +1053,18 @@
     "type": {
       "node": "RowNode | null",
       "data": "any",
-      "colDef": "ColDef",
       "column": "Column",
+      "colDef": "ColDef",
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any"
+    },
+    "docs": {
+      "node": "/** Row node for the given row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "RowSpanParams": {
@@ -934,11 +1072,18 @@
     "type": {
       "node": "RowNode | null",
       "data": "any",
-      "colDef": "ColDef",
       "column": "Column",
+      "colDef": "ColDef",
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any"
+    },
+    "docs": {
+      "node": "/** Row node for the given row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "SuppressKeyboardEventParams": {
@@ -948,23 +1093,33 @@
       "data": "any",
       "column": "Column",
       "colDef": "ColDef",
-      "context": "any",
       "api": "GridApi",
       "columnApi": "ColumnApi",
+      "context": "any",
       "event": "KeyboardEvent",
       "editing": "boolean"
+    },
+    "docs": {
+      "node": "/** Row node for the given row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "SuppressHeaderKeyboardEventParams": {
     "meta": {},
     "type": {
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "column": "Column | ColumnGroup",
       "colDef": "ColDef | ColGroupDef | null",
-      "context": "any",
       "headerRowIndex": "number",
-      "event": "KeyboardEvent"
+      "event": "KeyboardEvent",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "CellClassParams": {
@@ -979,6 +1134,15 @@
       "context": "any",
       "colDef": "ColDef",
       "value": "any"
+    },
+    "docs": {
+      "data": "/** The data associated with this row from rowData */",
+      "node": "/** The RowNode associated with this row */",
+      "rowIndex": "/** The index of the row */",
+      "$scope": "/** If using AngularJs, is the row's child scope, otherwise null */",
+      "context": "/** Context object if provided to `gridOptions.context` */",
+      "colDef": "/** The colDef associated with the column for this cell */",
+      "value": "/** The value to be rendered */"
     }
   },
   "CellClassFunc": {
@@ -1521,6 +1685,13 @@
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any"
+    },
+    "docs": {
+      "data": "/** The data associated with this row from rowData */",
+      "node": "/** The RowNode associated with this row */",
+      "rowIndex": "/** The index of the row */",
+      "$scope": "/** If using AngularJs, is the row's child scope, otherwise null */",
+      "context": "/** Context object if provided to `gridOptions.context` */"
     }
   },
   "RowHeightParams": {
@@ -1587,16 +1758,32 @@
       "subMenu?": "(MenuItemDef | string)[] | IComponent<any>",
       "cssClasses?": "string[]",
       "tooltip?": "string"
+    },
+    "docs": {
+      "name": "/** Name of the menu item */",
+      "disabled?": "/** It the item should be enabled / disabled */",
+      "shortcut?": "/** Shortcut (just display text, saying the shortcut here does nothing) */",
+      "action?": "/** Function that gets executed when item is chosen */",
+      "checked?": "/** Set to true to provide a check beside the option */",
+      "icon?": "/** The icon to display, either a DOM element or HTML string */",
+      "subMenu?": "/** If this item is a sub menu, contains a list of menu item definitions */",
+      "cssClasses?": "/** CSS classes to apply to the menu item */",
+      "tooltip?": "/** Tooltip for the menu item */"
     }
   },
   "GetMainMenuItemsParams": {
     "meta": {},
     "type": {
       "column": "Column",
+      "defaultItems": "string[]",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "context": "any",
-      "defaultItems": "string[]"
+      "context": "any"
+    },
+    "docs": {
+      "column": "/** The column that was clicked */",
+      "defaultItems": "/** List of the items that would be displayed by default */",
+      "context": "/** Context object if provided to `gridOptions.context` */"
     }
   },
   "GetMainMenuItems": {
@@ -1670,6 +1857,14 @@
       "type": "string",
       "eventSource?": "HTMLElement | null",
       "mouseEvent?": "MouseEvent | Touch | null"
+    },
+    "docs": {
+      "column?": "/** If popup is for a column, this gives the Column */",
+      "rowNode?": "/** If popup is for a row, this gives the RowNode */",
+      "ePopup": "/** The popup we are showing */",
+      "type": "/** The different types are:\n * 'contextMenu', 'columnMenu', 'aggFuncSelect', 'popupCellEditor' */",
+      "eventSource?": "/** If the popup is as a result of a button click (eg menu button),\n * this is the component that the user clicked */",
+      "mouseEvent?": "/** If the popup is as a result of a click or touch,\n * this is the event - eg user showing context menu */"
     }
   },
   "PaginationNumberFormatterParams": {
@@ -1678,7 +1873,8 @@
   },
   "ProcessDataFromClipboardParams": {
     "meta": {},
-    "type": { "data": "string[][]" }
+    "type": { "data": "string[][]" },
+    "docs": { "data": "/** 2D array of all cells from the clipboard */" }
   },
   "ChartRef": {
     "meta": {},
@@ -4453,7 +4649,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { dimOpacity?: number; strokeWidth?: number; }; }"
+      "highlightStyle?": "{ fill?: string; stroke?: string; }"
     }
   },
   "AgTooltipRendererResult": {
@@ -4576,7 +4772,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { dimOpacity?: number; strokeWidth?: number; }; }",
+      "highlightStyle?": "{ fill?: string; stroke?: string; }",
       "type?": "'line'",
       "marker?": "AgCartesianSeriesMarker",
       "label?": "AgLineSeriesLabelOptions",
@@ -4620,7 +4816,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { dimOpacity?: number; strokeWidth?: number; }; }",
+      "highlightStyle?": "{ fill?: string; stroke?: string; }",
       "type?": "'scatter'",
       "marker?": "AgCartesianSeriesMarker",
       "label?": "AgScatterSeriesLabelOptions",
@@ -4666,7 +4862,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { dimOpacity?: number; strokeWidth?: number; }; }",
+      "highlightStyle?": "{ fill?: string; stroke?: string; }",
       "type?": "'area'",
       "marker?": "AgCartesianSeriesMarker",
       "label?": "AgAreaSeriesLabelOptions",
@@ -4729,7 +4925,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { dimOpacity?: number; strokeWidth?: number; }; }",
+      "highlightStyle?": "{ fill?: string; stroke?: string; }",
       "type?": "'bar' | 'column'",
       "grouped?": "boolean",
       "normalizedTo?": "number",
@@ -4778,7 +4974,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { dimOpacity?: number; strokeWidth?: number; }; }",
+      "highlightStyle?": "{ fill?: string; stroke?: string; }",
       "type?": "'histogram'",
       "fill?": "string",
       "stroke?": "string",
@@ -4859,7 +5055,7 @@
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { dimOpacity?: number; strokeWidth?: number; }; }",
+      "highlightStyle?": "{ fill?: string; stroke?: string; }",
       "type?": "'pie'",
       "title?": "AgPieTitleOptions",
       "label?": "AgPieSeriesLabelOptions",
@@ -5317,12 +5513,7 @@
   },
   "HighlightOptions": {
     "meta": {},
-    "type": {
-      "fill": "string",
-      "stroke?": "string",
-      "strokeWidth?": "number",
-      "series?": "{ dimOpacity?: number; strokeWidth?: number; }"
-    }
+    "type": { "fill": "string", "stroke?": "string" }
   },
   "FillOptions": {
     "meta": {},
