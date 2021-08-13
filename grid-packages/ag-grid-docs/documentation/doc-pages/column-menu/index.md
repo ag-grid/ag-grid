@@ -25,33 +25,9 @@ If you don't specify a `menuTabs` for a `colDef` the default is: `['generalMenuT
 
 The main menu panel, by default, will show a set of items. You can adjust which of these items get display, or you can start from scratch and provide your own items. To customise the menu, provide the `getMainMenuItems()` callback.
 
-`getMainMenuItems()` takes the following object as parameters:
-
-```ts
-GetMainMenuItemsParams {
-    column: Column, // the column that was clicked
-    api: GridApi, // the grid API
-    columnApi: ColumnAPI, // the column API
-    context: any, // the grid context
-    defaultItems: string[] // list of the items that would be displayed by default
-}
-```
-
 The result of `getMainMenuItems()` should be a list with each item either a) a string or b) a MenuItem description. Use 'string' to pick from built in menu items (listed below) and use MenuItem descriptions for your own menu items.
 
-A MenuItem description looks as follows (items with question marks are optional):
-
-```ts
-MenuItem {
-    name: string, // name of menu item
-    disabled?: boolean, // if item should be enabled / disabled
-    shortcut?: string, // shortcut (just display text, saying the shortcut here does nothing)
-    action?: () => void, // function that gets executed when item is chosen
-    checked?: boolean, // set to true to provide a check beside the option
-    icon?: HTMLElement | string, // the icon to display, either a DOM element or HTML string
-    subMenu?: MenuItemDef[] // if this item is a sub menu, contains a list of menu item definitions
-}
-```
+<api-documentation source='grid-callbacks/callbacks.json' section='menus' names='["getMainMenuItems"]' config='{"codeSrc": "GridOptions"}' ></api-documentation>
 
 ## Built In Menu Items
 
@@ -83,30 +59,8 @@ menuItems.push('separator')
 
 If not happy with the position of the popup, you can override it's position using `postProcessPopup(params)` callback. This gives you the popup HTML element so you can change it's position should you wish to.
 
-The params for the callback are as follows:
+<api-documentation source='grid-callbacks/callbacks.json' section='menus' names='["postProcessPopup"]' config='{"codeSrc": "GridOptions"}' ></api-documentation>
 
-```ts
-interface PostProcessPopupParams {
-    // the popup we are showing
-    ePopup: HTMLElement;
-
-    // The different types are: 'contextMenu', 'columnMenu', 'aggFuncSelect', 'popupCellEditor'
-    type: string;
-
-    // if popup is for a column, this gives the Column
-    column?: Column,
-    // if popup is for a row, this gives the RowNode
-    rowNode?: RowNode,
-
-    // if the popup is as a result of a button click (eg menu button),
-    // this is the component that the user clicked
-    eventSource?: HTMLElement;
-
-    // if the popup is as a result of a click or touch, this is the event
-    // eg user showing context menu
-    mouseEvent?: MouseEvent | Touch;
-}
-```
 
 ## Overriding Column Menu Width
 
@@ -143,28 +97,9 @@ The example below shows the `getMainMenuItems()` in action. To demonstrate diffe
 
 The behaviour and appearance of the Columns Menu tab can be customised by supplying `ColumnsMenuParams` to the column definition: `colDef.columnsMenuParams`.
 
-The available properties are shown below:
+Note that all of the properties are initially set to `false`.
 
-```ts
-ColumnsMenuParams {
-    // to suppress updating the layout of columns as they are rearranged in the grid
-    suppressSyncLayoutWithGrid?: boolean,
-
-    // to suppress Column Filter section
-    suppressColumnFilter?: boolean,
-
-    // to suppress Select / Un-select all widget
-    suppressColumnSelectAll?: boolean,
-
-    // to suppress Expand / Collapse all widget
-    suppressColumnExpandAll?: boolean,
-
-    // by default, column groups start expanded. Pass true to default to contracted groups
-    contractColumnSelection?: boolean
-}
-```
-
-Note that all of the above properties are initially set to `false`.
+<api-documentation source='column-properties/properties.json' section='header' names='["columnsMenuParams"]' config='{"codeSrc": "ColumnOptions"}' ></api-documentation>
 
 The following example demonstrates all of the above columns menu tab properties. Note the following:
 

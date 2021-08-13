@@ -476,10 +476,17 @@ export interface GetQuickFilterTextParams {
 }
 
 export interface ColumnsMenuParams {
+/** To suppress updating the layout of columns
+ * as they are rearranged in the grid */
     suppressSyncLayoutWithGrid?: boolean;
+/** To suppress Column Filter section*/
     suppressColumnFilter?: boolean;
+/** To suppress Select / Un-select all widget*/
     suppressColumnSelectAll?: boolean;
+/** To suppress Expand / Collapse all widget*/
     suppressColumnExpandAll?: boolean;
+/** By default, column groups start expanded.
+ * Pass true to default to contracted groups*/
     contractColumnSelection?: boolean;
 }
 

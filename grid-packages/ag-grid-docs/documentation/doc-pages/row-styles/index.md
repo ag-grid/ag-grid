@@ -74,25 +74,7 @@ The following snippet shows `rowClassRules` that use functions and the value fro
 
 All rowStyle, rowClass and rowClassRules functions take a params object that implements the following interface:
 
-
-```ts
-interface RowClassParams {
-    // The row (from the rowData array, where value was taken) been rendered.
-    data: any;
-    // The node associated to this row
-    node: RowNode;
-    // The index of the row about to be rendered
-    rowIndex: number;
-    // If compiling to AngularJs, is the row's child scope, otherwise null.
-    $scope: any;
-    // A reference to the AG Grid API.
-    api: GridApi;
-    // A reference to the AG Grid Column API.
-    columnApi: ColumnApi;
-    // If provided in gridOptions, a context object
-    context: any;
-}
-```
+<interface-documentation interfaces='["RowClassParams"]' ></interface-documentation>
 
 As an alternative, you can also provide shorthands of the functions using an expression.
 An expression is evaluated by the grid by executing the string as if it were a Javascript expression. The expression has the following attributes available to it (mapping the the attributes of the equivalent
