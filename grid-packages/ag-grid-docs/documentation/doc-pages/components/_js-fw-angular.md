@@ -49,4 +49,4 @@
 |   //...other properties & methods
 |}
 |```
-|Change the documentation view to <a href='../../javascript-grid/components/'>JavaScript</a> to see how to create a plain JavaScript component.
+|Change the documentation view to <a href='../../javascript-data-grid/components/'>JavaScript</a> to see how to create a plain JavaScript component.

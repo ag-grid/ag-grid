@@ -14658,7 +14658,8 @@ var GridOptionsWrapper = /** @class */ (function () {
             options.groupDisplayType = _entities_gridOptions__WEBPACK_IMPORTED_MODULE_0__[/* RowGroupingDisplayType */ "a"].GROUP_ROWS;
         }
         if (options.groupSuppressAutoColumn) {
-            console.warn("AG Grid: since v26.0, the grid property `groupSuppressAutoColumn` has been replaced by `groupDisplayType = 'custom'`");
+            var propName = options.treeData ? 'treeDataDisplayType' : 'groupDisplayType';
+            console.warn("AG Grid: since v26.0, the grid property `groupSuppressAutoColumn` has been replaced by `" + propName + " = 'custom'`");
             options.groupDisplayType = _entities_gridOptions__WEBPACK_IMPORTED_MODULE_0__[/* RowGroupingDisplayType */ "a"].CUSTOM;
         }
         if (options.defaultGroupSortComparator) {
@@ -52140,7 +52141,8 @@ var AgGridVue_AgGridVue = /** @class */ (function (_super) {
         // with mergeDeep for example
         var gridOptions = markRaw(main["d" /* ComponentUtil */].copyAttributesToGridOptions(toRaw(this.gridOptions), this));
         this.checkForBindingConflicts();
-        gridOptions.rowData = this.getRowDataBasedOnBindings();
+        var rowData = this.getRowDataBasedOnBindings();
+        gridOptions.rowData = rowData ? markRaw(toRaw(rowData)) : rowData;
         if (AgGridColumn_AgGridColumn.hasChildColumns(this.$slots)) {
             gridOptions.columnDefs = AgGridColumn_AgGridColumn.mapChildColumnDefs(this.$slots);
         }

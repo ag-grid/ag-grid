@@ -1688,7 +1688,8 @@ export class GridOptionsWrapper {
         }
 
         if (options.groupSuppressAutoColumn) {
-            console.warn("AG Grid: since v26.0, the grid property `groupSuppressAutoColumn` has been replaced by `groupDisplayType = 'custom'`");
+            const propName = options.treeData ? 'treeDataDisplayType' : 'groupDisplayType';
+            console.warn(`AG Grid: since v26.0, the grid property \`groupSuppressAutoColumn\` has been replaced by \`${propName} = 'custom'\``);
             options.groupDisplayType = RowGroupingDisplayType.CUSTOM;
         }
 

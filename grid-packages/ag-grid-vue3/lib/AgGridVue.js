@@ -76,7 +76,8 @@ var AgGridVue = /** @class */ (function (_super) {
         // with mergeDeep for example
         var gridOptions = markRaw(ComponentUtil.copyAttributesToGridOptions(toRaw(this.gridOptions), this));
         this.checkForBindingConflicts();
-        gridOptions.rowData = this.getRowDataBasedOnBindings();
+        var rowData = this.getRowDataBasedOnBindings();
+        gridOptions.rowData = rowData ? markRaw(toRaw(rowData)) : rowData;
         if (AgGridColumn.hasChildColumns(this.$slots)) {
             gridOptions.columnDefs = AgGridColumn.mapChildColumnDefs(this.$slots);
         }

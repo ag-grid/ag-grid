@@ -1,10 +1,10 @@
-var gridOptions = {
+const gridOptions = {
     columnDefs: [
         // group cell renderer needed for expand / collapse icons
-        { field: 'name', cellRenderer: 'agGroupCellRenderer' },
-        { field: 'account' },
-        { field: 'calls' },
-        { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" }
+        {field: 'name', cellRenderer: 'agGroupCellRenderer'},
+        {field: 'account'},
+        {field: 'calls'},
+        {field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'"}
     ],
     defaultColDef: {
         flex: 1
@@ -20,24 +20,24 @@ var gridOptions = {
     onFirstDataRendered: onFirstDataRendered
 };
 
-var allRowData;
+let allRowData;
 
 function onFirstDataRendered(params) {
 
     // arbitrarily expand a row for presentational purposes
-    setTimeout(function() {
+    setTimeout(function () {
         params.api.getDisplayedRowAtIndex(0).setExpanded(true);
     }, 0);
 
-    setInterval(function() {
+    setInterval(function () {
         if (!allRowData) {
             return;
         }
 
-        var data = allRowData[0];
+        const data = allRowData[0];
 
-        var newCallRecords = [];
-        data.callRecords.forEach(function(record, index) {
+        const newCallRecords = [];
+        data.callRecords.forEach(function (record, index) {
             newCallRecords.push({
                 name: record.name,
                 callId: record.callId,
@@ -51,7 +51,7 @@ function onFirstDataRendered(params) {
         data.callRecords = newCallRecords;
         data.calls++;
 
-        var tran = {
+        const tran = {
             update: [data],
         };
 
@@ -61,11 +61,11 @@ function onFirstDataRendered(params) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
-    var gridDiv = document.querySelector('#myGrid');
+document.addEventListener('DOMContentLoaded', function () {
+    const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/master-detail-data.json' }).then(function(data) {
+    agGrid.simpleHttpRequest({url: 'https://www.ag-grid.com/example-assets/master-detail-data.json'}).then(function (data) {
         allRowData = data;
         gridOptions.api.setRowData(allRowData);
     });

@@ -1,23 +1,23 @@
 export default {
     template: `
-      <div>
-      <form>
         <div>
-          <p>
-            <label>
-              Calls:<br>
-              <input type="text" :value="callsCount">
-            </label>
-          </p>
-          <p>
-            <label>
-              Last Updated:<br>
-              {{ now }}
-            </label>
-          </p>
+            <form>
+                <div>
+                    <p>
+                        <label>
+                            Calls:<br>
+                            <input type="text" :value="callsCount">
+                        </label>
+                    </p>
+                    <p>
+                        <label>
+                            Last Updated:<br>
+                            {{ now }}
+                        </label>
+                    </p>
+                </div>
+            </form>
         </div>
-      </form>
-      </div>
     `,
     data: function () {
         return {
@@ -34,7 +34,7 @@ export default {
         refresh(params) {
             // check and see if we need to get the grid to tear this
             // component down and update it again
-            return params.data.calls === this._data.callsCount;
+            return params.data.calls === this.params.data.callsCount;
         }
     }
 };

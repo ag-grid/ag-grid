@@ -1,24 +1,23 @@
-import {AgGridVue} from "ag-grid-vue";
-import 'ag-grid-enterprise';
+import {AgGridVue} from 'ag-grid-vue3';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 
 export default {
     template: `
-      <div class="full-width-panel">
-      <div class="full-width-details">
-        <div class="full-width-detail"><b>Name: </b>{{ params.data.name }}</div>
-        <div class="full-width-detail"><b>Account: </b>{{ params.data.account }}</div>
-      </div>
-      <ag-grid-vue style="height: 100%;"
-                   class="full-width-grid ag-theme-alpine"
-                   :gridOptions="gridOptions"
-                   :columnDefs="colDefs"
-                   :defaultColDef="defaultColDef"
-                   :rowData="rowData"
-                   @grid-ready="onGridReady">
-      </ag-grid-vue>
-      </div>
+        <div class="full-width-panel">
+            <div class="full-width-details">
+                <div class="full-width-detail"><b>Name: </b>{{ params.data.name }}</div>
+                <div class="full-width-detail"><b>Account: </b>{{ params.data.account }}</div>
+            </div>
+            <ag-grid-vue style="height: 100%;"
+                         class="full-width-grid ag-theme-alpine" 
+                         :gridOptions="gridOptions"
+                         :columnDefs="colDefs"
+                         :defaultColDef="defaultColDef"
+                         :rowData="rowData"
+                         @grid-ready="onGridReady">
+            </ag-grid-vue>
+        </div>
     `,
     components: {
         'ag-grid-vue': AgGridVue

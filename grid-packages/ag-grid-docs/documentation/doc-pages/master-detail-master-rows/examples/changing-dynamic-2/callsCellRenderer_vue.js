@@ -1,12 +1,14 @@
 export default {
     template: `
-      <span class="calls-cell-renderer">
+        <span class="calls-cell-renderer">
             <button v-on:click="onAdd">+</button>
             <button v-on:click="onRemove">-</button>
             <span>{{ value }}</span>
         </span>
     `,
-    data: {},
+    data: function() {
+        return {};
+    },
     computed: {
         value: function () {
             return this.params.value;

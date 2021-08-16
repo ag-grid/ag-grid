@@ -2720,7 +2720,8 @@ var AgGridVue_AgGridVue = /** @class */ (function (_super) {
         // with mergeDeep for example
         var gridOptions = markRaw(external_agGrid_["ComponentUtil"].copyAttributesToGridOptions(toRaw(this.gridOptions), this));
         this.checkForBindingConflicts();
-        gridOptions.rowData = this.getRowDataBasedOnBindings();
+        var rowData = this.getRowDataBasedOnBindings();
+        gridOptions.rowData = rowData ? markRaw(toRaw(rowData)) : rowData;
         if (AgGridColumn_AgGridColumn.hasChildColumns(this.$slots)) {
             gridOptions.columnDefs = AgGridColumn_AgGridColumn.mapChildColumnDefs(this.$slots);
         }

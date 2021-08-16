@@ -14658,7 +14658,8 @@ var GridOptionsWrapper = /** @class */ (function () {
             options.groupDisplayType = _entities_gridOptions__WEBPACK_IMPORTED_MODULE_0__[/* RowGroupingDisplayType */ "a"].GROUP_ROWS;
         }
         if (options.groupSuppressAutoColumn) {
-            console.warn("AG Grid: since v26.0, the grid property `groupSuppressAutoColumn` has been replaced by `groupDisplayType = 'custom'`");
+            var propName = options.treeData ? 'treeDataDisplayType' : 'groupDisplayType';
+            console.warn("AG Grid: since v26.0, the grid property `groupSuppressAutoColumn` has been replaced by `" + propName + " = 'custom'`");
             options.groupDisplayType = _entities_gridOptions__WEBPACK_IMPORTED_MODULE_0__[/* RowGroupingDisplayType */ "a"].CUSTOM;
         }
         if (options.defaultGroupSortComparator) {

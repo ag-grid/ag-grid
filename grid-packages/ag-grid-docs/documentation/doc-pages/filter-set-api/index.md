@@ -41,5 +41,5 @@ If no call to `gridOptions.api.onFilterChanged()` is provided the grid will stil
 
 In the example below, you can see how the filter for the Athlete column is modified through the API and how at the end of the interaction a call to `gridOptions.api.onFilterChanged()` is performed.
 
-<grid-example title='Set Filter API' name='set-filter-api' type='generated' options='{ "enterprise": true, "exampleHeight": 570, "modules": ["clientside", "setfilter", "menu", "filterpanel"] }'></grid-example>
+<grid-example title='Set Filter API' name='set-filter-api' type='mixed' options='{ "enterprise": true, "exampleHeight": 570, "modules": ["clientside", "setfilter", "menu", "filterpanel"] }'></grid-example>
 

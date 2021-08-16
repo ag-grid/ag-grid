@@ -1,5 +1,5 @@
 import {createApp} from 'vue';
-import {AgGridVue} from '@ag-grid-community/vue';
+import {AgGridVue} from '@ag-grid-community/vue3';
 
 import {AllCommunityModules} from '@ag-grid-community/all-modules';
 
