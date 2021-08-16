@@ -97,7 +97,7 @@ Group footers are a UI concept only in the grid. It is the grids way of showing 
 group) appearing after the group's children. Because the footer is a UI concept only, the following should be noted:
 
  - It is not possible to select footer nodes. Footer rows appear selected when the group is selected.
- - Footer rows are not parted of the iterated set when the api method `api.forEachNode()` is called.
+ - Footer rows are not part of the iterated set when the api method `api.forEachNode()` is called.
  - Footer nodes are not exported to CSV or Excel.
  - If a Footer cell is copied to the clipboard, the word "Total" will not be included. Eg where the group for "Sales" would say "Total Sales", only "Sales" will go to the clipboard. This is because the word "Total" is not actually part of the data, it's something the grid rendering puts in.
 
