@@ -1,30 +1,33 @@
-var rowData = [
-    {make: "Toyota", model: "Celica", price: 35000, zombies: 'Elly', style: 'Smooth', clothes: 'Jeans'},
-    {make: "Ford", model: "Mondeo", price: 32000, zombies: 'Shane', style: 'Filthy', clothes: 'Shorts'},
-    {make: "Porsche", model: "Boxter", price: 72000, zombies: 'Jack', style: 'Dirty', clothes: 'Padded'}
+const rowData = [
+    {id: 0, make: "Toyota", model: "Celica", price: 35000, zombies: 'Elly', style: 'Smooth', clothes: 'Jeans'},
+    {id: 1, make: "Ford", model: "Mondeo", price: 32000, zombies: 'Shane', style: 'Filthy', clothes: 'Shorts'},
+    {id: 2, make: "Porsche", model: "Boxter", price: 72000, zombies: 'Jack', style: 'Dirty', clothes: 'Padded'}
 ];
 
-var gridOptions = {
+const gridOptions = {
     columnDefs: [
-        { field: "make" },
-        { field: "model" },
-        { field: "price" },
-        { field: "zombies" },
-        { field: "style" },
-        { field: "clothes" }
+        {field: "make"},
+        {field: "model"},
+        {field: "price"},
+        {field: "zombies"},
+        {field: "style"},
+        {field: "clothes"}
     ],
+    getRowNodeId: data => data.id,
     defaultColDef: {
-      flex: 1,
+        flex: 1,
     },
     rowData: rowData,
     rowSelection: 'multiple',
     animateRows: true,
 };
 
-var newCount = 1;
+let newCount = 1;
+let id = 3;
 
 function createNewRowData() {
-    var newData = {
+    const newData = {
+        id: id++,
         make: "Toyota " + newCount,
         model: "Celica " + newCount,
         price: 35000 + (newCount * 17),
@@ -37,8 +40,8 @@ function createNewRowData() {
 }
 
 function getRowData() {
-    var rowData = [];
-    gridOptions.api.forEachNode( function(node) {
+    const rowData = [];
+    gridOptions.api.forEachNode(function (node) {
         rowData.push(node.data);
     });
     console.log('Row Data:');
@@ -50,46 +53,48 @@ function clearData() {
 }
 
 function addItems(addIndex) {
-    var newItems = [createNewRowData(), createNewRowData(), createNewRowData()];
-    var res = gridOptions.api.applyTransaction({add: newItems, addIndex: addIndex});
+    const newItems = [createNewRowData(), createNewRowData(), createNewRowData()];
+    const res = gridOptions.api.applyTransaction({add: newItems, addIndex: addIndex});
     printResult(res);
 }
 
 function updateItems() {
     // update the first 5 items
-    var itemsToUpdate = [];
-    gridOptions.api.forEachNodeAfterFilterAndSort( function(rowNode, index) {
+    const itemsToUpdate = [];
+    gridOptions.api.forEachNodeAfterFilterAndSort(function (rowNode, index) {
         // only do first 5
-        if (index>=2) { return; }
+        if (index >= 2) {
+            return;
+        }
 
-        var data = rowNode.data;
-        data.price = Math.floor((Math.random()*20000) + 20000);
+        const data = Object.assign({}, rowNode.data);
+        data.price = Math.floor((Math.random() * 20000) + 20000);
         itemsToUpdate.push(data);
     });
-    var res = gridOptions.api.applyTransaction({update: itemsToUpdate});
+    const res = gridOptions.api.applyTransaction({update: itemsToUpdate});
     printResult(res);
 }
 
 function onRemoveSelected() {
-    var selectedData = gridOptions.api.getSelectedRows();
-    var res = gridOptions.api.applyTransaction({remove: selectedData});
+    const selectedData = gridOptions.api.getSelectedRows();
+    const res = gridOptions.api.applyTransaction({remove: selectedData});
     printResult(res);
 }
 
 function printResult(res) {
     console.log('---------------------------------------')
     if (res.add) {
-        res.add.forEach( function(rowNode) {
+        res.add.forEach(function (rowNode) {
             console.log('Added Row Node', rowNode);
         });
     }
     if (res.remove) {
-        res.remove.forEach( function(rowNode) {
+        res.remove.forEach(function (rowNode) {
             console.log('Removed Row Node', rowNode);
         });
     }
     if (res.update) {
-        res.update.forEach( function(rowNode) {
+        res.update.forEach(function (rowNode) {
             console.log('Updated Row Node', rowNode);
         });
     }
@@ -97,7 +102,7 @@ function printResult(res) {
 
 // wait for the document to be loaded, otherwise
 // AG Grid will not find the div in the document.
-document.addEventListener("DOMContentLoaded", function() {
-    var eGridDiv = document.querySelector('#myGrid');
+document.addEventListener("DOMContentLoaded", function () {
+    const eGridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(eGridDiv, gridOptions);
 });
