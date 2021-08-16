@@ -1,4 +1,4 @@
-const countyToCityMap = match => {
+function countyToCityMap(match) {
     const map = {
         'Ireland': ['Dublin', 'Cork', 'Galway'],
         'USA': ['New York', 'Los Angeles', 'Chicago', 'Houston']
@@ -7,7 +7,7 @@ const countyToCityMap = match => {
     return map[match];
 };
 
-const onCellValueChanged = params => {
+function onCellValueChanged(params) {
     const colId = params.column.getId();
 
     if (colId === 'country') {
