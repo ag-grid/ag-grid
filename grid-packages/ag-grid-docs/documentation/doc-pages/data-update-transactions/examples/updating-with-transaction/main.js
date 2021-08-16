@@ -1,7 +1,7 @@
 const rowData = [
-    {id: 0, make: "Toyota", model: "Celica", price: 35000, zombies: 'Elly', style: 'Smooth', clothes: 'Jeans'},
-    {id: 1, make: "Ford", model: "Mondeo", price: 32000, zombies: 'Shane', style: 'Filthy', clothes: 'Shorts'},
-    {id: 2, make: "Porsche", model: "Boxter", price: 72000, zombies: 'Jack', style: 'Dirty', clothes: 'Padded'}
+    {make: "Toyota", model: "Celica", price: 35000, zombies: 'Elly', style: 'Smooth', clothes: 'Jeans'},
+    {make: "Ford", model: "Mondeo", price: 32000, zombies: 'Shane', style: 'Filthy', clothes: 'Shorts'},
+    {make: "Porsche", model: "Boxter", price: 72000, zombies: 'Jack', style: 'Dirty', clothes: 'Padded'}
 ];
 
 const gridOptions = {
@@ -13,7 +13,6 @@ const gridOptions = {
         {field: "style"},
         {field: "clothes"}
     ],
-    getRowNodeId: data => data.id,
     defaultColDef: {
         flex: 1,
     },
@@ -23,11 +22,9 @@ const gridOptions = {
 };
 
 let newCount = 1;
-let id = 3;
 
 function createNewRowData() {
     const newData = {
-        id: id++,
         make: "Toyota " + newCount,
         model: "Celica " + newCount,
         price: 35000 + (newCount * 17),
@@ -41,7 +38,7 @@ function createNewRowData() {
 
 function getRowData() {
     const rowData = [];
-    gridOptions.api.forEachNode(function (node) {
+    gridOptions.api.forEachNode( function(node) {
         rowData.push(node.data);
     });
     console.log('Row Data:');
@@ -61,14 +58,12 @@ function addItems(addIndex) {
 function updateItems() {
     // update the first 5 items
     const itemsToUpdate = [];
-    gridOptions.api.forEachNodeAfterFilterAndSort(function (rowNode, index) {
+    gridOptions.api.forEachNodeAfterFilterAndSort( function(rowNode, index) {
         // only do first 5
-        if (index >= 2) {
-            return;
-        }
+        if (index>=2) { return; }
 
-        const data = Object.assign({}, rowNode.data);
-        data.price = Math.floor((Math.random() * 20000) + 20000);
+        const data = rowNode.data;
+        data.price = Math.floor((Math.random()*20000) + 20000);
         itemsToUpdate.push(data);
     });
     const res = gridOptions.api.applyTransaction({update: itemsToUpdate});
@@ -84,17 +79,17 @@ function onRemoveSelected() {
 function printResult(res) {
     console.log('---------------------------------------')
     if (res.add) {
-        res.add.forEach(function (rowNode) {
+        res.add.forEach( function(rowNode) {
             console.log('Added Row Node', rowNode);
         });
     }
     if (res.remove) {
-        res.remove.forEach(function (rowNode) {
+        res.remove.forEach( function(rowNode) {
             console.log('Removed Row Node', rowNode);
         });
     }
     if (res.update) {
-        res.update.forEach(function (rowNode) {
+        res.update.forEach( function(rowNode) {
             console.log('Updated Row Node', rowNode);
         });
     }
@@ -102,7 +97,7 @@ function printResult(res) {
 
 // wait for the document to be loaded, otherwise
 // AG Grid will not find the div in the document.
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function() {
     const eGridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(eGridDiv, gridOptions);
 });
