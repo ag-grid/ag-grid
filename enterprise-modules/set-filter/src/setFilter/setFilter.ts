@@ -17,7 +17,7 @@ import {
     KeyCode,
     PositionableFeature,
     ResizableStructure,
-    _,
+    _
 } from '@ag-grid-community/core';
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 import { SetFilterListItem, SetFilterListItemSelectionChangedEvent } from './setFilterListItem';
@@ -68,6 +68,8 @@ export class SetFilter extends ProvidedFilter<SetFilterModel> {
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {
+        super.handleKeyDown(e);
+
         if (e.defaultPrevented) { return; }
 
         switch (e.which || e.keyCode) {

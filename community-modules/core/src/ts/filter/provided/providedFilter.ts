@@ -71,8 +71,16 @@ export abstract class ProvidedFilter<T> extends Component implements IFilterComp
     @PostConstruct
     protected postConstruct(): void {
         this.resetTemplate(); // do this first to create the DOM
-        this.createManagedBean(new ManagedFocusFeature(this.getFocusableElement()));
+        this.createManagedBean(new ManagedFocusFeature(
+            this.getFocusableElement(),
+            {
+                handleKeyDown: this.handleKeyDown.bind(this)
+            }
+        ));
     }
+
+    // override
+    protected handleKeyDown(e: KeyboardEvent): void {}
 
     public abstract getModelFromUi(): T | null;
 
@@ -238,7 +246,7 @@ export abstract class ProvidedFilter<T> extends Component implements IFilterComp
             this.updateUiVisibility();
 
             // we set the model from the GUI, rather than the provided model,
-            // so the model is consistent, e.g. handling of null/undefined will be the same,
+            // so the model is consistent, e.g. ing of null/undefined will be the same,
             // or if model is case insensitive, then casing is removed.
             this.applyModel();
         });
