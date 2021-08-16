@@ -456,7 +456,7 @@ export class RowCtrl extends BeanStub {
             this.leftCellCtrls = this.createCellCtrls(this.leftCellCtrls, leftCols, Constants.PINNED_LEFT);
 
             const rightCols = columnModel.getDisplayedRightColumnsForRow(this.rowNode);
-            this.rightCellCtrls = this.createCellCtrls(this.rightCellCtrls, rightCols, Constants.PINNED_LEFT);
+            this.rightCellCtrls = this.createCellCtrls(this.rightCellCtrls, rightCols, Constants.PINNED_RIGHT);
         }
 
         this.allRowGuis.forEach(item => {
