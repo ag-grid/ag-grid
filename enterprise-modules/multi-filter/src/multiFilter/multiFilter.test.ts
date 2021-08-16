@@ -418,7 +418,7 @@ describe('afterGuiAttached', () => {
 
         multiFilter.afterGuiAttached(params);
 
-        const expectedParams = { ...params, suppressFocus: false };
+        const expectedParams = { ...params };
 
         expect(filter1.afterGuiAttached).toHaveBeenCalledTimes(1);
         expect(filter1.afterGuiAttached).toHaveBeenCalledWith(expectedParams);
@@ -450,7 +450,7 @@ describe('afterGuiAttached', () => {
 
         multiFilter.afterGuiAttached(params);
 
-        const expectedParams = { ...params, suppressFocus: true };
+        const expectedParams = { ...params };
 
         expect(filter1.afterGuiAttached).toHaveBeenCalledTimes(1);
         expect(filter1.afterGuiAttached).toHaveBeenCalledWith(expectedParams);
