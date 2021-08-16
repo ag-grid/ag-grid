@@ -18,7 +18,7 @@ interface ChartCreated {
 }
 ```
 
-## `ChartRangeSelectionChanged`
+## ChartRangeSelectionChanged
 
 This is raised any time that the data range used to render the chart from is changed, e.g. by using the range selection handle or by making changes in the Data tab of the configuration sidebar. This event contains a `cellRange` object that gives you information about the range, allowing you to recreate the chart.
 
