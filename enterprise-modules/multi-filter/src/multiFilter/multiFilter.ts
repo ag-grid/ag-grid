@@ -300,15 +300,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp {
             this.refreshGui(params.container!);
         }
 
-        const { filters } = this.params;
-        const suppressFocus = filters && _.some(filters, filter => filter.display! && filter.display !== 'inline');
-
-        this.executeFunctionIfExists('afterGuiAttached', { ...params || {}, suppressFocus });
-
-        if (suppressFocus) {
-            // reset focus to the top of the container, and blur
-            this.forceFocusOutOfContainer();
-        }
+        this.executeFunctionIfExists('afterGuiAttached', { ...params || {} });
     }
 
     public onAnyFilterChanged(): void {
