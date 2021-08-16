@@ -246,7 +246,7 @@ export abstract class ProvidedFilter<T> extends Component implements IFilterComp
             this.updateUiVisibility();
 
             // we set the model from the GUI, rather than the provided model,
-            // so the model is consistent, e.g. ing of null/undefined will be the same,
+            // so the model is consistent, e.g. handling of null/undefined will be the same,
             // or if model is case insensitive, then casing is removed.
             this.applyModel();
         });
