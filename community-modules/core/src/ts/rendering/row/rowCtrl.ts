@@ -402,11 +402,17 @@ export class RowCtrl extends BeanStub {
         this.updateColumnListsPending = true;
     }
 
-    private createCellCtrls(prev: CellCtrlListAndMap, cols: Column[]): CellCtrlListAndMap {
+    private createCellCtrls(prev: CellCtrlListAndMap, cols: Column[], pinned: string | null = null): CellCtrlListAndMap {
         const res: CellCtrlListAndMap = {
             list: [],
             map: {}
         };
+        
+        const addCell = (colInstanceId: number, cellCtrl: CellCtrl) => {
+            res.list.push(cellCtrl);
+            res.map[colInstanceId] = cellCtrl;
+        };
+
         cols.forEach(col => {
             // we use instanceId's rather than colId as it's possible there is a Column with same Id,
             // but it's referring to a different column instance. Happens a lot with pivot, as pivot col id's are
@@ -416,14 +422,20 @@ export class RowCtrl extends BeanStub {
             if (!cellCtrl) {
                 cellCtrl = new CellCtrl(col, this.rowNode, this.beans, this);
             }
-            res.list.push(cellCtrl);
-            res.map[colInstanceId] = cellCtrl;
+            addCell(colInstanceId, cellCtrl);
         });
+
         prev.list.forEach(prevCellCtrl => {
-            const cellCtrlNotInResult = !res.map[prevCellCtrl.getColumn().getInstanceId()];
-            if (cellCtrlNotInResult) {
-                prevCellCtrl.destroy();
+            const cellInResult = res.map[prevCellCtrl.getColumn().getInstanceId()]!=null;
+            if (cellInResult) { return; }
+
+            const keepCell = !this.isCellEligibleToBeRemoved(prevCellCtrl, pinned);
+            if (keepCell) { 
+                addCell(prevCellCtrl.getColumn().getInstanceId(), prevCellCtrl);
+                return; 
             }
+
+            prevCellCtrl.destroy();
         });
 
         return res;
@@ -441,10 +453,10 @@ export class RowCtrl extends BeanStub {
             this.centerCellCtrls = this.createCellCtrls(this.centerCellCtrls, centerCols);
 
             const leftCols = columnModel.getDisplayedLeftColumnsForRow(this.rowNode);
-            this.leftCellCtrls = this.createCellCtrls(this.leftCellCtrls, leftCols);
+            this.leftCellCtrls = this.createCellCtrls(this.leftCellCtrls, leftCols, Constants.PINNED_LEFT);
 
             const rightCols = columnModel.getDisplayedRightColumnsForRow(this.rowNode);
-            this.rightCellCtrls = this.createCellCtrls(this.rightCellCtrls, rightCols);
+            this.rightCellCtrls = this.createCellCtrls(this.rightCellCtrls, rightCols, Constants.PINNED_LEFT);
         }
 
         this.allRowGuis.forEach(item => {
@@ -452,6 +464,30 @@ export class RowCtrl extends BeanStub {
                         item.pinned === Constants.PINNED_RIGHT ? this.rightCellCtrls : this.centerCellCtrls;
             item.rowComp.setCellCtrls(cellControls.list);
         });
+    }
+
+    private isCellEligibleToBeRemoved(cellCtrl: CellCtrl, nextContainerPinned: string | null): boolean {
+        const REMOVE_CELL = true;
+        const KEEP_CELL = false;
+
+        // always remove the cell if it's not rendered or if it's in the wrong pinned location
+        const column = cellCtrl.getColumn();
+        if (column.getPinned() != nextContainerPinned) { return REMOVE_CELL; }
+
+        // we want to try and keep editing and focused cells
+        const editing = cellCtrl.isEditing();
+        const focused = this.beans.focusService.isCellFocused(cellCtrl.getCellPosition());
+
+        const mightWantToKeepCell = editing || focused;
+
+        if (mightWantToKeepCell) {
+            const column = cellCtrl.getColumn();
+            const displayedColumns = this.beans.columnModel.getAllDisplayedColumns();
+            const cellStillDisplayed = displayedColumns.indexOf(column) >= 0;
+            return cellStillDisplayed ? KEEP_CELL : REMOVE_CELL;
+        }
+
+        return REMOVE_CELL;
     }
 
     private setAnimateFlags(animateIn: boolean): void {
