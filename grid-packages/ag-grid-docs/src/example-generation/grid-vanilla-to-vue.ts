@@ -394,11 +394,12 @@ function convertDefaultColDef(defaultColDef): string {
 }
 
 const getColumnDefs = (bindings: any, utilFunctions: any[]) => {
+    debugger
     const columnDefs = bindings.parsedColDefs ? convertColumnDefs(JSON5.parse(bindings.parsedColDefs), bindings.components.map(component => component.name)) : null;
-    if(!columnDefs) {
+    if (!columnDefs) {
         const columnDefProperty = bindings.properties.filter(property => property.name === 'columnDefs');
-        if(columnDefProperty && columnDefProperty.length === 1 && columnDefProperty[0].value && utilFunctions.some(func => func.includes(`window.${columnDefProperty[0].value}`.replace("()", "")))) {
-            return `${columnDefProperty[0].value}`;
+        if (columnDefProperty && columnDefProperty.length === 1 && columnDefProperty[0].value) {
+            return columnDefProperty[0].value;
         }
 
         return [];
@@ -411,7 +412,8 @@ export function vanillaToVue(bindings: any, componentFileNames: string[]): (impo
     const onGridReady = getOnGridReadyCode(bindings);
     const eventAttributes = bindings.eventHandlers.filter(event => event.name !== 'onGridReady').map(toOutput);
     const [eventHandlers, externalEventHandlers, instanceMethods, utilFunctions] = getAllMethods(bindings);
-    const columnDefs = getColumnDefs(bindings, utilFunctions);    const defaultColDef = bindings.defaultColDef ? convertDefaultColDef(bindings.defaultColDef) : null;
+    const columnDefs = getColumnDefs(bindings, utilFunctions);
+    const defaultColDef = bindings.defaultColDef ? convertDefaultColDef(bindings.defaultColDef) : null;
 
     return importType => {
         const imports = getImports(bindings, componentFileNames, importType);

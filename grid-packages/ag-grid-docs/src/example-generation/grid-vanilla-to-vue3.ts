@@ -383,8 +383,8 @@ function convertColumnDefs(rawColumnDefs, userComponentNames): string[] {
 
 function convertDefaultColDef(defaultColDef): string {
     return GRID_COMPONENTS.reduce((acc, componentName) => {
-        if(componentName === 'filter') {
-            if(defaultColDef.indexOf('filter: true') === -1) {
+        if (componentName === 'filter') {
+            if (defaultColDef.indexOf('filter: true') === -1) {
                 return acc.replace(componentName, `${componentName}Framework`);
             }
         }
@@ -394,11 +394,14 @@ function convertDefaultColDef(defaultColDef): string {
 }
 
 const getColumnDefs = (bindings: any, utilFunctions: any[]) => {
+    debugger
     const columnDefs = bindings.parsedColDefs ? convertColumnDefs(JSON5.parse(bindings.parsedColDefs), bindings.components.map(component => component.name)) : null;
-    if(!columnDefs) {
+    if (!columnDefs) {
         const columnDefProperty = bindings.properties.filter(property => property.name === 'columnDefs');
-        if(columnDefProperty && columnDefProperty.length === 1 && columnDefProperty[0].value && utilFunctions.some(func => func.includes(`window.${columnDefProperty[0].value}`.replace("()", "")))) {
-            return `${columnDefProperty[0].value}`;
+        if (columnDefProperty && columnDefProperty.length === 1) {
+            if (columnDefProperty && columnDefProperty.length === 1 && columnDefProperty[0].value) {
+                return columnDefProperty[0].value;
+            }
         }
 
         return [];
