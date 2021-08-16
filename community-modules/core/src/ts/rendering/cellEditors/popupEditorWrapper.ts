@@ -1,5 +1,5 @@
 import { PopupComponent } from "../../widgets/popupComponent";
-import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
+import { ICellEditorParams } from "../../interfaces/iCellEditor";
 import { isUserSuppressingKeyboardEvent } from "../../utils/keyboard";
 import { PostConstruct } from "../../context/context";
 
@@ -7,25 +7,25 @@ export class PopupEditorWrapper extends PopupComponent {
 
     public static DOM_KEY_POPUP_EDITOR_WRAPPER = 'popupEditorWrapper';
 
-    constructor(params: ICellEditorParams) {
-        super(`<div class="ag-popup-editor" tabindex="-1"/>`);
-
-        this.addKeyDownListener(params);
+    constructor(private readonly params: ICellEditorParams) {
+        super(/* html */`<div class="ag-popup-editor" tabindex="-1"/>`);
     }
 
     @PostConstruct
     private postConstruct(): void {
         this.gridOptionsWrapper.setDomData(this.getGui(), PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER, true);
+        this.addKeyDownListener();
     }
 
-    private addKeyDownListener(params: ICellEditorParams): void {
-
+    private addKeyDownListener(): void {
+        const eGui = this.getGui();
+        const params = this.params;
         const listener = (event: KeyboardEvent) => {
             if (!isUserSuppressingKeyboardEvent(this.gridOptionsWrapper, event, params.node, params.column, true)) {
                 params.onKeyDown(event);
             }
         };
 
-        this.addManagedListener(this.getGui(), 'keydown', listener);
+        this.addManagedListener(eGui, 'keydown', listener);
     }
 }

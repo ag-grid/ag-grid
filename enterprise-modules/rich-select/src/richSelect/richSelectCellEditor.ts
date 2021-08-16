@@ -100,6 +100,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
 
     private onKeyDown(event: KeyboardEvent): void {
         const key = event.keyCode;
+        event.preventDefault();
 
         switch (key) {
             case KeyCode.ENTER:
