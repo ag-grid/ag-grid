@@ -1,4 +1,4 @@
-var gridOptions = {
+const gridOptions = {
     columnDefs: [
         {
             field: 'athlete',
@@ -7,7 +7,7 @@ var gridOptions = {
                 cellHeight: 20
             }
         },
-        { field: 'age', maxWidth: 120, filter: 'agNumberColumnFilter' },
+        {field: 'age', maxWidth: 120, filter: 'agNumberColumnFilter'},
         {
             field: 'country',
             cellRenderer: 'countryCellRenderer',
@@ -17,13 +17,13 @@ var gridOptions = {
                 newRowsAction: 'keep'
             }
         },
-        { field: 'year', maxWidth: 120 },
-        { field: 'date' },
-        { field: 'sport' },
-        { field: 'gold', filter: 'agNumberColumnFilter' },
-        { field: 'silver', filter: 'agNumberColumnFilter' },
-        { field: 'bronze', filter: 'agNumberColumnFilter' },
-        { field: 'total', filter: 'agNumberColumnFilter' },
+        {field: 'year', maxWidth: 120},
+        {field: 'date'},
+        {field: 'sport'},
+        {field: 'gold', filter: 'agNumberColumnFilter'},
+        {field: 'silver', filter: 'agNumberColumnFilter'},
+        {field: 'bronze', filter: 'agNumberColumnFilter'},
+        {field: 'total', filter: 'agNumberColumnFilter'},
     ],
     defaultColDef: {
         flex: 1,
@@ -47,8 +47,8 @@ function countryKeyCreator(params) {
 function patchData(data) {
     // hack the data, replace each country with an object of country name and code
     data.forEach(function(row) {
-        var countryName = row.country;
-        var countryCode = countryName.substring(0, 2).toUpperCase();
+        const countryName = row.country;
+        const countryCode = countryName.substring(0, 2).toUpperCase();
         row.country = {
             name: countryName,
             code: countryCode
@@ -57,32 +57,32 @@ function patchData(data) {
 }
 
 function selectJohnAndKenny() {
-    var instance = gridOptions.api.getFilterInstance('athlete');
+    const instance = gridOptions.api.getFilterInstance('athlete');
     instance.setModel({ values: ['John Joe Nevin', 'Kenny Egan'] });
     gridOptions.api.onFilterChanged();
 }
 
 function selectEverything() {
-    var instance = gridOptions.api.getFilterInstance('athlete');
+    const instance = gridOptions.api.getFilterInstance('athlete');
     instance.setModel(null);
     gridOptions.api.onFilterChanged();
 }
 
 function selectNothing() {
-    var instance = gridOptions.api.getFilterInstance('athlete');
+    const instance = gridOptions.api.getFilterInstance('athlete');
     instance.setModel({ values: [] });
     gridOptions.api.onFilterChanged();
 }
 
 function setCountriesToFranceAustralia() {
-    var instance = gridOptions.api.getFilterInstance('country');
+    const instance = gridOptions.api.getFilterInstance('country');
     instance.setFilterValues(['France', 'Australia']);
     instance.applyModel();
     gridOptions.api.onFilterChanged();
 }
 
 function setCountriesToAll() {
-    var instance = gridOptions.api.getFilterInstance('country');
+    const instance = gridOptions.api.getFilterInstance('country');
     instance.resetFilterValues();
     instance.applyModel();
     gridOptions.api.onFilterChanged();
@@ -90,7 +90,7 @@ function setCountriesToAll() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
-    var gridDiv = document.querySelector('#myGrid');
+    const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
     agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
