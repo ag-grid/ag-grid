@@ -86,7 +86,9 @@ export class AgGridVue extends Vue {
         const gridOptions = markRaw(ComponentUtil.copyAttributesToGridOptions(toRaw(this.gridOptions), this));
 
         this.checkForBindingConflicts();
-        gridOptions.rowData = markRaw(toRaw(this.getRowDataBasedOnBindings()));
+
+        const rowData = this.getRowDataBasedOnBindings();
+        gridOptions.rowData = rowData ? markRaw(toRaw(rowData)) : rowData;
 
         if (AgGridColumn.hasChildColumns(this.$slots)) {
             gridOptions.columnDefs = AgGridColumn.mapChildColumnDefs(this.$slots);
