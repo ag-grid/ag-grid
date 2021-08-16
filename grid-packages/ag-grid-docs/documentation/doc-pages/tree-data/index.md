@@ -3,7 +3,8 @@ title: "Tree Data"
 enterprise: true
 ---
 
-Use Tree Data to display data that has parent / child relationships where the parent / child relationships are provided as part of the data. For example, a folder can contain zero or more files and other folders.
+Use Tree Data to display data that has parent / child relationships where the parent / child relationships are provided
+as part of the data. For example, a folder can contain zero or more files and other folders.
 
 This section introduces simple ways to work with Tree Data before covering more advanced use cases.
 
@@ -57,13 +58,15 @@ getDataPath: data => {
 
 There are two ways to configure the Group Column:
 
-- **Auto Column Group** -  this is automatically selected by the grid when in Tree Data mode, however you can override the defaults.
+- **Auto Column Group** - this is automatically selected by the grid when in Tree Data mode, however you can override the defaults.
 
 - **Custom Column Group** - you can provide your own custom column group definition which gives allows more control over how the Group Column is displayed.
 
 ### Auto Column Group
 
-When the grid is working with Tree Data there is no need to explicitly specify a Column Group as the grid will use the  [Auto Column Group](/grouping/#auto-column-group). However you will probably want to override some of the defaults as shown below:
+When the grid is working with Tree Data there is no need to explicitly specify a Group Column as the grid will use the 
+[Auto Group Column](/grouping-single-group-column/#group-column-configuration). However, you will probably want to 
+override some defaults as shown below:
 
 <snippet>
 const gridOptions = {
@@ -79,12 +82,13 @@ const gridOptions = {
 
 ### Custom Column Group
 
-As noted above, providing your own Custom Column Group has the advantage of giving you full control over the presentation of the Column Group, however it is not as convenient as using the default Auto Column Group.
+As noted above, providing your own Custom Column Group has the advantage of giving you full control over the 
+presentation of the Column Group, however it is not as convenient as using the default Auto Column Group.
 
-One significant difference is that the entire `dataPath` array will be supplied as a value, rather than just the current node value.
+One significant difference is that the entire `dataPath` array will be supplied as a value, rather than just the current
+node value.
 
-For details on how you can provide your own Custom Group Column see: [Specifying Group Columns](/grouping/#example-custom-grouping-many-group-columns).
-
+For more details see [Custom Group Columns](/grouping-custom-group-columns/)
 
 [[note]]
 | It is **not** possible to have multiple group display columns for tree data like you do for row grouping.

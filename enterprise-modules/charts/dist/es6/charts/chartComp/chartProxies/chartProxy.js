@@ -63,7 +63,7 @@ var ChartProxy = /** @class */ (function () {
         // allow users to override options before they are applied
         var _a = this.chartProxyParams, processChartOptions = _a.processChartOptions, allowProcessChartOptions = _a.allowProcessChartOptions;
         if (processChartOptions) {
-            if (!allowProcessChartOptions) {
+            if (!allowProcessChartOptions && !this.chartProxyParams.restoringChart) {
                 console.warn("AG Grid: since v26.0, 'processChartOptions()' has been removed (deprecated in v24.0), see https://www.ag-grid.com/javascript-grid/integrated-charts-customisation/");
                 return;
             }

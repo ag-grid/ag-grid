@@ -26,6 +26,7 @@ export interface ChartProxyParams {
     eventService: EventService;
     gridApi: GridApi;
     columnApi: ColumnApi;
+    restoringChart?: boolean;
 }
 export interface FieldDefinition {
     colId: string;

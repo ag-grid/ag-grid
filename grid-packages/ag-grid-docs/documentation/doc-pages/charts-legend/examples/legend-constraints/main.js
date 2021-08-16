@@ -26,35 +26,42 @@ var options = {
         strokeWidth: 3
     }],
     legend: {
-        position: 'bottom'
+        position: 'bottom',
+        item: {
+            paddingX: 32,
+            paddingY: 8,
+            marker: {
+                padding: 8
+            }
+        }
     }
 };
 
 var chart = agCharts.AgChart.create(options);
 
-function updateLegendLayoutHorizontalSpacing(event) {
+function updateLegendItemPaddingX(event) {
     var value = +event.target.value;
 
-    options.legend.layoutHorizontalSpacing = value;
+    options.legend.item.paddingX = value;
     agCharts.AgChart.update(chart, options);
 
-    document.getElementById('hSpacingValue').innerHTML = String(value);
+    document.getElementById('xPaddingValue').innerHTML = String(value);
 }
 
-function updateLegendLayoutVerticalSpacing(event) {
+function updateLegendItemPaddingY(event) {
     var value = event.target.value;
 
-    options.legend.layoutVerticalSpacing = +event.target.value;
+    options.legend.item.paddingY = +event.target.value;
     agCharts.AgChart.update(chart, options);
 
-    document.getElementById('vSpacingValue').innerHTML = String(value);
+    document.getElementById('yPaddingValue').innerHTML = String(value);
 }
 
 function updateLegendItemSpacing(event) {
     var value = +event.target.value;
 
-    options.legend.itemSpacing = value;
+    options.legend.item.marker.padding = value;
     agCharts.AgChart.update(chart, options);
 
-    document.getElementById('itemSpacingValue').innerHTML = String(value);
+    document.getElementById('markerPaddingValue').innerHTML = String(value);
 }

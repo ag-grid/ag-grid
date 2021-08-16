@@ -27,11 +27,13 @@ To enable React UI in the latest AG Grid release, set the grid property `reactUi
 
 With `reactUi=true`, the grid renders cells using React, and all parent components of the cells are also written in React, all the way back to the client application. This means all the UI from your application down to the cells, including any provided React Cell Renderers, is all now 100% React.
 
-The example below demonstrates grid features such as row sorting by clicking the headers with the rows moving smoothly to the new locations. The React UI is built on top of the existing AG Grid services, thus all features carry across.
-
-You may say _"Doesn't it look identical to before?"_, and you would be right, it is identical to before from an application users point of view. That's the point - it is supposed to work exactly as before. The difference is this time it is all rendered in React.
+The example below demonstrates AG Grid with the core grid rendered using React.
 
 <grid-example title='React UI' name='react-ui' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>
+
+All features you would expect in the grid, such as sorting and column moving, can be tested to work in this example. The React UI is built on top of the existing AG Grid services, thus all features carry across.
+
+You may say _"Doesn't it look identical to before?"_, and you would be right, it is identical to before from an application users point of view. That's the point - it is supposed to work exactly as before. The difference is this time it is all rendered in React.
 
 ## React Profile
 
@@ -59,7 +61,7 @@ When the master grid has `reactUi=true` then the detail grids use React UI also.
 
 ## React UI and Portals?
 
-React UI does not use portals to host custom components (eg Cell Renderers).
+AG Grid React UI does not use portals to host custom components (eg Cell Renderers).
 
 Previous to React UI, when the rendering engine was written in Plain JavaScript, React Portals were used to host instances of provided components i.e. Cell Renderer's and Cell Editors etc. This caused issues such as additional `div`'s appear in the DOM to host the portal, and also sometimes flickering or delayed rendering was visible.
 
@@ -95,9 +97,9 @@ Below is an example showing different types of Cell Editors and also mixing Reac
 
 ## No Wasted Renders
 
-Below demonstrates no wasted React Render Cycles.
+Before AG Grid React UI, it was tricky to manage wasted React renders, as the grid wasn't participating as part of the React application. Now that the grid is written in React, it participates fully in the React rendering..
 
-Each Column is configured to use a Cell Renderer that prints into the Cell the number of times the Cell has had it's render method called. Note that the number stays at '1' even if you do any of the following:
+Below each Column is configured to use a Cell Renderer that prints into the Cell the number of times the Cell has had it's render method called. This tells us how many times the render method is called. For non wasted renders, the render method should only get called if it's contents change. Note that the number stays at '1' even if you do any of the following:
 1. Move columns by dragging the headers. The Cell Renderer does not re-render despite the cell moving.
 1. Create a Cell Range by dragging the mouse over some cells. The Cell Renderers do not re-render despite the cell UI background and border changing.
 
@@ -107,7 +109,7 @@ Note that we memoise the Cell Renderer using `const RenderCounterCellRenderer = 
 
 <grid-example title='React UI Render Cycles' name='no-wasted-render' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>
 
-To example below demonstrates how the Cell Renderer gets re-rendered when we do not memoise the Cell Renderer.
+The example below demonstrates how the Cell Renderer gets re-rendered when we do not memoise the Cell Renderer.
 
 Both examples are identical with the exception of above uses memo, below does not use memo.
 

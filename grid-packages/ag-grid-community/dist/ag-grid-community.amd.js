@@ -15007,7 +15007,8 @@ var GroupCellRendererCtrl = /** @class */ (function (_super) {
         if (this.cellIsBlank) {
             return;
         }
-        this.setupDragOpenParents();
+        this.setupShowingValueForOpenedParent();
+        this.findDisplayedGroupNode();
         this.addFullWidthRowDraggerIfNeeded();
         this.addExpandAndContract();
         this.addCheckboxIfNeeded();
@@ -15061,38 +15062,39 @@ var GroupCellRendererCtrl = /** @class */ (function (_super) {
         }
         return !bodyCell;
     };
-    GroupCellRendererCtrl.prototype.setupDragOpenParents = function () {
+    GroupCellRendererCtrl.prototype.findDisplayedGroupNode = function () {
         var column = this.params.column;
         var rowNode = this.params.node;
-        this.showingValueForOpenedParent = this.isShowingValueFromHiddenParent();
         if (this.showingValueForOpenedParent) {
             var pointer = rowNode.parent;
             while (pointer != null) {
                 if (pointer.rowGroupColumn && column.isRowGroupDisplayed(pointer.rowGroupColumn.getId())) {
-                    this.displayedGroup = pointer;
+                    this.displayedGroupNode = pointer;
                     break;
                 }
                 pointer = pointer.parent;
             }
         }
         // if we didn't find a displayed group, set it to the row node
-        if (Object(_utils_generic__WEBPACK_IMPORTED_MODULE_7__["missing"])(this.displayedGroup)) {
-            this.displayedGroup = rowNode;
+        if (Object(_utils_generic__WEBPACK_IMPORTED_MODULE_7__["missing"])(this.displayedGroupNode)) {
+            this.displayedGroupNode = rowNode;
         }
     };
-    GroupCellRendererCtrl.prototype.isShowingValueFromHiddenParent = function () {
+    GroupCellRendererCtrl.prototype.setupShowingValueForOpenedParent = function () {
         // note - this code depends on sortService.updateGroupDataForHiddenOpenParents, where group data
         // is updated to reflect the dragged down parents
         var rowNode = this.params.node;
         var column = this.params.column;
         if (!this.gridOptionsWrapper.isGroupHideOpenParents()) {
-            return false;
+            this.showingValueForOpenedParent = false;
+            return;
         }
         // hideOpenParents means rowNode.groupData can have data for the group this column is displaying, even though
         // this rowNode isn't grouping by the column we are displaying
         // if no groupData at all, we are not showing a parent value
         if (!rowNode.groupData) {
-            return false;
+            this.showingValueForOpenedParent = false;
+            return;
         }
         // this is the normal case, in that we are showing a group for which this column is configured. note that
         // this means the Row Group is closed (if it was open, we would not be displaying it)
@@ -15102,16 +15104,17 @@ var GroupCellRendererCtrl = /** @class */ (function (_super) {
             var configuredToShowThisGroupLevel = column.isRowGroupDisplayed(keyOfGroupingColumn);
             // if showing group as normal, we didn't take group info from parent
             if (configuredToShowThisGroupLevel) {
-                return false;
+                this.showingValueForOpenedParent = false;
+                return;
             }
         }
         // see if we are showing a Group Value for the Displayed Group. if we are showing a group value, and this Row Node
         // is not grouping by this Displayed Group, we must of gotten the value from a parent node
         var valPresent = rowNode.groupData[column.getId()] != null;
-        return valPresent;
+        this.showingValueForOpenedParent = valPresent;
     };
     GroupCellRendererCtrl.prototype.addValueElement = function () {
-        if (this.displayedGroup.footer) {
+        if (this.displayedGroupNode.footer) {
             this.addFooterValue();
         }
         else {
@@ -15120,23 +15123,31 @@ var GroupCellRendererCtrl = /** @class */ (function (_super) {
         }
     };
     GroupCellRendererCtrl.prototype.addGroupValue = function () {
-        var params = this.params;
-        var relatedColumn = this.displayedGroup.rowGroupColumn;
         // we try and use the cellRenderer of the column used for the grouping if we can
-        var columnForFormatting = relatedColumn ? relatedColumn : params.column;
-        var valueFormatted = null;
-        if (columnForFormatting) {
-            var groupName = this.params.value;
-            valueFormatted = this.valueFormatterService.formatValue(columnForFormatting, params.node, params.scope, groupName);
+        var paramsAdjusted = this.adjustParamsWithDetailsFromRelatedColumn();
+        var innerCompDetails = this.getInnerCompDetails(paramsAdjusted);
+        var valueFormatted = paramsAdjusted.valueFormatted, value = paramsAdjusted.value;
+        var valueWhenNoRenderer = valueFormatted != null ? valueFormatted : value;
+        this.comp.setInnerRenderer(innerCompDetails, valueWhenNoRenderer);
+    };
+    GroupCellRendererCtrl.prototype.adjustParamsWithDetailsFromRelatedColumn = function () {
+        var relatedColumn = this.displayedGroupNode.rowGroupColumn;
+        var column = this.params.column;
+        if (!relatedColumn) {
+            return this.params;
         }
+        // column is missing when doing full width
+        if (!column || !column.isRowGroupDisplayed(relatedColumn.getId())) {
+            return this.params;
+        }
+        var params = this.params;
+        var _a = this.params, value = _a.value, scope = _a.scope, node = _a.node;
+        var valueFormatted = this.valueFormatterService.formatValue(relatedColumn, node, scope, value);
         // we don't update the original params, as they could of come through React,
         // as react has RowGroupCellRenderer, which means the params could be props which
         // would be read only
         var paramsAdjusted = __assign(__assign({}, params), { valueFormatted: valueFormatted });
-        var relatedColDef = relatedColumn ? relatedColumn.getColDef() : undefined;
-        var innerCompDetails = this.getInnerCompDetails(paramsAdjusted, relatedColDef);
-        var valueWhenNoRenderer = paramsAdjusted.valueFormatted != null ? paramsAdjusted.valueFormatted : paramsAdjusted.value;
-        this.comp.setInnerRenderer(innerCompDetails, valueWhenNoRenderer);
+        return paramsAdjusted;
     };
     GroupCellRendererCtrl.prototype.addFooterValue = function () {
         var footerValueGetter = this.params.footerValueGetter;
@@ -15161,7 +15172,7 @@ var GroupCellRendererCtrl = /** @class */ (function (_super) {
         var innerCompDetails = this.getInnerCompDetails(this.params);
         this.comp.setInnerRenderer(innerCompDetails, footerValue);
     };
-    GroupCellRendererCtrl.prototype.getInnerCompDetails = function (params, relatedColDef) {
+    GroupCellRendererCtrl.prototype.getInnerCompDetails = function (params) {
         var _this = this;
         // for full width rows, we don't do any of the below
         if (params.fullWidth) {
@@ -15189,6 +15200,8 @@ var GroupCellRendererCtrl = /** @class */ (function (_super) {
             // use the renderer defined in cellRendererParams.innerRenderer
             return innerCompDetails;
         }
+        var relatedColumn = this.displayedGroupNode.rowGroupColumn;
+        var relatedColDef = relatedColumn ? relatedColumn.getColDef() : undefined;
         if (!relatedColDef) {
             return;
         }
@@ -15214,12 +15227,12 @@ var GroupCellRendererCtrl = /** @class */ (function (_super) {
         if (this.params.suppressCount) {
             return;
         }
-        this.addManagedListener(this.displayedGroup, _entities_rowNode__WEBPACK_IMPORTED_MODULE_4__["RowNode"].EVENT_ALL_CHILDREN_COUNT_CHANGED, this.updateChildCount.bind(this));
+        this.addManagedListener(this.displayedGroupNode, _entities_rowNode__WEBPACK_IMPORTED_MODULE_4__["RowNode"].EVENT_ALL_CHILDREN_COUNT_CHANGED, this.updateChildCount.bind(this));
         // filtering changes the child count, so need to cater for it
         this.updateChildCount();
     };
     GroupCellRendererCtrl.prototype.updateChildCount = function () {
-        var allChildrenCount = this.displayedGroup.allChildrenCount;
+        var allChildrenCount = this.displayedGroupNode.allChildrenCount;
         var showingGroupForThisNode = this.isShowRowGroupForThisRow();
         var showCount = showingGroupForThisNode && allChildrenCount != null && allChildrenCount >= 0;
         var countString = showCount ? "(" + allChildrenCount + ")" : "";
@@ -15229,7 +15242,7 @@ var GroupCellRendererCtrl = /** @class */ (function (_super) {
         if (this.gridOptionsWrapper.isTreeData()) {
             return true;
         }
-        var rowGroupColumn = this.displayedGroup.rowGroupColumn;
+        var rowGroupColumn = this.displayedGroupNode.rowGroupColumn;
         if (!rowGroupColumn) {
             return false;
         }
@@ -15262,9 +15275,9 @@ var GroupCellRendererCtrl = /** @class */ (function (_super) {
         // because we don't show the expand / contract when there are no children, we need to check every time
         // the number of children change.
         var expandableChangedListener = this.onRowNodeIsExpandableChanged.bind(this);
-        this.addManagedListener(this.displayedGroup, _entities_rowNode__WEBPACK_IMPORTED_MODULE_4__["RowNode"].EVENT_ALL_CHILDREN_COUNT_CHANGED, expandableChangedListener);
-        this.addManagedListener(this.displayedGroup, _entities_rowNode__WEBPACK_IMPORTED_MODULE_4__["RowNode"].EVENT_MASTER_CHANGED, expandableChangedListener);
-        this.addManagedListener(this.displayedGroup, _entities_rowNode__WEBPACK_IMPORTED_MODULE_4__["RowNode"].EVENT_HAS_CHILDREN_CHANGED, expandableChangedListener);
+        this.addManagedListener(this.displayedGroupNode, _entities_rowNode__WEBPACK_IMPORTED_MODULE_4__["RowNode"].EVENT_ALL_CHILDREN_COUNT_CHANGED, expandableChangedListener);
+        this.addManagedListener(this.displayedGroupNode, _entities_rowNode__WEBPACK_IMPORTED_MODULE_4__["RowNode"].EVENT_MASTER_CHANGED, expandableChangedListener);
+        this.addManagedListener(this.displayedGroupNode, _entities_rowNode__WEBPACK_IMPORTED_MODULE_4__["RowNode"].EVENT_HAS_CHILDREN_CHANGED, expandableChangedListener);
     };
     GroupCellRendererCtrl.prototype.onExpandClicked = function (mouseEvent) {
         if (Object(_utils_event__WEBPACK_IMPORTED_MODULE_5__["isStopPropagationForAgGrid"])(mouseEvent)) {
@@ -15276,7 +15289,7 @@ var GroupCellRendererCtrl = /** @class */ (function (_super) {
     };
     GroupCellRendererCtrl.prototype.onExpandOrContract = function () {
         // must use the displayedGroup, so if data was dragged down, we expand the parent, not this row
-        var rowNode = this.displayedGroup;
+        var rowNode = this.displayedGroupNode;
         var nextExpandState = !rowNode.expanded;
         rowNode.setExpanded(nextExpandState);
     };
@@ -15284,7 +15297,7 @@ var GroupCellRendererCtrl = /** @class */ (function (_super) {
         if (this.showingValueForOpenedParent) {
             return true;
         }
-        var rowNode = this.displayedGroup;
+        var rowNode = this.displayedGroupNode;
         var reducedLeafNode = this.columnModel.isPivotMode() && rowNode.leafGroup;
         var expandableGroup = rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode;
         if (!expandableGroup) {
@@ -15300,7 +15313,7 @@ var GroupCellRendererCtrl = /** @class */ (function (_super) {
         return true;
     };
     GroupCellRendererCtrl.prototype.showExpandAndContractIcons = function () {
-        var _a = this, params = _a.params, displayedGroup = _a.displayedGroup, columnModel = _a.columnModel;
+        var _a = this, params = _a.params, displayedGroup = _a.displayedGroupNode, columnModel = _a.columnModel;
         var node = params.node;
         var isExpandable = this.isExpandable();
         if (isExpandable) {
@@ -15385,7 +15398,7 @@ var GroupCellRendererCtrl = /** @class */ (function (_super) {
     };
     GroupCellRendererCtrl.prototype.addCheckboxIfNeeded = function () {
         var _this = this;
-        var rowNode = this.displayedGroup;
+        var rowNode = this.displayedGroupNode;
         var checkboxNeeded = this.isUserWantsSelected() &&
             // footers cannot be selected
             !rowNode.footer &&
@@ -15427,9 +15440,6 @@ var GroupCellRendererCtrl = /** @class */ (function (_super) {
             this.onExpandOrContract();
         }
     };
-    __decorate([
-        Object(_context_context__WEBPACK_IMPORTED_MODULE_3__["Autowired"])('rowRenderer')
-    ], GroupCellRendererCtrl.prototype, "rowRenderer", void 0);
     __decorate([
         Object(_context_context__WEBPACK_IMPORTED_MODULE_3__["Autowired"])('expressionService')
     ], GroupCellRendererCtrl.prototype, "expressionService", void 0);
@@ -20784,7 +20794,6 @@ var GridOptionsWrapper = /** @class */ (function () {
         return this.gridOptions.allowProcessChartOptions;
     };
     GridOptionsWrapper.prototype.getProcessChartOptionsFunc = function () {
-        console.warn("AG Grid: since v26.0, 'processChartOptions()' has been removed (deprecated in v24.0), see https://www.ag-grid.com/javascript-grid/integrated-charts-customisation/");
         return this.gridOptions.processChartOptions;
     };
     GridOptionsWrapper.prototype.getClipboardDeliminator = function () {

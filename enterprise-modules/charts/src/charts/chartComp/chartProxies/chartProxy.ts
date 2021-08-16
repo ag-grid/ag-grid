@@ -62,6 +62,7 @@ export interface ChartProxyParams {
     eventService: EventService;
     gridApi: GridApi;
     columnApi: ColumnApi;
+    restoringChart?: boolean;
 }
 
 export interface FieldDefinition {
@@ -160,7 +161,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         const { processChartOptions, allowProcessChartOptions } = this.chartProxyParams;
 
         if (processChartOptions) {
-            if (!allowProcessChartOptions) {
+            if (!allowProcessChartOptions && !this.chartProxyParams.restoringChart) {
                 console.warn(`AG Grid: since v26.0, 'processChartOptions()' has been removed (deprecated in v24.0), see https://www.ag-grid.com/javascript-grid/integrated-charts-customisation/`);
                 return;
             }

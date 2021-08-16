@@ -1,32 +1,32 @@
 'use strict';
 
-import React, { useState } from 'react';
-import { render } from 'react-dom';
-import { AgGridColumn, AgGridReact } from 'ag-grid-react';
+import React, {useState} from 'react';
+import {render} from 'react-dom';
+import {AgGridColumn, AgGridReact} from 'ag-grid-react';
 
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 
 const colDefsMedalsIncluded = [
-    { field: 'athlete' },
-    { field: 'age' },
-    { field: 'country' },
-    { field: 'sport' },
-    { field: 'year' },
-    { field: 'date' },
-    { field: 'gold' },
-    { field: 'silver' },
-    { field: 'bronze' },
-    { field: 'total' }
+    {field: 'athlete'},
+    {field: 'age'},
+    {field: 'country'},
+    {field: 'sport'},
+    {field: 'year'},
+    {field: 'date'},
+    {field: 'gold'},
+    {field: 'silver'},
+    {field: 'bronze'},
+    {field: 'total'}
 ];
 
 const colDefsMedalsExcluded = [
-    { field: 'athlete' },
-    { field: 'age' },
-    { field: 'country' },
-    { field: 'sport' },
-    { field: 'year' },
-    { field: 'date' }
+    {field: 'athlete'},
+    {field: 'age'},
+    {field: 'country'},
+    {field: 'sport'},
+    {field: 'year'},
+    {field: 'date'}
 ];
 
 const GridExample = () => {
@@ -53,7 +53,7 @@ const GridExample = () => {
     };
 
     return (
-        <div style={{ width: '100%', height: '100%' }}>
+        <div style={{width: '100%', height: '100%'}}>
             <div className="test-container">
                 <div className="test-header">
                     <button onClick={onBtExcludeMedalColumns}>Exclude Medal Columns</button>
@@ -72,7 +72,7 @@ const GridExample = () => {
                                 sortable: true,
                                 resizable: true
                             }}>
-                            {columns.map(column => (<AgGridColumn {...column} key={column.field} />))}
+                            {columns.map(column => (<AgGridColumn {...column} key={column.field}/>))}
                         </AgGridReact>
                     </div>
                 </div>
@@ -82,6 +82,6 @@ const GridExample = () => {
 };
 
 render(
-    <GridExample />,
+    <GridExample/>,
     document.querySelector('#root')
 );

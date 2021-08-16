@@ -10,7 +10,7 @@ containing all row groups under a single row group hierarchy.
 
 ## Enabling Single Group Column
 
-A single column is the default group display type, but it can be set explicitly using `groupDisplayType = 'singleColumn'` as shown below:
+By default, a Single Group Column is used, but it can be explicitly set using `groupDisplayType = 'singleColumn'` as shown below:
 
 <snippet spaceBetweenProperties="true">
 const gridOptions = {

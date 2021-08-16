@@ -1,5 +1,5 @@
 import {createApp} from 'vue';
-import {AgGridVue} from '@ag-grid-community/vue';
+import {AgGridVue} from '@ag-grid-community/vue3';
 
 import {AllCommunityModules} from '@ag-grid-community/all-modules';
 
@@ -27,8 +27,7 @@ function createLeftRowData() {
 
 const VueExample = {
     template: /* html */
-        `<div class="example-wrapper ag-theme-alpine">
-
+        `<div class="example-wrapper ag-theme-alpine">        
             <div class="inner-col">
                 <div class="toolbar">
                     <button class="factory factory-red" data-color="Red" data-side="left" @click="onFactoryButtonClick($event)">
@@ -92,6 +91,7 @@ const VueExample = {
                     </ag-grid-vue>
                 </div>
             </div>
+        </div>
     `,
     components: {
         'ag-grid-vue': AgGridVue

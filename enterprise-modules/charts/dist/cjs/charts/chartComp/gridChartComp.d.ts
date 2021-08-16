@@ -13,6 +13,7 @@ export interface GridChartParams {
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
     crossFiltering: boolean;
     crossFilteringContext: CrossFilteringContext;
+    restoringChart: boolean;
 }
 export declare class GridChartComp extends Component {
     private static TEMPLATE;

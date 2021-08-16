@@ -3,14 +3,18 @@ title: "Row Grouping"
 enterprise: true
 ---
 
-This section covers Row Grouping with links to sub sections that cover the various ways row grouping can be configured and customised.
+Row Grouping allows rows to be grouped by columns with the grid performing a 'group by' operation on the rows supplied
+to the grid. This section introduces Row Grouping and provides links to subsections that cover the various ways Row 
+Grouping can be configured and customised.
+
+The grid can be configured to initially display rows in a grouped state or rows can be grouped programmatically through 
+the grid API's. Users can also manually group rows through the UI as shown below:
 
 <image-caption src="grouping/resources/row-grouping.gif" maxWidth="90%" constrained="true" centered="true" alt="Row Grouping" ></image-caption>
 
 ## Enabling Default Row Grouping
 
-When there is at least one active row group, a single group column containing a row grouping hierarchy will be added to
-the left-hand side of the grid. To group rows by a particular column, enable the `rowGroup` column property as shown below:
+To group rows by a particular column, enable the `rowGroup` column property as shown below:
 
 <snippet>
 const gridOptions = {
@@ -25,15 +29,15 @@ const gridOptions = {
 
 In the snippet above, rows will be grouped by `country` and `year` as both column definitions have `rowGroup=true` declared.
 
+Note that the [Single Group Column](../grouping-single-group-column/) display type is used by default.
+
 The example below demonstrates the default row grouping behaviour. Note the following:
 
 - There are two active row groups as the supplied `country` and `year` column definitions have `rowGroup=true` declared.
 
 - A group column is added to the left-hand side of the grid as there are active row groups.
 
-- The `country` and `year` columns are still shown in the grid (to hide set `hide=true` on their column definitions).
-
-- The number of grouped rows is shown in parentheses at each row group level.
+- The `country` and `year` columns are hidden as `hide=true` on their column definitions.
 
 <grid-example title='Default Row Grouping' name='default-row-grouping' type='generated' options='{ "enterprise": true, "exampleHeight": 540, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 

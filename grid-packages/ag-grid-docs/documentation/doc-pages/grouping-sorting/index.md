@@ -52,15 +52,15 @@ const gridOptions = {
 | When using the [Group Rows Display Type](../grouping-group-rows/) there are no group columns to sort by, however row 
 | groups can still be ordered through the [Default Group Order](../grouping-group-order/#default-group-order). 
 
-The example below demonstrates how sorting is enabled the [Multiple Group Columns](../grouping-multiple-group-columns/). 
+The example below demonstrates how sorting is enabled with [Multiple Group Columns](../grouping-multiple-group-columns/). 
 Note that sorting is enabled across all columns, including Row Group Columns, using: `defaultColDef.sortable = true`.
 
 <grid-example title='Enabling Group Sorting' name='enabling-group-sorting' type='generated' options='{ "enterprise": true, "exampleHeight": 540, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
 ## Custom Group Sorting
 
-By default, any sort `comparator` defined on column that used to group rows by will also be used by the Group Column. For
-example, consider the following column definition:
+By default, any sort `comparator` defined on a column that used to group rows by will also be used by the Group Column. 
+For example, consider the following column definition:
 
 <snippet>
 |const gridOptions = {

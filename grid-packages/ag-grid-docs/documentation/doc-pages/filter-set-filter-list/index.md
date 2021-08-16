@@ -39,7 +39,7 @@ The following example demonstrates sorting Set Filter values using a comparator.
 - The **Age (no Comparator)** filter values are sorted using the default string order: `1, 10, 100...`
 - The **Age (with Comparator)** filter has a custom Comparator supplied in the `filterParams` that sorts the ages by numeric value: `1, 2, 3...`
 
-<grid-example title='Sorting Filter Lists' name='sorting-set-filter-values' type='generated' options='{ "enterprise": true, "exampleHeight": 720, "modules": ["clientside", "setfilter", "menu", "filterpanel"] }'></grid-example>
+<grid-example title='Sorting Filter Lists' name='sorting-set-filter-values' type='generated' options='{ "enterprise": true, "exampleHeight": 720, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] }'></grid-example>
 
 ## Formatting Values
 
@@ -86,10 +86,7 @@ The following example shows how Set Filter values are formatted using a Value Fo
 - **With Value Formatter** has the same Value Formatter supplied to the Column and Set Filter. The Set Filter is supplied the value formatter through `filterParams.valueFormatter = countryValueFormatter`.
 - Click **Print Filter Model** with a filter applied and note the logged Filter Model (dev console) has not been modified.
 
-<grid-example title='Filter List Value Formatters' name='filter-list-value-formatter' type='generated' options='{ "enterprise": true, "exampleHeight": 745, "modules": ["clientside", "setfilter", "menu", "filterpanel"] }'></grid-example>
-
-### Cell Renderer
-
+<grid-example title='Filter List Value Formatters' name='filter-list-value-formatter' type='generated' options='{ "enterprise": true, "exampleHeight": 745, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] }'></grid-example> 
 
 A [Cell Renderer](/cell-rendering/) is a good choice when the value displayed requires markup. For instance if a
 country flag image is to be shown alongside country names.
@@ -134,7 +131,7 @@ The following example shows how Set Filter values are rendered using a Cell Rend
 - **With Cell Renderer** uses the same Cell Renderer to format the cells and filter values. The Set Filter is supplied the Value Formatter using `filterParams.cellRenderer = countryCellRenderer`.
 - Click **Print Filter Model** with a filter applied and note the logged filter model (dev console) has not been modified.
 
-<grid-example title='Filter List Cell Renderers' name='filter-list-cell-renderer' type='generated' options='{ "enterprise": true, "exampleHeight": 745, "modules": ["clientside", "setfilter", "menu", "filterpanel"] }'></grid-example>
+<grid-example title='Filter List Cell Renderers' name='filter-list-cell-renderer' type='generated' options='{ "enterprise": true, "exampleHeight": 745, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] }'></grid-example>
 
 ## Supplying Filter Values
 
@@ -171,7 +168,7 @@ The following example demonstrates providing filter values using `filterParams.v
 - The **Days (Values Provided)** set filter is given values using `filterParams.values`. As all days are supplied the filter list also contains `'Saturday'` and `'Sunday'`.
 - As the **Days (Values Provided)** filter values are provided in the correct order, the default filter list sorting is turned off using: `filterParams.suppressSorting=true`.
 
-<grid-example title='Providing Filter Values' name='providing-filter-values' type='generated' options='{ "enterprise": true, "exampleHeight": 720, "modules": ["clientside", "setfilter", "menu", "filterpanel"] }'></grid-example>
+<grid-example title='Providing Filter Values' name='providing-filter-values' type='generated' options='{ "enterprise": true, "exampleHeight": 720, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] }'></grid-example>
 
 ### Asynchronous Values
 
@@ -305,7 +302,7 @@ The following example shows the Key Creator handling complex objects for the Set
 - A value formatter is supplied to the column using `colDef.valueFormatter = countryValueFormatter` which extracts the `name` property for the cell values.
 - Click **Print Filter Model** with a filter active and note the logged Filter Model (dev console) uses the `name` property from the complex object.
 
-<grid-example title='Complex Objects' name='complex-objects' type='generated' options='{ "enterprise": true, "exampleHeight": 505, "modules": ["clientside", "setfilter", "menu", "filterpanel"] }'></grid-example>
+<grid-example title='Complex Objects' name='complex-objects' type='generated' options='{ "enterprise": true, "exampleHeight": 505, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] }'></grid-example>
 
 ## Multiple Values Per Cell
 
@@ -319,7 +316,7 @@ The example below demonstrates this in action. Note the following:
 - For all scenarios, the Set Filter displays a list of all the individual, unique values present from the data.
 - Selecting values in the Set Filter will show rows where the data for that row contains **any** of the selected values.
 
-<grid-example title='Multiple Values' name='multiple-values' type='generated' options='{ "enterprise": true, "modules": ["clientside", "setfilter", "menu"] }'></grid-example>
+<grid-example title='Multiple Values' name='multiple-values' type='generated' options='{ "enterprise": true, "modules": ["clientside", "setfilter", "menu", "columnpanel"] }'></grid-example>
 
 ## Default State
 
@@ -347,7 +344,7 @@ The following example demonstrates different default states. Note the following:
 - The Country column has nothing selected by default, as `defaultToNothingSelected = true`.
 - When the Set Filter for the Country column is opened, the grid is not filtered until at least one value has been selected.
 
-<grid-example title='Default State' name='default-state' type='generated' options='{ "enterprise": true, "modules": ["clientside", "setfilter", "menu"] }'></grid-example>
+<grid-example title='Default State' name='default-state' type='generated' options='{ "enterprise": true, "modules": ["clientside", "setfilter", "menu", "columnpanel"] }'></grid-example>
 
 ## Filter Value Tooltips
 

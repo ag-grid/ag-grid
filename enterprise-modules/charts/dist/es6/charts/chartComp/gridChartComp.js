@@ -136,6 +136,7 @@ var GridChartComp = /** @class */ (function (_super) {
             eventService: this.eventService,
             gridApi: this.gridApi,
             columnApi: this.columnApi,
+            restoringChart: this.params.restoringChart,
         };
         // set local state used to detect when chart changes
         this.chartType = chartType;

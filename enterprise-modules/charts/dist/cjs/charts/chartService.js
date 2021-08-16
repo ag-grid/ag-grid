@@ -64,14 +64,41 @@ var ChartService = /** @class */ (function (_super) {
         return this.createChart(selectedRange, chartType);
     };
     ChartService.prototype.restoreChart = function (model, chartContainer) {
+        var _this = this;
         if (!model) {
             console.warn("AG Grid - unable to restore chart as no chart model is provided");
             return;
         }
+        var params = this.mapToRangeParam(model, chartContainer);
+        var getCellRange = function (cellRangeParams) {
+            return _this.rangeService
+                ? _this.rangeService.createCellRangeFromCellRangeParams(cellRangeParams)
+                : undefined;
+        };
         if (model.modelType && model.modelType === 'pivot') {
-            return this.createPivotChart(this.mapToPivotParams(model, chartContainer));
+            // if required enter pivot mode
+            if (!this.columnModel.isPivotMode()) {
+                this.columnModel.setPivotMode(true, "pivotChart");
+            }
+            // pivot chart range contains all visible column without a row range to include all rows
+            var chartAllRangeParams = {
+                rowStartIndex: null,
+                rowEndIndex: null,
+                columns: this.columnModel.getAllDisplayedColumns().map(function (col) { return col.getColId(); })
+            };
+            var cellRange_1 = getCellRange(chartAllRangeParams);
+            if (!cellRange_1) {
+                console.warn("AG Grid - unable to create chart as there are no columns in the grid.");
+                return;
+            }
+            return this.createChart(cellRange_1, params.chartType, params.chartThemeName, true, true, params.chartContainer, undefined, params.chartThemeOverrides, params.unlinkChart, params.processChartOptions, false, true);
         }
-        return this.createRangeChart(this.mapToRangeParam(model, chartContainer));
+        var cellRange = getCellRange(params.cellRange);
+        if (!cellRange) {
+            console.warn("AG Grid - unable to create chart as no range is selected");
+            return;
+        }
+        return this.createChart(cellRange, params.chartType, params.chartThemeName, false, params.suppressChartRanges, params.chartContainer, params.aggFunc, params.chartThemeOverrides, params.unlinkChart, params.processChartOptions, false, true);
     };
     ChartService.prototype.createRangeChart = function (params) {
         var cellRange = this.rangeService
@@ -116,12 +143,13 @@ var ChartService = /** @class */ (function (_super) {
         var suppressChartRanges = suppressChartRangesSupplied ? params.suppressChartRanges : true;
         return this.createChart(cellRange, params.chartType, params.chartThemeName, false, suppressChartRanges, params.chartContainer, params.aggFunc, params.chartThemeOverrides, params.unlinkChart, undefined, crossFiltering);
     };
-    ChartService.prototype.createChart = function (cellRange, chartType, chartThemeName, pivotChart, suppressChartRanges, container, aggFunc, chartThemeOverrides, unlinkChart, processChartOptions, crossFiltering) {
+    ChartService.prototype.createChart = function (cellRange, chartType, chartThemeName, pivotChart, suppressChartRanges, container, aggFunc, chartThemeOverrides, unlinkChart, processChartOptions, crossFiltering, restoringChart) {
         var _this = this;
         if (pivotChart === void 0) { pivotChart = false; }
         if (suppressChartRanges === void 0) { suppressChartRanges = false; }
         if (unlinkChart === void 0) { unlinkChart = false; }
         if (crossFiltering === void 0) { crossFiltering = false; }
+        if (restoringChart === void 0) { restoringChart = false; }
         var createChartContainerFunc = this.gridOptionsWrapper.getCreateChartContainerFunc();
         var params = {
             pivotChart: pivotChart,
@@ -135,7 +163,8 @@ var ChartService = /** @class */ (function (_super) {
             processChartOptions: processChartOptions,
             unlinkChart: unlinkChart,
             crossFiltering: crossFiltering,
-            crossFilteringContext: this.crossFilteringContext
+            crossFilteringContext: this.crossFilteringContext,
+            restoringChart: restoringChart,
         };
         var chartComp = new gridChartComp_1.GridChartComp(params);
         this.context.createBean(chartComp);
