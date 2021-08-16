@@ -384,7 +384,7 @@ function convertColumnDefs(rawColumnDefs, userComponentNames): string[] {
 function convertDefaultColDef(defaultColDef): string {
     return GRID_COMPONENTS.reduce((acc, componentName) => {
         if (componentName === 'filter') {
-            if (defaultColDef.indexOf('filter: true') === -1) {
+            if (defaultColDef.indexOf('filter: true') === -1 && defaultColDef.indexOf('filter: \'ag\'') === -1) {
                 return acc.replace(/componentName\b/g, `${componentName}Framework`);
             }
         }
