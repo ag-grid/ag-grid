@@ -49,29 +49,39 @@ If the legend is horizontal (positioned to the `'bottom'` or `'top'` of a chart)
 
 ## Constraints
 
-In addition to the width and height of the chart, the legend's layout is also affected by the amount of spacing between and within the legend items. For example, `layoutHorizontalSpacing` controls the amount of spacing between adjacent horizontal legend items:
+In addition to the width and height of the chart, the legend's layout is also affected by the amount of padding between and within the legend items. For example, `legend.item.paddingX` controls the amount of padding between adjacent horizontal legend items:
 
 ```js
 legend: {
-    layoutHorizontalSpacing: 16
+    item: {
+        paddingX: 16
+    }
 }
 ```
 
-`layoutVerticalSpacing` controls the amount of spacing between adjacent vertical legend items:
+`legend.item.paddingY` controls the amount of padding between adjacent vertical legend items:
 
 ```js
 legend: {
-    layoutVerticalSpacing: 8
+    item: {
+        paddingY: 8
+    }
 }
 ```
 
-And the `itemSpacing` config is responsible for the amount of spacing within a legend item, between the marker and the label:
+And the `legend.item.marker.padding` config is responsible for the amount of padding within a legend item, between the marker and the label:
 
 ```js
 legend: {
-    itemSpacing: 8
+    item: {
+        marker: {
+            padding: 8
+        }
+    }
 }
 ```
+
+Please refer to the example below to get a better idea of how the above configs affect the legend layout.
 
 ### Example: Legend Constraints
 
