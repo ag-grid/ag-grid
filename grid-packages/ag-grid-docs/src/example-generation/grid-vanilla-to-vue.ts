@@ -394,7 +394,6 @@ function convertDefaultColDef(defaultColDef): string {
 }
 
 const getColumnDefs = (bindings: any, utilFunctions: any[]) => {
-    debugger
     const columnDefs = bindings.parsedColDefs ? convertColumnDefs(JSON5.parse(bindings.parsedColDefs), bindings.components.map(component => component.name)) : null;
     if (!columnDefs) {
         const columnDefProperty = bindings.properties.filter(property => property.name === 'columnDefs');
