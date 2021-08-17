@@ -62,11 +62,12 @@
 
          <li>Miscellaneous</li>
          <ul>
+             <li>AG-5569 - Vue 3 Reactivity and Composition API Support, Improved Vue 3 Documentation</li>
+             <li>AG-5373 - Add Vue 3 examples to the Example Runner</li>
              <li>
                  AG-5607 - Enhance Row Auto Height Support
                  (see <a rel="nofollow" href="https://www.ag-grid.com/archive/26.0.0/javascript-data-grid/row-height/#auto-row-height">Auto Row Height</a>)
              </li>
-             <li>AG-5373 - Add Vue 3 examples to the Example Runner</li>
              <li>AG-5625 - Update and Improve Types on Angular Interfaces</li>
          </ul>
      </ul>
