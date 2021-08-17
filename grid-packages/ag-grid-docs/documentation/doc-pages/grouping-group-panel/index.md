@@ -6,7 +6,7 @@ This section covers the Row Group Panel which allows users control which columns
 
 ## Enabling Row Group Panel
 
-To display each row group under a separate group column set `rowGroupPanelShow` as shown below:
+To display the row group panel set `rowGroupPanelShow` as shown below:
 
 <snippet spaceBetweenProperties="true">
 const gridOptions = { 

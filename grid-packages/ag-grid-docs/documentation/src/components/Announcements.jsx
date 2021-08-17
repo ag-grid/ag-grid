@@ -9,10 +9,21 @@ import styles from './Announcements.module.scss';
  * This are the announcement cards shown underneath the left-hand navigation menu.
  */
 const Announcements = ({ framework }) => <div className={styles['announcements']}>
-    <Announcement date="Apr 27" version="25.3.0">
+    <Announcement date="Aug 18" version="26.0.0">
         <p className="card-text">
-            Minor release with bug fixes:
+            Major release with new features and bug fixes:
         </p>
+        <ul>
+            <li className={styles['announcement__list-item']}>
+                <a href="https://www.ag-grid.com/react-data-grid/reactui/">React UI</a>
+            </li>
+            <li className={styles['announcement__list-item']}>
+                <a href="../grouping/">Row Grouping Enhancements</a>
+            </li>
+            <li className={styles['announcement__list-item']}>
+                Grid UX Enhancements
+            </li>
+        </ul>
     </Announcement>
 
     <SimpleMailingListSignup />

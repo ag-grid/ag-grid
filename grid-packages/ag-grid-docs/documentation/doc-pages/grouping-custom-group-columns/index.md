@@ -12,7 +12,7 @@ When using the [Single Group Column](../grouping-single-group-column/), [Multipl
 and [Group Rows](../grouping-group-rows/) display types, the grid automatically adds Auto Group Columns to display the groups.
 
 However, it is also possible to take control over which columns display which groups. This is useful if you want to have
-a finer control over how your groups are displayed.
+a finer level of control over how your groups are displayed.
 
 ## Enabling Custom Group Columns
 

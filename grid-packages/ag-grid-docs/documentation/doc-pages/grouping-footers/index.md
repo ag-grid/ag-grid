@@ -3,7 +3,7 @@ title: "Row Grouping - Group Footers"
 enterprise: true
 ---
 
-This sections shows how to add group footers to show group level totals.
+This section shows how to add group footers to show group level totals.
 
 ## Enabling Group Footers
 

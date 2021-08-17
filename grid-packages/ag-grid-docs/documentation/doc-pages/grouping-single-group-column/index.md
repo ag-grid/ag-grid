@@ -107,8 +107,8 @@ To turn this feature on set either `groupRemoveSingleChildren=true` or `groupRem
 The example below shows this feature. Note the following:
 
 - **Normal:** Shows the rows as normal, nothing is removed. All groups have their children count in brackets after the group.
-- **Remove Single Children:** Removes single children using the property `groupRemoveSingleChildren=true`. All groups with just one child are remove.
-- **Remove Lowest Single Children:** Removes single children using the property `groupRemoveLowestSingleChildren=true`. All groups for the 'City' column with just one child are remove. The 'City' column is the lowest level group, so it's the only group candidate to be removed when one child.
+- **Remove Single Children:** Removes single children using the property `groupRemoveSingleChildren=true`. All groups with just one child are removed.
+- **Remove Lowest Single Children:** Removes single children using the property `groupRemoveLowestSingleChildren=true`. All groups for the 'City' column with just one child are removed. The 'City' column is the lowest level group, so it's the only group candidate to be removed when it only has one child.
 
 <grid-example title='Removing Single Children' name='remove-single-children' type='vanilla' options='{ "enterprise": true, "exampleHeight": 540, "modules":["clientside", "rowgrouping", "menu", "columnpanel", "setfilter"] }'></grid-example>
 

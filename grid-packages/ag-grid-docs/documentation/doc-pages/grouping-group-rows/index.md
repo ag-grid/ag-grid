@@ -47,7 +47,7 @@ Cell Renderer with your own [Custom Cell Renderer](/component-cell-renderer/), o
 [Group Cell Renderer](/group-cell-renderer/).
 
 If using Group Rows and no `groupRowRenderer` properties are provided, then the default 
-[Group Cell Renderer](/group-cell-renderer/) is used with it's default values.
+[Group Cell Renderer](/group-cell-renderer/) is used with its default values.
 
 <snippet>
 const gridOptions = {
@@ -102,7 +102,7 @@ const gridOptions = {
 </snippet>
 
 Below shows an example of aggregation with Group Rows. It also provides an `innerRenderer` to configure what gets 
-displaying inside the row groups, however it keeps the Default Group Cell Renderer for it's expand / collapse 
+displaying inside the row groups, however it keeps the Default Group Cell Renderer for its expand / collapse 
 functionality. Note the following:
 
 - Each group spans the width of the grid.

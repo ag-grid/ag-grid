@@ -3,7 +3,7 @@ title: "Row Grouping - Unbalanced Groups"
 enterprise: true
 ---
 
-This section covers Unbalanced Groups - when grouping by rows than can contain `null` or `undefined` group values.  
+This section covers Unbalanced Groups - when grouping by rows that can contain `null` or `undefined` group values.  
 
 ## Handling Unbalanced Groups
 
