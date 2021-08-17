@@ -71,8 +71,16 @@ export abstract class ProvidedFilter<T> extends Component implements IFilterComp
     @PostConstruct
     protected postConstruct(): void {
         this.resetTemplate(); // do this first to create the DOM
-        this.createManagedBean(new ManagedFocusFeature(this.getFocusableElement()));
+        this.createManagedBean(new ManagedFocusFeature(
+            this.getFocusableElement(),
+            {
+                handleKeyDown: this.handleKeyDown.bind(this)
+            }
+        ));
     }
+
+    // override
+    protected handleKeyDown(e: KeyboardEvent): void {}
 
     public abstract getModelFromUi(): T | null;
 

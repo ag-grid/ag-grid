@@ -16,7 +16,6 @@ export class RowComp extends Component {
     private fullWidthCellRenderer: ICellRendererComp | null | undefined;
 
     private beans: Beans;
-    private pinned: string | null;
 
     private rowCtrl: RowCtrl;
 
@@ -27,7 +26,6 @@ export class RowComp extends Component {
         super();
 
         this.beans = beans;
-        this.pinned = pinned;
         this.rowCtrl = ctrl;
 
         this.setTemplate(/* html */`<div comp-id="${this.getCompId()}" style="${this.getInitialStyle()}"/>`);
@@ -109,7 +107,7 @@ export class RowComp extends Component {
         });
 
         const cellCompsToRemove = getAllValuesInObject(cellsToRemove)
-            .filter(cellComp => cellComp ? this.isCellEligibleToBeRemoved(cellComp) : false);
+            .filter(cellComp => cellComp != null );
 
         this.destroyCells(cellCompsToRemove as CellComp[]);
         this.ensureDomOrder(cellCtrls);
@@ -127,30 +125,6 @@ export class RowComp extends Component {
         });
 
         setDomChildOrder(this.getGui(), elementsInOrder);
-    }
-
-    private isCellEligibleToBeRemoved(cellComp: CellComp): boolean {
-        const REMOVE_CELL = true;
-        const KEEP_CELL = false;
-
-        // always remove the cell if it's not rendered or if it's in the wrong pinned location
-        const column = cellComp.getCtrl().getColumn();
-        if (column.getPinned() != this.pinned) { return REMOVE_CELL; }
-
-        // we want to try and keep editing and focused cells
-        const editing = cellComp.getCtrl().isEditing();
-        const focused = this.beans.focusService.isCellFocused(cellComp.getCtrl().getCellPosition());
-
-        const mightWantToKeepCell = editing || focused;
-
-        if (mightWantToKeepCell) {
-            const column = cellComp.getCtrl().getColumn();
-            const displayedColumns = this.beans.columnModel.getAllDisplayedColumns();
-            const cellStillDisplayed = displayedColumns.indexOf(column) >= 0;
-            return cellStillDisplayed ? KEEP_CELL : REMOVE_CELL;
-        }
-
-        return REMOVE_CELL;
     }
 
     private newCellComp(cellCtrl: CellCtrl): void {
