@@ -13,8 +13,14 @@ export class TabGuardComp extends Component {
     protected initialiseTabGuard(params: {
         focusInnerElement?: (fromBottom: boolean) => void;
         shouldStopEventPropagation?: () => boolean;
-        onFocusIn?: (e: FocusEvent) => void;
-        onFocusOut?: (e: FocusEvent) => void;
+        /**
+         * @return `true` to prevent the default onFocusIn behavior
+         */
+        onFocusIn?: (e: FocusEvent) => boolean;
+        /**
+         * @return `true` to prevent the default onFocusOut behavior
+         */
+        onFocusOut?: (e: FocusEvent) => boolean;
         onTabKeyDown?: (e: KeyboardEvent) => void;
         handleKeyDown?: (e: KeyboardEvent) => void;
     }) {
@@ -68,8 +74,8 @@ export class TabGuardComp extends Component {
         this.addTabGuards(...tabGuards);
     }
 
-    public forceFocusOutOfContainer(): void {
-        this.tabGuardCtrl.forceFocusOutOfContainer();
+    public forceFocusOutOfContainer(up: boolean = false): void {
+        this.tabGuardCtrl.forceFocusOutOfContainer(up);
     }
 
     public appendChild(newChild: HTMLElement | Component, container?: HTMLElement): void {
