@@ -716,14 +716,17 @@ export class AreaSeries extends CartesianSeries {
             format: tooltipFormat
         } = tooltip;
         const datum = nodeDatum.seriesDatum;
-        const yKeyIndex = yKeys.indexOf(yKey);
         const xValue = datum[xKey];
         const yValue = datum[yKey];
+        if (!isNumber(yValue)) {
+            return '';
+        }
+        const xString = xAxis.formatDatum(xValue);
+        const yString = yAxis.formatDatum(yValue);
+        const yKeyIndex = yKeys.indexOf(yKey);
         const processedYValue = yGroup[yKeyIndex];
         const yName = yNames[yKeyIndex];
         const color = fills[yKeyIndex % fills.length];
-        const xString = xAxis.formatDatum(xValue);
-        const yString = yAxis.formatDatum(yValue);
         const title = sanitizeHtml(yName);
         const content = sanitizeHtml(xString + ': ' + yString);
         const defaults: TooltipRendererResult = {
