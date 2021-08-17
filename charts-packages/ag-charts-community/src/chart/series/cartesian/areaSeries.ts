@@ -23,6 +23,7 @@ import { Label } from "../../label";
 import { sanitizeHtml } from "../../../util/sanitize";
 import { FontStyle, FontWeight } from "../../../scene/shape/text";
 import { Shape } from "../../../scene/shape/shape";
+import { isNumber } from "../../../util/number";
 
 interface AreaSelectionDatum {
     readonly itemId: string;
@@ -457,7 +458,7 @@ export class AreaSeries extends CartesianSeries {
                 if (label.formatter) {
                     labelText = label.formatter({ value: yValue });
                 } else {
-                    labelText = isFinite(yValue) ? yValue.toFixed(2) : yValue ? String(yValue) : '';
+                    labelText = isNumber(yValue) ? yValue.toFixed(2) : String(yValue);
                 }
 
                 if (label) {
