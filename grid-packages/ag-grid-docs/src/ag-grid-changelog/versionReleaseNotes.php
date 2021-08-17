@@ -1,3 +1,133 @@
+<div class="note" style="display: none" fixVersionNote id="fix_version_26_0_0">
+    <p><b>Release 26.0.0 (18th Aug 2021)</b></p>
+
+     <p><b>Feature Highlights:</b></p>
+     <ul>
+         <li>
+             AG-5156: React UI (The next generation of AG Grid React - UI written purely in React)
+             (see <a rel="nofollow" href="https://www.ag-grid.com/archive/26.0.0/react-data-grid/reactui/">React UI</a>)
+         </li>
+
+         <li>Grid UX Enhancements:</li>
+         <ul>
+            <li>
+                AG-3406 - Allow user to resize/collapse the different areas of the Columns Tool Panel
+                (see <a rel="nofollow" href="https://www.ag-grid.com/archive/26.0.0/javascript-data-grid/tool-panel-columns/">Columns Tool Panel</a>)
+            </li>
+            <li>
+                AG-1945 - Allow setting Tool Panel width (current / min / max / initial)
+                (see <a rel="nofollow" href="https://www.ag-grid.com/archive/26.0.0/javascript-data-grid/side-bar/#sidebardef-configuration">Sidebar Configuration</a>)
+            </li>
+            <li>
+                AG-4028 - Allow Set Filter popup to be resized
+                (see <a rel="nofollow" href="https://www.ag-grid.com/archive/26.0.0/javascript-data-grid/filter-set/">Set Filter</a>)
+            </li>
+         </ul>
+
+         <li>Row Grouping Enhancements:</li>
+         <ul>
+             <li>
+                 AG-5484 - Reworked Documentation
+                 (see <a rel="nofollow" href="https://www.ag-grid.com/archive/26.0.0/javascript-data-grid/grouping/">Row Grouping</a>)
+             </li>
+             <li>
+                 AG-5524 - Simplified configuration of Row Grouping Display Types
+                 (see <a rel="nofollow" href="https://www.ag-grid.com/archive/26.0.0/javascript-data-grid/grouping-display-types/">Row Grouping Display Types</a>)
+             </li>
+             <li>
+                 AG-1153 - Allow sort comparators defined on columns to also sort group columns
+                 (see <a rel="nofollow" href="https://www.ag-grid.com/archive/26.0.0/javascript-data-grid/grouping-sorting/#custom-group-sorting/">Custom Group Sorting</a>)
+             </li>
+             <li>
+                AG-2139 - Add option to maintain group order when sorting on non-group columns
+                (see <a rel="nofollow" href="https://www.ag-grid.com/archive/26.0.0/javascript-data-grid/grouping-sorting/#maintain-group-order">Maintain Group Order</a>)
+             </li>
+             <li>
+                AG-5582 - Allow custom cell renderers to be used with Group Footer Rows
+                (see <a rel="nofollow" href="https://www.ag-grid.com/archive/26.0.0/javascript-data-grid/grouping-footers/#customising-footer-cells">Customising Footer Cells</a>)
+             </li>
+          </ul>
+
+         <li>
+              AG-5607 - Enhance Row Auto Height Support
+              (see <a rel="nofollow" href="https://www.ag-grid.com/archive/26.0.0/javascript-data-grid/row-height/#auto-row-height">Auto Row Height</a>)
+         </li>
+
+         <li>
+              AG-4880 - Add series marker labels for Bubble / Scatter charts
+              (see <a rel="nofollow" href="https://www.ag-grid.com/archive/26.0.0/javascript-charts/scatter-series/#example-bubble-chart-labels">Bubble Chart Labels</a>)
+         </li>
+         <li>
+              AG-3634 - Add support for series marker labels in category series
+              (see <a rel="nofollow" href="https://www.ag-grid.com/archive/26.0.0/javascript-charts/line-series/#example-basic-line-labels">Line Chart Labels</a>)
+         </li>
+         <li>AG-5373 - Add Vue 3 examples to the Example Runner</li>
+         <li>AG-5625 - Update and Improve Types on Angular Interfaces</li>
+     </ul>
+
+      <p><b>Breaking Changes:</b></p>
+
+      <p><u>Integrated Charts</u></p>
+      <ul>
+          <li>
+              AG-5605 - The previously deprecated <code>processChartOptions()</code> callback has now been removed. Please use
+              <a rel="nofollow" href="https://www.ag-grid.com/archive/26.0.0/javascript-data-grid/integrated-charts-customisation/">Theme Based Configuration</a>) instead.
+          </li>
+          <li>
+              AG-5558 - <code>getChartImageDataURL()</code> has been removed from the ChartModel and it is now available directly through the grid API.
+              <a rel="nofollow" href="https://www.ag-grid.com/archive/26.0.0/javascript-data-grid/integrated-charts-api/#downloading-chart-image">Downloading Chart Image</a>)
+          </li>
+          <li>
+              AG-5447 - The chart property has been removed from the ChartModel to support serialisation, to access the chart instance use <code>gridApi.getChartRef(chartId)</code>
+              <a rel="nofollow" href="https://www.ag-grid.com/archive/26.0.0/javascript-data-grid/integrated-charts-events/#accessing-chart-instance">Accessing Chart Instance</a>)
+          </li>
+      </ul>
+
+      <p><u>Standalone Charts</u></p>
+      <p>The following Standalone Chart options have been deprecated for over a year and have now been removed:</p>
+      <ul>
+         <li>Chart Option - <code>tooltipTracking</code> (use <code>tooltip.tracking</code>)</li>
+         <li>Chart Option - <code>tooltipClass</code> (use <code>tooltip.class</code>)</li>
+         <li>Series Option - <code>tooltipEnabled</code> (use <code>tooltip.enabled</code>)</li>
+         <li>Series Option - <code>tooltipRenderer</code> (use <code>tooltip.renderer</code>)</li>
+         <li>Legend Option - <code>layoutHorizontalSpacing</code> (use <code>item.paddingX</code>)</li>
+         <li>Legend Option - <code>layoutVerticalSpacing</code> (use <code>item.paddingY</code>)</li>
+         <li>Legend Option - <code>itemSpacing</code> (use <code>item.marker.padding</code>)</li>
+         <li>Legend Option - <code>markerShape</code> (use <code>item.marker.shape</code>)</li>
+         <li>Legend Option - <code>markerSize</code> (use <code>item.marker.size</code>)</li>
+         <li>Legend Option - <code>strokeWidth</code> (use <code>item.marker.strokeWidth</code>)</li>
+         <li>Legend Option - <code>color</code> (use <code>item.label.color</code>)</li>
+         <li>Legend Option - <code>fontStyle</code> (use <code>item.label.fontStyle</code>)</li>
+         <li>Legend Option - <code>fontWeight</code> (use <code>item.label.fontWeight</code>)</li>
+         <li>Legend Option - <code>fontSize</code> (use <code>item.label.fontSize</code>)</li>
+         <li>Legend Option - <code>fontFamily</code> (use <code>item.label.fontFamily</code>)</li>
+      </ul>
+
+
+      <li>
+        AG-5392 - Now when setting (or updating) Column Definitions, the order of the Columns in the grid will always match the order of the Column Definitions.
+        <code>applyColumnDefOrder</code> used to achieve this, now it's the default behaviour. To turn this behaviour off (ie to maintain the order of Columns between
+         updates to Column Definitions) set the property <code>maintainColumnOrder=true</code>.
+        (see <a rel="nofollow" href="https://www.ag-grid.com/archive/26.0.0/javascript-data-grid/column-updating-definitions/#maintain-column-order">Maintain Column Order</a>)
+      </li>
+
+      <li>
+          AG-5534 - AnimationQueueEmptyEvent has been removed. If you depended on this event please consider using the <code>isAnimationFrameQueueEmpty()</code> method on the GridApi instead.
+      </li>
+      <li>
+          AG-4952 - The <code>.cjs</code> files previously included all AG Grid related dependencies. These files now only contain the relevant code for that module, which is the correct behaviour.
+      </li>
+
+      <p><b>Deprecations:</b></p>
+
+      <p><u>Row Grouping</u></p>
+
+      <li><code>groupMultiAutoColumn</code> (use <code>groupDisplayType = 'multipleColumns'</code> instead)</li>
+      <li><code>groupUseEntireRow</code> (use <code>groupDisplayType = 'groupRows'</code> instead)</li>
+      <li><code>groupSuppressAutoColumn</code> (use <code>groupDisplayType = 'custom'</code> instead)</li>
+      <li><code>defaultGroupSortComparator</code> (use <code>defaultGroupOrderComparator</code> instead)</li>
+</div>
+
 <div class="note" style="display: none" fixVersionNote id="fix_version_25_3_0">
     <p><b>Release 25.3.0 (27th Apr 2021)</b></p>
 
