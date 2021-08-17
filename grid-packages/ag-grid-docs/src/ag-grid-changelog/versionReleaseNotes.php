@@ -36,7 +36,7 @@
              </li>
              <li>
                  AG-1153 - Allow sort comparators defined on columns to also sort group columns
-                 (see <a rel="nofollow" href="https://www.ag-grid.com/archive/26.0.0/javascript-data-grid/grouping-sorting/#custom-group-sorting/">Custom Group Sorting</a>)
+                 (see <a rel="nofollow" href="https://www.ag-grid.com/archive/26.0.0/javascript-data-grid/grouping-sorting/#custom-group-sorting">Custom Group Sorting</a>)
              </li>
              <li>
                 AG-2139 - Add option to maintain group order when sorting on non-group columns
