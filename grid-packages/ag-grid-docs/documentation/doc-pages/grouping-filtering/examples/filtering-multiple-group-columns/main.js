@@ -16,8 +16,13 @@ var gridOptions = {
     autoGroupColumnDef: {
         // supplies filter values to the column filters based on the colId
         filterValueGetter: params => {
-            const colId = params.colDef.showRowGroup;
-            return params.data[colId];
+            const colId = params.column.colId;
+            if (colId.includes('country')) {
+                return params.data.country;
+            }
+            if (colId.includes('year') > -1) {
+                return params.data.year;
+            }
         },
     },
     groupDisplayType: 'multipleColumns',

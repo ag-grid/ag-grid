@@ -43,7 +43,7 @@ const gridOptions = {
 Note in the snippet above that the `colDef.keyCreator()` returns the country name to be used as the group key from 
 `country` complex object supplied in the row data.
 
-The example below shows grouping on the `county` column that contains complex object values:
+The example below shows grouping on the `country` column that contains complex object values:
 
 <grid-example title='Grouping Complex Objects with Keys' name='grouping-complex-objects' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
