@@ -42,6 +42,7 @@ export declare abstract class ProvidedFilter<T> extends Component implements IFi
     /** Used to get the filter type for filter models. */
     protected abstract getFilterType(): string;
     protected postConstruct(): void;
+    protected handleKeyDown(e: KeyboardEvent): void;
     abstract getModelFromUi(): T | null;
     getFilterTitle(): string;
     /** @deprecated */

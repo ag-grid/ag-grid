@@ -31,21 +31,24 @@ var context_1 = require("../../context/context");
 var PopupEditorWrapper = /** @class */ (function (_super) {
     __extends(PopupEditorWrapper, _super);
     function PopupEditorWrapper(params) {
-        var _this = _super.call(this, "<div class=\"ag-popup-editor\" tabindex=\"-1\"/>") || this;
-        _this.addKeyDownListener(params);
+        var _this = _super.call(this, /* html */ "<div class=\"ag-popup-editor\" tabindex=\"-1\"/>") || this;
+        _this.params = params;
         return _this;
     }
     PopupEditorWrapper.prototype.postConstruct = function () {
         this.gridOptionsWrapper.setDomData(this.getGui(), PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER, true);
+        this.addKeyDownListener();
     };
-    PopupEditorWrapper.prototype.addKeyDownListener = function (params) {
+    PopupEditorWrapper.prototype.addKeyDownListener = function () {
         var _this = this;
+        var eGui = this.getGui();
+        var params = this.params;
         var listener = function (event) {
             if (!keyboard_1.isUserSuppressingKeyboardEvent(_this.gridOptionsWrapper, event, params.node, params.column, true)) {
                 params.onKeyDown(event);
             }
         };
-        this.addManagedListener(this.getGui(), 'keydown', listener);
+        this.addManagedListener(eGui, 'keydown', listener);
     };
     PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER = 'popupEditorWrapper';
     __decorate([

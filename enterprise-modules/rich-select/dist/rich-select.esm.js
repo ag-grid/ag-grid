@@ -147,6 +147,7 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
     };
     RichSelectCellEditor.prototype.onKeyDown = function (event) {
         var key = event.keyCode;
+        event.preventDefault();
         switch (key) {
             case KeyCode.ENTER:
                 this.onEnterKeyDown();
@@ -176,14 +177,15 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
     RichSelectCellEditor.prototype.searchText = function (key) {
         if (typeof key !== 'string') {
             var keyCode = key.keyCode;
+            var keyString = key.key;
             if (keyCode === KeyCode.BACKSPACE) {
                 this.searchString = this.searchString.slice(0, -1);
-                key = '';
+                keyString = '';
             }
             else if (!_.isEventFromPrintableCharacter(key)) {
                 return;
             }
-            this.searchText(key);
+            this.searchText(keyString);
             return;
         }
         this.searchString += key;

@@ -289,11 +289,16 @@ var RowCtrl = /** @class */ (function (_super) {
         }, this.rowNode.rowIndex, 'createTasksP1');
         this.updateColumnListsPending = true;
     };
-    RowCtrl.prototype.createCellCtrls = function (prev, cols) {
+    RowCtrl.prototype.createCellCtrls = function (prev, cols, pinned) {
         var _this = this;
+        if (pinned === void 0) { pinned = null; }
         var res = {
             list: [],
             map: {}
+        };
+        var addCell = function (colInstanceId, cellCtrl) {
+            res.list.push(cellCtrl);
+            res.map[colInstanceId] = cellCtrl;
         };
         cols.forEach(function (col) {
             // we use instanceId's rather than colId as it's possible there is a Column with same Id,
@@ -304,14 +309,19 @@ var RowCtrl = /** @class */ (function (_super) {
             if (!cellCtrl) {
                 cellCtrl = new CellCtrl(col, _this.rowNode, _this.beans, _this);
             }
-            res.list.push(cellCtrl);
-            res.map[colInstanceId] = cellCtrl;
+            addCell(colInstanceId, cellCtrl);
         });
         prev.list.forEach(function (prevCellCtrl) {
-            var cellCtrlNotInResult = !res.map[prevCellCtrl.getColumn().getInstanceId()];
-            if (cellCtrlNotInResult) {
-                prevCellCtrl.destroy();
+            var cellInResult = res.map[prevCellCtrl.getColumn().getInstanceId()] != null;
+            if (cellInResult) {
+                return;
             }
+            var keepCell = !_this.isCellEligibleToBeRemoved(prevCellCtrl, pinned);
+            if (keepCell) {
+                addCell(prevCellCtrl.getColumn().getInstanceId(), prevCellCtrl);
+                return;
+            }
+            prevCellCtrl.destroy();
         });
         return res;
     };
@@ -328,15 +338,35 @@ var RowCtrl = /** @class */ (function (_super) {
             var centerCols = columnModel.getViewportCenterColumnsForRow(this.rowNode);
             this.centerCellCtrls = this.createCellCtrls(this.centerCellCtrls, centerCols);
             var leftCols = columnModel.getDisplayedLeftColumnsForRow(this.rowNode);
-            this.leftCellCtrls = this.createCellCtrls(this.leftCellCtrls, leftCols);
+            this.leftCellCtrls = this.createCellCtrls(this.leftCellCtrls, leftCols, Constants.PINNED_LEFT);
             var rightCols = columnModel.getDisplayedRightColumnsForRow(this.rowNode);
-            this.rightCellCtrls = this.createCellCtrls(this.rightCellCtrls, rightCols);
+            this.rightCellCtrls = this.createCellCtrls(this.rightCellCtrls, rightCols, Constants.PINNED_RIGHT);
         }
         this.allRowGuis.forEach(function (item) {
             var cellControls = item.pinned === Constants.PINNED_LEFT ? _this.leftCellCtrls :
                 item.pinned === Constants.PINNED_RIGHT ? _this.rightCellCtrls : _this.centerCellCtrls;
             item.rowComp.setCellCtrls(cellControls.list);
         });
+    };
+    RowCtrl.prototype.isCellEligibleToBeRemoved = function (cellCtrl, nextContainerPinned) {
+        var REMOVE_CELL = true;
+        var KEEP_CELL = false;
+        // always remove the cell if it's not rendered or if it's in the wrong pinned location
+        var column = cellCtrl.getColumn();
+        if (column.getPinned() != nextContainerPinned) {
+            return REMOVE_CELL;
+        }
+        // we want to try and keep editing and focused cells
+        var editing = cellCtrl.isEditing();
+        var focused = this.beans.focusService.isCellFocused(cellCtrl.getCellPosition());
+        var mightWantToKeepCell = editing || focused;
+        if (mightWantToKeepCell) {
+            var column_1 = cellCtrl.getColumn();
+            var displayedColumns = this.beans.columnModel.getAllDisplayedColumns();
+            var cellStillDisplayed = displayedColumns.indexOf(column_1) >= 0;
+            return cellStillDisplayed ? KEEP_CELL : REMOVE_CELL;
+        }
+        return REMOVE_CELL;
     };
     RowCtrl.prototype.setAnimateFlags = function (animateIn) {
         if (animateIn) {

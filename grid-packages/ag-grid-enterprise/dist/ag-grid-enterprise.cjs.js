@@ -42821,13 +42821,7 @@ var MultiFilter = /** @class */ (function (_super) {
         if (params) {
             this.refreshGui(params.container);
         }
-        var filters = this.params.filters;
-        var suppressFocus = filters && agGridCommunity._.some(filters, function (filter) { return filter.display && filter.display !== 'inline'; });
-        this.executeFunctionIfExists('afterGuiAttached', __assign$o(__assign$o({}, params || {}), { suppressFocus: suppressFocus }));
-        if (suppressFocus) {
-            // reset focus to the top of the container, and blur
-            this.forceFocusOutOfContainer();
-        }
+        this.executeFunctionIfExists('afterGuiAttached', __assign$o({}, params || {}));
     };
     MultiFilter.prototype.onAnyFilterChanged = function () {
         this.executeFunctionIfExists('onAnyFilterChanged');
@@ -43180,6 +43174,7 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
     };
     RichSelectCellEditor.prototype.onKeyDown = function (event) {
         var key = event.keyCode;
+        event.preventDefault();
         switch (key) {
             case agGridCommunity.KeyCode.ENTER:
                 this.onEnterKeyDown();
@@ -43209,14 +43204,15 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
     RichSelectCellEditor.prototype.searchText = function (key) {
         if (typeof key !== 'string') {
             var keyCode = key.keyCode;
+            var keyString = key.key;
             if (keyCode === agGridCommunity.KeyCode.BACKSPACE) {
                 this.searchString = this.searchString.slice(0, -1);
-                key = '';
+                keyString = '';
             }
             else if (!agGridCommunity._.isEventFromPrintableCharacter(key)) {
                 return;
             }
-            this.searchText(key);
+            this.searchText(keyString);
             return;
         }
         this.searchString += key;
@@ -46857,6 +46853,7 @@ var SetFilter = /** @class */ (function (_super) {
         return /* html */ "\n            <div class=\"ag-set-filter\">\n                <div ref=\"eFilterLoading\" class=\"ag-filter-loading ag-hidden\">" + this.translateForSetFilter('loadingOoo') + "</div>\n                <ag-input-text-field class=\"ag-mini-filter\" ref=\"eMiniFilter\"></ag-input-text-field>\n                <div ref=\"eFilterNoMatches\" class=\"ag-filter-no-matches ag-hidden\">" + this.translateForSetFilter('noMatches') + "</div>\n                <div ref=\"eSetFilterList\" class=\"ag-set-filter-list\" role=\"presentation\"></div>\n            </div>";
     };
     SetFilter.prototype.handleKeyDown = function (e) {
+        _super.prototype.handleKeyDown.call(this, e);
         if (e.defaultPrevented) {
             return;
         }

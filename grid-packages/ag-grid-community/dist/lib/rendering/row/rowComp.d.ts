@@ -4,7 +4,6 @@ import { RowCtrl } from "./rowCtrl";
 export declare class RowComp extends Component {
     private fullWidthCellRenderer;
     private beans;
-    private pinned;
     private rowCtrl;
     private domOrder;
     private cellComps;
@@ -13,7 +12,6 @@ export declare class RowComp extends Component {
     private showFullWidth;
     private setCellCtrls;
     private ensureDomOrder;
-    private isCellEligibleToBeRemoved;
     private newCellComp;
     destroy(): void;
     private destroyAllCells;

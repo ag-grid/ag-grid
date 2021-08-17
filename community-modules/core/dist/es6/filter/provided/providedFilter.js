@@ -54,8 +54,12 @@ var ProvidedFilter = /** @class */ (function (_super) {
     }
     ProvidedFilter.prototype.postConstruct = function () {
         this.resetTemplate(); // do this first to create the DOM
-        this.createManagedBean(new ManagedFocusFeature(this.getFocusableElement()));
+        this.createManagedBean(new ManagedFocusFeature(this.getFocusableElement(), {
+            handleKeyDown: this.handleKeyDown.bind(this)
+        }));
     };
+    // override
+    ProvidedFilter.prototype.handleKeyDown = function (e) { };
     ProvidedFilter.prototype.getFilterTitle = function () {
         return this.translate(this.filterNameKey);
     };

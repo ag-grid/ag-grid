@@ -253,13 +253,7 @@ var MultiFilter = /** @class */ (function (_super) {
         if (params) {
             this.refreshGui(params.container);
         }
-        var filters = this.params.filters;
-        var suppressFocus = filters && core._.some(filters, function (filter) { return filter.display && filter.display !== 'inline'; });
-        this.executeFunctionIfExists('afterGuiAttached', __assign(__assign({}, params || {}), { suppressFocus: suppressFocus }));
-        if (suppressFocus) {
-            // reset focus to the top of the container, and blur
-            this.forceFocusOutOfContainer();
-        }
+        this.executeFunctionIfExists('afterGuiAttached', __assign({}, params || {}));
     };
     MultiFilter.prototype.onAnyFilterChanged = function () {
         this.executeFunctionIfExists('onAnyFilterChanged');

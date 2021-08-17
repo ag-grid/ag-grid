@@ -258,16 +258,13 @@ var CellCtrl = /** @class */ (function (_super) {
         }
     };
     CellCtrl.prototype.onPopupEditorClosed = function () {
-        // we only call stopEditing if we are editing, as
-        // it's possible the popup called 'stop editing'
-        // before this, eg if 'enter key' was pressed on
-        // the editor.
         if (!this.isEditing()) {
             return;
         }
-        // note: this only happens when use clicks outside of the grid. if use clicks on another
-        // cell, then the editing will have already stopped on this cell
-        this.stopRowOrCellEdit();
+        // note: this happens because of a click outside of the grid or if the popupEditor
+        // is closed with `Escape` key. if another cell was clicked, then the editing will 
+        // have already stopped and returned on the conditional above.
+        this.stopEditingAndFocus();
     };
     CellCtrl.prototype.takeValueFromCellEditor = function (cancel) {
         var noValueResult = { newValueExists: false };

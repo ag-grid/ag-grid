@@ -521,6 +521,7 @@ var SetFilter = /** @class */ (function (_super) {
         return /* html */ "\n            <div class=\"ag-set-filter\">\n                <div ref=\"eFilterLoading\" class=\"ag-filter-loading ag-hidden\">" + this.translateForSetFilter('loadingOoo') + "</div>\n                <ag-input-text-field class=\"ag-mini-filter\" ref=\"eMiniFilter\"></ag-input-text-field>\n                <div ref=\"eFilterNoMatches\" class=\"ag-filter-no-matches ag-hidden\">" + this.translateForSetFilter('noMatches') + "</div>\n                <div ref=\"eSetFilterList\" class=\"ag-set-filter-list\" role=\"presentation\"></div>\n            </div>";
     };
     SetFilter.prototype.handleKeyDown = function (e) {
+        _super.prototype.handleKeyDown.call(this, e);
         if (e.defaultPrevented) {
             return;
         }

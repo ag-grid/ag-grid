@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, Constants, Events, ProvidedFilter, RefSelector, VirtualList, AgPromise, KeyCode, PositionableFeature, _, } from '@ag-grid-community/core';
+import { Autowired, Constants, Events, ProvidedFilter, RefSelector, VirtualList, AgPromise, KeyCode, PositionableFeature, _ } from '@ag-grid-community/core';
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 import { SetFilterListItem } from './setFilterListItem';
 import { DEFAULT_LOCALE_TEXT } from './localeText';
@@ -46,6 +46,7 @@ var SetFilter = /** @class */ (function (_super) {
         return /* html */ "\n            <div class=\"ag-set-filter\">\n                <div ref=\"eFilterLoading\" class=\"ag-filter-loading ag-hidden\">" + this.translateForSetFilter('loadingOoo') + "</div>\n                <ag-input-text-field class=\"ag-mini-filter\" ref=\"eMiniFilter\"></ag-input-text-field>\n                <div ref=\"eFilterNoMatches\" class=\"ag-filter-no-matches ag-hidden\">" + this.translateForSetFilter('noMatches') + "</div>\n                <div ref=\"eSetFilterList\" class=\"ag-set-filter-list\" role=\"presentation\"></div>\n            </div>";
     };
     SetFilter.prototype.handleKeyDown = function (e) {
+        _super.prototype.handleKeyDown.call(this, e);
         if (e.defaultPrevented) {
             return;
         }

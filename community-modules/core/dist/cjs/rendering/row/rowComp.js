@@ -31,7 +31,6 @@ var RowComp = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.cellComps = {};
         _this.beans = beans;
-        _this.pinned = pinned;
         _this.rowCtrl = ctrl;
         _this.setTemplate(/* html */ "<div comp-id=\"" + _this.getCompId() + "\" style=\"" + _this.getInitialStyle() + "\"/>");
         var eGui = _this.getGui();
@@ -108,7 +107,7 @@ var RowComp = /** @class */ (function (_super) {
             }
         });
         var cellCompsToRemove = object_1.getAllValuesInObject(cellsToRemove)
-            .filter(function (cellComp) { return cellComp ? _this.isCellEligibleToBeRemoved(cellComp) : false; });
+            .filter(function (cellComp) { return cellComp != null; });
         this.destroyCells(cellCompsToRemove);
         this.ensureDomOrder(cellCtrls);
     };
@@ -125,26 +124,6 @@ var RowComp = /** @class */ (function (_super) {
             }
         });
         dom_1.setDomChildOrder(this.getGui(), elementsInOrder);
-    };
-    RowComp.prototype.isCellEligibleToBeRemoved = function (cellComp) {
-        var REMOVE_CELL = true;
-        var KEEP_CELL = false;
-        // always remove the cell if it's not rendered or if it's in the wrong pinned location
-        var column = cellComp.getCtrl().getColumn();
-        if (column.getPinned() != this.pinned) {
-            return REMOVE_CELL;
-        }
-        // we want to try and keep editing and focused cells
-        var editing = cellComp.getCtrl().isEditing();
-        var focused = this.beans.focusService.isCellFocused(cellComp.getCtrl().getCellPosition());
-        var mightWantToKeepCell = editing || focused;
-        if (mightWantToKeepCell) {
-            var column_1 = cellComp.getCtrl().getColumn();
-            var displayedColumns = this.beans.columnModel.getAllDisplayedColumns();
-            var cellStillDisplayed = displayedColumns.indexOf(column_1) >= 0;
-            return cellStillDisplayed ? KEEP_CELL : REMOVE_CELL;
-        }
-        return REMOVE_CELL;
     };
     RowComp.prototype.newCellComp = function (cellCtrl) {
         var cellComp = new cellComp_1.CellComp(this.rowCtrl.getScope(), this.beans, cellCtrl, false, this.rowCtrl.isPrintLayout(), this.getGui(), this.rowCtrl.isEditing());

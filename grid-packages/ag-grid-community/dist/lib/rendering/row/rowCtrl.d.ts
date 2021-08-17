@@ -88,6 +88,7 @@ export declare class RowCtrl extends BeanStub {
     private updateColumnLists;
     private createCellCtrls;
     private updateColumnListsImpl;
+    private isCellEligibleToBeRemoved;
     private setAnimateFlags;
     isEditing(): boolean;
     stopRowEditing(cancel: boolean): void;
