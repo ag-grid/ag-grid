@@ -1,3 +1,4 @@
+export declare function isNumber(n: any): boolean;
 export declare function isEqual(a: number, b: number, epsilon?: number): boolean;
 /**
  * `Number.toFixed(n)` always formats a number so that it has `n` digits after the decimal point.

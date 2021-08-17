@@ -33,6 +33,7 @@ import { interpolate } from "../../../util/string";
 import { Text } from "../../../scene/shape/text";
 import { Label } from "../../label";
 import { sanitizeHtml } from "../../../util/sanitize";
+import { isNumber } from "../../../util/number";
 var AreaSeriesLabel = /** @class */ (function (_super) {
     __extends(AreaSeriesLabel, _super);
     function AreaSeriesLabel() {
@@ -369,7 +370,7 @@ var AreaSeries = /** @class */ (function (_super) {
                     labelText = label.formatter({ value: yValue });
                 }
                 else {
-                    labelText = isFinite(yValue) ? yValue.toFixed(2) : yValue ? String(yValue) : '';
+                    labelText = isNumber(yValue) ? yValue.toFixed(2) : String(yValue);
                 }
                 if (label) {
                     labelSelectionData.push({
@@ -586,14 +587,17 @@ var AreaSeries = /** @class */ (function (_super) {
         var yGroup = yData[nodeDatum.index];
         var tooltipRenderer = tooltip.renderer, tooltipFormat = tooltip.format;
         var datum = nodeDatum.seriesDatum;
-        var yKeyIndex = yKeys.indexOf(yKey);
         var xValue = datum[xKey];
         var yValue = datum[yKey];
+        if (!isNumber(yValue)) {
+            return '';
+        }
+        var xString = xAxis.formatDatum(xValue);
+        var yString = yAxis.formatDatum(yValue);
+        var yKeyIndex = yKeys.indexOf(yKey);
         var processedYValue = yGroup[yKeyIndex];
         var yName = yNames[yKeyIndex];
         var color = fills[yKeyIndex % fills.length];
-        var xString = xAxis.formatDatum(xValue);
-        var yString = yAxis.formatDatum(yValue);
         var title = sanitizeHtml(yName);
         var content = sanitizeHtml(xString + ': ' + yString);
         var defaults = {

@@ -17061,6 +17061,17 @@ function toRadians(degrees) {
     return degrees / 180 * Math.PI;
 }
 
+// https://github.com/plotly/fast-isnumeric
+function isNumber(n) {
+    var type = typeof n;
+    if (type === 'string') {
+        return false;
+    }
+    else if (type !== 'number') {
+        return false;
+    }
+    return n - n < 1;
+}
 function isEqual(a, b, epsilon) {
     if (epsilon === void 0) { epsilon = 1e-10; }
     return Math.abs(a - b) < epsilon;
@@ -25069,7 +25080,7 @@ var AreaSeries = /** @class */ (function (_super) {
                     labelText = label.formatter({ value: yValue });
                 }
                 else {
-                    labelText = isFinite(yValue) ? yValue.toFixed(2) : yValue ? String(yValue) : '';
+                    labelText = isNumber(yValue) ? yValue.toFixed(2) : String(yValue);
                 }
                 if (label) {
                     labelSelectionData.push({
@@ -25286,14 +25297,17 @@ var AreaSeries = /** @class */ (function (_super) {
         var yGroup = yData[nodeDatum.index];
         var tooltipRenderer = tooltip.renderer, tooltipFormat = tooltip.format;
         var datum = nodeDatum.seriesDatum;
-        var yKeyIndex = yKeys.indexOf(yKey);
         var xValue = datum[xKey];
         var yValue = datum[yKey];
+        if (!isNumber(yValue)) {
+            return '';
+        }
+        var xString = xAxis.formatDatum(xValue);
+        var yString = yAxis.formatDatum(yValue);
+        var yKeyIndex = yKeys.indexOf(yKey);
         var processedYValue = yGroup[yKeyIndex];
         var yName = yNames[yKeyIndex];
         var color = fills[yKeyIndex % fills.length];
-        var xString = xAxis.formatDatum(xValue);
-        var yString = yAxis.formatDatum(yValue);
         var title = sanitizeHtml(yName);
         var content = sanitizeHtml(xString + ': ' + yString);
         var defaults = {

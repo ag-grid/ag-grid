@@ -1,5 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+// https://github.com/plotly/fast-isnumeric
+function isNumber(n) {
+    var type = typeof n;
+    if (type === 'string') {
+        return false;
+    }
+    else if (type !== 'number') {
+        return false;
+    }
+    return n - n < 1;
+}
+exports.isNumber = isNumber;
 function isEqual(a, b, epsilon) {
     if (epsilon === void 0) { epsilon = 1e-10; }
     return Math.abs(a - b) < epsilon;
