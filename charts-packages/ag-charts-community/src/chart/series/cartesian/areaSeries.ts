@@ -23,6 +23,7 @@ import { Label } from "../../label";
 import { sanitizeHtml } from "../../../util/sanitize";
 import { FontStyle, FontWeight } from "../../../scene/shape/text";
 import { Shape } from "../../../scene/shape/shape";
+import { isNumber } from "../../../util/number";
 
 interface AreaSelectionDatum {
     readonly itemId: string;
@@ -457,7 +458,7 @@ export class AreaSeries extends CartesianSeries {
                 if (label.formatter) {
                     labelText = label.formatter({ value: yValue });
                 } else {
-                    labelText = isFinite(yValue) ? yValue.toFixed(2) : yValue ? String(yValue) : '';
+                    labelText = isNumber(yValue) ? yValue.toFixed(2) : String(yValue);
                 }
 
                 if (label) {
@@ -715,14 +716,17 @@ export class AreaSeries extends CartesianSeries {
             format: tooltipFormat
         } = tooltip;
         const datum = nodeDatum.seriesDatum;
-        const yKeyIndex = yKeys.indexOf(yKey);
         const xValue = datum[xKey];
         const yValue = datum[yKey];
+        if (!isNumber(yValue)) {
+            return '';
+        }
+        const xString = xAxis.formatDatum(xValue);
+        const yString = yAxis.formatDatum(yValue);
+        const yKeyIndex = yKeys.indexOf(yKey);
         const processedYValue = yGroup[yKeyIndex];
         const yName = yNames[yKeyIndex];
         const color = fills[yKeyIndex % fills.length];
-        const xString = xAxis.formatDatum(xValue);
-        const yString = yAxis.formatDatum(yValue);
         const title = sanitizeHtml(yName);
         const content = sanitizeHtml(xString + ': ' + yString);
         const defaults: TooltipRendererResult = {

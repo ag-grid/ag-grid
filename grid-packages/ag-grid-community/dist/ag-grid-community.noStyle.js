@@ -13618,8 +13618,12 @@ var ProvidedFilter = /** @class */ (function (_super) {
     }
     ProvidedFilter.prototype.postConstruct = function () {
         this.resetTemplate(); // do this first to create the DOM
-        this.createManagedBean(new _widgets_managedFocusFeature__WEBPACK_IMPORTED_MODULE_5__["ManagedFocusFeature"](this.getFocusableElement()));
+        this.createManagedBean(new _widgets_managedFocusFeature__WEBPACK_IMPORTED_MODULE_5__["ManagedFocusFeature"](this.getFocusableElement(), {
+            handleKeyDown: this.handleKeyDown.bind(this)
+        }));
     };
+    // override
+    ProvidedFilter.prototype.handleKeyDown = function (e) { };
     ProvidedFilter.prototype.getFilterTitle = function () {
         return this.translate(this.filterNameKey);
     };
@@ -23592,11 +23596,16 @@ var RowCtrl = /** @class */ (function (_super) {
         }, this.rowNode.rowIndex, 'createTasksP1');
         this.updateColumnListsPending = true;
     };
-    RowCtrl.prototype.createCellCtrls = function (prev, cols) {
+    RowCtrl.prototype.createCellCtrls = function (prev, cols, pinned) {
         var _this = this;
+        if (pinned === void 0) { pinned = null; }
         var res = {
             list: [],
             map: {}
+        };
+        var addCell = function (colInstanceId, cellCtrl) {
+            res.list.push(cellCtrl);
+            res.map[colInstanceId] = cellCtrl;
         };
         cols.forEach(function (col) {
             // we use instanceId's rather than colId as it's possible there is a Column with same Id,
@@ -23607,14 +23616,19 @@ var RowCtrl = /** @class */ (function (_super) {
             if (!cellCtrl) {
                 cellCtrl = new _cell_cellCtrl__WEBPACK_IMPORTED_MODULE_13__["CellCtrl"](col, _this.rowNode, _this.beans, _this);
             }
-            res.list.push(cellCtrl);
-            res.map[colInstanceId] = cellCtrl;
+            addCell(colInstanceId, cellCtrl);
         });
         prev.list.forEach(function (prevCellCtrl) {
-            var cellCtrlNotInResult = !res.map[prevCellCtrl.getColumn().getInstanceId()];
-            if (cellCtrlNotInResult) {
-                prevCellCtrl.destroy();
+            var cellInResult = res.map[prevCellCtrl.getColumn().getInstanceId()] != null;
+            if (cellInResult) {
+                return;
             }
+            var keepCell = !_this.isCellEligibleToBeRemoved(prevCellCtrl, pinned);
+            if (keepCell) {
+                addCell(prevCellCtrl.getColumn().getInstanceId(), prevCellCtrl);
+                return;
+            }
+            prevCellCtrl.destroy();
         });
         return res;
     };
@@ -23631,15 +23645,35 @@ var RowCtrl = /** @class */ (function (_super) {
             var centerCols = columnModel.getViewportCenterColumnsForRow(this.rowNode);
             this.centerCellCtrls = this.createCellCtrls(this.centerCellCtrls, centerCols);
             var leftCols = columnModel.getDisplayedLeftColumnsForRow(this.rowNode);
-            this.leftCellCtrls = this.createCellCtrls(this.leftCellCtrls, leftCols);
+            this.leftCellCtrls = this.createCellCtrls(this.leftCellCtrls, leftCols, _constants_constants__WEBPACK_IMPORTED_MODULE_0__["Constants"].PINNED_LEFT);
             var rightCols = columnModel.getDisplayedRightColumnsForRow(this.rowNode);
-            this.rightCellCtrls = this.createCellCtrls(this.rightCellCtrls, rightCols);
+            this.rightCellCtrls = this.createCellCtrls(this.rightCellCtrls, rightCols, _constants_constants__WEBPACK_IMPORTED_MODULE_0__["Constants"].PINNED_RIGHT);
         }
         this.allRowGuis.forEach(function (item) {
             var cellControls = item.pinned === _constants_constants__WEBPACK_IMPORTED_MODULE_0__["Constants"].PINNED_LEFT ? _this.leftCellCtrls :
                 item.pinned === _constants_constants__WEBPACK_IMPORTED_MODULE_0__["Constants"].PINNED_RIGHT ? _this.rightCellCtrls : _this.centerCellCtrls;
             item.rowComp.setCellCtrls(cellControls.list);
         });
+    };
+    RowCtrl.prototype.isCellEligibleToBeRemoved = function (cellCtrl, nextContainerPinned) {
+        var REMOVE_CELL = true;
+        var KEEP_CELL = false;
+        // always remove the cell if it's not rendered or if it's in the wrong pinned location
+        var column = cellCtrl.getColumn();
+        if (column.getPinned() != nextContainerPinned) {
+            return REMOVE_CELL;
+        }
+        // we want to try and keep editing and focused cells
+        var editing = cellCtrl.isEditing();
+        var focused = this.beans.focusService.isCellFocused(cellCtrl.getCellPosition());
+        var mightWantToKeepCell = editing || focused;
+        if (mightWantToKeepCell) {
+            var column_1 = cellCtrl.getColumn();
+            var displayedColumns = this.beans.columnModel.getAllDisplayedColumns();
+            var cellStillDisplayed = displayedColumns.indexOf(column_1) >= 0;
+            return cellStillDisplayed ? KEEP_CELL : REMOVE_CELL;
+        }
+        return REMOVE_CELL;
     };
     RowCtrl.prototype.setAnimateFlags = function (animateIn) {
         if (animateIn) {
@@ -24746,16 +24780,13 @@ var CellCtrl = /** @class */ (function (_super) {
         }
     };
     CellCtrl.prototype.onPopupEditorClosed = function () {
-        // we only call stopEditing if we are editing, as
-        // it's possible the popup called 'stop editing'
-        // before this, eg if 'enter key' was pressed on
-        // the editor.
         if (!this.isEditing()) {
             return;
         }
-        // note: this only happens when use clicks outside of the grid. if use clicks on another
-        // cell, then the editing will have already stopped on this cell
-        this.stopRowOrCellEdit();
+        // note: this happens because of a click outside of the grid or if the popupEditor
+        // is closed with `Escape` key. if another cell was clicked, then the editing will 
+        // have already stopped and returned on the conditional above.
+        this.stopEditingAndFocus();
     };
     CellCtrl.prototype.takeValueFromCellEditor = function (cancel) {
         var noValueResult = { newValueExists: false };
@@ -48393,7 +48424,6 @@ var RowComp = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.cellComps = {};
         _this.beans = beans;
-        _this.pinned = pinned;
         _this.rowCtrl = ctrl;
         _this.setTemplate(/* html */ "<div comp-id=\"" + _this.getCompId() + "\" style=\"" + _this.getInitialStyle() + "\"/>");
         var eGui = _this.getGui();
@@ -48470,7 +48500,7 @@ var RowComp = /** @class */ (function (_super) {
             }
         });
         var cellCompsToRemove = Object(_utils_object__WEBPACK_IMPORTED_MODULE_4__["getAllValuesInObject"])(cellsToRemove)
-            .filter(function (cellComp) { return cellComp ? _this.isCellEligibleToBeRemoved(cellComp) : false; });
+            .filter(function (cellComp) { return cellComp != null; });
         this.destroyCells(cellCompsToRemove);
         this.ensureDomOrder(cellCtrls);
     };
@@ -48487,26 +48517,6 @@ var RowComp = /** @class */ (function (_super) {
             }
         });
         Object(_utils_dom__WEBPACK_IMPORTED_MODULE_1__["setDomChildOrder"])(this.getGui(), elementsInOrder);
-    };
-    RowComp.prototype.isCellEligibleToBeRemoved = function (cellComp) {
-        var REMOVE_CELL = true;
-        var KEEP_CELL = false;
-        // always remove the cell if it's not rendered or if it's in the wrong pinned location
-        var column = cellComp.getCtrl().getColumn();
-        if (column.getPinned() != this.pinned) {
-            return REMOVE_CELL;
-        }
-        // we want to try and keep editing and focused cells
-        var editing = cellComp.getCtrl().isEditing();
-        var focused = this.beans.focusService.isCellFocused(cellComp.getCtrl().getCellPosition());
-        var mightWantToKeepCell = editing || focused;
-        if (mightWantToKeepCell) {
-            var column_1 = cellComp.getCtrl().getColumn();
-            var displayedColumns = this.beans.columnModel.getAllDisplayedColumns();
-            var cellStillDisplayed = displayedColumns.indexOf(column_1) >= 0;
-            return cellStillDisplayed ? KEEP_CELL : REMOVE_CELL;
-        }
-        return REMOVE_CELL;
     };
     RowComp.prototype.newCellComp = function (cellCtrl) {
         var cellComp = new _cell_cellComp__WEBPACK_IMPORTED_MODULE_3__["CellComp"](this.rowCtrl.getScope(), this.beans, cellCtrl, false, this.rowCtrl.isPrintLayout(), this.getGui(), this.rowCtrl.isEditing());
@@ -49101,21 +49111,24 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 var PopupEditorWrapper = /** @class */ (function (_super) {
     __extends(PopupEditorWrapper, _super);
     function PopupEditorWrapper(params) {
-        var _this = _super.call(this, "<div class=\"ag-popup-editor\" tabindex=\"-1\"/>") || this;
-        _this.addKeyDownListener(params);
+        var _this = _super.call(this, /* html */ "<div class=\"ag-popup-editor\" tabindex=\"-1\"/>") || this;
+        _this.params = params;
         return _this;
     }
     PopupEditorWrapper.prototype.postConstruct = function () {
         this.gridOptionsWrapper.setDomData(this.getGui(), PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER, true);
+        this.addKeyDownListener();
     };
-    PopupEditorWrapper.prototype.addKeyDownListener = function (params) {
+    PopupEditorWrapper.prototype.addKeyDownListener = function () {
         var _this = this;
+        var eGui = this.getGui();
+        var params = this.params;
         var listener = function (event) {
             if (!Object(_utils_keyboard__WEBPACK_IMPORTED_MODULE_1__["isUserSuppressingKeyboardEvent"])(_this.gridOptionsWrapper, event, params.node, params.column, true)) {
                 params.onKeyDown(event);
             }
         };
-        this.addManagedListener(this.getGui(), 'keydown', listener);
+        this.addManagedListener(eGui, 'keydown', listener);
     };
     PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER = 'popupEditorWrapper';
     __decorate([

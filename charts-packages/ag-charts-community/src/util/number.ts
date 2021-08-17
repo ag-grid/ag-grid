@@ -1,3 +1,14 @@
+// https://github.com/plotly/fast-isnumeric
+export function isNumber(n: any): boolean {
+    const type = typeof n;
+    if (type === 'string') {
+        return false;
+    } else if (type !== 'number') {
+        return false;
+    }
+    return n - n < 1;
+}
+
 export function isEqual(a: number, b: number, epsilon: number = 1e-10) {
     return Math.abs(a - b) < epsilon;
 }
