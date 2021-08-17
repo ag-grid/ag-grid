@@ -49,5 +49,5 @@ export declare class MultiFilter extends TabGuardComp implements IFilterComp {
     private executeWhenAllFiltersReady;
     private updateActiveList;
     private filterChanged;
-    protected onFocusIn(e: FocusEvent): void;
+    protected onFocusIn(e: FocusEvent): boolean;
 }

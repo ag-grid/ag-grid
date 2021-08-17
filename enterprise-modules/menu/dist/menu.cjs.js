@@ -52,7 +52,6 @@ var MenuPanel = /** @class */ (function (_super) {
         }
     };
     MenuPanel.prototype.onTabKeyDown = function (e) {
-        this.tabGuardCtrl.onTabKeyDown(e);
         if (e.defaultPrevented) {
             return;
         }

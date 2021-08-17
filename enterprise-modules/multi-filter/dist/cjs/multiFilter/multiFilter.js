@@ -243,7 +243,13 @@ var MultiFilter = /** @class */ (function (_super) {
         if (params) {
             this.refreshGui(params.container);
         }
-        this.executeFunctionIfExists('afterGuiAttached', __assign({}, params || {}));
+        var filters = this.params.filters;
+        var suppressFocus = filters && core_1._.some(filters, function (filter) { return filter.display && filter.display !== 'inline'; });
+        this.executeFunctionIfExists('afterGuiAttached', __assign(__assign({}, params || {}), { suppressFocus: suppressFocus }));
+        if (suppressFocus) {
+            // reset focus to the top of the container, and blur
+            this.forceFocusOutOfContainer(true);
+        }
     };
     MultiFilter.prototype.onAnyFilterChanged = function () {
         this.executeFunctionIfExists('onAnyFilterChanged');
@@ -323,6 +329,7 @@ var MultiFilter = /** @class */ (function (_super) {
             this.lastActivatedMenuItem.deactivate();
             this.lastActivatedMenuItem = null;
         }
+        return true;
     };
     __decorate([
         core_1.Autowired('filterManager')

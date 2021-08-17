@@ -24,8 +24,8 @@ export declare class VirtualList extends TabGuardComp {
     private postConstruct;
     private addResizeObserver;
     protected focusInnerElement(fromBottom: boolean): void;
-    protected onFocusIn(e: FocusEvent): void;
-    protected onFocusOut(e: FocusEvent): void;
+    protected onFocusIn(e: FocusEvent): boolean;
+    protected onFocusOut(e: FocusEvent): boolean;
     protected handleKeyDown(e: KeyboardEvent): void;
     protected onTabKeyDown(e: KeyboardEvent): void;
     private navigate;

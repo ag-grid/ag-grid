@@ -40946,7 +40946,6 @@ var MenuPanel = /** @class */ (function (_super) {
         }
     };
     MenuPanel.prototype.onTabKeyDown = function (e) {
-        this.tabGuardCtrl.onTabKeyDown(e);
         if (e.defaultPrevented) {
             return;
         }
@@ -42835,7 +42834,13 @@ var MultiFilter = /** @class */ (function (_super) {
         if (params) {
             this.refreshGui(params.container);
         }
-        this.executeFunctionIfExists('afterGuiAttached', __assign$o({}, params || {}));
+        var filters = this.params.filters;
+        var suppressFocus = filters && agGridCommunity._.some(filters, function (filter) { return filter.display && filter.display !== 'inline'; });
+        this.executeFunctionIfExists('afterGuiAttached', __assign$o(__assign$o({}, params || {}), { suppressFocus: suppressFocus }));
+        if (suppressFocus) {
+            // reset focus to the top of the container, and blur
+            this.forceFocusOutOfContainer(true);
+        }
     };
     MultiFilter.prototype.onAnyFilterChanged = function () {
         this.executeFunctionIfExists('onAnyFilterChanged');
@@ -42915,6 +42920,7 @@ var MultiFilter = /** @class */ (function (_super) {
             this.lastActivatedMenuItem.deactivate();
             this.lastActivatedMenuItem = null;
         }
+        return true;
     };
     __decorate$1w([
         agGridCommunity.Autowired('filterManager')

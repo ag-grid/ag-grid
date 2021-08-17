@@ -62,7 +62,7 @@ var TabGuardCtrl = /** @class */ (function (_super) {
         }
     };
     TabGuardCtrl.prototype.tabGuardsAreActive = function () {
-        return !!this.eTopGuard && this.eBottomGuard.hasAttribute('tabIndex');
+        return !!this.eTopGuard && this.eTopGuard.hasAttribute('tabIndex');
     };
     TabGuardCtrl.prototype.shouldStopEventPropagation = function () {
         if (this.providedShouldStopEventPropagation) {
@@ -90,14 +90,14 @@ var TabGuardCtrl = /** @class */ (function (_super) {
         }
     };
     TabGuardCtrl.prototype.onFocusIn = function (e) {
-        if (this.providedFocusIn) {
-            this.providedFocusIn(e);
+        if (this.providedFocusIn && this.providedFocusIn(e)) {
+            return;
         }
         this.deactivateTabGuards();
     };
     TabGuardCtrl.prototype.onFocusOut = function (e) {
-        if (this.providedFocusOut) {
-            this.providedFocusOut(e);
+        if (this.providedFocusOut && this.providedFocusOut(e)) {
+            return;
         }
         if (!this.eFocusableElement.contains(e.relatedTarget)) {
             this.activateTabGuards();
@@ -147,10 +147,12 @@ var TabGuardCtrl = /** @class */ (function (_super) {
     TabGuardCtrl.prototype.getNextFocusableElement = function (backwards) {
         return this.focusService.findNextFocusableElement(this.eFocusableElement, false, backwards);
     };
-    TabGuardCtrl.prototype.forceFocusOutOfContainer = function () {
+    TabGuardCtrl.prototype.forceFocusOutOfContainer = function (up) {
+        if (up === void 0) { up = false; }
+        var tabGuardToFocus = up ? this.eTopGuard : this.eBottomGuard;
         this.activateTabGuards();
         this.skipTabGuardFocus = true;
-        this.eBottomGuard.focus();
+        tabGuardToFocus.focus();
     };
     __decorate([
         Autowired('focusService')

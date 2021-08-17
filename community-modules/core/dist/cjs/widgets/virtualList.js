@@ -71,11 +71,13 @@ var VirtualList = /** @class */ (function (_super) {
         if (dom_1.containsClass(target, 'ag-virtual-list-item')) {
             this.lastFocusedRowIndex = aria_1.getAriaPosInSet(target) - 1;
         }
+        return false;
     };
     VirtualList.prototype.onFocusOut = function (e) {
         if (!this.getFocusableElement().contains(e.relatedTarget)) {
             this.lastFocusedRowIndex = null;
         }
+        return false;
     };
     VirtualList.prototype.handleKeyDown = function (e) {
         switch (e.keyCode) {

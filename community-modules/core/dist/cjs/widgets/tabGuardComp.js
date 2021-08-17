@@ -67,8 +67,9 @@ var TabGuardComp = /** @class */ (function (_super) {
         dom_1.clearElement(this.getFocusableElement());
         this.addTabGuards.apply(this, tabGuards);
     };
-    TabGuardComp.prototype.forceFocusOutOfContainer = function () {
-        this.tabGuardCtrl.forceFocusOutOfContainer();
+    TabGuardComp.prototype.forceFocusOutOfContainer = function (up) {
+        if (up === void 0) { up = false; }
+        this.tabGuardCtrl.forceFocusOutOfContainer(up);
     };
     TabGuardComp.prototype.appendChild = function (newChild, container) {
         if (!dom_1.isNodeOrElement(newChild)) {
