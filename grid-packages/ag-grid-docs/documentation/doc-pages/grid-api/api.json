@@ -600,9 +600,6 @@
         "addRenderedRowListener": {
             "description": "Registers a callback to a virtual row. A virtual row is a row that is visually rendered on the screen (rows that are not visible because of the scroll position are not rendered). Unlike normal events, you do not need to unregister rendered row listeners. When the rendered row is removed from the grid, all associated rendered row listeners will also be removed. Currently supports only one event, `virtualRowRemoved`; listen for this event if your `cellRenderer` needs to do cleanup when the row no longer exists."
         },
-        "showToolPanel": {
-            "description": "Shows (or hides) the tool panel."
-        },
         "isToolPanelShowing": {
             "description": "Returns `true` if the tool panel is showing, otherwise `false`."
         },
