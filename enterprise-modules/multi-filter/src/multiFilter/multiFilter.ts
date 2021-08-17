@@ -300,7 +300,15 @@ export class MultiFilter extends TabGuardComp implements IFilterComp {
             this.refreshGui(params.container!);
         }
 
-        this.executeFunctionIfExists('afterGuiAttached', { ...params || {} });
+        const { filters } = this.params;
+        const suppressFocus = filters && _.some(filters, filter => filter.display! && filter.display !== 'inline');
+
+        this.executeFunctionIfExists('afterGuiAttached', { ...params || {}, suppressFocus });
+
+        if (suppressFocus) {
+            // reset focus to the top of the container, and blur
+            this.forceFocusOutOfContainer(true);
+        }
     }
 
     public onAnyFilterChanged(): void {
@@ -392,10 +400,12 @@ export class MultiFilter extends TabGuardComp implements IFilterComp {
         });
     }
 
-    protected onFocusIn(e: FocusEvent): void {
+    protected onFocusIn(e: FocusEvent): boolean {
         if (this.lastActivatedMenuItem != null && !this.lastActivatedMenuItem.getGui().contains(e.target as HTMLElement)) {
             this.lastActivatedMenuItem.deactivate();
             this.lastActivatedMenuItem = null;
         }
+
+        return true;
     }
 }
