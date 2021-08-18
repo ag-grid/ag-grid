@@ -90,37 +90,37 @@ AddType text/javascript ts jsx
 
     # Redirect old pages to new documentation structure
     Redirect 301 /ag-grid-8-performance-hacks-for-javascript/ /javascript-data-grid/8-performance-hacks-for-javascript/
-    Redirect 301 /ag-grid-angular-aot-dynamic-components/ https:/ /medium.com/ag-grid/understanding-aot-and-dynamic-components-in-angular-2-9b7548ce5845
-    Redirect 301 /ag-grid-angular-connect-2016/ https:/ /medium.com/ag-grid/were-gonna-need-a-bigger-boat-from-speaker-to-sponsor-with-ag-grid-cf5e01a2d9ba
+    Redirect 301 /ag-grid-angular-aot-dynamic-components/ https://medium.com/ag-grid/understanding-aot-and-dynamic-components-in-angular-2-9b7548ce5845
+    Redirect 301 /ag-grid-angular-connect-2016/ https://medium.com/ag-grid/were-gonna-need-a-bigger-boat-from-speaker-to-sponsor-with-ag-grid-cf5e01a2d9ba
     Redirect 301 /ag-grid-angular-systemjs/ /angular-data-grid/systemjs/
     Redirect 301 /ag-grid-angular-webpack-2/ /angular-data-grid/webpack-2/
     Redirect 301 /ag-grid-angular-webpack-3/ /angular-data-grid/webpack-3/
     Redirect 301 /ag-grid-angular-webpack/ /angular-data-grid/webpack/
-    Redirect 301 /ag-grid-angular2-support-v6/ https:/ /medium.com/ag-grid/announcing-ag-grid-v6-and-angular-2-datagrid-support-34ceef54872b
-    Redirect 301 /ag-grid-angular2-support-v7/ https:/ /medium.com/ag-grid/ag-grid-v7-aot-angular-2-components-7130fdb8f480
-    Redirect 301 /ag-grid-big-data-small-browser/ https:/ /medium.com/ag-grid/delivering-big-data-in-the-small-browser-41704f1058f0
-    Redirect 301 /ag-grid-blog-14-0-0/ https:/ /medium.com/ag-grid/ag-grid-v14-halloween-released-fb53e674bfc
-    Redirect 301 /ag-grid-blog-14-2-0/ https:/ /medium.com/ag-grid/whats-new-in-ag-grid-v14-2-0-6cf06f953109
-    Redirect 301 /ag-grid-blog-15-0-0/ https:/ /medium.com/ag-grid/happy-new-ag-grid-v15-0-0-698f3f405069
-    Redirect 301 /ag-grid-blog-16-0-0/ https:/ /medium.com/ag-grid/introducing-version-16-phoenix-and-our-new-website-53403451083c
+    Redirect 301 /ag-grid-angular2-support-v6/ https://medium.com/ag-grid/announcing-ag-grid-v6-and-angular-2-datagrid-support-34ceef54872b
+    Redirect 301 /ag-grid-angular2-support-v7/ https://medium.com/ag-grid/ag-grid-v7-aot-angular-2-components-7130fdb8f480
+    Redirect 301 /ag-grid-big-data-small-browser/ https://medium.com/ag-grid/delivering-big-data-in-the-small-browser-41704f1058f0
+    Redirect 301 /ag-grid-blog-14-0-0/ https://medium.com/ag-grid/ag-grid-v14-halloween-released-fb53e674bfc
+    Redirect 301 /ag-grid-blog-14-2-0/ https://medium.com/ag-grid/whats-new-in-ag-grid-v14-2-0-6cf06f953109
+    Redirect 301 /ag-grid-blog-15-0-0/ https://medium.com/ag-grid/happy-new-ag-grid-v15-0-0-698f3f405069
+    Redirect 301 /ag-grid-blog-16-0-0/ https://medium.com/ag-grid/introducing-version-16-phoenix-and-our-new-website-53403451083c
     Redirect 301 /ag-grid-building-amd/ /javascript-data-grid/building-amd/
     Redirect 301 /ag-grid-building-rollup/ /javascript-data-grid/building-rollup/
     Redirect 301 /ag-grid-building-typescript/ /javascript-data-grid/building-typescript/
     Redirect 301 /ag-grid-building/ /javascript-data-grid/building/
-    Redirect 301 /ag-grid-datagrid-crud-part-1/ https:/ /medium.com/ag-grid/building-a-crud-application-with-ag-grid-part-1-bf7f9715166e
-    Redirect 301 /ag-grid-datagrid-crud-part-2/ https:/ /medium.com/ag-grid/building-a-crud-application-with-ag-grid-part-2-c5e5e4548bf
-    Redirect 301 /ag-grid-datagrid-crud-part-4/ https:/ /medium.com/ag-grid/building-a-crud-application-with-ag-grid-part-4-3189034df922
-    Redirect 301 /ag-grid-goes-commercial/ https:/ /medium.com/ag-grid/ag-grid-goes-commercial-3961cf0c6f7b
-    Redirect 301 /ag-grid-gpu-animation-transform-translate/ https:/ /medium.com/ag-grid/javascript-gpu-animation-with-transform-and-translate-bf09c7000aa6
-    Redirect 301 /ag-grid-in-2016/ https:/ /medium.com/ag-grid/stepping-it-up-ag-grid-focuses-on-agnostic-in-2016-fd7cdb8c11d4
-    Redirect 301 /ag-grid-javascript-pivot-grid/ https:/ /medium.com/ag-grid/announcing-ag-grid-v5-and-pivot-417fa7649ccb
-    Redirect 301 /ag-grid-proud-to-support-plunker/ https:/ /medium.com/ag-grid/plunker-is-now-backed-by-ag-grid-601c17440fca
-    Redirect 301 /ag-grid-react-datagrid/ https:/ /medium.com/ag-grid/building-a-react-datagrid-with-redux-and-ag-grid-1a837ef1b649
-    Redirect 301 /ag-grid-the-best-html5-grid-for-streaming-updates/ https:/ /medium.com/ag-grid/how-to-test-for-the-best-html5-grid-for-streaming-updates-53545bb9256a
-    Redirect 301 /ag-grid-trader-dashboard/ https:/ /www.ag-grid.com/
+    Redirect 301 /ag-grid-datagrid-crud-part-1/ https://medium.com/ag-grid/building-a-crud-application-with-ag-grid-part-1-bf7f9715166e
+    Redirect 301 /ag-grid-datagrid-crud-part-2/ https://medium.com/ag-grid/building-a-crud-application-with-ag-grid-part-2-c5e5e4548bf
+    Redirect 301 /ag-grid-datagrid-crud-part-4/ https://medium.com/ag-grid/building-a-crud-application-with-ag-grid-part-4-3189034df922
+    Redirect 301 /ag-grid-goes-commercial/ https://medium.com/ag-grid/ag-grid-goes-commercial-3961cf0c6f7b
+    Redirect 301 /ag-grid-gpu-animation-transform-translate/ https://medium.com/ag-grid/javascript-gpu-animation-with-transform-and-translate-bf09c7000aa6
+    Redirect 301 /ag-grid-in-2016/ https://medium.com/ag-grid/stepping-it-up-ag-grid-focuses-on-agnostic-in-2016-fd7cdb8c11d4
+    Redirect 301 /ag-grid-javascript-pivot-grid/ https://medium.com/ag-grid/announcing-ag-grid-v5-and-pivot-417fa7649ccb
+    Redirect 301 /ag-grid-proud-to-support-plunker/ https://medium.com/ag-grid/plunker-is-now-backed-by-ag-grid-601c17440fca
+    Redirect 301 /ag-grid-react-datagrid/ https://medium.com/ag-grid/building-a-react-datagrid-with-redux-and-ag-grid-1a837ef1b649
+    Redirect 301 /ag-grid-the-best-html5-grid-for-streaming-updates/ https://medium.com/ag-grid/how-to-test-for-the-best-html5-grid-for-streaming-updates-53545bb9256a
+    Redirect 301 /ag-grid-trader-dashboard/ https://www.ag-grid.com/
     Redirect 301 /ag-grid-tutorials/ /javascript-data-grid/getting-started/
-    Redirect 301 /ag-grid-understanding-webpack/ https:/ /medium.com/ag-grid/webpack-tutorial-understanding-how-it-works-f73dfa164f01
-    Redirect 301 /ag-grid-webpack-ngtools/ https:/ /medium.com/ag-grid/webpack-tutorial-understanding-ngtools-webpack-306dd7f9e07d
+    Redirect 301 /ag-grid-understanding-webpack/ https://medium.com/ag-grid/webpack-tutorial-understanding-how-it-works-f73dfa164f01
+    Redirect 301 /ag-grid-webpack-ngtools/ https://medium.com/ag-grid/webpack-tutorial-understanding-ngtools-webpack-306dd7f9e07d
     Redirect 301 /angular-getting-started/ /angular-data-grid/getting-started/
     Redirect 301 /angular-grid-angular-compiling/ /angular-data-grid/getting-started/
     Redirect 301 /angular-grid-api/ /angular-data-grid/grid-api/
@@ -1172,14 +1172,14 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/vue/view-refresh/ /vue-data-grid/view-refresh/
     Redirect 301 /documentation/vue/viewport/ /vue-data-grid/viewport/
     Redirect 301 /documentation/vue/ /vue-data-grid/
-    Redirect 301 /embracing-the-future-with-angularjs2-web-components-and-ag-grid/ https:/ /medium.com/ag-grid/embracing-the-future-with-angular-2-0-web-components-and-ag-grid-fec000d5a304
+    Redirect 301 /embracing-the-future-with-angularjs2-web-components-and-ag-grid/ https://medium.com/ag-grid/embracing-the-future-with-angular-2-0-web-components-and-ag-grid-fec000d5a304
     Redirect 301 /example-angular-material-design/ /angular-data-grid/material-design/
     Redirect 301 /example-angular-rxjs/ /angular-data-grid/angular-rxjs/
     Redirect 301 /example-excel-import/ /javascript-data-grid/excel-import/
     Redirect 301 /example-expressions-and-context/ /javascript-data-grid/expressions-and-context/
     Redirect 301 /example-react-redux/ /react-data-grid/redux-integration-pt1/
     Redirect 301 /features-overview/ /javascript-data-grid/grid-features/
-    Redirect 301 /git-color/ https:/ /medium.com/ag-grid/git-on-the-command-line-improving-the-experience-5a604cb14cf6
+    Redirect 301 /git-color/ https://medium.com/ag-grid/git-on-the-command-line-improving-the-experience-5a604cb14cf6
     Redirect 301 /graphql-server-side-operations/ /javascript-data-grid/server-side-operations-graphql/
     Redirect 301 /javascript-charts-api-explorer/ /javascript-charts/api-explorer/
     Redirect 301 /javascript-charts-api-themes/ /javascript-charts/api-themes/
@@ -1200,7 +1200,7 @@ AddType text/javascript ts jsx
     Redirect 301 /javascript-charts-scatter-series/ /javascript-charts/scatter-series/
     Redirect 301 /javascript-charts-themes/ /javascript-charts/themes/
     Redirect 301 /javascript-charts-tooltips/ /javascript-charts/tooltips/
-    Redirect 301 /javascript-datagrid/ https:/ /medium.com/ag-grid/8-reasons-to-choose-ag-grid-as-your-javascript-datagrid-eb4a767a351f
+    Redirect 301 /javascript-datagrid/ https://medium.com/ag-grid/8-reasons-to-choose-ag-grid-as-your-javascript-datagrid-eb4a767a351f
     Redirect 301 /javascript-getting-started/ /javascript-data-grid/getting-started/
     Redirect 301 /javascript-grid-accessibility/ /javascript-data-grid/accessibility/
     Redirect 301 /javascript-grid-accessing-data/ /javascript-data-grid/accessing-data/
@@ -1333,7 +1333,7 @@ AddType text/javascript ts jsx
     Redirect 301 /javascript-grid-modules-more-details/ /javascript-data-grid/modules-more-details/
     Redirect 301 /javascript-grid-modules/ /javascript-data-grid/modules/
     Redirect 301 /javascript-grid-npm/ /javascript-data-grid/npm/
-    Redirect 301 /javascript-grid-openfin-dashboard/ https:/ /www.ag-grid.com/
+    Redirect 301 /javascript-grid-openfin-dashboard/ https://www.ag-grid.com/
     Redirect 301 /javascript-grid-overlay-component/ /javascript-data-grid/component-overlay/
     Redirect 301 /javascript-grid-overlays/ /javascript-data-grid/overlays/
     Redirect 301 /javascript-grid-packages-modules/ /javascript-data-grid/packages-modules/
@@ -2218,7 +2218,7 @@ AddType text/javascript ts jsx
     Redirect 301 /vue-grid/viewport/ /vue-data-grid/viewport/
     Redirect 301 /nodejs-server-side-operations/ /javascript-data-grid/server-side-operations-nodejs/
     Redirect 301 /oracle-server-side-operations/ /javascript-data-grid/server-side-operations-oracle/
-    Redirect 301 /quote/ /ecommerce/#/ecommerce/quote-lookup
+    Redirect 301 /quote/ /ecommerce//ecommerce/quote-lookup
     Redirect 301 /react-15/ /react-data-grid/getting-started/
     Redirect 301 /react-and-ag-grid/ https://medium.com/ag-grid/building-a-react-datagrid-using-ag-grid-a-perfect-match-5a4c45f3bedb
     Redirect 301 /react-apis/ /react-data-grid/getting-started/
