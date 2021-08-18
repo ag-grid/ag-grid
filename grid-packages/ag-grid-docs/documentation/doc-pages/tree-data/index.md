@@ -88,7 +88,7 @@ presentation of the Column Group, however it is not as convenient as using the d
 One significant difference is that the entire `dataPath` array will be supplied as a value, rather than just the current
 node value.
 
-For more details see [Custom Group Columns](/grouping-custom-group-columns/).
+For more details see [Custom Group Columns](/grouping-custom-group-columns/)
 
 [[note]]
 | It is **not** possible to have multiple group display columns for tree data like you do for row grouping.
