@@ -13834,8 +13834,9 @@ function interpolate(input, values, formats) {
     });
 }
 
-var element = document.createElement('div');
+var element = null;
 function sanitizeHtml(text) {
+    element = element || document.createElement('div');
     if (!text) {
         return '';
     }

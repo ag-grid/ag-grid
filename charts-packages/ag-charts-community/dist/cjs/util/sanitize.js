@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var element = document.createElement('div');
+var element = null;
 function sanitizeHtml(text) {
+    element = element || document.createElement('div');
     if (!text) {
         return '';
     }
