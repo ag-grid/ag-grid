@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-docs",
-  "version": "26.0.0",
+  "version": "26.0.1",
   "description": "Documentation for AG Grid",
   "scripts": {
     "postinstall": "npx webdriver-manager update",
