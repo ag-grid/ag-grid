@@ -191,19 +191,22 @@ export class CellRangeFeature {
 
         const cellRange = last(cellRanges);
         const cellPosition = this.cellCtrl.getCellPosition();
-        let fillHandleIsAvailable = rangesLen === 1 &&
-            (gridOptionsWrapper.isEnableFillHandle() || gridOptionsWrapper.isEnableRangeHandle()) &&
-            !this.cellCtrl.isEditing();
+        const isFillHandleAvailable = gridOptionsWrapper.isEnableFillHandle() && !this.cellCtrl.isSuppressFillHandle();
+        const isRangeHandleAvailable = gridOptionsWrapper.isEnableRangeHandle();
+
+        let handleIsAvailable = rangesLen === 1 && !this.cellCtrl.isEditing() && (
+            isFillHandleAvailable || isRangeHandleAvailable
+        )
 
         if (this.hasChartRange) {
             const hasCategoryRange = cellRanges[0].type === CellRangeType.DIMENSION;
             const isCategoryCell = hasCategoryRange && rangeService.isCellInSpecificRange(cellPosition, cellRanges[0]);
 
             this.cellComp.addOrRemoveCssClass(CSS_CELL_RANGE_CHART_CATEGORY, isCategoryCell);
-            fillHandleIsAvailable = cellRange.type === CellRangeType.VALUE;
+            handleIsAvailable = cellRange.type === CellRangeType.VALUE;
         }
 
-        return fillHandleIsAvailable &&
+        return handleIsAvailable &&
             cellRange.endRow != null &&
             rangeService.isContiguousRange(cellRange) &&
             rangeService.isBottomRightCell(cellRange, cellPosition);

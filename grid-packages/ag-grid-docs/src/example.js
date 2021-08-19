@@ -857,6 +857,7 @@ var desktopDefaultCols = [
             {
                 headerName: "Country", field: "country", width: 150, editable: true,
                 cellRenderer: 'countryCellRenderer',
+                suppressFillHandle:true,
                 // pivotIndex: 1,
                 // rowGroupIndex: 1,
                 cellClass: ['countryCell', 'vAlign'],

@@ -285,6 +285,8 @@ export class AgGridColumn {
     /** Whether to display a floating filter for this column.     */
     @Input() public floatingFilter: boolean | undefined = undefined;
     @Input() public cellEditorPopup: boolean | undefined = undefined;
+    /** Set to true to prevent the fillHandle from being rendered in any cell that belongs to this column     */
+    @Input() public suppressFillHandle: boolean | undefined = undefined;
     // @END@
 
 }

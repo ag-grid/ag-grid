@@ -401,6 +401,10 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.isColumnFunc(rowNode, this.colDef.editable);
     }
 
+    public isSuppressFillHandle(): boolean {
+        return !!this.colDef.suppressFillHandle;
+    }
+
     public isRowDrag(rowNode: RowNode): boolean {
         return this.isColumnFunc(rowNode, this.colDef.rowDrag);
     }

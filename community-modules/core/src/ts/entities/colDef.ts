@@ -392,6 +392,9 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     /** The custom header component parameters**/
     headerComponentParams?: any;
 
+    /** Set to true to prevent the fillHandle from being rendered in any cell that belongs to this column */
+    suppressFillHandle?: boolean;
+
     /** Whether to display a floating filter for this column. */
     floatingFilter?: boolean;
 

@@ -694,8 +694,12 @@ export class CellCtrl extends BeanStub {
         }
     }
 
-    public isCellEditable() {
+    public isCellEditable(): boolean {
         return this.column.isCellEditable(this.rowNode);
+    }
+
+    public isSuppressFillHandle(): boolean {
+        return this.column.isSuppressFillHandle();
     }
 
     private formatValue(value: any): any {

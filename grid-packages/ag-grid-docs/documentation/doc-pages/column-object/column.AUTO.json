@@ -75,6 +75,9 @@
   "isCellEditable": {
     "type": { "arguments": { "rowNode": "RowNode" }, "returnType": "boolean" }
   },
+  "isSuppressFillHandle": {
+    "type": { "arguments": {}, "returnType": "boolean" }
+  },
   "isRowDrag": {
     "type": { "arguments": { "rowNode": "RowNode" }, "returnType": "boolean" }
   },

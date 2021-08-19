@@ -527,6 +527,7 @@
       "headerComponent?": "string | { new (): any; }",
       "headerComponentFramework?": "any",
       "headerComponentParams?": "any",
+      "suppressFillHandle?": "boolean",
       "floatingFilter?": "boolean",
       "refData?": "{ [key: string]: string; }",
       "chartDataType?": "'category' | 'series' | 'time' | 'excluded'",
@@ -629,6 +630,7 @@
       "headerComponent?": "/** The custom header component to be used for rendering the component header. If none specified the default AG Grid is used* */",
       "headerComponentFramework?": "/** The custom header component to be used for rendering the component header in the hosting framework (ie: React/Angular). If none specified the default AG Grid is used* */",
       "headerComponentParams?": "/** The custom header component parameters* */",
+      "suppressFillHandle?": "/** Set to true to prevent the fillHandle from being rendered in any cell that belongs to this column */",
       "floatingFilter?": "/** Whether to display a floating filter for this column. */",
       "chartDataType?": "/** Defines the column data type used when charting */",
       "columnsMenuParams?": "/** Params to customise the columns menu behaviour and appearance */"
