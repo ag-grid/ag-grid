@@ -1,0 +1,71 @@
+@import "../../ag-theme-base/sass/ag-theme-base-default-params";
+@import "./ag-theme-material-font-vars";
+
+$ag-theme-material-default-params: (
+    // Taking primary and accent from the indigo / pink theme: https://github.com/angular/material2/blob/master/src/lib/core/theming/prebuilt/indigo-pink.scss
+    material-primary-color: #3f51b5,
+    material-accent-color: #ff4081,
+
+    // Colors
+    foreground-color: rgba(#000, 0.87),
+    secondary-foreground-color: ag-derived(foreground-color, $opacity: 0.54),
+    disabled-foreground-color: ag-derived(foreground-color, $opacity: 0.38),
+    background-color: #fff,
+    header-background-color: #fff,
+    subheader-background-color: #eee,
+    header-cell-hover-background-color: ag-derived(header-background-color, $darken: 5%),
+    chip-background-color: #e2e2e2,
+    range-selection-background-color: rgba(122, 134, 203, 0.1),
+    range-selection-highlight-color: #fce4ec,
+    row-hover-color: #fafafa,
+    column-hover-color: #fafafa,
+    control-panel-background-color: #fafafa,
+    selected-row-background-color: #eee,
+    range-selection-border-color: ag-derived(material-primary-color),
+    checkbox-checked-color: ag-derived(material-accent-color),
+    checkbox-unchecked-color: #333,
+    value-change-value-highlight-background-color: #00acc1,
+
+    // Borders
+    borders: false,
+    borders-critical: true,
+    border-color: #e2e2e2,
+
+    // Sizing
+    grid-size: 8px,
+    icon-size: 18px,
+    header-height: ag-derived(grid-size, $times: 7),
+    row-height: ag-derived(grid-size, $times: 6),
+    cell-horizontal-padding: ag-derived(grid-size, $times: 3),
+    list-item-height: ag-derived(grid-size, $times: 4),
+    row-group-indent-size: ag-derived(grid-size, $times: 3, $plus: icon-size),
+    filter-tool-panel-sub-level-row-height: ag-derived(grid-size, $times: 4),
+    checkbox-border-radius: 2px,
+    toggle-button-switch-border-width: 2px,
+    toggle-button-height: ag-derived(icon-size),
+    widget-container-horizontal-padding: ag-derived(grid-size, $times: 1.5),
+    widget-container-vertical-padding: ag-derived(grid-size, $times: 2),
+    widget-horizontal-spacing: ag-derived(grid-size, $times: 1.5),
+    widget-vertical-spacing: ag-derived(grid-size, $times: 1.75),
+
+    // Fonts
+    font-family: ("Roboto", sans-serif),
+    font-size: 13px,
+    icon-font-family: $ag-theme-material-icon-font-family,
+    icons-data: $ag-theme-material-icons-data,
+    icons-font-codes: $ag-theme-material-icons-font-codes,
+
+    // Misc
+    selected-tab-underline-color: ag-derived(material-primary-color),
+    selected-tab-underline-width: 2px,
+    full-width-tabs: true,
+
+    input-focus-border-color: ag-derived(material-primary-color),
+    
+    input-focus-box-shadow: 0 0 0 5px rgba(32,33,36,0.122),
+
+    card-shadow: (0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12)),
+    card-radius: 2px,
+);
+
+$ag-theme-material-default-params: map-merge($ag-theme-base-default-params, $ag-theme-material-default-params);

@@ -1,0 +1,31 @@
+import { Column, Component } from "@ag-grid-community/core";
+export declare class ToolPanelFilterComp extends Component {
+    private static TEMPLATE;
+    private eFilterToolPanelHeader;
+    private eFilterName;
+    private agFilterToolPanelBody;
+    private eFilterIcon;
+    private eExpand;
+    private filterManager;
+    private columnModel;
+    private eExpandChecked;
+    private eExpandUnchecked;
+    private hideHeader;
+    private column;
+    private expanded;
+    private underlyingFilter;
+    constructor(hideHeader?: boolean);
+    private postConstruct;
+    setColumn(column: Column): void;
+    getColumn(): Column;
+    getColumnFilterName(): string | null;
+    addCssClassToTitleBar(cssClass: string): void;
+    private addInIcon;
+    isFilterActive(): boolean;
+    private onFilterChanged;
+    toggleExpanded(): void;
+    expand(): void;
+    collapse(): void;
+    refreshFilter(): void;
+    private onFilterOpened;
+}

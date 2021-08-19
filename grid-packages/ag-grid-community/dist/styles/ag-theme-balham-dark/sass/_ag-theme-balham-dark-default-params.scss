@@ -1,0 +1,32 @@
+@import "../../ag-theme-balham/sass/ag-theme-balham-default-params";
+
+$ag-theme-balham-dark-default-params: (
+    // override colours from balham theme
+    foreground-color: #F5F5F5,
+    secondary-foreground-color: ag-derived(foreground-color),
+    header-foreground-color: ag-derived(foreground-color, $opacity: 0.64),
+    disabled-foreground-color: ag-derived(foreground-color, $opacity: 0.38),
+    background-color: #2d3436,
+    header-background-color: #1c1c1c,
+    subheader-background-color: #111,
+    control-panel-background-color: #202020,
+    checkbox-unchecked-color: #ecf0f1,
+    toggle-button-off-background-color: transparent,
+    toggle-button-off-border-color: ag-derived(foreground-color),
+
+    balham-active-color: #00B0FF,
+    range-selection-chart-category-background-color: rgba(#1ab14a, 0.5),
+    range-selection-chart-background-color: rgba(#2da6ff, 0.5),
+    border-color: #424242,
+    odd-row-background-color: ag-derived(background-color, $darken: 3),
+    row-hover-color: ag-derived(background-color, $lighten: 7),
+    column-hover-color: ag-derived(background-color, $lighten: 7),
+    selected-row-background-color: ag-derived(balham-active-color, $darken: 25),
+
+    input-border-color: #f0f0f0,
+    input-disabled-background-color: rgba(#302e2e, 0.3),
+
+    input-focus-box-shadow: 0 0 4px 1.5px ag-derived(input-focus-border-color),
+);
+
+$ag-theme-balham-dark-default-params: map-merge($ag-theme-balham-default-params, $ag-theme-balham-dark-default-params);
