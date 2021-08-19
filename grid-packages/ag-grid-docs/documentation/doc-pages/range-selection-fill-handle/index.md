@@ -27,11 +27,21 @@ The example below demonstrates the basic features of the fill handle:
 
 <grid-example title='Fill Handle' name='fill-handle' type='generated' options='{ "enterprise": true, "exampleHeight": 560, "modules": ["clientside", "range"] }'></grid-example>
 
-### Example: Reducing the Range Size
+### Example: Preventing Reducing the Range Size
 
 If the behaviour for decreasing selection needs to be prevented, the flag `suppressClearOnFillReduction` should be set to `true`.
 
 <grid-example title='Fill Handle - Range Reduction' name='fill-handle-reduction' type='generated' options='{ "enterprise": true, "exampleHeight": 560, "modules": ["clientside", "range"] }'></grid-example>
+
+## Suppressing the Fill Handle
+
+When blocking the Fill Handle for certain columns is part of the requirement, the flag `suppressFillHandle` should be set to `true` in the [ColDef](/column-properties/).
+
+In the example below note the following: 
+
+- The Fill Handle is disabled in the **Country** and **Date** columns.
+
+<grid-example title='Suppress Fill Handle' name='suppress-fill-handle' type='generated' options='{ "enterprise": true, "exampleHeight": 560, "modules": ["clientside", "range"] }'></grid-example>
 
 ## Custom User Function
 
