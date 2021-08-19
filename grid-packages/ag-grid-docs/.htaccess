@@ -88,7 +88,15 @@ AddType text/javascript ts jsx
     RewriteCond %{REQUEST_URI} /+[^\.]+$
     RewriteRule ^(.+[^/])$ %{REQUEST_URI}/ [R=301,L]
 
+    # Redirect paths after a php file (ie index.php/path/path => index.php)
+    # arguments will be carried over (ie index.php?abc=true will stay as is)
+    RewriteRule ^(.*)\.php(\/.+)$ /$1.php [R=301,L]
+
     # Redirect old pages to new documentation structure
+    Redirect 301 /javascript-grid/ /javascript-data-grid/
+    Redirect 301 /react-grid/ /react-data-grid/
+    Redirect 301 /angular-grid/ /angular-data-grid/
+    Redirect 301 /vue-grid/ /vue-data-grid/
     Redirect 301 /ag-grid-8-performance-hacks-for-javascript/ /javascript-data-grid/8-performance-hacks-for-javascript/
     Redirect 301 /ag-grid-angular-aot-dynamic-components/ https://medium.com/ag-grid/understanding-aot-and-dynamic-components-in-angular-2-9b7548ce5845
     Redirect 301 /ag-grid-angular-connect-2016/ https://medium.com/ag-grid/were-gonna-need-a-bigger-boat-from-speaker-to-sponsor-with-ag-grid-cf5e01a2d9ba
@@ -2218,7 +2226,7 @@ AddType text/javascript ts jsx
     Redirect 301 /vue-grid/viewport/ /vue-data-grid/viewport/
     Redirect 301 /nodejs-server-side-operations/ /javascript-data-grid/server-side-operations-nodejs/
     Redirect 301 /oracle-server-side-operations/ /javascript-data-grid/server-side-operations-oracle/
-    Redirect 301 /quote/ /ecommerce/#/ecommerce/quote-lookup
+    Redirect 301 /quote/ /ecommerce//ecommerce/quote-lookup
     Redirect 301 /react-15/ /react-data-grid/getting-started/
     Redirect 301 /react-and-ag-grid/ https://medium.com/ag-grid/building-a-react-datagrid-using-ag-grid-a-perfect-match-5a4c45f3bedb
     Redirect 301 /react-apis/ /react-data-grid/getting-started/
