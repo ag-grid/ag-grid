@@ -217,6 +217,7 @@ export class FillHandle extends AbstractSelectionHandle {
 
         const fillValues = (currentValues: any[], col: Column, rowNode: RowNode, updateInitialSet: () => boolean) => {
             let currentValue: any;
+            let skipValue: boolean = false;
 
             if (withinInitialRange) {
                 currentValue = this.valueService.getValue(col, rowNode);
@@ -225,11 +226,18 @@ export class FillHandle extends AbstractSelectionHandle {
             } else {
                 currentValue = this.processValues(e, currentValues, initialValues, col, rowNode, idx++);
                 if (col.isCellEditable(rowNode)) {
-                    rowNode.setDataValue(col, currentValue);
+                    const cellValue = this.valueService.getValue(col, rowNode);
+                    if (cellValue !== currentValue) {
+                        rowNode.setDataValue(col, currentValue);
+                    } else {
+                        skipValue = true;
+                    }
                 }
             }
 
-            currentValues.push(currentValue);
+            if (!skipValue) {
+                currentValues.push(currentValue);
+            }
         };
 
         if (isVertical) {
@@ -293,8 +301,8 @@ export class FillHandle extends AbstractSelectionHandle {
                 columnApi: this.gridOptionsWrapper.getColumnApi()!,
                 context: this.gridOptionsWrapper.getContext(),
                 direction,
-                column: isVertical ? col : undefined,
-                rowNode: !isVertical ? rowNode : undefined // only present if left / right
+                column: col,
+                rowNode: rowNode
             });
 
             if (userResult !== false) {

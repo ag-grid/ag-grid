@@ -1643,8 +1643,8 @@
       "columnApi": "ColumnApi",
       "context": "any",
       "direction": "string",
-      "column?": "Column",
-      "rowNode?": "RowNode"
+      "column": "Column",
+      "rowNode": "RowNode"
     }
   },
   "GetDataPath": {

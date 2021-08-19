@@ -14,6 +14,9 @@ The `fillHandleDirection` property can be set to `x`, `y` and `xy` in the `gridO
 [[note]]
 | It's important to note that if you enable both `enableFillHandle` and `enableRangeHandle`, the Fill Handle will take precedence.
 
+[[warning]]
+| Cells that are **not editable** will not be altered by the Fill Handle.
+
 ### Example: Range Selection with Fill Handle
 
 The example below demonstrates the basic features of the fill handle:
@@ -64,8 +67,8 @@ interface FillOperationParams {
     columnApi: ColumnApi, // the grid Column API
     context: any,  // the context
     direction: string // 'up', 'down', 'left' or 'right'
-    column?: Column, // only present if direction is 'up' / 'down'
-    rowNode?: RowNode // only present if direction is 'left' / 'right'
+    column: Column, // the Column of the current cell being changed
+    rowNode: RowNode // the RowNode of the current cell being changed
 }
 
 // example fillOperation
@@ -86,3 +89,11 @@ The example below will use the custom `fillOperation` for the **Day of the week*
 
 <grid-example title='Custom Fill Operation' name='custom-fill-operation' type='generated' options='{ "enterprise": true, "exampleHeight": 560, "modules": ["clientside", "range"] }'></grid-example>
 
+### Example: Skipping Columns in the Fill Operation
+
+The example below will use the custom `fillOperation` to prevent values in the **Country** column from being altered by the Fill Handle.
+
+[[note]]
+| When the `fillOperation` function returns `params.currentCellValue` that value is not added to the `params.values` list. This allows users to skip any cells in the Fill Handle operation.
+
+<grid-example title='Skipping Columns' name='skipping-columns' type='generated' options='{ "enterprise": true, "exampleHeight": 560, "modules": ["clientside", "range"] }'></grid-example>

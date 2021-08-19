@@ -650,8 +650,8 @@ export interface FillOperationParams {
     columnApi: ColumnApi;
     context: any;
     direction: string; // up, down, left or right
-    column?: Column; // only present if up / down
-    rowNode?: RowNode; // only present if left / right,
+    column: Column;
+    rowNode: RowNode;
 }
 
 export interface GetDataPath {
