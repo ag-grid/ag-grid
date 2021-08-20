@@ -1012,7 +1012,7 @@
             "url": "/tree-data/",
             "enterprise": true,
             "showInCollapsed": true
-          },
+          },          
           {
             "title": "Pivoting",
             "url": "/pivoting/",
@@ -1720,6 +1720,10 @@
               {
                 "title": "Legend",
                 "url": "/charts-legend/"
+              },
+              {
+                "title": "Series",
+                "url": "/charts-series/"
               },
               {
                 "title": "Themes",
