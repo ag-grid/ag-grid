@@ -5,7 +5,7 @@ import { MiniLineChart } from "./miniLineChart";
 export abstract class AgSparkline {
     static create(type: string, data: number[]): MiniLineChart | MiniAreaChart | MiniColumnChart {
         const component = getChartComponent(type);
-        const sparkline = new component()
+        const sparkline = new component();
 
         sparkline.data = data;
         sparkline.width = 100;

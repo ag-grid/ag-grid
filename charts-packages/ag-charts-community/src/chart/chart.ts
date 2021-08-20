@@ -1002,9 +1002,7 @@ export abstract class Chart extends Observable {
             });
         }
 
-        if (closestDatum) {
-            return closestDatum;
-        }
+        return closestDatum;
     }
 
     protected onMouseMove(event: MouseEvent): void {

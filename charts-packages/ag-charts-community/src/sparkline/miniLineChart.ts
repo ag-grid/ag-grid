@@ -10,7 +10,12 @@ import { MiniChart, SeriesNodeDatum } from './miniChart';
 import { toTooltipHtml } from './miniChartTooltip';
 import { getMarkerShape } from './util';
 
-interface LineNodeDatum extends SeriesNodeDatum { }
+interface LineNodeDatum extends SeriesNodeDatum { 
+    readonly point: {
+        readonly x: number;
+        readonly y: number;
+    }
+}
 
 interface MarkerFormat {
     enabled?: boolean;
@@ -214,9 +219,8 @@ export class MiniLineChart extends MiniChart {
             node.stroke = markerFormat && markerFormat.stroke || markerStroke;
             node.strokeWidth = markerFormat && markerFormat.strokeWidth || markerStrokeWidth;
 
-            // hmm
-            node.translationX = point!.x;
-            node.translationY = point!.y;
+            node.translationX = point.x;
+            node.translationY = point.y;
             node.visible = markerFormat && markerFormat.enabled || marker.enabled && node.size > 0;
         });
     }

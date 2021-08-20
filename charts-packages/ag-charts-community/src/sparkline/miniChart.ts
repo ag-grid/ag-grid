@@ -110,7 +110,6 @@ export abstract class MiniChart extends Observable {
         
             MiniChart.tooltipInstances.set(document, this.tooltip);
         } else {
-            // hmm
             this.tooltip = MiniChart.tooltipInstances.get(document)!;
         }
 
@@ -146,7 +145,6 @@ export abstract class MiniChart extends Observable {
         return this._height;
     }
 
-    // hmm
     protected yData: (number | undefined)[] = [];
     protected xData: (number | undefined)[] = [];
 
@@ -269,14 +267,17 @@ export abstract class MiniChart extends Observable {
         const hitPoint = this.rootGroup.transformPoint(x, y);
 
         this.getNodeData().forEach(datum => {
-            const distance = getDistance(datum.point!, hitPoint);
+            if (!datum.point) {
+                return;
+            }
+            const distance = getDistance(hitPoint, datum.point);
             if (distance < minDistance) {
                 minDistance = distance;
                 closestDatum = datum;
             }
         });
 
-        return closestDatum && closestDatum;
+        return closestDatum;
     }
 
     private handleTooltip(datum: SeriesNodeDatum): void {
@@ -284,6 +285,7 @@ export abstract class MiniChart extends Observable {
         const { canvasElement } = this;
         const canvasRect = canvasElement.getBoundingClientRect();
         const { pageXOffset, pageYOffset } = window;
+        // pickClosestSeriesNodeDatum only returns datum with point
         const point = this.rootGroup.inverseTransformPoint(datum.point!.x, datum.point!.y);
 
         const meta = {
