@@ -65,5 +65,6 @@ export const time = {
 
 export * from "./chart/agChartOptions";
 export * from "./chart/agChart";
-export * from "./sparkline/agSparkline";
 export * from "./chart/themes/chartTheme";
+
+export * from "./sparkline/agSparkline";
