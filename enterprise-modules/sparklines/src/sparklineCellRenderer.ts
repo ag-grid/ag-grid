@@ -2,13 +2,14 @@ import {
     Autowired,
     Component,
     ICellRenderer,
+    ISparklineCellRendererParams,
     RefSelector,
     ResizeObserverService
 } from "@ag-grid-community/core";
-import { AgSparkline, AgSparklineOptions } from "ag-charts-community";
-import { MiniLineChart } from "ag-charts-community/dist/cjs/sparkline/miniLineChart";
-import { MiniAreaChart } from "ag-charts-community/dist/cjs/sparkline/miniAreaChart";
-import { MiniColumnChart } from "ag-charts-community/dist/cjs/sparkline/miniColumnChart";
+import { MiniLineChart } from "./sparkline/miniLineChart";
+import { MiniAreaChart } from "./sparkline/miniAreaChart";
+import { MiniColumnChart } from "./sparkline/miniColumnChart";
+import { AgSparkline, AgSparklineOptions } from "./sparkline/agSparkline";
 
 export class SparklineCellRenderer extends Component implements ICellRenderer {
 
@@ -27,7 +28,8 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
         super(SparklineCellRenderer.TEMPLATE);
     }
 
-    public init(params: any): void {
+    public init(params: ISparklineCellRendererParams): void {
+
         // this.TIMER = window.setTimeout(() => {
             const { clientWidth, clientHeight } = this.getGui();
 

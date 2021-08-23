@@ -9,7 +9,7 @@
         "sourceMap": true,
         "types": [],                /* to prevent inclusion of node types etc, amongst others - sub modules need to specify types they require */
         "lib": [
-            "es5",
+            "es6", /* FIXME: temp upgrade for sparklines */
             "ES2015.Collection",
             "dom"
         ]
