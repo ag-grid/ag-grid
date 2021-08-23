@@ -56,19 +56,19 @@ function generateAngularInputOutputs(compUtils, { typeLookup, eventTypeLookup, d
         result += `    @Output() public ${event}: EventEmitter<${eventTypeLookup[onEvent]}> = new EventEmitter<${eventTypeLookup[onEvent]}>();${EOL}`;
     });
 
-    //result = addTypeCoercionHints(result, compUtils.BOOLEAN_PROPERTIES);
+    result = addTypeCoercionHints(result, compUtils.BOOLEAN_PROPERTIES);
 
     return result;
 }
 
-/* function addTypeCoercionHints(result, boolProps) {
+function addTypeCoercionHints(result, boolProps) {
     result += `${EOL}    // Enable type coercion for boolean Inputs to support use like 'enableCharts' instead of forcing '[enableCharts]="true"' ${EOL}`;
     result += `    // https://angular.io/guide/template-typecheck#input-setter-coercion ${EOL}`;
     boolProps.forEach((property) => {
         result += `    static ngAcceptInputType_${property}: boolean | '';${EOL}`;
     });
     return result;
-} */
+}
 
 function getSafeType(typeName) {
     let inputType = 'any';
@@ -167,7 +167,7 @@ function getGridColumnPropertiesJs() {
         }
     });
 
-    //result = addTypeCoercionHints(result, ColDefUtil.BOOLEAN_PROPERTIES);
+    result = addTypeCoercionHints(result, ColDefUtil.BOOLEAN_PROPERTIES);
 
     return result;
 }

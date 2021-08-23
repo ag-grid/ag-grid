@@ -287,6 +287,48 @@ export class AgGridColumn {
     @Input() public cellEditorPopup: boolean | undefined = undefined;
     /** Set to true to prevent the fillHandle from being rendered in any cell that belongs to this column     */
     @Input() public suppressFillHandle: boolean | undefined = undefined;
+
+    // Enable type coercion for boolean Inputs to support use like 'enableCharts' instead of forcing '[enableCharts]="true"' 
+    // https://angular.io/guide/template-typecheck#input-setter-coercion 
+    static ngAcceptInputType_suppressCellFlash: boolean | '';
+    static ngAcceptInputType_suppressColumnsToolPanel: boolean | '';
+    static ngAcceptInputType_suppressFiltersToolPanel: boolean | '';
+    static ngAcceptInputType_openByDefault: boolean | '';
+    static ngAcceptInputType_marryChildren: boolean | '';
+    static ngAcceptInputType_hide: boolean | '';
+    static ngAcceptInputType_initialHide: boolean | '';
+    static ngAcceptInputType_rowGroup: boolean | '';
+    static ngAcceptInputType_initialRowGroup: boolean | '';
+    static ngAcceptInputType_pivot: boolean | '';
+    static ngAcceptInputType_initialPivot: boolean | '';
+    static ngAcceptInputType_checkboxSelection: boolean | '';
+    static ngAcceptInputType_headerCheckboxSelection: boolean | '';
+    static ngAcceptInputType_headerCheckboxSelectionFilteredOnly: boolean | '';
+    static ngAcceptInputType_suppressMenu: boolean | '';
+    static ngAcceptInputType_suppressMovable: boolean | '';
+    static ngAcceptInputType_lockPosition: boolean | '';
+    static ngAcceptInputType_lockVisible: boolean | '';
+    static ngAcceptInputType_lockPinned: boolean | '';
+    static ngAcceptInputType_unSortIcon: boolean | '';
+    static ngAcceptInputType_suppressSizeToFit: boolean | '';
+    static ngAcceptInputType_suppressAutoSize: boolean | '';
+    static ngAcceptInputType_enableRowGroup: boolean | '';
+    static ngAcceptInputType_enablePivot: boolean | '';
+    static ngAcceptInputType_enableValue: boolean | '';
+    static ngAcceptInputType_editable: boolean | '';
+    static ngAcceptInputType_suppressPaste: boolean | '';
+    static ngAcceptInputType_suppressNavigable: boolean | '';
+    static ngAcceptInputType_enableCellChangeFlash: boolean | '';
+    static ngAcceptInputType_rowDrag: boolean | '';
+    static ngAcceptInputType_dndSource: boolean | '';
+    static ngAcceptInputType_autoHeight: boolean | '';
+    static ngAcceptInputType_wrapText: boolean | '';
+    static ngAcceptInputType_sortable: boolean | '';
+    static ngAcceptInputType_resizable: boolean | '';
+    static ngAcceptInputType_singleClickEdit: boolean | '';
+    static ngAcceptInputType_floatingFilter: boolean | '';
+    static ngAcceptInputType_cellEditorPopup: boolean | '';
+    static ngAcceptInputType_suppressFillHandle: boolean | '';
     // @END@
 
 }
