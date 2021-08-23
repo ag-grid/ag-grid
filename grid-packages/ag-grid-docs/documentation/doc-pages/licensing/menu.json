@@ -1361,6 +1361,12 @@
             "url": "/sparklines-overview/",
             "enterprise": true,
             "showInCollapsed": true
+          },
+          {
+            "title": "Data Updates",
+            "url": "/sparklines-data-updates/",
+            "enterprise": true,
+            "showInCollapsed": true
           }
         ]
       },

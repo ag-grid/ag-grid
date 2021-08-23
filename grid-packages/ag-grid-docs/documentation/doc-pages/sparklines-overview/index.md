@@ -24,8 +24,8 @@ const gridOptions = {
 }
 </snippet>
 
-<grid-example title='Enabling Sparklines' name='enabling-sparklines' type='generated' options='{ "enterprise": true, "exampleHeight": 540, "modules": ["clientside", "sparklines"] }'></grid-example>
+<grid-example title='Enabling Sparklines' name='enabling-sparklines' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
 ## Next Up
 
-Continue to the next section to learn about the: [Range Chart](/integrated-charts-range-chart/).
+Continue to the next section to learn about the: [Data Updates](/sparklines-data-updates/).

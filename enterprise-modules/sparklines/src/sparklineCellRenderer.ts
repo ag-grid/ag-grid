@@ -9,7 +9,7 @@ import {
 import { MiniLineChart } from "./sparkline/miniLineChart";
 import { MiniAreaChart } from "./sparkline/miniAreaChart";
 import { MiniColumnChart } from "./sparkline/miniColumnChart";
-import { AgColumnSparklineOptions, AgSparkline, AgSparklineOptions } from "./sparkline/agSparkline";
+import { AgSparkline } from "./sparkline/agSparkline";
 
 export class SparklineCellRenderer extends Component implements ICellRenderer {
 
@@ -21,7 +21,6 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
     @RefSelector('eSparkline') private eSparkline: HTMLElement;
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
 
-    // private TIMER: number;
     private sparkline: MiniLineChart | MiniAreaChart | MiniColumnChart;
 
     constructor() {
@@ -29,20 +28,16 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
     }
 
     public init(params: ISparklineCellRendererParams): void {
+        const { clientWidth, clientHeight } = this.getGui();
+        const options = {
+            type: params.sparklineType,
+            data: params.value,
+            width: clientWidth,
+            height: clientHeight,
+        }
 
-        // this.TIMER = window.setTimeout(() => {
-            const { clientWidth, clientHeight } = this.getGui();
-
-            const options = {
-                type: params.sparklineType,
-                data: params.value,
-                width: clientWidth,
-                height: clientHeight,
-            }
-
-            this.sparkline = AgSparkline.create(options as any);
-            this.eSparkline.appendChild(this.sparkline.canvasElement);
-        // }, 100);
+        this.sparkline = AgSparkline.create(options as any);
+        this.eSparkline.appendChild(this.sparkline.canvasElement);
 
         const updateSparklineWidthFunc = () => {
             if (this.sparkline) {
@@ -56,12 +51,12 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
         this.addDestroyFunc(() => unsubscribeFromResize());
     }
 
-    public refresh(): boolean {
-        return false;
+    public refresh(params: ISparklineCellRendererParams): boolean {
+        this.sparkline.data = params.value;
+        return true;
     }
 
     public destroy() {
-        // window.clearTimeout(this.TIMER);
         super.destroy();
     }
 }
