@@ -219,7 +219,6 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
     }
 
     let propertyType = getPropertyType(type, config);
-
     const typeUrl = isObject ? `#reference-${id}.${name}` : getTypeUrl(type, framework);
 
     const codeSection = <FunctionCodeSample framework={framework} name={name} type={type} config={config} />;
@@ -243,7 +242,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
             <div>
                 {typeUrl ?
                     <a className={styles['reference__property-type']} href={typeUrl} target={typeUrl.startsWith('http') ? '_blank' : '_self'} rel="noreferrer">
-                        {isObject ? getInterfaceName(name) : type}
+                        {isObject ? getInterfaceName(name) : propertyType}
                     </a> :
                     <span className={styles['reference__property-type']}>{propertyType}</span>}
             </div>

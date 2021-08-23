@@ -2,7 +2,8 @@
     "rowNodeEvents": {
         "meta": {
             "displayName": "Events on Row Nodes",
-            "description": "The following events can be listened to on <code>rowNodes</code>:"
+            "description": "The following events can be listened to on <code>rowNodes</code>:",
+            "isEvent": true
         },
         "rowSelected": {
             "description": "Row was selected or unselected.",
