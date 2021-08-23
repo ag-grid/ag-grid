@@ -23,8 +23,6 @@ var gridOptions = {
     // rowBuffer: 20,
 };
 
-
-
 function addSparklineData(data) {
     function randomNumber(min, max) {
         return Math.floor(Math.random() * (max - min) + min);
