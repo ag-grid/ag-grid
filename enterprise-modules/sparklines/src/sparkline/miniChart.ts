@@ -15,6 +15,14 @@ export interface Point {
     readonly x: number;
     readonly y: number;
 }
+
+export interface HighlightStyle {
+    size?: number;
+    fill?: string;
+    stroke?: string;
+    strokeWidth?: number;
+}
+
 interface SeriesRect {
     x: number;
     y: number;
@@ -71,7 +79,7 @@ export abstract class MiniChart extends Observable {
     @reactive() padding: Padding = new Padding(3);
 
     readonly axis = new MiniChartAxis();
-    readonly highlightStyle = {
+    readonly highlightStyle: HighlightStyle = {
         size: 6,
         fill: 'yellow',
         stroke: 'yellow',
@@ -253,11 +261,6 @@ export abstract class MiniChart extends Observable {
     }
 
     private pickClosestSeriesNodeDatum(x: number, y: number): SeriesNodeDatum | undefined {
-        type Point = {
-            x: number,
-            y: number
-        }
-
         function getDistance(p1: Point, p2: Point): number {
             return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
         }

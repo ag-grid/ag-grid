@@ -6,15 +6,12 @@ import { Path } from '../scene/shape/path';
 import { Observable, reactive } from '../util/observable';
 import { Selection } from '../scene/selection';
 import { Marker } from './marker';
-import { MiniChart, SeriesNodeDatum } from './miniChart';
+import { MiniChart, Point, SeriesNodeDatum } from './miniChart';
 import { toTooltipHtml } from './miniChartTooltip';
 import { getMarkerShape } from './util';
 
 interface LineNodeDatum extends SeriesNodeDatum { 
-    readonly point: {
-        readonly x: number;
-        readonly y: number;
-    }
+    readonly point: Point;
 }
 
 interface MarkerFormat {

@@ -9,7 +9,7 @@ import {
 import { MiniLineChart } from "./sparkline/miniLineChart";
 import { MiniAreaChart } from "./sparkline/miniAreaChart";
 import { MiniColumnChart } from "./sparkline/miniColumnChart";
-import { AgSparkline, AgSparklineOptions } from "./sparkline/agSparkline";
+import { AgColumnSparklineOptions, AgSparkline, AgSparklineOptions } from "./sparkline/agSparkline";
 
 export class SparklineCellRenderer extends Component implements ICellRenderer {
 
@@ -33,14 +33,14 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
         // this.TIMER = window.setTimeout(() => {
             const { clientWidth, clientHeight } = this.getGui();
 
-            const options: AgSparklineOptions = {
+            const options = {
                 type: params.sparklineType,
                 data: params.value,
                 width: clientWidth,
                 height: clientHeight,
             }
 
-            this.sparkline = AgSparkline.create(options);
+            this.sparkline = AgSparkline.create(options as any);
             this.eSparkline.appendChild(this.sparkline.canvasElement);
         // }, 100);
 
