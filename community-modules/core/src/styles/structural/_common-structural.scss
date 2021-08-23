@@ -687,6 +687,11 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     }
 }
 
+.ag-sparkline-wrapper {
+    height: 100%;
+    width: 100%;
+}
+
 .ag-full-width-row .ag-cell-wrapper.ag-row-group {
     align-items: center;
 }

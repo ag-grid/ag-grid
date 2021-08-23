@@ -1353,6 +1353,18 @@
         ]
       },
       {
+        "title": "Sparklines",
+        "icon": "icon-charts",
+        "items": [
+          {
+            "title": "Overview",
+            "url": "/sparklines-overview/",
+            "enterprise": true,
+            "showInCollapsed": true
+          }
+        ]
+      },
+      {
         "title": "Integrated Charts",
         "icon": "icon-charts",
         "items": [
