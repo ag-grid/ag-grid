@@ -20,6 +20,7 @@ const RowGroupingModule = require("../../../../../enterprise-modules/row-groupin
 const ServerSideRowModelModule = require("../../../../../enterprise-modules/server-side-row-model/dist/cjs/serverSideRowModelModule").ServerSideRowModelModule;
 const SetFilterModule = require("../../../../../enterprise-modules/set-filter/dist/cjs/setFilterModule").SetFilterModule;
 const SideBarModule = require("../../../../../enterprise-modules/side-bar/dist/cjs/sideBarModule").SideBarModule;
+const SparklinesModule = require("../../../../../enterprise-modules/sparklines/dist/cjs/sparklinesModule").SparklinesModule;
 const StatusBarModule = require("../../../../../enterprise-modules/status-bar/dist/cjs/statusBarModule").StatusBarModule;
 const ViewportRowModelModule = require("../../../../../enterprise-modules/viewport-row-model/dist/cjs/viewportRowModelModule").ViewportRowModelModule;
 const ClientSideRowModelModule = require("../../../../../community-modules/client-side-row-model/dist/cjs/clientSideRowModelModule").ClientSideRowModelModule;
@@ -39,6 +40,7 @@ ModuleRegistry.register(RowGroupingModule);
 ModuleRegistry.register(ServerSideRowModelModule);
 ModuleRegistry.register(SetFilterModule);
 ModuleRegistry.register(SideBarModule);
+ModuleRegistry.register(SparklinesModule);
 ModuleRegistry.register(StatusBarModule);
 ModuleRegistry.register(ViewportRowModelModule);
 ModuleRegistry.register(ClientSideRowModelModule);

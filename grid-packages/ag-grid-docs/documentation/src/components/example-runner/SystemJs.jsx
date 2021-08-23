@@ -74,6 +74,7 @@ const localConfiguration = {
         "@ag-grid-enterprise/server-side-row-model": `${localPrefix}/@ag-grid-enterprise/server-side-row-model/dist/server-side-row-model.cjs.js`,
         "@ag-grid-enterprise/set-filter": `${localPrefix}/@ag-grid-enterprise/set-filter/dist/set-filter.cjs.js`,
         "@ag-grid-enterprise/side-bar": `${localPrefix}/@ag-grid-enterprise/side-bar/dist/side-bar.cjs.js`,
+        "@ag-grid-enterprise/sparklines": `${localPrefix}/@ag-grid-enterprise/sparklines/dist/sparklines.cjs.js`,
         "@ag-grid-enterprise/status-bar": `${localPrefix}/@ag-grid-enterprise/status-bar/dist/status-bar.cjs.js`,
         "@ag-grid-enterprise/viewport-row-model": `${localPrefix}/@ag-grid-enterprise/viewport-row-model/dist/viewport-row-model.cjs.js`,
         /* END OF GRID ENTERPRISE MODULES PATHS DEV - DO NOT DELETE */
@@ -156,6 +157,7 @@ const publishedConfiguration = {
         "@ag-grid-enterprise/server-side-row-model": `https://unpkg.com/@ag-grid-enterprise/server-side-row-model/dist/server-side-row-model.cjs.js`,
         "@ag-grid-enterprise/set-filter": `https://unpkg.com/@ag-grid-enterprise/set-filter/dist/set-filter.cjs.js`,
         "@ag-grid-enterprise/side-bar": `https://unpkg.com/@ag-grid-enterprise/side-bar/dist/side-bar.cjs.js`,
+        "@ag-grid-enterprise/sparklines": `https://unpkg.com/@ag-grid-enterprise/sparklines/dist/sparklines.cjs.js`,
         "@ag-grid-enterprise/status-bar": `https://unpkg.com/@ag-grid-enterprise/status-bar/dist/status-bar.cjs.js`,
         "@ag-grid-enterprise/viewport-row-model": `https://unpkg.com/@ag-grid-enterprise/viewport-row-model/dist/viewport-row-model.cjs.js`,
         /* END OF GRID ENTERPRISE MODULES PATHS PROD - DO NOT DELETE */
@@ -204,6 +206,7 @@ const SystemJs = ({ library, boilerplatePath, appLocation, startFile, options })
             "@ag-grid-enterprise/server-side-row-model": `${localPrefix}/@ag-grid-enterprise/server-side-row-model`,
             "@ag-grid-enterprise/set-filter": `${localPrefix}/@ag-grid-enterprise/set-filter`,
             "@ag-grid-enterprise/side-bar": `${localPrefix}/@ag-grid-enterprise/side-bar`,
+            "@ag-grid-enterprise/sparklines": `${localPrefix}/@ag-grid-enterprise/sparklines`,
             "@ag-grid-enterprise/status-bar": `${localPrefix}/@ag-grid-enterprise/status-bar`,
             "@ag-grid-enterprise/viewport-row-model": `${localPrefix}/@ag-grid-enterprise/viewport-row-model`,
             /* END OF GRID MODULES DEV - DO NOT DELETE */

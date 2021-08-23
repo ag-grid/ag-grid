@@ -13,6 +13,7 @@
     { "path" :  "enterprise-modules/side-bar" },
     { "path" :  "enterprise-modules/status-bar" },
     { "path" :  "enterprise-modules/range-selection" },
+    { "path" :  "enterprise-modules/sparklines" },
     { "path" :  "enterprise-modules/charts" },
     { "path" :  "enterprise-modules/row-grouping" },
     { "path" :  "enterprise-modules/column-tool-panel" },

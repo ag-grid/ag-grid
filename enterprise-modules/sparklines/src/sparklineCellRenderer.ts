@@ -2,7 +2,6 @@ import {
     Autowired,
     Component,
     ICellRenderer,
-    ISparklineCellRendererParams,
     RefSelector,
     ResizeObserverService
 } from "@ag-grid-community/core";
@@ -28,7 +27,7 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
         super(SparklineCellRenderer.TEMPLATE);
     }
 
-    public init(params: ISparklineCellRendererParams): void {
+    public init(params: any): void {
         // this.TIMER = window.setTimeout(() => {
             const { clientWidth, clientHeight } = this.getGui();
 

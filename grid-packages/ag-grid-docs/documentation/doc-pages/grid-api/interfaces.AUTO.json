@@ -7123,6 +7123,36 @@
       "isDisplayed()": "boolean"
     }
   },
+  "ISparklineCellRendererParams": {
+    "meta": {},
+    "type": {
+      "fullWidth?": "boolean",
+      "pinned?": "string | null",
+      "value": "any",
+      "valueFormatted": "any",
+      "data": "any",
+      "node": "RowNode",
+      "colDef?": "ColDef",
+      "column?": "Column",
+      "$scope": "any",
+      "rowIndex": "number",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any",
+      "eGridCell": "HTMLElement",
+      "eParentOfValue": "HTMLElement",
+      "getValue?": "() => any",
+      "setValue?": "(value: any) => void",
+      "formatValue?": "(value: any) => any",
+      "refreshCell?": "() => void",
+      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string) => void",
+      "sparklineType": "string"
+    },
+    "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */",
+      "registerRowDragger": "/** registerRowDragger: Function\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n */"
+    }
+  },
   "IStatusBarService": {
     "meta": {},
     "type": {
@@ -7458,6 +7488,7 @@
       "ServerSideRowModelModule = \"@ag-grid-enterprise/server-side-row-model\"",
       "ExcelExportModule = \"@ag-grid-enterprise/excel-export\"",
       "ClipboardModule = \"@ag-grid-enterprise/clipboard\"",
+      "SparklinesModule = \"@ag-grid-enterprise/sparklines\"",
       "AngularModule = \"@ag-grid-community/angular\"",
       "ReactModule = \"@ag-grid-community/react\"",
       "VueModule = \"@ag-grid-community/vue\"",

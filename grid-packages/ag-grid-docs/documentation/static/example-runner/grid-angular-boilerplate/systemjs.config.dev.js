@@ -258,6 +258,10 @@
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
+            '@ag-grid-enterprise/sparklines': {
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
+            },
             '@ag-grid-enterprise/status-bar': {
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'

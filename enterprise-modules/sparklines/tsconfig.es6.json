@@ -1,0 +1,16 @@
+{
+  "extends": "../../module-build/tsconfig.es6.json",
+  "compilerOptions": {
+    "outDir": "dist/es6",
+    "baseUrl": ".",
+    "paths": {
+      "@ag-*": [
+        "node_modules/@ag-*/dist/es6/main"
+      ]
+    }
+
+  },
+  "include": [
+    "src/**/*"
+  ]
+}

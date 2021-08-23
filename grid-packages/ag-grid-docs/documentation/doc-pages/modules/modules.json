@@ -61,6 +61,13 @@
     "exported": "LicenseManager"
   },
   {
+    "title": "Sparklines<enterprise-icon></enterprise-icon>",
+    "shortname": "sparklines",
+    "module": "@ag-grid-enterprise/sparklines",
+    "enterprise": true,
+    "exported": "SparklinesModule"
+  },
+  {
     "title": "Charts<enterprise-icon></enterprise-icon>",
     "shortname": "charts",
     "module": "@ag-grid-enterprise/charts",

@@ -32,6 +32,7 @@ export enum ModuleNames {
     ServerSideRowModelModule = "@ag-grid-enterprise/server-side-row-model", // or
     ExcelExportModule = "@ag-grid-enterprise/excel-export",
     ClipboardModule = "@ag-grid-enterprise/clipboard",
+    SparklinesModule = "@ag-grid-enterprise/sparklines",
 
     // framework wrappers currently don't provide beans, comps etc, so no need to be modules,
     // however i argue they should be as in theory they 'could' provide beans etc
