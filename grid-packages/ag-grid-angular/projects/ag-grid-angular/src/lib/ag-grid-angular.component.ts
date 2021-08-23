@@ -378,7 +378,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public cellFlashDelay: number | undefined = undefined;
     @Input() public cellFadeDelay: number | undefined = undefined;
     @Input() public tabIndex: number | undefined = undefined;
-    @Input() public localeTextFunc: (key: string, defaultValue: string) => string | undefined = undefined;
+    @Input() public localeTextFunc: ((key: string, defaultValue: string) => string) | undefined = undefined;
     /** @deprecated - this is now groupRowRendererParams.innerRenderer
      */
     @Input() public groupRowInnerRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined = undefined;
@@ -389,32 +389,32 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public dateComponentFramework: any = undefined;
     @Input() public groupRowRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined = undefined;
     @Input() public groupRowRendererFramework: any | undefined = undefined;
-    @Input() public isExternalFilterPresent: () =>  boolean | undefined = undefined;
-    @Input() public getRowHeight: (params: RowHeightParams) => number | undefined | null | undefined = undefined;
-    @Input() public doesExternalFilterPass: (node: RowNode) =>  boolean | undefined = undefined;
-    @Input() public getRowClass: (params: RowClassParams) => string | string[] | undefined | undefined = undefined;
-    @Input() public getRowStyle: (params: RowClassParams) => { [cssProperty: string]: string } | undefined = undefined;
+    @Input() public isExternalFilterPresent: (() =>  boolean) | undefined = undefined;
+    @Input() public getRowHeight: ((params: RowHeightParams) => number | undefined | null) | undefined = undefined;
+    @Input() public doesExternalFilterPass: ((node: RowNode) =>  boolean) | undefined = undefined;
+    @Input() public getRowClass: ((params: RowClassParams) => string | string[] | undefined) | undefined = undefined;
+    @Input() public getRowStyle: ((params: RowClassParams) => { [cssProperty: string]: string }) | undefined = undefined;
     @Input() public getContextMenuItems: GetContextMenuItems | undefined = undefined;
     @Input() public getMainMenuItems: GetMainMenuItems | undefined = undefined;
-    @Input() public processRowPostCreate: (params: ProcessRowParams) =>  void | undefined = undefined;
-    @Input() public processCellForClipboard: (params: ProcessCellForExportParams) =>  any | undefined = undefined;
-    @Input() public groupRowAggNodes: (nodes: RowNode[]) =>  any | undefined = undefined;
+    @Input() public processRowPostCreate: ((params: ProcessRowParams) =>  void) | undefined = undefined;
+    @Input() public processCellForClipboard: ((params: ProcessCellForExportParams) =>  any) | undefined = undefined;
+    @Input() public groupRowAggNodes: ((nodes: RowNode[]) =>  any) | undefined = undefined;
     @Input() public getRowNodeId: GetRowNodeIdFunc | undefined = undefined;
-    @Input() public isFullWidthCell: (rowNode: RowNode) =>  boolean | undefined = undefined;
+    @Input() public isFullWidthCell: ((rowNode: RowNode) =>  boolean) | undefined = undefined;
     @Input() public fullWidthCellRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined = undefined;
     @Input() public fullWidthCellRendererFramework: any | undefined = undefined;
-    @Input() public processSecondaryColDef: (colDef: ColDef) =>  void | undefined = undefined;
-    @Input() public processSecondaryColGroupDef: (colGroupDef: ColGroupDef) =>  void | undefined = undefined;
-    @Input() public getBusinessKeyForNode: (node: RowNode) =>  string | undefined = undefined;
-    @Input() public sendToClipboard: (params: SendToClipboardParams) => void | undefined = undefined;
-    @Input() public navigateToNextHeader: (params: NavigateToNextHeaderParams) => HeaderPosition | undefined = undefined;
-    @Input() public tabToNextHeader: (params: TabToNextHeaderParams) => HeaderPosition | undefined = undefined;
-    @Input() public navigateToNextCell: (params: NavigateToNextCellParams) => CellPosition | undefined = undefined;
-    @Input() public tabToNextCell: (params: TabToNextCellParams) => CellPosition | undefined = undefined;
-    @Input() public processCellFromClipboard: (params: ProcessCellForExportParams) =>  any | undefined = undefined;
-    @Input() public getDocument: () => Document | undefined = undefined;
-    @Input() public postProcessPopup: (params: PostProcessPopupParams) => void | undefined = undefined;
-    @Input() public getChildCount: (dataItem: any) =>  number | undefined = undefined;
+    @Input() public processSecondaryColDef: ((colDef: ColDef) =>  void) | undefined = undefined;
+    @Input() public processSecondaryColGroupDef: ((colGroupDef: ColGroupDef) =>  void) | undefined = undefined;
+    @Input() public getBusinessKeyForNode: ((node: RowNode) =>  string) | undefined = undefined;
+    @Input() public sendToClipboard: ((params: SendToClipboardParams) => void) | undefined = undefined;
+    @Input() public navigateToNextHeader: ((params: NavigateToNextHeaderParams) => HeaderPosition) | undefined = undefined;
+    @Input() public tabToNextHeader: ((params: TabToNextHeaderParams) => HeaderPosition) | undefined = undefined;
+    @Input() public navigateToNextCell: ((params: NavigateToNextCellParams) => CellPosition) | undefined = undefined;
+    @Input() public tabToNextCell: ((params: TabToNextCellParams) => CellPosition) | undefined = undefined;
+    @Input() public processCellFromClipboard: ((params: ProcessCellForExportParams) =>  any) | undefined = undefined;
+    @Input() public getDocument: (() => Document) | undefined = undefined;
+    @Input() public postProcessPopup: ((params: PostProcessPopupParams) => void) | undefined = undefined;
+    @Input() public getChildCount: ((dataItem: any) =>  number) | undefined = undefined;
     @Input() public getDataPath: GetDataPath | undefined = undefined;
     @Input() public loadingCellRenderer: { new(): ICellRenderer; } | string | undefined = undefined;
     @Input() public loadingCellRendererFramework: any | undefined = undefined;
@@ -426,28 +426,28 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public detailCellRendererFramework: any | undefined = undefined;
     @Input() public isRowMaster: IsRowMaster | undefined = undefined;
     @Input() public isRowSelectable: IsRowSelectable | undefined = undefined;
-    @Input() public postSort: (nodes: RowNode[]) =>  void | undefined = undefined;
-    @Input() public processHeaderForClipboard: (params: ProcessHeaderForExportParams) =>  any | undefined = undefined;
-    @Input() public paginationNumberFormatter: (params: PaginationNumberFormatterParams) => string | undefined = undefined;
-    @Input() public processDataFromClipboard: (params: ProcessDataFromClipboardParams) => string[][] | null | undefined = undefined;
+    @Input() public postSort: ((nodes: RowNode[]) =>  void) | undefined = undefined;
+    @Input() public processHeaderForClipboard: ((params: ProcessHeaderForExportParams) =>  any) | undefined = undefined;
+    @Input() public paginationNumberFormatter: ((params: PaginationNumberFormatterParams) => string) | undefined = undefined;
+    @Input() public processDataFromClipboard: ((params: ProcessDataFromClipboardParams) => string[][] | null) | undefined = undefined;
     @Input() public getServerSideGroupKey: GetServerSideGroupKey | undefined = undefined;
     @Input() public isServerSideGroup: IsServerSideGroup | undefined = undefined;
     /** Allows user to suppress certain keyboard events     */
-    @Input() public suppressKeyboardEvent: (params: SuppressKeyboardEventParams) => boolean | undefined = undefined;
-    @Input() public createChartContainer: (params: ChartRef) => void | undefined = undefined;
+    @Input() public suppressKeyboardEvent: ((params: SuppressKeyboardEventParams) => boolean) | undefined = undefined;
+    @Input() public createChartContainer: ((params: ChartRef) => void) | undefined = undefined;
     /** @deprecated
      */
-    @Input() public processChartOptions: (params: ProcessChartOptionsParams) =>  ChartOptions<any> | undefined = undefined;
+    @Input() public processChartOptions: ((params: ProcessChartOptionsParams) =>  ChartOptions<any>) | undefined = undefined;
     @Input() public getChartToolbarItems: GetChartToolbarItems | undefined = undefined;
-    @Input() public fillOperation: (params: FillOperationParams) => any | undefined = undefined;
+    @Input() public fillOperation: ((params: FillOperationParams) => any) | undefined = undefined;
     @Input() public isApplyServerSideTransaction: IsApplyServerSideTransaction | undefined = undefined;
-    @Input() public getServerSideStoreParams: (params: GetServerSideStoreParamsParams) => ServerSideStoreParams | undefined = undefined;
-    @Input() public isServerSideGroupOpenByDefault: (params: IsServerSideGroupOpenByDefaultParams) => boolean | undefined = undefined;
-    @Input() public isGroupOpenByDefault: (params: IsGroupOpenByDefaultParams) => boolean | undefined = undefined;
+    @Input() public getServerSideStoreParams: ((params: GetServerSideStoreParamsParams) => ServerSideStoreParams) | undefined = undefined;
+    @Input() public isServerSideGroupOpenByDefault: ((params: IsServerSideGroupOpenByDefaultParams) => boolean) | undefined = undefined;
+    @Input() public isGroupOpenByDefault: ((params: IsGroupOpenByDefaultParams) => boolean) | undefined = undefined;
     /** @deprecated - Use defaultGroupOrderComparator instead
      */
-    @Input() public defaultGroupSortComparator: (nodeA: RowNode, nodeB: RowNode) => number | undefined = undefined;
-    @Input() public defaultGroupOrderComparator: (nodeA: RowNode, nodeB: RowNode) => number | undefined = undefined;
+    @Input() public defaultGroupSortComparator: ((nodeA: RowNode, nodeB: RowNode) => number) | undefined = undefined;
+    @Input() public defaultGroupOrderComparator: ((nodeA: RowNode, nodeB: RowNode) => number) | undefined = undefined;
     @Input() public suppressMakeColumnVisibleAfterUnGroup: boolean | undefined = undefined;
     @Input() public suppressRowClickSelection: boolean | undefined = undefined;
     @Input() public suppressCellSelection: boolean | undefined = undefined;

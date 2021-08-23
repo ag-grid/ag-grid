@@ -160,7 +160,7 @@ export class AgGridColumn {
     @Input() public pivotIndex: number | null | undefined = undefined;
     @Input() public initialPivotIndex: number | undefined = undefined;
     /** For native drag and drop, set to true to allow custom onRowDrag processing     */
-    @Input() public dndSourceOnRowDrag: (params: { rowNode: RowNode, dragEvent: DragEvent; }) => void | undefined = undefined;
+    @Input() public dndSourceOnRowDrag: ((params: { rowNode: RowNode, dragEvent: DragEvent; }) => void) | undefined = undefined;
     /** Expression or function to get the cells value.     */
     @Input() public valueGetter: string | ValueGetterFunc | undefined = undefined;
     /** If not using a field, then this puts the value into the cell     */
@@ -169,7 +169,7 @@ export class AgGridColumn {
     @Input() public filterValueGetter: string | ValueGetterFunc | undefined = undefined;
     /** Function to return the key for a value - use this if the value is an object (not a primitive type) and you
      * want to a) group by this field or b) use set filter on this field.     */
-    @Input() public keyCreator: (value: any) => string | undefined = undefined;
+    @Input() public keyCreator: ((value: any) => string) | undefined = undefined;
     @Input() public cellRendererFramework: any | undefined = undefined;
     /** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned.
      */
@@ -182,36 +182,36 @@ export class AgGridColumn {
     /** Gets called after editing, converts the value in the cell.     */
     @Input() public valueParser: string | ValueParserFunc | undefined = undefined;
     /** Comparator function for custom sorting.     */
-    @Input() public comparator: (valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode, isInverted: boolean) => number | undefined = undefined;
+    @Input() public comparator: ((valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode, isInverted: boolean) => number) | undefined = undefined;
     /** Comparator for values, used by renderer to know if values have changed. Cells who's values have not changed don't get refreshed.     */
-    @Input() public equals: (valueA: any, valueB: any) => boolean | undefined = undefined;
+    @Input() public equals: ((valueA: any, valueB: any) => boolean) | undefined = undefined;
     /** Comparator for ordering the pivot columns     */
-    @Input() public pivotComparator: (valueA: string, valueB: string) => number | undefined = undefined;
+    @Input() public pivotComparator: ((valueA: string, valueB: string) => number) | undefined = undefined;
     /** Allows the user to suppress certain keyboard events in the grid cell     */
-    @Input() public suppressKeyboardEvent: (params: SuppressKeyboardEventParams) => boolean | undefined = undefined;
+    @Input() public suppressKeyboardEvent: ((params: SuppressKeyboardEventParams) => boolean) | undefined = undefined;
     /** Allows the user to suppress certain keyboard events in the grid header     */
-    @Input() public suppressHeaderKeyboardEvent: (params: SuppressHeaderKeyboardEventParams) => boolean | undefined = undefined;
-    @Input() public colSpan: (params: ColSpanParams) => number | undefined = undefined;
-    @Input() public rowSpan: (params: RowSpanParams) => number | undefined = undefined;
+    @Input() public suppressHeaderKeyboardEvent: ((params: SuppressHeaderKeyboardEventParams) => boolean) | undefined = undefined;
+    @Input() public colSpan: ((params: ColSpanParams) => number) | undefined = undefined;
+    @Input() public rowSpan: ((params: RowSpanParams) => number) | undefined = undefined;
     /** To create the quick filter text for this column, if toString is not good enough on the value.     */
-    @Input() public getQuickFilterText: (params: GetQuickFilterTextParams) => string | undefined = undefined;
+    @Input() public getQuickFilterText: ((params: GetQuickFilterTextParams) => string) | undefined = undefined;
     /** Callbacks for editing. See editing section for further details.
      * Return true if the update was successful, or false if not.
      * If false, then skips the UI refresh and no events are emitted.
      * Return false if the values are the same (ie no update).     */
-    @Input() public newValueHandler: (params: NewValueParams) => boolean | undefined = undefined;
+    @Input() public newValueHandler: ((params: NewValueParams) => boolean) | undefined = undefined;
     /** Callbacks for editing.See editing section for further details.     */
-    @Input() public onCellValueChanged: (event: NewValueParams) => void | undefined = undefined;
+    @Input() public onCellValueChanged: ((event: NewValueParams) => void) | undefined = undefined;
     /** Function callback, gets called when a cell is clicked.     */
-    @Input() public onCellClicked: (event: CellClickedEvent) => void | undefined = undefined;
+    @Input() public onCellClicked: ((event: CellClickedEvent) => void) | undefined = undefined;
     /** Function callback, gets called when a cell is double clicked.     */
-    @Input() public onCellDoubleClicked: (event: CellDoubleClickedEvent) => void | undefined = undefined;
+    @Input() public onCellDoubleClicked: ((event: CellDoubleClickedEvent) => void) | undefined = undefined;
     /** Function callback, gets called when a cell is right clicked.     */
-    @Input() public onCellContextMenu: (event: CellContextMenuEvent) => void | undefined = undefined;
+    @Input() public onCellContextMenu: ((event: CellContextMenuEvent) => void) | undefined = undefined;
     /** To configure the text to be displayed in the floating div while dragging a row when rowDrag is true     */
-    @Input() public rowDragText: (params: IRowDragItem, dragItemCount: number) => string | undefined = undefined;
+    @Input() public rowDragText: ((params: IRowDragItem, dragItemCount: number) => string) | undefined = undefined;
     /** The function used to calculate the tooltip of the object, tooltipField takes precedence     */
-    @Input() public tooltipValueGetter: (params: ITooltipParams) => string | undefined = undefined;
+    @Input() public tooltipValueGetter: ((params: ITooltipParams) => string) | undefined = undefined;
     @Input() public cellRendererSelector: CellRendererSelectorFunc | undefined = undefined;
     @Input() public cellEditorSelector: CellEditorSelectorFunc | undefined = undefined;
     /** Set to true to not flash this column for value changes     */

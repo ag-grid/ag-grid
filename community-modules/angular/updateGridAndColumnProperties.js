@@ -42,7 +42,7 @@ function generateAngularInputOutputs(compUtils, { typeLookup, eventTypeLookup, d
     compUtils.ALL_PROPERTIES.forEach((property) => {
         if (skippableProperties.indexOf(property) === -1) {
             const typeName = typeLookup[property];
-            const inputType = typeName ? `${typeName.trim()} | undefined` : 'any'
+            const inputType = getSafeType(typeName);
             result = addDocLine(docLookup, property, result);
             result += `    @Input() public ${property}: ${inputType} = undefined;${EOL}`;
         }
@@ -56,7 +56,35 @@ function generateAngularInputOutputs(compUtils, { typeLookup, eventTypeLookup, d
         result += `    @Output() public ${event}: EventEmitter<${eventTypeLookup[onEvent]}> = new EventEmitter<${eventTypeLookup[onEvent]}>();${EOL}`;
     });
 
+    //result = addTypeCoercionHints(result, compUtils.BOOLEAN_PROPERTIES);
+
     return result;
+}
+
+/* function addTypeCoercionHints(result, boolProps) {
+    result += `${EOL}    // Enable type coercion for boolean Inputs to support use like 'enableCharts' instead of forcing '[enableCharts]="true"' ${EOL}`;
+    result += `    // https://angular.io/guide/template-typecheck#input-setter-coercion ${EOL}`;
+    boolProps.forEach((property) => {
+        result += `    static ngAcceptInputType_${property}: boolean | '';${EOL}`;
+    });
+    return result;
+} */
+
+function getSafeType(typeName) {
+    let inputType = 'any';
+    if (typeName) {
+        const trimmed = typeName.trim();
+        // Ensure that we correctly apply the undefined as a separate union type for complex types
+        // e.g isExternalFilterPresent: (() => boolean) | undefined = undefined;
+        // Without the brackets this changes the return type!
+        if (trimmed.includes('=>')) {
+            inputType = `(${typeName.trim()}) | undefined`;
+        }
+        else {
+            inputType = `${typeName.trim()} | undefined`;
+        }
+    }
+    return inputType;
 }
 
 function addDocLine(docLookup, property, result) {
@@ -132,11 +160,14 @@ function getGridColumnPropertiesJs() {
     ColDefUtil.ALL_PROPERTIES.filter(unique).forEach((property) => {
         if (skippableProperties.indexOf(property) === -1) {
             const typeName = context.typeLookup[property];
-            const inputType = typeName ? `${typeName.trim()} | undefined` : 'any'
+
+            const inputType = getSafeType(typeName)
             result = addDocLine(context.docLookup, property, result);
             result += `    @Input() public ${property}: ${inputType} = undefined;${EOL}`;
         }
     });
+
+    //result = addTypeCoercionHints(result, ColDefUtil.BOOLEAN_PROPERTIES);
 
     return result;
 }
