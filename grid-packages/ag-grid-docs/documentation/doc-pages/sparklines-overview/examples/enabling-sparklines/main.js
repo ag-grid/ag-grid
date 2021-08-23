@@ -23,19 +23,18 @@ var gridOptions = {
     // rowBuffer: 20,
 };
 
-function randomNumber(min, max) {
-    return Math.floor(Math.random() * (max - min) + min);
-}
-
-function addSparlineData(data) {
-    const dataMod = data.slice(0, 1000);
-    dataMod.forEach(function (d) {
+function addSparklineData(data) {
+    function randomNumber(min, max) {
+        return Math.floor(Math.random() * (max - min) + min);
+    }
+    const NUM_VALUES = 20;
+    data.forEach(function (d) {
         d.results = [];
-        for (let i = 0; i < 20; i++) {
+        for (let i = 0; i < NUM_VALUES; i++) {
             d.results.push(randomNumber(1, 10));
         }
     });
-    return dataMod;
+    return data;
 }
 
 // setup the grid after the page has finished loading
@@ -48,6 +47,8 @@ document.addEventListener('DOMContentLoaded', function () {
             url: 'https://www.ag-grid.com/example-assets/olympic-winners.json',
         })
         .then(function (data) {
-            gridOptions.api.setRowData(addSparlineData(data));
+            const NUM_ROWS = 1000;
+            const dataMod = data.slice(0, NUM_ROWS);
+            gridOptions.api.setRowData(addSparklineData(dataMod));
         });
 });

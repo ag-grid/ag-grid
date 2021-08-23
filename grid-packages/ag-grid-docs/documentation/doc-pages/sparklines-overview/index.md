@@ -24,8 +24,7 @@ const gridOptions = {
 }
 </snippet>
 
-<grid-example title='Enabling Sparklines' name='enabling-sparklines' type='generated' options='{ "enterprise": true, "exampleHeight": 540 }'></grid-example>
-
+<grid-example title='Enabling Sparklines' name='enabling-sparklines' type='generated' options='{ "enterprise": true, "exampleHeight": 540, "modules": ["clientside", "sparklines"] }'></grid-example>
 
 ## Next Up
 
