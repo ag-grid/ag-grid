@@ -4,20 +4,16 @@
             "displayName": "Columns"
         },
         "columnDefs": {
-            "description": "Array of [Column Definitions](/column-definitions/).",
-            "type": "ColDef[]"
+            "description": "Array of [Column](/column-definitions/) / [Column Group](//column-groups/) definitions."
         },
         "defaultColDef": {
-            "description": "A [default column definition](/column-definitions/#default-column-definitions).",
-            "type": "ColDef"
+            "description": "A [default column definition](/column-definitions/#default-column-definitions)."
         },
         "defaultColGroupDef": {
-            "description": "A [default column group definition](/column-definitions/#default-column-definitions). All column group definitions will use these properties. Items defined in the actual column group  definition get precedence.",
-            "type": "ColDef"
+            "description": "A [default column group definition](/column-definitions/#default-column-definitions). All column group definitions will use these properties. Items defined in the actual column group definition get precedence."
         },
         "columnTypes": {
-            "description": "An object map of [custom column types](/column-definitions/#default-column-definitions) which contain groups of properties that column definitions can inherit.",
-            "type": "object"
+            "description": "An object map of [custom column types](/column-definitions/#default-column-definitions) which contain groups of properties that column definitions can inherit."
         },
         "colResizeDefault": {
             "description": "Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down <kbd>Shift</kbd> while resizing).",
@@ -70,8 +66,7 @@
             "description": "Set to `true` to always show the column menu button, rather than only showing when the mouse is over the column header."
         },
         "autoGroupColumnDef": {
-            "description": "Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column definition in the grid. If not grouping, this column is not included.",
-            "type": "ColDef"
+            "description": "Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column definition in the grid. If not grouping, this column is not included."
         },
         "allowDragFromColumnsToolPanel": {
             "default": false,
@@ -91,8 +86,7 @@
             "displayName": "Sort and Filter"
         },
         "quickFilterText": {
-            "description": "Rows are filtered using this text as a [quick filter](/filter-quick/).",
-            "type": "string"
+            "description": "Rows are filtered using this text as a [quick filter](/filter-quick/)."
         },
         "cacheQuickFilter": {
             "default": false,
@@ -100,7 +94,6 @@
         },
         "sortingOrder": {
             "description": "Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`.",
-            "type": "string[]",
             "default": [
                 null,
                 "asc",
@@ -887,14 +880,12 @@
             "description": "Provide a custom [loading overlay component](/component-overlay/#loading-rows-overlay-interface)."
         },
         "loadingOverlayComponentParams": {
-            "type": "object",
             "description": "Customise the parameters provided to the loading overlay component."
         },
         "noRowsOverlayComponent<br />noRowsOverlayComponentFramework ": {
             "description": "Provide a custom [no rows overlay component](/component-overlay/#no-rows-overlay-interface)."
         },
         "noRowsOverlayComponentParams": {
-            "type": "object",
             "description": "Customise the parameters provided to the no rows overlay component."
         }
     },
@@ -925,7 +916,6 @@
             }
         },
         "customChartThemes": {
-            "type": "object",
             "description": "A map containing custom chart themes.",
             "more": {
                 "name": "Custom Chart Themes",
@@ -933,7 +923,6 @@
             }
         },
         "chartThemeOverrides": {
-            "type": "object",
             "description": "Chart theme overrides applied to all themes, see [Overriding Existing Themes](/integrated-charts-customisation/#overriding-existing-themes)."
         }
     },
@@ -946,11 +935,9 @@
             }
         },
         "components": {
-            "type": "object",
             "description": "A map of component names to plain JavaScript components."
         },
         "frameworkComponents": {
-            "type": "object",
             "description": "A map of component names to framework (React, Angular, etc.) components."
         }
     },
@@ -959,7 +946,6 @@
             "displayName": "Miscellaneous"
         },
         "popupParent": {
-            "type": "HTMLElement",
             "description": "DOM element to use as [popup parent](/context-menu/#popup-parent) for grid popups (context menu, column menu etc)."
         },
         "tabIndex": {
@@ -975,11 +961,9 @@
             "description": "Set to `true` to configure the [value cache](/value-getters/#value-cache-properties) to not expire after data updates."
         },
         "defaultCsvExportParams": {
-            "type": "object",
             "description": "A default configuration object used to export to [CSV](/csv-export/)."
         },
         "defaultExcelExportParams": {
-            "type": "object",
             "description": "A default configuration object used to export to [Excel](/excel-export/)."
         },
         "suppressMiddleClickScrolls": {
@@ -1028,7 +1012,6 @@
             "description": "The number of rows rendered outside the viewable area the grid renders. Having a buffer means the grid will have rows ready to show as the user slowly scrolls vertically."
         },
         "alignedGrids": {
-            "type": "object[]",
             "description": "A list of grids to treat as [Aligned Grids](/aligned-grids/). If grids are aligned then the columns and horizontal scrolling will be kept in sync."
         },
         "suppressParentsInRowNodes": {
@@ -1052,7 +1035,6 @@
             "description": "Set this to `true` to enable debug information from the grid and related components. Will result in additional logging being output, but very useful when investigating problems."
         },
         "context": {
-            "type": "object",
             "description": "Provides a [context](/context/) object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application."
         },
         "suppressContextMenu": {
@@ -1068,7 +1050,6 @@
             "description": "Allows [context menu](/context-menu/) to show, even when <kbd>Ctrl</kbd> key is held down."
         },
         "statusBar": {
-            "type": "object",
             "description": "Specifies the [status bar](/status-bar/) components to use in the status bar."
         },
         "suppressTouch": {
@@ -1088,8 +1069,7 @@
             "description": "Prevents the user from exporting the grid to Excel."
         },
         "excelStyles": {
-            "description": "A list (array) of [Excel Styles](/excel-export-styles/#excelstyle) to be used when [exporting to Excel with styles](/excel-export-styles/)",
-            "type": "ExcelStyle[]"
+            "description": "A list (array) of [Excel Styles](/excel-export-styles/#excelstyle) to be used when [exporting to Excel with styles](/excel-export-styles/)"
         },
         "asyncTransactionWaitMillis": {
             "description": "How many milliseconds to wait before executing a [batch of async transactions](/data-update-high-frequency/)."

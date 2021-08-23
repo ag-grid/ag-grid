@@ -56,11 +56,20 @@ export function escapeGenericCode(lines) {
 export function getTypeUrl(type, framework) {
     if (typeof type === 'string') {
         if (type.includes('|')) {
-            // can't handle multiple types
+
+            const linkedTypes = type.split('|').map(t => getTypeUrl(t.trim(), framework)).filter(url => !!url);
+            // If there is only one linked type then lets return that otherwise we don't support union type links
+            if (linkedTypes.length === 1) {
+                return linkedTypes[0];
+            }
+
             return null;
         } else if (type.endsWith('[]')) {
             type = type.replace(/\[\]/g, '');
         }
+    } else if (type && typeof type === 'object' && typeof (type.returnType) === 'string') {
+        // This method can be called with a type object
+        return getTypeUrl(type.returnType, framework);
     }
 
     return convertUrl(TYPE_LINKS[type], framework);
