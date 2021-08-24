@@ -7,7 +7,7 @@ By default the grid renders values into the cells as strings. If you want someth
 
 The cell editor for a column is set via `colDef.cellRenderer` and can be any of the following types:
 
-1. `undefined / null`: Grid renders the value as a string.
+1. `undefined`: Grid renders the value as a string.
 1. `String`: The name of a cell renderer component.
 1. `Class`: Direct reference to a cell renderer component.
 1. `Function`: A function that returns either an HTML string or DOM element for display.
@@ -17,10 +17,10 @@ The code snippet below demonstrates each of these method types.
 <snippet spaceBetweenProperties="true">
 const gridOptions = {
     columnDefs: [
-        // 1 - undefined / null - Grid renders the value as a string.
+        // 1 - undefined - Grid renders the value as a string.
         {
             field: 'name',
-            cellRenderer: null,
+            cellRenderer: undefined,
         },
         // 2 - String - The name of a cell renderer registered with the grid.
         {
@@ -101,7 +101,7 @@ The following example illustrates how to use different renderers and parameters 
             return moodDetails;
         }
 
-        return null;
+        return undefined;
     }
     ```
 

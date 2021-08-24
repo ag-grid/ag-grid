@@ -45,7 +45,7 @@ const VueExample = {
                         else if (params.data.type === 'mood')
                             return moodDetails;
                         else
-                            return null;
+                            return undefined;
                     }
                 },
                 {field: "type"}

@@ -6,7 +6,7 @@ This section outlines how to configure cell editors to enable editing in cells.
 
 You configure cell editors as part of the column definition and can be one of the following:
 
-- `undefined` / `null`: The grid uses the default text cell editor.
+- `undefined`: The grid uses the default text cell editor.
 - `string`: The name of a cell renderer registered with the grid.
 - `Class`: Provide your own cell renderer component directly without registering.
 
@@ -167,7 +167,7 @@ The following example illustrates how to use different editors and parameters in
             return { component: 'agRichSelect' };
         }
 
-        return null;
+        return undefined;
     }
     ```
 - Edit a cell by double clicking to observe the different editors used.

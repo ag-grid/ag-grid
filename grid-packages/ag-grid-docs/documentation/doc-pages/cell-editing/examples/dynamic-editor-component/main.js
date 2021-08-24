@@ -33,7 +33,7 @@ var columnDefs = [
                 };
             }
 
-            return null;
+            return undefined;
         }
     },
     { field: "type" }
