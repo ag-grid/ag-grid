@@ -164,12 +164,11 @@ export default abstract class ContinuousScale implements Scale<any, any> {
         x = +x;
         if (isNaN(x)) {
             return this.unknown;
-        } else {
-            if (!this.output) {
-                this.output = this.piecewise!(this.domain.map(this.transform), this.range, this.interpolate);
-            }
-        return this.output(this.transform(this._clamp(x)));
         }
+        if (!this.output) {
+            this.output = this.piecewise!(this.domain.map(this.transform), this.range, this.interpolate);
+        }
+        return this.output(this.transform(this._clamp(x)));
     }
 
     invert(y: any): any {
