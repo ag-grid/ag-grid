@@ -8,9 +8,7 @@ export class NumberAxis extends ChartAxis {
     static type = 'number';
 
     constructor() {
-        super();
-
-        this.scale = new LinearScale();
+        super(new LinearScale());
     }
 
     protected _nice: boolean = true;

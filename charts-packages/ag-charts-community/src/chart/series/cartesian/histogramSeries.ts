@@ -434,15 +434,15 @@ export class HistogramSeries extends CartesianSeries {
     }
 
     generateNodeData(): HistogramNodeDatum[] {
-        if (!this.seriesItemEnabled) {
+        const { xAxis, yAxis } = this;
+
+        if (!this.seriesItemEnabled || !xAxis || !yAxis) {
             return [];
         }
 
-        const {
-            xAxis: { scale: xScale },
-            yAxis: { scale: yScale },
-            fill, stroke, strokeWidth
-        } = this;
+        const { scale: xScale } = xAxis;
+        const { scale: yScale } = yAxis;
+        const { fill, stroke, strokeWidth } = this;
 
         const nodeData: HistogramNodeDatum[] = [];
 
@@ -582,7 +582,7 @@ export class HistogramSeries extends CartesianSeries {
     getTooltipHtml(nodeDatum: HistogramNodeDatum): string {
         const { xKey, yKey, xAxis, yAxis } = this;
 
-        if (!xKey) {
+        if (!xKey || !yKey || !xAxis || !yAxis) {
             return '';
         }
 

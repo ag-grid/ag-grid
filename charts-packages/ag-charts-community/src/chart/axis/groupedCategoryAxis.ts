@@ -41,11 +41,10 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
     private longestSeparatorLength = 0;
 
     constructor() {
-        super();
+        super(new BandScale<string | number>());
 
-        const { group, tickScale } = this;
+        const { group, tickScale, scale } = this;
 
-        const scale = new BandScale<string | number>();
         scale.paddingOuter = 0.1;
         scale.paddingInner = scale.paddingOuter * 2;
         this.requestedRange = scale.range.slice();

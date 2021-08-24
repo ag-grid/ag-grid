@@ -129,12 +129,12 @@ export class HdpiCanvas {
         return this.element.style.imageRendering === 'pixelated';
     }
 
-    private _width: number;
+    private _width: number = 0;
     get width(): number {
         return this._width;
     }
 
-    private _height: number;
+    private _height: number = 0;
     get height(): number {
         return this._height;
     }

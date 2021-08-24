@@ -10,9 +10,9 @@ export class TimeAxis extends ChartAxis<TimeScale> {
     private datumFormatter: (date: Date) => string;
 
     constructor() {
-        super();
+        super(new TimeScale());
 
-        const scale = new TimeScale();
+        const { scale } = this;
         scale.clamp = true;
         this.scale = scale;
         this.datumFormatter = scale.tickFormat(this.tick.count, this.datumFormat);

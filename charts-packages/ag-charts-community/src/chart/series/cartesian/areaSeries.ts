@@ -232,10 +232,6 @@ export class AreaSeries extends CartesianSeries {
         const { xKey, yKeys, seriesItemEnabled } = this;
         const data = xKey && yKeys.length && this.data ? this.data : [];
 
-        // if (!(chart && chart.xAxis && chart.yAxis)) {
-        //     return false;
-        // }
-
         // If the data is an array of rows like so:
         //
         // [{
@@ -410,13 +406,14 @@ export class AreaSeries extends CartesianSeries {
         markerSelectionData: MarkerSelectionDatum[],
         labelSelectionData: LabelSelectionDatum[]
     } | undefined {
-        if (!this.data) {
+        const { data, xAxis, yAxis } = this;
+
+        if (!data || !xAxis || !yAxis) {
             return;
         }
-        const {
-            yKeys, data, xData, yData, marker, label, fills, strokes,
-            xAxis: { scale: xScale }, yAxis: { scale: yScale }
-        } = this;
+        const { yKeys, xData, yData, marker, label, fills, strokes } = this;
+        const { scale: xScale } = xAxis;
+        const { scale: yScale } = yAxis;
 
         const xOffset = (xScale.bandwidth || 0) / 2;
         const yOffset = (yScale.bandwidth || 0) / 2;
@@ -705,7 +702,7 @@ export class AreaSeries extends CartesianSeries {
         const { xKey, xAxis, yAxis } = this;
         const { yKey } = nodeDatum;
 
-        if (!xKey || !yKey) {
+        if (!xKey || !yKey || !xAxis || !yAxis) {
             return '';
         }
 

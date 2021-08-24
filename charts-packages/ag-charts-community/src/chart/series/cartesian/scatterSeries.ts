@@ -182,6 +182,10 @@ export class ScatterSeries extends CartesianSeries {
     processData(): boolean {
         const { xKey, yKey, sizeKey, labelKey, xAxis, yAxis, marker, label } = this;
 
+        if (!xAxis || !yAxis) {
+            return false;
+        }
+
         const data = xKey && yKey && this.data ? this.data : [];
 
         this.xData = data.map(d => d[xKey]);
@@ -243,18 +247,19 @@ export class ScatterSeries extends CartesianSeries {
     }
 
     generateNodeData(): ScatterNodeDatum[] {
-        if (!this.data) {
+        const { data, xAxis, yAxis } = this;
+
+        if (!data || !xAxis || !yAxis) {
             return [];
         }
 
-        const { xAxis, yAxis } = this;
         const xScale = xAxis.scale;
         const yScale = yAxis.scale;
         const isContinuousX = xScale instanceof ContinuousScale;
         const isContinuousY = yScale instanceof ContinuousScale;
         const xOffset = (xScale.bandwidth || 0) / 2;
         const yOffset = (yScale.bandwidth || 0) / 2;
-        const { data, xData, yData, sizeData, sizeScale, marker } = this;
+        const { xData, yData, sizeData, sizeScale, marker } = this;
         const nodeData: ScatterNodeDatum[] = [];
 
         sizeScale.range = [marker.size, marker.maxSize];
@@ -386,7 +391,7 @@ export class ScatterSeries extends CartesianSeries {
     getTooltipHtml(nodeDatum: ScatterNodeDatum): string {
         const { xKey, yKey, xAxis, yAxis } = this;
 
-        if (!xKey || !yKey) {
+        if (!xKey || !yKey || !xAxis || !yAxis) {
             return '';
         }
 

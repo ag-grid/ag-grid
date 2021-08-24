@@ -89,7 +89,7 @@ export class HierarchyNode {
         return this;
     }
 
-    find(callback: (node: HierarchyNode, index: number, root: this) => void, scope?: any): HierarchyNode | undefined {
+    find(callback: (node: HierarchyNode, index: number, root: this) => boolean, scope?: any): HierarchyNode | undefined {
         let index = -1;
         let result: HierarchyNode | undefined;
 

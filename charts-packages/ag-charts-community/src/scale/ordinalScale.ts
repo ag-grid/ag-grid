@@ -7,7 +7,7 @@ import Scale from "./scale";
 export class OrdinalScale<D, R> implements Scale<D, R> {
     readonly type = 'ordinal';
 
-    unknown: R;
+    unknown?: R;
 
     /**
      * Using an object as a map prevents us from uniquely identifying objects and arrays:
