@@ -585,15 +585,15 @@ export interface CellClassRules {
 }
 
 export interface SelectorFunc {
-    (params: ICellRendererParams | ICellEditorParams): CellRendererSelectorResult | CellEditorSelectorResult
+    (params: ICellRendererParams | ICellEditorParams): CellRendererSelectorResult | CellEditorSelectorResult | undefined
 }
 
 export interface CellRendererSelectorFunc extends SelectorFunc {
-    (params: ICellRendererParams): CellRendererSelectorResult
+    (params: ICellRendererParams): CellRendererSelectorResult | undefined
 }
 
 export interface CellEditorSelectorFunc extends SelectorFunc {
-    (params: ICellEditorParams): CellEditorSelectorResult
+    (params: ICellEditorParams): CellEditorSelectorResult | undefined
 }
 
 export interface CellRendererSelectorResult {

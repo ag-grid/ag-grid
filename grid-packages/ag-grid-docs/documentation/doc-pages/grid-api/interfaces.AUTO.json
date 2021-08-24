@@ -1182,21 +1182,21 @@
     "meta": { "isCallSignature": true },
     "type": {
       "arguments": { "params": "ICellRendererParams | ICellEditorParams" },
-      "returnType": "CellRendererSelectorResult | CellEditorSelectorResult"
+      "returnType": "CellRendererSelectorResult | CellEditorSelectorResult | undefined"
     }
   },
   "CellRendererSelectorFunc": {
     "meta": { "isCallSignature": true },
     "type": {
       "arguments": { "params": "ICellRendererParams" },
-      "returnType": "CellRendererSelectorResult"
+      "returnType": "CellRendererSelectorResult | undefined"
     }
   },
   "CellEditorSelectorFunc": {
     "meta": { "isCallSignature": true },
     "type": {
       "arguments": { "params": "ICellEditorParams" },
-      "returnType": "CellEditorSelectorResult"
+      "returnType": "CellEditorSelectorResult | undefined"
     }
   },
   "CellRendererSelectorResult": {
