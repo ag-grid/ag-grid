@@ -18,19 +18,19 @@ describe('formatDecimalParts', () => {
     });
 });
 
-describe('formatNumerals', () => {
-    test('123456789', () => {
-        const result = formatNumerals('000')('123456');
-        // console.log(result);
-    });
-});
-
 describe('format', () => {
     describe('percent', () => {
         test('multiply by 100 and add %', () => {
             const f = format('.0%');
             expect(f(0.3)).toBe('30%');
             expect(f(40)).toBe('4000%');
+        });
+    });
+    describe('SI-prefix', () => {
+        test('Formatted value should have 3 significant digits followed by a unit', () => {
+            const f = format('.3s');
+            console.log(f(43e6));
+            expect(f(43e6)).toBe('43.0M');
         });
     });
 });

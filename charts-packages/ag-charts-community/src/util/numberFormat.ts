@@ -178,15 +178,13 @@ export function makeFormatSpecifier(specifier: string | FormatSpecifier): Format
 export function tickFormat(start: number, stop: number, count: number, specifier?: string): (n: number | { valueOf(): number }) => string {
     const step = tickStep(start, stop, count);
     const formatSpecifier = makeFormatSpecifier(specifier == undefined ? ',f' : specifier);
+    let precision: number;
 
     switch (formatSpecifier.type) {
         case 's': {
-            var value = Math.max(Math.abs(start), Math.abs(stop));
-            if (formatSpecifier.precision == null) {
-                const precision = precisionPrefix(step, value);
-                if (!isNaN(precision)) {
-                    formatSpecifier.precision = precision;
-                }
+            const value = Math.max(Math.abs(start), Math.abs(stop));
+            if (formatSpecifier.precision == null && !isNaN(precision = precisionPrefix(step, value))) {
+                formatSpecifier.precision = precision;
             }
             return formatPrefix(formatSpecifier, value);
         }
@@ -195,21 +193,15 @@ export function tickFormat(start: number, stop: number, count: number, specifier
         case 'g':
         case 'p':
         case 'r': {
-            if (formatSpecifier.precision == null) {
-                const precision = precisionRound(step, Math.max(Math.abs(start), Math.abs(stop)));
-                if (!isNaN(precision)) {
-                    formatSpecifier.precision = precision - Number(formatSpecifier.type === 'e');
-                }
+            if (formatSpecifier.precision == null && !isNaN(precision = precisionRound(step, Math.max(Math.abs(start), Math.abs(stop))))) {
+                formatSpecifier.precision = precision - +(formatSpecifier.type === 'e');
             }
             break;
         }
         case 'f':
         case '%': {
-            if (formatSpecifier.precision == null) {
-                const precision = precisionFixed(step);
-                if (!isNaN(precision)) {
-                    formatSpecifier.precision = precision - Number(formatSpecifier.type === '%') * 2;
-                }
+            if (formatSpecifier.precision == null && !isNaN(precision = precisionFixed(step))) {
+                formatSpecifier.precision = precision - +(formatSpecifier.type === '%') * 2;
             }
             break;
         }
