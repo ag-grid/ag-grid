@@ -7128,6 +7128,19 @@
       "isDisplayed()": "boolean"
     }
   },
+  "SparklineFormatter": { "meta": {}, "type": {} },
+  "HighlightStyle": { "meta": {}, "type": {} },
+  "SparklineOptions": {
+    "meta": {},
+    "type": {
+      "type?": "string",
+      "strokeWidth?": "number",
+      "paddingInner?": "number",
+      "paddingOuter?": "number",
+      "formatter?": "SparklineFormatter",
+      "highlightStyle?": "HighlightStyle"
+    }
+  },
   "ISparklineCellRendererParams": {
     "meta": {},
     "type": {
@@ -7151,7 +7164,7 @@
       "formatValue?": "(value: any) => any",
       "refreshCell?": "() => void",
       "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string) => void",
-      "sparklineType": "string"
+      "sparklineOptions?": "SparklineOptions"
     },
     "docs": {
       "context": "/** The context as provided on `gridOptions.context` */",

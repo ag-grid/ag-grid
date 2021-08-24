@@ -1,7 +1,7 @@
 var gridOptions = {
     columnDefs: [
-        { field: 'country' },
-        { field: 'sport' },
+        {field: 'country'},
+        {field: 'sport'},
         {
             field: 'results',
             minWidth: 100,
@@ -12,45 +12,37 @@ var gridOptions = {
                     strokeWidth: 1,
                     paddingInner: 0.7,
                     paddingOuter: 0.2,
-                    formatter: function (params) {
-                        return {
-                            fill: !params.highlighted 
-                            ? params.yValue < 0 
-                            ? 'rgb(207,191,212)' 
-                            : 'rgb(196,212,191)' 
-                            : params.yValue < 0 
-                            ? 'rgb(224,158,245)' 
-                            : 'rgb(183,237,166)',
-                            stroke: params.highlighted 
-                            ? params.yValue < 0 
-                            ? 'rgb(136,99,147)' 
-                            : 'rgb(110,147,99)' 
-                            : params.stroke,
-                        }
-                    },
+                    formatter: formatter,
                     highlightStyle: {
                         strokeWidth: 1,
                     }
                 }
             },
-            // cellStyle: { padding: 0 },
-            // valueGetter: function(params) { return [5, 3, 6, 2, 1]}
         },
-        { field: 'athlete' },
+        {field: 'athlete'},
     ],
     defaultColDef: {
         flex: 1,
         minWidth: 100,
         resizable: true,
     },
-    // rowHeight: 75,
-    // rowBuffer: 20,
 };
+
+function formatter(params) {
+    let fill = params.highlighted ?
+        params.yValue < 0 ? 'rgb(224,158,245)' : 'rgb(183,237,166)' :
+        params.yValue < 0 ? 'rgb(207,191,212)' : 'rgb(196,212,191)';
+
+    let stroke = params.highlighted ? params.yValue < 0 ? 'rgb(136,99,147)' : 'rgb(110,147,99)' : params.stroke;
+
+    return { fill, stroke };
+}
 
 function addSparklineData(data) {
     function randomNumber(min, max) {
         return Math.floor(Math.random() * (max - min) + min) - (max / 2);
     }
+
     const NUM_VALUES = 7;
     data.forEach(function (d) {
         d.results = [];
