@@ -5,13 +5,15 @@ import { LinearScale } from '../scale/linearScale';
 import { BandScale } from '../scale/bandScale';
 import { Observable, reactive } from '../util/observable';
 import { Selection } from "../scene/selection";
-import { MiniChart, SeriesNodeDatum } from './miniChart';
+import { Sparkline, SeriesNodeDatum } from './sparkline';
 import { Marker } from './marker';
-import { toTooltipHtml } from './miniChartTooltip';
+import { toTooltipHtml } from './sparklineTooltip';
 import { getMarkerShape } from './util';
 
 interface AreaNodeDatum extends SeriesNodeDatum { }
+
 interface AreaPathDatum extends SeriesNodeDatum { }
+
 interface MarkerFormat {
     enabled?: boolean;
     shape?: string;
@@ -20,6 +22,7 @@ interface MarkerFormat {
     stroke?: string;
     strokeWidth?: number;
 }
+
 interface MarkerFormatterParams {
     datum: any;
     xValue: any;
@@ -30,7 +33,8 @@ interface MarkerFormatterParams {
     size: number;
     highlighted: boolean;
 }
-class MiniChartMarker extends Observable {
+
+class SparklineMarker extends Observable {
     @reactive() enabled: boolean = true;
     @reactive() shape: string = 'circle';
     @reactive('update') size: number = 0;
@@ -39,37 +43,38 @@ class MiniChartMarker extends Observable {
     @reactive('update') strokeWidth: number = 1;
     @reactive('update') formatter?: (params: MarkerFormatterParams) => MarkerFormat;
 }
-class MiniChartLine extends Observable {
+
+class SparklineLine extends Observable {
     @reactive('update') stroke: string = 'rgb(124, 181, 236)';
     @reactive('update') strokeWidth: number = 1;
 }
-export class MiniAreaChart extends MiniChart {
+
+export class AreaSparkline extends Sparkline {
     
-    static className = 'MiniAreaChart';
+    static className = 'AreaSparkline';
 
     @reactive('update') fill: string = 'rgba(124, 181, 236, 0.25)';
 
-    private miniAreaChartGroup: Group = new Group();
+    private areaSparklineGroup: Group = new Group();
     protected strokePath: Path = new Path();
     protected fillPath: Path = new Path();
     private areaPathData: AreaPathDatum[];
     private xAxisLine: Line = new Line();
     protected yScale: LinearScale = new LinearScale();
-    // hmm
     protected xScale: BandScale<number | undefined> = new BandScale<number | undefined>();
     private markers: Group = new Group();
     private markerSelection: Selection<Marker, Group, AreaNodeDatum, any> = Selection.select(this.markers).selectAll<Marker>();
     private markerSelectionData: AreaNodeDatum[] = [];
 
-    readonly marker = new MiniChartMarker();
-    readonly line = new MiniChartLine();
+    readonly marker = new SparklineMarker();
+    readonly line = new SparklineLine();
 
     constructor() {
         super();
 
         this.addEventListener('update', this.scheduleLayout, this);
-        this.rootGroup.append(this.miniAreaChartGroup);
-        this.miniAreaChartGroup.append([this.fillPath, this.xAxisLine, this.strokePath, this.markers]);
+        this.rootGroup.append(this.areaSparklineGroup);
+        this.areaSparklineGroup.append([this.fillPath, this.xAxisLine, this.strokePath, this.markers]);
 
         this.marker.addEventListener('update', this.updateMarkers, this);
         this.marker.addPropertyListener('enabled', this.updateMarkers, this);

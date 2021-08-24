@@ -4,8 +4,8 @@ import { LinearScale } from '../scale/linearScale';
 import { Group } from '../scene/group';
 import { Line } from '../scene/shape/line';
 import { Selection } from '../scene/selection';
-import { MiniChart, SeriesNodeDatum } from './miniChart';
-import { toTooltipHtml } from './miniChartTooltip';
+import { Sparkline, SeriesNodeDatum } from './sparkline';
+import { toTooltipHtml } from './sparklineTooltip';
 import { Rectangle } from './rectangle';
 import { reactive } from '../util/observable';
 
@@ -19,7 +19,7 @@ interface ColumnNodeDatum extends SeriesNodeDatum {
     strokeWidth: number
 }
 
-interface ColumnFormatterParams {
+export interface ColumnFormatterParams {
     datum: any;
     xValue: any;
     yValue: any;
@@ -31,18 +31,18 @@ interface ColumnFormatterParams {
     highlighted: boolean;
 }
 
-interface ColumnFormat{
+export interface ColumnFormat{
     fill?: string;
     stroke?: string;
     strokeWidth?: number;
 }
-export class MiniColumnChart extends MiniChart {
-    
-    static className = 'MiniColumnChart';
 
-    private miniColumnChartGroup: Group = new Group();
+export class ColumnSparkline extends Sparkline {
+    
+    static className = 'ColumnSparkline';
+
+    private columnSparklineGroup: Group = new Group();
     private yScale: LinearScale = new LinearScale();
-    // hmm
     private xScale: BandScale<number | undefined> = new BandScale<number | undefined>();
     private xAxisLine: Line = new Line();
     private columns: Group = new Group();
@@ -59,8 +59,8 @@ export class MiniColumnChart extends MiniChart {
     constructor() {
         super();
 
-        this.rootGroup.append(this.miniColumnChartGroup);
-        this.miniColumnChartGroup.append([this.columns, this.xAxisLine]);
+        this.rootGroup.append(this.columnSparklineGroup);
+        this.columnSparklineGroup.append([this.columns, this.xAxisLine]);
 
         this.addEventListener('update', this.scheduleLayout, this);
 

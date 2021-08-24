@@ -7,7 +7,31 @@ var gridOptions = {
             minWidth: 100,
             cellRenderer: 'agSparklineCellRenderer',
             cellRendererParams: {
-                sparklineType: 'column',
+                sparklineOptions: {
+                    type: 'column',
+                    strokeWidth: 1,
+                    paddingInner: 0.7,
+                    paddingOuter: 0.2,
+                    formatter: function (params) {
+                        return {
+                            fill: !params.highlighted 
+                            ? params.yValue < 0 
+                            ? 'rgb(207,191,212)' 
+                            : 'rgb(196,212,191)' 
+                            : params.yValue < 0 
+                            ? 'rgb(224,158,245)' 
+                            : 'rgb(183,237,166)',
+                            stroke: params.highlighted 
+                            ? params.yValue < 0 
+                            ? 'rgb(136,99,147)' 
+                            : 'rgb(110,147,99)' 
+                            : params.stroke,
+                        }
+                    },
+                    highlightStyle: {
+                        strokeWidth: 1,
+                    }
+                }
             },
             // cellStyle: { padding: 0 },
             // valueGetter: function(params) { return [5, 3, 6, 2, 1]}
@@ -25,9 +49,9 @@ var gridOptions = {
 
 function addSparklineData(data) {
     function randomNumber(min, max) {
-        return Math.floor(Math.random() * (max - min) + min);
+        return Math.floor(Math.random() * (max - min) + min) - (max / 2);
     }
-    const NUM_VALUES = 20;
+    const NUM_VALUES = 7;
     data.forEach(function (d) {
         d.results = [];
         for (let i = 0; i < NUM_VALUES; i++) {

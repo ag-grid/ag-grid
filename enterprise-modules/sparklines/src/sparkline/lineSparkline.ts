@@ -6,8 +6,8 @@ import { Path } from '../scene/shape/path';
 import { Observable, reactive } from '../util/observable';
 import { Selection } from '../scene/selection';
 import { Marker } from './marker';
-import { MiniChart, Point, SeriesNodeDatum } from './miniChart';
-import { toTooltipHtml } from './miniChartTooltip';
+import { Sparkline, Point, SeriesNodeDatum } from './sparkline';
+import { toTooltipHtml } from './sparklineTooltip';
 import { getMarkerShape } from './util';
 
 interface LineNodeDatum extends SeriesNodeDatum { 
@@ -34,7 +34,7 @@ interface MarkerFormatterParams {
     highlighted: boolean;
 }
 
-class MiniChartMarker extends Observable {
+class SparklineMarker extends Observable {
     @reactive() enabled: boolean = true;
     @reactive() shape: string = 'circle';
     @reactive('update') size: number = 0;
@@ -43,31 +43,32 @@ class MiniChartMarker extends Observable {
     @reactive('update') strokeWidth: number = 1;
     @reactive('update') formatter?: (params: MarkerFormatterParams) => MarkerFormat;
 }
-class MiniChartLine extends Observable {
+
+class SparklineLine extends Observable {
     @reactive('update') stroke: string = 'rgb(124, 181, 236)';
     @reactive('update') strokeWidth: number = 1;
 }
-export class MiniLineChart extends MiniChart {
 
-    static className = 'MiniLineChart';
+export class LineSparkline extends Sparkline {
 
-    private miniLineChartGroup: Group = new Group();
+    static className = 'LineSparkline';
+
+    private lineSparklineGroup: Group = new Group();
     protected linePath: Path = new Path();
     protected yScale: LinearScale = new LinearScale();
-    // hmm
     protected xScale: BandScale<number | undefined> = new BandScale<number | undefined>();
     private markers: Group = new Group();
     private markerSelection: Selection<Marker, Group, LineNodeDatum, any> = Selection.select(this.markers).selectAll<Marker>();
     private markerSelectionData: LineNodeDatum[] = [];
 
-    readonly marker = new MiniChartMarker();
-    readonly line = new MiniChartLine();
+    readonly marker = new SparklineMarker();
+    readonly line = new SparklineLine();
 
     constructor() {
         super();
 
-        this.rootGroup.append(this.miniLineChartGroup);
-        this.miniLineChartGroup.append([this.linePath, this.markers]);
+        this.rootGroup.append(this.lineSparklineGroup);
+        this.lineSparklineGroup.append([this.linePath, this.markers]);
 
         this.marker.addEventListener('update', this.updateMarkers, this);
         this.marker.addPropertyListener('enabled', this.updateMarkers, this);

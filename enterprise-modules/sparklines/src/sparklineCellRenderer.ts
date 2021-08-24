@@ -6,9 +6,9 @@ import {
     RefSelector,
     ResizeObserverService
 } from "@ag-grid-community/core";
-import { MiniLineChart } from "./sparkline/miniLineChart";
-import { MiniAreaChart } from "./sparkline/miniAreaChart";
-import { MiniColumnChart } from "./sparkline/miniColumnChart";
+import { LineSparkline } from "./sparkline/lineSparkline";
+import { AreaSparkline } from "./sparkline/areaSparkline";
+import { ColumnSparkline } from "./sparkline/columnSparkline";
 import { AgSparkline } from "./sparkline/agSparkline";
 
 export class SparklineCellRenderer extends Component implements ICellRenderer {
@@ -21,23 +21,28 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
     @RefSelector('eSparkline') private eSparkline: HTMLElement;
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
 
-    private sparkline: MiniLineChart | MiniAreaChart | MiniColumnChart;
+    private sparkline: LineSparkline | AreaSparkline | ColumnSparkline;
 
     constructor() {
         super(SparklineCellRenderer.TEMPLATE);
     }
 
-    public init(params: ISparklineCellRendererParams): void {
-        const { clientWidth, clientHeight } = this.getGui();
-        const options = {
-            type: params.sparklineType,
-            data: params.value,
-            width: clientWidth,
-            height: clientHeight,
-        }
+    public init(params: any): void {
 
-        this.sparkline = AgSparkline.create(options as any);
-        this.eSparkline.appendChild(this.sparkline.canvasElement);
+        // this.TIMER = window.setTimeout(() => {
+            const { clientWidth, clientHeight } = this.getGui();
+            const { sparklineOptions } = params;
+
+            const options = {
+                data: params.value,
+                width: clientWidth,
+                height: clientHeight,
+                ...sparklineOptions
+            }
+
+            this.sparkline = AgSparkline.create(options as any);
+            this.eSparkline.appendChild(this.sparkline.canvasElement);
+        // }, 100);
 
         const updateSparklineWidthFunc = () => {
             if (this.sparkline) {

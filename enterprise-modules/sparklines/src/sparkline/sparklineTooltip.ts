@@ -1,6 +1,6 @@
 import { Color } from "../util/color";
 import { Observable, reactive } from "../util/observable";
-import { MiniChart } from "./miniChart";
+import { Sparkline } from "./sparkline";
 
 export interface TooltipMeta {
     pageX: number;
@@ -50,23 +50,23 @@ export function toTooltipHtml(input: string | TooltipRendererResult, defaults?: 
 
     const contentBgColor = `rgba(244, 244, 244, ${opacity})`;
 
-    const titleHtml = title ? `<div class="${MiniChart.defaultTooltipClass}-title";
+    const titleHtml = title ? `<div class="${Sparkline.defaultTooltipClass}-title";
     style="color: ${color}; background-color: ${titleBgColorRgbaString}">${title}</div>` : '';
 
-    return `${titleHtml}<div class="${MiniChart.defaultTooltipClass}-content" style="background-color: ${contentBgColor}">${content}</div>`;
+    return `${titleHtml}<div class="${Sparkline.defaultTooltipClass}-content" style="background-color: ${contentBgColor}">${content}</div>`;
 
 }
 
-export class MiniChartTooltip extends Observable {
-    chart: MiniChart;
+export class SparklineTooltip extends Observable {
+    chart: Sparkline;
     element: HTMLElement = document.createElement('div');
 
-    @reactive() class: string = MiniChart.defaultTooltipClass;
+    @reactive() class: string = Sparkline.defaultTooltipClass;
     @reactive() enabled: boolean = true;
     @reactive() container: HTMLElement;
     @reactive('change') renderer?: (params: TooltipRendererParams) => string | TooltipRendererResult;
 
-    constructor(chart: MiniChart) {
+    constructor(chart: Sparkline) {
         super();
 
         this.chart = chart;
@@ -78,26 +78,26 @@ export class MiniChartTooltip extends Observable {
     isVisible(): boolean {
         const { element } = this;
         if (element.classList) {
-            return !element.classList.contains(`${MiniChart.defaultTooltipClass}-hidden`);
+            return !element.classList.contains(`${Sparkline.defaultTooltipClass}-hidden`);
         }
 
         // IE11
         const classes = element.getAttribute('class');
         if (classes) {
-            return classes.split(' ').indexOf(`${MiniChart.defaultTooltipClass}-hidden`) < 0;
+            return classes.split(' ').indexOf(`${Sparkline.defaultTooltipClass}-hidden`) < 0;
         }
 
         return false;
     }
     updateClass(visible?: boolean, constrained?: boolean) {
-        const classList = [MiniChart.defaultTooltipClass];
+        const classList = [Sparkline.defaultTooltipClass];
 
         if (visible !== true) {
-            classList.push(`${MiniChart.defaultTooltipClass}-hidden`);
+            classList.push(`${Sparkline.defaultTooltipClass}-hidden`);
         }
 
         if (constrained !== true) {
-            classList.push(`${MiniChart.defaultTooltipClass}-arrow`);
+            classList.push(`${Sparkline.defaultTooltipClass}-arrow`);
         }
 
         this.element.setAttribute('class', classList.join(' '));

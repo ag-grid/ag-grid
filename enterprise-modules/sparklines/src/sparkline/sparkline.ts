@@ -4,8 +4,8 @@ import { Observable, reactive } from '../util/observable';
 import { createId } from "../util/id";
 import { Padding } from '../util/padding';
 import { defaultTooltipCss } from './defaultTooltipCss';
-import { MiniChartTooltip } from './miniChartTooltip';
 import { isNumber } from './util';
+import { SparklineTooltip } from './sparklineTooltip';
 
 export interface SeriesNodeDatum {
     readonly seriesDatum: any;
@@ -29,11 +29,11 @@ interface SeriesRect {
     width: number;
     height: number;
 }
-class MiniChartAxis extends Observable {
+export class SparklineAxis extends Observable {
     @reactive('update') stroke: string = 'rgb(204, 214, 235)';
     @reactive('update') strokeWidth: number = 1;
 }
-export abstract class MiniChart extends Observable {
+export abstract class Sparkline extends Observable {
 
     readonly id: string = createId(this);
     
@@ -41,11 +41,11 @@ export abstract class MiniChart extends Observable {
     readonly canvasElement: HTMLCanvasElement;
     readonly rootGroup: Group;
 
-    readonly tooltip: MiniChartTooltip;
+    readonly tooltip: SparklineTooltip;
     static readonly defaultTooltipClass = 'ag-sparkline-tooltip';
 
     private static tooltipDocuments: Document[] = [];
-    private static tooltipInstances: Map<Document, MiniChartTooltip> = new Map();
+    private static tooltipInstances: Map<Document, SparklineTooltip> = new Map();
 
     protected seriesRect: SeriesRect = {
         x: 0,
@@ -78,7 +78,7 @@ export abstract class MiniChart extends Observable {
     @reactive() title?: string = undefined;
     @reactive() padding: Padding = new Padding(3);
 
-    readonly axis = new MiniChartAxis();
+    readonly axis = new SparklineAxis();
     readonly highlightStyle: HighlightStyle = {
         size: 6,
         fill: 'yellow',
@@ -106,19 +106,19 @@ export abstract class MiniChart extends Observable {
         this.seriesRect.height = this.height;
 
         // one tooltip instance per document
-        if (MiniChart.tooltipDocuments.indexOf(document) === -1) {
+        if (Sparkline.tooltipDocuments.indexOf(document) === -1) {
             const styleElement = document.createElement('style');
             styleElement.innerHTML = defaultTooltipCss;
         
             document.head.insertBefore(styleElement, document.head.querySelector('style'));
-            MiniChart.tooltipDocuments.push(document);
+            Sparkline.tooltipDocuments.push(document);
         
-            this.tooltip = new MiniChartTooltip(this);
+            this.tooltip = new SparklineTooltip(this);
             this.tooltip.addEventListener('class', () => this.tooltip.toggle());
         
-            MiniChart.tooltipInstances.set(document, this.tooltip);
+            Sparkline.tooltipInstances.set(document, this.tooltip);
         } else {
-            this.tooltip = MiniChart.tooltipInstances.get(document)!;
+            this.tooltip = Sparkline.tooltipInstances.get(document)!;
         }
 
         this.addPropertyListener('data', this.processData, this);
@@ -157,7 +157,6 @@ export abstract class MiniChart extends Observable {
     protected xData: (number | undefined)[] = [];
 
     protected update() { }
-    // hmm
     protected generateNodeData(): { nodeData: SeriesNodeDatum[], areaData: SeriesNodeDatum[] } | SeriesNodeDatum[] | undefined { return []; }
     protected getNodeData(): readonly SeriesNodeDatum[] { return []; }
     protected highlightDatum(closestDatum: SeriesNodeDatum) { }
@@ -323,9 +322,9 @@ export abstract class MiniChart extends Observable {
     protected destroy() {
         this.tooltip.destroy();
         // remove tooltip instance
-        MiniChart.tooltipInstances.delete(document);
+        Sparkline.tooltipInstances.delete(document);
         // remove document from documents list
-        MiniChart.tooltipDocuments = MiniChart.tooltipDocuments.filter(d => d !== document);
+        Sparkline.tooltipDocuments = Sparkline.tooltipDocuments.filter(d => d !== document);
         this.scene.container = undefined;
         this.cleanupDomEventListerners(this.scene.canvas.element);
     }
