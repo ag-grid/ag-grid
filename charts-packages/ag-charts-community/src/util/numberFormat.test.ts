@@ -1,6 +1,7 @@
 import { describe, expect, test, it } from "@jest/globals";
 import { format, formatDecimalParts, formatPrefix } from "./numberFormat";
 import { LinearScale } from "../scale/linearScale";
+import * as d3 from 'd3';
 
 describe('formatDecimalParts', () => {
     test('1.23', () => {
@@ -53,7 +54,12 @@ describe('format', () => {
     });
     describe('space-filled and signed', () => {
         // TODO: returns '+420000000000'
-        expect(format('+20')(42)).toBe('                 +42');
+        const f = format('+20');
+        const d3_f = d3.format('+20');
+        // d3_f(42);
+        // f(42);
+        expect(d3_f(42)).toBe('                 +42');
+        expect(f(42)).toBe('                 +42');
     });
     describe('dot-filled and centered', () => {
         // TODO: returns '....420000000000....'
