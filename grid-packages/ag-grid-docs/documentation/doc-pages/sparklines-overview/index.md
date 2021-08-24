@@ -16,7 +16,9 @@ const gridOptions = {
             field: 'results',
             cellRenderer: 'agSparklineCellRenderer',
             cellRendererParams: {
-                sparklineType: 'column',
+                sparklineOptions: {
+                    type: 'column'
+                }
             },
         }, 
         // other column definitions ...
@@ -28,4 +30,4 @@ const gridOptions = {
 
 ## Next Up
 
-Continue to the next section to learn about the: [Data Updates](/sparklines-data-updates/).
+Continue to the next section to learn about the: [Column Sparkline](/column-sparkline/).

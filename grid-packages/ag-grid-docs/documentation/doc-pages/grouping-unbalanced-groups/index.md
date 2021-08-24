@@ -18,5 +18,7 @@ The following example demonstrates:
 <grid-example title='Unbalanced Groups' name='unbalanced-groups' type='mixed' options='{ "enterprise": true, "exampleHeight": 570, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
 [[note]]
-| If you do not want rows with null or undefined to be left out of groups, but want a group created to contain these empty values, then change your data and replace the null and undefined values with something (eg the string 'Empty' or a string with a blank space character i.e. ' ').
+| If you do not want rows with null or undefined to be left out of groups, but want a group created to contain these empty
+| values, then change your data and replace the null and undefined values with something (e.g. the string 'Empty' or a 
+| string with a blank space character i.e. ' ').
 
