@@ -1,3 +1,4 @@
+import { describe, expect, test, it } from "@jest/globals";
 import { Observable, reactive } from "./observable";
 
 class SubComponent {
@@ -39,14 +40,14 @@ test('reactive', async () => {
             expect(event.source).toBe(c);
             expect(event.oldValue).toBe('smith');
             expect(event.value).toBe('doe');
-            resolve();
+            resolve(undefined);
         });
     });
 
     const nameCategoryListenerPromise = new Promise((resolve, reject) => {
         c.addEventListener('name', event => {
             expect(event.type).toBe('name');
-            resolve();
+            resolve(undefined);
         });
     });
 

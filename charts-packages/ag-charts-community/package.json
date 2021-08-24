@@ -6,7 +6,8 @@
   "module": "./dist/es6/main.js",
   "types": "./dist/cjs/main.d.ts",
   "scripts": {
-    "test": "echo Skipping chart tests for now.",
+    "test": "npm run validate-es5 && jest",
+    "jest": "jest",
     "build-cjs": "npx tsc -p tsconfig.json",
     "build-es6": "npx tsc -p tsconfig.es6.json",
     "package": "node ../../module-build/rollup/build.js --bundlePrefix ag-charts-community --umdModuleName agCharts",
@@ -54,6 +55,8 @@
   "devDependencies": {
     "@babel/types": "7.12.7",
     "@types/jest": "^25.2.1",
+    "jest-canvas-mock": "2.3.1",
+    "canvas": "2.8.0",
     "eslint": "^6.8.0",
     "eslint-plugin-compat": "^3.5.1",
     "eslint-plugin-ie11": "^1.0.0",

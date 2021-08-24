@@ -1,3 +1,4 @@
+import { describe, expect, test } from "@jest/globals";
 import { equal } from "./equal";
 
 describe('equal', () => {

@@ -1,11 +1,12 @@
+import { describe, expect, test } from "@jest/globals";
+import "jest-canvas-mock";
 import { AgChart } from "./agChart";
-import 'jest-canvas-mock';
 import { LegendPosition } from "./legend";
 import { AreaSeries } from "./series/cartesian/areaSeries";
 import { BarSeries } from "./series/cartesian/barSeries";
 import { LineSeries } from "./series/cartesian/lineSeries";
-import { NumberAxis } from "./axis/numberAxis";
 import { ChartAxis, ChartAxisPosition } from "./chartAxis";
+import { NumberAxis } from "./axis/numberAxis";
 import { ChartTheme } from "./themes/chartTheme";
 
 const revenueProfitData = [{
@@ -69,7 +70,9 @@ describe('update', () => {
                 fills: ['lime']
             }],
             legend: {
-                layoutVerticalSpacing: 16
+                item: {
+                    paddingY: 16
+                }
             }
         });
         AgChart.update(chart, {
@@ -147,7 +150,9 @@ describe('update', () => {
                 fills: ['lime']
             }],
             legend: {
-                layoutVerticalSpacing: 16
+                item: {
+                    paddingY: 16
+                }
             }
         });
 

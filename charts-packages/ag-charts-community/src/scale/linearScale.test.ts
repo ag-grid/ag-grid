@@ -1,3 +1,4 @@
+import { describe, expect, test, it } from "@jest/globals";
 import { LinearScale } from "./linearScale";
 
 test('domain', () => {

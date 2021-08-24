@@ -1,3 +1,4 @@
+import { describe, expect, test, it } from "@jest/globals";
 import { toFixed, toReadableNumber, isNumber } from "./number";
 
 test('toFixed', () => {

@@ -1,4 +1,6 @@
+import { describe, expect, test } from "@jest/globals";
 import { format, formatDecimalParts, formatNumerals } from "./numberFormat";
+import { LinearScale } from "../scale/linearScale";
 
 describe('formatDecimalParts', () => {
     test('1.23', () => {
@@ -31,6 +33,10 @@ describe('format', () => {
             const f = format('.3s');
             console.log(f(43e6));
             expect(f(43e6)).toBe('43.0M');
+        });
+        test('Test scale format', () => {
+            const scale = new LinearScale();
+            const f = scale.tickFormat(10, '.3s');
         });
     });
 });
