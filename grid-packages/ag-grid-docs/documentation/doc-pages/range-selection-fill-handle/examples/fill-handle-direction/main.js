@@ -18,7 +18,22 @@ var gridOptions = {
     },
     enableRangeSelection: true,
     enableFillHandle: true,
+    fillHandleDirection: 'x'
 };
+
+function fillHandleAxis(direction) {
+    // call Array slice because IE querySelectorAll returns an
+    // Array like object that doesn't support forEach
+    var buttons = Array.prototype.slice.call(document.querySelectorAll('.ag-fill-direction'));
+    var button = document.querySelector('.ag-fill-direction.' + direction);
+
+    buttons.forEach(function(btn) {
+        btn.classList.remove('selected');
+    });
+
+    button.classList.add('selected');
+    gridOptions.api.setFillHandleDirection(direction);
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
