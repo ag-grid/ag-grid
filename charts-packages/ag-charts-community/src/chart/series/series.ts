@@ -97,15 +97,15 @@ export abstract class Series extends Observable {
 
     // Package-level visibility, not meant to be set by the user.
     chart?: Chart;
-    xAxis: ChartAxis;
-    yAxis: ChartAxis;
+    xAxis?: ChartAxis;
+    yAxis?: ChartAxis;
 
     directions: ChartAxisDirection[] = [ChartAxisDirection.X, ChartAxisDirection.Y];
-    directionKeys: { [key in ChartAxisDirection]?: string[] };
+    directionKeys: { [key in ChartAxisDirection]?: string[] } = {};
 
     readonly label = new Label();
 
-    tooltip: SeriesTooltip;
+    abstract tooltip: SeriesTooltip;
 
     @reactive('dataChange') data?: any[] = undefined;
     @reactive('dataChange') visible = true;

@@ -130,7 +130,7 @@ export class PieSeries extends PolarSeries {
     set title(value: PieTitle | undefined) {
         const oldTitle = this._title;
 
-        function updateLegend() {
+        function updateLegend(this: PieSeries) {
             this.fireEvent({ type: 'legendChange' });
         }
 

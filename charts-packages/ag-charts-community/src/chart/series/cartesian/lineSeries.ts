@@ -169,7 +169,7 @@ export class LineSeries extends CartesianSeries {
         const { xAxis, yAxis, xKey, yKey, xData, yData } = this;
         const data = xKey && yKey && this.data ? this.data : [];
 
-        if (!xAxis) {
+        if (!xAxis || !yAxis) {
             return false;
         }
 
@@ -247,11 +247,13 @@ export class LineSeries extends CartesianSeries {
     }
 
     private updateLinePath() {
-        if (!this.data) {
+        const { data, xAxis, yAxis } = this;
+
+        if (!data || !xAxis || !yAxis) {
             return;
         }
 
-        const { xAxis, yAxis, data, xData, yData, lineNode, label } = this;
+        const { xData, yData, lineNode, label } = this;
         const xScale = xAxis.scale;
         const yScale = yAxis.scale;
         const xOffset = (xScale.bandwidth || 0) / 2;
@@ -444,7 +446,7 @@ export class LineSeries extends CartesianSeries {
     getTooltipHtml(nodeDatum: LineNodeDatum): string {
         const { xKey, yKey, xAxis, yAxis } = this;
 
-        if (!xKey || !yKey) {
+        if (!xKey || !yKey || !xAxis || !yAxis) {
             return '';
         }
 

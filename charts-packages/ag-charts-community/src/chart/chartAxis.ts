@@ -32,7 +32,7 @@ interface ChartAxisMeta {
 
 export class ChartAxis<S extends Scale<any, number> = Scale<any, number>> extends Axis<S> {
     keys: string[] = [];
-    direction: ChartAxisDirection;
+    direction: ChartAxisDirection = ChartAxisDirection.Y;
     boundSeries: Series[] = [];
     linkedTo?: ChartAxis;
 
@@ -48,7 +48,7 @@ export class ChartAxis<S extends Scale<any, number> = Scale<any, number>> extend
         };
     }
 
-    protected _position: ChartAxisPosition;
+    protected _position: ChartAxisPosition = ChartAxisPosition.Left;
     set position(value: ChartAxisPosition) {
         if (this._position !== value) {
             this._position = value;

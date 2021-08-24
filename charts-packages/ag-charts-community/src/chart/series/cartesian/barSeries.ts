@@ -473,11 +473,11 @@ export class BarSeries extends CartesianSeries {
         });
     }
 
-    private getCategoryAxis(): ChartAxis<Scale<any, number>> {
+    private getCategoryAxis(): ChartAxis<Scale<any, number>> | undefined {
         return this.flipXY ? this.yAxis : this.xAxis;
     }
 
-    private getValueAxis(): ChartAxis<Scale<any, number>> {
+    private getValueAxis(): ChartAxis<Scale<any, number>> | undefined {
         return this.flipXY ? this.xAxis : this.yAxis;
     }
 
@@ -511,13 +511,14 @@ export class BarSeries extends CartesianSeries {
     }
 
     generateNodeData(): BarNodeDatum[] {
-        if (!this.data) {
+        const xAxis = this.getCategoryAxis();
+        const yAxis = this.getValueAxis();
+
+        if (!this.data || !xAxis || !yAxis) {
             return [];
         }
 
         const { flipXY } = this;
-        const xAxis = this.getCategoryAxis();
-        const yAxis = this.getValueAxis();
         const xScale = xAxis.scale;
         const yScale = yAxis.scale;
 
@@ -789,7 +790,7 @@ export class BarSeries extends CartesianSeries {
         const yAxis = this.getValueAxis();
         const { yKey } = nodeDatum;
 
-        if (!xKey || !yKey || !yData.length) {
+        if (!yData.length || !xKey || !yKey || !xAxis || !yAxis) {
             return '';
         }
 

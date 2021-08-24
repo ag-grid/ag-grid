@@ -162,7 +162,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
     private groupSelection: Selection<Group, Group, D, D>;
     private lineNode = new Line();
 
-    protected _scale: S;
+    protected _scale!: S;
     set scale(value: S) {
         this._scale = value;
         this.requestedRange = value.range.slice();
@@ -201,7 +201,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
      */
     getMeta(): any {}
 
-    constructor() {
+    constructor(scale: S) {
+        this.scale = scale;
         this.groupSelection = Selection.select(this.group).selectAll<Group>();
         this.label.onFormatChange = this.onLabelFormatChange.bind(this);
         this.group.append(this.lineNode);
@@ -241,7 +242,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         return 0; // in range
     }
 
-    protected requestedRange: number[];
+    protected requestedRange: number[] = [0, 1];
     set range(value: number[]) {
         this.requestedRange = value.slice();
         this.updateRange();
