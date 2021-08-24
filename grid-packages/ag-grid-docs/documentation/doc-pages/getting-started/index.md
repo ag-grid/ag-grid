@@ -109,8 +109,9 @@ title: "Get Started with AG Grid"
 | ```
 
 [[only-angular]]
-| ```jsx
+| ```ts
 | import { Component } from '@angular/core';
+| import { ColDef } from 'ag-grid-community';
 |
 | @Component({
 |   selector: 'my-app',
@@ -119,7 +120,7 @@ title: "Get Started with AG Grid"
 | })
 | export class AppComponent  {
 |
-|     columnDefs = [
+|     columnDefs: ColDef[] = [
 |         { field: 'make' },
 |         { field: 'model' },
 |         { field: 'price' }
@@ -791,7 +792,7 @@ title: "Get Started with AG Grid"
 |
 | [[note]]
 | | The `withComponents` call is necessary for the grid to be able to use Angular
-| | components as cells / headers - you can ignore it for now.
+| | components as cells / headers pre Ivy - you can ignore it for now.
 |
 | The next step is to add the AG Grid styles - replace the content of
 | `src/styles.scss` with the following code:
@@ -810,6 +811,7 @@ title: "Get Started with AG Grid"
 |
 | ```ts
 | import { Component } from '@angular/core';
+| import { ColDef } from 'ag-grid-community';
 |
 | @Component({
 |     selector: 'app-root',
@@ -818,7 +820,7 @@ title: "Get Started with AG Grid"
 | })
 | export class AppComponent {
 |
-|     columnDefs = [
+|     columnDefs: ColDef[] = [
 |         { field: 'make' },
 |         { field: 'model' },
 |         { field: 'price'}
@@ -865,7 +867,7 @@ title: "Get Started with AG Grid"
 | need to do is set the `sortable` property to each column you want to be able to sort by.
 |
 | ```ts
-| columnDefs = [
+| columnDefs: ColDef[] = [
 |     { field: 'make', sortable: true },
 |     { field: 'model', sortable: true },
 |     { field: 'price', sortable: true }
@@ -883,7 +885,7 @@ title: "Get Started with AG Grid"
 | As with sorting, enabling filtering is as easy as setting the `filter` property:
 |
 | ```ts
-| columnDefs = [
+| columnDefs: ColDef[] = [
 |     { field: 'make', sortable: true, filter: true },
 |     { field: 'model', sortable: true, filter: true },
 |     { field: 'price', sortable: true, filter: true }
@@ -929,18 +931,19 @@ title: "Get Started with AG Grid"
 | Edit the `src/app/app.component.ts` to this:
 |
 |```ts
-|import { Component, OnInit } from '@angular/core';
+|import { Component } from '@angular/core';
 |import { HttpClient } from '@angular/common/http';
-|import {Observable} from 'rxjs';
+|import { Observable } from 'rxjs';
+|import { ColDef } from 'ag-grid-community';
 |
 |@Component({
 |    selector: 'app-root',
 |    templateUrl: './app.component.html',
 |    styleUrls: ['./app.component.scss']
 |})
-|export class AppComponent implements OnInit {
+|export class AppComponent {
 |
-|    columnDefs = [
+|    columnDefs: ColDef[] = [
 |        { field: 'make', sortable: true, filter: true },
 |        { field: 'model', sortable: true, filter: true },
 |        { field: 'price', sortable: true, filter: true }
@@ -949,9 +952,6 @@ title: "Get Started with AG Grid"
 |    rowData: Observable<any[]>;
 |
 |    constructor(private http: HttpClient) {
-|    }
-|
-|    ngOnInit(): void {
 |        this.rowData = this.http.get<any[]>('https://www.ag-grid.com/example-assets/small-row-data.json');
 |    }
 |}
@@ -964,7 +964,7 @@ title: "Get Started with AG Grid"
 | <ag-grid-angular
 |     style="width: 500px; height: 500px;"
 |     class="ag-theme-alpine"
-|     [rowData]="rowData | async"
+|     [rowData]="(rowData | async) || []"
 |     [columnDefs]="columnDefs"
 | >
 | </ag-grid-angular>
@@ -972,6 +972,8 @@ title: "Get Started with AG Grid"
 |
 | The remote data is the same as the one we initially had, so you should not notice any actual changes
 | to the grid. However, you will see an additional HTTP request performed if you open your developer tools.
+|
+| We provide a default value of an empty array `[]` to meet the `strictNullChecks` type requirement which is now enabled by default with the Angular CLI. See [Strict Null checks](https://angular.io/guide/template-typecheck#strict-null-checks) for more details.
 |
 | ## Enable Selection
 |
@@ -985,18 +987,19 @@ title: "Get Started with AG Grid"
 | matter of adding and changing couple of properties. Edit `src/app/app.component.ts` first:
 |
 | ```ts
-|import {Component, OnInit} from '@angular/core';
-|import {HttpClient} from '@angular/common/http';
-|import {Observable} from 'rxjs';
+|import { Component } from '@angular/core';
+|import { HttpClient } from '@angular/common/http';
+|import { Observable } from 'rxjs';
+|import { ColDef } from 'ag-grid-community';
 |
 |@Component({
 |    selector: 'app-root',
 |    templateUrl: './app.component.html',
 |    styleUrls: ['./app.component.scss']
 |})
-|export class AppComponent implements OnInit {
+|export class AppComponent {
 |
-|    columnDefs = [
+|    columnDefs: ColDef[] = [
 |        {field: 'make', sortable: true, filter: true, checkboxSelection: true},
 |        {field: 'model', sortable: true, filter: true},
 |        {field: 'price', sortable: true, filter: true}
@@ -1005,10 +1008,7 @@ title: "Get Started with AG Grid"
 |    rowData: Observable<any[]>;
 |
 |    constructor(private http: HttpClient) {
-|    }
-|
-|    ngOnInit(): void {
-|        this.rowData = this.http.get<any[]>('https://www.ag-grid.com/example-assets/small-row-data.json');
+|       this.rowData = this.http.get<any[]>('https://www.ag-grid.com/example-assets/small-row-data.json');
 |    }
 |}
 | ```
@@ -1020,7 +1020,7 @@ title: "Get Started with AG Grid"
 | <ag-grid-angular
 |     style="width: 500px; height: 500px;"
 |     class="ag-theme-alpine"
-|     [rowData]="rowData | async"
+|     [rowData]="(rowData | async) || []"
 |     [columnDefs]="columnDefs"
 |     rowSelection="multiple"
 | >
@@ -1039,7 +1039,7 @@ title: "Get Started with AG Grid"
 |     #agGrid
 |     style="width: 500px; height: 500px;"
 |     class="ag-theme-alpine"
-|     [rowData]="rowData | async"
+|     [rowData]="(rowData | async) || []"
 |     [columnDefs]="columnDefs"
 |     rowSelection="multiple"
 | >
@@ -1049,20 +1049,21 @@ title: "Get Started with AG Grid"
 | Now let's make the instance accessible, and add the `getSelectedRows` method to our component: 
 |
 |```diff
-|import {Component, OnInit, ViewChild} from '@angular/core';
-|import {HttpClient} from '@angular/common/http';
-|import {Observable} from 'rxjs';
-|import {AgGridAngular} from 'ag-grid-angular';
+|+ import { Component, ViewChild } from '@angular/core';
+|import { HttpClient } from '@angular/common/http';
+|import { Observable } from 'rxjs';
+|import { ColDef } from 'ag-grid-community';
+|+ import { AgGridAngular } from 'ag-grid-angular';
 |
 |@Component({
 |    selector: 'app-root',
 |    templateUrl: './app.component.html',
 |    styleUrls: ['./app.component.scss']
 |})
-|export class AppComponent implements OnInit {
-|+  @ViewChild('agGrid') agGrid: AgGridAngular;
+|export class AppComponent {
+|+  @ViewChild('agGrid') agGrid!: AgGridAngular;
 |
-|    columnDefs = [
+|    columnDefs: ColDef[] = [
 |        {field: 'make', sortable: true, filter: true, checkboxSelection: true},
 |        {field: 'model', sortable: true, filter: true},
 |        {field: 'price', sortable: true, filter: true}
@@ -1071,10 +1072,7 @@ title: "Get Started with AG Grid"
 |    rowData: Observable<any[]>;
 |
 |    constructor(private http: HttpClient) {
-|    }
-|
-|    ngOnInit(): void {
-|        this.rowData = this.http.get<any[]>('https://www.ag-grid.com/example-assets/small-row-data.json');
+|       this.rowData = this.http.get<any[]>('https://www.ag-grid.com/example-assets/small-row-data.json');
 |    }
 |
 |+  getSelectedRows(): void {
@@ -1083,7 +1081,7 @@ title: "Get Started with AG Grid"
 |+      const selectedDataStringPresentation = selectedData.map(node => `${node.make} ${node.model}`).join(', ');
 |+
 |+      alert(`Selected nodes: ${selectedDataStringPresentation}`);
-|   }
+|+   }
 |}
 |```
 |
@@ -1105,7 +1103,7 @@ title: "Get Started with AG Grid"
 | Our current data set is pretty small so let's switch to a larger one:
 |
 | ```diff
-| ngOnInit(): void {
+| constructor(private http: HttpClient) {
 | -     this.rowData = this.http.get<any[]>('https://www.ag-grid.com/example-assets/small-row-data.json');
 | +     this.rowData = this.http.get<any[]>('https://www.ag-grid.com/example-assets/row-data.json');
 | }
@@ -1135,20 +1133,20 @@ title: "Get Started with AG Grid"
 | `columnDefs` to the following:
 |
 | ```ts
-| export class AppComponent implements OnInit {
-|     @ViewChild('agGrid') agGrid: AgGridAngular;
+| export class AppComponent {
+|     @ViewChild('agGrid') agGrid!: AgGridAngular;
 |
-|     defaultColDef = {
+|     defaultColDef: ColDef = {
 |         sortable: true,
 |         filter: true
 |     };
 |
-|     columnDefs = [
+|     columnDefs: ColDef[] = [
 |         { field: 'make', rowGroup: true },
 |         { field: 'price' }
 |     ];
 |
-|     autoGroupColumnDef = {
+|     autoGroupColumnDef: ColDef = {
 |         headerName: 'Model',
 |         field: 'model',
 |         cellRenderer: 'agGroupCellRenderer',
@@ -1160,9 +1158,6 @@ title: "Get Started with AG Grid"
 |     rowData: Observable<any[]>;
 |
 |     constructor(private http: HttpClient) {
-|     }
-|
-|     ngOnInit(): void {
 |         this.rowData = this.http.get<any[]>('https://www.ag-grid.com/example-assets/row-data.json');
 |     }
 |
