@@ -7130,18 +7130,125 @@
       "isDisplayed()": "boolean"
     }
   },
-  "SparklineFormatter": { "meta": {}, "type": {} },
-  "HighlightStyle": { "meta": {}, "type": {} },
-  "SparklineOptions": {
+  "SparklineColumnFormatter": { "meta": {}, "type": {} },
+  "SparklineMarkerFormatter": { "meta": {}, "type": {} },
+  "ColumnFormatterParams": {
     "meta": {},
     "type": {
-      "type?": "string",
+      "datum": "any",
+      "xValue": "any",
+      "yValue": "any",
+      "width": "number",
+      "height": "number",
+      "fill?": "string",
+      "stroke?": "string",
+      "strokeWidth": "number",
+      "highlighted": "boolean"
+    }
+  },
+  "ColumnFormat": {
+    "meta": {},
+    "type": { "fill?": "string", "stroke?": "string", "strokeWidth?": "number" }
+  },
+  "MarkerFormat": {
+    "meta": {},
+    "type": {
+      "enabled?": "boolean",
+      "shape?": "string",
+      "size?": "number",
+      "fill?": "string",
+      "stroke?": "string",
+      "strokeWidth?": "number"
+    }
+  },
+  "MarkerFormatterParams": {
+    "meta": {},
+    "type": {
+      "datum": "any",
+      "xValue": "any",
+      "yValue": "any",
+      "fill?": "string",
+      "stroke?": "string",
+      "strokeWidth": "number",
+      "size": "number",
+      "highlighted": "boolean"
+    }
+  },
+  "AgBaseSparklineOptions": {
+    "meta": {},
+    "type": {
+      "data?": "number[]",
+      "width?": "number",
+      "height?": "number",
+      "title?": "string",
+      "padding?": "string",
+      "axis?": "AgSparklineAxisOptions",
+      "hihglightStyle": "HighlightStyle"
+    }
+  },
+  "AgSparklineAxisOptions": {
+    "meta": {},
+    "type": { "stroke?": "string", "strokeWidth?": "number" }
+  },
+  "HighlightStyle": {
+    "meta": {},
+    "type": {
+      "size?": "number",
+      "fill?": "string",
+      "stroke?": "string",
+      "strokeWidth?": "number"
+    }
+  },
+  "AgLineSparklineOptions": {
+    "meta": {},
+    "type": {
+      "data?": "number[]",
+      "width?": "number",
+      "height?": "number",
+      "title?": "string",
+      "padding?": "string",
+      "axis?": "AgSparklineAxisOptions",
+      "hihglightStyle": "HighlightStyle",
+      "type?": "'line'",
+      "line?": "{ fill?: string; }"
+    }
+  },
+  "AgAreaSparklineOptions": {
+    "meta": {},
+    "type": {
+      "data?": "number[]",
+      "width?": "number",
+      "height?": "number",
+      "title?": "string",
+      "padding?": "string",
+      "axis?": "AgSparklineAxisOptions",
+      "hihglightStyle": "HighlightStyle",
+      "type?": "'area'"
+    }
+  },
+  "AgColumnSparklineOptions": {
+    "meta": {},
+    "type": {
+      "data?": "number[]",
+      "width?": "number",
+      "height?": "number",
+      "title?": "string",
+      "padding?": "string",
+      "axis?": "AgSparklineAxisOptions",
+      "hihglightStyle": "HighlightStyle",
+      "type?": "'column'",
+      "fill?": "string",
+      "stroke?": "string",
       "strokeWidth?": "number",
       "paddingInner?": "number",
       "paddingOuter?": "number",
-      "formatter?": "SparklineFormatter",
-      "highlightStyle?": "HighlightStyle"
+      "yScaleDomain": "[number, number] | undefined",
+      "formatter?": "SparklineColumnFormatter"
     }
+  },
+  "AgSparklineOptions": {
+    "meta": { "isTypeAlias": true },
+    "type": "AgLineSparklineOptions | AgAreaSparklineOptions | AgColumnSparklineOptions"
   },
   "ISparklineCellRendererParams": {
     "meta": {},
@@ -7166,7 +7273,7 @@
       "formatValue?": "(value: any) => any",
       "refreshCell?": "() => void",
       "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string) => void",
-      "sparklineOptions?": "SparklineOptions"
+      "sparklineOptions?": "AgSparklineOptions"
     },
     "docs": {
       "context": "/** The context as provided on `gridOptions.context` */",
