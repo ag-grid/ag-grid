@@ -261,7 +261,7 @@ Infinite scrolling has a cache working behind the scenes. The following properti
 
 ### Properties
 
-<api-documentation source='grid-properties/properties.json' section='serverSideRowModel' names='["cacheOverflowSize", "maxConcurrentDatasourceRequests", "maxBlocksInCache", "infiniteInitialRowCount", "cacheBlockSize"]'></api-documentation>
+<api-documentation source='grid-properties/properties.json' section='infiniteRowModel' names='["cacheOverflowSize", "maxConcurrentDatasourceRequests", "maxBlocksInCache", "infiniteInitialRowCount", "cacheBlockSize"]'></api-documentation>
 
 
 ### API

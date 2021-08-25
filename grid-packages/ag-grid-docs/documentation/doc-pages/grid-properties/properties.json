@@ -1,4 +1,7 @@
 {
+    "_config_": {
+        "codeSrc": "GridOptions"
+    },
     "columns": {
         "meta": {
             "displayName": "Columns"
@@ -267,9 +270,13 @@
             "default": false,
             "description": "Set this to `true` to [stop cell editing when grid loses focus](/cell-editing/#stop-editing-when-grid-loses-focus). The default is that the grid stays editing until focus goes onto another cell. For inline (non-popup) editors only."
         },
-        "enterMovesDown<br />enterMovesDownAfterEdit": {
+        "enterMovesDown": {
             "default": false,
-            "description": "Set both properties to `true` to have Excel-style behaviour for the <kbd>Enter</kbd> key, i.e. pressing the <kbd>Enter</kbd> key will move down to the cell beneath [as described here](/cell-editing/#enter-key-navigation)."
+            "description": "Set to `true` along with `enterMovesDownAfterEdit` to have Excel-style behaviour for the <kbd>Enter</kbd> key, i.e. pressing the <kbd>Enter</kbd> key will move down to the cell beneath [as described here](/cell-editing/#enter-key-navigation)."
+        },
+        "enterMovesDownAfterEdit": {
+            "default": false,
+            "description": "Set to `true` along with `enterMovesDown` to have Excel-style behaviour for the <kbd>Enter</kbd> key, i.e. pressing the <kbd>Enter</kbd> key will move down to the cell beneath [as described here](/cell-editing/#enter-key-navigation)."
         }
     },
     "headers": {
@@ -571,7 +578,8 @@
     },
     "serverSideRowModel": {
         "meta": {
-            "displayName": "Row Model: Server-Side"
+            "displayName": "Row Model: Server-Side",
+            "description": "See [Server-Side Model](/server-side-model/)"
         },
         "serverSideStoreType": {
             "description": "Whether to use Full Store or Partial Store for storing rows.",
@@ -608,9 +616,35 @@
             "description": "When enabled, always refreshes stores after filter has changed. Used by Full Store only, to allow Server-Side Filtering."
         }
     },
+    "infiniteRowModel": {
+        "meta": {
+            "displayName": "Row Model: Infinite",
+            "description": "See [Infinite Model](/infinite-scrolling/)"
+        },
+        "cacheOverflowSize": {
+            "default": 1,
+            "description": "How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data."
+        },
+        "maxConcurrentDatasourceRequests": {
+            "default": 2,
+            "description": "How many requests to hit the server with concurrently. If the max is reached, requests are queued."
+        },
+        "cacheBlockSize": {
+            "default": 100,
+            "description": "How many rows for each block in the store, i.e. how many rows returned from the server at a time."
+        },
+        "maxBlocksInCache": {
+            "description": "How many blocks to keep in the store. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value."
+        },
+        "infiniteInitialRowCount": {
+            "default": 1,
+            "description": "How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data."
+        }
+    },
     "viewportRowModel": {
         "meta": {
-            "displayName": "Row Model: Viewport"
+            "displayName": "Row Model: Viewport",
+            "description": "See [Viewport Model](/viewport/)"
         },
         "viewportRowModelPageSize": {
             "description": "When using [Viewport Row Model](/viewport/), sets the page size for the viewport."
@@ -652,6 +686,7 @@
         },
         "suppressRowVirtualisation": {
             "strikeThrough": true,
+            "type": "never",
             "description": "There is no such property as `suppressRowVirtualisation` - if you want to do this, then set the `rowBuffer` property to be very large, e.g. `9999`. **Warning: rendering lots of rows will mean a very large amount of rendering in the DOM which will slow things down.**"
         },
         "suppressMaxRenderedRowRestriction": {
@@ -712,25 +747,24 @@
         "meta": {
             "displayName": "Full Width Renderers"
         },
-        "groupRowRenderer<br />groupRowRendererFramework": {
+        "groupRowRenderer": {
             "description": "Sets the [Cell Renderer](/component-cell-renderer/) to use when `groupUseEntireRow=true`.",
             "more": {
                 "name": "Row Grouping",
                 "url": "/grouping/#reference-callbacks"
             }
         },
+        "groupRowRendererFramework": {
+            "description": "Same as `groupRowRenderer` but for a framework component."
+        },
         "groupRowRendererParams": {
             "description": "Customise the parameters provided to the group row renderer component."
         },
-        "groupRowInnerRenderer<br />groupRowInnerRendererFramework": {
-            "description": "Sets the inner [Cell Renderer](/component-cell-renderer/) to use when `groupUseEntireRow=true`.",
-            "more": {
-                "name": "Row Grouping",
-                "url": "/grouping/#reference-callbacks"
-            }
-        },
-        "fullWidthCellRenderer<br />fullWidthCellRendererFramework": {
+        "fullWidthCellRenderer": {
             "description": "Sets the [Cell Renderer](/component-cell-renderer/) to use for [Full Width Rows](/full-width-rows/)."
+        },
+        "fullWidthCellRendererFramework": {
+            "description": "Same as `fullWidthCellRenderer` but for a framework component."
         },
         "fullWidthCellRendererParams": {
             "description": "Customise the parameters provided to the full width cell renderer component."
@@ -876,14 +910,20 @@
         "overlayNoRowsTemplate": {
             "description": "Provide a template for 'no rows' [overlay](/overlays/)."
         },
-        "loadingOverlayComponent<br />loadingOverlayComponentFramework ": {
+        "loadingOverlayComponent": {
             "description": "Provide a custom [loading overlay component](/component-overlay/#loading-rows-overlay-interface)."
+        },
+        "loadingOverlayComponentFramework": {
+            "description": "Same as `loadingOverlayComponent` but for a framework component."
         },
         "loadingOverlayComponentParams": {
             "description": "Customise the parameters provided to the loading overlay component."
         },
-        "noRowsOverlayComponent<br />noRowsOverlayComponentFramework ": {
+        "noRowsOverlayComponent": {
             "description": "Provide a custom [no rows overlay component](/component-overlay/#no-rows-overlay-interface)."
+        },
+        "noRowsOverlayComponentFramework": {
+            "description": "Same as `noRowsOverlayComponent` but for a framework component."
         },
         "noRowsOverlayComponentParams": {
             "description": "Customise the parameters provided to the no rows overlay component."
