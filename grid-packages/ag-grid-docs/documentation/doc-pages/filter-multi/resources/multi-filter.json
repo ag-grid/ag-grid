@@ -1,4 +1,5 @@
 {
+    "_config_": {},
     "filterParams": {
         "filters": {
             "description": "An array of filter definition objects.",

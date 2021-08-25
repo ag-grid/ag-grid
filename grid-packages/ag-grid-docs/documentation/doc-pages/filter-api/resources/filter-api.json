@@ -1,4 +1,5 @@
 {
+    "_config_": {},
     "api": {
         "isFilterActive()": {
             "description": "Returns `true` if the filter is currently active, otherwise `false`.",

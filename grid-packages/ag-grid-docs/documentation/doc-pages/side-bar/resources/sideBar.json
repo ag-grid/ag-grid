@@ -1,4 +1,5 @@
 {
+    "_config_": {},
     "sideBarProperties": {
         "toolPanels": {
             "description": "A list of all the panels to place in the side bar. The panels will be displayed in the provided order from top to bottom."

@@ -1,4 +1,5 @@
 {
+    "_config_": {},
     "csvExportParams": {
         "columnSeparator": {
             "default": ",",

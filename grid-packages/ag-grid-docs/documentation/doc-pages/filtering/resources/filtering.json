@@ -1,4 +1,5 @@
 {
+    "_config_": {},
     "providedFilters": {
         "agNumberColumnFilter": {
             "description": "A Number Filter for number comparisons."
