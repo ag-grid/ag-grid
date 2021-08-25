@@ -1,4 +1,7 @@
 {
+    "_config_": {
+        "codeSrc": "ColumnApi"
+    },
     "columns": {
         "meta": {
             "displayName": "Columns",
@@ -140,11 +143,29 @@
         "getAllDisplayedVirtualColumns": {
             "description": "Same as `getAllGridColumns()`, except only returns rendered columns, i.e. columns that are not within the viewport and therefore not rendered, due to column virtualisation, are not displayed."
         },
-        "getDisplayedCenterColumns<br />getDisplayedLeftColumns<br />getDisplayedRightColumns<br />getAllDisplayedColumns": {
-            "description": "Returns all columns currently displayed (e.g. are visible and if in a group, the group is showing the columns) for the pinned left, centre and pinned right portions of the grid.<br/> Returns: `Column[]`"
+        "getAllDisplayedColumns": {
+            "description": "Returns all columns currently displayed (e.g. are visible and if in a group, the group is showing the columns) for the pinned left, centre and pinned right portions of the grid."
         },
-        "getLeftDisplayedColumnGroups<br />getCenterDisplayedColumnGroups<br />getRightDisplayedColumnGroups<br />getAllDisplayedColumnGroups": {
-            "description": "Returns all 'root' column headers. If you are not grouping columns, these return the columns. If you are grouping, these return the top level groups - you can navigate down through each one to get the other lower level headers and finally the columns at the bottom.<br/> Returns: `ColumnGroupChild[]`"
+        "getDisplayedCenterColumns": {
+            "description": "Same as `getAllDisplayedColumns` but just for the center portion of the grid"
+        },
+        "getDisplayedLeftColumns": {
+            "description": "Same as `getAllDisplayedColumns` but just for the pinned left portion of the grid."
+        },
+        "getDisplayedRightColumns": {
+            "description": "Same as `getAllDisplayedColumns` but just for the pinned right portion of the grid."
+        },
+        "getAllDisplayedColumnGroups": {
+            "description": "Returns all 'root' column headers. If you are not grouping columns, these return the columns. If you are grouping, these return the top level groups - you can navigate down through each one to get the other lower level headers and finally the columns at the bottom."
+        },
+        "getCenterDisplayedColumnGroups": {
+            "description": "Same as `getAllDisplayedColumnGroups` but just for the center portion of the grid."
+        },
+        "getLeftDisplayedColumnGroups": {
+            "description": "Same as `getAllDisplayedColumnGroups` but just for the pinned left portion of the grid."
+        },
+        "getRightDisplayedColumnGroups": {
+            "description": "Same as `getAllDisplayedColumnGroups` but just for the pinned right portion of the grid."
         }
     },
     "valueColumns": {

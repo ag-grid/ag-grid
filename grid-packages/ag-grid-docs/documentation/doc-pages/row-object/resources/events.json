@@ -1,4 +1,7 @@
 {
+    "_config_": {
+        "codeSrc": "RowNode"
+    },
     "rowNodeEvents": {
         "meta": {
             "displayName": "Events on Row Nodes",

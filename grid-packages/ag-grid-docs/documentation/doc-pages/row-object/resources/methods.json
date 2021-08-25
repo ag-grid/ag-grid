@@ -1,4 +1,7 @@
 {
+    "_config_": {
+        "codeSrc": "RowNode"
+    },
     "rowNodeMethods": {
         "meta": {
             "displayName": "Row Node Methods"

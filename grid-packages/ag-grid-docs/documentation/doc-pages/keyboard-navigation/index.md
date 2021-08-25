@@ -67,13 +67,13 @@ Most people will be happy with the default navigation the grid does when you use
 
 Provide a callback `navigateToNextCell` if you want to override the arrow key navigation. 
 
-<api-documentation source='grid-callbacks/callbacks.json' section='nav' names='["navigateToNextCell"]' config='{"codeSrc": "GridOptions"}' ></api-documentation>
+<api-documentation source='grid-callbacks/callbacks.json' section='nav' names='["navigateToNextCell"]'  ></api-documentation>
 
 ### tabToNextCell
 
 Provide a callback `tabToNextCell` if you want to override the <kbd>Tab</kbd> key navigation. 
 
-<api-documentation source='grid-callbacks/callbacks.json' section='nav' names='["tabToNextCell"]' config='{"codeSrc": "GridOptions"}' ></api-documentation>
+<api-documentation source='grid-callbacks/callbacks.json' section='nav' names='["tabToNextCell"]'  ></api-documentation>
 
 ### CellPosition
 
@@ -87,13 +87,13 @@ The functions take a `CellPosition` for current and next cells, as well as retur
 
 Provide a callback `navigateToNextHeader` if you want to override the arrow key navigation. 
 
-<api-documentation source='grid-callbacks/callbacks.json' section='nav' names='["navigateToNextHeader"]' config='{"codeSrc": "GridOptions"}' ></api-documentation>
+<api-documentation source='grid-callbacks/callbacks.json' section='nav' names='["navigateToNextHeader"]'  ></api-documentation>
 
 ### tabToNextHeader
 
 Provide a callback `tabToNextHeader` if you want to override the <kbd>Tab</kbd> key navigation. 
 
-<api-documentation source='grid-callbacks/callbacks.json' section='nav' names='["tabToNextHeader"]' config='{"codeSrc": "GridOptions"}' ></api-documentation>
+<api-documentation source='grid-callbacks/callbacks.json' section='nav' names='["tabToNextHeader"]'  ></api-documentation>
 
 ### HeaderPosition
 
@@ -195,11 +195,11 @@ It is possible to stop the grid acting on particular events. To do this implemen
 
 ### suppressHeaderKeyboardEvent
 
-<api-documentation source='column-properties/properties.json' section='header' names='["suppressHeaderKeyboardEvent"]' config='{ "codeSrc": "ColumnOptions"}'></api-documentation>
+<api-documentation source='column-properties/properties.json' section='header' names='["suppressHeaderKeyboardEvent"]'></api-documentation>
 
 ### suppressKeyboardEvent
 
-<api-documentation source='column-properties/properties.json' section='columns' names='["suppressKeyboardEvent"]' config='{ "codeSrc": "ColumnOptions"}'></api-documentation>
+<api-documentation source='column-properties/properties.json' section='columns' names='["suppressKeyboardEvent"]'></api-documentation>
 
 The callback is available as a [column callback](/column-properties/) (set on the column definition). If you provide the callback on both the grid and column definition, then if either return `true` the event will be suppressed.
 

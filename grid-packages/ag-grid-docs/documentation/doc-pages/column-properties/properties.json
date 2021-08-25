@@ -1,4 +1,7 @@
 {
+    "_config_": {
+        "codeSrc": "ColumnOptions"
+    },
     "columns": {
         "meta": {
             "displayName": "Columns"
@@ -95,8 +98,15 @@
         "headerClass": {
             "description": "Class to use for the header cell. Can be a string, array of strings, or function."
         },
-        "headerComponent<br />headerComponentFramework": {
+        "headerComponent": {
             "description": "Header component to use for this column.",
+            "more": {
+                "name": "Header Component",
+                "url": "/component-header/"
+            }
+        },
+        "headerComponentFramework": {
+            "description": "Header framework component to use for this column.",
             "more": {
                 "name": "Header Component",
                 "url": "/component-header/"
@@ -257,8 +267,15 @@
                 "url": "/cell-styles/#cell-class-rules"
             }
         },
-        "cellRenderer<br />cellRendererFramework": {
+        "cellRenderer": {
             "description": "`cellRenderer` to use for this column.",
+            "more": {
+                "name": "Cell Renderer",
+                "url": "/cell-rendering/"
+            }
+        },
+        "cellRendererFramework": {
+            "description": "Framework `cellRenderer` to use for this column.",
             "more": {
                 "name": "Cell Renderer",
                 "url": "/cell-rendering/"
@@ -415,8 +432,15 @@
         "valueParser": {
             "description": "Function or [expression](/cell-expressions/#column-definition-expressions). Parses the value for saving."
         },
-        "cellEditor<br />cellEditorFramework": {
+        "cellEditor": {
             "description": "`cellEditor` to use for this column.",
+            "more": {
+                "name": "Cell Editors",
+                "url": "/component-cell-editor/"
+            }
+        },
+        "cellEditorFramework": {
+            "description": "Framework `cellEditor` to use for this column.",
             "more": {
                 "name": "Cell Editors",
                 "url": "/component-cell-editor/"
@@ -587,8 +611,11 @@
         "headerClass": {
             "description": "Class to use for the header cell. Can be a string, array of strings, or function."
         },
-        "headerGroupComponent<br />headerGroupComponentFramework": {
+        "headerGroupComponent": {
             "description": "Component to use header group."
+        },
+        "headerGroupComponentFramework": {
+            "description": "Framework component to use header group."
         },
         "headerGroupComponentParams": {
             "description": "Params for the header group component."

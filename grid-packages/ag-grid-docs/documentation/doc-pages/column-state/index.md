@@ -54,7 +54,7 @@ The example below demonstrates saving and restoring column state. Try the follow
 
 The Column State method interfaces are as follows:
 
-<api-documentation source='column-api/api.json' section='state' names='["getColumnState", "applyColumnState"]' config='{ "codeSrc": "ColumnApi"}'></api-documentation>
+<api-documentation source='column-api/api.json' section='state' names='["getColumnState", "applyColumnState"]'></api-documentation>
 
 ## Partial State
 

@@ -1,4 +1,7 @@
 {
+    "_config_": {
+        "codeSrc": "GridOptions"
+    },
     "selection": {
         "meta": {
             "displayName": "Selection"

@@ -1,4 +1,7 @@
 {
+    "_config_": {
+        "codeSrc": "GridApi"
+    },
     "columns": {
         "meta": {
             "displayName": "Columns",

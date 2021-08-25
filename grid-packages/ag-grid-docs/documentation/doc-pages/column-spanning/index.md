@@ -23,7 +23,7 @@ const gridOptions = {
 
 The interface for the colSpan callback is as follows:
 
-<api-documentation source='column-properties/properties.json' section='spanning' names='["colSpan"]' config='{ "codeSrc": "ColumnOptions"}'></api-documentation>
+<api-documentation source='column-properties/properties.json' section='spanning' names='["colSpan"]'></api-documentation>
 
 ## Column Spanning Simple Example
 

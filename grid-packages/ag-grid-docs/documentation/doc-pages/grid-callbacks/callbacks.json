@@ -1,5 +1,7 @@
 {
-
+    "_config_": {
+        "codeSrc": "GridOptions"
+    },
     "callbacks": {
         "meta": {
             "displayName": "Rows"

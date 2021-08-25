@@ -16,7 +16,7 @@ The simplest way to enable editing is by providing `colDef.editable=true`. By do
 
 It is possible to have only a few cells in a column editable; to do so, instead of `colDef.editable=true`, you can specify a callback that will get called for each cell displayed for that column. If you return `true` the cell will be editable.
 
-<api-documentation source='column-properties/properties.json' section='editing' names='["editable"]' config='{ "codeSrc": "ColumnOptions"}'></api-documentation>
+<api-documentation source='column-properties/properties.json' section='editing' names='["editable"]' ></api-documentation>
 
 ## Default Editing
 

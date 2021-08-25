@@ -1,4 +1,7 @@
 {
+    "_config_": {
+        "codeSrc": "RowNode"
+    },
     "rowNodeAttributes": {
         "meta": {
             "displayName": "All Row Node Attributes"

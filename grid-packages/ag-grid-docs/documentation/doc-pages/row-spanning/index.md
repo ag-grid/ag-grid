@@ -45,7 +45,7 @@ const gridOptions = {
 
 The interface for the `rowSpan` callback is as follows:
 
-<api-documentation source='column-properties/properties.json' section='spanning' names='["rowSpan"]' config='{ "codeSrc": "ColumnOptions"}'></api-documentation>
+<api-documentation source='column-properties/properties.json' section='spanning' names='["rowSpan"]' ></api-documentation>
 
 ## Row Spanning Simple Example
 

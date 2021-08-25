@@ -41,4 +41,4 @@ The name of the callback is constructed by prefixing the event name with `on`. F
 [[note]]
 | TypeScript users can take advantage of the events' interfaces. You can construct the interface name by suffixing the event name with `Event`. For example, the `cellClicked` event uses the interface `CellClickedEvent`.
 
-<api-documentation source='events.json' config='{"codeSrc": "GridOptions"}'></api-documentation>
+<api-documentation source='events.json' ></api-documentation>

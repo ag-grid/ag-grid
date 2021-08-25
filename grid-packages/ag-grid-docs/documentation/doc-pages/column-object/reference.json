@@ -1,4 +1,7 @@
 {
+    "_config_": {
+        "codeSrc": "Column"
+    },
     "methods": {
         "meta": {
             "displayName": "Column Methods"
