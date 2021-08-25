@@ -54,7 +54,7 @@ Note that the `datum` object is untyped and can contain keys that are not plotte
 
 No events yet.
 
-<api-documentation source='charts-api/api.json' section='area.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation>
+<!-- <api-documentation source='charts-api/api.json' section='area.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation> -->
 
 #### Scatter series
 
@@ -97,4 +97,4 @@ Fired when a node of any series in the chart is clicked. In case a chart has mul
 
 In this case the contents of the event object passed to the listener will depend on the type of series the clicked node belongs to.
 
-<api-documentation source='charts-api/api.json' section='chart.legend.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation>
+<!-- <api-documentation source='charts-api/api.json' section='chart.legend.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation> -->
