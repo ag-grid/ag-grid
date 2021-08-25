@@ -7,7 +7,7 @@ var gridOptions = {
             minWidth: 100,
             cellRenderer: 'agSparklineCellRenderer',
             cellRendererParams: {
-                sparklineType: 'column',
+                sparklineOptions: { type: 'column' },
             },
         },
         { field: 'athlete' },

@@ -1,0 +1,118 @@
+{
+    "AgColumnSparklineOptions": {
+        "type": {
+            "description": "xxx",
+            "type": "string"
+        },
+        "data": {
+            "description": "xxx",
+            "type": "number[]"
+        },
+        "width": {
+            "description": "xxx",
+            "type": "number"
+        },
+        "height": {
+            "description": "xxx",
+            "type": "number"
+        },
+        "title": {
+            "description": "xxx",
+            "type": "string"
+        },
+        "padding": {
+            "description": "xxx",
+            "type": "string"
+        },
+        "axis": {
+            "description": "xxx",
+            "type": "AgSparklineAxisOptions"
+        },
+        "highlightStyle": {
+            "description": "xxx",
+            "type": "HighlightStyle"
+        },
+        "fill": {
+            "description": "xxx",
+            "type": "string"
+        },
+        "stroke": {
+            "description": "xxx",
+            "type": "string"
+        },
+        "strokeWidth": {
+            "description": "xxx",
+            "type": "number"
+        },
+        "paddingInner": {
+            "description": "xxx",
+            "type": "number"
+        },
+        "paddingOuter": {
+            "description": "xxx",
+            "type": "number"
+        },
+        "formatter": {
+            "description": "A callback function to return xxx",
+            "type": {
+                "meta": {
+                    "name": "ColumnFormatterParams"
+                },
+                "parameters": {
+                    "datum": "any",
+                    "xValue": "any",
+                    "yValue": "any",
+                    "width": "number",
+                    "height": "number",
+                    "fill": "string",
+                    "stroke": "string",
+                    "strokeWidth": "number",
+                    "highlighted": "boolean"
+                },
+                "returnType": "ColumnFormat"
+            }
+        }
+    },
+    "AgSparklineAxisOptions": {
+        "stroke": {
+            "description": "xxx",
+            "type": "string"
+        },
+        "strokeWidth": {
+            "description": "xxx",
+            "type": "number"
+        }
+    },
+    "HighlightStyle": {
+        "size": {
+            "description": "xxx",
+            "type": "number"
+        },
+        "fill": {
+            "description": "xxx",
+            "type": "string"
+        },
+        "stroke": {
+            "description": "xxx",
+            "type": "string"
+        },
+        "strokeWidth": {
+            "description": "xxx",
+            "type": "number"
+        }
+    },
+    "ColumnFormat": {
+        "fill": {
+            "description": "xxx",
+            "type": "string"
+        },
+        "stroke": {
+            "description": "xxx",
+            "type": "string"
+        },
+        "strokeWidth": {
+            "description": "xxx",
+            "type": "number"
+        }
+    }
+}

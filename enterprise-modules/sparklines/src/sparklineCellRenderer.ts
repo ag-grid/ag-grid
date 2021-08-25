@@ -28,25 +28,21 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
     }
 
     public init(params: any): void {
+        const {clientWidth, clientHeight} = this.getGui();
 
-        // this.TIMER = window.setTimeout(() => {
-            const { clientWidth, clientHeight } = this.getGui();
-            const { sparklineOptions } = params;
+        const options = {
+            data: params.value,
+            width: clientWidth,
+            height: clientHeight,
+            ...params.sparklineOptions
+        }
 
-            const options = {
-                data: params.value,
-                width: clientWidth,
-                height: clientHeight,
-                ...sparklineOptions
-            }
-
-            this.sparkline = AgSparkline.create(options as any);
-            this.eSparkline.appendChild(this.sparkline.canvasElement);
-        // }, 100);
+        this.sparkline = AgSparkline.create(options as any);
+        this.eSparkline.appendChild(this.sparkline.canvasElement);
 
         const updateSparklineWidthFunc = () => {
             if (this.sparkline) {
-                const { clientWidth, clientHeight } = this.getGui();
+                const {clientWidth, clientHeight} = this.getGui();
                 this.sparkline.width = clientWidth;
                 this.sparkline.height = clientHeight;
             }
@@ -62,6 +58,7 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
     }
 
     public destroy() {
+        console.log("destroy")
         super.destroy();
     }
 }

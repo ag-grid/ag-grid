@@ -46,7 +46,7 @@ export interface AgBaseSparklineOptions {
     title?: string;
     padding?: string;
     axis?: AgSparklineAxisOptions;
-    hihglightStyle: HighlightStyle;
+    highlightStyle: HighlightStyle;
 }
 export interface AgSparklineAxisOptions {
     stroke?: string;
@@ -75,7 +75,6 @@ export interface AgColumnSparklineOptions extends AgBaseSparklineOptions {
     strokeWidth?: number;
     paddingInner?: number;
     paddingOuter?: number;
-    yScaleDomain: [number, number] | undefined;
     formatter?: SparklineColumnFormatter;
 }
 

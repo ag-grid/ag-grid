@@ -36,6 +36,31 @@ const gridOptions = {
 <interface-documentation interfaces='["AgSparklineOptions", "AgColumnSparklineOptions"]' ></interface-documentation>
 
 
+## Interfaces
+
+### AgColumnSparklineOptions:
+
+<api-documentation source='sparklines-column-sparkline/resources/column-sparkline-api.json' section='AgColumnSparklineOptions'></api-documentation>
+
+### AgSparklineAxisOptions:
+
+<api-documentation source='sparklines-column-sparkline/resources/column-sparkline-api.json' section='AgSparklineAxisOptions'></api-documentation>
+
+### AgSparklineAxisOptions:
+
+<api-documentation source='sparklines-column-sparkline/resources/column-sparkline-api.json' section='AgSparklineAxisOptions'></api-documentation>
+
+### HighlightStyle:
+
+<api-documentation source='sparklines-column-sparkline/resources/column-sparkline-api.json' section='HighlightStyle'></api-documentation>
+
+### SparklineColumnFormatter:
+
+
+
+
+
+
 <grid-example title='Column Sparkline' name='column-sparkline' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
 

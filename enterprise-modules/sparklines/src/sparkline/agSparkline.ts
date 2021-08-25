@@ -120,7 +120,6 @@ const initColumnSparkline = (sparkline: ColumnSparkline, options: any) => {
 function setValueIfPropertyExists(target: any, property: string, value: any, options: any): void {
     if (property in options) {
         if (property in target) {
-            console.log(property, value)
             target[property] = value;
         } else {
             console.warn(`Property ${property} does not exist on the target object.`);
