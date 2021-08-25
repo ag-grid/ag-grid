@@ -178,7 +178,7 @@ Some of the most likely errors you can encounter when exporting to Excel are:
 
 ### API Methods
 
-<api-documentation source='grid-api/api.json' section='export' names='["exportDataAsExcel()", "getDataAsExcel()"]'></api-documentation>
+<api-documentation source='grid-api/api.json' section='export' names='["exportDataAsExcel", "getDataAsExcel"]'></api-documentation>
 
 ### Grid Properties
 

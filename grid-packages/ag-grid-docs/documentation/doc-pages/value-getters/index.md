@@ -40,7 +40,9 @@ colDef.valueGetter = params => {
 
 Below shows the column definition properties for value getters.
 
-<api-documentation source='column-properties/properties.json' section="columnsOnly" names='["valueGetter(params)", "headerValueGetter(params)", "filterValueGetter(params)"]'></api-documentation>
+<api-documentation source='column-properties/properties.json' section="columns" names='["valueGetter"]></api-documentation>
+<api-documentation source='column-properties/properties.json' section="header" names='["headerValueGetter"]'></api-documentation>
+<api-documentation source='column-properties/properties.json' section="filtering" names='["filterValueGetter"]'></api-documentation>
 
 ### Example Value Getters
 

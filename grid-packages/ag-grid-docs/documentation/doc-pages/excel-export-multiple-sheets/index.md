@@ -56,7 +56,7 @@ Note the following:
 
 ### API Methods
 
-<api-documentation source='grid-api/api.json' section='export' names='["getSheetDataForExcel()", "getMultipleSheetsAsExcel()", "exportMultipleSheetsAsExcel()"]'></api-documentation>
+<api-documentation source='grid-api/api.json' section='export' names='["getSheetDataForExcel", "getMultipleSheetsAsExcel", "exportMultipleSheetsAsExcel"]'></api-documentation>
 
 ## Next Up
 

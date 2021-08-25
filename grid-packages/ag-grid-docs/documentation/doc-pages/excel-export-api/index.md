@@ -10,7 +10,7 @@ This page documents the Excel Export API and Interfaces.
 
 ### API Methods
 
-<api-documentation source='grid-api/api.json' section='export' names='["exportDataAsExcel()", "getDataAsExcel()", "getSheetDataForExcel()", "getMultipleSheetsAsExcel()", "exportMultipleSheetsAsExcel()"]'></api-documentation>
+<api-documentation source='grid-api/api.json' config='{"isApi": true}' section='export' names='["exportDataAsExcel", "getDataAsExcel", "getSheetDataForExcel", "getMultipleSheetsAsExcel", "exportMultipleSheetsAsExcel"]'></api-documentation>
 
 ## Interfaces
 

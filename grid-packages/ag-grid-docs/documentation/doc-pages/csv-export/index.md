@@ -120,7 +120,7 @@ Note the following:
 
 ### API Methods
 
-<api-documentation source='grid-api/api.json' section='export' names='["exportDataAsCsv()", "getDataAsCsv()"]'></api-documentation>
+<api-documentation source='grid-api/api.json' section='export' names='["exportDataAsCsv", "getDataAsCsv"]'></api-documentation>
 
 ## Interfaces
 
