@@ -68,7 +68,7 @@ export class DragService extends BeanStub {
         if (exists(eBody)) {
             // when we drag the mouse in AG Grid, this class gets added / removed from the body, so that
             // the mouse isn't selecting text when dragging.
-            addOrRemoveCssClass(eBody, 'ag-unselectable', noSelect);
+            addOrRemoveCssClass(eBody, 'ag-force-unselectable', noSelect);
         }
     }
 

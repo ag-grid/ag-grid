@@ -1,8 +1,24 @@
 import { tickStep } from './ticks';
 
-type FormatType = '%' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'o' | 'p' | 'r' | 's' | 'X' | 'x';
+type FormatType = '' | '%' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'o' | 'p' | 'r' | 's' | 'X' | 'x';
+
+function formatDefault(x: number, p?: number): string {
+    const xs = x.toPrecision(p);
+
+    out: for (var n = xs.length, i = 1, i0 = -1, i1 = 0; i < n; ++i) {
+        switch (xs[i]) {
+            case '.': i0 = i1 = i; break;
+            case '0': if (i0 === 0) i0 = i; i1 = i; break;
+            case 'e': break out;
+            default: if (i0 > 0) i0 = 0; break;
+        }
+    }
+
+    return i0 > 0 ? xs.slice(0, i0) + xs.slice(i1 + 1) : xs;
+}
 
 const formatTypes: { [key in FormatType]: (x: number, p?: number) => string } = {
+    '': formatDefault,
     // Multiply by 100, and then decimal notation with a percent sign.
     '%': (x: number, p?: number): string => (x * 100).toFixed(p),
     // Binary notation, rounded to integer.
