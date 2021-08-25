@@ -65,119 +65,41 @@ Most people will be happy with the default navigation the grid does when you use
 
 ### navigateToNextCell
 
-Provide a callback `navigateToNextCell` if you want to override the arrow key navigation. The parameter object is as follows:
+Provide a callback `navigateToNextCell` if you want to override the arrow key navigation. 
 
-```ts
-interface NavigateToNextCellParams {
-    // the keycode for the arrow key pressed, left = 37, up = 38, right = 39, down = 40
-    key: number;
-
-    // the cell that currently has focus
-    previousCellPosition: CellPosition;
-
-    // the cell the grid would normally pick as the next cell for this navigation
-    nextCellPosition: CellPosition;
-
-    event: KeyboardEvent;
-}
-```
+<api-documentation source='grid-callbacks/callbacks.json' section='nav' names='["navigateToNextCell"]' config='{"codeSrc": "GridOptions"}' ></api-documentation>
 
 ### tabToNextCell
 
-Provide a callback `tabToNextCell` if you want to override the <kbd>Tab</kbd> key navigation. The parameter object is as follows:
+Provide a callback `tabToNextCell` if you want to override the <kbd>Tab</kbd> key navigation. 
 
-```ts
-interface TabToNextCellParams {
-    // true if the Shift key is also down
-    backwards: boolean;
-
-    // true if the current cell is editing (you may want to skip cells that are not editable,
-    // as the grid will enter the next cell in editing mode also if tabbing)
-    editing: boolean;
-
-    // the cell that currently has focus
-    previousCellPosition: CellPosition;
-
-    // the cell the grid would normally pick as the next cell for this navigation
-    nextCellPosition: CellPosition;
-}
-```
+<api-documentation source='grid-callbacks/callbacks.json' section='nav' names='["tabToNextCell"]' config='{"codeSrc": "GridOptions"}' ></api-documentation>
 
 ### CellPosition
 
 Both functions above use `CellPosition`. This is an object that represents a cell in the grid. Its interface is as follows:
 
-```ts
-interface CellPosition {
-    // either 'top', 'bottom' or undefined/null (for not pinned)
-    rowPinned: string;
-
-    // a positive number from 0 to n, where n is the last row the grid is rendering
-    // or -1 if you want to navigate to the grid header
-    rowIndex: number;
-
-    // the grid column
-    column: Column;
-}
-```
+<interface-documentation interfaces='["CellPosition"]' ></interface-documentation>
 
 The functions take a `CellPosition` for current and next cells, as well as returning a `CellPosition` object. The returned `CellPosition` will be the one the grid puts focus on next. Return the provided `nextCellPosition` to stick with the grid default behaviour. Return `null`/`undefined` to skip the navigation.
 
 ### navigateToNextHeader
 
-Provide a callback `navigateToNextHeader` if you want to override the arrow key navigation. The parameter object is as follows:
+Provide a callback `navigateToNextHeader` if you want to override the arrow key navigation. 
 
-```ts
-interface NavigateToNextHeaderParams {
-    // the key for the arrow key pressed, left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown'
-    key: string;
-
-    // the header that currently has focus
-    previousHeaderPosition: HeaderPosition;
-
-    // the header the grid would normally pick as the next header for this navigation
-    nextHeaderPosition: HeaderPosition;
-
-    // the number of header rows present in the grid
-    headerRowCount: number;
-
-    event: KeyboardEvent;
-}
-```
+<api-documentation source='grid-callbacks/callbacks.json' section='nav' names='["navigateToNextHeader"]' config='{"codeSrc": "GridOptions"}' ></api-documentation>
 
 ### tabToNextHeader
 
-Provide a callback `tabToNextHeader` if you want to override the <kbd>Tab</kbd> key navigation. The parameter object is as follows:
+Provide a callback `tabToNextHeader` if you want to override the <kbd>Tab</kbd> key navigation. 
 
-```ts
-interface TabToNextHeaderParams {
-    // true if the Shift key is also down
-    backwards: boolean;
-
-    // the header that currently has focus
-    previousHeaderPosition: HeaderPosition;
-
-    // the header the grid would normally pick as the next header for this navigation
-    nextHeaderPosition: HeaderPosition;
-
-    // the number of header rows present in the grid
-    headerRowCount: number;
-}
-```
+<api-documentation source='grid-callbacks/callbacks.json' section='nav' names='["tabToNextHeader"]' config='{"codeSrc": "GridOptions"}' ></api-documentation>
 
 ### HeaderPosition
 
 Both `navigateToNextHeader` and `tabToNextHeader` use `HeaderPosition`. This is an object that represents a header in the grid. Its interface is as follows:
 
-```ts
-interface HeaderPosition {
-    // a number from 0 to n, where n is the last header row the grid is rendering
-    headerRowIndex: number;
-
-    // the grid column or column group
-    column: Column | ColumnGroup;
-}
-```
+<interface-documentation interfaces='["HeaderPosition"]' ></interface-documentation>
 
 You should return the `HeaderPosition` you want in the `navigateToNextHeader` and `tabToNextHeader` functions to have it focused. Returning `null` or `undefined` in `navigateToNextHeader` will do nothing (same as focusing the current focused cell), however, doing the same thing in `tabToNextHeader` will allow the browser default behaviour for <kbd>Tab</kbd> to happen. This is useful for tabbing outside of the grid from the last cell or <kbd>Shift</kbd> tabbing out of the grid from the first cell.
 
@@ -248,6 +170,7 @@ In the following example there is an input box provided to test tabbing into the
 - Shift-Tabbing out third input (below the grid) will have the default focus behaviour, which is to focus the last element of the grid. This element will vary depending on how many features have been enabled (eg. Row Pagination, Tool Panels, etc...).
 
 <grid-example title='Tabbing into the Grid' name='tabbing-into-grid' type='mixed'></grid-example>
+
 ## Keyboard Events
 
 It is possible to add custom behaviour to any key event that you want using the grid events `cellKeyPress` (gets called when a DOM `keyPress` event fires on a cell) and `cellKeyDown` (gets called when a DOM `keyDown` event fires on a cell).
@@ -272,46 +195,11 @@ It is possible to stop the grid acting on particular events. To do this implemen
 
 ### suppressHeaderKeyboardEvent
 
-The callback has the following signature:
-
-```ts
-function suppressHeaderKeyboardEvent(params: SuppressHeaderKeyboardEventParams) => boolean;
-
-interface SuppressHeaderKeyboardEventParams {
-    api: GridApi; // grid API
-    columnApi: ColumnApi; // column API
-    context: any; // context object
-    event: KeyboardEvent; // the keyboard event the grid received. inspect this to see what key was pressed
-    headerRowIndex: number; // the index of the header row of the current focused header
-    column: Column | ColumnGroup; // the current Column or Column Group
-    colDef: ColDef | ColGroupDef; // Column Definition or Column Group Definition
-}
-```
+<api-documentation source='column-properties/properties.json' section='header' names='["suppressHeaderKeyboardEvent"]' config='{ "codeSrc": "ColumnOptions"}'></api-documentation>
 
 ### suppressKeyboardEvent
 
-The callback has the following signature:
-
-```ts
-function suppressKeyboardEvent(params: SuppressKeyboardEventParams) => boolean;
-
-interface SuppressKeyboardEventParams {
-    // the keyboard event the grid received. inspect this to see what key was pressed
-    event: KeyboardEvent;
-
-    // whether the cell is editing or not. sometimes you might want to suppress event
-    // only when cell is editing.
-    editing: boolean;
-
-    node: RowNode; // row node
-    data: any; // row data
-    column: Column; // column
-    colDef: ColDef; // column definition
-    context: any; // context object
-    api: GridApi; // grid API
-    columnApi: ColumnApi; // column API
-}
-```
+<api-documentation source='column-properties/properties.json' section='columns' names='["suppressKeyboardEvent"]' config='{ "codeSrc": "ColumnOptions"}'></api-documentation>
 
 The callback is available as a [column callback](/column-properties/) (set on the column definition). If you provide the callback on both the grid and column definition, then if either return `true` the event will be suppressed.
 

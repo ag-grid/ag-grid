@@ -1127,11 +1127,13 @@
       "colDef": "ColDef | ColGroupDef | null",
       "headerRowIndex": "number",
       "event": "KeyboardEvent",
+      "context": "any",
       "api": "GridApi",
-      "columnApi": "ColumnApi",
-      "context": "any"
+      "columnApi": "ColumnApi"
     },
     "docs": {
+      "headerRowIndex": "/** The index of the header row of the current focused header */",
+      "event": "/** The keyboard event the grid received */",
       "context": "/** The context as provided on `gridOptions.context` */"
     }
   },

@@ -145,6 +145,11 @@ function getInterfaces() {
 
         const allAncestors = getAncestors(i);
         let extendedInterface = interfaces[i];
+
+        // TODO: Inherited Generic types do not get passed through
+        // Would need to make this tree work so that the params applied lower down  get sent up the tree and correctly applied
+        // Example interface is ICellEditorComp
+
         allAncestors.forEach(a => {
             const extended = a.extends;
             let aI = interfaces[extended];

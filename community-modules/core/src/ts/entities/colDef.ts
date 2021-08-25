@@ -559,12 +559,14 @@ export interface SuppressKeyboardEventParams extends ColumnFunctionCallbackParam
 export interface SuppressHeaderKeyboardEventParams {
     column: Column | ColumnGroup;
     colDef: ColDef | ColGroupDef | null;
+/** The index of the header row of the current focused header */
     headerRowIndex: number;
+/** The keyboard event the grid received */
     event: KeyboardEvent;
-    api: GridApi;
-    columnApi: ColumnApi;
     /** The context as provided on `gridOptions.context` */
     context: any;
+    api: GridApi;
+    columnApi: ColumnApi;
 }
 
 export interface CellClassParams extends RowClassParams {
