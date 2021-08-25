@@ -12,7 +12,7 @@ import { ModuleNames } from "../../modules/moduleNames";
 import { ModuleRegistry } from "../../modules/moduleRegistry";
 import { addCssClass, addOrRemoveCssClass, isElementChildOfClass, removeCssClass } from "../../utils/dom";
 import { isStopPropagationForAgGrid } from "../../utils/event";
-import { executeNextVMTurn } from "../../utils/function";
+import { doOnce, executeNextVMTurn } from "../../utils/function";
 import { exists, find } from "../../utils/generic";
 import { convertToMap } from "../../utils/map";
 import { assign } from "../../utils/object";
@@ -280,9 +280,27 @@ export class RowCtrl extends BeanStub {
             if (this.isFullWidth()) {
                 this.setupFullWidth(gui);
             }
+
+            if (gow.isRowDrag()) {
+                this.addRowDraggerToRow(gui);
+            }
         });
 
         this.executeProcessRowPostCreateFunc();
+    }
+
+    private addRowDraggerToRow(gui: RowGui) {
+        const gow = this.beans.gridOptionsWrapper;
+
+        if (gow.isEnableRangeSelection()) {
+            doOnce(() => {
+                console.warn('AG Grid: Setting `rowDrag: true` in the gridOptions doesn\'t work with `enableRangeSelection: true`');
+            }, 'rowDragAndRangeSelectionEnabled');
+            return;
+        }
+
+        const rowDragComp = new RowDragComp(() => '1 row', this.rowNode, undefined, gui.element);
+        this.createManagedBean(rowDragComp, this.beans.context);
     }
 
     public getFullWidthCellRendererType(): string {

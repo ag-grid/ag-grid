@@ -17,23 +17,16 @@ export class RowDragComp extends Component {
 
     private dragSource: DragSource | null = null;
 
-    private readonly cellValueFn: () => string;
-    private readonly rowNode: RowNode;
-    private readonly column: Column | undefined;
-    private readonly customGui: HTMLElement | undefined;
-    private readonly dragStartPixels: number | undefined;
-
     @Autowired('beans') private beans: Beans;
 
-    constructor(cellValueFn: () => string, rowNode: RowNode, column?: Column,
-                customGui?: HTMLElement, dragStartPixels?: number) {
-        super();
-        this.cellValueFn = cellValueFn;
-        this.rowNode = rowNode;
-        this.column = column;
-        this.customGui = customGui;
-        this.dragStartPixels = dragStartPixels;
-    }
+    constructor(
+        private readonly cellValueFn: () => string,
+        private readonly rowNode: RowNode,
+        private readonly column?: Column,
+        private readonly customGui?: HTMLElement,
+        private readonly dragStartPixels?: number,
+        private readonly coverElement?: boolean
+    ) { super(); }
 
     public isCustomGui(): boolean {
         return this.customGui != null;
@@ -43,8 +36,7 @@ export class RowDragComp extends Component {
     private postConstruct(): void {
         if (!this.customGui) {
             this.setTemplate(/* html */ `<div class="ag-drag-handle ag-row-drag" aria-hidden="true"></div>`);
-            const eGui = this.getGui();
-            eGui.appendChild(createIconNoSpan('rowDrag', this.beans.gridOptionsWrapper, null)!);
+            this.getGui().appendChild(createIconNoSpan('rowDrag', this.beans.gridOptionsWrapper, null)!);
             this.addDragSource();
         } else {
             this.setDragElement(this.customGui, this.dragStartPixels);

@@ -1,6 +1,6 @@
-# AG-Grid documentation
+# AG Grid documentation
 
-This is the documentation site for AG-Grid, a statically-generated site using the Gatsby framework.
+This is the documentation site for AG Grid, a statically-generated site using the Gatsby framework.
 
 ## Getting started
 

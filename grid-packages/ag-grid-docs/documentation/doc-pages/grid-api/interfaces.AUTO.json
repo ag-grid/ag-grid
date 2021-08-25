@@ -7153,18 +7153,18 @@
       "formatValue?": "(value: any) => any",
       "refreshCell?": "() => void",
       "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string) => void",
-      "sparklineOptions?": "AgSparklineOptions"
+      "sparklineOptions?": "SparklineOptions"
     },
     "docs": {
       "context": "/** The context as provided on `gridOptions.context` */",
       "registerRowDragger": "/** registerRowDragger: Function\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n */"
     }
   },
-  "AgSparklineOptions": {
+  "SparklineOptions": {
     "meta": { "isTypeAlias": true },
-    "type": "AgLineSparklineOptions | AgAreaSparklineOptions | AgColumnSparklineOptions"
+    "type": "LineSparklineOptions | AreaSparklineOptions | ColumnSparklineOptions"
   },
-  "AgBaseSparklineOptions": {
+  "BaseSparklineOptions": {
     "meta": {},
     "type": {
       "data?": "number[]",
@@ -7172,11 +7172,11 @@
       "height?": "number",
       "title?": "string",
       "padding?": "string",
-      "axis?": "AgSparklineAxisOptions",
+      "axis?": "SparklineAxisOptions",
       "highlightStyle": "HighlightStyle"
     }
   },
-  "AgLineSparklineOptions": {
+  "LineSparklineOptions": {
     "meta": {},
     "type": {
       "data?": "number[]",
@@ -7184,13 +7184,13 @@
       "height?": "number",
       "title?": "string",
       "padding?": "string",
-      "axis?": "AgSparklineAxisOptions",
+      "axis?": "SparklineAxisOptions",
       "highlightStyle": "HighlightStyle",
       "type?": "'line'",
       "line?": "{ fill?: string; }"
     }
   },
-  "AgAreaSparklineOptions": {
+  "AreaSparklineOptions": {
     "meta": {},
     "type": {
       "data?": "number[]",
@@ -7198,12 +7198,12 @@
       "height?": "number",
       "title?": "string",
       "padding?": "string",
-      "axis?": "AgSparklineAxisOptions",
+      "axis?": "SparklineAxisOptions",
       "highlightStyle": "HighlightStyle",
       "type?": "'area'"
     }
   },
-  "AgColumnSparklineOptions": {
+  "ColumnSparklineOptions": {
     "meta": {},
     "type": {
       "data?": "number[]",
@@ -7211,7 +7211,7 @@
       "height?": "number",
       "title?": "string",
       "padding?": "string",
-      "axis?": "AgSparklineAxisOptions",
+      "axis?": "SparklineAxisOptions",
       "highlightStyle": "HighlightStyle",
       "type?": "'column'",
       "fill?": "string",
@@ -7222,7 +7222,7 @@
       "formatter?": "SparklineColumnFormatter"
     }
   },
-  "AgSparklineAxisOptions": {
+  "SparklineAxisOptions": {
     "meta": {},
     "type": { "stroke?": "string", "strokeWidth?": "number" }
   },

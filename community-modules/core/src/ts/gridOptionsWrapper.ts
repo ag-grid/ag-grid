@@ -33,7 +33,6 @@ import { GridApi } from './gridApi';
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from './entities/colDef';
 import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from './context/context';
 import { ColumnApi } from './columns/columnApi';
-import { ColumnModel } from './columns/columnModel';
 import { IViewportDatasource } from './interfaces/iViewportDatasource';
 import { IDatasource } from './interfaces/iDatasource';
 import { CellPosition } from './entities/cellPosition';
@@ -173,7 +172,6 @@ export class GridOptionsWrapper {
     public static PROP_GET_SERVER_SIDE_GROUP_KEY = 'getServerSideGroupKey';
 
     @Autowired('gridOptions') private readonly gridOptions: GridOptions;
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('eventService') private readonly eventService: EventService;
     @Autowired('environment') private readonly environment: Environment;
 
@@ -584,12 +582,16 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressScrollOnNewData);
     }
 
-    public isRowDragManaged() {
-        return isTrue(this.gridOptions.rowDragManaged);
+    public isRowDrag() {
+        return isTrue(this.gridOptions.rowDrag);
     }
 
     public isSuppressRowDrag() {
         return isTrue(this.gridOptions.suppressRowDrag);
+    }
+
+    public isRowDragManaged() {
+        return isTrue(this.gridOptions.rowDragManaged);
     }
 
     public isSuppressMoveWhenRowDragging() {

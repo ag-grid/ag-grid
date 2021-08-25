@@ -513,6 +513,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public groupRemoveLowestSingleChildren: boolean | undefined = undefined;
     @Input() public enableRtl: boolean | undefined = undefined;
     @Input() public suppressClickEdit: boolean | undefined = undefined;
+    @Input() public rowDrag: boolean | undefined = undefined;
     @Input() public rowDragManaged: boolean | undefined = undefined;
     @Input() public suppressRowDrag: boolean | undefined = undefined;
     @Input() public suppressMoveWhenRowDragging: boolean | undefined = undefined;
@@ -744,6 +745,7 @@ export class AgGridAngular implements AfterViewInit {
     static ngAcceptInputType_groupRemoveLowestSingleChildren: boolean | '';
     static ngAcceptInputType_enableRtl: boolean | '';
     static ngAcceptInputType_suppressClickEdit: boolean | '';
+    static ngAcceptInputType_rowDrag: boolean | '';
     static ngAcceptInputType_rowDragManaged: boolean | '';
     static ngAcceptInputType_suppressRowDrag: boolean | '';
     static ngAcceptInputType_suppressMoveWhenRowDragging: boolean | '';
