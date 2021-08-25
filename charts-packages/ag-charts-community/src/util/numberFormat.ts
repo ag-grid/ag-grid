@@ -286,32 +286,13 @@ export function formatNumerals(numerals: string[]): (value: string) => string {
     return value => value.replace(/[0-9]/g, i => numerals[+i]);
 }
 
-// Trim insignificant zeros.
+// Trims insignificant zeros, e.g., replaces 1.2000k with 1.2k.
 function formatTrim(s: string): string {
-    const n = s.length;
-    let i = 1;
-    let i0 = -1;
-    let i1 = NaN;
-
-    out: for (; i < n; i++) {
+    out: for (var n = s.length, i = 1, i0 = -1, i1 = 0; i < n; ++i) {
         switch (s[i]) {
-            case '.':
-                i0 = i1 = i;
-                break;
-            case '0':
-                if (i0 === 0) {
-                    i0 = i;
-                    i1 = i;
-                }
-                break;
-            default:
-                if (!+s[i]) {
-                    break out;
-                }
-                if (i0 > 0) {
-                    i0 = 0;
-                    break;
-                }
+            case '.': i0 = i1 = i; break;
+            case '0': if (i0 === 0) i0 = i; i1 = i; break;
+            default: if (!+s[i]) break out; if (i0 > 0) i0 = 0; break;
         }
     }
     return i0 > 0 ? s.slice(0, i0) + s.slice(i1 + 1) : s;
@@ -493,7 +474,7 @@ export function formatLocale(locale: FormatLocaleOptions): FormatLocale {
         if (type as string === 'n') {
             comma = true;
             type = 'g';
-        } else if (!type || !formatTypes[type]) { // The '' type, and any invalid type, is an alias for '.12~g'.
+        } else if (!formatTypes[type]) { // The '' type, and any invalid type, is an alias for '.12~g'.
             if (precision === undefined) {
                 precision = 12;
             }

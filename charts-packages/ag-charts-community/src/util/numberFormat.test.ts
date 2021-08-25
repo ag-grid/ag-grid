@@ -1,7 +1,7 @@
 import { describe, expect, test, it } from "@jest/globals";
 import { format, formatDecimalParts, formatPrefix } from "./numberFormat";
 import { LinearScale } from "../scale/linearScale";
-import * as d3 from 'd3';
+import { NumericTicks } from "./ticks";
 
 describe('formatDecimalParts', () => {
     test('1.23', () => {
@@ -28,68 +28,80 @@ describe('formatPrefix', () => {
 });
 
 describe('format', () => {
-    describe('fixed decimal', () => {
-        it('should have one decimal point', () => {
-            const f = format('.1f');
-            expect(f(0.1 + 0.2)).toBe('0.3');
-        });
+    test('fixed decimal', () => {
+        const f = format('.1f');
+        expect(f(0.1 + 0.2)).toBe('0.3');
     });
-    describe('fixed decimal', () => {
-        it('should have one decimal point', () => {
-            const f = format('.1f');
-            expect(f(0.1 + 0.2)).toBe('0.3');
-        });
+    test('fixed decimal', () => {
+        const f = format('.1f');
+        expect(f(0.1 + 0.2)).toBe('0.3');
     });
-    describe('rounded percentage', () => {
+    test('rounded percentage', () => {
         const f = format('.0%');
         expect(f(0.3)).toBe('30%');
         expect(f(0.123)).toBe('12%');
         expect(f(40)).toBe('4000%');
     });
-    describe('localized fixed-point currency', () => {
+    test('localized fixed-point currency', () => {
         expect(format('$.2f')(3.5)).toBe('$3.50');
     });
-    describe('localized fixed-point currency', () => {
+    test('localized fixed-point currency', () => {
         expect(format('$.2f')(3.5)).toBe('$3.50');
     });
-    describe('space-filled and signed', () => {
-        // TODO: returns '+420000000000'
-        const f = format('+20');
-        const d3_f = d3.format('+20');
-        // d3_f(42);
-        // f(42);
-        expect(d3_f(42)).toBe('                 +42');
-        expect(f(42)).toBe('                 +42');
+    test('space-filled and signed', () => {
+        expect(format('+20')(42)).toBe('                 +42');
     });
-    describe('dot-filled and centered', () => {
-        // TODO: returns '....420000000000....'
+    test('dot-filled and centered', () => {
         expect(format('.^20')(42)).toBe('.........42.........');
     });
-    describe('prefixed lowercase hexadecimal', () => {
+    test('prefixed lowercase hexadecimal', () => {
         expect(format('#x')(48879)).toBe('0xbeef');
     });
-    describe('grouped thousands with two significant digits', () => {
+    test('grouped thousands with two significant digits', () => {
         expect(format(',.2r')(4223)).toBe('4,200');
     });
-    describe('trim insignificant trailing zeros across format types', () => {
-        expect(format('s')(1500)).toBe('1.50000k');
-        expect(format('s')(-1500)).toBe('−1.5k'); // TODO: returns "−1.50000k"
-    });
-    describe('empty type is a shorthand for ~g', () => {
+    test('empty type is a shorthand for ~g', () => {
         expect(format('.2')(42)).toBe('42');
         expect(format('.2')(4.2)).toBe('4.2');
         expect(format('.1')(42)).toBe('4e+1');
         expect(format('.1')(4.2)).toBe('4');
     });
-    describe('SI-prefix', () => {
-        it('should have 3 digits followed by a unit', () => {
-            const f = format('.3s');
-            expect(f(43e6)).toBe('43.0M');
-        });
-        test('Test scale format', () => {
-            const scale = new LinearScale();
-            const f = scale.tickFormat(10, '.3s');
-        });
-    });
+    test('SI-prefix', () => {
+        const f = format('.3s');
+        expect(f(43e6)).toBe('43.0M');
 
+        expect(format('s')(1500)).toMatch('1.50000k');
+        // using '-' will make the test fail because it has a different char code
+        expect(format('s')(-1500)).toMatch('\u22121.50000k');
+    });
+    test('trim insignificant trailing zeros across format types', () => {
+        expect(format('~s')(1500)).toBe('1.5k');
+        expect(format('~s')(-1500)).toBe('\u22121.5k');
+    });
+    test('scale.tickFormat', () => {
+        {
+            const scale = new LinearScale();
+            const f = scale.tickFormat(undefined, '~s');
+            expect(f(43000000)).toBe('43000000');
+        }
+        {
+            const scale = new LinearScale();
+            scale.domain = [-50000000, 50000000];
+            const f = scale.tickFormat(undefined, '~s');
+            expect(f(43000000)).toBe('43M');
+        }
+        {
+            const scale = new LinearScale();
+            scale.domain = [-50000000, 50000000];
+            const f = scale.tickFormat(undefined, '~s');
+            expect(f(43500000)).toBe('44M');
+        }
+        {
+            const scale = new LinearScale();
+            scale.domain = [35000000, 44000000];
+            const f = scale.tickFormat(undefined, '~s');
+            const expectedTicks = ['35M', '36M', '37M', '38M', '39M', '40M', '41M', '42M', '43M', '44M'];
+            scale.ticks().forEach((t, i) => expect(f(t)).toBe(expectedTicks[i]));
+        }
+    });
 });
