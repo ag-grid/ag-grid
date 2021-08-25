@@ -1,33 +1,33 @@
 import { ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
 
 export interface ISparklineCellRendererParams extends ICellRendererParams {
-    sparklineOptions?: AgSparklineOptions
+    sparklineOptions?: SparklineOptions
 }
 
-export type AgSparklineOptions = AgLineSparklineOptions | AgAreaSparklineOptions | AgColumnSparklineOptions;
+export type SparklineOptions = LineSparklineOptions | AreaSparklineOptions | ColumnSparklineOptions;
 
-export interface AgBaseSparklineOptions {
+export interface BaseSparklineOptions {
     data?: number[];
     width?: number;
     height?: number;
     title?: string;
     padding?: string;
-    axis?: AgSparklineAxisOptions;
+    axis?: SparklineAxisOptions;
     highlightStyle: HighlightStyle;
 }
 
-export interface AgLineSparklineOptions extends AgBaseSparklineOptions {
+export interface LineSparklineOptions extends BaseSparklineOptions {
     type?: 'line';
     line?: {
         fill?: string;
     };
 }
 
-export interface AgAreaSparklineOptions extends AgBaseSparklineOptions {
+export interface AreaSparklineOptions extends BaseSparklineOptions {
     type?: 'area';
 }
 
-export interface AgColumnSparklineOptions extends AgBaseSparklineOptions {
+export interface ColumnSparklineOptions extends BaseSparklineOptions {
     type?: 'column';
     fill?: string;
     stroke?: string;
@@ -37,7 +37,7 @@ export interface AgColumnSparklineOptions extends AgBaseSparklineOptions {
     formatter?: SparklineColumnFormatter;
 }
 
-export interface AgSparklineAxisOptions {
+export interface SparklineAxisOptions {
     stroke?: string;
     strokeWidth?: number;
 }

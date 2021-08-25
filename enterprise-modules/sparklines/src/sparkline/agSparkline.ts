@@ -4,21 +4,21 @@ import { ColumnSparkline } from "./columnSparkline";
 import { LineSparkline } from "./lineSparkline";
 
 import {
-    AgSparklineOptions,
-    AgLineSparklineOptions,
-    AgAreaSparklineOptions,
-    AgColumnSparklineOptions,
+    SparklineOptions,
+    LineSparklineOptions,
+    AreaSparklineOptions,
+    ColumnSparklineOptions,
     HighlightStyle
 } from "@ag-grid-community/core";
 
 export type AgSparklineType<T> =
-    T extends AgLineSparklineOptions ? LineSparkline :
-    T extends AgAreaSparklineOptions ? AreaSparkline :
-    T extends AgColumnSparklineOptions ? ColumnSparkline :
+    T extends LineSparklineOptions ? LineSparkline :
+    T extends AreaSparklineOptions ? AreaSparkline :
+    T extends ColumnSparklineOptions ? ColumnSparkline :
     never;
 
 export abstract class AgSparkline {
-    static create<T extends AgSparklineOptions>(options: T): AgSparklineType<T> {
+    static create<T extends SparklineOptions>(options: T): AgSparklineType<T> {
 
         const sparkline = getSparklineInstance(options.type);
 

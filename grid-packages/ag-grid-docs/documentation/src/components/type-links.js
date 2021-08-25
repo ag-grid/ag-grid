@@ -51,4 +51,7 @@ export const TYPE_LINKS = {
     ServerSideTransaction: '/server-side-model-transactions/#transaction-api',
     ServerSideStoreType: 'https://ag-grid.com/javascript-grid/grid-properties/#reference-serverSideRowModel',
     Touch: 'https://developer.mozilla.org/en-US/docs/Web/API/Touch',
+    SparklineAxisOptions: '/sparklines-column-sparkline/#sparklineaxisoptions',
+    HighlightStyle: '/sparklines-column-sparkline/#highlightstyle',
+    ColumnFormat: '/sparklines-column-sparkline/#columnformat',
 };

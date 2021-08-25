@@ -33,35 +33,25 @@ const gridOptions = {
 };
 </snippet>
 
-<interface-documentation interfaces='["AgSparklineOptions", "AgColumnSparklineOptions"]' ></interface-documentation>
-
+<grid-example title='Column Sparkline' name='column-sparkline' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
 ## Interfaces
 
-### AgColumnSparklineOptions:
+### ColumnSparklineOptions:
 
-<api-documentation source='sparklines-column-sparkline/resources/column-sparkline-api.json' section='AgColumnSparklineOptions'></api-documentation>
+<api-documentation source='sparklines-column-sparkline/resources/column-sparkline-api.json' section='ColumnSparklineOptions'></api-documentation>
 
-### AgSparklineAxisOptions:
+### SparklineAxisOptions:
 
-<api-documentation source='sparklines-column-sparkline/resources/column-sparkline-api.json' section='AgSparklineAxisOptions'></api-documentation>
-
-### AgSparklineAxisOptions:
-
-<api-documentation source='sparklines-column-sparkline/resources/column-sparkline-api.json' section='AgSparklineAxisOptions'></api-documentation>
+<api-documentation source='sparklines-column-sparkline/resources/column-sparkline-api.json' section='SparklineAxisOptions'></api-documentation>
 
 ### HighlightStyle:
 
 <api-documentation source='sparklines-column-sparkline/resources/column-sparkline-api.json' section='HighlightStyle'></api-documentation>
 
-### SparklineColumnFormatter:
+### ColumnFormat:
 
-
-
-
-
-
-<grid-example title='Column Sparkline' name='column-sparkline' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
+<api-documentation source='sparklines-column-sparkline/resources/column-sparkline-api.json' section='ColumnFormat'></api-documentation>
 
 
 ## Next Up

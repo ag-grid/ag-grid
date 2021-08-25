@@ -419,12 +419,12 @@ export * from "./interfaces/iAgChartOptions";
 // sparklines
 export {
     ISparklineCellRendererParams,
-    AgSparklineOptions,
-    AgBaseSparklineOptions,
-    AgLineSparklineOptions,
-    AgAreaSparklineOptions,
-    AgColumnSparklineOptions,
-    AgSparklineAxisOptions,
+    SparklineOptions,
+    BaseSparklineOptions,
+    LineSparklineOptions,
+    AreaSparklineOptions,
+    ColumnSparklineOptions,
+    SparklineAxisOptions,
     HighlightStyle,
     SparklineColumnFormatter,
     ColumnFormatterParams,
