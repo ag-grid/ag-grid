@@ -3,7 +3,7 @@ import { convertMarkdown, convertUrl, escapeGenericCode, getLinkedType, getLonge
 import anchorIcon from 'images/anchor';
 import React, { useState } from 'react';
 import styles from './ApiDocumentation.module.scss';
-import { ApiProps, Config, DocEntryMap, FunctionCode, ICallSignature, IEvent, IntrfaceEntry, ObjectCode, PropertyCall, PropertyType, SectionProps, InterfaceEntry } from './ApiDocumentation.types';
+import { ApiProps, Config, DocEntryMap, FunctionCode, ICallSignature, IEvent, ObjectCode, PropertyCall, PropertyType, SectionProps, InterfaceEntry } from './ApiDocumentation.types';
 import Code from './Code';
 import { extractInterfaces, writeAllInterfaces } from './documentation-helpers';
 import { useJsonFileNodes } from './use-json-file-nodes';
@@ -28,51 +28,70 @@ export const ApiDocumentation: React.FC<ApiProps> = ({ pageName, framework, sour
         namesArr = JSON.parse(names);
     }
 
-    let codeLookup = {};
-    let lookups = { codeLookup, interfaces: {} };
-    if (config.codeSrc) {
-        switch (config.codeSrc) {
+    const propertiesFromFiles = sources.map(s => getJsonFromFile(nodes, pageName, s));
+
+    const configs = propertiesFromFiles.map(p => p['_config_']);
+    propertiesFromFiles.forEach(p => delete p['_config_']);
+
+    let codeLookup = {};    
+    let codeSrcProvided = [];
+    configs.forEach(c => {
+        if (c == undefined) {
+            console.warn(`_config_ property missing from source ${source || (sources || []).join()}.`)
+            return;
+        }
+        if (c.codeSrc) {
+            codeSrcProvided = [...codeSrcProvided, c.codeSrc];
+        }
+
+        switch (c.codeSrc) {
             case 'GridOptions':
-                codeLookup = getJsonFromFile(nodes, undefined, 'grid-api/grid-options.AUTO.json');
+                codeLookup = { ...codeLookup, ...getJsonFromFile(nodes, undefined, 'grid-api/grid-options.AUTO.json') };
                 break;
             case 'GridApi':
-                codeLookup = getJsonFromFile(nodes, undefined, 'grid-api/grid-api.AUTO.json');
+                codeLookup = { ...codeLookup, ...getJsonFromFile(nodes, undefined, 'grid-api/grid-api.AUTO.json') };
                 break;
             case 'RowNode':
-                codeLookup = getJsonFromFile(nodes, undefined, 'row-object/row-node.AUTO.json');
+                codeLookup = { ...codeLookup, ...getJsonFromFile(nodes, undefined, 'row-object/row-node.AUTO.json') };
                 break;
             case 'ColumnOptions':
-                codeLookup = getJsonFromFile(nodes, undefined, 'column-properties/column-options.AUTO.json');
+                codeLookup = { ...codeLookup, ...getJsonFromFile(nodes, undefined, 'column-properties/column-options.AUTO.json') };
                 break;
             case 'ColumnApi':
-                codeLookup = getJsonFromFile(nodes, undefined, 'column-api/column-api.AUTO.json');
+                codeLookup = { ...codeLookup, ...getJsonFromFile(nodes, undefined, 'column-api/column-api.AUTO.json') };
                 break;
             case 'Column':
-                codeLookup = getJsonFromFile(nodes, undefined, 'column-object/column.AUTO.json');
+                codeLookup = { ...codeLookup, ...getJsonFromFile(nodes, undefined, 'column-object/column.AUTO.json') };
                 break;
-        }
-        const interfaceLookup = getJsonFromFile(nodes, undefined, 'grid-api/interfaces.AUTO.json');
-        lookups = { codeLookup, interfaces: interfaceLookup };
-    }
-
-    const propertiesFromFiles = sources.map(s => getJsonFromFile(nodes, pageName, s));
+        }            
+    })
+    const interfaceLookup = getJsonFromFile(nodes, undefined, 'grid-api/interfaces.AUTO.json');
+    const lookups = { codeLookup, interfaces: interfaceLookup };
+    config = { ...config, lookups, codeSrcProvided }
 
     if (section == null) {
         const properties: DocEntryMap = mergeObjects(propertiesFromFiles);
 
         return Object.entries(properties)
-            .map(([key, value]) => <Section key={key} framework={framework} title={key} properties={value} config={{ ...config, lookups }} />);
+            .map(([key, value]) => <Section key={key} framework={framework} title={key} properties={value} config={config} />);
     }
 
     const keys = section.split('.');
-    const processed = keys.reduce((current, key) => current.map(x => x[key]), propertiesFromFiles);
+    const processed = keys.reduce((current, key) => current.map(x => {
+        const prop = x[key];
+        if (!prop) {
+            //console.warn(`Could not find a prop ${key} under source ${source} and section ${section}!`)
+            throw new Error(`Could not find a prop ${key} under source ${source} and section ${section}!`)
+        }
+        return prop;
+    }), propertiesFromFiles);
     const properties = mergeObjects(processed);
 
     return <Section
         framework={framework}
         title={keys[keys.length - 1]}
         properties={properties}
-        config={{ ...config, lookups, isSubset: true }}
+        config={{ ...config, isSubset: true }}
         names={namesArr} />;
 };
 
@@ -119,6 +138,7 @@ const Section: React.FC<SectionProps> = ({ framework, title, properties, config 
     const objectProperties: DocEntryMap = {};
 
     let longestNameLength = 25;
+    let processed = new Set();
     Object.entries(properties).forEach(([name, definition]) => {
         const { relevantTo } = definition;
 
@@ -126,6 +146,10 @@ const Section: React.FC<SectionProps> = ({ framework, title, properties, config 
             (names.length > 0 && !names.includes(name) && !(relevantTo && relevantTo.includes(names[0])))) {
             return;
         }
+        // Either the name matched
+        processed.add(name);
+        // Or include via relevantTo, see simple-filters.json for example of relevantTo
+        processed.add(names[0]);
 
         const length = getLongestNameLength(name);
         if (longestNameLength < length) {
@@ -140,6 +164,15 @@ const Section: React.FC<SectionProps> = ({ framework, title, properties, config 
             objectProperties[name] = definition;
         }
     });
+
+    if (names.length > 0) {
+        // Validate we found properties for each provided name or relevantTo section
+        names.forEach(n => {
+            if (!processed.has(n)) {
+                throw new Error(`Failed to find a property named ${n} or relevantTo label ${n} that we requested under section ${title}. Check if you passed the correct name or if the name appears in the source json file that you are using.`)
+            }
+        })
+    }
 
     return <>
         {header}
@@ -215,6 +248,10 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
         } else {
             // As a last resort try and infer the type
             type = inferType(definition.default);
+
+            if (type == null && config.codeSrcProvided.length > 0) {
+                console.warn(`We could not find a type for ${name} but a code sources ${config.codeSrcProvided.join()} were provided.`)
+            }
         }
     }
 

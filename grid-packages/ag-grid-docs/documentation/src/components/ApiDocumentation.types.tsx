@@ -116,8 +116,7 @@ export interface ICallSignature extends BaseInterface {
         returnType: string;
     };
 }
-export interface Config {
-    codeSrc?: string;
+export interface Config {    
     isSubset?: boolean;
     isApi?: boolean;
     isEvent?: boolean;
@@ -130,6 +129,7 @@ export interface Config {
             [key: string]: InterfaceEntry;
         };
     };
+    codeSrcProvided: string[];
     gridOpProp?: InterfaceEntry;
     codeOnly?: boolean;
     defaultExpand?: boolean
