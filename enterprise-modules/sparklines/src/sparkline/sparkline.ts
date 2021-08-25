@@ -6,6 +6,7 @@ import { Padding } from '../util/padding';
 import { defaultTooltipCss } from './defaultTooltipCss';
 import { isNumber } from './util';
 import { SparklineTooltip } from './sparklineTooltip';
+import { HighlightStyle } from "@ag-grid-community/core";
 
 export interface SeriesNodeDatum {
     readonly seriesDatum: any;
@@ -14,13 +15,6 @@ export interface SeriesNodeDatum {
 export interface Point {
     readonly x: number;
     readonly y: number;
-}
-
-export interface HighlightStyle {
-    size?: number;
-    fill?: string;
-    stroke?: string;
-    strokeWidth?: number;
 }
 
 interface SeriesRect {

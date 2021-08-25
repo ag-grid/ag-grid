@@ -1,4 +1,3 @@
-
 import { BandScale } from '../scale/bandScale';
 import { LinearScale } from '../scale/linearScale';
 import { Group } from '../scene/group';
@@ -6,32 +5,13 @@ import { Path } from '../scene/shape/path';
 import { Observable, reactive } from '../util/observable';
 import { Selection } from '../scene/selection';
 import { Marker } from './marker';
-import { Sparkline, Point, SeriesNodeDatum } from './sparkline';
+import { Point, SeriesNodeDatum, Sparkline } from './sparkline';
 import { toTooltipHtml } from './sparklineTooltip';
 import { getMarkerShape } from './util';
+import { MarkerFormat, MarkerFormatterParams } from "@ag-grid-community/core";
 
 interface LineNodeDatum extends SeriesNodeDatum { 
     readonly point: Point;
-}
-
-interface MarkerFormat {
-    enabled?: boolean;
-    shape?: string;
-    size?: number;
-    fill?: string;
-    stroke?: string;
-    strokeWidth?: number;
-}
-
-interface MarkerFormatterParams {
-    datum: any;
-    xValue: any;
-    yValue: any;
-    fill?: string;
-    stroke?: string;
-    strokeWidth: number;
-    size: number;
-    highlighted: boolean;
 }
 
 class SparklineMarker extends Observable {

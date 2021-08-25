@@ -1,13 +1,13 @@
-
 import { BandScale } from '../scale/bandScale';
 import { LinearScale } from '../scale/linearScale';
 import { Group } from '../scene/group';
 import { Line } from '../scene/shape/line';
 import { Selection } from '../scene/selection';
-import { Sparkline, SeriesNodeDatum } from './sparkline';
+import { SeriesNodeDatum, Sparkline } from './sparkline';
 import { toTooltipHtml } from './sparklineTooltip';
 import { Rectangle } from './rectangle';
 import { reactive } from '../util/observable';
+import { ColumnFormatterParams, ColumnFormat } from "@ag-grid-community/core";
 
 interface ColumnNodeDatum extends SeriesNodeDatum {
     x: number,
@@ -17,24 +17,6 @@ interface ColumnNodeDatum extends SeriesNodeDatum {
     fill?: string,
     stroke?: string,
     strokeWidth: number
-}
-
-export interface ColumnFormatterParams {
-    datum: any;
-    xValue: any;
-    yValue: any;
-    width: number;
-    height: number;
-    fill?: string;
-    stroke?: string;
-    strokeWidth: number;
-    highlighted: boolean;
-}
-
-export interface ColumnFormat{
-    fill?: string;
-    stroke?: string;
-    strokeWidth?: number;
 }
 
 export class ColumnSparkline extends Sparkline {

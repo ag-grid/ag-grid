@@ -415,7 +415,24 @@ export { IAggregationStage } from "./interfaces/iAggregationStage";
 // charts
 export * from "./interfaces/iChartOptions";
 export * from "./interfaces/iAgChartOptions";
-export { ISparklineCellRendererParams } from "./interfaces/iSparklineCellRendererParams";
+
+// sparklines
+export {
+    ISparklineCellRendererParams,
+    AgSparklineOptions,
+    AgBaseSparklineOptions,
+    AgLineSparklineOptions,
+    AgAreaSparklineOptions,
+    AgColumnSparklineOptions,
+    AgSparklineAxisOptions,
+    HighlightStyle,
+    SparklineColumnFormatter,
+    ColumnFormatterParams,
+    ColumnFormat,
+    SparklineMarkerFormatter,
+    MarkerFormatterParams,
+    MarkerFormat
+} from "./interfaces/iSparklineCellRendererParams";
 
 // modules
 export { Module } from "./interfaces/iModule";

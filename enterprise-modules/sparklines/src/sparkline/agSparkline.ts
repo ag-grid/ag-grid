@@ -1,47 +1,15 @@
 import { AreaSparkline } from "./areaSparkline";
-import { HighlightStyle, SparklineAxis } from "./sparkline";
-import { ColumnFormat, ColumnFormatterParams, ColumnSparkline } from "./columnSparkline";
+import { SparklineAxis } from "./sparkline";
+import { ColumnSparkline } from "./columnSparkline";
 import { LineSparkline } from "./lineSparkline";
 
-export type AgSparklineOptions = AgLineSparklineOptions | AgAreaSparklineOptions | AgColumnSparklineOptions;
-
-export interface AgBaseSparklineOptions {
-    data?: number[];
-    width?: number;
-    height?: number;
-    title?: string;
-    padding?: string;
-    axis?: AgSparklineAxisOptions;
-    hihglightStyle: HighlightStyle;
-}
-
-export interface AgSparklineAxisOptions {
-    stroke?: string;
-    strokeWidth?: number;
-}
-
-export interface AgLineSparklineOptions extends AgBaseSparklineOptions {
-    type?: 'line';
-    line?: {
-        fill?: string;
-
-    };
-}
-
-export interface AgAreaSparklineOptions extends AgBaseSparklineOptions {
-    type?: 'area';
-}
-
-export interface AgColumnSparklineOptions extends AgBaseSparklineOptions {
-    type?: 'column';
-    fill?: string;
-    stroke?: string;
-    strokeWidth?: number;
-    paddingInner?: number;
-    paddingOuter?: number;
-    yScaleDomain: [number, number] | undefined;
-    formatter?: (params: ColumnFormatterParams) => ColumnFormat;
-}
+import {
+    AgSparklineOptions,
+    AgLineSparklineOptions,
+    AgAreaSparklineOptions,
+    AgColumnSparklineOptions,
+    HighlightStyle
+} from "@ag-grid-community/core";
 
 export type AgSparklineType<T> =
     T extends AgLineSparklineOptions ? LineSparkline :
