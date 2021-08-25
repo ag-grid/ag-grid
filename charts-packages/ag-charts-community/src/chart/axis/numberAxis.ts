@@ -34,6 +34,7 @@ export class NumberAxis extends ChartAxis {
             isNaN(max) ? domain[1] : max
         ];
         scale.domain = domain;
+        this.onLabelFormatChange(this.label.format);
         (scale as ContinuousScale).clamp = true;
         if (this.nice && this.scale.nice) {
             this.scale.nice(this.tick.count);

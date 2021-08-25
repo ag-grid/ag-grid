@@ -269,6 +269,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
     set domain(value: D[]) {
         this.scale.domain = value.slice();
+        this.onLabelFormatChange(this.label.format);
     }
     get domain(): D[] {
         return this.scale.domain.slice();
