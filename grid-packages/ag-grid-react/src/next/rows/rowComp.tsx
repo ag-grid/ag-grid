@@ -1,9 +1,9 @@
-import { CellCtrl, Context, IRowComp, RowCtrl, UserCompDetails, _, ICellRenderer } from 'ag-grid-community';
 import React, { useEffect, useRef, useState, useMemo, memo, useContext } from 'react';
-import CellComp from '../cells/cellComp';
+import { CellCtrl, IRowComp, RowCtrl, UserCompDetails, _, ICellRenderer } from 'ag-grid-community';
 import { showJsComp } from '../jsComp';
 import { CssClasses, isComponentStateless } from '../utils';
 import { BeansContext } from '../beansContext';
+import CellComp from '../cells/cellComp';
 
 interface CellCtrls {
     list: CellCtrl[],
@@ -79,7 +79,7 @@ const RowComp = (params: {rowCtrl: RowCtrl, pinned: string | null}) => {
     const eGui = useRef<HTMLDivElement>(null);
     const fullWidthCompRef = useRef<ICellRenderer>();
 
-    useEffect(() => {        
+    useEffect(() => {
         const compProxy: IRowComp = {
             setDisplay: value => setDisplay(value),
             setDomOrder: domOrder => setDomOrder(domOrder),
@@ -112,7 +112,7 @@ const RowComp = (params: {rowCtrl: RowCtrl, pinned: string | null}) => {
             fullWidthCompRef);
     }, [fullWidthCompDetails]);
 
-    const rowStyles = useMemo( ()=> {
+    const rowStyles = useMemo(() => {
         const res = {
             height,
             top,

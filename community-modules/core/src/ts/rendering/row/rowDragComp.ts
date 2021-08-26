@@ -24,8 +24,7 @@ export class RowDragComp extends Component {
         private readonly rowNode: RowNode,
         private readonly column?: Column,
         private readonly customGui?: HTMLElement,
-        private readonly dragStartPixels?: number,
-        private readonly coverElement?: boolean
+        private readonly dragStartPixels?: number
     ) { super(); }
 
     public isCustomGui(): boolean {

@@ -206,7 +206,7 @@ export class RowCtrl extends BeanStub {
 
     public setCached(cached: boolean): void {
         const displayValue = cached ? 'none' : undefined;
-        this.allRowGuis.forEach( rg => rg.rowComp.setDisplay(displayValue) );
+        this.allRowGuis.forEach(rg => rg.rowComp.setDisplay(displayValue));
     }
 
     private initialiseRowComps(): void {

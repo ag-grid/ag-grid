@@ -1,12 +1,10 @@
 import { Component } from "../../widgets/component";
-import { RowContainerComp } from "../../gridBodyComp/rowContainer/rowContainerComp";
 import { ICellRendererComp } from "../cellRenderers/iCellRenderer";
 import { Beans } from "../beans";
-import { RowNode } from "../../entities/rowNode";
 import { addStylesToElement, setDomChildOrder } from "../../utils/dom";
 import { IRowComp, RowCtrl, RowType } from "./rowCtrl";
 import { CellComp } from "../cell/cellComp";
-import { assign, getAllValuesInObject, iterateObject } from "../../utils/object";
+import { assign, getAllValuesInObject } from "../../utils/object";
 import { setAriaExpanded, setAriaRowIndex, setAriaSelected } from "../../utils/aria";
 import { CellCtrl } from "../cell/cellCtrl";
 import { UserCompDetails } from "../../components/framework/userComponentFactory";
@@ -34,7 +32,13 @@ export class RowComp extends Component {
         const style = eGui.style;
 
         const compProxy: IRowComp = {
-            setDisplay: value => style.display = value==null ? null : 'none',
+            setDisplay: value => {
+                if (value == null) {
+                    style.removeProperty('display');
+                } else {
+                    style.setProperty('display', 'none');
+                }
+            },
             setDomOrder: domOrder => this.domOrder = domOrder,
             setCellCtrls: cellCtrls => this.setCellCtrls(cellCtrls),
             showFullWidth: compDetails => this.showFullWidth(compDetails),
