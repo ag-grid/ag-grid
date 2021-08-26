@@ -13,6 +13,10 @@
             "description": "The index of the current processed value",
             "type": "number"
         },
+        "currentCellValue": {
+            "description": "The value of the cell being currently processed by the Fill Operation",
+            "type": "any"
+        },
         "direction": {
             "description": "The direction of the Fill Operation.",
             "type": "'up' | 'down' | 'left' | 'right'"

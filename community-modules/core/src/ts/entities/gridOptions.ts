@@ -644,15 +644,15 @@ export enum TreeDataDisplayType {
 export interface FillOperationParams {
     event: MouseEvent;
     values: any[];
+    rowNode: RowNode;
     initialValues: any[];
     currentIndex: number;
     currentCellValue: any;
+    direction: 'up' | 'down' | 'left' | 'right';
     api: GridApi;
     columnApi: ColumnApi;
-    context: any;
-    direction: string; // up, down, left or right
     column: Column;
-    rowNode: RowNode;
+    context: any;
 }
 
 export interface GetDataPath {

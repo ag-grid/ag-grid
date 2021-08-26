@@ -282,7 +282,7 @@ export class FillHandle extends AbstractSelectionHandle {
     ): any {
         const userFillOperation = this.gridOptionsWrapper.getFillOperation();
         const isVertical = this.dragAxis === 'y';
-        let direction;
+        let direction: 'up' | 'down' | 'left' | 'right';
 
         if (isVertical) {
             direction = this.isUp ? 'up' : 'down';
