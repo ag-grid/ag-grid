@@ -3231,19 +3231,44 @@
   "RowGroupingDisplayType": {},
   "TreeDataDisplayType": {},
   "FillOperationParams": {
-    "event": { "type": { "returnType": "MouseEvent" } },
-    "values": { "type": { "returnType": "any[]" } },
-    "rowNode": { "type": { "returnType": "RowNode" } },
-    "initialValues": { "type": { "returnType": "any[]" } },
-    "currentIndex": { "type": { "returnType": "number" } },
-    "currentCellValue": { "type": { "returnType": "any" } },
+    "event": {
+      "description": "/** The mouse event for the fill operation. */",
+      "type": { "returnType": "MouseEvent" }
+    },
+    "values": {
+      "description": "/** The values that have been processed by the fill operation. */",
+      "type": { "returnType": "any[]" }
+    },
+    "rowNode": {
+      "description": "/** The RowNode of the current cell being changed. */",
+      "type": { "returnType": "RowNode" }
+    },
+    "column": {
+      "description": "/** The Column of the current cell being changed. */",
+      "type": { "returnType": "Column" }
+    },
+    "initialValues": {
+      "description": "/** The values that were present before processing started. */",
+      "type": { "returnType": "any[]" }
+    },
+    "currentIndex": {
+      "description": "/** The index of the current processed value. */",
+      "type": { "returnType": "number" }
+    },
+    "currentCellValue": {
+      "description": "/** The value of the cell being currently processed by the Fill Operation. */",
+      "type": { "returnType": "any" }
+    },
     "direction": {
+      "description": "/** The direction of the Fill Operation. */",
       "type": { "returnType": "'up' | 'down' | 'left' | 'right'" }
     },
     "api": { "type": { "returnType": "GridApi" } },
     "columnApi": { "type": { "returnType": "ColumnApi" } },
-    "column": { "type": { "returnType": "Column" } },
-    "context": { "type": { "returnType": "any" } }
+    "context": {
+      "description": "/** The context as provided on `gridOptions.context` */",
+      "type": { "returnType": "any" }
+    }
   },
   "GetDataPath": {},
   "IsServerSideGroup": {},

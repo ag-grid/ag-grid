@@ -77,7 +77,7 @@ const gridOptions = {
 
 Often there is a need to use a custom method to fill values instead of simply copying values or increasing number values using linear progression. In these scenarios, the `fillOperation` callback should be used.
 
-The interface for `fillOperation` is as follows:
+<api-documentation source='grid-callbacks/callbacks.json' section='callbacks' names='["fillOperation"]'  ></api-documentation>
 
 <snippet>
 const gridOptions = {
@@ -96,7 +96,7 @@ const gridOptions = {
 </snippet>
 
 ### FillOperationParams
-<api-documentation source='range-selection-fill-handle/resources/fill-handle-api.json' section='fillOperationParams'></api-documentation>
+<interface-documentation interfaceName='FillOperationParams'></interface-documentation>
 
 [[note]]
 | If a `fillOperation` callback is provided, the fill handle will always run it. If the current values are not relevant to the `fillOperation` function that was provided, `false` should be returned to allow the grid to process the values as it normally would.

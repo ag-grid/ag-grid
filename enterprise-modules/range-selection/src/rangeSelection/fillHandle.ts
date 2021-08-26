@@ -10,7 +10,8 @@ import {
     FillEndEvent,
     FillStartEvent,
     SelectionHandleType,
-    _, CellCtrl
+    _, CellCtrl,
+    FillOperationParams
 } from '@ag-grid-community/core';
 import { AbstractSelectionHandle } from "./abstractSelectionHandle";
 
@@ -303,7 +304,7 @@ export class FillHandle extends AbstractSelectionHandle {
                 direction,
                 column: col,
                 rowNode: rowNode
-            });
+            } as FillOperationParams);
 
             if (userResult !== false) {
                 return userResult;

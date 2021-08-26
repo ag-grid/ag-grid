@@ -36,7 +36,7 @@ export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework
 
     sortAndFilterProperties(typeProps, framework).forEach(([k, v]) => {
         if (namesArr.length === 0 || namesArr.includes(k)) {
-            props[k] = { description: removeJsDocStars(li.docs[k]) || v, }
+            props[k] = { description: (li.docs && removeJsDocStars(li.docs[k])) || v, }
         }
     })
 

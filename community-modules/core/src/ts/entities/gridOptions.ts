@@ -642,16 +642,25 @@ export enum TreeDataDisplayType {
 }
 
 export interface FillOperationParams {
+    /** The mouse event for the fill operation. */
     event: MouseEvent;
+    /** The values that have been processed by the fill operation. */
     values: any[];
+    /** The RowNode of the current cell being changed. */
     rowNode: RowNode;
+    /** The Column of the current cell being changed. */
+    column: Column;
+    /** The values that were present before processing started. */
     initialValues: any[];
+    /** The index of the current processed value. */
     currentIndex: number;
+    /** The value of the cell being currently processed by the Fill Operation. */
     currentCellValue: any;
+    /** The direction of the Fill Operation. */
     direction: 'up' | 'down' | 'left' | 'right';
     api: GridApi;
     columnApi: ColumnApi;
-    column: Column;
+    /** The context as provided on `gridOptions.context` */
     context: any;
 }
 

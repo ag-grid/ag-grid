@@ -1640,14 +1640,25 @@
       "event": "MouseEvent",
       "values": "any[]",
       "rowNode": "RowNode",
+      "column": "Column",
       "initialValues": "any[]",
       "currentIndex": "number",
       "currentCellValue": "any",
       "direction": "'up' | 'down' | 'left' | 'right'",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "column": "Column",
       "context": "any"
+    },
+    "docs": {
+      "event": "/** The mouse event for the fill operation. */",
+      "values": "/** The values that have been processed by the fill operation. */",
+      "rowNode": "/** The RowNode of the current cell being changed. */",
+      "column": "/** The Column of the current cell being changed. */",
+      "initialValues": "/** The values that were present before processing started. */",
+      "currentIndex": "/** The index of the current processed value. */",
+      "currentCellValue": "/** The value of the cell being currently processed by the Fill Operation. */",
+      "direction": "/** The direction of the Fill Operation. */",
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "GetDataPath": {
