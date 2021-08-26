@@ -9,15 +9,17 @@ var gridOptions = {
             cellRendererParams: {
                 sparklineOptions: {
                     type: 'line',
+                    line: {
+                        stroke: 'skyblue',
+                    },
                     marker: {
-                        fill: '',
-                        stroke: '',
                         shape: 'diamond',
-                        size: '3'
+                        size: '3',
+                        formatter: formatter,
                     },
                     highlightStyle: {
                         size: 5,
-                    }
+                    },
                 }
             },
         },
@@ -29,6 +31,13 @@ var gridOptions = {
         resizable: true,
     },
 };
+
+function formatter(params) {
+    return {
+        fill: !params.highlighted ? params.yValue < 0 ? 'green' : 'skyblue': undefined,
+        stroke: !params.highlighted ? params.yValue < 0 ? 'green' : 'skyblue' : undefined
+    }
+}
 
 function addSparklineData(data) {
     function randomNumber(min, max) {

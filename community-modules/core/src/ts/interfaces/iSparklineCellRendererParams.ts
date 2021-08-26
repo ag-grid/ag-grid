@@ -1,7 +1,7 @@
 import { ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
 
 export interface ISparklineCellRendererParams extends ICellRendererParams {
-    sparklineOptions?: SparklineOptions
+    sparklineOptions?: SparklineOptions;
 }
 
 export type SparklineOptions = LineSparklineOptions | AreaSparklineOptions | ColumnSparklineOptions;
@@ -13,18 +13,20 @@ export interface BaseSparklineOptions {
     title?: string;
     padding?: string;
     axis?: SparklineAxisOptions;
-    highlightStyle: HighlightStyle;
+    highlightStyle?: HighlightStyle;
 }
 
 export interface LineSparklineOptions extends BaseSparklineOptions {
     type?: 'line';
-    line?: {
-        fill?: string;
-    };
+    line?: SparklineLine;
+    marker?: SparklineMarker;
 }
 
 export interface AreaSparklineOptions extends BaseSparklineOptions {
     type?: 'area';
+    fill?: string;
+    line?: SparklineLine;
+    marker?: SparklineMarker;
 }
 
 export interface ColumnSparklineOptions extends BaseSparklineOptions {
@@ -38,6 +40,11 @@ export interface ColumnSparklineOptions extends BaseSparklineOptions {
 }
 
 export interface SparklineAxisOptions {
+    stroke?: string;
+    strokeWidth?: number;
+}
+
+export interface SparklineLine {
     stroke?: string;
     strokeWidth?: number;
 }
@@ -63,10 +70,20 @@ export interface ColumnFormatterParams {
     highlighted: boolean;
 }
 
-export interface ColumnFormat{
+export interface ColumnFormat {
     fill?: string;
     stroke?: string;
     strokeWidth?: number;
+}
+
+export interface SparklineMarker {
+    enabled?: boolean;
+    shape?: string;
+    size?: number;
+    fill?: string;
+    stroke?: string;
+    strokeWidth?: number;
+    formatter?: SparklineMarkerFormatter;
 }
 
 export type SparklineMarkerFormatter = (params: MarkerFormatterParams) => MarkerFormat;

@@ -7174,7 +7174,7 @@
       "title?": "string",
       "padding?": "string",
       "axis?": "SparklineAxisOptions",
-      "highlightStyle": "HighlightStyle"
+      "highlightStyle?": "HighlightStyle"
     }
   },
   "LineSparklineOptions": {
@@ -7186,9 +7186,10 @@
       "title?": "string",
       "padding?": "string",
       "axis?": "SparklineAxisOptions",
-      "highlightStyle": "HighlightStyle",
+      "highlightStyle?": "HighlightStyle",
       "type?": "'line'",
-      "line?": "{ fill?: string; }"
+      "line?": "SparklineLine",
+      "marker?": "SparklineMarker"
     }
   },
   "AreaSparklineOptions": {
@@ -7200,8 +7201,11 @@
       "title?": "string",
       "padding?": "string",
       "axis?": "SparklineAxisOptions",
-      "highlightStyle": "HighlightStyle",
-      "type?": "'area'"
+      "highlightStyle?": "HighlightStyle",
+      "type?": "'area'",
+      "fill?": "string",
+      "line?": "SparklineLine",
+      "marker?": "SparklineMarker"
     }
   },
   "ColumnSparklineOptions": {
@@ -7213,7 +7217,7 @@
       "title?": "string",
       "padding?": "string",
       "axis?": "SparklineAxisOptions",
-      "highlightStyle": "HighlightStyle",
+      "highlightStyle?": "HighlightStyle",
       "type?": "'column'",
       "fill?": "string",
       "stroke?": "string",
@@ -7224,6 +7228,10 @@
     }
   },
   "SparklineAxisOptions": {
+    "meta": {},
+    "type": { "stroke?": "string", "strokeWidth?": "number" }
+  },
+  "SparklineLine": {
     "meta": {},
     "type": { "stroke?": "string", "strokeWidth?": "number" }
   },
@@ -7254,6 +7262,18 @@
   "ColumnFormat": {
     "meta": {},
     "type": { "fill?": "string", "stroke?": "string", "strokeWidth?": "number" }
+  },
+  "SparklineMarker": {
+    "meta": {},
+    "type": {
+      "enabled?": "boolean",
+      "shape?": "string",
+      "size?": "number",
+      "fill?": "string",
+      "stroke?": "string",
+      "strokeWidth?": "number",
+      "formatter?": "SparklineMarkerFormatter"
+    }
   },
   "SparklineMarkerFormatter": { "meta": {}, "type": {} },
   "MarkerFormatterParams": {

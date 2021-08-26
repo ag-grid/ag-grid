@@ -431,7 +431,9 @@ export {
     ColumnFormat,
     SparklineMarkerFormatter,
     MarkerFormatterParams,
-    MarkerFormat
+    MarkerFormat,
+    SparklineMarker,
+    SparklineLine
 } from "./interfaces/iSparklineCellRendererParams";
 
 // modules
