@@ -1369,6 +1369,12 @@
             "showInCollapsed": true
           },
           {
+            "title": "Area Sparkline",
+            "url": "/sparklines-area-sparkline/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
             "title": "Column Sparkline",
             "url": "/sparklines-column-sparkline/",
             "enterprise": true,
