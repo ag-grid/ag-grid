@@ -18,17 +18,17 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
             <span ref="eSparkline"></span>
         </div>`;
 
-    @RefSelector('eSparkline') private eSparkline: HTMLElement;
-    @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
+    @RefSelector('eSparkline') private eSparkline?: HTMLElement;
+    @Autowired('resizeObserverService') private resizeObserverService?: ResizeObserverService;
 
-    private sparkline: LineSparkline | AreaSparkline | ColumnSparkline;
+    private sparkline?: LineSparkline | AreaSparkline | ColumnSparkline;
 
     constructor() {
         super(SparklineCellRenderer.TEMPLATE);
     }
 
     public init(params: any): void {
-        const {clientWidth, clientHeight} = this.getGui();
+        const { clientWidth, clientHeight } = this.getGui();
 
         const options = {
             data: params.value,
@@ -38,22 +38,29 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
         }
 
         this.sparkline = AgSparkline.create(options as any);
-        this.eSparkline.appendChild(this.sparkline.canvasElement);
+
+        if (this.eSparkline) {
+            this.eSparkline.appendChild(this.sparkline.canvasElement);
+        }
 
         const updateSparklineWidthFunc = () => {
             if (this.sparkline) {
-                const {clientWidth, clientHeight} = this.getGui();
+                const { clientWidth, clientHeight } = this.getGui();
                 this.sparkline.width = clientWidth;
                 this.sparkline.height = clientHeight;
             }
         }
 
-        const unsubscribeFromResize = this.resizeObserverService.observeResize(this.getGui(), updateSparklineWidthFunc);
-        this.addDestroyFunc(() => unsubscribeFromResize());
+        if (this.resizeObserverService) {
+            const unsubscribeFromResize = this.resizeObserverService.observeResize(this.getGui(), updateSparklineWidthFunc);
+            this.addDestroyFunc(() => unsubscribeFromResize());
+        }
     }
 
     public refresh(params: ISparklineCellRendererParams): boolean {
-        this.sparkline.data = params.value;
+        if (this.sparkline) {
+            this.sparkline.data = params.value;
+        }
         return true;
     }
 

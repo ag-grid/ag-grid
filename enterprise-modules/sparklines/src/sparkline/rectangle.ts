@@ -4,7 +4,7 @@ export class Rectangle extends Shape {
 
     static className = 'Column';
 
-    private _x: number;
+    private _x: number = 0;
     set x(value: number) {
         if (this._x !== value) {
             this._x = value;
@@ -15,7 +15,7 @@ export class Rectangle extends Shape {
         return this._x;
     }
 
-    private _y: number;
+    private _y: number = 0;
     set y(value: number) {
         if (this._y !== value) {
             this._y = value;
@@ -26,7 +26,7 @@ export class Rectangle extends Shape {
         return this._y;
     }
 
-    private _width: number;
+    private _width: number = 0;
     set width(value: number) {
         if (this._width !== value) {
             this._width = value;
@@ -37,7 +37,7 @@ export class Rectangle extends Shape {
         return this._width;
     }
 
-    private _height: number;
+    private _height: number = 0;
     set height(value: number) {
         if (this._height !== value) {
             this._height = value;
@@ -61,11 +61,11 @@ export class Rectangle extends Shape {
     get crisp(): boolean {
         return this._crisp;
     }
-    
+
     isPointInStroke(x: number, y: number): boolean {
         return false;
     }
-    
+
     isPointInPath(x: number, y: number): boolean {
         return false;
     }
@@ -78,7 +78,7 @@ export class Rectangle extends Shape {
 
         const { x, y, width, height, crisp } = this;
         ctx.beginPath();
-        
+
         if (crisp) {
             // ensure stroke aligns to the pixel grid
             const { alignment: a, align: al } = this;

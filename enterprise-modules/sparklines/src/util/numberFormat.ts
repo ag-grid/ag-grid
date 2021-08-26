@@ -1,8 +1,24 @@
 import { tickStep } from './ticks';
 
-type FormatType = '%' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'o' | 'p' | 'r' | 's' | 'X' | 'x';
+type FormatType = '' | '%' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'o' | 'p' | 'r' | 's' | 'X' | 'x';
+
+function formatDefault(x: number, p?: number): string {
+    const xs = x.toPrecision(p);
+
+    out: for (var n = xs.length, i = 1, i0 = -1, i1 = 0; i < n; ++i) {
+        switch (xs[i]) {
+            case '.': i0 = i1 = i; break;
+            case '0': if (i0 === 0) i0 = i; i1 = i; break;
+            case 'e': break out;
+            default: if (i0 > 0) i0 = 0; break;
+        }
+    }
+
+    return i0 > 0 ? xs.slice(0, i0) + xs.slice(i1 + 1) : xs;
+}
 
 const formatTypes: { [key in FormatType]: (x: number, p?: number) => string } = {
+    '': formatDefault,
     // Multiply by 100, and then decimal notation with a percent sign.
     '%': (x: number, p?: number): string => (x * 100).toFixed(p),
     // Binary notation, rounded to integer.
@@ -20,7 +36,7 @@ const formatTypes: { [key in FormatType]: (x: number, p?: number) => string } = 
     // Octal notation, rounded to integer.
     'o': (x: number) => Math.round(x).toString(8),
     // Multiply by 100, round to significant digits, and then decimal notation with a percent sign.
-    'p': (x: number, p: number) => formatRounded(x * 100, p),
+    'p': (x: number, p?: number) => formatRounded(x * 100, p),
     // Decimal notation, rounded to significant digits.
     'r': formatRounded,
     // Decimal notation with a SI prefix, rounded to significant digits.
@@ -178,15 +194,13 @@ export function makeFormatSpecifier(specifier: string | FormatSpecifier): Format
 export function tickFormat(start: number, stop: number, count: number, specifier?: string): (n: number | { valueOf(): number }) => string {
     const step = tickStep(start, stop, count);
     const formatSpecifier = makeFormatSpecifier(specifier == undefined ? ',f' : specifier);
+    let precision: number;
 
     switch (formatSpecifier.type) {
         case 's': {
-            var value = Math.max(Math.abs(start), Math.abs(stop));
-            if (formatSpecifier.precision == null) {
-                const precision = precisionPrefix(step, value);
-                if (!isNaN(precision)) {
-                    formatSpecifier.precision = precision;
-                }
+            const value = Math.max(Math.abs(start), Math.abs(stop));
+            if (formatSpecifier.precision == null && !isNaN(precision = precisionPrefix(step, value))) {
+                formatSpecifier.precision = precision;
             }
             return formatPrefix(formatSpecifier, value);
         }
@@ -195,21 +209,15 @@ export function tickFormat(start: number, stop: number, count: number, specifier
         case 'g':
         case 'p':
         case 'r': {
-            if (formatSpecifier.precision == null) {
-                const precision = precisionRound(step, Math.max(Math.abs(start), Math.abs(stop)));
-                if (!isNaN(precision)) {
-                    formatSpecifier.precision = precision - Number(formatSpecifier.type === 'e');
-                }
+            if (formatSpecifier.precision == null && !isNaN(precision = precisionRound(step, Math.max(Math.abs(start), Math.abs(stop))))) {
+                formatSpecifier.precision = precision - +(formatSpecifier.type === 'e');
             }
             break;
         }
         case 'f':
         case '%': {
-            if (formatSpecifier.precision == null) {
-                const precision = precisionFixed(step);
-                if (!isNaN(precision)) {
-                    formatSpecifier.precision = precision - Number(formatSpecifier.type === '%') * 2;
-                }
+            if (formatSpecifier.precision == null && !isNaN(precision = precisionFixed(step))) {
+                formatSpecifier.precision = precision - +(formatSpecifier.type === '%') * 2;
             }
             break;
         }
@@ -218,7 +226,7 @@ export function tickFormat(start: number, stop: number, count: number, specifier
 }
 
 let prefixExponent: number;
-function formatPrefixAuto(x: number, p: number) {
+function formatPrefixAuto(x: number, p: number = 0) {
     const d = formatDecimalParts(x, p);
     if (!d) {
         return String(x);
@@ -274,36 +282,17 @@ function formatGroup(grouping: number[], thousands: string): (value: string, wid
     };
 }
 
-export function formatNumerals(numerals: string): (value: string) => string {
+export function formatNumerals(numerals: string[]): (value: string) => string {
     return value => value.replace(/[0-9]/g, i => numerals[+i]);
 }
 
-// Trim insignificant zeros.
+// Trims insignificant zeros, e.g., replaces 1.2000k with 1.2k.
 function formatTrim(s: string): string {
-    const n = s.length;
-    let i = 1;
-    let i0 = -1;
-    let i1 = NaN;
-
-    out: for (; i < n; i++) {
+    out: for (var n = s.length, i = 1, i0 = -1, i1 = 0; i < n; ++i) {
         switch (s[i]) {
-            case '.':
-                i0 = i1 = i;
-                break;
-            case '0':
-                if (i0 === 0) {
-                    i0 = i;
-                    i1 = i;
-                }
-                break;
-            default:
-                if (!+s[i]) {
-                    break out;
-                }
-                if (i0 > 0) {
-                    i0 = 0;
-                    break;
-                }
+            case '.': i0 = i1 = i; break;
+            case '0': if (i0 === 0) i0 = i; i1 = i; break;
+            default: if (!+s[i]) break out; if (i0 > 0) i0 = 0; break;
         }
     }
     return i0 > 0 ? s.slice(0, i0) + s.slice(i1 + 1) : s;
@@ -438,7 +427,7 @@ export interface FormatLocale {
      * @param specifier A Specifier string.
      * @throws Error on invalid format specifier.
      */
-    format(specifier: string): (n: number | { valueOf(): number }) => string;
+    format(specifier: string | FormatSpecifier): (n: number | { valueOf(): number }) => string;
 
     /**
      * Returns a new format function for the given string specifier. The returned function
@@ -450,24 +439,24 @@ export interface FormatLocale {
      * @param value The reference value to determine the appropriate SI prefix.
      * @throws Error on invalid format specifier.
      */
-    formatPrefix(specifier: string, value: number): (n: number | { valueOf(): number }) => string;
+    formatPrefix(specifier: string | FormatSpecifier, value: number): (n: number | { valueOf(): number }) => string;
 }
 
 export function formatLocale(locale: FormatLocaleOptions): FormatLocale {
     const group = locale.grouping === undefined || locale.thousands === undefined
         ? identity
-        : formatGroup(Array.prototype.map.call(locale.grouping, Number), String(locale.thousands));
+        : formatGroup(Array.prototype.map.call(locale.grouping, Number) as number[], String(locale.thousands));
     const currencyPrefix = locale.currency === undefined ? '' : String(locale.currency[0]);
     const currencySuffix = locale.currency === undefined ? '' : String(locale.currency[1]);
     const decimal = locale.decimal === undefined ? '.' : String(locale.decimal);
     const numerals = locale.numerals === undefined
         ? identity
-        : formatNumerals(Array.prototype.map.call(locale.numerals, String));
+        : formatNumerals(Array.prototype.map.call(locale.numerals, String) as string[]);
     const percent = locale.percent === undefined ? '%' : String(locale.percent);
     const minus = locale.minus === undefined ? '\u2212' : String(locale.minus);
     const nan = locale.nan === undefined ? 'NaN' : String(locale.nan);
 
-    function newFormat(specifier: string | FormatSpecifier): (x: number) => string {
+    function newFormat(specifier: string | FormatSpecifier): (n: number | { valueOf(): number }) => string {
         const formatSpecifier = makeFormatSpecifier(specifier);
 
         let fill = formatSpecifier.fill;
@@ -485,7 +474,7 @@ export function formatLocale(locale: FormatLocaleOptions): FormatLocale {
         if (type as string === 'n') {
             comma = true;
             type = 'g';
-        } else if (!type || !formatTypes[type]) { // The '' type, and any invalid type, is an alias for '.12~g'.
+        } else if (!formatTypes[type]) { // The '' type, and any invalid type, is an alias for '.12~g'.
             if (precision === undefined) {
                 precision = 12;
             }
@@ -523,21 +512,21 @@ export function formatLocale(locale: FormatLocaleOptions): FormatLocale {
             precision = Math.max(0, Math.min(20, precision));
         }
 
-        function format(x: number): string {
+        function format(x: number | { valueOf(): number }): string {
             let valuePrefix = prefix;
             let valueSuffix = suffix;
             let value: string;
 
             if (type === 'c') {
-                valueSuffix = formatType(x) + valueSuffix;
+                valueSuffix = formatType(+x) + valueSuffix;
                 value = '';
             } else {
-                x = +x;
+                const nx = +x;
                 // Determine the sign. -0 is not less than 0, but 1 / -0 is!
-                var valueNegative = x < 0 || 1 / x < 0;
+                var valueNegative = x < 0 || 1 / nx < 0;
 
                 // Perform the initial formatting.
-                value = isNaN(x) ? nan : formatType(Math.abs(x), precision);
+                value = isNaN(nx) ? nan : formatType(Math.abs(nx), precision);
 
                 // Trim insignificant zeros.
                 if (trim) {
@@ -603,7 +592,7 @@ export function formatLocale(locale: FormatLocaleOptions): FormatLocale {
         return format;
     }
 
-    function formatPrefix(specifier: string | FormatSpecifier, value: number) {
+    function formatPrefix(specifier: string | FormatSpecifier, value: number): (n: number | { valueOf(): number }) => string {
         const formatSpecifier = makeFormatSpecifier(specifier);
         formatSpecifier.type = 'f';
 
@@ -612,8 +601,8 @@ export function formatLocale(locale: FormatLocaleOptions): FormatLocale {
         const k = Math.pow(10, -e);
         const prefix = prefixes[8 + e / 3];
 
-        return function (value: number) {
-            return f(k * value) + prefix;
+        return function (value: number | { valueOf(): number }) {
+            return f(k * +value) + prefix;
         };
     }
 

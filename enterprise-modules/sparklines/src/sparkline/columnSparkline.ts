@@ -20,7 +20,7 @@ interface ColumnNodeDatum extends SeriesNodeDatum {
 }
 
 export class ColumnSparkline extends Sparkline {
-    
+
     static className = 'ColumnSparkline';
 
     private columnSparklineGroup: Group = new Group();
@@ -36,7 +36,7 @@ export class ColumnSparkline extends Sparkline {
     @reactive('update') paddingInner: number = 0.5;
     @reactive('update') paddingOuter: number = 0.2;
     @reactive('update') yScaleDomain: [number, number] | undefined = undefined;
-    @reactive('update') formatter: (params: ColumnFormatterParams) => ColumnFormat;
+    @reactive('update') formatter?: (params: ColumnFormatterParams) => ColumnFormat;
 
     constructor() {
         super();
@@ -64,7 +64,7 @@ export class ColumnSparkline extends Sparkline {
 
         const nodeData = this.generateNodeData();
         this.columnSelectionData = nodeData;
-        
+
         this.updateRectNodesSelection(nodeData);
         this.updateRectNodes();
     }
@@ -86,7 +86,7 @@ export class ColumnSparkline extends Sparkline {
             minY = extent[0];
             maxY = extent[1];
         }
-        
+
         minY = minY < 0 ? minY : 0;
 
         if (minY === maxY) {
@@ -134,7 +134,7 @@ export class ColumnSparkline extends Sparkline {
         const { yData, xData, xScale, yScale, fill, stroke, strokeWidth } = this;
 
         const nodeData: ColumnNodeDatum[] = [];
-        
+
         const yZero: number = yScale.convert(0);
         const width: number = xScale.bandwidth;
 
@@ -143,7 +143,7 @@ export class ColumnSparkline extends Sparkline {
             let xDatum = xData[i];
 
             let invalidDatum = yDatum === undefined;
-            
+
             if (invalidDatum) {
                 yDatum = 0;
             }
@@ -158,13 +158,13 @@ export class ColumnSparkline extends Sparkline {
                 y: yZero
             }
 
-            nodeData.push({ 
-                x, 
-                y, 
-                width, 
-                height, 
-                fill, 
-                stroke, 
+            nodeData.push({
+                x,
+                y,
+                width,
+                height,
+                fill,
+                stroke,
                 strokeWidth,
                 seriesDatum: { x: xDatum, y: invalidDatum ? undefined : yDatum },
                 point: midPoint
@@ -186,7 +186,7 @@ export class ColumnSparkline extends Sparkline {
     private updateRectNodes() {
         const { highlightedDatum, formatter: columnFormatter, fill, stroke, strokeWidth } = this;
         const { fill: highlightFill, stroke: highlightStroke, strokeWidth: highlightStrokeWidth } = this.highlightStyle;
-        
+
         this.columnSelection.each((column, datum) => {
             const highlighted = datum === highlightedDatum;
             const columnFill = highlighted && highlightFill !== undefined ? highlightFill : fill;
@@ -199,7 +199,7 @@ export class ColumnSparkline extends Sparkline {
 
             if (columnFormatter) {
                 columnFormat = columnFormatter({
-                    datum, 
+                    datum,
                     xValue: seriesDatum.x,
                     yValue: seriesDatum.y,
                     width: width,

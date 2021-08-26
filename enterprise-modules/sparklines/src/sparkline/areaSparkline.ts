@@ -31,7 +31,7 @@ class SparklineLine extends Observable {
 }
 
 export class AreaSparkline extends Sparkline {
-    
+
     static className = 'AreaSparkline';
 
     @reactive('update') fill: string = 'rgba(124, 181, 236, 0.25)';
@@ -39,7 +39,7 @@ export class AreaSparkline extends Sparkline {
     private areaSparklineGroup: Group = new Group();
     protected strokePath: Path = new Path();
     protected fillPath: Path = new Path();
-    private areaPathData: AreaPathDatum[];
+    private areaPathData: AreaPathDatum[] = [];
     private xAxisLine: Line = new Line();
     protected yScale: LinearScale = new LinearScale();
     protected xScale: BandScale<number | undefined> = new BandScale<number | undefined>();
@@ -158,8 +158,8 @@ export class AreaSparkline extends Sparkline {
             let xDatum = xData[i];
 
             const invalidYDatum = yDatum === undefined;
-            const invalidXDatum = xDatum === undefined; 
-            
+            const invalidXDatum = xDatum === undefined;
+
             if (invalidYDatum) {
                 yDatum = 0;
             }
@@ -238,13 +238,13 @@ export class AreaSparkline extends Sparkline {
             const markerStroke = highlighted && highlightStroke !== undefined ? highlightStroke : marker.stroke;
             const markerStrokeWidth = highlighted && highlightStrokeWidth !== undefined ? highlightStrokeWidth : marker.strokeWidth;
             const markerSize = highlighted && highlightSize !== undefined ? highlightSize : marker.size;
-            
+
             let markerFormat: MarkerFormat | undefined = undefined;
 
             if (markerFormatter) {
                 markerFormat = markerFormatter({
-                    datum, 
-                    xValue: seriesDatum.x, 
+                    datum,
+                    xValue: seriesDatum.x,
                     yValue: seriesDatum.y,
                     fill: markerFill,
                     stroke: markerStroke,
@@ -270,7 +270,7 @@ export class AreaSparkline extends Sparkline {
 
         const path = strokePath.path;
         const n = yData.length;
-        
+
         path.clear();
 
         if (yData.length < 2) {
@@ -279,7 +279,7 @@ export class AreaSparkline extends Sparkline {
 
         for (let i = 0; i < n; i++) {
             const { point } = nodeData[i];
-            
+
             if (!point) {
                 return;
             }
@@ -321,7 +321,7 @@ export class AreaSparkline extends Sparkline {
 
             const x = point.x;
             const y = point.y;
-            
+
             if (i > 0) {
                 path.lineTo(x, y);
             } else {
