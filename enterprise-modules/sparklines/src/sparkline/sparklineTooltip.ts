@@ -30,11 +30,11 @@ export function toTooltipHtml(input: string | TooltipRendererResult, defaults?: 
 
     defaults = defaults || {};
 
-    const { 
-        content = defaults.content || '', 
-        title = defaults.title || undefined, 
-        color = defaults.color || 'black', 
-        backgroundColor = defaults.backgroundColor || 'rgb(136, 136, 136)', 
+    const {
+        content = defaults.content || '',
+        title = defaults.title || undefined,
+        color = defaults.color || 'black',
+        backgroundColor = defaults.backgroundColor || 'rgb(136, 136, 136)',
         opacity = defaults.opacity || 0.2
     } = input;
 
@@ -43,7 +43,7 @@ export function toTooltipHtml(input: string | TooltipRendererResult, defaults?: 
 
     // TODO: combine a and opacity for alpha?
     const alpha = opacity;
-    
+
     const titleBgColorWithAlpha = Color.fromArray([r, g, b, alpha]);
     const titleBgColorRgbaString = titleBgColorWithAlpha.toRgbaString();
 
@@ -63,7 +63,7 @@ export class SparklineTooltip extends Observable {
 
     @reactive() class: string = Sparkline.defaultTooltipClass;
     @reactive() enabled: boolean = true;
-    @reactive() container: HTMLElement;
+    @reactive() container?: HTMLElement;
     @reactive('change') renderer?: (params: TooltipRendererParams) => string | TooltipRendererResult;
 
     constructor(chart: Sparkline) {
@@ -106,7 +106,7 @@ export class SparklineTooltip extends Observable {
     private constrained = false;
     show(meta: TooltipMeta, html?: string) {
         const { element } = this;
-        
+
         if (html !== undefined) {
             element.innerHTML = html;
         } else if (!element.innerHTML) {
@@ -118,14 +118,14 @@ export class SparklineTooltip extends Observable {
 
         this.constrained = false;
         const tooltipRect = element.getBoundingClientRect();
-        
+
         let minLeft = 0;
         let maxLeft = window.innerWidth - tooltipRect.width;
         let minTop = window.pageYOffset;
 
         if (this.container) {
             const containerRect = this.container.getBoundingClientRect();
-            
+
             minLeft = containerRect.left;
             maxLeft = containerRect.width - tooltipRect.width;
             minTop = containerRect.top < 0 ?  window.pageYOffset : containerRect.top;
@@ -144,7 +144,7 @@ export class SparklineTooltip extends Observable {
             // top = meta.pageY + 20;
             this.updateClass(true, this.constrained = true);
         }
-        
+
         element.style.left = `${left}px`;
         element.style.top = `${top}px`;
 
