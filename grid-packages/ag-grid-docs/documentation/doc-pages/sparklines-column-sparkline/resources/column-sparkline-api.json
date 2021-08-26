@@ -2,59 +2,81 @@
     "_config_": {},
     "ColumnSparklineOptions": {
         "type": {
-            "description": "xxx",
+            "description": "The type of sparklines to create, in this case it would be `column`.",
             "type": "string"
         },
         "data": {
-            "description": "xxx",
+            "description": "The data to render the sparklines from. By default this value will be the cell value in the grid.",
             "type": "number[]"
         },
         "width": {
-            "description": "xxx",
+            "description": "The width in pixels of the sparkline, by default, this will be the width of the grid's cell.",
             "type": "number"
         },
         "height": {
-            "description": "xxx",
+            "description": "The height in pixels of the sparkline, by default, this will be the height of the grid's cell.",
             "type": "number"
         },
         "title": {
-            "description": "xxx",
+            "description": "The title of the sparklines.",
             "type": "string"
         },
         "padding": {
-            "description": "xxx",
-            "type": "string"
+            "description": "The padding in pixels of the sparklines.",
+            "type": "string",
+            "default": "3"
         },
         "axis": {
-            "description": "xxx",
-            "type": "SparklineAxisOptions"
+            "description": "The styling options for the horizontal axis line in the sparklines.",
+            "type": "SparklineAxisOptions",
+            "more": {
+                "name": "HighlightStyle",
+                "url": "/sparklines-column-sparkline/#sparklineaxisoptions"
+            }
         },
         "highlightStyle": {
-            "description": "xxx",
-            "type": "HighlightStyle"
+            "description": "The configuration for the highlighting used when the columns are hovered over.",
+            "type": "HighlightStyle",
+            "more": {
+                "name": "HighlightStyle",
+                "url": "/sparklines-column-sparkline/#highlightstyle"
+            }
         },
         "fill": {
-            "description": "xxx",
-            "type": "string"
+            "description": "The css colour value for the fill of the columns.",
+            "type": "string",
+            "default": "rgb(124, 181, 236)"
         },
         "stroke": {
-            "description": "xxx",
-            "type": "string"
+            "description": "The css colour value for the outline of the columns.",
+            "type": "string",
+            "default" : "silver",
+            "more": {
+                "name": "HighlightStyle",
+                "url": "/sparklines-column-sparkline/#highlightstyle"
+            }
         },
         "strokeWidth": {
-            "description": "xxx",
-            "type": "number"
+            "description": "The thickness in pixels for the stroke of the columns.",
+            "type": "number",
+            "default": "0"
         },
         "paddingInner": {
-            "description": "xxx",
-            "type": "number"
+            "description": "The size of the gap between the columns as a proportion, between 0 and 1. This value is a fraction of the “step”, which is the interval between the start of a band and the start of the next band.",
+            "type": "number",
+            "default": "0.5"
         },
         "paddingOuter": {
-            "description": "xxx",
-            "type": "number"
+            "description": "The padding on the outside i.e. left and right, to leave some room for the axis. In association with `paddingInner`, this value can be between 0 and 1.",
+            "type": "number",
+            "default": "0.2"
         },
         "formatter": {
-            "description": "A callback function to return xxx",
+            "description": "A callback function to return format styles of type ColumnFormat.",
+            "more": {
+                "name": "ColumnFormat",
+                "url": "/sparklines-column-sparkline/#columnFormat"
+            },
             "type": {
                 "meta": {
                     "name": "ColumnFormatterParams"
@@ -76,43 +98,44 @@
     },
     "SparklineAxisOptions": {
         "stroke": {
-            "description": "xxx",
-            "type": "string"
+            "description": "The css colour value for the outline of the horizontal axis line.",
+            "type": "string",
+            "default": "rgb(204, 214, 235)"
         },
         "strokeWidth": {
-            "description": "xxx",
-            "type": "number"
+            "description": "The thickness in pixels for the stroke of the horizontal axis line.",
+            "type": "number",
+            "default": "1"
         }
     },
     "HighlightStyle": {
-        "size": {
-            "description": "xxx",
-            "type": "number"
-        },
         "fill": {
-            "description": "xxx",
-            "type": "string"
+            "description": "The fill colour of the columns when hovered over. Use `undefined` for no highlight fill.",
+            "type": "string",
+            "default": "yellow"
         },
         "stroke": {
-            "description": "xxx",
-            "type": "string"
+            "description": "The css colour value for the outline of the columns when hovered over. Use `undefined` for no highlight stroke.",
+            "type": "string",
+            "default": "yellow"
         },
         "strokeWidth": {
             "description": "xxx",
-            "type": "number"
+            "type": "number",
+            "default": "0"
         }
     },
     "ColumnFormat": {
         "fill": {
-            "description": "xxx",
+            "description": "The css colour value for the fill of the individual column.",
             "type": "string"
         },
         "stroke": {
-            "description": "xxx",
+            "description": "TThe css colour value for the outline of the individual column.",
             "type": "string"
         },
         "strokeWidth": {
-            "description": "xxx",
+            "description": "The thickness in pixels for the stroke of the individual column.",
             "type": "number"
         }
     }

@@ -22,5 +22,5 @@ export function isNumber(n: any): boolean {
     } else if (type !== 'number') {
         return false;
     }
-    return n - n < 1;;
+    return n - n < 1;
 }

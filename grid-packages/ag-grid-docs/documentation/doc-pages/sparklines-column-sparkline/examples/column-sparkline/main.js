@@ -29,9 +29,9 @@ var gridOptions = {
 };
 
 function formatter(params) {
-    let fill = params.highlighted ?
-        params.yValue < 0 ? 'rgb(224,158,245)' : 'rgb(183,237,166)' :
-        params.yValue < 0 ? 'rgb(156,166,195)' : 'rgb(156,195,185)';
+    let fill = !params.highlighted ?
+        params.yValue < 0 ? 'rgb(255,27,0)' : 'rgb(0,255,27)' :
+        params.yValue < 0 ? 'rgb(255,0,228)' : 'rgb(0,228,255)';
 
     let stroke = params.highlighted ? params.yValue < 0 ? 'rgb(156,166,195)' : 'rgb(156,195,185)' : params.stroke;
 
