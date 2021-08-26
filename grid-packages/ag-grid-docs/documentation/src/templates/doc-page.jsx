@@ -5,7 +5,7 @@ import classnames from 'classnames';
 import ExampleRunner from 'components/example-runner/ExampleRunner';
 import SideMenu from 'components/SideMenu';
 import processFrameworkSpecificSections from 'utils/framework-specific-sections';
-import { ApiDocumentation } from 'components/ApiDocumentation';
+import { ApiDocumentation, InterfaceDocumentation } from 'components/ApiDocumentation';
 import { Snippet } from 'components/snippet/Snippet';
 import FeatureOverview from 'components/FeatureOverview';
 import IconsPanel from 'components/IconsPanel';
@@ -23,7 +23,6 @@ import { SEO } from 'components/SEO';
 import { getHeaderTitle } from 'utils/page-header';
 import stripHtml from 'utils/strip-html';
 import styles from './doc-page.module.scss';
-import { InterfaceDocumentation } from '../components/InterfaceDocumentation';
 
 /**
  * This template is used for documentation pages, i.e. those generated from Markdown files.
@@ -64,7 +63,7 @@ const DocPageTemplate = ({ data, pageContext: { framework, pageName } }) => {
       'interface-documentation': props => InterfaceDocumentation({
         ...props,
         framework,
-        interfaces: props.interfaces != null ? JSON.parse(props.interfaces) : undefined,
+        config: props.config != null ? JSON.parse(props.config) : undefined
       }),
       'snippet': props => Snippet({ ...props, framework }),
       'feature-overview': props => FeatureOverview({ ...props, framework }),

@@ -72,9 +72,10 @@ The following snippet shows `rowClassRules` that use functions and the value fro
 |}
 </snippet>
 
-All rowStyle, rowClass and rowClassRules functions take a params object that implements the following interface:
+All rowStyle, rowClass and rowClassRules functions take a `RowClassParams` params object.
 
-<interface-documentation interfaces='["RowClassParams"]' ></interface-documentation>
+<interface-documentation interfaceName='RowClassParams' ></interface-documentation>
+
 
 As an alternative, you can also provide shorthands of the functions using an expression.
 An expression is evaluated by the grid by executing the string as if it were a Javascript expression. The expression has the following attributes available to it (mapping the the attributes of the equivalent

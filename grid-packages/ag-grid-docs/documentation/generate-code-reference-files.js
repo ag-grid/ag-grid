@@ -99,6 +99,11 @@ function getInterfaces() {
 
     // Now that we have recorded all the interfaces we can apply the extension properties.
     // For example CellPosition extends RowPosition and we want the json to add the RowPosition properties to the CellPosition
+    applyInheritance(extensions, interfaces, false);
+    return interfaces;
+}
+
+function applyInheritance(extensions, interfaces, isDocStyle) {
     Object.entries(extensions).forEach(([i, exts]) => {
 
         const getAncestors = (child) => {
@@ -130,19 +135,33 @@ function getInterfaces() {
                             var rep = `(?<!\\w)${t}(?!\\w)`;
                             var re = new RegExp(rep, "g");
                             var newKey = k.replace(re, parent.params[i]);
-                            var newValue = v.replace(re, parent.params[i])
+
+                            if (isDocStyle) {
+                                if (v.type) {
+                                    let newArgs = undefined;
+                                    if (v.type.arguments) {
+                                        newArgs = {};
+                                        Object.entries(v.type.arguments).forEach(([ak, av]) => {
+                                            newArgs[ak] = av.replace(re, parent.params[i])
+                                        })
+                                    }
+                                    const newReturnType = v.type.returnType.replace(re, parent.params[i])
+                                    newValue = { ...v, type: { ...v.type, returnType: newReturnType, arguments: newArgs } }
+                                }
+                            } else {
+                                var newValue = v.replace(re, parent.params[i]);
+                            }
+
                             mergedProps[newKey] = newValue;
-                        })
-                    })
-                } else {
-                    throw new Error(`Parent interface ${parent.extends} takes generic params: [${parent.params.join()}] but child does not have typeParams.`)
+                        });
+                    });
+                }
+                else {
+                    throw new Error(`Parent interface ${parent.extends} takes generic params: [${parent.params.join()}] but child does not have typeParams.`);
                 }
             }
-
-            return mergedProps
-        }
-
-
+            return mergedProps;
+        };
         const allAncestors = getAncestors(i);
         let extendedInterface = interfaces[i];
 
@@ -155,19 +174,24 @@ function getInterfaces() {
             let aI = interfaces[extended];
             if (!aI) {
                 //Check for type params                
-                throw new Error('Missing interface', a)
+                throw new Error('Missing interface', a);
             }
-            if (aI && aI.type) {
-                extendedInterface.type = { ...mergeAncestorProps(a, aI, a => a.type), ...extendedInterface.type }
-            }
-            if (aI && aI.docs) {
-                extendedInterface.docs = { ...mergeAncestorProps(a, aI, a => a.docs), ...extendedInterface.docs }
-            }
-        })
 
+            if (isDocStyle) {
+                if (aI) {
+                    extendedInterface = { ...extendedInterface, ...mergeAncestorProps(a, aI, a => a) };
+                }
+            } else {
+                if (aI && aI.type) {
+                    extendedInterface.type = { ...extendedInterface.type, ...mergeAncestorProps(a, aI, a => a.type) };
+                }
+                if (aI && aI.docs) {
+                    extendedInterface.docs = { ...extendedInterface.docs, ...mergeAncestorProps(a, aI, a => a.docs) };
+                }
+            }
+        });
         interfaces[i] = extendedInterface;
-    })
-    return interfaces;
+    });
 }
 
 function extractInterfaces(srcFile, extension) {
@@ -260,6 +284,40 @@ function getClassProperties(filePath, className) {
     });
 
     return members;
+}
+
+/** Build the interface file in the format that can be used by <interface-documentation> */
+function buildInterfaceProps() {
+    const interfaceFiles = glob.sync('../../../community-modules/core/src/ts/**/**.ts');
+
+    let interfaces = {};
+    let extensions = {};
+    interfaceFiles.forEach(file => {
+        const parsedFile = parseFile(file);
+
+        // Using this method to build the extensions lookup required to get inheritance correct
+        extractInterfaces(parsedFile, extensions);
+
+        const interfacesInFile = findAllInNodesTree(parsedFile);
+        interfacesInFile.forEach(iNode => {
+            let props = {};
+            iNode.forEachChild(ch => {
+                const prop = extractTypesFromNode(ch, parsedFile);
+                props = { ...props, ...prop }
+            })
+
+            if (iNode.typeParameters) {
+                props = { ...props, meta: { ...props.meta, typeParams: iNode.typeParameters.map(tp => formatNode(tp, parsedFile)) } }
+            }
+
+            const iName = formatNode(iNode.name, parsedFile, true);
+            interfaces[iName] = props;
+        })
+    });
+
+    applyInheritance(extensions, interfaces, true);
+
+    return interfaces;
 }
 
 function hasPublicModifier(node) {
@@ -367,6 +425,7 @@ const generateMetaFiles = () => {
     writeFormattedFile('./doc-pages/column-properties/', 'column-options.AUTO.json', getColumnOptions());
     writeFormattedFile('./doc-pages/column-api/', 'column-api.AUTO.json', getColumnApi());
     writeFormattedFile('./doc-pages/column-object/', 'column.AUTO.json', getColumn());
+    writeFormattedFile('./doc-pages/grid-api/', 'doc-interfaces.AUTO.json', buildInterfaceProps());
 };
 
 console.log(`--------------------------------------------------------------------------------`);

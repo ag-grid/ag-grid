@@ -259,14 +259,14 @@
   "CellPosition": {
     "meta": {},
     "type": {
+      "column": "Column",
       "rowIndex": "number",
-      "rowPinned": "string | null",
-      "column": "Column"
+      "rowPinned": "string | null"
     },
     "docs": {
+      "column": "/** The grid column */",
       "rowIndex": "/** A positive number from 0 to n, where n is the last row the grid is rendering\n * or -1 if you want to navigate to the grid header */",
-      "rowPinned": "/** Either 'top', 'bottom' or undefined/null (for not pinned) */",
-      "column": "/** The grid column */"
+      "rowPinned": "/** Either 'top', 'bottom' or undefined/null (for not pinned) */"
     }
   },
   "AbstractColDef": {
@@ -304,6 +304,13 @@
   "ColGroupDef": {
     "meta": {},
     "type": {
+      "children": "(ColDef | ColGroupDef)[]",
+      "groupId?": "string",
+      "openByDefault?": "boolean",
+      "marryChildren?": "boolean",
+      "headerGroupComponent?": "string | { new (): IHeaderGroupComp; }",
+      "headerGroupComponentFramework?": "any",
+      "headerGroupComponentParams?": "any",
       "headerName?": "string",
       "columnGroupShow?": "string",
       "headerClass?": "HeaderClass",
@@ -316,16 +323,16 @@
       "tooltipComponent?": "{ new (): ITooltipComp; } | string",
       "tooltipComponentFramework?": "any",
       "tooltipComponentParams?": "any",
-      "suppressHeaderKeyboardEvent?": "(params: SuppressHeaderKeyboardEventParams) => boolean",
-      "children": "(ColDef | ColGroupDef)[]",
-      "groupId?": "string",
-      "openByDefault?": "boolean",
-      "marryChildren?": "boolean",
-      "headerGroupComponent?": "string | { new (): IHeaderGroupComp; }",
-      "headerGroupComponentFramework?": "any",
-      "headerGroupComponentParams?": "any"
+      "suppressHeaderKeyboardEvent?": "(params: SuppressHeaderKeyboardEventParams) => boolean"
     },
     "docs": {
+      "children": "/** Columns in this group */",
+      "groupId?": "/** Group ID */",
+      "openByDefault?": "/** Open by Default */",
+      "marryChildren?": "/** If true, group cannot be broken up by column moving, child columns will always appear side by side, however you can rearrange child columns within the group */",
+      "headerGroupComponent?": "/** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used* */",
+      "headerGroupComponentFramework?": "/** The custom header group component to be used for rendering the component header in the hosting framework (ie: React/Angular). If none specified the default AG Grid is used* */",
+      "headerGroupComponentParams?": "/** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used* */",
       "headerName?": "/** The name to render in the column header */",
       "columnGroupShow?": "/** Whether to show the column when the group is open / closed. */",
       "headerClass?": "/** CSS class for the header */",
@@ -335,14 +342,7 @@
       "suppressColumnsToolPanel?": "/** Set to true to not include this column in the Columns Tool Panel */",
       "suppressFiltersToolPanel?": "/** Set to true to not include this column / filter in the Filters Tool Panel */",
       "headerTooltip?": "/** Tooltip for the column header */",
-      "suppressHeaderKeyboardEvent?": "/** Allows the user to suppress certain keyboard events in the grid header */",
-      "children": "/** Columns in this group */",
-      "groupId?": "/** Group ID */",
-      "openByDefault?": "/** Open by Default */",
-      "marryChildren?": "/** If true, group cannot be broken up by column moving, child columns will always appear side by side, however you can rearrange child columns within the group */",
-      "headerGroupComponent?": "/** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used* */",
-      "headerGroupComponentFramework?": "/** The custom header group component to be used for rendering the component header in the hosting framework (ie: React/Angular). If none specified the default AG Grid is used* */",
-      "headerGroupComponentParams?": "/** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used* */"
+      "suppressHeaderKeyboardEvent?": "/** Allows the user to suppress certain keyboard events in the grid header */"
     }
   },
   "IAggFunc": {
@@ -403,25 +403,6 @@
       "doc": "/** *********************************************************************\n * Don't forget to update ColDefUtil if changing this class. PLEASE! *\n * ********************************************************************* */"
     },
     "type": {
-      "filter?": "IFilterType",
-      "filterFramework?": "any",
-      "filterParams?": "any",
-      "floatingFilterComponent?": "IFloatingFilterType",
-      "floatingFilterComponentParams?": "any",
-      "floatingFilterComponentFramework?": "any",
-      "headerName?": "string",
-      "columnGroupShow?": "string",
-      "headerClass?": "HeaderClass",
-      "toolPanelClass?": "ToolPanelClass",
-      "headerValueGetter?": "string | Function",
-      "pivotKeys?": "string[]",
-      "suppressColumnsToolPanel?": "boolean",
-      "suppressFiltersToolPanel?": "boolean",
-      "headerTooltip?": "string",
-      "tooltipComponent?": "{ new (): ITooltipComp; } | string",
-      "tooltipComponentFramework?": "any",
-      "tooltipComponentParams?": "any",
-      "suppressHeaderKeyboardEvent?": "(params: SuppressHeaderKeyboardEventParams) => boolean",
       "colId?": "string",
       "sort?": "string | null",
       "initialSort?": "string",
@@ -531,22 +512,28 @@
       "floatingFilter?": "boolean",
       "refData?": "{ [key: string]: string; }",
       "chartDataType?": "'category' | 'series' | 'time' | 'excluded'",
-      "columnsMenuParams?": "ColumnsMenuParams"
+      "columnsMenuParams?": "ColumnsMenuParams",
+      "headerName?": "string",
+      "columnGroupShow?": "string",
+      "headerClass?": "HeaderClass",
+      "toolPanelClass?": "ToolPanelClass",
+      "headerValueGetter?": "string | Function",
+      "pivotKeys?": "string[]",
+      "suppressColumnsToolPanel?": "boolean",
+      "suppressFiltersToolPanel?": "boolean",
+      "headerTooltip?": "string",
+      "tooltipComponent?": "{ new (): ITooltipComp; } | string",
+      "tooltipComponentFramework?": "any",
+      "tooltipComponentParams?": "any",
+      "suppressHeaderKeyboardEvent?": "(params: SuppressHeaderKeyboardEventParams) => boolean",
+      "filter?": "IFilterType",
+      "filterFramework?": "any",
+      "filterParams?": "any",
+      "floatingFilterComponent?": "IFloatingFilterType",
+      "floatingFilterComponentParams?": "any",
+      "floatingFilterComponentFramework?": "any"
     },
     "docs": {
-      "filter?": "/** One of the built in filter names: [set, number, text, date], or a filter function */",
-      "filterParams?": "/** The filter params are specific to each filter! */",
-      "floatingFilterComponent?": "/** The custom component to be used for rendering the floating filter. If none is specified the default AG Grid is used. * */",
-      "headerName?": "/** The name to render in the column header */",
-      "columnGroupShow?": "/** Whether to show the column when the group is open / closed. */",
-      "headerClass?": "/** CSS class for the header */",
-      "toolPanelClass?": "/** CSS class for the toolPanel */",
-      "headerValueGetter?": "/** Expression or function to get the cells value. */",
-      "pivotKeys?": "/** Never set this, it is used internally by grid when doing in-grid pivoting */",
-      "suppressColumnsToolPanel?": "/** Set to true to not include this column in the Columns Tool Panel */",
-      "suppressFiltersToolPanel?": "/** Set to true to not include this column / filter in the Filters Tool Panel */",
-      "headerTooltip?": "/** Tooltip for the column header */",
-      "suppressHeaderKeyboardEvent?": "/** Allows the user to suppress certain keyboard events in the grid header */",
       "colId?": "/** The unique ID to give the column. This is optional. If missing, the ID will default to the field.\n * If both field and colId are missing, a unique ID will be generated.\n * This ID is used to identify the column in the API for sorting, filtering etc. */",
       "sort?": "/** If sorting by default, set it here. Set to 'asc' or 'desc' */",
       "sortIndex?": "/** If sorting more than one column by default, specifies order in which the sorting should be applied. */",
@@ -633,7 +620,20 @@
       "suppressFillHandle?": "/** Set to true to prevent the fillHandle from being rendered in any cell that belongs to this column */",
       "floatingFilter?": "/** Whether to display a floating filter for this column. */",
       "chartDataType?": "/** Defines the column data type used when charting */",
-      "columnsMenuParams?": "/** Params to customise the columns menu behaviour and appearance */"
+      "columnsMenuParams?": "/** Params to customise the columns menu behaviour and appearance */",
+      "headerName?": "/** The name to render in the column header */",
+      "columnGroupShow?": "/** Whether to show the column when the group is open / closed. */",
+      "headerClass?": "/** CSS class for the header */",
+      "toolPanelClass?": "/** CSS class for the toolPanel */",
+      "headerValueGetter?": "/** Expression or function to get the cells value. */",
+      "pivotKeys?": "/** Never set this, it is used internally by grid when doing in-grid pivoting */",
+      "suppressColumnsToolPanel?": "/** Set to true to not include this column in the Columns Tool Panel */",
+      "suppressFiltersToolPanel?": "/** Set to true to not include this column / filter in the Filters Tool Panel */",
+      "headerTooltip?": "/** Tooltip for the column header */",
+      "suppressHeaderKeyboardEvent?": "/** Allows the user to suppress certain keyboard events in the grid header */",
+      "filter?": "/** One of the built in filter names: [set, number, text, date], or a filter function */",
+      "filterParams?": "/** The filter params are specific to each filter! */",
+      "floatingFilterComponent?": "/** The custom component to be used for rendering the floating filter. If none is specified the default AG Grid is used. * */"
     }
   },
   "ColumnFunctionCallbackParams": {
@@ -911,14 +911,14 @@
   "BaseWithValueColDefParams": {
     "meta": {},
     "type": {
+      "value": "any",
       "node": "RowNode | null",
       "data": "any",
       "column": "Column",
       "colDef": "ColDef",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "context": "any",
-      "value": "any"
+      "context": "any"
     },
     "docs": {
       "node": "/** Row node for the given row */",
@@ -931,14 +931,14 @@
   "ValueGetterParams": {
     "meta": {},
     "type": {
+      "getValue": "(field: string) => any",
       "node": "RowNode | null",
       "data": "any",
       "column": "Column",
       "colDef": "ColDef",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "context": "any",
-      "getValue": "(field: string) => any"
+      "context": "any"
     },
     "docs": {
       "node": "/** Row node for the given row */",
@@ -958,15 +958,15 @@
   "NewValueParams": {
     "meta": {},
     "type": {
+      "oldValue": "any",
+      "newValue": "any",
       "node": "RowNode | null",
       "data": "any",
       "column": "Column",
       "colDef": "ColDef",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "context": "any",
-      "oldValue": "any",
-      "newValue": "any"
+      "context": "any"
     },
     "docs": {
       "node": "/** Row node for the given row */",
@@ -979,15 +979,15 @@
   "ValueSetterParams": {
     "meta": {},
     "type": {
+      "oldValue": "any",
+      "newValue": "any",
       "node": "RowNode | null",
       "data": "any",
       "column": "Column",
       "colDef": "ColDef",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "context": "any",
-      "oldValue": "any",
-      "newValue": "any"
+      "context": "any"
     },
     "docs": {
       "node": "/** Row node for the given row */",
@@ -1007,15 +1007,15 @@
   "ValueParserParams": {
     "meta": {},
     "type": {
+      "oldValue": "any",
+      "newValue": "any",
       "node": "RowNode | null",
       "data": "any",
       "column": "Column",
       "colDef": "ColDef",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "context": "any",
-      "oldValue": "any",
-      "newValue": "any"
+      "context": "any"
     },
     "docs": {
       "node": "/** Row node for the given row */",
@@ -1035,14 +1035,14 @@
   "ValueFormatterParams": {
     "meta": {},
     "type": {
+      "value": "any",
       "node": "RowNode | null",
       "data": "any",
       "column": "Column",
       "colDef": "ColDef",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "context": "any",
-      "value": "any"
+      "context": "any"
     },
     "docs": {
       "node": "/** Row node for the given row */",
@@ -1100,24 +1100,24 @@
   "SuppressKeyboardEventParams": {
     "meta": {},
     "type": {
+      "event": "KeyboardEvent",
+      "editing": "boolean",
       "node": "RowNode",
       "data": "any",
       "column": "Column",
       "colDef": "ColDef",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "context": "any",
-      "event": "KeyboardEvent",
-      "editing": "boolean"
+      "context": "any"
     },
     "docs": {
+      "event": "/** The keyboard event the grid received */",
+      "editing": "/** Whether the cell is editing or not */",
       "node": "/** Row node for the given row */",
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
       "colDef": "/** ColDef provided for this column */",
-      "context": "/** The context as provided on `gridOptions.context` */",
-      "event": "/** The keyboard event the grid received */",
-      "editing": "/** Whether the cell is editing or not */"
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "SuppressHeaderKeyboardEventParams": {
@@ -1140,24 +1140,24 @@
   "CellClassParams": {
     "meta": {},
     "type": {
+      "colDef": "ColDef",
+      "value": "any",
       "data": "any",
       "node": "RowNode",
       "rowIndex": "number",
       "$scope": "any",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "context": "any",
-      "colDef": "ColDef",
-      "value": "any"
+      "context": "any"
     },
     "docs": {
+      "colDef": "/** The colDef associated with the column for this cell */",
+      "value": "/** The value to be rendered */",
       "data": "/** The data associated with this row from rowData */",
       "node": "/** The RowNode associated with this row */",
       "rowIndex": "/** The index of the row */",
       "$scope": "/** If using AngularJs, is the row's child scope, otherwise null */",
-      "context": "/** The context as provided on `gridOptions.context` */",
-      "colDef": "/** The colDef associated with the column for this cell */",
-      "value": "/** The value to be rendered */"
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "CellClassFunc": {
@@ -1190,15 +1190,15 @@
   "CellRendererSelectorFunc": {
     "meta": { "isCallSignature": true },
     "type": {
-      "arguments": { "params": "ICellRendererParams" },
-      "returnType": "CellRendererSelectorResult | undefined"
+      "arguments": { "params": "ICellRendererParams | ICellEditorParams" },
+      "returnType": "CellRendererSelectorResult | CellEditorSelectorResult | undefined"
     }
   },
   "CellEditorSelectorFunc": {
     "meta": { "isCallSignature": true },
     "type": {
-      "arguments": { "params": "ICellEditorParams" },
-      "returnType": "CellEditorSelectorResult | undefined"
+      "arguments": { "params": "ICellRendererParams | ICellEditorParams" },
+      "returnType": "CellRendererSelectorResult | CellEditorSelectorResult | undefined"
     }
   },
   "CellRendererSelectorResult": {
@@ -1220,8 +1220,6 @@
   "ColumnGroupChild": {
     "meta": {},
     "type": {
-      "addEventListener(eventType: string, listener: EventListener, async?: boolean, options?: AddEventListenerOptions)": "void",
-      "removeEventListener(eventType: string, listener: EventListener, async?: boolean, options?: AddEventListenerOptions)": "void",
       "getUniqueId()": "string",
       "getActualWidth()": "number",
       "getMinWidth()": "number | null | undefined",
@@ -1234,7 +1232,9 @@
       "setParent(parent: ColumnGroup | null)": "void",
       "isEmptyGroup()": "boolean",
       "isMoving()": "boolean",
-      "getPinned()": "string | null | undefined"
+      "getPinned()": "string | null | undefined",
+      "addEventListener(eventType: string, listener: EventListener, async?: boolean, options?: AddEventListenerOptions)": "void",
+      "removeEventListener(eventType: string, listener: EventListener, async?: boolean, options?: AddEventListenerOptions)": "void"
     }
   },
   "GridOptions": {
@@ -1990,28 +1990,28 @@
   },
   "RowNodeEvent": {
     "meta": {},
-    "type": { "type": "string", "node": "RowNode" },
+    "type": { "node": "RowNode", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
   "DataChangedEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "node": "RowNode",
       "oldData": "any",
       "newData": "any",
-      "update": "boolean"
+      "update": "boolean",
+      "node": "RowNode",
+      "type": "string"
     },
     "docs": { "type": "/** Event identifier */" }
   },
   "CellChangedEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "node": "RowNode",
       "column": "Column",
       "newValue": "any",
-      "oldValue": "any"
+      "oldValue": "any",
+      "node": "RowNode",
+      "type": "string"
     },
     "docs": { "type": "/** Event identifier */" }
   },
@@ -2062,39 +2062,39 @@
   "ModelUpdatedEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "animate": "boolean | undefined",
       "keepRenderedRows": "boolean | undefined",
       "newData": "boolean | undefined",
-      "newPage": "boolean"
+      "newPage": "boolean",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
       "animate": "/** If true, the grid will try and animate the rows to the new positions */",
       "keepRenderedRows": "/** If true, the grid has new data loaded, eg user called setRowData(), otherwise\n * it's the same data but sorted or filtered, in which case this is true, and rows\n * can animate around (eg rowNode id 24 is the same row node as last time). */",
       "newData": "/** If true, then this update was a result of setRowData() getting called. This\n * gets the grid to scroll to the top again. */",
-      "newPage": "/** True when pagination and a new page is navigated to. */"
+      "newPage": "/** True when pagination and a new page is navigated to. */",
+      "type": "/** Event identifier */"
     }
   },
   "PaginationChangedEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "animate?": "boolean",
       "keepRenderedRows?": "boolean",
       "newData?": "boolean",
-      "newPage": "boolean"
+      "newPage": "boolean",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
       "animate?": "/** True if rows were animated to new position */",
       "keepRenderedRows?": "/** True if rows were kept (otherwise complete redraw) */",
       "newData?": "/** True if data was new (i.e user set new data) */",
-      "newPage": "/** True if user went to a new page */"
+      "newPage": "/** True if user went to a new page */",
+      "type": "/** Event identifier */"
     }
   },
   "AgEvent": {
@@ -2104,157 +2104,157 @@
   },
   "AgGridEvent": {
     "meta": {},
-    "type": { "type": "string", "api": "GridApi", "columnApi": "ColumnApi" },
+    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
   "ToolPanelVisibleChangedEvent": {
     "meta": {},
     "type": {
-      "type": "string",
+      "source": "string | undefined",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "source": "string | undefined"
+      "type": "string"
     },
     "docs": { "type": "/** Event identifier */" }
   },
   "ColumnPivotModeChangedEvent": {
     "meta": {},
-    "type": { "type": "string", "api": "GridApi", "columnApi": "ColumnApi" },
+    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
   "VirtualColumnsChangedEvent": {
     "meta": {},
-    "type": { "type": "string", "api": "GridApi", "columnApi": "ColumnApi" },
+    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
   "ColumnEverythingChangedEvent": {
     "meta": {},
     "type": {
-      "type": "string",
+      "source": "string",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "source": "string"
+      "type": "string"
     },
     "docs": { "type": "/** Event identifier */" }
   },
   "NewColumnsLoadedEvent": {
     "meta": {},
-    "type": { "type": "string", "api": "GridApi", "columnApi": "ColumnApi" },
+    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
   "GridColumnsChangedEvent": {
     "meta": {},
-    "type": { "type": "string", "api": "GridApi", "columnApi": "ColumnApi" },
+    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
   "DisplayedColumnsChangedEvent": {
     "meta": {},
-    "type": { "type": "string", "api": "GridApi", "columnApi": "ColumnApi" },
+    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
   "RowDataChangedEvent": {
     "meta": {},
-    "type": { "type": "string", "api": "GridApi", "columnApi": "ColumnApi" },
+    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
   "RowDataUpdatedEvent": {
     "meta": {},
-    "type": { "type": "string", "api": "GridApi", "columnApi": "ColumnApi" },
+    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
   "PinnedRowDataChangedEvent": {
     "meta": {},
-    "type": { "type": "string", "api": "GridApi", "columnApi": "ColumnApi" },
+    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
   "SelectionChangedEvent": {
     "meta": {},
-    "type": { "type": "string", "api": "GridApi", "columnApi": "ColumnApi" },
+    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
   "FilterChangedEvent": {
     "meta": {},
     "type": {
-      "type": "string",
+      "afterDataChange?": "boolean",
+      "afterFloatingFilter?": "boolean",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "afterDataChange?": "boolean",
-      "afterFloatingFilter?": "boolean"
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
       "afterDataChange?": "/** True if the filter was changed as a result of data changing */",
-      "afterFloatingFilter?": "/** True if filter was changed via floating filter */"
+      "afterFloatingFilter?": "/** True if filter was changed via floating filter */",
+      "type": "/** Event identifier */"
     }
   },
   "FilterModifiedEvent": {
     "meta": {},
     "type": {
-      "type": "string",
+      "filterInstance": "IFilterComp",
+      "column": "Column",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "filterInstance": "IFilterComp",
-      "column": "Column"
+      "type": "string"
     },
     "docs": { "type": "/** Event identifier */" }
   },
   "FilterOpenedEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "column": "Column | OriginalColumnGroup",
       "source": "FilterRequestSource",
-      "eGui": "HTMLElement"
+      "eGui": "HTMLElement",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
       "column": "/** Column / OriginalColumnGroup that contains the filter */",
       "source": "/** Source of the open request */",
-      "eGui": "/** Parent element of the filter */"
+      "eGui": "/** Parent element of the filter */",
+      "type": "/** Event identifier */"
     }
   },
   "SortChangedEvent": {
     "meta": {},
-    "type": { "type": "string", "api": "GridApi", "columnApi": "ColumnApi" },
+    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
   "GridReadyEvent": {
     "meta": {},
-    "type": { "type": "string", "api": "GridApi", "columnApi": "ColumnApi" },
+    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
   "DisplayedColumnsWidthChangedEvent": {
     "meta": {},
-    "type": { "type": "string", "api": "GridApi", "columnApi": "ColumnApi" },
+    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
   "ColumnHoverChangedEvent": {
     "meta": {},
-    "type": { "type": "string", "api": "GridApi", "columnApi": "ColumnApi" },
+    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
   "BodyHeightChangedEvent": {
     "meta": {},
-    "type": { "type": "string", "api": "GridApi", "columnApi": "ColumnApi" },
+    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
   "ComponentStateChangedEvent": {
     "meta": {},
-    "type": { "type": "string", "api": "GridApi", "columnApi": "ColumnApi" },
+    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
   "DragEvent": {
     "meta": {},
     "type": {
       "type": "string",
+      "target": "HTMLElement",
       "api": "GridApi",
-      "columnApi": "ColumnApi",
-      "target": "HTMLElement"
+      "columnApi": "ColumnApi"
     },
     "docs": {
-      "type": "/** One of {'cell','row','headerCell','toolPanel'} */",
+      "type": "/** Event identifier */",
       "target": "/** The DOM element that started the event. */"
     }
   },
@@ -2262,12 +2262,12 @@
     "meta": {},
     "type": {
       "type": "string",
+      "target": "HTMLElement",
       "api": "GridApi",
-      "columnApi": "ColumnApi",
-      "target": "HTMLElement"
+      "columnApi": "ColumnApi"
     },
     "docs": {
-      "type": "/** One of {'cell','row','headerCell','toolPanel'} */",
+      "type": "/** Event identifier */",
       "target": "/** The DOM element that started the event. */"
     }
   },
@@ -2275,306 +2275,306 @@
     "meta": {},
     "type": {
       "type": "string",
+      "target": "HTMLElement",
       "api": "GridApi",
-      "columnApi": "ColumnApi",
-      "target": "HTMLElement"
+      "columnApi": "ColumnApi"
     },
     "docs": {
-      "type": "/** One of {'cell','row','headerCell','toolPanel'} */",
+      "type": "/** Event identifier */",
       "target": "/** The DOM element that started the event. */"
     }
   },
   "CheckboxChangedEvent": {
     "meta": {},
     "type": {
-      "type": "string",
       "id": "string",
       "name": "string",
       "selected?": "boolean",
-      "previousValue": "boolean | undefined"
+      "previousValue": "boolean | undefined",
+      "type": "string"
     },
     "docs": { "type": "/** Event identifier */" }
   },
   "GridSizeChangedEvent": {
     "meta": {},
     "type": {
-      "type": "string",
+      "clientWidth": "number",
+      "clientHeight": "number",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "clientWidth": "number",
-      "clientHeight": "number"
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
       "clientWidth": "/** The grid's DIV's clientWidth */",
-      "clientHeight": "/** The grid's DIV's clientHeight */"
+      "clientHeight": "/** The grid's DIV's clientHeight */",
+      "type": "/** Event identifier */"
     }
   },
   "RowDragEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "node": "RowNode",
       "nodes": "RowNode[]",
       "y": "number",
       "vDirection": "string",
       "event": "MouseEvent",
       "overIndex": "number",
-      "overNode": "RowNode"
+      "overNode": "RowNode",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
       "node": "/** The row node getting dragged. Also the node that started the drag when multi-row dragging. */",
       "nodes": "/** The list of nodes being dragged. */",
       "y": "/** The vertical pixel location the mouse is over. */",
       "vDirection": "/** Direction of the drag, either 'up', 'down' or null. */",
       "event": "/** The underlying mouse move event associated with the drag. */",
       "overIndex": "/** The row index the mouse is dragging over. */",
-      "overNode": "/** The row node the mouse is dragging over. */"
+      "overNode": "/** The row node the mouse is dragging over. */",
+      "type": "/** Event identifier */"
     }
   },
   "RowDragEnterEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "node": "RowNode",
       "nodes": "RowNode[]",
       "y": "number",
       "vDirection": "string",
       "event": "MouseEvent",
       "overIndex": "number",
-      "overNode": "RowNode"
+      "overNode": "RowNode",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
       "node": "/** The row node getting dragged. Also the node that started the drag when multi-row dragging. */",
       "nodes": "/** The list of nodes being dragged. */",
       "y": "/** The vertical pixel location the mouse is over. */",
       "vDirection": "/** Direction of the drag, either 'up', 'down' or null. */",
       "event": "/** The underlying mouse move event associated with the drag. */",
       "overIndex": "/** The row index the mouse is dragging over. */",
-      "overNode": "/** The row node the mouse is dragging over. */"
+      "overNode": "/** The row node the mouse is dragging over. */",
+      "type": "/** Event identifier */"
     }
   },
   "RowDragEndEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "node": "RowNode",
       "nodes": "RowNode[]",
       "y": "number",
       "vDirection": "string",
       "event": "MouseEvent",
       "overIndex": "number",
-      "overNode": "RowNode"
+      "overNode": "RowNode",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
       "node": "/** The row node getting dragged. Also the node that started the drag when multi-row dragging. */",
       "nodes": "/** The list of nodes being dragged. */",
       "y": "/** The vertical pixel location the mouse is over. */",
       "vDirection": "/** Direction of the drag, either 'up', 'down' or null. */",
       "event": "/** The underlying mouse move event associated with the drag. */",
       "overIndex": "/** The row index the mouse is dragging over. */",
-      "overNode": "/** The row node the mouse is dragging over. */"
+      "overNode": "/** The row node the mouse is dragging over. */",
+      "type": "/** Event identifier */"
     }
   },
   "RowDragMoveEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "node": "RowNode",
       "nodes": "RowNode[]",
       "y": "number",
       "vDirection": "string",
       "event": "MouseEvent",
       "overIndex": "number",
-      "overNode": "RowNode"
+      "overNode": "RowNode",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
       "node": "/** The row node getting dragged. Also the node that started the drag when multi-row dragging. */",
       "nodes": "/** The list of nodes being dragged. */",
       "y": "/** The vertical pixel location the mouse is over. */",
       "vDirection": "/** Direction of the drag, either 'up', 'down' or null. */",
       "event": "/** The underlying mouse move event associated with the drag. */",
       "overIndex": "/** The row index the mouse is dragging over. */",
-      "overNode": "/** The row node the mouse is dragging over. */"
+      "overNode": "/** The row node the mouse is dragging over. */",
+      "type": "/** Event identifier */"
     }
   },
   "RowDragLeaveEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "node": "RowNode",
       "nodes": "RowNode[]",
       "y": "number",
       "vDirection": "string",
       "event": "MouseEvent",
       "overIndex": "number",
-      "overNode": "RowNode"
+      "overNode": "RowNode",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
       "node": "/** The row node getting dragged. Also the node that started the drag when multi-row dragging. */",
       "nodes": "/** The list of nodes being dragged. */",
       "y": "/** The vertical pixel location the mouse is over. */",
       "vDirection": "/** Direction of the drag, either 'up', 'down' or null. */",
       "event": "/** The underlying mouse move event associated with the drag. */",
       "overIndex": "/** The row index the mouse is dragging over. */",
-      "overNode": "/** The row node the mouse is dragging over. */"
+      "overNode": "/** The row node the mouse is dragging over. */",
+      "type": "/** Event identifier */"
     }
   },
   "PasteStartEvent": {
     "meta": {},
     "type": {
-      "type": "string",
+      "source": "string",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "source": "string"
+      "type": "string"
     },
     "docs": { "type": "/** Event identifier */" }
   },
   "PasteEndEvent": {
     "meta": {},
     "type": {
-      "type": "string",
+      "source": "string",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "source": "string"
+      "type": "string"
     },
     "docs": { "type": "/** Event identifier */" }
   },
   "FillStartEvent": {
     "meta": {},
-    "type": { "type": "string", "api": "GridApi", "columnApi": "ColumnApi" },
+    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
   "FillEndEvent": {
     "meta": {},
     "type": {
-      "type": "string",
+      "initialRange": "CellRange",
+      "finalRange": "CellRange",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "initialRange": "CellRange",
-      "finalRange": "CellRange"
+      "type": "string"
     },
     "docs": { "type": "/** Event identifier */" }
   },
   "ViewportChangedEvent": {
     "meta": {},
     "type": {
-      "type": "string",
+      "firstRow": "number",
+      "lastRow": "number",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "firstRow": "number",
-      "lastRow": "number"
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
       "firstRow": "/** Index of the first rendered row */",
-      "lastRow": "/** Index of the last rendered row */"
+      "lastRow": "/** Index of the last rendered row */",
+      "type": "/** Event identifier */"
     }
   },
   "FirstDataRenderedEvent": {
     "meta": {},
     "type": {
-      "type": "string",
+      "firstRow": "number",
+      "lastRow": "number",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "firstRow": "number",
-      "lastRow": "number"
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
       "firstRow": "/** Index of the first rendered row */",
-      "lastRow": "/** Index of the last rendered row */"
+      "lastRow": "/** Index of the last rendered row */",
+      "type": "/** Event identifier */"
     }
   },
   "RangeSelectionChangedEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "id?": "string",
       "finished": "boolean",
-      "started": "boolean"
+      "started": "boolean",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": { "type": "/** Event identifier */" }
   },
   "ChartCreated": {
     "meta": {},
     "type": {
-      "type": "string",
+      "chartId": "string",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "chartId": "string"
+      "type": "string"
     },
     "docs": { "type": "/** Event identifier */" }
   },
   "ChartRangeSelectionChanged": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "id": "string",
       "chartId": "string",
-      "cellRange": "CellRangeParams"
+      "cellRange": "CellRangeParams",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": { "type": "/** Event identifier */" }
   },
   "ChartOptionsChanged": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "chartId": "string",
       "chartType": "ChartType",
       "chartThemeName": "string",
-      "chartOptions": "ChartOptions<any>"
+      "chartOptions": "ChartOptions<any>",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": { "type": "/** Event identifier */" }
   },
   "ChartDestroyed": {
     "meta": {},
     "type": {
-      "type": "string",
+      "chartId": "string",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "chartId": "string"
+      "type": "string"
     },
     "docs": { "type": "/** Event identifier */" }
   },
   "ColumnGroupOpenedEvent": {
     "meta": {},
     "type": {
-      "type": "string",
+      "columnGroup": "OriginalColumnGroup",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "columnGroup": "OriginalColumnGroup"
+      "type": "string"
     },
     "docs": { "type": "/** Event identifier */" }
   },
   "ItemsAddedEvent": {
     "meta": {},
     "type": {
-      "type": "string",
+      "items": "RowNode[]",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "items": "RowNode[]"
+      "type": "string"
     },
     "docs": { "type": "/** Event identifier */" }
   },
@@ -2585,59 +2585,59 @@
   "BodyScrollEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "direction": "ScrollDirection",
       "left": "number",
-      "top": "number"
+      "top": "number",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": { "type": "/** Event identifier */" }
   },
   "FlashCellsEvent": {
     "meta": {},
     "type": {
-      "type": "string",
+      "cells": "any",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "cells": "any"
+      "type": "string"
     },
     "docs": { "type": "/** Event identifier */" }
   },
   "PaginationPixelOffsetChangedEvent": {
     "meta": {},
-    "type": { "type": "string", "api": "GridApi", "columnApi": "ColumnApi" },
+    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
   "CellFocusedEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "rowIndex": "number | null",
       "column": "Column | null",
       "rowPinned?": "string | null",
       "isFullWidthCell": "boolean",
       "forceBrowserFocus?": "boolean",
-      "floating": "string | null"
+      "floating": "string | null",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
       "rowIndex": "/** Row index of the focused cell */",
       "column": "/** Column of the focused cell */",
       "rowPinned?": "/** either 'top', 'bottom' or null / undefined (if not pinned) */",
       "isFullWidthCell": "/** Whether the cell a full width cell or a regular cell */",
-      "forceBrowserFocus?": "/** Whether browser focus is also set (false when editing) */"
+      "forceBrowserFocus?": "/** Whether browser focus is also set (false when editing) */",
+      "type": "/** Event identifier */"
     }
   },
   "ExpandCollapseAllEvent": {
     "meta": {},
     "type": {
-      "type": "string",
+      "source": "string",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "source": "string"
+      "type": "string"
     },
     "docs": { "type": "/** Event identifier */" }
   },
@@ -2648,147 +2648,147 @@
   "ColumnEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "column": "Column | null",
       "columns": "Column[] | null",
-      "source": "ColumnEventType"
+      "source": "ColumnEventType",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
       "column": "/** The impacted column, only set if action was on one column */",
       "columns": "/** List of all impacted columns */",
-      "source": "/** String describing where the event is coming from */"
+      "source": "/** String describing where the event is coming from */",
+      "type": "/** Event identifier */"
     }
   },
   "ColumnResizedEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
+      "finished": "boolean",
+      "flexColumns": "Column[] | null",
       "column": "Column | null",
       "columns": "Column[] | null",
       "source": "ColumnEventType",
-      "finished": "boolean",
-      "flexColumns": "Column[] | null"
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
+      "finished": "/** Set to true for last event in a sequence of move events */",
+      "flexColumns": "/** Any columns resized due to flex */",
       "column": "/** The impacted column, only set if action was on one column */",
       "columns": "/** List of all impacted columns */",
       "source": "/** String describing where the event is coming from */",
-      "finished": "/** Set to true for last event in a sequence of move events */",
-      "flexColumns": "/** Any columns resized due to flex */"
+      "type": "/** Event identifier */"
     }
   },
   "ColumnPivotChangedEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "column": "Column | null",
       "columns": "Column[] | null",
-      "source": "ColumnEventType"
+      "source": "ColumnEventType",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
       "column": "/** The impacted column, only set if action was on one column */",
       "columns": "/** List of all impacted columns */",
-      "source": "/** String describing where the event is coming from */"
+      "source": "/** String describing where the event is coming from */",
+      "type": "/** Event identifier */"
     }
   },
   "ColumnRowGroupChangedEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "column": "Column | null",
       "columns": "Column[] | null",
-      "source": "ColumnEventType"
+      "source": "ColumnEventType",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
       "column": "/** The impacted column, only set if action was on one column */",
       "columns": "/** List of all impacted columns */",
-      "source": "/** String describing where the event is coming from */"
+      "source": "/** String describing where the event is coming from */",
+      "type": "/** Event identifier */"
     }
   },
   "ColumnValueChangedEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "column": "Column | null",
       "columns": "Column[] | null",
-      "source": "ColumnEventType"
+      "source": "ColumnEventType",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
       "column": "/** The impacted column, only set if action was on one column */",
       "columns": "/** List of all impacted columns */",
-      "source": "/** String describing where the event is coming from */"
+      "source": "/** String describing where the event is coming from */",
+      "type": "/** Event identifier */"
     }
   },
   "ColumnMovedEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
+      "toIndex?": "number",
       "column": "Column | null",
       "columns": "Column[] | null",
       "source": "ColumnEventType",
-      "toIndex?": "number"
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
+      "toIndex?": "/** The position the column was moved to */",
       "column": "/** The impacted column, only set if action was on one column */",
       "columns": "/** List of all impacted columns */",
       "source": "/** String describing where the event is coming from */",
-      "toIndex?": "/** The position the column was moved to */"
+      "type": "/** Event identifier */"
     }
   },
   "ColumnVisibleEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
+      "visible?": "boolean",
       "column": "Column | null",
       "columns": "Column[] | null",
       "source": "ColumnEventType",
-      "visible?": "boolean"
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
+      "visible?": "/** True if column was set to visible, false if set to hide */",
       "column": "/** The impacted column, only set if action was on one column */",
       "columns": "/** List of all impacted columns */",
       "source": "/** String describing where the event is coming from */",
-      "visible?": "/** True if column was set to visible, false if set to hide */"
+      "type": "/** Event identifier */"
     }
   },
   "ColumnPinnedEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
+      "pinned": "string | null",
       "column": "Column | null",
       "columns": "Column[] | null",
       "source": "ColumnEventType",
-      "pinned": "string | null"
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
+      "pinned": "/** Either 'left', 'right', or null (it not pinned) */",
       "column": "/** The impacted column, only set if action was on one column */",
       "columns": "/** List of all impacted columns */",
       "source": "/** String describing where the event is coming from */",
-      "pinned": "/** Either 'left', 'right', or null (it not pinned) */"
+      "type": "/** Event identifier */"
     }
   },
   "RowEvent": {
@@ -2796,245 +2796,245 @@
       "doc": "/** ------------ */\n/** ROW EVENTS */\n/** ------------ */"
     },
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
-      "node": "RowNode",
-      "data": "any",
-      "rowIndex": "number | null",
-      "rowPinned": "string | null",
-      "context": "any",
-      "event?": "Event | null"
-    },
-    "docs": {
-      "type": "/** Event identifier */",
-      "data": "/** The user provided data for the row */",
-      "rowIndex": "/** The visible row index for the row */",
-      "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
-      "context": "/** The context as provided on `gridOptions.context` */",
-      "event?": "/** If event was due to browser event (eg click), this is the browser event */"
-    }
-  },
-  "RowGroupOpenedEvent": {
-    "meta": {},
-    "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
-      "expanded": "boolean"
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
-      "expanded": "/** True if the group is expanded. */"
+      "type": "/** Event identifier */"
+    }
+  },
+  "RowGroupOpenedEvent": {
+    "meta": {},
+    "type": {
+      "expanded": "boolean",
+      "node": "RowNode",
+      "data": "any",
+      "rowIndex": "number | null",
+      "rowPinned": "string | null",
+      "context": "any",
+      "event?": "Event | null",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
+    "docs": {
+      "expanded": "/** True if the group is expanded. */",
+      "data": "/** The user provided data for the row */",
+      "rowIndex": "/** The visible row index for the row */",
+      "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
+      "context": "/** The context as provided on `gridOptions.context` */",
+      "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "type": "/** Event identifier */"
     }
   },
   "RowValueChangedEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
-      "event?": "Event | null"
+      "event?": "Event | null",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
-      "event?": "/** If event was due to browser event (eg click), this is the browser event */"
+      "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "type": "/** Event identifier */"
     }
   },
   "RowSelectedEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
-      "event?": "Event | null"
+      "event?": "Event | null",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
-      "event?": "/** If event was due to browser event (eg click), this is the browser event */"
+      "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "type": "/** Event identifier */"
     }
   },
   "VirtualRowRemovedEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
-      "event?": "Event | null"
+      "event?": "Event | null",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
-      "event?": "/** If event was due to browser event (eg click), this is the browser event */"
+      "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "type": "/** Event identifier */"
     }
   },
   "RowClickedEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
-      "event?": "Event | null"
+      "event?": "Event | null",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
-      "event?": "/** If event was due to browser event (eg click), this is the browser event */"
+      "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "type": "/** Event identifier */"
     }
   },
   "RowDoubleClickedEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
-      "event?": "Event | null"
+      "event?": "Event | null",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
-      "event?": "/** If event was due to browser event (eg click), this is the browser event */"
+      "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "type": "/** Event identifier */"
     }
   },
   "RowEditingStartedEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
-      "event?": "Event | null"
+      "event?": "Event | null",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
-      "event?": "/** If event was due to browser event (eg click), this is the browser event */"
+      "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "type": "/** Event identifier */"
     }
   },
   "RowEditingStoppedEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
-      "event?": "Event | null"
+      "event?": "Event | null",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
-      "event?": "/** If event was due to browser event (eg click), this is the browser event */"
+      "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "type": "/** Event identifier */"
     }
   },
   "FullWidthCellKeyDownEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
-      "event?": "Event | null"
+      "event?": "Event | null",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
-      "event?": "/** If event was due to browser event (eg click), this is the browser event */"
+      "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "type": "/** Event identifier */"
     }
   },
   "FullWidthCellKeyPressEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
-      "event?": "Event | null"
+      "event?": "Event | null",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
-      "event?": "/** If event was due to browser event (eg click), this is the browser event */"
+      "event?": "/** If event was due to browser event (eg click), this is the browser event */",
+      "type": "/** Event identifier */"
     }
   },
   "CellEvent": {
@@ -3042,386 +3042,386 @@
       "doc": "/** ------------ */\n/** CELL EVENTS */\n/** ------------ */"
     },
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
+      "column": "Column",
+      "colDef": "ColDef",
+      "value": "any",
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
-      "column": "Column",
-      "colDef": "ColDef",
-      "value": "any"
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
+      "value": "/** The value for the cell */",
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
-      "value": "/** The value for the cell */"
+      "type": "/** Event identifier */"
     }
   },
   "CellKeyDownEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
+      "column": "Column",
+      "colDef": "ColDef",
+      "value": "any",
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
-      "column": "Column",
-      "colDef": "ColDef",
-      "value": "any"
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
+      "value": "/** The value for the cell */",
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
-      "value": "/** The value for the cell */"
+      "type": "/** Event identifier */"
     }
   },
   "CellKeyPressEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
+      "column": "Column",
+      "colDef": "ColDef",
+      "value": "any",
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
-      "column": "Column",
-      "colDef": "ColDef",
-      "value": "any"
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
+      "value": "/** The value for the cell */",
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
-      "value": "/** The value for the cell */"
+      "type": "/** Event identifier */"
     }
   },
   "CellClickedEvent": {
     "meta": { "doc": "/** Cell is clicked */" },
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
+      "column": "Column",
+      "colDef": "ColDef",
+      "value": "any",
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
-      "column": "Column",
-      "colDef": "ColDef",
-      "value": "any"
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
+      "value": "/** The value for the cell */",
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
-      "value": "/** The value for the cell */"
+      "type": "/** Event identifier */"
     }
   },
   "CellMouseDownEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
+      "column": "Column",
+      "colDef": "ColDef",
+      "value": "any",
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
-      "column": "Column",
-      "colDef": "ColDef",
-      "value": "any"
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
+      "value": "/** The value for the cell */",
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
-      "value": "/** The value for the cell */"
+      "type": "/** Event identifier */"
     }
   },
   "CellDoubleClickedEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
+      "column": "Column",
+      "colDef": "ColDef",
+      "value": "any",
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
-      "column": "Column",
-      "colDef": "ColDef",
-      "value": "any"
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
+      "value": "/** The value for the cell */",
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
-      "value": "/** The value for the cell */"
+      "type": "/** Event identifier */"
     }
   },
   "CellMouseOverEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
+      "column": "Column",
+      "colDef": "ColDef",
+      "value": "any",
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
-      "column": "Column",
-      "colDef": "ColDef",
-      "value": "any"
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
+      "value": "/** The value for the cell */",
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
-      "value": "/** The value for the cell */"
+      "type": "/** Event identifier */"
     }
   },
   "CellMouseOutEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
+      "column": "Column",
+      "colDef": "ColDef",
+      "value": "any",
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
-      "column": "Column",
-      "colDef": "ColDef",
-      "value": "any"
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
+      "value": "/** The value for the cell */",
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
-      "value": "/** The value for the cell */"
+      "type": "/** Event identifier */"
     }
   },
   "CellContextMenuEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
+      "column": "Column",
+      "colDef": "ColDef",
+      "value": "any",
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
-      "column": "Column",
-      "colDef": "ColDef",
-      "value": "any"
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
+      "value": "/** The value for the cell */",
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
-      "value": "/** The value for the cell */"
+      "type": "/** Event identifier */"
     }
   },
   "CellEditingStartedEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
+      "column": "Column",
+      "colDef": "ColDef",
+      "value": "any",
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
-      "column": "Column",
-      "colDef": "ColDef",
-      "value": "any"
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
+      "value": "/** The value for the cell */",
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
-      "value": "/** The value for the cell */"
+      "type": "/** Event identifier */"
     }
   },
   "CellEditingStoppedEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
+      "oldValue": "any",
+      "newValue": "any",
+      "column": "Column",
+      "colDef": "ColDef",
+      "value": "any",
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
-      "column": "Column",
-      "colDef": "ColDef",
-      "value": "any",
-      "oldValue": "any",
-      "newValue": "any"
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
+      "oldValue": "/** The old value before editing */",
+      "newValue": "/** The new value after editing */",
+      "value": "/** The value for the cell */",
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
-      "value": "/** The value for the cell */",
-      "oldValue": "/** The old value before editing */",
-      "newValue": "/** The new value after editing */"
+      "type": "/** Event identifier */"
     }
   },
   "CellValueChangedEvent": {
     "meta": {},
     "type": {
-      "type": "string",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
+      "oldValue": "any",
+      "newValue": "any",
+      "source": "string | undefined",
+      "column": "Column",
+      "colDef": "ColDef",
+      "value": "any",
       "node": "RowNode",
       "data": "any",
       "rowIndex": "number | null",
       "rowPinned": "string | null",
       "context": "any",
       "event?": "Event | null",
-      "column": "Column",
-      "colDef": "ColDef",
-      "value": "any",
-      "oldValue": "any",
-      "newValue": "any",
-      "source": "string | undefined"
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
     },
     "docs": {
-      "type": "/** Event identifier */",
+      "value": "/** The value for the cell */",
       "data": "/** The user provided data for the row */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
       "context": "/** The context as provided on `gridOptions.context` */",
       "event?": "/** If event was due to browser event (eg click), this is the browser event */",
-      "value": "/** The value for the cell */"
+      "type": "/** Event identifier */"
     }
   },
   "AsyncTransactionsFlushed": {
     "meta": {},
     "type": {
-      "type": "string",
+      "results": "(RowNodeTransaction | ServerSideTransactionResult)[]",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "results": "(RowNodeTransaction | ServerSideTransactionResult)[]"
+      "type": "string"
     },
     "docs": { "type": "/** Event identifier */" }
   },
   "ColumnRequestEvent": {
     "meta": {},
     "type": {
-      "type": "string",
+      "columns": "Column[]",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "columns": "Column[]"
+      "type": "string"
     },
     "docs": { "type": "/** Event identifier */" }
   },
   "ColumnRowGroupChangeRequestEvent": {
     "meta": {},
     "type": {
-      "type": "string",
+      "columns": "Column[]",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "columns": "Column[]"
+      "type": "string"
     },
     "docs": { "type": "/** Event identifier */" }
   },
   "ColumnPivotChangeRequestEvent": {
     "meta": {},
     "type": {
-      "type": "string",
+      "columns": "Column[]",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "columns": "Column[]"
+      "type": "string"
     },
     "docs": { "type": "/** Event identifier */" }
   },
   "ColumnValueChangeRequestEvent": {
     "meta": {},
     "type": {
-      "type": "string",
+      "columns": "Column[]",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "columns": "Column[]"
+      "type": "string"
     },
     "docs": { "type": "/** Event identifier */" }
   },
   "ColumnAggFuncChangeRequestEvent": {
     "meta": {},
     "type": {
-      "type": "string",
+      "aggFunc": "any",
+      "columns": "Column[]",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "columns": "Column[]",
-      "aggFunc": "any"
+      "type": "string"
     },
     "docs": { "type": "/** Event identifier */" }
   },
   "ScrollVisibilityChangedEvent": {
     "meta": {},
-    "type": { "type": "string", "api": "GridApi", "columnApi": "ColumnApi" },
+    "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
   "StoreUpdatedEvent": {
@@ -3524,11 +3524,11 @@
   "IFloatingFilterComp": {
     "meta": {},
     "type": {
+      "onParentModelChanged(parentModel: any, filterChangedEvent?: FilterChangedEvent | null)": "void",
       "getGui()": "HTMLElement",
       "destroy?()": "void",
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void",
-      "init?(params: IFloatingFilterParams)": "AgPromise<void> | void",
-      "onParentModelChanged(parentModel: any, filterChangedEvent?: FilterChangedEvent | null)": "void"
+      "init?(params: IFloatingFilterParams)": "AgPromise<void> | void"
     },
     "docs": {
       "getGui()": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
@@ -3544,15 +3544,36 @@
   "DateFilterModel": {
     "meta": {},
     "type": {
-      "filterType?": "string",
-      "type?": "string | null",
       "dateFrom": "string | null",
-      "dateTo": "string | null"
+      "dateTo": "string | null",
+      "type?": "string | null",
+      "filterType?": "string"
     }
   },
   "IDateFilterParams": {
     "meta": {},
     "type": {
+      "comparator?": "IDateComparatorFunc",
+      "browserDatePicker?": "boolean",
+      "minValidYear?": "number",
+      "inRangeInclusive?": "boolean",
+      "includeBlanksInEquals?": "boolean",
+      "includeBlanksInLessThan?": "boolean",
+      "includeBlanksInGreaterThan?": "boolean",
+      "includeBlanksInRange?": "boolean",
+      "nullComparator?": "NullComparator",
+      "filterOptions?": "(IFilterOptionDef | string)[]",
+      "defaultOption?": "string",
+      "defaultJoinOperator?": "JoinOperator",
+      "suppressAndOrCondition?": "boolean",
+      "alwaysShowBothConditions?": "boolean",
+      "clearButton?": "boolean",
+      "resetButton?": "boolean",
+      "applyButton?": "boolean",
+      "buttons?": "FilterButtonType[]",
+      "closeOnApply?": "boolean",
+      "newRowsAction?": "string",
+      "debounceMs?": "number",
       "api": "GridApi",
       "column": "Column",
       "colDef": "ColDef",
@@ -3561,36 +3582,15 @@
       "filterModifiedCallback": "() => void",
       "valueGetter": "(rowNode: RowNode) => any",
       "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
-      "context": "any",
-      "clearButton?": "boolean",
-      "resetButton?": "boolean",
-      "applyButton?": "boolean",
-      "buttons?": "FilterButtonType[]",
-      "closeOnApply?": "boolean",
-      "newRowsAction?": "string",
-      "debounceMs?": "number",
-      "filterOptions?": "(IFilterOptionDef | string)[]",
-      "defaultOption?": "string",
-      "defaultJoinOperator?": "JoinOperator",
-      "suppressAndOrCondition?": "boolean",
-      "alwaysShowBothConditions?": "boolean",
-      "inRangeInclusive?": "boolean",
-      "includeBlanksInEquals?": "boolean",
-      "includeBlanksInLessThan?": "boolean",
-      "includeBlanksInGreaterThan?": "boolean",
-      "includeBlanksInRange?": "boolean",
-      "nullComparator?": "NullComparator",
-      "comparator?": "IDateComparatorFunc",
-      "browserDatePicker?": "boolean",
-      "minValidYear?": "number"
+      "context": "any"
     },
     "docs": {
-      "context": "/** The context as provided on `gridOptions.context` */",
+      "nullComparator?": "/** @deprecated in v21\n */",
       "clearButton?": "/** @deprecated\n */",
       "resetButton?": "/** @deprecated\n */",
       "applyButton?": "/** @deprecated\n */",
       "newRowsAction?": "/** @deprecated\n */",
-      "nullComparator?": "/** @deprecated in v21\n */"
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "IDateComparatorFunc": {
@@ -3603,15 +3603,35 @@
   "NumberFilterModel": {
     "meta": {},
     "type": {
-      "filterType?": "string",
-      "type?": "string | null",
       "filter?": "number | null",
-      "filterTo?": "number | null"
+      "filterTo?": "number | null",
+      "type?": "string | null",
+      "filterType?": "string"
     }
   },
   "INumberFilterParams": {
     "meta": {},
     "type": {
+      "allowedCharPattern?": "string",
+      "numberParser?": "(text: string | null) => number",
+      "inRangeInclusive?": "boolean",
+      "includeBlanksInEquals?": "boolean",
+      "includeBlanksInLessThan?": "boolean",
+      "includeBlanksInGreaterThan?": "boolean",
+      "includeBlanksInRange?": "boolean",
+      "nullComparator?": "NullComparator",
+      "filterOptions?": "(IFilterOptionDef | string)[]",
+      "defaultOption?": "string",
+      "defaultJoinOperator?": "JoinOperator",
+      "suppressAndOrCondition?": "boolean",
+      "alwaysShowBothConditions?": "boolean",
+      "clearButton?": "boolean",
+      "resetButton?": "boolean",
+      "applyButton?": "boolean",
+      "buttons?": "FilterButtonType[]",
+      "closeOnApply?": "boolean",
+      "newRowsAction?": "string",
+      "debounceMs?": "number",
       "api": "GridApi",
       "column": "Column",
       "colDef": "ColDef",
@@ -3620,35 +3640,15 @@
       "filterModifiedCallback": "() => void",
       "valueGetter": "(rowNode: RowNode) => any",
       "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
-      "context": "any",
-      "clearButton?": "boolean",
-      "resetButton?": "boolean",
-      "applyButton?": "boolean",
-      "buttons?": "FilterButtonType[]",
-      "closeOnApply?": "boolean",
-      "newRowsAction?": "string",
-      "debounceMs?": "number",
-      "filterOptions?": "(IFilterOptionDef | string)[]",
-      "defaultOption?": "string",
-      "defaultJoinOperator?": "JoinOperator",
-      "suppressAndOrCondition?": "boolean",
-      "alwaysShowBothConditions?": "boolean",
-      "inRangeInclusive?": "boolean",
-      "includeBlanksInEquals?": "boolean",
-      "includeBlanksInLessThan?": "boolean",
-      "includeBlanksInGreaterThan?": "boolean",
-      "includeBlanksInRange?": "boolean",
-      "nullComparator?": "NullComparator",
-      "allowedCharPattern?": "string",
-      "numberParser?": "(text: string | null) => number"
+      "context": "any"
     },
     "docs": {
-      "context": "/** The context as provided on `gridOptions.context` */",
+      "nullComparator?": "/** @deprecated in v21\n */",
       "clearButton?": "/** @deprecated\n */",
       "resetButton?": "/** @deprecated\n */",
       "applyButton?": "/** @deprecated\n */",
       "newRowsAction?": "/** @deprecated\n */",
-      "nullComparator?": "/** @deprecated in v21\n */"
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "FilterButtonType": {
@@ -3658,6 +3658,13 @@
   "IProvidedFilterParams": {
     "meta": {},
     "type": {
+      "clearButton?": "boolean",
+      "resetButton?": "boolean",
+      "applyButton?": "boolean",
+      "buttons?": "FilterButtonType[]",
+      "closeOnApply?": "boolean",
+      "newRowsAction?": "string",
+      "debounceMs?": "number",
       "api": "GridApi",
       "column": "Column",
       "colDef": "ColDef",
@@ -3666,21 +3673,14 @@
       "filterModifiedCallback": "() => void",
       "valueGetter": "(rowNode: RowNode) => any",
       "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
-      "context": "any",
-      "clearButton?": "boolean",
-      "resetButton?": "boolean",
-      "applyButton?": "boolean",
-      "buttons?": "FilterButtonType[]",
-      "closeOnApply?": "boolean",
-      "newRowsAction?": "string",
-      "debounceMs?": "number"
+      "context": "any"
     },
     "docs": {
-      "context": "/** The context as provided on `gridOptions.context` */",
       "clearButton?": "/** @deprecated\n */",
       "resetButton?": "/** @deprecated\n */",
       "applyButton?": "/** @deprecated\n */",
-      "newRowsAction?": "/** @deprecated\n */"
+      "newRowsAction?": "/** @deprecated\n */",
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "NullComparator": {
@@ -3694,6 +3694,24 @@
   "IScalarFilterParams": {
     "meta": {},
     "type": {
+      "inRangeInclusive?": "boolean",
+      "includeBlanksInEquals?": "boolean",
+      "includeBlanksInLessThan?": "boolean",
+      "includeBlanksInGreaterThan?": "boolean",
+      "includeBlanksInRange?": "boolean",
+      "nullComparator?": "NullComparator",
+      "filterOptions?": "(IFilterOptionDef | string)[]",
+      "defaultOption?": "string",
+      "defaultJoinOperator?": "JoinOperator",
+      "suppressAndOrCondition?": "boolean",
+      "alwaysShowBothConditions?": "boolean",
+      "clearButton?": "boolean",
+      "resetButton?": "boolean",
+      "applyButton?": "boolean",
+      "buttons?": "FilterButtonType[]",
+      "closeOnApply?": "boolean",
+      "newRowsAction?": "string",
+      "debounceMs?": "number",
       "api": "GridApi",
       "column": "Column",
       "colDef": "ColDef",
@@ -3702,33 +3720,15 @@
       "filterModifiedCallback": "() => void",
       "valueGetter": "(rowNode: RowNode) => any",
       "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
-      "context": "any",
-      "clearButton?": "boolean",
-      "resetButton?": "boolean",
-      "applyButton?": "boolean",
-      "buttons?": "FilterButtonType[]",
-      "closeOnApply?": "boolean",
-      "newRowsAction?": "string",
-      "debounceMs?": "number",
-      "filterOptions?": "(IFilterOptionDef | string)[]",
-      "defaultOption?": "string",
-      "defaultJoinOperator?": "JoinOperator",
-      "suppressAndOrCondition?": "boolean",
-      "alwaysShowBothConditions?": "boolean",
-      "inRangeInclusive?": "boolean",
-      "includeBlanksInEquals?": "boolean",
-      "includeBlanksInLessThan?": "boolean",
-      "includeBlanksInGreaterThan?": "boolean",
-      "includeBlanksInRange?": "boolean",
-      "nullComparator?": "NullComparator"
+      "context": "any"
     },
     "docs": {
-      "context": "/** The context as provided on `gridOptions.context` */",
+      "nullComparator?": "/** @deprecated in v21\n */",
       "clearButton?": "/** @deprecated\n */",
       "resetButton?": "/** @deprecated\n */",
       "applyButton?": "/** @deprecated\n */",
       "newRowsAction?": "/** @deprecated\n */",
-      "nullComparator?": "/** @deprecated in v21\n */"
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "Comparator": {
@@ -3742,6 +3742,18 @@
   "ISimpleFilterParams": {
     "meta": {},
     "type": {
+      "filterOptions?": "(IFilterOptionDef | string)[]",
+      "defaultOption?": "string",
+      "defaultJoinOperator?": "JoinOperator",
+      "suppressAndOrCondition?": "boolean",
+      "alwaysShowBothConditions?": "boolean",
+      "clearButton?": "boolean",
+      "resetButton?": "boolean",
+      "applyButton?": "boolean",
+      "buttons?": "FilterButtonType[]",
+      "closeOnApply?": "boolean",
+      "newRowsAction?": "string",
+      "debounceMs?": "number",
       "api": "GridApi",
       "column": "Column",
       "colDef": "ColDef",
@@ -3750,48 +3762,36 @@
       "filterModifiedCallback": "() => void",
       "valueGetter": "(rowNode: RowNode) => any",
       "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
-      "context": "any",
-      "clearButton?": "boolean",
-      "resetButton?": "boolean",
-      "applyButton?": "boolean",
-      "buttons?": "FilterButtonType[]",
-      "closeOnApply?": "boolean",
-      "newRowsAction?": "string",
-      "debounceMs?": "number",
-      "filterOptions?": "(IFilterOptionDef | string)[]",
-      "defaultOption?": "string",
-      "defaultJoinOperator?": "JoinOperator",
-      "suppressAndOrCondition?": "boolean",
-      "alwaysShowBothConditions?": "boolean"
+      "context": "any"
     },
     "docs": {
-      "context": "/** The context as provided on `gridOptions.context` */",
       "clearButton?": "/** @deprecated\n */",
       "resetButton?": "/** @deprecated\n */",
       "applyButton?": "/** @deprecated\n */",
-      "newRowsAction?": "/** @deprecated\n */"
+      "newRowsAction?": "/** @deprecated\n */",
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "ISimpleFilterModel": {
     "meta": {},
-    "type": { "filterType?": "string", "type?": "string | null" }
+    "type": { "type?": "string | null", "filterType?": "string" }
   },
   "ICombinedSimpleModel": {
     "meta": { "typeParams": ["M extends ISimpleFilterModel"] },
     "type": {
-      "filterType?": "string",
       "operator": "JoinOperator",
       "condition1": "M",
-      "condition2": "M"
+      "condition2": "M",
+      "filterType?": "string"
     }
   },
   "ConditionPosition": { "meta": { "isEnum": true }, "type": ["One", "Two"] },
   "TextFilterModel": {
     "meta": {},
     "type": {
-      "filterType?": "string",
+      "filter?": "string | null",
       "type?": "string | null",
-      "filter?": "string | null"
+      "filterType?": "string"
     }
   },
   "TextComparator": {
@@ -3815,6 +3815,22 @@
   "ITextFilterParams": {
     "meta": {},
     "type": {
+      "textCustomComparator?": "TextComparator",
+      "caseSensitive?": "boolean",
+      "textFormatter?": "(from: string) => string",
+      "trimInput?": "boolean",
+      "filterOptions?": "(IFilterOptionDef | string)[]",
+      "defaultOption?": "string",
+      "defaultJoinOperator?": "JoinOperator",
+      "suppressAndOrCondition?": "boolean",
+      "alwaysShowBothConditions?": "boolean",
+      "clearButton?": "boolean",
+      "resetButton?": "boolean",
+      "applyButton?": "boolean",
+      "buttons?": "FilterButtonType[]",
+      "closeOnApply?": "boolean",
+      "newRowsAction?": "string",
+      "debounceMs?": "number",
       "api": "GridApi",
       "column": "Column",
       "colDef": "ColDef",
@@ -3823,30 +3839,14 @@
       "filterModifiedCallback": "() => void",
       "valueGetter": "(rowNode: RowNode) => any",
       "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
-      "context": "any",
-      "clearButton?": "boolean",
-      "resetButton?": "boolean",
-      "applyButton?": "boolean",
-      "buttons?": "FilterButtonType[]",
-      "closeOnApply?": "boolean",
-      "newRowsAction?": "string",
-      "debounceMs?": "number",
-      "filterOptions?": "(IFilterOptionDef | string)[]",
-      "defaultOption?": "string",
-      "defaultJoinOperator?": "JoinOperator",
-      "suppressAndOrCondition?": "boolean",
-      "alwaysShowBothConditions?": "boolean",
-      "textCustomComparator?": "TextComparator",
-      "caseSensitive?": "boolean",
-      "textFormatter?": "(from: string) => string",
-      "trimInput?": "boolean"
+      "context": "any"
     },
     "docs": {
-      "context": "/** The context as provided on `gridOptions.context` */",
       "clearButton?": "/** @deprecated\n */",
       "resetButton?": "/** @deprecated\n */",
       "applyButton?": "/** @deprecated\n */",
-      "newRowsAction?": "/** @deprecated\n */"
+      "newRowsAction?": "/** @deprecated\n */",
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "GridParams": {
@@ -3877,19 +3877,19 @@
   "RefreshCellsParams": {
     "meta": {},
     "type": {
-      "rowNodes?": "RowNode[]",
-      "columns?": "(string | Column)[]",
       "force?": "boolean",
-      "suppressFlash?": "boolean"
+      "suppressFlash?": "boolean",
+      "rowNodes?": "RowNode[]",
+      "columns?": "(string | Column)[]"
     }
   },
   "FlashCellsParams": {
     "meta": {},
     "type": {
-      "rowNodes?": "RowNode[]",
-      "columns?": "(string | Column)[]",
       "flashDelay?": "number",
-      "fadeDelay?": "number"
+      "fadeDelay?": "number",
+      "rowNodes?": "RowNode[]",
+      "columns?": "(string | Column)[]"
     }
   },
   "GetCellRendererInstancesParams": {
@@ -3972,7 +3972,6 @@
   "IGridBodyComp": {
     "meta": {},
     "type": {
-      "updateLayoutClasses(layoutClass: string, params: UpdateLayoutClassesParams)": "void",
       "setColumnMovingCss(cssClass: string | null, on: boolean)": "void",
       "setCellSelectableCss(cssClass: string | null, on: boolean)": "void",
       "setTopHeight(height: number)": "void",
@@ -3984,7 +3983,8 @@
       "setRowAnimationCssOnBodyViewport(cssClass: string, animate: boolean)": "void",
       "setAlwaysVerticalScrollClass(cssClass: string | null, on: boolean)": "void",
       "setPinnedTopBottomOverflowY(overflow: string)": "void",
-      "registerBodyViewportResizeListener(listener: (() => void))": "void"
+      "registerBodyViewportResizeListener(listener: (() => void))": "void",
+      "updateLayoutClasses(layoutClass: string, params: UpdateLayoutClassesParams)": "void"
     }
   },
   "NavigateParams": {
@@ -4040,11 +4040,11 @@
   "RowDropZoneParams": {
     "meta": {},
     "type": {
+      "getContainer": "() => HTMLElement",
       "onDragEnter?": "(params: RowDragEnterEvent) => void",
       "onDragLeave?": "(params: RowDragLeaveEvent) => void",
       "onDragging?": "(params: RowDragMoveEvent) => void",
-      "onDragStop?": "(params: RowDragEndEvent) => void",
-      "getContainer": "() => HTMLElement"
+      "onDragStop?": "(params: RowDragEndEvent) => void"
     }
   },
   "SetScrollsVisibleParams": {
@@ -4057,19 +4057,19 @@
   "IGridComp": {
     "meta": {},
     "type": {
-      "updateLayoutClasses(layoutClass: string, params: UpdateLayoutClassesParams)": "void",
       "setRtlClass(cssClass: string)": "void",
       "destroyGridUi()": "void",
       "forceFocusOutOfContainer(up: boolean)": "void",
       "addOrRemoveKeyboardFocusClass(value: boolean)": "void",
       "getFocusableContainers()": "HTMLElement[]",
       "setCursor(value: string | null)": "void",
-      "setUserSelect(value: string | null)": "void"
+      "setUserSelect(value: string | null)": "void",
+      "updateLayoutClasses(layoutClass: string, params: UpdateLayoutClassesParams)": "void"
     }
   },
   "PropertyChangedEvent": {
     "meta": {},
-    "type": { "type": "string", "currentValue": "any", "previousValue": "any" },
+    "type": { "currentValue": "any", "previousValue": "any", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
   "DropListener": {
@@ -4112,18 +4112,18 @@
   "IHeaderComp": {
     "meta": {},
     "type": {
+      "refresh(params: IHeaderParams)": "boolean",
       "getGui()": "HTMLElement",
       "destroy?()": "void",
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void",
-      "init?(params: IHeaderParams)": "AgPromise<void> | void",
-      "refresh(params: IHeaderParams)": "boolean"
+      "init?(params: IHeaderParams)": "AgPromise<void> | void"
     },
     "docs": {
+      "refresh(params: IHeaderParams)": "/** Get the header to refresh. Gets called whenever Column Defs are updated. */",
       "getGui()": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
       "destroy?()": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "init?(params: IHeaderParams)": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
-      "refresh(params: IHeaderParams)": "/** Get the header to refresh. Gets called whenever Column Defs are updated. */"
+      "init?(params: IHeaderParams)": "/** The init(params) method is called on the component once. See below for details on the parameters. */"
     }
   },
   "HeaderNavigationDirection": {
@@ -4222,6 +4222,11 @@
   "ExportParams": {
     "meta": { "typeParams": ["T"] },
     "type": {
+      "prependContent?": "T",
+      "appendContent?": "T",
+      "customHeader?": "T",
+      "customFooter?": "T",
+      "getCustomContentBelowRow?": "(params: ProcessRowGroupForExportParams) => T | undefined",
       "allColumns?": "boolean",
       "columnKeys?": "(string | Column)[]",
       "fileName?": "string",
@@ -4239,19 +4244,14 @@
       "processRowGroupCallback?(params: ProcessRowGroupForExportParams)": "string",
       "columnGroups?": "boolean",
       "skipGroups?": "boolean",
-      "skipHeader?": "boolean",
-      "prependContent?": "T",
-      "appendContent?": "T",
-      "customHeader?": "T",
-      "customFooter?": "T",
-      "getCustomContentBelowRow?": "(params: ProcessRowGroupForExportParams) => T | undefined"
+      "skipHeader?": "boolean"
     },
     "docs": {
+      "customHeader?": "/** @deprecated Use prependContent\n */",
+      "customFooter?": "/** @deprecated Use appendContent\n */",
       "columnGroups?": "/** @deprecated\n */",
       "skipGroups?": "/** @deprecated\n */",
-      "skipHeader?": "/** @deprecated\n */",
-      "customHeader?": "/** @deprecated Use prependContent\n */",
-      "customFooter?": "/** @deprecated Use appendContent\n */"
+      "skipHeader?": "/** @deprecated\n */"
     }
   },
   "PackageFileParams": { "meta": { "typeParams": ["T"] }, "type": {} },
@@ -4267,6 +4267,13 @@
   "CsvExportParams": {
     "meta": {},
     "type": {
+      "columnSeparator?": "string",
+      "suppressQuotes?": "boolean",
+      "prependContent?": "CsvCustomContent",
+      "appendContent?": "CsvCustomContent",
+      "customHeader?": "CsvCustomContent",
+      "customFooter?": "CsvCustomContent",
+      "getCustomContentBelowRow?": "(params: ProcessRowGroupForExportParams) => CsvCustomContent | undefined",
       "allColumns?": "boolean",
       "columnKeys?": "(string | Column)[]",
       "fileName?": "string",
@@ -4284,21 +4291,14 @@
       "processRowGroupCallback?(params: ProcessRowGroupForExportParams)": "string",
       "columnGroups?": "boolean",
       "skipGroups?": "boolean",
-      "skipHeader?": "boolean",
-      "prependContent?": "CsvCustomContent",
-      "appendContent?": "CsvCustomContent",
-      "customHeader?": "CsvCustomContent",
-      "customFooter?": "CsvCustomContent",
-      "getCustomContentBelowRow?": "(params: ProcessRowGroupForExportParams) => CsvCustomContent | undefined",
-      "columnSeparator?": "string",
-      "suppressQuotes?": "boolean"
+      "skipHeader?": "boolean"
     },
     "docs": {
+      "customHeader?": "/** @deprecated Use prependContent\n */",
+      "customFooter?": "/** @deprecated Use appendContent\n */",
       "columnGroups?": "/** @deprecated\n */",
       "skipGroups?": "/** @deprecated\n */",
-      "skipHeader?": "/** @deprecated\n */",
-      "customHeader?": "/** @deprecated Use prependContent\n */",
-      "customFooter?": "/** @deprecated Use appendContent\n */"
+      "skipHeader?": "/** @deprecated\n */"
     }
   },
   "ShouldRowBeSkippedParams": {
@@ -4398,9 +4398,9 @@
   "AgChartTheme": {
     "meta": {},
     "type": {
+      "baseTheme?": "AgChartThemeName",
       "palette?": "AgChartThemePalette",
-      "overrides?": "AgChartThemeOverrides",
-      "baseTheme?": "AgChartThemeName"
+      "overrides?": "AgChartThemeOverrides"
     }
   },
   "AgChartThemeOverrides": {
@@ -4652,71 +4652,71 @@
   "AgBaseCartesianAxisOptions": {
     "meta": {},
     "type": {
-      "keys?": "string[]",
       "position?": "AgCartesianAxisPosition",
       "title?": "AgChartCaptionOptions",
       "line?": "AgAxisLineOptions",
       "tick?": "AgAxisTickOptions",
       "label?": "AgAxisLabelOptions",
-      "gridStyle?": "AgAxisGridStyle[]"
+      "gridStyle?": "AgAxisGridStyle[]",
+      "keys?": "string[]"
     }
   },
   "AgNumberAxisOptions": {
     "meta": {},
     "type": {
-      "keys?": "string[]",
+      "type": "'number'",
+      "nice?": "boolean",
+      "min?": "number",
+      "max?": "number",
       "position?": "AgCartesianAxisPosition",
       "title?": "AgChartCaptionOptions",
       "line?": "AgAxisLineOptions",
       "tick?": "AgAxisTickOptions",
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
-      "type": "'number'",
-      "nice?": "boolean",
-      "min?": "number",
-      "max?": "number"
+      "keys?": "string[]"
     }
   },
   "AgCategoryAxisOptions": {
     "meta": {},
     "type": {
-      "keys?": "string[]",
+      "type": "'category'",
+      "paddingInner?": "number",
+      "paddingOuter?": "number",
       "position?": "AgCartesianAxisPosition",
       "title?": "AgChartCaptionOptions",
       "line?": "AgAxisLineOptions",
       "tick?": "AgAxisTickOptions",
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
-      "type": "'category'",
-      "paddingInner?": "number",
-      "paddingOuter?": "number"
+      "keys?": "string[]"
     }
   },
   "AgGroupedCategoryAxisOptions": {
     "meta": {},
     "type": {
-      "keys?": "string[]",
+      "type": "'groupedCategory'",
       "position?": "AgCartesianAxisPosition",
       "title?": "AgChartCaptionOptions",
       "line?": "AgAxisLineOptions",
       "tick?": "AgAxisTickOptions",
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
-      "type": "'groupedCategory'"
+      "keys?": "string[]"
     }
   },
   "AgTimeAxisOptions": {
     "meta": {},
     "type": {
-      "keys?": "string[]",
+      "type": "'time'",
+      "nice?": "boolean",
       "position?": "AgCartesianAxisPosition",
       "title?": "AgChartCaptionOptions",
       "line?": "AgAxisLineOptions",
       "tick?": "AgAxisTickOptions",
       "label?": "AgAxisLabelOptions",
       "gridStyle?": "AgAxisGridStyle[]",
-      "type": "'time'",
-      "nice?": "boolean"
+      "keys?": "string[]"
     }
   },
   "AgCartesianAxisOptions": {
@@ -4746,47 +4746,47 @@
   "AgCartesianSeriesTooltipRendererParams": {
     "meta": {},
     "type": {
-      "datum": "any",
-      "title?": "string",
-      "color?": "string",
-      "xKey": "string",
-      "xValue?": "any",
-      "xName?": "string",
-      "yKey": "string",
-      "yValue?": "any",
-      "yName?": "string"
-    }
-  },
-  "AgPolarSeriesTooltipRendererParams": {
-    "meta": {},
-    "type": {
-      "datum": "any",
-      "title?": "string",
-      "color?": "string",
-      "angleKey": "string",
-      "angleValue?": "any",
-      "angleName?": "string",
-      "radiusKey?": "string",
-      "radiusValue?": "any",
-      "radiusName?": "string"
-    }
-  },
-  "AgScatterSeriesTooltipRendererParams": {
-    "meta": {},
-    "type": {
-      "datum": "any",
-      "title?": "string",
-      "color?": "string",
       "xKey": "string",
       "xValue?": "any",
       "xName?": "string",
       "yKey": "string",
       "yValue?": "any",
       "yName?": "string",
+      "datum": "any",
+      "title?": "string",
+      "color?": "string"
+    }
+  },
+  "AgPolarSeriesTooltipRendererParams": {
+    "meta": {},
+    "type": {
+      "angleKey": "string",
+      "angleValue?": "any",
+      "angleName?": "string",
+      "radiusKey?": "string",
+      "radiusValue?": "any",
+      "radiusName?": "string",
+      "datum": "any",
+      "title?": "string",
+      "color?": "string"
+    }
+  },
+  "AgScatterSeriesTooltipRendererParams": {
+    "meta": {},
+    "type": {
       "sizeKey?": "string",
       "sizeName?": "string",
       "labelKey?": "string",
-      "labelName?": "string"
+      "labelName?": "string",
+      "xKey": "string",
+      "xValue?": "any",
+      "xName?": "string",
+      "yKey": "string",
+      "yValue?": "any",
+      "yName?": "string",
+      "datum": "any",
+      "title?": "string",
+      "color?": "string"
     }
   },
   "AgSeriesMarker": {
@@ -4817,45 +4817,39 @@
   "AgCartesianSeriesMarker": {
     "meta": {},
     "type": {
+      "formatter?": "(params: AgCartesianSeriesMarkerFormatterParams) => AgCartesianSeriesMarkerFormat",
       "enabled?": "boolean",
       "shape?": "string",
       "size?": "number",
       "maxSize?": "number",
       "fill?": "string",
       "stroke?": "string",
-      "strokeWidth?": "number",
-      "formatter?": "(params: AgCartesianSeriesMarkerFormatterParams) => AgCartesianSeriesMarkerFormat"
+      "strokeWidth?": "number"
     }
   },
   "AgSeriesTooltip": { "meta": {}, "type": { "enabled?": "boolean" } },
   "AgLineSeriesTooltip": {
     "meta": {},
     "type": {
-      "enabled?": "boolean",
-      "renderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult"
+      "renderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
+      "enabled?": "boolean"
     }
   },
   "AgLineSeriesLabelOptions": {
     "meta": {},
     "type": {
+      "formatter?": "(params: { value: any; }) => string",
       "enabled?": "boolean",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
       "fontSize?": "number",
       "fontFamily?": "string",
-      "color?": "string",
-      "formatter?": "(params: { value: any; }) => string"
+      "color?": "string"
     }
   },
   "AgLineSeriesOptions": {
     "meta": {},
     "type": {
-      "tooltipEnabled?": "boolean",
-      "data?": "any[]",
-      "visible?": "boolean",
-      "showInLegend?": "boolean",
-      "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }",
       "type?": "'line'",
       "marker?": "AgCartesianSeriesMarker",
       "label?": "AgLineSeriesLabelOptions",
@@ -4870,14 +4864,20 @@
       "lineDash?": "number[]",
       "lineDashOffset?": "number",
       "tooltip?": "AgLineSeriesTooltip",
-      "tooltipRenderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult"
+      "tooltipRenderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
+      "tooltipEnabled?": "boolean",
+      "data?": "any[]",
+      "visible?": "boolean",
+      "showInLegend?": "boolean",
+      "listeners?": "{[key in string]: Function}",
+      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
     }
   },
   "AgScatterSeriesTooltip": {
     "meta": {},
     "type": {
-      "enabled?": "boolean",
-      "renderer?": "(params: AgScatterSeriesTooltipRendererParams) => string | AgTooltipRendererResult"
+      "renderer?": "(params: AgScatterSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
+      "enabled?": "boolean"
     }
   },
   "AgScatterSeriesLabelOptions": {
@@ -4894,12 +4894,6 @@
   "AgScatterSeriesOptions": {
     "meta": {},
     "type": {
-      "tooltipEnabled?": "boolean",
-      "data?": "any[]",
-      "visible?": "boolean",
-      "showInLegend?": "boolean",
-      "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }",
       "type?": "'scatter'",
       "marker?": "AgCartesianSeriesMarker",
       "label?": "AgScatterSeriesLabelOptions",
@@ -4914,38 +4908,38 @@
       "fillOpacity?": "number",
       "strokeOpacity?": "number",
       "tooltip?": "AgScatterSeriesTooltip",
-      "tooltipRenderer?": "(params: AgScatterSeriesTooltipRendererParams) => string | AgTooltipRendererResult"
-    }
-  },
-  "AgAreaSeriesTooltip": {
-    "meta": {},
-    "type": {
-      "enabled?": "boolean",
-      "renderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
-      "format?": "string"
-    }
-  },
-  "AgAreaSeriesLabelOptions": {
-    "meta": {},
-    "type": {
-      "enabled?": "boolean",
-      "fontStyle?": "FontStyle",
-      "fontWeight?": "FontWeight",
-      "fontSize?": "number",
-      "fontFamily?": "string",
-      "color?": "string",
-      "formatter?": "(params: { value: any; }) => string"
-    }
-  },
-  "AgAreaSeriesOptions": {
-    "meta": {},
-    "type": {
+      "tooltipRenderer?": "(params: AgScatterSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
       "tooltipEnabled?": "boolean",
       "data?": "any[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }",
+      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
+    }
+  },
+  "AgAreaSeriesTooltip": {
+    "meta": {},
+    "type": {
+      "renderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
+      "format?": "string",
+      "enabled?": "boolean"
+    }
+  },
+  "AgAreaSeriesLabelOptions": {
+    "meta": {},
+    "type": {
+      "formatter?": "(params: { value: any; }) => string",
+      "enabled?": "boolean",
+      "fontStyle?": "FontStyle",
+      "fontWeight?": "FontWeight",
+      "fontSize?": "number",
+      "fontFamily?": "string",
+      "color?": "string"
+    }
+  },
+  "AgAreaSeriesOptions": {
+    "meta": {},
+    "type": {
       "type?": "'area'",
       "marker?": "AgCartesianSeriesMarker",
       "label?": "AgAreaSeriesLabelOptions",
@@ -4962,19 +4956,25 @@
       "lineDashOffset?": "number",
       "shadow?": "AgDropShadowOptions",
       "tooltip?": "AgAreaSeriesTooltip",
-      "tooltipRenderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult"
+      "tooltipRenderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
+      "tooltipEnabled?": "boolean",
+      "data?": "any[]",
+      "visible?": "boolean",
+      "showInLegend?": "boolean",
+      "listeners?": "{[key in string]: Function}",
+      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
     }
   },
   "AgBarSeriesLabelOptions": {
     "meta": {},
     "type": {
+      "formatter?": "(params: { value: number; }) => string",
       "enabled?": "boolean",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
       "fontSize?": "number",
       "fontFamily?": "string",
-      "color?": "string",
-      "formatter?": "(params: { value: number; }) => string"
+      "color?": "string"
     }
   },
   "AgBarSeriesFormatterParams": {
@@ -4996,19 +4996,13 @@
   "AgBarSeriesTooltip": {
     "meta": {},
     "type": {
-      "enabled?": "boolean",
-      "renderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult"
+      "renderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
+      "enabled?": "boolean"
     }
   },
   "AgBarSeriesOptions": {
     "meta": {},
     "type": {
-      "tooltipEnabled?": "boolean",
-      "data?": "any[]",
-      "visible?": "boolean",
-      "showInLegend?": "boolean",
-      "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }",
       "type?": "'bar' | 'column'",
       "grouped?": "boolean",
       "normalizedTo?": "number",
@@ -5027,37 +5021,37 @@
       "label?": "AgBarSeriesLabelOptions",
       "tooltip?": "AgBarSeriesTooltip",
       "tooltipRenderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
-      "formatter?": "(params: AgBarSeriesFormatterParams) => AgBarSeriesFormat"
-    }
-  },
-  "AgHistogramSeriesLabelOptions": {
-    "meta": {},
-    "type": {
-      "enabled?": "boolean",
-      "fontStyle?": "FontStyle",
-      "fontWeight?": "FontWeight",
-      "fontSize?": "number",
-      "fontFamily?": "string",
-      "color?": "string",
-      "formatter?": "(params: { value: number; }) => string"
-    }
-  },
-  "AgHistogramSeriesTooltip": {
-    "meta": {},
-    "type": {
-      "enabled?": "boolean",
-      "renderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult"
-    }
-  },
-  "AgHistogramSeriesOptions": {
-    "meta": {},
-    "type": {
+      "formatter?": "(params: AgBarSeriesFormatterParams) => AgBarSeriesFormat",
       "tooltipEnabled?": "boolean",
       "data?": "any[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }",
+      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
+    }
+  },
+  "AgHistogramSeriesLabelOptions": {
+    "meta": {},
+    "type": {
+      "formatter?": "(params: { value: number; }) => string",
+      "enabled?": "boolean",
+      "fontStyle?": "FontStyle",
+      "fontWeight?": "FontWeight",
+      "fontSize?": "number",
+      "fontFamily?": "string",
+      "color?": "string"
+    }
+  },
+  "AgHistogramSeriesTooltip": {
+    "meta": {},
+    "type": {
+      "renderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
+      "enabled?": "boolean"
+    }
+  },
+  "AgHistogramSeriesOptions": {
+    "meta": {},
+    "type": {
       "type?": "'histogram'",
       "fill?": "string",
       "stroke?": "string",
@@ -5077,20 +5071,26 @@
       "shadow?": "AgDropShadowOptions",
       "label?": "AgHistogramSeriesLabelOptions",
       "tooltip?": "AgHistogramSeriesTooltip",
-      "tooltipRenderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult"
+      "tooltipRenderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
+      "tooltipEnabled?": "boolean",
+      "data?": "any[]",
+      "visible?": "boolean",
+      "showInLegend?": "boolean",
+      "listeners?": "{[key in string]: Function}",
+      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
     }
   },
   "AgPieSeriesLabelOptions": {
     "meta": {},
     "type": {
+      "offset?": "number",
+      "minAngle?": "number",
       "enabled?": "boolean",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
       "fontSize?": "number",
       "fontFamily?": "string",
-      "color?": "string",
-      "offset?": "number",
-      "minAngle?": "number"
+      "color?": "string"
     }
   },
   "AgPieSeriesFormatterParams": {
@@ -5112,13 +5112,14 @@
   "AgPieSeriesTooltip": {
     "meta": {},
     "type": {
-      "enabled?": "boolean",
-      "renderer?": "(params: AgPieSeriesTooltipRendererParams) => string | AgTooltipRendererResult"
+      "renderer?": "(params: AgPieSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
+      "enabled?": "boolean"
     }
   },
   "AgPieTitleOptions": {
     "meta": {},
     "type": {
+      "showInLegend?": "boolean",
       "enabled?": "boolean",
       "padding?": "AgChartPaddingOptions",
       "text?": "string",
@@ -5126,19 +5127,12 @@
       "fontWeight?": "FontWeight",
       "fontSize?": "number",
       "fontFamily?": "string",
-      "color?": "string",
-      "showInLegend?": "boolean"
+      "color?": "string"
     }
   },
   "AgPieSeriesOptions": {
     "meta": {},
     "type": {
-      "tooltipEnabled?": "boolean",
-      "data?": "any[]",
-      "visible?": "boolean",
-      "showInLegend?": "boolean",
-      "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }",
       "type?": "'pie'",
       "title?": "AgPieTitleOptions",
       "label?": "AgPieSeriesLabelOptions",
@@ -5162,23 +5156,29 @@
       "shadow?": "AgDropShadowOptions",
       "tooltip?": "AgPieSeriesTooltip",
       "tooltipRenderer?": "(params: AgPieSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
-      "formatter?": "(params: AgPieSeriesFormatterParams) => AgPieSeriesFormat"
+      "formatter?": "(params: AgPieSeriesFormatterParams) => AgPieSeriesFormat",
+      "tooltipEnabled?": "boolean",
+      "data?": "any[]",
+      "visible?": "boolean",
+      "showInLegend?": "boolean",
+      "listeners?": "{[key in string]: Function}",
+      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
     }
   },
   "AgPieSeriesTooltipRendererParams": {
     "meta": {},
     "type": {
-      "datum": "any",
-      "title?": "string",
-      "color?": "string",
+      "labelKey?": "string",
+      "labelName?": "string",
       "angleKey": "string",
       "angleValue?": "any",
       "angleName?": "string",
       "radiusKey?": "string",
       "radiusValue?": "any",
       "radiusName?": "string",
-      "labelKey?": "string",
-      "labelName?": "string"
+      "datum": "any",
+      "title?": "string",
+      "color?": "string"
     }
   },
   "AgCartesianSeriesOptions": {
@@ -5189,6 +5189,9 @@
   "AgCartesianChartOptions": {
     "meta": { "typeParams": ["TAxisOptions", "TSeriesOptions"] },
     "type": {
+      "type?": "'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter'",
+      "axes?": "TAxisOptions",
+      "series?": "TSeriesOptions",
       "container?": "HTMLElement",
       "data?": "any[]",
       "width?": "number",
@@ -5203,15 +5206,15 @@
       "navigator?": "AgNavigatorOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "{[key in string]: Function}",
-      "theme?": "string | AgChartTheme",
-      "type?": "'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter'",
-      "axes?": "TAxisOptions",
-      "series?": "TSeriesOptions"
+      "theme?": "string | AgChartTheme"
     }
   },
   "AgPolarChartOptions": {
     "meta": { "typeParams": ["TAxisOptions", "TSeriesOptions"] },
     "type": {
+      "type?": "'polar' | 'pie'",
+      "axes?": "TAxisOptions",
+      "series?": "TSeriesOptions",
       "container?": "HTMLElement",
       "data?": "any[]",
       "width?": "number",
@@ -5226,10 +5229,7 @@
       "navigator?": "AgNavigatorOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "{[key in string]: Function}",
-      "theme?": "string | AgChartTheme",
-      "type?": "'polar' | 'pie'",
-      "axes?": "TAxisOptions",
-      "series?": "TSeriesOptions"
+      "theme?": "string | AgChartTheme"
     }
   },
   "AgChartOptions": {
@@ -5319,32 +5319,32 @@
   "ICellEditorComp": {
     "meta": {},
     "type": {
-      "getGui()": "HTMLElement",
-      "destroy?()": "void",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void",
-      "init?(params: T)": "AgPromise<void> | void",
-      "isPopup?()": "boolean",
-      "focusIn?()": "void",
-      "focusOut?()": "void",
       "getValue()": "any",
+      "isPopup?()": "boolean",
       "getPopupPosition?()": "string | undefined",
       "isCancelBeforeStart?()": "boolean",
       "isCancelAfterEnd?()": "boolean",
-      "getFrameworkComponentInstance?()": "any"
+      "focusIn?()": "void",
+      "focusOut?()": "void",
+      "getFrameworkComponentInstance?()": "any",
+      "getGui()": "HTMLElement",
+      "destroy?()": "void",
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void",
+      "init?(params: T)": "AgPromise<void> | void"
     },
     "docs": {
-      "getGui()": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
-      "destroy?()": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "init?(params: T)": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
-      "isPopup?()": "/** Gets called once after initialised. If you return true, the editor will\n * appear in a popup, so is not constrained to the boundaries of the cell.\n * This is great if you want to, for example, provide you own custom dropdown list\n * for selection. Default is false (ie if you don't provide the method). */",
-      "focusIn?()": "/** If doing full line edit, then gets called when focus should be put into the editor */",
-      "focusOut?()": "/** If doing full line edit, then gets called when focus is leaving the editor */",
       "getValue()": "/** Return the final value - called by the grid once after editing is complete */",
+      "isPopup?()": "/** Gets called once after initialised. If you return true, the component will appear in a popup, and it will be\n * constrained to the boundaries of the popupParent. This is great if you want to, for example, provide you own\n * custom dropdown list for selection. Default is false (ie if you don't provide the method). */",
       "getPopupPosition?()": "/** Gets called once, only if isPopup() returns true. Return \"over\" if the popup\n * should cover the cell, or \"under\" if it should be positioned below leaving the\n * cell value visible. If this method is not present, the default is \"over\". */",
       "isCancelBeforeStart?()": "/** Gets called once after initialised. If you return true, the editor will not be\n * used and the grid will continue editing. Use this to make a decision on editing\n * inside the init() function, eg maybe you want to only start editing if the user\n * hits a numeric key, but not a letter, if the editor is for numbers. */",
       "isCancelAfterEnd?()": "/** Gets called once after editing is complete. If your return true, then the new\n * value will not be used. The editing will have no impact on the record. Use this\n * if you do not want a new value from your gui, i.e. you want to cancel the editing. */",
-      "getFrameworkComponentInstance?()": "/** If using a framework this returns the underlying component instance, so you can call\n * methods on it if you want. */"
+      "focusIn?()": "/** Called when focus is within the component */",
+      "focusOut?()": "/** Called when focus is leaving the component */",
+      "getFrameworkComponentInstance?()": "/** If using a framework this returns the underlying component instance, so you can call\n * methods on it if you want. */",
+      "getGui()": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
+      "destroy?()": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
+      "init?(params: T)": "/** The init(params) method is called on the component once. See below for details on the parameters. */"
     }
   },
   "ChartType": {
@@ -5434,13 +5434,13 @@
   "CaptionOptions": {
     "meta": {},
     "type": {
+      "enabled": "boolean",
+      "text?": "string",
       "fontStyle": "FontStyle",
       "fontWeight": "FontWeight",
       "fontSize": "number",
       "fontFamily": "string",
-      "color": "string",
-      "enabled": "boolean",
-      "text?": "string"
+      "color": "string"
     }
   },
   "LegendOptions": {
@@ -5529,6 +5529,9 @@
   "CartesianChartOptions": {
     "meta": { "typeParams": ["T extends SeriesOptions"] },
     "type": {
+      "xAxis": "AxisOptions",
+      "yAxis": "AxisOptions",
+      "navigator": "NavigatorOptions",
       "document?": "Document",
       "seriesDefaults": "T",
       "width?": "number",
@@ -5537,12 +5540,9 @@
       "background": "BackgroundOptions",
       "title": "CaptionOptions",
       "subtitle": "CaptionOptions",
-      "navigator": "NavigatorOptions",
       "legend": "LegendOptions",
       "tooltip?": "ChartTooltip",
-      "listeners?": "{[key in string]: Function}",
-      "xAxis": "AxisOptions",
-      "yAxis": "AxisOptions"
+      "listeners?": "{[key in string]: Function}"
     }
   },
   "PolarChartOptions": {
@@ -5597,15 +5597,15 @@
   "AxisLabelOptions": {
     "meta": {},
     "type": {
+      "padding": "number",
+      "rotation": "number",
+      "format?": "string",
+      "formatter?": "(params: AxisLabelFormatterParams) => string",
       "fontStyle": "FontStyle",
       "fontWeight": "FontWeight",
       "fontSize": "number",
       "fontFamily": "string",
-      "color": "string",
-      "padding": "number",
-      "rotation": "number",
-      "format?": "string",
-      "formatter?": "(params: AxisLabelFormatterParams) => string"
+      "color": "string"
     }
   },
   "GridStyle": {
@@ -5642,12 +5642,12 @@
   "SeriesLabelOptions": {
     "meta": {},
     "type": {
+      "enabled": "boolean",
       "fontStyle": "FontStyle",
       "fontWeight": "FontWeight",
       "fontSize": "number",
       "fontFamily": "string",
-      "color": "string",
-      "enabled": "boolean"
+      "color": "string"
     }
   },
   "TooltipRendererResult": {
@@ -5668,96 +5668,96 @@
   "CartesianTooltipRendererParams": {
     "meta": {},
     "type": {
-      "datum": "any",
-      "title?": "string",
-      "color": "string",
       "xKey": "string",
       "xValue": "any",
       "xName": "string",
       "yKey": "string",
       "yValue": "any",
-      "yName": "string"
+      "yName": "string",
+      "datum": "any",
+      "title?": "string",
+      "color": "string"
     }
   },
   "BarSeriesOptions": {
     "meta": {},
     "type": {
-      "fill": "FillOptions",
-      "stroke": "StrokeOptions",
-      "highlightStyle": "HighlightOptions",
-      "listeners?": "{[key in string]: Function}",
-      "shadow": "DropShadowOptions",
-      "label": "BarSeriesLabelOptions",
-      "tooltip": "TooltipOptions<BarTooltipRendererParams>",
-      "lineDash": "number[]",
-      "lineDashOffset": "number"
-    }
-  },
-  "HistogramSeriesOptions": {
-    "meta": {},
-    "type": {
-      "fill": "FillOptions",
-      "stroke": "StrokeOptions",
-      "highlightStyle": "HighlightOptions",
-      "listeners?": "{[key in string]: Function}",
       "shadow": "DropShadowOptions",
       "label": "BarSeriesLabelOptions",
       "tooltip": "TooltipOptions<BarTooltipRendererParams>",
       "lineDash": "number[]",
       "lineDashOffset": "number",
-      "binCount?": "number"
+      "fill": "FillOptions",
+      "stroke": "StrokeOptions",
+      "highlightStyle": "HighlightOptions",
+      "listeners?": "{[key in string]: Function}"
+    }
+  },
+  "HistogramSeriesOptions": {
+    "meta": {},
+    "type": {
+      "binCount?": "number",
+      "shadow": "DropShadowOptions",
+      "label": "BarSeriesLabelOptions",
+      "tooltip": "TooltipOptions<BarTooltipRendererParams>",
+      "lineDash": "number[]",
+      "lineDashOffset": "number",
+      "fill": "FillOptions",
+      "stroke": "StrokeOptions",
+      "highlightStyle": "HighlightOptions",
+      "listeners?": "{[key in string]: Function}"
     }
   },
   "BarSeriesLabelOptions": {
     "meta": {},
     "type": {
+      "formatter?": "(params: { value: number; }) => string",
+      "enabled": "boolean",
       "fontStyle": "FontStyle",
       "fontWeight": "FontWeight",
       "fontSize": "number",
       "fontFamily": "string",
-      "color": "string",
-      "enabled": "boolean",
-      "formatter?": "(params: { value: number; }) => string"
+      "color": "string"
     }
   },
   "BarTooltipRendererParams": {
     "meta": {},
     "type": {
-      "datum": "any",
-      "title?": "string",
-      "color": "string",
       "xKey": "string",
       "xValue": "any",
       "xName": "string",
       "yKey": "string",
       "yValue": "any",
-      "yName": "string"
+      "yName": "string",
+      "datum": "any",
+      "title?": "string",
+      "color": "string"
     }
   },
   "LineSeriesOptions": {
     "meta": {},
     "type": {
-      "fill": "FillOptions",
-      "stroke": "StrokeOptions",
-      "highlightStyle": "HighlightOptions",
-      "listeners?": "{[key in string]: Function}",
       "marker": "MarkerOptions",
       "label": "LineSeriesLabelOptions",
       "tooltip": "TooltipOptions<LineTooltipRendererParams>",
       "lineDash": "number[]",
-      "lineDashOffset": "number"
+      "lineDashOffset": "number",
+      "fill": "FillOptions",
+      "stroke": "StrokeOptions",
+      "highlightStyle": "HighlightOptions",
+      "listeners?": "{[key in string]: Function}"
     }
   },
   "LineSeriesLabelOptions": {
     "meta": {},
     "type": {
+      "formatter?": "(params: { value: any; }) => string",
+      "enabled": "boolean",
       "fontStyle": "FontStyle",
       "fontWeight": "FontWeight",
       "fontSize": "number",
       "fontFamily": "string",
-      "color": "string",
-      "enabled": "boolean",
-      "formatter?": "(params: { value: any; }) => string"
+      "color": "string"
     }
   },
   "MarkerOptions": {
@@ -5773,151 +5773,151 @@
   "LineTooltipRendererParams": {
     "meta": {},
     "type": {
-      "datum": "any",
-      "title?": "string",
-      "color": "string",
-      "xKey": "string",
-      "xValue": "any",
-      "xName": "string",
-      "yKey": "string",
-      "yValue": "any",
-      "yName": "string"
-    }
-  },
-  "ScatterSeriesLabelOptions": {
-    "meta": {},
-    "type": {
-      "fontStyle": "FontStyle",
-      "fontWeight": "FontWeight",
-      "fontSize": "number",
-      "fontFamily": "string",
-      "color": "string",
-      "enabled": "boolean"
-    }
-  },
-  "ScatterSeriesOptions": {
-    "meta": {},
-    "type": {
-      "fill": "FillOptions",
-      "stroke": "StrokeOptions",
-      "highlightStyle": "HighlightOptions",
-      "listeners?": "{[key in string]: Function}",
-      "marker": "ScatterMarkerOptions",
-      "label": "ScatterSeriesLabelOptions",
-      "tooltip": "TooltipOptions<ScatterTooltipRendererParams>",
-      "paired": "boolean"
-    }
-  },
-  "ScatterMarkerOptions": {
-    "meta": {},
-    "type": {
-      "enabled": "boolean",
-      "shape": "MarkerShape",
-      "size": "number",
-      "strokeWidth": "number",
-      "formatter?": "Function",
-      "maxSize?": "number"
-    }
-  },
-  "ScatterTooltipRendererParams": {
-    "meta": {},
-    "type": {
-      "datum": "any",
-      "title?": "string",
-      "color": "string",
       "xKey": "string",
       "xValue": "any",
       "xName": "string",
       "yKey": "string",
       "yValue": "any",
       "yName": "string",
-      "sizeKey?": "string",
-      "sizeName?": "string",
-      "labelKey?": "string",
-      "labelName?": "string"
+      "datum": "any",
+      "title?": "string",
+      "color": "string"
     }
   },
-  "AreaSeriesLabelOptions": {
+  "ScatterSeriesLabelOptions": {
     "meta": {},
     "type": {
+      "enabled": "boolean",
       "fontStyle": "FontStyle",
       "fontWeight": "FontWeight",
       "fontSize": "number",
       "fontFamily": "string",
-      "color": "string",
-      "enabled": "boolean",
-      "formatter?": "(params: { value: any; }) => string"
+      "color": "string"
     }
   },
-  "AreaSeriesOptions": {
+  "ScatterSeriesOptions": {
     "meta": {},
     "type": {
+      "marker": "ScatterMarkerOptions",
+      "label": "ScatterSeriesLabelOptions",
+      "tooltip": "TooltipOptions<ScatterTooltipRendererParams>",
+      "paired": "boolean",
       "fill": "FillOptions",
       "stroke": "StrokeOptions",
       "highlightStyle": "HighlightOptions",
-      "listeners?": "{[key in string]: Function}",
-      "marker": "MarkerOptions",
-      "label": "AreaSeriesLabelOptions",
-      "shadow": "DropShadowOptions",
-      "tooltip": "TooltipOptions<AreaTooltipRendererParams>",
-      "lineDash": "number[]",
-      "lineDashOffset": "number"
+      "listeners?": "{[key in string]: Function}"
     }
   },
-  "AreaTooltipRendererParams": {
+  "ScatterMarkerOptions": {
     "meta": {},
     "type": {
-      "datum": "any",
-      "title?": "string",
-      "color": "string",
+      "maxSize?": "number",
+      "enabled": "boolean",
+      "shape": "MarkerShape",
+      "size": "number",
+      "strokeWidth": "number",
+      "formatter?": "Function"
+    }
+  },
+  "ScatterTooltipRendererParams": {
+    "meta": {},
+    "type": {
+      "sizeKey?": "string",
+      "sizeName?": "string",
+      "labelKey?": "string",
+      "labelName?": "string",
       "xKey": "string",
       "xValue": "any",
       "xName": "string",
       "yKey": "string",
       "yValue": "any",
-      "yName": "string"
+      "yName": "string",
+      "datum": "any",
+      "title?": "string",
+      "color": "string"
+    }
+  },
+  "AreaSeriesLabelOptions": {
+    "meta": {},
+    "type": {
+      "formatter?": "(params: { value: any; }) => string",
+      "enabled": "boolean",
+      "fontStyle": "FontStyle",
+      "fontWeight": "FontWeight",
+      "fontSize": "number",
+      "fontFamily": "string",
+      "color": "string"
+    }
+  },
+  "AreaSeriesOptions": {
+    "meta": {},
+    "type": {
+      "marker": "MarkerOptions",
+      "label": "AreaSeriesLabelOptions",
+      "shadow": "DropShadowOptions",
+      "tooltip": "TooltipOptions<AreaTooltipRendererParams>",
+      "lineDash": "number[]",
+      "lineDashOffset": "number",
+      "fill": "FillOptions",
+      "stroke": "StrokeOptions",
+      "highlightStyle": "HighlightOptions",
+      "listeners?": "{[key in string]: Function}"
+    }
+  },
+  "AreaTooltipRendererParams": {
+    "meta": {},
+    "type": {
+      "xKey": "string",
+      "xValue": "any",
+      "xName": "string",
+      "yKey": "string",
+      "yValue": "any",
+      "yName": "string",
+      "datum": "any",
+      "title?": "string",
+      "color": "string"
     }
   },
   "PieTitleOptions": {
     "meta": {},
     "type": {
+      "showInLegend?": "boolean",
+      "enabled": "boolean",
+      "text?": "string",
       "fontStyle": "FontStyle",
       "fontWeight": "FontWeight",
       "fontSize": "number",
       "fontFamily": "string",
-      "color": "string",
-      "enabled": "boolean",
-      "text?": "string",
-      "showInLegend?": "boolean"
+      "color": "string"
     }
   },
   "PieSeriesOptions": {
     "meta": {},
     "type": {
-      "fill": "FillOptions",
-      "stroke": "StrokeOptions",
-      "highlightStyle": "HighlightOptions",
-      "listeners?": "{[key in string]: Function}",
       "title": "PieTitleOptions",
       "label": "PieSeriesLabelOptions",
       "callout": "PieSeriesCalloutOptions",
       "shadow": "DropShadowOptions",
       "tooltip": "TooltipOptions<PieTooltipRendererParams>",
       "lineDash": "number[]",
-      "lineDashOffset": "number"
+      "lineDashOffset": "number",
+      "fill": "FillOptions",
+      "stroke": "StrokeOptions",
+      "highlightStyle": "HighlightOptions",
+      "listeners?": "{[key in string]: Function}"
     }
   },
   "PieSeriesLabelOptions": {
     "meta": {},
     "type": {
+      "minAngle": "number",
+      "offset": "number",
+      "enabled": "boolean",
       "fontStyle": "FontStyle",
       "fontWeight": "FontWeight",
       "fontSize": "number",
       "fontFamily": "string",
-      "color": "string",
-      "enabled": "boolean",
-      "minAngle": "number",
-      "offset": "number"
+      "color": "string"
     }
   },
   "PieSeriesCalloutOptions": {
@@ -5931,14 +5931,14 @@
   "PieTooltipRendererParams": {
     "meta": {},
     "type": {
-      "datum": "any",
-      "title?": "string",
-      "color": "string",
       "angleKey": "string",
       "angleValue": "any",
       "angleName?": "string",
       "labelKey?": "string",
-      "labelName?": "string"
+      "labelName?": "string",
+      "datum": "any",
+      "title?": "string",
+      "color": "string"
     }
   },
   "GetChartImageDataUrlParams": {
@@ -5991,22 +5991,6 @@
   "IClientSideRowModel": {
     "meta": {},
     "type": {
-      "getRow(index: number)": "RowNode | undefined",
-      "getRowNode(id: string)": "RowNode | undefined",
-      "getRowCount()": "number",
-      "getTopLevelRowCount()": "number",
-      "getTopLevelRowDisplayedIndex(topLevelIndex: number)": "number",
-      "getRowIndexAtPixel(pixel: number)": "number",
-      "isRowPresent(rowNode: RowNode)": "boolean",
-      "getRowBounds(index: number)": "RowBounds | null",
-      "isEmpty()": "boolean",
-      "isRowsToRender()": "boolean",
-      "getNodesInRangeForSelection(first: RowNode, last: RowNode | null)": "RowNode[]",
-      "forEachNode(callback: (rowNode: RowNode, index: number) => void)": "void",
-      "getType()": "string",
-      "isLastRowIndexKnown()": "boolean",
-      "ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number)": "boolean",
-      "start()": "void",
       "onRowGroupOpened()": "void",
       "updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder?: { [id: string]: number; } | null)": "RowNodeTransaction | null",
       "setRowData(rowData: any[])": "void",
@@ -6027,7 +6011,23 @@
       "ensureRowsAtPixel(rowNode: RowNode[], pixel: number, increment: number)": "boolean",
       "highlightRowAtPixel(rowNode: RowNode | null, pixel?: number)": "void",
       "getHighlightPosition(pixel: number, rowNode?: RowNode)": "RowHighlightPosition",
-      "getLastHighlightedRowNode()": "RowNode | null"
+      "getLastHighlightedRowNode()": "RowNode | null",
+      "getRow(index: number)": "RowNode | undefined",
+      "getRowNode(id: string)": "RowNode | undefined",
+      "getRowCount()": "number",
+      "getTopLevelRowCount()": "number",
+      "getTopLevelRowDisplayedIndex(topLevelIndex: number)": "number",
+      "getRowIndexAtPixel(pixel: number)": "number",
+      "isRowPresent(rowNode: RowNode)": "boolean",
+      "getRowBounds(index: number)": "RowBounds | null",
+      "isEmpty()": "boolean",
+      "isRowsToRender()": "boolean",
+      "getNodesInRangeForSelection(first: RowNode, last: RowNode | null)": "RowNode[]",
+      "forEachNode(callback: (rowNode: RowNode, index: number) => void)": "void",
+      "getType()": "string",
+      "isLastRowIndexKnown()": "boolean",
+      "ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number)": "boolean",
+      "start()": "void"
     },
     "docs": {
       "getRow(index: number)": "/** Returns the rowNode at the given index. */",
@@ -6352,6 +6352,24 @@
   "ExcelExportParams": {
     "meta": {},
     "type": {
+      "author?": "string",
+      "autoConvertFormulas?": "boolean",
+      "columnWidth?": "number | ((params: ColumnWidthCallbackParams) => number)",
+      "exportMode?": "'xlsx' | 'xml'",
+      "fontSize?": "number",
+      "headerRowHeight?": "number | ((params: RowHeightCallbackParams) => number)",
+      "rowHeight?": "number | ((params: RowHeightCallbackParams) => number)",
+      "sheetName?": "string",
+      "margins?": "ExcelSheetMargin",
+      "pageSetup?": "ExcelSheetPageSetup",
+      "headerFooterConfig?": "ExcelHeaderFooterConfig",
+      "suppressTextAsCDATA?": "boolean",
+      "addImageToCell?": "(rowIndex: number, column: Column, value: string) => { image: ExcelImage; value?: string; } | undefined",
+      "prependContent?": "ExcelCell[][]",
+      "appendContent?": "ExcelCell[][]",
+      "customHeader?": "ExcelCell[][]",
+      "customFooter?": "ExcelCell[][]",
+      "getCustomContentBelowRow?": "(params: ProcessRowGroupForExportParams) => ExcelCell[][] | undefined",
       "allColumns?": "boolean",
       "columnKeys?": "(string | Column)[]",
       "fileName?": "string",
@@ -6369,32 +6387,14 @@
       "processRowGroupCallback?(params: ProcessRowGroupForExportParams)": "string",
       "columnGroups?": "boolean",
       "skipGroups?": "boolean",
-      "skipHeader?": "boolean",
-      "prependContent?": "ExcelCell[][]",
-      "appendContent?": "ExcelCell[][]",
-      "customHeader?": "ExcelCell[][]",
-      "customFooter?": "ExcelCell[][]",
-      "getCustomContentBelowRow?": "(params: ProcessRowGroupForExportParams) => ExcelCell[][] | undefined",
-      "author?": "string",
-      "autoConvertFormulas?": "boolean",
-      "columnWidth?": "number | ((params: ColumnWidthCallbackParams) => number)",
-      "exportMode?": "'xlsx' | 'xml'",
-      "fontSize?": "number",
-      "headerRowHeight?": "number | ((params: RowHeightCallbackParams) => number)",
-      "rowHeight?": "number | ((params: RowHeightCallbackParams) => number)",
-      "sheetName?": "string",
-      "margins?": "ExcelSheetMargin",
-      "pageSetup?": "ExcelSheetPageSetup",
-      "headerFooterConfig?": "ExcelHeaderFooterConfig",
-      "suppressTextAsCDATA?": "boolean",
-      "addImageToCell?": "(rowIndex: number, column: Column, value: string) => { image: ExcelImage; value?: string; } | undefined"
+      "skipHeader?": "boolean"
     },
     "docs": {
+      "customHeader?": "/** @deprecated Use prependContent\n */",
+      "customFooter?": "/** @deprecated Use appendContent\n */",
       "columnGroups?": "/** @deprecated\n */",
       "skipGroups?": "/** @deprecated\n */",
-      "skipHeader?": "/** @deprecated\n */",
-      "customHeader?": "/** @deprecated Use prependContent\n */",
-      "customFooter?": "/** @deprecated Use appendContent\n */"
+      "skipHeader?": "/** @deprecated\n */"
     }
   },
   "ExcelExportMultipleSheetParams": {
@@ -6513,10 +6513,6 @@
   "IFilterComp": {
     "meta": {},
     "type": {
-      "getGui()": "HTMLElement",
-      "destroy?()": "void",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void",
-      "init?(params: IFilterParams)": "AgPromise<void> | void",
       "isFilterActive()": "boolean",
       "doesFilterPass(params: IDoesFilterPassParams)": "boolean",
       "getModel()": "any",
@@ -6524,13 +6520,13 @@
       "onNewRowsLoaded?()": "void",
       "onAnyFilterChanged?()": "void",
       "getFrameworkComponentInstance?()": "any",
-      "getModelAsString?(model: any)": "string"
+      "getModelAsString?(model: any)": "string",
+      "getGui()": "HTMLElement",
+      "destroy?()": "void",
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void",
+      "init?(params: IFilterParams)": "AgPromise<void> | void"
     },
     "docs": {
-      "getGui()": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
-      "destroy?()": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "init?(params: IFilterParams)": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
       "isFilterActive()": "/** This is used to let the grid know if the filter is active or not */",
       "doesFilterPass(params: IDoesFilterPassParams)": "/** The grid will ask each active filter, in turn, whether each row in the grid passes. If any\n * filter fails, then the row will be excluded from the final set. The method is provided a\n * params object with attributes node (the rodNode the grid creates that wraps the data) and data\n * (the data object that you provided to the grid for that row). */",
       "getModel()": "/** Gets the filter state for storing */",
@@ -6538,7 +6534,11 @@
       "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
       "onAnyFilterChanged?()": "/** Called whenever any filter is changed. */",
       "getFrameworkComponentInstance?()": "/** If using React or Angular 2, returns the underlying component instance, so you can call methods\n * on it if you want. */",
-      "getModelAsString?(model: any)": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */"
+      "getModelAsString?(model: any)": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */",
+      "getGui()": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
+      "destroy?()": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
+      "init?(params: IFilterParams)": "/** The init(params) method is called on the component once. See below for details on the parameters. */"
     }
   },
   "IDoesFilterPassParams": {
@@ -6628,6 +6628,10 @@
   "IInfiniteRowModel": {
     "meta": {},
     "type": {
+      "setDatasource(datasource: IDatasource | undefined)": "void",
+      "refreshCache()": "void",
+      "purgeCache()": "void",
+      "setRowCount(rowCount: number, maxRowFound?: boolean)": "void",
       "getRow(index: number)": "RowNode | undefined",
       "getRowNode(id: string)": "RowNode | undefined",
       "getRowCount()": "number",
@@ -6643,11 +6647,7 @@
       "getType()": "string",
       "isLastRowIndexKnown()": "boolean",
       "ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number)": "boolean",
-      "start()": "void",
-      "setDatasource(datasource: IDatasource | undefined)": "void",
-      "refreshCache()": "void",
-      "purgeCache()": "void",
-      "setRowCount(rowCount: number, maxRowFound?: boolean)": "void"
+      "start()": "void"
     },
     "docs": {
       "getRow(index: number)": "/** Returns the rowNode at the given index. */",
@@ -6691,22 +6691,22 @@
   "IPopupComponent": {
     "meta": { "typeParams": ["T"] },
     "type": {
+      "isPopup?()": "boolean",
+      "focusIn?()": "void",
+      "focusOut?()": "void",
       "getGui()": "HTMLElement",
       "destroy?()": "void",
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void",
-      "init?(params: T)": "AgPromise<void> | void",
-      "isPopup?()": "boolean",
-      "focusIn?()": "void",
-      "focusOut?()": "void"
+      "init?(params: T)": "AgPromise<void> | void"
     },
     "docs": {
+      "isPopup?()": "/** Gets called once after initialised. If you return true, the component will appear in a popup, and it will be\n * constrained to the boundaries of the popupParent. This is great if you want to, for example, provide you own\n * custom dropdown list for selection. Default is false (ie if you don't provide the method). */",
+      "focusIn?()": "/** Called when focus is within the component */",
+      "focusOut?()": "/** Called when focus is leaving the component */",
       "getGui()": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
       "destroy?()": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "init?(params: T)": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
-      "isPopup?()": "/** Gets called once after initialised. If you return true, the component will appear in a popup, and it will be\n * constrained to the boundaries of the popupParent. This is great if you want to, for example, provide you own\n * custom dropdown list for selection. Default is false (ie if you don't provide the method). */",
-      "focusIn?()": "/** Called when focus is within the component */",
-      "focusOut?()": "/** Called when focus is leaving the component */"
+      "init?(params: T)": "/** The init(params) method is called on the component once. See below for details on the parameters. */"
     }
   },
   "IRangeService": {
@@ -6807,6 +6807,10 @@
   "IRichCellEditorParams": {
     "meta": {},
     "type": {
+      "values": "CellValue[]",
+      "cellHeight": "number",
+      "cellRenderer": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
+      "searchDebounceDelay?": "number",
       "value": "any",
       "keyPress": "number | null",
       "charPress": "string | null",
@@ -6824,11 +6828,7 @@
       "stopEditing": "(suppressNavigateAfterEdit?: boolean) => void",
       "eGridCell": "HTMLElement",
       "parseValue": "(value: any) => any",
-      "formatValue": "(value: any) => any",
-      "values": "CellValue[]",
-      "cellHeight": "number",
-      "cellRenderer": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
-      "searchDebounceDelay?": "number"
+      "formatValue": "(value: any) => any"
     },
     "docs": {
       "value": "/** Current value of the cell */",
@@ -6893,8 +6893,6 @@
   "IRowNodeBlock": {
     "meta": {},
     "type": {
-      "addEventListener(eventType: string, listener: EventListener, async?: boolean, options?: AddEventListenerOptions)": "void",
-      "removeEventListener(eventType: string, listener: EventListener, async?: boolean, options?: AddEventListenerOptions)": "void",
       "getDisplayIndexStart()": "number",
       "getDisplayIndexEnd()": "number",
       "getLastAccessed()": "number",
@@ -6903,7 +6901,9 @@
       "getBlockNumber()": "number",
       "forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence, rowCount: number)": "void",
       "forEachNodeShallow(callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence, rowCount: number)": "void",
-      "load()": "void"
+      "load()": "void",
+      "addEventListener(eventType: string, listener: EventListener, async?: boolean, options?: AddEventListenerOptions)": "void",
+      "removeEventListener(eventType: string, listener: EventListener, async?: boolean, options?: AddEventListenerOptions)": "void"
     }
   },
   "StageExecuteParams": {
@@ -6958,6 +6958,13 @@
   "IServerSideRowModel": {
     "meta": {},
     "type": {
+      "refreshStore(params: RefreshStoreParams)": "void",
+      "onRowHeightChanged()": "void",
+      "getStoreState()": "ServerSideStoreState[]",
+      "retryLoads()": "void",
+      "expandAll(value: boolean)": "void",
+      "setDatasource(datasource: IServerSideDatasource)": "void",
+      "forEachNodeAfterFilterAndSort(callback: (node: RowNode, index: number) => void)": "void",
       "getRow(index: number)": "RowNode | undefined",
       "getRowNode(id: string)": "RowNode | undefined",
       "getRowCount()": "number",
@@ -6973,14 +6980,7 @@
       "getType()": "string",
       "isLastRowIndexKnown()": "boolean",
       "ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number)": "boolean",
-      "start()": "void",
-      "refreshStore(params: RefreshStoreParams)": "void",
-      "onRowHeightChanged()": "void",
-      "getStoreState()": "ServerSideStoreState[]",
-      "retryLoads()": "void",
-      "expandAll(value: boolean)": "void",
-      "setDatasource(datasource: IServerSideDatasource)": "void",
-      "forEachNodeAfterFilterAndSort(callback: (node: RowNode, index: number) => void)": "void"
+      "start()": "void"
     },
     "docs": {
       "getRow(index: number)": "/** Returns the rowNode at the given index. */",
@@ -7070,22 +7070,6 @@
   "ISetFilterParams": {
     "meta": {},
     "type": {
-      "api": "GridApi",
-      "column": "Column",
-      "colDef": "ColDef",
-      "rowModel": "IRowModel",
-      "filterChangedCallback": "(additionalEventAttributes?: any) => void",
-      "filterModifiedCallback": "() => void",
-      "valueGetter": "(rowNode: RowNode) => any",
-      "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
-      "context": "any",
-      "clearButton?": "boolean",
-      "resetButton?": "boolean",
-      "applyButton?": "boolean",
-      "buttons?": "FilterButtonType[]",
-      "closeOnApply?": "boolean",
-      "newRowsAction?": "string",
-      "debounceMs?": "number",
       "suppressRemoveEntries?": "boolean",
       "values?": "SetFilterValues",
       "refreshValuesOnOpen?": "boolean",
@@ -7103,18 +7087,34 @@
       "selectAllOnMiniFilter?": "boolean",
       "syncValuesLikeExcel?": "boolean",
       "showTooltips?": "boolean",
-      "excelMode?": "'mac' | 'windows'"
+      "excelMode?": "'mac' | 'windows'",
+      "clearButton?": "boolean",
+      "resetButton?": "boolean",
+      "applyButton?": "boolean",
+      "buttons?": "FilterButtonType[]",
+      "closeOnApply?": "boolean",
+      "newRowsAction?": "string",
+      "debounceMs?": "number",
+      "api": "GridApi",
+      "column": "Column",
+      "colDef": "ColDef",
+      "rowModel": "IRowModel",
+      "filterChangedCallback": "(additionalEventAttributes?: any) => void",
+      "filterModifiedCallback": "() => void",
+      "valueGetter": "(rowNode: RowNode) => any",
+      "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
+      "context": "any"
     },
     "docs": {
-      "context": "/** The context as provided on `gridOptions.context` */",
+      "suppressRemoveEntries?": "/** @deprecated\n */",
+      "suppressSyncValuesAfterDataChange?": "/** @deprecated\n */",
+      "selectAllOnMiniFilter?": "/** @deprecated\n */",
+      "syncValuesLikeExcel?": "/** @deprecated\n */",
       "clearButton?": "/** @deprecated\n */",
       "resetButton?": "/** @deprecated\n */",
       "applyButton?": "/** @deprecated\n */",
       "newRowsAction?": "/** @deprecated\n */",
-      "suppressRemoveEntries?": "/** @deprecated\n */",
-      "suppressSyncValuesAfterDataChange?": "/** @deprecated\n */",
-      "selectAllOnMiniFilter?": "/** @deprecated\n */",
-      "syncValuesLikeExcel?": "/** @deprecated\n */"
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "ISideBar": {
@@ -7134,6 +7134,7 @@
   "ISparklineCellRendererParams": {
     "meta": {},
     "type": {
+      "sparklineOptions?": "SparklineOptions",
       "fullWidth?": "boolean",
       "pinned?": "string | null",
       "value": "any",
@@ -7153,8 +7154,7 @@
       "setValue?": "(value: any) => void",
       "formatValue?": "(value: any) => any",
       "refreshCell?": "() => void",
-      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string) => void",
-      "sparklineOptions?": "SparklineOptions"
+      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string) => void"
     },
     "docs": {
       "context": "/** The context as provided on `gridOptions.context` */",
@@ -7180,51 +7180,51 @@
   "LineSparklineOptions": {
     "meta": {},
     "type": {
+      "type?": "'line'",
+      "line?": "SparklineLine",
+      "marker?": "SparklineMarker",
       "data?": "number[]",
       "width?": "number",
       "height?": "number",
       "title?": "string",
       "padding?": "string",
       "axis?": "SparklineAxisOptions",
-      "highlightStyle?": "HighlightStyle",
-      "type?": "'line'",
-      "line?": "SparklineLine",
-      "marker?": "SparklineMarker"
+      "highlightStyle?": "HighlightStyle"
     }
   },
   "AreaSparklineOptions": {
     "meta": {},
     "type": {
+      "type?": "'area'",
+      "fill?": "string",
+      "line?": "SparklineLine",
+      "marker?": "SparklineMarker",
       "data?": "number[]",
       "width?": "number",
       "height?": "number",
       "title?": "string",
       "padding?": "string",
       "axis?": "SparklineAxisOptions",
-      "highlightStyle?": "HighlightStyle",
-      "type?": "'area'",
-      "fill?": "string",
-      "line?": "SparklineLine",
-      "marker?": "SparklineMarker"
+      "highlightStyle?": "HighlightStyle"
     }
   },
   "ColumnSparklineOptions": {
     "meta": {},
     "type": {
-      "data?": "number[]",
-      "width?": "number",
-      "height?": "number",
-      "title?": "string",
-      "padding?": "string",
-      "axis?": "SparklineAxisOptions",
-      "highlightStyle?": "HighlightStyle",
       "type?": "'column'",
       "fill?": "string",
       "stroke?": "string",
       "strokeWidth?": "number",
       "paddingInner?": "number",
       "paddingOuter?": "number",
-      "formatter?": "SparklineColumnFormatter"
+      "formatter?": "SparklineColumnFormatter",
+      "data?": "number[]",
+      "width?": "number",
+      "height?": "number",
+      "title?": "string",
+      "padding?": "string",
+      "axis?": "SparklineAxisOptions",
+      "highlightStyle?": "HighlightStyle"
     }
   },
   "SparklineAxisOptions": {
@@ -7334,18 +7334,18 @@
   "IStatusPanelComp": {
     "meta": {},
     "type": {
+      "getFrameworkComponentInstance?()": "any",
       "getGui()": "HTMLElement",
       "destroy?()": "void",
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void",
-      "init?(params: IStatusPanelParams)": "AgPromise<void> | void",
-      "getFrameworkComponentInstance?()": "any"
+      "init?(params: IStatusPanelParams)": "AgPromise<void> | void"
     },
     "docs": {
+      "getFrameworkComponentInstance?()": "/** If using a framework, returns the underlying component instance, so you can call methods\n * on it if you want. */",
       "getGui()": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
       "destroy?()": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "init?(params: IStatusPanelParams)": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
-      "getFrameworkComponentInstance?()": "/** If using a framework, returns the underlying component instance, so you can call methods\n * on it if you want. */"
+      "init?(params: IStatusPanelParams)": "/** The init(params) method is called on the component once. See below for details on the parameters. */"
     }
   },
   "IToolPanelParams": {
@@ -7356,11 +7356,11 @@
   "IToolPanelComp": {
     "meta": {},
     "type": {
+      "refresh()": "void",
       "getGui()": "HTMLElement",
       "destroy?()": "void",
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void",
-      "init?(params: IToolPanelParams)": "AgPromise<void> | void",
-      "refresh()": "void"
+      "init?(params: IToolPanelParams)": "AgPromise<void> | void"
     },
     "docs": {
       "getGui()": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
@@ -7372,8 +7372,6 @@
   "ToolPanelColumnCompParams": {
     "meta": {},
     "type": {
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
       "suppressRowGroups": "boolean",
       "suppressValues": "boolean",
       "suppressPivots": "boolean",
@@ -7382,7 +7380,9 @@
       "suppressColumnSelectAll": "boolean",
       "suppressColumnExpandAll": "boolean",
       "contractColumnSelection": "boolean",
-      "suppressSyncLayoutWithGrid": "boolean"
+      "suppressSyncLayoutWithGrid": "boolean",
+      "api": "GridApi",
+      "columnApi": "ColumnApi"
     }
   },
   "IPrimaryColsPanel": {
@@ -7465,6 +7465,16 @@
   "IDetailCellRendererParams": {
     "meta": {},
     "type": {
+      "detailGridOptions": "GridOptions",
+      "getDetailRowData": "GetDetailRowData",
+      "refreshStrategy": "'rows' | 'everything' | 'nothing'",
+      "agGridReact": "any",
+      "frameworkComponentWrapper": "any",
+      "$compile": "any",
+      "pinned": "string",
+      "template": "string | TemplateFunc",
+      "autoHeight": "boolean",
+      "suppressRefresh": "boolean",
       "fullWidth?": "boolean",
       "pinned?": "string | null",
       "value": "any",
@@ -7484,23 +7494,13 @@
       "setValue?": "(value: any) => void",
       "formatValue?": "(value: any) => any",
       "refreshCell?": "() => void",
-      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string) => void",
-      "detailGridOptions": "GridOptions",
-      "getDetailRowData": "GetDetailRowData",
-      "refreshStrategy": "'rows' | 'everything' | 'nothing'",
-      "agGridReact": "any",
-      "frameworkComponentWrapper": "any",
-      "$compile": "any",
-      "pinned": "string",
-      "template": "string | TemplateFunc",
-      "autoHeight": "boolean",
-      "suppressRefresh": "boolean"
+      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string) => void"
     },
     "docs": {
-      "context": "/** The context as provided on `gridOptions.context` */",
-      "registerRowDragger": "/** registerRowDragger: Function\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n */",
       "autoHeight": "/** @deprecated\n */",
-      "suppressRefresh": "/** @deprecated\n */"
+      "suppressRefresh": "/** @deprecated\n */",
+      "context": "/** The context as provided on `gridOptions.context` */",
+      "registerRowDragger": "/** registerRowDragger: Function\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n */"
     }
   },
   "GetDetailRowData": {
@@ -7675,6 +7675,9 @@
   "ILargeTextEditorParams": {
     "meta": {},
     "type": {
+      "maxLength": "number",
+      "rows": "number",
+      "cols": "number",
       "value": "any",
       "keyPress": "number | null",
       "charPress": "string | null",
@@ -7692,10 +7695,7 @@
       "stopEditing": "(suppressNavigateAfterEdit?: boolean) => void",
       "eGridCell": "HTMLElement",
       "parseValue": "(value: any) => any",
-      "formatValue": "(value: any) => any",
-      "maxLength": "number",
-      "rows": "number",
-      "cols": "number"
+      "formatValue": "(value: any) => any"
     },
     "docs": {
       "value": "/** Current value of the cell */",
@@ -7719,6 +7719,7 @@
   "ISelectCellEditorParams": {
     "meta": {},
     "type": {
+      "values": "any[]",
       "value": "any",
       "keyPress": "number | null",
       "charPress": "string | null",
@@ -7736,8 +7737,7 @@
       "stopEditing": "(suppressNavigateAfterEdit?: boolean) => void",
       "eGridCell": "HTMLElement",
       "parseValue": "(value: any) => any",
-      "formatValue": "(value: any) => any",
-      "values": "any[]"
+      "formatValue": "(value: any) => any"
     },
     "docs": {
       "value": "/** Current value of the cell */",
@@ -7763,6 +7763,7 @@
       "doc": "/** useFormatter: used when the cell value needs formatting prior to editing, such as when using reference data and you\n *                want to display text rather than code. */"
     },
     "type": {
+      "useFormatter": "boolean",
       "value": "any",
       "keyPress": "number | null",
       "charPress": "string | null",
@@ -7780,8 +7781,7 @@
       "stopEditing": "(suppressNavigateAfterEdit?: boolean) => void",
       "eGridCell": "HTMLElement",
       "parseValue": "(value: any) => any",
-      "formatValue": "(value: any) => any",
-      "useFormatter": "boolean"
+      "formatValue": "(value: any) => any"
     },
     "docs": {
       "value": "/** Current value of the cell */",
@@ -7816,6 +7816,20 @@
   "GroupCellRendererParams": {
     "meta": {},
     "type": {
+      "pinned": "string",
+      "fullWidth": "boolean",
+      "suppressPadding": "boolean",
+      "suppressDoubleClickExpand": "boolean",
+      "suppressEnterExpand": "boolean",
+      "footerValueGetter": "any",
+      "suppressCount": "boolean",
+      "checkbox": "any",
+      "rowDrag?": "boolean",
+      "innerRenderer?": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
+      "innerRendererFramework?": "any",
+      "innerRendererParams?": "any",
+      "scope": "any",
+      "padding": "number",
       "fullWidth?": "boolean",
       "pinned?": "string | null",
       "value": "any",
@@ -7835,26 +7849,12 @@
       "setValue?": "(value: any) => void",
       "formatValue?": "(value: any) => any",
       "refreshCell?": "() => void",
-      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string) => void",
-      "pinned": "string",
-      "fullWidth": "boolean",
-      "suppressPadding": "boolean",
-      "suppressDoubleClickExpand": "boolean",
-      "suppressEnterExpand": "boolean",
-      "footerValueGetter": "any",
-      "suppressCount": "boolean",
-      "checkbox": "any",
-      "rowDrag?": "boolean",
-      "innerRenderer?": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
-      "innerRendererFramework?": "any",
-      "innerRendererParams?": "any",
-      "scope": "any",
-      "padding": "number"
+      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string) => void"
     },
     "docs": {
+      "padding": "/** @deprecated\n */",
       "context": "/** The context as provided on `gridOptions.context` */",
-      "registerRowDragger": "/** registerRowDragger: Function\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n */",
-      "padding": "/** @deprecated\n */"
+      "registerRowDragger": "/** registerRowDragger: Function\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n */"
     }
   },
   "ICellRendererParams": {
@@ -7908,18 +7908,18 @@
   "ICellRendererComp": {
     "meta": {},
     "type": {
+      "refresh(params: ICellRendererParams)": "boolean",
       "getGui()": "HTMLElement",
       "destroy?()": "void",
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void",
-      "init?(params: ICellRendererParams)": "AgPromise<void> | void",
-      "refresh(params: ICellRendererParams)": "boolean"
+      "init?(params: ICellRendererParams)": "AgPromise<void> | void"
     },
     "docs": {
+      "refresh(params: ICellRendererParams)": "/** Get the cell to refresh. Return true if successful. Return false if not (or you don't have refresh logic),\n * then the grid will refresh the cell for you. */",
       "getGui()": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
       "destroy?()": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "init?(params: ICellRendererParams)": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
-      "refresh(params: ICellRendererParams)": "/** Get the cell to refresh. Return true if successful. Return false if not (or you don't have refresh logic),\n * then the grid will refresh the cell for you. */"
+      "init?(params: ICellRendererParams)": "/** The init(params) method is called on the component once. See below for details on the parameters. */"
     }
   },
   "ICellRendererFunc": {
@@ -7991,22 +7991,22 @@
   "IDateComp": {
     "meta": {},
     "type": {
-      "getDate()": "Date | null",
-      "setDate(date: Date | null)": "void",
-      "setInputPlaceholder?(placeholder: string)": "void",
-      "setInputAriaLabel?(placeholder: string)": "void",
       "getGui()": "HTMLElement",
       "destroy?()": "void",
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void",
-      "init?(params: IDateParams)": "AgPromise<void> | void"
+      "init?(params: IDateParams)": "AgPromise<void> | void",
+      "getDate()": "Date | null",
+      "setDate(date: Date | null)": "void",
+      "setInputPlaceholder?(placeholder: string)": "void",
+      "setInputAriaLabel?(placeholder: string)": "void"
     },
     "docs": {
-      "getDate()": "/** Returns the current date represented by this editor */",
-      "setDate(date: Date | null)": "/** Sets the date represented by this component */",
       "getGui()": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
       "destroy?()": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "init?(params: IDateParams)": "/** The init(params) method is called on the component once. See below for details on the parameters. */"
+      "init?(params: IDateParams)": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
+      "getDate()": "/** Returns the current date represented by this editor */",
+      "setDate(date: Date | null)": "/** Sets the date represented by this component */"
     }
   },
   "PositionableOptions": {
@@ -8136,11 +8136,11 @@
   "IRowDragItem": {
     "meta": {},
     "type": {
+      "defaultTextValue": "string",
       "rowNode?": "RowNode",
       "rowNodes?": "RowNode[]",
       "columns?": "Column[]",
-      "visibleState?": "{ [key: string]: boolean; }",
-      "defaultTextValue": "string"
+      "visibleState?": "{ [key: string]: boolean; }"
     },
     "docs": {
       "rowNode?": "/** When dragging a row, this contains the row node being dragged\n * When dragging multiple rows, this contains the row that started the drag. */",
@@ -8194,7 +8194,7 @@
   },
   "LoadCompleteEvent": {
     "meta": {},
-    "type": { "type": "string", "success": "boolean", "block": "RowNodeBlock" },
+    "type": { "success": "boolean", "block": "RowNodeBlock", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
   "LoadSuccessParams": {
@@ -8277,12 +8277,12 @@
   "IInputField": {
     "meta": {},
     "type": {
+      "value?": "any",
+      "width?": "number",
       "label?": "HTMLElement | string",
       "labelWidth?": "number | 'flex'",
       "labelSeparator?": "string",
-      "labelAlignment?": "LabelAlignment",
-      "value?": "any",
-      "width?": "number"
+      "labelAlignment?": "LabelAlignment"
     }
   },
   "LabelAlignment": {
@@ -8300,22 +8300,33 @@
   },
   "ChangeEvent": {
     "meta": {},
-    "type": { "type": "string", "selected": "boolean" },
+    "type": { "selected": "boolean", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
   "ColorPickerConfig": {
     "meta": {},
     "type": {
+      "color": "string",
       "label?": "HTMLElement | string",
       "labelWidth?": "number | 'flex'",
       "labelSeparator?": "string",
-      "labelAlignment?": "LabelAlignment",
-      "color": "string"
+      "labelAlignment?": "LabelAlignment"
     }
   },
   "DialogOptions": {
     "meta": {},
     "type": {
+      "eWrapper?": "HTMLElement",
+      "modal?": "boolean",
+      "movable?": "boolean",
+      "alwaysOnTop?": "boolean",
+      "maximizable?": "boolean",
+      "component?": "Component",
+      "hideTitleBar?": "boolean | null",
+      "closable?": "boolean | null",
+      "resizable?": "boolean | ResizableStructure",
+      "title?": "string | null",
+      "cssIdentifier?": "string | null",
       "popup?": "boolean",
       "minWidth?": "number | null",
       "width?": "number | string | null",
@@ -8325,18 +8336,7 @@
       "calculateTopBuffer?": "() => number",
       "forcePopupParentAsOffsetParent?": "boolean",
       "x?": "number | null",
-      "y?": "number | null",
-      "component?": "Component",
-      "hideTitleBar?": "boolean | null",
-      "closable?": "boolean | null",
-      "resizable?": "boolean | ResizableStructure",
-      "title?": "string | null",
-      "cssIdentifier?": "string | null",
-      "eWrapper?": "HTMLElement",
-      "modal?": "boolean",
-      "movable?": "boolean",
-      "alwaysOnTop?": "boolean",
-      "maximizable?": "boolean"
+      "y?": "number | null"
     },
     "docs": {
       "forcePopupParentAsOffsetParent?": "/** Used for when a popup needs to be resized by an element within itself\n * In that case, the feature will configured as `popup=false` but the offsetParent\n * needs to be the popupParent. */"
@@ -8370,27 +8370,27 @@
   "IInputRange": {
     "meta": {},
     "type": {
+      "min?": "number",
+      "max?": "number",
+      "step?": "number",
+      "value?": "any",
+      "width?": "number",
       "label?": "HTMLElement | string",
       "labelWidth?": "number | 'flex'",
       "labelSeparator?": "string",
-      "labelAlignment?": "LabelAlignment",
-      "value?": "any",
-      "width?": "number",
-      "min?": "number",
-      "max?": "number",
-      "step?": "number"
+      "labelAlignment?": "LabelAlignment"
     }
   },
   "ITextInputField": {
     "meta": {},
     "type": {
+      "allowedCharPattern?": "string",
+      "value?": "any",
+      "width?": "number",
       "label?": "HTMLElement | string",
       "labelWidth?": "number | 'flex'",
       "labelSeparator?": "string",
-      "labelAlignment?": "LabelAlignment",
-      "value?": "any",
-      "width?": "number",
-      "allowedCharPattern?": "string"
+      "labelAlignment?": "LabelAlignment"
     }
   },
   "ListOption": {
@@ -8400,6 +8400,12 @@
   "PanelOptions": {
     "meta": {},
     "type": {
+      "component?": "Component",
+      "hideTitleBar?": "boolean | null",
+      "closable?": "boolean | null",
+      "resizable?": "boolean | ResizableStructure",
+      "title?": "string | null",
+      "cssIdentifier?": "string | null",
       "popup?": "boolean",
       "minWidth?": "number | null",
       "width?": "number | string | null",
@@ -8409,13 +8415,7 @@
       "calculateTopBuffer?": "() => number",
       "forcePopupParentAsOffsetParent?": "boolean",
       "x?": "number | null",
-      "y?": "number | null",
-      "component?": "Component",
-      "hideTitleBar?": "boolean | null",
-      "closable?": "boolean | null",
-      "resizable?": "boolean | ResizableStructure",
-      "title?": "string | null",
-      "cssIdentifier?": "string | null"
+      "y?": "number | null"
     },
     "docs": {
       "forcePopupParentAsOffsetParent?": "/** Used for when a popup needs to be resized by an element within itself\n * In that case, the feature will configured as `popup=false` but the offsetParent\n * needs to be the popupParent. */"
@@ -8423,7 +8423,7 @@
   },
   "VisibleChangedEvent": {
     "meta": {},
-    "type": { "type": "string", "visible": "boolean" },
+    "type": { "visible": "boolean", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
   "ManagedFocusCallbacks": {
@@ -8506,15 +8506,15 @@
   },
   "TapEvent": {
     "meta": {},
-    "type": { "type": "string", "touchStart": "Touch" },
+    "type": { "touchStart": "Touch", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
   "LongTapEvent": {
     "meta": {},
     "type": {
-      "type": "string",
       "touchStart": "Touch",
-      "touchEvent": "TouchEvent"
+      "touchEvent": "TouchEvent",
+      "type": "string"
     },
     "docs": { "type": "/** Event identifier */" }
   },

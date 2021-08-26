@@ -5,15 +5,64 @@ import React, { useState } from 'react';
 import styles from './ApiDocumentation.module.scss';
 import { ApiProps, Config, DocEntryMap, FunctionCode, ICallSignature, IEvent, ObjectCode, PropertyCall, PropertyType, SectionProps, InterfaceEntry } from './ApiDocumentation.types';
 import Code from './Code';
-import { extractInterfaces, writeAllInterfaces } from './documentation-helpers';
+import { extractInterfaces, writeAllInterfaces, removeJsDocStars, sortAndFilterProperties } from './documentation-helpers';
 import { useJsonFileNodes } from './use-json-file-nodes';
+
+
+/**
+ * This generates tabulated interface documentation based on information in JSON files.
+ */
+export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework, source, names = "", config = {} }): any => {
+    const nodes = useJsonFileNodes();
+    let codeSrcProvided = [interfacename];
+    let namesArr = [];
+
+    if (names && names.length) {
+        namesArr = JSON.parse(names);
+    }
+
+    const interfaceLookup = getJsonFromFile(nodes, undefined, 'grid-api/interfaces.AUTO.json');
+    const codeLookup = getJsonFromFile(nodes, undefined, 'grid-api/doc-interfaces.AUTO.json');
+
+    const lookups = { codeLookup: codeLookup[interfacename], interfaces: interfaceLookup };
+    config = { ...config, lookups, codeSrcProvided, hideHeader: true }
+
+    const li = interfaceLookup[interfacename];
+
+    let props = {};
+    const overrides = source ? getJsonFromFile(nodes, undefined, source) : {};
+
+    const typeProps = Object.entries(li.type).map(([k, v]) => [k.split(/\[^$\w\]/)[0], v]);
+
+    sortAndFilterProperties(typeProps, framework).forEach(([k, v]) => {
+        if (namesArr.length === 0 || namesArr.includes(k)) {
+            props[k] = { description: removeJsDocStars(li.docs[k]) || v, }
+        }
+    })
+
+    const interfaceOverrides = overrides[interfacename] || {};
+    let properties: DocEntryMap = {
+        [interfacename]: {
+            ...{ ...props, ...interfaceOverrides },
+            "meta": {
+                "displayName": interfacename,
+                "description": `Properties available on the \`${interfacename}\` interface.`,
+                ...interfaceOverrides.meta
+            }
+        }
+    }
+
+    return Object.entries(properties)
+        .map(([key, value]) => <Section key={key} framework={framework} title={key} properties={value} config={config} />);
+};
+
 
 /**
  * This generates tabulated API documentation based on information in JSON files. This way it is possible to show
  * information about different parts of an API in multiple places across the website while pulling the information
  * from one source of truth, so we only have to update one file when the documentation needs to change.
  */
-export const ApiDocumentation: React.FC<ApiProps> = ({ pageName, framework, source, sources, section, names = "", config = {} }): any => {
+export const ApiDocumentation: React.FC<ApiProps> = ({ pageName, framework, source, sources, section, names = "", config = {} as Config }): any => {
     const nodes = useJsonFileNodes();
 
     if (source) {
@@ -26,6 +75,8 @@ export const ApiDocumentation: React.FC<ApiProps> = ({ pageName, framework, sour
     let namesArr = [];
     if (names && names.length) {
         namesArr = JSON.parse(names);
+        // Hide more links when properties included by name
+        config = { ...config, hideMore: true };
     }
 
     const propertiesFromFiles = sources.map(s => getJsonFromFile(nodes, pageName, s));
@@ -33,7 +84,7 @@ export const ApiDocumentation: React.FC<ApiProps> = ({ pageName, framework, sour
     const configs = propertiesFromFiles.map(p => p['_config_']);
     propertiesFromFiles.forEach(p => delete p['_config_']);
 
-    let codeLookup = {};    
+    let codeLookup = {};
     let codeSrcProvided = [];
     configs.forEach(c => {
         if (c == undefined) {
@@ -96,7 +147,7 @@ export const ApiDocumentation: React.FC<ApiProps> = ({ pageName, framework, sour
 };
 
 
-const Section: React.FC<SectionProps> = ({ framework, title, properties, config = {}, breadcrumbs = {}, names = [] }) : any => {
+const Section: React.FC<SectionProps> = ({ framework, title, properties, config = {} as Config, breadcrumbs = {}, names = [] }): any => {
     const { meta } = properties;
     const displayName = (meta && meta.displayName) || title;
     if (meta && meta.isEvent) {
@@ -118,10 +169,10 @@ const Section: React.FC<SectionProps> = ({ framework, title, properties, config 
         // We use a plugin (gatsby-remark-autolink-headers) to insert links for all the headings in Markdown
         // We manually add the element here ourselves to match
         header = <>
-            <HeaderTag id={`reference-${id}`} style={{ position: 'relative' }}>
+            {!config.hideHeader && <HeaderTag id={`reference-${id}`} style={{ position: 'relative' }}>
                 <a href={`#reference-${id}`} className="anchor before">{anchorIcon}</a>
                 {displayName}
-            </HeaderTag>
+            </HeaderTag>}
             <Breadcrumbs breadcrumbs={breadcrumbs} />
             {meta && meta.description &&
                 <p dangerouslySetInnerHTML={{ __html: convertMarkdown(meta.description, framework) }}></p>}
@@ -209,7 +260,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
 
         const { more } = definition;
 
-        if (more != null && more.url) {
+        if (more != null && more.url && !config.hideMore) {
             description += ` See <a href="${convertUrl(more.url, framework)}">${more.name}</a>.`;
         }
     } else {

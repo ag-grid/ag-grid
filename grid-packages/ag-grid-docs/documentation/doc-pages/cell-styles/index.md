@@ -16,6 +16,8 @@ Each of these approaches are presented in the following sections.
 Used to provide CSS styles directly (not using a class) to the cell. Can be either an object
 of CSS styles, or a function returning an object of CSS styles.
 
+<api-documentation source='column-properties/properties.json' section='styling' names='["cellStyle"]'></api-documentation>
+
 <snippet spaceBetweenProperties="true">
 const gridOptions = {
     columnDefs: [
@@ -47,6 +49,8 @@ const gridOptions = {
 
 Provides a class for the cells in this column. Can be a string (a class), array of strings
 (array of classes), or a function (that returns a string or an array of strings).
+
+<api-documentation source='column-properties/properties.json' section='styling' names='["cellClass"]'></api-documentation>
 
 <snippet spaceBetweenProperties="true">
 const gridOptions = {
@@ -90,6 +94,7 @@ that if evaluated to true, the class gets used. The expression can either be a J
 or a string which is treated as a shorthand for a function by the grid.
 
 
+<api-documentation source='column-properties/properties.json' section='styling' names='["cellClassRules"]'></api-documentation>
 
 The following snippet is cellClassRules using functions on a year column:
 
@@ -112,10 +117,9 @@ The following snippet is cellClassRules using functions on a year column:
 ## Cell Style, Cell Class & Cell Class Rules Params
 
 
-All cellClass cellStyle and cellClassRules functions take a params object that implements the following interface:
+All cellClass cellStyle and cellClassRules functions take a `CellClassParams`.
 
-<interface-documentation interfaces='["CellClassParams"]' ></interface-documentation>
-
+<interface-documentation interfaceName='CellClassParams' ></interface-documentation>
 
 As an alternative, you can also provide shorthands of the functions using an expression.
 The column Age in the example uses expressions. An expression is evaluated by the grid

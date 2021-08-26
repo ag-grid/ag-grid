@@ -109,10 +109,7 @@ export function getLinkedType(type, framework) {
     return formattedTypes.join(' | ');
 };
 
-export function appendInterface(name, interfaceType, framework, allLines) {
-
-    const lines = [`interface ${name} {`];
-    const properties = Object.entries(interfaceType.type);
+export function sortAndFilterProperties(properties, framework) {
     properties.sort(([p1,], [p2,]) => {
         // Push $scope to the end while maintaining original order
         if (p1 === '$scope')
@@ -121,10 +118,17 @@ export function appendInterface(name, interfaceType, framework, allLines) {
             return -1;
         return 0;
     });
-    properties
+    return properties
         // Only show AngularJS $scope property for Angular or Javascript frameworks
-        .filter(([p,]) => p !== '$scope' || (framework === 'angular' || framework === 'javascript'))
-        .forEach(([property, type]) => {
+        .filter(([p,]) => p !== '$scope' || (framework === 'angular' || framework === 'javascript'));
+}
+
+export function appendInterface(name, interfaceType, framework, allLines) {
+
+    const lines = [`interface ${name} {`];
+    const properties = Object.entries(interfaceType.type);
+
+    sortAndFilterProperties(properties, framework).forEach(([property, type]) => {
             const docs = interfaceType.docs && interfaceType.docs[property];
             if (!docs || (docs && !docs.includes('@deprecated'))) {
                 addDocLines(docs, lines);
@@ -142,6 +146,13 @@ export function addDocLines(docs, lines) {
     docs.replace('/**', '//').replace('\n */', '').split(/\n/g).forEach(s => {
         lines.push(`  ${s.replace('*/', '').replace(' *', '//')}`);
     });
+}
+
+export function removeJsDocStars(docString) {
+    if (!docString || docString.length === 0) {
+        return;
+    }
+    return docString.replace('/**', '').replace('*/', '');
 }
 
 export function appendCallSignature(name, interfaceType, framework, allLines) {

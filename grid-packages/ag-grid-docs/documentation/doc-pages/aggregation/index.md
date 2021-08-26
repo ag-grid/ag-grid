@@ -121,6 +121,8 @@ The example below shows simple aggregation using the built in functions. The fol
 It is possible to add your own custom aggregation to the grid. Custom aggregation functions can be applied directly to
 the column or registered to the grid and reference by name (similar to grid provided functions).
 
+<api-documentation source='grid-properties/properties.json' section='rowPivoting' names='["aggFuncs"]'></api-documentation>
+
 A custom aggregation function takes values to aggregate and aggregates them.
 
 Option 1 - reference the function directly with a column
@@ -158,9 +160,6 @@ const gridOptions = {
 }
 </snippet>
 
-The interface for the aggregation function is `IAggFunc` which receives the params `IAggFuncParams` as follows:
-
-<interface-documentation interfaces='["IAggFunc"]' ></interface-documentation>
  
 [[note]]
 | Javascript doesn't always represent decimal numbers correctly (e.g `0.2 + 0.1 = 0.30000000000000004`). For this

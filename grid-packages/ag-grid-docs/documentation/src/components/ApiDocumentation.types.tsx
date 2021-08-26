@@ -132,7 +132,9 @@ export interface Config {
     codeSrcProvided: string[];
     gridOpProp?: InterfaceEntry;
     codeOnly?: boolean;
-    defaultExpand?: boolean
+    defaultExpand?: boolean;
+    hideMore?: boolean;
+    hideHeader?: boolean;
 }
 export type SectionProps = {
     framework: string;

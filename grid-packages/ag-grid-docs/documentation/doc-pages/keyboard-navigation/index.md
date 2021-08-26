@@ -77,9 +77,9 @@ Provide a callback `tabToNextCell` if you want to override the <kbd>Tab</kbd> ke
 
 ### CellPosition
 
-Both functions above use `CellPosition`. This is an object that represents a cell in the grid. Its interface is as follows:
+Both functions above use `CellPosition`. This is an object that represents a cell in the grid. 
 
-<interface-documentation interfaces='["CellPosition"]' ></interface-documentation>
+<interface-documentation interfaceName='CellPosition' ></interface-documentation>
 
 The functions take a `CellPosition` for current and next cells, as well as returning a `CellPosition` object. The returned `CellPosition` will be the one the grid puts focus on next. Return the provided `nextCellPosition` to stick with the grid default behaviour. Return `null`/`undefined` to skip the navigation.
 
@@ -97,9 +97,9 @@ Provide a callback `tabToNextHeader` if you want to override the <kbd>Tab</kbd> 
 
 ### HeaderPosition
 
-Both `navigateToNextHeader` and `tabToNextHeader` use `HeaderPosition`. This is an object that represents a header in the grid. Its interface is as follows:
+Both `navigateToNextHeader` and `tabToNextHeader` use `HeaderPosition`. This is an object that represents a header in the grid.
 
-<interface-documentation interfaces='["HeaderPosition"]' ></interface-documentation>
+<interface-documentation interfaceName='HeaderPosition' ></interface-documentation>
 
 You should return the `HeaderPosition` you want in the `navigateToNextHeader` and `tabToNextHeader` functions to have it focused. Returning `null` or `undefined` in `navigateToNextHeader` will do nothing (same as focusing the current focused cell), however, doing the same thing in `tabToNextHeader` will allow the browser default behaviour for <kbd>Tab</kbd> to happen. This is useful for tabbing outside of the grid from the last cell or <kbd>Shift</kbd> tabbing out of the grid from the first cell.
 
