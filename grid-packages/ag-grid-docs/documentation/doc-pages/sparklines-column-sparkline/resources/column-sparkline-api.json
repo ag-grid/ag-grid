@@ -30,7 +30,7 @@
             "description": "The styling options for the horizontal axis line in the sparklines.",
             "type": "SparklineAxisOptions",
             "more": {
-                "name": "HighlightStyle",
+                "name": "SparklineAxisOptions",
                 "url": "/sparklines-column-sparkline/#sparklineaxisoptions"
             }
         },
@@ -75,7 +75,7 @@
             "description": "A callback function to return format styles of type ColumnFormat.",
             "more": {
                 "name": "ColumnFormat",
-                "url": "/sparklines-column-sparkline/#columnFormat"
+                "url": "/sparklines-column-sparkline/#columnformat"
             },
             "type": {
                 "meta": {
@@ -120,7 +120,7 @@
             "default": "yellow"
         },
         "strokeWidth": {
-            "description": "xxx",
+            "description": "The thickness in pixels for the stroke of the markers when hovered over.",
             "type": "number",
             "default": "0"
         }
