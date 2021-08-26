@@ -3,7 +3,13 @@ title: "Sparklines Overview"
 enterprise: true
 ---
 
-This section introduces the grid's built-in Sparklines.
+This section introduces the grid's built-in Sparklines. A Sparkline is a mini chart in a single grid cell that depicts visual representation of the data. Sparklines are highly impactful as they can provide insight into the data trend at a glance.
+
+Enabling sparklines is simple and straightforward, all that is required is the use of the built-in `agSparklineCellRenderer`. Changes in properties and data are reflected in the chart, allowing easy and quick analysis of flucuations in values.
+
+Sparklines are visually appealing and can be formatted according to your liking or branding with the available configuration options.
+
+There are currently three available sparkline types: line, area and column. Depending on the type, different visualisation to the cell value will be given.
 
 ## Enabling Sparklines
 
@@ -11,7 +17,7 @@ To enable sparklines on a particular column, add the `agSparklineCellRenderer` a
 
 <snippet>
 const gridOptions = {
-    columnDefs: [ 
+    columnDefs: [
         {
             field: 'results',
             cellRenderer: 'agSparklineCellRenderer',
@@ -20,7 +26,7 @@ const gridOptions = {
                     type: 'column'
                 }
             },
-        }, 
+        },
         // other column definitions ...
     ],
 }

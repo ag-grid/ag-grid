@@ -38,7 +38,7 @@ const gridOptions = {
 
 In the snippet above, the `sparklineOptions` provided in the `cellRendererParams` property is of type `LineSparklineOptions`.
 
-This is an example to further demonstarate how line sparklines can be configured and made more attractive by using the available options to add styles.
+This is an example to further demonstarate how line sparklines can be configured and customised to your liking or branding by using the available options to add styles.
 
 - The `sparklineOptions` object is a way to define properties that get applied to the line and every marker. In this example, the shape of every marker is set to `diamond`.
 - Refer to the [LineSparklineOptions](/sparklines-line-sparkline/#linesparklineoptions) interface for the attributes which can be customised in a line sparkline.
