@@ -225,6 +225,27 @@ and to append the units used at the end.
 
 <chart-example title='Number Axis Label Format' name='number-axis-label-format' type='generated'></chart-example>
 
+Let's take a look at another example that illustrates a common requirement of formatting numbers as currency. Note that we are using:
+- the `s` SI prefix directive to shorten big numbers by using smaller numbers in combination with units,
+  so that `3500000` becomes `3.5M` for example
+- the `~` trim option to trim all insignificant trailing zeros from the formatted value,
+  so that `3.0M` becomes `3M` for example
+- the `$` currency option so that the formatted value is prefixed by a currency symbol of the current locale
+- the `formatter` function in addition to the `format` config to convert certain SI units to currency units
+
+The last point deserves a more in-depth explanation. Because the currency units don't match the SI
+units exactly, we have to convert certain SI units to their currency counterparts.
+For example, the SI unit for thousands is `k` for kilo, `M` for `mega`, `G` for `giga` and so on.
+With currencies though it's typical to format thousands as `K`, while `M` is the same for `million` and `B` (rather than `G`) is used to denote a `billion`.
+
+So how do we replace `k` with `K` and `G` with `B`? To do that, we need to provide a `formatter` function in addition to our `format` string. The `formatter` function receives the unformatted `value`,
+as well as the `formatter` function generated from the `format` config we provided. So all we have
+to do is to format the original value using that generated formatter `params.formatter(params.value)`
+and replace the SI units with the currency ones `.replace('k', 'K').replace('G', 'B')`.
+
+
+<chart-example title='Number Axis Currency Format' name='number-axis-currency-format' type='generated'></chart-example>
+
 ### Time Label Format String
 
 For time axes, a format string can be provided, which will be used to format the dates for display as axis labels. The format string may contain the following directives, which reflect those from Python's <a href="https://strftime.org/" target="_blank">strftime</a>:
