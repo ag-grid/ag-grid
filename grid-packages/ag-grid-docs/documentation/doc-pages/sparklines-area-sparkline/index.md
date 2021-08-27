@@ -44,8 +44,8 @@ This is an example to further demonstarate how area sparklines can be configured
 - Refer to the [AreaSparklineOptions](/sparklines-area-sparkline/#areasparklineoptions) interface for the attributes which can be customised in a area sparkline.
 - The formatter callback function is used to override the default property values for individual markers based on the data they represent.
 - The formatter callback function is passed `MarkerFormatterParams` which provides information about the data associated with each Marker. This function should return an object of type `MarkerFormat`.
-- Here, when the marker is not hovered over, if the y value of the data point is less than 0, the fill is set to red, otherwise it is set to lime green.
-- When the marker is hovered over, if the y value of the data point is less than 0, the fill is set to magenta, otherwise it is set to cyan.
+- Here, when the marker is not highlighted, the marker size is set to `0`px which means it is not visible.
+- When the marker is highlighted, if the y value of the data point is less than 0, the marker size is set to `4`px, otherwise it is set to `6`px.
 - See the [MarkerFormat](/sparklines-area-sparkline/#markerformat) interface for the attributes which can be customised using this formatter.
 
 

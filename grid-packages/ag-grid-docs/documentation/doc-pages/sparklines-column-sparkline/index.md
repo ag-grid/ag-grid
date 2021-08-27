@@ -41,8 +41,8 @@ This is an example to further demonstarate how column sparklines can be configur
 - Refer to the [ColumnSparklineOptions](/sparklines-column-sparkline/#columnsparklineoptions) interface for the attributes which can be customised in a column sparkline.
 - The formatter callback function is used to override the default property values for individual columns based on the data they represent.
 - The formatter callback function is passed `ColumnFormatterParams` which provides information about the data associated with each column. This function should return an object of type `ColumnFormat`.
-- Here, when the item is not hovered over, if the y value of the item is less than 0, the fill is set to red, otherwise it is set to lime green.
-- When the item is hovered over, if the y value of the item is less than 0, the fill is set to magenta, otherwise it is set to cyan.
+- Here, when the column is not highlighted, if the y value of the item is less than 0, the fill is set to red, otherwise it is set to lime green.
+- When the column is highlighted, if the y value of the item is less than 0, the fill is set to magenta, otherwise it is set to cyan.
 - See the [ColumnFormat](/sparklines-column-sparkline/#columnformat) interface for the attributes which can be customised using this formatter.
 
 
