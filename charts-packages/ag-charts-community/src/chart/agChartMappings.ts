@@ -217,14 +217,11 @@ const seriesDefaults: any = {
 const highlightStyleDefaults = {
     highlightStyle: {
         item: {
-            fill: 'yellow',
-            stroke: undefined,
-            strokeWidth: undefined
+            fill: 'yellow'
         },
         series: {
             enabled: false,
-            dimOpacity: 0.3,
-            strokeWidth: undefined
+            dimOpacity: 0.3
         }
     }
 };
