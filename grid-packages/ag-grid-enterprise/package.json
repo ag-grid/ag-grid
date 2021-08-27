@@ -68,6 +68,7 @@
     "@ag-grid-enterprise/status-bar": "~26.0.0",
     "@ag-grid-enterprise/viewport-row-model": "~26.0.0",
     "@rollup/plugin-alias": "^2.2.0",
+    "@types/node": "12.20.20",
     "ag-grid-community": "~26.0.0",
     "gulp": "^4.0.0",
     "gulp-clean": "^0.4.0",
