@@ -7179,11 +7179,12 @@
   "BaseSparklineOptions": {
     "meta": {},
     "type": {
+      "container?": "HTMLElement",
       "data?": "number[]",
       "width?": "number",
       "height?": "number",
       "title?": "string",
-      "padding?": "string",
+      "padding?": "Padding",
       "axis?": "SparklineAxisOptions",
       "highlightStyle?": "HighlightStyle"
     }
@@ -7194,11 +7195,12 @@
       "type?": "'line'",
       "line?": "SparklineLine",
       "marker?": "SparklineMarker",
+      "container?": "HTMLElement",
       "data?": "number[]",
       "width?": "number",
       "height?": "number",
       "title?": "string",
-      "padding?": "string",
+      "padding?": "Padding",
       "axis?": "SparklineAxisOptions",
       "highlightStyle?": "HighlightStyle"
     }
@@ -7210,11 +7212,12 @@
       "fill?": "string",
       "line?": "SparklineLine",
       "marker?": "SparklineMarker",
+      "container?": "HTMLElement",
       "data?": "number[]",
       "width?": "number",
       "height?": "number",
       "title?": "string",
-      "padding?": "string",
+      "padding?": "Padding",
       "axis?": "SparklineAxisOptions",
       "highlightStyle?": "HighlightStyle"
     }
@@ -7229,13 +7232,23 @@
       "paddingInner?": "number",
       "paddingOuter?": "number",
       "formatter?": "SparklineColumnFormatter",
+      "container?": "HTMLElement",
       "data?": "number[]",
       "width?": "number",
       "height?": "number",
       "title?": "string",
-      "padding?": "string",
+      "padding?": "Padding",
       "axis?": "SparklineAxisOptions",
       "highlightStyle?": "HighlightStyle"
+    }
+  },
+  "Padding": {
+    "meta": {},
+    "type": {
+      "top?": "number",
+      "right?": "number",
+      "bottom?": "number",
+      "left?": "number"
     }
   },
   "SparklineAxisOptions": {

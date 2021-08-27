@@ -10,7 +10,8 @@ import {
     ColumnSparklineOptions,
     HighlightStyle,
     SparklineMarker,
-    SparklineLine
+    SparklineLine,
+    Padding
 } from "@ag-grid-community/core";
 
 export type AgSparklineType<T> =
@@ -65,7 +66,10 @@ function initSparkline(sparkline: ColumnSparkline, options: any) {
     setValueIfPropertyExists(sparkline, 'width', options.width, options);
     setValueIfPropertyExists(sparkline, 'height', options.height, options);
     setValueIfPropertyExists(sparkline, 'title', options.title, options);
-    setValueIfPropertyExists(sparkline, 'padding', options.padding, options);
+
+    if (options.padding) {
+        initPaddingOptions(sparkline.padding, options.padding);
+    }
 
     if (options.axis) {
         initAxisOptions(sparkline.axis, options.axis);
@@ -115,6 +119,13 @@ function setValueIfPropertyExists(target: any, property: string, value: any, opt
             console.warn(`Property ${property} does not exist on the target object.`);
         }
     }
+}
+
+function initPaddingOptions(target: Padding, options: any) {
+    setValueIfPropertyExists(target, 'top', options.top, options);
+    setValueIfPropertyExists(target, 'right', options.right, options);
+    setValueIfPropertyExists(target, 'bottom', options.bottom, options);
+    setValueIfPropertyExists(target, 'left', options.left, options);
 }
 
 function initMarkerOptions(target: SparklineMarker, options: any) {

@@ -44,7 +44,7 @@ This is an example to further demonstarate how line sparklines can be configured
 - Refer to the [LineSparklineOptions](/sparklines-line-sparkline/#linesparklineoptions) interface for the attributes which can be customised in a line sparkline.
 - The formatter callback function is used to override the default property values for individual markers based on the data they represent.
 - The formatter callback function is passed `MarkerFormatterParams` which provides information about the data associated with each Marker. This function should return an object of type `MarkerFormat`.
-- Here, when the marker is not hovered over, if the y value of the data point is less than 0, the fill and stroke are set to `green`, otherwise they are set to `skyblue`.
+- Here, when the marker is not highlighted, if the y value of the data point is less than 0, the fill and stroke are set to `green`, otherwise they are set to `skyblue`.
 - See the [MarkerFormat](/sparklines-line-sparkline/#markerformat) interface for the attributes which can be customised using this formatter.
 
 
@@ -56,6 +56,10 @@ The interfacs for the available options is as follows:
 ### LineSparklineOptions:
 
 <api-documentation source='sparklines-line-sparkline/resources/line-sparkline-api.json' section='LineSparklineOptions'></api-documentation>
+
+### Padding:
+
+<api-documentation source='sparklines-line-sparkline/resources/line-sparkline-api.json' section='Padding'></api-documentation>
 
 ### SparklineLine:
 

@@ -433,7 +433,8 @@ export {
     MarkerFormatterParams,
     MarkerFormat,
     SparklineMarker,
-    SparklineLine
+    SparklineLine,
+    Padding
 } from "./interfaces/iSparklineCellRendererParams";
 
 // modules
