@@ -74,10 +74,6 @@ export class AreaSparkline extends Sparkline {
     }
 
     protected update(): void {
-        const { seriesRect } = this;
-        this.rootGroup.translationX = seriesRect.x;
-        this.rootGroup.translationY = seriesRect.y;
-
         this.updateXScale();
         this.updateYScaleRange();
         this.updateYScaleDomain();

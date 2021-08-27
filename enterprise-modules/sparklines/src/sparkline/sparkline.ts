@@ -30,7 +30,7 @@ export class SparklineAxis extends Observable {
 export abstract class Sparkline extends Observable {
 
     readonly id: string = createId(this);
-    
+
     readonly scene: Scene;
     readonly canvasElement: HTMLCanvasElement;
     readonly rootGroup: Group;
@@ -95,7 +95,7 @@ export abstract class Sparkline extends Observable {
         scene.root = root;
         scene.container = element;
         scene.resize(this.width, this.height);
-        
+
         this.seriesRect.width = this.width;
         this.seriesRect.height = this.height;
 
@@ -103,13 +103,13 @@ export abstract class Sparkline extends Observable {
         if (Sparkline.tooltipDocuments.indexOf(document) === -1) {
             const styleElement = document.createElement('style');
             styleElement.innerHTML = defaultTooltipCss;
-        
+
             document.head.insertBefore(styleElement, document.head.querySelector('style'));
             Sparkline.tooltipDocuments.push(document);
-        
+
             this.tooltip = new SparklineTooltip(this);
             this.tooltip.addEventListener('class', () => this.tooltip.toggle());
-        
+
             Sparkline.tooltipInstances.set(document, this.tooltip);
         } else {
             this.tooltip = Sparkline.tooltipInstances.get(document)!;
@@ -159,7 +159,7 @@ export abstract class Sparkline extends Observable {
 
     private onMouseMove(event: MouseEvent) {
         const closestDatum: SeriesNodeDatum | undefined = this.pickClosestSeriesNodeDatum(event.offsetX, event.offsetY);
-        
+
         if (!closestDatum) {
             return;
         }
@@ -238,14 +238,18 @@ export abstract class Sparkline extends Observable {
             cancelAnimationFrame(this.layoutId);
         }
         this.layoutId = requestAnimationFrame(() => {
-            const { width, height, padding } = this;
+            const { width, height, padding, seriesRect, rootGroup } = this;
+
             const shrunkWidth = width - padding.left - padding.right;
             const shrunkHeight = height - padding.top - padding.bottom;
 
-            this.seriesRect.width = shrunkWidth;
-            this.seriesRect.height = shrunkHeight;
-            this.seriesRect.x = padding.left;
-            this.seriesRect.y = padding.top;
+            seriesRect.width = shrunkWidth;
+            seriesRect.height = shrunkHeight;
+            seriesRect.x = padding.left;
+            seriesRect.y = padding.top;
+
+            rootGroup.translationX = seriesRect.x;
+            rootGroup.translationY = seriesRect.y;
 
             this.update();
 
@@ -290,7 +294,7 @@ export abstract class Sparkline extends Observable {
         }
 
         const html = this.tooltip.enabled && seriesDatum.y !== undefined && this.getTooltipHtml(datum);
-        
+
         if (html) {
             this.tooltip.show(meta, html);
         }
@@ -302,7 +306,7 @@ export abstract class Sparkline extends Observable {
 
     private _onMouseMove = this.onMouseMove.bind(this);
     private _onMouseOut = this.onMouseOut.bind(this);
-    
+
     private setupDomEventListeners(chartElement: HTMLCanvasElement): void {
         chartElement.addEventListener('mousemove', this._onMouseMove);
         chartElement.addEventListener('mouseout', this._onMouseOut);

@@ -54,10 +54,6 @@ export class ColumnSparkline extends Sparkline {
     }
 
     protected update() {
-        const { seriesRect } = this;
-        this.rootGroup.translationX = seriesRect.x;
-        this.rootGroup.translationY = seriesRect.y;
-
         this.updateYScale();
         this.updateXScale();
         this.updateXAxisLine();

@@ -10,7 +10,7 @@ import { toTooltipHtml } from './sparklineTooltip';
 import { getMarkerShape } from './util';
 import { MarkerFormat, MarkerFormatterParams } from "@ag-grid-community/core";
 
-interface LineNodeDatum extends SeriesNodeDatum { 
+interface LineNodeDatum extends SeriesNodeDatum {
     readonly point: Point;
 }
 
@@ -67,10 +67,6 @@ export class LineSparkline extends Sparkline {
     }
 
     protected update(): void {
-        const { seriesRect } = this;
-        this.rootGroup.translationX = seriesRect.x;
-        this.rootGroup.translationY = seriesRect.y;
-
         this.updateXScale();
         this.updateYScaleRange();
         this.updateYScaleDomain();
@@ -174,15 +170,15 @@ export class LineSparkline extends Sparkline {
             const markerStroke = highlighted && highlightStroke !== undefined ? highlightStroke : marker.stroke;
             const markerStrokeWidth = highlighted && highlightStrokeWidth !== undefined ? highlightStrokeWidth : marker.strokeWidth;
             const markerSize = highlighted && highlightSize !== undefined ? highlightSize : marker.size;
-            
+
             let markerFormat: MarkerFormat | undefined = undefined;
 
             const { seriesDatum, point } = datum;
 
             if (markerFormatter) {
                 markerFormat = markerFormatter({
-                    datum, 
-                    xValue: seriesDatum.x, 
+                    datum,
+                    xValue: seriesDatum.x,
                     yValue: seriesDatum.y,
                     fill: markerFill,
                     stroke: markerStroke,
