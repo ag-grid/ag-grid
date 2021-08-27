@@ -696,9 +696,14 @@ export class BarSeries extends CartesianSeries {
             chart: { highlightedDatum },
             highlightedItemId,
             highlightStyle: {
-                fill,
-                stroke,
-                strokeWidth: highlightedDatumStrokeWidth,
+                fill: deprecatedFill,
+                stroke: deprecatedStroke,
+                strokeWidth: deprecatedStrokeWidth,
+                item: {
+                    fill: highlightedFill = deprecatedFill,
+                    stroke: highlightedStroke = deprecatedStroke,
+                    strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
+                },
                 series: {
                     enabled: subSeriesHighlightingEnabled,
                     strokeWidth: highlightedSubSeriesStrokeWidth
@@ -709,8 +714,8 @@ export class BarSeries extends CartesianSeries {
         this.rectSelection.each((rect, datum) => {
             const isDatumHighlighted = datum === highlightedDatum;
             const isSubSeriesHighlighted = highlightedItemId === datum.itemId;
-            const rectFill = isDatumHighlighted && fill !== undefined ? fill : datum.fill;
-            const rectStroke = isDatumHighlighted && stroke !== undefined ? stroke : datum.stroke;
+            const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : datum.fill;
+            const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : datum.stroke;
             let format: BarSeriesFormat | undefined = undefined;
 
             const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
@@ -722,8 +727,8 @@ export class BarSeries extends CartesianSeries {
             if (formatter) {
                 format = formatter({
                     datum: datum.seriesDatum,
-                    fill: rectFill,
-                    stroke: rectStroke,
+                    fill,
+                    stroke,
                     strokeWidth,
                     highlighted: isDatumHighlighted,
                     xKey,
@@ -734,8 +739,8 @@ export class BarSeries extends CartesianSeries {
             rect.y = datum.y;
             rect.width = datum.width;
             rect.height = datum.height;
-            rect.fill = format && format.fill || rectFill;
-            rect.stroke = format && format.stroke || rectStroke;
+            rect.fill = format && format.fill || fill;
+            rect.stroke = format && format.stroke || stroke;
             rect.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : strokeWidth;
             rect.fillOpacity = fillOpacity;
             rect.strokeOpacity = strokeOpacity;

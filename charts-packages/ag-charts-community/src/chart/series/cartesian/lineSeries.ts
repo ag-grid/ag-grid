@@ -360,9 +360,24 @@ export class LineSeries extends CartesianSeries {
             return;
         }
 
-        const { highlightedDatum } = this.chart;
-        const { marker, xKey, yKey, stroke, strokeWidth } = this;
-        const { fill: highlightFill, stroke: highlightStroke } = this.highlightStyle;
+        const {
+            marker, xKey, yKey, stroke: lineStroke, strokeWidth,
+            chart: { highlightedDatum },
+            highlightStyle: {
+                fill: deprecatedFill,
+                stroke: deprecatedStroke,
+                strokeWidth: deprecatedStrokeWidth,
+                item: {
+                    fill: highlightedFill = deprecatedFill,
+                    stroke: highlightedStroke = deprecatedStroke,
+                    strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
+                },
+                series: {
+                    enabled: subSeriesHighlightingEnabled,
+                    strokeWidth: highlightedSubSeriesStrokeWidth
+                }
+            }
+        } = this;
         const markerFormatter = marker.formatter;
         const markerSize = marker.size;
         const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : strokeWidth;
@@ -371,8 +386,8 @@ export class LineSeries extends CartesianSeries {
         this.nodeSelection.selectByClass(MarkerShape)
             .each((node, datum) => {
                 const highlighted = datum === highlightedDatum;
-                const markerFill = highlighted && highlightFill !== undefined ? highlightFill : marker.fill;
-                const markerStroke = highlighted && highlightStroke !== undefined ? highlightStroke : marker.stroke || stroke;
+                const fill = highlighted && highlightedFill !== undefined ? highlightedFill : marker.fill;
+                const stroke = highlighted && highlightedStroke !== undefined ? highlightedStroke : marker.stroke || lineStroke;
                 let markerFormat: CartesianSeriesMarkerFormat | undefined = undefined;
 
                 if (markerFormatter) {
@@ -380,16 +395,16 @@ export class LineSeries extends CartesianSeries {
                         datum: datum.seriesDatum,
                         xKey,
                         yKey,
-                        fill: markerFill,
-                        stroke: markerStroke,
+                        fill,
+                        stroke,
                         strokeWidth: markerStrokeWidth,
                         size: markerSize,
                         highlighted
                     });
                 }
 
-                node.fill = markerFormat && markerFormat.fill || markerFill;
-                node.stroke = markerFormat && markerFormat.stroke || markerStroke;
+                node.fill = markerFormat && markerFormat.fill || fill;
+                node.stroke = markerFormat && markerFormat.stroke || stroke;
                 node.strokeWidth = markerFormat && markerFormat.strokeWidth !== undefined
                     ? markerFormat.strokeWidth
                     : markerStrokeWidth;

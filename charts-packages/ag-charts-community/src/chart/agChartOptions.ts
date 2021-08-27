@@ -303,9 +303,23 @@ interface AgBaseSeriesOptions {
     cursor?: string;
     listeners?: { [key in string]: Function };
     highlightStyle?: {
+        /**
+         * @deprecated Use item.fill instead.
+         */
         fill?: string;
+        /**
+         * @deprecated Use item.stroke instead.
+         */
         stroke?: string;
+        /**
+         * @deprecated Use item.strokeWidth instead.
+         */
         strokeWidth?: number;
+        item?: {
+            fill?: string;
+            stroke?: string;
+            strokeWidth?: number;
+        },
         series?: {
             enabled?: boolean;
             dimOpacity?: number;

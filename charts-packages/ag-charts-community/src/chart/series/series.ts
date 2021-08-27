@@ -52,6 +52,12 @@ export interface PolarTooltipRendererParams extends TooltipRendererParams {
     readonly radiusName?: string;
 }
 
+export class SeriesItemHighlightStyle {
+    fill?: string = 'yellow';
+    stroke?: string;
+    strokeWidth?: number;
+}
+
 export class SeriesHighlightStyle {
     private static defaultDimOpacity = 0.3;
 
@@ -70,10 +76,19 @@ export class SeriesHighlightStyle {
 }
 
 export class HighlightStyle {
+    /**
+     * @deprecated Use item.fill instead.
+     */
     fill?: string = 'yellow';
+    /**
+     * @deprecated Use item.stroke instead.
+     */
     stroke?: string;
+    /**
+    * @deprecated Use item.strokeWidth instead.
+    */
     strokeWidth?: number;
-
+    readonly item = new SeriesItemHighlightStyle();
     readonly series = new SeriesHighlightStyle();
 }
 
