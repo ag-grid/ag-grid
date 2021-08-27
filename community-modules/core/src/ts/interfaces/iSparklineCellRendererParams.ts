@@ -101,7 +101,6 @@ export interface MarkerFormatterParams {
 
 export interface MarkerFormat {
     enabled?: boolean;
-    shape?: string;
     size?: number;
     fill?: string;
     stroke?: string;

@@ -10446,7 +10446,6 @@
   },
   "MarkerFormat": {
     "enabled": { "type": { "returnType": "boolean" } },
-    "shape": { "type": { "returnType": "string" } },
     "size": { "type": { "returnType": "number" } },
     "fill": { "type": { "returnType": "string" } },
     "stroke": { "type": { "returnType": "string" } },

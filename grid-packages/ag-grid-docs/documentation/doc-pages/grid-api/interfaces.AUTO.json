@@ -7304,7 +7304,6 @@
     "meta": {},
     "type": {
       "enabled?": "boolean",
-      "shape?": "string",
       "size?": "number",
       "fill?": "string",
       "stroke?": "string",
