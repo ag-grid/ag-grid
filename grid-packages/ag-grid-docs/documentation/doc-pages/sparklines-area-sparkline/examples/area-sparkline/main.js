@@ -1,7 +1,7 @@
 var gridOptions = {
     columnDefs: [
-        {field: 'country'},
-        {field: 'sport'},
+        { field: 'country' },
+        { field: 'sport' },
         {
             field: 'results',
             minWidth: 100,
@@ -9,20 +9,23 @@ var gridOptions = {
             cellRendererParams: {
                 sparklineOptions: {
                     type: 'area',
-                    fill: 'skyblue',
+                    fill: 'rgba(216, 204, 235, 0.3)',
                     line: {
-                        stroke: 'pink',
-                        strokeWidth: 2
+                        stroke: 'rgb(119,77,185)'
+                    },
+                    highlightStyle: {
+                        fill: 'rgb(143,185,77)',
                     },
                     marker: {
-                        fill: 'pink',
-                        size: 2,
-                        stroke: '',
+                        formatter: formatter,
+                    },
+                    axis: {
+                        stroke: 'rgb(204, 204, 235)'
                     }
-                }
+                },
             },
         },
-        {field: 'athlete'},
+        { field: 'athlete' },
     ],
     defaultColDef: {
         flex: 1,
@@ -30,6 +33,12 @@ var gridOptions = {
         resizable: true,
     },
 };
+
+function formatter(params) {
+    return {
+        size: params.highlighted ? params.yValue < 0 ? 4 : 6 : 0,
+    }
+}
 
 function addSparklineData(data) {
     function randomNumber(min, max) {

@@ -31,7 +31,7 @@ export abstract class AgSparkline {
                 initColumnSparkline(sparkline, options);
                 break;
             case 'area':
-                // initAreaSparkline(sparkline, options);
+                initAreaSparkline(sparkline, options);
                 break;
             case 'line':
             default:
@@ -59,9 +59,8 @@ function getSparklineInstance(type: string = 'line'): any {
     }
 }
 
-
 function initSparkline(sparkline: ColumnSparkline, options: any) {
-
+    setValueIfPropertyExists(sparkline, 'container', options.container, options);
     setValueIfPropertyExists(sparkline, 'data', options.data, options);
     setValueIfPropertyExists(sparkline, 'width', options.width, options);
     setValueIfPropertyExists(sparkline, 'height', options.height, options);
@@ -77,15 +76,6 @@ function initSparkline(sparkline: ColumnSparkline, options: any) {
     }
 }
 
-function initColumnSparkline(sparkline: ColumnSparkline, options: any) {
-    setValueIfPropertyExists(sparkline, 'fill', options.fill, options);
-    setValueIfPropertyExists(sparkline, 'stroke', options.stroke, options);
-    setValueIfPropertyExists(sparkline, 'strokeWidth', options.strokeWidth, options);
-    setValueIfPropertyExists(sparkline, 'paddingInner', options.paddingInner, options);
-    setValueIfPropertyExists(sparkline, 'paddingOuter', options.paddingOuter, options);
-    setValueIfPropertyExists(sparkline, 'formatter', options.formatter, options);
-}
-
 function initLineSparkline(sparkline: LineSparkline, options: any) {
     if (options.marker) {
         initMarkerOptions(sparkline.marker, options.marker);
@@ -94,6 +84,27 @@ function initLineSparkline(sparkline: LineSparkline, options: any) {
     if (options.line) {
         initLineOptions(sparkline.line, options.line);
     }
+}
+
+function initAreaSparkline(sparkline: AreaSparkline, options: any) {
+    setValueIfPropertyExists(sparkline, 'fill', options.fill, options);
+
+    if (options.marker) {
+        initMarkerOptions(sparkline.marker, options.marker);
+    }
+
+    if (options.line) {
+        initLineOptions(sparkline.line, options.line);
+    }
+}
+
+function initColumnSparkline(sparkline: ColumnSparkline, options: any) {
+    setValueIfPropertyExists(sparkline, 'fill', options.fill, options);
+    setValueIfPropertyExists(sparkline, 'stroke', options.stroke, options);
+    setValueIfPropertyExists(sparkline, 'strokeWidth', options.strokeWidth, options);
+    setValueIfPropertyExists(sparkline, 'paddingInner', options.paddingInner, options);
+    setValueIfPropertyExists(sparkline, 'paddingOuter', options.paddingOuter, options);
+    setValueIfPropertyExists(sparkline, 'formatter', options.formatter, options);
 }
 
 function setValueIfPropertyExists(target: any, property: string, value: any, options: any): void {
