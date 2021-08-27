@@ -7,12 +7,13 @@
     "target": "es5",
     "outDir": "ts-lint-rules/dist",
     "skipLibCheck": true,
+    "types": [], /* to prevent inclusion of node types etc, amongst others - sub modules need to specify types they require */
     "lib": [
       "es6",
       "dom"
     ]
   },
   "include": [
-    "./ts-lint-rules/src/**/*"
+    "src/**/*"
   ]
 }
