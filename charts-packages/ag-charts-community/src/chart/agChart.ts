@@ -85,16 +85,10 @@ type AgChartType<T> =
     T extends AgHierarchyChartOptions ? HierarchyChart :
     never;
 
-type AgChartOptionsType<T> =
-    T extends AgCartesianChartOptions ? AgCartesianChartOptions :
-    T extends AgPolarChartOptions ? AgPolarChartOptions :
-    T extends AgHierarchyChartOptions ? AgHierarchyChartOptions :
-    never;
-
 let firstColorIndex = 0;
 
 export abstract class AgChart {
-    static create<T extends AgChartOptions>(options: AgChartOptionsType<T>, container?: HTMLElement, data?: any[]): AgChartType<T> {
+    static create<T extends AgChartOptions>(options: T, container?: HTMLElement, data?: any[]): AgChartType<T> {
         options = Object.create(options); // avoid mutating user provided options
         if (container) {
             options.container = container;
