@@ -22,9 +22,12 @@
             "type": "string"
         },
         "padding": {
-            "description": "The padding in pixels of the sparklines.",
-            "type": "string",
-            "default": "3"
+            "description": "Configuration for the padding in pixels shown around the sparklines.",
+            "type": "Padding",
+            "more": {
+                "name": "Padding",
+                "url": "/sparklines-column-sparkline/#padding"
+            }
         },
         "line": {
             "description": "The configuration for the line.",
@@ -49,6 +52,32 @@
                 "name": "HighlightStyle",
                 "url": "/sparklines-line-sparkline/#highlightstyle"
             }
+        }
+    },
+    "Padding": {
+        "top": {
+            "default": 20,
+            "description": "The number of pixels of padding at the top of the sparkline area.",
+            "min": 0,
+            "max": 40
+        },
+        "right": {
+            "default": 20,
+            "description": "The number of pixels of padding at the right of the sparkline area.",
+            "min": 0,
+            "max": 40
+        },
+        "bottom": {
+            "default": 20,
+            "description": "The number of pixels of padding at the bottom of the sparkline area.",
+            "min": 0,
+            "max": 40
+        },
+        "left": {
+            "default": 20,
+            "description": "The number of pixels of padding at the left of the sparkline area.",
+            "min": 0,
+            "max": 40
         }
     },
     "SparklineLine": {

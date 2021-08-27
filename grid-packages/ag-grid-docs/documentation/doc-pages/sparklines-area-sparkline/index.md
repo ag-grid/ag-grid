@@ -58,6 +58,10 @@ The interfacs for the available options is as follows:
 
 <api-documentation source='sparklines-area-sparkline/resources/area-sparkline-api.json' section='AreaSparklineOptions'></api-documentation>
 
+### Padding:
+
+<api-documentation source='sparklines-area-sparkline/resources/area-sparkline-api.json' section='Padding'></api-documentation>
+
 ### SparklineAxisOptions:
 
 <api-documentation source='sparklines-area-sparkline/resources/area-sparkline-api.json' section='SparklineAxisOptions'></api-documentation>

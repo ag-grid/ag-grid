@@ -57,6 +57,10 @@ The interfacs for the available options is as follows:
 
 <api-documentation source='sparklines-line-sparkline/resources/line-sparkline-api.json' section='LineSparklineOptions'></api-documentation>
 
+### Padding:
+
+<api-documentation source='sparklines-line-sparkline/resources/line-sparkline-api.json' section='Padding'></api-documentation>
+
 ### SparklineLine:
 
 <api-documentation source='sparklines-line-sparkline/resources/line-sparkline-api.json' section='SparklineLine'></api-documentation>
