@@ -51,6 +51,7 @@
   "devDependencies": {
     "@babel/types": "7.12.7",
     "@types/jest": "^25.2.1",
+    "@types/node": "12.20.20",
     "jest": "^25.4.0",
     "ts-jest": "^25.4.0",
     "typescript": "~3.6.5"

@@ -54,6 +54,7 @@
   "devDependencies": {
     "@types/jest": "^26.0.23",
     "@babel/types": "7.12.7",
+    "@types/node": "12.20.20",
     "@types/sass": "^1.16.0",
     "autoprefixer": "^9.7.6",
     "cache-loader": "^4.1.0",

@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@ag-grid-community/core": "~26.0.0",
-    "@types/node": "12.12.22",
+    "@types/node": "12.20.20",
     "@vue/cli-plugin-typescript": "^3.11.0",
     "@vue/cli-plugin-unit-jest": "^3.11.0",
     "@vue/cli-service": "^3.11.0",
