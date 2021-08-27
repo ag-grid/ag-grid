@@ -150,15 +150,6 @@
             "description": "Set to false to make marker invisible.",
             "type": "boolean"
         },
-        "shape": {
-            "description": "The shape of the individual marker.",
-            "type": "string",
-            "options": [
-                "circle",
-                "diamond",
-                "square"
-            ]
-        },
         "size": {
             "description": "The width in pixels of the individual marker.",
             "type": "number"
