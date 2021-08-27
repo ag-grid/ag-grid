@@ -317,7 +317,7 @@ export abstract class Sparkline extends Observable {
         chartElement.removeEventListener('mouseout', this._onMouseOut);
     }
 
-    protected destroy() {
+    destroy() {
         this.tooltip.destroy();
         // remove tooltip instance
         Sparkline.tooltipInstances.delete(document);

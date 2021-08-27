@@ -6,6 +6,7 @@
     "module": "./dist/es6/main.js",
     "types": "./dist/cjs/main.d.ts",
     "scripts": {
+        "jest": "jest",
         "build-cjs": "npx tsc -p tsconfig.json",
         "build-es6": "npx tsc -p tsconfig.es6.json",
         "package": "node ../../module-build/rollup/build.js",
@@ -42,12 +43,19 @@
         "not blackberry > 0"
     ],
     "homepage": "http://www.ag-grid.com/",
+    "jest": {
+        "setupFiles": [
+          "jest-canvas-mock"
+        ],
+        "testEnvironment": "node"
+    },
     "dependencies": {
         "@ag-grid-community/core": "~26.0.0",
         "@ag-grid-enterprise/core": "~26.0.0"
     },
     "devDependencies": {
         "@types/jest": "^25.2.1",
+        "jest-canvas-mock": "2.3.1",
         "jest": "^25.4.0",
         "ts-jest": "^25.4.0",
         "typescript": "~3.6.5"
