@@ -34,13 +34,13 @@
             "displayName": "Rendering and Styling"
         },
         "getRowClass": {
-            "description": "Callback version of property `rowClass`. Function should return a string or an array of strings."
+            "description": "Callback version of property `rowClass` to set class(es) for each row individually. Function should return either a string (class name), array of strings (array of class names) or undefined for no class."
         },
         "getRowStyle": {
-            "description": "Callback version of property `rowStyle`. Function should return an object of CSS values."
+            "description": "Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values."
         },
         "getRowHeight": {
-            "description": "Callback version of property `rowHeight`. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height."
+            "description": "Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height."
         },
         "isFullWidthCell": {
             "description": "Tells the grid if this row should be rendered as [full width](/master-detail/)."

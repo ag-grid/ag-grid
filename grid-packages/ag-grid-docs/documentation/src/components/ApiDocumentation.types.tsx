@@ -135,6 +135,7 @@ export interface Config {
     defaultExpand?: boolean;
     hideMore?: boolean;
     hideHeader?: boolean;
+    noBottomMargin?: boolean;
 }
 export type SectionProps = {
     framework: string;

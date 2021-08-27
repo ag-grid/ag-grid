@@ -14,8 +14,8 @@ Each of these approaches are presented in the following sections.
 
 You can add CSS styles to each row in the following ways:
 
-- `rowStyle`: Property to set style for all rows. Set to an object of key (style names) and values (style values).
-- `getRowStyle`: Callback to set style for each row individually.
+<api-documentation source='grid-properties/properties.json' section='renderingStyling' names='["rowStyle"]' config='{"noBottomMargin":true}'></api-documentation>
+<api-documentation source='grid-callbacks/callbacks.json' section='rendering' names='["getRowStyle"]'></api-documentation>
 
 <snippet spaceBetweenProperties="true">
 const gridOptions = {
@@ -38,6 +38,9 @@ You can add CSS classes to each row in the following ways:
     of class names).
 - `getRowClass`: Callback to set class for each row individually.
 
+<api-documentation source='grid-properties/properties.json' section='renderingStyling' names='["rowClass"]' config='{"noBottomMargin":true}'></api-documentation>
+<api-documentation source='grid-callbacks/callbacks.json' section='rendering' names='["getRowClass"]'></api-documentation>
+
 <snippet spaceBetweenProperties="true">
 const gridOptions = {
     // all rows assigned CSS class 'my-green-class'
@@ -54,6 +57,8 @@ const gridOptions = {
 ## Row Class Rules
 
 You can define rules which can be applied to include certain CSS classes via the grid option `rowClassRules`. These rules are provided as a JavaScript map where the keys are class names and the values are expressions that if evaluated to `true`, the class gets used. The expression can either be a JavaScript function, or a string which is treated as a shorthand for a function by the grid.
+
+<api-documentation source='grid-properties/properties.json' section='renderingStyling' names='["rowClassRules"]'></api-documentation>
 
 The following snippet shows `rowClassRules` that use functions and the value from the year column:
 

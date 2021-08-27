@@ -821,21 +821,25 @@
             "description": "Set to `true` to enable [Row Animation](/row-animation/)."
         },
         "rowStyle": {
-            "description": "The style to give a particular row.",
+            "description": "The style properties to apply to all rows. Set to an object of key (style names) and values (style values)",
             "more": {
                 "name": "Row Style",
                 "url": "/row-styles/#row-style"
             }
         },
         "rowClass": {
-            "description": "The class to give a particular row.",
+            "description": "CSS class(es) for all rows. Provide either a string (class name) or array of strings (array of class names).",
             "more": {
                 "name": "Row Class",
                 "url": "/row-styles/#row-class"
             }
         },
         "rowClassRules": {
-            "description": "Rules which can be applied to include certain CSS classes. See [Row Class Rules](/row-styles/#row-class-rules)."
+            "description": "Rules which can be applied to include certain CSS classes.",
+            "more": {
+                "name": "Row Class Rules",
+                "url": "/row-styles/#row-class-rules"
+            }
         },
         "scrollbarWidth": {
             "description": "Tell the grid how wide in pixels the scrollbar is, which is used in grid width calculations. Set only if using non-standard browser-provided scrollbars, so the grid can use the non-standard size in its calculations."

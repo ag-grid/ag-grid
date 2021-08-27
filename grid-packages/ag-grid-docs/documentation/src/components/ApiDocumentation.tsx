@@ -227,7 +227,7 @@ const Section: React.FC<SectionProps> = ({ framework, title, properties, config 
 
     return <>
         {header}
-        <table className={styles['reference']}>
+        <table className={styles['reference']} style={config.noBottomMargin ? { "marginBottom": "0" } : {}}>
             <colgroup>
                 <col className={styles['reference__expander-cell']} ></col>
                 <col style={{ width: longestNameLength + 'ch' }}></col>
