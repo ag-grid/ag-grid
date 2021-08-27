@@ -10344,11 +10344,12 @@
   },
   "SparklineOptions": {},
   "BaseSparklineOptions": {
+    "container": { "type": { "returnType": "HTMLElement" } },
     "data": { "type": { "returnType": "number[]" } },
     "width": { "type": { "returnType": "number" } },
     "height": { "type": { "returnType": "number" } },
     "title": { "type": { "returnType": "string" } },
-    "padding": { "type": { "returnType": "string" } },
+    "padding": { "type": { "returnType": "Padding" } },
     "axis": { "type": { "returnType": "SparklineAxisOptions" } },
     "highlightStyle": { "type": { "returnType": "HighlightStyle" } }
   },
@@ -10356,11 +10357,12 @@
     "type": { "type": { "returnType": "'line'" } },
     "line": { "type": { "returnType": "SparklineLine" } },
     "marker": { "type": { "returnType": "SparklineMarker" } },
+    "container": { "type": { "returnType": "HTMLElement" } },
     "data": { "type": { "returnType": "number[]" } },
     "width": { "type": { "returnType": "number" } },
     "height": { "type": { "returnType": "number" } },
     "title": { "type": { "returnType": "string" } },
-    "padding": { "type": { "returnType": "string" } },
+    "padding": { "type": { "returnType": "Padding" } },
     "axis": { "type": { "returnType": "SparklineAxisOptions" } },
     "highlightStyle": { "type": { "returnType": "HighlightStyle" } }
   },
@@ -10369,11 +10371,12 @@
     "fill": { "type": { "returnType": "string" } },
     "line": { "type": { "returnType": "SparklineLine" } },
     "marker": { "type": { "returnType": "SparklineMarker" } },
+    "container": { "type": { "returnType": "HTMLElement" } },
     "data": { "type": { "returnType": "number[]" } },
     "width": { "type": { "returnType": "number" } },
     "height": { "type": { "returnType": "number" } },
     "title": { "type": { "returnType": "string" } },
-    "padding": { "type": { "returnType": "string" } },
+    "padding": { "type": { "returnType": "Padding" } },
     "axis": { "type": { "returnType": "SparklineAxisOptions" } },
     "highlightStyle": { "type": { "returnType": "HighlightStyle" } }
   },
@@ -10385,13 +10388,20 @@
     "paddingInner": { "type": { "returnType": "number" } },
     "paddingOuter": { "type": { "returnType": "number" } },
     "formatter": { "type": { "returnType": "SparklineColumnFormatter" } },
+    "container": { "type": { "returnType": "HTMLElement" } },
     "data": { "type": { "returnType": "number[]" } },
     "width": { "type": { "returnType": "number" } },
     "height": { "type": { "returnType": "number" } },
     "title": { "type": { "returnType": "string" } },
-    "padding": { "type": { "returnType": "string" } },
+    "padding": { "type": { "returnType": "Padding" } },
     "axis": { "type": { "returnType": "SparklineAxisOptions" } },
     "highlightStyle": { "type": { "returnType": "HighlightStyle" } }
+  },
+  "Padding": {
+    "top": { "type": { "returnType": "number" } },
+    "right": { "type": { "returnType": "number" } },
+    "bottom": { "type": { "returnType": "number" } },
+    "left": { "type": { "returnType": "number" } }
   },
   "SparklineAxisOptions": {
     "stroke": { "type": { "returnType": "string" } },
