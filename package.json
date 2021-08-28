@@ -57,6 +57,7 @@
     "ciUpdateRebuild": "npm i && npm run bootstrap && npm run ciBuildNoTest"
   },
   "devDependencies": {
+    "@types/node": "12.20.20",
     "archiver": "^3.0.0",
     "command-line-args": "^5.1.1",
     "glob": "^7.1.6",
