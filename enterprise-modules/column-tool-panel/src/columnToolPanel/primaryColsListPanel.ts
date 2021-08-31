@@ -14,7 +14,11 @@ import {
     ToolPanelColumnCompParams,
     VirtualList,
     VirtualListModel,
-    PreDestroy
+    PreDestroy,
+    DropTarget,
+    DragAndDropService,
+    DragSourceType,
+    DraggingEvent
 } from "@ag-grid-community/core";
 import { ToolPanelColumnGroupComp } from "./toolPanelColumnGroupComp";
 import { ToolPanelColumnComp } from "./toolPanelColumnComp";
@@ -40,14 +44,18 @@ class UIColumnModel implements VirtualListModel {
     }
 }
 
+const PRIMARY_COLS_LIST_PANEL_CLASS = 'ag-column-select-list';
+const PRIMARY_COLS_LIST_ITEM_HOVERED = 'ag-column-list-item-hovered';
+type HoveredRow = { rowIndex: number, position: 'top' | 'bottom' };
+
 export class PrimaryColsListPanel extends Component {
 
-    public static TEMPLATE = /* html */ `<div class="ag-column-select-list" role="tree"></div>`;
+    public static TEMPLATE = /* html */ `<div class="${PRIMARY_COLS_LIST_PANEL_CLASS}" role="tree"></div>`;
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('toolPanelColDefService') private colDefService: ToolPanelColDefService;
-    @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('modelItemUtils') private modelItemUtils: ModelItemUtils;
+    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
 
     private allowDragging: boolean;
     private filterText: string | null;
@@ -61,8 +69,9 @@ export class PrimaryColsListPanel extends Component {
 
     private allColsTree: ColumnModelItem[];
     private displayedColsList: ColumnModelItem[];
-
     private destroyColumnItemFuncs: (() => void)[] = [];
+
+    private lastHoveredRow: HoveredRow | null = null;
 
     constructor() {
         super(PrimaryColsListPanel.TEMPLATE);
@@ -115,6 +124,75 @@ export class PrimaryColsListPanel extends Component {
         if (this.columnModel.isReady()) {
             this.onColumnsChanged();
         }
+
+        this.createDropTarget();
+    }
+
+    private createDropTarget(): void {
+        const dropTarget: DropTarget = {
+            isInterestedIn: (type: DragSourceType) => type === DragSourceType.ToolPanel,
+            getIconName:() => DragAndDropService.ICON_MOVE,
+            getContainer: () => this.getGui(),
+            onDragging: (e) => this.onDragging(e),
+            onDragStop: (e) => this.onDragStop(e),
+            onDragLeave: (e) => this.onDragLeave(e)
+        };
+
+        this.dragAndDropService.addDropTarget(dropTarget);
+    }
+
+    private onDragging(e: DraggingEvent) {
+        const hoveredRow = this.getHoverRow(e);
+        const comp = this.virtualList.getComponentAt(hoveredRow.rowIndex);
+        const el = comp!.getGui().parentElement as HTMLElement
+
+        if (
+            this.lastHoveredRow &&
+            this.lastHoveredRow.rowIndex === hoveredRow.rowIndex &&
+            this.lastHoveredRow.position === hoveredRow.position
+            ) { return; }
+
+        this.clearHoveredItems();
+        this.lastHoveredRow = hoveredRow;
+
+        _.radioCssClass(el, `${PRIMARY_COLS_LIST_ITEM_HOVERED}`);
+        _.radioCssClass(el, `ag-item-highlight-${hoveredRow.position}`);
+    }
+
+    private getHoverRow(e: DraggingEvent): HoveredRow {
+        const virtualListGui = this.virtualList.getGui();
+        const paddingTop = parseFloat(window.getComputedStyle(virtualListGui).paddingTop as string);
+        const rowHeight = this.virtualList.getRowHeight();
+        const scrollTop = this.virtualList.getScrollTop();
+        const rowIndex = Math.max(0, (e.y - paddingTop + scrollTop) / rowHeight);
+        const maxLen = this.displayedColsList.length - 1;
+
+        return {
+            rowIndex: Math.trunc(Math.min(maxLen, rowIndex)),
+            position: (Math.round(rowIndex) > rowIndex || rowIndex > maxLen) ? 'bottom' : 'top'
+        };
+    }
+
+    private onDragStop(e: DraggingEvent) {
+        this.clearHoveredItems();
+    }
+
+    private onDragLeave(e: DraggingEvent) {
+        this.clearHoveredItems();
+    }
+
+    private clearHoveredItems(): void {
+        const virtualListGui = this.virtualList.getGui();
+        virtualListGui.querySelectorAll(`.${PRIMARY_COLS_LIST_ITEM_HOVERED}`).forEach(el => {
+            [
+                PRIMARY_COLS_LIST_ITEM_HOVERED,
+                'ag-item-highlight-top',
+                'ag-item-highlight-bottom'
+            ].forEach(cls => {
+                _.removeCssClass((el as HTMLElement), cls);
+            });
+        });
+        this.lastHoveredRow = null;
     }
 
     private createComponentFromItem(item: ColumnModelItem, listItemElement: HTMLElement): Component {
@@ -270,8 +348,8 @@ export class PrimaryColsListPanel extends Component {
         };
 
         this.allColsTree.forEach(recursiveFunc);
-
         this.virtualList.setModel(new UIColumnModel(this.displayedColsList));
+
         const focusedRow = this.virtualList.getLastFocusedRow();
         this.virtualList.refresh();
 
