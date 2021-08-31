@@ -7165,11 +7165,11 @@
       "setValue?": "(value: any) => void",
       "formatValue?": "(value: any) => any",
       "refreshCell?": "() => void",
-      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string) => void"
+      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void"
     },
     "docs": {
       "context": "/** The context as provided on `gridOptions.context` */",
-      "registerRowDragger": "/** registerRowDragger: Function\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n */"
+      "registerRowDragger": "/** registerRowDragger: Function\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */"
     }
   },
   "SparklineOptions": {
@@ -7517,13 +7517,13 @@
       "setValue?": "(value: any) => void",
       "formatValue?": "(value: any) => any",
       "refreshCell?": "() => void",
-      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string) => void"
+      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void"
     },
     "docs": {
       "autoHeight": "/** @deprecated\n */",
       "suppressRefresh": "/** @deprecated\n */",
       "context": "/** The context as provided on `gridOptions.context` */",
-      "registerRowDragger": "/** registerRowDragger: Function\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n */"
+      "registerRowDragger": "/** registerRowDragger: Function\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */"
     }
   },
   "GetDetailRowData": {
@@ -7872,12 +7872,12 @@
       "setValue?": "(value: any) => void",
       "formatValue?": "(value: any) => any",
       "refreshCell?": "() => void",
-      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string) => void"
+      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void"
     },
     "docs": {
       "padding": "/** @deprecated\n */",
       "context": "/** The context as provided on `gridOptions.context` */",
-      "registerRowDragger": "/** registerRowDragger: Function\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n */"
+      "registerRowDragger": "/** registerRowDragger: Function\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */"
     }
   },
   "ICellRendererParams": {
@@ -7902,11 +7902,11 @@
       "setValue?": "(value: any) => void",
       "formatValue?": "(value: any) => any",
       "refreshCell?": "() => void",
-      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string) => void"
+      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void"
     },
     "docs": {
       "context": "/** The context as provided on `gridOptions.context` */",
-      "registerRowDragger": "/** registerRowDragger: Function\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n */"
+      "registerRowDragger": "/** registerRowDragger: Function\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */"
     }
   },
   "ISetFilterCellRendererParams": {
@@ -7974,11 +7974,11 @@
       "setValue?": "(value: any) => void",
       "formatValue?": "(value: any) => any",
       "refreshCell?": "() => void",
-      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string) => void"
+      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void"
     },
     "docs": {
       "context": "/** The context as provided on `gridOptions.context` */",
-      "registerRowDragger": "/** registerRowDragger: Function\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n */"
+      "registerRowDragger": "/** registerRowDragger: Function\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */"
     }
   },
   "ILoadingCellRenderer": {

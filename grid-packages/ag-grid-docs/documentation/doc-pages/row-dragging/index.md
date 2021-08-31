@@ -247,6 +247,27 @@ Unmanaged row dragging will work with any of the row models [Infinite](/infinite
 
 Because the grid implementation with regards to row dragging is identical to the above, examples of row dragging with the other row models are not given. How your application behaves with regards to the row drag events is the difficult bit, but that part is specific to your application and how your application stores its state. Giving an example here with a different data store would be redundant.
 
+## Whole Row as Row Dragger
+
+If the requirement is to drag rows by clicking anywhere on the row, the `rowDrag: true` property should be added to the GridOptions as follows: 
+
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        { field: 'country' },
+        { field: 'year' },
+        { field: 'sport' },
+        { field: 'total' }
+    ],
+    rowDrag: true
+}
+</snippet>
+
+<grid-example title='Whole Row as Row Dragger' name='whole-row-as-row-dragger' type='generated' options='{ "enterprise": true, "modules": ["clientside"] }'></grid-example>
+
+[[warning]]
+| When `rowDrag: true` is in the GridOptions it will be impossible to use the [Range Selection](/range-selection/) feature.
+
 ## Customisation
 
 There are some options that can be used to customise the Row Drag experience, so it has a better integration with your application.

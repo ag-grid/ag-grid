@@ -34,7 +34,7 @@ export default {
     beforeMount() {
         this.maxValue = this.params.maxValue;
         this.imgSrc = `https://www.ag-grid.com/example-assets/large-flags/${this.params.node.data.code}.png`;
-        this.params.registerRowDragger(this.params.eParentOfValue, undefined, this.params.data.name);
+        this.params.registerRowDragger(this.params.eParentOfValue, undefined, this.params.data.name, true);
     },
     methods: {
         latinText() {

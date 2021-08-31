@@ -24,7 +24,8 @@ export class RowDragComp extends Component {
         private readonly rowNode: RowNode,
         private readonly column?: Column,
         private readonly customGui?: HTMLElement,
-        private readonly dragStartPixels?: number
+        private readonly dragStartPixels?: number,
+        private readonly suppressVisibilityChange?: boolean
     ) { super(); }
 
     public isCustomGui(): boolean {
@@ -43,11 +44,13 @@ export class RowDragComp extends Component {
 
         this.checkCompatibility();
 
-        const strategy = this.beans.gridOptionsWrapper.isRowDragManaged() ?
+        if (!this.suppressVisibilityChange) {
+            const strategy = this.beans.gridOptionsWrapper.isRowDragManaged() ?
             new ManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column) :
             new NonManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column);
 
-        this.createManagedBean(strategy, this.beans.context);
+            this.createManagedBean(strategy, this.beans.context);
+        }
     }
 
     public setDragElement(dragElement: HTMLElement, dragStartPixels?: number) {

@@ -5,7 +5,7 @@ FullWidthCellRenderer.prototype.init = function(params) {
     var eTemp = document.createElement('div');
     eTemp.innerHTML = this.getTemplate(params);
     this.eGui = eTemp.firstElementChild;
-    params.registerRowDragger(this.eGui, undefined, params.data.name);
+    params.registerRowDragger(this.eGui, undefined, params.data.name, true);
     this.consumeMouseWheelOnCenterText();
 };
 

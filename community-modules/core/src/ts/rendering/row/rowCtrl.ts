@@ -299,7 +299,7 @@ export class RowCtrl extends BeanStub {
             return;
         }
 
-        const rowDragComp = new RowDragComp(() => '1 row', this.rowNode, undefined, gui.element);
+        const rowDragComp = new RowDragComp(() => '1 row', this.rowNode, undefined, gui.element, undefined, true);
         this.createManagedBean(rowDragComp, this.beans.context);
     }
 
@@ -938,7 +938,7 @@ export class RowCtrl extends BeanStub {
             eParentOfValue: eRow,
             pinned: pinned,
             addRenderedRowListener: this.addEventListener.bind(this),
-            registerRowDragger: (rowDraggerElement, dragStartPixels, value) => this.addFullWidthRowDragging(rowDraggerElement, dragStartPixels, value)
+            registerRowDragger: (rowDraggerElement, dragStartPixels, value, suppressVisibilityChange) => this.addFullWidthRowDragging(rowDraggerElement, dragStartPixels, value, suppressVisibilityChange)
         } as ICellRendererParams;
 
         return params;
@@ -947,11 +947,12 @@ export class RowCtrl extends BeanStub {
     private addFullWidthRowDragging(
         rowDraggerElement?: HTMLElement,
         dragStartPixels?: number,
-        value: string = ''
+        value: string = '',
+        suppressVisibilityChange?: boolean
     ): void {
         if (!this.isFullWidth()) { return; }
 
-        const rowDragComp = new RowDragComp(() => value, this.rowNode, undefined, rowDraggerElement, dragStartPixels);
+        const rowDragComp = new RowDragComp(() => value, this.rowNode, undefined, rowDraggerElement, dragStartPixels, suppressVisibilityChange);
         this.createManagedBean(rowDragComp, this.beans.context);
     }
 

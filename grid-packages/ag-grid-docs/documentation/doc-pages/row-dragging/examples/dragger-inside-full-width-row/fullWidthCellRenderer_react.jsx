@@ -12,7 +12,7 @@ export default class FullWidthCellRenderer extends Component {
             event.stopPropagation();
         }, false);
 
-        this.props.registerRowDragger(this.props.eParentOfValue, undefined, this.props.data.name);
+        this.props.registerRowDragger(this.props.eParentOfValue, undefined, this.props.data.name, true);
     }
 
     getReactContainerStyle() {

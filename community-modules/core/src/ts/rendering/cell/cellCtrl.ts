@@ -497,7 +497,7 @@ export class CellCtrl extends BeanStub {
             eGridCell: this.getGui(),
             eParentOfValue: this.cellComp.getParentOfValue(),
 
-            registerRowDragger: (rowDraggerElement: HTMLElement, dragStartPixels: number) => this.registerRowDragger(rowDraggerElement, dragStartPixels),
+            registerRowDragger: (rowDraggerElement: HTMLElement, dragStartPixels: number, value?: string, suppressVisibilityChange?: boolean) => this.registerRowDragger(rowDraggerElement, dragStartPixels, suppressVisibilityChange),
 
             // this function is not documented anywhere, so we could drop it
             // it was in the olden days to allow user to register for when rendered
@@ -1051,14 +1051,18 @@ export class CellCtrl extends BeanStub {
         return dndSourceComp;
     }
 
-    public registerRowDragger(customElement: HTMLElement, dragStartPixels?: number): void {
+    public registerRowDragger(
+        customElement: HTMLElement,
+        dragStartPixels?: number,
+        suppressVisibilityChange?: boolean
+    ): void {
         // if previously existed, then we are only updating
         if (this.customRowDragComp) {
             this.customRowDragComp.setDragElement(customElement, dragStartPixels);
             return;
         }
 
-        const newComp = this.createRowDragComp(customElement, dragStartPixels);
+        const newComp = this.createRowDragComp(customElement, dragStartPixels, suppressVisibilityChange);
 
         if (newComp) {
             this.customRowDragComp = newComp;
@@ -1066,7 +1070,11 @@ export class CellCtrl extends BeanStub {
         }
     }
 
-    public createRowDragComp(customElement?: HTMLElement, dragStartPixels?: number): RowDragComp | undefined {
+    public createRowDragComp(
+        customElement?: HTMLElement,
+        dragStartPixels?: number,
+        suppressVisibilityChange?: boolean
+    ): RowDragComp | undefined {
         const pagination = this.beans.gridOptionsWrapper.isPagination();
         const rowDragManaged = this.beans.gridOptionsWrapper.isRowDragManaged();
         const clientSideRowModelActive = this.beans.gridOptionsWrapper.isRowModelDefault();
@@ -1089,7 +1097,7 @@ export class CellCtrl extends BeanStub {
         }
 
         // otherwise (normal case) we are creating a RowDraggingComp for the first time
-        const rowDragComp = new RowDragComp(() => this.value, this.rowNode, this.column, customElement, dragStartPixels);
+        const rowDragComp = new RowDragComp(() => this.value, this.rowNode, this.column, customElement, dragStartPixels, suppressVisibilityChange);
         this.beans.context.createBean(rowDragComp);
 
         return rowDragComp;

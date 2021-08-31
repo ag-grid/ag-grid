@@ -31,8 +31,9 @@ export interface ICellRendererParams {
      * @param rowDraggerElement The HTMLElement to be used as Row Dragger
      * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)
      * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.
+     * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.
      */
-     registerRowDragger: (rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string) => void;
+     registerRowDragger: (rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void;
 }
 
 export interface ISetFilterCellRendererParams {
