@@ -121,10 +121,10 @@ export class ColumnSparkline extends Sparkline {
         xAxisLine.x2 = xScale.range[1];
         xAxisLine.y1 = xAxisLine.y2 = 0;
         xAxisLine.stroke = axis.stroke;
-        xAxisLine.strokeWidth = strokeWidth;
+        xAxisLine.strokeWidth = strokeWidth + (strokeWidth % 2 === 1 ? 1 : 0);
 
         const yZero: number = yScale.convert(0);
-        xAxisLine.translationY = yZero - (strokeWidth % 2 === 1 ? 0.5 : 0);
+        xAxisLine.translationY = yZero;
     }
 
     protected generateNodeData(): ColumnNodeDatum[] {
