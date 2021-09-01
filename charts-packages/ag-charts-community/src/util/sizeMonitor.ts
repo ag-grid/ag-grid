@@ -11,7 +11,6 @@ type Entry = {
 export class SizeMonitor {
     private static elements = new Map<HTMLElement, Entry>();
     private static resizeObserver: any;
-    private static requestAnimationFrameId: number = 0;
     private static ready = false;
 
     static init() {

@@ -22,7 +22,7 @@ import {
     AgChartThemeName,
     AgHierarchyChartOptions
 } from "./agChartOptions";
-import mappings from './agChartMappings';
+import { mappings } from './agChartMappings';
 import { CartesianChart } from "./cartesianChart";
 import { PolarChart } from "./polarChart";
 import { HierarchyChart } from "./hierarchyChart";
