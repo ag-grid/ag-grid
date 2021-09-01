@@ -5,7 +5,7 @@ import { RowContainerCtrl } from "./gridBodyComp/rowContainer/rowContainerCtrl";
 import { FakeHScrollCtrl } from "./gridBodyComp/fakeHScrollCtrl";
 import { BeanStub } from "./context/beanStub";
 import { GridHeaderCtrl } from "./headerRendering/gridHeaderCtrl";
-import { HeaderContainer } from "./headerRendering/headerContainer";
+import { HeaderRowContainer } from "./headerRendering/headerRowContainerComp";
 import { Constants } from "./constants/constants";
 
 // for all controllers that are singletons, they can register here so other parts
@@ -30,9 +30,9 @@ interface ReadyParams {
     fakeHScrollCtrl: FakeHScrollCtrl;
     gridHeaderCtrl: GridHeaderCtrl;
 
-    centerHeaderContainer: HeaderContainer;
-    leftHeaderContainer: HeaderContainer;
-    rightHeaderContainer: HeaderContainer;
+    centerHeaderContainer: HeaderRowContainer;
+    leftHeaderContainer: HeaderRowContainer;
+    rightHeaderContainer: HeaderRowContainer;
 }
 
 @Bean('ctrlsService')
@@ -53,9 +53,9 @@ export class CtrlsService extends BeanStub {
     private topLeftRowContainerCtrl: RowContainerCtrl;
     private topRightRowContainerCtrl: RowContainerCtrl;
 
-    private centerHeaderContainer: HeaderContainer;
-    private leftHeaderContainer: HeaderContainer;
-    private rightHeaderContainer: HeaderContainer;
+    private centerHeaderContainer: HeaderRowContainer;
+    private leftHeaderContainer: HeaderRowContainer;
+    private rightHeaderContainer: HeaderRowContainer;
 
     private fakeHScrollCtrl: FakeHScrollCtrl;
 
@@ -183,7 +183,7 @@ export class CtrlsService extends BeanStub {
         this.checkReady();
     }
 
-    public registerHeaderContainer(con: HeaderContainer, pinned: string | null): void {
+    public registerHeaderContainer(con: HeaderRowContainer, pinned: string | null): void {
         switch (pinned) {
             case Constants.PINNED_LEFT: 
                 this.leftHeaderContainer = con; 
@@ -235,11 +235,11 @@ export class CtrlsService extends BeanStub {
         return this.gridBodyCtrl;
     }
 
-    public getHeaderContainers(): HeaderContainer[] {
+    public getHeaderContainers(): HeaderRowContainer[] {
         return [this.leftHeaderContainer, this.rightHeaderContainer, this.centerHeaderContainer];
     }
 
-    public getHeaderContainer(pinned?: string | null): HeaderContainer {
+    public getHeaderContainer(pinned?: string | null): HeaderRowContainer {
         switch (pinned) {
             case Constants.PINNED_LEFT: return this.leftHeaderContainer;
             case Constants.PINNED_RIGHT: return this.rightHeaderContainer;

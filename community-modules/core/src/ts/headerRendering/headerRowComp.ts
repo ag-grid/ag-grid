@@ -17,6 +17,7 @@ import { setDomChildOrder } from '../utils/dom';
 import { FocusService } from '../focusService';
 import { AbstractHeaderWrapper } from './header/abstractHeaderWrapper';
 import { setAriaRowIndex } from '../utils/aria';
+import { _ } from '../utils';
 
 export enum HeaderRowType {
     COLUMN_GROUP, COLUMN, FLOATING_FILTER
@@ -50,10 +51,13 @@ export class HeaderRowComp extends Component {
         }
     }
 
-    public forEachHeaderElement(callback: (comp: Component) => void): void {
-        Object.keys(this.headerComps).forEach(key => {
-            callback(this.headerComps[key]);
-        });
+    public getHeaderWrapperComp(column: Column): HeaderWrapperComp | undefined {
+        if (this.type != HeaderRowType.COLUMN) { return; }
+
+        const headerCompsList = Object.keys(this.headerComps).map( c => this.headerComps[c]) as (HeaderWrapperComp[]);
+        const res = headerCompsList.find( wrapper => wrapper.getColumn() == column);
+
+        return res;
     }
 
     private setRowIndex(rowIndex: number) {

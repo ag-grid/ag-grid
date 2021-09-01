@@ -1,10 +1,8 @@
 import { Constants } from '../constants/constants';
 import { PostConstruct } from '../context/context';
-import { addOrRemoveCssClass } from '../utils/dom';
 import { Component } from '../widgets/component';
-import { RefSelector } from '../widgets/componentAnnotations';
 import { GridHeaderCtrl, IGridHeaderComp } from './gridHeaderCtrl';
-import { HeaderContainer } from './headerContainer';
+import { HeaderRowContainer } from './headerRowContainerComp';
 
 export class GridHeaderComp extends Component {
 
@@ -29,13 +27,13 @@ export class GridHeaderComp extends Component {
         const ctrl = this.createManagedBean(new GridHeaderCtrl());
         ctrl.setComp(compProxy, this.getGui(), this.getFocusableElement());
 
-        const addContainer = (container: HeaderContainer) => {
+        const addContainer = (container: HeaderRowContainer) => {
             this.createManagedBean(container);
             this.appendChild(container);
         };
 
-        addContainer(new HeaderContainer(Constants.PINNED_LEFT));
-        addContainer(new HeaderContainer(null));
-        addContainer(new HeaderContainer(Constants.PINNED_RIGHT));
+        addContainer(new HeaderRowContainer(Constants.PINNED_LEFT));
+        addContainer(new HeaderRowContainer(null));
+        addContainer(new HeaderRowContainer(Constants.PINNED_RIGHT));
     }
 }

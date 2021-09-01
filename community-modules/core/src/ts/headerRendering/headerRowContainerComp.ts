@@ -13,8 +13,11 @@ import { CtrlsService } from '../ctrlsService';
 import { RefSelector } from '../widgets/componentAnnotations';
 import { PinnedWidthService } from '../gridBodyComp/pinnedWidthService';
 import { CenterWidthFeature } from '../gridBodyComp/centerWidthFeature';
+import { HeaderRowContainerCtrl, IHeaderRowContainerComp } from './HeaderRowContainerCtrl';
+import { Column } from '../entities/column';
+import { HeaderWrapperComp } from './header/headerWrapperComp';
 
-export class HeaderContainer extends Component {
+export class HeaderRowContainer extends Component {
 
     private static PINNED_TEMPLATE =  /* html */ `<div role="presentation"/>`;
 
@@ -43,15 +46,9 @@ export class HeaderContainer extends Component {
         this.pinned = pinned;
     }
 
-    public forEachHeaderElement(callback: (renderedHeaderElement: Component) => void): void {
-        if (this.groupsRowComps) {
-            this.groupsRowComps.forEach(c => c.forEachHeaderElement(callback));
-        }
+    public getHeaderWrapperComp(column: Column): HeaderWrapperComp | undefined {
         if (this.columnsRowComp) {
-            this.columnsRowComp.forEachHeaderElement(callback);
-        }
-        if (this.filtersRowComp) {
-            this.filtersRowComp.forEachHeaderElement(callback);
+            return this.columnsRowComp.getHeaderWrapperComp(column);
         }
     }
 
@@ -78,6 +75,13 @@ export class HeaderContainer extends Component {
         if (this.columnModel.isReady()) {
             this.refresh();
         }
+
+        const compProxy: IHeaderRowContainerComp = {
+
+        };
+
+        const ctrl = this.createManagedBean(new HeaderRowContainerCtrl());
+        ctrl.setComp(compProxy);
     }
 
     public setHorizontalScroll(offset: number): void {
@@ -131,7 +135,7 @@ export class HeaderContainer extends Component {
     }
 
     private selectAndSetTemplate(): void {
-        const template = this.pinned ? HeaderContainer.PINNED_TEMPLATE : HeaderContainer.CENTER_TEMPLATE;
+        const template = this.pinned ? HeaderRowContainer.PINNED_TEMPLATE : HeaderRowContainer.CENTER_TEMPLATE;
         this.setTemplate(template);
     }
 
