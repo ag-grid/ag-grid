@@ -214,14 +214,22 @@ const seriesDefaults: any = {
     listeners: undefined
 };
 
-const highlightStyleDefaults = {
+const highlightStyleMapping = {
     highlightStyle: {
         item: {
-            fill: 'yellow'
+            meta: {
+                defaults: {
+                    fill: 'yellow'
+                }
+            }
         },
         series: {
-            enabled: false,
-            dimOpacity: 0.3
+            meta: {
+                defaults: {
+                    enabled: false,
+                    dimOpacity: 0.3
+                }
+            }
         }
     }
 };
@@ -238,8 +246,7 @@ const columnSeriesDefaults: any = {
     strokeWidth: 1,
     lineDash: undefined,
     lineDashOffset: 0,
-    shadow: undefined,
-    ...highlightStyleDefaults
+    shadow: undefined
 };
 
 const shadowMapping: any = {
@@ -352,7 +359,7 @@ const axisMappings: any = {
     }
 };
 
-const mappings: any = {
+export const mappings: any = {
     [CartesianChart.type]: {
         meta: { // unlike other entries, 'meta' is not a component type or a config name
             constructor: CartesianChart, // Constructor function for the `cartesian` type.
@@ -423,7 +430,7 @@ const mappings: any = {
                         ...columnSeriesDefaults
                     }
                 },
-                highlightStyle: {},
+                ...highlightStyleMapping,
                 ...tooltipMapping,
                 ...barLabelMapping,
                 ...shadowMapping
@@ -438,7 +445,7 @@ const mappings: any = {
                         ...columnSeriesDefaults
                     }
                 },
-                highlightStyle: {},
+                ...highlightStyleMapping,
                 ...tooltipMapping,
                 ...barLabelMapping,
                 ...shadowMapping
@@ -457,12 +464,11 @@ const mappings: any = {
                         strokeWidth: 2,
                         strokeOpacity: 1,
                         lineDash: undefined,
-                        lineDashOffset: 0,
-                        ...highlightStyleDefaults
+                        lineDashOffset: 0
                     }
                 },
                 ...tooltipMapping,
-                highlightStyle: {},
+                ...highlightStyleMapping,
                 label: {
                     meta: {
                         defaults: {
@@ -501,12 +507,11 @@ const mappings: any = {
                         labelName: 'Label',
                         strokeWidth: 2,
                         fillOpacity: 1,
-                        strokeOpacity: 1,
-                        ...highlightStyleDefaults
+                        strokeOpacity: 1
                     }
                 },
                 ...tooltipMapping,
-                highlightStyle: {},
+                ...highlightStyleMapping,
                 marker: {
                     meta: {
                         constructor: CartesianSeriesMarker,
@@ -544,12 +549,11 @@ const mappings: any = {
                         strokeWidth: 2,
                         lineDash: undefined,
                         lineDashOffset: 0,
-                        shadow: undefined,
-                        ...highlightStyleDefaults
+                        shadow: undefined
                     }
                 },
                 ...tooltipMapping,
-                highlightStyle: {},
+                ...highlightStyleMapping,
                 label: {
                     meta: {
                         defaults: {
@@ -592,12 +596,11 @@ const mappings: any = {
                         areaPlot: false,
                         binCount: undefined,
                         bins: undefined,
-                        aggregation: 'sum',
-                        ...highlightStyleDefaults
+                        aggregation: 'sum'
                     }
                 },
                 ...tooltipMapping,
-                highlightStyle: {},
+                ...highlightStyleMapping,
                 label: {
                     meta: {
                         defaults: {
@@ -703,12 +706,11 @@ const mappings: any = {
                         strokeWidth: 1,
                         lineDash: undefined,
                         lineDashOffset: 0,
-                        shadow: undefined,
-                        ...highlightStyleDefaults
+                        shadow: undefined
                     }
                 },
                 ...tooltipMapping,
-                highlightStyle: {},
+                ...highlightStyleMapping,
                 title: {
                     meta: {
                         constructor: PieTitle,
@@ -922,5 +924,3 @@ const groupedCategoryChartMeta = Object.create(groupedCategoryChartMapping.meta)
 groupedCategoryChartMeta.constructor = GroupedCategoryChart;
 groupedCategoryChartMapping.meta = groupedCategoryChartMeta;
 mappings[GroupedCategoryChart.type] = groupedCategoryChartMapping;
-
-export default mappings;

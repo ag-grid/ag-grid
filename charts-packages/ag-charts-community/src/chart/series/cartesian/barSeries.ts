@@ -716,14 +716,13 @@ export class BarSeries extends CartesianSeries {
             const isSubSeriesHighlighted = highlightedItemId === datum.itemId;
             const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : datum.fill;
             const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : datum.stroke;
-            let format: BarSeriesFormat | undefined = undefined;
-
             const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
                 ? highlightedDatumStrokeWidth
                 : subSeriesHighlightingEnabled && isSubSeriesHighlighted && highlightedSubSeriesStrokeWidth !== undefined
                     ? highlightedSubSeriesStrokeWidth
                     : datum.strokeWidth;
 
+            let format: BarSeriesFormat | undefined = undefined;
             if (formatter) {
                 format = formatter({
                     datum: datum.seriesDatum,

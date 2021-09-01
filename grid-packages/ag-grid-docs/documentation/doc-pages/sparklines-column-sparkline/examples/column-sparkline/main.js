@@ -10,8 +10,6 @@ var gridOptions = {
                 sparklineOptions: {
                     type: 'column',
                     strokeWidth: 1,
-                    paddingInner: 0.7,
-                    paddingOuter: 0.2,
                     formatter: formatter,
                     highlightStyle: {
                         strokeWidth: 1,
@@ -30,8 +28,8 @@ var gridOptions = {
 
 function formatter(params) {
     let fill = !params.highlighted ?
-        params.yValue < 0 ? 'rgb(255,27,0)' : 'rgb(0,255,27)' :
-        params.yValue < 0 ? 'rgb(255,0,228)' : 'rgb(0,228,255)';
+        params.yValue < 0 ? 'rgb(210,5,5)' : 'rgb(5,200,5)' :
+        params.yValue < 0 ? 'rgb(255,201,14)' : 'rgb(71,133,235)';
 
     let stroke = params.highlighted ? params.yValue < 0 ? 'rgb(156,166,195)' : 'rgb(156,195,185)' : params.stroke;
 

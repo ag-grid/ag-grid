@@ -1,4 +1,5 @@
-// https://github.com/plotly/fast-isnumeric
+// Simplified version of https://github.com/plotly/fast-isnumeric
+// that doesn't treat number strings with leading/trailing whitespace as numbers.
 export function isNumber(n: any): boolean {
     const type = typeof n;
     if (type === 'string') {

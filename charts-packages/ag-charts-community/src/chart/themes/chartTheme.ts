@@ -99,7 +99,9 @@ export class ChartTheme {
             showInLegend: true,
             cursor: 'default',
             highlightStyle: {
-                fill: 'yellow',
+                item: {
+                    fill: 'yellow'
+                },
                 series: {
                     enabled: false,
                     dimOpacity: 0.3

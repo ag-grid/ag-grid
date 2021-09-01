@@ -144,7 +144,7 @@
             "type": "string"
         },
         "stroke": {
-            "description": "TThe CSS colour value for the outline of the individual column.",
+            "description": "The CSS colour value for the outline of the individual column.",
             "type": "string"
         },
         "strokeWidth": {

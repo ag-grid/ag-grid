@@ -361,7 +361,8 @@ export class LineSeries extends CartesianSeries {
         }
 
         const {
-            marker, xKey, yKey, stroke: lineStroke, strokeWidth,
+            marker, xKey, yKey,
+            stroke: lineStroke,
             chart: { highlightedDatum },
             highlightStyle: {
                 fill: deprecatedFill,
@@ -371,46 +372,44 @@ export class LineSeries extends CartesianSeries {
                     fill: highlightedFill = deprecatedFill,
                     stroke: highlightedStroke = deprecatedStroke,
                     strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
-                },
-                series: {
-                    enabled: subSeriesHighlightingEnabled,
-                    strokeWidth: highlightedSubSeriesStrokeWidth
                 }
             }
         } = this;
-        const markerFormatter = marker.formatter;
-        const markerSize = marker.size;
-        const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : strokeWidth;
+        const { size, formatter } = marker;
+        const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : this.strokeWidth;
         const MarkerShape = getMarker(marker.shape);
 
         this.nodeSelection.selectByClass(MarkerShape)
             .each((node, datum) => {
-                const highlighted = datum === highlightedDatum;
-                const fill = highlighted && highlightedFill !== undefined ? highlightedFill : marker.fill;
-                const stroke = highlighted && highlightedStroke !== undefined ? highlightedStroke : marker.stroke || lineStroke;
-                let markerFormat: CartesianSeriesMarkerFormat | undefined = undefined;
+                const isDatumHighlighted = datum === highlightedDatum;
+                const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : marker.fill;
+                const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : marker.stroke || lineStroke;
+                const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
+                    ? highlightedDatumStrokeWidth
+                    : markerStrokeWidth;
 
-                if (markerFormatter) {
-                    markerFormat = markerFormatter({
+                let format: CartesianSeriesMarkerFormat | undefined = undefined;
+                if (formatter) {
+                    format = formatter({
                         datum: datum.seriesDatum,
                         xKey,
                         yKey,
                         fill,
                         stroke,
-                        strokeWidth: markerStrokeWidth,
-                        size: markerSize,
-                        highlighted
+                        strokeWidth,
+                        size,
+                        highlighted: isDatumHighlighted
                     });
                 }
 
-                node.fill = markerFormat && markerFormat.fill || fill;
-                node.stroke = markerFormat && markerFormat.stroke || stroke;
-                node.strokeWidth = markerFormat && markerFormat.strokeWidth !== undefined
-                    ? markerFormat.strokeWidth
-                    : markerStrokeWidth;
-                node.size = markerFormat && markerFormat.size !== undefined
-                    ? markerFormat.size
-                    : markerSize;
+                node.fill = format && format.fill || fill;
+                node.stroke = format && format.stroke || stroke;
+                node.strokeWidth = format && format.strokeWidth !== undefined
+                    ? format.strokeWidth
+                    : strokeWidth;
+                node.size = format && format.size !== undefined
+                    ? format.size
+                    : size;
 
                 node.translationX = datum.point.x;
                 node.translationY = datum.point.y;
