@@ -106,8 +106,7 @@ export class PrimaryColsListPanel extends Component {
         this.expandGroupsByDefault = !this.params.contractColumnSelection;
 
         this.virtualList = this.createManagedBean(new VirtualList('column-select', 'tree'));
-        const virtualListGui = this.virtualList.getGui();
-        this.appendChild(virtualListGui);
+        this.appendChild(this.virtualList.getGui());
 
         this.virtualList.setComponentCreator(
             (item: ColumnModelItem, listItemElement: HTMLElement) => this.createComponentFromItem(item, listItemElement)
