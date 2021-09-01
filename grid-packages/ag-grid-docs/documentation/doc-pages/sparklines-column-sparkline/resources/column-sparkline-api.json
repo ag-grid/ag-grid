@@ -9,14 +9,6 @@
             "description": "The data to render the sparklines from. By default this value will be the cell value in the grid.",
             "type": "number[]"
         },
-        "width": {
-            "description": "The width in pixels of the sparkline, by default, this will be the width of the grid's cell.",
-            "type": "number"
-        },
-        "height": {
-            "description": "The height in pixels of the sparkline, by default, this will be the height of the grid's cell.",
-            "type": "number"
-        },
         "title": {
             "description": "The title of the sparklines.",
             "type": "string"
