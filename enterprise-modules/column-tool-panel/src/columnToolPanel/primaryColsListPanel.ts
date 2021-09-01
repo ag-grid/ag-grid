@@ -117,7 +117,7 @@ export class PrimaryColsListPanel extends Component {
             this.onColumnsChanged();
         }
 
-        if (!params.suppressColumnMove) {
+        if (!params.suppressColumnMove || this.gridOptionsWrapper.isSuppressMovableColumns) {
             this.createManagedBean(new PrimaryColsListPanelItemDragFeature(this, this.virtualList));
         }
     }

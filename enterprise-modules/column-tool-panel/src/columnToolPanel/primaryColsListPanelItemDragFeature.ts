@@ -35,6 +35,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
     private currentDragColumn: Column | OriginalColumnGroup | null = null;
     private lastHoveredColumnItem: DragColumnItem | null = null;
     private autoScrollService: AutoScrollService;
+    private moveBlocked: boolean;
 
     constructor(
         private readonly comp: PrimaryColsListPanel,
@@ -52,20 +53,32 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
 
     private columnPanelItemDragStart({ column }: ColumnPanelItemDragStartEvent): void {
         this.currentDragColumn = column;
+        const currentColumns = this.getCurrentColumns();
+        const hasNotMovable = _.find(currentColumns, col => {
+            const colDef = col.getColDef();
+            return !!colDef.suppressMovable || !!colDef.lockPosition;
+        });
+
+        if (hasNotMovable) {
+            this.moveBlocked = true;
+        }
     }
 
     private columnPanelItemDragEnd(): void {
-        window.setTimeout(() => { this.currentDragColumn = null; }, 10);
+        window.setTimeout(() => { 
+            this.currentDragColumn = null;
+            this.moveBlocked = false;
+        }, 10);
     }
 
     private createDropTarget(): void {
         const dropTarget: DropTarget = {
             isInterestedIn: (type: DragSourceType) => type === DragSourceType.ToolPanel,
-            getIconName:() => DragAndDropService.ICON_MOVE,
+            getIconName:() => DragAndDropService[this.moveBlocked ? 'ICON_NOT_ALLOWED' : 'ICON_MOVE'],
             getContainer: () => this.comp.getGui(),
             onDragging: (e) => this.onDragging(e),
-            onDragStop: (e) => this.onDragStop(e),
-            onDragLeave: (e) => this.onDragLeave(e)
+            onDragStop: () => this.onDragStop(),
+            onDragLeave: () => this.onDragLeave()
         };
 
         this.dragAndDropService.addDropTarget(dropTarget);
@@ -82,7 +95,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
     }
 
     private onDragging(e: DraggingEvent) {
-        if (!this.currentDragColumn) { return; }
+        if (!this.currentDragColumn || this.moveBlocked) { return; }
 
         const hoveredColumnItem = this.getDragColumnItem(e);
         const comp = this.virtualList.getComponentAt(hoveredColumnItem.rowIndex);
@@ -95,7 +108,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
             this.lastHoveredColumnItem &&
             this.lastHoveredColumnItem.rowIndex === hoveredColumnItem.rowIndex &&
             this.lastHoveredColumnItem.position === hoveredColumnItem.position
-            ) { return; }
+        ) { return; }
 
         this.autoScrollService.check(e.event);
         this.clearHoveredItems();
@@ -121,9 +134,11 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
         };
     }
 
-    private onDragStop(e: DraggingEvent) {
+    private onDragStop() {
+        if (this.moveBlocked) { return; }
+
         const targetIndex: number | null = this.getTargetIndex();
-        const columnsToMove: Column[] = this.getColumnsToMove();
+        const columnsToMove: Column[] = this.getCurrentColumns();
 
         if (targetIndex != null) { 
             this.columnModel.moveColumns(columnsToMove, targetIndex);
@@ -135,16 +150,10 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
 
     private getMoveDiff(end: number): number {
         const allColumns = this.columnModel.getAllGridColumns();
-        let currentColumn: Column;
-        let span: number;
-        if (this.currentDragColumn instanceof OriginalColumnGroup) {
-            const leafColumns = this.currentDragColumn.getLeafColumns();
-            currentColumn = leafColumns[0];
-            span = leafColumns.length;
-        } else {
-            currentColumn = this.currentDragColumn!;
-            span = 1;
-        }
+        const currentColumns = this.getCurrentColumns();
+        const currentColumn = currentColumns[0];
+        const span = currentColumns.length;
+
         const currentIndex = allColumns.indexOf(currentColumn);
 
         if (currentIndex < end) {
@@ -152,6 +161,13 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
         }
 
         return 0;
+    }
+
+    private getCurrentColumns(): Column[] {
+        if (this.currentDragColumn instanceof OriginalColumnGroup) {
+            return this.currentDragColumn.getLeafColumns();
+        }
+        return [this.currentDragColumn!];
     }
 
     private getTargetIndex(): number | null {
@@ -176,15 +192,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
         return adjustedTarget - diff;
     }
 
-    private getColumnsToMove(): Column[] {
-        if (this.currentDragColumn instanceof OriginalColumnGroup) {
-            return this.currentDragColumn.getLeafColumns();
-        }
-
-        return [this.currentDragColumn!];
-    }
-
-    private onDragLeave(e: DraggingEvent) {
+    private onDragLeave() {
         this.clearHoveredItems();
         this.autoScrollService.ensureCleared();
     }
