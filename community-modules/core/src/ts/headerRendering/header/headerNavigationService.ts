@@ -7,7 +7,7 @@ import { ColumnGroup } from "../../entities/columnGroup";
 import { Column } from "../../entities/column";
 import { HeaderRowType } from "../headerRowComp";
 import { AnimationFrameService } from "../../misc/animationFrameService";
-import { HeaderRootComp, HeaderContainerPosition } from "../headerRootComp";
+import { GridHeaderComp } from "../gridHeaderComp";
 import { last } from "../../utils/array";
 import { CtrlsService } from "../../ctrlsService";
 import { GridBodyCtrl } from "../../gridBodyComp/gridBodyCtrl";
@@ -28,7 +28,6 @@ export class HeaderNavigationService extends BeanStub {
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
     private gridBodyCon: GridBodyCtrl;
-    private headerRoot: HeaderRootComp;
 
     @PostConstruct
     private postConstruct(): void {
@@ -37,28 +36,16 @@ export class HeaderNavigationService extends BeanStub {
         });
     }
 
-    public registerHeaderRoot(headerRoot: HeaderRootComp): void {
-        this.headerRoot = headerRoot;
-    }
-
     public getHeaderRowCount(): number {
-        const headerContainers = this.headerRoot.getHeaderContainers();
-
-        return headerContainers.size === 0 ? 0 : this.getHeaderContainer()!.getRowComps().length;
+        const centerHeaderContainer = this.ctrlsService.getHeaderContainer();
+        return centerHeaderContainer ? centerHeaderContainer.getRowComps().length : 0;
     }
 
     public getHeaderRowType(idx: number): HeaderRowType | undefined {
-        if (this.getHeaderRowCount()) {
-            return this.getHeaderContainer()!.getRowComps()[idx].getType();
+        const centerHeaderContainer = this.ctrlsService.getHeaderContainer();
+        if (centerHeaderContainer) {
+            return centerHeaderContainer.getRowComps()[idx].getType();
         }
-    }
-
-    public getHeaderContainer(position: HeaderContainerPosition | null | undefined = 'center'): HeaderContainer | undefined {
-        if (position === null) {
-            position = 'center';
-        }
-
-        return this.headerRoot.getHeaderContainers().get(position);
     }
 
     /*

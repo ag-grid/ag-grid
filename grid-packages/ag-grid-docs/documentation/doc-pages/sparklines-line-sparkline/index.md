@@ -51,29 +51,29 @@ This is an example to further demonstarate how line sparklines can be configured
 <grid-example title='Line Sparkline' name='line-sparkline' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
 ## Interfaces
-The interfacs for the available options is as follows:
+The interfaces for the available options are as follows:
 
-### LineSparklineOptions:
+### LineSparklineOptions
 
 <api-documentation source='sparklines-line-sparkline/resources/line-sparkline-api.json' section='LineSparklineOptions'></api-documentation>
 
-### Padding:
+### Padding
 
 <api-documentation source='sparklines-line-sparkline/resources/line-sparkline-api.json' section='Padding'></api-documentation>
 
-### SparklineLine:
+### SparklineLine
 
 <api-documentation source='sparklines-line-sparkline/resources/line-sparkline-api.json' section='SparklineLine'></api-documentation>
 
-### SparklineMarker:
+### SparklineMarker
 
 <api-documentation source='sparklines-line-sparkline/resources/line-sparkline-api.json' section='SparklineMarker'></api-documentation>
 
-### HighlightStyle:
+### HighlightStyle
 
 <api-documentation source='sparklines-line-sparkline/resources/line-sparkline-api.json' section='HighlightStyle'></api-documentation>
 
-### MarkerFormat:
+### MarkerFormat
 
 <api-documentation source='sparklines-line-sparkline/resources/line-sparkline-api.json' section='MarkerFormat'></api-documentation>
 

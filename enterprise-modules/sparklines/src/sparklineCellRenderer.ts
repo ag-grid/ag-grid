@@ -6,9 +6,6 @@ import {
     RefSelector,
     ResizeObserverService
 } from "@ag-grid-community/core";
-import { LineSparkline } from "./sparkline/lineSparkline";
-import { AreaSparkline } from "./sparkline/areaSparkline";
-import { ColumnSparkline } from "./sparkline/columnSparkline";
 import { AgSparkline } from "./sparkline/agSparkline";
 
 export class SparklineCellRenderer extends Component implements ICellRenderer {
@@ -19,9 +16,9 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
         </div>`;
 
     @RefSelector('eSparkline') private eSparkline?: HTMLElement;
-    @Autowired('resizeObserverService') private resizeObserverService?: ResizeObserverService;
+    @Autowired('resizeObserverService') private resizeObserverService!: ResizeObserverService;
 
-    private sparkline?: LineSparkline | AreaSparkline | ColumnSparkline;
+    private sparkline?: any;
 
     constructor() {
         super(SparklineCellRenderer.TEMPLATE);
@@ -51,15 +48,17 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
             }
         }
 
-        if (this.resizeObserverService) {
-            const unsubscribeFromResize = this.resizeObserverService.observeResize(this.getGui(), updateSparklineWidthFunc);
-            this.addDestroyFunc(() => unsubscribeFromResize());
-        }
+        const unsubscribeFromResize = this.resizeObserverService.observeResize(this.getGui(), updateSparklineWidthFunc);
+        this.addDestroyFunc(() => unsubscribeFromResize());
     }
 
     public refresh(params: ISparklineCellRendererParams): boolean {
         if (this.sparkline) {
-            this.sparkline.data = params.value;
+            const options = {
+                data: params.value,
+                ...params.sparklineOptions
+            }
+            AgSparkline.update(this.sparkline, options);
         }
         return true;
     }

@@ -11,7 +11,7 @@ const buildSharedString = (strMap: Map<string, number>): XmlElement[] => {
         };
 
         // if we have leading or trailing spaces, instruct Excel not to trim them
-        const preserveSpaces = textNode.replace(/^\s*|\s*$/g, '').length !== textNode.length;
+        const preserveSpaces = textNode.trim().length !== textNode.length;
 
         if (preserveSpaces) {
             child.properties = {
@@ -23,7 +23,7 @@ const buildSharedString = (strMap: Map<string, number>): XmlElement[] => {
         ret.push({
             name: 'si',
             children: [child]
-        })
+        });
     });
 
     return ret;

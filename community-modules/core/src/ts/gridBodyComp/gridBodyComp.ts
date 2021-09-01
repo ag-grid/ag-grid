@@ -1,17 +1,12 @@
 import { Autowired, Optional, PostConstruct } from '../context/context';
-import { Events } from '../events';
+import { GridHeaderComp } from '../headerRendering/gridHeaderComp';
 import { IRangeService } from '../interfaces/IRangeService';
-import { IContextMenuFactory } from '../interfaces/iContextMenuFactory';
-import { GridApi } from '../gridApi';
-import { Component } from '../widgets/component';
-import { Beans } from '../rendering/beans';
-import { RefSelector } from '../widgets/componentAnnotations';
-import { HeaderRootComp } from '../headerRendering/headerRootComp';
 import { ResizeObserverService } from '../misc/resizeObserverService';
-import { setAriaColCount, setAriaMultiSelectable, setAriaRowCount } from '../utils/aria';
-import { addCssClass, addOrRemoveCssClass, removeCssClass } from '../utils/dom';
-import { IMenuFactory } from "../interfaces/iMenuFactory";
 import { LayoutCssClasses } from "../styling/layoutFeature";
+import { setAriaColCount, setAriaMultiSelectable, setAriaRowCount } from '../utils/aria';
+import { addOrRemoveCssClass } from '../utils/dom';
+import { Component } from '../widgets/component';
+import { RefSelector } from '../widgets/componentAnnotations';
 import {
     CSS_CLASS_CELL_SELECTABLE,
     CSS_CLASS_COLUMN_MOVING,
@@ -56,7 +51,7 @@ export class GridBodyComp extends Component {
     @RefSelector('eBodyViewport') private eBodyViewport: HTMLElement;
     @RefSelector('eTop') private eTop: HTMLElement;
     @RefSelector('eBottom') private eBottom: HTMLElement;
-    @RefSelector('headerRoot') headerRootComp: HeaderRootComp;
+    @RefSelector('headerRoot') headerRootComp: GridHeaderComp;
 
     private ctrl: GridBodyCtrl;
 

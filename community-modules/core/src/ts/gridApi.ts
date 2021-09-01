@@ -38,7 +38,7 @@ import { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
 import { ICellRenderer } from "./rendering/cellRenderers/iCellRenderer";
 import { ICellEditor } from "./interfaces/iCellEditor";
 import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
-import { HeaderRootComp } from "./headerRendering/headerRootComp";
+import { GridHeaderComp } from "./headerRendering/gridHeaderComp";
 import { AnimationFrameService } from "./misc/animationFrameService";
 import {
     IServerSideRowModel,
@@ -214,7 +214,6 @@ export class GridApi {
     private gridBodyCon: GridBodyCtrl;
     private sideBarComp: ISideBar;
 
-    private headerRootComp: HeaderRootComp;
     private clientSideRowModel: IClientSideRowModel;
     private infiniteRowModel: IInfiniteRowModel;
 
@@ -226,10 +225,6 @@ export class GridApi {
 
     public registerOverlayWrapperComp(overlayWrapperComp: OverlayWrapperComponent): void {
         this.overlayWrapperComp = overlayWrapperComp;
-    }
-
-    public registerHeaderRootComp(headerRootComp: HeaderRootComp): void {
-        this.headerRootComp = headerRootComp;
     }
 
     public registerSideBarComp(sideBarComp: ISideBar): void {
@@ -554,7 +549,7 @@ export class GridApi {
     }
 
     public refreshHeader() {
-        this.headerRootComp.refreshHeader();
+        this.ctrlsService.getHeaderContainers().forEach(c => c.refresh());
     }
 
     public isAnyFilterPresent(): boolean {

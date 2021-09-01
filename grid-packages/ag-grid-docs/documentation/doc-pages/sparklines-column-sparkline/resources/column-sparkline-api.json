@@ -2,20 +2,12 @@
     "_config_": {},
     "ColumnSparklineOptions": {
         "type": {
-            "description": "The type of sparklines to create, in this case it would be `column`.",
+            "description": "The type of sparklines to create, in this case it would be `'column'`.",
             "type": "string"
         },
         "data": {
             "description": "The data to render the sparklines from. By default this value will be the cell value in the grid.",
             "type": "number[]"
-        },
-        "width": {
-            "description": "The width in pixels of the sparkline, by default, this will be the width of the grid's cell.",
-            "type": "number"
-        },
-        "height": {
-            "description": "The height in pixels of the sparkline, by default, this will be the height of the grid's cell.",
-            "type": "number"
         },
         "title": {
             "description": "The title of the sparklines.",
@@ -46,12 +38,12 @@
             }
         },
         "fill": {
-            "description": "The css colour value for the fill of the columns.",
+            "description": "The CSS colour value for the fill of the columns.",
             "type": "string",
             "default": "rgb(124, 181, 236)"
         },
         "stroke": {
-            "description": "The css colour value for the outline of the columns.",
+            "description": "The CSS colour value for the outline of the columns.",
             "type": "string",
             "default": "silver",
             "more": {
@@ -62,17 +54,17 @@
         "strokeWidth": {
             "description": "The thickness in pixels for the stroke of the columns.",
             "type": "number",
-            "default": "0"
+            "default": 0
         },
         "paddingInner": {
             "description": "The size of the gap between the columns as a proportion, between 0 and 1. This value is a fraction of the “step”, which is the interval between the start of a band and the start of the next band.",
             "type": "number",
-            "default": "0.5"
+            "default": 0.5
         },
         "paddingOuter": {
             "description": "The padding on the outside i.e. left and right, to leave some room for the axis. In association with `paddingInner`, this value can be between 0 and 1.",
             "type": "number",
-            "default": "0.2"
+            "default": 0.2
         },
         "formatter": {
             "description": "A callback function to return format styles of type ColumnFormat.",
@@ -101,40 +93,32 @@
     },
     "Padding": {
         "top": {
-            "default": 20,
-            "description": "The number of pixels of padding at the top of the sparkline area.",
-            "min": 0,
-            "max": 40
+            "default": 3,
+            "description": "The number of pixels of padding at the top of the sparkline area."
         },
         "right": {
-            "default": 20,
-            "description": "The number of pixels of padding at the right of the sparkline area.",
-            "min": 0,
-            "max": 40
+            "default": 3,
+            "description": "The number of pixels of padding at the right of the sparkline area."
         },
         "bottom": {
-            "default": 20,
-            "description": "The number of pixels of padding at the bottom of the sparkline area.",
-            "min": 0,
-            "max": 40
+            "default": 3,
+            "description": "The number of pixels of padding at the bottom of the sparkline area."
         },
         "left": {
-            "default": 20,
-            "description": "The number of pixels of padding at the left of the sparkline area.",
-            "min": 0,
-            "max": 40
+            "default": 3,
+            "description": "The number of pixels of padding at the left of the sparkline area."
         }
     },
     "SparklineAxisOptions": {
         "stroke": {
-            "description": "The css colour value for the outline of the horizontal axis line.",
+            "description": "The CSS colour value for the outline of the horizontal axis line.",
             "type": "string",
             "default": "rgb(204, 214, 235)"
         },
         "strokeWidth": {
             "description": "The thickness in pixels for the stroke of the horizontal axis line.",
             "type": "number",
-            "default": "1"
+            "default": 1
         }
     },
     "HighlightStyle": {
@@ -144,23 +128,23 @@
             "default": "yellow"
         },
         "stroke": {
-            "description": "The css colour value for the outline of the columns when hovered over. Use `undefined` for no highlight stroke.",
+            "description": "The CSS colour value for the outline of the columns when hovered over. Use `undefined` for no highlight stroke.",
             "type": "string",
             "default": "yellow"
         },
         "strokeWidth": {
             "description": "The thickness in pixels for the stroke of the markers when hovered over.",
             "type": "number",
-            "default": "0"
+            "default": 0
         }
     },
     "ColumnFormat": {
         "fill": {
-            "description": "The css colour value for the fill of the individual column.",
+            "description": "The CSS colour value for the fill of the individual column.",
             "type": "string"
         },
         "stroke": {
-            "description": "TThe css colour value for the outline of the individual column.",
+            "description": "TThe CSS colour value for the outline of the individual column.",
             "type": "string"
         },
         "strokeWidth": {

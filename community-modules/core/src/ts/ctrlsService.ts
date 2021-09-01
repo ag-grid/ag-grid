@@ -2,9 +2,11 @@ import { GridCtrl } from "./gridComp/gridCtrl";
 import { Bean } from "./context/context";
 import { GridBodyCtrl } from "./gridBodyComp/gridBodyCtrl";
 import { RowContainerCtrl } from "./gridBodyComp/rowContainer/rowContainerCtrl";
-import { HeaderRootComp } from "./headerRendering/headerRootComp";
 import { FakeHScrollCtrl } from "./gridBodyComp/fakeHScrollCtrl";
 import { BeanStub } from "./context/beanStub";
+import { GridHeaderCtrl } from "./headerRendering/gridHeaderCtrl";
+import { HeaderContainer } from "./headerRendering/headerContainer";
+import { Constants } from "./constants/constants";
 
 // for all controllers that are singletons, they can register here so other parts
 // of the application can access them.
@@ -26,7 +28,11 @@ interface ReadyParams {
     topRightRowContainerCtrl: RowContainerCtrl;
 
     fakeHScrollCtrl: FakeHScrollCtrl;
-    headerRootComp: HeaderRootComp;
+    gridHeaderCtrl: GridHeaderCtrl;
+
+    centerHeaderContainer: HeaderContainer;
+    leftHeaderContainer: HeaderContainer;
+    rightHeaderContainer: HeaderContainer;
 }
 
 @Bean('ctrlsService')
@@ -47,9 +53,13 @@ export class CtrlsService extends BeanStub {
     private topLeftRowContainerCtrl: RowContainerCtrl;
     private topRightRowContainerCtrl: RowContainerCtrl;
 
+    private centerHeaderContainer: HeaderContainer;
+    private leftHeaderContainer: HeaderContainer;
+    private rightHeaderContainer: HeaderContainer;
+
     private fakeHScrollCtrl: FakeHScrollCtrl;
 
-    private headerRootComp: HeaderRootComp;
+    private gridHeaderCtrl: GridHeaderCtrl;
 
     private ready = false;
     private readyCallbacks: ((p: ReadyParams) => void)[] = [];
@@ -71,8 +81,12 @@ export class CtrlsService extends BeanStub {
             && this.topLeftRowContainerCtrl != null
             && this.topRightRowContainerCtrl != null
 
+            && this.centerHeaderContainer != null
+            && this.leftHeaderContainer != null
+            && this.rightHeaderContainer != null
+
             && this.fakeHScrollCtrl != null
-            && this.headerRootComp != null;
+            && this.gridHeaderCtrl != null;
 
         if (this.ready) {
             const p = this.createReadyParams();
@@ -103,10 +117,14 @@ export class CtrlsService extends BeanStub {
             topLeftRowContainerCtrl: this.topLeftRowContainerCtrl,
             topRightRowContainerCtrl: this.topRightRowContainerCtrl,
 
+            centerHeaderContainer: this.centerHeaderContainer,
+            leftHeaderContainer: this.leftHeaderContainer,
+            rightHeaderContainer: this.rightHeaderContainer,
+
             fakeHScrollCtrl: this.fakeHScrollCtrl,
             gridBodyCtrl: this.gridBodyCtrl,
             gridCtrl: this.gridCtrl,
-            headerRootComp: this.headerRootComp,
+            gridHeaderCtrl: this.gridHeaderCtrl,
         };
     }
 
@@ -115,8 +133,8 @@ export class CtrlsService extends BeanStub {
         this.checkReady();
     }
 
-    public registerHeaderRootComp(headerRootComp: HeaderRootComp): void {
-        this.headerRootComp = headerRootComp;
+    public registerGridHeaderCtrl(gridHeaderCtrl: GridHeaderCtrl): void {
+        this.gridHeaderCtrl = gridHeaderCtrl;
         this.checkReady();
     }
 
@@ -165,6 +183,20 @@ export class CtrlsService extends BeanStub {
         this.checkReady();
     }
 
+    public registerHeaderContainer(con: HeaderContainer, pinned: string | null): void {
+        switch (pinned) {
+            case Constants.PINNED_LEFT: 
+                this.leftHeaderContainer = con; 
+                break;
+            case Constants.PINNED_RIGHT: 
+                this.rightHeaderContainer = con; 
+                break;
+            default: this.centerHeaderContainer = con; 
+                break;
+        }
+        this.checkReady();
+    }
+
     public registerGridBodyCtrl(con: GridBodyCtrl): void {
         this.gridBodyCtrl = con;
         this.checkReady();
@@ -179,8 +211,8 @@ export class CtrlsService extends BeanStub {
         return this.fakeHScrollCtrl;
     }
 
-    public getHeaderRootComp(): HeaderRootComp {
-        return this.headerRootComp;
+    public getGridHeaderCtrl(): GridHeaderCtrl {
+        return this.gridHeaderCtrl;
     }
 
     public getGridCtrl(): GridCtrl {
@@ -201,5 +233,17 @@ export class CtrlsService extends BeanStub {
 
     public getGridBodyCtrl(): GridBodyCtrl {
         return this.gridBodyCtrl;
+    }
+
+    public getHeaderContainers(): HeaderContainer[] {
+        return [this.leftHeaderContainer, this.rightHeaderContainer, this.centerHeaderContainer];
+    }
+
+    public getHeaderContainer(pinned?: string | null): HeaderContainer {
+        switch (pinned) {
+            case Constants.PINNED_LEFT: return this.leftHeaderContainer;
+            case Constants.PINNED_RIGHT: return this.rightHeaderContainer;
+            default: return this.centerHeaderContainer;
+        }
     }
 }
