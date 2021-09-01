@@ -10,6 +10,7 @@ import {
     DragSourceType,
     DropTarget,
     Events,
+    OriginalColumnGroup,
     PostConstruct,
     VirtualList,
     _
@@ -31,7 +32,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
 
-    private currentDragColumn: Column | ColumnGroup | null = null;
+    private currentDragColumn: Column | OriginalColumnGroup | null = null;
     private lastHoveredColumnItem: DragColumnItem | null = null;
     private autoScrollService: AutoScrollService;
 
@@ -49,7 +50,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
         this.createAutoScrollService();
     }
 
-    private columnPanelItemDragStart({ column }: { column: Column | ColumnGroup }): void {
+    private columnPanelItemDragStart({ column }: { column: Column | OriginalColumnGroup }): void {
         this.currentDragColumn = column;
     }
 
@@ -132,6 +133,27 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
         this.autoScrollService.ensureCleared();
     }
 
+    private getMoveDiff(end: number): number {
+        const allColumns = this.columnModel.getAllGridColumns();
+        let currentColumn: Column;
+        let span: number;
+        if (this.currentDragColumn instanceof OriginalColumnGroup) {
+            const leafColumns = this.currentDragColumn.getLeafColumns();
+            currentColumn = leafColumns[0];
+            span = leafColumns.length;
+        } else {
+            currentColumn = this.currentDragColumn!;
+            span = 1;
+        }
+        const currentIndex = allColumns.indexOf(currentColumn);
+
+        if (currentIndex < end) {
+            return span;
+        }
+
+        return 0;
+    }
+
     private getTargetIndex(): number | null {
         if (!this.lastHoveredColumnItem) { return null; }
         const columnItemComponent = this.lastHoveredColumnItem.component;
@@ -148,12 +170,14 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
         }
 
         const targetColumnIndex = this.columnModel.getAllGridColumns().indexOf(targetColumn);
+        const adjustedTarget = isBefore ? targetColumnIndex : targetColumnIndex + 1;
+        const diff = this.getMoveDiff(adjustedTarget);
 
-        return isBefore ? Math.max(0, targetColumnIndex) : targetColumnIndex + 1;
+        return adjustedTarget - diff;
     }
 
     private getColumnsToMove(): Column[] {
-        if (this.currentDragColumn instanceof ColumnGroup) {
+        if (this.currentDragColumn instanceof OriginalColumnGroup) {
             return this.currentDragColumn.getLeafColumns();
         }
 

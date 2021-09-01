@@ -4,6 +4,8 @@ import {
     Autowired,
     Column,
     ColumnModel,
+    ColumnPanelItemDragStartEvent,
+    ColumnPanelItemDragEndEvent,
     Component,
     CssClassApplier,
     DragAndDropService,
@@ -13,8 +15,7 @@ import {
     ITooltipParams,
     KeyCode,
     PostConstruct,
-    RefSelector,
-    AgEvent
+    RefSelector
 } from "@ag-grid-community/core";
 import { ModelItemUtils } from "./modelItemUtils";
 
@@ -167,15 +168,21 @@ export class ToolPanelColumnComp extends Component {
             dragItemName: this.displayName,
             getDragItem: () => this.createDragItem(),
             onDragStarted: () => {
-                this.eventService.dispatchEvent({
+                const event: ColumnPanelItemDragStartEvent = {
                     type: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START,
+                    api: this.gridOptionsWrapper.getApi()!,
+                    columnApi: this.gridOptionsWrapper.getColumnApi()!,
                     column: this.column
-                } as AgEvent);
+                };
+                this.eventService.dispatchEvent(event);
             },
             onDragStopped: () => {
-                this.eventService.dispatchEvent({
-                    type: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_END
-                });
+                const event: ColumnPanelItemDragEndEvent = {
+                    type: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_END,
+                    api: this.gridOptionsWrapper.getApi()!,
+                    columnApi: this.gridOptionsWrapper.getColumnApi()!,
+                };
+                this.eventService.dispatchEvent(event);
             }
         };
 

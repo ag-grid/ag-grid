@@ -51,6 +51,12 @@ export interface ToolPanelVisibleChangedEvent extends AgGridEvent {
     source: string | undefined;
 }
 
+export interface ColumnPanelItemDragStartEvent extends AgGridEvent {
+    column: Column | OriginalColumnGroup
+}
+
+export interface ColumnPanelItemDragEndEvent extends AgGridEvent { }
+
 export interface ColumnPivotModeChangedEvent extends AgGridEvent { }
 
 export interface VirtualColumnsChangedEvent extends AgGridEvent { }

@@ -5,6 +5,8 @@ import {
     Column,
     ColumnModel,
     ColumnEventType,
+    ColumnPanelItemDragStartEvent,
+    ColumnPanelItemDragEndEvent,
     Component,
     CssClassApplier,
     DragAndDropService,
@@ -16,8 +18,7 @@ import {
     OriginalColumnGroup,
     PostConstruct,
     RefSelector,
-    TouchListener,
-    AgEvent
+    TouchListener
 } from "@ag-grid-community/core";
 import { ColumnModelItem } from "./columnModelItem";
 import { ModelItemUtils } from "./modelItemUtils";
@@ -169,13 +170,21 @@ export class ToolPanelColumnGroupComp extends Component {
             dragItemName: this.displayName,
             getDragItem: () => this.createDragItem(),
             onDragStarted: () => {
-                this.eventService.dispatchEvent({
+                const event: ColumnPanelItemDragStartEvent = {
+                    api: this.gridOptionsWrapper.getApi()!,
+                    columnApi: this.gridOptionsWrapper.getColumnApi()!,
                     type: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START,
                     column: this.columnGroup
-                } as AgEvent);
+                }
+                this.eventService.dispatchEvent(event);
             },
             onDragStopped: () => {
-                this.eventService.dispatchEvent({ type: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_END });
+                const event: ColumnPanelItemDragEndEvent = {
+                    api: this.gridOptionsWrapper.getApi()!,
+                    columnApi: this.gridOptionsWrapper.getColumnApi()!,
+                    type: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_END
+                };
+                this.eventService.dispatchEvent(event);
             }
         };
 
