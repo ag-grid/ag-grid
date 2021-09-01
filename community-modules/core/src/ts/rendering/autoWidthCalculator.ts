@@ -72,15 +72,10 @@ export class AutoWidthCalculator extends BeanStub {
 
         let comp: Component | null = null;
 
-        this.ctrlsService.getHeaderContainers().forEach(
-            container => container.forEachHeaderElement(headerElement => {
-                if (headerElement instanceof HeaderWrapperComp) {
-                    const headerWrapperComp = headerElement;
-                    if (headerWrapperComp.getColumn() === column) {
-                        comp = headerWrapperComp;
-                    }
-                }
-            })
+        this.ctrlsService.getHeaderContainers().forEach(container => {
+                const res = container.getHeaderWrapperComp(column);
+                if (res!=null) { comp = res; }
+            }
         );
 
         return comp ? (comp as Component).getGui() : null;

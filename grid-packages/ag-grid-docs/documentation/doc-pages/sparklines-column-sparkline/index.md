@@ -35,9 +35,10 @@ const gridOptions = {
 
 In the snippet above, the `sparklineOptions` provided in the `cellRendererParams` property is of type `ColumnSparklineOptions`.
 
-This is an example to further demonstarate how column sparklines can be configured and customised to your liking or branding by using the available options to add styles.
+This is an example to further demonstrate how column sparklines can be configured and customised to your liking or branding by using the available options to add styles.
 
-- The `sparklineOptions` object is a way to define properties that get applied to every column. In this example, strokeWidth of every column is set to `1`.
+- The `sparklineOptions` object contains the properties that get applied to every column. In this example, strokeWidth of every column is set to `1`.
+- By default, an axis line is displayed, this can be modified or removed by setting the axis strokeWidth to `0`. See [SparklineAxisOptions](/sparklines-column-sparkline/#sparklineaxisoptions).
 - Refer to the [ColumnSparklineOptions](/sparklines-column-sparkline/#columnsparklineoptions) interface for the attributes which can be customised in a column sparkline.
 - The formatter callback function is used to override the default property values for individual columns based on the data they represent.
 - The formatter callback function is passed `ColumnFormatterParams` which provides information about the data associated with each column. This function should return an object of type `ColumnFormat`.

@@ -1,6 +1,6 @@
 import { Bean, Autowired, PostConstruct } from "../../context/context";
 import { BeanStub } from "../../context/beanStub";
-import { HeaderContainer } from "../headerContainer";
+import { HeaderRowContainer } from "../headerRowContainerComp";
 import { FocusService } from "../../focusService";
 import { HeaderPosition, HeaderPositionUtils } from "./headerPosition";
 import { ColumnGroup } from "../../entities/columnGroup";

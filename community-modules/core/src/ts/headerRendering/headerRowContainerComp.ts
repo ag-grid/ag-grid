@@ -7,19 +7,31 @@ import { ScrollVisibleService } from '../gridBodyComp/scrollVisibleService';
 import { Component } from '../widgets/component';
 import { Constants } from '../constants/constants';
 import { setFixedWidth, ensureDomOrder } from '../utils/dom';
-import { BeanStub } from "../context/beanStub";
 import { NumberSequence } from "../utils";
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { CtrlsService } from '../ctrlsService';
+import { RefSelector } from '../widgets/componentAnnotations';
+import { PinnedWidthService } from '../gridBodyComp/pinnedWidthService';
+import { CenterWidthFeature } from '../gridBodyComp/centerWidthFeature';
+import { HeaderRowContainerCtrl, IHeaderRowContainerComp } from './headerRowContainerCtrl';
+import { Column } from '../entities/column';
+import { HeaderWrapperComp } from './header/headerWrapperComp';
 
-export class HeaderContainer extends BeanStub {
+export class HeaderRowContainer extends Component {
+
+    private static PINNED_TEMPLATE =  /* html */ `<div role="presentation"/>`;
+
+    private static CENTER_TEMPLATE =  /* html */ 
+        `<div role="presentation">
+            <div class="ag-header-container" ref="eContainer" role="rowgroup"></div>
+        <div>`;
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+    @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
 
-    private eContainer: HTMLElement;
-    private eViewport: HTMLElement | null;
+    @RefSelector('eContainer') private eContainer: HTMLElement;
 
     private pinned: string | null;
 
@@ -29,34 +41,25 @@ export class HeaderContainer extends BeanStub {
 
     private printLayout: boolean;
 
-    constructor(eContainer: HTMLElement, eViewport: HTMLElement | null, pinned: string | null) {
+    constructor(pinned: string | null) {
         super();
-        this.eContainer = eContainer;
         this.pinned = pinned;
-        this.eViewport = eViewport;
     }
 
-    public forEachHeaderElement(callback: (renderedHeaderElement: Component) => void): void {
-        if (this.groupsRowComps) {
-            this.groupsRowComps.forEach(c => c.forEachHeaderElement(callback));
-        }
+    public getHeaderWrapperComp(column: Column): HeaderWrapperComp | undefined {
         if (this.columnsRowComp) {
-            this.columnsRowComp.forEachHeaderElement(callback);
-        }
-        if (this.filtersRowComp) {
-            this.filtersRowComp.forEachHeaderElement(callback);
+            return this.columnsRowComp.getHeaderWrapperComp(column);
         }
     }
 
     @PostConstruct
     private init(): void {
+        this.selectAndSetTemplate();
+        this.selectTopLevelClass();
+
         // if value changes, then if not pivoting, we at least need to change the label eg from sum() to avg(),
         // if pivoting, then the columns have changed
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_SCROLLBAR_WIDTH_CHANGED, this.onScrollbarWidthChanged.bind(this));
         this.setupDragAndDrop();
 
         this.printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
@@ -66,9 +69,78 @@ export class HeaderContainer extends BeanStub {
 
         this.ctrlsService.registerHeaderContainer(this, this.pinned);
 
+        this.setupPinnedWidth();
+        this.setupCenterWidth();
+
         if (this.columnModel.isReady()) {
             this.refresh();
         }
+
+        const compProxy: IHeaderRowContainerComp = {
+
+        };
+
+        const ctrl = this.createManagedBean(new HeaderRowContainerCtrl());
+        ctrl.setComp(compProxy);
+    }
+
+    public setHorizontalScroll(offset: number): void {
+        this.eContainer.style.transform = `translateX(${offset}px)`;
+    }
+
+    private setupCenterWidth(): void {
+        if (this.pinned!=null) { return; }
+        this.createManagedBean(new CenterWidthFeature(width => this.eContainer.style.width = `${width}px`));
+    }
+
+    private setupPinnedWidth(): void {
+        if (this.pinned==null) { return; }
+
+        const pinningLeft = this.pinned === Constants.PINNED_LEFT;
+        const pinningRight = this.pinned === Constants.PINNED_RIGHT;
+
+        const listener = ()=> {
+            const width = pinningLeft ? this.pinnedWidthService.getPinnedLeftWidth() : this.pinnedWidthService.getPinnedRightWidth();
+            if (width==null) { return; } // can happen at initialisation, width not yet set
+
+            const hidden = width == 0;
+            const isRtl = this.gridOptionsWrapper.isEnableRtl();
+            const scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
+
+            // if there is a scroll showing (and taking up space, so Windows, and not iOS)
+            // in the body, then we add extra space to keep header aligned with the body,
+            // as body width fits the cols and the scrollbar
+            const addPaddingForScrollbar = this.scrollVisibleService.isVerticalScrollShowing() && ((isRtl && pinningLeft) || (!isRtl && pinningRight));
+            const widthWithPadding = addPaddingForScrollbar ? width + scrollbarWidth : width;
+
+            setFixedWidth(this.getContainer(), widthWithPadding);
+
+            this.addOrRemoveCssClass('ag-hidden', hidden);
+        };
+
+        this.addManagedListener(this.eventService, Events.EVENT_LEFT_PINNED_WIDTH_CHANGED, listener);
+        this.addManagedListener(this.eventService, Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED, listener);
+        this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, listener);
+        this.addManagedListener(this.eventService, Events.EVENT_SCROLLBAR_WIDTH_CHANGED, listener);
+    }
+
+    private selectTopLevelClass(): void {
+        let cssClass: string;
+        switch (this.pinned) {
+            case Constants.PINNED_LEFT : cssClass = 'ag-pinned-left-header'; break;
+            case Constants.PINNED_RIGHT : cssClass = 'ag-pinned-right-header'; break;
+            default : cssClass = 'ag-header-viewport'; break;
+        }
+        this.addCssClass(cssClass);
+    }
+
+    private selectAndSetTemplate(): void {
+        const template = this.pinned ? HeaderRowContainer.PINNED_TEMPLATE : HeaderRowContainer.CENTER_TEMPLATE;
+        this.setTemplate(template);
+    }
+
+    private getContainer(): HTMLElement {
+        return this.eContainer ? this.eContainer : this.getGui();
     }
 
     private onDomLayoutChanged(): void {
@@ -76,46 +148,6 @@ export class HeaderContainer extends BeanStub {
         if (this.printLayout !== newValue) {
             this.printLayout = newValue;
             this.refresh();
-        }
-    }
-
-    private onColumnResized(): void {
-        this.setWidthOfPinnedContainer();
-    }
-
-    private onDisplayedColumnsChanged(): void {
-        this.setWidthOfPinnedContainer();
-    }
-
-    private onScrollVisibilityChanged(): void {
-        this.setWidthOfPinnedContainer();
-    }
-
-    private onScrollbarWidthChanged(): void {
-        this.setWidthOfPinnedContainer();
-    }
-
-    private setWidthOfPinnedContainer(): void {
-        const pinningLeft = this.pinned === Constants.PINNED_LEFT;
-        const pinningRight = this.pinned === Constants.PINNED_RIGHT;
-        const controller = this.columnModel;
-        const isRtl = this.gridOptionsWrapper.isEnableRtl();
-        const scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
-
-        if (pinningLeft || pinningRight) {
-            // size to fit all columns
-            let width = controller[pinningLeft ? 'getDisplayedColumnsLeftWidth' : 'getDisplayedColumnsRightWidth']();
-
-            // if there is a scroll showing (and taking up space, so Windows, and not iOS)
-            // in the body, then we add extra space to keep header aligned with the body,
-            // as body width fits the cols and the scrollbar
-            const addPaddingForScrollbar = this.scrollVisibleService.isVerticalScrollShowing() && ((isRtl && pinningLeft) || (!isRtl && pinningRight));
-
-            if (addPaddingForScrollbar) {
-                width += scrollbarWidth;
-            }
-
-            setFixedWidth(this.eContainer, width);
         }
     }
 
@@ -140,8 +172,7 @@ export class HeaderContainer extends BeanStub {
     }
 
     private setupDragAndDrop(): void {
-        // center section has viewport, but pinned sections do not
-        const dropContainer = this.eViewport ? this.eViewport : this.eContainer;
+        const dropContainer = this.getGui();
         const bodyDropTarget = new BodyDropTarget(this.pinned, dropContainer);
         this.createManagedBean(bodyDropTarget);
     }
@@ -164,7 +195,7 @@ export class HeaderContainer extends BeanStub {
     private destroyRowComp(rowComp?: HeaderRowComp): void {
         if (rowComp) {
             this.destroyBean(rowComp);
-            this.eContainer.removeChild(rowComp.getGui());
+            this.getContainer().removeChild(rowComp.getGui());
         }
     }
 
@@ -237,14 +268,16 @@ export class HeaderContainer extends BeanStub {
         // add in all the eGui's. if the gui is already in, don't re-add it. however we do check for order
         // so that if use adds a row of column headers, they get added in right location (before the columns)
         const eGuis = this.getRowComps().map(c => c.getGui());
+        const eContainer = this.getContainer();
         let prevGui: HTMLElement;
+
         eGuis.forEach( eGui => {
-            const notAlreadyIn = eGui.parentElement!=this.eContainer;
+            const notAlreadyIn = eGui.parentElement!=eContainer;
             if (notAlreadyIn) {
-                this.eContainer.appendChild(eGui);
+                eContainer.appendChild(eGui);
             }
             if (prevGui) {
-                ensureDomOrder(this.eContainer, eGui, prevGui);
+                ensureDomOrder(eContainer, eGui, prevGui);
             }
             prevGui = eGui;
         });

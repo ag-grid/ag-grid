@@ -5,8 +5,6 @@ import { Autowired } from "../context/context";
 import { CtrlsService } from "../ctrlsService";
 import { Events } from "../eventKeys";
 import { FocusService } from "../focusService";
-import { CenterWidthFeature } from "../gridBodyComp/centerWidthFeature";
-import { PinnedWidthService } from "../gridBodyComp/pinnedWidthService";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { exists } from "../utils/generic";
 import { ManagedFocusFeature } from "../widgets/managedFocusFeature";
@@ -14,11 +12,7 @@ import { HeaderNavigationDirection, HeaderNavigationService } from "./header/hea
 
 export interface IGridHeaderComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
-    addOrRemoveLeftCssClass(cssClassName: string, on: boolean): void;
-    addOrRemoveRightCssClass(cssClassName: string, on: boolean): void;
-    setCenterWidth(width: string): void;
     setHeightAndMinHeight(height: string): void;
-    setCenterTransform(pos: string): void;
 }
 
 export class GridHeaderCtrl extends BeanStub {
@@ -26,7 +20,6 @@ export class GridHeaderCtrl extends BeanStub {
     @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
     private comp: IGridHeaderComp;
@@ -45,22 +38,13 @@ export class GridHeaderCtrl extends BeanStub {
             }
         ));
 
-        this.createManagedBean(new CenterWidthFeature(width => this.comp.setCenterWidth(`${width}px`)));
-
         // for setting ag-pivot-on / ag-pivot-off CSS classes
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
-
-        this.addManagedListener(this.eventService, Events.EVENT_LEFT_PINNED_WIDTH_CHANGED, this.onPinnedLeftWidthChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED, this.onPinnedRightWidthChanged.bind(this));
 
         this.onPivotModeChanged();
         this.setupHeaderHeight();
 
         this.ctrlsService.registerGridHeaderCtrl(this);
-    }
-
-    public setHorizontalScroll(offset: number): void {
-        this.comp.setCenterTransform(`translateX(${offset}px)`)
     }
 
     private setupHeaderHeight(): void {
@@ -169,15 +153,5 @@ export class GridHeaderCtrl extends BeanStub {
         if (!this.eGui.contains(relatedTarget as HTMLElement)) {
             this.focusService.clearFocusedHeader();
         }
-    }
-
-    private onPinnedLeftWidthChanged(): void {
-        const displayed = this.pinnedWidthService.getPinnedLeftWidth() > 0;
-        this.comp.addOrRemoveLeftCssClass('ag-hidden', !displayed);
-    }
-
-    private onPinnedRightWidthChanged(): void {
-        const displayed = this.pinnedWidthService.getPinnedRightWidth() > 0;
-        this.comp.addOrRemoveRightCssClass('ag-hidden', !displayed);
     }
 }
