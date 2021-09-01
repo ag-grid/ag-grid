@@ -2,7 +2,7 @@
     "_config_": {},
     "ColumnSparklineOptions": {
         "type": {
-            "description": "The type of sparklines to create, in this case it would be `column`.",
+            "description": "The type of sparklines to create, in this case it would be `'column'`.",
             "type": "string"
         },
         "data": {
@@ -54,17 +54,17 @@
         "strokeWidth": {
             "description": "The thickness in pixels for the stroke of the columns.",
             "type": "number",
-            "default": "0"
+            "default": 0
         },
         "paddingInner": {
             "description": "The size of the gap between the columns as a proportion, between 0 and 1. This value is a fraction of the “step”, which is the interval between the start of a band and the start of the next band.",
             "type": "number",
-            "default": "0.5"
+            "default": 0.5
         },
         "paddingOuter": {
             "description": "The padding on the outside i.e. left and right, to leave some room for the axis. In association with `paddingInner`, this value can be between 0 and 1.",
             "type": "number",
-            "default": "0.2"
+            "default": 0.2
         },
         "formatter": {
             "description": "A callback function to return format styles of type ColumnFormat.",
@@ -93,28 +93,20 @@
     },
     "Padding": {
         "top": {
-            "default": 20,
-            "description": "The number of pixels of padding at the top of the sparkline area.",
-            "min": 0,
-            "max": 40
+            "default": 3,
+            "description": "The number of pixels of padding at the top of the sparkline area."
         },
         "right": {
-            "default": 20,
-            "description": "The number of pixels of padding at the right of the sparkline area.",
-            "min": 0,
-            "max": 40
+            "default": 3,
+            "description": "The number of pixels of padding at the right of the sparkline area."
         },
         "bottom": {
-            "default": 20,
-            "description": "The number of pixels of padding at the bottom of the sparkline area.",
-            "min": 0,
-            "max": 40
+            "default": 3,
+            "description": "The number of pixels of padding at the bottom of the sparkline area."
         },
         "left": {
-            "default": 20,
-            "description": "The number of pixels of padding at the left of the sparkline area.",
-            "min": 0,
-            "max": 40
+            "default": 3,
+            "description": "The number of pixels of padding at the left of the sparkline area."
         }
     },
     "SparklineAxisOptions": {
@@ -126,7 +118,7 @@
         "strokeWidth": {
             "description": "The thickness in pixels for the stroke of the horizontal axis line.",
             "type": "number",
-            "default": "1"
+            "default": 1
         }
     },
     "HighlightStyle": {
@@ -143,7 +135,7 @@
         "strokeWidth": {
             "description": "The thickness in pixels for the stroke of the markers when hovered over.",
             "type": "number",
-            "default": "0"
+            "default": 0
         }
     },
     "ColumnFormat": {
