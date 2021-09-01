@@ -136,9 +136,9 @@
       "topRightRowContainerCtrl": "RowContainerCtrl",
       "fakeHScrollCtrl": "FakeHScrollCtrl",
       "gridHeaderCtrl": "GridHeaderCtrl",
-      "centerHeaderContainer": "HeaderContainer",
-      "leftHeaderContainer": "HeaderContainer",
-      "rightHeaderContainer": "HeaderContainer"
+      "centerHeaderContainer": "HeaderRowContainer",
+      "leftHeaderContainer": "HeaderRowContainer",
+      "rightHeaderContainer": "HeaderRowContainer"
     }
   },
   "DragItem": {
@@ -4100,11 +4100,7 @@
     "meta": {},
     "type": {
       "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
-      "addOrRemoveLeftCssClass(cssClassName: string, on: boolean)": "void",
-      "addOrRemoveRightCssClass(cssClassName: string, on: boolean)": "void",
-      "setCenterWidth(width: string)": "void",
-      "setHeightAndMinHeight(height: string)": "void",
-      "setCenterTransform(pos: string)": "void"
+      "setHeightAndMinHeight(height: string)": "void"
     }
   },
   "IHeaderParams": {
@@ -4201,6 +4197,7 @@
     "meta": { "isEnum": true },
     "type": ["COLUMN_GROUP", "COLUMN", "FLOATING_FILTER"]
   },
+  "IHeaderRowContainerComp": { "meta": {}, "type": {} },
   "HorizontalResizeParams": {
     "meta": {},
     "type": {
