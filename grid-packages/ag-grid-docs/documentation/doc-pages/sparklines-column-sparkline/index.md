@@ -49,25 +49,25 @@ This is an example to further demonstarate how column sparklines can be configur
 <grid-example title='Column Sparkline' name='column-sparkline' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
 ## Interfaces
-The interfacs for the available options is as follows:
+The interfaces for the available options are as follows:
 
-### ColumnSparklineOptions:
+### ColumnSparklineOptions
 
 <api-documentation source='sparklines-column-sparkline/resources/column-sparkline-api.json' section='ColumnSparklineOptions'></api-documentation>
 
-### Padding:
+### Padding
 
 <api-documentation source='sparklines-column-sparkline/resources/column-sparkline-api.json' section='Padding'></api-documentation>
 
-### SparklineAxisOptions:
+### SparklineAxisOptions
 
 <api-documentation source='sparklines-column-sparkline/resources/column-sparkline-api.json' section='SparklineAxisOptions'></api-documentation>
 
-### HighlightStyle:
+### HighlightStyle
 
 <api-documentation source='sparklines-column-sparkline/resources/column-sparkline-api.json' section='HighlightStyle'></api-documentation>
 
-### ColumnFormat:
+### ColumnFormat
 
 <api-documentation source='sparklines-column-sparkline/resources/column-sparkline-api.json' section='ColumnFormat'></api-documentation>
 

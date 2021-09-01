@@ -30,7 +30,7 @@
             }
         },
         "fill": {
-            "description": "The css colour value for the fill of the area.",
+            "description": "The CSS colour value for the fill of the area.",
             "type": "string",
             "default": "rgba(124, 181, 236, 0.25)"
         },
@@ -79,7 +79,7 @@
     },
     "SparklineAxisOptions": {
         "stroke": {
-            "description": "The css colour value for the outline of the horizontal axis line.",
+            "description": "The CSS colour value for the outline of the horizontal axis line.",
             "type": "string",
             "default": "rgb(204, 214, 235)"
         },
@@ -91,7 +91,7 @@
     },
     "SparklineLine": {
         "stroke": {
-            "description": "The css colour value for the line.",
+            "description": "The CSS colour value for the line.",
             "type": "string",
             "default" : "rgb(124, 181, 236)"
         },
@@ -123,12 +123,12 @@
             "default": 0
         },
         "fill": {
-            "description": "The css colour value for the fill of the markers.",
+            "description": "The CSS colour value for the fill of the markers.",
             "type": "string",
             "default": "rgb(124, 181, 236)"
         },
         "stroke": {
-            "description": "The css colour value for the outline of the markers.",
+            "description": "The CSS colour value for the outline of the markers.",
             "type": "string",
             "default": "rgb(124, 181, 236)"
         },
@@ -173,7 +173,7 @@
             "default": "yellow"
         },
         "stroke": {
-            "description": "The css colour value for the outline of the markers when hovered over. Use `undefined` for no highlight stroke.",
+            "description": "The CSS colour value for the outline of the markers when hovered over. Use `undefined` for no highlight stroke.",
             "type": "string",
             "default": "yellow"
         },
@@ -193,11 +193,11 @@
             "type": "number"
         },
         "fill": {
-            "description": "The css colour value for the fill of the individual marker.",
+            "description": "The CSS colour value for the fill of the individual marker.",
             "type": "string"
         },
         "stroke": {
-            "description": "The css colour value for the outline of the individual marker.",
+            "description": "The CSS colour value for the outline of the individual marker.",
             "type": "string"
         },
         "strokeWidth": {

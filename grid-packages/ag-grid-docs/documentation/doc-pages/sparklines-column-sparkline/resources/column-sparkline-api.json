@@ -38,12 +38,12 @@
             }
         },
         "fill": {
-            "description": "The css colour value for the fill of the columns.",
+            "description": "The CSS colour value for the fill of the columns.",
             "type": "string",
             "default": "rgb(124, 181, 236)"
         },
         "stroke": {
-            "description": "The css colour value for the outline of the columns.",
+            "description": "The CSS colour value for the outline of the columns.",
             "type": "string",
             "default": "silver",
             "more": {
@@ -111,7 +111,7 @@
     },
     "SparklineAxisOptions": {
         "stroke": {
-            "description": "The css colour value for the outline of the horizontal axis line.",
+            "description": "The CSS colour value for the outline of the horizontal axis line.",
             "type": "string",
             "default": "rgb(204, 214, 235)"
         },
@@ -128,7 +128,7 @@
             "default": "yellow"
         },
         "stroke": {
-            "description": "The css colour value for the outline of the columns when hovered over. Use `undefined` for no highlight stroke.",
+            "description": "The CSS colour value for the outline of the columns when hovered over. Use `undefined` for no highlight stroke.",
             "type": "string",
             "default": "yellow"
         },
@@ -140,11 +140,11 @@
     },
     "ColumnFormat": {
         "fill": {
-            "description": "The css colour value for the fill of the individual column.",
+            "description": "The CSS colour value for the fill of the individual column.",
             "type": "string"
         },
         "stroke": {
-            "description": "TThe css colour value for the outline of the individual column.",
+            "description": "TThe CSS colour value for the outline of the individual column.",
             "type": "string"
         },
         "strokeWidth": {
