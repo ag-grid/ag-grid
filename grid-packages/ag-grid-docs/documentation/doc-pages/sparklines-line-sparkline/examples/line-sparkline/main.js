@@ -1,7 +1,7 @@
 var gridOptions = {
     columnDefs: [
-        {field: 'country'},
-        {field: 'sport'},
+        { field: 'country' },
+        { field: 'sport' },
         {
             field: 'results',
             minWidth: 100,
@@ -23,7 +23,7 @@ var gridOptions = {
                 }
             },
         },
-        {field: 'athlete'},
+        { field: 'athlete' },
     ],
     defaultColDef: {
         flex: 1,
@@ -34,7 +34,7 @@ var gridOptions = {
 
 function formatter(params) {
     return {
-        fill: !params.highlighted ? params.yValue < 0 ? 'green' : 'skyblue': undefined,
+        fill: !params.highlighted ? params.yValue < 0 ? 'green' : 'skyblue' : undefined,
         stroke: !params.highlighted ? params.yValue < 0 ? 'green' : 'skyblue' : undefined
     }
 }
@@ -52,6 +52,28 @@ function addSparklineData(data) {
         }
     });
     return data;
+}
+
+function updateLineStrokeWidth(strokeWidth) {
+    gridOptions.columnDefs[2].cellRendererParams.sparklineOptions.line.strokeWidth = strokeWidth;
+    gridOptions.api.setColumnDefs(gridOptions.columnDefs);
+}
+
+function updateMarkerSize(size) {
+    gridOptions.columnDefs[2].cellRendererParams.sparklineOptions.marker.size = size;
+    gridOptions.api.setColumnDefs(gridOptions.columnDefs);
+}
+
+function updateLineStroke(stroke, el) {
+    const toggleButtons = document.getElementsByClassName('toggle-button');
+
+    for (const b of toggleButtons) {
+        b.setAttribute('class', 'toggle-button');
+    }
+    el.setAttribute('class', 'toggle-button active');
+
+    gridOptions.columnDefs[2].cellRendererParams.sparklineOptions.line.stroke = stroke;
+    gridOptions.api.setColumnDefs(gridOptions.columnDefs);
 }
 
 // setup the grid after the page has finished loading

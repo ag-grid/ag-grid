@@ -1,1 +1,23 @@
-<div id="myGrid" class="ag-theme-alpine" style="height: 100%;"></div>
+<div class="wrapper">
+    <div class="toolPanel">
+        <div class='sliders'>
+            <div class="slider-wrapper">
+                <label class='slider-label' for="sliderId">Line strokeWidth</label>
+                <input id="sliderId" class="slider" type="range" min="1" max="4" step="1" value="1"
+                    onChange="updateLineStrokeWidth(value)">
+            </div>
+            <div class="slider-wrapper">
+                <label class='slider-label' for="sliderId">Marker size</label>
+                <input id="sliderId" class="slider" type="range" min="2" max="6" step="1" value="2"
+                    onChange="updateMarkerSize(value)">
+            </div>
+        </div>
+        <div class="toggle-wrapper">
+            <button class="toggle-button" onClick="updateLineStroke('blue', this)">blue</button>
+            <button class="toggle-button" onClick="updateLineStroke('red', this)">red</button>
+            <button class="toggle-button" onClick="updateLineStroke('green', this)">green</button>
+            <button class="toggle-button" onClick="updateLineStroke('purple', this)">purple</button>
+        </div>
+    </div>
+    <div id="myGrid" class="ag-theme-alpine"></div>
+</div>

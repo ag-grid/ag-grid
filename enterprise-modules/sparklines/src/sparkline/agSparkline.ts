@@ -20,30 +20,62 @@ export type AgSparklineType<T> =
     T extends ColumnSparklineOptions ? ColumnSparkline :
     never;
 
+export type Sparkline = LineSparkline | AreaSparkline | ColumnSparkline;
 export abstract class AgSparkline {
-    static create<T extends SparklineOptions>(options: T): AgSparklineType<T> {
+    static create<T extends SparklineOptions>(options: T, container?: HTMLElement, data?: any[]): AgSparklineType<T> {
+        // avoid mutating user provided options
+        options = Object.create(options);
+
+        if (container) {
+            options.container = container;
+        }
+
+        if (data) {
+            options.data = data;
+        }
 
         const sparkline = getSparklineInstance(options.type);
 
         initSparkline(sparkline, options);
 
-        switch (options.type) {
-            case 'column':
-                initColumnSparkline(sparkline, options);
-                break;
-            case 'area':
-                initAreaSparkline(sparkline, options);
-                break;
-            case 'line':
-            default:
-                initLineSparkline(sparkline, options);
-                break;
-        }
+        initSparklineByType(sparkline, options);
 
         //TODO: don't want to test this feature yet
         sparkline.tooltip.enabled = false;
 
         return sparkline;
+    }
+
+    static update<T extends SparklineOptions>(sparkline: AgSparklineType<T>, options: T, container?: HTMLElement, data?: any[]) {
+        // avoid mutating user provided options
+        options = Object.create(options);
+
+        if (container) {
+            options.container = container;
+        }
+
+        if (data) {
+            options.data = data;
+        }
+
+        initSparkline(sparkline, options);
+
+        initSparklineByType(sparkline, options);
+    }
+}
+
+function initSparklineByType(sparkline: Sparkline, options: any): void {
+    switch (options.type) {
+        case 'column':
+            initColumnSparkline(sparkline as ColumnSparkline, options);
+            break;
+        case 'area':
+            initAreaSparkline(sparkline as AreaSparkline, options);
+            break;
+        case 'line':
+        default:
+            initLineSparkline(sparkline as LineSparkline, options);
+            break;
     }
 }
 
@@ -60,7 +92,7 @@ function getSparklineInstance(type: string = 'line'): any {
     }
 }
 
-function initSparkline(sparkline: ColumnSparkline, options: any) {
+function initSparkline(sparkline: Sparkline, options: any) {
     setValueIfPropertyExists(sparkline, 'container', options.container, options);
     setValueIfPropertyExists(sparkline, 'data', options.data, options);
     setValueIfPropertyExists(sparkline, 'width', options.width, options);
@@ -114,7 +146,9 @@ function initColumnSparkline(sparkline: ColumnSparkline, options: any) {
 function setValueIfPropertyExists(target: any, property: string, value: any, options: any): void {
     if (property in options) {
         if (property in target) {
-            target[property] = value;
+            if (target[property] !== value) { // only set property if the value is different to new value
+                target[property] = value;
+            }
         } else {
             console.warn(`Property ${property} does not exist on the target object.`);
         }
@@ -154,4 +188,3 @@ function initHighlightStyleOptions(target: HighlightStyle, options: any) {
     setValueIfPropertyExists(target, 'stroke', options.stroke, options);
     setValueIfPropertyExists(target, 'strokeWidth', options.strokeWidth, options);
 }
-
