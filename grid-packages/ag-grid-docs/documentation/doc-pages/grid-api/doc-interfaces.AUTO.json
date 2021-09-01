@@ -10587,6 +10587,7 @@
     }
   },
   "ToolPanelColumnCompParams": {
+    "suppressColumnMove": { "type": { "returnType": "boolean" } },
     "suppressRowGroups": { "type": { "returnType": "boolean" } },
     "suppressValues": { "type": { "returnType": "boolean" } },
     "suppressPivots": { "type": { "returnType": "boolean" } },

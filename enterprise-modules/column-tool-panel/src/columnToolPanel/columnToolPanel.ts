@@ -18,6 +18,7 @@ import { PivotDropZonePanel, RowGroupDropZonePanel, ValuesDropZonePanel } from "
 import { PrimaryColsPanel } from "./primaryColsPanel";
 
 export interface ToolPanelColumnCompParams extends IToolPanelParams {
+    suppressColumnMove: boolean;
     suppressRowGroups: boolean;
     suppressValues: boolean;
     suppressPivots: boolean;
@@ -61,6 +62,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
     public init(params: ToolPanelColumnCompParams): void {
         const defaultParams: ToolPanelColumnCompParams = {
+            suppressColumnMove: false,
             suppressColumnSelectAll: false,
             suppressColumnFilter: false,
             suppressColumnExpandAll: false,

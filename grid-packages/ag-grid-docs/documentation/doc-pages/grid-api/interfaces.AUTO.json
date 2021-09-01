@@ -7412,6 +7412,7 @@
   "ToolPanelColumnCompParams": {
     "meta": {},
     "type": {
+      "suppressColumnMove": "boolean",
       "suppressRowGroups": "boolean",
       "suppressValues": "boolean",
       "suppressPivots": "boolean",

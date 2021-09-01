@@ -78,7 +78,8 @@ export class PrimaryColsListPanel extends Component {
     public init(
         params: ToolPanelColumnCompParams,
         allowDragging: boolean,
-        eventType: ColumnEventType): void {
+        eventType: ColumnEventType
+    ): void {
         this.params = params;
         this.allowDragging = allowDragging;
         this.eventType = eventType;
@@ -116,7 +117,9 @@ export class PrimaryColsListPanel extends Component {
             this.onColumnsChanged();
         }
 
-        this.createManagedBean(new PrimaryColsListPanelItemDragFeature(this, this.virtualList));
+        if (!params.suppressColumnMove) {
+            this.createManagedBean(new PrimaryColsListPanelItemDragFeature(this, this.virtualList));
+        }
     }
 
     private createComponentFromItem(item: ColumnModelItem, listItemElement: HTMLElement): Component {
