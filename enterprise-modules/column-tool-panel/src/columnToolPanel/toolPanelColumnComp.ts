@@ -170,17 +170,13 @@ export class ToolPanelColumnComp extends Component {
             onDragStarted: () => {
                 const event: ColumnPanelItemDragStartEvent = {
                     type: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START,
-                    api: this.gridOptionsWrapper.getApi()!,
-                    columnApi: this.gridOptionsWrapper.getColumnApi()!,
                     column: this.column
                 };
                 this.eventService.dispatchEvent(event);
             },
             onDragStopped: () => {
                 const event: ColumnPanelItemDragEndEvent = {
-                    type: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_END,
-                    api: this.gridOptionsWrapper.getApi()!,
-                    columnApi: this.gridOptionsWrapper.getColumnApi()!,
+                    type: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_END
                 };
                 this.eventService.dispatchEvent(event);
             }

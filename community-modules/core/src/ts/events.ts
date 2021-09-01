@@ -51,12 +51,6 @@ export interface ToolPanelVisibleChangedEvent extends AgGridEvent {
     source: string | undefined;
 }
 
-export interface ColumnPanelItemDragStartEvent extends AgGridEvent {
-    column: Column | OriginalColumnGroup
-}
-
-export interface ColumnPanelItemDragEndEvent extends AgGridEvent { }
-
 export interface ColumnPivotModeChangedEvent extends AgGridEvent { }
 
 export interface VirtualColumnsChangedEvent extends AgGridEvent { }
@@ -113,6 +107,12 @@ export interface BodyHeightChangedEvent extends AgGridEvent { } // not documente
 // has 'rowData', so this property should have 'rowData' also, so that when the row
 // data changes via the framework bound property, this event has that attribute set.
 export interface ComponentStateChangedEvent extends AgGridEvent { }
+
+export interface ColumnPanelItemDragStartEvent extends AgEvent {
+    column: Column | OriginalColumnGroup
+}
+
+export interface ColumnPanelItemDragEndEvent extends AgEvent { }
 
 export interface DragEvent extends AgGridEvent {
     /** One of {'cell','row','headerCell','toolPanel'} */

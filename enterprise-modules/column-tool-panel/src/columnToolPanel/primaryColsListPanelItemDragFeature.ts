@@ -3,8 +3,8 @@ import {
     Autowired,
     BeanStub,
     Column,
-    ColumnGroup,
     ColumnModel,
+    ColumnPanelItemDragStartEvent,
     DragAndDropService,
     DraggingEvent,
     DragSourceType,
@@ -50,7 +50,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
         this.createAutoScrollService();
     }
 
-    private columnPanelItemDragStart({ column }: { column: Column | OriginalColumnGroup }): void {
+    private columnPanelItemDragStart({ column }: ColumnPanelItemDragStartEvent): void {
         this.currentDragColumn = column;
     }
 

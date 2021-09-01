@@ -3708,23 +3708,6 @@
       "type": { "returnType": "string" }
     }
   },
-  "ColumnPanelItemDragStartEvent": {
-    "column": { "type": { "returnType": "Column | OriginalColumnGroup" } },
-    "api": { "type": { "returnType": "GridApi" } },
-    "columnApi": { "type": { "returnType": "ColumnApi" } },
-    "type": {
-      "description": "/** Event identifier */",
-      "type": { "returnType": "string" }
-    }
-  },
-  "ColumnPanelItemDragEndEvent": {
-    "api": { "type": { "returnType": "GridApi" } },
-    "columnApi": { "type": { "returnType": "ColumnApi" } },
-    "type": {
-      "description": "/** Event identifier */",
-      "type": { "returnType": "string" }
-    }
-  },
   "ColumnPivotModeChangedEvent": {
     "api": { "type": { "returnType": "GridApi" } },
     "columnApi": { "type": { "returnType": "ColumnApi" } },
@@ -3895,6 +3878,19 @@
   "ComponentStateChangedEvent": {
     "api": { "type": { "returnType": "GridApi" } },
     "columnApi": { "type": { "returnType": "ColumnApi" } },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string" }
+    }
+  },
+  "ColumnPanelItemDragStartEvent": {
+    "column": { "type": { "returnType": "Column | OriginalColumnGroup" } },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string" }
+    }
+  },
+  "ColumnPanelItemDragEndEvent": {
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string" }
