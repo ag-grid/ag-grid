@@ -13,7 +13,7 @@ import { CtrlsService } from '../ctrlsService';
 import { RefSelector } from '../widgets/componentAnnotations';
 import { PinnedWidthService } from '../gridBodyComp/pinnedWidthService';
 import { CenterWidthFeature } from '../gridBodyComp/centerWidthFeature';
-import { HeaderRowContainerCtrl, IHeaderRowContainerComp } from './HeaderRowContainerCtrl';
+import { HeaderRowContainerCtrl, IHeaderRowContainerComp } from './headerRowContainerCtrl';
 import { Column } from '../entities/column';
 import { HeaderWrapperComp } from './header/headerWrapperComp';
 
