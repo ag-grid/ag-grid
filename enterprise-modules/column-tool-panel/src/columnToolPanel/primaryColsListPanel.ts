@@ -4,7 +4,6 @@ import {
     Autowired,
     ColGroupDef,
     Column,
-    ColumnApi,
     ColumnModel,
     ColumnEventType,
     Component,
@@ -16,6 +15,7 @@ import {
     VirtualListModel,
     PreDestroy
 } from "@ag-grid-community/core";
+import { PrimaryColsListPanelItemDragFeature } from './primaryColsListPanelItemDragFeature';
 import { ToolPanelColumnGroupComp } from "./toolPanelColumnGroupComp";
 import { ToolPanelColumnComp } from "./toolPanelColumnComp";
 import { ToolPanelColDefService } from "@ag-grid-enterprise/side-bar";
@@ -40,13 +40,14 @@ class UIColumnModel implements VirtualListModel {
     }
 }
 
+const PRIMARY_COLS_LIST_PANEL_CLASS = 'ag-column-select-list';
+
 export class PrimaryColsListPanel extends Component {
 
-    public static TEMPLATE = /* html */ `<div class="ag-column-select-list" role="tree"></div>`;
+    public static TEMPLATE = /* html */ `<div class="${PRIMARY_COLS_LIST_PANEL_CLASS}" role="tree"></div>`;
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('toolPanelColDefService') private colDefService: ToolPanelColDefService;
-    @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('modelItemUtils') private modelItemUtils: ModelItemUtils;
 
     private allowDragging: boolean;
@@ -61,7 +62,6 @@ export class PrimaryColsListPanel extends Component {
 
     private allColsTree: ColumnModelItem[];
     private displayedColsList: ColumnModelItem[];
-
     private destroyColumnItemFuncs: (() => void)[] = [];
 
     constructor() {
@@ -78,7 +78,8 @@ export class PrimaryColsListPanel extends Component {
     public init(
         params: ToolPanelColumnCompParams,
         allowDragging: boolean,
-        eventType: ColumnEventType): void {
+        eventType: ColumnEventType
+    ): void {
         this.params = params;
         this.allowDragging = allowDragging;
         this.eventType = eventType;
@@ -115,6 +116,10 @@ export class PrimaryColsListPanel extends Component {
         if (this.columnModel.isReady()) {
             this.onColumnsChanged();
         }
+
+        if (!params.suppressColumnMove && !this.gridOptionsWrapper.isSuppressMovableColumns()) {
+            this.createManagedBean(new PrimaryColsListPanelItemDragFeature(this, this.virtualList));
+        }
     }
 
     private createComponentFromItem(item: ColumnModelItem, listItemElement: HTMLElement): Component {
@@ -147,6 +152,10 @@ export class PrimaryColsListPanel extends Component {
 
         this.markFilteredColumns();
         this.flattenAndFilterModel();
+    }
+
+    public getDisplayedColsList(): ColumnModelItem[] {
+        return this.displayedColsList;
     }
 
     private getExpandedStates(): {[key:string]:boolean} {
@@ -270,8 +279,8 @@ export class PrimaryColsListPanel extends Component {
         };
 
         this.allColsTree.forEach(recursiveFunc);
-
         this.virtualList.setModel(new UIColumnModel(this.displayedColsList));
+
         const focusedRow = this.virtualList.getLastFocusedRow();
         this.virtualList.refresh();
 

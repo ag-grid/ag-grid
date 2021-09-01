@@ -3883,6 +3883,19 @@
       "type": { "returnType": "string" }
     }
   },
+  "ColumnPanelItemDragStartEvent": {
+    "column": { "type": { "returnType": "Column | OriginalColumnGroup" } },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string" }
+    }
+  },
+  "ColumnPanelItemDragEndEvent": {
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string" }
+    }
+  },
   "DragEvent": {
     "type": {
       "description": "/** Event identifier */",
@@ -10574,6 +10587,7 @@
     }
   },
   "ToolPanelColumnCompParams": {
+    "suppressColumnMove": { "type": { "returnType": "boolean" } },
     "suppressRowGroups": { "type": { "returnType": "boolean" } },
     "suppressValues": { "type": { "returnType": "boolean" } },
     "suppressPivots": { "type": { "returnType": "boolean" } },

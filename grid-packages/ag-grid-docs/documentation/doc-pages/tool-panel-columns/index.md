@@ -59,7 +59,7 @@ The column tool panel is split into different sections as follows:
 
 <image-caption src="tool-panel-columns/resources/screenshot.png" alt="AG Grid Tool Panel Section" width="50rem" centered="true"></image-caption>
 
-## Section Visibility
+## Column Tool Panel Options
 
 It is possible to remove items from the tool panel. Items are suppressed by setting one or more of the following `componentParams` to `true` whenever you are using the agColumnsToolPanel component properties:
 
@@ -72,6 +72,7 @@ It is possible to remove items from the tool panel. Items are suppressed by sett
 - `suppressColumnExpandAll`: to suppress Expand / Collapse all widget.
 - `contractColumnSelection`: by default, column groups start expanded. Pass true to default to contracted groups.
 - `suppressSyncLayoutWithGrid`: to suppress updating the layout of columns in this panel as they are rearranged in the grid.
+- `suppressColumnMove`: by default, it is allowed to use the `Drag Handle` to move columns from within the Column Tool Panel. Pass true to prevent this behaviour.
 
 To remove a particular column from the tool panel, set the column property `suppressColumnsToolPanel` to `true`. This is useful when you have a column working in the background, e.g. a column you want to group by, but not visible to the user.
 

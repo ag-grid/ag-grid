@@ -38,7 +38,11 @@ export class PrimaryColsPanel extends TabGuardComp implements IPrimaryColsPanel 
     }
 
     // we allow dragging in the toolPanel, but not when this component appears in the column menu
-    public init(allowDragging: boolean, params: ToolPanelColumnCompParams, eventType: ColumnEventType): void {
+    public init(
+        allowDragging: boolean,
+        params: ToolPanelColumnCompParams,
+        eventType: ColumnEventType
+    ): void {
         this.allowDragging = allowDragging;
         this.params = params;
         this.eventType = eventType;

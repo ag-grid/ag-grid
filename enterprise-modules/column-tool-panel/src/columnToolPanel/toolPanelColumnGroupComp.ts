@@ -5,6 +5,8 @@ import {
     Column,
     ColumnModel,
     ColumnEventType,
+    ColumnPanelItemDragStartEvent,
+    ColumnPanelItemDragEndEvent,
     Component,
     CssClassApplier,
     DragAndDropService,
@@ -103,6 +105,10 @@ export class ToolPanelColumnGroupComp extends Component {
         CssClassApplier.addToolPanelClassesFromColDef(this.columnGroup.getColGroupDef(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
     }
 
+    public getColumns(): Column[] {
+        return this.columnGroup.getLeafColumns();
+    }
+
     private setupTooltip(): void {
         const colGroupDef = this.columnGroup.getColGroupDef();
 
@@ -162,7 +168,20 @@ export class ToolPanelColumnGroupComp extends Component {
             type: DragSourceType.ToolPanel,
             eElement: this.eDragHandle,
             dragItemName: this.displayName,
-            getDragItem: () => this.createDragItem()
+            getDragItem: () => this.createDragItem(),
+            onDragStarted: () => {
+                const event: ColumnPanelItemDragStartEvent = {
+                    type: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START,
+                    column: this.columnGroup
+                }
+                this.eventService.dispatchEvent(event);
+            },
+            onDragStopped: () => {
+                const event: ColumnPanelItemDragEndEvent = {
+                    type: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_END
+                };
+                this.eventService.dispatchEvent(event);
+            }
         };
 
         this.dragAndDropService.addDragSource(dragSource, true);
@@ -224,9 +243,7 @@ export class ToolPanelColumnGroupComp extends Component {
     private onChangeCommon(nextState: boolean): void {
         this.refreshAriaLabel();
 
-        if (this.processingColumnStateChange) {
-            return;
-        }
+        if (this.processingColumnStateChange) { return; }
 
         this.modelItemUtils.selectAllChildren(this.modelItem.getChildren(), nextState, this.eventType);
     }
@@ -268,9 +285,9 @@ export class ToolPanelColumnGroupComp extends Component {
 
         if (checkedCount > 0 && uncheckedCount > 0) {
             return undefined;
-        } else {
-            return checkedCount > 0;
         }
+
+        return checkedCount > 0;
     }
 
     private workOutReadOnlyValue(): boolean {
@@ -299,9 +316,9 @@ export class ToolPanelColumnGroupComp extends Component {
             const grouped = column.isRowGroupActive();
             const aggregated = column.isValueActive();
             return pivoted || grouped || aggregated;
-        } else {
-            return column.isVisible();
         }
+
+        return column.isVisible();
     }
 
     private onExpandOrContractClicked(): void {

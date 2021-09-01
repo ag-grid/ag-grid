@@ -2259,6 +2259,16 @@
     "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
+  "ColumnPanelItemDragStartEvent": {
+    "meta": {},
+    "type": { "column": "Column | OriginalColumnGroup", "type": "string" },
+    "docs": { "type": "/** Event identifier */" }
+  },
+  "ColumnPanelItemDragEndEvent": {
+    "meta": {},
+    "type": { "type": "string" },
+    "docs": { "type": "/** Event identifier */" }
+  },
   "DragEvent": {
     "meta": {},
     "type": {
@@ -7402,6 +7412,7 @@
   "ToolPanelColumnCompParams": {
     "meta": {},
     "type": {
+      "suppressColumnMove": "boolean",
       "suppressRowGroups": "boolean",
       "suppressValues": "boolean",
       "suppressPivots": "boolean",

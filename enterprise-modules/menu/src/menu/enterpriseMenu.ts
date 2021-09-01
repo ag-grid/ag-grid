@@ -487,6 +487,7 @@ export class EnterpriseMenu extends BeanStub {
         if (!columnsMenuParams) { columnsMenuParams = {}; }
 
         this.columnSelectPanel.init(false, {
+            suppressColumnMove: false,
             suppressValues: false,
             suppressPivots: false,
             suppressRowGroups: false,

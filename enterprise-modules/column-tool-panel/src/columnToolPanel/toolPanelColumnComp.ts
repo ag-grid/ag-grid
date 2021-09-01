@@ -4,6 +4,8 @@ import {
     Autowired,
     Column,
     ColumnModel,
+    ColumnPanelItemDragStartEvent,
+    ColumnPanelItemDragEndEvent,
     Component,
     CssClassApplier,
     DragAndDropService,
@@ -88,6 +90,10 @@ export class ToolPanelColumnComp extends Component {
         CssClassApplier.addToolPanelClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
     }
 
+    public getColumn(): Column {
+        return this.column;
+    }
+
     private setupTooltip(): void {
         const refresh = () => {
             const newTooltipText = this.column.getColDef().headerTooltip;
@@ -160,7 +166,20 @@ export class ToolPanelColumnComp extends Component {
             type: DragSourceType.ToolPanel,
             eElement: this.eDragHandle,
             dragItemName: this.displayName,
-            getDragItem: () => this.createDragItem()
+            getDragItem: () => this.createDragItem(),
+            onDragStarted: () => {
+                const event: ColumnPanelItemDragStartEvent = {
+                    type: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START,
+                    column: this.column
+                };
+                this.eventService.dispatchEvent(event);
+            },
+            onDragStopped: () => {
+                const event: ColumnPanelItemDragEndEvent = {
+                    type: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_END
+                };
+                this.eventService.dispatchEvent(event);
+            }
         };
 
         this.dragAndDropService.addDragSource(dragSource, true);

@@ -16,6 +16,7 @@ export interface IToolPanel {
 export interface IToolPanelComp extends IToolPanel, IComponent<IToolPanelParams> { }
 
 export interface ToolPanelColumnCompParams extends IToolPanelParams {
+    suppressColumnMove: boolean;
     suppressRowGroups: boolean;
     suppressValues: boolean;
     suppressPivots: boolean;
