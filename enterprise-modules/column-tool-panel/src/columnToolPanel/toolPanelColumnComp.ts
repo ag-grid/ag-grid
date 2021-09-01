@@ -13,7 +13,8 @@ import {
     ITooltipParams,
     KeyCode,
     PostConstruct,
-    RefSelector
+    RefSelector,
+    AgEvent
 } from "@ag-grid-community/core";
 import { ModelItemUtils } from "./modelItemUtils";
 
@@ -88,6 +89,10 @@ export class ToolPanelColumnComp extends Component {
         CssClassApplier.addToolPanelClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
     }
 
+    public getColumn(): Column {
+        return this.column;
+    }
+
     private setupTooltip(): void {
         const refresh = () => {
             const newTooltipText = this.column.getColDef().headerTooltip;
@@ -160,7 +165,18 @@ export class ToolPanelColumnComp extends Component {
             type: DragSourceType.ToolPanel,
             eElement: this.eDragHandle,
             dragItemName: this.displayName,
-            getDragItem: () => this.createDragItem()
+            getDragItem: () => this.createDragItem(),
+            onDragStarted: () => {
+                this.eventService.dispatchEvent({
+                    type: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START,
+                    column: this.column
+                } as AgEvent);
+            },
+            onDragStopped: () => {
+                this.eventService.dispatchEvent({
+                    type: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_END
+                });
+            }
         };
 
         this.dragAndDropService.addDragSource(dragSource, true);

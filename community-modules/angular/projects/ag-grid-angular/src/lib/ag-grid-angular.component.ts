@@ -637,6 +637,8 @@ export class AgGridAngular implements AfterViewInit {
     @Output() public chartOptionsChanged: EventEmitter<ChartOptionsChanged> = new EventEmitter<ChartOptionsChanged>();
     @Output() public chartDestroyed: EventEmitter<ChartDestroyed> = new EventEmitter<ChartDestroyed>();
     @Output() public toolPanelVisibleChanged: EventEmitter<ToolPanelVisibleChangedEvent> = new EventEmitter<ToolPanelVisibleChangedEvent>();
+    @Output() public columnPanelItemDragStart: EventEmitter<undefined> = new EventEmitter<undefined>();
+    @Output() public columnPanelItemDragEnd: EventEmitter<undefined> = new EventEmitter<undefined>();
     @Output() public modelUpdated: EventEmitter<ModelUpdatedEvent> = new EventEmitter<ModelUpdatedEvent>();
     @Output() public pasteStart: EventEmitter<PasteStartEvent> = new EventEmitter<PasteStartEvent>();
     @Output() public pasteEnd: EventEmitter<PasteEndEvent> = new EventEmitter<PasteEndEvent>();

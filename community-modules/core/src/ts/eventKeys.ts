@@ -79,6 +79,9 @@ export class Events {
     /** For when the tool panel is shown / hidden */
     public static EVENT_TOOL_PANEL_VISIBLE_CHANGED = 'toolPanelVisibleChanged';
 
+    public static EVENT_COLUMN_PANEL_ITEM_DRAG_START = 'columnPanelItemDragStart';
+    public static EVENT_COLUMN_PANEL_ITEM_DRAG_END = 'columnPanelItemDragEnd';
+
     /** Model was updated - grid updates the drawn rows when this happens */
     public static EVENT_MODEL_UPDATED = 'modelUpdated';
 
