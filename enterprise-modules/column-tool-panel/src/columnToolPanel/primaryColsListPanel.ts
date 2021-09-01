@@ -18,7 +18,8 @@ import {
     DropTarget,
     DragAndDropService,
     DragSourceType,
-    DraggingEvent
+    DraggingEvent,
+    AutoScrollService
 } from "@ag-grid-community/core";
 import { ToolPanelColumnGroupComp } from "./toolPanelColumnGroupComp";
 import { ToolPanelColumnComp } from "./toolPanelColumnComp";
@@ -57,6 +58,7 @@ export class PrimaryColsListPanel extends Component {
     @Autowired('modelItemUtils') private modelItemUtils: ModelItemUtils;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
 
+    private autoScrollService: AutoScrollService;
     private allowDragging: boolean;
     private filterText: string | null;
     private expandGroupsByDefault: boolean;
@@ -115,7 +117,15 @@ export class PrimaryColsListPanel extends Component {
         this.expandGroupsByDefault = !this.params.contractColumnSelection;
 
         this.virtualList = this.createManagedBean(new VirtualList('column-select', 'tree'));
-        this.appendChild(this.virtualList.getGui());
+        const virtualListGui = this.virtualList.getGui();
+        this.appendChild(virtualListGui);
+
+        this.autoScrollService = new AutoScrollService({
+            scrollContainer: virtualListGui,
+            scrollAxis: 'y',
+            getVerticalPosition: () => virtualListGui.scrollTop,
+            setVerticalPosition: (position) => virtualListGui.scrollTop = position
+        });
 
         this.virtualList.setComponentCreator(
             (item: ColumnModelItem, listItemElement: HTMLElement) => this.createComponentFromItem(item, listItemElement)
@@ -152,6 +162,7 @@ export class PrimaryColsListPanel extends Component {
             this.lastHoveredRow.position === hoveredRow.position
             ) { return; }
 
+        this.autoScrollService.check(e.event);
         this.clearHoveredItems();
         this.lastHoveredRow = hoveredRow;
 
@@ -175,10 +186,12 @@ export class PrimaryColsListPanel extends Component {
 
     private onDragStop(e: DraggingEvent) {
         this.clearHoveredItems();
+        this.autoScrollService.ensureCleared();
     }
 
     private onDragLeave(e: DraggingEvent) {
         this.clearHoveredItems();
+        this.autoScrollService.ensureCleared();
     }
 
     private clearHoveredItems(): void {
