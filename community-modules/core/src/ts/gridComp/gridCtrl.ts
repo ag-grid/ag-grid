@@ -33,8 +33,6 @@ export class GridCtrl extends BeanStub {
     @Autowired('columnApi') private readonly columnApi: ColumnApi;
     @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('focusService') protected readonly focusService: FocusService;
-    @Optional('clipboardService') private readonly clipboardService: IClipboardService;
-    @Autowired('loggerFactory') private readonly loggerFactory: LoggerFactory;
     @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('ctrlsService') private readonly ctrlsService: CtrlsService;
@@ -44,12 +42,8 @@ export class GridCtrl extends BeanStub {
     private eGridHostDiv: HTMLElement;
     private eGui: HTMLElement;
 
-    private logger: Logger;
-
     @PostConstruct
     protected postConstruct(): void {
-        this.logger = this.loggerFactory.create('GridCompController');
-
         this.ctrlsService.registerGridCtrl(this);
     }
 

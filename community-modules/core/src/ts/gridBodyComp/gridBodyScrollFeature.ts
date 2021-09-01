@@ -95,10 +95,10 @@ export class GridBodyScrollFeature extends BeanStub {
         const offset = this.enableRtl ? scrollLeft : -scrollLeft;
         const topCenterContainer = this.ctrlsService.getTopCenterRowContainerCtrl();
         const bottomCenterContainer = this.ctrlsService.getBottomCenterRowContainerCtrl();
-        const headerRootComp = this.ctrlsService.getHeaderRootComp();
+        const gridHeaderCtrl = this.ctrlsService.getGridHeaderCtrl();
         const fakeHScroll = this.ctrlsService.getFakeHScrollCtrl();
 
-        headerRootComp.setHorizontalScroll(offset);
+        gridHeaderCtrl.setHorizontalScroll(offset);
         bottomCenterContainer.setContainerTranslateX(offset);
         topCenterContainer.setContainerTranslateX(offset);
 

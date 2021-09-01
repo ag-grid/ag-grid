@@ -135,7 +135,10 @@
       "topLeftRowContainerCtrl": "RowContainerCtrl",
       "topRightRowContainerCtrl": "RowContainerCtrl",
       "fakeHScrollCtrl": "FakeHScrollCtrl",
-      "headerRootComp": "HeaderRootComp"
+      "gridHeaderCtrl": "GridHeaderCtrl",
+      "centerHeaderContainer": "HeaderContainer",
+      "leftHeaderContainer": "HeaderContainer",
+      "rightHeaderContainer": "HeaderContainer"
     }
   },
   "DragItem": {
@@ -4093,6 +4096,17 @@
       "onDragStop(params: DraggingEvent)": "void"
     }
   },
+  "IGridHeaderComp": {
+    "meta": {},
+    "type": {
+      "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
+      "addOrRemoveLeftCssClass(cssClassName: string, on: boolean)": "void",
+      "addOrRemoveRightCssClass(cssClassName: string, on: boolean)": "void",
+      "setCenterWidth(width: string)": "void",
+      "setHeightAndMinHeight(height: string)": "void",
+      "setCenterTransform(pos: string)": "void"
+    }
+  },
   "IHeaderParams": {
     "meta": {},
     "type": {
@@ -4182,10 +4196,6 @@
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
       "init?(params: IHeaderGroupParams)": "/** The init(params) method is called on the component once. See below for details on the parameters. */"
     }
-  },
-  "HeaderContainerPosition": {
-    "meta": { "isTypeAlias": true },
-    "type": "'left' | 'right' | 'center'"
   },
   "HeaderRowType": {
     "meta": { "isEnum": true },

@@ -1,16 +1,12 @@
-import React, { useEffect, useRef, useState, useMemo, memo, useContext } from 'react';
 import {
-    AgStackComponentsRegistry,
-    Context,
     GridBodyCtrl,
-    IGridBodyComp,
-    ResizeObserverService,
-    RowContainerName
+    IGridBodyComp, RowContainerName
 } from 'ag-grid-community';
-import { classesList } from './utils';
-import RowContainerComp  from './rows/rowContainerComp';
-import useReactCommentEffect from './reactComment';
+import React, { memo, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { BeansContext } from './beansContext';
+import useReactCommentEffect from './reactComment';
+import RowContainerComp from './rows/rowContainerComp';
+import { classesList } from './utils';
 
 interface SectionProperties {
     section: React.RefObject<HTMLDivElement>;

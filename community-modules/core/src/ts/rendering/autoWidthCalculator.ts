@@ -3,7 +3,7 @@ import { Column } from "../entities/column";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { HeaderWrapperComp } from "../headerRendering/header/headerWrapperComp";
 import { Component } from "../widgets/component";
-import { HeaderRootComp } from "../headerRendering/headerRootComp";
+import { GridHeaderComp } from "../headerRendering/gridHeaderComp";
 import { BeanStub } from "../context/beanStub";
 import { containsClass, addCssClass } from "../utils/dom";
 import { CtrlsService } from "../ctrlsService";
@@ -18,17 +18,12 @@ export class AutoWidthCalculator extends BeanStub {
     @Autowired('rowCssClassCalculator') public rowCssClassCalculator: RowCssClassCalculator;
 
     private centerRowContainerCon: RowContainerCtrl;
-    private headerRootComp: HeaderRootComp;
 
     @PostConstruct
     private postConstruct(): void {
         this.ctrlsService.whenReady(p => {
             this.centerRowContainerCon = p.centerRowContainerCtrl;
         });
-    }
-
-    public registerHeaderRootComp(headerRootComp: HeaderRootComp): void {
-        this.headerRootComp = headerRootComp;
     }
 
     // this is the trick: we create a dummy container and clone all the cells
@@ -77,15 +72,16 @@ export class AutoWidthCalculator extends BeanStub {
 
         let comp: Component | null = null;
 
-        // find the rendered header cell
-        this.headerRootComp.forEachHeaderElement(headerElement => {
-            if (headerElement instanceof HeaderWrapperComp) {
-                const headerWrapperComp = headerElement;
-                if (headerWrapperComp.getColumn() === column) {
-                    comp = headerWrapperComp;
+        this.ctrlsService.getHeaderContainers().forEach(
+            container => container.forEachHeaderElement(headerElement => {
+                if (headerElement instanceof HeaderWrapperComp) {
+                    const headerWrapperComp = headerElement;
+                    if (headerWrapperComp.getColumn() === column) {
+                        comp = headerWrapperComp;
+                    }
                 }
-            }
-        });
+            })
+        );
 
         return comp ? (comp as Component).getGui() : null;
     }

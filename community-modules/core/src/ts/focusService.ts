@@ -309,7 +309,7 @@ export class FocusService extends BeanStub {
 
         this.headerNavigationService.scrollToColumn(headerPosition.column, direction);
 
-        const childContainer = this.headerNavigationService.getHeaderContainer(headerPosition.column.getPinned());
+        const childContainer = this.ctrlsService.getHeaderContainer(headerPosition.column.getPinned());
         const rowComps = childContainer!.getRowComps();
         const nextRowComp = rowComps[headerPosition.headerRowIndex];
         const headerComps = nextRowComp.getHeaderComps();

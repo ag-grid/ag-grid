@@ -5,6 +5,7 @@ import { BeanStub } from "../../context/beanStub";
 import { ColumnModel } from "../../columns/columnModel";
 import { HeaderNavigationService } from "./headerNavigationService";
 import { HeaderRowType } from "../headerRowComp";
+import { CtrlsService } from "../../ctrlsService";
 
 export interface HeaderPosition {
 /** A number from 0 to n, where n is the last header row the grid is rendering */
@@ -18,6 +19,7 @@ export class HeaderPositionUtils extends BeanStub {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
+    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
     public findHeader(focusedHeader: HeaderPosition, direction: 'Before' | 'After'): HeaderPosition | undefined {
         let nextColumn: Column | ColumnGroup;
@@ -46,7 +48,8 @@ export class HeaderPositionUtils extends BeanStub {
 
         if (!column) { return; }
 
-        const childContainer = this.headerNavigationService.getHeaderContainer(column.getPinned());
+        const childContainer = this.ctrlsService.getHeaderContainer(column.getPinned());
+
         const headerRowComp = childContainer!.getRowComps()[level];
         const type = headerRowComp && headerRowComp.getType();
 

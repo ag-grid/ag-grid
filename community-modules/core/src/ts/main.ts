@@ -133,7 +133,7 @@ export { BodyDropPivotTarget } from "./headerRendering/bodyDropPivotTarget";
 export { BodyDropTarget } from "./headerRendering/bodyDropTarget";
 export { CssClassApplier } from "./headerRendering/cssClassApplier";
 export { HeaderContainer } from "./headerRendering/headerContainer";
-export { HeaderRootComp, HeaderContainerPosition } from "./headerRendering/headerRootComp";
+export { GridHeaderComp } from "./headerRendering/gridHeaderComp";
 export { HeaderRowComp } from "./headerRendering/headerRowComp";
 export { HorizontalResizeService } from "./headerRendering/horizontalResizeService";
 export { MoveColumnFeature } from "./headerRendering/moveColumnFeature";

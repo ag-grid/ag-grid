@@ -168,7 +168,10 @@
       "type": { "returnType": "RowContainerCtrl" }
     },
     "fakeHScrollCtrl": { "type": { "returnType": "FakeHScrollCtrl" } },
-    "headerRootComp": { "type": { "returnType": "HeaderRootComp" } }
+    "gridHeaderCtrl": { "type": { "returnType": "GridHeaderCtrl" } },
+    "centerHeaderContainer": { "type": { "returnType": "HeaderContainer" } },
+    "leftHeaderContainer": { "type": { "returnType": "HeaderContainer" } },
+    "rightHeaderContainer": { "type": { "returnType": "HeaderContainer" } }
   },
   "DragItem": {
     "rowNode": {
@@ -6199,6 +6202,35 @@
       }
     }
   },
+  "IGridHeaderComp": {
+    "addOrRemoveCssClass": {
+      "type": {
+        "arguments": { "cssClassName": "string", "on": "boolean" },
+        "returnType": "void"
+      }
+    },
+    "addOrRemoveLeftCssClass": {
+      "type": {
+        "arguments": { "cssClassName": "string", "on": "boolean" },
+        "returnType": "void"
+      }
+    },
+    "addOrRemoveRightCssClass": {
+      "type": {
+        "arguments": { "cssClassName": "string", "on": "boolean" },
+        "returnType": "void"
+      }
+    },
+    "setCenterWidth": {
+      "type": { "arguments": { "width": "string" }, "returnType": "void" }
+    },
+    "setHeightAndMinHeight": {
+      "type": { "arguments": { "height": "string" }, "returnType": "void" }
+    },
+    "setCenterTransform": {
+      "type": { "arguments": { "pos": "string" }, "returnType": "void" }
+    }
+  },
   "IHeaderParams": {
     "column": { "type": { "returnType": "Column" } },
     "displayName": { "type": { "returnType": "string" } },
@@ -6318,7 +6350,6 @@
       }
     }
   },
-  "HeaderContainerPosition": {},
   "HeaderRowType": {},
   "HorizontalResizeParams": {
     "eResizeBar": { "type": { "returnType": "HTMLElement" } },

@@ -9,12 +9,14 @@ import { Constants } from '../constants/constants';
 import { setFixedWidth, ensureDomOrder } from '../utils/dom';
 import { BeanStub } from "../context/beanStub";
 import { NumberSequence } from "../utils";
-import { TouchListener } from '../widgets/touchListener';
+import { GridOptionsWrapper } from '../gridOptionsWrapper';
+import { CtrlsService } from '../ctrlsService';
 
 export class HeaderContainer extends BeanStub {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
+    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
     private eContainer: HTMLElement;
     private eViewport: HTMLElement | null;
@@ -24,6 +26,8 @@ export class HeaderContainer extends BeanStub {
     private filtersRowComp: HeaderRowComp | undefined;
     private columnsRowComp: HeaderRowComp | undefined;
     private groupsRowComps: HeaderRowComp[] = [];
+
+    private printLayout: boolean;
 
     constructor(eContainer: HTMLElement, eViewport: HTMLElement | null, pinned: string | null) {
         super();
@@ -54,6 +58,25 @@ export class HeaderContainer extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_SCROLLBAR_WIDTH_CHANGED, this.onScrollbarWidthChanged.bind(this));
         this.setupDragAndDrop();
+
+        this.printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
+
+        // shotgun way to get labels to change, eg from sum(amount) to avg(amount)
+        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
+
+        this.ctrlsService.registerHeaderContainer(this, this.pinned);
+
+        if (this.columnModel.isReady()) {
+            this.refresh();
+        }
+    }
+
+    private onDomLayoutChanged(): void {
+        const newValue = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
+        if (this.printLayout !== newValue) {
+            this.printLayout = newValue;
+            this.refresh();
+        }
     }
 
     private onColumnResized(): void {
@@ -116,11 +139,6 @@ export class HeaderContainer extends BeanStub {
         this.refresh(true);
     }
 
-    // we expose this for gridOptions.api.refreshHeader() to call
-    public refresh(keepColumns = false): void {
-        this.refreshRowComps(keepColumns);
-    }
-
     private setupDragAndDrop(): void {
         // center section has viewport, but pinned sections do not
         const dropContainer = this.eViewport ? this.eViewport : this.eContainer;
@@ -150,7 +168,7 @@ export class HeaderContainer extends BeanStub {
         }
     }
 
-    private refreshRowComps(keepColumns = false): void {
+    public refresh(keepColumns = false): void {
         const sequence = new NumberSequence();
 
         const refreshColumnGroups = () => {

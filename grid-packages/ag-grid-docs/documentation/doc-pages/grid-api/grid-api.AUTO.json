@@ -5,12 +5,6 @@
       "returnType": "void"
     }
   },
-  "registerHeaderRootComp": {
-    "type": {
-      "arguments": { "headerRootComp": "HeaderRootComp" },
-      "returnType": "void"
-    }
-  },
   "registerSideBarComp": {
     "type": { "arguments": { "sideBarComp": "ISideBar" }, "returnType": "void" }
   },

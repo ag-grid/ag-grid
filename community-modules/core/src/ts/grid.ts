@@ -4,7 +4,7 @@ import { SelectionService } from "./selectionService";
 import { ColumnApi } from "./columns/columnApi";
 import { ColumnModel } from "./columns/columnModel";
 import { RowRenderer } from "./rendering/rowRenderer";
-import { HeaderRootComp } from "./headerRendering/headerRootComp";
+import { GridHeaderComp } from "./headerRendering/gridHeaderComp";
 import { FilterManager } from "./filter/filterManager";
 import { ValueService } from "./valueService/valueService";
 import { EventService } from "./eventService";
@@ -272,7 +272,7 @@ export class GridCoreCreator {
             { componentName: 'AgAngleSelect', componentClass: AgAngleSelect },
             { componentName: 'AgColorPicker', componentClass: AgColorPicker },
             { componentName: 'AgGridBody', componentClass: GridBodyComp },
-            { componentName: 'AgHeaderRoot', componentClass: HeaderRootComp },
+            { componentName: 'AgHeaderRoot', componentClass: GridHeaderComp },
             { componentName: 'AgPagination', componentClass: PaginationComp },
             { componentName: 'AgOverlayWrapper', componentClass: OverlayWrapperComponent },
             { componentName: 'AgGroupComponent', componentClass: AgGroupComponent },
