@@ -46,7 +46,7 @@ export abstract class AgSparkline {
         return sparkline;
     }
 
-    static update<T extends SparklineOptions>(sparkline: AgSparklineType<T>, options: T, container?: HTMLElement, data?: any[]) {
+    static update<T extends SparklineOptions>(sparkline: AgSparklineType<T>, options: T, container?: HTMLElement, data?: any[]) : AgSparklineType<T> | undefined {
         // avoid mutating user provided options
         options = Object.create(options);
 
@@ -58,9 +58,32 @@ export abstract class AgSparkline {
             options.data = data;
         }
 
+        const newSparkline = getSparklineInstance(options.type, sparkline);
+
+        if (newSparkline !== sparkline) {
+            // if the type in options has changed, a new sparkline instance will be created, this needs to be configurated according to the rest of the options and returned when update is called
+            initSparkline(newSparkline, options);
+
+            initSparklineByType(newSparkline, options);
+
+            return newSparkline;
+        }
+
         initSparkline(sparkline, options);
 
         initSparklineByType(sparkline, options);
+    }
+}
+
+function getSparklineInstance(type: string = 'line', sparkline?: any): any {
+    switch (type) {
+        case 'column':
+            return sparkline instanceof ColumnSparkline ? sparkline : new ColumnSparkline();
+        case 'area':
+            return sparkline instanceof AreaSparkline ? sparkline  : new AreaSparkline();
+        case 'line':
+        default:
+            return sparkline instanceof LineSparkline ? sparkline  : new LineSparkline();
     }
 }
 
@@ -76,19 +99,6 @@ function initSparklineByType(sparkline: Sparkline, options: any): void {
         default:
             initLineSparkline(sparkline as LineSparkline, options);
             break;
-    }
-}
-
-function getSparklineInstance(type: string = 'line'): any {
-    switch (type) {
-        case 'line':
-            return new LineSparkline();
-        case 'column':
-            return new ColumnSparkline();
-        case 'area':
-            return new AreaSparkline();
-        default:
-            return new LineSparkline();
     }
 }
 

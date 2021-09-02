@@ -7,7 +7,7 @@ var gridOptions = {
             minWidth: 100,
             cellRenderer: 'agSparklineCellRenderer',
             cellRendererParams: {
-                sparklineOptions: { type: 'column' },
+                sparklineOptions: { type: 'area' },
             },
         },
         { field: 'athlete' },
@@ -30,6 +30,18 @@ function updateData() {
         itemsToUpdate.push(data);
     });
     gridOptions.api.applyTransaction({ update: itemsToUpdate });
+}
+
+function updateSparklineType(type, el) {
+    const toggleButtons = document.getElementsByClassName('toggle-button');
+
+    for (const b of toggleButtons) {
+        b.setAttribute('class', 'toggle-button');
+    }
+    el.setAttribute('class', 'toggle-button active');
+
+    gridOptions.columnDefs[2].cellRendererParams.sparklineOptions.type = type;
+    gridOptions.api.setColumnDefs(gridOptions.columnDefs);
 }
 
 function randomNumber(min, max) {
