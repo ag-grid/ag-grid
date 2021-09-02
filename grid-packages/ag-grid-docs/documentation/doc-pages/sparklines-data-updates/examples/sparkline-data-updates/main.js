@@ -1,16 +1,25 @@
 var gridOptions = {
     columnDefs: [
-        { field: 'country' },
-        { field: 'sport' },
+        { field: 'symbol' },
         {
-            field: 'results',
+            field: 'shortName',
+            headerName: 'Name',
+        },
+        {
+            field: 'history',
+            headerName: 'Close History',
             minWidth: 100,
             cellRenderer: 'agSparklineCellRenderer',
             cellRendererParams: {
                 sparklineOptions: { type: 'area' },
             },
         },
-        { field: 'athlete' },
+        {
+            field: 'regularMarketDayHigh',
+        },
+        {
+            field: 'regularMarketDayLow',
+        }
     ],
     defaultColDef: {
         flex: 1,
@@ -19,14 +28,12 @@ var gridOptions = {
     },
 };
 
-const NUM_VALUES = 10;
-const NUM_ROWS = 1000;
-
 function updateData() {
     const itemsToUpdate = [];
     gridOptions.api.forEachNodeAfterFilterAndSort(function (rowNode, index) {
         let data = rowNode.data;
-        data.results = [...data.results.slice(1, NUM_VALUES), randomNumber(0, 10)];
+        const n = data.history.length;
+        data.history = [...data.history.slice(1, n), randomNumber(0, 10)];
         itemsToUpdate.push(data);
     });
     gridOptions.api.applyTransaction({ update: itemsToUpdate });
@@ -63,12 +70,5 @@ document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid
-        .simpleHttpRequest({
-            url: 'https://www.ag-grid.com/example-assets/olympic-winners.json',
-        })
-        .then(function (data) {
-            const dataMod = data.slice(0, NUM_ROWS);
-            gridOptions.api.setRowData(addSparklineData(dataMod));
-        });
+    gridOptions.api.setRowData(quotes);
 });

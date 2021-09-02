@@ -13,7 +13,7 @@ To create column sparklines in the grid, `agSparklineCellRenderer` component can
 const gridOptions = {
     columnDefs: [
         {
-            field: 'results',
+            field: 'history',
             cellRenderer: 'agSparklineCellRenderer',
             cellRendererParams: {
                 sparklineOptions: {
