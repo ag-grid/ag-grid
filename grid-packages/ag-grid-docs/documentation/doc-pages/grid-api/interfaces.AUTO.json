@@ -136,9 +136,9 @@
       "topRightRowContainerCtrl": "RowContainerCtrl",
       "fakeHScrollCtrl": "FakeHScrollCtrl",
       "gridHeaderCtrl": "GridHeaderCtrl",
-      "centerHeaderContainer": "HeaderRowContainer",
-      "leftHeaderContainer": "HeaderRowContainer",
-      "rightHeaderContainer": "HeaderRowContainer"
+      "centerHeaderRowContainerCtrl": "HeaderRowContainerCtrl",
+      "leftHeaderRowContainerCtrl": "HeaderRowContainerCtrl",
+      "rightHeaderRowContainerCtrl": "HeaderRowContainerCtrl"
     }
   },
   "DragItem": {
@@ -4106,11 +4106,34 @@
       "onDragStop(params: DraggingEvent)": "void"
     }
   },
-  "IGridHeaderComp": {
+  "IHeaderGroupParams": {
     "meta": {},
     "type": {
-      "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
-      "setHeightAndMinHeight(height: string)": "void"
+      "columnGroup": "ColumnGroup",
+      "displayName": "string",
+      "setExpanded": "(expanded: boolean) => void",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */"
+    }
+  },
+  "IHeaderGroup": { "meta": {}, "type": {} },
+  "IHeaderGroupComp": {
+    "meta": {},
+    "type": {
+      "getGui()": "HTMLElement",
+      "destroy?()": "void",
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void",
+      "init?(params: IHeaderGroupParams)": "AgPromise<void> | void"
+    },
+    "docs": {
+      "getGui()": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
+      "destroy?()": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
+      "init?(params: IHeaderGroupParams)": "/** The init(params) method is called on the component once. See below for details on the parameters. */"
     }
   },
   "IHeaderParams": {
@@ -4173,41 +4196,37 @@
     "meta": {},
     "type": { "selected": "number", "notSelected": "number" }
   },
-  "IHeaderGroupParams": {
+  "IGridHeaderComp": {
     "meta": {},
     "type": {
-      "columnGroup": "ColumnGroup",
-      "displayName": "string",
-      "setExpanded": "(expanded: boolean) => void",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
-      "context": "any"
-    },
-    "docs": {
-      "context": "/** The context as provided on `gridOptions.context` */"
-    }
-  },
-  "IHeaderGroup": { "meta": {}, "type": {} },
-  "IHeaderGroupComp": {
-    "meta": {},
-    "type": {
-      "getGui()": "HTMLElement",
-      "destroy?()": "void",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void",
-      "init?(params: IHeaderGroupParams)": "AgPromise<void> | void"
-    },
-    "docs": {
-      "getGui()": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
-      "destroy?()": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "init?(params: IHeaderGroupParams)": "/** The init(params) method is called on the component once. See below for details on the parameters. */"
+      "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
+      "setHeightAndMinHeight(height: string)": "void"
     }
   },
   "HeaderRowType": {
     "meta": { "isEnum": true },
     "type": ["COLUMN_GROUP", "COLUMN", "FLOATING_FILTER"]
   },
-  "IHeaderRowContainerComp": { "meta": {}, "type": {} },
+  "IHeaderRowComp": {
+    "meta": {},
+    "type": {
+      "setTransform(transform: string)": "void",
+      "setTop(top: string)": "void",
+      "setHeight(height: string)": "void",
+      "setHeaderCtrls(ctrls: HeaderCtrl[])": "void",
+      "setWidth(width: string)": "void"
+    }
+  },
+  "IHeaderRowContainerComp": {
+    "meta": {},
+    "type": {
+      "setCenterWidth(width: string)": "void",
+      "setContainerTransform(transform: string)": "void",
+      "getRowComps()": "HeaderRowComp[]",
+      "refresh()": "void",
+      "getHeaderWrapperComp(column: Column)": "HeaderWrapperComp | undefined"
+    }
+  },
   "HorizontalResizeParams": {
     "meta": {},
     "type": {
