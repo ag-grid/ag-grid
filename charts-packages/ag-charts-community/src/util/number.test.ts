@@ -20,6 +20,8 @@ test('isNumber', () => {
     expect(isNumber(1)).toBe(true);
     expect(isNumber(0)).toBe(true);
     expect(isNumber(-1)).toBe(true);
+    expect(isNumber(Number(1))).toBe(true);
+    expect(isNumber(Number('wow'))).toBe(false);
     expect(isNumber(Infinity)).toBe(false);
     expect(isNumber(-Infinity)).toBe(false);
     expect(isNumber(NaN)).toBe(false);
