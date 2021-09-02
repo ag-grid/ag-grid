@@ -147,16 +147,20 @@ export interface RowDragEvent extends AgGridEvent {
     node: RowNode;
     /** The list of nodes being dragged. */
     nodes: RowNode[];
-    /** The vertical pixel location the mouse is over. */
-    y: number;
-    /** Direction of the drag, either 'up', 'down' or null. */
-    vDirection: string;
     /** The underlying mouse move event associated with the drag. */
     event: MouseEvent;
-    /** The row index the mouse is dragging over. */
+    /** Direction of the drag, either 'up', 'down' or null (if mouse is moving horizontally and not vertically). */
+    vDirection: string;
+    /** The row index the mouse is dragging over or -1 if over no row. */
     overIndex: number;
-    /** The row node the mouse is dragging over. */
-    overNode: RowNode;
+    /** The row node the mouse is dragging over or undefined if over no row. */
+    overNode?: RowNode;
+    /** The vertical pixel location the mouse is over, with `0` meaning the top of the first row.
+     * This can be compared to the `rowNode.rowHeight` and `rowNode.rowTop` to work out the mouse position relative to rows.
+     * The provided attributes `overIndex` and `overNode` means the `y` property is mostly redundant.
+     * The `y` property can be handy if you want more information such as 'how close is the mouse to the top or bottom of the row?'
+     */
+    y: number;
 }
 
 export interface RowDragEnterEvent extends RowDragEvent { }

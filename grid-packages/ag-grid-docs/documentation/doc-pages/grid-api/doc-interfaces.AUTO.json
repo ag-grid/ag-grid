@@ -3975,25 +3975,25 @@
       "description": "/** The list of nodes being dragged. */",
       "type": { "returnType": "RowNode[]" }
     },
-    "y": {
-      "description": "/** The vertical pixel location the mouse is over. */",
-      "type": { "returnType": "number" }
-    },
-    "vDirection": {
-      "description": "/** Direction of the drag, either 'up', 'down' or null. */",
-      "type": { "returnType": "string" }
-    },
     "event": {
       "description": "/** The underlying mouse move event associated with the drag. */",
       "type": { "returnType": "MouseEvent" }
     },
+    "vDirection": {
+      "description": "/** Direction of the drag, either 'up', 'down' or null (if mouse is moving horizontally and not vertically). */",
+      "type": { "returnType": "string" }
+    },
     "overIndex": {
-      "description": "/** The row index the mouse is dragging over. */",
+      "description": "/** The row index the mouse is dragging over or -1 if over no row. */",
       "type": { "returnType": "number" }
     },
     "overNode": {
-      "description": "/** The row node the mouse is dragging over. */",
+      "description": "/** The row node the mouse is dragging over or undefined if over no row. */",
       "type": { "returnType": "RowNode" }
+    },
+    "y": {
+      "description": "/** The vertical pixel location the mouse is over, with `0` meaning the top of the first row.\n * This can be compared to the `rowNode.rowHeight` and `rowNode.rowTop` to work out the mouse position relative to rows.\n * The provided attributes `overIndex` and `overNode` means the `y` property is mostly redundant.\n * The `y` property can be handy if you want more information such as 'how close is the mouse to the top or bottom of the row?' */",
+      "type": { "returnType": "number" }
     },
     "api": { "type": { "returnType": "GridApi" } },
     "columnApi": { "type": { "returnType": "ColumnApi" } },
@@ -4011,25 +4011,25 @@
       "description": "/** The list of nodes being dragged. */",
       "type": { "returnType": "RowNode[]" }
     },
-    "y": {
-      "description": "/** The vertical pixel location the mouse is over. */",
-      "type": { "returnType": "number" }
-    },
-    "vDirection": {
-      "description": "/** Direction of the drag, either 'up', 'down' or null. */",
-      "type": { "returnType": "string" }
-    },
     "event": {
       "description": "/** The underlying mouse move event associated with the drag. */",
       "type": { "returnType": "MouseEvent" }
     },
+    "vDirection": {
+      "description": "/** Direction of the drag, either 'up', 'down' or null (if mouse is moving horizontally and not vertically). */",
+      "type": { "returnType": "string" }
+    },
     "overIndex": {
-      "description": "/** The row index the mouse is dragging over. */",
+      "description": "/** The row index the mouse is dragging over or -1 if over no row. */",
       "type": { "returnType": "number" }
     },
     "overNode": {
-      "description": "/** The row node the mouse is dragging over. */",
+      "description": "/** The row node the mouse is dragging over or undefined if over no row. */",
       "type": { "returnType": "RowNode" }
+    },
+    "y": {
+      "description": "/** The vertical pixel location the mouse is over, with `0` meaning the top of the first row.\n * This can be compared to the `rowNode.rowHeight` and `rowNode.rowTop` to work out the mouse position relative to rows.\n * The provided attributes `overIndex` and `overNode` means the `y` property is mostly redundant.\n * The `y` property can be handy if you want more information such as 'how close is the mouse to the top or bottom of the row?' */",
+      "type": { "returnType": "number" }
     },
     "api": { "type": { "returnType": "GridApi" } },
     "columnApi": { "type": { "returnType": "ColumnApi" } },
@@ -4047,25 +4047,25 @@
       "description": "/** The list of nodes being dragged. */",
       "type": { "returnType": "RowNode[]" }
     },
-    "y": {
-      "description": "/** The vertical pixel location the mouse is over. */",
-      "type": { "returnType": "number" }
-    },
-    "vDirection": {
-      "description": "/** Direction of the drag, either 'up', 'down' or null. */",
-      "type": { "returnType": "string" }
-    },
     "event": {
       "description": "/** The underlying mouse move event associated with the drag. */",
       "type": { "returnType": "MouseEvent" }
     },
+    "vDirection": {
+      "description": "/** Direction of the drag, either 'up', 'down' or null (if mouse is moving horizontally and not vertically). */",
+      "type": { "returnType": "string" }
+    },
     "overIndex": {
-      "description": "/** The row index the mouse is dragging over. */",
+      "description": "/** The row index the mouse is dragging over or -1 if over no row. */",
       "type": { "returnType": "number" }
     },
     "overNode": {
-      "description": "/** The row node the mouse is dragging over. */",
+      "description": "/** The row node the mouse is dragging over or undefined if over no row. */",
       "type": { "returnType": "RowNode" }
+    },
+    "y": {
+      "description": "/** The vertical pixel location the mouse is over, with `0` meaning the top of the first row.\n * This can be compared to the `rowNode.rowHeight` and `rowNode.rowTop` to work out the mouse position relative to rows.\n * The provided attributes `overIndex` and `overNode` means the `y` property is mostly redundant.\n * The `y` property can be handy if you want more information such as 'how close is the mouse to the top or bottom of the row?' */",
+      "type": { "returnType": "number" }
     },
     "api": { "type": { "returnType": "GridApi" } },
     "columnApi": { "type": { "returnType": "ColumnApi" } },
@@ -4083,25 +4083,25 @@
       "description": "/** The list of nodes being dragged. */",
       "type": { "returnType": "RowNode[]" }
     },
-    "y": {
-      "description": "/** The vertical pixel location the mouse is over. */",
-      "type": { "returnType": "number" }
-    },
-    "vDirection": {
-      "description": "/** Direction of the drag, either 'up', 'down' or null. */",
-      "type": { "returnType": "string" }
-    },
     "event": {
       "description": "/** The underlying mouse move event associated with the drag. */",
       "type": { "returnType": "MouseEvent" }
     },
+    "vDirection": {
+      "description": "/** Direction of the drag, either 'up', 'down' or null (if mouse is moving horizontally and not vertically). */",
+      "type": { "returnType": "string" }
+    },
     "overIndex": {
-      "description": "/** The row index the mouse is dragging over. */",
+      "description": "/** The row index the mouse is dragging over or -1 if over no row. */",
       "type": { "returnType": "number" }
     },
     "overNode": {
-      "description": "/** The row node the mouse is dragging over. */",
+      "description": "/** The row node the mouse is dragging over or undefined if over no row. */",
       "type": { "returnType": "RowNode" }
+    },
+    "y": {
+      "description": "/** The vertical pixel location the mouse is over, with `0` meaning the top of the first row.\n * This can be compared to the `rowNode.rowHeight` and `rowNode.rowTop` to work out the mouse position relative to rows.\n * The provided attributes `overIndex` and `overNode` means the `y` property is mostly redundant.\n * The `y` property can be handy if you want more information such as 'how close is the mouse to the top or bottom of the row?' */",
+      "type": { "returnType": "number" }
     },
     "api": { "type": { "returnType": "GridApi" } },
     "columnApi": { "type": { "returnType": "ColumnApi" } },
@@ -4119,25 +4119,25 @@
       "description": "/** The list of nodes being dragged. */",
       "type": { "returnType": "RowNode[]" }
     },
-    "y": {
-      "description": "/** The vertical pixel location the mouse is over. */",
-      "type": { "returnType": "number" }
-    },
-    "vDirection": {
-      "description": "/** Direction of the drag, either 'up', 'down' or null. */",
-      "type": { "returnType": "string" }
-    },
     "event": {
       "description": "/** The underlying mouse move event associated with the drag. */",
       "type": { "returnType": "MouseEvent" }
     },
+    "vDirection": {
+      "description": "/** Direction of the drag, either 'up', 'down' or null (if mouse is moving horizontally and not vertically). */",
+      "type": { "returnType": "string" }
+    },
     "overIndex": {
-      "description": "/** The row index the mouse is dragging over. */",
+      "description": "/** The row index the mouse is dragging over or -1 if over no row. */",
       "type": { "returnType": "number" }
     },
     "overNode": {
-      "description": "/** The row node the mouse is dragging over. */",
+      "description": "/** The row node the mouse is dragging over or undefined if over no row. */",
       "type": { "returnType": "RowNode" }
+    },
+    "y": {
+      "description": "/** The vertical pixel location the mouse is over, with `0` meaning the top of the first row.\n * This can be compared to the `rowNode.rowHeight` and `rowNode.rowTop` to work out the mouse position relative to rows.\n * The provided attributes `overIndex` and `overNode` means the `y` property is mostly redundant.\n * The `y` property can be handy if you want more information such as 'how close is the mouse to the top or bottom of the row?' */",
+      "type": { "returnType": "number" }
     },
     "api": { "type": { "returnType": "GridApi" } },
     "columnApi": { "type": { "returnType": "ColumnApi" } },
