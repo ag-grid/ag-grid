@@ -235,11 +235,11 @@ export class CtrlsService extends BeanStub {
         return this.gridBodyCtrl;
     }
 
-    public getHeaderContainers(): HeaderRowContainerCtrl[] {
+    public getHeaderRowContainerCtrls(): HeaderRowContainerCtrl[] {
         return [this.leftHeaderRowContainerCtrl, this.rightHeaderRowContainerCtrl, this.centerHeaderRowContainerCtrl];
     }
 
-    public getHeaderContainer(pinned?: string | null): HeaderRowContainerCtrl {
+    public getHeaderRowContainerCtrl(pinned?: string | null): HeaderRowContainerCtrl {
         switch (pinned) {
             case Constants.PINNED_LEFT: return this.leftHeaderRowContainerCtrl;
             case Constants.PINNED_RIGHT: return this.rightHeaderRowContainerCtrl;

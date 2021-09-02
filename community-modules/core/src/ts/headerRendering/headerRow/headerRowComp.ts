@@ -25,13 +25,13 @@ export class HeaderRowComp extends Component {
     private readonly pinned: string | null;
 
     private readonly type: HeaderRowType;
-    private dept: number;
+    private rowIndex: number;
 
     private headerComps: { [key: string]: AbstractHeaderWrapper; } = {};
 
-    constructor(dept: number, type: HeaderRowType, pinned: string | null) {
+    constructor(headerRowIndex: number, type: HeaderRowType, pinned: string | null) {
         super(/* html */`<div class="ag-header-row" role="row"></div>`);
-        this.setRowIndex(dept);
+        this.setRowIndex(headerRowIndex);
         this.type = type;
         this.pinned = pinned;
 
@@ -55,7 +55,7 @@ export class HeaderRowComp extends Component {
         };
 
         const ctrl = this.createManagedBean(new HeaderRowCtrl());
-        ctrl.setComp(compProxy, this.dept, this.pinned, this.type);
+        ctrl.setComp(compProxy, this.rowIndex, this.pinned, this.type);
     }
 
     public getHeaderWrapperComp(column: Column): HeaderWrapperComp | undefined {
@@ -68,12 +68,12 @@ export class HeaderRowComp extends Component {
     }
 
     private setRowIndex(rowIndex: number) {
-        this.dept = rowIndex;
+        this.rowIndex = rowIndex;
         setAriaRowIndex(this.getGui(), rowIndex + 1);
     }
 
     public getRowIndex(): number {
-        return this.dept;
+        return this.rowIndex;
     }
 
     public getType(): HeaderRowType {
@@ -81,7 +81,7 @@ export class HeaderRowComp extends Component {
     }
 
     @PreDestroy
-    private destroyAllChildComponents(): void {
+    private destroyHeaderCtrls(): void {
         this.setHeaderCtrls([]);
     }
 

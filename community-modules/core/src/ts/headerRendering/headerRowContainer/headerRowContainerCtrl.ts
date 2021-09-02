@@ -46,7 +46,6 @@ export class HeaderRowContainerCtrl extends BeanStub {
         this.comp.setContainerTransform(`translateX(${offset}px)`);
     }
 
-
     // temp - should not be in new design
     public getRowComps(): HeaderRowComp[] {
         return this.comp.getRowComps();

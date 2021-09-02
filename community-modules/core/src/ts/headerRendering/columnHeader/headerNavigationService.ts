@@ -37,12 +37,12 @@ export class HeaderNavigationService extends BeanStub {
     }
 
     public getHeaderRowCount(): number {
-        const centerHeaderContainer = this.ctrlsService.getHeaderContainer();
+        const centerHeaderContainer = this.ctrlsService.getHeaderRowContainerCtrl();
         return centerHeaderContainer ? centerHeaderContainer.getRowComps().length : 0;
     }
 
     public getHeaderRowType(idx: number): HeaderRowType | undefined {
-        const centerHeaderContainer = this.ctrlsService.getHeaderContainer();
+        const centerHeaderContainer = this.ctrlsService.getHeaderRowContainerCtrl();
         if (centerHeaderContainer) {
             return centerHeaderContainer.getRowComps()[idx].getType();
         }

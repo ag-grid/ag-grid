@@ -549,7 +549,7 @@ export class GridApi {
     }
 
     public refreshHeader() {
-        this.ctrlsService.getHeaderContainers().forEach(c => c.refresh());
+        this.ctrlsService.getHeaderRowContainerCtrls().forEach(c => c.refresh());
     }
 
     public isAnyFilterPresent(): boolean {
