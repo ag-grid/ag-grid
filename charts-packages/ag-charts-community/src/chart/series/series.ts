@@ -134,11 +134,24 @@ export abstract class Series extends Observable {
     // while `onHighlightChange` is responsible for highlighting of individual series nodes / datums
     // (see `chart.highlightDatum`, `chart.dehighlightDatum` methods).
 
-    highlight(itemId?: any) {
+    protected highlightedItemId?: string;
+    highlight(itemId?: any): boolean {
+        this.updatePending = true;
+        if (itemId === this.highlightedItemId) {
+            return false;
+        }
+        this.highlightedItemId = itemId;
         this.undim(itemId);
+        return true;
     }
 
-    dehighlight() {}
+    dehighlight(): boolean {
+        if (this.highlightedItemId !== undefined) {
+            this.highlightedItemId = undefined;
+            return true;
+        }
+        return false;
+    }
 
     dim() {
         this.group.opacity = this.highlightStyle.series.dimOpacity;
@@ -177,12 +190,29 @@ export abstract class Series extends Observable {
     abstract processData(): boolean;
 
     // Using processed data, generate data that backs visible nodes.
-    generateNodeData(): SeriesNodeDatum[] { return [] };
+    generateNodeData(): SeriesNodeDatum[] { return []; }
 
     // Returns persisted node data associated with the rendered portion of the series' data.
     getNodeData(): readonly SeriesNodeDatum[] { return []; }
 
     getLabelData(): readonly PointLabelDatum[] { return []; }
+
+    private _updatePending = false;
+    set updatePending(value: boolean) {
+        if (this._updatePending !== value) {
+            this._updatePending = value;
+            if (value && this.chart) {
+                this.chart.updatePending = value;
+            }
+        }
+    }
+    get updatePending(): boolean {
+        return this._updatePending;
+    }
+
+    scheduleUpdate() {
+        this.updatePending = true;
+    }
 
     // Produce data joins and update selection's nodes using node data.
     abstract update(): void;

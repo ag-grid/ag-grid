@@ -240,7 +240,7 @@ export class HistogramSeries extends CartesianSeries {
     set xName(value: string) {
         if (this._xName !== value) {
             this._xName = value;
-            this.update();
+            this.scheduleUpdate();
         }
     }
 
@@ -273,7 +273,7 @@ export class HistogramSeries extends CartesianSeries {
     set strokeWidth(value: number) {
         if (this._strokeWidth !== value) {
             this._strokeWidth = value;
-            this.update();
+            this.scheduleUpdate();
         }
     }
 
@@ -285,7 +285,7 @@ export class HistogramSeries extends CartesianSeries {
     set shadow(value: DropShadow | undefined) {
         if (this._shadow !== value) {
             this._shadow = value;
-            this.update();
+            this.scheduleUpdate();
         }
     }
 

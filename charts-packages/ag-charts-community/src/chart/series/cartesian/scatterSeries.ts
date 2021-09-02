@@ -152,14 +152,14 @@ export class ScatterSeries extends CartesianSeries {
         const { marker, label } = this;
 
         marker.addPropertyListener('shape', this.onMarkerShapeChange, this);
-        marker.addEventListener('change', this.update, this);
+        marker.addEventListener('change', this.scheduleUpdate, this);
 
         this.addPropertyListener('xKey', () => this.xData = []);
         this.addPropertyListener('yKey', () => this.yData = []);
         this.addPropertyListener('sizeKey', () => this.sizeData = []);
 
         label.enabled = false;
-        label.addEventListener('change', this.update, this);
+        label.addEventListener('change', this.scheduleUpdate, this);
         label.addEventListener('dataChange', this.scheduleData, this);
         label.addPropertyListener('fontSize', this.scheduleData, this);
     }

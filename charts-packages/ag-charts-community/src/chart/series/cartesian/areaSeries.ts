@@ -145,22 +145,22 @@ export class AreaSeries extends CartesianSeries {
     constructor() {
         super();
 
-        this.addEventListener('update', this.update);
+        this.addEventListener('update', this.scheduleUpdate);
 
         const { marker, label } = this;
 
         marker.enabled = false;
         marker.addPropertyListener('shape', this.onMarkerShapeChange, this);
-        marker.addEventListener('change', this.update, this);
+        marker.addEventListener('change', this.scheduleUpdate, this);
 
         label.enabled = false;
-        label.addEventListener('change', this.update, this);
+        label.addEventListener('change', this.scheduleUpdate, this);
     }
 
     onMarkerShapeChange() {
         this.markerSelection = this.markerSelection.setData([]);
         this.markerSelection.exit.remove();
-        this.update();
+        this.scheduleUpdate();
 
         this.fireEvent({ type: 'legendChange' });
     }
@@ -189,6 +189,8 @@ export class AreaSeries extends CartesianSeries {
             const { seriesItemEnabled } = this;
             seriesItemEnabled.clear();
             values.forEach(key => seriesItemEnabled.set(key, true));
+
+            this.highlightedItemId = undefined;
 
             this.scheduleData();
         }
@@ -331,15 +333,22 @@ export class AreaSeries extends CartesianSeries {
         }
     }
 
-    highlight(itemId?: any) {
-        super.highlight(itemId);
-
+    highlight(itemId?: any): boolean {
+        if (!super.highlight(itemId)) {
+            return false;
+        }
         const { strokeWidth } = this.highlightStyle.series;
         this.strokeSelection.each((node, datum) => node.strokeWidth = itemId === datum.itemId && strokeWidth !== undefined ? strokeWidth : this.strokeWidth);
+        return true;
     }
 
-    dehighlight() {
-        this.strokeSelection.each((node, datum) => node.strokeWidth = this.strokeWidth);
+    dehighlight(): boolean {
+        if (!super.dehighlight()) {
+            return false;
+        }
+        this.highlightedItemId = undefined;
+        this.strokeSelection.each(node => node.strokeWidth = this.strokeWidth);
+        return true;
     }
 
     undim(itemId?: any) {
@@ -368,33 +377,34 @@ export class AreaSeries extends CartesianSeries {
     }
 
     update(): void {
-        const { visible, chart, xAxis, yAxis, xData, yData } = this;
+        this.group.visible = this.visible && this.xData.length > 0 && this.yData.length > 0;
 
-        this.group.visible = visible && !!(xData.length && yData.length);
-
-        if (!chart || chart.layoutPending || chart.dataPending
-            || !visible || !xAxis || !yAxis || !xData.length || !yData.length) {
-            return;
+        if (this.updateSelections()) {
+            this.updateNodes();
         }
+    }
 
+    updateSelections(): boolean {
         const selectionData = this.generateSelectionData();
         if (!selectionData) {
-            return;
+            return false;
         }
 
-        const { areaSelectionData, markerSelectionData, labelSelectionData } = selectionData;
+        const {
+            areaSelectionData,
+            markerSelectionData,
+            labelSelectionData
+        } = selectionData;
 
         this.updateFillSelection(areaSelectionData);
         this.updateStrokeSelection(areaSelectionData);
         this.updateMarkerSelection(markerSelectionData);
         this.updateLabelSelection(labelSelectionData);
 
-        this.updateSelectionNodes();
-
-        this.markerSelectionData = markerSelectionData;
+        return true;
     }
 
-    updateSelectionNodes() {
+    updateNodes() {
         this.updateFillNodes();
         this.updateStrokeNodes();
         this.updateMarkerNodes();
@@ -406,12 +416,21 @@ export class AreaSeries extends CartesianSeries {
         markerSelectionData: MarkerSelectionDatum[],
         labelSelectionData: LabelSelectionDatum[]
     } | undefined {
-        const { data, xAxis, yAxis } = this;
+        const { data, visible, chart, xAxis, yAxis, xData, yData } = this;
 
-        if (!data || !xAxis || !yAxis) {
+        if (!data ||
+            !visible ||
+            !chart ||
+            chart.layoutPending ||
+            chart.dataPending ||
+            !xAxis ||
+            !yAxis ||
+            !xData.length ||
+            !yData.length) {
             return;
         }
-        const { yKeys, xData, yData, marker, label, fills, strokes } = this;
+
+        const { yKeys, marker, label, fills, strokes } = this;
         const { scale: xScale } = xAxis;
         const { scale: yScale } = yAxis;
 
@@ -597,6 +616,7 @@ export class AreaSeries extends CartesianSeries {
         updateMarkers.exit.remove();
         const enterMarkers = updateMarkers.enter.append(MarkerShape);
         this.markerSelection = updateMarkers.merge(enterMarkers);
+        this.markerSelectionData = markerSelectionData;
     }
 
     private updateMarkerNodes(): void {
@@ -604,41 +624,66 @@ export class AreaSeries extends CartesianSeries {
             return;
         }
 
-        const { marker } = this;
-        const markerFormatter = marker.formatter;
+        const {
+            xKey, marker, seriesItemEnabled,
+            chart: { highlightedDatum },
+            highlightedItemId,
+            highlightStyle: {
+                fill: deprecatedFill,
+                stroke: deprecatedStroke,
+                strokeWidth: deprecatedStrokeWidth,
+                item: {
+                    fill: highlightedFill = deprecatedFill,
+                    stroke: highlightedStroke = deprecatedStroke,
+                    strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
+                },
+                series: {
+                    enabled: subSeriesHighlightingEnabled,
+                    strokeWidth: highlightedSubSeriesStrokeWidth
+                }
+            }
+        } = this;
+
+        const { size, formatter } = marker;
         const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : this.strokeWidth;
-        const markerSize = marker.size;
-        const { xKey, seriesItemEnabled } = this;
-        const { highlightedDatum } = this.chart;
-        const { fill: highlightFill, stroke: highlightStroke } = this.highlightStyle;
 
         this.markerSelection.each((node, datum) => {
-            const highlighted = datum === highlightedDatum;
-            const markerFill = highlighted && highlightFill !== undefined ? highlightFill : marker.fill || datum.fill;
-            const markerStroke = highlighted && highlightStroke !== undefined ? highlightStroke : marker.stroke || datum.stroke;
-            let markerFormat: CartesianSeriesMarkerFormat | undefined = undefined;
+            const isDatumHighlighted = datum === highlightedDatum;
+            // const isSubSeriesHighlighted = highlightedItemId === datum.itemId;
+            const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : marker.fill || datum.fill;
+            const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : marker.stroke || datum.stroke;
+            const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
+                ? highlightedDatumStrokeWidth
+                : markerStrokeWidth;
 
-            if (markerFormatter) {
-                markerFormat = markerFormatter({
+            // const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
+            //     ? highlightedDatumStrokeWidth
+            //     : subSeriesHighlightingEnabled && isSubSeriesHighlighted && highlightedSubSeriesStrokeWidth !== undefined
+            //         ? highlightedSubSeriesStrokeWidth
+            //         : markerStrokeWidth;
+
+            let format: CartesianSeriesMarkerFormat | undefined = undefined;
+            if (formatter) {
+                format = formatter({
                     datum: datum.seriesDatum,
                     xKey,
                     yKey: datum.yKey,
-                    fill: markerFill,
-                    stroke: markerStroke,
-                    strokeWidth: markerStrokeWidth,
-                    size: markerSize,
-                    highlighted
+                    fill,
+                    stroke,
+                    strokeWidth,
+                    size,
+                    highlighted: isDatumHighlighted
                 });
             }
 
-            node.fill = markerFormat && markerFormat.fill || markerFill;
-            node.stroke = markerFormat && markerFormat.stroke || markerStroke;
-            node.strokeWidth = markerFormat && markerFormat.strokeWidth !== undefined
-                ? markerFormat.strokeWidth
-                : markerStrokeWidth;
-            node.size = markerFormat && markerFormat.size !== undefined
-                ? markerFormat.size
-                : markerSize;
+            node.fill = format && format.fill || fill;
+            node.stroke = format && format.stroke || stroke;
+            node.strokeWidth = format && format.strokeWidth !== undefined
+                ? format.strokeWidth
+                : strokeWidth;
+            node.size = format && format.size !== undefined
+                ? format.size
+                : size;
 
             node.translationX = datum.point.x;
             node.translationY = datum.point.y;
