@@ -1,30 +1,30 @@
-import { Autowired, PostConstruct, PreDestroy } from '../context/context';
 import { ColumnModel } from '../columns/columnModel';
-import { Events } from '../events';
-import { HeaderRowComp, HeaderRowType } from './headerRowComp';
-import { BodyDropTarget } from './bodyDropTarget';
-import { ScrollVisibleService } from '../gridBodyComp/scrollVisibleService';
-import { Component } from '../widgets/component';
 import { Constants } from '../constants/constants';
-import { setFixedWidth, ensureDomOrder } from '../utils/dom';
-import { NumberSequence } from "../utils";
-import { GridOptionsWrapper } from '../gridOptionsWrapper';
+import { Autowired, PostConstruct, PreDestroy } from '../context/context';
 import { CtrlsService } from '../ctrlsService';
-import { RefSelector } from '../widgets/componentAnnotations';
-import { PinnedWidthService } from '../gridBodyComp/pinnedWidthService';
-import { CenterWidthFeature } from '../gridBodyComp/centerWidthFeature';
-import { HeaderRowContainerCtrl, IHeaderRowContainerComp } from './headerRowContainerCtrl';
 import { Column } from '../entities/column';
+import { Events } from '../events';
+import { PinnedWidthService } from '../gridBodyComp/pinnedWidthService';
+import { ScrollVisibleService } from '../gridBodyComp/scrollVisibleService';
+import { NumberSequence } from "../utils";
+import { ensureDomOrder, setFixedWidth } from '../utils/dom';
+import { Component } from '../widgets/component';
+import { RefSelector } from '../widgets/componentAnnotations';
+import { BodyDropTarget } from './bodyDropTarget';
 import { HeaderWrapperComp } from './header/headerWrapperComp';
+import { HeaderRowComp, HeaderRowType } from './headerRowComp';
+import { HeaderRowContainerCtrl, IHeaderRowContainerComp } from './headerRowContainerCtrl';
 
 export class HeaderRowContainer extends Component {
 
-    private static PINNED_TEMPLATE =  /* html */ `<div role="presentation"/>`;
+    private static PINNED_LEFT_TEMPLATE =  /* html */ `<div class="ag-pinned-left-header" role="presentation"/>`;
+
+    private static PINNED_RIGHT_TEMPLATE =  /* html */ `<div class="ag-pinned-right-header" role="presentation"/>`;
 
     private static CENTER_TEMPLATE =  /* html */ 
-        `<div role="presentation">
+        `<div class="ag-header-viewport" role="presentation">
             <div class="ag-header-container" ref="eContainer" role="rowgroup"></div>
-        <div>`;
+        </div>`;
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
@@ -38,8 +38,6 @@ export class HeaderRowContainer extends Component {
     private filtersRowComp: HeaderRowComp | undefined;
     private columnsRowComp: HeaderRowComp | undefined;
     private groupsRowComps: HeaderRowComp[] = [];
-
-    private printLayout: boolean;
 
     constructor(pinned: string | null) {
         super();
@@ -55,42 +53,30 @@ export class HeaderRowContainer extends Component {
     @PostConstruct
     private init(): void {
         this.selectAndSetTemplate();
-        this.selectTopLevelClass();
 
         // if value changes, then if not pivoting, we at least need to change the label eg from sum() to avg(),
         // if pivoting, then the columns have changed
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
         this.setupDragAndDrop();
 
-        this.printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
-
-        // shotgun way to get labels to change, eg from sum(amount) to avg(amount)
-        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
-
         this.ctrlsService.registerHeaderContainer(this, this.pinned);
 
         this.setupPinnedWidth();
-        this.setupCenterWidth();
 
         if (this.columnModel.isReady()) {
             this.refresh();
         }
 
         const compProxy: IHeaderRowContainerComp = {
-
+            setCenterWidth: width => this.eContainer.style.width = width
         };
 
-        const ctrl = this.createManagedBean(new HeaderRowContainerCtrl());
+        const ctrl = this.createManagedBean(new HeaderRowContainerCtrl(this.pinned));
         ctrl.setComp(compProxy);
     }
 
     public setHorizontalScroll(offset: number): void {
         this.eContainer.style.transform = `translateX(${offset}px)`;
-    }
-
-    private setupCenterWidth(): void {
-        if (this.pinned!=null) { return; }
-        this.createManagedBean(new CenterWidthFeature(width => this.eContainer.style.width = `${width}px`));
     }
 
     private setupPinnedWidth(): void {
@@ -124,31 +110,18 @@ export class HeaderRowContainer extends Component {
         this.addManagedListener(this.eventService, Events.EVENT_SCROLLBAR_WIDTH_CHANGED, listener);
     }
 
-    private selectTopLevelClass(): void {
-        let cssClass: string;
-        switch (this.pinned) {
-            case Constants.PINNED_LEFT : cssClass = 'ag-pinned-left-header'; break;
-            case Constants.PINNED_RIGHT : cssClass = 'ag-pinned-right-header'; break;
-            default : cssClass = 'ag-header-viewport'; break;
-        }
-        this.addCssClass(cssClass);
-    }
-
     private selectAndSetTemplate(): void {
-        const template = this.pinned ? HeaderRowContainer.PINNED_TEMPLATE : HeaderRowContainer.CENTER_TEMPLATE;
+        const pinnedLeft = this.pinned == Constants.PINNED_LEFT;
+        const pinnedRight = this.pinned == Constants.PINNED_RIGHT;
+
+        const template = pinnedLeft ? HeaderRowContainer.PINNED_LEFT_TEMPLATE : 
+                         pinnedRight ? HeaderRowContainer.PINNED_RIGHT_TEMPLATE : HeaderRowContainer.CENTER_TEMPLATE;
+
         this.setTemplate(template);
     }
 
     private getContainer(): HTMLElement {
         return this.eContainer ? this.eContainer : this.getGui();
-    }
-
-    private onDomLayoutChanged(): void {
-        const newValue = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
-        if (this.printLayout !== newValue) {
-            this.printLayout = newValue;
-            this.refresh();
-        }
     }
 
     public getRowComps(): HeaderRowComp[] {

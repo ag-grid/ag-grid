@@ -9,6 +9,7 @@ import { setAriaColIndex, setAriaColSpan } from "../../utils/aria";
 import { last } from "../../utils/array";
 import { exists } from "../../utils/generic";
 import { Events } from "../../eventKeys";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 
 export class SetLeftFeature extends BeanStub {
 
@@ -24,8 +25,6 @@ export class SetLeftFeature extends BeanStub {
 
     private beans: Beans;
 
-    private readonly printLayout: boolean;
-
     constructor(columnOrGroup: ColumnGroupChild, eCell: HTMLElement, beans: Beans, colsSpanning?: Column[]) {
         super();
         this.columnOrGroup = columnOrGroup;
@@ -33,7 +32,6 @@ export class SetLeftFeature extends BeanStub {
         this.ariaEl = this.eCell.querySelector('[role=columnheader]') || this.eCell;
         this.colsSpanning = colsSpanning;
         this.beans = beans;
-        this.printLayout = beans.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
     }
 
     public setColsSpanning(colsSpanning: Column[]): void {
@@ -55,9 +53,10 @@ export class SetLeftFeature extends BeanStub {
 
         // when in print layout, the left position is also dependent on the width of the pinned sections.
         // so additionally update left if any column width changes.
-        if (this.printLayout) {
-            this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onLeftChanged.bind(this));
-        }
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onLeftChanged.bind(this));
+
+        // setting left has a dependency on print layout
+        this.addManagedListener(this.beans.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onLeftChanged.bind(this));
     }
 
     private setLeftFirstTime(): void {
@@ -105,7 +104,9 @@ export class SetLeftFeature extends BeanStub {
     }
 
     private modifyLeftForPrintLayout(colOrGroup: ColumnGroupChild, leftPosition: number): number {
-        if (!this.printLayout) { return leftPosition; }
+        const printLayout = this.beans.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
+
+        if (!printLayout) { return leftPosition; }
 
         if (colOrGroup.getPinned() === Constants.PINNED_LEFT) {
             return leftPosition;

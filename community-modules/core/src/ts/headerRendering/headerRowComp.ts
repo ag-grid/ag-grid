@@ -141,10 +141,12 @@ export class HeaderRowComp extends Component {
 
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_FLOATING_FILTERS_HEIGHT, this.onRowHeightChanged.bind(this));
 
+        // when print layout changes, it changes what columns are in what section
+        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDisplayedColumnsChanged.bind(this));
+
         this.addManagedListener(this.eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
-        // this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
     }
 
     private onColumnResized(): void {
@@ -160,15 +162,12 @@ export class HeaderRowComp extends Component {
         const printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
 
         if (printLayout) {
-            const centerRow = missing(this.pinned);
+            const pinned = this.pinned != null;
+            if (pinned) { return 0; }
 
-            if (centerRow) {
-                return this.columnModel.getContainerWidth(Constants.PINNED_RIGHT)
-                    + this.columnModel.getContainerWidth(Constants.PINNED_LEFT)
-                    + this.columnModel.getContainerWidth(null);
-            }
-
-            return 0;
+            return this.columnModel.getContainerWidth(Constants.PINNED_RIGHT)
+                + this.columnModel.getContainerWidth(Constants.PINNED_LEFT)
+                + this.columnModel.getContainerWidth(null);
         }
 
         // if not printing, just return the width as normal
