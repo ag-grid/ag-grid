@@ -145,8 +145,8 @@ export class SparklineTooltip extends Observable {
             this.updateClass(true, this.constrained = true);
         }
 
-        element.style.left = `${left}px`;
-        element.style.top = `${top}px`;
+        element.style.left = `${Math.round(left)}px`;
+        element.style.top = `${Math.round(top)}px`;
 
         this.toggle(true);
     }

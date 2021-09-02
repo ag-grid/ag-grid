@@ -324,6 +324,7 @@ export abstract class Sparkline extends Observable {
         // remove document from documents list
         Sparkline.tooltipDocuments = Sparkline.tooltipDocuments.filter(d => d !== document);
         this.scene.container = undefined;
+        this.container = undefined;
         this.cleanupDomEventListerners(this.scene.canvas.element);
     }
 

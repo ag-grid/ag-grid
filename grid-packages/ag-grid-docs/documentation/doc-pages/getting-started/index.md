@@ -1687,7 +1687,7 @@ title: "Get Started with AG Grid"
 | |
 | | This tutorial, as well as ll of our examples, use Vue 2 by default. 
 | |
-| | For the Vue 3 version of this tutorial please see the documentaiton [here.](/vue3/)
+| | For the Vue 3 version of this tutorial please see the documentation [here.](/vue3/)
 | |
 |
 | ## Add AG Grid to Your Project

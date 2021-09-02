@@ -34,12 +34,14 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
             ...params.sparklineOptions
         }
 
-        this.sparkline = AgSparkline.create(options as any);
+        // create new instance of sparkline
+        this.sparkline = AgSparkline.create(options);
 
-        if (this.eSparkline) {
-            this.eSparkline.appendChild(this.sparkline.canvasElement);
-        }
+        // append sparkline canvas element to this.eSparkline;
+        this.sparkline.container = this.eSparkline;
 
+        // resize sparkline when cell size changes
+        // TODO: use update for this?
         const updateSparklineWidthFunc = () => {
             if (this.sparkline) {
                 const { clientWidth, clientHeight } = this.getGui();
@@ -54,17 +56,35 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
 
     public refresh(params: ISparklineCellRendererParams): boolean {
         if (this.sparkline) {
+            const { clientWidth, clientHeight } = this.getGui();
+
             const options = {
                 data: params.value,
+                width: clientWidth,
+                height: clientHeight,
                 ...params.sparklineOptions
             }
-            AgSparkline.update(this.sparkline, options);
+
+            // AgSparkline update method returns a new instance of the sparkline if the type has changed, otherwise its return type is undefined
+            const newSparkline = AgSparkline.update(this.sparkline, options);
+
+            if (newSparkline) {
+                 // remove old sparkline canvas element from parentNode: this.eSparkline
+                 this.sparkline.destroy();
+
+                 // save new instance of sparkline
+                 this.sparkline = newSparkline;
+
+                 // append new sparkline canvas element to this.eSparkline;
+                 this.sparkline.container = this.eSparkline;
+            }
         }
+
         return true;
     }
 
     public destroy() {
-        console.log("destroy")
+        this.sparkline.destroy();
         super.destroy();
     }
 }
