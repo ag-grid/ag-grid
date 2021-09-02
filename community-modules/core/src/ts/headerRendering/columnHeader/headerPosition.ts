@@ -4,7 +4,7 @@ import { Bean, Autowired } from "../../context/context";
 import { BeanStub } from "../../context/beanStub";
 import { ColumnModel } from "../../columns/columnModel";
 import { HeaderNavigationService } from "./headerNavigationService";
-import { HeaderRowType } from "../headerRowComp";
+import { HeaderRowType } from "../headerRow/headerRowComp";
 import { CtrlsService } from "../../ctrlsService";
 
 export interface HeaderPosition {

@@ -1,18 +1,17 @@
-import { ColumnModel } from '../columns/columnModel';
-import { Constants } from '../constants/constants';
-import { Autowired, PostConstruct, PreDestroy } from '../context/context';
-import { CtrlsService } from '../ctrlsService';
-import { Column } from '../entities/column';
-import { Events } from '../events';
-import { PinnedWidthService } from '../gridBodyComp/pinnedWidthService';
-import { ScrollVisibleService } from '../gridBodyComp/scrollVisibleService';
-import { NumberSequence } from "../utils";
-import { ensureDomOrder, setFixedWidth } from '../utils/dom';
-import { Component } from '../widgets/component';
-import { RefSelector } from '../widgets/componentAnnotations';
-import { BodyDropTarget } from './bodyDropTarget';
-import { HeaderWrapperComp } from './header/headerWrapperComp';
-import { HeaderRowComp, HeaderRowType } from './headerRowComp';
+import { ColumnModel } from '../../columns/columnModel';
+import { Constants } from '../../constants/constants';
+import { Autowired, PostConstruct, PreDestroy } from '../../context/context';
+import { Column } from '../../entities/column';
+import { Events } from '../../events';
+import { PinnedWidthService } from '../../gridBodyComp/pinnedWidthService';
+import { ScrollVisibleService } from '../../gridBodyComp/scrollVisibleService';
+import { NumberSequence } from "../../utils";
+import { ensureDomOrder, setFixedWidth } from '../../utils/dom';
+import { Component } from '../../widgets/component';
+import { RefSelector } from '../../widgets/componentAnnotations';
+import { BodyDropTarget } from '../bodyDropTarget';
+import { HeaderWrapperComp } from '../columnHeader/headerWrapperComp';
+import { HeaderRowComp, HeaderRowType } from '../headerRow/headerRowComp';
 import { HeaderRowContainerCtrl, IHeaderRowContainerComp } from './headerRowContainerCtrl';
 
 export class HeaderRowContainer extends Component {
@@ -28,7 +27,6 @@ export class HeaderRowContainer extends Component {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
 
     @RefSelector('eContainer') private eContainer: HTMLElement;
@@ -59,8 +57,6 @@ export class HeaderRowContainer extends Component {
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
         this.setupDragAndDrop();
 
-        this.ctrlsService.registerHeaderContainer(this, this.pinned);
-
         this.setupPinnedWidth();
 
         if (this.columnModel.isReady()) {
@@ -68,15 +64,17 @@ export class HeaderRowContainer extends Component {
         }
 
         const compProxy: IHeaderRowContainerComp = {
-            setCenterWidth: width => this.eContainer.style.width = width
+            setCenterWidth: width => this.eContainer.style.width = width,
+            setContainerTransform: transform => this.eContainer.style.transform = transform,
+
+            // temp pass through
+            getRowComps: ()=> this.getRowComps(),
+            refresh: ()=> this.refresh(),
+            getHeaderWrapperComp: column => this.getHeaderWrapperComp(column)
         };
 
         const ctrl = this.createManagedBean(new HeaderRowContainerCtrl(this.pinned));
         ctrl.setComp(compProxy);
-    }
-
-    public setHorizontalScroll(offset: number): void {
-        this.eContainer.style.transform = `translateX(${offset}px)`;
     }
 
     private setupPinnedWidth(): void {

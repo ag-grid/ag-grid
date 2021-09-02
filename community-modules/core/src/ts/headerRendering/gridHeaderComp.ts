@@ -2,7 +2,7 @@ import { Constants } from '../constants/constants';
 import { PostConstruct } from '../context/context';
 import { Component } from '../widgets/component';
 import { GridHeaderCtrl, IGridHeaderComp } from './gridHeaderCtrl';
-import { HeaderRowContainer } from './headerRowContainerComp';
+import { HeaderRowContainer } from './headerRowContainer/headerRowContainerComp';
 
 export class GridHeaderComp extends Component {
 

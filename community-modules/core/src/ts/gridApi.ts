@@ -99,7 +99,7 @@ import { ISideBar } from "./interfaces/iSideBar";
 import { CtrlsService } from "./ctrlsService";
 import { GridBodyCtrl } from "./gridBodyComp/gridBodyCtrl";
 import { OverlayWrapperComponent } from "./rendering/overlays/overlayWrapperComponent";
-import { HeaderPosition } from "./headerRendering/header/headerPosition";
+import { HeaderPosition } from "./headerRendering/columnHeader/headerPosition";
 import { NavigationService } from "./gridBodyComp/navigationService";
 
 export interface StartEditingCellParams {

@@ -1,11 +1,11 @@
 import { Bean, Autowired, PostConstruct } from "../../context/context";
 import { BeanStub } from "../../context/beanStub";
-import { HeaderRowContainer } from "../headerRowContainerComp";
+import { HeaderRowContainer } from "../headerRowContainer/headerRowContainerComp";
 import { FocusService } from "../../focusService";
 import { HeaderPosition, HeaderPositionUtils } from "./headerPosition";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { Column } from "../../entities/column";
-import { HeaderRowType } from "../headerRowComp";
+import { HeaderRowType } from "../headerRow/headerRowComp";
 import { AnimationFrameService } from "../../misc/animationFrameService";
 import { GridHeaderComp } from "../gridHeaderComp";
 import { last } from "../../utils/array";

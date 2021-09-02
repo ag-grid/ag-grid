@@ -11,7 +11,7 @@ import { getTarget } from "../utils/event";
 import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
 import { GridBodyScrollFeature } from "./gridBodyScrollFeature";
 import { getInnerWidth, isVerticalScrollShowing, addCssClass, removeCssClass } from "../utils/dom";
-import { HeaderNavigationService } from "../headerRendering/header/headerNavigationService";
+import { HeaderNavigationService } from "../headerRendering/columnHeader/headerNavigationService";
 import { PaginationProxy } from "../pagination/paginationProxy";
 import { RowDragFeature } from "./rowDragFeature";
 import { DragAndDropService } from "../dragAndDrop/dragAndDropService";

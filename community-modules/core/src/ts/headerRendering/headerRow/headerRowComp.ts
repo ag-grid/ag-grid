@@ -1,23 +1,23 @@
-import { Component } from '../widgets/component';
-import { Autowired, PostConstruct, PreDestroy } from '../context/context';
-import { GridOptionsWrapper } from '../gridOptionsWrapper';
-import { ColumnGroupChild } from '../entities/columnGroupChild';
-import { ColumnGroup } from '../entities/columnGroup';
-import { ColumnModel } from '../columns/columnModel';
-import { Column } from '../entities/column';
-import { Events } from '../events';
-import { HeaderWrapperComp } from './header/headerWrapperComp';
-import { HeaderGroupWrapperComp } from './headerGroup/headerGroupWrapperComp';
-import { Constants } from '../constants/constants';
-import { FloatingFilterWrapper } from '../filter/floating/floatingFilterWrapper';
-import { isBrowserSafari } from '../utils/browser';
-import { missing } from '../utils/generic';
-import { removeFromArray } from '../utils/array';
-import { setDomChildOrder } from '../utils/dom';
-import { FocusService } from '../focusService';
-import { AbstractHeaderWrapper } from './header/abstractHeaderWrapper';
-import { setAriaRowIndex } from '../utils/aria';
-import { _ } from '../utils';
+import { Component } from '../../widgets/component';
+import { Autowired, PostConstruct, PreDestroy } from '../../context/context';
+import { GridOptionsWrapper } from '../../gridOptionsWrapper';
+import { ColumnGroupChild } from '../../entities/columnGroupChild';
+import { ColumnGroup } from '../../entities/columnGroup';
+import { ColumnModel } from '../../columns/columnModel';
+import { Column } from '../../entities/column';
+import { Events } from '../../events';
+import { HeaderWrapperComp } from '../columnHeader/headerWrapperComp';
+import { HeaderGroupWrapperComp } from '../columnGroupHeader/headerGroupWrapperComp';
+import { Constants } from '../../constants/constants';
+import { FloatingFilterWrapper } from '../../filter/floating/floatingFilterWrapper';
+import { isBrowserSafari } from '../../utils/browser';
+import { missing } from '../../utils/generic';
+import { removeFromArray } from '../../utils/array';
+import { setDomChildOrder } from '../../utils/dom';
+import { FocusService } from '../../focusService';
+import { AbstractHeaderWrapper } from '../columnHeader/abstractHeaderWrapper';
+import { setAriaRowIndex } from '../../utils/aria';
+import { _ } from '../../utils';
 
 export enum HeaderRowType {
     COLUMN_GROUP, COLUMN, FLOATING_FILTER

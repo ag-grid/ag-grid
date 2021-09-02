@@ -8,7 +8,7 @@ import { FocusService } from "../focusService";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { exists } from "../utils/generic";
 import { ManagedFocusFeature } from "../widgets/managedFocusFeature";
-import { HeaderNavigationDirection, HeaderNavigationService } from "./header/headerNavigationService";
+import { HeaderNavigationDirection, HeaderNavigationService } from "./columnHeader/headerNavigationService";
 
 export interface IGridHeaderComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;

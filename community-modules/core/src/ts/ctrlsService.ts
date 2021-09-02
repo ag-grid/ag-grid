@@ -5,8 +5,8 @@ import { RowContainerCtrl } from "./gridBodyComp/rowContainer/rowContainerCtrl";
 import { FakeHScrollCtrl } from "./gridBodyComp/fakeHScrollCtrl";
 import { BeanStub } from "./context/beanStub";
 import { GridHeaderCtrl } from "./headerRendering/gridHeaderCtrl";
-import { HeaderRowContainer } from "./headerRendering/headerRowContainerComp";
 import { Constants } from "./constants/constants";
+import { HeaderRowContainerCtrl } from "./headerRendering/headerRowContainer/headerRowContainerCtrl";
 
 // for all controllers that are singletons, they can register here so other parts
 // of the application can access them.
@@ -30,9 +30,9 @@ interface ReadyParams {
     fakeHScrollCtrl: FakeHScrollCtrl;
     gridHeaderCtrl: GridHeaderCtrl;
 
-    centerHeaderContainer: HeaderRowContainer;
-    leftHeaderContainer: HeaderRowContainer;
-    rightHeaderContainer: HeaderRowContainer;
+    centerHeaderRowContainerCtrl: HeaderRowContainerCtrl;
+    leftHeaderRowContainerCtrl: HeaderRowContainerCtrl;
+    rightHeaderRowContainerCtrl: HeaderRowContainerCtrl;
 }
 
 @Bean('ctrlsService')
@@ -53,9 +53,9 @@ export class CtrlsService extends BeanStub {
     private topLeftRowContainerCtrl: RowContainerCtrl;
     private topRightRowContainerCtrl: RowContainerCtrl;
 
-    private centerHeaderContainer: HeaderRowContainer;
-    private leftHeaderContainer: HeaderRowContainer;
-    private rightHeaderContainer: HeaderRowContainer;
+    private centerHeaderRowContainerCtrl: HeaderRowContainerCtrl;
+    private leftHeaderRowContainerCtrl: HeaderRowContainerCtrl;
+    private rightHeaderRowContainerCtrl: HeaderRowContainerCtrl;
 
     private fakeHScrollCtrl: FakeHScrollCtrl;
 
@@ -81,9 +81,9 @@ export class CtrlsService extends BeanStub {
             && this.topLeftRowContainerCtrl != null
             && this.topRightRowContainerCtrl != null
 
-            && this.centerHeaderContainer != null
-            && this.leftHeaderContainer != null
-            && this.rightHeaderContainer != null
+            && this.centerHeaderRowContainerCtrl != null
+            && this.leftHeaderRowContainerCtrl != null
+            && this.rightHeaderRowContainerCtrl != null
 
             && this.fakeHScrollCtrl != null
             && this.gridHeaderCtrl != null;
@@ -117,9 +117,9 @@ export class CtrlsService extends BeanStub {
             topLeftRowContainerCtrl: this.topLeftRowContainerCtrl,
             topRightRowContainerCtrl: this.topRightRowContainerCtrl,
 
-            centerHeaderContainer: this.centerHeaderContainer,
-            leftHeaderContainer: this.leftHeaderContainer,
-            rightHeaderContainer: this.rightHeaderContainer,
+            centerHeaderRowContainerCtrl: this.centerHeaderRowContainerCtrl,
+            leftHeaderRowContainerCtrl: this.leftHeaderRowContainerCtrl,
+            rightHeaderRowContainerCtrl: this.rightHeaderRowContainerCtrl,
 
             fakeHScrollCtrl: this.fakeHScrollCtrl,
             gridBodyCtrl: this.gridBodyCtrl,
@@ -128,8 +128,8 @@ export class CtrlsService extends BeanStub {
         };
     }
 
-    public registerFakeHScrollCtrl(con: FakeHScrollCtrl): void {
-        this.fakeHScrollCtrl = con;
+    public registerFakeHScrollCtrl(ctrl: FakeHScrollCtrl): void {
+        this.fakeHScrollCtrl = ctrl;
         this.checkReady();
     }
 
@@ -138,72 +138,72 @@ export class CtrlsService extends BeanStub {
         this.checkReady();
     }
 
-    public registerCenterRowContainerCtrl(con: RowContainerCtrl): void {
-        this.centerRowContainerCtrl = con;
+    public registerCenterRowContainerCtrl(ctrl: RowContainerCtrl): void {
+        this.centerRowContainerCtrl = ctrl;
         this.checkReady();
     }
 
-    public registerLeftRowContainerCtrl(con: RowContainerCtrl): void {
-        this.leftRowContainerCtrl = con;
+    public registerLeftRowContainerCtrl(ctrl: RowContainerCtrl): void {
+        this.leftRowContainerCtrl = ctrl;
         this.checkReady();
     }
 
-    public registerRightRowContainerCtrl(con: RowContainerCtrl): void {
-        this.rightRowContainerCtrl = con;
+    public registerRightRowContainerCtrl(ctrl: RowContainerCtrl): void {
+        this.rightRowContainerCtrl = ctrl;
         this.checkReady();
     }
 
-    public registerTopCenterRowContainerCtrl(con: RowContainerCtrl): void {
-        this.topCenterRowContainerCtrl = con;
+    public registerTopCenterRowContainerCtrl(ctrl: RowContainerCtrl): void {
+        this.topCenterRowContainerCtrl = ctrl;
         this.checkReady();
     }
 
-    public registerTopLeftRowContainerCon(con: RowContainerCtrl): void {
-        this.topLeftRowContainerCtrl = con;
+    public registerTopLeftRowContainerCon(ctrl: RowContainerCtrl): void {
+        this.topLeftRowContainerCtrl = ctrl;
         this.checkReady();
     }
 
-    public registerTopRightRowContainerCtrl(con: RowContainerCtrl): void {
-        this.topRightRowContainerCtrl = con;
+    public registerTopRightRowContainerCtrl(ctrl: RowContainerCtrl): void {
+        this.topRightRowContainerCtrl = ctrl;
         this.checkReady();
     }
 
-    public registerBottomCenterRowContainerCtrl(con: RowContainerCtrl): void {
-        this.bottomCenterRowContainerCtrl = con;
+    public registerBottomCenterRowContainerCtrl(ctrl: RowContainerCtrl): void {
+        this.bottomCenterRowContainerCtrl = ctrl;
         this.checkReady();
     }
 
-    public registerBottomLeftRowContainerCtrl(con: RowContainerCtrl): void {
-        this.bottomLeftRowContainerCtrl = con;
+    public registerBottomLeftRowContainerCtrl(ctrl: RowContainerCtrl): void {
+        this.bottomLeftRowContainerCtrl = ctrl;
         this.checkReady();
     }
 
-    public registerBottomRightRowContainerCtrl(con: RowContainerCtrl): void {
-        this.bottomRightRowContainerCtrl = con;
+    public registerBottomRightRowContainerCtrl(ctrl: RowContainerCtrl): void {
+        this.bottomRightRowContainerCtrl = ctrl;
         this.checkReady();
     }
 
-    public registerHeaderContainer(con: HeaderRowContainer, pinned: string | null): void {
+    public registerHeaderContainer(ctrl: HeaderRowContainerCtrl, pinned: string | null): void {
         switch (pinned) {
             case Constants.PINNED_LEFT: 
-                this.leftHeaderContainer = con; 
+                this.leftHeaderRowContainerCtrl = ctrl; 
                 break;
             case Constants.PINNED_RIGHT: 
-                this.rightHeaderContainer = con; 
+                this.rightHeaderRowContainerCtrl = ctrl; 
                 break;
-            default: this.centerHeaderContainer = con; 
+            default: this.centerHeaderRowContainerCtrl = ctrl; 
                 break;
         }
         this.checkReady();
     }
 
-    public registerGridBodyCtrl(con: GridBodyCtrl): void {
-        this.gridBodyCtrl = con;
+    public registerGridBodyCtrl(ctrl: GridBodyCtrl): void {
+        this.gridBodyCtrl = ctrl;
         this.checkReady();
     }
 
-    public registerGridCtrl(con: GridCtrl): void {
-        this.gridCtrl = con;
+    public registerGridCtrl(ctrl: GridCtrl): void {
+        this.gridCtrl = ctrl;
         this.checkReady();
     }
 
@@ -235,15 +235,15 @@ export class CtrlsService extends BeanStub {
         return this.gridBodyCtrl;
     }
 
-    public getHeaderContainers(): HeaderRowContainer[] {
-        return [this.leftHeaderContainer, this.rightHeaderContainer, this.centerHeaderContainer];
+    public getHeaderContainers(): HeaderRowContainerCtrl[] {
+        return [this.leftHeaderRowContainerCtrl, this.rightHeaderRowContainerCtrl, this.centerHeaderRowContainerCtrl];
     }
 
-    public getHeaderContainer(pinned?: string | null): HeaderRowContainer {
+    public getHeaderContainer(pinned?: string | null): HeaderRowContainerCtrl {
         switch (pinned) {
-            case Constants.PINNED_LEFT: return this.leftHeaderContainer;
-            case Constants.PINNED_RIGHT: return this.rightHeaderContainer;
-            default: return this.centerHeaderContainer;
+            case Constants.PINNED_LEFT: return this.leftHeaderRowContainerCtrl;
+            case Constants.PINNED_RIGHT: return this.rightHeaderRowContainerCtrl;
+            default: return this.centerHeaderRowContainerCtrl;
         }
     }
 }

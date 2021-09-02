@@ -132,9 +132,9 @@ export { RowContainerName, IRowContainerComp, RowContainerCtrl } from "./gridBod
 export { BodyDropPivotTarget } from "./headerRendering/bodyDropPivotTarget";
 export { BodyDropTarget } from "./headerRendering/bodyDropTarget";
 export { CssClassApplier } from "./headerRendering/cssClassApplier";
-export { HeaderRowContainer as HeaderContainer } from "./headerRendering/headerRowContainerComp";
+export { HeaderRowContainer as HeaderContainer } from "./headerRendering/headerRowContainer/headerRowContainerComp";
 export { GridHeaderComp } from "./headerRendering/gridHeaderComp";
-export { HeaderRowComp } from "./headerRendering/headerRowComp";
+export { HeaderRowComp } from "./headerRendering/headerRow/headerRowComp";
 export { HorizontalResizeService } from "./headerRendering/horizontalResizeService";
 export { MoveColumnFeature } from "./headerRendering/moveColumnFeature";
 export { StandardMenuFactory } from "./headerRendering/standardMenu";
@@ -296,8 +296,8 @@ export { IClipboardService } from "./interfaces/iClipboardService";
 export { IMenuFactory } from "./interfaces/iMenuFactory";
 export { CellPosition, CellPositionUtils } from "./entities/cellPosition";
 export { RowPosition, RowPositionUtils } from "./entities/rowPosition";
-export { HeaderPosition, HeaderPositionUtils } from "./headerRendering/header/headerPosition";
-export { HeaderNavigationService, HeaderNavigationDirection } from "./headerRendering/header/headerNavigationService";
+export { HeaderPosition, HeaderPositionUtils } from "./headerRendering/columnHeader/headerPosition";
+export { HeaderNavigationService, HeaderNavigationDirection } from "./headerRendering/columnHeader/headerNavigationService";
 export {
     IAggFunc,
     IAggFuncParams,
@@ -402,8 +402,8 @@ export { IDateParams, IDate, IDateComp } from "./rendering/dateComponent";
 export { IAfterGuiAttachedParams, ContainerType } from "./interfaces/iAfterGuiAttachedParams";
 export { IComponent } from "./interfaces/iComponent";
 export { IEventEmitter } from "./interfaces/iEventEmitter";
-export { IHeaderParams, IHeader } from "./headerRendering/header/headerComp";
-export { IHeaderGroupParams, IHeaderGroup, IHeaderGroupComp } from "./headerRendering/headerGroup/headerGroupComp";
+export { IHeaderParams, IHeader } from "./headerRendering/columnHeader/headerComp";
+export { IHeaderGroupParams, IHeaderGroup, IHeaderGroupComp } from "./headerRendering/columnGroupHeader/headerGroupComp";
 export { ColumnApi } from "./columns/columnApi";
 export { IRichCellEditorParams } from "./interfaces/iRichCellEditorParams";
 export { WrappableInterface, BaseComponentWrapper, FrameworkComponentWrapper } from "./components/framework/frameworkComponentWrapper";
