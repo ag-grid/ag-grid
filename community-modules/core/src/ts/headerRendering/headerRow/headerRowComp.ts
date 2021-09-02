@@ -19,12 +19,9 @@ export enum HeaderRowType {
 }
 export class HeaderRowComp extends Component {
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('focusService') private focusService: FocusService;
-
     private readonly pinned: string | null;
-
     private readonly type: HeaderRowType;
+
     private rowIndex: number;
 
     private headerComps: { [key: string]: AbstractHeaderWrapper; } = {};

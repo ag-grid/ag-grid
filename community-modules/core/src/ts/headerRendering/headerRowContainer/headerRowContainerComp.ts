@@ -57,8 +57,6 @@ export class HeaderRowContainer extends Component {
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
         this.setupDragAndDrop();
 
-        this.setupPinnedWidth();
-
         if (this.columnModel.isReady()) {
             this.refresh();
         }
@@ -66,6 +64,14 @@ export class HeaderRowContainer extends Component {
         const compProxy: IHeaderRowContainerComp = {
             setCenterWidth: width => this.eContainer.style.width = width,
             setContainerTransform: transform => this.eContainer.style.transform = transform,
+            setContainerWidth: width => {
+                const container = this.getContainer();
+                container.style.width = width;
+                container.style.maxWidth = width;
+                container.style.minWidth = width;
+            },
+            addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
+
 
             // temp pass through
             getRowComps: ()=> this.getRowComps(),
@@ -75,37 +81,6 @@ export class HeaderRowContainer extends Component {
 
         const ctrl = this.createManagedBean(new HeaderRowContainerCtrl(this.pinned));
         ctrl.setComp(compProxy);
-    }
-
-    private setupPinnedWidth(): void {
-        if (this.pinned==null) { return; }
-
-        const pinningLeft = this.pinned === Constants.PINNED_LEFT;
-        const pinningRight = this.pinned === Constants.PINNED_RIGHT;
-
-        const listener = ()=> {
-            const width = pinningLeft ? this.pinnedWidthService.getPinnedLeftWidth() : this.pinnedWidthService.getPinnedRightWidth();
-            if (width==null) { return; } // can happen at initialisation, width not yet set
-
-            const hidden = width == 0;
-            const isRtl = this.gridOptionsWrapper.isEnableRtl();
-            const scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
-
-            // if there is a scroll showing (and taking up space, so Windows, and not iOS)
-            // in the body, then we add extra space to keep header aligned with the body,
-            // as body width fits the cols and the scrollbar
-            const addPaddingForScrollbar = this.scrollVisibleService.isVerticalScrollShowing() && ((isRtl && pinningLeft) || (!isRtl && pinningRight));
-            const widthWithPadding = addPaddingForScrollbar ? width + scrollbarWidth : width;
-
-            setFixedWidth(this.getContainer(), widthWithPadding);
-
-            this.addOrRemoveCssClass('ag-hidden', hidden);
-        };
-
-        this.addManagedListener(this.eventService, Events.EVENT_LEFT_PINNED_WIDTH_CHANGED, listener);
-        this.addManagedListener(this.eventService, Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED, listener);
-        this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, listener);
-        this.addManagedListener(this.eventService, Events.EVENT_SCROLLBAR_WIDTH_CHANGED, listener);
     }
 
     private selectAndSetTemplate(): void {
