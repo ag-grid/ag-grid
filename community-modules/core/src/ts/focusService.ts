@@ -24,6 +24,7 @@ import { GridCtrl } from "./gridComp/gridCtrl";
 import { NavigationService } from "./gridBodyComp/navigationService";
 import { CellCtrl } from "./rendering/cell/cellCtrl";
 import { CtrlsService } from "./ctrlsService";
+import { HeaderCtrl } from "./headerRendering/columnHeader/headerCtrl";
 
 @Bean('focusService')
 export class FocusService extends BeanStub {
@@ -237,12 +238,12 @@ export class FocusService extends BeanStub {
         return this.isRowFocused(rowNode.rowIndex!, rowNode.rowPinned);
     }
 
-    public isHeaderWrapperFocused(headerWrapper: AbstractHeaderWrapper): boolean {
+    public isHeaderWrapperFocused(headerCtrl: HeaderCtrl): boolean {
         if (this.focusedHeaderPosition == null) { return false; }
 
-        const column = headerWrapper.getColumn();
-        const headerRowIndex = (headerWrapper.getParentComponent() as HeaderRowComp).getRowIndex();
-        const pinned = headerWrapper.getPinned();
+        const column = headerCtrl.getColumnGroupOrChild();
+        const headerRowIndex = headerCtrl.getRowIndex();
+        const pinned = headerCtrl.getPinned();
 
         const { column: focusedColumn, headerRowIndex: focusedHeaderRowIndex } = this.focusedHeaderPosition;
 
@@ -312,8 +313,7 @@ export class FocusService extends BeanStub {
         const childContainer = this.ctrlsService.getHeaderContainer(headerPosition.column.getPinned());
         const rowComps = childContainer!.getRowComps();
         const nextRowComp = rowComps[headerPosition.headerRowIndex];
-        const headerComps = nextRowComp.getHeaderComps();
-        const nextHeader = headerComps[headerPosition.column.getUniqueId()];
+        const nextHeader = nextRowComp.getHeaderCompForColumn(headerPosition.column);
 
         if (nextHeader) {
             // this will automatically call the setFocusedHeader method above

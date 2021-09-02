@@ -23,6 +23,7 @@ import { HeaderRowComp } from '../../headerRendering/headerRow/headerRowComp';
 import { FloatingFilterMapper } from './floatingFilterMapper';
 import { KeyCode } from '../../constants/keyCode';
 import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
+import { HeaderCtrl } from '../../headerRendering/columnHeader/headerCtrl';
 
 export class FloatingFilterWrapper extends AbstractHeaderWrapper {
     private static TEMPLATE = /* html */
@@ -51,10 +52,10 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
 
     private floatingFilterCompPromise: AgPromise<IFloatingFilterComp> | null;
 
-    constructor(column: Column, pinned: string | null) {
+    constructor(ctrl: HeaderCtrl) {
         super(FloatingFilterWrapper.TEMPLATE);
-        this.column = column;
-        this.pinned = pinned;
+        this.column = ctrl.getColumnGroupOrChild() as Column;
+        this.pinned = ctrl.getPinned();
     }
 
     @PostConstruct

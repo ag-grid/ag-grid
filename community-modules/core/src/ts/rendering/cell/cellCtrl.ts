@@ -1,6 +1,6 @@
 import { Beans } from "./../beans";
 import { Column } from "../../entities/column";
-import { ColDef, NewValueParams } from "../../entities/colDef";
+import { NewValueParams } from "../../entities/colDef";
 import { CellChangedEvent, RowNode } from "../../entities/rowNode";
 import { CellPosition } from "../../entities/cellPosition";
 import {
@@ -31,10 +31,8 @@ import { CheckboxSelectionComponent } from "../checkboxSelectionComponent";
 import { DndSourceComp } from "../dndSourceComp";
 import { doOnce } from "../../utils/function";
 import { RowDragComp } from "../row/rowDragComp";
-import { Constants } from "../../constants/constants";
 
 const CSS_CELL = 'ag-cell';
-const CSS_AUTO_HEIGHT = 'ag-cell-auto-height';
 const CSS_NORMAL_HEIGHT = 'ag-cell-normal-height';
 const CSS_CELL_FOCUS = 'ag-cell-focus';
 const CSS_CELL_FIRST_RIGHT_PINNED = 'ag-cell-first-right-pinned';

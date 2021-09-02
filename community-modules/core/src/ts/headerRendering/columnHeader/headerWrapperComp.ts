@@ -28,6 +28,7 @@ import { addCssClass, addOrRemoveCssClass, removeCssClass, setDisplayed } from "
 import { KeyCode } from '../../constants/keyCode';
 import { ITooltipParams } from "../../rendering/tooltipComponent";
 import { ManagedFocusFeature } from "../../widgets/managedFocusFeature";
+import { HeaderCtrl } from "./headerCtrl";
 
 export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
@@ -73,10 +74,10 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     private colDefHeaderComponent?: string | { new(): any; };
     private colDefHeaderComponentFramework?: any;
 
-    constructor(column: Column, pinned: string | null) {
+    constructor(ctrl: HeaderCtrl) {
         super(HeaderWrapperComp.TEMPLATE);
-        this.column = column;
-        this.pinned = pinned;
+        this.column = ctrl.getColumnGroupOrChild() as Column;
+        this.pinned = ctrl.getPinned();
     }
 
     @PostConstruct
