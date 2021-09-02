@@ -792,7 +792,7 @@ title: "Get Started with AG Grid"
 |
 | [[note]]
 | | The `withComponents` call is necessary for the grid to be able to use Angular
-| | components as cells / headers pre Ivy - you can ignore it for now.
+| | components as cells / headers \(pre Ivy only\) - you can ignore it for now.
 |
 | The next step is to add the AG Grid styles - replace the content of
 | `src/styles.scss` with the following code:
@@ -964,7 +964,7 @@ title: "Get Started with AG Grid"
 | <ag-grid-angular
 |     style="width: 500px; height: 500px;"
 |     class="ag-theme-alpine"
-|     [rowData]="(rowData | async) || []"
+|     [rowData]="rowData | async"
 |     [columnDefs]="columnDefs"
 | >
 | </ag-grid-angular>
@@ -972,8 +972,6 @@ title: "Get Started with AG Grid"
 |
 | The remote data is the same as the one we initially had, so you should not notice any actual changes
 | to the grid. However, you will see an additional HTTP request performed if you open your developer tools.
-|
-| We provide a default value of an empty array `[]` to meet the `strictNullChecks` type requirement which is now enabled by default with the Angular CLI. See [Strict Null checks](https://angular.io/guide/template-typecheck#strict-null-checks) for more details.
 |
 | ## Enable Selection
 |
@@ -1020,7 +1018,7 @@ title: "Get Started with AG Grid"
 | <ag-grid-angular
 |     style="width: 500px; height: 500px;"
 |     class="ag-theme-alpine"
-|     [rowData]="(rowData | async) || []"
+|     [rowData]="rowData | async"
 |     [columnDefs]="columnDefs"
 |     rowSelection="multiple"
 | >
@@ -1039,7 +1037,7 @@ title: "Get Started with AG Grid"
 |     #agGrid
 |     style="width: 500px; height: 500px;"
 |     class="ag-theme-alpine"
-|     [rowData]="(rowData | async) || []"
+|     [rowData]="rowData | async"
 |     [columnDefs]="columnDefs"
 |     rowSelection="multiple"
 | >

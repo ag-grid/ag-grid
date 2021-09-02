@@ -355,11 +355,11 @@ export interface GridOptions {
     detailRowAutoHeight?: boolean;
 
     // changeable with impact
-    rowData?: any[];
+    rowData?: any[] | null;
     pinnedTopRowData?: any[];
     pinnedBottomRowData?: any[];
     sideBar?: SideBarDef | string | boolean | null;
-    columnDefs?: (ColDef | ColGroupDef)[];
+    columnDefs?: (ColDef | ColGroupDef)[] | null;
     columnTypes?: { [key: string]: ColDef; };
     datasource?: IDatasource;
     viewportDatasource?: IViewportDatasource;

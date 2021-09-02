@@ -878,7 +878,7 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressPaginationPanel);
     }
 
-    public getRowData(): any[] | undefined {
+    public getRowData(): any[] | undefined | null {
         return this.gridOptions.rowData;
     }
 

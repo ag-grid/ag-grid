@@ -65,7 +65,7 @@ function addTypeCoercionHints(result, boolProps) {
     result += `${EOL}    // Enable type coercion for boolean Inputs to support use like 'enableCharts' instead of forcing '[enableCharts]="true"' ${EOL}`;
     result += `    // https://angular.io/guide/template-typecheck#input-setter-coercion ${EOL}`;
     boolProps.forEach((property) => {
-        result += `    static ngAcceptInputType_${property}: boolean | '';${EOL}`;
+        result += `    static ngAcceptInputType_${property}: boolean | null | '';${EOL}`;
     });
     return result;
 }
