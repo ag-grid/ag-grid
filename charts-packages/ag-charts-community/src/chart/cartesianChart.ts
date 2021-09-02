@@ -145,6 +145,7 @@ export class CartesianChart extends Chart {
             series.group.translationX = Math.floor(shrinkRect.x);
             series.group.translationY = Math.floor(shrinkRect.y);
             series.update(); // this has to happen after the `updateAxes` call
+            series.updatePending = false;
         });
 
         const { seriesRoot } = this;

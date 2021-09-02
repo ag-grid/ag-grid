@@ -1226,14 +1226,7 @@ export abstract class Chart extends Observable {
             if (node) {
                 style.cursor = s.cursor;
             }
-            if (s.highlightStyle.series.enabled) {
-                if (s === datum.series) {
-                    s.highlight(datum.itemId);
-                } else {
-                    s.dim();
-                }
-            }
-            s.onHighlightChange();
+            s.updatePending = true;
         });
     }
 
@@ -1241,13 +1234,7 @@ export abstract class Chart extends Observable {
         if (this.highlightedDatum) {
             this.scene.canvas.element.style.cursor = 'default';
             this.highlightedDatum = undefined;
-            this.series.forEach(s => {
-                s.onHighlightChange();
-                if (s.highlightStyle.series.enabled) {
-                    s.undim();
-                    s.dehighlight();
-                }
-            });
+            this.series.forEach(s => s.updatePending = true );
         }
     }
 }
