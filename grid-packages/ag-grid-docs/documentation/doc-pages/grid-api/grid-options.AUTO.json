@@ -292,13 +292,13 @@
   "detailCellRendererFramework": { "type": { "returnType": "any" } },
   "detailCellRendererParams": { "type": { "returnType": "any" } },
   "detailRowAutoHeight": { "type": { "returnType": "boolean" } },
-  "rowData": { "type": { "returnType": "any[]" } },
+  "rowData": { "type": { "returnType": "any[] | null" } },
   "pinnedTopRowData": { "type": { "returnType": "any[]" } },
   "pinnedBottomRowData": { "type": { "returnType": "any[]" } },
   "sideBar": {
     "type": { "returnType": "SideBarDef | string | boolean | null" }
   },
-  "columnDefs": { "type": { "returnType": "(ColDef | ColGroupDef)[]" } },
+  "columnDefs": { "type": { "returnType": "(ColDef | ColGroupDef)[] | null" } },
   "columnTypes": { "type": { "returnType": "{ [key: string]: ColDef; }" } },
   "datasource": { "type": { "returnType": "IDatasource" } },
   "viewportDatasource": { "type": { "returnType": "IViewportDatasource" } },
