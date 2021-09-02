@@ -169,9 +169,9 @@
     },
     "fakeHScrollCtrl": { "type": { "returnType": "FakeHScrollCtrl" } },
     "gridHeaderCtrl": { "type": { "returnType": "GridHeaderCtrl" } },
-    "centerHeaderContainer": { "type": { "returnType": "HeaderContainer" } },
-    "leftHeaderContainer": { "type": { "returnType": "HeaderContainer" } },
-    "rightHeaderContainer": { "type": { "returnType": "HeaderContainer" } }
+    "centerHeaderContainer": { "type": { "returnType": "HeaderRowContainer" } },
+    "leftHeaderContainer": { "type": { "returnType": "HeaderRowContainer" } },
+    "rightHeaderContainer": { "type": { "returnType": "HeaderRowContainer" } }
   },
   "DragItem": {
     "rowNode": {
@@ -3883,6 +3883,19 @@
       "type": { "returnType": "string" }
     }
   },
+  "ColumnPanelItemDragStartEvent": {
+    "column": { "type": { "returnType": "Column | OriginalColumnGroup" } },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string" }
+    }
+  },
+  "ColumnPanelItemDragEndEvent": {
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string" }
+    }
+  },
   "DragEvent": {
     "type": {
       "description": "/** Event identifier */",
@@ -6209,26 +6222,8 @@
         "returnType": "void"
       }
     },
-    "addOrRemoveLeftCssClass": {
-      "type": {
-        "arguments": { "cssClassName": "string", "on": "boolean" },
-        "returnType": "void"
-      }
-    },
-    "addOrRemoveRightCssClass": {
-      "type": {
-        "arguments": { "cssClassName": "string", "on": "boolean" },
-        "returnType": "void"
-      }
-    },
-    "setCenterWidth": {
-      "type": { "arguments": { "width": "string" }, "returnType": "void" }
-    },
     "setHeightAndMinHeight": {
       "type": { "arguments": { "height": "string" }, "returnType": "void" }
-    },
-    "setCenterTransform": {
-      "type": { "arguments": { "pos": "string" }, "returnType": "void" }
     }
   },
   "IHeaderParams": {
@@ -6351,6 +6346,7 @@
     }
   },
   "HeaderRowType": {},
+  "IHeaderRowContainerComp": {},
   "HorizontalResizeParams": {
     "eResizeBar": { "type": { "returnType": "HTMLElement" } },
     "dragStartPixels": { "type": { "returnType": "number" } },
@@ -10591,6 +10587,7 @@
     }
   },
   "ToolPanelColumnCompParams": {
+    "suppressColumnMove": { "type": { "returnType": "boolean" } },
     "suppressRowGroups": { "type": { "returnType": "boolean" } },
     "suppressValues": { "type": { "returnType": "boolean" } },
     "suppressPivots": { "type": { "returnType": "boolean" } },

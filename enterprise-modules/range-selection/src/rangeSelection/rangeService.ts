@@ -10,11 +10,8 @@ import {
     Constants,
     Events,
     GridApi,
-    GridOptionsWrapper,
     IRangeService,
     IRowModel,
-    Logger,
-    LoggerFactory,
     CellRangeParams,
     MouseEventService,
     PostConstruct,
@@ -24,15 +21,14 @@ import {
     RowPositionUtils,
     PinnedRowModel,
     BeanStub,
-    GridBodyCtrl,
-    _,
-    CtrlsService
+    CtrlsService,
+    AutoScrollService,
+    _
 } from "@ag-grid-community/core";
 
 @Bean('rangeService')
 export class RangeService extends BeanStub implements IRangeService {
 
-    @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
@@ -61,7 +57,6 @@ export class RangeService extends BeanStub implements IRangeService {
 
     @PostConstruct
     private init(): void {
-
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.removeAllCellRanges());
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, () => this.removeAllCellRanges());
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.removeAllCellRanges());
@@ -73,7 +68,16 @@ export class RangeService extends BeanStub implements IRangeService {
 
         this.ctrlsService.whenReady(() => {
             const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
-            this.autoScrollService = new AutoScrollService(gridBodyCon, this.gridOptionsWrapper);
+            this.autoScrollService = new AutoScrollService({
+                scrollContainer: gridBodyCon.getBodyViewportElement()!,
+                scrollAxis: 'xy',
+                getVerticalPosition: () => gridBodyCon.getScrollFeature().getVScrollPosition().top,
+                setVerticalPosition: (position) => gridBodyCon.getScrollFeature().setVerticalScrollPosition(position),
+                getHorizontalPosition: () => gridBodyCon.getScrollFeature().getHScrollPosition().left,
+                setHorizontalPosition: (position) => gridBodyCon.getScrollFeature().setHorizontalScrollPosition(position),
+                shouldSkipVerticalScroll: () => this.gridOptionsWrapper.getDomLayout() !== Constants.DOM_LAYOUT_NORMAL,
+                shouldSkipHorizontalScroll: () => gridBodyCon.getScrollFeature().isHorizontalScrollShowing()
+            });
         });
     }
 
@@ -100,9 +104,7 @@ export class RangeService extends BeanStub implements IRangeService {
     public refreshLastRangeStart(): void {
         const lastRange = _.last(this.cellRanges);
 
-        if (!lastRange) {
-            return;
-        }
+        if (!lastRange) { return; }
 
         this.refreshRangeStart(lastRange);
     }
@@ -672,87 +674,5 @@ export class RangeService extends BeanStub implements IRangeService {
         }
 
         return columns;
-    }
-}
-
-class AutoScrollService {
-
-    private tickingInterval: number | null = null;
-
-    private tickLeft: boolean;
-    private tickRight: boolean;
-    private tickUp: boolean;
-    private tickDown: boolean;
-
-    private gridBodyCtrl: GridBodyCtrl;
-    private gridOptionsWrapper: GridOptionsWrapper;
-
-    private tickCount: number;
-
-    constructor(gridBodyCtrl: GridBodyCtrl, gridOptionsWrapper: GridOptionsWrapper) {
-        this.gridBodyCtrl = gridBodyCtrl;
-        this.gridOptionsWrapper = gridOptionsWrapper;
-    }
-
-    public check(mouseEvent: MouseEvent, skipVerticalScroll: boolean = false): void {
-        const rect: ClientRect = this.gridBodyCtrl.getBodyClientRect()!;
-        skipVerticalScroll = skipVerticalScroll || this.gridOptionsWrapper.getDomLayout() !== Constants.DOM_LAYOUT_NORMAL;
-
-        // we don't do ticking if grid is auto height unless we have a horizontal scroller
-        if (skipVerticalScroll && !this.gridBodyCtrl.getScrollFeature().isHorizontalScrollShowing()) {
-            return;
-        }
-
-        this.tickLeft = mouseEvent.clientX < (rect.left + 20);
-        this.tickRight = mouseEvent.clientX > (rect.right - 20);
-        this.tickUp = mouseEvent.clientY < (rect.top + 20) && !skipVerticalScroll;
-        this.tickDown = mouseEvent.clientY > (rect.bottom - 20) && !skipVerticalScroll;
-
-        if (this.tickLeft || this.tickRight || this.tickUp || this.tickDown) {
-            this.ensureTickingStarted();
-        } else {
-            this.ensureCleared();
-        }
-    }
-
-    private ensureTickingStarted(): void {
-        if (this.tickingInterval === null) {
-            this.tickingInterval = window.setInterval(this.doTick.bind(this), 100);
-            this.tickCount = 0;
-        }
-    }
-
-    private doTick(): void {
-        this.tickCount++;
-
-        const vScrollPosition = this.gridBodyCtrl.getScrollFeature().getVScrollPosition();
-        const hScrollPosition = this.gridBodyCtrl.getScrollFeature().getHScrollPosition();
-
-        let tickAmount: number;
-
-        tickAmount = this.tickCount > 20 ? 200 : (this.tickCount > 10 ? 80 : 40);
-
-        if (this.tickUp) {
-            this.gridBodyCtrl.getScrollFeature().setVerticalScrollPosition(vScrollPosition.top - tickAmount);
-        }
-
-        if (this.tickDown) {
-            this.gridBodyCtrl.getScrollFeature().setVerticalScrollPosition(vScrollPosition.top + tickAmount);
-        }
-
-        if (this.tickLeft) {
-            this.gridBodyCtrl.getScrollFeature().setHorizontalScrollPosition(hScrollPosition.left - tickAmount);
-        }
-
-        if (this.tickRight) {
-            this.gridBodyCtrl.getScrollFeature().setHorizontalScrollPosition(hScrollPosition.left + tickAmount);
-        }
-    }
-
-    public ensureCleared(): void {
-        if (this.tickingInterval) {
-            window.clearInterval(this.tickingInterval);
-            this.tickingInterval = null;
-        }
     }
 }

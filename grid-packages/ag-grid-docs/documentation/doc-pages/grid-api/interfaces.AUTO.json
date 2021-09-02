@@ -136,9 +136,9 @@
       "topRightRowContainerCtrl": "RowContainerCtrl",
       "fakeHScrollCtrl": "FakeHScrollCtrl",
       "gridHeaderCtrl": "GridHeaderCtrl",
-      "centerHeaderContainer": "HeaderContainer",
-      "leftHeaderContainer": "HeaderContainer",
-      "rightHeaderContainer": "HeaderContainer"
+      "centerHeaderContainer": "HeaderRowContainer",
+      "leftHeaderContainer": "HeaderRowContainer",
+      "rightHeaderContainer": "HeaderRowContainer"
     }
   },
   "DragItem": {
@@ -2259,6 +2259,16 @@
     "type": { "api": "GridApi", "columnApi": "ColumnApi", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
+  "ColumnPanelItemDragStartEvent": {
+    "meta": {},
+    "type": { "column": "Column | OriginalColumnGroup", "type": "string" },
+    "docs": { "type": "/** Event identifier */" }
+  },
+  "ColumnPanelItemDragEndEvent": {
+    "meta": {},
+    "type": { "type": "string" },
+    "docs": { "type": "/** Event identifier */" }
+  },
   "DragEvent": {
     "meta": {},
     "type": {
@@ -4100,11 +4110,7 @@
     "meta": {},
     "type": {
       "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
-      "addOrRemoveLeftCssClass(cssClassName: string, on: boolean)": "void",
-      "addOrRemoveRightCssClass(cssClassName: string, on: boolean)": "void",
-      "setCenterWidth(width: string)": "void",
-      "setHeightAndMinHeight(height: string)": "void",
-      "setCenterTransform(pos: string)": "void"
+      "setHeightAndMinHeight(height: string)": "void"
     }
   },
   "IHeaderParams": {
@@ -4201,6 +4207,7 @@
     "meta": { "isEnum": true },
     "type": ["COLUMN_GROUP", "COLUMN", "FLOATING_FILTER"]
   },
+  "IHeaderRowContainerComp": { "meta": {}, "type": {} },
   "HorizontalResizeParams": {
     "meta": {},
     "type": {
@@ -7405,6 +7412,7 @@
   "ToolPanelColumnCompParams": {
     "meta": {},
     "type": {
+      "suppressColumnMove": "boolean",
       "suppressRowGroups": "boolean",
       "suppressValues": "boolean",
       "suppressPivots": "boolean",
