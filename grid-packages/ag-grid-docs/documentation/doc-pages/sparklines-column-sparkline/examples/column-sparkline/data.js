@@ -1180,3 +1180,7 @@ var quotes = [
         ]
     }
 ]
+
+function generateRowData() {
+    return quotes;
+}
