@@ -32,8 +32,7 @@ export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework
     let props = {};
     const overrides = source ? getJsonFromFile(nodes, undefined, source) : {};
 
-    const typeProps = Object.entries(li.type).map(([k, v]) => [k.split(/\[^$\w\]/)[0], v]);
-
+    const typeProps = Object.entries(li.type);
     sortAndFilterProperties(typeProps, framework).forEach(([k, v]) => {
         if (namesArr.length === 0 || namesArr.includes(k)) {
             props[k] = { description: (li.docs && removeJsDocStars(li.docs[k])) || v, }
@@ -521,44 +520,37 @@ const FunctionCodeSample: React.FC<FunctionCode> = ({ framework, name, type, con
         lines.push(`${functionPrefix} ${returnTypeIsObject ? returnTypeName : (getLinkedType(returnType || 'void', framework))};`);
     }
 
-    let addNewLine = lines.length > 0 ? [''] : [];
+    let interfacesToWrite = [];
     if (type.parameters) {
 
         Object.keys(args)
             .filter(key => !Array.isArray(args[key]) && typeof args[key] === 'object')
             .forEach(key => {
                 const { meta, ...type } = args[key];
-                lines.push(...addNewLine, ...getInterfaceLines(framework, getArgumentTypeName(key, { meta }), type, config));
+                interfacesToWrite = [...interfacesToWrite, ...getInterfacesToWrite(getArgumentTypeName(key, { meta }), type, config)];
+
             });
     } else if (args) {
 
         Object.entries(args)
             .forEach(([key, type]) => {
-                const result = getInterfaceLines(framework, getArgumentTypeName(key, type), type, config);
-                if (result.length > 0) {
-                    lines.push(...addNewLine, ...result);
-                }
+                interfacesToWrite = [...interfacesToWrite, ...getInterfacesToWrite(getArgumentTypeName(key, type), type, config)];
             });
     }
 
-    addNewLine = lines.length > 0 ? [''] : [];
     if (returnTypeIsObject) {
-        const result = getInterfaceLines(framework, returnTypeName, returnType, config);
-        if (result.length > 0) {
-            lines.push(...addNewLine, ...result);
-        }
+        interfacesToWrite = [...interfacesToWrite, ...getInterfacesToWrite(returnTypeName, returnType, config)];
     } else if (returnTypeHasInterface) {
-        const result = getInterfaceLines(framework, returnType, returnType, config);
-        if (result) {
-            lines.push(...addNewLine, ...result);
-        }
+        interfacesToWrite = [...interfacesToWrite, ...getInterfacesToWrite(returnType, returnType, config)];
     }
+
+    lines.push(...writeAllInterfaces(interfacesToWrite, framework));
 
     const escapedLines = escapeGenericCode(lines);
     return <Code code={escapedLines} className={styles['reference__code-sample']} keepMarkup={true} />;
 };
 
-const getInterfaceLines = (framework, name, definition, config) => {
+const getInterfacesToWrite = (name, definition, config) => {
     let interfacesToWrite = []
     if (typeof (definition) === 'string') {
         // Extract all the words to enable support for Union types
@@ -571,7 +563,7 @@ const getInterfaceLines = (framework, name, definition, config) => {
         })
     }
 
-    return writeAllInterfaces(interfacesToWrite, framework);
+    return interfacesToWrite;
 };
 
 const getJsonFromFile = (nodes, pageName, source) => {
