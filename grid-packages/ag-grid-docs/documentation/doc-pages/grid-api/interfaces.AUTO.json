@@ -4226,6 +4226,8 @@
     "type": {
       "setCenterWidth(width: string)": "void",
       "setContainerTransform(transform: string)": "void",
+      "setContainerWidth(width: string)": "void",
+      "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
       "getRowComps()": "HeaderRowComp[]",
       "refresh()": "void",
       "getHeaderWrapperComp(column: Column)": "HeaderWrapperComp | undefined"
