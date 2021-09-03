@@ -145,8 +145,8 @@ Each of the four row drag events has the following attributes:
 - `columnApi`: The grid column API.
 - `event`: The underlying mouse move event associated with the drag.
 - `node`: The row node getting dragged.
-- `overIndex`: The row index the mouse is dragging over.
-- `overNode`: The row node the mouse is dragging over.
+- `overIndex`: The row index the mouse is dragging over or -1 if over no row.
+- `overNode`: The row node the mouse is dragging over or undefined if over no row.
 - `y`: The vertical pixel location the mouse is over, with `0` meaning the top of the first row. This can be compared to the `rowNode.rowHeight` and `rowNode.rowTop` to work out the mouse position relative to rows. The provided attributes `overIndex` and `overNode` means the `y` property is mostly redundant. The `y` property can be handy if you want more information such as 'how close is the mouse to the top or bottom of the row'.
 - `vDirection`: Direction of the drag, either `up`, `down` or blank (if mouse is moving horizontally and not vertically).
 

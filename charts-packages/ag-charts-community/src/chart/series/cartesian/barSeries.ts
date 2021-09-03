@@ -165,10 +165,10 @@ export class BarSeries extends CartesianSeries {
     constructor() {
         super();
 
-        this.addEventListener('update', this.update);
+        this.addEventListener('update', this.scheduleUpdate);
 
         this.label.enabled = false;
-        this.label.addEventListener('change', this.update, this);
+        this.label.addEventListener('change', this.scheduleUpdate, this);
     }
 
     /**
@@ -219,7 +219,7 @@ export class BarSeries extends CartesianSeries {
     set xName(value: string) {
         if (this._xName !== value) {
             this._xName = value;
-            this.update();
+            this.scheduleUpdate();
         }
     }
     get xName(): string {
@@ -350,7 +350,7 @@ export class BarSeries extends CartesianSeries {
     set strokeWidth(value: number) {
         if (this._strokeWidth !== value) {
             this._strokeWidth = value;
-            this.update();
+            this.scheduleUpdate();
         }
     }
     get strokeWidth(): number {
@@ -361,7 +361,7 @@ export class BarSeries extends CartesianSeries {
     set shadow(value: DropShadow | undefined) {
         if (this._shadow !== value) {
             this._shadow = value;
-            this.update();
+            this.scheduleUpdate();
         }
     }
     get shadow(): DropShadow | undefined {
@@ -481,17 +481,23 @@ export class BarSeries extends CartesianSeries {
         return this.flipXY ? this.xAxis : this.yAxis;
     }
 
-    protected highlightedItemId?: string;
-    highlight(itemId?: string) {
-        super.highlight(itemId);
+    highlight(itemId?: string): boolean {
+        if (!super.highlight(itemId)) {
+            return false;
+        }
 
         this.highlightedItemId = itemId;
         this.updateRectNodes();
+
+        return true;
     }
 
-    dehighlight() {
-        this.highlightedItemId = undefined;
+    dehighlight(): boolean {
+        if (!super.dehighlight()) {
+            return false;
+        }
         this.updateRectNodes();
+        return true;
     }
 
     undim(itemId?: any) {

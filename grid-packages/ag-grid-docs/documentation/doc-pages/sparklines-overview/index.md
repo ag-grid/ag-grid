@@ -19,11 +19,11 @@ To enable sparklines on a particular column, add the `agSparklineCellRenderer` a
 const gridOptions = {
     columnDefs: [
         {
-            field: 'results',
+            field: 'history',
             cellRenderer: 'agSparklineCellRenderer',
             cellRendererParams: {
                 sparklineOptions: {
-                    type: 'column'
+                    type: 'line'
                 }
             },
         },

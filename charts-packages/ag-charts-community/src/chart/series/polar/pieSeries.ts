@@ -136,20 +136,20 @@ export class PieSeries extends PolarSeries {
 
         if (oldTitle !== value) {
             if (oldTitle) {
-                oldTitle.removeEventListener('change', this.update, this);
+                oldTitle.removeEventListener('change', this.scheduleUpdate, this);
                 oldTitle.addPropertyListener('showInLegend', updateLegend, this);
                 this.group.removeChild(oldTitle.node);
             }
 
             if (value) {
                 value.node.textBaseline = 'bottom';
-                value.addEventListener('change', this.update, this);
+                value.addEventListener('change', this.scheduleUpdate, this);
                 value.addPropertyListener('showInLegend', updateLegend, this);
                 this.group.appendChild(value.node);
             }
 
             this._title = value;
-            this.update();
+            this.scheduleUpdate();
         }
     }
     get title(): PieTitle | undefined {
@@ -164,7 +164,7 @@ export class PieSeries extends PolarSeries {
     constructor() {
         super();
 
-        this.addEventListener('update', this.update, this);
+        this.addEventListener('update', this.scheduleUpdate, this);
         this.label.addEventListener('change', this.scheduleLayout, this);
         this.label.addEventListener('dataChange', this.scheduleData, this);
         this.callout.addEventListener('change', this.scheduleLayout, this);

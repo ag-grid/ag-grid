@@ -457,7 +457,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             node: draggingEvent.dragItem.rowNode!,
             nodes: draggingEvent.dragItem.rowNodes!,
             overIndex: overIndex,
-            overNode: overNode!,
+            overNode: overNode,
             y: yNormalised,
             vDirection: vDirectionString!
         };

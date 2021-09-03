@@ -169,9 +169,15 @@
     },
     "fakeHScrollCtrl": { "type": { "returnType": "FakeHScrollCtrl" } },
     "gridHeaderCtrl": { "type": { "returnType": "GridHeaderCtrl" } },
-    "centerHeaderContainer": { "type": { "returnType": "HeaderRowContainer" } },
-    "leftHeaderContainer": { "type": { "returnType": "HeaderRowContainer" } },
-    "rightHeaderContainer": { "type": { "returnType": "HeaderRowContainer" } }
+    "centerHeaderRowContainerCtrl": {
+      "type": { "returnType": "HeaderRowContainerCtrl" }
+    },
+    "leftHeaderRowContainerCtrl": {
+      "type": { "returnType": "HeaderRowContainerCtrl" }
+    },
+    "rightHeaderRowContainerCtrl": {
+      "type": { "returnType": "HeaderRowContainerCtrl" }
+    }
   },
   "DragItem": {
     "rowNode": {
@@ -3969,25 +3975,25 @@
       "description": "/** The list of nodes being dragged. */",
       "type": { "returnType": "RowNode[]" }
     },
-    "y": {
-      "description": "/** The vertical pixel location the mouse is over. */",
-      "type": { "returnType": "number" }
-    },
-    "vDirection": {
-      "description": "/** Direction of the drag, either 'up', 'down' or null. */",
-      "type": { "returnType": "string" }
-    },
     "event": {
       "description": "/** The underlying mouse move event associated with the drag. */",
       "type": { "returnType": "MouseEvent" }
     },
+    "vDirection": {
+      "description": "/** Direction of the drag, either 'up', 'down' or null (if mouse is moving horizontally and not vertically). */",
+      "type": { "returnType": "string" }
+    },
     "overIndex": {
-      "description": "/** The row index the mouse is dragging over. */",
+      "description": "/** The row index the mouse is dragging over or -1 if over no row. */",
       "type": { "returnType": "number" }
     },
     "overNode": {
-      "description": "/** The row node the mouse is dragging over. */",
+      "description": "/** The row node the mouse is dragging over or undefined if over no row. */",
       "type": { "returnType": "RowNode" }
+    },
+    "y": {
+      "description": "/** The vertical pixel location the mouse is over, with `0` meaning the top of the first row.\n * This can be compared to the `rowNode.rowHeight` and `rowNode.rowTop` to work out the mouse position relative to rows.\n * The provided attributes `overIndex` and `overNode` means the `y` property is mostly redundant.\n * The `y` property can be handy if you want more information such as 'how close is the mouse to the top or bottom of the row?' */",
+      "type": { "returnType": "number" }
     },
     "api": { "type": { "returnType": "GridApi" } },
     "columnApi": { "type": { "returnType": "ColumnApi" } },
@@ -4005,25 +4011,25 @@
       "description": "/** The list of nodes being dragged. */",
       "type": { "returnType": "RowNode[]" }
     },
-    "y": {
-      "description": "/** The vertical pixel location the mouse is over. */",
-      "type": { "returnType": "number" }
-    },
-    "vDirection": {
-      "description": "/** Direction of the drag, either 'up', 'down' or null. */",
-      "type": { "returnType": "string" }
-    },
     "event": {
       "description": "/** The underlying mouse move event associated with the drag. */",
       "type": { "returnType": "MouseEvent" }
     },
+    "vDirection": {
+      "description": "/** Direction of the drag, either 'up', 'down' or null (if mouse is moving horizontally and not vertically). */",
+      "type": { "returnType": "string" }
+    },
     "overIndex": {
-      "description": "/** The row index the mouse is dragging over. */",
+      "description": "/** The row index the mouse is dragging over or -1 if over no row. */",
       "type": { "returnType": "number" }
     },
     "overNode": {
-      "description": "/** The row node the mouse is dragging over. */",
+      "description": "/** The row node the mouse is dragging over or undefined if over no row. */",
       "type": { "returnType": "RowNode" }
+    },
+    "y": {
+      "description": "/** The vertical pixel location the mouse is over, with `0` meaning the top of the first row.\n * This can be compared to the `rowNode.rowHeight` and `rowNode.rowTop` to work out the mouse position relative to rows.\n * The provided attributes `overIndex` and `overNode` means the `y` property is mostly redundant.\n * The `y` property can be handy if you want more information such as 'how close is the mouse to the top or bottom of the row?' */",
+      "type": { "returnType": "number" }
     },
     "api": { "type": { "returnType": "GridApi" } },
     "columnApi": { "type": { "returnType": "ColumnApi" } },
@@ -4041,25 +4047,25 @@
       "description": "/** The list of nodes being dragged. */",
       "type": { "returnType": "RowNode[]" }
     },
-    "y": {
-      "description": "/** The vertical pixel location the mouse is over. */",
-      "type": { "returnType": "number" }
-    },
-    "vDirection": {
-      "description": "/** Direction of the drag, either 'up', 'down' or null. */",
-      "type": { "returnType": "string" }
-    },
     "event": {
       "description": "/** The underlying mouse move event associated with the drag. */",
       "type": { "returnType": "MouseEvent" }
     },
+    "vDirection": {
+      "description": "/** Direction of the drag, either 'up', 'down' or null (if mouse is moving horizontally and not vertically). */",
+      "type": { "returnType": "string" }
+    },
     "overIndex": {
-      "description": "/** The row index the mouse is dragging over. */",
+      "description": "/** The row index the mouse is dragging over or -1 if over no row. */",
       "type": { "returnType": "number" }
     },
     "overNode": {
-      "description": "/** The row node the mouse is dragging over. */",
+      "description": "/** The row node the mouse is dragging over or undefined if over no row. */",
       "type": { "returnType": "RowNode" }
+    },
+    "y": {
+      "description": "/** The vertical pixel location the mouse is over, with `0` meaning the top of the first row.\n * This can be compared to the `rowNode.rowHeight` and `rowNode.rowTop` to work out the mouse position relative to rows.\n * The provided attributes `overIndex` and `overNode` means the `y` property is mostly redundant.\n * The `y` property can be handy if you want more information such as 'how close is the mouse to the top or bottom of the row?' */",
+      "type": { "returnType": "number" }
     },
     "api": { "type": { "returnType": "GridApi" } },
     "columnApi": { "type": { "returnType": "ColumnApi" } },
@@ -4077,25 +4083,25 @@
       "description": "/** The list of nodes being dragged. */",
       "type": { "returnType": "RowNode[]" }
     },
-    "y": {
-      "description": "/** The vertical pixel location the mouse is over. */",
-      "type": { "returnType": "number" }
-    },
-    "vDirection": {
-      "description": "/** Direction of the drag, either 'up', 'down' or null. */",
-      "type": { "returnType": "string" }
-    },
     "event": {
       "description": "/** The underlying mouse move event associated with the drag. */",
       "type": { "returnType": "MouseEvent" }
     },
+    "vDirection": {
+      "description": "/** Direction of the drag, either 'up', 'down' or null (if mouse is moving horizontally and not vertically). */",
+      "type": { "returnType": "string" }
+    },
     "overIndex": {
-      "description": "/** The row index the mouse is dragging over. */",
+      "description": "/** The row index the mouse is dragging over or -1 if over no row. */",
       "type": { "returnType": "number" }
     },
     "overNode": {
-      "description": "/** The row node the mouse is dragging over. */",
+      "description": "/** The row node the mouse is dragging over or undefined if over no row. */",
       "type": { "returnType": "RowNode" }
+    },
+    "y": {
+      "description": "/** The vertical pixel location the mouse is over, with `0` meaning the top of the first row.\n * This can be compared to the `rowNode.rowHeight` and `rowNode.rowTop` to work out the mouse position relative to rows.\n * The provided attributes `overIndex` and `overNode` means the `y` property is mostly redundant.\n * The `y` property can be handy if you want more information such as 'how close is the mouse to the top or bottom of the row?' */",
+      "type": { "returnType": "number" }
     },
     "api": { "type": { "returnType": "GridApi" } },
     "columnApi": { "type": { "returnType": "ColumnApi" } },
@@ -4113,25 +4119,25 @@
       "description": "/** The list of nodes being dragged. */",
       "type": { "returnType": "RowNode[]" }
     },
-    "y": {
-      "description": "/** The vertical pixel location the mouse is over. */",
-      "type": { "returnType": "number" }
-    },
-    "vDirection": {
-      "description": "/** Direction of the drag, either 'up', 'down' or null. */",
-      "type": { "returnType": "string" }
-    },
     "event": {
       "description": "/** The underlying mouse move event associated with the drag. */",
       "type": { "returnType": "MouseEvent" }
     },
+    "vDirection": {
+      "description": "/** Direction of the drag, either 'up', 'down' or null (if mouse is moving horizontally and not vertically). */",
+      "type": { "returnType": "string" }
+    },
     "overIndex": {
-      "description": "/** The row index the mouse is dragging over. */",
+      "description": "/** The row index the mouse is dragging over or -1 if over no row. */",
       "type": { "returnType": "number" }
     },
     "overNode": {
-      "description": "/** The row node the mouse is dragging over. */",
+      "description": "/** The row node the mouse is dragging over or undefined if over no row. */",
       "type": { "returnType": "RowNode" }
+    },
+    "y": {
+      "description": "/** The vertical pixel location the mouse is over, with `0` meaning the top of the first row.\n * This can be compared to the `rowNode.rowHeight` and `rowNode.rowTop` to work out the mouse position relative to rows.\n * The provided attributes `overIndex` and `overNode` means the `y` property is mostly redundant.\n * The `y` property can be handy if you want more information such as 'how close is the mouse to the top or bottom of the row?' */",
+      "type": { "returnType": "number" }
     },
     "api": { "type": { "returnType": "GridApi" } },
     "columnApi": { "type": { "returnType": "ColumnApi" } },
@@ -6217,15 +6223,42 @@
       }
     }
   },
-  "IGridHeaderComp": {
-    "addOrRemoveCssClass": {
+  "IHeaderGroupParams": {
+    "columnGroup": { "type": { "returnType": "ColumnGroup" } },
+    "displayName": { "type": { "returnType": "string" } },
+    "setExpanded": {
+      "type": { "arguments": { "expanded": "boolean" }, "returnType": "void" }
+    },
+    "api": { "type": { "returnType": "GridApi" } },
+    "columnApi": { "type": { "returnType": "ColumnApi" } },
+    "context": {
+      "description": "/** The context as provided on `gridOptions.context` */",
+      "type": { "returnType": "any" }
+    }
+  },
+  "IHeaderGroup": {},
+  "IHeaderGroupComp": {
+    "getGui": {
+      "description": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
+      "type": { "arguments": {}, "returnType": "HTMLElement" }
+    },
+    "destroy": {
+      "description": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
+      "type": { "arguments": {}, "returnType": "void" }
+    },
+    "afterGuiAttached": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
       "type": {
-        "arguments": { "cssClassName": "string", "on": "boolean" },
+        "arguments": { "params": "IAfterGuiAttachedParams" },
         "returnType": "void"
       }
     },
-    "setHeightAndMinHeight": {
-      "type": { "arguments": { "height": "string" }, "returnType": "void" }
+    "init": {
+      "description": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
+      "type": {
+        "arguments": { "params": "IHeaderGroupParams" },
+        "returnType": "AgPromise<void> | void"
+      }
     }
   },
   "IHeaderParams": {
@@ -6309,46 +6342,53 @@
     "selected": { "type": { "returnType": "number" } },
     "notSelected": { "type": { "returnType": "number" } }
   },
-  "IHeaderGroupParams": {
-    "columnGroup": { "type": { "returnType": "ColumnGroup" } },
-    "displayName": { "type": { "returnType": "string" } },
-    "setExpanded": {
-      "type": { "arguments": { "expanded": "boolean" }, "returnType": "void" }
-    },
-    "api": { "type": { "returnType": "GridApi" } },
-    "columnApi": { "type": { "returnType": "ColumnApi" } },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any" }
-    }
-  },
-  "IHeaderGroup": {},
-  "IHeaderGroupComp": {
-    "getGui": {
-      "description": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
-      "type": { "arguments": {}, "returnType": "HTMLElement" }
-    },
-    "destroy": {
-      "description": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
-      "type": { "arguments": {}, "returnType": "void" }
-    },
-    "afterGuiAttached": {
-      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
+  "IGridHeaderComp": {
+    "addOrRemoveCssClass": {
       "type": {
-        "arguments": { "params": "IAfterGuiAttachedParams" },
+        "arguments": { "cssClassName": "string", "on": "boolean" },
         "returnType": "void"
       }
     },
-    "init": {
-      "description": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
-      "type": {
-        "arguments": { "params": "IHeaderGroupParams" },
-        "returnType": "AgPromise<void> | void"
-      }
+    "setHeightAndMinHeight": {
+      "type": { "arguments": { "height": "string" }, "returnType": "void" }
     }
   },
   "HeaderRowType": {},
-  "IHeaderRowContainerComp": {},
+  "IHeaderRowComp": {
+    "setTransform": {
+      "type": { "arguments": { "transform": "string" }, "returnType": "void" }
+    },
+    "setTop": {
+      "type": { "arguments": { "top": "string" }, "returnType": "void" }
+    },
+    "setHeight": {
+      "type": { "arguments": { "height": "string" }, "returnType": "void" }
+    },
+    "setHeaderCtrls": {
+      "type": { "arguments": { "ctrls": "HeaderCtrl[]" }, "returnType": "void" }
+    },
+    "setWidth": {
+      "type": { "arguments": { "width": "string" }, "returnType": "void" }
+    }
+  },
+  "IHeaderRowContainerComp": {
+    "setCenterWidth": {
+      "type": { "arguments": { "width": "string" }, "returnType": "void" }
+    },
+    "setContainerTransform": {
+      "type": { "arguments": { "transform": "string" }, "returnType": "void" }
+    },
+    "getRowComps": {
+      "type": { "arguments": {}, "returnType": "HeaderRowComp[]" }
+    },
+    "refresh": { "type": { "arguments": {}, "returnType": "void" } },
+    "getHeaderWrapperComp": {
+      "type": {
+        "arguments": { "column": "Column" },
+        "returnType": "HeaderWrapperComp | undefined"
+      }
+    }
+  },
   "HorizontalResizeParams": {
     "eResizeBar": { "type": { "returnType": "HTMLElement" } },
     "dragStartPixels": { "type": { "returnType": "number" } },

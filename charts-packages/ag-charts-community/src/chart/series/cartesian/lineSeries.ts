@@ -100,7 +100,7 @@ export class LineSeries extends CartesianSeries {
         // Make line render before markers in the pick group.
         this.group.insertBefore(lineNode, this.pickGroup);
 
-        this.addEventListener('update', this.update);
+        this.addEventListener('update', this.scheduleUpdate);
 
         const { marker, label } = this;
 
@@ -108,16 +108,16 @@ export class LineSeries extends CartesianSeries {
         marker.stroke = '#874349';
         marker.addPropertyListener('shape', this.onMarkerShapeChange, this);
         marker.addPropertyListener('enabled', this.onMarkerEnabledChange, this);
-        marker.addEventListener('change', this.update, this);
+        marker.addEventListener('change', this.scheduleUpdate, this);
 
         label.enabled = false;
-        label.addEventListener('change', this.update, this);
+        label.addEventListener('change', this.scheduleUpdate, this);
     }
 
     onMarkerShapeChange() {
         this.nodeSelection = this.nodeSelection.setData([]);
         this.nodeSelection.exit.remove();
-        this.update();
+        this.scheduleUpdate();
 
         this.fireEvent({ type: 'legendChange' });
     }
@@ -205,15 +205,23 @@ export class LineSeries extends CartesianSeries {
         this.updateNodes();
     }
 
-    highlight() {
-        super.highlight();
+    highlight(itemId?: any): boolean {
+        if (!super.highlight(itemId)) {
+            return false;
+        }
 
         const { strokeWidth } = this.highlightStyle.series;
         this.lineNode.strokeWidth = strokeWidth !== undefined ? strokeWidth : this.strokeWidth;
+
+        return true;
     }
 
-    dehighlight() {
+    dehighlight(): boolean {
+        if (!super.dehighlight()) {
+            return false;
+        }
         this.lineNode.strokeWidth = this.strokeWidth;
+        return true;
     }
 
     resetHighlight() {

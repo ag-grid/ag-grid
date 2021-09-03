@@ -68,13 +68,13 @@ export class TreemapSeries extends HierarchySeries {
     constructor() {
         super();
 
-        this.shadow.addEventListener('change', this.update, this);
-        this.title.addEventListener('change', this.update, this);
-        this.subtitle.addEventListener('change', this.update, this);
-        this.labels.small.addEventListener('change', this.update, this);
-        this.labels.medium.addEventListener('change', this.update, this);
-        this.labels.large.addEventListener('change', this.update, this);
-        this.labels.color.addEventListener('change', this.update, this);
+        this.shadow.addEventListener('change', this.scheduleUpdate, this);
+        this.title.addEventListener('change', this.scheduleUpdate, this);
+        this.subtitle.addEventListener('change', this.scheduleUpdate, this);
+        this.labels.small.addEventListener('change', this.scheduleUpdate, this);
+        this.labels.medium.addEventListener('change', this.scheduleUpdate, this);
+        this.labels.large.addEventListener('change', this.scheduleUpdate, this);
+        this.labels.color.addEventListener('change', this.scheduleUpdate, this);
     }
 
     readonly title: TreemapSeriesLabel = (() => {

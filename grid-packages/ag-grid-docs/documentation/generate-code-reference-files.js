@@ -39,9 +39,17 @@ function toCamelCase(value) {
     return value[0].toLowerCase() + value.substr(1);
 }
 
-function extractTypesFromNode(node, srcFile) {
+function extractTypesFromNode(node, srcFile, includeUndefined) {
     let nodeMembers = {};
     const kind = ts.SyntaxKind[node.kind];
+    const appendUndefined = (rt, n) => {
+        let returnType = rt;
+        if (includeUndefined && n && n.questionToken) {
+            returnType = `${returnType} | undefined`;
+        }
+        return returnType;
+    }
+
     let name = node && node.name && node.name.escapedText;
     let returnType = node && node.type && node.type.getFullText().trim();
 
@@ -57,6 +65,7 @@ function extractTypesFromNode(node, srcFile) {
             };
         } else {
             // i.e colWidth?: number; 
+            returnType = appendUndefined(returnType, node)
             nodeMembers[name] = { description: getJsDoc(node), type: { returnType } };
         }
     } else if (kind == 'MethodSignature') {
@@ -302,7 +311,7 @@ function buildInterfaceProps() {
         interfacesInFile.forEach(iNode => {
             let props = {};
             iNode.forEachChild(ch => {
-                const prop = extractTypesFromNode(ch, parsedFile);
+                const prop = extractTypesFromNode(ch, parsedFile, false);
                 props = { ...props, ...prop }
             })
 
@@ -370,7 +379,7 @@ function getGridOptions() {
 
     let gridOpsMembers = {};
     ts.forEachChild(gridOptionsNode, n => {
-        gridOpsMembers = { ...gridOpsMembers, ...extractTypesFromNode(n, srcFile) }
+        gridOpsMembers = { ...gridOpsMembers, ...extractTypesFromNode(n, srcFile, false) }
     });
 
     return gridOpsMembers;
@@ -389,7 +398,7 @@ function getColumnOptions() {
     let members = {};
     const addToMembers = (node, src) => {
         ts.forEachChild(node, n => {
-            members = { ...members, ...extractTypesFromNode(n, src) }
+            members = { ...members, ...extractTypesFromNode(n, src, false) }
         });
     }
     addToMembers(abstractColDefNode, srcFile);

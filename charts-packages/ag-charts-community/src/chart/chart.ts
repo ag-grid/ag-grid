@@ -801,6 +801,32 @@ export abstract class Chart extends Observable {
 
     abstract performLayout(): void;
 
+    private updateCallbackId: number = 0;
+    set updatePending(value: boolean) {
+        if (this.updateCallbackId) {
+            clearTimeout(this.updateCallbackId);
+            this.updateCallbackId = 0;
+        }
+        if (value) {
+            this.updateCallbackId = window.setTimeout(() => {
+                this.updatePending = false;
+                this.update();
+            }, 0);
+        }
+    }
+    get updatePending(): boolean {
+        return !!this.dataCallbackId;
+    }
+
+    update() {
+        this.series.forEach(series => {
+            if (series.updatePending) {
+                series.update();
+                series.updatePending = false;
+            }
+        });
+    }
+
     protected positionCaptions() {
         const { title, subtitle } = this;
 
