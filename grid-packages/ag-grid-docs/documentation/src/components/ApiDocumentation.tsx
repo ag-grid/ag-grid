@@ -75,8 +75,8 @@ export const ApiDocumentation: React.FC<ApiProps> = ({ pageName, framework, sour
     let namesArr = [];
     if (names && names.length) {
         namesArr = JSON.parse(names);
-        // Hide more links when properties included by name
-        config = { ...config, hideMore: true };
+        // Hide more links when properties included by name or use the value from config if its set
+        config = { hideMore: true, ...config, };
     }
 
     const propertiesFromFiles = sources.map(s => getJsonFromFile(nodes, pageName, s));
@@ -114,7 +114,7 @@ export const ApiDocumentation: React.FC<ApiProps> = ({ pageName, framework, sour
             case 'Column':
                 codeLookup = { ...codeLookup, ...getJsonFromFile(nodes, undefined, 'column-object/column.AUTO.json') };
                 break;
-        }            
+        }
     })
     const interfaceLookup = getJsonFromFile(nodes, undefined, 'grid-api/interfaces.AUTO.json');
     const lookups = { codeLookup, interfaces: interfaceLookup };
@@ -227,7 +227,7 @@ const Section: React.FC<SectionProps> = ({ framework, title, properties, config 
 
     return <>
         {header}
-        <table className={styles['reference']} style={config.noBottomMargin ? { "marginBottom": "0" } : {}}>
+        <table className={styles['reference']} style={config.overrideBottomMargin ? { "marginBottom": config.overrideBottomMargin } : {}}>
             <colgroup>
                 <col className={styles['reference__expander-cell']} ></col>
                 <col style={{ width: longestNameLength + 'ch' }}></col>
@@ -281,7 +281,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
     }
 
     // Use the type definition if manually specified in config
-    let type: any = definition.type;    
+    let type: any = definition.type;
     let showAdditionalDetails = typeof (type) == 'object';
     if (!type) {
         // No type specified in the doc config file so check the GridOptions property
@@ -335,7 +335,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
                     <span className={styles['reference__property-type']}>{propertyType}</span>}
             </div>
         </td>
-        <td>            
+        <td>
             <div onClick={() => setExpanded(!isExpanded)} role="presentation"
                 className={classnames(styles['reference__description'], { [styles['reference__description--expanded']]: isExpanded })}
                 dangerouslySetInnerHTML={{ __html: description }}></div>
@@ -345,7 +345,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
                 <div>Options: {definition.options.map((o, i) => <React.Fragment key={o}>{i > 0 ? ', ' : ''}<code>{formatJson(o)}</code></React.Fragment>)}</div>}
             {showAdditionalDetails &&
                 <div className={isExpanded ? '' : 'd-none'}>
-                {codeSection}
+                    {codeSection}
                 </div>}
         </td>
         {definition.relevantTo && <td style={{ whiteSpace: 'nowrap' }}>{definition.relevantTo.join(', ')}</td>}

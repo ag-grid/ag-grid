@@ -758,10 +758,10 @@ export abstract class Chart extends Observable {
     }
 
     private nodeData: Map<Series, readonly SeriesNodeDatum[]> = new Map();
-    generateNodeData(): void {
+    createNodeData(): void {
         this.nodeData.clear();
         this.series.forEach(s => {
-            const data = s.visible ? s.generateNodeData() : [];
+            const data = s.visible ? s.createNodeData() : [];
             this.nodeData.set(s, data);
         });
     }
@@ -1177,13 +1177,11 @@ export abstract class Chart extends Observable {
             }
         } else if (this.pointerInsideLegend) {
             this.pointerInsideLegend = false;
-            // Undim all series only if the pointer was inside legend is now leaving it.
-            this.series.forEach(series => {
-                if (series.highlightStyle.series.enabled) {
-                    series.undim();
-                    series.dehighlight();
-                }
-            });
+            // Dehighlight if the pointer was inside the legend and is now leaving it.
+            if (this.highlightedDatum) {
+                this.highlightedDatum.series.updatePending = true;
+                this.highlightedDatum = undefined;
+            }
             return;
         }
 
@@ -1192,7 +1190,12 @@ export abstract class Chart extends Observable {
             const series = find(this.series, series => series.id === id);
 
             if (series && series.highlightStyle.series.enabled) {
-                this.series.forEach(s => s === series ? s.highlight(itemId) : s.dim());
+                this.highlightedDatum = {
+                    series,
+                    itemId,
+                    seriesDatum: undefined
+                };
+                series.updatePending = true;
             }
         }
     }
@@ -1222,18 +1225,11 @@ export abstract class Chart extends Observable {
     highlightDatum(datum: SeriesNodeDatum, node?: Shape): void {
         const { style } = this.scene.canvas.element;
         this.highlightedDatum = datum;
-        this.series.forEach(s => {
+        this.series.forEach(series => {
             if (node) {
-                style.cursor = s.cursor;
+                style.cursor = series.cursor;
             }
-            if (s.highlightStyle.series.enabled) {
-                if (s === datum.series) {
-                    s.highlight(datum.itemId);
-                } else {
-                    s.dim();
-                }
-            }
-            s.onHighlightChange();
+            series.updatePending = true;
         });
     }
 
@@ -1241,13 +1237,7 @@ export abstract class Chart extends Observable {
         if (this.highlightedDatum) {
             this.scene.canvas.element.style.cursor = 'default';
             this.highlightedDatum = undefined;
-            this.series.forEach(s => {
-                s.onHighlightChange();
-                if (s.highlightStyle.series.enabled) {
-                    s.undim();
-                    s.dehighlight();
-                }
-            });
+            this.series.forEach(s => s.updatePending = true);
         }
     }
 }

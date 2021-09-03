@@ -2529,13 +2529,17 @@
     "meta": {},
     "type": {
       "id?": "string",
-      "finished": "boolean",
       "started": "boolean",
+      "finished": "boolean",
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "started": "/** True for the first change event, otherwise false */",
+      "finished": "/** True for the last change event, otherwise false */",
+      "type": "/** Event identifier */"
+    }
   },
   "ChartCreated": {
     "meta": {},
@@ -4222,6 +4226,8 @@
     "type": {
       "setCenterWidth(width: string)": "void",
       "setContainerTransform(transform: string)": "void",
+      "setContainerWidth(width: string)": "void",
+      "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
       "getRowComps()": "HeaderRowComp[]",
       "refresh()": "void",
       "getHeaderWrapperComp(column: Column)": "HeaderWrapperComp | undefined"
@@ -6814,6 +6820,12 @@
       "endRow?": "RowPosition",
       "columns": "Column[]",
       "startColumn": "Column"
+    },
+    "docs": {
+      "startRow?": "/** The start row of the range */",
+      "endRow?": "/** The end row of the range */",
+      "columns": "/** The columns in the range */",
+      "startColumn": "/** The start column for the range */"
     }
   },
   "CellRangeParams": {

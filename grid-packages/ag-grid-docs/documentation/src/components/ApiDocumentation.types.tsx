@@ -116,7 +116,7 @@ export interface ICallSignature extends BaseInterface {
         returnType: string;
     };
 }
-export interface Config {    
+export interface Config {
     isSubset?: boolean;
     isApi?: boolean;
     isEvent?: boolean;
@@ -131,11 +131,25 @@ export interface Config {
     };
     codeSrcProvided: string[];
     gridOpProp?: InterfaceEntry;
+    /**
+     * Just show the code interfaces without the table entry
+     */
     codeOnly?: boolean;
+    /**
+     * Can be used to have the doc entries expanded by default.
+     */
     defaultExpand?: boolean;
+    /**
+     * By default we do not include the "See More" links when api-documentation is used with specific names selected.
+     * This is because it is likely the link will be pointing to the same place it is currently being used.
+     */
     hideMore?: boolean;
+    /**
+     * Hide the header to make it easy to just include the sections as part of doc pages
+     */
     hideHeader?: boolean;
-    noBottomMargin?: boolean;
+    /** Set the margin-bottom value to override the default of 3em */
+    overrideBottomMargin?: string;
 }
 export type SectionProps = {
     framework: string;
