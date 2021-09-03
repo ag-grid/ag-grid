@@ -269,7 +269,7 @@
     "docs": {
       "column": "/** The grid column */",
       "rowIndex": "/** A positive number from 0 to n, where n is the last row the grid is rendering\n * or -1 if you want to navigate to the grid header */",
-      "rowPinned": "/** Either 'top', 'bottom' or undefined/null (for not pinned) */"
+      "rowPinned": "/** Either 'top', 'bottom' or null (for not pinned) */"
     }
   },
   "AbstractColDef": {
@@ -2038,7 +2038,7 @@
     "type": { "rowIndex": "number", "rowPinned": "string | null" },
     "docs": {
       "rowIndex": "/** A positive number from 0 to n, where n is the last row the grid is rendering\n * or -1 if you want to navigate to the grid header */",
-      "rowPinned": "/** Either 'top', 'bottom' or undefined/null (for not pinned) */"
+      "rowPinned": "/** Either 'top', 'bottom' or null (for not pinned) */"
     }
   },
   "ToolPanelDef": {
@@ -4196,6 +4196,7 @@
       "column": "/** The grid column or column group */"
     }
   },
+  "IHeaderWrapperComp": { "meta": {}, "type": { "focus()": "void" } },
   "SelectionCount": {
     "meta": {},
     "type": { "selected": "number", "notSelected": "number" }
@@ -4209,7 +4210,11 @@
   },
   "HeaderRowType": {
     "meta": { "isEnum": true },
-    "type": ["COLUMN_GROUP", "COLUMN", "FLOATING_FILTER"]
+    "type": [
+      "COLUMN_GROUP = 'group'",
+      "COLUMN = 'column'",
+      "FLOATING_FILTER = 'filter'"
+    ]
   },
   "IHeaderRowComp": {
     "meta": {},
@@ -4217,8 +4222,9 @@
       "setTransform(transform: string)": "void",
       "setTop(top: string)": "void",
       "setHeight(height: string)": "void",
-      "setHeaderCtrls(ctrls: HeaderCtrl[])": "void",
-      "setWidth(width: string)": "void"
+      "setHeaderCtrls(ctrls: HeaderWrapperCtrl[])": "void",
+      "setWidth(width: string)": "void",
+      "getHtmlElementForColumnHeader(column: Column)": "HTMLElement | undefined"
     }
   },
   "IHeaderRowContainerComp": {
@@ -4228,9 +4234,8 @@
       "setContainerTransform(transform: string)": "void",
       "setContainerWidth(width: string)": "void",
       "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
-      "getRowComps()": "HeaderRowComp[]",
-      "refresh()": "void",
-      "getHeaderWrapperComp(column: Column)": "HeaderWrapperComp | undefined"
+      "setCtrls(ctrls: HeaderRowCtrl[])": "void",
+      "getRowComps()": "HeaderRowComp[]"
     }
   },
   "HorizontalResizeParams": {
@@ -6838,6 +6843,15 @@
       "columnStart?": "string | Column",
       "columnEnd?": "string | Column",
       "columns?": "(string | Column)[]"
+    },
+    "docs": {
+      "rowStartIndex": "/** Start row index */",
+      "rowStartPinned?": "/** Pinned state of start row. Either 'top', 'bottom' or null */",
+      "rowEndIndex": "/** End row index */",
+      "rowEndPinned?": "/** Pinned state of end row. Either 'top', 'bottom' or null */",
+      "columnStart?": "/** Starting column for range */",
+      "columnEnd?": "/** End column for range */",
+      "columns?": "/** Specify Columns to include instead of using `columnStart` and `columnEnd` */"
     }
   },
   "RangeSelection": {

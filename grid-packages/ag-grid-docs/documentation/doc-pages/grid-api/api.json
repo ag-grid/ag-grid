@@ -151,10 +151,10 @@
             "description": "Returns the list of selected cell ranges."
         },
         "addCellRange": {
-            "description": "Adds to the selected range."
+            "description": "Adds the provided cell range to the selected ranges."
         },
         "clearRangeSelection": {
-            "description": "Clears the selected range."
+            "description": "Clears the selected ranges."
         },
         "setSuppressRowClickSelection": {
             "description": "Sets the `suppressRowClickSelection` property."
