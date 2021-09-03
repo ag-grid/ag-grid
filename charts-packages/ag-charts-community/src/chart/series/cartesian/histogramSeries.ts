@@ -424,7 +424,7 @@ export class HistogramSeries extends CartesianSeries {
             return;
         }
 
-        const nodeData = this.generateNodeData();
+        const nodeData = this.createNodeData();
 
         this.updateRectSelection(nodeData);
         this.updateRectNodes();
@@ -433,7 +433,7 @@ export class HistogramSeries extends CartesianSeries {
         this.updateTextNodes();
     }
 
-    generateNodeData(): HistogramNodeDatum[] {
+    createNodeData(): HistogramNodeDatum[] {
         const { xAxis, yAxis } = this;
 
         if (!this.seriesItemEnabled || !xAxis || !yAxis) {

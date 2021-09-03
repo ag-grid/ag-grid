@@ -246,7 +246,7 @@ export class ScatterSeries extends CartesianSeries {
         });
     }
 
-    generateNodeData(): ScatterNodeDatum[] {
+    createNodeData(): ScatterNodeDatum[] {
         const { data, xAxis, yAxis } = this;
 
         if (!data || !xAxis || !yAxis) {
@@ -301,7 +301,7 @@ export class ScatterSeries extends CartesianSeries {
             return;
         }
 
-        this.generateNodeData();
+        this.createNodeData();
 
         this.updateMarkerSelection(this.nodeData);
         this.updateLabelSelection(this.nodeData);

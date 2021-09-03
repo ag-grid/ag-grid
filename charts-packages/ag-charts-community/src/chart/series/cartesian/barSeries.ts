@@ -516,7 +516,7 @@ export class BarSeries extends CartesianSeries {
         this.labelSelection.each(fn);
     }
 
-    generateNodeData(): BarNodeDatum[] {
+    createNodeData(): BarNodeDatum[] {
         const xAxis = this.getCategoryAxis();
         const yAxis = this.getValueAxis();
 
@@ -572,7 +572,7 @@ export class BarSeries extends CartesianSeries {
                     const yKey = yKeys[stackIndex][levelIndex];
                     const barX = grouped ? x + groupScale.convert(String(stackIndex)) : x;
 
-                    // Bars outside of visible range are not rendered, so we generate node data
+                    // Bars outside of visible range are not rendered, so we create node data
                     // only for the visible subset of user data.
                     if (!xAxis.inRange(barX, barWidth)) {
                         continue;
@@ -673,7 +673,7 @@ export class BarSeries extends CartesianSeries {
             return;
         }
 
-        const nodeData = this.generateNodeData();
+        const nodeData = this.createNodeData();
 
         this.updateRectSelection(nodeData);
         this.updateRectNodes();

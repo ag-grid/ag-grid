@@ -138,7 +138,7 @@ export class CartesianChart extends Chart {
             }
         });
 
-        this.generateNodeData();
+        this.createNodeData();
 
         this.seriesRect = shrinkRect;
         this.series.forEach(series => {

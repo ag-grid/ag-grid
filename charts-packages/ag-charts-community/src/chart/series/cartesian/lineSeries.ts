@@ -237,7 +237,7 @@ export class LineSeries extends CartesianSeries {
             return;
         }
 
-        this.updateLinePath(); // this will generate node data too
+        this.updateLinePath(); // this will create node data too
         this.updateNodeSelection();
         this.updateNodes();
     }
