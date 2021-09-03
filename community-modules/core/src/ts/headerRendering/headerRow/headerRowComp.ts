@@ -19,24 +19,26 @@ export enum HeaderRowType {
 }
 export class HeaderRowComp extends Component {
 
-    private readonly pinned: string | null;
-    private readonly type: HeaderRowType;
-
     private rowIndex: number;
+    private ctrl: HeaderRowCtrl;
 
     private headerComps: { [key: string]: AbstractHeaderWrapper; } = {};
 
-    constructor(headerRowIndex: number, type: HeaderRowType, pinned: string | null) {
+    constructor(ctrl: HeaderRowCtrl) {
         super(/* html */`<div class="ag-header-row" role="row"></div>`);
-        this.setRowIndex(headerRowIndex);
-        this.type = type;
-        this.pinned = pinned;
+        this.setRowIndex(ctrl.getDepth());
+        this.ctrl = ctrl;
 
-        switch (type) {
+        switch (ctrl.getType()) {
             case HeaderRowType.COLUMN: this.addCssClass(`ag-header-row-column`); break;
             case HeaderRowType.COLUMN_GROUP: this.addCssClass(`ag-header-row-column-group`); break;
             case HeaderRowType.FLOATING_FILTER: this.addCssClass(`ag-header-row-floating-filter`); break;
         }
+    }
+
+    // TEMP - can possibly remove when we are properly managing create / destroy of ctrl's
+    public getCtrl(): HeaderRowCtrl {
+        return this.ctrl;
     }
 
     //noinspection JSUnusedLocalSymbols
@@ -51,12 +53,11 @@ export class HeaderRowComp extends Component {
             setWidth: width => this.getGui().style.width = width
         };
 
-        const ctrl = this.createManagedBean(new HeaderRowCtrl());
-        ctrl.setComp(compProxy, this.rowIndex, this.pinned, this.type);
+        this.ctrl.setComp(compProxy);
     }
 
     public getHeaderWrapperComp(column: Column): HeaderWrapperComp | undefined {
-        if (this.type != HeaderRowType.COLUMN) { return; }
+        if (this.ctrl.getType() != HeaderRowType.COLUMN) { return; }
 
         const headerCompsList = Object.keys(this.headerComps).map( c => this.headerComps[c]) as (HeaderWrapperComp[]);
         const res = headerCompsList.find( wrapper => wrapper.getColumn() == column);
@@ -74,7 +75,7 @@ export class HeaderRowComp extends Component {
     }
 
     public getType(): HeaderRowType {
-        return this.type;
+        return this.ctrl.getType();
     }
 
     @PreDestroy
@@ -124,7 +125,7 @@ export class HeaderRowComp extends Component {
 
         let result: AbstractHeaderWrapper;
 
-        switch (this.type) {
+        switch (this.ctrl.getType()) {
             case HeaderRowType.COLUMN_GROUP:
                 result = new HeaderGroupWrapperComp(headerCtrl);
                 break;

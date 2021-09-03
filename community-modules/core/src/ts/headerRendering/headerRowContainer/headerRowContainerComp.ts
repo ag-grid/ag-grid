@@ -12,6 +12,7 @@ import { RefSelector } from '../../widgets/componentAnnotations';
 import { BodyDropTarget } from '../bodyDropTarget';
 import { HeaderWrapperComp } from '../columnHeader/headerWrapperComp';
 import { HeaderRowComp, HeaderRowType } from '../headerRow/headerRowComp';
+import { HeaderRowCtrl } from '../headerRow/headerRowCtrl';
 import { HeaderRowContainerCtrl, IHeaderRowContainerComp } from './headerRowContainerCtrl';
 
 export class HeaderRowContainer extends Component {
@@ -140,6 +141,7 @@ export class HeaderRowContainer extends Component {
 
     private destroyRowComp(rowComp?: HeaderRowComp): void {
         if (rowComp) {
+            this.destroyBean(rowComp.getCtrl());
             this.destroyBean(rowComp);
             this.getContainer().removeChild(rowComp.getGui());
         }
@@ -155,8 +157,8 @@ export class HeaderRowContainer extends Component {
             this.groupsRowComps = [];
 
             for (let i = 0; i < groupRowCount; i++) {
-                const rowComp = this.createBean(
-                    new HeaderRowComp(sequence.next(), HeaderRowType.COLUMN_GROUP, this.pinned));
+                const ctrl = this.createBean(new HeaderRowCtrl(sequence.next(), this.pinned, HeaderRowType.COLUMN_GROUP));
+                const rowComp = this.createBean(new HeaderRowComp(ctrl));
                 this.groupsRowComps.push(rowComp);
             }
         };
@@ -173,8 +175,8 @@ export class HeaderRowContainer extends Component {
             }
 
             if (!this.columnsRowComp) {
-                this.columnsRowComp = this.createBean(
-                    new HeaderRowComp(rowIndex, HeaderRowType.COLUMN, this.pinned));
+                const ctrl = this.createBean(new HeaderRowCtrl(rowIndex, this.pinned, HeaderRowType.COLUMN));
+                this.columnsRowComp = this.createBean(new HeaderRowComp(ctrl));
             }
         };
 
@@ -202,8 +204,8 @@ export class HeaderRowContainer extends Component {
             }
 
             if (!this.filtersRowComp) {
-                this.filtersRowComp = this.createBean(
-                    new HeaderRowComp(rowIndex, HeaderRowType.FLOATING_FILTER, this.pinned));
+                const ctrl = this.createBean(new HeaderRowCtrl(rowIndex, this.pinned, HeaderRowType.FLOATING_FILTER));
+                this.filtersRowComp = this.createBean(new HeaderRowComp(ctrl));
             }
         };
 

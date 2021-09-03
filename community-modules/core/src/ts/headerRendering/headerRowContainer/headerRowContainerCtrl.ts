@@ -86,6 +86,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_SCROLLBAR_WIDTH_CHANGED, listener);
     }
 
+
     // temp - should not be in new design
     public getRowComps(): HeaderRowComp[] {
         return this.comp.getRowComps();

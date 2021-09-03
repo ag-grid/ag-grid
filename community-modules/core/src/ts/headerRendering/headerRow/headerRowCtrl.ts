@@ -26,17 +26,21 @@ export class HeaderRowCtrl extends BeanStub {
     @Autowired('focusService') private focusService: FocusService;
 
     private comp: IHeaderRowComp;
-    private depth: number;
+    private rowIndex: number;
     private pinned: string | null;
     private type: HeaderRowType;
 
     private headerCtrls: { [key: string]: HeaderCtrl } = {};
 
-    public setComp(comp: IHeaderRowComp, depth: number, pinned: string | null, type: HeaderRowType): void {
-        this.comp = comp;
-        this.depth = depth;
+    public constructor(rowIndex: number, pinned: string | null, type: HeaderRowType) {
+        super();
+        this.rowIndex = rowIndex;
         this.pinned = pinned;
         this.type = type;
+    }
+
+    public setComp(comp: IHeaderRowComp): void {
+        this.comp = comp;
 
         this.onRowHeightChanged();
         this.onVirtualColumnsChanged();
@@ -71,6 +75,10 @@ export class HeaderRowCtrl extends BeanStub {
     private onDisplayedColumnsChanged(): void {
         this.onVirtualColumnsChanged();
         this.setWidth();
+    }
+
+    public getType(): HeaderRowType {
+        return this.type;
     }
 
     private onColumnResized(): void {
@@ -130,10 +138,10 @@ export class HeaderRowCtrl extends BeanStub {
 
         let rowHeight = 0;
 
-        for (let i = 0; i < this.depth; i++) { rowHeight += sizes[i]; }
+        for (let i = 0; i < this.rowIndex; i++) { rowHeight += sizes[i]; }
 
         this.comp.setTop(rowHeight + 'px');
-        this.comp.setHeight(sizes[this.depth] + 'px');
+        this.comp.setHeight(sizes[this.rowIndex] + 'px');
     }
 
     public getPinned(): string | null {
@@ -141,7 +149,7 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     public getDepth(): number {
-        return this.depth;
+        return this.rowIndex;
     }
 
     private onVirtualColumnsChanged(): void {
@@ -223,7 +231,7 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private getActualDepth(): number {
-        return this.type == HeaderRowType.FLOATING_FILTER ? this.depth - 1 : this.depth;
+        return this.type == HeaderRowType.FLOATING_FILTER ? this.rowIndex - 1 : this.rowIndex;
     }
 
     private getColumnsInViewportNormalLayout(): ColumnGroupChild[] {
