@@ -43,84 +43,44 @@ The above two (pinning and floating) can be thought of as follows: if you have a
 
 The `rangeSelectionChanged` event tells you that the range selection has changed. The event has two properties, `started` and `finished`, which are `true` when the selection is starting or finishing. For example, if selecting a range of 10 cells in a row, the user will click the first cell and drag to the last cell. This will result in up to 11 events. The first event will have `started=true`, the last will have `finished=true`, and all the intermediary events will have both of these values as `false`.
 
-<snippet>
-gridOptions.api.addEventListener('rangeSelectionChanged', event => {
-    // this prints true for first event only
-    console.log('has changed, started = ' + event.started);
-    // this prints true for last event only
-    console.log('has changed, finished = ' + event.finished);
-});
-</snippet>
+<api-documentation source='grid-events/events.json' section='selection' names='["rangeSelectionChanged"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
 
 ## Range Selection API
 
-### api.getCellRanges()
+The following methods are available on the `GridApi` for managing range selection.
 
-Get the selected ranges using `api.getCellRanges()`. This will return back a list of cell range objects, each of which contains the details of one range. The structure of the cell range object is as follows:
+### getCellRanges()
 
-```ts
-interface CellRange {
-    startRow: RowPosition; // the start row of the range
-    endRow: RowPosition; // the end row of the range
-    columns: Column[]; // the columns in the range
-}
-
-interface RowPosition {
-    rowIndex: number;
-    rowPinned: string | undefined;
-}
-```
+Get the selected ranges using `api.getCellRanges()`. This will return back a list of cell range objects, each of which contains the details of one range. 
 
 The start is the first cell the user clicked on and the end is the cell where the user stopped dragging. Do not assume that the start cell's index is numerically before the end cell, as the user could have dragged up.
 
-### api.clearRangeSelection()
+<api-documentation source='grid-api/api.json' section='selection' names='["getCellRanges"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
 
+### clearRangeSelection()
 
-Clears the range selection.
+<api-documentation source='grid-api/api.json' section='selection' names='["clearRangeSelection"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
 
-### api.addCellRange(rangeSelection)
+### addCellRange(rangeSelection)
 
+Adds a range to the selection. This keeps any previous ranges. If you wish to only have the new range selected, then call `clearRangeSelection()` first. The method takes the params of type `CellRangeParams`.
 
-Adds a range to the selection. This keeps any previous ranges. If you wish to only have the new range selected, then call `clearRangeSelection()` first. The method takes the following params:
-
-```ts
-interface AddCellRangeParams {
-    // start row
-    rowStartIndex: number | null;
-    rowStartPinned?: string; // either 'top', 'bottom' or undefined
-
-    // end row
-    rowEndIndex: number | null;
-    rowEndPinned?: string; // either 'top', 'bottom' or undefined
-
-    // columns
-    columnStart?: string | Column;
-    columnEnd?: string | Column;
-    columns?: (string | Column)[];
-}
-```
+<api-documentation source='grid-api/api.json' section='selection' names='["addCellRange"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
 
 Ranges are normally bounded by a start and end row. However it is also possible to define a range unbounded by rows (i.e. to contain all rows). For an unbounded range, do not provide start or end row positions.
 
-
-Row positions are defined by a row index and pinned. Row indexes start at zero and increment. Pinned can be either `'top'` (row is in pinned top section), `'bottom'` (row is in pinned bottom section) or `undefined` (row is in the main body). See [Row Pinning](/row-pinning/) for information on row pinning.
+Row positions are defined by a row index and pinned. Row indexes start at zero and increment. Pinned can be either `'top'` (row is in pinned top section), `'bottom'` (row is in pinned bottom section) or `null` (row is in the main body). See [Row Pinning](/row-pinning/) for information on row pinning.
 
 Ranges are defined by a list of columns. Pass in either a) a list of columns or b) a start and end column and let the grid work out the columns in between. Passing a list of columns instead of a start and end column has the advantage that the columns do not need to be contiguous.
 
-### Callback `processCellForClipboard()`
-
-There is a grid callback `processCellForClipboard()` that allows you to format cells before going to the clipboard. This can be useful if, for example, you are pasting to Excel and you need to format dates so that Excel can understand them.
-
-The callback params has the following attributes: `value, node, column, api, columnApi, context, type`.
-
 ## Copy Range Down
 
-When you have more than one row selected in a range, pressing keys <kbd>Ctrl</kbd>+<kbd>D</kbd> will copy the range down.
+When you have more than one row selected in a range, pressing keys <kbd>Ctrl</kbd>+<kbd>D</kbd> will copy the top row values to all other rows in the selected range.
 
 ## Example: Advanced Range Selection
 
 The example below demonstrates a more complex range selection scenario. The example listens for the `rangeSelectionChanged` event and creates a sum of all the number values that are in the range (it ignores all non-number values). The `finished` flag is used to update the eager and lazy figures separately.
 
-The example also shows use of `processCellForClipboard()` and `processCellFromClipboard()` by making all the athlete names uppercase when copying into the clipboard and lowercase when copying from the clipboard.
+The example also shows use of the `processCellForClipboard` and `processCellFromClipboard` [callbacks](/clipboard/#processing-clipboard-data) by making all the athlete names uppercase when copying into the clipboard and lowercase when copying from the clipboard.
 
 <grid-example title='Advanced Range Selection' name='range-selection-advanced' type='generated' options='{ "enterprise": true, "exampleHeight": 700, "modules": ["clientside", "range", "clipboard"] }'></grid-example>
