@@ -23,6 +23,8 @@ interface SeriesRect {
     width: number;
     height: number;
 }
+
+type Container = HTMLElement | undefined | null;
 export class SparklineAxis extends Observable {
     @reactive('update') stroke: string = 'rgb(204, 214, 235)';
     @reactive('update') strokeWidth: number = 1;
@@ -48,7 +50,7 @@ export abstract class Sparkline extends Observable {
         height: 0
     };
 
-    private _container: HTMLElement | undefined | null = undefined;
+    private _container: Container = undefined;
     set container(value: HTMLElement | undefined | null) {
         if (this._container !== value) {
             const { parentNode } = this.canvasElement;
@@ -64,7 +66,7 @@ export abstract class Sparkline extends Observable {
             this._container = value;
         }
     }
-    get container(): HTMLElement | undefined | null {
+    get container(): Container {
         return this._container;
     }
 
@@ -150,13 +152,39 @@ export abstract class Sparkline extends Observable {
     protected yData: (number | undefined)[] = [];
     protected xData: (number | undefined)[] = [];
 
+    /**
+     * Update x/y scales based on processed data.
+     * Generate node data from processed data.
+     * Produce data joins.
+     * Update selection's nodes using node data.
+     */
     protected update() { }
+
+    // Using processed data, generate data that backs visible nodes.
     protected generateNodeData(): { nodeData: SeriesNodeDatum[], areaData: SeriesNodeDatum[] } | SeriesNodeDatum[] | undefined { return []; }
+
+    // Returns persisted node data associated with the sparkline's data.
     protected getNodeData(): readonly SeriesNodeDatum[] { return []; }
+
+    /**
+     * Each sparkline is expected to have its own logic to efficiently update its nodes
+     * on hightlight changes.
+     * @param closestDatum
+     */
     protected highlightDatum(closestDatum: SeriesNodeDatum) { }
+
+    /**
+     * Each sparkline is expected to have its own logic to efficiently update its nodes
+     * on hightlight changes.
+     */
     protected dehighlightDatum() { }
+
     abstract getTooltipHtml(datum: SeriesNodeDatum): string | undefined;
 
+    /**
+     * Highlight closest datum and display tooltip if enabled.
+     * @param event
+     */
     private onMouseMove(event: MouseEvent) {
         const closestDatum: SeriesNodeDatum | undefined = this.pickClosestSeriesNodeDatum(event.offsetX, event.offsetY);
 
@@ -171,17 +199,22 @@ export abstract class Sparkline extends Observable {
         }
     }
 
+    /**
+     * Dehighlight all nodes and remove tooltip.
+     * @param event
+     */
     private onMouseOut(event: MouseEvent) {
         this.dehighlightDatum();
         this.tooltip.toggle(false);
     }
 
+    // Fetch required values from the data object and process them.
     private processData() {
         const { data, yData, xData } = this;
 
         if (!data) {
             return;
-        };
+        }
 
         yData.length = 0;
         xData.length = 0;
@@ -196,11 +229,20 @@ export abstract class Sparkline extends Observable {
         this.update();
     }
 
+    /**
+    * Return the given value if it is a number, otherwise return `undefined`.
+    * @param y
+    */
     private getYDatum(y: any): number | undefined {
         const noDatum = !isNumber(y);
         return noDatum ? undefined : y;
     }
 
+    /**
+    * Return the minimum and maximum value in the given iterable using natural order.
+    * If the iterable contains no comparable values, return `undefined`.
+    * @param values
+    */
     protected findMinAndMax(values: (number | undefined)[]): [number, number] | undefined {
         const n = values.length;
         let value;
@@ -229,10 +271,20 @@ export abstract class Sparkline extends Observable {
     }
 
     private layoutId: number = 0;
+
+    /**
+     * Only `true` while we are waiting for the layout to start.
+     * This will be `false` if the layout has already started and is ongoing.
+     */
     get layoutScheduled(): boolean {
         return !!this.layoutId;
     }
 
+    /**
+     * Execute update method on the next available screen repaint to make changes to the canvas.
+     * If we are waiting for a layout to start and a new layout is requested,
+     * cancel the previous layout using the non 0 integer (this.layoutId) returned from requestAnimationFrame.
+     */
     protected scheduleLayout() {
         if (this.layoutId) {
             cancelAnimationFrame(this.layoutId);
@@ -257,6 +309,11 @@ export abstract class Sparkline extends Observable {
         })
     }
 
+    /**
+     * Return the closest data point to x/y canvas coordinates.
+     * @param x
+     * @param y
+     */
     private pickClosestSeriesNodeDatum(x: number, y: number): SeriesNodeDatum | undefined {
         function getDistance(p1: Point, p2: Point): number {
             return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
@@ -280,6 +337,10 @@ export abstract class Sparkline extends Observable {
         return closestDatum;
     }
 
+    /**
+     * calculate x/y coordinates for tooltip based on coordinates of highlighted datum, position of canvas and page offset.
+     * @param datum
+     */
     private handleTooltip(datum: SeriesNodeDatum): void {
         const { seriesDatum } = datum;
         const { canvasElement } = this;
@@ -300,7 +361,7 @@ export abstract class Sparkline extends Observable {
         }
     }
 
-    protected formatDatum(datum: any) : string {
+    protected formatDatum(datum: any): string {
         return datum.toFixed(1);
     }
 
@@ -317,6 +378,9 @@ export abstract class Sparkline extends Observable {
         chartElement.removeEventListener('mouseout', this._onMouseOut);
     }
 
+    /**
+     * Cleanup and remove canvas element from the DOM.
+     */
     destroy() {
         this.tooltip.destroy();
         // remove tooltip instance
@@ -324,10 +388,14 @@ export abstract class Sparkline extends Observable {
         // remove document from documents list
         Sparkline.tooltipDocuments = Sparkline.tooltipDocuments.filter(d => d !== document);
         this.scene.container = undefined;
+        // remove canvas element from the DOM
         this.container = undefined;
         this.cleanupDomEventListerners(this.scene.canvas.element);
     }
 
+    /**
+     * @returns this.scene.canvas.element
+     */
     public getCanvasElement(): HTMLCanvasElement {
         return this.canvasElement;
     }

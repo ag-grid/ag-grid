@@ -25,47 +25,66 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
     }
 
     public init(params: any): void {
-        let firstTimeIn = true;
-        const updateSparklineFunc = () => {
-            const { clientWidth, clientHeight } = this.getGui();
-            if (clientWidth === 0 || clientHeight === 0) {
-                return;
-            }
+        const { clientWidth, clientHeight } = this.getGui();
 
-            if (firstTimeIn) {
-                const options = {
-                    data: params.value,
-                    width: clientWidth,
-                    height: clientHeight,
-                    ...params.sparklineOptions
-                }
+        const options = {
+            data: params.value,
+            width: clientWidth,
+            height: clientHeight,
+            ...params.sparklineOptions
+        }
 
-                // create new instance of sparkline
-                this.sparkline = AgSparkline.create(options);
+        // create new instance of sparkline
+        this.sparkline = AgSparkline.create(options);
 
-                // append sparkline canvas element to this.eSparkline;
-                this.sparkline.container = this.eSparkline;
+        // append sparkline canvas element to this.eSparkline;
+        this.sparkline.container = this.eSparkline;
 
-                firstTimeIn = false;
-            } else {
+        // resize sparkline when cell size changes
+        // TODO: use update for this?
+        const resizeSparkline = () => {
+            if (this.sparkline) {
+                const { clientWidth, clientHeight } = this.getGui();
                 this.sparkline.width = clientWidth;
                 this.sparkline.height = clientHeight;
             }
         }
 
-        const unsubscribeFromResize = this.resizeObserverService.observeResize(this.getGui(), updateSparklineFunc);
+        const unsubscribeFromResize = this.resizeObserverService.observeResize(this.getGui(), resizeSparkline);
         this.addDestroyFunc(() => unsubscribeFromResize());
     }
 
     public refresh(params: ISparklineCellRendererParams): boolean {
-        this.sparkline.data = params.value;
+        if (this.sparkline) {
+            const { clientWidth, clientHeight } = this.getGui();
+
+            const options = {
+                data: params.value,
+                width: clientWidth,
+                height: clientHeight,
+                ...params.sparklineOptions
+            }
+
+            // AgSparkline update method returns a new instance of the sparkline if the type has changed, otherwise its return type is undefined
+            const newSparkline = AgSparkline.update(this.sparkline, options);
+
+            if (newSparkline) {
+                 // remove old sparkline canvas element from parentNode: this.eSparkline
+                 this.sparkline.destroy();
+
+                 // save new instance of sparkline
+                 this.sparkline = newSparkline;
+
+                 // append new sparkline canvas element to this.eSparkline;
+                 this.sparkline.container = this.eSparkline;
+            }
+        }
+
         return true;
     }
 
     public destroy() {
-        if (this.sparkline) {
-            this.sparkline.destroy();
-        }
+        this.sparkline.destroy();
         super.destroy();
     }
 }
