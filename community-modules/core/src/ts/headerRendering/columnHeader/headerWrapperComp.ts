@@ -28,7 +28,7 @@ import { addCssClass, addOrRemoveCssClass, removeCssClass, setDisplayed } from "
 import { KeyCode } from '../../constants/keyCode';
 import { ITooltipParams } from "../../rendering/tooltipComponent";
 import { ManagedFocusFeature } from "../../widgets/managedFocusFeature";
-import { HeaderCtrl } from "./headerCtrl";
+import { HeaderWrapperCtrl, IHeaderWrapperComp } from "./headerWrapperCtrl";
 
 export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
@@ -74,10 +74,13 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     private colDefHeaderComponent?: string | { new(): any; };
     private colDefHeaderComponentFramework?: any;
 
-    constructor(ctrl: HeaderCtrl) {
+    private ctrl: HeaderWrapperCtrl;
+
+    constructor(ctrl: HeaderWrapperCtrl) {
         super(HeaderWrapperComp.TEMPLATE);
-        this.column = ctrl.getColumnGroupOrChild() as Column;
+        this.column = ctrl.getColumnGroupChild() as Column;
         this.pinned = ctrl.getPinned();
+        this.ctrl = ctrl;
     }
 
     @PostConstruct
@@ -124,6 +127,12 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
 
         this.appendHeaderComp();
+
+        const compProxy: IHeaderWrapperComp = {
+            focus: ()=> this.getFocusableElement().focus()
+        };
+
+        this.ctrl.setComp(compProxy);
     }
 
     private onColumnRowGroupChanged(): void {

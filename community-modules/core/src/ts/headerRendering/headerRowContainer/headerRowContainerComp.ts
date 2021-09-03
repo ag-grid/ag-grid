@@ -1,17 +1,11 @@
-import { ColumnModel } from '../../columns/columnModel';
 import { Constants } from '../../constants/constants';
-import { Autowired, PostConstruct, PreDestroy } from '../../context/context';
-import { Column } from '../../entities/column';
-import { Events } from '../../events';
-import { PinnedWidthService } from '../../gridBodyComp/pinnedWidthService';
-import { ScrollVisibleService } from '../../gridBodyComp/scrollVisibleService';
-import { NumberSequence } from "../../utils";
-import { ensureDomOrder, setFixedWidth } from '../../utils/dom';
+import { PostConstruct, PreDestroy } from '../../context/context';
+import { ensureDomOrder } from '../../utils/dom';
+import { getAllValuesInObject } from '../../utils/object';
 import { Component } from '../../widgets/component';
 import { RefSelector } from '../../widgets/componentAnnotations';
 import { BodyDropTarget } from '../bodyDropTarget';
-import { HeaderWrapperComp } from '../columnHeader/headerWrapperComp';
-import { HeaderRowComp, HeaderRowType } from '../headerRow/headerRowComp';
+import { HeaderRowComp } from '../headerRow/headerRowComp';
 import { HeaderRowCtrl } from '../headerRow/headerRowCtrl';
 import { HeaderRowContainerCtrl, IHeaderRowContainerComp } from './headerRowContainerCtrl';
 
@@ -26,27 +20,16 @@ export class HeaderRowContainer extends Component {
             <div class="ag-header-container" ref="eContainer" role="rowgroup"></div>
         </div>`;
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
-    @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
-
     @RefSelector('eContainer') private eContainer: HTMLElement;
 
     private pinned: string | null;
 
-    private filtersRowComp: HeaderRowComp | undefined;
-    private columnsRowComp: HeaderRowComp | undefined;
-    private groupsRowComps: HeaderRowComp[] = [];
+    private rowComps: {[ctrlId: string]: HeaderRowComp} = {};
+    private rowCompsList: HeaderRowComp[] = [];
 
     constructor(pinned: string | null) {
         super();
         this.pinned = pinned;
-    }
-
-    public getHeaderWrapperComp(column: Column): HeaderWrapperComp | undefined {
-        if (this.columnsRowComp) {
-            return this.columnsRowComp.getHeaderWrapperComp(column);
-        }
     }
 
     @PostConstruct
@@ -55,12 +38,7 @@ export class HeaderRowContainer extends Component {
 
         // if value changes, then if not pivoting, we at least need to change the label eg from sum() to avg(),
         // if pivoting, then the columns have changed
-        this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
         this.setupDragAndDrop();
-
-        if (this.columnModel.isReady()) {
-            this.refresh();
-        }
 
         const compProxy: IHeaderRowContainerComp = {
             setCenterWidth: width => this.eContainer.style.width = width,
@@ -72,12 +50,10 @@ export class HeaderRowContainer extends Component {
                 container.style.minWidth = width;
             },
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
-
+            setCtrls: ctrls => this.setCtrls(ctrls),
 
             // temp pass through
-            getRowComps: ()=> this.getRowComps(),
-            refresh: ()=> this.refresh(),
-            getHeaderWrapperComp: column => this.getHeaderWrapperComp(column)
+            getRowComps: ()=> this.getRowComps()
         };
 
         const ctrl = this.createManagedBean(new HeaderRowContainerCtrl(this.pinned));
@@ -99,23 +75,7 @@ export class HeaderRowContainer extends Component {
     }
 
     public getRowComps(): HeaderRowComp[] {
-        let res: HeaderRowComp[] = [];
-        if (this.groupsRowComps) {
-            res = res.concat(this.groupsRowComps);
-        }
-        if (this.columnsRowComp) {
-            res.push(this.columnsRowComp);
-        }
-        if (this.filtersRowComp) {
-            res.push(this.filtersRowComp);
-        }
-        return res;
-    }
-
-    // grid cols have changed - this also means the number of rows in the header can have
-    // changed. so we remove all the old rows and insert new ones for a complete refresh
-    private onGridColumnsChanged() {
-        this.refresh(true);
+        return this.rowCompsList;
     }
 
     private setupDragAndDrop(): void {
@@ -125,101 +85,27 @@ export class HeaderRowContainer extends Component {
     }
 
     @PreDestroy
-    private destroyRowComps(keepColumns = false): void {
-
-        this.groupsRowComps.forEach(this.destroyRowComp.bind(this));
-        this.groupsRowComps = [];
-
-        this.destroyRowComp(this.filtersRowComp);
-        this.filtersRowComp = undefined;
-
-        if (!keepColumns) {
-            this.destroyRowComp(this.columnsRowComp);
-            this.columnsRowComp = undefined;
-        }
+    private destroyRowComps(): void {
+        this.setCtrls([]);
     }
 
-    private destroyRowComp(rowComp?: HeaderRowComp): void {
-        if (rowComp) {
-            this.destroyBean(rowComp.getCtrl());
-            this.destroyBean(rowComp);
-            this.getContainer().removeChild(rowComp.getGui());
-        }
+    private destroyRowComp(rowComp: HeaderRowComp): void {
+        this.destroyBean(rowComp);
+        this.getContainer().removeChild(rowComp.getGui());
     }
 
-    public refresh(keepColumns = false): void {
-        const sequence = new NumberSequence();
+    private setCtrls(ctrls: HeaderRowCtrl[]): void {
 
-        const refreshColumnGroups = () => {
-            const groupRowCount = this.columnModel.getHeaderRowCount() - 1;
+        const oldRowComps = this.rowComps;
+        this.rowComps = {};
+        this.rowCompsList = [];
 
-            this.groupsRowComps.forEach(this.destroyRowComp.bind(this));
-            this.groupsRowComps = [];
-
-            for (let i = 0; i < groupRowCount; i++) {
-                const ctrl = this.createBean(new HeaderRowCtrl(sequence.next(), this.pinned, HeaderRowType.COLUMN_GROUP));
-                const rowComp = this.createBean(new HeaderRowComp(ctrl));
-                this.groupsRowComps.push(rowComp);
-            }
-        };
-
-        const refreshColumns = () => {
-            const rowIndex = sequence.next();
-
-            if (this.columnsRowComp) {
-                const rowIndexMismatch = this.columnsRowComp.getRowIndex() !== rowIndex;
-                if (!keepColumns || rowIndexMismatch) {
-                    this.destroyRowComp(this.columnsRowComp);
-                    this.columnsRowComp = undefined;
-                }
-            }
-
-            if (!this.columnsRowComp) {
-                const ctrl = this.createBean(new HeaderRowCtrl(rowIndex, this.pinned, HeaderRowType.COLUMN));
-                this.columnsRowComp = this.createBean(new HeaderRowComp(ctrl));
-            }
-        };
-
-        const refreshFilters = () => {
-
-            const includeFloatingFilter = !this.columnModel.isPivotMode() && this.columnModel.hasFloatingFilters();
-
-            const destroyPreviousComp = () => {
-                this.destroyRowComp(this.filtersRowComp);
-                this.filtersRowComp = undefined;
-            };
-
-            if (!includeFloatingFilter) {
-                destroyPreviousComp();
-                return;
-            }
-
-            const rowIndex = sequence.next();
-
-            if (this.filtersRowComp) {
-                const rowIndexMismatch = this.filtersRowComp.getRowIndex() !== rowIndex;
-                if (!keepColumns || rowIndexMismatch) {
-                    destroyPreviousComp();
-                }
-            }
-
-            if (!this.filtersRowComp) {
-                const ctrl = this.createBean(new HeaderRowCtrl(rowIndex, this.pinned, HeaderRowType.FLOATING_FILTER));
-                this.filtersRowComp = this.createBean(new HeaderRowComp(ctrl));
-            }
-        };
-
-        refreshColumnGroups();
-        refreshColumns();
-        refreshFilters();
-
-        // add in all the eGui's. if the gui is already in, don't re-add it. however we do check for order
-        // so that if use adds a row of column headers, they get added in right location (before the columns)
-        const eGuis = this.getRowComps().map(c => c.getGui());
         const eContainer = this.getContainer();
         let prevGui: HTMLElement;
 
-        eGuis.forEach( eGui => {
+        const appendEnsuringDomOrder = (rowComp: HeaderRowComp) => {
+            const eGui = rowComp.getGui();
+
             const notAlreadyIn = eGui.parentElement!=eContainer;
             if (notAlreadyIn) {
                 eContainer.appendChild(eGui);
@@ -227,7 +113,22 @@ export class HeaderRowContainer extends Component {
             if (prevGui) {
                 ensureDomOrder(eContainer, eGui, prevGui);
             }
+
             prevGui = eGui;
+        };
+
+        ctrls.forEach(ctrl => {
+            const ctrlId = ctrl.getInstanceId();
+            const existingComp =  oldRowComps[ctrlId];
+            delete oldRowComps[ctrlId];
+
+            const rowComp = existingComp ? existingComp : this.createBean(new HeaderRowComp(ctrl));
+            this.rowComps[ctrlId] = rowComp;
+            this.rowCompsList.push(rowComp);
+
+            appendEnsuringDomOrder(rowComp);
         });
+
+        getAllValuesInObject(oldRowComps).forEach(c => this.destroyRowComp(c));
     }
 }

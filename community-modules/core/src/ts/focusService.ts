@@ -24,7 +24,7 @@ import { GridCtrl } from "./gridComp/gridCtrl";
 import { NavigationService } from "./gridBodyComp/navigationService";
 import { CellCtrl } from "./rendering/cell/cellCtrl";
 import { CtrlsService } from "./ctrlsService";
-import { HeaderCtrl } from "./headerRendering/columnHeader/headerCtrl";
+import { HeaderWrapperCtrl } from "./headerRendering/columnHeader/headerWrapperCtrl";
 
 @Bean('focusService')
 export class FocusService extends BeanStub {
@@ -238,10 +238,10 @@ export class FocusService extends BeanStub {
         return this.isRowFocused(rowNode.rowIndex!, rowNode.rowPinned);
     }
 
-    public isHeaderWrapperFocused(headerCtrl: HeaderCtrl): boolean {
+    public isHeaderWrapperFocused(headerCtrl: HeaderWrapperCtrl): boolean {
         if (this.focusedHeaderPosition == null) { return false; }
 
-        const column = headerCtrl.getColumnGroupOrChild();
+        const column = headerCtrl.getColumnGroupChild();
         const headerRowIndex = headerCtrl.getRowIndex();
         const pinned = headerCtrl.getPinned();
 
@@ -311,17 +311,11 @@ export class FocusService extends BeanStub {
         this.headerNavigationService.scrollToColumn(headerPosition.column, direction);
 
         const headerRowContainerCtrl = this.ctrlsService.getHeaderRowContainerCtrl(headerPosition.column.getPinned());
-        const rowComps = headerRowContainerCtrl!.getRowComps();
-        const nextRowComp = rowComps[headerPosition.headerRowIndex];
-        const nextHeader = nextRowComp.getHeaderCompForColumn(headerPosition.column);
 
-        if (nextHeader) {
-            // this will automatically call the setFocusedHeader method above
-            nextHeader.getFocusableElement().focus();
-            return true;
-        }
+        // this will automatically call the setFocusedHeader method above
+        const focusSuccess = headerRowContainerCtrl.focusHeader(headerPosition.headerRowIndex, headerPosition.column);
 
-        return false;
+        return focusSuccess;
     }
 
     public isAnyCellFocused(): boolean {

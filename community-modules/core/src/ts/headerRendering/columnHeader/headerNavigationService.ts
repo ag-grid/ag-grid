@@ -38,13 +38,13 @@ export class HeaderNavigationService extends BeanStub {
 
     public getHeaderRowCount(): number {
         const centerHeaderContainer = this.ctrlsService.getHeaderRowContainerCtrl();
-        return centerHeaderContainer ? centerHeaderContainer.getRowComps().length : 0;
+        return centerHeaderContainer ? centerHeaderContainer.getRowCount() : 0;
     }
 
-    public getHeaderRowType(idx: number): HeaderRowType | undefined {
+    public getHeaderRowType(rowIndex: number): HeaderRowType | undefined {
         const centerHeaderContainer = this.ctrlsService.getHeaderRowContainerCtrl();
         if (centerHeaderContainer) {
-            return centerHeaderContainer.getRowComps()[idx].getType();
+            return centerHeaderContainer.getRowType(rowIndex);
         }
     }
 

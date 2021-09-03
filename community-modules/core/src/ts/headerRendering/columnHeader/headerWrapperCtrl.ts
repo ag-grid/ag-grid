@@ -4,13 +4,19 @@ import { HeaderRowCtrl } from "../headerRow/headerRowCtrl";
 
 let instanceIdSequence = 0;
 
-export class HeaderCtrl extends BeanStub {
+export interface IHeaderWrapperComp {
+    focus(): void;
+}
+
+export class HeaderWrapperCtrl extends BeanStub {
 
     private instanceId: string;
 
     private columnGroupChild: ColumnGroupChild;
 
     private parentRowCtrl: HeaderRowCtrl;
+
+    private comp: IHeaderWrapperComp;
 
     constructor(columnGroupChild: ColumnGroupChild, parentRowCtrl: HeaderRowCtrl) {
         super();
@@ -22,8 +28,19 @@ export class HeaderCtrl extends BeanStub {
         this.instanceId = columnGroupChild.getUniqueId() + '-' + instanceIdSequence++;
     }
 
+    public setComp(comp: IHeaderWrapperComp): void {
+        this.comp = comp;
+    }
+
+    public focus(): boolean {
+        if (!this.comp) { return false; }
+
+        this.comp.focus();
+        return true;
+    }
+
     public getRowIndex(): number {
-        return this.parentRowCtrl.getDepth();
+        return this.parentRowCtrl.getRowIndex();
     }
 
     public getParentRowCtrl(): HeaderRowCtrl {
@@ -38,7 +55,7 @@ export class HeaderCtrl extends BeanStub {
         return this.instanceId;
     }
 
-    public getColumnGroupOrChild(): ColumnGroupChild {
+    public getColumnGroupChild(): ColumnGroupChild {
         return this.columnGroupChild;
     }
 }

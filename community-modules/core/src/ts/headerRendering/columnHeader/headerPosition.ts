@@ -48,9 +48,9 @@ export class HeaderPositionUtils extends BeanStub {
         if (!column) { return; }
 
         const childContainer = this.ctrlsService.getHeaderRowContainerCtrl(column.getPinned());
+        const type = childContainer.getRowType(level);
 
-        const headerRowComp = childContainer!.getRowComps()[level];
-        const type = headerRowComp && headerRowComp.getType();
+        console.log(`level=${level} type = ${type}`);
 
         if (type == HeaderRowType.COLUMN_GROUP) {
             const columnGroup = this.columnModel.getColumnGroupAtLevel(column, level);
@@ -61,7 +61,8 @@ export class HeaderPositionUtils extends BeanStub {
         }
 
         return {
-            headerRowIndex: !headerRowComp ? -1 : level,
+            // if type==null, means the header level didn't exist
+            headerRowIndex: type==null ? -1 : level,
             column
         };
     }
