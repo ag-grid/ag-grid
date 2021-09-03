@@ -38,30 +38,38 @@ export interface ISelectionHandleFactory {
     createSelectionHandle(type: SelectionHandleType): ISelectionHandle;
 }
 
-export enum SelectionHandleType { FILL,  RANGE }
+export enum SelectionHandleType { FILL, RANGE }
 
 export enum CellRangeType { VALUE, DIMENSION }
 
 export interface CellRange {
     id?: string;
     type?: CellRangeType;
-/** The start row of the range */
+    /** The start row of the range */
     startRow?: RowPosition;
-/** The end row of the range */
+    /** The end row of the range */
     endRow?: RowPosition;
-/** The columns in the range */
+    /** The columns in the range */
     columns: Column[];
-/** The start column for the range */
+    /** The start column for the range */
     startColumn: Column;
 }
 
 export interface CellRangeParams {
+    /** Start row index */
     rowStartIndex: number | null;
+    /** Pinned state of start row. Either 'top', 'bottom' or null */
     rowStartPinned?: string | null;
+    /** End row index */
     rowEndIndex: number | null;
+    /** Pinned state of end row. Either 'top', 'bottom' or null */
     rowEndPinned?: string | null;
+
+    /** Starting column for range */
     columnStart?: string | Column;
+    /** End column for range */
     columnEnd?: string | Column;
+    /** Specify Columns to include instead of using `columnStart` and `columnEnd` */
     columns?: (string | Column)[];
 }
 
