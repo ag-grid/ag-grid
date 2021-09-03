@@ -1177,13 +1177,11 @@ export abstract class Chart extends Observable {
             }
         } else if (this.pointerInsideLegend) {
             this.pointerInsideLegend = false;
-            // Undim all series only if the pointer was inside legend is now leaving it.
-            this.series.forEach(series => {
-                if (series.highlightStyle.series.enabled) {
-                    series.undim();
-                    series.dehighlight();
-                }
-            });
+            // Dehighlight if the pointer was inside the legend and is now leaving it.
+            if (this.highlightedDatum) {
+                this.highlightedDatum.series.updatePending = true;
+                this.highlightedDatum = undefined;
+            }
             return;
         }
 
@@ -1192,7 +1190,12 @@ export abstract class Chart extends Observable {
             const series = find(this.series, series => series.id === id);
 
             if (series && series.highlightStyle.series.enabled) {
-                this.series.forEach(s => s === series ? s.highlight(itemId) : s.dim());
+                this.highlightedDatum = {
+                    series,
+                    itemId,
+                    seriesDatum: undefined
+                };
+                series.updatePending = true;
             }
         }
     }
