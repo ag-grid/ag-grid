@@ -189,13 +189,30 @@ export abstract class Series extends Observable {
     // Fetch required values from the `chart.data` or `series.data` objects and process them.
     abstract processData(): boolean;
 
-    // Using processed data, generate data that backs visible nodes.
-    generateNodeData(): SeriesNodeDatum[] { return []; }
+    // Using processed data, create data that backs visible nodes.
+    createNodeData(): SeriesNodeDatum[] { return []; }
 
     // Returns persisted node data associated with the rendered portion of the series' data.
     getNodeData(): readonly SeriesNodeDatum[] { return []; }
 
     getLabelData(): readonly PointLabelDatum[] { return []; }
+
+    private _nodeDataPending = true;
+    set nodeDataPending(value: boolean) {
+        if (this._nodeDataPending !== value) {
+            this._nodeDataPending = value;
+            if (value && this.chart) {
+                this.chart.updatePending = value;
+            }
+        }
+    }
+    get nodeDataPending(): boolean {
+        return this._nodeDataPending;
+    }
+
+    scheduleNodeDate() {
+        this.nodeDataPending = true;
+    }
 
     private _updatePending = false;
     set updatePending(value: boolean) {

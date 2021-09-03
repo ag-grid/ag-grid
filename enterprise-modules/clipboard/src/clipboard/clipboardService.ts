@@ -260,7 +260,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                 const newValue = this.processCell(
                     rowNode, column, currentRowData[idx], Constants.EXPORT_TYPE_DRAG_COPY, processCellFromClipboardFunc);
 
-                this.valueService.setValue(rowNode, column, newValue, Constants.SOURCE_PASTE);
+                rowNode.setDataValue(column, newValue, Constants.SOURCE_PASTE);
 
                 if (changedPath) {
                     changedPath.addParentNode(rowNode.parent, [column]);
@@ -365,7 +365,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                         const firstRowValue = this.processCell(
                             rowNode, column, firstRowValues[index], Constants.EXPORT_TYPE_DRAG_COPY, processCellFromClipboardFunc);
 
-                        this.valueService.setValue(rowNode, column, firstRowValue, Constants.SOURCE_PASTE);
+                        rowNode.setDataValue(column, firstRowValue, Constants.SOURCE_PASTE);
 
                         if (changedPath) {
                             changedPath.addParentNode(rowNode.parent, [column]);
@@ -473,7 +473,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         ) { return; }
 
         const processedValue = this.processCell(rowNode, column, value, type, this.gridOptionsWrapper.getProcessCellFromClipboardFunc());
-        this.valueService.setValue(rowNode, column, processedValue, Constants.SOURCE_PASTE);
+        rowNode.setDataValue(column, processedValue, Constants.SOURCE_PASTE);
 
         const cellId = this.cellPositionUtils.createIdFromValues(rowNode.rowIndex!, column, rowNode.rowPinned);
         cellsToFlash[cellId] = true;

@@ -5,7 +5,7 @@ export class LinearGradient extends Gradient {
 
     angle = 0;
 
-    generateGradient(ctx: CanvasRenderingContext2D, bbox: BBox): CanvasGradient | string {
+    createGradient(ctx: CanvasRenderingContext2D, bbox: BBox): CanvasGradient | string {
         const { stops } = this;
         const radians = (this.angle % 360) * Math.PI / 180;
         const cos = Math.cos(radians);

@@ -28,7 +28,7 @@ import { removeFromParent, addCssClass, removeCssClass, addOrRemoveCssClass } fr
 import { KeyCode } from '../../constants/keyCode';
 import { ITooltipParams } from "../../rendering/tooltipComponent";
 import { ManagedFocusFeature } from "../../widgets/managedFocusFeature";
-import { HeaderCtrl } from "../columnHeader/headerCtrl";
+import { HeaderWrapperCtrl, IHeaderWrapperComp } from "../columnHeader/headerWrapperCtrl";
 
 export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
 
@@ -62,10 +62,13 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
     // the children can change, we keep destroy functions related to listening to the children here
     private removeChildListenersFuncs: Function[] = [];
 
-    constructor(ctrl: HeaderCtrl) {
+    private ctrl: HeaderWrapperCtrl;
+
+    constructor(ctrl: HeaderWrapperCtrl) {
         super(HeaderGroupWrapperComp.TEMPLATE);
-        this.column = ctrl.getColumnGroupOrChild() as ColumnGroup;
+        this.column = ctrl.getColumnGroupChild() as ColumnGroup;
         this.pinned = ctrl.getPinned();
+        this.ctrl = ctrl;
     }
 
     @PostConstruct
@@ -95,6 +98,12 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
                 onFocusIn: this.onFocusIn.bind(this)
             }
         ));
+
+        const compProxy: IHeaderWrapperComp = {
+            focus: ()=> this.getFocusableElement().focus()
+        };
+
+        this.ctrl.setComp(compProxy);
     }
 
     protected onFocusIn(e: FocusEvent) {

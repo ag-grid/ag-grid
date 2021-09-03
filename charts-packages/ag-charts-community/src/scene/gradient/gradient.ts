@@ -9,6 +9,6 @@ export abstract class Gradient {
 
     stops: GradientColorStop[] = [];
 
-    abstract generateGradient(ctx: CanvasRenderingContext2D, bbox: BBox): CanvasGradient | string;
+    abstract createGradient(ctx: CanvasRenderingContext2D, bbox: BBox): CanvasGradient | string;
 
 }

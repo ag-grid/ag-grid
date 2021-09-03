@@ -264,7 +264,7 @@ export class FillHandle extends AbstractSelectionHandle {
 
             columns.forEach((col: Column) => {
                 if (col.isCellEditable(rowNode)) {
-                    this.valueService.setValue(rowNode, col, null);
+                    rowNode.setDataValue(col, null);
                 }
             });
 

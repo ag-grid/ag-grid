@@ -223,7 +223,7 @@ export class Rect extends Path {
 
         if (this.fill) {
             if (this.gradientInstance) {
-                ctx.fillStyle = this.gradientInstance.generateGradient(ctx, this.computeBBox());
+                ctx.fillStyle = this.gradientInstance.createGradient(ctx, this.computeBBox());
             } else {
                 ctx.fillStyle = this.fill;
             }

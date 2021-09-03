@@ -1,26 +1,27 @@
+import { ColumnModel } from "../../columns/columnModel";
+import { Constants } from "../../constants/constants";
 import { BeanStub } from "../../context/beanStub";
 import { Autowired } from "../../context/context";
 import { CtrlsService } from "../../ctrlsService";
 import { Column } from "../../entities/column";
-import { CenterWidthFeature } from "../../gridBodyComp/centerWidthFeature";
-import { HeaderWrapperComp } from "./../columnHeader/headerWrapperComp";
-import { HeaderRowComp } from "../headerRow/headerRowComp";
-import { Constants } from "../../constants/constants";
-import { ScrollVisibleService } from "../../gridBodyComp/scrollVisibleService";
-import { PinnedWidthService } from "../../gridBodyComp/pinnedWidthService";
+import { ColumnGroupChild } from "../../entities/columnGroupChild";
 import { Events } from "../../eventKeys";
-import { setFixedWidth } from "../../utils/dom";
+import { CenterWidthFeature } from "../../gridBodyComp/centerWidthFeature";
+import { PinnedWidthService } from "../../gridBodyComp/pinnedWidthService";
+import { ScrollVisibleService } from "../../gridBodyComp/scrollVisibleService";
+import { NumberSequence } from "../../utils";
+import { HeaderRowComp, HeaderRowType } from "../headerRow/headerRowComp";
+import { HeaderRowCtrl } from "../headerRow/headerRowCtrl";
 
 export interface IHeaderRowContainerComp {
     setCenterWidth(width: string): void;
     setContainerTransform(transform: string): void;
     setContainerWidth(width: string): void;
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
+    setCtrls(ctrls: HeaderRowCtrl[]): void;
 
     // remove these, the comp should not be doing
     getRowComps(): HeaderRowComp[];
-    refresh(): void;
-    getHeaderWrapperComp(column: Column): HeaderWrapperComp | undefined;
 }
 
 export class HeaderRowContainerCtrl extends BeanStub {
@@ -28,9 +29,14 @@ export class HeaderRowContainerCtrl extends BeanStub {
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
+    @Autowired('columnModel') private columnModel: ColumnModel;
 
     private pinned: string | null;
     private comp: IHeaderRowContainerComp;
+
+    private filtersRowCtrl: HeaderRowCtrl | undefined;
+    private columnsRowCtrl: HeaderRowCtrl;
+    private groupsRowCtrls: HeaderRowCtrl[] = [];
 
     constructor(pinned: string | null) {
         super();
@@ -43,7 +49,86 @@ export class HeaderRowContainerCtrl extends BeanStub {
         this.setupCenterWidth();
         this.setupPinnedWidth();
 
+        this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
+
         this.ctrlsService.registerHeaderContainer(this, this.pinned);
+
+        if (this.columnModel.isReady()) {
+            this.refresh();
+        }
+    }
+
+    public refresh(keepColumns = false): void {
+        const sequence = new NumberSequence();
+
+        const refreshColumnGroups = () => {
+            const groupRowCount = this.columnModel.getHeaderRowCount() - 1;
+
+            this.groupsRowCtrls = this.destroyBeans(this.groupsRowCtrls);
+
+            for (let i = 0; i < groupRowCount; i++) {
+                const ctrl = this.createBean(new HeaderRowCtrl(sequence.next(), this.pinned, HeaderRowType.COLUMN_GROUP));
+                this.groupsRowCtrls.push(ctrl);
+            }
+        };
+
+        const refreshColumns = () => {
+            const rowIndex = sequence.next();
+            const needNewInstance = this.columnsRowCtrl==null || !keepColumns || this.columnsRowCtrl.getRowIndex() !== rowIndex;
+
+            if (needNewInstance) {
+                this.destroyBean(this.columnsRowCtrl);
+                this.columnsRowCtrl = this.createBean(new HeaderRowCtrl(rowIndex, this.pinned, HeaderRowType.COLUMN));
+            }
+        };
+
+        const refreshFilters = () => {
+
+            const includeFloatingFilter = !this.columnModel.isPivotMode() && this.columnModel.hasFloatingFilters();
+
+            const destroyPreviousComp = () => {
+                this.filtersRowCtrl = this.destroyBean(this.filtersRowCtrl);
+            };
+
+            if (!includeFloatingFilter) {
+                destroyPreviousComp();
+                return;
+            }
+
+            const rowIndex = sequence.next();
+
+            if (this.filtersRowCtrl) {
+                const rowIndexMismatch = this.filtersRowCtrl.getRowIndex() !== rowIndex;
+                if (!keepColumns || rowIndexMismatch) {
+                    destroyPreviousComp();
+                }
+            }
+
+            if (!this.filtersRowCtrl) {
+                this.filtersRowCtrl = this.createBean(new HeaderRowCtrl(rowIndex, this.pinned, HeaderRowType.FLOATING_FILTER));
+            }
+        };
+
+        refreshColumnGroups();
+        refreshColumns();
+        refreshFilters();
+
+        const allCtrls = this.getAllCtrls();
+        this.comp.setCtrls(allCtrls);
+    }
+
+    private getAllCtrls(): HeaderRowCtrl[] {
+        const res = [...this.groupsRowCtrls, this.columnsRowCtrl];
+        if (this.filtersRowCtrl) {
+            res.push(this.filtersRowCtrl!);
+        }
+        return res;
+    }
+
+    // grid cols have changed - this also means the number of rows in the header can have
+    // changed. so we remove all the old rows and insert new ones for a complete refresh
+    private onGridColumnsChanged() {
+        this.refresh(true);
     }
 
     private setupCenterWidth(): void {
@@ -86,19 +171,27 @@ export class HeaderRowContainerCtrl extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_SCROLLBAR_WIDTH_CHANGED, listener);
     }
 
-
-    // temp - should not be in new design
-    public getRowComps(): HeaderRowComp[] {
-        return this.comp.getRowComps();
+    public getHtmlElementForColumnHeader(column: Column): HTMLElement | undefined {
+        if (this.columnsRowCtrl) {
+            return this.columnsRowCtrl.getHtmlElementForColumnHeader(column);
+        }
     }
 
-    // temp - should not be in new design
-    public getHeaderWrapperComp(column: Column): HeaderWrapperComp | undefined {
-        return this.comp.getHeaderWrapperComp(column);
+    public getRowType(rowIndex: number): HeaderRowType | undefined {
+        const allCtrls = this.getAllCtrls();
+        const ctrl = allCtrls[rowIndex];
+        return ctrl ? ctrl.getType() : undefined;
     }
 
-    // temp - should not be in new design
-    public refresh(): void {
-        this.comp.refresh();
+    public focusHeader(rowIndex: number, column: ColumnGroupChild): boolean {
+        const allCtrls = this.getAllCtrls();
+        const ctrl = allCtrls[rowIndex];
+        if (!ctrl) { return false; }
+
+        return ctrl.focusHeader(column);
+    }
+
+    public getRowCount(): number {
+        return this.getAllCtrls().length;
     }
 }

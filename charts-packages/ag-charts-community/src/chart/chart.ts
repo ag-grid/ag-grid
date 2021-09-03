@@ -758,10 +758,10 @@ export abstract class Chart extends Observable {
     }
 
     private nodeData: Map<Series, readonly SeriesNodeDatum[]> = new Map();
-    generateNodeData(): void {
+    createNodeData(): void {
         this.nodeData.clear();
         this.series.forEach(s => {
-            const data = s.visible ? s.generateNodeData() : [];
+            const data = s.visible ? s.createNodeData() : [];
             this.nodeData.set(s, data);
         });
     }
@@ -1225,11 +1225,11 @@ export abstract class Chart extends Observable {
     highlightDatum(datum: SeriesNodeDatum, node?: Shape): void {
         const { style } = this.scene.canvas.element;
         this.highlightedDatum = datum;
-        this.series.forEach(s => {
+        this.series.forEach(series => {
             if (node) {
-                style.cursor = s.cursor;
+                style.cursor = series.cursor;
             }
-            s.updatePending = true;
+            series.updatePending = true;
         });
     }
 
@@ -1237,7 +1237,7 @@ export abstract class Chart extends Observable {
         if (this.highlightedDatum) {
             this.scene.canvas.element.style.cursor = 'default';
             this.highlightedDatum = undefined;
-            this.series.forEach(s => s.updatePending = true );
+            this.series.forEach(s => s.updatePending = true);
         }
     }
 }

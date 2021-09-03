@@ -1,21 +1,21 @@
-import { ColumnModel } from '../../columns/columnModel';
-import { Autowired, PostConstruct, PreDestroy } from '../../context/context';
+import { PostConstruct, PreDestroy } from '../../context/context';
 import { Column } from '../../entities/column';
 import { ColumnGroupChild } from '../../entities/columnGroupChild';
 import { FloatingFilterWrapper } from '../../filter/floating/floatingFilterWrapper';
-import { FocusService } from '../../focusService';
 import { setAriaRowIndex } from '../../utils/aria';
 import { setDomChildOrder } from '../../utils/dom';
 import { getAllValuesInObject, iterateObject } from '../../utils/object';
 import { Component } from '../../widgets/component';
 import { HeaderGroupWrapperComp } from '../columnGroupHeader/headerGroupWrapperComp';
 import { AbstractHeaderWrapper } from '../columnHeader/abstractHeaderWrapper';
-import { HeaderCtrl } from '../columnHeader/headerCtrl';
 import { HeaderWrapperComp } from '../columnHeader/headerWrapperComp';
+import { HeaderWrapperCtrl } from '../columnHeader/headerWrapperCtrl';
 import { HeaderRowCtrl, IHeaderRowComp } from './headerRowCtrl';
 
 export enum HeaderRowType {
-    COLUMN_GROUP, COLUMN, FLOATING_FILTER
+    COLUMN_GROUP = 'group',
+    COLUMN = 'column', 
+    FLOATING_FILTER = 'filter'
 }
 export class HeaderRowComp extends Component {
 
@@ -26,7 +26,7 @@ export class HeaderRowComp extends Component {
 
     constructor(ctrl: HeaderRowCtrl) {
         super(/* html */`<div class="ag-header-row" role="row"></div>`);
-        this.setRowIndex(ctrl.getDepth());
+        this.setRowIndex(ctrl.getRowIndex());
         this.ctrl = ctrl;
 
         switch (ctrl.getType()) {
@@ -50,19 +50,20 @@ export class HeaderRowComp extends Component {
             setHeight: height => this.getGui().style.height = height,
             setTop: top => this.getGui().style.top = top,
             setHeaderCtrls: ctrls => this.setHeaderCtrls(ctrls),
-            setWidth: width => this.getGui().style.width = width
+            setWidth: width => this.getGui().style.width = width,
+            getHtmlElementForColumnHeader: col => this.getHtmlElementForColumnHeader(col)
         };
 
         this.ctrl.setComp(compProxy);
     }
 
-    public getHeaderWrapperComp(column: Column): HeaderWrapperComp | undefined {
+    public getHtmlElementForColumnHeader(column: Column): HTMLElement | undefined {
         if (this.ctrl.getType() != HeaderRowType.COLUMN) { return; }
 
         const headerCompsList = Object.keys(this.headerComps).map( c => this.headerComps[c]) as (HeaderWrapperComp[]);
-        const res = headerCompsList.find( wrapper => wrapper.getColumn() == column);
+        const comp = headerCompsList.find( wrapper => wrapper.getColumn() == column);
 
-        return res;
+        return comp ? comp.getGui() : undefined;
     }
 
     private setRowIndex(rowIndex: number) {
@@ -74,16 +75,12 @@ export class HeaderRowComp extends Component {
         return this.rowIndex;
     }
 
-    public getType(): HeaderRowType {
-        return this.ctrl.getType();
-    }
-
     @PreDestroy
     private destroyHeaderCtrls(): void {
         this.setHeaderCtrls([]);
     }
 
-    private setHeaderCtrls(ctrls: HeaderCtrl[]): void {
+    private setHeaderCtrls(ctrls: HeaderWrapperCtrl[]): void {
         if (!this.isAlive()) { return; }
 
         const oldComps = this.headerComps;
@@ -121,7 +118,7 @@ export class HeaderRowComp extends Component {
         }
     }
 
-    private createHeaderComp(headerCtrl: HeaderCtrl): AbstractHeaderWrapper {
+    private createHeaderComp(headerCtrl: HeaderWrapperCtrl): AbstractHeaderWrapper {
 
         let result: AbstractHeaderWrapper;
 

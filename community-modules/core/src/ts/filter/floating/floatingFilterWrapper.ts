@@ -23,7 +23,7 @@ import { HeaderRowComp } from '../../headerRendering/headerRow/headerRowComp';
 import { FloatingFilterMapper } from './floatingFilterMapper';
 import { KeyCode } from '../../constants/keyCode';
 import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
-import { HeaderCtrl } from '../../headerRendering/columnHeader/headerCtrl';
+import { HeaderWrapperCtrl, IHeaderWrapperComp } from '../../headerRendering/columnHeader/headerWrapperCtrl';
 
 export class FloatingFilterWrapper extends AbstractHeaderWrapper {
     private static TEMPLATE = /* html */
@@ -52,10 +52,13 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
 
     private floatingFilterCompPromise: AgPromise<IFloatingFilterComp> | null;
 
-    constructor(ctrl: HeaderCtrl) {
+    private ctrl: HeaderWrapperCtrl;
+
+    constructor(ctrl: HeaderWrapperCtrl) {
         super(FloatingFilterWrapper.TEMPLATE);
-        this.column = ctrl.getColumnGroupOrChild() as Column;
+        this.column = ctrl.getColumnGroupChild() as Column;
         this.pinned = ctrl.getPinned();
+        this.ctrl = ctrl;
     }
 
     @PostConstruct
@@ -77,6 +80,12 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
         ));
 
         this.addManagedListener(this.eButtonShowMainFilter, 'click', this.showParentFilter.bind(this));
+
+        const compProxy: IHeaderWrapperComp = {
+            focus: ()=> this.getFocusableElement().focus()
+        };
+
+        this.ctrl.setComp(compProxy);
     }
 
     protected onTabKeyDown(e: KeyboardEvent) {
