@@ -14,7 +14,7 @@ Each of these approaches are presented in the following sections.
 
 You can add CSS styles to each row in the following ways:
 
-<api-documentation source='grid-properties/properties.json' section='renderingStyling' names='["rowStyle"]' config='{"noBottomMargin":true}'></api-documentation>
+<api-documentation source='grid-properties/properties.json' section='renderingStyling' names='["rowStyle"]' config='{"overrideBottomMargin":"0"}'></api-documentation>
 <api-documentation source='grid-callbacks/callbacks.json' section='rendering' names='["getRowStyle"]'></api-documentation>
 
 <snippet spaceBetweenProperties="true">
@@ -38,7 +38,7 @@ You can add CSS classes to each row in the following ways:
     of class names).
 - `getRowClass`: Callback to set class for each row individually.
 
-<api-documentation source='grid-properties/properties.json' section='renderingStyling' names='["rowClass"]' config='{"noBottomMargin":true}'></api-documentation>
+<api-documentation source='grid-properties/properties.json' section='renderingStyling' names='["rowClass"]' config='{"overrideBottomMargin":"0"}'></api-documentation>
 <api-documentation source='grid-callbacks/callbacks.json' section='rendering' names='["getRowClass"]'></api-documentation>
 
 <snippet spaceBetweenProperties="true">
