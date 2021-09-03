@@ -45,9 +45,13 @@ export enum CellRangeType { VALUE, DIMENSION }
 export interface CellRange {
     id?: string;
     type?: CellRangeType;
+/** The start row of the range */
     startRow?: RowPosition;
+/** The end row of the range */
     endRow?: RowPosition;
+/** The columns in the range */
     columns: Column[];
+/** The start column for the range */
     startColumn: Column;
 }
 

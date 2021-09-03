@@ -4216,8 +4216,14 @@
   },
   "RangeSelectionChangedEvent": {
     "id": { "type": { "returnType": "string" } },
-    "finished": { "type": { "returnType": "boolean" } },
-    "started": { "type": { "returnType": "boolean" } },
+    "started": {
+      "description": "/** True for the first change event, otherwise false */",
+      "type": { "returnType": "boolean" }
+    },
+    "finished": {
+      "description": "/** True for the last change event, otherwise false */",
+      "type": { "returnType": "boolean" }
+    },
     "api": { "type": { "returnType": "GridApi" } },
     "columnApi": { "type": { "returnType": "ColumnApi" } },
     "type": {
@@ -9648,10 +9654,22 @@
   "CellRange": {
     "id": { "type": { "returnType": "string" } },
     "type": { "type": { "returnType": "CellRangeType" } },
-    "startRow": { "type": { "returnType": "RowPosition" } },
-    "endRow": { "type": { "returnType": "RowPosition" } },
-    "columns": { "type": { "returnType": "Column[]" } },
-    "startColumn": { "type": { "returnType": "Column" } }
+    "startRow": {
+      "description": "/** The start row of the range */",
+      "type": { "returnType": "RowPosition" }
+    },
+    "endRow": {
+      "description": "/** The end row of the range */",
+      "type": { "returnType": "RowPosition" }
+    },
+    "columns": {
+      "description": "/** The columns in the range */",
+      "type": { "returnType": "Column[]" }
+    },
+    "startColumn": {
+      "description": "/** The start column for the range */",
+      "type": { "returnType": "Column" }
+    }
   },
   "CellRangeParams": {
     "rowStartIndex": { "type": { "returnType": "number | null" } },

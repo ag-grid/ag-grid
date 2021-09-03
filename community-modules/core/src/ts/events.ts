@@ -203,8 +203,10 @@ export interface FirstDataRenderedEvent extends AgGridEvent {
 
 export interface RangeSelectionChangedEvent extends AgGridEvent {
     id?: string;
-    finished: boolean;
+    /** True for the first change event, otherwise false */
     started: boolean;
+    /** True for the last change event, otherwise false */
+    finished: boolean;
 }
 
 export interface ChartCreated extends AgGridEvent {
