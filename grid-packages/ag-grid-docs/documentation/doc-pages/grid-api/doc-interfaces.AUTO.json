@@ -6384,6 +6384,15 @@
     "setContainerTransform": {
       "type": { "arguments": { "transform": "string" }, "returnType": "void" }
     },
+    "setContainerWidth": {
+      "type": { "arguments": { "width": "string" }, "returnType": "void" }
+    },
+    "addOrRemoveCssClass": {
+      "type": {
+        "arguments": { "cssClassName": "string", "on": "boolean" },
+        "returnType": "void"
+      }
+    },
     "getRowComps": {
       "type": { "arguments": {}, "returnType": "HeaderRowComp[]" }
     },
