@@ -28,7 +28,7 @@ function findAllInNodesTree(node) {
 
 function getArgTypes(parameters, file) {
     const args = {};
-    (parameters || []).forEach(p => {        
+    (parameters || []).forEach(p => {
         const initValue = formatNode(p.initializer, file);
         args[p.name.escapedText] = `${formatNode(p.type, file)}${initValue ? ` = ${initValue}` : ''}`;
     });
@@ -39,18 +39,18 @@ function toCamelCase(value) {
     return value[0].toLowerCase() + value.substr(1);
 }
 
-function extractTypesFromNode(node, srcFile, includeUndefined) {
+function extractTypesFromNode(node, srcFile, includeQuestionMark) {
     let nodeMembers = {};
     const kind = ts.SyntaxKind[node.kind];
-    const appendUndefined = (rt, n) => {
-        let returnType = rt;
-        if (includeUndefined && n && n.questionToken) {
-            returnType = `${returnType} | undefined`;
+    const appendQuestionMark = (name, n) => {
+        let propName = name;
+        if (includeQuestionMark && n && n.questionToken) {
+            propName = `${propName}?`;
         }
-        return returnType;
+        return propName;
     }
 
-    let name = node && node.name && node.name.escapedText;
+    let name = appendQuestionMark(node && node.name && node.name.escapedText, node);
     let returnType = node && node.type && node.type.getFullText().trim();
 
     if (kind == 'PropertySignature') {
@@ -64,8 +64,7 @@ function extractTypesFromNode(node, srcFile, includeUndefined) {
                 type: { arguments: methodArgs, returnType }
             };
         } else {
-            // i.e colWidth?: number; 
-            returnType = appendUndefined(returnType, node)
+            // i.e colWidth?: number;             
             nodeMembers[name] = { description: getJsDoc(node), type: { returnType } };
         }
     } else if (kind == 'MethodSignature') {
@@ -234,7 +233,7 @@ function extractInterfaces(srcFile, extension) {
                     isCallSignature = isCallSignature || ts.SyntaxKind[p.kind] == 'CallSignature';
                     if (isCallSignature) {
 
-                        const arguments = getArgTypes(p.parameters, srcFile);                     
+                        const arguments = getArgTypes(p.parameters, srcFile);
 
                         callSignatureMembers = {
                             arguments,
@@ -311,7 +310,7 @@ function buildInterfaceProps() {
         interfacesInFile.forEach(iNode => {
             let props = {};
             iNode.forEachChild(ch => {
-                const prop = extractTypesFromNode(ch, parsedFile, false);
+                const prop = extractTypesFromNode(ch, parsedFile, true);
                 props = { ...props, ...prop }
             })
 
@@ -443,6 +442,7 @@ console.log('Using Typescript version: ', ts.version)
 
 generateMetaFiles()
 
+console.log(`Generated OK.`);
 console.log(`--------------------------------------------------------------------------------`);
 
 

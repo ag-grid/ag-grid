@@ -291,7 +291,11 @@
   },
   "setDataValue": {
     "type": {
-      "arguments": { "colKey": "string | Column", "newValue": "any" },
+      "arguments": {
+        "colKey": "string | Column",
+        "newValue": "any",
+        "eventSource": "string"
+      },
       "returnType": "void"
     }
   },
