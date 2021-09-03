@@ -642,11 +642,11 @@ export class RowNode implements IEventEmitter {
     // the cell knows about the change given it's in charge of the editing.
     // this method is for the client to call, so the cell listens for the change
     // event, and also flashes the cell when the change occurs.
-    public setDataValue(colKey: string | Column, newValue: any): void {
+    public setDataValue(colKey: string | Column, newValue: any, eventSource?: string): void {
         const column = this.columnModel.getPrimaryColumn(colKey)!;
         const oldValue = this.valueService.getValue(column, this);
 
-        this.valueService.setValue(this, column, newValue);
+        this.valueService.setValue(this, column, newValue, eventSource);
         this.dispatchCellChangedEvent(column, newValue, oldValue);
     }
 
