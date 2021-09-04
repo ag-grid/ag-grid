@@ -132,11 +132,11 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             return draggingEvent.dragItem.rowNodes || [];
         }
 
-        const enableMultiRowDragging = this.gridOptionsWrapper.isEnableMultiRowDragging();
+        const isRowDragMultiRow = this.gridOptionsWrapper.isRowDragMultiRow();
         const selectedNodes = this.selectionService.getSelectedNodes();
         const currentNode = draggingEvent.dragItem.rowNode!;
 
-        if (enableMultiRowDragging && selectedNodes.indexOf(currentNode) !== -1) {
+        if (isRowDragMultiRow && selectedNodes.indexOf(currentNode) !== -1) {
             this.isMultiRowDrag = true;
             return [...selectedNodes];
         }

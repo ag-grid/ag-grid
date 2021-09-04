@@ -84,7 +84,7 @@ By default, the managed row dragging moves the rows while you are dragging them.
 
 ### Multi-Row Dragging
 
-It is possible to drag multiple rows at the same time, when `enableMultiRowDragging` is set to `true` in the `gridOptions` and it is combined with `rowSelection='multiple'`.
+It is possible to drag multiple rows at the same time, when `rowDragMultiRow` is set to `true` in the `gridOptions` and it is combined with `rowSelection='multiple'`.
 
 For this example note the following:
 
@@ -247,9 +247,9 @@ Unmanaged row dragging will work with any of the row models [Infinite](/infinite
 
 Because the grid implementation with regards to row dragging is identical to the above, examples of row dragging with the other row models are not given. How your application behaves with regards to the row drag events is the difficult bit, but that part is specific to your application and how your application stores its state. Giving an example here with a different data store would be redundant.
 
-## Whole Row as Row Dragger
+## Entire Row Dragging
 
-If the requirement is to drag rows by clicking anywhere on the row, the `rowDrag: true` property should be added to the GridOptions as follows: 
+If the requirement is to drag rows by clicking anywhere on the row, the `rowDragEntireRow: true` property should be added to the GridOptions as follows: 
 
 <snippet>
 const gridOptions = {
@@ -259,11 +259,11 @@ const gridOptions = {
         { field: 'sport' },
         { field: 'total' }
     ],
-    rowDrag: true
+    rowDragEntireRow: true
 }
 </snippet>
 
-<grid-example title='Whole Row as Row Dragger' name='whole-row-as-row-dragger' type='generated' options='{ "enterprise": true, "modules": ["clientside"] }'></grid-example>
+<grid-example title='Entire Row Dragging' name='entire-row-dragging' type='generated' options='{ "enterprise": true, "modules": ["clientside"] }'></grid-example>
 
 [[warning]]
 | When `rowDrag: true` is in the GridOptions it will be impossible to use the [Range Selection](/range-selection/) feature.

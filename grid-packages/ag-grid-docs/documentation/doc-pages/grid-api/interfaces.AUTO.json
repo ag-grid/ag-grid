@@ -1244,11 +1244,11 @@
     "meta": {},
     "type": {
       "suppressBrowserResizeObserver?": "boolean",
-      "rowDrag?": "boolean",
+      "rowDragEntireRow?": "boolean",
       "suppressRowDrag?": "boolean",
       "rowDragManaged?": "boolean",
       "suppressMoveWhenRowDragging?": "boolean",
-      "enableMultiRowDragging?": "boolean",
+      "rowDragMultiRow?": "boolean",
       "ensureDomOrder?": "boolean",
       "suppressAggFilteredOnly?": "boolean",
       "showOpenedGroup?": "boolean",

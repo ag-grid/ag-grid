@@ -103,11 +103,11 @@ export interface GridOptions {
 
     /** Set once in init, can never change*/
     suppressBrowserResizeObserver?: boolean;
-    rowDrag?: boolean;
+    rowDragEntireRow?: boolean;
     suppressRowDrag?: boolean;
     rowDragManaged?: boolean;
     suppressMoveWhenRowDragging?: boolean;
-    enableMultiRowDragging?: boolean;
+    rowDragMultiRow?: boolean;
     ensureDomOrder?: boolean;
     suppressAggFilteredOnly?: boolean;
     showOpenedGroup?: boolean;

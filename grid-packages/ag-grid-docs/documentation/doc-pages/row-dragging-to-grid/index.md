@@ -61,7 +61,7 @@ It is possible to drag multiple records at once from one grid to another.
 
 In the example below, note the following:
 
-- This example allows for `enableMultiRowDragging`, between grids. For more info on `multiRowDrag` within the grid see the [Multi-Row Dragging](/row-dragging/#multi-row-dragging) section in the Row Dragging documentation.
+- This example allows for `rowDragMultiRow`, between grids. For more info on `multiRowDrag` within the grid see the [Multi-Row Dragging](/row-dragging/#multi-row-dragging) section in the Row Dragging documentation.
 
 - This example allows you to toggle between regular `multiRow` selection and `checkboxSelection`. For more info see the [Row Selection](/row-selection/) documentation.
 

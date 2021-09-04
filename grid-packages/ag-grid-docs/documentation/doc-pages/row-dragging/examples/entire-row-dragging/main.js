@@ -16,9 +16,9 @@ var gridOptions = {
         filter: true
     },
 
-    rowDrag: true,
+    rowDragEntireRow: true,
     rowDragManaged: true,
-    enableMultiRowDragging: true,
+    rowDragMultiRow: true,
 
     rowSelection: 'multiple',
     animateRows: true

@@ -200,7 +200,7 @@ const TwoGridsWithMultipleRecordsExample = () => {
                     animateRows={true}
                     immutableData={true}
                     rowSelection={id === 0 ? "multiple" : undefined}
-                    enableMultiRowDragging={id === 0}
+                    rowDragMultiRow={id === 0}
                     suppressRowClickSelection={id === 0}
                     suppressMoveWhenRowDragging={id === 0}
                     

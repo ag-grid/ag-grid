@@ -318,7 +318,7 @@ var gridOptions = {
     enableCellChangeFlash: true,
     rowDragManaged: true,
     // suppressMoveWhenRowDragging: true,
-    enableMultiRowDragging: true,
+    rowDragMultiRow: true,
     popupParent: document.querySelector('#example-wrapper'),
     // enableBrowserTooltips: true,
     // tooltipShowDelay: 200,

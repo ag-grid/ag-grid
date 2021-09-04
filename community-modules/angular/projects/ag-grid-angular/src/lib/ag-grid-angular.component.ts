@@ -513,11 +513,11 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public groupRemoveLowestSingleChildren: boolean | undefined = undefined;
     @Input() public enableRtl: boolean | undefined = undefined;
     @Input() public suppressClickEdit: boolean | undefined = undefined;
-    @Input() public rowDrag: boolean | undefined = undefined;
+    @Input() public rowDragEntireRow: boolean | undefined = undefined;
     @Input() public rowDragManaged: boolean | undefined = undefined;
     @Input() public suppressRowDrag: boolean | undefined = undefined;
     @Input() public suppressMoveWhenRowDragging: boolean | undefined = undefined;
-    @Input() public enableMultiRowDragging: boolean | undefined = undefined;
+    @Input() public rowDragMultiRow: boolean | undefined = undefined;
     @Input() public enableGroupEdit: boolean | undefined = undefined;
     @Input() public embedFullWidthRows: boolean | undefined = undefined;
     /** @deprecated
@@ -745,11 +745,11 @@ export class AgGridAngular implements AfterViewInit {
     static ngAcceptInputType_groupRemoveLowestSingleChildren: boolean | null | '';
     static ngAcceptInputType_enableRtl: boolean | null | '';
     static ngAcceptInputType_suppressClickEdit: boolean | null | '';
-    static ngAcceptInputType_rowDrag: boolean | null | '';
+    static ngAcceptInputType_rowDragEntireRow: boolean | null | '';
     static ngAcceptInputType_rowDragManaged: boolean | null | '';
     static ngAcceptInputType_suppressRowDrag: boolean | null | '';
     static ngAcceptInputType_suppressMoveWhenRowDragging: boolean | null | '';
-    static ngAcceptInputType_enableMultiRowDragging: boolean | null | '';
+    static ngAcceptInputType_rowDragMultiRow: boolean | null | '';
     static ngAcceptInputType_enableGroupEdit: boolean | null | '';
     static ngAcceptInputType_embedFullWidthRows: boolean | null | '';
     static ngAcceptInputType_deprecatedEmbedFullWidthRows: boolean | null | '';

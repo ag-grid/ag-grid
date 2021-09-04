@@ -27,7 +27,7 @@ import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
                                 style="height: 100%;"
                                 [defaultColDef]="defaultColDef"
                                 rowSelection="multiple"
-                                [enableMultiRowDragging]="true"
+                                [rowDragMultiRow]="true"
                                 [getRowNodeId]="getRowNodeId"
                                 [rowDragManaged]="true"
                                 [suppressMoveWhenRowDragging]="true"

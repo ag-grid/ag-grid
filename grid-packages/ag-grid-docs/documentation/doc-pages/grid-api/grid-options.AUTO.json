@@ -3,11 +3,11 @@
     "description": "/** Set once in init, can never change */",
     "type": { "returnType": "boolean" }
   },
-  "rowDrag": { "type": { "returnType": "boolean" } },
+  "rowDragEntireRow": { "type": { "returnType": "boolean" } },
   "suppressRowDrag": { "type": { "returnType": "boolean" } },
   "rowDragManaged": { "type": { "returnType": "boolean" } },
   "suppressMoveWhenRowDragging": { "type": { "returnType": "boolean" } },
-  "enableMultiRowDragging": { "type": { "returnType": "boolean" } },
+  "rowDragMultiRow": { "type": { "returnType": "boolean" } },
   "ensureDomOrder": { "type": { "returnType": "boolean" } },
   "suppressAggFilteredOnly": { "type": { "returnType": "boolean" } },
   "showOpenedGroup": { "type": { "returnType": "boolean" } },

@@ -63,7 +63,7 @@ var leftGridOptions = {
         resizable: true
     },
     rowSelection: 'multiple',
-    enableMultiRowDragging: true,
+    rowDragMultiRow: true,
     suppressRowClickSelection: true,
     getRowNodeId: function(data) { return data.athlete; },
     rowDragManaged: true,

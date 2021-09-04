@@ -167,7 +167,7 @@ export default class extends Component {
                     animateRows={true}
                     immutableData={true}
                     rowSelection={id === 0 ? "multiple" : undefined}
-                    enableMultiRowDragging={id === 0}
+                    rowDragMultiRow={id === 0}
                     suppressMoveWhenRowDragging={id === 0}
                     
                     rowData={id === 0 ? this.state.leftRowData : this.state.rightRowData}

@@ -281,7 +281,7 @@ export class RowCtrl extends BeanStub {
                 this.setupFullWidth(gui);
             }
 
-            if (gow.isRowDrag()) {
+            if (gow.isRowDragEntireRow()) {
                 this.addRowDraggerToRow(gui);
             }
         });
@@ -294,7 +294,7 @@ export class RowCtrl extends BeanStub {
 
         if (gow.isEnableRangeSelection()) {
             doOnce(() => {
-                console.warn('AG Grid: Setting `rowDrag: true` in the gridOptions doesn\'t work with `enableRangeSelection: true`');
+                console.warn('AG Grid: Setting `rowDragEntireRow: true` in the gridOptions doesn\'t work with `enableRangeSelection: true`');
             }, 'rowDragAndRangeSelectionEnabled');
             return;
         }

@@ -582,8 +582,8 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressScrollOnNewData);
     }
 
-    public isRowDrag() {
-        return isTrue(this.gridOptions.rowDrag);
+    public isRowDragEntireRow() {
+        return isTrue(this.gridOptions.rowDragEntireRow);
     }
 
     public isSuppressRowDrag() {
@@ -598,8 +598,8 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressMoveWhenRowDragging);
     }
 
-    public isEnableMultiRowDragging() {
-        return isTrue(this.gridOptions.enableMultiRowDragging);
+    public isRowDragMultiRow() {
+        return isTrue(this.gridOptions.rowDragMultiRow);
     }
 
     // returns either 'print', 'autoHeight' or 'normal' (normal is the default)
@@ -1590,6 +1590,14 @@ export class GridOptionsWrapper {
         if (options.rowDeselection) {
             console.warn(
                 'AG Grid: since v24.x, rowDeselection is deprecated and the behaviour is true by default. Please use `suppressRowDeselection` to prevent rows from being deselected.'
+            );
+        }
+
+        if (options.enableMultiRowDragging) {
+            options.rowDragMultiRow = true;
+            delete options.enableMultiRowDragging;
+            console.warn(
+                'AG Grid: since v26.1, `enableMultiRowDragging` is deprecated. Please use `rowDragMultiRow`.'
             );
         }
 
