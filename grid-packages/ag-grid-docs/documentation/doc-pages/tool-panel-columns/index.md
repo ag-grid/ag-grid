@@ -54,7 +54,7 @@ The column tool panel is split into different sections as follows:
     2. Values (Pivot) Section
     3. Column Labels Section
     4. Onto the grid (when `gridOptions.allowDragFromColumnsToolPanel=true`)
-    5. Inside Columns Section to reorder columns (use `toolPanelParams.suppressColumnMove=true` to disable)
+    5. Inside Columns Section to reorder columns (see [Suppress Column Reordering](/tool-panel-columns/#suppress-column-reordering))
 - **Row Groups Section**: Columns here will form the grid's [Row Grouping](/grouping/).
 - **Values Section**: Columns here will form the grid's [Aggregations](/aggregation/). The grid calls this function 'Aggregations', however for the UI we follow the Excel naming convention and call it 'Values'.
 - **Column Labels (Pivot) Section**: Columns here will form the grid's [Pivot](/pivoting/). The grid calls this function 'Pivot', however for the UI we follow the Excel naming convention and call it 'Column Labels'.
@@ -73,7 +73,6 @@ It is possible to remove items from the tool panel. Items are suppressed by sett
 - `suppressColumnSelectAll`: to suppress Select / Un-select all widget.
 - `suppressColumnExpandAll`: to suppress Expand / Collapse all widget.
 - `contractColumnSelection`: by default, column groups start expanded. Pass true to default to contracted groups.
-- `suppressSyncLayoutWithGrid`: to suppress updating the layout of columns in this panel as they are rearranged in the grid.
 
 To remove a particular column from the tool panel, set the column property `suppressColumnsToolPanel` to `true`. This is useful when you have a column working in the background, e.g. a column you want to group by, but not visible to the user.
 
@@ -99,6 +98,49 @@ The example below demonstrates the suppress options / methods described above. N
 - Clicking **Show Pivot Section** invokes `showPivotSection(true)` on the column tool panel instance.
 
 <grid-example title='Section Visibility' name='section-visibility' type='generated' options='{ "enterprise": true, "exampleHeight": 630, "modules": ["clientside", "menu", "columnpanel"] }'></grid-example>
+
+## Suppress Column Reordering
+
+By default, reordering columns in the grid will also reorder the columns shown in the Columns Section of the Columns Tool Panel. 
+this default behaviour can be disabled via `toolPanelParams.suppressSyncLayoutWithGrid`. 
+
+Similarly, the reordering of columns from inside the Columns Section of the Columns Tool Panel is also enabled by default, and can be disabled via 
+`toolPanelParams.suppressColumnMove`. 
+
+The configuration of these properties are shown below:
+
+<snippet>
+const gridOptions = {
+    sideBar: {
+          toolPanels: [
+              {
+                id: 'columns',
+                labelDefault: 'Columns',
+                labelKey: 'columns',
+                iconKey: 'columns',
+                toolPanel: 'agColumnsToolPanel',
+                toolPanelParams: {
+                  // tool panel columns won't move when columns are reordered in the grid
+                  suppressSyncLayoutWithGrid: true, 
+                  // prevents columns being reordered from the columns tool panel
+                  suppressColumnMove: true,
+                },
+              },
+            ],
+            defaultToolPanel: 'columns',
+        },
+}
+</snippet>
+
+Note that it usually makes sense to enable both of these properties together but flexibility is provided through
+separate properties.
+
+The following example demonstrates the results of enabling both of these properties. Note the following:
+
+- Moving columns in the grid won't reorder columns in the columns tool panel as `suppressSyncLayoutWithGrid=true`.
+- It is not possible to reorder columns from the columns tool panel as `suppressColumnMove=true`.
+
+<grid-example title='Suppress Column Reordering' name='suppress-column-reordering' type='generated' options='{ "enterprise": true, "exampleHeight": 670, "modules": ["clientside", "menu", "columnpanel"] }'></grid-example>
 
 ## Styling Columns
 
@@ -229,8 +271,7 @@ const gridOptions = {
 Notice from the snippet above that it's possible to define column groups in the tool panel that don't exist in the grid. Also note that columns can be omitted or positioned in a different order but all referenced columns must already exist in the grid.
 
 [[note]]
-| When providing a custom layout it is recommend to enable `suppressSyncLayoutWithGrid` in the
-| tool panel params to prevent users changing the layout when moving columns in the grid.
+| When providing a custom layout it is recommended to enable both `suppressSyncLayoutWithGrid` and `suppressColumnMove` (see [Suppress Column Reordering](/tool-panel-columns/#suppress-column-reordering) for more details).
 
 The example below shows two custom layouts for the Columns Tool Panel. Note the following:
 
@@ -238,6 +279,7 @@ The example below shows two custom layouts for the Columns Tool Panel. Note the 
 - Clicking **Custom Sort Layout** invokes `setColumnLayout(colDefs)` with a list of column definitions arranged in ascending order.
 - Clicking **Custom Group Layout** invokes `setColumnLayout(colDefs)` with a list of column definitions containing groups that don't appear in the grid.
 - Moving columns in the grid won't affect the custom layouts as `suppressSyncLayoutWithGrid` is enabled.
+- Moving columns from within the Columns Tool Panel has been disabled as `suppressColumnMove` is enabled.
 
 <grid-example title='Custom Column Layout' name='custom-layout' type='generated' options='{ "enterprise": true, "exampleHeight": 640 }'></grid-example>
 

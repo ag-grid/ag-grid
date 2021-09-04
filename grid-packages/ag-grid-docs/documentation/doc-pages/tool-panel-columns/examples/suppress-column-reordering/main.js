@@ -48,7 +48,7 @@ var gridOptions = {
                 iconKey: 'columns',
                 toolPanel: 'agColumnsToolPanel',
                 toolPanelParams: {
-                    // prevents custom layout changing when columns are reordered in the grid
+                    // tool panel columns won't move when columns are reordered in the grid
                     suppressSyncLayoutWithGrid: true,
                     // prevents columns being reordered from the columns tool panel
                     suppressColumnMove: true,
@@ -58,76 +58,6 @@ var gridOptions = {
         defaultToolPanel: 'columns'
     }
 };
-
-var sortedToolPanelColumnDefs = [
-    {
-        headerName: 'Athlete',
-        children: [
-            { field: "age" },
-            { field: "country" },
-            { headerName: 'Name', field: "athlete" },
-        ]
-    },
-    {
-        headerName: 'Competition',
-        children: [
-            { field: "date" },
-            { field: "year" },
-        ]
-    },
-    {
-        headerName: 'Medals',
-        children: [
-            { field: "bronze" },
-            { field: "gold" },
-            { field: "silver" },
-            { field: "total" }
-        ]
-    },
-    { colId: 'sport', field: "sport" },
-];
-
-function setCustomSortLayout() {
-    var columnToolPanel = gridOptions.api.getToolPanelInstance('columns');
-    columnToolPanel.setColumnLayout(sortedToolPanelColumnDefs);
-}
-
-
-var customToolPanelColumnDefs = [
-    {
-        headerName: 'Dummy Group 1',
-        children: [
-            { field: "age" },
-            { headerName: 'Name', field: "athlete" },
-            {
-                headerName: 'Dummy Group 2',
-                children: [
-                    { colId: "sport" },
-                    { field: "country" },
-                ]
-            }
-        ]
-    },
-    {
-        headerName: 'Medals',
-        children: [
-            { field: "total" },
-            { field: "bronze" },
-            {
-                headerName: 'Dummy Group 3',
-                children: [
-                    { field: "silver" },
-                    { field: "gold" }
-                ]
-            }
-        ]
-    }
-];
-
-function setCustomGroupLayout() {
-    var columnToolPanel = gridOptions.api.getToolPanelInstance('columns');
-    columnToolPanel.setColumnLayout(customToolPanelColumnDefs);
-}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
