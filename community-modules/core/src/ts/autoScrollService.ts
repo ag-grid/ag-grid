@@ -22,6 +22,8 @@ export class AutoScrollService {
     private shouldSkipVerticalScroll: () => boolean;
     private shouldSkipHorizontalScroll: () => boolean;
 
+    private onScrollCallback: (() => void) | null = null;
+
     private tickCount: number;
 
     constructor(params: {
@@ -32,14 +34,19 @@ export class AutoScrollService {
         setVerticalPosition?: (position: number) => void,
         getHorizontalPosition?: () => number,
         setHorizontalPosition?: (position: number) => void,
-        shouldSkipVerticalScroll?: () => boolean
-        shouldSkipHorizontalScroll?: () => boolean
+        shouldSkipVerticalScroll?: () => boolean,
+        shouldSkipHorizontalScroll?: () => boolean,
+        onScrollCallback?: () => void
     }) {
         this.scrollContainer = params.scrollContainer;
         this.scrollHorizontally = params.scrollAxis.indexOf('x') !== -1;
         this.scrollVertically = params.scrollAxis.indexOf('y') !== -1;
 
         this.scrollByTick = params.scrollByTick != null ? params.scrollByTick : 20;
+        
+        if (params.onScrollCallback) {
+            this.onScrollCallback = params.onScrollCallback;
+        }
 
         if (this.scrollVertically) {
             this.getVerticalPosition = params.getVerticalPosition!;
@@ -109,6 +116,10 @@ export class AutoScrollService {
             if (this.tickRight) {
                 this.setHorizontalPosition(hScrollPosition + tickAmount);
             }
+        }
+
+        if (this.onScrollCallback) {
+            this.onScrollCallback();
         }
     }
 

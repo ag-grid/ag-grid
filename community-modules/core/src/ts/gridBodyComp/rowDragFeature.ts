@@ -20,10 +20,11 @@ import { last } from '../utils/array';
 import { SortController } from "../sortController";
 import { FilterManager } from "../filter/filterManager";
 import { BeanStub } from "../context/beanStub";
-import { exists, missingOrEmpty } from "../utils/generic";
+import { missingOrEmpty } from "../utils/generic";
 import { doOnce } from "../utils/function";
 import { PaginationProxy } from "../pagination/paginationProxy";
 import { CtrlsService } from "../ctrlsService";
+import { AutoScrollService } from "../autoScrollService";
 
 export interface RowDropZoneEvents {
     onDragEnter?: (params: RowDragEnterEvent) => void;
@@ -47,21 +48,18 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     @Autowired('sortController') private sortController: SortController;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('selectionService') private selectionService: SelectionService;
-    @Optional('rangeService') private rangeService: IRangeService;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+    @Optional('rangeService') private rangeService: IRangeService;
 
     private clientSideRowModel: IClientSideRowModel;
     private eContainer: HTMLElement;
-    private needToMoveUp: boolean;
-    private needToMoveDown: boolean;
-    private movingIntervalId: number | null;
-    private intervalCount: number;
-    private lastDraggingEvent: DraggingEvent;
     private isMultiRowDrag: boolean = false;
     private isGridSorted: boolean = false;
     private isGridFiltered: boolean = false;
     private isRowGroupActive: boolean = false;
+    private lastDraggingEvent: DraggingEvent;
+    private autoScrollService: AutoScrollService;
 
     constructor(eContainer: HTMLElement) {
         super();
@@ -81,6 +79,17 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         this.onSortChanged();
         this.onFilterChanged();
         this.onRowGroupChanged();
+
+        this.ctrlsService.whenReady(() => {
+            const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
+            this.autoScrollService = new AutoScrollService({
+                scrollContainer: gridBodyCon.getBodyViewportElement(),
+                scrollAxis: 'y',
+                getVerticalPosition: () => gridBodyCon.getScrollFeature().getVScrollPosition().top,
+                setVerticalPosition: (position) => gridBodyCon.getScrollFeature().setVerticalScrollPosition(position),
+                onScrollCallback: () => { this.onDragging(this.lastDraggingEvent); }
+            });
+        });
     }
 
     private onSortChanged(): void {
@@ -180,7 +189,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             this.doManagedDrag(draggingEvent, pixel);
         }
 
-        this.checkCenterForScrolling(pixel);
+        this.autoScrollService.check(draggingEvent.event);
     }
 
     private doManagedDrag(draggingEvent: DraggingEvent, pixel: number): void {
@@ -269,67 +278,6 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             if (this.rangeService) {
                 this.rangeService.removeAllCellRanges();
             }
-        }
-    }
-
-    private checkCenterForScrolling(pixel: number): void {
-        // scroll if the mouse is within 50px of the grid edge
-        const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
-        const pixelRange = gridBodyCon.getScrollFeature().getVScrollPosition();
-
-        // console.log(`pixelRange = (${pixelRange.top}, ${pixelRange.bottom})`);
-
-        this.needToMoveUp = pixel < (pixelRange.top + 50);
-        this.needToMoveDown = pixel > (pixelRange.bottom - 50);
-
-        // console.log(`needToMoveUp = ${this.needToMoveUp} = pixel < (pixelRange.top + 50) = ${pixel} < (${pixelRange.top} + 50)`);
-        // console.log(`needToMoveDown = ${this.needToMoveDown} = pixel < (pixelRange.top + 50) = ${pixel} < (${pixelRange.top} + 50)`);
-
-        if (this.needToMoveUp || this.needToMoveDown) {
-            this.ensureIntervalStarted();
-        } else {
-            this.ensureIntervalCleared();
-        }
-    }
-
-    private ensureIntervalStarted(): void {
-        if (this.movingIntervalId) { return; }
-
-        this.intervalCount = 0;
-        this.movingIntervalId = window.setInterval(this.moveInterval.bind(this), 100);
-
-    }
-
-    private ensureIntervalCleared(): void {
-        if (!exists(this.movingIntervalId)) { return; }
-
-        window.clearInterval(this.movingIntervalId);
-        this.movingIntervalId = null;
-    }
-
-    private moveInterval(): void {
-        // the amounts we move get bigger at each interval, so the speed accelerates, starting a bit slow
-        // and getting faster. this is to give smoother user experience. we max at 100px to limit the speed.
-        let pixelsToMove: number;
-
-        this.intervalCount++;
-        pixelsToMove = 10 + (this.intervalCount * 5);
-
-        if (pixelsToMove > 100) {
-            pixelsToMove = 100;
-        }
-
-        let pixelsMoved: number | null = null;
-
-        const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
-        if (this.needToMoveDown) {
-            pixelsMoved = gridBodyCon.scrollVertically(pixelsToMove);
-        } else if (this.needToMoveUp) {
-            pixelsMoved = gridBodyCon.scrollVertically(-pixelsToMove);
-        }
-
-        if (pixelsMoved !== 0) {
-            this.onDragging(this.lastDraggingEvent);
         }
     }
 
@@ -498,7 +446,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     private stopDragging(draggingEvent: DraggingEvent): void {
-        this.ensureIntervalCleared();
+        this.autoScrollService.ensureCleared();
 
         this.getRowNodes(draggingEvent).forEach(rowNode => {
             rowNode.setDragging(false);
