@@ -93,6 +93,39 @@ For this example note the following:
 
 <grid-example title='Row Drag with Multi Row Drag' name='managed-with-multi-row-drag' type='generated'></grid-example>
 
+### Entire Row Dragging
+
+When using managed row dragging it is also possible to reorder rows by clicking and dragging anywhere on the row without
+the need for a drag handle by enabling the `rowDragEntireRow` grid option as shown below:
+
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        { field: 'country' },
+        { field: 'year' },
+        { field: 'sport' },
+        { field: 'total' }
+    ],
+    // entire row dragging is only supported with managed row dragging
+    rowDragManaged: true,
+    // allows rows to dragged without the need for drag handles
+    rowDragEntireRow: true,
+    // entire row dragging requires row selection ('single' or 'multiple')  
+    rowSelection: 'single',
+}
+</snippet>
+
+The example below demonstrates entire row dragging with [Multi-Row Dragging](/row-dragging/#multi-row-dragging). Note
+the following:
+
+- Reordering rows by clicking and dragging anywhere on a row is possible as `rowDragEntireRow` and `rowDragManaged` enabled.
+- Multiple rows can be selected and dragged as `rowDragMultiRow` is also enabled with `rowSelection = 'multiple'`.
+
+<grid-example title='Entire Row Dragging' name='entire-row-dragging' type='generated' options='{ "enterprise": true, "modules": ["clientside"] }'></grid-example>
+
+[[warning]]
+|[Range Selection](/range-selection/) is not supported when `rowDragEntireRow` is enabled.   
+
 ## Suppress Row Drag
 
 You can hide the draggable area by calling the grid API `setSuppressRowDrag()`
@@ -245,28 +278,7 @@ The example above works, however it is not intuitive as the user is given no vis
 
 Unmanaged row dragging will work with any of the row models [Infinite](/infinite-scrolling/), [Server-Side](/server-side-model/) and [Viewport](/viewport/). With unmanaged dragging, the implementation of what happens when a particular drag happens is up to your application.
 
-Because the grid implementation with regards to row dragging is identical to the above, examples of row dragging with the other row models are not given. How your application behaves with regards to the row drag events is the difficult bit, but that part is specific to your application and how your application stores its state. Giving an example here with a different data store would be redundant.
-
-## Entire Row Dragging
-
-If the requirement is to drag rows by clicking anywhere on the row, the `rowDragEntireRow: true` property should be added to the GridOptions as follows: 
-
-<snippet>
-const gridOptions = {
-    columnDefs: [
-        { field: 'country' },
-        { field: 'year' },
-        { field: 'sport' },
-        { field: 'total' }
-    ],
-    rowDragEntireRow: true
-}
-</snippet>
-
-<grid-example title='Entire Row Dragging' name='entire-row-dragging' type='generated' options='{ "enterprise": true, "modules": ["clientside"] }'></grid-example>
-
-[[warning]]
-| When `rowDrag: true` is in the GridOptions it will be impossible to use the [Range Selection](/range-selection/) feature.
+Because the grid implementation with regard to row dragging is identical to the above, examples of row dragging with the other row models are not given. How your application behaves with regards to the row drag events is the difficult bit, but that part is specific to your application and how your application stores its state. Giving an example here with a different data store would be redundant.
 
 ## Customisation
 

@@ -15,11 +15,9 @@ var gridOptions = {
         sortable: true,
         filter: true
     },
-
-    rowDragEntireRow: true,
     rowDragManaged: true,
+    rowDragEntireRow: true,
     rowDragMultiRow: true,
-
     rowSelection: 'multiple',
     animateRows: true
 };
