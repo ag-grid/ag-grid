@@ -15,6 +15,7 @@ Below shows a simple example of the columns tool panel. The following can be not
 Things to try:
 
 - Checking / unchecking columns will show / hide the columns.
+- Drag and Drop a column inside the columns sections to reorder columns in the grid. 
 - Drag a column (e.g. Country) to Row Groups to group rows.
 - Drag a column (e.g. Gold) to Values to aggregate.
 - Reset (refresh) the demo and do the following:
@@ -50,16 +51,17 @@ The column tool panel is split into different sections as follows:
 - **Select / Un-Select Column (or Group)**: Each column can be individually selected. What selection means depends on pivot mode and is explained below*.
 - **Drag Handle**: Each column can be dragged either with the mouse or via touch on touch devices. The column can then be dragged to one of the following:
     1. Row Groups Section
-    1. Values (Pivot) Section
-    1. Column Labels Section
-    1. Onto the grid (`gridOptions.allowDragFromColumnsToolPanel=true`)
+    2. Values (Pivot) Section
+    3. Column Labels Section
+    4. Onto the grid (when `gridOptions.allowDragFromColumnsToolPanel=true`)
+    5. Inside Columns Section to reorder columns (use `gridOptions.suppressColumnMove=true` to disable)
 - **Row Groups Section**: Columns here will form the grid's [Row Grouping](/grouping/).
 - **Values Section**: Columns here will form the grid's [Aggregations](/aggregation/). The grid calls this function 'Aggregations', however for the UI we follow the Excel naming convention and call it 'Values'.
 - **Column Labels (Pivot) Section**: Columns here will form the grid's [Pivot](/pivoting/). The grid calls this function 'Pivot', however for the UI we follow the Excel naming convention and call it 'Column Labels'.
 
 <image-caption src="tool-panel-columns/resources/screenshot.png" alt="AG Grid Tool Panel Section" width="50rem" centered="true"></image-caption>
 
-## Column Tool Panel Options
+## Section Visibility
 
 It is possible to remove items from the tool panel. Items are suppressed by setting one or more of the following `componentParams` to `true` whenever you are using the agColumnsToolPanel component properties:
 
@@ -72,7 +74,6 @@ It is possible to remove items from the tool panel. Items are suppressed by sett
 - `suppressColumnExpandAll`: to suppress Expand / Collapse all widget.
 - `contractColumnSelection`: by default, column groups start expanded. Pass true to default to contracted groups.
 - `suppressSyncLayoutWithGrid`: to suppress updating the layout of columns in this panel as they are rearranged in the grid.
-- `suppressColumnMove`: by default, it is allowed to use the `Drag Handle` to move columns from within the Column Tool Panel. Pass true to prevent this behaviour.
 
 To remove a particular column from the tool panel, set the column property `suppressColumnsToolPanel` to `true`. This is useful when you have a column working in the background, e.g. a column you want to group by, but not visible to the user.
 
