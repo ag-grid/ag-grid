@@ -24,7 +24,7 @@ export class HeaderRowContainer extends Component {
 
     private pinned: string | null;
 
-    private rowComps: {[ctrlId: string]: HeaderRowComp} = {};
+    private headerRowComps: {[ctrlId: string]: HeaderRowComp} = {};
     private rowCompsList: HeaderRowComp[] = [];
 
     constructor(pinned: string | null) {
@@ -96,8 +96,8 @@ export class HeaderRowContainer extends Component {
 
     private setCtrls(ctrls: HeaderRowCtrl[]): void {
 
-        const oldRowComps = this.rowComps;
-        this.rowComps = {};
+        const oldRowComps = this.headerRowComps;
+        this.headerRowComps = {};
         this.rowCompsList = [];
 
         const eContainer = this.getContainer();
@@ -123,7 +123,7 @@ export class HeaderRowContainer extends Component {
             delete oldRowComps[ctrlId];
 
             const rowComp = existingComp ? existingComp : this.createBean(new HeaderRowComp(ctrl));
-            this.rowComps[ctrlId] = rowComp;
+            this.headerRowComps[ctrlId] = rowComp;
             this.rowCompsList.push(rowComp);
 
             appendEnsuringDomOrder(rowComp);
