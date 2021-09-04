@@ -54,7 +54,7 @@ The column tool panel is split into different sections as follows:
     2. Values (Pivot) Section
     3. Column Labels Section
     4. Onto the grid (when `gridOptions.allowDragFromColumnsToolPanel=true`)
-    5. Inside Columns Section to reorder columns (use `gridOptions.suppressColumnMove=true` to disable)
+    5. Inside Columns Section to reorder columns (use `toolPanelParams.suppressColumnMove=true` to disable)
 - **Row Groups Section**: Columns here will form the grid's [Row Grouping](/grouping/).
 - **Values Section**: Columns here will form the grid's [Aggregations](/aggregation/). The grid calls this function 'Aggregations', however for the UI we follow the Excel naming convention and call it 'Values'.
 - **Column Labels (Pivot) Section**: Columns here will form the grid's [Pivot](/pivoting/). The grid calls this function 'Pivot', however for the UI we follow the Excel naming convention and call it 'Column Labels'.
@@ -63,7 +63,7 @@ The column tool panel is split into different sections as follows:
 
 ## Section Visibility
 
-It is possible to remove items from the tool panel. Items are suppressed by setting one or more of the following `componentParams` to `true` whenever you are using the agColumnsToolPanel component properties:
+It is possible to remove items from the tool panel. Items are suppressed by setting one or more of the following `componentParams` to `true` whenever you are using the `agColumnsToolPanel` component properties:
 
 - `suppressRowGroups`: to suppress Row Groups section.
 - `suppressValues`: to suppress Values section.
