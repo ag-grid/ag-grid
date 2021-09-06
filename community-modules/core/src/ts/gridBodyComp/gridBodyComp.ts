@@ -19,7 +19,7 @@ import { RowContainerName } from "./rowContainer/rowContainerCtrl";
 
 const GRID_BODY_TEMPLATE = /* html */
     `<div class="ag-root ag-unselectable" role="grid" unselectable="on">
-        <ag-header-root ref="headerRoot" unselectable="on"></ag-header-root>
+        <ag-header-root ref="gridHeader" unselectable="on"></ag-header-root>
         <div class="ag-floating-top" ref="eTop" role="presentation" unselectable="on">
             <ag-row-container ref="topLeftContainer" name="${RowContainerName.TOP_LEFT}"></ag-row-container>
             <ag-row-container ref="topCenterContainer" name="${RowContainerName.TOP_CENTER}"></ag-row-container>
@@ -51,7 +51,7 @@ export class GridBodyComp extends Component {
     @RefSelector('eBodyViewport') private eBodyViewport: HTMLElement;
     @RefSelector('eTop') private eTop: HTMLElement;
     @RefSelector('eBottom') private eBottom: HTMLElement;
-    @RefSelector('headerRoot') headerRootComp: GridHeaderComp;
+    @RefSelector('gridHeader') headerRootComp: GridHeaderComp;
 
     private ctrl: GridBodyCtrl;
 

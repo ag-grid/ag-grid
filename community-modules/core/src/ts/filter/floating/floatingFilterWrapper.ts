@@ -139,8 +139,8 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
         const eGui = this.getGui();
 
         if (!eGui.contains(e.relatedTarget as HTMLElement)) {
-            const headerRow = this.getParentComponent() as HeaderRowComp;
-            this.beans.focusService.setFocusedHeader(headerRow.getRowIndex(), this.getColumn());
+            const rowIndex = this.ctrl.getRowIndex();
+            this.beans.focusService.setFocusedHeader(rowIndex, this.getColumn());
         }
     }
 

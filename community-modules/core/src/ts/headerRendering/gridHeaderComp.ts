@@ -2,7 +2,7 @@ import { Constants } from '../constants/constants';
 import { PostConstruct } from '../context/context';
 import { Component } from '../widgets/component';
 import { GridHeaderCtrl, IGridHeaderComp } from './gridHeaderCtrl';
-import { HeaderRowContainer } from './headerRowContainer/headerRowContainerComp';
+import { HeaderRowContainerComp } from './headerRowContainer/headerRowContainerComp';
 
 export class GridHeaderComp extends Component {
 
@@ -27,13 +27,13 @@ export class GridHeaderComp extends Component {
         const ctrl = this.createManagedBean(new GridHeaderCtrl());
         ctrl.setComp(compProxy, this.getGui(), this.getFocusableElement());
 
-        const addContainer = (container: HeaderRowContainer) => {
+        const addContainer = (container: HeaderRowContainerComp) => {
             this.createManagedBean(container);
             this.appendChild(container);
         };
 
-        addContainer(new HeaderRowContainer(Constants.PINNED_LEFT));
-        addContainer(new HeaderRowContainer(null));
-        addContainer(new HeaderRowContainer(Constants.PINNED_RIGHT));
+        addContainer(new HeaderRowContainerComp(Constants.PINNED_LEFT));
+        addContainer(new HeaderRowContainerComp(null));
+        addContainer(new HeaderRowContainerComp(Constants.PINNED_RIGHT));
     }
 }
