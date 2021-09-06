@@ -647,13 +647,13 @@
             "description": "See [Viewport Model](/viewport/)"
         },
         "viewportRowModelPageSize": {
-            "description": "When using [Viewport Row Model](/viewport/), sets the page size for the viewport."
+            "description": "When using Viewport Row Model, sets the page size for the viewport."
         },
         "viewportRowModelBufferSize": {
-            "description": "When using [Viewport Row Model](/viewport/), sets the buffer size for the viewport."
+            "description": "When using Viewport Row Model, sets the buffer size for the viewport."
         },
         "viewportDatasource": {
-            "description": "To use the [Viewport Row Model](/viewport/) you need to provide the grid with a `viewportDatasource`."
+            "description": "To use the Viewport Row Model you need to provide the grid with a `viewportDatasource`."
         }
     },
     "scrolling": {

@@ -26,23 +26,8 @@ To allow dragging from the grid, set the property `dndSource=true` on one of the
 This will result in the column having a drag handle displayed. When the dragging starts, the grid
 will by default create a JSON representation of the data and set this as MIME types `application/json` and also `text/plain`.
 
-`dndSource=true` can also be set to a callback function in the following format:
 
-```ts
-// function to enable/disable DnD Source
-function dndSource(params: DndSourceCallbackParams) => boolean;
-
-// interface for params
-interface DndSourceCallbackParams {
-    node: RowNode;
-    data: any;
-    column: Column;
-    colDef: ColDef;
-    context: any;
-    api: GridApi;
-    columnApi: ColumnApi;
-}
-```
+<api-documentation source='column-properties/properties.json' section='row dragging' names='["dndSource"]'></api-documentation>
 
 In the example below, note the following:
 
@@ -81,6 +66,8 @@ Given the grid was not adding any value, providing such callbacks would just be 
 It is possible that a JSON representation of the data is not what is required as the drag data.
 
 To provide alternative drag data, use the `dndSourceOnRowDrag` callback on the column definition. This allows specific processing by the application for the `rowdrag` even rather than the default grid behaviour.
+
+<api-documentation source='column-properties/properties.json' section='row dragging' names='["dndSourceOnRowDrag"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
 
 The example below is identical to the first example on this page with the addition of custom drag data. Note the following:
 

@@ -152,7 +152,13 @@ export function removeJsDocStars(docString) {
     if (!docString || docString.length === 0) {
         return;
     }
-    return docString.replace('/**', '').replace('*/', '').replace(' * ', ' ');
+    const paramReg = /\* @param/g;
+
+    return docString
+        .replace('/**', '')
+        .replace('*/', '')
+        .replace(paramReg, '<br>')
+        .replace(' * ', ' ');
 }
 
 export function appendCallSignature(name, interfaceType, framework, allLines) {

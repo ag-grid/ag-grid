@@ -36,39 +36,13 @@ The diagram below shows how the viewport maps to a connection to your dataset. T
 
 ## Interface IViewportDatasource
 
-To use the viewportRowModel you provide the grid with a `viewportDatasource`, which should look like the following:
+To use the viewportRowModel you provide the grid with an implementation of `IViewportDatasource` to the property `viewportDatasource`:
 
+<api-documentation source='grid-properties/properties.json' section='viewportRowModel' names='["viewportDatasource"]'></api-documentation>
 
-```ts
-interface IViewportDatasource {
-    // Gets called exactly once before viewPort is used.
-    // Passes methods to be used to tell viewPort of data loads / changes.
-    init(params: IViewportDatasourceParams): void;
+The grid will call the `init` method once, passing you a params object with the following methods. 
 
-    // Tell the viewport what the scroll position of the grid is, so it knows what
-    // rows it has to get
-    setViewportRange(firstRow: number, lastRow: number): void;
-
-    // Gets called once when viewPort is no longer used. If you need to do any
-    // cleanup, do it here.
-    destroy?(): void;
-}
-
-interface IViewportDatasourceParams {
-    // datasource calls this method when the total row count changes.
-    // This in turn sets the height of the grids vertical scroll.
-    // Set 'keepRenderedRows = true' to prevent unwanted row redraws.
-    setRowCount: (count:number, keepRenderedRows?: boolean) => void;
-
-    // datasource calls this when new data arrives. The grid then updates
-    // the provided rows. The rows are mapped from rowIndex to rowData.
-    setRowData: (rowData: { [key: number]: any }) => void;
-
-    // datasource calls this when it wants a row node - typically used
-    // when it wants to update the row node data
-    getRow: (rowIndex: number) => RowNode;
-}
-```
+<interface-documentation interfaceName='IViewportDatasourceParams' ></interface-documentation>
 
 ## Example Sequence
 
