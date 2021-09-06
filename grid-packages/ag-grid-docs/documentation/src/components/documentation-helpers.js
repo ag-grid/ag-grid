@@ -153,12 +153,13 @@ export function removeJsDocStars(docString) {
         return;
     }
     const paramReg = /\* @param/g;
+    const newLineReg = /\n \* /g;
 
     return docString
         .replace('/**', '')
         .replace('*/', '')
         .replace(paramReg, '<br>')
-        .replace(' * ', ' ');
+        .replace(newLineReg, ' ');
 }
 
 export function appendCallSignature(name, interfaceType, framework, allLines) {

@@ -21,20 +21,9 @@ md-include:component-interface-vue.md
 
 ## Status Panel Parameters
 
-The method init(params) takes a params object with the items listed below.
+The method init(params) takes a params object with the interface `IStatusPanelParams`.
 
-```ts
-interface IStatusPanelParams {
-    // The grid API
-    api: GridApi,
-
-    // The colum API
-    columnApi: ColumnApi,
-
-    // The context for this grid. See section on Context
-    context: any;
-}
-```
+<interface-documentation interfaceName='IStatusPanelParams' ></interface-documentation>
 
 ## Configuring Status Bar Panels
 

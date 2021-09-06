@@ -89,12 +89,7 @@ md-include:component-interface-angular.md
 md-include:component-interface-react.md
 md-include:component-interface-vue.md
 
-```ts
-interface IDateParams {
-    // Callback method to call when the date has changed
-    onDateChanged: () => void;
-}
-```
+<interface-documentation interfaceName='IDateParams' ></interface-documentation>
 
 
 

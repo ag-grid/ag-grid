@@ -22,16 +22,8 @@ md-include:component-interface-javascript.md
 md-include:component-interface-angular.md
 md-include:component-interface-react.md
 md-include:component-interface-vue.md
- 
-```ts
-interface IToolPanelParams {
-    // Grid API
-    api: GridApi;
-    
-    // Column API
-    columnApi: ColumnApi;
-}
-```
+
+<interface-documentation interfaceName='IToolPanelParams' ></interface-documentation>
 
 ## Registering Tool Panel Components
 

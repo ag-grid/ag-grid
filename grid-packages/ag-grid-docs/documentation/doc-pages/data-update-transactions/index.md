@@ -13,6 +13,8 @@ Transaction Updates are excellent for applying large data changes with the follo
 
 A transaction object contains the details of what rows should be added, removed and updated. The grid API `applyTransaction(transaction)` takes this transaction object and applies it to the grid's data.
 
+<api-documentation source='grid-api/api.json' section='data' names='["applyTransaction"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
+
 The result of the `applyTransaction(transaction)` is also a transaction, however it is a list of [Row Nodes](/row-object/) that were added, removed or updated. Both types of transactions look similar, but the difference is the data type they contain.
 
 - **Row Data Transaction**: Contains Row Data, the data that you are providing to the grid.
@@ -20,38 +22,7 @@ The result of the `applyTransaction(transaction)` is also a transaction, however
 
 For each data item in a Row Data Transaction there will typically be a Row Node in Row Node Transaction wrapping that data item. The only exception is for edge cases, for example you tried to delete or update a data item that didn't exist.
 
-```ts
-// Grid API method for accepting a transaction
-function applyTransaction(rowDataTransaction: RowDataTransaction): RowNodeTransaction;
 
-// params for above
-interface RowDataTransaction {
-
-    // rows to add
-    add?: any[];
-    // index to add rows
-    addIndex?: number;
-
-    // rows to remove
-    remove?: any[];
-
-    // rows to update
-    update?: any[];
-}
-
-// result for above
-interface RowNodeTransaction {
-
-    // Row Nodes added
-    add: RowNode[];
-
-    // Row Nodes removed
-    remove: RowNode[];
-
-    // Row Nodes updated
-    update: RowNode[];
-}
-```
 
 ## Example: Updating with Transaction
 
