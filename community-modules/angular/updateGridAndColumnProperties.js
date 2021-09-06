@@ -51,10 +51,20 @@ function generateAngularInputOutputs(compUtils, { typeLookup, eventTypeLookup, d
     // for readability
     result += EOL;
 
+    const missingEventTypes = [];
     compUtils.PUBLIC_EVENTS.forEach((event) => {
         const onEvent = compUtils.getCallbackForEvent(event);
-        result += `    @Output() public ${event}: EventEmitter<${eventTypeLookup[onEvent]}> = new EventEmitter<${eventTypeLookup[onEvent]}>();${EOL}`;
+        const eventType = eventTypeLookup[onEvent];
+        if (eventType) {
+            result += `    @Output() public ${event}: EventEmitter<${eventType}> = new EventEmitter<${eventType}>();${EOL}`;
+        } else {
+            missingEventTypes.push(event);
+        }
     });
+
+    if (missingEventTypes.length > 0) {
+        throw new Error(`The following events are missing type information: [${missingEventTypes.join()}]\n If this is a public event add it to the GridOptions interface. \n If a private event add it to ComponentUtil.EXCLUDED_INTERNAL_EVENTS.\n`)
+    }
 
     result = addTypeCoercionHints(result, compUtils.BOOLEAN_PROPERTIES);
 
