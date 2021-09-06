@@ -268,6 +268,13 @@
                 "name": "Editing API",
                 "url": "/cell-editing/#editing-api"
             }
+        },
+        "getCellEditorInstances": {
+            "description": "Returns the list of active cell editor instances. Optionally provide parameters to restrict to certain columns / row nodes.",
+            "more": {
+                "name": "Cell Editor Instances",
+                "url": "/component-cell-editor/#accessing-cell-editor-instances"
+            }
         }
     },
     "export": {
@@ -378,10 +385,11 @@
             "description": "Retrieve rendered nodes. Due to virtualisation this will contain only the current visible rows and those in the buffer."
         },
         "getCellRendererInstances": {
-            "description": "Returns the list of active [Cell Renderer Instances](/component-cell-renderer/#accessing-cell-renderer-instances)."
-        },
-        "getCellEditorInstances": {
-            "description": "Returns the list of active [Cell Editor Instances](/component-cell-editor/#accessing-cell-editor-instances)."
+            "description": "Returns the list of active cell renderer instances.",
+            "more": {
+                "name": "Cell Renderer Instances",
+                "url": "/component-cell-renderer/#accessing-cell-renderer-instances"
+            }
         },
         "getSizesForCurrentTheme": {
             "description": "Gets the sizes that various UI elements will be rendered at with the current theme. If you override the row or header height using `gridOptions`, the override value you provided will be returned."

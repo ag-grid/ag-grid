@@ -6,7 +6,7 @@
 |```ts
 |interface ICellEditorAngularComp {
 |    // Optional - Params for rendering
-|    agInit(params: ICellRendererParams): void;
+|    agInit(params: ICellEditorParams): void;
 |
 |    // Should return the final value to the grid, the result of the editing
 |    getValue(): any;
@@ -36,4 +36,4 @@
 |    focusOut?(): boolean;
 |}
 |```
-|The interface for the `params` argument passed to `agInit` is as follows:
+|The interface for the `params` argument passed to `agInit` is `ICellEditorParams`:

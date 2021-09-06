@@ -61,20 +61,7 @@ Cell renderer components can be referenced by string or directly by class. They 
 It is also possible to use different renderers for different rows in the same column. Typically an application might check the rows contents and choose a renderer accordingly. To configure this set `colDef.cellRendererSelector` to a function that returns alternative values for `cellRenderer`,
 `cellRendererFramework` and `cellRendererSelector`.
 
-```js
-// Return result for cellRendererSelector
-interface CellRendererSelectorResult {
-
-    // equivalent of colDef.cellRenderer
-    component?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
-
-    // equivalent of colDef.cellRendererFramework
-    frameworkComponent?: any;
-
-    // equivalent of colDef.cellRendererParams
-    params?: any;
-}
-```
+<interface-documentation interfaceName='CellRendererSelectorResult' ></interface-documentation>
 
 The following example illustrates how to use different renderers and parameters in the same column. Note that:
 

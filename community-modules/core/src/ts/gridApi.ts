@@ -111,7 +111,9 @@ export interface StartEditingCellParams {
 }
 
 export interface GetCellsParams {
+    /** Optional list of row nodes to restrict operation to */
     rowNodes?: RowNode[];
+    /** Optional list of columns to restrict operation to */
     columns?: (string | Column)[];
 }
 
@@ -1360,17 +1362,17 @@ export class GridApi {
     }
 
     public getChartRef(chartId: string) : ChartRef | undefined {
-        if (ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.getChartRef') && 
+        if (ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.getChartRef') &&
             ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.getChartRef')) {
-                return this.chartService.getChartRef(chartId);
-            }
+            return this.chartService.getChartRef(chartId);
+        }
     }
 
     public getChartImageDataURL(params: GetChartImageDataUrlParams): string | undefined {
         if (ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.getChartImageDataURL') &&
             ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.getChartImageDataURL')) {
-                return this.chartService.getChartImageDataURL(params);
-            }
+            return this.chartService.getChartImageDataURL(params);
+        }
     }
 
     public createRangeChart(params: CreateRangeChartParams): ChartRef | undefined {

@@ -6,8 +6,8 @@
 |
 |The editor interface is as follows:
 |
-|```
-|interface {
+|```ts
+|interface ICellEditor {
 |
 |    // Should return the final value to the grid, the result of the editing
 |    getValue(): any;

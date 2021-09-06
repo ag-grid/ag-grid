@@ -1609,19 +1609,33 @@
   "CellEditorSelectorFunc": {},
   "CellRendererSelectorResult": {
     "component?": {
+      "description": "/** Equivalent of setting `colDef.cellRenderer` */",
       "type": {
         "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string"
       }
     },
-    "frameworkComponent?": { "type": { "returnType": "any" } },
-    "params?": { "type": { "returnType": "any" } }
+    "frameworkComponent?": {
+      "description": "/** Equivalent of setting `colDef.cellRendererFramework` */",
+      "type": { "returnType": "any" }
+    },
+    "params?": {
+      "description": "/** Equivalent of setting `colDef.cellRendererParams` */",
+      "type": { "returnType": "any" }
+    }
   },
   "CellEditorSelectorResult": {
     "component?": {
+      "description": "/** Equivalent of setting `colDef.cellEditor` */",
       "type": { "returnType": "{ new(): ICellEditorComp; } | string" }
     },
-    "frameworkComponent?": { "type": { "returnType": "any" } },
-    "params?": { "type": { "returnType": "any" } }
+    "frameworkComponent?": {
+      "description": "/** Equivalent of setting `colDef.cellEditorFramework` */",
+      "type": { "returnType": "any" }
+    },
+    "params?": {
+      "description": "/** Equivalent of setting `colDef.cellEditorParams` */",
+      "type": { "returnType": "any" }
+    }
   },
   "ColumnGroupChild": {
     "getUniqueId": { "type": { "arguments": {}, "returnType": "string" } },
@@ -5297,28 +5311,58 @@
     "charPress?": { "type": { "returnType": "string" } }
   },
   "GetCellsParams": {
-    "rowNodes?": { "type": { "returnType": "RowNode[]" } },
-    "columns?": { "type": { "returnType": "(string | Column)[]" } }
+    "rowNodes?": {
+      "description": "/** Optional list of row nodes to restrict operation to */",
+      "type": { "returnType": "RowNode[]" }
+    },
+    "columns?": {
+      "description": "/** Optional list of columns to restrict operation to */",
+      "type": { "returnType": "(string | Column)[]" }
+    }
   },
   "RefreshCellsParams": {
     "force?": { "type": { "returnType": "boolean" } },
     "suppressFlash?": { "type": { "returnType": "boolean" } },
-    "rowNodes?": { "type": { "returnType": "RowNode[]" } },
-    "columns?": { "type": { "returnType": "(string | Column)[]" } }
+    "rowNodes?": {
+      "description": "/** Optional list of row nodes to restrict operation to */",
+      "type": { "returnType": "RowNode[]" }
+    },
+    "columns?": {
+      "description": "/** Optional list of columns to restrict operation to */",
+      "type": { "returnType": "(string | Column)[]" }
+    }
   },
   "FlashCellsParams": {
     "flashDelay?": { "type": { "returnType": "number" } },
     "fadeDelay?": { "type": { "returnType": "number" } },
-    "rowNodes?": { "type": { "returnType": "RowNode[]" } },
-    "columns?": { "type": { "returnType": "(string | Column)[]" } }
+    "rowNodes?": {
+      "description": "/** Optional list of row nodes to restrict operation to */",
+      "type": { "returnType": "RowNode[]" }
+    },
+    "columns?": {
+      "description": "/** Optional list of columns to restrict operation to */",
+      "type": { "returnType": "(string | Column)[]" }
+    }
   },
   "GetCellRendererInstancesParams": {
-    "rowNodes?": { "type": { "returnType": "RowNode[]" } },
-    "columns?": { "type": { "returnType": "(string | Column)[]" } }
+    "rowNodes?": {
+      "description": "/** Optional list of row nodes to restrict operation to */",
+      "type": { "returnType": "RowNode[]" }
+    },
+    "columns?": {
+      "description": "/** Optional list of columns to restrict operation to */",
+      "type": { "returnType": "(string | Column)[]" }
+    }
   },
   "GetCellEditorInstancesParams": {
-    "rowNodes?": { "type": { "returnType": "RowNode[]" } },
-    "columns?": { "type": { "returnType": "(string | Column)[]" } }
+    "rowNodes?": {
+      "description": "/** Optional list of row nodes to restrict operation to */",
+      "type": { "returnType": "RowNode[]" }
+    },
+    "columns?": {
+      "description": "/** Optional list of columns to restrict operation to */",
+      "type": { "returnType": "(string | Column)[]" }
+    }
   },
   "RedrawRowsParams": {
     "rowNodes?": { "type": { "returnType": "RowNode[]" } }
@@ -7109,7 +7153,7 @@
       }
     },
     "stopEditing": {
-      "description": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property enterMovesDownAfterEdit=true */",
+      "description": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property `enterMovesDownAfterEdit=true` */",
       "type": {
         "arguments": { "suppressNavigateAfterEdit": "boolean" },
         "returnType": "void"
@@ -7120,11 +7164,11 @@
       "type": { "returnType": "HTMLElement" }
     },
     "parseValue": {
-      "description": "/** Utility function to parse a value using the column's colDef.valueParser */",
+      "description": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
       "type": { "arguments": { "value": "any" }, "returnType": "any" }
     },
     "formatValue": {
-      "description": "/** Utility function to format a value using the column's colDef.valueFormatter */",
+      "description": "/** Utility function to format a value using the column's `colDef.valueFormatter` */",
       "type": { "arguments": { "value": "any" }, "returnType": "any" }
     }
   },
@@ -9206,7 +9250,7 @@
       }
     },
     "stopEditing": {
-      "description": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property enterMovesDownAfterEdit=true */",
+      "description": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property `enterMovesDownAfterEdit=true` */",
       "type": {
         "arguments": { "suppressNavigateAfterEdit": "boolean" },
         "returnType": "void"
@@ -9217,11 +9261,11 @@
       "type": { "returnType": "HTMLElement" }
     },
     "parseValue": {
-      "description": "/** Utility function to parse a value using the column's colDef.valueParser */",
+      "description": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
       "type": { "arguments": { "value": "any" }, "returnType": "any" }
     },
     "formatValue": {
-      "description": "/** Utility function to format a value using the column's colDef.valueFormatter */",
+      "description": "/** Utility function to format a value using the column's `colDef.valueFormatter` */",
       "type": { "arguments": { "value": "any" }, "returnType": "any" }
     }
   },
@@ -10525,7 +10569,7 @@
       }
     },
     "stopEditing": {
-      "description": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property enterMovesDownAfterEdit=true */",
+      "description": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property `enterMovesDownAfterEdit=true` */",
       "type": {
         "arguments": { "suppressNavigateAfterEdit": "boolean" },
         "returnType": "void"
@@ -10536,11 +10580,11 @@
       "type": { "returnType": "HTMLElement" }
     },
     "parseValue": {
-      "description": "/** Utility function to parse a value using the column's colDef.valueParser */",
+      "description": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
       "type": { "arguments": { "value": "any" }, "returnType": "any" }
     },
     "formatValue": {
-      "description": "/** Utility function to format a value using the column's colDef.valueFormatter */",
+      "description": "/** Utility function to format a value using the column's `colDef.valueFormatter` */",
       "type": { "arguments": { "value": "any" }, "returnType": "any" }
     }
   },
@@ -10600,7 +10644,7 @@
       }
     },
     "stopEditing": {
-      "description": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property enterMovesDownAfterEdit=true */",
+      "description": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property `enterMovesDownAfterEdit=true` */",
       "type": {
         "arguments": { "suppressNavigateAfterEdit": "boolean" },
         "returnType": "void"
@@ -10611,11 +10655,11 @@
       "type": { "returnType": "HTMLElement" }
     },
     "parseValue": {
-      "description": "/** Utility function to parse a value using the column's colDef.valueParser */",
+      "description": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
       "type": { "arguments": { "value": "any" }, "returnType": "any" }
     },
     "formatValue": {
-      "description": "/** Utility function to format a value using the column's colDef.valueFormatter */",
+      "description": "/** Utility function to format a value using the column's `colDef.valueFormatter` */",
       "type": { "arguments": { "value": "any" }, "returnType": "any" }
     }
   },
@@ -10675,7 +10719,7 @@
       }
     },
     "stopEditing": {
-      "description": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property enterMovesDownAfterEdit=true */",
+      "description": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property `enterMovesDownAfterEdit=true` */",
       "type": {
         "arguments": { "suppressNavigateAfterEdit": "boolean" },
         "returnType": "void"
@@ -10686,11 +10730,11 @@
       "type": { "returnType": "HTMLElement" }
     },
     "parseValue": {
-      "description": "/** Utility function to parse a value using the column's colDef.valueParser */",
+      "description": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
       "type": { "arguments": { "value": "any" }, "returnType": "any" }
     },
     "formatValue": {
-      "description": "/** Utility function to format a value using the column's colDef.valueFormatter */",
+      "description": "/** Utility function to format a value using the column's `colDef.valueFormatter` */",
       "type": { "arguments": { "value": "any" }, "returnType": "any" }
     }
   },

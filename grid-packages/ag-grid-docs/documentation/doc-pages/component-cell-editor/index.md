@@ -27,62 +27,7 @@ md-include:component-interface-angular.md
 md-include:component-interface-react.md
 md-include:component-interface-vue.md
 
-```ts
-interface ICellEditorParams {
-    // current value of the cell
-    value: any;
-
-    // key code of key that started the edit, eg 'Enter' or 'Delete' - non-printable characters appear here
-    keyPress: number;
-
-    // the string that started the edit, eg 'a' if letter A was pressed, or 'A' if Shift + letter A
-    // - only printable characters appear here
-    charPress: string;
-
-    // grid column
-    column: Column;
-
-    // grid row node
-    node: RowNode;
-
-    // editing row index
-    rowIndex: number,
-
-    // grid API
-    api: GridApi;
-
-    // column API
-    columnApi: ColumnApi;
-
-    // If doing full row edit, this is true if the cell is the one that started the edit (eg it is the cell the
-    // use double clicked on, or pressed a key on etc).
-    cellStartedEdit: boolean;
-
-    // the grid's context object
-    context: any;
-
-    // angular 1 scope - null if not using angular 1, this is legacy and not used if not using angular 1
-    $scope: any;
-
-    // callback to tell grid a key was pressed - useful to pass control key events (Tab, arrows etc)
-    // back to grid - however you do
-    onKeyDown: (event: KeyboardEvent)=>void;
-
-    // Callback to tell grid to stop editing the current cell. pass 'false' to prevent navigation moving
-    // to the next cell if grid property enterMovesDownAfterEdit=true
-    stopEditing: (suppressNavigateAfterEdit?: boolean)=>void;
-
-    // A reference to the DOM element representing the grid cell that your component will live inside. Useful if you
-    // want to add event listeners or classes at this level. This is the DOM element that gets browser focus when selecting cells.
-    eGridCell: HTMLElement;
-
-    // Utility function to parse a value using the column's colDef.valueParser
-    parseValue: (value: any) => any;
-
-    // Utility function to format a value using the column's colDef.valueFormatter
-    formatValue: (value: any) => any;
-}
-```
+<interface-documentation interfaceName='ICellEditorParams' ></interface-documentation>
 
 ## Registering Cell Editors with Columns
 
@@ -123,30 +68,13 @@ md-include:keyboard-option-1-vue.md
 
 If you implement `colDef.suppressKeyboardEvent()`, you can tell the grid which events you want process and which not. The advantage of this method of the previous method is it takes the responsibility out of the cell editor and into the column definition. So if you are using a reusable, or third party, cell editor, and the editor doesn't have this logic in it, you can add the logic via configuration.
 
+<api-documentation source='column-properties/properties.json' section='columns' names='["suppressKeyboardEvent"]'></api-documentation>
+
 md-include:keyboard-option-2-javascript.md
 md-include:keyboard-option-2-angular.md
 md-include:keyboard-option-2-react.md
 md-include:keyboard-option-2-vue.md
 
-The params for `suppressKeyboardEvent( )` are as follows:
-
-```ts
-interface SuppressKeyboardEventParams {
-    // the keyboard event the grid received
-    event: KeyboardEvent;
-
-    // whether the cell is editing or not
-    editing: boolean;
-
-    // these are same as normal
-    node: RowNode;
-    column: Column;
-    colDef: ColDef;
-    context: any;
-    api: GridApi;
-    columnApi: ColumnApi;
-}
-```
 
 ## Cell Editing Example
 
@@ -164,18 +92,7 @@ The example below illustrates:
 
 After the grid has created an instance of a cell editor for a cell it is possible to access that instance. This is useful if you want to call a method that you provide on the cell editor that has nothing to do with the operation of the grid. Accessing cell editors is done using the grid API `getCellEditorInstances(params)`.
 
-```ts
-// function takes params to identify what cells and returns back a list of cell editors
-function getCellEditorInstances(params: GetCellEditorInstancesParams): ICellEditorComp[];
-
-// params object for the above
-interface GetCellEditorInstancesParams {
-    // an optional list of row nodes
-    rowNodes?: RowNode[];
-    // an optional list of columns
-    columns?: (string | Column)[];
-}
-```
+<api-documentation source='grid-api/api.json' section='editing' names='["getCellEditorInstances"]'></api-documentation>
 
 If you are doing normal editing, then only one cell is editable at any given time. For this reason if you call `getCellEditorInstances()` with no params, it will return back the editing cell's editor if a cell is editing, or an empty list if no cell is editing.
 

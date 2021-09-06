@@ -1210,6 +1210,11 @@
       "component?": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
       "frameworkComponent?": "any",
       "params?": "any"
+    },
+    "docs": {
+      "component?": "/** Equivalent of setting `colDef.cellRenderer` */",
+      "frameworkComponent?": "/** Equivalent of setting `colDef.cellRendererFramework` */",
+      "params?": "/** Equivalent of setting `colDef.cellRendererParams` */"
     }
   },
   "CellEditorSelectorResult": {
@@ -1218,6 +1223,11 @@
       "component?": "{ new (): ICellEditorComp; } | string",
       "frameworkComponent?": "any",
       "params?": "any"
+    },
+    "docs": {
+      "component?": "/** Equivalent of setting `colDef.cellEditor` */",
+      "frameworkComponent?": "/** Equivalent of setting `colDef.cellEditorFramework` */",
+      "params?": "/** Equivalent of setting `colDef.cellEditorParams` */"
     }
   },
   "ColumnGroupChild": {
@@ -3900,7 +3910,11 @@
   },
   "GetCellsParams": {
     "meta": {},
-    "type": { "rowNodes?": "RowNode[]", "columns?": "(string | Column)[]" }
+    "type": { "rowNodes?": "RowNode[]", "columns?": "(string | Column)[]" },
+    "docs": {
+      "rowNodes?": "/** Optional list of row nodes to restrict operation to */",
+      "columns?": "/** Optional list of columns to restrict operation to */"
+    }
   },
   "RefreshCellsParams": {
     "meta": {},
@@ -3909,6 +3923,10 @@
       "suppressFlash?": "boolean",
       "rowNodes?": "RowNode[]",
       "columns?": "(string | Column)[]"
+    },
+    "docs": {
+      "rowNodes?": "/** Optional list of row nodes to restrict operation to */",
+      "columns?": "/** Optional list of columns to restrict operation to */"
     }
   },
   "FlashCellsParams": {
@@ -3918,15 +3936,27 @@
       "fadeDelay?": "number",
       "rowNodes?": "RowNode[]",
       "columns?": "(string | Column)[]"
+    },
+    "docs": {
+      "rowNodes?": "/** Optional list of row nodes to restrict operation to */",
+      "columns?": "/** Optional list of columns to restrict operation to */"
     }
   },
   "GetCellRendererInstancesParams": {
     "meta": {},
-    "type": { "rowNodes?": "RowNode[]", "columns?": "(string | Column)[]" }
+    "type": { "rowNodes?": "RowNode[]", "columns?": "(string | Column)[]" },
+    "docs": {
+      "rowNodes?": "/** Optional list of row nodes to restrict operation to */",
+      "columns?": "/** Optional list of columns to restrict operation to */"
+    }
   },
   "GetCellEditorInstancesParams": {
     "meta": {},
-    "type": { "rowNodes?": "RowNode[]", "columns?": "(string | Column)[]" }
+    "type": { "rowNodes?": "RowNode[]", "columns?": "(string | Column)[]" },
+    "docs": {
+      "rowNodes?": "/** Optional list of row nodes to restrict operation to */",
+      "columns?": "/** Optional list of columns to restrict operation to */"
+    }
   },
   "RedrawRowsParams": { "meta": {}, "type": { "rowNodes?": "RowNode[]" } },
   "CreateRangeChartParams": {
@@ -5368,10 +5398,10 @@
       "context": "/** Context  as set on gridOptions.context */",
       "$scope": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
       "onKeyDown": "/** callback to tell grid a key was pressed - useful to pass control key events (tab,\n * arrows etc) back to grid - however you do */",
-      "stopEditing": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property enterMovesDownAfterEdit=true */",
+      "stopEditing": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property `enterMovesDownAfterEdit=true` */",
       "eGridCell": "/** A reference to the DOM element representing the grid cell that your component\n * will live inside. Useful if you want to add event listeners or classes at this level.\n * This is the DOM element that gets browser focus when selecting cells. */",
-      "parseValue": "/** Utility function to parse a value using the column's colDef.valueParser */",
-      "formatValue": "/** Utility function to format a value using the column's colDef.valueFormatter */"
+      "parseValue": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
+      "formatValue": "/** Utility function to format a value using the column's `colDef.valueFormatter` */"
     }
   },
   "ICellEditorComp": {
@@ -6916,10 +6946,10 @@
       "context": "/** Context  as set on gridOptions.context */",
       "$scope": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
       "onKeyDown": "/** callback to tell grid a key was pressed - useful to pass control key events (tab,\n * arrows etc) back to grid - however you do */",
-      "stopEditing": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property enterMovesDownAfterEdit=true */",
+      "stopEditing": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property `enterMovesDownAfterEdit=true` */",
       "eGridCell": "/** A reference to the DOM element representing the grid cell that your component\n * will live inside. Useful if you want to add event listeners or classes at this level.\n * This is the DOM element that gets browser focus when selecting cells. */",
-      "parseValue": "/** Utility function to parse a value using the column's colDef.valueParser */",
-      "formatValue": "/** Utility function to format a value using the column's colDef.valueFormatter */"
+      "parseValue": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
+      "formatValue": "/** Utility function to format a value using the column's `colDef.valueFormatter` */"
     }
   },
   "RowBounds": {
@@ -7796,10 +7826,10 @@
       "context": "/** Context  as set on gridOptions.context */",
       "$scope": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
       "onKeyDown": "/** callback to tell grid a key was pressed - useful to pass control key events (tab,\n * arrows etc) back to grid - however you do */",
-      "stopEditing": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property enterMovesDownAfterEdit=true */",
+      "stopEditing": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property `enterMovesDownAfterEdit=true` */",
       "eGridCell": "/** A reference to the DOM element representing the grid cell that your component\n * will live inside. Useful if you want to add event listeners or classes at this level.\n * This is the DOM element that gets browser focus when selecting cells. */",
-      "parseValue": "/** Utility function to parse a value using the column's colDef.valueParser */",
-      "formatValue": "/** Utility function to format a value using the column's colDef.valueFormatter */"
+      "parseValue": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
+      "formatValue": "/** Utility function to format a value using the column's `colDef.valueFormatter` */"
     }
   },
   "ISelectCellEditorParams": {
@@ -7838,10 +7868,10 @@
       "context": "/** Context  as set on gridOptions.context */",
       "$scope": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
       "onKeyDown": "/** callback to tell grid a key was pressed - useful to pass control key events (tab,\n * arrows etc) back to grid - however you do */",
-      "stopEditing": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property enterMovesDownAfterEdit=true */",
+      "stopEditing": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property `enterMovesDownAfterEdit=true` */",
       "eGridCell": "/** A reference to the DOM element representing the grid cell that your component\n * will live inside. Useful if you want to add event listeners or classes at this level.\n * This is the DOM element that gets browser focus when selecting cells. */",
-      "parseValue": "/** Utility function to parse a value using the column's colDef.valueParser */",
-      "formatValue": "/** Utility function to format a value using the column's colDef.valueFormatter */"
+      "parseValue": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
+      "formatValue": "/** Utility function to format a value using the column's `colDef.valueFormatter` */"
     }
   },
   "ITextCellEditorParams": {
@@ -7882,10 +7912,10 @@
       "context": "/** Context  as set on gridOptions.context */",
       "$scope": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
       "onKeyDown": "/** callback to tell grid a key was pressed - useful to pass control key events (tab,\n * arrows etc) back to grid - however you do */",
-      "stopEditing": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property enterMovesDownAfterEdit=true */",
+      "stopEditing": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property `enterMovesDownAfterEdit=true` */",
       "eGridCell": "/** A reference to the DOM element representing the grid cell that your component\n * will live inside. Useful if you want to add event listeners or classes at this level.\n * This is the DOM element that gets browser focus when selecting cells. */",
-      "parseValue": "/** Utility function to parse a value using the column's colDef.valueParser */",
-      "formatValue": "/** Utility function to format a value using the column's colDef.valueFormatter */"
+      "parseValue": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
+      "formatValue": "/** Utility function to format a value using the column's `colDef.valueFormatter` */"
     }
   },
   "IGroupCellRenderer": {

@@ -44,5 +44,5 @@
 ||
 ||Please refer to the [Hook](/react-hooks/) documentation (or the examples on this page) for more information.
 |
-|The interface for values available on on component creation (via `props`) is as follows:
+|The interface for values available on component creation (via `props`) is `ICellEditorParams`:
 
