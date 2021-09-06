@@ -3,7 +3,7 @@ import { Path } from '../scene/shape/path';
 import { Line } from '../scene/shape/line';
 import { LinearScale } from '../scale/linearScale';
 import { BandScale } from '../scale/bandScale';
-import { Observable, reactive } from '../util/observable';
+import { Observable } from '../util/observable';
 import { Selection } from "../scene/selection";
 import { SeriesNodeDatum, Sparkline } from './sparkline';
 import { Marker } from './marker';
@@ -16,25 +16,25 @@ interface AreaNodeDatum extends SeriesNodeDatum { }
 interface AreaPathDatum extends SeriesNodeDatum { }
 
 class SparklineMarker extends Observable {
-    @reactive() enabled: boolean = true;
-    @reactive() shape: string = 'circle';
-    @reactive('update') size: number = 0;
-    @reactive('update') fill?: string = 'rgb(124, 181, 236)';
-    @reactive('update') stroke?: string = 'rgb(124, 181, 236)';
-    @reactive('update') strokeWidth: number = 1;
-    @reactive('update') formatter?: (params: MarkerFormatterParams) => MarkerFormat;
+    enabled: boolean = true;
+    shape: string = 'circle';
+    size: number = 0;
+    fill?: string = 'rgb(124, 181, 236)';
+    stroke?: string = 'rgb(124, 181, 236)';
+    strokeWidth: number = 1;
+    formatter?: (params: MarkerFormatterParams) => MarkerFormat = undefined;
 }
 
 class SparklineLine extends Observable {
-    @reactive('update') stroke: string = 'rgb(124, 181, 236)';
-    @reactive('update') strokeWidth: number = 1;
+    stroke: string = 'rgb(124, 181, 236)';
+    strokeWidth: number = 1;
 }
 
 export class AreaSparkline extends Sparkline {
 
     static className = 'AreaSparkline';
 
-    @reactive('update') fill: string = 'rgba(124, 181, 236, 0.25)';
+    fill: string = 'rgba(124, 181, 236, 0.25)';
 
     private areaSparklineGroup: Group = new Group();
     protected strokePath: Path = new Path();
@@ -53,20 +53,17 @@ export class AreaSparkline extends Sparkline {
     constructor() {
         super();
 
-        this.addEventListener('update', this.scheduleLayout, this);
         this.rootGroup.append(this.areaSparklineGroup);
         this.areaSparklineGroup.append([this.fillPath, this.xAxisLine, this.strokePath, this.markers]);
-
-        this.marker.addEventListener('update', this.updateMarkers, this);
-        this.marker.addPropertyListener('enabled', this.updateMarkers, this);
-        this.marker.addPropertyListener('shape', this.onMarkerShapeChange, this);
-        this.line.addEventListener('update', this.scheduleLayout, this);
     }
 
     protected getNodeData(): AreaNodeDatum[] {
         return this.markerSelectionData;
     }
 
+    /**
+    * If marker shape is changed, this method should be called to remove the previous marker nodes selection.
+    */
     private onMarkerShapeChange() {
         this.markerSelection = this.markerSelection.setData([]);
         this.markerSelection.exit.remove();
@@ -181,11 +178,11 @@ export class AreaSparkline extends Sparkline {
         // Phantom points for creating closed area
         const yZero = yScale.convert(0);
         const firstX = xScale.convert(xData[0]) + offsetX;
-        const lastX = xScale.convert(xData[n-1]) + offsetX;
+        const lastX = xScale.convert(xData[n - 1]) + offsetX;
 
         areaData.push(
-            { seriesDatum: undefined, point: { x: lastX, y: yZero} },
-            { seriesDatum: undefined, point: { x: firstX, y: yZero} }
+            { seriesDatum: undefined, point: { x: lastX, y: yZero } },
+            { seriesDatum: undefined, point: { x: firstX, y: yZero } }
         );
 
         return { nodeData, areaData };
@@ -218,7 +215,7 @@ export class AreaSparkline extends Sparkline {
     }
 
     private updateMarkers(): void {
-        const { highlightedDatum, highlightStyle,  marker } = this;
+        const { highlightedDatum, highlightStyle, marker } = this;
         const { size: highlightSize, fill: highlightFill, stroke: highlightStroke, strokeWidth: highlightStrokeWidth } = highlightStyle;
         const markerFormatter = marker.formatter;
 

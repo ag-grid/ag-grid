@@ -6,7 +6,6 @@ import { Selection } from '../scene/selection';
 import { SeriesNodeDatum, Sparkline } from './sparkline';
 import { toTooltipHtml } from './sparklineTooltip';
 import { Rectangle } from './rectangle';
-import { reactive } from '../util/observable';
 import { ColumnFormatterParams, ColumnFormat } from "@ag-grid-community/core";
 
 interface ColumnNodeDatum extends SeriesNodeDatum {
@@ -30,13 +29,13 @@ export class ColumnSparkline extends Sparkline {
     private columns: Group = new Group();
     private columnSelection: Selection<Rectangle, Group, ColumnNodeDatum, ColumnNodeDatum> = Selection.select(this.columns).selectAll<Rectangle>();
     private columnSelectionData: ColumnNodeDatum[] = [];
-    @reactive('update') fill: string = 'rgb(124, 181, 236)';
-    @reactive('update') stroke: string = 'silver';
-    @reactive('update') strokeWidth: number = 0;
-    @reactive('update') paddingInner: number = 0.5;
-    @reactive('update') paddingOuter: number = 0.2;
-    @reactive('update') yScaleDomain: [number, number] | undefined = undefined;
-    @reactive('update') formatter?: (params: ColumnFormatterParams) => ColumnFormat;
+    fill: string = 'rgb(124, 181, 236)';
+    stroke: string = 'silver';
+    strokeWidth: number = 0;
+    paddingInner: number = 0.5;
+    paddingOuter: number = 0.2;
+    yScaleDomain: [number, number] | undefined = undefined;
+    formatter?: (params: ColumnFormatterParams) => ColumnFormat = undefined;
 
     constructor() {
         super();
@@ -44,12 +43,10 @@ export class ColumnSparkline extends Sparkline {
         this.rootGroup.append(this.columnSparklineGroup);
         this.columnSparklineGroup.append([this.columns, this.xAxisLine]);
 
-        this.addEventListener('update', this.scheduleLayout, this);
-
         this.xAxisLine.lineCap = 'round';
     }
 
-    protected getNodeData() : ColumnNodeDatum[] {
+    protected getNodeData(): ColumnNodeDatum[] {
         return this.columnSelectionData;
     }
 

@@ -2,7 +2,7 @@ import { BandScale } from '../scale/bandScale';
 import { LinearScale } from '../scale/linearScale';
 import { Group } from '../scene/group';
 import { Path } from '../scene/shape/path';
-import { Observable, reactive } from '../util/observable';
+import { Observable } from '../util/observable';
 import { Selection } from '../scene/selection';
 import { Marker } from './marker';
 import { Point, SeriesNodeDatum, Sparkline } from './sparkline';
@@ -15,18 +15,18 @@ interface LineNodeDatum extends SeriesNodeDatum {
 }
 
 class SparklineMarker extends Observable {
-    @reactive() enabled: boolean = true;
-    @reactive() shape: string = 'circle';
-    @reactive('update') size: number = 0;
-    @reactive('update') fill?: string = 'rgb(124, 181, 236)';
-    @reactive('update') stroke?: string = 'rgb(124, 181, 236)';
-    @reactive('update') strokeWidth: number = 1;
-    @reactive('update') formatter?: (params: MarkerFormatterParams) => MarkerFormat;
+    enabled: boolean = true;
+    shape: string = 'circle';
+    size: number = 0;
+    fill?: string = 'rgb(124, 181, 236)';
+    stroke?: string = 'rgb(124, 181, 236)';
+    strokeWidth: number = 1;
+    formatter?: (params: MarkerFormatterParams) => MarkerFormat = undefined;
 }
 
 class SparklineLine extends Observable {
-    @reactive('update') stroke: string = 'rgb(124, 181, 236)';
-    @reactive('update') strokeWidth: number = 1;
+    stroke: string = 'rgb(124, 181, 236)';
+    strokeWidth: number = 1;
 }
 
 export class LineSparkline extends Sparkline {
@@ -49,17 +49,15 @@ export class LineSparkline extends Sparkline {
 
         this.rootGroup.append(this.lineSparklineGroup);
         this.lineSparklineGroup.append([this.linePath, this.markers]);
-
-        this.marker.addEventListener('update', this.updateMarkers, this);
-        this.marker.addPropertyListener('enabled', this.updateMarkers, this);
-        this.marker.addPropertyListener('shape', this.onMarkerShapeChange, this);
-        this.line.addEventListener('update', this.updateLine, this);
     }
 
     protected getNodeData(): LineNodeDatum[] {
         return this.markerSelectionData;
     }
 
+    /**
+     * If marker shape is changed, this method should be called to remove the previous marker nodes selection.
+     */
     private onMarkerShapeChange() {
         this.markerSelection = this.markerSelection.setData([]);
         this.markerSelection.exit.remove();

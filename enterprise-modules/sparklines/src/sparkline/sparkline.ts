@@ -1,6 +1,6 @@
 import { Group } from '../scene/group';
 import { Scene } from '../scene/scene';
-import { Observable, reactive } from '../util/observable';
+import { Observable } from '../util/observable';
 import { createId } from "../util/id";
 import { Padding } from '../util/padding';
 import { defaultTooltipCss } from './defaultTooltipCss';
@@ -25,9 +25,11 @@ interface SeriesRect {
 }
 
 type Container = HTMLElement | undefined | null;
+type Data = number[]  | undefined | null;
+
 export class SparklineAxis extends Observable {
-    @reactive('update') stroke: string = 'rgb(204, 214, 235)';
-    @reactive('update') strokeWidth: number = 1;
+    stroke: string = 'rgb(204, 214, 235)';
+    strokeWidth: number = 1;
 }
 export abstract class Sparkline extends Observable {
 
@@ -51,7 +53,7 @@ export abstract class Sparkline extends Observable {
     };
 
     private _container: Container = undefined;
-    set container(value: HTMLElement | undefined | null) {
+    set container(value: Container) {
         if (this._container !== value) {
             const { parentNode } = this.canvasElement;
 
@@ -70,9 +72,19 @@ export abstract class Sparkline extends Observable {
         return this._container;
     }
 
-    @reactive() data?: number[] = undefined;
-    @reactive() title?: string = undefined;
-    @reactive() padding: Padding = new Padding(3);
+    private _data: Data = undefined;
+    set data(value: Data) {
+        if (this._data !== value) {
+            this._data = value;
+            this.processData();
+        }
+    }
+    get data() {
+        return this._data;
+    }
+
+    title?: string = undefined;
+    padding: Padding = new Padding(3);
 
     readonly axis = new SparklineAxis();
     readonly highlightStyle: HighlightStyle = {
@@ -110,17 +122,11 @@ export abstract class Sparkline extends Observable {
             Sparkline.tooltipDocuments.push(document);
 
             this.tooltip = new SparklineTooltip(this);
-            this.tooltip.addEventListener('class', () => this.tooltip.toggle());
 
             Sparkline.tooltipInstances.set(document, this.tooltip);
         } else {
             this.tooltip = Sparkline.tooltipInstances.get(document)!;
         }
-
-        this.addPropertyListener('data', this.processData, this);
-        this.addPropertyListener('padding', this.scheduleLayout, this);
-        this.axis.addEventListener('update', this.scheduleLayout, this);
-        this.tooltip.addEventListener('change', this.update, this);
 
         this.setupDomEventListeners(this.scene.canvas.element);
     }
@@ -226,7 +232,7 @@ export abstract class Sparkline extends Observable {
             xData.push(i);
         }
 
-        this.update();
+        this.scheduleLayout();
     }
 
     /**

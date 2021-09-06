@@ -1,5 +1,5 @@
 import { Color } from "../util/color";
-import { Observable, reactive } from "../util/observable";
+import { Observable } from "../util/observable";
 import { Sparkline } from "./sparkline";
 
 export interface TooltipMeta {
@@ -61,10 +61,10 @@ export class SparklineTooltip extends Observable {
     chart: Sparkline;
     element: HTMLElement = document.createElement('div');
 
-    @reactive() class: string = Sparkline.defaultTooltipClass;
-    @reactive() enabled: boolean = true;
-    @reactive() container?: HTMLElement;
-    @reactive('change') renderer?: (params: TooltipRendererParams) => string | TooltipRendererResult;
+    class: string = Sparkline.defaultTooltipClass;
+    enabled: boolean = true;
+    container?: HTMLElement;
+    renderer?: (params: TooltipRendererParams) => string | TooltipRendererResult;
 
     constructor(chart: Sparkline) {
         super();
@@ -161,6 +161,5 @@ export class SparklineTooltip extends Observable {
         if (parentNode) {
             parentNode.removeChild(this.element);
         }
-
     }
 }
