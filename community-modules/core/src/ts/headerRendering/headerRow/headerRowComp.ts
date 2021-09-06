@@ -11,6 +11,7 @@ import { AbstractHeaderWrapper } from '../columnHeader/abstractHeaderWrapper';
 import { HeaderWrapperComp } from '../columnHeader/headerWrapperComp';
 import { HeaderWrapperCtrl } from '../columnHeader/headerWrapperCtrl';
 import { HeaderRowCtrl, IHeaderRowComp } from './headerRowCtrl';
+import { find } from '../../utils/generic';
 
 export enum HeaderRowType {
     COLUMN_GROUP = 'group',
@@ -61,8 +62,7 @@ export class HeaderRowComp extends Component {
         if (this.ctrl.getType() != HeaderRowType.COLUMN) { return; }
 
         const headerCompsList = Object.keys(this.headerComps).map( c => this.headerComps[c]) as (HeaderWrapperComp[]);
-        const comp = headerCompsList.find( wrapper => wrapper.getColumn() == column);
-
+        const comp = find(headerCompsList, wrapper => wrapper.getColumn() == column);
         return comp ? comp.getGui() : undefined;
     }
 
@@ -142,6 +142,6 @@ export class HeaderRowComp extends Component {
 
     public getHeaderCompForColumn(column: ColumnGroupChild): AbstractHeaderWrapper {
         const headerCompsList = getAllValuesInObject(this.headerComps);
-        return headerCompsList.find( comp => comp.getColumn() == column );
+        return find(headerCompsList, comp => comp.getColumn() == column );
     }
 }
