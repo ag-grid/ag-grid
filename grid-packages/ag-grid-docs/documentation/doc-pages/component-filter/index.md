@@ -23,76 +23,14 @@ md-include:component-interface-angular.md
 md-include:component-interface-react.md
 md-include:component-interface-vue.md
 
-```ts
-interface IFilterParams {
-    // The column this filter is for
-    column: Column;
-
-    // The column definition for the column
-    colDef: ColDef;
-
-    // The row model, helpful for looking up data values if needed.
-    // If the filter needs to know which rows are a) in the table,
-    // b) currently visible (i.e. not already filtered), c) which groups,
-    // d) what order - all of this can be read from the rowModel.
-    rowModel: IRowModel;
-
-    // A function callback to be called when the filter changes. The
-    // grid will then respond by filtering the grid data. The callback
-    // takes one optional parameter which, if included, will get merged
-    // to the FilterChangedEvent object (useful for passing additional
-    // information to anyone listening to this event, however such extra
-    // attributes are not used by the grid).
-    filterChangedCallback: (additionalEventAttributes?: any) => void;
-
-    // A function callback, to be optionally called, when the filter UI changes.
-    // The grid will respond with emitting a FilterModifiedEvent. Apart from
-    // emitting the event, the grid takes no further action.
-    filterModifiedCallback: () => void;
-
-    // A function callback for the filter to get cell values from the
-    // row data. Call with a node to be given the value for that filter's
-    // column for that node. The callback takes care of selecting the
-    // right column definition and deciding whether to use valueGetter
-    // or field etc. This is useful in, for example, creating an Excel
-    // style filter, where the filter needs to lookup available values
-    // to allow the user to select from.
-    valueGetter: (rowNode: RowNode) => any;
-
-    // A function callback, call with a node to be told whether the node
-    // passes all filters except the current filter. This is useful if you
-    // want to only present to the user values that this filter can filter
-    // given the status of the other filters. The set filter uses this to
-    // remove from the list, items that are no longer available due to the
-    // state of other filters (like Excel type filtering).
-    doesRowPassOtherFilter: (rowNode: RowNode) => boolean;
-
-    // The context for this grid. See section on Context
-    context: any;
-
-    // The grid API
-    api: any;
-
-    // Only if using AngularJS (ie Angular v1), if angularCompileFilters
-    // is set to true, then a new child scope is created for each column
-    // filter and provided here.
-    $scope: any;
-}
-```
+<interface-documentation interfaceName='IFilterParams' ></interface-documentation>
 
 ### IDoesFilterPassParams
 
 The method `doesFilterPass(params)` takes the following as a parameter:
 
-```ts
-interface IDoesFilterPassParams {
-    // The row node in question
-    node: RowNode;
+<interface-documentation interfaceName='IDoesFilterPassParams' ></interface-documentation>
 
-    // The data part of the row node in question
-    data: any;
-}
-```
 
 ## Associating Floating Filter
 

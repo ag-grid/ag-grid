@@ -3542,14 +3542,20 @@
     "type": {
       "column": "Column",
       "filterParams": "IFilterParams",
+      "suppressFilterButton": "boolean",
+      "api": "GridApi",
       "currentParentModel": "() => any",
       "parentFilterInstance": "(callback: (filterInstance: IFilterComp) => void) => void",
       "showParentFilter": "() => void",
-      "suppressFilterButton": "boolean",
-      "api": "GridApi",
       "onFloatingFilterChanged": "(change: any) => boolean"
     },
     "docs": {
+      "column": "/** The column this filter is for. */",
+      "filterParams": "/** The params object passed to the filter. \n * This is to allow the floating filter access to the configuration of the parent filter.\n * For example, the provided filters use debounceMs from the parent filter params. */",
+      "suppressFilterButton": "/** Boolean flag to indicate if the button in the floating filter that opens the parent filter in a popup should be displayed. */",
+      "currentParentModel": "/** This is a shortcut to invoke getModel on the parent filter.\n * If the parent filter doesn't exist (filters are lazily created as needed)\n * then it returns null rather than calling getModel() on the parent filter. */",
+      "parentFilterInstance": "/** Gets a reference to the parent filter. The result is returned asynchronously\n * via a callback as the parent filter may not exist yet. If it does\n * not exist, it is created and asynchronously returned (AG Grid itself\n * does not create components asynchronously, however if providing a framework\n * provided filter e.g. React, it might be).\n * \n * The floating filter can then call any method it likes on the parent filter.\n * The parent filter will typically provide its own method for the floating\n * filter to call to set the filter. For example, if creating custom filter A,\n * it should have a method your floating A can call to set the state\n * when the user updates via the floating filter. */",
+      "showParentFilter": "/** Shows the parent filter popup. */",
       "onFloatingFilterChanged": "/** @deprecated in v21, use parentFilterInstance() callback instead and tell filter directly\n */"
     }
   },
@@ -3612,7 +3618,6 @@
       "closeOnApply?": "boolean",
       "newRowsAction?": "string",
       "debounceMs?": "number",
-      "api": "GridApi",
       "column": "Column",
       "colDef": "ColDef",
       "rowModel": "IRowModel",
@@ -3620,6 +3625,7 @@
       "filterModifiedCallback": "() => void",
       "valueGetter": "(rowNode: RowNode) => any",
       "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
+      "api": "GridApi",
       "context": "any"
     },
     "docs": {
@@ -3628,6 +3634,10 @@
       "resetButton?": "/** @deprecated\n */",
       "applyButton?": "/** @deprecated\n */",
       "newRowsAction?": "/** @deprecated\n */",
+      "column": "/** The column this filter is for. */",
+      "colDef": "/** The column definition for the column. */",
+      "rowModel": "/** The row model, helpful for looking up data values if needed.\n * If the filter needs to know which rows are\n * a) in the table,\n * b) currently visible (i.e. not already filtered),\n * c) which groups,\n * d) what order - all of this can be read from the rowModel. */",
+      "filterChangedCallback": "/** A function callback to be called when the filter changes. The\n * grid will then respond by filtering the grid data. The callback\n * takes one optional parameter which, if included, will get merged\n * to the FilterChangedEvent object (useful for passing additional\n * information to anyone listening to this event, however such extra\n * attributes are not used by the grid). */",
       "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
@@ -3670,7 +3680,6 @@
       "closeOnApply?": "boolean",
       "newRowsAction?": "string",
       "debounceMs?": "number",
-      "api": "GridApi",
       "column": "Column",
       "colDef": "ColDef",
       "rowModel": "IRowModel",
@@ -3678,6 +3687,7 @@
       "filterModifiedCallback": "() => void",
       "valueGetter": "(rowNode: RowNode) => any",
       "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
+      "api": "GridApi",
       "context": "any"
     },
     "docs": {
@@ -3686,6 +3696,10 @@
       "resetButton?": "/** @deprecated\n */",
       "applyButton?": "/** @deprecated\n */",
       "newRowsAction?": "/** @deprecated\n */",
+      "column": "/** The column this filter is for. */",
+      "colDef": "/** The column definition for the column. */",
+      "rowModel": "/** The row model, helpful for looking up data values if needed.\n * If the filter needs to know which rows are\n * a) in the table,\n * b) currently visible (i.e. not already filtered),\n * c) which groups,\n * d) what order - all of this can be read from the rowModel. */",
+      "filterChangedCallback": "/** A function callback to be called when the filter changes. The\n * grid will then respond by filtering the grid data. The callback\n * takes one optional parameter which, if included, will get merged\n * to the FilterChangedEvent object (useful for passing additional\n * information to anyone listening to this event, however such extra\n * attributes are not used by the grid). */",
       "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
@@ -3703,7 +3717,6 @@
       "closeOnApply?": "boolean",
       "newRowsAction?": "string",
       "debounceMs?": "number",
-      "api": "GridApi",
       "column": "Column",
       "colDef": "ColDef",
       "rowModel": "IRowModel",
@@ -3711,6 +3724,7 @@
       "filterModifiedCallback": "() => void",
       "valueGetter": "(rowNode: RowNode) => any",
       "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
+      "api": "GridApi",
       "context": "any"
     },
     "docs": {
@@ -3718,6 +3732,10 @@
       "resetButton?": "/** @deprecated\n */",
       "applyButton?": "/** @deprecated\n */",
       "newRowsAction?": "/** @deprecated\n */",
+      "column": "/** The column this filter is for. */",
+      "colDef": "/** The column definition for the column. */",
+      "rowModel": "/** The row model, helpful for looking up data values if needed.\n * If the filter needs to know which rows are\n * a) in the table,\n * b) currently visible (i.e. not already filtered),\n * c) which groups,\n * d) what order - all of this can be read from the rowModel. */",
+      "filterChangedCallback": "/** A function callback to be called when the filter changes. The\n * grid will then respond by filtering the grid data. The callback\n * takes one optional parameter which, if included, will get merged\n * to the FilterChangedEvent object (useful for passing additional\n * information to anyone listening to this event, however such extra\n * attributes are not used by the grid). */",
       "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
@@ -3750,7 +3768,6 @@
       "closeOnApply?": "boolean",
       "newRowsAction?": "string",
       "debounceMs?": "number",
-      "api": "GridApi",
       "column": "Column",
       "colDef": "ColDef",
       "rowModel": "IRowModel",
@@ -3758,6 +3775,7 @@
       "filterModifiedCallback": "() => void",
       "valueGetter": "(rowNode: RowNode) => any",
       "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
+      "api": "GridApi",
       "context": "any"
     },
     "docs": {
@@ -3766,6 +3784,10 @@
       "resetButton?": "/** @deprecated\n */",
       "applyButton?": "/** @deprecated\n */",
       "newRowsAction?": "/** @deprecated\n */",
+      "column": "/** The column this filter is for. */",
+      "colDef": "/** The column definition for the column. */",
+      "rowModel": "/** The row model, helpful for looking up data values if needed.\n * If the filter needs to know which rows are\n * a) in the table,\n * b) currently visible (i.e. not already filtered),\n * c) which groups,\n * d) what order - all of this can be read from the rowModel. */",
+      "filterChangedCallback": "/** A function callback to be called when the filter changes. The\n * grid will then respond by filtering the grid data. The callback\n * takes one optional parameter which, if included, will get merged\n * to the FilterChangedEvent object (useful for passing additional\n * information to anyone listening to this event, however such extra\n * attributes are not used by the grid). */",
       "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
@@ -3792,7 +3814,6 @@
       "closeOnApply?": "boolean",
       "newRowsAction?": "string",
       "debounceMs?": "number",
-      "api": "GridApi",
       "column": "Column",
       "colDef": "ColDef",
       "rowModel": "IRowModel",
@@ -3800,6 +3821,7 @@
       "filterModifiedCallback": "() => void",
       "valueGetter": "(rowNode: RowNode) => any",
       "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
+      "api": "GridApi",
       "context": "any"
     },
     "docs": {
@@ -3807,6 +3829,10 @@
       "resetButton?": "/** @deprecated\n */",
       "applyButton?": "/** @deprecated\n */",
       "newRowsAction?": "/** @deprecated\n */",
+      "column": "/** The column this filter is for. */",
+      "colDef": "/** The column definition for the column. */",
+      "rowModel": "/** The row model, helpful for looking up data values if needed.\n * If the filter needs to know which rows are\n * a) in the table,\n * b) currently visible (i.e. not already filtered),\n * c) which groups,\n * d) what order - all of this can be read from the rowModel. */",
+      "filterChangedCallback": "/** A function callback to be called when the filter changes. The\n * grid will then respond by filtering the grid data. The callback\n * takes one optional parameter which, if included, will get merged\n * to the FilterChangedEvent object (useful for passing additional\n * information to anyone listening to this event, however such extra\n * attributes are not used by the grid). */",
       "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
@@ -3869,7 +3895,6 @@
       "closeOnApply?": "boolean",
       "newRowsAction?": "string",
       "debounceMs?": "number",
-      "api": "GridApi",
       "column": "Column",
       "colDef": "ColDef",
       "rowModel": "IRowModel",
@@ -3877,6 +3902,7 @@
       "filterModifiedCallback": "() => void",
       "valueGetter": "(rowNode: RowNode) => any",
       "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
+      "api": "GridApi",
       "context": "any"
     },
     "docs": {
@@ -3884,6 +3910,10 @@
       "resetButton?": "/** @deprecated\n */",
       "applyButton?": "/** @deprecated\n */",
       "newRowsAction?": "/** @deprecated\n */",
+      "column": "/** The column this filter is for. */",
+      "colDef": "/** The column definition for the column. */",
+      "rowModel": "/** The row model, helpful for looking up data values if needed.\n * If the filter needs to know which rows are\n * a) in the table,\n * b) currently visible (i.e. not already filtered),\n * c) which groups,\n * d) what order - all of this can be read from the rowModel. */",
+      "filterChangedCallback": "/** A function callback to be called when the filter changes. The\n * grid will then respond by filtering the grid data. The callback\n * takes one optional parameter which, if included, will get merged\n * to the FilterChangedEvent object (useful for passing additional\n * information to anyone listening to this event, however such extra\n * attributes are not used by the grid). */",
       "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
@@ -4180,13 +4210,22 @@
       "showColumnMenu": "(source: HTMLElement) => void",
       "progressSort": "(multiSort?: boolean) => void",
       "setSort": "(sort: string, multiSort?: boolean) => void",
-      "columnApi": "ColumnApi",
+      "template": "string",
       "eGridHeader": "HTMLElement",
       "api": "GridApi",
-      "context": "any",
-      "template": "string"
+      "columnApi": "ColumnApi",
+      "context": "any"
     },
     "docs": {
+      "column": "/** The column the header is for. */",
+      "displayName": "/** The name to display for the column. \n * If the column is using a headerValueGetter, the displayName will take this into account. */",
+      "enableSorting": "/** Whether sorting is enabled for the column. \n * Only put sort logic into your header if this is true. */",
+      "enableMenu": "/** Whether menu is enabled for the column.\n * Only display a menu button in your header if this is true. */",
+      "showColumnMenu": "/** Callback to request the grid to show the column menu.\n * Pass in the html element of the column menu to have the\n *   grid position the menu over the button. */",
+      "progressSort": "/** Callback to progress the sort for this column.\n * The grid will decide the next sort direction eg ascending, descending or 'no sort'.\n * Pass `multiSort=true` if you want to do a multi sort (eg user has Shift held down when they click). */",
+      "setSort": "/** Callback to set the sort for this column.\n * Pass the sort direction to use ignoring the current sort eg one of 'asc', 'desc' or null (for no sort).\n * Pass `multiSort=true` if you want to do a multi sort (eg user has Shift held down when they click) */",
+      "template": "/** HTML template as a string to display in the header. */",
+      "eGridHeader": "/** The header the grid provides. \n * The custom header component is a child of the grid provided header.\n * The grid's header component is what contains the grid managed functionality such as resizing, keyboard navigation etc.\n * This is provided should you want to make changes to this cell,\n * eg add ARIA tags, or add keyboard event listener (as focus goes here when navigating to the header). */",
       "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
@@ -6631,7 +6670,11 @@
   },
   "IDoesFilterPassParams": {
     "meta": {},
-    "type": { "node": "RowNode", "data": "any" }
+    "type": { "node": "RowNode", "data": "any" },
+    "docs": {
+      "node": "/** The row node in question. */",
+      "data": "/** The data part of the row node in question. */"
+    }
   },
   "IFilterOptionDef": {
     "meta": {},
@@ -6645,7 +6688,6 @@
   "IFilterParams": {
     "meta": {},
     "type": {
-      "api": "GridApi",
       "column": "Column",
       "colDef": "ColDef",
       "rowModel": "IRowModel",
@@ -6653,9 +6695,14 @@
       "filterModifiedCallback": "() => void",
       "valueGetter": "(rowNode: RowNode) => any",
       "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
+      "api": "GridApi",
       "context": "any"
     },
     "docs": {
+      "column": "/** The column this filter is for. */",
+      "colDef": "/** The column definition for the column. */",
+      "rowModel": "/** The row model, helpful for looking up data values if needed.\n * If the filter needs to know which rows are\n * a) in the table,\n * b) currently visible (i.e. not already filtered),\n * c) which groups,\n * d) what order - all of this can be read from the rowModel. */",
+      "filterChangedCallback": "/** A function callback to be called when the filter changes. The\n * grid will then respond by filtering the grid data. The callback\n * takes one optional parameter which, if included, will get merged\n * to the FilterChangedEvent object (useful for passing additional\n * information to anyone listening to this event, however such extra\n * attributes are not used by the grid). */",
       "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
@@ -7198,7 +7245,6 @@
       "closeOnApply?": "boolean",
       "newRowsAction?": "string",
       "debounceMs?": "number",
-      "api": "GridApi",
       "column": "Column",
       "colDef": "ColDef",
       "rowModel": "IRowModel",
@@ -7206,6 +7252,7 @@
       "filterModifiedCallback": "() => void",
       "valueGetter": "(rowNode: RowNode) => any",
       "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
+      "api": "GridApi",
       "context": "any"
     },
     "docs": {
@@ -7217,6 +7264,10 @@
       "resetButton?": "/** @deprecated\n */",
       "applyButton?": "/** @deprecated\n */",
       "newRowsAction?": "/** @deprecated\n */",
+      "column": "/** The column this filter is for. */",
+      "colDef": "/** The column definition for the column. */",
+      "rowModel": "/** The row model, helpful for looking up data values if needed.\n * If the filter needs to know which rows are\n * a) in the table,\n * b) currently visible (i.e. not already filtered),\n * c) which groups,\n * d) what order - all of this can be read from the rowModel. */",
+      "filterChangedCallback": "/** A function callback to be called when the filter changes. The\n * grid will then respond by filtering the grid data. The callback\n * takes one optional parameter which, if included, will get merged\n * to the FilterChangedEvent object (useful for passing additional\n * information to anyone listening to this event, however such extra\n * attributes are not used by the grid). */",
       "context": "/** The context as provided on `gridOptions.context` */"
     }
   },

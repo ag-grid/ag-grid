@@ -35,7 +35,11 @@ export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework
     const typeProps = Object.entries(li.type);
     sortAndFilterProperties(typeProps, framework).forEach(([k, v]) => {
         if (namesArr.length === 0 || namesArr.includes(k)) {
-            props[k] = { description: (li.docs && removeJsDocStars(li.docs[k])) || v, }
+
+            const docs = (li.docs && removeJsDocStars(li.docs[k])) || '';
+            if (!docs.includes('@deprecated')) {
+                props[k] = { description: docs || v, }
+            }
         }
     })
 

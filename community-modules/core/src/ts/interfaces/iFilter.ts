@@ -73,7 +73,9 @@ export interface IFilterComp extends IFilter, IComponent<IFilterParams> {
 }
 
 export interface IDoesFilterPassParams {
+    /** The row node in question. */
     node: RowNode;
+    /** The data part of the row node in question. */
     data: any;
 }
 
@@ -85,15 +87,34 @@ export interface IFilterOptionDef {
 }
 
 export interface IFilterParams {
-    api: GridApi;
+    /** The column this filter is for. */
     column: Column;
+    /** The column definition for the column. */
     colDef: ColDef;
+    /**
+     * The row model, helpful for looking up data values if needed.
+     * If the filter needs to know which rows are
+     * a) in the table,
+     * b) currently visible (i.e. not already filtered),
+     * c) which groups,
+     * d) what order - all of this can be read from the rowModel.
+     */
     rowModel: IRowModel;
+
+    /**
+     * A function callback to be called when the filter changes. The
+     * grid will then respond by filtering the grid data. The callback
+     * takes one optional parameter which, if included, will get merged
+     * to the FilterChangedEvent object (useful for passing additional
+     * information to anyone listening to this event, however such extra
+     * attributes are not used by the grid).
+     */
     filterChangedCallback: (additionalEventAttributes?: any) => void;
     filterModifiedCallback: () => void;
     valueGetter: (rowNode: RowNode) => any;
     doesRowPassOtherFilter: (rowNode: RowNode) => boolean; // TODO: this method should be "doesRowPassOtherFilters"
-/** The context as provided on `gridOptions.context` */
+    api: GridApi;
+    /** The context as provided on `gridOptions.context` */
     context: any;
 }
 
