@@ -9,17 +9,26 @@ import { ColumnGroup } from '../entities/columnGroup';
 import { ColGroupDef, ColDef } from '../entities/colDef';
 
 export interface ITooltipParams {
+    /** What part of the application is showing the tooltip, e.g. 'cell', 'header', 'menuItem' etc */
     location: string;
+    /** The value to be rendered by the tooltip. */
+    value?: any;
+    /** The formatted value to be rendered by the tooltip. */
+    valueFormatted?: any;
+    /** Column / ColumnGroup definition. */
+    colDef?: ColDef | ColGroupDef | null;
+    /** Column / ColumnGroup */
+    column?: Column | ColumnGroup;
+    /** The index of the row containing the cell rendering the tooltip. */
+    rowIndex?: number;
+    /** The row node. */
+    node?: RowNode;
+    /** Data for the row node in question. */
+    data?: any;
+    /** Context as set on gridOptions.context. */
+    context?: any;
     api?: GridApi;
     columnApi?: ColumnApi;
-    context?: any;
-    colDef?: ColDef | ColGroupDef | null;
-    column?: Column | ColumnGroup;
-    value?: any;
-    valueFormatted?: any;
-    rowIndex?: number;
-    node?: RowNode;
-    data?: any;
 }
 
 export interface ITooltipComp extends IComponent<ITooltipParams> { }

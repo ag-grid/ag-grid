@@ -5823,10 +5823,7 @@
         "returnType": "void"
       }
     },
-    "template": {
-      "description": "/** HTML template as a string to display in the header. */",
-      "type": { "returnType": "string" }
-    },
+    "template": { "type": { "returnType": "string" } },
     "eGridHeader": {
       "description": "/** The header the grid provides. \n * The custom header component is a child of the grid provided header.\n * The grid's header component is what contains the grid managed functionality such as resizing, keyboard navigation etc.\n * This is provided should you want to make changes to this cell,\n * eg add ARIA tags, or add keyboard event listener (as focus goes here when navigating to the header). */",
       "type": { "returnType": "HTMLElement" }
@@ -11576,17 +11573,44 @@
     "newPage?": { "type": { "returnType": "boolean" } }
   },
   "ITooltipParams": {
-    "location": { "type": { "returnType": "string" } },
+    "location": {
+      "description": "/** What part of the application is showing the tooltip, e.g. 'cell', 'header', 'menuItem' etc */",
+      "type": { "returnType": "string" }
+    },
+    "value?": {
+      "description": "/** The value to be rendered by the tooltip. */",
+      "type": { "returnType": "any" }
+    },
+    "valueFormatted?": {
+      "description": "/** The formatted value to be rendered by the tooltip. */",
+      "type": { "returnType": "any" }
+    },
+    "colDef?": {
+      "description": "/** Column / ColumnGroup definition. */",
+      "type": { "returnType": "ColDef | ColGroupDef | null" }
+    },
+    "column?": {
+      "description": "/** Column / ColumnGroup */",
+      "type": { "returnType": "Column | ColumnGroup" }
+    },
+    "rowIndex?": {
+      "description": "/** The index of the row containing the cell rendering the tooltip. */",
+      "type": { "returnType": "number" }
+    },
+    "node?": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode" }
+    },
+    "data?": {
+      "description": "/** Data for the row node in question. */",
+      "type": { "returnType": "any" }
+    },
+    "context?": {
+      "description": "/** Context as set on gridOptions.context. */",
+      "type": { "returnType": "any" }
+    },
     "api?": { "type": { "returnType": "GridApi" } },
-    "columnApi?": { "type": { "returnType": "ColumnApi" } },
-    "context?": { "type": { "returnType": "any" } },
-    "colDef?": { "type": { "returnType": "ColDef | ColGroupDef | null" } },
-    "column?": { "type": { "returnType": "Column | ColumnGroup" } },
-    "value?": { "type": { "returnType": "any" } },
-    "valueFormatted?": { "type": { "returnType": "any" } },
-    "rowIndex?": { "type": { "returnType": "number" } },
-    "node?": { "type": { "returnType": "RowNode" } },
-    "data?": { "type": { "returnType": "any" } }
+    "columnApi?": { "type": { "returnType": "ColumnApi" } }
   },
   "ITooltipComp": {
     "getGui": {

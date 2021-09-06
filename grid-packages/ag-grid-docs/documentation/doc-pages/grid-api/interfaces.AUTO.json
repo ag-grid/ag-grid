@@ -4224,7 +4224,6 @@
       "showColumnMenu": "/** Callback to request the grid to show the column menu.\n * Pass in the html element of the column menu to have the\n *   grid position the menu over the button. */",
       "progressSort": "/** Callback to progress the sort for this column.\n * The grid will decide the next sort direction eg ascending, descending or 'no sort'.\n * Pass `multiSort=true` if you want to do a multi sort (eg user has Shift held down when they click). */",
       "setSort": "/** Callback to set the sort for this column.\n * Pass the sort direction to use ignoring the current sort eg one of 'asc', 'desc' or null (for no sort).\n * Pass `multiSort=true` if you want to do a multi sort (eg user has Shift held down when they click) */",
-      "template": "/** HTML template as a string to display in the header. */",
       "eGridHeader": "/** The header the grid provides. \n * The custom header component is a child of the grid provided header.\n * The grid's header component is what contains the grid managed functionality such as resizing, keyboard navigation etc.\n * This is provided should you want to make changes to this cell,\n * eg add ARIA tags, or add keyboard event listener (as focus goes here when navigating to the header). */",
       "context": "/** The context as provided on `gridOptions.context` */"
     }
@@ -8412,16 +8411,27 @@
     "meta": {},
     "type": {
       "location": "string",
-      "api?": "GridApi",
-      "columnApi?": "ColumnApi",
-      "context?": "any",
-      "colDef?": "ColDef | ColGroupDef | null",
-      "column?": "Column | ColumnGroup",
       "value?": "any",
       "valueFormatted?": "any",
+      "colDef?": "ColDef | ColGroupDef | null",
+      "column?": "Column | ColumnGroup",
       "rowIndex?": "number",
       "node?": "RowNode",
-      "data?": "any"
+      "data?": "any",
+      "context?": "any",
+      "api?": "GridApi",
+      "columnApi?": "ColumnApi"
+    },
+    "docs": {
+      "location": "/** What part of the application is showing the tooltip, e.g. 'cell', 'header', 'menuItem' etc */",
+      "value?": "/** The value to be rendered by the tooltip. */",
+      "valueFormatted?": "/** The formatted value to be rendered by the tooltip. */",
+      "colDef?": "/** Column / ColumnGroup definition. */",
+      "column?": "/** Column / ColumnGroup */",
+      "rowIndex?": "/** The index of the row containing the cell rendering the tooltip. */",
+      "node?": "/** The row node. */",
+      "data?": "/** Data for the row node in question. */",
+      "context?": "/** Context as set on gridOptions.context. */"
     }
   },
   "ITooltipComp": {
