@@ -87,7 +87,6 @@ export class HeaderRowCtrl extends BeanStub {
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_FLOATING_FILTERS_HEIGHT, this.onRowHeightChanged.bind(this));
     }
 
-    // temp - until we have controls in the headers, shouldn't' be calling the comp here
     public getHtmlElementForColumnHeader(column: Column): HTMLElement | undefined {
         return this.comp ? this.comp.getHtmlElementForColumnHeader(column) : undefined;
     }

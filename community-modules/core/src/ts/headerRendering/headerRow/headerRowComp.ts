@@ -52,7 +52,7 @@ export class HeaderRowComp extends Component {
         this.ctrl.setComp(compProxy);
     }
 
-    public getHtmlElementForColumnHeader(column: Column): HTMLElement | undefined {
+    private getHtmlElementForColumnHeader(column: Column): HTMLElement | undefined {
         if (this.ctrl.getType() != HeaderRowType.COLUMN) { return; }
 
         const headerCompsList = Object.keys(this.headerComps).map( c => this.headerComps[c]) as (HeaderWrapperComp[]);
@@ -123,10 +123,5 @@ export class HeaderRowComp extends Component {
         result.setParentComponent(this);
 
         return result;
-    }
-
-    public getHeaderCompForColumn(column: ColumnGroupChild): AbstractHeaderWrapper {
-        const headerCompsList = getAllValuesInObject(this.headerComps);
-        return find(headerCompsList, comp => comp.getColumn() == column );
     }
 }

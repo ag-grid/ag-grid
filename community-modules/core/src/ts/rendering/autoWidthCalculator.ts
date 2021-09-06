@@ -70,15 +70,15 @@ export class AutoWidthCalculator extends BeanStub {
 
     private getHeaderCellForColumn(column: Column): HTMLElement | null {
 
-        let comp: HTMLElement | null = null;
+        let element: HTMLElement | null = null;
 
         this.ctrlsService.getHeaderRowContainerCtrls().forEach(container => {
                 const res = container.getHtmlElementForColumnHeader(column);
-                if (res!=null) { comp = res; }
+                if (res!=null) { element = res; }
             }
         );
 
-        return comp;
+        return element;
     }
 
     private putRowCellsIntoDummyContainer(column: Column, eDummyContainer: HTMLElement): void {
