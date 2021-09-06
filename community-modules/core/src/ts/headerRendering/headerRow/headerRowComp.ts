@@ -11,6 +11,9 @@ import { HeaderCellComp } from '../headerCell/headerCellComp';
 import { HeaderCellCtrl } from '../headerCell/headerCellCtrl';
 import { HeaderRowCtrl, IHeaderRowComp } from './headerRowCtrl';
 import { find } from '../../utils/generic';
+import { AbstractHeaderCellCtrl } from '../abstractHeaderCell/abstractHeaderCellCtrl';
+import { HeaderGroupCellCtrl } from '../headerGroupCell/headerGroupCellCtrl';
+import { HeaderFilterCellCtrl } from '../../filter/floating/headerFilterCellCtrl';
 
 export enum HeaderRowType {
     COLUMN_GROUP = 'group',
@@ -64,7 +67,7 @@ export class HeaderRowComp extends Component {
         this.setHeaderCtrls([]);
     }
 
-    private setHeaderCtrls(ctrls: HeaderCellCtrl[]): void {
+    private setHeaderCtrls(ctrls: AbstractHeaderCellCtrl[]): void {
         if (!this.isAlive()) { return; }
 
         const oldComps = this.headerComps;
@@ -102,19 +105,19 @@ export class HeaderRowComp extends Component {
         }
     }
 
-    private createHeaderComp(headerCtrl: HeaderCellCtrl): AbstractHeaderCellComp {
+    private createHeaderComp(headerCtrl: AbstractHeaderCellCtrl): AbstractHeaderCellComp {
 
         let result: AbstractHeaderCellComp;
 
         switch (this.ctrl.getType()) {
             case HeaderRowType.COLUMN_GROUP:
-                result = new HeaderGroupCellComp(headerCtrl);
+                result = new HeaderGroupCellComp(headerCtrl as HeaderGroupCellCtrl);
                 break;
             case HeaderRowType.FLOATING_FILTER:
-                result = new HeaderFilterCellComp(headerCtrl);
+                result = new HeaderFilterCellComp(headerCtrl as HeaderFilterCellCtrl);
                 break;
             default:
-                result = new HeaderCellComp(headerCtrl);
+                result = new HeaderCellComp(headerCtrl as HeaderCellCtrl);
                 break;
         }
 

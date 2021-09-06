@@ -11,7 +11,7 @@ import { PinnedWidthService } from "../../gridBodyComp/pinnedWidthService";
 import { ScrollVisibleService } from "../../gridBodyComp/scrollVisibleService";
 import { NumberSequence } from "../../utils";
 import { BodyDropTarget } from "../bodyDropTarget";
-import { HeaderRowComp, HeaderRowType } from "../headerRow/headerRowComp";
+import { HeaderRowType } from "../headerRow/headerRowComp";
 import { HeaderRowCtrl } from "../headerRow/headerRowCtrl";
 
 export interface IHeaderRowContainerComp {

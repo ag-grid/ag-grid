@@ -23,9 +23,10 @@ import { FloatingFilterMapper } from './floatingFilterMapper';
 import { KeyCode } from '../../constants/keyCode';
 import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
 import { HeaderCellCtrl, IHeaderCellComp } from '../../headerRendering/headerCell/headerCellCtrl';
+import { HeaderFilterCellCtrl } from './headerFilterCellCtrl';
 
 export class HeaderFilterCellComp extends AbstractHeaderCellComp {
-    
+
     private static TEMPLATE = /* html */
         `<div class="ag-header-cell ag-floating-filter" role="gridcell" tabindex="-1">
             <div class="ag-floating-filter-full-body" ref="eFloatingFilterBody" role="presentation"></div>
@@ -52,9 +53,9 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp {
 
     private floatingFilterCompPromise: AgPromise<IFloatingFilterComp> | null;
 
-    private ctrl: HeaderCellCtrl;
+    private ctrl: HeaderFilterCellCtrl;
 
-    constructor(ctrl: HeaderCellCtrl) {
+    constructor(ctrl: HeaderFilterCellCtrl) {
         super(HeaderFilterCellComp.TEMPLATE);
         this.column = ctrl.getColumnGroupChild() as Column;
         this.pinned = ctrl.getPinned();

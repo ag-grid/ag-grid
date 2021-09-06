@@ -1,16 +1,14 @@
-import { Bean, Autowired, PostConstruct } from "../../context/context";
 import { BeanStub } from "../../context/beanStub";
-import { HeaderRowContainerComp } from "../headerRowContainer/headerRowContainerComp";
-import { FocusService } from "../../focusService";
-import { HeaderPosition, HeaderPositionUtils } from "./headerPosition";
-import { ColumnGroup } from "../../entities/columnGroup";
-import { Column } from "../../entities/column";
-import { HeaderRowType } from "../headerRow/headerRowComp";
-import { AnimationFrameService } from "../../misc/animationFrameService";
-import { GridHeaderComp } from "../gridHeaderComp";
-import { last } from "../../utils/array";
+import { Autowired, Bean, PostConstruct } from "../../context/context";
 import { CtrlsService } from "../../ctrlsService";
+import { Column } from "../../entities/column";
+import { ColumnGroup } from "../../entities/columnGroup";
+import { FocusService } from "../../focusService";
 import { GridBodyCtrl } from "../../gridBodyComp/gridBodyCtrl";
+import { AnimationFrameService } from "../../misc/animationFrameService";
+import { last } from "../../utils/array";
+import { HeaderRowType } from "../headerRow/headerRowComp";
+import { HeaderPosition, HeaderPositionUtils } from "./headerPosition";
 
 export enum HeaderNavigationDirection {
     UP,

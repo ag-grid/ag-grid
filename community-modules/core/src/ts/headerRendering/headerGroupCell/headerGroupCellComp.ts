@@ -1,34 +1,34 @@
-import { ColGroupDef } from "../../entities/colDef";
-import { Column } from "../../entities/column";
-import { ColumnGroup } from "../../entities/columnGroup";
 import { ColumnApi } from "../../columns/columnApi";
-import { Constants } from "../../constants/constants";
 import { ColumnModel, ColumnResizeSet } from "../../columns/columnModel";
-import { HorizontalResizeService } from "../horizontalResizeService";
+import { UserComponentFactory } from "../../components/framework/userComponentFactory";
+import { Constants } from "../../constants/constants";
+import { KeyCode } from '../../constants/keyCode';
 import { Autowired, PostConstruct } from "../../context/context";
-import { CssClassApplier } from "../cssClassApplier";
 import {
     DragAndDropService,
     DragItem,
     DragSource,
     DragSourceType
 } from "../../dragAndDrop/dragAndDropService";
-import { SetLeftFeature } from "../../rendering/features/setLeftFeature";
-import { IHeaderGroupComp, IHeaderGroupParams } from "./headerGroupComp";
-import { GridApi } from "../../gridApi";
-import { UserComponentFactory } from "../../components/framework/userComponentFactory";
-import { HoverFeature } from "../hoverFeature";
-import { AbstractHeaderCellComp } from "../abstractHeaderCell/abstractHeaderCellComp";
-import { HeaderRowComp } from "../headerRow/headerRowComp";
-import { Beans } from "../../rendering/beans";
+import { ColGroupDef } from "../../entities/colDef";
+import { Column } from "../../entities/column";
+import { ColumnGroup } from "../../entities/columnGroup";
 import { OriginalColumnGroup } from "../../entities/originalColumnGroup";
+import { GridApi } from "../../gridApi";
+import { Beans } from "../../rendering/beans";
+import { SetLeftFeature } from "../../rendering/features/setLeftFeature";
+import { ITooltipParams } from "../../rendering/tooltipComponent";
 import { setAriaExpanded } from "../../utils/aria";
 import { removeFromArray } from "../../utils/array";
-import { removeFromParent, addCssClass, removeCssClass, addOrRemoveCssClass } from "../../utils/dom";
-import { KeyCode } from '../../constants/keyCode';
-import { ITooltipParams } from "../../rendering/tooltipComponent";
+import { addCssClass, addOrRemoveCssClass, removeCssClass, removeFromParent } from "../../utils/dom";
 import { ManagedFocusFeature } from "../../widgets/managedFocusFeature";
-import { HeaderCellCtrl, IHeaderCellComp } from "../headerCell/headerCellCtrl";
+import { AbstractHeaderCellComp } from "../abstractHeaderCell/abstractHeaderCellComp";
+import { CssClassApplier } from "../cssClassApplier";
+import { IHeaderCellComp } from "../headerCell/headerCellCtrl";
+import { HorizontalResizeService } from "../horizontalResizeService";
+import { HoverFeature } from "../hoverFeature";
+import { HeaderGroupCellCtrl } from "./headerGroupCellCtrl";
+import { IHeaderGroupComp, IHeaderGroupParams } from "./headerGroupComp";
 
 export class HeaderGroupCellComp extends AbstractHeaderCellComp {
 
@@ -62,9 +62,9 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp {
     // the children can change, we keep destroy functions related to listening to the children here
     private removeChildListenersFuncs: Function[] = [];
 
-    private ctrl: HeaderCellCtrl;
+    private ctrl: HeaderGroupCellCtrl;
 
-    constructor(ctrl: HeaderCellCtrl) {
+    constructor(ctrl: HeaderGroupCellCtrl) {
         super(HeaderGroupCellComp.TEMPLATE);
         this.column = ctrl.getColumnGroupChild() as ColumnGroup;
         this.pinned = ctrl.getPinned();

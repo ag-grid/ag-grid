@@ -4,7 +4,6 @@ import { ensureDomOrder } from '../../utils/dom';
 import { getAllValuesInObject } from '../../utils/object';
 import { Component } from '../../widgets/component';
 import { RefSelector } from '../../widgets/componentAnnotations';
-import { BodyDropTarget } from '../bodyDropTarget';
 import { HeaderRowComp } from '../headerRow/headerRowComp';
 import { HeaderRowCtrl } from '../headerRow/headerRowCtrl';
 import { HeaderRowContainerCtrl, IHeaderRowContainerComp } from './headerRowContainerCtrl';

@@ -1,20 +1,20 @@
-import { Component } from "../../widgets/component";
-import { Column } from "../../entities/column";
+import { ColumnApi } from "../../columns/columnApi";
 import { Autowired } from "../../context/context";
+import { Column } from "../../entities/column";
+import { Events } from "../../events";
+import { GridApi } from "../../gridApi";
+import { IComponent } from "../../interfaces/iComponent";
 import { IMenuFactory } from "../../interfaces/iMenuFactory";
 import { SortController } from "../../sortController";
-import { TapEvent, LongTapEvent, TouchListener } from "../../widgets/touchListener";
-import { IComponent } from "../../interfaces/iComponent";
-import { RefSelector } from "../../widgets/componentAnnotations";
-import { Events } from "../../events";
-import { ColumnApi } from "../../columns/columnApi";
-import { GridApi } from "../../gridApi";
-import { escapeString } from "../../utils/string";
-import { createIconNoSpan } from "../../utils/icon";
-import { exists } from "../../utils/generic";
-import { isIOSUserAgent } from "../../utils/browser";
-import { removeFromParent, addOrRemoveCssClass, setDisplayed, clearElement } from "../../utils/dom";
 import { firstExistingValue } from "../../utils/array";
+import { isIOSUserAgent } from "../../utils/browser";
+import { addOrRemoveCssClass, clearElement, removeFromParent, setDisplayed } from "../../utils/dom";
+import { exists } from "../../utils/generic";
+import { createIconNoSpan } from "../../utils/icon";
+import { escapeString } from "../../utils/string";
+import { Component } from "../../widgets/component";
+import { RefSelector } from "../../widgets/componentAnnotations";
+import { LongTapEvent, TapEvent, TouchListener } from "../../widgets/touchListener";
 
 export interface IHeaderParams {
     /** The column the header is for. */

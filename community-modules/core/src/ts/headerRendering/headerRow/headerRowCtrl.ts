@@ -5,19 +5,22 @@ import { Autowired } from "../../context/context";
 import { Column } from "../../entities/column";
 import { ColumnGroupChild } from "../../entities/columnGroupChild";
 import { Events } from "../../eventKeys";
+import { HeaderFilterCellCtrl } from "../../filter/floating/headerFilterCellCtrl";
 import { FocusService } from "../../focusService";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { isBrowserSafari } from "../../utils/browser";
 import { find } from "../../utils/generic";
 import { getAllValuesInObject, iterateObject } from "../../utils/object";
+import { AbstractHeaderCellCtrl } from "../abstractHeaderCell/abstractHeaderCellCtrl";
 import { HeaderCellCtrl } from "../headerCell/headerCellCtrl";
+import { HeaderGroupCellCtrl } from "../headerGroupCell/headerGroupCellCtrl";
 import { HeaderRowType } from "./headerRowComp";
 
 export interface IHeaderRowComp {
     setTransform(transform: string): void;
     setTop(top: string): void;
     setHeight(height: string): void;
-    setHeaderCtrls(ctrls: HeaderCellCtrl[]): void;
+    setHeaderCtrls(ctrls: AbstractHeaderCellCtrl[]): void;
     setWidth(width: string): void;
     getHtmlElementForColumnHeader(column: Column): HTMLElement | undefined;
     setRowIndex(rowIndex: number): void;
@@ -37,7 +40,7 @@ export class HeaderRowCtrl extends BeanStub {
 
     private instanceId = instanceIdSequence++;
 
-    private headerCtrls: { [key: string]: HeaderCellCtrl } = {};
+    private headerCtrls: { [key: string]: AbstractHeaderCellCtrl } = {};
 
     constructor(rowIndex: number, pinned: string | null, type: HeaderRowType) {
         super();
@@ -200,7 +203,17 @@ export class HeaderRowCtrl extends BeanStub {
             }
 
             if (headerCtrl==null) {
-                headerCtrl = this.createBean(new HeaderCellCtrl(child, this));
+                switch (this.type) {
+                    case HeaderRowType.FLOATING_FILTER:
+                        headerCtrl = this.createBean(new HeaderFilterCellCtrl(child, this));
+                        break;
+                    case HeaderRowType.COLUMN_GROUP:
+                        headerCtrl = this.createBean(new HeaderGroupCellCtrl(child, this));
+                        break;
+                    default:
+                        headerCtrl = this.createBean(new HeaderCellCtrl(child, this));
+                        break;
+                }
             }
 
             this.headerCtrls[idOfChild] = headerCtrl;
