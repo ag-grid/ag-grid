@@ -10,29 +10,9 @@ This is useful when the data has changed at the source (typically on the server)
 
 The grid has the following API's to assist with refreshing:
 
-| Method | Description |
-| ------ | ----------- |
-| refreshServerSideStore(params) | Refresh part of the grid's data. If you pass no parameters, then the top level cache is purged. To purge a child cache, pass in the string of keys to get to the child cache. For example, to purge the cache two levels down under 'Canada' and then '2002', pass in the string array `['Canada','2002']`. If you purge a cache, then all row nodes for that cache will be reset to the closed state, and all child caches will be destroyed. |
-| getCacheBlockState() | Returns an object representing the state of the cache. This is useful for debugging and understanding how the cache is working. |
+<api-documentation source='grid-api/api.json' section='miscellaneous' names='["refreshServerSideStore"]' config='{"overrideBottomMargin":"0rem"}' ></api-documentation>
+<api-documentation source='grid-api/api.json' section='infiniteScrolling' names='["getCacheBlockState"]' config='{"overrideBottomMargin":"1rem"}' ></api-documentation>
 
-The `params` for `refreshServerSideStore` is as follows:
-
-```ts
-interface RefreshStoreParams {
-    // List of group keys, pointing to the store to refresh.
-    // For example, to purge the cache two levels down under 'Canada'
-    // and then '2002', pass in the string array ['Canada','2002'].
-    // If no route is passed, or an empty array, then the top level store is refreshed.
-    route?: string[];
-
-    // If true, then all rows at the level getting refreshed are immediatly destroyed
-    // and 'loading' rows will appear.
-    //
-    // If false, then all rows at the level getting refreshed are kept until rows
-    // are loaded (no 'loading' rows appear).
-    purge?: boolean;
-}
-```
 
 The following example demonstrates the refresh API. The following can be noted:
 

@@ -662,7 +662,7 @@
             "description": "Returns `true` when there are no more animation frames left to process."
         },
         "refreshServerSideStore": {
-            "description": "Refresh a server-side store.",
+            "description": "Refresh a server-side store. If you pass no parameters, then the top level cache is purged. To purge a child cache, pass in the string of keys to get to the child cache.",
             "more": {
                 "name": "Purging Groups",
                 "url": "/server-side-model-refresh/"

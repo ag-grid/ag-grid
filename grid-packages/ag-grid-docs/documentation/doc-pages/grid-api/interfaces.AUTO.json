@@ -3627,6 +3627,7 @@
     "meta": {},
     "type": { "model": "ProvidedFilterModel", "apply": "boolean" }
   },
+  "IHeaderFilterCellComp": { "meta": {}, "type": { "focus()": "void" } },
   "DateFilterModel": {
     "meta": {},
     "type": {
@@ -4032,7 +4033,11 @@
       "columns?": "/** Optional list of columns to restrict operation to */"
     }
   },
-  "RedrawRowsParams": { "meta": {}, "type": { "rowNodes?": "RowNode[]" } },
+  "RedrawRowsParams": {
+    "meta": {},
+    "type": { "rowNodes?": "RowNode[]" },
+    "docs": { "rowNodes?": "/** Row nodes to redraw */" }
+  },
   "CreateRangeChartParams": {
     "meta": {},
     "type": {
@@ -4217,6 +4222,7 @@
     "type": { "currentValue": "any", "previousValue": "any", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
+  "IAbstractHeaderCellComp": { "meta": {}, "type": { "focus()": "void" } },
   "DropListener": {
     "meta": {},
     "type": {
@@ -4227,36 +4233,14 @@
       "onDragStop(params: DraggingEvent)": "void"
     }
   },
-  "IHeaderGroupParams": {
+  "IGridHeaderComp": {
     "meta": {},
     "type": {
-      "columnGroup": "ColumnGroup",
-      "displayName": "string",
-      "setExpanded": "(expanded: boolean) => void",
-      "api": "GridApi",
-      "columnApi": "ColumnApi",
-      "context": "any"
-    },
-    "docs": {
-      "context": "/** The context as provided on `gridOptions.context` */"
+      "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
+      "setHeightAndMinHeight(height: string)": "void"
     }
   },
-  "IHeaderGroup": { "meta": {}, "type": {} },
-  "IHeaderGroupComp": {
-    "meta": {},
-    "type": {
-      "getGui()": "HTMLElement",
-      "destroy?()": "void",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void",
-      "init?(params: IHeaderGroupParams)": "AgPromise<void> | void"
-    },
-    "docs": {
-      "getGui()": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
-      "destroy?()": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
-      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
-      "init?(params: IHeaderGroupParams)": "/** The init(params) method is called on the component once. See below for details on the parameters. */"
-    }
-  },
+  "IHeaderCellComp": { "meta": {}, "type": { "focus()": "void" } },
   "IHeaderParams": {
     "meta": {},
     "type": {
@@ -4321,16 +4305,39 @@
       "column": "/** The grid column or column group */"
     }
   },
-  "IHeaderWrapperComp": { "meta": {}, "type": { "focus()": "void" } },
   "SelectionCount": {
     "meta": {},
     "type": { "selected": "number", "notSelected": "number" }
   },
-  "IGridHeaderComp": {
+  "IHeaderGroupCellComp": { "meta": {}, "type": { "focus()": "void" } },
+  "IHeaderGroupParams": {
     "meta": {},
     "type": {
-      "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
-      "setHeightAndMinHeight(height: string)": "void"
+      "columnGroup": "ColumnGroup",
+      "displayName": "string",
+      "setExpanded": "(expanded: boolean) => void",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "context": "/** The context as provided on `gridOptions.context` */"
+    }
+  },
+  "IHeaderGroup": { "meta": {}, "type": {} },
+  "IHeaderGroupComp": {
+    "meta": {},
+    "type": {
+      "getGui()": "HTMLElement",
+      "destroy?()": "void",
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void",
+      "init?(params: IHeaderGroupParams)": "AgPromise<void> | void"
+    },
+    "docs": {
+      "getGui()": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
+      "destroy?()": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
+      "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
+      "init?(params: IHeaderGroupParams)": "/** The init(params) method is called on the component once. See below for details on the parameters. */"
     }
   },
   "HeaderRowType": {
@@ -4347,9 +4354,10 @@
       "setTransform(transform: string)": "void",
       "setTop(top: string)": "void",
       "setHeight(height: string)": "void",
-      "setHeaderCtrls(ctrls: HeaderWrapperCtrl[])": "void",
+      "setHeaderCtrls(ctrls: AbstractHeaderCellCtrl[])": "void",
       "setWidth(width: string)": "void",
-      "getHtmlElementForColumnHeader(column: Column)": "HTMLElement | undefined"
+      "getHtmlElementForColumnHeader(column: Column)": "HTMLElement | undefined",
+      "setRowIndex(rowIndex: number)": "void"
     }
   },
   "IHeaderRowContainerComp": {
@@ -4359,8 +4367,7 @@
       "setContainerTransform(transform: string)": "void",
       "setContainerWidth(width: string)": "void",
       "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
-      "setCtrls(ctrls: HeaderRowCtrl[])": "void",
-      "getRowComps()": "HeaderRowComp[]"
+      "setCtrls(ctrls: HeaderRowCtrl[])": "void"
     }
   },
   "HorizontalResizeParams": {
@@ -7215,7 +7222,11 @@
   },
   "RefreshStoreParams": {
     "meta": {},
-    "type": { "route?": "string[]", "purge?": "boolean" }
+    "type": { "route?": "string[]", "purge?": "boolean" },
+    "docs": {
+      "route?": "/** List of group keys, pointing to the store to refresh.\n * For example, to purge the cache two levels down under 'Canada'and then '2002', pass in the string array ['Canada','2002'].\n * If no route is passed, or an empty array, then the top level store is refreshed. */",
+      "purge?": "/** If true, then all rows at the level getting refreshed are immediately destroyed and 'loading' rows will appear.\n * If false, then all rows at the level getting refreshed are kept until rows are loaded (no 'loading' rows appear). */"
+    }
   },
   "IServerSideStore": {
     "meta": {},
