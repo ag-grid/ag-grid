@@ -27,13 +27,21 @@ import { CtrlsService } from "../ctrlsService";
 import { AutoScrollService } from "../autoScrollService";
 
 export interface RowDropZoneEvents {
+    /** Callback function that will be executed when the rowDrag enters the target. */
     onDragEnter?: (params: RowDragEnterEvent) => void;
+    /** Callback function that will be executed when the rowDrag leaves the target */
     onDragLeave?: (params: RowDragLeaveEvent) => void;
+    /** 
+     * Callback function that will be executed when the rowDrag is dragged inside the target.
+     * Note: this gets called multiple times.
+     */
     onDragging?: (params: RowDragMoveEvent) => void;
+    /** Callback function that will be executed when the rowDrag drops rows within the target. */
     onDragStop?: (params: RowDragEndEvent) => void;
 }
 
 export interface RowDropZoneParams extends RowDropZoneEvents {
+    /** A callback method that returns the DropZone HTMLElement. */
     getContainer: () => HTMLElement;
 }
 
@@ -324,7 +332,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
         this.dragAndDropService.addDropTarget({
             isInterestedIn: (type: DragSourceType) => type === DragSourceType.RowDrag,
-            getIconName:() => DragAndDropService.ICON_MOVE,
+            getIconName: () => DragAndDropService.ICON_MOVE,
             external: true,
             ...processedParams as any
         });

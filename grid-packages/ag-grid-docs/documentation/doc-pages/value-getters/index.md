@@ -6,24 +6,7 @@ Normally columns are configured with `field` attributes, so the column knows wha
 
 You should use `colDef.field` most of the time. Use value getters when retrieving the data requires more logic, including executing your own expressions (similar to what a spreadsheet would do).
 
-The interface for value getters is as follows:
-
 ```ts
-// function for valueGetter
-function valueGetter(params: ValueGetterParams) => any;
-
-// interface for params
-interface ValueGetterParams {
-    data: any, // the data you provided for this row
-    node: RowNode, // the row node for this row
-    colDef: ColDef, // the column def for this column
-    column: Column, // the column for this column
-    api: GridApi, // the grid API
-    columnApi: ColumnApi, // the grid Column API
-    context: any,  // the context
-    getValue: (colId: string) => any  // a utility method, for getting other column values
-}
-
 // example value getter, adds two fields together
 colDef.valueGetter = params => {
     return params.data.firstName + params.data.lastName;
@@ -40,9 +23,9 @@ colDef.valueGetter = params => {
 
 Below shows the column definition properties for value getters.
 
-<api-documentation source='column-properties/properties.json' section="columns" names='["valueGetter"]></api-documentation>
-<api-documentation source='column-properties/properties.json' section="header" names='["headerValueGetter"]'></api-documentation>
-<api-documentation source='column-properties/properties.json' section="filtering" names='["filterValueGetter"]'></api-documentation>
+<api-documentation source='column-properties/properties.json' section="columns" names='["valueGetter"]' config='{"overrideBottomMargin":"0rem"}'></api-documentation>
+<api-documentation source='column-properties/properties.json' section="header" names='["headerValueGetter"]' config='{"overrideBottomMargin":"0rem"}'></api-documentation>
+<api-documentation source='column-properties/properties.json' section="filtering" names='["filterValueGetter"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
 
 ### Example Value Getters
 

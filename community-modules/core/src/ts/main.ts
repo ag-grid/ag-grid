@@ -262,7 +262,7 @@ export { HeaderElement, PrefixedXmlAttributes, XmlElement } from "./interfaces/i
 export { ICsvCreator } from "./interfaces/iCsvCreator";
 
 // root
-export { AutoScrollService } from  './autoScrollService';
+export { AutoScrollService } from './autoScrollService';
 export { VanillaFrameworkOverrides } from "./vanillaFrameworkOverrides";
 export { CellNavigationService } from "./cellNavigationService";
 export { AlignedGridsService } from "./alignedGridsService";
@@ -311,6 +311,8 @@ export {
     ValueParserFunc,
     ValueGetterFunc,
     ValueSetterFunc,
+    HeaderValueGetterFunc,
+    HeaderValueGetterParams,
     ColSpanParams,
     RowSpanParams,
     SuppressKeyboardEventParams,

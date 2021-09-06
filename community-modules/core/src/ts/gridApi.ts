@@ -118,7 +118,9 @@ export interface GetCellsParams {
 }
 
 export interface RefreshCellsParams extends GetCellsParams {
+    /** Skip change detection, refresh everything. */
     force?: boolean;
+    /** Skip cell flashing, if cell flashing is enabled. */
     suppressFlash?: boolean;
 }
 
@@ -132,6 +134,7 @@ export interface GetCellRendererInstancesParams extends GetCellsParams { }
 export interface GetCellEditorInstancesParams extends GetCellsParams { }
 
 export interface RedrawRowsParams {
+    /** Row nodes to redraw */
     rowNodes?: RowNode[];
 }
 
@@ -1361,7 +1364,7 @@ export class GridApi {
         }
     }
 
-    public getChartRef(chartId: string) : ChartRef | undefined {
+    public getChartRef(chartId: string): ChartRef | undefined {
         if (ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.getChartRef') &&
             ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.getChartRef')) {
             return this.chartService.getChartRef(chartId);

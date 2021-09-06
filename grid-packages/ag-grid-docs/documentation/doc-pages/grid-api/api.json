@@ -172,7 +172,7 @@
             }
         },
         "redrawRows": {
-            "description": "Remove a row from the DOM and recreate it again from scratch.",
+            "description": "Remove row(s) from the DOM and recreate them again from scratch.",
             "more": {
                 "name": "Redraw Rows",
                 "url": "/view-refresh/#redraw-rows"

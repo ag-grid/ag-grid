@@ -197,17 +197,9 @@ const gridOptions = {
 
 Note in the snippet above the values callback receives a parameter object which contains `params.success()`which allows values obtained asynchronously to be supplied to the set filter.
 
-The interface for this parameter object is as follows:
+The interface for this parameter object is `SetFilterValuesFuncParams`:
 
-```ts
-interface SetFilterValuesFuncParams {
-    // The function to call with the values to load into the filter once they are ready
-    success: (values: string[]) => void;
-
-    // The column definition object from which the set filter is invoked
-    colDef: ColDef;
-}
-```
+<interface-documentation interfaceName='SetFilterValuesFuncParams' ></interface-documentation>
 
 [[note]]
 | If you are providing values to the Set Filter asynchronously, when setting the model using `setModel` you need to wait for changes to be applied before performing any further actions by waiting on the returned grid promise, e.g.:

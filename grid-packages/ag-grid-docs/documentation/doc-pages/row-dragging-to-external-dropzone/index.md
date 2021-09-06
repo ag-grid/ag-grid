@@ -7,25 +7,8 @@ Row Dragging to an External DropZone is concerned with moving rows from the grid
 The Row Drag to an External DropZone uses the grid's internal Managed Row Dragging system combined with row selection
 to create a seamless data drag and drop experience.
 
-```ts
-function addRowDropZone(params: RowDropZoneParams) => void;
-function removeRowDropZone(params: RowDropZoneParams) => void;
+<api-documentation source='grid-api/api.json' section='rowDrag' names='["addRowDropZone", "removeRowDropZone"]'></api-documentation>
 
-// interface for params
-interface RowDropZoneParams {
-    // A callback method that returns the DropZone HTMLElement
-    getContainer: () => HTMLElement;
-    // callback function that will be executed when the rowDrag enters the target
-    onDragEnter?: (params: RowDragEnterEvent) => void;
-    // callback function that will be executed when the rowDrag leaves the target
-    onDragLeave?: (params: RowDragLeaveEvent) => void;
-    // callback function that will be executed when the rowDrag is dragged inside the target
-    // note: this gets called multiple times
-    onDragging?: (params: RowDragMoveEvent) => void;
-    // callback function that will be executed when the rowDrag drops rows within the target
-    onDragStop?: (params: RowDragEndEvent) => void;
-}
-```
 
 [[note]]
 | If you read the [Managed Dragging](/row-dragging/#managed-dragging) section of the Row Dragging

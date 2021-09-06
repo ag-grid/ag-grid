@@ -28,7 +28,7 @@ export interface AbstractColDef {
     /** CSS class for the toolPanel */
     toolPanelClass?: ToolPanelClass;
     /** Expression or function to get the cells value. */
-    headerValueGetter?: string | Function;
+    headerValueGetter?: string | HeaderValueGetterFunc;
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
     pivotKeys?: string[];
 
@@ -422,27 +422,27 @@ export interface ColumnFunctionCallbackParams {
     context: any;
 }
 
-export interface CheckboxSelectionCallbackParams extends ColumnFunctionCallbackParams {}
+export interface CheckboxSelectionCallbackParams extends ColumnFunctionCallbackParams { }
 export interface CheckboxSelectionCallback {
     (params: CheckboxSelectionCallbackParams): boolean
 }
-export interface RowDragCallbackParams extends ColumnFunctionCallbackParams {}
+export interface RowDragCallbackParams extends ColumnFunctionCallbackParams { }
 export interface RowDragCallback {
     (params: RowDragCallbackParams): boolean
 }
-export interface DndSourceCallbackParams extends ColumnFunctionCallbackParams {}
+export interface DndSourceCallbackParams extends ColumnFunctionCallbackParams { }
 export interface DndSourceCallback {
     (params: DndSourceCallbackParams): boolean
 }
-export interface EditableCallbackParams extends ColumnFunctionCallbackParams {}
+export interface EditableCallbackParams extends ColumnFunctionCallbackParams { }
 export interface EditableCallback {
     (params: EditableCallbackParams): boolean
 }
-export interface SuppressPasteCallbackParams extends ColumnFunctionCallbackParams {}
+export interface SuppressPasteCallbackParams extends ColumnFunctionCallbackParams { }
 export interface SuppressPasteCallback {
     (params: SuppressPasteCallbackParams): boolean
 }
-export interface SuppressNavigableCallbackParams extends ColumnFunctionCallbackParams {}
+export interface SuppressNavigableCallbackParams extends ColumnFunctionCallbackParams { }
 export interface SuppressNavigableCallback {
     (params: SuppressNavigableCallbackParams): boolean
 }
@@ -468,7 +468,7 @@ export interface IsColumnFunc {
  * @deprecated
  * Replaced with ColumnFunctionCallbackParams
  */
-export interface IsColumnFuncParams extends ColumnFunctionCallbackParams {}
+export interface IsColumnFuncParams extends ColumnFunctionCallbackParams { }
 
 export interface GetQuickFilterTextParams {
     value: any;
@@ -511,17 +511,39 @@ export interface BaseColDefParams {
 }
 
 export interface BaseWithValueColDefParams extends BaseColDefParams {
+    /** Value for the cell. */
     value: any;
 }
 
 export interface ValueGetterParams extends BaseColDefParams {
+    /** A utility method for getting other column values */
     getValue: (field: string) => any;
 }
 export interface ValueGetterFunc {
     (params: ValueGetterParams): any
 }
+export interface HeaderValueGetterParams {
+    colDef: AbstractColDef,
+    /** Column for this callback if applicable*/
+    column?: Column | null,
+    /** ColumnGroup for this callback if applicable */
+    columnGroup?: ColumnGroup | OriginalColumnGroup | null,
+    /** Original column group if applicable */
+    originalColumnGroup: OriginalColumnGroup | null,
+    /** Where the column is going to appear */
+    location: string | null,
+    api: GridApi
+    /** The context as provided on `gridOptions.context` */
+    context?: any,
+}
+export interface HeaderValueGetterFunc {
+    (params: HeaderValueGetterParams): any
+}
+
 export interface NewValueParams extends BaseColDefParams {
+    /** The value before the change */
     oldValue: any;
+    /** The value after the change */
     newValue: any;
 }
 

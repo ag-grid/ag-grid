@@ -6,22 +6,8 @@ After editing a cell, the grid normally inserts the new value into your data usi
 
 A Value Setter is the inverse of a [Value Getter](/value-getters/). Where the value getter allows getting values from your data using a function rather than a field, the value setter allows you to set values into your data using a function rather than specifying a field.
 
-The parameters provided to a value setter are as follows:
+<api-documentation source='column-properties/properties.json' section="editing" names='["valueSetter"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
 
-```ts
-// interface for params
-interface ValueSetterParams {
-    oldValue: any, // the value before the change
-    newValue: any, // the value after the change
-    data: any, // the data you provided for this row
-    node: RowNode, // the row node for this row
-    colDef: ColDef, // the column def for this column
-    column: Column, // the column for this column
-    api: GridApi, // the grid API
-    columnApi: ColumnApi, // the grid Column API
-    context: any  // the context
-}
-```
 
 A value setter should return `true` if the value was updated successfully and `false` if the value was not updated (including if the value was not changed). When you return `true`, the grid knows it must refresh the cell.
 

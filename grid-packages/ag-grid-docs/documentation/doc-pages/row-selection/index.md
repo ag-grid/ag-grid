@@ -73,23 +73,8 @@ however it will not be visible using CSS `visibility: hidden`. This is to ensure
 1. Where a column has a checkbox for only some cells, the values will remain aligned.
 2. When a checkbox visibility changes, the cells contents don't jump.
 
-The interface for the callback is as follows:
 
-```ts
-// function to enable/disable Checkbox Selection
-function checkboxSelection(params: CheckboxSelectionCallbackParams) => boolean;
-
-// interface for params
-interface CheckboxSelectionCallbackParams {
-    node: RowNode;
-    data: any;
-    column: Column;
-    colDef: ColDef;
-    context: any;
-    api: GridApi;
-    columnApi: ColumnApi;
-}
-```
+<api-documentation source='column-properties/properties.json' section='columns' names='["checkboxSelection"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
 
 To be clear, there is a slight difference between a callback returning false, and false value provided explicitly.
 When a callback is used and returns false, the grid assumes a checkbox is sometimes used and as such creates one

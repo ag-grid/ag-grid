@@ -19,18 +19,7 @@ Your preference should be to use `refreshCells()` over `redrawRows()`. Only use 
 
 To get the grid to refresh the cells, call `api.refreshCells()`. The interface is as follows:
 
-```ts
-// method for refreshing cells
-function refreshCells(params: RefreshCellsParams = {}): void;
-
-// params for refresh cells
-interface RefreshCellsParams {
-    rowNodes?: RowNode[]; // specify rows, or all rows by default
-    columns?: (string|Column)[]; // specify columns, or all columns by default
-    force?: boolean; // skips change detection, refresh everything
-    suppressFlash?: boolean; // skips cell flashing, if cell flashing is enabled
-}
-```
+<api-documentation source='grid-api/api.json' section='refresh' names='["refreshCells"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
 
 
 Each parameter is optional. The simplest is to call with no parameters which will refresh all cells using [change detection](/change-detection/) (change detection means it will only refresh cells whose values have changed).
@@ -80,15 +69,7 @@ Use redraw row if you want to create the row again from scratch. This is useful 
 
 To get the grid to redraw rows, call `api.redrawRows()`. The interface is as follows:
 
-```ts
-// method for redraw rows
-function redrawRows(params: RedrawRowsParams = {})
-
-// params for redraw rows
-interface RedrawRowsParams {
-    rowNodes?: RowNode[]; // the row nodes to redraw
-}
-```
+<api-documentation source='grid-api/api.json' section='refresh' names='["redrawRows"]'></api-documentation>
 
 ### Example Redraw Nodes
 

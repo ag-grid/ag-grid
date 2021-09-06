@@ -88,34 +88,10 @@ interface IDatasource {
 }
 ```
 
-The `getRows()` method takes the following parameters:
+The `getRows()` method takes the `IGetRowsParams` parameters:
 
+<interface-documentation interfaceName='IGetRowsParams' ></interface-documentation>
 
-```ts
-// Params for the above IDatasource.getRows()
-interface IGetRowsParams {
-    // The first row index to get.
-    startRow: number;
-
-    // The first row index to NOT get.
-    endRow: number;
-
-    // If doing server-side sorting, contains the sort model
-    sortModel: any,
-
-    // If doing server-side filtering, contains the filter model
-    filterModel: any;
-
-    // The grid context object
-    context: any;
-
-    // Callback to call when the request is successful.
-    successCallback(rowsThisBlock: any[], lastRow?: number): void;
-
-    // Callback to call when the request fails.
-    failCallback(): void;
-}
-```
 
 ### getRows()
 

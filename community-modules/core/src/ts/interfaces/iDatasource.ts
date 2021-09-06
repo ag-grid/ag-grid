@@ -2,8 +2,9 @@
 export interface IDatasource {
 
     /** If you know up front how many rows are in the dataset, set it here. Otherwise leave blank.*/
-    rowCount?: number; // only used in old server side pagination service, we can remove this, infinite
-                       // scrolling uses the grid property infiniteInitialRowCount
+    rowCount?: number;
+    // only used in old server side pagination service, we can remove this, infinite
+    // scrolling uses the grid property infiniteInitialRowCount
 
     /** Callback the grid calls that you implement to fetch rows from the server. See below for params.*/
     getRows(params: IGetRowsParams): void;
@@ -32,6 +33,6 @@ export interface IGetRowsParams {
     /** If doing server side filtering, contains the filter model */
     filterModel: any;
 
-/** The context as provided on `gridOptions.context` */
+    /** The context as provided on `gridOptions.context` */
     context: any;
 }

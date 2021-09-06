@@ -50,17 +50,9 @@ const gridOptions = {
 }
 </snippet>
 
-The params passed to the callback are as follows:
+The params passed to the callback have the `IsGroupOpenByDefaultParams` interface:
 
-```js
-interface IsGroupOpenByDefaultParams {
-  rowNode: RowNode; // the Row Node being considered
-  rowGroupColumn: Column; // the Column for which this row is grouping
-  level: number; // same as rowNode.level - what level the group is at, e.g. 0 for top level, 1 for second etc
-  field: string; // same as rowNode.field - the field we are grouping on, e.g. 'country'
-  key: any; // same as rowNode.key, the value of this group, e.g. 'Ireland'
-}
-```
+<interface-documentation interfaceName='IsGroupOpenByDefaultParams' ></interface-documentation>
 
 In the example below, the country 'United States' and year '2004' are expanded by default. Note that year '2004' is expanded for all
 countries, not just 'United States'.

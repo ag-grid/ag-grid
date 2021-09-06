@@ -6,26 +6,10 @@ Value formatters allow you to format values for display. This is useful when dat
 
 Below shows the column definition properties for value formatters.
 
-<api-documentation source='column-properties/properties.json' section="columns" names='["valueFormatter"]'></api-documentation>
+<api-documentation source='column-properties/properties.json' section="columns" names='["valueFormatter"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
 
-The interface for `valueFormatter` is as follows:
 
 ```ts
-// function for valueFormatter
-function valueFormatter(params: ValueFormatterParams) => any;
-
-// interface for params
-interface ValueFormatterParams {
-    value: any, // the value before the change
-    data: any, // the data you provided for this row
-    node: RowNode, // the row node for this row
-    colDef: ColDef, // the column def for this column
-    column: Column, // the column for this column
-    api: GridApi, // the grid API
-    columnApi: ColumnApi, // the grid Column API
-    context: any  // the context
-}
-
 // example value formatter, simple currency formatter
 colDef.valueFormatter = params => {
     return '£' + params.value;

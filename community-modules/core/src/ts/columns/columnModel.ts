@@ -1,6 +1,6 @@
 import { ColumnGroup } from '../entities/columnGroup';
 import { Column } from '../entities/column';
-import { AbstractColDef, ColDef, ColGroupDef, IAggFunc } from '../entities/colDef';
+import { AbstractColDef, ColDef, ColGroupDef, IAggFunc, HeaderValueGetterParams } from '../entities/colDef';
 import { ColumnGroupChild } from '../entities/columnGroupChild';
 import { ExpressionService } from '../valueService/expressionService';
 import { ColumnFactory } from './columnFactory';
@@ -2519,7 +2519,7 @@ export class ColumnModel extends BeanStub {
         const headerValueGetter = colDef.headerValueGetter;
 
         if (headerValueGetter) {
-            const params = {
+            const params: HeaderValueGetterParams = {
                 colDef: colDef,
                 column: column,
                 columnGroup: columnGroup,

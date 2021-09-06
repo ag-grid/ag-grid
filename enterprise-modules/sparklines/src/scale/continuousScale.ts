@@ -4,8 +4,6 @@ import Scale, {
     Deinterpolator,
     Reinterpolator
 } from './scale';
-import { bisectRight } from "../util/bisect";
-import { ascending } from "../util/compare";
 
 export const constant = (x: any) => () => x;
 export const identity = (x: any) => x;
@@ -99,11 +97,7 @@ export default abstract class ContinuousScale implements Scale<any, any> {
     }
 
     protected rescale() {
-        if (Math.min(this.domain.length, this.range.length) > 2) {
-            this.piecewise = this.polymap;
-        } else {
-            this.piecewise = this.bimap;
-        }
+        this.piecewise = this.bimap;
         this.output = undefined;
         this.input = undefined;
     }
@@ -139,27 +133,6 @@ export default abstract class ContinuousScale implements Scale<any, any> {
         return (x) => ty(xt(x)); // domain value x --> t in [0, 1] --> range value y
     }
 
-    private polymap(domain: any[], range: any[], interpolate: (a: any, b: any) => (t: number) => any): Reinterpolator<any> {
-        // number of segments in the polylinear scale
-        const n = Math.min(domain.length, range.length) - 1;
-
-        if (domain[n] < domain[0]) {
-            domain = domain.slice().reverse();
-            range = range.slice().reverse();
-        }
-
-        // deinterpolators from domain segment value to t
-        const dt = Array.from( {length: n}, (_, i) => this.normalize(domain[i], domain[i+1]) );
-        // reinterpolators from t to range segment value
-        const tr = Array.from( {length: n}, (_, i) => interpolate(range[i], range[i+1]) );
-
-        return (x) => {
-            const i = bisectRight(domain, x, ascending, 1, n) - 1; // Find the domain segment that `x` belongs to.
-            // This also tells us which deinterpolator/reinterpolator pair to use.
-            return tr[i](dt[i](x));
-        };
-    }
-
     convert(x: any): any {
         x = +x;
         if (isNaN(x)) {
@@ -168,7 +141,7 @@ export default abstract class ContinuousScale implements Scale<any, any> {
             if (!this.output) {
                 this.output = this.piecewise!(this.domain.map(this.transform), this.range, this.interpolate);
             }
-        return this.output(this.transform(this._clamp(x)));
+            return this.output(this.transform(this._clamp(x)));
         }
     }
 

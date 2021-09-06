@@ -8,6 +8,8 @@ the first) column.
 
 ## Enabling Row Dragging
 
+<api-documentation source='column-properties/properties.json' section='row dragging' names='["rowDrag"]' config='{"overrideBottomMargin":"1rem"}' ></api-documentation>
+
 To enable row dragging on all columns, set the column property `rowDrag = true` on one (typically the first) column.
 
 <snippet>
@@ -21,7 +23,6 @@ const gridOptions = {
 
 It is also possible to dynamically control which rows are draggable by providing a callback function as shown below:
 
-
 <snippet>
 const gridOptions = {
     columnDefs: [
@@ -30,24 +31,6 @@ const gridOptions = {
     ],
 }
 </snippet>
-
-The `rowDrag`callback function has the following interface:
-
-```ts
-// function to enable/disable RowDrag
-function rowDragFunction(params: RowDragCallbackParams) => boolean;
-
-// interface for params
-interface RowDragCallbackParams {
-    node: RowNode;
-    data: any;
-    column: Column;
-    colDef: ColDef;
-    context: any;
-    api: GridApi;
-    columnApi: ColumnApi;
-}
-```
 
 There are two ways in which row dragging works in the grid, managed and unmanaged:
 
@@ -290,6 +273,8 @@ When a row drag starts, a "floating" DOM element is created to indicate which ro
 element will contain the same value as the cell that started the row drag. It's possible to override that text by using
 the `colDef.rowDragText` callback.
 
+<api-documentation source='column-properties/properties.json' section='row dragging' names='["rowDragText"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
+
 <snippet>
 const gridOptions = {
     columnDefs: [
@@ -307,20 +292,6 @@ const gridOptions = {
     ]
 }
 </snippet>
-
-The interface for the rowDragText callback is as follows:
-
-```ts
-// function for rowDragText
-function rowDragText(params: IRowDragItem, dragItemCount: number) => string;
-
-// interface for params
-interface IRowDragItem {
-    rowNode: RowNode; // the current RowNode
-    columns: Column[]; // an array containing the column that initiated the drag
-    defaultTextValue: string; // The default text that would be applied to this Drag Element
-}
-```
 
 The example below shows dragging with custom text. The following can be noted:
 
