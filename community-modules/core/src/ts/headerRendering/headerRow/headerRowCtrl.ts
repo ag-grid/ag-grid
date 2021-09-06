@@ -3,23 +3,21 @@ import { Constants } from "../../constants/constants";
 import { BeanStub } from "../../context/beanStub";
 import { Autowired } from "../../context/context";
 import { Column } from "../../entities/column";
-import { ColumnGroup } from "../../entities/columnGroup";
 import { ColumnGroupChild } from "../../entities/columnGroupChild";
 import { Events } from "../../eventKeys";
 import { FocusService } from "../../focusService";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
-import { removeFromArray } from "../../utils/array";
 import { isBrowserSafari } from "../../utils/browser";
 import { find } from "../../utils/generic";
 import { getAllValuesInObject, iterateObject } from "../../utils/object";
-import { HeaderWrapperCtrl } from "../columnHeader/headerWrapperCtrl";
+import { HeaderCellCtrl } from "../headerCell/headerCellCtrl";
 import { HeaderRowType } from "./headerRowComp";
 
 export interface IHeaderRowComp {
     setTransform(transform: string): void;
     setTop(top: string): void;
     setHeight(height: string): void;
-    setHeaderCtrls(ctrls: HeaderWrapperCtrl[]): void;
+    setHeaderCtrls(ctrls: HeaderCellCtrl[]): void;
     setWidth(width: string): void;
     getHtmlElementForColumnHeader(column: Column): HTMLElement | undefined;
     setRowIndex(rowIndex: number): void;
@@ -39,7 +37,7 @@ export class HeaderRowCtrl extends BeanStub {
 
     private instanceId = instanceIdSequence++;
 
-    private headerCtrls: { [key: string]: HeaderWrapperCtrl } = {};
+    private headerCtrls: { [key: string]: HeaderCellCtrl } = {};
 
     constructor(rowIndex: number, pinned: string | null, type: HeaderRowType) {
         super();
@@ -188,7 +186,7 @@ export class HeaderRowCtrl extends BeanStub {
             const idOfChild = child.getUniqueId();
 
             // if we already have this cell rendered, do nothing
-            let headerCtrl: HeaderWrapperCtrl | undefined = oldCtrls[idOfChild];
+            let headerCtrl: HeaderCellCtrl | undefined = oldCtrls[idOfChild];
             delete oldCtrls[idOfChild];
 
             // it's possible there is a new Column with the same ID, but it's for a different Column.
@@ -202,21 +200,21 @@ export class HeaderRowCtrl extends BeanStub {
             }
 
             if (headerCtrl==null) {
-                headerCtrl = this.createBean(new HeaderWrapperCtrl(child, this));
+                headerCtrl = this.createBean(new HeaderCellCtrl(child, this));
             }
 
             this.headerCtrls[idOfChild] = headerCtrl;
         });
 
         // we want to keep columns that are focused, otherwise keyboard navigation breaks
-        const isFocusedAndDisplayed = (ctrl: HeaderWrapperCtrl) => {
+        const isFocusedAndDisplayed = (ctrl: HeaderCellCtrl) => {
             const isFocused = this.focusService.isHeaderWrapperFocused(ctrl);
             if (!isFocused) { return false; }
             const isDisplayed = this.columnModel.isDisplayed(ctrl.getColumnGroupChild());
             return isDisplayed;
         };
 
-        iterateObject(oldCtrls, (id: string, oldCtrl: HeaderWrapperCtrl) => {
+        iterateObject(oldCtrls, (id: string, oldCtrl: HeaderCellCtrl) => {
             const keepCtrl = isFocusedAndDisplayed(oldCtrl);
             if (keepCtrl) {
                 this.headerCtrls[id] = oldCtrl;

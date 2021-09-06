@@ -18,7 +18,7 @@ import { IHeaderGroupComp, IHeaderGroupParams } from "./headerGroupComp";
 import { GridApi } from "../../gridApi";
 import { UserComponentFactory } from "../../components/framework/userComponentFactory";
 import { HoverFeature } from "../hoverFeature";
-import { AbstractHeaderWrapper } from "../columnHeader/abstractHeaderWrapper";
+import { AbstractHeaderCellComp } from "../abstractHeaderCell/abstractHeaderCellComp";
 import { HeaderRowComp } from "../headerRow/headerRowComp";
 import { Beans } from "../../rendering/beans";
 import { OriginalColumnGroup } from "../../entities/originalColumnGroup";
@@ -28,9 +28,9 @@ import { removeFromParent, addCssClass, removeCssClass, addOrRemoveCssClass } fr
 import { KeyCode } from '../../constants/keyCode';
 import { ITooltipParams } from "../../rendering/tooltipComponent";
 import { ManagedFocusFeature } from "../../widgets/managedFocusFeature";
-import { HeaderWrapperCtrl, IHeaderWrapperComp } from "../columnHeader/headerWrapperCtrl";
+import { HeaderCellCtrl, IHeaderCellComp } from "../headerCell/headerCellCtrl";
 
-export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
+export class HeaderGroupCellComp extends AbstractHeaderCellComp {
 
     private static TEMPLATE = /* html */
         `<div class="ag-header-group-cell" role="columnheader" tabindex="-1">
@@ -62,10 +62,10 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
     // the children can change, we keep destroy functions related to listening to the children here
     private removeChildListenersFuncs: Function[] = [];
 
-    private ctrl: HeaderWrapperCtrl;
+    private ctrl: HeaderCellCtrl;
 
-    constructor(ctrl: HeaderWrapperCtrl) {
-        super(HeaderGroupWrapperComp.TEMPLATE);
+    constructor(ctrl: HeaderCellCtrl) {
+        super(HeaderGroupCellComp.TEMPLATE);
         this.column = ctrl.getColumnGroupChild() as ColumnGroup;
         this.pinned = ctrl.getPinned();
         this.ctrl = ctrl;
@@ -99,7 +99,7 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
             }
         ));
 
-        const compProxy: IHeaderWrapperComp = {
+        const compProxy: IHeaderCellComp = {
             focus: ()=> this.getFocusableElement().focus()
         };
 

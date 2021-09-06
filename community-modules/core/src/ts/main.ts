@@ -114,7 +114,7 @@ export { DateFilter, IDateFilterParams, DateFilterModel } from "./filter/provide
 
 export { IFloatingFilter, IFloatingFilterParams, IFloatingFilterComp, BaseFloatingFilterChange } from "./filter/floating/floatingFilter";
 export { TextFloatingFilter } from './filter/provided/text/textFloatingFilter';
-export { FloatingFilterWrapper } from './filter/floating/floatingFilterWrapper';
+export { HeaderFilterCellComp as FloatingFilterWrapper } from './filter/floating/headerFilterCellComp';
 export { FloatingFilterMapper } from './filter/floating/floatingFilterMapper';
 
 // gridPanel
@@ -296,8 +296,8 @@ export { IClipboardService } from "./interfaces/iClipboardService";
 export { IMenuFactory } from "./interfaces/iMenuFactory";
 export { CellPosition, CellPositionUtils } from "./entities/cellPosition";
 export { RowPosition, RowPositionUtils } from "./entities/rowPosition";
-export { HeaderPosition, HeaderPositionUtils } from "./headerRendering/columnHeader/headerPosition";
-export { HeaderNavigationService, HeaderNavigationDirection } from "./headerRendering/columnHeader/headerNavigationService";
+export { HeaderPosition, HeaderPositionUtils } from "./headerRendering/headerCell/headerPosition";
+export { HeaderNavigationService, HeaderNavigationDirection } from "./headerRendering/headerCell/headerNavigationService";
 export {
     IAggFunc,
     IAggFuncParams,
@@ -402,8 +402,8 @@ export { IDateParams, IDate, IDateComp } from "./rendering/dateComponent";
 export { IAfterGuiAttachedParams, ContainerType } from "./interfaces/iAfterGuiAttachedParams";
 export { IComponent } from "./interfaces/iComponent";
 export { IEventEmitter } from "./interfaces/iEventEmitter";
-export { IHeaderParams, IHeader } from "./headerRendering/columnHeader/headerComp";
-export { IHeaderGroupParams, IHeaderGroup, IHeaderGroupComp } from "./headerRendering/columnGroupHeader/headerGroupComp";
+export { IHeaderParams, IHeader } from "./headerRendering/headerCell/headerComp";
+export { IHeaderGroupParams, IHeaderGroup, IHeaderGroupComp } from "./headerRendering/headerGroupCell/headerGroupComp";
 export { ColumnApi } from "./columns/columnApi";
 export { IRichCellEditorParams } from "./interfaces/iRichCellEditorParams";
 export { WrappableInterface, BaseComponentWrapper, FrameworkComponentWrapper } from "./components/framework/frameworkComponentWrapper";

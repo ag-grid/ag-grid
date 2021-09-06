@@ -2,7 +2,7 @@ import { Autowired, PostConstruct } from '../../context/context';
 import { IMenuFactory } from '../../interfaces/iMenuFactory';
 import { Column } from '../../entities/column';
 import { SetLeftFeature } from '../../rendering/features/setLeftFeature';
-import { IFloatingFilterComp, IFloatingFilterParams } from './../floating/floatingFilter';
+import { IFloatingFilterComp, IFloatingFilterParams } from './floatingFilter';
 import { RefSelector } from '../../widgets/componentAnnotations';
 import { HoverFeature } from '../../headerRendering/hoverFeature';
 import { Events, FilterChangedEvent } from '../../events';
@@ -11,21 +11,21 @@ import { AgPromise } from '../../utils';
 import { IFilterComp, IFilterDef } from '../../interfaces/iFilter';
 import { UserComponentFactory } from '../../components/framework/userComponentFactory';
 import { GridApi } from '../../gridApi';
-import { FilterManager } from './../filterManager';
+import { FilterManager } from '../filterManager';
 import { ReadOnlyFloatingFilter } from './provided/readOnlyFloatingFilter';
 import { ModuleNames } from '../../modules/moduleNames';
 import { ModuleRegistry } from '../../modules/moduleRegistry';
 import { addOrRemoveCssClass, setDisplayed } from '../../utils/dom';
 import { createIconNoSpan } from '../../utils/icon';
-import { AbstractHeaderWrapper } from '../../headerRendering/columnHeader/abstractHeaderWrapper';
+import { AbstractHeaderCellComp } from '../../headerRendering/abstractHeaderCell/abstractHeaderCellComp';
 import { Beans } from '../../rendering/beans';
-import { HeaderRowComp } from '../../headerRendering/headerRow/headerRowComp';
 import { FloatingFilterMapper } from './floatingFilterMapper';
 import { KeyCode } from '../../constants/keyCode';
 import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
-import { HeaderWrapperCtrl, IHeaderWrapperComp } from '../../headerRendering/columnHeader/headerWrapperCtrl';
+import { HeaderCellCtrl, IHeaderCellComp } from '../../headerRendering/headerCell/headerCellCtrl';
 
-export class FloatingFilterWrapper extends AbstractHeaderWrapper {
+export class HeaderFilterCellComp extends AbstractHeaderCellComp {
+    
     private static TEMPLATE = /* html */
         `<div class="ag-header-cell ag-floating-filter" role="gridcell" tabindex="-1">
             <div class="ag-floating-filter-full-body" ref="eFloatingFilterBody" role="presentation"></div>
@@ -52,10 +52,10 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
 
     private floatingFilterCompPromise: AgPromise<IFloatingFilterComp> | null;
 
-    private ctrl: HeaderWrapperCtrl;
+    private ctrl: HeaderCellCtrl;
 
-    constructor(ctrl: HeaderWrapperCtrl) {
-        super(FloatingFilterWrapper.TEMPLATE);
+    constructor(ctrl: HeaderCellCtrl) {
+        super(HeaderFilterCellComp.TEMPLATE);
         this.column = ctrl.getColumnGroupChild() as Column;
         this.pinned = ctrl.getPinned();
         this.ctrl = ctrl;
@@ -81,7 +81,7 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
 
         this.addManagedListener(this.eButtonShowMainFilter, 'click', this.showParentFilter.bind(this));
 
-        const compProxy: IHeaderWrapperComp = {
+        const compProxy: IHeaderCellComp = {
             focus: ()=> this.getFocusableElement().focus()
         };
 
@@ -267,7 +267,7 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
 
     private getFloatingFilterInstance(): AgPromise<IFloatingFilterComp> | null {
         const colDef = this.column.getColDef();
-        const defaultFloatingFilterType = FloatingFilterWrapper.getDefaultFloatingFilterType(colDef);
+        const defaultFloatingFilterType = HeaderFilterCellComp.getDefaultFloatingFilterType(colDef);
         const filterParams = this.filterManager.createFilterParams(this.column, colDef);
         const finalFilterParams = this.userComponentFactory.mergeParamsWithApplicationProvidedParams(colDef, 'filter', filterParams);
 

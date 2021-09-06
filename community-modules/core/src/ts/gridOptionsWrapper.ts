@@ -54,7 +54,7 @@ import { exists, missing, values } from './utils/generic';
 import { fuzzyCheckStrings } from './utils/fuzzyMatch';
 import { doOnce } from './utils/function';
 import { getScrollbarWidth } from './utils/browser';
-import { HeaderPosition } from './headerRendering/columnHeader/headerPosition';
+import { HeaderPosition } from './headerRendering/headerCell/headerPosition';
 import { ExcelExportParams } from './interfaces/iExcelCreator';
 import { capitalise } from './utils/string';
 

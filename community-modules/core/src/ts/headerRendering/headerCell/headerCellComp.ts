@@ -21,16 +21,16 @@ import { SelectAllFeature } from "./selectAllFeature";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { TouchListener } from "../../widgets/touchListener";
 import { UserComponentFactory } from "../../components/framework/userComponentFactory";
-import { AbstractHeaderWrapper } from "./abstractHeaderWrapper";
+import { AbstractHeaderCellComp } from "../abstractHeaderCell/abstractHeaderCellComp";
 import { HeaderRowComp } from "../headerRow/headerRowComp";
 import { setAriaSort, getAriaSortState, removeAriaSort } from "../../utils/aria";
 import { addCssClass, addOrRemoveCssClass, removeCssClass, setDisplayed } from "../../utils/dom";
 import { KeyCode } from '../../constants/keyCode';
 import { ITooltipParams } from "../../rendering/tooltipComponent";
 import { ManagedFocusFeature } from "../../widgets/managedFocusFeature";
-import { HeaderWrapperCtrl, IHeaderWrapperComp } from "./headerWrapperCtrl";
+import { HeaderCellCtrl, IHeaderCellComp } from "./headerCellCtrl";
 
-export class HeaderWrapperComp extends AbstractHeaderWrapper {
+export class HeaderCellComp extends AbstractHeaderCellComp {
 
     private static TEMPLATE = /* html */
         `<div class="ag-header-cell" role="columnheader" unselectable="on" tabindex="-1">
@@ -74,10 +74,10 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     private colDefHeaderComponent?: string | { new(): any; };
     private colDefHeaderComponentFramework?: any;
 
-    private ctrl: HeaderWrapperCtrl;
+    private ctrl: HeaderCellCtrl;
 
-    constructor(ctrl: HeaderWrapperCtrl) {
-        super(HeaderWrapperComp.TEMPLATE);
+    constructor(ctrl: HeaderCellCtrl) {
+        super(HeaderCellComp.TEMPLATE);
         this.column = ctrl.getColumnGroupChild() as Column;
         this.pinned = ctrl.getPinned();
         this.ctrl = ctrl;
@@ -128,7 +128,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
         this.appendHeaderComp();
 
-        const compProxy: IHeaderWrapperComp = {
+        const compProxy: IHeaderCellComp = {
             focus: ()=> this.getFocusableElement().focus()
         };
 

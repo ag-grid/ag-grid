@@ -1,14 +1,15 @@
 import { BeanStub } from "../../context/beanStub";
 import { ColumnGroupChild } from "../../entities/columnGroupChild";
+import { IHeaderCellComp } from "../headerCell/headerCellCtrl";
 import { HeaderRowCtrl } from "../headerRow/headerRowCtrl";
 
 let instanceIdSequence = 0;
 
-export interface IHeaderWrapperComp {
+export interface IAbstractHeaderCellComp {
     focus(): void;
 }
 
-export class HeaderWrapperCtrl extends BeanStub {
+export class AbstractHeaderCellCtrl extends BeanStub {
 
     private instanceId: string;
 
@@ -16,7 +17,7 @@ export class HeaderWrapperCtrl extends BeanStub {
 
     private parentRowCtrl: HeaderRowCtrl;
 
-    private comp: IHeaderWrapperComp;
+    private comp: IHeaderCellComp;
 
     constructor(columnGroupChild: ColumnGroupChild, parentRowCtrl: HeaderRowCtrl) {
         super();
@@ -28,7 +29,7 @@ export class HeaderWrapperCtrl extends BeanStub {
         this.instanceId = columnGroupChild.getUniqueId() + '-' + instanceIdSequence++;
     }
 
-    public setComp(comp: IHeaderWrapperComp): void {
+    public setComp(comp: IHeaderCellComp): void {
         this.comp = comp;
     }
 

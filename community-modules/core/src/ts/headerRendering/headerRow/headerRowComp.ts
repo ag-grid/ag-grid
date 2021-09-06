@@ -1,15 +1,14 @@
 import { PostConstruct, PreDestroy } from '../../context/context';
 import { Column } from '../../entities/column';
-import { ColumnGroupChild } from '../../entities/columnGroupChild';
-import { FloatingFilterWrapper } from '../../filter/floating/floatingFilterWrapper';
+import { HeaderFilterCellComp } from '../../filter/floating/headerFilterCellComp';
 import { setAriaRowIndex } from '../../utils/aria';
 import { setDomChildOrder } from '../../utils/dom';
 import { getAllValuesInObject, iterateObject } from '../../utils/object';
 import { Component } from '../../widgets/component';
-import { HeaderGroupWrapperComp } from '../columnGroupHeader/headerGroupWrapperComp';
-import { AbstractHeaderWrapper } from '../columnHeader/abstractHeaderWrapper';
-import { HeaderWrapperComp } from '../columnHeader/headerWrapperComp';
-import { HeaderWrapperCtrl } from '../columnHeader/headerWrapperCtrl';
+import { HeaderGroupCellComp } from '../headerGroupCell/headerGroupCellComp';
+import { AbstractHeaderCellComp } from '../abstractHeaderCell/abstractHeaderCellComp';
+import { HeaderCellComp } from '../headerCell/headerCellComp';
+import { HeaderCellCtrl } from '../headerCell/headerCellCtrl';
 import { HeaderRowCtrl, IHeaderRowComp } from './headerRowCtrl';
 import { find } from '../../utils/generic';
 
@@ -22,7 +21,7 @@ export class HeaderRowComp extends Component {
 
     private ctrl: HeaderRowCtrl;
 
-    private headerComps: { [key: string]: AbstractHeaderWrapper; } = {};
+    private headerComps: { [key: string]: AbstractHeaderCellComp; } = {};
 
     constructor(ctrl: HeaderRowCtrl) {
         super(/* html */`<div class="ag-header-row" role="row"></div>`);
@@ -55,7 +54,7 @@ export class HeaderRowComp extends Component {
     private getHtmlElementForColumnHeader(column: Column): HTMLElement | undefined {
         if (this.ctrl.getType() != HeaderRowType.COLUMN) { return; }
 
-        const headerCompsList = Object.keys(this.headerComps).map( c => this.headerComps[c]) as (HeaderWrapperComp[]);
+        const headerCompsList = Object.keys(this.headerComps).map( c => this.headerComps[c]) as (HeaderCellComp[]);
         const comp = find(headerCompsList, wrapper => wrapper.getColumn() == column);
         return comp ? comp.getGui() : undefined;
     }
@@ -65,7 +64,7 @@ export class HeaderRowComp extends Component {
         this.setHeaderCtrls([]);
     }
 
-    private setHeaderCtrls(ctrls: HeaderWrapperCtrl[]): void {
+    private setHeaderCtrls(ctrls: HeaderCellCtrl[]): void {
         if (!this.isAlive()) { return; }
 
         const oldComps = this.headerComps;
@@ -84,7 +83,7 @@ export class HeaderRowComp extends Component {
             this.headerComps[id] = comp;
         });
 
-        iterateObject(oldComps, (id: string, comp: AbstractHeaderWrapper)=> {
+        iterateObject(oldComps, (id: string, comp: AbstractHeaderCellComp)=> {
             this.getGui().removeChild(comp.getGui());
             this.destroyBean(comp);
         });
@@ -93,7 +92,7 @@ export class HeaderRowComp extends Component {
         if (ensureDomOrder) {
             const comps = getAllValuesInObject(this.headerComps);
             // ordering the columns by left position orders them in the order they appear on the screen
-            comps.sort( (a: AbstractHeaderWrapper, b: AbstractHeaderWrapper) => {
+            comps.sort( (a: AbstractHeaderCellComp, b: AbstractHeaderCellComp) => {
                 const leftA = a.getColumn().getLeft()!;
                 const leftB = b.getColumn().getLeft()!;
                 return leftA - leftB;
@@ -103,19 +102,19 @@ export class HeaderRowComp extends Component {
         }
     }
 
-    private createHeaderComp(headerCtrl: HeaderWrapperCtrl): AbstractHeaderWrapper {
+    private createHeaderComp(headerCtrl: HeaderCellCtrl): AbstractHeaderCellComp {
 
-        let result: AbstractHeaderWrapper;
+        let result: AbstractHeaderCellComp;
 
         switch (this.ctrl.getType()) {
             case HeaderRowType.COLUMN_GROUP:
-                result = new HeaderGroupWrapperComp(headerCtrl);
+                result = new HeaderGroupCellComp(headerCtrl);
                 break;
             case HeaderRowType.FLOATING_FILTER:
-                result = new FloatingFilterWrapper(headerCtrl);
+                result = new HeaderFilterCellComp(headerCtrl);
                 break;
             default:
-                result = new HeaderWrapperComp(headerCtrl);
+                result = new HeaderCellComp(headerCtrl);
                 break;
         }
 

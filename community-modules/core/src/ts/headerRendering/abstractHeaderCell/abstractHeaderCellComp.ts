@@ -5,7 +5,7 @@ import { Component } from "../../widgets/component";
 import { Autowired } from "../../context/context";
 import { FocusService } from "../../focusService";
 
-export abstract class AbstractHeaderWrapper extends Component {
+export abstract class AbstractHeaderCellComp extends Component {
 
     @Autowired('focusService') protected focusService: FocusService;
 

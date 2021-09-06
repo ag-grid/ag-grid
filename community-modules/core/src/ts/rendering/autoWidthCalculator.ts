@@ -1,7 +1,7 @@
 import { RowRenderer } from "./rowRenderer";
 import { Column } from "../entities/column";
 import { Autowired, Bean, PostConstruct } from "../context/context";
-import { HeaderWrapperComp } from "../headerRendering/columnHeader/headerWrapperComp";
+import { HeaderCellComp } from "../headerRendering/headerCell/headerCellComp";
 import { Component } from "../widgets/component";
 import { GridHeaderComp } from "../headerRendering/gridHeaderComp";
 import { BeanStub } from "../context/beanStub";

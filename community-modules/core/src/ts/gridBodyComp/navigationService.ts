@@ -20,7 +20,7 @@ import { doOnce } from "../utils/function";
 import { Constants } from "../constants/constants";
 import { RowPosition, RowPositionUtils } from "../entities/rowPosition";
 import { RowRenderer } from "../rendering/rowRenderer";
-import { HeaderNavigationService } from "../headerRendering/columnHeader/headerNavigationService";
+import { HeaderNavigationService } from "../headerRendering/headerCell/headerNavigationService";
 import { CellNavigationService } from "../cellNavigationService";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
 
