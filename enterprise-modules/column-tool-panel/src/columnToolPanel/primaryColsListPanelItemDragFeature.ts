@@ -1,5 +1,5 @@
 import {
-    AutoScrollService, 
+    AutoScrollService,
     Autowired,
     BeanStub,
     Column,
@@ -65,7 +65,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
     }
 
     private columnPanelItemDragEnd(): void {
-        window.setTimeout(() => { 
+        window.setTimeout(() => {
             this.currentDragColumn = null;
             this.moveBlocked = false;
         }, 10);
@@ -74,7 +74,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
     private createDropTarget(): void {
         const dropTarget: DropTarget = {
             isInterestedIn: (type: DragSourceType) => type === DragSourceType.ToolPanel,
-            getIconName:() => DragAndDropService[this.moveBlocked ? 'ICON_NOT_ALLOWED' : 'ICON_MOVE'],
+            getIconName: () => DragAndDropService[this.moveBlocked ? 'ICON_NOT_ALLOWED' : 'ICON_MOVE'],
             getContainer: () => this.comp.getGui(),
             onDragging: (e) => this.onDragging(e),
             onDragStop: () => this.onDragStop(),
@@ -125,7 +125,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
         const scrollTop = this.virtualList.getScrollTop();
         const rowIndex = Math.max(0, (e.y - paddingTop + scrollTop) / rowHeight);
         const maxLen = this.comp.getDisplayedColsList().length - 1;
-        const normalizedRowIndex = Math.trunc(Math.min(maxLen, rowIndex));
+        const normalizedRowIndex = Math.min(maxLen, rowIndex) | 0;
 
         return {
             rowIndex: normalizedRowIndex,
@@ -140,7 +140,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
         const targetIndex: number | null = this.getTargetIndex();
         const columnsToMove: Column[] = this.getCurrentColumns();
 
-        if (targetIndex != null) { 
+        if (targetIndex != null) {
             this.columnModel.moveColumns(columnsToMove, targetIndex);
         }
 
@@ -179,7 +179,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
 
         if (columnItemComponent instanceof ToolPanelColumnGroupComp) {
             const columns = columnItemComponent.getColumns();
-            targetColumn =  columns[0];
+            targetColumn = columns[0];
             isBefore = true;
         } else {
             targetColumn = columnItemComponent.getColumn();

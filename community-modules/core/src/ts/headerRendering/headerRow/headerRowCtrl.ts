@@ -22,6 +22,7 @@ export interface IHeaderRowComp {
     setHeaderCtrls(ctrls: HeaderWrapperCtrl[]): void;
     setWidth(width: string): void;
     getHtmlElementForColumnHeader(column: Column): HTMLElement | undefined;
+    setRowIndex(rowIndex: number): void;
 }
 
 let instanceIdSequence = 0;
@@ -40,7 +41,7 @@ export class HeaderRowCtrl extends BeanStub {
 
     private headerCtrls: { [key: string]: HeaderWrapperCtrl } = {};
 
-    public constructor(rowIndex: number, pinned: string | null, type: HeaderRowType) {
+    constructor(rowIndex: number, pinned: string | null, type: HeaderRowType) {
         super();
         this.rowIndex = rowIndex;
         this.pinned = pinned;
@@ -65,6 +66,8 @@ export class HeaderRowCtrl extends BeanStub {
             // as you move the mouse over the header
             this.comp.setTransform('translateZ(0)');
         }
+
+        comp.setRowIndex(this.rowIndex);
     }
 
     private addEventListeners(): void {

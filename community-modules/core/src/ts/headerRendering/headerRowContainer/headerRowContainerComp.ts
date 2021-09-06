@@ -9,7 +9,7 @@ import { HeaderRowComp } from '../headerRow/headerRowComp';
 import { HeaderRowCtrl } from '../headerRow/headerRowCtrl';
 import { HeaderRowContainerCtrl, IHeaderRowContainerComp } from './headerRowContainerCtrl';
 
-export class HeaderRowContainer extends Component {
+export class HeaderRowContainerComp extends Component {
 
     private static PINNED_LEFT_TEMPLATE =  /* html */ `<div class="ag-pinned-left-header" role="presentation"/>`;
 
@@ -36,10 +36,6 @@ export class HeaderRowContainer extends Component {
     private init(): void {
         this.selectAndSetTemplate();
 
-        // if value changes, then if not pivoting, we at least need to change the label eg from sum() to avg(),
-        // if pivoting, then the columns have changed
-        this.setupDragAndDrop();
-
         const compProxy: IHeaderRowContainerComp = {
             setCenterWidth: width => this.eContainer.style.width = width,
             setContainerTransform: transform => this.eContainer.style.transform = transform,
@@ -50,38 +46,25 @@ export class HeaderRowContainer extends Component {
                 container.style.minWidth = width;
             },
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
-            setCtrls: ctrls => this.setCtrls(ctrls),
-
-            // temp pass through
-            getRowComps: ()=> this.getRowComps()
+            setCtrls: ctrls => this.setCtrls(ctrls)
         };
 
         const ctrl = this.createManagedBean(new HeaderRowContainerCtrl(this.pinned));
-        ctrl.setComp(compProxy);
+        ctrl.setComp(compProxy, this.getGui());
     }
 
     private selectAndSetTemplate(): void {
         const pinnedLeft = this.pinned == Constants.PINNED_LEFT;
         const pinnedRight = this.pinned == Constants.PINNED_RIGHT;
 
-        const template = pinnedLeft ? HeaderRowContainer.PINNED_LEFT_TEMPLATE : 
-                         pinnedRight ? HeaderRowContainer.PINNED_RIGHT_TEMPLATE : HeaderRowContainer.CENTER_TEMPLATE;
+        const template = pinnedLeft ? HeaderRowContainerComp.PINNED_LEFT_TEMPLATE : 
+                         pinnedRight ? HeaderRowContainerComp.PINNED_RIGHT_TEMPLATE : HeaderRowContainerComp.CENTER_TEMPLATE;
 
         this.setTemplate(template);
     }
 
     private getContainer(): HTMLElement {
         return this.eContainer ? this.eContainer : this.getGui();
-    }
-
-    public getRowComps(): HeaderRowComp[] {
-        return this.rowCompsList;
-    }
-
-    private setupDragAndDrop(): void {
-        const dropContainer = this.getGui();
-        const bodyDropTarget = new BodyDropTarget(this.pinned, dropContainer);
-        this.createManagedBean(bodyDropTarget);
     }
 
     @PreDestroy

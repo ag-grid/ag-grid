@@ -20,14 +20,12 @@ export enum HeaderRowType {
 }
 export class HeaderRowComp extends Component {
 
-    private rowIndex: number;
     private ctrl: HeaderRowCtrl;
 
     private headerComps: { [key: string]: AbstractHeaderWrapper; } = {};
 
     constructor(ctrl: HeaderRowCtrl) {
         super(/* html */`<div class="ag-header-row" role="row"></div>`);
-        this.setRowIndex(ctrl.getRowIndex());
         this.ctrl = ctrl;
 
         switch (ctrl.getType()) {
@@ -35,11 +33,6 @@ export class HeaderRowComp extends Component {
             case HeaderRowType.COLUMN_GROUP: this.addCssClass(`ag-header-row-column-group`); break;
             case HeaderRowType.FLOATING_FILTER: this.addCssClass(`ag-header-row-floating-filter`); break;
         }
-    }
-
-    // TEMP - can possibly remove when we are properly managing create / destroy of ctrl's
-    public getCtrl(): HeaderRowCtrl {
-        return this.ctrl;
     }
 
     //noinspection JSUnusedLocalSymbols
@@ -52,7 +45,8 @@ export class HeaderRowComp extends Component {
             setTop: top => this.getGui().style.top = top,
             setHeaderCtrls: ctrls => this.setHeaderCtrls(ctrls),
             setWidth: width => this.getGui().style.width = width,
-            getHtmlElementForColumnHeader: col => this.getHtmlElementForColumnHeader(col)
+            getHtmlElementForColumnHeader: col => this.getHtmlElementForColumnHeader(col),
+            setRowIndex: rowIndex => setAriaRowIndex(this.getGui(), rowIndex + 1)
         };
 
         this.ctrl.setComp(compProxy);
@@ -64,15 +58,6 @@ export class HeaderRowComp extends Component {
         const headerCompsList = Object.keys(this.headerComps).map( c => this.headerComps[c]) as (HeaderWrapperComp[]);
         const comp = find(headerCompsList, wrapper => wrapper.getColumn() == column);
         return comp ? comp.getGui() : undefined;
-    }
-
-    private setRowIndex(rowIndex: number) {
-        this.rowIndex = rowIndex;
-        setAriaRowIndex(this.getGui(), rowIndex + 1);
-    }
-
-    public getRowIndex(): number {
-        return this.rowIndex;
     }
 
     @PreDestroy

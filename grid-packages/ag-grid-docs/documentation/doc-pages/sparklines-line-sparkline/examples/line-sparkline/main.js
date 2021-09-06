@@ -1,14 +1,13 @@
 var gridOptions = {
     columnDefs: [
-        { field: 'symbol' },
-        {
-            field: 'shortName',
-            headerName: 'Name',
-        },
+        { field: 'symbol', maxWidth: 110 },
+        { field: 'name', minWidth: 250 },
+        { field: 'lastPrice', type: 'numericColumn' },
+        { field: 'volume', type: 'numericColumn' },
         {
             field: 'history',
             headerName: 'Close History',
-            minWidth: 100,
+            minWidth: 250,
             cellRenderer: 'agSparklineCellRenderer',
             cellRendererParams: {
                 sparklineOptions: {
@@ -26,18 +25,13 @@ var gridOptions = {
                 }
             },
         },
-        {
-            field: 'regularMarketDayHigh',
-        },
-        {
-            field: 'regularMarketDayLow',
-        }
     ],
     defaultColDef: {
         flex: 1,
         minWidth: 100,
         resizable: true,
     },
+    rowData: stockData,
 };
 
 function formatter(params) {
@@ -47,32 +41,8 @@ function formatter(params) {
     }
 }
 
-function updateLineStrokeWidth(strokeWidth) {
-    gridOptions.columnDefs[2].cellRendererParams.sparklineOptions.line.strokeWidth = strokeWidth;
-    gridOptions.api.setColumnDefs(gridOptions.columnDefs);
-}
-
-function updateMarkerSize(size) {
-    gridOptions.columnDefs[2].cellRendererParams.sparklineOptions.marker.size = size;
-    gridOptions.api.setColumnDefs(gridOptions.columnDefs);
-}
-
-function updateLineStroke(stroke, el) {
-    const toggleButtons = document.getElementsByClassName('toggle-button');
-
-    for (const b of toggleButtons) {
-        b.setAttribute('class', 'toggle-button');
-    }
-    el.setAttribute('class', 'toggle-button active');
-
-    gridOptions.columnDefs[2].cellRendererParams.sparklineOptions.line.stroke = stroke;
-    gridOptions.api.setColumnDefs(gridOptions.columnDefs);
-}
-
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
-
-    gridOptions.api.setRowData(quotes);
 });

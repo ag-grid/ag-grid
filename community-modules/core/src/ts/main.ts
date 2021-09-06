@@ -132,7 +132,7 @@ export { RowContainerName, IRowContainerComp, RowContainerCtrl } from "./gridBod
 export { BodyDropPivotTarget } from "./headerRendering/bodyDropPivotTarget";
 export { BodyDropTarget } from "./headerRendering/bodyDropTarget";
 export { CssClassApplier } from "./headerRendering/cssClassApplier";
-export { HeaderRowContainer as HeaderContainer } from "./headerRendering/headerRowContainer/headerRowContainerComp";
+export { HeaderRowContainerComp as HeaderContainer } from "./headerRendering/headerRowContainer/headerRowContainerComp";
 export { GridHeaderComp } from "./headerRendering/gridHeaderComp";
 export { HeaderRowComp } from "./headerRendering/headerRow/headerRowComp";
 export { HorizontalResizeService } from "./headerRendering/horizontalResizeService";

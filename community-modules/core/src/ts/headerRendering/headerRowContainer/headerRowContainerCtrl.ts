@@ -10,6 +10,7 @@ import { CenterWidthFeature } from "../../gridBodyComp/centerWidthFeature";
 import { PinnedWidthService } from "../../gridBodyComp/pinnedWidthService";
 import { ScrollVisibleService } from "../../gridBodyComp/scrollVisibleService";
 import { NumberSequence } from "../../utils";
+import { BodyDropTarget } from "../bodyDropTarget";
 import { HeaderRowComp, HeaderRowType } from "../headerRow/headerRowComp";
 import { HeaderRowCtrl } from "../headerRow/headerRowCtrl";
 
@@ -19,9 +20,6 @@ export interface IHeaderRowContainerComp {
     setContainerWidth(width: string): void;
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     setCtrls(ctrls: HeaderRowCtrl[]): void;
-
-    // remove these, the comp should not be doing
-    getRowComps(): HeaderRowComp[];
 }
 
 export class HeaderRowContainerCtrl extends BeanStub {
@@ -43,11 +41,13 @@ export class HeaderRowContainerCtrl extends BeanStub {
         this.pinned = pinned;
     }
     
-    public setComp(comp: IHeaderRowContainerComp): void {
+    public setComp(comp: IHeaderRowContainerComp, eGui: HTMLElement): void {
         this.comp = comp;
 
         this.setupCenterWidth();
         this.setupPinnedWidth();
+
+        this.setupDragAndDrop(eGui);
 
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
 
@@ -56,6 +56,11 @@ export class HeaderRowContainerCtrl extends BeanStub {
         if (this.columnModel.isReady()) {
             this.refresh();
         }
+    }
+
+    private setupDragAndDrop(dropContainer: HTMLElement): void {
+        const bodyDropTarget = new BodyDropTarget(this.pinned, dropContainer);
+        this.createManagedBean(bodyDropTarget);
     }
 
     public refresh(keepColumns = false): void {
