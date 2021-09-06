@@ -10559,15 +10559,36 @@
     "refresh": { "type": { "arguments": {}, "returnType": "boolean" } }
   },
   "RowDataTransaction": {
-    "addIndex?": { "type": { "returnType": "number | null" } },
-    "add?": { "type": { "returnType": "any[] | null" } },
-    "remove?": { "type": { "returnType": "any[] | null" } },
-    "update?": { "type": { "returnType": "any[] | null" } }
+    "addIndex?": {
+      "description": "/** Index to add rows */",
+      "type": { "returnType": "number | null" }
+    },
+    "add?": {
+      "description": "/** Rows to add */",
+      "type": { "returnType": "any[] | null" }
+    },
+    "remove?": {
+      "description": "/** Rows to remove */",
+      "type": { "returnType": "any[] | null" }
+    },
+    "update?": {
+      "description": "/** Rows to update */",
+      "type": { "returnType": "any[] | null" }
+    }
   },
   "RowNodeTransaction": {
-    "add": { "type": { "returnType": "RowNode[]" } },
-    "remove": { "type": { "returnType": "RowNode[]" } },
-    "update": { "type": { "returnType": "RowNode[]" } }
+    "add": {
+      "description": "/** Row nodes added */",
+      "type": { "returnType": "RowNode[]" }
+    },
+    "remove": {
+      "description": "/** Row nodes removed */",
+      "type": { "returnType": "RowNode[]" }
+    },
+    "update": {
+      "description": "/** Row nodes updated */",
+      "type": { "returnType": "RowNode[]" }
+    }
   },
   "ServerSideTransaction": {
     "route?": { "type": { "returnType": "string[]" } },

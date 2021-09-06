@@ -7738,11 +7738,26 @@
       "add?": "any[] | null",
       "remove?": "any[] | null",
       "update?": "any[] | null"
+    },
+    "docs": {
+      "addIndex?": "/** Index to add rows */",
+      "add?": "/** Rows to add */",
+      "remove?": "/** Rows to remove */",
+      "update?": "/** Rows to update */"
     }
   },
   "RowNodeTransaction": {
     "meta": {},
-    "type": { "add": "RowNode[]", "remove": "RowNode[]", "update": "RowNode[]" }
+    "type": {
+      "add": "RowNode[]",
+      "remove": "RowNode[]",
+      "update": "RowNode[]"
+    },
+    "docs": {
+      "add": "/** Row nodes added */",
+      "remove": "/** Row nodes removed */",
+      "update": "/** Row nodes updated */"
+    }
   },
   "ServerSideTransaction": {
     "meta": {},
