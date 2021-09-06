@@ -1,14 +1,13 @@
 var gridOptions = {
     columnDefs: [
-        { field: 'symbol' },
-        {
-            field: 'shortName',
-            headerName: 'Name',
-        },
+        { field: 'symbol', maxWidth: 110 },
+        { field: 'name', minWidth: 250 },
+        { field: 'lastPrice', type: 'numericColumn' },
+        { field: 'volume', type: 'numericColumn' },
         {
             field: 'history',
             headerName: 'Close History',
-            minWidth: 100,
+            minWidth: 250,
             cellRenderer: 'agSparklineCellRenderer',
             cellRendererParams: {
                 sparklineOptions: {
@@ -20,12 +19,6 @@ var gridOptions = {
                     }
                 }
             },
-        },
-        {
-            field: 'regularMarketDayHigh',
-        },
-        {
-            field: 'regularMarketDayLow',
         }
     ],
     defaultColDef: {
@@ -33,7 +26,7 @@ var gridOptions = {
         minWidth: 100,
         resizable: true,
     },
-    rowData: generateRowData()
+    rowData: stockData,
 };
 
 function formatter(params) {
