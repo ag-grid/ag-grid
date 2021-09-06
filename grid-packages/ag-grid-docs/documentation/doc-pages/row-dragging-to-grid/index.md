@@ -4,20 +4,7 @@ title: "Row Dragging Between Grids"
 
 Row Drag Between Grids is concerned with seamless integration among different grids, allowing records to be dragged from one grid and dropped at a specific index on another grid.
 
-
-```ts
-function addRowDropZone(params: RowDropZoneParams) => void;
-function removeRowDropZone(params: RowDropZoneParams) => void;
-function getRowDropZoneParams(events: RowDropZoneEvents) => RowDropZoneParams;
-
-// interface for events
-interface RowDropZoneEvents {
-    onDragEnter?: (params: RowDragEnterEvent) => void;
-    onDragLeave?: (params: RowDragLeaveEvent) => void;
-    onDragging?: (params: RowDragMoveEvent) => void;
-    onDragStop?: (params: RowDragEndEvent) => void;
-}
-```
+<api-documentation source='grid-api/api.json' section='rowDrag' names='["addRowDropZone", "removeRowDropZone", "getRowDropZoneParams"]'></api-documentation>
 
 ## Adding a Grid as Target
 

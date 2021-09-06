@@ -699,17 +699,17 @@ export interface RowClassRules {
 }
 
 export interface RowClassParams {
-/** The data associated with this row from rowData */
+    /** The data associated with this row from rowData */
     data: any;
-/** The RowNode associated with this row */
+    /** The RowNode associated with this row */
     node: RowNode;
-/** The index of the row */
+    /** The index of the row */
     rowIndex: number;
-/** If using AngularJs, is the row's child scope, otherwise null */
+    /** If using AngularJs, is the row's child scope, otherwise null */
     $scope: any;
     api: GridApi;
     columnApi: ColumnApi;
-/** The context as provided on `gridOptions.context` */
+    /** The context as provided on `gridOptions.context` */
     context: any;
 }
 
@@ -717,7 +717,7 @@ export interface RowHeightParams {
     data: any;
     node: RowNode;
     api: GridApi;
-/** The context as provided on `gridOptions.context` */
+    /** The context as provided on `gridOptions.context` */
     context: any;
 }
 
@@ -743,7 +743,7 @@ export interface GetContextMenuItemsParams {
     value: any;
     api: GridApi;
     columnApi: ColumnApi;
-/** The context as provided on `gridOptions.context` */
+    /** The context as provided on `gridOptions.context` */
     context: any;
 }
 
@@ -762,34 +762,34 @@ export interface GetChartToolbarItems {
 }
 
 export interface MenuItemDef {
-/** Name of the menu item */
+    /** Name of the menu item */
     name: string;
-/** It the item should be enabled / disabled */
+    /** It the item should be enabled / disabled */
     disabled?: boolean;
-/** Shortcut (just display text, saying the shortcut here does nothing) */
+    /** Shortcut (just display text, saying the shortcut here does nothing) */
     shortcut?: string;
-/** Function that gets executed when item is chosen */
+    /** Function that gets executed when item is chosen */
     action?: () => void;
-/** Set to true to provide a check beside the option */
+    /** Set to true to provide a check beside the option */
     checked?: boolean;
-/** The icon to display, either a DOM element or HTML string */
+    /** The icon to display, either a DOM element or HTML string */
     icon?: HTMLElement | string;
-/** If this item is a sub menu, contains a list of menu item definitions */
+    /** If this item is a sub menu, contains a list of menu item definitions */
     subMenu?: (MenuItemDef | string)[] | IComponent<any>;
-/** CSS classes to apply to the menu item */
+    /** CSS classes to apply to the menu item */
     cssClasses?: string[];
-/** Tooltip for the menu item */
+    /** Tooltip for the menu item */
     tooltip?: string;
 }
 
 export interface GetMainMenuItemsParams {
-/** The column that was clicked */
+    /** The column that was clicked */
     column: Column;
     /** List of the items that would be displayed by default */
     defaultItems: string[];
     api: GridApi;
     columnApi: ColumnApi;
-/** The context as provided on `gridOptions.context` */
+    /** The context as provided on `gridOptions.context` */
     context: any;
 }
 
@@ -810,73 +810,73 @@ export interface ProcessRowParams {
     api: GridApi;
     columnApi: ColumnApi;
     addRenderedRowListener: (eventType: string, listener: Function) => void;
-/** The context as provided on `gridOptions.context` */
+    /** The context as provided on `gridOptions.context` */
     context: any;
 }
 
 export interface NavigateToNextHeaderParams {
-/** The key for the arrow key pressed,
- *  left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */
+    /** The key for the arrow key pressed,
+     *  left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */
     key: string;
-/** The header that currently has focus */
+    /** The header that currently has focus */
     previousHeaderPosition: HeaderPosition | null;
-/** The header the grid would normally pick as the next header for this navigation */
+    /** The header the grid would normally pick as the next header for this navigation */
     nextHeaderPosition: HeaderPosition | null;
-/** The number of header rows present in the grid */
+    /** The number of header rows present in the grid */
     headerRowCount: number;
     event: KeyboardEvent;
 }
 
 export interface TabToNextHeaderParams {
-/** True if the Shift key is also down */
+    /** True if the Shift key is also down */
     backwards: boolean;
-/** The header that currently has focus */
+    /** The header that currently has focus */
     previousHeaderPosition: HeaderPosition | null;
-/** The header the grid would normally pick as the next header for this navigation */
+    /** The header the grid would normally pick as the next header for this navigation */
     nextHeaderPosition: HeaderPosition | null;
-/** The number of header rows present in the grid */
+    /** The number of header rows present in the grid */
     headerRowCount: number;
 }
 
 export interface NavigateToNextCellParams {
-/** The keycode for the arrow key pressed:
- *  left = 37, up = 38, right = 39, down = 40 */
+    /** The keycode for the arrow key pressed:
+     *  left = 37, up = 38, right = 39, down = 40 */
     key: number;
-/** The cell that currently has focus */
+    /** The cell that currently has focus */
     previousCellPosition: CellPosition;
-/** The cell the grid would normally pick as the next cell for navigation */
+    /** The cell the grid would normally pick as the next cell for navigation */
     nextCellPosition: CellPosition | null;
 
     event: KeyboardEvent | null;
 }
 
 export interface TabToNextCellParams {
-/** True if the Shift key is also down */
+    /** True if the Shift key is also down */
     backwards: boolean;
-/** True if the current cell is editing
- * (you may want to skip cells that are not editable, as the grid will enter the next cell in editing mode also if tabbing) */
+    /** True if the current cell is editing
+     * (you may want to skip cells that are not editable, as the grid will enter the next cell in editing mode also if tabbing) */
     editing: boolean;
-/** The cell that currently has focus */
+    /** The cell that currently has focus */
     previousCellPosition: CellPosition;
-/** The cell the grid would normally pick as the next cell for navigation */
+    /** The cell the grid would normally pick as the next cell for navigation */
     nextCellPosition: CellPosition;
 }
 
 export interface PostProcessPopupParams {
-/** If popup is for a column, this gives the Column */
+    /** If popup is for a column, this gives the Column */
     column?: Column | null;
-/** If popup is for a row, this gives the RowNode */
+    /** If popup is for a row, this gives the RowNode */
     rowNode?: RowNode;
-/** The popup we are showing */
+    /** The popup we are showing */
     ePopup: HTMLElement;
-/** The different types are:
- *  'contextMenu', 'columnMenu', 'aggFuncSelect', 'popupCellEditor' */
+    /** The different types are:
+     *  'contextMenu', 'columnMenu', 'aggFuncSelect', 'popupCellEditor' */
     type: string;
-/** If the popup is as a result of a button click (eg menu button),
- *  this is the component that the user clicked */
+    /** If the popup is as a result of a button click (eg menu button),
+     *  this is the component that the user clicked */
     eventSource?: HTMLElement | null;
-/** If the popup is as a result of a click or touch,
- *  this is the event - eg user showing context menu */
+    /** If the popup is as a result of a click or touch,
+     *  this is the event - eg user showing context menu */
     mouseEvent?: MouseEvent | Touch | null;
 }
 
@@ -885,7 +885,7 @@ export interface PaginationNumberFormatterParams {
 }
 
 export interface ProcessDataFromClipboardParams {
-/** 2D array of all cells from the clipboard */
+    /** 2D array of all cells from the clipboard */
     data: string[][];
 }
 
@@ -921,9 +921,14 @@ export interface IsServerSideGroupOpenByDefaultParams {
 }
 
 export interface IsGroupOpenByDefaultParams {
+    /** The row node being considered. */
     rowNode: RowNode;
+    /** The Column for which this row is grouping. */
     rowGroupColumn: Column;
+    /** Same as `rowNode.level` - what level the group is at, e.g. 0 for top level, 1 for second etc */
     level: number;
+    /** Same as `rowNode.field` - the field we are grouping on, e.g. 'country' */
     field: string;
+    /** Same as `rowNode.key`, the value of this group, e.g. 'Ireland' */
     key: string;
 }

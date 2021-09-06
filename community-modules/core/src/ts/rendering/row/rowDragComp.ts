@@ -10,6 +10,7 @@ import { createIconNoSpan } from "../../utils/icon";
 import { doOnce, isFunction } from "../../utils/function";
 
 export interface IRowDragItem extends DragItem {
+    /** The default text that would be applied to this Drag Element */
     defaultTextValue: string;
 }
 
@@ -46,8 +47,8 @@ export class RowDragComp extends Component {
 
         if (!this.suppressVisibilityChange) {
             const strategy = this.beans.gridOptionsWrapper.isRowDragManaged() ?
-            new ManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column) :
-            new NonManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column);
+                new ManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column) :
+                new NonManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column);
 
             this.createManagedBean(strategy, this.beans.context);
         }

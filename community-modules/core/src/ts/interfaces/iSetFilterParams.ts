@@ -3,7 +3,9 @@ import { ColDef, ValueFormatterParams } from '../entities/colDef';
 import { IProvidedFilterParams } from '../filter/provided/providedFilter';
 
 export interface SetFilterValuesFuncParams {
+    /** The function to call with the values to load into the filter once they are ready. */
     success: (values: string[]) => void;
+    /** The column definition from which the set filter is invoked. */
     colDef: ColDef;
 }
 
