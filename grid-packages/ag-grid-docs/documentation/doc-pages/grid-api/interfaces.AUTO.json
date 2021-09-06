@@ -281,7 +281,7 @@
       "columnGroupShow?": "string",
       "headerClass?": "HeaderClass",
       "toolPanelClass?": "ToolPanelClass",
-      "headerValueGetter?": "string | Function",
+      "headerValueGetter?": "string | HeaderValueGetterFunc",
       "pivotKeys?": "string[]",
       "suppressColumnsToolPanel?": "boolean",
       "suppressFiltersToolPanel?": "boolean",
@@ -318,7 +318,7 @@
       "columnGroupShow?": "string",
       "headerClass?": "HeaderClass",
       "toolPanelClass?": "ToolPanelClass",
-      "headerValueGetter?": "string | Function",
+      "headerValueGetter?": "string | HeaderValueGetterFunc",
       "pivotKeys?": "string[]",
       "suppressColumnsToolPanel?": "boolean",
       "suppressFiltersToolPanel?": "boolean",
@@ -520,7 +520,7 @@
       "columnGroupShow?": "string",
       "headerClass?": "HeaderClass",
       "toolPanelClass?": "ToolPanelClass",
-      "headerValueGetter?": "string | Function",
+      "headerValueGetter?": "string | HeaderValueGetterFunc",
       "pivotKeys?": "string[]",
       "suppressColumnsToolPanel?": "boolean",
       "suppressFiltersToolPanel?": "boolean",
@@ -924,6 +924,7 @@
       "context": "any"
     },
     "docs": {
+      "value": "/** Value for the cell. */",
       "node": "/** Row node for the given row */",
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
@@ -944,6 +945,7 @@
       "context": "any"
     },
     "docs": {
+      "getValue": "/** A utility method for getting other column values */",
       "node": "/** Row node for the given row */",
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
@@ -955,6 +957,32 @@
     "meta": { "isCallSignature": true },
     "type": {
       "arguments": { "params": "ValueGetterParams" },
+      "returnType": "any"
+    }
+  },
+  "HeaderValueGetterParams": {
+    "meta": {},
+    "type": {
+      "colDef": "AbstractColDef",
+      "column?": "Column | null",
+      "columnGroup?": "ColumnGroup | OriginalColumnGroup | null",
+      "originalColumnGroup": "OriginalColumnGroup | null",
+      "location": "string | null",
+      "api": "GridApi",
+      "context?": "any"
+    },
+    "docs": {
+      "column?": "/** Column for this callback if applicable */",
+      "columnGroup?": "/** ColumnGroup for this callback if applicable */",
+      "originalColumnGroup": "/** Original column group if applicable */",
+      "location": "/** Where the column is going to appear */",
+      "context?": "/** The context as provided on `gridOptions.context` */"
+    }
+  },
+  "HeaderValueGetterFunc": {
+    "meta": { "isCallSignature": true },
+    "type": {
+      "arguments": { "params": "HeaderValueGetterParams" },
       "returnType": "any"
     }
   },
@@ -972,6 +1000,8 @@
       "context": "any"
     },
     "docs": {
+      "oldValue": "/** The value before the change */",
+      "newValue": "/** The value after the change */",
       "node": "/** Row node for the given row */",
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
@@ -993,6 +1023,8 @@
       "context": "any"
     },
     "docs": {
+      "oldValue": "/** The value before the change */",
+      "newValue": "/** The value after the change */",
       "node": "/** Row node for the given row */",
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
@@ -1021,6 +1053,8 @@
       "context": "any"
     },
     "docs": {
+      "oldValue": "/** The value before the change */",
+      "newValue": "/** The value after the change */",
       "node": "/** Row node for the given row */",
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
@@ -1048,6 +1082,7 @@
       "context": "any"
     },
     "docs": {
+      "value": "/** Value for the cell. */",
       "node": "/** Row node for the given row */",
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
@@ -1991,6 +2026,13 @@
       "level": "number",
       "field": "string",
       "key": "string"
+    },
+    "docs": {
+      "rowNode": "/** The row node being considered. */",
+      "rowGroupColumn": "/** The Column for which this row is grouping. */",
+      "level": "/** Same as `rowNode.level` - what level the group is at, e.g. 0 for top level, 1 for second etc */",
+      "field": "/** Same as `rowNode.field` - the field we are grouping on, e.g. 'country' */",
+      "key": "/** Same as `rowNode.key`, the value of this group, e.g. 'Ireland' */"
     }
   },
   "OriginalColumnGroupChild": {
@@ -3955,6 +3997,8 @@
       "columns?": "(string | Column)[]"
     },
     "docs": {
+      "force?": "/** Skip change detection, refresh everything. */",
+      "suppressFlash?": "/** Skip cell flashing, if cell flashing is enabled. */",
       "rowNodes?": "/** Optional list of row nodes to restrict operation to */",
       "columns?": "/** Optional list of columns to restrict operation to */"
     }
@@ -4123,6 +4167,12 @@
       "onDragLeave?": "(params: RowDragLeaveEvent) => void",
       "onDragging?": "(params: RowDragMoveEvent) => void",
       "onDragStop?": "(params: RowDragEndEvent) => void"
+    },
+    "docs": {
+      "onDragEnter?": "/** Callback function that will be executed when the rowDrag enters the target. */",
+      "onDragLeave?": "/** Callback function that will be executed when the rowDrag leaves the target */",
+      "onDragging?": "/** Callback function that will be executed when the rowDrag is dragged inside the target.\n * Note: this gets called multiple times. */",
+      "onDragStop?": "/** Callback function that will be executed when the rowDrag drops rows within the target. */"
     }
   },
   "RowDropZoneParams": {
@@ -4133,6 +4183,13 @@
       "onDragLeave?": "(params: RowDragLeaveEvent) => void",
       "onDragging?": "(params: RowDragMoveEvent) => void",
       "onDragStop?": "(params: RowDragEndEvent) => void"
+    },
+    "docs": {
+      "getContainer": "/** A callback method that returns the DropZone HTMLElement. */",
+      "onDragEnter?": "/** Callback function that will be executed when the rowDrag enters the target. */",
+      "onDragLeave?": "/** Callback function that will be executed when the rowDrag leaves the target */",
+      "onDragging?": "/** Callback function that will be executed when the rowDrag is dragged inside the target.\n * Note: this gets called multiple times. */",
+      "onDragStop?": "/** Callback function that will be executed when the rowDrag drops rows within the target. */"
     }
   },
   "SetScrollsVisibleParams": {
@@ -7209,7 +7266,11 @@
   },
   "SetFilterValuesFuncParams": {
     "meta": {},
-    "type": { "success": "(values: string[]) => void", "colDef": "ColDef" }
+    "type": { "success": "(values: string[]) => void", "colDef": "ColDef" },
+    "docs": {
+      "success": "/** The function to call with the values to load into the filter once they are ready. */",
+      "colDef": "/** The column definition from which the set filter is invoked. */"
+    }
   },
   "SetFilterValuesFunc": { "meta": {}, "type": {} },
   "SetFilterValues": {
@@ -8404,6 +8465,7 @@
       "visibleState?": "{ [key: string]: boolean; }"
     },
     "docs": {
+      "defaultTextValue": "/** The default text that would be applied to this Drag Element */",
       "rowNode?": "/** When dragging a row, this contains the row node being dragged\n * When dragging multiple rows, this contains the row that started the drag. */",
       "rowNodes?": "/** When dragging multiple rows, this contains all rows being dragged */",
       "columns?": "/** When dragging columns, this contains the columns being dragged */",

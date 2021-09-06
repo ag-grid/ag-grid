@@ -388,7 +388,7 @@
     },
     "headerValueGetter?": {
       "description": "/** Expression or function to get the cells value. */",
-      "type": { "returnType": "string | Function" }
+      "type": { "returnType": "string | HeaderValueGetterFunc" }
     },
     "pivotKeys?": {
       "description": "/** Never set this, it is used internally by grid when doing in-grid pivoting */",
@@ -466,7 +466,7 @@
     },
     "headerValueGetter?": {
       "description": "/** Expression or function to get the cells value. */",
-      "type": { "returnType": "string | Function" }
+      "type": { "returnType": "string | HeaderValueGetterFunc" }
     },
     "pivotKeys?": {
       "description": "/** Never set this, it is used internally by grid when doing in-grid pivoting */",
@@ -1003,7 +1003,7 @@
     },
     "headerValueGetter?": {
       "description": "/** Expression or function to get the cells value. */",
-      "type": { "returnType": "string | Function" }
+      "type": { "returnType": "string | HeaderValueGetterFunc" }
     },
     "pivotKeys?": {
       "description": "/** Never set this, it is used internally by grid when doing in-grid pivoting */",
@@ -1313,7 +1313,10 @@
     }
   },
   "BaseWithValueColDefParams": {
-    "value": { "type": { "returnType": "any" } },
+    "value": {
+      "description": "/** Value for the cell. */",
+      "type": { "returnType": "any" }
+    },
     "node": {
       "description": "/** Row node for the given row */",
       "type": { "returnType": "RowNode | null" }
@@ -1339,6 +1342,7 @@
   },
   "ValueGetterParams": {
     "getValue": {
+      "description": "/** A utility method for getting other column values */",
       "type": { "arguments": { "field": "string" }, "returnType": "any" }
     },
     "node": {
@@ -1365,9 +1369,40 @@
     }
   },
   "ValueGetterFunc": {},
+  "HeaderValueGetterParams": {
+    "colDef": { "type": { "returnType": "AbstractColDef" } },
+    "column?": {
+      "description": "/** Column for this callback if applicable */",
+      "type": { "returnType": "Column | null" }
+    },
+    "columnGroup?": {
+      "description": "/** ColumnGroup for this callback if applicable */",
+      "type": { "returnType": "ColumnGroup | OriginalColumnGroup | null" }
+    },
+    "originalColumnGroup": {
+      "description": "/** Original column group if applicable */",
+      "type": { "returnType": "OriginalColumnGroup | null" }
+    },
+    "location": {
+      "description": "/** Where the column is going to appear */",
+      "type": { "returnType": "string | null" }
+    },
+    "api": { "type": { "returnType": "GridApi" } },
+    "context?": {
+      "description": "/** The context as provided on `gridOptions.context` */",
+      "type": { "returnType": "any" }
+    }
+  },
+  "HeaderValueGetterFunc": {},
   "NewValueParams": {
-    "oldValue": { "type": { "returnType": "any" } },
-    "newValue": { "type": { "returnType": "any" } },
+    "oldValue": {
+      "description": "/** The value before the change */",
+      "type": { "returnType": "any" }
+    },
+    "newValue": {
+      "description": "/** The value after the change */",
+      "type": { "returnType": "any" }
+    },
     "node": {
       "description": "/** Row node for the given row */",
       "type": { "returnType": "RowNode | null" }
@@ -1392,8 +1427,14 @@
     }
   },
   "ValueSetterParams": {
-    "oldValue": { "type": { "returnType": "any" } },
-    "newValue": { "type": { "returnType": "any" } },
+    "oldValue": {
+      "description": "/** The value before the change */",
+      "type": { "returnType": "any" }
+    },
+    "newValue": {
+      "description": "/** The value after the change */",
+      "type": { "returnType": "any" }
+    },
     "node": {
       "description": "/** Row node for the given row */",
       "type": { "returnType": "RowNode | null" }
@@ -1419,8 +1460,14 @@
   },
   "ValueSetterFunc": {},
   "ValueParserParams": {
-    "oldValue": { "type": { "returnType": "any" } },
-    "newValue": { "type": { "returnType": "any" } },
+    "oldValue": {
+      "description": "/** The value before the change */",
+      "type": { "returnType": "any" }
+    },
+    "newValue": {
+      "description": "/** The value after the change */",
+      "type": { "returnType": "any" }
+    },
     "node": {
       "description": "/** Row node for the given row */",
       "type": { "returnType": "RowNode | null" }
@@ -1446,7 +1493,10 @@
   },
   "ValueParserFunc": {},
   "ValueFormatterParams": {
-    "value": { "type": { "returnType": "any" } },
+    "value": {
+      "description": "/** Value for the cell. */",
+      "type": { "returnType": "any" }
+    },
     "node": {
       "description": "/** Row node for the given row */",
       "type": { "returnType": "RowNode | null" }
@@ -2975,11 +3025,26 @@
     "rowNode": { "type": { "returnType": "RowNode" } }
   },
   "IsGroupOpenByDefaultParams": {
-    "rowNode": { "type": { "returnType": "RowNode" } },
-    "rowGroupColumn": { "type": { "returnType": "Column" } },
-    "level": { "type": { "returnType": "number" } },
-    "field": { "type": { "returnType": "string" } },
-    "key": { "type": { "returnType": "string" } }
+    "rowNode": {
+      "description": "/** The row node being considered. */",
+      "type": { "returnType": "RowNode" }
+    },
+    "rowGroupColumn": {
+      "description": "/** The Column for which this row is grouping. */",
+      "type": { "returnType": "Column" }
+    },
+    "level": {
+      "description": "/** Same as `rowNode.level` - what level the group is at, e.g. 0 for top level, 1 for second etc */",
+      "type": { "returnType": "number" }
+    },
+    "field": {
+      "description": "/** Same as `rowNode.field` - the field we are grouping on, e.g. 'country' */",
+      "type": { "returnType": "string" }
+    },
+    "key": {
+      "description": "/** Same as `rowNode.key`, the value of this group, e.g. 'Ireland' */",
+      "type": { "returnType": "string" }
+    }
   },
   "OriginalColumnGroupChild": {
     "isVisible": { "type": { "arguments": {}, "returnType": "boolean" } },
@@ -5397,8 +5462,14 @@
     }
   },
   "RefreshCellsParams": {
-    "force?": { "type": { "returnType": "boolean" } },
-    "suppressFlash?": { "type": { "returnType": "boolean" } },
+    "force?": {
+      "description": "/** Skip change detection, refresh everything. */",
+      "type": { "returnType": "boolean" }
+    },
+    "suppressFlash?": {
+      "description": "/** Skip cell flashing, if cell flashing is enabled. */",
+      "type": { "returnType": "boolean" }
+    },
     "rowNodes?": {
       "description": "/** Optional list of row nodes to restrict operation to */",
       "type": { "returnType": "RowNode[]" }
@@ -5623,24 +5694,28 @@
   },
   "RowDropZoneEvents": {
     "onDragEnter?": {
+      "description": "/** Callback function that will be executed when the rowDrag enters the target. */",
       "type": {
         "arguments": { "params": "RowDragEnterEvent" },
         "returnType": "void"
       }
     },
     "onDragLeave?": {
+      "description": "/** Callback function that will be executed when the rowDrag leaves the target */",
       "type": {
         "arguments": { "params": "RowDragLeaveEvent" },
         "returnType": "void"
       }
     },
     "onDragging?": {
+      "description": "/** Callback function that will be executed when the rowDrag is dragged inside the target.\n * Note: this gets called multiple times. */",
       "type": {
         "arguments": { "params": "RowDragMoveEvent" },
         "returnType": "void"
       }
     },
     "onDragStop?": {
+      "description": "/** Callback function that will be executed when the rowDrag drops rows within the target. */",
       "type": {
         "arguments": { "params": "RowDragEndEvent" },
         "returnType": "void"
@@ -5649,27 +5724,32 @@
   },
   "RowDropZoneParams": {
     "getContainer": {
+      "description": "/** A callback method that returns the DropZone HTMLElement. */",
       "type": { "arguments": {}, "returnType": "HTMLElement" }
     },
     "onDragEnter?": {
+      "description": "/** Callback function that will be executed when the rowDrag enters the target. */",
       "type": {
         "arguments": { "params": "RowDragEnterEvent" },
         "returnType": "void"
       }
     },
     "onDragLeave?": {
+      "description": "/** Callback function that will be executed when the rowDrag leaves the target */",
       "type": {
         "arguments": { "params": "RowDragLeaveEvent" },
         "returnType": "void"
       }
     },
     "onDragging?": {
+      "description": "/** Callback function that will be executed when the rowDrag is dragged inside the target.\n * Note: this gets called multiple times. */",
       "type": {
         "arguments": { "params": "RowDragMoveEvent" },
         "returnType": "void"
       }
     },
     "onDragStop?": {
+      "description": "/** Callback function that will be executed when the rowDrag drops rows within the target. */",
       "type": {
         "arguments": { "params": "RowDragEndEvent" },
         "returnType": "void"
@@ -9867,9 +9947,13 @@
   },
   "SetFilterValuesFuncParams": {
     "success": {
+      "description": "/** The function to call with the values to load into the filter once they are ready. */",
       "type": { "arguments": { "values": "string[]" }, "returnType": "void" }
     },
-    "colDef": { "type": { "returnType": "ColDef" } }
+    "colDef": {
+      "description": "/** The column definition from which the set filter is invoked. */",
+      "type": { "returnType": "ColDef" }
+    }
   },
   "SetFilterValuesFunc": {},
   "SetFilterValues": {},
@@ -11566,7 +11650,10 @@
     "map": { "type": { "returnType": "{[key: string]: CellCtrl}" } }
   },
   "IRowDragItem": {
-    "defaultTextValue": { "type": { "returnType": "string" } },
+    "defaultTextValue": {
+      "description": "/** The default text that would be applied to this Drag Element */",
+      "type": { "returnType": "string" }
+    },
     "rowNode?": {
       "description": "/** When dragging a row, this contains the row node being dragged\n * When dragging multiple rows, this contains the row that started the drag. */",
       "type": { "returnType": "RowNode" }
