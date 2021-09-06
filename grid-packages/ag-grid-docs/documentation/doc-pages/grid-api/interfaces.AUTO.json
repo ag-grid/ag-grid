@@ -7238,16 +7238,16 @@
     "meta": {},
     "type": {
       "sparklineOptions?": "SparklineOptions",
-      "fullWidth?": "boolean",
-      "pinned?": "string | null",
       "value": "any",
       "valueFormatted": "any",
+      "fullWidth?": "boolean",
+      "pinned?": "string | null",
       "data": "any",
       "node": "RowNode",
+      "rowIndex": "number",
       "colDef?": "ColDef",
       "column?": "Column",
       "$scope": "any",
-      "rowIndex": "number",
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any",
@@ -7260,8 +7260,24 @@
       "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void"
     },
     "docs": {
-      "context": "/** The context as provided on `gridOptions.context` */",
-      "registerRowDragger": "/** registerRowDragger: Function\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */"
+      "value": "/** Value to be rendered. */",
+      "valueFormatted": "/** Formatted value to be rendered. */",
+      "fullWidth?": "/** True if this is a full width row. */",
+      "pinned?": "/** Pinned state of the cell. */",
+      "data": "/** The row's data. */",
+      "node": "/** The row node. */",
+      "rowIndex": "/** The current index of the row (this changes after filter and sort). */",
+      "colDef?": "/** The cell's column definition. */",
+      "column?": "/** The cell's column. */",
+      "$scope": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
+      "context": "/** The context as provided on `gridOptions.context`. */",
+      "eGridCell": "/** The grid's cell, a DOM div element. */",
+      "eParentOfValue": "/** The parent DOM item for the cell renderer, same as eGridCell unless using checkbox selection. */",
+      "getValue?": "/** Convenience function to get most recent up to date value. */",
+      "setValue?": "/** Convenience function to set the value. */",
+      "formatValue?": "/** Convenience function to format a value using the column's formatter. */",
+      "refreshCell?": "/** Convenience function to refresh the cell. */",
+      "registerRowDragger": "/** registerRowDragger:\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */"
     }
   },
   "SparklineOptions": {
@@ -7523,7 +7539,7 @@
     },
     "docs": {
       "init(params: IViewportDatasourceParams)": "/** Gets called exactly once before viewPort is used. Passes methods to be used to tell viewPort of data loads / changes. */",
-      "setViewportRange(firstRow: number, lastRow: number)": "/** Tell the viewport what the scroll position of the grid is, so it knows what rows it has to get */",
+      "setViewportRange(firstRow: number, lastRow: number)": "/** Tell the viewport what the scroll position of the grid is, so it knows what rows it has to get. */",
       "destroy?()": "/** Gets called once when viewPort is no longer used. If you need to do any cleanup, do it here. */"
     }
   },
@@ -7535,9 +7551,9 @@
       "getRow": "(rowIndex: number) => RowNode"
     },
     "docs": {
-      "setRowCount": "/** datasource calls this method when the total row count changes. This in turn sets the height of the grids vertical scroll. */",
-      "setRowData": "/** datasource calls this when new data arrives. The grid then updates the provided rows. The rows are mapped [rowIndex]=>rowData]. */",
-      "getRow": "/** datasource calls this when it wants a row node - typically used when it wants to update the row node */"
+      "setRowCount": "/** Datasource calls this method when the total row count changes. This in turn sets the height of the grids vertical scroll. */",
+      "setRowData": "/** Datasource calls this when new data arrives. The grid then updates the provided rows. The rows are mapped [rowIndex]=>rowData]. */",
+      "getRow": "/** Datasource calls this when it wants a row node - typically used when it wants to update the row node. */"
     }
   },
   "XmlElement": {
@@ -7591,16 +7607,16 @@
       "template": "string | TemplateFunc",
       "autoHeight": "boolean",
       "suppressRefresh": "boolean",
-      "fullWidth?": "boolean",
-      "pinned?": "string | null",
       "value": "any",
       "valueFormatted": "any",
+      "fullWidth?": "boolean",
+      "pinned?": "string | null",
       "data": "any",
       "node": "RowNode",
+      "rowIndex": "number",
       "colDef?": "ColDef",
       "column?": "Column",
       "$scope": "any",
-      "rowIndex": "number",
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any",
@@ -7615,8 +7631,24 @@
     "docs": {
       "autoHeight": "/** @deprecated\n */",
       "suppressRefresh": "/** @deprecated\n */",
-      "context": "/** The context as provided on `gridOptions.context` */",
-      "registerRowDragger": "/** registerRowDragger: Function\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */"
+      "value": "/** Value to be rendered. */",
+      "valueFormatted": "/** Formatted value to be rendered. */",
+      "fullWidth?": "/** True if this is a full width row. */",
+      "pinned?": "/** Pinned state of the cell. */",
+      "data": "/** The row's data. */",
+      "node": "/** The row node. */",
+      "rowIndex": "/** The current index of the row (this changes after filter and sort). */",
+      "colDef?": "/** The cell's column definition. */",
+      "column?": "/** The cell's column. */",
+      "$scope": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
+      "context": "/** The context as provided on `gridOptions.context`. */",
+      "eGridCell": "/** The grid's cell, a DOM div element. */",
+      "eParentOfValue": "/** The parent DOM item for the cell renderer, same as eGridCell unless using checkbox selection. */",
+      "getValue?": "/** Convenience function to get most recent up to date value. */",
+      "setValue?": "/** Convenience function to set the value. */",
+      "formatValue?": "/** Convenience function to format a value using the column's formatter. */",
+      "refreshCell?": "/** Convenience function to refresh the cell. */",
+      "registerRowDragger": "/** registerRowDragger:\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */"
     }
   },
   "GetDetailRowData": {
@@ -7946,16 +7978,16 @@
       "innerRendererParams?": "any",
       "scope": "any",
       "padding": "number",
-      "fullWidth?": "boolean",
-      "pinned?": "string | null",
       "value": "any",
       "valueFormatted": "any",
+      "fullWidth?": "boolean",
+      "pinned?": "string | null",
       "data": "any",
       "node": "RowNode",
+      "rowIndex": "number",
       "colDef?": "ColDef",
       "column?": "Column",
       "$scope": "any",
-      "rowIndex": "number",
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any",
@@ -7969,23 +8001,39 @@
     },
     "docs": {
       "padding": "/** @deprecated\n */",
-      "context": "/** The context as provided on `gridOptions.context` */",
-      "registerRowDragger": "/** registerRowDragger: Function\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */"
+      "value": "/** Value to be rendered. */",
+      "valueFormatted": "/** Formatted value to be rendered. */",
+      "fullWidth?": "/** True if this is a full width row. */",
+      "pinned?": "/** Pinned state of the cell. */",
+      "data": "/** The row's data. */",
+      "node": "/** The row node. */",
+      "rowIndex": "/** The current index of the row (this changes after filter and sort). */",
+      "colDef?": "/** The cell's column definition. */",
+      "column?": "/** The cell's column. */",
+      "$scope": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
+      "context": "/** The context as provided on `gridOptions.context`. */",
+      "eGridCell": "/** The grid's cell, a DOM div element. */",
+      "eParentOfValue": "/** The parent DOM item for the cell renderer, same as eGridCell unless using checkbox selection. */",
+      "getValue?": "/** Convenience function to get most recent up to date value. */",
+      "setValue?": "/** Convenience function to set the value. */",
+      "formatValue?": "/** Convenience function to format a value using the column's formatter. */",
+      "refreshCell?": "/** Convenience function to refresh the cell. */",
+      "registerRowDragger": "/** registerRowDragger:\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */"
     }
   },
   "ICellRendererParams": {
     "meta": {},
     "type": {
-      "fullWidth?": "boolean",
-      "pinned?": "string | null",
       "value": "any",
       "valueFormatted": "any",
+      "fullWidth?": "boolean",
+      "pinned?": "string | null",
       "data": "any",
       "node": "RowNode",
+      "rowIndex": "number",
       "colDef?": "ColDef",
       "column?": "Column",
       "$scope": "any",
-      "rowIndex": "number",
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any",
@@ -7998,8 +8046,24 @@
       "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void"
     },
     "docs": {
-      "context": "/** The context as provided on `gridOptions.context` */",
-      "registerRowDragger": "/** registerRowDragger: Function\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */"
+      "value": "/** Value to be rendered. */",
+      "valueFormatted": "/** Formatted value to be rendered. */",
+      "fullWidth?": "/** True if this is a full width row. */",
+      "pinned?": "/** Pinned state of the cell. */",
+      "data": "/** The row's data. */",
+      "node": "/** The row node. */",
+      "rowIndex": "/** The current index of the row (this changes after filter and sort). */",
+      "colDef?": "/** The cell's column definition. */",
+      "column?": "/** The cell's column. */",
+      "$scope": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
+      "context": "/** The context as provided on `gridOptions.context`. */",
+      "eGridCell": "/** The grid's cell, a DOM div element. */",
+      "eParentOfValue": "/** The parent DOM item for the cell renderer, same as eGridCell unless using checkbox selection. */",
+      "getValue?": "/** Convenience function to get most recent up to date value. */",
+      "setValue?": "/** Convenience function to set the value. */",
+      "formatValue?": "/** Convenience function to format a value using the column's formatter. */",
+      "refreshCell?": "/** Convenience function to refresh the cell. */",
+      "registerRowDragger": "/** registerRowDragger:\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */"
     }
   },
   "ISetFilterCellRendererParams": {
@@ -8048,16 +8112,16 @@
   "ILoadingCellRendererParams": {
     "meta": {},
     "type": {
-      "fullWidth?": "boolean",
-      "pinned?": "string | null",
       "value": "any",
       "valueFormatted": "any",
+      "fullWidth?": "boolean",
+      "pinned?": "string | null",
       "data": "any",
       "node": "RowNode",
+      "rowIndex": "number",
       "colDef?": "ColDef",
       "column?": "Column",
       "$scope": "any",
-      "rowIndex": "number",
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any",
@@ -8070,8 +8134,24 @@
       "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void"
     },
     "docs": {
-      "context": "/** The context as provided on `gridOptions.context` */",
-      "registerRowDragger": "/** registerRowDragger: Function\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */"
+      "value": "/** Value to be rendered. */",
+      "valueFormatted": "/** Formatted value to be rendered. */",
+      "fullWidth?": "/** True if this is a full width row. */",
+      "pinned?": "/** Pinned state of the cell. */",
+      "data": "/** The row's data. */",
+      "node": "/** The row node. */",
+      "rowIndex": "/** The current index of the row (this changes after filter and sort). */",
+      "colDef?": "/** The cell's column definition. */",
+      "column?": "/** The cell's column. */",
+      "$scope": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
+      "context": "/** The context as provided on `gridOptions.context`. */",
+      "eGridCell": "/** The grid's cell, a DOM div element. */",
+      "eParentOfValue": "/** The parent DOM item for the cell renderer, same as eGridCell unless using checkbox selection. */",
+      "getValue?": "/** Convenience function to get most recent up to date value. */",
+      "setValue?": "/** Convenience function to set the value. */",
+      "formatValue?": "/** Convenience function to format a value using the column's formatter. */",
+      "refreshCell?": "/** Convenience function to refresh the cell. */",
+      "registerRowDragger": "/** registerRowDragger:\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */"
     }
   },
   "ILoadingCellRenderer": {

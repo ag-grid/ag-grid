@@ -9884,34 +9884,78 @@
   },
   "ISparklineCellRendererParams": {
     "sparklineOptions?": { "type": { "returnType": "SparklineOptions" } },
-    "fullWidth?": { "type": { "returnType": "boolean" } },
-    "pinned?": { "type": { "returnType": "string | null" } },
-    "value": { "type": { "returnType": "any" } },
-    "valueFormatted": { "type": { "returnType": "any" } },
-    "data": { "type": { "returnType": "any" } },
-    "node": { "type": { "returnType": "RowNode" } },
-    "colDef?": { "type": { "returnType": "ColDef" } },
-    "column?": { "type": { "returnType": "Column" } },
-    "$scope": { "type": { "returnType": "any" } },
-    "rowIndex": { "type": { "returnType": "number" } },
+    "value": {
+      "description": "/** Value to be rendered. */",
+      "type": { "returnType": "any" }
+    },
+    "valueFormatted": {
+      "description": "/** Formatted value to be rendered. */",
+      "type": { "returnType": "any" }
+    },
+    "fullWidth?": {
+      "description": "/** True if this is a full width row. */",
+      "type": { "returnType": "boolean" }
+    },
+    "pinned?": {
+      "description": "/** Pinned state of the cell. */",
+      "type": { "returnType": "string | null" }
+    },
+    "data": {
+      "description": "/** The row's data. */",
+      "type": { "returnType": "any" }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode" }
+    },
+    "rowIndex": {
+      "description": "/** The current index of the row (this changes after filter and sort). */",
+      "type": { "returnType": "number" }
+    },
+    "colDef?": {
+      "description": "/** The cell's column definition. */",
+      "type": { "returnType": "ColDef" }
+    },
+    "column?": {
+      "description": "/** The cell's column. */",
+      "type": { "returnType": "Column" }
+    },
+    "$scope": {
+      "description": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
+      "type": { "returnType": "any" }
+    },
     "api": { "type": { "returnType": "GridApi" } },
     "columnApi": { "type": { "returnType": "ColumnApi" } },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
+      "description": "/** The context as provided on `gridOptions.context`. */",
       "type": { "returnType": "any" }
     },
-    "eGridCell": { "type": { "returnType": "HTMLElement" } },
-    "eParentOfValue": { "type": { "returnType": "HTMLElement" } },
-    "getValue?": { "type": { "arguments": {}, "returnType": "any" } },
+    "eGridCell": {
+      "description": "/** The grid's cell, a DOM div element. */",
+      "type": { "returnType": "HTMLElement" }
+    },
+    "eParentOfValue": {
+      "description": "/** The parent DOM item for the cell renderer, same as eGridCell unless using checkbox selection. */",
+      "type": { "returnType": "HTMLElement" }
+    },
+    "getValue?": {
+      "description": "/** Convenience function to get most recent up to date value. */",
+      "type": { "arguments": {}, "returnType": "any" }
+    },
     "setValue?": {
+      "description": "/** Convenience function to set the value. */",
       "type": { "arguments": { "value": "any" }, "returnType": "void" }
     },
     "formatValue?": {
+      "description": "/** Convenience function to format a value using the column's formatter. */",
       "type": { "arguments": { "value": "any" }, "returnType": "any" }
     },
-    "refreshCell?": { "type": { "arguments": {}, "returnType": "void" } },
+    "refreshCell?": {
+      "description": "/** Convenience function to refresh the cell. */",
+      "type": { "arguments": {}, "returnType": "void" }
+    },
     "registerRowDragger": {
-      "description": "/** registerRowDragger: Function\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */",
+      "description": "/** registerRowDragger:\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */",
       "type": {
         "arguments": {
           "rowDraggerElement": "HTMLElement",
@@ -10190,7 +10234,7 @@
       }
     },
     "setViewportRange": {
-      "description": "/** Tell the viewport what the scroll position of the grid is, so it knows what rows it has to get */",
+      "description": "/** Tell the viewport what the scroll position of the grid is, so it knows what rows it has to get. */",
       "type": {
         "arguments": { "firstRow": "number", "lastRow": "number" },
         "returnType": "void"
@@ -10203,21 +10247,21 @@
   },
   "IViewportDatasourceParams": {
     "setRowCount": {
-      "description": "/** datasource calls this method when the total row count changes. This in turn sets the height of the grids vertical scroll. */",
+      "description": "/** Datasource calls this method when the total row count changes. This in turn sets the height of the grids vertical scroll. */",
       "type": {
         "arguments": { "count": "number", "keepRenderedRows": "boolean" },
         "returnType": "void"
       }
     },
     "setRowData": {
-      "description": "/** datasource calls this when new data arrives. The grid then updates the provided rows. The rows are mapped [rowIndex]=>rowData]. */",
+      "description": "/** Datasource calls this when new data arrives. The grid then updates the provided rows. The rows are mapped [rowIndex]=>rowData]. */",
       "type": {
         "arguments": { "rowData": "{ [key: number]: any; }" },
         "returnType": "void"
       }
     },
     "getRow": {
-      "description": "/** datasource calls this when it wants a row node - typically used when it wants to update the row node */",
+      "description": "/** Datasource calls this when it wants a row node - typically used when it wants to update the row node. */",
       "type": { "arguments": { "rowIndex": "number" }, "returnType": "RowNode" }
     }
   },
@@ -10284,34 +10328,78 @@
       "description": "/** @deprecated\n */",
       "type": { "returnType": "boolean" }
     },
-    "fullWidth?": { "type": { "returnType": "boolean" } },
-    "pinned?": { "type": { "returnType": "string | null" } },
-    "value": { "type": { "returnType": "any" } },
-    "valueFormatted": { "type": { "returnType": "any" } },
-    "data": { "type": { "returnType": "any" } },
-    "node": { "type": { "returnType": "RowNode" } },
-    "colDef?": { "type": { "returnType": "ColDef" } },
-    "column?": { "type": { "returnType": "Column" } },
-    "$scope": { "type": { "returnType": "any" } },
-    "rowIndex": { "type": { "returnType": "number" } },
+    "value": {
+      "description": "/** Value to be rendered. */",
+      "type": { "returnType": "any" }
+    },
+    "valueFormatted": {
+      "description": "/** Formatted value to be rendered. */",
+      "type": { "returnType": "any" }
+    },
+    "fullWidth?": {
+      "description": "/** True if this is a full width row. */",
+      "type": { "returnType": "boolean" }
+    },
+    "pinned?": {
+      "description": "/** Pinned state of the cell. */",
+      "type": { "returnType": "string | null" }
+    },
+    "data": {
+      "description": "/** The row's data. */",
+      "type": { "returnType": "any" }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode" }
+    },
+    "rowIndex": {
+      "description": "/** The current index of the row (this changes after filter and sort). */",
+      "type": { "returnType": "number" }
+    },
+    "colDef?": {
+      "description": "/** The cell's column definition. */",
+      "type": { "returnType": "ColDef" }
+    },
+    "column?": {
+      "description": "/** The cell's column. */",
+      "type": { "returnType": "Column" }
+    },
+    "$scope": {
+      "description": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
+      "type": { "returnType": "any" }
+    },
     "api": { "type": { "returnType": "GridApi" } },
     "columnApi": { "type": { "returnType": "ColumnApi" } },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
+      "description": "/** The context as provided on `gridOptions.context`. */",
       "type": { "returnType": "any" }
     },
-    "eGridCell": { "type": { "returnType": "HTMLElement" } },
-    "eParentOfValue": { "type": { "returnType": "HTMLElement" } },
-    "getValue?": { "type": { "arguments": {}, "returnType": "any" } },
+    "eGridCell": {
+      "description": "/** The grid's cell, a DOM div element. */",
+      "type": { "returnType": "HTMLElement" }
+    },
+    "eParentOfValue": {
+      "description": "/** The parent DOM item for the cell renderer, same as eGridCell unless using checkbox selection. */",
+      "type": { "returnType": "HTMLElement" }
+    },
+    "getValue?": {
+      "description": "/** Convenience function to get most recent up to date value. */",
+      "type": { "arguments": {}, "returnType": "any" }
+    },
     "setValue?": {
+      "description": "/** Convenience function to set the value. */",
       "type": { "arguments": { "value": "any" }, "returnType": "void" }
     },
     "formatValue?": {
+      "description": "/** Convenience function to format a value using the column's formatter. */",
       "type": { "arguments": { "value": "any" }, "returnType": "any" }
     },
-    "refreshCell?": { "type": { "arguments": {}, "returnType": "void" } },
+    "refreshCell?": {
+      "description": "/** Convenience function to refresh the cell. */",
+      "type": { "arguments": {}, "returnType": "void" }
+    },
     "registerRowDragger": {
-      "description": "/** registerRowDragger: Function\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */",
+      "description": "/** registerRowDragger:\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */",
       "type": {
         "arguments": {
           "rowDraggerElement": "HTMLElement",
@@ -10789,34 +10877,78 @@
       "description": "/** @deprecated\n */",
       "type": { "returnType": "number" }
     },
-    "fullWidth?": { "type": { "returnType": "boolean" } },
-    "pinned?": { "type": { "returnType": "string | null" } },
-    "value": { "type": { "returnType": "any" } },
-    "valueFormatted": { "type": { "returnType": "any" } },
-    "data": { "type": { "returnType": "any" } },
-    "node": { "type": { "returnType": "RowNode" } },
-    "colDef?": { "type": { "returnType": "ColDef" } },
-    "column?": { "type": { "returnType": "Column" } },
-    "$scope": { "type": { "returnType": "any" } },
-    "rowIndex": { "type": { "returnType": "number" } },
+    "value": {
+      "description": "/** Value to be rendered. */",
+      "type": { "returnType": "any" }
+    },
+    "valueFormatted": {
+      "description": "/** Formatted value to be rendered. */",
+      "type": { "returnType": "any" }
+    },
+    "fullWidth?": {
+      "description": "/** True if this is a full width row. */",
+      "type": { "returnType": "boolean" }
+    },
+    "pinned?": {
+      "description": "/** Pinned state of the cell. */",
+      "type": { "returnType": "string | null" }
+    },
+    "data": {
+      "description": "/** The row's data. */",
+      "type": { "returnType": "any" }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode" }
+    },
+    "rowIndex": {
+      "description": "/** The current index of the row (this changes after filter and sort). */",
+      "type": { "returnType": "number" }
+    },
+    "colDef?": {
+      "description": "/** The cell's column definition. */",
+      "type": { "returnType": "ColDef" }
+    },
+    "column?": {
+      "description": "/** The cell's column. */",
+      "type": { "returnType": "Column" }
+    },
+    "$scope": {
+      "description": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
+      "type": { "returnType": "any" }
+    },
     "api": { "type": { "returnType": "GridApi" } },
     "columnApi": { "type": { "returnType": "ColumnApi" } },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
+      "description": "/** The context as provided on `gridOptions.context`. */",
       "type": { "returnType": "any" }
     },
-    "eGridCell": { "type": { "returnType": "HTMLElement" } },
-    "eParentOfValue": { "type": { "returnType": "HTMLElement" } },
-    "getValue?": { "type": { "arguments": {}, "returnType": "any" } },
+    "eGridCell": {
+      "description": "/** The grid's cell, a DOM div element. */",
+      "type": { "returnType": "HTMLElement" }
+    },
+    "eParentOfValue": {
+      "description": "/** The parent DOM item for the cell renderer, same as eGridCell unless using checkbox selection. */",
+      "type": { "returnType": "HTMLElement" }
+    },
+    "getValue?": {
+      "description": "/** Convenience function to get most recent up to date value. */",
+      "type": { "arguments": {}, "returnType": "any" }
+    },
     "setValue?": {
+      "description": "/** Convenience function to set the value. */",
       "type": { "arguments": { "value": "any" }, "returnType": "void" }
     },
     "formatValue?": {
+      "description": "/** Convenience function to format a value using the column's formatter. */",
       "type": { "arguments": { "value": "any" }, "returnType": "any" }
     },
-    "refreshCell?": { "type": { "arguments": {}, "returnType": "void" } },
+    "refreshCell?": {
+      "description": "/** Convenience function to refresh the cell. */",
+      "type": { "arguments": {}, "returnType": "void" }
+    },
     "registerRowDragger": {
-      "description": "/** registerRowDragger: Function\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */",
+      "description": "/** registerRowDragger:\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */",
       "type": {
         "arguments": {
           "rowDraggerElement": "HTMLElement",
@@ -10829,34 +10961,78 @@
     }
   },
   "ICellRendererParams": {
-    "fullWidth?": { "type": { "returnType": "boolean" } },
-    "pinned?": { "type": { "returnType": "string | null" } },
-    "value": { "type": { "returnType": "any" } },
-    "valueFormatted": { "type": { "returnType": "any" } },
-    "data": { "type": { "returnType": "any" } },
-    "node": { "type": { "returnType": "RowNode" } },
-    "colDef?": { "type": { "returnType": "ColDef" } },
-    "column?": { "type": { "returnType": "Column" } },
-    "$scope": { "type": { "returnType": "any" } },
-    "rowIndex": { "type": { "returnType": "number" } },
+    "value": {
+      "description": "/** Value to be rendered. */",
+      "type": { "returnType": "any" }
+    },
+    "valueFormatted": {
+      "description": "/** Formatted value to be rendered. */",
+      "type": { "returnType": "any" }
+    },
+    "fullWidth?": {
+      "description": "/** True if this is a full width row. */",
+      "type": { "returnType": "boolean" }
+    },
+    "pinned?": {
+      "description": "/** Pinned state of the cell. */",
+      "type": { "returnType": "string | null" }
+    },
+    "data": {
+      "description": "/** The row's data. */",
+      "type": { "returnType": "any" }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode" }
+    },
+    "rowIndex": {
+      "description": "/** The current index of the row (this changes after filter and sort). */",
+      "type": { "returnType": "number" }
+    },
+    "colDef?": {
+      "description": "/** The cell's column definition. */",
+      "type": { "returnType": "ColDef" }
+    },
+    "column?": {
+      "description": "/** The cell's column. */",
+      "type": { "returnType": "Column" }
+    },
+    "$scope": {
+      "description": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
+      "type": { "returnType": "any" }
+    },
     "api": { "type": { "returnType": "GridApi" } },
     "columnApi": { "type": { "returnType": "ColumnApi" } },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
+      "description": "/** The context as provided on `gridOptions.context`. */",
       "type": { "returnType": "any" }
     },
-    "eGridCell": { "type": { "returnType": "HTMLElement" } },
-    "eParentOfValue": { "type": { "returnType": "HTMLElement" } },
-    "getValue?": { "type": { "arguments": {}, "returnType": "any" } },
+    "eGridCell": {
+      "description": "/** The grid's cell, a DOM div element. */",
+      "type": { "returnType": "HTMLElement" }
+    },
+    "eParentOfValue": {
+      "description": "/** The parent DOM item for the cell renderer, same as eGridCell unless using checkbox selection. */",
+      "type": { "returnType": "HTMLElement" }
+    },
+    "getValue?": {
+      "description": "/** Convenience function to get most recent up to date value. */",
+      "type": { "arguments": {}, "returnType": "any" }
+    },
     "setValue?": {
+      "description": "/** Convenience function to set the value. */",
       "type": { "arguments": { "value": "any" }, "returnType": "void" }
     },
     "formatValue?": {
+      "description": "/** Convenience function to format a value using the column's formatter. */",
       "type": { "arguments": { "value": "any" }, "returnType": "any" }
     },
-    "refreshCell?": { "type": { "arguments": {}, "returnType": "void" } },
+    "refreshCell?": {
+      "description": "/** Convenience function to refresh the cell. */",
+      "type": { "arguments": {}, "returnType": "void" }
+    },
     "registerRowDragger": {
-      "description": "/** registerRowDragger: Function\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */",
+      "description": "/** registerRowDragger:\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */",
       "type": {
         "arguments": {
           "rowDraggerElement": "HTMLElement",
@@ -10919,34 +11095,78 @@
   },
   "ICellRendererFunc": {},
   "ILoadingCellRendererParams": {
-    "fullWidth?": { "type": { "returnType": "boolean" } },
-    "pinned?": { "type": { "returnType": "string | null" } },
-    "value": { "type": { "returnType": "any" } },
-    "valueFormatted": { "type": { "returnType": "any" } },
-    "data": { "type": { "returnType": "any" } },
-    "node": { "type": { "returnType": "RowNode" } },
-    "colDef?": { "type": { "returnType": "ColDef" } },
-    "column?": { "type": { "returnType": "Column" } },
-    "$scope": { "type": { "returnType": "any" } },
-    "rowIndex": { "type": { "returnType": "number" } },
+    "value": {
+      "description": "/** Value to be rendered. */",
+      "type": { "returnType": "any" }
+    },
+    "valueFormatted": {
+      "description": "/** Formatted value to be rendered. */",
+      "type": { "returnType": "any" }
+    },
+    "fullWidth?": {
+      "description": "/** True if this is a full width row. */",
+      "type": { "returnType": "boolean" }
+    },
+    "pinned?": {
+      "description": "/** Pinned state of the cell. */",
+      "type": { "returnType": "string | null" }
+    },
+    "data": {
+      "description": "/** The row's data. */",
+      "type": { "returnType": "any" }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "RowNode" }
+    },
+    "rowIndex": {
+      "description": "/** The current index of the row (this changes after filter and sort). */",
+      "type": { "returnType": "number" }
+    },
+    "colDef?": {
+      "description": "/** The cell's column definition. */",
+      "type": { "returnType": "ColDef" }
+    },
+    "column?": {
+      "description": "/** The cell's column. */",
+      "type": { "returnType": "Column" }
+    },
+    "$scope": {
+      "description": "/** AngularJS scope - null if not using AngularJS, this is legacy and not used if not */",
+      "type": { "returnType": "any" }
+    },
     "api": { "type": { "returnType": "GridApi" } },
     "columnApi": { "type": { "returnType": "ColumnApi" } },
     "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
+      "description": "/** The context as provided on `gridOptions.context`. */",
       "type": { "returnType": "any" }
     },
-    "eGridCell": { "type": { "returnType": "HTMLElement" } },
-    "eParentOfValue": { "type": { "returnType": "HTMLElement" } },
-    "getValue?": { "type": { "arguments": {}, "returnType": "any" } },
+    "eGridCell": {
+      "description": "/** The grid's cell, a DOM div element. */",
+      "type": { "returnType": "HTMLElement" }
+    },
+    "eParentOfValue": {
+      "description": "/** The parent DOM item for the cell renderer, same as eGridCell unless using checkbox selection. */",
+      "type": { "returnType": "HTMLElement" }
+    },
+    "getValue?": {
+      "description": "/** Convenience function to get most recent up to date value. */",
+      "type": { "arguments": {}, "returnType": "any" }
+    },
     "setValue?": {
+      "description": "/** Convenience function to set the value. */",
       "type": { "arguments": { "value": "any" }, "returnType": "void" }
     },
     "formatValue?": {
+      "description": "/** Convenience function to format a value using the column's formatter. */",
       "type": { "arguments": { "value": "any" }, "returnType": "any" }
     },
-    "refreshCell?": { "type": { "arguments": {}, "returnType": "void" } },
+    "refreshCell?": {
+      "description": "/** Convenience function to refresh the cell. */",
+      "type": { "arguments": {}, "returnType": "void" }
+    },
     "registerRowDragger": {
-      "description": "/** registerRowDragger: Function\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */",
+      "description": "/** registerRowDragger:\n * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n */",
       "type": {
         "arguments": {
           "rowDraggerElement": "HTMLElement",
