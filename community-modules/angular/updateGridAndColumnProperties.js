@@ -83,18 +83,28 @@ function addTypeCoercionHints(result, boolProps) {
 function getSafeType(typeName) {
     let inputType = 'any';
     if (typeName) {
-        const trimmed = typeName.trim();
-        // Ensure that we correctly apply the undefined as a separate union type for complex types
-        // e.g isExternalFilterPresent: (() => boolean) | undefined = undefined;
-        // Without the brackets this changes the return type!
-        if (trimmed.includes('=>')) {
-            inputType = `(${typeName.trim()}) | undefined`;
-        }
-        else {
-            inputType = `${typeName.trim()} | undefined`;
-        }
+        inputType = applyUndefinedUnionType(typeName);
     }
     return inputType;
+}
+
+/**
+ * Ensure that we correctly apply the undefined as a separate union type for complex type
+ *  e.g isExternalFilterPresent: (() => boolean) | undefined = undefined;
+ *  Without the brackets this changes the return type!
+ */
+function applyUndefinedUnionType(typeName) {
+    const trimmed = typeName.trim();
+    if (trimmed === 'any') {
+        // Don't union type with any
+        return trimmed;
+    }
+    if (trimmed.includes('=>')) {
+        return `(${trimmed}) | undefined`;
+    }
+    else {
+        return `${trimmed} | undefined`;
+    }
 }
 
 function addDocLine(docLookup, property, result) {

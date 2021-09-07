@@ -299,16 +299,16 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public components: { [p: string]: any; } | undefined = undefined;
     @Input() public frameworkComponents: { [p: string]: { new(): any; }; } | any | undefined = undefined;
     @Input() public rowStyle: { [cssProperty: string]: string } | undefined = undefined;
-    @Input() public context: any | undefined = undefined;
+    @Input() public context: any = undefined;
     @Input() public autoGroupColumnDef: ColDef | undefined = undefined;
     @Input() public localeText: { [key: string]: string } | undefined = undefined;
     @Input() public icons: { [key: string]: Function | string; } | undefined = undefined;
     @Input() public datasource: IDatasource | undefined = undefined;
     @Input() public serverSideDatasource: IServerSideDatasource | undefined = undefined;
     @Input() public viewportDatasource: IViewportDatasource | undefined = undefined;
-    @Input() public groupRowRendererParams: any | undefined = undefined;
+    @Input() public groupRowRendererParams: any = undefined;
     @Input() public aggFuncs: { [key: string]: IAggFunc; } | undefined = undefined;
-    @Input() public fullWidthCellRendererParams: any | undefined = undefined;
+    @Input() public fullWidthCellRendererParams: any = undefined;
     @Input() public defaultColGroupDef: Partial<ColGroupDef> | undefined = undefined;
     @Input() public defaultColDef: ColDef | undefined = undefined;
     /** @deprecated Use defaultCsvExportParams or defaultExcelExportParams
@@ -318,10 +318,10 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public defaultExcelExportParams: ExcelExportParams | undefined = undefined;
     @Input() public columnTypes: { [key: string]: ColDef; } | undefined = undefined;
     @Input() public rowClassRules: RowClassRules | undefined = undefined;
-    @Input() public detailCellRendererParams: any | undefined = undefined;
-    @Input() public loadingCellRendererParams: any | undefined = undefined;
-    @Input() public loadingOverlayComponentParams: any | undefined = undefined;
-    @Input() public noRowsOverlayComponentParams: any | undefined = undefined;
+    @Input() public detailCellRendererParams: any = undefined;
+    @Input() public loadingCellRendererParams: any = undefined;
+    @Input() public loadingOverlayComponentParams: any = undefined;
+    @Input() public noRowsOverlayComponentParams: any = undefined;
     @Input() public popupParent: HTMLElement | undefined = undefined;
     @Input() public colResizeDefault: string | undefined = undefined;
     @Input() public statusBar: { statusPanels: StatusPanelDef[]; } | undefined = undefined;
@@ -384,11 +384,11 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public groupRowInnerRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined = undefined;
     /** @deprecated - this is now groupRowRendererParams.innerRendererFramework
      */
-    @Input() public groupRowInnerRendererFramework: any | undefined = undefined;
+    @Input() public groupRowInnerRendererFramework: any = undefined;
     @Input() public dateComponent: any = undefined;
     @Input() public dateComponentFramework: any = undefined;
     @Input() public groupRowRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined = undefined;
-    @Input() public groupRowRendererFramework: any | undefined = undefined;
+    @Input() public groupRowRendererFramework: any = undefined;
     @Input() public isExternalFilterPresent: (() =>  boolean) | undefined = undefined;
     @Input() public getRowHeight: ((params: RowHeightParams) => number | undefined | null) | undefined = undefined;
     @Input() public doesExternalFilterPass: ((node: RowNode) =>  boolean) | undefined = undefined;
@@ -402,7 +402,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public getRowNodeId: GetRowNodeIdFunc | undefined = undefined;
     @Input() public isFullWidthCell: ((rowNode: RowNode) =>  boolean) | undefined = undefined;
     @Input() public fullWidthCellRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined = undefined;
-    @Input() public fullWidthCellRendererFramework: any | undefined = undefined;
+    @Input() public fullWidthCellRendererFramework: any = undefined;
     @Input() public processSecondaryColDef: ((colDef: ColDef) =>  void) | undefined = undefined;
     @Input() public processSecondaryColGroupDef: ((colGroupDef: ColGroupDef) =>  void) | undefined = undefined;
     @Input() public getBusinessKeyForNode: ((node: RowNode) =>  string) | undefined = undefined;
@@ -417,13 +417,13 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public getChildCount: ((dataItem: any) =>  number) | undefined = undefined;
     @Input() public getDataPath: GetDataPath | undefined = undefined;
     @Input() public loadingCellRenderer: { new(): ICellRenderer; } | string | undefined = undefined;
-    @Input() public loadingCellRendererFramework: any | undefined = undefined;
+    @Input() public loadingCellRendererFramework: any = undefined;
     @Input() public loadingOverlayComponent: { new(): ILoadingOverlayComp; } | string | undefined = undefined;
-    @Input() public loadingOverlayComponentFramework: any | undefined = undefined;
+    @Input() public loadingOverlayComponentFramework: any = undefined;
     @Input() public noRowsOverlayComponent: { new(): INoRowsOverlayComp; } | string | undefined = undefined;
-    @Input() public noRowsOverlayComponentFramework: any | undefined = undefined;
+    @Input() public noRowsOverlayComponentFramework: any = undefined;
     @Input() public detailCellRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined = undefined;
-    @Input() public detailCellRendererFramework: any | undefined = undefined;
+    @Input() public detailCellRendererFramework: any = undefined;
     @Input() public isRowMaster: IsRowMaster | undefined = undefined;
     @Input() public isRowSelectable: IsRowSelectable | undefined = undefined;
     @Input() public postSort: ((nodes: RowNode[]) =>  void) | undefined = undefined;
