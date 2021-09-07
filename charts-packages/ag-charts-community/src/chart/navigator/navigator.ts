@@ -102,7 +102,7 @@ export class Navigator {
             }
         });
         chart.seriesRoot.enabled = clipSeries;
-        chart.series.forEach(series => series.update());
+        chart.series.forEach(s => s.nodeDataPending = true);
     }
 
     onDragStart(offset: Offset) {

@@ -6,6 +6,7 @@ import { Chart } from "../chart";
 import { createId } from "../../util/id";
 import { Label } from "../label";
 import { PointLabelDatum } from "../../util/labelPlacement";
+import { isNumber } from "../../util/value";
 
 /**
  * Processed series datum used in node selections,
@@ -201,6 +202,7 @@ export abstract class Series extends Observable {
     set nodeDataPending(value: boolean) {
         if (this._nodeDataPending !== value) {
             this._nodeDataPending = value;
+            this.updatePending = true;
             if (value && this.chart) {
                 this.chart.updatePending = value;
             }
@@ -275,13 +277,8 @@ export abstract class Series extends Observable {
         }
 
         let [min, max] = extent;
-
-        if (min instanceof Date) {
-            min = min.getTime();
-        }
-        if (max instanceof Date) {
-            max = max.getTime();
-        }
+        min = +min;
+        max = +max;
 
         if (min === max) {
             const padding = Math.abs(min * 0.01);
@@ -293,7 +290,7 @@ export abstract class Series extends Observable {
             // }
         }
 
-        if (!isFinite(min) || !isFinite(max)) {
+        if (!(isNumber(min) && isNumber(max))) {
             min = 0;
             max = 1;
             // if (type) {

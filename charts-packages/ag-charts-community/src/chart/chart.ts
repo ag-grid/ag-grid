@@ -694,6 +694,7 @@ export abstract class Chart extends Observable {
         if (value) {
             if (!(this.layoutCallbackId || this.dataPending)) {
                 this.layoutCallbackId = requestAnimationFrame(this._performLayout);
+                this.series.forEach(s => s.nodeDataPending = true);
             }
         } else if (this.layoutCallbackId) {
             cancelAnimationFrame(this.layoutCallbackId);
@@ -807,9 +808,8 @@ export abstract class Chart extends Observable {
             clearTimeout(this.updateCallbackId);
             this.updateCallbackId = 0;
         }
-        if (value) {
+        if (value && !this.layoutPending) {
             this.updateCallbackId = window.setTimeout(() => {
-                this.updatePending = false;
                 this.update();
             }, 0);
         }
@@ -819,10 +819,10 @@ export abstract class Chart extends Observable {
     }
 
     update() {
+        this.updatePending = false;
         this.series.forEach(series => {
             if (series.updatePending) {
                 series.update();
-                series.updatePending = false;
             }
         });
     }
@@ -1186,16 +1186,19 @@ export abstract class Chart extends Observable {
         }
 
         if (datum) {
-            const { id, itemId } = datum;
-            const series = find(this.series, series => series.id === id);
+            const { id, itemId, enabled } = datum;
 
-            if (series && series.highlightStyle.series.enabled) {
-                this.highlightedDatum = {
-                    series,
-                    itemId,
-                    seriesDatum: undefined
-                };
-                series.updatePending = true;
+            if (enabled) {
+                const series = find(this.series, series => series.id === id);
+
+                if (series && series.highlightStyle.series.enabled) {
+                    this.highlightedDatum = {
+                        series,
+                        itemId,
+                        seriesDatum: undefined
+                    };
+                    series.updatePending = true;
+                }
             }
         }
     }

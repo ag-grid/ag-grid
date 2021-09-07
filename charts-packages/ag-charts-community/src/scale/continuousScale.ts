@@ -7,8 +7,8 @@ import Scale, {
 import { bisectRight } from "../util/bisect";
 import { ascending } from "../util/compare";
 
-export const constant = (x: any) => () => x;
-export const identity = (x: any) => x;
+const constant = (x: any) => () => x;
+const identity = (x: any) => x;
 
 function clamper(domain: number[]): (x: number) => number {
     let a = domain[0];

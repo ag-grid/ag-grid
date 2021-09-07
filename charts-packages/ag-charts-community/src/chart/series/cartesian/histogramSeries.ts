@@ -13,10 +13,11 @@ import { LegendDatum } from "../../legend";
 import { CartesianSeries } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import { TooltipRendererResult, toTooltipHtml } from "../../chart";
-import { numericExtent, finiteExtent } from "../../../util/array";
+import { extent } from "../../../util/array";
 import { reactive, TypedEvent } from "../../../util/observable";
 import ticks, { tickStep } from "../../../util/ticks";
 import { sanitizeHtml } from "../../../util/sanitize";
+import { isContinuous } from "../../../util/value";
 
 enum HistogramSeriesNodeTag {
     Bin,
@@ -318,7 +319,7 @@ export class HistogramSeries extends CartesianSeries {
         }
 
         const xData = this.data.map(datum => datum[this.xKey]);
-        const xDomain = this.fixNumericExtent(finiteExtent(xData), 'x');
+        const xDomain = this.fixNumericExtent(extent(xData, isContinuous), 'x');
 
         const binStarts = ticks(xDomain[0], xDomain[1], this.binCount || defaultBinCount);
         const binSize = tickStep(xDomain[0], xDomain[1], this.binCount || defaultBinCount);
@@ -382,7 +383,7 @@ export class HistogramSeries extends CartesianSeries {
         this.binnedData = this.placeDataInBins(xKey && data ? data : []);
 
         const yData = this.binnedData.map(b => b.getY(this.areaPlot));
-        const yMinMax = numericExtent(yData);
+        const yMinMax = extent(yData, isContinuous);
 
         this.yDomain = this.fixNumericExtent([0, yMinMax ? yMinMax[1] : 1], 'y');
 

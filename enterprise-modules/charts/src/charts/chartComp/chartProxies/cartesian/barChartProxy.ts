@@ -168,6 +168,7 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
                 opacity: themeSeriesDefaults.strokeOpacity,
                 width: themeSeriesDefaults.strokeWidth
             },
+            formatter: themeSeriesDefaults.formatter,
             lineDash: themeSeriesDefaults.lineDash ? themeSeriesDefaults.lineDash : [0],
             lineDashOffset: themeSeriesDefaults.lineDashOffset,
             highlightStyle: themeSeriesDefaults.highlightStyle as HighlightOptions,

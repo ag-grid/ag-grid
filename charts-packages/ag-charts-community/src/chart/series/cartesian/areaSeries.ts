@@ -22,8 +22,7 @@ import { Text } from "../../../scene/shape/text";
 import { Label } from "../../label";
 import { sanitizeHtml } from "../../../util/sanitize";
 import { FontStyle, FontWeight } from "../../../scene/shape/text";
-import { Shape } from "../../../scene/shape/shape";
-import { isNumber } from "../../../util/number";
+import { isNumber } from "../../../util/value";
 
 interface AreaSelectionDatum {
     readonly itemId: string;
@@ -345,21 +344,13 @@ export class AreaSeries extends CartesianSeries {
         return true;
     }
 
-    undim(itemId?: any) {
-        if (this.yKeys.length > 1) {
-            this.updateDim(itemId);
-        } else {
-            super.undim();
-        }
-    }
-
-    private getNodeOpacity(nodeDatum: AreaSelectionDatum | MarkerSelectionDatum | LabelSelectionDatum): number {
+    protected getOpacity(nodeDatum: AreaSelectionDatum | MarkerSelectionDatum | LabelSelectionDatum): number {
         const { chart, highlightStyle: { series: { enabled, dimOpacity } } } = this;
         return !chart || !enabled || !chart.highlightedDatum ||
             chart.highlightedDatum.series === this && chart.highlightedDatum.itemId === nodeDatum.itemId ? 1 : dimOpacity;
     }
 
-    private getStrokeWidth(datum: AreaSelectionDatum): number {
+    protected getStrokeWidth(datum: AreaSelectionDatum): number {
         const { chart, highlightStyle: { series: { enabled, strokeWidth } } } = this;
         return chart && enabled && chart.highlightedDatum &&
             chart.highlightedDatum.series === this &&
@@ -367,24 +358,9 @@ export class AreaSeries extends CartesianSeries {
             strokeWidth !== undefined ? strokeWidth : this.strokeWidth;
     }
 
-    private updateDim(itemId?: any) {
-        const { dimOpacity } = this.highlightStyle.series;
-        const fn = (node: Shape, datum: { itemId?: any }) => node.opacity = !itemId || itemId === datum.itemId ? 1 : dimOpacity;
-        this.fillSelection.each(fn);
-        this.strokeSelection.each(fn);
-        this.markerSelection.each(fn);
-        this.labelSelection.each(fn);
-    }
-
-    dim() {
-        if (this.yKeys.length > 1) {
-            this.updateDim();
-        } else {
-            super.dim();
-        }
-    }
-
     update(): void {
+        this.updatePending = false;
+
         this.group.visible = this.visible && this.xData.length > 0 && this.yData.length > 0;
 
         this.updateSelections();
@@ -395,9 +371,9 @@ export class AreaSeries extends CartesianSeries {
         if (!this.nodeDataPending) {
             return;
         }
+        this.nodeDataPending = false;
 
         this.createSelectionData();
-        this.nodeDataPending = false;
 
         this.updateFillSelection();
         this.updateStrokeSelection();
@@ -541,7 +517,7 @@ export class AreaSeries extends CartesianSeries {
             shape.lineDashOffset = this.lineDashOffset;
             shape.fillShadow = shadow;
             shape.visible = !!seriesItemEnabled.get(datum.itemId);
-            shape.opacity = this.getNodeOpacity(datum);
+            shape.opacity = this.getOpacity(datum);
 
             path.clear();
 
@@ -585,7 +561,7 @@ export class AreaSeries extends CartesianSeries {
             const path = shape.path;
 
             shape.visible = !!seriesItemEnabled.get(datum.itemId);
-            shape.opacity = this.getNodeOpacity(datum);
+            shape.opacity = this.getOpacity(datum);
             shape.stroke = strokes[index % strokes.length];
             shape.strokeWidth = this.getStrokeWidth(datum);
             shape.strokeOpacity = strokeOpacity;
@@ -687,7 +663,7 @@ export class AreaSeries extends CartesianSeries {
             node.translationX = datum.point.x;
             node.translationY = datum.point.y;
             node.visible = marker.enabled && node.size > 0 && !!seriesItemEnabled.get(datum.yKey);
-            node.opacity = this.getNodeOpacity(datum);
+            node.opacity = this.getOpacity(datum);
         });
     }
 
@@ -722,7 +698,7 @@ export class AreaSeries extends CartesianSeries {
                 text.y = point.y - 10;
                 text.fill = label.fill;
                 text.visible = true;
-                text.opacity = this.getNodeOpacity(datum);
+                text.opacity = this.getOpacity(datum);
             } else {
                 text.visible = false;
             }
@@ -745,28 +721,37 @@ export class AreaSeries extends CartesianSeries {
     }
 
     getTooltipHtml(nodeDatum: MarkerSelectionDatum): string {
-        const { xKey, xAxis, yAxis } = this;
+        const { xKey } = this;
         const { yKey } = nodeDatum;
 
-        if (!xKey || !yKey || !xAxis || !yAxis) {
+        if (!(xKey && yKey)) {
+            return '';
+        }
+
+        const datum = nodeDatum.seriesDatum;
+        const xValue = datum[xKey];
+        const yValue = datum[yKey];
+        const { xAxis, yAxis } = this;
+
+        if (!(xAxis && yAxis && isNumber(yValue))) {
+            return '';
+        }
+
+        const x = xAxis.scale.convert(xValue);
+        const y = yAxis.scale.convert(yValue);
+
+        // Don't show the tooltip for the off-screen markers.
+        // Node: some markers might still go off-screen despite virtual rendering
+        //       (to connect the dots and render the area properly).
+        if (!(xAxis.inRange(x) && yAxis.inRange(y))) {
             return '';
         }
 
         const { xName, yKeys, yNames, yData, fills, tooltip } = this;
-        const yGroup = yData[nodeDatum.index];
-        const {
-            renderer: tooltipRenderer,
-            format: tooltipFormat
-        } = tooltip;
-        const datum = nodeDatum.seriesDatum;
-        const xValue = datum[xKey];
-        const yValue = datum[yKey];
-        if (!isNumber(yValue)) {
-            return '';
-        }
         const xString = xAxis.formatDatum(xValue);
         const yString = yAxis.formatDatum(yValue);
         const yKeyIndex = yKeys.indexOf(yKey);
+        const yGroup = yData[nodeDatum.index];
         const processedYValue = yGroup[yKeyIndex];
         const yName = yNames[yKeyIndex];
         const color = fills[yKeyIndex % fills.length];
@@ -777,6 +762,10 @@ export class AreaSeries extends CartesianSeries {
             backgroundColor: color,
             content
         };
+        const {
+            renderer: tooltipRenderer,
+            format: tooltipFormat
+        } = tooltip;
 
         if (tooltipFormat || tooltipRenderer) {
             const params = {

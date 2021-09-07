@@ -1,7 +1,8 @@
-import ContinuousScale, { identity } from "./continuousScale";
+import ContinuousScale from "./continuousScale";
 import ticks from "../util/ticks";
 import { format } from "../util/numberFormat";
 
+const identity = (x: any) => x;
 export class LogScale extends ContinuousScale {
     readonly type = 'log';
 

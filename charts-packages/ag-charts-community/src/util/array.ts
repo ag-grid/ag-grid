@@ -17,23 +17,30 @@ export function findIndex<T>(arr: T[], predicate: (item: T, index: number, arr: 
     return -1;
 }
 
-/**
- * Returns the minimum and maximum value in the given iterable using natural order.
- * If the iterable contains no comparable values, returns `undefined`.
- * @param values
- */
-export function extent<T>(values: T[]): [T, T] | undefined {
+function identity<T>(value: T): T {
+    return value;
+}
+
+export function extent<T>(values: T[], predicate: (value: T) => boolean): [T, T] | undefined {
+    return mapExtent(values, predicate, identity);
+}
+
+export function mapExtent<T, K>(
+    values: T[],
+    predicate: (value: T) => boolean,
+    map: (value: T) => K
+): [K, K] | undefined {
     const n = values.length;
     let i = -1;
     let value;
     let min;
     let max;
 
-    while (++i < n) { // Find the first comparable finite value.
-        if ((value = values[i]) != null && value >= value) {
+    while (++i < n) { // Find the first value.
+        if ((value = values[i]) && predicate(value)) {
             min = max = value;
             while (++i < n) { // Compare the remaining values.
-                if ((value = values[i]) != null) {
+                if ((value = values[i]) && predicate(value)) {
                     if (min > value) {
                         min = value;
                     }
@@ -45,54 +52,7 @@ export function extent<T>(values: T[]): [T, T] | undefined {
         }
     }
 
-    return typeof min === 'undefined' || typeof max === 'undefined' ? undefined : [min, max];
-}
-
-export function finiteExtent<T>(values: T[]): [T, T] | undefined {
-    const n = values.length;
-    let i = -1;
-    let value;
-    let min;
-    let max;
-
-    while (++i < n) { // Find the first comparable finite value.
-        if ((value = values[i]) != null && value >= value && isFinite(value as any)) {
-            min = max = value;
-            while (++i < n) { // Compare the remaining values.
-                if ((value = values[i]) != null && isFinite(value as any)) {
-                    if (min > value) {
-                        min = value;
-                    }
-                    if (max < value) {
-                        max = value;
-                    }
-                }
-            }
-        }
-    }
-
-    return min === undefined || max === undefined ? undefined : [min, max];
-}
-
-/**
- * This method will only return `undefined` if there's not a single valid finite number present
- * in the given array of values. Date values will be converted to timestamps.
- * @param values
- */
-export function numericExtent<T>(values: T[]): [number, number] | undefined {
-    const calculatedExtent = finiteExtent(values);
-
-    if (typeof calculatedExtent === 'undefined') {
-        return;
-    }
-
-    const [a, b] = calculatedExtent;
-    const min = a instanceof Date ? a.getTime() : a;
-    const max = b instanceof Date ? b.getTime() : b;
-
-    if (typeof min === 'number' && isFinite(min) && typeof max === 'number' && isFinite(max)) {
-        return [min, max];
-    }
+    return min === undefined || max === undefined ? undefined : [map(min), map(max)];
 }
 
 /**
@@ -111,7 +71,7 @@ export function findMinMax(values: number[]): { min: number, max: number } {
         }
     }
 
-    return {min, max};
+    return { min, max };
 }
 
 export function copy(array: any[], start: number = 0, count: number = array.length): any[] {

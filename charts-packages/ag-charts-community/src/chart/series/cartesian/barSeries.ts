@@ -20,6 +20,7 @@ import { reactive, TypedEvent } from "../../../util/observable";
 import Scale from "../../../scale/scale";
 import { sanitizeHtml } from "../../../util/sanitize";
 import { Shape } from "../../../scene/shape/shape";
+import { isNumber } from "../../../util/value";
 
 export interface BarSeriesNodeClickEvent extends TypedEvent {
     readonly type: 'nodeClick';
@@ -542,13 +543,15 @@ export class BarSeries extends CartesianSeries {
             label
         } = this;
 
-        const labelFontStyle = label.fontStyle;
-        const labelFontWeight = label.fontWeight;
-        const labelFontSize = label.fontSize;
-        const labelFontFamily = label.fontFamily;
-        const labelColor = label.color;
-        const labelFormatter = label.formatter;
-        const labelPlacement = label.placement;
+        const {
+            fontStyle: labelFontStyle,
+            fontWeight: labelFontWeight,
+            fontSize: labelFontSize,
+            fontFamily: labelFontFamily,
+            color: labelColor,
+            formatter: labelFormatter,
+            placement: labelPlacement
+        } = label;
 
         groupScale.range = [0, xScale.bandwidth!];
 
@@ -582,14 +585,12 @@ export class BarSeries extends CartesianSeries {
                     const y = yScale.convert(prevY + currY);
                     const bottomY = yScale.convert(prevY);
                     const yValue = seriesDatum[yKey]; // unprocessed y-value
-                    const yValueIsNumber = typeof yValue === 'number';
 
                     let labelText: string;
-
                     if (labelFormatter) {
-                        labelText = labelFormatter({ value: yValueIsNumber ? yValue : undefined });
+                        labelText = labelFormatter({ value: isNumber(yValue) ? yValue : undefined });
                     } else {
-                        labelText = yValueIsNumber && isFinite(yValue) ? yValue.toFixed(2) : '';
+                        labelText = isNumber(yValue) ? yValue.toFixed(2) : '';
                     }
 
                     let labelX: number;

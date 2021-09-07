@@ -7,7 +7,7 @@ import {
     CartesianTooltipRendererParams as LineTooltipRendererParams,
     SeriesTooltip
 } from "../series";
-import { numericExtent } from "../../../util/array";
+import { extent } from "../../../util/array";
 import { PointerEvents } from "../../../scene/node";
 import { Text } from "../../../scene/shape/text";
 import { LegendDatum } from "../../legend";
@@ -21,6 +21,7 @@ import { interpolate } from "../../../util/string";
 import { FontStyle, FontWeight } from "../../../scene/shape/text";
 import { Label } from "../../label";
 import { sanitizeHtml } from "../../../util/sanitize";
+import { isContinuous } from "../../../util/value";
 
 interface LineNodeDatum extends SeriesNodeDatum {
     readonly point: {
@@ -188,8 +189,8 @@ export class LineSeries extends CartesianSeries {
             yData.push(y);
         }
 
-        this.xDomain = isContinuousX ? this.fixNumericExtent(numericExtent(xData), 'x') : xData;
-        this.yDomain = isContinuousY ? this.fixNumericExtent(numericExtent(yData), 'y') : yData;
+        this.xDomain = isContinuousX ? this.fixNumericExtent(extent(xData, isContinuous), 'x') : xData;
+        this.yDomain = isContinuousY ? this.fixNumericExtent(extent(yData, isContinuous), 'y') : yData;
 
         return true;
     }
@@ -229,17 +230,22 @@ export class LineSeries extends CartesianSeries {
     }
 
     update(): void {
+        this.updatePending = false;
+
         this.group.visible = this.visible;
 
-        const { chart, xAxis, yAxis } = this;
+        this.updateSelections();
+        this.updateNodes();
+    }
 
-        if (!chart || chart.layoutPending || chart.dataPending || !xAxis || !yAxis) {
+    updateSelections() {
+        if (!this.nodeDataPending) {
             return;
         }
+        this.nodeDataPending = false;
 
         this.updateLinePath(); // this will create node data too
         this.updateNodeSelection();
-        this.updateNodes();
     }
 
     private getXYDatums(i: number, xData: number[], yData: number[],
@@ -255,9 +261,9 @@ export class LineSeries extends CartesianSeries {
     }
 
     private updateLinePath() {
-        const { data, xAxis, yAxis } = this;
+        const { chart, data, xAxis, yAxis } = this;
 
-        if (!data || !xAxis || !yAxis) {
+        if (!chart || !data || !xAxis || !yAxis || chart.layoutPending || chart.dataPending) {
             return;
         }
 

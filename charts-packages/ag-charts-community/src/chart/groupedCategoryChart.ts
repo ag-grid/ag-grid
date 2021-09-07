@@ -1,7 +1,8 @@
 import { CartesianChart } from "./cartesianChart";
-import { numericExtent } from "../util/array";
+import { mapExtent } from "../util/array";
 import { GroupedCategoryAxis } from "./axis/groupedCategoryAxis";
 import { ChartAxis, ChartAxisDirection } from "./chartAxis";
+import { isContinuous } from "../util/value";
 
 export type GroupedCategoryChartAxis = GroupedCategoryAxis | ChartAxis;
 
@@ -30,7 +31,7 @@ export class GroupedCategoryChart extends CartesianChart {
                 }
             });
             const domain = new Array<any>().concat(...domains);
-            axis.domain = numericExtent(domain) || domain;
+            axis.domain = mapExtent(domain, isContinuous, x => +x) || domain;
 
             axis.update();
         });

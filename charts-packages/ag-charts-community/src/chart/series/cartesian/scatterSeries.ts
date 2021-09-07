@@ -1,7 +1,7 @@
 import { Selection } from "../../../scene/selection";
 import { Group } from "../../../scene/group";
 import { SeriesNodeDatum, CartesianTooltipRendererParams, SeriesTooltip } from "../series";
-import { finiteExtent } from "../../../util/array";
+import { extent } from "../../../util/array";
 import { LegendDatum } from "../../legend";
 import { LinearScale } from "../../../scale/linearScale";
 import { reactive, TypedEvent } from "../../../util/observable";
@@ -16,6 +16,7 @@ import { Text } from "../../../scene/shape/text";
 import { HdpiCanvas } from "../../../canvas/hdpiCanvas";
 import { Marker } from "../../marker/marker";
 import { MeasuredLabel, PlacedLabel, placeLabels, PointLabelDatum } from "../../../util/labelPlacement";
+import { isContinuous } from "../../../util/value";
 
 interface ScatterNodeDatum extends SeriesNodeDatum {
     readonly point: {
@@ -203,14 +204,14 @@ export class ScatterSeries extends CartesianSeries {
             };
         }) : [];
 
-        this.sizeScale.domain = marker.domain ? marker.domain : finiteExtent(this.sizeData) || [1, 1];
+        this.sizeScale.domain = marker.domain ? marker.domain : extent(this.sizeData, isContinuous) || [1, 1];
         if (xAxis.scale instanceof ContinuousScale) {
-            this.xDomain = this.fixNumericExtent(finiteExtent(this.xData), 'x');
+            this.xDomain = this.fixNumericExtent(extent(this.xData, isContinuous), 'x');
         } else {
             this.xDomain = this.xData;
         }
         if (yAxis.scale instanceof ContinuousScale) {
-            this.yDomain = this.fixNumericExtent(finiteExtent(this.yData), 'y');
+            this.yDomain = this.fixNumericExtent(extent(this.yData, isContinuous), 'y');
         } else {
             this.yDomain = this.yData;
         }
