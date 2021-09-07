@@ -92,7 +92,7 @@ import { FakeHScrollComp } from "./gridBodyComp/fakeHScrollComp";
 import { PinnedWidthService } from "./gridBodyComp/pinnedWidthService";
 import { RowContainerComp } from "./gridBodyComp/rowContainer/rowContainerComp";
 import { RowNodeEventThrottle } from "./entities/rowNodeEventThrottle";
-import { StandardMenuFactory } from "./main";
+import { StandardMenuFactory } from "./headerRendering/headerCells/column/standardMenu";
 
 export interface GridParams {
     // used by Web Components
