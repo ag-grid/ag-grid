@@ -1,4 +1,4 @@
-import { OriginalColumnGroupChild } from "./originalColumnGroupChild";
+import { IProvidedColumn } from "./iProvidedColumn";
 import { ColGroupDef } from "./colDef";
 import { ColumnGroup } from "./columnGroup";
 import { Column } from "./column";
@@ -6,7 +6,7 @@ import { EventService } from "../eventService";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { AgEvent } from "../events";
 
-export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmitter {
+export class OriginalColumnGroup implements IProvidedColumn, IEventEmitter {
 
     public static EVENT_EXPANDED_CHANGED = 'expandedChanged';
     public static EVENT_EXPANDABLE_CHANGED = 'expandableChanged';
@@ -16,7 +16,7 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
     private colGroupDef: ColGroupDef | null;
     private originalParent: OriginalColumnGroup | null;
 
-    private children: OriginalColumnGroupChild[];
+    private children: IProvidedColumn[];
     private groupId: string;
     private expandable = false;
 
@@ -82,11 +82,11 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
         return this.getGroupId();
     }
 
-    public setChildren(children: OriginalColumnGroupChild[]): void {
+    public setChildren(children: IProvidedColumn[]): void {
         this.children = children;
     }
 
-    public getChildren(): OriginalColumnGroupChild[] {
+    public getChildren(): IProvidedColumn[] {
         return this.children;
     }
 
@@ -103,7 +103,7 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
     private addLeafColumns(leafColumns: Column[]): void {
         if (!this.children) { return; }
 
-        this.children.forEach((child: OriginalColumnGroupChild) => {
+        this.children.forEach((child: IProvidedColumn) => {
             if (child instanceof Column) {
                 leafColumns.push(child);
             } else if (child instanceof OriginalColumnGroup) {
@@ -171,10 +171,10 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
         }
     }
 
-    private findChildrenRemovingPadding(): OriginalColumnGroupChild[] {
-        const res: OriginalColumnGroupChild[] = [];
+    private findChildrenRemovingPadding(): IProvidedColumn[] {
+        const res: IProvidedColumn[] = [];
 
-        const process = (items: OriginalColumnGroupChild[]) => {
+        const process = (items: IProvidedColumn[]) => {
             items.forEach(item => {
                 // if padding, we add this children instead of the padding
                 const skipBecausePadding = item instanceof OriginalColumnGroup && item.isPadding();

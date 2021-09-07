@@ -9,7 +9,7 @@ import {
     Events,
     GridApi,
     OriginalColumnGroup,
-    OriginalColumnGroupChild
+    IProvidedColumn
 } from "@ag-grid-community/core";
 
 import { ToolPanelFilterComp } from "./toolPanelFilterComp";
@@ -83,7 +83,7 @@ export class FiltersToolPanelListPanel extends Component {
 
     private buildTreeFromProvidedColumnDefs(): void {
         this.destroyFilters();
-        const columnTree: OriginalColumnGroupChild[] = this.columnModel.getPrimaryColumnTree();
+        const columnTree: IProvidedColumn[] = this.columnModel.getPrimaryColumnTree();
         this.filterGroupComps = this.recursivelyAddComps(columnTree, 0);
         const len = this.filterGroupComps.length;
 
@@ -103,7 +103,7 @@ export class FiltersToolPanelListPanel extends Component {
 
     public setFiltersLayout(colDefs: AbstractColDef[]): void {
         this.destroyFilters();
-        const columnTree: OriginalColumnGroupChild[] = this.toolPanelColDefService.createColumnTree(colDefs);
+        const columnTree: IProvidedColumn[] = this.toolPanelColDefService.createColumnTree(colDefs);
         this.filterGroupComps = this.recursivelyAddComps(columnTree, 0);
 
         const len = this.filterGroupComps.length;
@@ -122,7 +122,7 @@ export class FiltersToolPanelListPanel extends Component {
         this.fireExpandedEvent();
     }
 
-    private recursivelyAddComps(tree: OriginalColumnGroupChild[], depth: number): ToolPanelFilterGroupComp[] {
+    private recursivelyAddComps(tree: IProvidedColumn[], depth: number): ToolPanelFilterGroupComp[] {
         return _.flatten(tree.map(child => {
             if (child instanceof OriginalColumnGroup) {
                 return _.flatten(this.recursivelyAddFilterGroupComps(child, depth)!);
@@ -165,7 +165,7 @@ export class FiltersToolPanelListPanel extends Component {
         return [filterGroupComp];
     }
 
-    private filtersExistInChildren(tree: OriginalColumnGroupChild[]): boolean {
+    private filtersExistInChildren(tree: IProvidedColumn[]): boolean {
         return tree.some(child => {
             if (child instanceof OriginalColumnGroup) {
                 return this.filtersExistInChildren(child.getChildren());

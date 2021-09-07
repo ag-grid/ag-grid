@@ -2035,7 +2035,7 @@
       "removeEventListener(eventType: string, listener: EventListener, async?: boolean, options?: AddEventListenerOptions)": "void"
     }
   },
-  "OriginalColumnGroupChild": {
+  "IProvidedColumn": {
     "meta": {},
     "type": {
       "isVisible()": "boolean",

@@ -8,7 +8,7 @@ import {
     Events,
     FilterOpenedEvent,
     OriginalColumnGroup,
-    OriginalColumnGroupChild,
+    IProvidedColumn,
     PostConstruct,
     ITooltipParams,
     PreConstruct,
@@ -30,13 +30,13 @@ export class ToolPanelFilterGroupComp extends Component {
     @Autowired('columnModel') private columnModel: ColumnModel;
 
     private readonly depth: number;
-    private readonly columnGroup: OriginalColumnGroupChild;
+    private readonly columnGroup: IProvidedColumn;
     private readonly showingColumn: boolean;
     private childFilterComps: ToolPanelFilterItem[];
     private expandedCallback: () => void;
     private filterGroupName: string | null;
 
-    constructor(columnGroup: OriginalColumnGroupChild, childFilterComps: ToolPanelFilterItem[],
+    constructor(columnGroup: IProvidedColumn, childFilterComps: ToolPanelFilterItem[],
         expandedCallback: () => void, depth: number, showingColumn: boolean) {
         super();
         this.columnGroup = columnGroup;

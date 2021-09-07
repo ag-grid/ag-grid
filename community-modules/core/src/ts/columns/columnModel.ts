@@ -6,7 +6,7 @@ import { ExpressionService } from '../valueService/expressionService';
 import { ColumnFactory } from './columnFactory';
 import { DisplayedGroupCreator } from './displayedGroupCreator';
 import { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
-import { OriginalColumnGroupChild } from '../entities/originalColumnGroupChild';
+import { IProvidedColumn } from '../entities/iProvidedColumn';
 import { ColumnUtils } from './columnUtils';
 import { Logger, LoggerFactory } from '../logger';
 import {
@@ -108,7 +108,7 @@ export class ColumnModel extends BeanStub {
     // order or state of the columns and groups change. it will only change if the client
     // provides a new set of column definitions. otherwise this tree is used to build up
     // the groups for displaying.
-    private primaryColumnTree: OriginalColumnGroupChild[];
+    private primaryColumnTree: IProvidedColumn[];
     // header row count, based on user provided columns
     private primaryHeaderRowCount = 0;
     // all columns provided by the user. basically it's the leaf level nodes of the
@@ -117,7 +117,7 @@ export class ColumnModel extends BeanStub {
     private primaryColumnsMap: {[id: string]: Column};
 
     // if pivoting, these are the generated columns as a result of the pivot
-    private secondaryBalancedTree: OriginalColumnGroupChild[] | null;
+    private secondaryBalancedTree: IProvidedColumn[] | null;
     private secondaryColumns: Column[] | null;
     private secondaryHeaderRowCount = 0;
     private secondaryColumnsPresent = false;
@@ -127,7 +127,7 @@ export class ColumnModel extends BeanStub {
     private columnsForQuickFilter: Column[];
 
     // these are all columns that are available to the grid for rendering after pivot
-    private gridBalancedTree: OriginalColumnGroupChild[];
+    private gridBalancedTree: IProvidedColumn[];
     private gridColumns: Column[];
     private gridColumnsMap: {[id: string]: Column};
 
@@ -562,10 +562,10 @@ export class ColumnModel extends BeanStub {
         this.autoSizeColumns(allDisplayedColumns, skipHeader, source);
     }
 
-    private getColumnsFromTree(rootColumns: OriginalColumnGroupChild[]): Column[] {
+    private getColumnsFromTree(rootColumns: IProvidedColumn[]): Column[] {
         const result: Column[] = [];
 
-        const recursiveFindColumns = (childColumns: OriginalColumnGroupChild[]): void => {
+        const recursiveFindColumns = (childColumns: IProvidedColumn[]): void => {
             for (let i = 0; i < childColumns.length; i++) {
                 const child = childColumns[i];
                 if (child instanceof Column) {
@@ -592,7 +592,7 @@ export class ColumnModel extends BeanStub {
     }
 
     // + columnSelectPanel
-    public getPrimaryColumnTree(): OriginalColumnGroupChild[] {
+    public getPrimaryColumnTree(): IProvidedColumn[] {
         return this.primaryColumnTree;
     }
 
@@ -3749,7 +3749,7 @@ export class ColumnModel extends BeanStub {
         return columnList.reduce((width, col) => width + col.getActualWidth(), 0);
     }
 
-    public getGridBalancedTree(): OriginalColumnGroupChild[] {
+    public getGridBalancedTree(): IProvidedColumn[] {
         return this.gridBalancedTree;
     }
 

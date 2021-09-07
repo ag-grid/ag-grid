@@ -395,7 +395,7 @@ export {
 } from "./entities/gridOptions";
 
 export * from "./propertyKeys";
-export { OriginalColumnGroupChild } from "./entities/originalColumnGroupChild";
+export { IProvidedColumn } from "./entities/iProvidedColumn";
 export { IHeaderColumn } from "./entities/iHeaderColumn";
 export { IViewportDatasource, IViewportDatasourceParams } from "./interfaces/iViewportDatasource";
 export { IContextMenuFactory } from "./interfaces/iContextMenuFactory";

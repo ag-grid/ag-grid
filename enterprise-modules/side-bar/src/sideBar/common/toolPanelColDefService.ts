@@ -9,7 +9,7 @@ import {
     Column,
     ColumnModel,
     OriginalColumnGroup,
-    OriginalColumnGroupChild
+    IProvidedColumn
 } from "@ag-grid-community/core";
 
 @Bean('toolPanelColDefService')
@@ -17,17 +17,17 @@ export class ToolPanelColDefService extends BeanStub {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
 
-    public createColumnTree(colDefs: AbstractColDef[]): OriginalColumnGroupChild[] {
+    public createColumnTree(colDefs: AbstractColDef[]): IProvidedColumn[] {
         const invalidColIds: AbstractColDef[] = [];
 
-        const createDummyColGroup = (abstractColDef: AbstractColDef, depth: number): OriginalColumnGroupChild => {
+        const createDummyColGroup = (abstractColDef: AbstractColDef, depth: number): IProvidedColumn => {
             if (this.isColGroupDef(abstractColDef)) {
 
                 // creating 'dummy' group which is not associated with grid column group
                 const groupDef = abstractColDef as ColGroupDef;
                 const groupId = (typeof groupDef.groupId !== 'undefined') ? groupDef.groupId : groupDef.headerName;
                 const group = new OriginalColumnGroup(groupDef, groupId!, false, depth);
-                const children: OriginalColumnGroupChild[] = [];
+                const children: IProvidedColumn[] = [];
                 groupDef.children.forEach(def => {
                     const child = createDummyColGroup(def, depth + 1);
                     // check column exists in case invalid colDef is supplied for primary column
@@ -41,7 +41,7 @@ export class ToolPanelColDefService extends BeanStub {
             } else {
                 const colDef = abstractColDef as ColDef;
                 const key = colDef.colId ? colDef.colId : colDef.field;
-                const column = this.columnModel.getPrimaryColumn(key!) as OriginalColumnGroupChild;
+                const column = this.columnModel.getPrimaryColumn(key!) as IProvidedColumn;
 
                 if (!column) {
                     invalidColIds.push(colDef);
@@ -51,7 +51,7 @@ export class ToolPanelColDefService extends BeanStub {
             }
         };
 
-        const mappedResults: OriginalColumnGroupChild[] = [];
+        const mappedResults: IProvidedColumn[] = [];
         colDefs.forEach(colDef => {
             const result = createDummyColGroup(colDef, 0);
             if (result) {

@@ -9,7 +9,7 @@ import {
     Component,
     Events,
     OriginalColumnGroup,
-    OriginalColumnGroupChild,
+    IProvidedColumn,
     ToolPanelColumnCompParams,
     VirtualList,
     VirtualListModel,
@@ -212,7 +212,7 @@ export class PrimaryColsListPanel extends Component {
         this.groupsExist = this.columnModel.isPrimaryColumnGroupsPresent();
     }
 
-    private buildListModel(columnTree: OriginalColumnGroupChild[]): void {
+    private buildListModel(columnTree: IProvidedColumn[]): void {
         const columnExpandedListener = this.onColumnExpanded.bind(this);
         const addListeners = (item: ColumnModelItem) => {
             item.addEventListener(ColumnModelItem.EVENT_EXPANDED_CHANGED, columnExpandedListener);
@@ -220,7 +220,7 @@ export class PrimaryColsListPanel extends Component {
             this.destroyColumnItemFuncs.push(removeFunc);
         };
 
-        const recursivelyBuild = (tree: OriginalColumnGroupChild[], dept: number, parentList: ColumnModelItem[]): void => {
+        const recursivelyBuild = (tree: IProvidedColumn[], dept: number, parentList: ColumnModelItem[]): void => {
             tree.forEach(child => {
                 if (child instanceof OriginalColumnGroup) {
                     createGroupItem(child, dept, parentList);

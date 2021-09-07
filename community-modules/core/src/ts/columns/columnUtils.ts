@@ -1,6 +1,6 @@
 import { IHeaderColumn } from "../entities/iHeaderColumn";
 import { ColumnGroup } from "../entities/columnGroup";
-import { OriginalColumnGroupChild } from "../entities/originalColumnGroupChild";
+import { IProvidedColumn } from "../entities/iProvidedColumn";
 import { OriginalColumnGroup } from "../entities/originalColumnGroup";
 import { Column } from "../entities/column";
 import { Bean } from "../context/context";
@@ -32,11 +32,11 @@ export class ColumnUtils extends BeanStub {
         return Math.max(Math.min(width, maxColWidth), minColWidth);
     }
 
-    public getOriginalPathForColumn(column: Column, originalBalancedTree: OriginalColumnGroupChild[]): OriginalColumnGroup[] | null {
+    public getOriginalPathForColumn(column: Column, originalBalancedTree: IProvidedColumn[]): OriginalColumnGroup[] | null {
         const result: OriginalColumnGroup[] = [];
         let found = false;
 
-        const recursePath = (balancedColumnTree: OriginalColumnGroupChild[], dept: number): void => {
+        const recursePath = (balancedColumnTree: IProvidedColumn[], dept: number): void => {
             for (let i = 0; i < balancedColumnTree.length; i++) {
                 if (found) { return; }
                     // quit the search, so 'result' is kept with the found result
@@ -59,10 +59,10 @@ export class ColumnUtils extends BeanStub {
         return found ? result : null;
     }
 
-    public depthFirstOriginalTreeSearch(parent: OriginalColumnGroup | null, tree: OriginalColumnGroupChild[], callback: (treeNode: OriginalColumnGroupChild, parent: OriginalColumnGroup | null) => void): void {
+    public depthFirstOriginalTreeSearch(parent: OriginalColumnGroup | null, tree: IProvidedColumn[], callback: (treeNode: IProvidedColumn, parent: OriginalColumnGroup | null) => void): void {
         if (!tree) { return; }
 
-        tree.forEach((child: OriginalColumnGroupChild) => {
+        tree.forEach((child: IProvidedColumn) => {
             if (child instanceof OriginalColumnGroup) {
                 this.depthFirstOriginalTreeSearch(child, child.getChildren(), callback);
             }

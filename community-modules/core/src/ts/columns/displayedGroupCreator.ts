@@ -1,5 +1,5 @@
 import { Column } from "../entities/column";
-import { OriginalColumnGroupChild } from "../entities/originalColumnGroupChild";
+import { IProvidedColumn } from "../entities/iProvidedColumn";
 import { GroupInstanceIdCreator } from "./groupInstanceIdCreator";
 import { IHeaderColumn } from "../entities/iHeaderColumn";
 import { ColumnGroup } from "../entities/columnGroup";
@@ -17,7 +17,7 @@ export class DisplayedGroupCreator extends BeanStub {
         // all displayed columns sorted - this is the columns the grid should show
         sortedVisibleColumns: Column[],
         // the tree of columns, as provided by the users, used to know what groups columns roll up into
-        balancedColumnTree: OriginalColumnGroupChild[],
+        balancedColumnTree: IProvidedColumn[],
         // creates unique id's for the group
         groupInstanceIdCreator: GroupInstanceIdCreator,
         // whether it's left, right or center col
@@ -143,11 +143,11 @@ export class DisplayedGroupCreator extends BeanStub {
         });
     }
 
-    private getOriginalPathForColumn(balancedColumnTree: OriginalColumnGroupChild[], column: Column): OriginalColumnGroup[] | null {
+    private getOriginalPathForColumn(balancedColumnTree: IProvidedColumn[], column: Column): OriginalColumnGroup[] | null {
         const result: OriginalColumnGroup[] = [];
         let found = false;
 
-        const recursePath = (columnTree: OriginalColumnGroupChild[], dept: number): void => {
+        const recursePath = (columnTree: IProvidedColumn[], dept: number): void => {
             for (let i = 0; i < columnTree.length; i++) {
                 // quit the search, so 'result' is kept with the found result
                 if (found) { return; }

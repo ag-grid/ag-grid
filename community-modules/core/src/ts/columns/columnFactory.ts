@@ -2,7 +2,7 @@ import { Logger, LoggerFactory } from '../logger';
 import { ColumnUtils } from './columnUtils';
 import { AbstractColDef, ColDef, ColGroupDef } from "../entities/colDef";
 import { ColumnKeyCreator } from "./columnKeyCreator";
-import { OriginalColumnGroupChild } from "../entities/originalColumnGroupChild";
+import { IProvidedColumn } from "../entities/iProvidedColumn";
 import { OriginalColumnGroup } from "../entities/originalColumnGroup";
 import { Column } from "../entities/column";
 import { Autowired, Bean, Qualifier } from "../context/context";
@@ -25,8 +25,8 @@ export class ColumnFactory extends BeanStub {
         this.logger = loggerFactory.create('ColumnFactory');
     }
 
-    public createColumnTree(defs: (ColDef | ColGroupDef)[] | null, primaryColumns: boolean, existingTree?: OriginalColumnGroupChild[])
-        : { columnTree: OriginalColumnGroupChild[], treeDept: number; } {
+    public createColumnTree(defs: (ColDef | ColGroupDef)[] | null, primaryColumns: boolean, existingTree?: IProvidedColumn[])
+        : { columnTree: IProvidedColumn[], treeDept: number; } {
 
         // column key creator dishes out unique column id's in a deterministic way,
         // so if we have two grids (that could be master/slave) with same column definitions,
@@ -43,7 +43,7 @@ export class ColumnFactory extends BeanStub {
         this.logger.log('Number of levels for grouped columns is ' + treeDept);
         const columnTree = this.balanceColumnTree(unbalancedTree, 0, treeDept, columnKeyCreator);
 
-        const deptFirstCallback = (child: OriginalColumnGroupChild, parent: OriginalColumnGroup) => {
+        const deptFirstCallback = (child: IProvidedColumn, parent: OriginalColumnGroup) => {
             if (child instanceof OriginalColumnGroup) {
                 child.setupExpandable();
             }
@@ -60,7 +60,7 @@ export class ColumnFactory extends BeanStub {
         };
     }
 
-    private extractExistingTreeData(existingTree?: OriginalColumnGroupChild[]):
+    private extractExistingTreeData(existingTree?: IProvidedColumn[]):
         {
             existingCols: Column[],
             existingGroups: OriginalColumnGroup[],
@@ -72,7 +72,7 @@ export class ColumnFactory extends BeanStub {
         const existingColKeys: string[] = [];
 
         if (existingTree) {
-            this.columnUtils.depthFirstOriginalTreeSearch(null, existingTree, (item: OriginalColumnGroupChild) => {
+            this.columnUtils.depthFirstOriginalTreeSearch(null, existingTree, (item: IProvidedColumn) => {
                 if (item instanceof OriginalColumnGroup) {
                     const group = item;
                     existingGroups.push(group);
@@ -87,8 +87,8 @@ export class ColumnFactory extends BeanStub {
         return {existingCols, existingGroups, existingColKeys};
     }
 
-    public createForAutoGroups(autoGroupCols: Column[], gridBalancedTree: OriginalColumnGroupChild[]): OriginalColumnGroupChild[] {
-        const autoColBalancedTree: OriginalColumnGroupChild[] = [];
+    public createForAutoGroups(autoGroupCols: Column[], gridBalancedTree: IProvidedColumn[]): IProvidedColumn[] {
+        const autoColBalancedTree: IProvidedColumn[] = [];
 
         autoGroupCols.forEach(col => {
             const fakeTreeItem = this.createAutoGroupTreeItem(gridBalancedTree, col);
@@ -98,11 +98,11 @@ export class ColumnFactory extends BeanStub {
         return autoColBalancedTree;
     }
 
-    private createAutoGroupTreeItem(balancedColumnTree: OriginalColumnGroupChild[], column: Column): OriginalColumnGroupChild {
+    private createAutoGroupTreeItem(balancedColumnTree: IProvidedColumn[], column: Column): IProvidedColumn {
         const dept = this.findDepth(balancedColumnTree);
 
         // at the end, this will be the top of the tree item.
-        let nextChild: OriginalColumnGroupChild = column;
+        let nextChild: IProvidedColumn = column;
 
         for (let i = dept - 1; i >= 0; i--) {
             const autoGroup = new OriginalColumnGroup(
@@ -121,7 +121,7 @@ export class ColumnFactory extends BeanStub {
         return nextChild;
     }
 
-    private findDepth(balancedColumnTree: OriginalColumnGroupChild[]): number {
+    private findDepth(balancedColumnTree: IProvidedColumn[]): number {
         let dept = 0;
         let pointer = balancedColumnTree;
 
@@ -133,13 +133,13 @@ export class ColumnFactory extends BeanStub {
     }
 
     private balanceColumnTree(
-        unbalancedTree: OriginalColumnGroupChild[],
+        unbalancedTree: IProvidedColumn[],
         currentDept: number,
         columnDept: number,
         columnKeyCreator: ColumnKeyCreator
-    ): OriginalColumnGroupChild[] {
+    ): IProvidedColumn[] {
 
-        const result: OriginalColumnGroupChild[] = [];
+        const result: IProvidedColumn[] = [];
 
         // go through each child, for groups, recurse a level deeper,
         // for columns we need to pad
@@ -197,7 +197,7 @@ export class ColumnFactory extends BeanStub {
         return result;
     }
 
-    private findMaxDept(treeChildren: OriginalColumnGroupChild[], dept: number): number {
+    private findMaxDept(treeChildren: IProvidedColumn[], dept: number): number {
         let maxDeptThisLevel = dept;
 
         for (let i = 0; i < treeChildren.length; i++) {
@@ -221,13 +221,13 @@ export class ColumnFactory extends BeanStub {
         existingColsCopy: Column[],
         columnKeyCreator: ColumnKeyCreator,
         existingGroups: OriginalColumnGroup[]
-    ): OriginalColumnGroupChild[] {
-        const result: OriginalColumnGroupChild[] = [];
+    ): IProvidedColumn[] {
+        const result: IProvidedColumn[] = [];
 
         if (!defs) { return result; }
 
         defs.forEach((def: ColDef | ColGroupDef) => {
-            let newGroupOrColumn: OriginalColumnGroupChild;
+            let newGroupOrColumn: IProvidedColumn;
 
             if (this.isColumnGroup(def)) {
                 newGroupOrColumn = this.createColumnGroup(primaryColumns, def as ColGroupDef, level, existingColsCopy,

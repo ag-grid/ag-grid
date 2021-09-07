@@ -4486,7 +4486,7 @@
       }
     }
   },
-  "OriginalColumnGroupChild": {
+  "IProvidedColumn": {
     "isVisible": {
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },

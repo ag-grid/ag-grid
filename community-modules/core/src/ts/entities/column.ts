@@ -1,5 +1,5 @@
 import { IHeaderColumn } from "./iHeaderColumn";
-import { OriginalColumnGroupChild } from "./originalColumnGroupChild";
+import { IProvidedColumn } from "./iProvidedColumn";
 import {
     AbstractColDef,
     BaseColDefParams,
@@ -35,7 +35,7 @@ let instanceIdSequence = 0;
 // appear as a child of either the original tree or the displayed tree. However the relevant group classes
 // for each type only implements one, as each group can only appear in it's associated tree (eg OriginalColumnGroup
 // can only appear in OriginalColumn tree).
-export class Column implements IHeaderColumn, OriginalColumnGroupChild, IEventEmitter {
+export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
 
     // + renderedHeaderCell - for making header cell transparent when moving
     public static EVENT_MOVING_CHANGED = 'movingChanged';

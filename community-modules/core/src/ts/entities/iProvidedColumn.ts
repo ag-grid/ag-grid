@@ -2,7 +2,7 @@
 // See the note at the top of Column class.
 import { OriginalColumnGroup } from "./originalColumnGroup";
 
-export interface OriginalColumnGroupChild {
+export interface IProvidedColumn {
     isVisible(): boolean;
     getColumnGroupShow(): string | undefined;
     getId(): string;
