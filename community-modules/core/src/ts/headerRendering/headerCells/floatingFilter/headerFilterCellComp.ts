@@ -4,7 +4,7 @@ import { Column } from '../../../entities/column';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import { IFloatingFilterComp, IFloatingFilterParams } from '../../../filter/floating/floatingFilter';
 import { RefSelector } from '../../../widgets/componentAnnotations';
-import { HoverFeature } from '../../common/hoverFeature';
+import { HoverFeature } from '../hoverFeature';
 import { Events, FilterChangedEvent } from '../../../events';
 import { ColumnHoverService } from '../../../rendering/columnHoverService';
 import { AgPromise } from '../../../utils';

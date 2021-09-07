@@ -131,7 +131,7 @@ export { RowContainerName, IRowContainerComp, RowContainerCtrl } from "./gridBod
 // headerRendering
 export { BodyDropPivotTarget } from "./headerRendering/columnDrag/bodyDropPivotTarget";
 export { BodyDropTarget } from "./headerRendering/columnDrag/bodyDropTarget";
-export { CssClassApplier } from "./headerRendering/common/cssClassApplier";
+export { CssClassApplier } from "./headerRendering/headerCells/cssClassApplier";
 export { HeaderRowContainerComp as HeaderContainer } from "./headerRendering/headerRowContainer/headerRowContainerComp";
 export { GridHeaderComp } from "./headerRendering/gridHeaderComp";
 export { HeaderRowComp } from "./headerRendering/headerRow/headerRowComp";
