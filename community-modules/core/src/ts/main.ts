@@ -437,7 +437,9 @@ export {
     MarkerFormat,
     SparklineMarker,
     SparklineLine,
-    Padding
+    Padding,
+    TooltipRendererResult,
+    TooltipRendererParams
 } from "./interfaces/iSparklineCellRendererParams";
 
 // modules

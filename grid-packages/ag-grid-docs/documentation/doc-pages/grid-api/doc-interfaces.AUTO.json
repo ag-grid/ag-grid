@@ -7631,8 +7631,11 @@
     "color": { "type": { "returnType": "string" } }
   },
   "TooltipRendererResult": {
-    "content": { "type": { "returnType": "string" } },
-    "title?": { "type": { "returnType": "string" } }
+    "content?": { "type": { "returnType": "string" } },
+    "title?": { "type": { "returnType": "string" } },
+    "color?": { "type": { "returnType": "string" } },
+    "backgroundColor?": { "type": { "returnType": "string" } },
+    "opacity?": { "type": { "returnType": "number" } }
   },
   "TooltipOptions": {
     "enabled": { "type": { "returnType": "boolean" } },
@@ -7647,7 +7650,9 @@
   "TooltipRendererParams": {
     "datum": { "type": { "returnType": "any" } },
     "title?": { "type": { "returnType": "string" } },
-    "color": { "type": { "returnType": "string" } }
+    "backgroundColor?": { "type": { "returnType": "string" } },
+    "xValue": { "type": { "returnType": "any" } },
+    "yValue": { "type": { "returnType": "any" } }
   },
   "CartesianTooltipRendererParams": {
     "xKey": { "type": { "returnType": "string" } },
@@ -7658,7 +7663,7 @@
     "yName": { "type": { "returnType": "string" } },
     "datum": { "type": { "returnType": "any" } },
     "title?": { "type": { "returnType": "string" } },
-    "color": { "type": { "returnType": "string" } }
+    "backgroundColor?": { "type": { "returnType": "string" } }
   },
   "BarSeriesOptions": {
     "shadow": { "type": { "returnType": "DropShadowOptions" } },
@@ -7710,7 +7715,7 @@
     "yName": { "type": { "returnType": "string" } },
     "datum": { "type": { "returnType": "any" } },
     "title?": { "type": { "returnType": "string" } },
-    "color": { "type": { "returnType": "string" } }
+    "backgroundColor?": { "type": { "returnType": "string" } }
   },
   "LineSeriesOptions": {
     "marker": { "type": { "returnType": "MarkerOptions" } },
@@ -7755,7 +7760,7 @@
     "yName": { "type": { "returnType": "string" } },
     "datum": { "type": { "returnType": "any" } },
     "title?": { "type": { "returnType": "string" } },
-    "color": { "type": { "returnType": "string" } }
+    "backgroundColor?": { "type": { "returnType": "string" } }
   },
   "ScatterSeriesLabelOptions": {
     "enabled": { "type": { "returnType": "boolean" } },
@@ -7798,7 +7803,7 @@
     "yName": { "type": { "returnType": "string" } },
     "datum": { "type": { "returnType": "any" } },
     "title?": { "type": { "returnType": "string" } },
-    "color": { "type": { "returnType": "string" } }
+    "backgroundColor?": { "type": { "returnType": "string" } }
   },
   "AreaSeriesLabelOptions": {
     "formatter?": {
@@ -7837,7 +7842,7 @@
     "yName": { "type": { "returnType": "string" } },
     "datum": { "type": { "returnType": "any" } },
     "title?": { "type": { "returnType": "string" } },
-    "color": { "type": { "returnType": "string" } }
+    "backgroundColor?": { "type": { "returnType": "string" } }
   },
   "PieTitleOptions": {
     "showInLegend?": { "type": { "returnType": "boolean" } },
@@ -7887,7 +7892,9 @@
     "labelName?": { "type": { "returnType": "string" } },
     "datum": { "type": { "returnType": "any" } },
     "title?": { "type": { "returnType": "string" } },
-    "color": { "type": { "returnType": "string" } }
+    "backgroundColor?": { "type": { "returnType": "string" } },
+    "xValue": { "type": { "returnType": "any" } },
+    "yValue": { "type": { "returnType": "any" } }
   },
   "GetChartImageDataUrlParams": {
     "chartId": { "type": { "returnType": "string" } },
@@ -10198,7 +10205,8 @@
     "title?": { "type": { "returnType": "string" } },
     "padding?": { "type": { "returnType": "Padding" } },
     "axis?": { "type": { "returnType": "SparklineAxisOptions" } },
-    "highlightStyle?": { "type": { "returnType": "HighlightStyle" } }
+    "highlightStyle?": { "type": { "returnType": "HighlightStyle" } },
+    "tooltip?": { "type": { "returnType": "SparklineTooltip" } }
   },
   "LineSparklineOptions": {
     "type?": { "type": { "returnType": "'line'" } },
@@ -10211,7 +10219,8 @@
     "title?": { "type": { "returnType": "string" } },
     "padding?": { "type": { "returnType": "Padding" } },
     "axis?": { "type": { "returnType": "SparklineAxisOptions" } },
-    "highlightStyle?": { "type": { "returnType": "HighlightStyle" } }
+    "highlightStyle?": { "type": { "returnType": "HighlightStyle" } },
+    "tooltip?": { "type": { "returnType": "SparklineTooltip" } }
   },
   "AreaSparklineOptions": {
     "type?": { "type": { "returnType": "'area'" } },
@@ -10225,7 +10234,8 @@
     "title?": { "type": { "returnType": "string" } },
     "padding?": { "type": { "returnType": "Padding" } },
     "axis?": { "type": { "returnType": "SparklineAxisOptions" } },
-    "highlightStyle?": { "type": { "returnType": "HighlightStyle" } }
+    "highlightStyle?": { "type": { "returnType": "HighlightStyle" } },
+    "tooltip?": { "type": { "returnType": "SparklineTooltip" } }
   },
   "ColumnSparklineOptions": {
     "type?": { "type": { "returnType": "'column'" } },
@@ -10242,7 +10252,8 @@
     "title?": { "type": { "returnType": "string" } },
     "padding?": { "type": { "returnType": "Padding" } },
     "axis?": { "type": { "returnType": "SparklineAxisOptions" } },
-    "highlightStyle?": { "type": { "returnType": "HighlightStyle" } }
+    "highlightStyle?": { "type": { "returnType": "HighlightStyle" } },
+    "tooltip?": { "type": { "returnType": "SparklineTooltip" } }
   },
   "Padding": {
     "top?": { "type": { "returnType": "number" } },
@@ -10254,6 +10265,12 @@
     "stroke?": { "type": { "returnType": "string" } },
     "strokeWidth?": { "type": { "returnType": "number" } }
   },
+  "SparklineTooltip": {
+    "enabled?": { "type": { "returnType": "boolean" } },
+    "container?": { "type": { "returnType": "HTMLElement" } },
+    "renderer?": { "type": { "returnType": "SparklineTooltipRenderer" } }
+  },
+  "SparklineTooltipRenderer": {},
   "SparklineLine": {
     "stroke?": { "type": { "returnType": "string" } },
     "strokeWidth?": { "type": { "returnType": "number" } }

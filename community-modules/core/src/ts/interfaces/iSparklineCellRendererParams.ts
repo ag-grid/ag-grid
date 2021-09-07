@@ -13,6 +13,7 @@ export interface BaseSparklineOptions {
     padding?: Padding;
     axis?: SparklineAxisOptions;
     highlightStyle?: HighlightStyle;
+    tooltip?: SparklineTooltip;
 }
 export interface LineSparklineOptions extends BaseSparklineOptions {
     type?: 'line';
@@ -43,6 +44,26 @@ export interface Padding {
 export interface SparklineAxisOptions {
     stroke?: string;
     strokeWidth?: number;
+}
+export interface SparklineTooltip {
+    enabled?: boolean;
+    container?: HTMLElement;
+    renderer?: SparklineTooltipRenderer;
+}
+export type SparklineTooltipRenderer = (params: TooltipRendererParams) => TooltipRendererResult;
+export interface TooltipRendererResult {
+    content?: string;
+    title?: string;
+    color?: string;
+    backgroundColor?: string;
+    opacity?: number;
+}
+export interface TooltipRendererParams {
+    readonly datum: any;
+    readonly title?: string;
+    readonly backgroundColor?: string;
+    readonly xValue: any;
+    readonly yValue: any;
 }
 export interface SparklineLine {
     stroke?: string;
