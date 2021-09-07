@@ -10027,6 +10027,7 @@
     "meta": { "typeParams": ["TParams"] }
   },
   "TooltipRendererParams": {
+    "context": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "title": { "type": { "returnType": "string", "optional": true } },
     "backgroundColor": { "type": { "returnType": "string", "optional": true } },
@@ -10040,6 +10041,7 @@
     "yKey": { "type": { "returnType": "string", "optional": false } },
     "yValue": { "type": { "returnType": "any", "optional": false } },
     "yName": { "type": { "returnType": "string", "optional": false } },
+    "context": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "title": { "type": { "returnType": "string", "optional": true } },
     "backgroundColor": { "type": { "returnType": "string", "optional": true } }
@@ -10121,6 +10123,7 @@
     "yKey": { "type": { "returnType": "string", "optional": false } },
     "yValue": { "type": { "returnType": "any", "optional": false } },
     "yName": { "type": { "returnType": "string", "optional": false } },
+    "context": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "title": { "type": { "returnType": "string", "optional": true } },
     "backgroundColor": { "type": { "returnType": "string", "optional": true } }
@@ -10179,6 +10182,7 @@
     "yKey": { "type": { "returnType": "string", "optional": false } },
     "yValue": { "type": { "returnType": "any", "optional": false } },
     "yName": { "type": { "returnType": "string", "optional": false } },
+    "context": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "title": { "type": { "returnType": "string", "optional": true } },
     "backgroundColor": { "type": { "returnType": "string", "optional": true } }
@@ -10236,6 +10240,7 @@
     "yKey": { "type": { "returnType": "string", "optional": false } },
     "yValue": { "type": { "returnType": "any", "optional": false } },
     "yName": { "type": { "returnType": "string", "optional": false } },
+    "context": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "title": { "type": { "returnType": "string", "optional": true } },
     "backgroundColor": { "type": { "returnType": "string", "optional": true } }
@@ -10290,6 +10295,7 @@
     "yKey": { "type": { "returnType": "string", "optional": false } },
     "yValue": { "type": { "returnType": "any", "optional": false } },
     "yName": { "type": { "returnType": "string", "optional": false } },
+    "context": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "title": { "type": { "returnType": "string", "optional": true } },
     "backgroundColor": { "type": { "returnType": "string", "optional": true } }
@@ -10356,6 +10362,7 @@
     "angleName": { "type": { "returnType": "string", "optional": true } },
     "labelKey": { "type": { "returnType": "string", "optional": true } },
     "labelName": { "type": { "returnType": "string", "optional": true } },
+    "context": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "title": { "type": { "returnType": "string", "optional": true } },
     "backgroundColor": { "type": { "returnType": "string", "optional": true } },

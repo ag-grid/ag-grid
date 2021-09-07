@@ -34,7 +34,7 @@ var gridOptions = {
         minWidth: 100,
         resizable: true,
     },
-    rowData: stockData,
+    rowData: getStockData(),
 };
 
 function formatter(params) {

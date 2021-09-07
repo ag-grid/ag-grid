@@ -28,6 +28,7 @@ var gridOptions = {
         minWidth: 100,
         resizable: true,
     },
+    rowData: getQuotes(),
     // rowHeight: 75,
     // rowBuffer: 20,
 };
@@ -36,6 +37,4 @@ var gridOptions = {
 document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
-
-    gridOptions.api.setRowData(quotes);
 });

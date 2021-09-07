@@ -5860,6 +5860,7 @@
   "TooltipRendererParams": {
     "meta": {},
     "type": {
+      "context?": "any",
       "datum": "any",
       "title?": "string",
       "backgroundColor?": "string",
@@ -5876,6 +5877,7 @@
       "yKey": "string",
       "yValue": "any",
       "yName": "string",
+      "context?": "any",
       "datum": "any",
       "title?": "string",
       "backgroundColor?": "string"
@@ -5931,6 +5933,7 @@
       "yKey": "string",
       "yValue": "any",
       "yName": "string",
+      "context?": "any",
       "datum": "any",
       "title?": "string",
       "backgroundColor?": "string"
@@ -5981,6 +5984,7 @@
       "yKey": "string",
       "yValue": "any",
       "yName": "string",
+      "context?": "any",
       "datum": "any",
       "title?": "string",
       "backgroundColor?": "string"
@@ -6034,6 +6038,7 @@
       "yKey": "string",
       "yValue": "any",
       "yName": "string",
+      "context?": "any",
       "datum": "any",
       "title?": "string",
       "backgroundColor?": "string"
@@ -6075,6 +6080,7 @@
       "yKey": "string",
       "yValue": "any",
       "yName": "string",
+      "context?": "any",
       "datum": "any",
       "title?": "string",
       "backgroundColor?": "string"
@@ -6138,6 +6144,7 @@
       "angleName?": "string",
       "labelKey?": "string",
       "labelName?": "string",
+      "context?": "any",
       "datum": "any",
       "title?": "string",
       "backgroundColor?": "string",
