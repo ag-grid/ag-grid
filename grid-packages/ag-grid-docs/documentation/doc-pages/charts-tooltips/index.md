@@ -6,7 +6,7 @@ There are four ways of enabling the tooltips in AG Charts by using:
 
 - [default tooltips](#default-tooltip)
 - [custom styled tooltips](#styling-the-default-tooltip) via CSS classes
-- [custom title / content](#modifying-content-title) via a renderer function
+- [custom title / content](#modifying-content--title) via a renderer function
 - [completely custom template and markup](#using-custom-tooltips) via a renderer function
 
 ## Default Tooltip
