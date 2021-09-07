@@ -13,6 +13,7 @@ import {
     SparklineLine,
     Padding
 } from "@ag-grid-community/core";
+import { SparklineTooltip } from "./sparklineTooltip";
 
 export type AgSparklineType<T> =
     T extends LineSparklineOptions ? LineSparkline :
@@ -39,9 +40,6 @@ export abstract class AgSparkline {
         initSparkline(sparkline, options);
 
         initSparklineByType(sparkline, options);
-
-        //TODO: don't want to test this feature yet
-        sparkline.tooltip.enabled = false;
 
         return sparkline;
     }
@@ -120,6 +118,10 @@ function initSparkline(sparkline: Sparkline, options: any) {
     if (options.highlightStyle) {
         initHighlightStyleOptions(sparkline.highlightStyle, options.highlightStyle);
     }
+
+    if(options.tooltip) {
+        initTooltipOptions(sparkline.tooltip, options.tooltip);
+    }
 }
 
 function initLineSparkline(sparkline: LineSparkline, options: any) {
@@ -197,4 +199,10 @@ function initHighlightStyleOptions(target: HighlightStyle, options: any) {
     setValueIfPropertyExists(target, 'size', options.size, options);
     setValueIfPropertyExists(target, 'stroke', options.stroke, options);
     setValueIfPropertyExists(target, 'strokeWidth', options.strokeWidth, options);
+}
+
+function initTooltipOptions(target: SparklineTooltip, options: any) {
+    setValueIfPropertyExists(target, 'enabled', options.enabled, options);
+    setValueIfPropertyExists(target, 'container', options.container, options);
+    setValueIfPropertyExists(target, 'renderer', options.renderer, options);
 }

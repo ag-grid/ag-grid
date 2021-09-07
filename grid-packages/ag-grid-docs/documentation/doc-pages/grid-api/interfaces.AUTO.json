@@ -5842,7 +5842,13 @@
   },
   "TooltipRendererResult": {
     "meta": {},
-    "type": { "content": "string", "title?": "string" }
+    "type": {
+      "content?": "string",
+      "title?": "string",
+      "color?": "string",
+      "backgroundColor?": "string",
+      "opacity?": "number"
+    }
   },
   "TooltipOptions": {
     "meta": { "typeParams": ["TParams"] },
@@ -5853,7 +5859,13 @@
   },
   "TooltipRendererParams": {
     "meta": {},
-    "type": { "datum": "any", "title?": "string", "color": "string" }
+    "type": {
+      "datum": "any",
+      "title?": "string",
+      "backgroundColor?": "string",
+      "xValue": "any",
+      "yValue": "any"
+    }
   },
   "CartesianTooltipRendererParams": {
     "meta": {},
@@ -5866,7 +5878,7 @@
       "yName": "string",
       "datum": "any",
       "title?": "string",
-      "color": "string"
+      "backgroundColor?": "string"
     }
   },
   "BarSeriesOptions": {
@@ -5921,7 +5933,7 @@
       "yName": "string",
       "datum": "any",
       "title?": "string",
-      "color": "string"
+      "backgroundColor?": "string"
     }
   },
   "LineSeriesOptions": {
@@ -5971,7 +5983,7 @@
       "yName": "string",
       "datum": "any",
       "title?": "string",
-      "color": "string"
+      "backgroundColor?": "string"
     }
   },
   "ScatterSeriesLabelOptions": {
@@ -6024,7 +6036,7 @@
       "yName": "string",
       "datum": "any",
       "title?": "string",
-      "color": "string"
+      "backgroundColor?": "string"
     }
   },
   "AreaSeriesLabelOptions": {
@@ -6065,7 +6077,7 @@
       "yName": "string",
       "datum": "any",
       "title?": "string",
-      "color": "string"
+      "backgroundColor?": "string"
     }
   },
   "PieTitleOptions": {
@@ -6128,7 +6140,9 @@
       "labelName?": "string",
       "datum": "any",
       "title?": "string",
-      "color": "string"
+      "backgroundColor?": "string",
+      "xValue": "any",
+      "yValue": "any"
     }
   },
   "GetChartImageDataUrlParams": {
@@ -7416,7 +7430,8 @@
       "title?": "string",
       "padding?": "Padding",
       "axis?": "SparklineAxisOptions",
-      "highlightStyle?": "HighlightStyle"
+      "highlightStyle?": "HighlightStyle",
+      "tooltip?": "SparklineTooltip"
     }
   },
   "LineSparklineOptions": {
@@ -7432,7 +7447,8 @@
       "title?": "string",
       "padding?": "Padding",
       "axis?": "SparklineAxisOptions",
-      "highlightStyle?": "HighlightStyle"
+      "highlightStyle?": "HighlightStyle",
+      "tooltip?": "SparklineTooltip"
     }
   },
   "AreaSparklineOptions": {
@@ -7449,7 +7465,8 @@
       "title?": "string",
       "padding?": "Padding",
       "axis?": "SparklineAxisOptions",
-      "highlightStyle?": "HighlightStyle"
+      "highlightStyle?": "HighlightStyle",
+      "tooltip?": "SparklineTooltip"
     }
   },
   "ColumnSparklineOptions": {
@@ -7469,7 +7486,8 @@
       "title?": "string",
       "padding?": "Padding",
       "axis?": "SparklineAxisOptions",
-      "highlightStyle?": "HighlightStyle"
+      "highlightStyle?": "HighlightStyle",
+      "tooltip?": "SparklineTooltip"
     }
   },
   "Padding": {
@@ -7485,6 +7503,15 @@
     "meta": {},
     "type": { "stroke?": "string", "strokeWidth?": "number" }
   },
+  "SparklineTooltip": {
+    "meta": {},
+    "type": {
+      "enabled?": "boolean",
+      "container?": "HTMLElement",
+      "renderer?": "SparklineTooltipRenderer"
+    }
+  },
+  "SparklineTooltipRenderer": { "meta": {}, "type": {} },
   "SparklineLine": {
     "meta": {},
     "type": { "stroke?": "string", "strokeWidth?": "number" }

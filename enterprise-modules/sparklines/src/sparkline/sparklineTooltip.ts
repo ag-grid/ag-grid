@@ -1,26 +1,11 @@
 import { Color } from "../util/color";
 import { Observable } from "../util/observable";
 import { Sparkline } from "./sparkline";
+import { TooltipRendererResult, TooltipRendererParams } from "@ag-grid-community/core";
 
 export interface TooltipMeta {
     pageX: number;
     pageY: number;
-}
-
-export interface TooltipRendererResult {
-    content?: string;
-    title?: string;
-    color?: string;
-    backgroundColor?: string;
-    opacity?: number;
-}
-
-export interface TooltipRendererParams {
-    readonly datum: any;
-    readonly title?: string;
-    readonly backgroundColor?: string;
-    readonly xValue: any;
-    readonly yValue: any;
 }
 
 export function toTooltipHtml(input: string | TooltipRendererResult, defaults?: TooltipRendererResult) : string {
@@ -63,8 +48,8 @@ export class SparklineTooltip extends Observable {
 
     class: string = Sparkline.defaultTooltipClass;
     enabled: boolean = true;
-    container?: HTMLElement;
-    renderer?: (params: TooltipRendererParams) => string | TooltipRendererResult;
+    container?: HTMLElement = undefined;
+    renderer?: (params: TooltipRendererParams) => string | TooltipRendererResult = undefined;
 
     constructor(chart: Sparkline) {
         super();
