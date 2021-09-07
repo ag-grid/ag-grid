@@ -1,7 +1,7 @@
-import { BeanStub } from "../../context/beanStub";
-import { ColumnGroupChild } from "../../entities/columnGroupChild";
-import { IHeaderCellComp } from "../headerCell/headerCellCtrl";
-import { HeaderRowCtrl } from "../headerRow/headerRowCtrl";
+import { BeanStub } from "../../../context/beanStub";
+import { ColumnGroupChild } from "../../../entities/columnGroupChild";
+import { IHeaderCellComp } from "../columnCell/headerCellCtrl";
+import { HeaderRowCtrl } from "../../headerRow/headerRowCtrl";
 
 let instanceIdSequence = 0;
 

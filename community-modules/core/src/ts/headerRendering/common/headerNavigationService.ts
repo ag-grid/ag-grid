@@ -8,7 +8,7 @@ import { GridBodyCtrl } from "../../gridBodyComp/gridBodyCtrl";
 import { AnimationFrameService } from "../../misc/animationFrameService";
 import { last } from "../../utils/array";
 import { HeaderRowType } from "../headerRow/headerRowComp";
-import { HeaderPosition, HeaderPositionUtils } from "./headerPosition";
+import { HeaderPosition, HeaderPositionUtils } from "../headerCells/common/headerPosition";
 
 export enum HeaderNavigationDirection {
     UP,

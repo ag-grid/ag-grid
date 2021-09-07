@@ -1,19 +1,19 @@
 import { PostConstruct, PreDestroy } from '../../context/context';
 import { Column } from '../../entities/column';
-import { HeaderFilterCellComp } from '../../filter/floating/headerFilterCellComp';
 import { setAriaRowIndex } from '../../utils/aria';
 import { setDomChildOrder } from '../../utils/dom';
 import { getAllValuesInObject, iterateObject } from '../../utils/object';
 import { Component } from '../../widgets/component';
-import { HeaderGroupCellComp } from '../headerGroupCell/headerGroupCellComp';
-import { AbstractHeaderCellComp } from '../abstractHeaderCell/abstractHeaderCellComp';
-import { HeaderCellComp } from '../headerCell/headerCellComp';
-import { HeaderCellCtrl } from '../headerCell/headerCellCtrl';
+import { HeaderGroupCellComp } from '../headerCells/groupCell/headerGroupCellComp';
+import { AbstractHeaderCellComp } from '../headerCells/abstractCell/abstractHeaderCellComp';
+import { HeaderCellComp } from '../headerCells/columnCell/headerCellComp';
+import { HeaderCellCtrl } from '../headerCells/columnCell/headerCellCtrl';
 import { HeaderRowCtrl, IHeaderRowComp } from './headerRowCtrl';
 import { find } from '../../utils/generic';
-import { AbstractHeaderCellCtrl } from '../abstractHeaderCell/abstractHeaderCellCtrl';
-import { HeaderGroupCellCtrl } from '../headerGroupCell/headerGroupCellCtrl';
-import { HeaderFilterCellCtrl } from '../../filter/floating/headerFilterCellCtrl';
+import { AbstractHeaderCellCtrl } from '../headerCells/abstractCell/abstractHeaderCellCtrl';
+import { HeaderGroupCellCtrl } from '../headerCells/groupCell/headerGroupCellCtrl';
+import { HeaderFilterCellComp } from '../headerCells/floatingFilterCell/headerFilterCellComp';
+import { HeaderFilterCellCtrl } from '../headerCells/floatingFilterCell/headerFilterCellCtrl';
 
 export enum HeaderRowType {
     COLUMN_GROUP = 'group',

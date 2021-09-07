@@ -4,7 +4,7 @@ import { ICellRendererComp, ICellRendererFunc, ICellRendererParams } from "../re
 import { Column } from "./column";
 import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columns/columnApi";
-import { IHeaderGroupComp } from "../headerRendering/headerGroupCell/headerGroupComp";
+import { IHeaderGroupComp } from "../headerRendering/headerCells/groupCell/headerGroupComp";
 import { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent } from "../events";
 import { ITooltipComp, ITooltipParams } from "../rendering/tooltipComponent";
 import { IRowDragItem } from "../rendering/row/rowDragComp";

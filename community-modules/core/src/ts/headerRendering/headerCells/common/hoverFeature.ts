@@ -1,8 +1,8 @@
-import { Column } from "../../entities/column";
-import { BeanStub } from "../../context/beanStub";
-import { Autowired, PostConstruct } from "../../context/context";
-import { ColumnHoverService } from "../../rendering/columnHoverService";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { Column } from "../../../entities/column";
+import { BeanStub } from "../../../context/beanStub";
+import { Autowired, PostConstruct } from "../../../context/context";
+import { ColumnHoverService } from "../../../rendering/columnHoverService";
+import { GridOptionsWrapper } from "../../../gridOptionsWrapper";
 
 export class HoverFeature extends BeanStub {
 

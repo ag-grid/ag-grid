@@ -1,6 +1,6 @@
-import { ColumnGroupChild } from "../../entities/columnGroupChild";
-import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "../abstractHeaderCell/abstractHeaderCellCtrl";
-import { HeaderRowCtrl } from "../headerRow/headerRowCtrl";
+import { ColumnGroupChild } from "../../../entities/columnGroupChild";
+import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellCtrl";
+import { HeaderRowCtrl } from "../../headerRow/headerRowCtrl";
 
 export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     focus(): void;

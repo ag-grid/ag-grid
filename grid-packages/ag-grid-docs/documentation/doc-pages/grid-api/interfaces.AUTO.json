@@ -3627,7 +3627,6 @@
     "meta": {},
     "type": { "model": "ProvidedFilterModel", "apply": "boolean" }
   },
-  "IHeaderFilterCellComp": { "meta": {}, "type": { "focus()": "void" } },
   "DateFilterModel": {
     "meta": {},
     "type": {
@@ -4222,7 +4221,6 @@
     "type": { "currentValue": "any", "previousValue": "any", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
-  "IAbstractHeaderCellComp": { "meta": {}, "type": { "focus()": "void" } },
   "DropListener": {
     "meta": {},
     "type": {
@@ -4233,6 +4231,20 @@
       "onDragStop(params: DraggingEvent)": "void"
     }
   },
+  "HeaderNavigationDirection": {
+    "meta": { "isEnum": true },
+    "type": ["UP", "DOWN", "LEFT", "RIGHT"]
+  },
+  "HorizontalResizeParams": {
+    "meta": {},
+    "type": {
+      "eResizeBar": "HTMLElement",
+      "dragStartPixels?": "number",
+      "onResizeStart": "(shiftKey: boolean) => void",
+      "onResizing": "(delta: number) => void",
+      "onResizeEnd": "(delta: number) => void"
+    }
+  },
   "IGridHeaderComp": {
     "meta": {},
     "type": {
@@ -4240,6 +4252,7 @@
       "setHeightAndMinHeight(height: string)": "void"
     }
   },
+  "IAbstractHeaderCellComp": { "meta": {}, "type": { "focus()": "void" } },
   "IHeaderCellComp": { "meta": {}, "type": { "focus()": "void" } },
   "IHeaderParams": {
     "meta": {},
@@ -4293,9 +4306,9 @@
       "init?(params: IHeaderParams)": "/** The init(params) method is called on the component once. See below for details on the parameters. */"
     }
   },
-  "HeaderNavigationDirection": {
-    "meta": { "isEnum": true },
-    "type": ["UP", "DOWN", "LEFT", "RIGHT"]
+  "SelectionCount": {
+    "meta": {},
+    "type": { "selected": "number", "notSelected": "number" }
   },
   "HeaderPosition": {
     "meta": {},
@@ -4305,10 +4318,7 @@
       "column": "/** The grid column or column group */"
     }
   },
-  "SelectionCount": {
-    "meta": {},
-    "type": { "selected": "number", "notSelected": "number" }
-  },
+  "IHeaderFilterCellComp": { "meta": {}, "type": { "focus()": "void" } },
   "IHeaderGroupCellComp": { "meta": {}, "type": { "focus()": "void" } },
   "IHeaderGroupParams": {
     "meta": {},
@@ -4368,16 +4378,6 @@
       "setContainerWidth(width: string)": "void",
       "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
       "setCtrls(ctrls: HeaderRowCtrl[])": "void"
-    }
-  },
-  "HorizontalResizeParams": {
-    "meta": {},
-    "type": {
-      "eResizeBar": "HTMLElement",
-      "dragStartPixels?": "number",
-      "onResizeStart": "(shiftKey: boolean) => void",
-      "onResizing": "(delta: number) => void",
-      "onResizeEnd": "(delta: number) => void"
     }
   },
   "ILogger": { "meta": {}, "type": { "log(message: string)": "void" } },

@@ -1,31 +1,31 @@
-import { ColumnApi } from "../../columns/columnApi";
-import { ColumnModel, ColumnResizeSet } from "../../columns/columnModel";
-import { UserComponentFactory } from "../../components/framework/userComponentFactory";
-import { Constants } from "../../constants/constants";
-import { KeyCode } from '../../constants/keyCode';
-import { Autowired, PostConstruct } from "../../context/context";
+import { ColumnApi } from "../../../columns/columnApi";
+import { ColumnModel, ColumnResizeSet } from "../../../columns/columnModel";
+import { UserComponentFactory } from "../../../components/framework/userComponentFactory";
+import { Constants } from "../../../constants/constants";
+import { KeyCode } from '../../../constants/keyCode';
+import { Autowired, PostConstruct } from "../../../context/context";
 import {
     DragAndDropService,
     DragItem,
     DragSource,
     DragSourceType
-} from "../../dragAndDrop/dragAndDropService";
-import { ColGroupDef } from "../../entities/colDef";
-import { Column } from "../../entities/column";
-import { ColumnGroup } from "../../entities/columnGroup";
-import { OriginalColumnGroup } from "../../entities/originalColumnGroup";
-import { GridApi } from "../../gridApi";
-import { Beans } from "../../rendering/beans";
-import { SetLeftFeature } from "../../rendering/features/setLeftFeature";
-import { ITooltipParams } from "../../rendering/tooltipComponent";
-import { setAriaExpanded } from "../../utils/aria";
-import { removeFromArray } from "../../utils/array";
-import { addCssClass, addOrRemoveCssClass, removeCssClass, removeFromParent } from "../../utils/dom";
-import { ManagedFocusFeature } from "../../widgets/managedFocusFeature";
-import { AbstractHeaderCellComp } from "../abstractHeaderCell/abstractHeaderCellComp";
+} from "../../../dragAndDrop/dragAndDropService";
+import { ColGroupDef } from "../../../entities/colDef";
+import { Column } from "../../../entities/column";
+import { ColumnGroup } from "../../../entities/columnGroup";
+import { OriginalColumnGroup } from "../../../entities/originalColumnGroup";
+import { GridApi } from "../../../gridApi";
+import { Beans } from "../../../rendering/beans";
+import { SetLeftFeature } from "../../../rendering/features/setLeftFeature";
+import { ITooltipParams } from "../../../rendering/tooltipComponent";
+import { setAriaExpanded } from "../../../utils/aria";
+import { removeFromArray } from "../../../utils/array";
+import { addCssClass, addOrRemoveCssClass, removeCssClass, removeFromParent } from "../../../utils/dom";
+import { ManagedFocusFeature } from "../../../widgets/managedFocusFeature";
+import { AbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellComp";
 import { CssClassApplier } from "../common/cssClassApplier";
-import { IHeaderCellComp } from "../headerCell/headerCellCtrl";
-import { HorizontalResizeService } from "../common/horizontalResizeService";
+import { IHeaderCellComp } from "../columnCell/headerCellCtrl";
+import { HorizontalResizeService } from "../../common/horizontalResizeService";
 import { HoverFeature } from "../common/hoverFeature";
 import { HeaderGroupCellCtrl } from "./headerGroupCellCtrl";
 import { IHeaderGroupComp, IHeaderGroupParams } from "./headerGroupComp";

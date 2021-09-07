@@ -1,10 +1,10 @@
-import { ColumnModel } from "../../columns/columnModel";
-import { BeanStub } from "../../context/beanStub";
-import { Autowired, Bean } from "../../context/context";
-import { CtrlsService } from "../../ctrlsService";
-import { Column } from "../../entities/column";
-import { ColumnGroup } from "../../entities/columnGroup";
-import { HeaderRowType } from "../headerRow/headerRowComp";
+import { ColumnModel } from "../../../columns/columnModel";
+import { BeanStub } from "../../../context/beanStub";
+import { Autowired, Bean } from "../../../context/context";
+import { CtrlsService } from "../../../ctrlsService";
+import { Column } from "../../../entities/column";
+import { ColumnGroup } from "../../../entities/columnGroup";
+import { HeaderRowType } from "../../headerRow/headerRowComp";
 
 export interface HeaderPosition {
 /** A number from 0 to n, where n is the last header row the grid is rendering */

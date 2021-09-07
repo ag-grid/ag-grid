@@ -93,7 +93,7 @@ import { SideBarDef } from "./sideBar";
 import { ChartMenuOptions, ChartOptions, ChartType } from "../interfaces/iChartOptions";
 import { AgChartOptions, AgChartTheme, AgChartThemeOverrides } from "../interfaces/iAgChartOptions";
 import { ServerSideTransaction } from "../interfaces/serverSideTransaction";
-import { HeaderPosition } from "../headerRendering/common/headerPosition";
+import { HeaderPosition } from "../headerRendering/headerCells/common/headerPosition";
 import { ExcelExportParams, ExcelStyle } from "../interfaces/iExcelCreator";
 
 export interface GridOptions {

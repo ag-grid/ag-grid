@@ -4992,9 +4992,6 @@
     "model": { "type": { "returnType": "ProvidedFilterModel" } },
     "apply": { "type": { "returnType": "boolean" } }
   },
-  "IHeaderFilterCellComp": {
-    "focus": { "type": { "arguments": {}, "returnType": "void" } }
-  },
   "DateFilterModel": {
     "dateFrom": { "type": { "returnType": "string | null" } },
     "dateTo": { "type": { "returnType": "string | null" } },
@@ -5810,9 +5807,6 @@
       "type": { "returnType": "string" }
     }
   },
-  "IAbstractHeaderCellComp": {
-    "focus": { "type": { "arguments": {}, "returnType": "void" } }
-  },
   "DropListener": {
     "getIconName": {
       "type": { "arguments": {}, "returnType": "string | null" }
@@ -5842,6 +5836,20 @@
       }
     }
   },
+  "HeaderNavigationDirection": {},
+  "HorizontalResizeParams": {
+    "eResizeBar": { "type": { "returnType": "HTMLElement" } },
+    "dragStartPixels?": { "type": { "returnType": "number" } },
+    "onResizeStart": {
+      "type": { "arguments": { "shiftKey": "boolean" }, "returnType": "void" }
+    },
+    "onResizing": {
+      "type": { "arguments": { "delta": "number" }, "returnType": "void" }
+    },
+    "onResizeEnd": {
+      "type": { "arguments": { "delta": "number" }, "returnType": "void" }
+    }
+  },
   "IGridHeaderComp": {
     "addOrRemoveCssClass": {
       "type": {
@@ -5852,6 +5860,9 @@
     "setHeightAndMinHeight": {
       "type": { "arguments": { "height": "string" }, "returnType": "void" }
     }
+  },
+  "IAbstractHeaderCellComp": {
+    "focus": { "type": { "arguments": {}, "returnType": "void" } }
   },
   "IHeaderCellComp": {
     "focus": { "type": { "arguments": {}, "returnType": "void" } }
@@ -5940,7 +5951,10 @@
       }
     }
   },
-  "HeaderNavigationDirection": {},
+  "SelectionCount": {
+    "selected": { "type": { "returnType": "number" } },
+    "notSelected": { "type": { "returnType": "number" } }
+  },
   "HeaderPosition": {
     "headerRowIndex": {
       "description": "/** A number from 0 to n, where n is the last header row the grid is rendering */",
@@ -5951,9 +5965,8 @@
       "type": { "returnType": "Column | ColumnGroup" }
     }
   },
-  "SelectionCount": {
-    "selected": { "type": { "returnType": "number" } },
-    "notSelected": { "type": { "returnType": "number" } }
+  "IHeaderFilterCellComp": {
+    "focus": { "type": { "arguments": {}, "returnType": "void" } }
   },
   "IHeaderGroupCellComp": {
     "focus": { "type": { "arguments": {}, "returnType": "void" } }
@@ -6047,19 +6060,6 @@
         "arguments": { "ctrls": "HeaderRowCtrl[]" },
         "returnType": "void"
       }
-    }
-  },
-  "HorizontalResizeParams": {
-    "eResizeBar": { "type": { "returnType": "HTMLElement" } },
-    "dragStartPixels?": { "type": { "returnType": "number" } },
-    "onResizeStart": {
-      "type": { "arguments": { "shiftKey": "boolean" }, "returnType": "void" }
-    },
-    "onResizing": {
-      "type": { "arguments": { "delta": "number" }, "returnType": "void" }
-    },
-    "onResizeEnd": {
-      "type": { "arguments": { "delta": "number" }, "returnType": "void" }
     }
   },
   "ILogger": {

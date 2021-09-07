@@ -8,8 +8,8 @@ import { CellPosition } from "./entities/cellPosition";
 import { RowNode } from "./entities/rowNode";
 import { GridApi } from "./gridApi";
 import { HeaderRowComp } from "./headerRendering/headerRow/headerRowComp";
-import { AbstractHeaderCellComp } from "./headerRendering/abstractHeaderCell/abstractHeaderCellComp";
-import { HeaderPosition } from "./headerRendering/common/headerPosition";
+import { AbstractHeaderCellComp } from "./headerRendering/headerCells/abstractCell/abstractHeaderCellComp";
+import { HeaderPosition } from "./headerRendering/headerCells/common/headerPosition";
 import { RowPositionUtils } from "./entities/rowPosition";
 import { IRangeService } from "./interfaces/IRangeService";
 import { RowRenderer } from "./rendering/rowRenderer";
@@ -24,7 +24,7 @@ import { GridCtrl } from "./gridComp/gridCtrl";
 import { NavigationService } from "./gridBodyComp/navigationService";
 import { CellCtrl } from "./rendering/cell/cellCtrl";
 import { CtrlsService } from "./ctrlsService";
-import { HeaderCellCtrl } from "./headerRendering/headerCell/headerCellCtrl";
+import { HeaderCellCtrl } from "./headerRendering/headerCells/columnCell/headerCellCtrl";
 
 @Bean('focusService')
 export class FocusService extends BeanStub {

@@ -114,7 +114,7 @@ export { DateFilter, IDateFilterParams, DateFilterModel } from "./filter/provide
 
 export { IFloatingFilter, IFloatingFilterParams, IFloatingFilterComp, BaseFloatingFilterChange } from "./filter/floating/floatingFilter";
 export { TextFloatingFilter } from './filter/provided/text/textFloatingFilter';
-export { HeaderFilterCellComp as FloatingFilterWrapper } from './filter/floating/headerFilterCellComp';
+export { HeaderFilterCellComp } from './headerRendering/headerCells/floatingFilterCell/headerFilterCellComp';
 export { FloatingFilterMapper } from './filter/floating/floatingFilterMapper';
 
 // gridPanel
@@ -131,13 +131,13 @@ export { RowContainerName, IRowContainerComp, RowContainerCtrl } from "./gridBod
 // headerRendering
 export { BodyDropPivotTarget } from "./headerRendering/columnDrag/bodyDropPivotTarget";
 export { BodyDropTarget } from "./headerRendering/columnDrag/bodyDropTarget";
-export { CssClassApplier } from "./headerRendering/common/cssClassApplier";
-export { HeaderRowContainerComp as HeaderContainer } from "./headerRendering/headerRowContainer/headerRowContainerComp";
+export { CssClassApplier } from "./headerRendering/headerCells/common/cssClassApplier";
+export { HeaderRowContainerComp } from "./headerRendering/headerRowContainer/headerRowContainerComp";
 export { GridHeaderComp } from "./headerRendering/gridHeaderComp";
 export { HeaderRowComp } from "./headerRendering/headerRow/headerRowComp";
 export { HorizontalResizeService } from "./headerRendering/common/horizontalResizeService";
 export { MoveColumnFeature } from "./headerRendering/columnDrag/moveColumnFeature";
-export { StandardMenuFactory } from "./headerRendering/headerCell/standardMenu";
+export { StandardMenuFactory } from "./headerRendering/headerCells/columnCell/standardMenu";
 
 // layout
 export { TabbedLayout, TabbedItem } from "./layout/tabbedLayout";
@@ -296,7 +296,7 @@ export { IClipboardService } from "./interfaces/iClipboardService";
 export { IMenuFactory } from "./interfaces/iMenuFactory";
 export { CellPosition, CellPositionUtils } from "./entities/cellPosition";
 export { RowPosition, RowPositionUtils } from "./entities/rowPosition";
-export { HeaderPosition, HeaderPositionUtils } from "./headerRendering/common/headerPosition";
+export { HeaderPosition, HeaderPositionUtils } from "./headerRendering/headerCells/common/headerPosition";
 export { HeaderNavigationService, HeaderNavigationDirection } from "./headerRendering/common/headerNavigationService";
 export {
     IAggFunc,
@@ -404,8 +404,8 @@ export { IDateParams, IDate, IDateComp } from "./rendering/dateComponent";
 export { IAfterGuiAttachedParams, ContainerType } from "./interfaces/iAfterGuiAttachedParams";
 export { IComponent } from "./interfaces/iComponent";
 export { IEventEmitter } from "./interfaces/iEventEmitter";
-export { IHeaderParams, IHeader } from "./headerRendering/headerCell/headerComp";
-export { IHeaderGroupParams, IHeaderGroup, IHeaderGroupComp } from "./headerRendering/headerGroupCell/headerGroupComp";
+export { IHeaderParams, IHeader } from "./headerRendering/headerCells/columnCell/headerComp";
+export { IHeaderGroupParams, IHeaderGroup, IHeaderGroupComp } from "./headerRendering/headerCells/groupCell/headerGroupComp";
 export { ColumnApi } from "./columns/columnApi";
 export { IRichCellEditorParams } from "./interfaces/iRichCellEditorParams";
 export { WrappableInterface, BaseComponentWrapper, FrameworkComponentWrapper } from "./components/framework/frameworkComponentWrapper";
