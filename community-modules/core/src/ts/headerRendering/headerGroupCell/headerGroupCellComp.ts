@@ -23,10 +23,10 @@ import { removeFromArray } from "../../utils/array";
 import { addCssClass, addOrRemoveCssClass, removeCssClass, removeFromParent } from "../../utils/dom";
 import { ManagedFocusFeature } from "../../widgets/managedFocusFeature";
 import { AbstractHeaderCellComp } from "../abstractHeaderCell/abstractHeaderCellComp";
-import { CssClassApplier } from "../cssClassApplier";
+import { CssClassApplier } from "../common/cssClassApplier";
 import { IHeaderCellComp } from "../headerCell/headerCellCtrl";
-import { HorizontalResizeService } from "../horizontalResizeService";
-import { HoverFeature } from "../hoverFeature";
+import { HorizontalResizeService } from "../common/horizontalResizeService";
+import { HoverFeature } from "../common/hoverFeature";
 import { HeaderGroupCellCtrl } from "./headerGroupCellCtrl";
 import { IHeaderGroupComp, IHeaderGroupParams } from "./headerGroupComp";
 

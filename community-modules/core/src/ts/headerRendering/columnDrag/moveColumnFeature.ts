@@ -1,20 +1,19 @@
-import { Autowired, PostConstruct } from "../context/context";
-import { Constants } from "../constants/constants";
-import { ColumnModel } from "../columns/columnModel";
-import { Column } from "../entities/column";
-import { DragAndDropService, DraggingEvent, DragSourceType, HorizontalDirection } from "../dragAndDrop/dragAndDropService";
+import { Autowired, PostConstruct } from "../../context/context";
+import { Constants } from "../../constants/constants";
+import { ColumnModel } from "../../columns/columnModel";
+import { Column } from "../../entities/column";
+import { DragAndDropService, DraggingEvent, DragSourceType, HorizontalDirection } from "../../dragAndDrop/dragAndDropService";
 import { DropListener } from "./bodyDropTarget";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { Logger, LoggerFactory } from "../logger";
-import { ColumnEventType } from "../events";
-import { missing, exists } from "../utils/generic";
-import { sortNumerically, last, includes } from "../utils/array";
-import { CtrlsService } from "../ctrlsService";
-import { GridBodyCtrl } from "../gridBodyComp/gridBodyCtrl";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { Logger, LoggerFactory } from "../../logger";
+import { ColumnEventType } from "../../events";
+import { missing, exists } from "../../utils/generic";
+import { sortNumerically, last, includes } from "../../utils/array";
+import { CtrlsService } from "../../ctrlsService";
+import { GridBodyCtrl } from "../../gridBodyComp/gridBodyCtrl";
 
 export class MoveColumnFeature implements DropListener {
 
-    @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -27,7 +26,6 @@ export class MoveColumnFeature implements DropListener {
     private movingIntervalId: number | null;
     private intervalCount: number;
 
-    private logger: Logger;
     private pinned: string | null;
     private centerContainer: boolean;
 
@@ -48,7 +46,6 @@ export class MoveColumnFeature implements DropListener {
 
     @PostConstruct
     public init(): void {
-        this.logger = this.loggerFactory.create('MoveColumnController');
         this.ctrlsService.whenReady(() => {
             this.gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         });
