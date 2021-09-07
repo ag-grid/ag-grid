@@ -24,7 +24,7 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
         super(SparklineCellRenderer.TEMPLATE);
     }
 
-    public init(params: any): void {
+    public init(params: ISparklineCellRendererParams): void {
         let firstTimeIn = true;
         const updateSparkline = () => {
             const { clientWidth, clientHeight } = this.getGui();
