@@ -4233,6 +4233,28 @@
       "onDragStop(params: DraggingEvent)": "void"
     }
   },
+  "HeaderNavigationDirection": {
+    "meta": { "isEnum": true },
+    "type": ["UP", "DOWN", "LEFT", "RIGHT"]
+  },
+  "HeaderPosition": {
+    "meta": {},
+    "type": { "headerRowIndex": "number", "column": "Column | ColumnGroup" },
+    "docs": {
+      "headerRowIndex": "/** A number from 0 to n, where n is the last header row the grid is rendering */",
+      "column": "/** The grid column or column group */"
+    }
+  },
+  "HorizontalResizeParams": {
+    "meta": {},
+    "type": {
+      "eResizeBar": "HTMLElement",
+      "dragStartPixels?": "number",
+      "onResizeStart": "(shiftKey: boolean) => void",
+      "onResizing": "(delta: number) => void",
+      "onResizeEnd": "(delta: number) => void"
+    }
+  },
   "IGridHeaderComp": {
     "meta": {},
     "type": {
@@ -4291,18 +4313,6 @@
       "destroy?()": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
       "init?(params: IHeaderParams)": "/** The init(params) method is called on the component once. See below for details on the parameters. */"
-    }
-  },
-  "HeaderNavigationDirection": {
-    "meta": { "isEnum": true },
-    "type": ["UP", "DOWN", "LEFT", "RIGHT"]
-  },
-  "HeaderPosition": {
-    "meta": {},
-    "type": { "headerRowIndex": "number", "column": "Column | ColumnGroup" },
-    "docs": {
-      "headerRowIndex": "/** A number from 0 to n, where n is the last header row the grid is rendering */",
-      "column": "/** The grid column or column group */"
     }
   },
   "SelectionCount": {
@@ -4368,16 +4378,6 @@
       "setContainerWidth(width: string)": "void",
       "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
       "setCtrls(ctrls: HeaderRowCtrl[])": "void"
-    }
-  },
-  "HorizontalResizeParams": {
-    "meta": {},
-    "type": {
-      "eResizeBar": "HTMLElement",
-      "dragStartPixels?": "number",
-      "onResizeStart": "(shiftKey: boolean) => void",
-      "onResizing": "(delta: number) => void",
-      "onResizeEnd": "(delta: number) => void"
     }
   },
   "ILogger": { "meta": {}, "type": { "log(message: string)": "void" } },
