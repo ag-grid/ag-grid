@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import styles from './ApiDocumentation.module.scss';
 import { ApiProps, Config, DocEntryMap, FunctionCode, ICallSignature, IEvent, ObjectCode, PropertyCall, PropertyType, SectionProps, InterfaceEntry } from './ApiDocumentation.types';
 import Code from './Code';
-import { extractInterfaces, writeAllInterfaces, removeJsDocStars, sortAndFilterProperties } from './documentation-helpers';
+import { extractInterfaces, writeAllInterfaces, removeJsDocStars, sortAndFilterProperties, applyUndefinedUnionType } from './documentation-helpers';
 import { useJsonFileNodes } from './use-json-file-nodes';
 
 
@@ -34,11 +34,14 @@ export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework
 
     const typeProps = Object.entries(li.type);
     sortAndFilterProperties(typeProps, framework).forEach(([k, v]) => {
-        if (namesArr.length === 0 || namesArr.includes(k)) {
+        // interfaces include the ? as part of the name. We want to remove this for the <interface-documentation> component
+        // Instead the type will be unioned with undefined as part of the propertyType
+        const keyNoQuestion = k.replace('?', '');
 
+        if (namesArr.length === 0 || namesArr.includes(keyNoQuestion)) {
             const docs = (li.docs && removeJsDocStars(li.docs[k])) || '';
             if (!docs.includes('@deprecated')) {
-                props[k] = { description: docs || v, }
+                props[keyNoQuestion] = { description: docs || v, }
             }
         }
     })
@@ -602,7 +605,7 @@ function getPropertyType(type: string | PropertyType, config: Config) {
                     // If an event show the event type instead of Function
                     propertyType = Object.values(type.arguments)[0];
                 } else {
-                    propertyType = 'Function';
+                    propertyType = `Function${type.optional ? ' | undefined' : ''}`;
                 }
             }
             else if (type.returnType) {
@@ -612,10 +615,10 @@ function getPropertyType(type: string | PropertyType, config: Config) {
                 else if (typeof (type.returnType) == 'string') {
                     const inter = config.lookups.interfaces[type.returnType];
                     if (inter && inter.meta && inter.meta.isCallSignature) {
-                        propertyType = 'Function';
+                        propertyType = `Function${type.optional ? ' | undefined' : ''}`;
                     }
                     else {
-                        propertyType = type.returnType;
+                        propertyType = type.optional ? applyUndefinedUnionType(type.returnType) : type.returnType;;
                     }
                 }
             }

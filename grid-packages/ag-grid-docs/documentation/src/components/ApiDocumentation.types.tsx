@@ -30,6 +30,8 @@ export interface PropertyType {
         [key in string]: string;
     };
     returnType?: string;
+    /** True if property is defined with ? i.e pinned?: boolean Currently only applied to doc-interfaces.AUTO */
+    optional?: boolean;
 }
 interface ChildDocEntry {
     meta?: never;

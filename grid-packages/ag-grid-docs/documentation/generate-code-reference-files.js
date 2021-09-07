@@ -42,16 +42,11 @@ function toCamelCase(value) {
 function extractTypesFromNode(node, srcFile, includeQuestionMark) {
     let nodeMembers = {};
     const kind = ts.SyntaxKind[node.kind];
-    const appendQuestionMark = (name, n) => {
-        let propName = name;
-        if (includeQuestionMark && n && n.questionToken) {
-            propName = `${propName}?`;
-        }
-        return propName;
-    }
 
-    let name = appendQuestionMark(node && node.name && node.name.escapedText, node);
+
+    let name = node && node.name && node.name.escapedText;
     let returnType = node && node.type && node.type.getFullText().trim();
+    let optional = includeQuestionMark ? node && !!node.questionToken : undefined;
 
     if (kind == 'PropertySignature') {
 
@@ -61,11 +56,11 @@ function extractTypesFromNode(node, srcFile, includeQuestionMark) {
             returnType = formatNode(node.type.type, srcFile);
             nodeMembers[name] = {
                 description: getJsDoc(node),
-                type: { arguments: methodArgs, returnType }
+                type: { arguments: methodArgs, returnType, optional }
             };
         } else {
             // i.e colWidth?: number;             
-            nodeMembers[name] = { description: getJsDoc(node), type: { returnType } };
+            nodeMembers[name] = { description: getJsDoc(node), type: { returnType, optional } };
         }
     } else if (kind == 'MethodSignature') {
         // i.e isExternalFilterPresent?(): boolean;
@@ -74,7 +69,7 @@ function extractTypesFromNode(node, srcFile, includeQuestionMark) {
 
         nodeMembers[name] = {
             description: getJsDoc(node),
-            type: { arguments: methodArgs, returnType }
+            type: { arguments: methodArgs, returnType, optional }
         };
 
         if (EVENT_LOOKUP.has(name)) {

@@ -148,6 +148,25 @@ export function addDocLines(docs, lines) {
     });
 }
 
+/**
+ * Ensure that we correctly apply the undefined as a separate union type for complex type
+ *  e.g isExternalFilterPresent: (() => boolean) | undefined = undefined;
+ *  Without the brackets this changes the return type!
+ */
+export function applyUndefinedUnionType(typeName) {
+    const trimmed = typeName.trim();
+    if (trimmed === 'any') {
+        // Don't union type with any
+        return trimmed;
+    }
+    if (trimmed.includes('=>')) {
+        return `(${trimmed}) | undefined`;
+    }
+    else {
+        return `${trimmed} | undefined`;
+    }
+}
+
 export function removeJsDocStars(docString) {
     if (!docString || docString.length === 0) {
         return;
