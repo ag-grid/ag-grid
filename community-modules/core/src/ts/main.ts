@@ -95,7 +95,7 @@ export { IRowDragItem } from "./rendering/row/rowDragComp";
 // entities
 export { Column } from "./entities/column";
 export { ColumnGroup } from "./entities/columnGroup";
-export { OriginalColumnGroup } from "./entities/originalColumnGroup";
+export { ProvidedColumnGroup } from "./entities/providedColumnGroup";
 export { RowNode, RowHighlightPosition } from "./entities/rowNode";
 export { SideBarDef, ToolPanelDef } from "./entities/sideBar";
 

@@ -10,7 +10,7 @@ import { IRowDragItem } from "../rendering/row/rowDragComp";
 import { IFilterDef } from '../interfaces/iFilter';
 import { ColumnGroup } from "./columnGroup";
 import { RowClassParams } from "./gridOptions";
-import { OriginalColumnGroup } from "./originalColumnGroup";
+import { ProvidedColumnGroup } from "./providedColumnGroup";
 import { IHeaderGroupComp } from "../headerRendering/headerCells/columnGroup/headerGroupComp";
 
 /***********************************************************************
@@ -91,7 +91,7 @@ export interface HeaderClassParams {
     api: GridApi
     colDef: AbstractColDef,
     column?: Column | null,
-    columnGroup?: ColumnGroup | OriginalColumnGroup | null,
+    columnGroup?: ColumnGroup | ProvidedColumnGroup | null,
     context?: any,
 }
 export type HeaderClass = string | string[] | ((params: HeaderClassParams) => string | string[]);
@@ -527,9 +527,9 @@ export interface HeaderValueGetterParams {
     /** Column for this callback if applicable*/
     column?: Column | null,
     /** ColumnGroup for this callback if applicable */
-    columnGroup?: ColumnGroup | OriginalColumnGroup | null,
+    columnGroup?: ColumnGroup | ProvidedColumnGroup | null,
     /** Original column group if applicable */
-    originalColumnGroup: OriginalColumnGroup | null,
+    originalColumnGroup: ProvidedColumnGroup | null,
     /** Where the column is going to appear */
     location: string | null,
     api: GridApi

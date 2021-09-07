@@ -3,7 +3,7 @@ import { ColumnUtils } from './columnUtils';
 import { AbstractColDef, ColDef, ColGroupDef } from "../entities/colDef";
 import { ColumnKeyCreator } from "./columnKeyCreator";
 import { IProvidedColumn } from "../entities/iProvidedColumn";
-import { OriginalColumnGroup } from "../entities/originalColumnGroup";
+import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
 import { Column } from "../entities/column";
 import { Autowired, Bean, Qualifier } from "../context/context";
 import { DefaultColumnTypes } from "../entities/defaultColumnTypes";
@@ -43,8 +43,8 @@ export class ColumnFactory extends BeanStub {
         this.logger.log('Number of levels for grouped columns is ' + treeDept);
         const columnTree = this.balanceColumnTree(unbalancedTree, 0, treeDept, columnKeyCreator);
 
-        const deptFirstCallback = (child: IProvidedColumn, parent: OriginalColumnGroup) => {
-            if (child instanceof OriginalColumnGroup) {
+        const deptFirstCallback = (child: IProvidedColumn, parent: ProvidedColumnGroup) => {
+            if (child instanceof ProvidedColumnGroup) {
                 child.setupExpandable();
             }
             // we set the original parents at the end, rather than when we go along, as balancing the tree
@@ -63,17 +63,17 @@ export class ColumnFactory extends BeanStub {
     private extractExistingTreeData(existingTree?: IProvidedColumn[]):
         {
             existingCols: Column[],
-            existingGroups: OriginalColumnGroup[],
+            existingGroups: ProvidedColumnGroup[],
             existingColKeys: string[]
         }  {
 
         const existingCols: Column[] = [];
-        const existingGroups: OriginalColumnGroup[] = [];
+        const existingGroups: ProvidedColumnGroup[] = [];
         const existingColKeys: string[] = [];
 
         if (existingTree) {
             this.columnUtils.depthFirstOriginalTreeSearch(null, existingTree, (item: IProvidedColumn) => {
-                if (item instanceof OriginalColumnGroup) {
+                if (item instanceof ProvidedColumnGroup) {
                     const group = item;
                     existingGroups.push(group);
                 } else {
@@ -105,7 +105,7 @@ export class ColumnFactory extends BeanStub {
         let nextChild: IProvidedColumn = column;
 
         for (let i = dept - 1; i >= 0; i--) {
-            const autoGroup = new OriginalColumnGroup(
+            const autoGroup = new ProvidedColumnGroup(
                 null,
                 `FAKE_PATH_${column.getId()}}_${i}`,
                 true,
@@ -125,9 +125,9 @@ export class ColumnFactory extends BeanStub {
         let dept = 0;
         let pointer = balancedColumnTree;
 
-        while (pointer && pointer[0] && pointer[0] instanceof OriginalColumnGroup) {
+        while (pointer && pointer[0] && pointer[0] instanceof ProvidedColumnGroup) {
             dept++;
-            pointer = (pointer[0] as OriginalColumnGroup).getChildren();
+            pointer = (pointer[0] as ProvidedColumnGroup).getChildren();
         }
         return dept;
     }
@@ -145,7 +145,7 @@ export class ColumnFactory extends BeanStub {
         // for columns we need to pad
         for (let i = 0; i < unbalancedTree.length; i++) {
             const child = unbalancedTree[i];
-            if (child instanceof OriginalColumnGroup) {
+            if (child instanceof ProvidedColumnGroup) {
                 // child is a group, all we do is go to the next level of recursion
                 const originalGroup = child;
                 const newChildren = this.balanceColumnTree(originalGroup.getChildren(),
@@ -154,15 +154,15 @@ export class ColumnFactory extends BeanStub {
                 result.push(originalGroup);
             } else {
                 // child is a column - so here we add in the padded column groups if needed
-                let firstPaddedGroup: OriginalColumnGroup | undefined;
-                let currentPaddedGroup: OriginalColumnGroup | undefined;
+                let firstPaddedGroup: ProvidedColumnGroup | undefined;
+                let currentPaddedGroup: ProvidedColumnGroup | undefined;
 
                 // this for loop will NOT run any loops if no padded column groups are needed
                 for (let j = columnDept - 1; j >= currentDept; j--) {
                     const newColId = columnKeyCreator.getUniqueKey(null, null);
                     const colGroupDefMerged = this.createMergedColGroupDef(null);
 
-                    const paddedGroup = new OriginalColumnGroup(colGroupDefMerged, newColId, true, currentDept);
+                    const paddedGroup = new ProvidedColumnGroup(colGroupDefMerged, newColId, true, currentDept);
                     this.context.createBean(paddedGroup);
 
                     if (currentPaddedGroup) {
@@ -179,7 +179,7 @@ export class ColumnFactory extends BeanStub {
                 // likewise this if statement will not run if no padded groups
                 if (firstPaddedGroup && currentPaddedGroup) {
                     result.push(firstPaddedGroup);
-                    const hasGroups = unbalancedTree.some(leaf => leaf instanceof OriginalColumnGroup);
+                    const hasGroups = unbalancedTree.some(leaf => leaf instanceof ProvidedColumnGroup);
 
                     if (hasGroups) {
                         currentPaddedGroup.setChildren([child]);
@@ -202,7 +202,7 @@ export class ColumnFactory extends BeanStub {
 
         for (let i = 0; i < treeChildren.length; i++) {
             const abstractColumn = treeChildren[i];
-            if (abstractColumn instanceof OriginalColumnGroup) {
+            if (abstractColumn instanceof ProvidedColumnGroup) {
                 const originalGroup = abstractColumn;
                 const newDept = this.findMaxDept(originalGroup.getChildren(), dept + 1);
                 if (maxDeptThisLevel < newDept) {
@@ -220,7 +220,7 @@ export class ColumnFactory extends BeanStub {
         primaryColumns: boolean,
         existingColsCopy: Column[],
         columnKeyCreator: ColumnKeyCreator,
-        existingGroups: OriginalColumnGroup[]
+        existingGroups: ProvidedColumnGroup[]
     ): IProvidedColumn[] {
         const result: IProvidedColumn[] = [];
 
@@ -248,11 +248,11 @@ export class ColumnFactory extends BeanStub {
         level: number,
         existingColumns: Column[],
         columnKeyCreator: ColumnKeyCreator,
-        existingGroups: OriginalColumnGroup[]
-    ): OriginalColumnGroup {
+        existingGroups: ProvidedColumnGroup[]
+    ): ProvidedColumnGroup {
         const colGroupDefMerged = this.createMergedColGroupDef(colGroupDef);
         const groupId = columnKeyCreator.getUniqueKey(colGroupDefMerged.groupId || null, null);
-        const originalGroup = new OriginalColumnGroup(colGroupDefMerged, groupId, false, level);
+        const originalGroup = new ProvidedColumnGroup(colGroupDefMerged, groupId, false, level);
 
         this.context.createBean(originalGroup);
 
@@ -385,8 +385,8 @@ export class ColumnFactory extends BeanStub {
         return res;
     }
 
-    public findExistingGroup(newGroupDef: ColGroupDef, existingGroups: OriginalColumnGroup[]): OriginalColumnGroup | null {
-        const res: OriginalColumnGroup | null = find(existingGroups, existingGroup => {
+    public findExistingGroup(newGroupDef: ColGroupDef, existingGroups: ProvidedColumnGroup[]): ProvidedColumnGroup | null {
+        const res: ProvidedColumnGroup | null = find(existingGroups, existingGroup => {
 
             const existingDef = existingGroup.getColGroupDef()
             if (!existingDef) { return false; }

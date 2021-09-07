@@ -19,7 +19,7 @@ import { ColumnEvent, ColumnEventType } from "../events";
 import { ColumnApi } from "../columns/columnApi";
 import { GridApi } from "../gridApi";
 import { ColumnGroup } from "./columnGroup";
-import { OriginalColumnGroup } from "./originalColumnGroup";
+import { ProvidedColumnGroup } from "./providedColumnGroup";
 import { Constants } from "../constants/constants";
 import { ModuleNames } from "../modules/moduleNames";
 import { ModuleRegistry } from "../modules/moduleRegistry";
@@ -115,7 +115,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     private readonly primary: boolean;
 
     private parent: ColumnGroup;
-    private originalParent: OriginalColumnGroup | null;
+    private originalParent: ProvidedColumnGroup | null;
 
     constructor(colDef: ColDef, userProvidedColDef: ColDef | null, colId: string, primary: boolean) {
         this.colDef = colDef;
@@ -202,11 +202,11 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         return this.parent;
     }
 
-    public setOriginalParent(originalParent: OriginalColumnGroup | null): void {
+    public setOriginalParent(originalParent: ProvidedColumnGroup | null): void {
         this.originalParent = originalParent;
     }
 
-    public getOriginalParent(): OriginalColumnGroup | null {
+    public getOriginalParent(): ProvidedColumnGroup | null {
         return this.originalParent;
     }
 

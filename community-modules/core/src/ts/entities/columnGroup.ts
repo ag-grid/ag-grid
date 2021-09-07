@@ -2,7 +2,7 @@ import { IHeaderColumn } from "./iHeaderColumn";
 import { ColGroupDef } from "./colDef";
 import { Column } from "./column";
 import { AbstractColDef } from "./colDef";
-import { OriginalColumnGroup } from "./originalColumnGroup";
+import { ProvidedColumnGroup } from "./providedColumnGroup";
 import { EventService } from "../eventService";
 import { Autowired } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
@@ -31,7 +31,7 @@ export class ColumnGroup implements IHeaderColumn {
 
     private readonly groupId: string;
     private readonly instanceId: number;
-    private readonly originalColumnGroup: OriginalColumnGroup;
+    private readonly originalColumnGroup: ProvidedColumnGroup;
     private readonly pinned: 'left' | 'right' | null;
 
     // private moving = false
@@ -41,7 +41,7 @@ export class ColumnGroup implements IHeaderColumn {
 
     private parent: ColumnGroup | null;
 
-    constructor(originalColumnGroup: OriginalColumnGroup, groupId: string, instanceId: number, pinned: 'left' | 'right' | null) {
+    constructor(originalColumnGroup: ProvidedColumnGroup, groupId: string, instanceId: number, pinned: 'left' | 'right' | null) {
         this.groupId = groupId;
         this.instanceId = instanceId;
         this.originalColumnGroup = originalColumnGroup;
@@ -269,7 +269,7 @@ export class ColumnGroup implements IHeaderColumn {
         return this.originalColumnGroup.getColumnGroupShow();
     }
 
-    public getOriginalColumnGroup(): OriginalColumnGroup {
+    public getOriginalColumnGroup(): ProvidedColumnGroup {
         return this.originalColumnGroup;
     }
 

@@ -3,7 +3,7 @@ import { Column } from './entities/column';
 import { ColDef } from './entities/colDef';
 import { GridApi } from './gridApi';
 import { ColumnApi } from './columns/columnApi';
-import { OriginalColumnGroup } from './entities/originalColumnGroup';
+import { ProvidedColumnGroup } from './entities/providedColumnGroup';
 import { FilterRequestSource } from './filter/filterManager';
 import { ChartOptions, ChartType } from './interfaces/iChartOptions';
 import { IFilterComp } from './interfaces/iFilter';
@@ -87,7 +87,7 @@ export interface FilterModifiedEvent extends AgGridEvent {
 
 export interface FilterOpenedEvent extends AgGridEvent {
     /** Column / OriginalColumnGroup that contains the filter */
-    column: Column | OriginalColumnGroup;
+    column: Column | ProvidedColumnGroup;
     /** Source of the open request */
     source: FilterRequestSource;
     /** Parent element of the filter */
@@ -109,7 +109,7 @@ export interface BodyHeightChangedEvent extends AgGridEvent { } // not documente
 export interface ComponentStateChangedEvent extends AgGridEvent { }
 
 export interface ColumnPanelItemDragStartEvent extends AgEvent {
-    column: Column | OriginalColumnGroup
+    column: Column | ProvidedColumnGroup
 }
 
 export interface ColumnPanelItemDragEndEvent extends AgEvent { }
@@ -231,7 +231,7 @@ export interface ChartDestroyed extends AgGridEvent {
 }
 
 export interface ColumnGroupOpenedEvent extends AgGridEvent {
-    columnGroup: OriginalColumnGroup;
+    columnGroup: ProvidedColumnGroup;
 }
 
 export interface ItemsAddedEvent extends AgGridEvent {

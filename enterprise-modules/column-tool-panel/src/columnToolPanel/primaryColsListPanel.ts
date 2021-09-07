@@ -8,7 +8,7 @@ import {
     ColumnEventType,
     Component,
     Events,
-    OriginalColumnGroup,
+    ProvidedColumnGroup,
     IProvidedColumn,
     ToolPanelColumnCompParams,
     VirtualList,
@@ -222,7 +222,7 @@ export class PrimaryColsListPanel extends Component {
 
         const recursivelyBuild = (tree: IProvidedColumn[], dept: number, parentList: ColumnModelItem[]): void => {
             tree.forEach(child => {
-                if (child instanceof OriginalColumnGroup) {
+                if (child instanceof ProvidedColumnGroup) {
                     createGroupItem(child, dept, parentList);
                 } else {
                     createColumnItem(child as Column, dept, parentList);
@@ -230,7 +230,7 @@ export class PrimaryColsListPanel extends Component {
             });
         };
 
-        const createGroupItem = (columnGroup: OriginalColumnGroup, dept: number, parentList: ColumnModelItem[]): void => {
+        const createGroupItem = (columnGroup: ProvidedColumnGroup, dept: number, parentList: ColumnModelItem[]): void => {
             const columnGroupDef = columnGroup.getColGroupDef();
             const skipThisGroup = columnGroupDef && columnGroupDef.suppressColumnsToolPanel;
             if (skipThisGroup) { return; }

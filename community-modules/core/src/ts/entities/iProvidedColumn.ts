@@ -1,10 +1,10 @@
 // Implemented by Column and OriginalColumnGroup. Allows the groups to contain a list of this type for it's children.
 // See the note at the top of Column class.
-import { OriginalColumnGroup } from "./originalColumnGroup";
+import { ProvidedColumnGroup } from "./providedColumnGroup";
 
 export interface IProvidedColumn {
     isVisible(): boolean;
     getColumnGroupShow(): string | undefined;
     getId(): string;
-    setOriginalParent(originalParent: OriginalColumnGroup | null): void;
+    setOriginalParent(originalParent: ProvidedColumnGroup | null): void;
 }

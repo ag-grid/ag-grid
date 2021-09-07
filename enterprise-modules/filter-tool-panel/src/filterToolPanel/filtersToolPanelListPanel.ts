@@ -8,7 +8,7 @@ import {
     Component,
     Events,
     GridApi,
-    OriginalColumnGroup,
+    ProvidedColumnGroup,
     IProvidedColumn
 } from "@ag-grid-community/core";
 
@@ -124,7 +124,7 @@ export class FiltersToolPanelListPanel extends Component {
 
     private recursivelyAddComps(tree: IProvidedColumn[], depth: number): ToolPanelFilterGroupComp[] {
         return _.flatten(tree.map(child => {
-            if (child instanceof OriginalColumnGroup) {
+            if (child instanceof ProvidedColumnGroup) {
                 return _.flatten(this.recursivelyAddFilterGroupComps(child, depth)!);
             }
 
@@ -146,7 +146,7 @@ export class FiltersToolPanelListPanel extends Component {
         }));
     }
 
-    private recursivelyAddFilterGroupComps(columnGroup: OriginalColumnGroup, depth: number): ToolPanelFilterGroupComp[] | undefined {
+    private recursivelyAddFilterGroupComps(columnGroup: ProvidedColumnGroup, depth: number): ToolPanelFilterGroupComp[] | undefined {
         if (!this.filtersExistInChildren(columnGroup.getChildren())) { return; }
 
         const colGroupDef = columnGroup.getColGroupDef();
@@ -167,7 +167,7 @@ export class FiltersToolPanelListPanel extends Component {
 
     private filtersExistInChildren(tree: IProvidedColumn[]): boolean {
         return tree.some(child => {
-            if (child instanceof OriginalColumnGroup) {
+            if (child instanceof ProvidedColumnGroup) {
                 return this.filtersExistInChildren(child.getChildren());
             }
 

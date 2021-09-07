@@ -2,7 +2,7 @@ import { AbstractColDef, HeaderClassParams, ToolPanelClassParams } from "../../e
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { Column } from "../../entities/column";
-import { OriginalColumnGroup } from "../../entities/originalColumnGroup";
+import { ProvidedColumnGroup } from "../../entities/providedColumnGroup";
 import { missing } from "../../utils/generic";
 import { addCssClass } from "../../utils/dom";
 
@@ -13,7 +13,7 @@ export class CssClassApplier {
         this.addColumnClassesFromCollDef(abstractColDef.headerClass, abstractColDef, eHeaderCell, gridOptionsWrapper, column, columnGroup);
     }
 
-    public static addToolPanelClassesFromColDef(abstractColDef: AbstractColDef | null, eHeaderCell: HTMLElement, gridOptionsWrapper: GridOptionsWrapper, column: Column | null, columnGroup: OriginalColumnGroup | null) {
+    public static addToolPanelClassesFromColDef(abstractColDef: AbstractColDef | null, eHeaderCell: HTMLElement, gridOptionsWrapper: GridOptionsWrapper, column: Column | null, columnGroup: ProvidedColumnGroup | null) {
         if (missing(abstractColDef)) { return; }
         this.addColumnClassesFromCollDef(abstractColDef.toolPanelClass, abstractColDef, eHeaderCell, gridOptionsWrapper, column, columnGroup);
     }
@@ -23,7 +23,7 @@ export class CssClassApplier {
                                               eHeaderCell: HTMLElement,
                                               gridOptionsWrapper: GridOptionsWrapper,
                                               column: Column | null,
-                                              columnGroup: ColumnGroup | OriginalColumnGroup | null) {
+                                              columnGroup: ColumnGroup | ProvidedColumnGroup | null) {
         if (missing(classesOrFunc)) {
             return;
         }

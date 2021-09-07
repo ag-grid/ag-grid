@@ -6,7 +6,7 @@ import { EventService } from "../eventService";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { AgEvent } from "../events";
 
-export class OriginalColumnGroup implements IProvidedColumn, IEventEmitter {
+export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
 
     public static EVENT_EXPANDED_CHANGED = 'expandedChanged';
     public static EVENT_EXPANDABLE_CHANGED = 'expandableChanged';
@@ -14,7 +14,7 @@ export class OriginalColumnGroup implements IProvidedColumn, IEventEmitter {
     private localEventService = new EventService();
 
     private colGroupDef: ColGroupDef | null;
-    private originalParent: OriginalColumnGroup | null;
+    private originalParent: ProvidedColumnGroup | null;
 
     private children: IProvidedColumn[];
     private groupId: string;
@@ -33,11 +33,11 @@ export class OriginalColumnGroup implements IProvidedColumn, IEventEmitter {
         this.level = level;
     }
 
-    public setOriginalParent(originalParent: OriginalColumnGroup | null): void {
+    public setOriginalParent(originalParent: ProvidedColumnGroup | null): void {
         this.originalParent = originalParent;
     }
 
-    public getOriginalParent(): OriginalColumnGroup | null {
+    public getOriginalParent(): ProvidedColumnGroup | null {
         return this.originalParent;
     }
 
@@ -61,7 +61,7 @@ export class OriginalColumnGroup implements IProvidedColumn, IEventEmitter {
     public setExpanded(expanded: boolean | undefined): void {
         this.expanded = expanded === undefined ? false : expanded;
         const event: AgEvent = {
-            type: OriginalColumnGroup.EVENT_EXPANDED_CHANGED
+            type: ProvidedColumnGroup.EVENT_EXPANDED_CHANGED
         };
         this.localEventService.dispatchEvent(event);
     }
@@ -106,7 +106,7 @@ export class OriginalColumnGroup implements IProvidedColumn, IEventEmitter {
         this.children.forEach((child: IProvidedColumn) => {
             if (child instanceof Column) {
                 leafColumns.push(child);
-            } else if (child instanceof OriginalColumnGroup) {
+            } else if (child instanceof ProvidedColumnGroup) {
                 child.addLeafColumns(leafColumns);
             }
         });
@@ -165,7 +165,7 @@ export class OriginalColumnGroup implements IProvidedColumn, IEventEmitter {
         if (this.expandable !== expandable) {
             this.expandable = expandable;
             const event: AgEvent = {
-                type: OriginalColumnGroup.EVENT_EXPANDABLE_CHANGED
+                type: ProvidedColumnGroup.EVENT_EXPANDABLE_CHANGED
             };
             this.localEventService.dispatchEvent(event);
         }
@@ -177,9 +177,9 @@ export class OriginalColumnGroup implements IProvidedColumn, IEventEmitter {
         const process = (items: IProvidedColumn[]) => {
             items.forEach(item => {
                 // if padding, we add this children instead of the padding
-                const skipBecausePadding = item instanceof OriginalColumnGroup && item.isPadding();
+                const skipBecausePadding = item instanceof ProvidedColumnGroup && item.isPadding();
                 if (skipBecausePadding) {
-                    process((item as OriginalColumnGroup).children);
+                    process((item as ProvidedColumnGroup).children);
                 } else {
                     res.push(item);
                 }

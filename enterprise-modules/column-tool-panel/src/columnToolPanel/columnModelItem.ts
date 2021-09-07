@@ -2,7 +2,7 @@ import {
     Column,
     EventService,
     IEventEmitter,
-    OriginalColumnGroup
+    ProvidedColumnGroup
 } from "@ag-grid-community/core";
 
 export class ColumnModelItem implements IEventEmitter {
@@ -13,7 +13,7 @@ export class ColumnModelItem implements IEventEmitter {
 
     private readonly group: boolean;
     private readonly displayName: string | null;
-    private readonly columnGroup: OriginalColumnGroup;
+    private readonly columnGroup: ProvidedColumnGroup;
     private readonly column: Column;
     private readonly dept: number;
     private readonly children: ColumnModelItem[];
@@ -23,7 +23,7 @@ export class ColumnModelItem implements IEventEmitter {
 
     constructor(
         displayName: string | null,
-        columnOrGroup: Column | OriginalColumnGroup,
+        columnOrGroup: Column | ProvidedColumnGroup,
         dept: number,
         group = false,
         expanded?: boolean
@@ -33,7 +33,7 @@ export class ColumnModelItem implements IEventEmitter {
         this.group = group;
 
         if (group) {
-            this.columnGroup = columnOrGroup as OriginalColumnGroup;
+            this.columnGroup = columnOrGroup as ProvidedColumnGroup;
             this.expanded = expanded;
             this.children = [];
         } else {
@@ -43,7 +43,7 @@ export class ColumnModelItem implements IEventEmitter {
 
     public isGroup(): boolean { return this.group; }
     public getDisplayName(): string | null { return this.displayName; }
-    public getColumnGroup(): OriginalColumnGroup { return this.columnGroup; }
+    public getColumnGroup(): ProvidedColumnGroup { return this.columnGroup; }
     public getColumn(): Column { return this.column; }
     public getDept(): number { return this.dept; }
     public isExpanded(): boolean { return !!this.expanded; }

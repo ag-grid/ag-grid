@@ -636,7 +636,7 @@
     "column": { "type": { "returnType": "Column | null", "optional": true } },
     "columnGroup": {
       "type": {
-        "returnType": "ColumnGroup | OriginalColumnGroup | null",
+        "returnType": "ColumnGroup | ProvidedColumnGroup | null",
         "optional": true
       }
     },
@@ -649,7 +649,7 @@
     "column": { "type": { "returnType": "Column | null", "optional": true } },
     "columnGroup": {
       "type": {
-        "returnType": "ColumnGroup | OriginalColumnGroup | null",
+        "returnType": "ColumnGroup | ProvidedColumnGroup | null",
         "optional": true
       }
     },
@@ -1575,13 +1575,13 @@
     "columnGroup": {
       "description": "/** ColumnGroup for this callback if applicable */",
       "type": {
-        "returnType": "ColumnGroup | OriginalColumnGroup | null",
+        "returnType": "ColumnGroup | ProvidedColumnGroup | null",
         "optional": true
       }
     },
     "originalColumnGroup": {
       "description": "/** Original column group if applicable */",
-      "type": { "returnType": "OriginalColumnGroup | null", "optional": false }
+      "type": { "returnType": "ProvidedColumnGroup | null", "optional": false }
     },
     "location": {
       "description": "/** Where the column is going to appear */",
@@ -4502,7 +4502,7 @@
     },
     "setOriginalParent": {
       "type": {
-        "arguments": { "originalParent": "OriginalColumnGroup | null" },
+        "arguments": { "originalParent": "ProvidedColumnGroup | null" },
         "returnType": "void",
         "optional": false
       }
@@ -4776,7 +4776,7 @@
     "column": {
       "description": "/** Column / OriginalColumnGroup that contains the filter */",
       "type": {
-        "returnType": "Column | OriginalColumnGroup",
+        "returnType": "Column | ProvidedColumnGroup",
         "optional": false
       }
     },
@@ -4846,7 +4846,7 @@
   "ColumnPanelItemDragStartEvent": {
     "column": {
       "type": {
-        "returnType": "Column | OriginalColumnGroup",
+        "returnType": "Column | ProvidedColumnGroup",
         "optional": false
       }
     },
@@ -5239,7 +5239,7 @@
   },
   "ColumnGroupOpenedEvent": {
     "columnGroup": {
-      "type": { "returnType": "OriginalColumnGroup", "optional": false }
+      "type": { "returnType": "ProvidedColumnGroup", "optional": false }
     },
     "api": { "type": { "returnType": "GridApi", "optional": false } },
     "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },

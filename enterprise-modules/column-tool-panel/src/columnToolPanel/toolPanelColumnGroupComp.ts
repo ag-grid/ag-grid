@@ -15,7 +15,7 @@ import {
     Events,
     ITooltipParams,
     KeyCode,
-    OriginalColumnGroup,
+    ProvidedColumnGroup,
     PostConstruct,
     RefSelector,
     TouchListener
@@ -48,7 +48,7 @@ export class ToolPanelColumnGroupComp extends Component {
 
     private eDragHandle: HTMLElement;
 
-    private readonly columnGroup: OriginalColumnGroup;
+    private readonly columnGroup: ProvidedColumnGroup;
     private readonly columnDept: number;
 
     private displayName: string | null;

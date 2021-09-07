@@ -13,7 +13,7 @@ import {
 import { ColGroupDef } from "../../../entities/colDef";
 import { Column } from "../../../entities/column";
 import { ColumnGroup } from "../../../entities/columnGroup";
-import { OriginalColumnGroup } from "../../../entities/originalColumnGroup";
+import { ProvidedColumnGroup } from "../../../entities/providedColumnGroup";
 import { GridApi } from "../../../gridApi";
 import { Beans } from "../../../rendering/beans";
 import { SetLeftFeature } from "../../../rendering/features/setLeftFeature";
@@ -136,8 +136,8 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp {
 
         this.refreshExpanded();
 
-        this.addManagedListener(originalColumnGroup, OriginalColumnGroup.EVENT_EXPANDABLE_CHANGED, this.refreshExpanded.bind(this));
-        this.addManagedListener(originalColumnGroup, OriginalColumnGroup.EVENT_EXPANDED_CHANGED, this.refreshExpanded.bind(this));
+        this.addManagedListener(originalColumnGroup, ProvidedColumnGroup.EVENT_EXPANDABLE_CHANGED, this.refreshExpanded.bind(this));
+        this.addManagedListener(originalColumnGroup, ProvidedColumnGroup.EVENT_EXPANDED_CHANGED, this.refreshExpanded.bind(this));
     }
 
     private refreshExpanded(): void {

@@ -3,7 +3,7 @@ import { IProvidedColumn } from "../entities/iProvidedColumn";
 import { GroupInstanceIdCreator } from "./groupInstanceIdCreator";
 import { IHeaderColumn } from "../entities/iHeaderColumn";
 import { ColumnGroup } from "../entities/columnGroup";
-import { OriginalColumnGroup } from "../entities/originalColumnGroup";
+import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
 import { Bean } from "../context/context";
 import { BeanStub } from "../context/beanStub";
 import { last } from "../utils/array";
@@ -28,7 +28,7 @@ export class DisplayedGroupCreator extends BeanStub {
         const result: IHeaderColumn[] = [];
 
         let previousRealPath: ColumnGroup[];
-        let previousOriginalPath: OriginalColumnGroup[];
+        let previousOriginalPath: ProvidedColumnGroup[];
 
         const oldColumnsMapped = this.mapOldGroupsById(oldDisplayedGroups!);
 
@@ -82,7 +82,7 @@ export class DisplayedGroupCreator extends BeanStub {
     }
 
     private createColumnGroup(
-            originalGroup: OriginalColumnGroup,
+            originalGroup: ProvidedColumnGroup,
             groupInstanceIdCreator: GroupInstanceIdCreator,
             oldColumnsMapped: {[key: string]: ColumnGroup},
             pinned: 'left' | 'right' | null
@@ -143,8 +143,8 @@ export class DisplayedGroupCreator extends BeanStub {
         });
     }
 
-    private getOriginalPathForColumn(balancedColumnTree: IProvidedColumn[], column: Column): OriginalColumnGroup[] | null {
-        const result: OriginalColumnGroup[] = [];
+    private getOriginalPathForColumn(balancedColumnTree: IProvidedColumn[], column: Column): ProvidedColumnGroup[] | null {
+        const result: ProvidedColumnGroup[] = [];
         let found = false;
 
         const recursePath = (columnTree: IProvidedColumn[], dept: number): void => {
@@ -154,7 +154,7 @@ export class DisplayedGroupCreator extends BeanStub {
 
                 const node = columnTree[i];
 
-                if (node instanceof OriginalColumnGroup) {
+                if (node instanceof ProvidedColumnGroup) {
                     const nextNode = node;
                     recursePath(nextNode.getChildren(), dept + 1);
                     result[dept] = node;

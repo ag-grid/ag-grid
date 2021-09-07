@@ -31,12 +31,12 @@
   "getParent": { "type": { "arguments": {}, "returnType": "ColumnGroup" } },
   "setOriginalParent": {
     "type": {
-      "arguments": { "originalParent": "OriginalColumnGroup | null" },
+      "arguments": { "originalParent": "ProvidedColumnGroup | null" },
       "returnType": "void"
     }
   },
   "getOriginalParent": {
-    "type": { "arguments": {}, "returnType": "OriginalColumnGroup | null" }
+    "type": { "arguments": {}, "returnType": "ProvidedColumnGroup | null" }
   },
   "resetActualWidth": {
     "type": {

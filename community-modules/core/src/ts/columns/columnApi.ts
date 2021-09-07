@@ -1,7 +1,7 @@
 import { ColDef, ColGroupDef } from "../entities/colDef";
 import { IHeaderColumn } from "../entities/iHeaderColumn";
 import { ColumnModel, ColumnState } from "./columnModel";
-import { OriginalColumnGroup } from "../entities/originalColumnGroup";
+import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
 import { ColumnGroup } from "../entities/columnGroup";
 import { Column } from "../entities/column";
 import { Autowired, Bean, PreDestroy } from "../context/context";
@@ -21,9 +21,9 @@ export class ColumnApi {
         }
         this.columnModel.sizeColumnsToFit(gridWidth, 'api');
     }
-    public setColumnGroupOpened(group: OriginalColumnGroup | string, newValue: boolean): void { this.columnModel.setColumnGroupOpened(group, newValue, 'api'); }
+    public setColumnGroupOpened(group: ProvidedColumnGroup | string, newValue: boolean): void { this.columnModel.setColumnGroupOpened(group, newValue, 'api'); }
     public getColumnGroup(name: string, instanceId?: number): ColumnGroup | null { return this.columnModel.getColumnGroup(name, instanceId); }
-    public getOriginalColumnGroup(name: string): OriginalColumnGroup | null { return this.columnModel.getOriginalColumnGroup(name); }
+    public getOriginalColumnGroup(name: string): ProvidedColumnGroup | null { return this.columnModel.getOriginalColumnGroup(name); }
 
     public getDisplayNameForColumn(column: Column, location: string | null): string { return this.columnModel.getDisplayNameForColumn(column, location) || ''; }
     public getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: string): string { return this.columnModel.getDisplayNameForColumnGroup(columnGroup, location) || ''; }
@@ -132,7 +132,7 @@ export class ColumnApi {
     //     return null;
     // }
 
-    public columnGroupOpened(group: OriginalColumnGroup | string, newValue: boolean): void {
+    public columnGroupOpened(group: ProvidedColumnGroup | string, newValue: boolean): void {
         console.error('AG Grid: columnGroupOpened no longer exists, use setColumnGroupOpened');
         this.setColumnGroupOpened(group, newValue);
     }

@@ -7,7 +7,7 @@ import {
     Component,
     Events,
     FilterOpenedEvent,
-    OriginalColumnGroup,
+    ProvidedColumnGroup,
     IProvidedColumn,
     PostConstruct,
     ITooltipParams,
@@ -111,7 +111,7 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     public isColumnGroup(): boolean {
-        return this.columnGroup instanceof OriginalColumnGroup;
+        return this.columnGroup instanceof ProvidedColumnGroup;
     }
 
     public isExpanded(): boolean {
@@ -160,7 +160,7 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     private addFilterChangedListeners() {
-        if (this.columnGroup instanceof OriginalColumnGroup) {
+        if (this.columnGroup instanceof ProvidedColumnGroup) {
             const group = this.columnGroup;
             const anyChildFiltersActive = () => group.getLeafColumns().some(col => col.isFilterActive());
 
@@ -200,13 +200,13 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     private setGroupTitle() {
-        this.filterGroupName = (this.columnGroup instanceof OriginalColumnGroup) ?
+        this.filterGroupName = (this.columnGroup instanceof ProvidedColumnGroup) ?
             this.getColumnGroupName(this.columnGroup) : this.getColumnName(this.columnGroup as Column);
 
         this.filterGroupComp.setTitle(this.filterGroupName || '');
     }
 
-    private getColumnGroupName(columnGroup: OriginalColumnGroup): string | null {
+    private getColumnGroupName(columnGroup: ProvidedColumnGroup): string | null {
         return this.columnModel.getDisplayNameForOriginalColumnGroup(null, columnGroup, 'filterToolPanel');
     }
 

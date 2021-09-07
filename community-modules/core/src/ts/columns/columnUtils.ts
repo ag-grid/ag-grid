@@ -1,7 +1,7 @@
 import { IHeaderColumn } from "../entities/iHeaderColumn";
 import { ColumnGroup } from "../entities/columnGroup";
 import { IProvidedColumn } from "../entities/iProvidedColumn";
-import { OriginalColumnGroup } from "../entities/originalColumnGroup";
+import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
 import { Column } from "../entities/column";
 import { Bean } from "../context/context";
 import { BeanStub } from "../context/beanStub";
@@ -32,8 +32,8 @@ export class ColumnUtils extends BeanStub {
         return Math.max(Math.min(width, maxColWidth), minColWidth);
     }
 
-    public getOriginalPathForColumn(column: Column, originalBalancedTree: IProvidedColumn[]): OriginalColumnGroup[] | null {
-        const result: OriginalColumnGroup[] = [];
+    public getOriginalPathForColumn(column: Column, originalBalancedTree: IProvidedColumn[]): ProvidedColumnGroup[] | null {
+        const result: ProvidedColumnGroup[] = [];
         let found = false;
 
         const recursePath = (balancedColumnTree: IProvidedColumn[], dept: number): void => {
@@ -42,7 +42,7 @@ export class ColumnUtils extends BeanStub {
                     // quit the search, so 'result' is kept with the found result
 
                 const node = balancedColumnTree[i];
-                if (node instanceof OriginalColumnGroup) {
+                if (node instanceof ProvidedColumnGroup) {
                     const nextNode = node;
                     recursePath(nextNode.getChildren(), dept + 1);
                     result[dept] = node;
@@ -59,11 +59,11 @@ export class ColumnUtils extends BeanStub {
         return found ? result : null;
     }
 
-    public depthFirstOriginalTreeSearch(parent: OriginalColumnGroup | null, tree: IProvidedColumn[], callback: (treeNode: IProvidedColumn, parent: OriginalColumnGroup | null) => void): void {
+    public depthFirstOriginalTreeSearch(parent: ProvidedColumnGroup | null, tree: IProvidedColumn[], callback: (treeNode: IProvidedColumn, parent: ProvidedColumnGroup | null) => void): void {
         if (!tree) { return; }
 
         tree.forEach((child: IProvidedColumn) => {
-            if (child instanceof OriginalColumnGroup) {
+            if (child instanceof ProvidedColumnGroup) {
                 this.depthFirstOriginalTreeSearch(child, child.getChildren(), callback);
             }
             callback(child, parent);

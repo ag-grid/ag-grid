@@ -6,7 +6,7 @@ import { ColumnModel } from "../../../columns/columnModel";
 import { Autowired } from "../../../context/context";
 import { TouchListener } from "../../../widgets/touchListener";
 import { RefSelector } from "../../../widgets/componentAnnotations";
-import { OriginalColumnGroup } from "../../../entities/originalColumnGroup";
+import { ProvidedColumnGroup } from "../../../entities/providedColumnGroup";
 import { GridApi } from "../../../gridApi";
 import { escapeString } from "../../../utils/string";
 import { isStopPropagationForAgGrid, stopPropagationForAgGrid } from "../../../utils/event";
@@ -107,8 +107,8 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         this.updateIconVisibility();
 
         const originalColumnGroup = this.params.columnGroup.getOriginalColumnGroup();
-        this.addManagedListener(originalColumnGroup, OriginalColumnGroup.EVENT_EXPANDED_CHANGED, this.updateIconVisibility.bind(this));
-        this.addManagedListener(originalColumnGroup, OriginalColumnGroup.EVENT_EXPANDABLE_CHANGED, this.updateIconVisibility.bind(this));
+        this.addManagedListener(originalColumnGroup, ProvidedColumnGroup.EVENT_EXPANDED_CHANGED, this.updateIconVisibility.bind(this));
+        this.addManagedListener(originalColumnGroup, ProvidedColumnGroup.EVENT_EXPANDABLE_CHANGED, this.updateIconVisibility.bind(this));
     }
 
     private addTouchAndClickListeners(eElement: HTMLElement, action: (event: MouseEvent) => void): void {

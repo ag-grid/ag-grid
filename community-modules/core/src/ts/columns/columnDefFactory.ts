@@ -2,7 +2,7 @@ import { ColDef, ColGroupDef } from "../entities/colDef";
 import { Column } from "../entities/column";
 import { Bean } from "../context/context";
 import { deepCloneDefinition } from "../utils/object";
-import { OriginalColumnGroup } from "../entities/originalColumnGroup";
+import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
 
 @Bean('columnDefFactory')
 export class ColumnDefFactory {
@@ -63,7 +63,7 @@ export class ColumnDefFactory {
         return res;
     }
 
-    private createDefFromGroup(group: OriginalColumnGroup): ColGroupDef | null | undefined {
+    private createDefFromGroup(group: ProvidedColumnGroup): ColGroupDef | null | undefined {
         const defCloned = deepCloneDefinition(group.getColGroupDef(), ['children']);
 
         if (defCloned) {

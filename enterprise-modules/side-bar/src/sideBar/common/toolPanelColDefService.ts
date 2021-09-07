@@ -8,7 +8,7 @@ import {
     ColGroupDef,
     Column,
     ColumnModel,
-    OriginalColumnGroup,
+    ProvidedColumnGroup,
     IProvidedColumn
 } from "@ag-grid-community/core";
 
@@ -26,7 +26,7 @@ export class ToolPanelColDefService extends BeanStub {
                 // creating 'dummy' group which is not associated with grid column group
                 const groupDef = abstractColDef as ColGroupDef;
                 const groupId = (typeof groupDef.groupId !== 'undefined') ? groupDef.groupId : groupDef.headerName;
-                const group = new OriginalColumnGroup(groupDef, groupId!, false, depth);
+                const group = new ProvidedColumnGroup(groupDef, groupId!, false, depth);
                 const children: IProvidedColumn[] = [];
                 groupDef.children.forEach(def => {
                     const child = createDummyColGroup(def, depth + 1);
@@ -81,11 +81,11 @@ export class ToolPanelColDefService extends BeanStub {
     private getLeafPathTrees(): AbstractColDef[] {
 
         // leaf tree paths are obtained by walking up the tree starting at a column until we reach the top level group.
-        const getLeafPathTree = (node: Column | OriginalColumnGroup, childDef: AbstractColDef): AbstractColDef => {
+        const getLeafPathTree = (node: Column | ProvidedColumnGroup, childDef: AbstractColDef): AbstractColDef => {
             let leafPathTree: AbstractColDef;
 
             // build up tree in reverse order
-            if (node instanceof OriginalColumnGroup) {
+            if (node instanceof ProvidedColumnGroup) {
                 if (node.isPadding()) {
                     // skip over padding groups
                     leafPathTree = childDef;

@@ -12,7 +12,7 @@ import { Bean } from "./context/context";
 import { Qualifier } from "./context/context";
 import { Autowired } from "./context/context";
 import { PostConstruct } from "./context/context";
-import { OriginalColumnGroup } from "./entities/originalColumnGroup";
+import { ProvidedColumnGroup } from "./entities/providedColumnGroup";
 import { BeanStub } from "./context/beanStub";
 import { CtrlsService } from "./ctrlsService";
 
@@ -147,7 +147,7 @@ export class AlignedGridsService extends BeanStub {
     private processGroupOpenedEvent(groupOpenedEvent: ColumnGroupOpenedEvent): void {
         // likewise for column group
         const masterColumnGroup = groupOpenedEvent.columnGroup;
-        let otherColumnGroup: OriginalColumnGroup | null = null;
+        let otherColumnGroup: ProvidedColumnGroup | null = null;
 
         if (masterColumnGroup) {
             const groupId = masterColumnGroup.getGroupId();

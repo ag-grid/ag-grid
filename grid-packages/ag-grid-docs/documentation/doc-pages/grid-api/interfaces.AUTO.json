@@ -379,7 +379,7 @@
       "api": "GridApi",
       "colDef": "AbstractColDef",
       "column?": "Column | null",
-      "columnGroup?": "ColumnGroup | OriginalColumnGroup | null",
+      "columnGroup?": "ColumnGroup | ProvidedColumnGroup | null",
       "context?": "any"
     }
   },
@@ -393,7 +393,7 @@
       "api": "GridApi",
       "colDef": "AbstractColDef",
       "column?": "Column | null",
-      "columnGroup?": "ColumnGroup | OriginalColumnGroup | null",
+      "columnGroup?": "ColumnGroup | ProvidedColumnGroup | null",
       "context?": "any"
     }
   },
@@ -965,8 +965,8 @@
     "type": {
       "colDef": "AbstractColDef",
       "column?": "Column | null",
-      "columnGroup?": "ColumnGroup | OriginalColumnGroup | null",
-      "originalColumnGroup": "OriginalColumnGroup | null",
+      "columnGroup?": "ColumnGroup | ProvidedColumnGroup | null",
+      "originalColumnGroup": "ProvidedColumnGroup | null",
       "location": "string | null",
       "api": "GridApi",
       "context?": "any"
@@ -2041,7 +2041,7 @@
       "isVisible()": "boolean",
       "getColumnGroupShow()": "string | undefined",
       "getId()": "string",
-      "setOriginalParent(originalParent: OriginalColumnGroup | null)": "void"
+      "setOriginalParent(originalParent: ProvidedColumnGroup | null)": "void"
     }
   },
   "SetSelectedParams": {
@@ -2267,7 +2267,7 @@
   "FilterOpenedEvent": {
     "meta": {},
     "type": {
-      "column": "Column | OriginalColumnGroup",
+      "column": "Column | ProvidedColumnGroup",
       "source": "FilterRequestSource",
       "eGui": "HTMLElement",
       "api": "GridApi",
@@ -2313,7 +2313,7 @@
   },
   "ColumnPanelItemDragStartEvent": {
     "meta": {},
-    "type": { "column": "Column | OriginalColumnGroup", "type": "string" },
+    "type": { "column": "Column | ProvidedColumnGroup", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
   "ColumnPanelItemDragEndEvent": {
@@ -2641,7 +2641,7 @@
   "ColumnGroupOpenedEvent": {
     "meta": {},
     "type": {
-      "columnGroup": "OriginalColumnGroup",
+      "columnGroup": "ProvidedColumnGroup",
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "type": "string"

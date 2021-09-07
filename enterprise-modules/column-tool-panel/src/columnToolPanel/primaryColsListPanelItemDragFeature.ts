@@ -10,7 +10,7 @@ import {
     DragSourceType,
     DropTarget,
     Events,
-    OriginalColumnGroup,
+    ProvidedColumnGroup,
     PostConstruct,
     VirtualList,
     _
@@ -32,7 +32,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
 
-    private currentDragColumn: Column | OriginalColumnGroup | null = null;
+    private currentDragColumn: Column | ProvidedColumnGroup | null = null;
     private lastHoveredColumnItem: DragColumnItem | null = null;
     private autoScrollService: AutoScrollService;
     private moveBlocked: boolean;
@@ -164,7 +164,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
     }
 
     private getCurrentColumns(): Column[] {
-        if (this.currentDragColumn instanceof OriginalColumnGroup) {
+        if (this.currentDragColumn instanceof ProvidedColumnGroup) {
             return this.currentDragColumn.getLeafColumns();
         }
         return [this.currentDragColumn!];
