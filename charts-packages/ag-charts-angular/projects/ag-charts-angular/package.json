@@ -20,7 +20,7 @@
   "homepage": "https://www.ag-grid.com/",
   "peerDependencies": {
     "@angular/common": ">=8.0.0",
-    "@angular/core": "^>=8.0.0",
+    "@angular/core": ">=8.0.0",
     "ag-charts-community": "~4.0.0"
   }
 }
