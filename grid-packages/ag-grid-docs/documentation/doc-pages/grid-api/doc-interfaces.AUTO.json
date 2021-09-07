@@ -4992,6 +4992,9 @@
     "model": { "type": { "returnType": "ProvidedFilterModel" } },
     "apply": { "type": { "returnType": "boolean" } }
   },
+  "IHeaderFilterCellComp": {
+    "focus": { "type": { "arguments": {}, "returnType": "void" } }
+  },
   "DateFilterModel": {
     "dateFrom": { "type": { "returnType": "string | null" } },
     "dateTo": { "type": { "returnType": "string | null" } },
@@ -5512,7 +5515,10 @@
     }
   },
   "RedrawRowsParams": {
-    "rowNodes?": { "type": { "returnType": "RowNode[]" } }
+    "rowNodes?": {
+      "description": "/** Row nodes to redraw */",
+      "type": { "returnType": "RowNode[]" }
+    }
   },
   "CreateRangeChartParams": {
     "cellRange": { "type": { "returnType": "CellRangeParams" } },
@@ -5804,6 +5810,9 @@
       "type": { "returnType": "string" }
     }
   },
+  "IAbstractHeaderCellComp": {
+    "focus": { "type": { "arguments": {}, "returnType": "void" } }
+  },
   "DropListener": {
     "getIconName": {
       "type": { "arguments": {}, "returnType": "string | null" }
@@ -5833,43 +5842,19 @@
       }
     }
   },
-  "IHeaderGroupParams": {
-    "columnGroup": { "type": { "returnType": "ColumnGroup" } },
-    "displayName": { "type": { "returnType": "string" } },
-    "setExpanded": {
-      "type": { "arguments": { "expanded": "boolean" }, "returnType": "void" }
-    },
-    "api": { "type": { "returnType": "GridApi" } },
-    "columnApi": { "type": { "returnType": "ColumnApi" } },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any" }
-    }
-  },
-  "IHeaderGroup": {},
-  "IHeaderGroupComp": {
-    "getGui": {
-      "description": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
-      "type": { "arguments": {}, "returnType": "HTMLElement" }
-    },
-    "destroy?": {
-      "description": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
-      "type": { "arguments": {}, "returnType": "void" }
-    },
-    "afterGuiAttached?": {
-      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
+  "IGridHeaderComp": {
+    "addOrRemoveCssClass": {
       "type": {
-        "arguments": { "params": "IAfterGuiAttachedParams" },
+        "arguments": { "cssClassName": "string", "on": "boolean" },
         "returnType": "void"
       }
     },
-    "init?": {
-      "description": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
-      "type": {
-        "arguments": { "params": "IHeaderGroupParams" },
-        "returnType": "AgPromise<void> | void"
-      }
+    "setHeightAndMinHeight": {
+      "type": { "arguments": { "height": "string" }, "returnType": "void" }
     }
+  },
+  "IHeaderCellComp": {
+    "focus": { "type": { "arguments": {}, "returnType": "void" } }
   },
   "IHeaderParams": {
     "column": {
@@ -5966,22 +5951,49 @@
       "type": { "returnType": "Column | ColumnGroup" }
     }
   },
-  "IHeaderWrapperComp": {
-    "focus": { "type": { "arguments": {}, "returnType": "void" } }
-  },
   "SelectionCount": {
     "selected": { "type": { "returnType": "number" } },
     "notSelected": { "type": { "returnType": "number" } }
   },
-  "IGridHeaderComp": {
-    "addOrRemoveCssClass": {
+  "IHeaderGroupCellComp": {
+    "focus": { "type": { "arguments": {}, "returnType": "void" } }
+  },
+  "IHeaderGroupParams": {
+    "columnGroup": { "type": { "returnType": "ColumnGroup" } },
+    "displayName": { "type": { "returnType": "string" } },
+    "setExpanded": {
+      "type": { "arguments": { "expanded": "boolean" }, "returnType": "void" }
+    },
+    "api": { "type": { "returnType": "GridApi" } },
+    "columnApi": { "type": { "returnType": "ColumnApi" } },
+    "context": {
+      "description": "/** The context as provided on `gridOptions.context` */",
+      "type": { "returnType": "any" }
+    }
+  },
+  "IHeaderGroup": {},
+  "IHeaderGroupComp": {
+    "getGui": {
+      "description": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
+      "type": { "arguments": {}, "returnType": "HTMLElement" }
+    },
+    "destroy?": {
+      "description": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
+      "type": { "arguments": {}, "returnType": "void" }
+    },
+    "afterGuiAttached?": {
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
       "type": {
-        "arguments": { "cssClassName": "string", "on": "boolean" },
+        "arguments": { "params": "IAfterGuiAttachedParams" },
         "returnType": "void"
       }
     },
-    "setHeightAndMinHeight": {
-      "type": { "arguments": { "height": "string" }, "returnType": "void" }
+    "init?": {
+      "description": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
+      "type": {
+        "arguments": { "params": "IHeaderGroupParams" },
+        "returnType": "AgPromise<void> | void"
+      }
     }
   },
   "HeaderRowType": {},
@@ -5997,7 +6009,7 @@
     },
     "setHeaderCtrls": {
       "type": {
-        "arguments": { "ctrls": "HeaderWrapperCtrl[]" },
+        "arguments": { "ctrls": "AbstractHeaderCellCtrl[]" },
         "returnType": "void"
       }
     },
@@ -6009,6 +6021,9 @@
         "arguments": { "column": "Column" },
         "returnType": "HTMLElement | undefined"
       }
+    },
+    "setRowIndex": {
+      "type": { "arguments": { "rowIndex": "number" }, "returnType": "void" }
     }
   },
   "IHeaderRowContainerComp": {
@@ -6032,9 +6047,6 @@
         "arguments": { "ctrls": "HeaderRowCtrl[]" },
         "returnType": "void"
       }
-    },
-    "getRowComps": {
-      "type": { "arguments": {}, "returnType": "HeaderRowComp[]" }
     }
   },
   "HorizontalResizeParams": {
