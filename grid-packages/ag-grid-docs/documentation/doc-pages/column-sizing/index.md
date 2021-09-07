@@ -78,15 +78,11 @@ By default the grid will also resize the column to fit the header. If you do not
 
 ### Autosize Column API
 
-Autosizing columns can also be done using the following grid API methods:
-
-- `autoSizeColumn(colKey, skipHeader)`: Autosize one column.
-- `autoSizeColumns(colKeys, skipHeader)`: Autosize many columns.
-- `autoSizeAllColumns(colKey, skipHeader)`: Autosize all columns.
-
-If skipHeader=true, the header won't be included when calculating the column widths.
+Autosizing columns can also be done using the following column API methods. If `skipHeader=true`, the header won't be included when calculating the column widths.
 
 [Column Groups](/column-groups/) are never considered when calculating the column widths.
+
+<api-documentation source='column-api/api.json' section='Sizing' names='["autoSizeColumn", "autoSizeColumns", "autoSizeAllColumns"]'></api-documentation>
 
 ## Resizing Example
 
