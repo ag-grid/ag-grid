@@ -1,4 +1,4 @@
-import {createApp, defineComponent} from 'vue';
+import {createVNode, defineComponent, render} from 'vue';
 import {Vue} from 'vue-class-component';
 import {AgGridVue} from './AgGridVue';
 
@@ -25,52 +25,40 @@ export class VueComponentFactory {
         return componentDefinition;
     }
 
-    private static createComponentParams(params: any, parent: AgGridVue) {
-        const extendedParams = {
-            params: Object.freeze(params),
-            parent,
-        };
-
-        if (parent.componentDependencies) {
-            parent.componentDependencies.forEach((dependency) =>
-                (extendedParams as any)[dependency] = (parent as any)[dependency],
-            );
-        }
-
-        return extendedParams;
-    }
-
     public static createAndMountComponent(component: any, params: any, parent: AgGridVue) {
         const componentDefinition = VueComponentFactory.getComponentDefinition(component, parent);
         if (!componentDefinition) {
             return;
         }
 
-        const componentParams = VueComponentFactory.createComponentParams(params, parent);
-
-        // the inner defineComponent allows us to re-declare the component, with the outer one allowing us to
-        // provide the grid's params and capture the resulting component instance
-        let componentInstance: any = null;
-        const extendedComponentDefinition = defineComponent({
-            ...componentDefinition,
-            data: () => ({...componentParams, ...componentDefinition.data ? componentDefinition.data() : {}}),
-            created() { // note: function - don't use arrow functions here (for the correct "this" to be used)
-                componentInstance = (this as any).$root;
-                if (componentDefinition.created) {
-                    componentDefinition.created.bind(this)();
-                }
-            }
-        });
-
-        // with vue 3 we need to provide a container to mount into (not necessary in vue 2), so create a wrapper div here
-        const container = document.createElement('div');
-        const mountedComponent = createApp(extendedComponentDefinition);
-        VueComponentFactory.addContext(mountedComponent, parent as any);
-        (parent as any).plugins.forEach((plugin: any) => mountedComponent.use(plugin));
-        mountedComponent.mount(container);
+        const {vNode, destroy, el} = this.mount(componentDefinition, {params: Object.freeze(params)}, parent)
 
         // note that the component creation is synchronous so that componentInstance is set by this point
-        return {mountedComponent, componentInstance};
+        return {
+            componentInstance: vNode.component.proxy,
+            element: el,
+            destroy,
+        };
+    }
+
+    public static mount(component: any, props: any, parent: any) {
+        let vNode: any = createVNode(component, props)
+
+        vNode.appContext = parent.$.appContext;
+
+        let el: any = document.createElement('div')
+        render(vNode, el)
+
+        const destroy = () => {
+            if (el) {
+                render(null, el)
+            }
+
+            el = null;
+            vNode = null;
+        }
+
+        return {vNode, destroy, el}
     }
 
     public static searchForComponentInstance(parent: AgGridVue,
@@ -103,22 +91,5 @@ export class VueComponentFactory {
             return null;
         }
         return componentInstance;
-    }
-
-    private static addContext(component: any, parent: any) {
-        if (component._context && parent.$ && parent.$.appContext) {
-            const contextProperties = [
-                'config',
-                'mixins',
-                'components ',
-                'directives ',
-                'provides',
-                'optionsCache',
-                'propsCache',
-                'emitsCache',
-            ];
-
-            contextProperties.forEach(property => component._context[property] = parent.$.appContext[property]);
-        }
     }
 }
