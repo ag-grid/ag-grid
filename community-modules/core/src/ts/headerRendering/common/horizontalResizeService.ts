@@ -1,7 +1,7 @@
-import { Autowired, Bean } from "../context/context";
-import { DragListenerParams, DragService } from "../dragAndDrop/dragService";
-import { BeanStub } from "../context/beanStub";
-import { CtrlsService } from "../ctrlsService";
+import { Autowired, Bean } from "../../context/context";
+import { DragListenerParams, DragService } from "../../dragAndDrop/dragService";
+import { BeanStub } from "../../context/beanStub";
+import { CtrlsService } from "../../ctrlsService";
 
 export interface HorizontalResizeParams {
     eResizeBar: HTMLElement;
@@ -54,14 +54,6 @@ export class HorizontalResizeService extends BeanStub {
         ctrl.setResizeCursor(true);
         // we don't want text selection outside the grid (otherwise it looks weird as text highlights when we move)
         ctrl.disableUserSelect(true);
-
-        // this.oldBodyCursor = this.eGridDiv.style.cursor;
-        // this.oldUserSelect = this.eGridDiv.style.userSelect;
-        // this.oldWebkitUserSelect = this.eGridDiv.style.webkitUserSelect;
-        //
-        // this.eGridDiv.style.cursor = 'ew-resize';
-        // this.eGridDiv.style.userSelect = 'none';
-        // this.eGridDiv.style.webkitUserSelect = 'none';
     }
 
     private onDragStop(params: HorizontalResizeParams, mouseEvent: MouseEvent | Touch): void {
@@ -73,10 +65,6 @@ export class HorizontalResizeService extends BeanStub {
         const ctrl = this.ctrlsService.getGridCtrl();
         ctrl.setResizeCursor(false);
         ctrl.disableUserSelect(false);
-
-        // this.eGridDiv.style.cursor = this.oldBodyCursor;
-        // this.eGridDiv.style.userSelect = this.oldUserSelect;
-        // this.eGridDiv.style.webkitUserSelect = this.oldWebkitUserSelect;
     }
 
     private onDragging(params: HorizontalResizeParams, mouseEvent: MouseEvent | Touch): void {

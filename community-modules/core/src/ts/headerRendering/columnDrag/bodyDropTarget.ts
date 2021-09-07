@@ -1,11 +1,11 @@
-import { DragAndDropService, DraggingEvent, DragSourceType, DropTarget } from "../dragAndDrop/dragAndDropService";
-import { Autowired, PostConstruct } from "../context/context";
+import { DragAndDropService, DraggingEvent, DragSourceType, DropTarget } from "../../dragAndDrop/dragAndDropService";
+import { Autowired, PostConstruct } from "../../context/context";
 import { MoveColumnFeature } from "./moveColumnFeature";
 import { BodyDropPivotTarget } from "./bodyDropPivotTarget";
-import { ColumnModel } from "../columns/columnModel";
-import { Constants } from "../constants/constants";
-import { BeanStub } from "../context/beanStub";
-import { CtrlsService } from "../ctrlsService";
+import { ColumnModel } from "../../columns/columnModel";
+import { Constants } from "../../constants/constants";
+import { BeanStub } from "../../context/beanStub";
+import { CtrlsService } from "../../ctrlsService";
 
 export interface DropListener {
     getIconName(): string | null;

@@ -1,10 +1,10 @@
-import { AbstractColDef, HeaderClassParams, ToolPanelClassParams } from "../entities/colDef";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { ColumnGroup } from "../entities/columnGroup";
-import { Column } from "../entities/column";
-import { OriginalColumnGroup } from "../entities/originalColumnGroup";
-import { missing } from "../utils/generic";
-import { addCssClass } from "../utils/dom";
+import { AbstractColDef, HeaderClassParams, ToolPanelClassParams } from "../../entities/colDef";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { ColumnGroup } from "../../entities/columnGroup";
+import { Column } from "../../entities/column";
+import { OriginalColumnGroup } from "../../entities/originalColumnGroup";
+import { missing } from "../../utils/generic";
+import { addCssClass } from "../../utils/dom";
 
 export class CssClassApplier {
 

@@ -1,15 +1,15 @@
-import { Autowired, Bean } from '../context/context';
-import { BeanStub } from "../context/beanStub";
-import { IMenuFactory } from '../interfaces/iMenuFactory';
-import { FilterManager } from '../filter/filterManager';
-import { Column } from '../entities/column';
-import { PopupService } from '../widgets/popupService';
-import { FocusService } from '../focusService';
-import { addCssClass, isVisible } from '../utils/dom';
-import { KeyCode } from '../constants/keyCode';
-import { GridBodyComp } from "../gridBodyComp/gridBodyComp";
-import { ContainerType } from '../interfaces/iAfterGuiAttachedParams';
-import { CtrlsService } from '../ctrlsService';
+import { Autowired, Bean } from '../../context/context';
+import { BeanStub } from "../../context/beanStub";
+import { IMenuFactory } from '../../interfaces/iMenuFactory';
+import { FilterManager } from '../../filter/filterManager';
+import { Column } from '../../entities/column';
+import { PopupService } from '../../widgets/popupService';
+import { FocusService } from '../../focusService';
+import { addCssClass, isVisible } from '../../utils/dom';
+import { KeyCode } from '../../constants/keyCode';
+import { GridBodyComp } from "../../gridBodyComp/gridBodyComp";
+import { ContainerType } from '../../interfaces/iAfterGuiAttachedParams';
+import { CtrlsService } from '../../ctrlsService';
 
 @Bean('menuFactory')
 export class StandardMenuFactory extends BeanStub implements IMenuFactory {

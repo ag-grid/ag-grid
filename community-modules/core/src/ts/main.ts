@@ -129,15 +129,15 @@ export { RowContainerComp } from "./gridBodyComp/rowContainer/rowContainerComp";
 export { RowContainerName, IRowContainerComp, RowContainerCtrl } from "./gridBodyComp/rowContainer/rowContainerCtrl";
 
 // headerRendering
-export { BodyDropPivotTarget } from "./headerRendering/bodyDropPivotTarget";
-export { BodyDropTarget } from "./headerRendering/bodyDropTarget";
-export { CssClassApplier } from "./headerRendering/cssClassApplier";
+export { BodyDropPivotTarget } from "./headerRendering/columnDrag/bodyDropPivotTarget";
+export { BodyDropTarget } from "./headerRendering/columnDrag/bodyDropTarget";
+export { CssClassApplier } from "./headerRendering/common/cssClassApplier";
 export { HeaderRowContainerComp as HeaderContainer } from "./headerRendering/headerRowContainer/headerRowContainerComp";
 export { GridHeaderComp } from "./headerRendering/gridHeaderComp";
 export { HeaderRowComp } from "./headerRendering/headerRow/headerRowComp";
-export { HorizontalResizeService } from "./headerRendering/horizontalResizeService";
-export { MoveColumnFeature } from "./headerRendering/moveColumnFeature";
-export { StandardMenuFactory } from "./headerRendering/standardMenu";
+export { HorizontalResizeService } from "./headerRendering/common/horizontalResizeService";
+export { MoveColumnFeature } from "./headerRendering/columnDrag/moveColumnFeature";
+export { StandardMenuFactory } from "./headerRendering/headerCell/standardMenu";
 
 // layout
 export { TabbedLayout, TabbedItem } from "./layout/tabbedLayout";
@@ -296,8 +296,8 @@ export { IClipboardService } from "./interfaces/iClipboardService";
 export { IMenuFactory } from "./interfaces/iMenuFactory";
 export { CellPosition, CellPositionUtils } from "./entities/cellPosition";
 export { RowPosition, RowPositionUtils } from "./entities/rowPosition";
-export { HeaderPosition, HeaderPositionUtils } from "./headerRendering/headerCell/headerPosition";
-export { HeaderNavigationService, HeaderNavigationDirection } from "./headerRendering/headerCell/headerNavigationService";
+export { HeaderPosition, HeaderPositionUtils } from "./headerRendering/common/headerPosition";
+export { HeaderNavigationService, HeaderNavigationDirection } from "./headerRendering/common/headerNavigationService";
 export {
     IAggFunc,
     IAggFuncParams,

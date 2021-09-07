@@ -10,7 +10,7 @@ import { CenterWidthFeature } from "../../gridBodyComp/centerWidthFeature";
 import { PinnedWidthService } from "../../gridBodyComp/pinnedWidthService";
 import { ScrollVisibleService } from "../../gridBodyComp/scrollVisibleService";
 import { NumberSequence } from "../../utils";
-import { BodyDropTarget } from "../bodyDropTarget";
+import { BodyDropTarget } from "../columnDrag/bodyDropTarget";
 import { HeaderRowType } from "../headerRow/headerRowComp";
 import { HeaderRowCtrl } from "../headerRow/headerRowCtrl";
 
