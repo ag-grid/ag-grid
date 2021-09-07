@@ -3,7 +3,7 @@ import { Constants } from "../../constants/constants";
 import { BeanStub } from "../../context/beanStub";
 import { Autowired } from "../../context/context";
 import { Column } from "../../entities/column";
-import { ColumnGroupChild } from "../../entities/columnGroupChild";
+import { IHeaderColumn } from "../../entities/iHeaderColumn";
 import { Events } from "../../eventKeys";
 import { FocusService } from "../../focusService";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
@@ -240,16 +240,16 @@ export class HeaderRowCtrl extends BeanStub {
         this.comp.setHeaderCtrls(ctrlsToDisplay);
     }
 
-    private getColumnsInViewport(): ColumnGroupChild[] {
+    private getColumnsInViewport(): IHeaderColumn[] {
         const printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
         return printLayout ? this.getColumnsInViewportPrintLayout() : this.getColumnsInViewportNormalLayout();
     }
 
-    private getColumnsInViewportPrintLayout(): ColumnGroupChild[] {
+    private getColumnsInViewportPrintLayout(): IHeaderColumn[] {
         // for print layout, we add all columns into the center
         if (this.pinned != null) { return []; }
 
-        let viewportColumns: ColumnGroupChild[] = [];
+        let viewportColumns: IHeaderColumn[] = [];
         const actualDepth = this.getActualDepth();
 
         [Constants.PINNED_LEFT, null, Constants.PINNED_RIGHT].forEach(pinned => {
@@ -264,12 +264,12 @@ export class HeaderRowCtrl extends BeanStub {
         return this.type == HeaderRowType.FLOATING_FILTER ? this.rowIndex - 1 : this.rowIndex;
     }
 
-    private getColumnsInViewportNormalLayout(): ColumnGroupChild[] {
+    private getColumnsInViewportNormalLayout(): IHeaderColumn[] {
         // when in normal layout, we add the columns for that container only
         return this.columnModel.getVirtualHeaderGroupRow(this.pinned, this.getActualDepth());
     }
 
-    public focusHeader(column: ColumnGroupChild): boolean {
+    public focusHeader(column: IHeaderColumn): boolean {
         const allCtrls = getAllValuesInObject(this.headerCtrls);
         const ctrl = find(allCtrls, ctrl => ctrl.getColumnGroupChild()==column);
         if (!ctrl) { return false; }

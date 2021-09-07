@@ -1265,26 +1265,6 @@
       "params?": "/** Equivalent of setting `colDef.cellEditorParams` */"
     }
   },
-  "ColumnGroupChild": {
-    "meta": {},
-    "type": {
-      "getUniqueId()": "string",
-      "getActualWidth()": "number",
-      "getMinWidth()": "number | null | undefined",
-      "getLeft()": "number | null",
-      "getOldLeft()": "number | null",
-      "getDefinition()": "AbstractColDef | null",
-      "getColumnGroupShow()": "string | undefined",
-      "getParent()": "ColumnGroupChild",
-      "isResizable()": "boolean",
-      "setParent(parent: ColumnGroup | null)": "void",
-      "isEmptyGroup()": "boolean",
-      "isMoving()": "boolean",
-      "getPinned()": "string | null | undefined",
-      "addEventListener(eventType: string, listener: EventListener, async?: boolean, options?: AddEventListenerOptions)": "void",
-      "removeEventListener(eventType: string, listener: EventListener, async?: boolean, options?: AddEventListenerOptions)": "void"
-    }
-  },
   "GridOptions": {
     "meta": {},
     "type": {
@@ -2033,6 +2013,26 @@
       "level": "/** Same as `rowNode.level` - what level the group is at, e.g. 0 for top level, 1 for second etc */",
       "field": "/** Same as `rowNode.field` - the field we are grouping on, e.g. 'country' */",
       "key": "/** Same as `rowNode.key`, the value of this group, e.g. 'Ireland' */"
+    }
+  },
+  "IHeaderColumn": {
+    "meta": {},
+    "type": {
+      "getUniqueId()": "string",
+      "getActualWidth()": "number",
+      "getMinWidth()": "number | null | undefined",
+      "getLeft()": "number | null",
+      "getOldLeft()": "number | null",
+      "getDefinition()": "AbstractColDef | null",
+      "getColumnGroupShow()": "string | undefined",
+      "getParent()": "IHeaderColumn",
+      "isResizable()": "boolean",
+      "setParent(parent: ColumnGroup | null)": "void",
+      "isEmptyGroup()": "boolean",
+      "isMoving()": "boolean",
+      "getPinned()": "string | null | undefined",
+      "addEventListener(eventType: string, listener: EventListener, async?: boolean, options?: AddEventListenerOptions)": "void",
+      "removeEventListener(eventType: string, listener: EventListener, async?: boolean, options?: AddEventListenerOptions)": "void"
     }
   },
   "OriginalColumnGroupChild": {

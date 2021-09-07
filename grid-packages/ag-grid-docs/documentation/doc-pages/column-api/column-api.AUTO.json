@@ -279,16 +279,16 @@
   },
   "getPivotColumns": { "type": { "arguments": {}, "returnType": "Column[]" } },
   "getLeftDisplayedColumnGroups": {
-    "type": { "arguments": {}, "returnType": "ColumnGroupChild[]" }
+    "type": { "arguments": {}, "returnType": "IHeaderColumn[]" }
   },
   "getCenterDisplayedColumnGroups": {
-    "type": { "arguments": {}, "returnType": "ColumnGroupChild[]" }
+    "type": { "arguments": {}, "returnType": "IHeaderColumn[]" }
   },
   "getRightDisplayedColumnGroups": {
-    "type": { "arguments": {}, "returnType": "ColumnGroupChild[]" }
+    "type": { "arguments": {}, "returnType": "IHeaderColumn[]" }
   },
   "getAllDisplayedColumnGroups": {
-    "type": { "arguments": {}, "returnType": "ColumnGroupChild[] | null" }
+    "type": { "arguments": {}, "returnType": "IHeaderColumn[] | null" }
   },
   "autoSizeColumn": {
     "type": {

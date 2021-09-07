@@ -6,7 +6,7 @@ import {
     Column,
     ColumnModel,
     ColumnGroup,
-    ColumnGroupChild,
+    IHeaderColumn,
     Constants,
     DisplayedGroupCreator,
     ExportParams,
@@ -140,7 +140,7 @@ export class GridSerializer extends BeanStub {
         return (gridSerializingSession) => {
             if (!params.skipColumnGroupHeaders) {
                 const groupInstanceIdCreator: GroupInstanceIdCreator = new GroupInstanceIdCreator();
-                const displayedGroups: ColumnGroupChild[] = this.displayedGroupCreator.createDisplayedGroups(
+                const displayedGroups: IHeaderColumn[] = this.displayedGroupCreator.createDisplayedGroups(
                     columnsToExport,
                     this.columnModel.getGridBalancedTree(),
                     groupInstanceIdCreator,
@@ -246,9 +246,9 @@ export class GridSerializer extends BeanStub {
         return this.columnModel.getAllDisplayedColumns();
     }
 
-    private recursivelyAddHeaderGroups<T>(displayedGroups: ColumnGroupChild[], gridSerializingSession: GridSerializingSession<T>, processGroupHeaderCallback: ProcessGroupHeaderCallback | undefined): void {
-        const directChildrenHeaderGroups: ColumnGroupChild[] = [];
-        displayedGroups.forEach((columnGroupChild: ColumnGroupChild) => {
+    private recursivelyAddHeaderGroups<T>(displayedGroups: IHeaderColumn[], gridSerializingSession: GridSerializingSession<T>, processGroupHeaderCallback: ProcessGroupHeaderCallback | undefined): void {
+        const directChildrenHeaderGroups: IHeaderColumn[] = [];
+        displayedGroups.forEach((columnGroupChild: IHeaderColumn) => {
             const columnGroup: ColumnGroup = columnGroupChild as ColumnGroup;
             if (!columnGroup.getChildren) {
                 return;
@@ -265,10 +265,10 @@ export class GridSerializer extends BeanStub {
         }
     }
 
-    private doAddHeaderHeader<T>(gridSerializingSession: GridSerializingSession<T>, displayedGroups: ColumnGroupChild[], processGroupHeaderCallback: ProcessGroupHeaderCallback | undefined) {
+    private doAddHeaderHeader<T>(gridSerializingSession: GridSerializingSession<T>, displayedGroups: IHeaderColumn[], processGroupHeaderCallback: ProcessGroupHeaderCallback | undefined) {
         const gridRowIterator: RowSpanningAccumulator = gridSerializingSession.onNewHeaderGroupingRow();
         let columnIndex: number = 0;
-        displayedGroups.forEach((columnGroupChild: ColumnGroupChild) => {
+        displayedGroups.forEach((columnGroupChild: IHeaderColumn) => {
             const columnGroup: ColumnGroup = columnGroupChild as ColumnGroup;
 
             let name: string;

@@ -1,4 +1,4 @@
-import { ColumnGroupChild } from "../entities/columnGroupChild";
+import { IHeaderColumn } from "../entities/iHeaderColumn";
 import { ColumnGroup } from "../entities/columnGroup";
 import { OriginalColumnGroupChild } from "../entities/originalColumnGroupChild";
 import { OriginalColumnGroup } from "../entities/originalColumnGroup";
@@ -71,10 +71,10 @@ export class ColumnUtils extends BeanStub {
 
     }
 
-    public depthFirstAllColumnTreeSearch(tree: ColumnGroupChild[] | null, callback: (treeNode: ColumnGroupChild) => void): void {
+    public depthFirstAllColumnTreeSearch(tree: IHeaderColumn[] | null, callback: (treeNode: IHeaderColumn) => void): void {
         if (!tree) { return; }
 
-        tree.forEach((child: ColumnGroupChild) => {
+        tree.forEach((child: IHeaderColumn) => {
             if (child instanceof ColumnGroup) {
                 this.depthFirstAllColumnTreeSearch(child.getChildren(), callback);
             }
@@ -83,10 +83,10 @@ export class ColumnUtils extends BeanStub {
 
     }
 
-    public depthFirstDisplayedColumnTreeSearch(tree: ColumnGroupChild[] | null, callback: (treeNode: ColumnGroupChild) => void): void {
+    public depthFirstDisplayedColumnTreeSearch(tree: IHeaderColumn[] | null, callback: (treeNode: IHeaderColumn) => void): void {
         if (!tree) { return; }
 
-        tree.forEach((child: ColumnGroupChild) => {
+        tree.forEach((child: IHeaderColumn) => {
             if (child instanceof ColumnGroup) {
                 this.depthFirstDisplayedColumnTreeSearch(child.getDisplayedChildren(), callback);
             }

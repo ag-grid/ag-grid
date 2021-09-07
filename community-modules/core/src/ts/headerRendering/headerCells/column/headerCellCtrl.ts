@@ -1,4 +1,4 @@
-import { ColumnGroupChild } from "../../../entities/columnGroupChild";
+import { IHeaderColumn } from "../../../entities/iHeaderColumn";
 import { HeaderRowCtrl } from "../../headerRow/headerRowCtrl";
 import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellCtrl";
 
@@ -8,7 +8,7 @@ export interface IHeaderCellComp extends IAbstractHeaderCellComp {
 
 export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
-    constructor(columnGroupChild: ColumnGroupChild, parentRowCtrl: HeaderRowCtrl) {
+    constructor(columnGroupChild: IHeaderColumn, parentRowCtrl: HeaderRowCtrl) {
         super(columnGroupChild, parentRowCtrl);
     }
 

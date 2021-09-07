@@ -1,7 +1,7 @@
 import { Column } from "../entities/column";
 import { OriginalColumnGroupChild } from "../entities/originalColumnGroupChild";
 import { GroupInstanceIdCreator } from "./groupInstanceIdCreator";
-import { ColumnGroupChild } from "../entities/columnGroupChild";
+import { IHeaderColumn } from "../entities/iHeaderColumn";
 import { ColumnGroup } from "../entities/columnGroup";
 import { OriginalColumnGroup } from "../entities/originalColumnGroup";
 import { Bean } from "../context/context";
@@ -23,9 +23,9 @@ export class DisplayedGroupCreator extends BeanStub {
         // whether it's left, right or center col
         pinned: 'left' | 'right' | null,
         // we try to reuse old groups if we can, to allow gui to do animation
-        oldDisplayedGroups?: ColumnGroupChild[]): ColumnGroupChild[] {
+        oldDisplayedGroups?: IHeaderColumn[]): IHeaderColumn[] {
 
-        const result: ColumnGroupChild[] = [];
+        const result: IHeaderColumn[] = [];
 
         let previousRealPath: ColumnGroup[];
         let previousOriginalPath: OriginalColumnGroup[];
@@ -113,10 +113,10 @@ export class DisplayedGroupCreator extends BeanStub {
     }
 
     // returns back a 2d map of ColumnGroup as follows: groupId -> instanceId -> ColumnGroup
-    private mapOldGroupsById(displayedGroups: ColumnGroupChild[]): {[uniqueId: string]: ColumnGroup} {
+    private mapOldGroupsById(displayedGroups: IHeaderColumn[]): {[uniqueId: string]: ColumnGroup} {
         const result: {[uniqueId: string]: ColumnGroup} = {};
 
-        const recursive = (columnsOrGroups: ColumnGroupChild[] | null) => {
+        const recursive = (columnsOrGroups: IHeaderColumn[] | null) => {
             columnsOrGroups!.forEach(columnOrGroup => {
                 if (columnOrGroup instanceof ColumnGroup) {
                     const columnGroup = columnOrGroup;
@@ -133,7 +133,7 @@ export class DisplayedGroupCreator extends BeanStub {
         return result;
     }
 
-    private setupParentsIntoColumns(columnsOrGroups: ColumnGroupChild[] | null, parent: ColumnGroup | null): void {
+    private setupParentsIntoColumns(columnsOrGroups: IHeaderColumn[] | null, parent: ColumnGroup | null): void {
         columnsOrGroups!.forEach(columnsOrGroup => {
             columnsOrGroup.setParent(parent);
             if (columnsOrGroup instanceof ColumnGroup) {

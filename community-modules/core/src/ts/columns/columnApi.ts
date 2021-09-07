@@ -1,5 +1,5 @@
 import { ColDef, ColGroupDef } from "../entities/colDef";
-import { ColumnGroupChild } from "../entities/columnGroupChild";
+import { IHeaderColumn } from "../entities/iHeaderColumn";
 import { ColumnModel, ColumnState } from "./columnModel";
 import { OriginalColumnGroup } from "../entities/originalColumnGroup";
 import { ColumnGroup } from "../entities/columnGroup";
@@ -101,10 +101,10 @@ export class ColumnApi {
     public addPivotColumns(colKeys: (string | Column)[]): void { this.columnModel.addPivotColumns(colKeys, 'api'); }
     public getPivotColumns(): Column[] { return this.columnModel.getPivotColumns(); }
 
-    public getLeftDisplayedColumnGroups(): ColumnGroupChild[] { return this.columnModel.getDisplayedTreeLeft(); }
-    public getCenterDisplayedColumnGroups(): ColumnGroupChild[] { return this.columnModel.getDisplayedTreeCentre(); }
-    public getRightDisplayedColumnGroups(): ColumnGroupChild[] { return this.columnModel.getDisplayedTreeRight(); }
-    public getAllDisplayedColumnGroups(): ColumnGroupChild[] | null { return this.columnModel.getAllDisplayedTrees(); }
+    public getLeftDisplayedColumnGroups(): IHeaderColumn[] { return this.columnModel.getDisplayedTreeLeft(); }
+    public getCenterDisplayedColumnGroups(): IHeaderColumn[] { return this.columnModel.getDisplayedTreeCentre(); }
+    public getRightDisplayedColumnGroups(): IHeaderColumn[] { return this.columnModel.getDisplayedTreeRight(); }
+    public getAllDisplayedColumnGroups(): IHeaderColumn[] | null { return this.columnModel.getAllDisplayedTrees(); }
     public autoSizeColumn(key: string | Column, skipHeader?: boolean): void {return this.columnModel.autoSizeColumn(key, skipHeader, 'api'); }
     public autoSizeColumns(keys: (string | Column)[], skipHeader?: boolean): void {return this.columnModel.autoSizeColumns(keys, skipHeader, 'api'); }
     public autoSizeAllColumns(skipHeader?: boolean): void { this.columnModel.autoSizeAllColumns(skipHeader, 'api'); }

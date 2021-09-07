@@ -1,5 +1,5 @@
 import { BeanStub } from "../../../context/beanStub";
-import { ColumnGroupChild } from "../../../entities/columnGroupChild";
+import { IHeaderColumn } from "../../../entities/iHeaderColumn";
 import { HeaderRowCtrl } from "../../headerRow/headerRowCtrl";
 import { IHeaderCellComp } from "../column/headerCellCtrl";
 
@@ -13,13 +13,13 @@ export class AbstractHeaderCellCtrl extends BeanStub {
 
     private instanceId: string;
 
-    private columnGroupChild: ColumnGroupChild;
+    private columnGroupChild: IHeaderColumn;
 
     private parentRowCtrl: HeaderRowCtrl;
 
     private comp: IHeaderCellComp;
 
-    constructor(columnGroupChild: ColumnGroupChild, parentRowCtrl: HeaderRowCtrl) {
+    constructor(columnGroupChild: IHeaderColumn, parentRowCtrl: HeaderRowCtrl) {
         super();
 
         this.columnGroupChild = columnGroupChild;
@@ -56,7 +56,7 @@ export class AbstractHeaderCellCtrl extends BeanStub {
         return this.instanceId;
     }
 
-    public getColumnGroupChild(): ColumnGroupChild {
+    public getColumnGroupChild(): IHeaderColumn {
         return this.columnGroupChild;
     }
 }

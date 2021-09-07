@@ -4,7 +4,7 @@ import { ColumnGroup } from "./columnGroup";
 
 // Implemented by Column and ColumnGroup. Allows the groups to contain a list of this type for it's children.
 // See the note at the top of Column class.
-export interface ColumnGroupChild extends IEventEmitter {
+export interface IHeaderColumn extends IEventEmitter {
     getUniqueId(): string;
     getActualWidth(): number;
     getMinWidth(): number | null | undefined;
@@ -12,7 +12,7 @@ export interface ColumnGroupChild extends IEventEmitter {
     getOldLeft(): number | null;
     getDefinition(): AbstractColDef | null;
     getColumnGroupShow(): string | undefined;
-    getParent(): ColumnGroupChild;
+    getParent(): IHeaderColumn;
     isResizable(): boolean;
     setParent(parent: ColumnGroup | null): void;
     isEmptyGroup(): boolean;

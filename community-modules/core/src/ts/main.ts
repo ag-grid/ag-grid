@@ -396,7 +396,7 @@ export {
 
 export * from "./propertyKeys";
 export { OriginalColumnGroupChild } from "./entities/originalColumnGroupChild";
-export { ColumnGroupChild } from "./entities/columnGroupChild";
+export { IHeaderColumn } from "./entities/iHeaderColumn";
 export { IViewportDatasource, IViewportDatasourceParams } from "./interfaces/iViewportDatasource";
 export { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
 export { IRowNodeStage, StageExecuteParams } from "./interfaces/iRowNodeStage";

@@ -1,4 +1,4 @@
-import { ColumnGroupChild } from "../../entities/columnGroupChild";
+import { IHeaderColumn } from "../../entities/iHeaderColumn";
 import { Column } from "../../entities/column";
 import { BeanStub } from "../../context/beanStub";
 import { Beans } from "../beans";
@@ -13,7 +13,7 @@ import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 
 export class SetLeftFeature extends BeanStub {
 
-    private readonly columnOrGroup: ColumnGroupChild;
+    private readonly columnOrGroup: IHeaderColumn;
     private eCell: HTMLElement;
     private ariaEl: HTMLElement;
 
@@ -25,7 +25,7 @@ export class SetLeftFeature extends BeanStub {
 
     private beans: Beans;
 
-    constructor(columnOrGroup: ColumnGroupChild, eCell: HTMLElement, beans: Beans, colsSpanning?: Column[]) {
+    constructor(columnOrGroup: IHeaderColumn, eCell: HTMLElement, beans: Beans, colsSpanning?: Column[]) {
         super();
         this.columnOrGroup = columnOrGroup;
         this.eCell = eCell;
@@ -39,7 +39,7 @@ export class SetLeftFeature extends BeanStub {
         this.onLeftChanged();
     }
 
-    public getColumnOrGroup(): ColumnGroupChild {
+    public getColumnOrGroup(): IHeaderColumn {
         if (this.beans.gridOptionsWrapper.isEnableRtl() && this.colsSpanning) {
             return last(this.colsSpanning);
         }
@@ -103,7 +103,7 @@ export class SetLeftFeature extends BeanStub {
         this.setLeft(this.actualLeft);
     }
 
-    private modifyLeftForPrintLayout(colOrGroup: ColumnGroupChild, leftPosition: number): number {
+    private modifyLeftForPrintLayout(colOrGroup: IHeaderColumn, leftPosition: number): number {
         const printLayout = this.beans.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
 
         if (!printLayout) { return leftPosition; }

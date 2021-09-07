@@ -1895,103 +1895,6 @@
       "type": { "returnType": "any", "optional": true }
     }
   },
-  "ColumnGroupChild": {
-    "getUniqueId": {
-      "type": { "arguments": {}, "returnType": "string", "optional": false }
-    },
-    "getActualWidth": {
-      "type": { "arguments": {}, "returnType": "number", "optional": false }
-    },
-    "getMinWidth": {
-      "type": {
-        "arguments": {},
-        "returnType": "number | null | undefined",
-        "optional": false
-      }
-    },
-    "getLeft": {
-      "type": {
-        "arguments": {},
-        "returnType": "number | null",
-        "optional": false
-      }
-    },
-    "getOldLeft": {
-      "type": {
-        "arguments": {},
-        "returnType": "number | null",
-        "optional": false
-      }
-    },
-    "getDefinition": {
-      "type": {
-        "arguments": {},
-        "returnType": "AbstractColDef | null",
-        "optional": false
-      }
-    },
-    "getColumnGroupShow": {
-      "type": {
-        "arguments": {},
-        "returnType": "string | undefined",
-        "optional": false
-      }
-    },
-    "getParent": {
-      "type": {
-        "arguments": {},
-        "returnType": "ColumnGroupChild",
-        "optional": false
-      }
-    },
-    "isResizable": {
-      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
-    },
-    "setParent": {
-      "type": {
-        "arguments": { "parent": "ColumnGroup | null" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "isEmptyGroup": {
-      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
-    },
-    "isMoving": {
-      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
-    },
-    "getPinned": {
-      "type": {
-        "arguments": {},
-        "returnType": "string | null | undefined",
-        "optional": false
-      }
-    },
-    "addEventListener": {
-      "type": {
-        "arguments": {
-          "eventType": "string",
-          "listener": "EventListener",
-          "async": "boolean",
-          "options": "AddEventListenerOptions"
-        },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "removeEventListener": {
-      "type": {
-        "arguments": {
-          "eventType": "string",
-          "listener": "EventListener",
-          "async": "boolean",
-          "options": "AddEventListenerOptions"
-        },
-        "returnType": "void",
-        "optional": false
-      }
-    }
-  },
   "GridOptions": {
     "suppressBrowserResizeObserver": {
       "description": "/** Set once in init, can never change */",
@@ -4484,6 +4387,103 @@
     "key": {
       "description": "/** Same as `rowNode.key`, the value of this group, e.g. 'Ireland' */",
       "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "IHeaderColumn": {
+    "getUniqueId": {
+      "type": { "arguments": {}, "returnType": "string", "optional": false }
+    },
+    "getActualWidth": {
+      "type": { "arguments": {}, "returnType": "number", "optional": false }
+    },
+    "getMinWidth": {
+      "type": {
+        "arguments": {},
+        "returnType": "number | null | undefined",
+        "optional": false
+      }
+    },
+    "getLeft": {
+      "type": {
+        "arguments": {},
+        "returnType": "number | null",
+        "optional": false
+      }
+    },
+    "getOldLeft": {
+      "type": {
+        "arguments": {},
+        "returnType": "number | null",
+        "optional": false
+      }
+    },
+    "getDefinition": {
+      "type": {
+        "arguments": {},
+        "returnType": "AbstractColDef | null",
+        "optional": false
+      }
+    },
+    "getColumnGroupShow": {
+      "type": {
+        "arguments": {},
+        "returnType": "string | undefined",
+        "optional": false
+      }
+    },
+    "getParent": {
+      "type": {
+        "arguments": {},
+        "returnType": "IHeaderColumn",
+        "optional": false
+      }
+    },
+    "isResizable": {
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
+    "setParent": {
+      "type": {
+        "arguments": { "parent": "ColumnGroup | null" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "isEmptyGroup": {
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
+    "isMoving": {
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
+    "getPinned": {
+      "type": {
+        "arguments": {},
+        "returnType": "string | null | undefined",
+        "optional": false
+      }
+    },
+    "addEventListener": {
+      "type": {
+        "arguments": {
+          "eventType": "string",
+          "listener": "EventListener",
+          "async": "boolean",
+          "options": "AddEventListenerOptions"
+        },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "removeEventListener": {
+      "type": {
+        "arguments": {
+          "eventType": "string",
+          "listener": "EventListener",
+          "async": "boolean",
+          "options": "AddEventListenerOptions"
+        },
+        "returnType": "void",
+        "optional": false
+      }
     }
   },
   "OriginalColumnGroupChild": {

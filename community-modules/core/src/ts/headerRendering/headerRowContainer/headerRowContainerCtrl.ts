@@ -4,7 +4,7 @@ import { BeanStub } from "../../context/beanStub";
 import { Autowired } from "../../context/context";
 import { CtrlsService } from "../../ctrlsService";
 import { Column } from "../../entities/column";
-import { ColumnGroupChild } from "../../entities/columnGroupChild";
+import { IHeaderColumn } from "../../entities/iHeaderColumn";
 import { Events } from "../../eventKeys";
 import { CenterWidthFeature } from "../../gridBodyComp/centerWidthFeature";
 import { PinnedWidthService } from "../../gridBodyComp/pinnedWidthService";
@@ -188,7 +188,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
         return ctrl ? ctrl.getType() : undefined;
     }
 
-    public focusHeader(rowIndex: number, column: ColumnGroupChild): boolean {
+    public focusHeader(rowIndex: number, column: IHeaderColumn): boolean {
         const allCtrls = this.getAllCtrls();
         const ctrl = allCtrls[rowIndex];
         if (!ctrl) { return false; }

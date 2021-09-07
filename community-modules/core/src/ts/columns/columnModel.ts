@@ -1,7 +1,7 @@
 import { ColumnGroup } from '../entities/columnGroup';
 import { Column } from '../entities/column';
 import { AbstractColDef, ColDef, ColGroupDef, IAggFunc, HeaderValueGetterParams } from '../entities/colDef';
-import { ColumnGroupChild } from '../entities/columnGroupChild';
+import { IHeaderColumn } from '../entities/iHeaderColumn';
 import { ExpressionService } from '../valueService/expressionService';
 import { ColumnFactory } from './columnFactory';
 import { DisplayedGroupCreator } from './displayedGroupCreator';
@@ -143,9 +143,9 @@ export class ColumnModel extends BeanStub {
     // viewport columns -> centre columns only, what columns are to be rendered due to column virtualisation
 
     // tree of columns to be displayed for each section
-    private displayedTreeLeft: ColumnGroupChild[];
-    private displayedTreeRight: ColumnGroupChild[];
-    private displayedTreeCentre: ColumnGroupChild[];
+    private displayedTreeLeft: IHeaderColumn[];
+    private displayedTreeRight: IHeaderColumn[];
+    private displayedTreeCentre: IHeaderColumn[];
 
     // leave level columns of the displayed trees
     private displayedColumnsLeft: Column[] = [];
@@ -155,7 +155,7 @@ export class ColumnModel extends BeanStub {
     private displayedColumns: Column[] = [];
 
     // for fast lookup, to see if a column or group is still displayed
-    private displayedColumnsAndGroupsMap: {[id:string]:ColumnGroupChild} = {};
+    private displayedColumnsAndGroupsMap: {[id:string]:IHeaderColumn} = {};
 
     // all columns to be rendered
     private viewportColumns: Column[] = [];
@@ -164,9 +164,9 @@ export class ColumnModel extends BeanStub {
 
     // all columns & groups to be rendered, index by row. used by header rows to get all items
     // to render for that row.
-    private viewportRowLeft: { [row: number]: ColumnGroupChild[]; };
-    private viewportRowRight: { [row: number]: ColumnGroupChild[]; };
-    private viewportRowCenter: { [row: number]: ColumnGroupChild[]; };
+    private viewportRowLeft: { [row: number]: IHeaderColumn[]; };
+    private viewportRowRight: { [row: number]: IHeaderColumn[]; };
+    private viewportRowCenter: { [row: number]: IHeaderColumn[]; };
 
     // true if we are doing column spanning
     private colSpanActive: boolean;
@@ -581,7 +581,7 @@ export class ColumnModel extends BeanStub {
         return result;
     }
 
-    public getAllDisplayedTrees(): ColumnGroupChild[] | null {
+    public getAllDisplayedTrees(): IHeaderColumn[] | null {
         if (this.displayedTreeLeft && this.displayedTreeRight && this.displayedTreeCentre) {
             return this.displayedTreeLeft
                 .concat(this.displayedTreeCentre)
@@ -602,17 +602,17 @@ export class ColumnModel extends BeanStub {
     }
 
     // + headerRenderer -> setting pinned body width
-    public getDisplayedTreeLeft(): ColumnGroupChild[] {
+    public getDisplayedTreeLeft(): IHeaderColumn[] {
         return this.displayedTreeLeft;
     }
 
     // + headerRenderer -> setting pinned body width
-    public getDisplayedTreeRight(): ColumnGroupChild[] {
+    public getDisplayedTreeRight(): IHeaderColumn[] {
         return this.displayedTreeRight;
     }
 
     // + headerRenderer -> setting pinned body width
-    public getDisplayedTreeCentre(): ColumnGroupChild[] {
+    public getDisplayedTreeCentre(): IHeaderColumn[] {
         return this.displayedTreeCentre;
     }
 
@@ -2621,7 +2621,7 @@ export class ColumnModel extends BeanStub {
         const checkInstanceId = typeof instanceId === 'number';
         let result: ColumnGroup | null = null;
 
-        this.columnUtils.depthFirstAllColumnTreeSearch(allColumnGroups, (child: ColumnGroupChild) => {
+        this.columnUtils.depthFirstAllColumnTreeSearch(allColumnGroups, (child: IHeaderColumn) => {
             if (child instanceof ColumnGroup) {
                 const columnGroup = child;
                 let matched: boolean;
@@ -3346,9 +3346,9 @@ export class ColumnModel extends BeanStub {
         });
     }
 
-    private derivedDisplayedColumnsFromDisplayedTree(tree: ColumnGroupChild[], columns: Column[]): void {
+    private derivedDisplayedColumnsFromDisplayedTree(tree: IHeaderColumn[], columns: Column[]): void {
         columns.length = 0;
-        this.columnUtils.depthFirstDisplayedColumnTreeSearch(tree, (child: ColumnGroupChild) => {
+        this.columnUtils.depthFirstDisplayedColumnTreeSearch(tree, (child: IHeaderColumn) => {
             if (child instanceof Column) {
                 columns.push(child);
             }
@@ -3369,8 +3369,8 @@ export class ColumnModel extends BeanStub {
             .concat(this.displayedColumnsRight);
     }
 
-    public getVirtualHeaderGroupRow(type: string | null, dept: number): ColumnGroupChild[] {
-        let result: ColumnGroupChild[];
+    public getVirtualHeaderGroupRow(type: string | null, dept: number): IHeaderColumn[] {
+        let result: IHeaderColumn[];
 
         switch (type) {
             case Constants.PINNED_LEFT:
@@ -3404,8 +3404,8 @@ export class ColumnModel extends BeanStub {
         this.viewportColumns.forEach(col => virtualColIds[col.getId()] = true);
 
         const testGroup = (
-            children: ColumnGroupChild[],
-            result: { [row: number]: ColumnGroupChild[]; },
+            children: IHeaderColumn[],
+            result: { [row: number]: IHeaderColumn[]; },
             dept: number): boolean => {
 
             let returnValue = false;
@@ -3680,7 +3680,7 @@ export class ColumnModel extends BeanStub {
     private updateDisplayedMap(): void {
         this.displayedColumnsAndGroupsMap = {};
 
-        const func = (child: ColumnGroupChild) => {
+        const func = (child: IHeaderColumn) => {
             this.displayedColumnsAndGroupsMap[child.getUniqueId()] = child;
         };
 
@@ -3689,7 +3689,7 @@ export class ColumnModel extends BeanStub {
         this.columnUtils.depthFirstAllColumnTreeSearch(this.displayedTreeRight, func);
     }
 
-    public isDisplayed(item: ColumnGroupChild): boolean {
+    public isDisplayed(item: IHeaderColumn): boolean {
         const fromMap = this.displayedColumnsAndGroupsMap[item.getUniqueId()];
         // check for reference, in case new column / group with same id is now present
         return fromMap === item;
