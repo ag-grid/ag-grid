@@ -58,34 +58,34 @@ export class AgGridColumn {
     /** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used*     */
     @Input() public headerGroupComponent: string | { new(): IHeaderGroupComp; } | undefined = undefined;
     /** The custom header group component to be used for rendering the component header in the hosting framework (ie: React/Angular). If none specified the default AG Grid is used*     */
-    @Input() public headerGroupComponentFramework: any | undefined = undefined;
+    @Input() public headerGroupComponentFramework: any = undefined;
     /** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used*     */
-    @Input() public headerGroupComponentParams: any | undefined = undefined;
+    @Input() public headerGroupComponentParams: any = undefined;
     /** An object of css values. Or a function returning an object of css values.     */
     @Input() public cellStyle: { [cssProperty: string]: string } | CellStyleFunc | undefined = undefined;
-    @Input() public cellRendererParams: any | undefined = undefined;
-    @Input() public cellEditorFramework: any | undefined = undefined;
-    @Input() public cellEditorParams: any | undefined = undefined;
+    @Input() public cellRendererParams: any = undefined;
+    @Input() public cellEditorFramework: any = undefined;
+    @Input() public cellEditorParams: any = undefined;
     /** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned.
      */
-    @Input() public pinnedRowCellRendererFramework: any | undefined = undefined;
+    @Input() public pinnedRowCellRendererFramework: any = undefined;
     /** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned.
      */
-    @Input() public pinnedRowCellRendererParams: any | undefined = undefined;
+    @Input() public pinnedRowCellRendererParams: any = undefined;
     @Input() public filterFramework: any = undefined;
     @Input() public filterParams: any = undefined;
     /** The custom header component to be used for rendering the component header. If none specified the default AG Grid is used*     */
     @Input() public headerComponent: string | { new(): any; } | undefined = undefined;
     /** The custom header component to be used for rendering the component header in the hosting framework (ie: React/Angular). If none specified the default AG Grid is used*     */
-    @Input() public headerComponentFramework: any | undefined = undefined;
+    @Input() public headerComponentFramework: any = undefined;
     /** The custom header component parameters*     */
-    @Input() public headerComponentParams: any | undefined = undefined;
+    @Input() public headerComponentParams: any = undefined;
     @Input() public floatingFilterComponent: any = undefined;
     @Input() public floatingFilterComponentParams: any = undefined;
     @Input() public floatingFilterComponentFramework: any = undefined;
     @Input() public tooltipComponent: { new(): ITooltipComp; } | string | undefined = undefined;
-    @Input() public tooltipComponentParams: any | undefined = undefined;
-    @Input() public tooltipComponentFramework: any | undefined = undefined;
+    @Input() public tooltipComponentParams: any = undefined;
+    @Input() public tooltipComponentFramework: any = undefined;
     @Input() public refData: { [key: string]: string; } | undefined = undefined;
     /** Params to customise the columns menu behaviour and appearance     */
     @Input() public columnsMenuParams: ColumnsMenuParams | undefined = undefined;
@@ -170,7 +170,7 @@ export class AgGridColumn {
     /** Function to return the key for a value - use this if the value is an object (not a primitive type) and you
      * want to a) group by this field or b) use set filter on this field.     */
     @Input() public keyCreator: ((value: any) => string) | undefined = undefined;
-    @Input() public cellRendererFramework: any | undefined = undefined;
+    @Input() public cellRendererFramework: any = undefined;
     /** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned.
      */
     @Input() public pinnedRowCellRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined = undefined;
