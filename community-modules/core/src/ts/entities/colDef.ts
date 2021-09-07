@@ -11,7 +11,7 @@ import { IFilterDef } from '../interfaces/iFilter';
 import { ColumnGroup } from "./columnGroup";
 import { RowClassParams } from "./gridOptions";
 import { OriginalColumnGroup } from "./originalColumnGroup";
-import { IHeaderGroupComp } from "../headerRendering/headerCells/headerGroupCell/headerGroupComp";
+import { IHeaderGroupComp } from "../headerRendering/headerCells/columnGroup/headerGroupComp";
 
 /***********************************************************************
  * Don't forget to update ColDefUtil if changing this class. PLEASE! *

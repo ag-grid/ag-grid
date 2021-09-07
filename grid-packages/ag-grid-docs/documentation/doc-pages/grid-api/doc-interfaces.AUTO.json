@@ -7725,11 +7725,6 @@
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     }
   },
-  "IHeaderFilterCellComp": {
-    "focus": {
-      "type": { "arguments": {}, "returnType": "void", "optional": false }
-    }
-  },
   "IHeaderCellComp": {
     "focus": {
       "type": { "arguments": {}, "returnType": "void", "optional": false }
@@ -7893,6 +7888,11 @@
         "returnType": "AgPromise<void> | void",
         "optional": true
       }
+    }
+  },
+  "IHeaderFilterCellComp": {
+    "focus": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
     }
   },
   "HeaderRowType": {},

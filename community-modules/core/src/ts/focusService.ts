@@ -22,7 +22,7 @@ import { GridCtrl } from "./gridComp/gridCtrl";
 import { NavigationService } from "./gridBodyComp/navigationService";
 import { CellCtrl } from "./rendering/cell/cellCtrl";
 import { CtrlsService } from "./ctrlsService";
-import { HeaderCellCtrl } from "./headerRendering/headerCells/headerCell/headerCellCtrl";
+import { HeaderCellCtrl } from "./headerRendering/headerCells/column/headerCellCtrl";
 
 @Bean('focusService')
 export class FocusService extends BeanStub {

@@ -137,7 +137,7 @@ export { GridHeaderComp } from "./headerRendering/gridHeaderComp";
 export { HeaderRowComp } from "./headerRendering/headerRow/headerRowComp";
 export { HorizontalResizeService } from "./headerRendering/common/horizontalResizeService";
 export { MoveColumnFeature } from "./headerRendering/columnDrag/moveColumnFeature";
-export { StandardMenuFactory } from "./headerRendering/headerCells/headerCell/standardMenu";
+export { StandardMenuFactory } from "./headerRendering/headerCells/column/standardMenu";
 
 // layout
 export { TabbedLayout, TabbedItem } from "./layout/tabbedLayout";
@@ -404,8 +404,8 @@ export { IDateParams, IDate, IDateComp } from "./rendering/dateComponent";
 export { IAfterGuiAttachedParams, ContainerType } from "./interfaces/iAfterGuiAttachedParams";
 export { IComponent } from "./interfaces/iComponent";
 export { IEventEmitter } from "./interfaces/iEventEmitter";
-export { IHeaderParams, IHeader } from "./headerRendering/headerCells/headerCell/headerComp";
-export { IHeaderGroupParams, IHeaderGroup, IHeaderGroupComp } from "./headerRendering/headerCells/headerGroupCell/headerGroupComp";
+export { IHeaderParams, IHeader } from "./headerRendering/headerCells/column/headerComp";
+export { IHeaderGroupParams, IHeaderGroup, IHeaderGroupComp } from "./headerRendering/headerCells/columnGroup/headerGroupComp";
 export { ColumnApi } from "./columns/columnApi";
 export { IRichCellEditorParams } from "./interfaces/iRichCellEditorParams";
 export { WrappableInterface, BaseComponentWrapper, FrameworkComponentWrapper } from "./components/framework/frameworkComponentWrapper";

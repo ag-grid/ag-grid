@@ -7,13 +7,13 @@ import { getAllValuesInObject, iterateObject } from '../../utils/object';
 import { Component } from '../../widgets/component';
 import { HeaderRowCtrl, IHeaderRowComp } from './headerRowCtrl';
 import { find } from '../../utils/generic';
-import { AbstractHeaderCellComp } from '../headerCells/abstractHeaderCell/abstractHeaderCellComp';
-import { HeaderCellComp } from '../headerCells/headerCell/headerCellComp';
-import { AbstractHeaderCellCtrl } from '../headerCells/abstractHeaderCell/abstractHeaderCellCtrl';
-import { HeaderGroupCellComp } from '../headerCells/headerGroupCell/headerGroupCellComp';
-import { HeaderGroupCellCtrl } from '../headerCells/headerGroupCell/headerGroupCellCtrl';
+import { AbstractHeaderCellComp } from '../headerCells/abstractCell/abstractHeaderCellComp';
+import { HeaderCellComp } from '../headerCells/column/headerCellComp';
+import { AbstractHeaderCellCtrl } from '../headerCells/abstractCell/abstractHeaderCellCtrl';
+import { HeaderGroupCellComp } from '../headerCells/columnGroup/headerGroupCellComp';
+import { HeaderGroupCellCtrl } from '../headerCells/columnGroup/headerGroupCellCtrl';
 import { HeaderFilterCellCtrl } from '../headerCells/floatingFilter/headerFilterCellCtrl';
-import { HeaderCellCtrl } from '../headerCells/headerCell/headerCellCtrl';
+import { HeaderCellCtrl } from '../headerCells/column/headerCellCtrl';
 
 export enum HeaderRowType {
     COLUMN_GROUP = 'group',

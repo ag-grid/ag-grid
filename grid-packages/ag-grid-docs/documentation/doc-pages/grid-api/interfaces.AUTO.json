@@ -4261,7 +4261,6 @@
     }
   },
   "IAbstractHeaderCellComp": { "meta": {}, "type": { "focus()": "void" } },
-  "IHeaderFilterCellComp": { "meta": {}, "type": { "focus()": "void" } },
   "IHeaderCellComp": { "meta": {}, "type": { "focus()": "void" } },
   "IHeaderParams": {
     "meta": {},
@@ -4350,6 +4349,7 @@
       "init?(params: IHeaderGroupParams)": "/** The init(params) method is called on the component once. See below for details on the parameters. */"
     }
   },
+  "IHeaderFilterCellComp": { "meta": {}, "type": { "focus()": "void" } },
   "HeaderRowType": {
     "meta": { "isEnum": true },
     "type": [

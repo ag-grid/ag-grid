@@ -10,10 +10,10 @@ import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { isBrowserSafari } from "../../utils/browser";
 import { find } from "../../utils/generic";
 import { getAllValuesInObject, iterateObject } from "../../utils/object";
-import { AbstractHeaderCellCtrl } from "../headerCells/abstractHeaderCell/abstractHeaderCellCtrl";
+import { AbstractHeaderCellCtrl } from "../headerCells/abstractCell/abstractHeaderCellCtrl";
 import { HeaderFilterCellCtrl } from "../headerCells/floatingFilter/headerFilterCellCtrl";
-import { HeaderCellCtrl } from "../headerCells/headerCell/headerCellCtrl";
-import { HeaderGroupCellCtrl } from "../headerCells/headerGroupCell/headerGroupCellCtrl";
+import { HeaderCellCtrl } from "../headerCells/column/headerCellCtrl";
+import { HeaderGroupCellCtrl } from "../headerCells/columnGroup/headerGroupCellCtrl";
 import { HeaderRowType } from "./headerRowComp";
 
 export interface IHeaderRowComp {

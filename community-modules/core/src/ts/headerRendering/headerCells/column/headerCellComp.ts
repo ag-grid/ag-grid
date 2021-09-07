@@ -24,7 +24,7 @@ import { TouchListener } from "../../../widgets/touchListener";
 import { CssClassApplier } from "../../common/cssClassApplier";
 import { HorizontalResizeService } from "../../common/horizontalResizeService";
 import { HoverFeature } from "../../common/hoverFeature";
-import { AbstractHeaderCellComp } from "../abstractHeaderCell/abstractHeaderCellComp";
+import { AbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellComp";
 import { HeaderCellCtrl, IHeaderCellComp } from "./headerCellCtrl";
 import { HeaderComp, IHeaderComp, IHeaderParams } from "./headerComp";
 import { SelectAllFeature } from "./selectAllFeature";

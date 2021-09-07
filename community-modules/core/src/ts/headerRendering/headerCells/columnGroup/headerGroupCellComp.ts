@@ -22,13 +22,13 @@ import { setAriaExpanded } from "../../../utils/aria";
 import { removeFromArray } from "../../../utils/array";
 import { addCssClass, addOrRemoveCssClass, removeCssClass, removeFromParent } from "../../../utils/dom";
 import { ManagedFocusFeature } from "../../../widgets/managedFocusFeature";
-import { AbstractHeaderCellComp } from "../abstractHeaderCell/abstractHeaderCellComp";
+import { AbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellComp";
 import { CssClassApplier } from "../../common/cssClassApplier";
 import { HorizontalResizeService } from "../../common/horizontalResizeService";
 import { HoverFeature } from "../../common/hoverFeature";
 import { HeaderGroupCellCtrl } from "./headerGroupCellCtrl";
 import { IHeaderGroupComp, IHeaderGroupParams } from "./headerGroupComp";
-import { IHeaderCellComp } from "../headerCell/headerCellCtrl";
+import { IHeaderCellComp } from "../column/headerCellCtrl";
 
 export class HeaderGroupCellComp extends AbstractHeaderCellComp {
 

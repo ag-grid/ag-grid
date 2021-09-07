@@ -22,8 +22,8 @@ import { FloatingFilterMapper } from '../../../filter/floating/floatingFilterMap
 import { KeyCode } from '../../../constants/keyCode';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import { HeaderFilterCellCtrl } from './headerFilterCellCtrl';
-import { AbstractHeaderCellComp } from '../abstractHeaderCell/abstractHeaderCellComp';
-import { IHeaderCellComp } from '../headerCell/headerCellCtrl';
+import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
+import { IHeaderCellComp } from '../column/headerCellCtrl';
 
 export class HeaderFilterCellComp extends AbstractHeaderCellComp {
 
