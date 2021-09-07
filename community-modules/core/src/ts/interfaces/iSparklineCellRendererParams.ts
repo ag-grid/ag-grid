@@ -59,11 +59,11 @@ export interface TooltipRendererResult {
     opacity?: number;
 }
 export interface TooltipRendererParams {
-    readonly datum: any;
-    readonly title?: string;
-    readonly backgroundColor?: string;
-    readonly xValue: any;
-    readonly yValue: any;
+    datum: any;
+    title?: string;
+    backgroundColor?: string;
+    xValue: any;
+    yValue: any;
 }
 export interface SparklineLine {
     stroke?: string;
