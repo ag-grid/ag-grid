@@ -1,6 +1,7 @@
-import { ColumnGroupChild } from "../../entities/columnGroupChild";
-import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "../../headerRendering/abstractHeaderCell/abstractHeaderCellCtrl";
-import { HeaderRowCtrl } from "../../headerRendering/headerRow/headerRowCtrl";
+import { ColumnGroupChild } from "../../../main";
+import { HeaderRowCtrl } from "../../headerRow/headerRowCtrl";
+import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "../abstractHeaderCell/abstractHeaderCellCtrl";
+
 
 export interface IHeaderFilterCellComp extends IAbstractHeaderCellComp {
 }

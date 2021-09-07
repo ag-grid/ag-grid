@@ -1,30 +1,30 @@
-import { TextCellEditor } from "../../rendering/cellEditors/textCellEditor";
+import { BeanStub } from "../../context/beanStub";
 import { Autowired, Bean, PostConstruct } from "../../context/context";
-import { IComponent } from "../../interfaces/iComponent";
+import { GridOptions } from "../../entities/gridOptions";
 import { DateFilter } from "../../filter/provided/date/dateFilter";
-import { HeaderComp } from "../../headerRendering/headerCell/headerComp";
-import { HeaderGroupComp } from "../../headerRendering/headerGroupCell/headerGroupComp";
-import { GroupCellRenderer } from "../../rendering/cellRenderers/groupCellRenderer";
+import { DateFloatingFilter } from "../../filter/provided/date/dateFloatingFilter";
+import { DefaultDateComponent } from "../../filter/provided/date/defaultDateComponent";
+import { NumberFilter } from "../../filter/provided/number/numberFilter";
+import { NumberFloatingFilter } from "../../filter/provided/number/numberFloatingFilter";
+import { TextFilter } from "../../filter/provided/text/textFilter";
+import { TextFloatingFilter } from "../../filter/provided/text/textFloatingFilter";
+import { HeaderComp } from "../../headerRendering/headerCells/headerCell/headerComp";
+import { HeaderGroupComp } from "../../headerRendering/headerCells/headerGroupCell/headerGroupComp";
+import { IComponent } from "../../interfaces/iComponent";
+import { LargeTextCellEditor } from "../../rendering/cellEditors/largeTextCellEditor";
+import { PopupSelectCellEditor } from "../../rendering/cellEditors/popupSelectCellEditor";
+import { PopupTextCellEditor } from "../../rendering/cellEditors/popupTextCellEditor";
+import { SelectCellEditor } from "../../rendering/cellEditors/selectCellEditor";
+import { TextCellEditor } from "../../rendering/cellEditors/textCellEditor";
 import { AnimateShowChangeCellRenderer } from "../../rendering/cellRenderers/animateShowChangeCellRenderer";
 import { AnimateSlideCellRenderer } from "../../rendering/cellRenderers/animateSlideCellRenderer";
+import { GroupCellRenderer } from "../../rendering/cellRenderers/groupCellRenderer";
 import { LoadingCellRenderer } from "../../rendering/cellRenderers/loadingCellRenderer";
-import { SelectCellEditor } from "../../rendering/cellEditors/selectCellEditor";
-import { PopupTextCellEditor } from "../../rendering/cellEditors/popupTextCellEditor";
-import { PopupSelectCellEditor } from "../../rendering/cellEditors/popupSelectCellEditor";
-import { LargeTextCellEditor } from "../../rendering/cellEditors/largeTextCellEditor";
-import { NumberFilter } from "../../filter/provided/number/numberFilter";
 import { LoadingOverlayComponent } from "../../rendering/overlays/loadingOverlayComponent";
 import { NoRowsOverlayComponent } from "../../rendering/overlays/noRowsOverlayComponent";
 import { TooltipComponent } from "../../rendering/tooltipComponent";
-import { GridOptions } from "../../entities/gridOptions";
-import { DefaultDateComponent } from "../../filter/provided/date/defaultDateComponent";
-import { DateFloatingFilter } from "../../filter/provided/date/dateFloatingFilter";
-import { TextFilter } from "../../filter/provided/text/textFilter";
-import { NumberFloatingFilter } from "../../filter/provided/number/numberFloatingFilter";
-import { TextFloatingFilter } from "../../filter/provided/text/textFloatingFilter";
-import { BeanStub } from "../../context/beanStub";
-import { iterateObject } from '../../utils/object';
 import { doOnce } from "../../utils/function";
+import { iterateObject } from '../../utils/object';
 
 /**
  * B the business interface (ie IHeader)

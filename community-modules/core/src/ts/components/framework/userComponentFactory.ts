@@ -10,8 +10,6 @@ import { IRichCellEditorParams } from "../../interfaces/iRichCellEditorParams";
 import { ToolPanelDef } from "../../entities/sideBar";
 import { AgPromise } from "../../utils";
 import { IDateComp, IDateParams } from "../../rendering/dateComponent";
-import { IHeaderComp, IHeaderParams } from "../../headerRendering/headerCell/headerComp";
-import { IHeaderGroupComp, IHeaderGroupParams } from "../../headerRendering/headerGroupCell/headerGroupComp";
 import { ICellRendererComp, ICellRendererParams, ISetFilterCellRendererParams } from "../../rendering/cellRenderers/iCellRenderer";
 import { ILoadingOverlayComp, ILoadingOverlayParams } from "../../rendering/overlays/loadingOverlayComponent";
 import { INoRowsOverlayComp, INoRowsOverlayParams } from "../../rendering/overlays/noRowsOverlayComponent";
@@ -40,6 +38,8 @@ import {
 import { BeanStub } from "../../context/beanStub";
 import { cloneObject, mergeDeep } from '../../utils/object';
 import { GroupCellRendererParams } from "../../rendering/cellRenderers/groupCellRendererCtrl";
+import { IHeaderGroupComp, IHeaderGroupParams } from "../../headerRendering/headerCells/headerGroupCell/headerGroupComp";
+import { IHeaderComp, IHeaderParams } from "../../headerRendering/headerCells/headerCell/headerComp";
 
 export type DefinitionObject =
     GridOptions

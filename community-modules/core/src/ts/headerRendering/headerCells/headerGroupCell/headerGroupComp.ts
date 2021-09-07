@@ -1,19 +1,19 @@
-import { Component } from "../../widgets/component";
-import { IComponent } from "../../interfaces/iComponent";
-import { ColumnGroup } from "../../entities/columnGroup";
-import { ColumnApi } from "../../columns/columnApi";
-import { ColumnModel } from "../../columns/columnModel";
-import { Autowired } from "../../context/context";
-import { TouchListener } from "../../widgets/touchListener";
-import { RefSelector } from "../../widgets/componentAnnotations";
-import { OriginalColumnGroup } from "../../entities/originalColumnGroup";
-import { GridApi } from "../../gridApi";
-import { escapeString } from "../../utils/string";
-import { isStopPropagationForAgGrid, stopPropagationForAgGrid } from "../../utils/event";
-import { setDisplayed } from "../../utils/dom";
-import { createIconNoSpan } from "../../utils/icon";
-import { exists } from "../../utils/generic";
-import { doOnce } from "../../utils/function";
+import { Component } from "../../../widgets/component";
+import { IComponent } from "../../../interfaces/iComponent";
+import { ColumnGroup } from "../../../entities/columnGroup";
+import { ColumnApi } from "../../../columns/columnApi";
+import { ColumnModel } from "../../../columns/columnModel";
+import { Autowired } from "../../../context/context";
+import { TouchListener } from "../../../widgets/touchListener";
+import { RefSelector } from "../../../widgets/componentAnnotations";
+import { OriginalColumnGroup } from "../../../entities/originalColumnGroup";
+import { GridApi } from "../../../gridApi";
+import { escapeString } from "../../../utils/string";
+import { isStopPropagationForAgGrid, stopPropagationForAgGrid } from "../../../utils/event";
+import { setDisplayed } from "../../../utils/dom";
+import { createIconNoSpan } from "../../../utils/icon";
+import { exists } from "../../../utils/generic";
+import { doOnce } from "../../../utils/function";
 
 export interface IHeaderGroupParams {
     columnGroup: ColumnGroup;

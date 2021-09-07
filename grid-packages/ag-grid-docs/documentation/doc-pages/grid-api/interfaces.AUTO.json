@@ -3627,7 +3627,6 @@
     "meta": {},
     "type": { "model": "ProvidedFilterModel", "apply": "boolean" }
   },
-  "IHeaderFilterCellComp": { "meta": {}, "type": { "focus()": "void" } },
   "DateFilterModel": {
     "meta": {},
     "type": {
@@ -4222,7 +4221,6 @@
     "type": { "currentValue": "any", "previousValue": "any", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
-  "IAbstractHeaderCellComp": { "meta": {}, "type": { "focus()": "void" } },
   "DropListener": {
     "meta": {},
     "type": {
@@ -4262,6 +4260,8 @@
       "setHeightAndMinHeight(height: string)": "void"
     }
   },
+  "IAbstractHeaderCellComp": { "meta": {}, "type": { "focus()": "void" } },
+  "IHeaderFilterCellComp": { "meta": {}, "type": { "focus()": "void" } },
   "IHeaderCellComp": { "meta": {}, "type": { "focus()": "void" } },
   "IHeaderParams": {
     "meta": {},

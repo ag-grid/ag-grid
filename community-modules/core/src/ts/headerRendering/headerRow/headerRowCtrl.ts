@@ -5,15 +5,15 @@ import { Autowired } from "../../context/context";
 import { Column } from "../../entities/column";
 import { ColumnGroupChild } from "../../entities/columnGroupChild";
 import { Events } from "../../eventKeys";
-import { HeaderFilterCellCtrl } from "../../filter/floating/headerFilterCellCtrl";
 import { FocusService } from "../../focusService";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { isBrowserSafari } from "../../utils/browser";
 import { find } from "../../utils/generic";
 import { getAllValuesInObject, iterateObject } from "../../utils/object";
-import { AbstractHeaderCellCtrl } from "../abstractHeaderCell/abstractHeaderCellCtrl";
-import { HeaderCellCtrl } from "../headerCell/headerCellCtrl";
-import { HeaderGroupCellCtrl } from "../headerGroupCell/headerGroupCellCtrl";
+import { AbstractHeaderCellCtrl } from "../headerCells/abstractHeaderCell/abstractHeaderCellCtrl";
+import { HeaderFilterCellCtrl } from "../headerCells/floatingFilter/headerFilterCellCtrl";
+import { HeaderCellCtrl } from "../headerCells/headerCell/headerCellCtrl";
+import { HeaderGroupCellCtrl } from "../headerCells/headerGroupCell/headerGroupCellCtrl";
 import { HeaderRowType } from "./headerRowComp";
 
 export interface IHeaderRowComp {

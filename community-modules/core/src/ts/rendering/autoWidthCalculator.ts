@@ -1,9 +1,6 @@
 import { RowRenderer } from "./rowRenderer";
 import { Column } from "../entities/column";
 import { Autowired, Bean, PostConstruct } from "../context/context";
-import { HeaderCellComp } from "../headerRendering/headerCell/headerCellComp";
-import { Component } from "../widgets/component";
-import { GridHeaderComp } from "../headerRendering/gridHeaderComp";
 import { BeanStub } from "../context/beanStub";
 import { containsClass, addCssClass } from "../utils/dom";
 import { CtrlsService } from "../ctrlsService";

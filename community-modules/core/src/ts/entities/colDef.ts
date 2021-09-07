@@ -4,7 +4,6 @@ import { ICellRendererComp, ICellRendererFunc, ICellRendererParams } from "../re
 import { Column } from "./column";
 import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columns/columnApi";
-import { IHeaderGroupComp } from "../headerRendering/headerGroupCell/headerGroupComp";
 import { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent } from "../events";
 import { ITooltipComp, ITooltipParams } from "../rendering/tooltipComponent";
 import { IRowDragItem } from "../rendering/row/rowDragComp";
@@ -12,6 +11,7 @@ import { IFilterDef } from '../interfaces/iFilter';
 import { ColumnGroup } from "./columnGroup";
 import { RowClassParams } from "./gridOptions";
 import { OriginalColumnGroup } from "./originalColumnGroup";
+import { IHeaderGroupComp } from "../headerRendering/headerCells/headerGroupCell/headerGroupComp";
 
 /***********************************************************************
  * Don't forget to update ColDefUtil if changing this class. PLEASE! *

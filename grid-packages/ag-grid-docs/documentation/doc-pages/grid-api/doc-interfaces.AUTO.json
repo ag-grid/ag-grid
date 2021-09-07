@@ -6512,11 +6512,6 @@
     },
     "apply": { "type": { "returnType": "boolean", "optional": false } }
   },
-  "IHeaderFilterCellComp": {
-    "focus": {
-      "type": { "arguments": {}, "returnType": "void", "optional": false }
-    }
-  },
   "DateFilterModel": {
     "dateFrom": {
       "type": { "returnType": "string | null", "optional": false }
@@ -7634,11 +7629,6 @@
       "type": { "returnType": "string", "optional": false }
     }
   },
-  "IAbstractHeaderCellComp": {
-    "focus": {
-      "type": { "arguments": {}, "returnType": "void", "optional": false }
-    }
-  },
   "DropListener": {
     "getIconName": {
       "type": {
@@ -7728,6 +7718,16 @@
         "returnType": "void",
         "optional": false
       }
+    }
+  },
+  "IAbstractHeaderCellComp": {
+    "focus": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    }
+  },
+  "IHeaderFilterCellComp": {
+    "focus": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
     }
   },
   "IHeaderCellComp": {

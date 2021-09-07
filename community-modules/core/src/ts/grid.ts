@@ -21,7 +21,6 @@ import { AutoWidthCalculator } from "./rendering/autoWidthCalculator";
 import { HorizontalResizeService } from "./headerRendering/common/horizontalResizeService";
 import { ComponentMeta, Context, ContextParams } from "./context/context";
 import { GridComp } from "./gridComp/gridComp";
-import { StandardMenuFactory } from "./headerRendering/headerCell/standardMenu";
 import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
 import { DragService } from "./dragAndDrop/dragService";
 import { SortController } from "./sortController";
@@ -93,6 +92,7 @@ import { FakeHScrollComp } from "./gridBodyComp/fakeHScrollComp";
 import { PinnedWidthService } from "./gridBodyComp/pinnedWidthService";
 import { RowContainerComp } from "./gridBodyComp/rowContainer/rowContainerComp";
 import { RowNodeEventThrottle } from "./entities/rowNodeEventThrottle";
+import { StandardMenuFactory } from "./main";
 
 export interface GridParams {
     // used by Web Components
