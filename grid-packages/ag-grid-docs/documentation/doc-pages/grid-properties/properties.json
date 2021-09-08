@@ -234,7 +234,7 @@
     },
     "rowDragging": {
         "meta": {
-            "displayName": "Row Dragging",
+            "displayName": "Row Drag and Drop",
             "page": {
                 "name": "Row Dragging",
                 "url": "/row-dragging/"

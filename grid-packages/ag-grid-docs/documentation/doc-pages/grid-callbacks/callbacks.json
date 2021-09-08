@@ -46,9 +46,13 @@
             "description": "Tells the grid if this row should be rendered as [full width](/master-detail/)."
         }
     },
-    "Sort and Filter": {
+    "Filter": {
         "meta": {
-            "displayName": "Sort and Filter"
+            "displayName": "Filtering",
+            "page": {
+                "name": "Filtering",
+                "url": "/filtering-overview/"
+            }
         },
         "isExternalFilterPresent": {
             "description": "Grid calls this method to know if an external filter is present.",
@@ -63,18 +67,12 @@
                 "name": "External Filter",
                 "url": "/filter-external/"
             }
-        },
-        "postSort": {
-            "description": "Callback to perform additional sorting after the grid has sorted the rows.",
-            "more": {
-                "name": "Post Sort",
-                "url": "/row-sorting/#post-sort"
-            }
         }
     },
     "groupPivot": {
         "meta": {
-            "displayName": "Row Grouping and Pivoting"
+            "displayName": "Row Grouping and Pivoting",
+            "description": "See [Pivot](/pivoting/) and [Aggregation](/aggregation/) for more information"
         },
         "groupRowAggNodes": {
             "description": "Callback for grouping.",
@@ -102,7 +100,7 @@
     },
     "menus": {
         "meta": {
-            "displayName": "Popup / Menus"
+            "displayName": "Accessories"
         },
         "getContextMenuItems": {
             "description": "For customising the context menu.",
@@ -125,7 +123,10 @@
     "clipboard": {
         "meta": {
             "displayName": "Clipboard",
-            "description": "See [Clipboard](/clipboard/)"
+            "page": {
+                "name": "Clipboard",
+                "url": "/clipboard/"
+            }
         },
         "processCellForClipboard": {
             "description": "Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel."
@@ -146,7 +147,10 @@
     "nav": {
         "meta": {
             "displayName": "Keyboard Navigation",
-            "description": "See [Keyboard Navigation](/keyboard-navigation/)"
+            "page": {
+                "name": "Keyboard Navigation",
+                "url": "/keyboard-navigation/"
+            }
         },
         "navigateToNextHeader": {
             "description": "Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused."
@@ -164,7 +168,10 @@
     "pagination": {
         "meta": {
             "displayName": "Pagination",
-            "description": "See [Row Pagination](/row-pagination/)"
+            "page": {
+                "name": "Row Pagination",
+                "url": "/row-pagination"
+            }
         },
         "paginationNumberFormatter": {
             "description": "Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions."
@@ -172,8 +179,11 @@
     },
     "ServerSide": {
         "meta": {
-            "displayName": "Row Model: Server-Side",
-            "description": "Callbacks for [Server-Side Row Model](/server-side-model/) only."
+            "displayName": "RowModel: Server-Side",
+            "page": {
+                "name": "Server-Side Row Model",
+                "url": "/server-side-model/"
+            }
         },
         "getChildCount": {
             "description": "Allows setting the child count for a group row."
@@ -196,7 +206,11 @@
     },
     "charts": {
         "meta": {
-            "displayName": "Charts"
+            "displayName": "Integrated Charts",
+            "page": {
+                "name": "Integrated Charts",
+                "url": "/integrated-charts/"
+            }
         },
         "getChartToolbarItems": {
             "description": "Callback to be used to customise the chart toolbar items.",
@@ -212,6 +226,22 @@
         },
         "getDocument": {
             "description": "Allows overriding what `document` is used. Currently used by Drag and Drop (may extend to other places in the future). Use this when you want the grid to use a different `document` than the one available on the global scope. This can happen if docking out components (something which Electron supports)."
+        }
+    },
+    "sort": {
+        "meta": {
+            "displayName": "Sorting",
+            "page": {
+                "name": "Row Sorting",
+                "url": "/row-sorting/"
+            }
+        },
+        "postSort": {
+            "description": "Callback to perform additional sorting after the grid has sorted the rows.",
+            "more": {
+                "name": "Post Sort",
+                "url": "/row-sorting/#post-sort"
+            }
         }
     }
 }

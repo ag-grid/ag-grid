@@ -249,7 +249,7 @@
     },
     "navigation": {
         "meta": {
-            "displayName": "Navigation",
+            "displayName": "Keyboard Navigation",
             "page": {
                 "name": "Keyboard Navigation",
                 "url": "/keyboard-navigation/"
@@ -381,7 +381,7 @@
     },
     "rowDrag": {
         "meta": {
-            "displayName": "Row Dragging",
+            "displayName": "Row Drag and Drop",
             "page": {
                 "name": "Row Dragging",
                 "url": "/row-dragging/"
