@@ -36,12 +36,14 @@ export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework
     sortAndFilterProperties(typeProps, framework).forEach(([k, v]) => {
         // interfaces include the ? as part of the name. We want to remove this for the <interface-documentation> component
         // Instead the type will be unioned with undefined as part of the propertyType
-        const keyNoQuestion = k.replace('?', '');
-
-        if (namesArr.length === 0 || namesArr.includes(keyNoQuestion)) {
+        let propNameOnly = k.replace('?', '');
+        // for function properties like failCallback(): void; We only want the name failCallback part
+        // as this is what is listed in the doc-interfaces.AUTO.json file
+        propNameOnly = propNameOnly.split('(')[0];
+        if (namesArr.length === 0 || namesArr.includes(propNameOnly)) {
             const docs = (li.docs && removeJsDocStars(li.docs[k])) || '';
             if (!docs.includes('@deprecated')) {
-                props[keyNoQuestion] = { description: docs || v, }
+                props[propNameOnly] = { description: docs || v, }
             }
         }
     })
