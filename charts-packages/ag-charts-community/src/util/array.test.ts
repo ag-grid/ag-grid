@@ -1,5 +1,5 @@
 import { describe, expect, test, it } from "@jest/globals";
-import { extent, mapExtent } from "./array";
+import { extent } from "./array";
 import { isComparable, isContinuous } from "./value";
 
 describe("extent with isComparable", () => {
@@ -116,14 +116,12 @@ describe("extent with isContinuous", () => {
         const result = extent([{ toString: () => "2" }, { toString: () => "1" }], isContinuous);
         expect(result).toBe(undefined);
     });
-});
 
-describe("mapExtent", () => {
     test("coerces Dates to numbers", () => {
         const earliest = 5270400000;
         const latest = 1568332800000;
 
-        const result = mapExtent([new Date(earliest), new Date(latest), new Date(1985, 5, 5)], isContinuous, x => +x);
+        const result = extent([new Date(earliest), new Date(latest), new Date(1985, 5, 5)], isContinuous, x => +x);
 
         expect(result![0]).toBe(earliest);
         expect(result![1]).toBe(latest);
@@ -133,7 +131,7 @@ describe("mapExtent", () => {
         const earliest = 5270400000;
         const latest = 1568468277000;
 
-        const result = mapExtent([new Date(2019, 7, 20), new Date(earliest), latest, new Date(1985, 5, 5)], isContinuous, x => +x);
+        const result = extent([new Date(2019, 7, 20), new Date(earliest), latest, new Date(1985, 5, 5)], isContinuous, x => +x);
 
         expect(result![0]).toBe(earliest);
         expect(result![1]).toBe(latest);
