@@ -1,6 +1,6 @@
 import ContinuousScale from "../../scale/continuousScale";
 import { LinearScale } from "../../scale/linearScale";
-import { mapExtent } from "../../util/array";
+import { extent } from "../../util/array";
 import { isContinuous } from "../../util/value";
 import { ChartAxis } from "../chartAxis";
 
@@ -27,7 +27,7 @@ export class NumberAxis extends ChartAxis {
 
     set domain(domain: number[]) {
         if (domain.length > 2) {
-            domain = mapExtent(domain, isContinuous, x => +x) || [0, 1];
+            domain = extent(domain, isContinuous) || [0, 1];
         }
         const { scale, min, max } = this;
         domain = [
