@@ -1226,14 +1226,9 @@ export abstract class Chart extends Observable {
     highlightedDatum?: SeriesNodeDatum;
 
     highlightDatum(datum: SeriesNodeDatum, node?: Shape): void {
-        const { style } = this.scene.canvas.element;
+        this.scene.canvas.element.style.cursor = datum.series.cursor;
         this.highlightedDatum = datum;
-        this.series.forEach(series => {
-            if (node) {
-                style.cursor = series.cursor;
-            }
-            series.updatePending = true;
-        });
+        this.series.forEach(s => s.updatePending = true);
     }
 
     dehighlightDatum(): void {

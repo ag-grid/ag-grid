@@ -260,9 +260,9 @@ export class LineSparkline extends Sparkline {
             content
         }
 
-        if (this.tooltip.renderer) {
-            return toTooltipHtml(this.tooltip.renderer({
-                // context: this.context,
+        if (Sparkline.tooltip.renderer) {
+            return toTooltipHtml(Sparkline.tooltip.renderer({
+                context: this.context,
                 datum: seriesDatum,
                 title,
                 backgroundColor,

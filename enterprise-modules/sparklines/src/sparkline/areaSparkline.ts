@@ -354,8 +354,8 @@ export class AreaSparkline extends Sparkline {
             content
         }
 
-        if (this.tooltip.renderer) {
-            return toTooltipHtml(this.tooltip.renderer({
+        if (Sparkline.tooltip.renderer) {
+            return toTooltipHtml(Sparkline.tooltip.renderer({
                 // context: this.context,
                 datum: seriesDatum,
                 title,

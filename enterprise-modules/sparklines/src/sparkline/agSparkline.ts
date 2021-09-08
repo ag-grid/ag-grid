@@ -2,6 +2,7 @@ import { AreaSparkline } from "./areaSparkline";
 import { SparklineAxis } from "./sparkline";
 import { ColumnSparkline } from "./columnSparkline";
 import { LineSparkline } from "./lineSparkline";
+import { Sparkline } from "./sparkline";
 
 import {
     SparklineOptions,
@@ -21,7 +22,7 @@ export type AgSparklineType<T> =
     T extends ColumnSparklineOptions ? ColumnSparkline :
     never;
 
-export type Sparkline = LineSparkline | AreaSparkline | ColumnSparkline;
+export type SparklineType = LineSparkline | AreaSparkline | ColumnSparkline;
 export abstract class AgSparkline {
     static create<T extends SparklineOptions>(options: T, container?: HTMLElement, data?: any[]): AgSparklineType<T> {
         // avoid mutating user provided options
@@ -85,7 +86,7 @@ function getSparklineInstance(type: string = 'line', sparkline?: any): any {
     }
 }
 
-function initSparklineByType(sparkline: Sparkline, options: any): void {
+function initSparklineByType(sparkline: SparklineType, options: any): void {
     switch (options.type) {
         case 'column':
             initColumnSparkline(sparkline as ColumnSparkline, options);
@@ -100,7 +101,7 @@ function initSparklineByType(sparkline: Sparkline, options: any): void {
     }
 }
 
-function initSparkline(sparkline: Sparkline, options: any) {
+function initSparkline(sparkline: SparklineType, options: any) {
     // FIXME: it may not be necessary to set context
     setValueIfPropertyExists(sparkline, 'context', options.context, options);
     setValueIfPropertyExists(sparkline, 'container', options.container, options);
@@ -122,7 +123,7 @@ function initSparkline(sparkline: Sparkline, options: any) {
     }
 
     if(options.tooltip) {
-        initTooltipOptions(sparkline.tooltip, options.tooltip);
+        initTooltipOptions(Sparkline.tooltip, options.tooltip);
     }
 }
 

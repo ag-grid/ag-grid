@@ -39,8 +39,8 @@ export abstract class Sparkline extends Observable {
     readonly canvasElement: HTMLCanvasElement;
     readonly rootGroup: Group;
 
-    readonly tooltip: SparklineTooltip;
-    static readonly defaultTooltipClass = 'ag-sparkline-tooltip';
+    // static readonly defaultTooltipClass = 'ag-sparkline-tooltip';
+    static tooltip: SparklineTooltip = new SparklineTooltip();
 
     private static tooltipDocuments: Document[] = [];
     private static tooltipInstances: Map<Document, SparklineTooltip> = new Map();
@@ -124,25 +124,26 @@ export abstract class Sparkline extends Observable {
         this.seriesRect.height = this.height;
 
         // FIXME: make this more efficient
-        this.tooltip = new SparklineTooltip(this);
-        const styleElement = document.createElement('style');
-        styleElement.innerHTML = defaultTooltipCss;
 
-        document.head.insertBefore(styleElement, document.head.querySelector('style'));
-        Sparkline.tooltipDocuments.push(document);
+        // const styleElement = document.createElement('style');
+        // styleElement.innerHTML = defaultTooltipCss;
+        //
+        // document.head.insertBefore(styleElement, document.head.querySelector('style'));
+        // Sparkline.tooltipDocuments.push(document);
 
         // one tooltip instance per document
-        // if (Sparkline.tooltipDocuments.indexOf(document) === -1) {
-        //     const styleElement = document.createElement('style');
-        //     styleElement.innerHTML = defaultTooltipCss;
+        if (Sparkline.tooltipDocuments.indexOf(document) === -1) {
+            const styleElement = document.createElement('style');
+            styleElement.innerHTML = defaultTooltipCss;
 
-        //     document.head.insertBefore(styleElement, document.head.querySelector('style'));
-        //     Sparkline.tooltipDocuments.push(document);
+            document.head.insertBefore(styleElement, document.head.querySelector('style'));
+            Sparkline.tooltipDocuments.push(document);
 
-        //     this.tooltip = new SparklineTooltip(this);
+            // this.tooltip = new SparklineTooltip(this);
 
-        //     Sparkline.tooltipInstances.set(document, this.tooltip);
-        // } else {
+            // Sparkline.tooltipInstances.set(document, this.tooltip);
+        }
+        // else {
         //     this.tooltip = Sparkline.tooltipInstances.get(document)!;
         // }
 
@@ -218,7 +219,7 @@ export abstract class Sparkline extends Observable {
 
         this.highlightDatum(closestDatum);
 
-        if (this.tooltip.enabled) {
+        if (Sparkline.tooltip.enabled) {
             this.handleTooltip(closestDatum);
         }
     }
@@ -229,7 +230,7 @@ export abstract class Sparkline extends Observable {
      */
     private onMouseOut(event: MouseEvent) {
         this.dehighlightDatum();
-        this.tooltip.toggle(false);
+        Sparkline.tooltip.toggle(false);
     }
 
     // Fetch required values from the data object and process them.
@@ -378,10 +379,10 @@ export abstract class Sparkline extends Observable {
             pageY: (point.y + canvasRect.top + pageYOffset)
         }
 
-        const html = this.tooltip.enabled && seriesDatum.y !== undefined && this.getTooltipHtml(datum);
+        const html = Sparkline.tooltip.enabled && seriesDatum.y !== undefined && this.getTooltipHtml(datum);
 
         if (html) {
-            this.tooltip.show(meta, html);
+            Sparkline.tooltip.show(meta, html);
         }
     }
 

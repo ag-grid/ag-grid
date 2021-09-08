@@ -57,14 +57,14 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
                     data: params.value,
                     width: clientWidth,
                     height: clientHeight,
-                    // context: {
-                    //     data: params.data
-                    // },
+                    context: {
+                        data: params.data
+                    },
                     ...params.sparklineOptions,
-                    tooltip: {
-                        ...params.sparklineOptions!.tooltip,
-                        renderer: tooltipRenderer
-                    }
+                    // tooltip: {
+                    //     ...params.sparklineOptions!.tooltip,
+                    //     renderer: tooltipRenderer
+                    // }
                 }
 
                 // create new instance of sparkline
