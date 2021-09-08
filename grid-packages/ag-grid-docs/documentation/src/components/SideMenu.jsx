@@ -14,7 +14,7 @@ const SideMenu = ({ headings = [], pageName, pageTitle, hideMenu }) => {
         let headings = [];
         let maxLevel = 1;
 
-        const selector = [2, 3, 4, 5, 6].map(depth => `#doc-content h${depth}`).join(',');
+        const selector = [2, 3, 4, 5, 6].map(depth => `#doc-content h${depth}:not(.side-menu-exclude)`).join(',');
         const headingsFromDom = document.querySelectorAll(selector);
 
         for (let i = 0; i < headingsFromDom.length; i++) {

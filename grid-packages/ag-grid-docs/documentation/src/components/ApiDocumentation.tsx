@@ -337,7 +337,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
             </div>}
         </td>
         <td onClick={() => setExpanded(!isExpanded)} role="presentation">
-            <h6 id={`reference-${id}-${name}`} style={{ display: 'inline-flex' }}>
+            <h6 id={`reference-${id}-${name}`} style={{ display: 'inline-flex' }} className="side-menu-exclude">
                 <code dangerouslySetInnerHTML={{ __html: name }} className={styles['reference__name']}></code>
                 <a href={`#reference-${id}-${name}`} className="anchor after" style={{ fontSize: 'small' }}>{anchorIcon}</a>
             </h6>
