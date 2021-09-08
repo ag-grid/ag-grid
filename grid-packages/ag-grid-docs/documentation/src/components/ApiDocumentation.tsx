@@ -337,7 +337,11 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
             </div>}
         </td>
         <td onClick={() => setExpanded(!isExpanded)} role="presentation">
-            <code dangerouslySetInnerHTML={{ __html: name }} className={styles['reference__name']}></code>
+            <h6 id={`reference-${id}-${name}`} style={{ display: 'inline-flex' }}>
+                <code dangerouslySetInnerHTML={{ __html: name }} className={styles['reference__name']}></code>
+                <a href={`#reference-${id}-${name}`} className="anchor after" style={{ fontSize: 'small' }}>{anchorIcon}</a>
+            </h6>
+
             <div>
                 {typeUrl ?
                     <a className={styles['reference__property-type']} href={typeUrl} target={typeUrl.startsWith('http') ? '_blank' : '_self'} rel="noreferrer">
