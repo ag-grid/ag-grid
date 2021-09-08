@@ -25,7 +25,7 @@ interface SeriesRect {
 }
 
 type Container = HTMLElement | undefined | null;
-type Data = number[]  | undefined | null;
+type Data = number[] | undefined | null;
 
 export class SparklineAxis extends Observable {
     stroke: string = 'rgb(204, 214, 235)';
@@ -51,6 +51,16 @@ export abstract class Sparkline extends Observable {
         width: 0,
         height: 0
     };
+
+    private _context: { data: any } | undefined = undefined;
+    set context(value: { data: any } | undefined) {
+        if (this._context !== value) {
+            this._context = value;
+        }
+    }
+    get context(): { data: any } | undefined {
+        return this._context;
+    }
 
     private _container: Container = undefined;
     set container(value: Container) {
@@ -113,20 +123,28 @@ export abstract class Sparkline extends Observable {
         this.seriesRect.width = this.width;
         this.seriesRect.height = this.height;
 
+        // FIXME: make this more efficient
+        this.tooltip = new SparklineTooltip(this);
+        const styleElement = document.createElement('style');
+        styleElement.innerHTML = defaultTooltipCss;
+
+        document.head.insertBefore(styleElement, document.head.querySelector('style'));
+        Sparkline.tooltipDocuments.push(document);
+
         // one tooltip instance per document
-        if (Sparkline.tooltipDocuments.indexOf(document) === -1) {
-            const styleElement = document.createElement('style');
-            styleElement.innerHTML = defaultTooltipCss;
+        // if (Sparkline.tooltipDocuments.indexOf(document) === -1) {
+        //     const styleElement = document.createElement('style');
+        //     styleElement.innerHTML = defaultTooltipCss;
 
-            document.head.insertBefore(styleElement, document.head.querySelector('style'));
-            Sparkline.tooltipDocuments.push(document);
+        //     document.head.insertBefore(styleElement, document.head.querySelector('style'));
+        //     Sparkline.tooltipDocuments.push(document);
 
-            this.tooltip = new SparklineTooltip(this);
+        //     this.tooltip = new SparklineTooltip(this);
 
-            Sparkline.tooltipInstances.set(document, this.tooltip);
-        } else {
-            this.tooltip = Sparkline.tooltipInstances.get(document)!;
-        }
+        //     Sparkline.tooltipInstances.set(document, this.tooltip);
+        // } else {
+        //     this.tooltip = Sparkline.tooltipInstances.get(document)!;
+        // }
 
         this.setupDomEventListeners(this.scene.canvas.element);
     }
@@ -388,11 +406,12 @@ export abstract class Sparkline extends Observable {
      * Cleanup and remove canvas element from the DOM.
      */
     destroy() {
-        this.tooltip.destroy();
-        // remove tooltip instance
-        Sparkline.tooltipInstances.delete(document);
-        // remove document from documents list
-        Sparkline.tooltipDocuments = Sparkline.tooltipDocuments.filter(d => d !== document);
+        // FIXME: should tooltip(s) be destroyed?
+        // this.tooltip.destroy();
+        // // remove tooltip instance
+        // Sparkline.tooltipInstances.delete(document);
+        // // remove document from documents list
+        // Sparkline.tooltipDocuments = Sparkline.tooltipDocuments.filter(d => d !== document);
         this.scene.container = undefined;
         // remove canvas element from the DOM
         this.container = undefined;

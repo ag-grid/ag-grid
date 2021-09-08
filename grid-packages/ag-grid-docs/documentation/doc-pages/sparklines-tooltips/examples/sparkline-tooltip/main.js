@@ -24,7 +24,7 @@ var gridOptions = {
                     },
                     tooltip: {
                         enabled: true,
-                        renderer: tooltipRenderer
+                        renderer: tooltipRenderer,
                     }
                 }
             },
@@ -41,9 +41,7 @@ var gridOptions = {
 function tooltipRenderer(params) {
     return {
         content: params.yValue,
-        // title: 'dog',
-        // color: 'pink',
-        // backgroundColor: 'green',
+        title: params.context.data.symbol,
         opacity: 0.5
     }
 }

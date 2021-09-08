@@ -1,6 +1,9 @@
 {
     "_config_": {},
     "Tooltip": {
+        "meta": {
+            "description": "Configuration for the tooltips."
+        },
         "enabled": {
             "type": "boolean",
             "default": true,
@@ -26,8 +29,8 @@
                     "backgroundColor?": "string",
                     "opacity?": "number"
                 }
-            }
-        },
-        "description": "Function used to create the content for tooltips."
+            },
+            "description": "Function used to create the content for tooltips."
+        }
     }
 }

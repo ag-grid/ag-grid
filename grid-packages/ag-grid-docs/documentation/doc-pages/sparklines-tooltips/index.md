@@ -46,6 +46,10 @@ const gridOptions = {
                     },
                     highlightStyle: {
                         size: 5,
+                    },
+                    tooltip: {
+                        enabled: true,
+                        renderer: tooltipRenderer
                     }
                 }
             },
@@ -67,35 +71,11 @@ This is an example to further demonstrate how line sparklines can be configured 
 - See the [MarkerFormat](/sparklines-line-sparkline/#markerformat) interface for the attributes which can be customised using this formatter.
 
 
-<grid-example title='Line Sparkline' name='sparkline-tooltip' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
+<grid-example title='Sparkline Tooltips' name='sparkline-tooltip' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
-## Interfaces
-The interfaces for the available options are as follows:
+### Tooltip
 
-### LineSparklineOptions
-
-<api-documentation source='sparklines-line-sparkline/resources/line-sparkline-api.json' section='LineSparklineOptions'></api-documentation>
-
-### Padding
-
-<api-documentation source='sparklines-line-sparkline/resources/line-sparkline-api.json' section='Padding'></api-documentation>
-
-### SparklineLine
-
-<api-documentation source='sparklines-line-sparkline/resources/line-sparkline-api.json' section='SparklineLine'></api-documentation>
-
-### SparklineMarker
-
-<api-documentation source='sparklines-line-sparkline/resources/line-sparkline-api.json' section='SparklineMarker'></api-documentation>
-
-### HighlightStyle
-
-<api-documentation source='sparklines-line-sparkline/resources/line-sparkline-api.json' section='HighlightStyle'></api-documentation>
-
-### MarkerFormat
-
-<api-documentation source='sparklines-line-sparkline/resources/line-sparkline-api.json' section='MarkerFormat'></api-documentation>
-
+<api-documentation source='sparklines-tooltips/resources/sparkline-tooltip-api.json' section='Tooltip'></api-documentation>
 
 ## Next Up
 

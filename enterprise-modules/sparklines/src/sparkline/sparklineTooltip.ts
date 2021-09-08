@@ -39,11 +39,10 @@ export function toTooltipHtml(input: string | TooltipRendererResult, defaults?: 
     style="color: ${color}; background-color: ${titleBgColorRgbaString}">${title}</div>` : '';
 
     return `${titleHtml}<div class="${Sparkline.defaultTooltipClass}-content" style="background-color: ${contentBgColor}">${content}</div>`;
-
 }
 
 export class SparklineTooltip extends Observable {
-    chart: Sparkline;
+    sparkline: Sparkline;
     element: HTMLElement = document.createElement('div');
 
     class: string = Sparkline.defaultTooltipClass;
@@ -51,10 +50,10 @@ export class SparklineTooltip extends Observable {
     container?: HTMLElement = undefined;
     renderer?: (params: TooltipRendererParams) => string | TooltipRendererResult = undefined;
 
-    constructor(chart: Sparkline) {
+    constructor(sparkline: Sparkline) {
         super();
 
-        this.chart = chart;
+        this.sparkline = sparkline;
 
         const tooltipRoot = document.body;
         tooltipRoot.appendChild(this.element);
@@ -90,6 +89,8 @@ export class SparklineTooltip extends Observable {
 
     private constrained = false;
     show(meta: TooltipMeta, html?: string) {
+        this.toggle(false);
+
         const { element } = this;
 
         if (html !== undefined) {
@@ -126,7 +127,6 @@ export class SparklineTooltip extends Observable {
 
         if (top < minTop) {
             top = minTop;
-            // top = meta.pageY + 20;
             this.updateClass(true, this.constrained = true);
         }
 
