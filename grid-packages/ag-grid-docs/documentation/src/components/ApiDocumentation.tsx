@@ -3,7 +3,7 @@ import { convertMarkdown, convertUrl, escapeGenericCode, getLinkedType, getLonge
 import anchorIcon from 'images/anchor';
 import React, { useState } from 'react';
 import styles from './ApiDocumentation.module.scss';
-import { ApiProps, Config, DocEntryMap, FunctionCode, ICallSignature, IEvent, ObjectCode, PropertyCall, PropertyType, SectionProps, InterfaceEntry } from './ApiDocumentation.types';
+import { ApiProps, Config, DocEntryMap, FunctionCode, ICallSignature, IEvent, ObjectCode, PropertyCall, PropertyType, SectionProps, InterfaceEntry, DocEntry } from './ApiDocumentation.types';
 import Code from './Code';
 import { extractInterfaces, writeAllInterfaces, removeJsDocStars, sortAndFilterProperties, applyUndefinedUnionType } from './documentation-helpers';
 import { useJsonFileNodes } from './use-json-file-nodes';
@@ -129,7 +129,12 @@ export const ApiDocumentation: React.FC<ApiProps> = ({ pageName, framework, sour
     if (section == null) {
         const properties: DocEntryMap = mergeObjects(propertiesFromFiles);
 
-        return Object.entries(properties)
+        const entries = Object.entries(properties);
+        entries.sort(([k1, v1], [k2, v2]) => {
+            const getName = (k, v) => v.meta && v.meta.displayName || k;
+            return getName(k1, v1) < getName(k2, v2) ? -1 : 1;
+        })
+        return entries
             .map(([key, value]) => <Section key={key} framework={framework} title={key} properties={value} config={config} />);
     }
 
