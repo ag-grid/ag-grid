@@ -234,7 +234,7 @@
     },
     "rowDragging": {
         "meta": {
-            "displayName": "Dragging",
+            "displayName": "Row Dragging",
             "page": {
                 "name": "Row Dragging",
                 "url": "/row-dragging/"
@@ -585,7 +585,7 @@
         "meta": {
             "displayName": "RowModel: Client-Side",
             "page": {
-                "name": "Client-Side Data",
+                "name": "Client-Side Row Model",
                 "url": "/client-side-model/"
             }
         },
@@ -612,7 +612,7 @@
         "meta": {
             "displayName": "RowModel: Server-Side",
             "page": {
-                "name": "Server-Side Model",
+                "name": "Server-Side Row Model",
                 "url": "/server-side-model/"
             }
         },
@@ -655,7 +655,7 @@
         "meta": {
             "displayName": "RowModel: Infinite",
             "page": {
-                "name": "Infinite Model",
+                "name": "Infinite Row Model",
                 "url": "/infinite-scrolling/"
             }
         },
@@ -683,7 +683,7 @@
         "meta": {
             "displayName": "RowModel: Viewport",
             "page": {
-                "name": "Viewport Model",
+                "name": "Viewport Row Model",
                 "url": "/viewport-scrolling/"
             }
         },
