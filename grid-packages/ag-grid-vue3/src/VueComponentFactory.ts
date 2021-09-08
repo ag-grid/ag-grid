@@ -18,11 +18,26 @@ export class VueComponentFactory {
             console.error(`Could not find component with name of ${component}. Is it in Vue.components?`);
         }
 
-        if (componentDefinition.extends && componentDefinition.extends.setup) {
-            componentDefinition.setup = componentDefinition.extends.setup;
+        if (componentDefinition.extends) {
+            if (componentDefinition.extends.setup) {
+                componentDefinition.setup = componentDefinition.extends.setup;
+            }
+
+            componentDefinition.extends.props = this.addParamsToProps(componentDefinition.extends.props)
+        } else {
+            componentDefinition.props = this.addParamsToProps(componentDefinition.props)
         }
 
         return componentDefinition;
+    }
+
+    private static addParamsToProps(props: any) {
+        if ((props && props.indexOf('params') === -1) ||
+            !props) {
+            props = ['params', ...(props ? props : [])];
+        }
+
+        return props;
     }
 
     public static createAndMountComponent(component: any, params: any, parent: AgGridVue) {
@@ -45,6 +60,7 @@ export class VueComponentFactory {
         let vNode: any = createVNode(component, props)
 
         vNode.appContext = parent.$.appContext;
+        vNode.appContext.provides = {...(vNode.appContext.provides ? vNode.appContext.provides : {}), ...(parent.$parent.$options.provide ? parent.$parent.$options.provide : {})};
 
         let el: any = document.createElement('div')
         render(vNode, el)
