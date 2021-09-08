@@ -21,24 +21,28 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
     @Autowired('resizeObserverService') private resizeObserverService!: ResizeObserverService;
 
     private sparkline?: any;
-    private params: ISparklineCellRendererParams | undefined;
 
     constructor() {
         super(SparklineCellRenderer.TEMPLATE);
     }
 
     public init(params: ISparklineCellRendererParams): void {
-        this.params = params;
+        let tooltipRenderer: (tooltipRendererParams: TooltipRendererParams) => TooltipRendererResult;
 
-        const tooltipRenderer = (tooltipRendererParams: TooltipRendererParams): TooltipRendererResult => {
-            if (!params.sparklineOptions || !params.sparklineOptions.tooltip || !params.sparklineOptions.tooltip.renderer) {
-                return {};
+        if (params.sparklineOptions && params.sparklineOptions.tooltip && params.sparklineOptions.tooltip.renderer !== undefined) {
+
+            tooltipRenderer = (tooltipRendererParams: TooltipRendererParams): TooltipRendererResult => {
+
+                console.log('this elem', this.getGui());
+
+                const renderer = params.sparklineOptions!.tooltip!.renderer;
+                tooltipRendererParams.context = {
+                    data: params.data
+                };
+
+                return renderer!(tooltipRendererParams);
             }
-            const renderer = params.sparklineOptions!.tooltip!.renderer;
-            tooltipRendererParams.context = {
-                data: params.data
-            };
-            return renderer(tooltipRendererParams);
+
         }
 
         let firstTimeIn = true;
@@ -49,15 +53,18 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
             }
 
             if (firstTimeIn) {
-                // FIXME: temp logging to help troubleshooting
-                console.log(tooltipRenderer({} as any));
-
                 const options = {
                     data: params.value,
                     width: clientWidth,
                     height: clientHeight,
+                    // context: {
+                    //     data: params.data
+                    // },
                     ...params.sparklineOptions,
-                    tooltip: {...params.sparklineOptions!.tooltip, renderer: tooltipRenderer}
+                    tooltip: {
+                        ...params.sparklineOptions!.tooltip,
+                        renderer: tooltipRenderer
+                    }
                 }
 
                 // create new instance of sparkline

@@ -58,7 +58,6 @@ export interface TooltipRendererResult {
     backgroundColor?: string;
     opacity?: number;
 }
-
 export interface TooltipRendererParams {
     context?: any;
     datum: any;
@@ -67,7 +66,6 @@ export interface TooltipRendererParams {
     xValue: any;
     yValue: any;
 }
-
 export interface SparklineLine {
     stroke?: string;
     strokeWidth?: number;

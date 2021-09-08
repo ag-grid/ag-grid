@@ -101,6 +101,8 @@ function initSparklineByType(sparkline: Sparkline, options: any): void {
 }
 
 function initSparkline(sparkline: Sparkline, options: any) {
+    // FIXME: it may not be necessary to set context
+    setValueIfPropertyExists(sparkline, 'context', options.context, options);
     setValueIfPropertyExists(sparkline, 'container', options.container, options);
     setValueIfPropertyExists(sparkline, 'data', options.data, options);
     setValueIfPropertyExists(sparkline, 'width', options.width, options);

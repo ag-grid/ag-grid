@@ -249,6 +249,7 @@ export class ColumnSparkline extends Sparkline {
 
         if (this.tooltip.renderer) {
             return toTooltipHtml(this.tooltip.renderer({
+                // context: this.context,
                 datum: seriesDatum,
                 title,
                 backgroundColor,
