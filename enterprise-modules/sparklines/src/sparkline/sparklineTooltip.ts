@@ -35,26 +35,23 @@ export function toTooltipHtml(input: string | TooltipRendererResult, defaults?: 
 
     const contentBgColor = `rgba(244, 244, 244, ${opacity})`;
 
-    const titleHtml = title ? `<div class="${Sparkline.defaultTooltipClass}-title";
+    const titleHtml = title ? `<div class="ag-sparkline-tooltip-title";
     style="color: ${color}; background-color: ${titleBgColorRgbaString}">${title}</div>` : '';
 
-    return `${titleHtml}<div class="${Sparkline.defaultTooltipClass}-content" style="background-color: ${contentBgColor}">${content}</div>`;
+    return `${titleHtml}<div class="ag-sparkline-tooltip-content" style="background-color: ${contentBgColor}">${content}</div>`;
 }
 
 export class SparklineTooltip extends Observable {
-    sparkline: Sparkline;
+    // sparkline: Sparkline;
     element: HTMLElement = document.createElement('div');
 
-    class: string = Sparkline.defaultTooltipClass;
+    class: string = 'ag-sparkline-tooltip';
     enabled: boolean = true;
     container?: HTMLElement = undefined;
     renderer?: (params: TooltipRendererParams) => string | TooltipRendererResult = undefined;
 
-    constructor(sparkline: Sparkline) {
+    constructor() {
         super();
-
-        this.sparkline = sparkline;
-
         const tooltipRoot = document.body;
         tooltipRoot.appendChild(this.element);
     }
@@ -62,26 +59,26 @@ export class SparklineTooltip extends Observable {
     isVisible(): boolean {
         const { element } = this;
         if (element.classList) {
-            return !element.classList.contains(`${Sparkline.defaultTooltipClass}-hidden`);
+            return !element.classList.contains(`ag-sparkline-tooltip-hidden`);
         }
 
         // IE11
         const classes = element.getAttribute('class');
         if (classes) {
-            return classes.split(' ').indexOf(`${Sparkline.defaultTooltipClass}-hidden`) < 0;
+            return classes.split(' ').indexOf(`ag-sparkline-tooltip-hidden`) < 0;
         }
 
         return false;
     }
     updateClass(visible?: boolean, constrained?: boolean) {
-        const classList = [Sparkline.defaultTooltipClass];
+        const classList = ['ag-sparkline-tooltip'];
 
         if (visible !== true) {
-            classList.push(`${Sparkline.defaultTooltipClass}-hidden`);
+            classList.push(`ag-sparkline-tooltip-hidden`);
         }
 
         if (constrained !== true) {
-            classList.push(`${Sparkline.defaultTooltipClass}-arrow`);
+            classList.push(`ag-sparkline-tooltip-arrow`);
         }
 
         this.element.setAttribute('class', classList.join(' '));

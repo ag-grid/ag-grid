@@ -2,6 +2,7 @@ import { AreaSparkline } from "./areaSparkline";
 import { SparklineAxis } from "./sparkline";
 import { ColumnSparkline } from "./columnSparkline";
 import { LineSparkline } from "./lineSparkline";
+import { Sparkline } from "./sparkline";
 
 import {
     SparklineOptions,
@@ -122,7 +123,7 @@ function initSparkline(sparkline: Sparkline, options: any) {
     }
 
     if(options.tooltip) {
-        initTooltipOptions(sparkline.tooltip, options.tooltip);
+        initTooltipOptions(Sparkline.tooltip, options.tooltip);
     }
 }
 
