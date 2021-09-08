@@ -5,6 +5,7 @@ import "jest-canvas-mock";
 import { AreaSparkline } from './areaSparkline';
 import { ColumnSparkline } from './columnSparkline';
 import { ColumnFormat, ColumnFormatterParams, MarkerFormat, MarkerFormatterParams, SparklineOptions, TooltipRendererResult, TooltipRendererParams } from '@ag-grid-community/core';
+import { Sparkline } from './sparkline';
 
 const data = [7, 8.3, undefined, -9, '9.2', null, 5.5, Infinity, 6.75, -11.9, NaN, -Infinity, 5, 4, null, {}, 6, []] as any;
 
@@ -118,7 +119,7 @@ describe('line sparkline', () => {
         expect(highlightStyle.strokeWidth).toBe(4);
     });
     test('tooltip properties', () => {
-        const { tooltip } = sparkline;
+        const { tooltip } = Sparkline;
         expect(tooltip.enabled).toBe(false);
         expect(tooltip.container).toBe(tooltipContainer);
         expect(tooltip.renderer).toBe(tooltipRenderer);
@@ -235,7 +236,7 @@ describe('area sparkline', () => {
         expect(highlightStyle.strokeWidth).toBe(1);
     });
     test('tooltip properties', () => {
-        const { tooltip } = sparkline;
+        const { tooltip } = Sparkline;
         expect(tooltip.enabled).toBe(true);
         expect(tooltip.container).toBe(tooltipContainer);
         expect(tooltip.renderer).toBe(tooltipRenderer);
@@ -337,7 +338,7 @@ describe('column sparkline', () => {
         expect(highlightStyle.strokeWidth).toBe(3);
     });
     test('tooltip properties', () => {
-        const { tooltip } = sparkline;
+        const { tooltip } = Sparkline;
         expect(tooltip.enabled).toBe(false);
         expect(tooltip.container).toBe(tooltipContainer);
         expect(tooltip.renderer).toBe(tooltipRenderer);
