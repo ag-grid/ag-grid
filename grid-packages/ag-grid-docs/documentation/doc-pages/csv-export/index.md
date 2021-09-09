@@ -116,7 +116,7 @@ Note the following:
 ## API
 ### Grid Properties
 
-<api-documentation source='grid-properties/properties.json' section='miscellaneous' names='["suppressCsvExport"]'></api-documentation>
+<api-documentation source='grid-properties/properties.json' section='export' names='["suppressCsvExport"]'></api-documentation>
 
 ### API Methods
 
