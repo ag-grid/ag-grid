@@ -20,6 +20,7 @@ export enum HeaderRowType {
     COLUMN = 'column', 
     FLOATING_FILTER = 'filter'
 }
+
 export class HeaderRowComp extends Component {
 
     private ctrl: HeaderRowCtrl;
@@ -27,14 +28,14 @@ export class HeaderRowComp extends Component {
     private headerComps: { [key: string]: AbstractHeaderCellComp; } = {};
 
     constructor(ctrl: HeaderRowCtrl) {
-        super(/* html */`<div class="ag-header-row" role="row"></div>`);
-        this.ctrl = ctrl;
+        super();
 
-        switch (ctrl.getType()) {
-            case HeaderRowType.COLUMN: this.addCssClass(`ag-header-row-column`); break;
-            case HeaderRowType.COLUMN_GROUP: this.addCssClass(`ag-header-row-column-group`); break;
-            case HeaderRowType.FLOATING_FILTER: this.addCssClass(`ag-header-row-floating-filter`); break;
-        }
+        const extraClass = ctrl.getType()==HeaderRowType.COLUMN_GROUP ? `ag-header-row-column-group` :
+                            ctrl.getType()==HeaderRowType.FLOATING_FILTER ? `ag-header-row-column-filter` : `ag-header-row-column`;
+
+        this.setTemplate(/* html */`<div class="ag-header-row ${extraClass}" role="row"></div>`);
+
+        this.ctrl = ctrl;
     }
 
     //noinspection JSUnusedLocalSymbols
