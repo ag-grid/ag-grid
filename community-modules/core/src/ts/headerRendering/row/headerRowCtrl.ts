@@ -23,7 +23,6 @@ export interface IHeaderRowComp {
     setHeight(height: string): void;
     setHeaderCtrls(ctrls: AbstractHeaderCellCtrl[]): void;
     setWidth(width: string): void;
-    getHtmlElementForColumnHeader(column: Column): HTMLElement | undefined;
     setRowIndex(rowIndex: number): void;
 }
 

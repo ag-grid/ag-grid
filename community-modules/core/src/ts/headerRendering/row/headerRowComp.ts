@@ -48,19 +48,10 @@ export class HeaderRowComp extends Component {
             setTop: top => this.getGui().style.top = top,
             setHeaderCtrls: ctrls => this.setHeaderCtrls(ctrls),
             setWidth: width => this.getGui().style.width = width,
-            getHtmlElementForColumnHeader: col => this.getHtmlElementForColumnHeader(col),
             setRowIndex: rowIndex => setAriaRowIndex(this.getGui(), rowIndex + 1)
         };
 
         this.ctrl.setComp(compProxy);
-    }
-
-    private getHtmlElementForColumnHeader(column: Column): HTMLElement | undefined {
-        if (this.ctrl.getType() != HeaderRowType.COLUMN) { return; }
-
-        const headerCompsList = Object.keys(this.headerComps).map( c => this.headerComps[c]) as (HeaderCellComp[]);
-        const comp = find(headerCompsList, wrapper => wrapper.getColumn() == column);
-        return comp ? comp.getGui() : undefined;
     }
 
     @PreDestroy
