@@ -1,7 +1,6 @@
 import { ColumnApi } from "../../../columns/columnApi";
 import { ColumnModel } from "../../../columns/columnModel";
 import { UserComponentFactory } from "../../../components/framework/userComponentFactory";
-import { Constants } from "../../../constants/constants";
 import { KeyCode } from '../../../constants/keyCode';
 import { Autowired, PostConstruct, PreDestroy } from "../../../context/context";
 import { DragAndDropService, DragItem, DragSource, DragSourceType } from "../../../dragAndDrop/dragAndDropService";
@@ -20,9 +19,7 @@ import { addCssClass, addOrRemoveCssClass, removeCssClass, setDisplayed } from "
 import { AgCheckbox } from "../../../widgets/agCheckbox";
 import { RefSelector } from "../../../widgets/componentAnnotations";
 import { ManagedFocusFeature } from "../../../widgets/managedFocusFeature";
-import { TouchListener } from "../../../widgets/touchListener";
 import { CssClassApplier } from "../cssClassApplier";
-import { HorizontalResizeService } from "../../common/horizontalResizeService";
 import { HoverFeature } from "../hoverFeature";
 import { AbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellComp";
 import { HeaderCellCtrl, IHeaderCellComp } from "./headerCellCtrl";
@@ -39,7 +36,6 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
 
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('horizontalResizeService') private horizontalResizeService: HorizontalResizeService;
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
@@ -58,8 +54,6 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
     private headerCompGui: HTMLElement | undefined;
 
     private headerCompVersion = 0;
-    private resizeStartWidth: number;
-    private resizeWithShiftKey: boolean;
     private menuEnabled: boolean;
 
     private moveDragSource: DragSource | undefined;
@@ -85,14 +79,14 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
             focus: ()=> this.getFocusableElement().focus(),
             setWidth: width => eGui.style.width = width,
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
+            setResizeDisplayed: displayed => setDisplayed(this.eResize, displayed),
 
             refreshHeaderComp: ()=> this.refreshHeaderComp()
         };
 
-        this.ctrl.setComp(compProxy, this.getGui());
+        this.ctrl.setComp(compProxy, this.getGui(), this.eResize);
 
         this.setupTooltip();
-        this.setupResize();
         this.setupMenuClass();
         this.setupSortableClass();
         this.addColumnHoverListener();
@@ -365,85 +359,6 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
         };
     }
 
-    private setupResize(): void {
-        const colDef = this.getComponentHolder();
-
-        const destroyResizeFuncs: (() => void)[] = [];
-
-        let canResize: boolean;
-        let canAutosize: boolean;
-
-        const addResize = () => {
-            setDisplayed(this.eResize, canResize);
-
-            if (!canResize) { return; }
-
-            const finishedWithResizeFunc = this.horizontalResizeService.addResizeBar({
-                eResizeBar: this.eResize,
-                onResizeStart: this.onResizeStart.bind(this),
-                onResizing: this.onResizing.bind(this, false),
-                onResizeEnd: this.onResizing.bind(this, true)
-            });
-            destroyResizeFuncs.push(finishedWithResizeFunc);
-
-            if (canAutosize) {
-                const skipHeaderOnAutoSize = this.gridOptionsWrapper.isSkipHeaderOnAutoSize();
-
-                const autoSizeColListener = () => {
-                    this.columnModel.autoSizeColumn(this.column, skipHeaderOnAutoSize, "uiColumnResized");
-                };
-
-                this.eResize.addEventListener('dblclick', autoSizeColListener);
-                const touchListener: TouchListener = new TouchListener(this.eResize);
-                touchListener.addEventListener(TouchListener.EVENT_DOUBLE_TAP, autoSizeColListener);
-
-                this.addDestroyFunc(() => {
-                    this.eResize.removeEventListener('dblclick', autoSizeColListener);
-                    touchListener.removeEventListener(TouchListener.EVENT_DOUBLE_TAP, autoSizeColListener);
-                    touchListener.destroy();
-                });
-            }
-        };
-
-        const removeResize = () => {
-            destroyResizeFuncs.forEach(f => f());
-            destroyResizeFuncs.length = 0;
-        };
-
-        const refresh = () => {
-            const resize = this.column.isResizable();
-            const autoSize = !this.gridOptionsWrapper.isSuppressAutoSize() && !colDef.suppressAutoSize;
-            const propertyChange = resize !== canResize || autoSize !== canAutosize;
-            if (propertyChange) {
-                canResize = resize;
-                canAutosize = autoSize;
-                removeResize();
-                addResize();
-            }
-        };
-
-        refresh();
-        this.addDestroyFunc(removeResize);
-        this.ctrl.temp_addRefreshFunction(refresh);
-    }
-
-    public onResizing(finished: boolean, resizeAmount: number): void {
-        const resizeAmountNormalised = this.normaliseResizeAmount(resizeAmount);
-        const columnWidths = [{ key: this.column, newWidth: this.resizeStartWidth + resizeAmountNormalised }];
-        this.columnModel.setColumnWidths(columnWidths, this.resizeWithShiftKey, finished, "uiColumnDragged");
-
-        if (finished) {
-            removeCssClass(this.getGui(), 'ag-column-resizing');
-        }
-    }
-
-    public onResizeStart(shiftKey: boolean): void {
-        this.resizeStartWidth = this.column.getActualWidth();
-        this.resizeWithShiftKey = shiftKey;
-
-        addCssClass(this.getGui(), 'ag-column-resizing');
-    }
-
     public getTooltipParams(): ITooltipParams {
         const res = super.getTooltipParams();
         res.location = 'header';
@@ -474,23 +389,4 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
         this.addOrRemoveCssClass('ag-column-menu-visible', this.column.isMenuVisible());
     }
 
-    // optionally inverts the drag, depending on pinned and RTL
-    // note - this method is duplicated in RenderedHeaderGroupCell - should refactor out?
-    private normaliseResizeAmount(dragChange: number): number {
-        let result = dragChange;
-
-        if (this.gridOptionsWrapper.isEnableRtl()) {
-            // for RTL, dragging left makes the col bigger, except when pinning left
-            if (this.pinned !== Constants.PINNED_LEFT) {
-                result *= -1;
-            }
-        } else {
-            // for LTR (ie normal), dragging left makes the col smaller, except when pinning right
-            if (this.pinned === Constants.PINNED_RIGHT) {
-                result *= -1;
-            }
-        }
-
-        return result;
-    }
 }

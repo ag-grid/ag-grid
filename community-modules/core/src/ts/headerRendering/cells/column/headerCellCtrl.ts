@@ -1,15 +1,16 @@
+import { ColumnModel } from "../../../columns/columnModel";
+import { Autowired } from "../../../context/context";
+import { Column } from "../../../entities/column";
 import { IHeaderColumn } from "../../../entities/iHeaderColumn";
 import { Events } from "../../../eventKeys";
 import { HeaderRowCtrl } from "../../row/headerRowCtrl";
 import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellCtrl";
-import { Autowired } from "../../../context/context";
-import { ColumnModel } from "../../../columns/columnModel";
-import { Column } from "../../../entities/column";
-
+import { ResizeFeature } from "./resizeFeature";
 export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     focus(): void;
     setWidth(width: string): void;
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
+    setResizeDisplayed(displayed: boolean): void;
 
     // temp
     refreshHeaderComp(): void;
@@ -38,10 +39,10 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.column = column;
     }
 
-    public setComp(comp: IHeaderCellComp, eGui: HTMLElement): void {
+    public setComp(comp: IHeaderCellComp, eGui: HTMLElement, eResize: HTMLElement): void {
         super.setAbstractComp(comp);
-        this.eGui = eGui;
         this.comp = comp;
+        this.eGui = eGui;
 
         this.colDefVersion = this.columnModel.getColDefVersion();
 
@@ -54,6 +55,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
 
+        this.createManagedBean(new ResizeFeature(this.getPinned(), this.column, eResize, comp, this));
     }
 
     public temp_isDraggable(): boolean {
@@ -150,5 +152,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.addManagedListener(this.column, Column.EVENT_MOVING_CHANGED, listener);
         listener();
     }
+
+    
 
 }
