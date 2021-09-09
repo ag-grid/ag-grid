@@ -76,7 +76,7 @@ pre[class*="language-"] > code {
 .token.block-comment
 {
     font-size: 0.85rem;
-    opacity: 0.85;
+    opacity: 0.95;
     color: #7d8b99;
 }
 
