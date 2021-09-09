@@ -38,8 +38,8 @@ import {
 import { BeanStub } from "../../context/beanStub";
 import { cloneObject, mergeDeep } from '../../utils/object';
 import { GroupCellRendererParams } from "../../rendering/cellRenderers/groupCellRendererCtrl";
-import { IHeaderGroupComp, IHeaderGroupParams } from "../../headerRendering/headerCells/columnGroup/headerGroupComp";
-import { IHeaderComp, IHeaderParams } from "../../headerRendering/headerCells/column/headerComp";
+import { IHeaderGroupComp, IHeaderGroupParams } from "../../headerRendering/cells/columnGroup/headerGroupComp";
+import { IHeaderComp, IHeaderParams } from "../../headerRendering/cells/column/headerComp";
 
 export type DefinitionObject =
     GridOptions

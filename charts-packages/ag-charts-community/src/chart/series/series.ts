@@ -131,37 +131,6 @@ export abstract class Series extends Observable {
 
     setColors(fills: string[], strokes: string[]) { }
 
-    // Both `highlight`, `dehighlight` and `dim`, `undim` are related to whole series highlighting / dimming,
-    // while `onHighlightChange` is responsible for highlighting of individual series nodes / datums
-    // (see `chart.highlightDatum`, `chart.dehighlightDatum` methods).
-
-    protected highlightedItemId?: string;
-    highlight(itemId?: any): boolean {
-        this.updatePending = true;
-        if (itemId === this.highlightedItemId) {
-            return false;
-        }
-        this.highlightedItemId = itemId;
-        this.undim(itemId);
-        return true;
-    }
-
-    dehighlight(): boolean {
-        if (this.highlightedItemId !== undefined) {
-            this.highlightedItemId = undefined;
-            return true;
-        }
-        return false;
-    }
-
-    dim() {
-        this.group.opacity = this.highlightStyle.series.dimOpacity;
-    }
-
-    undim(itemId?: any) {
-        this.group.opacity = 1;
-    }
-
     // Returns the actual keys used (to fetch the values from `data` items) for the given direction.
     getKeys(direction: ChartAxisDirection): string[] {
         const { directionKeys } = this;
@@ -235,6 +204,21 @@ export abstract class Series extends Observable {
 
     // Produce data joins and update selection's nodes using node data.
     abstract update(): void;
+
+    protected getOpacity(datum?: { itemId?: any }): number {
+        const { chart, highlightStyle: { series: { enabled, dimOpacity } } } = this;
+        return !chart || !enabled || !chart.highlightedDatum ||
+            chart.highlightedDatum.series === this &&
+            (!datum || chart.highlightedDatum.itemId === datum.itemId) ? 1 : dimOpacity;
+    }
+
+    protected getStrokeWidth(defaultStrokeWidth: number, datum?: { itemId?: any }): number {
+        const { chart, highlightStyle: { series: { enabled, strokeWidth } } } = this;
+        return chart && enabled && chart.highlightedDatum &&
+            chart.highlightedDatum.series === this &&
+            (!datum || chart.highlightedDatum.itemId === datum.itemId) &&
+            strokeWidth !== undefined ? strokeWidth : defaultStrokeWidth;
+    }
 
     abstract getTooltipHtml(seriesDatum: any): string;
 

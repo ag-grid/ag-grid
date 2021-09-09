@@ -1,6 +1,6 @@
 
 import { IHeaderColumn } from "../../../main";
-import { HeaderRowCtrl } from "../../headerRow/headerRowCtrl";
+import { HeaderRowCtrl } from "../../row/headerRowCtrl";
 import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellCtrl";
 
 
@@ -13,4 +13,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
         super(columnGroupChild, parentRowCtrl);
     }
 
+    public setComp(comp: IHeaderFilterCellComp): void {
+        super.setAbstractComp(comp);
+    }
 }

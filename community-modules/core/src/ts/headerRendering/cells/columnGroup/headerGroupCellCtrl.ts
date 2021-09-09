@@ -1,5 +1,5 @@
 import { IHeaderColumn } from "../../../entities/iHeaderColumn";
-import { HeaderRowCtrl } from "../../headerRow/headerRowCtrl";
+import { HeaderRowCtrl } from "../../row/headerRowCtrl";
 import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellCtrl";
 
 export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp {
@@ -12,4 +12,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
         super(columnGroupChild, parentRowCtrl);
     }
 
+    public setComp(comp: IHeaderGroupCellComp): void {
+        super.setAbstractComp(comp);
+    }
 }

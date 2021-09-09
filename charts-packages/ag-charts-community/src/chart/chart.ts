@@ -1179,11 +1179,13 @@ export abstract class Chart extends Observable {
             this.pointerInsideLegend = false;
             // Dehighlight if the pointer was inside the legend and is now leaving it.
             if (this.highlightedDatum) {
-                this.highlightedDatum.series.updatePending = true;
                 this.highlightedDatum = undefined;
+                this.series.forEach(s => s.updatePending = true);
             }
             return;
         }
+
+        const oldHighlightedDatum = this.highlightedDatum;
 
         if (datum) {
             const { id, itemId, enabled } = datum;
@@ -1197,9 +1199,16 @@ export abstract class Chart extends Observable {
                         itemId,
                         seriesDatum: undefined
                     };
-                    series.updatePending = true;
                 }
             }
+        }
+
+        // Careful to only schedule updates when necessary.
+        if ((this.highlightedDatum && !oldHighlightedDatum) ||
+            (this.highlightedDatum && oldHighlightedDatum &&
+                (this.highlightedDatum.series !== oldHighlightedDatum.series ||
+                 this.highlightedDatum.itemId !== oldHighlightedDatum.itemId))) {
+            this.series.forEach(s => s.updatePending = true);
         }
     }
 
@@ -1214,7 +1223,7 @@ export abstract class Chart extends Observable {
             event
         };
 
-        this.highlightDatum(datum, node);
+        this.highlightDatum(datum);
 
         const html = datum.series.tooltip.enabled && datum.series.getTooltipHtml(datum);
 
@@ -1225,17 +1234,15 @@ export abstract class Chart extends Observable {
 
     highlightedDatum?: SeriesNodeDatum;
 
-    highlightDatum(datum: SeriesNodeDatum, node?: Shape): void {
+    highlightDatum(datum: SeriesNodeDatum): void {
         this.scene.canvas.element.style.cursor = datum.series.cursor;
         this.highlightedDatum = datum;
         this.series.forEach(s => s.updatePending = true);
     }
 
     dehighlightDatum(): void {
-        if (this.highlightedDatum) {
-            this.scene.canvas.element.style.cursor = 'default';
-            this.highlightedDatum = undefined;
-            this.series.forEach(s => s.updatePending = true);
-        }
+        this.scene.canvas.element.style.cursor = 'default';
+        this.highlightedDatum = undefined;
+        this.series.forEach(s => s.updatePending = true);
     }
 }

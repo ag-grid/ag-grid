@@ -1,25 +1,26 @@
 import { PostConstruct, PreDestroy } from '../../context/context';
 import { Column } from '../../entities/column';
-import { HeaderFilterCellComp } from '../headerCells/floatingFilter/headerFilterCellComp';
+import { HeaderFilterCellComp } from '../cells/floatingFilter/headerFilterCellComp';
 import { setAriaRowIndex } from '../../utils/aria';
 import { setDomChildOrder } from '../../utils/dom';
 import { getAllValuesInObject, iterateObject } from '../../utils/object';
 import { Component } from '../../widgets/component';
 import { HeaderRowCtrl, IHeaderRowComp } from './headerRowCtrl';
 import { find } from '../../utils/generic';
-import { AbstractHeaderCellComp } from '../headerCells/abstractCell/abstractHeaderCellComp';
-import { HeaderCellComp } from '../headerCells/column/headerCellComp';
-import { AbstractHeaderCellCtrl } from '../headerCells/abstractCell/abstractHeaderCellCtrl';
-import { HeaderGroupCellComp } from '../headerCells/columnGroup/headerGroupCellComp';
-import { HeaderGroupCellCtrl } from '../headerCells/columnGroup/headerGroupCellCtrl';
-import { HeaderFilterCellCtrl } from '../headerCells/floatingFilter/headerFilterCellCtrl';
-import { HeaderCellCtrl } from '../headerCells/column/headerCellCtrl';
+import { AbstractHeaderCellComp } from '../cells/abstractCell/abstractHeaderCellComp';
+import { HeaderCellComp } from '../cells/column/headerCellComp';
+import { AbstractHeaderCellCtrl } from '../cells/abstractCell/abstractHeaderCellCtrl';
+import { HeaderGroupCellComp } from '../cells/columnGroup/headerGroupCellComp';
+import { HeaderGroupCellCtrl } from '../cells/columnGroup/headerGroupCellCtrl';
+import { HeaderFilterCellCtrl } from '../cells/floatingFilter/headerFilterCellCtrl';
+import { HeaderCellCtrl, IHeaderCellComp } from '../cells/column/headerCellCtrl';
 
 export enum HeaderRowType {
     COLUMN_GROUP = 'group',
     COLUMN = 'column', 
     FLOATING_FILTER = 'filter'
 }
+
 export class HeaderRowComp extends Component {
 
     private ctrl: HeaderRowCtrl;
@@ -27,14 +28,14 @@ export class HeaderRowComp extends Component {
     private headerComps: { [key: string]: AbstractHeaderCellComp; } = {};
 
     constructor(ctrl: HeaderRowCtrl) {
-        super(/* html */`<div class="ag-header-row" role="row"></div>`);
-        this.ctrl = ctrl;
+        super();
 
-        switch (ctrl.getType()) {
-            case HeaderRowType.COLUMN: this.addCssClass(`ag-header-row-column`); break;
-            case HeaderRowType.COLUMN_GROUP: this.addCssClass(`ag-header-row-column-group`); break;
-            case HeaderRowType.FLOATING_FILTER: this.addCssClass(`ag-header-row-floating-filter`); break;
-        }
+        const extraClass = ctrl.getType()==HeaderRowType.COLUMN_GROUP ? `ag-header-row-column-group` :
+                            ctrl.getType()==HeaderRowType.FLOATING_FILTER ? `ag-header-row-column-filter` : `ag-header-row-column`;
+
+        this.setTemplate(/* html */`<div class="ag-header-row ${extraClass}" role="row"></div>`);
+
+        this.ctrl = ctrl;
     }
 
     //noinspection JSUnusedLocalSymbols
@@ -47,19 +48,10 @@ export class HeaderRowComp extends Component {
             setTop: top => this.getGui().style.top = top,
             setHeaderCtrls: ctrls => this.setHeaderCtrls(ctrls),
             setWidth: width => this.getGui().style.width = width,
-            getHtmlElementForColumnHeader: col => this.getHtmlElementForColumnHeader(col),
             setRowIndex: rowIndex => setAriaRowIndex(this.getGui(), rowIndex + 1)
         };
 
         this.ctrl.setComp(compProxy);
-    }
-
-    private getHtmlElementForColumnHeader(column: Column): HTMLElement | undefined {
-        if (this.ctrl.getType() != HeaderRowType.COLUMN) { return; }
-
-        const headerCompsList = Object.keys(this.headerComps).map( c => this.headerComps[c]) as (HeaderCellComp[]);
-        const comp = find(headerCompsList, wrapper => wrapper.getColumn() == column);
-        return comp ? comp.getGui() : undefined;
     }
 
     @PreDestroy

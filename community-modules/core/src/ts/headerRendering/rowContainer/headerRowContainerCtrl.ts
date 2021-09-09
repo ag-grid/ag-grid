@@ -11,8 +11,8 @@ import { PinnedWidthService } from "../../gridBodyComp/pinnedWidthService";
 import { ScrollVisibleService } from "../../gridBodyComp/scrollVisibleService";
 import { NumberSequence } from "../../utils";
 import { BodyDropTarget } from "../columnDrag/bodyDropTarget";
-import { HeaderRowType } from "../headerRow/headerRowComp";
-import { HeaderRowCtrl } from "../headerRow/headerRowCtrl";
+import { HeaderRowType } from "../row/headerRowComp";
+import { HeaderRowCtrl } from "../row/headerRowCtrl";
 
 export interface IHeaderRowContainerComp {
     setCenterWidth(width: string): void;

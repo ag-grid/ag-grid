@@ -7,7 +7,7 @@ import { FocusService } from "../../focusService";
 import { GridBodyCtrl } from "../../gridBodyComp/gridBodyCtrl";
 import { AnimationFrameService } from "../../misc/animationFrameService";
 import { last } from "../../utils/array";
-import { HeaderRowType } from "../headerRow/headerRowComp";
+import { HeaderRowType } from "../row/headerRowComp";
 import { HeaderPosition, HeaderPositionUtils } from "./headerPosition";
 
 export enum HeaderNavigationDirection {

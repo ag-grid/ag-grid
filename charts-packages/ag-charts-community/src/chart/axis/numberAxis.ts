@@ -27,7 +27,7 @@ export class NumberAxis extends ChartAxis {
 
     set domain(domain: number[]) {
         if (domain.length > 2) {
-            domain = extent(domain, isContinuous) || [0, 1];
+            domain = extent(domain, isContinuous, Number) || [0, 1];
         }
         const { scale, min, max } = this;
         domain = [
