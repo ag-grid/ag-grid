@@ -221,7 +221,7 @@ const Section: React.FC<SectionProps> = ({ framework, title, properties, config 
         }
         const gridOptionProperty = config.lookups.codeLookup[name];
 
-        rows.push(<Property key={name} framework={framework} id={id} name={name} definition={definition} config={{ ...config, gridOpProp: gridOptionProperty }} />);
+        rows.push(<Property key={name} framework={framework} id={id} name={name} definition={definition} config={{ ...config, gridOpProp: gridOptionProperty, interfaceHierarchyOverrides: definition.interfaceHierarchyOverrides }} />);
 
         if (typeof definition !== 'string' && !definition.description) {
             // store object property to process later
@@ -307,8 +307,8 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
                 console.warn(gridParams.description);
             }
 
-            const isInterface = extractInterfaces(gridParams.type, config.lookups.interfaces, () => isGridOptionEvent(config.gridOpProp)).length > 0;
-            showAdditionalDetails = isCallSig(gridParams) || type.arguments || !!isInterface;
+            const anyInterfaces = extractInterfaces(gridParams.type, config.lookups.interfaces, applyInterfaceInclusions(config));
+            showAdditionalDetails = isCallSig(gridParams) || type.arguments || anyInterfaces.length > 0;
         } else {
             // As a last resort try and infer the type
             type = inferType(definition.default);
@@ -475,9 +475,9 @@ const FunctionCodeSample: React.FC<FunctionCode> = ({ framework, name, type, con
     type = type || {};
     let returnType = typeof (type) == 'string' ? undefined : type.returnType;
     const returnTypeIsObject = !!returnType && typeof returnType === 'object';
-    const extracted = extractInterfaces(returnType, config.lookups.interfaces, () => isGridOptionEvent(config.gridOpProp));
-    const returnTypeInterface = extracted.length > 0 ? extracted[0].interfaceType : undefined;
-    const isCallSignatureInterface = extracted.some(i => isCallSig(i.interfaceType));
+    const extracted = extractInterfaces(returnType, config.lookups.interfaces, applyInterfaceInclusions(config));
+    const returnTypeInterface = config.lookups.interfaces[returnType];
+    const isCallSig = returnTypeInterface && returnTypeInterface.meta.isCallSignature;
     const returnTypeHasInterface = extracted.length > 0;
 
     let functionName = name.replace(/\([^)]*\)/g, '');
@@ -496,10 +496,11 @@ const FunctionCodeSample: React.FC<FunctionCode> = ({ framework, name, type, con
             }
         } else if (type.arguments) {
             args = type.arguments;
-        } else if (isCallSig(returnTypeInterface)) {
+        } else if (!!isCallSig) {
             // Required to handle call signature interfaces so we can flatten out the interface to make it clearer        
-            args = returnTypeInterface.type.arguments;
-            returnType = returnTypeInterface.type.returnType;
+            const callSigInterface = returnTypeInterface as ICallSignature
+            args = callSigInterface.type.arguments;
+            returnType = callSigInterface.type.returnType;
         }
     }
 
@@ -534,8 +535,10 @@ const FunctionCodeSample: React.FC<FunctionCode> = ({ framework, name, type, con
         `${functionName} = (${functionArguments}) =>`;
 
     let lines = [];
-    if (typeof (type) != 'string' && (type.parameters || type.arguments || isCallSignatureInterface)) {
+    if (typeof (type) != 'string' && (type.parameters || type.arguments || isCallSig)) {
         lines.push(`${functionPrefix} ${returnTypeIsObject ? returnTypeName : (getLinkedType(returnType || 'void', framework))};`);
+    } else {
+        lines.push(`${name}: ${returnType};`);
     }
 
     let interfacesToWrite = [];
@@ -568,11 +571,27 @@ const FunctionCodeSample: React.FC<FunctionCode> = ({ framework, name, type, con
     return <Code code={escapedLines} className={styles['reference__code-sample']} keepMarkup={true} />;
 };
 
+function applyInterfaceInclusions({ gridOpProp, interfaceHierarchyOverrides }) {
+    return (typeName) => {
+        if (interfaceHierarchyOverrides) {
+            // If definition includes overrides apply them
+            if ((interfaceHierarchyOverrides.exclude || []).includes(typeName)) {
+                return false;
+            }
+            if ((interfaceHierarchyOverrides.include || []).includes(typeName)) {
+                return true;
+            }
+        }
+        // If its an event return true to force inclusion, otherwise undefined to use default inclusion logic.
+        return isGridOptionEvent(gridOpProp) || undefined;
+    }
+}
+
 const getInterfacesToWrite = (name, definition, config) => {
     let interfacesToWrite = []
     if (typeof (definition) === 'string') {
         // Extract all the words to enable support for Union types
-        interfacesToWrite = extractInterfaces(definition, config.lookups.interfaces, () => isGridOptionEvent(config.gridOpProp));
+        interfacesToWrite = extractInterfaces(definition, config.lookups.interfaces, applyInterfaceInclusions(config));
     } else if (
         (typeof (definition) == 'object' && !Array.isArray(definition)) ||
         (typeof (name) == 'string' && Array.isArray(definition))) {
@@ -603,7 +622,9 @@ const formatJson = value => JSON.stringify(value, undefined, 2)
     .replace(/"/g, "'"); // use single quotes
 
 
-
+/**
+ * Property type is the small blue text that tells you the type of the given property
+ */
 function getPropertyType(type: string | PropertyType, config: Config) {
     let propertyType = '';
     if (type) {

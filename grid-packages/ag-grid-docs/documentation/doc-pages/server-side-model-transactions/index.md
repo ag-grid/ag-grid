@@ -47,75 +47,10 @@ Here is a basic example with no grouping and a small dataset.
 
 ## Transaction API
 
-The full signature of the grid API `applyServerSideTransaction()` is as follows:
+The signature of the grid API `applyServerSideTransaction(params)` is as follows:
 
-```ts
-// call this API to apply a transaction to the data inside the grid
-function applyServerSideTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult;
+<api-documentation source='grid-api/api.json' section='serverSideRowModel' names='["applyServerSideTransaction"]'></api-documentation>
 
-// transaction record takes this shape
-export interface ServerSideTransaction {
-
-    // the Row Store to apply the transaction to, ie what group level.
-    // eg ['Ireland','2002'] to update the child store found after expanding
-    // Ireland and 2002 groups. passing in blank to empty applys the transation
-    // to the top level.
-    route?: string[];
-
-    // rows to add.
-    add?: any[];
-    // index to add. if missing, rows will be added to the end
-    addIndex?: number;
-
-    // rows to remove.
-    remove?: any[];
-
-    // rows to update
-    update?: any[];
-}
-
-// result object
-export interface ServerSideTransactionResult {
-
-    // the status of applying the transaction
-    status: ServerSideTransactionResultStatus;
-
-    // if rows were added, the newly created Row Nodes for those rows
-    add?: RowNode[];
-
-    // if rows were removed, the deleted Row Nodes
-    remove?: RowNode[];
-
-    // if rows were updated, the udpated Row Nodes
-    update?: RowNode[];
-}
-
-export enum ServerSideTransactionResultStatus {
-
-    // transaction was successully applied
-    Applied = 'Applied',
-
-    // store was not found, transaction not applied.
-    // either invalid route, or the parent row has not yet been expanded.
-    StoreNotFound = 'StoreNotFound',
-
-    // store is loading, transaction not applied.
-    StoreLoading = 'StoreLoading',
-
-    // store is loading (as max loads exceeded), transaction not applied.
-    StoreWaitingToLoad = 'StoreWaitingToLoad',
-
-    // store load attempt failed, transaction not applied.
-    StoreLoadingFailed = 'StoreLoadingFailed',
-
-    // store is type Partial, which doesn't accept transactions
-    StoreWrongType = 'StoreWrongType',
-
-    // transaction was cancelled, due to grid
-    // callback isApplyServerSideTransaction() returning false
-    Cancelled = 'Cancelled'
-}
-```
 
 ## Matching Rows
 

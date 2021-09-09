@@ -4873,7 +4873,7 @@
   },
   "DragEvent": {
     "type": {
-      "description": "/** Event identifier */",
+      "description": "/** One of {'cell','row','headerCell','toolPanel'} */",
       "type": { "returnType": "string", "optional": false }
     },
     "target": {
@@ -4885,7 +4885,7 @@
   },
   "DragStartedEvent": {
     "type": {
-      "description": "/** Event identifier */",
+      "description": "/** One of {'cell','row','headerCell','toolPanel'} */",
       "type": { "returnType": "string", "optional": false }
     },
     "target": {
@@ -4897,7 +4897,7 @@
   },
   "DragStoppedEvent": {
     "type": {
-      "description": "/** Event identifier */",
+      "description": "/** One of {'cell','row','headerCell','toolPanel'} */",
       "type": { "returnType": "string", "optional": false }
     },
     "target": {
@@ -7647,6 +7647,9 @@
   "IHeaderCellComp": {
     "focus": {
       "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
+    "refreshHeaderComp": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
     }
   },
   "IHeaderParams": {
@@ -9669,7 +9672,7 @@
       "type": { "arguments": {}, "returnType": "any", "optional": false }
     },
     "isPopup": {
-      "description": "/** Gets called once after initialised. If you return true, the component will appear in a popup, and it will be\n * constrained to the boundaries of the popupParent. This is great if you want to, for example, provide you own\n * custom dropdown list for selection. Default is false (ie if you don't provide the method). */",
+      "description": "/** Gets called once after initialised. If you return true, the editor will\n * appear in a popup, so is not constrained to the boundaries of the cell.\n * This is great if you want to, for example, provide you own custom dropdown list\n * for selection. Default is false (ie if you don't provide the method). */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": true }
     },
     "getPopupPosition": {
@@ -9689,11 +9692,11 @@
       "type": { "arguments": {}, "returnType": "boolean", "optional": true }
     },
     "focusIn": {
-      "description": "/** Called when focus is within the component */",
+      "description": "/** If doing full line edit, then gets called when focus should be put into the editor */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
     "focusOut": {
-      "description": "/** Called when focus is leaving the component */",
+      "description": "/** If doing full line edit, then gets called when focus is leaving the editor */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
     "getFrameworkComponentInstance": {
@@ -9873,6 +9876,7 @@
     "navigator": {
       "type": { "returnType": "NavigatorOptions", "optional": false }
     },
+    "meta": { "typeParams": ["T extends SeriesOptions"] },
     "document": { "type": { "returnType": "Document", "optional": true } },
     "seriesDefaults": { "type": { "returnType": "T", "optional": false } },
     "width": { "type": { "returnType": "number", "optional": true } },
@@ -9897,6 +9901,7 @@
     }
   },
   "PolarChartOptions": {
+    "meta": { "typeParams": ["T extends SeriesOptions"] },
     "document": { "type": { "returnType": "Document", "optional": true } },
     "seriesDefaults": { "type": { "returnType": "T", "optional": false } },
     "width": { "type": { "returnType": "number", "optional": true } },
@@ -10505,11 +10510,8 @@
       }
     },
     "forEachNode": {
-      "description": "/** Iterate through each node. What this does depends on the model type. For clientSide, goes through\n * all nodes. For serverSide, goes through what's loaded in memory. */",
       "type": {
-        "arguments": {
-          "callback": "(rowNode: RowNode, index: number) => void"
-        },
+        "arguments": { "callback": "(node: RowNode, index: number) => void" },
         "returnType": "void",
         "optional": false
       }
@@ -11982,6 +11984,7 @@
       "description": "/** Called when focus is leaving the component */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
+    "meta": { "typeParams": ["T"] },
     "getGui": {
       "description": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
       "type": {
@@ -13746,10 +13749,7 @@
       "type": { "returnType": "any", "optional": false }
     },
     "$compile": { "type": { "returnType": "any", "optional": false } },
-    "pinned": {
-      "description": "/** Pinned state of the cell. */",
-      "type": { "returnType": "string | null", "optional": true }
-    },
+    "pinned": { "type": { "returnType": "string", "optional": false } },
     "template": {
       "type": { "returnType": "string | TemplateFunc", "optional": false }
     },
@@ -14494,14 +14494,8 @@
     }
   },
   "GroupCellRendererParams": {
-    "pinned": {
-      "description": "/** Pinned state of the cell. */",
-      "type": { "returnType": "string | null", "optional": true }
-    },
-    "fullWidth": {
-      "description": "/** True if this is a full width row. */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
+    "pinned": { "type": { "returnType": "string", "optional": false } },
+    "fullWidth": { "type": { "returnType": "boolean", "optional": false } },
     "suppressPadding": {
       "type": { "returnType": "boolean", "optional": false }
     },
