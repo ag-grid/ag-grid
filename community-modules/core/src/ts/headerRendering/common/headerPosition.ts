@@ -4,7 +4,7 @@ import { Autowired, Bean } from "../../context/context";
 import { CtrlsService } from "../../ctrlsService";
 import { Column } from "../../entities/column";
 import { ColumnGroup } from "../../entities/columnGroup";
-import { HeaderRowType } from "../headerRow/headerRowComp";
+import { HeaderRowType } from "../row/headerRowComp";
 
 export interface HeaderPosition {
 /** A number from 0 to n, where n is the last header row the grid is rendering */

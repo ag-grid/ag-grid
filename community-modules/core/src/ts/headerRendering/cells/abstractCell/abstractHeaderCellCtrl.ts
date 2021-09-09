@@ -1,6 +1,6 @@
 import { BeanStub } from "../../../context/beanStub";
 import { IHeaderColumn } from "../../../entities/iHeaderColumn";
-import { HeaderRowCtrl } from "../../headerRow/headerRowCtrl";
+import { HeaderRowCtrl } from "../../row/headerRowCtrl";
 import { IHeaderCellComp } from "../column/headerCellCtrl";
 
 let instanceIdSequence = 0;

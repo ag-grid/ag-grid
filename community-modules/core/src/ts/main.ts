@@ -114,7 +114,7 @@ export { DateFilter, IDateFilterParams, DateFilterModel } from "./filter/provide
 
 export { IFloatingFilter, IFloatingFilterParams, IFloatingFilterComp, BaseFloatingFilterChange } from "./filter/floating/floatingFilter";
 export { TextFloatingFilter } from './filter/provided/text/textFloatingFilter';
-export { HeaderFilterCellComp as FloatingFilterWrapper } from './headerRendering/headerCells/floatingFilter/headerFilterCellComp';
+export { HeaderFilterCellComp as FloatingFilterWrapper } from './headerRendering/cells/floatingFilter/headerFilterCellComp';
 export { FloatingFilterMapper } from './filter/floating/floatingFilterMapper';
 
 // gridPanel
@@ -131,13 +131,13 @@ export { RowContainerName, IRowContainerComp, RowContainerCtrl } from "./gridBod
 // headerRendering
 export { BodyDropPivotTarget } from "./headerRendering/columnDrag/bodyDropPivotTarget";
 export { BodyDropTarget } from "./headerRendering/columnDrag/bodyDropTarget";
-export { CssClassApplier } from "./headerRendering/headerCells/cssClassApplier";
-export { HeaderRowContainerComp as HeaderContainer } from "./headerRendering/headerRowContainer/headerRowContainerComp";
+export { CssClassApplier } from "./headerRendering/cells/cssClassApplier";
+export { HeaderRowContainerComp as HeaderContainer } from "./headerRendering/rowContainer/headerRowContainerComp";
 export { GridHeaderComp } from "./headerRendering/gridHeaderComp";
-export { HeaderRowComp } from "./headerRendering/headerRow/headerRowComp";
+export { HeaderRowComp } from "./headerRendering/row/headerRowComp";
 export { HorizontalResizeService } from "./headerRendering/common/horizontalResizeService";
 export { MoveColumnFeature } from "./headerRendering/columnDrag/moveColumnFeature";
-export { StandardMenuFactory } from "./headerRendering/headerCells/column/standardMenu";
+export { StandardMenuFactory } from "./headerRendering/cells/column/standardMenu";
 
 // layout
 export { TabbedLayout, TabbedItem } from "./layout/tabbedLayout";
@@ -404,8 +404,8 @@ export { IDateParams, IDate, IDateComp } from "./rendering/dateComponent";
 export { IAfterGuiAttachedParams, ContainerType } from "./interfaces/iAfterGuiAttachedParams";
 export { IComponent } from "./interfaces/iComponent";
 export { IEventEmitter } from "./interfaces/iEventEmitter";
-export { IHeaderParams, IHeader } from "./headerRendering/headerCells/column/headerComp";
-export { IHeaderGroupParams, IHeaderGroup, IHeaderGroupComp } from "./headerRendering/headerCells/columnGroup/headerGroupComp";
+export { IHeaderParams, IHeader } from "./headerRendering/cells/column/headerComp";
+export { IHeaderGroupParams, IHeaderGroup, IHeaderGroupComp } from "./headerRendering/cells/columnGroup/headerGroupComp";
 export { ColumnApi } from "./columns/columnApi";
 export { IRichCellEditorParams } from "./interfaces/iRichCellEditorParams";
 export { WrappableInterface, BaseComponentWrapper, FrameworkComponentWrapper } from "./components/framework/frameworkComponentWrapper";

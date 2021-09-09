@@ -1,6 +1,6 @@
 
 import { IHeaderColumn } from "../../../main";
-import { HeaderRowCtrl } from "../../headerRow/headerRowCtrl";
+import { HeaderRowCtrl } from "../../row/headerRowCtrl";
 import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellCtrl";
 
 
