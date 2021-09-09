@@ -178,18 +178,33 @@ function applyInheritance(extensions, interfaces, isDocStyle) {
             if (!aI) {
                 //Check for type params                
                 throw new Error('Missing interface', a);
+
+            }
+            const mergeRespectingChildOverrides = (parent, child) => {
+                let merged = { ...child };
+
+                // We want the child properties to be list first for better doc reading experience
+                // Normal spread merge to get the correct order wipes out child overrides
+                // Hence the manual approach to the merge here.
+                Object.entries(parent).forEach(([k, v]) => {
+                    if (!merged[k]) {
+                        merged[k] = v;
+                    }
+                })
+
+                return merged;
             }
 
             if (isDocStyle) {
                 if (aI) {
-                    extendedInterface = { ...extendedInterface, ...mergeAncestorProps(a, aI, a => a) };
+                    extendedInterface = mergeRespectingChildOverrides(mergeAncestorProps(a, aI, a => a), extendedInterface);
                 }
             } else {
                 if (aI && aI.type) {
-                    extendedInterface.type = { ...extendedInterface.type, ...mergeAncestorProps(a, aI, a => a.type) };
+                    extendedInterface.type = mergeRespectingChildOverrides(mergeAncestorProps(a, aI, a => a.type), extendedInterface.type);
                 }
                 if (aI && aI.docs) {
-                    extendedInterface.docs = { ...extendedInterface.docs, ...mergeAncestorProps(a, aI, a => a.docs) };
+                    extendedInterface.docs = mergeRespectingChildOverrides(mergeAncestorProps(a, aI, a => a.docs), extendedInterface.docs);
                 }
             }
         });

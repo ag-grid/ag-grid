@@ -46,6 +46,11 @@ interface ChildDocEntry {
     options?: string[];
     default?: string;
     type: PropertyType | string;
+    interfaceHierarchyOverrides: {
+        exclude?: string[],
+        include?: string[]
+    }
+
 }
 export interface ObjectCode {
     framework?: string;

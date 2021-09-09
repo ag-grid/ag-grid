@@ -195,7 +195,11 @@ export function appendCallSignature(name, interfaceType, framework, allLines) {
 export function appendEnum(name, interfaceType, allLines) {
     const lines = [`enum ${name} {`];
     const properties = interfaceType.type;
-    properties.forEach((property) => {
+    const docs = interfaceType.docs;
+    properties.forEach((property, i) => {
+        if (docs && docs[i]) {
+            addDocLines(docs[i], lines);
+        }
         lines.push(`  ${property}`);
     });
     lines.push('}');
@@ -257,14 +261,13 @@ export function writeAllInterfaces(interfacesToWrite, framework) {
     return allLines;
 }
 
-export function extractInterfaces(definitionOrArray, interfaceLookup, forceShowFunc, dontIncludeChildrenTypes) {
+export function extractInterfaces(definitionOrArray, interfaceLookup, overrideIncludeInterfaceFunc, allDefs = []) {
     if (!definitionOrArray) return [];
 
     if (Array.isArray(definitionOrArray)) {
-        let allDefs = [];
 
         definitionOrArray.forEach(def => {
-            allDefs = [...allDefs, ...extractInterfaces(def, interfaceLookup, forceShowFunc, dontIncludeChildrenTypes)]
+            allDefs = [...allDefs, ...extractInterfaces(def, interfaceLookup, overrideIncludeInterfaceFunc, allDefs)]
         })
         return allDefs;
     }
@@ -273,7 +276,6 @@ export function extractInterfaces(definitionOrArray, interfaceLookup, forceShowF
     if (typeof (definition) == 'string') {
         const typeRegex = /\w+/g;
         const definitionTypes = [...definition.matchAll(typeRegex)];
-        let interfacesToWrite = []
         definitionTypes.forEach(regMatch => {
             const type = regMatch[0];
             // If we have the actual interface use that definition
@@ -281,58 +283,79 @@ export function extractInterfaces(definitionOrArray, interfaceLookup, forceShowF
             if (!interfaceType) {
                 return undefined;
             }
+
             const isLinkedType = !!TYPE_LINKS[type];
             const numMembers = typeof (interfaceType.type) == 'string'
                 ? interfaceType.type.split('|').length
                 : Object.entries((interfaceType.type) || {}).length;
-            // Show interface if we have found one.            
+
+            const overrideInclusion = overrideIncludeInterfaceFunc ? overrideIncludeInterfaceFunc(type) : undefined;
+            if (overrideInclusion === false) {
+                // Override function is false so do not include this interface
+                return undefined;
+            }
+
+            // Show interface if we have found one.
             // Do not show an interface if it has lots of properties and is a linked type.
             // Always show event interfaces
-            if ((!isLinkedType && (!dontIncludeChildrenTypes || numMembers < 6))
+            if ((!isLinkedType
                 || (isLinkedType && numMembers < 12)
-                || (forceShowFunc && forceShowFunc())) {
-                interfacesToWrite.push({ name: type, interfaceType })
+                || (overrideInclusion === true)) && !allDefs.some(a => a.name === type)) {
+
+                allDefs.push({ name: type, interfaceType })
 
                 // Now if this is a top level interface see if we should include any interfaces for its properties
-                // We do not go below the top level to avoid long interface chains
-                if (!dontIncludeChildrenTypes && interfaceType.type) {
-                    let propertyTypes = typeof (interfaceType.type) === 'string' ? [interfaceType.type]
-                        : Object.values(interfaceType.type);
+                if (interfaceType.type) {
                     let interfacesToInclude = [];
-                    propertyTypes.filter(i => !!i && typeof i == 'string')
-                        .map(i => {
-                            // Extract all the words from the type to handle unions and functions and params cleanly.
-                            const words = [...i.matchAll(typeRegex)].map(ws => ws[0]);
-                            return words.filter(w => !TYPE_LINKS[w] && interfaceLookup[w]);
-                        }).forEach((s) => {
-                            if (s.length > 0) {
-                                interfacesToInclude = [...interfacesToInclude, ...s];
-                            }
-                        });
+
+                    if (typeof (interfaceType.type) === 'string') {
+                        interfacesToInclude.push(interfaceType.type);
+                    } else {
+                        let propertyTypes = Object.entries(interfaceType.type);
+                        propertyTypes.filter(([k, v]) => !!v && typeof v == 'string')
+                            .filter(([k, v]) => {
+                                const docs = interfaceType.docs && interfaceType.docs[k];
+                                return !docs || !docs.includes('@deprecated');
+                            })
+                            .map(([k, i]) => {
+                                // Extract all the words from the type to handle unions and functions and params cleanly.
+                                const words = [...k.matchAll(typeRegex), ...i.matchAll(typeRegex)].map(ws => ws[0]);
+                                return words.filter(w => !TYPE_LINKS[w] && interfaceLookup[w]);
+
+                            }).forEach((s) => {
+                                if (s.length > 0) {
+                                    interfacesToInclude = [...interfacesToInclude, ...s];
+                                }
+                            });
+                    }
+
+
 
                     if (interfacesToInclude.length > 0) {
                         // Be sure to pass true to dontIncludeChildrenTypes so we do not recurse indefinitely
-                        interfacesToWrite = [...interfacesToWrite, ...extractInterfaces(interfacesToInclude, interfaceLookup, forceShowFunc, true)];
+                        allDefs = [...allDefs, ...extractInterfaces(interfacesToInclude, interfaceLookup, overrideIncludeInterfaceFunc, allDefs)];
                     }
                 }
             }
 
+            // If a call signature we unwrap the interface and recurse on the call signature arguments instead.
             if (interfaceType.meta.isCallSignature) {
                 const args = interfaceType.type && interfaceType.type.arguments;
                 if (args) {
                     const argInterfaces = Object.values(args)
-                    interfacesToWrite = [...interfacesToWrite, ...extractInterfaces(argInterfaces, interfaceLookup, forceShowFunc, dontIncludeChildrenTypes)];
+                    allDefs = [...allDefs, ...extractInterfaces(argInterfaces, interfaceLookup, overrideIncludeInterfaceFunc)];
                 }
             }
-        });
-        return interfacesToWrite;
-    }
 
-    let allDefs = [];
-    Object.values(definition).forEach(v => {
-        allDefs = [...allDefs, ...extractInterfaces(v, interfaceLookup, forceShowFunc, dontIncludeChildrenTypes)];
-    })
-    return allDefs;
+        });
+        return allDefs;
+    } else {
+
+        Object.values(definition).forEach(v => {
+            allDefs = [...allDefs, ...extractInterfaces(v, interfaceLookup, overrideIncludeInterfaceFunc, allDefs)];
+        })
+        return allDefs;
+    }
 
 }
 

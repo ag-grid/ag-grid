@@ -430,7 +430,13 @@
             }
         },
         "groupRowRenderer": {
-            "description": "Sets the [Cell Renderer](/component-cell-renderer/) to use when `groupDisplayType = 'groupRows'`."
+            "description": "Sets the [Cell Renderer](/component-cell-renderer/) to use when `groupDisplayType = 'groupRows'`.",
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "ICellRendererComp"
+                ],
+                "include": []
+            }
         },
         "groupRowRendererFramework": {
             "description": "Same as `groupRowRenderer` but for a framework component."
@@ -688,7 +694,13 @@
             }
         },
         "viewportDatasource": {
-            "description": "To use the viewport row model you need to provide the grid with a `viewportDatasource`."
+            "description": "To use the viewport row model you need to provide the grid with a `viewportDatasource`.",
+            "interfaceHierarchyOverrides": {
+                "exclude": [],
+                "include": [
+                    "IViewportDatasourceParams"
+                ]
+            }
         },
         "viewportRowModelPageSize": {
             "description": "When using viewport row model, sets the page size for the viewport."
@@ -813,7 +825,13 @@
             }
         },
         "fullWidthCellRenderer": {
-            "description": "Sets the [Cell Renderer](/component-cell-renderer/) to use for full width rows."
+            "description": "Sets the [Cell Renderer](/component-cell-renderer/) to use for full width rows.",
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "ICellRendererComp"
+                ],
+                "include": []
+            }
         },
         "fullWidthCellRendererFramework": {
             "description": "Same as `fullWidthCellRenderer` but for a framework component."
@@ -1018,7 +1036,13 @@
             "description": "Provide a template for 'loading' overlay."
         },
         "loadingOverlayComponent": {
-            "description": "Provide a custom [loading overlay component](/component-overlay/#loading-rows-overlay-interface)."
+            "description": "Provide a custom [loading overlay component](/component-overlay/#loading-rows-overlay-interface).",
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "ILoadingOverlayComp"
+                ],
+                "include": []
+            }
         },
         "loadingOverlayComponentFramework": {
             "description": "Same as `loadingOverlayComponent` but for a framework component."
@@ -1034,7 +1058,13 @@
             "description": "Provide a template for 'no rows' overlay."
         },
         "noRowsOverlayComponent": {
-            "description": "Provide a custom [no rows overlay component](/component-overlay/#no-rows-overlay-interface)."
+            "description": "Provide a custom [no rows overlay component](/component-overlay/#no-rows-overlay-interface).",
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "INoRowsOverlayComp"
+                ],
+                "include": []
+            }
         },
         "noRowsOverlayComponentFramework": {
             "description": "Same as `noRowsOverlayComponent` but for a framework component."
@@ -1108,6 +1138,12 @@
             "more": {
                 "name": "Status Bar",
                 "url": "/status-bar/"
+            },
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "IStatusPanelComp"
+                ],
+                "include": []
             }
         },
         "suppressContextMenu": {

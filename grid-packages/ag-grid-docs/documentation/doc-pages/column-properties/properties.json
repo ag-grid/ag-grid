@@ -272,6 +272,12 @@
             "more": {
                 "name": "Cell Renderer",
                 "url": "/cell-rendering/"
+            },
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "ICellRendererComp"
+                ],
+                "include": []
             }
         },
         "cellRendererFramework": {
@@ -293,6 +299,12 @@
             "more": {
                 "name": "Many Renderers One Column",
                 "url": "/cell-rendering/#many-renderers-one-column"
+            },
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "ICellRendererComp"
+                ],
+                "include": []
             }
         },
         "autoHeight": {
@@ -397,6 +409,12 @@
             "more": {
                 "name": "Floating Filter Component",
                 "url": "/component-floating-filter/"
+            },
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "IFloatingFilterComp"
+                ],
+                "include": []
             }
         },
         "floatingFilterComponentFramework": {
@@ -437,6 +455,12 @@
             "more": {
                 "name": "Cell Editors",
                 "url": "/component-cell-editor/"
+            },
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "ICellEditorComp"
+                ],
+                "include": []
             }
         },
         "cellEditorFramework": {
@@ -454,6 +478,12 @@
             "more": {
                 "name": "Many Editors One Column",
                 "url": "/cell-editing/#many-editors-one-column"
+            },
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "ICellEditorComp"
+                ],
+                "include": []
             }
         },
         "singleClickEdit": {
@@ -612,7 +642,13 @@
             "description": "Class to use for the header cell. Can be a string, array of strings, or function."
         },
         "headerGroupComponent": {
-            "description": "Component to use header group."
+            "description": "Component to use header group.",
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "IHeaderGroupComp"
+                ],
+                "include": []
+            }
         },
         "headerGroupComponentFramework": {
             "description": "Framework component to use header group."

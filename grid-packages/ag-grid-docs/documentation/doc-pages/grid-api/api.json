@@ -305,6 +305,12 @@
             "more": {
                 "name": "Cell Editor Instances",
                 "url": "/component-cell-editor/#accessing-cell-editor-instances"
+            },
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "ICellEditor"
+                ],
+                "include": []
             }
         }
     },
@@ -406,6 +412,15 @@
             "more": {
                 "name": "Row Dragging to an External DropZone",
                 "url": "/row-dragging-to-external-dropzone/"
+            },
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "RowDragEnterEvent",
+                    "RowDragLeaveEvent",
+                    "RowDragMoveEvent",
+                    "RowDragEndEvent"
+                ],
+                "include": []
             }
         },
         "removeRowDropZone": {
@@ -413,6 +428,15 @@
             "more": {
                 "name": "Row Dragging to an External DropZone",
                 "url": "/row-dragging-to-external-dropzone/"
+            },
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "RowDragEnterEvent",
+                    "RowDragLeaveEvent",
+                    "RowDragMoveEvent",
+                    "RowDragEndEvent"
+                ],
+                "include": []
             }
         },
         "getRowDropZoneParams": {
@@ -420,6 +444,15 @@
             "more": {
                 "name": "Row Dragging Between Grids",
                 "url": "/row-dragging-to-grid/"
+            },
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "RowDragEnterEvent",
+                    "RowDragLeaveEvent",
+                    "RowDragMoveEvent",
+                    "RowDragEndEvent"
+                ],
+                "include": []
             }
         }
     },
@@ -697,6 +730,12 @@
             "more": {
                 "name": "Range Chart API",
                 "url": "/integrated-charts-api/#range-charts"
+            },
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "CellRangeParams"
+                ],
+                "include": []
             }
         },
         "createPivotChart": {
@@ -711,6 +750,12 @@
             "more": {
                 "name": "Cross-filter API",
                 "url": "/integrated-charts-cross-filtering/#cross-filter-api"
+            },
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "CellRangeParams"
+                ],
+                "include": []
             }
         },
         "getChartRef": {
@@ -721,6 +766,14 @@
             "more": {
                 "name": "Saving and Restoring Charts",
                 "url": "/integrated-charts-api/#saving-and-restoring-charts"
+            },
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "CellRangeParams",
+                    "ChartOptions",
+                    "ChartModelType"
+                ],
+                "include": []
             }
         },
         "restoreChart": {
@@ -728,6 +781,14 @@
             "more": {
                 "name": "Saving and Restoring Charts",
                 "url": "/integrated-charts-api/#saving-and-restoring-charts"
+            },
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "CellRangeParams",
+                    "ChartOptions",
+                    "ChartModelType"
+                ],
+                "include": []
             }
         },
         "getChartImageDataURL": {
@@ -821,6 +882,13 @@
             "more": {
                 "name": "Retry Loads",
                 "url": "/server-side-model-retry/"
+            }
+        },
+        "applyServerSideTransaction": {
+            "description": "Apply transactions to the server side row model.",
+            "more": {
+                "name": "Transactions",
+                "url": "/server-side-model-transactions/"
             }
         }
     }
