@@ -63,7 +63,6 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
     private sortable: boolean | null | undefined;
     private menuEnabled: boolean;
 
-    private colDefVersion: number;
     private refreshFunctions: (() => void)[] = [];
 
     private moveDragSource: DragSource | undefined;
@@ -84,7 +83,15 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
 
     @PostConstruct
     private postConstruct(): void {
-        this.colDefVersion = this.columnModel.getColDefVersion();
+
+        const compProxy: IHeaderCellComp = {
+            focus: ()=> this.getFocusableElement().focus(),
+
+            // temp items
+            refresh: ()=> this.refresh()
+        };
+
+        this.ctrl.setComp(compProxy, this.getGui());
 
         this.updateState();
         this.setupWidth();
@@ -120,18 +127,12 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
         CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper,
             this.column, null);
 
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
 
         this.appendHeaderComp();
 
-        const compProxy: IHeaderCellComp = {
-            focus: ()=> this.getFocusableElement().focus()
-        };
-
-        this.ctrl.setComp(compProxy, this.getGui());
     }
 
     private onColumnRowGroupChanged(): void {
@@ -162,14 +163,6 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
 
     private calculateDisplayName(): string | null {
         return this.columnModel.getDisplayNameForColumn(this.column, 'header', true);
-    }
-
-    private onNewColumnsLoaded(): void {
-        const colDefVersionNow = this.columnModel.getColDefVersion();
-        if (colDefVersionNow != this.colDefVersion) {
-            this.colDefVersion = colDefVersionNow;
-            this.refresh();
-        }
     }
 
     private refresh(): void {

@@ -1,29 +1,28 @@
-import { Autowired, PostConstruct } from '../../../context/context';
-import { IMenuFactory } from '../../../interfaces/iMenuFactory';
-import { Column } from '../../../entities/column';
-import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
-import { IFloatingFilterComp, IFloatingFilterParams } from '../../../filter/floating/floatingFilter';
-import { RefSelector } from '../../../widgets/componentAnnotations';
-import { HoverFeature } from '../hoverFeature';
-import { Events, FilterChangedEvent } from '../../../events';
-import { ColumnHoverService } from '../../../rendering/columnHoverService';
-import { AgPromise } from '../../../utils';
-import { IFilterComp, IFilterDef } from '../../../interfaces/iFilter';
 import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
-import { GridApi } from '../../../gridApi';
+import { KeyCode } from '../../../constants/keyCode';
+import { Autowired, PostConstruct } from '../../../context/context';
+import { Column } from '../../../entities/column';
+import { Events, FilterChangedEvent } from '../../../events';
 import { FilterManager } from '../../../filter/filterManager';
+import { IFloatingFilterComp, IFloatingFilterParams } from '../../../filter/floating/floatingFilter';
+import { FloatingFilterMapper } from '../../../filter/floating/floatingFilterMapper';
 import { ReadOnlyFloatingFilter } from '../../../filter/floating/provided/readOnlyFloatingFilter';
+import { GridApi } from '../../../gridApi';
+import { IFilterComp, IFilterDef } from '../../../interfaces/iFilter';
+import { IMenuFactory } from '../../../interfaces/iMenuFactory';
 import { ModuleNames } from '../../../modules/moduleNames';
 import { ModuleRegistry } from '../../../modules/moduleRegistry';
+import { Beans } from '../../../rendering/beans';
+import { ColumnHoverService } from '../../../rendering/columnHoverService';
+import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
+import { AgPromise } from '../../../utils';
 import { addOrRemoveCssClass, setDisplayed } from '../../../utils/dom';
 import { createIconNoSpan } from '../../../utils/icon';
-import { Beans } from '../../../rendering/beans';
-import { FloatingFilterMapper } from '../../../filter/floating/floatingFilterMapper';
-import { KeyCode } from '../../../constants/keyCode';
+import { RefSelector } from '../../../widgets/componentAnnotations';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
-import { HeaderFilterCellCtrl } from './headerFilterCellCtrl';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
-import { IHeaderCellComp } from '../column/headerCellCtrl';
+import { HoverFeature } from '../hoverFeature';
+import { HeaderFilterCellCtrl, IHeaderFilterCellComp } from './headerFilterCellCtrl';
 
 export class HeaderFilterCellComp extends AbstractHeaderCellComp {
 
@@ -82,7 +81,7 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp {
 
         this.addManagedListener(this.eButtonShowMainFilter, 'click', this.showParentFilter.bind(this));
 
-        const compProxy: IHeaderCellComp = {
+        const compProxy: IHeaderFilterCellComp = {
             focus: ()=> this.getFocusableElement().focus()
         };
 

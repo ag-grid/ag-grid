@@ -22,13 +22,12 @@ import { setAriaExpanded } from "../../../utils/aria";
 import { removeFromArray } from "../../../utils/array";
 import { addCssClass, addOrRemoveCssClass, removeCssClass, removeFromParent } from "../../../utils/dom";
 import { ManagedFocusFeature } from "../../../widgets/managedFocusFeature";
+import { HorizontalResizeService } from "../../common/horizontalResizeService";
 import { AbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellComp";
 import { CssClassApplier } from "../cssClassApplier";
-import { HorizontalResizeService } from "../../common/horizontalResizeService";
 import { HoverFeature } from "../hoverFeature";
-import { HeaderGroupCellCtrl } from "./headerGroupCellCtrl";
+import { HeaderGroupCellCtrl, IHeaderGroupCellComp } from "./headerGroupCellCtrl";
 import { IHeaderGroupComp, IHeaderGroupParams } from "./headerGroupComp";
-import { IHeaderCellComp } from "../column/headerCellCtrl";
 
 export class HeaderGroupCellComp extends AbstractHeaderCellComp {
 
@@ -99,7 +98,7 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp {
             }
         ));
 
-        const compProxy: IHeaderCellComp = {
+        const compProxy: IHeaderGroupCellComp = {
             focus: ()=> this.getFocusableElement().focus()
         };
 
