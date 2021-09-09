@@ -38,12 +38,6 @@ md-include:component-usage-javascript.md
 md-include:component-usage-angular.md
 md-include:component-usage-react.md
 md-include:component-usage-vue.md
-
-[[only-vue]]
-md-include:vue3-plugins.md
- 
-[[only-vue]]
-md-include:vue3-class-components.md
  
 md-include:js-fw-angular.md
 md-include:js-fw-react.md

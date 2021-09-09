@@ -16,7 +16,7 @@ md-include:simple-renderer-vue.md
 The example below shows a simple cell renderer in action. It uses a cell renderer to render a hash (`#`) symbol for each medal won
 (instead of the medal count), and the `MedalCellRenderer` defined in the code snippet above for the `Total` column:
 
-<grid-example title='Simple Cell Renderer' name='simple-javascript' type='generated' options='{ "exampleHeight": 460 }'></grid-example>
+<grid-example title='Simple Cell Renderer' name='simple' type='mixed' options='{ "exampleHeight": 460 }'></grid-example>
 
 md-include:component-interface-javascript.md
 md-include:component-interface-angular.md
@@ -24,6 +24,8 @@ md-include:component-interface-react.md
 md-include:component-interface-vue.md
 
 <interface-documentation interfaceName='ICellRendererParams' ></interface-documentation>
+
+md-include:params_vue.md
 
 ## Registering Cell Renderers with Columns
 
@@ -39,7 +41,7 @@ md-include:component-refresh-general.md
 md-include:component-refresh-general.md
 [[only-vue]]
 md-include:component-refresh-general.md
-
+  
 md-include:component-refresh-react.md
 
 ### Change Detection
