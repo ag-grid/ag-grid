@@ -12,4 +12,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
         super(columnGroupChild, parentRowCtrl);
     }
 
+    public setComp(comp: IHeaderGroupCellComp): void {
+        super.setAbstractComp(comp);
+    }
 }

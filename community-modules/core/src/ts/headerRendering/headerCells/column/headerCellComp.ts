@@ -131,7 +131,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
             focus: ()=> this.getFocusableElement().focus()
         };
 
-        this.ctrl.setComp(compProxy);
+        this.ctrl.setComp(compProxy, this.getGui());
     }
 
     private onColumnRowGroupChanged(): void {

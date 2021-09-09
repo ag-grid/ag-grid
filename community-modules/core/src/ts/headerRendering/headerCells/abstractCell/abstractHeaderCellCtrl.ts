@@ -17,7 +17,7 @@ export class AbstractHeaderCellCtrl extends BeanStub {
 
     private parentRowCtrl: HeaderRowCtrl;
 
-    private comp: IHeaderCellComp;
+    private abstractComp: IAbstractHeaderCellComp;
 
     constructor(columnGroupChild: IHeaderColumn, parentRowCtrl: HeaderRowCtrl) {
         super();
@@ -29,14 +29,14 @@ export class AbstractHeaderCellCtrl extends BeanStub {
         this.instanceId = columnGroupChild.getUniqueId() + '-' + instanceIdSequence++;
     }
 
-    public setComp(comp: IHeaderCellComp): void {
-        this.comp = comp;
+    protected setAbstractComp(abstractComp: IAbstractHeaderCellComp): void {
+        this.abstractComp = abstractComp;
     }
 
     public focus(): boolean {
-        if (!this.comp) { return false; }
+        if (!this.abstractComp) { return false; }
 
-        this.comp.focus();
+        this.abstractComp.focus();
         return true;
     }
 

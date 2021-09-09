@@ -13,7 +13,7 @@ import { AbstractHeaderCellCtrl } from '../headerCells/abstractCell/abstractHead
 import { HeaderGroupCellComp } from '../headerCells/columnGroup/headerGroupCellComp';
 import { HeaderGroupCellCtrl } from '../headerCells/columnGroup/headerGroupCellCtrl';
 import { HeaderFilterCellCtrl } from '../headerCells/floatingFilter/headerFilterCellCtrl';
-import { HeaderCellCtrl } from '../headerCells/column/headerCellCtrl';
+import { HeaderCellCtrl, IHeaderCellComp } from '../headerCells/column/headerCellCtrl';
 
 export enum HeaderRowType {
     COLUMN_GROUP = 'group',

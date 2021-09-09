@@ -12,9 +12,10 @@ import { find } from "../../utils/generic";
 import { getAllValuesInObject, iterateObject } from "../../utils/object";
 import { AbstractHeaderCellCtrl } from "../headerCells/abstractCell/abstractHeaderCellCtrl";
 import { HeaderFilterCellCtrl } from "../headerCells/floatingFilter/headerFilterCellCtrl";
-import { HeaderCellCtrl } from "../headerCells/column/headerCellCtrl";
+import { HeaderCellCtrl, IHeaderCellComp } from "../headerCells/column/headerCellCtrl";
 import { HeaderGroupCellCtrl } from "../headerCells/columnGroup/headerGroupCellCtrl";
 import { HeaderRowType } from "./headerRowComp";
+import { _ } from "../../utils";
 
 export interface IHeaderRowComp {
     setTransform(transform: string): void;
@@ -40,7 +41,7 @@ export class HeaderRowCtrl extends BeanStub {
 
     private instanceId = instanceIdSequence++;
 
-    private headerCtrls: { [key: string]: AbstractHeaderCellCtrl } = {};
+    private headerCellCtrls: { [key: string]: AbstractHeaderCellCtrl } = {};
 
     constructor(rowIndex: number, pinned: string | null, type: HeaderRowType) {
         super();
@@ -89,7 +90,14 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     public getHtmlElementForColumnHeader(column: Column): HTMLElement | undefined {
-        return this.comp ? this.comp.getHtmlElementForColumnHeader(column) : undefined;
+        if (this.type != HeaderRowType.COLUMN) { return; }
+
+        const cellCtrl = find(this.headerCellCtrls, cellCtrl => cellCtrl.getColumnGroupChild() == column);
+        if (!cellCtrl) { return; }
+
+        const res = (cellCtrl as HeaderCellCtrl).getGui();
+
+        return res;
     }
 
     private onDisplayedColumnsChanged(): void {
@@ -173,8 +181,8 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private onVirtualColumnsChanged(): void {
-        const oldCtrls = this.headerCtrls;
-        this.headerCtrls = {};
+        const oldCtrls = this.headerCellCtrls;
+        this.headerCellCtrls = {};
         const columns = this.getColumnsInViewport();
 
         columns.forEach(child => {
@@ -189,7 +197,7 @@ export class HeaderRowCtrl extends BeanStub {
             const idOfChild = child.getUniqueId();
 
             // if we already have this cell rendered, do nothing
-            let headerCtrl: HeaderCellCtrl | undefined = oldCtrls[idOfChild];
+            let headerCtrl: AbstractHeaderCellCtrl | undefined = oldCtrls[idOfChild];
             delete oldCtrls[idOfChild];
 
             // it's possible there is a new Column with the same ID, but it's for a different Column.
@@ -216,7 +224,7 @@ export class HeaderRowCtrl extends BeanStub {
                 }
             }
 
-            this.headerCtrls[idOfChild] = headerCtrl;
+            this.headerCellCtrls[idOfChild] = headerCtrl;
         });
 
         // we want to keep columns that are focused, otherwise keyboard navigation breaks
@@ -230,13 +238,13 @@ export class HeaderRowCtrl extends BeanStub {
         iterateObject(oldCtrls, (id: string, oldCtrl: HeaderCellCtrl) => {
             const keepCtrl = isFocusedAndDisplayed(oldCtrl);
             if (keepCtrl) {
-                this.headerCtrls[id] = oldCtrl;
+                this.headerCellCtrls[id] = oldCtrl;
             } else {
                 this.destroyBean(oldCtrl);
             }
         });
 
-        const ctrlsToDisplay = getAllValuesInObject(this.headerCtrls);
+        const ctrlsToDisplay = getAllValuesInObject(this.headerCellCtrls);
         this.comp.setHeaderCtrls(ctrlsToDisplay);
     }
 
@@ -270,7 +278,7 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     public focusHeader(column: IHeaderColumn): boolean {
-        const allCtrls = getAllValuesInObject(this.headerCtrls);
+        const allCtrls = getAllValuesInObject(this.headerCellCtrls);
         const ctrl = find(allCtrls, ctrl => ctrl.getColumnGroupChild()==column);
         if (!ctrl) { return false; }
 
