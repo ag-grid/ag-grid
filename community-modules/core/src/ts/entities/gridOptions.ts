@@ -737,9 +737,13 @@ export interface ProcessChartParams {
 }
 
 export interface GetContextMenuItemsParams {
+    /** Names of the items that would be provided by default. */
     defaultItems: string[] | undefined;
-    column: Column;
-    node: RowNode;
+    /** The column, if a cell was clicked, otherwise null. */
+    column: Column | null;
+    /** The row node, if a cell was clicked, otherwise null. */
+    node: RowNode | null;
+    /** The value, if a cell was clicked, otherwise null.  */
     value: any;
     api: GridApi;
     columnApi: ColumnApi;
@@ -866,7 +870,7 @@ export interface PostProcessPopupParams {
     /** If popup is for a column, this gives the Column */
     column?: Column | null;
     /** If popup is for a row, this gives the RowNode */
-    rowNode?: RowNode;
+    rowNode?: RowNode | null;
     /** The popup we are showing */
     ePopup: HTMLElement;
     /** The different types are:

@@ -46,7 +46,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
         this.destroyBean(this.activeMenu);
     }
 
-    private getMenuItems(node: RowNode, column: Column, value: any): (MenuItemDef | string)[] | undefined {
+    private getMenuItems(node: RowNode | null, column: Column | null, value: any): (MenuItemDef | string)[] | undefined {
         const defaultMenuOptions: string[] = [];
 
         if (_.exists(node) && ModuleRegistry.isRegistered(ModuleNames.ClipboardModule)) {
@@ -116,7 +116,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
         if (this.gridOptionsWrapper.isSuppressContextMenu()) { return; }
 
         const eventOrTouch: (MouseEvent | Touch) = mouseEvent ? mouseEvent : touchEvent!.touches[0];
-        if (this.showMenu(rowNode!, column!, value, eventOrTouch, anchorToElement)) {
+        if (this.showMenu(rowNode, column, value, eventOrTouch, anchorToElement)) {
             const event = mouseEvent ? mouseEvent : touchEvent;
             event!.preventDefault();
         }
@@ -138,7 +138,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
         }
     }
 
-    public showMenu(node: RowNode, column: Column, value: any, mouseEvent: MouseEvent | Touch, anchorToElement: HTMLElement): boolean {
+    public showMenu(node: RowNode | null, column: Column | null, value: any, mouseEvent: MouseEvent | Touch, anchorToElement: HTMLElement): boolean {
         const menuItems = this.getMenuItems(node, column, value);
         const eGridBodyGui = this.ctrlsService.getGridBodyCtrl().getGui();
 

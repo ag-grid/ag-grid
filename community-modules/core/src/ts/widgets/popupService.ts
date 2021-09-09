@@ -153,8 +153,8 @@ export class PopupService extends BeanStub {
     }
 
     public positionPopupUnderMouseEvent(params: {
-        rowNode?: RowNode,
-        column?: Column,
+        rowNode?: RowNode | null,
+        column?: Column | null,
         type: string,
         mouseEvent: MouseEvent | Touch,
         nudgeX?: number,
@@ -249,7 +249,7 @@ export class PopupService extends BeanStub {
         eventSource?: HTMLElement | null,
         mouseEvent?: MouseEvent | Touch | null,
         column?: Column | null,
-        rowNode?: RowNode
+        rowNode?: RowNode | null
     ): void {
         const callback = this.gridOptionsWrapper.getPostProcessPopupFunc();
         if (callback) {
