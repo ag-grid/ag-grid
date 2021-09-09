@@ -16,41 +16,14 @@ The user can bring up the context menu by right clicking on a cell. By default, 
 
 ## Configuring the Context Menu
 
-You can customise the context menu by providing a `getContextMenuItems()` callback. Each time the context menu is to be shown, the callback is called to retrieve the items to include in the menu. This allows the client application to display a menu individually customised to each cell.
+You can customise the context menu by providing a `getContextMenuItems()` callback. Each time the context menu is to be shown, the callback is called to retrieve the menu items. This allows the client application to display a menu individually customised to each cell.
 
-`getContextMenuItems()` takes the following object as parameters:
+The result of `getContextMenuItems(params)` should be a list with each item either a) a string or b) a `MenuItemDef`. Use 'string' to pick from built in menu items and use MenuItem descriptions for your own menu items.
 
-```ts
-GetContextMenuItemsParams {
-    column: Column, // the column that was clicked
-    node: RowNode, // the node that was clicked
-    value: any, // the value displayed in the clicked cell
-    api: GridApi, // the grid API
-    columnApi: ColumnAPI, // the column API
-    context: any, // the grid context
-    defaultItems: string[] | undefined // names of the items that would be provided by default
-}
-```
+<api-documentation source='grid-callbacks/callbacks.json' section='menus' names='["getContextMenuItems"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
 
-The result of `getContextMenuItems()` should be a list with each item either a) a string or b) a MenuItem description. Use 'string' to pick from built in menu items (currently 'copy', 'paste' or 'separator') and use MenuItem descriptions for your own menu items.
 
 If you want to access your underlying data item, you access that through the rowNode as `var dataItem = node.data`.
-
-A `MenuItem` description looks as follows (items with question marks are optional):
-
-```ts
-MenuItemDef {
-    name: string; // name of menu item
-    disabled?: boolean; // if item should be enabled / disabled
-    shortcut?: string; // shortcut (just display text, saying the shortcut here does nothing)
-    action?: () => void; // function that gets executed when item is chosen
-    checked?: boolean; // set to true to provide a check beside the option
-    icon?: HTMLElement | string; // the icon to display beside the icon, either a DOM element or HTML string
-    subMenu?: MenuItemDef[]; // if this menu is a sub menu, contains a list of sub menu item definitions
-    cssClasses?: string[]; // Additional CSS classes to be applied to the menu item
-    tooltip?: string; // Optional tooltip for the menu item
-}
-```
 
 Note: If you set `checked=true`, then icon will be ignored, these options are mutually exclusive.
 

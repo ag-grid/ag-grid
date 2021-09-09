@@ -1774,14 +1774,18 @@
     "meta": {},
     "type": {
       "defaultItems": "string[] | undefined",
-      "column": "Column",
-      "node": "RowNode",
+      "column": "Column | null",
+      "node": "RowNode | null",
       "value": "any",
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "context": "any"
     },
     "docs": {
+      "defaultItems": "/** Names of the items that would be provided by default. */",
+      "column": "/** The column, if a cell was clicked, otherwise null. */",
+      "node": "/** The row node, if a cell was clicked, otherwise null. */",
+      "value": "/** The value, if a cell was clicked, otherwise null. */",
       "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
@@ -1939,7 +1943,7 @@
     "meta": {},
     "type": {
       "column?": "Column | null",
-      "rowNode?": "RowNode",
+      "rowNode?": "RowNode | null",
       "ePopup": "HTMLElement",
       "type": "string",
       "eventSource?": "HTMLElement | null",

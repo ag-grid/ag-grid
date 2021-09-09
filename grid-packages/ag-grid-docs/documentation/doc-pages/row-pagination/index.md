@@ -114,6 +114,6 @@ The following methods compose the pagination API are all available from `gridOpt
 
 ## Pagination Events
 
-<api-documentation source='grid-events/events.json' section='miscellaneous' names='["paginationChanged"]'></api-documentation>
+<api-documentation source='grid-events/events.json' section='pagination' names='["paginationChanged"]'></api-documentation>
 
 

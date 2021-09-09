@@ -191,8 +191,6 @@ export class AreaSeries extends CartesianSeries {
             seriesItemEnabled.clear();
             values.forEach(key => seriesItemEnabled.set(key, true));
 
-            this.highlightedItemId = undefined;
-
             this.scheduleData();
         }
     }
@@ -328,34 +326,6 @@ export class AreaSeries extends CartesianSeries {
         } else {
             return this.yDomain;
         }
-    }
-
-    highlight(itemId?: any): boolean {
-        if (!super.highlight(itemId)) {
-            return false;
-        }
-        return true;
-    }
-
-    dehighlight(): boolean {
-        if (!super.dehighlight()) {
-            return false;
-        }
-        return true;
-    }
-
-    protected getOpacity(nodeDatum: AreaSelectionDatum | MarkerSelectionDatum | LabelSelectionDatum): number {
-        const { chart, highlightStyle: { series: { enabled, dimOpacity } } } = this;
-        return !chart || !enabled || !chart.highlightedDatum ||
-            chart.highlightedDatum.series === this && chart.highlightedDatum.itemId === nodeDatum.itemId ? 1 : dimOpacity;
-    }
-
-    protected getStrokeWidth(datum: AreaSelectionDatum): number {
-        const { chart, highlightStyle: { series: { enabled, strokeWidth } } } = this;
-        return chart && enabled && chart.highlightedDatum &&
-            chart.highlightedDatum.series === this &&
-            chart.highlightedDatum.itemId === datum.itemId &&
-            strokeWidth !== undefined ? strokeWidth : this.strokeWidth;
     }
 
     update(): void {
@@ -563,7 +533,7 @@ export class AreaSeries extends CartesianSeries {
             shape.visible = !!seriesItemEnabled.get(datum.itemId);
             shape.opacity = this.getOpacity(datum);
             shape.stroke = strokes[index % strokes.length];
-            shape.strokeWidth = this.getStrokeWidth(datum);
+            shape.strokeWidth = this.getStrokeWidth(this.strokeWidth, datum);
             shape.strokeOpacity = strokeOpacity;
             shape.lineDash = this.lineDash;
             shape.lineDashOffset = this.lineDashOffset;

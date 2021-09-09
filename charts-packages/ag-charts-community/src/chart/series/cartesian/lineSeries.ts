@@ -206,25 +206,6 @@ export class LineSeries extends CartesianSeries {
         this.updateNodes();
     }
 
-    highlight(itemId?: any): boolean {
-        if (!super.highlight(itemId)) {
-            return false;
-        }
-
-        const { strokeWidth } = this.highlightStyle.series;
-        this.lineNode.strokeWidth = strokeWidth !== undefined ? strokeWidth : this.strokeWidth;
-
-        return true;
-    }
-
-    dehighlight(): boolean {
-        if (!super.dehighlight()) {
-            return false;
-        }
-        this.lineNode.strokeWidth = this.strokeWidth;
-        return true;
-    }
-
     resetHighlight() {
         this.lineNode.strokeWidth = this.strokeWidth;
     }
@@ -338,14 +319,8 @@ export class LineSeries extends CartesianSeries {
             }
         }
 
-        lineNode.stroke = this.stroke;
-        lineNode.strokeWidth = this.strokeWidth;
-        lineNode.lineDash = this.lineDash;
-        lineNode.lineDashOffset = this.lineDashOffset;
-        lineNode.strokeOpacity = this.strokeOpacity;
-
         // Used by marker nodes and for hit-testing even when not using markers
-        // when `chart.tooltipTracking` is true.
+        // when `chart.tooltip.tracking` is true.
         this.nodeData = nodeData;
     }
 
@@ -365,8 +340,22 @@ export class LineSeries extends CartesianSeries {
     }
 
     private updateNodes() {
+        this.updateLineNode();
         this.updateMarkerNodes();
         this.updateTextNodes();
+    }
+
+    private updateLineNode() {
+        const { lineNode } =  this;
+
+        lineNode.stroke = this.stroke;
+        lineNode.strokeWidth = this.getStrokeWidth(this.strokeWidth);
+        lineNode.strokeOpacity = this.strokeOpacity;
+
+        lineNode.lineDash = this.lineDash;
+        lineNode.lineDashOffset = this.lineDashOffset;
+
+        lineNode.opacity = this.getOpacity();
     }
 
     private updateMarkerNodes() {
@@ -427,6 +416,7 @@ export class LineSeries extends CartesianSeries {
 
                 node.translationX = datum.point.x;
                 node.translationY = datum.point.y;
+                node.opacity = this.getOpacity(datum);
                 node.visible = marker.enabled && node.size > 0;
             });
     }

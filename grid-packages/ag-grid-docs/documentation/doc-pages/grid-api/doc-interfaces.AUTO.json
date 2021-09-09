@@ -4123,11 +4123,21 @@
   },
   "GetContextMenuItemsParams": {
     "defaultItems": {
+      "description": "/** Names of the items that would be provided by default. */",
       "type": { "returnType": "string[] | undefined", "optional": false }
     },
-    "column": { "type": { "returnType": "Column", "optional": false } },
-    "node": { "type": { "returnType": "RowNode", "optional": false } },
-    "value": { "type": { "returnType": "any", "optional": false } },
+    "column": {
+      "description": "/** The column, if a cell was clicked, otherwise null. */",
+      "type": { "returnType": "Column | null", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node, if a cell was clicked, otherwise null. */",
+      "type": { "returnType": "RowNode | null", "optional": false }
+    },
+    "value": {
+      "description": "/** The value, if a cell was clicked, otherwise null. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "api": { "type": { "returnType": "GridApi", "optional": false } },
     "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
     "context": {
@@ -4306,7 +4316,7 @@
     },
     "rowNode": {
       "description": "/** If popup is for a row, this gives the RowNode */",
-      "type": { "returnType": "RowNode", "optional": true }
+      "type": { "returnType": "RowNode | null", "optional": true }
     },
     "ePopup": {
       "description": "/** The popup we are showing */",

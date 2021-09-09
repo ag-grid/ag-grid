@@ -373,21 +373,6 @@ export class PieSeries extends PolarSeries {
         return true;
     }
 
-    protected highlightedItemId?: any;
-    undim(itemId?: any) {
-        super.undim(itemId);
-
-        this.highlightedItemId = itemId;
-        this.updateNodes();
-    }
-
-    dim() {
-        super.dim();
-
-        this.highlightedItemId = undefined;
-        this.updateNodes();
-    }
-
     update(): void {
         const { chart } = this;
         const visible = this.group.visible = this.visible && this.seriesItemEnabled.indexOf(true) >= 0;
@@ -460,9 +445,9 @@ export class PieSeries extends PolarSeries {
 
         this.groupSelection.selectByTag<Sector>(PieNodeTag.Sector).each((sector, datum, index) => {
             const radius = radiusScale.convert(datum.radius);
-            const isDatumHighlighted = datum === highlightedDatum || datum.itemId === this.highlightedItemId;
-            const isSeriesHighlighted = this.highlightedItemId !== undefined;
-            const highlighted = datum === highlightedDatum || datum.itemId === this.highlightedItemId;
+            const isDatumHighlighted = true; // datum === highlightedDatum || datum.itemId === this.highlightedItemId;
+            const isSeriesHighlighted = true; // = this.highlightedItemId !== undefined;
+            const highlighted = true; // = datum === highlightedDatum || datum.itemId === this.highlightedItemId;
             const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
                 ? highlightedDatumStrokeWidth
                 : isSeriesHighlighted && highlightedSeriesStrokeWidth !== undefined
