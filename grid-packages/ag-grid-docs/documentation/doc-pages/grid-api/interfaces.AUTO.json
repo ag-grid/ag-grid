@@ -158,7 +158,8 @@
   },
   "DragSourceType": {
     "meta": { "isEnum": true },
-    "type": ["ToolPanel", "HeaderCell", "RowDrag", "ChartPanel"]
+    "type": ["ToolPanel", "HeaderCell", "RowDrag", "ChartPanel"],
+    "docs": [null, null, null, null]
   },
   "DragSource": {
     "meta": {},
@@ -210,10 +211,15 @@
       "onDragStop?(params: DraggingEvent)": "/** Callback for when drag stops */"
     }
   },
-  "VerticalDirection": { "meta": { "isEnum": true }, "type": ["Up", "Down"] },
+  "VerticalDirection": {
+    "meta": { "isEnum": true },
+    "type": ["Up", "Down"],
+    "docs": [null, null]
+  },
   "HorizontalDirection": {
     "meta": { "isEnum": true },
-    "type": ["Left", "Right"]
+    "type": ["Left", "Right"],
+    "docs": [null, null]
   },
   "DraggingEvent": {
     "meta": {},
@@ -1656,11 +1662,13 @@
       "MULTIPLE_COLUMNS = 'multipleColumns'",
       "GROUP_ROWS = 'groupRows'",
       "CUSTOM = 'custom'"
-    ]
+    ],
+    "docs": [null, null, null, null]
   },
   "TreeDataDisplayType": {
     "meta": { "isEnum": true },
-    "type": ["AUTO = 'auto'", "CUSTOM = 'custom'"]
+    "type": ["AUTO = 'auto'", "CUSTOM = 'custom'"],
+    "docs": [null, null]
   },
   "FillOperationParams": {
     "meta": {},
@@ -1978,7 +1986,8 @@
   },
   "ServerSideStoreType": {
     "meta": { "isEnum": true },
-    "type": ["Full = 'full'", "Partial = 'partial'"]
+    "type": ["Full = 'full'", "Partial = 'partial'"],
+    "docs": [null, null]
   },
   "ServerSideStoreParams": {
     "meta": {},
@@ -2087,7 +2096,8 @@
   },
   "RowHighlightPosition": {
     "meta": { "isEnum": true },
-    "type": ["Above", "Below"]
+    "type": ["Above", "Below"],
+    "docs": [null, null]
   },
   "RowPosition": {
     "meta": {},
@@ -3895,7 +3905,11 @@
       "filterType?": "string"
     }
   },
-  "ConditionPosition": { "meta": { "isEnum": true }, "type": ["One", "Two"] },
+  "ConditionPosition": {
+    "meta": { "isEnum": true },
+    "type": ["One", "Two"],
+    "docs": [null, null]
+  },
   "TextFilterModel": {
     "meta": {},
     "type": {
@@ -4107,7 +4121,8 @@
     "type": [
       "ANIMATION_ON = 'ag-row-animation'",
       "ANIMATION_OFF = 'ag-row-no-animation'"
-    ]
+    ],
+    "docs": [null, null]
   },
   "IGridBodyComp": {
     "meta": {},
@@ -4157,6 +4172,20 @@
       "BOTTOM_RIGHT = 'bottomRight'",
       "BOTTOM_CENTER = 'bottomCenter'",
       "BOTTOM_FULL_WITH = 'bottomFullWidth'"
+    ],
+    "docs": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
     ]
   },
   "IRowContainerComp": {
@@ -4237,7 +4266,8 @@
   },
   "HeaderNavigationDirection": {
     "meta": { "isEnum": true },
-    "type": ["UP", "DOWN", "LEFT", "RIGHT"]
+    "type": ["UP", "DOWN", "LEFT", "RIGHT"],
+    "docs": [null, null, null, null]
   },
   "HeaderPosition": {
     "meta": {},
@@ -4360,7 +4390,8 @@
       "COLUMN_GROUP = 'group'",
       "COLUMN = 'column'",
       "FLOATING_FILTER = 'filter'"
-    ]
+    ],
+    "docs": [null, null, null]
   },
   "IHeaderRowComp": {
     "meta": {},
@@ -5561,6 +5592,25 @@
       "StackedArea = 'stackedArea'",
       "NormalizedArea = 'normalizedArea'",
       "Histogram = 'histogram'"
+    ],
+    "docs": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
     ]
   },
   "ChartMenuOptions": {
@@ -5653,7 +5703,8 @@
       "Right = 'right'",
       "Bottom = 'bottom'",
       "Left = 'left'"
-    ]
+    ],
+    "docs": [null, null, null, null]
   },
   "LegendItemOptions": {
     "meta": {},
@@ -6201,7 +6252,8 @@
       "AGGREGATE = 'aggregate'",
       "PIVOT = 'pivot'",
       "NOTHING = 'nothing'"
-    ]
+    ],
+    "docs": [null, null, null, null, null, null, null]
   },
   "IClientSideRowModel": {
     "meta": {},
@@ -6557,7 +6609,8 @@
   },
   "ExcelFactoryMode": {
     "meta": { "isEnum": true },
-    "type": ["SINGLE_SHEET", "MULTI_SHEET"]
+    "type": ["SINGLE_SHEET", "MULTI_SHEET"],
+    "docs": [null, null]
   },
   "ColumnWidthCallbackParams": {
     "meta": {},
@@ -6975,11 +7028,13 @@
   },
   "SelectionHandleType": {
     "meta": { "isEnum": true },
-    "type": ["FILL", "RANGE"]
+    "type": ["FILL", "RANGE"],
+    "docs": [null, null]
   },
   "CellRangeType": {
     "meta": { "isEnum": true },
-    "type": ["VALUE", "DIMENSION"]
+    "type": ["VALUE", "DIMENSION"],
+    "docs": [null, null]
   },
   "CellRange": {
     "meta": {},
@@ -7877,6 +7932,13 @@
       "add?": "any[]",
       "remove?": "any[]",
       "update?": "any[]"
+    },
+    "docs": {
+      "route?": "/** The Row Store to apply the transaction to, ie what group level.\n * eg ['Ireland','2002'] to update the child store found after expanding Ireland and 2002 groups. \n * Passing in blank to empty applies the transaction to the top level. */",
+      "addIndex?": "/** Index position to add at. If missing, rows will be added to the end. */",
+      "add?": "/** Rows to add */",
+      "remove?": "/** Rows to remove */",
+      "update?": "/** Rows to update */"
     }
   },
   "ServerSideTransactionResult": {
@@ -7886,18 +7948,33 @@
       "add?": "RowNode[]",
       "remove?": "RowNode[]",
       "update?": "RowNode[]"
+    },
+    "docs": {
+      "status": "/** The status of applying the transaction. */",
+      "add?": "/** If rows were added, the newly created Row Nodes for those rows. */",
+      "remove?": "/** If rows were removed, the deleted Row Nodes. */",
+      "update?": "/** If rows were updated, the updated Row Nodes. */"
     }
   },
   "ServerSideTransactionResultStatus": {
     "meta": { "isEnum": true },
     "type": [
+      "Applied = 'Applied'",
       "StoreNotFound = 'StoreNotFound'",
       "StoreLoading = 'StoreLoading'",
       "StoreWaitingToLoad = 'StoreWaitingToLoad'",
       "StoreLoadingFailed = 'StoreLoadingFailed'",
       "StoreWrongType = 'StoreWrongType'",
-      "Applied = 'Applied'",
       "Cancelled = 'Cancelled'"
+    ],
+    "docs": [
+      "/** Transaction was successfully applied */",
+      "/** Store was not found, transaction not applied.\n * Either invalid route, or the parent row has not yet been expanded. */",
+      "/** Store is loading, transaction not applied. */",
+      "/** Store is loading (as max loads exceeded), transaction not applied. */",
+      "/** Store load attempt failed, transaction not applied. */",
+      "/** Store is type Partial, which doesn't accept transactions */",
+      "/** Transaction was cancelled, due to grid.\n * Callback isApplyServerSideTransaction() returning false */"
     ]
   },
   "TabbedLayoutParams": {
@@ -7963,6 +8040,36 @@
       "ReactModule = \"@ag-grid-community/react\"",
       "VueModule = \"@ag-grid-community/vue\"",
       "PolymerModule = \"@ag-grid-community/polymer\""
+    ],
+    "docs": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
     ]
   },
   "ICellComp": {
@@ -8439,7 +8546,11 @@
       "init?(params: INoRowsOverlayParams)": "/** The init(params) method is called on the component once. See below for details on the parameters. */"
     }
   },
-  "LoadingType": { "meta": { "isEnum": true }, "type": ["Loading", "NoRows"] },
+  "LoadingType": {
+    "meta": { "isEnum": true },
+    "type": ["Loading", "NoRows"],
+    "docs": [null, null]
+  },
   "RowCssClassCalculatorParams": {
     "meta": {},
     "type": {
@@ -8466,7 +8577,8 @@
       "FullWidthLoading = 'FullWidthLoading'",
       "FullWidthGroup = 'FullWidthGroup'",
       "FullWidthDetail = 'FullWidthDetail'"
-    ]
+    ],
+    "docs": [null, null, null, null, null]
   },
   "IRowComp": {
     "meta": {},
@@ -8608,7 +8720,8 @@
       "AUTO_HEIGHT = 'ag-layout-auto-height'",
       "NORMAL = 'ag-layout-normal'",
       "PRINT = 'ag-layout-print'"
-    ]
+    ],
+    "docs": [null, null, null]
   },
   "UpdateLayoutClassesParams": {
     "meta": {},
@@ -8651,7 +8764,8 @@
   "ResolveAndRejectCallback": { "meta": { "typeParams": ["T"] }, "type": {} },
   "AgPromiseStatus": {
     "meta": { "isEnum": true },
-    "type": ["IN_PROGRESS", "RESOLVED"]
+    "type": ["IN_PROGRESS", "RESOLVED"],
+    "docs": [null, null]
   },
   "FieldElement": {
     "meta": { "isTypeAlias": true },
@@ -8849,7 +8963,8 @@
   },
   "DIRECTION": {
     "meta": { "isEnum": true },
-    "type": ["vertical", "horizontal"]
+    "type": ["vertical", "horizontal"],
+    "docs": [null, null]
   },
   "AddPopupParams": {
     "meta": {},
@@ -8885,7 +9000,8 @@
   },
   "TooltipStates": {
     "meta": { "isEnum": true },
-    "type": ["NOTHING", "WAITING_TO_SHOW", "SHOWING"]
+    "type": ["NOTHING", "WAITING_TO_SHOW", "SHOWING"],
+    "docs": [null, null, null]
   },
   "TapEvent": {
     "meta": {},

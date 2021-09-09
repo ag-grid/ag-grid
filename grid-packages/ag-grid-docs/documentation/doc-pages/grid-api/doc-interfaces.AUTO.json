@@ -13924,22 +13924,47 @@
     }
   },
   "ServerSideTransaction": {
-    "route": { "type": { "returnType": "string[]", "optional": true } },
-    "addIndex": { "type": { "returnType": "number", "optional": true } },
-    "add": { "type": { "returnType": "any[]", "optional": true } },
-    "remove": { "type": { "returnType": "any[]", "optional": true } },
-    "update": { "type": { "returnType": "any[]", "optional": true } }
+    "route": {
+      "description": "/** The Row Store to apply the transaction to, ie what group level.\n * eg ['Ireland','2002'] to update the child store found after expanding Ireland and 2002 groups. \n * Passing in blank to empty applies the transaction to the top level. */",
+      "type": { "returnType": "string[]", "optional": true }
+    },
+    "addIndex": {
+      "description": "/** Index position to add at. If missing, rows will be added to the end. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "add": {
+      "description": "/** Rows to add */",
+      "type": { "returnType": "any[]", "optional": true }
+    },
+    "remove": {
+      "description": "/** Rows to remove */",
+      "type": { "returnType": "any[]", "optional": true }
+    },
+    "update": {
+      "description": "/** Rows to update */",
+      "type": { "returnType": "any[]", "optional": true }
+    }
   },
   "ServerSideTransactionResult": {
     "status": {
+      "description": "/** The status of applying the transaction. */",
       "type": {
         "returnType": "ServerSideTransactionResultStatus",
         "optional": false
       }
     },
-    "add": { "type": { "returnType": "RowNode[]", "optional": true } },
-    "remove": { "type": { "returnType": "RowNode[]", "optional": true } },
-    "update": { "type": { "returnType": "RowNode[]", "optional": true } }
+    "add": {
+      "description": "/** If rows were added, the newly created Row Nodes for those rows. */",
+      "type": { "returnType": "RowNode[]", "optional": true }
+    },
+    "remove": {
+      "description": "/** If rows were removed, the deleted Row Nodes. */",
+      "type": { "returnType": "RowNode[]", "optional": true }
+    },
+    "update": {
+      "description": "/** If rows were updated, the updated Row Nodes. */",
+      "type": { "returnType": "RowNode[]", "optional": true }
+    }
   },
   "ServerSideTransactionResultStatus": {},
   "TabbedLayoutParams": {

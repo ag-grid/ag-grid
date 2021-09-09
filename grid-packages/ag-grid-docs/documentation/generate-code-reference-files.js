@@ -213,7 +213,10 @@ function extractInterfaces(srcFile, extension) {
         }
 
         if (kind == 'EnumDeclaration') {
-            iLookup[name] = { meta: { isEnum: true }, type: node.members.map(n => formatNode(n, srcFile)) }
+            iLookup[name] = {
+                meta: { isEnum: true }, type: node.members.map(n => formatNode(n, srcFile)),
+                docs: node.members.map(n => getJsDoc(n))
+            }
         } else if (kind == 'TypeAliasDeclaration' && node.type && node.type.types && !node.typeParameters) {
             iLookup[name] = { meta: { isTypeAlias: true }, type: formatNode(node.type, srcFile) }
         } else {
