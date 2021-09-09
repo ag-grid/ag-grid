@@ -65,14 +65,14 @@ describe("extent with isComparable", () => {
         expect(result![1]).toBe('A');
     });
 
-    test("return undefined for empty strings", () => {
+    test("return ['', ''] for empty strings", () => {
         {
             const result = extent([''], isComparable);
-            expect(result).toBe(undefined);
+            expect(result).toEqual(['', '']);
         }
         {
             const result = extent(['', ''], isComparable);
-            expect(result).toBe(undefined);
+            expect(result).toEqual(['', '']);
         }
     });
 

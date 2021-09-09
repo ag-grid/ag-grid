@@ -15,7 +15,7 @@ import { Label } from "../../label";
 import { Text } from "../../../scene/shape/text";
 import { HdpiCanvas } from "../../../canvas/hdpiCanvas";
 import { Marker } from "../../marker/marker";
-import { MeasuredLabel, PlacedLabel, placeLabels, PointLabelDatum } from "../../../util/labelPlacement";
+import { MeasuredLabel, PlacedLabel, PointLabelDatum } from "../../../util/labelPlacement";
 import { isContinuous } from "../../../util/value";
 
 interface ScatterNodeDatum extends SeriesNodeDatum {
@@ -305,13 +305,13 @@ export class ScatterSeries extends CartesianSeries {
         this.createNodeData();
 
         this.updateMarkerSelection(this.nodeData);
-        this.updateLabelSelection(this.nodeData);
+        this.updateLabelSelection();
 
         this.updateMarkerNodes();
         this.updateLabelNodes();
     }
 
-    private updateLabelSelection(nodeData: ScatterNodeDatum[]): void {
+    private updateLabelSelection(): void {
         const placedLabels: PlacedLabel[] = this.chart && this.chart.placeLabels().get(this) || [];
         const updateLabels = this.labelSelection.setData(placedLabels);
         updateLabels.exit.remove();

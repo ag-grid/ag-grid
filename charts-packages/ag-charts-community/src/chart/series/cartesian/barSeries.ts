@@ -482,41 +482,6 @@ export class BarSeries extends CartesianSeries {
         return this.flipXY ? this.xAxis : this.yAxis;
     }
 
-    highlight(itemId?: string): boolean {
-        if (!super.highlight(itemId)) {
-            return false;
-        }
-
-        this.highlightedItemId = itemId;
-        this.updateRectNodes();
-
-        return true;
-    }
-
-    dehighlight(): boolean {
-        if (!super.dehighlight()) {
-            return false;
-        }
-        this.updateRectNodes();
-        return true;
-    }
-
-    undim(itemId?: any) {
-        this.updateDim(itemId);
-    }
-
-    dim() {
-        this.updateDim();
-    }
-
-    private updateDim(itemId?: any) {
-        const { dimOpacity } = this.highlightStyle.series;
-
-        const fn = (node: Shape, datum: { itemId?: any }) => node.opacity = !itemId || itemId === datum.itemId ? 1 : dimOpacity;
-        this.rectSelection.each(fn);
-        this.labelSelection.each(fn);
-    }
-
     createNodeData(): BarNodeDatum[] {
         const xAxis = this.getCategoryAxis();
         const yAxis = this.getValueAxis();
@@ -701,7 +666,6 @@ export class BarSeries extends CartesianSeries {
         const {
             fillOpacity, strokeOpacity, shadow, formatter, xKey, flipXY,
             chart: { highlightedDatum },
-            highlightedItemId,
             highlightStyle: {
                 fill: deprecatedFill,
                 stroke: deprecatedStroke,
@@ -720,7 +684,7 @@ export class BarSeries extends CartesianSeries {
 
         this.rectSelection.each((rect, datum) => {
             const isDatumHighlighted = datum === highlightedDatum;
-            const isSubSeriesHighlighted = highlightedItemId === datum.itemId;
+            const isSubSeriesHighlighted = true; // highlightedItemId === datum.itemId;
             const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : datum.fill;
             const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : datum.stroke;
             const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
