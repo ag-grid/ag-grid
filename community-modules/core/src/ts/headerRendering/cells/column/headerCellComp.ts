@@ -263,8 +263,8 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
         updateSortableCssClass();
         updateAriaSort();
 
-        this.ctrl.temp_addRefreshFunction(updateSortableCssClass);
-        this.ctrl.temp_addRefreshFunction(updateAriaSort);
+        this.ctrl.addRefreshFunction(updateSortableCssClass);
+        this.ctrl.addRefreshFunction(updateAriaSort);
 
         this.addManagedListener(this.column, Column.EVENT_SORT_CHANGED, updateAriaSort.bind(this));
     }
@@ -374,7 +374,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
 
         refresh();
 
-        this.ctrl.temp_addRefreshFunction(refresh);
+        this.ctrl.addRefreshFunction(refresh);
     }
 
     private addAttributes(): void {

@@ -89,7 +89,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.draggable = this.workOutDraggable();
     }
 
-    public temp_addRefreshFunction(func: ()=>void): void {
+    public addRefreshFunction(func: ()=>void): void {
         this.refreshFunctions.push(func);
     }
 

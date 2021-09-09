@@ -92,7 +92,7 @@ export class ResizeFeature extends BeanStub {
 
         refresh();
         this.addDestroyFunc(removeResize);
-        this.ctrl.temp_addRefreshFunction(refresh);
+        this.ctrl.addRefreshFunction(refresh);
     }
 
     private onResizing(finished: boolean, resizeAmount: number): void {
