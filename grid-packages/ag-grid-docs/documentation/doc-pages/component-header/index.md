@@ -31,52 +31,9 @@ md-include:component-interface-javascript.md
 md-include:component-interface-angular.md
 md-include:component-interface-react.md
 md-include:component-interface-vue.md
-  
-```ts
-interface IHeaderParams {
-    // the column the header is for
-    column: Column;
 
-    // the name to display for the column. if the column is using a headerValueGetter,
-    // the displayName will take this into account.
-    displayName: string;
+<interface-documentation interfaceName='IHeaderParams' ></interface-documentation>
 
-    // whether sorting is enabled for the column. only put sort logic into
-    // your header if this is true.
-    enableSorting: boolean;
-
-    // whether menu is enabled for the column. only display a menu button
-    // in your header if this is true.
-    enableMenu: boolean;
-
-    // the header the grid provides. the custom header component is a child of the grid provided
-    // header. the grid's header component is what contains the grid managed functionality such as
-    // resizing, keyboard navigation etc. this is provided should you want to make changes to this
-    // cell, eg add ARIA tags, or add keyboard event listener (as focus goes here when navigating
-    // to the header).
-    eGridHeader: HTMLElement;
-
-    // callback to progress the sort for this column.
-    // the grid will decide the next sort direction eg ascending, descending or 'no sort'.
-    // pass multiSort=true if you want to do a multi sort (eg user has Shift held down when
-    // they click)
-    progressSort(multiSort: boolean): void;
-
-    // callback to set the sort for this column.
-    // pass the sort direction to use ignoring the current sort eg one of 'asc', 'desc' or null
-    // (for no sort). pass multiSort=true if you want to do a multi sort (eg user has Shift held
-    // down when they click)
-    setSort(sort: string, multiSort?: boolean): void;
-
-    // callback to request the grid to show the column menu.
-    // pass in the html element of the column menu to have the
-    // grid position the menu over the button.
-    showColumnMenu(menuButton: HTMLElement): void;
- 
-    // The grid API
-    api: any;
-}
-``` 
 ## Specifying Header Components 
 
 You specify the Header Component, as well Header Group Components, in the column definition (or you can set in the default column definition to impact all columns).
