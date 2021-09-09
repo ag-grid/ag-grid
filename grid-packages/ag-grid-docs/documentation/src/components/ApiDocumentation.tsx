@@ -262,7 +262,7 @@ const Section: React.FC<SectionProps> = ({ framework, title, properties, config 
 };
 
 const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, config }) => {
-    const [isExpanded, setExpanded] = useState(config.defaultExpand || true);
+    const [isExpanded, setExpanded] = useState(config.defaultExpand);
 
     let description = '';
     let isObject = false;
