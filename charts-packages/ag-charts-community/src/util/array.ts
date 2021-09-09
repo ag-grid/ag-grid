@@ -32,10 +32,12 @@ export function extent<T, K>(values: T[], predicate: (value: T) => boolean, map?
     let max;
 
     while (++i < n) { // Find the first value.
-        if ((value = values[i]) && predicate(value)) {
+        value = values[i];
+        if (predicate(value)) {
             min = max = value;
             while (++i < n) { // Compare the remaining values.
-                if ((value = values[i]) && predicate(value)) {
+                value = values[i];
+                if (predicate(value)) {
                     if (min > value) {
                         min = value;
                     }

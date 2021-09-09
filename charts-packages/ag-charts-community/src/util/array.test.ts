@@ -85,9 +85,21 @@ describe("extent with isComparable", () => {
 
 describe("extent with isContinuous", () => {
     test("returns lowest and highest numbers from list of numbers", () => {
-        const result = extent([3, 7, 1, 2, 9, -2], isContinuous);
-        expect(result![0]).toBe(-2);
-        expect(result![1]).toBe(9);
+        {
+            const result = extent([3, 7, 1, 2, 9, -2], isContinuous);
+            expect(result![0]).toBe(-2);
+            expect(result![1]).toBe(9);
+        }
+        {
+            const result = extent([0, 13, 10, 19], isContinuous);
+            expect(result![0]).toBe(0);
+            expect(result![1]).toBe(19);
+        }
+        {
+            const result = extent([null, 0, 13, 10, 19], isContinuous);
+            expect(result![0]).toBe(0);
+            expect(result![1]).toBe(19);
+        }
     });
 
     test("returns undefined for list of invalid values", () => {
