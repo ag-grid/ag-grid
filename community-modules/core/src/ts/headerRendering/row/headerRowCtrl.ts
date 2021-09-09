@@ -218,7 +218,7 @@ export class HeaderRowCtrl extends BeanStub {
                         headerCtrl = this.createBean(new HeaderGroupCellCtrl(child, this));
                         break;
                     default:
-                        headerCtrl = this.createBean(new HeaderCellCtrl(child, this));
+                        headerCtrl = this.createBean(new HeaderCellCtrl(child, this, child as Column));
                         break;
                 }
             }

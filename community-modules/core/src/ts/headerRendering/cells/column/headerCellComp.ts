@@ -60,14 +60,9 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
     private headerCompVersion = 0;
     private resizeStartWidth: number;
     private resizeWithShiftKey: boolean;
-    private sortable: boolean | null | undefined;
     private menuEnabled: boolean;
 
-    private refreshFunctions: (() => void)[] = [];
-
     private moveDragSource: DragSource | undefined;
-    private displayName: string | null;
-    private draggable: boolean;
 
     private colDefHeaderComponent?: string | { new(): any; };
     private colDefHeaderComponentFramework?: any;
@@ -87,13 +82,11 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
         const compProxy: IHeaderCellComp = {
             focus: ()=> this.getFocusableElement().focus(),
 
-            // temp items
-            refresh: ()=> this.refresh()
+            refreshHeaderComp: ()=> this.refreshHeaderComp()
         };
 
         this.ctrl.setComp(compProxy, this.getGui());
 
-        this.updateState();
         this.setupWidth();
         this.setupMovingCss();
         this.setupTooltip();
@@ -127,48 +120,9 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
         CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper,
             this.column, null);
 
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
 
         this.appendHeaderComp();
 
-    }
-
-    private onColumnRowGroupChanged(): void {
-        this.checkDisplayName();
-    }
-
-    private onColumnPivotChanged(): void {
-        this.checkDisplayName();
-    }
-
-    private onColumnValueChanged(): void {
-        this.checkDisplayName();
-    }
-
-    private checkDisplayName(): void {
-        // display name can change if aggFunc different, eg sum(Gold) is now max(Gold)
-        if (this.displayName !== this.calculateDisplayName()) {
-            this.refresh();
-        }
-    }
-
-    private updateState(): void {
-        const colDef = this.column.getColDef();
-        this.sortable = colDef.sortable;
-        this.displayName = this.calculateDisplayName();
-        this.draggable = this.workOutDraggable();
-    }
-
-    private calculateDisplayName(): string | null {
-        return this.columnModel.getDisplayNameForColumn(this.column, 'header', true);
-    }
-
-    private refresh(): void {
-        this.updateState();
-        this.refreshHeaderComp();
-        this.refreshFunctions.forEach(f => f());
     }
 
     private refreshHeaderComp(): void {
@@ -183,8 +137,8 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
 
         const headerCompRefreshed = newHeaderCompConfigured ? false : this.attemptHeaderCompRefresh();
         if (headerCompRefreshed) {
-            const dragSourceIsMissing = this.draggable && !this.moveDragSource;
-            const dragSourceNeedsRemoving = !this.draggable && this.moveDragSource;
+            const dragSourceIsMissing = this.ctrl.temp_isDraggable() && !this.moveDragSource;
+            const dragSourceNeedsRemoving = !this.ctrl.temp_isDraggable() && this.moveDragSource;
             if (dragSourceIsMissing || dragSourceNeedsRemoving) {
                 this.attachDraggingToHeaderComp();
             }
@@ -270,7 +224,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
                     e.preventDefault();
                     headerComp.showMenu();
                 }
-            } else if (this.sortable) {
+            } else if (this.ctrl.temp_isSortable()) {
                 const multiSort = e.shiftKey;
                 this.sortController.progressSort(this.column, multiSort, "uiColumnSorted");
             }
@@ -299,11 +253,11 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
         const eGui = this.getGui();
 
         const updateSortableCssClass = () => {
-            addOrRemoveCssClass(eGui, 'ag-header-cell-sortable', !!this.sortable);
+            addOrRemoveCssClass(eGui, 'ag-header-cell-sortable', !!this.ctrl.temp_isSortable());
         };
 
         const updateAriaSort = () => {
-            if (this.sortable) {
+            if (this.ctrl.temp_isSortable()) {
                 setAriaSort(eGui, getAriaSortState(this.column));
             } else {
                 removeAriaSort(eGui);
@@ -313,8 +267,8 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
         updateSortableCssClass();
         updateAriaSort();
 
-        this.refreshFunctions.push(updateSortableCssClass);
-        this.refreshFunctions.push(updateAriaSort);
+        this.ctrl.temp_addRefreshFunction(updateSortableCssClass);
+        this.ctrl.temp_addRefreshFunction(updateAriaSort);
 
         this.addManagedListener(this.column, Column.EVENT_SORT_CHANGED, updateAriaSort.bind(this));
     }
@@ -344,7 +298,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
 
         const params = {
             column: this.column,
-            displayName: this.displayName,
+            displayName: this.ctrl.temp_getDisplayName(),
             enableSorting: colDef.sortable,
             enableMenu: this.menuEnabled,
             showColumnMenu: (source: HTMLElement) => {
@@ -391,29 +345,18 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
         }
     }
 
-    private workOutDraggable(): boolean {
-        const colDef = this.column.getColDef();
-        const isSuppressMovableColumns = this.gridOptionsWrapper.isSuppressMovableColumns();
-
-        const colCanMove = !isSuppressMovableColumns && !colDef.suppressMovable && !colDef.lockPosition;
-
-        // we should still be allowed drag the column, even if it can't be moved, if the column
-        // can be dragged to a rowGroup or pivot drop zone
-        return !!colCanMove || !!colDef.enableRowGroup || !!colDef.enablePivot;
-    }
-
     private attachDraggingToHeaderComp(): void {
 
         this.removeMoveDragSource();
 
-        if (!this.draggable) { return; }
+        if (!this.ctrl.temp_isDraggable()) { return; }
 
         this.moveDragSource = {
             type: DragSourceType.HeaderCell,
             eElement: this.headerCompGui!,
             defaultIconName: DragAndDropService.ICON_HIDE,
             getDragItem: () => this.createDragItem(),
-            dragItemName: this.displayName,
+            dragItemName: this.ctrl.temp_getDisplayName(),
             onDragStarted: () => this.column.setMoving(true, "uiColumnMoved"),
             onDragStopped: () => this.column.setMoving(false, "uiColumnMoved")
         };
@@ -490,7 +433,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
 
         refresh();
         this.addDestroyFunc(removeResize);
-        this.refreshFunctions.push(refresh);
+        this.ctrl.temp_addRefreshFunction(refresh);
     }
 
     public onResizing(finished: boolean, resizeAmount: number): void {
@@ -525,7 +468,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
 
         refresh();
 
-        this.refreshFunctions.push(refresh);
+        this.ctrl.temp_addRefreshFunction(refresh);
     }
 
     private setupMovingCss(): void {
