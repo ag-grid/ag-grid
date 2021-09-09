@@ -7639,97 +7639,6 @@
       "type": { "returnType": "string", "optional": false }
     }
   },
-  "DropListener": {
-    "getIconName": {
-      "type": {
-        "arguments": {},
-        "returnType": "string | null",
-        "optional": false
-      }
-    },
-    "onDragEnter": {
-      "type": {
-        "arguments": { "params": "DraggingEvent" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "onDragLeave": {
-      "type": {
-        "arguments": { "params": "DraggingEvent" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "onDragging": {
-      "type": {
-        "arguments": { "params": "DraggingEvent" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "onDragStop": {
-      "type": {
-        "arguments": { "params": "DraggingEvent" },
-        "returnType": "void",
-        "optional": false
-      }
-    }
-  },
-  "HeaderNavigationDirection": {},
-  "HeaderPosition": {
-    "headerRowIndex": {
-      "description": "/** A number from 0 to n, where n is the last header row the grid is rendering */",
-      "type": { "returnType": "number", "optional": false }
-    },
-    "column": {
-      "description": "/** The grid column or column group */",
-      "type": { "returnType": "Column | ColumnGroup", "optional": false }
-    }
-  },
-  "HorizontalResizeParams": {
-    "eResizeBar": {
-      "type": { "returnType": "HTMLElement", "optional": false }
-    },
-    "dragStartPixels": { "type": { "returnType": "number", "optional": true } },
-    "onResizeStart": {
-      "type": {
-        "arguments": { "shiftKey": "boolean" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "onResizing": {
-      "type": {
-        "arguments": { "delta": "number" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "onResizeEnd": {
-      "type": {
-        "arguments": { "delta": "number" },
-        "returnType": "void",
-        "optional": false
-      }
-    }
-  },
-  "IGridHeaderComp": {
-    "addOrRemoveCssClass": {
-      "type": {
-        "arguments": { "cssClassName": "string", "on": "boolean" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "setHeightAndMinHeight": {
-      "type": {
-        "arguments": { "height": "string" },
-        "returnType": "void",
-        "optional": false
-      }
-    }
-  },
   "IAbstractHeaderCellComp": {
     "focus": {
       "type": { "arguments": {}, "returnType": "void", "optional": false }
@@ -7905,6 +7814,97 @@
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     }
   },
+  "DropListener": {
+    "getIconName": {
+      "type": {
+        "arguments": {},
+        "returnType": "string | null",
+        "optional": false
+      }
+    },
+    "onDragEnter": {
+      "type": {
+        "arguments": { "params": "DraggingEvent" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "onDragLeave": {
+      "type": {
+        "arguments": { "params": "DraggingEvent" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "onDragging": {
+      "type": {
+        "arguments": { "params": "DraggingEvent" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "onDragStop": {
+      "type": {
+        "arguments": { "params": "DraggingEvent" },
+        "returnType": "void",
+        "optional": false
+      }
+    }
+  },
+  "HeaderNavigationDirection": {},
+  "HeaderPosition": {
+    "headerRowIndex": {
+      "description": "/** A number from 0 to n, where n is the last header row the grid is rendering */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "column": {
+      "description": "/** The grid column or column group */",
+      "type": { "returnType": "Column | ColumnGroup", "optional": false }
+    }
+  },
+  "HorizontalResizeParams": {
+    "eResizeBar": {
+      "type": { "returnType": "HTMLElement", "optional": false }
+    },
+    "dragStartPixels": { "type": { "returnType": "number", "optional": true } },
+    "onResizeStart": {
+      "type": {
+        "arguments": { "shiftKey": "boolean" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "onResizing": {
+      "type": {
+        "arguments": { "delta": "number" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "onResizeEnd": {
+      "type": {
+        "arguments": { "delta": "number" },
+        "returnType": "void",
+        "optional": false
+      }
+    }
+  },
+  "IGridHeaderComp": {
+    "addOrRemoveCssClass": {
+      "type": {
+        "arguments": { "cssClassName": "string", "on": "boolean" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "setHeightAndMinHeight": {
+      "type": {
+        "arguments": { "height": "string" },
+        "returnType": "void",
+        "optional": false
+      }
+    }
+  },
   "HeaderRowType": {},
   "IHeaderRowComp": {
     "setTransform": {
@@ -7939,13 +7939,6 @@
       "type": {
         "arguments": { "width": "string" },
         "returnType": "void",
-        "optional": false
-      }
-    },
-    "getHtmlElementForColumnHeader": {
-      "type": {
-        "arguments": { "column": "Column" },
-        "returnType": "HTMLElement | undefined",
         "optional": false
       }
     },

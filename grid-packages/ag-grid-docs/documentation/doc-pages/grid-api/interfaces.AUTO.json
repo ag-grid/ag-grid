@@ -4254,46 +4254,6 @@
     "type": { "currentValue": "any", "previousValue": "any", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
-  "DropListener": {
-    "meta": {},
-    "type": {
-      "getIconName()": "string | null",
-      "onDragEnter(params: DraggingEvent)": "void",
-      "onDragLeave(params: DraggingEvent)": "void",
-      "onDragging(params: DraggingEvent)": "void",
-      "onDragStop(params: DraggingEvent)": "void"
-    }
-  },
-  "HeaderNavigationDirection": {
-    "meta": { "isEnum": true },
-    "type": ["UP", "DOWN", "LEFT", "RIGHT"],
-    "docs": [null, null, null, null]
-  },
-  "HeaderPosition": {
-    "meta": {},
-    "type": { "headerRowIndex": "number", "column": "Column | ColumnGroup" },
-    "docs": {
-      "headerRowIndex": "/** A number from 0 to n, where n is the last header row the grid is rendering */",
-      "column": "/** The grid column or column group */"
-    }
-  },
-  "HorizontalResizeParams": {
-    "meta": {},
-    "type": {
-      "eResizeBar": "HTMLElement",
-      "dragStartPixels?": "number",
-      "onResizeStart": "(shiftKey: boolean) => void",
-      "onResizing": "(delta: number) => void",
-      "onResizeEnd": "(delta: number) => void"
-    }
-  },
-  "IGridHeaderComp": {
-    "meta": {},
-    "type": {
-      "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
-      "setHeightAndMinHeight(height: string)": "void"
-    }
-  },
   "IAbstractHeaderCellComp": { "meta": {}, "type": { "focus()": "void" } },
   "IHeaderCellComp": { "meta": {}, "type": { "focus()": "void" } },
   "IHeaderParams": {
@@ -4384,6 +4344,46 @@
     }
   },
   "IHeaderFilterCellComp": { "meta": {}, "type": { "focus()": "void" } },
+  "DropListener": {
+    "meta": {},
+    "type": {
+      "getIconName()": "string | null",
+      "onDragEnter(params: DraggingEvent)": "void",
+      "onDragLeave(params: DraggingEvent)": "void",
+      "onDragging(params: DraggingEvent)": "void",
+      "onDragStop(params: DraggingEvent)": "void"
+    }
+  },
+  "HeaderNavigationDirection": {
+    "meta": { "isEnum": true },
+    "type": ["UP", "DOWN", "LEFT", "RIGHT"],
+    "docs": [null, null, null, null]
+  },
+  "HeaderPosition": {
+    "meta": {},
+    "type": { "headerRowIndex": "number", "column": "Column | ColumnGroup" },
+    "docs": {
+      "headerRowIndex": "/** A number from 0 to n, where n is the last header row the grid is rendering */",
+      "column": "/** The grid column or column group */"
+    }
+  },
+  "HorizontalResizeParams": {
+    "meta": {},
+    "type": {
+      "eResizeBar": "HTMLElement",
+      "dragStartPixels?": "number",
+      "onResizeStart": "(shiftKey: boolean) => void",
+      "onResizing": "(delta: number) => void",
+      "onResizeEnd": "(delta: number) => void"
+    }
+  },
+  "IGridHeaderComp": {
+    "meta": {},
+    "type": {
+      "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
+      "setHeightAndMinHeight(height: string)": "void"
+    }
+  },
   "HeaderRowType": {
     "meta": { "isEnum": true },
     "type": [
@@ -4401,7 +4401,6 @@
       "setHeight(height: string)": "void",
       "setHeaderCtrls(ctrls: AbstractHeaderCellCtrl[])": "void",
       "setWidth(width: string)": "void",
-      "getHtmlElementForColumnHeader(column: Column)": "HTMLElement | undefined",
       "setRowIndex(rowIndex: number)": "void"
     }
   },
