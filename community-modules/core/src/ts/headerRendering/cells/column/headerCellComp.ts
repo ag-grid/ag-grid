@@ -79,16 +79,18 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
     @PostConstruct
     private postConstruct(): void {
 
+        const eGui = this.getGui();
+
         const compProxy: IHeaderCellComp = {
             focus: ()=> this.getFocusableElement().focus(),
+            setWidth: width => eGui.style.width = width,
+            addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
 
             refreshHeaderComp: ()=> this.refreshHeaderComp()
         };
 
         this.ctrl.setComp(compProxy, this.getGui());
 
-        this.setupWidth();
-        this.setupMovingCss();
         this.setupTooltip();
         this.setupResize();
         this.setupMenuClass();
@@ -334,17 +336,6 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
         this.attachDraggingToHeaderComp();
     }
 
-    private onColumnMovingChanged(): void {
-        // this function adds or removes the moving css, based on if the col is moving.
-        // this is what makes the header go dark when it is been moved (gives impression to
-        // user that the column was picked up).
-        if (this.column.isMoving()) {
-            addCssClass(this.getGui(), 'ag-header-cell-moving');
-        } else {
-            removeCssClass(this.getGui(), 'ag-header-cell-moving');
-        }
-    }
-
     private attachDraggingToHeaderComp(): void {
 
         this.removeMoveDragSource();
@@ -471,18 +462,8 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
         this.ctrl.temp_addRefreshFunction(refresh);
     }
 
-    private setupMovingCss(): void {
-        this.addManagedListener(this.column, Column.EVENT_MOVING_CHANGED, this.onColumnMovingChanged.bind(this));
-        this.onColumnMovingChanged();
-    }
-
     private addAttributes(): void {
         this.getGui().setAttribute("col-id", this.column.getColId());
-    }
-
-    private setupWidth(): void {
-        this.addManagedListener(this.column, Column.EVENT_WIDTH_CHANGED, this.onColumnWidthChanged.bind(this));
-        this.onColumnWidthChanged();
     }
 
     private setupMenuClass(): void {
@@ -491,10 +472,6 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
 
     private onMenuVisible(): void {
         this.addOrRemoveCssClass('ag-column-menu-visible', this.column.isMenuVisible());
-    }
-
-    private onColumnWidthChanged(): void {
-        this.getGui().style.width = this.column.getActualWidth() + 'px';
     }
 
     // optionally inverts the drag, depending on pinned and RTL

@@ -8,6 +8,8 @@ import { Column } from "../../../entities/column";
 
 export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     focus(): void;
+    setWidth(width: string): void;
+    addOrRemoveCssClass(cssClassName: string, on: boolean): void;
 
     // temp
     refreshHeaderComp(): void;
@@ -44,6 +46,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.colDefVersion = this.columnModel.getColDefVersion();
 
         this.updateState();
+        this.setupWidth();
+        this.setupMovingCss();
 
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
@@ -126,4 +130,25 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     private onColumnValueChanged(): void {
         this.checkDisplayName();
     }
+
+    private setupWidth(): void {
+        const listener = () => {
+            this.comp.setWidth(this.column.getActualWidth() + 'px');
+        };
+    
+        this.addManagedListener(this.column, Column.EVENT_WIDTH_CHANGED, listener);
+        listener();
+    }
+
+    private setupMovingCss(): void {
+        const listener = ()=> {
+            // this is what makes the header go dark when it is been moved (gives impression to
+            // user that the column was picked up).
+            this.comp.addOrRemoveCssClass('ag-header-cell-moving', this.column.isMoving());
+        };
+
+        this.addManagedListener(this.column, Column.EVENT_MOVING_CHANGED, listener);
+        listener();
+    }
+
 }
