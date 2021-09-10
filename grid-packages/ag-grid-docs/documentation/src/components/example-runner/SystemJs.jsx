@@ -116,13 +116,13 @@ const publishedConfiguration = {
         "@ag-grid-community/react": `https://unpkg.com/@ag-grid-community/react@${agGridVersion}/`,
         "@ag-grid-community/angular": `https://unpkg.com/@ag-grid-community/angular@${agGridVersion}/`,
         "@ag-grid-community/vue": `https://unpkg.com/@ag-grid-community/vue@${agGridVersion}/`,
-        "@ag-grid-community/vue3": `https://unpkg.com/@ag-grid-community/vue3@${agGridVersion}/`,
+        "@ag-grid-community/vue3": `https://unpkg.com/@ag-grid-community/vue3@26.0.1/`,
         "ag-grid-community": `https://unpkg.com/ag-grid-community@${agGridVersion}/`,
         "ag-grid-enterprise": `https://unpkg.com/ag-grid-enterprise@${agGridVersion}/`,
         "ag-grid-angular": `https://unpkg.com/ag-grid-angular@${agGridVersion}/`,
         "ag-grid-react": `https://unpkg.com/ag-grid-react@${agGridVersion}/`,
         "ag-grid-vue": `https://unpkg.com/ag-grid-vue@${agGridVersion}/`,
-        "ag-grid-vue3": `https://unpkg.com/ag-grid-vue3@${agGridVersion}/`
+        "ag-grid-vue3": `https://unpkg.com/ag-grid-vue3@26.0.1/`
     },
     gridCommunityPaths: {
         /* START OF GRID COMMUNITY MODULES PATHS PROD - DO NOT DELETE */
