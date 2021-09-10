@@ -8,6 +8,7 @@ import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "../abstractCell
 import { ResizeFeature } from "./resizeFeature";
 import { ColumnSortState, getAriaSortState, removeAriaSort, setAriaSort } from "../../../utils/aria";
 import { ColumnHoverService } from "../../../rendering/columnHoverService";
+import { HoverFeature } from "../hoverFeature";
 
 export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     focus(): void;
@@ -57,6 +58,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.setupMenuClass();
         this.setupSortableClass();
         this.addColumnHoverListener();
+
+        this.createManagedBean(new HoverFeature([this.column], this.getGui()));
 
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));

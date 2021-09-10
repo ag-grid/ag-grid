@@ -100,7 +100,6 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
             }
         ));
 
-        this.createManagedBean(new HoverFeature([this.column], this.getGui()));
 
         this.addManagedListener(this.column, Column.EVENT_FILTER_ACTIVE_CHANGED, this.onFilterChanged.bind(this));
         this.onFilterChanged();
