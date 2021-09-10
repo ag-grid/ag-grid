@@ -14,23 +14,51 @@
             "description": "The element to place the tooltip into. This can be used to confine the tooltip to a specific area which may be outside of the sparkline grid cell."
         },
         "renderer": {
+            "description": "A callback function used to create the content for the tooltips. This function should return an object or a HTML string used to render the tooltip.",
+            "more": {
+                "name": "TooltipRendererResult",
+                "url": "/sparklines-tooltips/#tooltiprendererresult"
+            },
             "type": {
+                "meta": {
+                    "name": "TooltipRendererParams"
+                },
                 "parameters": {
                     "datum": "any",
-                    "title?": "string",
-                    "backgroundColor?": "string",
                     "xValue": "any",
-                    "yValue": "any"
-                },
-                "returnType": {
-                    "content?": "string",
+                    "yValue": "any",
+                    "context?": "Context",
                     "title?": "string",
-                    "color?": "string",
-                    "backgroundColor?": "string",
-                    "opacity?": "number"
-                }
-            },
-            "description": "Function used to create the content for tooltips."
+                    "backgroundColor?": "string"
+                },
+                "returnType": "TooltipRendererResult"
+            }
+        }
+    },
+    "TooltipRendererResult": {
+        "enabled?": {
+            "type": "boolean",
+            "description": "Whether or not to show the tooltip for a specific data point when hovered over."
+        },
+        "content?": {
+            "type": "string",
+            "description": "The string that will be displayed in the content div."
+        },
+        "title?": {
+            "type": "string",
+            "description": "Title of the tooltip, this string will be displayed in the title div."
+        },
+        "color?": {
+            "type": "string",
+            "description": "The CSS color value for the tooltip text."
+        },
+        "backgroundColor?": {
+            "type": "string",
+            "description": "The CSS color value for the tooltip title background."
+        },
+        "opacity?": {
+            "type": "number",
+            "description": "The vlaue in the range of 0 to 1 for the opacity of the background of the tooltip title div."
         }
     }
 }

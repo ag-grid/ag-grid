@@ -77,6 +77,10 @@ This is an example to further demonstrate how line sparklines can be configured 
 
 <api-documentation source='sparklines-tooltips/resources/sparkline-tooltip-api.json' section='Tooltip'></api-documentation>
 
+### TooltipRendererResult
+
+<api-documentation source='sparklines-tooltips/resources/sparkline-tooltip-api.json' section='TooltipRendererResult'></api-documentation>
+
 ## Next Up
 
 Continue to the next section to learn about the: [Area Sparklines](/sparklines-area-sparkline/).
