@@ -4257,7 +4257,14 @@
   "IAbstractHeaderCellComp": { "meta": {}, "type": { "focus()": "void" } },
   "IHeaderCellComp": {
     "meta": {},
-    "type": { "focus()": "void", "refreshHeaderComp()": "void" }
+    "type": {
+      "focus()": "void",
+      "setWidth(width: string)": "void",
+      "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
+      "setResizeDisplayed(displayed: boolean)": "void",
+      "setAriaSort(sort: ColumnSortState | undefined)": "void",
+      "refreshHeaderComp()": "void"
+    }
   },
   "IHeaderParams": {
     "meta": {},
@@ -7219,8 +7226,8 @@
   "IServerSideGetRowsRequest": {
     "meta": {},
     "type": {
-      "startRow": "number",
-      "endRow": "number",
+      "startRow": "number | undefined",
+      "endRow": "number | undefined",
       "rowGroupCols": "ColumnVO[]",
       "valueCols": "ColumnVO[]",
       "pivotCols": "ColumnVO[]",
@@ -7228,6 +7235,17 @@
       "groupKeys": "string[]",
       "filterModel": "any",
       "sortModel": "any"
+    },
+    "docs": {
+      "startRow": "/** First row requested or undefined for all rows. */",
+      "endRow": "/** Last row requested or undefined for all rows. */",
+      "rowGroupCols": "/** Columns that are currently row grouped. */",
+      "valueCols": "/** Columns that have aggregations on them. */",
+      "pivotCols": "/** Columns that have pivot on them. */",
+      "pivotMode": "/** Defines if pivot mode is on or off. */",
+      "groupKeys": "/** What groups the user is viewing. */",
+      "filterModel": "/** If filtering, what the filter model is. */",
+      "sortModel": "/** If sorting, what the sort model is. */"
     }
   },
   "IServerSideGetRowsParams": {
@@ -7241,6 +7259,14 @@
       "fail()": "void",
       "api": "GridApi",
       "columnApi": "ColumnApi"
+    },
+    "docs": {
+      "request": "/** Details for the request. A simple object that can be converted to JSON. */",
+      "parentNode": "/** The parent row node. The RootNode (level -1) if request is top level.\n * This is NOT part fo the request as it cannot be serialised to JSON (a rowNode has methods). */",
+      "successCallback(rowsThisPage: any[], lastRow: number)": "/** @deprecated Use `success` method instead and return result as a `LoadSuccessParams` object.\n */",
+      "success(params: LoadSuccessParams)": "/** Success callback, pass the rows back to the grid that were requested. */",
+      "failCallback()": "/** @deprecated Use `fail` instead.\n */",
+      "fail()": "/** Fail callback, tell the grid the call failed so it can adjust it's state. */"
     }
   },
   "IServerSideDatasource": {
@@ -7248,6 +7274,10 @@
     "type": {
       "getRows(params: IServerSideGetRowsParams)": "void",
       "destroy?()": "void"
+    },
+    "docs": {
+      "getRows(params: IServerSideGetRowsParams)": "/** Grid calls `getRows` when it requires more rows as specified in the params. \n * Params object contains callbacks for responding to the request. */",
+      "destroy?()": "/** Optional method, if your datasource has state it needs to clean up. */"
     }
   },
   "IServerSideRowModel": {
@@ -8696,7 +8726,12 @@
   },
   "LoadSuccessParams": {
     "meta": {},
-    "type": { "rowData": "any[]", "rowCount?": "number", "storeInfo?": "any" }
+    "type": { "rowData": "any[]", "rowCount?": "number", "storeInfo?": "any" },
+    "docs": {
+      "rowData": "/** Data retrieved from the server as requested by the grid. */",
+      "rowCount?": "/** The last row, if known, to help Infinite Scroll (i.e Partial Store) and Pagination. */",
+      "storeInfo?": "/** Any extra information for the grid to associate with this load. */"
+    }
   },
   "SortOption": {
     "meta": {},

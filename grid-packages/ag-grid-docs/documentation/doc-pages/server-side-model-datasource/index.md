@@ -51,9 +51,9 @@ const createDatasource = server => {
 }
 ```
 
-Notice that the datasource contains a single method `getRows(params)` which is called by the grid when more rows are required. A request is supplied in the `params` which contains all the information required by the server to fetch data from the server.
+Notice that the datasource contains a single method `getRows(params)` which is called by the grid when more rows are required. A request is supplied in the `params` object which contains all the information required by the server to fetch data from the server.
 
-Rows fetched from the server are supplied to the grid via `params.success()`. Note the `rowCount` can be optionally supplied to the grid.
+Rows fetched from the server are supplied to the grid via `params.success(data)`.
 
 ## Registering the Datasource
 
@@ -89,134 +89,44 @@ Note the following:
 
 ## Datasource Interface
 
-The interface for the Server-side Datasource is show below:
+The interface for the Server-side Datasource is `IServerSideDatasource`:
 
+<interface-documentation interfaceName='IServerSideDatasource' ></interface-documentation>
 
-```ts
-interface IServerSideDatasource {
-    // grid calls this to get rows
-    getRows(params: IServerSideGetRowsParams): void;
+### GetRows
 
-    // optional destroy method, if your datasource has state it needs to clean up
-    destroy?(): void;
-}
-```
+Each time the grid requires more rows, it will call the `getRows(params)` method. The method is passed a `params` object (`IServerSideGetRowsParams`) that contains two callbacks (one for success and one for failure) and a request object which details what rows the grid is looking for.
 
-Each time the grid requires more rows, it will call the `getRows()` method. The method is passed a `params` object that contains two callbacks (one for success and one for failure) and a request object with details what row the grid is looking for.
+<interface-documentation interfaceName='IServerSideGetRowsParams' config='{"overrideBottomMargin":"1rem"}' ></interface-documentation>
 
-The interface for the `params` is shown below:
-
-```ts
-interface IServerSideGetRowsParams {
-    // details for the request, simple object, can be converted to JSON
-    request: IServerSideGetRowsRequest;
-
-    // the parent row node. is the RootNode (level -1) if request is top level.
-    // this is NOT part of the request as it cannot be serialised to JSON (a rowNode has methods)
-    parentNode: RowNode;
-
-    // success callback
-    success(params: LoadSuccessParams): void;
-
-    // fail callback, tell the grid the call failed so it can adjust its state
-    fail(): void;
-
-    // grid API
-    api: GridApi;
-
-    // column API
-    columnApi: ColumnApi;
-}
-```
+### GetRows Request Params
 
 The request gives details on what the grid is looking for. The success and failure callbacks are not included inside
 the request object to keep the request object simple data (i.e. simple data types, no functions). This allows the
 request object to be serialised (e.g. via JSON) and sent to your server.
 
-The interface for the `request` is shown below:
-
-```ts
-interface IServerSideGetRowsRequest {
-    // for Infinite Scroll (i.e. Partial Store) only, first row requested
-   startRow: number;
-
-   // for Infinite Scroll (i.e. Partial Store) only, last row requested
-   endRow: number;
-
-   // row group columns
-   rowGroupCols: ColumnVO[];
-
-   // value columns
-   valueCols: ColumnVO[];
-
-   // pivot columns
-   pivotCols: ColumnVO[];
-
-   // true if pivot mode is one, otherwise false
-   pivotMode: boolean;
-
-   // what groups the user is viewing
-   groupKeys: string[];
-
-   // if filtering, what the filter model is
-   filterModel: any;
-
-   // if sorting, what the sort model is
-   sortModel: any;
-}
-
-// we pass a VO (Value Object) of the column and not the column itself,
-// so the data can be converted to a JSON string and passed to server-side
-interface ColumnVO {
-    id: string;
-    displayName: string;
-    field: string;
-    aggFunc: string;
-}
-```
+<interface-documentation interfaceName='IServerSideGetRowsRequest' config='{"overrideBottomMargin":"1rem"}' ></interface-documentation>
 
 In the example above, no sorting, filtering, infinite scrolling, grouping or pivoting was active. This means the
 request didn't have any information for any of these attributes.
 
 ## Success Callback
 
-The success callback passes rows to the grid with the following parameters:
+The success callback passes rows to the grid via the `LoadSuccessParams` interface:
 
-
-```ts
-// The success() callback uses the following params
-interface LoadSuccessParams {
-
-    // data retreived from the server
-    rowData: any[];
-
-    // for Infinite Scroll (i.e. Partial Store) only, the last row, if known
-    rowCount?: number;
-
-    // any extra info for the grid to associate with this load
-    storeInfo?: any;
-}
-```
+<interface-documentation interfaceName='LoadSuccessParams' config='{"overrideBottomMargin":"1rem"}' ></interface-documentation>
 
 The `rowData` attribute provides the grid with the requested data.
 
 The `rowCount` is used when Partial Store is used. When the total row count is known, this should be passed to the grid to enable the grid to set the vertical scroll range. This then allows the user to scroll the full extend of the dataset and the grid will never ask for data past the provided row count. Otherwise the grid will assume the total number of rows is not known and the vertical scrollbar range will grow as the user scrolls down (the default behaviour for Partial Store).
 
-The `info` is additional data the application can pass to the grid about a particular load. This is useful when doing [High Frequency Updates](/server-side-model-high-frequency/) and explained further in that section.
+The `rowCount` is also used when [Pagination](/server-side-model-pagination/) is enabled. The row count is used to determine the number of pages that are required and enables the grid to jump to the last page. If not provided users will only be able to step to the next page as the grid does not know how many pages are required.
 
-[[note]]
-| Prior to version 25, the `success` callback was called `successCallback` and takes a list of parameters instead
-| of a `params` object. The old method is still provided for backwards compatibility however it will be deprecated
-| and then removed in future major releases.
-
+The `storeInfo` is additional data the application can pass to the grid about a particular load. This is useful when doing [High Frequency Updates](/server-side-model-high-frequency/) and explained further in that section.
 
 ## Fail Callback
 
 The Fail callback has no parameters. It informs the grid the request has failed - eg a network error. It is important to inform the grid of failed requests as it limits the number of concurrent datasource requests. If the Fail callback was not called, the grid would still count the request as pending. For example if the grid was configured with `maxConcurrentDatasourceRequests = 1`, only one request can be pending at any time, and all other requests would be paused until either the Fail or Success callbacks were called for the outstanding request.
-
-[[note]]
-| Prior to version 25, the `fail` callback was called `failCallback`. The old method is still provided for backwards
-| compatibility however it will be deprecated and then removed in future major releases.
 
 ## Next Up
 

@@ -7,8 +7,17 @@ export interface LoadCompleteEvent extends AgEvent {
 }
 
 export interface LoadSuccessParams {
+    /**
+     * Data retrieved from the server as requested by the grid.
+     */
     rowData: any[];
+    /**
+     * The last row, if known, to help Infinite Scroll (i.e Partial Store) and Pagination. 
+     */
     rowCount?: number;
+    /**
+     * Any extra information for the grid to associate with this load.
+     */
     storeInfo?: any;
 }
 
