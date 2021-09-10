@@ -7,6 +7,7 @@ import { HeaderRowCtrl } from "../../row/headerRowCtrl";
 import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellCtrl";
 import { ResizeFeature } from "./resizeFeature";
 import { ColumnSortState, getAriaSortState, removeAriaSort, setAriaSort } from "../../../utils/aria";
+import { ColumnHoverService } from "../../../rendering/columnHoverService";
 
 export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     focus(): void;
@@ -22,6 +23,7 @@ export interface IHeaderCellComp extends IAbstractHeaderCellComp {
 export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('columnHoverService') private columnHoverService: ColumnHoverService;
 
     private eGui: HTMLElement;
 
@@ -54,6 +56,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.setupMovingCss();
         this.setupMenuClass();
         this.setupSortableClass();
+        this.addColumnHoverListener();
 
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
@@ -187,6 +190,18 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.addRefreshFunction(updateSortableCssClass);
         this.addRefreshFunction(updateAriaSort);
 
-        this.addManagedListener(this.column, Column.EVENT_SORT_CHANGED, updateAriaSort.bind(this));
+        this.addManagedListener(this.column, Column.EVENT_SORT_CHANGED, updateAriaSort);
     }
+
+    private addColumnHoverListener(): void {
+        const listener = ()=> {
+            if (!this.gridOptionsWrapper.isColumnHoverHighlight()) { return; }
+            const isHovered = this.columnHoverService.isHovered(this.column);
+            this.comp.addOrRemoveCssClass('ag-column-hover', isHovered);
+        };
+
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, listener);
+        listener();
+    }
+
 }

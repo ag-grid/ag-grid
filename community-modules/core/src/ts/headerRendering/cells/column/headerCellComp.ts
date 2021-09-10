@@ -41,7 +41,6 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
-    @Autowired('columnHoverService') private columnHoverService: ColumnHoverService;
     @Autowired('beans') protected beans: Beans;
 
     @RefSelector('eResize') private eResize: HTMLElement;
@@ -88,7 +87,6 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
         this.ctrl.setComp(compProxy, this.getGui(), this.eResize);
 
         this.setupTooltip();
-        this.addColumnHoverListener();
         this.addActiveHeaderMouseListeners();
 
         this.createManagedBean(new ManagedFocusFeature(
@@ -232,16 +230,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
         return this.column.getColDef();
     }
 
-    private addColumnHoverListener(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, this.onColumnHover.bind(this));
-        this.onColumnHover();
-    }
 
-    private onColumnHover(): void {
-        if (!this.gridOptionsWrapper.isColumnHoverHighlight()) { return; }
-        const isHovered = this.columnHoverService.isHovered(this.column);
-        addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
-    }
 
 
 
