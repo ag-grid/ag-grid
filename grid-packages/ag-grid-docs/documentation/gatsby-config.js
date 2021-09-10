@@ -164,7 +164,7 @@ const plugins = [
     // This generates the sitemap
     resolve: 'gatsby-plugin-sitemap',
     options: {
-      exclude: [`/documentation`],
+      exclude: [`/documentation`, '/changelog'], // changelog is a POC not using PHP
       output: 'sitemap-documentation.xml'
     }
   },
