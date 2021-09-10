@@ -27,24 +27,6 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
     }
 
     public init(params: ISparklineCellRendererParams): void {
-        let tooltipRenderer: (tooltipRendererParams: TooltipRendererParams) => TooltipRendererResult;
-
-        if (params.sparklineOptions && params.sparklineOptions.tooltip && params.sparklineOptions.tooltip.renderer !== undefined) {
-
-            tooltipRenderer = (tooltipRendererParams: TooltipRendererParams): TooltipRendererResult => {
-
-                console.log('this elem', this.getGui());
-
-                const renderer = params.sparklineOptions!.tooltip!.renderer;
-                tooltipRendererParams.context = {
-                    data: params.data
-                };
-
-                return renderer!(tooltipRendererParams);
-            }
-
-        }
-
         let firstTimeIn = true;
         const updateSparkline = () => {
             const { clientWidth, clientHeight } = this.getGui();
@@ -61,10 +43,6 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
                         data: params.data
                     },
                     ...params.sparklineOptions,
-                    // tooltip: {
-                    //     ...params.sparklineOptions!.tooltip,
-                    //     renderer: tooltipRenderer
-                    // }
                 }
 
                 // create new instance of sparkline

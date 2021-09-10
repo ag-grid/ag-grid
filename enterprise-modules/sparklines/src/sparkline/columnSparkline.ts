@@ -80,10 +80,14 @@ export class ColumnSparkline extends Sparkline {
             maxY = extent[1];
         }
 
+        // if minY is positive, set minY to 0.
         minY = minY < 0 ? minY : 0;
 
+        // if maxY is negative, set maxY to 0.
+        maxY = maxY < 0 ? 0 : maxY
+
         if (minY === maxY) {
-            // if minY and maxY are equal and negative, maxY should be set to 0?
+            // if minY and maxY are equal, maxY should be set to 0?
             const padding = Math.abs(minY * 0.01);
             minY -= padding;
             maxY = 0 + padding;

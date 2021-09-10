@@ -7676,6 +7676,13 @@
         "optional": false
       }
     },
+    "setColId": {
+      "type": {
+        "arguments": { "id": "string" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
     "refreshHeaderComp": {
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     }
@@ -10045,6 +10052,7 @@
     "color": { "type": { "returnType": "string", "optional": false } }
   },
   "TooltipRendererResult": {
+    "enabled": { "type": { "returnType": "boolean", "optional": true } },
     "content": { "type": { "returnType": "string", "optional": true } },
     "title": { "type": { "returnType": "string", "optional": true } },
     "color": { "type": { "returnType": "string", "optional": true } },

@@ -116,7 +116,10 @@ export class AreaSparkline extends Sparkline {
             // if minY is positive, set minY to 0.
             minY = minY < 0 ? minY : 0;
 
-            // if minY and maxY are equal and negative, maxY should be set to 0?
+            // if maxY is negative, set maxY to 0.
+            maxY = maxY < 0 ? 0 : maxY
+
+            // if minY and maxY are equal, maxY should be set to 0?
             if (minY === maxY) {
                 const padding = Math.abs(minY * 0.01);
                 maxY = 0 + padding;
@@ -247,14 +250,14 @@ export class AreaSparkline extends Sparkline {
                 });
             }
 
-            node.size = markerFormat && markerFormat.size || markerSize;
-            node.fill = markerFormat && markerFormat.fill || markerFill;
-            node.stroke = markerFormat && markerFormat.stroke || markerStroke;
-            node.strokeWidth = markerFormat && markerFormat.strokeWidth || markerStrokeWidth;
+            node.size = markerFormat && markerFormat.size != undefined ? markerFormat.size : markerSize;
+            node.fill = markerFormat && markerFormat.fill != undefined ? markerFormat.fill : markerFill;
+            node.stroke = markerFormat && markerFormat.stroke != undefined ? markerFormat.stroke : markerStroke;
+            node.strokeWidth = markerFormat && markerFormat.strokeWidth != undefined ? markerFormat.strokeWidth : markerStrokeWidth;
 
             node.translationX = point.x;
             node.translationY = point.y;
-            node.visible = markerFormat && markerFormat.enabled || marker.enabled && node.size > 0;
+            node.visible = markerFormat && markerFormat.enabled != undefined ? markerFormat.enabled : marker.enabled && node.size > 0;
         });
     }
 

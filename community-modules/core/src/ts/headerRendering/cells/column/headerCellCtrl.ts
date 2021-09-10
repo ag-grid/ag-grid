@@ -11,6 +11,7 @@ import { ColumnHoverService } from "../../../rendering/columnHoverService";
 import { HoverFeature } from "../hoverFeature";
 import { Beans } from "../../../rendering/beans";
 import { SetLeftFeature } from "../../../rendering/features/setLeftFeature";
+import { CssClassApplier } from "../cssClassApplier";
 
 export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     focus(): void;
@@ -18,6 +19,7 @@ export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     setResizeDisplayed(displayed: boolean): void;
     setAriaSort(sort: ColumnSortState | undefined): void;
+    setColId(id: string): void;
 
     // temp
     refreshHeaderComp(): void;
@@ -62,9 +64,11 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.setupSortableClass();
         this.addColumnHoverListener();
         this.setupFilterCss();
+        this.setupColId();
+        this.setupClassesFromColDef();
 
-        this.createManagedBean(new HoverFeature([this.column], this.getGui()));
-        this.createManagedBean(new SetLeftFeature(this.column, this.getGui(), this.beans));
+        this.createManagedBean(new HoverFeature([this.column], eGui));
+        this.createManagedBean(new SetLeftFeature(this.column, eGui, this.beans));
 
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
@@ -72,6 +76,13 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
 
         this.createManagedBean(new ResizeFeature(this.getPinned(), this.column, eResize, comp, this));
+    }
+
+    private setupClassesFromColDef(): void {
+        const colDef = this.column.getColDef();
+        const goa = this.gridOptionsWrapper;
+        const classes = CssClassApplier.getHeaderClassesFromColDef(colDef, goa, this.column, null);
+        classes.forEach( c => this.comp.addOrRemoveCssClass(c, true) );
     }
 
     public temp_isDraggable(): boolean {
@@ -221,4 +232,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         listener();
     }
 
+    private setupColId(): void {
+        this.comp.setColId(this.column.getColId());
+    }
 }

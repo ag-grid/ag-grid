@@ -8,24 +8,26 @@ import { addCssClass } from "../../utils/dom";
 
 export class CssClassApplier {
 
-    public static addHeaderClassesFromColDef(abstractColDef: AbstractColDef | null, eHeaderCell: HTMLElement, gridOptionsWrapper: GridOptionsWrapper, column: Column | null, columnGroup: ColumnGroup | null) {
-        if (missing(abstractColDef)) { return; }
-        this.addColumnClassesFromCollDef(abstractColDef.headerClass, abstractColDef, eHeaderCell, gridOptionsWrapper, column, columnGroup);
+    public static getHeaderClassesFromColDef(abstractColDef: AbstractColDef | null, gridOptionsWrapper: GridOptionsWrapper, column: Column | null, columnGroup: ColumnGroup | null): string[] {
+        if (missing(abstractColDef)) { return []; }
+        return this.getColumnClassesFromCollDef(abstractColDef.headerClass, abstractColDef, gridOptionsWrapper, column, columnGroup);
     }
 
-    public static addToolPanelClassesFromColDef(abstractColDef: AbstractColDef | null, eHeaderCell: HTMLElement, gridOptionsWrapper: GridOptionsWrapper, column: Column | null, columnGroup: ProvidedColumnGroup | null) {
-        if (missing(abstractColDef)) { return; }
-        this.addColumnClassesFromCollDef(abstractColDef.toolPanelClass, abstractColDef, eHeaderCell, gridOptionsWrapper, column, columnGroup);
+    public static getToolPanelClassesFromColDef(abstractColDef: AbstractColDef | null, gridOptionsWrapper: GridOptionsWrapper, column: Column | null, columnGroup: ProvidedColumnGroup | null): string[] {
+        if (missing(abstractColDef)) { return []; }
+        return this.getColumnClassesFromCollDef(abstractColDef.toolPanelClass, abstractColDef, gridOptionsWrapper, column, columnGroup);
     }
 
-    public static addColumnClassesFromCollDef(classesOrFunc: string | string[] | ((params: HeaderClassParams | ToolPanelClassParams) => string | string[]) | null | undefined,
+    private static getColumnClassesFromCollDef(classesOrFunc: string 
+                                                            | string[] 
+                                                            | ((params: HeaderClassParams | ToolPanelClassParams) 
+                                                                    => string | string[]) | null | undefined,
                                               abstractColDef: AbstractColDef,
-                                              eHeaderCell: HTMLElement,
                                               gridOptionsWrapper: GridOptionsWrapper,
                                               column: Column | null,
-                                              columnGroup: ColumnGroup | ProvidedColumnGroup | null) {
+                                              columnGroup: ColumnGroup | ProvidedColumnGroup | null): string[] {
         if (missing(classesOrFunc)) {
-            return;
+            return [];
         }
         let classToUse: string | string[];
         if (typeof classesOrFunc === 'function') {
@@ -39,18 +41,17 @@ export class CssClassApplier {
                 context: gridOptionsWrapper.getContext(),
                 api: gridOptionsWrapper.getApi()!
             };
-            const headerClassFunc = classesOrFunc;
-            classToUse = headerClassFunc(params);
+            classToUse = classesOrFunc(params);
         } else {
             classToUse = classesOrFunc;
         }
 
         if (typeof classToUse === 'string') {
-            addCssClass(eHeaderCell, classToUse);
+            return [classToUse];
         } else if (Array.isArray(classToUse)) {
-            classToUse.forEach((cssClassItem: any): void => {
-                addCssClass(eHeaderCell, cssClassItem);
-            });
+            return classToUse
+        } else {
+            return [];
         }
     }
 }

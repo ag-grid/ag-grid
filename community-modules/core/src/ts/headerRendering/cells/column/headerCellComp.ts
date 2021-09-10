@@ -35,7 +35,6 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
         </div>`;
 
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
@@ -80,6 +79,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setResizeDisplayed: displayed => setDisplayed(this.eResize, displayed),
             setAriaSort: sort => sort ? setAriaSort(eGui, sort) : removeAriaSort(eGui),
+            setColId: id => eGui.setAttribute("col-id", id),
 
             refreshHeaderComp: ()=> this.refreshHeaderComp()
         };
@@ -103,13 +103,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
         this.createManagedBean(new SelectAllFeature(this.cbSelectAll, this.column));
         this.cbSelectAll.setParentComponent(this);
 
-        this.addAttributes();
-        CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper,
-            this.column, null);
-
-
         this.appendHeaderComp();
-
     }
 
     private refreshHeaderComp(): void {
@@ -327,7 +321,5 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
         this.ctrl.addRefreshFunction(refresh);
     }
 
-    private addAttributes(): void {
-        this.getGui().setAttribute("col-id", this.column.getColId());
-    }
+
 }

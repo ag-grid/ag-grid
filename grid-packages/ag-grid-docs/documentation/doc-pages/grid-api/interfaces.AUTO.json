@@ -4263,6 +4263,7 @@
       "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
       "setResizeDisplayed(displayed: boolean)": "void",
       "setAriaSort(sort: ColumnSortState | undefined)": "void",
+      "setColId(id: string)": "void",
       "refreshHeaderComp()": "void"
     }
   },
@@ -5907,6 +5908,7 @@
   "TooltipRendererResult": {
     "meta": {},
     "type": {
+      "enabled?": "boolean",
       "content?": "string",
       "title?": "string",
       "color?": "string",
