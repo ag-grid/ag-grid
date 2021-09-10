@@ -65,11 +65,12 @@ export class LineSparkline extends Sparkline {
     }
 
     protected update(): void {
-        this.updateXScale();
-        this.updateYScaleRange();
-        this.updateYScaleDomain();
-
         const nodeData = this.generateNodeData();
+
+        if (!nodeData) {
+            return;
+        }
+
         this.markerSelectionData = nodeData;
 
         this.updateMarkerSelection(nodeData);
@@ -78,13 +79,10 @@ export class LineSparkline extends Sparkline {
         this.updateLine();
     }
 
-    protected updateYScaleRange(): void {
-        const { yScale, seriesRect } = this;
-        yScale.range = [seriesRect.height, 0];
-    }
+    protected updateYScale(): void {
+        const { yData, yScale, seriesRect} = this;
 
-    protected updateYScaleDomain(): void {
-        const { yData, yScale } = this;
+        yScale.range = [seriesRect.height, 0];
 
         const extent = this.findMinAndMax(yData);
         let minY;
@@ -114,11 +112,11 @@ export class LineSparkline extends Sparkline {
         xScale.domain = xData;
     }
 
-    protected generateNodeData(): LineNodeDatum[] {
-        const { yData, xData, data, xScale, yScale } = this;
+    protected generateNodeData(): LineNodeDatum[] | undefined {
+        const { data, yData, xData, xScale, yScale } = this;
 
         if (!data) {
-            return [];
+            return;
         }
 
         const offsetX = xScale.bandwidth / 2;

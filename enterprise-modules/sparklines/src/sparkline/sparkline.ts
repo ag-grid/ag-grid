@@ -39,7 +39,7 @@ export abstract class Sparkline extends Observable {
     readonly canvasElement: HTMLCanvasElement;
     readonly rootGroup: Group;
 
-    // Only one tooltip instance for all sparkline instances
+    // Only one tooltip instance for all sparkline instances.
     static tooltip: SparklineTooltip = new SparklineTooltip();
     private static tooltipDocuments: Document[] = [];
 
@@ -160,12 +160,26 @@ export abstract class Sparkline extends Observable {
     protected xData: (number | undefined)[] = [];
 
     /**
-     * Update x/y scales based on processed data.
      * Generate node data from processed data.
      * Produce data joins.
      * Update selection's nodes using node data.
      */
     protected update() { }
+
+    // Update x scale based on processed data.
+    protected updateXScale() { }
+
+    // Update x scale based on processed data.
+    protected updateYScale() { }
+
+    // Update x axis line.
+    protected updateXAxisLine() { }
+
+    protected updateAxes() {
+        this.updateYScale();
+        this.updateXScale();
+        this.updateXAxisLine();
+    }
 
     // Using processed data, generate data that backs visible nodes.
     protected generateNodeData(): { nodeData: SeriesNodeDatum[], areaData: SeriesNodeDatum[] } | SeriesNodeDatum[] | undefined { return []; }
@@ -233,7 +247,10 @@ export abstract class Sparkline extends Observable {
             xData.push(i);
         }
 
-        // Produce data joins and update selection's nodes.
+        // update axes
+        this.updateAxes();
+
+        // produce data joins and update selection's nodes
         this.update();
     }
 
@@ -311,6 +328,10 @@ export abstract class Sparkline extends Observable {
             rootGroup.translationX = seriesRect.x;
             rootGroup.translationY = seriesRect.y;
 
+            // update axes
+            this.updateAxes();
+
+            // produce data joins and update selection's nodes
             this.update();
 
             this.layoutId = 0;

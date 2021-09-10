@@ -51,18 +51,19 @@ export class ColumnSparkline extends Sparkline {
     }
 
     protected update() {
-        this.updateYScale();
-        this.updateXScale();
-        this.updateXAxisLine();
-
         const nodeData = this.generateNodeData();
+
+        if (!nodeData) {
+            return;
+        }
+
         this.columnSelectionData = nodeData;
 
         this.updateRectNodesSelection(nodeData);
         this.updateRectNodes();
     }
 
-    private updateYScale() {
+    protected updateYScale() {
         const { yScale, seriesRect, yData, yScaleDomain } = this;
 
         yScale.range = [seriesRect.height, 0];
@@ -105,7 +106,7 @@ export class ColumnSparkline extends Sparkline {
         yScale.domain = yScaleDomain ? yScaleDomain : [minY, maxY];
     }
 
-    private updateXScale() {
+    protected updateXScale() {
         const { xScale, seriesRect, xData, paddingOuter, paddingInner } = this;
 
         xScale.range = [0, seriesRect.width];
@@ -114,7 +115,7 @@ export class ColumnSparkline extends Sparkline {
         xScale.paddingOuter = paddingOuter;
     }
 
-    private updateXAxisLine() {
+    protected updateXAxisLine() {
         const { xScale, yScale, axis, xAxisLine } = this;
         const { strokeWidth } = axis;
 
@@ -128,8 +129,12 @@ export class ColumnSparkline extends Sparkline {
         xAxisLine.translationY = yZero;
     }
 
-    protected generateNodeData(): ColumnNodeDatum[] {
-        const { yData, xData, xScale, yScale, fill, stroke, strokeWidth } = this;
+    protected generateNodeData(): ColumnNodeDatum[] | undefined {
+        const { data, yData, xData, xScale, yScale, fill, stroke, strokeWidth } = this;
+
+        if (!data) {
+            return;
+        }
 
         const nodeData: ColumnNodeDatum[] = [];
 

@@ -71,13 +71,8 @@ export class AreaSparkline extends Sparkline {
     }
 
     protected update(): void {
-        this.updateXScale();
-        this.updateYScaleRange();
-        this.updateYScaleDomain();
-
-        this.updateXAxisLine();
-
         const data = this.generateNodeData();
+
         if (!data) {
             return;
         }
@@ -94,13 +89,11 @@ export class AreaSparkline extends Sparkline {
         this.updateFill(areaData);
     }
 
-    protected updateYScaleRange(): void {
-        const { yScale, seriesRect } = this;
-        yScale.range = [seriesRect.height, 0];
-    }
+    protected updateYScale(): void {
+        const { yData, yScale, seriesRect} = this;
 
-    protected updateYScaleDomain(): void {
-        const { yData, yScale } = this;
+        yScale.range = [seriesRect.height, 0];
+
         let extent = this.findMinAndMax(yData);
         let minY, maxY
 
@@ -137,7 +130,7 @@ export class AreaSparkline extends Sparkline {
     }
 
     protected generateNodeData(): { nodeData: AreaNodeDatum[], areaData: AreaPathDatum[] } | undefined {
-        const { yData, xData, data, xScale, yScale } = this;
+        const { data, yData, xData, xScale, yScale } = this;
 
         if (!data) {
             return;
@@ -191,7 +184,7 @@ export class AreaSparkline extends Sparkline {
         return { nodeData, areaData };
     }
 
-    private updateXAxisLine() {
+    protected updateXAxisLine() {
         const { xScale, yScale, axis, xAxisLine } = this;
 
         xAxisLine.x1 = xScale.range[0];
