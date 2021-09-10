@@ -9,11 +9,7 @@ export abstract class AbstractHeaderCellComp extends Component {
 
     @Autowired('focusService') protected focusService: FocusService;
 
-    protected abstract readonly column: Column | ColumnGroup;
-    protected abstract readonly pinned: string | null;
-
-    protected abstract onFocusIn(e: FocusEvent): void;
-
+    /// temp - this is in the AbstractHeaderCellCtrl also, once all comps refactored, this can be removed
     protected shouldStopEventPropagation(e: KeyboardEvent): boolean {
         const { headerRowIndex, column } = this.focusService.getFocusedHeader()!;
 
@@ -25,11 +21,5 @@ export abstract class AbstractHeaderCellComp extends Component {
         );
     }
 
-    public getColumn(): Column | ColumnGroup {
-        return this.column;
-    }
-
-    public getPinned(): string | null {
-        return this.pinned;
-    }
+    public abstract getColumn(): Column | ColumnGroup;
 }

@@ -4264,7 +4264,10 @@
       "setResizeDisplayed(displayed: boolean)": "void",
       "setAriaSort(sort: ColumnSortState | undefined)": "void",
       "setColId(id: string)": "void",
-      "refreshHeaderComp()": "void"
+      "setAriaDescribedBy(id: string | undefined)": "void",
+      "refreshHeaderComp()": "void",
+      "temp_getHeaderComp()": "IHeaderComp | undefined",
+      "setTitle(title: string | undefined)": "void"
     }
   },
   "IHeaderParams": {
@@ -8136,22 +8139,6 @@
       "setEditDetails(compDetails?: UserCompDetails, popup?: boolean, position?: string)": "void"
     }
   },
-  "ITooltipFeatureCtrl": {
-    "meta": {},
-    "type": {
-      "getTooltipValue()": "any",
-      "getGui()": "HTMLElement",
-      "getLocation()": "string",
-      "getColumn?()": "Column",
-      "getRowIndex?()": "number",
-      "getRowNode?()": "RowNode",
-      "getValueFormatted?()": "string"
-    }
-  },
-  "ITooltipFeatureComp": {
-    "meta": {},
-    "type": { "setTitle(title: string | undefined)": "void" }
-  },
   "ILargeTextEditorParams": {
     "meta": {},
     "type": {
@@ -9057,6 +9044,22 @@
   "ITabGuard": {
     "meta": {},
     "type": { "setTabIndex(tabIndex?: string)": "void" }
+  },
+  "ITooltipFeatureCtrl": {
+    "meta": {},
+    "type": {
+      "getTooltipValue()": "any",
+      "getGui()": "HTMLElement",
+      "getLocation()": "string",
+      "getColumn?()": "Column",
+      "getRowIndex?()": "number",
+      "getRowNode?()": "RowNode",
+      "getValueFormatted?()": "string"
+    }
+  },
+  "ITooltipFeatureComp": {
+    "meta": {},
+    "type": { "setTitle(title: string | undefined)": "void" }
   },
   "TapEvent": {
     "meta": {},

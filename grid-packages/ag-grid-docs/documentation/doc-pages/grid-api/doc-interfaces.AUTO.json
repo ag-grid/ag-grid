@@ -7683,8 +7683,29 @@
         "optional": false
       }
     },
+    "setAriaDescribedBy": {
+      "type": {
+        "arguments": { "id": "string | undefined" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
     "refreshHeaderComp": {
       "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
+    "temp_getHeaderComp": {
+      "type": {
+        "arguments": {},
+        "returnType": "IHeaderComp | undefined",
+        "optional": false
+      }
+    },
+    "setTitle": {
+      "type": {
+        "arguments": { "title": "string | undefined" },
+        "returnType": "void",
+        "optional": false
+      }
     }
   },
   "IHeaderParams": {
@@ -14260,42 +14281,6 @@
       }
     }
   },
-  "ITooltipFeatureCtrl": {
-    "getTooltipValue": {
-      "type": { "arguments": {}, "returnType": "any", "optional": false }
-    },
-    "getGui": {
-      "type": {
-        "arguments": {},
-        "returnType": "HTMLElement",
-        "optional": false
-      }
-    },
-    "getLocation": {
-      "type": { "arguments": {}, "returnType": "string", "optional": false }
-    },
-    "getColumn": {
-      "type": { "arguments": {}, "returnType": "Column", "optional": true }
-    },
-    "getRowIndex": {
-      "type": { "arguments": {}, "returnType": "number", "optional": true }
-    },
-    "getRowNode": {
-      "type": { "arguments": {}, "returnType": "RowNode", "optional": true }
-    },
-    "getValueFormatted": {
-      "type": { "arguments": {}, "returnType": "string", "optional": true }
-    }
-  },
-  "ITooltipFeatureComp": {
-    "setTitle": {
-      "type": {
-        "arguments": { "title": "string | undefined" },
-        "returnType": "void",
-        "optional": false
-      }
-    }
-  },
   "ILargeTextEditorParams": {
     "maxLength": { "type": { "returnType": "number", "optional": false } },
     "rows": { "type": { "returnType": "number", "optional": false } },
@@ -15840,6 +15825,42 @@
     "setTabIndex": {
       "type": {
         "arguments": { "tabIndex": "string" },
+        "returnType": "void",
+        "optional": false
+      }
+    }
+  },
+  "ITooltipFeatureCtrl": {
+    "getTooltipValue": {
+      "type": { "arguments": {}, "returnType": "any", "optional": false }
+    },
+    "getGui": {
+      "type": {
+        "arguments": {},
+        "returnType": "HTMLElement",
+        "optional": false
+      }
+    },
+    "getLocation": {
+      "type": { "arguments": {}, "returnType": "string", "optional": false }
+    },
+    "getColumn": {
+      "type": { "arguments": {}, "returnType": "Column", "optional": true }
+    },
+    "getRowIndex": {
+      "type": { "arguments": {}, "returnType": "number", "optional": true }
+    },
+    "getRowNode": {
+      "type": { "arguments": {}, "returnType": "RowNode", "optional": true }
+    },
+    "getValueFormatted": {
+      "type": { "arguments": {}, "returnType": "string", "optional": true }
+    }
+  },
+  "ITooltipFeatureComp": {
+    "setTitle": {
+      "type": {
+        "arguments": { "title": "string | undefined" },
         "returnType": "void",
         "optional": false
       }

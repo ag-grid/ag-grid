@@ -1,5 +1,8 @@
 import { BeanStub } from "../../../context/beanStub";
+import { Autowired } from "../../../context/context";
 import { IHeaderColumn } from "../../../entities/iHeaderColumn";
+import { FocusService } from "../../../focusService";
+import { isUserSuppressingHeaderKeyboardEvent } from "../../../utils/keyboard";
 import { HeaderRowCtrl } from "../../row/headerRowCtrl";
 import { IHeaderCellComp } from "../column/headerCellCtrl";
 
@@ -10,6 +13,8 @@ export interface IAbstractHeaderCellComp {
 }
 
 export class AbstractHeaderCellCtrl extends BeanStub {
+
+    @Autowired('focusService') protected focusService: FocusService;
 
     private instanceId: string;
 
@@ -27,6 +32,17 @@ export class AbstractHeaderCellCtrl extends BeanStub {
 
         // unique id to this instance, including the column ID to help with debugging in React as it's used in 'key'
         this.instanceId = columnGroupChild.getUniqueId() + '-' + instanceIdSequence++;
+    }
+
+    protected shouldStopEventPropagation(e: KeyboardEvent): boolean {
+        const { headerRowIndex, column } = this.focusService.getFocusedHeader()!;
+
+        return isUserSuppressingHeaderKeyboardEvent(
+            this.gridOptionsWrapper,
+            e,
+            headerRowIndex,
+            column
+        );
     }
 
     protected setAbstractComp(abstractComp: IAbstractHeaderCellComp): void {

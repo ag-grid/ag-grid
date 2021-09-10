@@ -106,6 +106,10 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp {
         this.ctrl.setComp(compProxy);
     }
 
+    public getColumn(): ColumnGroup {
+        return this.column;
+    }
+
     protected onFocusIn(e: FocusEvent) {
         if (!this.getGui().contains(e.relatedTarget as HTMLElement)) {
             const rowIndex = this.ctrl.getRowIndex();

@@ -88,6 +88,10 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp {
         this.ctrl.setComp(compProxy);
     }
 
+    public getColumn(): Column {
+        return this.column;
+    }
+
     protected onTabKeyDown(e: KeyboardEvent) {
         const activeEl = document.activeElement as HTMLElement;
         const eGui = this.getGui();

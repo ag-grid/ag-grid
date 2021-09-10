@@ -51,8 +51,13 @@ export function setAriaLabelledBy(element: HTMLElement, labelledBy: string): voi
     setAriaAttribute(element, 'labelledby', labelledBy);
 }
 
-export function setAriaDescribedBy(element: HTMLElement, describedby: string): void {
-    setAriaAttribute(element, 'describedby', describedby);
+export function setAriaDescribedBy(element: HTMLElement, describedby: string | undefined): void {
+    const key = 'describedby';
+    if (describedby) {
+        setAriaAttribute(element, key, describedby);
+    } else {
+        removeAriaAttribute(element, key);
+    }
 }
 
 export function setAriaLevel(element: HTMLElement, level: number): void {

@@ -11,6 +11,7 @@ import { RowNode } from "../../../entities/rowNode";
 import { SelectionService } from "../../../selectionService";
 import { getAriaDescribedBy, setAriaDescribedBy } from "../../../utils/aria";
 import { isVisible } from "../../../utils/dom";
+import { IHeaderCellComp } from "./headerCellCtrl";
 
 export class SelectAllFeature extends BeanStub {
 
@@ -22,21 +23,29 @@ export class SelectAllFeature extends BeanStub {
     private cbSelectAllVisible = false;
     private processingEventFromCheckbox = false;
     private column: Column;
+    private comp: IHeaderCellComp;
 
     private filteredOnly: boolean;
     private cbSelectAll: AgCheckbox;
 
-    constructor(cbSelectAll: AgCheckbox, column: Column) {
+    constructor(column: Column) {
         super();
-        this.cbSelectAll = cbSelectAll;
         this.column = column;
 
         const colDef = column.getColDef();
         this.filteredOnly = colDef ? !!colDef.headerCheckboxSelectionFilteredOnly : false;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    public getCheckboxGui(): HTMLElement {
+        return this.cbSelectAll.getGui();
+    }
+
+    public setComp(comp: IHeaderCellComp): void {
+        this.comp = comp;
+        this.cbSelectAll = this.createManagedBean(new AgCheckbox());
+        this.cbSelectAll.addCssClass('ag-header-select-all');
+        this.cbSelectAll.getGui().setAttribute('role','presentation');
+
         this.showOrHideSelectAll();
 
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideSelectAll.bind(this));
@@ -62,26 +71,8 @@ export class SelectAllFeature extends BeanStub {
     }
 
     private refreshHeaderAriaDescribedBy(isSelectAllVisible: boolean): void {
-        const parentHeader = this.cbSelectAll.getParentComponent();
-        const parentHeaderGui = parentHeader && parentHeader.getGui();
-        if (!parentHeaderGui || !isVisible(parentHeaderGui)) { return; }
-
-        let describedByIds = '';
-
-        if (parentHeaderGui) {
-            describedByIds = getAriaDescribedBy(parentHeaderGui);
-        }
-
-        const cbSelectAllId = this.cbSelectAll.getInputElement().id;
-        const describedByIdsHasSelectAllFeature = describedByIds.indexOf(cbSelectAllId) !== -1;
-
-        if (isSelectAllVisible) {
-            if (!describedByIdsHasSelectAllFeature) {
-                setAriaDescribedBy(parentHeaderGui, `${cbSelectAllId} ${describedByIds.trim()}`);
-            }
-        } else if (describedByIdsHasSelectAllFeature) {
-            setAriaDescribedBy(parentHeaderGui, describedByIds.trim().split(' ').filter(id => id === cbSelectAllId).join(' '));
-        }
+        const describedBy = isSelectAllVisible ? this.cbSelectAll.getInputElement().id : undefined;
+        this.comp.setAriaDescribedBy(describedBy);
     }
 
     private onModelChanged(): void {

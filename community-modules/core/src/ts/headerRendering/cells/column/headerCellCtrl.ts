@@ -13,6 +13,12 @@ import { Beans } from "../../../rendering/beans";
 import { SetLeftFeature } from "../../../rendering/features/setLeftFeature";
 import { CssClassApplier } from "../cssClassApplier";
 import { ITooltipFeatureComp, ITooltipFeatureCtrl, TooltipFeature } from "../../../widgets/tooltipFeature";
+import { ManagedFocusFeature } from "../../../widgets/managedFocusFeature";
+import { KeyCode } from '../../../constants/keyCode';
+import { SortController } from "../../../sortController";
+import { IMenuFactory } from "../../../interfaces/iMenuFactory";
+import { HeaderComp, IHeaderComp } from "./headerComp";
+import { SelectAllFeature } from "./selectAllFeature";
 
 export interface IHeaderCellComp extends IAbstractHeaderCellComp, ITooltipFeatureComp {
     focus(): void;
@@ -21,9 +27,11 @@ export interface IHeaderCellComp extends IAbstractHeaderCellComp, ITooltipFeatur
     setResizeDisplayed(displayed: boolean): void;
     setAriaSort(sort: ColumnSortState | undefined): void;
     setColId(id: string): void;
+    setAriaDescribedBy(id: string | undefined): void;
 
     // temp
     refreshHeaderComp(): void;
+    temp_getHeaderComp(): IHeaderComp | undefined;
 }
 
 export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
@@ -31,6 +39,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('columnHoverService') private columnHoverService: ColumnHoverService;
     @Autowired('beans') protected beans: Beans;
+    @Autowired('sortController') private sortController: SortController;
+    @Autowired('menuFactory') private menuFactory: IMenuFactory;
 
     private eGui: HTMLElement;
 
@@ -45,6 +55,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     private sortable: boolean | null | undefined;
     private displayName: string | null;
     private draggable: boolean;
+    private menuEnabled: boolean;
 
     constructor(columnGroupChild: IHeaderColumn, parentRowCtrl: HeaderRowCtrl, column: Column) {
         super(columnGroupChild, parentRowCtrl);
@@ -68,9 +79,21 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.setupColId();
         this.setupClassesFromColDef();
         this.setupTooltip();
+        this.addActiveHeaderMouseListeners();
+        this.setupSelectAll();
 
         this.createManagedBean(new HoverFeature([this.column], eGui));
         this.createManagedBean(new SetLeftFeature(this.column, eGui, this.beans));
+        this.createManagedBean(new ManagedFocusFeature(
+            eGui,
+            {
+                shouldStopEventPropagation: e => this.shouldStopEventPropagation(e),
+                onTabKeyDown: ()=> null,
+                handleKeyDown: this.handleKeyDown.bind(this),
+                onFocusIn: this.onFocusIn.bind(this),
+                onFocusOut: this.onFocusOut.bind(this)
+            }
+        ));
 
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
@@ -78,6 +101,64 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
 
         this.createManagedBean(new ResizeFeature(this.getPinned(), this.column, eResize, comp, this));
+    }
+
+    private selectAllFeature: SelectAllFeature;
+
+    private setupSelectAll(): void {
+        this.selectAllFeature = this.createManagedBean(new SelectAllFeature(this.column));
+        this.selectAllFeature.setComp(this.comp);
+    }
+
+    public getSelectAllGui(): HTMLElement {
+        return this.selectAllFeature.getCheckboxGui();
+    }
+
+    protected handleKeyDown(e: KeyboardEvent): void {
+        /// THIS IS BAD - we are assuming the header is not a user provided comp
+        const headerComp = this.comp.temp_getHeaderComp() as HeaderComp;
+        if (!headerComp) { return; }
+
+        // if (e.keyCode === KeyCode.SPACE) {
+        //     const checkbox = this.cbSelectAll;
+        //     if (checkbox.isDisplayed() && !checkbox.getGui().contains(document.activeElement)) {
+        //         e.preventDefault();
+        //         checkbox.setValue(!checkbox.getValue());
+        //     }
+        // }
+
+        if (e.keyCode === KeyCode.ENTER) {
+            if (e.ctrlKey || e.metaKey) {
+                if (this.menuEnabled && headerComp.showMenu) {
+                    e.preventDefault();
+                    headerComp.showMenu();
+                }
+            } else if (this.sortable) {
+                const multiSort = e.shiftKey;
+                this.sortController.progressSort(this.column, multiSort, "uiColumnSorted");
+            }
+        }
+    }
+
+    public isMenuEnabled(): boolean {
+        return this.menuEnabled;
+    }
+
+    protected onFocusIn(e: FocusEvent) {
+        if (!this.getGui().contains(e.relatedTarget as HTMLElement)) {
+            const rowIndex = this.getRowIndex();
+            this.focusService.setFocusedHeader(rowIndex, this.column);
+        }
+
+        this.setActiveHeader(true);
+    }
+
+    protected onFocusOut(e: FocusEvent) {
+        if (
+            this.getGui().contains(e.relatedTarget as HTMLElement)
+        ) { return; }
+
+        this.setActiveHeader(false);
     }
 
     private setupTooltip(): void {
@@ -132,6 +213,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
     private updateState(): void {
         const colDef = this.column.getColDef();
+        this.menuEnabled = this.menuFactory.isMenuEnabled(this.column) && !colDef.suppressMenu;
         this.sortable = colDef.sortable;
         this.displayName = this.calculateDisplayName();
         this.draggable = this.workOutDraggable();
@@ -255,5 +337,19 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
     private setupColId(): void {
         this.comp.setColId(this.column.getColId());
+    }
+
+    private addActiveHeaderMouseListeners(): void {
+        const listener = (e: MouseEvent) => this.setActiveHeader(e.type === 'mouseenter');
+        this.addManagedListener(this.getGui(), 'mouseenter', listener);
+        this.addManagedListener(this.getGui(), 'mouseleave', listener);
+    }
+
+    public temp_setActiveHeader(active: boolean): void {
+        this.setActiveHeader(active);
+    }
+
+    private setActiveHeader(active: boolean): void {
+        this.comp.addOrRemoveCssClass('ag-header-active', active);
     }
 }

@@ -14,7 +14,7 @@ import { ColumnHoverService } from "../../../rendering/columnHoverService";
 import { SetLeftFeature } from "../../../rendering/features/setLeftFeature";
 import { ITooltipParams } from "../../../rendering/tooltipComponent";
 import { SortController } from "../../../sortController";
-import { getAriaSortState, removeAriaSort, setAriaSort } from "../../../utils/aria";
+import { getAriaSortState, removeAriaSort, setAriaDescribedBy, setAriaSort } from "../../../utils/aria";
 import { addOrRemoveCssClass, setDisplayed } from "../../../utils/dom";
 import { AgCheckbox } from "../../../widgets/agCheckbox";
 import { RefSelector } from "../../../widgets/componentAnnotations";
@@ -31,11 +31,10 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
     private static TEMPLATE = /* html */
         `<div class="ag-header-cell" role="columnheader" unselectable="on" tabindex="-1">
             <div ref="eResize" class="ag-header-cell-resize" role="presentation"></div>
-            <ag-checkbox ref="cbSelectAll" class="ag-header-select-all" role="presentation"></ag-checkbox>
         </div>`;
+        // <ag-checkbox ref="cbSelectAll" class="ag-header-select-all" role="presentation"></ag-checkbox>
 
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('menuFactory') private menuFactory: IMenuFactory;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('sortController') private sortController: SortController;
@@ -52,7 +51,6 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
     private headerCompGui: HTMLElement | undefined;
 
     private headerCompVersion = 0;
-    private menuEnabled: boolean;
 
     private moveDragSource: DragSource | undefined;
 
@@ -66,6 +64,10 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
         this.column = ctrl.getColumnGroupChild() as Column;
         this.pinned = ctrl.getPinned();
         this.ctrl = ctrl;
+    }
+
+    public getColumn(): Column {
+        return this.column;
     }
 
     @PostConstruct
@@ -90,27 +92,16 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
             setAriaSort: sort => sort ? setAriaSort(eGui, sort) : removeAriaSort(eGui),
             setColId: id => setAttribute('col-id', id),
             setTitle: title => setAttribute('title', title),
+            setAriaDescribedBy: value => setAriaDescribedBy(eGui, value),
 
-            refreshHeaderComp: ()=> this.refreshHeaderComp()
+            refreshHeaderComp: ()=> this.refreshHeaderComp(),
+            temp_getHeaderComp: ()=> this.headerComp
         };
 
         this.ctrl.setComp(compProxy, this.getGui(), this.eResize);
 
-        this.addActiveHeaderMouseListeners();
-
-        this.createManagedBean(new ManagedFocusFeature(
-            this.getFocusableElement(),
-            {
-                shouldStopEventPropagation: this.shouldStopEventPropagation.bind(this),
-                onTabKeyDown: this.onTabKeyDown.bind(this),
-                handleKeyDown: this.handleKeyDown.bind(this),
-                onFocusIn: this.onFocusIn.bind(this),
-                onFocusOut: this.onFocusOut.bind(this)
-            }
-        ));
-
-        this.createManagedBean(new SelectAllFeature(this.cbSelectAll, this.column));
-        this.cbSelectAll.setParentComponent(this);
+        const selectAllGui = this.ctrl.getSelectAllGui();
+        this.eResize.insertAdjacentElement('afterend', selectAllGui);
 
         this.appendHeaderComp();
     }
@@ -169,60 +160,6 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
         return res;
     }
 
-    private addActiveHeaderMouseListeners(): void {
-        const listener = (e: MouseEvent) => this.setActiveHeader(e.type === 'mouseenter');
-        this.addManagedListener(this.getGui(), 'mouseenter', listener);
-        this.addManagedListener(this.getGui(), 'mouseleave', listener);
-    }
-
-    private setActiveHeader(active: boolean): void {
-        addOrRemoveCssClass(this.getGui(), 'ag-header-active', active);
-    }
-
-    protected onFocusIn(e: FocusEvent) {
-        if (!this.getGui().contains(e.relatedTarget as HTMLElement)) {
-            const rowIndex = this.ctrl.getRowIndex();
-            this.focusService.setFocusedHeader(rowIndex, this.getColumn());
-        }
-
-        this.setActiveHeader(true);
-    }
-
-    protected onFocusOut(e: FocusEvent) {
-        if (
-            this.getGui().contains(e.relatedTarget as HTMLElement)
-        ) { return; }
-
-        this.setActiveHeader(false);
-    }
-
-    protected handleKeyDown(e: KeyboardEvent): void {
-        const headerComp = this.headerComp as HeaderComp;
-        if (!headerComp) { return; }
-
-        if (e.keyCode === KeyCode.SPACE) {
-            const checkbox = this.cbSelectAll;
-            if (checkbox.isDisplayed() && !checkbox.getGui().contains(document.activeElement)) {
-                e.preventDefault();
-                checkbox.setValue(!checkbox.getValue());
-            }
-        }
-
-        if (e.keyCode === KeyCode.ENTER) {
-            if (e.ctrlKey || e.metaKey) {
-                if (this.menuEnabled && headerComp.showMenu) {
-                    e.preventDefault();
-                    headerComp.showMenu();
-                }
-            } else if (this.ctrl.temp_isSortable()) {
-                const multiSort = e.shiftKey;
-                this.sortController.progressSort(this.column, multiSort, "uiColumnSorted");
-            }
-        }
-    }
-
-    protected onTabKeyDown(): void { }
-
     public getComponentHolder(): ColDef {
         return this.column.getColDef();
     }
@@ -243,13 +180,11 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
 
         const colDef = this.column.getColDef();
 
-        this.menuEnabled = this.menuFactory.isMenuEnabled(this.column) && !colDef.suppressMenu;
-
         const params = {
             column: this.column,
             displayName: this.ctrl.temp_getDisplayName(),
             enableSorting: colDef.sortable,
-            enableMenu: this.menuEnabled,
+            enableMenu: this.ctrl.isMenuEnabled(),
             showColumnMenu: (source: HTMLElement) => {
                 this.gridApi.showColumnMenuAfterButtonClick(this.column, source);
             },
