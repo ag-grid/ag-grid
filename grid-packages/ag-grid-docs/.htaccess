@@ -2218,7 +2218,7 @@ AddType text/javascript ts jsx
     Redirect 301 /vue-grid/viewport/ /vue-data-grid/viewport/
     Redirect 301 /nodejs-server-side-operations/ /javascript-data-grid/server-side-operations-nodejs/
     Redirect 301 /oracle-server-side-operations/ /javascript-data-grid/server-side-operations-oracle/
-    Redirect 301 /quote/ /ecommerce//ecommerce/quote-lookup
+    Redirect 301 /quote/ /ecommerce/#/ecommerce/quote-lookup
     Redirect 301 /react-15/ /react-data-grid/getting-started/
     Redirect 301 /react-and-ag-grid/ https://medium.com/ag-grid/building-a-react-datagrid-using-ag-grid-a-perfect-match-5a4c45f3bedb
     Redirect 301 /react-apis/ /react-data-grid/getting-started/
