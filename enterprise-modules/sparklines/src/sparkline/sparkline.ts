@@ -3,9 +3,9 @@ import { Scene } from '../scene/scene';
 import { Observable } from '../util/observable';
 import { createId } from "../util/id";
 import { Padding } from '../util/padding';
-import { defaultTooltipCss } from './defaultTooltipCss';
+import { defaultTooltipCss } from './tooltip/defaultTooltipCss';
 import { isNumber } from './util';
-import { SparklineTooltip } from './sparklineTooltip';
+import { SparklineTooltip } from './tooltip/sparklineTooltip';
 import { HighlightStyle } from "@ag-grid-community/core";
 
 export interface SeriesNodeDatum {
@@ -39,7 +39,7 @@ export abstract class Sparkline extends Observable {
     readonly canvasElement: HTMLCanvasElement;
     readonly rootGroup: Group;
 
-    // Only one tooltip instance for all sparkline instances
+    // Only one tooltip instance for all sparkline instances.
     static tooltip: SparklineTooltip = new SparklineTooltip();
     private static tooltipDocuments: Document[] = [];
 
@@ -160,12 +160,26 @@ export abstract class Sparkline extends Observable {
     protected xData: (number | undefined)[] = [];
 
     /**
-     * Update x/y scales based on processed data.
      * Generate node data from processed data.
      * Produce data joins.
      * Update selection's nodes using node data.
      */
     protected update() { }
+
+    // Update x scale based on processed data.
+    protected updateXScale() { }
+
+    // Update x scale based on processed data.
+    protected updateYScale() { }
+
+    // Update x axis line.
+    protected updateXAxisLine() { }
+
+    protected updateAxes() {
+        this.updateYScale();
+        this.updateXScale();
+        this.updateXAxisLine();
+    }
 
     // Using processed data, generate data that backs visible nodes.
     protected generateNodeData(): { nodeData: SeriesNodeDatum[], areaData: SeriesNodeDatum[] } | SeriesNodeDatum[] | undefined { return []; }
@@ -173,23 +187,26 @@ export abstract class Sparkline extends Observable {
     // Returns persisted node data associated with the sparkline's data.
     protected getNodeData(): readonly SeriesNodeDatum[] { return []; }
 
-    /**
-     * Each sparkline is expected to have its own logic to efficiently update its nodes
-     * on hightlight changes.
-     * @param closestDatum
-     */
-    protected highlightDatum(closestDatum: SeriesNodeDatum) { }
+    // Update the selection's nodes.
+    protected updateNodes(): void { }
 
-    /**
-     * Each sparkline is expected to have its own logic to efficiently update its nodes
-     * on hightlight changes.
-     */
-    protected dehighlightDatum() { }
+    // Efficiently update sparkline nodes on hightlight changes.
+    protected highlightedDatum?: SeriesNodeDatum;
+    protected highlightDatum(closestDatum: SeriesNodeDatum): void {
+        this.updateNodes();
+    }
+
+    protected dehighlightDatum(): void {
+        this.highlightedDatum = undefined;
+        this.updateNodes();
+    }
 
     abstract getTooltipHtml(datum: SeriesNodeDatum): string | undefined;
 
     /**
      * Highlight closest datum and display tooltip if enabled.
+     * Only update if necessary, i.e. only update if the highlighted datum is different from previously highlighted datum,
+     * or if there is no previously highlighted datum.
      * @param event
      */
     private onMouseMove(event: MouseEvent) {
@@ -199,10 +216,15 @@ export abstract class Sparkline extends Observable {
             return;
         }
 
-        this.highlightDatum(closestDatum);
+        const oldHighlightedDatum = this.highlightedDatum;
+        this.highlightedDatum = closestDatum;
 
-        if (Sparkline.tooltip.enabled) {
-            this.handleTooltip(closestDatum);
+        if ((this.highlightedDatum && !oldHighlightedDatum) ||
+            (this.highlightedDatum && oldHighlightedDatum && this.highlightedDatum !== oldHighlightedDatum)) {
+            this.highlightDatum(closestDatum);
+            if (Sparkline.tooltip.enabled) {
+                this.handleTooltip(closestDatum);
+            }
         }
     }
 
@@ -233,7 +255,10 @@ export abstract class Sparkline extends Observable {
             xData.push(i);
         }
 
-        // Produce data joins and update selection's nodes.
+        // update axes
+        this.updateAxes();
+
+        // produce data joins and update selection's nodes
         this.update();
     }
 
@@ -311,6 +336,10 @@ export abstract class Sparkline extends Observable {
             rootGroup.translationX = seriesRect.x;
             rootGroup.translationY = seriesRect.y;
 
+            // update axes
+            this.updateAxes();
+
+            // produce data joins and update selection's nodes
             this.update();
 
             this.layoutId = 0;

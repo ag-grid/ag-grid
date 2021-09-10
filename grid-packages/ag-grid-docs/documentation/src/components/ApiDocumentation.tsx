@@ -338,13 +338,13 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
                 <svg className={classnames({ 'fa-rotate-90': isExpanded })}><use href="#menu-item" /></svg>
             </div>}
         </td>
-        <td onClick={() => setExpanded(!isExpanded)} role="presentation">
-            <h6 id={`reference-${id}-${name}`} style={{ display: 'inline-flex' }} className="side-menu-exclude">
-                <code dangerouslySetInnerHTML={{ __html: name }} className={styles['reference__name']}></code>
+        <td role="presentation">
+            <h6 id={`reference-${id}-${name}`} style={{ display: 'inline-flex' }} className="side-menu-exclude" >
+                <code onClick={() => setExpanded(!isExpanded)} dangerouslySetInnerHTML={{ __html: name }} className={styles['reference__name']}></code>
                 <a href={`#reference-${id}-${name}`} className="anchor after" style={{ fontSize: 'small' }}>{anchorIcon}</a>
             </h6>
 
-            <div>
+            <div onClick={() => setExpanded(!isExpanded)}>
                 {typeUrl ?
                     <a className={styles['reference__property-type']} href={typeUrl} target={typeUrl.startsWith('http') ? '_blank' : '_self'} rel="noreferrer">
                         {isObject ? getInterfaceName(name) : propertyType}

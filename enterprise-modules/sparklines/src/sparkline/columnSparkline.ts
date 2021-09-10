@@ -4,7 +4,7 @@ import { Group } from '../scene/group';
 import { Line } from '../scene/shape/line';
 import { Selection } from '../scene/selection';
 import { SeriesNodeDatum, Sparkline } from './sparkline';
-import { toTooltipHtml } from './sparklineTooltip';
+import { toTooltipHtml } from './tooltip/sparklineTooltip';
 import { Rectangle } from './rectangle';
 import { ColumnFormatterParams, ColumnFormat } from "@ag-grid-community/core";
 
@@ -51,18 +51,19 @@ export class ColumnSparkline extends Sparkline {
     }
 
     protected update() {
-        this.updateYScale();
-        this.updateXScale();
-        this.updateXAxisLine();
-
         const nodeData = this.generateNodeData();
+
+        if (!nodeData) {
+            return;
+        }
+
         this.columnSelectionData = nodeData;
 
-        this.updateRectNodesSelection(nodeData);
-        this.updateRectNodes();
+        this.updateSelection(nodeData);
+        this.updateNodes();
     }
 
-    private updateYScale() {
+    protected updateYScale() {
         const { yScale, seriesRect, yData, yScaleDomain } = this;
 
         yScale.range = [seriesRect.height, 0];
@@ -105,7 +106,7 @@ export class ColumnSparkline extends Sparkline {
         yScale.domain = yScaleDomain ? yScaleDomain : [minY, maxY];
     }
 
-    private updateXScale() {
+    protected updateXScale() {
         const { xScale, seriesRect, xData, paddingOuter, paddingInner } = this;
 
         xScale.range = [0, seriesRect.width];
@@ -114,7 +115,7 @@ export class ColumnSparkline extends Sparkline {
         xScale.paddingOuter = paddingOuter;
     }
 
-    private updateXAxisLine() {
+    protected updateXAxisLine() {
         const { xScale, yScale, axis, xAxisLine } = this;
         const { strokeWidth } = axis;
 
@@ -128,8 +129,12 @@ export class ColumnSparkline extends Sparkline {
         xAxisLine.translationY = yZero;
     }
 
-    protected generateNodeData(): ColumnNodeDatum[] {
-        const { yData, xData, xScale, yScale, fill, stroke, strokeWidth } = this;
+    protected generateNodeData(): ColumnNodeDatum[] | undefined {
+        const { data, yData, xData, xScale, yScale, fill, stroke, strokeWidth } = this;
+
+        if (!data) {
+            return;
+        }
 
         const nodeData: ColumnNodeDatum[] = [];
 
@@ -171,7 +176,7 @@ export class ColumnSparkline extends Sparkline {
         return nodeData;
     }
 
-    private updateRectNodesSelection(selectionData: ColumnNodeDatum[]) {
+    private updateSelection(selectionData: ColumnNodeDatum[]) {
         const updateColumnsSelection = this.columnSelection.setData(selectionData);
 
         const enterColumnsSelection = updateColumnsSelection.enter.append(Rectangle);
@@ -181,7 +186,7 @@ export class ColumnSparkline extends Sparkline {
         this.columnSelection = updateColumnsSelection.merge(enterColumnsSelection);
     }
 
-    private updateRectNodes() {
+    protected updateNodes() {
         const { highlightedDatum, formatter: columnFormatter, fill, stroke, strokeWidth } = this;
         const { fill: highlightFill, stroke: highlightStroke, strokeWidth: highlightStrokeWidth } = this.highlightStyle;
 
@@ -224,17 +229,6 @@ export class ColumnSparkline extends Sparkline {
             // shifts bars upwards?
             // column.crisp = true;
         });
-    }
-
-    private highlightedDatum?: SeriesNodeDatum;
-    protected highlightDatum(closestDatum: SeriesNodeDatum): void {
-        this.highlightedDatum = closestDatum;
-        this.updateRectNodes();
-    }
-
-    protected dehighlightDatum(): void {
-        this.highlightedDatum = undefined;
-        this.updateRectNodes();
     }
 
     getTooltipHtml(datum: SeriesNodeDatum): string | undefined {

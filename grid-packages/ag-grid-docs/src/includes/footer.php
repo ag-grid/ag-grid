@@ -47,17 +47,6 @@
 </footer>
 
 
-<div id="cookie-warning" style="display: none;">
-  <div style="margin-bottom: 5px">
-    <p>
-      This website uses cookies to ensure you get the best experience on our website. This enables us to understand how you use the site and track any patterns with regards how you are using our website. By using our website you consent to all cookies in accordance with our Cookie Policy.
-    </p>
-
-    <a style="margin-left: 20px!important" class="btn btn-primary" id="cookie-accept">OK</a>
-    <a style="margin-left:-25px!important" href="/cookies.php" class="btn btn-primary" id="read-more" style="margin:0px!important">Read More</a>
-  </div>
-</div>
-
 <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
 <script>
   WebFont.load({

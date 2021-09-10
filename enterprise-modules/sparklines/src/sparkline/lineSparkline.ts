@@ -6,7 +6,7 @@ import { Observable } from '../util/observable';
 import { Selection } from '../scene/selection';
 import { Marker } from './marker';
 import { Point, SeriesNodeDatum, Sparkline } from './sparkline';
-import { toTooltipHtml } from './sparklineTooltip';
+import { toTooltipHtml } from './tooltip/sparklineTooltip';
 import { getMarkerShape } from './util';
 import { MarkerFormat, MarkerFormatterParams } from "@ag-grid-community/core";
 
@@ -65,26 +65,24 @@ export class LineSparkline extends Sparkline {
     }
 
     protected update(): void {
-        this.updateXScale();
-        this.updateYScaleRange();
-        this.updateYScaleDomain();
-
         const nodeData = this.generateNodeData();
+
+        if (!nodeData) {
+            return;
+        }
+
         this.markerSelectionData = nodeData;
 
-        this.updateMarkerSelection(nodeData);
-        this.updateMarkers();
+        this.updateSelection(nodeData);
+        this.updateNodes();
 
         this.updateLine();
     }
 
-    protected updateYScaleRange(): void {
-        const { yScale, seriesRect } = this;
-        yScale.range = [seriesRect.height, 0];
-    }
+    protected updateYScale(): void {
+        const { yData, yScale, seriesRect } = this;
 
-    protected updateYScaleDomain(): void {
-        const { yData, yScale } = this;
+        yScale.range = [seriesRect.height, 0];
 
         const extent = this.findMinAndMax(yData);
         let minY;
@@ -114,11 +112,11 @@ export class LineSparkline extends Sparkline {
         xScale.domain = xData;
     }
 
-    protected generateNodeData(): LineNodeDatum[] {
-        const { yData, xData, data, xScale, yScale } = this;
+    protected generateNodeData(): LineNodeDatum[] | undefined {
+        const { data, yData, xData, xScale, yScale } = this;
 
         if (!data) {
-            return [];
+            return;
         }
 
         const offsetX = xScale.bandwidth / 2;
@@ -144,7 +142,7 @@ export class LineSparkline extends Sparkline {
         return nodeData;
     }
 
-    private updateMarkerSelection(selectionData: LineNodeDatum[]): void {
+    private updateSelection(selectionData: LineNodeDatum[]): void {
         const { marker } = this;
 
         const shape = getMarkerShape(marker.shape);
@@ -157,7 +155,7 @@ export class LineSparkline extends Sparkline {
         this.markerSelection = updateMarkerSelection.merge(enterMarkerSelection);
     }
 
-    private updateMarkers(): void {
+    protected updateNodes(): void {
         const { highlightedDatum, highlightStyle, marker } = this;
         const { size: highlightSize, fill: highlightFill, stroke: highlightStroke, strokeWidth: highlightStrokeWidth } = highlightStyle;
         const markerFormatter = marker.formatter;
@@ -233,17 +231,6 @@ export class LineSparkline extends Sparkline {
         linePath.fill = undefined;
         linePath.stroke = line.stroke;
         linePath.strokeWidth = line.strokeWidth;
-    }
-
-    private highlightedDatum?: SeriesNodeDatum;
-    protected highlightDatum(closestDatum: SeriesNodeDatum): void {
-        this.highlightedDatum = closestDatum;
-        this.updateMarkers();
-    }
-
-    protected dehighlightDatum(): void {
-        this.highlightedDatum = undefined;
-        this.updateMarkers();
     }
 
     getTooltipHtml(datum: SeriesNodeDatum): string | undefined {

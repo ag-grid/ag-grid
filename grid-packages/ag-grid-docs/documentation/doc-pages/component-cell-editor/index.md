@@ -29,6 +29,8 @@ md-include:component-interface-vue.md
 
 <interface-documentation interfaceName='ICellEditorParams' ></interface-documentation>
 
+md-include:params_vue.md
+
 ## Registering Cell Editors with Columns
 
 See the section [registering custom components](/components/#registering-custom-components) for details on registering and using custom cell editors.

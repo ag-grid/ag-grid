@@ -7,7 +7,7 @@ import { Observable } from '../util/observable';
 import { Selection } from "../scene/selection";
 import { SeriesNodeDatum, Sparkline } from './sparkline';
 import { Marker } from './marker';
-import { toTooltipHtml } from './sparklineTooltip';
+import { toTooltipHtml } from './tooltip/sparklineTooltip';
 import { getMarkerShape } from './util';
 import { MarkerFormat, MarkerFormatterParams } from "@ag-grid-community/core";
 
@@ -71,13 +71,8 @@ export class AreaSparkline extends Sparkline {
     }
 
     protected update(): void {
-        this.updateXScale();
-        this.updateYScaleRange();
-        this.updateYScaleDomain();
-
-        this.updateXAxisLine();
-
         const data = this.generateNodeData();
+
         if (!data) {
             return;
         }
@@ -87,20 +82,18 @@ export class AreaSparkline extends Sparkline {
         this.markerSelectionData = nodeData;
         this.areaPathData = areaData;
 
-        this.updateMarkerSelection(nodeData);
-        this.updateMarkers();
+        this.updateSelection(nodeData);
+        this.updateNodes();
 
         this.updateStroke(nodeData);
         this.updateFill(areaData);
     }
 
-    protected updateYScaleRange(): void {
-        const { yScale, seriesRect } = this;
-        yScale.range = [seriesRect.height, 0];
-    }
+    protected updateYScale(): void {
+        const { yData, yScale, seriesRect} = this;
 
-    protected updateYScaleDomain(): void {
-        const { yData, yScale } = this;
+        yScale.range = [seriesRect.height, 0];
+
         let extent = this.findMinAndMax(yData);
         let minY, maxY
 
@@ -137,7 +130,7 @@ export class AreaSparkline extends Sparkline {
     }
 
     protected generateNodeData(): { nodeData: AreaNodeDatum[], areaData: AreaPathDatum[] } | undefined {
-        const { yData, xData, data, xScale, yScale } = this;
+        const { data, yData, xData, xScale, yScale } = this;
 
         if (!data) {
             return;
@@ -191,7 +184,7 @@ export class AreaSparkline extends Sparkline {
         return { nodeData, areaData };
     }
 
-    private updateXAxisLine() {
+    protected updateXAxisLine() {
         const { xScale, yScale, axis, xAxisLine } = this;
 
         xAxisLine.x1 = xScale.range[0];
@@ -204,7 +197,7 @@ export class AreaSparkline extends Sparkline {
         xAxisLine.translationY = yZero;
     }
 
-    private updateMarkerSelection(selectionData: AreaNodeDatum[]): void {
+    private updateSelection(selectionData: AreaNodeDatum[]): void {
         const { marker } = this;
 
         const shape = getMarkerShape(marker.shape);
@@ -217,7 +210,7 @@ export class AreaSparkline extends Sparkline {
         this.markerSelection = updateMarkerSelection.merge(enterMarkerSelection);
     }
 
-    private updateMarkers(): void {
+    protected updateNodes(): void {
         const { highlightedDatum, highlightStyle, marker } = this;
         const { size: highlightSize, fill: highlightFill, stroke: highlightStroke, strokeWidth: highlightStrokeWidth } = highlightStyle;
         const markerFormatter = marker.formatter;
@@ -330,17 +323,6 @@ export class AreaSparkline extends Sparkline {
         fillPath.lineJoin = 'round';
         fillPath.stroke = undefined;
         fillPath.fill = fill;
-    }
-
-    private highlightedDatum?: SeriesNodeDatum;
-    protected highlightDatum(closestDatum: SeriesNodeDatum): void {
-        this.highlightedDatum = closestDatum;
-        this.updateMarkers();
-    }
-
-    protected dehighlightDatum(): void {
-        this.highlightedDatum = undefined;
-        this.updateMarkers();
     }
 
     getTooltipHtml(datum: SeriesNodeDatum): string | undefined {
