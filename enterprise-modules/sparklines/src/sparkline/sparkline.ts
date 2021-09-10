@@ -187,23 +187,26 @@ export abstract class Sparkline extends Observable {
     // Returns persisted node data associated with the sparkline's data.
     protected getNodeData(): readonly SeriesNodeDatum[] { return []; }
 
-    /**
-     * Each sparkline is expected to have its own logic to efficiently update its nodes
-     * on hightlight changes.
-     * @param closestDatum
-     */
-    protected highlightDatum(closestDatum: SeriesNodeDatum) { }
+    // Update the selection's nodes.
+    protected updateNodes(): void { }
 
-    /**
-     * Each sparkline is expected to have its own logic to efficiently update its nodes
-     * on hightlight changes.
-     */
-    protected dehighlightDatum() { }
+    // Efficiently update sparkline nodes on hightlight changes.
+    protected highlightedDatum?: SeriesNodeDatum;
+    protected highlightDatum(closestDatum: SeriesNodeDatum): void {
+        this.updateNodes();
+    }
+
+    protected dehighlightDatum(): void {
+        this.highlightedDatum = undefined;
+        this.updateNodes();
+    }
 
     abstract getTooltipHtml(datum: SeriesNodeDatum): string | undefined;
 
     /**
      * Highlight closest datum and display tooltip if enabled.
+     * Only update if necessary, i.e. only update if the highlighted datum is different from previously highlighted datum,
+     * or if there is no previously highlighted datum.
      * @param event
      */
     private onMouseMove(event: MouseEvent) {
@@ -213,10 +216,15 @@ export abstract class Sparkline extends Observable {
             return;
         }
 
-        this.highlightDatum(closestDatum);
+        const oldHighlightedDatum = this.highlightedDatum;
+        this.highlightedDatum = closestDatum;
 
-        if (Sparkline.tooltip.enabled) {
-            this.handleTooltip(closestDatum);
+        if ((this.highlightedDatum && !oldHighlightedDatum) ||
+            (this.highlightedDatum && oldHighlightedDatum && this.highlightedDatum !== oldHighlightedDatum)) {
+            this.highlightDatum(closestDatum);
+            if (Sparkline.tooltip.enabled) {
+                this.handleTooltip(closestDatum);
+            }
         }
     }
 

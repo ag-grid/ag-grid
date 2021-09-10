@@ -59,8 +59,8 @@ export class ColumnSparkline extends Sparkline {
 
         this.columnSelectionData = nodeData;
 
-        this.updateRectNodesSelection(nodeData);
-        this.updateRectNodes();
+        this.updateSelection(nodeData);
+        this.updateNodes();
     }
 
     protected updateYScale() {
@@ -176,7 +176,7 @@ export class ColumnSparkline extends Sparkline {
         return nodeData;
     }
 
-    private updateRectNodesSelection(selectionData: ColumnNodeDatum[]) {
+    private updateSelection(selectionData: ColumnNodeDatum[]) {
         const updateColumnsSelection = this.columnSelection.setData(selectionData);
 
         const enterColumnsSelection = updateColumnsSelection.enter.append(Rectangle);
@@ -186,7 +186,7 @@ export class ColumnSparkline extends Sparkline {
         this.columnSelection = updateColumnsSelection.merge(enterColumnsSelection);
     }
 
-    private updateRectNodes() {
+    protected updateNodes() {
         const { highlightedDatum, formatter: columnFormatter, fill, stroke, strokeWidth } = this;
         const { fill: highlightFill, stroke: highlightStroke, strokeWidth: highlightStrokeWidth } = this.highlightStyle;
 
@@ -229,17 +229,6 @@ export class ColumnSparkline extends Sparkline {
             // shifts bars upwards?
             // column.crisp = true;
         });
-    }
-
-    private highlightedDatum?: SeriesNodeDatum;
-    protected highlightDatum(closestDatum: SeriesNodeDatum): void {
-        this.highlightedDatum = closestDatum;
-        this.updateRectNodes();
-    }
-
-    protected dehighlightDatum(): void {
-        this.highlightedDatum = undefined;
-        this.updateRectNodes();
     }
 
     getTooltipHtml(datum: SeriesNodeDatum): string | undefined {

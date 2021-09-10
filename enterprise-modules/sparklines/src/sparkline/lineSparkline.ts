@@ -73,14 +73,14 @@ export class LineSparkline extends Sparkline {
 
         this.markerSelectionData = nodeData;
 
-        this.updateMarkerSelection(nodeData);
-        this.updateMarkers();
+        this.updateSelection(nodeData);
+        this.updateNodes();
 
         this.updateLine();
     }
 
     protected updateYScale(): void {
-        const { yData, yScale, seriesRect} = this;
+        const { yData, yScale, seriesRect } = this;
 
         yScale.range = [seriesRect.height, 0];
 
@@ -142,7 +142,7 @@ export class LineSparkline extends Sparkline {
         return nodeData;
     }
 
-    private updateMarkerSelection(selectionData: LineNodeDatum[]): void {
+    private updateSelection(selectionData: LineNodeDatum[]): void {
         const { marker } = this;
 
         const shape = getMarkerShape(marker.shape);
@@ -155,7 +155,7 @@ export class LineSparkline extends Sparkline {
         this.markerSelection = updateMarkerSelection.merge(enterMarkerSelection);
     }
 
-    private updateMarkers(): void {
+    protected updateNodes(): void {
         const { highlightedDatum, highlightStyle, marker } = this;
         const { size: highlightSize, fill: highlightFill, stroke: highlightStroke, strokeWidth: highlightStrokeWidth } = highlightStyle;
         const markerFormatter = marker.formatter;
@@ -231,17 +231,6 @@ export class LineSparkline extends Sparkline {
         linePath.fill = undefined;
         linePath.stroke = line.stroke;
         linePath.strokeWidth = line.strokeWidth;
-    }
-
-    private highlightedDatum?: SeriesNodeDatum;
-    protected highlightDatum(closestDatum: SeriesNodeDatum): void {
-        this.highlightedDatum = closestDatum;
-        this.updateMarkers();
-    }
-
-    protected dehighlightDatum(): void {
-        this.highlightedDatum = undefined;
-        this.updateMarkers();
     }
 
     getTooltipHtml(datum: SeriesNodeDatum): string | undefined {
