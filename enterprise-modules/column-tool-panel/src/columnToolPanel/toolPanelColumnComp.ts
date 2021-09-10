@@ -87,7 +87,8 @@ export class ToolPanelColumnComp extends Component {
 
         this.setupTooltip();
 
-        CssClassApplier.addToolPanelClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
+        const classes = CssClassApplier.getToolPanelClassesFromColDef(this.column.getColDef(), this.gridOptionsWrapper, this.column, null);
+        classes.forEach( c => this.addOrRemoveCssClass(c, true) );
     }
 
     public getColumn(): Column {

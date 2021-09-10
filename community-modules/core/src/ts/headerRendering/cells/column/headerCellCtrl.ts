@@ -11,6 +11,7 @@ import { ColumnHoverService } from "../../../rendering/columnHoverService";
 import { HoverFeature } from "../hoverFeature";
 import { Beans } from "../../../rendering/beans";
 import { SetLeftFeature } from "../../../rendering/features/setLeftFeature";
+import { CssClassApplier } from "../cssClassApplier";
 
 export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     focus(): void;
@@ -64,6 +65,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.addColumnHoverListener();
         this.setupFilterCss();
         this.setupColId();
+        this.setupClassesFromColDef();
 
         this.createManagedBean(new HoverFeature([this.column], this.getGui()));
         this.createManagedBean(new SetLeftFeature(this.column, this.getGui(), this.beans));
@@ -74,6 +76,13 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
 
         this.createManagedBean(new ResizeFeature(this.getPinned(), this.column, eResize, comp, this));
+    }
+
+    private setupClassesFromColDef(): void {
+        const colDef = this.column.getColDef();
+        const goa = this.gridOptionsWrapper;
+        const classes = CssClassApplier.getHeaderClassesFromColDef(colDef, goa, this.column, null);
+        classes.forEach( c => this.comp.addOrRemoveCssClass(c, true) );
     }
 
     public temp_isDraggable(): boolean {

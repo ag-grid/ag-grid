@@ -102,7 +102,8 @@ export class ToolPanelColumnGroupComp extends Component {
         this.refreshAriaLabel();
         this.setupTooltip();
 
-        CssClassApplier.addToolPanelClassesFromColDef(this.columnGroup.getColGroupDef(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
+        const classes = CssClassApplier.getToolPanelClassesFromColDef(this.columnGroup.getColGroupDef(), this.gridOptionsWrapper, null, this.columnGroup);
+        classes.forEach( c => this.addOrRemoveCssClass(c, true) );
     }
 
     public getColumns(): Column[] {

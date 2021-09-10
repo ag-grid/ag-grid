@@ -72,7 +72,8 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp {
 
     @PostConstruct
     private postConstruct(): void {
-        CssClassApplier.addHeaderClassesFromColDef(this.getComponentHolder(), this.getGui(), this.gridOptionsWrapper, null, this.column);
+        const classes = CssClassApplier.getHeaderClassesFromColDef(this.getComponentHolder(), this.gridOptionsWrapper, null, this.column);
+        classes.forEach( c => this.addOrRemoveCssClass(c, true) );
 
         const displayName = this.columnModel.getDisplayNameForColumnGroup(this.column, 'header');
 
