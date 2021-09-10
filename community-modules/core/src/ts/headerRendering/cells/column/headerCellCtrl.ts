@@ -58,6 +58,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.setupMenuClass();
         this.setupSortableClass();
         this.addColumnHoverListener();
+        this.setupFilterCss();
 
         this.createManagedBean(new HoverFeature([this.column], this.getGui()));
 
@@ -204,6 +205,15 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         };
 
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, listener);
+        listener();
+    }
+
+    private setupFilterCss(): void {
+        const listener = ()=> {
+            this.comp.addOrRemoveCssClass('ag-header-cell-filtered', this.column.isFilterActive());
+        };
+
+        this.addManagedListener(this.column, Column.EVENT_FILTER_ACTIVE_CHANGED, listener);
         listener();
     }
 

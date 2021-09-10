@@ -101,8 +101,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
         ));
 
 
-        this.addManagedListener(this.column, Column.EVENT_FILTER_ACTIVE_CHANGED, this.onFilterChanged.bind(this));
-        this.onFilterChanged();
+
 
         this.createManagedBean(new SelectAllFeature(this.cbSelectAll, this.column));
         this.cbSelectAll.setParentComponent(this);
@@ -227,15 +226,6 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
 
     public getComponentHolder(): ColDef {
         return this.column.getColDef();
-    }
-
-
-
-
-
-    private onFilterChanged(): void {
-        const filterPresent = this.column.isFilterActive();
-        addOrRemoveCssClass(this.getGui(), 'ag-header-cell-filtered', filterPresent);
     }
 
     private appendHeaderComp(): void {
