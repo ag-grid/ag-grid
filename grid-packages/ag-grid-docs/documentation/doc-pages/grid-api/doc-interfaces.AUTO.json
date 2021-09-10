@@ -10052,6 +10052,7 @@
     "color": { "type": { "returnType": "string", "optional": false } }
   },
   "TooltipRendererResult": {
+    "enabled": { "type": { "returnType": "boolean", "optional": true } },
     "content": { "type": { "returnType": "string", "optional": true } },
     "title": { "type": { "returnType": "string", "optional": true } },
     "color": { "type": { "returnType": "string", "optional": true } },
@@ -12605,24 +12606,54 @@
     }
   },
   "IServerSideGetRowsRequest": {
-    "startRow": { "type": { "returnType": "number", "optional": false } },
-    "endRow": { "type": { "returnType": "number", "optional": false } },
+    "startRow": {
+      "description": "/** First row requested or undefined for all rows. */",
+      "type": { "returnType": "number | undefined", "optional": false }
+    },
+    "endRow": {
+      "description": "/** Last row requested or undefined for all rows. */",
+      "type": { "returnType": "number | undefined", "optional": false }
+    },
     "rowGroupCols": {
+      "description": "/** Columns that are currently row grouped. */",
       "type": { "returnType": "ColumnVO[]", "optional": false }
     },
-    "valueCols": { "type": { "returnType": "ColumnVO[]", "optional": false } },
-    "pivotCols": { "type": { "returnType": "ColumnVO[]", "optional": false } },
-    "pivotMode": { "type": { "returnType": "boolean", "optional": false } },
-    "groupKeys": { "type": { "returnType": "string[]", "optional": false } },
-    "filterModel": { "type": { "returnType": "any", "optional": false } },
-    "sortModel": { "type": { "returnType": "any", "optional": false } }
+    "valueCols": {
+      "description": "/** Columns that have aggregations on them. */",
+      "type": { "returnType": "ColumnVO[]", "optional": false }
+    },
+    "pivotCols": {
+      "description": "/** Columns that have pivot on them. */",
+      "type": { "returnType": "ColumnVO[]", "optional": false }
+    },
+    "pivotMode": {
+      "description": "/** Defines if pivot mode is on or off. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "groupKeys": {
+      "description": "/** What groups the user is viewing. */",
+      "type": { "returnType": "string[]", "optional": false }
+    },
+    "filterModel": {
+      "description": "/** If filtering, what the filter model is. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "sortModel": {
+      "description": "/** If sorting, what the sort model is. */",
+      "type": { "returnType": "any", "optional": false }
+    }
   },
   "IServerSideGetRowsParams": {
     "request": {
+      "description": "/** Details for the request. A simple object that can be converted to JSON. */",
       "type": { "returnType": "IServerSideGetRowsRequest", "optional": false }
     },
-    "parentNode": { "type": { "returnType": "RowNode", "optional": false } },
+    "parentNode": {
+      "description": "/** The parent row node. The RootNode (level -1) if request is top level.\n * This is NOT part fo the request as it cannot be serialised to JSON (a rowNode has methods). */",
+      "type": { "returnType": "RowNode", "optional": false }
+    },
     "successCallback": {
+      "description": "/** @deprecated Use `success` method instead and return result as a `LoadSuccessParams` object.\n */",
       "type": {
         "arguments": { "rowsThisPage": "any[]", "lastRow": "number" },
         "returnType": "void",
@@ -12630,6 +12661,7 @@
       }
     },
     "success": {
+      "description": "/** Success callback, pass the rows back to the grid that were requested. */",
       "type": {
         "arguments": { "params": "LoadSuccessParams" },
         "returnType": "void",
@@ -12637,9 +12669,11 @@
       }
     },
     "failCallback": {
+      "description": "/** @deprecated Use `fail` instead.\n */",
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
     "fail": {
+      "description": "/** Fail callback, tell the grid the call failed so it can adjust it's state. */",
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
     "api": { "type": { "returnType": "GridApi", "optional": false } },
@@ -12647,6 +12681,7 @@
   },
   "IServerSideDatasource": {
     "getRows": {
+      "description": "/** Grid calls `getRows` when it requires more rows as specified in the params. \n * Params object contains callbacks for responding to the request. */",
       "type": {
         "arguments": { "params": "IServerSideGetRowsParams" },
         "returnType": "void",
@@ -12654,6 +12689,7 @@
       }
     },
     "destroy": {
+      "description": "/** Optional method, if your datasource has state it needs to clean up. */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     }
   },
@@ -15412,9 +15448,18 @@
     }
   },
   "LoadSuccessParams": {
-    "rowData": { "type": { "returnType": "any[]", "optional": false } },
-    "rowCount": { "type": { "returnType": "number", "optional": true } },
-    "storeInfo": { "type": { "returnType": "any", "optional": true } }
+    "rowData": {
+      "description": "/** Data retrieved from the server as requested by the grid. */",
+      "type": { "returnType": "any[]", "optional": false }
+    },
+    "rowCount": {
+      "description": "/** The last row, if known, to help Infinite Scroll (i.e Partial Store) and Pagination. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "storeInfo": {
+      "description": "/** Any extra information for the grid to associate with this load. */",
+      "type": { "returnType": "any", "optional": true }
+    }
   },
   "SortOption": {
     "sort": { "type": { "returnType": "string", "optional": false } },

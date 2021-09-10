@@ -8,51 +8,67 @@ import { GridApi } from "../gridApi";
 import { LoadSuccessParams } from "../rowNodeCache/rowNodeBlock";
 
 export interface IServerSideGetRowsRequest {
-    // first row requested
-    startRow: number;
-    // last row requested
-    endRow: number;
-    // columns that are currently row grouped
+    /** First row requested or undefined for all rows. */
+    startRow: number | undefined;
+    /** Last row requested or undefined for all rows. */
+    endRow: number | undefined;
+    /** Columns that are currently row grouped.  */
     rowGroupCols: ColumnVO[];
-    // columns that have aggregations on them
+    /** Columns that have aggregations on them.  */
     valueCols: ColumnVO[];
-    // columns that have pivot on them
+    /** Columns that have pivot on them.  */
     pivotCols: ColumnVO[];
-    // defines if pivot mode is on or off
+    /** Defines if pivot mode is on or off.  */
     pivotMode: boolean;
-    // what groups the user is viewing
+    /** What groups the user is viewing.  */
     groupKeys: string[];
-    // if filtering, what the filter model is
+    /** If filtering, what the filter model is.  */
     filterModel: any;
-    // if sorting, what the sort model is
+    /** If sorting, what the sort model is.  */
     sortModel: any;
 }
 
 export interface IServerSideGetRowsParams {
-    // details for the request,
+    /**
+     * Details for the request. A simple object that can be converted to JSON.
+     */
     request: IServerSideGetRowsRequest;
 
-    // the parent row node. is the RootNode (level -1) if request is top level.
-    // this is NOT part fo the request as it cannot be serialised to JSON (a rowNode has methods)
+    /**
+     * The parent row node. The RootNode (level -1) if request is top level.
+     * This is NOT part fo the request as it cannot be serialised to JSON (a rowNode has methods).
+     */
     parentNode: RowNode;
 
-    // success callback, pass the rows back the grid asked for
+    /**
+     * @deprecated Use `success` method instead and return result as a `LoadSuccessParams` object.
+     */
     successCallback(rowsThisPage: any[], lastRow: number): void;
+    /**     
+     * Success callback, pass the rows back to the grid that were requested.
+     */
     success(params: LoadSuccessParams): void;
 
-    // fail callback, tell the grid the call failed so it can adjust it's state
+    /**
+     * @deprecated Use `fail` instead.
+     */
     failCallback(): void;
+    /**
+     * Fail callback, tell the grid the call failed so it can adjust it's state.
+     */
     fail(): void;
 
-    // grid API
     api: GridApi;
-
-    // column API
     columnApi: ColumnApi;
 }
 
 // datasource for Server Side Row Model
 export interface IServerSideDatasource {
+    /**
+     * Grid calls `getRows` when it requires more rows as specified in the params. 
+     * Params object contains callbacks for responding to the request.
+     */
     getRows(params: IServerSideGetRowsParams): void;
+    /** Optional method, if your datasource has state it needs to clean up. */
     destroy?(): void;
 }

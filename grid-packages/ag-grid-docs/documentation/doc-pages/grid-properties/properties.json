@@ -942,7 +942,11 @@
         },
         "rowHeight": {
             "default": 25,
-            "description": "Default [Row Height](/row-height/) in pixels."
+            "description": "Default row height in pixels.",
+            "more": {
+                "name": "Row Height",
+                "url": "/row-height/"
+            }
         },
         "rowStyle": {
             "description": "The style properties to apply to all rows. Set to an object of key (style names) and values (style values)",

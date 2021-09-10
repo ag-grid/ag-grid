@@ -24,9 +24,11 @@ Changing the property will set a new row height for all rows, including pinned r
 
 ## getRowHeight Callback
 
+<api-documentation source='grid-callbacks/callbacks.json' section='styling' names='["getRowHeight"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
+
 To change the row height so that each row can have a different height,
 implement the `getRowHeight()` callback. For example, to set the height
-to 50px for all non-pinned rows and 25px for pinned rows, do the following:
+to 50px for all group rows and 25px for all other rows, do the following:
 
 <snippet>
 const gridOptions = {
@@ -34,14 +36,7 @@ const gridOptions = {
 }
 </snippet>
 
-The params object passed to the callback has the following values:
-
-- **node:** The [rowNode](/row-object/) in question.
-- **data:** The data for the row.
-- **api:** The [grid API](/grid-api/).
-- **context:** The [grid context](/context/).
-
-The example below shows dynamic row height, specifying a different row height for each row. It uses the `getRowHeight()` callback to achieve this.
+The example below shows dynamic row height, specifying a different row height for each row. It uses the `getRowHeight(params)` callback to achieve this.
 
 <grid-example title='Row Height Simple' name='row-height-simple' type='generated'></grid-example>
 
@@ -50,7 +45,7 @@ The example below shows dynamic row height, specifying a different row height fo
 
 Setting the row height is done once for each row. Once set, the grid will not ask you
 for the row height again. You can change the row height after it is initially set
-using a combination of `api.resetRowHeights()`, `rowNode.setRowHeight()` and
+using a combination of `api.resetRowHeights()`, `rowNode.setRowHeight(height)` and
 `api.onRowHeightChanged()`.
 
 ### api.resetRowHeights()

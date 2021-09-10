@@ -50,8 +50,8 @@ export class StoreUtils extends BeanStub {
         if (!storeParams.datasource) { return; }
 
         const request: IServerSideGetRowsRequest = {
-            startRow: p.startRow!,
-            endRow: p.endRow!,
+            startRow: p.startRow,
+            endRow: p.endRow,
             rowGroupCols: storeParams.rowGroupCols,
             valueCols: storeParams.valueCols,
             pivotCols: storeParams.pivotCols,

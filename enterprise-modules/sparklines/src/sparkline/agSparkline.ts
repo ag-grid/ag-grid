@@ -42,6 +42,10 @@ export abstract class AgSparkline {
 
         initSparklineByType(sparkline, options);
 
+        // Set data last as this invokes the update method to produce the data joins and update the selection's nodes,
+        // we only want to do this after all the other properties are set.
+        initSparklineData(sparkline, options);
+
         return sparkline;
     }
 
@@ -71,6 +75,10 @@ export abstract class AgSparkline {
         initSparkline(sparkline, options);
 
         initSparklineByType(sparkline, options);
+
+        // Set data last as this invokes the update method to produce the data joins and update the selection's nodes,
+        // we only want to do this after all the other properties are set.
+        initSparklineData(sparkline, options);
     }
 }
 
@@ -105,7 +113,6 @@ function initSparkline(sparkline: SparklineType, options: any) {
     // FIXME: it may not be necessary to set context
     setValueIfPropertyExists(sparkline, 'context', options.context, options);
     setValueIfPropertyExists(sparkline, 'container', options.container, options);
-    setValueIfPropertyExists(sparkline, 'data', options.data, options);
     setValueIfPropertyExists(sparkline, 'width', options.width, options);
     setValueIfPropertyExists(sparkline, 'height', options.height, options);
     setValueIfPropertyExists(sparkline, 'title', options.title, options);
@@ -125,6 +132,10 @@ function initSparkline(sparkline: SparklineType, options: any) {
     if(options.tooltip) {
         initTooltipOptions(Sparkline.tooltip, options.tooltip);
     }
+}
+
+function initSparklineData(sparkline: SparklineType, options: any) {
+    setValueIfPropertyExists(sparkline, 'data', options.data, options);
 }
 
 function initLineSparkline(sparkline: LineSparkline, options: any) {
