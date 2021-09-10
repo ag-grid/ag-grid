@@ -55,7 +55,11 @@
             }
         },
         "isFullWidthCell": {
-            "description": "Tells the grid if this row should be rendered as [full width](/master-detail/)."
+            "description": "Tells the grid if this row should be rendered as full width.",
+            "more": {
+                "name": "Full Width Rows",
+                "url": "/full-width-rows/"
+            }
         }
     },
     "Filter": {
