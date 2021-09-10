@@ -12,8 +12,9 @@ import { HoverFeature } from "../hoverFeature";
 import { Beans } from "../../../rendering/beans";
 import { SetLeftFeature } from "../../../rendering/features/setLeftFeature";
 import { CssClassApplier } from "../cssClassApplier";
+import { ITooltipFeatureComp, ITooltipFeatureCtrl, TooltipFeature } from "../../../widgets/tooltipFeature";
 
-export interface IHeaderCellComp extends IAbstractHeaderCellComp {
+export interface IHeaderCellComp extends IAbstractHeaderCellComp, ITooltipFeatureComp {
     focus(): void;
     setWidth(width: string): void;
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
@@ -66,6 +67,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.setupFilterCss();
         this.setupColId();
         this.setupClassesFromColDef();
+        this.setupTooltip();
 
         this.createManagedBean(new HoverFeature([this.column], eGui));
         this.createManagedBean(new SetLeftFeature(this.column, eGui, this.beans));
@@ -76,6 +78,25 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
 
         this.createManagedBean(new ResizeFeature(this.getPinned(), this.column, eResize, comp, this));
+    }
+
+    private setupTooltip(): void {
+
+        const tooltipCtrl: ITooltipFeatureCtrl = {
+            getColumn: ()=> this.column,
+            getGui: ()=> this.eGui,
+            getLocation: ()=> 'header',
+            getTooltipValue: () => {
+                const res = this.column.getColDef().headerTooltip;
+                return res;
+            },
+        };
+
+        const tooltipFeature = this.createManagedBean(new TooltipFeature(tooltipCtrl, this.beans));
+
+        tooltipFeature.setComp(this.comp);
+
+        this.refreshFunctions.push( ()=> tooltipFeature.refreshToolTip() );
     }
 
     private setupClassesFromColDef(): void {

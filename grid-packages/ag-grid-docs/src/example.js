@@ -1245,10 +1245,6 @@ function createData() {
             clearInterval(intervalId);
             window.setTimeout(function() {
                 gridOptions.api.setColumnDefs(colDefs);
-                // for (let i = 0; i<data.length; i+=2) {
-                //     data[i].game.name = 'accusantium doloremque laudantium, totam rem aperiam eaque ipsa';
-                //     data[i].language = 'accusantium doloremque laudantium, totam rem aperiam eaque ipsa';
-                // }
                 gridOptions.api.setRowData(data);
                 eMessage.style.display = 'none';
                 eMessageText.innerHTML = '';

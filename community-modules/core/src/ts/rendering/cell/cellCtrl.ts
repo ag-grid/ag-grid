@@ -104,7 +104,7 @@ export class CellCtrl extends BeanStub {
     private cellRangeFeature: CellRangeFeature;
     private cellPositionFeature: CellPositionFeature;
     private cellCustomStyleFeature: CellCustomStyleFeature;
-    private cellTooltipFeature: TooltipFeature;
+    private tooltipFeature: TooltipFeature;
     private cellMouseListenerFeature: CellMouseListenerFeature;
     private cellKeyboardListenerFeature: CellKeyboardListenerFeature;
 
@@ -203,8 +203,8 @@ export class CellCtrl extends BeanStub {
             getValueFormatted: () => this.valueFormatted
         };
 
-        this.cellTooltipFeature = new TooltipFeature(tooltipCtrl, this.beans);
-        this.addDestroyFunc(() => this.cellTooltipFeature.destroy());
+        this.tooltipFeature = new TooltipFeature(tooltipCtrl, this.beans);
+        this.addDestroyFunc(() => this.tooltipFeature.destroy());
     }
 
     public setComp(
@@ -248,7 +248,7 @@ export class CellCtrl extends BeanStub {
 
         this.cellPositionFeature.setComp(comp);
         this.cellCustomStyleFeature.setComp(comp, scope);
-        this.cellTooltipFeature.setComp(comp);
+        this.tooltipFeature.setComp(comp);
         this.cellKeyboardListenerFeature.setComp(this.eGui);
 
         if (this.cellRangeFeature) { this.cellRangeFeature.setComp(comp); }
@@ -859,7 +859,7 @@ export class CellCtrl extends BeanStub {
     }
 
     public refreshToolTip(): void {
-        this.cellTooltipFeature.refreshToolTip();
+        this.tooltipFeature.refreshToolTip();
     }
 
     public getColSpanningList(): Column[] {

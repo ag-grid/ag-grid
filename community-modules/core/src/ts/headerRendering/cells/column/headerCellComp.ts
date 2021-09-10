@@ -73,20 +73,29 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
 
         const eGui = this.getGui();
 
+        const setAttribute = (name: string, value: string | null | undefined, element?: HTMLElement) => {
+            const actualElement = element ? element : eGui;
+            if (value != null && value != '') {
+                actualElement.setAttribute(name, value);
+            } else {
+                actualElement.removeAttribute(name);
+            }
+        };
+
         const compProxy: IHeaderCellComp = {
             focus: ()=> this.getFocusableElement().focus(),
             setWidth: width => eGui.style.width = width,
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setResizeDisplayed: displayed => setDisplayed(this.eResize, displayed),
             setAriaSort: sort => sort ? setAriaSort(eGui, sort) : removeAriaSort(eGui),
-            setColId: id => eGui.setAttribute("col-id", id),
+            setColId: id => setAttribute('col-id', id),
+            setTitle: title => setAttribute('title', title),
 
             refreshHeaderComp: ()=> this.refreshHeaderComp()
         };
 
         this.ctrl.setComp(compProxy, this.getGui(), this.eResize);
 
-        this.setupTooltip();
         this.addActiveHeaderMouseListeners();
 
         this.createManagedBean(new ManagedFocusFeature(
@@ -302,24 +311,4 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
             visibleState: visibleState
         };
     }
-
-    public getTooltipParams(): ITooltipParams {
-        const res = super.getTooltipParams();
-        res.location = 'header';
-        res.colDef = this.column.getColDef();
-        return res;
-    }
-
-    private setupTooltip(): void {
-        const refresh = () => {
-            const newTooltipText = this.column.getColDef().headerTooltip;
-            this.setTooltip(newTooltipText);
-        };
-
-        refresh();
-
-        this.ctrl.addRefreshFunction(refresh);
-    }
-
-
 }
