@@ -18,7 +18,7 @@ const Announcements = ({ framework }) => <div className={styles['announcements']
                 <a href="https://www.ag-grid.com/react-data-grid/reactui/">React UI</a>
             </li>
             <li className={styles['announcement__list-item']}>
-                <a href="../grouping/">Row Grouping Enhancements</a>
+                <DocumentationLink framework={framework} href="/grouping/">Row Grouping Enhancements</DocumentationLink>
             </li>
             <li className={styles['announcement__list-item']}>
                 Grid UX Enhancements
