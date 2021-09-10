@@ -83,6 +83,8 @@ interface ICellEditorParams {
     formatValue: (value: any) => any;
 }
 ```
+   
+md-include:params_vue.md
 
 ## Registering Cell Editors with Columns
 

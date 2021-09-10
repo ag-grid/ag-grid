@@ -16,9 +16,9 @@ const VueExample = {
                         class="ag-theme-alpine"
                         id="myGrid"
                         :columnDefs="columnDefs"
-                        @grid-ready="onGridReady"
                         :rowData="rowData"
-                        :defaultColDef="defaultColDef"></ag-grid-vue>
+                        :defaultColDef="defaultColDef">
+                </ag-grid-vue>
             </div>
         </div>
     `,
@@ -29,42 +29,37 @@ const VueExample = {
         moodEditor: MoodEditor,
         numericEditor: NumericEditor
     },
-    data: function () {
-        return {
-            columnDefs: [{
-                headerName: "Doubling",
-                field: "number",
-                cellEditorFramework: "doublingEditor",
-                editable: true,
-                width: 300
-            }, {
-                field: "mood",
-                cellRendererFramework: "moodRenderer",
-                cellEditorFramework: "moodEditor",
-                editable: true,
-                width: 300
-            }, {
-                headerName: "Numeric",
-                field: "number",
-                cellEditorFramework: "numericEditor",
-                editable: true,
-                width: 280
-            }],
-            gridApi: null,
-            columnApi: null,
-            defaultColDef: {
-                editable: true,
-                sortable: true,
-                flex: 1,
-                minWidth: 100,
-                filter: true,
-                resizable: true
-            },
-            rowData: null
-        }
-    },
-    beforeMount() {
-        this.rowData = [
+    setup() {
+        const defaultColDef = {
+            editable: true,
+            sortable: true,
+            flex: 1,
+            minWidth: 100,
+            filter: true,
+            resizable: true
+        };
+
+        const columnDefs = [{
+            headerName: "Doubling",
+            field: "number",
+            cellEditorFramework: "doublingEditor",
+            editable: true,
+            width: 300
+        }, {
+            field: "mood",
+            cellRendererFramework: "moodRenderer",
+            cellEditorFramework: "moodEditor",
+            editable: true,
+            width: 300
+        }, {
+            headerName: "Numeric",
+            field: "number",
+            cellEditorFramework: "numericEditor",
+            editable: true,
+            width: 280
+        }];
+
+        const rowData = [
             {
                 name: "Bob",
                 mood: "Happy",
@@ -131,16 +126,14 @@ const VueExample = {
                 number: 13
             }
         ]
-    },
-    methods: {
-        onGridReady(params) {
-            this.gridApi = params.api;
-            this.gridColumnApi = params.columnApi;
 
-        },
+        return {
+            columnDefs,
+            rowData,
+            defaultColDef
+        }
     }
 }
-
 
 createApp(VueExample)
     .mount("#app")

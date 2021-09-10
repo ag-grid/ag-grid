@@ -1,5 +1,5 @@
 [[only-vue]]
-|Below is a simple example of cell renderer component with Vue 2:
+|Below is a simple example of cell renderer component:
 |
 |```js
 |export default {
@@ -15,7 +15,7 @@
 |};
 |```
 |
-|And below is the example using Vue 3:
+|And below is the example using Vue 3's Composition API::
 |
 |```js
 |export default {
