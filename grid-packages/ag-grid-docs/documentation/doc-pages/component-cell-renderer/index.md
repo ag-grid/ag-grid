@@ -27,6 +27,8 @@ md-include:component-interface-vue.md
 
 md-include:params_vue.md
 
+md-include:params_vue.md
+
 ## Registering Cell Renderers with Columns
 
 See the section [registering custom components](/components/#registering-custom-components) for details on registering and using custom cell renderers.
