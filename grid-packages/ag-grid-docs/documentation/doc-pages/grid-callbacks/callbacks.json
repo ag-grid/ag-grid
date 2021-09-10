@@ -29,18 +29,30 @@
             "description": "Callback to fill values instead of simply copying values or increasing number values using linear progression."
         }
     },
-    "rendering": {
+    "styling": {
         "meta": {
-            "displayName": "Rendering and Styling"
+            "displayName": "Styling"
         },
         "getRowClass": {
-            "description": "Callback version of property `rowClass` to set class(es) for each row individually. Function should return either a string (class name), array of strings (array of class names) or undefined for no class."
+            "description": "Callback version of property `rowClass` to set class(es) for each row individually. Function should return either a string (class name), array of strings (array of class names) or undefined for no class.",
+            "more": {
+                "name": "Row Class",
+                "url": "/row-styles/#row-class"
+            }
         },
         "getRowStyle": {
-            "description": "Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values."
+            "description": "Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values.",
+            "more": {
+                "name": "Row Style",
+                "url": "/row-styles/#row-style"
+            }
         },
         "getRowHeight": {
-            "description": "Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height."
+            "description": "Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height.",
+            "more": {
+                "name": "Row Height",
+                "url": "/row-height/"
+            }
         },
         "isFullWidthCell": {
             "description": "Tells the grid if this row should be rendered as [full width](/master-detail/)."
