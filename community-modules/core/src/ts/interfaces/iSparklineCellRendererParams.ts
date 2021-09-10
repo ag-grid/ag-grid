@@ -52,6 +52,7 @@ export interface SparklineTooltip {
 }
 export type SparklineTooltipRenderer = (params: TooltipRendererParams) => TooltipRendererResult;
 export interface TooltipRendererResult {
+    enabled?: boolean;
     content?: string;
     title?: string;
     color?: string;

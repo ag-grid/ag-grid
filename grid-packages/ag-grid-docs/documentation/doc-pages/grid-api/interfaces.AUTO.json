@@ -4255,10 +4255,7 @@
     "docs": { "type": "/** Event identifier */" }
   },
   "IAbstractHeaderCellComp": { "meta": {}, "type": { "focus()": "void" } },
-  "IHeaderCellComp": {
-    "meta": {},
-    "type": { "focus()": "void", "refreshHeaderComp()": "void" }
-  },
+  "IHeaderCellComp": { "meta": {}, "type": { "focus()": "void" } },
   "IHeaderParams": {
     "meta": {},
     "type": {
@@ -5900,6 +5897,7 @@
   "TooltipRendererResult": {
     "meta": {},
     "type": {
+      "enabled?": "boolean",
       "content?": "string",
       "title?": "string",
       "color?": "string",
@@ -7934,13 +7932,6 @@
       "add?": "any[]",
       "remove?": "any[]",
       "update?": "any[]"
-    },
-    "docs": {
-      "route?": "/** The Row Store to apply the transaction to, ie what group level.\n * eg ['Ireland','2002'] to update the child store found after expanding Ireland and 2002 groups. \n * Passing in blank to empty applies the transaction to the top level. */",
-      "addIndex?": "/** Index position to add at. If missing, rows will be added to the end. */",
-      "add?": "/** Rows to add */",
-      "remove?": "/** Rows to remove */",
-      "update?": "/** Rows to update */"
     }
   },
   "ServerSideTransactionResult": {
@@ -7950,34 +7941,20 @@
       "add?": "RowNode[]",
       "remove?": "RowNode[]",
       "update?": "RowNode[]"
-    },
-    "docs": {
-      "status": "/** The status of applying the transaction. */",
-      "add?": "/** If rows were added, the newly created Row Nodes for those rows. */",
-      "remove?": "/** If rows were removed, the deleted Row Nodes. */",
-      "update?": "/** If rows were updated, the updated Row Nodes. */"
     }
   },
   "ServerSideTransactionResultStatus": {
     "meta": { "isEnum": true },
     "type": [
-      "Applied = 'Applied'",
       "StoreNotFound = 'StoreNotFound'",
       "StoreLoading = 'StoreLoading'",
       "StoreWaitingToLoad = 'StoreWaitingToLoad'",
       "StoreLoadingFailed = 'StoreLoadingFailed'",
       "StoreWrongType = 'StoreWrongType'",
+      "Applied = 'Applied'",
       "Cancelled = 'Cancelled'"
     ],
-    "docs": [
-      "/** Transaction was successfully applied */",
-      "/** Store was not found, transaction not applied.\n * Either invalid route, or the parent row has not yet been expanded. */",
-      "/** Store is loading, transaction not applied. */",
-      "/** Store is loading (as max loads exceeded), transaction not applied. */",
-      "/** Store load attempt failed, transaction not applied. */",
-      "/** Store is type Partial, which doesn't accept transactions */",
-      "/** Transaction was cancelled, due to grid.\n * Callback isApplyServerSideTransaction() returning false */"
-    ]
+    "docs": [null, null, null, null, null, null, null]
   },
   "TabbedLayoutParams": {
     "meta": {},

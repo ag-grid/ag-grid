@@ -39,11 +39,9 @@ export abstract class Sparkline extends Observable {
     readonly canvasElement: HTMLCanvasElement;
     readonly rootGroup: Group;
 
-    // static readonly defaultTooltipClass = 'ag-sparkline-tooltip';
+    // Only one tooltip instance for all sparkline instances
     static tooltip: SparklineTooltip = new SparklineTooltip();
-
     private static tooltipDocuments: Document[] = [];
-    private static tooltipInstances: Map<Document, SparklineTooltip> = new Map();
 
     protected seriesRect: SeriesRect = {
         x: 0,
@@ -123,30 +121,14 @@ export abstract class Sparkline extends Observable {
         this.seriesRect.width = this.width;
         this.seriesRect.height = this.height;
 
-        // FIXME: make this more efficient
-
-        // const styleElement = document.createElement('style');
-        // styleElement.innerHTML = defaultTooltipCss;
-        //
-        // document.head.insertBefore(styleElement, document.head.querySelector('style'));
-        // Sparkline.tooltipDocuments.push(document);
-
-        // one tooltip instance per document
+        // one style element for tooltip styles per document
         if (Sparkline.tooltipDocuments.indexOf(document) === -1) {
             const styleElement = document.createElement('style');
             styleElement.innerHTML = defaultTooltipCss;
 
             document.head.insertBefore(styleElement, document.head.querySelector('style'));
             Sparkline.tooltipDocuments.push(document);
-
-            // this.tooltip = new SparklineTooltip(this);
-
-            // Sparkline.tooltipInstances.set(document, this.tooltip);
         }
-        // else {
-        //     this.tooltip = Sparkline.tooltipInstances.get(document)!;
-        // }
-
         this.setupDomEventListeners(this.scene.canvas.element);
     }
 
@@ -251,7 +233,8 @@ export abstract class Sparkline extends Observable {
             xData.push(i);
         }
 
-        this.scheduleLayout();
+        // Produce data joins and update selection's nodes.
+        this.update();
     }
 
     /**
@@ -379,7 +362,25 @@ export abstract class Sparkline extends Observable {
             pageY: (point.y + canvasRect.top + pageYOffset)
         }
 
-        const html = Sparkline.tooltip.enabled && seriesDatum.y !== undefined && this.getTooltipHtml(datum);
+        const { title } = this;
+        const yValue = seriesDatum.y;
+        const xValue = seriesDatum.x;
+
+        // check if tooltip is enabled for this specific data point
+        let enabled = Sparkline.tooltip.enabled;
+
+        if (Sparkline.tooltip.renderer) {
+            let tooltipRendererResult = Sparkline.tooltip.renderer({
+                context: this.context,
+                datum: seriesDatum,
+                title,
+                yValue,
+                xValue,
+            });
+            enabled = typeof tooltipRendererResult !== 'string' && tooltipRendererResult.enabled !== undefined ? tooltipRendererResult.enabled : enabled;
+        }
+
+        const html = enabled && seriesDatum.y !== undefined && this.getTooltipHtml(datum);
 
         if (html) {
             Sparkline.tooltip.show(meta, html);
@@ -407,12 +408,8 @@ export abstract class Sparkline extends Observable {
      * Cleanup and remove canvas element from the DOM.
      */
     destroy() {
-        // FIXME: should tooltip(s) be destroyed?
+        // FIXME: destroy tooltip when grid is destroyed
         // this.tooltip.destroy();
-        // // remove tooltip instance
-        // Sparkline.tooltipInstances.delete(document);
-        // // remove document from documents list
-        // Sparkline.tooltipDocuments = Sparkline.tooltipDocuments.filter(d => d !== document);
         this.scene.container = undefined;
         // remove canvas element from the DOM
         this.container = undefined;

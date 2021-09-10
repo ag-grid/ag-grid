@@ -186,14 +186,14 @@ export class LineSparkline extends Sparkline {
                 });
             }
 
-            node.size = markerFormat && markerFormat.size || markerSize;
-            node.fill = markerFormat && markerFormat.fill || markerFill;
-            node.stroke = markerFormat && markerFormat.stroke || markerStroke;
-            node.strokeWidth = markerFormat && markerFormat.strokeWidth || markerStrokeWidth;
+            node.size = markerFormat && markerFormat.size != undefined ? markerFormat.size : markerSize;
+            node.fill = markerFormat && markerFormat.fill != undefined ? markerFormat.fill : markerFill;
+            node.stroke = markerFormat && markerFormat.stroke != undefined ? markerFormat.stroke : markerStroke;
+            node.strokeWidth = markerFormat && markerFormat.strokeWidth != undefined ? markerFormat.strokeWidth : markerStrokeWidth;
 
             node.translationX = point.x;
             node.translationY = point.y;
-            node.visible = markerFormat && markerFormat.enabled || marker.enabled && node.size > 0;
+            node.visible = markerFormat && markerFormat.enabled != undefined ? markerFormat.enabled : marker.enabled && node.size > 0;
         });
     }
 
