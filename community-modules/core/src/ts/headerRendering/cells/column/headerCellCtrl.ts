@@ -67,8 +67,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.setupColId();
         this.setupClassesFromColDef();
 
-        this.createManagedBean(new HoverFeature([this.column], this.getGui()));
-        this.createManagedBean(new SetLeftFeature(this.column, this.getGui(), this.beans));
+        this.createManagedBean(new HoverFeature([this.column], eGui));
+        this.createManagedBean(new SetLeftFeature(this.column, eGui, this.beans));
 
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));

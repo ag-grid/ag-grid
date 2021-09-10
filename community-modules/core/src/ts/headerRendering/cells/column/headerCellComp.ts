@@ -35,7 +35,6 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
         </div>`;
 
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
@@ -80,7 +79,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setResizeDisplayed: displayed => setDisplayed(this.eResize, displayed),
             setAriaSort: sort => sort ? setAriaSort(eGui, sort) : removeAriaSort(eGui),
-            setColId: id => eGui.setAttribute("col-id", this.column.getColId()),
+            setColId: id => eGui.setAttribute("col-id", id),
 
             refreshHeaderComp: ()=> this.refreshHeaderComp()
         };
