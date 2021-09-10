@@ -108,7 +108,6 @@ export class AgGridVue extends Vue {
         this.gridCreated = true;
     }
 
-    // noinspection JSUnusedGlobalSymbols
     public destroyed() {
         if (this.gridCreated) {
             if (this.gridOptions.api) {
@@ -116,6 +115,10 @@ export class AgGridVue extends Vue {
             }
             this.isDestroyed = true;
         }
+    }
+
+    public unmounted() {
+        this.destroyed();
     }
 
     private checkForBindingConflicts() {

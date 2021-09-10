@@ -9,7 +9,14 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-import { createApp, defineComponent } from 'vue';
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
+import { createVNode, defineComponent, render } from 'vue';
 var VueComponentFactory = /** @class */ (function () {
     function VueComponentFactory() {
     }
@@ -26,46 +33,51 @@ var VueComponentFactory = /** @class */ (function () {
         if (!componentDefinition) {
             console.error("Could not find component with name of " + component + ". Is it in Vue.components?");
         }
-        if (componentDefinition.extends && componentDefinition.extends.setup) {
-            componentDefinition.setup = componentDefinition.extends.setup;
+        if (componentDefinition.extends) {
+            if (componentDefinition.extends.setup) {
+                componentDefinition.setup = componentDefinition.extends.setup;
+            }
+            componentDefinition.extends.props = this.addParamsToProps(componentDefinition.extends.props);
+        }
+        else {
+            componentDefinition.props = this.addParamsToProps(componentDefinition.props);
         }
         return componentDefinition;
     };
-    VueComponentFactory.createComponentParams = function (params, parent) {
-        var extendedParams = {
-            params: Object.freeze(params),
-            parent: parent,
-        };
-        if (parent.componentDependencies) {
-            parent.componentDependencies.forEach(function (dependency) {
-                return extendedParams[dependency] = parent[dependency];
-            });
+    VueComponentFactory.addParamsToProps = function (props) {
+        if ((props && props.indexOf('params') === -1) ||
+            !props) {
+            props = __spreadArrays(['params'], (props ? props : []));
         }
-        return extendedParams;
+        return props;
     };
     VueComponentFactory.createAndMountComponent = function (component, params, parent) {
         var componentDefinition = VueComponentFactory.getComponentDefinition(component, parent);
         if (!componentDefinition) {
             return;
         }
-        var componentParams = VueComponentFactory.createComponentParams(params, parent);
-        // the inner defineComponent allows us to re-declare the component, with the outer one allowing us to
-        // provide the grid's params and capture the resulting component instance
-        var componentInstance = null;
-        var extendedComponentDefinition = defineComponent(__assign(__assign({}, componentDefinition), { data: function () { return (__assign(__assign({}, componentParams), componentDefinition.data ? componentDefinition.data() : {})); }, created: function () {
-                componentInstance = this.$root;
-                if (componentDefinition.created) {
-                    componentDefinition.created.bind(this)();
-                }
-            } }));
-        // with vue 3 we need to provide a container to mount into (not necessary in vue 2), so create a wrapper div here
-        var container = document.createElement('div');
-        var mountedComponent = createApp(extendedComponentDefinition);
-        VueComponentFactory.addContext(mountedComponent, parent);
-        parent.plugins.forEach(function (plugin) { return mountedComponent.use(plugin); });
-        mountedComponent.mount(container);
+        var _a = this.mount(componentDefinition, { params: Object.freeze(params) }, parent), vNode = _a.vNode, destroy = _a.destroy, el = _a.el;
         // note that the component creation is synchronous so that componentInstance is set by this point
-        return { mountedComponent: mountedComponent, componentInstance: componentInstance };
+        return {
+            componentInstance: vNode.component.proxy,
+            element: el,
+            destroy: destroy,
+        };
+    };
+    VueComponentFactory.mount = function (component, props, parent) {
+        var vNode = createVNode(component, props);
+        vNode.appContext = parent.$.appContext;
+        vNode.appContext.provides = __assign(__assign({}, (vNode.appContext.provides ? vNode.appContext.provides : {})), (parent.$parent.$options.provide ? parent.$parent.$options.provide : {}));
+        var el = document.createElement('div');
+        render(vNode, el);
+        var destroy = function () {
+            if (el) {
+                render(null, el);
+            }
+            el = null;
+            vNode = null;
+        };
+        return { vNode: vNode, destroy: destroy, el: el };
     };
     VueComponentFactory.searchForComponentInstance = function (parent, component, maxDepth, suppressError) {
         if (maxDepth === void 0) { maxDepth = 10; }
@@ -93,21 +105,6 @@ var VueComponentFactory = /** @class */ (function () {
             return null;
         }
         return componentInstance;
-    };
-    VueComponentFactory.addContext = function (component, parent) {
-        if (component._context && parent.$ && parent.$.appContext) {
-            var contextProperties = [
-                'config',
-                'mixins',
-                'components ',
-                'directives ',
-                'provides',
-                'optionsCache',
-                'propsCache',
-                'emitsCache',
-            ];
-            contextProperties.forEach(function (property) { return component._context[property] = parent.$.appContext[property]; });
-        }
     };
     return VueComponentFactory;
 }());

@@ -1,3 +1,4 @@
+
 import {BaseComponentWrapper, Bean, WrappableInterface} from 'ag-grid-community';
 import {AgGridVue} from './AgGridVue';
 import {VueComponentFactory} from './VueComponentFactory';
@@ -93,14 +94,15 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<Wrappable
 
 abstract class VueComponent<P, T> {
     private componentInstance: any;
-    private mountedComponent: any;
+    private element!: HTMLElement;
+    private unmount: any;
 
     public getGui(): HTMLElement {
-        return this.componentInstance.$el;
+        return this.element;
     }
 
     public destroy(): void {
-        this.mountedComponent.unmount();
+        this.unmount();
     }
 
     public getFrameworkComponentInstance(): any {
@@ -108,11 +110,13 @@ abstract class VueComponent<P, T> {
     }
 
     protected init(params: P): void {
-        const {mountedComponent, componentInstance} = this.createComponent(params);
+        const {componentInstance, element, destroy: unmount} = this.createComponent(params);
 
-        this.mountedComponent = mountedComponent;
         this.componentInstance = componentInstance;
+        this.element = element;
+        this.unmount = unmount;
     }
 
     protected abstract createComponent(params: P): any;
 }
+

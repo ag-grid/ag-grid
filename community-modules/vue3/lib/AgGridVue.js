@@ -92,7 +92,6 @@ var AgGridVue = /** @class */ (function (_super) {
         new Grid(this.$el, gridOptions, gridParams);
         this.gridCreated = true;
     };
-    // noinspection JSUnusedGlobalSymbols
     AgGridVue.prototype.destroyed = function () {
         if (this.gridCreated) {
             if (this.gridOptions.api) {
@@ -100,6 +99,9 @@ var AgGridVue = /** @class */ (function (_super) {
             }
             this.isDestroyed = true;
         }
+    };
+    AgGridVue.prototype.unmounted = function () {
+        this.destroyed();
     };
     AgGridVue.prototype.checkForBindingConflicts = function () {
         var thisAsAny = this;

@@ -97,18 +97,19 @@ var VueComponent = /** @class */ (function () {
     function VueComponent() {
     }
     VueComponent.prototype.getGui = function () {
-        return this.componentInstance.$el;
+        return this.element;
     };
     VueComponent.prototype.destroy = function () {
-        this.mountedComponent.unmount();
+        this.unmount();
     };
     VueComponent.prototype.getFrameworkComponentInstance = function () {
         return this.componentInstance;
     };
     VueComponent.prototype.init = function (params) {
-        var _a = this.createComponent(params), mountedComponent = _a.mountedComponent, componentInstance = _a.componentInstance;
-        this.mountedComponent = mountedComponent;
+        var _a = this.createComponent(params), componentInstance = _a.componentInstance, element = _a.element, unmount = _a.destroy;
         this.componentInstance = componentInstance;
+        this.element = element;
+        this.unmount = unmount;
     };
     return VueComponent;
 }());

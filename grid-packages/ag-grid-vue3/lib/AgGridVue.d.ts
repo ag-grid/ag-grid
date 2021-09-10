@@ -19,6 +19,7 @@ export declare class AgGridVue extends Vue {
     processChanges(propertyName: string, currentValue: any, previousValue: any): void;
     mounted(): void;
     destroyed(): void;
+    unmounted(): void;
     private checkForBindingConflicts;
     private getRowData;
     private updateModelIfUsed;
