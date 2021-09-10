@@ -6,6 +6,9 @@ export function isNumber(n: any): boolean {
     } else if (type !== 'number') {
         return false;
     }
+    // n - n is going to be:
+    // - zero, for any finite number
+    // -  NaN, for NaN, Infinity, -Infinity
     return n - n < 1;
 }
 

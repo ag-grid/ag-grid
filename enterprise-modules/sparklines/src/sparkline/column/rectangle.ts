@@ -1,4 +1,4 @@
-import { Shape } from "../scene/shape/shape";
+import { Shape } from "../../scene/shape/shape";
 
 export class Rectangle extends Shape {
 

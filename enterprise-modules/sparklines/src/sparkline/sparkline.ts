@@ -4,9 +4,9 @@ import { Observable } from '../util/observable';
 import { createId } from "../util/id";
 import { Padding } from '../util/padding';
 import { defaultTooltipCss } from './tooltip/defaultTooltipCss';
-import { isNumber } from './util';
 import { SparklineTooltip } from './tooltip/sparklineTooltip';
 import { HighlightStyle } from "@ag-grid-community/core";
+import { isNumber } from "../util/number";
 
 export interface SeriesNodeDatum {
     readonly seriesDatum: any;

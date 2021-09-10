@@ -1,13 +1,13 @@
-import { BandScale } from '../scale/bandScale';
-import { LinearScale } from '../scale/linearScale';
-import { Group } from '../scene/group';
-import { Path } from '../scene/shape/path';
-import { Observable } from '../util/observable';
-import { Selection } from '../scene/selection';
-import { Marker } from './marker';
-import { Point, SeriesNodeDatum, Sparkline } from './sparkline';
-import { toTooltipHtml } from './tooltip/sparklineTooltip';
-import { getMarkerShape } from './util';
+import { BandScale } from '../../scale/bandScale';
+import { LinearScale } from '../../scale/linearScale';
+import { Group } from '../../scene/group';
+import { Path } from '../../scene/shape/path';
+import { Observable } from '../../util/observable';
+import { Selection } from '../../scene/selection';
+import { Marker } from '../marker/marker';
+import { Point, SeriesNodeDatum, Sparkline } from '../sparkline';
+import { toTooltipHtml } from '../tooltip/sparklineTooltip';
+import { getMarker } from '../marker/markerFactory';
 import { MarkerFormat, MarkerFormatterParams } from "@ag-grid-community/core";
 
 interface LineNodeDatum extends SeriesNodeDatum {
@@ -145,7 +145,7 @@ export class LineSparkline extends Sparkline {
     private updateSelection(selectionData: LineNodeDatum[]): void {
         const { marker } = this;
 
-        const shape = getMarkerShape(marker.shape);
+        const shape = getMarker(marker.shape);
 
         let updateMarkerSelection = this.markerSelection.setData(selectionData);
         let enterMarkerSelection = updateMarkerSelection.enter.append(shape);

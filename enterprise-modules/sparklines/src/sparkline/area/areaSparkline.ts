@@ -1,14 +1,14 @@
-import { Group } from '../scene/group';
-import { Path } from '../scene/shape/path';
-import { Line } from '../scene/shape/line';
-import { LinearScale } from '../scale/linearScale';
-import { BandScale } from '../scale/bandScale';
-import { Observable } from '../util/observable';
-import { Selection } from "../scene/selection";
-import { SeriesNodeDatum, Sparkline } from './sparkline';
-import { Marker } from './marker';
-import { toTooltipHtml } from './tooltip/sparklineTooltip';
-import { getMarkerShape } from './util';
+import { Group } from '../../scene/group';
+import { Path } from '../../scene/shape/path';
+import { Line } from '../../scene/shape/line';
+import { LinearScale } from '../../scale/linearScale';
+import { BandScale } from '../../scale/bandScale';
+import { Observable } from '../../util/observable';
+import { Selection } from "../../scene/selection";
+import { SeriesNodeDatum, Sparkline } from '../sparkline';
+import { Marker } from '../marker/marker';
+import { toTooltipHtml } from '../tooltip/sparklineTooltip';
+import { getMarker } from '../marker/markerFactory';
 import { MarkerFormat, MarkerFormatterParams } from "@ag-grid-community/core";
 
 interface AreaNodeDatum extends SeriesNodeDatum { }
@@ -200,7 +200,7 @@ export class AreaSparkline extends Sparkline {
     private updateSelection(selectionData: AreaNodeDatum[]): void {
         const { marker } = this;
 
-        const shape = getMarkerShape(marker.shape);
+        const shape = getMarker(marker.shape);
 
         let updateMarkerSelection = this.markerSelection.setData(selectionData);
         let enterMarkerSelection = updateMarkerSelection.enter.append(shape);

@@ -1,9 +1,9 @@
 import { describe, beforeAll, afterAll, test, expect } from '@jest/globals'
 import { AgSparkline } from './agSparkline';
-import { LineSparkline } from './lineSparkline';
+import { LineSparkline } from './line/lineSparkline';
 import "jest-canvas-mock";
-import { AreaSparkline } from './areaSparkline';
-import { ColumnSparkline } from './columnSparkline';
+import { AreaSparkline } from './area/areaSparkline';
+import { ColumnSparkline } from './column/columnSparkline';
 import { ColumnFormat, ColumnFormatterParams, MarkerFormat, MarkerFormatterParams, SparklineOptions, TooltipRendererResult, TooltipRendererParams } from '@ag-grid-community/core';
 import { Sparkline } from './sparkline';
 
