@@ -80,6 +80,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setResizeDisplayed: displayed => setDisplayed(this.eResize, displayed),
             setAriaSort: sort => sort ? setAriaSort(eGui, sort) : removeAriaSort(eGui),
+            setColId: id => eGui.setAttribute("col-id", this.column.getColId()),
 
             refreshHeaderComp: ()=> this.refreshHeaderComp()
         };
@@ -103,7 +104,6 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
         this.createManagedBean(new SelectAllFeature(this.cbSelectAll, this.column));
         this.cbSelectAll.setParentComponent(this);
 
-        this.addAttributes();
         CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper,
             this.column, null);
 
@@ -327,7 +327,5 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
         this.ctrl.addRefreshFunction(refresh);
     }
 
-    private addAttributes(): void {
-        this.getGui().setAttribute("col-id", this.column.getColId());
-    }
+
 }

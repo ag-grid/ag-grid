@@ -18,6 +18,7 @@ export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     setResizeDisplayed(displayed: boolean): void;
     setAriaSort(sort: ColumnSortState | undefined): void;
+    setColId(id: string): void;
 
     // temp
     refreshHeaderComp(): void;
@@ -62,6 +63,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.setupSortableClass();
         this.addColumnHoverListener();
         this.setupFilterCss();
+        this.setupColId();
 
         this.createManagedBean(new HoverFeature([this.column], this.getGui()));
         this.createManagedBean(new SetLeftFeature(this.column, this.getGui(), this.beans));
@@ -221,4 +223,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         listener();
     }
 
+    private setupColId(): void {
+        this.comp.setColId(this.column.getColId());
+    }
 }
