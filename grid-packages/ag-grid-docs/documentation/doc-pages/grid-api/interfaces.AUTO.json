@@ -4257,7 +4257,15 @@
   "IAbstractHeaderCellComp": { "meta": {}, "type": { "focus()": "void" } },
   "IHeaderCellComp": {
     "meta": {},
-    "type": { "focus()": "void", "refreshHeaderComp()": "void" }
+    "type": {
+      "focus()": "void",
+      "setWidth(width: string)": "void",
+      "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
+      "setResizeDisplayed(displayed: boolean)": "void",
+      "setAriaSort(sort: ColumnSortState | undefined)": "void",
+      "setColId(id: string)": "void",
+      "refreshHeaderComp()": "void"
+    }
   },
   "IHeaderParams": {
     "meta": {},
@@ -8104,6 +8112,22 @@
       "setEditDetails(compDetails?: UserCompDetails, popup?: boolean, position?: string)": "void"
     }
   },
+  "ITooltipFeatureCtrl": {
+    "meta": {},
+    "type": {
+      "getTooltipValue()": "any",
+      "getGui()": "HTMLElement",
+      "getLocation()": "string",
+      "getColumn?()": "Column",
+      "getRowIndex?()": "number",
+      "getRowNode?()": "RowNode",
+      "getValueFormatted?()": "string"
+    }
+  },
+  "ITooltipFeatureComp": {
+    "meta": {},
+    "type": { "setTitle(title: string | undefined)": "void" }
+  },
   "ILargeTextEditorParams": {
     "meta": {},
     "type": {
@@ -8925,6 +8949,18 @@
     "type": { "visible": "boolean", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
+  "TooltipParentComp": {
+    "meta": {},
+    "type": {
+      "getTooltipParams()": "ITooltipParams",
+      "getGui()": "HTMLElement"
+    }
+  },
+  "TooltipStates": {
+    "meta": { "isEnum": true },
+    "type": ["NOTHING", "WAITING_TO_SHOW", "SHOWING"],
+    "docs": [null, null, null]
+  },
   "ManagedFocusCallbacks": {
     "meta": {},
     "type": {
@@ -8992,18 +9028,6 @@
   "ITabGuard": {
     "meta": {},
     "type": { "setTabIndex(tabIndex?: string)": "void" }
-  },
-  "TooltipParentComp": {
-    "meta": {},
-    "type": {
-      "getTooltipParams()": "ITooltipParams",
-      "getGui()": "HTMLElement"
-    }
-  },
-  "TooltipStates": {
-    "meta": { "isEnum": true },
-    "type": ["NOTHING", "WAITING_TO_SHOW", "SHOWING"],
-    "docs": [null, null, null]
   },
   "TapEvent": {
     "meta": {},

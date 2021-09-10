@@ -4,7 +4,7 @@ import {
     Component,
     MenuItemDef,
     PostConstruct,
-    TooltipFeature,
+    CustomTooltipFeature,
     PopupService,
     IComponent,
     KeyCode,
@@ -244,7 +244,7 @@ export class MenuItemComponent extends Component {
         if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
             this.getGui().setAttribute('title', this.tooltip);
         } else {
-            this.createManagedBean(new TooltipFeature(this));
+            this.createManagedBean(new CustomTooltipFeature(this));
         }
     }
 

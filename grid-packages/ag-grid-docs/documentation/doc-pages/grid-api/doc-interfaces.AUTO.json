@@ -7648,6 +7648,41 @@
     "focus": {
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
+    "setWidth": {
+      "type": {
+        "arguments": { "width": "string" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "addOrRemoveCssClass": {
+      "type": {
+        "arguments": { "cssClassName": "string", "on": "boolean" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "setResizeDisplayed": {
+      "type": {
+        "arguments": { "displayed": "boolean" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "setAriaSort": {
+      "type": {
+        "arguments": { "sort": "ColumnSortState | undefined" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "setColId": {
+      "type": {
+        "arguments": { "id": "string" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
     "refreshHeaderComp": {
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     }
@@ -14189,6 +14224,42 @@
       }
     }
   },
+  "ITooltipFeatureCtrl": {
+    "getTooltipValue": {
+      "type": { "arguments": {}, "returnType": "any", "optional": false }
+    },
+    "getGui": {
+      "type": {
+        "arguments": {},
+        "returnType": "HTMLElement",
+        "optional": false
+      }
+    },
+    "getLocation": {
+      "type": { "arguments": {}, "returnType": "string", "optional": false }
+    },
+    "getColumn": {
+      "type": { "arguments": {}, "returnType": "Column", "optional": true }
+    },
+    "getRowIndex": {
+      "type": { "arguments": {}, "returnType": "number", "optional": true }
+    },
+    "getRowNode": {
+      "type": { "arguments": {}, "returnType": "RowNode", "optional": true }
+    },
+    "getValueFormatted": {
+      "type": { "arguments": {}, "returnType": "string", "optional": true }
+    }
+  },
+  "ITooltipFeatureComp": {
+    "setTitle": {
+      "type": {
+        "arguments": { "title": "string | undefined" },
+        "returnType": "void",
+        "optional": false
+      }
+    }
+  },
   "ILargeTextEditorParams": {
     "maxLength": { "type": { "returnType": "number", "optional": false } },
     "rows": { "type": { "returnType": "number", "optional": false } },
@@ -15601,6 +15672,23 @@
       "type": { "returnType": "string", "optional": false }
     }
   },
+  "TooltipParentComp": {
+    "getTooltipParams": {
+      "type": {
+        "arguments": {},
+        "returnType": "ITooltipParams",
+        "optional": false
+      }
+    },
+    "getGui": {
+      "type": {
+        "arguments": {},
+        "returnType": "HTMLElement",
+        "optional": false
+      }
+    }
+  },
+  "TooltipStates": {},
   "ManagedFocusCallbacks": {
     "shouldStopEventPropagation": {
       "type": {
@@ -15712,23 +15800,6 @@
       }
     }
   },
-  "TooltipParentComp": {
-    "getTooltipParams": {
-      "type": {
-        "arguments": {},
-        "returnType": "ITooltipParams",
-        "optional": false
-      }
-    },
-    "getGui": {
-      "type": {
-        "arguments": {},
-        "returnType": "HTMLElement",
-        "optional": false
-      }
-    }
-  },
-  "TooltipStates": {},
   "TapEvent": {
     "touchStart": { "type": { "returnType": "Touch", "optional": false } },
     "type": {

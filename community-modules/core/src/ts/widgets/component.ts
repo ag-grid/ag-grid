@@ -17,7 +17,7 @@ import {
 } from '../utils/dom';
 import { forEach } from '../utils/array';
 import { getFunctionName } from '../utils/function';
-import { TooltipFeature } from "./tooltipFeature";
+import { CustomTooltipFeature } from "./customTooltipFeature";
 import { ITooltipParams } from "../rendering/tooltipComponent";
 
 const compIdSequence = new NumberSequence();
@@ -54,7 +54,7 @@ export class Component extends BeanStub {
 
     protected usingBrowserTooltips: boolean;
     private tooltipText: string | undefined;
-    private tooltipFeature: TooltipFeature | undefined;
+    private tooltipFeature: CustomTooltipFeature | undefined;
 
     constructor(template?: string) {
         super();
@@ -94,7 +94,7 @@ export class Component extends BeanStub {
             if (this.usingBrowserTooltips) {
                 this.getGui().setAttribute('title', this.tooltipText!);
             } else {
-                this.tooltipFeature = this.createBean(new TooltipFeature(this));
+                this.tooltipFeature = this.createBean(new CustomTooltipFeature(this));
             }
         };
 

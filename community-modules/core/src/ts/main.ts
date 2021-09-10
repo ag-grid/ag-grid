@@ -412,7 +412,7 @@ export { WrappableInterface, BaseComponentWrapper, FrameworkComponentWrapper } f
 export { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 export { Environment } from "./environment";
 export { ITooltipComp, ITooltipParams } from "./rendering/tooltipComponent";
-export { TooltipFeature } from "./widgets/tooltipFeature";
+export { CustomTooltipFeature } from "./widgets/customTooltipFeature";
 export { IAggregationStage } from "./interfaces/iAggregationStage";
 
 // charts

@@ -18,7 +18,7 @@ import { BeanStub } from "../../context/beanStub";
 import { CellPositionFeature } from "./cellPositionFeature";
 import { escapeString } from "../../utils/string";
 import { CellCustomStyleFeature } from "./cellCustomStyleFeature";
-import { CellTooltipFeature } from "./cellTooltipFeature";
+import { TooltipFeature, ITooltipFeatureCtrl } from "../../widgets/tooltipFeature";
 import { RowPosition } from "../../entities/rowPosition";
 import { RowCtrl } from "../row/rowCtrl";
 import { CellMouseListenerFeature } from "./cellMouseListenerFeature";
@@ -31,6 +31,8 @@ import { CheckboxSelectionComponent } from "../checkboxSelectionComponent";
 import { DndSourceComp } from "../dndSourceComp";
 import { doOnce } from "../../utils/function";
 import { RowDragComp } from "../row/rowDragComp";
+import { getValueUsingField } from "../../utils/object";
+import { ITooltipParams } from "../tooltipComponent";
 
 const CSS_CELL = 'ag-cell';
 const CSS_NORMAL_HEIGHT = 'ag-cell-normal-height';
@@ -102,7 +104,7 @@ export class CellCtrl extends BeanStub {
     private cellRangeFeature: CellRangeFeature;
     private cellPositionFeature: CellPositionFeature;
     private cellCustomStyleFeature: CellCustomStyleFeature;
-    private cellTooltipFeature: CellTooltipFeature;
+    private cellTooltipFeature: TooltipFeature;
     private cellMouseListenerFeature: CellMouseListenerFeature;
     private cellKeyboardListenerFeature: CellKeyboardListenerFeature;
 
@@ -144,9 +146,6 @@ export class CellCtrl extends BeanStub {
         this.cellCustomStyleFeature = new CellCustomStyleFeature(this, this.beans);
         this.addDestroyFunc(() => this.cellCustomStyleFeature.destroy());
 
-        this.cellTooltipFeature = new CellTooltipFeature(this, this.beans);
-        this.addDestroyFunc(() => this.cellTooltipFeature.destroy());
-
         this.cellMouseListenerFeature = new CellMouseListenerFeature(this, this.beans, this.column);
         this.addDestroyFunc(() => this.cellMouseListenerFeature.destroy());
 
@@ -158,6 +157,54 @@ export class CellCtrl extends BeanStub {
             this.cellRangeFeature = new CellRangeFeature(this.beans, this);
             this.addDestroyFunc(() => this.cellRangeFeature.destroy());
         }
+
+        this.addTooltipFeature();
+    }
+
+    private addTooltipFeature(): void {
+        const getTooltipValue = () => {
+            const colDef = this.column.getColDef();
+            const data = this.rowNode.data;
+    
+            if (colDef.tooltipField && exists(data)) {
+                return getValueUsingField(data, colDef.tooltipField, this.column.isTooltipFieldContainsDots());
+            }
+    
+            const valueGetter = colDef.tooltipValueGetter;
+    
+            if (valueGetter) {
+                return valueGetter({
+                    location: 'cell',
+                    api: this.beans.gridOptionsWrapper.getApi()!,
+                    columnApi: this.beans.gridOptionsWrapper.getColumnApi()!,
+                    context: this.beans.gridOptionsWrapper.getContext(),
+                    colDef: this.column.getColDef(),
+                    column: this.column,
+                    rowIndex: this.cellPosition.rowIndex,
+                    node: this.rowNode,
+                    data: this.rowNode.data,
+                    value: this.value,
+                    valueFormatted: this.valueFormatted,
+                });
+            }
+    
+            return null;
+        };
+
+        const tooltipCtrl: ITooltipFeatureCtrl = {
+            getColumn: ()=> this.column,
+            getRowIndex: ()=> this.cellPosition.rowIndex,
+            getRowNode: () => this.rowNode,
+            getGui: ()=> this.getGui(),
+            getLocation: ()=> 'cell',
+            getTooltipValue: getTooltipValue,
+
+            // this makes no sense, why is the cell formatted value passed to the tooltip???
+            getValueFormatted: () => this.valueFormatted
+        };
+
+        this.cellTooltipFeature = new TooltipFeature(tooltipCtrl, this.beans);
+        this.addDestroyFunc(() => this.cellTooltipFeature.destroy());
     }
 
     public setComp(

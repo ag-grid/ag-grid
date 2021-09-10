@@ -9,7 +9,7 @@ import { RowCtrl } from "./../row/rowCtrl";
 import { RowDragComp } from "./../row/rowDragComp";
 import { PopupEditorWrapper } from "./../cellEditors/popupEditorWrapper";
 import { DndSourceComp } from "./../dndSourceComp";
-import { TooltipParentComp } from "../../widgets/tooltipFeature";
+import { TooltipParentComp } from "../../widgets/customTooltipFeature";
 import { setAriaColIndex, setAriaDescribedBy, setAriaSelected, setAriaExpanded } from "../../utils/aria";
 import { escapeString } from "../../utils/string";
 import { missing } from "../../utils/generic";
