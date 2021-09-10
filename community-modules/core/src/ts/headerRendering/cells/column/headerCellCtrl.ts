@@ -9,6 +9,8 @@ import { ResizeFeature } from "./resizeFeature";
 import { ColumnSortState, getAriaSortState, removeAriaSort, setAriaSort } from "../../../utils/aria";
 import { ColumnHoverService } from "../../../rendering/columnHoverService";
 import { HoverFeature } from "../hoverFeature";
+import { Beans } from "../../../rendering/beans";
+import { SetLeftFeature } from "../../../rendering/features/setLeftFeature";
 
 export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     focus(): void;
@@ -25,6 +27,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('columnHoverService') private columnHoverService: ColumnHoverService;
+    @Autowired('beans') protected beans: Beans;
 
     private eGui: HTMLElement;
 
@@ -61,6 +64,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.setupFilterCss();
 
         this.createManagedBean(new HoverFeature([this.column], this.getGui()));
+        this.createManagedBean(new SetLeftFeature(this.column, this.getGui(), this.beans));
 
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));

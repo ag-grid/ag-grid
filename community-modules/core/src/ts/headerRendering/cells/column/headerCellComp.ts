@@ -100,12 +100,8 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
             }
         ));
 
-
-
-
         this.createManagedBean(new SelectAllFeature(this.cbSelectAll, this.column));
         this.cbSelectAll.setParentComponent(this);
-        this.createManagedBean(new SetLeftFeature(this.column, this.getGui(), this.beans));
 
         this.addAttributes();
         CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper,
