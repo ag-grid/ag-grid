@@ -1,5 +1,5 @@
-import { Color } from "../util/color";
-import { Observable } from "../util/observable";
+import { Color } from "../../util/color";
+import { Observable } from "../../util/observable";
 import { TooltipRendererResult, TooltipRendererParams } from "@ag-grid-community/core";
 
 export interface TooltipMeta {

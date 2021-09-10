@@ -14,7 +14,7 @@ import {
     SparklineLine,
     Padding
 } from "@ag-grid-community/core";
-import { SparklineTooltip } from "./sparklineTooltip";
+import { SparklineTooltip } from "./tooltip/sparklineTooltip";
 
 export type AgSparklineType<T> =
     T extends LineSparklineOptions ? LineSparkline :

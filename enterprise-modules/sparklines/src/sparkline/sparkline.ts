@@ -3,9 +3,9 @@ import { Scene } from '../scene/scene';
 import { Observable } from '../util/observable';
 import { createId } from "../util/id";
 import { Padding } from '../util/padding';
-import { defaultTooltipCss } from './defaultTooltipCss';
+import { defaultTooltipCss } from './tooltip/defaultTooltipCss';
 import { isNumber } from './util';
-import { SparklineTooltip } from './sparklineTooltip';
+import { SparklineTooltip } from './tooltip/sparklineTooltip';
 import { HighlightStyle } from "@ag-grid-community/core";
 
 export interface SeriesNodeDatum {

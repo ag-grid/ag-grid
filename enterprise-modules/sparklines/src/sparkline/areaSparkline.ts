@@ -7,7 +7,7 @@ import { Observable } from '../util/observable';
 import { Selection } from "../scene/selection";
 import { SeriesNodeDatum, Sparkline } from './sparkline';
 import { Marker } from './marker';
-import { toTooltipHtml } from './sparklineTooltip';
+import { toTooltipHtml } from './tooltip/sparklineTooltip';
 import { getMarkerShape } from './util';
 import { MarkerFormat, MarkerFormatterParams } from "@ag-grid-community/core";
 

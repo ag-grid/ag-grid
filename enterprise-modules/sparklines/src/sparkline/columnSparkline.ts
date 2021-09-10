@@ -4,7 +4,7 @@ import { Group } from '../scene/group';
 import { Line } from '../scene/shape/line';
 import { Selection } from '../scene/selection';
 import { SeriesNodeDatum, Sparkline } from './sparkline';
-import { toTooltipHtml } from './sparklineTooltip';
+import { toTooltipHtml } from './tooltip/sparklineTooltip';
 import { Rectangle } from './rectangle';
 import { ColumnFormatterParams, ColumnFormat } from "@ag-grid-community/core";
 
