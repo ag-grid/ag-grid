@@ -15,7 +15,7 @@ import { SetLeftFeature } from "../../../rendering/features/setLeftFeature";
 import { ITooltipParams } from "../../../rendering/tooltipComponent";
 import { SortController } from "../../../sortController";
 import { getAriaSortState, removeAriaSort, setAriaSort } from "../../../utils/aria";
-import { addCssClass, addOrRemoveCssClass, removeCssClass, setDisplayed } from "../../../utils/dom";
+import { addOrRemoveCssClass, setDisplayed } from "../../../utils/dom";
 import { AgCheckbox } from "../../../widgets/agCheckbox";
 import { RefSelector } from "../../../widgets/componentAnnotations";
 import { ManagedFocusFeature } from "../../../widgets/managedFocusFeature";
@@ -80,6 +80,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
             setWidth: width => eGui.style.width = width,
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setResizeDisplayed: displayed => setDisplayed(this.eResize, displayed),
+            setAriaSort: sort => sort ? setAriaSort(eGui, sort) : removeAriaSort(eGui),
 
             refreshHeaderComp: ()=> this.refreshHeaderComp()
         };
@@ -87,8 +88,6 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
         this.ctrl.setComp(compProxy, this.getGui(), this.eResize);
 
         this.setupTooltip();
-        this.setupMenuClass();
-        this.setupSortableClass();
         this.addColumnHoverListener();
         this.addActiveHeaderMouseListeners();
 
@@ -244,30 +243,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
         addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
     }
 
-    private setupSortableClass(): void {
 
-        const eGui = this.getGui();
-
-        const updateSortableCssClass = () => {
-            addOrRemoveCssClass(eGui, 'ag-header-cell-sortable', !!this.ctrl.temp_isSortable());
-        };
-
-        const updateAriaSort = () => {
-            if (this.ctrl.temp_isSortable()) {
-                setAriaSort(eGui, getAriaSortState(this.column));
-            } else {
-                removeAriaSort(eGui);
-            }
-        };
-
-        updateSortableCssClass();
-        updateAriaSort();
-
-        this.ctrl.addRefreshFunction(updateSortableCssClass);
-        this.ctrl.addRefreshFunction(updateAriaSort);
-
-        this.addManagedListener(this.column, Column.EVENT_SORT_CHANGED, updateAriaSort.bind(this));
-    }
 
     private onFilterChanged(): void {
         const filterPresent = this.column.isFilterActive();
@@ -380,13 +356,4 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
     private addAttributes(): void {
         this.getGui().setAttribute("col-id", this.column.getColId());
     }
-
-    private setupMenuClass(): void {
-        this.addManagedListener(this.column, Column.EVENT_MENU_VISIBLE_CHANGED, this.onMenuVisible.bind(this));
-    }
-
-    private onMenuVisible(): void {
-        this.addOrRemoveCssClass('ag-column-menu-visible', this.column.isMenuVisible());
-    }
-
 }

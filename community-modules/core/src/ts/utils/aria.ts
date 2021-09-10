@@ -1,6 +1,6 @@
 import { Column } from '../entities/column';
 
-type ColumnSortState = 'ascending' | 'descending' | 'none';
+export type ColumnSortState = 'ascending' | 'descending' | 'none';
 
 // ARIA HELPER FUNCTIONS
 function setAriaAttribute(element: HTMLElement, attribute: string, value: number | boolean | string): void {

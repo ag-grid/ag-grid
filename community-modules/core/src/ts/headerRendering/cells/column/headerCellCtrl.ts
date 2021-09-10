@@ -6,11 +6,14 @@ import { Events } from "../../../eventKeys";
 import { HeaderRowCtrl } from "../../row/headerRowCtrl";
 import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellCtrl";
 import { ResizeFeature } from "./resizeFeature";
+import { ColumnSortState, getAriaSortState, removeAriaSort, setAriaSort } from "../../../utils/aria";
+
 export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     focus(): void;
     setWidth(width: string): void;
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     setResizeDisplayed(displayed: boolean): void;
+    setAriaSort(sort: ColumnSortState | undefined): void;
 
     // temp
     refreshHeaderComp(): void;
@@ -49,6 +52,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.updateState();
         this.setupWidth();
         this.setupMovingCss();
+        this.setupMenuClass();
+        this.setupSortableClass();
 
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
@@ -153,6 +158,35 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         listener();
     }
 
-    
+    private setupMenuClass(): void {
+        const listener = ()=> {
+            this.comp.addOrRemoveCssClass('ag-column-menu-visible', this.column.isMenuVisible());
+        };
 
+        this.addManagedListener(this.column, Column.EVENT_MENU_VISIBLE_CHANGED, listener);
+        listener();
+    }
+
+    private setupSortableClass(): void {
+
+        const updateSortableCssClass = () => {
+            this.comp.addOrRemoveCssClass('ag-header-cell-sortable', !!this.sortable);
+        };
+
+        const updateAriaSort = () => {
+            if (this.sortable) {
+                this.comp.setAriaSort(getAriaSortState(this.column));
+            } else {
+                this.comp.setAriaSort(undefined);
+            }
+        };
+
+        updateSortableCssClass();
+        updateAriaSort();
+
+        this.addRefreshFunction(updateSortableCssClass);
+        this.addRefreshFunction(updateAriaSort);
+
+        this.addManagedListener(this.column, Column.EVENT_SORT_CHANGED, updateAriaSort.bind(this));
+    }
 }
