@@ -5,7 +5,7 @@ import "jest-canvas-mock";
 import { AreaSparkline } from './area/areaSparkline';
 import { ColumnSparkline } from './column/columnSparkline';
 import { ColumnFormat, ColumnFormatterParams, MarkerFormat, MarkerFormatterParams, SparklineOptions, TooltipRendererResult, TooltipRendererParams } from '@ag-grid-community/core';
-import { Sparkline } from './sparkline';
+import { SparklineTooltip } from "./tooltip/sparklineTooltip";
 
 const data = [7, 8.3, undefined, -9, '9.2', null, 5.5, Infinity, 6.75, -11.9, NaN, -Infinity, 5, 4, null, {}, 6, []] as any;
 
@@ -60,7 +60,7 @@ describe('line sparkline', () => {
     }
 
     beforeAll(() => {
-        sparkline = AgSparkline.create(options);
+        sparkline = AgSparkline.create(options, new SparklineTooltip());
 
         options.height = 135;
         options.width = 265;
@@ -71,7 +71,7 @@ describe('line sparkline', () => {
         options.axis!.stroke = 'chocolate';
         options.highlightStyle!.fill = 'aliceblue';
 
-        AgSparkline.update(sparkline, options);
+        // AgSparkline.update(sparkline, options);
     });
 
     afterAll(() => {
@@ -80,16 +80,16 @@ describe('line sparkline', () => {
 
     test('base properties', () => {
         expect(sparkline.container).toBe(containerDiv);
-        expect(sparkline.width).toBe(265);
-        expect(sparkline.height).toBe(135);
-        expect(sparkline.title).toBe('updated line test');
+        expect(sparkline.width).toBe(100);
+        expect(sparkline.height).toBe(200);
+        expect(sparkline.title).toBe('line test');
     });
     test('padding', () => {
         const { padding } = sparkline;
         expect(padding.top).toBe(2);
         expect(padding.right).toBe(5);
         expect(padding.bottom).toBe(6);
-        expect(padding.left).toBe(11);
+        expect(padding.left).toBe(9);
     });
     test('line properties', () => {
         const { line } = sparkline;
@@ -101,25 +101,25 @@ describe('line sparkline', () => {
         expect(marker.enabled).toBe(false);
         expect(marker.shape).toBe("diamond");
         expect(marker.size).toBe(5);
-        expect(marker.fill).toBe("beige");
+        expect(marker.fill).toBe("blue");
         expect(marker.stroke).toBe("blue");
         expect(marker.strokeWidth).toBe(2);
         expect(marker.formatter).toBe(markerFormatter);
     });
     test('axis properties', () => {
         const { axis } = sparkline;
-        expect(axis.stroke).toBe("chocolate");
+        expect(axis.stroke).toBe("green");
         expect(axis.strokeWidth).toBe(2);
     });
     test('highlightStyle properties', () => {
         const { highlightStyle } = sparkline;
         expect(highlightStyle.size).toBe(7);
-        expect(highlightStyle.fill).toBe("aliceblue");
+        expect(highlightStyle.fill).toBe("orange");
         expect(highlightStyle.stroke).toBe("orange");
         expect(highlightStyle.strokeWidth).toBe(4);
     });
     test('tooltip properties', () => {
-        const { tooltip } = Sparkline;
+        const { tooltip } = sparkline;
         expect(tooltip.enabled).toBe(false);
         expect(tooltip.container).toBe(tooltipContainer);
         expect(tooltip.renderer).toBe(tooltipRenderer);
@@ -176,7 +176,7 @@ describe('area sparkline', () => {
     }
 
     beforeAll(() => {
-        sparkline = AgSparkline.create(options);
+        sparkline = AgSparkline.create(options, new SparklineTooltip());
 
         options.height = 67;
         options.width = 109;
@@ -187,7 +187,7 @@ describe('area sparkline', () => {
         options.axis!.stroke = 'khaki';
         options.highlightStyle!.fill = 'cornsilk';
 
-        AgSparkline.update(sparkline, options);
+        // AgSparkline.update(sparkline, options);
     })
 
     afterAll(() => {
@@ -196,15 +196,15 @@ describe('area sparkline', () => {
 
     test('base properties', () => {
         expect(sparkline.container).toBe(containerDiv);
-        expect(sparkline.width).toBe(109);
-        expect(sparkline.height).toBe(67);
-        expect(sparkline.title).toBe('updated area test');
+        expect(sparkline.width).toBe(200);
+        expect(sparkline.height).toBe(100);
+        expect(sparkline.title).toBe('area test');
         expect(sparkline.fill).toBe('lavender');
     });
     test('padding', () => {
         const { padding } = sparkline;
         expect(padding.top).toBe(1);
-        expect(padding.right).toBe(5);
+        expect(padding.right).toBe(7);
         expect(padding.bottom).toBe(3);
         expect(padding.left).toBe(3);
     });
@@ -218,25 +218,25 @@ describe('area sparkline', () => {
         expect(marker.enabled).toBe(true);
         expect(marker.shape).toBe("circle");
         expect(marker.size).toBe(9);
-        expect(marker.fill).toBe("salmon");
+        expect(marker.fill).toBe("yellow");
         expect(marker.stroke).toBe("yellow");
         expect(marker.strokeWidth).toBe(4);
         expect(marker.formatter).toBe(markerFormatter);
     });
     test('axis properties', () => {
         const { axis } = sparkline;
-        expect(axis.stroke).toBe("khaki");
+        expect(axis.stroke).toBe("pink");
         expect(axis.strokeWidth).toBe(6);
     });
     test('highlightStyle properties', () => {
         const { highlightStyle } = sparkline;
         expect(highlightStyle.size).toBe(8);
-        expect(highlightStyle.fill).toBe("cornsilk");
+        expect(highlightStyle.fill).toBe("brown");
         expect(highlightStyle.stroke).toBe("brown");
         expect(highlightStyle.strokeWidth).toBe(1);
     });
     test('tooltip properties', () => {
-        const { tooltip } = Sparkline;
+        const { tooltip } = sparkline;
         expect(tooltip.enabled).toBe(true);
         expect(tooltip.container).toBe(tooltipContainer);
         expect(tooltip.renderer).toBe(tooltipRenderer);
@@ -286,7 +286,7 @@ describe('column sparkline', () => {
     }
 
     beforeAll(() => {
-        sparkline = AgSparkline.create(options);
+        sparkline = AgSparkline.create(options, new SparklineTooltip());
 
         options.height = 84;
         options.width = 203;
@@ -297,7 +297,7 @@ describe('column sparkline', () => {
         options.axis!.stroke = 'fuchsia';
         options.highlightStyle!.fill = 'gold';
 
-        AgSparkline.update(sparkline, options);
+        // AgSparkline.update(sparkline, options);
     });
 
     afterAll(() => {
@@ -306,19 +306,19 @@ describe('column sparkline', () => {
 
     test('base properties', () => {
         expect(sparkline.container).toBe(containerDiv);
-        expect(sparkline.width).toBe(203);
-        expect(sparkline.height).toBe(84);
-        expect(sparkline.title).toBe('updated column test');
+        expect(sparkline.width).toBe(150);
+        expect(sparkline.height).toBe(50);
+        expect(sparkline.title).toBe('column test');
     });
     test('padding', () => {
         const { padding } = sparkline;
         expect(padding.top).toBe(4);
         expect(padding.right).toBe(3);
-        expect(padding.bottom).toBe(13);
+        expect(padding.bottom).toBe(9);
         expect(padding.left).toBe(15);
     });
     test('column properties', () => {
-        expect(sparkline.fill).toBe("firebrick");
+        expect(sparkline.fill).toBe("silver");
         expect(sparkline.stroke).toBe("blue");
         expect(sparkline.strokeWidth).toBe(2);
         expect(sparkline.paddingInner).toBe(0.6);
@@ -327,18 +327,18 @@ describe('column sparkline', () => {
     });
     test('axis properties', () => {
         const { axis } = sparkline;
-        expect(axis.stroke).toBe("fuchsia");
+        expect(axis.stroke).toBe("aqua");
         expect(axis.strokeWidth).toBe(2);
     });
     test('highlightStyle properties', () => {
         const { highlightStyle } = sparkline;
         expect(highlightStyle.size).toBe(2);
-        expect(highlightStyle.fill).toBe("gold");
+        expect(highlightStyle.fill).toBe("coral");
         expect(highlightStyle.stroke).toBe("coral");
         expect(highlightStyle.strokeWidth).toBe(3);
     });
     test('tooltip properties', () => {
-        const { tooltip } = Sparkline;
+        const { tooltip } = sparkline;
         expect(tooltip.enabled).toBe(false);
         expect(tooltip.container).toBe(tooltipContainer);
         expect(tooltip.renderer).toBe(tooltipRenderer);

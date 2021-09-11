@@ -4,7 +4,7 @@ import { Group } from '../../scene/group';
 import { Line } from '../../scene/shape/line';
 import { Selection } from '../../scene/selection';
 import { SeriesNodeDatum, Sparkline } from '../sparkline';
-import { toTooltipHtml } from '../tooltip/sparklineTooltip';
+import { SparklineTooltip, toTooltipHtml } from '../tooltip/sparklineTooltip';
 import { Rectangle } from './rectangle';
 import { ColumnFormatterParams, ColumnFormat } from "@ag-grid-community/core";
 
@@ -19,7 +19,6 @@ interface ColumnNodeDatum extends SeriesNodeDatum {
 }
 
 export class ColumnSparkline extends Sparkline {
-
     static className = 'ColumnSparkline';
 
     private columnSparklineGroup: Group = new Group();
@@ -37,9 +36,8 @@ export class ColumnSparkline extends Sparkline {
     yScaleDomain: [number, number] | undefined = undefined;
     formatter?: (params: ColumnFormatterParams) => ColumnFormat = undefined;
 
-    constructor() {
-        super();
-
+    constructor(document = window.document, tooltip: SparklineTooltip) {
+        super(document, tooltip);
         this.rootGroup.append(this.columnSparklineGroup);
         this.columnSparklineGroup.append([this.columns, this.xAxisLine]);
 
@@ -245,8 +243,8 @@ export class ColumnSparkline extends Sparkline {
             content
         }
 
-        if (Sparkline.tooltip.renderer) {
-            return toTooltipHtml(Sparkline.tooltip.renderer({
+        if (this.tooltip.renderer) {
+            return toTooltipHtml(this.tooltip.renderer({
                 // context: this.context,
                 datum: seriesDatum,
                 title,

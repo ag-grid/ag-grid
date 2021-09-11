@@ -4,11 +4,10 @@ import {
     ICellRenderer,
     ISparklineCellRendererParams,
     RefSelector,
-    ResizeObserverService,
-    TooltipRendererParams,
-    TooltipRendererResult
+    ResizeObserverService
 } from "@ag-grid-community/core";
 import { AgSparkline } from "./sparkline/agSparkline";
+import { SparklineTooltipSingleton } from "./tooltip/sparklineTooltipSingleton";
 
 export class SparklineCellRenderer extends Component implements ICellRenderer {
 
@@ -19,6 +18,7 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
 
     @RefSelector('eSparkline') private eSparkline?: HTMLElement;
     @Autowired('resizeObserverService') private resizeObserverService!: ResizeObserverService;
+    @Autowired('sparklineTooltipSingleton') private sparklineTooltipSingleton!: SparklineTooltipSingleton;
 
     private sparkline?: any;
 
@@ -46,7 +46,7 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
                 }
 
                 // create new instance of sparkline
-                this.sparkline = AgSparkline.create(options);
+                this.sparkline = AgSparkline.create(options, this.sparklineTooltipSingleton.getSparklineTooltip());
 
                 // append sparkline canvas element to this.eSparkline;
                 this.sparkline.container = this.eSparkline;

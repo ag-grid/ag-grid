@@ -2,7 +2,6 @@ import { AreaSparkline } from "./area/areaSparkline";
 import { SparklineAxis } from "./sparkline";
 import { ColumnSparkline } from "./column/columnSparkline";
 import { LineSparkline } from "./line/lineSparkline";
-import { Sparkline } from "./sparkline";
 
 import {
     SparklineOptions,
@@ -24,7 +23,7 @@ export type AgSparklineType<T> =
 
 export type SparklineType = LineSparkline | AreaSparkline | ColumnSparkline;
 export abstract class AgSparkline {
-    static create<T extends SparklineOptions>(options: T, container?: HTMLElement, data?: any[]): AgSparklineType<T> {
+    static create<T extends SparklineOptions>(options: T, tooltip: SparklineTooltip, container?: HTMLElement, data?: any[]): AgSparklineType<T> {
         // avoid mutating user provided options
         options = Object.create(options);
 
@@ -36,7 +35,7 @@ export abstract class AgSparkline {
             options.data = data;
         }
 
-        const sparkline = getSparklineInstance(options.type);
+        const sparkline = getSparklineInstance(options.type, tooltip);
 
         initSparkline(sparkline, options);
 
@@ -48,49 +47,17 @@ export abstract class AgSparkline {
 
         return sparkline;
     }
-
-    static update<T extends SparklineOptions>(sparkline: AgSparklineType<T>, options: T, container?: HTMLElement, data?: any[]) : AgSparklineType<T> | undefined {
-        // avoid mutating user provided options
-        options = Object.create(options);
-
-        if (container) {
-            options.container = container;
-        }
-
-        if (data) {
-            options.data = data;
-        }
-
-        const newSparkline = getSparklineInstance(options.type, sparkline);
-
-        if (newSparkline !== sparkline) {
-            // if the type in options has changed, a new sparkline instance will be created, this needs to be configurated according to the rest of the options and returned when update is called
-            initSparkline(newSparkline, options);
-
-            initSparklineByType(newSparkline, options);
-
-            return newSparkline;
-        }
-
-        initSparkline(sparkline, options);
-
-        initSparklineByType(sparkline, options);
-
-        // Set data last as this invokes the update method to produce the data joins and update the selection's nodes,
-        // we only want to do this after all the other properties are set.
-        initSparklineData(sparkline, options);
-    }
 }
 
-function getSparklineInstance(type: string = 'line', sparkline?: any): any {
+function getSparklineInstance(type: string = 'line', tooltip: any): any {
     switch (type) {
         case 'column':
-            return sparkline instanceof ColumnSparkline ? sparkline : new ColumnSparkline();
+            return new ColumnSparkline(window.document, tooltip);
         case 'area':
-            return sparkline instanceof AreaSparkline ? sparkline  : new AreaSparkline();
+            return new AreaSparkline(window.document, tooltip);
         case 'line':
         default:
-            return sparkline instanceof LineSparkline ? sparkline  : new LineSparkline();
+            return new LineSparkline(window.document, tooltip);
     }
 }
 
@@ -130,7 +97,7 @@ function initSparkline(sparkline: SparklineType, options: any) {
     }
 
     if(options.tooltip) {
-        initTooltipOptions(Sparkline.tooltip, options.tooltip);
+        initTooltipOptions(sparkline.tooltip, options.tooltip);
     }
 }
 

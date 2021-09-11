@@ -6,7 +6,7 @@ import { Observable } from '../../util/observable';
 import { Selection } from '../../scene/selection';
 import { Marker } from '../marker/marker';
 import { Point, SeriesNodeDatum, Sparkline } from '../sparkline';
-import { toTooltipHtml } from '../tooltip/sparklineTooltip';
+import { SparklineTooltip, toTooltipHtml } from '../tooltip/sparklineTooltip';
 import { getMarker } from '../marker/markerFactory';
 import { MarkerFormat, MarkerFormatterParams } from "@ag-grid-community/core";
 
@@ -30,7 +30,6 @@ class SparklineLine extends Observable {
 }
 
 export class LineSparkline extends Sparkline {
-
     static className = 'LineSparkline';
 
     private lineSparklineGroup: Group = new Group();
@@ -44,9 +43,8 @@ export class LineSparkline extends Sparkline {
     readonly marker = new SparklineMarker();
     readonly line = new SparklineLine();
 
-    constructor() {
-        super();
-
+    constructor(document = window.document, tooltip: SparklineTooltip) {
+        super(document, tooltip);
         this.rootGroup.append(this.lineSparklineGroup);
         this.lineSparklineGroup.append([this.linePath, this.markers]);
     }
@@ -247,8 +245,8 @@ export class LineSparkline extends Sparkline {
             content
         }
 
-        if (Sparkline.tooltip.renderer) {
-            return toTooltipHtml(Sparkline.tooltip.renderer({
+        if (this.tooltip.renderer) {
+            return toTooltipHtml(this.tooltip.renderer({
                 context: this.context,
                 datum: seriesDatum,
                 title,

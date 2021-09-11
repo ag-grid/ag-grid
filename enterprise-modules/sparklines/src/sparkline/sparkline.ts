@@ -40,7 +40,7 @@ export abstract class Sparkline extends Observable {
     readonly rootGroup: Group;
 
     // Only one tooltip instance for all sparkline instances.
-    static tooltip: SparklineTooltip = new SparklineTooltip();
+    readonly tooltip: SparklineTooltip;
     private static tooltipDocuments: Document[] = [];
 
     protected seriesRect: SeriesRect = {
@@ -102,8 +102,10 @@ export abstract class Sparkline extends Observable {
         strokeWidth: 0
     }
 
-    protected constructor(document = window.document) {
+    protected constructor(document: Document, tooltip: SparklineTooltip) {
         super();
+
+        this.tooltip = tooltip;
 
         const root = new Group();
         this.rootGroup = root;
@@ -222,7 +224,7 @@ export abstract class Sparkline extends Observable {
         if ((this.highlightedDatum && !oldHighlightedDatum) ||
             (this.highlightedDatum && oldHighlightedDatum && this.highlightedDatum !== oldHighlightedDatum)) {
             this.highlightDatum(closestDatum);
-            if (Sparkline.tooltip.enabled) {
+            if (this.tooltip.enabled) {
                 this.handleTooltip(closestDatum);
             }
         }
@@ -234,7 +236,7 @@ export abstract class Sparkline extends Observable {
      */
     private onMouseOut(event: MouseEvent) {
         this.dehighlightDatum();
-        Sparkline.tooltip.toggle(false);
+        this.tooltip.toggle(false);
     }
 
     // Fetch required values from the data object and process them.
@@ -396,10 +398,10 @@ export abstract class Sparkline extends Observable {
         const xValue = seriesDatum.x;
 
         // check if tooltip is enabled for this specific data point
-        let enabled = Sparkline.tooltip.enabled;
+        let enabled = this.tooltip.enabled;
 
-        if (Sparkline.tooltip.renderer) {
-            let tooltipRendererResult = Sparkline.tooltip.renderer({
+        if (this.tooltip.renderer) {
+            let tooltipRendererResult = this.tooltip.renderer({
                 context: this.context,
                 datum: seriesDatum,
                 title,
@@ -412,7 +414,7 @@ export abstract class Sparkline extends Observable {
         const html = enabled && seriesDatum.y !== undefined && this.getTooltipHtml(datum);
 
         if (html) {
-            Sparkline.tooltip.show(meta, html);
+            this.tooltip.show(meta, html);
         }
     }
 
