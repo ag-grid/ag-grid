@@ -1150,7 +1150,7 @@ export class GridApi {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, headerHeight);
     }
 
-    public isSideBarVisible() {
+    public isSideBarVisible(): boolean {
         return this.sideBarComp ? this.sideBarComp.isDisplayed() : false;
     }
 
@@ -1204,7 +1204,7 @@ export class GridApi {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_SUPPRESS_CLIPBOARD_PASTE, value);
     }
 
-    public isToolPanelShowing() {
+    public isToolPanelShowing(): boolean {
         return this.sideBarComp.isToolPanelShowing();
     }
 

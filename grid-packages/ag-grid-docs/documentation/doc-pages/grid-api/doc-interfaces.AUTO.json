@@ -4575,33 +4575,65 @@
     }
   },
   "ToolPanelDef": {
-    "id": { "type": { "returnType": "string", "optional": false } },
-    "labelDefault": { "type": { "returnType": "string", "optional": false } },
-    "labelKey": { "type": { "returnType": "string", "optional": false } },
-    "minWidth": { "type": { "returnType": "number", "optional": true } },
-    "maxWidth": { "type": { "returnType": "number", "optional": true } },
-    "width": { "type": { "returnType": "number", "optional": true } },
-    "iconKey": { "type": { "returnType": "string", "optional": false } },
+    "id": {
+      "description": "/** The unique ID for this panel. Used in the API and elsewhere to refer to the panel. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "labelKey": {
+      "description": "/** The key used for [localisation](/localisation/) for displaying the label. The label is displayed in the tab button. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "labelDefault": {
+      "description": "/** The default label if `labelKey` is missing or does not map to valid text through localisation. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "minWidth": {
+      "description": "/** The min width of the tool panel. Default: `100` */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "maxWidth": {
+      "description": "/** The max width of the tool panel. Default: `undefined` */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "width": {
+      "description": "/** The initial width of the tool panel. Default: `$side-bar-panel-width (theme variable)` */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "iconKey": {
+      "description": "/** The [key of the icon](/custom-icons/) to be used as a graphical aid beside the label in the side bar. */",
+      "type": { "returnType": "string", "optional": false }
+    },
     "toolPanel": {
+      "description": "/** The tool panel component to use as the panel.\n * The provided panels use components `agColumnsToolPanel` and `agFiltersToolPanel`.\n * To provide your own custom panel component, you reference it by name here. */",
       "type": {
         "returnType": "{ new(): IToolPanelComp } | string",
         "optional": true
       }
     },
-    "toolPanelFramework": { "type": { "returnType": "any", "optional": true } },
-    "toolPanelParams": { "type": { "returnType": "any", "optional": true } }
+    "toolPanelFramework": {
+      "description": "/** Same as `toolPanel` but for framework specific components. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "toolPanelParams": {
+      "description": "/** Customise the parameters provided to the `toolPanel` component. */",
+      "type": { "returnType": "any", "optional": true }
+    }
   },
   "SideBarDef": {
     "toolPanels": {
-      "type": { "returnType": "(ToolPanelDef | string) []", "optional": true }
+      "description": "/** A list of all the panels to place in the side bar. The panels will be displayed in the provided order from top to bottom. */",
+      "type": { "returnType": "(ToolPanelDef | string)[]", "optional": true }
     },
     "defaultToolPanel": {
+      "description": "/** The panel (identified by ID) to open by default. If none specified, the side bar is initially displayed closed. */",
       "type": { "returnType": "string", "optional": true }
     },
     "hiddenByDefault": {
+      "description": "/** To hide the side bar by default, set this to `true`. If left undefined the side bar will be shown. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "position": {
+      "description": "/** Sets the side bar position relative to the grid. */",
       "type": { "returnType": "'left' | 'right'", "optional": true }
     }
   },

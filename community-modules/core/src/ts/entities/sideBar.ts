@@ -1,23 +1,43 @@
 import { IToolPanelComp } from "../interfaces/iToolPanel";
 
 export interface ToolPanelDef {
+    /** The unique ID for this panel. Used in the API and elsewhere to refer to the panel. */
     id: string;
-    labelDefault: string;
+    /** The key used for [localisation](/localisation/) for displaying the label. The label is displayed in the tab button. */
     labelKey: string;
+    /** The default label if `labelKey` is missing or does not map to valid text through localisation. */
+    labelDefault: string;
+    /** The min width of the tool panel. Default: `100` */
     minWidth?: number;
+    /** The max width of the tool panel. Default: `undefined` */
     maxWidth?: number;
+    /** The initial width of the tool panel. Default: `$side-bar-panel-width (theme variable)` */
     width?: number;
-    // To allow binding this to an specific icon
+    /** The [key of the icon](/custom-icons/) to be used as a graphical aid beside the label in the side bar. */
     iconKey: string;
+
+    /**
+     * The tool panel component to use as the panel.
+     * The provided panels use components `agColumnsToolPanel` and `agFiltersToolPanel`.
+     * To provide your own custom panel component, you reference it by name here.
+     */
     toolPanel?: { new(): IToolPanelComp } | string;
+    /** Same as `toolPanel` but for framework specific components. */
     toolPanelFramework?: any;
+    /** Customise the parameters provided to the `toolPanel` component. */
     toolPanelParams?: any;
 }
 
 export interface SideBarDef {
-    toolPanels?: (ToolPanelDef | string) [];
+    /**
+     * A list of all the panels to place in the side bar. The panels will be displayed in the provided order from top to bottom.
+     */
+    toolPanels?: (ToolPanelDef | string)[];
+    /** The panel (identified by ID) to open by default. If none specified, the side bar is initially displayed closed. */
     defaultToolPanel?: string;
+    /** To hide the side bar by default, set this to `true`. If left undefined the side bar will be shown. */
     hiddenByDefault?: boolean;
+    /** Sets the side bar position relative to the grid. */
     position?: 'left' | 'right';
 }
 

@@ -726,7 +726,7 @@
   "setPivotHeaderHeight": {
     "type": { "arguments": { "headerHeight": "number" } }
   },
-  "isSideBarVisible": { "type": { "arguments": {} } },
+  "isSideBarVisible": { "type": { "arguments": {}, "returnType": "boolean" } },
   "setSideBarVisible": { "type": { "arguments": { "show": "boolean" } } },
   "setSideBarPosition": {
     "type": { "arguments": { "position": "'left' | 'right'" } }
@@ -743,7 +743,9 @@
   "setSuppressClipboardPaste": {
     "type": { "arguments": { "value": "boolean" }, "returnType": "void" }
   },
-  "isToolPanelShowing": { "type": { "arguments": {} } },
+  "isToolPanelShowing": {
+    "type": { "arguments": {}, "returnType": "boolean" }
+  },
   "doLayout": { "type": { "arguments": {} } },
   "resetRowHeights": { "type": { "arguments": {} } },
   "setGroupRemoveSingleChildren": {
