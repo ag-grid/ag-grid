@@ -35,6 +35,31 @@ interface ILoadingCellRendererParams {
 }
 ```
 
+## Dynamic Cell Loading Renderer
+
+It's possible to determine what Loading Cell Renderer to use dynamically - i.e. at runtime. For this you'll make use of the
+
+```ts
+loadingCellRendererSelector: (params) => {
+    const useCustomRenderer = ...some condition/check...
+    if (useCustomRenderer) {
+        return {
+            // the component to use - registered previously
+            component: 'customLoadingCellRenderer',
+            params: {
+                // parameters to supply to the custom loading cell renderer
+                loadingMessage: '--- CUSTOM ERROR MESSAGE ---',
+            },
+        };
+        } else {
+            // no loading cell renderer 
+            return undefined;
+        }
+    }
+}
+```
+
+
 ## Registering Loading Cell Renderer Components
 
 See the section [registering custom components](/components/#registering-custom-components) for details on registering and using custom loading cell renderers.
