@@ -12,7 +12,7 @@ import { useJsonFileNodes } from './use-json-file-nodes';
 /**
  * This generates tabulated interface documentation based on information in JSON files.
  */
-export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework, source, names = "", config = {} }): any => {
+export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework, overridesrc, names = "", config = {} }): any => {
     const nodes = useJsonFileNodes();
     let codeSrcProvided = [interfacename];
     let namesArr = [];
@@ -30,7 +30,8 @@ export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework
     const li = interfaceLookup[interfacename];
 
     let props = {};
-    const overrides = source ? getJsonFromFile(nodes, undefined, source) : {};
+    const overrides = overridesrc ? getJsonFromFile(nodes, undefined, overridesrc) : {};
+    const interfaceOverrides = overrides[interfacename] || {};
 
     const typeProps = Object.entries(li.type);
     sortAndFilterProperties(typeProps, framework).forEach(([k, v]) => {
@@ -43,15 +44,14 @@ export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework
         if (namesArr.length === 0 || namesArr.includes(propNameOnly)) {
             const docs = (li.docs && removeJsDocStars(li.docs[k])) || '';
             if (!docs.includes('@deprecated')) {
-                props[propNameOnly] = { description: docs || v, }
+                props[propNameOnly] = { description: docs || v, ...interfaceOverrides[propNameOnly] }
             }
         }
     })
 
-    const interfaceOverrides = overrides[interfacename] || {};
     let properties: DocEntryMap = {
         [interfacename]: {
-            ...{ ...props, ...interfaceOverrides },
+            ...props,
             "meta": {
                 "displayName": interfacename,
                 "description": `Properties available on the \`${interfacename}\` interface.`,
@@ -314,7 +314,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
             type = inferType(definition.default);
 
             if (type == null && config.codeSrcProvided.length > 0) {
-                console.warn(`We could not find a type for ${name} but a code sources ${config.codeSrcProvided.join()} were provided.`)
+                throw new Error(`We could not find a type for "${name}" from the code sources ${config.codeSrcProvided.join()}.`);
             }
         }
     }

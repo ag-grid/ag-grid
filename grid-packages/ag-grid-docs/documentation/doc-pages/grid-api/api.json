@@ -706,13 +706,61 @@
         "hidePopupMenu": {
             "description": "Hides any visible [context menu](/context-menu/) or [column menu](/column-menu/)."
         },
+        "setSideBar": {
+            "description": "Resets the side bar to the provided configuration. The parameter is the same as the sideBar grid property. The side bar is re-created from scratch with the new config.",
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "ToolPanelDef"
+                ],
+                "include": []
+            },
+            "more": {
+                "name": "Side Bar",
+                "url": "/side-bar/"
+            }
+        },
+        "getSideBar": {
+            "description": "Returns the current side bar configuration. If a shortcut was used, returns the detailed long form.",
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "ToolPanelDef"
+                ],
+                "include": []
+            }
+        },
+        "setSideBarVisible": {
+            "description": "Show/hide the entire side bar, including any visible panel and the tab buttons."
+        },
+        "isSideBarVisible": {
+            "description": "Returns `true` if the side bar is visible."
+        },
+        "setSideBarPosition": {
+            "description": "Sets the side bar position relative to the grid. Possible values are `'left'` or `'right'`.",
+            "default": "right"
+        },
+        "openToolPanel": {
+            "description": "Opens a particular tool panel. Provide the ID of the tool panel to open.",
+            "more": {
+                "name": "Tool Panel",
+                "url": "/tool-panel/"
+            }
+        },
+        "closeToolPanel": {
+            "description": "Closes the currently open tool panel (if any)."
+        },
+        "getOpenedToolPanel": {
+            "description": "Returns the ID of the currently shown tool panel if any, otherwise `null`."
+        },
         "isToolPanelShowing": {
             "description": "Returns `true` if the tool panel is showing, otherwise `false`."
+        },
+        "refreshToolPanel": {
+            "description": "Force refresh all tool panels by calling their `refresh` method."
         },
         "getToolPanelInstance": {
             "description": "Gets the tool panel instance corresponding to the supplied `id`.",
             "more": {
-                "name": "Expand / Collapse Column Groups",
+                "name": "Tool Panel Expand / Collapse Column Groups",
                 "url": "/tool-panel-columns/#expand--collapse-column-groups"
             }
         }

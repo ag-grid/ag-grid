@@ -11,9 +11,9 @@ The side bar is configured using the grid property `sideBar`. The property takes
 
 | Type                       | Description                                                                                        |
 | -------------------------- | -------------------------------------------------------------------------------------------------- |
-| undefined                  | No side bar provided.                                                                              |
+| undefined / null           | No side bar provided.                                                                              |
 | boolean                    | Set to `true` to display the side bar with default configuration.                       |
-| string                     | Set to 'columns' or 'filters' to display side bar with just one of Columns or Filters tool panels. |
+| string                     | Set to `'columns'` or `'filters'` to display side bar with just one of [Columns](/tool-panel-columns/) or [Filters](/tool-panel-filters/) tool panels. |
 | SideBarDef<br/>(long form) | An object of type `SideBarDef` (explained below) to allow detailed configuration of the side bar. Use this to configure the provided tool panels (e.g. pass parameters to the columns or filters panel) or to include custom tool panels. |
 
 
@@ -44,16 +44,15 @@ The example below demonstrates using the string configuration. Note the followin
 
 ### SideBarDef Configuration
 
-The previous configurations are shortcuts for the full fledged configuration using a `SideBarDef` object. For full control over the configuration, you must provide a `SideBarDef` object. The properties of `SideBarDef` are as follows:
+The previous configurations are shortcuts for the full fledged configuration using a `SideBarDef` object. For full control over the configuration, you must provide a `SideBarDef` object.
 
-<api-documentation source='side-bar/resources/sideBar.json' section='sideBarProperties'></api-documentation>
+<interface-documentation interfaceName='SideBarDef' overridesrc='side-bar/resources/sideBar.json'></interface-documentation>
 
-Each panel has the following properties:
+The `toolPanels` property follows the `ToolPanelDef` interface:
 
-<api-documentation source='side-bar/resources/sideBar.json' section='toolPanelProperties'></api-documentation>
+<interface-documentation interfaceName='ToolPanelDef' overridesrc='side-bar/resources/sideBar.json'></interface-documentation>
 
 The following snippet shows configuring the tool panel using a `SideBarDef` object:
-
 
 <snippet>
 const gridOptions = {
@@ -226,7 +225,7 @@ This example configures the columns tool panel. See the [columns tool panel](/to
 
 The list below details all the API methods relevant to the tool panel.
 
-<api-documentation source='side-bar/resources/sideBar.json' section='toolPanelApi'></api-documentation>
+<api-documentation source='grid-api/api.json' section='accessories' names='["setSideBar","getSideBar","setSideBarVisible","isSideBarVisible","setSideBarPosition","openToolPanel","closeToolPanel","getOpenedToolPanel","isToolPanelShowing","refreshToolPanel", "getToolPanelInstance"]'></api-documentation>
 
 The example below demonstrates different usages of the tool panel API methods. The following can be noted:
 

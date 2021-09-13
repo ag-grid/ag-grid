@@ -1150,6 +1150,19 @@
                 "include": []
             }
         },
+        "sideBar": {
+            "description": "Specifies the side bar components.",
+            "more": {
+                "name": "Side Bar",
+                "url": "/side-bar/"
+            },
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "IToolPanelComp"
+                ],
+                "include": []
+            }
+        },
         "suppressContextMenu": {
             "default": false,
             "description": "Set to `true` to not show the context menu. Use if you don't want to use the default 'right click' context menu.",
