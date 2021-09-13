@@ -35,7 +35,7 @@ const VanillaBody = ({ library, appLocation, options, scriptFiles, indexFragment
 
     if (library === 'charts') {
         scriptPath = isUsingPublishedPackages() ?
-            `https://unpkg.com/ag-charts-community@${agChartsVersion}/dist/ag-charts-community.min.js` :
+            `https://unpkg.com/ag-charts-community@4.0.1/dist/ag-charts-community.min.js` :
             `${localPrefix}/ag-charts-community/dist/ag-charts-community.js`;
     } else {
         if (options.enterprise) {
