@@ -69,5 +69,5 @@ export interface ICellRenderer {
 export interface ICellRendererComp extends ICellRenderer, IComponent<ICellRendererParams> { }
 
 export interface ICellRendererFunc {
-    (params: any): HTMLElement | string;
+    (params: ICellRendererParams): HTMLElement | string;
 }
