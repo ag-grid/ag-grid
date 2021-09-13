@@ -4,12 +4,13 @@ import { MutableRefObject } from 'react';
 export const showJsComp = (
     compDetails: UserCompDetails | undefined, 
     context: Context, eParent: HTMLElement, 
-    callCompFactory: (compFactory: UserComponentFactory) => AgPromise<IComponent<any>> | null,
     ref?: MutableRefObject<any>
 )  => {
 
     const doNothing = !compDetails || compDetails.componentFromFramework;
     if (doNothing) { return; }
+
+    const callCompFactory = (compFactory: UserComponentFactory) => compFactory.createInstanceFromCompDetails(compDetails);
 
     const comp = createJsComp(context, callCompFactory) as ICellRendererComp;
 

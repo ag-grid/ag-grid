@@ -23,8 +23,7 @@ const GroupCellRenderer = (props: GroupCellRendererParams) => {
     const [checkboxCssClasses, setCheckboxCssClasses] = useState<CssClasses>(new CssClasses());
 
     useEffect(() => {
-        return showJsComp(innerCompDetails, context, eValueRef.current!, 
-            compFactory => compFactory.createCellRenderer(innerCompDetails!));
+        return showJsComp(innerCompDetails, context, eValueRef.current!);
     }, [innerCompDetails]);
 
     useEffect( ()=> {

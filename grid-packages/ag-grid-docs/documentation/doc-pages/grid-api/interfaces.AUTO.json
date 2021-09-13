@@ -84,7 +84,8 @@
     "type": {
       "componentClass": "any",
       "componentFromFramework": "boolean",
-      "params": "any"
+      "params": "any",
+      "type": "ComponentType"
     }
   },
   "RegisteredComponent": {

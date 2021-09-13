@@ -50,7 +50,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     private setRenderDetails(compDetails: UserCompDetails | undefined, valueToDisplay: any): void {
 
         if (compDetails) {
-            const componentPromise = this.userComponentFactory.createCellRenderer(compDetails);
+            const componentPromise = this.userComponentFactory.createInstanceFromCompDetails(compDetails);
             if (!componentPromise) { return; }
             componentPromise.then( comp => {
                 if (!comp) { return; }

@@ -136,7 +136,8 @@
     "componentFromFramework": {
       "type": { "returnType": "boolean", "optional": false }
     },
-    "params": { "type": { "returnType": "any", "optional": false } }
+    "params": { "type": { "returnType": "any", "optional": false } },
+    "type": { "type": { "returnType": "ComponentType", "optional": false } }
   },
   "RegisteredComponent": {
     "component": { "type": { "returnType": "any", "optional": false } },

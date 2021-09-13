@@ -89,7 +89,7 @@ export class RowComp extends Component {
         };
 
         // if not in cache, create new one
-        const res = this.beans.userComponentFactory.createFullWidthCellRenderer(compDetails, this.rowCtrl.getFullWidthCellRendererType());
+        const res = this.beans.userComponentFactory.createInstanceFromCompDetails(compDetails, this.rowCtrl.getFullWidthCellRendererType());
 
         if (!res) { return; }
 
