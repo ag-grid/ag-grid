@@ -466,7 +466,7 @@
       "type": { "returnType": "ToolPanelClass", "optional": true }
     },
     "headerValueGetter": {
-      "description": "/** Expression or function to get the cells value. */",
+      "description": "/** Expression or function to get the value for display in the header. */",
       "type": {
         "returnType": "string | HeaderValueGetterFunc",
         "optional": true
@@ -558,7 +558,7 @@
       "type": { "returnType": "ToolPanelClass", "optional": true }
     },
     "headerValueGetter": {
-      "description": "/** Expression or function to get the cells value. */",
+      "description": "/** Expression or function to get the value for display in the header. */",
       "type": {
         "returnType": "string | HeaderValueGetterFunc",
         "optional": true
@@ -1180,7 +1180,7 @@
       "type": { "returnType": "ToolPanelClass", "optional": true }
     },
     "headerValueGetter": {
-      "description": "/** Expression or function to get the cells value. */",
+      "description": "/** Expression or function to get the value for display in the header. */",
       "type": {
         "returnType": "string | HeaderValueGetterFunc",
         "optional": true
@@ -4261,7 +4261,9 @@
       "description": "/** The number of header rows present in the grid */",
       "type": { "returnType": "number", "optional": false }
     },
-    "event": { "type": { "returnType": "KeyboardEvent", "optional": false } }
+    "event": { "type": { "returnType": "KeyboardEvent", "optional": false } },
+    "api": { "type": { "returnType": "GridApi", "optional": false } },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
   },
   "TabToNextHeaderParams": {
     "backwards": {
@@ -4279,7 +4281,9 @@
     "headerRowCount": {
       "description": "/** The number of header rows present in the grid */",
       "type": { "returnType": "number", "optional": false }
-    }
+    },
+    "api": { "type": { "returnType": "GridApi", "optional": false } },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
   },
   "NavigateToNextCellParams": {
     "key": {
@@ -4296,7 +4300,9 @@
     },
     "event": {
       "type": { "returnType": "KeyboardEvent | null", "optional": false }
-    }
+    },
+    "api": { "type": { "returnType": "GridApi", "optional": false } },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
   },
   "TabToNextCellParams": {
     "backwards": {
@@ -4312,9 +4318,11 @@
       "type": { "returnType": "CellPosition", "optional": false }
     },
     "nextCellPosition": {
-      "description": "/** The cell the grid would normally pick as the next cell for navigation */",
-      "type": { "returnType": "CellPosition", "optional": false }
-    }
+      "description": "/** The cell the grid would normally pick as the next cell for navigation. */",
+      "type": { "returnType": "CellPosition | null", "optional": false }
+    },
+    "api": { "type": { "returnType": "GridApi", "optional": false } },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
   },
   "PostProcessPopupParams": {
     "column": {
@@ -7476,14 +7484,22 @@
     }
   },
   "NavigateParams": {
-    "scrollIndex": { "type": { "returnType": "number", "optional": false } },
+    "scrollIndex": {
+      "description": "/** The rowIndex to vertically scroll to. */",
+      "type": { "returnType": "number", "optional": false }
+    },
     "scrollType": {
+      "description": "/** The position to put scroll index. */",
       "type": { "returnType": "'top' | 'bottom' | null", "optional": false }
     },
     "scrollColumn": {
+      "description": "/** The column to horizontally scroll to. */",
       "type": { "returnType": "Column | null", "optional": false }
     },
-    "focusIndex": { "type": { "returnType": "number", "optional": false } },
+    "focusIndex": {
+      "description": "/** For page up/down, we want to scroll to one row/column but focus another (ie. scrollRow could be stub). */",
+      "type": { "returnType": "number", "optional": false }
+    },
     "focusColumn": { "type": { "returnType": "Column", "optional": false } }
   },
   "RenderParams": {

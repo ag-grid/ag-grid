@@ -95,7 +95,7 @@ import { AgChartOptions, AgChartTheme, AgChartThemeOverrides } from "../interfac
 import { ServerSideTransaction } from "../interfaces/serverSideTransaction";
 import { HeaderPosition } from "../headerRendering/common/headerPosition";
 import { ExcelExportParams, ExcelStyle } from "../interfaces/iExcelCreator";
-import {ILoadingCellRendererParams} from "../rendering/cellRenderers/loadingCellRenderer";
+import { ILoadingCellRendererParams } from "../rendering/cellRenderers/loadingCellRenderer";
 
 export interface GridOptions {
     // ******************************************************************************************************
@@ -838,6 +838,8 @@ export interface NavigateToNextHeaderParams {
     /** The number of header rows present in the grid */
     headerRowCount: number;
     event: KeyboardEvent;
+    api: GridApi;
+    columnApi: ColumnApi;
 }
 
 export interface TabToNextHeaderParams {
@@ -849,6 +851,8 @@ export interface TabToNextHeaderParams {
     nextHeaderPosition: HeaderPosition | null;
     /** The number of header rows present in the grid */
     headerRowCount: number;
+    api: GridApi;
+    columnApi: ColumnApi;
 }
 
 export interface NavigateToNextCellParams {
@@ -861,6 +865,8 @@ export interface NavigateToNextCellParams {
     nextCellPosition: CellPosition | null;
 
     event: KeyboardEvent | null;
+    api: GridApi;
+    columnApi: ColumnApi;
 }
 
 export interface TabToNextCellParams {
@@ -871,8 +877,10 @@ export interface TabToNextCellParams {
     editing: boolean;
     /** The cell that currently has focus */
     previousCellPosition: CellPosition;
-    /** The cell the grid would normally pick as the next cell for navigation */
-    nextCellPosition: CellPosition;
+    /** The cell the grid would normally pick as the next cell for navigation.  */
+    nextCellPosition: CellPosition | null;
+    api: GridApi;
+    columnApi: ColumnApi;
 }
 
 export interface PostProcessPopupParams {

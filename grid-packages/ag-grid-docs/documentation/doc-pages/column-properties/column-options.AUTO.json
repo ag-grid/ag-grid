@@ -16,7 +16,7 @@
     "type": { "returnType": "ToolPanelClass" }
   },
   "headerValueGetter": {
-    "description": "/** Expression or function to get the cells value. */",
+    "description": "/** Expression or function to get the value for display in the header. */",
     "type": { "returnType": "string | HeaderValueGetterFunc" }
   },
   "pivotKeys": {
