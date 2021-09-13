@@ -52,6 +52,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
     private refreshFunctions: (() => void)[] = [];
 
+    private selectAllFeature: SelectAllFeature;
+
     private sortable: boolean | null | undefined;
     private displayName: string | null;
     private draggable: boolean;
@@ -103,8 +105,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.createManagedBean(new ResizeFeature(this.getPinned(), this.column, eResize, comp, this));
     }
 
-    private selectAllFeature: SelectAllFeature;
-
     private setupSelectAll(): void {
         this.selectAllFeature = this.createManagedBean(new SelectAllFeature(this.column));
         this.selectAllFeature.setComp(this.comp);
@@ -115,28 +115,27 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {
+        if (e.keyCode === KeyCode.SPACE) {
+            this.selectAllFeature.onSpaceKeyPressed(e);
+        }
+        if (e.keyCode === KeyCode.ENTER) {
+            this.onEnterKeyPressed(e);
+        }
+    }
+
+    private onEnterKeyPressed(e: KeyboardEvent): void {
         /// THIS IS BAD - we are assuming the header is not a user provided comp
         const headerComp = this.comp.temp_getHeaderComp() as HeaderComp;
         if (!headerComp) { return; }
 
-        // if (e.keyCode === KeyCode.SPACE) {
-        //     const checkbox = this.cbSelectAll;
-        //     if (checkbox.isDisplayed() && !checkbox.getGui().contains(document.activeElement)) {
-        //         e.preventDefault();
-        //         checkbox.setValue(!checkbox.getValue());
-        //     }
-        // }
-
-        if (e.keyCode === KeyCode.ENTER) {
-            if (e.ctrlKey || e.metaKey) {
-                if (this.menuEnabled && headerComp.showMenu) {
-                    e.preventDefault();
-                    headerComp.showMenu();
-                }
-            } else if (this.sortable) {
-                const multiSort = e.shiftKey;
-                this.sortController.progressSort(this.column, multiSort, "uiColumnSorted");
+        if (e.ctrlKey || e.metaKey) {
+            if (this.menuEnabled && headerComp.showMenu) {
+                e.preventDefault();
+                headerComp.showMenu();
             }
+        } else if (this.sortable) {
+            const multiSort = e.shiftKey;
+            this.sortController.progressSort(this.column, multiSort, "uiColumnSorted");
         }
     }
 
