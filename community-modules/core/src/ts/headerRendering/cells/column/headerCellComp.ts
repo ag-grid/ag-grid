@@ -34,7 +34,6 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
         </div>`;
         // <ag-checkbox ref="cbSelectAll" class="ag-header-select-all" role="presentation"></ag-checkbox>
 
-    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('sortController') private sortController: SortController;
@@ -51,8 +50,6 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
     private headerCompGui: HTMLElement | undefined;
 
     private headerCompVersion = 0;
-
-    private moveDragSource: DragSource | undefined;
 
     private colDefHeaderComponent?: string | { new(): any; };
     private colDefHeaderComponentFramework?: any;
@@ -117,15 +114,15 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
             || this.colDefHeaderComponentFramework != colDef.headerComponentFramework;
 
         const headerCompRefreshed = newHeaderCompConfigured ? false : this.attemptHeaderCompRefresh();
+
         if (headerCompRefreshed) {
-            const dragSourceIsMissing = this.ctrl.temp_isDraggable() && !this.moveDragSource;
-            const dragSourceNeedsRemoving = !this.ctrl.temp_isDraggable() && this.moveDragSource;
-            if (dragSourceIsMissing || dragSourceNeedsRemoving) {
-                this.attachDraggingToHeaderComp();
-            }
+            // we do this as a refresh happens after colDefs change, and it's possible the column has had it's
+            // draggable property toggled. no need to call this if not refreshing, as setDragSource is done
+            // as part of appendHeaderComp
+            this.ctrl.setDragSource(this.headerCompGui!);
         } else {
             this.appendHeaderComp();
-        }
+        }        
     }
 
     @PreDestroy
@@ -134,14 +131,6 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
             this.getGui().removeChild(this.headerCompGui!);
             this.headerComp = this.destroyBean(this.headerComp);
             this.headerCompGui = undefined;
-        }
-        this.removeMoveDragSource();
-    }
-
-    private removeMoveDragSource(): void {
-        if (this.moveDragSource) {
-            this.dragAndDropService.removeDragSource(this.moveDragSource);
-            this.moveDragSource = undefined;
         }
     }
 
@@ -174,6 +163,8 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
         const params = this.createParams();
         const callback = this.afterHeaderCompCreated.bind(this, this.headerCompVersion);
         this.userComponentFactory.newHeaderComponent(params)!.then(callback);
+
+        this.ctrl.setDragSource(this.headerCompGui!);
     }
 
     private createParams(): IHeaderParams {
@@ -214,36 +205,5 @@ export class HeaderCellComp extends AbstractHeaderCellComp {
         this.headerComp = headerComp;
         this.headerCompGui = headerComp.getGui();
         this.getGui().appendChild(this.headerCompGui);
-
-        this.attachDraggingToHeaderComp();
-    }
-
-    private attachDraggingToHeaderComp(): void {
-
-        this.removeMoveDragSource();
-
-        if (!this.ctrl.temp_isDraggable()) { return; }
-
-        this.moveDragSource = {
-            type: DragSourceType.HeaderCell,
-            eElement: this.headerCompGui!,
-            defaultIconName: DragAndDropService.ICON_HIDE,
-            getDragItem: () => this.createDragItem(),
-            dragItemName: this.ctrl.temp_getDisplayName(),
-            onDragStarted: () => this.column.setMoving(true, "uiColumnMoved"),
-            onDragStopped: () => this.column.setMoving(false, "uiColumnMoved")
-        };
-
-        this.dragAndDropService.addDragSource(this.moveDragSource, true);
-    }
-
-    private createDragItem(): DragItem {
-        const visibleState: { [key: string]: boolean; } = {};
-        visibleState[this.column.getId()] = this.column.isVisible();
-
-        return {
-            columns: [this.column],
-            visibleState: visibleState
-        };
     }
 }

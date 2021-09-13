@@ -1,5 +1,5 @@
 import { ColumnModel } from "../../../columns/columnModel";
-import { Autowired } from "../../../context/context";
+import { Autowired, PreDestroy } from "../../../context/context";
 import { Column } from "../../../entities/column";
 import { IHeaderColumn } from "../../../entities/iHeaderColumn";
 import { Events } from "../../../eventKeys";
@@ -19,6 +19,7 @@ import { SortController } from "../../../sortController";
 import { IMenuFactory } from "../../../interfaces/iMenuFactory";
 import { HeaderComp, IHeaderComp } from "./headerComp";
 import { SelectAllFeature } from "./selectAllFeature";
+import { DragAndDropService, DragItem, DragSource, DragSourceType } from "../../../dragAndDrop/dragAndDropService";
 
 export interface IHeaderCellComp extends IAbstractHeaderCellComp, ITooltipFeatureComp {
     focus(): void;
@@ -41,6 +42,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     @Autowired('beans') protected beans: Beans;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
+    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
 
     private eGui: HTMLElement;
 
@@ -53,6 +55,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     private refreshFunctions: (() => void)[] = [];
 
     private selectAllFeature: SelectAllFeature;
+
+    private moveDragSource: DragSource | undefined;
 
     private sortable: boolean | null | undefined;
     private displayName: string | null;
@@ -186,20 +190,50 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         classes.forEach( c => this.comp.addOrRemoveCssClass(c, true) );
     }
 
-    public temp_isDraggable(): boolean {
-        return this.draggable;
-    }
-
-    public temp_isSortable(): boolean | null | undefined {
-        return this.sortable;
+    public getGui(): HTMLElement {
+        return this.eGui;
     }
 
     public temp_getDisplayName(): string | null {
         return this.displayName;
     }
 
-    public getGui(): HTMLElement {
-        return this.eGui;
+    public setDragSource(eSource: HTMLElement): void {
+        this.removeDragSource();
+
+        if (!eSource) { return; }
+
+        if (!this.draggable) { return; }
+
+        this.moveDragSource = {
+            type: DragSourceType.HeaderCell,
+            eElement: eSource,
+            defaultIconName: DragAndDropService.ICON_HIDE,
+            getDragItem: () => this.createDragItem(),
+            dragItemName: this.displayName,
+            onDragStarted: () => this.column.setMoving(true, "uiColumnMoved"),
+            onDragStopped: () => this.column.setMoving(false, "uiColumnMoved")
+        };
+
+        this.dragAndDropService.addDragSource(this.moveDragSource, true);
+    }
+
+    private createDragItem(): DragItem {
+        const visibleState: { [key: string]: boolean; } = {};
+        visibleState[this.column.getId()] = this.column.isVisible();
+
+        return {
+            columns: [this.column],
+            visibleState: visibleState
+        };
+    }
+
+    @PreDestroy
+    public removeDragSource(): void {
+        if (this.moveDragSource) {
+            this.dragAndDropService.removeDragSource(this.moveDragSource);
+            this.moveDragSource = undefined;
+        }
     }
 
     private onNewColumnsLoaded(): void {
@@ -342,10 +376,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         const listener = (e: MouseEvent) => this.setActiveHeader(e.type === 'mouseenter');
         this.addManagedListener(this.getGui(), 'mouseenter', listener);
         this.addManagedListener(this.getGui(), 'mouseleave', listener);
-    }
-
-    public temp_setActiveHeader(active: boolean): void {
-        this.setActiveHeader(active);
     }
 
     private setActiveHeader(active: boolean): void {
