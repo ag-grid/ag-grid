@@ -69,7 +69,7 @@ export class UserComponentFactory extends BeanStub {
     //////// NEW (after React UI)
 
     public getHeaderCompDetails(colDef: ColDef, params: IHeaderParams): UserCompDetails | undefined {
-        return this.getCompDetails(colDef, HeaderComponent, null, params);
+        return this.getCompDetails(colDef, HeaderComponent, 'agColumnHeader', params);
     }
 
     // this one is unusual, as it can be LoadingCellRenderer, DetailCellRenderer, FullWidthCellRenderer or GroupRowRenderer.
