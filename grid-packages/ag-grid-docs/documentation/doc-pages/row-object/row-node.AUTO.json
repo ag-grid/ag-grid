@@ -223,7 +223,7 @@
   },
   "setRowSelectable": { "type": { "arguments": { "newVal": "boolean" } } },
   "setId": {
-    "type": { "arguments": { "id": "string" }, "returnType": "void" }
+    "type": { "arguments": { "id?": "string" }, "returnType": "void" }
   },
   "isPixelInRange": {
     "type": { "arguments": { "pixel": "number" }, "returnType": "boolean" }
@@ -294,7 +294,7 @@
       "arguments": {
         "colKey": "string | Column",
         "newValue": "any",
-        "eventSource": "string"
+        "eventSource?": "string"
       },
       "returnType": "void"
     }
@@ -355,7 +355,7 @@
     }
   },
   "selectThisNode": {
-    "type": { "arguments": { "newValue": "boolean" }, "returnType": "boolean" }
+    "type": { "arguments": { "newValue?": "boolean" }, "returnType": "boolean" }
   },
   "addEventListener": {
     "type": {

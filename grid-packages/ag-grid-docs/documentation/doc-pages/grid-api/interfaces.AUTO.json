@@ -3951,7 +3951,7 @@
   "TextFormatter": {
     "meta": { "isCallSignature": true },
     "type": {
-      "arguments": { "from": "string | null" },
+      "arguments": { "from?": "string | null" },
       "returnType": "string | null"
     }
   },

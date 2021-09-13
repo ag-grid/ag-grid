@@ -13,7 +13,7 @@
   },
   "getColumnGroup": {
     "type": {
-      "arguments": { "name": "string", "instanceId": "number" },
+      "arguments": { "name": "string", "instanceId?": "number" },
       "returnType": "ColumnGroup | null"
     }
   },
@@ -155,7 +155,7 @@
         "key": "string | Column",
         "newWidth": "number",
         "finished": "boolean = true",
-        "source": "ColumnEventType"
+        "source?": "ColumnEventType"
       },
       "returnType": "void"
     }
@@ -165,7 +165,7 @@
       "arguments": {
         "columnWidths": "{ key: string | Column; newWidth: number; }[]",
         "finished": "boolean = true",
-        "source": "ColumnEventType"
+        "source?": "ColumnEventType"
       },
       "returnType": "void"
     }
@@ -292,18 +292,18 @@
   },
   "autoSizeColumn": {
     "type": {
-      "arguments": { "key": "string | Column", "skipHeader": "boolean" },
+      "arguments": { "key": "string | Column", "skipHeader?": "boolean" },
       "returnType": "void"
     }
   },
   "autoSizeColumns": {
     "type": {
-      "arguments": { "keys": "(string | Column)[]", "skipHeader": "boolean" },
+      "arguments": { "keys": "(string | Column)[]", "skipHeader?": "boolean" },
       "returnType": "void"
     }
   },
   "autoSizeAllColumns": {
-    "type": { "arguments": { "skipHeader": "boolean" }, "returnType": "void" }
+    "type": { "arguments": { "skipHeader?": "boolean" }, "returnType": "void" }
   },
   "setSecondaryColumns": {
     "type": {

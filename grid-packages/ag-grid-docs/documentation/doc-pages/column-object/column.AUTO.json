@@ -132,7 +132,7 @@
   },
   "setSortIndex": {
     "type": {
-      "arguments": { "sortOrder": "number | null" },
+      "arguments": { "sortOrder?": "number | null" },
       "returnType": "void"
     }
   },
@@ -165,7 +165,7 @@
       "arguments": {
         "active": "boolean",
         "source": "ColumnEventType = \"api\"",
-        "additionalEventAttributes": "any"
+        "additionalEventAttributes?": "any"
       },
       "returnType": "void"
     }

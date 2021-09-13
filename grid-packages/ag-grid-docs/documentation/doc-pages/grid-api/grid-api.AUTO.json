@@ -36,31 +36,31 @@
   },
   "getDataAsCsv": {
     "type": {
-      "arguments": { "params": "CsvExportParams" },
+      "arguments": { "params?": "CsvExportParams" },
       "returnType": "string | undefined"
     }
   },
   "exportDataAsCsv": {
     "type": {
-      "arguments": { "params": "CsvExportParams" },
+      "arguments": { "params?": "CsvExportParams" },
       "returnType": "void"
     }
   },
   "getDataAsExcel": {
     "type": {
-      "arguments": { "params": "ExcelExportParams" },
+      "arguments": { "params?": "ExcelExportParams" },
       "returnType": "string | Blob | undefined"
     }
   },
   "exportDataAsExcel": {
     "type": {
-      "arguments": { "params": "ExcelExportParams" },
+      "arguments": { "params?": "ExcelExportParams" },
       "returnType": "void"
     }
   },
   "getSheetDataForExcel": {
     "type": {
-      "arguments": { "params": "ExcelExportParams" },
+      "arguments": { "params?": "ExcelExportParams" },
       "returnType": "string | undefined"
     }
   },
@@ -244,13 +244,13 @@
     }
   },
   "onGroupExpandedOrCollapsed": {
-    "type": { "arguments": { "deprecated_refreshFromIndex": "any" } }
+    "type": { "arguments": { "deprecated_refreshFromIndex?": "any" } }
   },
   "refreshInMemoryRowModel": {
-    "type": { "arguments": { "step": "string" }, "returnType": "any" }
+    "type": { "arguments": { "step?": "string" }, "returnType": "any" }
   },
   "refreshClientSideRowModel": {
-    "type": { "arguments": { "step": "string" }, "returnType": "any" }
+    "type": { "arguments": { "step?": "string" }, "returnType": "any" }
   },
   "isAnimationFrameQueueEmpty": {
     "type": { "arguments": {}, "returnType": "boolean" }
@@ -353,7 +353,7 @@
     "type": { "arguments": { "key": "string | Column" } }
   },
   "ensureIndexVisible": {
-    "type": { "arguments": { "index": "any", "position": "string | null" } }
+    "type": { "arguments": { "index": "any", "position?": "string | null" } }
   },
   "ensureNodeVisible": {
     "type": {
@@ -385,7 +385,7 @@
     "type": {
       "arguments": {
         "key": "string | Column",
-        "callback": "(filter: IFilterComp) => void"
+        "callback?": "(filter: IFilterComp) => void"
       },
       "returnType": "IFilterComp | null | undefined"
     }
@@ -421,7 +421,7 @@
       "arguments": {
         "rowIndex": "number",
         "colKey": "string | Column",
-        "floating": "string"
+        "floating?": "string"
       }
     }
   },
@@ -452,7 +452,7 @@
       "returnType": "RowDropZoneParams"
     }
   },
-  "setHeaderHeight": { "type": { "arguments": { "headerHeight": "number" } } },
+  "setHeaderHeight": { "type": { "arguments": { "headerHeight?": "number" } } },
   "setDomLayout": { "type": { "arguments": { "domLayout": "string" } } },
   "setEnableCellTextSelection": {
     "type": { "arguments": { "selectable": "boolean" } }
@@ -842,7 +842,7 @@
     "type": {
       "arguments": {
         "chartModel": "ChartModel",
-        "chartContainer": "HTMLElement"
+        "chartContainer?": "HTMLElement"
       },
       "returnType": "ChartRef | undefined"
     }
@@ -857,7 +857,7 @@
     "type": {
       "arguments": {
         "includeHeader": "boolean",
-        "columnKeys": "(string | Column)[]"
+        "columnKeys?": "(string | Column)[]"
       },
       "returnType": "void"
     }
@@ -948,7 +948,7 @@
     "type": {
       "arguments": {
         "transaction": "ServerSideTransaction",
-        "callback": "(res: ServerSideTransactionResult) => void"
+        "callback?": "(res: ServerSideTransactionResult) => void"
       },
       "returnType": "void"
     }
@@ -974,7 +974,7 @@
     "type": {
       "arguments": {
         "rowDataTransaction": "RowDataTransaction",
-        "callback": "(res: RowNodeTransaction) => void"
+        "callback?": "(res: RowNodeTransaction) => void"
       },
       "returnType": "void"
     }
@@ -987,7 +987,7 @@
     "type": {
       "arguments": {
         "rowDataTransaction": "RowDataTransaction",
-        "callback": "(res: RowNodeTransaction) => void"
+        "callback?": "(res: RowNodeTransaction) => void"
       },
       "returnType": "void"
     }
@@ -1033,7 +1033,7 @@
   "purgeInfiniteCache": { "type": { "arguments": {}, "returnType": "void" } },
   "purgeEnterpriseCache": {
     "description": "/** @deprecated\n */",
-    "type": { "arguments": { "route": "string[]" }, "returnType": "void" }
+    "type": { "arguments": { "route?": "string[]" }, "returnType": "void" }
   },
   "purgeServerSideCache": {
     "description": "/** @deprecated\n */",
@@ -1062,19 +1062,19 @@
   },
   "setVirtualRowCount": {
     "type": {
-      "arguments": { "rowCount": "number", "maxRowFound": "boolean" },
+      "arguments": { "rowCount": "number", "maxRowFound?": "boolean" },
       "returnType": "void"
     }
   },
   "setInfiniteRowCount": {
     "type": {
-      "arguments": { "rowCount": "number", "maxRowFound": "boolean" },
+      "arguments": { "rowCount": "number", "maxRowFound?": "boolean" },
       "returnType": "void"
     }
   },
   "setRowCount": {
     "type": {
-      "arguments": { "rowCount": "number", "maxRowFound": "boolean" },
+      "arguments": { "rowCount": "number", "maxRowFound?": "boolean" },
       "returnType": "void"
     }
   },
@@ -1108,7 +1108,7 @@
     "type": { "arguments": {}, "returnType": "number" }
   },
   "paginationSetPageSize": {
-    "type": { "arguments": { "size": "number" }, "returnType": "void" }
+    "type": { "arguments": { "size?": "number" }, "returnType": "void" }
   },
   "paginationGetCurrentPage": {
     "type": { "arguments": {}, "returnType": "number" }
