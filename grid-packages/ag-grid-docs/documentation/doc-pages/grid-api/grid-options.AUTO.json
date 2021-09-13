@@ -430,6 +430,12 @@
   },
   "loadingCellRendererFramework": { "type": { "returnType": "any" } },
   "loadingCellRendererParams": { "type": { "returnType": "any" } },
+  "loadingCellRendererSelector": {
+    "type": {
+      "arguments": { "params": "ILoadingCellRendererParams" },
+      "returnType": "{ component?: { new (): ICellRenderer; } | string; frameworkComponent?: any; params?: any; } | undefined"
+    }
+  },
   "loadingOverlayComponent": {
     "type": { "returnType": "{ new(): ILoadingOverlayComp; } | string" }
   },

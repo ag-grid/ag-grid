@@ -1520,6 +1520,7 @@
       "loadingCellRenderer?": "{ new (): ICellRenderer; } | string",
       "loadingCellRendererFramework?": "any",
       "loadingCellRendererParams?": "any",
+      "loadingCellRendererSelector?": "(params: ILoadingCellRendererParams) => { component?: { new (): ICellRenderer; } | string; frameworkComponent?: any; params?: any; } | undefined",
       "loadingOverlayComponent?": "{ new (): ILoadingOverlayComp; } | string",
       "loadingOverlayComponentFramework?": "any",
       "loadingOverlayComponentParams?": "any",

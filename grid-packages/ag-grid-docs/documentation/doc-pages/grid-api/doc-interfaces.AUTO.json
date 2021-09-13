@@ -2685,6 +2685,13 @@
     "loadingCellRendererParams": {
       "type": { "returnType": "any", "optional": true }
     },
+    "loadingCellRendererSelector": {
+      "type": {
+        "arguments": { "params": "ILoadingCellRendererParams" },
+        "returnType": "{ component?: { new (): ICellRenderer; } | string; frameworkComponent?: any; params?: any; } | undefined",
+        "optional": true
+      }
+    },
     "loadingOverlayComponent": {
       "type": {
         "returnType": "{ new(): ILoadingOverlayComp; } | string",

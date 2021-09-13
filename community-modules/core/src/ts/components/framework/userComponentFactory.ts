@@ -78,18 +78,8 @@ export class UserComponentFactory extends BeanStub {
             params.columnGroup.getColGroupDef()!, params, HeaderGroupComponent, 'agColumnGroupHeader');
     }
 
-
     // this one is unusual, as it can be LoadingCellRenderer, DetailCellRenderer, FullWidthCellRenderer or GroupRowRenderer.
     // so we have to pass the type in.
-    public newFullWidthCellRenderer(
-        params: ICellRendererParams, cellRendererType: string, cellRendererName: string): AgPromise<ICellRendererComp> | null {
-        return this.lookupAndCreateComponent(
-            this.gridOptions,
-            params,
-            { propertyName: cellRendererType, isCellRenderer: () => true },
-            cellRendererName);
-    }
-
     public getFullWidthCellRendererDetails(params: ICellRendererParams, cellRendererType: string, cellRendererName: string): UserCompDetails | undefined {
         return this.getCompDetails(this.gridOptions, cellRendererType, cellRendererName, params);
     }
@@ -113,16 +103,6 @@ export class UserComponentFactory extends BeanStub {
         return this.getCompDetails(def, InnerRendererComponent.propertyName, null, params);
     }
 
-    // delete this one
-    public newFullWidthGroupRowInnerCellRenderer(params: ICellRendererParams): AgPromise<ICellRendererComp> | null {
-        return this.lookupAndCreateComponent(this.gridOptions.groupRowRendererParams, params, InnerRendererComponent, null, true);
-    }
-
-    // delete this one
-    public newInnerCellRenderer(def: GroupCellRendererParams, params: ICellRendererParams): AgPromise<ICellRendererComp> | null {
-        return this.lookupAndCreateComponent(def, params, InnerRendererComponent, null);
-    }
-
     public getCellRendererDetails(def: ColDef | IRichCellEditorParams, params: ICellRendererParams): UserCompDetails | undefined {
         return this.getCompDetails(def, CellRendererComponent.propertyName, null, params);
     }
@@ -132,9 +112,6 @@ export class UserComponentFactory extends BeanStub {
     }
 
     // CELL EDITOR
-    public newCellEditor(colDef: ColDef, params: ICellEditorParams): AgPromise<ICellEditorComp> | null {
-        return this.lookupAndCreateComponent(colDef, params, CellEditorComponent, 'agCellEditor');
-    }
     public getCellEditorDetails(def: ColDef, params: ICellEditorParams): UserCompDetails | undefined {
         return this.getCompDetails(def, CellEditorComponent.propertyName, 'agCellEditor', params, true);
     }
