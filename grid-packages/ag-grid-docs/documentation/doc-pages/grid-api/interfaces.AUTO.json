@@ -8457,7 +8457,7 @@
   "ICellRendererFunc": {
     "meta": { "isCallSignature": true },
     "type": {
-      "arguments": { "params": "any" },
+      "arguments": { "params": "ICellRendererParams" },
       "returnType": "HTMLElement | string"
     }
   },
