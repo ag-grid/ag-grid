@@ -1,5 +1,5 @@
 import { describe, expect, test, it } from "@jest/globals";
-import { isNumber, isContinuous } from "./value";
+import { isNumber, isContinuous, isComparable } from "./value";
 
 test('isNumber', () => {
     expect(isNumber(1)).toBe(true);
@@ -42,4 +42,27 @@ test('isContinuous', () => {
     expect(isContinuous(Symbol.iterator)).toBe(false);
     expect(isContinuous(Infinity)).toBe(false);
     expect(isContinuous(-Infinity)).toBe(false);
+});
+
+test('isComparable', () => {
+    expect({
+        valueOf: () => 'A'
+    } < {
+        valueOf: () => 'B'
+    }).toBe(true);
+    expect({
+        toString: () => 'C'
+    } < {
+        toString: () => 'B'
+    }).toBe(false);
+    expect(isComparable(0)).toBe(true);
+    expect(isComparable(-1)).toBe(true);
+    expect(isComparable(1)).toBe(true);
+    expect(isComparable('A')).toBe(true);
+    expect(isComparable({
+        toString: () => 'A'
+    })).toBe(true);
+    expect(isComparable({
+        valueOf: () => 'A'
+    })).toBe(true);
 });

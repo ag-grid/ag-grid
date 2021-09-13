@@ -55,6 +55,7 @@ export interface UserCompDetails {
     componentClass: any;
     componentFromFramework: boolean;
     params: any;
+    type: ComponentType;
 }
 
 @Bean('userComponentFactory')
@@ -65,6 +66,41 @@ export class UserComponentFactory extends BeanStub {
     @Autowired('userComponentRegistry') private readonly userComponentRegistry: UserComponentRegistry;
     @Optional('frameworkComponentWrapper') private readonly frameworkComponentWrapper: FrameworkComponentWrapper;
 
+    //////// NEW (after React UI)
+
+    public getHeaderCompDetails(colDef: ColDef, params: IHeaderParams): UserCompDetails | undefined {
+        return this.getCompDetails(colDef, HeaderComponent, null, params);
+    }
+
+    // this one is unusual, as it can be LoadingCellRenderer, DetailCellRenderer, FullWidthCellRenderer or GroupRowRenderer.
+    // so we have to pass the type in.
+    public getFullWidthCellRendererDetails(params: ICellRendererParams, cellRendererType: string, cellRendererName: string): UserCompDetails | undefined {
+        return this.getCompDetails(this.gridOptions, { propertyName: cellRendererType, isCellRenderer: () => true }, cellRendererName, params);
+    }
+
+    // CELL RENDERER
+    public getInnerRendererDetails(def: GroupCellRendererParams, params: ICellRendererParams): UserCompDetails | undefined {
+        return this.getCompDetails(def, InnerRendererComponent, null, params);
+    }
+    public getFullWidthGroupRowInnerCellRenderer(def: any, params: ICellRendererParams): UserCompDetails | undefined {
+        return this.getCompDetails(def, InnerRendererComponent, null, params);
+    }
+    public getCellRendererDetails(def: ColDef | IRichCellEditorParams, params: ICellRendererParams): UserCompDetails | undefined {
+        return this.getCompDetails(def, CellRendererComponent, null, params);
+    }
+
+    // CELL EDITOR
+    public getCellEditorDetails(def: ColDef, params: ICellEditorParams): UserCompDetails | undefined {
+        return this.getCompDetails(def, CellEditorComponent, 'agCellEditor', params, true);
+    }
+
+    //////// OLD (before React UI)
+    public newCellRenderer(
+        def: ColDef | IRichCellEditorParams,
+        params: ICellRendererParams): AgPromise<ICellRendererComp> | null {
+        return this.lookupAndCreateComponent(def, params, CellRendererComponent, null, true);
+    }
+    
     public newDateComponent(params: IDateParams): AgPromise<IDateComp> | null {
         return this.lookupAndCreateComponent(this.gridOptions, params, DateComponent, 'agDateInput');
     }
@@ -76,47 +112,6 @@ export class UserComponentFactory extends BeanStub {
     public newHeaderGroupComponent(params: IHeaderGroupParams): AgPromise<IHeaderGroupComp> | null {
         return this.lookupAndCreateComponent(
             params.columnGroup.getColGroupDef()!, params, HeaderGroupComponent, 'agColumnGroupHeader');
-    }
-
-    // this one is unusual, as it can be LoadingCellRenderer, DetailCellRenderer, FullWidthCellRenderer or GroupRowRenderer.
-    // so we have to pass the type in.
-    public getFullWidthCellRendererDetails(params: ICellRendererParams, cellRendererType: string, cellRendererName: string): UserCompDetails | undefined {
-        return this.getCompDetails(this.gridOptions, cellRendererType, cellRendererName, params);
-    }
-
-    public createFullWidthCellRenderer(userCompDetails: UserCompDetails, cellRendererType: string): AgPromise<ICellRendererComp> | null {
-        return this.createAndInitComponent(userCompDetails, { propertyName: cellRendererType, isCellRenderer: () => true })
-    }
-
-    // CELL RENDERER
-    public newCellRenderer(
-        def: ColDef | IRichCellEditorParams,
-        params: ICellRendererParams): AgPromise<ICellRendererComp> | null {
-        return this.lookupAndCreateComponent(def, params, CellRendererComponent, null, true);
-    }
-
-    public getInnerRendererDetails(def: GroupCellRendererParams, params: ICellRendererParams): UserCompDetails | undefined {
-        return this.getCompDetails(def, InnerRendererComponent.propertyName, null, params);
-    }
-
-    public getFullWidthGroupRowInnerCellRenderer(def: any, params: ICellRendererParams): UserCompDetails | undefined {
-        return this.getCompDetails(def, InnerRendererComponent.propertyName, null, params);
-    }
-
-    public getCellRendererDetails(def: ColDef | IRichCellEditorParams, params: ICellRendererParams): UserCompDetails | undefined {
-        return this.getCompDetails(def, CellRendererComponent.propertyName, null, params);
-    }
-
-    public createCellRenderer(userCompDetails: UserCompDetails): AgPromise<ICellRendererComp> | null {
-        return this.createAndInitComponent(userCompDetails, CellRendererComponent)
-    }
-
-    // CELL EDITOR
-    public getCellEditorDetails(def: ColDef, params: ICellEditorParams): UserCompDetails | undefined {
-        return this.getCompDetails(def, CellEditorComponent.propertyName, 'agCellEditor', params, true);
-    }
-    public createCellEditor(compClassAndParams: UserCompDetails): AgPromise<ICellEditorComp> | null {
-        return this.createAndInitComponent(compClassAndParams, CellEditorComponent)
     }
 
 
@@ -154,8 +149,11 @@ export class UserComponentFactory extends BeanStub {
         return this.lookupAndCreateComponent(def, params, StatusPanelComponent);
     }
 
-    private getCompDetails(defObject: DefinitionObject, propName: string, defaultName: string | null | undefined, params: any, mandatory = false): UserCompDetails | undefined {
-        const compDetails = this.lookupComponent(defObject, propName, params, defaultName);
+
+
+    private getCompDetails(defObject: DefinitionObject, type: ComponentType, defaultName: string | null | undefined, params: any, mandatory = false): UserCompDetails | undefined {
+        const propName = type.propertyName;
+        const compDetails = this.lookupComponent(defObject, type, params, defaultName);
         if (!compDetails || !compDetails.componentClass) {
             if (mandatory) {
                 this.logComponentMissing(defObject, propName);
@@ -192,21 +190,21 @@ export class UserComponentFactory extends BeanStub {
         optional = false
     ): AgPromise<any> | null {
 
-        const compClassAndParams = this.getCompDetails(
-            def, componentType.propertyName, defaultComponentName, paramsFromGrid, !optional);
+        const compDetails = this.getCompDetails(
+            def, componentType, defaultComponentName, paramsFromGrid, !optional);
 
-        if (!compClassAndParams) { return null; }
+        if (!compDetails) { return null; }
 
-        return this.createAndInitComponent(compClassAndParams, componentType, defaultComponentName);
+        return this.createInstanceFromCompDetails(compDetails, defaultComponentName);
     }
 
-    private createAndInitComponent(compClassAndParams: UserCompDetails, componentType: ComponentType, defaultComponentName?: string | null): AgPromise<any> | null {
-        if (!compClassAndParams) { return null; }
+    public createInstanceFromCompDetails(compDetails: UserCompDetails, defaultComponentName?: string | null): AgPromise<any> | null {
+        if (!compDetails) { return null; }
 
-        const {params, componentClass, componentFromFramework} = compClassAndParams;
+        const {params, componentClass, componentFromFramework} = compDetails;
 
         // Create the component instance
-        const instance = this.createComponentInstance(componentType, defaultComponentName, componentClass, componentFromFramework);
+        const instance = this.createComponentInstance(compDetails.type, defaultComponentName, componentClass, componentFromFramework);
         if (!instance) { return null; }
 
         this.addReactHacks(params);
@@ -253,8 +251,10 @@ export class UserComponentFactory extends BeanStub {
         return internalComponent;
     }
 
-    public lookupComponent(defObject: DefinitionObject, propertyName: string,
+    private lookupComponent(defObject: DefinitionObject, type: ComponentType,
                             params: any = null, defaultComponentName?: string | null): UserCompDetails | null {
+
+        const propertyName = type.propertyName;
 
         let paramsFromSelector: any;
         let comp: any;
@@ -316,7 +316,8 @@ export class UserComponentFactory extends BeanStub {
         return {
             componentFromFramework: comp == null,
             componentClass: comp ? comp : frameworkComp,
-            params: paramsFromSelector
+            params: paramsFromSelector,
+            type: type
         };
     }
 

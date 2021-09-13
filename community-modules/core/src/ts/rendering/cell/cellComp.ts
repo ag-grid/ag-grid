@@ -254,7 +254,7 @@ export class CellComp extends Component implements TooltipParentComp {
     private createCellEditorInstance(compDetails: UserCompDetails, popup?: boolean, position?: string): void {
         const versionCopy = this.editorVersion;
 
-        const cellEditorPromise = this.beans.userComponentFactory.createCellEditor(compDetails);
+        const cellEditorPromise = this.beans.userComponentFactory.createInstanceFromCompDetails(compDetails);
         if (!cellEditorPromise) { return; } // if empty, userComponentFactory already did a console message
 
         const { params } = compDetails;
@@ -366,7 +366,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
             // this can return null in the event that the user has switched from a renderer component to nothing, for example
             // when using a cellRendererSelect to return a component or null depending on row data etc
-            const componentPromise = this.beans.userComponentFactory.createCellRenderer(compClassAndParams);
+            const componentPromise = this.beans.userComponentFactory.createInstanceFromCompDetails(compClassAndParams);
             const callback = this.afterCellRendererCreated.bind(this, displayComponentVersionCopy, componentClass);
             if (componentPromise) {
                 componentPromise.then(callback);
