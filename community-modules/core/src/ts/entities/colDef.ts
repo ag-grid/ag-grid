@@ -27,7 +27,7 @@ export interface AbstractColDef {
     headerClass?: HeaderClass;
     /** CSS class for the toolPanel */
     toolPanelClass?: ToolPanelClass;
-    /** Expression or function to get the cells value. */
+    /** Expression or function to get the value for display in the header. */
     headerValueGetter?: string | HeaderValueGetterFunc;
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
     pivotKeys?: string[];

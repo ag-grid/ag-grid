@@ -97,7 +97,7 @@ export class AgGridColumn {
     @Input() public headerClass: HeaderClass | undefined = undefined;
     /** CSS class for the toolPanel     */
     @Input() public toolPanelClass: ToolPanelClass | undefined = undefined;
-    /** Expression or function to get the cells value.     */
+    /** Expression or function to get the value for display in the header.     */
     @Input() public headerValueGetter: string | HeaderValueGetterFunc | undefined = undefined;
     /** Group ID     */
     @Input() public groupId: string | undefined = undefined;
