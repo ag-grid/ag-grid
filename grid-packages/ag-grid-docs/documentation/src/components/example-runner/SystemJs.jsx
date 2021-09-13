@@ -161,9 +161,9 @@ const publishedConfiguration = {
         /* END OF GRID ENTERPRISE MODULES PATHS PROD - DO NOT DELETE */
     },
     chartMap: {
-        "ag-charts-react": `https://unpkg.com/ag-charts-react@4.0.1/`,
-        "ag-charts-angular": `https://unpkg.com/ag-charts-angular@4.0.1/`,
-        "ag-charts-vue": `https://unpkg.com/ag-charts-vue@4.0.1/`,
+        "ag-charts-react": `https://unpkg.com/ag-charts-react@4.0.0/`,
+        "ag-charts-angular": `https://unpkg.com/ag-charts-angular@4.0.0/`,
+        "ag-charts-vue": `https://unpkg.com/ag-charts-vue@4.0.0/`,
         "ag-charts-community": `https://unpkg.com/ag-charts-community@4.0.1/dist/ag-charts-community.cjs.js`,
     },
     chartPaths: {}
