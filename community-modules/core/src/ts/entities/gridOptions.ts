@@ -95,6 +95,7 @@ import { AgChartOptions, AgChartTheme, AgChartThemeOverrides } from "../interfac
 import { ServerSideTransaction } from "../interfaces/serverSideTransaction";
 import { HeaderPosition } from "../headerRendering/common/headerPosition";
 import { ExcelExportParams, ExcelStyle } from "../interfaces/iExcelCreator";
+import {ILoadingCellRendererParams} from "../rendering/cellRenderers/loadingCellRenderer";
 
 export interface GridOptions {
     // ******************************************************************************************************
@@ -415,6 +416,14 @@ export interface GridOptions {
     loadingCellRenderer?: { new(): ICellRenderer; } | string;
     loadingCellRendererFramework?: any;
     loadingCellRendererParams?: any;
+    loadingCellRendererSelector?: (params: ILoadingCellRendererParams) =>
+        {
+            component?: { new(): ICellRenderer; } | string;
+            /** Equivalent of setting `loadingCellRendererFramework` */
+            frameworkComponent?: any;
+            /** Equivalent of setting `loadingCellRendererParams` */
+            params?: any;
+        } | undefined
 
     loadingOverlayComponent?: { new(): ILoadingOverlayComp; } | string;
     loadingOverlayComponentFramework?: any;
