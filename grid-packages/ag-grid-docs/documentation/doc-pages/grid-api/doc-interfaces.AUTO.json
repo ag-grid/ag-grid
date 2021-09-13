@@ -100,7 +100,7 @@
           "methodList": "string[]",
           "optionalMethodList": "string[]",
           "componentType": "ComponentType",
-          "componentName": "string | null"
+          "componentName?": "string | null"
         },
         "returnType": "A",
         "optional": false
@@ -467,7 +467,7 @@
       "type": { "returnType": "ToolPanelClass", "optional": true }
     },
     "headerValueGetter": {
-      "description": "/** Expression or function to get the cells value. */",
+      "description": "/** Expression or function to get the value for display in the header. */",
       "type": {
         "returnType": "string | HeaderValueGetterFunc",
         "optional": true
@@ -559,7 +559,7 @@
       "type": { "returnType": "ToolPanelClass", "optional": true }
     },
     "headerValueGetter": {
-      "description": "/** Expression or function to get the cells value. */",
+      "description": "/** Expression or function to get the value for display in the header. */",
       "type": {
         "returnType": "string | HeaderValueGetterFunc",
         "optional": true
@@ -1181,7 +1181,7 @@
       "type": { "returnType": "ToolPanelClass", "optional": true }
     },
     "headerValueGetter": {
-      "description": "/** Expression or function to get the cells value. */",
+      "description": "/** Expression or function to get the value for display in the header. */",
       "type": {
         "returnType": "string | HeaderValueGetterFunc",
         "optional": true
@@ -4262,7 +4262,9 @@
       "description": "/** The number of header rows present in the grid */",
       "type": { "returnType": "number", "optional": false }
     },
-    "event": { "type": { "returnType": "KeyboardEvent", "optional": false } }
+    "event": { "type": { "returnType": "KeyboardEvent", "optional": false } },
+    "api": { "type": { "returnType": "GridApi", "optional": false } },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
   },
   "TabToNextHeaderParams": {
     "backwards": {
@@ -4280,7 +4282,9 @@
     "headerRowCount": {
       "description": "/** The number of header rows present in the grid */",
       "type": { "returnType": "number", "optional": false }
-    }
+    },
+    "api": { "type": { "returnType": "GridApi", "optional": false } },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
   },
   "NavigateToNextCellParams": {
     "key": {
@@ -4297,7 +4301,9 @@
     },
     "event": {
       "type": { "returnType": "KeyboardEvent | null", "optional": false }
-    }
+    },
+    "api": { "type": { "returnType": "GridApi", "optional": false } },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
   },
   "TabToNextCellParams": {
     "backwards": {
@@ -4313,9 +4319,11 @@
       "type": { "returnType": "CellPosition", "optional": false }
     },
     "nextCellPosition": {
-      "description": "/** The cell the grid would normally pick as the next cell for navigation */",
-      "type": { "returnType": "CellPosition", "optional": false }
-    }
+      "description": "/** The cell the grid would normally pick as the next cell for navigation. */",
+      "type": { "returnType": "CellPosition | null", "optional": false }
+    },
+    "api": { "type": { "returnType": "GridApi", "optional": false } },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
   },
   "PostProcessPopupParams": {
     "column": {
@@ -4484,8 +4492,8 @@
         "arguments": {
           "eventType": "string",
           "listener": "EventListener",
-          "async": "boolean",
-          "options": "AddEventListenerOptions"
+          "async?": "boolean",
+          "options?": "AddEventListenerOptions"
         },
         "returnType": "void",
         "optional": false
@@ -4496,8 +4504,8 @@
         "arguments": {
           "eventType": "string",
           "listener": "EventListener",
-          "async": "boolean",
-          "options": "AddEventListenerOptions"
+          "async?": "boolean",
+          "options?": "AddEventListenerOptions"
         },
         "returnType": "void",
         "optional": false
@@ -6509,7 +6517,7 @@
       "type": {
         "arguments": {
           "parentModel": "any",
-          "filterChangedEvent": "FilterChangedEvent | null"
+          "filterChangedEvent?": "FilterChangedEvent | null"
         },
         "returnType": "void",
         "optional": false
@@ -6521,7 +6529,7 @@
       "type": {
         "arguments": {
           "parentModel": "any",
-          "filterChangedEvent": "FilterChangedEvent | null"
+          "filterChangedEvent?": "FilterChangedEvent | null"
         },
         "returnType": "void",
         "optional": false
@@ -6542,7 +6550,7 @@
     "afterGuiAttached": {
       "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
       "type": {
-        "arguments": { "params": "IAfterGuiAttachedParams" },
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
         "returnType": "void",
         "optional": true
       }
@@ -6649,7 +6657,7 @@
     "filterChangedCallback": {
       "description": "/** A function callback to be called when the filter changes. The\n * grid will then respond by filtering the grid data. The callback\n * takes one optional parameter which, if included, will get merged\n * to the FilterChangedEvent object (useful for passing additional\n * information to anyone listening to this event, however such extra\n * attributes are not used by the grid). */",
       "type": {
-        "arguments": { "additionalEventAttributes": "any" },
+        "arguments": { "additionalEventAttributes?": "any" },
         "returnType": "void",
         "optional": false
       }
@@ -6766,7 +6774,7 @@
     "filterChangedCallback": {
       "description": "/** A function callback to be called when the filter changes. The\n * grid will then respond by filtering the grid data. The callback\n * takes one optional parameter which, if included, will get merged\n * to the FilterChangedEvent object (useful for passing additional\n * information to anyone listening to this event, however such extra\n * attributes are not used by the grid). */",
       "type": {
-        "arguments": { "additionalEventAttributes": "any" },
+        "arguments": { "additionalEventAttributes?": "any" },
         "returnType": "void",
         "optional": false
       }
@@ -6832,7 +6840,7 @@
     "filterChangedCallback": {
       "description": "/** A function callback to be called when the filter changes. The\n * grid will then respond by filtering the grid data. The callback\n * takes one optional parameter which, if included, will get merged\n * to the FilterChangedEvent object (useful for passing additional\n * information to anyone listening to this event, however such extra\n * attributes are not used by the grid). */",
       "type": {
-        "arguments": { "additionalEventAttributes": "any" },
+        "arguments": { "additionalEventAttributes?": "any" },
         "returnType": "void",
         "optional": false
       }
@@ -6937,7 +6945,7 @@
     "filterChangedCallback": {
       "description": "/** A function callback to be called when the filter changes. The\n * grid will then respond by filtering the grid data. The callback\n * takes one optional parameter which, if included, will get merged\n * to the FilterChangedEvent object (useful for passing additional\n * information to anyone listening to this event, however such extra\n * attributes are not used by the grid). */",
       "type": {
-        "arguments": { "additionalEventAttributes": "any" },
+        "arguments": { "additionalEventAttributes?": "any" },
         "returnType": "void",
         "optional": false
       }
@@ -7020,7 +7028,7 @@
     "filterChangedCallback": {
       "description": "/** A function callback to be called when the filter changes. The\n * grid will then respond by filtering the grid data. The callback\n * takes one optional parameter which, if included, will get merged\n * to the FilterChangedEvent object (useful for passing additional\n * information to anyone listening to this event, however such extra\n * attributes are not used by the grid). */",
       "type": {
-        "arguments": { "additionalEventAttributes": "any" },
+        "arguments": { "additionalEventAttributes?": "any" },
         "returnType": "void",
         "optional": false
       }
@@ -7132,7 +7140,7 @@
     "filterChangedCallback": {
       "description": "/** A function callback to be called when the filter changes. The\n * grid will then respond by filtering the grid data. The callback\n * takes one optional parameter which, if included, will get merged\n * to the FilterChangedEvent object (useful for passing additional\n * information to anyone listening to this event, however such extra\n * attributes are not used by the grid). */",
       "type": {
-        "arguments": { "additionalEventAttributes": "any" },
+        "arguments": { "additionalEventAttributes?": "any" },
         "returnType": "void",
         "optional": false
       }
@@ -7477,14 +7485,22 @@
     }
   },
   "NavigateParams": {
-    "scrollIndex": { "type": { "returnType": "number", "optional": false } },
+    "scrollIndex": {
+      "description": "/** The rowIndex to vertically scroll to. */",
+      "type": { "returnType": "number", "optional": false }
+    },
     "scrollType": {
+      "description": "/** The position to put scroll index. */",
       "type": { "returnType": "'top' | 'bottom' | null", "optional": false }
     },
     "scrollColumn": {
+      "description": "/** The column to horizontally scroll to. */",
       "type": { "returnType": "Column | null", "optional": false }
     },
-    "focusIndex": { "type": { "returnType": "number", "optional": false } },
+    "focusIndex": {
+      "description": "/** For page up/down, we want to scroll to one row/column but focus another (ie. scrollRow could be stub). */",
+      "type": { "returnType": "number", "optional": false }
+    },
     "focusColumn": { "type": { "returnType": "Column", "optional": false } }
   },
   "RenderParams": {
@@ -7776,7 +7792,7 @@
     "progressSort": {
       "description": "/** Callback to progress the sort for this column.\n * The grid will decide the next sort direction eg ascending, descending or 'no sort'.\n * Pass `multiSort=true` if you want to do a multi sort (eg user has Shift held down when they click). */",
       "type": {
-        "arguments": { "multiSort": "boolean" },
+        "arguments": { "multiSort?": "boolean" },
         "returnType": "void",
         "optional": false
       }
@@ -7784,7 +7800,7 @@
     "setSort": {
       "description": "/** Callback to set the sort for this column.\n * Pass the sort direction to use ignoring the current sort eg one of 'asc', 'desc' or null (for no sort).\n * Pass `multiSort=true` if you want to do a multi sort (eg user has Shift held down when they click) */",
       "type": {
-        "arguments": { "sort": "string", "multiSort": "boolean" },
+        "arguments": { "sort": "string", "multiSort?": "boolean" },
         "returnType": "void",
         "optional": false
       }
@@ -7835,7 +7851,7 @@
     "afterGuiAttached": {
       "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
       "type": {
-        "arguments": { "params": "IAfterGuiAttachedParams" },
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
         "returnType": "void",
         "optional": true
       }
@@ -7894,7 +7910,7 @@
     "afterGuiAttached": {
       "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
       "type": {
-        "arguments": { "params": "IAfterGuiAttachedParams" },
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
         "returnType": "void",
         "optional": true
       }
@@ -9736,7 +9752,7 @@
     "stopEditing": {
       "description": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property `enterMovesDownAfterEdit=true` */",
       "type": {
-        "arguments": { "suppressNavigateAfterEdit": "boolean" },
+        "arguments": { "suppressNavigateAfterEdit?": "boolean" },
         "returnType": "void",
         "optional": false
       }
@@ -9814,7 +9830,7 @@
     "afterGuiAttached": {
       "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
       "type": {
-        "arguments": { "params": "IAfterGuiAttachedParams" },
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
         "returnType": "void",
         "optional": true
       }
@@ -10545,7 +10561,10 @@
     },
     "restoreChart": {
       "type": {
-        "arguments": { "model": "ChartModel", "chartContainer": "HTMLElement" },
+        "arguments": {
+          "model": "ChartModel",
+          "chartContainer?": "HTMLElement"
+        },
         "returnType": "ChartRef | undefined",
         "optional": false
       }
@@ -10572,7 +10591,7 @@
       "type": {
         "arguments": {
           "rowDataTran": "RowDataTransaction",
-          "rowNodeOrder": "{ [id: string]: number; } | null"
+          "rowNodeOrder?": "{ [id: string]: number; } | null"
         },
         "returnType": "RowNodeTransaction | null",
         "optional": false
@@ -10637,7 +10656,7 @@
       "type": {
         "arguments": {
           "rowDataTransaction": "RowDataTransaction",
-          "callback": "(res: RowNodeTransaction) => void"
+          "callback?": "(res: RowNodeTransaction) => void"
         },
         "returnType": "void",
         "optional": false
@@ -10651,7 +10670,7 @@
     },
     "doAggregate": {
       "type": {
-        "arguments": { "changedPath": "ChangedPath" },
+        "arguments": { "changedPath?": "ChangedPath" },
         "returnType": "void",
         "optional": false
       }
@@ -10683,14 +10702,14 @@
     },
     "highlightRowAtPixel": {
       "type": {
-        "arguments": { "rowNode": "RowNode | null", "pixel": "number" },
+        "arguments": { "rowNode": "RowNode | null", "pixel?": "number" },
         "returnType": "void",
         "optional": false
       }
     },
     "getHighlightPosition": {
       "type": {
-        "arguments": { "pixel": "number", "rowNode": "RowNode" },
+        "arguments": { "pixel": "number", "rowNode?": "RowNode" },
         "returnType": "RowHighlightPosition",
         "optional": false
       }
@@ -10827,7 +10846,7 @@
     },
     "copyToClipboard": {
       "type": {
-        "arguments": { "includeHeader": "boolean" },
+        "arguments": { "includeHeader?": "boolean" },
         "returnType": "void",
         "optional": false
       }
@@ -10835,8 +10854,8 @@
     "copySelectedRowsToClipboard": {
       "type": {
         "arguments": {
-          "includeHeader": "boolean",
-          "columnKeys": "(string | Column)[]"
+          "includeHeader?": "boolean",
+          "columnKeys?": "(string | Column)[]"
         },
         "returnType": "void",
         "optional": false
@@ -10844,7 +10863,7 @@
     },
     "copySelectedRangeToClipboard": {
       "type": {
-        "arguments": { "includeHeader": "boolean" },
+        "arguments": { "includeHeader?": "boolean" },
         "returnType": "void",
         "optional": false
       }
@@ -10856,14 +10875,14 @@
   "IColumnToolPanel": {
     "expandColumnGroups": {
       "type": {
-        "arguments": { "groupIds": "string[]" },
+        "arguments": { "groupIds?": "string[]" },
         "returnType": "void",
         "optional": false
       }
     },
     "collapseColumnGroups": {
       "type": {
-        "arguments": { "groupIds": "string[]" },
+        "arguments": { "groupIds?": "string[]" },
         "returnType": "void",
         "optional": false
       }
@@ -10929,7 +10948,7 @@
     "afterGuiAttached": {
       "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
       "type": {
-        "arguments": { "params": "IAfterGuiAttachedParams" },
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
         "returnType": "void",
         "optional": true
       }
@@ -10966,14 +10985,14 @@
   "ICsvCreator": {
     "getDataAsCsv": {
       "type": {
-        "arguments": { "params": "CsvExportParams" },
+        "arguments": { "params?": "CsvExportParams" },
         "returnType": "string",
         "optional": false
       }
     },
     "exportDataAsCsv": {
       "type": {
-        "arguments": { "params": "CsvExportParams" },
+        "arguments": { "params?": "CsvExportParams" },
         "returnType": "string",
         "optional": false
       }
@@ -11008,7 +11027,7 @@
     "successCallback": {
       "description": "/** Callback to call for the result when successful. */",
       "type": {
-        "arguments": { "rowsThisBlock": "any[]", "lastRow": "number" },
+        "arguments": { "rowsThisBlock": "any[]", "lastRow?": "number" },
         "returnType": "void",
         "optional": false
       }
@@ -11036,8 +11055,8 @@
         "arguments": {
           "eventType": "string",
           "listener": "EventListener",
-          "async": "boolean",
-          "options": "AddEventListenerOptions"
+          "async?": "boolean",
+          "options?": "AddEventListenerOptions"
         },
         "returnType": "void",
         "optional": false
@@ -11048,8 +11067,8 @@
         "arguments": {
           "eventType": "string",
           "listener": "EventListener",
-          "async": "boolean",
-          "options": "AddEventListenerOptions"
+          "async?": "boolean",
+          "options?": "AddEventListenerOptions"
         },
         "returnType": "void",
         "optional": false
@@ -11246,7 +11265,7 @@
     "getTemplate": {
       "type": {
         "arguments": {
-          "styleProperties": "ExcelStyle | ExcelWorksheet | ExcelColumn | ExcelRow | ExcelCell"
+          "styleProperties?": "ExcelStyle | ExcelWorksheet | ExcelColumn | ExcelRow | ExcelCell"
         },
         "returnType": "XmlElement",
         "optional": false
@@ -11257,9 +11276,9 @@
     "getTemplate": {
       "type": {
         "arguments": {
-          "config": "any",
-          "idx": "number",
-          "currentSheet": "number"
+          "config?": "any",
+          "idx?": "number",
+          "currentSheet?": "number"
         },
         "returnType": "XmlElement",
         "optional": false
@@ -11452,21 +11471,21 @@
   "IExcelCreator": {
     "exportDataAsExcel": {
       "type": {
-        "arguments": { "params": "ExcelExportParams" },
+        "arguments": { "params?": "ExcelExportParams" },
         "returnType": "void",
         "optional": false
       }
     },
     "getDataAsExcel": {
       "type": {
-        "arguments": { "params": "ExcelExportParams" },
+        "arguments": { "params?": "ExcelExportParams" },
         "returnType": "Blob | string | undefined",
         "optional": false
       }
     },
     "getSheetDataForExcel": {
       "type": {
-        "arguments": { "params": "ExcelExportParams" },
+        "arguments": { "params?": "ExcelExportParams" },
         "returnType": "string",
         "optional": false
       }
@@ -11655,7 +11674,7 @@
     "afterGuiAttached": {
       "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
       "type": {
-        "arguments": { "params": "IAfterGuiAttachedParams" },
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
         "returnType": "void",
         "optional": true
       }
@@ -11707,7 +11726,7 @@
     "filterChangedCallback": {
       "description": "/** A function callback to be called when the filter changes. The\n * grid will then respond by filtering the grid data. The callback\n * takes one optional parameter which, if included, will get merged\n * to the FilterChangedEvent object (useful for passing additional\n * information to anyone listening to this event, however such extra\n * attributes are not used by the grid). */",
       "type": {
-        "arguments": { "additionalEventAttributes": "any" },
+        "arguments": { "additionalEventAttributes?": "any" },
         "returnType": "void",
         "optional": false
       }
@@ -11791,28 +11810,28 @@
     },
     "expandFilterGroups": {
       "type": {
-        "arguments": { "groupIds": "string[]" },
+        "arguments": { "groupIds?": "string[]" },
         "returnType": "void",
         "optional": false
       }
     },
     "collapseFilterGroups": {
       "type": {
-        "arguments": { "groupIds": "string[]" },
+        "arguments": { "groupIds?": "string[]" },
         "returnType": "void",
         "optional": false
       }
     },
     "expandFilters": {
       "type": {
-        "arguments": { "colIds": "string[]" },
+        "arguments": { "colIds?": "string[]" },
         "returnType": "void",
         "optional": false
       }
     },
     "collapseFilters": {
       "type": {
-        "arguments": { "colIds": "string[]" },
+        "arguments": { "colIds?": "string[]" },
         "returnType": "void",
         "optional": false
       }
@@ -11825,14 +11844,14 @@
     "setTimeout": {
       "description": "/** Because Angular 2+ uses Zones, you should not use setTimeout or setInterval (as it'll keep angular constantly doing dirty checks etc\n * So to get around this, we allow the framework to specify how to execute setTimeout. The default is to just call the browser setTimeout(). */",
       "type": {
-        "arguments": { "action": "any", "timeout": "any" },
+        "arguments": { "action": "any", "timeout?": "any" },
         "returnType": "void",
         "optional": false
       }
     },
     "setInterval": {
       "type": {
-        "arguments": { "action": "any", "interval": "any" },
+        "arguments": { "action": "any", "interval?": "any" },
         "returnType": "AgPromise<number>",
         "optional": false
       }
@@ -11844,7 +11863,7 @@
           "element": "HTMLElement",
           "type": "string",
           "listener": "EventListenerOrEventListenerObject",
-          "options": "boolean | AddEventListenerOptions"
+          "options?": "boolean | AddEventListenerOptions"
         },
         "returnType": "void",
         "optional": false
@@ -11894,7 +11913,7 @@
     },
     "setRowCount": {
       "type": {
-        "arguments": { "rowCount": "number", "maxRowFound": "boolean" },
+        "arguments": { "rowCount": "number", "maxRowFound?": "boolean" },
         "returnType": "void",
         "optional": false
       }
@@ -12013,8 +12032,8 @@
           "column": "Column | null",
           "eventSource": "HTMLElement",
           "containerType": "ContainerType",
-          "defaultTab": "string",
-          "restrictToTabs": "string[]"
+          "defaultTab?": "string",
+          "restrictToTabs?": "string[]"
         },
         "returnType": "void",
         "optional": false
@@ -12025,8 +12044,8 @@
         "arguments": {
           "column": "Column",
           "mouseEvent": "MouseEvent | Touch",
-          "defaultTab": "string",
-          "restrictToTabs": "string[]"
+          "defaultTab?": "string",
+          "restrictToTabs?": "string[]"
         },
         "returnType": "void",
         "optional": false
@@ -12097,7 +12116,7 @@
     "afterGuiAttached": {
       "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
       "type": {
-        "arguments": { "params": "IAfterGuiAttachedParams" },
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
         "returnType": "void",
         "optional": true
       }
@@ -12182,7 +12201,7 @@
     },
     "setRangeToCell": {
       "type": {
-        "arguments": { "cell": "CellPosition", "appendRange": "boolean" },
+        "arguments": { "cell": "CellPosition", "appendRange?": "boolean" },
         "returnType": "void",
         "optional": false
       }
@@ -12220,7 +12239,7 @@
         "arguments": {
           "cellRange": "CellRange",
           "cellPosition": "CellPosition",
-          "silent": "boolean"
+          "silent?": "boolean"
         },
         "returnType": "void",
         "optional": false
@@ -12428,7 +12447,7 @@
     "stopEditing": {
       "description": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property `enterMovesDownAfterEdit=true` */",
       "type": {
-        "arguments": { "suppressNavigateAfterEdit": "boolean" },
+        "arguments": { "suppressNavigateAfterEdit?": "boolean" },
         "returnType": "void",
         "optional": false
       }
@@ -12619,8 +12638,8 @@
         "arguments": {
           "eventType": "string",
           "listener": "EventListener",
-          "async": "boolean",
-          "options": "AddEventListenerOptions"
+          "async?": "boolean",
+          "options?": "AddEventListenerOptions"
         },
         "returnType": "void",
         "optional": false
@@ -12631,8 +12650,8 @@
         "arguments": {
           "eventType": "string",
           "listener": "EventListener",
-          "async": "boolean",
-          "options": "AddEventListenerOptions"
+          "async?": "boolean",
+          "options?": "AddEventListenerOptions"
         },
         "returnType": "void",
         "optional": false
@@ -12914,7 +12933,7 @@
       "type": {
         "arguments": {
           "transaction": "ServerSideTransaction",
-          "callback": "(res: ServerSideTransactionResult) => void"
+          "callback?": "(res: ServerSideTransactionResult) => void"
         },
         "returnType": "void",
         "optional": false
@@ -12966,7 +12985,7 @@
       "type": {
         "arguments": {
           "callback": "(rowNode: RowNode, index: number) => void",
-          "sequence": "NumberSequence"
+          "sequence?": "NumberSequence"
         },
         "returnType": "void",
         "optional": false
@@ -12976,7 +12995,7 @@
       "type": {
         "arguments": {
           "callback": "(rowNode: RowNode, index: number) => void",
-          "sequence": "NumberSequence"
+          "sequence?": "NumberSequence"
         },
         "returnType": "void",
         "optional": false
@@ -12989,7 +13008,7 @@
       "type": {
         "arguments": {
           "displayRowIndex": "number",
-          "dontCreateBlock": "boolean"
+          "dontCreateBlock?": "boolean"
         },
         "returnType": "RowNode | undefined",
         "optional": false
@@ -13226,7 +13245,7 @@
     "filterChangedCallback": {
       "description": "/** A function callback to be called when the filter changes. The\n * grid will then respond by filtering the grid data. The callback\n * takes one optional parameter which, if included, will get merged\n * to the FilterChangedEvent object (useful for passing additional\n * information to anyone listening to this event, however such extra\n * attributes are not used by the grid). */",
       "type": {
-        "arguments": { "additionalEventAttributes": "any" },
+        "arguments": { "additionalEventAttributes?": "any" },
         "returnType": "void",
         "optional": false
       }
@@ -13267,7 +13286,7 @@
     },
     "setSideBarPosition": {
       "type": {
-        "arguments": { "position": "'left' | 'right'" },
+        "arguments": { "position?": "'left' | 'right'" },
         "returnType": "void",
         "optional": false
       }
@@ -13390,9 +13409,9 @@
       "type": {
         "arguments": {
           "rowDraggerElement": "HTMLElement",
-          "dragStartPixels": "number",
-          "value": "string",
-          "suppressVisibilityChange": "boolean"
+          "dragStartPixels?": "number",
+          "value?": "string",
+          "suppressVisibilityChange?": "boolean"
         },
         "returnType": "void",
         "optional": false
@@ -13622,7 +13641,7 @@
     "afterGuiAttached": {
       "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
       "type": {
-        "arguments": { "params": "IAfterGuiAttachedParams" },
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
         "returnType": "void",
         "optional": true
       }
@@ -13664,7 +13683,7 @@
     "afterGuiAttached": {
       "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
       "type": {
-        "arguments": { "params": "IAfterGuiAttachedParams" },
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
         "returnType": "void",
         "optional": true
       }
@@ -13739,14 +13758,14 @@
     },
     "expandGroups": {
       "type": {
-        "arguments": { "groupIds": "string[]" },
+        "arguments": { "groupIds?": "string[]" },
         "returnType": "void",
         "optional": false
       }
     },
     "collapseGroups": {
       "type": {
-        "arguments": { "groupIds": "string[]" },
+        "arguments": { "groupIds?": "string[]" },
         "returnType": "void",
         "optional": false
       }
@@ -13972,9 +13991,9 @@
       "type": {
         "arguments": {
           "rowDraggerElement": "HTMLElement",
-          "dragStartPixels": "number",
-          "value": "string",
-          "suppressVisibilityChange": "boolean"
+          "dragStartPixels?": "number",
+          "value?": "string",
+          "suppressVisibilityChange?": "boolean"
         },
         "returnType": "void",
         "optional": false
@@ -14312,9 +14331,9 @@
     "setEditDetails": {
       "type": {
         "arguments": {
-          "compDetails": "UserCompDetails",
-          "popup": "boolean",
-          "position": "string"
+          "compDetails?": "UserCompDetails",
+          "popup?": "boolean",
+          "position?": "string"
         },
         "returnType": "void",
         "optional": false
@@ -14382,7 +14401,7 @@
     "stopEditing": {
       "description": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property `enterMovesDownAfterEdit=true` */",
       "type": {
-        "arguments": { "suppressNavigateAfterEdit": "boolean" },
+        "arguments": { "suppressNavigateAfterEdit?": "boolean" },
         "returnType": "void",
         "optional": false
       }
@@ -14467,7 +14486,7 @@
     "stopEditing": {
       "description": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property `enterMovesDownAfterEdit=true` */",
       "type": {
-        "arguments": { "suppressNavigateAfterEdit": "boolean" },
+        "arguments": { "suppressNavigateAfterEdit?": "boolean" },
         "returnType": "void",
         "optional": false
       }
@@ -14552,7 +14571,7 @@
     "stopEditing": {
       "description": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property `enterMovesDownAfterEdit=true` */",
       "type": {
-        "arguments": { "suppressNavigateAfterEdit": "boolean" },
+        "arguments": { "suppressNavigateAfterEdit?": "boolean" },
         "returnType": "void",
         "optional": false
       }
@@ -14733,9 +14752,9 @@
       "type": {
         "arguments": {
           "rowDraggerElement": "HTMLElement",
-          "dragStartPixels": "number",
-          "value": "string",
-          "suppressVisibilityChange": "boolean"
+          "dragStartPixels?": "number",
+          "value?": "string",
+          "suppressVisibilityChange?": "boolean"
         },
         "returnType": "void",
         "optional": false
@@ -14826,9 +14845,9 @@
       "type": {
         "arguments": {
           "rowDraggerElement": "HTMLElement",
-          "dragStartPixels": "number",
-          "value": "string",
-          "suppressVisibilityChange": "boolean"
+          "dragStartPixels?": "number",
+          "value?": "string",
+          "suppressVisibilityChange?": "boolean"
         },
         "returnType": "void",
         "optional": false
@@ -14878,7 +14897,7 @@
     "afterGuiAttached": {
       "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
       "type": {
-        "arguments": { "params": "IAfterGuiAttachedParams" },
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
         "returnType": "void",
         "optional": true
       }
@@ -14977,9 +14996,9 @@
       "type": {
         "arguments": {
           "rowDraggerElement": "HTMLElement",
-          "dragStartPixels": "number",
-          "value": "string",
-          "suppressVisibilityChange": "boolean"
+          "dragStartPixels?": "number",
+          "value?": "string",
+          "suppressVisibilityChange?": "boolean"
         },
         "returnType": "void",
         "optional": false
@@ -15053,7 +15072,7 @@
     "afterGuiAttached": {
       "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
       "type": {
-        "arguments": { "params": "IAfterGuiAttachedParams" },
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
         "returnType": "void",
         "optional": true
       }
@@ -15149,7 +15168,7 @@
     "afterGuiAttached": {
       "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
       "type": {
-        "arguments": { "params": "IAfterGuiAttachedParams" },
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
         "returnType": "void",
         "optional": true
       }
@@ -15182,7 +15201,7 @@
     "afterGuiAttached": {
       "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
       "type": {
-        "arguments": { "params": "IAfterGuiAttachedParams" },
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
         "returnType": "void",
         "optional": true
       }
@@ -15218,7 +15237,7 @@
   "IRowComp": {
     "setDisplay": {
       "type": {
-        "arguments": { "value": "string" },
+        "arguments": { "value?": "string" },
         "returnType": "void",
         "optional": false
       }
@@ -15450,7 +15469,7 @@
     "afterGuiAttached": {
       "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
       "type": {
-        "arguments": { "params": "IAfterGuiAttachedParams" },
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
         "returnType": "void",
         "optional": true
       }
@@ -15830,7 +15849,7 @@
     "closeOnEsc": { "type": { "returnType": "boolean", "optional": true } },
     "closedCallback": {
       "type": {
-        "arguments": { "e": "MouseEvent | TouchEvent | KeyboardEvent" },
+        "arguments": { "e?": "MouseEvent | TouchEvent | KeyboardEvent" },
         "returnType": "void",
         "optional": true
       }
@@ -15864,7 +15883,7 @@
   "ITabGuard": {
     "setTabIndex": {
       "type": {
-        "arguments": { "tabIndex": "string" },
+        "arguments": { "tabIndex?": "string" },
         "returnType": "void",
         "optional": false
       }

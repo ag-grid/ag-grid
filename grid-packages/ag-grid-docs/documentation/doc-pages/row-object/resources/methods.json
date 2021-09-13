@@ -28,7 +28,18 @@
             "description": "Sets the row height. Call if you want to change the height initially assigned to the row. After calling, you must call <code>api.onRowHeightChanged()</code> so the grid knows it needs to work out the placement of the rows."
         },
         "setData": {
-            "description": "Sets the data for this item. Results in the entire row getting refreshed."
+            "description": "Replaces the data on the `rowNode`. When complete, the grid will refresh the the entire rendered row if it is showing.",
+            "more": {
+                "name": "Client-Side Single Row Update",
+                "url": "/data-update-single-row-cell/"
+            }
+        },
+        "setDataValue": {
+            "description": "Replaces the value on the `rowNode` for the specified column. When complete, the grid will refresh the rendered cell on the required row only.",
+            "more": {
+                "name": "Client-Side Single Cell Update",
+                "url": "/data-update-single-row-cell/"
+            }
         }
     }
 }

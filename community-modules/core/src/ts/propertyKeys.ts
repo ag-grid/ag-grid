@@ -77,7 +77,7 @@ export class PropertyKeys {
         'detailCellRendererFramework', 'isRowMaster', 'isRowSelectable', 'postSort', 'processHeaderForClipboard', 'paginationNumberFormatter',
         'processDataFromClipboard', 'getServerSideGroupKey', 'isServerSideGroup', 'suppressKeyboardEvent', 'createChartContainer',
         'processChartOptions', 'getChartToolbarItems', 'fillOperation', 'isApplyServerSideTransaction', 'getServerSideStoreParams',
-        'isServerSideGroupOpenByDefault', 'isGroupOpenByDefault', 'defaultGroupSortComparator', 'defaultGroupOrderComparator',
+        'isServerSideGroupOpenByDefault', 'isGroupOpenByDefault', 'defaultGroupSortComparator', 'defaultGroupOrderComparator', 'loadingCellRendererSelector'
     ];
 
     public static ALL_PROPERTIES = [

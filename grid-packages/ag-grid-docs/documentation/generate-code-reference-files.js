@@ -30,7 +30,8 @@ function getArgTypes(parameters, file) {
     const args = {};
     (parameters || []).forEach(p => {
         const initValue = formatNode(p.initializer, file);
-        args[p.name.escapedText] = `${formatNode(p.type, file)}${initValue ? ` = ${initValue}` : ''}`;
+        const argName = `${p.name.escapedText}${p.questionToken ? '?' : ''}`
+        args[argName] = `${formatNode(p.type, file)}${initValue ? ` = ${initValue}` : ''}`;
     });
     return args;
 }

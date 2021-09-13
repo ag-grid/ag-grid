@@ -7,18 +7,16 @@ You can target updates to a single row or cell. Updating a single row means aski
 Both single row and single cell updates are done by first getting a reference to the row's Row Node and then using the relevant Row Node API method. See [Accessing Data](/accessing-data/) on how to access Row Nodes.
 Once you have access to the required Row Node, you update its data with the following Row Node API methods:
 
-- `rowNode.setData(data):` Replaces the data on the `rowNode`. When complete, the grid will refresh the the entire rendered row if it is showing.
-
-- `rowNode.setDataValue(colKey, value):` Replaces the data on the `rowNode` for the specified column. When complete, the grid will refresh the rendered cell on the required row only.
+<api-documentation source='row-object/resources/methods.json' section='rowNodeMethods' names='["setData", "setDataValue"]'></api-documentation>
 
 ## View Refresh
 
-After calling `rowNode.setData()` or `rowNode.setDataValue()` the grid's view will automatically refresh to reflect the change. There is no need to manually request a refresh.
+After calling `rowNode.setData` or `rowNode.setDataValue` the grid's view will automatically refresh to reflect the change. There is no need to manually request a refresh.
 
 ## Sort / Filter / Group Refresh
 
 
-After calling `rowNode.setData()` or `rowNode.setDataValue()` the grid will not update to reflect a change in sorting, filtering or grouping.
+After calling `rowNode.setData` or `rowNode.setDataValue` the grid will not update to reflect a change in sorting, filtering or grouping.
 
 To have the grid update its sort, filter or grouping call the Grid API `refreshClientSideRowModel()`.
 

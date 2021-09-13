@@ -148,7 +148,8 @@ import {
     SendToClipboardParams,
     TreeDataDisplayType,
     FullWidthCellKeyDownEvent,
-    FullWidthCellKeyPressEvent
+    FullWidthCellKeyPressEvent,
+    ILoadingCellRendererParams
 } from "@ag-grid-community/core";
 
 import {AngularFrameworkOverrides} from "./angularFrameworkOverrides";
@@ -448,6 +449,14 @@ export class AgGridAngular implements AfterViewInit {
      */
     @Input() public defaultGroupSortComparator: ((nodeA: RowNode, nodeB: RowNode) => number) | undefined = undefined;
     @Input() public defaultGroupOrderComparator: ((nodeA: RowNode, nodeB: RowNode) => number) | undefined = undefined;
+    @Input() public loadingCellRendererSelector: ((params: ILoadingCellRendererParams) =>
+        {
+            component?: { new(): ICellRenderer; } | string;
+            /** Equivalent of setting `loadingCellRendererFramework` */
+            frameworkComponent?: any;
+            /** Equivalent of setting `loadingCellRendererParams` */
+            params?: any;
+        } | undefined) | undefined = undefined;
     @Input() public suppressMakeColumnVisibleAfterUnGroup: boolean | undefined = undefined;
     @Input() public suppressRowClickSelection: boolean | undefined = undefined;
     @Input() public suppressCellSelection: boolean | undefined = undefined;

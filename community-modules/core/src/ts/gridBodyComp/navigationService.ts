@@ -25,13 +25,13 @@ import { CellNavigationService } from "../cellNavigationService";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
 
 interface NavigateParams {
-     // The rowIndex to vertically scroll to
+    /** The rowIndex to vertically scroll to. */
     scrollIndex: number;
-     // The position to put scroll index
+    /** The position to put scroll index. */
     scrollType: 'top' | 'bottom' | null;
-    //  The column to horizontally scroll to
+    /**  The column to horizontally scroll to. */
     scrollColumn: Column | null;
-    // For page up/down, we want to scroll to one row/column but focus another (ie. scrollRow could be stub).
+    /** For page up/down, we want to scroll to one row/column but focus another (ie. scrollRow could be stub). */
     focusIndex: number;
     focusColumn: Column;
 }
@@ -486,12 +486,14 @@ export class NavigationService extends BeanStub {
             const userFunc = this.gridOptionsWrapper.getTabToNextCellFunc();
 
             if (exists(userFunc)) {
-                const params = {
+                const params: TabToNextCellParams = {
                     backwards: backwards,
                     editing: startEditing,
                     previousCellPosition: previousPosition,
-                    nextCellPosition: nextPosition ? nextPosition : null
-                } as TabToNextCellParams;
+                    nextCellPosition: nextPosition ? nextPosition : null,
+                    api: this.gridOptionsWrapper.getApi()!,
+                    columnApi: this.gridOptionsWrapper.getColumnApi()!
+                };
                 const userCell = userFunc(params);
                 if (exists(userCell)) {
                     if ((userCell as any).floating) {
@@ -591,7 +593,7 @@ export class NavigationService extends BeanStub {
         return this.paginationProxy.getRow(cell.rowIndex);
     }
 
-// we use index for rows, but column object for columns, as the next column (by index) might not
+    // we use index for rows, but column object for columns, as the next column (by index) might not
     // be visible (header grouping) so it's not reliable, so using the column object instead.
     public navigateToNextCell(event: KeyboardEvent | null, key: number, currentCell: CellPosition, allowUserOverride: boolean) {
         // we keep searching for a next cell until we find one. this is how the group rows get skipped
@@ -633,7 +635,9 @@ export class NavigationService extends BeanStub {
                     key: key,
                     previousCellPosition: currentCell,
                     nextCellPosition: nextCell ? nextCell : null,
-                    event: event
+                    event: event,
+                    api: this.gridOptionsWrapper.getApi()!,
+                    columnApi: this.gridOptionsWrapper.getColumnApi()!
                 };
                 const userCell = userFunc(params);
                 if (exists(userCell)) {

@@ -23,6 +23,7 @@ import { NavigationService } from "./gridBodyComp/navigationService";
 import { CellCtrl } from "./rendering/cell/cellCtrl";
 import { CtrlsService } from "./ctrlsService";
 import { HeaderCellCtrl } from "./headerRendering/cells/column/headerCellCtrl";
+import { TabToNextHeaderParams, NavigateToNextHeaderParams } from "./entities/gridOptions";
 
 @Bean('focusService')
 export class FocusService extends BeanStub {
@@ -133,7 +134,7 @@ export class FocusService extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, clearFocusedCellListener);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, clearFocusedCellListener);
 
-        this.ctrlsService.whenReady( p => {
+        this.ctrlsService.whenReady(p => {
             this.gridCtrl = p.gridCtrl;
             const doc = this.gridOptionsWrapper.getDocument();
             FocusService.addKeyboardModeEvents(doc, this.gridCtrl);
@@ -277,23 +278,27 @@ export class FocusService extends BeanStub {
             if (fromTab) {
                 const userFunc = gridOptionsWrapper.getTabToNextHeaderFunc();
                 if (userFunc) {
-                    const params = {
+                    const params: TabToNextHeaderParams = {
                         backwards: direction === 'Before',
                         previousHeaderPosition: currentPosition,
                         nextHeaderPosition: headerPosition,
-                        headerRowCount
+                        headerRowCount,
+                        api: gridOptionsWrapper.getApi()!,
+                        columnApi: gridOptionsWrapper.getColumnApi()!
                     };
                     headerPosition = userFunc(params);
                 }
             } else {
                 const userFunc = gridOptionsWrapper.getNavigateToNextHeaderFunc();
                 if (userFunc && event) {
-                    const params = {
+                    const params: NavigateToNextHeaderParams = {
                         key: event.key,
                         previousHeaderPosition: currentPosition,
                         nextHeaderPosition: headerPosition,
                         headerRowCount,
-                        event
+                        event,
+                        api: gridOptionsWrapper.getApi()!,
+                        columnApi: gridOptionsWrapper.getColumnApi()!
                     };
                     headerPosition = userFunc(params);
                 }
