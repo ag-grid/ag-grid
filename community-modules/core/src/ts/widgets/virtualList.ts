@@ -28,7 +28,7 @@ export class VirtualList extends TabGuardComp {
     @RefSelector('eContainer') private readonly eContainer: HTMLElement;
 
     constructor(private readonly cssIdentifier = 'default', private readonly ariaRole = 'listbox') {
-        super(VirtualList.getTemplate(cssIdentifier));
+        super(VirtualList.getTemplate(cssIdentifier, ariaRole));
     }
 
     @PostConstruct
@@ -129,10 +129,10 @@ export class VirtualList extends TabGuardComp {
         return comp && comp.rowComponent;
     }
 
-    private static getTemplate(cssIdentifier: string) {
+    private static getTemplate(cssIdentifier: string, ariaRole: string) {
         return /* html */`
-            <div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport" role="listbox">
-                <div class="ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container" ref="eContainer"></div>
+            <div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport" role="${ariaRole}">
+                <div class="ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container" role="presentation" ref="eContainer"></div>
             </div>`;
     }
 
