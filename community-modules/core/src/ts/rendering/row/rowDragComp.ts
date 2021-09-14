@@ -123,14 +123,14 @@ export class RowDragComp extends Component {
 
 class VisibilityStrategy extends BeanStub {
     private readonly parent: RowDragComp;
-    private readonly column: Column | undefined;
+    protected readonly column: Column | undefined;
     protected readonly rowNode: RowNode;
 
     constructor(parent: RowDragComp, rowNode: RowNode, column?: Column) {
         super();
         this.parent = parent;
-        this.column = column;
         this.rowNode = rowNode;
+        this.column = column;
     }
 
     protected setDisplayedOrVisible(neverDisplayed: boolean): void {
@@ -227,7 +227,8 @@ class ManagedVisibilityStrategy extends VisibilityStrategy {
         const shouldPreventRowMove = rowDragFeature && rowDragFeature.shouldPreventRowMove();
         const suppressRowDrag = this.beans.gridOptionsWrapper.isSuppressRowDrag();
         const hasExternalDropZones = this.beans.dragAndDropService.hasExternalDropZones();
-        const neverDisplayed = (shouldPreventRowMove && !hasExternalDropZones) || suppressRowDrag;
+        const isRowGroupDisplayed = !!(this.column && this.column.isRowGroupDisplayed(this.column.getId()));
+        const neverDisplayed = (shouldPreventRowMove && !hasExternalDropZones) || suppressRowDrag || isRowGroupDisplayed;
 
         this.setDisplayedOrVisible(neverDisplayed);
     }
