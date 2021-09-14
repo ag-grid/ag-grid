@@ -348,6 +348,7 @@ export {
     HeaderClass,
     ToolPanelClassParams,
     ToolPanelClass,
+    KeyCreatorParams,
     // deprecated params
     IsColumnFunc,
     IsColumnFuncParams

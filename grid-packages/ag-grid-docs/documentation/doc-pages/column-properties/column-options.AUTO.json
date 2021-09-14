@@ -140,7 +140,10 @@
   },
   "keyCreator": {
     "description": "/** Function to return the key for a value - use this if the value is an object (not a primitive type) and you\n * want to a) group by this field or b) use set filter on this field. */",
-    "type": { "arguments": { "value": "any" }, "returnType": "string" }
+    "type": {
+      "arguments": { "params": "KeyCreatorParams" },
+      "returnType": "string"
+    }
   },
   "width": {
     "description": "/** Actual width, in pixels, of the cell */",
