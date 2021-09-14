@@ -815,7 +815,7 @@ export abstract class Chart extends Observable {
         }
     }
     get updatePending(): boolean {
-        return !!this.dataCallbackId;
+        return !!this.updateCallbackId;
     }
 
     update() {

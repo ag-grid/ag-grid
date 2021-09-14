@@ -581,10 +581,6 @@ export class AreaSeries extends CartesianSeries {
                     fill: highlightedFill = deprecatedFill,
                     stroke: highlightedStroke = deprecatedStroke,
                     strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
-                },
-                series: {
-                    enabled: subSeriesHighlightingEnabled,
-                    strokeWidth: highlightedSubSeriesStrokeWidth
                 }
             }
         } = this;
@@ -600,12 +596,6 @@ export class AreaSeries extends CartesianSeries {
             const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
                 ? highlightedDatumStrokeWidth
                 : markerStrokeWidth;
-
-            // const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
-            //     ? highlightedDatumStrokeWidth
-            //     : subSeriesHighlightingEnabled && isSubSeriesHighlighted && highlightedSubSeriesStrokeWidth !== undefined
-            //         ? highlightedSubSeriesStrokeWidth
-            //         : markerStrokeWidth;
 
             let format: CartesianSeriesMarkerFormat | undefined = undefined;
             if (formatter) {

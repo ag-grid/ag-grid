@@ -4,12 +4,24 @@ import { extent } from "../../util/array";
 import { isContinuous } from "../../util/value";
 import { ChartAxis } from "../chartAxis";
 
+export function clamper(domain: number[]): (x: number) => number {
+    let a = domain[0];
+    let b = domain[domain.length - 1];
+
+    if (a > b) {
+        [a, b] = [b, a];
+    }
+
+    return x => x >= a && x <= b ? x : NaN;
+}
+
 export class NumberAxis extends ChartAxis {
     static className = 'NumberAxis';
     static type = 'number';
 
     constructor() {
         super(new LinearScale());
+        (this.scale as ContinuousScale).clamper = clamper;
     }
 
     protected _nice: boolean = true;

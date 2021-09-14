@@ -1,5 +1,6 @@
+import ContinuousScale from "../../scale/continuousScale";
 import { LogScale } from "../../scale/logScale";
-import { NumberAxis } from "./numberAxis";
+import { NumberAxis, clamper } from "./numberAxis";
 
 export class LogAxis extends NumberAxis {
     static className = 'LogAxis';
@@ -16,5 +17,6 @@ export class LogAxis extends NumberAxis {
         super();
 
         this.scale = new LogScale();
+        (this.scale as ContinuousScale).clamper = clamper;
     }
 }
