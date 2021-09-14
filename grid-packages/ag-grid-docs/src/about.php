@@ -113,26 +113,26 @@
                         </div>
                         <div class="col-md-4">
                             <div>
-                                <img src='images/team/vitaly2.jpg' alt="Vitaly Kravchenko, Lead Developer"/>
+                                <img src='images/team/vitaly.jpg' alt="Vitaly Kravchenko, Lead Developer"/>
                             </div>
                             <h3>Vitaly Kravchenko</h3>
                             <h4>Lead Developer, Data Visualisation</h4>
                         </div>
                         <div class="col-md-4">
                             <div>
-                                <img src='images/team/alan.jpg' alt="Alan Richardson, Digital Marketing"/>
+                                <img src='images/team/stephen.jpeg' alt="Stephen Cooper, Developer"/>
                             </div>
-                            <h3>Alan Richardson</h3>
-                            <h4>Digital Marketing</h4>
+                            <h3>Stephen Cooper</h3>
+                            <h4>Developer, Grid Core</h4>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-4">
+                         <div class="col-md-4">
                             <div>
-                                <img src='images/team/viqas.jpg' alt="Viqas Hussain, Lead Developer"/>
+                                <img src='images/team/mana.jpeg' alt="Mana Peirov, Developer"/>
                             </div>
-                            <h3>Viqas Hussain</h3>
-                            <h4>Lead Developer, E-commerce</h4>
+                            <h3>Mana Peirov</h3>
+                            <h4>Developer, Data Visualisation</h4>
                         </div>
                         <div class="col-md-4">
                             <div>
@@ -143,32 +143,32 @@
                         </div>
                         <div class="col-md-4">
                             <div>
-                                <img src='images/team/marats.jpeg' alt="Marats Stelihs, Developer"/>
-                            </div>
-                            <h3>Marats Stelihs</h3>
-                            <h4>Developer</h4>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div>
                                 <img src='images/team/ahmed.jpeg' alt=" Ahmed Gadir, Developer"/>
                             </div>
                             <h3>Ahmed Gadir</h3>
                             <h4>Developer</h4>
                         </div>
+                    </div>
+                    <div class="row">
+                         <div class="col-md-4">
+                            <div>
+                                <img src='images/team/shuheb.jpg' alt=" Shuheb Ahmed, Developer"/>
+                            </div>
+                            <h3>Shuheb Ahmed</h3>
+                            <h4>Developer</h4>
+                        </div>
                         <div class="col-md-4">
                             <div>
-                                <img src='images/team/bam2.jpg' alt=" Bamdad Fard, Developer"/>
+                                <img src='images/team/bam.jpg' alt=" Bamdad Fard, Developer"/>
                             </div>
                             <h3>Bamdad Fard</h3>
                             <h4>Developer</h4>
                         </div>
                         <div class="col-md-4">
                             <div>
-                                <img src='images/team/shuheb.jpg' alt=" Shuheb Ahmed, Developer"/>
+                                <img src='images/team/marats.jpeg' alt="Marats Stelihs, Developer"/>
                             </div>
-                            <h3>Shuheb Ahmed</h3>
+                            <h3>Marats Stelihs</h3>
                             <h4>Developer</h4>
                         </div>
                     </div>
@@ -186,6 +186,22 @@
                             </div>
                             <h3>Kiril Matev</h3>
                             <h4>Developer</h4>
+                        </div>
+                        <div class="col-md-4">
+                            <div>
+                                <img src='images/team/viqas.jpg' alt="Viqas Hussain, Lead Developer"/>
+                            </div>
+                            <h3>Viqas Hussain</h3>
+                            <h4>Lead Developer, E-commerce</h4>
+                       </div>
+                    </div>
+                    <div class="row">
+                       <div class="col-md-4">
+                            <div>
+                                <img src='images/team/alan.jpg' alt="Alan Richardson, Digital Marketing"/>
+                            </div>
+                            <h3>Alan Richardson</h3>
+                            <h4>Digital Marketing</h4>
                         </div>
                     </div>
                 </article>
@@ -233,10 +249,11 @@
                         </div>
                         <div class="col-md-4">
                             <div>
-                                <img src='images/team/najma.jpg' alt="Najma Mohamud, Customer Experience Manager"/>
+                                <img src='images/team/victoria.jpeg'
+                                     alt="Victoria Tennant, Business Development Manager"/>
                             </div>
-                            <h3>Najma Mahomud</h3>
-                            <h4>Customer Experience Manager</h4>
+                            <h3>Victoria Tennant</h3>
+                            <h4>Business Development Manager</h4>
                         </div>
                     </div>
                     <div class="row">
@@ -256,10 +273,10 @@
                         </div>
                         <div class="col-md-4">
                             <div>
-                                <img src='images/team/victoria.jpeg'
-                                     alt="Victoria Tennant, Business Development Manager"/>
+                                <img src='images/team/alison.jpeg'
+                                     alt="Alison Bunworth, Business Development Manager"/>
                             </div>
-                            <h3>Victoria Tennant</h3>
+                            <h3>Alison Bunworth</h3>
                             <h4>Business Development Manager</h4>
                         </div>
                     </div>
@@ -292,13 +309,6 @@
                                 <img src='images/team/seweety.jpeg' alt="Seweety Kumar, Customer Experience Manager"/>
                             </div>
                             <h3>Seweety Kumar</h3>
-                            <h4>Customer Experience Manager</h4>
-                        </div>
-                        <div class="col-md-4">
-                            <div>
-                                <img src='images/team/shannon.jpeg' alt="Shannan Monrose, Customer Experience Manager"/>
-                            </div>
-                            <h3>Shannan Monrose</h3>
                             <h4>Customer Experience Manager</h4>
                         </div>
                     </div>
