@@ -249,17 +249,9 @@ const numberEquals18OrEquals20 = {
 
 For applications that have bespoke filtering requirements, it is also possible to add new custom filtering options to the number, text and date filters. For example, a 'Not Equal (with Nulls)' filter option could be included alongside the built in 'Not Equal' option.
 
-Custom filter options are supplied to the grid via `filterParams.filterOptions` and must conform to the following interface:
+Custom filter options are supplied to the grid via `filterParams.filterOptions` and must conform to the `IFilterOptionDef` interface:
 
-```ts
-interface IFilterOptionDef {
-    displayKey: string;
-    displayName: string;
-    test: (filterValue: any, cellValue: any) => boolean;
-    hideFilterInput?: boolean;
-}
-```
-
+<interface-documentation interfaceName='IFilterOptionDef' ></interface-documentation>
 
 The `displayKey` should contain a unique key value that doesn't clash with the built-in filter keys. A default `displayName` should also be provided but can be replaced by a locale-specific value using a [localeTextFunc](/localisation/#locale-callback).
 

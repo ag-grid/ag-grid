@@ -157,7 +157,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
 
     /** Function to return the key for a value - use this if the value is an object (not a primitive type) and you
      * want to a) group by this field or b) use set filter on this field. */
-    keyCreator?: (value: any) => string;
+    keyCreator?: (params: KeyCreatorParams) => string;
 
     /** Actual width, in pixels, of the cell */
     width?: number;
@@ -564,6 +564,8 @@ export interface ValueFormatterParams extends BaseWithValueColDefParams {
 export interface ValueFormatterFunc {
     (params: ValueFormatterParams): string
 }
+
+export interface KeyCreatorParams extends BaseWithValueColDefParams { };
 
 export interface ColSpanParams extends BaseColDefParams {
 }

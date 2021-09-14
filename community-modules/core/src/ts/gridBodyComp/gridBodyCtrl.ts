@@ -93,7 +93,7 @@ export class GridBodyCtrl extends BeanStub {
         this.createManagedBean(new LayoutFeature(this.comp));
         this.bodyScrollFeature = this.createManagedBean(new GridBodyScrollFeature(this.eBodyViewport));
         this.addRowDragListener();
-
+        
         this.setupRowAnimationCssClass();
 
         this.ctrlsService.registerGridBodyCtrl(this);

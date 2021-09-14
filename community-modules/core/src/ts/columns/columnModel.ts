@@ -1076,7 +1076,7 @@ export class ColumnModel extends BeanStub {
         finished: boolean,
         source: ColumnEventType
     ): void {
-        const passMinMaxCheck = !resizeSets || resizeSets.every(this.checkMinAndMaxWidthsForSet.bind(this));
+        const passMinMaxCheck = !resizeSets || resizeSets.every(columnResizeSet => this.checkMinAndMaxWidthsForSet(columnResizeSet));
 
         if (!passMinMaxCheck) {
             // even though we are not going to resize beyond min/max size, we still need to raise event when finished

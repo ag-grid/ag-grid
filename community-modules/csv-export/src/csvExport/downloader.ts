@@ -8,7 +8,9 @@ export class Downloader {
         }
 
         // Internet Explorer
+        // @ts-ignore
         if (win.navigator.msSaveOrOpenBlob) {
+            // @ts-ignore
             win.navigator.msSaveOrOpenBlob(content, fileName);
         } else {
             // Other Browsers

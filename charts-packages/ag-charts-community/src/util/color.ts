@@ -55,52 +55,63 @@ export class Color {
     }
 
     // See https://drafts.csswg.org/css-color/#hex-notation
-    private static hexRe = /\s*#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})?\s*$/;
-    private static shortHexRe = /\s*#([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])?\s*$/;
-    // Using separate RegExp for the short hex notation because strings like `#abcd`
-    // are matched as ['#abcd', 'ab', 'c', 'd', undefined] when the `{1,2}` quantifier is used.
+    static parseHex(input: string): [number, number, number, number] | undefined {
+        input = input.replace(/ /g, '').slice(1);
+        let parts: any;
 
-    static fromHexString(str: string): Color {
-        let values = str.match(Color.hexRe);
-        if (values) {
-            const r = parseInt(values[1], 16);
-            const g = parseInt(values[2], 16);
-            const b = parseInt(values[3], 16);
-            const a = values[4] !== undefined ? parseInt(values[4], 16) : 255;
-
-            return new Color(r / 255, g / 255, b / 255, a / 255);
+        switch (input.length) {
+            case 6:
+            case 8:
+                parts = [];
+                for (let i = 0; i < input.length; i += 2) {
+                    parts.push(parseInt(`${input[i]}${input[i + 1]}`, 16));
+                }
+                break;
+            case 3:
+            case 4:
+                parts = input.split('').map(p => parseInt(p, 16)).map(p => p + p * 16);
+                break;
         }
 
-        values = str.match(Color.shortHexRe);
+        if (parts.length >= 3) {
+            if (parts.every((p: number) => !isNaN(p))) {
+                if (parts.length === 3) {
+                    parts.push(255);
+                }
+                return parts;
+            }
+        }
+    }
+
+    static fromHexString(str: string): Color {
+        let values = Color.parseHex(str);
         if (values) {
-            let r = parseInt(values[1], 16);
-            let g = parseInt(values[2], 16);
-            let b = parseInt(values[3], 16);
-            let a = values[4] !== undefined ? parseInt(values[4], 16) : 15;
-
-            r += r * 16;
-            g += g * 16;
-            b += b * 16;
-            a += a * 16;
-
+            const [r, g, b, a] = values;
             return new Color(r / 255, g / 255, b / 255, a / 255);
         }
 
         throw new Error(`Malformed hexadecimal color string: '${str}'`);
     }
 
-    private static rgbRe = /\s*rgb\((\d+),\s*(\d+),\s*(\d+)\)\s*/;
-    private static rgbaRe = /\s*rgba\((\d+),\s*(\d+),\s*(\d+),\s*([.\d]+)\)\s*/;
+    static parseRgb(input: string): [number, number, number] | undefined {
+        const parts = input.replace(/ /g, '').slice(4, -1).split(',').map(Number);
+        return parts.length === 3 && parts.every(p => p >= 0) ? parts as [number, number, number] : undefined;
+    }
+
+    static parseRgba(input: string): [number, number, number, number] | undefined {
+        const parts = input.replace(/ /g, '').slice(5, -1).split(',').map(Number);
+        return parts.length === 4 && parts.every(p => p >= 0) ? parts as [number, number, number, number] : undefined;
+    }
 
     static fromRgbaString(str: string): Color {
-        let values = str.match(Color.rgbRe);
-        if (values) {
-            return new Color(+values[1] / 255, +values[2] / 255, +values[3] / 255);
+        const rgb = Color.parseRgb(str);
+        if (rgb) {
+            return new Color(rgb[0] / 255, rgb[1] / 255, rgb[2] / 255);
         }
 
-        values = str.match(Color.rgbaRe);
-        if (values) {
-            return new Color(+values[1] / 255, +values[2] / 255, +values[3] / 255, +values[4]);
+        const rgba = Color.parseRgba(str);
+        if (rgba) {
+            return new Color(rgba[0] / 255, rgba[1] / 255, rgba[2] / 255, rgba[3]);
         }
 
         throw new Error(`Malformed rgb/rgba color string: '${str}'`);
@@ -223,36 +234,36 @@ export class Color {
             const q = B * (1 - S * f);
             const t = B * (1 - (S * (1 - f)));
             switch (h >> 0) { // discard the floating point part of the number
-            case 0:
-                r = B;
-                g = t;
-                b = p;
-                break;
-            case 1:
-                r = q;
-                g = B;
-                b = p;
-                break;
-            case 2:
-                r = p;
-                g = B;
-                b = t;
-                break;
-            case 3:
-                r = p;
-                g = q;
-                b = B;
-                break;
-            case 4:
-                r = t;
-                g = p;
-                b = B;
-                break;
-            case 5:
-                r = B;
-                g = p;
-                b = q;
-                break;
+                case 0:
+                    r = B;
+                    g = t;
+                    b = p;
+                    break;
+                case 1:
+                    r = q;
+                    g = B;
+                    b = p;
+                    break;
+                case 2:
+                    r = p;
+                    g = B;
+                    b = t;
+                    break;
+                case 3:
+                    r = p;
+                    g = q;
+                    b = B;
+                    break;
+                case 4:
+                    r = t;
+                    g = p;
+                    b = B;
+                    break;
+                case 5:
+                    r = B;
+                    g = p;
+                    b = q;
+                    break;
             }
         }
         return [r, g, b];

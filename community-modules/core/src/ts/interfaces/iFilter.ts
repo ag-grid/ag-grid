@@ -6,6 +6,7 @@ import { IComponent } from './iComponent';
 import { GridApi } from '../gridApi';
 import { AgPromise } from '../utils';
 import { IFloatingFilterComp } from '../filter/floating/floatingFilter';
+import { ColumnApi } from '../columns/columnApi';
 
 export type IFilterType = string | { new(): IFilterComp; } | boolean;
 export type IFloatingFilterType = string | { new(): IFloatingFilterComp; };
@@ -80,9 +81,17 @@ export interface IDoesFilterPassParams {
 }
 
 export interface IFilterOptionDef {
+    /** A unique key that does not clash with the built-in filter keys. */
     displayKey: string;
+    /** Display name for the filter. Can be replaced by a locale-specific value using a `localeTextFunc`. */
     displayName: string;
+    /**
+     * Custom filter logic.
+     */
     test: (filterValue: any, cellValue: any) => boolean;
+    /**
+     * Optionally hide the filter input field.
+     */
     hideFilterInput?: boolean;
 }
 
@@ -110,10 +119,31 @@ export interface IFilterParams {
      * attributes are not used by the grid).
      */
     filterChangedCallback: (additionalEventAttributes?: any) => void;
+    /**
+     * A function callback, to be optionally called, when the filter UI changes.
+     * The grid will respond with emitting a FilterModifiedEvent.
+     * Apart from emitting the event, the grid takes no further action.
+     */
     filterModifiedCallback: () => void;
+
+    /**
+     * A function callback for the filter to get cell values from the row data.
+     * Call with a node to be given the value for that filter's column for that node.
+     * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.
+     * This is useful in, for example, creating an Excel style filter,
+     * where the filter needs to lookup available values to allow the user to select from.
+     */
     valueGetter: (rowNode: RowNode) => any;
+
+    /**
+     * A function callback, call with a node to be told whether the node passes all filters except the current filter.
+     * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.
+     * The set filter uses this to remove from the list,
+     * items that are no longer available due to the state of other filters (like Excel type filtering).
+     */
     doesRowPassOtherFilter: (rowNode: RowNode) => boolean; // TODO: this method should be "doesRowPassOtherFilters"
     api: GridApi;
+    columnApi: ColumnApi;
     /** The context as provided on `gridOptions.context` */
     context: any;
 }

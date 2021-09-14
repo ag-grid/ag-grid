@@ -110,17 +110,19 @@ export function getLinkedType(type, framework) {
 };
 
 export function sortAndFilterProperties(properties, framework) {
+    // Match $scope and $scope?
+    const scopeRegex = /\$scope(\??)/
     properties.sort(([p1,], [p2,]) => {
         // Push $scope to the end while maintaining original order
-        if (p1 === '$scope')
+        if (p1.match(scopeRegex))
             return 1;
-        if (p2 === '$scope')
+        if (p2.match(scopeRegex))
             return -1;
         return 0;
     });
     return properties
         // Only show AngularJS $scope property for Angular or Javascript frameworks
-        .filter(([p,]) => p !== '$scope' || (framework === 'angular' || framework === 'javascript'));
+        .filter(([p,]) => !p.match(scopeRegex) || (framework === 'angular' || framework === 'javascript'));
 }
 
 export function appendInterface(name, interfaceType, framework, allLines) {

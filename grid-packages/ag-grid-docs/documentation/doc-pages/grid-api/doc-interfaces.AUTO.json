@@ -729,7 +729,7 @@
     "keyCreator": {
       "description": "/** Function to return the key for a value - use this if the value is an object (not a primitive type) and you\n * want to a) group by this field or b) use set filter on this field. */",
       "type": {
-        "arguments": { "value": "any" },
+        "arguments": { "params": "KeyCreatorParams" },
         "returnType": "string",
         "optional": true
       }
@@ -1722,6 +1722,34 @@
     }
   },
   "ValueFormatterFunc": {},
+  "KeyCreatorParams": {
+    "value": {
+      "description": "/** Value for the cell. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "node": {
+      "description": "/** Row node for the given row */",
+      "type": { "returnType": "RowNode | null", "optional": false }
+    },
+    "data": {
+      "description": "/** Data associated with the node */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "column": {
+      "description": "/** Column for this callback */",
+      "type": { "returnType": "Column", "optional": false }
+    },
+    "colDef": {
+      "description": "/** ColDef provided for this column */",
+      "type": { "returnType": "ColDef", "optional": false }
+    },
+    "api": { "type": { "returnType": "GridApi", "optional": false } },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "context": {
+      "description": "/** The context as provided on `gridOptions.context` */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
   "ColSpanParams": {
     "node": {
       "description": "/** Row node for the given row */",
@@ -6663,9 +6691,11 @@
       }
     },
     "filterModifiedCallback": {
+      "description": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
     "valueGetter": {
+      "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
       "type": {
         "arguments": { "rowNode": "RowNode" },
         "returnType": "any",
@@ -6673,6 +6703,7 @@
       }
     },
     "doesRowPassOtherFilter": {
+      "description": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
       "type": {
         "arguments": { "rowNode": "RowNode" },
         "returnType": "boolean",
@@ -6680,6 +6711,7 @@
       }
     },
     "api": { "type": { "returnType": "GridApi", "optional": false } },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
       "type": { "returnType": "any", "optional": false }
@@ -6780,9 +6812,11 @@
       }
     },
     "filterModifiedCallback": {
+      "description": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
     "valueGetter": {
+      "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
       "type": {
         "arguments": { "rowNode": "RowNode" },
         "returnType": "any",
@@ -6790,6 +6824,7 @@
       }
     },
     "doesRowPassOtherFilter": {
+      "description": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
       "type": {
         "arguments": { "rowNode": "RowNode" },
         "returnType": "boolean",
@@ -6797,6 +6832,7 @@
       }
     },
     "api": { "type": { "returnType": "GridApi", "optional": false } },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
       "type": { "returnType": "any", "optional": false }
@@ -6846,9 +6882,11 @@
       }
     },
     "filterModifiedCallback": {
+      "description": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
     "valueGetter": {
+      "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
       "type": {
         "arguments": { "rowNode": "RowNode" },
         "returnType": "any",
@@ -6856,6 +6894,7 @@
       }
     },
     "doesRowPassOtherFilter": {
+      "description": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
       "type": {
         "arguments": { "rowNode": "RowNode" },
         "returnType": "boolean",
@@ -6863,6 +6902,7 @@
       }
     },
     "api": { "type": { "returnType": "GridApi", "optional": false } },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
       "type": { "returnType": "any", "optional": false }
@@ -6951,9 +6991,11 @@
       }
     },
     "filterModifiedCallback": {
+      "description": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
     "valueGetter": {
+      "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
       "type": {
         "arguments": { "rowNode": "RowNode" },
         "returnType": "any",
@@ -6961,6 +7003,7 @@
       }
     },
     "doesRowPassOtherFilter": {
+      "description": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
       "type": {
         "arguments": { "rowNode": "RowNode" },
         "returnType": "boolean",
@@ -6968,6 +7011,7 @@
       }
     },
     "api": { "type": { "returnType": "GridApi", "optional": false } },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
       "type": { "returnType": "any", "optional": false }
@@ -7034,9 +7078,11 @@
       }
     },
     "filterModifiedCallback": {
+      "description": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
     "valueGetter": {
+      "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
       "type": {
         "arguments": { "rowNode": "RowNode" },
         "returnType": "any",
@@ -7044,6 +7090,7 @@
       }
     },
     "doesRowPassOtherFilter": {
+      "description": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
       "type": {
         "arguments": { "rowNode": "RowNode" },
         "returnType": "boolean",
@@ -7051,6 +7098,7 @@
       }
     },
     "api": { "type": { "returnType": "GridApi", "optional": false } },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
       "type": { "returnType": "any", "optional": false }
@@ -7146,9 +7194,11 @@
       }
     },
     "filterModifiedCallback": {
+      "description": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
     "valueGetter": {
+      "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
       "type": {
         "arguments": { "rowNode": "RowNode" },
         "returnType": "any",
@@ -7156,6 +7206,7 @@
       }
     },
     "doesRowPassOtherFilter": {
+      "description": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
       "type": {
         "arguments": { "rowNode": "RowNode" },
         "returnType": "boolean",
@@ -7163,6 +7214,7 @@
       }
     },
     "api": { "type": { "returnType": "GridApi", "optional": false } },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
       "type": { "returnType": "any", "optional": false }
@@ -11703,16 +11755,26 @@
     }
   },
   "IFilterOptionDef": {
-    "displayKey": { "type": { "returnType": "string", "optional": false } },
-    "displayName": { "type": { "returnType": "string", "optional": false } },
+    "displayKey": {
+      "description": "/** A unique key that does not clash with the built-in filter keys. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "displayName": {
+      "description": "/** Display name for the filter. Can be replaced by a locale-specific value using a `localeTextFunc`. */",
+      "type": { "returnType": "string", "optional": false }
+    },
     "test": {
+      "description": "/** Custom filter logic. */",
       "type": {
         "arguments": { "filterValue": "any", "cellValue": "any" },
         "returnType": "boolean",
         "optional": false
       }
     },
-    "hideFilterInput": { "type": { "returnType": "boolean", "optional": true } }
+    "hideFilterInput": {
+      "description": "/** Optionally hide the filter input field. */",
+      "type": { "returnType": "boolean", "optional": true }
+    }
   },
   "IFilterParams": {
     "column": {
@@ -11736,9 +11798,11 @@
       }
     },
     "filterModifiedCallback": {
+      "description": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
     "valueGetter": {
+      "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
       "type": {
         "arguments": { "rowNode": "RowNode" },
         "returnType": "any",
@@ -11746,6 +11810,7 @@
       }
     },
     "doesRowPassOtherFilter": {
+      "description": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
       "type": {
         "arguments": { "rowNode": "RowNode" },
         "returnType": "boolean",
@@ -11753,6 +11818,7 @@
       }
     },
     "api": { "type": { "returnType": "GridApi", "optional": false } },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
       "type": { "returnType": "any", "optional": false }
@@ -13255,9 +13321,11 @@
       }
     },
     "filterModifiedCallback": {
+      "description": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
     "valueGetter": {
+      "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
       "type": {
         "arguments": { "rowNode": "RowNode" },
         "returnType": "any",
@@ -13265,6 +13333,7 @@
       }
     },
     "doesRowPassOtherFilter": {
+      "description": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
       "type": {
         "arguments": { "rowNode": "RowNode" },
         "returnType": "boolean",
@@ -13272,6 +13341,7 @@
       }
     },
     "api": { "type": { "returnType": "GridApi", "optional": false } },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
       "type": { "returnType": "any", "optional": false }
