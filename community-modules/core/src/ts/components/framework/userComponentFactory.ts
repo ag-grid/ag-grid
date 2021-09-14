@@ -149,108 +149,6 @@ export class UserComponentFactory extends BeanStub {
         return this.lookupAndCreateComponent(def, params, StatusPanelComponent);
     }
 
-
-
-    private getCompDetails(defObject: DefinitionObject, type: ComponentType, defaultName: string | null | undefined, params: any, mandatory = false): UserCompDetails | undefined {
-        const propName = type.propertyName;
-        const compDetails = this.lookupComponent(defObject, type, params, defaultName);
-        if (!compDetails || !compDetails.componentClass) {
-            if (mandatory) {
-                this.logComponentMissing(defObject, propName);
-            }
-            return undefined;
-        }
-
-        const paramsMerged = this.mergeParamsWithApplicationProvidedParams(
-            defObject, propName, params, compDetails.params);
-
-        return {...compDetails, params: paramsMerged};
-    }
-
-    /**
-     * This method creates a component given everything needed to guess what sort of component needs to be instantiated
-     * It takes
-     *  @param definitionObject: This is the context for which this component needs to be created, it can be gridOptions
-     *      (global) or columnDef mostly.
-     *  @param paramsFromGrid: Params to be passed to the component and passed by AG Grid. This will get merged with any params
-     *      specified by the user in the configuration
-     *  @param propertyName: The name of the property used in ag-grid as a convention to refer to the component, it can be:
-     *      'floatingFilter', 'cellRenderer', is used to find if the user is specifying a custom component
-     *  @param defaultComponentName: The actual name of the component to instantiate, this is usually the same as propertyName, but in
-     *      some cases is not, like floatingFilter, if it is the same is not necessary to specify
-     *  @param optional: Handy method to tell if this should return a component ALWAYS. if that is the case, but there is no
-     *      component found, it throws an error, by default all components are MANDATORY
-     */
-    private lookupAndCreateComponent(
-        def: DefinitionObject,
-        paramsFromGrid: any,
-        componentType: ComponentType,
-        defaultComponentName?: string | null,
-        // optional items are: FloatingFilter, CellComp (for cellRenderer)
-        optional = false
-    ): AgPromise<any> | null {
-
-        const compDetails = this.getCompDetails(
-            def, componentType, defaultComponentName, paramsFromGrid, !optional);
-
-        if (!compDetails) { return null; }
-
-        return this.createInstanceFromCompDetails(compDetails, defaultComponentName);
-    }
-
-    public createInstanceFromCompDetails(compDetails: UserCompDetails, defaultComponentName?: string | null): AgPromise<any> | null {
-        if (!compDetails) { return null; }
-
-        const {params, componentClass, componentFromFramework} = compDetails;
-
-        // Create the component instance
-        const instance = this.createComponentInstance(compDetails.type, defaultComponentName, componentClass, componentFromFramework);
-        if (!instance) { return null; }
-
-        this.addReactHacks(params);
-
-        const deferredInit = this.initComponent(instance, params);
-
-        if (deferredInit == null) {
-            return AgPromise.resolve(instance);
-        }
-        return (deferredInit as AgPromise<void>).then(() => instance);
-    }
-
-    private addReactHacks(params: any): void {
-        // a temporary fix for AG-1574
-        // AG-1715 raised to do a wider ranging refactor to improve this
-        const agGridReact = this.context.getBean('agGridReact');
-
-        if (agGridReact) {
-            params.agGridReact = cloneObject(agGridReact);
-        }
-
-        // AG-1716 - directly related to AG-1574 and AG-1715
-        const frameworkComponentWrapper = this.context.getBean('frameworkComponentWrapper');
-
-        if (frameworkComponentWrapper) {
-            params.frameworkComponentWrapper = frameworkComponentWrapper;
-        }
-    }
-
-    /**
-     * This method creates a component given everything needed to guess what sort of component needs to be instantiated
-     * It takes
-     *  @param CompClass: The class to instantiate,
-     *  @param agGridParams: Params to be passed to the component and passed by AG Grid. This will get merged with any params
-     *      specified by the user in the configuration
-     *  @param modifyParamsCallback: A chance to customise the params passed to the init method. It receives what the current
-     *  params are and the component that init is about to get called for
-     */
-    public createUserComponentFromConcreteClass(CompClass: any, agGridParams: any): any {
-        const internalComponent = new CompClass();
-
-        this.initComponent(internalComponent, agGridParams);
-
-        return internalComponent;
-    }
-
     private lookupComponent(defObject: DefinitionObject, type: ComponentType,
                             params: any = null, defaultComponentName?: string | null): UserCompDetails | null {
 
@@ -321,6 +219,42 @@ export class UserComponentFactory extends BeanStub {
         };
     }
 
+    public createInstanceFromCompDetails(compDetails: UserCompDetails, defaultComponentName?: string | null): AgPromise<any> | null {
+        if (!compDetails) { return null; }
+
+        const {params, componentClass, componentFromFramework} = compDetails;
+
+        // Create the component instance
+        const instance = this.createComponentInstance(compDetails.type, defaultComponentName, componentClass, componentFromFramework);
+        if (!instance) { return null; }
+
+        this.addReactHacks(params);
+
+        const deferredInit = this.initComponent(instance, params);
+
+        if (deferredInit == null) {
+            return AgPromise.resolve(instance);
+        }
+        return (deferredInit as AgPromise<void>).then(() => instance);
+    }
+
+    /**
+     * This method creates a component given everything needed to guess what sort of component needs to be instantiated
+     * It takes
+     *  @param CompClass: The class to instantiate,
+     *  @param agGridParams: Params to be passed to the component and passed by AG Grid. This will get merged with any params
+     *      specified by the user in the configuration
+     *  @param modifyParamsCallback: A chance to customise the params passed to the init method. It receives what the current
+     *  params are and the component that init is about to get called for
+     */
+    public createUserComponentFromConcreteClass(CompClass: any, agGridParams: any): any {
+        const internalComponent = new CompClass();
+
+        this.initComponent(internalComponent, agGridParams);
+
+        return internalComponent;
+    }
+
     /**
      * Useful to check what would be the resultant params for a given object
      *  @param definitionObject: This is the context for which this component needs to be created, it can be gridOptions
@@ -354,6 +288,70 @@ export class UserComponentFactory extends BeanStub {
         mergeDeep(params, paramsFromSelector);
 
         return params;
+    }
+
+    private getCompDetails(defObject: DefinitionObject, type: ComponentType, defaultName: string | null | undefined, params: any, mandatory = false): UserCompDetails | undefined {
+        const propName = type.propertyName;
+        const compDetails = this.lookupComponent(defObject, type, params, defaultName);
+        if (!compDetails || !compDetails.componentClass) {
+            if (mandatory) {
+                this.logComponentMissing(defObject, propName);
+            }
+            return undefined;
+        }
+
+        const paramsMerged = this.mergeParamsWithApplicationProvidedParams(
+            defObject, propName, params, compDetails.params);
+
+        return {...compDetails, params: paramsMerged};
+    }
+
+    /**
+     * This method creates a component given everything needed to guess what sort of component needs to be instantiated
+     * It takes
+     *  @param definitionObject: This is the context for which this component needs to be created, it can be gridOptions
+     *      (global) or columnDef mostly.
+     *  @param paramsFromGrid: Params to be passed to the component and passed by AG Grid. This will get merged with any params
+     *      specified by the user in the configuration
+     *  @param propertyName: The name of the property used in ag-grid as a convention to refer to the component, it can be:
+     *      'floatingFilter', 'cellRenderer', is used to find if the user is specifying a custom component
+     *  @param defaultComponentName: The actual name of the component to instantiate, this is usually the same as propertyName, but in
+     *      some cases is not, like floatingFilter, if it is the same is not necessary to specify
+     *  @param optional: Handy method to tell if this should return a component ALWAYS. if that is the case, but there is no
+     *      component found, it throws an error, by default all components are MANDATORY
+     */
+    private lookupAndCreateComponent(
+        def: DefinitionObject,
+        paramsFromGrid: any,
+        componentType: ComponentType,
+        defaultComponentName?: string | null,
+        // optional items are: FloatingFilter, CellComp (for cellRenderer)
+        optional = false
+    ): AgPromise<any> | null {
+
+        const compDetails = this.getCompDetails(
+            def, componentType, defaultComponentName, paramsFromGrid, !optional);
+
+        if (!compDetails) { return null; }
+
+        return this.createInstanceFromCompDetails(compDetails, defaultComponentName);
+    }
+
+    private addReactHacks(params: any): void {
+        // a temporary fix for AG-1574
+        // AG-1715 raised to do a wider ranging refactor to improve this
+        const agGridReact = this.context.getBean('agGridReact');
+
+        if (agGridReact) {
+            params.agGridReact = cloneObject(agGridReact);
+        }
+
+        // AG-1716 - directly related to AG-1574 and AG-1715
+        const frameworkComponentWrapper = this.context.getBean('frameworkComponentWrapper');
+
+        if (frameworkComponentWrapper) {
+            params.frameworkComponentWrapper = frameworkComponentWrapper;
+        }
     }
 
     private logComponentMissing(holder: any, propertyName: string, defaultComponentName?: string | null): void {
