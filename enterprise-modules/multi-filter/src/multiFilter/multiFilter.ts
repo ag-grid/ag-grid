@@ -30,7 +30,7 @@ export interface IMultiFilterParams extends IFilterParams {
 }
 
 export interface IMultiFilterModel {
-    filterType: string;
+    filterType?: 'multi';
     filterModels: any[] | null;
 }
 
@@ -48,7 +48,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp {
     private activeFilterIndices: number[] = [];
     private lastActivatedMenuItem: MenuItemComponent | null = null;
 
-    private afterFiltersReadyFuncs: (() => void) [] = [];
+    private afterFiltersReadyFuncs: (() => void)[] = [];
 
     constructor() {
         super(/* html */`<div class="ag-multi-filter ag-menu-list-compact"></div>`);
@@ -223,7 +223,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp {
         return rowPasses;
     }
 
-    private getFilterType(): string {
+    private getFilterType(): 'multi' {
         return 'multi';
     }
 

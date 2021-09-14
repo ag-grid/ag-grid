@@ -86,7 +86,7 @@ export interface IFilterOptionDef {
     /** Display name for the filter. Can be replaced by a locale-specific value using a `localeTextFunc`. */
     displayName: string;
     /**
-     * Custom filter logic.
+     * Custom filter logic that returns a boolean based on the `filterValue` and `cellValue`.
      */
     test: (filterValue: any, cellValue: any) => boolean;
     /**
