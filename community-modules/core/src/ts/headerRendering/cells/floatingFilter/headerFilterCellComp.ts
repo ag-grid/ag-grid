@@ -24,7 +24,7 @@ import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
 import { HoverFeature } from '../hoverFeature';
 import { HeaderFilterCellCtrl, IHeaderFilterCellComp } from './headerFilterCellCtrl';
 
-export class HeaderFilterCellComp extends AbstractHeaderCellComp {
+export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCellCtrl> {
 
     private static TEMPLATE = /* html */
         `<div class="ag-header-cell ag-floating-filter" role="gridcell" tabindex="-1">
@@ -52,13 +52,10 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp {
 
     private floatingFilterCompPromise: AgPromise<IFloatingFilterComp> | null;
 
-    private ctrl: HeaderFilterCellCtrl;
-
     constructor(ctrl: HeaderFilterCellCtrl) {
-        super(HeaderFilterCellComp.TEMPLATE);
+        super(HeaderFilterCellComp.TEMPLATE, ctrl);
         this.column = ctrl.getColumnGroupChild() as Column;
         this.pinned = ctrl.getPinned();
-        this.ctrl = ctrl;
     }
 
     @PostConstruct

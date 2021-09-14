@@ -7798,10 +7798,14 @@
         "optional": false
       }
     },
-    "refreshHeaderComp": {
-      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    "setCompDetails": {
+      "type": {
+        "arguments": { "compDetails": "UserCompDetails" },
+        "returnType": "void",
+        "optional": false
+      }
     },
-    "temp_getHeaderComp": {
+    "getUserCompInstance": {
       "type": {
         "arguments": {},
         "returnType": "IHeaderComp | undefined",

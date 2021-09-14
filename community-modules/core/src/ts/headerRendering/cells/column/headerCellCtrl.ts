@@ -1,25 +1,28 @@
+import { ColumnApi } from "../../../columns/columnApi";
 import { ColumnModel } from "../../../columns/columnModel";
+import { UserCompDetails, UserComponentFactory } from "../../../components/framework/userComponentFactory";
+import { KeyCode } from '../../../constants/keyCode';
 import { Autowired, PreDestroy } from "../../../context/context";
+import { DragAndDropService, DragItem, DragSource, DragSourceType } from "../../../dragAndDrop/dragAndDropService";
 import { Column } from "../../../entities/column";
 import { IHeaderColumn } from "../../../entities/iHeaderColumn";
 import { Events } from "../../../eventKeys";
+import { GridApi } from "../../../gridApi";
+import { IMenuFactory } from "../../../interfaces/iMenuFactory";
+import { Beans } from "../../../rendering/beans";
+import { ColumnHoverService } from "../../../rendering/columnHoverService";
+import { SetLeftFeature } from "../../../rendering/features/setLeftFeature";
+import { SortController } from "../../../sortController";
+import { ColumnSortState, getAriaSortState } from "../../../utils/aria";
+import { ManagedFocusFeature } from "../../../widgets/managedFocusFeature";
+import { ITooltipFeatureComp, ITooltipFeatureCtrl, TooltipFeature } from "../../../widgets/tooltipFeature";
 import { HeaderRowCtrl } from "../../row/headerRowCtrl";
 import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellCtrl";
-import { ResizeFeature } from "./resizeFeature";
-import { ColumnSortState, getAriaSortState, removeAriaSort, setAriaSort } from "../../../utils/aria";
-import { ColumnHoverService } from "../../../rendering/columnHoverService";
-import { HoverFeature } from "../hoverFeature";
-import { Beans } from "../../../rendering/beans";
-import { SetLeftFeature } from "../../../rendering/features/setLeftFeature";
 import { CssClassApplier } from "../cssClassApplier";
-import { ITooltipFeatureComp, ITooltipFeatureCtrl, TooltipFeature } from "../../../widgets/tooltipFeature";
-import { ManagedFocusFeature } from "../../../widgets/managedFocusFeature";
-import { KeyCode } from '../../../constants/keyCode';
-import { SortController } from "../../../sortController";
-import { IMenuFactory } from "../../../interfaces/iMenuFactory";
-import { HeaderComp, IHeaderComp } from "./headerComp";
+import { HoverFeature } from "../hoverFeature";
+import { HeaderComp, IHeaderComp, IHeaderParams } from "./headerComp";
+import { ResizeFeature } from "./resizeFeature";
 import { SelectAllFeature } from "./selectAllFeature";
-import { DragAndDropService, DragItem, DragSource, DragSourceType } from "../../../dragAndDrop/dragAndDropService";
 
 export interface IHeaderCellComp extends IAbstractHeaderCellComp, ITooltipFeatureComp {
     focus(): void;
@@ -30,9 +33,8 @@ export interface IHeaderCellComp extends IAbstractHeaderCellComp, ITooltipFeatur
     setColId(id: string): void;
     setAriaDescribedBy(id: string | undefined): void;
 
-    // temp
-    refreshHeaderComp(): void;
-    temp_getHeaderComp(): IHeaderComp | undefined;
+    setCompDetails(compDetails: UserCompDetails): void;
+    getUserCompInstance(): IHeaderComp | undefined;
 }
 
 export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
@@ -43,6 +45,9 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     @Autowired('sortController') private sortController: SortController;
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
+    @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
     private eGui: HTMLElement;
 
@@ -62,6 +67,9 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     private displayName: string | null;
     private draggable: boolean;
     private menuEnabled: boolean;
+    private dragSourceElement: HTMLElement | undefined;
+
+    private userCompDetails: UserCompDetails;
 
     constructor(columnGroupChild: IHeaderColumn, parentRowCtrl: HeaderRowCtrl, column: Column) {
         super(columnGroupChild, parentRowCtrl);
@@ -107,6 +115,51 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
 
         this.createManagedBean(new ResizeFeature(this.getPinned(), this.column, eResize, comp, this));
+
+        this.createUserComp();
+    }
+
+    private createUserComp(): void {
+        const compDetails = this.lookupUserCompDetails();
+        this.setCompDetails(compDetails);
+    }
+
+    private setCompDetails(compDetails: UserCompDetails): void {
+        this.userCompDetails = compDetails;
+        this.comp.setCompDetails(compDetails);
+    }
+
+    private lookupUserCompDetails(): UserCompDetails {
+        const params = this.createParams();
+        const colDef = this.column.getColDef();
+        return this.userComponentFactory.getHeaderCompDetails(colDef, params)!;
+    }
+
+    private createParams(): IHeaderParams {
+
+        const colDef = this.column.getColDef();
+
+        const params = {
+            column: this.column,
+            displayName: this.displayName,
+            enableSorting: colDef.sortable,
+            enableMenu: this.menuEnabled,
+            showColumnMenu: (source: HTMLElement) => {
+                this.gridApi.showColumnMenuAfterButtonClick(this.column, source);
+            },
+            progressSort: (multiSort?: boolean) => {
+                this.sortController.progressSort(this.column, !!multiSort, "uiColumnSorted");
+            },
+            setSort: (sort: string, multiSort?: boolean) => {
+                this.sortController.setSortForColumn(this.column, sort, !!multiSort, "uiColumnSorted");
+            },
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            context: this.gridOptionsWrapper.getContext(),
+            eGridHeader: this.getGui()
+        } as IHeaderParams;
+
+        return params;
     }
 
     private setupSelectAll(): void {
@@ -129,7 +182,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
     private onEnterKeyPressed(e: KeyboardEvent): void {
         /// THIS IS BAD - we are assuming the header is not a user provided comp
-        const headerComp = this.comp.temp_getHeaderComp() as HeaderComp;
+        const headerComp = this.comp.getUserCompInstance() as HeaderComp;
         if (!headerComp) { return; }
 
         if (e.ctrlKey || e.metaKey) {
@@ -198,7 +251,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         return this.displayName;
     }
 
-    public setDragSource(eSource: HTMLElement): void {
+    public setDragSource(eSource: HTMLElement | undefined): void {
+        this.dragSourceElement = eSource;
         this.removeDragSource();
 
         if (!eSource) { return; }
@@ -258,8 +312,40 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
     private refresh(): void {
         this.updateState();
-        this.comp.refreshHeaderComp();
+        this.refreshHeaderComp();
         this.refreshFunctions.forEach(f => f());
+    }
+
+    private refreshHeaderComp(): void {
+        const newCompDetails = this.lookupUserCompDetails();
+
+        const compInstance = this.comp.getUserCompInstance();
+
+        // only try refresh if old comp exists adn it is the correct type
+        const attemptRefresh = compInstance!=null && this.userCompDetails.componentClass == newCompDetails.componentClass;
+
+        const headerCompRefreshed = attemptRefresh ? this.attemptHeaderCompRefresh(newCompDetails.params) : false;
+
+        if (headerCompRefreshed) {
+            // we do this as a refresh happens after colDefs change, and it's possible the column has had it's
+            // draggable property toggled. no need to call this if not refreshing, as setDragSource is done
+            // as part of appendHeaderComp
+            this.setDragSource(this.dragSourceElement);
+        } else {
+            this.setCompDetails(newCompDetails);
+        }        
+    }
+
+    public attemptHeaderCompRefresh(params: IHeaderParams): boolean {
+        const headerComp = this.comp.getUserCompInstance();
+        if (!headerComp) { return false; }
+
+        // if no refresh method, then we want to replace the headerComp
+        if (!headerComp.refresh) { return false; }
+
+        const res = headerComp.refresh(params);
+
+        return res;
     }
 
     private calculateDisplayName(): string | null {

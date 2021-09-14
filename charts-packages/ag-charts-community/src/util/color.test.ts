@@ -144,9 +144,7 @@ test('fromRgbaString', () => {
         expect(color.a).toBe(1);
         expect(color.toRgbaString()).toBe('rgb(120, 255, 255)');
     }
-    expect(() => { Color.fromRgbaString('rgb(120.5, 240, 100)'); }).toThrow();
-    expect(() => { Color.fromRgbaString('rgb(120, .3, 100)'); }).toThrow();
-    expect(() => { Color.fromRgbaString('rgb(120, 240, 100.)'); }).toThrow();
+
     expect(() => { Color.fromRgbaString('rgb(-120, 240, 100)'); }).toThrow();
 });
 

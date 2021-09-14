@@ -1,19 +1,17 @@
 import { PostConstruct, PreDestroy } from '../../context/context';
-import { Column } from '../../entities/column';
-import { HeaderFilterCellComp } from '../cells/floatingFilter/headerFilterCellComp';
 import { setAriaRowIndex } from '../../utils/aria';
 import { setDomChildOrder } from '../../utils/dom';
 import { getAllValuesInObject, iterateObject } from '../../utils/object';
 import { Component } from '../../widgets/component';
-import { HeaderRowCtrl, IHeaderRowComp } from './headerRowCtrl';
-import { find } from '../../utils/generic';
 import { AbstractHeaderCellComp } from '../cells/abstractCell/abstractHeaderCellComp';
-import { HeaderCellComp } from '../cells/column/headerCellComp';
 import { AbstractHeaderCellCtrl } from '../cells/abstractCell/abstractHeaderCellCtrl';
+import { HeaderCellComp } from '../cells/column/headerCellComp';
+import { HeaderCellCtrl } from '../cells/column/headerCellCtrl';
 import { HeaderGroupCellComp } from '../cells/columnGroup/headerGroupCellComp';
 import { HeaderGroupCellCtrl } from '../cells/columnGroup/headerGroupCellCtrl';
+import { HeaderFilterCellComp } from '../cells/floatingFilter/headerFilterCellComp';
 import { HeaderFilterCellCtrl } from '../cells/floatingFilter/headerFilterCellCtrl';
-import { HeaderCellCtrl, IHeaderCellComp } from '../cells/column/headerCellCtrl';
+import { HeaderRowCtrl, IHeaderRowComp } from './headerRowCtrl';
 
 export enum HeaderRowType {
     COLUMN_GROUP = 'group',
@@ -25,7 +23,7 @@ export class HeaderRowComp extends Component {
 
     private ctrl: HeaderRowCtrl;
 
-    private headerComps: { [key: string]: AbstractHeaderCellComp; } = {};
+    private headerComps: { [key: string]: AbstractHeaderCellComp<AbstractHeaderCellCtrl>; } = {};
 
     constructor(ctrl: HeaderRowCtrl) {
         super();
@@ -78,7 +76,7 @@ export class HeaderRowComp extends Component {
             this.headerComps[id] = comp;
         });
 
-        iterateObject(oldComps, (id: string, comp: AbstractHeaderCellComp)=> {
+        iterateObject(oldComps, (id: string, comp: AbstractHeaderCellComp<AbstractHeaderCellCtrl>)=> {
             this.getGui().removeChild(comp.getGui());
             this.destroyBean(comp);
         });
@@ -87,9 +85,9 @@ export class HeaderRowComp extends Component {
         if (ensureDomOrder) {
             const comps = getAllValuesInObject(this.headerComps);
             // ordering the columns by left position orders them in the order they appear on the screen
-            comps.sort( (a: AbstractHeaderCellComp, b: AbstractHeaderCellComp) => {
-                const leftA = a.getColumn().getLeft()!;
-                const leftB = b.getColumn().getLeft()!;
+            comps.sort( (a: AbstractHeaderCellComp<AbstractHeaderCellCtrl>, b: AbstractHeaderCellComp<AbstractHeaderCellCtrl>) => {
+                const leftA = a.getCtrl().getColumnGroupChild().getLeft()!;
+                const leftB = b.getCtrl().getColumnGroupChild().getLeft()!;
                 return leftA - leftB;
             });
             const elementsInOrder = comps.map( c => c.getGui() );
@@ -97,9 +95,9 @@ export class HeaderRowComp extends Component {
         }
     }
 
-    private createHeaderComp(headerCtrl: AbstractHeaderCellCtrl): AbstractHeaderCellComp {
+    private createHeaderComp(headerCtrl: AbstractHeaderCellCtrl): AbstractHeaderCellComp<AbstractHeaderCellCtrl> {
 
-        let result: AbstractHeaderCellComp;
+        let result: AbstractHeaderCellComp<AbstractHeaderCellCtrl>;
 
         switch (this.ctrl.getType()) {
             case HeaderRowType.COLUMN_GROUP:

@@ -29,7 +29,7 @@ import { HoverFeature } from "../hoverFeature";
 import { HeaderGroupCellCtrl, IHeaderGroupCellComp } from "./headerGroupCellCtrl";
 import { IHeaderGroupComp, IHeaderGroupParams } from "./headerGroupComp";
 
-export class HeaderGroupCellComp extends AbstractHeaderCellComp {
+export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellCtrl> {
 
     private static TEMPLATE = /* html */
         `<div class="ag-header-group-cell" role="columnheader" tabindex="-1">
@@ -61,13 +61,10 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp {
     // the children can change, we keep destroy functions related to listening to the children here
     private removeChildListenersFuncs: Function[] = [];
 
-    private ctrl: HeaderGroupCellCtrl;
-
     constructor(ctrl: HeaderGroupCellCtrl) {
-        super(HeaderGroupCellComp.TEMPLATE);
+        super(HeaderGroupCellComp.TEMPLATE, ctrl);
         this.column = ctrl.getColumnGroupChild() as ColumnGroup;
         this.pinned = ctrl.getPinned();
-        this.ctrl = ctrl;
     }
 
     @PostConstruct
