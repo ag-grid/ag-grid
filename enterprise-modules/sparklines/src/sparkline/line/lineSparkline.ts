@@ -9,6 +9,9 @@ import { Point, SeriesNodeDatum, Sparkline } from '../sparkline';
 import { SparklineTooltip, toTooltipHtml } from '../tooltip/sparklineTooltip';
 import { getMarker } from '../marker/markerFactory';
 import { MarkerFormat, MarkerFormatterParams } from "@ag-grid-community/core";
+import { TimeScale } from '../../scale/timeScale';
+import { extent } from '../../util/array';
+import { isNumber } from '../../util/value';
 
 interface LineNodeDatum extends SeriesNodeDatum {
     readonly point: Point;
@@ -34,8 +37,6 @@ export class LineSparkline extends Sparkline {
 
     private lineSparklineGroup: Group = new Group();
     protected linePath: Path = new Path();
-    protected yScale: LinearScale = new LinearScale();
-    protected xScale: BandScale<number | undefined> = new BandScale<number | undefined>();
     private markers: Group = new Group();
     private markerSelection: Selection<Marker, Group, LineNodeDatum, any> = Selection.select(this.markers).selectAll<Marker>();
     private markerSelectionData: LineNodeDatum[] = [];
@@ -77,37 +78,27 @@ export class LineSparkline extends Sparkline {
         this.updateLine();
     }
 
-    protected updateYScale(): void {
-        const { yData, yScale, seriesRect } = this;
+    protected updateYScaleDomain(): void {
+        const { yData, yScale } = this;
 
-        yScale.range = [seriesRect.height, 0];
+        const yMinMax = extent(yData, isNumber);
 
-        const extent = this.findMinAndMax(yData);
-        let minY;
-        let maxY;
+        let yMin = 0;
+        let yMax= 1;
 
-        if (!extent) {
-            minY = 0;
-            maxY = 1;
-        } else {
-            minY = extent[0];
-            maxY = extent[1];
+        if (yMinMax !== undefined) {
+            yMin = yMinMax[0] as number;
+            yMax = yMinMax[1] as number;
         }
 
-        if (minY === maxY) {
-            // if all values in the data are the same, minY and maxY will be equal, need to adjust the domain with some padding.
-            const padding = Math.abs(minY * 0.01);
-            minY -= padding;
-            maxY += padding;
+        if (yMin === yMax) {
+            // if all values in the data are the same, yMin and yMax will be equal, need to adjust the domain with some padding
+            const padding = Math.abs(yMin * 0.01);
+            yMin -= padding;
+            yMax += padding;
         }
 
-        yScale.domain = [minY, maxY];
-    }
-
-    protected updateXScale(): void {
-        const { xScale, seriesRect, xData } = this;
-        xScale.range = [0, seriesRect.width];
-        xScale.domain = xData;
+        yScale.domain = [yMin, yMax];
     }
 
     protected generateNodeData(): LineNodeDatum[] | undefined {
@@ -117,7 +108,7 @@ export class LineSparkline extends Sparkline {
             return;
         }
 
-        const offsetX = xScale.bandwidth / 2;
+        const offsetX = xScale instanceof BandScale ? xScale.bandwidth / 2 : 0;
 
         const nodeData: LineNodeDatum[] = [];
 
@@ -125,11 +116,11 @@ export class LineSparkline extends Sparkline {
             let yDatum = yData[i];
             let xDatum = xData[i];
 
-            if (yDatum == undefined) {
+            if (yDatum == undefined || xDatum == undefined) {
                 continue;
             }
 
-            const x = xScale.convert(i) + offsetX;
+            const x = xScale.convert(xDatum) + offsetX;
             const y = yScale.convert(yDatum);
 
             nodeData.push({
@@ -202,7 +193,7 @@ export class LineSparkline extends Sparkline {
 
         const path = linePath.path;
         const n = yData.length;
-        const offsetX = xScale.bandwidth / 2;
+        const offsetX = xScale instanceof BandScale ? xScale.bandwidth / 2 : 0;
         let moveTo = true;
 
         path.clear();
@@ -237,7 +228,7 @@ export class LineSparkline extends Sparkline {
         const yValue = seriesDatum.y;
         const xValue = seriesDatum.x;
         const backgroundColor = marker.fill;
-        const content = typeof xValue !== 'number' ? `${this.formatDatum(seriesDatum.x)}: ${this.formatDatum(seriesDatum.y)}` : `${this.formatDatum(seriesDatum.y)}`;
+        const content = this.formatNumericDatum(yValue);
 
         const defaults = {
             backgroundColor,

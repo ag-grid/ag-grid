@@ -10,6 +10,8 @@ import { Marker } from '../marker/marker';
 import { SparklineTooltip, toTooltipHtml } from '../tooltip/sparklineTooltip';
 import { getMarker } from '../marker/markerFactory';
 import { MarkerFormat, MarkerFormatterParams } from "@ag-grid-community/core";
+import { extent } from '../../util/array';
+import { isNumber } from '../../util/value';
 
 interface AreaNodeDatum extends SeriesNodeDatum { }
 
@@ -40,8 +42,6 @@ export class AreaSparkline extends Sparkline {
     protected fillPath: Path = new Path();
     private areaPathData: AreaPathDatum[] = [];
     private xAxisLine: Line = new Line();
-    protected yScale: LinearScale = new LinearScale();
-    protected xScale: BandScale<number | undefined> = new BandScale<number | undefined>();
     private markers: Group = new Group();
     private markerSelection: Selection<Marker, Group, AreaNodeDatum, any> = Selection.select(this.markers).selectAll<Marker>();
     private markerSelectionData: AreaNodeDatum[] = [];
@@ -87,44 +87,35 @@ export class AreaSparkline extends Sparkline {
         this.updateFill(areaData);
     }
 
-    protected updateYScale(): void {
-        const { yData, yScale, seriesRect} = this;
+    protected updateYScaleDomain(): void {
+        const { yData, yScale } = this;
 
-        yScale.range = [seriesRect.height, 0];
+        let yMinMax = extent(yData, isNumber);
 
-        let extent = this.findMinAndMax(yData);
-        let minY, maxY
+        let yMin = 0;
+        let yMax = 1;
 
-        if (!extent) {
-            minY = 0;
-            maxY = 1;
-        } else {
-            minY = extent[0]
-            maxY = extent[1]
+        if (yMinMax !== undefined) {
+            yMin = yMinMax[0] as number;
+            yMax = yMinMax[1] as number;
         }
 
         if (yData.length > 1) {
-            // if minY is positive, set minY to 0.
-            minY = minY < 0 ? minY : 0;
+            // if yMin is positive, set yMin to 0
+            yMin = yMin < 0 ? yMin : 0;
 
-            // if maxY is negative, set maxY to 0.
-            maxY = maxY < 0 ? 0 : maxY
+            // if yMax is negative, set yMax to 0
+            yMax = yMax < 0 ? 0 : yMax;
 
-            // if minY and maxY are equal, maxY should be set to 0?
-            if (minY === maxY) {
-                const padding = Math.abs(minY * 0.01);
-                maxY = 0 + padding;
-                minY -= padding;
+            // if yMin and yMax are equal, yMax should be set to 0
+            if (yMin === yMax) {
+                const padding = Math.abs(yMin * 0.01);
+                yMax = 0 + padding;
+                yMin -= padding;
             }
         }
 
-        yScale.domain = [minY, maxY];
-    }
-
-    protected updateXScale(): void {
-        const { xScale, seriesRect, xData } = this;
-        xScale.range = [0, seriesRect.width];
-        xScale.domain = xData;
+        yScale.domain = [yMin, yMax];
     }
 
     protected generateNodeData(): { nodeData: AreaNodeDatum[], areaData: AreaPathDatum[] } | undefined {
@@ -134,7 +125,7 @@ export class AreaSparkline extends Sparkline {
             return;
         }
 
-        const offsetX = xScale.bandwidth / 2;
+        const offsetX = xScale instanceof BandScale ? xScale.bandwidth / 2 : 0;
         const n = yData.length;
 
         const nodeData: AreaNodeDatum[] = [];
@@ -169,7 +160,7 @@ export class AreaSparkline extends Sparkline {
             });
         }
 
-        // Phantom points for creating closed area
+        // phantom points for creating closed area
         const yZero = yScale.convert(0);
         const firstX = xScale.convert(xData[0]) + offsetX;
         const lastX = xScale.convert(xData[n - 1]) + offsetX;
@@ -329,7 +320,7 @@ export class AreaSparkline extends Sparkline {
         const yValue = seriesDatum.y;
         const xValue = seriesDatum.x;
         const backgroundColor = marker.fill;
-        const content = typeof xValue !== 'number' ? `${this.formatDatum(seriesDatum.x)}: ${this.formatDatum(seriesDatum.y)}` : `${this.formatDatum(seriesDatum.y)}`;
+        const content = this.formatNumericDatum(yValue);
 
         const defaults = {
             backgroundColor,
@@ -339,7 +330,7 @@ export class AreaSparkline extends Sparkline {
 
         if (this.tooltip.renderer) {
             return toTooltipHtml(this.tooltip.renderer({
-                // context: this.context,
+                context: this.context,
                 datum: seriesDatum,
                 title,
                 backgroundColor,

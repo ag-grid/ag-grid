@@ -6,7 +6,11 @@ import { Padding } from '../util/padding';
 import { defaultTooltipCss } from './tooltip/defaultTooltipCss';
 import { SparklineTooltip } from './tooltip/sparklineTooltip';
 import { HighlightStyle } from "@ag-grid-community/core";
-import { isNumber } from "../util/number";
+import { isContinuous, isDate, isNumber, isString, isStringObject } from '../util/value';
+import { LinearScale } from '../scale/linearScale';
+import { TimeScale } from '../scale/timeScale';
+import { BandScale } from '../scale/bandScale';
+import { extent } from '../util/array';
 
 export interface SeriesNodeDatum {
     readonly seriesDatum: any;
@@ -25,9 +29,12 @@ interface SeriesRect {
 }
 
 type Container = HTMLElement | undefined | null;
-type Data = number[] | undefined | null;
+type Data = number[] | [number | string | Date, number][] | undefined | null;
+type AxisType = 'number' | 'category' | 'time';
+type ScaleType = LinearScale | TimeScale | BandScale<string>;
 
 export class SparklineAxis extends Observable {
+    type?: AxisType = 'category';
     stroke: string = 'rgb(204, 214, 235)';
     strokeWidth: number = 1;
 }
@@ -94,6 +101,15 @@ export abstract class Sparkline extends Observable {
     title?: string = undefined;
     padding: Padding = new Padding(3);
 
+    xKey: string = 'x';
+    yKey: string = 'y';
+
+    protected xData: any[] = [];
+    protected yData: (number | undefined)[] = [];
+
+    protected xScale!: ScaleType;
+    protected yScale: LinearScale = new LinearScale();
+
     readonly axis = new SparklineAxis();
     readonly highlightStyle: HighlightStyle = {
         size: 6,
@@ -158,9 +174,6 @@ export abstract class Sparkline extends Observable {
         return this._height;
     }
 
-    protected yData: (number | undefined)[] = [];
-    protected xData: (number | undefined)[] = [];
-
     /**
      * Generate node data from processed data.
      * Produce data joins.
@@ -168,11 +181,68 @@ export abstract class Sparkline extends Observable {
      */
     protected update() { }
 
-    // Update x scale based on processed data.
-    protected updateXScale() { }
+    // Update y scale based on processed data.
+    protected updateYScale(): void {
+        this.updateYScaleRange();
+        this.updateYScaleDomain();
+    }
+
+    // Update y scale domain based on processed data.
+    protected updateYScaleDomain() { }
+
+    // Update y scale range based on height and padding (seriesRect).
+    protected updateYScaleRange(): void {
+        const { yScale, seriesRect } = this;
+        yScale.range = [seriesRect.height, 0];
+    }
 
     // Update x scale based on processed data.
-    protected updateYScale() { }
+    protected updateXScale(): void {
+        const { type } = this.axis;
+
+        this.xScale = this.getXScale(type);
+
+        this.updateXScaleRange();
+        this.updateXScaleDomain();
+    }
+
+    // Update x scale range based on width and padding (seriesRect).
+    protected updateXScaleRange(): void {
+        const { seriesRect } = this;
+        this.xScale.range = [0, seriesRect.width];
+    }
+
+    // Update x scale domain based on processed data and type of scale.
+    protected updateXScaleDomain(): void {
+        const { xData, xScale } = this;
+
+        let xMinMax;
+
+        if (xScale instanceof LinearScale) {
+            xMinMax = extent(xData, isNumber);
+        } else if (xScale instanceof TimeScale) {
+            xMinMax = extent(xData, isDate);
+        }
+
+        this.xScale.domain = xMinMax ? xMinMax.slice() : xData;
+    }
+
+    /**
+    * Return xScale instance based on the provided type or return a `BandScale` by default.
+    * The default type is `category`.
+    * @param type
+    */
+    protected getXScale(type: AxisType = 'category'): ScaleType {
+        switch (type) {
+            case 'number':
+                return new LinearScale();
+            case 'time':
+                return new TimeScale();
+            case 'category':
+            default:
+                return new BandScale();
+        }
+    }
 
     // Update x axis line.
     protected updateXAxisLine() { }
@@ -250,11 +320,56 @@ export abstract class Sparkline extends Observable {
         yData.length = 0;
         xData.length = 0;
 
-        for (let i = 0, n = data.length; i < n; i++) {
-            const y = data[i];
-            const yDatum = this.getYDatum(y);
-            yData.push(yDatum);
-            xData.push(i);
+        const n = data.length;
+
+        const dataType = this.getDataType(data);
+
+        const { type: xValueType } = this.axis;
+        const xType = xValueType !== 'number' && xValueType !== 'time' ? 'category' : xValueType;
+
+        if (dataType === 'number') {
+            for (let i = 0; i < n; i++) {
+                const xDatum = i;
+                const yDatum = data[i];
+
+                const x = this.getDatum(xDatum, xType);
+                const y = this.getDatum(yDatum, 'number');
+
+                xData.push(x);
+                yData.push(y);
+            }
+        } else if (dataType === 'array') {
+            for (let i = 0; i < n; i++) {
+                const datum = data[i];
+                if (Array.isArray(datum)) {
+                    const xDatum = datum[0];
+                    const yDatum = datum[1];
+
+                    const x = this.getDatum(xDatum, xType);
+                    const y = this.getDatum(yDatum, 'number');
+
+                    xData.push(x);
+                    yData.push(y);
+                }
+            }
+        } else if (dataType === 'object') {
+            const { yKey, xKey } = this;
+
+            for (let i = 0; i < n; i++) {
+                const datum = data[i];
+
+                if (typeof datum === 'object' && !Array.isArray(datum)) {
+                    const xDatum = datum[xKey];
+                    const yDatum = datum[yKey];
+
+
+                    const x = this.getDatum(xDatum, xType);
+                    const y = this.getDatum(yDatum, 'number');
+
+                    xData.push(x);
+                    yData.push(y);
+                }
+            }
         }
 
         // update axes
@@ -265,44 +380,41 @@ export abstract class Sparkline extends Observable {
     }
 
     /**
-    * Return the given value if it is a number, otherwise return `undefined`.
-    * @param y
+    * Return the type of data provided to the sparkline based on the first truthy value in the data array.
+    * If the value is not a number, array or object, return `undefined`.
+    * @param data
     */
-    private getYDatum(y: any): number | undefined {
-        const noDatum = !isNumber(y);
-        return noDatum ? undefined : y;
+    private getDataType(data: any): 'number' | 'array' | 'object' | undefined {
+        for (let datum of data) {
+            if (datum) {
+                if (isNumber(datum)) {
+                    return 'number';
+                } else if (Array.isArray(datum)) {
+                    return 'array';
+                } else if (typeof datum === 'object') {
+                    return 'object';
+                }
+            }
+        }
     }
 
     /**
-    * Return the minimum and maximum value in the given iterable using natural order.
-    * If the iterable contains no comparable values, return `undefined`.
-    * @param values
+    * Return the given value depending on the type of axis.
+    * Return `undefined` if the value is invalid for the given axis type.
+    * @param value
     */
-    protected findMinAndMax(values: (number | undefined)[]): [number, number] | undefined {
-        const n = values.length;
-        let value;
-        let i = -1;
-        let min;
-        let max;
-
-        while (++i < n) {
-            if ((value = values[i]) != undefined) {
-                min = max = value;
-                while (++i < n) {
-                    if ((value = values[i]) != undefined) {
-                        if (value < min) {
-                            min = value;
-                        }
-                        if (value > max) {
-                            max = value;
-                        }
-                    }
-                }
+    private getDatum(value: any, type: AxisType): any {
+        if (type === 'number' && isNumber(value) || type === 'time' && isContinuous(value)) {
+            return value;
+        } else if (type === 'category') {
+            if (isNumber(value)) {
+                return String(value);
+            } else if (isString(value)) {
+                return { toString: () => String(value) };
+            } else if (isStringObject(value)) {
+                return value;
             }
-
         }
-
-        return typeof min === 'undefined' || typeof max === 'undefined' ? undefined : [min, max];
     }
 
     private layoutId: number = 0;
@@ -338,8 +450,9 @@ export abstract class Sparkline extends Observable {
             rootGroup.translationX = seriesRect.x;
             rootGroup.translationY = seriesRect.y;
 
-            // update axes
-            this.updateAxes();
+            // update axes ranges
+            this.updateXScaleRange();
+            this.updateYScaleRange();
 
             // produce data joins and update selection's nodes
             this.update();
@@ -418,8 +531,8 @@ export abstract class Sparkline extends Observable {
         }
     }
 
-    protected formatDatum(datum: any): string {
-        return datum.toFixed(1);
+    protected formatNumericDatum(datum: any): string {
+        return parseInt(datum).toFixed(1);
     }
 
     private _onMouseMove = this.onMouseMove.bind(this);
@@ -439,8 +552,6 @@ export abstract class Sparkline extends Observable {
      * Cleanup and remove canvas element from the DOM.
      */
     destroy() {
-        // FIXME: destroy tooltip when grid is destroyed
-        // this.tooltip.destroy();
         this.scene.container = undefined;
         // remove canvas element from the DOM
         this.container = undefined;

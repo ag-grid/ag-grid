@@ -7,6 +7,8 @@ import { SeriesNodeDatum, Sparkline } from '../sparkline';
 import { SparklineTooltip, toTooltipHtml } from '../tooltip/sparklineTooltip';
 import { Rectangle } from './rectangle';
 import { ColumnFormatterParams, ColumnFormat } from "@ag-grid-community/core";
+import { extent } from '../../util/array';
+import { isNumber } from '../../util/value';
 
 interface ColumnNodeDatum extends SeriesNodeDatum {
     x: number,
@@ -22,8 +24,6 @@ export class ColumnSparkline extends Sparkline {
     static className = 'ColumnSparkline';
 
     private columnSparklineGroup: Group = new Group();
-    private yScale: LinearScale = new LinearScale();
-    private xScale: BandScale<number | undefined> = new BandScale<number | undefined>();
     private xAxisLine: Line = new Line();
     private columns: Group = new Group();
     private columnSelection: Selection<Rectangle, Group, ColumnNodeDatum, ColumnNodeDatum> = Selection.select(this.columns).selectAll<Rectangle>();
@@ -61,56 +61,55 @@ export class ColumnSparkline extends Sparkline {
         this.updateNodes();
     }
 
-    protected updateYScale() {
-        const { yScale, seriesRect, yData, yScaleDomain } = this;
+    protected updateYScaleDomain() {
+        const { yScale, yData, yScaleDomain } = this;
 
-        yScale.range = [seriesRect.height, 0];
+        const yMinMax = extent(yData, isNumber);
 
-        // TODO: fix this up
-        const extent = this.findMinAndMax(yData);
-        let minY;
-        let maxY;
+        let yMin = 0;
+        let yMax = 1;
 
-        if (!extent) {
-            minY = 0;
-            maxY = 1;
-        } else {
-            minY = extent[0];
-            maxY = extent[1];
+        if (yMinMax !== undefined) {
+            yMin = yMinMax[0] as number;
+            yMax = yMinMax[1] as number;
         }
 
-        // if minY is positive, set minY to 0.
-        minY = minY < 0 ? minY : 0;
+        // if yMin is positive, set yMin to 0
+        yMin = yMin < 0 ? yMin : 0;
 
-        // if maxY is negative, set maxY to 0.
-        maxY = maxY < 0 ? 0 : maxY
+        // if yMax is negative, set yMax to 0
+        yMax = yMax < 0 ? 0 : yMax;
 
-        if (minY === maxY) {
-            // if minY and maxY are equal, maxY should be set to 0?
-            const padding = Math.abs(minY * 0.01);
-            minY -= padding;
-            maxY = 0 + padding;
+        // if yMin and yMax are equal, yMax should be set to 0
+        if (yMin === yMax) {
+            const padding = Math.abs(yMin * 0.01);
+            yMax = 0 + padding;
+            yMin -= padding;
         }
 
         if (yScaleDomain) {
-            if (yScaleDomain[1] < maxY) {
-                yScaleDomain[1] = maxY;
+            if (yScaleDomain[1] < yMax) {
+                yScaleDomain[1] = yMax;
             }
-            if (yScaleDomain[0] > minY) {
-                yScaleDomain[0] = minY;
+            if (yScaleDomain[0] > yMin) {
+                yScaleDomain[0] = yMin;
             }
         }
 
-        yScale.domain = yScaleDomain ? yScaleDomain : [minY, maxY];
+        yScale.domain = yScaleDomain ? yScaleDomain : [yMin, yMax];
     }
 
-    protected updateXScale() {
-        const { xScale, seriesRect, xData, paddingOuter, paddingInner } = this;
-
-        xScale.range = [0, seriesRect.width];
-        xScale.domain = xData;
-        xScale.paddingInner = paddingInner;
-        xScale.paddingOuter = paddingOuter;
+    protected updateXScaleRange() {
+        const { xScale, seriesRect, paddingOuter, paddingInner, xData } = this;
+        if (xScale instanceof BandScale) {
+            xScale.range = [0, seriesRect.width];
+            xScale.paddingInner = paddingInner;
+            xScale.paddingOuter = paddingOuter;
+        } else {
+            // last column will be clipped if the scale is not a band scale
+            // subtract maximum possible column width from the range so that the last column is not clipped
+            xScale.range = [0, seriesRect.width - (seriesRect.width / xData.length)];
+        }
     }
 
     protected updateXAxisLine() {
@@ -136,8 +135,23 @@ export class ColumnSparkline extends Sparkline {
 
         const nodeData: ColumnNodeDatum[] = [];
 
-        const yZero: number = yScale.convert(0);
-        const width: number = xScale.bandwidth;
+        const yZero = yScale.convert(0);
+
+        // if the scale is a band scale, the width of the columns will be the bandwidth, otherwise the width of the columns will be the smallest interval between the given data points
+
+        let smallestInterval = Infinity;
+        if (!(xScale instanceof BandScale)) {
+            for (let i = 0, n = xData.length; i < n; i++) {
+                const curr = xData[i];
+                const next = xData[i + 1];
+                if (curr && next && (xScale.convert(next) - xScale.convert(curr)) < smallestInterval) {
+                    smallestInterval = xScale.convert(next) - xScale.convert(curr);
+                }
+            }
+        }
+
+        const width = xScale instanceof BandScale ? xScale.bandwidth : isFinite(smallestInterval) ? smallestInterval : (xScale.range[1] / xData.length);
+
 
         for (let i = 0, n = yData.length; i < n; i++) {
             let yDatum = yData[i];
@@ -235,7 +249,7 @@ export class ColumnSparkline extends Sparkline {
         const yValue = seriesDatum.y;
         const xValue = seriesDatum.x;
         const backgroundColor = fill;
-        const content = typeof xValue !== 'number' ? `${this.formatDatum(seriesDatum.x)}: ${this.formatDatum(seriesDatum.y)}` : `${this.formatDatum(seriesDatum.y)}`;
+        const content = this.formatNumericDatum(yValue);
 
         const defaults = {
             backgroundColor,
@@ -245,7 +259,7 @@ export class ColumnSparkline extends Sparkline {
 
         if (this.tooltip.renderer) {
             return toTooltipHtml(this.tooltip.renderer({
-                // context: this.context,
+                context: this.context,
                 datum: seriesDatum,
                 title,
                 backgroundColor,

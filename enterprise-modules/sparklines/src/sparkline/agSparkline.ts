@@ -83,6 +83,8 @@ function initSparkline(sparkline: SparklineType, options: any) {
     setValueIfPropertyExists(sparkline, 'width', options.width, options);
     setValueIfPropertyExists(sparkline, 'height', options.height, options);
     setValueIfPropertyExists(sparkline, 'title', options.title, options);
+    setValueIfPropertyExists(sparkline, 'xKey', options.xKey, options);
+    setValueIfPropertyExists(sparkline, 'yKey', options.yKey, options);
 
     if (options.padding) {
         initPaddingOptions(sparkline.padding, options.padding);
@@ -171,6 +173,7 @@ function initLineOptions(target: SparklineLine, options: any) {
 }
 
 function initAxisOptions(target: SparklineAxis, options: any) {
+    setValueIfPropertyExists(target, 'type', options.type, options);
     setValueIfPropertyExists(target, 'stroke', options.stroke, options);
     setValueIfPropertyExists(target, 'strokeWidth', options.strokeWidth, options);
 }
