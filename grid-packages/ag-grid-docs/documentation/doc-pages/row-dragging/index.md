@@ -78,8 +78,7 @@ For this example note the following:
 
 ### Entire Row Dragging
 
-When using managed row dragging it is also possible to reorder rows by clicking and dragging anywhere on the row without
-the need for a drag handle by enabling the `rowDragEntireRow` grid option as shown below:
+When using row dragging it is also possible to reorder rows by clicking and dragging anywhere on the row without the need for a drag handle by enabling the `rowDragEntireRow` grid option as shown below:
 
 <snippet>
 const gridOptions = {
@@ -89,25 +88,21 @@ const gridOptions = {
         { field: 'sport' },
         { field: 'total' }
     ],
-    // entire row dragging is only supported with managed row dragging
-    rowDragManaged: true,
     // allows rows to dragged without the need for drag handles
-    rowDragEntireRow: true,
-    // entire row dragging requires row selection ('single' or 'multiple')  
-    rowSelection: 'single',
+    rowDragEntireRow: true
 }
 </snippet>
 
-The example below demonstrates entire row dragging with [Multi-Row Dragging](/row-dragging/#multi-row-dragging). Note
-the following:
+The example below demonstrates entire row dragging with [Multi-Row Dragging](/row-dragging/#multi-row-dragging). Note the following:
 
-- Reordering rows by clicking and dragging anywhere on a row is possible as `rowDragEntireRow` and `rowDragManaged` enabled.
+- Reordering rows by clicking and dragging anywhere on a row is possible as `rowDragEntireRow` enabled.
 - Multiple rows can be selected and dragged as `rowDragMultiRow` is also enabled with `rowSelection = 'multiple'`.
+- Row Drag Managed is being used, but it is not a requirement for `Entire Row Dragging`.
 
 <grid-example title='Entire Row Dragging' name='entire-row-dragging' type='generated' options='{ "enterprise": true, "modules": ["clientside"] }'></grid-example>
 
 [[warning]]
-|[Range Selection](/range-selection/) is not supported when `rowDragEntireRow` is enabled.   
+|[Range Selection](/range-selection/) is not supported when `rowDragEntireRow` is enabled.
 
 ## Suppress Row Drag
 
