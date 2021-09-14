@@ -4401,21 +4401,39 @@
   "ServerSideStoreType": {},
   "ServerSideStoreParams": {
     "storeType": {
+      "description": "/** What store type to use.\n * If missing, then defaults to grid option `serverSideStoreType`. */",
       "type": { "returnType": "ServerSideStoreType", "optional": true }
     },
     "maxBlocksInCache": {
+      "description": "/** For Partial Store only.\n * How many blocks to keep in cache.\n * If missing, defaults to grid options `maxBlocksInCache`. */",
       "type": { "returnType": "number", "optional": true }
     },
-    "cacheBlockSize": { "type": { "returnType": "number", "optional": true } }
+    "cacheBlockSize": {
+      "description": "/** For Partial Store only.\n * Cache block size.\n * If missing, defaults to grid options `cacheBlockSize`. */",
+      "type": { "returnType": "number", "optional": true }
+    }
   },
   "GetServerSideStoreParamsParams": {
-    "level": { "type": { "returnType": "number", "optional": false } },
-    "parentRowNode": { "type": { "returnType": "RowNode", "optional": true } },
+    "level": {
+      "description": "/** The level of the store. Top level is 0. */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "parentRowNode": {
+      "description": "/** The Row Node for the group that got expanded, or undefined if top level (ie no parent) */",
+      "type": { "returnType": "RowNode", "optional": true }
+    },
     "rowGroupColumns": {
+      "description": "/** Active Row Group Columns, if any. */",
       "type": { "returnType": "Column[]", "optional": false }
     },
-    "pivotColumns": { "type": { "returnType": "Column[]", "optional": false } },
-    "pivotMode": { "type": { "returnType": "boolean", "optional": false } }
+    "pivotColumns": {
+      "description": "/** Active Pivot Columns, if any. */",
+      "type": { "returnType": "Column[]", "optional": false }
+    },
+    "pivotMode": {
+      "description": "/** true if pivot mode is active. */",
+      "type": { "returnType": "boolean", "optional": false }
+    }
   },
   "IsServerSideGroupOpenByDefaultParams": {
     "data": { "type": { "returnType": "any", "optional": false } },
@@ -13216,18 +13234,33 @@
   },
   "ServerSideStoreState": {
     "type": {
+      "description": "/** Store type, `partial` or `full` */",
       "type": { "returnType": "ServerSideStoreType", "optional": false }
     },
-    "route": { "type": { "returnType": "string[]", "optional": false } },
-    "rowCount": { "type": { "returnType": "number", "optional": false } },
+    "route": {
+      "description": "/** The route that identifies this store. */",
+      "type": { "returnType": "string[]", "optional": false }
+    },
+    "rowCount": {
+      "description": "/** How many rows the store has. This includes 'loading rows'. */",
+      "type": { "returnType": "number", "optional": false }
+    },
     "lastRowIndexKnown": {
+      "description": "/** Partial store only.\n * Whether the last row index is know. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "info": { "type": { "returnType": "any", "optional": true } },
+    "info": {
+      "description": "/** Any extra info provided to the store, when data was loaded. */",
+      "type": { "returnType": "any", "optional": true }
+    },
     "maxBlocksInCache": {
+      "description": "/** Partial store only.\n * Max blocks allowed in the store. */",
       "type": { "returnType": "number", "optional": true }
     },
-    "cacheBlockSize": { "type": { "returnType": "number", "optional": true } }
+    "cacheBlockSize": {
+      "description": "/** Partial store only.\n * The size (number of rows) of each block. */",
+      "type": { "returnType": "number", "optional": true }
+    }
   },
   "SetFilterValuesFuncParams": {
     "success": {

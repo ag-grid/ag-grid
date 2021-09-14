@@ -2026,6 +2026,11 @@
       "storeType?": "ServerSideStoreType",
       "maxBlocksInCache?": "number",
       "cacheBlockSize?": "number"
+    },
+    "docs": {
+      "storeType?": "/** What store type to use.\n * If missing, then defaults to grid option `serverSideStoreType`. */",
+      "maxBlocksInCache?": "/** For Partial Store only.\n * How many blocks to keep in cache.\n * If missing, defaults to grid options `maxBlocksInCache`. */",
+      "cacheBlockSize?": "/** For Partial Store only.\n * Cache block size.\n * If missing, defaults to grid options `cacheBlockSize`. */"
     }
   },
   "GetServerSideStoreParamsParams": {
@@ -2036,6 +2041,13 @@
       "rowGroupColumns": "Column[]",
       "pivotColumns": "Column[]",
       "pivotMode": "boolean"
+    },
+    "docs": {
+      "level": "/** The level of the store. Top level is 0. */",
+      "parentRowNode?": "/** The Row Node for the group that got expanded, or undefined if top level (ie no parent) */",
+      "rowGroupColumns": "/** Active Row Group Columns, if any. */",
+      "pivotColumns": "/** Active Pivot Columns, if any. */",
+      "pivotMode": "/** true if pivot mode is active. */"
     }
   },
   "IsServerSideGroupOpenByDefaultParams": {
@@ -7497,6 +7509,15 @@
       "info?": "any",
       "maxBlocksInCache?": "number",
       "cacheBlockSize?": "number"
+    },
+    "docs": {
+      "type": "/** Store type, `partial` or `full` */",
+      "route": "/** The route that identifies this store. */",
+      "rowCount": "/** How many rows the store has. This includes 'loading rows'. */",
+      "lastRowIndexKnown?": "/** Partial store only.\n * Whether the last row index is know. */",
+      "info?": "/** Any extra info provided to the store, when data was loaded. */",
+      "maxBlocksInCache?": "/** Partial store only.\n * Max blocks allowed in the store. */",
+      "cacheBlockSize?": "/** Partial store only.\n * The size (number of rows) of each block. */"
     }
   },
   "SetFilterValuesFuncParams": {

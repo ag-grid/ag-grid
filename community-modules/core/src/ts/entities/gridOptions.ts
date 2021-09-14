@@ -923,16 +923,35 @@ export enum ServerSideStoreType {
 }
 
 export interface ServerSideStoreParams {
+    /**
+     * What store type to use.
+     * If missing, then defaults to grid option `serverSideStoreType`.
+     *  */
     storeType?: ServerSideStoreType;
+    /**
+     * For Partial Store only.
+     * How many blocks to keep in cache.
+     * If missing, defaults to grid options `maxBlocksInCache`.
+     */
     maxBlocksInCache?: number;
+    /**
+     * For Partial Store only.
+     * Cache block size.
+     * If missing, defaults to grid options `cacheBlockSize`.
+     */
     cacheBlockSize?: number;
 }
 
 export interface GetServerSideStoreParamsParams {
+    /** The level of the store. Top level is 0. */
     level: number;
+    /** The Row Node for the group that got expanded, or undefined if top level (ie no parent) */
     parentRowNode?: RowNode;
+    /** Active Row Group Columns, if any. */
     rowGroupColumns: Column[];
+    /** Active Pivot Columns, if any. */
     pivotColumns: Column[];
+    /** true if pivot mode is active. */
     pivotMode: boolean;
 }
 
