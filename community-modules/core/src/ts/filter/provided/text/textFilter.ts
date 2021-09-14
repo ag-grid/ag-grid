@@ -14,6 +14,12 @@ import { AgPromise } from '../../../utils';
 import { forEach } from '../../../utils/array';
 
 export interface TextFilterModel extends ISimpleFilterModel {
+    /** Filter type is always `'text'` */
+    filterType?: 'text';
+    /**
+     * The text value associated with the filter.
+     * It's optional as custom filters may not have a text value.
+     * */
     filter?: string | null;
 }
 
@@ -140,7 +146,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
         return model;
     }
 
-    protected getFilterType(): string {
+    protected getFilterType(): 'text' {
         return 'text';
     }
 

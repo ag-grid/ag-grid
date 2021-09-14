@@ -20,6 +20,7 @@ export interface ISimpleFilterParams extends IProvidedFilterParams {
 }
 
 export interface ISimpleFilterModel extends ProvidedFilterModel {
+    /** One of the filter options, e.g. `'equals'` */
     type?: string | null;
 }
 

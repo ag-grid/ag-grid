@@ -131,56 +131,11 @@ This section explains what the Filter Model looks like for each of the simple fi
 | The best way to understand what the Filter Models look like is to set a filter via the
 | UI and call `api.getFilterModel()` in your console. You can then see what the model looks like for different variations of the filters.
 
-```ts
-// text filter uses this filter model
-interface TextFilterModel {
-    // always 'text' for text filter
-    filterType: string;
+<interface-documentation interfaceName='TextFilterModel' config='{"hideHeader":false, "headerLevel": 3}'></interface-documentation>
 
-    // one of the filter options, e.g. 'equals'
-    type: string;
+<interface-documentation interfaceName='NumberFilterModel' config='{"hideHeader":false, "headerLevel": 3}'></interface-documentation>
 
-    // the text value associated with the filter.
-    // it's optional as custom filters may not
-    // have a text value
-    filter?: string;
-}
-```
-
-```ts
-// number filter uses this filter model
-interface NumberFilterModel {
-    // always 'number' for number filter
-    filterType: string;
-
-    // one of the filter options, e.g. 'equals'
-    type: string;
-
-    // the number value(s) associated with the filter.
-    // custom filters can have no values (hence both are optional).
-    // range filter has two values (from and to).
-    filter?: number;
-    filterTo?: number;
-}
-```
-
-```ts
-// date filter uses this filter model
-interface DateFilterModel {
-    // always 'date' for date filter
-    filterType: string;
-
-    // one of the filter options, e.g. 'equals'
-    type: string;
-
-    // the date value(s) associated with the filter.
-    // the type is string and format is always YYYY-MM-DD e.g. 2019-05-24
-    // custom filters can have no values (hence both are optional).
-    // range filter has two values (from and to).
-    dateFrom?: string;
-    dateTo?: string;
-}
-```
+<interface-documentation interfaceName='DateFilterModel' config='{"hideHeader":false, "headerLevel": 3}'></interface-documentation>
 
 Examples of filter model instances are as follows:
 

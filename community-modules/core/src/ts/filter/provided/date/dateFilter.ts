@@ -12,7 +12,18 @@ import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedPa
 // The date filter model takes strings, although the filter actually works with dates. This is because a Date object
 // won't convert easily to JSON. When the model is used for doing the filtering, it's converted to a Date object.
 export interface DateFilterModel extends ISimpleFilterModel {
+    /** Filter type is always `'date'` */
+    filterType?: 'date';
+    /**
+     * The date value(s) associated with the filter.
+     * The type is `string` and format is always `YYYY-MM-DD` e.g. 2019-05-24.
+     * Custom filters can have no values (hence both are optional).
+     * Range filter has two values (from and to).
+     */
     dateFrom: string | null;
+    /**
+     * Range filter `to` date value.
+     */
     dateTo: string | null;
 }
 
@@ -184,7 +195,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
             && aSimple.type === bSimple.type;
     }
 
-    protected getFilterType(): string {
+    protected getFilterType(): 'date' {
         return 'date';
     }
 

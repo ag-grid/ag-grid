@@ -25,7 +25,11 @@ export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework
     const codeLookup = getJsonFromFile(nodes, undefined, 'grid-api/doc-interfaces.AUTO.json');
 
     const lookups = { codeLookup: codeLookup[interfacename], interfaces: interfaceLookup };
-    config = { ...config, lookups, codeSrcProvided, hideHeader: true }
+    let hideHeader = true;
+    if (config.hideHeader !== undefined) {
+        hideHeader = config.hideHeader;
+    }
+    config = { ...config, lookups, codeSrcProvided, hideHeader };
 
     const li = interfaceLookup[interfacename];
 
@@ -176,7 +180,7 @@ const Section: React.FC<SectionProps> = ({ framework, title, properties, config 
     let header = null;
 
     if (!config.isSubset) {
-        const headerLevel = breadcrumbKeys.length + 1;
+        const headerLevel = config.headerLevel || breadcrumbKeys.length + 1;
         const HeaderTag = `h${headerLevel}`;
 
         // We use a plugin (gatsby-remark-autolink-headers) to insert links for all the headings in Markdown

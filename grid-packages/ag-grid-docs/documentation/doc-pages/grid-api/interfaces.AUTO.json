@@ -3693,10 +3693,16 @@
   "DateFilterModel": {
     "meta": {},
     "type": {
+      "filterType?": "'date'",
       "dateFrom": "string | null",
       "dateTo": "string | null",
-      "type?": "string | null",
-      "filterType?": "string"
+      "type?": "string | null"
+    },
+    "docs": {
+      "filterType?": "/** Filter type is always `'date'` */",
+      "dateFrom": "/** The date value(s) associated with the filter.\n * The type is `string` and format is always `YYYY-MM-DD` e.g. 2019-05-24.\n * Custom filters can have no values (hence both are optional).\n * Range filter has two values (from and to). */",
+      "dateTo": "/** Range filter `to` date value. */",
+      "type?": "/** One of the filter options, e.g. `'equals'` */"
     }
   },
   "IDateFilterParams": {
@@ -3760,10 +3766,16 @@
   "NumberFilterModel": {
     "meta": {},
     "type": {
+      "filterType?": "'number'",
       "filter?": "number | null",
       "filterTo?": "number | null",
-      "type?": "string | null",
-      "filterType?": "string"
+      "type?": "string | null"
+    },
+    "docs": {
+      "filterType?": "/** Filter type is always `'number'` */",
+      "filter?": "/** The number value(s) associated with the filter.\n * Custom filters can have no values (hence both are optional).\n * Range filter has two values (from and to). */",
+      "filterTo?": "/** Range filter `to` value. */",
+      "type?": "/** One of the filter options, e.g. `'equals'` */"
     }
   },
   "INumberFilterParams": {
@@ -3963,7 +3975,8 @@
   },
   "ISimpleFilterModel": {
     "meta": {},
-    "type": { "type?": "string | null", "filterType?": "string" }
+    "type": { "type?": "string | null", "filterType?": "string" },
+    "docs": { "type?": "/** One of the filter options, e.g. `'equals'` */" }
   },
   "ICombinedSimpleModel": {
     "meta": { "typeParams": ["M extends ISimpleFilterModel"] },
@@ -3982,9 +3995,14 @@
   "TextFilterModel": {
     "meta": {},
     "type": {
+      "filterType?": "'text'",
       "filter?": "string | null",
-      "type?": "string | null",
-      "filterType?": "string"
+      "type?": "string | null"
+    },
+    "docs": {
+      "filterType?": "/** Filter type is always `'text'` */",
+      "filter?": "/** The text value associated with the filter.\n * It's optional as custom filters may not have a text value. */",
+      "type?": "/** One of the filter options, e.g. `'equals'` */"
     }
   },
   "TextComparator": {
@@ -6921,7 +6939,7 @@
     "docs": {
       "displayKey": "/** A unique key that does not clash with the built-in filter keys. */",
       "displayName": "/** Display name for the filter. Can be replaced by a locale-specific value using a `localeTextFunc`. */",
-      "test": "/** Custom filter logic. */",
+      "test": "/** Custom filter logic that returns a boolean based on the `filterValue` and `cellValue`. */",
       "hideFilterInput?": "/** Optionally hide the filter input field. */"
     }
   },
