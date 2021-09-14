@@ -80,13 +80,20 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
 
+        const refreshStatus = () => {
+            this.onSortChanged();
+            this.onFilterChanged();
+            this.onRowGroupChanged();
+        }
+
         this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, () => {
+            refreshStatus();
+        });
 
-        this.onSortChanged();
-        this.onFilterChanged();
-        this.onRowGroupChanged();
+        refreshStatus();
 
         this.ctrlsService.whenReady(() => {
             const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
