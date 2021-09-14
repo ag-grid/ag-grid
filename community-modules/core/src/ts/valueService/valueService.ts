@@ -1,6 +1,6 @@
 import { ExpressionService } from "./expressionService";
 import { ColumnModel } from "../columns/columnModel";
-import { NewValueParams, ValueGetterParams } from "../entities/colDef";
+import { NewValueParams, ValueGetterParams, KeyCreatorParams } from "../entities/colDef";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { RowNode } from "../entities/rowNode";
 import { Column } from "../entities/column";
@@ -289,7 +289,17 @@ export class ValueService extends BeanStub {
         const value = this.getValue(col, rowNode);
         const keyCreator = col.getColDef().keyCreator;
 
-        let result = keyCreator ? keyCreator({ value: value }) : value;
+        const keyParams: KeyCreatorParams = {
+            value: value,
+            colDef: col.getColDef(),
+            column: col,
+            node: rowNode,
+            data: rowNode.data,
+            api: this.gridOptionsWrapper.getApi()!,
+            columnApi: this.gridOptionsWrapper.getColumnApi()!,
+            context: this.gridOptionsWrapper.getContext()
+        };
+        let result = keyCreator ? keyCreator(keyParams) : value;
 
         // if already a string, or missing, just return it
         if (typeof result === 'string' || result == null) {

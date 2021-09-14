@@ -15,6 +15,7 @@ import {
     IAfterGuiAttachedParams,
     AgPromise,
     KeyCode,
+    KeyCreatorParams,
     PositionableFeature,
     ResizableStructure,
     _
@@ -471,7 +472,17 @@ export class SetFilter extends ProvidedFilter<SetFilterModel> {
         let value = valueGetter(params.node);
 
         if (keyCreator) {
-            value = keyCreator({ value });
+            const keyParams: KeyCreatorParams = {
+                value: value,
+                colDef: this.setFilterParams.colDef,
+                column: this.setFilterParams.column,
+                node: params.node,
+                data: params.data,
+                api: this.gridOptionsWrapper.getApi()!,
+                columnApi: this.gridOptionsWrapper.getColumnApi()!,
+                context: this.gridOptionsWrapper.getContext()
+            };
+            value = keyCreator(keyParams);
         }
 
         value = _.makeNull(value);

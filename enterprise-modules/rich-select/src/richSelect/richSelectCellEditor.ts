@@ -11,6 +11,7 @@ import {
     RefSelector,
     VirtualList,
     KeyCode,
+    KeyCreatorParams,
     _,
 } from "@ag-grid-community/core";
 import { RichSelectRow } from "./richSelectRow";
@@ -162,7 +163,20 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         }
 
         if (typeof values[0] === 'object' && this.params.colDef.keyCreator) {
-            searchStrings = values.map(this.params.colDef.keyCreator);
+            searchStrings = values.map(value => {
+                const keyParams: KeyCreatorParams = {
+                    value: value,
+                    colDef: this.params.colDef,
+                    column: this.params.column,
+                    node: this.params.node,
+                    data: this.params.data,
+                    api: this.gridOptionsWrapper.getApi()!,
+                    columnApi: this.gridOptionsWrapper.getColumnApi()!,
+                    context: this.gridOptionsWrapper.getContext()
+                };
+                return this.params.colDef.keyCreator!(keyParams);
+            })
+
         }
 
         if (!searchStrings) {

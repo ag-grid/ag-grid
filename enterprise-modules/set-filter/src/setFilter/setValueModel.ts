@@ -75,7 +75,6 @@ export class SetValueModel implements IEventEmitter {
             suppressSorting,
             comparator,
             rowModel,
-            valueGetter,
             values
         } = filterParams;
 
@@ -89,8 +88,7 @@ export class SetValueModel implements IEventEmitter {
         if (rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
             this.clientSideValuesExtractor = new ClientSideValuesExtractor(
                 rowModel as IClientSideRowModel,
-                colDef,
-                valueGetter
+                this.filterParams
             );
         }
 
