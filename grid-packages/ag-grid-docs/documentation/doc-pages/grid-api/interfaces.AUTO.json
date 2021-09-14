@@ -4299,8 +4299,8 @@
       "setAriaSort(sort: ColumnSortState | undefined)": "void",
       "setColId(id: string)": "void",
       "setAriaDescribedBy(id: string | undefined)": "void",
-      "refreshHeaderComp()": "void",
-      "temp_getHeaderComp()": "IHeaderComp | undefined",
+      "setCompDetails(compDetails: UserCompDetails)": "void",
+      "getUserCompInstance()": "IHeaderComp | undefined",
       "setTitle(title: string | undefined)": "void"
     }
   },
