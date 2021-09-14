@@ -435,6 +435,7 @@ export class FilterManager extends BeanStub {
     public createFilterParams(column: Column, colDef: ColDef, $scope: any = null): IFilterParams {
         const params: IFilterParams = {
             api: this.gridOptionsWrapper.getApi()!,
+            columnApi: this.gridOptionsWrapper.getColumnApi()!,
             column,
             colDef: cloneObject(colDef),
             rowModel: this.rowModel,
