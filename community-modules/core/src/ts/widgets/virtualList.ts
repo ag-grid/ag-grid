@@ -131,8 +131,8 @@ export class VirtualList extends TabGuardComp {
 
     private static getTemplate(cssIdentifier: string, ariaRole: string) {
         return /* html */`
-            <div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport" role="${ariaRole}">
-                <div class="ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container" role="presentation" ref="eContainer"></div>
+            <div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport" role="presentation">
+                <div class="ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container" ref="eContainer" role="${ariaRole}"></div>
             </div>`;
     }
 

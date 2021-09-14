@@ -44,7 +44,7 @@ const PRIMARY_COLS_LIST_PANEL_CLASS = 'ag-column-select-list';
 
 export class PrimaryColsListPanel extends Component {
 
-    public static TEMPLATE = /* html */ `<div class="${PRIMARY_COLS_LIST_PANEL_CLASS}" role="tree"></div>`;
+    public static TEMPLATE = /* html */ `<div class="${PRIMARY_COLS_LIST_PANEL_CLASS}" role="presentation"></div>`;
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('toolPanelColDefService') private colDefService: ToolPanelColDefService;
