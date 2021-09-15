@@ -11117,7 +11117,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "getRows": {
-      "description": "/** Callback the grid calls that you implement to fetch rows from the server. See below for params. */",
+      "description": "/** Callback the grid calls that you implement to fetch rows from the server. */",
       "type": {
         "arguments": { "params": "IGetRowsParams" },
         "returnType": "void",
@@ -11125,6 +11125,7 @@
       }
     },
     "destroy": {
+      "description": "/** Optional destroy method, if your datasource has state it needs to clean up. */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     }
   },
