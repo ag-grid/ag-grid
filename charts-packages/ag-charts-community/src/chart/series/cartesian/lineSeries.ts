@@ -16,12 +16,11 @@ import { ChartAxisDirection } from "../../chartAxis";
 import { getMarker } from "../../marker/util";
 import { reactive, PropertyChangeEvent, TypedEvent } from "../../../util/observable";
 import { TooltipRendererResult, toTooltipHtml } from "../../chart";
-import Scale from "../../../scale/scale";
 import { interpolate } from "../../../util/string";
 import { FontStyle, FontWeight } from "../../../scene/shape/text";
 import { Label } from "../../label";
 import { sanitizeHtml } from "../../../util/sanitize";
-import { isContinuous, isDiscrete } from "../../../util/value";
+import { isContinuous } from "../../../util/value";
 
 interface LineNodeDatum extends SeriesNodeDatum {
     readonly point: {
