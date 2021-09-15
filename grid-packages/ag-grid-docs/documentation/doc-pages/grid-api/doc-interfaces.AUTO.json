@@ -5030,6 +5030,10 @@
     }
   },
   "RowDragEvent": {
+    "type": {
+      "description": "/** Event identifier: One of rowDragEnter, rowDragMove, rowDragEnd, rowDragLeave */",
+      "type": { "returnType": "string", "optional": false }
+    },
     "node": {
       "description": "/** The row node getting dragged. Also the node that started the drag when multi-row dragging. */",
       "type": { "returnType": "RowNode", "optional": false }
@@ -5043,7 +5047,7 @@
       "type": { "returnType": "MouseEvent", "optional": false }
     },
     "vDirection": {
-      "description": "/** Direction of the drag, either 'up', 'down' or null (if mouse is moving horizontally and not vertically). */",
+      "description": "/** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */",
       "type": { "returnType": "string", "optional": false }
     },
     "overIndex": {
@@ -5059,13 +5063,13 @@
       "type": { "returnType": "number", "optional": false }
     },
     "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
-    "type": {
-      "description": "/** Event identifier */",
-      "type": { "returnType": "string", "optional": false }
-    }
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
   },
   "RowDragEnterEvent": {
+    "type": {
+      "description": "/** Event identifier: One of rowDragEnter, rowDragMove, rowDragEnd, rowDragLeave */",
+      "type": { "returnType": "string", "optional": false }
+    },
     "node": {
       "description": "/** The row node getting dragged. Also the node that started the drag when multi-row dragging. */",
       "type": { "returnType": "RowNode", "optional": false }
@@ -5079,7 +5083,7 @@
       "type": { "returnType": "MouseEvent", "optional": false }
     },
     "vDirection": {
-      "description": "/** Direction of the drag, either 'up', 'down' or null (if mouse is moving horizontally and not vertically). */",
+      "description": "/** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */",
       "type": { "returnType": "string", "optional": false }
     },
     "overIndex": {
@@ -5095,13 +5099,13 @@
       "type": { "returnType": "number", "optional": false }
     },
     "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
-    "type": {
-      "description": "/** Event identifier */",
-      "type": { "returnType": "string", "optional": false }
-    }
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
   },
   "RowDragEndEvent": {
+    "type": {
+      "description": "/** Event identifier: One of rowDragEnter, rowDragMove, rowDragEnd, rowDragLeave */",
+      "type": { "returnType": "string", "optional": false }
+    },
     "node": {
       "description": "/** The row node getting dragged. Also the node that started the drag when multi-row dragging. */",
       "type": { "returnType": "RowNode", "optional": false }
@@ -5115,7 +5119,7 @@
       "type": { "returnType": "MouseEvent", "optional": false }
     },
     "vDirection": {
-      "description": "/** Direction of the drag, either 'up', 'down' or null (if mouse is moving horizontally and not vertically). */",
+      "description": "/** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */",
       "type": { "returnType": "string", "optional": false }
     },
     "overIndex": {
@@ -5131,13 +5135,13 @@
       "type": { "returnType": "number", "optional": false }
     },
     "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
-    "type": {
-      "description": "/** Event identifier */",
-      "type": { "returnType": "string", "optional": false }
-    }
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
   },
   "RowDragMoveEvent": {
+    "type": {
+      "description": "/** Event identifier: One of rowDragEnter, rowDragMove, rowDragEnd, rowDragLeave */",
+      "type": { "returnType": "string", "optional": false }
+    },
     "node": {
       "description": "/** The row node getting dragged. Also the node that started the drag when multi-row dragging. */",
       "type": { "returnType": "RowNode", "optional": false }
@@ -5151,7 +5155,7 @@
       "type": { "returnType": "MouseEvent", "optional": false }
     },
     "vDirection": {
-      "description": "/** Direction of the drag, either 'up', 'down' or null (if mouse is moving horizontally and not vertically). */",
+      "description": "/** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */",
       "type": { "returnType": "string", "optional": false }
     },
     "overIndex": {
@@ -5167,13 +5171,13 @@
       "type": { "returnType": "number", "optional": false }
     },
     "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
-    "type": {
-      "description": "/** Event identifier */",
-      "type": { "returnType": "string", "optional": false }
-    }
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
   },
   "RowDragLeaveEvent": {
+    "type": {
+      "description": "/** Event identifier: One of rowDragEnter, rowDragMove, rowDragEnd, rowDragLeave */",
+      "type": { "returnType": "string", "optional": false }
+    },
     "node": {
       "description": "/** The row node getting dragged. Also the node that started the drag when multi-row dragging. */",
       "type": { "returnType": "RowNode", "optional": false }
@@ -5187,7 +5191,7 @@
       "type": { "returnType": "MouseEvent", "optional": false }
     },
     "vDirection": {
-      "description": "/** Direction of the drag, either 'up', 'down' or null (if mouse is moving horizontally and not vertically). */",
+      "description": "/** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */",
       "type": { "returnType": "string", "optional": false }
     },
     "overIndex": {
@@ -5203,11 +5207,7 @@
       "type": { "returnType": "number", "optional": false }
     },
     "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
-    "type": {
-      "description": "/** Event identifier */",
-      "type": { "returnType": "string", "optional": false }
-    }
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
   },
   "PasteStartEvent": {
     "source": { "type": { "returnType": "string", "optional": false } },
@@ -6372,7 +6372,7 @@
   "AsyncTransactionsFlushed": {
     "results": {
       "type": {
-        "returnType": "(RowNodeTransaction | ServerSideTransactionResult) []",
+        "returnType": "(RowNodeTransaction | ServerSideTransactionResult)[]",
         "optional": false
       }
     },
