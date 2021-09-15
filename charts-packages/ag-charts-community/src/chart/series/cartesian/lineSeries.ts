@@ -21,7 +21,7 @@ import { interpolate } from "../../../util/string";
 import { FontStyle, FontWeight } from "../../../scene/shape/text";
 import { Label } from "../../label";
 import { sanitizeHtml } from "../../../util/sanitize";
-import { isContinuous } from "../../../util/value";
+import { isContinuous, isDiscrete } from "../../../util/value";
 
 interface LineNodeDatum extends SeriesNodeDatum {
     readonly point: {
@@ -229,16 +229,19 @@ export class LineSeries extends CartesianSeries {
         this.updateNodeSelection();
     }
 
-    private getXYDatums(i: number, xData: number[], yData: number[],
-                      xScale: Scale<any, any>, yScale: Scale<any, any>): [number, number] | undefined {
+    private getXYDatums(
+        i: number, xData: number[], yData: number[],
+        xScale: Scale<any, any>,
+        yScale: Scale<any, any>
+    ): [number, number] | undefined {
         const isContinuousX = xScale instanceof ContinuousScale;
         const isContinuousY = yScale instanceof ContinuousScale;
         const xDatum = xData[i];
         const yDatum = yData[i];
-        const noDatum =
-            yDatum == null || (isContinuousY && (isNaN(yDatum) || !isFinite(yDatum))) ||
-            xDatum == null || (isContinuousX && (isNaN(xDatum) || !isFinite(xDatum)));
-        return noDatum ? undefined : [xDatum, yDatum];
+        const isValidDatum =
+            (isContinuousX && isContinuous(xDatum) || isDiscrete(xDatum)) &&
+            (isContinuousY && isContinuous(yDatum) || isDiscrete(yDatum));
+        return isValidDatum ? [xDatum, yDatum] : undefined;
     }
 
     private updateLinePath() {
@@ -269,6 +272,11 @@ export class LineSeries extends CartesianSeries {
             } else {
                 const [xDatum, yDatum] = xyDatums;
                 const x = xScale.convert(xDatum) + xOffset;
+                if (isNaN(x)) {
+                    prevXInRange = undefined;
+                    moveTo = true;
+                    continue;
+                }
                 const tolerance = (xScale.bandwidth || (this.marker.size * 0.5 + (this.marker.strokeWidth || 0))) + 1;
 
                 nextXYDatums = this.getXYDatums(i + 1, xData, yData, xScale, yScale);
