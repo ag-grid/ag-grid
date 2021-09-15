@@ -81,7 +81,6 @@ export class ScatterSeries extends CartesianSeries {
             this.scheduleData();
         }
     }
-
     get fill(): string | undefined {
         return this._fill;
     }
@@ -111,7 +110,6 @@ export class ScatterSeries extends CartesianSeries {
             this.update();
         }
     }
-
     get strokeWidth(): number {
         return this._strokeWidth;
     }
@@ -126,7 +124,6 @@ export class ScatterSeries extends CartesianSeries {
             this.scheduleLayout();
         }
     }
-
     get fillOpacity(): number {
         return this._fillOpacity;
     }
@@ -369,7 +366,7 @@ export class ScatterSeries extends CartesianSeries {
         }
 
         const {
-            marker, xKey, yKey, strokeWidth, fillOpacity, strokeOpacity,
+            marker, xKey, yKey, strokeWidth, fillOpacity, strokeOpacity, fill: seriesFill, stroke: seriesStroke,
             chart: { highlightedDatum },
             highlightStyle: {
                 fill: deprecatedFill,
@@ -387,8 +384,8 @@ export class ScatterSeries extends CartesianSeries {
 
         this.markerSelection.each((node, datum) => {
             const isDatumHighlighted = datum === highlightedDatum;
-            const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : marker.fill;
-            const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : marker.stroke;
+            const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : marker.fill || seriesFill;
+            const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : marker.stroke || seriesStroke;
             const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
                 ? highlightedDatumStrokeWidth
                 : this.getStrokeWidth(markerStrokeWidth, datum);
@@ -450,8 +447,9 @@ export class ScatterSeries extends CartesianSeries {
         const xString = sanitizeHtml(xAxis.formatDatum(xValue));
         const yString = sanitizeHtml(yAxis.formatDatum(yValue));
 
-        let content = `<b>${sanitizeHtml(xName || xKey)}</b>: ${xString}`
-            + `<br><b>${sanitizeHtml(yName || yKey)}</b>: ${yString}`;
+        let content =
+            `<b>${sanitizeHtml(xName || xKey)}</b>: ${xString}<br>` +
+            `<b>${sanitizeHtml(yName || yKey)}</b>: ${yString}`;
 
         if (sizeKey) {
             content += `<br><b>${sanitizeHtml(sizeName || sizeKey)}</b>: ${sanitizeHtml(datum[sizeKey])}`;

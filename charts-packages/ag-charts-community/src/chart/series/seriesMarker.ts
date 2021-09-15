@@ -30,9 +30,9 @@ export class SeriesMarker extends Observable {
 
     @reactive('change') strokeWidth?: number = 1;
 
-    @reactive('change') fillOpacity?: number = 1;
+    @reactive('change') fillOpacity?: number;
 
-    @reactive('change') strokeOpacity?: number = 1;
+    @reactive('change') strokeOpacity?: number;
 }
 
 export interface SeriesMarkerFormatterParams {
