@@ -83,4 +83,4 @@ This is an example to further demonstrate how line sparklines can be configured 
 
 ## Next Up
 
-Continue to the next section to learn about the: [Area Sparklines](/sparklines-area-sparkline/).
+Continue to the next section to learn about the: [Data Updates](/sparklines-data-updates/).

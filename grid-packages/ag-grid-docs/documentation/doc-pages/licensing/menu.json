@@ -1381,6 +1381,12 @@
             "showInCollapsed": true
           },
           {
+            "title": "Data Types",
+            "url": "/sparklines-data/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
             "title": "Tooltips",
             "url": "/sparklines-tooltips/",
             "enterprise": true,
