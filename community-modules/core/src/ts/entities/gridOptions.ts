@@ -416,6 +416,7 @@ export interface GridOptions {
     loadingCellRenderer?: { new(): ICellRenderer; } | string;
     loadingCellRendererFramework?: any;
     loadingCellRendererParams?: any;
+    1 = x
     loadingCellRendererSelector?: (params: ILoadingCellRendererParams) =>
         {
             component?: { new(): ICellRenderer; } | string;
