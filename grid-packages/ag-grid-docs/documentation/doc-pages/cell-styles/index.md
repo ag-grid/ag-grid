@@ -16,7 +16,7 @@ Each of these approaches are presented in the following sections.
 Used to provide CSS styles directly (not using a class) to the cell. Can be either an object
 of CSS styles, or a function returning an object of CSS styles.
 
-<api-documentation source='column-properties/properties.json' section='styling' names='["cellStyle"]'></api-documentation>
+<api-documentation source='column-properties/properties.json' section='styling' names='["cellStyle"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
 
 <snippet spaceBetweenProperties="true">
 const gridOptions = {
@@ -50,7 +50,7 @@ const gridOptions = {
 Provides a class for the cells in this column. Can be a string (a class), array of strings
 (array of classes), or a function (that returns a string or an array of strings).
 
-<api-documentation source='column-properties/properties.json' section='styling' names='["cellClass"]'></api-documentation>
+<api-documentation source='column-properties/properties.json' section='styling' names='["cellClass"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
 
 <snippet spaceBetweenProperties="true">
 const gridOptions = {
@@ -94,7 +94,7 @@ that if evaluated to true, the class gets used. The expression can either be a J
 or a string which is treated as a shorthand for a function by the grid.
 
 
-<api-documentation source='column-properties/properties.json' section='styling' names='["cellClassRules"]'></api-documentation>
+<api-documentation source='column-properties/properties.json' section='styling' names='["cellClassRules"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
 
 The following snippet is cellClassRules using functions on a year column:
 

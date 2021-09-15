@@ -29,7 +29,7 @@ const gridOptions = {
 - A manner of letting AG Grid know the type of update we're doing - for this we make use of the [Transaction](/data-update/) method:
 
 <snippet>
-updates.subscribe(updates => gridOptions.api.applyTransaction({ update: updates }));
+updates$.subscribe(update => gridOptions.api.applyTransaction({ update: update }));
 </snippet>
 
 With these two pieces of code we can supply the updates to AG Grid and the grid will only re-render the changes rows, resulting
@@ -60,5 +60,24 @@ const gridOptions = {
 
 With this configuration we can supply the updates to AG Grid and the grid will only re-render the changed rows, resulting in much improved performance.
 
+<snippet>
+ updates$ = mockServer.allDataUpdates();    
+ updates$.subscribe(function (newRowData) {
+     return params.api.setRowData(newRowData);
+ });
+</snippet>
+
 <grid-example title='RxJS - Full Updates' name='rxjs-full' type='generated' options='{ "enterprise": true, "extras": ["lodash", "rxjs", "bluebirdjs"], "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
+### Async Pipe
+
+In the example above we manually subscribe to the `updates$` observable and call `api.setRowData` to update the grid. One potential downside of this approach is that we must remember to clean up this subscription when we are finished with it. 
+
+Alternatively, we can take advantage of the `async` pipe to manage the Subscription for us. Using the `async` pipe we can provide the updates directly to the grid.
+
+```html
+<ag-grid-angular>
+    [immutableData]="true"
+    [rowData]="updates$ | async"
+</ag-grid-angular>
+```

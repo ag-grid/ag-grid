@@ -44,14 +44,14 @@ var gridOptions = {
     enableRangeSelection: true,
     immutableData: true,
     // implement this so that we can do selection
-    getRowNodeId: function(data) { return data.code; },
+    getRowNodeId: function (data) { return data.code; },
 
-    onGridReady: function(params) {
-        var mockServer = createMockServer(),
-            initialLoad$ = mockServer.initialLoad(),
-            updates$ = mockServer.allDataUpdates();
+    onGridReady: function (params) {
+        var mockServer = createMockServer();
+        initialLoad$ = mockServer.initialLoad();
+        updates$ = mockServer.allDataUpdates();
 
-        initialLoad$.subscribe(function(rowData) {
+        initialLoad$.subscribe(function (rowData) {
             // the initial full set of data
             // note that we don't need to un-subscribe here as it's a one off data load
             params.api.setRowData(rowData);
@@ -59,12 +59,12 @@ var gridOptions = {
             // now listen for updates
             // we're using immutableData this time, so although we're setting the entire
             // data set here, the grid will only re-render changed rows, improving performance
-            updates$.subscribe(function(newRowData) { return params.api.setRowData(newRowData); });
+            updates$.subscribe(function (newRowData) { return params.api.setRowData(newRowData); });
         });
     }
 };
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 });
@@ -76,7 +76,7 @@ function createMockServer() {
     }
 
     // provides the initial (or current state) of the data
-    MockServer.prototype.initialLoad = function() {
+    MockServer.prototype.initialLoad = function () {
         return Rx.Observable.fromPromise(new Promise((resolve, reject) => {
             // do http request to get our sample data - not using any framework to keep the example self contained.
             // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
@@ -100,11 +100,11 @@ function createMockServer() {
 
     // provides randomised data updates to some of the rows
     // only returns the changed data rows
-    MockServer.prototype.byRowupdates = function() {
+    MockServer.prototype.byRowupdates = function () {
         var that = Object(this);
 
-        return Rx.Observable.create(function(observer) {
-            var interval = window.setInterval(function() {
+        return Rx.Observable.create(function (observer) {
+            var interval = window.setInterval(function () {
                 var changes = [];
 
                 // make some mock changes to the data
@@ -113,17 +113,17 @@ function createMockServer() {
                 observer.next(changes);
             }, 1000);
 
-            return function() { window.clearInterval(interval); };
+            return function () { window.clearInterval(interval); };
         });
     };
 
     // provides randomised data updates to some of the rows
     // only all the row data (with some rows changed)
-    MockServer.prototype.allDataUpdates = function() {
+    MockServer.prototype.allDataUpdates = function () {
         var that = Object(this);
 
-        return Rx.Observable.create(function(observer) {
-            var interval = setInterval(function() {
+        return Rx.Observable.create(function (observer) {
+            var interval = setInterval(function () {
                 var changes = [];
 
                 // make some mock changes to the data
@@ -135,7 +135,7 @@ function createMockServer() {
                 observer.next(_.cloneDeep(that.rowData));
             }, 1000);
 
-            return function() { window.clearInterval(interval); };
+            return function () { window.clearInterval(interval); };
         });
     };
 
@@ -144,10 +144,10 @@ function createMockServer() {
      * The rest of the code exists to create or modify mock data
      * it is not important to understand the rest of the example (i.e. the rxjs part of it)
      */
-    MockServer.prototype.backfillData = function(rowData) {
+    MockServer.prototype.backfillData = function (rowData) {
         var that = Object(this);
         // the sample data has just name and code, we need to add in dummy figures
-        rowData.forEach(function(dataItem) {
+        rowData.forEach(function (dataItem) {
             // have volume a random between 100 and 10,000
             dataItem.volume = Math.floor((Math.random() * 10000) + 100);
 
@@ -159,7 +159,7 @@ function createMockServer() {
         return rowData;
     };
 
-    MockServer.prototype.makeSomeVolumeChanges = function(changes) {
+    MockServer.prototype.makeSomeVolumeChanges = function (changes) {
         for (var i = 0; i < 10; i++) {
             // pick a data item at random
             var index = Math.floor(this.rowData.length * Math.random()),
@@ -173,7 +173,7 @@ function createMockServer() {
         }
     };
 
-    MockServer.prototype.makeSomePriceChanges = function(changes) {
+    MockServer.prototype.makeSomePriceChanges = function (changes) {
         // randomly update data for some rows
         for (var i = 0; i < 10; i++) {
             var index = Math.floor(this.rowData.length * Math.random()),
@@ -188,7 +188,7 @@ function createMockServer() {
         }
     };
 
-    MockServer.prototype.setBidAndAsk = function(dataItem) {
+    MockServer.prototype.setBidAndAsk = function (dataItem) {
         dataItem.bid = dataItem.mid * 0.98;
         dataItem.ask = dataItem.mid * 1.02;
     };

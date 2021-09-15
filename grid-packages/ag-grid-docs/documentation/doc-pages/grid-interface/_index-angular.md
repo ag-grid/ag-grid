@@ -89,7 +89,7 @@
 |
 | ```jsx
 | <ag-grid-angular
-|     [gridOptions]={gridOptions}
+|     [gridOptions]="gridOptions"
 | ```
 |
 | Once the grid is initialised, you will also have access to the grid API (`api`) and column API (`columnApi`) on the `gridOptions` object as shown:
