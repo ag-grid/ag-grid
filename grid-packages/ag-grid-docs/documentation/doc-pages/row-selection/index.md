@@ -54,6 +54,8 @@ The example below shows multi-select with click. Clicking multiple rows will sel
 
 Checkbox selection can be used in two places: row selection and group selection.
 
+<api-documentation source='column-properties/properties.json' section='columns' names='["checkboxSelection"]'></api-documentation>
+
 To include checkbox selection for a column, set the attribute `'checkboxSelection'` to `true` on the column definition. 
 You can set this attribute on as many columns as you like, however it doesn't make sense to have it in more than one 
 column in a table.
@@ -72,9 +74,6 @@ however it will not be visible using CSS `visibility: hidden`. This is to ensure
 1. Where a column has a checkbox for only some cells, the values will remain aligned.
 2. When a checkbox visibility changes, the cells contents don't jump.
 
-
-<api-documentation source='column-properties/properties.json' section='columns' names='["checkboxSelection"]' ></api-documentation>
-
 To be clear, there is a slight difference between a callback returning false, and false value provided explicitly.
 When a callback is used and returns false, the grid assumes a checkbox is sometimes used and as such creates one
 that is not visible.
@@ -89,8 +88,7 @@ colDef.checkboxSelection = () => false;
 
 ## Group Selection
 
-When doing grouping, you control what selecting a group means. This is controlled with the two properties `groupSelectsChildren` and `groupSelectsFiltered`.
-
+When doing grouping, you control what selecting a group means. This is controlled with the two grid properties `groupSelectsChildren` and `groupSelectsFiltered`.
 
 - `groupSelectsChildren`: When `true`, selecting a group will have the impact of selecting all its children. The group will then display `'selected'` when all children are selected, `'unselected'` when none are selected and `'intermediate'` when children have a mix of selected and unselected. When the node is selecting children, it will never appear in the selected set when calling `api.getSelectedNodes()`.<br /> When `false`, the group is selectable independently of the child nodes. When selecting the group node independently of the children, it will appear in the set when calling `api.getSelectedNodes()`.
 
@@ -126,6 +124,8 @@ To demonstrate, try this in the example:
 ## Header Checkbox Selection
 
 It is possible to have a checkbox in the header for selection. To configure the column to have a checkbox, set `colDef.headerCheckboxSelection=true`. `headerCheckboxSelection` can also be a function, if you want the checkbox to appear sometimes (e.g. if the column is ordered first in the grid).
+
+<api-documentation source='column-properties/properties.json' section='header' names='["headerCheckboxSelection"]'></api-documentation>
 
 <snippet>
 const gridOptions = {
@@ -182,6 +182,8 @@ The next example is similar to the one above with the following changes:
 
 It is possible to specify which rows can be selected via the `gridOptions.isRowSelectable(rowNode)` callback function.
 
+<api-documentation source='grid-callbacks/callbacks.json' section='callbacks' names='["isRowSelectable"]'></api-documentation>
+
 For instance if we only wanted to allow rows where the 'year' property is less than 2007, we could implement the following:
 
 <snippet>
@@ -194,7 +196,7 @@ const gridOptions = {
 
 This example demonstrates the following:
 
-- The `isRowSelectable()` callback only allows selections on rows where the year < 2007.
+- The `isRowSelectable(node)` callback only allows selections on rows where the year < 2007.
 - The country column has `headerCheckboxSelection: true` and `checkboxSelection: true`, but only rows which are selectable will obtain a selectable checkbox. Similarly, the header checkbox will only select selectable rows.
 
 <grid-example title='Selectable Rows with Header Checkbox' name='specify-selectable-rows' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"] }'></grid-example>
@@ -203,7 +205,7 @@ This example demonstrates the following:
 
 This example demonstrates the following:
 
-- The `isRowSelectable()` callback allows rows with a year of 2004 or 2008 to be selectable.
+- The `isRowSelectable(node)` callback allows rows with a year of 2004 or 2008 to be selectable.
 - As `gridOptions.groupSelectsChildren = true` selecting groups will also select 'selectable' children.
 - As `gridOptions.groupSelectsFiltered = true` selecting groups will only select 'selectable' children that pass the filter.
 - To demonstrate, follow these steps:
@@ -219,19 +221,15 @@ This example demonstrates the following:
 
 There are two events with regards to selection:<br/>
 
-
-- **rowSelected**: Called when a row is selected or deselected. The event contains the node in question, so call the node's `isSelected()` method to see if it was just selected or deselected.
-
-- **selectionChanged**: Called when one or more rows are selected or deselected. Use the grid API to get a list of selected nodes if you want them.
+<api-documentation source='grid-events/events.json' section='selection' names='["rowSelected", "selectionChanged"]'></api-documentation>
 
 <grid-example title='Selection Events' name='selection-events' type='generated'></grid-example>
 
 ## Node Selection API
 
-To select rows programmatically, use the `node.setSelected()` method. This method takes two parameters:
+To select rows programmatically, use the `node.setSelected(params)` method.
 
-- **selected**: set to `true` to select, `false` to un-select.
-- **clearSelection** (optional): for selection only. If `true`, any other selected nodes will be deselected. Use this if you do not want multi-selection and want this node to be exclusively selected.
+<api-documentation source='row-object/resources/methods.json' section='rowNodeMethods' names='["setSelected", "isSelected"]'></api-documentation>
 
 <snippet>
 |// set selected, keep any other selections
@@ -251,14 +249,9 @@ The `isSelected()` method returns `true` if the node is selected, or `false` if 
 
 ## Grid Selection API
 
-
 The grid API has the following methods for selection:
 
-- `api.selectAll()`: Select all rows in the grid, regardless of filtering.
-- `api.deselectAll()`: Un-select all rows, regardless of filtering.
-- `api.selectAllFiltered()`: Select all filtered rows in the grid.
-- `api.deselectAllFiltered()`: Un-select all filtered rows.
-- `api.getSelectedNodes()`: Returns a list of all the selected row nodes, regardless of filtering.
+<api-documentation source='grid-api/api.json' section='selection' names='["selectAll","deselectAll","selectAllFiltered","deselectAllFiltered","getSelectedNodes"]'></api-documentation>
 
 If you want to select only filtered-out row nodes, you could do this using the following:
 
@@ -281,6 +274,8 @@ There is an API function `forEachNode`. This is useful for doing group selection
 By default, you can select a row on mouse click, and navigate up and down the rows using your keyboard keys. However, the selection state does not correlate with the navigation keys, but we can add this behaviour using our own [Custom Navigation](/keyboard-navigation/#custom-navigation).
 
 We need to provide a callback to the `navigateToNextCell` grid option to override the default arrow key navigation:
+
+<api-documentation source='grid-callbacks/callbacks.json' section='nav' names='["navigateToNextCell"]'></api-documentation>
 
 <snippet>
 |const gridOptions = {
