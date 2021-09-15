@@ -1,15 +1,13 @@
 import { BandScale } from '../../scale/bandScale';
-import { LinearScale } from '../../scale/linearScale';
 import { Group } from '../../scene/group';
 import { Path } from '../../scene/shape/path';
 import { Observable } from '../../util/observable';
 import { Selection } from '../../scene/selection';
 import { Marker } from '../marker/marker';
 import { Point, SeriesNodeDatum, Sparkline } from '../sparkline';
-import { SparklineTooltip, toTooltipHtml } from '../tooltip/sparklineTooltip';
+import { toTooltipHtml } from '../tooltip/sparklineTooltip';
 import { getMarker } from '../marker/markerFactory';
 import { MarkerFormat, MarkerFormatterParams } from "@ag-grid-community/core";
-import { TimeScale } from '../../scale/timeScale';
 import { extent } from '../../util/array';
 import { isNumber } from '../../util/value';
 
@@ -44,8 +42,8 @@ export class LineSparkline extends Sparkline {
     readonly marker = new SparklineMarker();
     readonly line = new SparklineLine();
 
-    constructor(document = window.document, tooltip: SparklineTooltip) {
-        super(document, tooltip);
+    constructor() {
+        super();
         this.rootGroup.append(this.lineSparklineGroup);
         this.lineSparklineGroup.append([this.linePath, this.markers]);
     }

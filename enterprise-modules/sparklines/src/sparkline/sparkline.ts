@@ -47,7 +47,7 @@ export abstract class Sparkline extends Observable {
     readonly rootGroup: Group;
 
     // Only one tooltip instance for all sparkline instances.
-    readonly tooltip: SparklineTooltip;
+    tooltip!: SparklineTooltip;
     private static tooltipDocuments: Document[] = [];
 
     protected seriesRect: SeriesRect = {
@@ -118,10 +118,8 @@ export abstract class Sparkline extends Observable {
         strokeWidth: 0
     }
 
-    protected constructor(document: Document, tooltip: SparklineTooltip) {
+    protected constructor() {
         super();
-
-        this.tooltip = tooltip;
 
         const root = new Group();
         this.rootGroup = root;

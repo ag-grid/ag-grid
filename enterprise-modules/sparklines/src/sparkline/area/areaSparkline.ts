@@ -1,13 +1,12 @@
 import { Group } from '../../scene/group';
 import { Path } from '../../scene/shape/path';
 import { Line } from '../../scene/shape/line';
-import { LinearScale } from '../../scale/linearScale';
 import { BandScale } from '../../scale/bandScale';
 import { Observable } from '../../util/observable';
 import { Selection } from "../../scene/selection";
 import { SeriesNodeDatum, Sparkline } from '../sparkline';
 import { Marker } from '../marker/marker';
-import { SparklineTooltip, toTooltipHtml } from '../tooltip/sparklineTooltip';
+import { toTooltipHtml } from '../tooltip/sparklineTooltip';
 import { getMarker } from '../marker/markerFactory';
 import { MarkerFormat, MarkerFormatterParams } from "@ag-grid-community/core";
 import { extent } from '../../util/array';
@@ -49,8 +48,8 @@ export class AreaSparkline extends Sparkline {
     readonly marker = new SparklineMarker();
     readonly line = new SparklineLine();
 
-    constructor(document = window.document, tooltip: SparklineTooltip) {
-        super(document, tooltip);
+    constructor() {
+        super();
         this.rootGroup.append(this.areaSparklineGroup);
         this.areaSparklineGroup.append([this.fillPath, this.xAxisLine, this.strokePath, this.markers]);
     }
