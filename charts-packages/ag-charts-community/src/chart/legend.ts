@@ -226,6 +226,9 @@ export class Legend extends Observable {
         let paddedItemsWidth = 0;
         let paddedItemsHeight = 0;
 
+        width = Math.max(1, width);
+        height = Math.max(1, height);
+
         switch (this.orientation) {
             case LegendOrientation.Horizontal:
 
