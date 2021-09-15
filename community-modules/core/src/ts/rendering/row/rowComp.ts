@@ -5,7 +5,7 @@ import { addStylesToElement, setDomChildOrder } from "../../utils/dom";
 import { IRowComp, RowCtrl, RowType } from "./rowCtrl";
 import { CellComp } from "../cell/cellComp";
 import { assign, getAllValuesInObject } from "../../utils/object";
-import { setAriaExpanded, setAriaRowIndex, setAriaSelected } from "../../utils/aria";
+import { setAriaExpanded, setAriaLabel, setAriaRowIndex, setAriaSelected } from "../../utils/aria";
 import { CellCtrl } from "../cell/cellCtrl";
 import { UserCompDetails } from "../../components/framework/userComponentFactory";
 
@@ -48,11 +48,7 @@ export class RowComp extends Component {
             setUserStyles: styles => addStylesToElement(eGui, styles),
             setAriaSelected: value => setAriaSelected(eGui, value),
             setAriaLabel: value => {
-                if (value == null) {
-                    eGui.removeAttribute('aria-label');
-                } else {
-                    eGui.setAttribute('aria-label', value);
-                }
+                setAriaLabel(eGui, value == null ? '' : value);
             },
             setHeight: height => style.height = height,
             setTop: top => style.top = top,

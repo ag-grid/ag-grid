@@ -45,7 +45,7 @@ export class FiltersToolPanelHeaderPanel extends Component {
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         this.eFilterTextField.onValueChange(this.onSearchTextChanged.bind(this));
-        this.eFilterTextField.setInputAriaLabel(translate('ariaSearch', 'Search'));
+        this.eFilterTextField.setInputAriaLabel(translate('ariaSearchFilterValues', 'Search filter values'));
 
         this.createExpandIcons();
         this.setExpandState(EXPAND_STATE.EXPANDED);
