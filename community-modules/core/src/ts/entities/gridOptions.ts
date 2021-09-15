@@ -686,8 +686,11 @@ export interface IsApplyServerSideTransaction {
 }
 
 export interface IsApplyServerSideTransactionParams {
+    /** The transaction getting applied. */
     transaction: ServerSideTransaction;
+    /** The parent RowNode, if transaction is applied to a group. */
     parentNode: RowNode;
+    //** Store info, if any, as passed via the success() callback when loading data. */
     storeInfo: any;
 }
 

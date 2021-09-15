@@ -234,8 +234,9 @@ The example below demonstrates these techniques. Note the following:
 
 ## Providing Child Counts
 
-By default, the grid will not show row counts beside the group names. If you do want row counts, you need to implement the `getChildCount()` callback for the grid. The callback provides you with the row data; it is your application's responsibility to know what the child row count is. The suggestion is you set this information into the row data item you provide to the grid.
+By default, the grid will not show row counts beside the group names. If you do want row counts, you need to implement the `getChildCount(dataItem)` callback for the grid. The callback provides you with the row data; it is your application's responsibility to know what the child row count is. The suggestion is you set this information into the row data item you provide to the grid.
 
+<api-documentation source='grid-callbacks/callbacks.json' section='ServerSide' names='["getChildCount"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
 
 <snippet>
 const gridOptions = {

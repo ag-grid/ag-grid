@@ -428,6 +428,10 @@ export interface CellValueChangedEvent extends CellEvent {
 }
 
 export interface AsyncTransactionsFlushed extends AgGridEvent {
+    /**
+     * Array of result objects. for SSRM it's always list of `ServerSideTransactionResult`.
+     * For Client-Side Row Model it's a list of `RowNodeTransaction`.
+     */
     results: (RowNodeTransaction | ServerSideTransactionResult)[];
 }
 

@@ -64,6 +64,8 @@ data, e.g. `2000, 2002, 2004 etc...`
 
 Secondary columns are defined identically to primary columns: you provide a list of [Column Definitions](/column-definitions/) passing a list of columns and / or column groups using the following column API method:
 
+<api-documentation source='column-api/api.json' section='Pivoting' names='["setSecondaryColumns"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
+
 <snippet>
 gridOptions.columnApi.setSecondaryColumns(pivotColDefs);
 </snippet>

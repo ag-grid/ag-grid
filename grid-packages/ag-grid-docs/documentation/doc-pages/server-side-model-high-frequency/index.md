@@ -43,17 +43,7 @@ Below shows a simple example using Async Transactions. Note the following:
 
 When Async Transactions are applied, the `asyncTransactionsFlushed` event is fired. The event contains all of the `ServerSideTransactionResult` objects of all attempted transactions.
 
-```ts
-interface AsyncTransactionsFlushed {
-    type: string; // always 'asyncTransactionsFlushed'
-    api: GridApi; // the grid's API
-    columnApi: ColumnApi; // the grid's Column API
-
-    // array of result objects. for SSRM it's always list of ServerSideTransactionResult.
-    // for Client-side Row Model it's list of RowNodeTransaction.
-    results: (RowNodeTransaction | ServerSideTransactionResult) [];
-}
-```
+<interface-documentation interfaceName='AsyncTransactionsFlushed' ></interface-documentation>
 
 The example below listens for this event and prints a summary of the result objects to the console.
 
@@ -86,25 +76,9 @@ The Cancelling Transactions feature guards against Duplicate Records. Duplicate 
 
 Duplicate records occur when data read from the server includes a new record (it's just in time), but the transaction for the new record is attempted after the Row Store finishes loading (transaction is applied). This results in the record appearing twice.
 
-Before a transaction is applied, the grid calls the `isApplyServerSideTransaction()` callback to give the application one last chance to cancel the transaction.
+Before a transaction is applied, the grid calls the `isApplyServerSideTransaction(params)` callback to give the application one last chance to cancel the transaction.
 
-The signature of the callback is as follows:
-
-```ts
-function isApplyServerSideTransaction(params: IsApplyServerSideTransactionParams): boolean;
-
-interface IsApplyServerSideTransactionParams {
-
-    // the trnasction getting applied
-    transaction: ServerSideTransaction,
-
-    // the parent RowNode, if transaction is applied to a group
-    parentNode: RowNode,
-
-    // store info, if any, as passed via the success() callback when loading data
-    storeInfo: any
-}
-```
+<api-documentation source='grid-callbacks/callbacks.json' section='ServerSide' names='["isApplyServerSideTransaction"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
 
 If the callback returns `true`, the transaction is applied as normal and the Transaction Status `Applied` is returned. If the callback returns `false`, the transaction is discarded and the Transaction Status `Cancelled` is returned.
 
@@ -147,7 +121,7 @@ In the example, note the following:
 - The buttons Start Feed and Stop Feed start and stop live updates happening on the server.
 - The example registers for live updates with the fake server. In a real world example, live updates would probably be delivered using web sockets and how it is managed on the server would be the responsibility of your server technology.
 - The fake server makes use of a version counter. The version at the time of data reads is provided to the grid as Store Data. The version of the data at the time of record creation is passed alongside the grid's transactions.
-- There are no problem with race conditions as the grid will retry transactions automatically when transactions are applied against loading Row Stores, and the callback `isApplyServerSideTransaction()` is implemented to discard old transactions.
+- There are no problem with race conditions as the grid will retry transactions automatically when transactions are applied against loading Row Stores, and the callback `isApplyServerSideTransaction(params)` is implemented to discard old transactions.
 - All columns are sortable. The sorting is done by the grid without needing to request data again from the server.
 - Column Deal Type has a filter associated with it. The filter is done by the grid without needing to request data again from the server.
 

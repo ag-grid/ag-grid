@@ -75,18 +75,9 @@ This is useful if the context of your data changes, i.e. if you want to look at 
 
 In a nutshell, every time the grid wants more rows, it will call `getRows()` on the datasource. The
 datasource responds with the rows requested. Your datasource for infinite scrolling should implement
-the following interface:
+the `IDatasource` interface:
 
-```ts
-// Infinite Scrolling Datasource
-interface IDatasource {
-    // Callback the grid calls that you implement to fetch rows from the server. See below for params.
-    getRows(params: IGetRowsParams): void;
-
-    // optional destroy method, if your datasource has state it needs to clean up
-    destroy?(): void;
-}
-```
+<interface-documentation interfaceName='IDatasource' config='{"overrideBottomMargin":"1rem"}' ></interface-documentation>
 
 The `getRows()` method takes the `IGetRowsParams` parameters:
 
@@ -152,7 +143,6 @@ Selection works on the rows in infinite scrolling by using the ID of the row nod
 
 To provide your own IDs, implement the method `getRowNodeId(data)`, which takes the data and should return the ID for the data.
 
-
 ```js
 gridOptions.getRowNodeId: function(item) {
     // the ID can be any string, as long as it's unique within your dataset
@@ -185,8 +175,9 @@ When a row is selected, the selection will remain inside the grid, even if the g
 
 ## Specify Selectable Rows
 
-It is also possible to specify which rows can be selected via the `gridOptions.isRowSelectable()` callback function.
+It is also possible to specify which rows can be selected via the `gridOptions.isRowSelectable(node)` callback function.
 
+<api-documentation source='grid-callbacks/callbacks.json' section='callbacks' names='["isRowSelectable"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
 
 For instance if we only wanted to allow rows where the `data.country` property is the 'United States' we could implement the following:
 

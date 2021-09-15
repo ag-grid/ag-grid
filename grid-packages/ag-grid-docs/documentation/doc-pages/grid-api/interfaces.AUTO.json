@@ -1741,6 +1741,10 @@
       "transaction": "ServerSideTransaction",
       "parentNode": "RowNode",
       "storeInfo": "any"
+    },
+    "docs": {
+      "transaction": "/** The transaction getting applied. */",
+      "parentNode": "/** The parent RowNode, if transaction is applied to a group. */"
     }
   },
   "GetServerSideGroupKey": {
@@ -3521,7 +3525,10 @@
       "columnApi": "ColumnApi",
       "type": "string"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "results": "/** Array of result objects. for SSRM it's always list of `ServerSideTransactionResult`.\n * For Client-Side Row Model it's a list of `RowNodeTransaction`. */",
+      "type": "/** Event identifier */"
+    }
   },
   "ColumnRequestEvent": {
     "meta": {},

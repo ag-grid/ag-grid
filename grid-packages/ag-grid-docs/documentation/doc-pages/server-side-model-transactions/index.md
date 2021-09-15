@@ -7,7 +7,7 @@ SSRM Transaction Updates allow large numbers of rows in the grid to be added, re
 
 Transactions for the Server Side Row Model (SSRM) work similarly to [Client Side Row Model Transactions](/data-update-transactions/). The APIs are almost identical, but there are some important differences (such as the SSRM requiring a 'route') and as such the APIs are not shared.
 
-Applying a SSRM transaction is done using the grid API `applyServerSideTransaction()`. Here are some introductory code snippets demonstrating how to use the API:
+Applying a SSRM transaction is done using the grid API `applyServerSideTransaction(params)`. Here are some introductory code snippets demonstrating how to use the API:
 
 <snippet>
 // Add 1 row at the top level group
@@ -59,6 +59,8 @@ In order for the grid to find rows to update and remove, it needs a way to ident
 If the grid callback `getRowNodeId` is provided, the grid will match on row ID.
 
 If the grid callback `getRowNodeId` is not provided, the grid will match on object reference.
+
+<api-documentation source='grid-callbacks/callbacks.json' section='callbacks' names='["getRowNodeId"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
 
 ## Targeting Stores
 

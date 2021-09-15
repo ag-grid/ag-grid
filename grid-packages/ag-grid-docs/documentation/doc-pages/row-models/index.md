@@ -48,8 +48,9 @@ deal with server-side data. The following is a summary of each:
     </li>
 </ul>
 
-Which row model you use is set as a grid property `rowModelType`. Set it to one of `'clientSide'`,
-`'infinite'`, `'viewport'`, or `'serverSide'`. The default is `'clientSide'`.
+Which row model you use is set by the grid property `rowModelType`. 
+
+<api-documentation source='grid-properties/properties.json' section='rowModels' names='["rowModelType"]'></api-documentation>
 
 ## When to Use
 

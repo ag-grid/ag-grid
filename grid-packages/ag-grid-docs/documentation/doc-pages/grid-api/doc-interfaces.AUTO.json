@@ -4099,9 +4099,13 @@
   "IsApplyServerSideTransaction": {},
   "IsApplyServerSideTransactionParams": {
     "transaction": {
+      "description": "/** The transaction getting applied. */",
       "type": { "returnType": "ServerSideTransaction", "optional": false }
     },
-    "parentNode": { "type": { "returnType": "RowNode", "optional": false } },
+    "parentNode": {
+      "description": "/** The parent RowNode, if transaction is applied to a group. */",
+      "type": { "returnType": "RowNode", "optional": false }
+    },
     "storeInfo": { "type": { "returnType": "any", "optional": false } }
   },
   "GetServerSideGroupKey": {},
@@ -6371,6 +6375,7 @@
   },
   "AsyncTransactionsFlushed": {
     "results": {
+      "description": "/** Array of result objects. for SSRM it's always list of `ServerSideTransactionResult`.\n * For Client-Side Row Model it's a list of `RowNodeTransaction`. */",
       "type": {
         "returnType": "(RowNodeTransaction | ServerSideTransactionResult)[]",
         "optional": false
