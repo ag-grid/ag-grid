@@ -111,7 +111,7 @@ export class PrimaryColsListPanel extends Component {
 
         this.virtualList.setComponentCreator(
             (item: ColumnModelItem, listItemElement: HTMLElement) => {
-                listItemElement.setAttribute('aria-level', (item.getDept() + 1).toString());
+                _.setAriaLevel(listItemElement, (item.getDept() + 1));
                 return this.createComponentFromItem(item, listItemElement);
             }
         );
