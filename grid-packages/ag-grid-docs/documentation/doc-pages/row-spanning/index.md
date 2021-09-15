@@ -14,6 +14,7 @@ Row spanning is then configured at the column definition level. To have a cell
 span more than one row, return how many rows to span in the callback
 `colDef.rowSpan`.
 
+<api-documentation source='column-properties/properties.json' section='spanning' names='["rowSpan"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
 
 <snippet spaceBetweenProperties="true">
 const gridOptions = {
@@ -42,10 +43,6 @@ const gridOptions = {
 | when using CSS `transform`. The downside to not using `transform` is performance; row animation
 | (after sort or filter) will be slower.
 
-
-The interface for the `rowSpan` callback is as follows:
-
-<api-documentation source='column-properties/properties.json' section='spanning' names='["rowSpan"]' ></api-documentation>
 
 ## Row Spanning Simple Example
 

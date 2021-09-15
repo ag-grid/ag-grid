@@ -55,6 +55,8 @@ heights and work them all out again from scratch - if you provide a `getRowHeigh
 callback, it will be called again for each row. The grid will then resize and
 reposition all rows again. This is the shotgun approach.
 
+<api-documentation source='grid-api/api.json' section='rendering' names='["resetRowHeights"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
+
 ### rowNode.setRowHeight(height) and api.onRowHeightChanged()
 
 You can call `rowNode.setRowHeight(height)` directly
@@ -71,6 +73,10 @@ or `null` or `undefined`. If you pass a height, that height will be used for the
 If you pass in `null` or `undefined`, the grid will then calculate the row height in the
 usual way, either using the provided `rowHeight` property or `getRowHeight()`
 callback.
+
+<api-documentation source='row-object/resources/methods.json' section='rowNodeMethods' names='["setRowHeight"]' config='{"overrideBottomMargin":"0rem"}' ></api-documentation>
+<api-documentation source='grid-api/api.json' section='rendering' names='["onRowHeightChanged"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
+
 
 ### Example Changing Row Height
 

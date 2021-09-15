@@ -81,7 +81,7 @@ export interface FilterChangedEvent extends AgGridEvent {
 }
 
 export interface FilterModifiedEvent extends AgGridEvent {
-    filterInstance: IFilterComp;    
+    filterInstance: IFilterComp;
     column: Column;
 }
 
@@ -136,20 +136,22 @@ export interface CheckboxChangedEvent extends AgEvent {
 }
 
 export interface GridSizeChangedEvent extends AgGridEvent {
-    /** The grid's DIV's clientWidth */    
+    /** The grid's DIV's clientWidth */
     clientWidth: number;
     /** The grid's DIV's clientHeight */
     clientHeight: number;
 }
 
 export interface RowDragEvent extends AgGridEvent {
+    /** Event identifier: One of rowDragEnter, rowDragMove, rowDragEnd, rowDragLeave */
+    type: string;
     /** The row node getting dragged. Also the node that started the drag when multi-row dragging. */
     node: RowNode;
     /** The list of nodes being dragged. */
     nodes: RowNode[];
     /** The underlying mouse move event associated with the drag. */
     event: MouseEvent;
-    /** Direction of the drag, either 'up', 'down' or null (if mouse is moving horizontally and not vertically). */
+    /** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */
     vDirection: string;
     /** The row index the mouse is dragging over or -1 if over no row. */
     overIndex: number;
@@ -419,14 +421,14 @@ export interface CellEditingStoppedEvent extends CellEvent {
     newValue: any;
 }
 
-export interface CellValueChangedEvent extends CellEvent {    
+export interface CellValueChangedEvent extends CellEvent {
     oldValue: any;
     newValue: any;
     source: string | undefined;
 }
 
 export interface AsyncTransactionsFlushed extends AgGridEvent {
-    results: (RowNodeTransaction | ServerSideTransactionResult) [];
+    results: (RowNodeTransaction | ServerSideTransactionResult)[];
 }
 
 // not documented, was put in for CS - more thought needed of how server side grouping / pivoting
@@ -447,11 +449,11 @@ export interface ColumnAggFuncChangeRequestEvent extends ColumnRequestEvent {
 
 export interface ScrollVisibilityChangedEvent extends AgGridEvent { } // not documented
 
-export interface StoreUpdatedEvent extends AgEvent {} // not documented
+export interface StoreUpdatedEvent extends AgEvent { } // not documented
 
-export interface LeftPinnedWidthChangedEvent extends AgEvent {} // not documented
-export interface RightPinnedWidthChangedEvent extends AgEvent {} // not documented
+export interface LeftPinnedWidthChangedEvent extends AgEvent { } // not documented
+export interface RightPinnedWidthChangedEvent extends AgEvent { } // not documented
 
-export interface RowContainerHeightChanged extends AgEvent {} // not documented
+export interface RowContainerHeightChanged extends AgEvent { } // not documented
 
-export interface DisplayedRowsChangedEvent extends AgEvent {} // not documented
+export interface DisplayedRowsChangedEvent extends AgEvent { } // not documented

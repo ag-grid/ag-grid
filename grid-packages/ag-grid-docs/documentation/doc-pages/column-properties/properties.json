@@ -291,7 +291,7 @@
             "description": "Params to be passed to cell renderer component.",
             "more": {
                 "name": "Cell Renderer Params",
-                "url": "/component-cell-renderer/#complementing-cell-renderer-params"
+                "url": "/component-cell-renderer/#reference-ICellRendererParams"
             }
         },
         "cellRendererSelector": {
@@ -304,7 +304,9 @@
                 "exclude": [
                     "ICellRendererComp"
                 ],
-                "include": []
+                "include": [
+                    "ICellRendererParams"
+                ]
             }
         },
         "autoHeight": {
