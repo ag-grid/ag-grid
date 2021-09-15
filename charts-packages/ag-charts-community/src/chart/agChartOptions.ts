@@ -375,6 +375,8 @@ interface AgSeriesMarker {
     fill?: string;
     stroke?: string;
     strokeWidth?: number;
+    fillOpacity?: number;
+    strokeOpacity?: number;
 }
 
 export interface AgCartesianSeriesMarkerFormatterParams {
@@ -472,10 +474,25 @@ export interface AgScatterSeriesOptions extends AgBaseSeriesOptions {
     xName?: string;
     yName?: string;
     title?: string;
+    /**
+     * @deprecated Use {@link marker.fill} instead.
+     */
     fill?: string;
+    /**
+     * @deprecated Use {@link marker.stroke} instead.
+     */
     stroke?: string;
+    /**
+     * @deprecated Use {@link marker.strokeWidth} instead.
+     */
     strokeWidth?: number;
+    /**
+     * @deprecated Use {@link marker.fillOpacity} instead.
+     */
     fillOpacity?: number;
+    /**
+     * @deprecated Use {@link marker.strokeOpacity} instead.
+     */
     strokeOpacity?: number;
     tooltip?: AgScatterSeriesTooltip;
 }
