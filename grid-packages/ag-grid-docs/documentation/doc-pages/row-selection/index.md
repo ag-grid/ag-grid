@@ -20,8 +20,7 @@ Configure row selection with the following properties:
 
 When you pass data to the grid, it wraps each data item in a node object. This is explained in the section [Client-Side Row Model](/client-side-model/). When you query for the selected rows, there are two method types: ones that return nodes, and ones that return data items. To get the selected nodes / rows from the grid, use the following API methods:
 
-- `api.getSelectedNodes()`: Returns an array of the selected nodes.
-- `api.getSelectedRows()`: Returns an array of data from the selected rows.
+<api-documentation source='grid-api/api.json' section='selection' names='["getSelectedNodes", "getSelectedRows"]'></api-documentation>
 
 Working with AG Grid nodes is preferred over the row data as it provides you with more information and maps better to the internal representation of AG Grid.
 
@@ -74,7 +73,7 @@ however it will not be visible using CSS `visibility: hidden`. This is to ensure
 2. When a checkbox visibility changes, the cells contents don't jump.
 
 
-<api-documentation source='column-properties/properties.json' section='columns' names='["checkboxSelection"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
+<api-documentation source='column-properties/properties.json' section='columns' names='["checkboxSelection"]' ></api-documentation>
 
 To be clear, there is a slight difference between a callback returning false, and false value provided explicitly.
 When a callback is used and returns false, the grid assumes a checkbox is sometimes used and as such creates one

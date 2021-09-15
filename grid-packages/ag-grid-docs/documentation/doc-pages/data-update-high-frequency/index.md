@@ -8,7 +8,7 @@ High Frequency Updates relates to lots of updates in high succession going into 
 
 When you call `applyTransactionAsync()` the grid will execute the update, along with any other updates you subsequently provide using `applyTransactionAsync()`, after 50ms. This allows the grid to execute all the transactions in one batch which is more efficient.
 
-<api-documentation source='grid-api/api.json' section='data' names='["applyTransactionAsync"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
+<api-documentation source='grid-api/api.json' section='data' names='["applyTransactionAsync"]' ></api-documentation>
 
 <grid-example title='Async Transaction' name='async-transaction' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 

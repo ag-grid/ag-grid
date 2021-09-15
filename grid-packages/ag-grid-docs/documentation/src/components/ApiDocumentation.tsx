@@ -88,7 +88,7 @@ export const ApiDocumentation: React.FC<ApiProps> = ({ pageName, framework, sour
     if (names && names.length) {
         namesArr = JSON.parse(names);
         // Hide more links when properties included by name or use the value from config if its set
-        config = { hideMore: true, ...config, };
+        config = { hideMore: true, overrideBottomMargin: "1rem", ...config, };
     }
 
     const propertiesFromFiles = sources.map(s => getJsonFromFile(nodes, pageName, s));

@@ -19,7 +19,7 @@ Your preference should be to use `refreshCells()` over `redrawRows()`. Only use 
 
 To get the grid to refresh the cells, call `api.refreshCells()`. The interface is as follows:
 
-<api-documentation source='grid-api/api.json' section='refresh' names='["refreshCells"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
+<api-documentation source='grid-api/api.json' section='refresh' names='["refreshCells"]' ></api-documentation>
 
 
 Each parameter is optional. The simplest is to call with no parameters which will refresh all cells using [change detection](/change-detection/) (change detection means it will only refresh cells whose values have changed).

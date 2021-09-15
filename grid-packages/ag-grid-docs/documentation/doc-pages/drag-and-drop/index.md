@@ -67,7 +67,7 @@ It is possible that a JSON representation of the data is not what is required as
 
 To provide alternative drag data, use the `dndSourceOnRowDrag` callback on the column definition. This allows specific processing by the application for the `rowdrag` even rather than the default grid behaviour.
 
-<api-documentation source='column-properties/properties.json' section='row dragging' names='["dndSourceOnRowDrag"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
+<api-documentation source='column-properties/properties.json' section='row dragging' names='["dndSourceOnRowDrag"]' ></api-documentation>
 
 The example below is identical to the first example on this page with the addition of custom drag data. Note the following:
 

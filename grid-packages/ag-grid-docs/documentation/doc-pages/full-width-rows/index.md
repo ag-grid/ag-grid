@@ -37,7 +37,7 @@ To use `fullWidth`, you must:
 1. Provide a `fullWidthCellRenderer`, to tell the grid what `cellRenderer` to use when doing `fullWidth` rendering.
 
 <api-documentation source='grid-callbacks/callbacks.json' section='styling' names='["isFullWidthCell"]' config='{"overrideBottomMargin":"0rem"}'></api-documentation>
-<api-documentation source='grid-properties/properties.json' section='fullWidth' names='["fullWidthCellRenderer"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
+<api-documentation source='grid-properties/properties.json' section='fullWidth' names='["fullWidthCellRenderer"]' ></api-documentation>
 
 The cell renderer can be any AG Grid cell renderer. Refer to
 [Cell Rendering](/component-cell-renderer/) on how to build cell renderers.

@@ -43,7 +43,7 @@ The above two (pinning and floating) can be thought of as follows: if you have a
 
 The `rangeSelectionChanged` event tells you that the range selection has changed. The event has two properties, `started` and `finished`, which are `true` when the selection is starting or finishing. For example, if selecting a range of 10 cells in a row, the user will click the first cell and drag to the last cell. This will result in up to 11 events. The first event will have `started=true`, the last will have `finished=true`, and all the intermediary events will have both of these values as `false`.
 
-<api-documentation source='grid-events/events.json' section='selection' names='["rangeSelectionChanged"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
+<api-documentation source='grid-events/events.json' section='selection' names='["rangeSelectionChanged"]' ></api-documentation>
 
 ## Range Selection API
 
@@ -55,17 +55,17 @@ Get the selected ranges using `api.getCellRanges()`. This will return back a lis
 
 The start is the first cell the user clicked on and the end is the cell where the user stopped dragging. Do not assume that the start cell's index is numerically before the end cell, as the user could have dragged up.
 
-<api-documentation source='grid-api/api.json' section='selection' names='["getCellRanges"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
+<api-documentation source='grid-api/api.json' section='selection' names='["getCellRanges"]' ></api-documentation>
 
 ### clearRangeSelection()
 
-<api-documentation source='grid-api/api.json' section='selection' names='["clearRangeSelection"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
+<api-documentation source='grid-api/api.json' section='selection' names='["clearRangeSelection"]' ></api-documentation>
 
 ### addCellRange(rangeSelection)
 
 Adds a range to the selection. This keeps any previous ranges. If you wish to only have the new range selected, then call `clearRangeSelection()` first. The method takes the params of type `CellRangeParams`.
 
-<api-documentation source='grid-api/api.json' section='selection' names='["addCellRange"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
+<api-documentation source='grid-api/api.json' section='selection' names='["addCellRange"]' ></api-documentation>
 
 Ranges are normally bounded by a start and end row. However it is also possible to define a range unbounded by rows (i.e. to contain all rows). For an unbounded range, do not provide start or end row positions.
 

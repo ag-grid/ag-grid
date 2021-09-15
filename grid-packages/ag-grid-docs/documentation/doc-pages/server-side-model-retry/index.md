@@ -11,7 +11,7 @@ When loading fails, the datasource informs the grid of such using the `fail()` c
 
 Failed loads can be retried by using the grid API `retryServerSideLoads()`. This will retry all loads that have previously failed.
 
-<api-documentation source='grid-api/api.json' section='serverSideRowModel' names='["retryServerSideLoads"]' config='{"overrideBottomMargin":"1rem"}' ></api-documentation>
+<api-documentation source='grid-api/api.json' section='serverSideRowModel' names='["retryServerSideLoads"]'  ></api-documentation>
 
 ### Examples
 

@@ -120,7 +120,7 @@ The example below shows five columns formatted, demonstrating each of the method
 
 After the grid has created an instance of a cell renderer for a cell it is possible to access that instance. This is useful if you want to call a method that you provide on the cell renderer that has nothing to do with the operation of the grid. Accessing cell renderers is done using the grid API `getCellRendererInstances(params)`.
 
-<api-documentation source='grid-api/api.json' section='rendering' names='["getCellRendererInstances"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
+<api-documentation source='grid-api/api.json' section='rendering' names='["getCellRendererInstances"]' ></api-documentation>
 
 An example of getting the cell renderer for exactly one cell is as follows:
 

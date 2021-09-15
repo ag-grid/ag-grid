@@ -8,7 +8,7 @@ the first) column.
 
 ## Enabling Row Dragging
 
-<api-documentation source='column-properties/properties.json' section='row dragging' names='["rowDrag"]' config='{"overrideBottomMargin":"1rem"}' ></api-documentation>
+<api-documentation source='column-properties/properties.json' section='row dragging' names='["rowDrag"]'  ></api-documentation>
 
 To enable row dragging on all columns, set the column property `rowDrag = true` on one (typically the first) column.
 
@@ -260,7 +260,7 @@ When a row drag starts, a "floating" DOM element is created to indicate which ro
 element will contain the same value as the cell that started the row drag. It's possible to override that text by using
 the `colDef.rowDragText` callback.
 
-<api-documentation source='column-properties/properties.json' section='row dragging' names='["rowDragText"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
+<api-documentation source='column-properties/properties.json' section='row dragging' names='["rowDragText"]' ></api-documentation>
 
 <snippet>
 const gridOptions = {

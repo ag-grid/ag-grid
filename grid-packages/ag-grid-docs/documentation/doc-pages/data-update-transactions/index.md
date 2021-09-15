@@ -13,7 +13,7 @@ Transaction Updates are excellent for applying large data changes with the follo
 
 A transaction object contains the details of what rows should be added, removed and updated. The grid API `applyTransaction(transaction)` takes this transaction object and applies it to the grid's data.
 
-<api-documentation source='grid-api/api.json' section='data' names='["applyTransaction"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
+<api-documentation source='grid-api/api.json' section='data' names='["applyTransaction"]' ></api-documentation>
 
 The result of the `applyTransaction(transaction)` is also a transaction, however it is a list of [Row Nodes](/row-object/) that were added, removed or updated. Both types of transactions look similar, but the difference is the data type they contain.
 

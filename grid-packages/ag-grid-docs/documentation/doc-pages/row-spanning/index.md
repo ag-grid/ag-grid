@@ -14,7 +14,7 @@ Row spanning is then configured at the column definition level. To have a cell
 span more than one row, return how many rows to span in the callback
 `colDef.rowSpan`.
 
-<api-documentation source='column-properties/properties.json' section='spanning' names='["rowSpan"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
+<api-documentation source='column-properties/properties.json' section='spanning' names='["rowSpan"]' ></api-documentation>
 
 <snippet spaceBetweenProperties="true">
 const gridOptions = {

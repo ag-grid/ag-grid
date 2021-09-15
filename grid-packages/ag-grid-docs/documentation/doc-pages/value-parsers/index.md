@@ -6,7 +6,7 @@ After editing cells in the grid you have the opportunity to parse the value befo
 
 A Value Parser is the inverse of a [Value Formatter](/value-formatters/).
 
-<api-documentation source='column-properties/properties.json' section="editing" names='["valueParser"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
+<api-documentation source='column-properties/properties.json' section="editing" names='["valueParser"]' ></api-documentation>
 
 The return value of a value parser should be the result of the parse, i.e. return the value you want stored in the data.
 
