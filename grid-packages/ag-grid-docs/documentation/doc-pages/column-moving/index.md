@@ -11,9 +11,7 @@ Columns can be moved in the grid in the following ways:
 
 The column API methods for moving columns are as follows:
 
-- `moveColumn(key, toIndex)`: Move one column to specific index.
-- `moveColumns(keys, toIndex)`: Move list of columns to specific index.
-- `moveColumnByIndex(fromIndex, toIndex)`: Move column from `fromIndex` to `toIndex`.
+<api-documentation source='column-api/api.json' section='Moving' names='["moveColumn", "moveColumns", "moveColumnByIndex"]'></api-documentation>
 
 ## Simple Example
 

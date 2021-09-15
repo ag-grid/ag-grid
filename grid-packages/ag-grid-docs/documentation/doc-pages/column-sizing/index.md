@@ -37,7 +37,10 @@ const gridOptions = {
 
 ## Size Columns to Fit
 
-Call `api.sizeColumnsToFit()` to make the currently visible columns fit the screen. The columns will scale (growing or shrinking) to fit the available width.
+Call the Grid Api `api.sizeColumnsToFit()` to make the currently visible columns fit the screen. The columns will scale (growing or shrinking) to fit the available width.
+
+<api-documentation source='grid-api/api.json' section='columns' names='["sizeColumnsToFit"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
+
 
 If you don't want a particular column to be included in the auto resize, then set the column definition `suppressSizeToFit=true`. This is helpful if, for example, you want the first column to remain fixed width, but all other columns to fill the width of the table.
 
