@@ -99,7 +99,6 @@ import { ILoadingCellRendererParams } from "../rendering/cellRenderers/loadingCe
 
 export interface GridOptions {
 
-    xxx
     // ******************************************************************************************************
     // If you change the properties on this interface, you must also update PropertyKeys to be consistent. *
     // ******************************************************************************************************
