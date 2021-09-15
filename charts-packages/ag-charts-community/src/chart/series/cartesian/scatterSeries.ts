@@ -166,6 +166,7 @@ export class ScatterSeries extends CartesianSeries {
 
         marker.addPropertyListener('shape', this.onMarkerShapeChange, this);
         marker.addEventListener('change', this.scheduleUpdate, this);
+        marker.addPropertyListener('maxSize', this.scheduleData, this);
 
         this.addPropertyListener('xKey', () => this.xData = []);
         this.addPropertyListener('yKey', () => this.yData = []);
