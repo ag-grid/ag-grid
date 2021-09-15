@@ -9,10 +9,15 @@ export interface NullComparator {
 }
 
 export interface IScalarFilterParams extends ISimpleFilterParams {
+    /** If `true`, the `'inRange'` filter option will include values equal to the start and end of the range. */
     inRangeInclusive?: boolean;
+    /** If `true`, blank (`null` or `undefined`) values will pass the `'equals'` filter option. */
     includeBlanksInEquals?: boolean;
+    /** If `true`, blank (`null` or `undefined`) values will pass the `'lessThan'` and `'lessThanOrEqual'` filter options. */
     includeBlanksInLessThan?: boolean;
+    /** If `true`, blank (`null` or `undefined`) values will pass the `'greaterThan'` and `'greaterThanOrEqual'` filter options. */
     includeBlanksInGreaterThan?: boolean;
+    /** If `true`, blank (`null` or `undefined`) values will pass the `'inRange'` filter option. */
     includeBlanksInRange?: boolean;
 
     /** @deprecated in v21*/

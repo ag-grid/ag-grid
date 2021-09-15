@@ -28,8 +28,17 @@ export interface DateFilterModel extends ISimpleFilterModel {
 }
 
 export interface IDateFilterParams extends IScalarFilterParams {
+    /** Required if the data for the column are not native JS `Date` objects. */
     comparator?: IDateComparatorFunc;
+    /** 
+     * This is only used if a date component is not provided.
+     * By default the grid will use the browser date picker in Chrome and Firefox and a plain text box for all other browsers
+     * (This is because Chrome and Firefox are the only current browsers providing a decent out-of-the-box date picker).
+     * If this property is set to `true`, the browser date picker will be used regardless of the browser type.
+     * If set to `false`, a plain text box will be used for all browsers.
+     */
     browserDatePicker?: boolean;
+    /** This is the minimum year that must be entered in a date field for the value to be considered valid. Default: `1000` */
     minValidYear?: number;
 }
 

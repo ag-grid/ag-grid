@@ -32,9 +32,27 @@ export interface TextFormatter {
 }
 
 export interface ITextFilterParams extends ISimpleFilterParams {
+    /** 
+     * Used to override how to filter based on the user input.
+     */
     textCustomComparator?: TextComparator;
+    /** 
+     * By default, text filtering is case-insensitive. Set this to `true` to make text filtering case-sensitive.
+     * Default: `false`
+     */
     caseSensitive?: boolean;
+    /** 
+     * Formats the text before applying the filter compare logic.
+     * Useful if you want to substitute accented characters, for example.
+     */
     textFormatter?: (from: string) => string;
+
+    /**
+     * If `true`, the input that the user enters will be trimmed when the filter is applied, so any leading or trailing whitespace will be removed.
+     * If only whitespace is entered, it will be left as-is.
+     * If you enable `trimInput`, it is best to also increase the `debounceMs` to give users more time to enter text.
+     * Default: `false`
+     */
     trimInput?: boolean;
 }
 

@@ -10,9 +10,9 @@ Date Filters are configured though the `filterParams` attribute of the column de
 
 <api-documentation source='filter-provided/resources/provided-filters.json' section='filterParams'></api-documentation>
 
-In addition, the following parameters are also available:
+In addition, the following parameters are also available for Date filters:
 
-<api-documentation source='filter-provided-simple/resources/simple-filters.json' section='filterParams' names='["Date"]'></api-documentation>
+<interface-documentation interfaceName='IDateFilterParams' names='["alwaysShowBothConditions","filterOptions","defaultOption","defaultJoinOperator","suppressAndOrCondition","textCustomComparator","caseSensitive","textFormatter","trimInput","inRangeInclusive","includeBlanksInEquals","includeBlanksInLessThan","includeBlanksInGreaterThan","includeBlanksInRange","allowedCharPattern","numberParser","comparator","browserDatePicker","minValidYear"]' config='{"description":" "}' ></interface-documentation>
 
 ## Date Selection Component
 
@@ -24,6 +24,8 @@ By default the grid will use the browser-provided date picker for Chrome and Fir
 Dates can be represented in your data in many ways e.g. as a JavaScript `Date` object, as a string in a particular format such as `'26-MAR-2020'`, or something else. How you represent dates will be particular to your application.
 
 By default, the date filter assumes you are using JavaScript `Date` objects. If this is the case, the date filter will work out of the box. However, if your date is in any other format you will have to provide your own `comparator` to perform the date comparisons.
+
+<interface-documentation interfaceName='IDateFilterParams' names='["comparator"]' config='{"description":" ", "overrideBottomMargin":"1rem"}'></interface-documentation>
 
 The `comparator` function takes two parameters. The first parameter is a JavaScript `Date` object for the selected date in the filter (with the time set to midnight). The second parameter is the current value of the cell in the row being evaluated. The function must return:
 

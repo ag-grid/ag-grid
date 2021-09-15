@@ -100,7 +100,7 @@ const gridOptions = {
 </snippet>
 
 [[note]]
-| `newRowsAction` is deprecated, and `newRowsAction='keep'` will become the default behaviour in v26.
+| `newRowsAction` is deprecated, and `newRowsAction='keep'` will become the default behaviour in v27.
 
 However it is still possible to clear filter selections using: `api.setFilterModel([])`.
 

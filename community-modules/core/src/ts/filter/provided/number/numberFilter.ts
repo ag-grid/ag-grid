@@ -24,7 +24,14 @@ export interface NumberFilterModel extends ISimpleFilterModel {
 }
 
 export interface INumberFilterParams extends IScalarFilterParams {
+    /**
+     * When specified, the input field will be of type `text` instead of `number`, and this will be used as a regex of all the characters that are allowed to be typed.
+     * This will be compared against any typed character and prevent the character from appearing in the input if it does not match, in supported browsers (all except Safari).
+     */
     allowedCharPattern?: string;
+    /**
+     * Typically used alongside `allowedCharPattern`, this provides a custom parser to convert the value entered in the filter inputs into a number that can be used for comparisons.
+     */
     numberParser?: (text: string | null) => number;
 }
 
