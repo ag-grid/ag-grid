@@ -115,7 +115,7 @@ export interface GridOptions {
     showOpenedGroup?: boolean;
     /** @deprecated */
     deltaRowDataMode?: boolean;
-    x
+
     /** @deprecated */
     deltaColumnMode?: boolean;
     /** @deprecated */
@@ -123,7 +123,7 @@ export interface GridOptions {
     maintainColumnOrder?: boolean;
     immutableData?: boolean;
     /** @deprecated */
-    immutableColumns?: boolean;xxx
+    immutableColumns?: boolean;
     scrollbarWidth?: number;
     suppressRowClickSelection?: boolean;
     suppressRowHoverHighlight?: boolean;
