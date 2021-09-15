@@ -1,6 +1,6 @@
 import { AgCheckbox } from "../../../widgets/agCheckbox";
 import { BeanStub } from "../../../context/beanStub";
-import { PostConstruct, Autowired } from "../../../context/context";
+import { Autowired } from "../../../context/context";
 import { ColumnApi } from "../../../columns/columnApi";
 import { GridApi } from "../../../gridApi";
 import { Events } from "../../../events";
@@ -9,8 +9,6 @@ import { Constants } from "../../../constants/constants";
 import { Column } from "../../../entities/column";
 import { RowNode } from "../../../entities/rowNode";
 import { SelectionService } from "../../../selectionService";
-import { getAriaDescribedBy, setAriaDescribedBy } from "../../../utils/aria";
-import { isVisible } from "../../../utils/dom";
 import { IHeaderCellComp } from "./headerCellCtrl";
 
 export class SelectAllFeature extends BeanStub {
