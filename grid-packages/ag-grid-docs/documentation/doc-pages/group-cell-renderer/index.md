@@ -37,15 +37,7 @@ const gridOptions = {
 
 The set of parameters for the group cell renderer are defined on `GroupCellRendererParams` and include:
 
-- **suppressCount:** One of `[true, false]`, if `true`, count is not displayed beside the name.
-- **checkbox:** One of `[true, false]`, if `true`, a selection checkbox is included.
-- **suppressPadding:** Set to `true` to not including any padding (indentation) in the child rows.
-- **suppressDoubleClickExpand:** Set to `true` to suppress expand on double click.
-- **suppressEnterExpand:** Set to `true` to suppress expand on <kbd>Enter</kbd> key.
-- **innerRenderer:** The renderer to use for inside the cell (after grouping functions are added).
-- **innerRendererSelector:** The renderer to use for inside the cell (after grouping functions are added). The 
-`innerRendererSelector` allows different cell renderers to be selected across rows.      
-- **footerValueGetter:** The value getter for the footer text. Can be a function or expression.
+<interface-documentation interfaceName='GroupCellRendererParams' overrideSrc='group-cell-renderer/group-cell-renderer.json' names='["checkbox","suppressCount","suppressPadding","suppressDoubleClickExpand","suppressEnterExpand","innerRenderer","innerRendererSelector","footerValueGetter"]' ></interface-documentation>
 
 ### Example Group cellRenderer
 

@@ -8498,6 +8498,13 @@
       "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void"
     }
   },
+  "FooterValueGetterFunc": {
+    "meta": { "isCallSignature": true },
+    "type": {
+      "arguments": { "params": "GroupCellRendererParams" },
+      "returnType": "any"
+    }
+  },
   "GroupCellRendererParams": {
     "meta": {},
     "type": {
@@ -8506,13 +8513,14 @@
       "suppressPadding": "boolean",
       "suppressDoubleClickExpand": "boolean",
       "suppressEnterExpand": "boolean",
-      "footerValueGetter": "any",
+      "footerValueGetter": "string | FooterValueGetterFunc",
       "suppressCount": "boolean",
       "checkbox": "any",
       "rowDrag?": "boolean",
       "innerRenderer?": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
       "innerRendererFramework?": "any",
       "innerRendererParams?": "any",
+      "innerRendererSelector?": "CellRendererSelectorFunc",
       "scope": "any",
       "padding": "number",
       "value": "any",
@@ -8537,6 +8545,18 @@
       "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void"
     },
     "docs": {
+      "pinned": "/** Only when in fullWidth, this gives whether the comp is pinned or not.\n * If not doing fullWidth, then this is not provided, as pinned can be got from the column. */",
+      "fullWidth": "/** 'true' if comp is showing full width. */",
+      "suppressPadding": "/** Set to `true` to not include any padding (indentation) in teh child rows. */",
+      "suppressDoubleClickExpand": "/** Set to `true` to suppress expand on double click. */",
+      "suppressEnterExpand": "/** Set to `true` to suppress expand on <kbd>Enter</kbd> */",
+      "footerValueGetter": "/** The value getter for the footer text. Can be a function or expression. */",
+      "suppressCount": "/** If `true`, count is not displayed beside the name. */",
+      "checkbox": "/** If `true`, a selection checkbox is included. */",
+      "innerRenderer?": "/** The renderer to use for inside the cell (after grouping functions are added) */",
+      "innerRendererFramework?": "/** Same as `innerRenderer` but for a framework component. */",
+      "innerRendererParams?": "/** Additional params to customise to the `innerRenderer`. */",
+      "innerRendererSelector?": "/** Callback to enable different innerRenderers to be used based of value of params. */",
       "padding": "/** @deprecated\n */",
       "value": "/** Value to be rendered. */",
       "valueFormatted": "/** Formatted value to be rendered. */",

@@ -4,7 +4,7 @@ import { Constants } from "../../constants/constants";
 import { KeyCode } from "../../constants/keyCode";
 import { BeanStub } from "../../context/beanStub";
 import { Autowired } from "../../context/context";
-import { ColDef } from "../../entities/colDef";
+import { ColDef, CellRendererSelectorFunc } from "../../entities/colDef";
 import { Column } from "../../entities/column";
 import { GridOptions } from "../../entities/gridOptions";
 import { RowNode } from "../../entities/rowNode";
@@ -30,24 +30,42 @@ export interface IGroupCellRenderer {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
 }
 
+export interface FooterValueGetterFunc {
+    (params: GroupCellRendererParams): any;
+}
+
 export interface GroupCellRendererParams extends ICellRendererParams {
-    // only when in fullWidth, this gives whether the comp is pinned or not.
-    // if not doing fullWidth, then this is not provided, as pinned can be got from the column.
+
+    /**
+     * Only when in fullWidth, this gives whether the comp is pinned or not.
+     * If not doing fullWidth, then this is not provided, as pinned can be got from the column.
+     */
     pinned: string;
-    // true if comp is showing full width
+    /** 'true' if comp is showing full width. */
     fullWidth: boolean;
 
+    /** Set to `true` to not include any padding (indentation) in teh child rows. */
     suppressPadding: boolean;
+    /** Set to `true` to suppress expand on double click. */
     suppressDoubleClickExpand: boolean;
+    /** Set to `true` to suppress expand on <kbd>Enter</kbd> */
     suppressEnterExpand: boolean;
-    footerValueGetter: any;
+    /** The value getter for the footer text. Can be a function or expression. */
+    footerValueGetter: string | FooterValueGetterFunc;
+    /** If `true`, count is not displayed beside the name. */
     suppressCount: boolean;
+    /** If `true`, a selection checkbox is included.  */
     checkbox: any;
     rowDrag?: boolean;
 
+    /** The renderer to use for inside the cell (after grouping functions are added) */
     innerRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
+    /** Same as `innerRenderer` but for a framework component. */
     innerRendererFramework?: any;
+    /** Additional params to customise to the `innerRenderer`. */
     innerRendererParams?: any;
+    /** Callback to enable different innerRenderers to be used based of value of params. */
+    innerRendererSelector?: CellRendererSelectorFunc;
 
     scope: any;
 
@@ -95,13 +113,13 @@ export class GroupCellRendererCtrl extends BeanStub {
         this.compClass = compClass;
 
         const topLevelFooter = this.isTopLevelFooter();
-        
+
         const embeddedRowMismatch = this.isEmbeddedRowMismatch();
         // This allows for empty strings to appear as groups since
         // it will only return for null or undefined.
         const nullValue = params.value == null;
         let skipCell = false;
-        
+
         // if the groupCellRenderer is inside of a footer and groupHideOpenParents is true
         // we should only display the groupCellRenderer if the current column is the rowGroupedColumn
         if (this.gridOptionsWrapper.isGroupIncludeFooter() && this.gridOptionsWrapper.isGroupHideOpenParents()) {
@@ -127,7 +145,7 @@ export class GroupCellRendererCtrl extends BeanStub {
         this.addValueElement();
         this.setupIndent();
     }
-    
+
     private isTopLevelFooter(): boolean {
         if (!this.gridOptionsWrapper.isGroupIncludeTotalFooter()) { return false; }
 
@@ -183,7 +201,7 @@ export class GroupCellRendererCtrl extends BeanStub {
         if (this.showingValueForOpenedParent) {
             let pointer = rowNode.parent;
 
-            while (pointer!=null) {
+            while (pointer != null) {
                 if (pointer.rowGroupColumn && column!.isRowGroupDisplayed(pointer.rowGroupColumn.getId())) {
                     this.displayedGroupNode = pointer;
                     break;
@@ -204,7 +222,7 @@ export class GroupCellRendererCtrl extends BeanStub {
         const rowNode: RowNode = this.params.node;
         const column = this.params.column as Column;
 
-        if (!this.gridOptionsWrapper.isGroupHideOpenParents()) { 
+        if (!this.gridOptionsWrapper.isGroupHideOpenParents()) {
             this.showingValueForOpenedParent = false;
             return;
         }
@@ -213,21 +231,21 @@ export class GroupCellRendererCtrl extends BeanStub {
         // this rowNode isn't grouping by the column we are displaying
 
         // if no groupData at all, we are not showing a parent value
-        if (!rowNode.groupData) { 
+        if (!rowNode.groupData) {
             this.showingValueForOpenedParent = false;
             return;
-         }
+        }
 
         // this is the normal case, in that we are showing a group for which this column is configured. note that
         // this means the Row Group is closed (if it was open, we would not be displaying it)
-        const showingGroupNode = rowNode.rowGroupColumn!=null;
+        const showingGroupNode = rowNode.rowGroupColumn != null;
         if (showingGroupNode) {
             const keyOfGroupingColumn = rowNode.rowGroupColumn!.getId();
             const configuredToShowThisGroupLevel = column.isRowGroupDisplayed(keyOfGroupingColumn);
             // if showing group as normal, we didn't take group info from parent
             if (configuredToShowThisGroupLevel) {
                 this.showingValueForOpenedParent = false;
-                return;    
+                return;
             }
         }
 
@@ -252,8 +270,8 @@ export class GroupCellRendererCtrl extends BeanStub {
         // we try and use the cellRenderer of the column used for the grouping if we can
         const paramsAdjusted = this.adjustParamsWithDetailsFromRelatedColumn();
         const innerCompDetails = this.getInnerCompDetails(paramsAdjusted);
-        
-        const {valueFormatted, value} = paramsAdjusted;
+
+        const { valueFormatted, value } = paramsAdjusted;
         const valueWhenNoRenderer = valueFormatted != null ? valueFormatted : value;
 
         this.comp.setInnerRenderer(innerCompDetails, valueWhenNoRenderer);
@@ -271,16 +289,16 @@ export class GroupCellRendererCtrl extends BeanStub {
 
         const params = this.params;
 
-        const {value, scope, node} = this.params;
+        const { value, scope, node } = this.params;
         const valueFormatted = this.valueFormatterService.formatValue(relatedColumn, node, scope, value);
 
         // we don't update the original params, as they could of come through React,
         // as react has RowGroupCellRenderer, which means the params could be props which
         // would be read only
         const paramsAdjusted = {
-                    ...params, 
-                    valueFormatted: valueFormatted
-                };
+            ...params,
+            valueFormatted: valueFormatted
+        };
 
         return paramsAdjusted;
     }
@@ -291,7 +309,7 @@ export class GroupCellRendererCtrl extends BeanStub {
 
         if (footerValueGetter) {
             // params is same as we were given, except we set the value as the item to display
-            const paramsClone: any = cloneObject(this.params);
+            const paramsClone = cloneObject(this.params);
             paramsClone.value = this.params.value;
 
             if (typeof footerValueGetter === 'function') {
@@ -333,7 +351,7 @@ export class GroupCellRendererCtrl extends BeanStub {
 
         // we check if cell renderer provided for the group cell renderer, eg colDef.cellRendererParams.innerRenderer
         const innerCompDetails = this.userComponentFactory
-                    .getInnerRendererDetails(params, params);
+            .getInnerRendererDetails(params, params);
 
         // avoid using GroupCellRenderer again, otherwise stack overflow, as we insert same renderer again and again.
         // this covers off chance user is grouping by a column that is also configured with GroupCellRenderer
@@ -359,9 +377,9 @@ export class GroupCellRendererCtrl extends BeanStub {
             // Only if the original column is using a specific renderer, it it is a using a DEFAULT one ignore it
             return relatedCompDetails;
         }
-        
+
         if (isGroupRowRenderer(relatedCompDetails) &&
-            relatedColDef.cellRendererParams && 
+            relatedColDef.cellRendererParams &&
             relatedColDef.cellRendererParams.innerRenderer) {
             // edge case - this comes from a column which has been grouped dynamically, that has a renderer 'group'
             // and has an inner cell renderer
@@ -422,7 +440,7 @@ export class GroupCellRendererCtrl extends BeanStub {
         if (!this.gridOptionsWrapper.isEnableGroupEdit() && this.isExpandable() && !params.suppressDoubleClickExpand) {
             this.addManagedListener(eGroupCell, 'dblclick', this.onCellDblClicked.bind(this));
         }
-        
+
 
         this.addManagedListener(this.eExpanded, 'click', this.onExpandClicked.bind(this));
         this.addManagedListener(this.eContracted, 'click', this.onExpandClicked.bind(this));

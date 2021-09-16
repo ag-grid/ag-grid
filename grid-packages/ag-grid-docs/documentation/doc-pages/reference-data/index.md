@@ -95,6 +95,8 @@ The following example demonstrates how `Value Handlers` can be combined to work 
 
 Here we present the same example but this time using the `refData` `ColDef` property. This approach requires less coding and is more straightforward, but might not be flexible enough for scenarios involving more complex reference data formats.
 
+<api-documentation source='column-properties/properties.json' section='columns' names='["refData"]'></api-documentation>
+
 All that is required with this approach is to specify the `refData` and the grid will take care of the
 rest, as shown below:
 
