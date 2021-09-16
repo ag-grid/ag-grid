@@ -84,7 +84,7 @@ test('isComparable', () => {
     })).toBe(true);
     expect(isComparable({
         valueOf: () => 'A'
-    })).toBe(true);
+    })).toBe(false);
 });
 
 test('isStringObject', () => {
