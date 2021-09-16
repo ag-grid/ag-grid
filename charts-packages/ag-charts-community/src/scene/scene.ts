@@ -1,6 +1,5 @@
 import { HdpiCanvas } from "../canvas/hdpiCanvas";
 import { Node } from "./node";
-import { Path2D } from "./path2D";
 import { createId } from "../util/id";
 
 interface DebugOptions {

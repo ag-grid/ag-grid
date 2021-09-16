@@ -1,27 +1,12 @@
-import { Shape } from "./shape";
+import { Path } from "./path";
 import { Path2D } from "../path2D";
 import { normalizeAngle360 } from "../../util/angle";
 import { isEqual } from "../../util/number";
 import { BBox } from "../bbox";
 
-export class Sector extends Shape {
+export class Sector extends Path {
 
     static className = 'Sector';
-
-    protected path = new Path2D();
-
-    private _dirtyPath = true;
-    set dirtyPath(value: boolean) {
-        if (this._dirtyPath !== value) {
-            this._dirtyPath = value;
-            if (value) {
-                this.dirty = true;
-            }
-        }
-    }
-    get dirtyPath(): boolean {
-        return this._dirtyPath;
-    }
 
     private _centerX: number = 0;
     set centerX(value: number) {
@@ -121,24 +106,11 @@ export class Sector extends Shape {
         );
     }
 
-    isPointInPath(x: number, y: number): boolean {
-        const point = this.transformPoint(x, y);
-        return this.path.isPointInPath(point.x, point.y);
-    }
-
-    isPointInStroke(x: number, y: number): boolean {
-        return false;
-    }
-
-    private get fullPie(): boolean {
+    private isFullPie(): boolean {
         return isEqual(normalizeAngle360(this.startAngle), normalizeAngle360(this.endAngle));
     }
 
     updatePath(): void {
-        if (!this.dirtyPath) {
-            return;
-        }
-
         const path = this.path;
 
         const angleOffset = this.angleOffset;
@@ -148,7 +120,7 @@ export class Sector extends Shape {
         const innerRadius = Math.min(this.innerRadius, this.outerRadius);
         const outerRadius = Math.max(this.innerRadius, this.outerRadius);
         const centerOffset = this.centerOffset;
-        const fullPie = this.fullPie;
+        const fullPie = this.isFullPie();
         let centerX = this.centerX;
         let centerY = this.centerY;
 
@@ -205,19 +177,5 @@ export class Sector extends Shape {
         path.closePath();
 
         this.dirtyPath = false;
-    }
-
-    render(ctx: CanvasRenderingContext2D): void {
-        if (this.dirtyTransform) {
-            this.computeTransformMatrix();
-        }
-        this.matrix.toContext(ctx);
-
-        this.updatePath();
-        this.path.draw(ctx);
-
-        this.fillStroke(ctx);
-
-        this.dirty = false;
     }
 }
