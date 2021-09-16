@@ -1,4 +1,4 @@
-import Scale from "../scale/scale";
+import { Scale } from "../scale/scale";
 import { Axis } from "../axis";
 import { Series } from "./series/series";
 
