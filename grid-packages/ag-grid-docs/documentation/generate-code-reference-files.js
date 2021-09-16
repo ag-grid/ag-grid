@@ -233,8 +233,13 @@ function extractInterfaces(srcFile, extension) {
                 meta: { isEnum: true }, type: node.members.map(n => formatNode(n, srcFile)),
                 docs: node.members.map(n => getJsDoc(n))
             }
-        } else if (kind == 'TypeAliasDeclaration' && node.type && node.type.types && !node.typeParameters) {
-            iLookup[name] = { meta: { isTypeAlias: true }, type: formatNode(node.type, srcFile) }
+        } else if (kind == 'TypeAliasDeclaration') {
+            iLookup[name] = { 
+                meta: { 
+                    isTypeAlias: true, 
+                    typeParams: node.typeParameters ? node.typeParameters.map(tp => formatNode(tp, srcFile)) : undefined 
+                },
+                type: formatNode(node.type, srcFile) }                
         } else {
 
             let isCallSignature = false;
@@ -327,6 +332,11 @@ function buildInterfaceProps() {
                 const prop = extractTypesFromNode(ch, parsedFile, true);
                 props = { ...props, ...prop }
             })
+
+            const kind = ts.SyntaxKind[iNode.kind];
+            if(kind == 'TypeAliasDeclaration'){
+                // We do not support types here but have not seen this needed in the docs yet.
+            }
 
             if (iNode.typeParameters) {
                 props = { ...props, meta: { ...props.meta, typeParams: iNode.typeParameters.map(tp => formatNode(tp, parsedFile)) } }

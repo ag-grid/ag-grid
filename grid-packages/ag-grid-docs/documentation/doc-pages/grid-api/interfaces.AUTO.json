@@ -4657,7 +4657,10 @@
       "skipHeader?": "/** @deprecated\n */"
     }
   },
-  "PackageFileParams": { "meta": { "typeParams": ["T"] }, "type": {} },
+  "PackageFileParams": {
+    "meta": { "isTypeAlias": true, "typeParams": ["T"] },
+    "type": "T & { data: string[]; }"
+  },
   "CsvCell": {
     "meta": {},
     "type": { "data": "CsvCellData", "mergeAcross?": "number" }
@@ -5126,7 +5129,7 @@
     "meta": { "isTypeAlias": true },
     "type": "AgNumberAxisOptions | AgCategoryAxisOptions | AgGroupedCategoryAxisOptions | AgTimeAxisOptions"
   },
-  "AgPolarAxisOptions": { "meta": {}, "type": {} },
+  "AgPolarAxisOptions": { "meta": { "isTypeAlias": true }, "type": "any" },
   "AgBaseSeriesOptions": {
     "meta": {},
     "type": {
@@ -5588,7 +5591,10 @@
     "meta": { "isTypeAlias": true },
     "type": "AgLineSeriesOptions | AgScatterSeriesOptions | AgAreaSeriesOptions | AgBarSeriesOptions | AgHistogramSeriesOptions"
   },
-  "AgPolarSeriesOptions": { "meta": {}, "type": {} },
+  "AgPolarSeriesOptions": {
+    "meta": { "isTypeAlias": true },
+    "type": "AgPieSeriesOptions"
+  },
   "AgCartesianChartOptions": {
     "meta": { "typeParams": ["TAxisOptions", "TSeriesOptions"] },
     "type": {
@@ -7585,7 +7591,10 @@
       "colDef": "/** The column definition from which the set filter is invoked. */"
     }
   },
-  "SetFilterValuesFunc": { "meta": {}, "type": {} },
+  "SetFilterValuesFunc": {
+    "meta": { "isTypeAlias": true },
+    "type": "(params: SetFilterValuesFuncParams) => void"
+  },
   "SetFilterValues": {
     "meta": { "isTypeAlias": true },
     "type": "SetFilterValuesFunc | any[]"
@@ -7593,7 +7602,6 @@
   "ISetFilterParams": {
     "meta": {},
     "type": {
-      "suppressRemoveEntries?": "boolean",
       "values?": "SetFilterValues",
       "refreshValuesOnOpen?": "boolean",
       "cellHeight?": "number",
@@ -7603,14 +7611,15 @@
       "applyMiniFilterWhileTyping?": "boolean",
       "suppressSelectAll?": "boolean",
       "defaultToNothingSelected?": "boolean",
-      "suppressSyncValuesAfterDataChange?": "boolean",
       "comparator?": "(a: any, b: any) => number",
       "textFormatter?": "(from: string) => string",
       "valueFormatter?": "(params: ValueFormatterParams) => string",
-      "selectAllOnMiniFilter?": "boolean",
-      "syncValuesLikeExcel?": "boolean",
       "showTooltips?": "boolean",
       "excelMode?": "'mac' | 'windows'",
+      "suppressRemoveEntries?": "boolean",
+      "suppressSyncValuesAfterDataChange?": "boolean",
+      "selectAllOnMiniFilter?": "boolean",
+      "syncValuesLikeExcel?": "boolean",
       "clearButton?": "boolean",
       "resetButton?": "boolean",
       "applyButton?": "boolean",
@@ -7630,6 +7639,19 @@
       "context": "any"
     },
     "docs": {
+      "values?": "/** The values to display in the Filter List.\n * If this is not set, the filter will takes its values from what is loaded in the table. */",
+      "refreshValuesOnOpen?": "/** Refresh the values every time the Set filter is opened. */",
+      "cellHeight?": "/** The height of values in the Filter List in pixels. */",
+      "suppressSorting?": "/** If `true`, the Set Filter values will not be sorted.\n * Use this if you are providing your own values and don't want them sorted as you are providing in the order you want.\n * Default: false */",
+      "cellRenderer?": "/** Similar to the Cell Renderer for the grid.\n * Setting it separately here allows for the value to be rendered differently in the filter. */",
+      "suppressMiniFilter?": "/** Set to `true` to hide the Mini Filter.\n * Default: `false` */",
+      "applyMiniFilterWhileTyping?": "/** Set to `true` to apply the Set Filter immediately when the user is typing in the Mini Filter.\n * Default: `false` */",
+      "suppressSelectAll?": "/** Set to `true` to remove the Select All checkbox.\n * Default: `false` */",
+      "defaultToNothingSelected?": "/** By default, when the Set Filter is opened all values are shown selected. Set this to `true` to instead show all values as de-selected by default. */",
+      "comparator?": "/** Comparator for sorting.\n * If not provided, the Column Definition comparator is used.\n * If Column Definition comparator is also not provided, the default (grid provided) comparator is used. */",
+      "textFormatter?": "/** If specified, this formats the text before applying the Mini Filter compare logic, useful for instance to substitute accented characters. */",
+      "showTooltips?": "/** If `true`, hovering over a value in the Set Filter will show a tooltip containing the full, untruncated value.\n * Default: `false` */",
+      "excelMode?": "/** Changes the behaviour of the Set Filter to match that of Excel's AutoFilter. */",
       "suppressRemoveEntries?": "/** @deprecated\n */",
       "suppressSyncValuesAfterDataChange?": "/** @deprecated\n */",
       "selectAllOnMiniFilter?": "/** @deprecated\n */",
@@ -7803,7 +7825,10 @@
       "renderer?": "SparklineTooltipRenderer"
     }
   },
-  "SparklineTooltipRenderer": { "meta": {}, "type": {} },
+  "SparklineTooltipRenderer": {
+    "meta": { "isTypeAlias": true },
+    "type": "(params: TooltipRendererParams) => TooltipRendererResult"
+  },
   "SparklineLine": {
     "meta": {},
     "type": { "stroke?": "string", "strokeWidth?": "number" }
@@ -7817,7 +7842,10 @@
       "strokeWidth?": "number"
     }
   },
-  "SparklineColumnFormatter": { "meta": {}, "type": {} },
+  "SparklineColumnFormatter": {
+    "meta": { "isTypeAlias": true },
+    "type": "(params: ColumnFormatterParams) => ColumnFormat"
+  },
   "ColumnFormatterParams": {
     "meta": {},
     "type": {
@@ -7848,7 +7876,10 @@
       "formatter?": "SparklineMarkerFormatter"
     }
   },
-  "SparklineMarkerFormatter": { "meta": {}, "type": {} },
+  "SparklineMarkerFormatter": {
+    "meta": { "isTypeAlias": true },
+    "type": "(params: MarkerFormatterParams) => MarkerFormat"
+  },
   "MarkerFormatterParams": {
     "meta": {},
     "type": {
@@ -8735,7 +8766,10 @@
     "meta": { "isTypeAlias": true },
     "type": "'topLeft' | 'top' | 'topRight' | 'right' | 'bottomRight' | 'bottom' | 'bottomLeft' | 'left'"
   },
-  "ResizableStructure": { "meta": {}, "type": {} },
+  "ResizableStructure": {
+    "meta": { "isTypeAlias": true },
+    "type": "{[key in ResizableSides]?: boolean}"
+  },
   "MappedResizer": {
     "meta": {},
     "type": { "element": "HTMLElement", "dragSource?": "DragListenerParams" }
@@ -8958,14 +8992,38 @@
     "meta": {},
     "type": { "autoHeight": "boolean", "normal": "boolean", "print": "boolean" }
   },
-  "GenericFunction": { "meta": {}, "type": {} },
-  "PickByTypeKeyFilter": { "meta": { "typeParams": ["T", "C"] }, "type": {} },
-  "KeysByType": { "meta": { "typeParams": ["T", "C"] }, "type": {} },
-  "ValuesByType": { "meta": { "typeParams": ["T", "C"] }, "type": {} },
-  "PickByType": { "meta": { "typeParams": ["T", "C"] }, "type": {} },
-  "MethodsOf": { "meta": { "typeParams": ["T"] }, "type": {} },
-  "InterfaceOf": { "meta": { "typeParams": ["T"] }, "type": {} },
-  "PartiallyMockedInterfaceOf": { "meta": { "typeParams": ["T"] }, "type": {} },
+  "GenericFunction": {
+    "meta": { "isTypeAlias": true },
+    "type": "(...args: any[]) => any"
+  },
+  "PickByTypeKeyFilter": {
+    "meta": { "isTypeAlias": true, "typeParams": ["T", "C"] },
+    "type": "{[K in keyof T]: T[K] extends C ? K : never}"
+  },
+  "KeysByType": {
+    "meta": { "isTypeAlias": true, "typeParams": ["T", "C"] },
+    "type": "PickByTypeKeyFilter<T, C>[keyof T]"
+  },
+  "ValuesByType": {
+    "meta": { "isTypeAlias": true, "typeParams": ["T", "C"] },
+    "type": "{[K in keyof T]: T[K] extends C ? T[K] : never}"
+  },
+  "PickByType": {
+    "meta": { "isTypeAlias": true, "typeParams": ["T", "C"] },
+    "type": "Pick<ValuesByType<T, C>, KeysByType<T, C>>"
+  },
+  "MethodsOf": {
+    "meta": { "isTypeAlias": true, "typeParams": ["T"] },
+    "type": "KeysByType<Required<T>, GenericFunction>"
+  },
+  "InterfaceOf": {
+    "meta": { "isTypeAlias": true, "typeParams": ["T"] },
+    "type": "PickByType<T, GenericFunction>"
+  },
+  "PartiallyMockedInterfaceOf": {
+    "meta": { "isTypeAlias": true, "typeParams": ["T"] },
+    "type": "{[K in MethodsOf<T>]?: jest.Mock<InterfaceOf<T>[K]>}"
+  },
   "CellValueChange": {
     "meta": {},
     "type": {
@@ -8992,7 +9050,10 @@
     "meta": {},
     "type": { "rowNode": "RowNode", "children": "PathItem[] | null" }
   },
-  "ResolveAndRejectCallback": { "meta": { "typeParams": ["T"] }, "type": {} },
+  "ResolveAndRejectCallback": {
+    "meta": { "isTypeAlias": true, "typeParams": ["T"] },
+    "type": "(resolve: (value: T | null) => void, reject: (params: any) => void) => void"
+  },
   "AgPromiseStatus": {
     "meta": { "isEnum": true },
     "type": ["IN_PROGRESS", "RESOLVED"],

@@ -13350,41 +13350,47 @@
   "SetFilterValuesFunc": {},
   "SetFilterValues": {},
   "ISetFilterParams": {
-    "suppressRemoveEntries": {
-      "description": "/** @deprecated\n */",
-      "type": { "returnType": "boolean", "optional": true }
+    "values": {
+      "description": "/** The values to display in the Filter List.\n * If this is not set, the filter will takes its values from what is loaded in the table. */",
+      "type": { "returnType": "SetFilterValues", "optional": true }
     },
-    "values": { "type": { "returnType": "SetFilterValues", "optional": true } },
     "refreshValuesOnOpen": {
+      "description": "/** Refresh the values every time the Set filter is opened. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "cellHeight": { "type": { "returnType": "number", "optional": true } },
+    "cellHeight": {
+      "description": "/** The height of values in the Filter List in pixels. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "suppressSorting": {
+      "description": "/** If `true`, the Set Filter values will not be sorted.\n * Use this if you are providing your own values and don't want them sorted as you are providing in the order you want.\n * Default: false */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "cellRenderer": {
+      "description": "/** Similar to the Cell Renderer for the grid.\n * Setting it separately here allows for the value to be rendered differently in the filter. */",
       "type": {
         "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string",
         "optional": true
       }
     },
     "suppressMiniFilter": {
+      "description": "/** Set to `true` to hide the Mini Filter.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "applyMiniFilterWhileTyping": {
+      "description": "/** Set to `true` to apply the Set Filter immediately when the user is typing in the Mini Filter.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressSelectAll": {
+      "description": "/** Set to `true` to remove the Select All checkbox.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "defaultToNothingSelected": {
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "suppressSyncValuesAfterDataChange": {
-      "description": "/** @deprecated\n */",
+      "description": "/** By default, when the Set Filter is opened all values are shown selected. Set this to `true` to instead show all values as de-selected by default. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "comparator": {
+      "description": "/** Comparator for sorting.\n * If not provided, the Column Definition comparator is used.\n * If Column Definition comparator is also not provided, the default (grid provided) comparator is used. */",
       "type": {
         "arguments": { "a": "any", "b": "any" },
         "returnType": "number",
@@ -13392,6 +13398,7 @@
       }
     },
     "textFormatter": {
+      "description": "/** If specified, this formats the text before applying the Mini Filter compare logic, useful for instance to substitute accented characters. */",
       "type": {
         "arguments": { "from": "string" },
         "returnType": "string",
@@ -13405,6 +13412,22 @@
         "optional": true
       }
     },
+    "showTooltips": {
+      "description": "/** If `true`, hovering over a value in the Set Filter will show a tooltip containing the full, untruncated value.\n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "excelMode": {
+      "description": "/** Changes the behaviour of the Set Filter to match that of Excel's AutoFilter. */",
+      "type": { "returnType": "'mac' | 'windows'", "optional": true }
+    },
+    "suppressRemoveEntries": {
+      "description": "/** @deprecated\n */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "suppressSyncValuesAfterDataChange": {
+      "description": "/** @deprecated\n */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "selectAllOnMiniFilter": {
       "description": "/** @deprecated\n */",
       "type": { "returnType": "boolean", "optional": true }
@@ -13412,10 +13435,6 @@
     "syncValuesLikeExcel": {
       "description": "/** @deprecated\n */",
       "type": { "returnType": "boolean", "optional": true }
-    },
-    "showTooltips": { "type": { "returnType": "boolean", "optional": true } },
-    "excelMode": {
-      "type": { "returnType": "'mac' | 'windows'", "optional": true }
     },
     "clearButton": {
       "description": "/** @deprecated\n */",

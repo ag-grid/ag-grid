@@ -34,8 +34,15 @@ export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework
     const li = interfaceLookup[interfacename];
 
     let props = {};
-    const overrides = overridesrc ? getJsonFromFile(nodes, undefined, overridesrc) : {};
-    const interfaceOverrides = overrides[interfacename] || {};
+    let overrides = {};
+    let interfaceOverrides = {};
+    if(overridesrc){
+        overrides = getJsonFromFile(nodes, undefined, overridesrc);
+        interfaceOverrides = overrides[interfacename];
+        if(!interfaceOverrides){
+            throw new Error(`overrideSrc:${overridesrc} provided but does not contain expected section named: '${interfacename}'!`);            
+        }
+    }
 
     const typeProps = Object.entries(li.type);
     sortAndFilterProperties(typeProps, framework).forEach(([k, v]) => {
