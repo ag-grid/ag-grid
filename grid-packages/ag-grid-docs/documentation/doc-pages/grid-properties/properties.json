@@ -156,11 +156,19 @@
             }
         },
         "quickFilterText": {
-            "description": "Rows are filtered using this text as a [quick filter](/filter-quick/)."
+            "description": "Rows are filtered using this text as a quick filter.",
+            "more": {
+                "name": "Quick Filter",
+                "url": "/filter-quick/"
+            }
         },
         "cacheQuickFilter": {
             "default": false,
-            "description": "Set to `true` to turn on the [quick filter cache](/filter-quick/#quick-filter-cache), used to improve performance when using the quick filter."
+            "description": "Set to `true` to turn on the quick filter cache, used to improve performance when using the quick filter.",
+            "more": {
+                "name": "Quick Filter Cache",
+                "url": "/filter-quick/#quick-filter-cache"
+            }
         },
         "excludeChildrenWhenTreeDataFiltering": {
             "default": false,
