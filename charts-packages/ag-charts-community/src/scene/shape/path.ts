@@ -60,8 +60,6 @@ export class Path extends Shape {
     protected updatePath() {}
 
     render(ctx: CanvasRenderingContext2D): void {
-        const scene = this.scene!;
-
         if (this.dirtyTransform) {
             this.computeTransformMatrix();
         }
@@ -77,7 +75,7 @@ export class Path extends Shape {
             this.updatePath();
             this.dirtyPath = false;
         }
-        scene.appendPath(this.path);
+        this.path.draw(ctx);
 
         this.fillStroke(ctx);
 
