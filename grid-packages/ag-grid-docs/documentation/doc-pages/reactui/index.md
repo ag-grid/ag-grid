@@ -106,6 +106,7 @@ Below is an example showing a grid configure with a custom React Header componen
 * The Athlete Column uses a simple Header Comp that just displays the Header name.
 * The Age Column uses a simple Header Comp that displays the Header name along with an animated gif.
 * The Country Column uses a Header Comp that displays the Header name and allows sorting (by clicking on the header).
+* The Year, Date and Sport Columns do not their Headers customised and work as normal.
 
 <grid-example title='React UI Headers' name='headers' type='react' options=' { "showImportsDropdown": false }'></grid-example>
 

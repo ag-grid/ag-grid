@@ -73,6 +73,7 @@ function GridExample() {
 
     // never changes, so we can use useMemo
     const defaultColDef = useMemo( ()=> ({
+        filter: true,
         resizable: true,
         sortable: true,
         flex: 1
@@ -96,6 +97,7 @@ function GridExample() {
 
             // all other properties as normal...
             className="ag-theme-alpine"
+            floatingFilter={true}
             animateRows="true"
             modules={modules}
             columnDefs={columnDefs}

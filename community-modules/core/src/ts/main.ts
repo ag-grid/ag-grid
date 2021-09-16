@@ -114,7 +114,7 @@ export { DateFilter, IDateFilterParams, DateFilterModel } from "./filter/provide
 
 export { IFloatingFilter, IFloatingFilterParams, IFloatingFilterComp, BaseFloatingFilterChange } from "./filter/floating/floatingFilter";
 export { TextFloatingFilter } from './filter/provided/text/textFloatingFilter';
-export { HeaderFilterCellComp as FloatingFilterWrapper } from './headerRendering/cells/floatingFilter/headerFilterCellComp';
+export { HeaderFilterCellComp } from './headerRendering/cells/floatingFilter/headerFilterCellComp';
 export { FloatingFilterMapper } from './filter/floating/floatingFilterMapper';
 
 // gridPanel
@@ -138,6 +138,8 @@ export { GridHeaderCtrl, IGridHeaderComp } from "./headerRendering/gridHeaderCtr
 export { HeaderRowComp, HeaderRowType } from "./headerRendering/row/headerRowComp";
 export { HeaderRowCtrl, IHeaderRowComp } from "./headerRendering/row/headerRowCtrl";
 export { HeaderCellCtrl, IHeaderCellComp } from "./headerRendering/cells/column/headerCellCtrl";
+export { HeaderFilterCellCtrl, IHeaderFilterCellComp } from "./headerRendering/cells/floatingFilter/headerFilterCellCtrl";
+export { HeaderGroupCellCtrl, IHeaderGroupCellComp } from "./headerRendering/cells/columnGroup/headerGroupCellCtrl";
 export { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "./headerRendering/cells/abstractCell/abstractHeaderCellCtrl";
 export { HeaderRowContainerCtrl, IHeaderRowContainerComp } from "./headerRendering/rowContainer/headerRowContainerCtrl";
 export { HorizontalResizeService } from "./headerRendering/common/horizontalResizeService";
