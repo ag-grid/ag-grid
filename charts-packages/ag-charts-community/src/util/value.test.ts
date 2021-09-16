@@ -1,5 +1,5 @@
 import { describe, expect, test, it } from "@jest/globals";
-import { isNumber, isContinuous, isComparable } from "./value";
+import { isNumber, isContinuous, isComparable, isStringObject } from "./value";
 
 test('isNumber', () => {
     expect(isNumber(1)).toBe(true);
@@ -64,5 +64,46 @@ test('isComparable', () => {
     })).toBe(true);
     expect(isComparable({
         valueOf: () => 'A'
+    })).toBe(true);
+});
+
+test('isStringObject', () => {
+    expect(isStringObject({})).toBe(false);
+    expect(isStringObject([])).toBe(false);
+    expect(isStringObject(false)).toBe(false);
+    expect(isStringObject(true)).toBe(false);
+    expect(isStringObject(0)).toBe(false);
+    expect(isStringObject(1)).toBe(false);
+    expect(isStringObject(-1)).toBe(false);
+    expect(isStringObject(null)).toBe(false);
+    expect(isStringObject(NaN)).toBe(false);
+    expect(isStringObject(undefined)).toBe(false);
+    expect(isStringObject(Symbol.iterator)).toBe(false);
+    expect(isStringObject(Number(5))).toBe(false);
+    expect(isStringObject(String('hello'))).toBe(false);
+    expect(isStringObject('hello')).toBe(false);
+    expect(isStringObject({
+        toString: () => 5
+    })).toBe(false);
+    expect(isStringObject({
+        toString: () => []
+    })).toBe(false);
+    expect(isStringObject({
+        toString: () => false
+    })).toBe(false);
+    expect(isStringObject({
+        toString: () => true
+    })).toBe(false);
+    expect(isStringObject({
+        toString: () => ({})
+    })).toBe(false);
+    expect(isStringObject({
+        toString: () => undefined
+    })).toBe(false);
+    expect(isStringObject({
+        toString: () => 'hello'
+    })).toBe(true);
+    expect(isStringObject({
+        toString: () => String('hello')
     })).toBe(true);
 });
