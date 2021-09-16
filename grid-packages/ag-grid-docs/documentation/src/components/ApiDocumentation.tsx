@@ -114,25 +114,8 @@ export const ApiDocumentation: React.FC<ApiProps> = ({ pageName, framework, sour
             codeSrcProvided = [...codeSrcProvided, c.codeSrc];
         }
 
-        switch (c.codeSrc) {
-            case 'GridOptions':
-                codeLookup = { ...codeLookup, ...getJsonFromFile(nodes, undefined, 'grid-api/grid-options.AUTO.json') };
-                break;
-            case 'GridApi':
-                codeLookup = { ...codeLookup, ...getJsonFromFile(nodes, undefined, 'grid-api/grid-api.AUTO.json') };
-                break;
-            case 'RowNode':
-                codeLookup = { ...codeLookup, ...getJsonFromFile(nodes, undefined, 'row-object/row-node.AUTO.json') };
-                break;
-            case 'ColumnOptions':
-                codeLookup = { ...codeLookup, ...getJsonFromFile(nodes, undefined, 'column-properties/column-options.AUTO.json') };
-                break;
-            case 'ColumnApi':
-                codeLookup = { ...codeLookup, ...getJsonFromFile(nodes, undefined, 'column-api/column-api.AUTO.json') };
-                break;
-            case 'Column':
-                codeLookup = { ...codeLookup, ...getJsonFromFile(nodes, undefined, 'column-object/column.AUTO.json') };
-                break;
+        if(c.codeSrc){
+            codeLookup = { ...codeLookup, ...getJsonFromFile(nodes, undefined, c.codeSrc) };
         }
     })
     const interfaceLookup = getJsonFromFile(nodes, undefined, 'grid-api/interfaces.AUTO.json');

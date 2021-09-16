@@ -1,6 +1,6 @@
 {
     "_config_": {
-        "codeSrc": "GridApi"
+        "codeSrc": "grid-api/grid-api.AUTO.json"
     },
     "columns": {
         "meta": {

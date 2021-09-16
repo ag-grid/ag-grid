@@ -1,6 +1,6 @@
 {
     "_config_": {
-        "codeSrc": "ColumnOptions"
+        "codeSrc": "column-properties/column-options.AUTO.json"
     },
     "columns": {
         "meta": {

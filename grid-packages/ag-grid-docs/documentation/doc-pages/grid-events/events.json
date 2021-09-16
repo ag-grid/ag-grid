@@ -1,6 +1,6 @@
 {
     "_config_": {
-        "codeSrc": "GridOptions"
+        "codeSrc": "grid-api/grid-options.AUTO.json"
     },
     "accessories": {
         "meta": {

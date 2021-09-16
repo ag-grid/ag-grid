@@ -1,6 +1,6 @@
 {
     "_config_": {
-        "codeSrc": "Column"
+        "codeSrc": "column-object/column.AUTO.json"
     },
     "methods": {
         "meta": {
