@@ -120,6 +120,7 @@ export class BarSeries extends CartesianSeries {
     private rectSelection: Selection<Rect, Group, BarNodeDatum, any> = Selection.select(this.rectGroup).selectAll<Rect>();
     private labelSelection: Selection<Text, Group, BarNodeDatum, any> = Selection.select(this.labelGroup).selectAll<Text>();
 
+    private nodeData: BarNodeDatum[] = [];
     private xData: string[] = [];
     private yData: number[][][] = [];
     private yDomain: number[] = [];
@@ -482,10 +483,11 @@ export class BarSeries extends CartesianSeries {
     }
 
     createNodeData(): BarNodeDatum[] {
+        const { chart, data, visible } = this;
         const xAxis = this.getCategoryAxis();
         const yAxis = this.getValueAxis();
 
-        if (!this.data || !xAxis || !yAxis) {
+        if (!(chart && data && visible && xAxis && yAxis) || chart.layoutPending || chart.dataPending) {
             return [];
         }
 
@@ -501,7 +503,6 @@ export class BarSeries extends CartesianSeries {
             strokes,
             strokeWidth,
             seriesItemEnabled,
-            data,
             xData,
             yData,
             label
@@ -625,30 +626,36 @@ export class BarSeries extends CartesianSeries {
             }
         });
 
-        return nodeData;
+        return this.nodeData = nodeData;
     }
 
     update(): void {
-        const { visible, chart, xAxis, yAxis, xData, yData } = this;
+        this.updatePending = false;
 
-        this.group.visible = visible;
+        this.group.visible = this.visible;
 
-        if (!chart || chart.layoutPending || chart.dataPending ||
-            !xAxis || !yAxis || !visible || !xData.length || !yData.length) {
+        this.updateSelections();
+        this.updateNodes();
+    }
+
+    private updateSelections() {
+        if (!this.nodeDataPending) {
             return;
         }
+        this.nodeDataPending = false;
 
-        const nodeData = this.createNodeData();
+        this.createNodeData();
+        this.updateRectSelection();
+        this.updateLabelSelection();
+    }
 
-        this.updateRectSelection(nodeData);
+    private updateNodes() {
         this.updateRectNodes();
-
-        this.updateLabelSelection(nodeData);
         this.updateLabelNodes();
     }
 
-    private updateRectSelection(selectionData: BarNodeDatum[]): void {
-        const updateRects = this.rectSelection.setData(selectionData);
+    private updateRectSelection(): void {
+        const updateRects = this.rectSelection.setData(this.nodeData);
         updateRects.exit.remove();
         const enterRects = updateRects.enter.append(Rect).each(rect => {
             rect.tag = BarSeriesNodeTag.Bar;
@@ -721,8 +728,8 @@ export class BarSeries extends CartesianSeries {
         });
     }
 
-    private updateLabelSelection(selectionData: BarNodeDatum[]): void {
-        const updateLabels = this.labelSelection.setData(selectionData);
+    private updateLabelSelection(): void {
+        const updateLabels = this.labelSelection.setData(this.nodeData);
 
         updateLabels.exit.remove();
 
