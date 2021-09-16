@@ -17,7 +17,7 @@ import { HeaderRowCtrl } from "../row/headerRowCtrl";
 export interface IHeaderRowContainerComp {
     setCenterWidth(width: string): void;
     setContainerTransform(transform: string): void;
-    setContainerWidth(width: string): void;
+    setPinnedContainerWidth(width: string): void;
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     setCtrls(ctrls: HeaderRowCtrl[]): void;
 }
@@ -166,7 +166,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
             const addPaddingForScrollbar = this.scrollVisibleService.isVerticalScrollShowing() && ((isRtl && pinningLeft) || (!isRtl && pinningRight));
             const widthWithPadding = addPaddingForScrollbar ? width + scrollbarWidth : width;
 
-            this.comp.setContainerWidth(widthWithPadding + 'px');
+            this.comp.setPinnedContainerWidth(widthWithPadding + 'px');
             this.comp.addOrRemoveCssClass('ag-hidden', hidden);
         };
 

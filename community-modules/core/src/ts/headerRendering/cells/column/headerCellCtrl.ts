@@ -20,21 +20,19 @@ import { HeaderRowCtrl } from "../../row/headerRowCtrl";
 import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellCtrl";
 import { CssClassApplier } from "../cssClassApplier";
 import { HoverFeature } from "../hoverFeature";
-import { HeaderComp, IHeaderComp, IHeaderParams } from "./headerComp";
+import { HeaderComp, IHeader, IHeaderComp, IHeaderParams } from "./headerComp";
 import { ResizeFeature } from "./resizeFeature";
 import { SelectAllFeature } from "./selectAllFeature";
 
 export interface IHeaderCellComp extends IAbstractHeaderCellComp, ITooltipFeatureComp {
-    focus(): void;
     setWidth(width: string): void;
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
-    setResizeDisplayed(displayed: boolean): void;
     setAriaSort(sort: ColumnSortState | undefined): void;
     setColId(id: string): void;
     setAriaDescribedBy(id: string | undefined): void;
 
     setCompDetails(compDetails: UserCompDetails): void;
-    getUserCompInstance(): IHeaderComp | undefined;
+    getUserCompInstance(): IHeader | undefined;
 }
 
 export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
@@ -48,8 +46,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
-
-    private eGui: HTMLElement;
 
     private colDefVersion: number;
 
@@ -77,9 +73,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     public setComp(comp: IHeaderCellComp, eGui: HTMLElement, eResize: HTMLElement): void {
-        super.setAbstractComp(comp);
+        super.setAbstractComp(comp, eGui);
         this.comp = comp;
-        this.eGui = eGui;
 
         this.colDefVersion = this.columnModel.getColDefVersion();
 
