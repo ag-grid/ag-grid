@@ -37,7 +37,7 @@ All of the provided filters have the following parameters:
 
 Provided Filters provide the following methods:
 
-<api-documentation sources='["filter-api/resources/filter-api.json", "filter-provided/resources/provided-filters.json"]' section='api'></api-documentation>
+<api-documentation source='filter-provided/resources/provided-filters.json' section='api'></api-documentation>
 
 ## Apply, Clear, Reset and Cancel Buttons
 

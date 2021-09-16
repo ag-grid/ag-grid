@@ -23,6 +23,31 @@
         }
     },
     "api": {
+        "isFilterActive()": {
+            "description": "Returns `true` if the filter is currently active, otherwise `false`.",
+            "type": {
+                "arguments": {},
+                "returnType": "boolean"
+            }
+        },
+        "getModel()": {
+            "description": "Returns a model representing the current state of the filter, or `null` if the filter is not active.",
+            "type": {
+                "arguments": {},
+                "returnType": "object"
+            }
+        },
+        "setModel()": {
+            "description": "Sets the state of the filter using the supplied model. Providing `null` as the model will de-activate the filter.",
+            "type": {
+                "arguments": {
+                    "model": [
+                        "object",
+                        "null"
+                    ]
+                }
+            }
+        },
         "getModelFromUi()": {
             "description": "Returns the filter model from the UI. If changes have been made to the UI but not yet applied, this model will reflect those changes.",
             "type": {

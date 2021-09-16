@@ -145,4 +145,4 @@ The example below shows how you can access child filter instances and call metho
 
 ## Multi Filter API
 
-<api-documentation sources='["filter-api/resources/filter-api.json", "filter-multi/resources/multi-filter.json"]' section='api'></api-documentation>
+<api-documentation source='filter-multi/resources/multi-filter.json' section='api'></api-documentation>

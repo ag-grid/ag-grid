@@ -81,7 +81,7 @@ The following example demonstrates these rules. Try the following:
 
 ## Setting New Data
 
-By default, when `api.setRowData()` is called, all Set Filter selections will be lost.
+By default, when `api.setRowData(data)` is called, all Set Filter selections will be lost.
 
 It is recommended that `newRowsAction='keep'` is set on the filter params to keep existing filter selections when new rows are added, as shown below:
 
@@ -104,7 +104,7 @@ const gridOptions = {
 
 However it is still possible to clear filter selections using: `api.setFilterModel([])`.
 
-The following example demonstrates how `api.setRowData()` affects filter selections. Try the following:
+The following example demonstrates how `api.setRowData(data)` affects filter selections. Try the following:
 
 - Deselect value 'B' from the set filter list and click the **Set New Data** button which calls `api.setRowData(newData)` to add new data with extra rows to the grid.
 

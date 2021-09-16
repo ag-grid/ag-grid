@@ -9330,5 +9330,34 @@
       "getRow(index: number)": "any",
       "isRowSelected?(index: number)": "boolean | undefined"
     }
+  },
+  "ISetFilterLocaleText": {
+    "meta": {},
+    "type": {
+      "loadingOoo": "string",
+      "blanks": "string",
+      "searchOoo": "string",
+      "selectAll": "string",
+      "selectAllSearchResults": "string",
+      "noMatches": "string"
+    }
+  },
+  "SetFilterListItemSelectionChangedEvent": {
+    "meta": {},
+    "type": { "isSelected": "boolean", "type": "string" },
+    "docs": { "type": "/** Event identifier */" }
+  },
+  "SetFilterModelValue": {
+    "meta": { "isTypeAlias": true },
+    "type": "(string | null)[]"
+  },
+  "SetFilterModel": {
+    "meta": {},
+    "type": { "filterType?": "'set'", "values": "SetFilterModelValue" }
+  },
+  "SetFilterModelValuesType": {
+    "meta": { "isEnum": true },
+    "type": ["PROVIDED_LIST", "PROVIDED_CALLBACK", "TAKEN_FROM_GRID_VALUES"],
+    "docs": [null, null, null]
   }
 }
