@@ -10,6 +10,12 @@ const formatNode = getFormatterForTS(ts);
 
 const EVENT_LOOKUP = new Set(ComponentUtil.getEventCallbacks());
 
+const INTERFACE_GLOBS = [
+    ...glob.sync('../../../community-modules/core/src/ts/**/*.ts'),
+    ...glob.sync('../../../enterprise-modules/set-filter/src/**/*.ts'),
+    ...glob.sync('../../../enterprise-modules/multi-filter/src/**/*.ts')
+];
+
 function findAllInNodesTree(node) {
     const kind = ts.SyntaxKind[node.kind];
     let interfaces = [];
@@ -92,14 +98,9 @@ function parseFile(sourceFile) {
 }
 
 function getInterfaces() {
-    const interfaceFiles = [
-        ...glob.sync('../../../community-modules/core/src/ts/**/*.ts'),
-        ...glob.sync('../../../enterprise-modules/set-filter/src/**/*.ts')
-    ];
-
     let interfaces = {};
     let extensions = {};
-    interfaceFiles.forEach(file => {
+    INTERFACE_GLOBS.forEach(file => {
         const parsedFile = parseFile(file);
         interfaces = { ...interfaces, ...extractInterfaces(parsedFile, extensions) };
     });
@@ -319,11 +320,10 @@ function getClassProperties(filePath, className) {
 
 /** Build the interface file in the format that can be used by <interface-documentation> */
 function buildInterfaceProps() {
-    const interfaceFiles = glob.sync('../../../community-modules/core/src/ts/**/**.ts');
 
     let interfaces = {};
     let extensions = {};
-    interfaceFiles.forEach(file => {
+    INTERFACE_GLOBS.forEach(file => {
         const parsedFile = parseFile(file);
 
         // Using this method to build the extensions lookup required to get inheritance correct

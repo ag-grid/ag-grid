@@ -1,42 +1,41 @@
 {
     "_config_": {},
-    "filterParams": {
+    "IMultiFilterParams": {
         "filters": {
-            "description": "An array of filter definition objects.",
-            "type": "IFilterDef[]"
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "IFilterType",
+                    "IFloatingFilterType",
+                    "IFloatingFilterComp"
+                ],
+                "include": []
+            }
         }
     },
-    "filterDef": {
-        "filter<br />filterFramework": {
+    "IMultiFilterDef": {
+        "filter": {
             "description": "Child filter component to use inside the Multi Filter."
         },
-        "filterParams": {
-            "description": "Custom parameters to be passed to the child filter component.",
-            "type": "object"
+        "filterFramework": {
+            "description": "Child framework filter component to use inside the Multi Filter."
         },
-        "floatingFilterComponent<br />floatingFilterComponentFramework": {
+        "filterParams": {
+            "description": "Custom parameters to be passed to the child filter component."
+        },
+        "floatingFilterComponent": {
             "description": "Floating filter component to use for the child filter."
         },
+        "floatingFilterComponentFramework": {
+            "description": "Floating framework filter component to use for the child filter."
+        },
         "floatingFilterComponentParams": {
-            "description": "Custom parameters to be passed to the floating filter component.",
-            "type": "object"
+            "description": "Custom parameters to be passed to the floating filter component."
         },
         "display": {
-            "default": "inline",
-            "options": [
-                "inline",
-                "subMenu",
-                "accordion"
-            ],
-            "description": "Configures how the filter is shown in the Multi Filter.",
             "more": {
                 "url": "/filter-multi/#display-style",
                 "name": "Display Style"
             }
-        },
-        "title": {
-            "description": "The title to be used when a filter is displayed inside a sub-menu or accordion.",
-            "type": "string"
         }
     },
     "api": {
@@ -51,7 +50,7 @@
             "description": "Returns a model representing the current state of the filter, or `null` if the filter is not active.",
             "type": {
                 "arguments": {},
-                "returnType": "object"
+                "returnType": "IMultiFilterModel"
             }
         },
         "setModel()": {
@@ -59,7 +58,7 @@
             "type": {
                 "arguments": {
                     "model": [
-                        "object",
+                        "IMultiFilterModel",
                         "null"
                     ]
                 }
@@ -71,7 +70,7 @@
                 "arguments": {
                     "index": "number"
                 },
-                "returnType": "IFilter"
+                "returnType": "IFilterComp"
             },
             "more": {
                 "url": "/filter-multi/#accessing-child-filters",

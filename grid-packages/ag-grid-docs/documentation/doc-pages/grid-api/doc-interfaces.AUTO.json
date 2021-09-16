@@ -1233,7 +1233,7 @@
       "type": { "returnType": "any", "optional": true }
     },
     "floatingFilterComponent": {
-      "description": "/** The custom component to be used for rendering the floating filter. If none is specified the default AG Grid is used. * */",
+      "description": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
       "type": { "returnType": "IFloatingFilterType", "optional": true }
     },
     "floatingFilterComponentParams": {
@@ -11712,7 +11712,7 @@
       "type": { "returnType": "any", "optional": true }
     },
     "floatingFilterComponent": {
-      "description": "/** The custom component to be used for rendering the floating filter. If none is specified the default AG Grid is used. * */",
+      "description": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
       "type": { "returnType": "IFloatingFilterType", "optional": true }
     },
     "floatingFilterComponentParams": {
@@ -16166,6 +16166,125 @@
         "returnType": "boolean | undefined",
         "optional": true
       }
+    }
+  },
+  "ISetFilterLocaleText": {
+    "loadingOoo": { "type": { "returnType": "string", "optional": false } },
+    "blanks": { "type": { "returnType": "string", "optional": false } },
+    "searchOoo": { "type": { "returnType": "string", "optional": false } },
+    "selectAll": { "type": { "returnType": "string", "optional": false } },
+    "selectAllSearchResults": {
+      "type": { "returnType": "string", "optional": false }
+    },
+    "noMatches": { "type": { "returnType": "string", "optional": false } }
+  },
+  "SetFilterListItemSelectionChangedEvent": {
+    "isSelected": { "type": { "returnType": "boolean", "optional": false } },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "SetFilterModelValue": {},
+  "SetFilterModel": {
+    "filterType": { "type": { "returnType": "'set'", "optional": true } },
+    "values": {
+      "type": { "returnType": "SetFilterModelValue", "optional": false }
+    }
+  },
+  "SetFilterModelValuesType": {},
+  "IMultiFilterDef": {
+    "display": {
+      "description": "/** Configures how the filter is shown in the Multi Filter.\n * Default: `inline` */",
+      "type": {
+        "returnType": "'inline' | 'accordion' | 'subMenu'",
+        "optional": true
+      }
+    },
+    "title": {
+      "description": "/** The title to be used when a filter is displayed inside a sub-menu or accordion. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "filter": {
+      "description": "/** One of the built in filter names: [set, number, text, date], or a filter function */",
+      "type": { "returnType": "IFilterType", "optional": true }
+    },
+    "filterFramework": { "type": { "returnType": "any", "optional": true } },
+    "filterParams": {
+      "description": "/** The filter params are specific to each filter! */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "floatingFilterComponent": {
+      "description": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
+      "type": { "returnType": "IFloatingFilterType", "optional": true }
+    },
+    "floatingFilterComponentParams": {
+      "type": { "returnType": "any", "optional": true }
+    },
+    "floatingFilterComponentFramework": {
+      "type": { "returnType": "any", "optional": true }
+    }
+  },
+  "IMultiFilterParams": {
+    "filters": {
+      "description": "/** An array of filter definition objects. */",
+      "type": { "returnType": "IMultiFilterDef[]", "optional": true }
+    },
+    "column": {
+      "description": "/** The column this filter is for. */",
+      "type": { "returnType": "Column", "optional": false }
+    },
+    "colDef": {
+      "description": "/** The column definition for the column. */",
+      "type": { "returnType": "ColDef", "optional": false }
+    },
+    "rowModel": {
+      "description": "/** The row model, helpful for looking up data values if needed.\n * If the filter needs to know which rows are\n * a) in the table,\n * b) currently visible (i.e. not already filtered),\n * c) which groups,\n * d) what order - all of this can be read from the rowModel. */",
+      "type": { "returnType": "IRowModel", "optional": false }
+    },
+    "filterChangedCallback": {
+      "description": "/** A function callback to be called when the filter changes. The\n * grid will then respond by filtering the grid data. The callback\n * takes one optional parameter which, if included, will get merged\n * to the FilterChangedEvent object (useful for passing additional\n * information to anyone listening to this event, however such extra\n * attributes are not used by the grid). */",
+      "type": {
+        "arguments": { "additionalEventAttributes?": "any" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "filterModifiedCallback": {
+      "description": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
+    "valueGetter": {
+      "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
+      "type": {
+        "arguments": { "rowNode": "RowNode" },
+        "returnType": "any",
+        "optional": false
+      }
+    },
+    "doesRowPassOtherFilter": {
+      "description": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
+      "type": {
+        "arguments": { "rowNode": "RowNode" },
+        "returnType": "boolean",
+        "optional": false
+      }
+    },
+    "api": { "type": { "returnType": "GridApi", "optional": false } },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "context": {
+      "description": "/** The context as provided on `gridOptions.context` */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "IMultiFilterModel": {
+    "filterType": {
+      "description": "/** Multi filter type. */",
+      "type": { "returnType": "'multi'", "optional": true }
+    },
+    "filterModels": {
+      "description": "/** Child filter models in the same order as the filters are specified in `filterParams`. */",
+      "type": { "returnType": "any[] | null", "optional": false }
     }
   }
 }

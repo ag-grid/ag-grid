@@ -19,7 +19,10 @@ export interface IFilterDef {
     /** The filter params are specific to each filter! */
     filterParams?: any;
 
-    /** The custom component to be used for rendering the floating filter. If none is specified the default AG Grid is used. **/
+    /** 
+     * The custom component to be used for rendering the floating filter.
+     * If none is specified the default AG Grid is used. 
+     */
     floatingFilterComponent?: IFloatingFilterType;
     floatingFilterComponentParams?: any;
     floatingFilterComponentFramework?: any;

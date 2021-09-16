@@ -10,7 +10,7 @@ This section describes how changing data through [Cell Editing](/cell-editing/) 
 Row / Cell updates refers to any of the following:
 
 - All edits via the grid's UI such as [Cell Editing](/cell-editing/) and [Clipboard Operations](/clipboard/).
-- Using the grid's [Single Row / Cell Update API](/data-update-single-row-cell/) i.e. `rowNode.setData()` and `rowNode.setDataValue()` API methods.
+- Using the grid's [Single Row / Cell Update API](/data-update-single-row-cell/) i.e. `rowNode.setData(data)` and `rowNode.setDataValue(col,value)` API methods.
 
 Filter Values will be refreshed when data is updated through any of these methods.
 
@@ -22,6 +22,8 @@ Here are the rules that determine how Filter Values are selected:
 Cell editing does not re-execute filtering by default, so the row will not be filtered out even though the value in the cell is not selected in the filter. This default behaviour mimics how Excel works.
 
 To execute filtering on cell edits, listen to `CellValueChanged` events and trigger filtering as shown below:
+
+<api-documentation source='grid-events/events.json' section='editing' names='["cellValueChanged"]'></api-documentation>
 
 <snippet>
 const gridOptions = {

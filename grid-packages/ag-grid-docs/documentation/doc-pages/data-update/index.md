@@ -50,7 +50,7 @@ There are different ways of updating row data which are summarised as follows:
 
 
 - ### Single Row / Cell
-    Updates the value of a single row or cell. This is done by getting a reference to the Row Node and then calling either `rowNode.setData()` or `rowNode.setDataValue()`.
+    Updates the value of a single row or cell. This is done by getting a reference to the Row Node and then calling either `rowNode.setData(data)` or `rowNode.setDataValue(col,value)`.
 
     Use transactions for updating a small number of individual rows infrequently. There is no way to insert or remove rows with this method.
 

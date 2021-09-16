@@ -21,16 +21,28 @@ import {
 import { MenuItemComponent, MenuItemActivatedEvent } from '@ag-grid-enterprise/menu';
 
 export interface IMultiFilterDef extends IFilterDef {
+    /** 
+     * Configures how the filter is shown in the Multi Filter.
+     * Default: `inline`
+     */
     display?: 'inline' | 'accordion' | 'subMenu';
+    /**
+     * The title to be used when a filter is displayed inside a sub-menu or accordion.
+     */
     title?: string;
 }
 
 export interface IMultiFilterParams extends IFilterParams {
+    /** An array of filter definition objects. */
     filters?: IMultiFilterDef[];
 }
 
 export interface IMultiFilterModel {
+    /** Multi filter type.  */
     filterType?: 'multi';
+    /**
+     * Child filter models in the same order as the filters are specified in `filterParams`.
+     */
     filterModels: any[] | null;
 }
 

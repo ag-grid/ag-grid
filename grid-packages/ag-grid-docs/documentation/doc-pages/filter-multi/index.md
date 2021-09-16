@@ -93,14 +93,10 @@ The example below shows a Custom Filter in use on the **Year** column, used alon
 
 ## Multi Filter Model
 
-The model for the Multi Filter wraps the models for all the child filters inside it. It has the following interface:
+The model for the Multi Filter wraps the models for all the child filters inside it. It has the `IMultiFilterModel` interface:
 
-```ts
-interface IMultiFilterModel {
-    filterType: string;
-    filterModels: any[];
-}
-```
+<interface-documentation interfaceName='IMultiFilterModel' config='{"overrideBottomMargin":"1rem"}' ></interface-documentation>
+
 
 The `filterType` will always be set to `'multi'`. The models array is the same length as the number of child filters, containing the models for the child filters in the same order as the filters were specified in the `filterParams`. Each array entry will either be set to `null` if the corresponding child filter is not active, or to the current model for the child filter if it is active.
 
@@ -137,11 +133,11 @@ The example below shows how you can access child filter instances and call metho
 
 ## Multi Filter Parameters
 
-<api-documentation source='filter-multi/resources/multi-filter.json' section='filterParams'></api-documentation>
+<interface-documentation interfaceName='IMultiFilterParams' overrideSrc='filter-multi/resources/multi-filter.json' names='["filters"]' ></interface-documentation>
 
-### IFilterDef
+### IMultiFilterDef
 
-<api-documentation source='filter-multi/resources/multi-filter.json' section='filterDef'></api-documentation>
+<interface-documentation interfaceName='IMultiFilterDef' overrideSrc='filter-multi/resources/multi-filter.json' ></interface-documentation>
 
 ## Multi Filter API
 
