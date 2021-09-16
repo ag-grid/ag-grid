@@ -8,6 +8,8 @@ To enable cell flashing on data changes for a particular column, set the attribu
 
 You can also explicitly flash cells using the grid API `flashCells(params)`. The params takes a list of columns and rows to flash, the flashDelay and the fadeDelay values e.g. to flash one cell pass in one column and one row that identifies that cell.
 
+<api-documentation source='grid-api/api.json' section='refresh' names='["flashCells"]'></api-documentation>
+
 The example below demonstrates cell flashing. The following can be noted:
 
 - All columns have `enableCellChangeFlash=true` so changes to the columns values will flash.

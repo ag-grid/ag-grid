@@ -6,6 +6,9 @@ Normally columns are configured with `field` attributes, so the column knows wha
 
 You should use `colDef.field` most of the time. Use value getters when retrieving the data requires more logic, including executing your own expressions (similar to what a spreadsheet would do).
 
+<api-documentation source='column-properties/properties.json' section="columns" names='["valueGetter"]'></api-documentation>
+
+
 ```ts
 // example value getter, adds two fields together
 colDef.valueGetter = params => {
@@ -21,11 +24,6 @@ colDef.valueGetter = params => {
 | to an aggregation function when grouping, or can be used as input to another valueGetter via the
 | `params.getValue()` function.
 
-Below shows the column definition properties for value getters.
-
-<api-documentation source='column-properties/properties.json' section="columns" names='["valueGetter"]' config='{"overrideBottomMargin":"0rem"}'></api-documentation>
-<api-documentation source='column-properties/properties.json' section="header" names='["headerValueGetter"]' config='{"overrideBottomMargin":"0rem"}'></api-documentation>
-<api-documentation source='column-properties/properties.json' section="filtering" names='["filterValueGetter"]' ></api-documentation>
 
 ### Example Value Getters
 
@@ -48,6 +46,8 @@ The example below demonstrates `valueGetter`. The following can be noted from th
 
 Use `headerValueGetter` instead of `colDef.headerName` to allow dynamic header names.
 
+<api-documentation source='column-properties/properties.json' section="header" names='["headerValueGetter"]' ></api-documentation>
+
 The parameters for `headerValueGetter` differ from standard `valueGetter` as follows:
 
 - Only one of column or columnGroup will be present, depending on whether it's a column or a column group.
@@ -58,6 +58,8 @@ See the [Column Tool Panel Example](/tool-panel-columns/#column-tool-panel-examp
 ### Filter Value Getters
 
 See [Filtering in Row Grouping](/grouping/#filtering-on-group-columns) for more information on Filter Value Getters.
+
+<api-documentation source='column-properties/properties.json' section="filtering" names='["filterValueGetter"]' ></api-documentation>
 
 ## Value Cache
 

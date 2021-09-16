@@ -4,6 +4,7 @@ title: "Cell Rendering"
 
 By default the grid renders values into the cells as strings. If you want something more complex you use a cell renderer.
 
+<api-documentation source='column-properties/properties.json' section='styling' names='["cellRenderer"]'></api-documentation>
 
 The cell editor for a column is set via `colDef.cellRenderer` and can be any of the following types:
 
@@ -51,6 +52,8 @@ This remainder of this documentation page goes through the grid provided cell re
 If you have no requirements for custom cells, then you should use no cell renderer. Having no custom cell renderers will result in the fastest possible grid (which might be important to you if using Internet Explorer) as even the simplest cell renderer will result in some extra div's in the DOM
 
 If you just want to do simple formatting of the data (eg currency or date formatting) then you can use `colDef.valueFormatter`.
+
+<api-documentation source='column-properties/properties.json' section='columns' names='["valueFormatter"]'></api-documentation>
 
 ## Cell Renderer Components
 

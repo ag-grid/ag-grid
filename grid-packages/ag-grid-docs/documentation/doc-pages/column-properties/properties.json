@@ -33,6 +33,13 @@
                 "url": "/value-formatters/"
             }
         },
+        "refData": {
+            "description": "Provided a reference data map to be used to map column values to their respective value from the map.",
+            "more": {
+                "name": "Using the 'refData' Property",
+                "url": "/reference-data/#using-the-refdata-property"
+            }
+        },
         "keyCreator": {
             "description": "Function to return a string key for a value. This string is used for grouping, Set filtering, and searching within cell editor dropdowns. When filtering and searching the string is exposed to the user, so make sure to return a human-readable value."
         },

@@ -168,7 +168,7 @@ export { ICellRenderer, ICellRendererFunc, ICellRendererComp, ICellRendererParam
 export { AnimateShowChangeCellRenderer } from "./rendering/cellRenderers/animateShowChangeCellRenderer";
 export { AnimateSlideCellRenderer } from "./rendering/cellRenderers/animateSlideCellRenderer";
 export { GroupCellRenderer, } from "./rendering/cellRenderers/groupCellRenderer";
-export { GroupCellRendererParams, IGroupCellRenderer, GroupCellRendererCtrl } from "./rendering/cellRenderers/groupCellRendererCtrl";
+export { GroupCellRendererParams, FooterValueGetterFunc, IGroupCellRenderer, GroupCellRendererCtrl } from "./rendering/cellRenderers/groupCellRendererCtrl";
 
 // status bar components
 export { StatusPanelDef, IStatusPanel, IStatusPanelComp, IStatusPanelParams } from "./interfaces/iStatusPanel";

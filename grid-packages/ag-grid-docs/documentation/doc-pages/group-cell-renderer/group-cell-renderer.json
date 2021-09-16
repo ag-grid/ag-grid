@@ -1,0 +1,29 @@
+{
+    "_config_": {},
+    "GroupCellRendererParams": {
+        "footerValueGetter": {
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "GroupCellRendererParams"
+                ],
+                "include": []
+            }
+        },
+        "innerRenderer": {
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "ICellRendererComp"
+                ],
+                "include": []
+            }
+        },
+        "innerRendererSelector": {
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "ICellRendererComp"
+                ],
+                "include": []
+            }
+        }
+    }
+}

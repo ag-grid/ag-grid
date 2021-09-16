@@ -14853,33 +14853,62 @@
       }
     }
   },
+  "FooterValueGetterFunc": {},
   "GroupCellRendererParams": {
-    "pinned": { "type": { "returnType": "string", "optional": false } },
-    "fullWidth": { "type": { "returnType": "boolean", "optional": false } },
+    "pinned": {
+      "description": "/** Only when in fullWidth, this gives whether the comp is pinned or not.\n * If not doing fullWidth, then this is not provided, as pinned can be got from the column. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "fullWidth": {
+      "description": "/** 'true' if comp is showing full width. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
     "suppressPadding": {
+      "description": "/** Set to `true` to not include any padding (indentation) in teh child rows. */",
       "type": { "returnType": "boolean", "optional": false }
     },
     "suppressDoubleClickExpand": {
+      "description": "/** Set to `true` to suppress expand on double click. */",
       "type": { "returnType": "boolean", "optional": false }
     },
     "suppressEnterExpand": {
+      "description": "/** Set to `true` to suppress expand on <kbd>Enter</kbd> */",
       "type": { "returnType": "boolean", "optional": false }
     },
-    "footerValueGetter": { "type": { "returnType": "any", "optional": false } },
-    "suppressCount": { "type": { "returnType": "boolean", "optional": false } },
-    "checkbox": { "type": { "returnType": "any", "optional": false } },
+    "footerValueGetter": {
+      "description": "/** The value getter for the footer text. Can be a function or expression. */",
+      "type": {
+        "returnType": "string | FooterValueGetterFunc",
+        "optional": false
+      }
+    },
+    "suppressCount": {
+      "description": "/** If `true`, count is not displayed beside the name. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "checkbox": {
+      "description": "/** If `true`, a selection checkbox is included. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "rowDrag": { "type": { "returnType": "boolean", "optional": true } },
     "innerRenderer": {
+      "description": "/** The renderer to use for inside the cell (after grouping functions are added) */",
       "type": {
         "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string",
         "optional": true
       }
     },
     "innerRendererFramework": {
+      "description": "/** Same as `innerRenderer` but for a framework component. */",
       "type": { "returnType": "any", "optional": true }
     },
     "innerRendererParams": {
+      "description": "/** Additional params to customise to the `innerRenderer`. */",
       "type": { "returnType": "any", "optional": true }
+    },
+    "innerRendererSelector": {
+      "description": "/** Callback to enable different innerRenderers to be used based of value of params. */",
+      "type": { "returnType": "CellRendererSelectorFunc", "optional": true }
     },
     "scope": { "type": { "returnType": "any", "optional": false } },
     "padding": {

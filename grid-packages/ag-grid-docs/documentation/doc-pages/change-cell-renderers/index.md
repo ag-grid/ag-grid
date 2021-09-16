@@ -7,6 +7,8 @@ The grid provides two cell renderers for animating changes to data. They are:
 - `agAnimateShowChangeCellRenderer:` The previous value is temporarily shown beside the old value with a directional arrow showing increase or decrease in value. The old value is then faded out.
 - `agAnimateSlideCellRenderer:` The previous value shown in a faded fashion and slides, giving a ghosting effect as the old value fades and slides away.
 
+## Example
+
 The example below shows both types of animation cell renders in action. To test, try the following:
 
 - Columns A, B and C are editable.
