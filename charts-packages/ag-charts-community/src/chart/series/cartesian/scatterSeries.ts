@@ -288,7 +288,7 @@ export class ScatterSeries extends CartesianSeries {
             const x = xScale.convert(xy[0]) + xOffset;
             const y = yScale.convert(xy[1]) + yOffset;
 
-            if (!this.checkRangeXY(x, y)) {
+            if (!this.checkRangeXY(x, y, xAxis, yAxis)) {
                 continue;
             }
 
