@@ -52,7 +52,7 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
             }
         ];
 
-        // special handling to add a number axis label formatter to show '%' for normalized charts
+        // special handling to add a default label formatter to show '%' for normalized charts if none is provided
         const normalised = _.includes([ChartType.NormalizedColumn, ChartType.NormalizedBar], this.chartType);
         if (normalised) {
             const numberAxis = agChartOptions.axes[1];
