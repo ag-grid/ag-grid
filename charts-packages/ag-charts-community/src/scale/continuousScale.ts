@@ -1,9 +1,6 @@
 import interpolateValue from "../interpolate/value";
 import interpolateNumber from "../interpolate/number";
-import Scale, {
-    Deinterpolator,
-    Reinterpolator
-} from './scale';
+import { Scale, Deinterpolator, Reinterpolator } from './scale';
 import { bisectRight } from "../util/bisect";
 import { ascending } from "../util/compare";
 
@@ -37,7 +34,7 @@ export interface InterpolatorFactory<T, U> {
     (a: T, b: T): ((t: number) => U);
 }
 
-export default abstract class ContinuousScale implements Scale<any, any> {
+export abstract class ContinuousScale implements Scale<any, any> {
     /**
      * The output value of the scale for `undefined` or `NaN` input values.
      */

@@ -2,19 +2,24 @@
 title: "Quick Filter"
 ---
 
-In addition to the column specific filtering, a 'quick filter' (influenced by how filtering is done in Google's Gmail) can also be applied. Set the quick filter by using the Grid's API:
+In addition to the column specific filtering, a 'quick filter' can also be applied.
+
+The quick filter text will check all words provided against the full row. For example if the text provided is "Tony Ireland", the quick filter will only include rows with both "Tony" AND "Ireland" in them.
+
+If you are using a framework, you can bind the quick filter text to the `quickFilterText` attribute.
+
+<api-documentation source='grid-properties/properties.json' section='filter' names='["quickFilterText"]' config='{"overrideBottomMargin":"0rem"}'></api-documentation>
+<api-documentation source='grid-api/api.json' section='filter' names='["setQuickFilter"]'></api-documentation>
 
 <snippet>
 gridOptions.api.setQuickFilter('new filter text');
 </snippet>
 
-If you are using a framework such as Angular or React, you can bind the quick filter text to the `quickFilter` attribute.
-
-The quick filter text will check all words provided against the full row. For example if the text provided is "Tony Ireland", the quick filter will only include rows with both "Tony" AND "Ireland" in them.
-
 ## Overriding the Quick Filter Value
 
 If your data contains complex objects, the quick filter will end up comparing against `[object Object]` instead of searchable string values. Alternatively, you might want to format string values specifically for searching (e.g. replace accented characters in strings, or remove commas from numbers). If you want to do this, provide `getQuickFilterText` to the column definition, e.g.:
+
+<api-documentation source='column-properties/properties.json' section='filtering' names='["getQuickFilterText"]'></api-documentation>
 
 <snippet>
 const gridOptions = {
@@ -29,7 +34,6 @@ const gridOptions = {
 }
 </snippet>
 
-The `params` object contains `{ value, node, data, column, colDef, context }`.
 
 [[note]]
 | The quick filter will work 'out of the box' in most cases, so you should only override the quick filter value if you have a particular problem to resolve.
@@ -37,6 +41,8 @@ The `params` object contains `{ value, node, data, column, colDef, context }`.
 ## Quick Filter Cache
 
 By default, the quick filter checks each column's value, including running value getters if present, every time the quick filter is executed. If your data set is large, you may wish to enable the quick filter cache by setting `cacheQuickFilter = true`.
+
+<api-documentation source='grid-properties/properties.json' section='filter' names='["cacheQuickFilter"]'></api-documentation>
 
 When the cache is enabled, a 'quick filter text' is generated for each node by concatenating all the values for each column. For example, a table with columns of "Employee Name" and "Job" could have a row with quick filter text of `'NIALL CROSBY\nCOFFEE MAKER'`. The grid then performs a simple string search, so if you search for `'Niall'`, it will find our example text. Joining all the column's values into one string gives a huge performance boost. The values are joined after the quick filter is requested for the first time and stored in the `rowNode` - the original data that you provide is not changed.
 

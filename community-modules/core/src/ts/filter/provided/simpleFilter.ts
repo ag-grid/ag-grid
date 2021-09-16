@@ -12,10 +12,29 @@ import { IFilterLocaleText } from '../filterLocaleText';
 export type JoinOperator = 'AND' | 'OR';
 
 export interface ISimpleFilterParams extends IProvidedFilterParams {
+    /**
+     * Array of filter options to present to the user. See [Filter Options](/filter-provided-simple/#simple-filter-options) for all options available to each filter type.
+     */
     filterOptions?: (IFilterOptionDef | string)[];
+    /** The default filter option to be selected. */
     defaultOption?: string;
+    /** 
+     * By default, the two conditions are combined using `AND`.
+     * You can change this default by setting this property.
+     * Options: `AND`, `OR`
+     */
     defaultJoinOperator?: JoinOperator;
+    /** 
+     * If `true`, the filter will only allow one condition.
+     * Default: `false`
+     */
     suppressAndOrCondition?: boolean;
+    /** 
+     * By default, only one condition is shown, and a second is made visible once a first condition has been entered.
+     * Set this to `true` to always show both conditions. 
+     * In this case the second condition will be disabled until a first condition has been entered.
+     * Default: `false`
+     */
     alwaysShowBothConditions?: boolean;
 }
 

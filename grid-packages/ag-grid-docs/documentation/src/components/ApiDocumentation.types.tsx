@@ -15,7 +15,6 @@ export type DocEntryMap = {
     };
 type DocEntry = {
     meta?: MetaTag;
-    relevantTo?: never;
     options?: never;
     more?: never;
     type?: never;
@@ -35,7 +34,6 @@ export interface PropertyType {
 }
 interface ChildDocEntry {
     meta?: never;
-    relevantTo?: string[];
     more?: {
         name: string;
         url: string;

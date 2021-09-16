@@ -4,7 +4,7 @@ title: "Text Filter"
 
 Text filters allow you to filter string data.
 
-The [Provided Filters](/filter-provided/) and [Simple Filters](/filter-provided-simple/) pages explain the parts of the Text Filter that the same as the other Provided Filters. This page builds on that and explains some details that are specific to the Text Filter.
+The [Provided Filters](/filter-provided/) and [Simple Filters](/filter-provided-simple/) pages explain the parts of the Text Filter that are the same as the other Provided Filters. This page builds on that and explains some details that are specific to the Text Filter.
 
 ## Text Filter Parameters
 
@@ -12,13 +12,13 @@ Text Filters are configured though the `filterParams` attribute of the column de
 
 <api-documentation source='filter-provided/resources/provided-filters.json' section='filterParams'></api-documentation>
 
-In addition, the following parameters are also available:
+In addition, the following parameters are also available for Text filters:
 
-<api-documentation source='filter-provided-simple/resources/simple-filters.json' section='filterParams' names='["Text"]'></api-documentation>
+<interface-documentation interfaceName='ITextFilterParams' names='["alwaysShowBothConditions","filterOptions","defaultOption","defaultJoinOperator","suppressAndOrCondition","textCustomComparator","caseSensitive","textFormatter","trimInput","inRangeInclusive","includeBlanksInEquals","includeBlanksInLessThan","includeBlanksInGreaterThan","includeBlanksInRange","allowedCharPattern","numberParser","comparator","browserDatePicker","minValidYear"]' config='{"description":" "}' ></interface-documentation>
 
 ## Text Custom Comparator
 
-By default the text filter performs strict case-insensitive text filtering, i.e. if you provide `['1,234.5USD', '345GBP']` as data for a text column:
+By default the text filter performs strict case-insensitive text filtering, i.e. if you provide `['1,234.5USD','345GBP']` as data for a text column:
 
 - **contains '1,2'** will show 1 value: ['1,234.5USD']
 - **contains '12'** will show 0 values
@@ -27,15 +27,11 @@ By default the text filter performs strict case-insensitive text filtering, i.e.
 
 You can change the default behaviour by providing your own `textCustomComparator`, which allows you to provide your own logic to decide when to include a row in the filtered results.
 
-The `textCustomComparator` is a function with the following signature:
+<interface-documentation interfaceName='ITextFilterParams' names='["textCustomComparator"]' config='{"description":" ", "overrideBottomMargin":"1rem"}' ></interface-documentation>
 
-```ts
-function textCustomComparator(filter: string, gridValue: any, filterText: string): boolean;
-```
-
-- `filter: string` The applicable filter type being tested. One of: `equals`, `notEqual`, `contains`, `notContains`, `startsWith`, `endsWith`
-- `gridValue: any` The value about to be filtered. If this column has a value getter, this value will be coming from the value getter, otherwise it is the raw value injected into the grid.
-- `filterText: string` The value to filter by.
+- `filter` The applicable filter type being tested. One of: `equals`, `notEqual`, `contains`, `notContains`, `startsWith`, `endsWith`
+- `gridValue` The value about to be filtered. If this column has a value getter, this value will be coming from the value getter, otherwise it is the raw value injected into the grid.
+- `filterText` The value to filter by.
 - `returns: boolean` Set to `true` if the value passes the filter, otherwise `false`.
 
 The following is an example of a `textCustomComparator` that mimics the current implementation of AG Grid. This can be used as a template to create your own.
@@ -82,11 +78,9 @@ By default, the grid compares the text filter with the values in a case-insensit
 
 You might have more advanced requirements, for example to ignore accented characters. In this case, you can provide your own `textFormatter`, which is a function with the following signature:
 
-```ts
-function textFormatter(gridValue: string): string;
-```
+<interface-documentation interfaceName='ITextFilterParams' names='["textFormatter"]' config='{"description":" ", "overrideBottomMargin":"1rem"}' ></interface-documentation>
 
-`gridValue` is the value coming from the grid. This can be from the `valueGetter` if there is any for the column, or the value as originally provided in the `rowData`. The function should return a string to be used for the purpose of filtering.
+`from` is the value coming from the grid. This can be from the `valueGetter` if there is any for the column, or the value as originally provided in the `rowData`. The function should return a string to be used for the purpose of filtering.
 
 The following is an example function to remove accents and convert to lower case.
 

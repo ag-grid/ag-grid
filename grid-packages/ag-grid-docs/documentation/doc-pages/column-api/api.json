@@ -1,6 +1,6 @@
 {
     "_config_": {
-        "codeSrc": "ColumnApi"
+        "codeSrc": "column-api/column-api.AUTO.json"
     },
     "columns": {
         "meta": {

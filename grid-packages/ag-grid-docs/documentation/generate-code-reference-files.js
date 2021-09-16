@@ -10,6 +10,12 @@ const formatNode = getFormatterForTS(ts);
 
 const EVENT_LOOKUP = new Set(ComponentUtil.getEventCallbacks());
 
+const INTERFACE_GLOBS = [
+    ...glob.sync('../../../community-modules/core/src/ts/**/*.ts'),
+    ...glob.sync('../../../enterprise-modules/set-filter/src/**/*.ts'),
+    ...glob.sync('../../../enterprise-modules/multi-filter/src/**/*.ts')
+];
+
 function findAllInNodesTree(node) {
     const kind = ts.SyntaxKind[node.kind];
     let interfaces = [];
@@ -92,11 +98,9 @@ function parseFile(sourceFile) {
 }
 
 function getInterfaces() {
-    const interfaceFiles = glob.sync('../../../community-modules/core/src/ts/**/*.ts');
-
     let interfaces = {};
     let extensions = {};
-    interfaceFiles.forEach(file => {
+    INTERFACE_GLOBS.forEach(file => {
         const parsedFile = parseFile(file);
         interfaces = { ...interfaces, ...extractInterfaces(parsedFile, extensions) };
     });
@@ -233,8 +237,14 @@ function extractInterfaces(srcFile, extension) {
                 meta: { isEnum: true }, type: node.members.map(n => formatNode(n, srcFile)),
                 docs: node.members.map(n => getJsDoc(n))
             }
-        } else if (kind == 'TypeAliasDeclaration' && node.type && node.type.types && !node.typeParameters) {
-            iLookup[name] = { meta: { isTypeAlias: true }, type: formatNode(node.type, srcFile) }
+        } else if (kind == 'TypeAliasDeclaration') {
+            iLookup[name] = {
+                meta: {
+                    isTypeAlias: true,
+                    typeParams: node.typeParameters ? node.typeParameters.map(tp => formatNode(tp, srcFile)) : undefined
+                },
+                type: formatNode(node.type, srcFile)
+            }
         } else {
 
             let isCallSignature = false;
@@ -310,11 +320,10 @@ function getClassProperties(filePath, className) {
 
 /** Build the interface file in the format that can be used by <interface-documentation> */
 function buildInterfaceProps() {
-    const interfaceFiles = glob.sync('../../../community-modules/core/src/ts/**/**.ts');
 
     let interfaces = {};
     let extensions = {};
-    interfaceFiles.forEach(file => {
+    INTERFACE_GLOBS.forEach(file => {
         const parsedFile = parseFile(file);
 
         // Using this method to build the extensions lookup required to get inheritance correct
@@ -327,6 +336,11 @@ function buildInterfaceProps() {
                 const prop = extractTypesFromNode(ch, parsedFile, true);
                 props = { ...props, ...prop }
             })
+
+            const kind = ts.SyntaxKind[iNode.kind];
+            if (kind == 'TypeAliasDeclaration') {
+                // We do not support types here but have not seen this needed in the docs yet.
+            }
 
             if (iNode.typeParameters) {
                 props = { ...props, meta: { ...props.meta, typeParams: iNode.typeParameters.map(tp => formatNode(tp, parsedFile)) } }
@@ -438,6 +452,10 @@ function getColumn() {
     const file = "../../../community-modules/core/src/ts/entities/column.ts";
     return getClassProperties(file, 'Column');
 }
+function getSetFilter() {
+    const file = "../../../enterprise-modules/set-filter/src/setFilter/setFilter.ts";
+    return getClassProperties(file, 'SetFilter');
+}
 
 const generateMetaFiles = () => {
     writeFormattedFile('./doc-pages/grid-api/', 'grid-options.AUTO.json', getGridOptions());
@@ -447,6 +465,7 @@ const generateMetaFiles = () => {
     writeFormattedFile('./doc-pages/column-properties/', 'column-options.AUTO.json', getColumnOptions());
     writeFormattedFile('./doc-pages/column-api/', 'column-api.AUTO.json', getColumnApi());
     writeFormattedFile('./doc-pages/column-object/', 'column.AUTO.json', getColumn());
+    writeFormattedFile('./doc-pages/filter-set-api/resources/', 'setFilter.AUTO.json', getSetFilter());
     writeFormattedFile('./doc-pages/grid-api/', 'doc-interfaces.AUTO.json', buildInterfaceProps());
 };
 

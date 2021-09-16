@@ -1,4 +1,4 @@
-import ContinuousScale from "./continuousScale";
+import { ContinuousScale } from "./continuousScale";
 import timeMillisecond from "../util/time/millisecond";
 import timeSecond from "../util/time/second";
 import timeMinute from "../util/time/minute";

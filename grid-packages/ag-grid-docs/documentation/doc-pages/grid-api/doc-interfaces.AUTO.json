@@ -1233,7 +1233,7 @@
       "type": { "returnType": "any", "optional": true }
     },
     "floatingFilterComponent": {
-      "description": "/** The custom component to be used for rendering the floating filter. If none is specified the default AG Grid is used. * */",
+      "description": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
       "type": { "returnType": "IFloatingFilterType", "optional": true }
     },
     "floatingFilterComponentParams": {
@@ -6641,25 +6641,35 @@
   },
   "IDateFilterParams": {
     "comparator": {
+      "description": "/** Required if the data for the column are not native JS `Date` objects. */",
       "type": { "returnType": "IDateComparatorFunc", "optional": true }
     },
     "browserDatePicker": {
+      "description": "/** This is only used if a date component is not provided.\n * By default the grid will use the browser date picker in Chrome and Firefox and a plain text box for all other browsers\n * (This is because Chrome and Firefox are the only current browsers providing a decent out-of-the-box date picker).\n * If this property is set to `true`, the browser date picker will be used regardless of the browser type.\n * If set to `false`, a plain text box will be used for all browsers. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "minValidYear": { "type": { "returnType": "number", "optional": true } },
+    "minValidYear": {
+      "description": "/** This is the minimum year that must be entered in a date field for the value to be considered valid. Default: `1000` */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "inRangeInclusive": {
+      "description": "/** If `true`, the `'inRange'` filter option will include values equal to the start and end of the range. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "includeBlanksInEquals": {
+      "description": "/** If `true`, blank (`null` or `undefined`) values will pass the `'equals'` filter option. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "includeBlanksInLessThan": {
+      "description": "/** If `true`, blank (`null` or `undefined`) values will pass the `'lessThan'` and `'lessThanOrEqual'` filter options. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "includeBlanksInGreaterThan": {
+      "description": "/** If `true`, blank (`null` or `undefined`) values will pass the `'greaterThan'` and `'greaterThanOrEqual'` filter options. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "includeBlanksInRange": {
+      "description": "/** If `true`, blank (`null` or `undefined`) values will pass the `'inRange'` filter option. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "nullComparator": {
@@ -6667,19 +6677,26 @@
       "type": { "returnType": "NullComparator", "optional": true }
     },
     "filterOptions": {
+      "description": "/** Array of filter options to present to the user. See [Filter Options](/filter-provided-simple/#simple-filter-options) for all options available to each filter type. */",
       "type": {
         "returnType": "(IFilterOptionDef | string)[]",
         "optional": true
       }
     },
-    "defaultOption": { "type": { "returnType": "string", "optional": true } },
+    "defaultOption": {
+      "description": "/** The default filter option to be selected. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "defaultJoinOperator": {
+      "description": "/** By default, the two conditions are combined using `AND`.\n * You can change this default by setting this property.\n * Options: `AND`, `OR` */",
       "type": { "returnType": "JoinOperator", "optional": true }
     },
     "suppressAndOrCondition": {
+      "description": "/** If `true`, the filter will only allow one condition.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "alwaysShowBothConditions": {
+      "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions. \n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "clearButton": {
@@ -6771,9 +6788,11 @@
   },
   "INumberFilterParams": {
     "allowedCharPattern": {
+      "description": "/** When specified, the input field will be of type `text` instead of `number`, and this will be used as a regex of all the characters that are allowed to be typed.\n * This will be compared against any typed character and prevent the character from appearing in the input if it does not match, in supported browsers (all except Safari). */",
       "type": { "returnType": "string", "optional": true }
     },
     "numberParser": {
+      "description": "/** Typically used alongside `allowedCharPattern`, this provides a custom parser to convert the value entered in the filter inputs into a number that can be used for comparisons. */",
       "type": {
         "arguments": { "text": "string | null" },
         "returnType": "number",
@@ -6781,18 +6800,23 @@
       }
     },
     "inRangeInclusive": {
+      "description": "/** If `true`, the `'inRange'` filter option will include values equal to the start and end of the range. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "includeBlanksInEquals": {
+      "description": "/** If `true`, blank (`null` or `undefined`) values will pass the `'equals'` filter option. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "includeBlanksInLessThan": {
+      "description": "/** If `true`, blank (`null` or `undefined`) values will pass the `'lessThan'` and `'lessThanOrEqual'` filter options. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "includeBlanksInGreaterThan": {
+      "description": "/** If `true`, blank (`null` or `undefined`) values will pass the `'greaterThan'` and `'greaterThanOrEqual'` filter options. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "includeBlanksInRange": {
+      "description": "/** If `true`, blank (`null` or `undefined`) values will pass the `'inRange'` filter option. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "nullComparator": {
@@ -6800,19 +6824,26 @@
       "type": { "returnType": "NullComparator", "optional": true }
     },
     "filterOptions": {
+      "description": "/** Array of filter options to present to the user. See [Filter Options](/filter-provided-simple/#simple-filter-options) for all options available to each filter type. */",
       "type": {
         "returnType": "(IFilterOptionDef | string)[]",
         "optional": true
       }
     },
-    "defaultOption": { "type": { "returnType": "string", "optional": true } },
+    "defaultOption": {
+      "description": "/** The default filter option to be selected. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "defaultJoinOperator": {
+      "description": "/** By default, the two conditions are combined using `AND`.\n * You can change this default by setting this property.\n * Options: `AND`, `OR` */",
       "type": { "returnType": "JoinOperator", "optional": true }
     },
     "suppressAndOrCondition": {
+      "description": "/** If `true`, the filter will only allow one condition.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "alwaysShowBothConditions": {
+      "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions. \n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "clearButton": {
@@ -6960,18 +6991,23 @@
   },
   "IScalarFilterParams": {
     "inRangeInclusive": {
+      "description": "/** If `true`, the `'inRange'` filter option will include values equal to the start and end of the range. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "includeBlanksInEquals": {
+      "description": "/** If `true`, blank (`null` or `undefined`) values will pass the `'equals'` filter option. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "includeBlanksInLessThan": {
+      "description": "/** If `true`, blank (`null` or `undefined`) values will pass the `'lessThan'` and `'lessThanOrEqual'` filter options. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "includeBlanksInGreaterThan": {
+      "description": "/** If `true`, blank (`null` or `undefined`) values will pass the `'greaterThan'` and `'greaterThanOrEqual'` filter options. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "includeBlanksInRange": {
+      "description": "/** If `true`, blank (`null` or `undefined`) values will pass the `'inRange'` filter option. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "nullComparator": {
@@ -6979,19 +7015,26 @@
       "type": { "returnType": "NullComparator", "optional": true }
     },
     "filterOptions": {
+      "description": "/** Array of filter options to present to the user. See [Filter Options](/filter-provided-simple/#simple-filter-options) for all options available to each filter type. */",
       "type": {
         "returnType": "(IFilterOptionDef | string)[]",
         "optional": true
       }
     },
-    "defaultOption": { "type": { "returnType": "string", "optional": true } },
+    "defaultOption": {
+      "description": "/** The default filter option to be selected. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "defaultJoinOperator": {
+      "description": "/** By default, the two conditions are combined using `AND`.\n * You can change this default by setting this property.\n * Options: `AND`, `OR` */",
       "type": { "returnType": "JoinOperator", "optional": true }
     },
     "suppressAndOrCondition": {
+      "description": "/** If `true`, the filter will only allow one condition.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "alwaysShowBothConditions": {
+      "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions. \n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "clearButton": {
@@ -7066,19 +7109,26 @@
   "JoinOperator": {},
   "ISimpleFilterParams": {
     "filterOptions": {
+      "description": "/** Array of filter options to present to the user. See [Filter Options](/filter-provided-simple/#simple-filter-options) for all options available to each filter type. */",
       "type": {
         "returnType": "(IFilterOptionDef | string)[]",
         "optional": true
       }
     },
-    "defaultOption": { "type": { "returnType": "string", "optional": true } },
+    "defaultOption": {
+      "description": "/** The default filter option to be selected. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "defaultJoinOperator": {
+      "description": "/** By default, the two conditions are combined using `AND`.\n * You can change this default by setting this property.\n * Options: `AND`, `OR` */",
       "type": { "returnType": "JoinOperator", "optional": true }
     },
     "suppressAndOrCondition": {
+      "description": "/** If `true`, the filter will only allow one condition.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "alwaysShowBothConditions": {
+      "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions. \n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "clearButton": {
@@ -7182,31 +7232,46 @@
   "TextFormatter": {},
   "ITextFilterParams": {
     "textCustomComparator": {
+      "description": "/** Used to override how to filter based on the user input. */",
       "type": { "returnType": "TextComparator", "optional": true }
     },
-    "caseSensitive": { "type": { "returnType": "boolean", "optional": true } },
+    "caseSensitive": {
+      "description": "/** By default, text filtering is case-insensitive. Set this to `true` to make text filtering case-sensitive.\n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "textFormatter": {
+      "description": "/** Formats the text before applying the filter compare logic.\n * Useful if you want to substitute accented characters, for example. */",
       "type": {
         "arguments": { "from": "string" },
         "returnType": "string",
         "optional": true
       }
     },
-    "trimInput": { "type": { "returnType": "boolean", "optional": true } },
+    "trimInput": {
+      "description": "/** If `true`, the input that the user enters will be trimmed when the filter is applied, so any leading or trailing whitespace will be removed.\n * If only whitespace is entered, it will be left as-is.\n * If you enable `trimInput`, it is best to also increase the `debounceMs` to give users more time to enter text.\n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "filterOptions": {
+      "description": "/** Array of filter options to present to the user. See [Filter Options](/filter-provided-simple/#simple-filter-options) for all options available to each filter type. */",
       "type": {
         "returnType": "(IFilterOptionDef | string)[]",
         "optional": true
       }
     },
-    "defaultOption": { "type": { "returnType": "string", "optional": true } },
+    "defaultOption": {
+      "description": "/** The default filter option to be selected. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "defaultJoinOperator": {
+      "description": "/** By default, the two conditions are combined using `AND`.\n * You can change this default by setting this property.\n * Options: `AND`, `OR` */",
       "type": { "returnType": "JoinOperator", "optional": true }
     },
     "suppressAndOrCondition": {
+      "description": "/** If `true`, the filter will only allow one condition.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "alwaysShowBothConditions": {
+      "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions. \n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "clearButton": {
@@ -7804,15 +7869,8 @@
       "type": { "returnType": "string", "optional": false }
     }
   },
-  "IAbstractHeaderCellComp": {
-    "focus": {
-      "type": { "arguments": {}, "returnType": "void", "optional": false }
-    }
-  },
+  "IAbstractHeaderCellComp": {},
   "IHeaderCellComp": {
-    "focus": {
-      "type": { "arguments": {}, "returnType": "void", "optional": false }
-    },
     "setWidth": {
       "type": {
         "arguments": { "width": "string" },
@@ -7823,13 +7881,6 @@
     "addOrRemoveCssClass": {
       "type": {
         "arguments": { "cssClassName": "string", "on": "boolean" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "setResizeDisplayed": {
-      "type": {
-        "arguments": { "displayed": "boolean" },
         "returnType": "void",
         "optional": false
       }
@@ -7865,7 +7916,7 @@
     "getUserCompInstance": {
       "type": {
         "arguments": {},
-        "returnType": "IHeaderComp | undefined",
+        "returnType": "IHeader | undefined",
         "optional": false
       }
     },
@@ -7982,11 +8033,7 @@
     "selected": { "type": { "returnType": "number", "optional": false } },
     "notSelected": { "type": { "returnType": "number", "optional": false } }
   },
-  "IHeaderGroupCellComp": {
-    "focus": {
-      "type": { "arguments": {}, "returnType": "void", "optional": false }
-    }
-  },
+  "IHeaderGroupCellComp": {},
   "IHeaderGroupParams": {
     "columnGroup": {
       "type": { "returnType": "ColumnGroup", "optional": false }
@@ -8037,11 +8084,7 @@
       }
     }
   },
-  "IHeaderFilterCellComp": {
-    "focus": {
-      "type": { "arguments": {}, "returnType": "void", "optional": false }
-    }
-  },
+  "IHeaderFilterCellComp": {},
   "DropListener": {
     "getIconName": {
       "type": {
@@ -8170,7 +8213,7 @@
         "optional": false
       }
     },
-    "setRowIndex": {
+    "setAriaRowIndex": {
       "type": {
         "arguments": { "rowIndex": "number" },
         "returnType": "void",
@@ -8193,7 +8236,7 @@
         "optional": false
       }
     },
-    "setContainerWidth": {
+    "setPinnedContainerWidth": {
       "type": {
         "arguments": { "width": "string" },
         "returnType": "void",
@@ -11669,7 +11712,7 @@
       "type": { "returnType": "any", "optional": true }
     },
     "floatingFilterComponent": {
-      "description": "/** The custom component to be used for rendering the floating filter. If none is specified the default AG Grid is used. * */",
+      "description": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
       "type": { "returnType": "IFloatingFilterType", "optional": true }
     },
     "floatingFilterComponentParams": {
@@ -13285,41 +13328,47 @@
   "SetFilterValuesFunc": {},
   "SetFilterValues": {},
   "ISetFilterParams": {
-    "suppressRemoveEntries": {
-      "description": "/** @deprecated\n */",
-      "type": { "returnType": "boolean", "optional": true }
+    "values": {
+      "description": "/** The values to display in the Filter List.\n * If this is not set, the filter will takes its values from what is loaded in the table. */",
+      "type": { "returnType": "SetFilterValues", "optional": true }
     },
-    "values": { "type": { "returnType": "SetFilterValues", "optional": true } },
     "refreshValuesOnOpen": {
+      "description": "/** Refresh the values every time the Set filter is opened. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "cellHeight": { "type": { "returnType": "number", "optional": true } },
+    "cellHeight": {
+      "description": "/** The height of values in the Filter List in pixels. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "suppressSorting": {
+      "description": "/** If `true`, the Set Filter values will not be sorted.\n * Use this if you are providing your own values and don't want them sorted as you are providing in the order you want.\n * Default: false */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "cellRenderer": {
+      "description": "/** Similar to the Cell Renderer for the grid.\n * Setting it separately here allows for the value to be rendered differently in the filter. */",
       "type": {
         "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string",
         "optional": true
       }
     },
     "suppressMiniFilter": {
+      "description": "/** Set to `true` to hide the Mini Filter.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "applyMiniFilterWhileTyping": {
+      "description": "/** Set to `true` to apply the Set Filter immediately when the user is typing in the Mini Filter.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressSelectAll": {
+      "description": "/** Set to `true` to remove the Select All checkbox.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "defaultToNothingSelected": {
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "suppressSyncValuesAfterDataChange": {
-      "description": "/** @deprecated\n */",
+      "description": "/** By default, when the Set Filter is opened all values are shown selected. Set this to `true` to instead show all values as de-selected by default. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "comparator": {
+      "description": "/** Comparator for sorting.\n * If not provided, the Column Definition comparator is used.\n * If Column Definition comparator is also not provided, the default (grid provided) comparator is used. */",
       "type": {
         "arguments": { "a": "any", "b": "any" },
         "returnType": "number",
@@ -13327,6 +13376,7 @@
       }
     },
     "textFormatter": {
+      "description": "/** If specified, this formats the text before applying the Mini Filter compare logic, useful for instance to substitute accented characters. */",
       "type": {
         "arguments": { "from": "string" },
         "returnType": "string",
@@ -13340,6 +13390,22 @@
         "optional": true
       }
     },
+    "showTooltips": {
+      "description": "/** If `true`, hovering over a value in the Set Filter will show a tooltip containing the full, untruncated value.\n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "excelMode": {
+      "description": "/** Changes the behaviour of the Set Filter to match that of Excel's AutoFilter. */",
+      "type": { "returnType": "'mac' | 'windows'", "optional": true }
+    },
+    "suppressRemoveEntries": {
+      "description": "/** @deprecated\n */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "suppressSyncValuesAfterDataChange": {
+      "description": "/** @deprecated\n */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "selectAllOnMiniFilter": {
       "description": "/** @deprecated\n */",
       "type": { "returnType": "boolean", "optional": true }
@@ -13347,10 +13413,6 @@
     "syncValuesLikeExcel": {
       "description": "/** @deprecated\n */",
       "type": { "returnType": "boolean", "optional": true }
-    },
-    "showTooltips": { "type": { "returnType": "boolean", "optional": true } },
-    "excelMode": {
-      "type": { "returnType": "'mac' | 'windows'", "optional": true }
     },
     "clearButton": {
       "description": "/** @deprecated\n */",
@@ -16104,6 +16166,125 @@
         "returnType": "boolean | undefined",
         "optional": true
       }
+    }
+  },
+  "ISetFilterLocaleText": {
+    "loadingOoo": { "type": { "returnType": "string", "optional": false } },
+    "blanks": { "type": { "returnType": "string", "optional": false } },
+    "searchOoo": { "type": { "returnType": "string", "optional": false } },
+    "selectAll": { "type": { "returnType": "string", "optional": false } },
+    "selectAllSearchResults": {
+      "type": { "returnType": "string", "optional": false }
+    },
+    "noMatches": { "type": { "returnType": "string", "optional": false } }
+  },
+  "SetFilterListItemSelectionChangedEvent": {
+    "isSelected": { "type": { "returnType": "boolean", "optional": false } },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "SetFilterModelValue": {},
+  "SetFilterModel": {
+    "filterType": { "type": { "returnType": "'set'", "optional": true } },
+    "values": {
+      "type": { "returnType": "SetFilterModelValue", "optional": false }
+    }
+  },
+  "SetFilterModelValuesType": {},
+  "IMultiFilterDef": {
+    "display": {
+      "description": "/** Configures how the filter is shown in the Multi Filter.\n * Default: `inline` */",
+      "type": {
+        "returnType": "'inline' | 'accordion' | 'subMenu'",
+        "optional": true
+      }
+    },
+    "title": {
+      "description": "/** The title to be used when a filter is displayed inside a sub-menu or accordion. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "filter": {
+      "description": "/** One of the built in filter names: [set, number, text, date], or a filter function */",
+      "type": { "returnType": "IFilterType", "optional": true }
+    },
+    "filterFramework": { "type": { "returnType": "any", "optional": true } },
+    "filterParams": {
+      "description": "/** The filter params are specific to each filter! */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "floatingFilterComponent": {
+      "description": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
+      "type": { "returnType": "IFloatingFilterType", "optional": true }
+    },
+    "floatingFilterComponentParams": {
+      "type": { "returnType": "any", "optional": true }
+    },
+    "floatingFilterComponentFramework": {
+      "type": { "returnType": "any", "optional": true }
+    }
+  },
+  "IMultiFilterParams": {
+    "filters": {
+      "description": "/** An array of filter definition objects. */",
+      "type": { "returnType": "IMultiFilterDef[]", "optional": true }
+    },
+    "column": {
+      "description": "/** The column this filter is for. */",
+      "type": { "returnType": "Column", "optional": false }
+    },
+    "colDef": {
+      "description": "/** The column definition for the column. */",
+      "type": { "returnType": "ColDef", "optional": false }
+    },
+    "rowModel": {
+      "description": "/** The row model, helpful for looking up data values if needed.\n * If the filter needs to know which rows are\n * a) in the table,\n * b) currently visible (i.e. not already filtered),\n * c) which groups,\n * d) what order - all of this can be read from the rowModel. */",
+      "type": { "returnType": "IRowModel", "optional": false }
+    },
+    "filterChangedCallback": {
+      "description": "/** A function callback to be called when the filter changes. The\n * grid will then respond by filtering the grid data. The callback\n * takes one optional parameter which, if included, will get merged\n * to the FilterChangedEvent object (useful for passing additional\n * information to anyone listening to this event, however such extra\n * attributes are not used by the grid). */",
+      "type": {
+        "arguments": { "additionalEventAttributes?": "any" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "filterModifiedCallback": {
+      "description": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
+    "valueGetter": {
+      "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
+      "type": {
+        "arguments": { "rowNode": "RowNode" },
+        "returnType": "any",
+        "optional": false
+      }
+    },
+    "doesRowPassOtherFilter": {
+      "description": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
+      "type": {
+        "arguments": { "rowNode": "RowNode" },
+        "returnType": "boolean",
+        "optional": false
+      }
+    },
+    "api": { "type": { "returnType": "GridApi", "optional": false } },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "context": {
+      "description": "/** The context as provided on `gridOptions.context` */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "IMultiFilterModel": {
+    "filterType": {
+      "description": "/** Multi filter type. */",
+      "type": { "returnType": "'multi'", "optional": true }
+    },
+    "filterModels": {
+      "description": "/** Child filter models in the same order as the filters are specified in `filterParams`. */",
+      "type": { "returnType": "any[] | null", "optional": false }
     }
   }
 }

@@ -3,7 +3,7 @@ title: "Sparklines - Data"
 enterprise: true
 ---
 
-This section covers the types of data supported by the sparklines
+This section covers the formats of data supported by the sparklines
 
 ## Sparklines Data
 

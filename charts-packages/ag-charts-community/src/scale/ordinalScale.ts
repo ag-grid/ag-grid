@@ -1,4 +1,4 @@
-import Scale from "./scale";
+import { Scale } from "./scale";
 
 /**
  * Maps a discrete domain to a discrete range.

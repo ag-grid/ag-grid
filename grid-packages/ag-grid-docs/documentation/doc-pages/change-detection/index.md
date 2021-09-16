@@ -199,7 +199,7 @@ From the example, you can observe:
 
 - Uncheck '**Group & Pivot**' to see what the data looks like when it is flat. You can see it's a list of student records showing student scores and age. For seeing the impact of value changes on pivots, keep this checked while selecting the other buttons.
 
-- Button '**Set One Value**' updates one value using `rowNode.setDataValue()`. The grid aggregates the new value for display.
+- Button '**Set One Value**' updates one value using `rowNode.setDataValue(col,value)`. The grid aggregates the new value for display.
 
 - Button '**Update Points**' updates one record using `api.applyTransaction(transaction)`. The grid aggregates the new value for display.
 

@@ -411,7 +411,9 @@
   },
   "getSortModel": { "type": { "arguments": {} } },
   "setFilterModel": { "type": { "arguments": { "model": "any" } } },
-  "getFilterModel": { "type": { "arguments": {} } },
+  "getFilterModel": {
+    "type": { "arguments": {}, "returnType": "{ [key: string]: any; }" }
+  },
   "getFocusedCell": {
     "type": { "arguments": {}, "returnType": "CellPosition | null" }
   },

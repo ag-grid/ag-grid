@@ -289,17 +289,20 @@ export class ValueService extends BeanStub {
         const value = this.getValue(col, rowNode);
         const keyCreator = col.getColDef().keyCreator;
 
-        const keyParams: KeyCreatorParams = {
-            value: value,
-            colDef: col.getColDef(),
-            column: col,
-            node: rowNode,
-            data: rowNode.data,
-            api: this.gridOptionsWrapper.getApi()!,
-            columnApi: this.gridOptionsWrapper.getColumnApi()!,
-            context: this.gridOptionsWrapper.getContext()
-        };
-        let result = keyCreator ? keyCreator(keyParams) : value;
+        let result = value;
+        if (keyCreator) {
+            const keyParams: KeyCreatorParams = {
+                value: value,
+                colDef: col.getColDef(),
+                column: col,
+                node: rowNode,
+                data: rowNode.data,
+                api: this.gridOptionsWrapper.getApi()!,
+                columnApi: this.gridOptionsWrapper.getColumnApi()!,
+                context: this.gridOptionsWrapper.getContext()
+            };
+            result = keyCreator(keyParams);
+        }
 
         // if already a string, or missing, just return it
         if (typeof result === 'string' || result == null) {

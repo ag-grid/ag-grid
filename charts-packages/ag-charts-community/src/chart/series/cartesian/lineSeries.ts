@@ -1,5 +1,5 @@
 import { Path } from "../../../scene/shape/path";
-import ContinuousScale from "../../../scale/continuousScale";
+import { ContinuousScale } from "../../../scale/continuousScale";
 import { Selection } from "../../../scene/selection";
 import { Group } from "../../../scene/group";
 import {
@@ -143,7 +143,6 @@ export class LineSeries extends CartesianSeries {
             this.scheduleData();
         }
     }
-
     get xKey(): string {
         return this._xKey;
     }
@@ -158,7 +157,6 @@ export class LineSeries extends CartesianSeries {
             this.scheduleData();
         }
     }
-
     get yKey(): string {
         return this._yKey;
     }

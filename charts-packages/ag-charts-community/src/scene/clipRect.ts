@@ -108,7 +108,7 @@ export class ClipRect extends Node {
             if (this.dirtyPath) {
                 this.updatePath();
             }
-            this.scene!.appendPath(this.path);
+            this.path.draw(ctx);
             ctx.clip();
         }
 

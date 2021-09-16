@@ -1,6 +1,6 @@
 {
     "_config_": {
-        "codeSrc": "GridApi"
+        "codeSrc": "grid-api/grid-api.AUTO.json"
     },
     "columns": {
         "meta": {
@@ -220,7 +220,11 @@
             }
         },
         "setQuickFilter": {
-            "description": "Pass a quick filter text into the grid for filtering. If using Angular, the grid watches the `quickFilterText` attribute of the `gridOptions`. If you won't want to use `quickFilterText` (i.e. if not using AngularJS) then you can call this method instead to apply a quick filter."
+            "description": "Pass a quick filter text into the grid for filtering.",
+            "more": {
+                "name": "Quick Filter",
+                "url": "/filter-quick/"
+            }
         },
         "isQuickFilterPresent": {
             "description": "Returns `true` if the quick filter is set, otherwise `false`."
@@ -232,7 +236,11 @@
             "description": "Returns `true` if any filter is set. This includes quick filter, advanced filter or external filter."
         },
         "getFilterInstance": {
-            "description": "Returns the filter component instance for a column. `col` can be a string field name or a ColDef object (matches on object reference, useful if field names are not unique). For filters that are created asynchronously including React 16+ components, calling this method will return null if the filter has not already been created. If your app uses asynchronous components, use the optional `callback` function which will be invoked with the filter instance when it is available."
+            "description": "Returns the filter component instance for a column. `col` can be a string field name or a ColDef object (matches on object reference, useful if field names are not unique).",
+            "more": {
+                "name": "Accessing Individual Filter Component Instances",
+                "url": "/filter-api/#accessing-individual-filter-component-instances"
+            }
         },
         "getFilterModel": {
             "description": "Gets the current state of all the advanced filters. Used for saving filter state."

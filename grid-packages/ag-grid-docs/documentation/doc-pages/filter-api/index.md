@@ -10,6 +10,8 @@ It is possible to get the state of all filters using the grid API method `getFil
 `setFilterModel()`. These methods manage the filters states via the `getModel()` and `setModel()` methods of the
 individual filters.
 
+<api-documentation source='grid-api/api.json' section='filter' names='["getFilterModel", "setFilterModel"]'></api-documentation>
+
 <snippet>
 |// Gets filter model via the grid API
 |const model = gridOptions.api.getFilterModel();
@@ -63,6 +65,8 @@ The example below shows getting and setting all the filter models in action.
 ## Accessing Individual Filter Component Instances
 
 It is also possible to access the filter components directly if you want to interact with a specific filter. This also works for your own custom filters, where you can get a reference to the underlying filtering instance (i.e. what was created when AG Grid called `new` on your filter). Calling `api.getFilterInstance(colKey)` will return a reference to the filter instance for the column with key `colKey`.
+
+<api-documentation source='grid-api/api.json' section='filter' names='["getFilterInstance"]'></api-documentation>
 
 <snippet>
 // Get a reference to the 'name' filter instance

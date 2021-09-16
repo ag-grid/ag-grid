@@ -108,36 +108,6 @@ export class Scene {
         return this._root;
     }
 
-    appendPath(path: Path2D) {
-        const ctx = this.ctx;
-        const commands = path.commands;
-        const params = path.params;
-        const n = commands.length;
-        let j = 0;
-
-        ctx.beginPath();
-        for (let i = 0; i < n; i++) {
-            switch (commands[i]) {
-                case 'M':
-                    ctx.moveTo(params[j++], params[j++]);
-                    break;
-                case 'L':
-                    ctx.lineTo(params[j++], params[j++]);
-                    break;
-                case 'C':
-                    ctx.bezierCurveTo(
-                        params[j++], params[j++],
-                        params[j++], params[j++],
-                        params[j++], params[j++]
-                    );
-                    break;
-                case 'Z':
-                    ctx.closePath();
-                    break;
-            }
-        }
-    }
-
     readonly debug: DebugOptions = {
         renderFrameIndex: false,
         renderBoundingBoxes: false

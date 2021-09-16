@@ -34,7 +34,7 @@ The grid works out what changes need to be applied to the grid using the followi
 
 The example below shows an immutable store in action. The example keeps a store of data locally. Each time the user does an update, the local store is replaced with a new store with the next data, and then `api.setRowData(store)` is called. This results in the grid updating the current data rather than replacing because we have set `immutableData=true`.
 
-If using bound properties with a framework, map the store to the `rowData` property instead of calling `api.setRowData()`.
+If using bound properties with a framework, map the store to the `rowData` property instead of calling `api.setRowData(data)`.
 
 The example demonstrates the following:
 

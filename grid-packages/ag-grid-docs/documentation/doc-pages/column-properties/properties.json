@@ -1,6 +1,6 @@
 {
     "_config_": {
-        "codeSrc": "ColumnOptions"
+        "codeSrc": "column-properties/column-options.AUTO.json"
     },
     "columns": {
         "meta": {
@@ -382,7 +382,11 @@
             "description": "Function or [expression](/cell-expressions/#column-definition-expressions). Gets the value for filtering purposes."
         },
         "getQuickFilterText": {
-            "description": "A function to tell the grid what quick filter text to use for this column if you don't want to use the default (which is calling `toString` on the value)."
+            "description": "A function to tell the grid what quick filter text to use for this column if you don't want to use the default (which is calling `toString` on the value).",
+            "more": {
+                "name": "Overriding the Quick Filter Value",
+                "url": "/filter-quick/#overriding-the-quick-filter-value"
+            }
         },
         "filterFramework": {
             "description": "Provided a custom framework filter to use for this column.",

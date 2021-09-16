@@ -73,17 +73,17 @@ If your data changes, you should get a reference to the node by calling `params.
 
 ## Replacing Data
 
-You may want to completely change data in the viewport, for example if you are showing 'latest 10 trades over 10k' which changes over time as to what the trades are, then you just call `setRowData()` again with the new data. The grid doesn't care how many times you call `setRowData()` with new data. You could alternatively call `rowNode.setData(data)` on the individual row nodes, it will have the same effect.
+You may want to completely change data in the viewport, for example if you are showing 'latest 10 trades over 10k' which changes over time as to what the trades are, then you just call `setRowData(rowData)` again with the new data. The grid doesn't care how many times you call `setRowData(rowData)` with new data. You could alternatively call `rowNode.setData(data)` on the individual row nodes, it will have the same effect.
 
 If you want to change the length of data (e.g. you apply a filter, or the result set otherwise grows or shrinks) then you call `setRowCount()` again. The grid doesn't care how many times you call `setRowCount()`.
 
 ## Sorting
 
-Only server-side sorting is supported, so if you want sorting you have to do it yourself on the server. This is done by listening for the `sortChanged` event and then calling `setRowData()` with the new data when it arrives.
+Only server-side sorting is supported, so if you want sorting you have to do it yourself on the server. This is done by listening for the `sortChanged` event and then calling `setRowData(data)` with the new data when it arrives.
 
 ## Filtering
 
-As with sorting, filtering also must be done on the server. To implement, listen for the `filterChanged` event and apply the filter to your server-side set of data. Then call `setRowCount()` and `setRowData()` to display the new data.
+As with sorting, filtering also must be done on the server. To implement, listen for the `filterChanged` event and apply the filter to your server-side set of data. Then call `setRowCount()` and `setRowData(data)` to display the new data.
 
 ## Selection
 

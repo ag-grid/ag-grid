@@ -1,4 +1,4 @@
-export default interface Scale<D, R> {
+export interface Scale<D, R> {
     domain: D[];
     range: R[];
     convert(value: D): R;

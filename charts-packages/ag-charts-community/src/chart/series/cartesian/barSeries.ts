@@ -17,7 +17,7 @@ import { TooltipRendererResult, toTooltipHtml } from "../../chart";
 import { findMinMax } from "../../../util/array";
 import { equal } from "../../../util/equal";
 import { reactive, TypedEvent } from "../../../util/observable";
-import Scale from "../../../scale/scale";
+import { Scale } from "../../../scale/scale";
 import { sanitizeHtml } from "../../../util/sanitize";
 import { isNumber } from "../../../util/value";
 

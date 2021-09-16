@@ -55,9 +55,7 @@ Simple Filters are configured though the `filterParams` attribute of the column 
 
 <api-documentation source='filter-provided/resources/provided-filters.json' section="filterParams"></api-documentation>
 
-In addition, the following parameters are also available, depending on the type of filter being used:
-
-<api-documentation source='filter-provided-simple/resources/simple-filters.json' section="filterParams"></api-documentation>
+Additional parameters are also available depending on the type of filter being used. See each type for the full list of parameters available: [Text](/filter-text/), [Number](/filter-number/), [Date](/filter-date/).
 
 ### Example: Simple Filter Options
 

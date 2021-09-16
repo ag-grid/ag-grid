@@ -930,7 +930,7 @@ export class GridApi {
         this.filterManager.setFilterModel(model);
     }
 
-    public getFilterModel() {
+    public getFilterModel(): { [key: string]: any; } {
         return this.filterManager.getFilterModel();
     }
 
@@ -1002,47 +1002,47 @@ export class GridApi {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PIVOT_GROUP_HEADER_HEIGHT, headerHeight);
     }
 
-    public setIsExternalFilterPresent(isExternalFilterPresentFunc: () => boolean) :  void {
+    public setIsExternalFilterPresent(isExternalFilterPresentFunc: () => boolean): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_IS_EXTERNAL_FILTER_PRESENT, isExternalFilterPresentFunc);
     }
 
-    public setDoesExternalFilterPass(doesExternalFilterPassFunc: (node: RowNode) => boolean) :  void {
+    public setDoesExternalFilterPass(doesExternalFilterPassFunc: (node: RowNode) => boolean): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_DOES_EXTERNAL_FILTER_PASS, doesExternalFilterPassFunc);
     }
 
-    public setNavigateToNextCell(navigateToNextCellFunc: (params: NavigateToNextCellParams) => CellPosition) :  void {
+    public setNavigateToNextCell(navigateToNextCellFunc: (params: NavigateToNextCellParams) => CellPosition): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_NAVIGATE_TO_NEXT_CELL, navigateToNextCellFunc);
     }
 
-    public setTabToNextCell(tabToNextCellFunc: (params: TabToNextCellParams) => CellPosition) :  void {
+    public setTabToNextCell(tabToNextCellFunc: (params: TabToNextCellParams) => CellPosition): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_TAB_TO_NEXT_CELL, tabToNextCellFunc);
     }
 
-    public setTabToNextHeader(tabToNextHeaderFunc: (params: TabToNextHeaderParams) => HeaderPosition) :  void {
+    public setTabToNextHeader(tabToNextHeaderFunc: (params: TabToNextHeaderParams) => HeaderPosition): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_TAB_TO_NEXT_HEADER, tabToNextHeaderFunc);
     }
 
-    public setNavigateToNextHeader(navigateToNextHeaderFunc: (params: NavigateToNextHeaderParams) => HeaderPosition) :  void {
+    public setNavigateToNextHeader(navigateToNextHeaderFunc: (params: NavigateToNextHeaderParams) => HeaderPosition): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_NAVIGATE_TO_NEXT_HEADER, navigateToNextHeaderFunc);
     }
 
-    public setGroupRowAggNodes(groupRowAggNodesFunc: (nodes: RowNode[]) => any) :  void {
+    public setGroupRowAggNodes(groupRowAggNodesFunc: (nodes: RowNode[]) => any): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GROUP_ROW_AGG_NODES, groupRowAggNodesFunc);
     }
 
-    public setGetBusinessKeyForNode(getBusinessKeyForNodeFunc: (nodes: RowNode) => string) :  void {
+    public setGetBusinessKeyForNode(getBusinessKeyForNodeFunc: (nodes: RowNode) => string): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GET_BUSINESS_KEY_FOR_NODE, getBusinessKeyForNodeFunc);
     }
 
-    public setGetChildCount(getChildCountFunc: (dataItem: any) => number) :  void {
+    public setGetChildCount(getChildCountFunc: (dataItem: any) => number): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GET_CHILD_COUNT, getChildCountFunc);
     }
 
-    public setProcessRowPostCreate(processRowPostCreateFunc: (params: ProcessRowParams) => void) :  void {
+    public setProcessRowPostCreate(processRowPostCreateFunc: (params: ProcessRowParams) => void): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PROCESS_ROW_POST_CREATE, processRowPostCreateFunc);
     }
 
-    public setGetRowNodeId(getRowNodeIdFunc: GetRowNodeIdFunc) :  void {
+    public setGetRowNodeId(getRowNodeIdFunc: GetRowNodeIdFunc): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GET_ROW_NODE_ID, getRowNodeIdFunc);
     }
 
@@ -1050,35 +1050,35 @@ export class GridApi {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GET_ROW_CLASS, rowClassFunc);
     }
 
-    public setIsFullWidthCell(isFullWidthCellFunc: (rowNode: RowNode) => boolean) :  void {
+    public setIsFullWidthCell(isFullWidthCellFunc: (rowNode: RowNode) => boolean): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_IS_FULL_WIDTH_CELL, isFullWidthCellFunc);
     }
 
-    public setIsRowSelectable(isRowSelectableFunc: IsRowSelectable) :  void {
+    public setIsRowSelectable(isRowSelectableFunc: IsRowSelectable): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_IS_ROW_SELECTABLE, isRowSelectableFunc);
     }
 
-    public setIsRowMaster(isRowMasterFunc: IsRowMaster) :  void {
+    public setIsRowMaster(isRowMasterFunc: IsRowMaster): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_IS_ROW_MASTER, isRowMasterFunc);
     }
 
-    public setPostSort(postSortFunc: (nodes: RowNode[]) => void) :  void {
+    public setPostSort(postSortFunc: (nodes: RowNode[]) => void): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_POST_SORT, postSortFunc);
     }
 
-    public setGetDocument(getDocumentFunc: () => Document) :  void {
+    public setGetDocument(getDocumentFunc: () => Document): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GET_DOCUMENT, getDocumentFunc);
     }
 
-    public setGetContextMenuItems(getContextMenuItemsFunc: GetContextMenuItems) :  void {
+    public setGetContextMenuItems(getContextMenuItemsFunc: GetContextMenuItems): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GET_CONTEXT_MENU_ITEMS, getContextMenuItemsFunc);
     }
 
-    public setGetMainMenuItems(getMainMenuItemsFunc: GetMainMenuItems) :  void {
+    public setGetMainMenuItems(getMainMenuItemsFunc: GetMainMenuItems): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GET_MAIN_MENU_ITEMS, getMainMenuItemsFunc);
     }
 
-    public setProcessCellForClipboard(processCellForClipboardFunc: (params: ProcessCellForExportParams) => any) :  void {
+    public setProcessCellForClipboard(processCellForClipboardFunc: (params: ProcessCellForExportParams) => any): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PROCESS_CELL_FOR_CLIPBOARD, processCellForClipboardFunc);
     }
 
@@ -1086,55 +1086,55 @@ export class GridApi {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_SEND_TO_CLIPBOARD, sendToClipboardFunc);
     }
 
-    public setProcessCellFromClipboard(processCellFromClipboardFunc: (params: ProcessCellForExportParams) => any) :  void {
+    public setProcessCellFromClipboard(processCellFromClipboardFunc: (params: ProcessCellForExportParams) => any): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PROCESS_CELL_FROM_CLIPBOARD, processCellFromClipboardFunc);
     }
 
-    public setProcessSecondaryColDef(processSecondaryColDefFunc: (colDef: ColDef) => void) :  void {
+    public setProcessSecondaryColDef(processSecondaryColDefFunc: (colDef: ColDef) => void): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PROCESS_TO_SECONDARY_COLDEF, processSecondaryColDefFunc);
     }
 
-    public setProcessSecondaryColGroupDef(processSecondaryColGroupDefFunc: (colDef: ColDef) => void) :  void {
+    public setProcessSecondaryColGroupDef(processSecondaryColGroupDefFunc: (colDef: ColDef) => void): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PROCESS_SECONDARY_COL_GROUP_DEF, processSecondaryColGroupDefFunc);
     }
 
-    public setPostProcessPopup(postProcessPopupFunc: (params: PostProcessPopupParams) => void) :  void {
+    public setPostProcessPopup(postProcessPopupFunc: (params: PostProcessPopupParams) => void): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_POST_PROCESS_POPUP, postProcessPopupFunc);
     }
 
-    public setDefaultGroupOrderComparator(defaultGroupOrderComparatorFunc: (nodeA: RowNode, nodeB: RowNode) => number) :  void {
+    public setDefaultGroupOrderComparator(defaultGroupOrderComparatorFunc: (nodeA: RowNode, nodeB: RowNode) => number): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_DEFAULT_GROUP_ORDER_COMPARATOR, defaultGroupOrderComparatorFunc);
     }
 
-    public setProcessChartOptions(processChartOptionsFunc: (params: ProcessChartOptionsParams) => ChartOptions<any>) :  void {
+    public setProcessChartOptions(processChartOptionsFunc: (params: ProcessChartOptionsParams) => ChartOptions<any>): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PROCESS_CHART_OPTIONS, processChartOptionsFunc);
     }
 
-    public setGetChartToolbarItems(getChartToolbarItemsFunc: GetChartToolbarItems) :  void {
+    public setGetChartToolbarItems(getChartToolbarItemsFunc: GetChartToolbarItems): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GET_CHART_TOOLBAR_ITEMS, getChartToolbarItemsFunc);
     }
 
-    public setPaginationNumberFormatter(paginationNumberFormatterFunc: (params: PaginationNumberFormatterParams) => string) :  void {
+    public setPaginationNumberFormatter(paginationNumberFormatterFunc: (params: PaginationNumberFormatterParams) => string): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PAGINATION_NUMBER_FORMATTER, paginationNumberFormatterFunc);
     }
 
-    public setGetServerSideStoreParams(getServerSideStoreParamsFunc: (params: GetServerSideStoreParamsParams) => ServerSideStoreParams) :  void {
+    public setGetServerSideStoreParams(getServerSideStoreParamsFunc: (params: GetServerSideStoreParamsParams) => ServerSideStoreParams): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GET_SERVER_SIDE_STORE_PARAMS, getServerSideStoreParamsFunc);
     }
 
-    public setIsServerSideGroupOpenByDefault(isServerSideGroupOpenByDefaultFunc: (params: IsServerSideGroupOpenByDefaultParams) => boolean) :  void {
+    public setIsServerSideGroupOpenByDefault(isServerSideGroupOpenByDefaultFunc: (params: IsServerSideGroupOpenByDefaultParams) => boolean): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_IS_SERVER_SIDE_GROUPS_OPEN_BY_DEFAULT, isServerSideGroupOpenByDefaultFunc);
     }
 
-    public setIsApplyServerSideTransaction(isApplyServerSideTransactionFunc: IsApplyServerSideTransaction) :  void {
+    public setIsApplyServerSideTransaction(isApplyServerSideTransactionFunc: IsApplyServerSideTransaction): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_IS_APPLY_SERVER_SIDE_TRANSACTION, isApplyServerSideTransactionFunc);
     }
 
-    public setIsServerSideGroup(isServerSideGroupFunc: IsServerSideGroup) :  void {
+    public setIsServerSideGroup(isServerSideGroupFunc: IsServerSideGroup): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_IS_SERVER_SIDE_GROUP, isServerSideGroupFunc);
     }
 
-    public setGetServerSideGroupKey(getServerSideGroupKeyFunc: GetServerSideGroupKey) :  void {
+    public setGetServerSideGroupKey(getServerSideGroupKeyFunc: GetServerSideGroupKey): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GET_SERVER_SIDE_GROUP_KEY, getServerSideGroupKeyFunc);
     }
 

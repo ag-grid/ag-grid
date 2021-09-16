@@ -4,7 +4,7 @@ title: "Number Filter"
 
 Number filters allow you to filter number data.
 
-The [Provided Filters](/filter-provided/) and [Simple Filters](/filter-provided-simple/) pages explain the parts of the Number Filter that the same as the other Provided Filters. This page builds on that and explains some details that are specific to the Number Filter.
+The [Provided Filters](/filter-provided/) and [Simple Filters](/filter-provided-simple/) pages explain the parts of the Number Filter that are the same as the other Provided Filters. This page builds on that and explains some details that are specific to the Number Filter.
 
 ## Number Filter Parameters
 
@@ -12,10 +12,9 @@ Number Filters are configured though the `filterParams` attribute of the column 
 
 <api-documentation source='filter-provided/resources/provided-filters.json' section='filterParams'></api-documentation>
 
-In addition, the following parameters are also available:
+In addition, the following parameters are also available for number filters:
 
-<api-documentation source='filter-provided-simple/resources/simple-filters.json' section='filterParams' names='["Number"]'></api-documentation>
-
+<interface-documentation interfaceName='INumberFilterParams' names='["alwaysShowBothConditions","filterOptions","defaultOption","defaultJoinOperator","suppressAndOrCondition","textCustomComparator","caseSensitive","textFormatter","trimInput","inRangeInclusive","includeBlanksInEquals","includeBlanksInLessThan","includeBlanksInGreaterThan","includeBlanksInRange","allowedCharPattern","numberParser","comparator","browserDatePicker","minValidYear"]' config='{"description":" "}'></interface-documentation>
 
 ## Custom Number Support
 

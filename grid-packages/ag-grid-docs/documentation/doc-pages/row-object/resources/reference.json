@@ -1,6 +1,6 @@
 {
     "_config_": {
-        "codeSrc": "RowNode"
+        "codeSrc": "row-object/row-node.AUTO.json"
     },
     "rowNodeAttributes": {
         "meta": {

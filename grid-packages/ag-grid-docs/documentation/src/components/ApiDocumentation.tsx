@@ -34,8 +34,15 @@ export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework
     const li = interfaceLookup[interfacename];
 
     let props = {};
-    const overrides = overridesrc ? getJsonFromFile(nodes, undefined, overridesrc) : {};
-    const interfaceOverrides = overrides[interfacename] || {};
+    let overrides = {};
+    let interfaceOverrides = {};
+    if(overridesrc){
+        overrides = getJsonFromFile(nodes, undefined, overridesrc);
+        interfaceOverrides = overrides[interfacename];
+        if(!interfaceOverrides){
+            throw new Error(`overrideSrc:${overridesrc} provided but does not contain expected section named: '${interfacename}'!`);            
+        }
+    }
 
     const typeProps = Object.entries(li.type);
     sortAndFilterProperties(typeProps, framework).forEach(([k, v]) => {
@@ -58,7 +65,7 @@ export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework
             ...props,
             "meta": {
                 "displayName": interfacename,
-                "description": `Properties available on the \`${interfacename}\` interface.`,
+                "description": config.description || `Properties available on the \`${interfacename}\` interface.`,
                 ...interfaceOverrides.meta
             }
         }
@@ -107,25 +114,8 @@ export const ApiDocumentation: React.FC<ApiProps> = ({ pageName, framework, sour
             codeSrcProvided = [...codeSrcProvided, c.codeSrc];
         }
 
-        switch (c.codeSrc) {
-            case 'GridOptions':
-                codeLookup = { ...codeLookup, ...getJsonFromFile(nodes, undefined, 'grid-api/grid-options.AUTO.json') };
-                break;
-            case 'GridApi':
-                codeLookup = { ...codeLookup, ...getJsonFromFile(nodes, undefined, 'grid-api/grid-api.AUTO.json') };
-                break;
-            case 'RowNode':
-                codeLookup = { ...codeLookup, ...getJsonFromFile(nodes, undefined, 'row-object/row-node.AUTO.json') };
-                break;
-            case 'ColumnOptions':
-                codeLookup = { ...codeLookup, ...getJsonFromFile(nodes, undefined, 'column-properties/column-options.AUTO.json') };
-                break;
-            case 'ColumnApi':
-                codeLookup = { ...codeLookup, ...getJsonFromFile(nodes, undefined, 'column-api/column-api.AUTO.json') };
-                break;
-            case 'Column':
-                codeLookup = { ...codeLookup, ...getJsonFromFile(nodes, undefined, 'column-object/column.AUTO.json') };
-                break;
+        if(c.codeSrc){
+            codeLookup = { ...codeLookup, ...getJsonFromFile(nodes, undefined, c.codeSrc) };
         }
     })
     const interfaceLookup = getJsonFromFile(nodes, undefined, 'grid-api/interfaces.AUTO.json');
@@ -208,16 +198,10 @@ const Section: React.FC<SectionProps> = ({ framework, title, properties, config 
     let longestNameLength = 25;
     let processed = new Set();
     Object.entries(properties).forEach(([name, definition]) => {
-        const { relevantTo } = definition;
-
-        if (name === 'meta' ||
-            (names.length > 0 && !names.includes(name) && !(relevantTo && relevantTo.includes(names[0])))) {
+        if (name === 'meta' || (names.length > 0 && !names.includes(name))) {
             return;
         }
-        // Either the name matched
         processed.add(name);
-        // Or include via relevantTo, see simple-filters.json for example of relevantTo
-        processed.add(names[0]);
 
         const length = getLongestNameLength(name);
         if (longestNameLength < length) {
@@ -234,10 +218,10 @@ const Section: React.FC<SectionProps> = ({ framework, title, properties, config 
     });
 
     if (names.length > 0) {
-        // Validate we found properties for each provided name or relevantTo section
+        // Validate we found properties for each provided name
         names.forEach(n => {
             if (!processed.has(n)) {
-                throw new Error(`Failed to find a property named ${n} or relevantTo label ${n} that we requested under section ${title}. Check if you passed the correct name or if the name appears in the source json file that you are using.`)
+                throw new Error(`Failed to find a property named ${n} that we requested under section ${title}. Check if you passed the correct name or if the name appears in the source json file that you are using.`)
             }
         })
     }
@@ -369,7 +353,6 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
                     {codeSection}
                 </div>}
         </td>
-        {definition.relevantTo && <td style={{ whiteSpace: 'nowrap' }}>{definition.relevantTo.join(', ')}</td>}
     </tr>;
 };
 

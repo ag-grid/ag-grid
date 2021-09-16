@@ -45,7 +45,7 @@ interface GetDetailRowDataParams {
 
 The `successCallback` can be called immediately in a synchronous fashion (typical if the data is already available) or asynchronously at a later time (typical if the data needs to be fetched remotely).
 
-The Master Grid in turn will call `api.setRowData()` on the Detail Grid with the data provided.
+The Master Grid in turn will call `api.setRowData(data)` on the Detail Grid with the data provided.
 
 All the previous examples on Master Detail provided the result synchronously and as such another specific example is not given here.
 

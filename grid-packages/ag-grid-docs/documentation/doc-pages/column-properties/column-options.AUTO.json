@@ -519,7 +519,7 @@
     "type": { "returnType": "any" }
   },
   "floatingFilterComponent": {
-    "description": "/** The custom component to be used for rendering the floating filter. If none is specified the default AG Grid is used. * */",
+    "description": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
     "type": { "returnType": "IFloatingFilterType" }
   },
   "floatingFilterComponentParams": { "type": { "returnType": "any" } },
