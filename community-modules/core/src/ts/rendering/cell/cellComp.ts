@@ -10,7 +10,7 @@ import { RowDragComp } from "./../row/rowDragComp";
 import { PopupEditorWrapper } from "./../cellEditors/popupEditorWrapper";
 import { DndSourceComp } from "./../dndSourceComp";
 import { TooltipParentComp } from "../../widgets/customTooltipFeature";
-import { setAriaColIndex, setAriaDescribedBy, setAriaSelected, setAriaExpanded } from "../../utils/aria";
+import { setAriaColIndex, setAriaDescribedBy, setAriaSelected, setAriaExpanded, setAriaRole } from "../../utils/aria";
 import { escapeString } from "../../utils/string";
 import { missing } from "../../utils/generic";
 import { addStylesToElement, clearElement, removeFromParent } from "../../utils/dom";
@@ -109,7 +109,7 @@ export class CellComp extends Component implements TooltipParentComp {
             setHeight: height => style.height = height,
             setZIndex: zIndex => style.zIndex = zIndex,
             setTabIndex: tabIndex => setAttribute('tabindex', tabIndex.toString()),
-            setRole: role => setAttribute('role', role),
+            setRole: role => setAriaRole(eGui, role),
             setColId: colId => setAttribute('col-id', colId),
             setTitle: title => setAttribute('title', title),
             setUnselectable: value => setAttribute('unselectable', value, this.eCellValue),
@@ -519,13 +519,16 @@ export class CellComp extends Component implements TooltipParentComp {
             popupService.positionPopupUnderComponent.bind(popupService, positionParams)
             : popupService.positionPopupOverComponent.bind(popupService, positionParams);
 
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+
         const addPopupRes = popupService.addPopup({
             modal: useModelPopup,
             eChild: ePopupGui,
             closeOnEsc: true,
             closedCallback: () => { this.cellCtrl.onPopupEditorClosed(); },
             anchorToElement: this.getGui(),
-            positionCallback
+            positionCallback,
+            ariaLabel: translate('ariaLabelCellEditor', 'Cell Editor')
         });
         if (addPopupRes) {
             this.hideEditorPopup = addPopupRes.hideFunc;

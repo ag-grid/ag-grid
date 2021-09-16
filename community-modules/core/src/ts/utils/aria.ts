@@ -15,6 +15,14 @@ function ariaAttributeName(attribute: string) {
     return `aria-${attribute}`;
 }
 
+export function setAriaRole(element: HTMLElement, role?: string | null) {
+    if (role) {
+        element.setAttribute('role', role);
+    } else {
+        element.removeAttribute('role');
+    }
+}
+
 export function getAriaSortState(column: Column): ColumnSortState {
     let sort: ColumnSortState;
 

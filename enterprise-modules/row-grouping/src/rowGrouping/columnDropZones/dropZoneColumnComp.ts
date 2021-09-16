@@ -189,11 +189,14 @@ export class DropZoneColumnComp extends Component {
             this.popupShowing = false;
         };
 
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+
         const addPopupRes = this.popupService.addPopup({
             modal: true,
             eChild: ePopup,
             closeOnEsc: true,
-            closedCallback: popupHiddenFunc
+            closedCallback: popupHiddenFunc,
+            ariaLabel: translate('ariaLabelAggregationFunction', 'Aggregation Function')
         });
 
         if (addPopupRes) {

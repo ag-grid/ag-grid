@@ -14,6 +14,7 @@ import { GridCtrl } from "../gridComp/gridCtrl";
 import { IAfterGuiAttachedParams } from "../interfaces/iAfterGuiAttachedParams";
 import { AgPromise } from "../utils";
 import { CtrlsService } from "../ctrlsService";
+import { setAriaLabel, setAriaRole } from "../utils/aria";
 
 export interface PopupEventParams {
     originalMouseEvent?: MouseEvent | Touch | null;
@@ -65,6 +66,9 @@ export interface AddPopupParams {
     // eg if cellComp element is passed, what happens if row moves (sorting, filtering etc)? best anchor against
     // the grid, not the cell.
     anchorToElement?: HTMLElement;
+
+    // an aria label should be added to provided context to screen readers
+    ariaLabel: string
 }
 
 export interface AddPopupResult {
@@ -423,7 +427,8 @@ export class PopupService extends BeanStub {
             alwaysOnTop,
             afterGuiAttached,
             positionCallback,
-            anchorToElement
+            anchorToElement,
+            ariaLabel
         } = params;
 
         const eDocument = this.gridOptionsWrapper.getDocument();
@@ -463,6 +468,8 @@ export class PopupService extends BeanStub {
         addCssClass(eWrapper, 'ag-popup');
         addCssClass(eChild, this.gridOptionsWrapper.isEnableRtl() ? 'ag-rtl' : 'ag-ltr');
         addCssClass(eChild, 'ag-popup-child');
+        setAriaRole(eChild, 'dialog');
+        setAriaLabel(eChild, ariaLabel);
 
         if (this.focusService.isKeyboardMode()) {
             addCssClass(eChild, FocusService.AG_KEYBOARD_FOCUS);

@@ -5,7 +5,7 @@ import { escapeString } from "../utils/string";
 import { addCssClass, removeCssClass } from "../utils/dom";
 import { findIndex } from "../utils/array";
 import { KeyCode } from '../constants/keyCode';
-import { setAriaSelected } from '../utils/aria';
+import { setAriaRole, setAriaSelected } from '../utils/aria';
 
 export interface ListOption {
     value: string;
@@ -79,8 +79,8 @@ export class AgList extends Component {
 
     private renderOption(value: string, text: string): void {
         const itemEl = document.createElement('div');
-        itemEl.setAttribute('role', 'option');
 
+        setAriaRole(itemEl, 'option');
         addCssClass(itemEl, 'ag-list-item');
         addCssClass(itemEl, `ag-${this.cssIdentifier}-list-item`);
 

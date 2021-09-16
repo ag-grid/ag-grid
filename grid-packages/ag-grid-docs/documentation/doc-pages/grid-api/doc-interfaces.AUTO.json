@@ -16108,7 +16108,8 @@
     },
     "anchorToElement": {
       "type": { "returnType": "HTMLElement", "optional": true }
-    }
+    },
+    "ariaLabel": { "type": { "returnType": "string", "optional": false } }
   },
   "AddPopupResult": {
     "hideFunc": {

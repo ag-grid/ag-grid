@@ -143,11 +143,14 @@ export class MenuItemComponent extends Component {
         const positionCallback = this.popupService.positionPopupForMenu.bind(this.popupService,
             { eventSource: eGui, ePopup });
 
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+
         const addPopupRes = this.popupService.addPopup({
             modal: true,
             eChild: ePopup,
             positionCallback: positionCallback,
-            anchorToElement: eGui
+            anchorToElement: eGui,
+            ariaLabel: translate('ariaLabelSubMenu', 'SubMenu')
         });
 
         this.subMenuIsOpen = true;

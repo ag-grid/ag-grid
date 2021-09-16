@@ -160,6 +160,8 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             nudgeY: 1
         };
 
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+
         const addPopupRes = this.popupService.addPopup({
             modal: true,
             eChild: eMenuGui,
@@ -175,7 +177,8 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
                 }, positionParams));
             },
             // so when browser is scrolled down, or grid is scrolled, context menu stays with cell
-            anchorToElement: anchorToElement
+            anchorToElement: anchorToElement,
+            ariaLabel: translate('ariaLabelContextMenu', 'Context Menu')
         });
 
         if (addPopupRes) {
