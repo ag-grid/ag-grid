@@ -1,4 +1,4 @@
-import ContinuousScale from "../../scale/continuousScale";
+import { ContinuousScale } from "../../scale/continuousScale";
 import { LinearScale } from "../../scale/linearScale";
 import { extent } from "../../util/array";
 import { isContinuous } from "../../util/value";

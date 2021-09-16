@@ -9,7 +9,7 @@ import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } f
 import { ChartAxisDirection } from "../../chartAxis";
 import { getMarker } from "../../marker/util";
 import { TooltipRendererResult, toTooltipHtml } from "../../chart";
-import ContinuousScale from "../../../scale/continuousScale";
+import { ContinuousScale } from "../../../scale/continuousScale";
 import { sanitizeHtml } from "../../../util/sanitize";
 import { Label } from "../../label";
 import { Text } from "../../../scene/shape/text";
@@ -288,7 +288,7 @@ export class ScatterSeries extends CartesianSeries {
             const x = xScale.convert(xy[0]) + xOffset;
             const y = yScale.convert(xy[1]) + yOffset;
 
-            if (!this.checkRangeXY(x, y)) {
+            if (!this.checkRangeXY(x, y, xAxis, yAxis)) {
                 continue;
             }
 

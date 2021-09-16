@@ -1,4 +1,4 @@
-import ContinuousScale from "./continuousScale";
+import { ContinuousScale } from "./continuousScale";
 import ticks, { tickIncrement } from "../util/ticks";
 import { tickFormat } from "../util/numberFormat";
 

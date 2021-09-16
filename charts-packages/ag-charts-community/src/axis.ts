@@ -1,4 +1,4 @@
-import Scale from "./scale/scale";
+import { Scale } from "./scale/scale";
 import { Group } from "./scene/group";
 import { Selection } from "./scene/selection";
 import { Line } from "./scene/shape/line";
