@@ -4,7 +4,7 @@ import { MutableRefObject } from 'react';
 export const showJsComp = (
     compDetails: UserCompDetails | undefined, 
     context: Context, eParent: HTMLElement, 
-    ref?: MutableRefObject<any>
+    ref?: MutableRefObject<any> | ((ref: any)=>void)
 )  => {
 
     const doNothing = !compDetails || compDetails.componentFromFramework;
@@ -20,9 +20,7 @@ export const showJsComp = (
 
     eParent.appendChild(compGui);
 
-    if (ref) {
-        ref.current = comp;
-    }
+    setRef(ref, comp);
 
     return () => {
         const compGui = comp.getGui();
@@ -34,10 +32,22 @@ export const showJsComp = (
         context.destroyBean(comp);
 
         if (ref) {
-            ref.current = undefined;
+            setRef(ref, undefined);
         }
     };
 }
+
+const setRef = (ref: MutableRefObject<any> | ((ref: any)=>void) | undefined, value: any) => {
+    if (!ref) { return; }
+    
+    if (ref instanceof Function) {
+        const refCallback = ref as (ref: any)=>void;
+        refCallback(value);
+    } else {
+        const refObj = ref as MutableRefObject<any>;
+        refObj.current = value;
+    }
+};
 
 export const createJsComp = (
     context: Context,

@@ -95,6 +95,22 @@ Below is an example showing different types of Cell Editors and also mixing Reac
 
 <grid-example title='React UI Editors' name='editors' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>
 
+See [Cell Editors](/component-cell-editor/) for full details on creating Cell Editors.
+
+## Customising Headers
+
+When React UI also works with React Headers.
+
+Below is an example showing a grid configure with a custom React Header component.
+
+* The Athlete Column uses a simple Header Comp that just displays the Header name.
+* The Age Column uses a simple Header Comp that displays the Header name along with an animated gif.
+* The Country Column uses a Header Comp that displays the Header name and allows sorting (by clicking on the header).
+
+<grid-example title='React UI Headers' name='headers' type='react' options=' { "showImportsDropdown": false }'></grid-example>
+
+See [Header Components](/component-header/) for full details on creating Header Components.
+
 ## No Wasted Renders
 
 Before AG Grid React UI, it was tricky to manage wasted React renders, as the grid wasn't participating as part of the React application. Now that the grid is written in React, it participates fully in the React rendering..
