@@ -214,7 +214,7 @@ export class Sector extends Shape {
         this.matrix.toContext(ctx);
 
         this.updatePath();
-        this.scene!.appendPath(this.path);
+        this.path.draw(ctx);
 
         this.fillStroke(ctx);
 

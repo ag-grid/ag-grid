@@ -16,6 +16,35 @@ export class Path2D {
     private static xmlDeclaration = '<?xml version="1.0" encoding="UTF-8"?>';
     private static xmlns = 'http://www.w3.org/2000/svg';
 
+    draw(ctx: CanvasRenderingContext2D) {
+        const commands = this.commands;
+        const params = this.params;
+        const n = commands.length;
+        let j = 0;
+
+        ctx.beginPath();
+        for (let i = 0; i < n; i++) {
+            switch (commands[i]) {
+                case 'M':
+                    ctx.moveTo(params[j++], params[j++]);
+                    break;
+                case 'L':
+                    ctx.lineTo(params[j++], params[j++]);
+                    break;
+                case 'C':
+                    ctx.bezierCurveTo(
+                        params[j++], params[j++],
+                        params[j++], params[j++],
+                        params[j++], params[j++]
+                    );
+                    break;
+                case 'Z':
+                    ctx.closePath();
+                    break;
+            }
+        }
+    }
+
     moveTo(x: number, y: number) {
         if (this.xy) {
             this.xy[0] = x;

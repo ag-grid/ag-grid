@@ -518,22 +518,6 @@ export abstract class Node { // Don't confuse with `window.Node`.
         ]).inverseTo(this.inverseMatrix);
     }
 
-    /**
-     * Scene nodes start rendering with the {@link Scene.root | root},
-     * where the `render` call propagates from parent nodes to their children.
-     * The root rendering is initiated by the {@link Scene.render} method,
-     * so if the `render` method of a node is called, that node belongs to a scene,
-     * and there is no need to check if node's {@link Node._scene} property
-     * is defined inside node's `render` method. For example, instead of doing this:
-     *
-     *     this.scene.appendPath(this.path);
-     *
-     * it's safe to do this:
-     *
-     *     this.scene!.appendPath(this.path);
-     *
-     * @param ctx The 2D canvas rendering context.
-     */
     abstract render(ctx: CanvasRenderingContext2D): void;
 
     /**
