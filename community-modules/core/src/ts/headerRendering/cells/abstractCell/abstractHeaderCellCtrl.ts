@@ -9,7 +9,6 @@ import { IHeaderCellComp } from "../column/headerCellCtrl";
 let instanceIdSequence = 0;
 
 export interface IAbstractHeaderCellComp {
-    focus(): void;
 }
 
 export class AbstractHeaderCellCtrl extends BeanStub {
@@ -23,6 +22,8 @@ export class AbstractHeaderCellCtrl extends BeanStub {
     private parentRowCtrl: HeaderRowCtrl;
 
     private abstractComp: IAbstractHeaderCellComp;
+
+    protected eGui: HTMLElement;
 
     constructor(columnGroupChild: IHeaderColumn, parentRowCtrl: HeaderRowCtrl) {
         super();
@@ -45,14 +46,14 @@ export class AbstractHeaderCellCtrl extends BeanStub {
         );
     }
 
-    protected setAbstractComp(abstractComp: IAbstractHeaderCellComp): void {
+    protected setAbstractComp(abstractComp: IAbstractHeaderCellComp, eGui: HTMLElement): void {
         this.abstractComp = abstractComp;
+        this.eGui = eGui;
     }
 
     public focus(): boolean {
-        if (!this.abstractComp) { return false; }
-
-        this.abstractComp.focus();
+        if (!this.eGui) { return false; }
+        this.eGui.focus();
         return true;
     }
 

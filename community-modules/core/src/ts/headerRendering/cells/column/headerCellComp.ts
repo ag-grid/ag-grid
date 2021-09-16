@@ -53,10 +53,8 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
         };
 
         const compProxy: IHeaderCellComp = {
-            focus: ()=> this.getFocusableElement().focus(),
             setWidth: width => eGui.style.width = width,
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
-            setResizeDisplayed: displayed => setDisplayed(this.eResize, displayed),
             setAriaSort: sort => sort ? setAriaSort(eGui, sort) : removeAriaSort(eGui),
             setColId: id => setAttribute('col-id', id),
             setTitle: title => setAttribute('title', title),

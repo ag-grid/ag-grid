@@ -75,4 +75,4 @@ The interfaces for the available options are as follows:
 
 ## Next Up
 
-Continue to the next section to learn about the: [Data Updates](/sparklines-data-updates/).
+Continue to the next section to learn about the: [Data Formats](/sparklines-data/).

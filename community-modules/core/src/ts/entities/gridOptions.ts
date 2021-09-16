@@ -98,6 +98,7 @@ import { ExcelExportParams, ExcelStyle } from "../interfaces/iExcelCreator";
 import { ILoadingCellRendererParams } from "../rendering/cellRenderers/loadingCellRenderer";
 
 export interface GridOptions {
+
     // ******************************************************************************************************
     // If you change the properties on this interface, you must also update PropertyKeys to be consistent. *
     // ******************************************************************************************************
@@ -114,6 +115,7 @@ export interface GridOptions {
     showOpenedGroup?: boolean;
     /** @deprecated */
     deltaRowDataMode?: boolean;
+
     /** @deprecated */
     deltaColumnMode?: boolean;
     /** @deprecated */

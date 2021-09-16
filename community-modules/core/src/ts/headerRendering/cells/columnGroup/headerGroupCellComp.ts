@@ -97,10 +97,9 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
         ));
 
         const compProxy: IHeaderGroupCellComp = {
-            focus: ()=> this.getFocusableElement().focus()
         };
 
-        this.ctrl.setComp(compProxy);
+        this.ctrl.setComp(compProxy, this.getGui());
     }
 
     public getColumn(): ColumnGroup {

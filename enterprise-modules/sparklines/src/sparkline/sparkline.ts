@@ -29,7 +29,7 @@ interface SeriesRect {
 }
 
 type Container = HTMLElement | undefined | null;
-type Data = number[] | [number | string | Date, number][] | undefined | null;
+type Data = number[] | [number | string | Date, number][] | { [key: string]: any }[] | undefined | null;
 type AxisType = 'number' | 'category' | 'time';
 type ScaleType = LinearScale | TimeScale | BandScale<string>;
 

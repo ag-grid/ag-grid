@@ -242,10 +242,10 @@
                         </div>
                         <div class="col-md-4">
                             <div>
-                                <img src='images/team/nathan.jpeg' alt="Nathan Gauge-Klein, General Council"/>
+                                <img src='images/team/nathan.jpeg' alt="Nathan Gauge-Klein, General Counsel"/>
                             </div>
                             <h3>Nathan Gauge-Klein</h3>
-                            <h4>General Council</h4>
+                            <h4>General Counsel</h4>
                         </div>
                         <div class="col-md-4">
                             <div>

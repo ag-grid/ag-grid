@@ -36,4 +36,4 @@ const gridOptions = {
 
 ## Next Up
 
-Continue to the next section to learn about the: [Column Sparkline](/column-sparkline/).
+Continue to the next section to learn about the: [Line Sparkline](/sparklines-line-sparkline/).

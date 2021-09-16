@@ -3,7 +3,6 @@ import { HeaderRowCtrl } from "../../row/headerRowCtrl";
 import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellCtrl";
 
 export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp {
-    focus(): void;
 }
 
 export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
@@ -12,7 +11,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
         super(columnGroupChild, parentRowCtrl);
     }
 
-    public setComp(comp: IHeaderGroupCellComp): void {
-        super.setAbstractComp(comp);
+    public setComp(comp: IHeaderGroupCellComp, eGui: HTMLElement): void {
+        super.setAbstractComp(comp, eGui);
     }
 }

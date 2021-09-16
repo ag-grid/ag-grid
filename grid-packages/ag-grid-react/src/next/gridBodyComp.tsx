@@ -7,6 +7,7 @@ import { BeansContext } from './beansContext';
 import useReactCommentEffect from './reactComment';
 import RowContainerComp from './rows/rowContainerComp';
 import { classesList } from './utils';
+import GridHeaderComp from './header/gridHeaderComp';
 
 interface SectionProperties {
     section: React.RefObject<HTMLDivElement>;
@@ -144,6 +145,7 @@ const GridBodyComp = () => {
 
     return (
         <div ref={ eRoot } className={ rootClasses } role="grid" unselectable="on" aria-colcount={ ariaColCount } aria-rowcount={ ariaRowCount }>
+            {/* <GridHeaderComp/> */}
             { createSection({ section: eTop, className: topClasses, style: topStyle, unselectable: 'on', children: [
                 RowContainerName.TOP_LEFT,
                 RowContainerName.TOP_CENTER,

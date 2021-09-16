@@ -13,7 +13,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
         super(columnGroupChild, parentRowCtrl);
     }
 
-    public setComp(comp: IHeaderFilterCellComp): void {
-        super.setAbstractComp(comp);
+    public setComp(comp: IHeaderFilterCellComp, eGui: HTMLElement): void {
+        super.setAbstractComp(comp, eGui);
     }
 }

@@ -14,7 +14,7 @@ export function isNumber(n: any): boolean {
 }
 
 export function isNumberObject(value: any): boolean {
-    return !!value && value.valueOf && isNumber(value.valueOf());
+    return !!value && value.hasOwnProperty('valueOf') && isNumber(value.valueOf());
 }
 
 export function isNumeric(value: any): boolean {
@@ -30,7 +30,7 @@ export function isString(value: any): boolean {
 }
 
 export function isStringObject(value: any): boolean {
-    return !!value && value.toString && isString(value.toString());
+    return !!value && value.hasOwnProperty('toString') && isString(value.toString());
 }
 
 export function isDiscrete(value: any): boolean {

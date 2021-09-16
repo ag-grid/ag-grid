@@ -4,6 +4,8 @@ import { extent } from "../../util/array";
 import { isContinuous } from "../../util/value";
 import { ChartAxis } from "../chartAxis";
 
+// Instead of clamping the values outside of domain to the range,
+// return NaNs to indicate invalid input.
 export function clamper(domain: number[]): (x: number) => number {
     let a = domain[0];
     let b = domain[domain.length - 1];

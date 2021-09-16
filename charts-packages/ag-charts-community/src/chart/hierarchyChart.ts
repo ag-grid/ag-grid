@@ -1,5 +1,5 @@
-import { ClipRect } from "../main";
 import { BBox } from "../scene/bbox";
+import { ClipRect } from "../scene/clipRect";
 import { Chart } from "./chart";
 
 export class HierarchyChart extends Chart {

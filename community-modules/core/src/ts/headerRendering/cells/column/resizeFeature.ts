@@ -3,6 +3,7 @@ import { Constants } from "../../../constants/constants";
 import { BeanStub } from "../../../context/beanStub";
 import { Autowired, PostConstruct } from "../../../context/context";
 import { Column } from "../../../entities/column";
+import { setDisplayed } from "../../../utils/dom";
 import { TouchListener } from "../../../widgets/touchListener";
 import { HorizontalResizeService } from "../../common/horizontalResizeService";
 import { HeaderCellCtrl, IHeaderCellComp } from "./headerCellCtrl";
@@ -42,7 +43,7 @@ export class ResizeFeature extends BeanStub {
         let canAutosize: boolean;
 
         const addResize = () => {
-            this.comp.setResizeDisplayed(canResize);
+            setDisplayed(this.eResize, canResize);
 
             if (!canResize) { return; }
 

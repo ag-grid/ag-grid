@@ -38,15 +38,20 @@ export class HeaderRowContainerComp extends Component {
         this.selectAndSetTemplate();
 
         const compProxy: IHeaderRowContainerComp = {
+            addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
+            setCtrls: ctrls => this.setCtrls(ctrls),
+            
+            // only gets called for center section
             setCenterWidth: width => this.eCenterContainer.style.width = width,
             setContainerTransform: transform => this.eCenterContainer.style.transform = transform,
-            setContainerWidth: width => {
-                this.eRowContainer.style.width = width;
-                this.eRowContainer.style.maxWidth = width;
-                this.eRowContainer.style.minWidth = width;
-            },
-            addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
-            setCtrls: ctrls => this.setCtrls(ctrls)
+
+            // only gets called for pinned sections
+            setPinnedContainerWidth: width => {
+                const eGui = this.getGui();
+                eGui.style.width = width;
+                eGui.style.maxWidth = width;
+                eGui.style.minWidth = width;
+            }
         };
 
         const ctrl = this.createManagedBean(new HeaderRowContainerCtrl(this.pinned));

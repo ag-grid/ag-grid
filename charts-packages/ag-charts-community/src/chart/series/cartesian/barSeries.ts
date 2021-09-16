@@ -19,7 +19,6 @@ import { equal } from "../../../util/equal";
 import { reactive, TypedEvent } from "../../../util/observable";
 import Scale from "../../../scale/scale";
 import { sanitizeHtml } from "../../../util/sanitize";
-import { Shape } from "../../../scene/shape/shape";
 import { isNumber } from "../../../util/value";
 
 export interface BarSeriesNodeClickEvent extends TypedEvent {

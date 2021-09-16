@@ -23,7 +23,7 @@ export interface IHeaderRowComp {
     setHeight(height: string): void;
     setHeaderCtrls(ctrls: AbstractHeaderCellCtrl[]): void;
     setWidth(width: string): void;
-    setRowIndex(rowIndex: number): void;
+    setAriaRowIndex(rowIndex: number): void;
 }
 
 let instanceIdSequence = 0;
@@ -68,7 +68,7 @@ export class HeaderRowCtrl extends BeanStub {
             this.comp.setTransform('translateZ(0)');
         }
 
-        comp.setRowIndex(this.rowIndex);
+        comp.setAriaRowIndex(this.rowIndex + 1);
     }
 
     private addEventListeners(): void {

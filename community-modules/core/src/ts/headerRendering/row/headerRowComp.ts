@@ -46,7 +46,7 @@ export class HeaderRowComp extends Component {
             setTop: top => this.getGui().style.top = top,
             setHeaderCtrls: ctrls => this.setHeaderCtrls(ctrls),
             setWidth: width => this.getGui().style.width = width,
-            setRowIndex: rowIndex => setAriaRowIndex(this.getGui(), rowIndex + 1)
+            setAriaRowIndex: rowIndex => setAriaRowIndex(this.getGui(), rowIndex)
         };
 
         this.ctrl.setComp(compProxy);

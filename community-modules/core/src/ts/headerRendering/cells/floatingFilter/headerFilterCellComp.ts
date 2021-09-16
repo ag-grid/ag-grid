@@ -79,10 +79,9 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
         this.addManagedListener(this.eButtonShowMainFilter, 'click', this.showParentFilter.bind(this));
 
         const compProxy: IHeaderFilterCellComp = {
-            focus: ()=> this.getFocusableElement().focus()
         };
 
-        this.ctrl.setComp(compProxy);
+        this.ctrl.setComp(compProxy, this.getGui());
     }
 
     public getColumn(): Column {
