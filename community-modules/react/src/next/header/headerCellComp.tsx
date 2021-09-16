@@ -1,6 +1,6 @@
-import React, { memo, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { BeansContext } from '../beansContext';
-import { ColumnSortState, HeaderCellCtrl, HeaderRowType, IHeader, IHeaderCellComp, UserCompDetails } from '@ag-grid-community/core';
+import { ColumnSortState, HeaderCellCtrl, IHeader, IHeaderCellComp, UserCompDetails } from '@ag-grid-community/core';
 import { CssClasses, isComponentStateless } from '../utils';
 import { showJsComp } from '../jsComp';
 
@@ -18,14 +18,12 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
 
     const eGui = useRef<HTMLDivElement>(null);
     const eResize = useRef<HTMLDivElement>(null);
-    const userCompRef = useRef<IHeader>(null);
+    const userCompRef = useRef<IHeader>();
 
     const { ctrl } = props;
 
     useEffect(() => {
 
-        setCssClasses(prev => prev.setClass('ag-header-cell', true));
-        
         const compProxy: IHeaderCellComp = {
             setWidth: width => setWidth(width),
             addOrRemoveCssClass: (name, on) => setCssClasses(prev => prev.setClass(name, on)),
@@ -41,24 +39,34 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
 
     }, []);
 
+    // js comps
+    useEffect(() => {
+        return showJsComp(compDetails, context, eGui.current!, userCompRef);
+    }, [compDetails]);
+
+    // add drag handling, must be done after component is added to the dom
+    useEffect(()=> {
+        let userCompDomElement: HTMLElement | undefined = undefined;
+        eGui.current!.childNodes.forEach( node => {
+            if (node!=null && node!==eResize.current) {
+                userCompDomElement = node as HTMLElement;
+            }
+        });
+
+        ctrl.setDragSource(userCompDomElement);
+    }, [compDetails]);
+
     const style = useMemo( ()=> ({
         width: width
     }), [width]);
 
-    const className = useMemo( ()=> {
-        const res = cssClasses.toString();
-        return 'ag-header-cell ' + res;
-    }, [cssClasses] );
+    const className = useMemo( ()=> 'ag-header-cell ' + cssClasses.toString(), [cssClasses] );
 
     const userCompStateless = useMemo( ()=> {
         const res = compDetails 
                     && compDetails.componentFromFramework 
                     && isComponentStateless(compDetails.componentClass);
         return !!res;
-    }, [compDetails]);
-
-    useEffect(() => {
-        return showJsComp(compDetails, context, eGui.current!, userCompRef);
     }, [compDetails]);
 
     const reactUserComp = compDetails && compDetails.componentFromFramework;
@@ -68,7 +76,7 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
         <div ref={eGui} className={className} style={style} title={title} col-id={colId} 
                     aria-sort={ariaSort} role="columnheader" unselectable="on" tabIndex={-1}
                     aria-describedby={ariaDescribedBy}>
-            { reactUserComp && userCompStateless && <UserCompClass { ...compDetails!.params }/> }
+            { reactUserComp && userCompStateless && <UserCompClass { ...compDetails!.params } /> }
             { reactUserComp && !userCompStateless && <UserCompClass { ...compDetails!.params } ref={ userCompRef }/> }
             <div ref={eResize} className="ag-header-cell-resize" role="presentation"></div>
         </div>

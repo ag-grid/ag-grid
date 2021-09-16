@@ -1,0 +1,14 @@
+.my-spinner {
+  width: 40px;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+
+.image-header {
+  margin-left: 20px;
+}
+
+.my-header {
+  width: 100%;
+}

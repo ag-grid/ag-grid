@@ -49,7 +49,6 @@ export class Path extends Shape {
 
     isPointInPath(x: number, y: number): boolean {
         const point = this.transformPoint(x, y);
-
         return this.path.closedPath && this.path.isPointInPath(point.x, point.y);
     }
 

@@ -1,10 +1,11 @@
+import { AbstractHeaderCellCtrl, HeaderCellCtrl, HeaderFilterCellComp, HeaderFilterCellCtrl, HeaderRowCtrl, HeaderRowType, IHeaderRowComp, _ } from 'ag-grid-community';
 import React, { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { BeansContext } from '../beansContext';
-import { IHeaderRowComp, HeaderRowCtrl, HeaderRowType, AbstractHeaderCellCtrl, HeaderCellCtrl } from 'ag-grid-community';
-import { CssClasses } from '../utils';
 import HeaderCellComp from './headerCellComp';
 
 const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
+
+    const {context} = useContext(BeansContext);
 
     const [ transform, setTransform ] = useState<string>();
     const [ height, setHeight ] = useState<string>();
@@ -13,11 +14,15 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
     const [ ariaRowIndex, setAriaRowIndex ] = useState<number>();
     const [ cellCtrls, setCellCtrls ] = useState<AbstractHeaderCellCtrl[]>([]);
 
+    const eGui = useRef<HTMLDivElement>(null);
+
     const { ctrl } = props;
 
     const typeColumn = ctrl.getType() === HeaderRowType.COLUMN;
     const typeGroup = ctrl.getType() === HeaderRowType.COLUMN_GROUP;
     const typeFilter = ctrl.getType() === HeaderRowType.FLOATING_FILTER;
+
+    const jsFilterCells = useRef<{[id: string]: HeaderFilterCellComp}>({});
 
     useEffect(() => {
 
@@ -32,6 +37,48 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
 
         ctrl.setComp(compProxy);
 
+    }, []);
+
+    const destroyJsFilterComps = useCallback( (cellCtrls: AbstractHeaderCellCtrl[])=> {
+        cellCtrls.forEach( cellCtrl => {
+            const comp = jsFilterCells.current[cellCtrl.getInstanceId()];
+            if (comp) {
+                const compGui = comp.getGui();
+                context.destroyBean(comp);
+                if (compGui && compGui.parentElement) {
+                    compGui.parentElement.removeChild(compGui);
+                }
+            }
+        });
+    }, []);
+
+    // manage filter comps, which are still JS
+    typeFilter && useEffect( ()=> {
+        const oldCompsMap = jsFilterCells.current;
+        jsFilterCells.current = {};
+        const newCompsMap = jsFilterCells.current;
+        cellCtrls.forEach(cellCtrl => {
+            const id = cellCtrl.getInstanceId();
+            const existing = oldCompsMap[id];
+            delete oldCompsMap[id];
+            if (existing) {
+                newCompsMap[id] = existing;
+            } else {
+                ////////// FIXME - need to consider cell order
+                const newComp = context.createBean(new HeaderFilterCellComp(cellCtrl as HeaderFilterCellCtrl))
+                eGui.current!.appendChild(newComp.getGui());
+            }
+        });
+        const oldComps = _.getAllValuesInObject(oldCompsMap);
+        destroyJsFilterComps(oldComps);
+    }, [cellCtrls]);
+
+    // when row comp is destroyed, make sure no child floating filters left
+    typeFilter && useEffect( ()=> {
+        const cellCtrls: AbstractHeaderCellCtrl[] = [];
+        _.getAllValuesInObject(jsFilterCells.current)
+            .forEach(comp => cellCtrls.push(comp.getCtrl()));
+        destroyJsFilterComps(cellCtrls);
     }, []);
 
     const style = useMemo( ()=> ({
@@ -55,18 +102,18 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
         switch (ctrl.getType()) {
             case HeaderRowType.COLUMN_GROUP :
                 return <span>Column Group</span>;
-            case HeaderRowType.FLOATING_FILTER :
-                return <span>Column Group</span>;
             default :
                 return <HeaderCellComp ctrl={cellCtrl as HeaderCellCtrl} key={cellCtrl.getInstanceId()} />;
         }
     }, []);
 
+
 ////// NOTE - we need to ignore the order of the columns if we are not applying dom order
 
+    // below, we are not doing floating filters, not yet
     return (
-        <div className={className} role="row" style={style} aria-rowindex={ariaRowIndex}>
-            { cellCtrls.map( createCellJsx ) }
+        <div ref={eGui} className={className} role="row" style={style} aria-rowindex={ariaRowIndex}>
+            { !typeFilter && cellCtrls.map( createCellJsx ) }
         </div>
     );
 };
