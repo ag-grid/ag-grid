@@ -6,7 +6,7 @@ import {
     IFloatingFilterParams,
     UserComponentFactory,
     Autowired,
-    FloatingFilterWrapper,
+    HeaderFilterCellComp,
     IFilterDef,
     AgPromise,
     IFilterComp,
@@ -100,7 +100,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
 
     private createFloatingFilter(filterDef: IFilterDef, params: IFloatingFilterParams): AgPromise<IFloatingFilterComp> | null {
         const defaultComponentName =
-            FloatingFilterWrapper.getDefaultFloatingFilterType(filterDef) || 'agTextColumnFloatingFilter';
+            HeaderFilterCellComp.getDefaultFloatingFilterType(filterDef) || 'agTextColumnFloatingFilter';
 
         return this.userComponentFactory.newFloatingFilterComponent(filterDef, params, defaultComponentName);
     }
