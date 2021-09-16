@@ -72,8 +72,8 @@ When inspecting the DOM you'll notice the following roles and properties have be
     - **aria-colindex** - announces the visible index of the cell.
     - **aria-selected** - only present if the cell is selectable, it announces the selection state.
     - **aria-expanded** - only present in a group cell, it announces the expand state.
-- **role="menu"** - element that serve as a container for a single levels of menu items.
-- **role="menuitem"** - marks an element as a menu item.
+- **role="tablist"** - element that serve as a container for a single levels of tab items.
+- **role="tab"** - marks an element as a tablist item.
 - **role="tree"** - element that serve as a container for items that could have multiple levels.
 - **role="treeitem"** - marks an element as an item of a tree.
     - **aria-level** - announces the current level of the tree.
