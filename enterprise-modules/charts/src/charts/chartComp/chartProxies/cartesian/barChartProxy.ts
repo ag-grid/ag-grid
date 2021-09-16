@@ -52,12 +52,20 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
             }
         ];
 
+        // special handling to add a number axis label formatter to show '%' for normalized charts
+        const normalised = _.includes([ChartType.NormalizedColumn, ChartType.NormalizedBar], this.chartType);
+        if (normalised) {
+            const numberAxis = agChartOptions.axes[1];
+            if (numberAxis.label && !numberAxis.label.formatter) {
+                numberAxis.label = {...numberAxis.label, formatter: params => Math.round(params.value) + '%'};
+            }
+        }
+
         const {chartType} = this;
         const isGrouped = !this.crossFiltering && (chartType === ChartType.GroupedColumn || chartType === ChartType.GroupedBar);
         const isNormalized = !this.crossFiltering && (chartType === ChartType.NormalizedColumn || chartType === ChartType.NormalizedBar);
 
         const {seriesDefaults} = this.iChartOptions;
-
         agChartOptions.series = [{
             type: isColumn ? 'column' : 'bar',
             grouped: isGrouped,
