@@ -7869,15 +7869,8 @@
       "type": { "returnType": "string", "optional": false }
     }
   },
-  "IAbstractHeaderCellComp": {
-    "focus": {
-      "type": { "arguments": {}, "returnType": "void", "optional": false }
-    }
-  },
+  "IAbstractHeaderCellComp": {},
   "IHeaderCellComp": {
-    "focus": {
-      "type": { "arguments": {}, "returnType": "void", "optional": false }
-    },
     "setWidth": {
       "type": {
         "arguments": { "width": "string" },
@@ -7888,13 +7881,6 @@
     "addOrRemoveCssClass": {
       "type": {
         "arguments": { "cssClassName": "string", "on": "boolean" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "setResizeDisplayed": {
-      "type": {
-        "arguments": { "displayed": "boolean" },
         "returnType": "void",
         "optional": false
       }
@@ -7930,7 +7916,7 @@
     "getUserCompInstance": {
       "type": {
         "arguments": {},
-        "returnType": "IHeaderComp | undefined",
+        "returnType": "IHeader | undefined",
         "optional": false
       }
     },
@@ -8047,11 +8033,7 @@
     "selected": { "type": { "returnType": "number", "optional": false } },
     "notSelected": { "type": { "returnType": "number", "optional": false } }
   },
-  "IHeaderGroupCellComp": {
-    "focus": {
-      "type": { "arguments": {}, "returnType": "void", "optional": false }
-    }
-  },
+  "IHeaderGroupCellComp": {},
   "IHeaderGroupParams": {
     "columnGroup": {
       "type": { "returnType": "ColumnGroup", "optional": false }
@@ -8102,11 +8084,7 @@
       }
     }
   },
-  "IHeaderFilterCellComp": {
-    "focus": {
-      "type": { "arguments": {}, "returnType": "void", "optional": false }
-    }
-  },
+  "IHeaderFilterCellComp": {},
   "DropListener": {
     "getIconName": {
       "type": {
@@ -8235,7 +8213,7 @@
         "optional": false
       }
     },
-    "setRowIndex": {
+    "setAriaRowIndex": {
       "type": {
         "arguments": { "rowIndex": "number" },
         "returnType": "void",
@@ -8258,7 +8236,7 @@
         "optional": false
       }
     },
-    "setContainerWidth": {
+    "setPinnedContainerWidth": {
       "type": {
         "arguments": { "width": "string" },
         "returnType": "void",

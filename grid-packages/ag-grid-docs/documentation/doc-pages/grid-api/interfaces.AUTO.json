@@ -4419,19 +4419,17 @@
     "type": { "currentValue": "any", "previousValue": "any", "type": "string" },
     "docs": { "type": "/** Event identifier */" }
   },
-  "IAbstractHeaderCellComp": { "meta": {}, "type": { "focus()": "void" } },
+  "IAbstractHeaderCellComp": { "meta": {}, "type": {} },
   "IHeaderCellComp": {
     "meta": {},
     "type": {
-      "focus()": "void",
       "setWidth(width: string)": "void",
       "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
-      "setResizeDisplayed(displayed: boolean)": "void",
       "setAriaSort(sort: ColumnSortState | undefined)": "void",
       "setColId(id: string)": "void",
       "setAriaDescribedBy(id: string | undefined)": "void",
       "setCompDetails(compDetails: UserCompDetails)": "void",
-      "getUserCompInstance()": "IHeaderComp | undefined",
+      "getUserCompInstance()": "IHeader | undefined",
       "setTitle(title: string | undefined)": "void"
     }
   },
@@ -4491,7 +4489,7 @@
     "meta": {},
     "type": { "selected": "number", "notSelected": "number" }
   },
-  "IHeaderGroupCellComp": { "meta": {}, "type": { "focus()": "void" } },
+  "IHeaderGroupCellComp": { "meta": {}, "type": {} },
   "IHeaderGroupParams": {
     "meta": {},
     "type": {
@@ -4522,7 +4520,7 @@
       "init?(params: IHeaderGroupParams)": "/** The init(params) method is called on the component once. See below for details on the parameters. */"
     }
   },
-  "IHeaderFilterCellComp": { "meta": {}, "type": { "focus()": "void" } },
+  "IHeaderFilterCellComp": { "meta": {}, "type": {} },
   "DropListener": {
     "meta": {},
     "type": {
@@ -4580,7 +4578,7 @@
       "setHeight(height: string)": "void",
       "setHeaderCtrls(ctrls: AbstractHeaderCellCtrl[])": "void",
       "setWidth(width: string)": "void",
-      "setRowIndex(rowIndex: number)": "void"
+      "setAriaRowIndex(rowIndex: number)": "void"
     }
   },
   "IHeaderRowContainerComp": {
@@ -4588,7 +4586,7 @@
     "type": {
       "setCenterWidth(width: string)": "void",
       "setContainerTransform(transform: string)": "void",
-      "setContainerWidth(width: string)": "void",
+      "setPinnedContainerWidth(width: string)": "void",
       "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
       "setCtrls(ctrls: HeaderRowCtrl[])": "void"
     }
