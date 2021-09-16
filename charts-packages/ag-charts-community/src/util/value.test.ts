@@ -1,5 +1,5 @@
 import { describe, expect, test, it } from "@jest/globals";
-import { isNumber, isContinuous, isComparable, isStringObject } from "./value";
+import { isNumber, isContinuous, isComparable, isStringObject, isNumberObject } from "./value";
 
 test('isNumber', () => {
     expect(isNumber(1)).toBe(true);
@@ -19,6 +19,26 @@ test('isNumber', () => {
     expect(isNumber({
         valueOf: () => 0
     })).toBe(false);
+});
+
+test('isNumberObject', () => {
+    expect(isNumberObject(1)).toBe(false);
+    expect(isNumberObject(0)).toBe(false);
+    expect(isNumberObject(-1)).toBe(false);
+    expect(isNumberObject(Number(1))).toBe(false);
+    expect(isNumberObject(Number('wow'))).toBe(false);
+    expect(isNumberObject(Infinity)).toBe(false);
+    expect(isNumberObject(-Infinity)).toBe(false);
+    expect(isNumberObject(NaN)).toBe(false);
+    expect(isNumberObject(null)).toBe(false);
+    expect(isNumberObject(undefined)).toBe(false);
+    expect(isNumberObject('1')).toBe(false);
+    expect(isNumberObject({})).toBe(false);
+    expect(isNumberObject([5])).toBe(false);
+    expect(isNumberObject('')).toBe(false);
+    expect(isNumberObject({
+        valueOf: () => 0
+    })).toBe(true);
 });
 
 test('isContinuous', () => {

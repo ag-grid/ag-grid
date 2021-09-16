@@ -14,7 +14,7 @@ export function isNumber(n: any): boolean {
 }
 
 export function isNumberObject(value: any): boolean {
-    return !!value && value.valueOf && isNumber(value.valueOf());
+    return !!value && value.hasOwnProperty('valueOf') && isNumber(value.valueOf());
 }
 
 export function isNumeric(value: any): boolean {
