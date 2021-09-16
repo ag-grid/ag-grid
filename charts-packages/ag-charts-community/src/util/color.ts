@@ -74,7 +74,7 @@ export class Color {
         }
 
         if (parts.length >= 3) {
-            if (parts.every((p: number) => !isNaN(p))) {
+            if (parts.every((p: number) => p >= 0)) {
                 if (parts.length === 3) {
                     parts.push(255);
                 }

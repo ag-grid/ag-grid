@@ -13,7 +13,10 @@ import {
     ToolPanelDef,
     GridApi,
     ToolPanelVisibleChangedEvent,
-    Autowired
+    Autowired,
+    ManagedFocusFeature,
+    FocusService,
+    KeyCode
 } from "@ag-grid-community/core";
 import { SideBarButtonClickedEvent, SideBarButtonsComp } from "./sideBarButtonsComp";
 import { ToolPanelWrapper } from "./toolPanelWrapper";
@@ -24,8 +27,9 @@ export interface IToolPanelChildComp extends IComponent<any> {
 
 export class SideBarComp extends Component implements ISideBar {
 
-    @RefSelector('sideBarButtons') private sideBarButtonsComp: SideBarButtonsComp;
     @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('focusService') private focusService: FocusService;
+    @RefSelector('sideBarButtons') private sideBarButtonsComp: SideBarButtonsComp;
 
     private toolPanelWrappers: ToolPanelWrapper[] = [];
 
@@ -49,6 +53,73 @@ export class SideBarComp extends Component implements ISideBar {
         });
 
         this.gridApi.registerSideBarComp(this);
+        this.createManagedBean(new ManagedFocusFeature(
+            this.getFocusableElement(),
+            {
+                onTabKeyDown: this.onTabKeyDown.bind(this),
+                handleKeyDown: this.handleKeyDown.bind(this)
+            }
+        ));
+    }
+
+    protected onTabKeyDown(e: KeyboardEvent) {
+        if (e.defaultPrevented) { return; }
+
+        const { focusService, sideBarButtonsComp } = this;
+        const eGui = this.getGui();
+        const sideBarGui = sideBarButtonsComp.getGui();
+        const activeElement = document.activeElement as HTMLElement;
+        const openPanel = eGui.querySelector('.ag-tool-panel-wrapper:not(.ag-hidden)') as HTMLElement;
+
+        if (!openPanel) { return; }
+
+        if (sideBarGui.contains(activeElement)) {
+            if (focusService.focusInto(openPanel, e.shiftKey)) {
+                e.preventDefault();
+            }
+        } else {
+            if (!focusService.isFocusUnderManagedComponent(openPanel) && e.shiftKey) {
+                const firstFocusableEl = focusService.findFocusableElements(openPanel)[0];
+                if (document.activeElement === firstFocusableEl) {
+                    const selectedButton = sideBarGui.querySelector('.ag-selected button') as HTMLElement;
+
+                    if (selectedButton) {
+                        e.preventDefault();
+                        selectedButton.focus();
+                        
+                    }
+                }
+            }
+        }
+    }
+
+    protected handleKeyDown(e: KeyboardEvent): void {
+        if (!this.sideBarButtonsComp.getGui().contains(document.activeElement)) { return; }
+        const sideBarGui = this.sideBarButtonsComp.getGui();
+        const buttons: HTMLElement[] = Array.prototype.slice.call(sideBarGui.querySelectorAll('.ag-side-button'));
+        const currentButton = document.activeElement;
+        const currentPos = _.findIndex(buttons, button => button.contains(currentButton))
+        let nextPos: number | null = null;
+
+        switch (e.keyCode) {
+            case KeyCode.LEFT:
+            case KeyCode.UP:
+                nextPos = Math.max(0, currentPos - 1);
+                break;
+            case KeyCode.RIGHT:
+            case KeyCode.DOWN:
+                nextPos = Math.min(currentPos + 1, buttons.length - 1);
+                break;
+        }
+
+        if (nextPos === null) { return; }
+
+        const innerButton = buttons[nextPos].querySelector('button');
+
+        if (innerButton) {
+            innerButton.focus();
+            e.preventDefault();
+        }
     }
 
     private onToolPanelButtonClicked(event: SideBarButtonClickedEvent): void {

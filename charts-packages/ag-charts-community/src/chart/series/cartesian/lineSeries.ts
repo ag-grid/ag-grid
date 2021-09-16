@@ -16,7 +16,6 @@ import { ChartAxisDirection } from "../../chartAxis";
 import { getMarker } from "../../marker/util";
 import { reactive, PropertyChangeEvent, TypedEvent } from "../../../util/observable";
 import { TooltipRendererResult, toTooltipHtml } from "../../chart";
-import Scale from "../../../scale/scale";
 import { interpolate } from "../../../util/string";
 import { FontStyle, FontWeight } from "../../../scene/shape/text";
 import { Label } from "../../label";
@@ -219,7 +218,7 @@ export class LineSeries extends CartesianSeries {
         this.updateNodes();
     }
 
-    updateSelections() {
+    private updateSelections() {
         if (!this.nodeDataPending) {
             return;
         }
@@ -227,18 +226,6 @@ export class LineSeries extends CartesianSeries {
 
         this.updateLinePath(); // this will create node data too
         this.updateNodeSelection();
-    }
-
-    private getXYDatums(i: number, xData: number[], yData: number[],
-                      xScale: Scale<any, any>, yScale: Scale<any, any>): [number, number] | undefined {
-        const isContinuousX = xScale instanceof ContinuousScale;
-        const isContinuousY = yScale instanceof ContinuousScale;
-        const xDatum = xData[i];
-        const yDatum = yData[i];
-        const noDatum =
-            yDatum == null || (isContinuousY && (isNaN(yDatum) || !isFinite(yDatum))) ||
-            xDatum == null || (isContinuousX && (isNaN(xDatum) || !isFinite(xDatum)));
-        return noDatum ? undefined : [xDatum, yDatum];
     }
 
     private updateLinePath() {
@@ -251,6 +238,8 @@ export class LineSeries extends CartesianSeries {
         const { xData, yData, lineNode, label } = this;
         const xScale = xAxis.scale;
         const yScale = yAxis.scale;
+        const isContinuousX = xScale instanceof ContinuousScale;
+        const isContinuousY = yScale instanceof ContinuousScale;
         const xOffset = (xScale.bandwidth || 0) / 2;
         const yOffset = (yScale.bandwidth || 0) / 2;
         const linePath = lineNode.path;
@@ -261,7 +250,7 @@ export class LineSeries extends CartesianSeries {
         let prevXInRange: undefined | -1 | 0 | 1 = undefined;
         let nextXYDatums: [number, number] | undefined = undefined;
         for (let i = 0; i < xData.length; i++) {
-            const xyDatums = nextXYDatums || this.getXYDatums(i, xData, yData, xScale, yScale);
+            const xyDatums = nextXYDatums || this.checkDomainXY(xData[i], yData[i], isContinuousX, isContinuousY);
 
             if (!xyDatums) {
                 prevXInRange = undefined;
@@ -269,9 +258,14 @@ export class LineSeries extends CartesianSeries {
             } else {
                 const [xDatum, yDatum] = xyDatums;
                 const x = xScale.convert(xDatum) + xOffset;
+                if (isNaN(x)) {
+                    prevXInRange = undefined;
+                    moveTo = true;
+                    continue;
+                }
                 const tolerance = (xScale.bandwidth || (this.marker.size * 0.5 + (this.marker.strokeWidth || 0))) + 1;
 
-                nextXYDatums = this.getXYDatums(i + 1, xData, yData, xScale, yScale);
+                nextXYDatums = this.checkDomainXY(xData[i + 1], yData[i + 1], isContinuousX, isContinuousY);
                 const xInRange = xAxis.inRangeEx(x, 0, tolerance);
                 const nextXInRange = nextXYDatums && xAxis.inRangeEx(xScale.convert(nextXYDatums[0]) + xOffset, 0, tolerance);
                 if (xInRange === -1 && nextXInRange === -1) {

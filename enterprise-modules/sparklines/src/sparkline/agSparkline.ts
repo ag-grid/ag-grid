@@ -35,7 +35,11 @@ export abstract class AgSparkline {
             options.data = data;
         }
 
-        const sparkline = getSparklineInstance(options.type, tooltip);
+        const sparkline = getSparklineInstance(options.type);
+
+        if (tooltip) {
+            sparkline.tooltip = tooltip;
+        }
 
         initSparkline(sparkline, options);
 
@@ -49,15 +53,15 @@ export abstract class AgSparkline {
     }
 }
 
-function getSparklineInstance(type: string = 'line', tooltip: any): any {
+function getSparklineInstance(type: string = 'line'): any {
     switch (type) {
         case 'column':
-            return new ColumnSparkline(window.document, tooltip);
+            return new ColumnSparkline();
         case 'area':
-            return new AreaSparkline(window.document, tooltip);
+            return new AreaSparkline();
         case 'line':
         default:
-            return new LineSparkline(window.document, tooltip);
+            return new LineSparkline();
     }
 }
 
@@ -83,6 +87,8 @@ function initSparkline(sparkline: SparklineType, options: any) {
     setValueIfPropertyExists(sparkline, 'width', options.width, options);
     setValueIfPropertyExists(sparkline, 'height', options.height, options);
     setValueIfPropertyExists(sparkline, 'title', options.title, options);
+    setValueIfPropertyExists(sparkline, 'xKey', options.xKey, options);
+    setValueIfPropertyExists(sparkline, 'yKey', options.yKey, options);
 
     if (options.padding) {
         initPaddingOptions(sparkline.padding, options.padding);
@@ -96,7 +102,7 @@ function initSparkline(sparkline: SparklineType, options: any) {
         initHighlightStyleOptions(sparkline.highlightStyle, options.highlightStyle);
     }
 
-    if(options.tooltip) {
+    if (options.tooltip && sparkline.tooltip) {
         initTooltipOptions(sparkline.tooltip, options.tooltip);
     }
 }
@@ -171,6 +177,7 @@ function initLineOptions(target: SparklineLine, options: any) {
 }
 
 function initAxisOptions(target: SparklineAxis, options: any) {
+    setValueIfPropertyExists(target, 'type', options.type, options);
     setValueIfPropertyExists(target, 'stroke', options.stroke, options);
     setValueIfPropertyExists(target, 'strokeWidth', options.strokeWidth, options);
 }

@@ -171,6 +171,8 @@ It is also possible to perform some post-sorting if you require additional contr
 
 This is provided via the `postSort` grid callback function as shown below:
 
+<api-documentation source='grid-callbacks/callbacks.json' section='sort' names='["postSort"]' ></api-documentation>
+
 <snippet>
 const gridOptions = {
     postSort: rowNodes => {

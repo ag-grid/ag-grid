@@ -44,7 +44,7 @@ const PRIMARY_COLS_LIST_PANEL_CLASS = 'ag-column-select-list';
 
 export class PrimaryColsListPanel extends Component {
 
-    public static TEMPLATE = /* html */ `<div class="${PRIMARY_COLS_LIST_PANEL_CLASS}" role="tree"></div>`;
+    public static TEMPLATE = /* html */ `<div class="${PRIMARY_COLS_LIST_PANEL_CLASS}" role="presentation"></div>`;
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('toolPanelColDefService') private colDefService: ToolPanelColDefService;
@@ -110,7 +110,10 @@ export class PrimaryColsListPanel extends Component {
         this.appendChild(this.virtualList.getGui());
 
         this.virtualList.setComponentCreator(
-            (item: ColumnModelItem, listItemElement: HTMLElement) => this.createComponentFromItem(item, listItemElement)
+            (item: ColumnModelItem, listItemElement: HTMLElement) => {
+                _.setAriaLevel(listItemElement, (item.getDept() + 1));
+                return this.createComponentFromItem(item, listItemElement);
+            }
         );
 
         if (this.columnModel.isReady()) {

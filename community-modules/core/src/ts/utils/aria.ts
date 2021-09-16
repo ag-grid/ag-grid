@@ -44,11 +44,21 @@ export function getAriaDescribedBy(element: HTMLElement): string {
 
 // ARIA ATTRIBUTE SETTERS
 export function setAriaLabel(element: HTMLElement, label: string): void {
-    setAriaAttribute(element, 'label', label);
+    const key = 'label';
+    if (label) {
+        setAriaAttribute(element, key, label);
+    } else {
+        removeAriaAttribute(element, key);
+    }
 }
 
 export function setAriaLabelledBy(element: HTMLElement, labelledBy: string): void {
-    setAriaAttribute(element, 'labelledby', labelledBy);
+    const key = 'labelledby';
+    if (labelledBy) {
+        setAriaAttribute(element, key, labelledBy);
+    } else {
+        removeAriaAttribute(element, key);
+    }
 }
 
 export function setAriaDescribedBy(element: HTMLElement, describedby: string | undefined): void {

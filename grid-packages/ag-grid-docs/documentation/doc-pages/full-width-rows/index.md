@@ -24,7 +24,6 @@ Below shows a simple example using full width. The following can be noted:
 
 ## Understanding Full Width
 
-
 A `fullWidth` (full width) component takes up the entire width of the grid. A full width component:
 
 - is not impacted by horizontal scrolling.
@@ -36,6 +35,9 @@ To use `fullWidth`, you must:
 
 1. Implement the `isFullWidthCell(rowNode)` callback, to tell the grid which rows should be treated as `fullWidth`.
 1. Provide a `fullWidthCellRenderer`, to tell the grid what `cellRenderer` to use when doing `fullWidth` rendering.
+
+<api-documentation source='grid-callbacks/callbacks.json' section='styling' names='["isFullWidthCell"]' config='{"overrideBottomMargin":"0rem"}'></api-documentation>
+<api-documentation source='grid-properties/properties.json' section='fullWidth' names='["fullWidthCellRenderer"]' ></api-documentation>
 
 The cell renderer can be any AG Grid cell renderer. Refer to
 [Cell Rendering](/component-cell-renderer/) on how to build cell renderers.

@@ -6,7 +6,7 @@ Value formatters allow you to format values for display. This is useful when dat
 
 Below shows the column definition properties for value formatters.
 
-<api-documentation source='column-properties/properties.json' section="columns" names='["valueFormatter"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
+<api-documentation source='column-properties/properties.json' section="columns" names='["valueFormatter"]' ></api-documentation>
 
 
 ```ts

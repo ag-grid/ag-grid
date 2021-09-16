@@ -114,7 +114,7 @@ export class AppComponent {
 }
 ```
 
-```jsx
+```html
 // app/app.component.html
 <ag-grid-angular
     #agGrid

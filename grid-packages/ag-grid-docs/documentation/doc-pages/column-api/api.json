@@ -69,7 +69,7 @@
             "description": "Sets the column widths on multiple columns. This method offers better performance than calling `setColumnWidth` multiple times. The finished flag gets included in the resulting event and not used internally by the grid. The finished flag is intended for dragging, where a dragging action will produce many `columnWidth` events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to `true`."
         },
         "sizeColumnsToFit": {
-            "description": "Gets the grid to size the columns to the specified width in pixels, e.g. `sizeColumnsToFix(900)`. To have the grid fit the columns to the grid's width, use the Grid API `gridApi.sizeColumnsToFit()` instead."
+            "description": "Gets the grid to size the columns to the specified width in pixels, e.g. `sizeColumnsToFit(900)`. To have the grid fit the columns to the grid's width, use the Grid API `gridApi.sizeColumnsToFit()` instead."
         },
         "autoSizeColumn": {
             "description": "Auto-sizes a column based on its contents."
@@ -250,6 +250,9 @@
         },
         "getSecondaryPivotColumn": {
             "description": "Returns the pivot column for the given `pivotKeys` and `valueColId`. Useful to then call operations on the pivot column."
+        },
+        "setSecondaryColumns": {
+            "description": "Set the secondary pivot columns."
         },
         "getPrimaryColumns": {
             "description": "Returns the grid's primary columns.",

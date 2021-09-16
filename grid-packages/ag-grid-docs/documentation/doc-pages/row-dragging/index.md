@@ -8,7 +8,7 @@ the first) column.
 
 ## Enabling Row Dragging
 
-<api-documentation source='column-properties/properties.json' section='row dragging' names='["rowDrag"]' config='{"overrideBottomMargin":"1rem"}' ></api-documentation>
+<api-documentation source='column-properties/properties.json' section='row dragging' names='["rowDrag"]'  ></api-documentation>
 
 To enable row dragging on all columns, set the column property `rowDrag = true` on one (typically the first) column.
 
@@ -149,17 +149,9 @@ Typically a drag will fire the following events:
 
 Additional `rowDragLeave` and `rowDragEnter` events are fired if the mouse leaves or re-enters the grid. If the drag is finished outside of the grid, then the `rowDragLeave` is the last event fired and no `rowDragEnd` is fired, as the drag did not end on the grid.
 
-Each of the four row drag events has the following attributes:
+Each of the four row drag events extend the `RowDragEvent` interface.
 
-- `type`: One of `{rowDragEnter, rowDragMove, rowDragEnd, rowDragLeave}`.
-- `api`: The grid API.
-- `columnApi`: The grid column API.
-- `event`: The underlying mouse move event associated with the drag.
-- `node`: The row node getting dragged.
-- `overIndex`: The row index the mouse is dragging over or -1 if over no row.
-- `overNode`: The row node the mouse is dragging over or undefined if over no row.
-- `y`: The vertical pixel location the mouse is over, with `0` meaning the top of the first row. This can be compared to the `rowNode.rowHeight` and `rowNode.rowTop` to work out the mouse position relative to rows. The provided attributes `overIndex` and `overNode` means the `y` property is mostly redundant. The `y` property can be handy if you want more information such as 'how close is the mouse to the top or bottom of the row'.
-- `vDirection`: Direction of the drag, either `up`, `down` or blank (if mouse is moving horizontally and not vertically).
+<interface-documentation interfaceName='RowDragEvent' ></interface-documentation>
 
 ### Example Events
 
@@ -268,7 +260,7 @@ When a row drag starts, a "floating" DOM element is created to indicate which ro
 element will contain the same value as the cell that started the row drag. It's possible to override that text by using
 the `colDef.rowDragText` callback.
 
-<api-documentation source='column-properties/properties.json' section='row dragging' names='["rowDragText"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
+<api-documentation source='column-properties/properties.json' section='row dragging' names='["rowDragText"]' ></api-documentation>
 
 <snippet>
 const gridOptions = {

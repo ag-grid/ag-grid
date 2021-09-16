@@ -7,7 +7,17 @@
         },
         "data": {
             "description": "The data to render the sparklines from. By default this value will be the cell value in the grid.",
-            "type": "number[]"
+            "type": "any[]"
+        },
+        "xKey": {
+            "description": "The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs.",
+            "type": "string",
+            "default": "x"
+        },
+        "yKey": {
+            "description": "The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs.",
+            "type": "string",
+            "default": "y"
         },
         "title": {
             "description": "The title of the sparklines.",

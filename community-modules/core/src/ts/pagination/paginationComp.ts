@@ -112,11 +112,9 @@ export class PaginationComp extends Component {
         const strNext = localeTextFunc('nextPage', 'Next Page');
         const strLast = localeTextFunc('lastPage', 'Last Page');
         const compId = this.getCompId();
-        const summaryDescribedBy = `ag-${compId}-first-row ag-${compId}-to ag-${compId}-last-row ag-${compId}-of ag-${compId}-row-count`;
-        const descriptionDescribedBy = `ag-${compId}-start-page ag-${compId}-start-page-number ag-${compId}-of-page ag-${compId}-of-page-number`;
 
-        return /* html */`<div class="ag-paging-panel ag-unselectable" id="ag-${compId}" aria-live="polite" aria-describedby="${descriptionDescribedBy} ${summaryDescribedBy}">
-                <span class="ag-paging-row-summary-panel" aria-hidden="true">
+        return /* html */`<div class="ag-paging-panel ag-unselectable" id="ag-${compId}">
+                <span class="ag-paging-row-summary-panel" role="status">
                     <span id="ag-${compId}-first-row" ref="lbFirstRowOnPage" class="ag-paging-row-summary-panel-number"></span>
                     <span id="ag-${compId}-to">${strTo}</span>
                     <span id="ag-${compId}-last-row" ref="lbLastRowOnPage" class="ag-paging-row-summary-panel-number"></span>
@@ -126,7 +124,7 @@ export class PaginationComp extends Component {
                 <span class="ag-paging-page-summary-panel" role="presentation">
                     <div ref="btFirst" class="ag-paging-button" role="button" aria-label="${strFirst}" tabindex="0"></div>
                     <div ref="btPrevious" class="ag-paging-button" role="button" aria-label="${strPrevious}" tabindex="0"></div>
-                    <span class="ag-paging-description" aria-hidden="true">
+                    <span class="ag-paging-description" role="status">
                         <span id="ag-${compId}-start-page">${strPage}</span>
                         <span id="ag-${compId}-start-page-number" ref="lbCurrent" class="ag-paging-number"></span>
                         <span id="ag-${compId}-of-page">${strOf}</span>

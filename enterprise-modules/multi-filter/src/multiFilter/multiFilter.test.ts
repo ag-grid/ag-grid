@@ -37,6 +37,7 @@ function createFilter(filterParams: any = {}): MultiFilter {
     const baseFilterParams: IProvidedFilterParams = {
         // @ts-ignore
         api: null,
+        columnApi: null,
         column,
         colDef,
         rowModel,

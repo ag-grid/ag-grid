@@ -214,10 +214,18 @@
             "description": "Allows cancelling transactions."
         },
         "isServerSideGroup": {
-            "description": "([SSRM Tree Data](/server-side-model-tree-data/)) Allows specifying which rows are expandable."
+            "description": "SSRM Tree Data: Allows specifying which rows are expandable.",
+            "more": {
+                "name": "SSRM Tree Data",
+                "url": "/server-side-model-tree-data/"
+            }
         },
         "getServerSideGroupKey": {
-            "description": "([SSRM Tree Data](/server-side-model-tree-data/)) Allows specifying group keys."
+            "description": "SSRM Tree Data: Allows specifying group keys.",
+            "more": {
+                "name": "SSRM Tree Data",
+                "url": "/server-side-model-tree-data/"
+            }
         }
     },
     "charts": {

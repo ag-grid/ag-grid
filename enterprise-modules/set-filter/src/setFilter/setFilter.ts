@@ -163,7 +163,7 @@ export class SetFilter extends ProvidedFilter<SetFilterModel> {
         return super.getModel() as SetFilterModel;
     }
 
-    public getFilterType(): string {
+    public getFilterType(): 'set' {
         return 'set';
     }
 

@@ -119,10 +119,10 @@
             }
         },
         "selectAll": {
-            "description": "Select all rows (even rows that are not visible due to grouping being enabled and their groups not expanded)."
+            "description": "Select all rows, regardless of filtering and rows that are not visible due to grouping being enabled and their groups not expanded."
         },
         "deselectAll": {
-            "description": "Clear all row selections."
+            "description": "Clear all row selections, regardless of filtering."
         },
         "selectAllFiltered": {
             "description": "Select all filtered rows."

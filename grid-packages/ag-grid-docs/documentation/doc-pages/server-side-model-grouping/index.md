@@ -98,57 +98,14 @@ is specified using the grid properties `serverSideStoreType`, `maxBlocksInCache`
 It is possible to have different configurations for different stores. For example if grouping, infinite
 scrolling (using the Partial Store) could be turned off at the top level but turned on at the lower levels.
 
-This is done by implementing the grid callback `getServerSideStoreParams()`. Its interface is as follows:
+This is done by implementing the grid callback `getServerSideStoreParams(params)`.
 
-```ts
-// functions takes params and also returns a different type of params
-function getServerSideStoreParams(params: GetServerSideStoreParamsParams): ServerSideStoreParams;
+<api-documentation source='grid-callbacks/callbacks.json' section='ServerSide' names='["getServerSideStoreParams"]' ></api-documentation>
 
-// these params the function gets, gives details on where the store is getting created
-interface GetServerSideStoreParamsParams {
-
-    // the level of the store. top level is 0.
-    level: number;
-
-    // the Row Node for the group that got expanded, or undefined if top level (ie no parent)
-    parentRowNode?: RowNode;
-
-    // active Row Group Columns, if any
-    rowGroupColumns: Column[];
-
-    // active Pivot Columns, if any
-    pivotColumns: Column[];
-
-    // true if pivot mode is active
-    pivotMode: boolean;
-}
-
-// these params the function returns, it's configuration for the store about to be created
-interface ServerSideStoreParams {
-
-    // what store type to use. if missing, then defaults to grid option 'serverSideStoreType'
-    storeType?: ServerSideStoreType;
-
-    // For Partial Store only. How many blocks to keep in cache.
-    // If missing, defaults to grid options 'maxBlocksInCache'
-    maxBlocksInCache?: number;
-
-    // For Partial Store only. Cache block size.
-    // If missing, defaults to grid options 'cacheBlockSize'
-    cacheBlockSize?: number;
-}
-
-// for storeType above, one of 'full' or 'partial'
-enum ServerSideStoreType {
-    Full = 'full',
-    Partial = 'partial'
-}
-```
-
-The example below demonstrates the `getServerSideStoreParams()` callback. Note the following:
+The example below demonstrates the `getServerSideStoreParams(params)` callback. Note the following:
 
 - The grid is configured differently depending on whether grouping is active or not by implementing
-the `getServerSideStoreParams()` callback. The callback logs its results to the dev console.
+the `getServerSideStoreParams(params)` callback. The callback logs its results to the dev console.
 
 - When grouping is active, the stores are configured as follows:
     - Level 0 - Full Store (no infinite scrolling)
@@ -167,30 +124,7 @@ For debugging purposes, the grid has the API `getServerSideStoreState()` which r
 existing [Row Stores](/server-side-model-row-stores/). This is good for learning purposes, as you can
 see details about the store such as the store type and it's route.
 
-```ts
-function getServerSideStoreState(): ServerSideStoreState[];
-
-interface ServerSideStoreState {
-    // store type, 'partial' or 'full'
-    type: ServerSideStoreType;
-
-    // the route that identifies this store
-    route: string[];
-
-    // how many rows the store has. this includes 'loading rows'
-    rowCount: number;
-
-    // any extra info provided to the store, when data was loaded
-    info?: any;
-
-    // for partial store only, whether the last row index is known
-    lastRowIndexKnown?: boolean;
-    // for partial store only, max blocks allowed in the store
-    maxBlocksInCache?: number;
-    // for partial store only, the size (number of rows) of each block
-    cacheBlockSize?: number;
-}
-```
+<api-documentation source='grid-api/api.json' section='serverSideRowModel' names='["getServerSideStoreState"]' ></api-documentation>
 
 Inspecting the Store State can be useful, for example when wanting to know what Route to use when
 providing [Transactions](/server-side-model-transactions/) or doing a [Store Refresh](/server-side-model-refresh/).
@@ -235,16 +169,9 @@ The example below shows Store Info in action.
 
 It is possible to have rows open as soon as they are loaded. To do this implement the grid callback `isServerSideGroupOpenByDefault`.
 
+<api-documentation source='grid-callbacks/callbacks.json' section='ServerSide' names='["isServerSideGroupOpenByDefault"]' ></api-documentation>
+
 ```js
-// Callback Signature
-function isServerSideGroupOpenByDefault(params: IsServerSideGroupOpenByDefaultParams) => boolean;
-
-// Params for callback
-interface IsServerSideGroupOpenByDefaultParams {
-    data: any;
-    rowNode: RowNode;
-}
-
 // Example implementation
 function isServerSideGroupOpenByDefault(params) {
     var rowNode = params.rowNode;
@@ -253,7 +180,9 @@ function isServerSideGroupOpenByDefault(params) {
 }
 ```
 
-It may also be helpful to use the [Row Node](/row-object/) API `getRoute()` to inspect the route of a row node. If the Row Node is a group, it returns the route to that Row Node. If the Row Node is not a group, it returns `undefined`.
+It may also be helpful to use the [Row Node](/row-object/) API `getRoute()` to inspect the route of a row node.
+
+<api-documentation source='row-object/resources/methods.json' section='rowNodeMethods' names='["getRoute"]' ></api-documentation>
 
 Below shows `isServerSideGroupOpenByDefault()` and `getRoute` in action. Note the following:
 
@@ -305,8 +234,9 @@ The example below demonstrates these techniques. Note the following:
 
 ## Providing Child Counts
 
-By default, the grid will not show row counts beside the group names. If you do want row counts, you need to implement the `getChildCount()` callback for the grid. The callback provides you with the row data; it is your application's responsibility to know what the child row count is. The suggestion is you set this information into the row data item you provide to the grid.
+By default, the grid will not show row counts beside the group names. If you do want row counts, you need to implement the `getChildCount(dataItem)` callback for the grid. The callback provides you with the row data; it is your application's responsibility to know what the child row count is. The suggestion is you set this information into the row data item you provide to the grid.
 
+<api-documentation source='grid-callbacks/callbacks.json' section='ServerSide' names='["getChildCount"]' ></api-documentation>
 
 <snippet>
 const gridOptions = {

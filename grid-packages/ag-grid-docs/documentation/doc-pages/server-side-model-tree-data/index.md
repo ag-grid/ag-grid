@@ -56,6 +56,8 @@ Tree Data is supplied via the [Server-Side Datasource](/server-side-model-dataso
 however there are two additional gridOptions callbacks: `isServerSideGroup(dataItem)`
 and `getServerSideGroupKey(dataItem)`.
 
+<api-documentation source='grid-callbacks/callbacks.json' section='ServerSide' names='["isServerSideGroup", "getServerSideGroupKey"]' ></api-documentation>
+
 The following code snippet shows the relevant `gridOptions` entries for configuring tree data with the
 server-side row model:
 
@@ -82,8 +84,8 @@ server-side row model:
 The example below shows this in action where the following can be noted: 333
 
 - Tree Data is enabled with the Server-Side Row Model using `gridOptions.treeData = true`.
-- Group nodes are determined using the callback `gridOptions.isServerSideGroup()`.
-- Group keys are returned from the callback `gridOptions.getServerSideGroupKey()`.
+- Group nodes are determined using the callback `gridOptions.isServerSideGroup(dataItem)`.
+- Group keys are returned from the callback `gridOptions.getServerSideGroupKey(dataItem)`.
 
 <grid-example title='Tree Data' name='tree-data' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["lodash"], "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 

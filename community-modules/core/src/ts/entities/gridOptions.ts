@@ -98,6 +98,7 @@ import { ExcelExportParams, ExcelStyle } from "../interfaces/iExcelCreator";
 import { ILoadingCellRendererParams } from "../rendering/cellRenderers/loadingCellRenderer";
 
 export interface GridOptions {
+
     // ******************************************************************************************************
     // If you change the properties on this interface, you must also update PropertyKeys to be consistent. *
     // ******************************************************************************************************
@@ -114,6 +115,7 @@ export interface GridOptions {
     showOpenedGroup?: boolean;
     /** @deprecated */
     deltaRowDataMode?: boolean;
+
     /** @deprecated */
     deltaColumnMode?: boolean;
     /** @deprecated */
@@ -686,8 +688,11 @@ export interface IsApplyServerSideTransaction {
 }
 
 export interface IsApplyServerSideTransactionParams {
+    /** The transaction getting applied. */
     transaction: ServerSideTransaction;
+    /** The parent RowNode, if transaction is applied to a group. */
     parentNode: RowNode;
+    //** Store info, if any, as passed via the success() callback when loading data. */
     storeInfo: any;
 }
 
@@ -923,16 +928,35 @@ export enum ServerSideStoreType {
 }
 
 export interface ServerSideStoreParams {
+    /**
+     * What store type to use.
+     * If missing, then defaults to grid option `serverSideStoreType`.
+     *  */
     storeType?: ServerSideStoreType;
+    /**
+     * For Partial Store only.
+     * How many blocks to keep in cache.
+     * If missing, defaults to grid options `maxBlocksInCache`.
+     */
     maxBlocksInCache?: number;
+    /**
+     * For Partial Store only.
+     * Cache block size.
+     * If missing, defaults to grid options `cacheBlockSize`.
+     */
     cacheBlockSize?: number;
 }
 
 export interface GetServerSideStoreParamsParams {
+    /** The level of the store. Top level is 0. */
     level: number;
+    /** The Row Node for the group that got expanded, or undefined if top level (ie no parent) */
     parentRowNode?: RowNode;
+    /** Active Row Group Columns, if any. */
     rowGroupColumns: Column[];
+    /** Active Pivot Columns, if any. */
     pivotColumns: Column[];
+    /** true if pivot mode is active. */
     pivotMode: boolean;
 }
 

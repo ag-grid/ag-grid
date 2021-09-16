@@ -1,14 +1,15 @@
 /** Datasource used by both PaginationController and InfiniteRowModel */
 export interface IDatasource {
 
-    /** If you know up front how many rows are in the dataset, set it here. Otherwise leave blank.*/
+    /** If you know up front how many rows are in the dataset, set it here. Otherwise leave blank. */
     rowCount?: number;
     // only used in old server side pagination service, we can remove this, infinite
     // scrolling uses the grid property infiniteInitialRowCount
 
-    /** Callback the grid calls that you implement to fetch rows from the server. See below for params.*/
+    /** Callback the grid calls that you implement to fetch rows from the server. */
     getRows(params: IGetRowsParams): void;
 
+    /** Optional destroy method, if your datasource has state it needs to clean up. */
     destroy?(): void;
 }
 

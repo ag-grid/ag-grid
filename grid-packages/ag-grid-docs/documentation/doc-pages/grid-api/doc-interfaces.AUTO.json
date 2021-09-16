@@ -4099,9 +4099,13 @@
   "IsApplyServerSideTransaction": {},
   "IsApplyServerSideTransactionParams": {
     "transaction": {
+      "description": "/** The transaction getting applied. */",
       "type": { "returnType": "ServerSideTransaction", "optional": false }
     },
-    "parentNode": { "type": { "returnType": "RowNode", "optional": false } },
+    "parentNode": {
+      "description": "/** The parent RowNode, if transaction is applied to a group. */",
+      "type": { "returnType": "RowNode", "optional": false }
+    },
     "storeInfo": { "type": { "returnType": "any", "optional": false } }
   },
   "GetServerSideGroupKey": {},
@@ -4401,21 +4405,39 @@
   "ServerSideStoreType": {},
   "ServerSideStoreParams": {
     "storeType": {
+      "description": "/** What store type to use.\n * If missing, then defaults to grid option `serverSideStoreType`. */",
       "type": { "returnType": "ServerSideStoreType", "optional": true }
     },
     "maxBlocksInCache": {
+      "description": "/** For Partial Store only.\n * How many blocks to keep in cache.\n * If missing, defaults to grid options `maxBlocksInCache`. */",
       "type": { "returnType": "number", "optional": true }
     },
-    "cacheBlockSize": { "type": { "returnType": "number", "optional": true } }
+    "cacheBlockSize": {
+      "description": "/** For Partial Store only.\n * Cache block size.\n * If missing, defaults to grid options `cacheBlockSize`. */",
+      "type": { "returnType": "number", "optional": true }
+    }
   },
   "GetServerSideStoreParamsParams": {
-    "level": { "type": { "returnType": "number", "optional": false } },
-    "parentRowNode": { "type": { "returnType": "RowNode", "optional": true } },
+    "level": {
+      "description": "/** The level of the store. Top level is 0. */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "parentRowNode": {
+      "description": "/** The Row Node for the group that got expanded, or undefined if top level (ie no parent) */",
+      "type": { "returnType": "RowNode", "optional": true }
+    },
     "rowGroupColumns": {
+      "description": "/** Active Row Group Columns, if any. */",
       "type": { "returnType": "Column[]", "optional": false }
     },
-    "pivotColumns": { "type": { "returnType": "Column[]", "optional": false } },
-    "pivotMode": { "type": { "returnType": "boolean", "optional": false } }
+    "pivotColumns": {
+      "description": "/** Active Pivot Columns, if any. */",
+      "type": { "returnType": "Column[]", "optional": false }
+    },
+    "pivotMode": {
+      "description": "/** true if pivot mode is active. */",
+      "type": { "returnType": "boolean", "optional": false }
+    }
   },
   "IsServerSideGroupOpenByDefaultParams": {
     "data": { "type": { "returnType": "any", "optional": false } },
@@ -5012,6 +5034,10 @@
     }
   },
   "RowDragEvent": {
+    "type": {
+      "description": "/** Event identifier: One of rowDragEnter, rowDragMove, rowDragEnd, rowDragLeave */",
+      "type": { "returnType": "string", "optional": false }
+    },
     "node": {
       "description": "/** The row node getting dragged. Also the node that started the drag when multi-row dragging. */",
       "type": { "returnType": "RowNode", "optional": false }
@@ -5025,7 +5051,7 @@
       "type": { "returnType": "MouseEvent", "optional": false }
     },
     "vDirection": {
-      "description": "/** Direction of the drag, either 'up', 'down' or null (if mouse is moving horizontally and not vertically). */",
+      "description": "/** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */",
       "type": { "returnType": "string", "optional": false }
     },
     "overIndex": {
@@ -5041,13 +5067,13 @@
       "type": { "returnType": "number", "optional": false }
     },
     "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
-    "type": {
-      "description": "/** Event identifier */",
-      "type": { "returnType": "string", "optional": false }
-    }
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
   },
   "RowDragEnterEvent": {
+    "type": {
+      "description": "/** Event identifier: One of rowDragEnter, rowDragMove, rowDragEnd, rowDragLeave */",
+      "type": { "returnType": "string", "optional": false }
+    },
     "node": {
       "description": "/** The row node getting dragged. Also the node that started the drag when multi-row dragging. */",
       "type": { "returnType": "RowNode", "optional": false }
@@ -5061,7 +5087,7 @@
       "type": { "returnType": "MouseEvent", "optional": false }
     },
     "vDirection": {
-      "description": "/** Direction of the drag, either 'up', 'down' or null (if mouse is moving horizontally and not vertically). */",
+      "description": "/** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */",
       "type": { "returnType": "string", "optional": false }
     },
     "overIndex": {
@@ -5077,13 +5103,13 @@
       "type": { "returnType": "number", "optional": false }
     },
     "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
-    "type": {
-      "description": "/** Event identifier */",
-      "type": { "returnType": "string", "optional": false }
-    }
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
   },
   "RowDragEndEvent": {
+    "type": {
+      "description": "/** Event identifier: One of rowDragEnter, rowDragMove, rowDragEnd, rowDragLeave */",
+      "type": { "returnType": "string", "optional": false }
+    },
     "node": {
       "description": "/** The row node getting dragged. Also the node that started the drag when multi-row dragging. */",
       "type": { "returnType": "RowNode", "optional": false }
@@ -5097,7 +5123,7 @@
       "type": { "returnType": "MouseEvent", "optional": false }
     },
     "vDirection": {
-      "description": "/** Direction of the drag, either 'up', 'down' or null (if mouse is moving horizontally and not vertically). */",
+      "description": "/** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */",
       "type": { "returnType": "string", "optional": false }
     },
     "overIndex": {
@@ -5113,13 +5139,13 @@
       "type": { "returnType": "number", "optional": false }
     },
     "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
-    "type": {
-      "description": "/** Event identifier */",
-      "type": { "returnType": "string", "optional": false }
-    }
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
   },
   "RowDragMoveEvent": {
+    "type": {
+      "description": "/** Event identifier: One of rowDragEnter, rowDragMove, rowDragEnd, rowDragLeave */",
+      "type": { "returnType": "string", "optional": false }
+    },
     "node": {
       "description": "/** The row node getting dragged. Also the node that started the drag when multi-row dragging. */",
       "type": { "returnType": "RowNode", "optional": false }
@@ -5133,7 +5159,7 @@
       "type": { "returnType": "MouseEvent", "optional": false }
     },
     "vDirection": {
-      "description": "/** Direction of the drag, either 'up', 'down' or null (if mouse is moving horizontally and not vertically). */",
+      "description": "/** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */",
       "type": { "returnType": "string", "optional": false }
     },
     "overIndex": {
@@ -5149,13 +5175,13 @@
       "type": { "returnType": "number", "optional": false }
     },
     "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
-    "type": {
-      "description": "/** Event identifier */",
-      "type": { "returnType": "string", "optional": false }
-    }
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
   },
   "RowDragLeaveEvent": {
+    "type": {
+      "description": "/** Event identifier: One of rowDragEnter, rowDragMove, rowDragEnd, rowDragLeave */",
+      "type": { "returnType": "string", "optional": false }
+    },
     "node": {
       "description": "/** The row node getting dragged. Also the node that started the drag when multi-row dragging. */",
       "type": { "returnType": "RowNode", "optional": false }
@@ -5169,7 +5195,7 @@
       "type": { "returnType": "MouseEvent", "optional": false }
     },
     "vDirection": {
-      "description": "/** Direction of the drag, either 'up', 'down' or null (if mouse is moving horizontally and not vertically). */",
+      "description": "/** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */",
       "type": { "returnType": "string", "optional": false }
     },
     "overIndex": {
@@ -5185,11 +5211,7 @@
       "type": { "returnType": "number", "optional": false }
     },
     "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
-    "type": {
-      "description": "/** Event identifier */",
-      "type": { "returnType": "string", "optional": false }
-    }
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
   },
   "PasteStartEvent": {
     "source": { "type": { "returnType": "string", "optional": false } },
@@ -6353,8 +6375,9 @@
   },
   "AsyncTransactionsFlushed": {
     "results": {
+      "description": "/** Array of result objects. for SSRM it's always list of `ServerSideTransactionResult`.\n * For Client-Side Row Model it's a list of `RowNodeTransaction`. */",
       "type": {
-        "returnType": "(RowNodeTransaction | ServerSideTransactionResult) []",
+        "returnType": "(RowNodeTransaction | ServerSideTransactionResult)[]",
         "optional": false
       }
     },
@@ -6599,12 +6622,22 @@
     "apply": { "type": { "returnType": "boolean", "optional": false } }
   },
   "DateFilterModel": {
+    "filterType": {
+      "description": "/** Filter type is always `'date'` */",
+      "type": { "returnType": "'date'", "optional": true }
+    },
     "dateFrom": {
+      "description": "/** The date value(s) associated with the filter.\n * The type is `string` and format is always `YYYY-MM-DD` e.g. 2019-05-24.\n * Custom filters can have no values (hence both are optional).\n * Range filter has two values (from and to). */",
       "type": { "returnType": "string | null", "optional": false }
     },
-    "dateTo": { "type": { "returnType": "string | null", "optional": false } },
-    "type": { "type": { "returnType": "string | null", "optional": true } },
-    "filterType": { "type": { "returnType": "string", "optional": true } }
+    "dateTo": {
+      "description": "/** Range filter `to` date value. */",
+      "type": { "returnType": "string | null", "optional": false }
+    },
+    "type": {
+      "description": "/** One of the filter options, e.g. `'equals'` */",
+      "type": { "returnType": "string | null", "optional": true }
+    }
   },
   "IDateFilterParams": {
     "comparator": {
@@ -6719,10 +6752,22 @@
   },
   "IDateComparatorFunc": {},
   "NumberFilterModel": {
-    "filter": { "type": { "returnType": "number | null", "optional": true } },
-    "filterTo": { "type": { "returnType": "number | null", "optional": true } },
-    "type": { "type": { "returnType": "string | null", "optional": true } },
-    "filterType": { "type": { "returnType": "string", "optional": true } }
+    "filterType": {
+      "description": "/** Filter type is always `'number'` */",
+      "type": { "returnType": "'number'", "optional": true }
+    },
+    "filter": {
+      "description": "/** The number value(s) associated with the filter.\n * Custom filters can have no values (hence both are optional).\n * Range filter has two values (from and to). */",
+      "type": { "returnType": "number | null", "optional": true }
+    },
+    "filterTo": {
+      "description": "/** Range filter `to` value. */",
+      "type": { "returnType": "number | null", "optional": true }
+    },
+    "type": {
+      "description": "/** One of the filter options, e.g. `'equals'` */",
+      "type": { "returnType": "string | null", "optional": true }
+    }
   },
   "INumberFilterParams": {
     "allowedCharPattern": {
@@ -7105,7 +7150,10 @@
     }
   },
   "ISimpleFilterModel": {
-    "type": { "type": { "returnType": "string | null", "optional": true } },
+    "type": {
+      "description": "/** One of the filter options, e.g. `'equals'` */",
+      "type": { "returnType": "string | null", "optional": true }
+    },
     "filterType": { "type": { "returnType": "string", "optional": true } }
   },
   "ICombinedSimpleModel": {
@@ -7117,9 +7165,18 @@
   },
   "ConditionPosition": {},
   "TextFilterModel": {
-    "filter": { "type": { "returnType": "string | null", "optional": true } },
-    "type": { "type": { "returnType": "string | null", "optional": true } },
-    "filterType": { "type": { "returnType": "string", "optional": true } }
+    "filterType": {
+      "description": "/** Filter type is always `'text'` */",
+      "type": { "returnType": "'text'", "optional": true }
+    },
+    "filter": {
+      "description": "/** The text value associated with the filter.\n * It's optional as custom filters may not have a text value. */",
+      "type": { "returnType": "string | null", "optional": true }
+    },
+    "type": {
+      "description": "/** One of the filter options, e.g. `'equals'` */",
+      "type": { "returnType": "string | null", "optional": true }
+    }
   },
   "TextComparator": {},
   "TextFormatter": {},
@@ -11060,7 +11117,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "getRows": {
-      "description": "/** Callback the grid calls that you implement to fetch rows from the server. See below for params. */",
+      "description": "/** Callback the grid calls that you implement to fetch rows from the server. */",
       "type": {
         "arguments": { "params": "IGetRowsParams" },
         "returnType": "void",
@@ -11068,6 +11125,7 @@
       }
     },
     "destroy": {
+      "description": "/** Optional destroy method, if your datasource has state it needs to clean up. */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     }
   },
@@ -11764,7 +11822,7 @@
       "type": { "returnType": "string", "optional": false }
     },
     "test": {
-      "description": "/** Custom filter logic. */",
+      "description": "/** Custom filter logic that returns a boolean based on the `filterValue` and `cellValue`. */",
       "type": {
         "arguments": { "filterValue": "any", "cellValue": "any" },
         "returnType": "boolean",
@@ -13182,18 +13240,33 @@
   },
   "ServerSideStoreState": {
     "type": {
+      "description": "/** Store type, `partial` or `full` */",
       "type": { "returnType": "ServerSideStoreType", "optional": false }
     },
-    "route": { "type": { "returnType": "string[]", "optional": false } },
-    "rowCount": { "type": { "returnType": "number", "optional": false } },
+    "route": {
+      "description": "/** The route that identifies this store. */",
+      "type": { "returnType": "string[]", "optional": false }
+    },
+    "rowCount": {
+      "description": "/** How many rows the store has. This includes 'loading rows'. */",
+      "type": { "returnType": "number", "optional": false }
+    },
     "lastRowIndexKnown": {
+      "description": "/** Partial store only.\n * Whether the last row index is know. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "info": { "type": { "returnType": "any", "optional": true } },
+    "info": {
+      "description": "/** Any extra info provided to the store, when data was loaded. */",
+      "type": { "returnType": "any", "optional": true }
+    },
     "maxBlocksInCache": {
+      "description": "/** Partial store only.\n * Max blocks allowed in the store. */",
       "type": { "returnType": "number", "optional": true }
     },
-    "cacheBlockSize": { "type": { "returnType": "number", "optional": true } }
+    "cacheBlockSize": {
+      "description": "/** Partial store only.\n * The size (number of rows) of each block. */",
+      "type": { "returnType": "number", "optional": true }
+    }
   },
   "SetFilterValuesFuncParams": {
     "success": {

@@ -30,6 +30,8 @@ This is for comparison in the example only. Normal applications generally have t
 - Checkbox selection on the group column allowing selection of any row.
 - Checkbox selection on the group sport column. Selection is restricted to leaf-level rows only via `gridOptions.isRowSelectable(rowNode)` callback.
 
+<api-documentation source='grid-callbacks/callbacks.json' section='callbacks' names='["isRowSelectable"]' ></api-documentation>
+
 <grid-example title='Checkbox Example' name='checkbox' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
 ## Providing Node IDs

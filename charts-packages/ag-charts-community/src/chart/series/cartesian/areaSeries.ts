@@ -581,10 +581,6 @@ export class AreaSeries extends CartesianSeries {
                     fill: highlightedFill = deprecatedFill,
                     stroke: highlightedStroke = deprecatedStroke,
                     strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
-                },
-                series: {
-                    enabled: subSeriesHighlightingEnabled,
-                    strokeWidth: highlightedSubSeriesStrokeWidth
                 }
             }
         } = this;
@@ -600,12 +596,6 @@ export class AreaSeries extends CartesianSeries {
             const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
                 ? highlightedDatumStrokeWidth
                 : markerStrokeWidth;
-
-            // const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
-            //     ? highlightedDatumStrokeWidth
-            //     : subSeriesHighlightingEnabled && isSubSeriesHighlighted && highlightedSubSeriesStrokeWidth !== undefined
-            //         ? highlightedSubSeriesStrokeWidth
-            //         : markerStrokeWidth;
 
             let format: CartesianSeriesMarkerFormat | undefined = undefined;
             if (formatter) {
@@ -632,7 +622,7 @@ export class AreaSeries extends CartesianSeries {
 
             node.translationX = datum.point.x;
             node.translationY = datum.point.y;
-            node.visible = marker.enabled && node.size > 0 && !!seriesItemEnabled.get(datum.yKey);
+            node.visible = marker.enabled && node.size > 0 && !!seriesItemEnabled.get(datum.yKey) && !isNaN(datum.point.x);
             node.opacity = this.getOpacity(datum);
         });
     }

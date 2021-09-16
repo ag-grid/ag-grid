@@ -25,7 +25,7 @@ Below shows the column definition properties for value getters.
 
 <api-documentation source='column-properties/properties.json' section="columns" names='["valueGetter"]' config='{"overrideBottomMargin":"0rem"}'></api-documentation>
 <api-documentation source='column-properties/properties.json' section="header" names='["headerValueGetter"]' config='{"overrideBottomMargin":"0rem"}'></api-documentation>
-<api-documentation source='column-properties/properties.json' section="filtering" names='["filterValueGetter"]' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
+<api-documentation source='column-properties/properties.json' section="filtering" names='["filterValueGetter"]' ></api-documentation>
 
 ### Example Value Getters
 

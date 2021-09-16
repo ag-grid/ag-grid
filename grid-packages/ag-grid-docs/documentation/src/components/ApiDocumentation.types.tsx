@@ -155,6 +155,10 @@ export interface Config {
      * Hide the header to make it easy to just include the sections as part of doc pages
      */
     hideHeader?: boolean;
+    /**
+     * Override the headerLevel used.
+     */
+    headerLevel?: number;
     /** Set the margin-bottom value to override the default of 3em */
     overrideBottomMargin?: string;
 }

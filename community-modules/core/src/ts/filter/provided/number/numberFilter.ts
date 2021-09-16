@@ -9,7 +9,17 @@ import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { isBrowserChrome, isBrowserEdge } from '../../../utils/browser';
 
 export interface NumberFilterModel extends ISimpleFilterModel {
+    /** Filter type is always `'number'` */
+    filterType?: 'number';
+    /**
+     * The number value(s) associated with the filter.
+     * Custom filters can have no values (hence both are optional).
+     * Range filter has two values (from and to).
+     */
     filter?: number | null;
+    /**
+     * Range filter `to` value.
+     */
     filterTo?: number | null;
 }
 
@@ -191,7 +201,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
             && aSimple.type === bSimple.type;
     }
 
-    protected getFilterType(): string {
+    protected getFilterType(): 'number' {
         return 'number';
     }
 

@@ -74,7 +74,12 @@ export class ToolPanelColumnGroupComp extends Component {
         this.eDragHandle = _.createIconNoSpan('columnDrag', this.gridOptionsWrapper)!;
         _.addCssClass(this.eDragHandle, 'ag-drag-handle');
         _.addCssClass(this.eDragHandle, 'ag-column-select-column-group-drag-handle');
-        this.cbSelect.getGui().insertAdjacentElement('afterend', this.eDragHandle);
+
+        const checkboxGui = this.cbSelect.getGui();
+        const checkboxInput = this.cbSelect.getInputElement();
+
+        checkboxGui.insertAdjacentElement('afterend', this.eDragHandle);
+        checkboxInput.setAttribute('tabindex', '-1');
 
         this.displayName = this.columnModel.getDisplayNameForOriginalColumnGroup(null, this.columnGroup, this.eventType);
 

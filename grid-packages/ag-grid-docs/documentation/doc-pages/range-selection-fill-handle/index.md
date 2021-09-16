@@ -53,7 +53,10 @@ If the behaviour for decreasing selection needs to be prevented, the flag `suppr
 
 ## Fill Handle Axis
 
-By the default, the Fill Handle can be dragged horizontally or vertically. If dragging only vertically, or only horizontally is a requirement, the `fillHandleDirection` should be added to the `gridOptions`, as follows: 
+By the default, the Fill Handle can be dragged horizontally or vertically. If dragging only vertically, or only horizontally is a requirement, the `gridOptions` property `fillHandleDirection` property can be set or set via the API using `setFillHandleDirection`. This default value is `xy`.
+
+<api-documentation source='grid-properties/properties.json' section='selection' names='["fillHandleDirection"]' config='{"overrideBottomMargin":"0"}'></api-documentation>
+<api-documentation source='grid-api/api.json' section='selection' names='["setFillHandleDirection"]'></api-documentation>
 
 <snippet>
 const gridOptions = {
@@ -68,8 +71,6 @@ const gridOptions = {
     fillHandleDirection: 'x' // Fill Handle can only be dragged horizontally
 }
 </snippet>
-
- To force the preferred axis for the Fill Handle, the `fillHandleDirection` property can be set to `x`, `y` or `xy` in the `gridOptions` or via API using `setFillHandleDirection`. This default value is `xy`.
 
 <grid-example title='Fill Handle - Direction' name='fill-handle-direction' type='generated' options='{ "enterprise": true, "exampleHeight": 560, "modules": ["clientside", "range"] }'></grid-example>
 

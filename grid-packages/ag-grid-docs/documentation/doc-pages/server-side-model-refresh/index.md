@@ -11,7 +11,7 @@ This is useful when the data has changed at the source (typically on the server)
 The grid has the following API's to assist with refreshing:
 
 <api-documentation source='grid-api/api.json' section='serverSideRowModel' names='["refreshServerSideStore"]' config='{"overrideBottomMargin":"0rem"}' ></api-documentation>
-<api-documentation source='grid-api/api.json' section='infiniteScrolling' names='["getCacheBlockState"]' config='{"overrideBottomMargin":"1rem"}' ></api-documentation>
+<api-documentation source='grid-api/api.json' section='infiniteScrolling' names='["getCacheBlockState"]'  ></api-documentation>
 
 
 The following example demonstrates the refresh API. The following can be noted:
