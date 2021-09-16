@@ -9,7 +9,7 @@ The update actions that cause the Detail Rows to refresh are as follows:
 
 - A [Transaction Update](/data-update-transactions/) updates the parent row.
 - The grid is in [Immutable Data](/immutable-data/) mode and new row data is set which updates the Master Grid row.
-- The method `rowNode.setRowData()` is called on the parent row's [Row Node](/row-object/).
+- The method `rowNode.setRowData(data)` is called on the parent row's [Row Node](/row-object/).
 
 How the refresh occurs depends on the Refresh Strategy set on the Detail Cell Renderer. There are three Refresh Strategies which are as follows:
 
