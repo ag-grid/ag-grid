@@ -132,72 +132,77 @@ export class ColumnApi {
     //     return null;
     // }
 
+    /** @deprecated columnGroupOpened no longer exists, use setColumnGroupOpened */
     public columnGroupOpened(group: ProvidedColumnGroup | string, newValue: boolean): void {
         console.error('AG Grid: columnGroupOpened no longer exists, use setColumnGroupOpened');
         this.setColumnGroupOpened(group, newValue);
     }
+    /** @deprecated hideColumns is deprecated, use setColumnsVisible */
     public hideColumns(colIds: any, hide: any): void {
         console.error('AG Grid: hideColumns is deprecated, use setColumnsVisible');
         this.columnModel.setColumnsVisible(colIds, !hide, 'api');
     }
+    /** @deprecated hideColumn is deprecated, use setColumnVisible */
     public hideColumn(colId: any, hide: any): void {
         console.error('AG Grid: hideColumn is deprecated, use setColumnVisible');
         this.columnModel.setColumnVisible(colId, !hide, 'api');
     }
-
+    /** @deprecated setState is deprecated, use setColumnState */
     public setState(columnState: ColumnState[]): boolean {
         console.error('AG Grid: setState is deprecated, use setColumnState');
         return this.setColumnState(columnState);
     }
-
+    /** @deprecated getState is deprecated, use getColumnState */
     public getState(): ColumnState[] {
         console.error('AG Grid: getState is deprecated, use getColumnState');
         return this.getColumnState();
     }
+    /** @deprecated resetState is deprecated, use resetColumnState */
     public resetState(): void {
         console.error('AG Grid: resetState is deprecated, use resetColumnState');
         this.resetColumnState();
     }
 
+    /** @deprecated getAggregationColumns is deprecated, use getValueColumns */
     public getAggregationColumns(): Column[] {
         console.error('AG Grid: getAggregationColumns is deprecated, use getValueColumns');
         return this.columnModel.getValueColumns();
     }
 
+    /** @deprecated removeAggregationColumn is deprecated, use removeValueColumn */
     public removeAggregationColumn(colKey: (string | Column)): void {
         console.error('AG Grid: removeAggregationColumn is deprecated, use removeValueColumn');
         this.columnModel.removeValueColumn(colKey, 'api');
     }
-
+    /** @deprecated removeAggregationColumns is deprecated, use removeValueColumns */
     public removeAggregationColumns(colKeys: (string | Column)[]): void {
         console.error('AG Grid: removeAggregationColumns is deprecated, use removeValueColumns');
         this.columnModel.removeValueColumns(colKeys, 'api');
     }
-
+    /** @deprecated addAggregationColumn is deprecated, use addValueColumn */
     public addAggregationColumn(colKey: (string | Column)): void {
         console.error('AG Grid: addAggregationColumn is deprecated, use addValueColumn');
         this.columnModel.addValueColumn(colKey, 'api');
     }
-
+    /** @deprecated addAggregationColumns is deprecated, use addValueColumns */
     public addAggregationColumns(colKeys: (string | Column)[]): void {
         console.error('AG Grid: addAggregationColumns is deprecated, use addValueColumns');
         this.columnModel.addValueColumns(colKeys, 'api');
     }
-
+    /** @deprecated setColumnAggFunction is deprecated, use setColumnAggFunc */
     public setColumnAggFunction(column: Column, aggFunc: string): void {
         console.error('AG Grid: setColumnAggFunction is deprecated, use setColumnAggFunc');
         this.columnModel.setColumnAggFunc(column, aggFunc, 'api');
     }
-
+    /** @deprecated getDisplayNameForCol is deprecated, use getDisplayNameForColumn */
     public getDisplayNameForCol(column: any): string {
         console.error('AG Grid: getDisplayNameForCol is deprecated, use getDisplayNameForColumn');
         return this.getDisplayNameForColumn(column, null);
     }
 
-    /**
-     * @deprecated Use `applyColumnState` instead.
-     */
+    /** @deprecated setColumnState is deprecated, use applyColumnState. */
     public setColumnState(columnState: ColumnState[]): boolean {
+        console.error('AG Grid: setColumnState is deprecated, use applyColumnState');
         return this.columnModel.applyColumnState({ state: columnState, applyOrder: true }, 'api');
     }
 
