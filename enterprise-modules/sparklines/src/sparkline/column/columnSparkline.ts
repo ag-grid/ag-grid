@@ -69,8 +69,8 @@ export class ColumnSparkline extends Sparkline {
         let yMax = 1;
 
         if (yMinMax !== undefined) {
-            yMin = yMinMax[0] as number;
-            yMax = yMinMax[1] as number;
+            yMin = this.min = yMinMax[0] as number;
+            yMax = this.max = yMinMax[1] as number;
         }
 
         // if yMin is positive, set yMin to 0
@@ -186,7 +186,7 @@ export class ColumnSparkline extends Sparkline {
     }
 
     protected updateNodes() {
-        const { highlightedDatum, formatter: columnFormatter, fill, stroke, strokeWidth } = this;
+        const { highlightedDatum, formatter: columnFormatter, fill, stroke, strokeWidth, min, max } = this;
         const { fill: highlightFill, stroke: highlightStroke, strokeWidth: highlightStrokeWidth } = this.highlightStyle;
 
         this.columnSelection.each((column, datum) => {
@@ -200,12 +200,20 @@ export class ColumnSparkline extends Sparkline {
             const { x, y, width, height, seriesDatum } = datum;
 
             if (columnFormatter) {
+                const nodeData = this.getNodeData();
+                const first = nodeData[0].seriesDatum.y;
+                const last = nodeData[nodeData.length - 1].seriesDatum.y;
+
                 columnFormat = columnFormatter({
                     datum,
                     xValue: seriesDatum.x,
                     yValue: seriesDatum.y,
                     width: width,
                     height: height,
+                    min,
+                    max,
+                    first,
+                    last,
                     fill: columnFill,
                     stroke: columnStroke,
                     strokeWidth: columnStrokeWidth,

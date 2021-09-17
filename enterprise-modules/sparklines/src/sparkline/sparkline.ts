@@ -108,6 +108,11 @@ export abstract class Sparkline extends Observable {
     protected xData: any[] = [];
     protected yData: (number | undefined)[] = [];
 
+    // Minimum y value in provided data.
+    protected min: number | undefined = undefined;
+    // Maximum y value in provided data.
+    protected max: number | undefined = undefined;
+
     protected xScale!: ScaleType;
     protected yScale: LinearScale = new LinearScale();
 

@@ -84,6 +84,10 @@ export interface ColumnFormatterParams {
     yValue: any;
     width: number;
     height: number;
+    min? : number;
+    max?: number;
+    first?: number;
+    last?: number;
     fill?: string;
     stroke?: string;
     strokeWidth: number;
@@ -108,7 +112,11 @@ export interface MarkerFormatterParams {
     datum: any;
     xValue: any;
     yValue: any;
+    min? : number;
+    max?: number;
     fill?: string;
+    first?: number;
+    last?: number;
     stroke?: string;
     strokeWidth: number;
     size: number;
