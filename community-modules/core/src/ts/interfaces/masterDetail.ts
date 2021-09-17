@@ -12,14 +12,21 @@ export interface IDetailCellRenderer {
 }
 
 export interface IDetailCellRendererParams extends ICellRendererParams {
+    /**
+     * Provide Grid Options to use for the Detail Grid.
+     */
     detailGridOptions: GridOptions;
+    /** A function that provides what rows to display in the Detail Grid. */
     getDetailRowData: GetDetailRowData;
+    /** Defines how to refresh the Detail Grids as data is changing in the Master Grid. */
     refreshStrategy: 'rows' | 'everything' | 'nothing';
+    /** Allows changing the template used around the Detail Grid. */
+    template: string | TemplateFunc;
+
     agGridReact: any;
     frameworkComponentWrapper: any;
     $compile: any;
     pinned: string;
-    template: string | TemplateFunc;
     /** @deprecated */
     autoHeight: boolean;
     /** @deprecated */
@@ -31,11 +38,11 @@ export interface GetDetailRowData {
 }
 
 export interface GetDetailRowDataParams {
-    // details for the request,
+    /** Row node for the details request. */
     node: RowNode;
+    /** Data for the current row. */
     data: any;
-
-    // success callback, pass the rows back the grid asked for
+    /** Success callback: pass the rows back for the grid request.  */
     successCallback(rowData: any[]): void;
 }
 

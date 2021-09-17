@@ -30,18 +30,7 @@ The example below shows configuring a Detail Grid with some additional Grid Opti
 
 Row data is provided to the Detail Grid by implementing the `getDetailRowData` callback of the Detail Cell Renderer Params. The interface of this callback is as follows:
 
-```ts
-function getDetailRowData(params: GetDetailRowDataParams): void;
-
-interface GetDetailRowDataParams {
-    // details for the request,
-    node: RowNode;
-    data: any;
-
-    // success callback, pass the rows back the grid asked for
-    successCallback(rowData: any[]): void;
-}
-```
+<interface-documentation interfaceName='IDetailCellRendererParams' names='["getDetailRowData"]' config='{"overrideBottomMargin":"1rem"}' ></interface-documentation>
 
 The `successCallback` can be called immediately in a synchronous fashion (typical if the data is already available) or asynchronously at a later time (typical if the data needs to be fetched remotely).
 
@@ -144,40 +133,28 @@ The Master Grid manages all the Detail Grid instances. You can access the API of
 
 The Detail Grid Info objects contain a reference to the underlying [Grid API](/grid-api/) and [Column API](/column-api/) for each detail grid. The interface for Detail Grid Info is as follows:
 
-```ts
-interface DetailGridInfo {
-    // id of the detail grid, the format is detail_&lt;row-id>
-    // where row-id is the id of the parent row.
-    id: string;
-
-    // the grid API of the detail grid
-    api: GridApi;
-
-    // the column API of the detail grid
-    columnApi: ColumnApi;
-}
-```
+<interface-documentation interfaceName='DetailGridInfo' ></interface-documentation>
 
 The Detail Grid Info objects are accessed via the Master Grid's API via the following methods:
 
-- `getDetailGridInfo(id)`: Returns back the Detail Grid Info for the Detail Grid with the provided ID.
+<api-documentation source='grid-api/api.json' section='masterDetail' names='["getDetailGridInfo"]'></api-documentation>
 
-    <snippet>
-    // lookup a specific DetailGridInfo by id, and then call stopEditing() on it
-    const detailGridInfo = gridOptions.api.getDetailGridInfo('detail_someId');
+<snippet>
+// lookup a specific DetailGridInfo by id, and then call stopEditing() on it
+const detailGridInfo = gridOptions.api.getDetailGridInfo('detail_someId');
+detailGridInfo.api.flashCells();
+</snippet>
+
+The grid generates IDs for detail grids by prefixing the parent row's ID with `detail_`. For example if the ID of the expanded Master Row is `"88"`, then the ID of the Detail Grid / row will be `"detail_88"`.
+
+<api-documentation source='grid-api/api.json' section='masterDetail' names='["forEachDetailGridInfo"]'></api-documentation>
+
+<snippet>
+// iterate over all DetailGridInfos, and call stopEditing() on each one
+gridOptions.api.forEachDetailGridInfo(detailGridInfo => {
     detailGridInfo.api.flashCells();
-    </snippet>
-
-    The grid generates IDs for detail grids by prefixing the parent row's ID with `detail_`. For example if the ID of the expanded Master Row is "88", then the ID of the Detail Grid / row will be "detail_88".
-
-- `forEachDetailGridInfo(callback)`: Calls the callback for each existing instance of a Detail Grid.
-
-    <snippet>
-    // iterate over all DetailGridInfos, and call stopEditing() on each one
-    gridOptions.api.forEachDetailGridInfo(detailGridInfo => {
-        detailGridInfo.api.flashCells();
-    });
-    </snippet>
+});
+</snippet>
 
 The following example shows flashing cells on the detail grids by using the Grid API `flashCells()`. Note the following:
 
@@ -209,7 +186,7 @@ The example below demonstrates keeping Detail Rows. Note the following:
 
 The full list of Detail Cell Renderer Params are as follows:
 
-<api-documentation source='master-detail-grids/resources/properties.json' section='detailCellRenderer'></api-documentation>
+<interface-documentation interfaceName='IDetailCellRendererParams' names='["detailGridOptions", "getDetailRowData", "template", "refreshStrategy"]' ></interface-documentation>
 
 The pattern of setting components such as Cell Renderers and providing parameters to those components is consistent across the grid and explained in [Grid Components](/components/).
 

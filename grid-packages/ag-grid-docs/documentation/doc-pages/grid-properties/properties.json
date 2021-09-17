@@ -868,7 +868,7 @@
             "description": "Set to `true` to enable Master Detail."
         },
         "detailCellRendererParams": {
-            "description": "Specifies the params to be used by the default detail [Cell Renderer](/component-cell-renderer/).",
+            "description": "Specifies the params to be used by the default Detail Cell Renderer. Can also be a function that provides the params to enable [dynamic definitions](/master-detail-grids/#dynamic-definitions) of the params.",
             "more": {
                 "name": "Detail Grids",
                 "url": "/master-detail-grids/"

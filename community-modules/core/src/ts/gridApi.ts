@@ -178,9 +178,15 @@ export interface CreateCrossFilterChartParams {
 }
 
 export interface DetailGridInfo {
-    api?: GridApi;
-    columnApi?: ColumnApi;
+    /**
+     * Id of the detail grid, the format is `detail_<ROW_ID>`,
+     * where ROW_ID is the `id` of the parent row.
+     */
     id: string;
+    /** Grid api of the detail grid. */
+    api?: GridApi;
+    /** Column api of the detail grid. */
+    columnApi?: ColumnApi;
 }
 
 @Bean('gridApi')

@@ -4267,7 +4267,12 @@
   },
   "DetailGridInfo": {
     "meta": {},
-    "type": { "api?": "GridApi", "columnApi?": "ColumnApi", "id": "string" }
+    "type": { "id": "string", "api?": "GridApi", "columnApi?": "ColumnApi" },
+    "docs": {
+      "id": "/** Id of the detail grid, the format is `detail_<ROW_ID>`,\n * where ROW_ID is the `id` of the parent row. */",
+      "api?": "/** Grid api of the detail grid. */",
+      "columnApi?": "/** Column api of the detail grid. */"
+    }
   },
   "IFakeHScrollComp": {
     "meta": {},
@@ -8095,11 +8100,11 @@
       "detailGridOptions": "GridOptions",
       "getDetailRowData": "GetDetailRowData",
       "refreshStrategy": "'rows' | 'everything' | 'nothing'",
+      "template": "string | TemplateFunc",
       "agGridReact": "any",
       "frameworkComponentWrapper": "any",
       "$compile": "any",
       "pinned": "string",
-      "template": "string | TemplateFunc",
       "autoHeight": "boolean",
       "suppressRefresh": "boolean",
       "value": "any",
@@ -8124,6 +8129,10 @@
       "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void"
     },
     "docs": {
+      "detailGridOptions": "/** Provide Grid Options to use for the Detail Grid. */",
+      "getDetailRowData": "/** A function that provides what rows to display in the Detail Grid. */",
+      "refreshStrategy": "/** Defines how to refresh the Detail Grids as data is changing in the Master Grid. */",
+      "template": "/** Allows changing the template used around the Detail Grid. */",
       "autoHeight": "/** @deprecated\n */",
       "suppressRefresh": "/** @deprecated\n */",
       "value": "/** Value to be rendered. */",
@@ -8159,6 +8168,11 @@
       "node": "RowNode",
       "data": "any",
       "successCallback(rowData: any[])": "void"
+    },
+    "docs": {
+      "node": "/** Row node for the details request. */",
+      "data": "/** Data for the current row. */",
+      "successCallback(rowData: any[])": "/** Success callback: pass the rows back for the grid request. */"
     }
   },
   "TemplateFunc": {
