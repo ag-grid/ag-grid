@@ -193,6 +193,7 @@ export class CellCtrl extends BeanStub {
 
         const tooltipCtrl: ITooltipFeatureCtrl = {
             getColumn: ()=> this.column,
+            getColDef: ()=> this.column.getColDef(),
             getRowIndex: ()=> this.cellPosition.rowIndex,
             getRowNode: () => this.rowNode,
             getGui: ()=> this.getGui(),

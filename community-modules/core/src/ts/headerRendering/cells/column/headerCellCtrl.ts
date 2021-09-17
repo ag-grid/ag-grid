@@ -216,6 +216,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
         const tooltipCtrl: ITooltipFeatureCtrl = {
             getColumn: ()=> this.column,
+            getColDef: ()=> this.column.getColDef(),
             getGui: ()=> this.eGui,
             getLocation: ()=> 'header',
             getTooltipValue: () => {

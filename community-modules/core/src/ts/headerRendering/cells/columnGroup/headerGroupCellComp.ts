@@ -61,16 +61,18 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
         const displayName = this.columnModel.getDisplayNameForColumnGroup(this.columnGroup, 'header');
         this.appendHeaderGroupComp(displayName!);
 
-        this.setupTooltip();
-
         const eGui = this.getGui();
+
+        const setAttribute = (key: string, value: string | undefined) => 
+                value!=undefined ? eGui.setAttribute(key, value) : eGui.removeAttribute(key);
 
         const compProxy: IHeaderGroupCellComp = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             addOrRemoveResizableCssClass: (cssClassName, on) => addOrRemoveCssClass(this.eResize, cssClassName, on),
             setWidth: width => eGui.style.width = width,
             setColId: id => eGui.setAttribute("col-id", id),
-            setAriaExpanded: expanded => expanded!=null ? eGui.setAttribute('aria-expanded', expanded) : eGui.removeAttribute('aria-expanded')
+            setAriaExpanded: expanded => setAttribute('aria-expanded', expanded),
+            setTitle: title => setAttribute("title", title)
         };
 
         this.ctrl.setComp(compProxy, eGui, this.eResize);
@@ -79,29 +81,6 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
     public getComponentHolder(): ColGroupDef | null {
         return this.columnGroup.getColGroupDef();
     }
-
-    public getTooltipParams(): ITooltipParams {
-        const res = super.getTooltipParams();
-        res.location = 'headerGroup';
-
-        // this is wrong, but leaving it as i don't want to change code,
-        // but the ColumnGroup does not have a ColDef or a Column (although it does have GroupDef and ColumnGroup)
-        res.colDef = this.getComponentHolder();
-        res.column = this.columnGroup;
-
-        return res;
-    }
-
-    private setupTooltip(): void {
-        const colGroupDef = this.getComponentHolder();
-        const tooltipText = colGroupDef && colGroupDef.headerTooltip;
-
-        if (tooltipText != null) {
-            this.setTooltip(tooltipText);
-        }
-    }
-
-
 
     private appendHeaderGroupComp(displayName: string): void {
         const params: IHeaderGroupParams = {

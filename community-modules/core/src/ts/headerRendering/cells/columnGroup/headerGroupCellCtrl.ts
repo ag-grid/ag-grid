@@ -32,7 +32,9 @@ import { HoverFeature } from "../hoverFeature";
 import { GroupResizeFeature } from "./groupResizeFeature";
 import { IHeaderGroupComp, IHeaderGroupParams } from "./headerGroupComp";
 import { GroupWidthFeature } from "./groupWidthFeature";
-export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp {
+import { ITooltipFeatureComp, ITooltipFeatureCtrl, TooltipFeature } from "../../../widgets/tooltipFeature";
+
+export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp, ITooltipFeatureComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     addOrRemoveResizableCssClass(cssClassName: string, on: boolean): void;
     setWidth(width: string): void;
@@ -63,6 +65,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
         this.addAttributes();
         this.setupMovingCss();
         this.setupExpandable();
+        this.setupTooltip();
 
         const pinned = this.getParentRowCtrl().getPinned();
         const leafCols = this.columnGroup.getOriginalColumnGroup().getLeafColumns();
@@ -81,6 +84,26 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
                 onFocusIn: this.onFocusIn.bind(this)
             }
         ));
+    }
+
+    private setupTooltip(): void {
+
+        const colGroupDef = this.columnGroup.getColGroupDef();
+
+        const tooltipCtrl: ITooltipFeatureCtrl = {
+            getColumn: ()=> this.columnGroup,
+            getGui: ()=> this.eGui,
+            getLocation: ()=> 'headerGroup',
+            getTooltipValue: () => colGroupDef && colGroupDef.headerTooltip
+        };
+
+        if (colGroupDef) {
+            tooltipCtrl.getColDef = ()=> colGroupDef;
+        }
+
+        const tooltipFeature = this.createManagedBean(new TooltipFeature(tooltipCtrl, this.beans));
+
+        tooltipFeature.setComp(this.comp);
     }
 
     private setupExpandable(): void {
@@ -135,7 +158,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
 
         listener();
     }
-    
+
     protected onFocusIn(e: FocusEvent) {
         if (!this.eGui.contains(e.relatedTarget as HTMLElement)) {
             const rowIndex = this.getRowIndex();

@@ -1,17 +1,20 @@
 import { BeanStub } from "../context/beanStub";
 import { Column } from "../entities/column";
+import { ColumnGroup } from "../entities/columnGroup";
 import { RowNode } from "../entities/rowNode";
 import { Beans } from "../rendering/beans";
 import { escapeString } from "../utils/string";
 import { CustomTooltipFeature, TooltipParentComp } from "./customTooltipFeature";
 import { ITooltipParams } from "../rendering/tooltipComponent";
+import { ColDef, ColGroupDef } from "../entities/colDef";
 
 export interface ITooltipFeatureCtrl {
     getTooltipValue(): any;
     getGui(): HTMLElement;
     getLocation(): string;
 
-    getColumn?(): Column;
+    getColumn?(): Column | ColumnGroup;
+    getColDef?(): ColDef | ColGroupDef;
     getRowIndex?(): number;
     getRowNode?(): RowNode;
 
@@ -86,11 +89,12 @@ export class TooltipFeature extends BeanStub {
     public getTooltipParams(): ITooltipParams {
         const ctrl = this.ctrl;
         const column = ctrl.getColumn ? ctrl.getColumn() : undefined;
+        const colDef = ctrl.getColDef ? ctrl.getColDef() : undefined;
         const rowNode = ctrl.getRowNode ? ctrl.getRowNode() : undefined;
 
         return {
             location: ctrl.getLocation(),//'cell',
-            colDef: column ? column.getColDef() : undefined,
+            colDef: colDef,
             column: column,
             rowIndex: ctrl.getRowIndex ? ctrl.getRowIndex() : undefined,
             node: rowNode,
