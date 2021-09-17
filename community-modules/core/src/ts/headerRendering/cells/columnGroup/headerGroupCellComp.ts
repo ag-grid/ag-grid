@@ -51,9 +51,6 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
 
     private expandable: boolean;
 
-    // the children can change, we keep destroy functions related to listening to the children here
-    private removeChildListenersFuncs: Function[] = [];
-
     constructor(ctrl: HeaderGroupCellCtrl) {
         super(HeaderGroupCellComp.TEMPLATE, ctrl);
         this.column = ctrl.getColumnGroupChild() as ColumnGroup;
@@ -66,8 +63,6 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
         const displayName = this.columnModel.getDisplayNameForColumnGroup(this.column, 'header');
         this.appendHeaderGroupComp(displayName!);
 
-        this.addClasses();
-        this.setupWidth();
         this.addAttributes();
         this.setupMovingCss();
         this.setupTooltip();
@@ -90,6 +85,7 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
         const compProxy: IHeaderGroupCellComp = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             addOrRemoveResizableCssClass: (cssClassName, on) => addOrRemoveCssClass(this.eResize, cssClassName, on),
+            setWidth: width => eGui.style.width = width,
         };
 
         this.ctrl.setComp(compProxy, eGui, this.eResize);
@@ -246,15 +242,6 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
         this.setupMove(headerGroupComp.getGui(), displayName);
     }
 
-    private addClasses(): void {
-        // having different classes below allows the style to not have a bottom border
-        // on the group header, if no group is specified
-        // columnGroup.getColGroupDef
-        const style = this.column.isPadding() ? 'no' : 'with';
-
-        this.addCssClass(`ag-header-group-cell-${style}-group`);
-    }
-
     private setupMove(eHeaderGroup: HTMLElement, displayName: string): void {
         if (!eHeaderGroup) { return; }
         if (this.isSuppressMoving()) { return; }
@@ -316,49 +303,10 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
         return result;
     }
 
-    private setupWidth(): void {
-        // we need to listen to changes in child columns, as they impact our width
-        this.addListenersToChildrenColumns();
 
-        // the children belonging to this group can change, so we need to add and remove listeners as they change
-        this.addManagedListener(this.column, ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED, this.onDisplayedChildrenChanged.bind(this));
 
-        this.onWidthChanged();
 
-        // the child listeners are not tied to this components life-cycle, as children can get added and removed
-        // to the group - hence they are on a different life-cycle. so we must make sure the existing children
-        // listeners are removed when we finally get destroyed
-        this.addDestroyFunc(this.removeListenersOnChildrenColumns.bind(this));
-    }
 
-    private onDisplayedChildrenChanged(): void {
-        this.addListenersToChildrenColumns();
-        this.onWidthChanged();
-    }
 
-    private addListenersToChildrenColumns(): void {
-        // first destroy any old listeners
-        this.removeListenersOnChildrenColumns();
-
-        // now add new listeners to the new set of children
-        const widthChangedListener = this.onWidthChanged.bind(this);
-        this.column.getLeafColumns().forEach(column => {
-            column.addEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
-            column.addEventListener(Column.EVENT_VISIBLE_CHANGED, widthChangedListener);
-            this.removeChildListenersFuncs.push(() => {
-                column.removeEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
-                column.removeEventListener(Column.EVENT_VISIBLE_CHANGED, widthChangedListener);
-            });
-        });
-    }
-
-    private removeListenersOnChildrenColumns(): void {
-        this.removeChildListenersFuncs.forEach(func => func());
-        this.removeChildListenersFuncs = [];
-    }
-
-    private onWidthChanged(): void {
-        this.getGui().style.width = this.column.getActualWidth() + 'px';
-    }
 
 }

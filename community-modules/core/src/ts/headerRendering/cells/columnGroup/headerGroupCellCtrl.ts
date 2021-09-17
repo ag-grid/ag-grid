@@ -31,9 +31,11 @@ import { CssClassApplier } from "../cssClassApplier";
 import { HoverFeature } from "../hoverFeature";
 import { GroupResizeFeature } from "./groupResizeFeature";
 import { IHeaderGroupComp, IHeaderGroupParams } from "./headerGroupComp";
+import { GroupWidthFeature } from "./groupWidthFeature";
 export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     addOrRemoveResizableCssClass(cssClassName: string, on: boolean): void;
+    setWidth(width: string): void;
 }
 
 export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
@@ -48,13 +50,26 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
 
     public setComp(comp: IHeaderGroupCellComp, eGui: HTMLElement, eResize: HTMLElement): void {
         super.setAbstractComp(comp, eGui);
+        this.comp = comp;
 
-        const colGroupDef = this.columnGroup.getColGroupDef();
-        const classes = CssClassApplier.getHeaderClassesFromColDef(colGroupDef, this.gridOptionsWrapper, null, this.columnGroup);
-
-        classes.forEach( c => this.comp.addOrRemoveCssClass(c, true) );
+        this.addClasses();
 
         const pinned = this.getParentRowCtrl().getPinned();
         this.createManagedBean(new GroupResizeFeature(comp, eResize, pinned, this.columnGroup));
+        this.createManagedBean(new GroupWidthFeature(comp, this.columnGroup));
     }
+
+    private addClasses(): void {
+
+        const colGroupDef = this.columnGroup.getColGroupDef();
+        const classes = CssClassApplier.getHeaderClassesFromColDef(colGroupDef, this.gridOptionsWrapper, null, this.columnGroup);
+        
+        // having different classes below allows the style to not have a bottom border
+        // on the group header, if no group is specified
+        classes.push(this.columnGroup.isPadding() ? `ag-header-group-cell-no-group` : `ag-header-group-cell-with-group`);
+
+        classes.forEach( c => this.comp.addOrRemoveCssClass(c, true) );
+    }
+
+
 }

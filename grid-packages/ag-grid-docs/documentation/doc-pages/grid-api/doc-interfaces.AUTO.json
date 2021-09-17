@@ -8046,7 +8046,22 @@
     "selected": { "type": { "returnType": "number", "optional": false } },
     "notSelected": { "type": { "returnType": "number", "optional": false } }
   },
-  "IHeaderGroupCellComp": {},
+  "IHeaderGroupCellComp": {
+    "addOrRemoveCssClass": {
+      "type": {
+        "arguments": { "cssClassName": "string", "on": "boolean" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "addOrRemoveResizableCssClass": {
+      "type": {
+        "arguments": { "cssClassName": "string", "on": "boolean" },
+        "returnType": "void",
+        "optional": false
+      }
+    }
+  },
   "IHeaderGroupParams": {
     "columnGroup": {
       "type": { "returnType": "ColumnGroup", "optional": false }
