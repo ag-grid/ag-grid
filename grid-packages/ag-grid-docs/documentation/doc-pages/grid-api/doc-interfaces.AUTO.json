@@ -7928,7 +7928,7 @@
         "optional": false
       }
     },
-    "setCompDetails": {
+    "setUserCompDetails": {
       "type": {
         "arguments": { "compDetails": "UserCompDetails" },
         "returnType": "void",
@@ -8087,6 +8087,13 @@
     "setAriaExpanded": {
       "type": {
         "arguments": { "expanded": "string | undefined" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "setUserCompDetails": {
+      "type": {
+        "arguments": { "compDetails": "UserCompDetails" },
         "returnType": "void",
         "optional": false
       }

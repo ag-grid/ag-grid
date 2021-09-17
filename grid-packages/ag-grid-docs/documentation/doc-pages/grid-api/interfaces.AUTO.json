@@ -4440,7 +4440,7 @@
       "setAriaSort(sort: ColumnSortState | undefined)": "void",
       "setColId(id: string)": "void",
       "setAriaDescribedBy(id: string | undefined)": "void",
-      "setCompDetails(compDetails: UserCompDetails)": "void",
+      "setUserCompDetails(compDetails: UserCompDetails)": "void",
       "getUserCompInstance()": "IHeader | undefined",
       "setTitle(title: string | undefined)": "void"
     }
@@ -4509,6 +4509,7 @@
       "setWidth(width: string)": "void",
       "setColId(id: string)": "void",
       "setAriaExpanded(expanded: string | undefined)": "void",
+      "setUserCompDetails(compDetails: UserCompDetails)": "void",
       "setTitle(title: string | undefined)": "void"
     }
   },

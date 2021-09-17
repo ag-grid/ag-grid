@@ -14,7 +14,7 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
     const [colId, setColId] = useState<string>();
     const [ariaSort, setAriaSort] = useState<ColumnSortState>();
     const [ariaDescribedBy, setAriaDescribedBy] = useState<string>();
-    const [compDetails, setCompDetails] = useState<UserCompDetails>();
+    const [userCompDetails, setUserCompDetails] = useState<UserCompDetails>();
 
     const eGui = useRef<HTMLDivElement>(null);
     const eResize = useRef<HTMLDivElement>(null);
@@ -31,7 +31,7 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
             setColId: id => setColId(id),
             setTitle: title => setTitle(title),
             setAriaDescribedBy: value => setAriaDescribedBy(value),
-            setCompDetails: compDetails => setCompDetails(compDetails),
+            setUserCompDetails: compDetails => setUserCompDetails(compDetails),
             getUserCompInstance: ()=> userCompRef.current || undefined
         };
 
@@ -41,8 +41,8 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
 
     // js comps
     useEffect(() => {
-        return showJsComp(compDetails, context, eGui.current!, userCompRef);
-    }, [compDetails]);
+        return showJsComp(userCompDetails, context, eGui.current!, userCompRef);
+    }, [userCompDetails]);
 
     // add drag handling, must be done after component is added to the dom
     useEffect(()=> {
@@ -54,7 +54,7 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
         });
 
         ctrl.setDragSource(userCompDomElement);
-    }, [compDetails]);
+    }, [userCompDetails]);
 
     const style = useMemo( ()=> ({
         width: width
@@ -63,21 +63,21 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
     const className = useMemo( ()=> 'ag-header-cell ' + cssClasses.toString(), [cssClasses] );
 
     const userCompStateless = useMemo( ()=> {
-        const res = compDetails 
-                    && compDetails.componentFromFramework 
-                    && isComponentStateless(compDetails.componentClass);
+        const res = userCompDetails 
+                    && userCompDetails.componentFromFramework 
+                    && isComponentStateless(userCompDetails.componentClass);
         return !!res;
-    }, [compDetails]);
+    }, [userCompDetails]);
 
-    const reactUserComp = compDetails && compDetails.componentFromFramework;
-    const UserCompClass = compDetails && compDetails.componentClass;
+    const reactUserComp = userCompDetails && userCompDetails.componentFromFramework;
+    const UserCompClass = userCompDetails && userCompDetails.componentClass;
 
     return (
         <div ref={eGui} className={className} style={style} title={title} col-id={colId} 
                     aria-sort={ariaSort} role="columnheader" unselectable="on" tabIndex={-1}
                     aria-describedby={ariaDescribedBy}>
-            { reactUserComp && userCompStateless && <UserCompClass { ...compDetails!.params } /> }
-            { reactUserComp && !userCompStateless && <UserCompClass { ...compDetails!.params } ref={ userCompRef }/> }
+            { reactUserComp && userCompStateless && <UserCompClass { ...userCompDetails!.params } /> }
+            { reactUserComp && !userCompStateless && <UserCompClass { ...userCompDetails!.params } ref={ userCompRef }/> }
             <div ref={eResize} className="ag-header-cell-resize" role="presentation"></div>
         </div>
     );

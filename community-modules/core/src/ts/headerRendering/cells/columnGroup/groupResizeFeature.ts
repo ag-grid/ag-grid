@@ -1,34 +1,11 @@
-import { ColumnApi } from "../../../columns/columnApi";
 import { ColumnModel, ColumnResizeSet } from "../../../columns/columnModel";
-import { UserComponentFactory } from "../../../components/framework/userComponentFactory";
 import { Constants } from "../../../constants/constants";
-import { KeyCode } from '../../../constants/keyCode';
+import { BeanStub } from "../../../context/beanStub";
 import { Autowired, PostConstruct } from "../../../context/context";
-import {
-    DragAndDropService,
-    DragItem,
-    DragSource,
-    DragSourceType
-} from "../../../dragAndDrop/dragAndDropService";
-import { ColGroupDef } from "../../../entities/colDef";
 import { Column } from "../../../entities/column";
 import { ColumnGroup } from "../../../entities/columnGroup";
-import { ProvidedColumnGroup } from "../../../entities/providedColumnGroup";
-import { GridApi } from "../../../gridApi";
-import { Beans } from "../../../rendering/beans";
-import { SetLeftFeature } from "../../../rendering/features/setLeftFeature";
-import { ITooltipParams } from "../../../rendering/tooltipComponent";
-import { setAriaExpanded } from "../../../utils/aria";
-import { removeFromArray } from "../../../utils/array";
-import { addCssClass, addOrRemoveCssClass, removeCssClass, removeFromParent } from "../../../utils/dom";
-import { ManagedFocusFeature } from "../../../widgets/managedFocusFeature";
 import { HorizontalResizeService } from "../../common/horizontalResizeService";
-import { AbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellComp";
-import { CssClassApplier } from "../cssClassApplier";
-import { HoverFeature } from "../hoverFeature";
-import { HeaderGroupCellCtrl, IHeaderGroupCellComp } from "./headerGroupCellCtrl";
-import { IHeaderGroupComp, IHeaderGroupParams } from "./headerGroupComp";
-import { BeanStub } from "../../../context/beanStub";
+import { IHeaderGroupCellComp } from "./headerGroupCellCtrl";
 
 export class GroupResizeFeature extends BeanStub {
 

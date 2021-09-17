@@ -5,7 +5,6 @@ import { KeyCode } from '../../../constants/keyCode';
 import { Autowired, PreDestroy } from "../../../context/context";
 import { DragAndDropService, DragItem, DragSource, DragSourceType } from "../../../dragAndDrop/dragAndDropService";
 import { Column } from "../../../entities/column";
-import { IHeaderColumn } from "../../../entities/iHeaderColumn";
 import { Events } from "../../../eventKeys";
 import { GridApi } from "../../../gridApi";
 import { IMenuFactory } from "../../../interfaces/iMenuFactory";
@@ -20,7 +19,7 @@ import { HeaderRowCtrl } from "../../row/headerRowCtrl";
 import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellCtrl";
 import { CssClassApplier } from "../cssClassApplier";
 import { HoverFeature } from "../hoverFeature";
-import { HeaderComp, IHeader, IHeaderComp, IHeaderParams } from "./headerComp";
+import { HeaderComp, IHeader, IHeaderParams } from "./headerComp";
 import { ResizeFeature } from "./resizeFeature";
 import { SelectAllFeature } from "./selectAllFeature";
 
@@ -31,7 +30,7 @@ export interface IHeaderCellComp extends IAbstractHeaderCellComp, ITooltipFeatur
     setColId(id: string): void;
     setAriaDescribedBy(id: string | undefined): void;
 
-    setCompDetails(compDetails: UserCompDetails): void;
+    setUserCompDetails(compDetails: UserCompDetails): void;
     getUserCompInstance(): IHeader | undefined;
 }
 
@@ -90,7 +89,9 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.setupTooltip();
         this.addActiveHeaderMouseListeners();
         this.setupSelectAll();
+        this.setupUserComp();
 
+        this.createManagedBean(new ResizeFeature(this.getPinned(), this.column, eResize, comp, this));
         this.createManagedBean(new HoverFeature([this.column], eGui));
         this.createManagedBean(new SetLeftFeature(this.column, eGui, this.beans));
         this.createManagedBean(new ManagedFocusFeature(
@@ -108,20 +109,16 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
-
-        this.createManagedBean(new ResizeFeature(this.getPinned(), this.column, eResize, comp, this));
-
-        this.createUserComp();
     }
 
-    private createUserComp(): void {
+    private setupUserComp(): void {
         const compDetails = this.lookupUserCompDetails();
         this.setCompDetails(compDetails);
     }
 
     private setCompDetails(compDetails: UserCompDetails): void {
         this.userCompDetails = compDetails;
-        this.comp.setCompDetails(compDetails);
+        this.comp.setUserCompDetails(compDetails);
     }
 
     private lookupUserCompDetails(): UserCompDetails {
@@ -241,10 +238,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
     public getGui(): HTMLElement {
         return this.eGui;
-    }
-
-    public temp_getDisplayName(): string | null {
-        return this.displayName;
     }
 
     public setDragSource(eSource: HTMLElement | undefined): void {
