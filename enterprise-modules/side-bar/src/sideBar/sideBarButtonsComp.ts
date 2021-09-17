@@ -4,13 +4,14 @@ import {
     Component,
     PostConstruct,
     ToolPanelDef,
-    RefSelector,
     PreDestroy,
     FocusService,
     _,
     KeyCode,
     ColumnModel
 } from "@ag-grid-community/core";
+
+import { SideBarButtonComp } from "./sideBarButtonComp";
 
 export interface SideBarButtonClickedEvent extends AgEvent {
     toolPanelId: string;
@@ -19,7 +20,7 @@ export interface SideBarButtonClickedEvent extends AgEvent {
 export class SideBarButtonsComp extends Component {
 
     public static EVENT_SIDE_BAR_BUTTON_CLICKED = 'sideBarButtonClicked';
-    private static readonly TEMPLATE: string = /* html */ `<div class="ag-side-buttons"></div>`;
+    private static readonly TEMPLATE: string = /* html */ `<div class="ag-side-buttons" role="tablist"></div>`;
     private buttonComps: SideBarButtonComp[] = [];
 
     @Autowired('focusService') private focusService: FocusService;
@@ -75,51 +76,3 @@ export class SideBarButtonsComp extends Component {
 
 }
 
-class SideBarButtonComp extends Component {
-
-    public static EVENT_TOGGLE_BUTTON_CLICKED = 'toggleButtonClicked';
-
-    @RefSelector('eToggleButton') private eToggleButton: HTMLButtonElement;
-    @RefSelector('eIconWrapper') private eIconWrapper: HTMLElement;
-
-    private readonly toolPanelDef: ToolPanelDef;
-
-    constructor(toolPanelDef: ToolPanelDef) {
-        super();
-        this.toolPanelDef = toolPanelDef;
-    }
-
-    public getToolPanelId(): string {
-        return this.toolPanelDef.id;
-    }
-
-    @PostConstruct
-    private postConstruct(): void {
-        const template = this.createTemplate();
-        this.setTemplate(template);
-        this.eIconWrapper.insertAdjacentElement('afterbegin', _.createIconNoSpan(this.toolPanelDef.iconKey, this.gridOptionsWrapper)!);
-        this.addManagedListener(this.eToggleButton, 'click', this.onButtonPressed.bind(this));
-    }
-
-    private createTemplate(): string {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        const def = this.toolPanelDef;
-        const label = translate(def.labelKey, def.labelDefault);
-        const res = /* html */
-            `<div class="ag-side-button">
-                <button type="button" ref="eToggleButton" tabindex="-1" class="ag-side-button-button">
-                    <div ref="eIconWrapper" class="ag-side-button-icon-wrapper"></div>
-                    <span class="ag-side-button-label">${label}</span>
-                </button>
-            </div>`;
-        return res;
-    }
-
-    private onButtonPressed(): void {
-        this.dispatchEvent({ type: SideBarButtonComp.EVENT_TOGGLE_BUTTON_CLICKED });
-    }
-
-    public setSelected(selected: boolean): void {
-        this.addOrRemoveCssClass('ag-selected', selected);
-    }
-}
