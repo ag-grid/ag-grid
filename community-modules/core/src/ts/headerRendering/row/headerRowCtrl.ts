@@ -16,6 +16,7 @@ import { HeaderCellCtrl, IHeaderCellComp } from "../cells/column/headerCellCtrl"
 import { HeaderGroupCellCtrl } from "../cells/columnGroup/headerGroupCellCtrl";
 import { HeaderRowType } from "./headerRowComp";
 import { _ } from "../../utils";
+import { ColumnGroup } from "../../main";
 
 export interface IHeaderRowComp {
     setTransform(transform: string): void;
@@ -212,13 +213,13 @@ export class HeaderRowCtrl extends BeanStub {
             if (headerCtrl==null) {
                 switch (this.type) {
                     case HeaderRowType.FLOATING_FILTER:
-                        headerCtrl = this.createBean(new HeaderFilterCellCtrl(child, this));
+                        headerCtrl = this.createBean(new HeaderFilterCellCtrl(child as Column, this));
                         break;
                     case HeaderRowType.COLUMN_GROUP:
-                        headerCtrl = this.createBean(new HeaderGroupCellCtrl(child, this));
+                        headerCtrl = this.createBean(new HeaderGroupCellCtrl(child as ColumnGroup, this));
                         break;
                     default:
-                        headerCtrl = this.createBean(new HeaderCellCtrl(child, this, child as Column));
+                        headerCtrl = this.createBean(new HeaderCellCtrl(child as Column, this));
                         break;
                 }
             }

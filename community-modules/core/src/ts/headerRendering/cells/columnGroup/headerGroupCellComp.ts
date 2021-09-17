@@ -16,6 +16,7 @@ import { ColumnGroup } from "../../../entities/columnGroup";
 import { ProvidedColumnGroup } from "../../../entities/providedColumnGroup";
 import { GridApi } from "../../../gridApi";
 import { Beans } from "../../../rendering/beans";
+import { RefSelector } from "../../../widgets/componentAnnotations";
 import { SetLeftFeature } from "../../../rendering/features/setLeftFeature";
 import { ITooltipParams } from "../../../rendering/tooltipComponent";
 import { setAriaExpanded } from "../../../utils/aria";
@@ -33,29 +34,21 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
 
     private static TEMPLATE = /* html */
         `<div class="ag-header-group-cell" role="columnheader" tabindex="-1">
-            <div ref="agResize" class="ag-header-cell-resize" role="presentation"></div>
+            <div ref="eResize" class="ag-header-cell-resize" role="presentation"></div>
         </div>`;
 
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('horizontalResizeService') private horizontalResizeService: HorizontalResizeService;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired('beans') protected beans: Beans;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
 
+    @RefSelector('eResize') private eResize: HTMLElement;
+
     protected readonly column: ColumnGroup;
     protected readonly pinned: string | null;
 
-    private eHeaderCellResize: HTMLElement;
-
-    private resizeCols: Column[];
-    private resizeStartWidth: number;
-    private resizeRatios: number[];
-
-    private resizeTakeFromCols: Column[] | null;
-    private resizeTakeFromStartWidth: number | null;
-    private resizeTakeFromRatios: number[] | null;
     private expandable: boolean;
 
     // the children can change, we keep destroy functions related to listening to the children here
@@ -69,14 +62,10 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
 
     @PostConstruct
     private postConstruct(): void {
-        const classes = CssClassApplier.getHeaderClassesFromColDef(this.getComponentHolder(), this.gridOptionsWrapper, null, this.column);
-        classes.forEach( c => this.addOrRemoveCssClass(c, true) );
 
         const displayName = this.columnModel.getDisplayNameForColumnGroup(this.column, 'header');
-
         this.appendHeaderGroupComp(displayName!);
 
-        this.setupResize();
         this.addClasses();
         this.setupWidth();
         this.addAttributes();
@@ -96,10 +85,14 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
             }
         ));
 
+        const eGui = this.getGui();
+
         const compProxy: IHeaderGroupCellComp = {
+            addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
+            addOrRemoveResizableCssClass: (cssClassName, on) => addOrRemoveCssClass(this.eResize, cssClassName, on),
         };
 
-        this.ctrl.setComp(compProxy, this.getGui());
+        this.ctrl.setComp(compProxy, eGui, this.eResize);
     }
 
     public getColumn(): ColumnGroup {
@@ -368,116 +361,4 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
         this.getGui().style.width = this.column.getActualWidth() + 'px';
     }
 
-    private setupResize(): void {
-        this.eHeaderCellResize = this.getRefElement('agResize');
-
-        if (!this.column.isResizable()) {
-            removeFromParent(this.eHeaderCellResize);
-            return;
-        }
-
-        const finishedWithResizeFunc = this.horizontalResizeService.addResizeBar({
-            eResizeBar: this.eHeaderCellResize,
-            onResizeStart: this.onResizeStart.bind(this),
-            onResizing: this.onResizing.bind(this, false),
-            onResizeEnd: this.onResizing.bind(this, true)
-        });
-
-        this.addDestroyFunc(finishedWithResizeFunc);
-
-        if (!this.gridOptionsWrapper.isSuppressAutoSize()) {
-            const skipHeaderOnAutoSize = this.gridOptionsWrapper.isSkipHeaderOnAutoSize();
-
-            this.eHeaderCellResize.addEventListener('dblclick', (event: MouseEvent) => {
-                // get list of all the column keys we are responsible for
-                const keys: string[] = [];
-                this.column.getDisplayedLeafColumns().forEach((column: Column) => {
-                    // not all cols in the group may be participating with auto-resize
-                    if (!column.getColDef().suppressAutoSize) {
-                        keys.push(column.getColId());
-                    }
-                });
-
-                if (keys.length > 0) {
-                    this.columnModel.autoSizeColumns(keys, skipHeaderOnAutoSize, "uiColumnResized");
-                }
-            });
-        }
-    }
-
-    public onResizeStart(shiftKey: boolean): void {
-        const leafCols = this.column.getDisplayedLeafColumns();
-        this.resizeCols = leafCols.filter(col => col.isResizable());
-        this.resizeStartWidth = 0;
-        this.resizeCols.forEach(col => this.resizeStartWidth += col.getActualWidth());
-        this.resizeRatios = [];
-        this.resizeCols.forEach(col => this.resizeRatios.push(col.getActualWidth() / this.resizeStartWidth));
-
-        let takeFromGroup: ColumnGroup | null = null;
-
-        if (shiftKey) {
-            takeFromGroup = this.columnModel.getDisplayedGroupAfter(this.column);
-        }
-
-        if (takeFromGroup) {
-            const takeFromLeafCols = takeFromGroup.getDisplayedLeafColumns();
-
-            this.resizeTakeFromCols = takeFromLeafCols.filter(col => col.isResizable());
-
-            this.resizeTakeFromStartWidth = 0;
-            this.resizeTakeFromCols.forEach(col => this.resizeTakeFromStartWidth! += col.getActualWidth());
-            this.resizeTakeFromRatios = [];
-            this.resizeTakeFromCols.forEach(col => this.resizeTakeFromRatios!.push(col.getActualWidth() / this.resizeTakeFromStartWidth!));
-        } else {
-            this.resizeTakeFromCols = null;
-            this.resizeTakeFromStartWidth = null;
-            this.resizeTakeFromRatios = null;
-        }
-
-        addCssClass(this.getGui(), 'ag-column-resizing');
-
-    }
-
-    public onResizing(finished: boolean, resizeAmount: any): void {
-        const resizeSets: ColumnResizeSet[] = [];
-        const resizeAmountNormalised = this.normaliseDragChange(resizeAmount);
-
-        resizeSets.push({
-            columns: this.resizeCols,
-            ratios: this.resizeRatios,
-            width: this.resizeStartWidth + resizeAmountNormalised
-        });
-
-        if (this.resizeTakeFromCols) {
-            resizeSets.push({
-                columns: this.resizeTakeFromCols,
-                ratios: this.resizeTakeFromRatios!,
-                width: this.resizeTakeFromStartWidth! - resizeAmountNormalised
-            });
-        }
-
-        this.columnModel.resizeColumnSets(resizeSets, finished, 'uiColumnDragged');
-
-        if (finished) {
-            removeCssClass(this.getGui(), 'ag-column-resizing');
-        }
-    }
-
-    // optionally inverts the drag, depending on pinned and RTL
-    // note - this method is duplicated in RenderedHeaderCell - should refactor out?
-    private normaliseDragChange(dragChange: number): number {
-        let result = dragChange;
-
-        if (this.gridOptionsWrapper.isEnableRtl()) {
-            // for RTL, dragging left makes the col bigger, except when pinning left
-            if (this.pinned !== Constants.PINNED_LEFT) {
-                result *= -1;
-            }
-        } else if (this.pinned === Constants.PINNED_RIGHT) {
-            // for LTR (ie normal), dragging left makes the col smaller, except when pinning right
-            result *= -1;
-        }
-
-        return result;
-    }
 }

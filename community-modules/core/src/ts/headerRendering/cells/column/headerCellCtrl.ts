@@ -67,8 +67,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
     private userCompDetails: UserCompDetails;
 
-    constructor(columnGroupChild: IHeaderColumn, parentRowCtrl: HeaderRowCtrl, column: Column) {
-        super(columnGroupChild, parentRowCtrl);
+    constructor(column: Column, parentRowCtrl: HeaderRowCtrl) {
+        super(column, parentRowCtrl);
         this.column = column;
     }
 
