@@ -195,8 +195,7 @@ export class ColumnApi {
     }
 
     /**
-     * 
-     * @param columnState @deprecated Use `applyColumnState` instead.
+     * @deprecated Use `applyColumnState` instead.
      */
     public setColumnState(columnState: ColumnState[]): boolean {
         return this.columnModel.applyColumnState({ state: columnState, applyOrder: true }, 'api');

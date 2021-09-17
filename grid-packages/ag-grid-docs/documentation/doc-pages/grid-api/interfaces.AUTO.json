@@ -4496,7 +4496,13 @@
     "meta": {},
     "type": { "selected": "number", "notSelected": "number" }
   },
-  "IHeaderGroupCellComp": { "meta": {}, "type": {} },
+  "IHeaderGroupCellComp": {
+    "meta": {},
+    "type": {
+      "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
+      "addOrRemoveResizableCssClass(cssClassName: string, on: boolean)": "void"
+    }
+  },
   "IHeaderGroupParams": {
     "meta": {},
     "type": {
