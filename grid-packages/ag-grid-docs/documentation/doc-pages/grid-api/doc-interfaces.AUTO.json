@@ -7512,9 +7512,18 @@
     "unlinkChart": { "type": { "returnType": "boolean", "optional": true } }
   },
   "DetailGridInfo": {
-    "api": { "type": { "returnType": "GridApi", "optional": true } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": true } },
-    "id": { "type": { "returnType": "string", "optional": false } }
+    "id": {
+      "description": "/** Id of the detail grid, the format is `detail_<ROW_ID>`,\n * where ROW_ID is the `id` of the parent row. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "api": {
+      "description": "/** Grid api of the detail grid. */",
+      "type": { "returnType": "GridApi", "optional": true }
+    },
+    "columnApi": {
+      "description": "/** Column api of the detail grid. */",
+      "type": { "returnType": "ColumnApi", "optional": true }
+    }
   },
   "IFakeHScrollComp": {
     "setHeight": {
@@ -14164,16 +14173,23 @@
   },
   "IDetailCellRendererParams": {
     "detailGridOptions": {
+      "description": "/** Provide Grid Options to use for the Detail Grid. */",
       "type": { "returnType": "GridOptions", "optional": false }
     },
     "getDetailRowData": {
+      "description": "/** A function that provides what rows to display in the Detail Grid. */",
       "type": { "returnType": "GetDetailRowData", "optional": false }
     },
     "refreshStrategy": {
+      "description": "/** Defines how to refresh the Detail Grids as data is changing in the Master Grid. */",
       "type": {
         "returnType": "'rows' | 'everything' | 'nothing'",
         "optional": false
       }
+    },
+    "template": {
+      "description": "/** Allows changing the template used around the Detail Grid. */",
+      "type": { "returnType": "string | TemplateFunc", "optional": false }
     },
     "agGridReact": { "type": { "returnType": "any", "optional": false } },
     "frameworkComponentWrapper": {
@@ -14181,9 +14197,6 @@
     },
     "$compile": { "type": { "returnType": "any", "optional": false } },
     "pinned": { "type": { "returnType": "string", "optional": false } },
-    "template": {
-      "type": { "returnType": "string | TemplateFunc", "optional": false }
-    },
     "autoHeight": {
       "description": "/** @deprecated\n */",
       "type": { "returnType": "boolean", "optional": false }
@@ -14282,9 +14295,16 @@
   },
   "GetDetailRowData": {},
   "GetDetailRowDataParams": {
-    "node": { "type": { "returnType": "RowNode", "optional": false } },
-    "data": { "type": { "returnType": "any", "optional": false } },
+    "node": {
+      "description": "/** Row node for the details request. */",
+      "type": { "returnType": "RowNode", "optional": false }
+    },
+    "data": {
+      "description": "/** Data for the current row. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "successCallback": {
+      "description": "/** Success callback: pass the rows back for the grid request. */",
       "type": {
         "arguments": { "rowData": "any[]" },
         "returnType": "void",

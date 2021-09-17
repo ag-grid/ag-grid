@@ -7,9 +7,9 @@ import {
     RefSelector,
     PreDestroy,
     FocusService,
-    HeaderPositionUtils,
     _,
-    KeyCode
+    KeyCode,
+    ColumnModel
 } from "@ag-grid-community/core";
 
 export interface SideBarButtonClickedEvent extends AgEvent {
@@ -23,7 +23,7 @@ export class SideBarButtonsComp extends Component {
     private buttonComps: SideBarButtonComp[] = [];
 
     @Autowired('focusService') private focusService: FocusService;
-    @Autowired('headerPositionUtils') private headerPositionUtils: HeaderPositionUtils;
+    @Autowired('columnModel') private columnModel: ColumnModel;
 
     constructor() {
         super(SideBarButtonsComp.TEMPLATE);
@@ -36,13 +36,11 @@ export class SideBarButtonsComp extends Component {
 
     private handleKeyDown(e: KeyboardEvent): void {
         if (e.keyCode !== KeyCode.TAB || !e.shiftKey) { return; }
-        const prevEl = this.focusService.findNextFocusableElement(this.getFocusableElement(), null, true);
 
-        if (!prevEl) {
-            const headerPosition = this.headerPositionUtils.findColAtEdgeForHeaderRow(0, 'start');
-            if (!headerPosition) { return; }
+        const lastColumn = _.last(this.columnModel.getAllDisplayedColumns());
+
+        if (this.focusService.focusGridView(lastColumn, true)) { 
             e.preventDefault();
-            this.focusService.focusHeaderPosition(headerPosition);
         }
     }
 
@@ -109,7 +107,7 @@ class SideBarButtonComp extends Component {
         const label = translate(def.labelKey, def.labelDefault);
         const res = /* html */
             `<div class="ag-side-button">
-                <button type="button" ref="eToggleButton" class="ag-side-button-button">
+                <button type="button" ref="eToggleButton" tabindex="-1" class="ag-side-button-button">
                     <div ref="eIconWrapper" class="ag-side-button-icon-wrapper"></div>
                     <span class="ag-side-button-label">${label}</span>
                 </button>

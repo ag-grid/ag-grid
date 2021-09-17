@@ -35,13 +35,13 @@ function emptyTarget(value: any) {
     return Array.isArray(value) ? [] : {};
 }
 
-function cloneUnlessOtherwiseSpecified(value: any, options: any) {
+export function cloneUnlessOtherwiseSpecified(value: any, options: any) {
     return (options.clone !== false && options.isMergeableObject(value))
         ? deepMerge(emptyTarget(value), value, options)
         : value;
 }
 
-function defaultArrayMerge(target: any, source: any, options: any) {
+export function defaultArrayMerge(target: any, source: any, options: any) {
     return target.concat(source).map(function (element: any) {
         return cloneUnlessOtherwiseSpecified(element, options);
     });
@@ -102,7 +102,7 @@ function mergeObject(target: any, source: any, options: any) {
     return destination;
 }
 
-function defaultIsMergeableObject(value: any): boolean {
+export function defaultIsMergeableObject(value: any): boolean {
     return isNonNullObject(value) && !isSpecial(value);
 }
 

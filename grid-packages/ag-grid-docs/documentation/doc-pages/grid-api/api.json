@@ -108,6 +108,20 @@
                 "name": "Accessing Detail Grids",
                 "url": "/master-detail-grids/#accessing-detail-grids"
             }
+        },
+        "addDetailGridInfo": {
+            "description": "Register a detail grid with the master grid when it is created.",
+            "more": {
+                "name": "Register Detail Grid",
+                "url": "/master-detail-custom-detail/#registering-detail-grid"
+            }
+        },
+        "removeDetailGridInfo": {
+            "description": "Unregister a detail grid from the master grid when it is destroyed.",
+            "more": {
+                "name": "Register Detail Grid",
+                "url": "/master-detail-custom-detail/#registering-detail-grid"
+            }
         }
     },
     "selection": {

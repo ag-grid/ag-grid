@@ -76,4 +76,4 @@ Top level Master Detail properties available on the Grid Options:
 
 Detail Cell Renderer parameters available on the `detailCellRendererParams` object:
 
-<api-documentation source='master-detail-grids/resources/properties.json' section="detailCellRenderer"></api-documentation>
+<interface-documentation interfaceName='IDetailCellRendererParams' names='["detailGridOptions", "getDetailRowData", "template", "refreshStrategy"]' ></interface-documentation>
