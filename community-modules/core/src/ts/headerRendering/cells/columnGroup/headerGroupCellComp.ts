@@ -57,8 +57,7 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
     @PostConstruct
     private postConstruct(): void {
 
-        const displayName = this.columnModel.getDisplayNameForColumnGroup(this.columnGroup, 'header');
-        this.appendHeaderGroupComp(displayName!);
+        this.appendHeaderGroupComp();
 
         const eGui = this.getGui();
 
@@ -81,9 +80,11 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
         return this.columnGroup.getColGroupDef();
     }
 
-    private appendHeaderGroupComp(displayName: string): void {
+    private appendHeaderGroupComp(): void {
+        let displayName = this.columnModel.getDisplayNameForColumnGroup(this.columnGroup, 'header');
+
         const params: IHeaderGroupParams = {
-            displayName: displayName,
+            displayName: displayName!,
             columnGroup: this.columnGroup,
             setExpanded: (expanded: boolean) => {
                 this.columnModel.setColumnGroupOpened(this.columnGroup.getOriginalColumnGroup(), expanded, "gridInitializing");
