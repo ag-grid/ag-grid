@@ -36,6 +36,7 @@ export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     addOrRemoveResizableCssClass(cssClassName: string, on: boolean): void;
     setWidth(width: string): void;
+    setColId(id: string): void;
 }
 
 export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
@@ -53,10 +54,15 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
         this.comp = comp;
 
         this.addClasses();
+        this.addAttributes();
 
         const pinned = this.getParentRowCtrl().getPinned();
         this.createManagedBean(new GroupResizeFeature(comp, eResize, pinned, this.columnGroup));
         this.createManagedBean(new GroupWidthFeature(comp, this.columnGroup));
+    }
+
+    private addAttributes(): void {
+        this.comp.setColId(this.columnGroup.getUniqueId());
     }
 
     private addClasses(): void {

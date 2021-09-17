@@ -46,30 +46,29 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
 
     @RefSelector('eResize') private eResize: HTMLElement;
 
-    protected readonly column: ColumnGroup;
+    protected readonly columnGroup: ColumnGroup;
     protected readonly pinned: string | null;
 
     private expandable: boolean;
 
     constructor(ctrl: HeaderGroupCellCtrl) {
         super(HeaderGroupCellComp.TEMPLATE, ctrl);
-        this.column = ctrl.getColumnGroupChild() as ColumnGroup;
+        this.columnGroup = ctrl.getColumnGroupChild() as ColumnGroup;
         this.pinned = ctrl.getPinned();
     }
 
     @PostConstruct
     private postConstruct(): void {
 
-        const displayName = this.columnModel.getDisplayNameForColumnGroup(this.column, 'header');
+        const displayName = this.columnModel.getDisplayNameForColumnGroup(this.columnGroup, 'header');
         this.appendHeaderGroupComp(displayName!);
 
-        this.addAttributes();
         this.setupMovingCss();
         this.setupTooltip();
         this.setupExpandable();
 
-        this.createManagedBean(new HoverFeature(this.column.getOriginalColumnGroup().getLeafColumns(), this.getGui()));
-        this.createManagedBean(new SetLeftFeature(this.column, this.getGui(), this.beans));
+        this.createManagedBean(new HoverFeature(this.columnGroup.getOriginalColumnGroup().getLeafColumns(), this.getGui()));
+        this.createManagedBean(new SetLeftFeature(this.columnGroup, this.getGui(), this.beans));
         this.createManagedBean(new ManagedFocusFeature(
             this.getFocusableElement(),
             {
@@ -86,13 +85,14 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             addOrRemoveResizableCssClass: (cssClassName, on) => addOrRemoveCssClass(this.eResize, cssClassName, on),
             setWidth: width => eGui.style.width = width,
+            setColId: id => eGui.setAttribute("col-id", id)
         };
 
         this.ctrl.setComp(compProxy, eGui, this.eResize);
     }
 
     public getColumn(): ColumnGroup {
-        return this.column;
+        return this.columnGroup;
     }
 
     protected onFocusIn(e: FocusEvent) {
@@ -146,7 +146,7 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
     }
 
     private setupMovingCss(): void {
-        const originalColumnGroup = this.column.getOriginalColumnGroup();
+        const originalColumnGroup = this.columnGroup.getOriginalColumnGroup();
         const leafColumns = originalColumnGroup.getLeafColumns();
 
         leafColumns.forEach(col => {
@@ -157,7 +157,7 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
     }
 
     public getComponentHolder(): ColGroupDef | null {
-        return this.column.getColGroupDef();
+        return this.columnGroup.getColGroupDef();
     }
 
     public getTooltipParams(): ITooltipParams {
@@ -185,19 +185,15 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
         // this function adds or removes the moving css, based on if the col is moving.
         // this is what makes the header go dark when it is been moved (gives impression to
         // user that the column was picked up).
-        addOrRemoveCssClass(this.getGui(), 'ag-header-cell-moving', this.column.isMoving());
-    }
-
-    private addAttributes(): void {
-        this.getGui().setAttribute("col-id", this.column.getUniqueId());
+        addOrRemoveCssClass(this.getGui(), 'ag-header-cell-moving', this.columnGroup.isMoving());
     }
 
     private appendHeaderGroupComp(displayName: string): void {
         const params: IHeaderGroupParams = {
             displayName: displayName,
-            columnGroup: this.column,
+            columnGroup: this.columnGroup,
             setExpanded: (expanded: boolean) => {
-                this.columnModel.setColumnGroupOpened(this.column.getOriginalColumnGroup(), expanded, "gridInitializing");
+                this.columnModel.setColumnGroupOpened(this.columnGroup.getOriginalColumnGroup(), expanded, "gridInitializing");
             },
             api: this.gridApi,
             columnApi: this.columnApi,
@@ -205,7 +201,7 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
         };
 
         if (!displayName) {
-            let columnGroup = this.column;
+            let columnGroup = this.columnGroup;
             const leafCols = columnGroup.getLeafColumns();
 
             // find the top most column group that represents the same columns. so if we are dragging a group, we also
@@ -246,7 +242,7 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
         if (!eHeaderGroup) { return; }
         if (this.isSuppressMoving()) { return; }
 
-        const allLeafColumns = this.column.getOriginalColumnGroup().getLeafColumns();
+        const allLeafColumns = this.columnGroup.getOriginalColumnGroup().getLeafColumns();
         const dragSource: DragSource = {
             type: DragSourceType.HeaderCell,
             eElement: eHeaderGroup,
@@ -265,7 +261,7 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
     // when moving the columns, we want to move all the columns (contained within the DragItem) in this group in one go,
     // and in the order they are currently in the screen.
     public getDragItemForGroup(): DragItem {
-        const allColumnsOriginalOrder = this.column.getOriginalColumnGroup().getLeafColumns();
+        const allColumnsOriginalOrder = this.columnGroup.getOriginalColumnGroup().getLeafColumns();
 
         // capture visible state, used when re-entering grid to dictate which columns should be visible
         const visibleState: { [key: string]: boolean; } = {};
@@ -292,7 +288,7 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
     private isSuppressMoving(): boolean {
         // if any child is fixed, then don't allow moving
         let childSuppressesMoving = false;
-        this.column.getLeafColumns().forEach((column: Column) => {
+        this.columnGroup.getLeafColumns().forEach((column: Column) => {
             if (column.getColDef().suppressMovable || column.getColDef().lockPosition) {
                 childSuppressesMoving = true;
             }
