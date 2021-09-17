@@ -46,11 +46,13 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
 
     @Autowired('beans') protected beans: Beans;
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
 
     private columnGroup: ColumnGroup;
     private comp: IHeaderGroupCellComp;
 
     private expandable: boolean;
+    private displayName: string | null;
 
     constructor(columnGroup: ColumnGroup, parentRowCtrl: HeaderRowCtrl) {
         super(columnGroup, parentRowCtrl);
@@ -60,6 +62,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
     public setComp(comp: IHeaderGroupCellComp, eGui: HTMLElement, eResize: HTMLElement): void {
         super.setAbstractComp(comp, eGui);
         this.comp = comp;
+
+        this.displayName = this.columnModel.getDisplayNameForColumnGroup(this.columnGroup, 'header');
 
         this.addClasses();
         this.addAttributes();
@@ -178,5 +182,68 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
 
             this.columnModel.setColumnGroupOpened(column.getOriginalColumnGroup(), newExpandedValue, "uiColumnExpanded");
         }
+    }
+
+    // unlike columns, this will only get called once, as we don't react on props on column groups
+    // (we will always destroy and recreate this comp if something changes)
+    public setDragSource(eHeaderGroup: HTMLElement): void {
+
+        if (this.isSuppressMoving()) { return; }
+
+        const allLeafColumns = this.columnGroup.getOriginalColumnGroup().getLeafColumns();
+        const dragSource: DragSource = {
+            type: DragSourceType.HeaderCell,
+            eElement: eHeaderGroup,
+            defaultIconName: DragAndDropService.ICON_HIDE,
+            dragItemName: this.displayName,
+            // we add in the original group leaf columns, so we move both visible and non-visible items
+            getDragItem: this.getDragItemForGroup.bind(this),
+            onDragStarted: () => allLeafColumns.forEach(col => col.setMoving(true, "uiColumnDragged")),
+            onDragStopped: () => allLeafColumns.forEach(col => col.setMoving(false, "uiColumnDragged"))
+        };
+
+        this.dragAndDropService.addDragSource(dragSource, true);
+        this.addDestroyFunc(() => this.dragAndDropService.removeDragSource(dragSource));
+    }
+
+    // when moving the columns, we want to move all the columns (contained within the DragItem) in this group in one go,
+    // and in the order they are currently in the screen.
+    public getDragItemForGroup(): DragItem {
+        const allColumnsOriginalOrder = this.columnGroup.getOriginalColumnGroup().getLeafColumns();
+
+        // capture visible state, used when re-entering grid to dictate which columns should be visible
+        const visibleState: { [key: string]: boolean; } = {};
+        allColumnsOriginalOrder.forEach(column => visibleState[column.getId()] = column.isVisible());
+
+        const allColumnsCurrentOrder: Column[] = [];
+        this.columnModel.getAllDisplayedColumns().forEach(column => {
+            if (allColumnsOriginalOrder.indexOf(column) >= 0) {
+                allColumnsCurrentOrder.push(column);
+                removeFromArray(allColumnsOriginalOrder, column);
+            }
+        });
+
+        // we are left with non-visible columns, stick these in at the end
+        allColumnsOriginalOrder.forEach(column => allColumnsCurrentOrder.push(column));
+
+        // create and return dragItem
+        return {
+            columns: allColumnsCurrentOrder,
+            visibleState: visibleState
+        };
+    }
+
+    private isSuppressMoving(): boolean {
+        // if any child is fixed, then don't allow moving
+        let childSuppressesMoving = false;
+        this.columnGroup.getLeafColumns().forEach((column: Column) => {
+            if (column.getColDef().suppressMovable || column.getColDef().lockPosition) {
+                childSuppressesMoving = true;
+            }
+        });
+
+        const result = childSuppressesMoving || this.gridOptionsWrapper.isSuppressMovableColumns();
+
+        return result;
     }
 }

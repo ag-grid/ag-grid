@@ -38,7 +38,6 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
         </div>`;
 
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired('beans') protected beans: Beans;
     @Autowired('gridApi') private gridApi: GridApi;
@@ -129,74 +128,8 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
             this.getContext().destroyBean(headerGroupComp);
         });
 
-        this.setupMove(headerGroupComp.getGui(), displayName);
+        this.ctrl.setDragSource(headerGroupComp.getGui());
     }
-
-    private setupMove(eHeaderGroup: HTMLElement, displayName: string): void {
-        if (!eHeaderGroup) { return; }
-        if (this.isSuppressMoving()) { return; }
-
-        const allLeafColumns = this.columnGroup.getOriginalColumnGroup().getLeafColumns();
-        const dragSource: DragSource = {
-            type: DragSourceType.HeaderCell,
-            eElement: eHeaderGroup,
-            defaultIconName: DragAndDropService.ICON_HIDE,
-            dragItemName: displayName,
-            // we add in the original group leaf columns, so we move both visible and non-visible items
-            getDragItem: this.getDragItemForGroup.bind(this),
-            onDragStarted: () => allLeafColumns.forEach(col => col.setMoving(true, "uiColumnDragged")),
-            onDragStopped: () => allLeafColumns.forEach(col => col.setMoving(false, "uiColumnDragged"))
-        };
-
-        this.dragAndDropService.addDragSource(dragSource, true);
-        this.addDestroyFunc(() => this.dragAndDropService.removeDragSource(dragSource));
-    }
-
-    // when moving the columns, we want to move all the columns (contained within the DragItem) in this group in one go,
-    // and in the order they are currently in the screen.
-    public getDragItemForGroup(): DragItem {
-        const allColumnsOriginalOrder = this.columnGroup.getOriginalColumnGroup().getLeafColumns();
-
-        // capture visible state, used when re-entering grid to dictate which columns should be visible
-        const visibleState: { [key: string]: boolean; } = {};
-        allColumnsOriginalOrder.forEach(column => visibleState[column.getId()] = column.isVisible());
-
-        const allColumnsCurrentOrder: Column[] = [];
-        this.columnModel.getAllDisplayedColumns().forEach(column => {
-            if (allColumnsOriginalOrder.indexOf(column) >= 0) {
-                allColumnsCurrentOrder.push(column);
-                removeFromArray(allColumnsOriginalOrder, column);
-            }
-        });
-
-        // we are left with non-visible columns, stick these in at the end
-        allColumnsOriginalOrder.forEach(column => allColumnsCurrentOrder.push(column));
-
-        // create and return dragItem
-        return {
-            columns: allColumnsCurrentOrder,
-            visibleState: visibleState
-        };
-    }
-
-    private isSuppressMoving(): boolean {
-        // if any child is fixed, then don't allow moving
-        let childSuppressesMoving = false;
-        this.columnGroup.getLeafColumns().forEach((column: Column) => {
-            if (column.getColDef().suppressMovable || column.getColDef().lockPosition) {
-                childSuppressesMoving = true;
-            }
-        });
-
-        const result = childSuppressesMoving || this.gridOptionsWrapper.isSuppressMovableColumns();
-
-        return result;
-    }
-
-
-
-
-
 
 
 }

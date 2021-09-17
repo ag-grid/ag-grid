@@ -61,7 +61,6 @@ export class GroupWidthFeature extends BeanStub {
         this.addDestroyFunc(this.removeListenersOnChildrenColumns.bind(this));
     }
 
-
     private addListenersToChildrenColumns(): void {
         // first destroy any old listeners
         this.removeListenersOnChildrenColumns();
