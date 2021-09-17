@@ -34,10 +34,6 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
         this.pinned = ctrl.getPinned();
     }
 
-    public getColumn(): Column {
-        return this.column;
-    }
-
     @PostConstruct
     private postConstruct(): void {
 
