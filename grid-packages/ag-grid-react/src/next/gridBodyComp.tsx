@@ -4,6 +4,7 @@ import {
 } from 'ag-grid-community';
 import React, { memo, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { BeansContext } from './beansContext';
+import GridHeaderComp from './header/gridHeaderComp';
 import useReactCommentEffect from './reactComment';
 import RowContainerComp from './rows/rowContainerComp';
 import { classesList } from './utils';
