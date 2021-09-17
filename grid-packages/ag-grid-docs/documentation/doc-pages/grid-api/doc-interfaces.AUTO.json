@@ -8060,6 +8060,20 @@
         "returnType": "void",
         "optional": false
       }
+    },
+    "setWidth": {
+      "type": {
+        "arguments": { "width": "string" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "setColId": {
+      "type": {
+        "arguments": { "id": "string" },
+        "returnType": "void",
+        "optional": false
+      }
     }
   },
   "IHeaderGroupParams": {
