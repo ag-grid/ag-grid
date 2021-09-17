@@ -92,10 +92,14 @@
                     "yValue": "any",
                     "width": "number",
                     "height": "number",
-                    "fill": "string",
-                    "stroke": "string",
-                    "strokeWidth": "number",
-                    "highlighted": "boolean"
+                    "highlighted": "boolean",
+                    "min?": "number",
+                    "max?": "number",
+                    "first?": "number",
+                    "last?": "number",
+                    "fill?": "string",
+                    "stroke?": "string",
+                    "strokeWidth": "number"
                 },
                 "returnType": "ColumnFormat"
             }

@@ -8074,6 +8074,20 @@
         "returnType": "void",
         "optional": false
       }
+    },
+    "setAriaExpanded": {
+      "type": {
+        "arguments": { "expanded": "string | undefined" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "setTitle": {
+      "type": {
+        "arguments": { "title": "string | undefined" },
+        "returnType": "void",
+        "optional": false
+      }
     }
   },
   "IHeaderGroupParams": {
@@ -13789,6 +13803,10 @@
     "yValue": { "type": { "returnType": "any", "optional": false } },
     "width": { "type": { "returnType": "number", "optional": false } },
     "height": { "type": { "returnType": "number", "optional": false } },
+    "min": { "type": { "returnType": "number", "optional": true } },
+    "max": { "type": { "returnType": "number", "optional": true } },
+    "first": { "type": { "returnType": "number", "optional": true } },
+    "last": { "type": { "returnType": "number", "optional": true } },
     "fill": { "type": { "returnType": "string", "optional": true } },
     "stroke": { "type": { "returnType": "string", "optional": true } },
     "strokeWidth": { "type": { "returnType": "number", "optional": false } },
@@ -13815,6 +13833,10 @@
     "datum": { "type": { "returnType": "any", "optional": false } },
     "xValue": { "type": { "returnType": "any", "optional": false } },
     "yValue": { "type": { "returnType": "any", "optional": false } },
+    "min": { "type": { "returnType": "number", "optional": true } },
+    "max": { "type": { "returnType": "number", "optional": true } },
+    "first": { "type": { "returnType": "number", "optional": true } },
+    "last": { "type": { "returnType": "number", "optional": true } },
     "fill": { "type": { "returnType": "string", "optional": true } },
     "stroke": { "type": { "returnType": "string", "optional": true } },
     "strokeWidth": { "type": { "returnType": "number", "optional": false } },
@@ -16185,7 +16207,18 @@
       "type": { "arguments": {}, "returnType": "string", "optional": false }
     },
     "getColumn": {
-      "type": { "arguments": {}, "returnType": "Column", "optional": true }
+      "type": {
+        "arguments": {},
+        "returnType": "Column | ColumnGroup",
+        "optional": true
+      }
+    },
+    "getColDef": {
+      "type": {
+        "arguments": {},
+        "returnType": "ColDef | ColGroupDef",
+        "optional": true
+      }
     },
     "getRowIndex": {
       "type": { "arguments": {}, "returnType": "number", "optional": true }

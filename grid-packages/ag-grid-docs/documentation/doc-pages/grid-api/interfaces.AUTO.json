@@ -4502,7 +4502,9 @@
       "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
       "addOrRemoveResizableCssClass(cssClassName: string, on: boolean)": "void",
       "setWidth(width: string)": "void",
-      "setColId(id: string)": "void"
+      "setColId(id: string)": "void",
+      "setAriaExpanded(expanded: string | undefined)": "void",
+      "setTitle(title: string | undefined)": "void"
     }
   },
   "IHeaderGroupParams": {
@@ -7867,6 +7869,10 @@
       "yValue": "any",
       "width": "number",
       "height": "number",
+      "min?": "number",
+      "max?": "number",
+      "first?": "number",
+      "last?": "number",
       "fill?": "string",
       "stroke?": "string",
       "strokeWidth": "number",
@@ -7899,6 +7905,10 @@
       "datum": "any",
       "xValue": "any",
       "yValue": "any",
+      "min?": "number",
+      "max?": "number",
+      "first?": "number",
+      "last?": "number",
       "fill?": "string",
       "stroke?": "string",
       "strokeWidth": "number",
@@ -9335,7 +9345,8 @@
       "getTooltipValue()": "any",
       "getGui()": "HTMLElement",
       "getLocation()": "string",
-      "getColumn?()": "Column",
+      "getColumn?()": "Column | ColumnGroup",
+      "getColDef?()": "ColDef | ColGroupDef",
       "getRowIndex?()": "number",
       "getRowNode?()": "RowNode",
       "getValueFormatted?()": "string"

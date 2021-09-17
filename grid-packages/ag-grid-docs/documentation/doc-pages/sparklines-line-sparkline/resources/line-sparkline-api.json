@@ -78,7 +78,7 @@
         "stroke": {
             "description": "The CSS colour value for the line.",
             "type": "string",
-            "default" : "rgb(124, 181, 236)"
+            "default": "rgb(124, 181, 236)"
         },
         "strokeWidth": {
             "description": "The thickness in pixels for the stroke of the line.",
@@ -135,12 +135,16 @@
                 "parameters": {
                     "datum": "any",
                     "xValue": "any",
-                    "yValue": "any",
-                    "size": "number",
-                    "fill": "string",
-                    "stroke": "string",
+                    "yValue": "number",
+                    "highlighted": "boolean",
+                    "min?": "number",
+                    "max?": "number",
+                    "first?": "number",
+                    "last?": "number",
+                    "fill?": "string",
+                    "stroke?": "string",
                     "strokeWidth": "number",
-                    "highlighted": "boolean"
+                    "size": "number"
                 },
                 "returnType": "MarkerFormat"
             }

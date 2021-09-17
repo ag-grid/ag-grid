@@ -114,9 +114,9 @@ export interface MarkerFormatterParams {
     yValue: any;
     min? : number;
     max?: number;
-    fill?: string;
     first?: number;
     last?: number;
+    fill?: string;
     stroke?: string;
     strokeWidth: number;
     size: number;
