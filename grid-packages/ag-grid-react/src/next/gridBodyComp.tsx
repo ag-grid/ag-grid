@@ -7,7 +7,6 @@ import { BeansContext } from './beansContext';
 import useReactCommentEffect from './reactComment';
 import RowContainerComp from './rows/rowContainerComp';
 import { classesList } from './utils';
-import GridHeaderComp from './header/gridHeaderComp';
 
 interface SectionProperties {
     section: React.RefObject<HTMLDivElement>;
@@ -57,10 +56,10 @@ const GridBodyComp = () => {
         };
 
         // should be shared
-        // const insertFirstPosition = (parent: HTMLElement, child: HTMLElement) => parent.insertBefore(child, parent.firstChild);
+        const insertFirstPosition = (parent: HTMLElement, child: HTMLElement) => parent.insertBefore(child, parent.firstChild);
 
-        // insertFirstPosition(eRoot.current!, newComp('AG-HEADER-ROOT').getGui());
-        // insertFirstPosition(eRoot.current!, document.createComment(' AG Header ') as any as HTMLElement);
+        insertFirstPosition(eRoot.current!, newComp('AG-HEADER-ROOT').getGui());
+        insertFirstPosition(eRoot.current!, document.createComment(' AG Header ') as any as HTMLElement);
 
         eRoot.current!.appendChild(document.createComment(' AG Fake Horizontal Scroll '));
         eRoot.current!.appendChild(newComp('AG-FAKE-HORIZONTAL-SCROLL').getGui());
@@ -145,7 +144,7 @@ const GridBodyComp = () => {
 
     return (
         <div ref={ eRoot } className={ rootClasses } role="grid" unselectable="on" aria-colcount={ ariaColCount } aria-rowcount={ ariaRowCount }>
-            <GridHeaderComp/>
+            {/* <GridHeaderComp/> */}
             { createSection({ section: eTop, className: topClasses, style: topStyle, unselectable: 'on', children: [
                 RowContainerName.TOP_LEFT,
                 RowContainerName.TOP_CENTER,

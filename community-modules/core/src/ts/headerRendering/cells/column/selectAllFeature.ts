@@ -10,6 +10,7 @@ import { Column } from "../../../entities/column";
 import { RowNode } from "../../../entities/rowNode";
 import { SelectionService } from "../../../selectionService";
 import { IHeaderCellComp } from "./headerCellCtrl";
+import { setAriaRole } from "../../../utils/aria";
 
 export class SelectAllFeature extends BeanStub {
 
@@ -50,8 +51,7 @@ export class SelectAllFeature extends BeanStub {
         this.comp = comp;
         this.cbSelectAll = this.createManagedBean(new AgCheckbox());
         this.cbSelectAll.addCssClass('ag-header-select-all');
-        this.cbSelectAll.getGui().setAttribute('role','presentation');
-
+        setAriaRole(this.cbSelectAll.getGui(), 'presentation')
         this.showOrHideSelectAll();
 
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideSelectAll.bind(this));

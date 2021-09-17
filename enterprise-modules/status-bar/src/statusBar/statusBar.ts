@@ -14,9 +14,9 @@ export class StatusBar extends Component {
 
     private static TEMPLATE = /* html */
         `<div class="ag-status-bar">
-            <div ref="eStatusBarLeft" class="ag-status-bar-left"></div>
-            <div ref="eStatusBarCenter" class="ag-status-bar-center"></div>
-            <div ref="eStatusBarRight" class="ag-status-bar-right"></div>
+            <div ref="eStatusBarLeft" class="ag-status-bar-left" role="status"></div>
+            <div ref="eStatusBarCenter" class="ag-status-bar-center" role="status"></div>
+            <div ref="eStatusBarRight" class="ag-status-bar-right" role="status"></div>
         </div>`;
 
     @Autowired('gridOptions') private gridOptions: GridOptions;

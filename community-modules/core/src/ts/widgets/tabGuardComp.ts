@@ -1,6 +1,7 @@
 import { Component } from "./component";
 import { isNodeOrElement, clearElement } from "../utils/dom";
 import { TabGuardCtrl, ITabGuard } from "./tabGuardCtrl";
+import { setAriaRole } from "../utils/aria";
 
 export class TabGuardComp extends Component {
 
@@ -58,7 +59,7 @@ export class TabGuardComp extends Component {
 
         tabGuard.classList.add('ag-tab-guard');
         tabGuard.classList.add(`ag-tab-guard-${side}`);
-        tabGuard.setAttribute('role', 'presentation');
+        setAriaRole(tabGuard, 'presentation');
 
         return tabGuard;
     }

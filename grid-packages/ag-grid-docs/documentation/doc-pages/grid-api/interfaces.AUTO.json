@@ -9306,7 +9306,8 @@
       "alwaysOnTop?": "boolean",
       "afterGuiAttached?": "(params: IAfterGuiAttachedParams) => void",
       "positionCallback?": "() => void",
-      "anchorToElement?": "HTMLElement"
+      "anchorToElement?": "HTMLElement",
+      "ariaLabel": "string"
     }
   },
   "AddPopupResult": {

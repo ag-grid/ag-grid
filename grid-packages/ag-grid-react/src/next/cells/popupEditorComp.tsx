@@ -44,6 +44,8 @@ const PopupEditorComp = (props: {
         const positionCallback = editDetails!.popupPosition === 'under' ?
             popupService.positionPopupUnderComponent.bind(popupService, positionParams)
             : popupService.positionPopupOverComponent.bind(popupService, positionParams);
+
+        const translate = gridOptionsWrapper.getLocaleTextFunc();
     
         const addPopupRes = popupService.addPopup({
             modal: useModelPopup,
@@ -51,7 +53,8 @@ const PopupEditorComp = (props: {
             closeOnEsc: true,
             closedCallback: () => { cellCtrl.onPopupEditorClosed(); },
             anchorToElement: eParentCell,
-            positionCallback
+            positionCallback,
+            ariaLabel: translate('ariaLabelCellEditor', 'Cell Editor')
         });
     
         const hideEditorPopup: (()=>void) | undefined = addPopupRes ? addPopupRes.hideFunc : undefined;

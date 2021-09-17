@@ -2,7 +2,7 @@ import { Component } from './component';
 import { Autowired, PostConstruct } from '../context/context';
 import { RefSelector } from './componentAnnotations';
 import { addCssClass, containsClass } from '../utils/dom';
-import { getAriaPosInSet, setAriaSetSize, setAriaPosInSet, setAriaSelected, setAriaChecked } from '../utils/aria';
+import { getAriaPosInSet, setAriaSetSize, setAriaPosInSet, setAriaSelected, setAriaChecked, setAriaRole } from '../utils/aria';
 import { KeyCode } from '../constants/keyCode';
 import { ResizeObserverService } from "../misc/resizeObserverService";
 import { waitUntil } from '../utils/function';
@@ -243,7 +243,7 @@ export class VirtualList extends TabGuardComp {
         addCssClass(eDiv, 'ag-virtual-list-item');
         addCssClass(eDiv, `ag-${this.cssIdentifier}-virtual-list-item`);
 
-        eDiv.setAttribute('role', this.ariaRole === 'tree' ? 'treeitem' : 'option');
+        setAriaRole(eDiv, this.ariaRole === 'tree' ? 'treeitem' : 'option');
         setAriaSetSize(eDiv, this.model.getRowCount());
         setAriaPosInSet(eDiv, rowIndex + 1);
         eDiv.setAttribute('tabindex', '-1');

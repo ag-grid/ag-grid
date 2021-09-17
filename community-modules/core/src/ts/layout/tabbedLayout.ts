@@ -3,7 +3,7 @@ import { RefSelector } from '../widgets/componentAnnotations';
 import { ManagedFocusFeature } from '../widgets/managedFocusFeature';
 import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 import { addCssClass, clearElement, removeCssClass } from '../utils/dom';
-import { setAriaLabel } from '../utils/aria';
+import { setAriaLabel, setAriaRole } from '../utils/aria';
 import { find } from '../utils/generic';
 import { callIfPresent } from '../utils/function';
 import { KeyCode } from '../constants/keyCode';
@@ -117,10 +117,12 @@ export class TabbedLayout extends Component {
 
     private addItem(item: TabbedItem): void {
         const eHeaderButton = document.createElement('span');
+
+        setAriaRole(eHeaderButton, 'tab');
         eHeaderButton.setAttribute('tabIndex', '-1');
-        eHeaderButton.setAttribute('role', 'tab');
         eHeaderButton.appendChild(item.title);
         addCssClass(eHeaderButton, 'ag-tab');
+
         this.eHeader.appendChild(eHeaderButton);
         setAriaLabel(eHeaderButton, item.titleLabel);
 

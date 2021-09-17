@@ -54,6 +54,8 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
             }
         });
 
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+
         const addPopupRes = this.popupService.addPopup({
             modal: true,
             eChild: listGui,
@@ -67,7 +69,8 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
                 if (this.isAlive()) {
                     this.getFocusableElement().focus();
                 }
-            }
+            },
+            ariaLabel: translate('ariaLabelSelectField', 'Select Field')
         });
 
         if (addPopupRes) {
