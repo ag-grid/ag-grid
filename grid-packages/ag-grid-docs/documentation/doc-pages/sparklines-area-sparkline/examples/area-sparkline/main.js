@@ -38,8 +38,10 @@ var gridOptions = {
 };
 
 function formatter(params) {
+    const { highlighted, yValue } = params;
+
     return {
-        size: params.highlighted ? params.yValue < 0 ? 4 : 6 : 0,
+        size: highlighted ? yValue < 0 ? 4 : 6 : 0,
     }
 }
 

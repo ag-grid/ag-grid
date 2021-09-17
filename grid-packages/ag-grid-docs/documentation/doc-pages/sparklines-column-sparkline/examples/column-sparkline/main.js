@@ -12,11 +12,7 @@ var gridOptions = {
             cellRendererParams: {
                 sparklineOptions: {
                     type: 'column',
-                    strokeWidth: 1,
                     formatter: formatter,
-                    highlightStyle: {
-                        strokeWidth: 1,
-                    }
                 }
             },
         }
@@ -30,13 +26,18 @@ var gridOptions = {
 };
 
 function formatter(params) {
-    let fill = !params.highlighted ?
-        params.yValue < 0 ? 'rgb(210,5,5)' : 'rgb(5,200,5)' :
-        params.yValue < 0 ? 'rgb(255,201,14)' : 'rgb(71,133,235)';
+    const { highlighted, yValue } = params;
 
-    let stroke = params.highlighted ? params.yValue < 0 ? 'rgb(156,166,195)' : 'rgb(156,195,185)' : params.stroke;
+    const colors = {
+        highlighted: 'rgb(250, 200, 88)',
+        negative: 'rgb(139, 0, 0)',
+        positive: 'rgba(0, 128, 0, 0.3)'
+    }
 
-    return { fill, stroke };
+    let color = !highlighted ?
+        yValue < 0 ? colors.negative : colors.positive : colors.highlighted;
+
+    return { fill: color, stroke: color };
 }
 
 // setup the grid after the page has finished loading

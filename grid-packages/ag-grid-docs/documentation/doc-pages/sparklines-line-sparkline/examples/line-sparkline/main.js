@@ -13,14 +13,20 @@ var gridOptions = {
                 sparklineOptions: {
                     type: 'line',
                     line: {
-                        stroke: 'skyblue',
+                        stroke: 'rgb(124, 255, 178)',
+                        strokeWidth: 2
+                    },
+                    padding: {
+                        top: 5,
+                        bottom: 5
                     },
                     marker: {
+                        size: 3,
                         shape: 'diamond',
                         formatter: formatter,
                     },
                     highlightStyle: {
-                        size: 5,
+                        size: 10,
                     },
                 }
             },
@@ -35,9 +41,29 @@ var gridOptions = {
 };
 
 function formatter(params) {
+    const { highlighted, yValue } = params;
+
+    const colors = {
+        highlighted: 'rgb(238, 102, 102)',
+        negative: 'rgb(252, 132, 82)',
+        positive: 'rgb(115, 192, 222)'
+    }
+
+    let color;
+
+    if (highlighted) {
+        color = colors.highlighted;
+    } else {
+        if (yValue < 0) {
+            color = colors.negative;
+        } else {
+            color = colors.positive;
+        }
+    }
+
     return {
-        fill: !params.highlighted ? params.yValue < 0 ? 'green' : 'skyblue' : undefined,
-        stroke: !params.highlighted ? params.yValue < 0 ? 'green' : 'skyblue' : undefined
+        fill: color,
+        stroke: color
     }
 }
 

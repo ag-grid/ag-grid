@@ -2,7 +2,7 @@ var gridOptions = {
     columnDefs: [
         { field: 'symbol' },
         {
-            field: 'shortName',
+            field: 'name',
             headerName: 'Name',
         },
         {
@@ -12,15 +12,31 @@ var gridOptions = {
             cellRenderer: 'agSparklineCellRenderer',
             cellRendererParams: {
                 sparklineOptions: { type: 'line' },
-            },
-            // cellStyle: { padding: 0 },
-            // valueGetter: function(params) { return [5, 3, 6, 2, 1]}
+            }
         },
         {
-            field: 'regularMarketDayHigh',
+            field: 'history',
+            headerName: 'Close History',
+            minWidth: 100,
+            cellRenderer: 'agSparklineCellRenderer',
+            cellRendererParams: {
+                sparklineOptions: { type: 'area' },
+            }
         },
         {
-            field: 'regularMarketDayLow',
+            field: 'marketCap',
+        },
+        {
+            field: 'history',
+            headerName: 'Close History',
+            minWidth: 100,
+            cellRenderer: 'agSparklineCellRenderer',
+            cellRendererParams: {
+                sparklineOptions: { type: 'column' },
+            }
+        },
+        {
+            field: 'volume',
         }
     ],
     defaultColDef: {
@@ -29,8 +45,6 @@ var gridOptions = {
         resizable: true,
     },
     rowData: getQuotes(),
-    // rowHeight: 75,
-    // rowBuffer: 20,
 };
 
 // setup the grid after the page has finished loading
