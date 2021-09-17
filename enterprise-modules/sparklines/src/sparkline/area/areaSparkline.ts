@@ -199,11 +199,11 @@ export class AreaSparkline extends Sparkline {
     }
 
     protected updateNodes(): void {
-        const { highlightedDatum, highlightStyle, marker, min, max } = this;
+        const { highlightedDatum, highlightStyle, marker } = this;
         const { size: highlightSize, fill: highlightFill, stroke: highlightStroke, strokeWidth: highlightStrokeWidth } = highlightStyle;
         const markerFormatter = marker.formatter;
 
-        this.markerSelection.each((node, datum) => {
+        this.markerSelection.each((node, datum, index) => {
             const { point, seriesDatum } = datum;
 
             if (!point) {
@@ -219,9 +219,10 @@ export class AreaSparkline extends Sparkline {
             let markerFormat: MarkerFormat | undefined = undefined;
 
             if (markerFormatter) {
-                const nodeData = this.getNodeData();
-                const first = nodeData[0].seriesDatum.y;
-                const last = nodeData[nodeData.length - 1].seriesDatum.y;
+                const first = index === 0;
+                const last = index === this.markerSelectionData.length - 1;
+                const min = seriesDatum.y === this.min;
+                const max = seriesDatum.y === this.max;
 
                 markerFormat = markerFormatter({
                     datum,
