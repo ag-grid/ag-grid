@@ -56,12 +56,6 @@ const GridBodyComp = () => {
             return comp;
         };
 
-        // should be shared
-        // const insertFirstPosition = (parent: HTMLElement, child: HTMLElement) => parent.insertBefore(child, parent.firstChild);
-
-        // insertFirstPosition(eRoot.current!, newComp('AG-HEADER-ROOT').getGui());
-        // insertFirstPosition(eRoot.current!, document.createComment(' AG Header ') as any as HTMLElement);
-
         eRoot.current!.appendChild(document.createComment(' AG Fake Horizontal Scroll '));
         eRoot.current!.appendChild(newComp('AG-FAKE-HORIZONTAL-SCROLL').getGui());
 
