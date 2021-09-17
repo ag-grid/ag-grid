@@ -27,6 +27,9 @@ them using the grid option `aggFuncs` property.
 Aggregation functions are provided with an array of values that it should aggregate into one value that it then returns.
 The following code snippets show the three ways of defining aggregations for columns as explained above.
 
+<api-documentation source='column-properties/properties.json' section='grouping' names='["aggFunc"]' config='{"overrideBottomMargin":"0rem"}'></api-documentation>
+<api-documentation source='grid-properties/properties.json' section='rowPivoting' names='["aggFuncs"]'></api-documentation>
+
 Option 1 - use the built-in 'sum' function:
 
 <snippet>
@@ -55,8 +58,6 @@ const gridOptions = {
 }
 </snippet>
 
-Note that custom aggregation functions can also be registered using `gridApi.addAggFunc('mySum', mySumFunc)`.
-
 Option 3 - column uses a function directly:
 
 <snippet>
@@ -73,6 +74,12 @@ const gridOptions = {
     ]
 }
 </snippet>
+
+
+Note that custom aggregation functions can also be registered using `gridApi.addAggFunc('mySum', mySumFunc)`.
+
+<api-documentation source='grid-api/api.json' section='rowPivoting' names='["addAggFunc"]'></api-documentation>
+
 
 [[note]]
 | Using a function directly will not work with column state, like
