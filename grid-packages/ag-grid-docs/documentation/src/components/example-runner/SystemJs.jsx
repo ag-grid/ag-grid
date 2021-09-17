@@ -1,6 +1,19 @@
 import React from 'react';
-import { localPrefix, agGridVersion, agChartsVersion } from 'utils/consts';
-import { isUsingPublishedPackages } from './helpers';
+import {
+    agChartsAngularVersion,
+    agChartsReactVersion,
+    agChartsVersion,
+    agChartsVueVersion,
+    agGridAngularVersion,
+    agGridReactVersion,
+    agGridVersion,
+    agGridVue3Version,
+    agGridVueVersion,
+    agGridEnterpriseVersion,
+    localPrefix
+} from 'utils/consts';
+
+import {isUsingPublishedPackages} from './helpers';
 import isDevelopment from 'utils/is-development';
 
 const localConfiguration = {
@@ -62,7 +75,7 @@ const localConfiguration = {
         "@ag-grid-enterprise/charts": `${localPrefix}/@ag-grid-enterprise/charts/dist/charts.cjs.js`,
         "@ag-grid-enterprise/clipboard": `${localPrefix}/@ag-grid-enterprise/clipboard/dist/clipboard.cjs.js`,
         "@ag-grid-enterprise/column-tool-panel": `${localPrefix}/@ag-grid-enterprise/column-tool-panel/dist/column-tool-panel.cjs.js`,
-        "@ag-grid-enterprise/core": `${localPrefix}/@ag-grid-enterprise/core/dist/core.cjs.js`,
+        "@ag-grid-enterprise/core": `${localPrefix}/@ag-grid-enterprise/core/dist/enterprise-core.cjs.js`,
         "@ag-grid-enterprise/excel-export": `${localPrefix}/@ag-grid-enterprise/excel-export/dist/excel-export.cjs.js`,
         "@ag-grid-enterprise/filter-tool-panel": `${localPrefix}/@ag-grid-enterprise/filter-tool-panel/dist/filter-tool-panel.cjs.js`,
         "@ag-grid-enterprise/master-detail": `${localPrefix}/@ag-grid-enterprise/master-detail/dist/master-detail.cjs.js`,
@@ -114,16 +127,16 @@ const publishedConfiguration = {
         "@ag-grid-community/all-modules/dist/styles/ag-theme-material.css": `https://unpkg.com/@ag-grid-community/all-modules@${agGridVersion}/dist/styles/ag-theme-material.css`,
         "@ag-grid-community/core/dist/styles/ag-theme-material.css": `https://unpkg.com/@ag-grid-community/core@${agGridVersion}/dist/styles/ag-theme-material.css`,
         /* END OF GRID CSS PROD - DO NOT DELETE */
-        "@ag-grid-community/react": `https://unpkg.com/@ag-grid-community/react@${agGridVersion}/`,
-        "@ag-grid-community/angular": `https://unpkg.com/@ag-grid-community/angular@${agGridVersion}/`,
-        "@ag-grid-community/vue": `https://unpkg.com/@ag-grid-community/vue@${agGridVersion}/`,
-        "@ag-grid-community/vue3": `https://unpkg.com/@ag-grid-community/vue3@${agGridVersion}/`,
+        "@ag-grid-community/react": `https://unpkg.com/@ag-grid-community/react@${agGridReactVersion}/`,
+        "@ag-grid-community/angular": `https://unpkg.com/@ag-grid-community/angular@${agGridAngularVersion}/`,
+        "@ag-grid-community/vue": `https://unpkg.com/@ag-grid-community/vue@${agGridVueVersion}/`,
+        "@ag-grid-community/vue3": `https://unpkg.com/@ag-grid-community/vue3@${agGridVue3Version}/`,
         "ag-grid-community": `https://unpkg.com/ag-grid-community@${agGridVersion}/`,
-        "ag-grid-enterprise": `https://unpkg.com/ag-grid-enterprise@${agGridVersion}/`,
-        "ag-grid-angular": `https://unpkg.com/ag-grid-angular@${agGridVersion}/`,
-        "ag-grid-react": `https://unpkg.com/ag-grid-react@${agGridVersion}/`,
-        "ag-grid-vue": `https://unpkg.com/ag-grid-vue@${agGridVersion}/`,
-        "ag-grid-vue3": `https://unpkg.com/ag-grid-vue3@${agGridVersion}/`
+        "ag-grid-enterprise": `https://unpkg.com/ag-grid-enterprise@${agGridEnterpriseVersion}/`,
+        "ag-grid-angular": `https://unpkg.com/ag-grid-angular@${agGridAngularVersion}/`,
+        "ag-grid-react": `https://unpkg.com/ag-grid-react@${agGridReactVersion}/`,
+        "ag-grid-vue": `https://unpkg.com/ag-grid-vue@${agGridVueVersion}/`,
+        "ag-grid-vue3": `https://unpkg.com/ag-grid-vue3@${agGridVue3Version}/`
     },
     gridCommunityPaths: {
         /* START OF GRID COMMUNITY MODULES PATHS PROD - DO NOT DELETE */
@@ -145,7 +158,7 @@ const publishedConfiguration = {
         "@ag-grid-enterprise/charts": `https://unpkg.com/@ag-grid-enterprise/charts/dist/charts.cjs.js`,
         "@ag-grid-enterprise/clipboard": `https://unpkg.com/@ag-grid-enterprise/clipboard/dist/clipboard.cjs.js`,
         "@ag-grid-enterprise/column-tool-panel": `https://unpkg.com/@ag-grid-enterprise/column-tool-panel/dist/column-tool-panel.cjs.js`,
-        "@ag-grid-enterprise/core": `https://unpkg.com/@ag-grid-enterprise/core/dist/core.cjs.js`,
+        "@ag-grid-enterprise/core": `https://unpkg.com/@ag-grid-enterprise/core/dist/enterprise-core.cjs.js`,
         "@ag-grid-enterprise/excel-export": `https://unpkg.com/@ag-grid-enterprise/excel-export/dist/excel-export.cjs.js`,
         "@ag-grid-enterprise/filter-tool-panel": `https://unpkg.com/@ag-grid-enterprise/filter-tool-panel/dist/filter-tool-panel.cjs.js`,
         "@ag-grid-enterprise/master-detail": `https://unpkg.com/@ag-grid-enterprise/master-detail/dist/master-detail.cjs.js`,
@@ -163,9 +176,9 @@ const publishedConfiguration = {
         /* END OF GRID ENTERPRISE MODULES PATHS PROD - DO NOT DELETE */
     },
     chartMap: {
-        "ag-charts-react": `https://unpkg.com/ag-charts-react@${agChartsVersion}/`,
-        "ag-charts-angular": `https://unpkg.com/ag-charts-angular@${agChartsVersion}/`,
-        "ag-charts-vue": `https://unpkg.com/ag-charts-vue@${agChartsVersion}/`,
+        "ag-charts-react": `https://unpkg.com/ag-charts-react@${agChartsReactVersion}/`,
+        "ag-charts-angular": `https://unpkg.com/ag-charts-angular@${agChartsAngularVersion}/`,
+        "ag-charts-vue": `https://unpkg.com/ag-charts-vue@${agChartsVueVersion}/`,
         "ag-charts-community": `https://unpkg.com/ag-charts-community@${agChartsVersion}/dist/ag-charts-community.cjs.js`,
     },
     chartPaths: {}

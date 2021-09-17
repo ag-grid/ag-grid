@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import ExampleStyle from './ExampleStyle';
 import Extras from './Extras';
-import { localPrefix, agGridVersion, agChartsVersion } from 'utils/consts';
+import { localPrefix, agGridVersion, agGridEnterpriseVersion, agChartsVersion } from 'utils/consts';
 import { getCssFilePaths, isUsingPublishedPackages } from './helpers';
 import isDevelopment from 'utils/is-development';
 import Scripts from './Scripts';
@@ -40,7 +40,7 @@ const VanillaBody = ({ library, appLocation, options, scriptFiles, indexFragment
     } else {
         if (options.enterprise) {
             scriptPath = isUsingPublishedPackages() ?
-                `https://unpkg.com/@ag-grid-enterprise/all-modules@${agGridVersion}/dist/ag-grid-enterprise.min.js` :
+                `https://unpkg.com/@ag-grid-enterprise/all-modules@${agGridEnterpriseVersion}/dist/ag-grid-enterprise.min.js` :
                 `${localPrefix}/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js`;
         } else {
             scriptPath = isUsingPublishedPackages() ?
