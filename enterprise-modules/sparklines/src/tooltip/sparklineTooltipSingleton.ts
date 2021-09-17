@@ -1,18 +1,16 @@
-import { Bean, BeanStub, PreDestroy, PostConstruct, Autowired, LoggerFactory, Logger } from "@ag-grid-community/core";
+import { Bean, BeanStub, PostConstruct, PreDestroy } from "@ag-grid-community/core";
 import { SparklineTooltip } from "../sparkline/tooltip/sparklineTooltip";
 
+/**
+ * This 'bean' creates a single sparkline tooltip that is bound to the grid lifecycle.
+ */
 @Bean('sparklineTooltipSingleton')
 export class SparklineTooltipSingleton extends BeanStub {
 
-    @Autowired('loggerFactory') private readonly loggerFactory!: LoggerFactory;
-
-    private logger!: Logger;
     private tooltip!: SparklineTooltip;
 
     @PostConstruct
     private postConstruct(): void {
-        this.logger = this.loggerFactory.create('SparklineTooltipSingleton');
-        this.logger.log('creating new sparkline tooltip ');
         this.tooltip = new SparklineTooltip();
     }
 
@@ -24,7 +22,6 @@ export class SparklineTooltipSingleton extends BeanStub {
     private destroyTooltip(): void {
         if (this.tooltip) {
             this.tooltip.destroy();
-            this.logger.log('sparkline tooltip destroyed');
         }
     }
 }
