@@ -27,9 +27,9 @@ const cleanLib = () => {
         .pipe(clean());
 };
 
-const tscTask = async () => {
+const tscTask = () => {
     const tscProject = gulpTypescript.createProject(tsConfig);
-    const tsResult = await gulp.src(
+    const tsResult = gulp.src(
         [
             'src/**/*.ts*',
             '!src/**/old/**/*',
