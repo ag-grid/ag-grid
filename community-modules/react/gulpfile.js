@@ -4,7 +4,7 @@ const sourcemaps = require('gulp-sourcemaps');
 const {series} = require('gulp');
 const gulpTypescript = require('gulp-typescript');
 const header = require('gulp-header');
-const merge = require('gulp-merge');
+const merge = require('merge2');
 const pkg = require('./package.json');
 const tsConfig = 'tsconfig.build.json';
 const typescript = require('rollup-plugin-typescript');
@@ -27,7 +27,7 @@ const cleanLib = () => {
         .pipe(clean());
 };
 
-const tscTask = () => {
+function tscTask() {
     const tscProject = gulpTypescript.createProject(tsConfig);
     const tsResult = gulp.src(
         [
@@ -46,7 +46,7 @@ const tscTask = () => {
             .pipe(sourcemaps.write('.'))
             .pipe(gulp.dest('lib'))
     ]);
-};
+}
 
 const cleanBundles = () => {
     return gulp.src('bundles/*')
