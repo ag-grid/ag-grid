@@ -3,7 +3,6 @@ import { Autowired, PostConstruct, PreDestroy } from "../../../context/context";
 import { Column } from "../../../entities/column";
 import { Beans } from "../../../rendering/beans";
 import { removeAriaSort, setAriaDescribedBy, setAriaSort } from "../../../utils/aria";
-import { setDisplayed } from "../../../utils/dom";
 import { RefSelector } from "../../../widgets/componentAnnotations";
 import { AbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellComp";
 import { HeaderCellCtrl, IHeaderCellComp } from "./headerCellCtrl";
@@ -55,7 +54,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
             setColId: id => setAttribute('col-id', id),
             setTitle: title => setAttribute('title', title),
             setAriaDescribedBy: value => setAriaDescribedBy(eGui, value),
-            setCompDetails: compDetails => this.setCompDetails(compDetails),
+            setUserCompDetails: compDetails => this.setUserCompDetails(compDetails),
             getUserCompInstance: ()=> this.headerComp
         };
 
@@ -74,7 +73,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
         }
     }
 
-    private setCompDetails(compDetails: UserCompDetails): void {
+    private setUserCompDetails(compDetails: UserCompDetails): void {
         this.headerCompVersion++;
 
         const versionCopy = this.headerCompVersion;

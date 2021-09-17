@@ -4435,7 +4435,7 @@
       "setAriaSort(sort: ColumnSortState | undefined)": "void",
       "setColId(id: string)": "void",
       "setAriaDescribedBy(id: string | undefined)": "void",
-      "setCompDetails(compDetails: UserCompDetails)": "void",
+      "setUserCompDetails(compDetails: UserCompDetails)": "void",
       "getUserCompInstance()": "IHeader | undefined",
       "setTitle(title: string | undefined)": "void"
     }
@@ -4502,7 +4502,10 @@
       "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
       "addOrRemoveResizableCssClass(cssClassName: string, on: boolean)": "void",
       "setWidth(width: string)": "void",
-      "setColId(id: string)": "void"
+      "setColId(id: string)": "void",
+      "setAriaExpanded(expanded: string | undefined)": "void",
+      "setUserCompDetails(compDetails: UserCompDetails)": "void",
+      "setTitle(title: string | undefined)": "void"
     }
   },
   "IHeaderGroupParams": {
@@ -9335,7 +9338,8 @@
       "getTooltipValue()": "any",
       "getGui()": "HTMLElement",
       "getLocation()": "string",
-      "getColumn?()": "Column",
+      "getColumn?()": "Column | ColumnGroup",
+      "getColDef?()": "ColDef | ColGroupDef",
       "getRowIndex?()": "number",
       "getRowNode?()": "RowNode",
       "getValueFormatted?()": "string"

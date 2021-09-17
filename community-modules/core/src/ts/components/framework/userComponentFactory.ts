@@ -72,6 +72,11 @@ export class UserComponentFactory extends BeanStub {
         return this.getCompDetails(colDef, HeaderComponent, 'agColumnHeader', params);
     }
 
+    public getHeaderGroupCompDetails(params: IHeaderGroupParams): UserCompDetails | undefined {
+        const colGroupDef = params.columnGroup.getColGroupDef()!;
+        return this.getCompDetails(colGroupDef, HeaderGroupComponent, 'agColumnGroupHeader', params);
+    }
+
     // this one is unusual, as it can be LoadingCellRenderer, DetailCellRenderer, FullWidthCellRenderer or GroupRowRenderer.
     // so we have to pass the type in.
     public getFullWidthCellRendererDetails(params: ICellRendererParams, cellRendererType: string, cellRendererName: string): UserCompDetails | undefined {
@@ -104,16 +109,6 @@ export class UserComponentFactory extends BeanStub {
     public newDateComponent(params: IDateParams): AgPromise<IDateComp> | null {
         return this.lookupAndCreateComponent(this.gridOptions, params, DateComponent, 'agDateInput');
     }
-
-    public newHeaderComponent(params: IHeaderParams): AgPromise<IHeaderComp> | null {
-        return this.lookupAndCreateComponent(params.column.getColDef(), params, HeaderComponent, 'agColumnHeader');
-    }
-
-    public newHeaderGroupComponent(params: IHeaderGroupParams): AgPromise<IHeaderGroupComp> | null {
-        return this.lookupAndCreateComponent(
-            params.columnGroup.getColGroupDef()!, params, HeaderGroupComponent, 'agColumnGroupHeader');
-    }
-
 
     public newLoadingOverlayComponent(params: ILoadingOverlayParams): AgPromise<ILoadingOverlayComp> | null {
         return this.lookupAndCreateComponent(this.gridOptions, params, LoadingOverlayComponent, 'agLoadingOverlay');

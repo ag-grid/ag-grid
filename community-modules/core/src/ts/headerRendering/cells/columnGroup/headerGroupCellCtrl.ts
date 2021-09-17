@@ -1,38 +1,30 @@
-import { IHeaderColumn } from "../../../entities/iHeaderColumn";
-import { HeaderRowCtrl } from "../../row/headerRowCtrl";
-import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellCtrl";
 import { ColumnApi } from "../../../columns/columnApi";
-import { ColumnModel, ColumnResizeSet } from "../../../columns/columnModel";
-import { UserComponentFactory } from "../../../components/framework/userComponentFactory";
-import { Constants } from "../../../constants/constants";
+import { ColumnModel } from "../../../columns/columnModel";
+import { UserCompDetails, UserComponentFactory } from "../../../components/framework/userComponentFactory";
 import { KeyCode } from '../../../constants/keyCode';
-import { Autowired, PostConstruct } from "../../../context/context";
+import { Autowired } from "../../../context/context";
 import {
     DragAndDropService,
     DragItem,
     DragSource,
     DragSourceType
 } from "../../../dragAndDrop/dragAndDropService";
-import { ColGroupDef } from "../../../entities/colDef";
 import { Column } from "../../../entities/column";
 import { ColumnGroup } from "../../../entities/columnGroup";
 import { ProvidedColumnGroup } from "../../../entities/providedColumnGroup";
 import { GridApi } from "../../../gridApi";
 import { Beans } from "../../../rendering/beans";
 import { SetLeftFeature } from "../../../rendering/features/setLeftFeature";
-import { ITooltipParams } from "../../../rendering/tooltipComponent";
-import { setAriaExpanded } from "../../../utils/aria";
 import { removeFromArray } from "../../../utils/array";
-import { addCssClass, addOrRemoveCssClass, removeCssClass, removeFromParent } from "../../../utils/dom";
 import { ManagedFocusFeature } from "../../../widgets/managedFocusFeature";
-import { HorizontalResizeService } from "../../common/horizontalResizeService";
-import { AbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellComp";
+import { ITooltipFeatureComp, ITooltipFeatureCtrl, TooltipFeature } from "../../../widgets/tooltipFeature";
+import { HeaderRowCtrl } from "../../row/headerRowCtrl";
+import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellCtrl";
 import { CssClassApplier } from "../cssClassApplier";
 import { HoverFeature } from "../hoverFeature";
 import { GroupResizeFeature } from "./groupResizeFeature";
-import { IHeaderGroupComp, IHeaderGroupParams } from "./headerGroupComp";
 import { GroupWidthFeature } from "./groupWidthFeature";
-import { ITooltipFeatureComp, ITooltipFeatureCtrl, TooltipFeature } from "../../../widgets/tooltipFeature";
+import { IHeaderGroupParams } from "./headerGroupComp";
 
 export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp, ITooltipFeatureComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
@@ -40,6 +32,7 @@ export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp, ITooltipF
     setWidth(width: string): void;
     setColId(id: string): void;
     setAriaExpanded(expanded: string | undefined): void;
+    setUserCompDetails(compDetails: UserCompDetails): void;
 }
 
 export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
@@ -47,6 +40,9 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
     @Autowired('beans') protected beans: Beans;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
+    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
+    @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('columnApi') private columnApi: ColumnApi;
 
     private columnGroup: ColumnGroup;
     private comp: IHeaderGroupCellComp;
@@ -70,6 +66,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
         this.setupMovingCss();
         this.setupExpandable();
         this.setupTooltip();
+        this.setupUserComp();
 
         const pinned = this.getParentRowCtrl().getPinned();
         const leafCols = this.columnGroup.getOriginalColumnGroup().getLeafColumns();
@@ -88,6 +85,50 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
                 onFocusIn: this.onFocusIn.bind(this)
             }
         ));
+    }
+
+    private setupUserComp(): void {
+
+        let displayName = this.displayName;
+
+        const params: IHeaderGroupParams = {
+            displayName: this.displayName!,
+            columnGroup: this.columnGroup,
+            setExpanded: (expanded: boolean) => {
+                this.columnModel.setColumnGroupOpened(this.columnGroup.getOriginalColumnGroup(), expanded, "gridInitializing");
+            },
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            context: this.gridOptionsWrapper.getContext()
+        };
+
+        if (!displayName) {
+            let columnGroup = this.columnGroup;
+            const leafCols = columnGroup.getLeafColumns();
+
+            // find the top most column group that represents the same columns. so if we are dragging a group, we also
+            // want to visually show the parent groups dragging for the same column set. for example imaging 5 levels
+            // of grouping, with each group only containing the next group, and the last group containing three columns,
+            // then when you move any group (even the lowest level group) you are in-fact moving all the groups, as all
+            // the groups represent the same column set.
+            while (columnGroup.getParent() && columnGroup.getParent().getLeafColumns().length === leafCols.length) {
+                columnGroup = columnGroup.getParent();
+            }
+
+            const colGroupDef = columnGroup.getColGroupDef();
+
+            if (colGroupDef) {
+                displayName = colGroupDef.headerName!;
+            }
+
+            if (!displayName) {
+                displayName = leafCols ? this.columnModel.getDisplayNameForColumn(leafCols[0], 'header', true)! : '';
+            }
+        }
+
+        const compDetails = this.userComponentFactory.getHeaderGroupCompDetails(params)!;
+
+        this.comp.setUserCompDetails(compDetails);
     }
 
     private setupTooltip(): void {
