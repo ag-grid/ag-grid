@@ -95,8 +95,8 @@ export class AreaSparkline extends Sparkline {
         let yMax = 1;
 
         if (yMinMax !== undefined) {
-            yMin = yMinMax[0] as number;
-            yMax = yMinMax[1] as number;
+            yMin = this.min = yMinMax[0] as number;
+            yMax = this.max = yMinMax[1] as number;
         }
 
         if (yData.length > 1) {
@@ -199,7 +199,7 @@ export class AreaSparkline extends Sparkline {
     }
 
     protected updateNodes(): void {
-        const { highlightedDatum, highlightStyle, marker } = this;
+        const { highlightedDatum, highlightStyle, marker, min, max } = this;
         const { size: highlightSize, fill: highlightFill, stroke: highlightStroke, strokeWidth: highlightStrokeWidth } = highlightStyle;
         const markerFormatter = marker.formatter;
 
@@ -219,10 +219,18 @@ export class AreaSparkline extends Sparkline {
             let markerFormat: MarkerFormat | undefined = undefined;
 
             if (markerFormatter) {
+                const nodeData = this.getNodeData();
+                const first = nodeData[0].seriesDatum.y;
+                const last = nodeData[nodeData.length - 1].seriesDatum.y;
+
                 markerFormat = markerFormatter({
                     datum,
                     xValue: seriesDatum.x,
                     yValue: seriesDatum.y,
+                    min,
+                    max,
+                    first,
+                    last,
                     fill: markerFill,
                     stroke: markerStroke,
                     strokeWidth: markerStrokeWidth,

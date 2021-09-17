@@ -690,14 +690,11 @@ export class BarSeries extends CartesianSeries {
 
         this.rectSelection.each((rect, datum) => {
             const isDatumHighlighted = datum === highlightedDatum;
-            const isSubSeriesHighlighted = true; // highlightedItemId === datum.itemId;
             const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : datum.fill;
             const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : datum.stroke;
             const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
                 ? highlightedDatumStrokeWidth
-                : subSeriesHighlightingEnabled && isSubSeriesHighlighted && highlightedSubSeriesStrokeWidth !== undefined
-                    ? highlightedSubSeriesStrokeWidth
-                    : datum.strokeWidth;
+                : this.getStrokeWidth(datum.strokeWidth, datum);
 
             let format: BarSeriesFormat | undefined = undefined;
             if (formatter) {
