@@ -32,8 +32,8 @@ export class ColumnApi {
     public applyColumnState(params: ApplyColumnStateParams): boolean { return this.columnModel.applyColumnState(params, 'api'); }
     public getColumnState(): ColumnState[] { return this.columnModel.getColumnState(); }
     public resetColumnState(): void { this.columnModel.resetColumnState('api'); }
-    public getColumnGroupState(): {groupId: string, open: boolean}[] {return this.columnModel.getColumnGroupState(); }
-    public setColumnGroupState(stateItems: ({groupId: string, open: boolean})[]): void {this.columnModel.setColumnGroupState(stateItems, 'api'); }
+    public getColumnGroupState(): { groupId: string, open: boolean }[] { return this.columnModel.getColumnGroupState(); }
+    public setColumnGroupState(stateItems: ({ groupId: string, open: boolean })[]): void { this.columnModel.setColumnGroupState(stateItems, 'api'); }
     public resetColumnGroupState(): void { this.columnModel.resetColumnGroupState('api'); }
 
     public isPinning(): boolean { return this.columnModel.isPinningLeft() || this.columnModel.isPinningRight(); }
@@ -70,9 +70,9 @@ export class ColumnApi {
     public setColumnAggFunc(key: string | Column, aggFunc: string): void { this.columnModel.setColumnAggFunc(key, aggFunc); }
 
     public setColumnWidth(key: string | Column, newWidth: number, finished: boolean = true, source?: ColumnEventType): void {
-        this.columnModel.setColumnWidths([{key, newWidth}], false, finished, source);
+        this.columnModel.setColumnWidths([{ key, newWidth }], false, finished, source);
     }
-    public setColumnWidths(columnWidths: {key: string | Column, newWidth: number}[], finished: boolean = true, source?: ColumnEventType): void {
+    public setColumnWidths(columnWidths: { key: string | Column, newWidth: number }[], finished: boolean = true, source?: ColumnEventType): void {
         this.columnModel.setColumnWidths(columnWidths, false, finished, source);
     }
 
@@ -105,8 +105,8 @@ export class ColumnApi {
     public getCenterDisplayedColumnGroups(): IHeaderColumn[] { return this.columnModel.getDisplayedTreeCentre(); }
     public getRightDisplayedColumnGroups(): IHeaderColumn[] { return this.columnModel.getDisplayedTreeRight(); }
     public getAllDisplayedColumnGroups(): IHeaderColumn[] | null { return this.columnModel.getAllDisplayedTrees(); }
-    public autoSizeColumn(key: string | Column, skipHeader?: boolean): void {return this.columnModel.autoSizeColumn(key, skipHeader, 'api'); }
-    public autoSizeColumns(keys: (string | Column)[], skipHeader?: boolean): void {return this.columnModel.autoSizeColumns(keys, skipHeader, 'api'); }
+    public autoSizeColumn(key: string | Column, skipHeader?: boolean): void { return this.columnModel.autoSizeColumn(key, skipHeader, 'api'); }
+    public autoSizeColumns(keys: (string | Column)[], skipHeader?: boolean): void { return this.columnModel.autoSizeColumns(keys, skipHeader, 'api'); }
     public autoSizeAllColumns(skipHeader?: boolean): void { this.columnModel.autoSizeAllColumns(skipHeader, 'api'); }
 
     public setSecondaryColumns(colDefs: (ColDef | ColGroupDef)[]): void { this.columnModel.setSecondaryColumns(colDefs, 'api'); }
@@ -194,17 +194,20 @@ export class ColumnApi {
         return this.getDisplayNameForColumn(column, null);
     }
 
+    /**
+     * @deprecated Use `applyColumnState` instead.
+     */
     public setColumnState(columnState: ColumnState[]): boolean {
-        return this.columnModel.applyColumnState({state: columnState, applyOrder: true}, 'api');
+        return this.columnModel.applyColumnState({ state: columnState, applyOrder: true }, 'api');
     }
 
 }
 
 export interface ApplyColumnStateParams {
-/** The state from `getColumnState` */
+    /** The state from `getColumnState` */
     state?: ColumnState[];
-/** Whether column order should be applied */
+    /** Whether column order should be applied */
     applyOrder?: boolean;
-/** State to apply to columns where state is missing for those columns */
+    /** State to apply to columns where state is missing for those columns */
     defaultState?: ColumnState;
 }
