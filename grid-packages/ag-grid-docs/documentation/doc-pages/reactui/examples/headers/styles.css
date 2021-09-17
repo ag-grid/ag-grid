@@ -5,10 +5,16 @@
   left: 0px;
 }
 
-.image-header {
+.my-header {
   margin-left: 20px;
+  width: 100%;
 }
 
-.my-header {
+.my-group-header {
+  margin-left: 20px;
   width: 100%;
+}
+
+.my-expand {
+  margin-left: 4px;
 }

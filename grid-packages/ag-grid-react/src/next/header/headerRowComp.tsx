@@ -1,7 +1,8 @@
-import { AbstractHeaderCellCtrl, HeaderCellCtrl, HeaderFilterCellComp, HeaderFilterCellCtrl, HeaderRowCtrl, HeaderRowType, IHeaderRowComp, _ } from 'ag-grid-community';
+import { AbstractHeaderCellCtrl, HeaderGroupCellCtrl, HeaderCellCtrl, HeaderFilterCellComp, HeaderFilterCellCtrl, HeaderRowCtrl, HeaderRowType, IHeaderRowComp, _ } from 'ag-grid-community';
 import React, { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { BeansContext } from '../beansContext';
 import HeaderCellComp from './headerCellComp';
+import HeaderGroupCellComp from './headerGroupCellComp';
 
 const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
 
@@ -101,7 +102,8 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
     const createCellJsx = useCallback( (cellCtrl: AbstractHeaderCellCtrl) => {
         switch (ctrl.getType()) {
             case HeaderRowType.COLUMN_GROUP :
-                return <span>Column Group</span>;
+                return <HeaderGroupCellComp ctrl={cellCtrl as HeaderGroupCellCtrl} key={cellCtrl.getInstanceId()} />;
+                
             default :
                 return <HeaderCellComp ctrl={cellCtrl as HeaderCellCtrl} key={cellCtrl.getInstanceId()} />;
         }

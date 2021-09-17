@@ -10,21 +10,6 @@ import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import React, { forwardRef, memo, useEffect, useImperativeHandle, useMemo, useRef, useState, useCallback } from 'react';
 import { render } from 'react-dom';
 
-const SimpleHeader = memo((props) => {
-    return (
-        <span className="my-header">{props.displayName}</span>
-    );
-});
-
-const ImageHeader = memo((props) => {
-    return (
-        <span className="image-header my-header">
-            <img src="https://d1yk6z6emsz7qy.cloudfront.net/static/images/loading.gif" className="my-spinner"/>
-            {props.displayName}
-        </span>
-    );
-});
-
 const SortingHeader = memo((props) => {
 
     const [sortState, setSortState] = useState();
@@ -51,7 +36,41 @@ const SortingHeader = memo((props) => {
 
     return (
         <span className="my-header" onClick={onClick}>
+            <img src="https://d1yk6z6emsz7qy.cloudfront.net/static/images/loading.gif" className="my-spinner"/>
             {props.displayName} {sortState}
+        </span>
+    );
+});
+
+const MyGroupHeader = memo((props) => {
+
+    const [expanded, setExpanded] = useState();
+    const {columnGroup} = props;
+    const expandable = columnGroup.isExpandable();
+    const originalColumnGroup = columnGroup.getOriginalColumnGroup();
+
+    const onExpandClicked = useCallback( ()=> props.setExpanded(!columnGroup.isExpanded()), []);
+
+    useEffect( ()=> {
+        const listener = ()=> {
+            setExpanded(columnGroup.isExpanded());
+        };
+        listener();
+        originalColumnGroup.addEventListener('expandedChanged', listener);
+        return ()=> originalColumnGroup.removeEventListener('expandedChanged', listener);
+    }, []);
+
+    const showExpandJsx = ()=> (
+        <button onClick={onExpandClicked} className="my-expand">
+            { expanded ? '<' : '>' }
+        </button>
+    );
+
+    return (
+        <span className="my-group-header">
+            <img src="https://d1yk6z6emsz7qy.cloudfront.net/static/images/loading.gif" className="my-spinner"/>
+            { props.displayName }
+            { expandable && showExpandJsx() }
         </span>
     );
 });
@@ -63,19 +82,30 @@ function GridExample() {
 
     // never changes, so we can use useMemo
     const columnDefs = useMemo( ()=> [
-        { field: 'athlete', headerComponentFramework: SimpleHeader },
-        { field: 'age', headerComponentFramework: ImageHeader },
-        { field: 'country', headerComponentFramework: SortingHeader },
-        { field: 'year' },
-        { field: 'date' },
-        { field: 'sport' }
+        {
+            headerName: 'Group A',
+            headerGroupComponentFramework: MyGroupHeader,
+            children: [
+                { field: 'athlete', headerComponentFramework: SortingHeader },
+                { field: 'age', headerComponentFramework: SortingHeader },
+            ]
+        },
+        {
+            headerName: 'Group B',
+            headerGroupComponentFramework: MyGroupHeader,
+            children: [
+                { field: 'country' },
+                { field: 'year' },
+                { field: 'date', columnGroupShow: 'open' },
+                { field: 'sport', columnGroupShow: 'open' }
+            ]
+        },
     ], []);
 
     // never changes, so we can use useMemo
     const defaultColDef = useMemo( ()=> ({
         resizable: true,
-        sortable: true,
-        flex: 1
+        sortable: true
     }), []);
 
     // changes, needs to be state

@@ -31,7 +31,7 @@ export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp, ITooltipF
     addOrRemoveResizableCssClass(cssClassName: string, on: boolean): void;
     setWidth(width: string): void;
     setColId(id: string): void;
-    setAriaExpanded(expanded: string | undefined): void;
+    setAriaExpanded(expanded: 'true' | 'false' | undefined): void;
     setUserCompDetails(compDetails: UserCompDetails): void;
 }
 
@@ -166,7 +166,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
         const expanded = column.isExpanded();
 
         if (this.expandable) {
-            this.comp.setAriaExpanded(`${!!expanded}`);
+            this.comp.setAriaExpanded(expanded ? 'true' : 'false');
         } else {
             this.comp.setAriaExpanded(undefined);
         }

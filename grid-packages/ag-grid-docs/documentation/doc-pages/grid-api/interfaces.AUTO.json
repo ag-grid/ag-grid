@@ -4503,7 +4503,7 @@
       "addOrRemoveResizableCssClass(cssClassName: string, on: boolean)": "void",
       "setWidth(width: string)": "void",
       "setColId(id: string)": "void",
-      "setAriaExpanded(expanded: string | undefined)": "void",
+      "setAriaExpanded(expanded: 'true' | 'false' | undefined)": "void",
       "setUserCompDetails(compDetails: UserCompDetails)": "void",
       "setTitle(title: string | undefined)": "void"
     }

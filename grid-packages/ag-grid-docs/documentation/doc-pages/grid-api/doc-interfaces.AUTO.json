@@ -8077,7 +8077,7 @@
     },
     "setAriaExpanded": {
       "type": {
-        "arguments": { "expanded": "string | undefined" },
+        "arguments": { "expanded": "'true' | 'false' | undefined" },
         "returnType": "void",
         "optional": false
       }

@@ -318,6 +318,7 @@
     "type": { "arguments": {}, "returnType": "Column[] | null" }
   },
   "columnGroupOpened": {
+    "description": "/** @deprecated columnGroupOpened no longer exists, use setColumnGroupOpened\n */",
     "type": {
       "arguments": {
         "group": "ProvidedColumnGroup | string",
@@ -327,63 +328,79 @@
     }
   },
   "hideColumns": {
+    "description": "/** @deprecated hideColumns is deprecated, use setColumnsVisible\n */",
     "type": {
       "arguments": { "colIds": "any", "hide": "any" },
       "returnType": "void"
     }
   },
   "hideColumn": {
+    "description": "/** @deprecated hideColumn is deprecated, use setColumnVisible\n */",
     "type": {
       "arguments": { "colId": "any", "hide": "any" },
       "returnType": "void"
     }
   },
   "setState": {
+    "description": "/** @deprecated setState is deprecated, use setColumnState\n */",
     "type": {
       "arguments": { "columnState": "ColumnState[]" },
       "returnType": "boolean"
     }
   },
-  "getState": { "type": { "arguments": {}, "returnType": "ColumnState[]" } },
-  "resetState": { "type": { "arguments": {}, "returnType": "void" } },
+  "getState": {
+    "description": "/** @deprecated getState is deprecated, use getColumnState\n */",
+    "type": { "arguments": {}, "returnType": "ColumnState[]" }
+  },
+  "resetState": {
+    "description": "/** @deprecated resetState is deprecated, use resetColumnState\n */",
+    "type": { "arguments": {}, "returnType": "void" }
+  },
   "getAggregationColumns": {
+    "description": "/** @deprecated getAggregationColumns is deprecated, use getValueColumns\n */",
     "type": { "arguments": {}, "returnType": "Column[]" }
   },
   "removeAggregationColumn": {
+    "description": "/** @deprecated removeAggregationColumn is deprecated, use removeValueColumn\n */",
     "type": {
       "arguments": { "colKey": "(string | Column)" },
       "returnType": "void"
     }
   },
   "removeAggregationColumns": {
+    "description": "/** @deprecated removeAggregationColumns is deprecated, use removeValueColumns\n */",
     "type": {
       "arguments": { "colKeys": "(string | Column)[]" },
       "returnType": "void"
     }
   },
   "addAggregationColumn": {
+    "description": "/** @deprecated addAggregationColumn is deprecated, use addValueColumn\n */",
     "type": {
       "arguments": { "colKey": "(string | Column)" },
       "returnType": "void"
     }
   },
   "addAggregationColumns": {
+    "description": "/** @deprecated addAggregationColumns is deprecated, use addValueColumns\n */",
     "type": {
       "arguments": { "colKeys": "(string | Column)[]" },
       "returnType": "void"
     }
   },
   "setColumnAggFunction": {
+    "description": "/** @deprecated setColumnAggFunction is deprecated, use setColumnAggFunc\n */",
     "type": {
       "arguments": { "column": "Column", "aggFunc": "string" },
       "returnType": "void"
     }
   },
   "getDisplayNameForCol": {
+    "description": "/** @deprecated getDisplayNameForCol is deprecated, use getDisplayNameForColumn\n */",
     "type": { "arguments": { "column": "any" }, "returnType": "string" }
   },
   "setColumnState": {
-    "description": "/** @deprecated Use `applyColumnState` instead.\n */",
+    "description": "/** @deprecated setColumnState is deprecated, use applyColumnState.\n */",
     "type": {
       "arguments": { "columnState": "ColumnState[]" },
       "returnType": "boolean"
