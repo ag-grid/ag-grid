@@ -4500,7 +4500,9 @@
     "meta": {},
     "type": {
       "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
-      "addOrRemoveResizableCssClass(cssClassName: string, on: boolean)": "void"
+      "addOrRemoveResizableCssClass(cssClassName: string, on: boolean)": "void",
+      "setWidth(width: string)": "void",
+      "setColId(id: string)": "void"
     }
   },
   "IHeaderGroupParams": {

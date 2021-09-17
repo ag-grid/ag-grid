@@ -49,8 +49,6 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
     protected readonly columnGroup: ColumnGroup;
     protected readonly pinned: string | null;
 
-    private expandable: boolean;
-
     constructor(ctrl: HeaderGroupCellCtrl) {
         super(HeaderGroupCellComp.TEMPLATE, ctrl);
         this.columnGroup = ctrl.getColumnGroupChild() as ColumnGroup;
@@ -63,21 +61,7 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
         const displayName = this.columnModel.getDisplayNameForColumnGroup(this.columnGroup, 'header');
         this.appendHeaderGroupComp(displayName!);
 
-        this.setupMovingCss();
         this.setupTooltip();
-        this.setupExpandable();
-
-        this.createManagedBean(new HoverFeature(this.columnGroup.getOriginalColumnGroup().getLeafColumns(), this.getGui()));
-        this.createManagedBean(new SetLeftFeature(this.columnGroup, this.getGui(), this.beans));
-        this.createManagedBean(new ManagedFocusFeature(
-            this.getFocusableElement(),
-            {
-                shouldStopEventPropagation: this.shouldStopEventPropagation.bind(this),
-                onTabKeyDown: this.onTabKeyDown.bind(this),
-                handleKeyDown: this.handleKeyDown.bind(this),
-                onFocusIn: this.onFocusIn.bind(this)
-            }
-        ));
 
         const eGui = this.getGui();
 
@@ -85,75 +69,11 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             addOrRemoveResizableCssClass: (cssClassName, on) => addOrRemoveCssClass(this.eResize, cssClassName, on),
             setWidth: width => eGui.style.width = width,
-            setColId: id => eGui.setAttribute("col-id", id)
+            setColId: id => eGui.setAttribute("col-id", id),
+            setAriaExpanded: expanded => expanded!=null ? eGui.setAttribute('aria-expanded', expanded) : eGui.removeAttribute('aria-expanded')
         };
 
         this.ctrl.setComp(compProxy, eGui, this.eResize);
-    }
-
-    public getColumn(): ColumnGroup {
-        return this.columnGroup;
-    }
-
-    protected onFocusIn(e: FocusEvent) {
-        if (!this.getGui().contains(e.relatedTarget as HTMLElement)) {
-            const rowIndex = this.ctrl.getRowIndex();
-            this.beans.focusService.setFocusedHeader(rowIndex, this.getColumn());
-        }
-    }
-
-    protected handleKeyDown(e: KeyboardEvent) {
-        const activeEl = document.activeElement;
-        const eGui = this.getGui();
-        const wrapperHasFocus = activeEl === eGui;
-
-        if (!this.expandable || !wrapperHasFocus) { return; }
-
-        if (e.keyCode === KeyCode.ENTER) {
-            const column = this.getColumn() as ColumnGroup;
-            const newExpandedValue = !column.isExpanded();
-
-            this.columnModel.setColumnGroupOpened(column.getOriginalColumnGroup(), newExpandedValue, "uiColumnExpanded");
-        }
-    }
-
-    protected onTabKeyDown(): void { }
-
-    private setupExpandable(): void {
-        const column = this.getColumn() as ColumnGroup;
-        const originalColumnGroup = column.getOriginalColumnGroup();
-
-        this.refreshExpanded();
-
-        this.addManagedListener(originalColumnGroup, ProvidedColumnGroup.EVENT_EXPANDABLE_CHANGED, this.refreshExpanded.bind(this));
-        this.addManagedListener(originalColumnGroup, ProvidedColumnGroup.EVENT_EXPANDED_CHANGED, this.refreshExpanded.bind(this));
-    }
-
-    private refreshExpanded(): void {
-        const column = this.getColumn() as ColumnGroup;
-        const eGui = this.getGui();
-
-        const expandable = column.isExpandable();
-        const expanded = column.isExpanded();
-
-        this.expandable = expandable;
-
-        if (!expandable) {
-            eGui.removeAttribute('aria-expanded');
-        } else {
-            setAriaExpanded(eGui, expanded);
-        }
-    }
-
-    private setupMovingCss(): void {
-        const originalColumnGroup = this.columnGroup.getOriginalColumnGroup();
-        const leafColumns = originalColumnGroup.getLeafColumns();
-
-        leafColumns.forEach(col => {
-            this.addManagedListener(col, Column.EVENT_MOVING_CHANGED, this.onColumnMovingChanged.bind(this));
-        });
-
-        this.onColumnMovingChanged();
     }
 
     public getComponentHolder(): ColGroupDef | null {
@@ -167,7 +87,7 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
         // this is wrong, but leaving it as i don't want to change code,
         // but the ColumnGroup does not have a ColDef or a Column (although it does have GroupDef and ColumnGroup)
         res.colDef = this.getComponentHolder();
-        res.column = this.getColumn();
+        res.column = this.columnGroup;
 
         return res;
     }
@@ -181,12 +101,7 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
         }
     }
 
-    private onColumnMovingChanged(): void {
-        // this function adds or removes the moving css, based on if the col is moving.
-        // this is what makes the header go dark when it is been moved (gives impression to
-        // user that the column was picked up).
-        addOrRemoveCssClass(this.getGui(), 'ag-header-cell-moving', this.columnGroup.isMoving());
-    }
+
 
     private appendHeaderGroupComp(displayName: string): void {
         const params: IHeaderGroupParams = {

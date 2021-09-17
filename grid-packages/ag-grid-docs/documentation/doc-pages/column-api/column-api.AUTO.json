@@ -383,7 +383,7 @@
     "type": { "arguments": { "column": "any" }, "returnType": "string" }
   },
   "setColumnState": {
-    "description": "/** @param columnState\n * @deprecated Use `applyColumnState` instead.\n */",
+    "description": "/** @deprecated Use `applyColumnState` instead.\n */",
     "type": {
       "arguments": { "columnState": "ColumnState[]" },
       "returnType": "boolean"

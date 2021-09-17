@@ -37,12 +37,18 @@ export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp {
     addOrRemoveResizableCssClass(cssClassName: string, on: boolean): void;
     setWidth(width: string): void;
     setColId(id: string): void;
+    setAriaExpanded(expanded: string | undefined): void;
 }
 
 export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
 
+    @Autowired('beans') protected beans: Beans;
+    @Autowired('columnModel') private columnModel: ColumnModel;
+
     private columnGroup: ColumnGroup;
     private comp: IHeaderGroupCellComp;
+
+    private expandable: boolean;
 
     constructor(columnGroup: ColumnGroup, parentRowCtrl: HeaderRowCtrl) {
         super(columnGroup, parentRowCtrl);
@@ -55,10 +61,47 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
 
         this.addClasses();
         this.addAttributes();
+        this.setupMovingCss();
+        this.setupExpandable();
 
         const pinned = this.getParentRowCtrl().getPinned();
+        const leafCols = this.columnGroup.getOriginalColumnGroup().getLeafColumns();
+
+        this.createManagedBean(new HoverFeature(leafCols, eGui));
+        this.createManagedBean(new SetLeftFeature(this.columnGroup, eGui, this.beans));
         this.createManagedBean(new GroupResizeFeature(comp, eResize, pinned, this.columnGroup));
         this.createManagedBean(new GroupWidthFeature(comp, this.columnGroup));
+
+        this.createManagedBean(new ManagedFocusFeature(
+            eGui,
+            {
+                shouldStopEventPropagation: this.shouldStopEventPropagation.bind(this),
+                onTabKeyDown: ()=> undefined,
+                handleKeyDown: this.handleKeyDown.bind(this),
+                onFocusIn: this.onFocusIn.bind(this)
+            }
+        ));
+    }
+
+    private setupExpandable(): void {
+        const providedColGroup = this.columnGroup.getOriginalColumnGroup();
+
+        this.refreshExpanded();
+
+        this.addManagedListener(providedColGroup, ProvidedColumnGroup.EVENT_EXPANDABLE_CHANGED, this.refreshExpanded.bind(this));
+        this.addManagedListener(providedColGroup, ProvidedColumnGroup.EVENT_EXPANDED_CHANGED, this.refreshExpanded.bind(this));
+    }
+
+    private refreshExpanded(): void {
+        const column = this.columnGroup as ColumnGroup;
+        this.expandable = column.isExpandable();
+        const expanded = column.isExpanded();
+
+        if (this.expandable) {
+            this.comp.setAriaExpanded(`${!!expanded}`);
+        } else {
+            this.comp.setAriaExpanded(undefined);
+        }
     }
 
     private addAttributes(): void {
@@ -77,5 +120,40 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
         classes.forEach( c => this.comp.addOrRemoveCssClass(c, true) );
     }
 
+    private setupMovingCss(): void {
+        const providedColumnGroup = this.columnGroup.getOriginalColumnGroup();
+        const leafColumns = providedColumnGroup.getLeafColumns();
 
+        // this function adds or removes the moving css, based on if the col is moving.
+        // this is what makes the header go dark when it is been moved (gives impression to
+        // user that the column was picked up).
+        const listener = ()=> this.comp.addOrRemoveCssClass('ag-header-cell-moving', this.columnGroup.isMoving());
+
+        leafColumns.forEach(col => {
+            this.addManagedListener(col, Column.EVENT_MOVING_CHANGED, listener);
+        });
+
+        listener();
+    }
+    
+    protected onFocusIn(e: FocusEvent) {
+        if (!this.eGui.contains(e.relatedTarget as HTMLElement)) {
+            const rowIndex = this.getRowIndex();
+            this.beans.focusService.setFocusedHeader(rowIndex, this.columnGroup);
+        }
+    }
+
+    protected handleKeyDown(e: KeyboardEvent) {
+        const activeEl = document.activeElement;
+        const wrapperHasFocus = activeEl === this.eGui;
+
+        if (!this.expandable || !wrapperHasFocus) { return; }
+
+        if (e.keyCode === KeyCode.ENTER) {
+            const column = this.columnGroup;
+            const newExpandedValue = !column.isExpanded();
+
+            this.columnModel.setColumnGroupOpened(column.getOriginalColumnGroup(), newExpandedValue, "uiColumnExpanded");
+        }
+    }
 }
