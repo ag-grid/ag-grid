@@ -125,6 +125,8 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             }
         });
 
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
         const addPopupRes = this.popupService.addPopup({
@@ -136,7 +138,8 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             },
             afterGuiAttached: params => menu.afterGuiAttached(_.assign({}, {container: containerType }, params)),
             positionCallback: () => positionCallback(menu),
-            anchorToElement
+            anchorToElement,
+            ariaLabel: translate('ariaLabelColumnMenu', 'Column Menu')
         });
 
         if (addPopupRes) {

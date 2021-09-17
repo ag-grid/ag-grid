@@ -7357,13 +7357,26 @@
     "modules": { "type": { "returnType": "Module[]", "optional": true } }
   },
   "StartEditingCellParams": {
-    "rowIndex": { "type": { "returnType": "number", "optional": false } },
+    "rowIndex": {
+      "description": "/** The row index of the row to start editing */",
+      "type": { "returnType": "number", "optional": false }
+    },
     "colKey": {
+      "description": "/** The column key of the row to start editing */",
       "type": { "returnType": "string | Column", "optional": false }
     },
-    "rowPinned": { "type": { "returnType": "string", "optional": true } },
-    "keyPress": { "type": { "returnType": "number", "optional": true } },
-    "charPress": { "type": { "returnType": "string", "optional": true } }
+    "rowPinned": {
+      "description": "/** Set to `'top'` or `'bottom'` to start editing a pinned row */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "keyPress": {
+      "description": "/** The keyPress to pass to the cell editor */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "charPress": {
+      "description": "/** The charPress to pass to the cell editor */",
+      "type": { "returnType": "string", "optional": true }
+    }
   },
   "GetCellsParams": {
     "rowNodes": {
@@ -16108,7 +16121,8 @@
     },
     "anchorToElement": {
       "type": { "returnType": "HTMLElement", "optional": true }
-    }
+    },
+    "ariaLabel": { "type": { "returnType": "string", "optional": false } }
   },
   "AddPopupResult": {
     "hideFunc": {

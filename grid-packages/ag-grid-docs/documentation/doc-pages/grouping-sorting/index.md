@@ -62,6 +62,8 @@ Note that sorting is enabled across all columns, including Row Group Columns, us
 By default, any sort `comparator` defined on a column that is used to group rows by will also be used by the Group Column. 
 For example, consider the following column definition:
 
+<api-documentation source='column-properties/properties.json' section='sort' names='["comparator"]'></api-documentation>
+
 <snippet>
 |const gridOptions = {
 |    columnDefs: [

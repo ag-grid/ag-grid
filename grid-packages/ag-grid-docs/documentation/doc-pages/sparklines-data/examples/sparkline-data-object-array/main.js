@@ -11,9 +11,12 @@ var gridOptions = {
             cellRenderer: 'agSparklineCellRenderer',
             cellRendererParams: {
                 sparklineOptions: {
-                    type: 'area',
+                    type: 'line',
                     xKey: 'xVal',
                     yKey: 'yVal',
+                    axis : {
+                        type: 'number'
+                    }
                 },
             },
         }

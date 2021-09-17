@@ -29,7 +29,8 @@ interface SeriesRect {
 }
 
 type Container = HTMLElement | undefined | null;
-type Data = number[] | [number | string | Date, number][] | { [key: string]: any }[] | undefined | null;
+// type Data = number[] | [number | string | Date | { toString: () => string }, number][] | { [key: string]: any }[] | undefined | null;
+type Data = any[] | undefined | null;
 type AxisType = 'number' | 'category' | 'time';
 type ScaleType = LinearScale | TimeScale | BandScale<string>;
 
@@ -451,6 +452,9 @@ export abstract class Sparkline extends Observable {
             // update axes ranges
             this.updateXScaleRange();
             this.updateYScaleRange();
+
+            // update x-axis line
+            this.updateXAxisLine();
 
             // produce data joins and update selection's nodes
             this.update();

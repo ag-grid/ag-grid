@@ -2,7 +2,7 @@
 title: "Header Components"
 ---
 
-You can specify what header renderer to use at the column definition level. If not specified, the grid's default header rendering components will be used.
+You can specify what header renderer to use at the column definition level. If not specified, the grid's default header rendering components will be used. If you just want to make simple layout changes to the default header take a look at [Header Templates](/column-headers/#header-templates).
 
 There are two types of header components:
 

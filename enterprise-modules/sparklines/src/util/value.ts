@@ -1,20 +1,20 @@
 // Simplified version of https://github.com/plotly/fast-isnumeric
 // that doesn't treat number strings with leading/trailing whitespace as numbers.
-export function isNumber(n: any): boolean {
-    const type = typeof n;
+export function isNumber(value: any): boolean {
+    const type = typeof value;
     if (type === 'string') {
         return false;
     } else if (type !== 'number') {
         return false;
     }
-    // n - n is going to be:
+    // value - value is going to be:
     // - zero, for any finite number
     // -  NaN, for NaN, Infinity, -Infinity
-    return n - n < 1;
+    return value - value < 1;
 }
 
 export function isNumberObject(value: any): boolean {
-    return !!value && value.valueOf && isNumber(value.valueOf());
+    return !!value && value.hasOwnProperty('valueOf') && isNumber(value.valueOf());
 }
 
 export function isNumeric(value: any): boolean {
@@ -30,7 +30,7 @@ export function isString(value: any): boolean {
 }
 
 export function isStringObject(value: any): boolean {
-    return !!value && value.toString && isString(value.toString());
+    return !!value && value.hasOwnProperty('toString') && isString(value.toString());
 }
 
 export function isDiscrete(value: any): boolean {

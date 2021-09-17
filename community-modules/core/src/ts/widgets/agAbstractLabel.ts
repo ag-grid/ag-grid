@@ -1,6 +1,7 @@
 import { Component } from "./component";
 import { PostConstruct } from "../context/context";
 import { addCssClass, clearElement, addOrRemoveCssClass, setElementWidth, removeCssClass } from "../utils/dom";
+import { setAriaRole } from "../utils/aria";
 
 export type LabelAlignment = 'left' | 'right' | 'top';
 
@@ -59,10 +60,10 @@ export abstract class AgAbstractLabel<TConfig extends IAgLabel = IAgLabel> exten
 
         if (this.label === '') {
             addCssClass(this.eLabel, 'ag-hidden');
-            this.eLabel.setAttribute('role', 'presentation');
+            setAriaRole(this.eLabel, 'presentation');
         } else {
             removeCssClass(this.eLabel, 'ag-hidden');
-            this.eLabel.removeAttribute('role');
+            setAriaRole(this.eLabel, null);
         }
     }
 

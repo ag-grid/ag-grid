@@ -7,7 +7,6 @@ import { BeansContext } from './beansContext';
 import useReactCommentEffect from './reactComment';
 import RowContainerComp from './rows/rowContainerComp';
 import { classesList } from './utils';
-import GridHeaderComp from './header/gridHeaderComp';
 
 interface SectionProperties {
     section: React.RefObject<HTMLDivElement>;

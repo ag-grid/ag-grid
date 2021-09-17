@@ -112,6 +112,13 @@
         },
         "processSecondaryColGroupDef": {
             "description": "Callback to be used with pivoting, to allow changing the second column group definition."
+        },
+        "getDataPath": {
+            "description": "Callback to be used when working with Tree Data when `treeData = true`.",
+            "more": {
+                "name": "Tree Data",
+                "url": "/tree-data/"
+            }
         }
     },
     "menus": {

@@ -205,8 +205,11 @@ export class CustomTooltipFeature extends BeanStub {
             addCssClass(eGui, 'ag-tooltip-custom');
         }
 
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+
         const addPopupRes = this.popupService.addPopup({
-            eChild: eGui
+            eChild: eGui,
+            ariaLabel: translate('ariaLabelTooltip', 'Tooltip')
         });
         if (addPopupRes) {
             this.tooltipPopupDestroyFunc = addPopupRes.hideFunc;

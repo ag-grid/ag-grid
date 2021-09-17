@@ -10,6 +10,8 @@ This section provides details on how to configure and customise how row groups a
 In order to filter on row group columns, filtering must be enabled on the group column and a `filterValueGetter` should
 be supplied to the `autoGroupColumnDef` as shown below:
 
+<api-documentation source='column-properties/properties.json' section='filtering' names='["filterValueGetter"]'></api-documentation>
+
 <snippet>
 const gridOptions = {  
     columnDefs: [

@@ -267,5 +267,17 @@ const AG_GRID_LOCALE_EN = {
     ariaRowToggleSelection: 'Press Space to toggle row selection',
     ariaRowSelectAll: 'Press Space to toggle all rows selection',
     ariaSearch: 'Search',
-    ariaSearchFilterValues: 'Search filter values'
+    ariaSearchFilterValues: 'Search filter values',
+
+    // ARIA LABEL FOR DIALOGS
+    ariaLabelColumnMenu: 'Column Menu',
+    ariaLabelCellEditor: 'Cell Editor',
+    ariaLabelDialog: 'Dialog',
+    ariaLabelSelectField: 'Select Field',
+    ariaLabelTooltip: 'Tooltip',
+    ariaLabelContextMenu: 'Context Menu',
+    ariaLabelColumnMenu: 'Column Menu',
+    ariaLabelSubMenu: 'SubMenu',
+    ariaLabelAggregationFunction: 'Aggregation Function'
+
 }

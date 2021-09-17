@@ -5,7 +5,7 @@ import { addStylesToElement, setDomChildOrder } from "../../utils/dom";
 import { IRowComp, RowCtrl, RowType } from "./rowCtrl";
 import { CellComp } from "../cell/cellComp";
 import { assign, getAllValuesInObject } from "../../utils/object";
-import { setAriaExpanded, setAriaLabel, setAriaRowIndex, setAriaSelected } from "../../utils/aria";
+import { setAriaExpanded, setAriaLabel, setAriaRole, setAriaRowIndex, setAriaSelected } from "../../utils/aria";
 import { CellCtrl } from "../cell/cellCtrl";
 import { UserCompDetails } from "../../components/framework/userComponentFactory";
 
@@ -54,7 +54,7 @@ export class RowComp extends Component {
             setTop: top => style.top = top,
             setTransform: transform => style.transform = transform,
             setRowIndex: rowIndex => eGui.setAttribute('row-index', rowIndex),
-            setRole: role => eGui.setAttribute('role', role),
+            setRole: role => setAriaRole(eGui, role),
             setAriaRowIndex: rowIndex => setAriaRowIndex(this.getGui(), rowIndex),
             setRowId: (rowId: string) => eGui.setAttribute('row-id', rowId),
             setRowBusinessKey: businessKey => eGui.setAttribute('row-business-key', businessKey),

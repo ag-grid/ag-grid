@@ -9,6 +9,7 @@ import { addCssClass, isVisible } from '../../../utils/dom';
 import { KeyCode } from '../../../constants/keyCode';
 import { ContainerType } from '../../../interfaces/iAfterGuiAttachedParams';
 import { CtrlsService } from '../../../ctrlsService';
+import { setAriaRole } from '../../../utils/aria';
 
 @Bean('menuFactory')
 export class StandardMenuFactory extends BeanStub implements IMenuFactory {
@@ -54,7 +55,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
         const filterWrapper = this.filterManager.getOrCreateFilterWrapper(column, 'COLUMN_MENU');
         const eMenu = document.createElement('div');
 
-        eMenu.setAttribute('role', 'presentation');
+        setAriaRole(eMenu, 'presentation');
         addCssClass(eMenu, 'ag-menu');
 
         this.tabListener = this.addManagedListener(eMenu, 'keydown', (e) => this.trapFocusWithin(e, eMenu))!;
@@ -79,13 +80,16 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
             }
         };
 
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+
         const addPopupRes = this.popupService.addPopup({
             modal: true,
             eChild: eMenu,
             closeOnEsc: true,
             closedCallback,
             positionCallback: () => positionCallback(eMenu),
-            anchorToElement
+            anchorToElement,
+            ariaLabel: translate('ariaLabelColumnMenu', 'Column Menu')
         });
 
         if (addPopupRes) {

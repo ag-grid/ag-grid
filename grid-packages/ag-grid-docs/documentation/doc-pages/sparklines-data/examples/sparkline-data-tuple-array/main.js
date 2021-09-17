@@ -12,6 +12,12 @@ var gridOptions = {
             cellRendererParams: {
                 sparklineOptions: {
                     type: 'area',
+                    axis: {
+                        type: 'time'
+                    },
+                    marker: {
+                        size: 3
+                    }
                 },
             },
         }

@@ -4155,6 +4155,13 @@
       "rowPinned?": "string",
       "keyPress?": "number",
       "charPress?": "string"
+    },
+    "docs": {
+      "rowIndex": "/** The row index of the row to start editing */",
+      "colKey": "/** The column key of the row to start editing */",
+      "rowPinned?": "/** Set to `'top'` or `'bottom'` to start editing a pinned row */",
+      "keyPress?": "/** The keyPress to pass to the cell editor */",
+      "charPress?": "/** The charPress to pass to the cell editor */"
     }
   },
   "GetCellsParams": {
@@ -9299,7 +9306,8 @@
       "alwaysOnTop?": "boolean",
       "afterGuiAttached?": "(params: IAfterGuiAttachedParams) => void",
       "positionCallback?": "() => void",
-      "anchorToElement?": "HTMLElement"
+      "anchorToElement?": "HTMLElement",
+      "ariaLabel": "string"
     }
   },
   "AddPopupResult": {

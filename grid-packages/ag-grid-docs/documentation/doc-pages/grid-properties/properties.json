@@ -467,6 +467,13 @@
                 "name": "Keeping Columns Visible",
                 "url": "/grouping-group-panel/#keeping-columns-visible"
             }
+        },
+        "treeData": {
+            "description": "Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback.",
+            "more": {
+                "name": "Tree Data",
+                "url": "/tree-data/"
+            }
         }
     },
     "rowPivoting": {

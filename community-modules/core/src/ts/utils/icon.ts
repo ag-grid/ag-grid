@@ -1,6 +1,7 @@
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { Column } from '../entities/column';
 import { loadTemplate, isNodeOrElement } from './dom';
+import { setAriaRole } from './aria';
 
 //
 // IMPORTANT NOTE!
@@ -193,7 +194,7 @@ export function createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptio
 
         span.setAttribute('class', `ag-icon ag-icon-${cssClass}`);
         span.setAttribute('unselectable', 'on');
-        span.setAttribute('role', 'presentation');
+        setAriaRole(span, 'presentation');
 
         return span;
     }
