@@ -1,9 +1,10 @@
-import { deepMerge, getValue, isObject } from "../../util/object";
+import { deepMerge, defaultIsMergeableObject, getValue, isObject } from "../../util/object";
 import { copy } from "../../util/array";
 import { AgChartThemePalette, AgChartThemeOptions, AgChartThemeOverrides } from "../agChartOptions";
 import { Series } from "../series/series";
 import { Padding } from "../../util/padding";
 import { Chart } from "../chart";
+import { TimeInterval } from "../../util/time/interval";
 
 const palette: AgChartThemePalette = {
     fills: [
@@ -27,6 +28,16 @@ const palette: AgChartThemePalette = {
         '#5f5f5f'
     ]
 };
+
+function arrayMerge(target: any, source: any, options: any) {
+    return source;
+}
+
+function isMergeableObject(value: any): boolean {
+    return defaultIsMergeableObject(value) && !(value instanceof TimeInterval);
+}
+
+const mergeOptions = { arrayMerge, isMergeableObject };
 
 export class ChartTheme {
 
@@ -541,7 +552,6 @@ export class ChartTheme {
     constructor(options?: AgChartThemeOptions) {
         let defaults = this.createChartConfigPerSeries(this.getDefaults());
         if (isObject(options)) {
-            const mergeOptions = { arrayMerge };
             options = deepMerge({}, options, mergeOptions) as AgChartThemeOptions;
             const overrides = options.overrides;
             if (overrides) {
@@ -629,7 +639,6 @@ export class ChartTheme {
     }
 
     protected mergeWithParentDefaults(defaults: any): any {
-        const mergeOptions = { arrayMerge };
         const proto = Object.getPrototypeOf(Object.getPrototypeOf(this));
 
         if (proto === Object.prototype) {
@@ -675,8 +684,4 @@ export class ChartTheme {
                 return 1;
         }
     }
-}
-
-function arrayMerge(target: any, source: any, options: any) {
-    return source;
 }
