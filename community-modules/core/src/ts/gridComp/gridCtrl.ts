@@ -142,7 +142,7 @@ export class GridCtrl extends BeanStub {
 
         if (fromBottom) {
             if (focusableContainers.length > 1) {
-                return this.focusService.focusInto(last(focusableContainers));
+                return this.focusService.focusInto(last(focusableContainers), true);
             }
 
             const lastColumn = last(this.columnModel.getAllDisplayedColumns());
