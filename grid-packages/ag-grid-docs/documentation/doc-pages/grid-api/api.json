@@ -287,15 +287,15 @@
                 "url": "/cell-editing/"
             }
         },
-        "stopEditing": {
-            "description": "If a cell is editing, it stops the editing. Pass `true` if you want to cancel the editing (i.e. don't accept changes).",
+        "startEditingCell": {
+            "description": "Start editing the provided cell. If another cell is editing, the editing will be stopped in that other cell.",
             "more": {
                 "name": "Editing API",
                 "url": "/cell-editing/#editing-api"
             }
         },
-        "startEditingCell": {
-            "description": "Start editing a particular cell.",
+        "stopEditing": {
+            "description": "If a cell is editing, it stops the editing. Pass `true` if you want to cancel the editing (i.e. don't accept changes).",
             "more": {
                 "name": "Editing API",
                 "url": "/cell-editing/#editing-api"

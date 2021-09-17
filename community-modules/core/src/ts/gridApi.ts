@@ -103,10 +103,15 @@ import { HeaderPosition } from "./headerRendering/common/headerPosition";
 import { NavigationService } from "./gridBodyComp/navigationService";
 
 export interface StartEditingCellParams {
+    /** The row index of the row to start editing */
     rowIndex: number;
+    /** The column key of the row to start editing */
     colKey: string | Column;
+    /** Set to `'top'` or `'bottom'` to start editing a pinned row */
     rowPinned?: string;
+    /** The keyPress to pass to the cell editor */
     keyPress?: number;
+    /** The charPress to pass to the cell editor */
     charPress?: string;
 }
 

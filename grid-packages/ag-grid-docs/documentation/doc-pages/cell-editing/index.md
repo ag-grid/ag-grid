@@ -29,7 +29,7 @@ If you have `colDef.editable=true` set for a column, editing will start upon any
 - **Edit Key Pressed**: One of the following is pressed: <kbd>Enter</kbd>, <kbd>F2</kbd>, <kbd>Backspace</kbd>, <kbd>Delete</kbd>. If this happens then `params.keyPress` will contain the key code of the key that started the edit. The default editor will clear the contents of the cell if <kbd>Backspace</kbd> or <kbd>Delete</kbd> are pressed.
 - **Printable Key Pressed**: Any of the following characters are pressed: `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!"£$%^&amp;*()_+-=[];\'#,./\|<>?:@~{}`<br/> If this happens then `params.charPress` will contain the character that started the edit. The default editor places this character into the edit field so that the user experience is they are typing into the cell.
 - **Mouse Double Click**: If the mouse is double-clicked. There is a grid property `singleClickEdit` that will allow single-click to start editing instead of double-click. Another property `suppressClickEdit` will prevent both single-click and double-click from starting the edit; use this if you only want to have your own way of starting editing, such as clicking a button in your custom cell renderer.
-- **api.startEditingCell()**: If you call `startEditingCell()` on the grid API
+- **api.startEditingCell(params)**: If you call `startEditingCell(params)` on the grid API
 
 ## Stop / End Editing
 
@@ -65,6 +65,8 @@ While editing, if you hit <kbd>Tab</kbd>, the editing will stop for the current 
 
 The next and previous cells can also be navigated using the API functions `api.tabToNextCell()` and `api.tabToPreviousCell()`. Both of these methods will return `true` if the navigation was successful, otherwise `false`.
 
+<api-documentation source='grid-api/api.json' section='navigation' names='["tabToNextCell", "tabToPreviousCell"]'></api-documentation>
+
 ## Value Parser and Value Setter
 
 [Value setters](/value-setters/) and [value parsers](/value-parsers/) are the inverse of value getters and formatters. If you want to parse the data, or set the value into your data in ways other than just using the field, see the sections for [value setters](/value-setters/) and [value parsers](/value-parsers/).
@@ -73,19 +75,18 @@ The next and previous cells can also be navigated using the API functions `api.t
 
 After a cell has been changed with default editing (i.e. not your own custom cell renderer) the `cellValueChanged` event is fired. You can listen for this event in the normal way, or additionally you can add a `onCellValueChanged()` callback to the `colDef`. This is used if your application needs to do something after a value has been changed.
 
+<api-documentation source='grid-events/events.json' section='editing' names='["cellValueChanged"]' config='{"overrideBottomMargin":"0rem"}'></api-documentation>
+<api-documentation source='column-properties/properties.json' section='events' names='["onCellValueChanged"]'></api-documentation>
+
 The `cellValueChanged` event contains the same parameters as the `ValueSetter` with one difference: the `newValue`. If `field` is in the column definition, the `newValue` contains the value in the data after the edit. So for example, if the `onCellValueChanged` converts the provided string value into a number, then `newValue` for `ValueSetter` will have the string, and `newValue` for `onCellValueChanged` will have the number.
 
 ## Editing API
 
 The grid has the following API methods for editing:
 
-- `startEditingCell(params)`: Starts editing the provided cell. If another cell is editing, the editing will be stopped in that other cell. Parameters are as follows:
-    - `rowIndex`: The row index of the row to start editing.
-    - `colKey`: The column key of the column to start editing.
-    - `rowPinned`: Set to `'top'` or `'bottom'` to started editing a pinned row.
-    - `keyPress, charPress`: The `keyPress` and `charPress` that are passed to the cell editor.
-- `stopEditing(cancel)`: If the grid is editing then editing is stopped. Passing `cancel=true` will keep the cell's original value and passing `cancel=false` will take the latest value from the cell editor.
-- `getEditingCells()`: If the grid is editing, returns back details of the editing cell(s). The result is an array of objects. If only one cell is editing (the default) then the array will have one entry. If multiple cells are editing (e.g. [Full Row Edit](#full-row-editing)) then the array contains all editing cells.
+<api-documentation source='grid-api/api.json' section='editing' names='["startEditingCell", "stopEditing", "getEditingCells"]'></api-documentation>
+
+If the grid is editing, `getEditingCells()` returns back details of the editing cell(s). The result is an array of objects. If only one cell is editing (the default) then the array will have one entry. If multiple cells are editing (e.g. [Full Row Edit](#full-row-editing)) then the array contains all editing cells.
 
 Below is a code example of using the editing API methods.
 
