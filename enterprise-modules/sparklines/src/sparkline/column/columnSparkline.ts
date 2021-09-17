@@ -136,20 +136,8 @@ export class ColumnSparkline extends Sparkline {
 
         const yZero = yScale.convert(0);
 
-        // if the scale is a band scale, the width of the columns will be the bandwidth, otherwise the width of the columns will be the smallest interval between the given data points
-
-        let smallestInterval = Infinity;
-        if (!(xScale instanceof BandScale)) {
-            for (let i = 0, n = xData.length; i < n; i++) {
-                const curr = xData[i];
-                const next = xData[i + 1];
-                if (curr && next && (xScale.convert(next) - xScale.convert(curr)) < smallestInterval) {
-                    smallestInterval = xScale.convert(next) - xScale.convert(curr);
-                }
-            }
-        }
-
-        const width = xScale instanceof BandScale ? xScale.bandwidth : isFinite(smallestInterval) ? smallestInterval : (xScale.range[1] / xData.length);
+        // if the scale is a band scale, the width of the columns will be the bandwidth, otherwise the width of the columns will be the range / number of items in the data
+        const width = xScale instanceof BandScale ? xScale.bandwidth : (Math.abs(xScale.range[1] - xScale.range[0]) / xData.length);
 
 
         for (let i = 0, n = yData.length; i < n; i++) {
