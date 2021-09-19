@@ -16,7 +16,7 @@ import {
 export class ToolPanelFilterComp extends Component {
     private static TEMPLATE = /* html */`
         <div class="ag-filter-toolpanel-instance">
-            <div class="ag-filter-toolpanel-header ag-filter-toolpanel-instance-header" ref="eFilterToolPanelHeader">
+            <div class="ag-filter-toolpanel-header ag-filter-toolpanel-instance-header" ref="eFilterToolPanelHeader" role="button" aria-expanded="false">
                 <div ref="eExpand" class="ag-filter-toolpanel-expand"></div>
                 <span ref="eFilterName" class="ag-header-cell-text"></span>
                 <span ref="eFilterIcon" class="ag-header-icon ag-filter-icon ag-filter-toolpanel-instance-header-icon" aria-hidden="true"></span>
@@ -115,6 +115,7 @@ export class ToolPanelFilterComp extends Component {
         if (this.expanded) { return; }
 
         this.expanded = true;
+        _.setAriaExpanded(this.eFilterToolPanelHeader, true)
 
         const container = _.loadTemplate(/* html */`<div class="ag-filter-toolpanel-instance-filter"></div>`);
         const filterPromise = this.filterManager.getOrCreateFilterWrapper(this.column, 'TOOLBAR').filterPromise;
@@ -142,6 +143,7 @@ export class ToolPanelFilterComp extends Component {
         if (!this.expanded) { return; }
 
         this.expanded = false;
+        _.setAriaExpanded(this.eFilterToolPanelHeader, false)
         this.agFilterToolPanelBody.removeChild(this.agFilterToolPanelBody.children[0]);
 
         _.setDisplayed(this.eExpandChecked, false);
