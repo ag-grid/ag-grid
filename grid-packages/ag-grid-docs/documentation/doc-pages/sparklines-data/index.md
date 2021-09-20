@@ -44,7 +44,7 @@ Note in the data.js file, the data for the `rateOfChange` field is of type `[Dat
 
 Though the default category axis would be valid, the x-axis has been configured to be of type `time` to depict a more meaningful data trend as the x-values are `Date` objects.
 
-```
+<snippet>
 const gridOptions = {
     columnDefs: [
         {
@@ -62,7 +62,7 @@ const gridOptions = {
         // other column definitions ...
     ],
 };
-```
+</snippet>
 
 <grid-example title='Sparkline Data' name='sparkline-data-tuple-array' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
@@ -74,7 +74,7 @@ In the example below, the data is an array of objects with the `xVal` and `yVal`
 
 By default, the xKey and yKey are `'x'` and `'y'` respectively, so data objects with the `'x'` and `'y'` keys would work fine without explicit configuration.
 
-```
+<snippet>
 const gridOptions = {
     columnDefs: [
         {
@@ -94,7 +94,7 @@ const gridOptions = {
         // other column definitions ...
     ],
 };
-```
+</snippet>
 
 Here, the x-values are numbers so the x-axis type is set to `number`.
 

@@ -105,7 +105,7 @@ The following example demonstrates the time axis type.
 - Note in the data.js file, the data for the `rateOfChange` field is of type `[Date, number][]`, where the x value is a `Date` object.
 - Though the default category axis would be valid, the x-axis has been configured to be of type `time` to depict a more meaningful data trend as the x-values are `Date` objects.
 
-```
+<snippet>
 const gridOptions = {
     columnDefs: [
         {
@@ -124,7 +124,7 @@ const gridOptions = {
         // other column definitions ...
     ],
 };
-```
+</snippet>
 
 <grid-example title='Sparkline Time Axis' name='sparkline-time-axis' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
