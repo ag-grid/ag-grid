@@ -120,8 +120,8 @@ The example below will use the custom `fillOperation` to prevent values in the *
 
 ## Suppressing the Fill Handle
 
-When blocking the Fill Handle for certain columns is part of the requirement, the flag `suppressFillHandle` should be set to `true` in the [ColDef](/column-properties/).
+The Fill Handle can be disabled on a per column basis by setting the column definition property `suppressFillHandle` to true .
 
-In the example below note that the Fill Handle is disabled in the **Country** and **Date** columns.
+In the example below, please note that the Fill Handle is disabled in the **Country** and **Date** columns.
 
 <grid-example title='Suppress Fill Handle' name='suppress-fill-handle' type='generated' options='{ "enterprise": true, "exampleHeight": 560, "modules": ["clientside", "range"] }'></grid-example>
