@@ -5,6 +5,7 @@ import { AgCheckbox } from './agCheckbox';
 import { createIcon } from '../utils/icon';
 import { setDisplayed, removeCssClass, addCssClass, addOrRemoveCssClass } from '../utils/dom';
 import { KeyCode } from '../constants/keyCode';
+import { setAriaExpanded } from '../utils/aria';
 
 type GroupItem = Component | HTMLElement;
 type Align = 'start' | 'end' | 'center' | 'stretch';
@@ -67,10 +68,10 @@ export class AgGroupComponent extends Component {
         const cssIdentifier = params.cssIdentifier || 'default';
         const direction: Direction = params.direction || 'vertical';
 
-        return /* html */ `<div class="ag-group ag-${cssIdentifier}-group">
-            <div class="ag-group-title-bar ag-${cssIdentifier}-group-title-bar ag-unselectable" ref="eTitleBar">
-                <span class="ag-group-title-bar-icon ag-${cssIdentifier}-group-title-bar-icon" ref="eGroupOpenedIcon"></span>
-                <span class="ag-group-title-bar-icon ag-${cssIdentifier}-group-title-bar-icon" ref="eGroupClosedIcon"></span>
+        return /* html */ `<div class="ag-group ag-${cssIdentifier}-group" role="presentation">
+            <div class="ag-group-title-bar ag-${cssIdentifier}-group-title-bar ag-unselectable" ref="eTitleBar" role="button">
+                <span class="ag-group-title-bar-icon ag-${cssIdentifier}-group-title-bar-icon" ref="eGroupOpenedIcon" role="presentation"></span>
+                <span class="ag-group-title-bar-icon ag-${cssIdentifier}-group-title-bar-icon" ref="eGroupClosedIcon" role="presentation"></span>
                 <span ref="eTitle" class="ag-group-title ag-${cssIdentifier}-group-title"></span>
             </div>
             <div ref="eToolbar" class="ag-group-toolbar ag-${cssIdentifier}-group-toolbar">
@@ -106,6 +107,7 @@ export class AgGroupComponent extends Component {
         this.hideOpenCloseIcons(this.suppressOpenCloseIcons);
 
         this.setupExpandContract();
+        this.refreshAriaStatus();
         this.refreshChildDisplay();
     }
 
@@ -116,16 +118,23 @@ export class AgGroupComponent extends Component {
         this.addManagedListener(this.eTitleBar, 'keydown', (e: KeyboardEvent) => {
             switch (e.keyCode) {
                 case KeyCode.ENTER:
+                case KeyCode.SPACE:
+                    e.preventDefault();
                     this.toggleGroupExpand();
                     break;
                 case KeyCode.RIGHT:
-                    this.toggleGroupExpand(true);
-                    break;
                 case KeyCode.LEFT:
-                    this.toggleGroupExpand(false);
+                    e.preventDefault();
+                    this.toggleGroupExpand(e.keyCode === KeyCode.RIGHT);
                     break;
             }
         });
+    }
+
+    private refreshAriaStatus(): void {
+        if (!this.suppressOpenCloseIcons) {
+            setAriaExpanded(this.eTitleBar, this.expanded);
+        }
     }
 
     private refreshChildDisplay(): void {
@@ -171,6 +180,7 @@ export class AgGroupComponent extends Component {
         }
 
         this.expanded = expanded;
+        this.refreshAriaStatus();
         this.refreshChildDisplay();
 
         setDisplayed(this.eContainer, expanded);

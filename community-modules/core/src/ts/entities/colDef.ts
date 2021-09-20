@@ -610,15 +610,11 @@ export interface CellClassRules {
     [cssClassName: string]: (((params: CellClassParams) => boolean) | string);
 }
 
-export interface SelectorFunc {
-    (params: ICellRendererParams | ICellEditorParams): CellRendererSelectorResult | CellEditorSelectorResult | undefined
-}
-
-export interface CellRendererSelectorFunc extends SelectorFunc {
+export interface CellRendererSelectorFunc {
     (params: ICellRendererParams): CellRendererSelectorResult | undefined
 }
 
-export interface CellEditorSelectorFunc extends SelectorFunc {
+export interface CellEditorSelectorFunc {
     (params: ICellEditorParams): CellEditorSelectorResult | undefined
 }
 

@@ -317,7 +317,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp {
 
         this.executeFunctionIfExists('afterGuiAttached', { ...params || {}, suppressFocus });
 
-        if (suppressFocus) {
+        if (suppressFocus && this.getGui().contains(document.activeElement)) {
             // reset focus to the top of the container, and blur
             this.forceFocusOutOfContainer(true);
         }

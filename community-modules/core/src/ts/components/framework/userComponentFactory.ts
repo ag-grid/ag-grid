@@ -1,7 +1,7 @@
 import { Autowired, Bean, Optional } from "../../context/context";
 import { GridOptions } from "../../entities/gridOptions";
 import { FrameworkComponentWrapper } from "./frameworkComponentWrapper";
-import { ColDef, ColGroupDef, SelectorFunc } from "../../entities/colDef";
+import { ColDef, ColGroupDef, CellEditorSelectorFunc, CellRendererSelectorFunc, CellEditorSelectorResult } from "../../entities/colDef";
 import { UserComponentRegistry } from "./userComponentRegistry";
 import { AgComponentUtils } from "./agComponentUtils";
 import { ComponentMetadata, ComponentMetadataProvider } from "./componentMetadataProvider";
@@ -105,7 +105,7 @@ export class UserComponentFactory extends BeanStub {
         params: ICellRendererParams): AgPromise<ICellRendererComp> | null {
         return this.lookupAndCreateComponent(def, params, CellRendererComponent, null, true);
     }
-    
+
     public newDateComponent(params: IDateParams): AgPromise<IDateComp> | null {
         return this.lookupAndCreateComponent(this.gridOptions, params, DateComponent, 'agDateInput');
     }
@@ -145,7 +145,7 @@ export class UserComponentFactory extends BeanStub {
     }
 
     private lookupComponent(defObject: DefinitionObject, type: ComponentType,
-                            params: any = null, defaultComponentName?: string | null): UserCompDetails | null {
+        params: any = null, defaultComponentName?: string | null): UserCompDetails | null {
 
         const propertyName = type.propertyName;
 
@@ -158,7 +158,7 @@ export class UserComponentFactory extends BeanStub {
             let defObjectAny = defObject as any;
 
             // if selector, use this
-            const selectorFunc: SelectorFunc = defObjectAny[propertyName + 'Selector'];
+            const selectorFunc: CellEditorSelectorFunc | CellRendererSelectorFunc = defObjectAny[propertyName + 'Selector'];
             const selectorRes = selectorFunc ? selectorFunc(params) : null;
             if (selectorRes) {
                 comp = selectorRes.component;
@@ -217,7 +217,7 @@ export class UserComponentFactory extends BeanStub {
     public createInstanceFromCompDetails(compDetails: UserCompDetails, defaultComponentName?: string | null): AgPromise<any> | null {
         if (!compDetails) { return null; }
 
-        const {params, componentClass, componentFromFramework} = compDetails;
+        const { params, componentClass, componentFromFramework } = compDetails;
 
         // Create the component instance
         const instance = this.createComponentInstance(compDetails.type, defaultComponentName, componentClass, componentFromFramework);
@@ -298,7 +298,7 @@ export class UserComponentFactory extends BeanStub {
         const paramsMerged = this.mergeParamsWithApplicationProvidedParams(
             defObject, propName, params, compDetails.params);
 
-        return {...compDetails, params: paramsMerged};
+        return { ...compDetails, params: paramsMerged };
     }
 
     /**
