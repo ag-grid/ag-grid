@@ -1,21 +1,24 @@
 var gridOptions = {
     columnDefs: [
-        {field: 'symbol', maxWidth: 120},
-        {field: 'name',  minWidth: 200 },
+        { field: 'symbol', maxWidth: 110 },
+        { field: 'name', minWidth: 250 },
+        { field: 'lastPrice', type: 'numericColumn' },
+        { field: 'volume', type: 'numericColumn' },
         {
-            field: 'volume',
-            type: 'numericColumn',
-            maxWidth: 160,
-        },
-        {
-            field: 'closeHistory',
+            field: 'rateOfChange',
+            headerName: 'Rate of Change',
+            minWidth: 250,
             cellRenderer: 'agSparklineCellRenderer',
             cellRendererParams: {
                 sparklineOptions: {
-                    type: 'line'
+                    type: 'area',
+                    axis: {
+                        // this can be omitted as the x-axis type is 'category' by default
+                        type: 'category'
+                    }
                 },
             },
-        },
+        }
     ],
     defaultColDef: {
         flex: 1,

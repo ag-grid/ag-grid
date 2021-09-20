@@ -1,0 +1,21 @@
+{
+    "_config_": {},
+    "SparklineAxisOptions": {
+        "type": {
+            "description": "The type of the x-axis.",
+            "type": "string",
+            "default": "category",
+            "options": ["category", "number", "time"]
+        },
+        "stroke": {
+            "description": "The CSS colour value for the outline of the horizontal axis line.",
+            "type": "string",
+            "default": "rgb(204, 214, 235)"
+        },
+        "strokeWidth": {
+            "description": "The thickness in pixels for the stroke of the horizontal axis line.",
+            "type": "number",
+            "default": 1
+        }
+    }
+}

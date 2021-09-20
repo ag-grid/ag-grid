@@ -13796,6 +13796,7 @@
     "left": { "type": { "returnType": "number", "optional": true } }
   },
   "SparklineAxisOptions": {
+    "type": { "type": { "returnType": "AxisType", "optional": true } },
     "stroke": { "type": { "returnType": "string", "optional": true } },
     "strokeWidth": { "type": { "returnType": "number", "optional": true } }
   },

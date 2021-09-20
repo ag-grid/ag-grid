@@ -6021,7 +6021,7 @@
   },
   "AxisType": {
     "meta": { "isTypeAlias": true },
-    "type": "'category' | 'number' | 'time'"
+    "type": "'number' | 'category' | 'time'"
   },
   "AxisLineOptions": {
     "meta": {},
@@ -7833,7 +7833,11 @@
   },
   "SparklineAxisOptions": {
     "meta": {},
-    "type": { "stroke?": "string", "strokeWidth?": "number" }
+    "type": {
+      "type?": "AxisType",
+      "stroke?": "string",
+      "strokeWidth?": "number"
+    }
   },
   "SparklineTooltip": {
     "meta": {},

@@ -28,11 +28,11 @@
             "type": "Padding",
             "more": {
                 "name": "Padding",
-                "url": "/sparklines-column-sparkline/#padding"
+                "url": "/sparklines-area-sparkline/#padding"
             }
         },
         "axis": {
-            "description": "The styling options for the horizontal axis line in the sparklines.",
+            "description": "The options for the horizontal axis line in the sparklines.",
             "type": "SparklineAxisOptions",
             "more": {
                 "name": "SparklineAxisOptions",
@@ -88,6 +88,16 @@
         }
     },
     "SparklineAxisOptions": {
+        "type": {
+            "description": "The type of the x-axis.",
+            "type": "string",
+            "default": "category",
+            "options": [
+                "category",
+                "number",
+                "time"
+            ]
+        },
         "stroke": {
             "description": "The CSS colour value for the outline of the horizontal axis line.",
             "type": "string",

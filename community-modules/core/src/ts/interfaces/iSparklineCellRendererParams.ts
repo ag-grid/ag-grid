@@ -42,9 +42,13 @@ export interface Padding {
     left?: number;
 }
 export interface SparklineAxisOptions {
+    type?: AxisType;
     stroke?: string;
     strokeWidth?: number;
 }
+
+export type AxisType = 'number' | 'category' | 'time';
+
 export interface SparklineTooltip {
     enabled?: boolean;
     container?: HTMLElement;

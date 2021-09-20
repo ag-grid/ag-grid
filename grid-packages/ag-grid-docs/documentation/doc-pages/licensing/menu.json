@@ -1381,8 +1381,14 @@
             "showInCollapsed": true
           },
           {
-            "title": "Data Formats",
+            "title": "Supplying Data",
             "url": "/sparklines-data/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Axis Types",
+            "url": "/sparklines-axis-types/",
             "enterprise": true,
             "showInCollapsed": true
           },
