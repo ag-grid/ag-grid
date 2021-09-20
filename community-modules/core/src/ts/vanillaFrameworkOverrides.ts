@@ -13,7 +13,7 @@ export class VanillaFrameworkOverrides implements IFrameworkOverrides {
     }
     public setInterval(action: any, timeout?: any): AgPromise<number> {
         return new AgPromise(resolve => {
-            resolve(window.setTimeout(action, timeout));
+            resolve(window.setInterval(action, timeout));
         })
     }
 
