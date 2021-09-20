@@ -37,6 +37,9 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
 
         ctrl.setComp(compProxy, eGui.current!, eResize.current!);
 
+        const selectAllGui = ctrl.getSelectAllGui();
+        eResize.current!.insertAdjacentElement('afterend', selectAllGui);
+
     }, []);
 
     // js comps
@@ -76,9 +79,9 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
         <div ref={eGui} className={className} style={style} title={title} col-id={colId} 
                     aria-sort={ariaSort} role="columnheader" unselectable="on" tabIndex={-1}
                     aria-describedby={ariaDescribedBy}>
+            <div ref={eResize} className="ag-header-cell-resize" role="presentation"></div>
             { reactUserComp && userCompStateless && <UserCompClass { ...userCompDetails!.params } /> }
             { reactUserComp && !userCompStateless && <UserCompClass { ...userCompDetails!.params } ref={ userCompRef }/> }
-            <div ref={eResize} className="ag-header-cell-resize" role="presentation"></div>
         </div>
     );
 };
