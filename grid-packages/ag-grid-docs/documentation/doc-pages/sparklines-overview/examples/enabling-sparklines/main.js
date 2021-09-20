@@ -1,18 +1,14 @@
 var gridOptions = {
     columnDefs: [
         {field: 'symbol', maxWidth: 120},
-        {field: 'name'},
+        {field: 'name',  minWidth: 200 },
         {
             field: 'volume',
             type: 'numericColumn',
-            maxWidth: 120,
-            valueFormatter: function (params) {
-                return formatter.format(params.value);
-            }
+            maxWidth: 160,
         },
         {
-            field: 'history',
-            headerName: 'Close History',
+            field: 'closeHistory',
             cellRenderer: 'agSparklineCellRenderer',
             cellRendererParams: {
                 sparklineOptions: {
@@ -26,14 +22,8 @@ var gridOptions = {
         minWidth: 100,
         resizable: true,
     },
-    rowData: getData().slice(0, 100),
+    rowData: getData(),
 };
-
-var formatter = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 0
-});
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
