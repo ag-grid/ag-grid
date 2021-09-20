@@ -892,7 +892,7 @@
       "contractColumnSelection?": "boolean"
     },
     "docs": {
-      "suppressSyncLayoutWithGrid?": "/** To suppress updating the layout of columns\n * as they are rearranged in the grid */",
+      "suppressSyncLayoutWithGrid?": "/** To suppress updating the layout of columns as they are rearranged in the grid */",
       "suppressColumnFilter?": "/** To suppress Column Filter section */",
       "suppressColumnSelectAll?": "/** To suppress Select / Un-select all widget */",
       "suppressColumnExpandAll?": "/** To suppress Expand / Collapse all widget */",
@@ -8010,6 +8010,18 @@
       "suppressSyncLayoutWithGrid": "boolean",
       "api": "GridApi",
       "columnApi": "ColumnApi"
+    },
+    "docs": {
+      "suppressColumnMove": "/** Suppress Column Move section */",
+      "suppressRowGroups": "/** Suppress Row Groups section */",
+      "suppressValues": "/** Suppress Values section */",
+      "suppressPivots": "/** Suppress Column Labels (Pivot) section */",
+      "suppressPivotMode": "/** Suppress Pivot Mode selection */",
+      "suppressColumnFilter": "/** Suppress Column Filter section */",
+      "suppressColumnSelectAll": "/** Suppress Select / Un-select all widget */",
+      "suppressColumnExpandAll": "/** Suppress Expand / Collapse all widget */",
+      "contractColumnSelection": "/** By default, column groups start expanded. Pass `true` to default to contracted groups */",
+      "suppressSyncLayoutWithGrid": "/** Suppress updating the layout of columns as they are rearranged in the grid */"
     }
   },
   "IPrimaryColsPanel": {
@@ -9415,6 +9427,30 @@
     "meta": { "isEnum": true },
     "type": ["PROVIDED_LIST", "PROVIDED_CALLBACK", "TAKEN_FROM_GRID_VALUES"],
     "docs": [null, null, null]
+  },
+  "ToolPanelFiltersCompParams": {
+    "meta": {},
+    "type": {
+      "suppressExpandAll": "boolean",
+      "suppressFilterSearch": "boolean",
+      "suppressSyncLayoutWithGrid": "boolean",
+      "api": "GridApi",
+      "columnApi": "ColumnApi"
+    },
+    "docs": {
+      "suppressExpandAll": "/** To suppress Expand / Collapse All */",
+      "suppressFilterSearch": "/** To suppress the Filter Search */",
+      "suppressSyncLayoutWithGrid": "/** Suppress updating the layout of columns as they are rearranged in the grid */"
+    }
+  },
+  "EXPAND_STATE": {
+    "meta": { "isEnum": true },
+    "type": ["EXPANDED", "COLLAPSED", "INDETERMINATE"],
+    "docs": [null, null, null]
+  },
+  "ToolPanelFilterItem": {
+    "meta": { "isTypeAlias": true },
+    "type": "ToolPanelFilterGroupComp | ToolPanelFilterComp"
   },
   "IMultiFilterDef": {
     "meta": {},

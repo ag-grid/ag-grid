@@ -481,8 +481,7 @@ export interface GetQuickFilterTextParams {
 }
 
 export interface ColumnsMenuParams {
-    /** To suppress updating the layout of columns
-     * as they are rearranged in the grid */
+    /** To suppress updating the layout of columns as they are rearranged in the grid */
     suppressSyncLayoutWithGrid?: boolean;
     /** To suppress Column Filter section*/
     suppressColumnFilter?: boolean;

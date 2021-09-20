@@ -15,8 +15,11 @@ import { FiltersToolPanelHeaderPanel } from "./filtersToolPanelHeaderPanel";
 import { FiltersToolPanelListPanel } from "./filtersToolPanelListPanel";
 
 export interface ToolPanelFiltersCompParams extends IToolPanelParams {
+    /** To suppress Expand / Collapse All */
     suppressExpandAll: boolean;
+    /** To suppress the Filter Search */
     suppressFilterSearch: boolean;
+    /** Suppress updating the layout of columns as they are rearranged in the grid */
     suppressSyncLayoutWithGrid: boolean;
 }
 

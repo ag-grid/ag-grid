@@ -78,8 +78,8 @@ This will lead to a bad user experience which is demonstrated in the following e
 
 The solution is to set the `popupParent` element which can be set in the following ways:
 
-- Property `popupParent`: Set as a grid property.
-- API `setPopupParent(element)`: Set via the grid API.
+<api-documentation source='grid-properties/properties.json' section='accessories' names='["popupParent"]' config='{"overrideBottomMargin":"0rem"}' ></api-documentation>
+<api-documentation source='grid-api/api.json' section='accessories' names='["setPopupParent"]'></api-documentation>
 
 Each mechanism allows you to set the popup parent to any HTML DOM element. The element must:
 

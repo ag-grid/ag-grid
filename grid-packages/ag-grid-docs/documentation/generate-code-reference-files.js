@@ -13,6 +13,7 @@ const EVENT_LOOKUP = new Set(ComponentUtil.getEventCallbacks());
 const INTERFACE_GLOBS = [
     ...glob.sync('../../../community-modules/core/src/ts/**/*.ts'),
     ...glob.sync('../../../enterprise-modules/set-filter/src/**/*.ts'),
+    ...glob.sync('../../../enterprise-modules/filter-tool-panel/src/**/*.ts'),
     ...glob.sync('../../../enterprise-modules/multi-filter/src/**/*.ts')
 ];
 

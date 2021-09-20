@@ -18,10 +18,11 @@ The example below shows the filters tool panel. The following can be noted:
 
 It is possible to remove items from the Filters Tool Panel. Items are suppressed by setting one or more of the following `componentParams` whenever you are using the agFiltersToolPanel component properties to `true`:
 
-- `suppressExpandAll`: To suppress Expand / Collapse All.
-- `suppressFilterSearch`: To suppress the Filter Search.
+<interface-documentation interfaceName='ToolPanelFiltersCompParams' exclude='["api", "columnApi"]' config='{"overrideBottomMargin":"1rem"}' ></interface-documentation>
 
 To remove a particular column / filter from the tool panel, set the column property `suppressFiltersToolPanel` to `true`.
+
+<api-documentation source='column-properties/properties.json' section='filtering' names='["suppressFiltersToolPanel"]'></api-documentation>
 
 The example below demonstrates the suppress options described above. Note the following:
 

@@ -1462,7 +1462,7 @@
   },
   "ColumnsMenuParams": {
     "suppressSyncLayoutWithGrid": {
-      "description": "/** To suppress updating the layout of columns\n * as they are rearranged in the grid */",
+      "description": "/** To suppress updating the layout of columns as they are rearranged in the grid */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressColumnFilter": {
@@ -13988,33 +13988,43 @@
   },
   "ToolPanelColumnCompParams": {
     "suppressColumnMove": {
+      "description": "/** Suppress Column Move section */",
       "type": { "returnType": "boolean", "optional": false }
     },
     "suppressRowGroups": {
+      "description": "/** Suppress Row Groups section */",
       "type": { "returnType": "boolean", "optional": false }
     },
     "suppressValues": {
+      "description": "/** Suppress Values section */",
       "type": { "returnType": "boolean", "optional": false }
     },
     "suppressPivots": {
+      "description": "/** Suppress Column Labels (Pivot) section */",
       "type": { "returnType": "boolean", "optional": false }
     },
     "suppressPivotMode": {
+      "description": "/** Suppress Pivot Mode selection */",
       "type": { "returnType": "boolean", "optional": false }
     },
     "suppressColumnFilter": {
+      "description": "/** Suppress Column Filter section */",
       "type": { "returnType": "boolean", "optional": false }
     },
     "suppressColumnSelectAll": {
+      "description": "/** Suppress Select / Un-select all widget */",
       "type": { "returnType": "boolean", "optional": false }
     },
     "suppressColumnExpandAll": {
+      "description": "/** Suppress Expand / Collapse all widget */",
       "type": { "returnType": "boolean", "optional": false }
     },
     "contractColumnSelection": {
+      "description": "/** By default, column groups start expanded. Pass `true` to default to contracted groups */",
       "type": { "returnType": "boolean", "optional": false }
     },
     "suppressSyncLayoutWithGrid": {
+      "description": "/** Suppress updating the layout of columns as they are rearranged in the grid */",
       "type": { "returnType": "boolean", "optional": false }
     },
     "api": { "type": { "returnType": "GridApi", "optional": false } },
@@ -16325,6 +16335,24 @@
     }
   },
   "SetFilterModelValuesType": {},
+  "ToolPanelFiltersCompParams": {
+    "suppressExpandAll": {
+      "description": "/** To suppress Expand / Collapse All */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "suppressFilterSearch": {
+      "description": "/** To suppress the Filter Search */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "suppressSyncLayoutWithGrid": {
+      "description": "/** Suppress updating the layout of columns as they are rearranged in the grid */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "api": { "type": { "returnType": "GridApi", "optional": false } },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
+  },
+  "EXPAND_STATE": {},
+  "ToolPanelFilterItem": {},
   "IMultiFilterDef": {
     "display": {
       "description": "/** Configures how the filter is shown in the Multi Filter.\n * Default: `inline` */",

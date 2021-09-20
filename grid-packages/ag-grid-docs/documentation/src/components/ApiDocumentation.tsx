@@ -3,7 +3,7 @@ import { convertMarkdown, convertUrl, escapeGenericCode, getLinkedType, getLonge
 import anchorIcon from 'images/anchor';
 import React, { useState } from 'react';
 import styles from './ApiDocumentation.module.scss';
-import { ApiProps, Config, DocEntryMap, FunctionCode, ICallSignature, IEvent, ObjectCode, PropertyCall, PropertyType, SectionProps, InterfaceEntry, DocEntry } from './ApiDocumentation.types';
+import { ApiProps, Config, DocEntryMap, FunctionCode, ICallSignature, IEvent, ObjectCode, PropertyCall, PropertyType, SectionProps, InterfaceEntry } from './ApiDocumentation.types';
 import Code from './Code';
 import { extractInterfaces, writeAllInterfaces, removeJsDocStars, sortAndFilterProperties, applyUndefinedUnionType } from './documentation-helpers';
 import { useJsonFileNodes } from './use-json-file-nodes';
@@ -12,10 +12,11 @@ import { useJsonFileNodes } from './use-json-file-nodes';
 /**
  * This generates tabulated interface documentation based on information in JSON files.
  */
-export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework, overridesrc, names = "", config = {} }): any => {
+export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework, overridesrc, names = "", exclude = "", config = {} }): any => {
     const nodes = useJsonFileNodes();
     let codeSrcProvided = [interfacename];
     let namesArr = [];
+    let excludeArr = exclude && exclude.length > 0 ? JSON.parse(exclude) : [];
 
     if (names && names.length) {
         namesArr = JSON.parse(names);
@@ -53,7 +54,7 @@ export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework
         // for function properties like failCallback(): void; We only want the name failCallback part
         // as this is what is listed in the doc-interfaces.AUTO.json file
         propNameOnly = propNameOnly.split('(')[0];
-        if (namesArr.length === 0 || namesArr.includes(propNameOnly)) {
+        if ((namesArr.length === 0 || namesArr.includes(propNameOnly)) && (excludeArr.length == 0 || !excludeArr.includes(propNameOnly))) {
             const docs = (li.docs && removeJsDocStars(li.docs[k])) || '';
             if (!docs.includes('@deprecated')) {
                 props[propNameOnly] = { description: docs || v, ...interfaceOverrides[propNameOnly] }

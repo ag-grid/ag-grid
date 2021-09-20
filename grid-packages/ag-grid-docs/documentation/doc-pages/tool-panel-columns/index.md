@@ -65,16 +65,11 @@ The column tool panel is split into different sections as follows:
 
 It is possible to remove items from the tool panel. Items are suppressed by setting one or more of the following `componentParams` to `true` whenever you are using the `agColumnsToolPanel` component properties:
 
-- `suppressRowGroups`: to suppress Row Groups section.
-- `suppressValues`: to suppress Values section.
-- `suppressPivots`: to suppress Column Labels (Pivot) section.
-- `suppressPivotMode`: to suppress Pivot Mode section.
-- `suppressColumnFilter`: to suppress Column Filter section.
-- `suppressColumnSelectAll`: to suppress Select / Un-select all widget.
-- `suppressColumnExpandAll`: to suppress Expand / Collapse all widget.
-- `contractColumnSelection`: by default, column groups start expanded. Pass true to default to contracted groups.
+<interface-documentation interfaceName='ToolPanelColumnCompParams' exclude='["api", "columnApi"]' config='{"overrideBottomMargin":"1rem"}' ></interface-documentation>
 
 To remove a particular column from the tool panel, set the column property `suppressColumnsToolPanel` to `true`. This is useful when you have a column working in the background, e.g. a column you want to group by, but not visible to the user.
+
+<api-documentation source='column-properties/properties.json' section='columns' names='["suppressColumnsToolPanel"]'></api-documentation>
 
 It is also possible to show and hide the sections of the Column Tool Panel using the following methods provided in the `IColumnToolPanel` interface:
 

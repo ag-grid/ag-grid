@@ -1250,6 +1250,9 @@
         "tooltipMouseTrack": {
             "default": false,
             "description": "Set to `true` to have tooltips follow the cursor once they are displayed."
+        },
+        "popupParent": {
+            "description": "DOM element to use as the [popup parent](/context-menu/#popup-parent) for grid popups (context menu, column menu etc)."
         }
     },
     "export": {
