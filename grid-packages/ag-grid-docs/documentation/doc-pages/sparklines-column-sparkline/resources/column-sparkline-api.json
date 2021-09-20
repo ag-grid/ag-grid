@@ -32,7 +32,7 @@
             }
         },
         "axis": {
-            "description": "The styling options for the horizontal axis line in the sparklines.",
+            "description": "The options for the horizontal axis line in the sparklines.",
             "type": "SparklineAxisOptions",
             "more": {
                 "name": "SparklineAxisOptions",
@@ -125,9 +125,10 @@
     },
     "SparklineAxisOptions": {
         "type": {
-            "description": "The type of axis value for the outline of the horizontal axis line.",
+            "description": "The type of the x-axis.",
             "type": "string",
-            "default": "rgb(204, 214, 235)"
+            "default": "category",
+            "options": ["category", "number", "time"]
         },
         "stroke": {
             "description": "The CSS colour value for the outline of the horizontal axis line.",

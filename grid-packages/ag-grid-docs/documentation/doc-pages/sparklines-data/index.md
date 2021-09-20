@@ -22,39 +22,7 @@ If present, the x values can be of types `number`, `string`, `Date` or objects w
 
 If the data provided is an array of numbers (`number[]`), each number will be a y-value with the corresponding index being the x-value. In this case the x values are plotted using the default category axis, i.e. the data points will be evenly spaced out along the x-axis.
 
-Otherwise, if the data is an array of tuples or complex objects, the x values will be pulled from the data. By default, the category axis will be used to plot the x-values, but, the type of axis can be configured via the axis options.
-
-### Axis Types
-
-If x-values are provided in the data via the tuples or complex objects format, different x axes can be used to plot the data. Discrete x-values such as `string` values require a category axis whilst continuous values such as timestamps or numbers can be plotted on a number, time or category axis.
-
-The supported axis types include `number`, `category` and `time`.
-
-<snippet>
-const gridOptions = {
-    columnDefs: [
-        {
-            field: 'history',
-            cellRenderer: 'agSparklineCellRenderer',
-            cellRendererParams: {
-                sparklineOptions: {
-                    type: 'line',
-                    axis: {
-                        type: 'number'
-                    }
-                }
-            },
-        },
-        // other column definitions ...
-    ],
-};
-</snippet>
-
-In the snippet above, the x-axis type is set to `number`. This means a number axis will be used to plot the x-values, which will be useful in the case where the magnitude of x-values must be reflected in the sparkline through the horizontal distance between data points.
-
-The time axis is similar to the number axis in the sense that it is also used to plot continous values. It can be used for `number` values, which will be interpreted as a timestamp derived from Unix time, or `Date` objects.
-
-If the x-values are discrete, the default category axis will suffice as the data points will be evenly spaced out along the width of the sparkline.
+Otherwise, if the data is an array of tuples or complex objects, the x values will be pulled from the data. By default, the category axis will be used to plot the x-values, but, the type of axis can be configured via the axis options. See [Axis Types](/sparklines-axis-types/) for a more details on configuring the x-axis type.
 
 ### Data Formats
 ## Array of numbers
@@ -72,14 +40,28 @@ This is demonstated in the simple example below, where the 'Rate of Change' colu
 
 Another supported format is the tuples array. In this format, each tuple in the array can contain two values, x and y. At index 0 will be the x value and index 1, the y value. The y should be a `number` value whereas the x can be a `number`, `string`, `Date` or an object with a `toString` method.
 
-Note in the data.js file, the data for the `rateOfChange` field is of type `[Date, number][]`, where the x value is a `Date` object. The data for this field is automatically passed to the sparkline via the `agSparklineCellRenderer`.
+Note in the data.js file, the data for the `rateOfChange` field is of type `[Date, number][]`, where the x value is a `Date` object. The data for this field is automatically supplied to the sparkline via the `agSparklineCellRenderer`.
 
 Though the default category axis would be valid, the x-axis has been configured to be of type `time` to depict a more meaningful data trend as the x-values are `Date` objects.
 
 ```
-axis: {
-    type: 'time'
-}
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'rateOfChange',
+            cellRenderer: 'agSparklineCellRenderer',
+            cellRendererParams: {
+                sparklineOptions: {
+                    type: 'line',
+                    axis: {
+                        type: 'time'
+                    }
+                }
+            },
+        },
+        // other column definitions ...
+    ],
+};
 ```
 
 <grid-example title='Sparkline Data' name='sparkline-data-tuple-array' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
@@ -93,11 +75,25 @@ In the example below, the data is an array of objects with the `xVal` and `yVal`
 By default, the xKey and yKey are `'x'` and `'y'` respectively, so data objects with the `'x'` and `'y'` keys would work fine without explicit configuration.
 
 ```
-xKey: 'xVal',
-yKey: 'yVal',
-axis : {
-    type: 'number'
-}
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'rateOfChange',
+            cellRenderer: 'agSparklineCellRenderer',
+            cellRendererParams: {
+                sparklineOptions: {
+                    type: 'line',
+                    xKey: 'xVal',
+                    yKey: 'yVal',
+                    axis : {
+                        type: 'number'
+                    }
+                }
+            },
+        },
+        // other column definitions ...
+    ],
+};
 ```
 
 Here, the x-values are numbers so the x-axis type is set to `number`.
@@ -106,4 +102,4 @@ Here, the x-values are numbers so the x-axis type is set to `number`.
 
 ## Next Up
 
-Continue to the next section to learn about the: [Tooltips](/sparklines-tooltips/).
+Continue to the next section to learn about the: [Axis Types](/sparklines-axis-types/).

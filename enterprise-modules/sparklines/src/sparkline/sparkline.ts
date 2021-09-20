@@ -413,7 +413,7 @@ export abstract class Sparkline extends Observable {
         } else if (type === 'category') {
             if (isNumber(value)) {
                 return String(value);
-            } else if (isString(value)) {
+            } else if (isString(value) || isDate(value)) {
                 return { toString: () => String(value) };
             } else if (isStringObject(value)) {
                 return value;
