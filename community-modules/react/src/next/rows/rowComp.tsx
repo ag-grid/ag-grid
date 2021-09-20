@@ -117,7 +117,7 @@ const RowComp = (params: {rowCtrl: RowCtrl, pinned: string | null}) => {
             transform,
             display
         };
-        _.assign(rowStyles, userStyles);
+        _.assign(res, userStyles);
         return res;
     }, [height, top, transform, userStyles, display]);
 
