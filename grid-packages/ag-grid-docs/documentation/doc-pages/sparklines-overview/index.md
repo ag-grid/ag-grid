@@ -5,6 +5,8 @@ enterprise: true
 
 This section introduces the grid's built-in Sparklines. A Sparkline is a mini chart in a single grid cell that depicts visual representation of the data. Sparklines are highly impactful as they can provide insight into the data trend at a glance.
 
+<image-caption src="sparklines-overview/resources/sparklines-overview.png" alt="Sparkline Overview" maxWidth="80%" constrained="true" centered="true"></image-caption>
+
 Enabling sparklines is simple and straightforward, all that is required is the use of the built-in `agSparklineCellRenderer`. Changes in properties and data are reflected in the sparkline, allowing easy and quick analysis of flucuations in values.
 
 Sparklines are visually appealing and can be formatted according to your liking or branding with the available configuration options.
