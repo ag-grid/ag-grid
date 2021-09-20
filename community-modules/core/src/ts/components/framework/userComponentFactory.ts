@@ -1,7 +1,7 @@
 import { Autowired, Bean, Optional } from "../../context/context";
 import { GridOptions } from "../../entities/gridOptions";
 import { FrameworkComponentWrapper } from "./frameworkComponentWrapper";
-import { ColDef, ColGroupDef, SelectorFunc } from "../../entities/colDef";
+import { ColDef, ColGroupDef, CellEditorSelectorFunc, CellRendererSelectorFunc, CellEditorSelectorResult } from "../../entities/colDef";
 import { UserComponentRegistry } from "./userComponentRegistry";
 import { AgComponentUtils } from "./agComponentUtils";
 import { ComponentMetadata, ComponentMetadataProvider } from "./componentMetadataProvider";
@@ -158,7 +158,7 @@ export class UserComponentFactory extends BeanStub {
             let defObjectAny = defObject as any;
 
             // if selector, use this
-            const selectorFunc: SelectorFunc = defObjectAny[propertyName + 'Selector'];
+            const selectorFunc: CellEditorSelectorFunc | CellRendererSelectorFunc = defObjectAny[propertyName + 'Selector'];
             const selectorRes = selectorFunc ? selectorFunc(params) : null;
             if (selectorRes) {
                 comp = selectorRes.component;
