@@ -6,7 +6,6 @@ export interface ISparklineCellRendererParams extends ICellRendererParams {
 export type SparklineOptions = LineSparklineOptions | AreaSparklineOptions | ColumnSparklineOptions;
 export interface BaseSparklineOptions {
     container?: HTMLElement;
-    data?: number[];
     width?: number;
     height?: number;
     title?: string;

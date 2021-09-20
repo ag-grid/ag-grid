@@ -23,16 +23,12 @@ export type AgSparklineType<T> =
 
 export type SparklineType = LineSparkline | AreaSparkline | ColumnSparkline;
 export abstract class AgSparkline {
-    static create<T extends SparklineOptions>(options: T, tooltip: SparklineTooltip, container?: HTMLElement, data?: any[]): AgSparklineType<T> {
+    static create<T extends SparklineOptions>(options: T, tooltip: SparklineTooltip, data: any[], container?: HTMLElement): AgSparklineType<T> {
         // avoid mutating user provided options
         options = Object.create(options);
 
         if (container) {
             options.container = container;
-        }
-
-        if (data) {
-            options.data = data;
         }
 
         const sparkline = getSparklineInstance(options.type);
@@ -42,12 +38,11 @@ export abstract class AgSparkline {
         }
 
         initSparkline(sparkline, options);
-
         initSparklineByType(sparkline, options);
 
-        // Set data last as this invokes the update method to produce the data joins and update the selection's nodes,
-        // we only want to do this after all the other properties are set.
-        initSparklineData(sparkline, options);
+        if (data) {
+            sparkline.data = data;
+        }
 
         return sparkline;
     }
@@ -105,10 +100,6 @@ function initSparkline(sparkline: SparklineType, options: any) {
     if (options.tooltip && sparkline.tooltip) {
         initTooltipOptions(sparkline.tooltip, options.tooltip);
     }
-}
-
-function initSparklineData(sparkline: SparklineType, options: any) {
-    setValueIfPropertyExists(sparkline, 'data', options.data, options);
 }
 
 function initLineSparkline(sparkline: LineSparkline, options: any) {
