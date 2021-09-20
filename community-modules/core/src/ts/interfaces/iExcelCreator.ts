@@ -202,7 +202,8 @@ export interface ExcelExportParams extends ExportParams<ExcelCell[][]> {
     margins?: ExcelSheetMargin;
     pageSetup?: ExcelSheetPageSetup;
     headerFooterConfig?: ExcelHeaderFooterConfig;
-    suppressTextAsCDATA?:boolean;
+    suppressTextAsCDATA?: boolean;
+    /** Use to export an image for the gridCell in question. */
     addImageToCell?: (rowIndex: number, column: Column, value: string) => { image: ExcelImage, value?: string } | undefined;
 }
 

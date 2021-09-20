@@ -19,6 +19,7 @@ export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework
 
     if (names && names.length) {
         namesArr = JSON.parse(names);
+        config = { overrideBottomMargin: "1rem", ...config, };
     }
 
     const interfaceLookup = getJsonFromFile(nodes, undefined, 'grid-api/interfaces.AUTO.json');
@@ -36,11 +37,11 @@ export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework
     let props = {};
     let overrides = {};
     let interfaceOverrides = {};
-    if(overridesrc){
+    if (overridesrc) {
         overrides = getJsonFromFile(nodes, undefined, overridesrc);
         interfaceOverrides = overrides[interfacename];
-        if(!interfaceOverrides){
-            throw new Error(`overrideSrc:${overridesrc} provided but does not contain expected section named: '${interfacename}'!`);            
+        if (!interfaceOverrides) {
+            throw new Error(`overrideSrc:${overridesrc} provided but does not contain expected section named: '${interfacename}'!`);
         }
     }
 
@@ -114,7 +115,7 @@ export const ApiDocumentation: React.FC<ApiProps> = ({ pageName, framework, sour
             codeSrcProvided = [...codeSrcProvided, c.codeSrc];
         }
 
-        if(c.codeSrc){
+        if (c.codeSrc) {
             codeLookup = { ...codeLookup, ...getJsonFromFile(nodes, undefined, c.codeSrc) };
         }
     })

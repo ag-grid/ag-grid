@@ -1246,13 +1246,6 @@
       "[cssClassName: string]": "(((params: CellClassParams) => boolean) | string)"
     }
   },
-  "SelectorFunc": {
-    "meta": { "isCallSignature": true },
-    "type": {
-      "arguments": { "params": "ICellRendererParams | ICellEditorParams" },
-      "returnType": "CellRendererSelectorResult | CellEditorSelectorResult | undefined"
-    }
-  },
   "CellRendererSelectorFunc": {
     "meta": { "isCallSignature": true },
     "type": {
@@ -6865,6 +6858,7 @@
       "skipHeader?": "boolean"
     },
     "docs": {
+      "addImageToCell?": "/** Use to export an image for the gridCell in question. */",
       "customHeader?": "/** @deprecated Use prependContent\n */",
       "customFooter?": "/** @deprecated Use appendContent\n */",
       "columnGroups?": "/** @deprecated\n */",

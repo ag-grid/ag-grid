@@ -10,6 +10,8 @@ Excel Export allows including images in the Excel export file. For example, you 
 
 You can export an image for any grid cell using the addImageToCell callback in the [export parameters](../excel-export-api/#excelexportparams) shown below:
 
+<interface-documentation interfaceName='ExcelExportParams' names='["addImageToCell"]' config='{"description": " "}' ></interface-documentation>
+
 <snippet>
 const gridOptions = {
     defaultExcelExportParams: {
@@ -70,14 +72,3 @@ Note the following:
 | Even if an ExcelCell object that merges multiple cells across is created, the `ExcelImage` still needs be informed of how many columns it will be spanning. This is done by passing `position: { colSpan: number }` to the `ExcelImage`.
 
 <grid-example title='Excel Export - Prepend Images' name='excel-export-prepend-images' type='generated' options='{ "enterprise": true }'></grid-example>
-
-## Interface
-
-<api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelExportParams' names='["addImageToCell"]'></api-documentation>
-
-### ExcelImage
-<api-documentation source='excel-export-api/resources/excel-export-params.json' section='excelImage'></api-documentation>
-
-## Next Up
-
-Continue to the next section: [Multiple Sheets](../excel-export-multiple-sheets/).

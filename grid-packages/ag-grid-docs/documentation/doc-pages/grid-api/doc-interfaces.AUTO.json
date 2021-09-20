@@ -1887,7 +1887,6 @@
   "CellClassFunc": {},
   "CellStyleFunc": {},
   "CellClassRules": {},
-  "SelectorFunc": {},
   "CellRendererSelectorFunc": {},
   "CellEditorSelectorFunc": {},
   "CellRendererSelectorResult": {
@@ -11570,6 +11569,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "addImageToCell": {
+      "description": "/** Use to export an image for the gridCell in question. */",
       "type": {
         "arguments": {
           "rowIndex": "number",
