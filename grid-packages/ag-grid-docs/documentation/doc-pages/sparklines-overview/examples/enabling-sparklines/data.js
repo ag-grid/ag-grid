@@ -1,4 +1,4 @@
-function getQuotes() {
+function getData() {
     return [
         {
             symbol: 'A',
