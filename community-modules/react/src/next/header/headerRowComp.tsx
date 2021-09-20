@@ -6,7 +6,7 @@ import HeaderGroupCellComp from './headerGroupCellComp';
 
 const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
 
-    const {context} = useContext(BeansContext);
+    const {context, gridOptionsWrapper} = useContext(BeansContext);
 
     const [ transform, setTransform ] = useState<string>();
     const [ height, setHeight ] = useState<string>();
@@ -25,13 +25,31 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
 
     const jsFilterCells = useRef<{[id: string]: HeaderFilterCellComp}>({});
 
+    const setCellCtrlsMaintainOrder = useCallback( (prev: AbstractHeaderCellCtrl[], next: AbstractHeaderCellCtrl[]) => {
+
+        // if we are ensuring dom order, we set the ctrls into the dom in the same order they appear on screen
+        if (gridOptionsWrapper.isEnsureDomOrder()) {
+            return next;
+        }
+
+        // if not maintaining order, we want to keep the dom elements we have and add new ones to the end,
+        // otherwise we will loose transition effects as elements are placed in different dom locations
+        const prevMap = _.mapById(prev, c => c.getInstanceId());
+        const nextMap = _.mapById(next, c => c.getInstanceId());
+
+        const oldCtrlsWeAreKeeping = prev.filter( c => nextMap.has(c.getInstanceId()) );
+        const newCtrls = next.filter( c => !prevMap.has(c.getInstanceId()) )
+
+        return [...oldCtrlsWeAreKeeping, ...newCtrls];
+    }, []);
+
     useEffect(() => {
 
         const compProxy: IHeaderRowComp = {
             setTransform: transform => setTransform(transform),
             setHeight: height => setHeight(height),
             setTop: top => setTop(top),
-            setHeaderCtrls: ctrls => setCellCtrls(ctrls),
+            setHeaderCtrls: ctrls => setCellCtrls(prev => setCellCtrlsMaintainOrder(prev, ctrls)),
             setWidth: width => setWidth(width),
             setAriaRowIndex: rowIndex => setAriaRowIndex(rowIndex)
         };
@@ -65,7 +83,6 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
             if (existing) {
                 newCompsMap[id] = existing;
             } else {
-                ////////// FIXME - need to consider cell order
                 const newComp = context.createBean(new HeaderFilterCellComp(cellCtrl as HeaderFilterCellCtrl))
                 eGui.current!.appendChild(newComp.getGui());
             }
@@ -108,9 +125,6 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
                 return <HeaderCellComp ctrl={cellCtrl as HeaderCellCtrl} key={cellCtrl.getInstanceId()} />;
         }
     }, []);
-
-
-////// NOTE - we need to ignore the order of the columns if we are not applying dom order
 
     // below, we are not doing floating filters, not yet
     return (
