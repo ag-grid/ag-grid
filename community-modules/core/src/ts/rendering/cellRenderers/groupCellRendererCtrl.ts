@@ -4,7 +4,7 @@ import { Constants } from "../../constants/constants";
 import { KeyCode } from "../../constants/keyCode";
 import { BeanStub } from "../../context/beanStub";
 import { Autowired } from "../../context/context";
-import { ColDef, CellRendererSelectorFunc } from "../../entities/colDef";
+import { CellRendererSelectorFunc } from "../../entities/colDef";
 import { Column } from "../../entities/column";
 import { GridOptions } from "../../entities/gridOptions";
 import { RowNode } from "../../entities/rowNode";
@@ -17,7 +17,6 @@ import { cloneObject } from "../../utils/object";
 import { ExpressionService } from "../../valueService/expressionService";
 import { CheckboxSelectionComponent } from "../checkboxSelectionComponent";
 import { RowDragComp } from "../row/rowDragComp";
-import { RowRenderer } from "../rowRenderer";
 import { ValueFormatterService } from "../valueFormatterService";
 import { ICellRendererComp, ICellRendererFunc, ICellRendererParams } from "./iCellRenderer";
 
@@ -284,8 +283,11 @@ export class GroupCellRendererCtrl extends BeanStub {
 
         if (!relatedColumn) { return this.params; }
 
-        // column is missing when doing full width
-        if (!column || !column.isRowGroupDisplayed(relatedColumn.getId())) { return this.params; }
+        const notFullWidth = column!=null;
+        if (notFullWidth) {
+            const showingThisRowGroup = column!.isRowGroupDisplayed(relatedColumn.getId());
+            if (!showingThisRowGroup) { return this.params; }
+        }
 
         const params = this.params;
 
