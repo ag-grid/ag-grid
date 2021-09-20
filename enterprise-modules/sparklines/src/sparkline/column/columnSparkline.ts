@@ -189,7 +189,7 @@ export class ColumnSparkline extends Sparkline {
         const { highlightedDatum, formatter: columnFormatter, fill, stroke, strokeWidth, min, max } = this;
         const { fill: highlightFill, stroke: highlightStroke, strokeWidth: highlightStrokeWidth } = this.highlightStyle;
 
-        this.columnSelection.each((column, datum) => {
+        this.columnSelection.each((column, datum, index) => {
             const highlighted = datum === highlightedDatum;
             const columnFill = highlighted && highlightFill !== undefined ? highlightFill : fill;
             const columnStroke = highlighted && highlightStroke !== undefined ? highlightStroke : stroke;
@@ -200,9 +200,10 @@ export class ColumnSparkline extends Sparkline {
             const { x, y, width, height, seriesDatum } = datum;
 
             if (columnFormatter) {
-                const nodeData = this.getNodeData();
-                const first = nodeData[0].seriesDatum.y;
-                const last = nodeData[nodeData.length - 1].seriesDatum.y;
+                const first = index === 0;
+                const last = index === this.columnSelectionData.length - 1;
+                const min = seriesDatum.y === this.min;
+                const max = seriesDatum.y === this.max;
 
                 columnFormat = columnFormatter({
                     datum,

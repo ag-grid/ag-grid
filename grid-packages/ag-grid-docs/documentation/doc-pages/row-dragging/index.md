@@ -76,47 +76,6 @@ For this example note the following:
 
 <grid-example title='Row Drag with Multi Row Drag' name='managed-with-multi-row-drag' type='generated'></grid-example>
 
-### Entire Row Dragging
-
-When using row dragging it is also possible to reorder rows by clicking and dragging anywhere on the row without the need for a drag handle by enabling the `rowDragEntireRow` grid option as shown below:
-
-<snippet>
-const gridOptions = {
-    columnDefs: [
-        { field: 'country' },
-        { field: 'year' },
-        { field: 'sport' },
-        { field: 'total' }
-    ],
-    // allows rows to dragged without the need for drag handles
-    rowDragEntireRow: true
-}
-</snippet>
-
-The example below demonstrates entire row dragging with [Multi-Row Dragging](/row-dragging/#multi-row-dragging). Note the following:
-
-- Reordering rows by clicking and dragging anywhere on a row is possible as `rowDragEntireRow` enabled.
-- Multiple rows can be selected and dragged as `rowDragMultiRow` is also enabled with `rowSelection = 'multiple'`.
-- Row Drag Managed is being used, but it is not a requirement for `Entire Row Dragging`.
-
-<grid-example title='Entire Row Dragging' name='entire-row-dragging' type='generated' options='{ "enterprise": true, "modules": ["clientside"] }'></grid-example>
-
-[[warning]]
-|[Range Selection](/range-selection/) is not supported when `rowDragEntireRow` is enabled.
-
-## Suppress Row Drag
-
-You can hide the draggable area by calling the grid API `setSuppressRowDrag()`
-or by setting the bound property `suppressRowDrag`.
-
-The example below is almost identical to the [Managed Dragging](#managed-dragging) example with the following differences:
-
-- Button **Suppress** will hide the drag icons.
-- Button **Remove Suppress** will un-hide the drag icons.
-- Applying a sort or a filter to the grid will also suppress the drag icons.
-
-<grid-example title='Suppress Row Drag' name='suppress-row-drag' type='generated'></grid-example>
-
 ## Unmanaged Dragging
 
 Unmanaged dragging is the default dragging for the grid. To use it, do not set the property `rowDragManaged`. Unmanaged dragging differs from managed dragging in the following ways:
@@ -192,6 +151,48 @@ such as row grouping or tree data, which are explained below.
 
 [[note]]
 |Dragging Multiple Rows with unmanaged row dragging, the application is in control of what gets dragged, so it is possible to use the events to drag more than one row at a time, e.g. to move all selected rows in one go if using row selection.
+
+## Entire Row Dragging
+
+When using row dragging it is also possible to reorder rows by clicking and dragging anywhere on the row without the need for a drag handle by enabling the `rowDragEntireRow` grid option as shown below:
+
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        { field: 'country' },
+        { field: 'year' },
+        { field: 'sport' },
+        { field: 'total' }
+    ],
+    // allows rows to dragged without the need for drag handles
+    rowDragEntireRow: true
+}
+</snippet>
+
+The example below demonstrates entire row dragging with [Multi-Row Dragging](/row-dragging/#multi-row-dragging). Note the following:
+
+- Reordering rows by clicking and dragging anywhere on a row is possible as `rowDragEntireRow` enabled.
+- Multiple rows can be selected and dragged as `rowDragMultiRow` is also enabled with `rowSelection = 'multiple'`.
+- Row Drag Managed is being used, but it is not a requirement for `Entire Row Dragging`.
+
+<grid-example title='Entire Row Dragging' name='entire-row-dragging' type='generated' options='{ "enterprise": true, "modules": ["clientside"] }'></grid-example>
+
+[[warning]]
+|[Range Selection](/range-selection/) is not supported when `rowDragEntireRow` is enabled.
+
+## Suppress Row Drag
+
+You can hide the draggable area by calling the grid API `setSuppressRowDrag()`
+or by setting the bound property `suppressRowDrag`.
+
+The example below is almost identical to the [Managed Dragging](#managed-dragging) example with the following differences:
+
+- Button **Suppress** will hide the drag icons.
+- Button **Remove Suppress** will un-hide the drag icons.
+- Applying a sort or a filter to the grid will also suppress the drag icons.
+
+<grid-example title='Suppress Row Drag' name='suppress-row-drag' type='generated'></grid-example>
+
 
 ## Dragging & Row Grouping
 

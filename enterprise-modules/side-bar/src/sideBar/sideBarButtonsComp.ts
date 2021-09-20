@@ -4,13 +4,14 @@ import {
     Component,
     PostConstruct,
     ToolPanelDef,
-    RefSelector,
     PreDestroy,
     FocusService,
-    HeaderPositionUtils,
     _,
-    KeyCode
+    KeyCode,
+    ColumnModel
 } from "@ag-grid-community/core";
+
+import { SideBarButtonComp } from "./sideBarButtonComp";
 
 export interface SideBarButtonClickedEvent extends AgEvent {
     toolPanelId: string;
@@ -19,11 +20,11 @@ export interface SideBarButtonClickedEvent extends AgEvent {
 export class SideBarButtonsComp extends Component {
 
     public static EVENT_SIDE_BAR_BUTTON_CLICKED = 'sideBarButtonClicked';
-    private static readonly TEMPLATE: string = /* html */ `<div class="ag-side-buttons"></div>`;
+    private static readonly TEMPLATE: string = /* html */ `<div class="ag-side-buttons" role="tablist"></div>`;
     private buttonComps: SideBarButtonComp[] = [];
 
     @Autowired('focusService') private focusService: FocusService;
-    @Autowired('headerPositionUtils') private headerPositionUtils: HeaderPositionUtils;
+    @Autowired('columnModel') private columnModel: ColumnModel;
 
     constructor() {
         super(SideBarButtonsComp.TEMPLATE);
@@ -36,13 +37,11 @@ export class SideBarButtonsComp extends Component {
 
     private handleKeyDown(e: KeyboardEvent): void {
         if (e.keyCode !== KeyCode.TAB || !e.shiftKey) { return; }
-        const prevEl = this.focusService.findNextFocusableElement(this.getFocusableElement(), null, true);
 
-        if (!prevEl) {
-            const headerPosition = this.headerPositionUtils.findColAtEdgeForHeaderRow(0, 'start');
-            if (!headerPosition) { return; }
+        const lastColumn = _.last(this.columnModel.getAllDisplayedColumns());
+
+        if (this.focusService.focusGridView(lastColumn, true)) { 
             e.preventDefault();
-            this.focusService.focusHeaderPosition(headerPosition);
         }
     }
 
@@ -77,51 +76,3 @@ export class SideBarButtonsComp extends Component {
 
 }
 
-class SideBarButtonComp extends Component {
-
-    public static EVENT_TOGGLE_BUTTON_CLICKED = 'toggleButtonClicked';
-
-    @RefSelector('eToggleButton') private eToggleButton: HTMLButtonElement;
-    @RefSelector('eIconWrapper') private eIconWrapper: HTMLElement;
-
-    private readonly toolPanelDef: ToolPanelDef;
-
-    constructor(toolPanelDef: ToolPanelDef) {
-        super();
-        this.toolPanelDef = toolPanelDef;
-    }
-
-    public getToolPanelId(): string {
-        return this.toolPanelDef.id;
-    }
-
-    @PostConstruct
-    private postConstruct(): void {
-        const template = this.createTemplate();
-        this.setTemplate(template);
-        this.eIconWrapper.insertAdjacentElement('afterbegin', _.createIconNoSpan(this.toolPanelDef.iconKey, this.gridOptionsWrapper)!);
-        this.addManagedListener(this.eToggleButton, 'click', this.onButtonPressed.bind(this));
-    }
-
-    private createTemplate(): string {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        const def = this.toolPanelDef;
-        const label = translate(def.labelKey, def.labelDefault);
-        const res = /* html */
-            `<div class="ag-side-button">
-                <button type="button" ref="eToggleButton" class="ag-side-button-button">
-                    <div ref="eIconWrapper" class="ag-side-button-icon-wrapper"></div>
-                    <span class="ag-side-button-label">${label}</span>
-                </button>
-            </div>`;
-        return res;
-    }
-
-    private onButtonPressed(): void {
-        this.dispatchEvent({ type: SideBarButtonComp.EVENT_TOGGLE_BUTTON_CLICKED });
-    }
-
-    public setSelected(selected: boolean): void {
-        this.addOrRemoveCssClass('ag-selected', selected);
-    }
-}

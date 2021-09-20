@@ -7,7 +7,7 @@ import {
     TabGuardComp,
     ColumnEventType,
     PositionableFeature,
-    PostConstruct,
+    PostConstruct
 } from "@ag-grid-community/core";
 import { PrimaryColsListPanel } from "./primaryColsListPanel";
 import { PrimaryColsHeaderPanel } from "./primaryColsHeaderPanel";

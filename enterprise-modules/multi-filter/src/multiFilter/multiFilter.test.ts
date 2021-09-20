@@ -74,7 +74,7 @@ function createFilter(filterParams: any = {}): MultiFilter {
 }
 
 beforeEach(() => {
-    eGui = mock<HTMLElement>('appendChild', 'insertAdjacentElement');
+    eGui = mock<HTMLElement>('appendChild', 'insertAdjacentElement', 'contains');
     filterManager = mock<FilterManager>('createFilterParams');
     tabGuardCtrl = mock<TabGuardCtrl>('forceFocusOutOfContainer');
     userComponentFactory = mock<UserComponentFactory>('newFilterComponent');

@@ -10,7 +10,7 @@ function checkFileExists {
 }
 
 checkFileExists ~/Documents/aggrid/aggrid/aggrid.txt
-checkFileExists ~/.ssh/ag_ssh
+checkFileExists ~/.ssh/ag_grid_site
 checkFileExists ~/Documents/aggrid/aggrid/.creds
 
 while true; do
@@ -27,4 +27,4 @@ while true; do
 done
 
 # delete the cache
-ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com "rm public_html/jira_reports/cache/changelog.json"
+ssh -i ~/.ag_deploy/.ssh/ag_grid_site ceolter@ag-grid.com "rm public_html/jira_reports/cache/changelog.json"

@@ -103,10 +103,9 @@ When React UI also works with React Headers.
 
 Below is an example showing a grid configure with a custom React Header component.
 
-* The Athlete Column uses a simple Header Comp that just displays the Header name.
-* The Age Column uses a simple Header Comp that displays the Header name along with an animated gif.
-* The Country Column uses a Header Comp that displays the Header name and allows sorting (by clicking on the header).
-* The Year, Date and Sport Columns do not their Headers customised and work as normal.
+* Columns Athlete and Age use a Header Comp that displays the Header name and allows sorting (by clicking on the header).
+* All other columns do not have their Headers customised and work as normal.
+
 
 <grid-example title='React UI Headers' name='headers' type='react' options=' { "showImportsDropdown": false }'></grid-example>
 
@@ -161,7 +160,6 @@ This also means the AG Grid React UI not only supports all features of the curre
 The work covers the core grid, rows and cells. This means if you provide Cell Renderers and Cell Editors, they will live inside the same React Context as your application.
 
 The following areas are yet to be completed. All of these areas use the old rendering engine alongside the new React UI:
-1. Column Headers and Header Groups.
 1. Column Filters and Floating Filters.
 1. Tool Panels.
 1. Status Bar.

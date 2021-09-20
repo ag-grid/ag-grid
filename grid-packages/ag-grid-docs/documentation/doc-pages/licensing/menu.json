@@ -1393,6 +1393,12 @@
             "showInCollapsed": true
           },
           {
+            "title": "Special Points",
+            "url": "/sparklines-special-points/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
             "title": "Data Updates",
             "url": "/sparklines-data-updates/",
             "enterprise": true,
