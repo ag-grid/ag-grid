@@ -1,20 +1,15 @@
 var gridOptions = {
     columnDefs: [
         {field: 'symbol', maxWidth: 120},
-        {field: 'name',  minWidth: 200 },
-        {
-            field: 'volume',
-            type: 'numericColumn',
-            maxWidth: 160,
-        },
+        {field: 'name',  minWidth: 250 },
         {
             field: 'closeHistory',
             cellRenderer: 'agSparklineCellRenderer',
-            cellRendererParams: {
-                sparklineOptions: {
-                    type: 'line'
-                },
-            },
+        },
+        {
+            field: 'volume',
+            type: 'numericColumn',
+            maxWidth: 140,
         },
     ],
     defaultColDef: {
