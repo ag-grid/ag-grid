@@ -107,6 +107,9 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
             case KeyCode.ENTER:
                 this.onEnterKeyDown();
                 break;
+            case KeyCode.TAB:
+                this.confirmSelection();
+                break;
             case KeyCode.DOWN:
             case KeyCode.UP:
                 this.onNavigationKeyPressed(event, key);
@@ -116,8 +119,12 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         }
     }
 
-    private onEnterKeyDown(): void {
+    private confirmSelection(): void {
         this.selectionConfirmed = true;
+    }
+
+    private onEnterKeyDown(): void {
+        this.confirmSelection();
         this.params.stopEditing();
     }
 
@@ -261,7 +268,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
     }
 
     private onClick(): void {
-        this.selectionConfirmed = true;
+        this.confirmSelection();
         this.params.stopEditing();
     }
 
