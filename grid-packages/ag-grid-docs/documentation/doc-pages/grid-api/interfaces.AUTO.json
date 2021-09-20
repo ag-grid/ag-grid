@@ -4517,6 +4517,9 @@
       "context": "any"
     },
     "docs": {
+      "columnGroup": "/** The column group the header is for. */",
+      "displayName": "/** The text label to render.\n * If the column is using a headerValueGetter, the displayName will take this into account. */",
+      "setExpanded": "/** Opens / closes the column group */",
       "context": "/** The context as provided on `gridOptions.context` */"
     }
   },

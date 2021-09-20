@@ -16,12 +16,18 @@ import { exists } from "../../../utils/generic";
 import { doOnce } from "../../../utils/function";
 
 export interface IHeaderGroupParams {
+    /** The column group the header is for. */
     columnGroup: ColumnGroup;
+    /** 
+     * The text label to render.
+     * If the column is using a headerValueGetter, the displayName will take this into account.  
+     */
     displayName: string;
+    /** Opens / closes the column group */
     setExpanded: (expanded: boolean) => void;
     api: GridApi;
     columnApi: ColumnApi;
-/** The context as provided on `gridOptions.context` */
+    /** The context as provided on `gridOptions.context` */
     context: any;
 }
 

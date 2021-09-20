@@ -785,6 +785,21 @@
                 "name": "Tool Panel Expand / Collapse Column Groups",
                 "url": "/tool-panel-columns/#expand--collapse-column-groups"
             }
+        },
+        "getStatusPanel": {
+            "description": "Gets the status panel instance corresponding to the supplied `id`.",
+            "more": {
+                "name": "Accessing Status Bar Panel Instances",
+                "url": "/component-status-bar/#accessing-status-bar-panel-instances"
+            },
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "IAfterGuiAttachedParams",
+                    "ContainerType",
+                    "IStatusPanelParams"
+                ],
+                "include": []
+            }
         }
     },
     "charts": {

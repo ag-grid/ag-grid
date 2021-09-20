@@ -33,23 +33,8 @@ md-include:component-interface-angular.md
 md-include:component-interface-react.md
 md-include:component-interface-vue.md
  
-## Loading Overlay Params Interface
-
-```ts
-interface ILoadingOverlayParams {
-    // The grid API
-    api: GridApi;
-}
-```
-
-## No Rows Overlay Params Interface
-
-```ts
-interface INoRowsOverlayParams {
-    // The grid API
-    api: GridApi;
-}
-```
+<interface-documentation interfaceName='ILoadingOverlayParams' config='{"hideHeader":false, "headerLevel":3}' ></interface-documentation>
+<interface-documentation interfaceName='INoRowsOverlayParams' config='{"hideHeader":false, "headerLevel":3}' ></interface-documentation>
 
 ## Registering Overlay Components
 

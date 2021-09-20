@@ -8107,10 +8107,15 @@
   },
   "IHeaderGroupParams": {
     "columnGroup": {
+      "description": "/** The column group the header is for. */",
       "type": { "returnType": "ColumnGroup", "optional": false }
     },
-    "displayName": { "type": { "returnType": "string", "optional": false } },
+    "displayName": {
+      "description": "/** The text label to render.\n * If the column is using a headerValueGetter, the displayName will take this into account. */",
+      "type": { "returnType": "string", "optional": false }
+    },
     "setExpanded": {
+      "description": "/** Opens / closes the column group */",
       "type": {
         "arguments": { "expanded": "boolean" },
         "returnType": "void",

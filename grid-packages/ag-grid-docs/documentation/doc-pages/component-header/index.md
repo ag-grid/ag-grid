@@ -223,19 +223,7 @@ md-include:group-component-interface-angular.md
 md-include:group-component-interface-react.md
 md-include:group-component-interface-vue.md
 
-```ts
-interface IHeaderGroupParams {
-    // the column group the header is for
-    columnGroup: ColumnGroup;
-
-    // the text label to render. if the column is using a headerValueGetter,
-    // the displayName will take this into account.
-    displayName: string;
-
-    // opens / closes the column group
-    setExpanded(expanded: boolean): void;
-}
-```
+<interface-documentation interfaceName='IHeaderGroupParams' ></interface-documentation>
 
 md-include:open-close-javascript.md
 md-include:open-close-angular.md

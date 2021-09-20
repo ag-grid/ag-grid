@@ -48,6 +48,8 @@ Please refer to the documentation [here.](/status-bar/#initialisation-of-status-
 
 After the grid has created an instance of a status bar component it is possible to access that instance. This is useful if you want to call a method that you provide on the status bar component that has nothing to do with the operation of the grid. Accessing a status bar component is done using the grid API `getStatusPanel(key)`.
 
+<api-documentation source='grid-api/api.json' section='accessories' names='["getStatusPanel"]'></api-documentation>
+
 If your are using a framework component then the returned object is a wrapper and you can get the underlying status bar component using `getFrameworkComponentInstance()`
 
 ```js
