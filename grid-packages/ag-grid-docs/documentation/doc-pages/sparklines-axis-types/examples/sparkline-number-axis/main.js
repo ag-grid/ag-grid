@@ -15,7 +15,7 @@ var gridOptions = {
                     xKey: 'xVal',
                     yKey: 'yVal',
                     axis: {
-                        // x-axis type configured to 'number'
+                        // set x-axis type to 'number'
                         type: 'number'
                     }
                 },

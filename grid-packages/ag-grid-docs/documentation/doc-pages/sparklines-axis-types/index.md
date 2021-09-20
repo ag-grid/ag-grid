@@ -76,8 +76,8 @@ const gridOptions = {
             cellRendererParams: {
                 sparklineOptions: {
                     type: 'line',
-                    // x-axis type configured to 'number'
                     axis: {
+                        // set x-axis type to 'number'
                         type: 'number'
                     }
                 }
@@ -114,8 +114,8 @@ const gridOptions = {
             cellRendererParams: {
                 sparklineOptions: {
                     type: 'line',
-                    // x-axis type configured to 'time'
                     axis: {
+                        // set x-axis type to 'time'
                         type: 'time'
                     }
                 }

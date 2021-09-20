@@ -13,7 +13,7 @@ var gridOptions = {
                 sparklineOptions: {
                     type: 'area',
                     axis: {
-                        // x-axis type configured to 'number'
+                        // set x-axis type to 'time'
                         type: 'time'
                     },
                     marker: {
