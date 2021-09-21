@@ -8,7 +8,6 @@ var gridOptions = {
             cellRenderer: 'agSparklineCellRenderer',
             cellRendererParams: {
                 sparklineOptions: {
-                    type: 'line',
                     line: {
                         stroke: 'rgb(124, 255, 178)',
                         strokeWidth: 2
@@ -35,9 +34,6 @@ var gridOptions = {
                     padding: {
                         top: 10,
                         bottom: 10
-                    },
-                    highlightStyle: {
-                        fill: 'rgb(88, 217, 249)'
                     },
                     formatter: columnFormatter
                 },
@@ -71,23 +67,27 @@ var gridOptions = {
         minWidth: 100,
         resizable: true,
     },
-    rowData: getQuotes(),
+    rowData: getData(),
 };
 
 const colors = {
     firstLast: 'rgb(253, 221, 96)',
     min: 'rgb(239, 108, 0)',
-    max: 'rgb(239, 108, 0)',
+    max: 'rgb(59, 162, 114)',
     negative: 'rgb(255, 110, 118)',
-    positive: 'rgba(0,128,0, 0.3)'
+    positive: 'rgba(0,128,0, 0.3)',
+    highlighted: 'rgb(88, 217, 249)'
 }
 
-function lineMarkerFormatter(params){
-    const { min, max, first, last } = params;
+function lineMarkerFormatter(params) {
+    const { min, max, first, last, highlighted } = params;
+
+    const color = highlighted ? colors.highlighted : min ? colors.min : max ? colors.max : colors.firstLast;
+
     return {
-        size: min || max || first || last ? 5 : 0,
-        fill: min ? colors.minimum : max ? colors.maximum : colors.firstLast,
-        stroke: min ? colors.minimum : max ? colors.maximum : colors.firstLast
+        size: highlighted || min || max || first || last ? 5 : 0,
+        fill: color,
+        stroke: color
     }
 }
 
@@ -95,6 +95,7 @@ function columnFormatter(params) {
     const { first, last, yValue, highlighted } = params;
 
     let fill = undefined;
+
     if (!highlighted) {
         if (first || last) {
             fill = colors.firstLast
@@ -103,39 +104,24 @@ function columnFormatter(params) {
         } else {
             fill = colors.positive
         }
+    } else {
+        fill = colors.highlighted
     }
+
+    return { fill }
+}
+
+function areaMarkerFormatter(params) {
+    const { min, max, first, last, highlighted } = params;
+
+    const color = highlighted ? colors.highlighted : min ? colors.min : max ? colors.max : colors.firstLast;
+
     return {
-        fill
+        size: highlighted || min || max || first || last ? 5 : 0,
+        fill: color,
+        stroke: color
     }
 }
-
-function areaMarkerFormatter(params){
-    const { min, max, first, last } = params;
-    return {
-        size: min || max || first || last ? 5 : 0,
-        fill: min ? 'rgb(239, 108, 0)' : max ? 'green' : 'rgb(253, 221, 96)',
-        stroke: min ? 'rgb(239, 108, 0)' : max ? 'green' : 'rgb(253, 221, 96)'
-    }
-}
-
-function updateData() {
-    const itemsToUpdate = [];
-    gridOptions.api.forEachNodeAfterFilterAndSort(function (rowNode, index) {
-        let data = rowNode.data;
-        const n = data.history.length;
-        data.history = [...data.history.slice(1, n), randomNumber(0, 10)];
-        itemsToUpdate.push(data);
-    });
-    gridOptions.api.applyTransaction({ update: itemsToUpdate });
-}
-
-function randomNumber(min, max) {
-    return Math.floor(Math.random() * (max - min) + min);
-}
-
-window.setInterval(() => {
-    updateData();
-}, 2000)
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
