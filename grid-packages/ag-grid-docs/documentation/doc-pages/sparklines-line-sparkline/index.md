@@ -17,17 +17,23 @@ const gridOptions = {
             cellRenderer: 'agSparklineCellRenderer',
             cellRendererParams: {
                 sparklineOptions: {
+                    // The type property is optional as the sparkline type is 'line' by default.
                     type: 'line',
                     line: {
-                        stroke: 'skyblue',
+                        stroke: 'rgb(124, 255, 178)',
+                        strokeWidth: 2
+                    },
+                    padding: {
+                        top: 5,
+                        bottom: 5
                     },
                     marker: {
+                        size: 3,
                         shape: 'diamond',
-                        size: '3'
                     },
                     highlightStyle: {
-                        size: 5,
-                    }
+                        size: 10,
+                    },
                 }
             },
         },
@@ -36,19 +42,20 @@ const gridOptions = {
 };
 </snippet>
 
-In the snippet above, the `sparklineOptions` provided in the `cellRendererParams` property is of type `LineSparklineOptions`.
+In the snippet above, `LineSparklineOptions` is provided in the `cellRendererParams`.
 
-This is an example to further demonstrate how line sparklines can be configured and customised to your liking or branding by using the available options to add styles.
+This is an example to further demonstrate how line sparklines can be configured.
 
-- The `sparklineOptions` object contains the properties that get applied to the line and every marker. In this example, the shape of every marker is set to `diamond`.
-- Refer to the [LineSparklineOptions](/sparklines-line-sparkline/#linesparklineoptions) interface for the attributes which can be customised in a line sparkline.
-- The formatter callback function is used to override the default property values for individual markers based on the data they represent.
-- The formatter callback function is passed `MarkerFormatterParams` which provides information about the data associated with each Marker. This function should return an object of type `MarkerFormat`.
-- Here, when the marker is not highlighted, if the y value of the data point is less than 0, the fill and stroke are set to `green`, otherwise they are set to `skyblue`.
-- See the [MarkerFormat](/sparklines-line-sparkline/#markerformat) interface for the attributes which can be customised using this formatter.
-
+- The `sparklineOptions` object contains the properties that get applied to the line and every marker globally.
+- Here, the shape of every marker is `diamond` and the size is configured to `3` pixels.
+- The padding around the sparkline is adjusted using the `padding` property.
+- The line path is formatted using the `line` property by adding `stroke` and `strokeWidth`.
+- When markers are highlighted, the highlightStyle is applied, in this case, the marker size is increased to `10` pixels for highlighted items.
 
 <grid-example title='Line Sparkline' name='line-sparkline' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
+
+Refer to the [LineSparklineOptions](/sparklines-line-sparkline/#linesparklineoptions) interface for the attributes which can be customised in a line sparkline.
+Also see [Special Points](/sparklines-special-points/) customisation of individual markers using a formatter.
 
 ## Interfaces
 The interfaces for the available options are as follows:
