@@ -1,0 +1,143 @@
+{
+    "_config_": {},
+    "MarkerFormatterParams": {
+        "datum": {
+            "description": "The raw data associated with the specific marker.",
+            "type": "any"
+        },
+        "xValue": {
+            "description": "The x value of the marker.",
+            "type": "any"
+        },
+        "yValue": {
+            "description": "The y value of the marker.",
+            "type": "number"
+        },
+        "highlighted": {
+            "description": "Whether or not the marker is highlighted.",
+            "type": "boolean"
+        },
+        "min?": {
+            "description": "Whether or not the marker is a minimum point.",
+            "type": "boolean"
+        },
+        "max?": {
+            "description": "Whether or not the marker is a maximum point.",
+            "type": "boolean"
+        },
+        "first?": {
+            "description": "Whether or not the marker represents the first data point.",
+            "type": "boolean"
+        },
+        "last?": {
+            "description": "Whether or not the marker represents the last data point.",
+            "type": "boolean"
+        },
+        "fill?": {
+            "description": "The CSS colour value for the fill of the individual marker.",
+            "type": "string"
+        },
+        "stroke?": {
+            "description": "The CSS colour value for the outline of the individual marker.",
+            "type": "string"
+        },
+        "strokeWidth": {
+            "description": "The thickness in pixels for the stroke of the individual marker.",
+            "type": "number"
+        },
+        "size": {
+            "description": "The width in pixels of the individual marker.",
+            "type": "number"
+        }
+    },
+    "MarkerFormat": {
+        "enabled": {
+            "description": "Set to false to make marker invisible.",
+            "type": "boolean"
+        },
+        "size": {
+            "description": "The width in pixels of the individual marker.",
+            "type": "number"
+        },
+        "fill": {
+            "description": "The CSS colour value for the fill of the individual marker.",
+            "type": "string"
+        },
+        "stroke": {
+            "description": "The CSS colour value for the outline of the individual marker.",
+            "type": "string"
+        },
+        "strokeWidth": {
+            "description": "The thickness in pixels for the stroke of the individual marker.",
+            "type": "number"
+        }
+    },
+    "ColumnFormatterParams": {
+        "datum": {
+            "description": "The raw data associated with the specific column.",
+            "type": "any"
+        },
+        "xValue": {
+            "description": "The x value of the column.",
+            "type": "any"
+        },
+        "yValue": {
+            "description": "The y value of the column.",
+            "type": "number"
+        },
+        "width": {
+            "description": "The width of the column in pixels.",
+            "type": "number"
+        },
+        "height": {
+            "description": "The height of the column in pixels.",
+            "type": "number"
+        },
+        "highlighted": {
+            "description": "Whether or not the column is highlighted.",
+            "type": "boolean"
+        },
+        "min?": {
+            "description": "Whether or not the column is a minimum point.",
+            "type": "boolean"
+        },
+        "max?": {
+            "description": "Whether or not the column is a maximum point.",
+            "type": "boolean"
+        },
+        "first?": {
+            "description": "Whether or not the collumn represents the first data point.",
+            "type": "boolean"
+        },
+        "last?": {
+            "description": "Whether or not the column represents the last data point.",
+            "type": "boolean"
+        },
+        "fill?": {
+            "description": "The CSS colour value for the fill of the individual column.",
+            "type": "string"
+        },
+        "stroke?": {
+            "description": "The CSS colour value for the outline of the individual column.",
+            "type": "string"
+        },
+        "strokeWidth": {
+            "description": "The thickness in pixels for the stroke of the individual column.",
+            "type": "number"
+        }
+    },
+    "ColumnFormat": {
+        "fill": {
+            "description": "The CSS colour value for the fill of the individual column.",
+            "type": "string"
+        },
+        "stroke": {
+            "description": "The CSS colour value for the outline of the individual column.",
+            "type": "string"
+        },
+        "strokeWidth": {
+            "description": "The thickness in pixels for the stroke of the individual column.",
+            "type": "number"
+        }
+    }
+}
