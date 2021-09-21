@@ -680,10 +680,6 @@ export class BarSeries extends CartesianSeries {
                     fill: highlightedFill = deprecatedFill,
                     stroke: highlightedStroke = deprecatedStroke,
                     strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
-                },
-                series: {
-                    enabled: subSeriesHighlightingEnabled,
-                    strokeWidth: highlightedSubSeriesStrokeWidth
                 }
             }
         } = this;

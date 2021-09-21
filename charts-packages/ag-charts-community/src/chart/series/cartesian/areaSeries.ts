@@ -582,7 +582,6 @@ export class AreaSeries extends CartesianSeries {
 
         this.markerSelection.each((node, datum) => {
             const isDatumHighlighted = datum === highlightedDatum;
-            // const isSubSeriesHighlighted = highlightedItemId === datum.itemId;
             const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : marker.fill || datum.fill;
             const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : marker.stroke || datum.stroke;
             const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
