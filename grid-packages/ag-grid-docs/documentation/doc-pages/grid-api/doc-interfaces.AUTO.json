@@ -13805,7 +13805,6 @@
   "SparklineOptions": {},
   "BaseSparklineOptions": {
     "container": { "type": { "returnType": "HTMLElement", "optional": true } },
-    "data": { "type": { "returnType": "number[]", "optional": true } },
     "width": { "type": { "returnType": "number", "optional": true } },
     "height": { "type": { "returnType": "number", "optional": true } },
     "title": { "type": { "returnType": "string", "optional": true } },
@@ -13825,7 +13824,6 @@
     "line": { "type": { "returnType": "SparklineLine", "optional": true } },
     "marker": { "type": { "returnType": "SparklineMarker", "optional": true } },
     "container": { "type": { "returnType": "HTMLElement", "optional": true } },
-    "data": { "type": { "returnType": "number[]", "optional": true } },
     "width": { "type": { "returnType": "number", "optional": true } },
     "height": { "type": { "returnType": "number", "optional": true } },
     "title": { "type": { "returnType": "string", "optional": true } },
@@ -13846,7 +13844,6 @@
     "line": { "type": { "returnType": "SparklineLine", "optional": true } },
     "marker": { "type": { "returnType": "SparklineMarker", "optional": true } },
     "container": { "type": { "returnType": "HTMLElement", "optional": true } },
-    "data": { "type": { "returnType": "number[]", "optional": true } },
     "width": { "type": { "returnType": "number", "optional": true } },
     "height": { "type": { "returnType": "number", "optional": true } },
     "title": { "type": { "returnType": "string", "optional": true } },
@@ -13872,7 +13869,6 @@
       "type": { "returnType": "SparklineColumnFormatter", "optional": true }
     },
     "container": { "type": { "returnType": "HTMLElement", "optional": true } },
-    "data": { "type": { "returnType": "number[]", "optional": true } },
     "width": { "type": { "returnType": "number", "optional": true } },
     "height": { "type": { "returnType": "number", "optional": true } },
     "title": { "type": { "returnType": "string", "optional": true } },

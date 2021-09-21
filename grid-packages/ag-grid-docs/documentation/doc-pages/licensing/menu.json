@@ -1360,25 +1360,27 @@
             "title": "Overview",
             "url": "/sparklines-overview/",
             "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
-            "title": "Line Sparkline",
-            "url": "/sparklines-line-sparkline/",
-            "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
-            "title": "Area Sparkline",
-            "url": "/sparklines-area-sparkline/",
-            "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
-            "title": "Column Sparkline",
-            "url": "/sparklines-column-sparkline/",
-            "enterprise": true,
-            "showInCollapsed": true
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "Line Sparkline",
+                "url": "/sparklines-line-sparkline/",
+                "enterprise": true,
+                "showInCollapsed": true
+              },
+              {
+                "title": "Area Sparkline",
+                "url": "/sparklines-area-sparkline/",
+                "enterprise": true,
+                "showInCollapsed": true
+              },
+              {
+                "title": "Column Sparkline",
+                "url": "/sparklines-column-sparkline/",
+                "enterprise": true,
+                "showInCollapsed": true
+              }
+            ]
           },
           {
             "title": "Supplying Data",
