@@ -28,9 +28,9 @@ Note in the snippet above that specifying a `agSparklineCellRenderer` will displ
 
 The following example shows the minimum configuration required to display data in a sparkline. Note the following:
 
-- The `closeHistory` column is configured to use a `agSparklineCellRenderer`.
-- The `closeHistory` data is supplied as an array of numbers, so no data mappings are required.
-- As no sparkline options are provided the default `line` sparkline is used.
+- The **Close History** column is configured to use a `agSparklineCellRenderer`.
+- No sparkline options are supplied to the `agSparklineCellRenderer` so the default [Line Sparkline](/sparklines-line-sparkline/) is used.
+- An array of numbers is supplied as data to the **Close History** column, which means no [Data Mapping](/sparklines-data/) is required.
 
 <grid-example title='Enabling Sparklines' name='enabling-sparklines' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
@@ -46,6 +46,7 @@ on how to specify and customise the built-in sparklines:
 The following sections are relevant to all sparkline types:
 
 - ***[Supplying Data](/sparklines-data/)*** - compares the different data formats that can be supplied to sparklines.  
+- ***[Axes Types](/sparklines-axes-types/)*** - compares the different axes types available to sparklines.
 - ***[Sparkline Tooltips](/sparklines-tooltips/)*** - covers the various ways sparkline tooltips can be customised.
 - ***[Special Points](sparklines-special-points/)*** - shows how points of interest can be highlighted on sparklines. 
 
