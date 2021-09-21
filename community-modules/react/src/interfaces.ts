@@ -1,27 +1,18 @@
-import { ColumnApi, GridApi, GridOptions, Module } from '@ag-grid-community/core';
-import { ChangeDetectionStrategyType } from './changeDetectionService';
 import {
+    ColumnApi,
+    GridApi,
+    GridOptions,
     ICellEditor,
-    ICellEditorParams,
     ICellRenderer,
-    ICellRendererParams,
     IDate,
-    IDateParams,
     IFilter,
-    IFilterParams,
     IHeader,
     IHeaderGroup,
-    IHeaderGroupParams,
-    IHeaderParams,
-    ILoadingCellRendererParams,
-    ILoadingOverlayParams,
-    INoRowsOverlayParams,
     IStatusPanel,
     IToolPanel,
-    IToolPanelParams,
-    IAfterGuiAttachedParams,
-    IStatusPanelParams
+    Module
 } from '@ag-grid-community/core';
+import {ChangeDetectionStrategyType} from './changeDetectionService';
 
 export interface SharedProps extends GridOptions {
     reactUi?: boolean;
@@ -44,12 +35,48 @@ export interface AgGridReactProps extends SharedProps {
     legacyComponentRendering?: boolean,
 }
 
-
-
-export interface AgReactFrameworkComponent<T> {
-    afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
+export interface AgReactComponent {
+    getReactContainerStyle?: () => {};
+    getReactContainerClasses?: () => string[];
 }
 
+export interface IHeaderGroupReactComp extends IHeaderGroup, AgReactComponent {
+}
+
+export interface IHeaderReactComp extends IHeader, AgReactComponent {
+}
+
+export interface IDateReactComp extends IDate, AgReactComponent {
+}
+
+export interface IFilterReactComp extends IFilter, AgReactComponent {
+}
+
+export interface ICellRendererReactComp extends ICellRenderer, AgReactComponent {
+}
+
+export interface ICellEditorReactComp extends ICellEditor, AgReactComponent {
+}
+
+export interface ILoadingCellRendererReactComp extends AgReactComponent {
+}
+
+export interface ILoadingOverlayReactComp extends AgReactComponent {
+}
+
+export interface INoRowsOverlayReactComp extends AgReactComponent {
+}
+
+export interface IStatusPanelReactComp extends IStatusPanel, AgReactComponent {
+}
+
+export interface IToolPanelReactComp extends IToolPanel, AgReactComponent {
+}
+
+export interface ITooltipReactComp extends AgReactComponent {
+}
+
+/*
 export interface IHeaderGroupReactComp extends IHeaderGroup, AgReactFrameworkComponent<IHeaderGroupParams> {
 }
 
@@ -83,3 +110,4 @@ export interface IStatusPanelReactComp extends IStatusPanel, AgReactFrameworkCom
 
 export interface IToolPanelReactComp extends IToolPanel, AgReactFrameworkComponent<IToolPanelParams> {
 }
+*/

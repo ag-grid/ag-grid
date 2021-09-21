@@ -44,3 +44,34 @@
 |    }
 |}
 |```
+|And finally here is an example using modules, hooks and TypeScript:
+|
+|```ts
+|import React, {forwardRef, ForwardRefRenderFunction, useImperativeHandle} from 'react';
+|import {ITooltipParams} from "@ag-grid-community/core";
+|import {ITooltipReactComp} from "@ag-grid-community/react";
+|
+|interface MyTooltipParams extends ITooltipParams {
+|    color?: string
+|}
+|
+|const CustomTooltip: ForwardRefRenderFunction<ITooltipReactComp, MyTooltipParams> = (props, ref) => {
+|    const data = props.api!.getDisplayedRowAtIndex(props.rowIndex!)!.data;
+|
+|    useImperativeHandle((ref), () => ({
+|        getReactContainerClasses() {
+|            return ['custom-tooltip'];
+|        },
+|    }));
+|
+|    return (
+|        <div style={{backgroundColor: props.color || 'white'}}>
+|            <p>
+|                <span>{data.athlete}</span>
+|            </p>
+|        </div>
+|    );
+|};
+|
+|export default forwardRef(CustomTooltip);
+|```

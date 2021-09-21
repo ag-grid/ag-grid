@@ -2357,7 +2357,10 @@ export class ColumnModel extends BeanStub {
                         'functions, register the functions first before using them in get/set state. This is because it is ' +
                         'intended for the column state to be stored and retrieved as simple JSON.');
                 }
-                column.setAggFunc(null);
+                // Note: we do not call column.setAggFunc(null), so that next time we aggregate
+                // by this column (eg drag teh column to the agg section int he toolpanel) it will
+                // default to the last aggregation function.
+
                 if (column.isValueActive()) {
                     column.setValueActive(false, source);
                     removeFromArray(this.valueColumns, column);
