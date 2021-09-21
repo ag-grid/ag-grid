@@ -423,7 +423,6 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/angular/themes-provided/ /angular-data-grid/themes-provided/
     Redirect 301 /documentation/angular/themes-v23-migration/ /angular-data-grid/themes-v23-migration/
     Redirect 301 /documentation/angular/themes/ /angular-data-grid/themes/
-    Redirect 301 /documentation/angular/third-party-charting/ /angular-data-grid/third-party-charting/
     Redirect 301 /documentation/angular/tool-panel-columns/ /angular-data-grid/tool-panel-columns/
     Redirect 301 /documentation/angular/tool-panel-filters/ /angular-data-grid/tool-panel-filters/
     Redirect 301 /documentation/angular/tool-panel/ /angular-data-grid/tool-panel/
@@ -675,7 +674,6 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/javascript/themes-provided/ /javascript-data-grid/themes-provided/
     Redirect 301 /documentation/javascript/themes-v23-migration/ /javascript-data-grid/themes-v23-migration/
     Redirect 301 /documentation/javascript/themes/ /javascript-data-grid/themes/
-    Redirect 301 /documentation/javascript/third-party-charting/ /javascript-data-grid/third-party-charting/
     Redirect 301 /documentation/javascript/tool-panel-columns/ /javascript-data-grid/tool-panel-columns/
     Redirect 301 /documentation/javascript/tool-panel-filters/ /javascript-data-grid/tool-panel-filters/
     Redirect 301 /documentation/javascript/tool-panel/ /javascript-data-grid/tool-panel/
@@ -922,7 +920,6 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/react/themes-provided/ /react-data-grid/themes-provided/
     Redirect 301 /documentation/react/themes-v23-migration/ /react-data-grid/themes-v23-migration/
     Redirect 301 /documentation/react/themes/ /react-data-grid/themes/
-    Redirect 301 /documentation/react/third-party-charting/ /react-data-grid/third-party-charting/
     Redirect 301 /documentation/react/tool-panel-columns/ /react-data-grid/tool-panel-columns/
     Redirect 301 /documentation/react/tool-panel-filters/ /react-data-grid/tool-panel-filters/
     Redirect 301 /documentation/react/tool-panel/ /react-data-grid/tool-panel/
@@ -1166,7 +1163,6 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/vue/themes-provided/ /vue-data-grid/themes-provided/
     Redirect 301 /documentation/vue/themes-v23-migration/ /vue-data-grid/themes-v23-migration/
     Redirect 301 /documentation/vue/themes/ /vue-data-grid/themes/
-    Redirect 301 /documentation/vue/third-party-charting/ /vue-data-grid/third-party-charting/
     Redirect 301 /documentation/vue/tool-panel-columns/ /vue-data-grid/tool-panel-columns/
     Redirect 301 /documentation/vue/tool-panel-filters/ /vue-data-grid/tool-panel-filters/
     Redirect 301 /documentation/vue/tool-panel/ /vue-data-grid/tool-panel/
@@ -1314,7 +1310,6 @@ AddType text/javascript ts jsx
     Redirect 301 /javascript-grid-for-print/ /javascript-data-grid/printing/
     Redirect 301 /javascript-grid-full-width-rows/ /javascript-data-grid/full-width-rows/
     Redirect 301 /javascript-grid-getting-started/ /javascript-data-grid/getting-started/
-    Redirect 301 /javascript-grid-graphing/ /javascript-data-grid/third-party-charting/
     Redirect 301 /javascript-grid-grouping-headers/ /javascript-data-grid/column-groups/
     Redirect 301 /javascript-grid-grouping/ /javascript-data-grid/grouping/
     Redirect 301 /javascript-grid-header-rendering/ /javascript-data-grid/component-header/
@@ -1608,7 +1603,6 @@ AddType text/javascript ts jsx
     Redirect 301 /javascript-grid/themes-customising/ /javascript-data-grid/themes-customising/
     Redirect 301 /javascript-grid/themes-provided/ /javascript-data-grid/themes-provided/
     Redirect 301 /javascript-grid/themes-v23-migration/ /javascript-data-grid/themes-v23-migration/
-    Redirect 301 /javascript-grid/third-party-charting/ /javascript-data-grid/third-party-charting/
     Redirect 301 /javascript-grid/tool-panel/ /javascript-data-grid/tool-panel/
     Redirect 301 /javascript-grid/tool-panel-columns/ /javascript-data-grid/tool-panel-columns/
     Redirect 301 /javascript-grid/tool-panel-filters/ /javascript-data-grid/tool-panel-filters/
@@ -1807,7 +1801,6 @@ AddType text/javascript ts jsx
     Redirect 301 /angular-grid/themes-customising/ /angular-data-grid/themes-customising/
     Redirect 301 /angular-grid/themes-provided/ /angular-data-grid/themes-provided/
     Redirect 301 /angular-grid/themes-v23-migration/ /angular-data-grid/themes-v23-migration/
-    Redirect 301 /angular-grid/third-party-charting/ /angular-data-grid/third-party-charting/
     Redirect 301 /angular-grid/tool-panel/ /angular-data-grid/tool-panel/
     Redirect 301 /angular-grid/tool-panel-columns/ /angular-data-grid/tool-panel-columns/
     Redirect 301 /angular-grid/tool-panel-filters/ /angular-data-grid/tool-panel-filters/
@@ -2012,7 +2005,6 @@ AddType text/javascript ts jsx
     Redirect 301 /react-grid/themes-customising/ /react-data-grid/themes-customising/
     Redirect 301 /react-grid/themes-provided/ /react-data-grid/themes-provided/
     Redirect 301 /react-grid/themes-v23-migration/ /react-data-grid/themes-v23-migration/
-    Redirect 301 /react-grid/third-party-charting/ /react-data-grid/third-party-charting/
     Redirect 301 /react-grid/tool-panel/ /react-data-grid/tool-panel/
     Redirect 301 /react-grid/tool-panel-columns/ /react-data-grid/tool-panel-columns/
     Redirect 301 /react-grid/tool-panel-filters/ /react-data-grid/tool-panel-filters/
@@ -2211,7 +2203,6 @@ AddType text/javascript ts jsx
     Redirect 301 /vue-grid/themes-customising/ /vue-data-grid/themes-customising/
     Redirect 301 /vue-grid/themes-provided/ /vue-data-grid/themes-provided/
     Redirect 301 /vue-grid/themes-v23-migration/ /vue-data-grid/themes-v23-migration/
-    Redirect 301 /vue-grid/third-party-charting/ /vue-data-grid/third-party-charting/
     Redirect 301 /vue-grid/tool-panel/ /vue-data-grid/tool-panel/
     Redirect 301 /vue-grid/tool-panel-columns/ /vue-data-grid/tool-panel-columns/
     Redirect 301 /vue-grid/tool-panel-filters/ /vue-data-grid/tool-panel-filters/
