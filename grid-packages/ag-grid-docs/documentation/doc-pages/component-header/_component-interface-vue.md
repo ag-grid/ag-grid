@@ -4,7 +4,7 @@
 |The interface for a custom header component is as follows:
 |
 |```ts
-|interface IHeaderReactComp {
+|interface {
 |    // gets called when a new Column Definition has been set for this header
 |    refresh?(params: IHeaderParams): HTMLElement;
 |}

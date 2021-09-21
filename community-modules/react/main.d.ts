@@ -1,9 +1,9 @@
-export * from './lib/agGridReact';
-export * from './lib/agGridColumn';
-
+import {Component} from "react";
 import {AgGridReactProps, AgReactUiProps} from "./lib/interfaces";
 import {AgGridColumnGroupProps, AgGridColumnProps} from "./lib/agGridColumn";
-import {Component} from "react";
+
+export * from './lib/agGridReact';
+export * from './lib/agGridColumn';
 
 export declare class AgGridReact extends Component<AgGridReactProps | AgReactUiProps, {}> {
 }
