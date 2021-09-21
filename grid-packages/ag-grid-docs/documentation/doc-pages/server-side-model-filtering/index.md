@@ -98,7 +98,7 @@ Filtering using the [Set Filter](/filter-set/) has a few differences to filterin
 ### Set Filter Model
 
 Entries in the `filterModel` have a different format to the Simple Filters. This filter model is what gets passed
-as part of the reques to the server when using the Partial Store.
+as part of the request to the server when using the Partial Store.
 The following shows an example of a Set Filter where two items are selected:
 
 
