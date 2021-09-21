@@ -18,7 +18,7 @@ export const SEO = ({ title, description, framework, pageName }) => {
 
         if (description.length > targetLength) {
             if (isDevelopment()) {
-                console.warn(`Page description is too long and was truncated.`);
+                console.log(`WARNING: Page description is too long and was truncated.`);
             }
 
             const parts = description.split('.');
