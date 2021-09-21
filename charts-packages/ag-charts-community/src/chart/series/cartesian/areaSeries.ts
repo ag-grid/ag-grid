@@ -360,19 +360,11 @@ export class AreaSeries extends CartesianSeries {
 
     private createSelectionData() {
         const {
-            data, visible, chart, xAxis, yAxis, xData, yData,
+            data, xAxis, yAxis, xData, yData,
             areaSelectionData, markerSelectionData, labelSelectionData
         } = this;
 
-        if (!data ||
-            !visible ||
-            !chart ||
-            chart.layoutPending ||
-            chart.dataPending ||
-            !xAxis ||
-            !yAxis ||
-            !xData.length ||
-            !yData.length) {
+        if (!data || !xAxis || !yAxis || !xData.length || !yData.length) {
             return;
         }
 
